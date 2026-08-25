@@ -12,6 +12,7 @@ const DISPLAYABLE_TOOL_MESSAGE_TOOL_IDS = new Set( [
 	'big_sky__editor_navigate',
 	'big_sky__restore_checkpoint',
 	'big_sky__open_help_center',
+	'jetpack_ai__open_image_studio',
 	'big_sky__stream_page_design',
 	'wp_admin__navigate',
 ] );

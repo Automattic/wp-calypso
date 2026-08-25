@@ -212,3 +212,16 @@ export function trackSplitScreenGuideRendered( options: TrackSplitScreenGuideOpt
 export function trackSplitScreenGuideClick( options: TrackSplitScreenGuideOptions ): void {
 	recordTracksEvent( 'ai_split_screen_guide_click', getSplitScreenGuideProperties( options ) );
 }
+
+/**
+ * Tracks the "Edit image" button (open-image-studio ability) being clicked.
+ * Its impression is already recorded by AM's ChatResponseRenderedTracker as
+ * `chat_response_rendered` with `component_type: 'open-image-studio-button'`.
+ */
+export function trackOpenImageStudioButtonClick(): void {
+	recordTracksEvent( 'ai_open_image_studio_button_click', {
+		component_type: 'open-image-studio-button',
+		post_type: getCurrentPostType(),
+		is_test: getIsTest(),
+	} );
+}

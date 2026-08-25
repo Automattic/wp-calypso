@@ -439,6 +439,15 @@ describe( 'convertToolMessagesToComponents', () => {
 			},
 			expected: 'Updated the color palette.',
 		},
+		{
+			name: 'open-image-studio structured result',
+			toolId: 'jetpack_ai__open_image_studio',
+			data: {
+				result: { success: true, message: 'Click the button below to open the image editor.' },
+				returnToAgent: true,
+			},
+			expected: 'Click the button below to open the image editor.',
+		},
 	] )( 'renders $name as plain text', ( { toolId, data, expected } ) => {
 		const result = convertToolMessagesToComponents( {
 			messages: [ createToolMessage( toolId, data ) ],
@@ -449,6 +458,39 @@ describe( 'convertToolMessagesToComponents', () => {
 			type: 'text',
 			text: expected,
 		} );
+	} );
+
+	it( 'renders the stored open-image-studio summary as plain text after a reload', () => {
+		// The server keeps only the tool call and its summary; the show-component
+		// envelope with the button is not persisted.
+		const summary = "I can't change what's in the image from here, but the image editor can.";
+		const message = createMessage( {
+			content: [
+				{
+					type: 'text',
+					text: JSON.stringify( {
+						tool_id: 'jetpack_ai__open_image_studio',
+						tool_call_id: 'call-open-1',
+						data: { summary },
+					} ),
+				},
+			],
+		} );
+
+		const result = convertToolMessagesToComponents( { messages: [ message ] } );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content ).toEqual( [ { type: 'text', text: summary } ] );
+		expect( result[ 0 ].suppressThinking ).toBe( true );
+	} );
+
+	it( 'hides a failed open-image-studio result', () => {
+		const message = createToolMessage( 'jetpack_ai__open_image_studio', {
+			success: false,
+			summary: 'Select the image you want to edit, then ask again.',
+		} );
+
+		expect( convertToolMessagesToComponents( { messages: [ message ] } ) ).toEqual( [] );
 	} );
 
 	it.each( [ 'big_sky__apply_block_edits', 'wpcom__update_block_content' ] )(

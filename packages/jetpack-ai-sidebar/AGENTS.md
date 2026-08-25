@@ -28,7 +28,7 @@ All exports live in `src/index.ts`. This is intentionally a single-file provider
 ## Critical Patterns (Don't Break These)
 
 - **Module-level state**: `addMessageFn`, `clearSuggestionsFn`, and `moduleCheckpointApi` are captured once via their respective hooks. These are module singletons — do NOT move them into React state or a store.
-- **`returnToAgent: false`**: The `handleUpdateBlockContent` and `handleShowComponent` handlers return `{ returnToAgent: false }`. This prevents the AM orchestrator from continuing automatically after the tool executes. Removing this breaks the UX flow.
+- **`returnToAgent: false`**: The `handleUpdateBlockContent` and `handleShowComponent` handlers return `{ returnToAgent: false }`. This prevents the AM orchestrator from continuing automatically after the tool executes. Removing this breaks the UX flow. The one exception is `handleOpenImageStudio`, which intentionally returns `returnToAgent: true`: the server echo-acks the success without an extra model turn, and the failure path needs the model to ask the user to select an image.
 - **Tool ID normalization**: AM normalizes tool IDs (`wpcom/update-block-content` → `wpcom__update_block_content`). The `isUpdateBlockContentTool` / `isShowComponentTool` helpers handle both forms. Any new tool must follow this pattern.
 - **Show-component via `agentMessage` escape hatch**: `handleShowComponent` returns `{ agentMessage: JSON }` — it does NOT call `addMessageFn` directly. agenttic-client wraps the JSON in an `{ role: 'agent', parts: [text] }` message, AM's `convert-tool-messages-to-components` resolves the component via `getChatComponent`, and AgentChat's action bar (thumbs/Undo) attaches because the original message had a text content part. See "Show-component pattern" below.
 - **Role transformation**: AM's `useAbilitiesSetup` handler maps `role: 'assistant'` → `'agent'` and everything else → `'user'`. When injecting messages directly via `addMessageFn`, always use `'assistant'` — passing `'agent'` would make the message render as user content and get filtered out of the agent message list.
@@ -41,6 +41,7 @@ All exports live in `src/index.ts`. This is intentionally a single-file provider
 | `jetpack_ai__show_component` | `handleShowComponent`       | via `getChatComponent` | Renders Jetpack AI chat components                       |
 | `big_sky__show_component`    | `handleLegacyShowComponent` | Jetpack or Big Sky     | Temporary migration support; delegates non-Jetpack types |
 | `wpcom/update-block-content` | `handleUpdateBlockContent`  | _(chat text)_          | Updates block content with shimmer effect                |
+| `jetpack-ai/open-image-studio` | `handleOpenImageStudio`   | `OpenImageStudioButton` | Offers an "Edit image" button that opens Image Studio for the selected image block; advertised only while Image Studio is loaded |
 
 ### Show-component pattern
 
