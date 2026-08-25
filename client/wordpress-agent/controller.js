@@ -10,7 +10,7 @@ export function wordpressAgent( context ) {
 		return;
 	}
 
-	const destination = new URL( '/me/apps/agent', window.location.origin );
+	const destination = new URL( '/me/agent', window.location.origin );
 	if ( typeof context.query.pair_token === 'string' ) {
 		destination.searchParams.set( 'pair_token', context.query.pair_token );
 	}

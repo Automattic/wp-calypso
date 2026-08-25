@@ -90,7 +90,7 @@ describe( '<WordPressAgentEmail />', () => {
 		expect( screen.getByRole( 'combobox', { name: 'Select site' } ) ).toHaveValue(
 			'email-agent.wordpress.com'
 		);
-		expect( screen.queryByRole( 'heading', { name: 'Connected' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'Connected' } ) ).toBeVisible();
 		expect( screen.getByLabelText( 'AI agent email address' ) ).toHaveValue(
 			'agent+secret@post.wordpress.com'
 		);
@@ -110,7 +110,27 @@ describe( '<WordPressAgentEmail />', () => {
 			'calypso_wordpress_agent_email_vcard_downloaded',
 			{ site_id: SITE.ID }
 		);
-		expect( screen.getByRole( 'link', { name: 'Manage' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: 'Manage' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'explains when email is unavailable and links to plans', () => {
+		seedSite();
+		queryClient.setQueryData( bigSkyPluginQuery( SITE.ID ).queryKey, {
+			blog_id: SITE.ID,
+			enabled: false,
+			available: false,
+			on_free_trial: false,
+		} );
+
+		render( <WordPressAgentEmail />, { queryClient } );
+
+		expect(
+			screen.getByRole( 'heading', { name: 'Email isn’t available for this site' } )
+		).toBeVisible();
+		expect(
+			screen.getByText( 'Upgrade this site’s plan to enable a WordPress Agent email address.' )
+		).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'View plans' } ) ).toBeVisible();
 	} );
 
 	test( 'enables email for the selected site', async () => {
@@ -121,6 +141,7 @@ describe( '<WordPressAgentEmail />', () => {
 
 		const { recordTracksEvent } = render( <WordPressAgentEmail />, { queryClient } );
 
+		expect( screen.getByRole( 'heading', { name: 'Not connected on this site' } ) ).toBeVisible();
 		await userEvent.click( screen.getByRole( 'button', { name: 'Enable email' } ) );
 
 		await waitFor( () => expect( createRequest.isDone() ).toBe( true ) );

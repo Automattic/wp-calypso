@@ -19,7 +19,6 @@
 	gap: 12px 24px;
 }
 
-.wordpress-agent-email__site-row,
 .wordpress-agent-email__address-row {
 	display: grid;
 	grid-template-columns: minmax( 0, 1fr ) auto;
@@ -27,12 +26,10 @@
 	gap: 16px;
 }
 
-.wordpress-agent-email__site-row > :first-child,
 .wordpress-agent-email__address-row > :first-child {
 	min-width: 0;
 }
 
-.wordpress-agent-email__site-row > .components-button,
 .wordpress-agent-email__address-row > .components-button {
 	margin-bottom: 1px;
 }
@@ -95,7 +92,6 @@
 		}
 	}
 
-	.wordpress-agent-email__site-row,
 	.wordpress-agent-email__address-row {
 		grid-template-columns: 1fr;
 		align-items: stretch;

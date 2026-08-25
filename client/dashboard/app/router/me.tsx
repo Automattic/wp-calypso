@@ -1203,17 +1203,12 @@ export const appsRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'AI & Apps' ),
+				title: __( 'Apps' ),
 			},
 		],
 	} ),
 	getParentRoute: () => meRoute,
 	path: 'apps',
-} );
-
-export const appsIndexRoute = createRoute( {
-	getParentRoute: () => appsRoute,
-	path: '/',
 } ).lazy( () =>
 	import( '../../me/apps' ).then( ( d ) =>
 		createLazyRoute( 'apps' )( {
@@ -1280,12 +1275,12 @@ export const agentRoute = createRoute( {
 			},
 		],
 	} ),
-	getParentRoute: () => appsRoute,
+	getParentRoute: () => meRoute,
 	path: 'agent',
 	validateSearch: validateAgentConnectionSearch,
 	loader: async () => queryClient.ensureQueryData( isAutomatticianQuery() ),
 } ).lazy( () =>
-	import( '../../me/apps/agent' ).then( ( d ) =>
+	import( '../../me/agent' ).then( ( d ) =>
 		createLazyRoute( 'agent' )( {
 			component: d.default,
 		} )
@@ -1513,12 +1508,11 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	);
 
 	if ( config.supports.me.apps ) {
-		meRoutes.push(
-			appsRoute.addChildren( [
-				appsIndexRoute,
-				...( isEnabled( 'mcp-settings' ) ? [ agentRoute ] : [] ),
-			] )
-		);
+		meRoutes.push( appsRoute );
+	}
+
+	if ( isEnabled( 'mcp-settings' ) ) {
+		meRoutes.push( agentRoute );
 	}
 
 	return [ meRoute.addChildren( meRoutes ) ];

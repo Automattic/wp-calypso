@@ -33,7 +33,7 @@ test.describe(
 				{ label: 'Billing', path: 'billing' },
 				{ label: 'Security', path: 'security' },
 				{ label: 'Notifications', path: 'notifications' },
-				{ label: 'AI & Apps', path: 'apps' },
+				{ label: 'Apps', path: 'apps' },
 			] as const;
 
 			for ( const target of meEndpoints ) {

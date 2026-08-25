@@ -133,7 +133,7 @@ function UpgradeRequiredBadge() {
 	);
 }
 
-const TELEGRAM_CONNECTION_PATH = '/me/apps/agent';
+const TELEGRAM_CONNECTION_PATH = '/me/agent';
 
 function EmailAssistantCard( {
 	site,

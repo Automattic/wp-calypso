@@ -2,15 +2,14 @@ import config from '@automattic/calypso-config';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
-import { useMcpTracksAudienceProps } from '../../../../me/mcp/tracks';
-import Breadcrumbs from '../../../app/breadcrumbs';
-import { agentRoute } from '../../../app/router/me';
-import ComponentViewTracker from '../../../components/component-view-tracker';
-import { PageHeader } from '../../../components/page-header';
-import PageLayout from '../../../components/page-layout';
-import WordPressAgentEmail from '../../mcp/wordpress-agent-email';
-import WordPressAgentSlack from '../../mcp/wordpress-agent-slack';
-import WordPressAgentTelegram from '../../mcp/wordpress-agent-telegram';
+import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
+import { agentRoute } from '../../app/router/me';
+import ComponentViewTracker from '../../components/component-view-tracker';
+import { PageHeader } from '../../components/page-header';
+import PageLayout from '../../components/page-layout';
+import WordPressAgentEmail from '../mcp/wordpress-agent-email';
+import WordPressAgentSlack from '../mcp/wordpress-agent-slack';
+import WordPressAgentTelegram from '../mcp/wordpress-agent-telegram';
 
 import './style.scss';
 
@@ -54,7 +53,6 @@ export default function WordPressAgent() {
 					description={ __(
 						'WordPress Agent helps you manage your site, create content, and monitor performance. Message your agent from where it’s convenient: via Telegram, Email, or Slack.'
 					) }
-					prefix={ <Breadcrumbs length={ 2 } /> }
 				/>
 			}
 		>

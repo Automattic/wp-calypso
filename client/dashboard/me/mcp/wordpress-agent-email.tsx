@@ -17,7 +17,7 @@ import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
-import { siteSettingsAIToolsRoute } from '../../app/router/sites';
+import { sitePlansRoute } from '../../app/router/sites';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import ClipboardInputControl from '../../components/clipboard-input-control';
@@ -35,14 +35,14 @@ function getErrorMessage( error: unknown, fallback: string ): string {
 	return error instanceof Error && error.message ? error.message : fallback;
 }
 
-function ManageEmailButton( { site }: { site: Site } ) {
+function ViewPlansButton( { site }: { site: Site } ) {
 	return (
 		<RouterLinkButton
 			variant="primary"
-			to={ siteSettingsAIToolsRoute.fullPath }
+			to={ sitePlansRoute.fullPath }
 			params={ { siteSlug: site.slug } }
 		>
-			{ __( 'Manage' ) }
+			{ __( 'View plans' ) }
 		</RouterLinkButton>
 	);
 }
@@ -95,22 +95,24 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 	if ( error ) {
 		return (
 			<CardBody>
-				<VStack spacing={ 4 }>
-					<Notice status="error" isDismissible={ false }>
-						{ getErrorMessage( error, __( 'Could not load this site’s email connection.' ) ) }
-					</Notice>
-					<ManageEmailButton site={ site } />
-				</VStack>
+				<Notice status="error" isDismissible={ false }>
+					{ getErrorMessage( error, __( 'Could not load this site’s email connection.' ) ) }
+				</Notice>
 			</CardBody>
 		);
 	}
 
 	if ( ! isAvailable ) {
 		return (
-			<CardBody>
-				<Text as="p" variant="muted">
-					{ __( 'Upgrade this site’s plan to enable WordPress Agent email address.' ) }
-				</Text>
+			<CardBody className="wordpress-agent-connection__row">
+				<SectionHeader
+					level={ 3 }
+					title={ __( 'Email isn’t available for this site' ) }
+					description={ __(
+						'Upgrade this site’s plan to enable a WordPress Agent email address.'
+					) }
+				/>
+				<ViewPlansButton site={ site } />
 			</CardBody>
 		);
 	}
@@ -120,7 +122,7 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 			<CardBody className="wordpress-agent-connection__row">
 				<SectionHeader
 					level={ 3 }
-					title={ __( 'Not connected' ) }
+					title={ __( 'Not connected on this site' ) }
 					description={ __( 'Enable a private address for emailing this site’s WordPress Agent.' ) }
 				/>
 				<Button
@@ -137,7 +139,12 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 
 	return (
 		<CardBody>
-			<VStack spacing={ 3 }>
+			<VStack spacing={ 4 }>
+				<SectionHeader
+					level={ 3 }
+					title={ __( 'Connected' ) }
+					description={ __( 'This email address is ready to use.' ) }
+				/>
 				<div className="wordpress-agent-email__address-row">
 					<ClipboardInputControl
 						label={ __( 'AI agent email address' ) }
@@ -216,17 +223,14 @@ export default function WordPressAgentEmail() {
 							'Email WordPress Agent through a private address unique to each site.'
 						) }
 					/>
-					<div className="wordpress-agent-email__site-row">
-						<PreferencesLoginSiteDropdown
-							sites={ sites }
-							value={ selectedSite?.ID.toString() ?? '' }
-							onChange={ selectSite }
-							label={ __( 'Select site' ) }
-							isLoading={ sitesQuery.isLoading }
-							useSiteUrlAsLabel
-						/>
-						{ selectedSite && <ManageEmailButton site={ selectedSite } /> }
-					</div>
+					<PreferencesLoginSiteDropdown
+						sites={ sites }
+						value={ selectedSite?.ID.toString() ?? '' }
+						onChange={ selectSite }
+						label={ __( 'Select site' ) }
+						isLoading={ sitesQuery.isLoading }
+						useSiteUrlAsLabel
+					/>
 					{ ! sitesQuery.isLoading && sites.length === 0 && (
 						<Notice status="info" isDismissible={ false }>
 							{ __( 'You do not have any sites that can use a WordPress Agent email address.' ) }
