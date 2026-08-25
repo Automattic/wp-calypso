@@ -304,7 +304,7 @@ export default function MarketplaceHosting() {
 				<PageHeader
 					title={ __( 'Hosting' ) }
 					description={ __(
-						'High performance, highly secure managed WordPress hosting for your clients.'
+						'Choose the right hosting for each client, from single sites to enterprise platforms.'
 					) }
 					actions={
 						<HStack spacing={ 4 } justify="flex-end">
@@ -316,10 +316,9 @@ export default function MarketplaceHosting() {
 								<ToggleControl
 									__nextHasNoMarginBottom
 									checked={ term === 'yearly' }
-									label={ undefined }
+									label={ __( 'Yearly' ) }
 									onChange={ ( checked ) => setTerm( checked ? 'yearly' : 'monthly' ) }
 								/>
-								<Text variant={ term === 'yearly' ? undefined : 'muted' }>{ __( 'Yearly' ) }</Text>
 							</HStack>
 							<Divider
 								orientation="vertical"
