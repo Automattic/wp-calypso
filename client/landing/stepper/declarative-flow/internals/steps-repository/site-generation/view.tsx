@@ -231,7 +231,13 @@ function BuildProgress( { state }: { state: SiteGenerationState } ) {
 								{ item.status === 'done' && CheckmarkIcon }
 								{ item.status === 'active' && ! hasFailed && <ActiveIndicator /> }
 							</div>
-							<span className="site-build-progress__text">{ item.label }</span>
+							<span className="site-build-progress__text">
+								{ item.status === 'active' && ! hasFailed ? (
+									<span className="site-build-progress__text-wave">{ item.label }</span>
+								) : (
+									item.label
+								) }
+							</span>
 							{ item.status === 'active' && ! hasFailed && item.startedAt !== undefined && (
 								<ElapsedTime startedAt={ item.startedAt } />
 							) }

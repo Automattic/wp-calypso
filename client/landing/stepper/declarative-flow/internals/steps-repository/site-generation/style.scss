@@ -10,12 +10,13 @@
 }
 
 .site-generation {
-	// Gutenberg editor-chrome colors with no color-studio token equivalent.
+	// Gutenberg editor-chrome and reference-animation colors with no color-studio token equivalent.
 	--site-generation-color-frame: #1e1e1e;
 	--site-generation-color-surface: #f0f0f0;
 	--site-generation-color-surface-muted: #e2e4e7;
 	--site-generation-color-notice-surface: #24272b;
 	--site-generation-color-frame-muted: #8f8f8f;
+	--site-generation-color-thinking: #757575;
 	position: fixed;
 	z-index: 1000000;
 	inset: 0;
@@ -1014,6 +1015,49 @@
 .site-build-progress__item--active .site-build-progress__text {
 	font-weight: 500;
 }
+
+.site-build-progress__text-wave {
+	display: inline-block;
+	background-color: var( --studio-white );
+	background-image: linear-gradient(
+		110deg,
+		var( --studio-white ) 0%,
+		var( --studio-white ) 32%,
+		color-mix( in srgb, var( --studio-white ) 65%, var( --site-generation-color-thinking ) ) 40%,
+		color-mix( in srgb, var( --studio-white ) 25%, var( --site-generation-color-thinking ) ) 47%,
+		color-mix(
+				in srgb,
+				var( --site-generation-color-thinking ) 65%,
+				var( --site-generation-color-frame )
+			)
+			50%,
+		color-mix( in srgb, var( --studio-white ) 25%, var( --site-generation-color-thinking ) ) 53%,
+		color-mix( in srgb, var( --studio-white ) 65%, var( --site-generation-color-thinking ) ) 60%,
+		var( --studio-white ) 68%,
+		var( --studio-white ) 100%
+	);
+	background-repeat: no-repeat;
+	background-position: 100% 50%;
+	background-size: 300% 100%;
+	background-clip: text;
+	color: transparent;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	animation: site-build-progress-text-wave 3s linear infinite;
+}
+
+@keyframes site-build-progress-text-wave {
+	0%,
+	20% {
+		background-position: 100% 50%;
+	}
+
+	75%,
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
 .site-build-progress .site-generation__sidebar-notice {
 	margin-block-start: 20px;
 	background: var( --site-generation-color-notice-surface );
@@ -1057,6 +1101,21 @@
 	.site-generation__waiting-description,
 	.site-build-progress__activity {
 		animation: none;
+	}
+	.site-generation__preview-scan,
+	.site-build-progress__activity,
+	.site-build-progress__text-wave {
+		animation: none;
+	}
+
+	.site-build-progress__text-wave {
+		background: none;
+		color: var( --studio-white );
+		-webkit-text-fill-color: currentColor;
+	}
+
+	.site-generation__preview-scan {
+		display: none;
 	}
 }
 // A short landscape viewport needs the same graceful compression as other
