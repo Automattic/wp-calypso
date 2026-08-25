@@ -1,5 +1,10 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { FetchJetpackLicensesOptions, JetpackLicense, JetpackLicenseCounts } from './types';
+import type {
+	FetchJetpackLicensesOptions,
+	JetpackLicense,
+	JetpackLicenseCounts,
+	JetpackLicenseDownloadUrl,
+} from './types';
 
 const FETCH_SIZE = 100;
 
@@ -55,9 +60,12 @@ export async function fetchJetpackLicenseCounts(
 }
 
 export async function fetchJetpackLicenseDownloadUrl(
-	agencyId: number,
+	agencyId: number | undefined,
 	licenseKey: string
-): Promise< { download_url: string } > {
+): Promise< JetpackLicenseDownloadUrl > {
+	if ( ! agencyId ) {
+		throw new Error( 'Agency ID is required to download a license' );
+	}
 	return wpcom.req.get(
 		{
 			apiNamespace: 'wpcom/v2',

@@ -90,3 +90,7 @@ export interface IssueJetpackLicensesInput {
 	quantity: number;
 	bundle?: boolean;
 }
+
+export interface JetpackLicenseDownloadUrl {
+	download_url: string;
+}

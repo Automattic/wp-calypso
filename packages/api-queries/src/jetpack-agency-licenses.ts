@@ -26,20 +26,20 @@ export const jetpackAgencyLicenseCountsQuery = ( agencyId: number ) =>
 		queryFn: () => fetchJetpackLicenseCounts( agencyId ),
 	} );
 
-function invalidateAgencyLicenses( agencyId: number ) {
+function invalidateAgencyLicenses( agencyId: number | undefined ) {
 	queryClient.invalidateQueries( {
 		queryKey: [ 'agency', agencyId, 'jetpack-agency-licenses' ],
 	} );
 }
 
-export const jetpackAgencyLicensesIssueMutation = ( agencyId: number ) =>
+export const jetpackAgencyLicensesIssueMutation = ( agencyId: number | undefined ) =>
 	mutationOptions( {
 		meta: { statId: 'agcy-license-issue' },
 		mutationFn: ( input: IssueJetpackLicensesInput ) => issueJetpackLicenses( agencyId, input ),
 		onSuccess: () => invalidateAgencyLicenses( agencyId ),
 	} );
 
-export const jetpackAgencyLicenseAssignMutation = ( agencyId: number ) =>
+export const jetpackAgencyLicenseAssignMutation = ( agencyId: number | undefined ) =>
 	mutationOptions( {
 		meta: { statId: 'agcy-license-assign' },
 		mutationFn: ( { licenseKey, siteId }: { licenseKey: string; siteId: number } ) =>
@@ -51,7 +51,7 @@ export const jetpackAgencyLicenseAssignMutation = ( agencyId: number ) =>
 		},
 	} );
 
-export const jetpackAgencyLicenseRevokeMutation = ( agencyId: number ) =>
+export const jetpackAgencyLicenseRevokeMutation = ( agencyId: number | undefined ) =>
 	mutationOptions( {
 		meta: { statId: 'agcy-license-revoke' },
 		mutationFn: ( licenseKey: string ) => revokeJetpackLicense( licenseKey ),
@@ -63,7 +63,7 @@ export const jetpackAgencyLicenseRevokeMutation = ( agencyId: number ) =>
 
 // Technically a read, but exposed as a mutation because the download URL is
 // requested imperatively (on click) and should never be cached.
-export const jetpackAgencyLicenseDownloadUrlMutation = ( agencyId: number ) =>
+export const jetpackAgencyLicenseDownloadUrlMutation = ( agencyId: number | undefined ) =>
 	mutationOptions( {
 		meta: { statId: 'agcy-license-dl-url-fetch' },
 		mutationFn: ( licenseKey: string ) => fetchJetpackLicenseDownloadUrl( agencyId, licenseKey ),

@@ -2,7 +2,7 @@ import { wpcom } from '../wpcom-fetcher';
 import type { IssuedJetpackLicense, IssueJetpackLicensesInput } from './types';
 
 export async function issueJetpackLicenses(
-	agencyId: number,
+	agencyId: number | undefined,
 	{ product, quantity, bundle = false }: IssueJetpackLicensesInput
 ): Promise< IssuedJetpackLicense[] > {
 	if ( ! agencyId ) {
@@ -16,7 +16,7 @@ export async function issueJetpackLicenses(
 }
 
 export async function assignJetpackLicenseToSite(
-	agencyId: number,
+	agencyId: number | undefined,
 	licenseKey: string,
 	siteId: number
 ): Promise< IssuedJetpackLicense > {
