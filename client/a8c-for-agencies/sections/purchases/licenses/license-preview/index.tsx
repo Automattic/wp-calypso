@@ -13,7 +13,6 @@ import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import A4APopoverTrigger from 'calypso/a8c-for-agencies/components/a4a-popover/trigger';
 import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
 import {
-	A4A_SITES_LINK_NEEDS_SETUP,
 	A4A_FEEDBACK_LINK,
 	A4A_LICENSES_LINK,
 	EXTERNAL_PRESSABLE_AUTH_URL,
@@ -37,9 +36,11 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isAgencyOwner } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
+import { infoNotice } from 'calypso/state/notices/actions';
 import { getSite } from 'calypso/state/sites/selectors';
-import usePaymentMethod from '../../payment-methods/hooks/use-payment-method';
+import CreateSiteButton from '../create-site-button';
+import useCreateSiteFromLicense from '../hooks/use-create-site-from-license';
+import usePaymentMethodGate from '../hooks/use-payment-method-gate';
 import LicenseDetails from '../license-details';
 import BundleDetails from '../license-details/bundle-details';
 import LicensesOverviewContext from '../licenses-overview/context';
@@ -139,38 +140,25 @@ export default function LicensePreview( {
 		dispatch( recordTracksEvent( 'calypso_a4a_license_list_copy_license_click' ) );
 	}, [ dispatch, translate ] );
 
-	const { paymentMethodRequired } = usePaymentMethod();
+	const isBlockedByMissingPaymentMethod = usePaymentMethodGate( !! referral );
+	const {
+		onCreateSite,
+		isProvisioning,
+		isLoading: isLoadingPendingSites,
+		modal: siteConfigurationsModal,
+	} = useCreateSiteFromLicense( licenseKey, !! referral );
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl && ! isPressableLicense ? getUrlParts( siteUrl ).hostname || siteUrl : '';
 
 	const assign = useCallback( () => {
-		const redirectUrl = isWPCOMLicense
-			? A4A_SITES_LINK_NEEDS_SETUP
-			: addQueryArgs( { key: licenseKey }, '/marketplace/assign-license' );
-		if ( paymentMethodRequired && ! referral ) {
-			const noticeLinkHref = addQueryArgs(
-				{
-					return: redirectUrl,
-				},
-				'/purchases/payment-methods/add'
-			);
-			const errorMessage = translate(
-				'A primary payment method is required.{{br/}} ' +
-					'{{a}}Try adding a new payment method{{/a}} or contact support.',
-				{
-					components: {
-						a: <a href={ noticeLinkHref } />,
-						br: <br />,
-					},
-				}
-			);
+		const redirectUrl = addQueryArgs( { key: licenseKey }, '/marketplace/assign-license' );
 
-			dispatch( errorNotice( errorMessage ) );
+		if ( isBlockedByMissingPaymentMethod( redirectUrl ) ) {
 			return;
 		}
 
 		page( redirectUrl );
-	}, [ isWPCOMLicense, licenseKey, paymentMethodRequired, referral, translate, dispatch ] );
+	}, [ isBlockedByMissingPaymentMethod, licenseKey ] );
 
 	useEffect( () => {
 		if ( isHighlighted ) {
@@ -316,16 +304,26 @@ export default function LicensePreview( {
 							{ ! domain && licenseState === LicenseState.Detached && ! isPressableAddonLicense && (
 								<span className="license-preview__unassigned">
 									<Badge intent="warning">{ translate( 'Unassigned' ) }</Badge>
-									{ licenseType === LicenseType.Partner && ! isPressableAddonLicense && (
-										<Button
-											className="license-preview__assign-button"
-											borderless
-											compact
-											onClick={ assign }
-										>
-											{ isWPCOMLicense ? translate( 'Create site' ) : translate( 'Assign' ) }
-										</Button>
-									) }
+									{ licenseType === LicenseType.Partner &&
+										! isPressableAddonLicense &&
+										( isWPCOMLicense ? (
+											<CreateSiteButton
+												className="license-preview__assign-button"
+												borderless
+												isProvisioning={ isProvisioning }
+												isLoading={ isLoadingPendingSites }
+												onCreateSite={ onCreateSite }
+											/>
+										) : (
+											<Button
+												className="license-preview__assign-button"
+												borderless
+												compact
+												onClick={ assign }
+											>
+												{ translate( 'Assign' ) }
+											</Button>
+										) ) }
 								</span>
 							) }
 							{ revokedAt && (
@@ -433,6 +431,7 @@ export default function LicensePreview( {
 						isDevSite={ isDevelopmentSite }
 					/>
 				) ) }
+			{ siteConfigurationsModal }
 		</div>
 	);
 }
