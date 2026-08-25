@@ -20,6 +20,21 @@
 	border-radius: 4px;
 }
 
+/* DataViews' infinite scroll listens on its own .dataviews-layout__container
+   (flex: 1, overflow: auto in stock styles); it only scrolls if the pane has a
+   bounded height, so pin the list to the viewport like the detail pane. */
+.dashboard-notifications-inbox__list {
+	position: sticky;
+	top: calc(var(--masterbar-height, 0px) + 24px);
+	height: calc(100vh - var(--masterbar-height, 0px) - 48px);
+
+	.components-card,
+	.components-card__body,
+	.dataviews-wrapper {
+		height: 100%;
+	}
+}
+
 @media (max-width: 960px) {
 	.dashboard-notifications-inbox__layout {
 		grid-template-columns: minmax(0, 1fr);
