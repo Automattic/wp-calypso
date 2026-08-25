@@ -10,11 +10,13 @@
 }
 
 .site-generation {
-	// Gutenberg editor-chrome and reference-animation colors with no color-studio token equivalent.
-	--site-generation-color-frame: #1e1e1e;
+	// Gutenberg editor-chrome colors with no color-studio token equivalent.
 	--site-generation-color-surface: #f0f0f0;
 	--site-generation-color-surface-muted: #e2e4e7;
-	--site-generation-color-notice-surface: #24272b;
+	// Match the docked Agents Manager shell and its inner dark surfaces.
+	--site-generation-color-frame: #1e1e1e;
+	--site-generation-color-sidebar-foreground: #fff;
+	--site-generation-color-notice-surface: #2f2f2f;
 	--site-generation-color-frame-muted: #8f8f8f;
 	--site-generation-color-thinking: #757575;
 	position: fixed;
@@ -813,19 +815,20 @@
 	min-height: 0;
 	padding-block: 28px calc( 24px + env( safe-area-inset-bottom ) );
 	padding-inline: 20px;
-	color: var( --site-generation-color-surface );
+	background-color: var( --site-generation-color-frame );
+	color: var( --site-generation-color-sidebar-foreground );
+	font-family: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+		'Segoe UI Symbol', 'Noto Color Emoji';
+	font-size: $font-body-small;
+	line-height: 1.65;
+	letter-spacing: -0.01em;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
 
 	@include break-medium {
-		width: 310px;
+		width: 350px;
 		height: 100%;
-		padding-block: 32px 12px;
-		padding-inline: 12px;
-	}
-
-	@include break-large {
-		width: 328px;
-		padding-block-start: 48px;
-		padding-inline: 20px 16px;
+		padding: 16px;
 	}
 }
 
@@ -837,13 +840,15 @@
 	padding: 0;
 
 	@include break-medium {
-		padding-inline: 8px;
+		padding-inline-start: 16px;
 	}
 }
 
 .site-generation__assistant-icon {
 	display: flex;
-	margin-inline-start: -8px;
+	// The mark has about 10px of whitespace inside its 48px viewBox.
+	// Compensate for it so the visible sparkle aligns with the text.
+	margin-inline-start: -10px;
 	color: var( --studio-blue-50 );
 	fill: currentColor;
 }
@@ -852,22 +857,18 @@
 	flex: none;
 	padding: 0;
 	overflow: visible;
-	font-size: $font-body-small;
-	line-height: 1.5;
+	font-size: inherit;
+	line-height: inherit;
 
 	@include break-medium {
 		flex: 1;
-		padding: 8px;
+		padding-inline: 16px;
 		overflow: auto;
 	}
 }
 .site-generation__conversation-message {
 	margin: 0 0 24px;
-	color: var( --site-generation-color-surface );
-
-	@include break-medium {
-		margin-block-end: 28px;
-	}
+	color: var( --site-generation-color-sidebar-foreground );
 }
 .site-build-progress {
 	box-sizing: border-box;
@@ -885,9 +886,10 @@
 }
 
 .site-build-progress__title {
-	color: var( --studio-white );
-	font-size: $font-body-small;
+	color: var( --site-generation-color-sidebar-foreground );
+	font-size: inherit;
 	font-weight: 500;
+	line-height: inherit;
 }
 
 .site-build-progress__announcement {
@@ -914,10 +916,6 @@
 	align-items: center;
 	gap: 12px;
 	padding-block-end: 10px;
-
-	@include break-mobile {
-		gap: 15px;
-	}
 
 	&::before {
 		position: absolute;
@@ -993,10 +991,10 @@
 .site-build-progress__text {
 	flex: 1;
 	min-width: 0;
-	color: var( --studio-white );
-	font-size: $font-body-small;
+	color: var( --site-generation-color-sidebar-foreground );
+	font-size: inherit;
 	font-weight: 400;
-	line-height: 1.4;
+	line-height: inherit;
 }
 
 .site-build-progress__elapsed {
@@ -1005,7 +1003,7 @@
 	color: var( --site-generation-color-frame-muted );
 	font-size: $font-body-extra-small;
 	font-variant-numeric: tabular-nums;
-	line-height: 1.4;
+	line-height: inherit;
 }
 
 .site-build-progress__item--idle .site-build-progress__text {
