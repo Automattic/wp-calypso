@@ -449,6 +449,10 @@ function ShelfUpsertModalContent( {
 	const wizardSteps = baseTabs;
 	const isLastStep = step === wizardSteps.length - 1;
 	const currentStep = wizardSteps[ step ];
+	const currentStepHasValidationError =
+		( currentStep.name === 'identity' && !! nameError ) ||
+		( currentStep.name === 'sources' && !! feedsError ) ||
+		( currentStep.name === 'topics' && !! ( tagsError || languagesError ) );
 
 	const goBack = () => setStep( ( current ) => Math.max( current - 1, 0 ) );
 	const goNext = () => {
@@ -534,7 +538,7 @@ function ShelfUpsertModalContent( {
 							__next40pxDefaultSize
 							variant="primary"
 							isBusy={ isPending }
-							disabled={ hasValidationError || isPending }
+							disabled={ currentStepHasValidationError || isPending }
 							onClick={ goNext }
 						>
 							{ isLastStep ? translate( 'Create' ) : translate( 'Next' ) }
