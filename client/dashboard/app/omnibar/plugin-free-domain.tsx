@@ -7,6 +7,7 @@ import {
 	FREE_DOMAIN_UPSELL_ID,
 	getFreeDomainUpsellHref,
 	getFreeDomainUpsellSource,
+	useFreeDomainUpsellExperiment,
 } from '../free-domain-upsell';
 import type { FreeDomainUpsellSurface } from '../free-domain-upsell';
 import type { Site } from '@automattic/api-core';
@@ -22,13 +23,14 @@ export function useFreeDomainPlugin( {
 	surface: FreeDomainUpsellSurface;
 } ): OmnibarNode | undefined {
 	const { recordTracksEvent } = useAnalytics();
+	const { showChip } = useFreeDomainUpsellExperiment( site );
 	const upsellSource = getFreeDomainUpsellSource( site );
 	const siteId = site?.ID;
 
 	// One impression per site: switching sites in the same mount re-fires.
 	const impressionSiteIds = useRef( new Set< number >() );
 	useEffect( () => {
-		if ( ! upsellSource || ! siteId || impressionSiteIds.current.has( siteId ) ) {
+		if ( ! showChip || ! siteId || impressionSiteIds.current.has( siteId ) ) {
 			return;
 		}
 		impressionSiteIds.current.add( siteId );
@@ -37,9 +39,9 @@ export function useFreeDomainPlugin( {
 			surface,
 			upsell_source: upsellSource,
 		} );
-	}, [ upsellSource, siteId, surface, recordTracksEvent ] );
+	}, [ showChip, upsellSource, siteId, surface, recordTracksEvent ] );
 
-	if ( ! site || ! upsellSource ) {
+	if ( ! site || ! showChip ) {
 		return undefined;
 	}
 

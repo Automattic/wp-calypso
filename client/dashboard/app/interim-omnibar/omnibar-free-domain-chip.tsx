@@ -8,19 +8,21 @@ import {
 	FREE_DOMAIN_UPSELL_ID,
 	getFreeDomainUpsellHref,
 	getFreeDomainUpsellSource,
+	useFreeDomainUpsellExperiment,
 } from '../free-domain-upsell';
 import type { Site } from '@automattic/api-core';
 
 import './omnibar-free-domain-chip.scss';
 
 export function OmnibarFreeDomainChip( { site }: { site: Site } ) {
+	const { showChip } = useFreeDomainUpsellExperiment( site );
 	const upsellSource = getFreeDomainUpsellSource( site );
 	const siteId = site.ID;
 
 	// One impression per site: switching sites in the same mount re-fires.
 	const impressionSiteIds = useRef( new Set< number >() );
 	useEffect( () => {
-		if ( ! upsellSource || impressionSiteIds.current.has( siteId ) ) {
+		if ( ! showChip || impressionSiteIds.current.has( siteId ) ) {
 			return;
 		}
 		impressionSiteIds.current.add( siteId );
@@ -29,9 +31,9 @@ export function OmnibarFreeDomainChip( { site }: { site: Site } ) {
 			surface: 'msd',
 			upsell_source: upsellSource,
 		} );
-	}, [ upsellSource, siteId ] );
+	}, [ showChip, upsellSource, siteId ] );
 
-	if ( ! upsellSource ) {
+	if ( ! showChip ) {
 		return null;
 	}
 
