@@ -55,11 +55,32 @@ export function buildTimeRangeInSeconds(
 	return { startSec, endSec };
 }
 
-/**
- * Convert a PHP log severity string to lowercase (to be used in a CSS class name).
- */
-export const toSeverityClass = ( severity: PHPLog[ 'severity' ] ) =>
-	severity.split( ' ' )[ 0 ].toLowerCase();
+export const toSeverityIntent = ( severity: PHPLog[ 'severity' ] ) => {
+	switch ( severity ) {
+		case 'Fatal error':
+			return 'high';
+		case 'Warning':
+			return 'medium';
+		case 'Deprecated':
+			return 'informational';
+		case 'User':
+		default:
+			return 'none';
+	}
+};
+
+export const toRequestTypeIntent = ( requestType: ServerLog[ 'request_type' ] ) => {
+	switch ( requestType ) {
+		case 'DELETE':
+			return 'high';
+		case 'GET':
+			return 'stable';
+		case 'POST':
+			return 'informational';
+		default:
+			return 'none';
+	}
+};
 
 /**
  * Format a log date/time string for display.

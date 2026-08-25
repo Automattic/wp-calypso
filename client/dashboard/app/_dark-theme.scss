@@ -444,40 +444,6 @@
 	}
 }
 
-/* Site Logs Badges */
-@mixin dashboard-dark-theme-site-logs-badges {
-	// Data table badges in the logs views don't declare a Badge intent, and
-	// override the colors locally, so we have to target them directly here.
-	:is( .site-logs-card, .site-logs-details-modal )
-		:is(
-			.badge--POST,
-			.badge--deprecated,
-			.badge--GET,
-			.badge--DELETE,
-			.badge--error,
-			.badge--fatal,
-			.badge--warning,
-			.badge--user
-		) {
-		background-color: color-mix(
-			in srgb,
-			var( --wp-components-color-background ) 90%,
-			var( --base-color )
-		);
-		color: color-mix( in srgb, var( --wp-components-color-foreground ) 50%, var( --base-color ) );
-
-		// `<Badge intent="default">` adds `.is-default`, which the Badge
-		// component pairs with an inset box-shadow in dark mode to stay
-		// visible against the card surface. The colored variants above
-		// already make the chip visible, so clear the shadow — except for
-		// `.badge--user`, whose gray-tinted bg is too close to the surface
-		// to stand on its own.
-		&:not( .badge--user ) {
-			box-shadow: none;
-		}
-	}
-}
-
 /* Modal */
 @mixin dashboard-dark-theme-modal {
 	.components-modal__frame {
@@ -527,6 +493,5 @@
 	@include dashboard-dark-theme-section-header;
 	@include color-scheme-dark-theme-site-icon;
 	@include dashboard-dark-theme-site-launch-modal;
-	@include dashboard-dark-theme-site-logs-badges;
 	@include color-scheme-dark-theme-summary-button;
 }
