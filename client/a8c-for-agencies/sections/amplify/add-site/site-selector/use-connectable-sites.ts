@@ -44,7 +44,12 @@ export default function useConnectableSites(): { sites: ConnectableSite[]; isLoa
 
 	const total = firstFetch?.data?.total || 0;
 	const isEnabled = total > FIRST_PAGE_SIZE && ! firstFetch.isFetching;
-	const allSites = useFetchDashboardSites( { ...defaultArgs, perPage: total }, isEnabled );
+	// Never pass a falsy `perPage`: the hook drops it from the query key, which
+	// then collides with the unpaged dashboard queries and serves their cache here.
+	const allSites = useFetchDashboardSites(
+		{ ...defaultArgs, perPage: total || FIRST_PAGE_SIZE },
+		isEnabled
+	);
 
 	const sites = useMemo< ConnectableSite[] >(
 		() => toConnectableSites( allSites?.data?.sites ?? firstFetch?.data?.sites ?? [] ),
