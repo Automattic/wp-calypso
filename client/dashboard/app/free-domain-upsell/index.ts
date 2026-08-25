@@ -8,32 +8,48 @@ export const FREE_DOMAIN_UPSELL_ID = 'omnibar-free-domain';
 
 export type FreeDomainUpsellSurface = 'msd' | 'calypso';
 
+export type FreeDomainUpsellSource = 'free_to_paid_plan' | 'monthly_to_annual_plan';
+
 /**
+ * Which sidebar JITM this site would qualify for, or null if not eligible.
+ *
  * Mirrors the conditions of the two sidebar JITMs this chip is tested against,
  * which share the "Free domain with an annual plan" message and CTA:
  * - `free_to_paid_plan`: Free plan, Simple, admin, not a domain-only site, no
- *   mapped domain.
+ *   mapped primary domain.
  * - `monthly_to_annual_plan`: any monthly plan, Simple, admin, no mapped
- *   domain.
- * A Simple site with a mapped domain keeps its custom-domain slug, so the
- * `.wordpress.com` check covers the mapped-domain rule — and keeps the "Free
- * domain" copy truthful.
+ *   primary domain.
+ * A Simple site with a mapped primary domain keeps its custom-domain slug, so
+ * the `.wordpress.com` check covers the mapped-domain rule — and keeps the
+ * "Free domain" copy truthful.
  */
-export function isFreeDomainUpsellEligible( site?: Site ): site is Site {
+export function getFreeDomainUpsellSource( site?: Site ): FreeDomainUpsellSource | null {
 	if ( ! isEnabled( 'dashboard/omnibar-free-domain-chip' ) || ! site ) {
-		return false;
+		return null;
 	}
 
-	const matchesFreeToPaid = !! site.plan?.is_free && ! site.options?.is_domain_only;
-	const matchesMonthlyToAnnual = site.plan?.billing_period === 'Monthly';
+	if (
+		! isSimple( site ) ||
+		site.is_wpcom_staging_site ||
+		! site.capabilities?.manage_options ||
+		! site.slug.endsWith( '.wordpress.com' )
+	) {
+		return null;
+	}
 
-	return (
-		( matchesFreeToPaid || matchesMonthlyToAnnual ) &&
-		isSimple( site ) &&
-		! site.is_wpcom_staging_site &&
-		!! site.capabilities?.manage_options &&
-		site.slug.endsWith( '.wordpress.com' )
-	);
+	if ( site.plan?.is_free && ! site.options?.is_domain_only ) {
+		return 'free_to_paid_plan';
+	}
+
+	if ( site.plan?.billing_period === 'Monthly' ) {
+		return 'monthly_to_annual_plan';
+	}
+
+	return null;
+}
+
+export function isFreeDomainUpsellEligible( site?: Site ): site is Site {
+	return getFreeDomainUpsellSource( site ) !== null;
 }
 
 export function getFreeDomainUpsellHref( site: Site ) {

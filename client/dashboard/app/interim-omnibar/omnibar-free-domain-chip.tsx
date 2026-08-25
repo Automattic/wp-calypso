@@ -7,30 +7,31 @@ import { upsell } from '../../components/icons';
 import {
 	FREE_DOMAIN_UPSELL_ID,
 	getFreeDomainUpsellHref,
-	isFreeDomainUpsellEligible,
+	getFreeDomainUpsellSource,
 } from '../free-domain-upsell';
 import type { Site } from '@automattic/api-core';
 
 import './omnibar-free-domain-chip.scss';
 
 export function OmnibarFreeDomainChip( { site }: { site: Site } ) {
-	const isEligible = isFreeDomainUpsellEligible( site );
+	const upsellSource = getFreeDomainUpsellSource( site );
 	const siteId = site.ID;
 
 	// One impression per site: switching sites in the same mount re-fires.
 	const impressionSiteIds = useRef( new Set< number >() );
 	useEffect( () => {
-		if ( ! isEligible || impressionSiteIds.current.has( siteId ) ) {
+		if ( ! upsellSource || impressionSiteIds.current.has( siteId ) ) {
 			return;
 		}
 		impressionSiteIds.current.add( siteId );
 		recordTracksEvent( 'calypso_omnibar_upsell_impression', {
 			upsell_id: FREE_DOMAIN_UPSELL_ID,
 			surface: 'msd',
+			upsell_source: upsellSource,
 		} );
-	}, [ isEligible, siteId ] );
+	}, [ upsellSource, siteId ] );
 
-	if ( ! isEligible ) {
+	if ( ! upsellSource ) {
 		return null;
 	}
 
@@ -43,6 +44,7 @@ export function OmnibarFreeDomainChip( { site }: { site: Site } ) {
 					recordTracksEvent( 'calypso_omnibar_upsell_click', {
 						upsell_id: FREE_DOMAIN_UPSELL_ID,
 						surface: 'msd',
+						upsell_source: upsellSource,
 					} )
 				}
 			>

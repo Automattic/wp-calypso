@@ -6,7 +6,7 @@ import { useAnalytics } from '../analytics';
 import {
 	FREE_DOMAIN_UPSELL_ID,
 	getFreeDomainUpsellHref,
-	isFreeDomainUpsellEligible,
+	getFreeDomainUpsellSource,
 } from '../free-domain-upsell';
 import type { FreeDomainUpsellSurface } from '../free-domain-upsell';
 import type { Site } from '@automattic/api-core';
@@ -22,23 +22,24 @@ export function useFreeDomainPlugin( {
 	surface: FreeDomainUpsellSurface;
 } ): OmnibarNode | undefined {
 	const { recordTracksEvent } = useAnalytics();
-	const isEligible = isFreeDomainUpsellEligible( site );
+	const upsellSource = getFreeDomainUpsellSource( site );
 	const siteId = site?.ID;
 
 	// One impression per site: switching sites in the same mount re-fires.
 	const impressionSiteIds = useRef( new Set< number >() );
 	useEffect( () => {
-		if ( ! isEligible || ! siteId || impressionSiteIds.current.has( siteId ) ) {
+		if ( ! upsellSource || ! siteId || impressionSiteIds.current.has( siteId ) ) {
 			return;
 		}
 		impressionSiteIds.current.add( siteId );
 		recordTracksEvent( 'calypso_omnibar_upsell_impression', {
 			upsell_id: FREE_DOMAIN_UPSELL_ID,
 			surface,
+			upsell_source: upsellSource,
 		} );
-	}, [ isEligible, siteId, surface, recordTracksEvent ] );
+	}, [ upsellSource, siteId, surface, recordTracksEvent ] );
 
-	if ( ! isEligible ) {
+	if ( ! site || ! upsellSource ) {
 		return undefined;
 	}
 
@@ -51,6 +52,7 @@ export function useFreeDomainPlugin( {
 			recordTracksEvent( 'calypso_omnibar_upsell_click', {
 				upsell_id: FREE_DOMAIN_UPSELL_ID,
 				surface,
+				upsell_source: upsellSource,
 			} ),
 		render: () => (
 			<span className="omnibar__free-domain-chip">
