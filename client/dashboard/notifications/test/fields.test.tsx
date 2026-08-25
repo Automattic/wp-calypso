@@ -2,7 +2,13 @@
  * @jest-environment jsdom
  */
 import { filterSortAndPaginate } from '@wordpress/dataviews';
-import { getBlockSegments, getFields, getNoteBodyParts, getNoteSender } from '../fields';
+import {
+	getBlockSegments,
+	getFields,
+	getNoteBodyParts,
+	getNoteSender,
+	getNoteUserRef,
+} from '../fields';
 import type { Note } from '../engine';
 import type { View } from '@wordpress/dataviews';
 
@@ -121,6 +127,38 @@ describe( 'getNoteBodyParts', () => {
 		const parts = getNoteBodyParts( makeNote( 3, { body: [ { text: '  ' } ] } ) );
 		expect( parts.context ).toEqual( [] );
 		expect( parts.comment ).toBeNull();
+	} );
+} );
+
+describe( 'getNoteUserRef', () => {
+	it( 'pulls name, avatar, and profile link from a user block', () => {
+		expect(
+			getNoteUserRef( {
+				text: 'Ian Stewart',
+				media: [ { type: 'image', url: 'https://example.com/a.jpg', indices: [ 0, 0 ] } ],
+				ranges: [
+					{
+						type: 'user',
+						indices: [ 0, 11 ],
+						id: 1,
+						parent: null,
+						url: 'https://example.com/ian',
+					},
+				],
+			} )
+		).toEqual( {
+			name: 'Ian Stewart',
+			avatarUrl: 'https://example.com/a.jpg',
+			url: 'https://example.com/ian',
+		} );
+	} );
+
+	it( 'falls back to nulls without media or ranges', () => {
+		expect( getNoteUserRef( { text: 'Bob' } ) ).toEqual( {
+			name: 'Bob',
+			avatarUrl: null,
+			url: null,
+		} );
 	} );
 } );
 

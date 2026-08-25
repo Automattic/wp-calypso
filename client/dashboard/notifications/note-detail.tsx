@@ -18,6 +18,7 @@ import {
 	getNoteExcerpt,
 	getNoteTitle,
 	getNoteTypeLabel,
+	getNoteUserRef,
 } from './fields';
 import NoteActions from './note-actions';
 import { FALLBACK_NOTICON_ICON, NOTICON_ICONS } from './note-icons';
@@ -41,6 +42,55 @@ function BlockText( { block }: { block: NoteBlock } ) {
 				)
 			) }
 		</>
+	);
+}
+
+const FACEPILE_MAX = 3;
+
+function Facepile( { blocks }: { blocks: NoteBlock[] } ) {
+	const users = blocks.map( getNoteUserRef );
+	const shown = users.slice( 0, FACEPILE_MAX );
+	const extra = users.length - shown.length;
+
+	return (
+		<HStack
+			className="dashboard-notifications-inbox__facepile"
+			justify="flex-start"
+			spacing={ 0 }
+			alignment="center"
+		>
+			{ shown.map( ( user, index ) => {
+				const avatar = user.avatarUrl ? (
+					<img src={ user.avatarUrl } alt="" width={ 28 } height={ 28 } />
+				) : (
+					<span aria-hidden="true">{ user.name.charAt( 0 ).toUpperCase() }</span>
+				);
+				return user.url ? (
+					<a
+						key={ index }
+						className="dashboard-notifications-inbox__facepile-item"
+						href={ user.url }
+						target="_blank"
+						rel="noreferrer"
+						title={ user.name }
+						aria-label={ user.name }
+					>
+						{ avatar }
+					</a>
+				) : (
+					<span
+						key={ index }
+						className="dashboard-notifications-inbox__facepile-item"
+						title={ user.name }
+					>
+						{ avatar }
+					</span>
+				);
+			} ) }
+			{ extra > 0 && (
+				<span className="dashboard-notifications-inbox__facepile-item is-overflow">+{ extra }</span>
+			) }
+		</HStack>
 	);
 }
 
@@ -106,6 +156,8 @@ export default function NoteDetail( {
 
 	const excerpt = getNoteExcerpt( note );
 	const { context, comment } = getNoteBodyParts( note );
+	const userBlocks = context.filter( ( block ) => block.type === 'user' );
+	const otherContext = context.filter( ( block ) => block.type !== 'user' );
 
 	return (
 		<DetailFrame onClose={ onClose }>
@@ -159,11 +211,12 @@ export default function NoteDetail( {
 			</HStack>
 			<VStack spacing={ 3 } className="dashboard-notifications-inbox__body">
 				{ ! comment && excerpt && <Text>{ excerpt }</Text> }
-				{ context.map( ( block, index ) => (
+				{ otherContext.map( ( block, index ) => (
 					<Text key={ index } variant="muted">
 						<BlockText block={ block } />
 					</Text>
 				) ) }
+				{ userBlocks.length > 0 && <Facepile blocks={ userBlocks } /> }
 				{ comment && (
 					<blockquote className="dashboard-notifications-inbox__quote">
 						<Text as="p">

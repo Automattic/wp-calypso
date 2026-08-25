@@ -114,6 +114,17 @@ export function getBlockSegments( block: NoteBlock ): BlockSegment[] {
 	return segments;
 }
 
+export type NoteUserRef = { name: string; avatarUrl: string | null; url: string | null };
+
+/** Identity bits of a body `user` block: name, avatar, and profile link. */
+export function getNoteUserRef( block: NoteBlock ): NoteUserRef {
+	return {
+		name: block.text,
+		avatarUrl: block.media?.find( ( media ) => media.type === 'image' )?.url ?? null,
+		url: block.ranges?.find( ( range ) => range.type === 'user' && range.url )?.url ?? null,
+	};
+}
+
 /**
  * Split the note's body blocks for display: the comment block becomes quoted
  * content; the rest are context lines. On comment notes the user blocks are
