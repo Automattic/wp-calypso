@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { useAgentsManagerContext } from '../../contexts';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { isEditorAiEntryEnabled } from '../../utils/editor-entry-points';
-import { recordFullNameAgentsManagerTracksEvent } from '../../utils/tracks';
+import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import { AI } from '../icons';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 import './style.scss';
@@ -36,7 +36,7 @@ export default function EditorAiChatButton( { onClose, onOpenChat }: Props ) {
 
 	// Mirrors the admin-bar button: close if showing, else resume the tab's conversation and open.
 	const handleToggle = () => {
-		recordFullNameAgentsManagerTracksEvent( 'calypso_editor_agents_manager_ai_chat_clicked', {
+		recordAgentsManagerTracksEvent( 'calypso_editor_agents_manager_ai_chat_clicked', {
 			section: sectionName || 'gutenberg',
 			action: isChatVisible ? 'close' : 'open',
 		} );

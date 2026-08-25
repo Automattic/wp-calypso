@@ -563,7 +563,7 @@ export default function OrchestratorChat( {
 		blockCurrentRequest();
 		abortCurrentRequest();
 
-		recordAgentsManagerTracksEvent( 'editor_canvas_move_request_aborted', {
+		recordAgentsManagerTracksEvent( 'calypso_agents_manager_editor_canvas_move_request_aborted', {
 			agent_id: agentConfig?.agentId,
 		} );
 
@@ -1214,7 +1214,7 @@ export default function OrchestratorChat( {
 			setHasUserSentMessage( true );
 			setUploadError( null );
 
-			recordBigSkyTracksEvent( 'chat_input_send_message', {
+			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message', {
 				message_length: message?.length || 0,
 				has_images: pendingImages.length > 0,
 			} );
@@ -1237,7 +1237,7 @@ export default function OrchestratorChat( {
 
 					const mediaObjects = await uploadImagesToWordPress();
 
-					recordBigSkyTracksEvent( 'file_upload_success', {
+					recordBigSkyTracksEvent( 'jetpack_big_sky_file_upload_success', {
 						count: mediaObjects.length,
 					} );
 
@@ -1260,13 +1260,13 @@ export default function OrchestratorChat( {
 					// composer-typed message stays in the input — the composer is
 					// back to its pre-send state.
 					if ( caughtError instanceof Error && caughtError.name === 'AbortError' ) {
-						recordBigSkyTracksEvent( 'file_upload_cancel', {
+						recordBigSkyTracksEvent( 'jetpack_big_sky_file_upload_cancel', {
 							count: pendingImages.length,
 						} );
 						return;
 					}
 
-					recordBigSkyTracksEvent( 'file_upload_error', {
+					recordBigSkyTracksEvent( 'jetpack_big_sky_file_upload_error', {
 						count: pendingImages.length,
 					} );
 					setUploadError(
@@ -1449,7 +1449,7 @@ export default function OrchestratorChat( {
 					: undefined;
 
 			if ( typeof suggestion !== 'string' ) {
-				recordBigSkyTracksEvent( 'chat_suggestion_click', {
+				recordBigSkyTracksEvent( 'jetpack_big_sky_chat_suggestion_click', {
 					suggestion_text: suggestion.prompt || '',
 					suggestion_id: suggestion.id || '',
 					available_suggestions: formatSuggestionIds( knownSuggestions ),
@@ -1780,7 +1780,7 @@ export default function OrchestratorChat( {
 		) {
 			return;
 		}
-		recordBigSkyTracksEvent( 'chat_suggestions_rendered', {
+		recordBigSkyTracksEvent( 'jetpack_big_sky_chat_suggestions_rendered', {
 			suggestions: formatSuggestionIds( displayedEmptyViewSuggestions ),
 			...( renderedSuggestionsBlockType ? { block_type: renderedSuggestionsBlockType } : {} ),
 		} );
