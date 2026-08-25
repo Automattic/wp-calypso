@@ -927,6 +927,9 @@
 
 	&[data-next-reached='true']::before {
 		background-color: var( --studio-blue-50 );
+		transform-origin: top;
+		animation: site-build-progress-connector-enter 420ms cubic-bezier( 0.22, 1, 0.36, 1 ) 120ms
+			backwards;
 	}
 
 	&[data-last='true'] {
@@ -938,7 +941,20 @@
 	}
 }
 
+@keyframes site-build-progress-connector-enter {
+	from {
+		opacity: 0;
+		transform: scaleY( 0 );
+	}
+
+	to {
+		opacity: 1;
+		transform: scaleY( 1 );
+	}
+}
+
 .site-build-progress__indicator {
+	position: relative;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -947,38 +963,108 @@
 	width: 16px;
 	height: 16px;
 	border-radius: 50%;
+
+	&::before {
+		position: absolute;
+		box-sizing: border-box;
+		inset: 1px;
+		border: 2px solid transparent;
+		border-radius: inherit;
+		content: '';
+	}
 }
 
 .site-build-progress__indicator--done {
 	background-color: var( --studio-blue-50 );
 	color: var( --studio-white );
+	animation: site-build-progress-complete 320ms cubic-bezier( 0.22, 1, 0.36, 1 ) both;
 }
 
 .site-build-progress__indicator--active {
 	background-color: transparent;
+
+	&::before {
+		border-color: var( --site-generation-color-frame-muted );
+		opacity: 0;
+		animation: site-build-progress-idle-indicator-exit 240ms ease-out 220ms both;
+	}
 }
 
 .site-build-progress__indicator--idle {
-	border: 2px solid var( --site-generation-color-frame-muted );
 	background-color: transparent;
+
+	&::before {
+		border-color: var( --site-generation-color-frame-muted );
+	}
 }
 
 .site-build-progress__check {
-	width: 8px;
-	height: 8px;
+	width: 14px;
+	height: 14px;
+	color: var( --studio-white );
+	fill: currentColor;
+	transform-origin: center;
+	animation: site-build-progress-check-enter 280ms cubic-bezier( 0.34, 1.56, 0.64, 1 ) 80ms
+		backwards;
+}
+
+@keyframes site-build-progress-complete {
+	from {
+		background-color: transparent;
+		transform: scale( 0.82 );
+	}
+
+	to {
+		background-color: var( --studio-blue-50 );
+		transform: scale( 1 );
+	}
+}
+
+@keyframes site-build-progress-check-enter {
+	from {
+		opacity: 0;
+		transform: scale( 0.4 ) rotate( -8deg );
+	}
+
+	to {
+		opacity: 1;
+		transform: scale( 1 ) rotate( 0 );
+	}
+}
+
+@keyframes site-build-progress-idle-indicator-exit {
+	from {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+	}
 }
 
 .site-build-progress__activity {
 	display: block;
 	flex-shrink: 0;
 	box-sizing: border-box;
-	width: 14px;
-	height: 14px;
+	width: 16px;
+	height: 16px;
 	border: 2px solid transparent;
 	border-block-start-color: var( --studio-blue-50 );
 	border-inline-end-color: var( --studio-blue-50 );
 	border-radius: 50%;
-	animation: site-build-spin 0.8s linear infinite;
+	animation:
+		site-build-spin 0.8s linear infinite,
+		site-build-progress-activity-enter 280ms ease-out 220ms backwards;
+}
+
+@keyframes site-build-progress-activity-enter {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
 }
 
 @keyframes site-build-spin {
@@ -994,6 +1080,9 @@
 	font-size: inherit;
 	font-weight: 400;
 	line-height: inherit;
+	transition:
+		color 240ms cubic-bezier( 0.22, 1, 0.36, 1 ),
+		font-weight 240ms cubic-bezier( 0.22, 1, 0.36, 1 );
 }
 
 .site-build-progress__elapsed {
@@ -1011,10 +1100,28 @@
 
 .site-build-progress__item--active .site-build-progress__text {
 	font-weight: 500;
+	transition-delay: 0ms, 220ms;
+}
+
+.site-build-progress__label {
+	display: inline-block;
+}
+
+.site-build-progress__item--active .site-build-progress__elapsed {
+	animation: site-build-progress-elapsed-enter 240ms ease-out 260ms backwards;
+}
+
+@keyframes site-build-progress-elapsed-enter {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
 }
 
 .site-build-progress__text-wave {
-	display: inline-block;
 	background-color: var( --studio-white );
 	background-image: linear-gradient(
 		90deg,
@@ -1033,7 +1140,19 @@
 	color: transparent;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
-	animation: site-build-progress-text-wave 3s linear infinite;
+	animation:
+		site-build-progress-text-wave 3s linear 220ms infinite,
+		site-build-progress-text-activate 260ms cubic-bezier( 0.22, 1, 0.36, 1 ) 220ms both;
+}
+
+@keyframes site-build-progress-text-activate {
+	from {
+		opacity: 0.5;
+	}
+
+	to {
+		opacity: 1;
+	}
 }
 
 @keyframes site-build-progress-text-wave {
@@ -1092,7 +1211,12 @@
 		animation: none;
 	}
 	.site-generation__preview-scan,
+	.site-build-progress__item::before,
+	.site-build-progress__indicator,
+	.site-build-progress__indicator::before,
+	.site-build-progress__check,
 	.site-build-progress__activity,
+	.site-build-progress__elapsed,
 	.site-build-progress__text-wave {
 		animation: none;
 	}
