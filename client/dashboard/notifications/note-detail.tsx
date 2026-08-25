@@ -169,7 +169,7 @@ export default function NoteDetail( {
 		</Text>
 	);
 	const excerpt = getNoteExcerpt( note );
-	const { context, comment } = getNoteBodyParts( note );
+	const { context, comment, postscript } = getNoteBodyParts( note );
 	const allUserBlocks = context.filter( ( block ) => block.type === 'user' );
 	// The pane header already identifies the sender; keep them out of the pile.
 	const senderIndex = allUserBlocks.findIndex( ( block ) => block.text === getNoteSender( note ) );
@@ -231,6 +231,11 @@ export default function NoteDetail( {
 						</Text>
 					</blockquote>
 				) }
+				{ postscript.map( ( block, index ) => (
+					<Text key={ index } variant="muted">
+						<BlockText block={ block } />
+					</Text>
+				) ) }
 			</VStack>
 			<div className="dashboard-notifications-inbox__footer">
 				<NoteActions key={ note.id } note={ note } />

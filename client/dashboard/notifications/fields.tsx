@@ -127,6 +127,8 @@ export type NoteBodyParts = {
 	context: NoteBlock[];
 	/** The quoted comment block, when the note carries one. */
 	comment: NoteBlock | null;
+	/** Blocks the payload places after the comment (e.g. "You replied to this comment."). */
+	postscript: NoteBlock[];
 };
 
 export type BlockSegment = { text: string; url?: string };
@@ -179,12 +181,14 @@ export function getNoteUserRef( block: NoteBlock ): NoteUserRef {
  */
 export function getNoteBodyParts( note: Note ): NoteBodyParts {
 	const blocks = ( note.body ?? [] ).filter( ( block ) => block.text && block.text.trim() );
-	const commentBlock = blocks.find( ( block ) => block.type === 'comment' );
-	const context = blocks
-		.filter( ( block ) => block !== commentBlock )
-		.filter( ( block ) => ! ( commentBlock && block.type === 'user' ) );
+	const commentIndex = blocks.findIndex( ( block ) => block.type === 'comment' );
+	const commentBlock = commentIndex === -1 ? null : blocks[ commentIndex ];
+	const keep = ( block: NoteBlock ) => ! ( commentBlock && block.type === 'user' );
 
-	return { context, comment: commentBlock ?? null };
+	const context = ( commentIndex === -1 ? blocks : blocks.slice( 0, commentIndex ) ).filter( keep );
+	const postscript = commentIndex === -1 ? [] : blocks.slice( commentIndex + 1 ).filter( keep );
+
+	return { context, comment: commentBlock, postscript };
 }
 
 export function getFields(): Field< Note >[] {

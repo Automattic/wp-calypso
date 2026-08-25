@@ -106,6 +106,25 @@ describe( 'getNoteBodyParts', () => {
 		expect( parts.context.map( ( block ) => block.text ) ).toEqual( [
 			'On the post: Hello world',
 		] );
+		expect( parts.postscript ).toEqual( [] );
+	} );
+
+	it( 'keeps blocks after the comment below it', () => {
+		const parts = getNoteBodyParts(
+			makeNote( 4, {
+				body: [
+					{ text: 'On the post: Hello world', type: 'post' },
+					{ text: 'A sharp observation.', type: 'comment' },
+					{ text: 'You replied to this comment.' },
+				],
+			} )
+		);
+		expect( parts.context.map( ( block ) => block.text ) ).toEqual( [
+			'On the post: Hello world',
+		] );
+		expect( parts.postscript.map( ( block ) => block.text ) ).toEqual( [
+			'You replied to this comment.',
+		] );
 	} );
 
 	it( 'keeps user blocks as context when there is no comment', () => {
