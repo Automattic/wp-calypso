@@ -143,6 +143,20 @@ const onboarding: FlowV2< typeof initialize > = {
 				const siteSlug = providedDependencies.siteSlug as string;
 				const siteId = providedDependencies.siteId as number;
 
+				// dest=editor: straight into the Site Editor on the built Atomic site. The build
+				// ran during domain selection and checkout, so the transfer is normally complete;
+				// the URL goes through the site's own domain, which follows the Simple->Atomic
+				// switch. Same shape as the ai-site-builder editor hand-off.
+				if ( wowFunnelDest === 'editor' ) {
+					const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
+					const siteUrl = site?.URL ?? `https://${ siteSlug }`;
+					logWowFunnelEvent( 'post_checkout_editor', {
+						funnel: wowFunnelSlug,
+						blog_id: siteId,
+					} );
+					return [ `${ siteUrl }/wp-admin/site-editor.php?canvas=edit&p=%2F`, null, null ];
+				}
+
 				// dest=site-spec: land on the AI site-spec. For the blueprint funnel, reuse the
 				// blueprint-archive site-spec URL, which polls the (already in-flight) import and
 				// then redirects to the Site Editor.

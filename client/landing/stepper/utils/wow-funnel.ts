@@ -14,13 +14,14 @@ import { logToLogstash } from 'calypso/lib/logstash';
 /**
  * Where the customer lands after checkout, chosen by the CTA.
  *
+ * - `editor`    — straight into the Site Editor on the built Atomic site.
  * - `site-spec` — the AI site-spec step (used by the blueprint funnel).
  * - `big-sky`   — the Big Sky / AI setup chooser.
  * - `manual`    — the default post-checkout onboarding (Launchpad / My Home).
  */
-export type WowFunnelDest = 'site-spec' | 'big-sky' | 'manual';
+export type WowFunnelDest = 'editor' | 'site-spec' | 'big-sky' | 'manual';
 
-const WOW_FUNNEL_DESTS: WowFunnelDest[] = [ 'site-spec', 'big-sky', 'manual' ];
+const WOW_FUNNEL_DESTS: WowFunnelDest[] = [ 'editor', 'site-spec', 'big-sky', 'manual' ];
 
 /**
  * A funnel site created for this flow, remembered so the create-site step can consume it rather
