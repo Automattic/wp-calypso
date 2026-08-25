@@ -2404,6 +2404,36 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/site-launch-modals@workspace:^, @automattic/site-launch-modals@workspace:packages/site-launch-modals":
+  version: 0.0.0-use.local
+  resolution: "@automattic/site-launch-modals@workspace:packages/site-launch-modals"
+  dependencies:
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@storybook/react": "npm:^9.1.20"
+    "@testing-library/dom": "npm:^10.4.0"
+    "@testing-library/react": "npm:^16.0.1"
+    "@testing-library/user-event": "npm:^14.6.1"
+    "@wordpress/base-styles": "npm:^9.1.0"
+    "@wordpress/components": "npm:^37.0.0"
+    "@wordpress/compose": "npm:^8.2.0"
+    "@wordpress/element": "npm:^8.0.0"
+    "@wordpress/i18n": "npm:^6.21.0"
+    "@wordpress/icons": "npm:^13.3.0"
+    canvas-confetti: "npm:^1.6.0"
+    postcss: "npm:^8.5.15"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    storybook: "npm:^9.1.20"
+    tslib: "npm:^2.8.1"
+    typescript: "npm:^6.0.3"
+    webpack: "npm:^5.99.8"
+  peerDependencies:
+    react: ^18.3.1 || ^19.0.0
+    react-dom: ^18.3.1 || ^19.0.0
+  languageName: unknown
+  linkType: soft
+
 "@automattic/sites@workspace:^, @automattic/sites@workspace:packages/sites":
   version: 0.0.0-use.local
   resolution: "@automattic/sites@workspace:packages/sites"
@@ -9389,7 +9419,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/dom@npm:^10.0.0, @testing-library/dom@npm:^10.4.1, @testing-library/dom@npm:^8.0.0 || ^9.0.0 || ^10.0.0":
+"@testing-library/dom@npm:^10.0.0, @testing-library/dom@npm:^10.4.0, @testing-library/dom@npm:^10.4.1, @testing-library/dom@npm:^8.0.0 || ^9.0.0 || ^10.0.0":
   version: 10.4.1
   resolution: "@testing-library/dom@npm:10.4.1"
   dependencies:
@@ -9452,7 +9482,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:^16.3.0, @testing-library/react@npm:^16.3.2":
+"@testing-library/react@npm:^16.0.1, @testing-library/react@npm:^16.3.0, @testing-library/react@npm:^16.3.2":
   version: 16.3.2
   resolution: "@testing-library/react@npm:16.3.2"
   dependencies:
@@ -9482,11 +9512,11 @@ __metadata:
   linkType: hard
 
 "@testing-library/user-event@npm:^14.6.1":
-  version: 14.6.1
-  resolution: "@testing-library/user-event@npm:14.6.1"
+  version: 14.6.5
+  resolution: "@testing-library/user-event@npm:14.6.5"
   peerDependencies:
     "@testing-library/dom": ">=7.21.4"
-  checksum: 75fea130a52bf320d35d46ed54f3eec77e71a56911b8b69a3fe29497b0b9947b2dc80d30f04054ad4ce7f577856ae3e5397ea7dff0ef14944d3909784c7a93fe
+  checksum: 874ad9548fb286bf1b42d9bdc7080b5b9e82cf975608b5e082cc5bbb506816291b6117305477c0a30670914279c2b35039cd07e7559ee993c5f5211722a95660
   languageName: node
   linkType: hard
 
@@ -15262,6 +15292,7 @@ __metadata:
     "@automattic/request-external-access": "workspace:^"
     "@automattic/search": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
+    "@automattic/site-launch-modals": "workspace:^"
     "@automattic/sites": "workspace:^"
     "@automattic/social-previews": "npm:^3.0.0"
     "@automattic/state-utils": "workspace:^"
