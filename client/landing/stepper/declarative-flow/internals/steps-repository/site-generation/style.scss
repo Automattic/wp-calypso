@@ -2,9 +2,9 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-@mixin site-generation-place( $top, $left, $width, $height ) {
-	top: $top;
-	left: $left;
+@mixin site-generation-place( $block-start, $inline-start, $width, $height ) {
+	inset-block-start: $block-start;
+	inset-inline-start: $inline-start;
 	width: $width;
 	height: $height;
 }
@@ -99,7 +99,8 @@
 	inset: 0;
 	background: var( --site-generation-canvas-background );
 	pointer-events: none;
-	transition: background-color var( --site-generation-tint-duration ) var( --site-generation-tint-easing );
+	transition: background-color var( --site-generation-tint-duration )
+		var( --site-generation-tint-easing );
 	animation: site-generation-tint-reveal 0.9s cubic-bezier( 0.22, 1, 0.36, 1 ) both;
 }
 
@@ -225,9 +226,17 @@
 	background: var( --studio-white );
 	box-shadow: var( --site-generation-shadow-rest );
 	overflow: hidden;
-	scale: calc( var( --site-generation-lift ) * var( --site-generation-dip ) * var( --site-generation-press ) );
-	transform: perspective( 1200px ) rotateX( var( --site-generation-tilt-x ) ) rotateY( var( --site-generation-tilt-y ) );
-	transition: width var( --site-generation-morph-duration ) var( --site-generation-morph-easing ), border-radius var( --site-generation-morph-duration ) var( --site-generation-morph-easing ), box-shadow var( --site-generation-shadow-duration ) var( --site-generation-settle-easing ), scale var( --site-generation-scale-duration ) var( --site-generation-scale-easing ), transform 100ms ease-out;
+	scale: calc(
+		var( --site-generation-lift ) * var( --site-generation-dip ) * var( --site-generation-press )
+	);
+	transform: perspective( 1200px ) rotateX( var( --site-generation-tilt-x ) )
+		rotateY( var( --site-generation-tilt-y ) );
+	transition:
+		width var( --site-generation-morph-duration ) var( --site-generation-morph-easing ),
+		border-radius var( --site-generation-morph-duration ) var( --site-generation-morph-easing ),
+		box-shadow var( --site-generation-shadow-duration ) var( --site-generation-settle-easing ),
+		scale var( --site-generation-scale-duration ) var( --site-generation-scale-easing ),
+		transform 100ms ease-out;
 	animation: site-generation-enter 0.9s cubic-bezier( 0.22, 1, 0.36, 1 ) backwards;
 
 	&[data-frame='mobile'] {
@@ -244,7 +253,9 @@
 @media ( hover: hover ) {
 	.site-generation__page-preview:hover {
 		--site-generation-lift: 1.03;
-		box-shadow: 0 48px 96px rgba( 0, 0, 0, 0.14 ), 0 4px 12px rgba( 0, 0, 0, 0.05 );
+		box-shadow:
+			0 48px 96px rgba( 0, 0, 0, 0.14 ),
+			0 4px 12px rgba( 0, 0, 0, 0.05 );
 	}
 }
 
@@ -261,7 +272,9 @@
 	box-shadow: none;
 }
 
-.site-generation__page-preview[data-press='down'] .site-generation__preview-bar .site-generation__wordpress-mark,
+.site-generation__page-preview[data-press='down']
+	.site-generation__preview-bar
+	.site-generation__wordpress-mark,
 .site-generation__page-preview[data-press='down'] .site-generation__preview-nav-item,
 .site-generation__page-preview[data-press='down'] .site-generation__preview-media,
 .site-generation__page-preview[data-press='down'] .site-generation__preview-line,
@@ -280,14 +293,16 @@
 	transition: translate 550ms cubic-bezier( 0.34, 1.56, 0.64, 1 );
 }
 
-.site-generation__waiting:has( .site-generation__page-preview[data-press='down'] ) .site-generation__waiting-copy {
+.site-generation__waiting:has( .site-generation__page-preview[data-press='down'] )
+	.site-generation__waiting-copy {
 	translate: 0 14px;
 	transition-duration: 220ms;
 }
 
 // The description travels a little less than the title, closing the gap
 // between them while pressed.
-.site-generation__waiting:has( .site-generation__page-preview[data-press='down'] ) .site-generation__waiting-description {
+.site-generation__waiting:has( .site-generation__page-preview[data-press='down'] )
+	.site-generation__waiting-description {
 	translate: 0 -4px;
 	transition-duration: var( --site-generation-tint-duration ), 220ms;
 }
@@ -302,7 +317,10 @@
 .site-generation__preview-card {
 	position: absolute;
 	box-sizing: border-box;
-	transition: all var( --site-generation-morph-duration ) var( --site-generation-morph-easing ), translate 100ms ease-out, background-color var( --site-generation-tint-duration ) var( --site-generation-tint-easing );
+	transition:
+		all var( --site-generation-morph-duration ) var( --site-generation-morph-easing ),
+		translate 100ms ease-out,
+		background-color var( --site-generation-tint-duration ) var( --site-generation-tint-easing );
 }
 
 // Parallax: the content floats as one plane above the page under the pointer,
@@ -314,12 +332,13 @@
 .site-generation__preview-line,
 .site-generation__preview-card {
 	--site-generation-depth: 0.7;
-	translate: calc( var( --site-generation-parallax-x ) * var( --site-generation-depth ) ) calc( var( --site-generation-parallax-y ) * var( --site-generation-depth ) );
+	translate: calc( var( --site-generation-parallax-x ) * var( --site-generation-depth ) )
+		calc( var( --site-generation-parallax-y ) * var( --site-generation-depth ) );
 }
 
 .site-generation__preview-bar {
-	top: 0;
-	left: 0;
+	inset-block-start: 0;
+	inset-inline-start: 0;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -339,10 +358,15 @@
 	height: 57%;
 	--site-generation-depth: 0.2;
 	color: var( --site-generation-canvas-mark );
-	transition: all var( --site-generation-morph-duration ) var( --site-generation-morph-easing ), translate 100ms ease-out, color var( --site-generation-tint-duration ) var( --site-generation-tint-easing );
+	transition:
+		all var( --site-generation-morph-duration ) var( --site-generation-morph-easing ),
+		translate 100ms ease-out,
+		color var( --site-generation-tint-duration ) var( --site-generation-tint-easing );
 }
 
-.site-generation__page-preview[data-frame='desktop'] .site-generation__preview-bar .site-generation__wordpress-mark {
+.site-generation__page-preview[data-frame='desktop']
+	.site-generation__preview-bar
+	.site-generation__wordpress-mark {
 	height: 40%;
 }
 
@@ -358,10 +382,14 @@
 	margin-inline-start: 12px;
 	border-radius: 4px;
 	background: var( --site-generation-canvas-line );
-	transition: all var( --site-generation-morph-duration ) var( --site-generation-morph-easing ), translate 100ms ease-out, background-color var( --site-generation-tint-duration ) var( --site-generation-tint-easing );
+	transition:
+		all var( --site-generation-morph-duration ) var( --site-generation-morph-easing ),
+		translate 100ms ease-out,
+		background-color var( --site-generation-tint-duration ) var( --site-generation-tint-easing );
 }
 
-.site-generation__page-preview[data-frame='mobile'] .site-generation__preview-nav-item.is-secondary {
+.site-generation__page-preview[data-frame='mobile']
+	.site-generation__preview-nav-item.is-secondary {
 	width: 0;
 	margin-inline-start: 0;
 	opacity: 0;
@@ -701,7 +729,9 @@
 	font-size: $font-body;
 	line-height: 1.5;
 	text-wrap: balance;
-	transition: color var( --site-generation-tint-duration ) var( --site-generation-tint-easing ), translate 550ms cubic-bezier( 0.34, 1.56, 0.64, 1 );
+	transition:
+		color var( --site-generation-tint-duration ) var( --site-generation-tint-easing ),
+		translate 550ms cubic-bezier( 0.34, 1.56, 0.64, 1 );
 	animation: site-generation-rise 0.7s cubic-bezier( 0.22, 1, 0.36, 1 ) 350ms backwards;
 }
 
