@@ -16,6 +16,7 @@ import PageLayout from '../components/page-layout';
 import {
 	NotesProvider,
 	acquireEngineVisibility,
+	getListEndReason,
 	hasMoreNotesFor,
 	loadMoreFor,
 	setActiveTab,
@@ -115,6 +116,10 @@ function InboxList( {
 		? { ...paginationInfo, totalItems: paginationInfo.totalItems + NOTES_PER_PAGE }
 		: paginationInfo;
 
+	// End-of-list note once scrolling truly stops: skip while searching (the
+	// client-side match set ending isn't the notification list ending).
+	const endReason = ! hasMore && data.length > 0 && ! view.search ? getListEndReason( tab ) : null;
+
 	const infiniteScrollHandler = useCallback( () => {
 		if ( ! isLoading ) {
 			loadMoreFor( tab );
@@ -189,6 +194,15 @@ function InboxList( {
 				// grouped, so this stands in for it, below the list rows.
 				<VStack alignment="center" style={ { flexShrink: 0, padding: '12px 0' } }>
 					<Spinner />
+				</VStack>
+			) }
+			{ endReason && (
+				<VStack alignment="center" style={ { flexShrink: 0, padding: '12px 0' } }>
+					<Text variant="muted">
+						{ endReason === 'cap'
+							? __( 'Showing your most recent notifications.' )
+							: __( 'You’re all caught up.' ) }
+					</Text>
 				</VStack>
 			) }
 		</DataViews>
