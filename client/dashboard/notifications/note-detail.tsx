@@ -241,7 +241,7 @@ export default function NoteDetail( {
 					</Text>
 				) ) }
 				{ userBlocks.length > 0 && (
-					<VStack spacing={ 2 }>
+					<VStack spacing={ 0 } className="dashboard-notifications-inbox__user-list">
 						{ userBlocks.map( ( block, index ) => (
 							<UserRow key={ index } note={ note } block={ block } />
 						) ) }
