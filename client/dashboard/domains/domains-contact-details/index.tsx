@@ -33,7 +33,6 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
 import { mostCommonValueInArray } from '../../utils/collection';
-import { omit } from '../../utils/object';
 
 const aggregateWhoisDataWithMostCommonValues = (
 	whoisData: WhoisDataEntry[]
@@ -182,7 +181,7 @@ export default function DomainsContactInfo() {
 							type: 'update-contact-info',
 							domains: selectedDomains,
 							transfer_lock: optOutTransferLock === false,
-							whois: omit( whois, [ 'extra' ] as const ),
+							whois,
 						},
 						{
 							onSuccess: () => {
