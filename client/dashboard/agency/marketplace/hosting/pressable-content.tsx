@@ -11,7 +11,7 @@ import { useState } from 'react';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import pressableDescriptor from '../exclusive-offers/images/pressable-descriptor.svg';
-import { CheckList } from './content-sections';
+import { CheckGrid } from './content-sections';
 import {
 	hostingBrands,
 	pressableSignaturePlans,
@@ -126,7 +126,7 @@ export default function PressableContent( {
 								'With Signature plans, your traffic & storage limits are shared amongst your total sites.'
 							) }
 						</Text>
-						<CheckList
+						<CheckGrid
 							items={ [
 								sprintf(
 									/* translators: %d: number of WordPress installs */

@@ -93,6 +93,19 @@ export function CheckList( { items }: { items: string[] } ) {
 	);
 }
 
+export function CheckGrid( { items }: { items: string[] } ) {
+	return (
+		<div className="marketplace-hosting__includes">
+			{ items.map( ( item ) => (
+				<HStack key={ item } spacing={ 2 } justify="flex-start" alignment="center">
+					<Icon icon={ check } className="marketplace-hosting__check" />
+					<Text>{ item }</Text>
+				</HStack>
+			) ) }
+		</div>
+	);
+}
+
 export function IncludedFeatures( { brand }: { brand: 'wpcom' | 'pressable' } ) {
 	return (
 		<Card>

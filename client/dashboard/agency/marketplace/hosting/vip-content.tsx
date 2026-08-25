@@ -19,7 +19,7 @@ import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import vipLogo from '../exclusive-offers/images/vip-descriptor.svg';
-import { CheckList, Testimonials } from './content-sections';
+import { CheckGrid, CheckList, Testimonials } from './content-sections';
 import { hostingBrands, VIP_CAPABILITIES, VIP_PITCH_CAPABILITIES } from './mock-data';
 
 const CLIENT_BRANDS = [
@@ -87,11 +87,7 @@ function VipCapabilitiesCard() {
 				/>
 			</CardHeader>
 			<CardBody>
-				<div className="marketplace-hosting__includes">
-					{ VIP_CAPABILITIES.map( ( capability ) => (
-						<CheckList key={ capability } items={ [ capability ] } />
-					) ) }
-				</div>
+				<CheckGrid items={ VIP_CAPABILITIES } />
 			</CardBody>
 		</Card>
 	);
