@@ -885,7 +885,8 @@ function getFields( {
 						return (
 							<HStack spacing={ 1 } expanded={ false }>
 								<span>{ helpText }</span>
-								<InfoPopover icon="info" position="bottom left">
+								<InfoPopover placement="bottom-start">
+									<div className="popover__arrow"></div>
 									{ createInterpolateElement(
 										sprintf(
 											/* translators: %(expireDate)s is a date and inlineSupportLink is a web link. */

@@ -2,54 +2,45 @@ import { Popover } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
-import PropTypes from 'prop-types';
-import { createRef, Component, Fragment } from 'react';
+import { createRef, Component, ComponentProps, Fragment, ReactNode, MouseEventHandler } from 'react';
 import { gridiconToWordPressIcon } from '../../utils/gridicons';
 
 import './style.scss';
 
-export default class InfoPopover extends Component {
-	static propTypes = {
-		autoRtl: PropTypes.bool,
-		className: PropTypes.string,
-		gaEventCategory: PropTypes.string,
-		icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
-		iconSize: PropTypes.number,
-		id: PropTypes.string,
-		ignoreContext: PropTypes.shape( {
-			getDOMNode: PropTypes.func,
-		} ),
-		onOpen: PropTypes.func,
-		onClose: PropTypes.func,
-		popoverName: PropTypes.string,
-		position: PropTypes.oneOf( [
-			'top',
-			'top right',
-			'right',
-			'bottom right',
-			'bottom',
-			'bottom left',
-			'left',
-			'top left',
-		] ),
-		showOnHover: PropTypes.bool,
-		children: PropTypes.node,
-		'aria-label': PropTypes.string,
+interface InfoPopoverProps {
+	autoRtl?: boolean;
+	className?: string;
+	icon?: string | ReactNode;
+	iconSize?: number;
+	id?: string;
+	ignoreContext?: {
+		getDOMNode: () => HTMLElement | null;
 	};
+	onOpen?: () => {};
+	onClose?: () => {};
+	popoverName?: string;
+	placement?: ComponentProps<typeof Popover>['placement'];
+	showOnHover?: boolean;
+	children: ReactNode;
+	'aria-label'?: string;
+}
+
+export default class InfoPopover extends Component<InfoPopoverProps> {
 
 	static defaultProps = {
 		autoRtl: true,
-		icon: 'info-outline',
+		icon: 'info',
 		iconSize: 18,
-		position: 'bottom',
+		placement: 'bottom',
 		showOnHover: false,
 	};
 
-	iconRef = createRef();
+	iconRef = createRef<HTMLButtonElement>();
 
 	state = { showPopover: false };
+	inPopover = false;
 
-	handleClick = ( e ) => {
+	handleClick: MouseEventHandler<HTMLButtonElement> = ( e ) => {
 		const { onOpen, showOnHover } = this.props;
 		const { showPopover } = this.state;
 
@@ -129,6 +120,7 @@ export default class InfoPopover extends Component {
 				>
 					{ typeof this.props.icon === 'string' ? (
 						<Icon
+							ref={ this.iconRef }
 							icon={ gridiconToWordPressIcon( this.props.icon ) }
 							size={ this.props.iconSize }
 						/>
@@ -143,7 +135,7 @@ export default class InfoPopover extends Component {
 						isVisible
 						context={ this.iconRef.current }
 						ignoreContext={ this.props.ignoreContext }
-						position={ this.props.position }
+						placement={ this.props.placement }
 						onClose={ this.handleClose }
 						className={ clsx( 'info-popover__tooltip', this.props.className ) }
 						onMouseEnter={ this.handleOnMouseEnterPopover }
