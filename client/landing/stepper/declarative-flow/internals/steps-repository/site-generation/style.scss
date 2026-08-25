@@ -315,10 +315,26 @@
 .site-generation__preview-media,
 .site-generation__preview-line,
 .site-generation__preview-card {
+	--site-generation-morph-delay: 0s;
 	position: absolute;
 	box-sizing: border-box;
 	transition:
-		all var( --site-generation-morph-duration ) var( --site-generation-morph-easing ),
+		inset-block-start var( --site-generation-morph-duration ) var( --site-generation-morph-easing )
+			var( --site-generation-morph-delay ),
+		inset-inline-start var( --site-generation-morph-duration ) var( --site-generation-morph-easing )
+			var( --site-generation-morph-delay ),
+		width var( --site-generation-morph-duration ) var( --site-generation-morph-easing )
+			var( --site-generation-morph-delay ),
+		height var( --site-generation-morph-duration ) var( --site-generation-morph-easing )
+			var( --site-generation-morph-delay ),
+		padding-inline-start var( --site-generation-morph-duration )
+			var( --site-generation-morph-easing ) var( --site-generation-morph-delay ),
+		padding-inline-end var( --site-generation-morph-duration ) var( --site-generation-morph-easing )
+			var( --site-generation-morph-delay ),
+		border-radius var( --site-generation-morph-duration ) var( --site-generation-morph-easing )
+			var( --site-generation-morph-delay ),
+		opacity var( --site-generation-morph-duration ) var( --site-generation-morph-easing )
+			var( --site-generation-morph-delay ),
 		translate 100ms ease-out,
 		background-color var( --site-generation-tint-duration ) var( --site-generation-tint-easing );
 }
@@ -359,7 +375,7 @@
 	--site-generation-depth: 0.2;
 	color: var( --site-generation-canvas-mark );
 	transition:
-		all var( --site-generation-morph-duration ) var( --site-generation-morph-easing ),
+		height var( --site-generation-morph-duration ) var( --site-generation-morph-easing ),
 		translate 100ms ease-out,
 		color var( --site-generation-tint-duration ) var( --site-generation-tint-easing );
 }
@@ -383,7 +399,10 @@
 	border-radius: 4px;
 	background: var( --site-generation-canvas-line );
 	transition:
-		all var( --site-generation-morph-duration ) var( --site-generation-morph-easing ),
+		width var( --site-generation-morph-duration ) var( --site-generation-morph-easing ),
+		margin-inline-start var( --site-generation-morph-duration )
+			var( --site-generation-morph-easing ),
+		opacity var( --site-generation-morph-duration ) var( --site-generation-morph-easing ),
 		translate 100ms ease-out,
 		background-color var( --site-generation-tint-duration ) var( --site-generation-tint-easing );
 }
@@ -427,29 +446,27 @@
 }
 
 // A short stagger so the page reads as re-composing itself, top to bottom.
-// The trailing values keep the pointer-driven translate and the tint colour
-// free of any delay.
 .site-generation__preview-line.is-heading {
-	transition-delay: 40ms, 0s, 0s;
+	--site-generation-morph-delay: 40ms;
 }
 
 .site-generation__preview-line.is-subheading {
-	transition-delay: 80ms, 0s, 0s;
+	--site-generation-morph-delay: 80ms;
 }
 
 .site-generation__preview-line.is-copy,
 .site-generation__preview-card.is-first {
-	transition-delay: 120ms, 0s, 0s;
+	--site-generation-morph-delay: 120ms;
 }
 
 .site-generation__preview-line.is-copy-short,
 .site-generation__preview-card.is-second {
-	transition-delay: 160ms, 0s, 0s;
+	--site-generation-morph-delay: 160ms;
 }
 
 .site-generation__preview-line.is-button,
 .site-generation__preview-card.is-third {
-	transition-delay: 200ms, 0s, 0s;
+	--site-generation-morph-delay: 200ms;
 }
 
 // Layouts. Atoms absent from a layout are parked below the fold with zero
