@@ -1,13 +1,14 @@
 # Reader Shelves — API contract
 
 A Shelf groups followed feeds (the client calls them `sources`) and followed tags
-under a name. Dark-shipped behind the `reader/shelves` flag (epic RSM-4110), a8c
-only. All endpoints live under `wpcom/v2` and are wired to the real backend.
+under a name. Dark-shipped behind the `reader/shelves` flag (epic RSM-4110). Any
+logged-in user can call the endpoints (the earlier a8c-only backend gate was
+removed). All endpoints live under `wpcom/v2` and are wired to the real backend.
 
 > Ownership: you only ever see or modify your own shelves. Another user's shelf
 > (or a non-existent id) returns `404 reader_shelves_not_found` — the two are
 > indistinguishable by design, so the UI must treat them the same. `403` is
-> purely the a8c gate.
+> purely the logged-out gate.
 
 ## Data shapes
 
@@ -108,22 +109,32 @@ Notes:
 
 ## Error codes
 
-| HTTP | code                            | when                                   |
-| ---- | ------------------------------- | -------------------------------------- |
-| 403  | `rest_forbidden`                | not logged in / not an Automattician   |
-| 404  | `reader_shelves_not_found`      | shelf doesn't exist or isn't yours     |
-| 404  | `reader_shelves_item_not_found` | removing a feed not in the shelf       |
-| 400  | `reader_shelves_invalid_title`  | empty title (create or update)         |
-| 400  | `reader_shelves_invalid_feed`   | a feed isn't an existing feedbag feed  |
-| 400  | `reader_shelves_invalid_tag`    | a tag slug isn't a valid Reader tag    |
-| 400  | `reader_shelves_no_changes`     | `update` with no recognized fields     |
-| 409  | `reader_shelves_duplicate_slug` | a shelf with that title already exists |
-| 409  | `reader_shelves_duplicate_feed` | feed already in the shelf              |
-| 500  | `reader_shelves_delete_failed`  | delete didn't persist (rare)           |
+| HTTP | code                                 | when                                                                                                                 |
+| ---- | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| 403  | `rest_forbidden`                    | not logged in                                                                                                       |
+| 404  | `reader_shelves_not_found`          | shelf doesn't exist or isn't yours                                                                                  |
+| 404  | `reader_shelves_item_not_found`     | removing a feed not in the shelf                                                                                    |
+| 400  | `reader_shelves_invalid_title`      | empty title (create or update)                                                                                      |
+| 400  | `reader_shelves_title_too_long`     | title over 50 characters                                                                                            |
+| 400  | `reader_shelves_invalid_feed`       | a feed isn't an existing feedbag feed                                                                               |
+| 400  | `reader_shelves_too_many_feeds`     | more than 50 feeds                                                                                                  |
+| 400  | `reader_shelves_invalid_tag`        | a tag slug isn't a valid Reader tag                                                                                 |
+| 400  | `reader_shelves_too_many_tags`      | more than 8 tags                                                                                                    |
+| 400  | `reader_shelves_too_many_languages` | more than 5 languages                                                                                               |
+| 400  | `reader_shelves_no_changes`         | `update` with no recognized fields                                                                                  |
+| 409  | `reader_shelves_duplicate_slug`     | a shelf with that title already exists                                                                              |
+| 409  | `reader_shelves_duplicate_feed`     | feed already in the shelf                                                                                           |
+| 429  | `reader_shelves_rate_limited`       | more than 20 writes in 5 minutes (create always; update only when the request includes `tags`/`feeds`/`languages`) |
+| 500  | `reader_shelves_delete_failed`      | delete didn't persist (rare)                                                                                        |
 
-The create modal maps `rest_forbidden` / `reader_shelves_invalid_title` /
-`reader_shelves_invalid_tag` / `reader_shelves_duplicate_slug` to copy; other
-surfaces should map the relevant codes as they adopt the mutations.
+The upsert modal maps `rest_forbidden` / `reader_shelves_invalid_title` /
+`reader_shelves_title_too_long` / `reader_shelves_invalid_tag` /
+`reader_shelves_too_many_feeds` / `reader_shelves_too_many_tags` /
+`reader_shelves_too_many_languages` / `reader_shelves_duplicate_slug` /
+`reader_shelves_rate_limited` to copy; other surfaces should map the relevant
+codes as they adopt the mutations. The feed/tag/language count limits are also
+enforced client-side (`validateFeeds`/`validateTags`/`validateLanguages` in
+`form-helpers.ts`) so the modal blocks Save before hitting the 400.
 
 ## Caching
 
