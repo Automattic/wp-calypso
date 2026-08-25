@@ -129,13 +129,7 @@ export function IncludedFeatures( { brand }: { brand: 'wpcom' | 'pressable' } ) 
 									{ column.title }
 								</Text>
 							</HStack>
-							<VStack spacing={ 2 }>
-								{ column.features.map( ( feature ) => (
-									<Text key={ feature } variant="muted">
-										{ feature }
-									</Text>
-								) ) }
-							</VStack>
+							<CheckList items={ column.features } />
 						</VStack>
 					) ) }
 				</div>
@@ -204,13 +198,17 @@ export function JetpackComplete() {
 					{ JETPACK_COMPLETE_FEATURES.filter(
 						( feature ) => feature !== 'All Jetpack features'
 					).map( ( feature ) => (
-						<Text key={ feature } variant="muted">
-							{ feature }
-						</Text>
+						<HStack key={ feature } spacing={ 2 } justify="flex-start" alignment="center">
+							<Icon icon={ check } className="marketplace-hosting__check" />
+							<Text>{ feature }</Text>
+						</HStack>
 					) ) }
-					<ExternalLink href="https://jetpack.com/complete/">
-						{ __( 'All Jetpack Complete features' ) }
-					</ExternalLink>
+					<HStack spacing={ 2 } justify="flex-start" alignment="center">
+						<Icon icon={ check } className="marketplace-hosting__check" />
+						<ExternalLink href="https://jetpack.com/complete/">
+							{ __( 'All Jetpack Complete features' ) }
+						</ExternalLink>
+					</HStack>
 				</div>
 			</CardBody>
 		</Card>
