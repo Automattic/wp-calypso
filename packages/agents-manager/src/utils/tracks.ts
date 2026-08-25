@@ -1,13 +1,14 @@
 /**
  * Central Tracks wrappers for the Agents Manager.
  *
- * Three record functions over two base-prop sets:
+ * Two record functions, one per base-prop set:
  * - `recordBigSkyTracksEvent` keeps Big Sky's exact event names and props so its
  *   live Looker dashboard keeps working. Removable once that parity is dropped.
  * - `recordAgentsManagerTracksEvent` uses the unified property schema shared across the new
- *   AI products, under the `calypso_agents_manager_` prefix.
- * - `recordFullNameAgentsManagerTracksEvent` sends the same unified props under a
- *   caller-supplied full event name, for entry points whose events carry a host prefix.
+ *   AI products.
+ *
+ * Callers pass event names in full — the template-literal parameter types enforce
+ * the namespace — so every event is findable by searching the code for its name.
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
@@ -29,9 +30,6 @@ type EditorSelectStore =
 type CoreSelectStore =
 	| { getEntityRecord?: ( kind: string, name: string, key?: number ) => unknown }
 	| undefined;
-
-const BIG_SKY_EVENT_PREFIX = 'jetpack_big_sky_';
-const AM_UNIFIED_EVENT_PREFIX = 'calypso_agents_manager_';
 
 /** Reads the optional server-provided Automattician tracking signal. */
 function getIsA11n(): boolean | undefined {
@@ -109,7 +107,10 @@ function getBigSkyPageProps(): TracksProps {
  * Records an event under Big Sky's exact name and props so the existing Big Sky
  * dashboards keep working.
  */
-export function recordBigSkyTracksEvent( eventName: string, props: TracksProps = {} ): void {
+export function recordBigSkyTracksEvent(
+	eventName: `jetpack_big_sky_${ string }`,
+	props: TracksProps = {}
+): void {
 	if ( isReaderChatAgent( getResolvedAgentId() ) ) {
 		return; // Big Sky parity events are editor-only; never on reader-chat.
 	}
@@ -141,7 +142,7 @@ export function recordBigSkyTracksEvent( eventName: string, props: TracksProps =
 		}
 	}
 
-	recordTracksEvent( `${ BIG_SKY_EVENT_PREFIX }${ eventName }`, mergedProps );
+	recordTracksEvent( eventName, mergedProps );
 }
 
 function getUnifiedBaseProps(): TracksProps {
@@ -160,19 +161,9 @@ function getUnifiedBaseProps(): TracksProps {
 
 /**
  * Records an Agents Manager event using the shared unified property names.
- * `eventName` is a suffix appended to the `calypso_agents_manager_` prefix.
  */
-export function recordAgentsManagerTracksEvent( eventName: string, props: TracksProps = {} ): void {
-	recordFullNameAgentsManagerTracksEvent( `${ AM_UNIFIED_EVENT_PREFIX }${ eventName }`, props );
-}
-
-/**
- * Records an event under its full name with the same unified base props as
- * `recordAgentsManagerTracksEvent` — for the entry-point events that carry
- * their own host prefix (e.g. `calypso_editor_agents_manager_ai_chat_clicked`).
- */
-export function recordFullNameAgentsManagerTracksEvent(
-	eventName: string,
+export function recordAgentsManagerTracksEvent(
+	eventName: `calypso_agents_manager_${ string }`,
 	props: TracksProps = {}
 ): void {
 	recordTracksEvent( eventName, { ...getUnifiedBaseProps(), ...props } );

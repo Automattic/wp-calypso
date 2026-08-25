@@ -36,6 +36,15 @@ describe( 'user preference mutation meta', () => {
 		).toBe( 'user-pref-update.cncofr' );
 	} );
 
+	it( 'uses short codes for wordpress labs preferences', () => {
+		expect( getPreferenceMutationStatId( 'wordpress-labs-opt-in' ) ).toBe(
+			'user-pref-update.wplabin'
+		);
+		expect( getPreferenceOptimisticMutationStatId( 'wordpress-labs-excluded-sites' ) ).toBe(
+			'user-pref-opt-update.wplabex'
+		);
+	} );
+
 	it( 'uses an other bucket for unknown preference keys', () => {
 		expect(
 			getPreferenceMutationStatId( 'experimental-preference' as keyof UserPreferences )
@@ -53,6 +62,8 @@ describe( 'user preference mutation meta', () => {
 			'hosting-dashboard-overview-storage-notice-dismissed-123',
 			'hosting-dashboard-time-mismatch-warning-dismissed-123',
 			'cancellation-offer-accepted-notice-dismissed-123',
+			'wordpress-labs-opt-in',
+			'wordpress-labs-excluded-sites',
 			'experimental-preference' as keyof UserPreferences,
 		];
 

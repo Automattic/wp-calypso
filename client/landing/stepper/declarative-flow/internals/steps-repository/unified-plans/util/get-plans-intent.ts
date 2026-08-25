@@ -41,6 +41,12 @@ export function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			if ( search.has( 'playground' ) ) {
 				return playgroundPlansIntent( search.get( 'playground' )! );
 			}
+			// WoW funnel: the site is always transferred to Atomic, so only plans that grant
+			// the transfer make sense. Hide the free plan. Kept after the playground check so a
+			// playground entry keeps its own intent.
+			if ( search.has( 'wow_funnel' ) ) {
+				return 'plans-ai-assembler-paid-only';
+			}
 			// Blueprint imports targeting Atomic (build_dest=wow) need a plan that
 			// supports the transfer, so hide the free plan. Plain blueprint imports
 			// build on a Simple site and keep the default grid.

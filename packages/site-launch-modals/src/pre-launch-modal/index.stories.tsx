@@ -1,12 +1,7 @@
 import { Button } from '@wordpress/components';
 import { useState } from 'react';
-import PreLaunchModal from './pre-launch-modal';
-import '../styles.scss';
+import PreLaunchModal from '.';
 import type { Meta, StoryObj } from '@storybook/react';
-
-// Renders the real PreLaunchModal view. The data/analytics container
-// (../index.tsx) is skipped because Storybook does not set up the app's query,
-// router, and analytics providers.
 
 interface PreLaunchArgs {
 	siteName: string;
@@ -37,7 +32,13 @@ function PreLaunchModalPreview( { siteName, domain, planName, isLaunching }: Pre
 			preview={
 				<div
 					className="site-launch-pre-launch-modal__thumbnail"
-					style={ { background: 'linear-gradient(135deg, #3858e9, #8c46ff)' } }
+					style={ {
+						inlineSize: '114px',
+						blockSize: '88px',
+						borderRadius: '4px',
+						flexShrink: 0,
+						background: 'linear-gradient(135deg, #3858e9, #8c46ff)',
+					} }
 				/>
 			}
 		/>
@@ -45,7 +46,7 @@ function PreLaunchModalPreview( { siteName, domain, planName, isLaunching }: Pre
 }
 
 const meta = {
-	title: 'client/dashboard/SiteLaunchModal/Pre-launch',
+	title: 'packages/SiteLaunchModals/Pre-launch',
 	component: PreLaunchModalPreview,
 	parameters: { layout: 'fullscreen' },
 } satisfies Meta< typeof PreLaunchModalPreview >;

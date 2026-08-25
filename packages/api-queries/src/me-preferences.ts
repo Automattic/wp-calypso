@@ -10,6 +10,8 @@ const defaultValues: Required< UserPreferences > = {
 	'hosting-dashboard-opt-in': { value: 'unset', updated_at: '' },
 	'hosting-dashboard-opt-in-welcome-modal-dismissed': '',
 	'hosting-dashboard-welcome-notice-dismissed': '',
+	'wordpress-labs-opt-in': { value: 'unset', updated_at: '' },
+	'wordpress-labs-excluded-sites': [],
 	'account-recovery-interstitial-snoozed-until': 0,
 	'account-recovery-interstitial-dismiss-count': 0,
 	'reader-landing-page': {
@@ -36,6 +38,8 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'hosting-dashboard-opt-in': 'optin',
 	'hosting-dashboard-opt-in-welcome-modal-dismissed': 'optwelc',
 	'hosting-dashboard-welcome-notice-dismissed': 'welcome',
+	'wordpress-labs-opt-in': 'wplabin',
+	'wordpress-labs-excluded-sites': 'wplabex',
 	'account-recovery-interstitial-snoozed-until': 'acctrec',
 	'account-recovery-interstitial-dismiss-count': 'acrdis',
 	'reader-landing-page': 'rdland',

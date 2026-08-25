@@ -11,7 +11,9 @@ import { __ } from '@wordpress/i18n';
 import { globe, payment } from '@wordpress/icons';
 import type { ReactNode } from 'react';
 
-interface PreLaunchModalProps {
+import './style.scss';
+
+export interface PreLaunchModalProps {
 	siteName: string;
 	siteDomain: string;
 	planName: string;
@@ -30,10 +32,13 @@ export default function PreLaunchModal( {
 	onLaunch,
 	onClose,
 }: PreLaunchModalProps ) {
+	const launchingTitle = __( 'Launching site…' );
+	const readyTitle = __( 'Launching makes your site public' );
+
 	return (
 		<Modal
 			className="site-launch-pre-launch-modal"
-			title={ isLaunching ? __( 'Launching site…' ) : __( 'Launching makes your site public' ) }
+			title={ isLaunching ? launchingTitle : readyTitle }
 			size="medium"
 			onRequestClose={ onClose }
 		>

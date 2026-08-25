@@ -155,7 +155,7 @@ export interface BillingTransactionItem {
 	product_slug: string;
 	variation: string;
 	variation_slug: string;
-	months_per_renewal_interval: number;
+	months_per_renewal_interval: number | null;
 	wpcom_product_slug: string;
 
 	/**

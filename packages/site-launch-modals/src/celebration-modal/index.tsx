@@ -10,9 +10,11 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { copy, globe } from '@wordpress/icons';
 import { useState } from 'react';
-import ConfettiAnimation from '../../../components/confetti';
+import ConfettiAnimation from '../confetti';
 
-interface CelebrationModalProps {
+import './style.scss';
+
+export interface CelebrationModalProps {
 	siteDomain: string;
 	siteUrl?: string;
 	hasCustomDomain: boolean;
@@ -35,6 +37,8 @@ export default function CelebrationModal( {
 }: CelebrationModalProps ) {
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const isMobileViewport = useViewportMatch( 'small', '<' );
+	const copiedTitle = __( 'Copied!' );
+	const copyUrlTitle = __( 'Copy URL' );
 
 	const handleCopy = () => {
 		navigator.clipboard.writeText( siteDomain );
@@ -126,7 +130,7 @@ export default function CelebrationModal( {
 								icon={ copy }
 								label={ __( 'Copy URL' ) }
 								onClick={ handleCopy }
-								title={ clipboardCopied ? __( 'Copied!' ) : __( 'Copy URL' ) }
+								title={ clipboardCopied ? copiedTitle : copyUrlTitle }
 							/>
 						</HStack>
 						<Button icon={ globe } href={ siteUrl } target="_blank">

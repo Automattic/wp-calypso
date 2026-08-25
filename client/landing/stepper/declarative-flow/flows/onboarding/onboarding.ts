@@ -44,6 +44,13 @@ import {
 	requestBuildWowSite,
 } from '../../../utils/build-wow';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
+import {
+	getWowFunnelDest,
+	getWowFunnelSlug,
+	getRememberedWowFunnelSite,
+	startWowFunnelSite,
+	logWowFunnelEvent,
+} from '../../../utils/wow-funnel';
 import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboarding-post-checkout-destination';
 import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
@@ -114,6 +121,8 @@ const onboarding: FlowV2< typeof initialize > = {
 			playgroundId,
 			buildDest
 		);
+		const wowFunnelSlug = getWowFunnelSlug( queryParams );
+		const wowFunnelDest = getWowFunnelDest( queryParams );
 
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
@@ -123,6 +132,20 @@ const onboarding: FlowV2< typeof initialize > = {
 			planCartItem: MinimalRequestCartProduct | null,
 			launchpadPersonalizationVariation: LaunchpadPersonalizationVariation
 		): Promise< [ string, string | null, string | null ] > => {
+			// A funnel CTA can ask for a specific post-checkout destination; today that means the
+			// Site Editor on the built Atomic site. The build ran during domain selection and
+			// checkout, so the transfer is normally complete; the URL goes through the site's own
+			// domain, which follows the Simple->Atomic switch (same shape as the ai-site-builder
+			// hand-off). With no dest, the ordinary destinations below apply.
+			if ( wowFunnelSlug && wowFunnelDest ) {
+				const siteSlug = providedDependencies.siteSlug as string;
+				const siteId = providedDependencies.siteId as number;
+				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
+				const siteUrl = site?.URL ?? `https://${ siteSlug }`;
+				logWowFunnelEvent( 'post_checkout_editor', { funnel: wowFunnelSlug, blog_id: siteId } );
+				return [ `${ siteUrl }/wp-admin/site-editor.php?canvas=edit&p=%2F`, null, null ];
+			}
+
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
 				return [ `/home/${ providedDependencies.siteSlug }`, null, null ];
 			}
@@ -469,9 +492,13 @@ const onboarding: FlowV2< typeof initialize > = {
 							// replace the location to delete processing step from history.
 							window.location.replace(
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-									// build_dest=wow goes straight from checkout to the AI site-spec
-									// (no post-checkout-onboarding hop, no chooser).
-									redirect_to: blueprintArchiveSlug ? destination : redirectTo,
+									// build_dest=wow and the WoW funnel (dest=editor) go
+									// straight from checkout to their destination — no
+									// post-checkout-onboarding hop, no chooser.
+									redirect_to:
+										blueprintArchiveSlug || ( wowFunnelSlug && wowFunnelDest )
+											? destination
+											: redirectTo,
 									signup: 1,
 									flow: ONBOARDING_FLOW,
 									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
@@ -483,9 +510,9 @@ const onboarding: FlowV2< typeof initialize > = {
 									steps_total: checkoutStepperPosition.total,
 								} )
 							);
-						} else if ( blueprintArchiveSlug ) {
-							// build_dest=wow never shows the setup-your-site-ai chooser; go
-							// straight to the AI site-spec destination.
+						} else if ( blueprintArchiveSlug || ( wowFunnelSlug && wowFunnelDest ) ) {
+							// build_dest=wow and the WoW funnel never show the
+							// setup-your-site-ai chooser; go straight to their destination.
 							window.location.replace( destination );
 						} else if (
 							refParameter === WOO_HOSTING_SOLUTIONS_REF &&
@@ -578,6 +605,30 @@ const onboarding: FlowV2< typeof initialize > = {
 		useEffect( () => {
 			loadExperimentAssignment( 'calypso_plans_page_visual_separation_2025_09_v2' );
 		}, [] );
+
+		// WoW funnel: create the Simple site as soon as the customer is in the flow, so its
+		// Atomic host builds (and any follow-up work) while they pick a domain and check out.
+		// Single-flight — the create-site step consumes the same site rather than creating a
+		// second one. Only fires once the funnel step is known (currentStepSlug set) and the
+		// user is logged in.
+		//
+		// The funnel is an internal-only experiment, but the gate lives server-side: /sites/new
+		// only honours the option for Automatticians and the plan-gate skip is bound to the
+		// option it writes. For anyone else this creates the site the flow would create anyway,
+		// with the funnel option ignored.
+		useEffect( () => {
+			if ( ! currentStepSlug || ! isLoggedIn ) {
+				return;
+			}
+			const queryParams = new URLSearchParams( window.location.search );
+			const funnelSlug = getWowFunnelSlug( queryParams );
+			if ( ! funnelSlug || getRememberedWowFunnelSite( funnelSlug ) ) {
+				return;
+			}
+			void startWowFunnelSite( { funnelSlug } ).catch( () => {
+				// Errors are logged in the util; the create-site step retries as a fallback.
+			} );
+		}, [ currentStepSlug, isLoggedIn ] );
 	},
 };
 

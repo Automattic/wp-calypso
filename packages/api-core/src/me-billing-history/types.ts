@@ -72,13 +72,13 @@ export interface ReceiptItem {
 	tax_integer: number;
 	amount_integer: number;
 	currency: string;
-	licensed_quantity: number;
+	licensed_quantity: number | null;
 	new_quantity: number;
 	product: string;
 	product_slug: string;
 	variation: string;
 	variation_slug: string;
-	months_per_renewal_interval: number;
+	months_per_renewal_interval: number | null;
 	wpcom_product_slug: string;
 	store_subscription_id?: number | null;
 	cost_overrides: ReceiptItemCostOverride[];
