@@ -104,17 +104,17 @@ export function NameRenderer( {
 	const renderBadge = () => {
 		switch ( badge ) {
 			case 'redirect':
-				return <Badge>{ __( 'Redirect' ) }</Badge>;
+				return <Badge intent="none">{ __( 'Redirect' ) }</Badge>;
 			case 'staging':
-				return <Badge>{ __( 'Staging' ) }</Badge>;
+				return <Badge intent="none">{ __( 'Staging' ) }</Badge>;
 			case 'trial':
-				return <Badge>{ __( 'Trial' ) }</Badge>;
+				return <Badge intent="none">{ __( 'Trial' ) }</Badge>;
 			case 'p2':
-				return <Badge>{ __( 'P2' ) }</Badge>;
+				return <Badge intent="none">{ __( 'P2' ) }</Badge>;
 			case 'deleted':
 				return <Badge intent="high">{ __( 'Deleted' ) }</Badge>;
 			case 'difm_lite_in_progress':
-				return <Badge>{ __( 'Express service' ) }</Badge>;
+				return <Badge intent="none">{ __( 'Express service' ) }</Badge>;
 			case 'migration_pending':
 				return <Badge intent="low">{ __( 'Migration pending' ) }</Badge>;
 			case 'migration_started':
