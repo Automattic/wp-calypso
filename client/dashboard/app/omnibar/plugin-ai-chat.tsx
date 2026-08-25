@@ -38,7 +38,8 @@ export function useAiChatPlugin( {
 	const handleClick = () => {
 		const isChatVisible = isAgentsManagerChatVisible();
 
-		recordAgentsManagerTracksEvent( 'calypso_masterbar_agents_manager_ai_chat_clicked', {
+		recordAgentsManagerTracksEvent( 'calypso_agents_manager_ai_chat_clicked', {
+			surface: 'masterbar',
 			section: sectionName || 'unknown',
 			action: isChatVisible ? 'close' : 'open',
 		} );

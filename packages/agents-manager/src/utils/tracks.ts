@@ -161,11 +161,9 @@ function getUnifiedBaseProps(): TracksProps {
 
 /**
  * Records an Agents Manager event using the shared unified property names.
- * Most events live under `calypso_agents_manager_`; the entry-point events
- * carry a host prefix instead (e.g. `calypso_editor_agents_manager_ai_chat_clicked`).
  */
 export function recordAgentsManagerTracksEvent(
-	eventName: `calypso_${ string }`,
+	eventName: `calypso_agents_manager_${ string }`,
 	props: TracksProps = {}
 ): void {
 	recordTracksEvent( eventName, { ...getUnifiedBaseProps(), ...props } );

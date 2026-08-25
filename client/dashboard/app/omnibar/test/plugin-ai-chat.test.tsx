@@ -46,8 +46,8 @@ describe( 'useAiChatPlugin', () => {
 		result.current?.onClick?.( {} as React.MouseEvent );
 
 		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
-			'calypso_masterbar_agents_manager_ai_chat_clicked',
-			{ section: 'sites', action: 'open' }
+			'calypso_agents_manager_ai_chat_clicked',
+			{ surface: 'masterbar', section: 'sites', action: 'open' }
 		);
 		expect( openAgentsManagerChat ).toHaveBeenCalled();
 		expect( closeAgentsManagerChat ).not.toHaveBeenCalled();
@@ -60,8 +60,8 @@ describe( 'useAiChatPlugin', () => {
 		result.current?.onClick?.( {} as React.MouseEvent );
 
 		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
-			'calypso_masterbar_agents_manager_ai_chat_clicked',
-			{ section: 'unknown', action: 'close' }
+			'calypso_agents_manager_ai_chat_clicked',
+			{ surface: 'masterbar', section: 'unknown', action: 'close' }
 		);
 		expect( closeAgentsManagerChat ).toHaveBeenCalled();
 		expect( openAgentsManagerChat ).not.toHaveBeenCalled();
