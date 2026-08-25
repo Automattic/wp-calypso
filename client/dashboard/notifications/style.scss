@@ -203,6 +203,10 @@
 	flex-shrink: 0;
 }
 
+.dashboard-notifications-inbox__detail-nav > .components-button:first-of-type {
+	margin-inline-start: auto;
+}
+
 .dashboard-notifications-inbox__type-chip {
 	display: inline-flex;
 	align-items: center;

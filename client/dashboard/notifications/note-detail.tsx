@@ -115,6 +115,10 @@ export default function NoteDetail( {
 				alignment="center"
 				className="dashboard-notifications-inbox__detail-nav"
 			>
+				<span className="dashboard-notifications-inbox__type-chip" aria-hidden="true">
+					<Icon icon={ NOTICON_ICONS[ note.noticon ] ?? FALLBACK_NOTICON_ICON } size={ 16 } />
+				</span>
+				<Text weight={ 500 }>{ getNoteTypeLabel( note ) }</Text>
 				<Button
 					size="small"
 					icon={ chevronLeft }
@@ -129,10 +133,6 @@ export default function NoteDetail( {
 					onClick={ onNext ?? undefined }
 					disabled={ ! onNext }
 				/>
-				<span className="dashboard-notifications-inbox__type-chip" aria-hidden="true">
-					<Icon icon={ NOTICON_ICONS[ note.noticon ] ?? FALLBACK_NOTICON_ICON } size={ 16 } />
-				</span>
-				<Text weight={ 500 }>{ getNoteTypeLabel( note ) }</Text>
 			</HStack>
 			<HStack spacing={ 3 } justify="flex-start" alignment="center">
 				<img
