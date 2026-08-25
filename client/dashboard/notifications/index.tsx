@@ -219,6 +219,7 @@ function NotificationsInbox( {
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
 	const isDesktop = useViewportMatch( 'medium' );
+	const { notes } = useVisibleNotes( CATEGORY_TO_TAB[ category ] );
 
 	// Whether this category has had a selection (auto or explicit). Auto-open
 	// runs once per category and never overrides a deep link, a user's pick,
@@ -276,6 +277,16 @@ function NotificationsInbox( {
 		[ note, isDesktop, category, navigate ]
 	);
 
+	// Previous/next walk the tab's list order; a deep-linked note that isn't
+	// in the loaded list disables both.
+	const noteIds = notes.map( ( { id } ) => id.toString() );
+	const currentIndex = note ? noteIds.indexOf( note ) : -1;
+	const onPrevious = currentIndex > 0 ? () => setSelectedNote( noteIds[ currentIndex - 1 ] ) : null;
+	const onNext =
+		currentIndex >= 0 && currentIndex < noteIds.length - 1
+			? () => setSelectedNote( noteIds[ currentIndex + 1 ] )
+			: null;
+
 	return (
 		<PageLayout header={ <PageHeader title={ __( 'Notifications' ) } /> }>
 			<div
@@ -294,7 +305,12 @@ function NotificationsInbox( {
 				</div>
 				<div className="dashboard-notifications-inbox__detail-pane">
 					{ note ? (
-						<NoteDetail noteId={ note } onClose={ () => setSelectedNote( undefined ) } />
+						<NoteDetail
+							noteId={ note }
+							onClose={ () => setSelectedNote( undefined ) }
+							onPrevious={ onPrevious }
+							onNext={ onNext }
+						/>
 					) : (
 						<VStack
 							alignment="center"

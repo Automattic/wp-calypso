@@ -7,13 +7,20 @@ import {
 	Spinner,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { arrowLeft } from '@wordpress/icons';
+import { arrowLeft, chevronLeft, chevronRight, Icon } from '@wordpress/icons';
 import { useEffect, useState } from 'react';
 import { Card, CardBody } from '../components/card';
 import { getRelativeTimeString } from '../utils/datetime';
 import { openNote, useNote } from './engine';
-import { getBlockSegments, getNoteBodyParts, getNoteExcerpt, getNoteTitle } from './fields';
+import {
+	getBlockSegments,
+	getNoteBodyParts,
+	getNoteExcerpt,
+	getNoteTitle,
+	getNoteTypeLabel,
+} from './fields';
 import NoteActions from './note-actions';
+import { FALLBACK_NOTICON_ICON, NOTICON_ICONS } from './note-icons';
 import type { NoteBlock } from './fields';
 
 // The engine has no error signal for a missing note: `openNote` just keeps
@@ -56,7 +63,17 @@ function DetailFrame( { onClose, children }: { onClose: () => void; children: Re
 	);
 }
 
-export default function NoteDetail( { noteId, onClose }: { noteId: string; onClose: () => void } ) {
+export default function NoteDetail( {
+	noteId,
+	onClose,
+	onPrevious,
+	onNext,
+}: {
+	noteId: string;
+	onClose: () => void;
+	onPrevious?: ( () => void ) | null;
+	onNext?: ( () => void ) | null;
+} ) {
 	const note = useNote( noteId );
 	const [ timedOut, setTimedOut ] = useState( false );
 
@@ -92,6 +109,31 @@ export default function NoteDetail( { noteId, onClose }: { noteId: string; onClo
 
 	return (
 		<DetailFrame onClose={ onClose }>
+			<HStack
+				spacing={ 2 }
+				justify="flex-start"
+				alignment="center"
+				className="dashboard-notifications-inbox__detail-nav"
+			>
+				<Button
+					size="small"
+					icon={ chevronLeft }
+					label={ __( 'Previous notification' ) }
+					onClick={ onPrevious ?? undefined }
+					disabled={ ! onPrevious }
+				/>
+				<Button
+					size="small"
+					icon={ chevronRight }
+					label={ __( 'Next notification' ) }
+					onClick={ onNext ?? undefined }
+					disabled={ ! onNext }
+				/>
+				<span className="dashboard-notifications-inbox__type-chip" aria-hidden="true">
+					<Icon icon={ NOTICON_ICONS[ note.noticon ] ?? FALLBACK_NOTICON_ICON } size={ 16 } />
+				</span>
+				<Text weight={ 500 }>{ getNoteTypeLabel( note ) }</Text>
+			</HStack>
 			<HStack spacing={ 3 } justify="flex-start" alignment="center">
 				<img
 					className="dashboard-notifications-inbox__note-avatar"

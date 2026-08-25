@@ -35,6 +35,27 @@ const getTimeGroupKey = ( timestamp: string ): number => {
 	return timeGroups.findIndex( ( [ after, before ] ) => before < time && time <= after );
 };
 
+export function getNoteTypeLabel( note: Note ): string {
+	switch ( note.type ) {
+		case 'comment':
+			return __( 'Comment' );
+		case 'comment_like':
+			return __( 'Comment like' );
+		case 'like':
+			return __( 'Like' );
+		case 'follow':
+			return __( 'New subscriber' );
+		case 'post':
+			return __( 'New post' );
+		case 'reblog':
+			return __( 'Reblog' );
+		default: {
+			const label = note.type.replace( /_/g, ' ' );
+			return label.charAt( 0 ).toUpperCase() + label.slice( 1 );
+		}
+	}
+}
+
 export function getNoteTitle( note: Note ): string {
 	return note.subject[ 0 ]?.text ?? note.title;
 }
