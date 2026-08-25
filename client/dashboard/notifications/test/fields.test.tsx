@@ -132,27 +132,35 @@ describe( 'getNoteBodyParts', () => {
 } );
 
 describe( 'getTitleSegments', () => {
-	it( 'bolds the user and post ranges only', () => {
+	it( 'bolds the user and post ranges and carries their links', () => {
 		const note = makeNote( 1, {
 			subject: [
 				{
 					text: 'Aras mentioned you on Deep links',
 					ranges: [
-						{ type: 'user', indices: [ 0, 4 ], id: 1, parent: null },
+						{
+							type: 'user',
+							indices: [ 0, 4 ],
+							id: 1,
+							parent: null,
+							url: 'https://example.com/aras',
+						},
 						{ type: 'post', indices: [ 22, 32 ], id: 2, parent: null },
 					],
 				},
 			],
 		} );
 		expect( getTitleSegments( note ) ).toEqual( [
-			{ text: 'Aras', bold: true },
-			{ text: ' mentioned you on ', bold: false },
-			{ text: 'Deep links', bold: true },
+			{ text: 'Aras', bold: true, url: 'https://example.com/aras' },
+			{ text: ' mentioned you on ', bold: false, url: null },
+			{ text: 'Deep links', bold: true, url: null },
 		] );
 	} );
 
 	it( 'returns one plain segment without ranges', () => {
-		expect( getTitleSegments( makeNote( 2 ) ) ).toEqual( [ { text: 'Subject 2', bold: false } ] );
+		expect( getTitleSegments( makeNote( 2 ) ) ).toEqual( [
+			{ text: 'Subject 2', bold: false, url: null },
+		] );
 	} );
 } );
 

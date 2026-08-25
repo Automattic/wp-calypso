@@ -236,10 +236,12 @@
 	}
 }
 
-.dashboard-notifications-inbox__note-title-link {
-	&,
-	.components-text {
-		color: var(--wp-admin-theme-color, #3858e9);
+.dashboard-notifications-inbox__note-title a {
+	color: var(--wp-admin-theme-color, #3858e9);
+	text-decoration: none;
+
+	&:hover {
+		text-decoration: underline;
 	}
 }
 

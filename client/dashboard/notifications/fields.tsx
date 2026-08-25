@@ -62,37 +62,46 @@ export function getNoteTitle( note: Note ): string {
 
 const TITLE_BOLD_RANGE_TYPES = new Set( [ 'user', 'post', 'b' ] );
 
-export type TitleSegment = { text: string; bold: boolean };
+export type TitleSegment = { text: string; bold: boolean; url: string | null };
 
-/** The title split into spans, bolding the subject's user/post ranges. */
+/**
+ * The title split into spans, following the subject's ranges: user/post ranges
+ * are bold, and any range's URL rides along so the detail pane can embed links
+ * (the list renders the same segments without them).
+ */
 export function getTitleSegments( note: Note ): TitleSegment[] {
 	const block = note.subject[ 0 ];
 	if ( ! block ) {
-		return [ { text: note.title, bold: false } ];
+		return [ { text: note.title, bold: false, url: null } ];
 	}
 
-	const boldRanges = ( block.ranges ?? [] )
+	const markedRanges = ( block.ranges ?? [] )
 		.filter(
 			( range ) =>
-				TITLE_BOLD_RANGE_TYPES.has( range.type ) && range.indices[ 1 ] > range.indices[ 0 ]
+				( TITLE_BOLD_RANGE_TYPES.has( range.type ) || !! range.url ) &&
+				range.indices[ 1 ] > range.indices[ 0 ]
 		)
 		.sort( ( a, b ) => a.indices[ 0 ] - b.indices[ 0 ] );
 
 	const segments: TitleSegment[] = [];
 	let cursor = 0;
-	for ( const range of boldRanges ) {
+	for ( const range of markedRanges ) {
 		const [ start, end ] = range.indices;
 		if ( start < cursor || end > block.text.length ) {
 			continue;
 		}
 		if ( start > cursor ) {
-			segments.push( { text: block.text.slice( cursor, start ), bold: false } );
+			segments.push( { text: block.text.slice( cursor, start ), bold: false, url: null } );
 		}
-		segments.push( { text: block.text.slice( start, end ), bold: true } );
+		segments.push( {
+			text: block.text.slice( start, end ),
+			bold: TITLE_BOLD_RANGE_TYPES.has( range.type ),
+			url: range.url ?? null,
+		} );
 		cursor = end;
 	}
 	if ( cursor < block.text.length ) {
-		segments.push( { text: block.text.slice( cursor ), bold: false } );
+		segments.push( { text: block.text.slice( cursor ), bold: false, url: null } );
 	}
 	return segments;
 }

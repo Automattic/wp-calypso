@@ -3,12 +3,11 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
-	ExternalLink,
 	Spinner,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { arrowLeft, chevronLeft, chevronRight, Icon } from '@wordpress/icons';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Card, CardBody } from '../components/card';
 import { getRelativeTimeString } from '../utils/datetime';
 import { openNote, useNote } from './engine';
@@ -157,9 +156,16 @@ export default function NoteDetail( {
 
 	const title = (
 		<Text className="dashboard-notifications-inbox__note-title">
-			{ getTitleSegments( note ).map( ( segment, index ) =>
-				segment.bold ? <strong key={ index }>{ segment.text }</strong> : segment.text
-			) }
+			{ getTitleSegments( note ).map( ( segment, index ) => {
+				const text = segment.bold ? <strong>{ segment.text }</strong> : segment.text;
+				return segment.url ? (
+					<a key={ index } href={ segment.url } target="_blank" rel="noreferrer">
+						{ text }
+					</a>
+				) : (
+					<Fragment key={ index }>{ text }</Fragment>
+				);
+			} ) }
 		</Text>
 	);
 	const excerpt = getNoteExcerpt( note );
@@ -206,17 +212,7 @@ export default function NoteDetail( {
 					height={ 40 }
 				/>
 				<VStack spacing={ 0 }>
-					{ note.url ? (
-						<ExternalLink
-							className="dashboard-notifications-inbox__note-title-link"
-							href={ note.url }
-							aria-label={ __( 'Open on WordPress.com' ) }
-						>
-							{ title }
-						</ExternalLink>
-					) : (
-						title
-					) }
+					{ title }
 					<Text variant="muted">{ getRelativeTimeString( new Date( note.timestamp ) ) }</Text>
 				</VStack>
 			</HStack>
