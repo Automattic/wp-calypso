@@ -230,7 +230,7 @@
 		"upgrades/upcoming-renewals-notices": true,
 		"wordpress-agent-slack": true,
 		"wordpress-ai-tools": true,
-		"wordpress-labs": true,
+		"wordpress-labs": false,
 		"wpcom-user-bootstrap": false
 	}
 }

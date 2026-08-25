@@ -146,7 +146,7 @@
 		"use-translation-chunks": true,
 		"wordpress-agent-slack": true,
 		"wordpress-ai-tools": true,
-		"wordpress-labs": true,
+		"wordpress-labs": false,
 		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "a4f69f6759",

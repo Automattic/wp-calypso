@@ -58,7 +58,7 @@
 		"webauthn/related-origin-requests": true,
 		"wordpress-agent-slack": true,
 		"wordpress-ai-tools": true,
-		"wordpress-labs": true,
+		"wordpress-labs": false,
 		"wpcom-user-bootstrap": true
 	},
 	"enable_all_sections": false,
