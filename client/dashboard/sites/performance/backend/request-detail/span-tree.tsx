@@ -14,9 +14,9 @@ import type {
 	ApmDetailSpan,
 	ApmDetailSpanPrunedChildren,
 } from '@automattic/api-core';
+import type { ComponentProps } from 'react';
 
-type BadgeIntent = 'high' | 'medium' | 'low' | 'stable' | 'informational' | 'none';
-const CATEGORY_INTENT: Record< string, BadgeIntent > = {
+const CATEGORY_INTENT: Record< string, ComponentProps< typeof Badge >[ 'intent' ] > = {
 	plugins: 'high',
 	db: 'medium',
 	external: 'medium',
