@@ -190,15 +190,19 @@ export function setActiveTab( tab: FilterName ): void {
 }
 
 /**
- * Load the next page for a tab. Always re-asserts the filter first — a bare
- * `loadMore()` pages whichever list the global filter last pointed at.
+ * Load the next page for a tab. Re-asserts the filter only when the client
+ * points elsewhere — `setFilter` on a filtered tab kicks off a head refetch
+ * whose in-flight lock would swallow the `loadMore()` right after it, so
+ * calling it unconditionally refetches the head forever without ever paging.
  */
 export function loadMoreFor( tab: FilterName ): void {
 	const client = getClient();
 	if ( ! client ) {
 		return;
 	}
-	client.setFilter( tab );
+	if ( ( client as { filterName?: string } ).filterName !== tab ) {
+		client.setFilter( tab );
+	}
 	client.loadMore();
 }
 

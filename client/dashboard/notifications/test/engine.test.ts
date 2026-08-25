@@ -200,8 +200,8 @@ describe( 'normalizeNoteId', () => {
 } );
 
 describe( 'loadMoreFor', () => {
-	it( 're-asserts the filter before loading more', () => {
-		const client = makeClient();
+	it( 're-asserts the filter before loading more when the client points elsewhere', () => {
+		const client = { ...makeClient(), filterName: 'all' };
 		mockGetClient.mockReturnValue( client );
 
 		loadMoreFor( 'unread' );
@@ -211,6 +211,19 @@ describe( 'loadMoreFor', () => {
 		expect( client.setFilter.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
 			client.loadMore.mock.invocationCallOrder[ 0 ]
 		);
+	} );
+
+	// setFilter on a filtered tab starts a head refetch whose in-flight lock
+	// swallows the loadMore right after it — re-asserting an already-active
+	// filter refetched the head forever instead of paging.
+	it( 'skips setFilter when the filter is already active', () => {
+		const client = { ...makeClient(), filterName: 'unread' };
+		mockGetClient.mockReturnValue( client );
+
+		loadMoreFor( 'unread' );
+
+		expect( client.setFilter ).not.toHaveBeenCalled();
+		expect( client.loadMore ).toHaveBeenCalled();
 	} );
 
 	it( 'is a no-op without a client', () => {
