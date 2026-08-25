@@ -15,18 +15,20 @@ import './omnibar-free-domain-chip.scss';
 
 export function OmnibarFreeDomainChip( { site }: { site: Site } ) {
 	const isEligible = isFreeDomainUpsellEligible( site );
+	const siteId = site.ID;
 
-	const hasRecordedImpression = useRef( false );
+	// One impression per site: switching sites in the same mount re-fires.
+	const impressionSiteIds = useRef( new Set< number >() );
 	useEffect( () => {
-		if ( ! isEligible || hasRecordedImpression.current ) {
+		if ( ! isEligible || impressionSiteIds.current.has( siteId ) ) {
 			return;
 		}
-		hasRecordedImpression.current = true;
+		impressionSiteIds.current.add( siteId );
 		recordTracksEvent( 'calypso_omnibar_upsell_impression', {
 			upsell_id: FREE_DOMAIN_UPSELL_ID,
-			surface: 'calypso',
+			surface: 'msd',
 		} );
-	}, [ isEligible ] );
+	}, [ isEligible, siteId ] );
 
 	if ( ! isEligible ) {
 		return null;
@@ -40,7 +42,7 @@ export function OmnibarFreeDomainChip( { site }: { site: Site } ) {
 				onClick={ () =>
 					recordTracksEvent( 'calypso_omnibar_upsell_click', {
 						upsell_id: FREE_DOMAIN_UPSELL_ID,
-						surface: 'calypso',
+						surface: 'msd',
 					} )
 				}
 			>

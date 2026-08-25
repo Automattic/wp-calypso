@@ -8,26 +8,35 @@ import {
 	getFreeDomainUpsellHref,
 	isFreeDomainUpsellEligible,
 } from '../free-domain-upsell';
+import type { FreeDomainUpsellSurface } from '../free-domain-upsell';
 import type { Site } from '@automattic/api-core';
 import type { OmnibarNode } from '@automattic/omnibar';
 
 import './plugin-free-domain.scss';
 
-export function useFreeDomainPlugin( { site }: { site?: Site } ): OmnibarNode | undefined {
+export function useFreeDomainPlugin( {
+	site,
+	surface,
+}: {
+	site?: Site;
+	surface: FreeDomainUpsellSurface;
+} ): OmnibarNode | undefined {
 	const { recordTracksEvent } = useAnalytics();
 	const isEligible = isFreeDomainUpsellEligible( site );
+	const siteId = site?.ID;
 
-	const hasRecordedImpression = useRef( false );
+	// One impression per site: switching sites in the same mount re-fires.
+	const impressionSiteIds = useRef( new Set< number >() );
 	useEffect( () => {
-		if ( ! isEligible || hasRecordedImpression.current ) {
+		if ( ! isEligible || ! siteId || impressionSiteIds.current.has( siteId ) ) {
 			return;
 		}
-		hasRecordedImpression.current = true;
+		impressionSiteIds.current.add( siteId );
 		recordTracksEvent( 'calypso_omnibar_upsell_impression', {
 			upsell_id: FREE_DOMAIN_UPSELL_ID,
-			surface: 'calypso',
+			surface,
 		} );
-	}, [ isEligible, recordTracksEvent ] );
+	}, [ isEligible, siteId, surface, recordTracksEvent ] );
 
 	if ( ! isEligible ) {
 		return undefined;
@@ -41,7 +50,7 @@ export function useFreeDomainPlugin( { site }: { site?: Site } ): OmnibarNode | 
 		onClick: () =>
 			recordTracksEvent( 'calypso_omnibar_upsell_click', {
 				upsell_id: FREE_DOMAIN_UPSELL_ID,
-				surface: 'calypso',
+				surface,
 			} ),
 		render: () => (
 			<span className="omnibar__free-domain-chip">
