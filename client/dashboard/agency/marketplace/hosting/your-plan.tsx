@@ -22,6 +22,9 @@ type YourPlanProps = {
 
 export default function YourPlan( { brand, term, quantity, plan, onAddToCart }: YourPlanProps ) {
 	const price = brand === 'wpcom' ? getTieredPrice( wpcomHosting, quantity, term ) : null;
+	const isCustomPlan = brand === 'pressable' && ! plan;
+	const isPremiumPlan = brand === 'pressable' && plan?.category === 'premium';
+	const isContactSales = isCustomPlan || isPremiumPlan;
 
 	const planLabel =
 		brand === 'wpcom'
@@ -33,7 +36,7 @@ export default function YourPlan( { brand, term, quantity, plan, onAddToCart }: 
 			: sprintf(
 					/* translators: %s: plan name */
 					__( 'Pressable %s' ),
-					plan?.name ?? ''
+					plan?.name ?? __( 'Custom' )
 			  );
 
 	const total = brand === 'wpcom' ? price?.discountedCost ?? null : plan?.yearly_price ?? null;
@@ -59,42 +62,84 @@ export default function YourPlan( { brand, term, quantity, plan, onAddToCart }: 
 			<CardBody>
 				<VStack spacing={ 3 } justify="flex-start">
 					<Text>{ planLabel }</Text>
-					<VStack spacing={ 1 }>
-						<Text className="marketplace-hosting__plan-price">
-							{ total !== null ? formatUSD( total ) : '—' }
-							<Text as="span" variant="muted">
-								{ term === 'yearly' ? __( '/year' ) : __( '/month' ) }
-							</Text>
-						</Text>
-						{ brand === 'wpcom' && price && price.discountPercent > 0 && (
-							<Text variant="muted">
-								<span className="marketplace-hosting__price-strikethrough">
-									{ formatUSD( price.actualCost ) }
-								</span>
-								{ ' · ' }
-								{ sprintf(
-									/* translators: %s: amount saved */
-									__( 'Save %s' ),
-									formatUSD( price.actualCost - price.discountedCost )
+					{ isContactSales && (
+						<>
+							<VStack spacing={ 1 }>
+								<Text size={ 18 } weight={ 600 }>
+									{ isPremiumPlan ? __( 'From US$350 per month' ) : __( 'Custom pricing' ) }
+								</Text>
+								{ isPremiumPlan && (
+									<Text variant="muted">{ __( 'Per site, when billed monthly.' ) }</Text>
 								) }
-								{ ' · ' }
-								{ term === 'yearly' ? __( 'billed yearly' ) : __( 'billed monthly' ) }
+							</VStack>
+							<VStack spacing={ 4 } alignment="flex-start">
+								<Button
+									variant="primary"
+									__next40pxDefaultSize
+									href="https://pressable.com/contact/"
+									target="_blank"
+									rel="noreferrer"
+								>
+									{ __( 'Contact us ↗' ) }
+								</Button>
+							</VStack>
+							<CardDivider />
+							<HStack spacing={ 2 } justify="flex-start" alignment="center">
+								<Icon icon={ check } className="marketplace-hosting__check" />
+								<Text variant="muted">
+									{ sprintf(
+										/* translators: %s: commission percentage, e.g. 20% */
+										__( 'Get %s commission when you refer.' ),
+										'20%'
+									) }
+								</Text>
+							</HStack>
+						</>
+					) }
+					{ ! isContactSales && (
+						<VStack spacing={ 1 }>
+							<Text className="marketplace-hosting__plan-price">
+								{ total !== null ? formatUSD( total ) : '—' }
+								<Text as="span" variant="muted">
+									{ term === 'yearly' ? __( '/year' ) : __( '/month' ) }
+								</Text>
 							</Text>
-						) }
-						{ brand === 'pressable' && total === null && (
-							<Text variant="muted">{ __( 'Prototype: price loads from the products API.' ) }</Text>
-						) }
-					</VStack>
-					<VStack spacing={ 4 } alignment="flex-start">
-						<Button variant="primary" __next40pxDefaultSize onClick={ onAddToCart }>
-							{ ctaLabel }
-						</Button>
-					</VStack>
-					<CardDivider />
-					<HStack spacing={ 2 } justify="flex-start" alignment="center">
-						<Icon icon={ check } className="marketplace-hosting__check" />
-						<Text variant="muted">{ __( 'Cancel anytime.' ) }</Text>
-					</HStack>
+							{ brand === 'wpcom' && price && price.discountPercent > 0 && (
+								<Text variant="muted">
+									<span className="marketplace-hosting__price-strikethrough">
+										{ formatUSD( price.actualCost ) }
+									</span>
+									{ ' · ' }
+									{ sprintf(
+										/* translators: %s: amount saved */
+										__( 'Save %s' ),
+										formatUSD( price.actualCost - price.discountedCost )
+									) }
+									{ ' · ' }
+									{ term === 'yearly' ? __( 'billed yearly' ) : __( 'billed monthly' ) }
+								</Text>
+							) }
+							{ brand === 'pressable' && total === null && (
+								<Text variant="muted">
+									{ __( 'Prototype: price loads from the products API.' ) }
+								</Text>
+							) }
+						</VStack>
+					) }
+					{ ! isContactSales && (
+						<>
+							<VStack spacing={ 4 } alignment="flex-start">
+								<Button variant="primary" __next40pxDefaultSize onClick={ onAddToCart }>
+									{ ctaLabel }
+								</Button>
+							</VStack>
+							<CardDivider />
+							<HStack spacing={ 2 } justify="flex-start" alignment="center">
+								<Icon icon={ check } className="marketplace-hosting__check" />
+								<Text variant="muted">{ __( 'Cancel anytime.' ) }</Text>
+							</HStack>
+						</>
+					) }
 				</VStack>
 			</CardBody>
 		</Card>

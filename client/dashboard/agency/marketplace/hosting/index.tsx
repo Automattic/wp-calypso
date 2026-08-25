@@ -29,7 +29,7 @@ import {
 	hostingBrands,
 	formatUSD,
 	getTieredPrice,
-	pressableSignaturePlans,
+	pressablePlans,
 	wpcomHosting,
 } from './mock-data';
 import PressableContent from './pressable-content';
@@ -280,9 +280,7 @@ export default function MarketplaceHosting() {
 	const [ quantity, setQuantity ] = useState( 3 );
 	const [ pressablePlanSlug, setPressablePlanSlug ] = useState( 'pressable-signature-1' );
 
-	const pressablePlan =
-		pressableSignaturePlans.find( ( p ) => p.slug === pressablePlanSlug ) ??
-		pressableSignaturePlans[ 0 ];
+	const pressablePlan = pressablePlans.find( ( p ) => p.slug === pressablePlanSlug );
 	const [ cartItems, setCartItems ] = useState< CartItem[] >( [] );
 	const [ isCartOpen, setIsCartOpen ] = useState( false );
 
@@ -429,9 +427,9 @@ export default function MarketplaceHosting() {
 									label: sprintf(
 										/* translators: %s: plan name */
 										__( 'Pressable %s' ),
-										pressablePlan.name
+										pressablePlan?.name ?? ''
 									),
-									total: pressablePlan.yearly_price ?? null,
+									total: pressablePlan?.yearly_price ?? null,
 								} )
 							}
 						/>
