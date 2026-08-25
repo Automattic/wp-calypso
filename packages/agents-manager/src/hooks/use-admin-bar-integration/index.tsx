@@ -139,7 +139,8 @@ export default function useAdminBarIntegration( {
 		}
 
 		const handleClick = () => {
-			recordAgentsManagerTracksEvent( 'calypso_admin_bar_agents_manager_ai_chat_clicked', {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_ai_chat_clicked', {
+				surface: 'admin_bar',
 				section: sectionName || 'wp-admin',
 				action: isChatVisibleRef.current ? 'close' : 'open',
 			} );
