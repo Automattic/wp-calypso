@@ -65,7 +65,6 @@ import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
 import { useFormattedTime } from '../../../components/formatted-time';
-import InfoPopover from '../../../components/info-popover';
 import InlineSupportLink from '../../../components/inline-support-link';
 import { MetadataList, MetadataItem } from '../../../components/metadata-list';
 import OverviewCard from '../../../components/overview-card';
@@ -116,6 +115,7 @@ import {
 } from '../../../utils/site-url';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
+import { BillingPurchaseInfoPopover } from '../dataviews';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import AkismetApiKeyCard from './akismet-api-key-card';
 import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
@@ -885,8 +885,7 @@ function getFields( {
 						return (
 							<HStack spacing={ 1 } expanded={ false }>
 								<span>{ helpText }</span>
-								<InfoPopover placement="bottom-start">
-									<div className="popover__arrow"></div>
+								<BillingPurchaseInfoPopover>
 									{ createInterpolateElement(
 										sprintf(
 											/* translators: %(expireDate)s is a date and inlineSupportLink is a web link. */
@@ -904,7 +903,7 @@ function getFields( {
 											inlineSupportLink: <InlineSupportLink supportContext="autorenewal" />,
 										}
 									) }
-								</InfoPopover>
+								</BillingPurchaseInfoPopover>
 							</HStack>
 						);
 					}
