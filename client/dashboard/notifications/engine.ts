@@ -206,6 +206,25 @@ export function hasMoreNotesFor( tab: FilterName ): boolean {
 	return getClient()?.hasMoreNotes( tab ) ?? false;
 }
 
+export type ListEndReason = 'exhausted' | 'cap';
+
+/**
+ * Why a tab's list stopped loading more: 'exhausted' when the server has no
+ * older notes left, 'cap' when the engine's fixed window limit (200 notes on
+ * the All tab) was reached while the server may still have more, or null while
+ * more can still load. Only meaningful once the tab has initially loaded.
+ */
+export function getListEndReason( tab: FilterName ): ListEndReason | null {
+	const client = getClient();
+	if ( ! client || hasMoreNotesFor( tab ) ) {
+		return null;
+	}
+	if ( tab === 'all' ) {
+		return ( client as { allNotesLoaded?: boolean } ).allNotesLoaded ? 'exhausted' : 'cap';
+	}
+	return 'exhausted';
+}
+
 /**
  * Open a note: select it in the engine, which marks it read for free via the
  * SELECT_NOTE middleware. If the note isn't loaded yet (deep link, hard

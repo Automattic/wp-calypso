@@ -10,6 +10,7 @@ import {
 	countUnreadNotes,
 	editCommentContent,
 	getAvailableNoteActions,
+	getListEndReason,
 	getPendingUndoableAction,
 	hasMoreNotesFor,
 	loadMoreFor,
@@ -230,6 +231,34 @@ describe( 'hasMoreNotesFor', () => {
 	it( 'reports false without a client', () => {
 		mockGetClient.mockReturnValue( undefined );
 		expect( hasMoreNotesFor( 'all' ) ).toBe( false );
+	} );
+} );
+
+describe( 'getListEndReason', () => {
+	it( 'is null while more notes can load', () => {
+		mockGetClient.mockReturnValue( { ...makeClient(), allNotesLoaded: false } );
+		expect( getListEndReason( 'all' ) ).toBeNull();
+	} );
+
+	it( 'reports the window cap when the server is not exhausted', () => {
+		const client = { ...makeClient(), allNotesLoaded: false };
+		client.hasMoreNotes = jest.fn( () => false );
+		mockGetClient.mockReturnValue( client );
+		expect( getListEndReason( 'all' ) ).toBe( 'cap' );
+	} );
+
+	it( 'reports exhaustion when the server has nothing older', () => {
+		const client = { ...makeClient(), allNotesLoaded: true };
+		client.hasMoreNotes = jest.fn( () => false );
+		mockGetClient.mockReturnValue( client );
+		expect( getListEndReason( 'all' ) ).toBe( 'exhausted' );
+	} );
+
+	it( 'treats a stopped filtered tab as exhausted', () => {
+		const client = makeClient();
+		client.hasMoreNotes = jest.fn( () => false );
+		mockGetClient.mockReturnValue( client );
+		expect( getListEndReason( 'unread' ) ).toBe( 'exhausted' );
 	} );
 } );
 
