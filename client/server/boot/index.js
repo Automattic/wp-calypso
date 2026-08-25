@@ -66,6 +66,11 @@ export default function setup() {
 					if ( ! req.cookies.wordpress_logged_in ) {
 						req.cookies.wordpress_logged_in = config( 'wordpress_logged_in_cookie' );
 					}
+					// The logged-in check also requires a `wordpress_sec` cookie, which is
+					// Secure and so never reaches a plain-http dev server.
+					if ( ! req.cookies.wordpress_sec ) {
+						req.cookies.wordpress_sec = 'development';
+					}
 					next();
 				} );
 			} else {

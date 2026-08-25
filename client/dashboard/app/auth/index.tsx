@@ -24,6 +24,14 @@ const BOOTSTRAP_ERROR_MESSAGE = 'Failed to bootstrap user object';
 
 const AUTH_BOUNCE_COUNT_KEY = 'wpcom_auth_bounce_count';
 
+// Whether a redirect to log in has been started. Consumers use this to tell a
+// recoverable auth failure from one that leaves the user stranded in the app.
+let authRedirectInFlight = false;
+
+export function isAuthRedirectInFlight(): boolean {
+	return authRedirectInFlight;
+}
+
 const AUTH_LOOP_WINDOW_MS = 30 * 1000;
 
 // Cap the reported loop count (reported as "10+") so a runaway loop can't
@@ -222,6 +230,19 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		};
 	}, [ user ] );
 
+	// A dead session fails every request alike, so one probe settles it for all of
+	// them.
+	const sessionProbe = useRef< Promise< boolean > | null >( null );
+	const confirmSessionExpired = useCallback( () => {
+		sessionProbe.current ??= fetchUser().then(
+			() => false,
+			( error: unknown ) =>
+				isWpError( error ) &&
+				( error.statusCode === 401 || error.error === 'authorization_required' )
+		);
+		return sessionProbe.current;
+	}, [] );
+
 	const handleAuthError = useCallback(
 		( reason: string ) => {
 			// Prevents repeated calls to redirect
@@ -230,6 +251,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 			}
 
 			authErrorHandled.current = true;
+			authRedirectInFlight = true;
 
 			bumpStat( 'dashboard-auth', `bounce:${ reason }` );
 			trackAuthBounceLoop();
@@ -267,6 +289,13 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 			return statusCode === 401 && [ 'authorization_required', 'rest_forbidden' ].includes( error );
 		};
 
+		// A missing or expired `wordpress_sec` invalidates `wp_api_sec` and the API
+		// answers 403 rather than 401. The same code covers per-resource permission
+		// errors, so confirm the whole session is gone before bouncing.
+		const isMaybeAuthError = ( { statusCode, error = '' }: WPError ) => {
+			return statusCode === 403 && error === 'authorization_required';
+		};
+
 		const handleEvent = ( event: MutationCacheNotifyEvent | QueryCacheNotifyEvent ) => {
 			// Errors fetching the user object itself are handled (and classified) below.
 			if ( 'query' in event && event.query.queryHash === hashKey( AUTH_QUERY_KEY ) ) {
@@ -276,10 +305,19 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 			if (
 				event.type === 'updated' &&
 				event.action.type === 'error' &&
-				isWpError( event.action.error ) &&
-				isAuthError( event.action.error )
+				isWpError( event.action.error )
 			) {
-				handleAuthError( 'expired' );
+				const error = event.action.error;
+
+				if ( isAuthError( error ) ) {
+					handleAuthError( 'expired' );
+				} else if ( isMaybeAuthError( error ) ) {
+					confirmSessionExpired().then( ( expired ) => {
+						if ( expired ) {
+							handleAuthError( 'expired' );
+						}
+					} );
+				}
 			}
 		};
 		const unsubMutationCache = queryClient.getMutationCache().subscribe( handleEvent );
@@ -288,7 +326,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 			unsubMutationCache();
 			unsubQueryCache();
 		};
-	}, [ queryClient, handleAuthError ] );
+	}, [ queryClient, handleAuthError, confirmSessionExpired ] );
 
 	const successStatBumped = useRef( false );
 	useEffect( () => {
