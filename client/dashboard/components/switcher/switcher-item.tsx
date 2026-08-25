@@ -2,6 +2,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { Text } from '../text';
 
 interface SwitcherItemProps {
 	media?: React.ReactNode;
@@ -18,16 +19,32 @@ export default function SwitcherItem( {
 	spacing,
 	alignment = 'center',
 }: SwitcherItemProps ) {
+	const titleElement = (
+		<Text
+			className="switcher-item__title"
+			weight={ 500 }
+			truncate
+			numberOfLines={ 1 }
+			style={ { color: 'inherit' } }
+		>
+			{ title }
+		</Text>
+	);
+
 	if ( ! media && ! description ) {
-		return <>{ title }</>;
+		return titleElement;
 	}
 
 	return (
 		<HStack justify="flex-start" alignment={ alignment } expanded spacing={ spacing }>
 			{ media }
 			<VStack spacing={ 0 }>
-				{ title }
-				{ description }
+				{ titleElement }
+				{ description && (
+					<Text className="switcher-item__description" variant="muted" truncate numberOfLines={ 1 }>
+						{ description }
+					</Text>
+				) }
 			</VStack>
 		</HStack>
 	);
