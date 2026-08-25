@@ -132,23 +132,18 @@ const onboarding: FlowV2< typeof initialize > = {
 			planCartItem: MinimalRequestCartProduct | null,
 			launchpadPersonalizationVariation: LaunchpadPersonalizationVariation
 		): Promise< [ string, string | null, string | null ] > => {
-			if ( wowFunnelSlug && wowFunnelDest !== 'manual' ) {
+			// dest=editor: straight into the Site Editor on the built Atomic site. The build ran
+			// during domain selection and checkout, so the transfer is normally complete; the URL
+			// goes through the site's own domain, which follows the Simple->Atomic switch. Same
+			// shape as the ai-site-builder editor hand-off. `manual` falls through to the
+			// ordinary post-checkout destinations below.
+			if ( wowFunnelSlug && wowFunnelDest === 'editor' ) {
 				const siteSlug = providedDependencies.siteSlug as string;
 				const siteId = providedDependencies.siteId as number;
-
-				// dest=editor: straight into the Site Editor on the built Atomic site. The build
-				// ran during domain selection and checkout, so the transfer is normally complete;
-				// the URL goes through the site's own domain, which follows the Simple->Atomic
-				// switch. Same shape as the ai-site-builder editor hand-off.
-				if ( wowFunnelDest === 'editor' ) {
-					const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
-					const siteUrl = site?.URL ?? `https://${ siteSlug }`;
-					logWowFunnelEvent( 'post_checkout_editor', {
-						funnel: wowFunnelSlug,
-						blog_id: siteId,
-					} );
-					return [ `${ siteUrl }/wp-admin/site-editor.php?canvas=edit&p=%2F`, null, null ];
-				}
+				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
+				const siteUrl = site?.URL ?? `https://${ siteSlug }`;
+				logWowFunnelEvent( 'post_checkout_editor', { funnel: wowFunnelSlug, blog_id: siteId } );
+				return [ `${ siteUrl }/wp-admin/site-editor.php?canvas=edit&p=%2F`, null, null ];
 			}
 
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
@@ -501,7 +496,7 @@ const onboarding: FlowV2< typeof initialize > = {
 									// straight from checkout to their destination — no
 									// post-checkout-onboarding hop, no chooser.
 									redirect_to:
-										blueprintArchiveSlug || ( wowFunnelSlug && wowFunnelDest !== 'manual' )
+										blueprintArchiveSlug || ( wowFunnelSlug && wowFunnelDest === 'editor' )
 											? destination
 											: redirectTo,
 									signup: 1,
@@ -515,7 +510,7 @@ const onboarding: FlowV2< typeof initialize > = {
 									steps_total: checkoutStepperPosition.total,
 								} )
 							);
-						} else if ( blueprintArchiveSlug || ( wowFunnelSlug && wowFunnelDest !== 'manual' ) ) {
+						} else if ( blueprintArchiveSlug || ( wowFunnelSlug && wowFunnelDest === 'editor' ) ) {
 							// build_dest=wow and the WoW funnel never show the
 							// setup-your-site-ai chooser; go straight to their destination.
 							window.location.replace( destination );
