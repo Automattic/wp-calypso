@@ -19,12 +19,6 @@ $button-padding: 8px 32px;
 // Adjust purchase page styling for WPCOM.
 .stats-purchase-page--is-wpcom {
 	.stats-purchase-wizard {
-		.components-button {
-			&.is-link {
-				color: var(--color-sidebar-menu-selected-background);
-			}
-		}
-
 		li.stats-purchase-wizard__benefits-item--included,
 		.stats-purchase-wizard__benefits--included li {
 			background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgaWQ9IkFjdGlvbnMgLyBkb25lXzI0cHgiPgo8bWFzayBpZD0ibWFzazBfMzgwMl81NDI1IiBzdHlsZT0ibWFzay10eXBlOmx1bWluYW5jZSIgbWFza1VuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeD0iMyIgeT0iNSIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE0Ij4KPHBhdGggaWQ9Imljb24vYWN0aW9uL2RvbmVfMjRweCIgZD0iTTguNzU2ODIgMTUuOUw0LjU3NzQzIDExLjdMMy4xODQzIDEzLjFMOC43NTY4MiAxOC43TDIwLjY5OCA2LjY5OTk5TDE5LjMwNDggNS4yOTk5OUw4Ljc1NjgyIDE1LjlaIiBmaWxsPSJ3aGl0ZSIvPgo8L21hc2s+CjxnIG1hc2s9InVybCgjbWFzazBfMzgwMl81NDI1KSI+CjxyZWN0IGlkPSJSZWN0YW5nbGUiIHdpZHRoPSIyMy44ODIzIiBoZWlnaHQ9IjI0IiBmaWxsPSIjMDY3NUM0Ii8+CjwvZz4KPC9nPgo8L3N2Zz4K);
@@ -411,7 +405,6 @@ $button-padding: 8px 32px;
 		}
 
 		&.is-link {
-			color: var(--jp-green-50);
 			font-size: inherit;
 			display: inline;
 		}
