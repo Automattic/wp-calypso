@@ -3,10 +3,10 @@ import {
 	DomainMappingSetupInfo,
 	DomainMappingStatus,
 } from '@automattic/api-core';
-import { Badge } from '@wordpress/ui';
 import { __experimentalText as Text } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useMemo } from 'react';
 import { DataViewsCard } from '../../../components/dataviews';
 import { useDnsRecordNames } from '../hooks/use-dns-record-names';

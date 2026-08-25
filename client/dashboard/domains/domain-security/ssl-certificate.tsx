@@ -1,5 +1,4 @@
 import { provisionSslCertificateMutation } from '@automattic/api-queries';
-import { Badge } from '@wordpress/ui';
 import { CONTACT } from '@automattic/urls';
 import { useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
@@ -11,6 +10,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { ReactElement } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { domainSecurityRoute } from '../../app/router/domains';

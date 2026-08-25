@@ -1,8 +1,8 @@
 import { DomainSubtype, DomainSummary } from '@automattic/api-core';
 import { sslDetailsQuery } from '@automattic/api-queries';
-import { Badge } from '@wordpress/ui';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 
 export const DomainSslField = ( { domain }: { domain: DomainSummary } ) => {
 	const { data: sslDetails } = useQuery( {

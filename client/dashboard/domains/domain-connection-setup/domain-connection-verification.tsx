@@ -1,5 +1,4 @@
 import { Domain, DomainConnectionSetupMode } from '@automattic/api-core';
-import { Badge } from '@wordpress/ui';
 import {
 	ExternalLink,
 	Icon,
@@ -11,6 +10,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { layout, swatch, atSymbol, published } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import { useAppContext } from '../../app/context';
 import { siteDomainsRoute, siteOverviewRoute } from '../../app/router/sites';
 import { Card, CardBody } from '../../components/card';

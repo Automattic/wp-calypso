@@ -1,10 +1,10 @@
 import { Domain } from '@automattic/api-core';
 import { domainInboundTransferStatusQuery } from '@automattic/api-queries';
-import { Badge } from '@wordpress/ui';
 import { useQuery } from '@tanstack/react-query';
 import { Icon, __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { drafts, layout } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import { siteOverviewRoute } from '../../../app/router/sites';
 import Notice from '../../../components/notice';
 import RouterLinkSummaryButton from '../../../components/router-link-summary-button';
