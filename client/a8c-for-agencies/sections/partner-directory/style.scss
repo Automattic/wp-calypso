@@ -1,6 +1,5 @@
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 
-@import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
 
 .partner-directory__dashboard {
@@ -43,12 +42,3 @@
 	}
 }
 
-.partner-directory__body {
-	.searchable-dropdown input.components-combobox-control__input[type="text"] {
-		@include body-medium;
-	}
-
-	.searchable-dropdown .components-form-token-field__suggestions-list li {
-		@include body-medium;
-	}
-}
