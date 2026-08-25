@@ -7,7 +7,7 @@ import {
 import { remoteLoginUser } from 'calypso/state/login/actions/remote-login-user';
 import { updateNonce } from 'calypso/state/login/actions/update-nonce';
 import {
-	getBlackboxSessionId,
+	getConsumedBlackboxSessionId,
 	getTwoFactorAuthNonce,
 	getTwoFactorUserId,
 } from 'calypso/state/login/selectors';
@@ -25,7 +25,7 @@ export const loginUserWithTwoFactorVerificationCode =
 	( twoStepCode, twoFactorAuthType ) => ( dispatch, getState ) => {
 		dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
 
-		const blackboxSessionId = getBlackboxSessionId( getState() );
+		const blackboxSessionId = getConsumedBlackboxSessionId( getState() );
 
 		return postLoginRequest( 'two-step-authentication-endpoint', {
 			user_id: getTwoFactorUserId( getState() ),

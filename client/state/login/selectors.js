@@ -19,16 +19,18 @@ export const getTwoFactorAuthNonce = ( state, nonceType ) =>
 	state.login.twoFactorAuth?.[ `two_step_nonce_${ nonceType }` ] ?? null;
 
 /**
- * Retrieve the Blackbox session id captured on the password step of this login.
- * Returns null if the password step did not produce one.
+ * Retrieve the Blackbox session id the password step already spent on /verify.
+ * Returns null if that step did not produce one.
  *
- * Blackbox correlates the two-step outcome with the session that scored the
- * password request, so consumers must read this rather than collect a new
- * session id at the two-step step.
+ * This id is spent: /verify has scored it, and it is carried forward only so a
+ * later step in the same login can be correlated with it. It is not a source of
+ * a live session, and nothing may verify with it. To obtain a live session, use
+ * getBlackboxSessionId() from calypso/blocks/login/utils/get-blackbox-session-id.
  * @param  {Object}   state  Global state tree
- * @returns {?string}         The Blackbox session id.
+ * @returns {?string}         The spent Blackbox session id.
  */
-export const getBlackboxSessionId = ( state ) => state.login.blackboxSessionId ?? null;
+export const getConsumedBlackboxSessionId = ( state ) =>
+	state.login.consumedBlackboxSessionId ?? null;
 
 /**
  * Retrieve the type of notification sent for the two factor authentication process.

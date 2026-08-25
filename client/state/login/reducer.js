@@ -321,7 +321,7 @@ export const twoFactorAuth = ( state = null, action ) => {
 	return state;
 };
 
-export const blackboxSessionId = ( state = null, action ) => {
+export const consumedBlackboxSessionId = ( state = null, action ) => {
 	switch ( action.type ) {
 		case LOGIN_REQUEST_SUCCESS:
 			return action.blackboxSessionId ?? null;
@@ -454,7 +454,7 @@ export const lastCheckedUsernameOrEmail = ( state = null, action ) => {
 
 const combinedReducer = combineReducers( {
 	authAccountType,
-	blackboxSessionId,
+	consumedBlackboxSessionId,
 	isFormDisabled,
 	isRequesting,
 	lastCheckedUsernameOrEmail,

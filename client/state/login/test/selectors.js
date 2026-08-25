@@ -1,7 +1,7 @@
 import deepFreeze from 'deep-freeze';
 import reducer from '../reducer';
 import {
-	getBlackboxSessionId,
+	getConsumedBlackboxSessionId,
 	getRequestError,
 	getTwoFactorAuthNonce,
 	getTwoFactorAuthRequestError,
@@ -25,19 +25,19 @@ const EMPTY_STATE = {
 };
 
 describe( 'selectors', () => {
-	describe( 'getBlackboxSessionId()', () => {
+	describe( 'getConsumedBlackboxSessionId()', () => {
 		test( 'should return null if the password step captured no session', () => {
-			expect( getBlackboxSessionId( EMPTY_STATE ) ).toBeNull();
+			expect( getConsumedBlackboxSessionId( EMPTY_STATE ) ).toBeNull();
 		} );
 
 		test( 'should return the session id captured on the password step', () => {
 			const state = deepFreeze( {
 				login: {
-					blackboxSessionId: 'ABCDEFGHIJKLMNOPQRSTuv',
+					consumedBlackboxSessionId: 'ABCDEFGHIJKLMNOPQRSTuv',
 				},
 			} );
 
-			expect( getBlackboxSessionId( state ) ).toBe( 'ABCDEFGHIJKLMNOPQRSTuv' );
+			expect( getConsumedBlackboxSessionId( state ) ).toBe( 'ABCDEFGHIJKLMNOPQRSTuv' );
 		} );
 	} );
 

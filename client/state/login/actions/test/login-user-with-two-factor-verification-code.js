@@ -28,7 +28,7 @@ const loginState = ( blackboxSessionId ) => ( {
 			user_id: 123456,
 			two_step_nonce_authenticator: 'a-two-step-nonce',
 		},
-		blackboxSessionId,
+		consumedBlackboxSessionId: blackboxSessionId,
 	},
 } );
 

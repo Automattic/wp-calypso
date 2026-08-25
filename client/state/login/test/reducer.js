@@ -20,7 +20,7 @@ import {
 	CURRENT_USER_RECEIVE,
 } from 'calypso/state/action-types';
 import reducer, {
-	blackboxSessionId,
+	consumedBlackboxSessionId,
 	isRequesting,
 	isFormDisabled,
 	requestError,
@@ -37,7 +37,7 @@ describe( 'reducer', () => {
 		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
 			expect.arrayContaining( [
 				'authAccountType',
-				'blackboxSessionId',
+				'consumedBlackboxSessionId',
 				'isFormDisabled',
 				'isRequesting',
 				'lastCheckedUsernameOrEmail',
@@ -206,13 +206,13 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( 'blackboxSessionId', () => {
+	describe( 'consumedBlackboxSessionId', () => {
 		test( 'should default to null', () => {
-			expect( blackboxSessionId( undefined, {} ) ).toBeNull();
+			expect( consumedBlackboxSessionId( undefined, {} ) ).toBeNull();
 		} );
 
 		test( 'should store the id carried by a successful password step', () => {
-			const state = blackboxSessionId( null, {
+			const state = consumedBlackboxSessionId( null, {
 				type: LOGIN_REQUEST_SUCCESS,
 				data: { two_step_notification_sent: 'sms' },
 				blackboxSessionId: 'ABCDEFGHIJKLMNOPQRSTuv',
@@ -222,7 +222,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should reset to null when a password step carries no id', () => {
-			const state = blackboxSessionId( 'ABCDEFGHIJKLMNOPQRSTuv', {
+			const state = consumedBlackboxSessionId( 'ABCDEFGHIJKLMNOPQRSTuv', {
 				type: LOGIN_REQUEST_SUCCESS,
 				data: { two_step_notification_sent: 'sms' },
 			} );
@@ -231,29 +231,35 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should clear on a new login request', () => {
-			expect( blackboxSessionId( 'ABCDEFGHIJKLMNOPQRSTuv', { type: LOGIN_REQUEST } ) ).toBeNull();
+			expect(
+				consumedBlackboxSessionId( 'ABCDEFGHIJKLMNOPQRSTuv', { type: LOGIN_REQUEST } )
+			).toBeNull();
 		} );
 
 		test( 'should clear on a failed login request', () => {
 			expect(
-				blackboxSessionId( 'ABCDEFGHIJKLMNOPQRSTuv', { type: LOGIN_REQUEST_FAILURE } )
+				consumedBlackboxSessionId( 'ABCDEFGHIJKLMNOPQRSTuv', { type: LOGIN_REQUEST_FAILURE } )
 			).toBeNull();
 		} );
 
 		test( 'should clear on a social login, which carries no Blackbox session', () => {
 			expect(
-				blackboxSessionId( 'ABCDEFGHIJKLMNOPQRSTuv', { type: SOCIAL_LOGIN_REQUEST } )
+				consumedBlackboxSessionId( 'ABCDEFGHIJKLMNOPQRSTuv', { type: SOCIAL_LOGIN_REQUEST } )
 			).toBeNull();
 			expect(
-				blackboxSessionId( 'ABCDEFGHIJKLMNOPQRSTuv', { type: SOCIAL_LOGIN_REQUEST_FAILURE } )
+				consumedBlackboxSessionId( 'ABCDEFGHIJKLMNOPQRSTuv', {
+					type: SOCIAL_LOGIN_REQUEST_FAILURE,
+				} )
 			).toBeNull();
 			expect(
-				blackboxSessionId( 'ABCDEFGHIJKLMNOPQRSTuv', { type: SOCIAL_LOGIN_REQUEST_SUCCESS } )
+				consumedBlackboxSessionId( 'ABCDEFGHIJKLMNOPQRSTuv', {
+					type: SOCIAL_LOGIN_REQUEST_SUCCESS,
+				} )
 			).toBeNull();
 		} );
 
 		test( 'should clear once the two-step step completes', () => {
-			const state = blackboxSessionId( 'ABCDEFGHIJKLMNOPQRSTuv', {
+			const state = consumedBlackboxSessionId( 'ABCDEFGHIJKLMNOPQRSTuv', {
 				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
 			} );
 
