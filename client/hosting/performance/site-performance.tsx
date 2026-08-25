@@ -10,6 +10,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSiteSettings } from 'calypso/blocks/plugins-scheduled-updates/hooks/use-site-settings';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
+import PreLaunchSiteModal from 'calypso/components/pre-launch-site-modal';
 import {
 	DeviceTabProvider,
 	useDeviceTab,
@@ -158,6 +159,15 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 	} );
 
 	const [ isExperimentLoading, experimentVariant ] = useSiteLaunchGatingVariant();
+
+	// A free, already-public, or A4A dev site never opens the pre-launch modal, so
+	// skip mounting the bridge for those — the CTA redirect stays instant with no
+	// site/domains fetch.
+	const isFreePlan = site?.plan?.is_free ?? false;
+	const canOfferPreLaunch = ! isSitePublic && ! site?.is_a4a_dev_site && ! isFreePlan;
+	const [ isLaunchModalOpen, setIsLaunchModalOpen ] = useState( false );
+	const [ launchUrl, setLaunchUrl ] = useState( '' );
+
 	const retestPage = () => {
 		recordTracksEvent( 'calypso_performance_profiler_test_again_click' );
 		performance.mark( 'test-started' );
@@ -188,19 +198,27 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 			path,
 		} );
 
-		// Site launch gating: 'semi_gated_site_launch' is the shipped default.
-		// The other branches are scaffolding for future experiments; see
-		// useSiteLaunchGatingVariant().
+		// Site launch gating: 'semi_gated_site_launch' is the shipped default — it
+		// routes to the `/start/launch-site` flow, but opens the shared pre-launch
+		// bridge first for paid-plan + custom-domain sites and otherwise hands
+		// straight off to that flow. The other branches are scaffolding for future
+		// experiments; see useSiteLaunchGatingVariant().
 		switch ( experimentVariant ) {
 			case 'semi_gated_site_launch':
 			case null:
 			default: {
-				window.location.assign(
-					addQueryArgs( '/start/launch-site', {
-						siteSlug: site?.slug,
-						back_to: window.location.pathname,
-					} )
-				);
+				const url = addQueryArgs( '/start/launch-site', {
+					siteSlug: site?.slug,
+					back_to: window.location.pathname,
+				} );
+
+				if ( ! canOfferPreLaunch ) {
+					window.location.assign( url );
+					return;
+				}
+
+				setLaunchUrl( url );
+				setIsLaunchModalOpen( true );
 				return;
 			}
 		}
@@ -351,7 +369,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 				<>
 					{ ! isSitePublic ? (
 						<ReportUnavailable
-							isLaunching={ siteIsLaunching || isExperimentLoading }
+							isLaunching={ siteIsLaunching || isExperimentLoading || isLaunchModalOpen }
 							onLaunchSiteClick={ onLaunchSiteClick }
 							ctaText={
 								site?.is_a4a_dev_site
@@ -375,6 +393,14 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 						</>
 					) }
 				</>
+			) }
+			{ canOfferPreLaunch && (
+				<PreLaunchSiteModal
+					siteId={ siteId ?? 0 }
+					isOpen={ isLaunchModalOpen }
+					onClose={ () => setIsLaunchModalOpen( false ) }
+					launchUrl={ launchUrl }
+				/>
 			) }
 		</div>
 	);
