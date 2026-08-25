@@ -840,6 +840,7 @@
 	animation: site-generation-sidebar-enter 580ms cubic-bezier( 0.25, 0.8, 0.25, 1 ) 70ms backwards;
 
 	@include break-medium {
+		margin-block-start: 16px;
 		padding-inline-start: 16px;
 	}
 }
