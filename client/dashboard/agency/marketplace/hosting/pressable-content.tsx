@@ -1,5 +1,4 @@
 import {
-	RadioControl,
 	SelectControl,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
@@ -18,6 +17,7 @@ import {
 	formatUSD,
 	formatCompactNumber,
 } from './mock-data';
+import OptionCards from './option-cards';
 import type { PressablePlan } from './mock-data';
 
 export const PRESSABLE_CUSTOM_SLUG = 'pressable-custom';
@@ -98,12 +98,6 @@ function PlanSpecs( { category, plan }: { category: PlanCategory; plan?: Pressab
 	if ( category === 'premium' ) {
 		return (
 			<VStack spacing={ 3 }>
-				<Heading level={ 3 } size={ 13 }>
-					{ plan.name }
-				</Heading>
-				<Text variant="muted">
-					{ __( 'For mission critical sites that demand extra attention and resources.' ) }
-				</Text>
 				<CheckGrid
 					items={ [
 						__( '1 WordPress install' ),
@@ -131,9 +125,6 @@ function PlanSpecs( { category, plan }: { category: PlanCategory; plan?: Pressab
 
 	return (
 		<VStack spacing={ 3 }>
-			<Heading level={ 3 } size={ 13 }>
-				{ plan.name }
-			</Heading>
 			<Text variant="muted">
 				{ __(
 					'With Signature plans, your traffic & storage limits are shared amongst your total sites.'
@@ -223,12 +214,17 @@ export default function PressableContent( {
 			<CardBody>
 				<VStack spacing={ 5 }>
 					<VStack spacing={ 4 }>
-						<RadioControl
-							label={ __( 'Choose a plan type' ) }
-							selected={ category }
-							options={ PLAN_TYPE_OPTIONS }
-							onChange={ ( value ) => handleCategoryChange( value as PlanCategory ) }
-						/>
+						<VStack spacing={ 3 }>
+							<Heading level={ 3 } size={ 13 }>
+								{ __( 'Choose a plan type' ) }
+							</Heading>
+							<OptionCards
+								label={ __( 'Plan type' ) }
+								options={ PLAN_TYPE_OPTIONS }
+								selected={ category }
+								onSelect={ ( value ) => handleCategoryChange( value as PlanCategory ) }
+							/>
+						</VStack>
 						{ category !== 'custom' && (
 							<SelectControl
 								__nextHasNoMarginBottom
