@@ -96,14 +96,17 @@ describe( 'ClassicColorSchemeProvider', () => {
 		expect( document.documentElement.dataset.theme ).toBe( 'dark' );
 	} );
 
-	test( 'applies saved system scheme', () => {
+	test( 'resolves the system scheme to a concrete light/dark data-theme', () => {
+		// The WPDS provider resolves `system` to the OS preference in JS, so the
+		// transitional `data-theme` bridge attribute only ever carries the
+		// resolved value. jsdom has no `matchMedia`, so this resolves to `light`.
 		renderWithStore(
 			buildState( { scheme: 'system' } ),
 			<ClassicColorSchemeProvider>
 				<span>child</span>
 			</ClassicColorSchemeProvider>
 		);
-		expect( document.documentElement.dataset.theme ).toBe( 'system' );
+		expect( document.documentElement.dataset.theme ).toBe( 'light' );
 	} );
 
 	test( 'removes data-theme when unmounted if there was no previous value', () => {

@@ -15,7 +15,7 @@
 
 .backup-details__file-browser {
 	.file-browser-header {
-		border-bottom: 1px solid $gray-100;
+		border-bottom: 1px solid var( --dashboard-surface__border-color, #{$gray-100} );
 		padding-bottom: 8px;
 		margin: 8px 0;
 	}

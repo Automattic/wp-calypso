@@ -17,7 +17,9 @@ function PropagationStatusIndicator( { propagated }: { propagated: boolean } ) {
 				width: '8px',
 				height: '8px',
 				borderRadius: '50%',
-				backgroundColor: propagated ? 'var(--dashboard__foreground-color-success)' : '#dcdcde',
+				backgroundColor: propagated
+					? 'var(--dashboard__foreground-color-success)'
+					: 'var(--dashboard__text-muted-color)',
 			} }
 			aria-label={ propagated ? __( 'Propagated' ) : __( 'Not propagated' ) }
 			role="status"
