@@ -15,7 +15,7 @@ import type { Site } from '@automattic/api-core';
 import './omnibar-free-domain-chip.scss';
 
 export function OmnibarFreeDomainChip( { site }: { site: Site } ) {
-	const { showChip } = useFreeDomainUpsellExperiment( site );
+	const { showChip, isQaOverride } = useFreeDomainUpsellExperiment( site );
 	const upsellSource = getFreeDomainUpsellSource( site );
 	const siteId = site.ID;
 
@@ -30,8 +30,9 @@ export function OmnibarFreeDomainChip( { site }: { site: Site } ) {
 			upsell_id: FREE_DOMAIN_UPSELL_ID,
 			surface: 'msd',
 			upsell_source: upsellSource,
+			...( isQaOverride && { qa_override: true } ),
 		} );
-	}, [ showChip, upsellSource, siteId ] );
+	}, [ showChip, isQaOverride, upsellSource, siteId ] );
 
 	if ( ! showChip ) {
 		return null;
@@ -47,6 +48,7 @@ export function OmnibarFreeDomainChip( { site }: { site: Site } ) {
 						upsell_id: FREE_DOMAIN_UPSELL_ID,
 						surface: 'msd',
 						upsell_source: upsellSource,
+						...( isQaOverride && { qa_override: true } ),
 					} )
 				}
 			>

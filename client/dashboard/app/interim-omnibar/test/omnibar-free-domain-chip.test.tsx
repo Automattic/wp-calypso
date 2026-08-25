@@ -10,6 +10,15 @@ import { FREE_DOMAIN_UPSELL_EXPERIMENT } from '../../free-domain-upsell';
 import { OmnibarFreeDomainChip } from '../omnibar-free-domain-chip';
 import type { Site } from '@automattic/api-core';
 
+// Lets a test fake a production build; everything else delegates to the real config.
+let mockEnvId: string | undefined;
+jest.mock( '@automattic/calypso-config', () => {
+	const actual = jest.requireActual( '@automattic/calypso-config' );
+	const configFn = ( key: string ) =>
+		key === 'env_id' && mockEnvId !== undefined ? mockEnvId : actual( key );
+	return Object.assign( configFn, actual, { __esModule: true, default: configFn } );
+} );
+
 const FREE_SIMPLE_SITE = {
 	ID: 123,
 	slug: 'test-site.wordpress.com',
@@ -66,6 +75,7 @@ describe( '<OmnibarFreeDomainChip>', () => {
 		window.localStorage.clear();
 		window.history.replaceState( {}, '', '/' );
 		disable( 'dashboard/omnibar-free-domain-chip' );
+		mockEnvId = undefined;
 	} );
 
 	test( 'shows the chip for an eligible free site in the treatment group', async () => {
@@ -157,5 +167,17 @@ describe( '<OmnibarFreeDomainChip>', () => {
 		render( <OmnibarFreeDomainChip site={ FREE_SIMPLE_SITE } /> );
 
 		expect( await screen.findByRole( 'link', { name: 'Free domain' } ) ).toBeVisible();
+	} );
+
+	test( 'the omnibar_free_domain query param is inert on production builds', async () => {
+		mockEnvId = 'dashboard-production';
+		assignExperiment( 'control' );
+		window.history.replaceState( {}, '', '/?omnibar_free_domain=1' );
+
+		render( <OmnibarFreeDomainChip site={ FREE_SIMPLE_SITE } /> );
+
+		await waitFor( () => {
+			expect( screen.queryByRole( 'link', { name: 'Free domain' } ) ).not.toBeInTheDocument();
+		} );
 	} );
 } );

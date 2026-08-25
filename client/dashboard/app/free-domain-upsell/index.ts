@@ -84,6 +84,7 @@ export function getFreeDomainUpsellHref( site: Site ) {
 export function useFreeDomainUpsellExperiment( site?: Site ): {
 	isLoading: boolean;
 	showChip: boolean;
+	isQaOverride: boolean;
 } {
 	const isEligible = isFreeDomainUpsellEligible( site );
 	const [ isLoading, assignment ] = useExperiment( FREE_DOMAIN_UPSELL_EXPERIMENT, {
@@ -91,24 +92,29 @@ export function useFreeDomainUpsellExperiment( site?: Site ): {
 	} );
 
 	if ( ! isEligible ) {
-		return { isLoading: false, showChip: false };
+		return { isLoading: false, showChip: false, isQaOverride: false };
 	}
 
 	// QA override. Dead on production builds (except inside a support session)
-	// so regular users can't force treatment UI — and its treatment-only Tracks
-	// events — outside a real assignment.
+	// so regular users can't force treatment UI outside a real assignment.
+	// `isQaOverride` marks the resulting Tracks events so QA sessions can be
+	// filtered out of the experiment analysis.
 	const canUseQaOverride =
 		! String( config( 'env_id' ) ?? '' ).endsWith( 'production' ) || isSupportSession();
 	if ( canUseQaOverride && typeof window !== 'undefined' ) {
 		const searchParams = new URLSearchParams( window.location.search );
 		if ( searchParams.get( QUERY_PARAM ) === '1' ) {
-			return { isLoading: false, showChip: true };
+			return { isLoading: false, showChip: true, isQaOverride: true };
 		}
 	}
 
 	if ( isLoading ) {
-		return { isLoading: true, showChip: false };
+		return { isLoading: true, showChip: false, isQaOverride: false };
 	}
 
-	return { isLoading: false, showChip: assignment?.variationName === 'treatment' };
+	return {
+		isLoading: false,
+		showChip: assignment?.variationName === 'treatment',
+		isQaOverride: false,
+	};
 }

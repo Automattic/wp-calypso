@@ -23,7 +23,7 @@ export function useFreeDomainPlugin( {
 	surface: FreeDomainUpsellSurface;
 } ): OmnibarNode | undefined {
 	const { recordTracksEvent } = useAnalytics();
-	const { showChip } = useFreeDomainUpsellExperiment( site );
+	const { showChip, isQaOverride } = useFreeDomainUpsellExperiment( site );
 	const upsellSource = getFreeDomainUpsellSource( site );
 	const siteId = site?.ID;
 
@@ -38,8 +38,9 @@ export function useFreeDomainPlugin( {
 			upsell_id: FREE_DOMAIN_UPSELL_ID,
 			surface,
 			upsell_source: upsellSource,
+			...( isQaOverride && { qa_override: true } ),
 		} );
-	}, [ showChip, upsellSource, siteId, surface, recordTracksEvent ] );
+	}, [ showChip, isQaOverride, upsellSource, siteId, surface, recordTracksEvent ] );
 
 	if ( ! site || ! showChip ) {
 		return undefined;
@@ -55,6 +56,7 @@ export function useFreeDomainPlugin( {
 				upsell_id: FREE_DOMAIN_UPSELL_ID,
 				surface,
 				upsell_source: upsellSource,
+				...( isQaOverride && { qa_override: true } ),
 			} ),
 		render: () => (
 			<span className="omnibar__free-domain-chip">
