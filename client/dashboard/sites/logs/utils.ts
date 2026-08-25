@@ -3,6 +3,10 @@ import { __, sprintf } from '@wordpress/i18n';
 import { startOfDay, endOfDay, fromUnixTime, isValid as isValidDate } from 'date-fns';
 import { formatDateWithOffset, getUtcOffsetDisplay } from '../../utils/datetime';
 import type { PHPLog, ServerLog } from '@automattic/api-core';
+import type { Badge } from '@wordpress/ui';
+import type { ComponentProps } from 'react';
+
+type BadgeIntent = NonNullable< ComponentProps< typeof Badge >[ 'intent' ] >;
 
 type DateRange = { start: Date; end: Date };
 
@@ -55,7 +59,7 @@ export function buildTimeRangeInSeconds(
 	return { startSec, endSec };
 }
 
-export const toSeverityIntent = ( severity: PHPLog[ 'severity' ] ) => {
+export const toSeverityIntent = ( severity: PHPLog[ 'severity' ] ): BadgeIntent => {
 	switch ( severity ) {
 		case 'Fatal error':
 			return 'high';
@@ -69,7 +73,7 @@ export const toSeverityIntent = ( severity: PHPLog[ 'severity' ] ) => {
 	}
 };
 
-export const toRequestTypeIntent = ( requestType: ServerLog[ 'request_type' ] ) => {
+export const toRequestTypeIntent = ( requestType: ServerLog[ 'request_type' ] ): BadgeIntent => {
 	switch ( requestType ) {
 		case 'DELETE':
 			return 'high';
