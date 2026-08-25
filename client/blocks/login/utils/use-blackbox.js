@@ -28,17 +28,17 @@ export function useBlackbox( { containerRef, enabled } ) {
 	useEffect( () => {
 		const container = containerRef.current;
 
-		if ( ! isEnabled || ! container || typeof window.MutationObserver !== 'function' ) {
+		if ( ! isEnabled || ! container || typeof window.ResizeObserver !== 'function' ) {
 			return;
 		}
 
 		const updateHasChallengeContent = () => {
-			setHasChallengeContent( container.childElementCount > 0 );
+			setHasChallengeContent( container.offsetHeight > 0 );
 		};
-		const observer = new window.MutationObserver( updateHasChallengeContent );
+		const observer = new window.ResizeObserver( updateHasChallengeContent );
 
 		updateHasChallengeContent();
-		observer.observe( container, { childList: true } );
+		observer.observe( container );
 
 		return () => {
 			observer.disconnect();
@@ -109,7 +109,6 @@ export function useBlackbox( { containerRef, enabled } ) {
 							if ( hasStartedChallenge ) {
 								stopLoading();
 							}
-							setHasChallengeContent( false );
 							setIsChallengeActive( false );
 						}
 					},
@@ -118,7 +117,6 @@ export function useBlackbox( { containerRef, enabled } ) {
 							if ( hasStartedChallenge ) {
 								stopLoading();
 							}
-							setHasChallengeContent( false );
 							setIsChallengeActive( false );
 						}
 					},
