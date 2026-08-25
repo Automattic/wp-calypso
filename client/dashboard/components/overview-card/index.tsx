@@ -11,6 +11,7 @@ import {
 import { isRTL, __ } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
+import { useId } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { Card, CardBody } from '../../components/card';
 import { isOnboardingUrl, isRelativeUrl } from '../../utils/url';
@@ -29,6 +30,7 @@ export interface OverviewCardProps {
 		value: number;
 		max: number;
 		label: string;
+		ariaValueText?: string;
 		variant?: ComponentProps< typeof CircularProgressBar >[ 'variant' ];
 	};
 	intent?: 'activate' | 'upsell' | 'success' | 'warning' | 'error';
@@ -49,6 +51,9 @@ export interface OverviewCardProps {
 
 	upsellFeatureId?: string;
 
+	/** Set to false in apps outside the dashboard's TanStack Router, so relative links render as plain anchors. */
+	shouldUseRouterLink?: boolean;
+
 	bottom?: ReactNode;
 	onClick?: () => void;
 }
@@ -66,10 +71,12 @@ export default function OverviewCard( {
 	externalLink: externalLinkProp,
 	tracksId,
 	upsellFeatureId,
+	shouldUseRouterLink = true,
 	bottom,
 	onClick,
 }: OverviewCardProps ) {
 	const { recordTracksEvent } = useAnalytics();
+	const descriptionId = useId();
 
 	const renderHeading = () => {
 		if ( isLoading ) {
@@ -93,15 +100,19 @@ export default function OverviewCard( {
 	const isRelativeLink = link && isRelativeUrl( link ) && ! isOnboarding;
 
 	let relativeLink: string | undefined = undefined;
-	let onboardingLink: string | undefined = undefined;
+	let plainAnchorLink: string | undefined = undefined;
 	let externalLink: string | undefined = undefined;
 
 	if ( externalLinkProp ) {
 		externalLink = externalLinkProp;
 	} else if ( isOnboarding ) {
-		onboardingLink = link;
+		plainAnchorLink = link;
 	} else if ( isRelativeLink ) {
-		relativeLink = link;
+		if ( shouldUseRouterLink ) {
+			relativeLink = link;
+		} else {
+			plainAnchorLink = link;
+		}
 	} else {
 		externalLink = link;
 	}
@@ -127,7 +138,7 @@ export default function OverviewCard( {
 							{ title }
 						</Text>
 					</HStack>
-					{ ( relativeLink || onboardingLink ) && ! progress && (
+					{ ( relativeLink || plainAnchorLink ) && ! progress && (
 						<Icon
 							className="dashboard-overview-card__link-icon"
 							icon={ isRTL() ? chevronLeft : chevronRight }
@@ -156,6 +167,7 @@ export default function OverviewCard( {
 							{ renderHeading() }
 						</Heading>
 						<Text
+							id={ descriptionId }
 							intent={ intent === 'warning' || intent === 'error' ? intent : undefined }
 							variant={ intent === 'warning' || intent === 'error' ? undefined : 'muted' }
 							lineHeight="16px"
@@ -168,6 +180,8 @@ export default function OverviewCard( {
 			</VStack>
 			{ progress && (
 				<CircularProgressBar
+					ariaLabelledBy={ description ? descriptionId : undefined }
+					ariaValueText={ progress.ariaValueText }
 					currentStep={ progress.value }
 					numberOfSteps={ progress.max }
 					size={ 80 }
@@ -211,10 +225,10 @@ export default function OverviewCard( {
 			);
 		}
 
-		if ( onboardingLink ) {
+		if ( plainAnchorLink ) {
 			return (
 				<a
-					href={ onboardingLink }
+					href={ plainAnchorLink }
 					className="dashboard-overview-card__link"
 					onClick={ handleClick }
 				>

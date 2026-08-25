@@ -19,11 +19,22 @@ import Notice from '../notice';
 import { getContactFormFields } from './contact-form-fields';
 import { mapValidationMessagesToFieldErrors } from './contact-validation-utils';
 import { RegionAddressFieldsLayout } from './region-address-fieldsets';
+import {
+	getUkContactFormFields,
+	getUkContactFormLayout,
+	getUkExtra,
+	hasUkDomain,
+} from './uk-contact-fields';
 import type { UseMutateAsyncFunction } from '@tanstack/react-query';
 interface ContactFormProps {
 	initialData?: DomainContactDetails;
 	beforeFormCard?: React.ReactNode;
 	beforeForm?: React.ReactNode;
+	/**
+	 * The domains being edited. Drives the ccTLD sections, which the registrar
+	 * requires on the payload for TLDs such as `.uk`.
+	 */
+	domainNames: string[];
 	isSubmitting: boolean;
 	onSubmit: ( normalizedFormData: DomainContactDetails ) => void;
 	validate: UseMutateAsyncFunction< DomainContactValidationResponse, Error, DomainContactDetails >;
@@ -31,6 +42,7 @@ interface ContactFormProps {
 
 export default function ContactForm( {
 	initialData,
+	domainNames,
 	isSubmitting,
 	beforeFormCard,
 	beforeForm,
@@ -100,15 +112,27 @@ export default function ContactForm( {
 			} );
 	}, [ validate ] );
 
+	const needsUkFields = useMemo( () => hasUkDomain( domainNames ), [ domainNames ] );
+	const ukRegistrantType = getUkExtra( normalizedFormData ).registrantType;
+
 	const fields: Field< DomainContactDetails >[] = useMemo(
-		() =>
-			getContactFormFields(
+		() => [
+			...getContactFormFields(
 				countryList ?? [],
 				statesList ?? [],
 				selectedCountryCode,
 				asyncValidator
 			),
-		[ countryList, statesList, selectedCountryCode, asyncValidator ]
+			...( needsUkFields ? getUkContactFormFields( ukRegistrantType ) : [] ),
+		],
+		[
+			countryList,
+			statesList,
+			selectedCountryCode,
+			asyncValidator,
+			needsUkFields,
+			ukRegistrantType,
+		]
 	);
 
 	const form = {
@@ -131,6 +155,7 @@ export default function ContactForm( {
 				countryList,
 				countryCode: selectedCountryCode,
 			} ),
+			...( needsUkFields ? getUkContactFormLayout( ukRegistrantType ) : [] ),
 			'optOutTransferLock',
 		],
 	};

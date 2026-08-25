@@ -208,6 +208,98 @@ describe( 'Purchase Management Buttons', () => {
 		expect( screen.queryByText( /Cancel subscription/ ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'hides the Remove button when is_manageable_by_user is false and auto-renew is OFF', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const store = createMockReduxStoreForPurchase( {
+			...purchase,
+			is_auto_renew_enabled: false,
+			is_manageable_by_user: false,
+		} );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		// Wait for component to fully render
+		expect( await findPaymentMethodNavItem() ).toBeInTheDocument();
+		expect( screen.queryByText( /Remove plan/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /will be removed immediately/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'hides the Cancel button when is_manageable_by_user is false and auto-renew is ON', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const store = createMockReduxStoreForPurchase( {
+			...purchase,
+			is_auto_renew_enabled: true,
+			is_manageable_by_user: false,
+		} );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		// Wait for component to fully render
+		expect( await findPaymentMethodNavItem() ).toBeInTheDocument();
+		expect( screen.queryByText( /Cancel subscription/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders a Remove button for a domain connection bundled with a plan, even though auto-renew is ON', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const store = createMockReduxStoreForPurchase(
+			{
+				...purchase,
+				product_id: 5,
+				product_slug: 'domain_map',
+				product_name: 'Domain Connection',
+				product_type: 'domain_map',
+				meta: 'onecooltestsite.com',
+				expiry_status: 'included',
+				is_auto_renew_enabled: true,
+			},
+			{ 212628935: [ { name: 'onecooltestsite.com' } ] }
+		);
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		expect( await screen.findByText( /Remove Domain Connection/ ) ).toBeVisible();
+		expect( screen.queryByText( /Cancel subscription/ ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'renders a Remove button with product-name language for an Akismet purchase attached to an akismet siteless holding site when auto-renew is OFF', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/me/payment-methods?expired=include' )
@@ -288,6 +380,7 @@ describe( 'Purchase Management Buttons', () => {
 			...purchase,
 			domain: 'siteless.akismet.com',
 			product_slug: product_slug,
+			is_upgradable: true,
 		} );
 
 		render(
@@ -319,6 +412,9 @@ describe( 'Purchase Management Buttons', () => {
 				...purchase,
 				domain: 'siteless.akismet.com',
 				product_slug: product_slug,
+				// Upgradable per the server, so the absent CTA is down to the
+				// product having no upgrade path rather than the gate.
+				is_upgradable: true,
 			} );
 
 			render(
@@ -342,7 +438,7 @@ describe( 'Purchase Management Buttons', () => {
 	// (/plans/storage), each rendered both in the button row and in the
 	// options list at the bottom. Backup T1 exercises the shared render path
 	// without pulling in the Jetpack-plan plugin-keys query.
-	it( 'renders both a plan upgrade and a storage upgrade CTA for a storage-eligible product', async () => {
+	it( 'renders both a product upgrade and a storage upgrade CTA for a storage-eligible product', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/me/payment-methods?expired=include' )
 			.reply( 200 );
@@ -350,6 +446,7 @@ describe( 'Purchase Management Buttons', () => {
 		const store = createMockReduxStoreForPurchase( {
 			...purchase,
 			product_slug: PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+			is_upgradable: true,
 		} );
 
 		render(
@@ -364,9 +461,11 @@ describe( 'Purchase Management Buttons', () => {
 			</QueryClientProvider>
 		);
 
-		expect( await screen.findByText( 'Upgrade plan' ) ).toHaveAttribute(
-			'href',
-			'/plans/onecooltestsite.com'
+		// Header and nav item should agree on the noun for a non-plan product.
+		const upgradeCtas = await screen.findAllByText( 'Upgrade product' );
+		expect( upgradeCtas ).toHaveLength( 2 );
+		upgradeCtas.forEach( ( cta ) =>
+			expect( cta ).toHaveAttribute( 'href', '/plans/onecooltestsite.com' )
 		);
 
 		const storageCtas = screen.getAllByText( 'Upgrade storage' );
@@ -374,6 +473,84 @@ describe( 'Purchase Management Buttons', () => {
 		storageCtas.forEach( ( cta ) =>
 			expect( cta ).toHaveAttribute( 'href', '/plans/storage/onecooltestsite.com' )
 		);
+	} );
+
+	// A WordPress.com plan uses the shared plan-change action, so its nav item and
+	// header button must agree on the Stepper flow rather than the classic
+	// `/plans` page.
+	describe( 'WordPress.com plans', () => {
+		const dotcomPlan = {
+			...purchase,
+			is_plan: true,
+			is_upgradable: true,
+			is_jetpack_plan_or_product: false,
+			is_plan_type_downgradable: false,
+			// Renewing normally, well clear of expiration. Otherwise the plan-expiry
+			// notice takes over the header and drops the CTA under test. Computed so
+			// the fixture can't age into that window.
+			expiry_date: new Date( Date.now() + 365 * 24 * 60 * 60 * 1000 ).toISOString(),
+			expiry_status: 'auto-renewing',
+			might_still_auto_renew: true,
+		};
+
+		async function renderPurchase( overrides = {} ) {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.2/me/payment-methods?expired=include' )
+				.reply( 200 );
+
+			const store = createMockReduxStoreForPurchase( { ...dotcomPlan, ...overrides } );
+
+			render(
+				<QueryClientProvider client={ queryClient }>
+					<ReduxProvider store={ store }>
+						<ManagePurchase
+							purchaseId={ Number( purchase.ID ) }
+							isSiteLevel
+							siteSlug="onecooltestsite.com"
+						/>
+					</ReduxProvider>
+				</QueryClientProvider>
+			);
+		}
+
+		it( 'points the nav item and the header button at the same Stepper flow', async () => {
+			await renderPurchase();
+
+			const ctas = await screen.findAllByText( 'Upgrade plan' );
+			expect( ctas ).toHaveLength( 2 );
+			ctas.forEach( ( cta ) => {
+				expect( cta ).toHaveAttribute( 'href', expect.stringContaining( '/setup/plan-upgrade' ) );
+				expect( cta ).not.toHaveAttribute( 'href', expect.stringContaining( 'allow_downgrade' ) );
+			} );
+		} );
+
+		it( 'offers to change plan when the plan can be downgraded', async () => {
+			await renderPurchase( { is_plan_type_downgradable: true } );
+
+			expect( await screen.findByText( 'Change plan' ) ).toHaveAttribute(
+				'href',
+				expect.stringContaining( 'allow_downgrade=true' )
+			);
+			// The header keeps promoting upgrades only, so it must not carry the flag.
+			expect( screen.getByText( 'Upgrade plan' ) ).not.toHaveAttribute(
+				'href',
+				expect.stringContaining( 'allow_downgrade' )
+			);
+		} );
+
+		it( 'still offers a way to pick a different plan once expired', async () => {
+			await renderPurchase( {
+				expiry_date: '2023-11-27T00:00:00+00:00',
+				expiry_status: 'expired',
+				subscription_status: 'active',
+				might_still_auto_renew: false,
+			} );
+
+			const cta = await screen.findByText( 'Upgrade plan' );
+			expect( cta ).toHaveAttribute( 'href', expect.stringContaining( '/setup/plan-upgrade' ) );
+			// Hidden from the header once expired, so the nav item is the only one.
+			expect( screen.getAllByText( 'Upgrade plan' ) ).toHaveLength( 1 );
+		} );
 	} );
 
 	it( 'renders payment method nav item for A4A billingdragon purchase on a real site', async () => {
@@ -513,9 +690,12 @@ describe( 'Purchase Management Buttons', () => {
 			.get( '/rest/v1.2/me/payment-methods?expired=include' )
 			.reply( 200 );
 
+		// The server excludes A4A purchases from `is_upgradable`; there is no
+		// longer a client-side check for them.
 		const store = createMockReduxStoreForPurchase( {
 			...purchase,
 			meta: 'is-a4a',
+			is_upgradable: false,
 		} );
 
 		render(
@@ -533,5 +713,74 @@ describe( 'Purchase Management Buttons', () => {
 		// Wait for component to fully render
 		await findPaymentMethodNavItem();
 		expect( screen.queryByText( /Upgrade/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'does not render cancel or remove CTAs for a host-managed plan', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		// The server reports these as neither cancelable nor removable, but the CTA
+		// visibility here is driven by auto-renew state, so it needs the flag too.
+		const store = createMockReduxStoreForPurchase( {
+			...purchase,
+			is_auto_renew_enabled: true,
+			is_upgradable: false,
+			is_cancelable: false,
+			is_removable: false,
+			can_explicit_renew: false,
+			is_partner_managed: true,
+			is_host_managed: true,
+			partner_name: 'Bluehost',
+			partner_type: 'hosting_provider',
+		} );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		expect(
+			await screen.findByText( 'Host Managed Plan. Please contact Bluehost for details.' )
+		).toBeVisible();
+		expect( screen.queryByText( /Cancel subscription/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /Remove plan/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'still renders a cancel CTA for an agency-managed plan', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const store = createMockReduxStoreForPurchase( {
+			...purchase,
+			is_auto_renew_enabled: true,
+			is_upgradable: false,
+			is_partner_managed: true,
+			is_host_managed: false,
+			partner_name: 'Some Agency',
+			partner_type: 'a4a_agency',
+		} );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		expect( await screen.findByText( /Cancel subscription/ ) ).toBeVisible();
 	} );
 } );

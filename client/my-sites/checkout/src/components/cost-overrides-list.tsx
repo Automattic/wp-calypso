@@ -441,7 +441,7 @@ function getItemSubtotalExcludingCoupon( product: ResponseCartProduct ): number 
  * it's just the result of comparing the prices of the annual to the monthly
  * product.
  */
-function getLineItemPriceDisplay(
+export function getLineItemPriceDisplay(
 	product: ResponseCartProduct,
 	responseCart: ResponseCart,
 	monthlyPrices: Record< string, number >

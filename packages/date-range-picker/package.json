@@ -49,7 +49,7 @@
 		"date-fns": "^4.1.0"
 	},
 	"peerDependencies": {
-		"@wordpress/components": ">=35.0.0",
+		"@wordpress/components": ">=37.0.0",
 		"@wordpress/compose": ">=8.2.0",
 		"@wordpress/date": ">=5.48.0",
 		"@wordpress/i18n": ">=6.21.0",
@@ -88,7 +88,7 @@
 		"@testing-library/user-event": "^14.6.1",
 		"@types/react": "^18.3.18",
 		"@wordpress/base-styles": "^9.1.0",
-		"@wordpress/components": "^35.0.0",
+		"@wordpress/components": "^37.0.0",
 		"@wordpress/compose": "^8.2.0",
 		"@wordpress/date": "5.48.0",
 		"@wordpress/i18n": "^6.21.0",

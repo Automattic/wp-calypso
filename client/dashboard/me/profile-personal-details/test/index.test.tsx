@@ -8,7 +8,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import PersonalDetailsSection from '../index';
-import type { UserSettings } from '@automattic/api-core';
+import type { User, UserSettings } from '@automattic/api-core';
 
 const settings = {
 	first_name: 'John',
@@ -19,6 +19,14 @@ const settings = {
 	user_login_can_be_changed: true,
 	is_dev_account: false,
 } as unknown as UserSettings;
+
+const unverifiedUser = {
+	ID: 1,
+	username: 'johndoe',
+	email: 'john@example.com',
+	email_verified: false,
+	language: 'en',
+} as User;
 
 function mockUserSettings( data: UserSettings ) {
 	return nock( 'https://public-api.wordpress.com' )
@@ -128,10 +136,10 @@ describe( '<PersonalDetailsSection>', () => {
 		} );
 
 		test( 'disables username field for unverified email users', async () => {
-			mockUserSettings( { ...settings, email_verified: false } as unknown as UserSettings );
+			mockUserSettings( settings );
 			mockIsAutomattician( false );
 
-			render( <PersonalDetailsSection /> );
+			render( <PersonalDetailsSection />, { user: unverifiedUser } );
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'textbox', { name: 'Username' } ) ).toBeDisabled();
@@ -203,6 +211,18 @@ describe( '<PersonalDetailsSection>', () => {
 			expect( screen.getByText( 'Your email has not been verified yet.' ) ).toBeVisible();
 		} );
 
+		test( 'shows the unverified notice when the account email is not verified', async () => {
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection />, { user: unverifiedUser } );
+
+			await screen.findByRole( 'textbox', { name: 'Email address' } );
+
+			expect( screen.getByText( 'Your email has not been verified yet.' ) ).toBeVisible();
+			expect( screen.getByText( 'Verify your email' ) ).toBeVisible();
+		} );
+
 		test( 'cancels pending email change', async () => {
 			const user = userEvent.setup();
 			mockUserSettings( {
@@ -234,6 +254,42 @@ describe( '<PersonalDetailsSection>', () => {
 			} );
 		} );
 
+		test( 'holds back the email field cancellation while the banner is resending', async () => {
+			const user = userEvent.setup();
+			const pending = {
+				...settings,
+				user_email_change_pending: true,
+				new_user_email: 'pending@example.com',
+			} as unknown as UserSettings;
+			mockUserSettings( pending );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection /> );
+
+			// Held open so the resend is still running while the cancellation is checked.
+			let deliverResend: () => void;
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/settings', ( body ) => 'user_email' in body )
+				.reply(
+					() =>
+						new Promise( ( resolve ) => {
+							deliverResend = () => resolve( [ 200, pending ] );
+						} )
+				);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Resend email' } ) );
+
+			// The banner and the email field each offer a cancellation and neither can see the
+			// other's state, so a resend re-saving the pending address has to lock both.
+			const cancelLink = screen.getByRole( 'button', {
+				name: 'Cancel the pending email change.',
+			} );
+			expect( cancelLink ).toBeDisabled();
+			deliverResend!();
+
+			await waitFor( () => expect( cancelLink ).toBeEnabled() );
+		} );
+
 		test( 'warns when the account email uses a custom domain and no recovery method is set', async () => {
 			mockUserSettings( {
 				...settings,
@@ -247,7 +303,7 @@ describe( '<PersonalDetailsSection>', () => {
 			expect( await screen.findByText( /lose access to account recovery/i ) ).toBeVisible();
 		} );
 
-		test( 'links to the account recovery settings page', async () => {
+		test( 'shows a CTA linking to the account recovery settings page', async () => {
 			mockUserSettings( {
 				...settings,
 				user_email: 'jane@mycustomdomain.com',
@@ -258,7 +314,7 @@ describe( '<PersonalDetailsSection>', () => {
 			render( <PersonalDetailsSection /> );
 
 			expect(
-				await screen.findByRole( 'link', { name: /set up a recovery email or phone number/i } )
+				await screen.findByRole( 'link', { name: /set up account recovery/i } )
 			).toHaveAttribute( 'href', '/me/security/account-recovery' );
 		} );
 

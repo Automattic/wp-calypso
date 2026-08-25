@@ -9,12 +9,12 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import PrecancellationChatButton from 'calypso/components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
-import type { Purchases } from '@automattic/data-stores';
+import type { Purchase } from '@automattic/api-core';
 
 import './style.scss';
 
 interface CancelAutoRenewalFormProps {
-	purchase: Purchases.Purchase;
+	purchase: Purchase;
 	selectedSiteId: number;
 	isVisible?: boolean;
 	onClose: () => void;
@@ -102,7 +102,12 @@ class CancelAutoRenewalForm extends Component<
 		this.props.submitSurvey(
 			'calypso-cancel-auto-renewal',
 			selectedSiteId,
-			enrichedSurveyData( surveyData, purchase )
+			enrichedSurveyData( surveyData, {
+				subscribedDate: purchase.subscribed_date,
+				blogCreatedDate: purchase.blog_created_date,
+				id: purchase.ID,
+				productSlug: purchase.product_slug,
+			} )
 		);
 
 		this.props.onClose();
@@ -153,7 +158,7 @@ class CancelAutoRenewalForm extends Component<
 				</DialogContent>
 				<DialogFooter>
 					<PrecancellationChatButton
-						purchase={ purchase.rawPurchase }
+						purchase={ purchase }
 						onClick={ onClose }
 						className="cancel-auto-renewal-form__chat-button"
 					/>

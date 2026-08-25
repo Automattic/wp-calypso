@@ -1,11 +1,11 @@
 import { Button, WordPressLogo } from '@automattic/components';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { formatNumber } from '@automattic/number-formatters';
-import { ExternalLink } from '@wordpress/components';
-import { reusableBlock } from '@wordpress/icons';
+import { Badge } from '@automattic/ui';
+import { ExternalLink, Tooltip } from '@wordpress/components';
+import { chevronRight, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState, useEffect } from 'react';
-import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import {
 	A4A_REFERRALS_PAYMENT_SETTINGS,
 	A4A_REFERRALS_FAQ,
@@ -22,22 +22,25 @@ import WooLogoColor from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { getAccountStatus } from 'calypso/dashboard/agency/earn/payout-settings/get-account-status';
+import ReferralsList from 'calypso/dashboard/agency/earn/referrals/referrals-list';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import ConsolidatedViews from '../../consolidated-view';
 import tipaltiLogo from '../../lib/tipalti-logo';
-import ReferralList from '../../referrals-list';
 import type { Referral, ReferralCommissionPayoutResponse } from '../../types';
+import type { View } from '@wordpress/dataviews';
 
 interface Props {
 	tipaltiData?: any;
 	referralCommissionPayout?: ReferralCommissionPayoutResponse | undefined;
 	referrals?: Referral[];
 	isLoading: boolean;
-	dataViewsState: DataViewsState;
-	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
+	view: View;
+	onChangeView: ( view: View ) => void;
+	selectedReferral?: Referral;
+	onSelectReferral: ( referralId: number ) => void;
 }
 
 export default function LayoutBodyContent( {
@@ -45,8 +48,10 @@ export default function LayoutBodyContent( {
 	referralCommissionPayout,
 	referrals,
 	isLoading,
-	dataViewsState,
-	setDataViewsState,
+	view,
+	onChangeView,
+	selectedReferral,
+	onSelectReferral,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -60,7 +65,27 @@ export default function LayoutBodyContent( {
 		dispatch( recordTracksEvent( 'calypso_a4a_referrals_get_started_button_click' ) );
 	}, [ dispatch ] );
 
+	const handleSelectReferral = useCallback(
+		( referralId: number ) => {
+			dispatch( recordTracksEvent( 'calypso_a4a_referrals_list_view_details_click' ) );
+			onSelectReferral( referralId );
+		},
+		[ dispatch, onSelectReferral ]
+	);
+
 	const accountStatus = getAccountStatus( tipaltiData );
+
+	const paymentStatusBadge = ( () => {
+		if ( ! accountStatus ) {
+			return undefined;
+		}
+		const badge = <Badge intent={ accountStatus.statusType }>{ accountStatus.status }</Badge>;
+		return accountStatus.statusReason ? (
+			<Tooltip text={ accountStatus.statusReason }>{ badge }</Tooltip>
+		) : (
+			badge
+		);
+	} )();
 
 	const hasPayeeAccount = !! accountStatus?.status;
 	const bankAccountCTAText = hasPayeeAccount
@@ -103,18 +128,49 @@ export default function LayoutBodyContent( {
 	if ( referrals?.length ) {
 		return (
 			<>
-				{ ! dataViewsState.selectedItem && (
+				{ ! selectedReferral && (
 					<ConsolidatedViews
 						referrals={ referrals }
 						referralCommissionPayout={ referralCommissionPayout }
 						isLoading={ isLoading }
 					/>
 				) }
-				<ReferralList
-					referrals={ referrals }
-					dataViewsState={ dataViewsState }
-					setDataViewsState={ setDataViewsState }
-				/>
+				<div className="redesigned-a8c-table full-width">
+					{ /* Deliberately no `isLoading`: the placeholders below cover the initial load. */ }
+					<ReferralsList
+						referrals={ referrals }
+						view={ view }
+						onChangeView={ onChangeView }
+						selection={ selectedReferral ? [ String( selectedReferral.id ) ] : [] }
+						onChangeSelection={ ( ids ) => {
+							const id = Number( ids[ 0 ] );
+							if ( ! Number.isNaN( id ) ) {
+								handleSelectReferral( id );
+							}
+						} }
+						actions={
+							view.type === 'table'
+								? [
+										{
+											id: 'view-details',
+											label: translate( 'View details' ),
+											isPrimary: true,
+											icon: chevronRight,
+											callback: ( items ) => {
+												const item = items[ 0 ];
+												if ( item ) {
+													handleSelectReferral( item.id );
+												}
+											},
+										},
+								  ]
+								: []
+						}
+						renderClient={ ( item ) => (
+							<span className="referrals-list__client">{ item.client.email }</span>
+						) }
+					/>
+				</div>
 			</>
 		);
 	}
@@ -201,15 +257,7 @@ export default function LayoutBodyContent( {
 									primary: ! hasPayeeAccount,
 									compact: true,
 								} }
-								statusProps={
-									accountStatus
-										? {
-												children: accountStatus?.status,
-												type: accountStatus?.statusType,
-												tooltip: accountStatus?.statusReason,
-										  }
-										: undefined
-								}
+								status={ paymentStatusBadge }
 							/>
 						</StepSection>
 						<StepSection

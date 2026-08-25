@@ -169,10 +169,18 @@ export const handleScroll = ( event: React.UIEvent< HTMLElement > ): void => {
 	}
 };
 
-const isRedirectingToStepContainerV2Flow = ( redirectTo: string ) => {
+const getFlowFromRedirectURL = ( redirectTo: string ) => {
+	if ( ! redirectTo ) {
+		return '';
+	}
+
 	const { pathname, search } = new URL( redirectTo, 'http://example.com' );
 
-	return shouldUseStepContainerV2( getFlowFromURL( pathname, search ) );
+	return getFlowFromURL( pathname, search );
+};
+
+const isRedirectingToStepContainerV2Flow = ( redirectTo: string ) => {
+	return shouldUseStepContainerV2( getFlowFromRedirectURL( redirectTo ) );
 };
 
 const isMarketplaceThankYouRedirect = ( redirectTo: string ) => {
@@ -230,6 +238,36 @@ export const isInStepContainerV2FlowContext = ( pathname: string, query: string 
 export const useInitialIsInStepContainerV2FlowContext = () => {
 	const ref = useRef(
 		isInStepContainerV2FlowContext( window.location.pathname, window.location.search )
+	);
+
+	return ref.current;
+};
+
+/**
+ * Returns the stepper flow name associated with the current page, if any.
+ * On `/setup` this is the flow in the URL. On `/checkout` the flow (if any) is
+ * inferred from the `redirect_to`/`cancel_to` query params, since checkout
+ * itself isn't part of a stepper flow.
+ */
+export const getStepperFlowFromContext = ( pathname: string, query: string ): string => {
+	if ( pathname.startsWith( '/setup' ) ) {
+		return getFlowFromURL( pathname, query );
+	}
+
+	if ( pathname.startsWith( '/checkout' ) ) {
+		const params = new URLSearchParams( query );
+		const redirectTo = params.get( 'redirect_to' ) ?? '';
+		const cancelTo = params.get( 'cancel_to' ) ?? '';
+
+		return getFlowFromRedirectURL( redirectTo ) || getFlowFromRedirectURL( cancelTo );
+	}
+
+	return '';
+};
+
+export const useInitialStepperFlowFromContext = () => {
+	const ref = useRef(
+		getStepperFlowFromContext( window.location.pathname, window.location.search )
 	);
 
 	return ref.current;

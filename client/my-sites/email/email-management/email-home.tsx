@@ -1,16 +1,19 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import { useIsLoading as useAddEmailForwardMutationIsLoading } from 'calypso/data/emails/use-add-email-forward-mutation';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
+import { navigate } from 'calypso/lib/navigate';
 import { getConfiguredTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import EmailListActive from 'calypso/my-sites/email/email-management/home/email-list-active';
@@ -106,13 +109,14 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 
 	const addEmailForwardMutationActive = useAddEmailForwardMutationIsLoading();
 
-	const { data: allDomains = [], isLoading: isSiteDomainLoading } = useGetDomainsQuery(
-		selectedSite?.ID ?? null,
-		{
-			refetchOnMount: ! addEmailForwardMutationActive,
-			retry: false,
-		}
-	);
+	const {
+		data: allDomains = [],
+		isLoading: isSiteDomainLoading,
+		isFetching: isSiteDomainFetching,
+	} = useGetDomainsQuery( selectedSite?.ID ?? null, {
+		refetchOnMount: ! addEmailForwardMutationActive,
+		retry: false,
+	} );
 
 	const domains = allDomains.map( createSiteDomainObject );
 	const nonWpcomDomains = domains.filter( ( domain ) => ! domain.isWPCOMDomain );
@@ -122,6 +126,35 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 
 	const isSingleDomainThatHasEmail =
 		domainsWithEmail.length === 1 && domainsWithNoEmail.length === 0;
+
+	// The domains query is persisted to localStorage for up to a week, so the
+	// first render can run on stale data. Waiting for the refetch to settle
+	// avoids sending someone who already bought email off to a purchase page,
+	// which a cross-origin navigation would make unrecoverable.
+	const canRedirectToDashboard =
+		isEnabled( 'emails/titan-tiers' ) &&
+		! selectedDomainName &&
+		! isSiteDomainLoading &&
+		! isSiteDomainFetching;
+
+	let dashboardRedirectPath: string | undefined;
+	if ( canRedirectToDashboard ) {
+		if ( nonWpcomDomains.length < 1 ) {
+			// No custom domain to buy email for, so land on the emails index,
+			// which prompts for a domain first.
+			dashboardRedirectPath = '/emails';
+		} else if ( domainsWithEmail.length < 1 && domainsWithNoEmail.length === 1 ) {
+			dashboardRedirectPath = `/emails/choose-email-solution/${ encodeURIComponent(
+				domainsWithNoEmail[ 0 ].name
+			) }`;
+		}
+	}
+
+	useEffect( () => {
+		if ( dashboardRedirectPath ) {
+			navigate( dashboardLink( dashboardRedirectPath ) );
+		}
+	}, [ dashboardRedirectPath ] );
 
 	if ( isSiteDomainLoading || ! hasSitesLoaded || ! selectedSite || ! domains ) {
 		return (

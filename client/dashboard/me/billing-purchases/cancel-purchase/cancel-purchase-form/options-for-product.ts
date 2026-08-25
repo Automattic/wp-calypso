@@ -1,4 +1,3 @@
-import { isGSuiteOrGoogleWorkspaceProductSlug } from '../../../../utils/purchase';
 import {
 	CANCELLATION_REASONS,
 	DOMAIN_TRANSFER_CANCELLATION_REASONS,
@@ -9,7 +8,7 @@ import {
 import type { Purchase } from '@automattic/api-core';
 
 export const cancellationOptionsForPurchase = ( purchase: Purchase ) => {
-	if ( isGSuiteOrGoogleWorkspaceProductSlug( purchase?.product_slug ) ) {
+	if ( purchase.is_google_workspace_product ) {
 		return [
 			...GSUITE_CANCELLATION_REASONS.map( ( { value } ) => value ),
 			'downgradeToAnotherPlan',

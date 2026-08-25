@@ -5,6 +5,11 @@ export interface HostingDashboardOptIn {
 	updated_at: string; // ISO date string
 }
 
+export interface WordPressLabsOptIn {
+	value: 'unset' | 'opt-in' | 'opt-out';
+	updated_at: string; // ISO date string
+}
+
 export interface LandingPagePreference {
 	updatedAt: number; // Result of Date.now()
 }
@@ -35,7 +40,10 @@ export interface UserPreferences {
 	[ key: `hosting-dashboard-time-mismatch-warning-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
 	[ key: `hosting-dashboard-wp-beta-notice-dismissed-${ number }` ]: string | undefined; // ISO timestamp when the user dismissed the beta notice for a site
 	'hosting-dashboard-welcome-notice-dismissed'?: string; // Timestamp when the user dismissed the notice
+	'wordpress-labs-opt-in'?: WordPressLabsOptIn;
+	'wordpress-labs-excluded-sites'?: number[]; // Site IDs excluded from an otherwise-opted-in account
 	'account-recovery-interstitial-snoozed-until'?: number; // Unix timestamp (seconds) until which the account-recovery interstitial is snoozed; 0/unset means "never snoozed"
+	'account-recovery-interstitial-dismiss-count'?: number; // How many times the user has dismissed the account-recovery interstitial; capped so we stop nudging after a few dismissals
 	'reader-landing-page'?: ReaderLandingPage;
 	'sites-landing-page'?: SitesLandingPage;
 	[ key: `cancel-purchase-survey-completed-${ string | number }` ]: string | undefined;
@@ -45,4 +53,6 @@ export interface UserPreferences {
 	'reader-profile-posts-visibility'?: 'public' | 'hidden';
 	'reader-profile-sites-visibility'?: 'public' | 'hidden';
 	'reader-profile-hidden-sites'?: number[];
+	two_step_security_key_reregister_required?: boolean;
+	'a4a-dashboard-pd-not-approved-popover'?: boolean;
 }

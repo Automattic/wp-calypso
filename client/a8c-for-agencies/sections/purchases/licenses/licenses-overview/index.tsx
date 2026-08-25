@@ -7,6 +7,7 @@ import PressableUsageLimitNotice from 'calypso/a8c-for-agencies/components/press
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useFetchLicenseCounts from 'calypso/a8c-for-agencies/data/purchases/use-fetch-license-counts';
+import useClearCartOnCheckoutSuccess from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-clear-cart-on-checkout-success';
 import {
 	LicenseFilter,
 	LicenseSortDirection,
@@ -45,6 +46,8 @@ export default function LicensesOverview( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	useClearCartOnCheckoutSuccess();
+
 	const title = translate( 'Licenses' );
 
 	const context = {
@@ -62,6 +65,9 @@ export default function LicensesOverview( {
 	const { data, isFetched } = useFetchLicenseCounts();
 
 	const showEmptyStateContent = isFetched && data?.all === 0;
+
+	// Counts aren't search-scoped: a zero means the tab is empty, not that an active query missed.
+	const showSearch = !! search || data?.[ filter ] !== 0;
 
 	return (
 		<Layout className="licenses-overview" title={ title } wide withBorder>
@@ -91,7 +97,7 @@ export default function LicensesOverview( {
 						<EmptyState />
 					) : (
 						<>
-							<LicenseSearch />
+							{ showSearch && <LicenseSearch /> }
 							<LicenseList />
 						</>
 					) }

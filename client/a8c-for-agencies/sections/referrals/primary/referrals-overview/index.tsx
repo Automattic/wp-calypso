@@ -1,13 +1,10 @@
+import { referralCommissionPayoutQuery, referralsQuery } from '@automattic/api-queries';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState, useMemo } from 'react';
-import {
-	DATAVIEWS_TABLE,
-	initialDataViewsState,
-} from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
-import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
@@ -22,6 +19,7 @@ import {
 	MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
 	MARKETPLACE_TYPE_REFERRAL,
 } from 'calypso/a8c-for-agencies/sections/marketplace/hoc/with-marketplace-type';
+import { DEFAULT_VIEW } from 'calypso/dashboard/agency/earn/referrals/dataviews/views';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutColumn from 'calypso/layout/hosting-dashboard/column';
 import LayoutHeader, {
@@ -29,16 +27,18 @@ import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch, useSelector } from 'calypso/state';
-import { hasApprovedAgencyStatus } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import {
+	getActiveAgencyId,
+	hasApprovedAgencyStatus,
+} from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MissingPaymentSettingsNotice from '../../common/missing-payment-settings-notice';
-import useFetchReferrals from '../../hooks/use-fetch-referrals';
-import useGetReferralCommissionPayout from '../../hooks/use-get-referral-commission-payout';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
 import ReferralDetails from '../../referral-details';
 import { ReferralOrderFlowType } from '../../types';
 import LayoutBodyContent from './layout-body-content';
 import NewReferralOrderNotification from './new-referral-order-notification';
+import type { View } from '@wordpress/dataviews';
 
 import './style.scss';
 
@@ -47,17 +47,10 @@ export default function ReferralsOverview() {
 	const dispatch = useDispatch();
 
 	const isAgencyApproved = useSelector( hasApprovedAgencyStatus );
+	const agencyId = useSelector( getActiveAgencyId ) ?? 0;
 
-	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
-		...initialDataViewsState,
-		fields: [
-			'completed-orders',
-			'pending-orders',
-			'estimated-commissions',
-			'subscription-status',
-		],
-		titleField: 'client',
-	} );
+	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
+	const [ selectedReferralId, setSelectedReferralId ] = useState< number | null >( null );
 
 	const { value: newReferralOrderEmail, setValue: setNewReferralOrderEmail } = useUrlQueryParam(
 		NEW_REFERRAL_ORDER_EMAIL_QUERY_PARAM_KEY
@@ -73,29 +66,52 @@ export default function ReferralsOverview() {
 	const isDesktop = useDesktopBreakpoint();
 
 	const { data: tipaltiData, isFetching } = useGetTipaltiPayee();
+	// The page renders its loading state from isFetching, so a refetch on window
+	// focus would flash it. MSD renders from isLoading and keeps the default.
 	const { data: referralCommissionPayout, isFetching: isFetchingReferralCommissionPayout } =
-		useGetReferralCommissionPayout();
+		useQuery( { ...referralCommissionPayoutQuery( agencyId ), refetchOnWindowFocus: false } );
 
 	const wrapperRef = useRef< HTMLButtonElement | null >( null );
 
-	const { data: referrals, isFetching: isFetchingReferrals } = useFetchReferrals();
+	const { data: referrals, isFetching: isFetchingReferrals } = useQuery( {
+		...referralsQuery( agencyId ),
+		refetchOnWindowFocus: false,
+	} );
 
 	const hasReferrals = !! referrals?.length;
 
-	// To ensure the selected item is updated when the referrals list is updated
-	// as we optimistically update the referrals list
+	// Derived from the list rather than stored, so it picks up optimistic updates.
 	const selectedItem = useMemo(
 		() =>
-			dataViewsState.selectedItem &&
-			referrals?.find( ( referral ) => referral.id === dataViewsState.selectedItem?.id ),
-		[ dataViewsState.selectedItem, referrals ]
+			selectedReferralId != null
+				? referrals?.find( ( referral ) => referral.id === selectedReferralId )
+				: undefined,
+		[ selectedReferralId, referrals ]
 	);
-	const updatedDataViewsState = useMemo( () => {
-		return {
-			...dataViewsState,
-			selectedItem,
-		};
-	}, [ dataViewsState, selectedItem ] );
+
+	// Spread the base view so search, sort, and pagination survive the collapse.
+	const listView = useMemo< View >(
+		() => ( selectedItem ? { ...view, type: 'list', titleField: 'client', fields: [] } : view ),
+		[ selectedItem, view ]
+	);
+
+	// Merge the user's changes back into the base view without persisting the
+	// collapsed layout overrides that `listView` applies.
+	const handleChangeView = useCallback(
+		( nextView: View ) => {
+			setView( ( prevView ) =>
+				selectedItem
+					? {
+							...nextView,
+							type: prevView.type,
+							titleField: prevView.titleField,
+							fields: prevView.fields,
+					  }
+					: nextView
+			);
+		},
+		[ selectedItem ]
+	);
 
 	const title =
 		isDesktop && ! selectedItem
@@ -162,8 +178,10 @@ export default function ReferralsOverview() {
 						referralCommissionPayout={ referralCommissionPayout }
 						referrals={ referrals }
 						isLoading={ isLoading }
-						dataViewsState={ updatedDataViewsState }
-						setDataViewsState={ setDataViewsState }
+						view={ listView }
+						onChangeView={ handleChangeView }
+						selectedReferral={ selectedItem ?? undefined }
+						onSelectReferral={ setSelectedReferralId }
 					/>
 				</LayoutBody>
 			</LayoutColumn>
@@ -172,13 +190,7 @@ export default function ReferralsOverview() {
 					<ReferralDetails
 						referral={ selectedItem }
 						referralCommissionPayout={ referralCommissionPayout }
-						closeSitePreviewPane={ () =>
-							setDataViewsState( {
-								...dataViewsState,
-								type: DATAVIEWS_TABLE,
-								selectedItem: undefined,
-							} )
-						}
+						closeSitePreviewPane={ () => setSelectedReferralId( null ) }
 					/>
 				</LayoutColumn>
 			) }

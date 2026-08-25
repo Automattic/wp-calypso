@@ -1,16 +1,21 @@
-import { FormInputValidation, FormLabel } from '@automattic/components';
+import {
+	FormInputValidation,
+	FormLabel,
+	WordPressLogo,
+	WordPressWordmark,
+} from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
 import { Step } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { globe, help, Icon, lock, pencil } from '@wordpress/icons';
+import { help } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { EduBackdrop } from './edu-backdrop';
 import { EduProgramLogo } from './edu-program-logo';
-import { EduWatermark } from './edu-watermark';
 import { useValidateEducationStudentCode } from './hooks/use-validate-education-student-code';
 import type { Step as StepType } from '../../types';
 import type { HelpCenterSelect } from '@automattic/data-stores';
@@ -70,9 +75,9 @@ const EducationStudentValidation: StepType< {
 	};
 
 	const trimmedCode = code.trim();
-	const title = __( 'Welcome to the WordPress.com Education Program' );
+	const title = __( 'Your site starts here' );
 	const subText = __(
-		'You’ve been invited to build and publish real work on the open web. Set up your space in three steps.'
+		'Your instructor set you up with a free WordPress.com site. Get it up and running in a few minutes. Keep it long after the course ends.'
 	);
 	const errorMessages: Record< ValidationError, string > = {
 		invalid: __( 'Invitation code not found' ),
@@ -89,24 +94,19 @@ const EducationStudentValidation: StepType< {
 	const programSteps = [
 		{
 			number: '01',
-			icon: lock,
 			title: __( 'Enter your invite code' ),
-			description: __(
-				'Confirm your spot in your school’s program with the code from your instructor.'
-			),
+			description: __( 'Use the code your instructor sent over to get started.' ),
 		},
 		{
 			number: '02',
-			icon: globe,
-			title: __( 'Claim your free site' ),
-			description: __( 'Pick a domain and set up your site in a couple of clicks.' ),
+			title: __( 'Name your site' ),
+			description: __( 'Pick a domain name and set up your site in a couple of clicks.' ),
 		},
 		{
 			number: '03',
-			icon: pencil,
-			title: __( 'Publish your work' ),
+			title: __( 'Start publishing' ),
 			description: __(
-				'Build real projects and share them on the open web — yours to keep long after class.'
+				'Whatever you build here is yours to keep. Your site stays live after the course ends.'
 			),
 		},
 	];
@@ -144,8 +144,21 @@ const EducationStudentValidation: StepType< {
 			<DocumentHead title={ title } />
 			<Step.CenteredColumnLayout
 				columnWidth={ 8 }
+				headingColumnWidth={ 8 }
 				topBar={
 					<Step.TopBar
+						logo={
+							<div className="step-container-v2__top-bar-wordpress-logo-wrapper education-student-validation__top-bar-logo">
+								<WordPressWordmark
+									className="step-container-v2__top-bar-wordpress-logo step-container-v2__top-bar-wordpress-logo--wordmark"
+									color="currentColor"
+								/>
+								<WordPressLogo
+									size={ 21 }
+									className="step-container-v2__top-bar-wordpress-logo step-container-v2__top-bar-wordpress-logo--logo"
+								/>
+							</div>
+						}
 						rightElement={
 							<Step.LinkButton icon={ help } iconSize={ 20 } onClick={ toggleHelpCenter }>
 								{ __( 'Need help?' ) }
@@ -155,40 +168,20 @@ const EducationStudentValidation: StepType< {
 				}
 				heading={
 					<div className="education-student-validation__heading">
-						<EduWatermark className="education-student-validation__watermark" />
+						<EduBackdrop />
 						<EduProgramLogo className="education-student-validation__logo" />
 						<Step.Heading align="center" text={ title } subText={ subText } />
 					</div>
 				}
-				verticalAlign="center"
 				className="education-student-validation"
 			>
-				<ol className="education-student-validation__steps">
-					{ programSteps.map( ( programStep ) => (
-						<li key={ programStep.number } className="education-student-validation__step">
-							<div className="education-student-validation__step-marker" aria-hidden="true">
-								<span className="education-student-validation__step-number">
-									{ programStep.number }
-								</span>
-								<span className="education-student-validation__step-rule" />
-							</div>
-							<div className="education-student-validation__step-icon">
-								<Icon icon={ programStep.icon } size={ 22 } />
-							</div>
-							<h3 className="education-student-validation__step-title">{ programStep.title }</h3>
-							<p className="education-student-validation__step-description">
-								{ programStep.description }
-							</p>
-						</li>
-					) ) }
-				</ol>
 				<form className="education-student-validation__form" onSubmit={ onSubmit }>
 					<div className="education-student-validation__field">
 						<FormLabel htmlFor={ INPUT_ID }>{ __( 'Invitation code' ) }</FormLabel>
 						<FormTextInput
 							id={ INPUT_ID }
 							value={ code }
-							placeholder="XXXXXXXX"
+							placeholder="XXXXXX"
 							isError={ !! error }
 							autoComplete="off"
 							// eslint-disable-next-line jsx-a11y/no-autofocus
@@ -213,6 +206,19 @@ const EducationStudentValidation: StepType< {
 					</Step.PrimaryButton>
 					<p className="education-student-validation__enroll-note">{ enrollNote }</p>
 				</form>
+				<ol className="education-student-validation__steps">
+					{ programSteps.map( ( programStep ) => (
+						<li key={ programStep.number } className="education-student-validation__step">
+							<span className="education-student-validation__step-number" aria-hidden="true">
+								{ programStep.number }
+							</span>
+							<h3 className="education-student-validation__step-title">{ programStep.title }</h3>
+							<p className="education-student-validation__step-description">
+								{ programStep.description }
+							</p>
+						</li>
+					) ) }
+				</ol>
 			</Step.CenteredColumnLayout>
 		</>
 	);

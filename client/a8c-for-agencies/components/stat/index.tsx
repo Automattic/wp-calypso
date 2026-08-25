@@ -64,7 +64,7 @@ export function Stat( {
 					value={ isLoading ? 0 : progressValue }
 					total={ 100 }
 					title={ progressLabel }
-					color={ progressColor ? progressColorMap[ progressColor ] : undefined }
+					color={ progressColor ? progressColorMap[ progressColor ] : 'var(--color-primary)' }
 				/>
 			) }
 		</div>

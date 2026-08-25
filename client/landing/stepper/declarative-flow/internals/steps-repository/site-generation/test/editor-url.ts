@@ -25,6 +25,40 @@ describe( 'getSafeEditorUrl', () => {
 		);
 	} );
 
+	it( 'rejects insecure wordpress.com destinations', () => {
+		expect( getSafeEditorUrl( 'http://wordpress.com/wp-admin/' ) ).toBeNull();
+		expect(
+			getSafeEditorUrl( 'http://example.wordpress.com/wp-admin/site-editor.php' )
+		).toBeNull();
+	} );
+
+	it( 'rejects HTTP for the current host when Calypso is using HTTPS', () => {
+		expect( getSafeEditorUrl( 'http://example.com/wp-admin/site-editor.php' ) ).toBeNull();
+	} );
+
+	it( 'allows HTTP for the current host during local HTTP development', () => {
+		const originalLocation = window.location;
+		Object.defineProperty( window, 'location', {
+			value: {
+				hostname: 'localhost',
+				origin: 'http://localhost:3000',
+				protocol: 'http:',
+			},
+			configurable: true,
+		} );
+
+		try {
+			expect( getSafeEditorUrl( 'http://localhost:3000/wp-admin/site-editor.php' ) ).toBe(
+				'http://localhost:3000/wp-admin/site-editor.php'
+			);
+		} finally {
+			Object.defineProperty( window, 'location', {
+				value: originalLocation,
+				configurable: true,
+			} );
+		}
+	} );
+
 	it( 'allows wpcomstaging.com subdomains', () => {
 		expect( getSafeEditorUrl( 'https://example.wpcomstaging.com/wp-admin/' ) ).toBe(
 			'https://example.wpcomstaging.com/wp-admin/'

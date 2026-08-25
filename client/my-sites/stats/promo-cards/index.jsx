@@ -64,9 +64,15 @@ export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 			return;
 		} else if ( dotPagerIndex >= viewEvents.length ) {
 			// Prevent out of bounds index when switching sites.
-			recordTracksEvent( viewEvents[ viewEvents.length - 1 ], { site_id: selectedSiteId } );
+			recordTracksEvent( viewEvents[ viewEvents.length - 1 ], {
+				blog_id: selectedSiteId,
+				site_id: selectedSiteId,
+			} );
 		} else {
-			recordTracksEvent( viewEvents[ dotPagerIndex ], { site_id: selectedSiteId } );
+			recordTracksEvent( viewEvents[ dotPagerIndex ], {
+				blog_id: selectedSiteId,
+				site_id: selectedSiteId,
+			} );
 		}
 	}, [ viewEvents, dotPagerIndex, selectedSiteId ] );
 
@@ -103,7 +109,7 @@ export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 			'-',
 			'_'
 		);
-		recordTracksEvent( tracksEventName );
+		recordTracksEvent( tracksEventName, { blog_id: selectedSiteId } );
 	};
 
 	const pagerDidSelectPage = ( index ) => setDotPagerIndex( index );

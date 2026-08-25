@@ -124,23 +124,42 @@ function getSignupDestination( { siteSlug, redirect_to, localeSlug, flowName } )
 	return redirectTo;
 }
 
-function getLaunchDestination( dependencies ) {
+function getLaunchReturnTarget( dependencies ) {
 	// If a back_to parameter is provided, use it as the destination
 	if ( dependencies.back_to ) {
-		return addQueryArgs( { celebrateLaunch: 'true' }, dependencies.back_to );
+		return { url: dependencies.back_to, celebrateArgs: { celebrateLaunch: 'true' } };
 	}
 
 	const ref = dependencies.refParameter?.trim() ?? '';
 	const isWpAdminPath = ref === 'wp-admin' || ref.startsWith( 'wp-admin/' );
 
 	if ( isWpAdminPath ) {
-		return addQueryArgs(
-			{ 'celebrate-launch': 'true' },
-			`https://${ dependencies.siteSlug }/${ ref }`
-		);
+		return {
+			url: `https://${ dependencies.siteSlug }/${ ref }`,
+			celebrateArgs: { 'celebrate-launch': 'true' },
+		};
 	}
 
-	return addQueryArgs( { celebrateLaunch: 'true' }, `/home/${ dependencies.siteSlug }` );
+	return {
+		url: `/home/${ dependencies.siteSlug }`,
+		celebrateArgs: { celebrateLaunch: 'true' },
+	};
+}
+
+/**
+ * Where the user came from before entering the launch flow, without the arguments that celebrate a
+ * successful launch. Use this when the launch did not happen.
+ * @param {Object} dependencies the signup dependency store
+ * @returns {string} the URL to send the user back to
+ */
+export function getLaunchReturnUrl( dependencies ) {
+	return getLaunchReturnTarget( dependencies ).url;
+}
+
+function getLaunchDestination( dependencies ) {
+	const { url, celebrateArgs } = getLaunchReturnTarget( dependencies );
+
+	return addQueryArgs( celebrateArgs, url );
 }
 
 function getDomainSignupFlowDestination( { designType, siteSlug, flowName } ) {

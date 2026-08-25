@@ -71,6 +71,7 @@ export interface UserSettings {
 	user_email: string;
 	user_login: string;
 	user_URL: string;
+	last_admin_activity_timestamp: number | string;
 	language?: string;
 	locale_variant?: string;
 	i18n_empathy_mode?: boolean;
@@ -106,6 +107,8 @@ export interface UserSettings {
 
 	// Email verification fields
 	user_email_change_pending?: boolean;
+	// Write-only. Names where a change was asked from, so confirming it can return the user there.
+	user_email_change_requested_from?: string;
 	new_user_email?: string;
 }
 
@@ -116,4 +119,10 @@ export interface PasswordValidationResponse {
 			explanation: string;
 		}[];
 	};
+}
+
+export interface SendVerificationEmailResponse {
+	success: boolean;
+	// Seconds until another verification email may be requested.
+	retry_after?: number;
 }

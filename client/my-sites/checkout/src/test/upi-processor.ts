@@ -138,6 +138,49 @@ describe( 'upiProcessor', () => {
 		expect( transactionsEndpoint ).toHaveBeenCalledWith( basicExpectedStripeRequest );
 	} );
 
+	it( 'surfaces the specific Stripe failure message when the backend provides one', async () => {
+		// The processor renders the dialog into a div so that div must be
+		// present to avoid errors.
+		render( createElement( 'div', { className: 'upi-modal-target' } ) );
+
+		const orderId = 54321;
+		// The order-details endpoint now returns a customer-facing, already
+		// translated failure message for redirect/async Stripe methods, the same
+		// way synchronous card failures do. See SHILL-1811.
+		const mockOrderStatus = {
+			order_id: orderId,
+			user_id: 1234,
+			receipt_id: undefined,
+			processing_status: 'payment-failure',
+			error_code: 'insufficient_funds',
+			error_message: 'Your card has insufficient funds.',
+		};
+		mockOrderEndpoint( orderId, () => [ 200, mockOrderStatus ] );
+		mockTransactionsEndpoint( () => mockTransactionsRedirectResponse( orderId ) );
+		const expected = {
+			payload: 'Your card has insufficient funds.',
+			type: 'ERROR',
+		};
+
+		// We have to use `act()` because this changes the DOM async and
+		// otherwise we get a bunch of warnings.
+		await act( async () => {
+			await expect(
+				upiProcessor(
+					submitData,
+					{
+						...options,
+						contactDetails: {
+							countryCode,
+							postalCode,
+						},
+					},
+					translate
+				)
+			).resolves.toStrictEqual( expected );
+		} );
+	} );
+
 	it( 'returns an explicit error response if the transaction fails', async () => {
 		// The processor renders the dialog into a div so that div must be
 		// present to avoid errors.

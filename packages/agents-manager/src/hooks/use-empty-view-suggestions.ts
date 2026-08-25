@@ -32,12 +32,14 @@ const WRITING_SUGGESTION_LABELS: Record< string, () => string > = {
 	'optimize-title': () => __( 'Optimize title', __i18n_text_domain__ ),
 	'generate-excerpt': () => __( 'Generate excerpt', __i18n_text_domain__ ),
 	'seo-enhancer': () => __( 'Optimize SEO', __i18n_text_domain__ ),
-	'generate-feedback': () => __( 'Simple review', __i18n_text_domain__ ),
-	'proofread-content': () => __( 'Proofread', __i18n_text_domain__ ),
-	'ai-editorial-review': () => __( 'Editorial review', __i18n_text_domain__ ),
+	'get-feedback': () => __( 'Get feedback', __i18n_text_domain__ ),
 };
 
 export const WRITING_SUGGESTION_IDS = new Set( Object.keys( WRITING_SUGGESTION_LABELS ) );
+
+// Provider suggestions that stay out of the writing group sit beside the design
+// actions, which show no description.
+const HIDE_DESCRIPTION_IDS = new Set( [ 'generate-featured-image' ] );
 
 // Keep writing action labels consistent across flat and grouped editor views.
 export function getWritingSuggestionLabel( suggestion: Suggestion ): string {
@@ -55,6 +57,14 @@ export function formatWritingSuggestionLabels(
 	return suggestions.map( ( suggestion ) =>
 		WRITING_SUGGESTION_IDS.has( suggestion.id )
 			? { ...suggestion, label: getWritingSuggestionLabel( suggestion ) }
+			: suggestion
+	);
+}
+
+export function hideTopLevelDescriptions( suggestions: Suggestion[] ): Suggestion[] {
+	return suggestions.map( ( suggestion ) =>
+		HIDE_DESCRIPTION_IDS.has( suggestion.id )
+			? { ...suggestion, description: undefined }
 			: suggestion
 	);
 }

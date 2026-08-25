@@ -321,6 +321,22 @@ export const twoFactorAuth = ( state = null, action ) => {
 	return state;
 };
 
+export const consumedBlackboxSessionId = ( state = null, action ) => {
+	switch ( action.type ) {
+		case LOGIN_REQUEST_SUCCESS:
+			return action.blackboxSessionId ?? null;
+		case LOGIN_REQUEST:
+		case LOGIN_REQUEST_FAILURE:
+		case SOCIAL_LOGIN_REQUEST:
+		case SOCIAL_LOGIN_REQUEST_FAILURE:
+		case SOCIAL_LOGIN_REQUEST_SUCCESS:
+		case TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS:
+			return null;
+	}
+
+	return state;
+};
+
 export const twoFactorAuthRequestError = ( state = null, action ) => {
 	switch ( action.type ) {
 		case TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST:
@@ -438,6 +454,7 @@ export const lastCheckedUsernameOrEmail = ( state = null, action ) => {
 
 const combinedReducer = combineReducers( {
 	authAccountType,
+	consumedBlackboxSessionId,
 	isFormDisabled,
 	isRequesting,
 	lastCheckedUsernameOrEmail,

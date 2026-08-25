@@ -1,7 +1,8 @@
 # Resurrected Free Users – Welcome Back Modal
 
 This module powers the welcome-back modal for eligible resurrected free users. A user is
-eligible after 180 days of inactivity when they have no active paid subscriptions.
+eligible after 180 days of inactivity when they have no active paid subscriptions. The inactivity
+threshold is 90 days while the experiment eligibility flag is enabled.
 
 ## Components
 
@@ -26,6 +27,8 @@ modal waits for an eligible user's assignment before deciding which experience t
 
 ## Feature flag
 
+- **`resurrected-users/90-day-eligibility`** – Uses the experiment's 90-day inactivity threshold
+  instead of the default 180-day threshold.
 - **`welcome-back-modal-manual`** – When enabled (for example,
   `ENABLE_FEATURES=welcome-back-modal-manual yarn start`), forces the modal to display regardless
   of eligibility for local testing. When no assignment is available, it uses the existing manual
@@ -37,8 +40,8 @@ modal waits for an eligible user's assignment before deciding which experience t
   selects a CTA.
 - The content variation fetches only the latest modified draft and keeps the modal visible while
   that request resolves.
-- The classic Calypso `/sites` mount is separate from the Dashboard client served at
-  `my.wordpress.com`; Dashboard does not currently mount this modal.
+- The classic Calypso `/sites` mount and the Dashboard client served at `my.wordpress.com` use
+  separate eligibility adapters for the shared modal.
 
 ## Analytics
 
@@ -49,4 +52,5 @@ modal waits for an eligible user's assignment before deciding which experience t
 ## Events
 
 - `calypso_user_resurrected` – Legacy 373-day resurrection.
-- `calypso_user_resurrected_6m` – 180-day resurrection (used for this modal).
+- `calypso_user_resurrected_6m` – 180-day resurrection.
+- `calypso_user_resurrected_3m` – 90-day resurrection.

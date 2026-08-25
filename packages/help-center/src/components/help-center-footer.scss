@@ -23,6 +23,16 @@
 		&:hover {
 			box-shadow: none;
 		}
+
+		// Keep the button recognisable while the destination is still resolving:
+		// the default disabled style greys the border out to near-invisibility.
+		&:disabled,
+		&[aria-disabled="true"],
+		&[aria-disabled="true"]:hover {
+			border-color: var(--wp-components-color-accent, var(--wp-admin-theme-color, $help-center-blue));
+			color: var(--wp-components-color-accent, var(--wp-admin-theme-color, $help-center-blue));
+			opacity: 0.6;
+		}
 	}
 }
 

@@ -178,6 +178,7 @@ export class JetpackSignup extends Component {
 
 	handleSubmitSignup = ( _, userData, analyticsData, afterSubmit = noop ) => {
 		debug( 'submitting new account', userData );
+		let submitError;
 		this.setState( { isCreatingAccount: true }, () =>
 			this.props
 				.createAccount( {
@@ -191,8 +192,11 @@ export class JetpackSignup extends Component {
 						plugins: this.props.authQuery.plugins,
 					},
 				} )
-				.then( this.handleUserCreationSuccess, this.handleUserCreationError )
-				.finally( afterSubmit )
+				.then( this.handleUserCreationSuccess, ( error ) => {
+					submitError = error;
+					this.handleUserCreationError( error );
+				} )
+				.finally( () => afterSubmit( submitError ) )
 		);
 	};
 

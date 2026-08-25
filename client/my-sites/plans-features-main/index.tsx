@@ -128,6 +128,8 @@ const PlanComparisonHeader = styled.h1`
 `;
 export interface PlansFeaturesMainProps {
 	highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+	titleBadgeOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+	taglineOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	siteId?: number | null;
 	intent?: PlansIntent | null;
 	isInSiteDashboard?: boolean;
@@ -236,6 +238,8 @@ const PlansFeaturesMain = ( {
 	plansWithScroll,
 	discountEndDate,
 	highlightLabelOverrides,
+	titleBadgeOverrides,
+	taglineOverrides,
 	hideFreePlan,
 	hidePersonalPlan,
 	hidePremiumPlan,
@@ -293,10 +297,11 @@ const PlansFeaturesMain = ( {
 	);
 	const isPlanExpired = !! sitePlansData?.find( ( p ) => p.currentPlan )?.expired;
 
-	// Refund-window instant downgrade: when the current plan is still within its
-	// initial refund window, a downgrade is performed instantly via the cancel
-	// endpoint instead of routing the user to checkout. This applies regardless of
-	// whether any money would be refunded (e.g. plans paid with credits or free).
+	// Refund-window instant downgrade: when the current plan has a refundable
+	// receipt — its initial purchase or, after a renewal, the renewal's — a
+	// downgrade is performed instantly via the cancel endpoint instead of routing
+	// the user to checkout. This applies regardless of whether any money would be
+	// refunded (e.g. plans paid with credits or free).
 	const reduxDispatch = useReduxDispatch();
 	const queryClient = useQueryClient();
 	const cancelAndRefundMutation = useMutation( cancelAndRefundPurchaseMutation() );
@@ -317,7 +322,7 @@ const PlansFeaturesMain = ( {
 	const isWithinRefundWindow =
 		config.isEnabled( 'plans/expired-downgrade' ) &&
 		!! currentPurchase &&
-		currentPurchase.is_within_initial_refund_window &&
+		currentPurchase.is_refundable &&
 		! currentPurchase.is_past_expiry_date;
 	// The delayed-downgrade flow (schedule a downgrade at renewal for an active
 	// plan) is gated separately from the launched expired/refund downgrade flow.
@@ -845,8 +850,8 @@ const PlansFeaturesMain = ( {
 	};
 
 	// Badge the plan a scheduled downgrade will land on so the user remembers it
-	// is queued. The term selector is hidden while a downgrade is pending, so the
-	// target product slug always matches the displayed plan slug.
+	// is queued. Keyed by exact product slug, so the badge only shows while the grid
+	// is displaying the downgrade target's term.
 	const highlightLabelOverridesWithDowngrade = useMemo( () => {
 		if ( ! delayedDowngradeToProductSlug ) {
 			return highlightLabelOverrides;
@@ -893,6 +898,8 @@ const PlansFeaturesMain = ( {
 		eligibleForFreeHostingTrial,
 		hasRedeemedDomainCredit: currentPlan?.hasRedeemedDomainCredit,
 		highlightLabelOverrides: highlightLabelOverridesWithDowngrade,
+		titleBadgeOverrides,
+		taglineOverrides,
 		hiddenPlans,
 		hideCurrentPlan: isInSiteDashboard,
 		intent,

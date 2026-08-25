@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getRelativeDayString } from 'calypso/dashboard/utils/datetime';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -85,7 +86,7 @@ export class PlanBillingPeriod extends Component<
 		if ( isExpiredOrRemoved( purchase ) && purchase.expiry_date ) {
 			return translate( 'Billed yearly, expired %(timeSinceExpiry)s', {
 				args: {
-					timeSinceExpiry: moment( purchase.expiry_date ).fromNow(),
+					timeSinceExpiry: getRelativeDayString( new Date( purchase.expiry_date ), 'past' ),
 				},
 				comment: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
 			} );
@@ -95,7 +96,7 @@ export class PlanBillingPeriod extends Component<
 	}
 
 	renderBillingPeriod() {
-		const { purchase, site, translate, moment, isProductOwner } = this.props;
+		const { purchase, site, translate, isProductOwner } = this.props;
 		if ( ! purchase ) {
 			return;
 		}
@@ -120,7 +121,7 @@ export class PlanBillingPeriod extends Component<
 						text: 'Billed monthly, expired %(timeSinceExpiry)s',
 						newCopy: translate( 'Billed monthly, expired %(timeSinceExpiry)s', {
 							args: {
-								timeSinceExpiry: moment( purchase.expiry_date ).fromNow(),
+								timeSinceExpiry: getRelativeDayString( new Date( purchase.expiry_date ), 'past' ),
 							},
 							comment:
 								'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',

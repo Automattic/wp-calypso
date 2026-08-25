@@ -27,6 +27,20 @@ describe( 'mapValidationMessagesToFieldErrors', () => {
 
 		expect( mapValidationMessagesToFieldErrors( messages ) ).toEqual( {} );
 	} );
+
+	it( 'maps the dotted ccTLD keys the endpoint reports .uk errors under', () => {
+		const messages = {
+			'extra.uk.registrant_type': [ 'Please choose a registrant type.' ],
+			'extra.uk.registration_number': [ 'Please use a valid registration number.' ],
+			email: [ 'Invalid email.' ],
+		} as unknown as ContactValidationResponseMessages;
+
+		expect( mapValidationMessagesToFieldErrors( messages ) ).toEqual( {
+			email: 'Invalid email.',
+			ukRegistrantType: 'Please choose a registrant type.',
+			ukRegistrationNumber: 'Please use a valid registration number.',
+		} );
+	} );
 } );
 
 const SMS_COUNTRY_CODES: SMSCountryCode[] = [

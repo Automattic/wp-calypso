@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { Badge } from '@automattic/components';
+import { Badge } from '@automattic/ui';
 import { __ } from '@wordpress/i18n';
 import { chevronLeft } from '@wordpress/icons';
 import Sidebar from '../sidebar';
@@ -19,7 +19,7 @@ export default function AmplifySidebar( { path }: Props ) {
 			title={
 				<div className="sidebar-menu-item__title-with-badge">
 					<span>{ __( 'Amplify' ) }</span>
-					<Badge type="info">{ __( 'Beta' ) }</Badge>
+					<Badge>{ __( 'Beta' ) }</Badge>
 				</div>
 			}
 			backButtonProps={ {

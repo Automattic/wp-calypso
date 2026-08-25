@@ -1,6 +1,10 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import { Button, __experimentalGrid as Grid } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
+import {
+	Button,
+	__experimentalGrid as Grid,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import ConsolidatedStatCard from '../../../components/consolidated-stat-card';
 import InlineSupportLink from '../../../components/inline-support-link';
@@ -94,20 +98,19 @@ export default function ConsolidatedViews( {
 					) : undefined
 				}
 				popoverTitle={ __( 'Total payouts' ) }
-				popoverContent={ createInterpolateElement(
-					__(
-						'The exact amount your agency has been paid out for referrals.<br/><br/><a>Learn more</a>'
-					),
-					{
-						br: <br />,
-						a: (
+				popoverContent={
+					<VStack spacing={ 3 }>
+						<Text>{ __( 'The exact amount your agency has been paid out for referrals.' ) }</Text>
+						<Text>
 							<InlineSupportLink
 								supportLink={ AGENCY_EARNINGS_LEARN_MORE_LINK }
 								forceOpenInHelpCenter
-							/>
-						),
-					}
-				) }
+							>
+								{ __( 'Learn more' ) }
+							</InlineSupportLink>
+						</Text>
+					</VStack>
+				}
 				isLoading={ isLoading || isLoadingCommissionPayout }
 			/>
 			<PayoutCards
@@ -120,20 +123,19 @@ export default function ConsolidatedViews( {
 				value={ pendingOrders }
 				footerText={ __( 'Pending referral orders' ) }
 				popoverTitle={ __( 'Pending orders' ) }
-				popoverContent={ createInterpolateElement(
-					__(
-						'These are the number of pending referrals (unpaid carts).<br/><br/><a>Learn more</a>'
-					),
-					{
-						br: <br />,
-						a: (
+				popoverContent={
+					<VStack spacing={ 3 }>
+						<Text>{ __( 'These are the number of pending referrals (unpaid carts).' ) }</Text>
+						<Text>
 							<InlineSupportLink
 								supportLink={ AGENCY_EARNINGS_LEARN_MORE_LINK }
 								forceOpenInHelpCenter
-							/>
-						),
-					}
-				) }
+							>
+								{ __( 'Learn more' ) }
+							</InlineSupportLink>
+						</Text>
+					</VStack>
+				}
 				isLoading={ isLoading }
 			/>
 		</Grid>

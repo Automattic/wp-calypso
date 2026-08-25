@@ -16,11 +16,11 @@ import './style.scss';
 
 export function PlaygroundIframe( {
 	className,
-	playgroundClient,
+	hasPlaygroundClient,
 	setPlaygroundClient,
 }: {
 	className?: string;
-	playgroundClient: PlaygroundClient | null;
+	hasPlaygroundClient: boolean;
 	setPlaygroundClient: ( client: PlaygroundClient ) => void;
 } ) {
 	const siteId = useSelector( getSelectedSiteId ) ?? 0;
@@ -44,7 +44,7 @@ export function PlaygroundIframe( {
 			return;
 		}
 
-		if ( playgroundClient ) {
+		if ( hasPlaygroundClient ) {
 			return;
 		}
 

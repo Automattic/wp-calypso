@@ -1,19 +1,9 @@
-import { useTranslate } from 'i18n-calypso';
+import { Badge } from '@automattic/ui';
 import { ReactNode } from 'react';
-import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
-import { getReferralStatus } from '../../lib/get-referral-status';
+import { getReferralStatus } from 'calypso/dashboard/agency/earn/referrals/lib/get-referral-status';
 
 export default function ReferralStatus( { status }: { status: string } ): ReactNode {
-	const translate = useTranslate();
+	const { status: statusText, type } = getReferralStatus( status );
 
-	const { status: statusText, type } = getReferralStatus( status, translate );
-
-	return (
-		<StatusBadge
-			statusProps={ {
-				children: statusText,
-				type,
-			} }
-		/>
-	);
+	return <Badge intent={ type }>{ statusText }</Badge>;
 }

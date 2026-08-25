@@ -3,6 +3,8 @@
  */
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
+import { waitFor } from '@testing-library/react';
+import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT } from 'calypso/lib/ai-launchpad';
 import { render } from '../../../test-utils';
 import { wpcomLink } from '../../../utils/link';
 import { Visibility } from '../index';
@@ -18,6 +20,20 @@ function createQueryClientWithSite( site: Site ) {
 	return queryClient;
 }
 
+// Seed a live ExPlat assignment into the storage the real useExperiment hook reads from, so it
+// resolves to the given variation through its normal code path — no module or network mocking.
+function assignPersonalizationVariation( variationName: string | null ) {
+	window.localStorage.setItem(
+		`explat-experiment--${ LAUNCHPAD_PERSONALIZATION_EXPERIMENT }`,
+		JSON.stringify( {
+			experimentName: LAUNCHPAD_PERSONALIZATION_EXPERIMENT,
+			variationName,
+			retrievedTimestamp: Date.now(),
+			ttl: 3600,
+		} )
+	);
+}
+
 const aiLaunchpadSite = {
 	ID: 1,
 	slug: 'test.wordpress.com',
@@ -29,6 +45,10 @@ const aiLaunchpadSite = {
 } as Site;
 
 describe( '<Visibility>', () => {
+	afterEach( () => {
+		window.localStorage.clear();
+	} );
+
 	test( 'for unlaunched sites, it renders "Coming soon" with a "Finish setup" link', () => {
 		const { container, getByRole } = render(
 			<Visibility
@@ -76,6 +96,21 @@ describe( '<Visibility>', () => {
 			{ queryClient: createQueryClientWithSite( completedSite ) }
 		);
 		expect( queryByRole( 'link', { name: /Finish setup/ } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'for the no_guidance personalization variation, it hides the "Finish setup" link', async () => {
+		assignPersonalizationVariation( 'no_guidance' );
+		const { queryByRole } = render(
+			<Visibility
+				siteSlug="test.wordpress.com"
+				visibility="private"
+				status={ null }
+				isLaunched={ false }
+			/>
+		);
+		await waitFor( () =>
+			expect( queryByRole( 'link', { name: /Finish setup/ } ) ).not.toBeInTheDocument()
+		);
 	} );
 
 	test( 'for coming soon sites, it renders "Coming soon"', () => {

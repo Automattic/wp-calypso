@@ -1,6 +1,8 @@
+import { referralsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { FormLabel, Tooltip } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
 	ExternalLink,
@@ -38,7 +40,6 @@ import {
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
-import useFetchReferrals from '../../referrals/hooks/use-fetch-referrals';
 import withMarketplaceProviders from '../hoc/with-marketplace-providers';
 import {
 	MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
@@ -121,7 +122,10 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	const agencyId = useSelector( getActiveAgencyId );
 	const uploadLogo = useUploadLogo();
 	const { mutate: requestPayment, isPending } = useRequestClientPaymentMutation();
-	const { data: referrals, refetch: refetchReferrals } = useFetchReferrals();
+	const { data: referrals, refetch: refetchReferrals } = useQuery( {
+		...referralsQuery( agencyId ?? 0 ),
+		refetchOnWindowFocus: false,
+	} );
 
 	const hasCompletedForm = !! email && !! message;
 	// Disable Send/Copy when "Use a different logo" is selected but no logo is uploaded

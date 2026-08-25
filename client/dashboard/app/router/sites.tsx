@@ -6,6 +6,7 @@ import {
 	codeDeploymentQuery,
 	codeDeploymentsQuery,
 	githubInstallationsQuery,
+	hasDeletedSitesQuery,
 	isAutomatticianQuery,
 	productsQuery,
 	rawUserPreferencesQuery,
@@ -28,10 +29,11 @@ import {
 	sitePlansQuery,
 	siteBySlugQuery,
 	siteByIdQuery,
+	siteAdminBarQuery,
+	siteAdminMenuQuery,
 	siteCrontabsQuery,
 	sitePreviewLinksQuery,
 	sitePrimaryDataCenterQuery,
-	purchaseQuery,
 	sitePurchasesQuery,
 	siteRedirectQuery,
 	siteScanQuery,
@@ -67,6 +69,7 @@ import { isSiteMigrationInProgress, getSiteMigrationState } from '../../utils/si
 import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { userHasNoLiveSites } from '../../utils/user';
 import { AUTH_QUERY_KEY } from '../auth';
 import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
@@ -85,9 +88,12 @@ export const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
 	loader: async () => {
+		const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+			// Settle the deleted-sites check before first paint.
+			userHasNoLiveSites( user ) && queryClient.ensureQueryData( hasDeletedSitesQuery() ),
 		] );
 	},
 } );
@@ -179,11 +185,15 @@ export const siteRoute = createRoute( {
 		const otherEnvironmentSiteId = site.is_wpcom_staging_site
 			? site.options?.wpcom_production_blog_id
 			: site.options?.wpcom_staging_blog_ids?.[ 0 ];
-		await Promise.all( [
-			otherEnvironmentSiteId &&
-				queryClient.ensureQueryData( siteByIdQuery( otherEnvironmentSiteId ) ),
-			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-		] );
+
+		queryClient.prefetchQuery( siteAdminMenuQuery( site.ID ) );
+		queryClient.prefetchQuery( siteAdminBarQuery( site.ID ) );
+
+		if ( otherEnvironmentSiteId ) {
+			queryClient.prefetchQuery( siteByIdQuery( otherEnvironmentSiteId ) );
+		}
+
+		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 
 		return { site };
 	},
@@ -215,10 +225,8 @@ export const siteOverviewRoute = createRoute( {
 				queryClient.prefetchQuery( sitePreviewLinksQuery( site.ID ) );
 			}
 
-			const currentPlan = await queryClient.ensureQueryData( siteCurrentPlanQuery( site.ID ) );
-			if ( currentPlan.id ) {
-				queryClient.ensureQueryData( purchaseQuery( currentPlan.id ) );
-			}
+			queryClient.prefetchQuery( siteCurrentPlanQuery( site.ID ) );
+			queryClient.prefetchQuery( sitePurchasesQuery( site.ID ) );
 		}
 
 		await Promise.all( [

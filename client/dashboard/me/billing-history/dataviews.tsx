@@ -17,7 +17,7 @@ import {
 	summarizeReceiptItems,
 	transactionIncludesTax,
 } from './utils';
-import type { CountryListItem, Receipt } from '@automattic/api-core';
+import type { CountryListItem, Receipt, Site } from '@automattic/api-core';
 import type { Fields, Operator, SortDirection, View } from '@wordpress/dataviews';
 
 import './styles.scss';
@@ -97,9 +97,36 @@ export function getFields(
 	receipts: Receipt[],
 	countryList: CountryListItem[] = [],
 	visibleFields: string[] = WIDE_FIELDS,
-	locale: string
+	locale: string,
+	sites: Site[] = [],
+	siteFilter?: number
 ): Fields< Receipt > {
+	// No point in having a filter if there's only one site.
+	const shouldAllowSiteFilter = sites.length > 1;
+
 	return [
+		{
+			id: 'site',
+			label: __( 'Site' ),
+			type: 'text',
+			enableGlobalSearch: true,
+			enableSorting: false,
+			enableHiding: false,
+			...( shouldAllowSiteFilter
+				? {
+						elements: sites.map( ( site ) => {
+							return { value: String( site.ID ), label: `${ site.name } (${ site.slug })` };
+						} ),
+						filterBy: {
+							operators: [ 'isAny' as Operator ],
+							...( siteFilter && { isPrimary: true } ),
+						},
+				  }
+				: { filterBy: false } ),
+			getValue: ( { item }: { item: Receipt } ) => {
+				return getReceiptSiteIds( item );
+			},
+		},
 		{
 			id: 'date',
 			label: __( 'Date' ),
@@ -309,6 +336,10 @@ function formatReceiptDate( receipt: Receipt, locale: string ): string {
 		month: 'short',
 		day: 'numeric',
 	} );
+}
+
+function getReceiptSiteIds( receipt: Receipt ): string[] {
+	return [ ...new Set( receipt.items.map( ( item ) => String( item.site_id ) ) ) ];
 }
 
 function getServicesForFiltering( receipts: Receipt[] ): Array< { value: string; label: string } > {

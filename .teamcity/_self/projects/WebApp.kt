@@ -2,7 +2,6 @@ package _self.projects
 
 import Settings
 import _self.bashNodeScript
-import _self.lib.customBuildType.E2EBuildType
 import _self.lib.utils.allBranchesExceptMergeQueue
 import _self.lib.utils.excludeMergeQueueBranches
 import _self.lib.utils.mergeTrunk
@@ -25,12 +24,10 @@ object WebApp : Project({
 	buildType(Translate)
 	buildType(BuildDockerImage)
 	buildType(PlaywrightTestPRMatrix)
-	buildType(PlaywrightTestPreReleaseMatrix)
+	buildType(PreReleaseE2ETests)
 	buildType(PlaywrightTestDashboardPRMatrix)
 	buildType(PlaywrightTestA4APRMatrix)
-	buildType(PreReleaseE2ETests)
 	buildType(AuthenticationE2ETests)
-	buildType(QuarantinedE2ETests)
 })
 
 object BuildDockerImage : BuildType({
@@ -40,58 +37,97 @@ object BuildDockerImage : BuildType({
 
     data class EnvConfig(
         val label: String,
+        val baseUrl: String = "https://calypso.live",
         val envQuery: String, // e.g. "" or "&env=jetpack"
         val qrEnv: String,    // e.g. "flags=oauth" or "env=jetpack&flags=oauth"
     )
 
-    val imageBase = "registry.a8c.com/calypso/app"
-	val commitImageExistsParam = "dockerImage.commitImageExists"
-	val baseUrl = "https://calypso.live"
-
-    val environments = listOf(
-        EnvConfig(
-            label = "Calypso Live",
-            envQuery = "",
-            qrEnv = "flags=oauth",
-        ),
-        EnvConfig(
-            label = "Jetpack Cloud Live",
-            envQuery = "&env=jetpack",
-            qrEnv = "env=jetpack&flags=oauth",
-        ),
-        EnvConfig(
-            label = "Automattic for Agencies Live",
-            envQuery = "&env=a8c-for-agencies",
-            qrEnv = "env=a8c-for-agencies&flags=oauth",
-        ),
-		EnvConfig(
-			label = "Dashboard Live (dotcom)",
-			envQuery = "&env=dashboard",
-			qrEnv = "env=dashboard&flags=oauth",
-		),
-		EnvConfig(
-			label = "Dashboard Live (A4A)",
-			envQuery = "&env=dashboard-a4a",
-			qrEnv = "env=dashboard-a4a&flags=oauth",
-		)
+    data class EnvGroup(
+        val label: String,
+        val environments: List<EnvConfig>,
     )
 
+    val imageBase = "registry.a8c.com/calypso/app"
+	val commitImageExistsParam = "dockerImage.commitImageExists"
+
+    val environmentGroups = listOf(
+        EnvGroup(
+            label = "WordPress.com",
+            environments = listOf(
+                EnvConfig(
+                    label = "Dashboard Live",
+                    envQuery = "&env=dashboard",
+                    qrEnv = "env=dashboard&flags=oauth",
+                ),
+                EnvConfig(
+                    label = "Calypso Live (/home)",
+                    baseUrl = "https://calypso.live/home",
+                    envQuery = "",
+                    qrEnv = "flags=oauth",
+                ),
+            ),
+        ),
+        EnvGroup(
+            label = "Automattic for Agencies",
+            environments = listOf(
+                EnvConfig(
+                    label = "Dashboard Live",
+                    envQuery = "&env=dashboard-a4a",
+                    qrEnv = "env=dashboard-a4a&flags=oauth",
+                ),
+                EnvConfig(
+                    label = "Automattic for Agencies Live",
+                    envQuery = "&env=a8c-for-agencies",
+                    qrEnv = "env=a8c-for-agencies&flags=oauth",
+                ),
+            ),
+        ),
+        EnvGroup(
+            label = "Jetpack Cloud",
+            environments = listOf(
+                EnvConfig(
+                    label = "Jetpack Cloud Live",
+                    envQuery = "&env=jetpack",
+                    qrEnv = "env=jetpack&flags=oauth",
+                ),
+            ),
+        )
+    )
+
+    fun renderEnv(env: EnvConfig): String {
+        val url = "${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}"
+        return """
+            <details>
+              <summary>${env.label} <a href="$url">(direct link)</a></summary>
+              <table>
+                <tr>
+                  <td>
+                    <a href="$url">$url</a>
+                  </td>
+                </tr>
+              </table>
+            </details>
+            """.trimIndent()
+    }
+
     val htmlBlock = buildString {
-        environments.forEach { env ->
-            appendLine(
-                """
-                <details>
-                  <summary>${env.label} <a href="${baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">(direct link)</a></summary>
-                  <table>
-                    <tr>
-                      <td>
-                        <a href="${baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">${baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}</a>
-                      </td>
-                    </tr>
-                  </table>
-                </details>
-                """.trimIndent()
-            )
+        environmentGroups.forEachIndexed { index, group ->
+            if (index > 0) {
+                appendLine("<hr>")
+            }
+            // A group holding a single environment renders as a bare item, without a heading.
+            if (group.environments.size == 1) {
+                appendLine(renderEnv(group.environments.single()))
+            } else {
+                appendLine("<p>${group.label}</p>")
+                appendLine("<ul>")
+                group.environments.forEach { env ->
+                    appendLine("<li>")
+                    appendLine(renderEnv(env))
+                    appendLine("</li>")
+                }
+                appendLine("</ul>")
+            }
             appendLine()
         }
     }
@@ -245,6 +281,7 @@ object BuildDockerImage : BuildType({
 			--build-arg base_image=%base_image%
 			--build-arg cache_seed_image=%cache_seed_image%
 			--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
+			--build-arg calypso_live_image=$imageBase:build-%build.number%
 			--build-arg profile=%PROFILE%
 			--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
 			--build-arg is_default_branch=%teamcity.build.branch.is_default%
@@ -944,6 +981,9 @@ object PlaywrightTestPRMatrix : BuildType({
 		param("TEST_GROUP", "@calypso-pr")
         param("DOCKER_IMAGE_BUILD_NUMBER", "${BuildDockerImage.depParamRefs.buildNumber}")
 		param("IGNORE_TEST_GROUP_FOR_E2E_CHANGES", "true")
+		// calypsoPreReleaseUser is left out: the only @calypso-pr spec that logs in as it runs
+		// on trunk alone, and this build type never builds trunk.
+		param("env.AUTHENTICATE_ACCOUNTS", "atomicUser,commentingUser,defaultUser,gutenbergSimpleSiteUser,notificationsUser,siteEditorSimpleSiteUser,simpleSiteFreePlanUser,simpleSitePersonalPlanUser")
 	}
 
 	features {
@@ -985,17 +1025,18 @@ object PlaywrightTestPRMatrix : BuildType({
 
 })
 
-object PlaywrightTestPreReleaseMatrix : BuildType({
+object PreReleaseE2ETests : BuildType({
 	templates(CalypsoE2ETestsBuildTemplate)
-	id("calypso_WebApp_Calypso_E2E_Playwright_Pre_Release_Matrix")
-	uuid = "a1b2c3d4-e5f6-7890-1234-56789abcdef0"
-	name = "Pre-Release E2E Tests (Playwright Test)"
-	description = "Runs Calypso pre-release e2e tests using Playwright Test runner with build matrix"
+	id("calypso_WebApp_Calypso_E2E_Pre_Release")
+	uuid = "9c2f634f-6582-4245-bb77-fb97d9f16533"
+	name = "Pre-Release E2E Tests"
+	description = "Runs pre-release suites of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production."
 
 	params {
 		text("TEST_GROUP", "@calypso-release")
 		param("CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
 		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
+		param("env.AUTHENTICATE_ACCOUNTS", "atomicUser,calypsoPreReleaseUser,defaultUser,simpleSiteFreePlanUser,simpleSitePersonalPlanUser")
 	}
 
 	features {
@@ -1032,6 +1073,10 @@ object PlaywrightTestDashboardPRMatrix : BuildType({
 	params {
 		param("TEST_GROUP", "@dashboard-pr")
 		param("DOCKER_IMAGE_BUILD_NUMBER", "${BuildDockerImage.depParamRefs.buildNumber}")
+		// Every @dashboard-pr spec takes the account this environment resolves to, and
+		// nothing else. Naming it costs no extra login: prime-logins adds the resolved
+		// account to whatever is listed here and logs in as each account once.
+		param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteUser")
 	}
 
 	features {
@@ -1086,6 +1131,8 @@ object PlaywrightTestA4APRMatrix : BuildType({
 	params {
 		param("TEST_GROUP", "@a8c-for-agencies")
 		param("DOCKER_IMAGE_BUILD_NUMBER", "${BuildDockerImage.depParamRefs.buildNumber}")
+		// The @a8c-for-agencies specs sign up their own users and log in as no test account.
+		param("env.AUTHENTICATE_ACCOUNTS", "")
 	}
 
 	features {
@@ -1124,53 +1171,6 @@ object PlaywrightTestA4APRMatrix : BuildType({
 	dependencies {
 		snapshot(BuildDockerImage) {
 			onDependencyFailure = FailureAction.FAIL_TO_START
-		}
-	}
-})
-
-object PreReleaseE2ETests : BuildType({
-	id("calypso_WebApp_Calypso_E2E_Pre_Release")
-	uuid = "9c2f634f-6582-4245-bb77-fb97d9f16533"
-	name = "Pre-Release E2E Tests"
-	description = "Aggregator build that runs pre-release suites of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production."
-
-	vcs {
-		root(Settings.WpCalypso)
-		branchFilter = allBranchesExceptMergeQueue()
-		cleanCheckout = true
-	}
-
-	dependencies {
-		snapshot(PlaywrightTestPreReleaseMatrix) {
-			onDependencyFailure = FailureAction.ADD_PROBLEM
-		}
-	}
-
-	features {
-		perfmon {
-		}
-		commitStatusPublisher {
-			vcsRootExtId = "${Settings.WpCalypso.id}"
-			publisher = github {
-				githubUrl = "https://api.github.com"
-				authType = personalToken {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-			}
-		}
-		notifications {
-			notifierSettings = slackNotifier {
-				connection = "PROJECT_EXT_11"
-				sendTo = "#e2eflowtesting-notif"
-				messageFormat = verboseMessageFormat {
-					addStatusText = true
-				}
-			}
-			branchFilter = "+:<default>"
-			buildFailedToStart = true
-			buildFailed = true
-			buildFinishedSuccessfully = false
-			buildProbablyHanging = true
 		}
 	}
 })
@@ -1216,32 +1216,3 @@ object AuthenticationE2ETests : BuildType({
 		}
 	}
 })
-
-object QuarantinedE2ETests: E2EBuildType(
-	buildId = "calypso_WebApp_Quarantined_E2E_Tests",
-	buildUuid = "14083675-b6de-419f-b2f6-ec89c06d3a8c",
-	buildName = "Quarantined E2E Tests",
-	buildDescription = "E2E tests quarantined due to intermittent failures.",
-	concurrentBuilds = 1,
-	testGroup = "quarantined",
-	buildParams = {
-		param("env.VIEWPORT_NAME", "desktop")
-		param("env.CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
-		param("env.DASHBOARD_BASE_URL", "https://my.wordpress.com")
-	},
-	buildFeatures = {
-		notifications {
-			notifierSettings = slackNotifier {
-				connection = "PROJECT_EXT_11"
-				sendTo = "#e2eflowtesting-notif"
-				messageFormat = simpleMessageFormat()
-			}
-			buildFailedToStart = true
-			buildFailed = true
-			buildFinishedSuccessfully = false
-			buildProbablyHanging = true
-		}
-	},
-	buildTriggers = {
-	}
-)

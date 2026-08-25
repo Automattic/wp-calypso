@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
-import { getProductCommissionPercentage } from '../../referrals/lib/commissions';
+import { getProductCommissionPercentage } from 'calypso/dashboard/agency/earn/referrals/lib/commissions';
 import type { ShoppingCartItem, TermPricingType } from '../types';
 
 import './style.scss';

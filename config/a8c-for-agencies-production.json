@@ -33,7 +33,6 @@
 		"a4a-bd-term-pricing": true,
 		"a4a-migrations-request-verification": true,
 		"a4a-partner-directory": false,
-		"a4a-partner-directory-lead-matching": false,
 		"a4a-pressable-referrals": true,
 		"a4a-signup-v2": true,
 		"a4a-signup-v2-via-email": false,

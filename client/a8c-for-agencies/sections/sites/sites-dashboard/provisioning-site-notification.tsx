@@ -32,7 +32,7 @@ function Banner( { siteId, migration, development, onDismiss }: BannerProps ) {
 	const wpOverviewUrl = `https://wordpress.com/overview/${ siteSlug }`;
 	const wpMigrationUrl = addQueryArgs(
 		{
-			siteId: site?.features.wpcom_atomic.blog_id,
+			siteId: site?.features?.wpcom_atomic?.blog_id,
 			siteSlug,
 		},
 		'https://wordpress.com/setup/site-migration'

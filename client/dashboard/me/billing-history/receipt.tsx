@@ -12,7 +12,7 @@ import { Link } from '@tanstack/react-router';
 import {
 	Button,
 	Flex,
-	TextControl,
+	TextareaControl,
 	__experimentalDivider as Divider,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -20,6 +20,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import clsx from 'clsx';
 import { type ReactNode, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useLocale } from '../../app/locale';
@@ -150,10 +151,6 @@ export default function Receipt() {
 }
 
 function ReceiptDetails( { receipt }: { receipt: Receipt } ) {
-	const [ billingDetailsText, setBillingDetailsText ] = useState(
-		receipt.cc_num !== 'XXXX' ? `${ receipt.cc_name }\n${ receipt.cc_email }` : ''
-	);
-
 	const paymentMethodText = getPaymentMethodText( receipt );
 
 	return (
@@ -183,27 +180,49 @@ function ReceiptDetails( { receipt }: { receipt: Receipt } ) {
 				</VStack>
 			) }
 
-			{ receipt.cc_num !== 'XXXX' && ( receipt.cc_name || receipt.cc_email ) && (
-				<VStack spacing={ 1 } alignment="flex-start" className="receipt-billing-details">
-					<Text upperCase variant="muted" size={ 11 }>
-						{ __( 'Billing details' ) }
-					</Text>
-					<TextControl
-						value={ billingDetailsText }
-						onChange={ setBillingDetailsText }
-						className="receipt-text-control"
-						__nextHasNoMarginBottom
-					/>
-					<Text variant="muted" size={ 11 }>
-						{ __(
-							'Use this field to add your billing information (eg. business address) before printing.'
-						) }
-					</Text>
-				</VStack>
-			) }
+			<BillingDetailsField receipt={ receipt } />
 
 			<ReceiptTaxDetails receipt={ receipt } />
 			<VatDetails receipt={ receipt } />
+		</VStack>
+	);
+}
+
+export function BillingDetailsField( { receipt }: { receipt: Receipt } ) {
+	const [ billingDetailsText, setBillingDetailsText ] = useState(
+		receipt.cc_num !== 'XXXX' ? `${ receipt.cc_name }\n${ receipt.cc_email }` : ''
+	);
+
+	if ( receipt.cc_num === 'XXXX' || ( ! receipt.cc_name && ! receipt.cc_email ) ) {
+		return null;
+	}
+
+	return (
+		<VStack spacing={ 1 } alignment="flex-start" className="receipt-billing-details">
+			<Text upperCase variant="muted" size={ 11 }>
+				{ __( 'Billing details' ) }
+			</Text>
+			<TextareaControl
+				label={ __( 'Billing details' ) }
+				hideLabelFromVision
+				value={ billingDetailsText }
+				onChange={ setBillingDetailsText }
+				className="receipt-billing-details-input"
+				__nextHasNoMarginBottom
+			/>
+			{ /* A printed textarea clips its overflow, so mirror the text into a print-only element. */ }
+			<div
+				className={ clsx( 'receipt-billing-details-printable', {
+					'is-empty': billingDetailsText.trim().length === 0,
+				} ) }
+			>
+				{ billingDetailsText }
+			</div>
+			<Text variant="muted" size={ 11 } className="receipt-billing-details-description">
+				{ __(
+					'Use this field to add your billing information (eg. business address) before printing.'
+				) }
+			</Text>
 		</VStack>
 	);
 }

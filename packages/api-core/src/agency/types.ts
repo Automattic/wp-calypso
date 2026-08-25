@@ -7,11 +7,103 @@ export type AgencyTierId =
 
 export type AgencyTierStatus = 'early_access' | 'tier_protected';
 
+export type AgencyApprovalStatus = 'pending' | 'approved' | 'rejected';
+
 export interface AgencyTier {
 	id?: AgencyTierId;
 	label?: string;
 	features?: string[];
 	status?: AgencyTierStatus;
+}
+
+/**
+ * Agency user capabilities, following the `a4a_<action>_<resource>` convention.
+ * Used to declare per-route access requirements in the dashboard router.
+ */
+export type AgencyCapability =
+	| 'a4a_read_managed_sites'
+	| 'a4a_read_reports'
+	| 'a4a_edit_reports'
+	| 'a4a_read_marketplace'
+	| 'a4a_read_referrals'
+	| 'a4a_read_migrations'
+	| 'a4a_read_partner_directory'
+	| 'a4a_read_agency_tier'
+	| 'a4a_read_users'
+	| 'a4a_read_learn'
+	| 'a4a_read_amplify'
+	| 'a4a_read_exclusive_offers'
+	| 'a4a_jetpack_licensing'
+	| 'a4a_edit_user_invites'
+	| 'a4a_remove_users'
+	| 'a4a_revoke_licenses'
+	| 'a4a_remove_payment_methods'
+	| 'a4a_remove_managed_sites';
+
+export type AgencyPartnerDirectorySlug =
+	| 'wordpress'
+	| 'jetpack'
+	| 'woocommerce'
+	| 'pressable'
+	| 'vip';
+
+export type AgencyPartnerDirectoryEntryStatus = 'pending' | 'approved' | 'rejected' | 'closed';
+
+export interface AgencyPartnerDirectoryEntry {
+	status?: AgencyPartnerDirectoryEntryStatus;
+	directory: AgencyPartnerDirectorySlug;
+	urls: string[];
+	note: string;
+	is_published?: boolean;
+}
+
+export interface AgencyPartnerDirectoryApplication {
+	status?: 'pending' | 'in-progress' | 'completed';
+	directories: AgencyPartnerDirectoryEntry[];
+	feedback_url: string;
+	is_published?: boolean;
+}
+
+export interface AgencyProfile {
+	company_details: {
+		name: string;
+		email: string;
+		website: string;
+		bio_description: string;
+		logo_url: string;
+		landing_page_url: string;
+		country: string;
+	};
+	listing_details: {
+		is_available: boolean;
+		is_global: boolean;
+		industries: string[];
+		services: string[];
+		products: string[];
+		languages_spoken: string[];
+	};
+	budget_details: {
+		budget_lower_range: string;
+		budget_upper_range: string;
+		has_hourly_rate: boolean;
+		hourly_rate_value: string;
+	};
+	partner_directory_application: AgencyPartnerDirectoryApplication | null;
+}
+
+/**
+ * Body of PUT /wpcom/v2/agency/$agencyId/profile/application.
+ */
+export interface AgencyPartnerDirectoryApplicationUpdate {
+	services: string[];
+	products: string[];
+	directories: {
+		directory: AgencyPartnerDirectorySlug;
+		urls: string[];
+		note?: string;
+	}[];
+	feedback_url: string;
+	is_published?: boolean;
 }
 
 /**
@@ -27,6 +119,12 @@ export interface Agency {
 		allowed: boolean;
 	};
 	influenced_revenue?: number;
+	approval_status?: AgencyApprovalStatus | '';
+	profile?: AgencyProfile;
+	partner_directory?: {
+		allowed: boolean;
+		directories: AgencyPartnerDirectorySlug[];
+	};
 	created_at: string;
 	billing_system?: 'billingdragon' | 'legacy';
 	user?: {
@@ -54,6 +152,12 @@ export interface McpAvailableAbility {
 	description: string;
 	category: string;
 	enabled: boolean;
+	/**
+	 * Whether the ability only reads data. Write abilities are flagged with an
+	 * explicit `false`; abilities from a response predating the flag omit it and
+	 * are treated as read-only.
+	 */
+	readonly?: boolean;
 }
 
 export interface McpAvailableCategory {

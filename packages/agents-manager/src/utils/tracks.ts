@@ -1,15 +1,20 @@
 /**
  * Central Tracks wrappers for the Agents Manager.
  *
- * Two record functions because each injects a different base-prop set:
+ * Two record functions, one per base-prop set:
  * - `recordBigSkyTracksEvent` keeps Big Sky's exact event names and props so its
  *   live Looker dashboard keeps working. Removable once that parity is dropped.
  * - `recordAgentsManagerTracksEvent` uses the unified property schema shared across the new
  *   AI products.
+ *
+ * Callers pass event names in full — the template-literal parameter types enforce
+ * the namespace — so every event is findable by searching the code for its name.
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
+import { DOLLY_AGENT_ID } from '../constants';
 import { getSessionId } from './agent-session';
+import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent, isReaderChatHost } from './is-reader-chat-agent';
 import { getResolvedAgentId } from './resolved-agent-id';
 
@@ -26,12 +31,18 @@ type CoreSelectStore =
 	| { getEntityRecord?: ( kind: string, name: string, key?: number ) => unknown }
 	| undefined;
 
-const BIG_SKY_EVENT_PREFIX = 'jetpack_big_sky_';
-const AM_UNIFIED_EVENT_PREFIX = 'calypso_agents_manager_';
-
-// FIXME: Agents Manager has no per-user a11n signal today
+/** Reads the optional server-provided Automattician tracking signal. */
 function getIsA11n(): boolean | undefined {
-	return undefined;
+	const isA11n = getAgentsManagerInlineData()?.isA11n;
+	return typeof isA11n === 'boolean' ? isA11n : undefined;
+}
+
+/** Reads the canonical server-provided blog ID when available. */
+function getBlogId(): number | undefined {
+	const blogId = getAgentsManagerInlineData()?.site?.ID;
+	return typeof blogId === 'number' && Number.isInteger( blogId ) && blogId > 0
+		? blogId
+		: undefined;
 }
 
 type BigSkyTracksData = {
@@ -64,24 +75,31 @@ function getIsTest(): boolean {
 }
 
 /**
- * Editor-surface page props, mirroring Big Sky's `getCurrentPageProperties`.
+ * Editor-surface page props, mirroring Big Sky's `getCurrentPageProperties`,
+ * plus the `surface` claim derived from the same editor-store read.
  */
 function getBigSkyPageProps(): TracksProps {
+	// `block_editor` only while the `core/editor` store is registered (unlike
+	// `isEditorPage()`, this includes custom post types and the site editor);
+	// preserved by the catch, omitted on plain wp-admin screens.
+	let surfaceProps: TracksProps = {};
 	try {
 		const editor = select( 'core/editor' ) as EditorSelectStore;
-		const core = select( 'core' ) as CoreSelectStore;
+		surfaceProps = editor ? { surface: 'block_editor' } : {};
 
+		const core = select( 'core' ) as CoreSelectStore;
 		const postId = editor?.getCurrentPostId?.();
 		const siteRecord = core?.getEntityRecord?.( 'root', 'site' ) as
 			| { page_on_front?: number }
 			| undefined;
 
 		return {
+			...surfaceProps,
 			post_type: editor?.getCurrentPostType?.() ?? '',
 			is_home_page: postId !== undefined && postId === siteRecord?.page_on_front,
 		};
 	} catch {
-		return { post_type: '', is_home_page: false };
+		return { ...surfaceProps, post_type: '', is_home_page: false };
 	}
 }
 
@@ -89,14 +107,21 @@ function getBigSkyPageProps(): TracksProps {
  * Records an event under Big Sky's exact name and props so the existing Big Sky
  * dashboards keep working.
  */
-export function recordBigSkyTracksEvent( eventName: string, props: TracksProps = {} ): void {
+export function recordBigSkyTracksEvent(
+	eventName: `jetpack_big_sky_${ string }`,
+	props: TracksProps = {}
+): void {
 	if ( isReaderChatAgent( getResolvedAgentId() ) ) {
 		return; // Big Sky parity events are editor-only; never on reader-chat.
 	}
 
 	const bigSky = getBigSkyTracksData();
+	const isA11n = getIsA11n();
+	const blogId = getBlogId();
 	const baseProps: TracksProps = {
 		is_test: getIsTest(),
+		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
+		...( blogId !== undefined ? { blog_id: blogId } : {} ),
 		sessionid: getSessionId(),
 		session_type: bigSky.sessionType,
 		// AM has no onboarding flow, so the phase is always the editor.
@@ -106,21 +131,42 @@ export function recordBigSkyTracksEvent( eventName: string, props: TracksProps =
 		...getBigSkyPageProps(),
 	};
 
-	recordTracksEvent( `${ BIG_SKY_EVENT_PREFIX }${ eventName }`, { ...baseProps, ...props } );
+	const mergedProps: TracksProps = { ...baseProps, ...props };
+	// Send the session ID under both names: `ai_session_id` is the standard one,
+	// and `sessionid` is the older one that dashboards still use. The alias
+	// copies the final `sessionid`, so a caller-supplied value stays mirrored.
+	if ( ! ( 'ai_session_id' in mergedProps ) ) {
+		const effectiveSessionId = mergedProps.sessionid;
+		if ( typeof effectiveSessionId === 'string' && effectiveSessionId !== '' ) {
+			mergedProps.ai_session_id = effectiveSessionId;
+		}
+	}
+
+	recordTracksEvent( eventName, mergedProps );
+}
+
+function getUnifiedBaseProps(): TracksProps {
+	const isA11n = getIsA11n();
+	const blogId = getBlogId();
+	return {
+		ai_session_id: getSessionId(),
+		agent_name: getResolvedAgentId() ?? DOLLY_AGENT_ID,
+		surface: isReaderChatHost() ? 'reader-chat' : 'editor',
+		path: typeof window !== 'undefined' ? window.location.pathname : '',
+		is_test: getIsTest(),
+		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
+		...( blogId !== undefined ? { blog_id: blogId } : {} ),
+	};
 }
 
 /**
  * Records an Agents Manager event using the shared unified property names.
+ * Most events live under `calypso_agents_manager_`; the entry-point events
+ * carry a host prefix instead (e.g. `calypso_editor_agents_manager_ai_chat_clicked`).
  */
-export function recordAgentsManagerTracksEvent( eventName: string, props: TracksProps = {} ): void {
-	const baseProps: TracksProps = {
-		ai_session_id: getSessionId(),
-		agent_name: 'dolly',
-		surface: isReaderChatHost() ? 'reader-chat' : 'editor',
-		path: typeof window !== 'undefined' ? window.location.pathname : '',
-		is_test: getIsTest(),
-		is_a11n: getIsA11n(),
-	};
-
-	recordTracksEvent( `${ AM_UNIFIED_EVENT_PREFIX }${ eventName }`, { ...baseProps, ...props } );
+export function recordAgentsManagerTracksEvent(
+	eventName: `calypso_${ string }`,
+	props: TracksProps = {}
+): void {
+	recordTracksEvent( eventName, { ...getUnifiedBaseProps(), ...props } );
 }
