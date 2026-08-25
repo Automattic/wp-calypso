@@ -22,7 +22,7 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 					  sprintf( __( 'View %(siteName)s' ), { siteName: site.name } );
 			const linkText = site.name === site.slug ? __( 'View site' ) : site.slug;
 			return (
-				<div>
+				<div className="billing-purchase__product">
 					{ createInterpolateElement(
 						sprintf(
 							// translators: %(purchaseType)s: the product name. The string also contains the name of the site and the URL for the site e.g. Premium plan for Block Store (blockstore.com)
@@ -60,7 +60,7 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 
 		if ( productType && site.slug ) {
 			return (
-				<div>
+				<div className="billing-purchase__product">
 					{ createInterpolateElement(
 						// translators: %(purchaseType)s: the product name. The string also contains the URL of the site and a link to visit the site (e.g. "Premium plan for blockstore.com (view site)")
 						sprintf( __( '%(purchaseType)s for <siteDomain /> (<viewSite />)' ), {
@@ -105,7 +105,7 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 					  sprintf( __( 'View %(siteName)s' ), { siteName: site.name } );
 			const linkText = site.name === site.slug ? __( 'View site' ) : site.slug;
 			return (
-				<div>
+				<div className="billing-purchase__product">
 					{ createInterpolateElement(
 						// translators: The string contains the name of the site, and the URL of the site e.g. for Block Store (blockstore.com)
 						__( 'for <siteName /> (<viewSite />)' ),
@@ -139,7 +139,7 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 
 	if ( ! site && productType ) {
 		return (
-			<div>
+			<div className="billing-purchase__product">
 				{ createInterpolateElement(
 					sprintf(
 						// translators: %(purchaseType)s: the product name, %(site)s: the site domain, followed by a link to view the site (e.g. "Premium plan for blockstore.com (view site)")
