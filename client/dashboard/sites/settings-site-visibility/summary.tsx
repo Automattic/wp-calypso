@@ -19,9 +19,9 @@ export default function SiteVisibilitySettingsSummary( {
 
 	let badges = [];
 	if ( site.launch_status === 'unlaunched' || site.is_coming_soon ) {
-		badges = [ { text: __( 'Coming soon' ), intent: 'informational' as const } ];
+		badges = [ { text: __( 'Coming soon' ), intent: 'low' as const } ];
 	} else if ( site.is_private ) {
-		badges = [ { text: __( 'Private' ) } ];
+		badges = [ { text: __( 'Private' ), intent: 'informational' as const } ];
 	} else {
 		badges = [ { text: __( 'Public' ), intent: 'stable' as const } ];
 	}
