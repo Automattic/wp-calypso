@@ -64,7 +64,7 @@ const SshKeyCard = ( {
 							<Text>{ `${ siteSshKey.user_login }-${ siteSshKey.name }` }</Text>
 							<Text variant="muted">{ siteSshKey.sha256 }</Text>
 						</VStack>
-						<Badge intent="info" style={ { height: '24px' } }>
+						<Badge intent="informational" style={ { height: '24px' } }>
 							{ sprintf(
 								/* translators: %s is when the SSH key was attached. */
 								__( 'Attached on %s' ),

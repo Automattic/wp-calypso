@@ -72,7 +72,7 @@ export const PerformanceInsightTitle = ( {
 				</HStack>
 			</HStack>
 			{ isHightImpact && (
-				<Badge intent="error" style={ { flexShrink: 0, marginInlineStart: '16px' } }>
+				<Badge intent="high" style={ { flexShrink: 0, marginInlineStart: '16px' } }>
 					{ __( 'High impact' ) }
 				</Badge>
 			) }

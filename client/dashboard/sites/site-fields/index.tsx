@@ -112,13 +112,13 @@ export function NameRenderer( {
 			case 'p2':
 				return <Badge>{ __( 'P2' ) }</Badge>;
 			case 'deleted':
-				return <Badge intent="error">{ __( 'Deleted' ) }</Badge>;
+				return <Badge intent="high">{ __( 'Deleted' ) }</Badge>;
 			case 'difm_lite_in_progress':
 				return <Badge>{ __( 'Express service' ) }</Badge>;
 			case 'migration_pending':
-				return <Badge intent="warning">{ __( 'Migration pending' ) }</Badge>;
+				return <Badge intent="low">{ __( 'Migration pending' ) }</Badge>;
 			case 'migration_started':
-				return <Badge intent="info">{ __( 'Migration started' ) }</Badge>;
+				return <Badge intent="informational">{ __( 'Migration started' ) }</Badge>;
 			default:
 				return null;
 		}

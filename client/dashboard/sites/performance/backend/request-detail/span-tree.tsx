@@ -15,15 +15,15 @@ import type {
 	ApmDetailSpanPrunedChildren,
 } from '@automattic/api-core';
 
-type BadgeIntent = 'success' | 'warning' | 'error' | 'info' | 'default';
+type BadgeIntent = 'high' | 'medium' | 'low' | 'stable' | 'informational' | 'none';
 const CATEGORY_INTENT: Record< string, BadgeIntent > = {
-	plugins: 'error',
-	db: 'warning',
-	external: 'warning',
-	cache: 'success',
-	wp_core: 'default',
-	template: 'info',
-	transaction: 'info',
+	plugins: 'high',
+	db: 'medium',
+	external: 'medium',
+	cache: 'stable',
+	wp_core: 'none',
+	template: 'informational',
+	transaction: 'informational',
 };
 
 // Per-transaction average wall-clock time spent in a span (sum across every
@@ -97,7 +97,7 @@ function SpanRowContent( { node, rootMaxMs }: { node: SpanNode; rootMaxMs: numbe
 	const totalMs = avgTotalMsPerTx( node );
 	const selfMs = avgSelfMsPerTx( node );
 	const fraction = rootMaxMs > 0 ? totalMs / rootMaxMs : 0;
-	const intent = CATEGORY_INTENT[ node.category ] ?? 'default';
+	const intent = CATEGORY_INTENT[ node.category ] ?? 'none';
 	const subtitleParts: string[] = [];
 	if ( node.plugins?.plugin ) {
 		subtitleParts.push( node.plugins.plugin );

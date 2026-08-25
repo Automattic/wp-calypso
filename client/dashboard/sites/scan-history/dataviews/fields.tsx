@@ -23,14 +23,14 @@ const getStatusLabel = ( status: string ): string => {
 	}
 };
 
-const getStatusIntent = ( status: string ): 'default' | 'success' | 'warning' => {
+const getStatusIntent = ( status: string ): 'none' | 'stable' | 'informational' => {
 	switch ( status ) {
 		case 'fixed':
-			return 'success';
+			return 'stable';
 		case 'ignored':
-			return 'warning';
+			return 'informational';
 		default:
-			return 'default';
+			return 'none';
 	}
 };
 

@@ -19,14 +19,14 @@ export const getSeverityLabel = ( severity: number ): string => {
 	return __( 'Low' );
 };
 
-export const getSeverityIntent = ( severity: number ): 'default' | 'error' | 'warning' => {
+export const getSeverityIntent = ( severity: number ): 'none' | 'high' | 'medium' | 'low' => {
 	if ( severity >= 5 ) {
-		return 'error';
+		return 'high';
 	}
 	if ( severity >= 4 ) {
-		return 'warning';
+		return 'medium';
 	}
-	return 'default';
+	return 'low';
 };
 
 export const SeverityBadge = ( { severity }: { severity: number } ) => {
