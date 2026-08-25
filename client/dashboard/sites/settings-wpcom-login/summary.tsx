@@ -44,7 +44,7 @@ export default function WpcomLoginSettingsSummary( {
 		badges = [ { text: __( 'Unavailable' ) } ];
 	} else if ( ! isSimple( site ) && hasHostingFeature( site, HostingFeatures.SECURITY_SETTINGS ) ) {
 		badges = ssoEnabled
-			? [ { text: __( 'Enabled' ), intent: 'success' as const } ]
+			? [ { text: __( 'Enabled' ), intent: 'stable' as const } ]
 			: [ { text: __( 'Disabled' ) } ];
 	}
 

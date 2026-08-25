@@ -31,7 +31,7 @@ export const Default: Story = {
 				key="visibility"
 				title="Site visibility"
 				decoration={ <Icon icon={ seen } /> }
-				badges={ [ { text: 'Public', intent: 'success' } ] }
+				badges={ [ { text: 'Public', intent: 'stable' } ] }
 			/>,
 			<SummaryButton
 				key="theme"
@@ -73,7 +73,7 @@ export const WithDescriptionsInButtons: Story = {
 				title="Site visibility"
 				description="Control who can see your site"
 				decoration={ <Icon icon={ seen } /> }
-				badges={ [ { text: 'Public', intent: 'success' } ] }
+				badges={ [ { text: 'Public', intent: 'stable' } ] }
 			/>,
 			<SummaryButton
 				key="theme"

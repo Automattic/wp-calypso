@@ -21,7 +21,7 @@ export default function SubscriptionGiftingSettingsSummary( {
 	}
 
 	const badges = settings.wpcom_gifting_subscription
-		? [ { text: __( 'Enabled' ), intent: 'success' as const } ]
+		? [ { text: __( 'Enabled' ), intent: 'stable' as const } ]
 		: [ { text: __( 'Disabled' ) } ];
 
 	return (

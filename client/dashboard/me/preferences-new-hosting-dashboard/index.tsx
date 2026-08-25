@@ -20,7 +20,7 @@ export default function PreferencesNewHostingDashboard( { density }: { density?:
 	const badges = [
 		{
 			text: isOptedIn ? __( 'Enabled' ) : __( 'Disabled' ),
-			intent: isOptedIn ? ( 'success' as const ) : undefined,
+			intent: isOptedIn ? ( 'stable' as const ) : undefined,
 		},
 	];
 

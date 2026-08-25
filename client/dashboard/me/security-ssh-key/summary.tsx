@@ -15,7 +15,7 @@ export default function SecuritySshKeySummary( { density }: { density?: Density 
 	const badges: SummaryButtonBadgeProps[] = [
 		{
 			text: sshKeys.length ? __( 'SSH key added' ) : __( 'No SSH key added' ),
-			intent: sshKeys.length ? 'success' : 'default',
+			intent: sshKeys.length ? 'stable' : 'none',
 		},
 	];
 

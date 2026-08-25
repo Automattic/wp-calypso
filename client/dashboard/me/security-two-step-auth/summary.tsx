@@ -21,14 +21,14 @@ export default function SecurityTwoStepAuthSummary( { density }: { density?: Den
 	const badges: SummaryButtonBadgeProps[] = [
 		{
 			text: two_step_enabled ? __( 'Enabled' ) : __( 'Not enabled' ),
-			intent: two_step_enabled ? 'success' : 'warning',
+			intent: two_step_enabled ? 'stable' : 'medium',
 		},
 	];
 
 	if ( two_step_enabled && ! two_step_backup_codes_printed ) {
 		badges.push( {
 			text: __( 'Backup codes not printed' ),
-			intent: 'warning',
+			intent: 'medium',
 		} );
 	}
 

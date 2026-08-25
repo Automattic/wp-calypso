@@ -36,11 +36,11 @@ export default function SftpSshSettingsSummary( {
 	const badges = [
 		hasSftpFeature && {
 			text: sftpEnabled ? __( 'SFTP enabled' ) : __( 'SFTP disabled' ),
-			intent: sftpEnabled ? ( 'success' as const ) : undefined,
+			intent: sftpEnabled ? ( 'stable' as const ) : undefined,
 		},
 		hasSshFeature && {
 			text: sshEnabled ? __( 'SSH enabled' ) : __( 'SSH disabled' ),
-			intent: sshEnabled ? ( 'success' as const ) : undefined,
+			intent: sshEnabled ? ( 'stable' as const ) : undefined,
 		},
 	].filter( ( badge ) => !! badge );
 

@@ -18,7 +18,7 @@ export default function SiteRedirectSettingsSummary( {
 	}
 	let badges = [];
 	if ( site.options?.is_redirect ) {
-		badges = [ { text: __( 'Enabled' ), intent: 'success' as const } ];
+		badges = [ { text: __( 'Enabled' ), intent: 'stable' as const } ];
 	} else {
 		badges = [ { text: __( 'Disabled' ) } ];
 	}

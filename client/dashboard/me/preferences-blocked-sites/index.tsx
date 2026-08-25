@@ -21,7 +21,7 @@ export default function PreferencesBlockedSites( { density }: { density?: Densit
 							__( '%d blocked' ),
 							count
 						),
-						intent: 'info' as const,
+						intent: 'informational' as const,
 					},
 			  ];
 

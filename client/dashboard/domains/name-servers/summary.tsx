@@ -11,7 +11,7 @@ export default function NameServersSettingsSummary( {
 } ) {
 	let badges = [];
 	if ( domain.has_wpcom_nameservers ) {
-		badges = [ { text: __( 'Using WordPress.com name servers' ), intent: 'success' as const } ];
+		badges = [ { text: __( 'Using WordPress.com name servers' ), intent: 'stable' as const } ];
 	} else {
 		badges = [ { text: __( 'Using custom name servers' ), intent: undefined } ];
 	}

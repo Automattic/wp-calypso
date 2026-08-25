@@ -22,7 +22,7 @@ function getToolsBadge( abilities: McpAvailableAbility[] ) {
 	const enabledCount = abilities.filter( ( ability ) => ability.enabled ).length;
 
 	if ( enabledCount === abilities.length ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 
 	if ( enabledCount === 0 ) {
@@ -32,7 +32,7 @@ function getToolsBadge( abilities: McpAvailableAbility[] ) {
 	return {
 		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
 		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, abilities.length ),
-		intent: 'info' as const,
+		intent: 'informational' as const,
 	};
 }
 
