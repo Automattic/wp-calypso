@@ -17,6 +17,18 @@ import {
 } from '../constants';
 import type { Agency as AgencyPayload } from '@automattic/api-core';
 
+/*
+ * The shared component fires the dashboard's calypso_a4a_* event names.
+ * Keep the pre-migration names in this app so existing Tracks reports keep
+ * receiving data.
+ * TODO: Remove the rewrite when this screen is retired.
+ */
+const toLegacyEventName = ( eventName: string ) =>
+	eventName.replace(
+		'calypso_a4a_partner_directory_dashboard_',
+		'calypso_partner_directory_dashboard_'
+	);
+
 const PartnerDirectoryDashboard = () => {
 	const dispatch = useDispatch();
 	const { showSupportGuide } = useHelpCenter();
@@ -25,7 +37,7 @@ const PartnerDirectoryDashboard = () => {
 
 	const recordTracks = useCallback(
 		( eventName: string, properties?: Record< string, unknown > ) => {
-			dispatch( recordTracksEvent( eventName, properties ) );
+			dispatch( recordTracksEvent( toLegacyEventName( eventName ), properties ) );
 		},
 		[ dispatch ]
 	);
