@@ -22,8 +22,8 @@
 	"dependencies": {
 		"@babel/core": "^7.27.1",
 		"babel-jest": "^29.7.0",
-		"jest": "^29.7.0",
-		"jest-config": "^29.7.0"
+		"jest": "^30.4.2",
+		"jest-config": "^30.4.2"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
