@@ -1,17 +1,53 @@
 /**
- * Tracking helpers for AI Editorial Review Tracks events.
+ * Tracking helpers for Jetpack AI sidebar Tracks events.
  */
 
 import { recordTracksEvent as recordTracksEventBase } from '@automattic/calypso-analytics';
+import { select } from '@wordpress/data';
 
 const TRACKS_PREFIX = 'jetpack';
 
 type TrackProperties = Record< string, string | number | boolean >;
 
+type ReviewContext =
+	| 'notes_and_guidelines'
+	| 'notes_only'
+	| 'guidelines_only'
+	| 'content_only'
+	| 'insufficient_input';
+
+type ResponseRenderedTrackingProperties = {
+	suggested_edit_count: number;
+	conflict_count?: number;
+	implication_count?: number;
+	guideline_violation_count?: number;
+	review_context?: ReviewContext;
+	cache_hit?: boolean;
+};
+
+const REVIEW_CONTEXTS: ReadonlySet< string > = new Set< ReviewContext >( [
+	'notes_and_guidelines',
+	'notes_only',
+	'guidelines_only',
+	'content_only',
+	'insufficient_input',
+] );
+
 type WindowWithAgentsManagerActions = Window & {
 	__agentsManagerActions?: {
 		getSessionId?: () => unknown;
 	};
+};
+
+type EditorSelectStore =
+	| {
+			getCurrentPostType?: () => string | undefined;
+	  }
+	| undefined;
+
+type BigSkyTrackingData = {
+	sessionType: string;
+	screen: string;
 };
 
 function getSessionId(): string | undefined {
@@ -24,124 +60,155 @@ function getSessionId(): string | undefined {
 	return typeof sessionId === 'string' && sessionId !== '' ? sessionId : undefined;
 }
 
+/** The `core/editor` store when registered — absent on non-editor surfaces. */
+function getEditorStore(): EditorSelectStore {
+	try {
+		return select( 'core/editor' ) as EditorSelectStore;
+	} catch {
+		return undefined;
+	}
+}
+
+function getCurrentPostType(): string {
+	try {
+		return getEditorStore()?.getCurrentPostType?.() ?? '';
+	} catch {
+		return '';
+	}
+}
+
+function getBigSkyTrackingData(): BigSkyTrackingData {
+	const state = typeof window !== 'undefined' ? window.bigSkyInitialState : undefined;
+	if ( ! state ) {
+		return { sessionType: 'unknown', screen: 'site-editor' };
+	}
+
+	return {
+		sessionType: state.isFreeTrial ? 'free-trial-session' : 'paid-user-session',
+		screen: state.currentScreen?.screen ?? 'site-editor',
+	};
+}
+
+function getIsTest(): boolean {
+	return typeof agentsManagerData !== 'undefined' && !! agentsManagerData?.isDevMode;
+}
+
+/** Reads the optional server-provided Automattician tracking signal. */
+function getIsA11n(): boolean | undefined {
+	const isA11n = typeof agentsManagerData !== 'undefined' ? agentsManagerData?.isA11n : undefined;
+	return typeof isA11n === 'boolean' ? isA11n : undefined;
+}
+
+/** Reads the canonical server-provided blog ID when available. */
+function getBlogId(): number | undefined {
+	const blogId = typeof agentsManagerData !== 'undefined' ? agentsManagerData?.site?.ID : undefined;
+	return typeof blogId === 'number' && Number.isInteger( blogId ) && blogId > 0
+		? blogId
+		: undefined;
+}
+
+/** Counts the non-null entries that a review response can render. */
+function countResponseItems( value: unknown ): number {
+	return Array.isArray( value ) ? value.filter( ( item ) => item != null ).length : 0;
+}
+
+/** Counts guideline findings that have the quote required by the rendered card. */
+function countRenderableGuidelineViolations( value: unknown ): number {
+	if ( ! Array.isArray( value ) ) {
+		return 0;
+	}
+
+	return value.filter( ( item ) => {
+		if ( typeof item !== 'object' || item === null ) {
+			return false;
+		}
+		const quote = ( item as Record< string, unknown > ).guideline_quote;
+		return typeof quote === 'string' && quote.trim() !== '';
+	} ).length;
+}
+
+/** Accepts only the review-context vocabulary supplied by the AER server response. */
+function getReviewContext( value: unknown ): ReviewContext | undefined {
+	return typeof value === 'string' && REVIEW_CONTEXTS.has( value )
+		? ( value as ReviewContext )
+		: undefined;
+}
+
+/** Builds privacy-safe tracking metadata from Jetpack AI's known review payloads. */
+export function getResponseRenderedTrackingProperties(
+	componentType: string,
+	props: Record< string, unknown >
+): ResponseRenderedTrackingProperties | undefined {
+	if ( componentType === 'proofread' || componentType === 'post-feedback' ) {
+		return { suggested_edit_count: countResponseItems( props.items ) };
+	}
+
+	if ( componentType === 'ai-editorial-review' ) {
+		const reviewContext = getReviewContext( props.review_context );
+		return {
+			suggested_edit_count: countResponseItems( props.suggested_edits ),
+			conflict_count: countResponseItems( props.conflicts ),
+			implication_count: countResponseItems( props.implications ),
+			guideline_violation_count: countRenderableGuidelineViolations( props.guideline_violations ),
+			...( reviewContext ? { review_context: reviewContext } : {} ),
+			// Server-declared cache signal; older payloads omit it.
+			...( typeof props.cache_hit === 'boolean' ? { cache_hit: props.cache_hit } : {} ),
+		};
+	}
+
+	return undefined;
+}
+
 function recordTracksEvent( eventName: string, properties: TrackProperties = {} ): void {
 	const sessionId = getSessionId();
+	const isA11n = getIsA11n();
+	const blogId = getBlogId();
+	const surface = getEditorStore() ? 'block_editor' : undefined;
 	recordTracksEventBase( `${ TRACKS_PREFIX }_${ eventName }`, {
+		// Defaults to block_editor unless caller overrides.
+		...( surface ? { surface } : {} ),
 		...properties,
-		...( sessionId ? { sessionid: sessionId } : {} ),
+		// Send the session ID under both names: `ai_session_id` is the standard
+		// one, and `sessionid` is the older one that existing consumers still use.
+		...( sessionId ? { sessionid: sessionId, ai_session_id: sessionId } : {} ),
+		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
+		...( blogId !== undefined ? { blog_id: blogId } : {} ),
 	} );
 }
 
-export type ReviewContext =
-	| 'notes_and_guidelines'
-	| 'notes_only'
-	| 'guidelines_only'
-	| 'content_only'
-	| 'insufficient_input';
-
-interface TrackAiEditorialReviewResultRenderedOptions {
-	outcome: 'success' | 'cache_hit' | 'no_findings' | 'insufficient_input';
-	conflictCount: number;
-	implicationCount: number;
-	suggestedEditCount: number;
-	guidelineViolationCount: number;
-	reviewContext?: ReviewContext;
+interface TrackSplitScreenGuideOptions {
+	componentType: string;
 }
 
-interface TrackAiEditorialReviewItemActionOptions {
-	action: 'accept' | 'undo' | 'dismiss' | 'bulk_accept';
-	target: 'edit' | 'conflict' | 'mixed';
-	outcome: 'success' | 'failed' | 'partial_failed';
-	itemCount?: number;
-}
+function getSplitScreenGuideProperties( {
+	componentType,
+}: TrackSplitScreenGuideOptions ): TrackProperties {
+	const bigSky = getBigSkyTrackingData();
 
-export type BlockTransformationSuggestionType = 'text' | 'image';
-
-interface TrackBlockTransformationSuggestionOptions {
-	suggestionId: string;
-	suggestionType: BlockTransformationSuggestionType;
-	blockType: string;
-}
-
-/**
- * Tracks the AI Editorial Review empty-view suggestion appearing.
- */
-export function trackAiEditorialReviewSuggestionRendered(): void {
-	recordTracksEvent( 'ai_editorial_review_suggestion_rendered' );
-}
-
-/**
- * Tracks a block transformation suggestion appearing for a selected block.
- * @param options                - Tracking options
- * @param options.suggestionId   - Stable suggestion identifier.
- * @param options.suggestionType - Transformation category.
- * @param options.blockType      - Core block type the suggestion applies to.
- */
-export function trackBlockTransformationSuggestionRendered( {
-	suggestionId,
-	suggestionType,
-	blockType,
-}: TrackBlockTransformationSuggestionOptions ): void {
-	recordTracksEvent( 'ai_block_transformation_suggestion_rendered', {
-		suggestion_id: suggestionId,
-		suggestion_type: suggestionType,
-		block_type: blockType,
-		surface: 'jetpack_ai_sidebar',
-	} );
-}
-
-/**
- * Tracks the review card mounting and becoming visible to the user.
- * @param options                          - Tracking options
- * @param options.outcome                  - High-level outcome: success, cache_hit, no_findings, or insufficient_input
- * @param options.conflictCount            - Number of conflict items in the payload
- * @param options.implicationCount         - Number of implication items in the payload
- * @param options.suggestedEditCount       - Total number of suggested edits
- * @param options.guidelineViolationCount  - Number of guideline violations in the payload
- * @param options.reviewContext            - Server-selected context used for this review
- */
-export function trackAiEditorialReviewResultRendered( {
-	outcome,
-	conflictCount,
-	implicationCount,
-	suggestedEditCount,
-	guidelineViolationCount,
-	reviewContext,
-}: TrackAiEditorialReviewResultRenderedOptions ): void {
-	const properties: TrackProperties = {
-		outcome,
-		conflict_count: conflictCount,
-		implication_count: implicationCount,
-		suggested_edit_count: suggestedEditCount,
-		guideline_violation_count: guidelineViolationCount,
+	return {
+		component_type: componentType,
+		guide_variant: 'inline_action_card',
+		post_type: getCurrentPostType(),
+		is_test: getIsTest(),
+		session_type: bigSky.sessionType,
+		screen: bigSky.screen,
 	};
-	if ( reviewContext !== undefined ) {
-		properties.review_context = reviewContext;
-	}
-	recordTracksEvent( 'ai_editorial_review_result_rendered', properties );
 }
 
 /**
- * Tracks a user action on an AI Editorial Review row.
- * @param options                - Tracking options
- * @param options.action         - Action verb
- * @param options.target         - Suggested edit, conflict, or mixed bulk action
- * @param options.outcome        - Whether the action completed successfully
- * @param options.itemCount      - (optional) Number of items attempted
+ * Tracks the split-screen guide's first visible appearance for a review result.
+ * @param options               - Tracking options.
+ * @param options.componentType - Existing show-component type.
  */
-export function trackAiEditorialReviewItemAction( {
-	action,
-	target,
-	outcome,
-	itemCount,
-}: TrackAiEditorialReviewItemActionOptions ): void {
-	const properties: TrackProperties = {
-		action,
-		target,
-		outcome,
-	};
-	if ( itemCount !== undefined ) {
-		properties.item_count = itemCount;
-	}
-	recordTracksEvent( 'ai_editorial_review_item_action', properties );
+export function trackSplitScreenGuideRendered( options: TrackSplitScreenGuideOptions ): void {
+	recordTracksEvent( 'ai_split_screen_guide_rendered', getSplitScreenGuideProperties( options ) );
+}
+
+/**
+ * Tracks the split-screen guide action being selected.
+ * @param options               - Tracking options.
+ * @param options.componentType - Existing show-component type.
+ */
+export function trackSplitScreenGuideClick( options: TrackSplitScreenGuideOptions ): void {
+	recordTracksEvent( 'ai_split_screen_guide_click', getSplitScreenGuideProperties( options ) );
 }

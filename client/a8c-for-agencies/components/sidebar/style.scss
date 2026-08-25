@@ -13,11 +13,12 @@
 	--color-sidebar-text-alternative: var(--color-primary-5);
 	--color-sidebar-gridicon-fill: var(--color-primary-5);
 
-	.sidebar__menu-icon {
+	.sidebar__menu-icon.sidebar__menu-icon.sidebar__menu-icon {
 		margin: 0;
+		max-height: 24px;
 	}
 
-	.sidebar-v2__navigator-sub-menu .components-navigator-back-button {
+	.sidebar-v2__navigator-sub-menu .components-navigator-back-button.components-navigator-back-button.components-navigator-back-button {
 		background: none;
 
 		&:hover {
@@ -68,7 +69,7 @@
 		margin: 0;
 	}
 
-	.components-button.sidebar__item-help {
+	.components-button.sidebar__item-help.components-button.sidebar__item-help.components-button.sidebar__item-help {
 		svg {
 			&.help-center__icon-has-new-items circle {
 				transform: translate(-1px, 3px);
@@ -76,7 +77,6 @@
 
 			fill: var(--color-sidebar-text);
 		}
-	
 		&:hover {
 			background: var(--color-sidebar-menu-hover-background);
 		}

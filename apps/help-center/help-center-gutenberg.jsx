@@ -15,6 +15,7 @@ import { useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { useCanvasMode } from './hooks/use-canvas-mode';
 import { useMenuPanelExperiment } from './hooks/use-menu-panel-experiment';
+import { recordHostTracksEvent } from './tracks';
 import { getEditorType } from './utils';
 import './help-center.scss';
 
@@ -42,7 +43,7 @@ function HelpCenterContent() {
 	);
 
 	const trackIconInteraction = useCallback( () => {
-		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
+		recordHostTracksEvent( 'wpcom_help_center_icon_interaction', {
 			is_help_center_visible: isShown ?? false,
 			section: helpCenterData.sectionName || 'wp-admin',
 			is_menu_panel_enabled: isMenuPanelExperimentEnabled ?? false,
@@ -52,8 +53,7 @@ function HelpCenterContent() {
 
 	const handleToggleHelpCenter = useCallback( () => {
 		trackIconInteraction();
-		recordTracksEvent( `calypso_inlinehelp_${ isShown ? 'close' : 'show' }`, {
-			force_site_id: true,
+		recordHostTracksEvent( `calypso_inlinehelp_${ isShown ? 'close' : 'show' }`, {
 			location: 'help-center',
 			section: helpCenterData.sectionName || 'gutenberg-editor',
 			editor_type: getEditorType(),
@@ -79,8 +79,7 @@ function HelpCenterContent() {
 					setNavigateToRoute( destination );
 					setHelpCenterPage( destination );
 				} else {
-					recordTracksEvent( `calypso_inlinehelp_close`, {
-						force_site_id: true,
+					recordHostTracksEvent( `calypso_inlinehelp_close`, {
 						location: 'help-center',
 						section: helpCenterData.sectionName || 'wp-admin',
 					} );
@@ -92,8 +91,7 @@ function HelpCenterContent() {
 				setHelpCenterPage( destination );
 				setShowHelpCenter( true );
 
-				recordTracksEvent( `calypso_inlinehelp_show`, {
-					force_site_id: true,
+				recordHostTracksEvent( `calypso_inlinehelp_show`, {
 					location: 'help-center',
 					section: helpCenterData.sectionName || 'wp-admin',
 					destination,
@@ -250,9 +248,15 @@ function HelpCenterContent() {
 		/>
 	);
 
-	const botProps = helpCenterData.isCommerceGarden
-		? { newInteractionsBotSlug: 'ciab-workflow-support_chat' }
-		: {};
+	const customProps = {};
+
+	if ( helpCenterData?.newInteractionsBotSlug ) {
+		customProps.newInteractionsBotSlug = helpCenterData.newInteractionsBotSlug;
+	}
+
+	if ( helpCenterData?.newLoggedOutInteractionsBotSlug ) {
+		customProps.newLoggedOutInteractionsBotSlug = helpCenterData.newLoggedOutInteractionsBotSlug;
+	}
 
 	return (
 		<>
@@ -272,7 +276,7 @@ function HelpCenterContent() {
 				onboardingUrl="https://wordpress.com/start"
 				handleClose={ closeCallback }
 				product={ helpCenterData.isCommerceGarden ? 'commerce-garden' : undefined }
-				{ ...botProps }
+				{ ...customProps }
 			/>
 		</>
 	);

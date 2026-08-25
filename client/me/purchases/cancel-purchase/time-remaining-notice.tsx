@@ -1,13 +1,12 @@
 import moment from 'moment';
 import Notice from 'calypso/components/notice';
 import { getTopNoticeCopy } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
-import { isPartnerPurchase } from 'calypso/lib/purchases';
-import { toPurchaseForCopy } from './to-purchase-for-copy';
-import type { Purchases } from '@automattic/data-stores';
-import type { CancelIntent, DisplayVariant } from 'calypso/lib/purchases/utils';
+import { isPartnerPurchase } from 'calypso/dashboard/utils/purchase';
+import type { Purchase } from '@automattic/api-core';
+import type { CancelIntent, DisplayVariant } from 'calypso/dashboard/utils/purchase';
 
 interface TimeRemainingNoticeProps {
-	purchase: Purchases.Purchase;
+	purchase: Purchase;
 	displayVariant: DisplayVariant;
 	intent: CancelIntent | null;
 }
@@ -20,15 +19,15 @@ export default function TimeRemainingNotice( {
 	if ( displayVariant === 'remove' ) {
 		return null;
 	}
-	if ( isPartnerPurchase( purchase ) || ! purchase.expiryDate ) {
+	if ( isPartnerPurchase( purchase ) || ! purchase.expiry_date ) {
 		return null;
 	}
-	if ( moment( purchase.expiryDate ).isSameOrBefore( moment(), 'day' ) ) {
+	if ( moment( purchase.expiry_date ).isSameOrBefore( moment(), 'day' ) ) {
 		return null;
 	}
 
 	const copy = getTopNoticeCopy( {
-		purchase: toPurchaseForCopy( purchase ),
+		purchase,
 		intent: intent ?? 'cancel',
 	} );
 	if ( ! copy ) {

@@ -885,6 +885,39 @@ describe( 'Checkout', () => {
 		const getSubmitArea = ( container ) =>
 			container.querySelector( '.checkout-steps__submit-button-wrapper' );
 
+		// jsdom has no layout, so every element reports a 0x0 rect, which counts as
+		// visible (there is nothing to scroll to). Tests that care about position say
+		// where the elements they are about live. `top` is viewport-relative, so a
+		// value >= window.innerHeight puts the element off-screen.
+		const byId = ( id ) => ( el ) => el.id === id;
+		const byTagName = ( tagName ) => ( el ) => el.tagName === tagName;
+		const positionElements = ( positions ) => {
+			const original = window.HTMLElement.prototype.getBoundingClientRect;
+			jest
+				.spyOn( window.HTMLElement.prototype, 'getBoundingClientRect' )
+				.mockImplementation( function () {
+					const position = positions.find( ( [ matches ] ) => matches( this ) );
+					if ( ! position ) {
+						return original.call( this );
+					}
+					const top = position[ 1 ];
+					return { top, bottom: top + 400, left: 0, right: 400, width: 400, height: 400 };
+				} );
+		};
+		const putStepAt = ( stepId, top ) => positionElements( [ [ byId( stepId ), top ] ] );
+
+		// jsdom has no layout, so it has no hit-testing either; the production code
+		// falls back to the rect alone without it. Tests that need to simulate the
+		// sticky summary covering an on-screen step provide it.
+		const putElementOverEverything = ( element ) => {
+			document.elementFromPoint = jest.fn( () => element );
+		};
+
+		afterEach( () => {
+			jest.restoreAllMocks();
+			delete ( document as unknown as { elementFromPoint?: unknown } ).elementFromPoint;
+		} );
+
 		it( 'renders an enabled Continue button instead of a disabled submit button when a later step exists', () => {
 			const { container } = render(
 				<ContinueCheckout withProp steps={ [ steps[ 0 ], steps[ 1 ], steps[ 3 ] ] } />
@@ -945,6 +978,156 @@ describe( 'Checkout', () => {
 				expect( ( scrollIntoView.mock.instances[ 0 ] as HTMLElement ).id ).toBe(
 					'custom-incomplete-step'
 				);
+			} );
+		} );
+
+		it( 'only scrolls the active step into view when it is entirely off-screen', async () => {
+			const scrollIntoView = jest.fn();
+			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
+			const isCompleteCallback = jest.fn( () => false );
+			const invalidActiveStep = { ...steps[ 3 ], isCompleteCallback };
+			putStepAt( 'custom-incomplete-step', window.innerHeight + 100 );
+			const { container } = render(
+				<ContinueCheckout withProp steps={ [ steps[ 0 ], invalidActiveStep, steps[ 1 ] ] } />
+			);
+			const submitArea = getSubmitArea( container );
+			const user = userEvent.setup();
+			await user.click( getByTextInNode( submitArea, 'Continue' ) );
+
+			await waitFor( () => {
+				expect( ( scrollIntoView.mock.instances[ 0 ] as HTMLElement ).id ).toBe(
+					'custom-incomplete-step'
+				);
+			} );
+			// The shopper has not seen the step yet, so it must not be validated: that
+			// would show errors for fields they have had no chance to fill in.
+			expect( isCompleteCallback ).not.toHaveBeenCalled();
+		} );
+
+		it( 'only scrolls the active step into view when something is covering it', async () => {
+			const scrollIntoView = jest.fn();
+			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
+			const isCompleteCallback = jest.fn( () => false );
+			const invalidActiveStep = { ...steps[ 3 ], isCompleteCallback };
+			// On-screen by its rect, but taller than the viewport, which is the normal
+			// case for a checkout step on a phone.
+			putStepAt( 'custom-incomplete-step', 100 );
+			const { container } = render(
+				<ContinueCheckout withProp steps={ [ steps[ 0 ], invalidActiveStep, steps[ 1 ] ] } />
+			);
+			// Every hit-test lands on the sticky summary rather than the step.
+			putElementOverEverything( container );
+			const submitArea = getSubmitArea( container );
+			const user = userEvent.setup();
+			await user.click( getByTextInNode( submitArea, 'Continue' ) );
+
+			await waitFor( () => {
+				expect( ( scrollIntoView.mock.instances[ 0 ] as HTMLElement ).id ).toBe(
+					'custom-incomplete-step'
+				);
+			} );
+			expect( isCompleteCallback ).not.toHaveBeenCalled();
+		} );
+
+		it( 'only scrolls the active step into view when its first field is off-screen', async () => {
+			const scrollIntoView = jest.fn();
+			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
+			const isCompleteCallback = jest.fn( () => false );
+			const stepWithAField = {
+				...steps[ 3 ],
+				isCompleteCallback,
+				activeStepContent: <input aria-label="Country" />,
+			};
+			// The step itself is on-screen but its first field is not, which is what a
+			// step taller than the phone screen looks like: heading showing, form not.
+			positionElements( [
+				[ byId( 'custom-incomplete-step' ), 100 ],
+				[ byTagName( 'INPUT' ), window.innerHeight + 100 ],
+			] );
+			const { container } = render(
+				<ContinueCheckout withProp steps={ [ steps[ 0 ], stepWithAField, steps[ 1 ] ] } />
+			);
+			const submitArea = getSubmitArea( container );
+			const user = userEvent.setup();
+			await user.click( getByTextInNode( submitArea, 'Continue' ) );
+
+			await waitFor( () => {
+				expect( ( scrollIntoView.mock.instances[ 0 ] as HTMLElement ).id ).toBe(
+					'custom-incomplete-step'
+				);
+			} );
+			expect( isCompleteCallback ).not.toHaveBeenCalled();
+		} );
+
+		it( 'validates the active step with an off-screen first field once the shopper has touched the steps', async () => {
+			const scrollIntoView = jest.fn();
+			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
+			const isCompleteCallback = jest.fn( () => false );
+			const stepWithAField = {
+				...steps[ 3 ],
+				isCompleteCallback,
+				activeStepContent: <input aria-label="Country" />,
+			};
+			// A shopper working down a step taller than the screen: the first field has
+			// scrolled off the top, but they have plainly seen the form.
+			positionElements( [
+				[ byId( 'custom-incomplete-step' ), -300 ],
+				[ byTagName( 'INPUT' ), -500 ],
+			] );
+			const { container, getByLabelText } = render(
+				<ContinueCheckout withProp steps={ [ steps[ 0 ], stepWithAField, steps[ 1 ] ] } />
+			);
+			const submitArea = getSubmitArea( container );
+			const user = userEvent.setup();
+			await user.click( getByLabelText( 'Country' ) );
+			await user.click( getByTextInNode( submitArea, 'Continue' ) );
+
+			await waitFor( () => {
+				expect( isCompleteCallback ).toHaveBeenCalled();
+			} );
+		} );
+
+		it( 'validates the active step when its first field is on-screen', async () => {
+			const scrollIntoView = jest.fn();
+			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
+			const isCompleteCallback = jest.fn( () => false );
+			const stepWithAField = {
+				...steps[ 3 ],
+				isCompleteCallback,
+				activeStepContent: <input aria-label="Country" />,
+			};
+			positionElements( [
+				[ byId( 'custom-incomplete-step' ), 100 ],
+				[ byTagName( 'INPUT' ), 200 ],
+			] );
+			const { container } = render(
+				<ContinueCheckout withProp steps={ [ steps[ 0 ], stepWithAField, steps[ 1 ] ] } />
+			);
+			const submitArea = getSubmitArea( container );
+			const user = userEvent.setup();
+			await user.click( getByTextInNode( submitArea, 'Continue' ) );
+
+			await waitFor( () => {
+				expect( isCompleteCallback ).toHaveBeenCalled();
+			} );
+		} );
+
+		it( 'validates the active step when it is on-screen and nothing is covering it', async () => {
+			const scrollIntoView = jest.fn();
+			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
+			const isCompleteCallback = jest.fn( () => false );
+			const invalidActiveStep = { ...steps[ 3 ], isCompleteCallback };
+			putStepAt( 'custom-incomplete-step', 100 );
+			const { container } = render(
+				<ContinueCheckout withProp steps={ [ steps[ 0 ], invalidActiveStep, steps[ 1 ] ] } />
+			);
+			putElementOverEverything( document.getElementById( 'custom-incomplete-step' ) );
+			const submitArea = getSubmitArea( container );
+			const user = userEvent.setup();
+			await user.click( getByTextInNode( submitArea, 'Continue' ) );
+
+			await waitFor( () => {
+				expect( isCompleteCallback ).toHaveBeenCalled();
 			} );
 		} );
 

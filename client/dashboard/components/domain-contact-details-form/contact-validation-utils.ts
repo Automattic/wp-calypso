@@ -1,7 +1,9 @@
+import { UK_FIELD_TO_API_KEY_MAP } from './uk-contact-fields';
 import type {
 	ContactValidationResponseMessages,
 	DomainContactDetails,
 	DomainContactValidationResponse,
+	RawContactValidationResponseMessages,
 	SMSCountryCode,
 } from '@automattic/api-core';
 import type { NormalizedField } from '@wordpress/dataviews';
@@ -114,6 +116,16 @@ export const mapValidationMessagesToFieldErrors = (
 			continue;
 		}
 		const messagesForField = messages[ apiKey ];
+		if ( Array.isArray( messagesForField ) && messagesForField.length > 0 ) {
+			fieldErrors[ fieldId ] = messagesForField[ 0 ];
+		}
+	}
+
+	// ccTLD errors are keyed by their dotted path (`extra.uk.registrant_type`)
+	// rather than nested under `extra`, so they need a separate lookup.
+	const rawMessages = messages as RawContactValidationResponseMessages;
+	for ( const [ fieldId, apiKey ] of Object.entries( UK_FIELD_TO_API_KEY_MAP ) ) {
+		const messagesForField = rawMessages[ apiKey ];
 		if ( Array.isArray( messagesForField ) && messagesForField.length > 0 ) {
 			fieldErrors[ fieldId ] = messagesForField[ 0 ];
 		}

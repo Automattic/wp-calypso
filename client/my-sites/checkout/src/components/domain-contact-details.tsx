@@ -3,6 +3,7 @@ import { Fragment } from 'react';
 import ManagedContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields/managed-contact-details-form-fields';
 import RegistrantExtraInfoCaForm from 'calypso/components/domains/registrant-extra-info/ca-form';
 import RegistrantExtraInfoFrForm from 'calypso/components/domains/registrant-extra-info/fr-form';
+import RegistrantExtraInfoInForm from 'calypso/components/domains/registrant-extra-info/in-form';
 import RegistrantExtraInfoUkForm from 'calypso/components/domains/registrant-extra-info/uk-form';
 import {
 	hasGoogleApps,
@@ -82,6 +83,16 @@ export default function DomainContactDetails( {
 				<RegistrantExtraInfoFrForm
 					contactDetails={ contactDetails }
 					ccTldDetails={ contactDetails?.extra?.fr ?? {} }
+					onContactDetailsChange={ updateDomainContactFields }
+					contactDetailsValidationErrors={
+						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
+					}
+				/>
+			) }
+			{ tlds.includes( 'in' ) && (
+				<RegistrantExtraInfoInForm
+					contactDetails={ contactDetails }
+					ccTldDetails={ contactDetails?.extra?.in ?? {} }
 					onContactDetailsChange={ updateDomainContactFields }
 					contactDetailsValidationErrors={
 						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}

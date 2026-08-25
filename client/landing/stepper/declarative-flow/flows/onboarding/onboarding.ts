@@ -34,6 +34,10 @@ import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
 import {
+	getBlueprintArchiveSiteSpecUrl,
+	getStandaloneBlueprintArchiveSlug,
+} from '../../../utils/blueprint-archive-import';
+import {
 	getBuildWowSiteIdentifier,
 	getBuildWowSiteSpecUrl,
 	logBuildWowEvent,
@@ -44,6 +48,7 @@ import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboardi
 import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
+import { useIsPostPlanSelectionEmailVerification } from '../../internals/steps-repository/__user/use-email-verification-gate';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import { getOnboardingStepperPosition } from './step-counter-config';
@@ -54,6 +59,7 @@ function initialize() {
 		STEPS.DOMAIN_SEARCH,
 		STEPS.USE_MY_DOMAIN,
 		STEPS.UNIFIED_PLANS,
+		STEPS.EMAIL_VERIFICATION,
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
 		STEPS.POST_CHECKOUT_ONBOARDING,
@@ -70,6 +76,9 @@ const onboarding: FlowV2< typeof initialize > = {
 	initialize,
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
+		// Variant B: the account step doesn't gate; the verification step is met after the free plan
+		// selection or, for a paid order, on return from checkout.
+		const postPlanSelectionEmailVerification = useIsPostPlanSelectionEmailVerification( flowName );
 
 		const {
 			setDomain,
@@ -99,6 +108,12 @@ const onboarding: FlowV2< typeof initialize > = {
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
 		const playgroundId = queryParams.get( 'playground' );
+		const buildDest = queryParams.get( 'build_dest' );
+		const blueprintArchiveSlug = getStandaloneBlueprintArchiveSlug(
+			blueprint,
+			playgroundId,
+			buildDest
+		);
 
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
@@ -117,7 +132,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				const isFree =
 					! planCartItem || isPlanProductFree( {} as unknown as State, planCartItem?.product_id );
 
-				if ( isFree && ! blueprint ) {
+				if ( isFree && playgroundId ) {
 					// Redirect free plan users to a home page
 					return [ `/home/${ providedDependencies.siteSlug }`, null, null ];
 				}
@@ -127,10 +142,28 @@ const onboarding: FlowV2< typeof initialize > = {
 					siteId: providedDependencies.siteId as number,
 				};
 
-				if ( blueprint ) {
-					params.blueprint = blueprint;
-				} else if ( playgroundId ) {
+				// build_dest=wow: skip the Playground-based importer and land on the AI
+				// site-spec, which kicks off the background transfer-to-Atomic +
+				// blueprint-archive import and, on confirm, polls the import and
+				// redirects to the Site Editor. The blueprint step already verified the
+				// archive exists (and stripped build_dest when it does not).
+				if ( blueprintArchiveSlug ) {
+					return [
+						getBlueprintArchiveSiteSpecUrl( {
+							siteSlug: providedDependencies.siteSlug as string,
+							siteId: providedDependencies.siteId as number,
+							blueprintSlug: blueprintArchiveSlug,
+							ref: refParameter,
+						} ),
+						null,
+						null,
+					];
+				}
+
+				if ( playgroundId ) {
 					params.playground = playgroundId;
+				} else if ( blueprint ) {
+					params.blueprint = blueprint;
 				}
 
 				return [
@@ -205,7 +238,7 @@ const onboarding: FlowV2< typeof initialize > = {
 						providedDependencies.mode &&
 						providedDependencies.domain
 					) {
-						const destination = addQueryArgs( '/use-my-domain', {
+						const destination = addQueryArgs( 'use-my-domain', {
 							...getQueryArgs( window.location.href ),
 							step: providedDependencies.mode,
 							initialQuery: providedDependencies.domain,
@@ -243,7 +276,22 @@ const onboarding: FlowV2< typeof initialize > = {
 					setProductCartItems( products.filter( ( product ) => product !== null ) );
 
 					setSignupCompleteFlowName( flowName );
+
+					// A fully free order never reaches checkout, so the post-plan-selection gate is met here,
+					// right after the plan is chosen, before the site is created.
+					if ( postPlanSelectionEmailVerification && ! pickedPlan ) {
+						return navigate(
+							'email-verification?next=create-site' as typeof currentStepSlug,
+							undefined,
+							false
+						);
+					}
+
 					return navigate( 'create-site', undefined, false );
+				}
+				case 'email-verification': {
+					const next = queryParams.get( 'next' ) || 'create-site';
+					return navigate( next as typeof currentStepSlug );
 				}
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
@@ -384,7 +432,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							 * redirect the user back to Playground to start the import.
 							 */
 							const playgroundId = getQueryArg( window.location.href, 'playground' );
-							const redirectTo: string =
+							let redirectTo: string =
 								playgroundId &&
 								! isPlanProductFree( {} as unknown as State, planCartItem?.product_id )
 									? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
@@ -401,12 +449,29 @@ const onboarding: FlowV2< typeof initialize > = {
 											}
 									  );
 
+							// Variant B: a paid order meets the post-plan-selection gate on return from checkout,
+							// before post-checkout-onboarding. The Playground import path keeps its own
+							// return target.
+							if ( postPlanSelectionEmailVerification && ! playgroundId ) {
+								redirectTo = addQueryArgs(
+									withLocale( '/setup/onboarding/email-verification', locale ),
+									{
+										next: 'post-checkout-onboarding',
+										siteSlug,
+										...( refParameter ? { ref: refParameter } : {} ),
+										...( diyLaunchpad ? { 'diy-launchpad': diyLaunchpad } : {} ),
+									}
+								);
+							}
+
 							const checkoutStepperPosition = getOnboardingStepperPosition( 'checkout' );
 
 							// replace the location to delete processing step from history.
 							window.location.replace(
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-									redirect_to: redirectTo,
+									// build_dest=wow goes straight from checkout to the AI site-spec
+									// (no post-checkout-onboarding hop, no chooser).
+									redirect_to: blueprintArchiveSlug ? destination : redirectTo,
 									signup: 1,
 									flow: ONBOARDING_FLOW,
 									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
@@ -418,6 +483,10 @@ const onboarding: FlowV2< typeof initialize > = {
 									steps_total: checkoutStepperPosition.total,
 								} )
 							);
+						} else if ( blueprintArchiveSlug ) {
+							// build_dest=wow never shows the setup-your-site-ai chooser; go
+							// straight to the AI site-spec destination.
+							window.location.replace( destination );
 						} else if (
 							refParameter === WOO_HOSTING_SOLUTIONS_REF &&
 							isEnabled( 'onboarding/woo-hosting-post-purchase-setup-choice' )
@@ -501,9 +570,9 @@ const onboarding: FlowV2< typeof initialize > = {
 		 */
 		useEffect( () => {
 			if ( isLoggedIn && user?.email && user?.date ) {
-				addSurvicate( { email: user.email, registrationDate: user.date } );
+				addSurvicate( { email: user.email, registrationDate: user.date, userId: user.ID } );
 			}
-		}, [ isLoggedIn, currentStepSlug, user?.email, user?.date ] );
+		}, [ isLoggedIn, currentStepSlug, user?.email, user?.date, user?.ID ] );
 
 		// Preload the visual split experiment
 		useEffect( () => {

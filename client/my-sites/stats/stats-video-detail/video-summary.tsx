@@ -1,7 +1,7 @@
 import { SegmentedControl } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useSelector } from 'calypso/state';
@@ -16,57 +16,54 @@ import DatePicker from '../stats-date-label';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import SummaryChart from '../stats-summary';
-import VideoMetricTabs, { VideoStatType, VideoMetricValues } from './video-metric-tabs';
+import { calculatePlayWeightedRetention } from './retention';
+import VideoMetricTabs, {
+	formatValue,
+	VideoStatType,
+	VideoMetricValues,
+} from './video-metric-tabs';
 
 type UiPeriod = 'day' | 'week' | 'month' | 'year';
-
-// The stats/video/:id endpoint treats `period` as a fixed trailing-window
-// selector, not a bucket granularity: `month` returns ~31 daily buckets and
-// `year` returns ~13 monthly buckets (there are no weekly or yearly buckets,
-// and `day`/`week` windows are too small to chart). So we fetch the daily
-// window for the Days/Weeks views and the monthly window for Months/Years,
-// then aggregate client-side.
-type ApiPeriod = 'month' | 'year';
-
-// The endpoint only recognizes statType=watch_time|impressions; `views` falls
-// back to the plays column, which is the same metric the Videos module and the
-// All videos page label "Views".
-const FETCHED_STAT_TYPES = [ 'views', 'impressions', 'watch_time' ] as const;
 
 interface ChartRecord {
 	period: string;
 	periodLabel: string;
 	startDate: string;
 	value: number;
+	formattedValue?: string;
 }
 
-interface BucketRecord {
-	key: string;
-	plays: number;
-	impressions: number;
-	watchTime: number;
+// A range-mode series row from the statsVideo normalizer: the period start
+// date plus one value per metric named in the response's `fields`.
+interface SeriesRow {
+	period: string;
+	[ metric: string ]: string | number;
 }
 
 interface VideoSummaryData {
-	data?: Array< { period: string; value: number } >;
+	rows?: SeriesRow[] | null;
+	metrics?: string[] | null;
 	post?: { post_date?: string } | null;
 }
 
-const STAT_TYPES: VideoStatType[] = [ 'views', 'impressions', 'watch_time' ];
+const STAT_TYPES: VideoStatType[] = [ 'views', 'impressions', 'watch_time', 'retention_rate' ];
+
+// The endpoint names the views column `plays` (the same metric the Videos
+// module and the All videos page label "Views"); the other tabs match their
+// column names directly.
+const METRIC_COLUMNS: Record< VideoStatType, string > = {
+	views: 'plays',
+	impressions: 'impressions',
+	watch_time: 'watch_time',
+	retention_rate: 'retention_rate',
+};
 
 function isVideoStatType( value: string | null ): value is VideoStatType {
 	return !! value && ( STAT_TYPES as string[] ).includes( value );
 }
 
-function metricOfBucket( bucket: BucketRecord, type: VideoStatType ): number {
-	switch ( type ) {
-		case 'impressions':
-			return bucket.impressions;
-		case 'watch_time':
-			return bucket.watchTime;
-		default:
-			return bucket.plays;
-	}
+function metricValue( row: SeriesRow, type: VideoStatType ): number {
+	return Number( row[ METRIC_COLUMNS[ type ] ] ) || 0;
 }
 
 export default function VideoSummary( {
@@ -80,228 +77,111 @@ export default function VideoSummary( {
 	const moment = useLocalizedMoment();
 	const siteId = useSelector( getSelectedSiteId );
 	const [ uiPeriod, setUiPeriod ] = useState< UiPeriod >( 'day' );
+	const [ page, setPage ] = useState( 1 );
 	const [ statType, setStatType ] = useState< VideoStatType >(
 		isVideoStatType( initialStatType ) ? initialStatType : 'views'
 	);
-	const [ selectedRecord, setSelectedRecord ] = useState< ChartRecord | null >( null );
 
-	const apiPeriod: ApiPeriod = uiPeriod === 'day' || uiPeriod === 'week' ? 'month' : 'year';
-
-	// The video's publish date, so the chart never shows periods before the
-	// video existed. Always queried with period=month (rather than reusing
-	// `apiPeriod`, which can be 'year') to mirror the parent StatsVideoDetail
-	// component's videoInfoQuery, so this reuses the same cached response.
-	const videoInfoQuery = useMemo(
-		() => ( { postId, statType: 'views', period: 'month' as const } ),
-		[ postId ]
+	// One request per granularity: statType=all returns every metric series in
+	// a single response, and num=-1 windows it from the video's publish date,
+	// so the chart can page back through the full history — mirroring how the
+	// Post Details chart fetches the post's entire view history up front and
+	// pages client-side.
+	const query = useMemo(
+		() => ( { postId, statType: 'all', period: uiPeriod, num: -1 } ),
+		[ postId, uiPeriod ]
 	);
-	const videoPublishDate = useSelector(
+
+	const summaryData = useSelector(
 		( state ) =>
-			(
-				getSiteStatsNormalizedData(
-					state,
-					siteId,
-					'statsVideo',
-					videoInfoQuery
-				) as VideoSummaryData | null
-			 )?.post?.post_date ?? null
-	);
-
-	// The endpoint's `month` window spans 31 days inclusive; trim to the
-	// trailing 30 so totals line up with the 30-day window the Videos module
-	// and the All videos page show by default, and drop any raw entry before
-	// the video's publish date. Shared by the bucketing below and by the
-	// header's date-range label, so both agree on the window.
-	const trimToTrailingWindow = useCallback(
-		(
-			data?: Array< { period: string; value: number } >
-		): Array< { period: string; value: number } > | undefined => {
-			const trimmed = apiPeriod === 'month' && data && data.length > 30 ? data.slice( -30 ) : data;
-			if ( ! trimmed || ! videoPublishDate ) {
-				return trimmed;
-			}
-			// apiPeriod === 'year' raw entries are whole months (e.g.
-			// '2026-07'); comparing those at day granularity would drop the
-			// publish month entirely for a video published mid-month.
-			const unit = apiPeriod === 'year' ? 'month' : 'day';
-			return trimmed.filter(
-				( { period } ) => ! moment( period ).isBefore( videoPublishDate, unit )
-			);
-		},
-		[ apiPeriod, videoPublishDate, moment ]
-	);
-
-	const queries = useMemo(
-		() =>
-			Object.fromEntries(
-				FETCHED_STAT_TYPES.map( ( type ) => [
-					type,
-					{ postId, statType: type, period: apiPeriod },
-				] )
-			) as Record<
-				( typeof FETCHED_STAT_TYPES )[ number ],
-				{ postId: number; statType: string; period: ApiPeriod }
-			>,
-		[ postId, apiPeriod ]
-	);
-
-	const playsData = useSelector(
-		( state ) =>
-			getSiteStatsNormalizedData(
-				state,
-				siteId,
-				'statsVideo',
-				queries.views
-			) as VideoSummaryData | null
-	);
-	const impressionsData = useSelector(
-		( state ) =>
-			getSiteStatsNormalizedData(
-				state,
-				siteId,
-				'statsVideo',
-				queries.impressions
-			) as VideoSummaryData | null
-	);
-	const watchTimeData = useSelector(
-		( state ) =>
-			getSiteStatsNormalizedData(
-				state,
-				siteId,
-				'statsVideo',
-				queries.watch_time
-			) as VideoSummaryData | null
+			getSiteStatsNormalizedData( state, siteId, 'statsVideo', query ) as VideoSummaryData | null
 	);
 	const isRequesting = useSelector( ( state ) =>
-		siteId
-			? FETCHED_STAT_TYPES.some( ( type ) =>
-					isRequestingSiteStatsForQuery( state, siteId, 'statsVideo', queries[ type ] )
-			  )
-			: false
+		siteId ? isRequestingSiteStatsForQuery( state, siteId, 'statsVideo', query ) : false
 	);
-
-	const hasSelectedSeriesFailed = useSelector( ( state ) =>
-		siteId ? hasSiteStatsQueryFailed( state, siteId, 'statsVideo', queries[ statType ] ) : false
+	const hasFailed = useSelector( ( state ) =>
+		siteId ? hasSiteStatsQueryFailed( state, siteId, 'statsVideo', query ) : false
 	);
 
 	// QuerySiteStats defers its initial request, so the requesting flag is
-	// still false on the first render after switching windows; treat missing
-	// data as loading too, or the empty state flashes before the fetch starts.
-	// A failed request also ends the loading state (empty chart instead of an
-	// infinite placeholder).
-	const isSelectedSeriesLoaded =
-		!! {
-			views: playsData,
-			impressions: impressionsData,
-			watch_time: watchTimeData,
-		}[ statType ] || hasSelectedSeriesFailed;
+	// still false on the first render after switching granularity; treat
+	// missing data as loading too, or the empty state flashes before the fetch
+	// starts. A failed request also ends the loading state (empty chart
+	// instead of an infinite placeholder).
+	const isLoaded = !! summaryData || hasFailed;
 
-	// Group the fetched buckets (daily or monthly) into the buckets the UI
-	// period wants, summing values. Bucket keys are normalized ISO dates.
-	const buckets: BucketRecord[] = useMemo( () => {
-		const unit = uiPeriod;
-		const toBucketMap = ( data?: Array< { period: string; value: number } > ) => {
-			const map = new Map< string, number >();
-			for ( const { period: date, value } of trimToTrailingWindow( data ) ?? [] ) {
-				const parsed = moment( date );
-				if ( ! parsed.isValid() ) {
-					continue;
-				}
-				// Stats weeks run Monday-Sunday (see stats-date-label); isoWeek
-				// matches that regardless of the user's locale.
-				const key = parsed.startOf( unit === 'week' ? 'isoWeek' : unit ).format( 'YYYY-MM-DD' );
-				map.set( key, ( map.get( key ) ?? 0 ) + value );
-			}
-			return map;
-		};
+	const rows = useMemo( () => summaryData?.rows ?? [], [ summaryData ] );
+	const availableMetrics = summaryData?.metrics ?? null;
 
-		const playsByBucket = toBucketMap( playsData?.data );
-		const impressionsByBucket = toBucketMap( impressionsData?.data );
-		const watchTimeByBucket = toBucketMap( watchTimeData?.data );
-
-		const keys = Array.from(
-			new Set( [
-				...playsByBucket.keys(),
-				...impressionsByBucket.keys(),
-				...watchTimeByBucket.keys(),
-			] )
-		).sort();
-
-		// Cap Weeks/Months/Years to the most recent STATS_SUMMARY_MAX_BARS
-		// buckets so they show the same amount of history per view as the
-		// Post Details chart, which pages in chunks of the same size. Weeks/
-		// Years will still fall short of that cap: the endpoint's `month`/
-		// `year` windows only cover ~30 days / ~13 months of raw data, which
-		// bucket into fewer than 10 weeks/years regardless of this cap —
-		// there's no more granular data to draw from without a backend
-		// change. Days aren't capped; there's no pagination for this chart,
-		// so it shows the full ~30-day window it always has.
-		const cappedKeys = uiPeriod === 'day' ? keys : keys.slice( -STATS_SUMMARY_MAX_BARS );
-		return cappedKeys.map( ( key ) => ( {
-			key,
-			plays: playsByBucket.get( key ) ?? 0,
-			impressions: impressionsByBucket.get( key ) ?? 0,
-			watchTime: watchTimeByBucket.get( key ) ?? 0,
-		} ) );
-	}, [ playsData, impressionsData, watchTimeData, uiPeriod, trimToTrailingWindow, moment ] );
+	// Page the full series in most-recent-last chunks, exactly like the Post
+	// Details chart ([start, end) bounds per page, page 1 = newest).
+	const totalCount = rows.length;
+	const maxPages = Math.max( Math.ceil( totalCount / STATS_SUMMARY_MAX_BARS ), 1 );
+	const dataStart = Math.max( totalCount - STATS_SUMMARY_MAX_BARS * page, 0 );
+	const dataEnd = Math.max( totalCount - STATS_SUMMARY_MAX_BARS * ( page - 1 ), 0 );
+	const visibleRows = useMemo(
+		() => rows.slice( dataStart, dataEnd ),
+		[ rows, dataStart, dataEnd ]
+	);
 
 	const chartData: ChartRecord[] = useMemo(
 		() =>
-			buckets.map( ( bucket ) => {
-				const start = moment( bucket.key );
-				const value = metricOfBucket( bucket, statType );
+			visibleRows.map( ( row ) => {
+				const start = moment( row.period );
+				const value = metricValue( row, statType );
+				// Views and impressions tooltips show the exact count; hours
+				// watched and retention rate reuse the metric-tab formatting
+				// (one decimal, % suffix) so the tooltip matches the card.
+				const record = {
+					startDate: row.period,
+					value,
+					formattedValue:
+						statType === 'watch_time' || statType === 'retention_rate'
+							? formatValue( statType, value )
+							: undefined,
+				};
 				switch ( uiPeriod ) {
 					case 'week':
 						return {
+							...record,
 							period: start.format( 'MMM D' ),
-							periodLabel: `${ start.format( 'L' ) } - ${ moment( bucket.key )
+							periodLabel: `${ start.format( 'L' ) } - ${ moment( row.period )
 								.add( 6, 'days' )
 								.format( 'L' ) }`,
-							startDate: bucket.key,
-							value,
 						};
 					case 'month':
 						return {
+							...record,
 							period: start.format( 'MMM YYYY' ),
 							periodLabel: start.format( 'MMMM YYYY' ),
-							startDate: bucket.key,
-							value,
 						};
 					case 'year':
 						return {
+							...record,
 							period: start.format( 'YYYY' ),
 							periodLabel: start.format( 'YYYY' ),
-							startDate: bucket.key,
-							value,
 						};
 					default:
 						return {
+							...record,
 							period: start.format( 'MMM D' ),
 							periodLabel: start.format( 'LL' ),
-							startDate: bucket.key,
-							value,
 						};
 				}
 			} ),
-		[ buckets, statType, uiPeriod, moment ]
+		[ visibleRows, statType, uiPeriod, moment ]
 	);
 
-	// No bar is highlighted by default; the header shows the range instead of
-	// a single bar's date, so defaulting to the most recent bar would highlight
-	// it for no reason until the user actually clicks one.
-	const selected = selectedRecord;
-
 	// The header shows the date range the visible bars cover (like the Post
-	// Details chart's page-range header), rather than the period of whichever
-	// single bar is selected, so it reads the same across every
+	// Details chart's page-range header), so it reads the same across every
 	// Day/Week/Month/Year tab and matches Post Details' behavior.
 	const chartDateRange = useMemo( () => {
-		if ( ! buckets.length ) {
+		if ( ! visibleRows.length ) {
 			return undefined;
 		}
 
-		const start = moment( buckets[ 0 ].key );
-		let end = moment( buckets[ buckets.length - 1 ].key );
+		const start = moment( visibleRows[ 0 ].period );
+		let end = moment( visibleRows[ visibleRows.length - 1 ].period );
 		switch ( uiPeriod ) {
 			case 'week':
 				end = end.add( 6, 'days' );
@@ -327,34 +207,54 @@ export default function VideoSummary( {
 			chartStart: start.format( 'YYYY-MM-DD' ),
 			chartEnd: end.format( 'YYYY-MM-DD' ),
 		};
-	}, [ buckets, uiPeriod, moment ] );
+	}, [ visibleRows, uiPeriod, moment ] );
 
-	// Card totals cover the whole window shown in the chart.
+	// Card totals cover the window shown in the chart (the current page).
+	// Retention is play-weighted rather than summed — see retention.ts.
 	const metricValues: VideoMetricValues = useMemo( () => {
-		const sum = ( data: VideoSummaryData | null, pick: ( bucket: BucketRecord ) => number ) =>
-			data ? buckets.reduce( ( total, bucket ) => total + pick( bucket ), 0 ) : null;
+		const sumOf = ( type: VideoStatType ) =>
+			visibleRows.reduce( ( total, row ) => total + metricValue( row, type ), 0 );
+		const has = ( type: VideoStatType ) =>
+			!! availableMetrics && availableMetrics.includes( METRIC_COLUMNS[ type ] );
+
+		let retention: number | null = null;
+		if ( has( 'retention_rate' ) && has( 'views' ) ) {
+			retention = calculatePlayWeightedRetention(
+				visibleRows.map( ( row ) => ( {
+					plays: metricValue( row, 'views' ),
+					retentionRate: metricValue( row, 'retention_rate' ),
+				} ) )
+			);
+		}
 
 		return {
-			views: sum( playsData, ( bucket ) => bucket.plays ),
-			impressions: sum( impressionsData, ( bucket ) => bucket.impressions ),
-			watch_time: sum( watchTimeData, ( bucket ) => bucket.watchTime ),
+			views: has( 'views' ) ? sumOf( 'views' ) : null,
+			impressions: has( 'impressions' ) ? sumOf( 'impressions' ) : null,
+			watch_time: has( 'watch_time' ) ? sumOf( 'watch_time' ) : null,
+			retention_rate: retention,
 		};
-	}, [ buckets, playsData, impressionsData, watchTimeData ] );
+	}, [ visibleRows, availableMetrics ] );
 
 	const selectPeriod = ( newPeriod: UiPeriod ) => () => {
 		setUiPeriod( newPeriod );
-		setSelectedRecord( null );
+		setPage( 1 );
 	};
 
-	const selectStatType = ( newStatType: VideoStatType ) => {
-		setStatType( newStatType );
-		setSelectedRecord( null );
+	// Arrows page the whole visible window of bars, like the Post Details
+	// chart — they never step through individual bars.
+	const onPeriodChange = ( { direction }: { direction: string } ) => {
+		if ( 'previous' === direction && page < maxPages ) {
+			setPage( page + 1 );
+		} else if ( 'next' === direction && page > 1 ) {
+			setPage( page - 1 );
+		}
 	};
 
 	const tabLabels: Record< VideoStatType, string > = {
 		views: translate( 'Views', { textOnly: true } ),
 		impressions: translate( 'Impressions', { textOnly: true } ),
 		watch_time: translate( 'Hours watched', { textOnly: true } ),
+		retention_rate: translate( 'Retention rate', { textOnly: true } ),
 	};
 
 	const periods: Array< { id: UiPeriod; label: string } > = [
@@ -368,42 +268,21 @@ export default function VideoSummary( {
 		<div
 			className={ clsx( 'stats-video-summary', 'is-chart-tabs', {
 				'is-period-year': uiPeriod === 'year',
-				'has-less-than-three-bars': chartData.length > 0 && chartData.length < 3,
 			} ) }
 		>
-			{ siteId &&
-				FETCHED_STAT_TYPES.map( ( type ) => (
-					<QuerySiteStats
-						key={ `${ type }-${ apiPeriod }` }
-						siteId={ siteId }
-						statType="statsVideo"
-						query={ queries[ type ] }
-					/>
-				) ) }
-			{ /* apiPeriod is already 'month' on the Days/Weeks tabs, so
-			queries.views above is this exact query already; only fetch it
-			separately when viewing Months/Years. */ }
-			{ siteId && apiPeriod !== 'month' && (
-				<QuerySiteStats
-					key="video-info"
-					siteId={ siteId }
-					statType="statsVideo"
-					query={ videoInfoQuery }
-				/>
+			{ siteId && (
+				<QuerySiteStats key={ uiPeriod } siteId={ siteId } statType="statsVideo" query={ query } />
 			) }
 
 			<StatsPeriodHeader>
-				{ /* The video stats endpoint only returns a fixed trailing window
-				ending "now" (no backend support yet for an older window), so
-				there's no previous/next period to navigate to; the arrows are
-				hidden rather than shown disabled. */ }
-				<StatsPeriodNavigation showArrows={ false } date={ null }>
-					<DatePicker
-						period={ uiPeriod }
-						date={ selected?.startDate }
-						dateRange={ chartDateRange }
-						isShort
-					/>
+				<StatsPeriodNavigation
+					showArrows
+					onPeriodChange={ onPeriodChange }
+					disablePreviousArrow={ page >= maxPages }
+					disableNextArrow={ page <= 1 }
+					date={ null }
+				>
+					<DatePicker period={ uiPeriod } dateRange={ chartDateRange } isShort />
 				</StatsPeriodNavigation>
 				<SegmentedControl primary>
 					{ periods.map( ( { id, label } ) => (
@@ -419,20 +298,18 @@ export default function VideoSummary( {
 			</StatsPeriodHeader>
 
 			<SummaryChart
-				isLoading={ ( isRequesting || ! isSelectedSeriesLoaded ) && ! chartData.length }
+				isLoading={ ( isRequesting || ! isLoaded ) && ! chartData.length }
 				data={ chartData }
 				activeKey="period"
 				dataKey="value"
 				labelKey="periodLabel"
 				chartType="video"
 				sectionClass="is-video"
-				selected={ selected }
-				onClick={ setSelectedRecord }
 				tabLabel={ tabLabels[ statType ] }
 				type="video"
 			/>
 
-			<VideoMetricTabs values={ metricValues } selected={ statType } onSelect={ selectStatType } />
+			<VideoMetricTabs values={ metricValues } selected={ statType } onSelect={ setStatType } />
 		</div>
 	);
 }

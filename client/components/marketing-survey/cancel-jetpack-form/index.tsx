@@ -11,11 +11,14 @@ import JetpackCancellationOfferStep from 'calypso/components/marketing-survey/ca
 import JetpackCancellationOfferAccepted from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-offer-accepted';
 import JetpackCancellationSurvey from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-survey';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
-import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
-import { getName, isRemoved } from 'calypso/lib/purchases';
+import { isJetpackHoldingSitePurchase } from 'calypso/dashboard/utils/purchase';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { isOutsideCalypso } from 'calypso/lib/url';
-import { isJetpackHoldingSitePurchase } from 'calypso/me/purchases/utils';
+import {
+	enrichedSurveyData,
+	getName,
+	isRemoved,
+} from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCancellationOfferApplySuccess from 'calypso/state/cancellation-offers/selectors/get-cancellation-offer-apply-success';
@@ -25,7 +28,7 @@ import isFetchingCancellationOffers from 'calypso/state/cancellation-offers/sele
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import nextStep from '../cancel-purchase-form/next-step';
 import * as steps from './steps';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from '@automattic/api-core';
 
 /**
  * Style dependencies
@@ -84,11 +87,11 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	const [ disableContinuation, setDisableContinuation ] = useState< boolean >( false );
 
 	const isAtomicSite = useSelector( ( state ) =>
-		isSiteAutomatedTransfer( state, purchase.siteId )
+		isSiteAutomatedTransfer( state, purchase.blog_id )
 	);
 
 	const cancellationOffer = useSelector( ( state ) => {
-		const offers = getCancellationOffers( state, purchase.id );
+		const offers = getCancellationOffers( state, purchase.ID );
 		if ( 1 === offers.length ) {
 			return offers[ 0 ];
 		}
@@ -97,15 +100,15 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	} );
 
 	const fetchingCancellationOffers = useSelector( ( state ) =>
-		isFetchingCancellationOffers( state, purchase.id )
+		isFetchingCancellationOffers( state, purchase.ID )
 	);
 
 	const applyingCancellationOffer = useSelector( ( state ) =>
-		isApplyingCancellationOffer( state, purchase.id )
+		isApplyingCancellationOffer( state, purchase.ID )
 	);
 
 	const cancellationOfferApplySuccess = useSelector( ( state ) =>
-		getCancellationOfferApplySuccess( state, purchase.id )
+		getCancellationOfferApplySuccess( state, purchase.ID )
 	);
 
 	const isOfferPriceSameOrLowerThanPurchasePrice = useMemo( () => {
@@ -138,14 +141,14 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			dispatch(
 				recordTracksEvent( name, {
 					cancellation_flow: flowType,
-					product_slug: purchase.productSlug,
+					product_slug: purchase.product_slug,
 					is_atomic: isAtomicSite,
 
 					...properties,
 				} )
 			);
 		},
-		[ dispatch, flowType, isAtomicSite, purchase.productSlug ]
+		[ dispatch, flowType, isAtomicSite, purchase.product_slug ]
 	);
 
 	/**
@@ -278,7 +281,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			const surveyData = {
 				'why-cancel': {
 					response: surveyAnswerId,
-					text: surveyAnswerText,
+					text: String( surveyAnswerText ),
 				},
 				type: 'cancel',
 			};
@@ -286,7 +289,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			dispatch(
 				submitSurvey(
 					props.isAkismet ? 'calypso-cancel-akismet' : 'calypso-cancel-jetpack',
-					purchase.siteId,
+					purchase.blog_id,
 					enrichedSurveyData( surveyData, purchase )
 				)
 			);
@@ -460,9 +463,9 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			// this differs a bit depending on the product/ what JP modules are active
 			return (
 				<JetpackBenefitsStep
-					siteId={ purchase.siteId }
+					siteId={ purchase.blog_id }
 					purchase={ purchase }
-					productSlug={ purchase.productSlug }
+					productSlug={ purchase.product_slug }
 				/>
 			);
 		}
@@ -487,7 +490,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			// Show an offer, the user can accept it or go ahead with the cancellation.
 			return (
 				<JetpackCancellationOfferStep
-					siteId={ purchase.siteId }
+					siteId={ purchase.blog_id }
 					purchase={ purchase }
 					offer={ cancellationOffer }
 					percentDiscount={ offerDiscountBasedFromPurchasePrice }
@@ -502,7 +505,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			// Show after an offer discount has been accepted
 			return (
 				<JetpackCancellationOfferAccepted
-					siteId={ purchase.siteId }
+					siteId={ purchase.blog_id }
 					percentDiscount={ offerDiscountBasedFromPurchasePrice }
 					productName={ productName }
 					isAkismet={ !! props?.isAkismet }
@@ -530,8 +533,8 @@ const CancelJetpackForm: React.FC< Props > = ( {
 
 	return (
 		<>
-			{ purchase.siteId && purchase.id && (
-				<QueryPurchaseCancellationOffers siteId={ purchase.siteId } purchaseId={ purchase.id } />
+			{ purchase.blog_id && purchase.ID && (
+				<QueryPurchaseCancellationOffers siteId={ purchase.blog_id } purchaseId={ purchase.ID } />
 			) }
 			<Dialog
 				leaveTimeout={ 0 } // this closes the modal immediately, which makes the experience feel snappier

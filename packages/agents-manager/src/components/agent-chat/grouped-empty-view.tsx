@@ -6,18 +6,17 @@ import { Icon, chevronDown, chevronLeft, chevronRight } from '@wordpress/icons';
 import {
 	DESIGN_SUGGESTION_IDS,
 	formatWritingSuggestionLabels,
+	hideTopLevelDescriptions,
 	WHAT_ELSE_CAN_I_DO_SUGGESTION_ID,
 	WRITING_SUGGESTION_IDS,
 } from '../../hooks/use-empty-view-suggestions';
 import { isEditorPage } from '../../utils/is-editor-page';
 import getSuggestionClickPayload from './get-suggestion-click-payload';
-import type { ReactNode } from 'react';
 import './grouped-empty-view.scss';
 
 interface Props {
 	heading: string;
 	help?: string;
-	icon: ReactNode;
 	suggestions: Suggestion[];
 	groupWritingSuggestions: boolean;
 	onSuggestionClick?: (
@@ -29,7 +28,6 @@ interface Props {
 export default function GroupedEmptyView( {
 	heading,
 	help,
-	icon,
 	suggestions,
 	groupWritingSuggestions,
 	onSuggestionClick,
@@ -68,15 +66,16 @@ export default function GroupedEmptyView( {
 				help={ help }
 				suggestions={ displaySuggestions }
 				onSuggestionClick={ handleSuggestionClick }
-				icon={ icon }
 			/>
 		);
 	}
 
-	const topLevelSuggestions = displaySuggestions.filter(
-		( suggestion ) =>
-			! WRITING_SUGGESTION_IDS.has( suggestion.id ) &&
-			suggestion.id !== WHAT_ELSE_CAN_I_DO_SUGGESTION_ID
+	const topLevelSuggestions = hideTopLevelDescriptions(
+		displaySuggestions.filter(
+			( suggestion ) =>
+				! WRITING_SUGGESTION_IDS.has( suggestion.id ) &&
+				suggestion.id !== WHAT_ELSE_CAN_I_DO_SUGGESTION_ID
+		)
 	);
 	const collapsedIcon = isRTL() ? chevronLeft : chevronRight;
 
@@ -90,7 +89,6 @@ export default function GroupedEmptyView( {
 				heading={ heading }
 				suggestions={ topLevelSuggestions }
 				onSuggestionClick={ handleSuggestionClick }
-				icon={ icon }
 			/>
 			<section className="agents-manager-writing-suggestions">
 				<button

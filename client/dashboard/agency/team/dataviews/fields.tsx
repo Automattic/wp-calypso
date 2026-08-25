@@ -73,7 +73,7 @@ function formatAddedDate( value?: string ): string | null {
 	// Active members provide a Unix-seconds timestamp; invites provide an ISO date string.
 	const numeric = Number( value );
 	const date = Number.isNaN( numeric ) ? new Date( value ) : new Date( numeric * 1000 );
-	return Number.isNaN( date.getTime() ) ? null : dateI18n( 'F j, Y', date );
+	return Number.isNaN( date.getTime() ) ? null : dateI18n( 'M j, Y', date );
 }
 
 export function useTeamFields(): Field< TeamMember >[] {

@@ -1,4 +1,11 @@
 import type { State } from './reducer';
+import type { LoggedOutOdieChat } from './types';
+
+const isLoggedOutOdieChat = ( value: unknown ): value is LoggedOutOdieChat =>
+	typeof value === 'object' &&
+	value !== null &&
+	'botSlug' in value &&
+	typeof value.botSlug === 'string';
 
 export const isHelpCenterShown = ( state: State ) => state.showHelpCenter;
 export const isMessagingLauncherShown = ( state: State ) => state.showMessagingLauncher;
@@ -11,7 +18,35 @@ export const getUnreadCount = ( state: State ) => state.unreadCount;
 export const getZendeskConnectionStatus = ( state: State ) => state.zendeskConnectionStatus;
 export const getIsMinimized = ( state: State ) => state.isMinimized;
 export const getIsChatLoaded = ( state: State ) => state.isChatLoaded;
-export const getLoggedOutOdieChat = ( state: State ) => state.loggedOutOdieChat;
+export const getLoggedOutOdieChat = ( state: State, botSlug: string ) => {
+	const session = state.loggedOutOdieChats?.[ botSlug ];
+
+	if ( session ) {
+		return session;
+	}
+
+	const legacySession = state.loggedOutOdieChat;
+
+	if ( isLoggedOutOdieChat( legacySession ) ) {
+		return legacySession.botSlug === botSlug ? legacySession : undefined;
+	}
+
+	// Read the temporary keyed shape previously persisted under the singular field.
+	return legacySession?.[ botSlug ];
+};
+export const hasLoggedOutOdieChat = ( state: State ) => {
+	if ( state.loggedOutOdieChats && Object.keys( state.loggedOutOdieChats ).length ) {
+		return true;
+	}
+
+	const legacySession = state.loggedOutOdieChat;
+
+	if ( isLoggedOutOdieChat( legacySession ) ) {
+		return true;
+	}
+
+	return Object.values( legacySession ?? {} ).some( isLoggedOutOdieChat );
+};
 export const getAreSoundNotificationsEnabled = ( state: State ) =>
 	state.areSoundNotificationsEnabled;
 export const getZendeskClientId = ( state: State ) => state.zendeskClientId;

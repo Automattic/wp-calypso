@@ -1,17 +1,44 @@
-import { rawUserPreferencesQuery, userSettingsQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
-import { Icon } from '@wordpress/components';
+import {
+	rawUserPreferencesQuery,
+	siteByIdQuery,
+	userPreferencesMutation,
+	userSettingsMutation,
+	userSettingsQuery,
+} from '@automattic/api-queries';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
+import { DataForm, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { commentAuthorAvatar } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
+import { useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
+import Breadcrumbs from '../../app/breadcrumbs';
 import { useAppContext } from '../../app/context';
-import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import type { Density } from '@automattic/components/src/summary-button/types';
+import { NavigationBlocker } from '../../app/navigation-blocker';
+import { ButtonStack } from '../../components/button-stack/';
+import { Card, CardBody } from '../../components/card';
+import { PageHeader } from '../../components/page-header';
+import PageLayout from '../../components/page-layout';
+import { SectionHeader } from '../../components/section-header';
+import PreferencesLoginSiteDropdown from './site-dropdown';
 
-function useLandingPageLabel() {
-	const { data: landingPage } = useQuery( {
+type LandingPage = 'primary-site-dashboard' | 'sites' | 'reader';
+
+interface DefaultLandingFormData {
+	defaultLandingPage: LandingPage;
+}
+
+interface PrimarySiteFormData {
+	primarySiteId?: number;
+}
+
+function LandingPageCard() {
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+
+	const { data: defaultLandingPage } = useSuspenseQuery( {
 		...rawUserPreferencesQuery(),
-		select: ( preferences ) => {
+		select: ( preferences ): LandingPage => {
 			if ( preferences[ 'sites-landing-page' ]?.useSitesAsLandingPage ) {
 				return 'sites';
 			}
@@ -22,47 +49,232 @@ function useLandingPageLabel() {
 		},
 	} );
 
-	switch ( landingPage ) {
-		case 'sites':
-			return __( 'Sites list' );
-		case 'reader':
-			return __( 'Reader' );
-		default:
-			return __( 'Primary site' );
-	}
+	const { mutateAsync: saveUserPreferences, isPending } = useMutation( userPreferencesMutation() );
+
+	const [ formData, setFormData ] = useState< DefaultLandingFormData >( {
+		defaultLandingPage,
+	} );
+
+	const isDirty = defaultLandingPage !== formData.defaultLandingPage;
+
+	const fields: Field< DefaultLandingFormData >[] = [
+		{
+			id: 'defaultLandingPage',
+			label: __( 'Page' ),
+			Edit: 'radio',
+			elements: [
+				{ label: __( 'Open your primary site’s dashboard.' ), value: 'primary-site-dashboard' },
+				{ label: __( 'See a list of all your sites.' ), value: 'sites' },
+				{ label: __( 'View posts from sites you follow.' ), value: 'reader' },
+			] satisfies { label: string; value: LandingPage }[],
+		},
+	];
+
+	const form = {
+		layout: { type: 'regular' as const },
+		fields: [ 'defaultLandingPage' ],
+	};
+
+	const handleSubmit = ( e: React.FormEvent ) => {
+		e.preventDefault();
+		const updatedAt = Date.now();
+		saveUserPreferences( {
+			'sites-landing-page': {
+				useSitesAsLandingPage: formData.defaultLandingPage === 'sites',
+				updatedAt,
+			},
+			'reader-landing-page': {
+				useReaderAsLandingPage: formData.defaultLandingPage === 'reader',
+				updatedAt,
+			},
+		} )
+			.then( () => {
+				createSuccessNotice( __( 'Default landing page saved.' ), {
+					type: 'snackbar',
+				} );
+			} )
+			.catch( () => {
+				createErrorNotice( __( 'Failed to save default landing page.' ), {
+					type: 'snackbar',
+				} );
+			} );
+	};
+
+	return (
+		<Card>
+			<CardBody>
+				<form onSubmit={ handleSubmit } aria-label={ __( 'Landing page' ) }>
+					<VStack spacing={ 4 }>
+						<SectionHeader
+							level={ 3 }
+							title={ __( 'Landing page' ) }
+							description={ __( 'Choose your destination after you log in.' ) }
+						/>
+						<NavigationBlocker shouldBlock={ isDirty } />
+						<DataForm< DefaultLandingFormData >
+							data={ formData }
+							fields={ fields }
+							form={ form }
+							onChange={ ( edits: Partial< DefaultLandingFormData > ) => {
+								setFormData( ( data ) => ( { ...data, ...edits } ) );
+							} }
+						/>
+						<ButtonStack>
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								type="submit"
+								isBusy={ isPending }
+								disabled={ isPending || ! isDirty }
+							>
+								{ __( 'Save' ) }
+							</Button>
+						</ButtonStack>
+					</VStack>
+				</form>
+			</CardBody>
+		</Card>
+	);
 }
 
-function usePrimarySiteName() {
-	const { queries } = useAppContext();
+function PrimarySiteCard() {
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { user } = useAuth();
+	const { queries } = useAppContext();
 
-	const { data: primarySiteId } = useQuery( {
+	const { data: primarySiteId } = useSuspenseQuery( {
 		...userSettingsQuery(),
 		select: ( data ) => data.primary_site_ID,
 	} );
 
-	const { data: sites } = useQuery(
+	const { data: sites, isLoading: isSiteListLoading } = useQuery(
 		queries.sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
 	);
 
-	const primarySite = sites?.find( ( site: { ID: number } ) => site.ID === primarySiteId );
-	return primarySite?.name ?? user.display_name;
-}
+	// The site list is filtered, so the saved primary site can be absent from it.
+	// Fetch it by ID so the dropdown always shows what is actually saved.
+	const { data: primarySite } = useQuery( {
+		...siteByIdQuery( primarySiteId ?? 0 ),
+		enabled: !! primarySiteId,
+	} );
 
-export default function PreferencesDefaults( { density }: { density?: Density } ) {
-	const landingPageLabel = useLandingPageLabel();
-	const primarySiteName = usePrimarySiteName();
+	const siteOptions = useMemo( () => {
+		const list = sites ?? [];
+		if ( primarySite && ! list.some( ( site ) => site.ID === primarySite.ID ) ) {
+			return [ primarySite, ...list ];
+		}
+		return list;
+	}, [ sites, primarySite ] );
 
-	const badges = [ { text: landingPageLabel }, { text: primarySiteName } ];
+	const { mutateAsync: saveUserSettings, isPending } = useMutation( userSettingsMutation() );
+
+	const [ formData, setFormData ] = useState< PrimarySiteFormData >( {
+		primarySiteId,
+	} );
+
+	const isDirty = primarySiteId !== formData.primarySiteId;
+
+	const fields: Field< PrimarySiteFormData >[] = [
+		{
+			id: 'primarySiteId',
+			label: __( 'Site' ),
+			isVisible: () => user.visible_site_count > 0,
+			Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
+				const { id, getValue } = field;
+				const value = getValue( { item: data } )?.toString( 10 ) ?? '';
+				return (
+					<PreferencesLoginSiteDropdown
+						sites={ siteOptions }
+						isLoading={ isSiteListLoading }
+						value={ value }
+						onChange={ ( newValue ) => {
+							if ( newValue ) {
+								onChange( { [ id ]: parseInt( newValue, 10 ) } );
+							}
+						} }
+						label={ hideLabelFromVision ? '' : field.label }
+						hideLabelFromVision={ hideLabelFromVision }
+					/>
+				);
+			},
+		},
+	];
+
+	const form = {
+		layout: { type: 'regular' as const },
+		fields: [ 'primarySiteId' ],
+	};
+
+	const handleSubmit = ( e: React.FormEvent ) => {
+		e.preventDefault();
+		saveUserSettings( {
+			primary_site_ID: formData.primarySiteId,
+		} )
+			.then( () => {
+				createSuccessNotice( __( 'Primary site saved.' ), {
+					type: 'snackbar',
+				} );
+			} )
+			.catch( () => {
+				createErrorNotice( __( 'Failed to save primary site.' ), {
+					type: 'snackbar',
+				} );
+			} );
+	};
 
 	return (
-		<RouterLinkSummaryButton
-			density={ density }
-			to="/me/preferences/defaults"
-			title={ __( 'Account defaults' ) }
-			description={ __( 'Set your starting point after you log in and primary site.' ) }
-			decoration={ <Icon icon={ commentAuthorAvatar } size={ 24 } /> }
-			badges={ badges }
-		/>
+		<Card>
+			<CardBody>
+				<form onSubmit={ handleSubmit } aria-label={ __( 'Primary site' ) }>
+					<VStack spacing={ 4 }>
+						<SectionHeader
+							level={ 3 }
+							title={ __( 'Primary site' ) }
+							description={ __( 'Your go-to site, always within reach.' ) }
+						/>
+						<NavigationBlocker shouldBlock={ isDirty } />
+						<DataForm< PrimarySiteFormData >
+							data={ formData }
+							fields={ fields }
+							form={ form }
+							onChange={ ( edits: Partial< PrimarySiteFormData > ) => {
+								setFormData( ( data ) => ( { ...data, ...edits } ) );
+							} }
+						/>
+						<ButtonStack>
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								type="submit"
+								isBusy={ isPending }
+								disabled={ isPending || ! isDirty }
+							>
+								{ __( 'Save' ) }
+							</Button>
+						</ButtonStack>
+					</VStack>
+				</form>
+			</CardBody>
+		</Card>
+	);
+}
+
+export default function PreferencesDefaults() {
+	return (
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title={ __( 'Account defaults' ) }
+					description={ __( 'Set your starting point after you log in and primary site.' ) }
+				/>
+			}
+		>
+			<VStack spacing={ 4 }>
+				<LandingPageCard />
+				<PrimarySiteCard />
+			</VStack>
+		</PageLayout>
 	);
 }

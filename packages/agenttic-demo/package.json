@@ -1,0 +1,30 @@
+{
+	"name": "@automattic/agenttic-demo",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Development playground for the agenttic packages.",
+	"author": "Automattic Inc.",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/agenttic-demo"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build"
+	},
+	"devDependencies": {
+		"@automattic/agenttic-client": "workspace:^",
+		"@automattic/agenttic-ui": "workspace:^",
+		"@types/react": "^18.0.0 || ^19.0.0",
+		"@types/react-dom": "^18.0.0 || ^19.0.0",
+		"@vitejs/plugin-react": "^4.0.0",
+		"react": "^18.0.0",
+		"react-dom": "^18.0.0",
+		"typescript": "^5.0.0",
+		"vite": "^5.0.0"
+	}
+}

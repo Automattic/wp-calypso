@@ -53,6 +53,7 @@ import {
 	getPurchaseCancellationFlowType,
 	getDisplayVariant,
 	getRenewUrlForPurchases,
+	hasQueryableSite,
 	isDotcomPlan,
 	CANCEL_FLOW_TYPE,
 	type CancelIntent,
@@ -188,6 +189,20 @@ export const billingHistoryIndexRoute = createRoute( {
 	path: '/',
 	loader: () => {
 		queryClient.prefetchQuery( userReceiptsQuery() );
+		queryClient.prefetchQuery( allSitesQuery() );
+	},
+	validateSearch: (
+		search
+	): {
+		page?: number;
+		search?: string;
+		site?: number;
+	} => {
+		return {
+			page: typeof search.page === 'number' ? search.page : undefined,
+			search: typeof search.search === 'string' ? search.search : undefined,
+			site: typeof search.site === 'number' ? search.site : undefined,
+		};
 	},
 } ).lazy( () =>
 	import( '../../me/billing-history' ).then( ( d ) =>
@@ -468,9 +483,13 @@ export const cancelPurchaseRoute = createRoute( {
 			return { purchase: undefined, intent };
 		}
 		await Promise.all( [
-			queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ),
+			...( hasQueryableSite( purchase )
+				? [
+						queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ),
+						queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ),
+				  ]
+				: [] ),
 			queryClient.ensureQueryData( productsQuery() ),
-			queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ),
 			queryClient.ensureQueryData( plansQuery() ),
 			queryClient.ensureQueryData( purchaseCancelFeaturesQuery( purchase.ID ) ),
 		] );
@@ -1071,6 +1090,35 @@ export const hostingDashboardRoute = createRoute( {
 	)
 );
 
+export const wordpressLabsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'WordPress Labs' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'wordpress-labs',
+	beforeLoad: async () => {
+		if ( ! isEnabled( 'wordpress-labs' ) ) {
+			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
+		}
+	},
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+			queryClient.prefetchQuery( allSitesQuery() ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../me/wordpress-labs' ).then( ( d ) =>
+		createLazyRoute( 'wordpress-labs' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const appearanceRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1144,8 +1192,8 @@ export const wordpressDefaultsRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../me/wordpress-defaults' ).then( ( d ) =>
-		createLazyRoute( 'wordpress-defaults' )( {
+	import( '../../me/preferences-defaults' ).then( ( d ) =>
+		createLazyRoute( 'preferences-defaults' )( {
 			component: d.default,
 		} )
 	)
@@ -1211,8 +1259,29 @@ export const mcpRoute = createRoute( {
 	} ),
 	getParentRoute: () => preferencesRoute,
 	path: 'mcp',
+	validateSearch: (
+		search
+	): {
+		pair_token?: string;
+		slack?: string;
+		telegram_id?: string;
+		token?: string;
+		ts?: string;
+		bot?: string;
+	} => ( {
+		...( typeof search.pair_token === 'string' ? { pair_token: search.pair_token } : {} ),
+		...( typeof search.slack === 'string' ? { slack: search.slack } : {} ),
+		...( typeof search.telegram_id === 'string' ? { telegram_id: search.telegram_id } : {} ),
+		...( typeof search.token === 'string' ? { token: search.token } : {} ),
+		...( typeof search.ts === 'string' ? { ts: search.ts } : {} ),
+		...( typeof search.bot === 'string' ? { bot: search.bot } : {} ),
+	} ),
 	loader: async () => {
-		await queryClient.ensureQueryData( userSettingsQuery() );
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			// The MCP Tracks audience props read Automattician status on first render (view events).
+			queryClient.ensureQueryData( isAutomatticianQuery() ),
+		] );
 	},
 } );
 
@@ -1324,6 +1393,9 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	}
 	if ( config.optIn ) {
 		preferencesChildren.push( hostingDashboardRoute );
+	}
+	if ( isEnabled( 'wordpress-labs' ) ) {
+		preferencesChildren.push( wordpressLabsRoute );
 	}
 	if ( config.supports.darkMode && config.supports.colorScheme ) {
 		preferencesChildren.push( appearanceRoute );

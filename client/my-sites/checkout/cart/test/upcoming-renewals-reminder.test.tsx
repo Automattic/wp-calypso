@@ -1,6 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+import { sitePurchasesQuery } from '@automattic/api-queries';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, within, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import moment from 'moment';
@@ -12,6 +14,7 @@ import { storeData } from 'calypso/my-sites/checkout/src/components/test/lib/fix
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import UpcomingRenewalsReminder from '../upcoming-renewals-reminder';
+import type { Purchase } from '@automattic/api-core';
 import type { PartialCart } from 'calypso/my-sites/checkout/src/components/secondary-cart-promotions';
 
 import 'calypso/my-sites/checkout/src/test/util';
@@ -33,19 +36,23 @@ jest.mock( 'calypso/state/preferences/actions', () => ( {
 const mockRecordTracksEvent = recordTracksEvent as unknown as jest.Mock;
 const mockSavePreference = savePreference as unknown as jest.Mock;
 
+const SITE_ID = 123;
 const URGENT_DOMAIN_NAME = 'urgent-domain-1234.live';
 const NON_URGENT_PLAN_NAME = 'WordPress.com Personal';
 
+// Shaped like what `fetchSitePurchases` resolves to: `normalizePurchase` has
+// already turned the API's numeric strings and "true" strings into numbers and
+// booleans by the time a component sees them.
 function urgentDomainPurchase( overrides = {} ) {
 	return {
-		ID: '10',
-		user_id: '123',
-		blog_id: '123',
-		product_id: '74',
+		ID: 10,
+		user_id: 123,
+		blog_id: SITE_ID,
+		product_id: 74,
 		product_name: '.live Domain Registration',
 		product_slug: 'dotlive_domain',
 		product_type: 'domain_reg',
-		is_domain_registration: 'true',
+		is_domain_registration: true,
 		meta: URGENT_DOMAIN_NAME,
 		domain: 'userpersonalsitetest1234.wordpress.com',
 		subscription_status: 'active',
@@ -66,10 +73,10 @@ function urgentDomainPurchase( overrides = {} ) {
 
 function nonUrgentPlanPurchase( overrides = {} ) {
 	return {
-		ID: '20',
-		user_id: '123',
-		blog_id: '123',
-		product_id: '1009',
+		ID: 20,
+		user_id: 123,
+		blog_id: SITE_ID,
+		product_id: 1009,
 		product_name: NON_URGENT_PLAN_NAME,
 		product_slug: 'personal-bundle',
 		product_type: 'bundle',
@@ -111,16 +118,21 @@ function renderReminder( {
 	cart?: PartialCart;
 	addItemToCart?: jest.Mock;
 } ) {
-	const reducer = () => ( {
-		...storeData(),
-		purchases: { ...storeData().purchases, data: purchases },
-		preferences,
-	} );
+	const reducer = () => ( { ...storeData(), preferences } );
 	const store = applyMiddleware( thunk )( createStore )( reducer );
+	const queryClient = new QueryClient( {
+		defaultOptions: { queries: { staleTime: Infinity, retry: false } },
+	} );
+	queryClient.setQueryData(
+		sitePurchasesQuery( SITE_ID ).queryKey,
+		purchases as unknown as Purchase[]
+	);
 	const ui = ( nextCart: PartialCart ) => (
-		<ReduxProvider store={ store }>
-			<UpcomingRenewalsReminder cart={ nextCart } addItemToCart={ addItemToCart } />
-		</ReduxProvider>
+		<QueryClientProvider client={ queryClient }>
+			<ReduxProvider store={ store }>
+				<UpcomingRenewalsReminder cart={ nextCart } addItemToCart={ addItemToCart } />
+			</ReduxProvider>
+		</QueryClientProvider>
 	);
 	const result = render( ui( cart ) );
 	return {
@@ -223,7 +235,7 @@ describe( 'UpcomingRenewalsReminder', () => {
 
 		test( 'a new urgent set auto-opens even after a different set was dismissed', async () => {
 			renderReminder( {
-				purchases: [ urgentDomainPurchase( { ID: '11' } ) ],
+				purchases: [ urgentDomainPurchase( { ID: 11 } ) ],
 				preferences: dismissedPrefs( 10 ),
 			} );
 			expect( await screen.findByText( 'Upcoming renewals' ) ).toBeVisible();

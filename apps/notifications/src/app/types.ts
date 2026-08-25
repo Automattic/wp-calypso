@@ -131,7 +131,7 @@ export interface Client {
 	isShowing: boolean;
 	lastSeenTime: number;
 	filter: Record< string, unknown > | null;
-	filteredHasMore: boolean;
+	filteredHasMore: Record< string, boolean >;
 	gettingFilteredNotes: boolean;
 	retries: number;
 	subscribeTry: number;
@@ -147,11 +147,11 @@ export interface Client {
 	getNote: ( note_id: number ) => void;
 	getNotes: () => void;
 	getNotesList: () => void;
-	getFilteredNotes: () => void;
-	setFilter: ( filter: Record< string, unknown > | null ) => void;
+	getFilteredNotes: ( before?: number ) => void;
+	setFilter: ( filterName: FilterName ) => void;
 	updateLastSeenTime: ( proposedTime: number, fromStorage: boolean ) => boolean;
 	loadMore: () => void;
-	hasMoreNotes: () => boolean;
+	hasMoreNotes: ( filterName?: FilterName ) => boolean;
 	refreshNotes: () => void;
 	setVisibility: ( { isShowing, isVisible }: { isShowing: boolean; isVisible: boolean } ) => void;
 }

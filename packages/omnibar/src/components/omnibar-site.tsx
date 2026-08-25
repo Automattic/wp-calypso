@@ -1,7 +1,18 @@
-import { useViewportMatch } from '@wordpress/compose';
 import { Stack } from '@wordpress/ui';
 import { OmnibarMenu } from './omnibar-menu';
 import type { OmnibarNode } from '../types';
+
+// Core truncates the site title in `wp_admin_bar_site_menu()` with
+// `wp_html_excerpt( $blogname, 40, '&hellip;' )`.
+const SITE_TITLE_MAX_LENGTH = 40;
+
+function truncateSiteTitle( title: string ) {
+	const characters = Array.from( title );
+	if ( characters.length <= SITE_TITLE_MAX_LENGTH ) {
+		return title;
+	}
+	return characters.slice( 0, SITE_TITLE_MAX_LENGTH ).join( '' ).trim() + '…';
+}
 
 export function OmnibarSiteNode( {
 	node,
@@ -12,21 +23,12 @@ export function OmnibarSiteNode( {
 	pluginNodes?: OmnibarNode[];
 	actionNodes?: OmnibarNode[];
 } ) {
-	const isDesktop = useViewportMatch( 'medium' );
-
-	const siteNode = isDesktop
-		? node
-		: {
-				...node,
-				children: [ ...( node.children || [] ), ...( actionNodes || [] ) ],
-		  };
-
-	const siteActionNodes = isDesktop ? actionNodes : undefined;
+	const siteNode = node.title ? { ...node, title: truncateSiteTitle( node.title ) } : node;
 
 	return [
-		<OmnibarMenu key={ siteNode.id } node={ siteNode } style={ { minWidth: 0 } } />,
+		<OmnibarMenu key={ node.id } node={ siteNode } className="omnibar__site" />,
 		pluginNodes && <OmnibarSitePluginsNode key="plugins" nodes={ pluginNodes } />,
-		siteActionNodes && <OmnibarSiteActionsNode key="actions" nodes={ siteActionNodes } />,
+		actionNodes && <OmnibarSiteActionsNode key="actions" nodes={ actionNodes } />,
 	].filter( Boolean );
 }
 
@@ -39,14 +41,11 @@ export function OmnibarSiteActionsNode( { nodes }: { nodes: OmnibarNode[] } ) {
 		<OmnibarMenu
 			key={ node.id }
 			node={ {
-				render: ( { title, meta } ) => (
-					<Stack direction="row" gap="xs" align="center">
-						<span>{ title }</span>
-						{ meta?.subtitle && (
-							<span style={ { opacity: meta.subtitle !== '0' ? undefined : '0.5' } }>
-								{ meta.subtitle }
-							</span>
-						) }
+				render: ( { icon, title, meta } ) => (
+					<Stack direction="row" align="center" className="omnibar__site-action">
+						{ icon }
+						{ title && <span className="omnibar__label">{ title }</span> }
+						{ meta?.subtitle && <span className="omnibar__label">{ meta.subtitle }</span> }
 					</Stack>
 				),
 				...node,

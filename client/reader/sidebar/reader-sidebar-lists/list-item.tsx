@@ -1,17 +1,18 @@
 import { ReadList } from '@automattic/api-core';
 import { isAutomatticianQuery } from '@automattic/api-queries';
-import { Count } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import AutoDirection from 'calypso/components/auto-direction';
+import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
+import { getListStreamKey } from 'calypso/reader/list/controller';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import ReaderSidebarHelper from '../helper';
 import { MenuItem, MenuItemLink } from '../menu';
-import { MoreMenuActions } from '../more-menu-actions';
+import MoreMenuActions from '../more-menu-actions';
 
 interface ReaderSidebarListsListItemProps {
 	list: ReadList;
@@ -100,13 +101,14 @@ const ReaderSidebarListsListItem = ( {
 				{ isSeenEnabled && (
 					<span className="sidebar__actions-and-count">
 						<MoreMenuActions
-							identifier="sidebar-list"
+							identifier={ getListStreamKey( list.owner, list.slug ) }
 							isSingleFeed={ false }
 							feedIds={ feedIds }
 							feedUrls={ [] }
+							source="sidebar-list-item"
 							unseenCount={ unseenCount }
 						/>
-						{ unseenCount > 0 && <Count count={ unseenCount } compact /> }
+						<ReaderUnreadCount count={ unseenCount } />
 					</span>
 				) }
 			</MenuItemLink>

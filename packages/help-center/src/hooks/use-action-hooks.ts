@@ -1,8 +1,8 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { HELP_CENTER_STORE } from '../stores';
+import type { HelpCenterSelect } from '@automattic/data-stores';
 
 /**
  * Add your conditions here to open the Help Center automatically when they're met.

@@ -67,6 +67,7 @@ export default function StatsUpsell( {
 		event.preventDefault();
 		recordTracksEvent( `${ eventPrefix }_stats_upsell_submit`, {
 			stat_type: statType,
+			blog_id: selectedSiteId,
 		} );
 		if ( isOdysseyStats ) {
 			const checkoutProductUrl = new URL(
@@ -85,6 +86,7 @@ export default function StatsUpsell( {
 			if ( ! isExpanded ) {
 				recordTracksEvent( `${ eventPrefix }_stats_upsell_expand`, {
 					stat_type: statType,
+					blog_id: selectedSiteId,
 				} );
 			}
 			setIsExpanded( ! isExpanded );
@@ -113,6 +115,7 @@ export default function StatsUpsell( {
 
 		recordTracksEvent( `${ eventPrefix }_stats_upsell_learn_more`, {
 			stat_type: statType,
+			blog_id: selectedSiteId,
 		} );
 	};
 
@@ -122,6 +125,7 @@ export default function StatsUpsell( {
 				eventName={ `${ eventPrefix }_stats_upsell_view` }
 				eventProperties={ {
 					stat_type: statType,
+					blog_id: selectedSiteId,
 				} }
 			/>
 			<div className="stats-upsell__content">

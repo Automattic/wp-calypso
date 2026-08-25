@@ -3,3 +3,15 @@
 		margin-block-start: 1rem;
 	}
 }
+
+// The A4A theme's catch-all `.components-button:not(…):not(…):hover` rule is one class more
+// specific than `.components-button.is-dark:hover`, so it repaints the background light while
+// the label stays white. Restated here on our own classes at a higher specificity so the shared
+// is-dark styles stay untouched.
+.theme-a8c-for-agencies .a4a-layout__banner.missing-payment-settings-notice {
+	.missing-payment-settings-notice__button.is-dark:hover,
+	.missing-payment-settings-notice__button.is-dark:focus-visible {
+		background-color: var( --color-accent-100 );
+		color: var( --color-surface );
+	}
+}

@@ -1,16 +1,15 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act, render as rtlRender } from '@testing-library/react';
 import useAgentLayoutManager from '../use-agent-layout-manager/index';
+import { useResponsiveUndock } from '../use-agent-layout-manager/responsive-undock-context';
 
 // Stub out viewport/responsive deps so `canDock` depends only on the hook's
-// own logic (viewport is always desktop, window is always tall enough).
-jest.mock( '@automattic/viewport', () => ( {
-	useWindowDimensions: () => ( { width: 1920, height: 1080 } ),
-} ) );
+// own logic (viewport defaults to desktop).
+let mockIsDesktop = true;
 jest.mock( '@wordpress/compose', () => ( {
-	useMediaQuery: () => true,
+	useMediaQuery: () => mockIsDesktop,
 } ) );
 jest.mock( '@wordpress/components', () => ( {
 	Button: () => null,
@@ -20,10 +19,8 @@ jest.mock( '@wordpress/element', () => ( {
 	createPortal: ( children: React.ReactNode ) => children,
 } ) );
 
-const CLOSING_CLASS = 'agents-manager-sidebar-container--closing';
 const OPEN_CLASS = 'agents-manager-sidebar-container--sidebar-open';
 const SPLIT_SCREEN_CLASS = 'is-split-screen';
-const TRANSITION_MS = 200;
 const DOCK_OPEN_DELAY_MS = 100;
 
 const FULLSCREEN_BODY_CLASS = 'is-fullscreen-mode';
@@ -61,6 +58,7 @@ beforeEach( () => {
 	// Reset before each test (not after) so RTL's auto-cleanup disconnects the
 	// observer first — otherwise this body mutation re-renders outside `act()`.
 	document.body.className = '';
+	mockIsDesktop = true;
 	container = document.createElement( 'div' );
 	document.body.appendChild( container );
 } );
@@ -116,64 +114,6 @@ describe( 'useAgentLayoutManager — open / close', () => {
 		act( () => result.current.openSidebar() );
 		expect( container.classList.contains( OPEN_CLASS ) ).toBe( true );
 		expect( result.current.isSidebarOpen ).toBe( true );
-	} );
-
-	it( 'adds --closing when closing an open sidebar, and removes it after the transition', () => {
-		const { result } = render();
-
-		act( () => result.current.closeSidebar() );
-		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( true );
-
-		act( () => jest.advanceTimersByTime( TRANSITION_MS ) );
-		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( false );
-	} );
-
-	it( 'does not add --closing when the sidebar was already closed', () => {
-		const { result } = render();
-
-		act( () => result.current.closeSidebar() );
-		act( () => jest.runAllTimers() );
-
-		act( () => result.current.closeSidebar() );
-		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( false );
-	} );
-
-	it( 'cancels the --closing transition when openSidebar() interrupts it', () => {
-		const { result } = render();
-
-		act( () => result.current.closeSidebar() );
-		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( true );
-
-		act( () => result.current.openSidebar() );
-		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( false );
-		expect( container.classList.contains( OPEN_CLASS ) ).toBe( true );
-
-		// The pending removal must not fire after the class is already gone.
-		act( () => jest.advanceTimersByTime( TRANSITION_MS ) );
-		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( false );
-	} );
-
-	it( 'cancels the --closing transition when undocking interrupts it', () => {
-		const { result } = render();
-
-		act( () => result.current.closeSidebar() );
-		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( true );
-
-		act( () => result.current.undock() );
-		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( false );
-
-		act( () => jest.advanceTimersByTime( TRANSITION_MS ) );
-		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( false );
-	} );
-
-	it( 'removes --closing on unmount', () => {
-		const { result, unmount } = render();
-
-		act( () => result.current.closeSidebar() );
-		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( true );
-
-		act( () => unmount() );
-		expect( container.classList.contains( CLOSING_CLASS ) ).toBe( false );
 	} );
 
 	it( 'cancels the pending dock-open when the layout undocks before it fires', async () => {
@@ -273,5 +213,83 @@ describe( 'useAgentLayoutManager — split-screen class', () => {
 
 		act( () => unmount() );
 		expect( container.classList.contains( SPLIT_SCREEN_CLASS ) ).toBe( false );
+	} );
+} );
+
+describe( 'useAgentLayoutManager — responsive undock', () => {
+	// Renders a docked chat and reads the context the portal provides to the chat
+	// components, alongside the same hook instance's state and controls.
+	function renderProbe() {
+		let layout: ReturnType< typeof useAgentLayoutManager >;
+		let context: ReturnType< typeof useResponsiveUndock >;
+
+		function Probe() {
+			context = useResponsiveUndock();
+			return null;
+		}
+
+		function Host() {
+			layout = useAgentLayoutManager( { sidebarContainer: container, defaultDocked: true } );
+			return <>{ layout.createAgentPortal( <Probe /> ) }</>;
+		}
+
+		const view = rtlRender( <Host /> );
+
+		return {
+			context: () => context,
+			isDocked: () => layout.isDocked,
+			dock: () => act( () => layout.dock() ),
+			undock: () => act( () => layout.undock() ),
+			// Crossing the desktop media query re-renders through `useMediaQuery`.
+			setDesktop: ( isDesktop: boolean ) => {
+				mockIsDesktop = isDesktop;
+				act( () => view.rerender( <Host /> ) );
+			},
+		};
+	}
+
+	it( 'counts each viewport-forced undock and flags the responsive state', () => {
+		const probe = renderProbe();
+		expect( probe.context() ).toEqual( { isResponsiveUndocked: false, undockCount: 0 } );
+
+		probe.setDesktop( false );
+		expect( probe.context() ).toEqual( { isResponsiveUndocked: true, undockCount: 1 } );
+
+		// Widening re-docks the chat, and narrowing again counts a second undock.
+		probe.setDesktop( true );
+		expect( probe.context() ).toEqual( { isResponsiveUndocked: false, undockCount: 1 } );
+
+		probe.setDesktop( false );
+		expect( probe.context() ).toEqual( { isResponsiveUndocked: true, undockCount: 2 } );
+	} );
+
+	it( 'ignores the fullscreen gate closing, which is not a viewport switch', async () => {
+		const probe = renderProbe();
+
+		await setBodyClass( EDITOR_BODY_CLASSES[ 0 ], true );
+
+		expect( probe.isDocked() ).toBe( false );
+		expect( probe.context() ).toEqual( { isResponsiveUndocked: false, undockCount: 0 } );
+	} );
+
+	it( 'ignores a manual pop-out, even on a narrow viewport', () => {
+		const probe = renderProbe();
+
+		probe.undock();
+		probe.setDesktop( false );
+
+		expect( probe.isDocked() ).toBe( false );
+		expect( probe.context() ).toEqual( { isResponsiveUndocked: false, undockCount: 0 } );
+	} );
+
+	it( 'ignores docking while narrow — no sidebar was taken away', () => {
+		const probe = renderProbe();
+		probe.undock();
+		probe.setDesktop( false );
+
+		// `setChatDocked( true )` stays reachable while the viewport blocks docking.
+		probe.dock();
+
+		expect( probe.context() ).toEqual( { isResponsiveUndocked: true, undockCount: 0 } );
 	} );
 } );

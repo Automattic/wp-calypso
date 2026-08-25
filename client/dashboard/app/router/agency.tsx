@@ -4,36 +4,95 @@ import {
 	agencyQuery,
 	agencyResourcesQuery,
 	agencySiteQuery,
+	agencySitesWithPluginsQuery,
+	agencyWooPaymentsDataQuery,
 	mcpSettingsQuery,
 	queryClient,
 	rawUserPreferencesQuery,
+	siteApmAggregateRollingQuery,
+	siteApmDetailQuery,
 	siteBackupsQuery,
 	siteBySlugQuery,
+	sitePerformancePagesQuery,
 	siteScanQuery,
 	siteSettingsQuery,
 	referralsQuery,
 	referralCommissionPayoutQuery,
+	tipaltiPayeeQuery,
+	wooPaymentsLicensesQuery,
+	WOOPAYMENTS_PLUGIN,
 } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
+import type { AgencyCapability } from '@automattic/api-core';
+import type { AnyRoute, StaticDataRouteOption } from '@tanstack/react-router';
+
+/**
+ * Any-of (OR): true when `capabilities` contains at least one required capability.
+ */
+export function hasAnyCapability(
+	capabilities: readonly string[],
+	required: AgencyCapability | AgencyCapability[]
+): boolean {
+	const list = Array.isArray( required ) ? required : [ required ];
+	return list.some( ( capability ) => capabilities.includes( capability ) );
+}
+
+function satisfiesStaticData(
+	staticData: StaticDataRouteOption | undefined,
+	capabilities: readonly string[]
+): boolean {
+	const required = staticData?.requiresAgencyCapability;
+	return ! required || hasAnyCapability( capabilities, required );
+}
+
+/**
+ * True when every matched agency route's declared capability requirement is
+ * satisfied. Routes without `requiresAgencyCapability` are unrestricted.
+ */
+export function isAllowedByCapabilities(
+	matches: ReadonlyArray< { staticData?: StaticDataRouteOption } >,
+	capabilities: readonly string[]
+): boolean {
+	return matches.every( ( match ) => satisfiesStaticData( match.staticData, capabilities ) );
+}
+
+/**
+ * The same check against a route object, for surfaces that decide whether to
+ * link to a route at all (the sidebar) rather than guarding a navigation to it.
+ * Reading the requirement off the route keeps the menu and the guard in sync.
+ */
+export function isRouteAllowedByCapabilities(
+	route: AnyRoute,
+	capabilities: readonly string[]
+): boolean {
+	return satisfiesStaticData( route.options.staticData, capabilities );
+}
 
 // Pathless layout route that guards every agency route (blocks client users).
 const agencyRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	id: 'agency',
-	beforeLoad: async ( { cause } ) => {
+	beforeLoad: async ( { cause, matches } ) => {
 		if ( cause === 'preload' ) {
 			return; // Don't redirect on hover/intent preloads.
 		}
 
-		const [ agency ] = await Promise.all( [
+		const [ agency, activeAgency ] = await Promise.all( [
 			queryClient.ensureQueryData( agencyQuery() ),
 			queryClient.ensureQueryData( activeAgencyQuery() ),
 		] );
 		if ( agency.isClientUser ) {
 			throw redirectAsNotAllowed( { to: '/client/subscriptions' } );
+		}
+
+		const capabilities = activeAgency?.user?.capabilities ?? [];
+		if ( ! isAllowedByCapabilities( matches, capabilities ) ) {
+			throw redirectAsNotAllowed( { to: '/overview' } );
 		}
 	},
 } );
@@ -58,7 +117,8 @@ const agencyOverviewRoute = createRoute( {
 );
 
 // `/tiers` – agency tiers & benefits
-const agencyTiersRoute = createRoute( {
+export const agencyTiersRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_agency_tier' },
 	head: () => ( {
 		meta: [
 			{
@@ -77,8 +137,40 @@ const agencyTiersRoute = createRoute( {
 	)
 );
 
+// `/agency/partner-directory` – partner directory application dashboard
+export const agencyPartnerDirectoryRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_partner_directory' },
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Partner Directories' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'agency/partner-directory',
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( ! agency?.partner_directory?.allowed ) {
+			throw redirectAsNotAllowed( { to: '/overview' } );
+		}
+	},
+	loader: () => queryClient.ensureQueryData( activeAgencyQuery() ),
+} ).lazy( () =>
+	import( '../../agency/partner-directory' ).then( ( d ) =>
+		createLazyRoute( 'agency-partner-directory' )( {
+			component: d.default,
+		} )
+	)
+);
+
 // `/marketplace/exclusive-offers` – partner offers (Refer / Resell)
-const exclusiveOffersRoute = createRoute( {
+export const exclusiveOffersRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_exclusive_offers' },
 	head: () => ( {
 		meta: [
 			{
@@ -97,7 +189,8 @@ const exclusiveOffersRoute = createRoute( {
 );
 
 // `/resources/learn` – guides, articles, and training for agencies
-const learnRoute = createRoute( {
+export const learnRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_learn' },
 	head: () => ( {
 		meta: [
 			{
@@ -125,8 +218,9 @@ const ensureMcpSettings = async () => {
 	}
 };
 
-const mcpRoute = createRoute( {
-	head: () => ( { meta: [ { title: __( 'MCP' ) } ] } ),
+export const mcpRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_learn' },
+	head: () => ( { meta: [ { title: __( 'AI and MCP' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'resources/ai-mcp',
 	beforeLoad: async ( { cause } ) => {
@@ -151,14 +245,35 @@ const mcpOverviewRoute = createRoute( {
 	)
 );
 
-const mcpAvailableToolsRoute = createRoute( {
-	head: () => ( { meta: [ { title: __( 'Available tools' ) } ] } ),
+const mcpReadToolsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Read' ) } ] } ),
 	getParentRoute: () => mcpRoute,
-	path: 'tools',
+	path: 'read',
 	loader: ensureMcpSettings,
 } ).lazy( () =>
-	import( '../../agency/resources/mcp/available-tools' ).then( ( d ) =>
-		createLazyRoute( 'resources-mcp-tools' )( { component: d.default } )
+	import( '../../agency/resources/mcp/read-tools' ).then( ( d ) =>
+		createLazyRoute( 'resources-mcp-read' )( { component: d.default } )
+	)
+);
+
+const mcpWriteToolsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Write' ) } ] } ),
+	getParentRoute: () => mcpRoute,
+	path: 'write',
+	loader: ensureMcpSettings,
+} ).lazy( () =>
+	import( '../../agency/resources/mcp/write-tools' ).then( ( d ) =>
+		createLazyRoute( 'resources-mcp-write' )( { component: d.default } )
+	)
+);
+
+const mcpStarterPromptsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Starter prompts' ) } ] } ),
+	getParentRoute: () => mcpRoute,
+	path: 'prompts',
+} ).lazy( () =>
+	import( '../../agency/resources/mcp/starter-prompts' ).then( ( d ) =>
+		createLazyRoute( 'resources-mcp-prompts' )( { component: d.default } )
 	)
 );
 
@@ -174,6 +289,7 @@ const mcpConnectRoute = createRoute( {
 
 // `/sites` – agency-managed sites
 export const agencySitesRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_managed_sites' },
 	head: () => ( {
 		meta: [ { title: __( 'Sites' ) } ],
 	} ),
@@ -190,6 +306,7 @@ export const agencySitesRoute = createRoute( {
 
 // `/team` – manage agency team members and invitations
 export const agencyTeamRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_users' },
 	head: () => ( {
 		meta: [ { title: __( 'Team' ) } ],
 	} ),
@@ -205,7 +322,9 @@ export const agencyTeamRoute = createRoute( {
 );
 
 // `/earn` – summary of the agency's earning programs (default Earn screen)
-const earnOverviewRoute = createRoute( {
+export const earnOverviewRoute = createRoute( {
+	// TODO: replace with a top-level `a4a_read_earnings` capability when one exists.
+	staticData: { requiresAgencyCapability: [ 'a4a_read_referrals', 'a4a_read_migrations' ] },
 	head: () => ( { meta: [ { title: __( 'Overview' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'earn',
@@ -216,7 +335,8 @@ const earnOverviewRoute = createRoute( {
 );
 
 // `/earn/referrals` – referral commissions
-const earnReferralsRoute = createRoute( {
+export const earnReferralsRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_referrals' },
 	head: () => ( { meta: [ { title: __( 'Referrals' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'earn/referrals',
@@ -227,10 +347,30 @@ const earnReferralsRoute = createRoute( {
 );
 
 // `/earn/woopayments` – WooPayments revenue share
-const earnWooPaymentsRoute = createRoute( {
+export const earnWooPaymentsRoute = createRoute( {
+	// TODO: replace with a dedicated WooPayments capability when one exists.
+	staticData: { requiresAgencyCapability: 'a4a_read_referrals' },
 	head: () => ( { meta: [ { title: __( 'WooPayments' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'earn/woopayments',
+	loader: async () => {
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( ! agency?.id ) {
+			return;
+		}
+		const [ sitesWithPlugins, licenses ] = await Promise.all( [
+			queryClient.ensureQueryData(
+				agencySitesWithPluginsQuery( agency.id, [ WOOPAYMENTS_PLUGIN ] )
+			),
+			queryClient.ensureQueryData( wooPaymentsLicensesQuery( agency.id ) ),
+		] );
+		if ( sitesWithPlugins.length > 0 || licenses.length > 0 ) {
+			await Promise.all( [
+				queryClient.ensureQueryData( agencyWooPaymentsDataQuery( agency.id ) ),
+				queryClient.ensureQueryData( tipaltiPayeeQuery( agency.id ) ),
+			] );
+		}
+	},
 } ).lazy( () =>
 	import( '../../agency/earn/woopayments' ).then( ( d ) =>
 		createLazyRoute( 'earn-woopayments' )( { component: d.default } )
@@ -238,7 +378,8 @@ const earnWooPaymentsRoute = createRoute( {
 );
 
 // `/earn/migrations` – migration commissions
-const earnMigrationsRoute = createRoute( {
+export const earnMigrationsRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_migrations' },
 	head: () => ( { meta: [ { title: __( 'Migrations' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'earn/migrations',
@@ -249,7 +390,9 @@ const earnMigrationsRoute = createRoute( {
 );
 
 // `/earn/payout-settings` – where and how the agency gets paid
-const earnPayoutSettingsRoute = createRoute( {
+export const earnPayoutSettingsRoute = createRoute( {
+	// TODO: replace with a top-level `a4a_read_earnings` capability when one exists.
+	staticData: { requiresAgencyCapability: [ 'a4a_read_referrals', 'a4a_read_migrations' ] },
 	head: () => ( { meta: [ { title: __( 'Payout settings' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'earn/payout-settings',
@@ -261,6 +404,7 @@ const earnPayoutSettingsRoute = createRoute( {
 
 // `/earn/referrals/$referralId` – referral (client) detail view; hosts the tab routes
 export const earnReferralRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_referrals' },
 	head: () => ( { meta: [ { title: __( 'Referral details' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'earn/referrals/$referralId',
@@ -309,10 +453,36 @@ const earnReferralPurchasesRoute = createRoute( {
 
 // `/sites/$siteSlug` – agency site detail (a layout that hosts the section routes)
 export const agencySiteRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_managed_sites' },
 	getParentRoute: () => agencyRoute,
 	path: 'sites/$siteSlug',
+	beforeLoad: async ( { cause, params: { siteSlug }, matches } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		let site;
+		try {
+			site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		} catch {
+			// Do nothing and propagate the error through the loader function.
+			return;
+		}
+
+		const siteTypeSupports = getSiteTypeFeatureSupports( site );
+		for ( const match of matches ) {
+			const required = match.staticData?.requiresSiteTypeSupport;
+			if ( required && ! siteTypeSupports[ required ] ) {
+				throw redirectAsNotAllowed( { to: `/sites/${ siteSlug }` } );
+			}
+		}
+	},
 	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( agencySiteQuery( siteSlug ) );
+		// The sidebar needs the full site to decide section visibility before first paint.
+		const [ site ] = await Promise.all( [
+			queryClient.ensureQueryData( agencySiteQuery( siteSlug ) ),
+			queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),
+		] );
 		if ( ! site ) {
 			throw notFound();
 		}
@@ -329,6 +499,10 @@ export const agencySiteRoute = createRoute( {
 const agencySiteOverviewRoute = createRoute( {
 	getParentRoute: () => agencySiteRoute,
 	path: '/',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		queryClient.prefetchQuery( sitePerformancePagesQuery( site.ID ) );
+	},
 } ).lazy( () =>
 	import( '../../agency/sites/site/overview' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-overview' )( {
@@ -512,13 +686,194 @@ export const agencySiteScanHistoryRoute = createRoute( {
 	)
 );
 
+// `/sites/$siteSlug/performance` – layout hosting the Frontend and Backend views
+const agencySitePerformanceRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'performance' },
+	head: () => ( { meta: [ { title: __( 'Performance' ) } ] } ),
+	getParentRoute: () => agencySiteRoute,
+	path: 'performance',
+} ).lazy( () =>
+	import( '../../agency/sites/site/performance' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-performance' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const agencySitePerformanceIndexRoute = createRoute( {
+	getParentRoute: () => agencySitePerformanceRoute,
+	path: '/',
+	beforeLoad: ( { params: { siteSlug } } ) => {
+		throw dashboardRedirect( { to: `/sites/${ siteSlug }/performance/frontend` } );
+	},
+} );
+
+export const agencySitePerformanceFrontendRoute = createRoute( {
+	head: () => ( {
+		meta: [ { title: isEnabled( 'performance/apm' ) ? __( 'Frontend' ) : undefined } ],
+	} ),
+	getParentRoute: () => agencySitePerformanceRoute,
+	path: 'frontend',
+} ).lazy( () =>
+	import( '../../sites/performance/frontend' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-performance-frontend' )( {
+			component: () => <d.default siteSlug={ agencySiteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+export const agencySitePerformanceBackendRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Backend' ) } ] } ),
+	getParentRoute: () => agencySitePerformanceRoute,
+	path: 'backend',
+} );
+
+async function prefetchAgencyApmAggregate( siteSlug: string ) {
+	const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+	const { getStoredOrDefaultTimeframe, TIMEFRAME_SECONDS } = await import(
+		'../../sites/performance/backend/timeframe'
+	);
+	const windowSec = TIMEFRAME_SECONDS[ getStoredOrDefaultTimeframe() ];
+	await queryClient.ensureQueryData( siteApmAggregateRollingQuery( site.ID, windowSec ) );
+}
+
+export const agencySitePerformanceBackendIndexRoute = createRoute( {
+	getParentRoute: () => agencySitePerformanceBackendRoute,
+	path: '/',
+	loader: ( { params: { siteSlug } } ) => prefetchAgencyApmAggregate( siteSlug ),
+} ).lazy( () =>
+	import( '../../sites/performance/backend' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-performance-backend' )( {
+			component: () => (
+				<d.default siteSlug={ agencySiteRoute.useParams().siteSlug } tab="overview" />
+			),
+		} )
+	)
+);
+
+export const agencySitePerformanceBackendTransactionsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Transactions' ) } ] } ),
+	getParentRoute: () => agencySitePerformanceBackendRoute,
+	path: 'transactions',
+	loader: ( { params: { siteSlug } } ) => prefetchAgencyApmAggregate( siteSlug ),
+} ).lazy( () =>
+	import( '../../sites/performance/backend' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-performance-backend-transactions' )( {
+			component: () => (
+				<d.default siteSlug={ agencySiteRoute.useParams().siteSlug } tab="transactions" />
+			),
+		} )
+	)
+);
+
+export const agencySitePerformanceBackendWordPressRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'WordPress' ) } ] } ),
+	getParentRoute: () => agencySitePerformanceBackendRoute,
+	path: 'wordpress',
+	loader: ( { params: { siteSlug } } ) => prefetchAgencyApmAggregate( siteSlug ),
+} ).lazy( () =>
+	import( '../../sites/performance/backend' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-performance-backend-wordpress' )( {
+			component: () => (
+				<d.default siteSlug={ agencySiteRoute.useParams().siteSlug } tab="wordpress" />
+			),
+		} )
+	)
+);
+
+export const agencySitePerformanceBackendDatabaseRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Database' ) } ] } ),
+	getParentRoute: () => agencySitePerformanceBackendRoute,
+	path: 'database',
+	loader: ( { params: { siteSlug } } ) => prefetchAgencyApmAggregate( siteSlug ),
+} ).lazy( () =>
+	import( '../../sites/performance/backend' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-performance-backend-database' )( {
+			component: () => (
+				<d.default siteSlug={ agencySiteRoute.useParams().siteSlug } tab="database" />
+			),
+		} )
+	)
+);
+
+export const agencySitePerformanceBackendExternalRequestsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'External requests' ) } ] } ),
+	getParentRoute: () => agencySitePerformanceBackendRoute,
+	path: 'external-requests',
+	loader: ( { params: { siteSlug } } ) => prefetchAgencyApmAggregate( siteSlug ),
+} ).lazy( () =>
+	import( '../../sites/performance/backend' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-performance-backend-external-requests' )( {
+			component: () => (
+				<d.default siteSlug={ agencySiteRoute.useParams().siteSlug } tab="external-requests" />
+			),
+		} )
+	)
+);
+
+export const agencySitePerformanceBackendRequestDetailRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Request' ) } ] } ),
+	getParentRoute: () => agencySitePerformanceBackendRoute,
+	path: 'requests',
+	validateSearch: ( search ): { method: string; route: string; bucket?: string } => ( {
+		method: typeof search.method === 'string' ? search.method : '',
+		route: typeof search.route === 'string' ? search.route : '',
+		bucket: typeof search.bucket === 'string' ? search.bucket : undefined,
+	} ),
+	loaderDeps: ( { search: { method, route } } ) => ( { method, route } ),
+	loader: async ( { params: { siteSlug }, deps: { method, route } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		const { TIMEFRAME_SECONDS, getStoredOrDefaultTimeframe } = await import(
+			'../../sites/performance/backend/timeframe'
+		);
+		const windowSec = TIMEFRAME_SECONDS[ getStoredOrDefaultTimeframe() ];
+		await queryClient.ensureQueryData(
+			siteApmDetailQuery( site.ID, { method, route, windowSec } )
+		);
+	},
+} ).lazy( () =>
+	import( '../../sites/performance/backend/request-detail' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-performance-backend-request-detail' )( {
+			component: () => {
+				const { siteSlug } = agencySiteRoute.useParams();
+				const { method, route, bucket } =
+					agencySitePerformanceBackendRequestDetailRoute.useSearch();
+				return (
+					<d.default siteSlug={ siteSlug } method={ method } route={ route } bucket={ bucket } />
+				);
+			},
+		} )
+	)
+);
+
+// `/sites/$siteSlug/monitoring` – server stats detailed view (WP.com sites only)
+export const agencySiteMonitoringRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'monitoring' },
+	head: () => ( { meta: [ { title: __( 'Monitoring' ) } ] } ),
+	getParentRoute: () => agencySiteRoute,
+	path: 'monitoring',
+} ).lazy( () =>
+	import( '../../agency/sites/site/monitoring' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-monitoring' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const createAgencyRoutes = () => [
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
 		agencyTiersRoute,
+		agencyPartnerDirectoryRoute,
 		exclusiveOffersRoute,
 		learnRoute,
-		mcpRoute.addChildren( [ mcpOverviewRoute, mcpAvailableToolsRoute, mcpConnectRoute ] ),
+		mcpRoute.addChildren( [
+			mcpOverviewRoute,
+			mcpReadToolsRoute,
+			mcpWriteToolsRoute,
+			mcpStarterPromptsRoute,
+			mcpConnectRoute,
+		] ),
 		agencySitesRoute,
 		agencyTeamRoute,
 		earnOverviewRoute,
@@ -546,6 +901,19 @@ export const createAgencyRoutes = () => [
 				agencySiteScanActiveRoute,
 				agencySiteScanHistoryRoute,
 			] ),
+			agencySitePerformanceRoute.addChildren( [
+				agencySitePerformanceIndexRoute,
+				agencySitePerformanceFrontendRoute,
+				agencySitePerformanceBackendRoute.addChildren( [
+					agencySitePerformanceBackendIndexRoute,
+					agencySitePerformanceBackendTransactionsRoute,
+					agencySitePerformanceBackendWordPressRoute,
+					agencySitePerformanceBackendDatabaseRoute,
+					agencySitePerformanceBackendExternalRequestsRoute,
+					agencySitePerformanceBackendRequestDetailRoute,
+				] ),
+			] ),
+			agencySiteMonitoringRoute,
 			agencySiteLogsRoute.addChildren( [ agencySiteLogsIndexRoute, agencySiteActivityRoute ] ),
 		] ),
 	] ),

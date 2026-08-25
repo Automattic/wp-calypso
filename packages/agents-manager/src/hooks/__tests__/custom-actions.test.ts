@@ -9,8 +9,8 @@ const mockSetIsOpen = jest.fn();
 const mockSetIsDocked = jest.fn();
 const mockSetIsMinimized = jest.fn();
 let mockContext = {
-	getActiveSessionId: jest.fn( () => 'session-123' ),
-	resumeActiveChat: jest.fn(),
+	getTabSessionId: jest.fn( () => 'session-123' ),
+	resumeChat: jest.fn(),
 	agentConfig: { agentId: 'reader-chat' },
 };
 let mockSelectState: {
@@ -66,8 +66,8 @@ describe( 'useSetupCustomActions', () => {
 		delete window.__agentsManagerActions;
 		clearSiteEditorActions();
 		mockContext = {
-			getActiveSessionId: jest.fn( () => 'session-123' ),
-			resumeActiveChat: jest.fn(),
+			getTabSessionId: jest.fn( () => 'session-123' ),
+			resumeChat: jest.fn(),
 			agentConfig: { agentId: 'reader-chat' },
 		};
 		mockSelectState = { hasLoaded: true, isOpen: false, isDocked: false, floatingPosition: '' };
@@ -114,7 +114,7 @@ describe( 'useSetupCustomActions', () => {
 
 		expect( snapshot?.setChatOpen ).toBeInstanceOf( Function );
 		expect( snapshot?.setChatDocked ).toBeInstanceOf( Function );
-		expect( snapshot?.resumeChat ).toBe( mockContext.resumeActiveChat );
+		expect( snapshot?.resumeChat ).toBe( mockContext.resumeChat );
 		expect( snapshot?.isReady ).toBe( true );
 	} );
 
@@ -128,8 +128,8 @@ describe( 'useSetupCustomActions', () => {
 
 	it( 'opens regular agents while preserving shared Agents Manager state persistence', () => {
 		mockContext = {
-			getActiveSessionId: jest.fn( () => 'session-123' ),
-			resumeActiveChat: jest.fn(),
+			getTabSessionId: jest.fn( () => 'session-123' ),
+			resumeChat: jest.fn(),
 			agentConfig: { agentId: 'wp-orchestrator' },
 		};
 		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
