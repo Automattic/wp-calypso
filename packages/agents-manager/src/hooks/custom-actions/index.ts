@@ -11,7 +11,8 @@ import {
 } from '../../utils/external-context';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { setSiteEditorAction } from '../../utils/site-editor-context';
-import { recordBigSkyTracksEvent } from '../../utils/tracks';
+import { BIG_SKY_EVENT_PREFIX, recordBigSkyTracksEvent } from '../../utils/tracks';
+import type { BigSkyEventName } from '../../utils/tracks';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 /** Bridge-facing recorder: drops malformed calls instead of emitting `jetpack_big_sky_undefined`. */
@@ -19,12 +20,12 @@ function recordGuardedBigSkyTracksEvent(
 	eventName: string,
 	props?: Record< string, unknown >
 ): void {
-	if ( typeof eventName !== 'string' || ! eventName.startsWith( 'jetpack_big_sky_' ) ) {
+	if ( typeof eventName !== 'string' || ! eventName.startsWith( BIG_SKY_EVENT_PREFIX ) ) {
 		return;
 	}
 
 	// `startsWith` doesn't narrow to the template-literal type; the guard above proves it.
-	recordBigSkyTracksEvent( eventName as `jetpack_big_sky_${ string }`, props );
+	recordBigSkyTracksEvent( eventName as BigSkyEventName, props );
 }
 
 /**
