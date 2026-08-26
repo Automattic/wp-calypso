@@ -274,14 +274,9 @@ export default function () {
 			setupPreferences,
 			maybeRedirectToMultiSiteDashboard( ( { domain, site } ) => {
 				// A site's WordPress.com address has no overview of its own in the dashboard:
-				// the only thing to manage is the site address, on the site's domains page. A
-				// staging address can't be changed at all, so it just lands there.
+				// the only thing to manage is the site address, on the site's domains page.
 				if ( site && domain.endsWith( '.wordpress.com' ) ) {
 					return `/sites/${ site }/domains?action=change-site-address`;
-				}
-
-				if ( site && domain.endsWith( '.wpcomstaging.com' ) ) {
-					return `/sites/${ site }/domains`;
 				}
 
 				return `/domains/${ domain }`;
