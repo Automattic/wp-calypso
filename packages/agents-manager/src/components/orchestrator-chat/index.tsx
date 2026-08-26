@@ -1714,7 +1714,7 @@ export default function OrchestratorChat( {
 
 	// Broadcast the turn's edges so a host editing surface can tell the agent's
 	// writes from a block settling itself on mount.
-	useBroadcastTurnActivity( isProcessing );
+	useBroadcastTurnActivity( agentConfig?.agentId, isProcessing );
 
 	const latestDisplayedMessage = displayedMessages[ displayedMessages.length - 1 ];
 	const shouldSuppressTransientThinking = Boolean(
