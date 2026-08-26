@@ -47,6 +47,15 @@ describe( 'redirectLoggedIn', () => {
 			expect( window.location ).toBe( '/home' );
 		} );
 
+		test( 'should redirect home when bare root carries a query or hash', () => {
+			isUserLoggedIn.mockReturnValue( true );
+			redirectLoggedIn( { ...context, query: { redirect_to: '/?source=magic-login' } }, next );
+			expect( window.location ).toBe( '/home' );
+
+			redirectLoggedIn( { ...context, query: { redirect_to: '/#section' } }, next );
+			expect( window.location ).toBe( '/home' );
+		} );
+
 		test( 'should redirect home when invalid internal url is passed', () => {
 			isUserLoggedIn.mockReturnValue( true );
 			redirectLoggedIn( { ...context, query: { redirect_to: '////test.com' } }, next );
