@@ -1,14 +1,16 @@
 import {
 	Button,
-	SearchControl,
+	RadioControl,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState } from 'react';
-import { Card, CardBody } from '../../../components/card';
+import { useMemo, useState } from 'react';
+import { DataViews } from '../../../components/dataviews';
 import type { AgencyLicense, AgencySite } from './mock-data';
+import type { Field, View } from '@wordpress/dataviews';
 
 export default function AssignLicenseModal( {
 	license,
@@ -21,13 +23,51 @@ export default function AssignLicenseModal( {
 	onAssign: ( site: AgencySite ) => void;
 	onCancel: () => void;
 } ) {
-	const [ search, setSearch ] = useState( '' );
-	const [ selected, setSelected ] = useState< number | null >( null );
+	const [ selected, setSelected ] = useState< AgencySite | null >( null );
+	const [ view, setView ] = useState< View >( {
+		type: 'table',
+		page: 1,
+		perPage: 10,
+		search: '',
+		filters: [],
+		sort: { field: '', direction: 'asc' },
+		fields: [ 'site' ],
+		layout: { density: 'compact' },
+	} );
 
-	const filtered = sites.filter( ( site ) =>
-		site.url.toLowerCase().includes( search.trim().toLowerCase() )
+	const fields = useMemo< Field< AgencySite >[] >(
+		() => [
+			{
+				id: 'site',
+				label: __( 'Site' ),
+				getValue: ( { item } ) => item.url,
+				render: ( { item } ) =>
+					item.connected ? (
+						<RadioControl
+							selected={ selected?.blogId === item.blogId ? String( item.blogId ) : '' }
+							options={ [ { label: item.url, value: String( item.blogId ) } ] }
+							onChange={ () => setSelected( item ) }
+						/>
+					) : (
+						<HStack justify="space-between" alignment="center">
+							<Text variant="muted">{ item.url }</Text>
+							<Text variant="muted" size={ 12 }>
+								{ __( 'Connect your WordPress.com user to assign' ) }
+							</Text>
+						</HStack>
+					),
+				enableGlobalSearch: true,
+				enableHiding: false,
+				enableSorting: false,
+			},
+		],
+		[ selected ]
 	);
-	const selectedSite = sites.find( ( site ) => site.blogId === selected );
+
+	const { data, paginationInfo } = useMemo(
+		() => filterSortAndPaginate( sites, view, fields ),
+		[ sites, view, fields ]
+	);
 
 	return (
 		<VStack spacing={ 4 }>
@@ -39,58 +79,15 @@ export default function AssignLicenseModal( {
 				) }
 			</Text>
 
-			<SearchControl
-				__nextHasNoMarginBottom
-				value={ search }
-				onChange={ setSearch }
-				placeholder={ __( 'Search sites by URL' ) }
+			<DataViews< AgencySite >
+				data={ data }
+				getItemId={ ( item ) => String( item.blogId ) }
+				paginationInfo={ paginationInfo }
+				fields={ fields }
+				view={ view }
+				onChangeView={ setView }
+				defaultLayouts={ { table: {} } }
 			/>
-
-			<VStack spacing={ 2 } className="marketplace-purchases__assign-list" role="radiogroup">
-				{ filtered.map( ( site ) => {
-					const isSelected = site.blogId === selected;
-					return (
-						<Card
-							key={ site.blogId }
-							className={
-								'marketplace-purchases__site-card' +
-								( isSelected ? ' is-selected' : '' ) +
-								( site.connected ? '' : ' is-disabled' )
-							}
-							role="radio"
-							aria-checked={ isSelected }
-							aria-disabled={ ! site.connected }
-							tabIndex={ site.connected ? 0 : -1 }
-							onClick={ site.connected ? () => setSelected( site.blogId ) : undefined }
-							onKeyDown={ ( event: React.KeyboardEvent ) => {
-								if ( site.connected && ( event.key === 'Enter' || event.key === ' ' ) ) {
-									event.preventDefault();
-									setSelected( site.blogId );
-								}
-							} }
-						>
-							<CardBody>
-								<HStack justify="space-between" alignment="center">
-									<HStack spacing={ 3 } justify="flex-start" alignment="center" expanded={ false }>
-										<span
-											className={ 'marketplace-purchases__radio' + ( isSelected ? ' is-on' : '' ) }
-										/>
-										<Text>{ site.url }</Text>
-									</HStack>
-									{ ! site.connected && (
-										<Text variant="muted" size={ 12 }>
-											{ __( 'Connect your WordPress.com user to assign' ) }
-										</Text>
-									) }
-								</HStack>
-							</CardBody>
-						</Card>
-					);
-				} ) }
-				{ filtered.length === 0 && (
-					<Text variant="muted">{ __( 'No sites match your search.' ) }</Text>
-				) }
-			</VStack>
 
 			<HStack justify="flex-end" spacing={ 3 }>
 				<Button variant="tertiary" onClick={ onCancel }>
@@ -99,8 +96,8 @@ export default function AssignLicenseModal( {
 				<Button
 					variant="primary"
 					__next40pxDefaultSize
-					disabled={ ! selectedSite }
-					onClick={ () => selectedSite && onAssign( selectedSite ) }
+					disabled={ ! selected }
+					onClick={ () => selected && onAssign( selected ) }
 				>
 					{ __( 'Assign to site' ) }
 				</Button>
