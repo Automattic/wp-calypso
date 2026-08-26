@@ -487,7 +487,7 @@ export default function MarketplaceHosting() {
 						</>
 					}
 					actions={
-						<HStack spacing={ 4 } justify="flex-end">
+						<div className="marketplace-hosting__header-actions">
 							<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
 								<Text variant="muted">{ __( 'Billed:' ) }</Text>
 								<Text variant={ term === 'monthly' ? undefined : 'muted' }>
@@ -500,10 +500,6 @@ export default function MarketplaceHosting() {
 									onChange={ ( checked ) => setTerm( checked ? 'yearly' : 'monthly' ) }
 								/>
 							</HStack>
-							<Divider
-								orientation="vertical"
-								style={ { color: 'var(--dashboard-overview__divider-color)', height: '24px' } }
-							/>
 							<HStack spacing={ 1 } justify="flex-start" expanded={ false }>
 								{ useAltControls ? (
 									<ToggleGroupControl
@@ -532,17 +528,13 @@ export default function MarketplaceHosting() {
 									onClick={ () => setIsGuideOpen( true ) }
 								/>
 							</HStack>
-							<Divider
-								orientation="vertical"
-								style={ { color: 'var(--dashboard-overview__divider-color)', height: '24px' } }
-							/>
 							<CartDropdown
 								items={ cartItems }
 								onRemove={ removeFromCart }
 								open={ isCartOpen }
 								onToggle={ setIsCartOpen }
 							/>
-						</HStack>
+						</div>
 					}
 				/>
 			}
