@@ -65,7 +65,7 @@ function RefusedRequestError() {
 					}
 				>
 					{ __(
-						'We’re having trouble accessing data from your account at the moment. Please log out and log back in to try again. We apologize for the error.'
+						'We’re having trouble accessing data from your account at the moment. Please log out and log back in to try again.'
 					) }
 				</Notice>
 			}
