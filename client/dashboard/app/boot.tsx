@@ -25,7 +25,7 @@ import './omnibar/style.scss';
 import '@automattic/omnibar/style.scss';
 
 function boot( config: AppConfig ) {
-	if ( handleOAuthCallback() ) {
+	if ( handleOAuthCallback( config.mainRoute ) ) {
 		return;
 	}
 
