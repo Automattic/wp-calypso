@@ -491,21 +491,8 @@ const CONTENT_DEPENDENT_SUGGESTION_IDS: Set< string > = new Set( [
 	SEO_ENHANCER_SUGGESTION.id,
 ] );
 
-/**
- * Written out per post type rather than built from a noun, because a noun
- * dropped into a sentence cannot agree with the rest of it in every language.
- * Only posts and pages reach these suggestions.
- */
-function getContentRequiredReason( currentPostType?: string ): string {
-	return currentPostType === 'page'
-		? __(
-				'This feature will be available once content is added to the page.',
-				__i18n_text_domain__
-		  )
-		: __(
-				'This feature will be available once content is added to the post.',
-				__i18n_text_domain__
-		  );
+function getContentRequiredReason(): string {
+	return __( 'This feature requires content to work.', __i18n_text_domain__ );
 }
 
 function getPostLevelSuggestions(
@@ -535,7 +522,7 @@ function getPostLevelSuggestions(
 	}
 
 	// Greyed out rather than dropped, so a blank post still shows what is on offer.
-	const disabledReason = getContentRequiredReason( currentPostType );
+	const disabledReason = getContentRequiredReason();
 
 	return suggestions.map( ( suggestion ) =>
 		CONTENT_DEPENDENT_SUGGESTION_IDS.has( suggestion.id )

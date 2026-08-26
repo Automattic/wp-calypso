@@ -1929,19 +1929,7 @@ describe( 'empty post gating', () => {
 	it.each( CONTENT_DEPENDENT_IDS )( 'gives %s a reason for being disabled', ( id ) => {
 		const suggestion = suggestionsFor( { isPostEmpty: true } ).find( ( s ) => s.id === id );
 
-		expect( suggestion?.disabledReason ).toBe(
-			'This feature will be available once content is added to the post.'
-		);
-	} );
-
-	it( 'names the page rather than the post when editing a page', () => {
-		installAiEditorialReviewData( ALL_FEATURES );
-		installPostTypeMock( 'page', 123, { supportsExcerpt: true, isPostEmpty: true } );
-		const suggestion = getEmptyViewSuggestions().find( ( s ) => s.id === 'optimize-title' );
-
-		expect( suggestion?.disabledReason ).toBe(
-			'This feature will be available once content is added to the page.'
-		);
+		expect( suggestion?.disabledReason ).toBe( 'This feature requires content to work.' );
 	} );
 
 	it( 'gives no reason once the suggestion is usable', () => {
