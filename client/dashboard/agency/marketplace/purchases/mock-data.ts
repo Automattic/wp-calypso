@@ -227,3 +227,24 @@ export function fetchAgencyLicenses(): Promise< AgencyLicense[] > {
 		setTimeout( () => resolve( mockLicenses ), 400 );
 	} );
 }
+
+/**
+ * The agency's sites a license can be assigned to. In production these come from
+ * the agency sites query; `connected` mirrors the real requirement that the
+ * agency's WordPress.com user be connected to the site before it's assignable.
+ */
+export interface AgencySite {
+	blogId: number;
+	url: string;
+	connected: boolean;
+}
+
+export const mockSites: AgencySite[] = [
+	{ blogId: 210998010, url: 'aurora-dental.com', connected: true },
+	{ blogId: 210998011, url: 'brightpath-nonprofit.org', connected: true },
+	{ blogId: 210998012, url: 'cedar-and-co.studio', connected: true },
+	{ blogId: 210998013, url: 'dune-surfshop.com', connected: true },
+	{ blogId: 210998014, url: 'evergreen-law.com', connected: false },
+	{ blogId: 210998015, url: 'fjord-architects.com', connected: true },
+	{ blogId: 210998016, url: 'granite-fitness.com', connected: true },
+];
