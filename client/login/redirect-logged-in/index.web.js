@@ -47,6 +47,24 @@ function isUnsafeInternalUrl( url ) {
 	}
 }
 
+/**
+ * The wordpress.com root is the marketing homepage, not a useful post-login
+ * destination, so treat it as "send me to my dashboard". Other allowed hosts
+ * keep their own root.
+ * @param {string} url URL to check
+ * @returns {boolean}
+ */
+function isBareRoot( url ) {
+	try {
+		const parsed = new URL( url, window.location.origin );
+		return (
+			parsed.pathname === '/' && ( url.startsWith( '/' ) || parsed.hostname === 'wordpress.com' )
+		);
+	} catch {
+		return false;
+	}
+}
+
 export default function redirectLoggedIn( context, next ) {
 	const userLoggedIn = isUserLoggedIn( context.store.getState() );
 
@@ -54,9 +72,7 @@ export default function redirectLoggedIn( context, next ) {
 		// force full page reload to avoid SSR hydration issues.
 		// Redirect parameters should have higher priority.
 		let url = context?.query?.redirect_to;
-		// Bare root, with or without a query or hash, means "my dashboard".
-		const isBareRoot = /^\/(?:[?#].*)?$/.test( url ?? '' );
-		if ( ! url || isBareRoot || isUnsafeInternalUrl( url ) || isExternalUrl( url ) ) {
+		if ( ! url || isBareRoot( url ) || isUnsafeInternalUrl( url ) || isExternalUrl( url ) ) {
 			url = '/home';
 		}
 		window.location = url;
