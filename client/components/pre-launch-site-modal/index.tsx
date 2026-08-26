@@ -22,13 +22,11 @@ interface PreLaunchSiteModalProps {
 }
 
 /**
- * Shared bridge that gates the classic "launch site" surfaces behind the
- * pre-launch modal.
+ * Gates the classic "launch site" surfaces behind the pre-launch modal.
  *
- * When a site already has a paid plan and a custom domain, the launch flow
- * auto-skips its domain and plan steps and launches immediately. For those sites
- * we show a confirmation modal first; on confirm we redirect to `launchUrl`.
- * Every other site is sent straight to `launchUrl`, preserving today's behavior.
+ * A paid plan + custom domain makes the launch flow auto-skip its steps and
+ * launch immediately, so those sites get a confirmation modal first (on confirm
+ * we redirect to `launchUrl`). Every other site goes straight to `launchUrl`.
  */
 function PreLaunchSiteModalContent( {
 	siteId,
@@ -57,12 +55,9 @@ function PreLaunchSiteModalContent( {
 	const isSettled =
 		( siteResult.isSuccess || siteResult.isError ) &&
 		( domainsResult.isSuccess || domainsResult.isError );
-	// Mirror the launch flow's domain-skip rule so the modal's "custom domain"
-	// set matches the set of sites for which `/start/launch-site` skips its
-	// domain step. That flow's `isDomainFulfilled` skips the step when the site
-	// has any non-WPCOM domain (`! isWPCOMDomain`) — i.e. anything other than the
-	// default `*.wordpress.com` address. Gating on the same signal guarantees
-	// that confirming "launch" never drops the user onto a domain step.
+	// A "custom domain" is any non-default address, mirroring the launch flow's
+	// domain-skip rule (`isDomainFulfilled` / `! isWPCOMDomain`) so confirming
+	// "launch" never drops the user onto a domain step.
 	const customDomains = ( domainsResult.data ?? [] ).filter(
 		( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
 	);
