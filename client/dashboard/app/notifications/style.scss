@@ -1,14 +1,7 @@
-@import '@wordpress/base-styles/variables';
-
 .dashboard-notifications__icon {
 	svg {
 		circle {
 			fill: var( --wp-admin-theme-color );
 		}
 	}
-}
-
-.dashboard-notifications__loading {
-	display: block;
-	padding: $grid-unit-10 $grid-unit-15;
 }

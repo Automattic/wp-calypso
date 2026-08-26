@@ -187,7 +187,7 @@ export default function Notifications( {
 			renderContent={ () => (
 				<Suspense
 					fallback={
-						<Text variant="muted" className="dashboard-notifications__loading">
+						<Text variant="muted" style={ { display: 'block', padding: '8px 12px' } }>
 							{ __( 'Loading…' ) }
 						</Text>
 					}
