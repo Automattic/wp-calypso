@@ -147,7 +147,7 @@ test.describe(
 				await pageUseADomainIAlreadyOwn.fillUseDomainIOwnInput( domain );
 			} );
 
-			await test.step( 'And I select the "Transfer your domain" option', async function () {
+			await test.step( 'And I select the "Transfer your domain name to WordPress.com" option', async function () {
 				await pageUseADomainIAlreadyOwn.selectTransferYourDomain();
 			} );
 
