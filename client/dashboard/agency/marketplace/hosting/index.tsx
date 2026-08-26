@@ -326,7 +326,11 @@ function CartDropdown( {
 }
 
 export default function MarketplaceHosting() {
-	const [ selectedBrand, setSelectedBrand ] = useState< HostingBrand[ 'key' ] >( 'wpcom' );
+	// Prototype-only: `?tab` and `?existing` make every demo state linkable.
+	const [ selectedBrand, setSelectedBrand ] = useState< HostingBrand[ 'key' ] >( () => {
+		const tab = new URLSearchParams( window.location.search ).get( 'tab' );
+		return tab === 'pressable' || tab === 'vip' ? tab : 'wpcom';
+	} );
 	const [ term, setTerm ] = useState< 'monthly' | 'yearly' >( 'yearly' );
 	const [ isReferralMode, setIsReferralMode ] = useState( false );
 	const [ isGuideOpen, setIsGuideOpen ] = useState( false );
@@ -340,7 +344,15 @@ export default function MarketplaceHosting() {
 		}
 	};
 	const [ quantity, setQuantity ] = useState( 3 );
-	const [ pressablePlanSlug, setPressablePlanSlug ] = useState( 'pressable-signature-1' );
+	const [ pressablePlanSlug, setPressablePlanSlug ] = useState( () => {
+		if ( ! new URLSearchParams( window.location.search ).has( 'existing' ) ) {
+			return 'pressable-signature-1';
+		}
+		const currentIndex = pressablePlans.findIndex(
+			( p ) => p.slug === mockOwnership.pressable.planSlug
+		);
+		return pressablePlans[ currentIndex + 1 ]?.slug ?? mockOwnership.pressable.planSlug;
+	} );
 
 	// Prototype-only: `?welcome` simulates the first-ever visit, which will be
 	// tracked with a user preference.
@@ -357,7 +369,9 @@ export default function MarketplaceHosting() {
 
 	// Prototype-only: simulates returning-customer data that will come from
 	// license and usage queries ( see mockOwnership ).
-	const [ isExistingCustomer, setIsExistingCustomer ] = useState( false );
+	const [ isExistingCustomer, setIsExistingCustomer ] = useState( () =>
+		new URLSearchParams( window.location.search ).has( 'existing' )
+	);
 	const ownedSites = isExistingCustomer ? mockOwnership.wpcom.ownedSites : 0;
 	const pressableCurrentPlan = isExistingCustomer
 		? pressablePlans.find( ( p ) => p.slug === mockOwnership.pressable.planSlug )
