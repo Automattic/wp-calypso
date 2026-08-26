@@ -147,10 +147,12 @@ function classifyAuthFailure( { statusCode, error = '' }: WPError ): AuthFailure
 		return 'forbidden';
 	}
 
-	// The rest-proxy iframe reports the missing cookie itself, which catches the
-	// state even when the failing request does not look like an auth error. It is
-	// a sticky flag and also fires when third-party cookies are blocked, so on its
-	// own it never means more than "worth checking".
+	// The rest-proxy iframe reports at handshake whether it had anything to
+	// authenticate with, which catches the state even when the failing request
+	// does not look like an auth error. It is only ever a hint: it also fires for
+	// blocked third-party cookies, it tests the token for presence rather than
+	// validity, and being a one-off handshake it never reports a session that dies
+	// later.
 	if ( isCookieAuthMissing() ) {
 		return 'cookie-auth-missing';
 	}
