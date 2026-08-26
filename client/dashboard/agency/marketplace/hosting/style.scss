@@ -21,6 +21,19 @@
 	}
 }
 
+.marketplace-hosting__header-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 8px 16px;
+
+	@media ( max-width: 660px ) {
+		justify-content: space-between;
+		inline-size: 100%;
+	}
+}
+
 .marketplace-hosting__guide-grid {
 	display: grid;
 	grid-template-columns: repeat( 3, 1fr );
