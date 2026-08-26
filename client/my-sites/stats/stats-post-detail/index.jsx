@@ -39,6 +39,7 @@ import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-e
 import getSiteAdminUrlFromState from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import usePostEmailStatsAvailabilityQuery from '../hooks/use-post-email-stats-availability-query';
 import PostDetailHighlightsSection from '../post-detail-highlights-section';
 import PostDetailTableSection from '../post-detail-table-section';
 import StatsPlaceholder from '../stats-module/placeholder';
@@ -64,6 +65,7 @@ class StatsPostDetail extends Component {
 		} ),
 		editUrl: PropTypes.string,
 		openSupportDoc: PropTypes.func,
+		hasEmailStats: PropTypes.bool,
 	};
 
 	state = {
@@ -153,12 +155,6 @@ class StatsPostDetail extends Component {
 		return null;
 	}
 
-	hasDontSendEmailPostToSubs( metadata ) {
-		return metadata?.some(
-			( { key, value } ) => key === '_jetpack_dont_email_post_to_subs' && !! value
-		);
-	}
-
 	getPost() {
 		const { isPostHomepage, post, postFallback, countLikes } = this.props;
 
@@ -173,7 +169,6 @@ class StatsPostDetail extends Component {
 			return {
 				...postBase,
 				date: post?.date,
-				dont_email_post_to_subs: this.hasDontSendEmailPostToSubs( post?.metadata ),
 				post_thumbnail: post?.post_thumbnail,
 				comment_count: post?.discussion?.comment_count,
 				type: post?.type,
@@ -185,7 +180,6 @@ class StatsPostDetail extends Component {
 			return {
 				...postBase,
 				date: postFallback?.post_date_gmt,
-				dont_email_post_to_subs: this.hasDontSendEmailPostToSubs( post?.metadata ),
 				post_thumbnail: null,
 				comment_count: parseInt( postFallback?.comment_count, 10 ),
 				type: postFallback?.post_type,
@@ -209,6 +203,7 @@ class StatsPostDetail extends Component {
 			supportsUTMStats,
 			isSubscriptionsModuleActive,
 			supportsEmailStats,
+			hasEmailStats,
 			isSimple,
 			breadcrumbTrail,
 		} = this.props;
@@ -242,13 +237,7 @@ class StatsPostDetail extends Component {
 		const subscriptionsEnabled = isSimple || isSubscriptionsModuleActive;
 		// postId > 0: Show the tabs for posts except for the Home Page (postId = 0).
 		const isEmailTabsAvailable =
-			subscriptionsEnabled &&
-			postId > 0 &&
-			! passedPost?.dont_email_post_to_subs &&
-			passedPost?.date &&
-			// The Newsletter Stats data was never backfilled (internal ref pdDOJh-1Uy-p2).
-			new Date( passedPost?.date ) >= new Date( '2023-05-30' ) &&
-			supportsEmailStats;
+			subscriptionsEnabled && postId > 0 && supportsEmailStats && hasEmailStats;
 
 		return (
 			<Main
@@ -348,6 +337,11 @@ const StatsPostDetailWrapper = ( props ) => {
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
 
+	const { data: hasEmailStats = false } = usePostEmailStatsAvailabilityQuery(
+		siteId,
+		props.postId
+	);
+
 	const openDoc = () => {
 		if ( isJetpack ) {
 			setTimeout( () => window.open( supportLink, '_blank' ), 250 );
@@ -362,6 +356,7 @@ const StatsPostDetailWrapper = ( props ) => {
 			siteId={ siteId }
 			breadcrumbTrail={ breadcrumbTrail }
 			openSupportDoc={ openDoc }
+			hasEmailStats={ hasEmailStats }
 		/>
 	);
 };
