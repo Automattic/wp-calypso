@@ -127,7 +127,7 @@ describe( 'reader stats', () => {
 			const result = buildReaderTracksEventProps( { custom: 'prop' }, '/discover' );
 
 			expect( result ).toEqual( {
-				ui_algo: 'freshly-pressed',
+				ui_algo: 'discover_recommended',
 				custom: 'prop',
 			} );
 		} );
@@ -165,7 +165,7 @@ describe( 'reader stats', () => {
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'test_event',
 				expect.objectContaining( {
-					ui_algo: 'freshly-pressed',
+					ui_algo: 'discover_recommended',
 					prop: 'value',
 				} )
 			);
@@ -736,6 +736,12 @@ describe( 'reader stats', () => {
 			const scenarios = [
 				{
 					url: '/discover',
+					expected: 'discover_recommended',
+					description: 'discover recommended page',
+					searchParams: {},
+				},
+				{
+					url: '/discover/freshly-pressed',
 					expected: 'freshly-pressed',
 					description: 'freshly pressed page',
 					searchParams: {},
@@ -787,8 +793,8 @@ describe( 'reader stats', () => {
 				}
 			);
 
-			it( 'returns freshly-pressed when there is no subpath', () => {
-				expect( getLocation( '/discover' ) ).toBe( 'freshly-pressed' );
+			it( 'returns discover_recommended when there is no subpath', () => {
+				expect( getLocation( '/discover' ) ).toBe( 'discover_recommended' );
 			} );
 
 			it( 'supports the /discover/recommended subpath', () => {

@@ -68,7 +68,7 @@ jest.mock( '../discover-document-head', () => ( {
 } ) );
 
 jest.mock( '../helper', () => ( {
-	FRESHLY_PRESSED_TAB: 'fresh',
+	RECOMMENDED_TAB: 'recommended',
 } ) );
 
 jest.mock( '../routes', () => ( {

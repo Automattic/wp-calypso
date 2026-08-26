@@ -53,14 +53,15 @@ These routes are served by the module:
 
 ### Discover
 
-| Route                   | Description                     |
-| ----------------------- | ------------------------------- |
-| `/discover`             | Discover (recommended content)  |
-| `/discover/recommended` | Recommended content             |
-| `/discover/tags`        | Featured tags                   |
-| `/discover/latest`      | Latest posts                    |
-| `/discover/reddit`      | Reddit content (requires login) |
-| `/discover/add-new`     | Add new source (requires login) |
+| Route                       | Description                     |
+| --------------------------- | ------------------------------- |
+| `/discover`                 | Discover (recommended content)  |
+| `/discover/recommended`     | Recommended content             |
+| `/discover/freshly-pressed` | Freshly Pressed                 |
+| `/discover/tags`            | Featured tags                   |
+| `/discover/latest`          | Latest posts                    |
+| `/discover/reddit`          | Reddit content (requires login) |
+| `/discover/add-new`         | Add new source (requires login) |
 
 ### Tags and conversations
 

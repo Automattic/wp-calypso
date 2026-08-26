@@ -23,7 +23,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import renderHeaderSection from '../lib/header-section';
 import { DiscoverDocumentHead } from './discover-document-head';
-import { FRESHLY_PRESSED_TAB } from './helper';
+import { RECOMMENDED_TAB } from './helper';
 import { getPrivateRoutes, getDiscoverRoutes, DISCOVER_PREFIX } from './routes';
 
 const loadDiscoverStream = () =>
@@ -41,7 +41,7 @@ const discover = ( context, next ) => {
 	const state = context.store.getState();
 	const currentRoute = getCurrentRoute( state );
 	const currentQueryArgs = new URLSearchParams( getCurrentQueryArguments( state ) ).toString();
-	const selectedTab = getCurrentTabFromURL( context.path, DISCOVER_PREFIX, FRESHLY_PRESSED_TAB );
+	const selectedTab = getCurrentTabFromURL( context.path, DISCOVER_PREFIX, RECOMMENDED_TAB );
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 	recordTrack(

@@ -36,14 +36,14 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 
 	const baseTabs: Tab[] = [
 		{
-			slug: FRESHLY_PRESSED_TAB,
-			title: translate( 'Freshly Pressed' ),
+			slug: RECOMMENDED_TAB,
+			title: translate( 'Recommended' ),
 			path: '/discover',
 		},
 		{
-			slug: RECOMMENDED_TAB,
-			title: translate( 'Recommended' ),
-			path: '/discover/recommended',
+			slug: FRESHLY_PRESSED_TAB,
+			title: translate( 'Freshly Pressed' ),
+			path: '/discover/freshly-pressed',
 		},
 		{
 			slug: 'tags',
