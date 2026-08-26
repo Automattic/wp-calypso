@@ -19,13 +19,13 @@ const TEMPLATE_LOCKED = 'template-locked';
 const TEMPLATE_POST_TYPES = [ 'wp_template', 'wp_template_part' ];
 
 /**
- * How long to wait for the parts to reach the block tree after the mode flips.
+ * How long to wait for a part's own blocks to reach the tree after the mode flips.
  *
  * The agent's next move is to re-read the page structure, which is built from
  * the client context captured on that request — so returning before the parts
  * land hands it a structure that still shows none, which is the exact reading
- * that makes it refuse. Usually satisfied within a tick; the ceiling only
- * bounds the pathological case.
+ * that makes it refuse. Each part is fetched as its own entity, so the ceiling
+ * covers a network round trip rather than a render.
  */
 const TEMPLATE_PARTS_TIMEOUT_MS = 5000;
 
@@ -40,7 +40,7 @@ export interface ShowTemplateIO {
 	getRenderingModes: () => RenderingModes | undefined;
 	setRenderingMode: ( mode: string ) => void;
 	setRenderingModes: ( modes: RenderingModes ) => void;
-	/** Resolves true once a template part is in the block tree, false on timeout. */
+	/** Resolves true once a template part's blocks are in the tree, false on timeout. */
 	waitForTemplateParts: () => Promise< boolean >;
 }
 
@@ -187,6 +187,7 @@ type PreferencesActions = {
 
 type BlockEditorSelectors = {
 	getBlocksByName?: ( name: string ) => string[];
+	getBlocks?: ( rootClientId?: string ) => unknown[];
 };
 
 const editorSelect = () => select( 'core/editor' ) as EditorSelectors | undefined;
@@ -195,17 +196,30 @@ const preferencesSelect = () => select( 'core/preferences' ) as PreferencesSelec
 const preferencesDispatch = () => dispatch( 'core/preferences' ) as PreferencesActions | undefined;
 const blockEditorSelect = () => select( 'core/block-editor' ) as BlockEditorSelectors | undefined;
 
+/*
+ * A part counts as in view only once its own blocks have arrived, not when the
+ * node for it appears. A template part holds no content of its own: the block
+ * mounts first and fetches the `wp_template_part` entity behind it, so for a
+ * beat it sits in the tree with nothing under it. The page structure the agent
+ * reads is built from those children — a part with none contributes no header
+ * or footer section at all — so returning on the node alone hands the agent a
+ * structure that reports no part in view, which is the reading that makes it
+ * refuse.
+ */
 function hasTemplateParts(): boolean {
-	return ( blockEditorSelect()?.getBlocksByName?.( 'core/template-part' )?.length ?? 0 ) > 0;
+	const blockEditor = blockEditorSelect();
+	const parts = blockEditor?.getBlocksByName?.( 'core/template-part' ) ?? [];
+
+	return parts.some( ( clientId ) => ( blockEditor?.getBlocks?.( clientId )?.length ?? 0 ) > 0 );
 }
 
 /**
- * Resolve once a template part is in the block tree.
+ * Resolve once a template part's blocks are in the tree.
  *
  * Flipping the mode does not fill the tree synchronously — the editor has to
  * render the page inside its template first — so this waits for the result
  * rather than the dispatch.
- * @returns Whether a part arrived before the timeout.
+ * @returns Whether a part's blocks arrived before the timeout.
  */
 function waitForTemplateParts(): Promise< boolean > {
 	if ( hasTemplateParts() ) {
