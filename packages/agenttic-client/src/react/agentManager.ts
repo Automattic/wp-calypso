@@ -566,6 +566,10 @@ function createAgentManager(): AgentManager {
 
 			const outboundSessionId = toOutboundSessionId( sessionId || managedAgent.sessionId );
 
+			// Whether the stream ever said how the turn ends: a final update, or
+			// the `input-required` pause that hands the turn to `sendToolResult`.
+			let sawTurnTerminus = false;
+
 			try {
 				for await ( const update of client.sendMessageStream( {
 					message: messageObj,
@@ -688,6 +692,10 @@ function createAgentManager(): AgentManager {
 						}
 					}
 
+					if ( update.final || update.status?.state === 'input-required' ) {
+						sawTurnTerminus = true;
+					}
+
 					if ( update.final && update.status?.state !== 'input-required' ) {
 						// Clear tool call tracking for next batch
 						currentToolCallIds = [];
@@ -731,6 +739,15 @@ function createAgentManager(): AgentManager {
 
 					yield update;
 				}
+
+				// A stream can run out without a word about the turn: an SSE reader
+				// that hits EOF mid-turn reads as a clean finish. Nothing further
+				// will arrive to resolve the opener, so the turn is over whether or
+				// not the server said so — left set, it would report the agent as
+				// working for the life of the page.
+				if ( ! sawTurnTerminus ) {
+					managedAgent.inFlightUserMessageId = null;
+				}
 			} catch ( error ) {
 				// A turn that threw is over, and nothing further will arrive to
 				// resolve its in-flight message. Left set, it would report the turn
@@ -740,7 +757,12 @@ function createAgentManager(): AgentManager {
 				managedAgent.inFlightUserMessageId = null;
 				throw error;
 			} finally {
-				managedAgent.currentAbortController = null;
+				// Only when the slot is still this stream's: one that outlived its
+				// chat can finish after a remount has started a newer stream, and
+				// clearing it then would leave `abortCurrentRequest` nothing to cancel.
+				if ( managedAgent.currentAbortController === abortController ) {
+					managedAgent.currentAbortController = null;
+				}
 			}
 		},
 
