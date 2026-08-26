@@ -46,6 +46,7 @@
 		"current-site/notice": true,
 		"dark-mode": false,
 		"dashboard/enable-percentage-rollout": true,
+		"dashboard/omnibar-radical": true,
 		"dashboard/rollout-advance-notice": true,
 		"dashboard/simulate-full-rollout": false,
 		"dashboard/wp-beta-program": true,
