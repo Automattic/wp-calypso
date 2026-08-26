@@ -4,7 +4,6 @@ import {
 	Button,
 	Dropdown,
 	Guide,
-	Modal,
 	TabPanel,
 	ToggleControl,
 	__experimentalToggleGroupControl as ToggleGroupControl,
@@ -16,7 +15,7 @@ import {
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import { sprintf, _n, __ } from '@wordpress/i18n';
-import { cart, chevronDown, chevronUp, info } from '@wordpress/icons';
+import { cart, chevronDown, chevronUp, globe, info } from '@wordpress/icons';
 import { useState } from 'react';
 import referralStep1 from 'calypso/assets/images/a8c-for-agencies/referral-step-1.jpg';
 import referralStep2 from 'calypso/assets/images/a8c-for-agencies/referral-step-2.jpg';
@@ -26,6 +25,7 @@ import referralStep5 from 'calypso/assets/images/a8c-for-agencies/referral-step-
 import { ButtonStack } from '../../../components/button-stack';
 import { Callout } from '../../../components/callout';
 import { Card, CardBody } from '../../../components/card';
+import EmptyState from '../../../components/empty-state';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { DomainUpsellIllustraction } from '../../../sites/overview-domain-upsell-card/upsell-illustration';
@@ -127,49 +127,45 @@ interface CartItem {
 	total: number | null;
 }
 
-function WelcomeModal( { onClose }: { onClose: () => void } ) {
+const HOSTING_LP_URL = 'https://automattic.com/for-agencies/hosting/';
+
+function WelcomeWall( { onClose }: { onClose: () => void } ) {
 	return (
-		<Modal
-			title={ __( 'Hosting for every client' ) }
-			onRequestClose={ onClose }
-			size="medium"
-			className="marketplace-hosting__welcome-modal"
-		>
-			<VStack spacing={ 6 }>
-				<Text as="p" variant="muted">
-					{ __(
-						'Three platforms, one program. Every plan includes free migrations, 24/7 expert support, and commissions when you refer clients.'
-					) }
-				</Text>
-				<VStack spacing={ 4 }>
-					{ hostingBrands.map( ( brand ) => (
-						<HStack key={ brand.key } spacing={ 4 } justify="space-between" alignment="flex-start">
-							<VStack spacing={ 1 }>
-								<Text weight={ 600 }>{ brand.name }</Text>
-								<Text variant="muted">{ brand.description }</Text>
-							</VStack>
-							<Text variant="muted" style={ { whiteSpace: 'nowrap' } }>
-								{ brand.priceNote }
-							</Text>
-						</HStack>
-					) ) }
-				</VStack>
-				<ButtonStack justify="flex-start">
-					<Button variant="primary" __next40pxDefaultSize onClick={ onClose }>
-						{ __( 'Continue to Marketplace' ) }
-					</Button>
-					<Button
-						variant="secondary"
-						__next40pxDefaultSize
-						href="https://automattic.com/for-agencies/"
-						target="_blank"
-						rel="noreferrer"
-					>
-						{ __( 'Learn more ↗' ) }
-					</Button>
-				</ButtonStack>
-			</VStack>
-		</Modal>
+		<EmptyState.Wrapper>
+			<div style={ { maxWidth: '600px' } }>
+				<Callout
+					icon={ globe }
+					title={ __( 'Hosting solutions for every client' ) }
+					titleAs="h2"
+					image={ demoIllustrationUrl }
+					imageAlt=""
+					imageVariant="full-bleed"
+					description={
+						<Text variant="muted">
+							{ __(
+								'Match every client to the right managed WordPress hosting — from single sites to enterprise platforms. Every plan includes free migrations, 24/7 expert support, and commissions when you refer.'
+							) }
+						</Text>
+					}
+					actions={
+						<ButtonStack justify="flex-start">
+							<Button variant="primary" __next40pxDefaultSize onClick={ onClose }>
+								{ __( 'Continue to Marketplace' ) }
+							</Button>
+							<Button
+								variant="secondary"
+								__next40pxDefaultSize
+								href={ HOSTING_LP_URL }
+								target="_blank"
+								rel="noreferrer"
+							>
+								{ __( 'Learn more ↗' ) }
+							</Button>
+						</ButtonStack>
+					}
+				/>
+			</div>
+		</EmptyState.Wrapper>
 	);
 }
 
@@ -512,107 +508,113 @@ export default function MarketplaceHosting() {
 				/>
 			}
 		>
-			{ isWelcomeOpen && <WelcomeModal onClose={ () => setIsWelcomeOpen( false ) } /> }
-			{ isGuideOpen && <ReferralGuide onClose={ () => setIsGuideOpen( false ) } /> }
-			{ SHOW_MIGRATION_OFFER && <MigrationOffer /> }
-			<TabPanel
-				className="marketplace-hosting__tabs"
-				tabs={ hostingBrands.map( ( brand ) => ( { name: brand.key, title: brand.name } ) ) }
-				initialTabName={ selectedBrand }
-				onSelect={ ( tabName ) => setSelectedBrand( tabName as HostingBrand[ 'key' ] ) }
-			>
-				{ () => null }
-			</TabPanel>
-			{ selectedBrand === 'wpcom' && (
-				<div className="marketplace-hosting__layout">
-					<VStack spacing={ 8 } justify="flex-start">
-						<VStack spacing={ 4 }>
-							<WpcomConfigurator
-								product={ wpcomProduct }
-								term={ term }
-								onQuantityChange={ setQuantity }
-								ownedSites={ ownedSites }
-								altQuantityControl={ useAltControls }
-							/>
-							<DevSitesBanner />
-						</VStack>
-						<Divider
-							orientation="horizontal"
-							style={ { color: 'var(--dashboard-overview__divider-color)' } }
-						/>
-						<IncludedFeatures brand="wpcom" />
-						<Testimonials brand="wpcom" />
-					</VStack>
-					<div className="marketplace-hosting__rail">
-						<YourPlan
-							brand="wpcom"
-							product={ wpcomProduct }
-							term={ term }
-							quantity={ quantity }
-							ownedSites={ ownedSites }
-							onAddToCart={ () =>
-								addToCart( {
-									id: 'wpcom-hosting',
-									family: 'wpcom-hosting',
-									label: sprintf(
-										/* translators: %d: number of sites */
-										_n( '%d WordPress.com site', '%d WordPress.com sites', quantity ),
-										quantity
-									),
-									total: getTieredPrice( wpcomProduct, quantity, term, ownedSites ).discountedCost,
-								} )
-							}
-						/>
-					</div>
-				</div>
+			{ isWelcomeOpen ? (
+				<WelcomeWall onClose={ () => setIsWelcomeOpen( false ) } />
+			) : (
+				<>
+					{ isGuideOpen && <ReferralGuide onClose={ () => setIsGuideOpen( false ) } /> }
+					{ SHOW_MIGRATION_OFFER && <MigrationOffer /> }
+					<TabPanel
+						className="marketplace-hosting__tabs"
+						tabs={ hostingBrands.map( ( brand ) => ( { name: brand.key, title: brand.name } ) ) }
+						initialTabName={ selectedBrand }
+						onSelect={ ( tabName ) => setSelectedBrand( tabName as HostingBrand[ 'key' ] ) }
+					>
+						{ () => null }
+					</TabPanel>
+					{ selectedBrand === 'wpcom' && (
+						<div className="marketplace-hosting__layout">
+							<VStack spacing={ 8 } justify="flex-start">
+								<VStack spacing={ 4 }>
+									<WpcomConfigurator
+										product={ wpcomProduct }
+										term={ term }
+										onQuantityChange={ setQuantity }
+										ownedSites={ ownedSites }
+										altQuantityControl={ useAltControls }
+									/>
+									<DevSitesBanner />
+								</VStack>
+								<Divider
+									orientation="horizontal"
+									style={ { color: 'var(--dashboard-overview__divider-color)' } }
+								/>
+								<IncludedFeatures brand="wpcom" />
+								<Testimonials brand="wpcom" />
+							</VStack>
+							<div className="marketplace-hosting__rail">
+								<YourPlan
+									brand="wpcom"
+									product={ wpcomProduct }
+									term={ term }
+									quantity={ quantity }
+									ownedSites={ ownedSites }
+									onAddToCart={ () =>
+										addToCart( {
+											id: 'wpcom-hosting',
+											family: 'wpcom-hosting',
+											label: sprintf(
+												/* translators: %d: number of sites */
+												_n( '%d WordPress.com site', '%d WordPress.com sites', quantity ),
+												quantity
+											),
+											total: getTieredPrice( wpcomProduct, quantity, term, ownedSites )
+												.discountedCost,
+										} )
+									}
+								/>
+							</div>
+						</div>
+					) }
+					{ selectedBrand === 'pressable' && (
+						<div className="marketplace-hosting__layout">
+							<VStack spacing={ 8 } justify="flex-start">
+								<VStack spacing={ 4 }>
+									<PressableContent
+										planSlug={ pressablePlanSlug }
+										onPlanChange={ setPressablePlanSlug }
+										currentPlan={ pressableCurrentPlan }
+										usage={ pressableUsage }
+									/>
+									<ScheduleDemoBanner />
+								</VStack>
+								<Divider
+									orientation="horizontal"
+									style={ { color: 'var(--dashboard-overview__divider-color)' } }
+								/>
+								<IncludedFeatures brand="pressable" />
+								<JetpackComplete />
+								<Testimonials brand="pressable" />
+							</VStack>
+							<div className="marketplace-hosting__rail">
+								<YourPlan
+									brand="pressable"
+									term={ term }
+									quantity={ 1 }
+									plan={ pressablePlan }
+									currentPlan={ pressableCurrentPlan }
+									onAddToCart={ () =>
+										addToCart( {
+											id: 'pressable-hosting',
+											family: 'pressable-hosting',
+											label: sprintf(
+												/* translators: %s: plan name */
+												__( 'Pressable %s' ),
+												pressablePlan?.name ?? ''
+											),
+											total:
+												( term === 'yearly'
+													? pressablePlan?.yearly_price
+													: pressablePlan?.monthly_price ) ?? null,
+										} )
+									}
+								/>
+							</div>
+						</div>
+					) }
+					{ selectedBrand === 'vip' && <VipContent /> }
+				</>
 			) }
-			{ selectedBrand === 'pressable' && (
-				<div className="marketplace-hosting__layout">
-					<VStack spacing={ 8 } justify="flex-start">
-						<VStack spacing={ 4 }>
-							<PressableContent
-								planSlug={ pressablePlanSlug }
-								onPlanChange={ setPressablePlanSlug }
-								currentPlan={ pressableCurrentPlan }
-								usage={ pressableUsage }
-							/>
-							<ScheduleDemoBanner />
-						</VStack>
-						<Divider
-							orientation="horizontal"
-							style={ { color: 'var(--dashboard-overview__divider-color)' } }
-						/>
-						<IncludedFeatures brand="pressable" />
-						<JetpackComplete />
-						<Testimonials brand="pressable" />
-					</VStack>
-					<div className="marketplace-hosting__rail">
-						<YourPlan
-							brand="pressable"
-							term={ term }
-							quantity={ 1 }
-							plan={ pressablePlan }
-							currentPlan={ pressableCurrentPlan }
-							onAddToCart={ () =>
-								addToCart( {
-									id: 'pressable-hosting',
-									family: 'pressable-hosting',
-									label: sprintf(
-										/* translators: %s: plan name */
-										__( 'Pressable %s' ),
-										pressablePlan?.name ?? ''
-									),
-									total:
-										( term === 'yearly'
-											? pressablePlan?.yearly_price
-											: pressablePlan?.monthly_price ) ?? null,
-								} )
-							}
-						/>
-					</div>
-				</div>
-			) }
-			{ selectedBrand === 'vip' && <VipContent /> }
 		</PageLayout>
 	);
 }
