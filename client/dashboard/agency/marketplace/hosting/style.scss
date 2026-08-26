@@ -34,20 +34,43 @@
 	}
 }
 
-.marketplace-hosting__guide-grid {
-	display: grid;
-	grid-template-columns: repeat( 3, 1fr );
-	gap: 16px;
-	align-items: stretch;
+.marketplace-hosting__guide-option {
+	cursor: pointer;
+	transition: box-shadow 0.1s ease-in-out;
 
-	@media ( max-width: 782px ) {
-		grid-template-columns: 1fr;
+	&:hover,
+	&:focus-visible {
+		box-shadow: inset 0 0 0 1.5px var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
 	}
 }
 
-.marketplace-hosting__guide-cta {
-	color: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
-	font-weight: 600;
+.marketplace-hosting__guide-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: 40px;
+	block-size: 40px;
+	border-radius: 8px;
+	box-shadow: inset 0 0 0 1px var( --dashboard-overview__divider-color );
+	flex-shrink: 0;
+
+	&.is-accent {
+		box-shadow: inset 0 0 0 1px var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+
+		svg {
+			fill: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+		}
+	}
+}
+
+.marketplace-hosting__guide-chevron {
+	margin-inline-start: auto;
+	flex-shrink: 0;
+	opacity: 0.4;
+}
+
+.marketplace-hosting__guide-result {
+	box-shadow: inset 0 0 0 1.5px var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
 }
 
 .marketplace-hosting__selector-card {

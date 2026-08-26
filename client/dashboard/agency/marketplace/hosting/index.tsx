@@ -5,6 +5,7 @@ import {
 	Dropdown,
 	ExternalLink,
 	Guide,
+	Icon,
 	TabPanel,
 	ToggleControl,
 	__experimentalToggleGroupControl as ToggleGroupControl,
@@ -16,7 +17,17 @@ import {
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import { sprintf, _n, __ } from '@wordpress/i18n';
-import { cart, chevronDown, chevronUp, closeSmall, info } from '@wordpress/icons';
+import {
+	cart,
+	chevronDown,
+	chevronRight,
+	chevronUp,
+	closeSmall,
+	copy,
+	globe,
+	info,
+	shield,
+} from '@wordpress/icons';
 import { useState } from 'react';
 import referralStep1 from 'calypso/assets/images/a8c-for-agencies/referral-step-1.jpg';
 import referralStep2 from 'calypso/assets/images/a8c-for-agencies/referral-step-2.jpg';
@@ -28,7 +39,7 @@ import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { DomainUpsellIllustraction } from '../../../sites/overview-domain-upsell-card/upsell-illustration';
-import { IncludedFeatures, JetpackComplete, Testimonials } from './content-sections';
+import { CheckGrid, IncludedFeatures, JetpackComplete, Testimonials } from './content-sections';
 import demoIllustrationUrl from './demo-callout-illustration.svg';
 import {
 	hostingBrands,
@@ -44,6 +55,7 @@ import WpcomConfigurator from './wpcom-configurator';
 import YourPlan from './your-plan';
 import type { HostingBrand, HostingProduct, TierPrice } from './mock-data';
 import type { AgencyProduct } from '@automattic/api-core';
+import type { JSX } from 'react';
 
 import './style.scss';
 
@@ -128,27 +140,45 @@ interface CartItem {
 
 const HOSTING_LP_URL = 'https://automattic.com/for-agencies/hosting/';
 
-const GUIDE_OPTIONS: { brand: HostingBrand[ 'key' ]; situation: string; outcome: string }[] = [
+type GuideOption = {
+	brand: HostingBrand[ 'key' ];
+	icon: JSX.Element;
+	situation: string;
+	hint: string;
+	outcome: string;
+	proof: string[];
+};
+
+const GUIDE_OPTIONS: GuideOption[] = [
 	{
 		brand: 'wpcom',
-		situation: __( 'A single site, or a handful' ),
+		icon: globe,
+		situation: __( 'Just one site, or a few' ),
+		hint: __( 'A small business, a portfolio, or a landing page.' ),
 		outcome: __(
 			'Managed WordPress with staging, backups, and 24/7 support built in, so client sites just run.'
 		),
+		proof: [ __( 'Free migrations' ), __( '24/7 expert support' ), __( 'Per-site pricing' ) ],
 	},
 	{
 		brand: 'pressable',
+		icon: copy,
 		situation: __( 'A growing book of clients' ),
+		hint: __( 'You keep adding sites and want them under one roof.' ),
 		outcome: __(
 			'Traffic and storage pooled across every site, so your margin grows as you add clients.'
 		),
+		proof: [ __( 'Pooled resources' ), __( 'Volume pricing' ), __( 'Free migrations' ) ],
 	},
 	{
 		brand: 'vip',
-		situation: __( 'Enterprise or high-traffic clients' ),
+		icon: shield,
+		situation: __( 'Enterprise or high-traffic' ),
+		hint: __( 'Mission-critical sites that can’t afford to go down.' ),
 		outcome: __(
 			'Enterprise-grade security and scale, with guided onboarding for your biggest clients.'
 		),
+		proof: [ __( 'Enterprise security' ), __( 'Dedicated support' ), __( 'Guided onboarding' ) ],
 	},
 ];
 
@@ -159,19 +189,25 @@ function HostingGuide( {
 	onSelect: ( brand: HostingBrand[ 'key' ] ) => void;
 	onClose: () => void;
 } ) {
+	const [ answer, setAnswer ] = useState< HostingBrand[ 'key' ] | null >( null );
+	const recommendation = answer ? GUIDE_OPTIONS.find( ( o ) => o.brand === answer ) : null;
+	const brand = answer ? hostingBrands.find( ( b ) => b.key === answer ) : null;
+
 	return (
 		<Card>
 			<CardBody>
-				<VStack spacing={ 4 }>
+				<VStack spacing={ 5 }>
 					<HStack justify="space-between" alignment="flex-start">
 						<VStack spacing={ 1 }>
 							<Heading level={ 3 } size={ 16 }>
-								{ __( 'Which fits this client?' ) }
+								{ recommendation
+									? __( 'Here’s what we recommend' )
+									: __( 'What are you hosting for this client?' ) }
 							</Heading>
 							<Text variant="muted">
-								{ __(
-									'Pick the situation that matches and we’ll point you to the right platform.'
-								) }
+								{ recommendation
+									? __( 'Based on what you told us. You can switch platforms any time.' )
+									: __( 'Answer one question and we’ll point you to the right platform.' ) }
 							</Text>
 						</VStack>
 						<Button
@@ -181,48 +217,89 @@ function HostingGuide( {
 							onClick={ onClose }
 						/>
 					</HStack>
-					<div className="marketplace-hosting__guide-grid" role="group">
-						{ GUIDE_OPTIONS.map( ( option ) => {
-							const brand = hostingBrands.find( ( b ) => b.key === option.brand );
-							return (
+
+					{ ! recommendation && (
+						<VStack spacing={ 3 } role="group">
+							{ GUIDE_OPTIONS.map( ( option ) => (
 								<Card
 									key={ option.brand }
-									className="marketplace-hosting__selector-card"
-									onClick={ () => onSelect( option.brand ) }
+									className="marketplace-hosting__guide-option"
+									onClick={ () => setAnswer( option.brand ) }
 									role="button"
 									tabIndex={ 0 }
 									onKeyDown={ ( event: React.KeyboardEvent ) => {
 										if ( event.key === 'Enter' || event.key === ' ' ) {
 											event.preventDefault();
-											onSelect( option.brand );
+											setAnswer( option.brand );
 										}
 									} }
 								>
 									<CardBody>
-										<VStack spacing={ 3 } justify="space-between" style={ { height: '100%' } }>
-											<VStack spacing={ 2 }>
-												<Text size={ 12 } weight={ 600 } variant="muted" upperCase>
-													{ option.situation }
-												</Text>
-												<Text weight={ 600 }>{ brand?.name }</Text>
-												<Text variant="muted">{ option.outcome }</Text>
+										<HStack spacing={ 4 } alignment="center" justify="flex-start">
+											<div className="marketplace-hosting__guide-icon">
+												<Icon icon={ option.icon } />
+											</div>
+											<VStack spacing={ 0 } expanded>
+												<Text weight={ 600 }>{ option.situation }</Text>
+												<Text variant="muted">{ option.hint }</Text>
 											</VStack>
-											<Text className="marketplace-hosting__guide-cta">
-												{ sprintf(
-													/* translators: %s: hosting brand name */
-													__( 'Choose %s' ),
-													brand?.name ?? ''
-												) }
-											</Text>
-										</VStack>
+											<Icon icon={ chevronRight } className="marketplace-hosting__guide-chevron" />
+										</HStack>
 									</CardBody>
 								</Card>
-							);
-						} ) }
-					</div>
-					<ExternalLink href={ HOSTING_LP_URL }>
-						{ __( 'Compare all plans and features' ) }
-					</ExternalLink>
+							) ) }
+						</VStack>
+					) }
+
+					{ recommendation && brand && (
+						<VStack spacing={ 4 }>
+							<Card className="marketplace-hosting__guide-result">
+								<CardBody>
+									<VStack spacing={ 4 }>
+										<HStack justify="space-between" alignment="center" wrap>
+											<HStack
+												spacing={ 3 }
+												alignment="center"
+												justify="flex-start"
+												expanded={ false }
+											>
+												<div className="marketplace-hosting__guide-icon is-accent">
+													<Icon icon={ recommendation.icon } />
+												</div>
+												<VStack spacing={ 0 }>
+													<Text size={ 12 } weight={ 600 } variant="muted" upperCase>
+														{ __( 'Top pick' ) }
+													</Text>
+													<Text weight={ 600 } size={ 16 }>
+														{ brand.name }
+													</Text>
+												</VStack>
+											</HStack>
+											<Button
+												variant="primary"
+												__next40pxDefaultSize
+												onClick={ () => onSelect( recommendation.brand ) }
+											>
+												{ sprintf(
+													/* translators: %s: hosting brand name */
+													__( 'Configure %s' ),
+													brand.name
+												) }
+											</Button>
+										</HStack>
+										<Text variant="muted">{ recommendation.outcome }</Text>
+										<CheckGrid items={ recommendation.proof } />
+									</VStack>
+								</CardBody>
+							</Card>
+							<HStack justify="space-between">
+								<Button variant="tertiary" onClick={ () => setAnswer( null ) }>
+									{ __( 'See other options' ) }
+								</Button>
+								<ExternalLink href={ HOSTING_LP_URL }>{ __( 'Compare all plans' ) }</ExternalLink>
+							</HStack>
+						</VStack>
+					) }
 				</VStack>
 			</CardBody>
 		</Card>
