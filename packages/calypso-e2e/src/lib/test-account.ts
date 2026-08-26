@@ -70,9 +70,9 @@ export class TestAccount {
 		}
 
 		// Freshness is read off the cookie file's age, but the session behind it can be gone
-		// well inside that window, having expired or been invalidated by another run logging
-		// in as the same account. WordPress.com answers a rejected session by redirecting to
-		// the login page, which otherwise surfaces much later as a missing app shell.
+		// well inside that window, having expired. WordPress.com answers a rejected session
+		// by redirecting to the login page, which otherwise surfaces much later as a missing
+		// app shell.
 		const rejected = saved && TestAccount.isLoginPage( page.url() ) ? saved : undefined;
 
 		if ( ! saved || rejected ) {
@@ -152,10 +152,10 @@ export class TestAccount {
 	}
 
 	/**
-	 * Runs a login that bypasses the shared cookie file, holding the account's lock for it.
+	 * Holds the account's login lock while a spec drives a login of its own.
 	 *
-	 * Discards the session file and logs in again. This does not invalidate sessions
-	 * already in use.
+	 * Serialising is all it does: the shared cookie file is left alone, and the session
+	 * this creates does not invalidate the ones already in use.
 	 */
 	async logInExclusively( fn: () => Promise< void > ): Promise< void > {
 		await withLoginLock( this.accountName, async () => {
