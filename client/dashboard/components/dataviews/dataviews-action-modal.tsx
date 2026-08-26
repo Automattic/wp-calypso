@@ -51,6 +51,10 @@ export function useDeepLinkedDataViewsAction< Item >( {
 } ): { action: ActionModal< Item >; item: Item; onClose: () => void } | undefined {
 	const actionId = queryParams?.[ paramName ];
 
+	if ( ! actionId ) {
+		return undefined;
+	}
+
 	const matchedAction = actions.find( ( action ) => action.id === actionId );
 	const action = matchedAction && 'RenderModal' in matchedAction ? matchedAction : undefined;
 	const item = action && items.find( ( candidate ) => action.isEligible?.( candidate ) ?? true );
