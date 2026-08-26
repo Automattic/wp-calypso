@@ -1,7 +1,9 @@
+import { Badge } from '@automattic/ui';
 import {
 	TextControl,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
@@ -30,20 +32,22 @@ type WpcomConfiguratorProps = {
 	term: 'monthly' | 'yearly';
 	onQuantityChange: ( quantity: number ) => void;
 	product?: HostingProduct;
+	ownedSites?: number;
 };
 
 export default function WpcomConfigurator( {
 	term,
 	onQuantityChange,
 	product = wpcomHosting,
+	ownedSites = 0,
 }: WpcomConfiguratorProps ) {
 	const [ preset, setPreset ] = useState< string >( '3' );
 	const [ customQuantity, setCustomQuantity ] = useState( 10 );
 
 	const isCustom = preset === 'custom';
 	const quantity = isCustom ? customQuantity : Number( preset );
-	const nudge = getNextDiscountNudge( product, quantity, term );
-	const currentDiscount = getTieredPrice( product, quantity, term ).discountPercent;
+	const nudge = getNextDiscountNudge( product, quantity, term, ownedSites );
+	const currentDiscount = getTieredPrice( product, quantity, term, ownedSites ).discountPercent;
 
 	return (
 		<Card>
@@ -61,9 +65,22 @@ export default function WpcomConfigurator( {
 			<CardBody>
 				<VStack spacing={ 5 }>
 					<VStack spacing={ 3 }>
-						<Heading level={ 3 } size={ 13 }>
-							{ __( 'How many sites do you need?' ) }
-						</Heading>
+						<HStack justify="space-between" alignment="center">
+							<Heading level={ 3 } size={ 13 }>
+								{ ownedSites > 0
+									? __( 'How many more sites do you need?' )
+									: __( 'How many sites do you need?' ) }
+							</Heading>
+							{ ownedSites > 0 && (
+								<Badge>
+									{ sprintf(
+										/* translators: %d: number of sites the agency already owns */
+										_n( 'You own %d site', 'You own %d sites', ownedSites ),
+										ownedSites
+									) }
+								</Badge>
+							) }
+						</HStack>
 						<ToggleGroupControl
 							__nextHasNoMarginBottom
 							__next40pxDefaultSize

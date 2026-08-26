@@ -4,6 +4,7 @@ import {
 	Button,
 	Dropdown,
 	Guide,
+	Modal,
 	TabPanel,
 	ToggleControl,
 	__experimentalDivider as Divider,
@@ -20,6 +21,7 @@ import referralStep2 from 'calypso/assets/images/a8c-for-agencies/referral-step-
 import referralStep3 from 'calypso/assets/images/a8c-for-agencies/referral-step-3.jpg';
 import referralStep4 from 'calypso/assets/images/a8c-for-agencies/referral-step-4.jpg';
 import referralStep5 from 'calypso/assets/images/a8c-for-agencies/referral-step-5.jpg';
+import { ButtonStack } from '../../../components/button-stack';
 import { Callout } from '../../../components/callout';
 import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
@@ -31,6 +33,7 @@ import {
 	hostingBrands,
 	formatUSD,
 	getTieredPrice,
+	mockOwnership,
 	pressablePlans,
 	wpcomHosting,
 } from './mock-data';
@@ -120,6 +123,52 @@ interface CartItem {
 	family: 'wpcom-hosting' | 'pressable-hosting';
 	label: string;
 	total: number | null;
+}
+
+function WelcomeModal( { onClose }: { onClose: () => void } ) {
+	return (
+		<Modal
+			title={ __( 'Hosting for every client' ) }
+			onRequestClose={ onClose }
+			size="medium"
+			className="marketplace-hosting__welcome-modal"
+		>
+			<VStack spacing={ 6 }>
+				<Text as="p" variant="muted">
+					{ __(
+						'Three platforms, one program. Every plan includes free migrations, 24/7 expert support, and commissions when you refer clients.'
+					) }
+				</Text>
+				<VStack spacing={ 4 }>
+					{ hostingBrands.map( ( brand ) => (
+						<HStack key={ brand.key } spacing={ 4 } justify="space-between" alignment="flex-start">
+							<VStack spacing={ 1 }>
+								<Text weight={ 600 }>{ brand.name }</Text>
+								<Text variant="muted">{ brand.description }</Text>
+							</VStack>
+							<Text variant="muted" style={ { whiteSpace: 'nowrap' } }>
+								{ brand.priceNote }
+							</Text>
+						</HStack>
+					) ) }
+				</VStack>
+				<ButtonStack justify="flex-start">
+					<Button variant="primary" __next40pxDefaultSize onClick={ onClose }>
+						{ __( 'Continue to Marketplace' ) }
+					</Button>
+					<Button
+						variant="secondary"
+						__next40pxDefaultSize
+						href="https://automattic.com/for-agencies/"
+						target="_blank"
+						rel="noreferrer"
+					>
+						{ __( 'Learn more ↗' ) }
+					</Button>
+				</ButtonStack>
+			</VStack>
+		</Modal>
+	);
 }
 
 function MigrationOffer() {
@@ -291,6 +340,35 @@ export default function MarketplaceHosting() {
 	const [ quantity, setQuantity ] = useState( 3 );
 	const [ pressablePlanSlug, setPressablePlanSlug ] = useState( 'pressable-signature-1' );
 
+	// Prototype-only: `?welcome` simulates the first-ever visit, which will be
+	// tracked with a user preference.
+	const [ isWelcomeOpen, setIsWelcomeOpen ] = useState( () =>
+		new URLSearchParams( window.location.search ).has( 'welcome' )
+	);
+
+	// Prototype-only: simulates returning-customer data that will come from
+	// license and usage queries ( see mockOwnership ).
+	const [ isExistingCustomer, setIsExistingCustomer ] = useState( false );
+	const ownedSites = isExistingCustomer ? mockOwnership.wpcom.ownedSites : 0;
+	const pressableCurrentPlan = isExistingCustomer
+		? pressablePlans.find( ( p ) => p.slug === mockOwnership.pressable.planSlug )
+		: undefined;
+	const pressableUsage = isExistingCustomer ? mockOwnership.pressable.usage : undefined;
+
+	const handleExistingCustomerToggle = ( checked: boolean ) => {
+		setIsExistingCustomer( checked );
+		if ( checked ) {
+			const currentIndex = pressablePlans.findIndex(
+				( p ) => p.slug === mockOwnership.pressable.planSlug
+			);
+			setPressablePlanSlug(
+				pressablePlans[ currentIndex + 1 ]?.slug ?? mockOwnership.pressable.planSlug
+			);
+		} else {
+			setPressablePlanSlug( 'pressable-signature-1' );
+		}
+	};
+
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { data: apiProducts } = useQuery( agencyProductsQuery( agency?.id ?? 0 ) );
 	const products = apiProducts as PricedProduct[] | undefined;
@@ -341,6 +419,18 @@ export default function MarketplaceHosting() {
 					actions={
 						<HStack spacing={ 4 } justify="flex-end">
 							<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
+								<ToggleControl
+									__nextHasNoMarginBottom
+									checked={ isExistingCustomer }
+									label={ __( 'Demo: existing customer' ) }
+									onChange={ handleExistingCustomerToggle }
+								/>
+							</HStack>
+							<Divider
+								orientation="vertical"
+								style={ { color: 'var(--dashboard-overview__divider-color)', height: '24px' } }
+							/>
+							<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
 								<Text variant="muted">{ __( 'Billed:' ) }</Text>
 								<Text variant={ term === 'monthly' ? undefined : 'muted' }>
 									{ __( 'Monthly' ) }
@@ -385,6 +475,7 @@ export default function MarketplaceHosting() {
 				/>
 			}
 		>
+			{ isWelcomeOpen && <WelcomeModal onClose={ () => setIsWelcomeOpen( false ) } /> }
 			{ isGuideOpen && <ReferralGuide onClose={ () => setIsGuideOpen( false ) } /> }
 			{ SHOW_MIGRATION_OFFER && <MigrationOffer /> }
 			<TabPanel
@@ -403,6 +494,7 @@ export default function MarketplaceHosting() {
 								product={ wpcomProduct }
 								term={ term }
 								onQuantityChange={ setQuantity }
+								ownedSites={ ownedSites }
 							/>
 							<DevSitesBanner />
 						</VStack>
@@ -419,6 +511,7 @@ export default function MarketplaceHosting() {
 							product={ wpcomProduct }
 							term={ term }
 							quantity={ quantity }
+							ownedSites={ ownedSites }
 							onAddToCart={ () =>
 								addToCart( {
 									id: 'wpcom-hosting',
@@ -428,7 +521,7 @@ export default function MarketplaceHosting() {
 										_n( '%d WordPress.com site', '%d WordPress.com sites', quantity ),
 										quantity
 									),
-									total: getTieredPrice( wpcomProduct, quantity, term ).discountedCost,
+									total: getTieredPrice( wpcomProduct, quantity, term, ownedSites ).discountedCost,
 								} )
 							}
 						/>
@@ -442,6 +535,8 @@ export default function MarketplaceHosting() {
 							<PressableContent
 								planSlug={ pressablePlanSlug }
 								onPlanChange={ setPressablePlanSlug }
+								currentPlan={ pressableCurrentPlan }
+								usage={ pressableUsage }
 							/>
 							<ScheduleDemoBanner />
 						</VStack>
@@ -459,6 +554,7 @@ export default function MarketplaceHosting() {
 							term={ term }
 							quantity={ 1 }
 							plan={ pressablePlan }
+							currentPlan={ pressableCurrentPlan }
 							onAddToCart={ () =>
 								addToCart( {
 									id: 'pressable-hosting',

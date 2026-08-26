@@ -1,5 +1,7 @@
 import {
+	Button,
 	SelectControl,
+	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
@@ -8,6 +10,7 @@ import { sprintf, _n, __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
+import { Stat } from '../../../components/stat';
 import pressableDescriptor from '../exclusive-offers/images/pressable-descriptor.svg';
 import { CheckGrid } from './content-sections';
 import {
@@ -19,6 +22,12 @@ import {
 } from './mock-data';
 import OptionCards from './option-cards';
 import type { PressablePlan } from './mock-data';
+
+export type PressableUsage = {
+	sites: number;
+	visits: number;
+	storageGB: number;
+};
 
 export const PRESSABLE_CUSTOM_SLUG = 'pressable-custom';
 
@@ -174,12 +183,84 @@ function PlanSpecs( { category, plan }: { category: PlanCategory; plan?: Pressab
 	);
 }
 
+function CurrentPlanCard( { plan, usage }: { plan: PressablePlan; usage: PressableUsage } ) {
+	return (
+		<Card>
+			<CardHeader>
+				<HStack justify="space-between" alignment="center">
+					<SectionHeader
+						level={ 3 }
+						title={ sprintf(
+							/* translators: %s: plan name */
+							__( 'Your current plan: Pressable %s' ),
+							plan.name
+						) }
+					/>
+					<Button
+						variant="tertiary"
+						size="compact"
+						href="https://my.pressable.com"
+						target="_blank"
+						rel="noreferrer"
+					>
+						{ __( 'Manage in Pressable ↗' ) }
+					</Button>
+				</HStack>
+			</CardHeader>
+			<CardBody>
+				<HStack spacing={ 8 } alignment="flex-start">
+					<Stat
+						strapline={ __( 'Sites created' ) }
+						metric={ String( usage.sites ) }
+						description={ sprintf(
+							/* translators: %d: maximum number of sites */
+							__( 'of %d' ),
+							plan.install
+						) }
+						progressValue={ Math.round( ( usage.sites / plan.install ) * 100 ) }
+					/>
+					<Stat
+						strapline={ __( 'Visits this month' ) }
+						metric={ formatCompactNumber( usage.visits ) }
+						description={ sprintf(
+							/* translators: %s: maximum number of visits */
+							__( 'of %s' ),
+							formatCompactNumber( plan.visits )
+						) }
+						progressValue={ Math.round( ( usage.visits / plan.visits ) * 100 ) }
+						progressColor={ usage.visits / plan.visits > 0.8 ? 'alert-yellow' : undefined }
+					/>
+					<Stat
+						strapline={ __( 'Storage used' ) }
+						metric={ sprintf(
+							/* translators: %d: storage used in GB */
+							__( '%dGB' ),
+							usage.storageGB
+						) }
+						description={ sprintf(
+							/* translators: %d: maximum storage in GB */
+							__( 'of %dGB' ),
+							plan.storage
+						) }
+						progressValue={ Math.round( ( usage.storageGB / plan.storage ) * 100 ) }
+						progressColor={ usage.storageGB / plan.storage > 0.8 ? 'alert-yellow' : undefined }
+					/>
+				</HStack>
+			</CardBody>
+		</Card>
+	);
+}
+
 export default function PressableContent( {
 	planSlug,
 	onPlanChange,
+	currentPlan,
+	usage,
 }: {
 	planSlug: string;
 	onPlanChange: ( slug: string ) => void;
+	currentPlan?: PressablePlan;
+	usage?: PressableUsage;
 } ) {
 	const [ category, setCategory ] = useState< PlanCategory >( 'signature' );
 
@@ -199,52 +280,64 @@ export default function PressableContent( {
 	};
 
 	return (
-		<Card>
-			<CardHeader>
-				<SectionHeader
-					className="marketplace-hosting__card-header"
-					level={ 3 }
-					title={ __( 'Configure Pressable' ) }
-					description={ hostingBrands.find( ( brand ) => brand.key === 'pressable' )?.description }
-					decoration={
-						<img src={ pressableDescriptor } alt="" className="marketplace-hosting__brand-mark" />
-					}
-				/>
-			</CardHeader>
-			<CardBody>
-				<VStack spacing={ 5 }>
-					<VStack spacing={ 4 }>
-						<VStack spacing={ 3 }>
-							<Heading level={ 3 } size={ 13 }>
-								{ __( 'Choose a plan type' ) }
-							</Heading>
-							<OptionCards
-								label={ __( 'Plan type' ) }
-								options={ PLAN_TYPE_OPTIONS }
-								selected={ category }
-								onSelect={ ( value ) => handleCategoryChange( value as PlanCategory ) }
-							/>
+		<>
+			{ currentPlan && usage && <CurrentPlanCard plan={ currentPlan } usage={ usage } /> }
+			<Card>
+				<CardHeader>
+					<SectionHeader
+						className="marketplace-hosting__card-header"
+						level={ 3 }
+						title={ currentPlan ? __( 'Upgrade your plan' ) : __( 'Configure Pressable' ) }
+						description={
+							hostingBrands.find( ( brand ) => brand.key === 'pressable' )?.description
+						}
+						decoration={
+							<img src={ pressableDescriptor } alt="" className="marketplace-hosting__brand-mark" />
+						}
+					/>
+				</CardHeader>
+				<CardBody>
+					<VStack spacing={ 5 }>
+						<VStack spacing={ 4 }>
+							<VStack spacing={ 3 }>
+								<Heading level={ 3 } size={ 13 }>
+									{ __( 'Choose a plan type' ) }
+								</Heading>
+								<OptionCards
+									label={ __( 'Plan type' ) }
+									options={ PLAN_TYPE_OPTIONS }
+									selected={ category }
+									onSelect={ ( value ) => handleCategoryChange( value as PlanCategory ) }
+								/>
+							</VStack>
+							{ category !== 'custom' && (
+								<SelectControl
+									__nextHasNoMarginBottom
+									__next40pxDefaultSize
+									label={ __( 'Plan' ) }
+									value={ planSlug }
+									options={ categoryPlans.map( ( p ) => ( {
+										label:
+											p.slug === currentPlan?.slug
+												? sprintf(
+														/* translators: %s: plan name and specs */
+														__( '%s — Current plan' ),
+														planOptionLabel( p )
+												  )
+												: planOptionLabel( p ),
+										value: p.slug,
+									} ) ) }
+									onChange={ onPlanChange }
+								/>
+							) }
 						</VStack>
-						{ category !== 'custom' && (
-							<SelectControl
-								__nextHasNoMarginBottom
-								__next40pxDefaultSize
-								label={ __( 'Plan' ) }
-								value={ planSlug }
-								options={ categoryPlans.map( ( p ) => ( {
-									label: planOptionLabel( p ),
-									value: p.slug,
-								} ) ) }
-								onChange={ onPlanChange }
-							/>
-						) }
+
+						<CardDivider />
+
+						<PlanSpecs category={ category } plan={ plan } />
 					</VStack>
-
-					<CardDivider />
-
-					<PlanSpecs category={ category } plan={ plan } />
-				</VStack>
-			</CardBody>
-		</Card>
+				</CardBody>
+			</Card>
+		</>
 	);
 }

@@ -166,10 +166,21 @@ export const pressableSignaturePlans: PressablePlan[] = [
 	},
 ];
 
-// Prototype stand-in for real agency data (site counts come from agencySitesQuery).
-export const mockAgencyContext = {
-	managedSites: 12,
-	ownsPressablePlan: false,
+// Prototype stand-in for real agency data. In production, WP.com owned-site
+// counts come from license queries and Pressable usage from
+// agency.third_party.pressable.usage (see PressableUsageDetails).
+export const mockOwnership = {
+	wpcom: {
+		ownedSites: 7,
+	},
+	pressable: {
+		planSlug: 'pressable-signature-3',
+		usage: {
+			sites: 4,
+			visits: 62000,
+			storageGB: 28,
+		},
+	},
 };
 
 export const pressableSignatureHighPlans: PressablePlan[] = [
@@ -482,15 +493,20 @@ export interface TieredPriceResult {
 	discountPercent: number;
 }
 
+/**
+ * Owned units raise the discount tier ( production computes tiers on
+ * quantity + ownedPlans ) but only the new quantity is charged.
+ */
 export function getTieredPrice(
 	product: HostingProduct,
 	quantity: number,
-	term: 'monthly' | 'yearly'
+	term: 'monthly' | 'yearly',
+	ownedUnits = 0
 ): TieredPriceResult {
 	const basePerUnit = term === 'yearly' ? product.yearly_price : product.monthly_price;
 	const ladder =
 		( term === 'yearly' ? product.tier_yearly_prices : product.tier_monthly_prices ) ?? [];
-	const tier = ladder.filter( ( t ) => t.units <= quantity ).pop();
+	const tier = ladder.filter( ( t ) => t.units <= quantity + ownedUnits ).pop();
 	const perUnit = tier?.price ?? basePerUnit;
 	return {
 		basePerUnit,
@@ -504,19 +520,20 @@ export function getTieredPrice(
 export function getNextDiscountNudge(
 	product: HostingProduct,
 	quantity: number,
-	term: 'monthly' | 'yearly'
+	term: 'monthly' | 'yearly',
+	ownedUnits = 0
 ): { addMore: number; discountPercent: number } | null {
 	const ladder =
 		( term === 'yearly' ? product.tier_yearly_prices : product.tier_monthly_prices ) ?? [];
-	const current = getTieredPrice( product, quantity, term );
+	const current = getTieredPrice( product, quantity, term, ownedUnits );
 	const next = ladder.find(
-		( t ) => t.units > quantity && t.price < ( current.perUnit ?? Infinity )
+		( t ) => t.units > quantity + ownedUnits && t.price < ( current.perUnit ?? Infinity )
 	);
 	if ( ! next ) {
 		return null;
 	}
 	return {
-		addMore: next.units - quantity,
+		addMore: next.units - ( quantity + ownedUnits ),
 		discountPercent: ( current.basePerUnit - next.price ) / current.basePerUnit,
 	};
 }

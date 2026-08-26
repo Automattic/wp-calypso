@@ -18,6 +18,8 @@ type YourPlanProps = {
 	quantity: number;
 	plan?: PressablePlan;
 	product?: HostingProduct;
+	ownedSites?: number;
+	currentPlan?: PressablePlan;
 	onAddToCart: () => void;
 };
 
@@ -27,43 +29,65 @@ export default function YourPlan( {
 	quantity,
 	plan,
 	product = wpcomHosting,
+	ownedSites = 0,
+	currentPlan,
 	onAddToCart,
 }: YourPlanProps ) {
-	const price = brand === 'wpcom' ? getTieredPrice( product, quantity, term ) : null;
+	const price = brand === 'wpcom' ? getTieredPrice( product, quantity, term, ownedSites ) : null;
 	const isCustomPlan = brand === 'pressable' && ! plan;
 	const isPremiumPlan = brand === 'pressable' && plan?.category === 'premium';
 	const isContactSales = isCustomPlan || isPremiumPlan;
+	const isUpgrade = brand === 'pressable' && !! currentPlan && ! isContactSales;
+	const isCurrentPlan = isUpgrade && plan?.slug === currentPlan?.slug;
 
-	const planLabel =
-		brand === 'wpcom'
-			? sprintf(
-					/* translators: %d: number of sites */
-					_n( '%d WordPress.com site', '%d WordPress.com sites', quantity ),
-					quantity
-			  )
-			: sprintf(
-					/* translators: %s: plan name */
-					__( 'Pressable %s' ),
-					plan?.name ?? __( 'Custom' )
-			  );
+	let planLabel;
+	if ( brand !== 'wpcom' ) {
+		planLabel = sprintf(
+			/* translators: %s: plan name */
+			__( 'Pressable %s' ),
+			plan?.name ?? __( 'Custom' )
+		);
+	} else if ( ownedSites > 0 ) {
+		planLabel = sprintf(
+			/* translators: %d: number of new sites */
+			_n( '%d new WordPress.com site', '%d new WordPress.com sites', quantity ),
+			quantity
+		);
+	} else {
+		planLabel = sprintf(
+			/* translators: %d: number of sites */
+			_n( '%d WordPress.com site', '%d WordPress.com sites', quantity ),
+			quantity
+		);
+	}
 
 	const total =
 		brand === 'wpcom'
 			? price?.discountedCost ?? null
 			: ( term === 'yearly' ? plan?.yearly_price : plan?.monthly_price ) ?? null;
 
-	const ctaLabel =
-		brand === 'wpcom'
-			? sprintf(
-					/* translators: %d: number of sites */
-					_n( 'Add %d site to cart', 'Add %d sites to cart', quantity ),
-					quantity
-			  )
-			: sprintf(
-					/* translators: %s: plan name */
-					__( 'Add %s to cart' ),
-					plan?.name ?? ''
-			  );
+	let ctaLabel;
+	if ( brand === 'wpcom' ) {
+		ctaLabel = sprintf(
+			/* translators: %d: number of sites */
+			_n( 'Add %d site to cart', 'Add %d sites to cart', quantity ),
+			quantity
+		);
+	} else if ( isCurrentPlan ) {
+		ctaLabel = __( 'Your current plan' );
+	} else if ( isUpgrade ) {
+		ctaLabel = sprintf(
+			/* translators: %s: plan name */
+			__( 'Upgrade to %s' ),
+			plan?.name ?? ''
+		);
+	} else {
+		ctaLabel = sprintf(
+			/* translators: %s: plan name */
+			__( 'Add %s to cart' ),
+			plan?.name ?? ''
+		);
+	}
 
 	return (
 		<Card>
@@ -130,6 +154,26 @@ export default function YourPlan( {
 									{ term === 'yearly' ? __( 'billed yearly' ) : __( 'billed monthly' ) }
 								</Text>
 							) }
+							{ brand === 'wpcom' && price && ownedSites > 0 && (
+								<Text variant="muted">
+									{ sprintf(
+										/* translators: %1$d: discount percentage, %2$d: total sites, %3$d: owned sites, %4$d: new sites */
+										__( '%1$d%% off at %2$d total sites — your %3$d existing sites count.' ),
+										Math.round( price.discountPercent * 100 ),
+										ownedSites + quantity,
+										ownedSites
+									) }
+								</Text>
+							) }
+							{ isUpgrade && ! isCurrentPlan && currentPlan && (
+								<Text variant="muted">
+									{ sprintf(
+										/* translators: %s: current plan name */
+										__( 'Replaces your current %s plan.' ),
+										currentPlan.name
+									) }
+								</Text>
+							) }
 							{ brand === 'pressable' && total === null && (
 								<Text variant="muted">
 									{ __( 'Prototype: price loads from the products API.' ) }
@@ -140,7 +184,12 @@ export default function YourPlan( {
 					{ ! isContactSales && (
 						<>
 							<VStack spacing={ 4 } alignment="flex-start">
-								<Button variant="primary" __next40pxDefaultSize onClick={ onAddToCart }>
+								<Button
+									variant="primary"
+									__next40pxDefaultSize
+									disabled={ isCurrentPlan }
+									onClick={ onAddToCart }
+								>
 									{ ctaLabel }
 								</Button>
 							</VStack>
