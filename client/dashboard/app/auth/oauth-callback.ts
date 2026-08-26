@@ -8,7 +8,7 @@ export const OAUTH_CALLBACK_PATH = '/oauth/token';
  * Must run before AuthProvider, which would otherwise redirect away.
  * Returns true if the callback was handled (caller should return early).
  */
-export function handleOAuthCallback( fallbackRoute: string ): boolean {
+export function handleOAuthCallback(): boolean {
 	if ( window.location.pathname !== OAUTH_CALLBACK_PATH ) {
 		return false;
 	}
@@ -21,7 +21,7 @@ export function handleOAuthCallback( fallbackRoute: string ): boolean {
 	const expectedState = sessionStorage.getItem( 'wpcom_oauth_state' );
 	sessionStorage.removeItem( 'wpcom_oauth_state' );
 	if ( ! returnedState || ! expectedState || returnedState !== expectedState ) {
-		window.location.replace( fallbackRoute );
+		document.location.replace( '/' );
 		return true;
 	}
 
@@ -35,15 +35,12 @@ export function handleOAuthCallback( fallbackRoute: string ): boolean {
 		store.set( 'wpcom_token_expires_in', expiresIn );
 	}
 
-	const next = params.get( 'next' ) || fallbackRoute;
-
-	// Bare root, with or without a query or hash, means the app's main route.
-	const isBareRoot = next === '/' || next.startsWith( '/?' ) || next.startsWith( '/#' );
+	const next = params.get( 'next' ) || '/';
 
 	// Validate that next is a safe same-origin relative path to prevent DOM XSS
 	// and open redirect via javascript: URIs or absolute URLs to external domains.
-	const safeNext = isRelativeUrl( next ) && ! isBareRoot ? next : fallbackRoute;
-	window.location.replace( safeNext );
+	const safeNext = isRelativeUrl( next ) ? next : '/';
+	document.location.replace( safeNext );
 
 	return true;
 }

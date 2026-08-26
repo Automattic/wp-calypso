@@ -7,7 +7,7 @@ export function storeToken( context ) {
 	const expectedState = sessionStorage.getItem( 'wpcom_oauth_state' );
 	sessionStorage.removeItem( 'wpcom_oauth_state' );
 	if ( ! returnedState || ! expectedState || returnedState !== expectedState ) {
-		document.location.replace( '/home' );
+		document.location.replace( '/' );
 		return;
 	}
 
@@ -19,11 +19,9 @@ export function storeToken( context ) {
 		store.set( 'wpcom_token_expires_in', context.hash.expires_in );
 	}
 
-	const { next = '/home' } = context.query;
+	const { next = '/' } = context.query;
 
 	// Validate that next is a safe relative path to prevent DOM XSS and open redirect.
 	const isSafe = next.startsWith( '/' ) && ! next.startsWith( '//' );
-	// Bare root, with or without a query or hash, means "my dashboard".
-	const isBareRoot = next === '/' || next.startsWith( '/?' ) || next.startsWith( '/#' );
-	document.location.replace( isSafe && ! isBareRoot ? next : '/home' );
+	document.location.replace( isSafe ? next : '/' );
 }
