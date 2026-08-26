@@ -135,24 +135,6 @@ describe( 'ReaderSidebar', () => {
 			expect( mockRecordTracksEvent ).not.toHaveBeenCalled();
 		} );
 
-		it( 'should handle search menu click with correct tracking keys', () => {
-			const handler = {
-				action: 'clicked_reader_sidebar_search',
-				gaEvent: 'Clicked Reader Sidebar Search',
-				tracksEvent: 'calypso_reader_sidebar_search_clicked',
-			};
-			const path = '/discover/search';
-
-			const clickHandler = instance.handleSidebarMenuClick( handler );
-			clickHandler( {}, path );
-
-			expect( recordAction ).toHaveBeenCalledWith( 'clicked_reader_sidebar_search' );
-			expect( recordGaEvent ).toHaveBeenCalledWith( 'Clicked Reader Sidebar Search' );
-			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
-				'calypso_reader_sidebar_search_clicked'
-			);
-		} );
-
 		it( 'should handle likes menu click with correct tracking keys', () => {
 			const handler = {
 				action: 'clicked_reader_sidebar_like_activity',

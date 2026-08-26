@@ -24,7 +24,6 @@ import ReaderDiscoverIcon from 'calypso/reader/components/icons/discover-icon';
 import ReaderLikesIcon from 'calypso/reader/components/icons/likes-icon';
 import ReaderManageSubscriptionsIcon from 'calypso/reader/components/icons/manage-subscriptions-icon';
 import ReaderSavedIcon from 'calypso/reader/components/icons/saved-icon';
-import ReaderSearchIcon from 'calypso/reader/components/icons/search-icon';
 import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getTagStreamUrl } from 'calypso/reader/route';
@@ -67,11 +66,6 @@ const TrackingKeys = {
 		action: 'clicked_reader_sidebar_discover',
 		gaEvent: 'Clicked Reader Sidebar Discover',
 		tracksEvent: 'calypso_reader_sidebar_discover_clicked',
-	},
-	search: {
-		action: 'clicked_reader_sidebar_search',
-		gaEvent: 'Clicked Reader Sidebar Search',
-		tracksEvent: 'calypso_reader_sidebar_search_clicked',
 	},
 	likeActivity: {
 		action: 'clicked_reader_sidebar_like_activity',
@@ -179,17 +173,8 @@ export class ReaderSidebar extends Component {
 					</li>
 
 					<SidebarItem
-						className={ clsx( 'sidebar-streams__search', {
-							selected: path.startsWith( '/discover/search' ),
-						} ) }
-						label={ translate( 'Search' ) }
-						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.search ) }
-						customIcon={ <ReaderSearchIcon /> }
-						link="/discover/search"
-					/>
-					<SidebarItem
 						className={ clsx( 'sidebar-streams__discover', {
-							selected: path.startsWith( '/discover' ) && ! path.startsWith( '/discover/search' ),
+							selected: path.startsWith( '/discover' ),
 						} ) }
 						label={ translate( 'Discover' ) }
 						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.discover ) }
