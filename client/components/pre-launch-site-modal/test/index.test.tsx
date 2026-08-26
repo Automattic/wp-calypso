@@ -3,7 +3,7 @@
  */
 import { DomainSubtype } from '@automattic/api-core';
 import { queryClient } from '@automattic/api-queries';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type ComponentProps } from 'react';
 import PreLaunchSiteModal from '../index';
@@ -15,8 +15,7 @@ let mockDomainsError = false;
 let mockIsPaid = true;
 
 jest.mock( '@automattic/api-queries', () => ( {
-	// eslint-disable-next-line @typescript-eslint/no-require-imports
-	queryClient: new ( require( '@tanstack/react-query' ).QueryClient )( {
+	queryClient: new ( jest.requireActual( '@tanstack/react-query' ).QueryClient )( {
 		defaultOptions: { queries: { retry: false } },
 	} ),
 	siteByIdQuery: ( siteId: number ) => ( {
@@ -209,6 +208,22 @@ describe( 'PreLaunchSiteModal', () => {
 
 		expect( await screen.findByTestId( 'pre-launch-modal' ) ).toBeVisible();
 		expect( screen.getByText( 'connected.example' ) ).toBeVisible();
+		expect( assign ).not.toHaveBeenCalled();
+	} );
+
+	it( 'keeps the modal up and never redirects if a later refetch errors', async () => {
+		renderBridge();
+		await screen.findByTestId( 'pre-launch-modal' );
+
+		// Simulate a background refetch (e.g. window refocus) that fails after the
+		// modal is already showing. The decision must stay frozen on "modal" — a
+		// redirect here would launch the site with no confirmation.
+		mockDomainsError = true;
+		await act( async () => {
+			await queryClient.refetchQueries( { queryKey: [ 'domains' ] } );
+		} );
+
+		expect( screen.getByTestId( 'pre-launch-modal' ) ).toBeVisible();
 		expect( assign ).not.toHaveBeenCalled();
 	} );
 

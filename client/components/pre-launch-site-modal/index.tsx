@@ -52,12 +52,9 @@ function PreLaunchSiteModalContent( {
 		select: ( data ) => data.filter( ( domain ) => domain.blog_id === siteId ),
 	} );
 
-	// Wait until both queries have settled (success or error) before deciding. On
-	// either error we fall back to the flow so the launch action is never silently
-	// swallowed — otherwise a failed site/domains fetch would leave the caller
+	// On either error we fall back to the flow rather than leaving the caller
 	// stuck with the modal neither open nor redirecting.
-	const isReady =
-		isOpen &&
+	const isSettled =
 		( siteResult.isSuccess || siteResult.isError ) &&
 		( domainsResult.isSuccess || domainsResult.isError );
 	// Mirror the launch flow's domain-skip rule so the modal's "custom domain"
@@ -77,13 +74,24 @@ function PreLaunchSiteModalContent( {
 		isSitePlanPaid( site ) &&
 		hasCustomDomain;
 
+	// Decide once and freeze it: after the modal is shown, a later refetch error
+	// must not re-decide and redirect a qualifying site into an unconfirmed launch.
+	const [ decision, setDecision ] = useState< 'pending' | 'modal' | 'redirect' >( 'pending' );
+
 	useEffect( () => {
-		if ( isReady && ! qualifiesForPreLaunch && launchUrl ) {
+		if ( decision !== 'pending' || ! isOpen || ! isSettled ) {
+			return;
+		}
+		setDecision( qualifiesForPreLaunch ? 'modal' : 'redirect' );
+	}, [ decision, isOpen, isSettled, qualifiesForPreLaunch ] );
+
+	useEffect( () => {
+		if ( decision === 'redirect' && launchUrl ) {
 			window.location.assign( launchUrl );
 		}
-	}, [ isReady, qualifiesForPreLaunch, launchUrl ] );
+	}, [ decision, launchUrl ] );
 
-	if ( ! isReady || ! qualifiesForPreLaunch || ! site ) {
+	if ( decision !== 'modal' || ! isOpen || ! site ) {
 		return null;
 	}
 
