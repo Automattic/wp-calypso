@@ -1,18 +1,19 @@
 import { isWpError } from '@automattic/api-core';
 import { Button, ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { reauthRequiredLink, wpcomLink } from '../../utils/link';
 import { AuthContext } from '../auth';
 
-function isAuthorizationError( error: Error ) {
-	return (
-		error.name === 'AuthorizationRequiredError' ||
-		( isWpError( error ) && error.error === 'authorization_required' )
-	);
+function ReauthRedirect() {
+	useEffect( () => {
+		window.location.href = reauthRequiredLink();
+	}, [] );
+
+	return null;
 }
 
 function SessionError() {
@@ -61,16 +62,7 @@ function SessionError() {
 	);
 }
 
-function UnknownError( { error }: { error: Error } ) {
-	if ( isWpError( error ) && error.error === 'reauthorization_required' ) {
-		window.location.href = reauthRequiredLink();
-		return null;
-	}
-
-	if ( isAuthorizationError( error ) ) {
-		return <SessionError />;
-	}
-
+function GenericError( { error }: { error: Error } ) {
 	return (
 		<PageLayout
 			header={
@@ -79,6 +71,31 @@ function UnknownError( { error }: { error: Error } ) {
 			notices={ <Notice variant="error">{ error.message }</Notice> }
 		></PageLayout>
 	);
+}
+
+/**
+ * The dashboard's last-resort error screen.
+ *
+ * Route error boundaries fall back to this, and the area-specific error
+ * components (site, domain) delegate to it for anything they do not recognise.
+ * Only add a branch here for a failure that can happen anywhere in the app;
+ * anything scoped to one area belongs in that area's error component.
+ */
+function UnknownError( { error }: { error: Error } ) {
+	if ( isWpError( error ) ) {
+		if ( error.error === 'reauthorization_required' ) {
+			return <ReauthRedirect />;
+		}
+
+		// The API marks a request that carried no usable credential with this
+		// reason. An authorization failure without it is a genuine permission
+		// error, where signing in again would not help.
+		if ( error.reason === 'no_identity' ) {
+			return <SessionError />;
+		}
+	}
+
+	return <GenericError error={ error } />;
 }
 
 export default UnknownError;
