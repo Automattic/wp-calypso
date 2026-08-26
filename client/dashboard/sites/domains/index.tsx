@@ -1,16 +1,20 @@
 import { siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
-import { Link, useNavigate } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { siteRoute, siteDomainsRoute, siteSettingsRedirectRoute } from '../../app/router/sites';
-import { DataViews, DataViewsActionModal, DataViewsCard } from '../../components/dataviews';
+import {
+	DataViews,
+	DataViewsActionModal,
+	DataViewsCard,
+	useDeepLinkedAction,
+} from '../../components/dataviews';
 import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -59,33 +63,12 @@ function SiteDomains() {
 	const actions = useActions( { user, sites: [ site ] } );
 
 	const searchParams = siteDomainsRoute.useSearch();
-	const navigate = useNavigate();
 
-	// The action is read once, so the modal survives the param being cleared below.
-	const [ deepLinkedActionId ] = useState( () => searchParams.action );
-	const matchedAction = actions.find( ( action ) => action.id === deepLinkedActionId );
-	const deepLinkedAction =
-		matchedAction && 'RenderModal' in matchedAction ? matchedAction : undefined;
-	const deepLinkedDomain = siteDomains.find(
-		( domain ) => deepLinkedAction?.isEligible?.( domain )
-	);
-	const [ isDeepLinkedActionOpen, setIsDeepLinkedActionOpen ] = useState(
-		() => !! searchParams.action
-	);
-
-	useEffect( () => {
-		if ( ! searchParams.action ) {
-			return;
-		}
-
-		// Drop the param so a reload or a shared URL doesn't reopen the modal.
-		navigate( {
-			to: siteDomainsRoute.fullPath,
-			params: { siteSlug },
-			search: ( previous: Record< string, unknown > ) => ( { ...previous, action: undefined } ),
-			replace: true,
-		} );
-	}, [ searchParams.action, navigate, siteSlug ] );
+	const deepLinkedAction = useDeepLinkedAction( {
+		actionId: searchParams.action,
+		actions,
+		items: siteDomains,
+	} );
 
 	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'site-domains',
@@ -154,13 +137,7 @@ function SiteDomains() {
 					defaultLayouts={ DEFAULT_LAYOUTS }
 				/>
 			</DataViewsCard>
-			{ isDeepLinkedActionOpen && deepLinkedAction && deepLinkedDomain && (
-				<DataViewsActionModal
-					action={ deepLinkedAction }
-					item={ deepLinkedDomain }
-					onClose={ () => setIsDeepLinkedActionOpen( false ) }
-				/>
-			) }
+			{ deepLinkedAction && <DataViewsActionModal { ...deepLinkedAction } /> }
 			<PerformanceTrackerStop />
 		</PageLayout>
 	);
