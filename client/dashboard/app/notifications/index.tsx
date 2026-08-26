@@ -5,6 +5,7 @@ import { bellUnread, bell } from '@wordpress/icons';
 import clsx from 'clsx';
 import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
+import { Text } from '../../components/text';
 import { dashboardLink } from '../../utils/link';
 import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
@@ -184,7 +185,13 @@ export default function Notifications( {
 				)
 			}
 			renderContent={ () => (
-				<Suspense fallback={ null }>
+				<Suspense
+					fallback={
+						<Text variant="muted" className="dashboard-notifications__loading">
+							{ __( 'Loading…' ) }
+						</Text>
+					}
+				>
 					<AsyncNotificationApp
 						locale={ locale }
 						isDismissible={ isMobileViewport }
