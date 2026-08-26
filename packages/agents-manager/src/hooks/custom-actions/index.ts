@@ -19,11 +19,12 @@ function recordGuardedBigSkyTracksEvent(
 	eventName: string,
 	props?: Record< string, unknown >
 ): void {
-	if ( typeof eventName !== 'string' || eventName === '' ) {
+	if ( typeof eventName !== 'string' || ! eventName.startsWith( 'jetpack_big_sky_' ) ) {
 		return;
 	}
 
-	recordBigSkyTracksEvent( eventName, props );
+	// `startsWith` doesn't narrow to the template-literal type; the guard above proves it.
+	recordBigSkyTracksEvent( eventName as `jetpack_big_sky_${ string }`, props );
 }
 
 /**
