@@ -7,6 +7,8 @@ import {
 	Modal,
 	TabPanel,
 	ToggleControl,
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	__experimentalDivider as Divider,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -346,6 +348,13 @@ export default function MarketplaceHosting() {
 		new URLSearchParams( window.location.search ).has( 'welcome' )
 	);
 
+	// Prototype-only: `?alt` shows the alternative controls suggested in the i1
+	// feedback — a plain quantity input instead of presets, and a segmented
+	// Purchase/Refer switch instead of the toggle.
+	const [ useAltControls ] = useState( () =>
+		new URLSearchParams( window.location.search ).has( 'alt' )
+	);
+
 	// Prototype-only: simulates returning-customer data that will come from
 	// license and usage queries ( see mockOwnership ).
 	const [ isExistingCustomer, setIsExistingCustomer ] = useState( false );
@@ -447,12 +456,26 @@ export default function MarketplaceHosting() {
 								style={ { color: 'var(--dashboard-overview__divider-color)', height: '24px' } }
 							/>
 							<HStack spacing={ 1 } justify="flex-start" expanded={ false }>
-								<ToggleControl
-									__nextHasNoMarginBottom
-									checked={ isReferralMode }
-									label={ __( 'Refer products' ) }
-									onChange={ handleReferralToggle }
-								/>
+								{ useAltControls ? (
+									<ToggleGroupControl
+										__nextHasNoMarginBottom
+										hideLabelFromVision
+										isAdaptiveWidth
+										label={ __( 'Marketplace mode' ) }
+										value={ isReferralMode ? 'refer' : 'purchase' }
+										onChange={ ( value ) => handleReferralToggle( value === 'refer' ) }
+									>
+										<ToggleGroupControlOption value="purchase" label={ __( 'Purchase' ) } />
+										<ToggleGroupControlOption value="refer" label={ __( 'Refer' ) } />
+									</ToggleGroupControl>
+								) : (
+									<ToggleControl
+										__nextHasNoMarginBottom
+										checked={ isReferralMode }
+										label={ __( 'Refer products' ) }
+										onChange={ handleReferralToggle }
+									/>
+								) }
 								<Button
 									icon={ info }
 									size="small"
@@ -495,6 +518,7 @@ export default function MarketplaceHosting() {
 								term={ term }
 								onQuantityChange={ setQuantity }
 								ownedSites={ ownedSites }
+								altQuantityControl={ useAltControls }
 							/>
 							<DevSitesBanner />
 						</VStack>

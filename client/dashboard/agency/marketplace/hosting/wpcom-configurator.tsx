@@ -14,7 +14,13 @@ import { Card, CardBody, CardDivider, CardHeader } from '../../../components/car
 import { SectionHeader } from '../../../components/section-header';
 import wpcomDescriptor from '../exclusive-offers/images/wordpressdotcom-descriptor.svg';
 import { CheckGrid } from './content-sections';
-import { getNextDiscountNudge, getTieredPrice, hostingBrands, wpcomHosting } from './mock-data';
+import {
+	formatUSD,
+	getNextDiscountNudge,
+	getTieredPrice,
+	hostingBrands,
+	wpcomHosting,
+} from './mock-data';
 import type { HostingProduct } from './mock-data';
 
 const PRESET_QUANTITIES = [ 1, 3, 5 ];
@@ -33,6 +39,7 @@ type WpcomConfiguratorProps = {
 	onQuantityChange: ( quantity: number ) => void;
 	product?: HostingProduct;
 	ownedSites?: number;
+	altQuantityControl?: boolean;
 };
 
 export default function WpcomConfigurator( {
@@ -40,14 +47,16 @@ export default function WpcomConfigurator( {
 	onQuantityChange,
 	product = wpcomHosting,
 	ownedSites = 0,
+	altQuantityControl = false,
 }: WpcomConfiguratorProps ) {
 	const [ preset, setPreset ] = useState< string >( '3' );
-	const [ customQuantity, setCustomQuantity ] = useState( 10 );
+	const [ customQuantity, setCustomQuantity ] = useState( altQuantityControl ? 3 : 10 );
 
-	const isCustom = preset === 'custom';
+	const isCustom = altQuantityControl || preset === 'custom';
 	const quantity = isCustom ? customQuantity : Number( preset );
+	const price = getTieredPrice( product, quantity, term, ownedSites );
 	const nudge = getNextDiscountNudge( product, quantity, term, ownedSites );
-	const currentDiscount = getTieredPrice( product, quantity, term, ownedSites ).discountPercent;
+	const currentDiscount = price.discountPercent;
 
 	return (
 		<Card>
@@ -81,23 +90,27 @@ export default function WpcomConfigurator( {
 								</Badge>
 							) }
 						</HStack>
-						<ToggleGroupControl
-							__nextHasNoMarginBottom
-							__next40pxDefaultSize
-							isBlock
-							hideLabelFromVision
-							label={ __( 'Number of sites' ) }
-							value={ preset }
-							onChange={ ( value ) => {
-								setPreset( String( value ) );
-								onQuantityChange( String( value ) === 'custom' ? customQuantity : Number( value ) );
-							} }
-						>
-							{ PRESET_QUANTITIES.map( ( q ) => (
-								<ToggleGroupControlOption key={ q } value={ String( q ) } label={ String( q ) } />
-							) ) }
-							<ToggleGroupControlOption value="custom" label={ __( 'Custom' ) } />
-						</ToggleGroupControl>
+						{ ! altQuantityControl && (
+							<ToggleGroupControl
+								__nextHasNoMarginBottom
+								__next40pxDefaultSize
+								isBlock
+								hideLabelFromVision
+								label={ __( 'Number of sites' ) }
+								value={ preset }
+								onChange={ ( value ) => {
+									setPreset( String( value ) );
+									onQuantityChange(
+										String( value ) === 'custom' ? customQuantity : Number( value )
+									);
+								} }
+							>
+								{ PRESET_QUANTITIES.map( ( q ) => (
+									<ToggleGroupControlOption key={ q } value={ String( q ) } label={ String( q ) } />
+								) ) }
+								<ToggleGroupControlOption value="custom" label={ __( 'Custom' ) } />
+							</ToggleGroupControl>
+						) }
 						{ isCustom && (
 							<TextControl
 								__nextHasNoMarginBottom
@@ -105,6 +118,7 @@ export default function WpcomConfigurator( {
 								type="number"
 								min={ 1 }
 								label={ __( 'Number of sites' ) }
+								hideLabelFromVision={ ! altQuantityControl }
 								value={ String( customQuantity ) }
 								onChange={ ( value ) => {
 									const next = Math.max( 1, Number( value ) || 1 );
@@ -112,6 +126,19 @@ export default function WpcomConfigurator( {
 									onQuantityChange( next );
 								} }
 							/>
+						) }
+						{ altQuantityControl && currentDiscount > 0 && (
+							<Text variant="muted">
+								<span className="marketplace-hosting__price-strikethrough">
+									{ formatUSD( price.basePerUnit ) }
+								</span>{ ' ' }
+								{ sprintf(
+									/* translators: %1$s: discounted per-site price, %2$d: discount percentage */
+									__( '%1$s per site, per year with your %2$d%% volume discount.' ),
+									formatUSD( price.perUnit ),
+									Math.round( currentDiscount * 100 )
+								) }
+							</Text>
 						) }
 						{ nudge ? (
 							<Text variant="muted">
