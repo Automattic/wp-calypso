@@ -12,12 +12,15 @@ import { expect, tags as allTags, test } from '../../../lib/pw-base';
 
 // Publishing a post carrying a synced form saves two entities. On Atomic the second save
 // regularly outruns the cap that predates it, so only Atomic gets the longer one; Simple keeps
-// the tighter bound, where it still catches a regression. Omitting the argument would not lift
-// the cap either way: `waitForResponse` falls back to `actionTimeout` from playwright.config.ts.
+// the tighter bound, where it still catches a regression.
 //
 // 60s was not enough: the Jetpack Forms flows overran it on the private variation, where four
 // workers share one site. Both values stay well inside the per-test budget set below.
-const PUBLISH_TIMEOUT = 15 * 1000;
+//
+// The tighter bound is 30s because publishing through the multi-entity save panel costs ~16s
+// locally and ~19s on CI: two 5s waits on panels that never open, either side of the entity save
+// and the publish itself.
+const PUBLISH_TIMEOUT = 30 * 1000;
 const ATOMIC_PUBLISH_TIMEOUT = 120 * 1000;
 
 /**
