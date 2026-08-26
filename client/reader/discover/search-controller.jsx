@@ -1,5 +1,3 @@
-import page from '@automattic/calypso-router';
-import { stringify } from 'qs';
 import AsyncLoad from 'calypso/components/async-load';
 import { sectionify } from 'calypso/lib/route';
 import {
@@ -20,14 +18,6 @@ const loadSearchStream = () =>
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
-function replaceSearchUrl( pathname, query, sort ) {
-	let searchUrl = pathname;
-	if ( query ) {
-		searchUrl += '?' + stringify( { q: query, sort } );
-	}
-	page.replace( searchUrl );
-}
-
 // Suggestions for logged-out visitors are built from trending tags.
 export const fetchTrendingTagsIfLoggedOut = ( context, next ) => {
 	if ( ! isUserLoggedIn( context.store.getState() ) ) {
@@ -42,15 +32,11 @@ export const search = ( context, next ) => {
 	const mcKey = 'search';
 	const state = context.store.getState();
 
-	const { sort = 'relevance', q } = context.query;
-	const searchSlug = q;
+	const { sort = 'relevance', q: searchSlug } = context.query;
 
-	let streamKey = 'custom_recs_sites_with_images';
-	let isQuerySuggestion = false;
-	if ( searchSlug ) {
-		streamKey = 'search:' + JSON.stringify( { sort, q } );
-		isQuerySuggestion = context.query.isSuggestion === '1';
-	}
+	const streamKey = searchSlug
+		? 'search:' + JSON.stringify( { sort, q: searchSlug } )
+		: 'custom_recs_sites_with_images';
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 	if ( searchSlug ) {
@@ -68,14 +54,6 @@ export const search = ( context, next ) => {
 
 	const autoFocusInput = ! searchSlug || context.query.focus === '1';
 
-	function reportQueryChange( query ) {
-		replaceSearchUrl( context.pathname, query, sort !== 'relevance' ? sort : undefined );
-	}
-
-	function reportSortChange( newSort ) {
-		replaceSearchUrl( context.pathname, searchSlug, newSort !== 'relevance' ? newSort : undefined );
-	}
-
 	if ( ! isUserLoggedIn( state ) ) {
 		context.renderHeaderSection = renderHeaderSection;
 	}
@@ -85,7 +63,6 @@ export const search = ( context, next ) => {
 			require={ loadSearchStream }
 			key="search"
 			streamKey={ streamKey }
-			isSuggestion={ isQuerySuggestion }
 			query={ searchSlug }
 			sort={ sort }
 			trackScrollPage={ trackScrollPage.bind(
@@ -97,8 +74,6 @@ export const search = ( context, next ) => {
 			) }
 			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 			autoFocusInput={ autoFocusInput }
-			onQueryChange={ reportQueryChange }
-			onSortChange={ reportSortChange }
 			trendingTags={ context.params.trendingTags }
 			placeholder={ null }
 		/>
