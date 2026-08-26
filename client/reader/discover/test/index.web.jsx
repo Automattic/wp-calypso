@@ -67,20 +67,16 @@ jest.mock( '../discover-document-head', () => ( {
 	DiscoverDocumentHead: () => null,
 } ) );
 
-jest.mock( '../helper', () => ( {
-	RECOMMENDED_TAB: 'recommended',
-	SEARCH_TAB: 'search',
-} ) );
-
 jest.mock( '../search-controller', () => ( {
 	fetchTrendingTagsIfLoggedOut: jest.fn(),
 	search: jest.fn(),
 } ) );
 
 jest.mock( '../routes', () => ( {
-	DISCOVER_PREFIX: '/discover',
 	getDiscoverRoutes: jest.fn( () => [ '/discover' ] ),
 	getPrivateRoutes: jest.fn( () => [ '/discover/site' ] ),
+	getSearchRoutes: jest.fn( () => [ '/discover/search' ] ),
+	getSelectedTab: jest.fn(),
 } ) );
 
 describe( 'reader discover routes', () => {

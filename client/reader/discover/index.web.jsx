@@ -17,14 +17,12 @@ import {
 } from 'calypso/reader/controller-helper';
 import { readerNotFound } from 'calypso/reader/lib/reader-router';
 import { recordTrack } from 'calypso/reader/stats';
-import { getCurrentTabFromURL } from 'calypso/reader/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import renderHeaderSection from '../lib/header-section';
 import { DiscoverDocumentHead } from './discover-document-head';
-import { RECOMMENDED_TAB, SEARCH_TAB } from './helper';
-import { getPrivateRoutes, getDiscoverRoutes, DISCOVER_PREFIX } from './routes';
+import { getPrivateRoutes, getDiscoverRoutes, getSearchRoutes, getSelectedTab } from './routes';
 import { fetchTrendingTagsIfLoggedOut, search } from './search-controller';
 
 const loadDiscoverStream = () =>
@@ -34,22 +32,8 @@ const loadDiscoverStream = () =>
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
-const getSelectedTab = ( context ) =>
-	getCurrentTabFromURL( context.path, DISCOVER_PREFIX, RECOMMENDED_TAB );
-
-const fetchSearchSuggestionsIfNeeded = ( context, next ) => {
-	if ( getSelectedTab( context ) === SEARCH_TAB ) {
-		return fetchTrendingTagsIfLoggedOut( context, next );
-	}
-	next();
-};
-
 const discover = ( context, next ) => {
-	const selectedTab = getSelectedTab( context );
-	if ( selectedTab === SEARCH_TAB ) {
-		return search( context, next );
-	}
-
+	const selectedTab = getSelectedTab( context.path );
 	const basePath = sectionify( context.path );
 	const fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Discover';
 	const streamKey = 'discover:recommended';
@@ -101,22 +85,39 @@ const discover = ( context, next ) => {
 export default function ( router ) {
 	const anyLangParam = getAnyLanguageRouteParam();
 
-	const commonMiddleware = [
+	const localeMiddleware = [
 		redirectInvalidLanguage,
 		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		setLocaleMiddleware(),
-		fetchSearchSuggestionsIfNeeded,
-		sidebar,
-		discover,
-		makeLayout,
-		clientRender,
 	];
+	const renderMiddleware = [ makeLayout, clientRender ];
 
 	// Must be logged in to access.
-	router( getPrivateRoutes( anyLangParam ), redirectLoggedOutToSignup, ...commonMiddleware );
+	router(
+		getPrivateRoutes( anyLangParam ),
+		redirectLoggedOutToSignup,
+		...localeMiddleware,
+		sidebar,
+		discover,
+		...renderMiddleware
+	);
 
-	//
-	router( getDiscoverRoutes( anyLangParam ), ...commonMiddleware );
+	router(
+		getSearchRoutes( anyLangParam ),
+		...localeMiddleware,
+		fetchTrendingTagsIfLoggedOut,
+		sidebar,
+		search,
+		...renderMiddleware
+	);
+
+	router(
+		getDiscoverRoutes( anyLangParam ),
+		...localeMiddleware,
+		sidebar,
+		discover,
+		...renderMiddleware
+	);
 
 	router( '/discover/*', readerNotFound );
 }
