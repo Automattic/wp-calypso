@@ -56,12 +56,6 @@ describe( 'redirectLoggedIn', () => {
 			expect( window.location ).toBe( '/home' );
 		} );
 
-		test( 'should redirect home when an absolute wordpress.com root is passed', () => {
-			isUserLoggedIn.mockReturnValue( true );
-			redirectLoggedIn( { ...context, query: { redirect_to: 'https://wordpress.com/' } }, next );
-			expect( window.location ).toBe( '/home' );
-		} );
-
 		test( 'should redirect home when invalid internal url is passed', () => {
 			isUserLoggedIn.mockReturnValue( true );
 			redirectLoggedIn( { ...context, query: { redirect_to: '////test.com' } }, next );

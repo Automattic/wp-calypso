@@ -363,7 +363,8 @@ function buildSuccessRedirect( {
 } ): RedirectInstructions {
 	const fallbackUrl = getDefaultSuccessUrl( siteSlug, effectiveReceiptId );
 	// A bare '/' is not a useful post-checkout destination, so use the thank-you page.
-	const isBareRoot = /^\/(?:[?#].*)?$/.test( redirectTo ?? '' );
+	const isBareRoot =
+		redirectTo === '/' || redirectTo?.startsWith( '/?' ) || redirectTo?.startsWith( '/#' );
 	let interpolated = interpolateReceiptId(
 		! redirectTo || isBareRoot ? fallbackUrl : redirectTo,
 		effectiveReceiptId

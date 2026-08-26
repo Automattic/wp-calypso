@@ -24,6 +24,6 @@ export function storeToken( context ) {
 	// Validate that next is a safe relative path to prevent DOM XSS and open redirect.
 	const isSafe = next.startsWith( '/' ) && ! next.startsWith( '//' );
 	// Bare root, with or without a query or hash, means "my dashboard".
-	const isBareRoot = /^\/(?:[?#].*)?$/.test( next );
+	const isBareRoot = next === '/' || next.startsWith( '/?' ) || next.startsWith( '/#' );
 	document.location.replace( isSafe && ! isBareRoot ? next : '/home' );
 }
