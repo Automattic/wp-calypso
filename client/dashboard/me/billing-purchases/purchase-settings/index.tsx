@@ -881,25 +881,23 @@ function getFields( {
 						purchase.renew_date !== purchase.expiry_date &&
 						( purchase.expiry_status === 'active' || purchase.expiry_status === 'auto-renewing' )
 					) {
-						const dateSpan = <span />;
 						return (
 							<HStack spacing={ 1 } expanded={ false }>
 								<span>{ helpText }</span>
 								<BillingPurchaseInfoPopover>
 									{ createInterpolateElement(
-										sprintf(
-											/* translators: %(expireDate)s is a date and inlineSupportLink is a web link. */
-											__(
-												'Your subscription is paid through <dateSpan>%(expireDate)s</dateSpan>, but will be renewed prior to that date. <inlineSupportLink>Learn more</inlineSupportLink>'
-											),
-											{
-												expireDate: formatDate( new Date( purchase.expiry_date ), locale, {
-													dateStyle: 'long',
-												} ),
-											}
+										/* translators: <expireDate /> is a date and inlineSupportLink is a web link. */
+										__(
+											'Your subscription is paid through <expireDate></expireDate>, but will be renewed prior to that date. <inlineSupportLink>Learn more</inlineSupportLink>'
 										),
 										{
-											dateSpan,
+											expireDate: (
+												<span>
+													{ formatDate( new Date( purchase.expiry_date ), locale, {
+														dateStyle: 'long',
+													} ) }
+												</span>
+											),
 											inlineSupportLink: <InlineSupportLink supportContext="autorenewal" />,
 										}
 									) }
