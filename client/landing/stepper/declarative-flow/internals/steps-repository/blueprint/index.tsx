@@ -22,8 +22,7 @@ export const BlueprintStep: StepType = ( { navigation } ) => {
 	const hasSubmitted = useRef( false );
 
 	const blueprintParam = query.get( 'blueprint' ) ?? '';
-	const buildDestParam = query.get( 'build_dest' ) ?? '';
-	// The wow funnel builds the Atomic site from the same archive, before checkout.
+	// The wow funnel builds the Atomic site from the blueprint's archive, before checkout.
 	const wowFunnelParam = query.get( 'wow_funnel' ) ?? '';
 
 	useEffect( () => {
@@ -40,14 +39,17 @@ export const BlueprintStep: StepType = ( { navigation } ) => {
 				return;
 			}
 
-			// Both Atomic paths restore the blueprint's pre-built archive, so both need that
-			// archive to exist on the library post: build_dest=wow imports after checkout, the
-			// wow funnel before it. Verify up front; when missing, fall back to the legacy
-			// Simple-site import by stripping the params (tracked, so missing archives surface).
-			if ( 'wow' === buildDestParam || 'blueprint' === wowFunnelParam ) {
+			// The wow funnel restores the blueprint's pre-built archive onto the Atomic site it
+			// builds before checkout, so that archive has to exist on the library post. Verify
+			// up front; when missing, fall back to the legacy Simple-site import by stripping
+			// the params (tracked, so missing archives surface).
+			if ( 'blueprint' === wowFunnelParam ) {
 				const hasArchive = await checkBlueprintExists( id );
 
 				if ( ! hasArchive ) {
+					// Event name predates the retired build_dest=wow param it was written for.
+					// Kept as-is so existing dashboards keep working; it now means "the wow
+					// funnel found no archive".
 					recordTracksEvent( 'calypso_blueprint_build_dest_wow_archive_missing', {
 						blueprint: id,
 					} );
@@ -64,7 +66,6 @@ export const BlueprintStep: StepType = ( { navigation } ) => {
 					// Atomic site with nothing to import onto it, and leaving dest on would
 					// send the customer to a site-spec waiting for an import that never runs.
 					const sanitized = new URLSearchParams( query );
-					sanitized.delete( 'build_dest' );
 					sanitized.delete( 'wow_funnel' );
 					sanitized.delete( 'dest' );
 					setQuery( sanitized, { replace: true } );
@@ -80,7 +81,7 @@ export const BlueprintStep: StepType = ( { navigation } ) => {
 
 		fetchBlueprint();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ blueprintParam, buildDestParam, wowFunnelParam ] );
+	}, [ blueprintParam, wowFunnelParam ] );
 
 	return (
 		<>
