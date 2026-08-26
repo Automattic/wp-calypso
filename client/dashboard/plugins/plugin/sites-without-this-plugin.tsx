@@ -14,21 +14,21 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { useMemo, useState } from 'react';
-import { Plan } from '../../sites/site-fields';
+import { Name, Plan, SiteLink, URL } from '../../sites/site-fields';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { hasPlanFeature } from '../../utils/site-features';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { getSiteDisplayUrl } from '../../utils/site-url';
-import { PluginSiteFieldContent } from './components/plugin-site-field-content';
 import type { Action, Field } from '@wordpress/dataviews';
 
 const defaultView: View = {
 	type: 'table',
 	fields: [ 'plan' ],
 	sort: { field: 'name', direction: 'asc' },
-	titleField: 'domain',
+	titleField: 'name',
+	descriptionField: 'URL',
 };
 
 type SitesWithoutThisPluginProps = {
@@ -83,18 +83,27 @@ export const SitesWithoutThisPlugin = ( {
 	const fields: Field< Site >[] = useMemo(
 		() => [
 			{
-				id: 'domain',
+				id: 'name',
 				label: __( 'Site' ),
 				getValue: ( { item }: { item: Site } ) => getSiteDisplayName( item ),
 				render: ( { field, item } ) => (
-					<PluginSiteFieldContent
-						site={ item }
-						name={ field.getValue( { item } ) as string }
-						url={ getSiteDisplayUrl( item ) }
-					/>
+					<SiteLink site={ item }>
+						<Name site={ item } value={ field.getValue( { item } ) as string } />
+					</SiteLink>
 				),
 				enableHiding: false,
 				enableSorting: true,
+				enableGlobalSearch: true,
+			},
+			{
+				id: 'URL',
+				label: __( 'URL' ),
+				getValue: ( { item }: { item: Site } ) => getSiteDisplayUrl( item ),
+				render: ( { field, item } ) => (
+					<URL site={ item } value={ field.getValue( { item } ) as string } />
+				),
+				enableHiding: false,
+				enableSorting: false,
 				enableGlobalSearch: true,
 			},
 			{
