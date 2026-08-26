@@ -132,6 +132,12 @@
 	padding: 0;
 }
 
+// The sticky fixed area sits flush against the first card and would otherwise
+// paint over the 1px box-shadow that draws the card's top border.
+.search-stream__post-results {
+	padding-top: 1px;
+}
+
 // Post results and recommendations in Search
 .is-reader-page .search-stream .reader__content {
 	display: flex;
