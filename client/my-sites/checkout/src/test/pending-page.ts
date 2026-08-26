@@ -227,7 +227,7 @@ describe( 'getRedirectFromPendingPage', () => {
 				receiptId: 12345,
 				siteSlug: 'example.com',
 			} )
-		).toEqual( { url: '/checkout/thank-you/example.com/12345' } );
+		).toEqual( { url: '/checkout/thank-you/example.com/12345#section' } );
 	} );
 
 	it( 'returns a receipt interpolated relative url if there is also a receipt', () => {

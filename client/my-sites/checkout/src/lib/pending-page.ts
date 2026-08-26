@@ -362,15 +362,13 @@ function buildSuccessRedirect( {
 	purchaseId: number | undefined;
 } ): RedirectInstructions {
 	const fallbackUrl = getDefaultSuccessUrl( siteSlug, effectiveReceiptId );
-	// A bare '/' is not a useful post-checkout destination, so use the thank-you
-	// page, keeping any query params (e.g. ?checkout_type=unified).
-	const isBareRoot =
-		redirectTo === '/' || redirectTo?.startsWith( '/?' ) || redirectTo?.startsWith( '/#' );
-	const bareRootQuery = redirectTo?.startsWith( '/?' ) ? redirectTo.slice( 1 ) : '';
-	let interpolated = interpolateReceiptId(
-		! redirectTo || isBareRoot ? fallbackUrl + bareRootQuery : redirectTo,
-		effectiveReceiptId
-	);
+	let destination = redirectTo ?? fallbackUrl;
+	if ( destination === '/' || destination.startsWith( '/?' ) || destination.startsWith( '/#' ) ) {
+		// The bare root is not a useful post-checkout destination; swap it for the
+		// thank-you page, keeping any query params (e.g. ?checkout_type=unified).
+		destination = fallbackUrl + destination.slice( 1 );
+	}
+	let interpolated = interpolateReceiptId( destination, effectiveReceiptId );
 	if ( interpolated.includes( ':purchaseId' ) ) {
 		if ( purchaseId === undefined ) {
 			return { url: fallbackUrl };
