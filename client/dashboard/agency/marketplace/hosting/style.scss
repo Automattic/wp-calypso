@@ -73,6 +73,21 @@
 	box-shadow: inset 0 0 0 1.5px var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
 }
 
+.marketplace-hosting__guide-compare {
+	display: grid;
+	grid-template-columns: repeat( 3, 1fr );
+	gap: 16px;
+	align-items: stretch;
+
+	@media ( max-width: 782px ) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.marketplace-hosting__guide-compare-col {
+	block-size: 100%;
+}
+
 .marketplace-hosting__guide-steps {
 	display: flex;
 	gap: 6px;
