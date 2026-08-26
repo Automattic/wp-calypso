@@ -11,6 +11,7 @@ import { getSiteBlockingStatus } from '../../utils/site-status';
 import { siteTypeSupportsFeature } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { canManageSite, canDisconnectSite, canLeaveSite, canRestoreSite } from '../features';
+import { siteWpAdminLandingUrl } from '../overview-blogger/mock-sites';
 import type { Site } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
 
@@ -37,7 +38,7 @@ export function useActions(): Action< Site >[] {
 				const site = sites[ 0 ];
 				recordTracksEvent( 'calypso_dashboard_sites_action_click', { action: 'admin' } );
 				if ( site.options?.admin_url ) {
-					window.open( site.options.admin_url, '_blank' );
+					window.open( siteWpAdminLandingUrl( site.options.admin_url ), '_blank' );
 				}
 			},
 			isEligible: ( item: Site ) => ( item.is_deleted || ! item.options?.admin_url ? false : true ),

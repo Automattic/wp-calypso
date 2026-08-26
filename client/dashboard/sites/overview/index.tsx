@@ -24,8 +24,7 @@ import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site
 import { SitesNoticeArbiter } from '../notice-arbiter';
 import AgencySiteShareCard from '../overview-agency-site-share-card';
 import BackupCard from '../overview-backup-card';
-import BloggerSiteOverview from '../overview-blogger';
-import { isMockBloggerSiteSlug } from '../overview-blogger/mock-sites';
+import { isMockBloggerSiteSlug, siteWpAdminLandingUrl } from '../overview-blogger/mock-sites';
 import DeveloperSiteOverview from '../overview-developer';
 import DIFMUpsellCard from '../overview-difm-upsell-card';
 import DomainsCard from '../overview-domains-card';
@@ -212,7 +211,7 @@ function SiteOverview( {
 				<Button
 					__next40pxDefaultSize
 					variant="primary"
-					href={ site.options.admin_url }
+					href={ siteWpAdminLandingUrl( site.options.admin_url ) }
 					onClick={ () =>
 						recordTracksEvent( 'calypso_dashboard_site_overview_wp_admin_clicked', {
 							site_id: site.ID,
@@ -231,7 +230,7 @@ function SiteOverview( {
 					ref={ wpAdminButtonRef }
 					__next40pxDefaultSize
 					variant="primary"
-					href={ site.options.admin_url }
+					href={ siteWpAdminLandingUrl( site.options.admin_url ) }
 					icon={ wordpress }
 					onClick={ () =>
 						recordTracksEvent( 'calypso_dashboard_site_overview_wp_admin_clicked', {
@@ -307,11 +306,8 @@ function SiteOverview( {
 
 export default function SiteOverviewRoot( props: Parameters< typeof SiteOverview >[ 0 ] ) {
 	const workspace = useWorkspace();
-	if ( isMockBloggerSiteSlug( props.siteSlug ) ) {
-		if ( workspace !== 'essential' ) {
-			return <DeveloperSiteOverview siteSlug={ props.siteSlug } />;
-		}
-		return <BloggerSiteOverview siteSlug={ props.siteSlug } />;
+	if ( isMockBloggerSiteSlug( props.siteSlug ) && workspace !== 'essential' ) {
+		return <DeveloperSiteOverview siteSlug={ props.siteSlug } />;
 	}
 	return <SiteOverview { ...props } />;
 }

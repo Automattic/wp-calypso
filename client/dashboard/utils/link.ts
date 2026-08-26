@@ -56,6 +56,20 @@ export function dashboardOrigins(): string[] {
 		origins.push( CALYPSO_LIVE_ORIGIN );
 	}
 
+	// Prototype (untangling IA): the untangled wp-admin lives on local Studio
+	// sites, and it hands off to stepper flows like /setup/domain with a
+	// back_to pointing at the wp-admin page the visitor came from. Those
+	// origins are not dashboards, so back_to was rejected and Back fell through
+	// to /sites — dropping the visitor out of wp-admin mid-flow. Allow them in
+	// development only; localhost never resolves in production.
+	if ( process.env.NODE_ENV !== 'production' ) {
+		origins.push(
+			...[ 8882, 8883, 8885, 8886, 8887, 8888 ].map(
+				( studioPort ) => `http://localhost:${ studioPort }`
+			)
+		);
+	}
+
 	return origins;
 }
 

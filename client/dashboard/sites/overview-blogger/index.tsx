@@ -15,7 +15,7 @@ import {
 	Button,
 	Icon,
 } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
+import { useResizeObserver, useViewportMatch } from '@wordpress/compose';
 import {
 	backup,
 	chartBar,
@@ -49,7 +49,13 @@ import { SectionHeader } from '../../components/section-header';
 import { Stat } from '../../components/stat';
 import { SummaryButtonCardFooter } from '../../components/summary-button-card-footer';
 import { Text } from '../../components/text';
-import { getMockBloggerSite, SOLO_BLOGGER_SITE_SLUG } from './mock-sites';
+import SitePreview from '../site-preview';
+import {
+	getMockBloggerSite,
+	SOLO_BLOGGER_SITE_SLUG,
+	siteWpAdminLandingUrl,
+	wpAdminPageUrl,
+} from './mock-sites';
 import type { BloggerTier } from './mock-sites';
 import type { Site } from '@automattic/api-core';
 import type { ReactElement, ReactNode } from 'react';
@@ -84,20 +90,17 @@ function getGridLayout( {
 	return { columns: 2, rows: Math.ceil( count / 2 ) };
 }
 
-const TIER_PREVIEW_THEME: Record< BloggerTier, string > = {
-	free: 'lettre',
-	premium: 'dorna',
-	business: 'stewart',
-};
-
-function SitePreviewColumn( { site, tier }: { site: Site; tier: BloggerTier } ) {
+function SitePreviewColumn( { site }: { site: Site } ) {
+	const [ resizeListener, { width } ] = useResizeObserver();
 	return (
 		<Card className="blogger-overview-preview">
 			<a href={ site.URL } target="_blank" rel="noreferrer">
-				<img
-					src={ `https://s0.wp.com/wp-content/themes/pub/${ TIER_PREVIEW_THEME[ tier ] }/screenshot.png` }
-					alt={ `Preview of ${ site.name }` }
-				/>
+				{ resizeListener }
+				{ !! width && (
+					<div style={ { height: width * 0.75, overflow: 'hidden' } }>
+						<SitePreview url={ site.URL } scale={ width / 1200 } height={ 900 } />
+					</div>
+				) }
 				<span className="blogger-overview-preview__overlay">
 					<span className="blogger-overview-preview__label">Visit your site</span>
 				</span>
@@ -257,7 +260,7 @@ function ActivityCard( {
 			{ items.length > 0 && (
 				<SummaryButtonCardFooter
 					title="See all activity"
-					href={ `https://wordpress.com/activity-log/${ site.slug }` }
+					href={ `/sites/${ site.slug }/logs/activity` }
 					density="medium"
 				/>
 			) }
@@ -266,7 +269,7 @@ function ActivityCard( {
 }
 
 function BackupCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
-	if ( tier === 'business' ) {
+	if ( tier === 'business' || tier === 'commerce' ) {
 		return (
 			<OverviewCard
 				title="Last backup"
@@ -284,13 +287,13 @@ function BackupCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
 			heading="Your posts aren’t backed up"
 			description="Automatic daily backups and one-click restores come with the Business plan."
 			intent="upsell"
-			link={ `https://wordpress.com/plans/${ site.slug }` }
+			link={ wpAdminPageUrl( site.options?.admin_url, 'admin.php?page=untangling-mysite&ms=plan' ) }
 		/>
 	);
 }
 
 function ScanCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
-	if ( tier === 'business' ) {
+	if ( tier === 'business' || tier === 'commerce' ) {
 		return (
 			<OverviewCard
 				title="Last scan"
@@ -332,6 +335,11 @@ const TIER_PERFORMANCE: Record<
 		description: 'Large images are slowing your homepage. Fix them in one click.',
 		intent: 'warning',
 	},
+	commerce: {
+		heading: 'Looking good',
+		description: 'Your store loads quickly for most visitors.',
+		intent: 'success',
+	},
 };
 
 function PerformanceCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
@@ -359,6 +367,25 @@ function PerformanceCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
 function PlanCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
 	switch ( tier ) {
 		case 'free':
+			if ( site.slug === SOLO_BLOGGER_SITE_SLUG ) {
+				return (
+					<OverviewCard
+						title="Plan"
+						icon={ wordpress }
+						heading="Free"
+						description="Upgrade for more space, a free domain, and no ads."
+						link={ `https://wordpress.com/plans/${ site.slug }` }
+						bottom={
+							<VStack spacing={ 4 }>
+								<StorageStat used="716 MB" max="1 GB" percent={ 70 } progressColor="alert-yellow" />
+								<Text variant="muted" lineHeight="16px" size={ 12 }>
+									Your photos are filling this fast. Paid plans start at 13 GB.
+								</Text>
+							</VStack>
+						}
+					/>
+				);
+			}
 			return (
 				<OverviewCard
 					title="Plan"
@@ -370,32 +397,13 @@ function PlanCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
 						<VStack spacing={ 4 }>
 							<StorageStat used="118 MB" max="1 GB" percent={ 12 } />
 							<Text variant="muted" lineHeight="16px" size={ 12 }>
-								Photos and videos fill this fast — paid plans start at 13 GB.
+								Photos and videos fill this fast. Paid plans start at 13 GB.
 							</Text>
 						</VStack>
 					}
 				/>
 			);
 		case 'premium':
-			if ( site.slug === SOLO_BLOGGER_SITE_SLUG ) {
-				return (
-					<OverviewCard
-						title="Plan"
-						icon={ wordpress }
-						heading="Premium"
-						description="Renews on March 3, 2027."
-						link={ `https://wordpress.com/plans/${ site.slug }` }
-						bottom={
-							<VStack spacing={ 4 }>
-								<StorageStat used="12.2 GB" max="13 GB" percent={ 94 } progressColor="alert-red" />
-								<Text variant="muted" lineHeight="16px" size={ 12 }>
-									Storage almost full — the Business plan includes 50 GB.
-								</Text>
-							</VStack>
-						}
-					/>
-				);
-			}
 			return (
 				<OverviewCard
 					title="Plan"
@@ -417,11 +425,27 @@ function PlanCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
 					title="Plan"
 					icon={ wordpress }
 					heading="Business"
-					description="Renews on December 12, 2026."
+					description="Renews on March 14, 2027."
 					link={ `https://wordpress.com/plans/my-plan/${ site.slug }` }
 					bottom={
 						<VStack spacing={ 4 }>
-							<StorageStat used="4.6 GB" max="50 GB" percent={ 9 } />
+							<StorageStat used="41.8 GB" max="50 GB" percent={ 84 } />
+							<BandwidthStat />
+						</VStack>
+					}
+				/>
+			);
+		case 'commerce':
+			return (
+				<OverviewCard
+					title="Plan"
+					icon={ wordpress }
+					heading="Commerce"
+					description="Renews on March 14, 2027."
+					link={ `https://wordpress.com/plans/my-plan/${ site.slug }` }
+					bottom={
+						<VStack spacing={ 4 }>
+							<StorageStat used="22.4 GB" max="50 GB" percent={ 45 } />
 							<BandwidthStat />
 						</VStack>
 					}
@@ -431,19 +455,22 @@ function PlanCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
 }
 
 function DomainPromoBanner( { site }: { site: Site } ) {
+	const domain = site.slug.replace( '.wordpress.com', '.com' );
 	return (
 		<div className="blogger-overview-promo is-domain">
 			<HStack spacing={ 8 } justify="space-between" alignment="center" wrap>
 				<VStack spacing={ 4 } alignment="flex-start">
-					<h2 className="blogger-overview-promo__title">sunrisestories.blog is waiting for you</h2>
+					<h2 className="blogger-overview-promo__title">{ domain } is waiting for you</h2>
 					<p className="blogger-overview-promo__description">
-						Save up to 55% on annual plans and get your domain free for the first year — along with
+						Save up to 55% on annual plans and get your domain free for the first year, along with
 						more space for your photos and no ads between your stories.
 					</p>
 					<Button
 						__next40pxDefaultSize
 						variant="primary"
-						href={ `https://wordpress.com/domains/add/${ site.slug }` }
+						href={ `/setup/domain?dashboard=dotcom&back_to=${ encodeURIComponent(
+							`/sites/${ site.slug }`
+						) }` }
 					>
 						Claim your domain
 					</Button>
@@ -456,7 +483,7 @@ function DomainPromoBanner( { site }: { site: Site } ) {
 					</span>
 					<span className="blogger-overview-promo__browser-address">
 						<Icon icon={ lockOutline } size={ 16 } />
-						sunrisestories.blog
+						{ domain }
 					</span>
 				</div>
 			</HStack>
@@ -480,13 +507,16 @@ function GrowPromoBanner( { site }: { site: Site } ) {
 						Your next thousand readers are out there
 					</h2>
 					<p className="blogger-overview-promo__description">
-						The Business plan is a growth kit for creators — reach new readers, keep them close with
+						The Business plan is a growth kit for creators. Reach new readers, keep them close with
 						newsletters, and give your photos and videos all the room they deserve.
 					</p>
 					<Button
 						__next40pxDefaultSize
 						variant="primary"
-						href={ `https://wordpress.com/plans/${ site.slug }` }
+						href={ wpAdminPageUrl(
+							site.options?.admin_url,
+							'admin.php?page=untangling-mysite&ms=plan'
+						) }
 					>
 						Grow with Business
 					</Button>
@@ -511,13 +541,16 @@ function MonetizePromoBanner( { site }: { site: Site } ) {
 				<VStack spacing={ 4 } alignment="flex-start">
 					<h2 className="blogger-overview-promo__title">Turn your readers into income</h2>
 					<p className="blogger-overview-promo__description">
-						You have 1,024 subscribers. Offer them a paid newsletter or exclusive posts — you set
-						the price, we handle the billing.
+						You have 1,024 subscribers. Offer them a paid newsletter or exclusive posts. You set the
+						price, we handle the billing.
 					</p>
 					<Button
 						__next40pxDefaultSize
 						className="blogger-overview-promo__button-inverted"
-						href={ `https://wordpress.com/earn/${ site.slug }` }
+						href={ wpAdminPageUrl(
+							site.options?.admin_url,
+							'admin.php?page=untangling-mysite&ms=plan'
+						) }
 					>
 						Set up paid subscriptions
 					</Button>
@@ -542,6 +575,7 @@ function PromoBanner( { site, tier }: { site: Site; tier: BloggerTier } ) {
 		case 'premium':
 			return <GrowPromoBanner site={ site } />;
 		case 'business':
+		case 'commerce':
 			return <MonetizePromoBanner site={ site } />;
 	}
 }
@@ -580,7 +614,7 @@ const TIER_ACTIVITY: Record< BloggerTier, ActivityItem[] > = {
 		},
 		{
 			icon: chartBar,
-			text: 'Your busiest day yet — 12 visitors',
+			text: 'Your busiest day yet: 12 visitors',
 			meta: '2 weeks ago',
 		},
 		{
@@ -642,7 +676,7 @@ const TIER_ACTIVITY: Record< BloggerTier, ActivityItem[] > = {
 		},
 		{
 			icon: chartBar,
-			text: 'Traffic spike — 320 views in one day',
+			text: 'Traffic spike: 320 views in one day',
 			meta: '2 weeks ago',
 		},
 		{
@@ -694,12 +728,49 @@ const TIER_ACTIVITY: Record< BloggerTier, ActivityItem[] > = {
 		},
 		{
 			icon: shield,
-			text: 'Security scan completed — no threats found',
+			text: 'Security scan completed, no threats found',
 			meta: 'Last week',
 		},
 		{
 			icon: chartBar,
 			text: 'Monthly traffic report is ready',
+			meta: '2 weeks ago',
+		},
+	],
+	commerce: [
+		{
+			icon: megaphone,
+			text: '3 new orders today',
+			meta: '2h ago',
+		},
+		{
+			icon: backup,
+			text: 'Backup completed',
+			meta: '3h ago',
+		},
+		{
+			icon: pencil,
+			text: 'Published a new product',
+			meta: 'Yesterday',
+		},
+		{
+			icon: people,
+			text: '5 customers created accounts',
+			meta: '2 days ago',
+		},
+		{
+			icon: comment,
+			text: '2 new product reviews',
+			meta: '3 days ago',
+		},
+		{
+			icon: shield,
+			text: 'Security scan completed, no threats found',
+			meta: 'Last week',
+		},
+		{
+			icon: chartBar,
+			text: 'Monthly sales report is ready',
 			meta: '2 weeks ago',
 		},
 	],
@@ -743,7 +814,7 @@ export default function BloggerSiteOverview( { siteSlug }: { siteSlug: string } 
 	const { site, tier } = mock;
 	const gridLayout = getGridLayout( { count: 4, isLargeViewport, isSmallViewport } );
 	const headerFields =
-		tier === 'business'
+		tier === 'business' || tier === 'commerce'
 			? 'WordPress 7.0.1 · PHP 8.3 · Hosted on WordPress.com'
 			: 'WordPress 7.0.1 · Hosted on WordPress.com';
 
@@ -758,7 +829,7 @@ export default function BloggerSiteOverview( { siteSlug }: { siteSlug: string } 
 						<Button
 							__next40pxDefaultSize
 							variant="primary"
-							href={ site.options?.admin_url }
+							href={ siteWpAdminLandingUrl( site.options?.admin_url ) }
 							icon={ wordpress }
 						>
 							WP Admin
@@ -769,7 +840,7 @@ export default function BloggerSiteOverview( { siteSlug }: { siteSlug: string } 
 		>
 			<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
 				<Grid { ...gridLayout } gap={ spacing }>
-					<SitePreviewColumn site={ site } tier={ tier } />
+					<SitePreviewColumn site={ site } />
 					<TierPrimaryCards site={ site } tier={ tier } spacing={ spacing } />
 				</Grid>
 				<Divider
@@ -791,7 +862,7 @@ export default function BloggerSiteOverview( { siteSlug }: { siteSlug: string } 
 							title="Support"
 							icon={ help }
 							heading="Need a hand?"
-							description="Get instant answers from our AI assistant, or chat with a Happiness Engineer — any time."
+							description="Get instant answers from our AI assistant, or chat with a Happiness Engineer, any time."
 							link="https://wordpress.com/help"
 							onClick={ ( event ) => {
 								event?.preventDefault();

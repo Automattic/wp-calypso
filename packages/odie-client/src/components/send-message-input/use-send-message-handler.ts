@@ -26,79 +26,86 @@ export function useSendMessageHandler( {
 	trackEvent,
 	sendMessage,
 }: UseSendMessageHandlerProps ) {
-	return useCallback( async () => {
-		const message = inputValue.trim().substring( 0, MAX_MESSAGE_LENGTH );
+	// `overrideContent` sends the given text instead of the current input value —
+	// used by the auto-send flow, where the input state may lag the query param.
+	// Guarded by type since form onSubmit handlers may pass an event object.
+	return useCallback(
+		async ( overrideContent?: unknown ) => {
+			const rawContent = typeof overrideContent === 'string' ? overrideContent : inputValue;
+			const message = rawContent.trim().substring( 0, MAX_MESSAGE_LENGTH );
 
-		// Allow submission if there's either a message or attachments
-		if ( ( message === '' && ! hasAttachments ) || isChatBusy ) {
-			return;
-		}
-
-		// Immediately clear the input field
-		if ( chat?.provider === 'odie' ) {
-			setInputValue( '' );
-		} else if ( chat.conversationId ) {
-			Smooch?.stopTyping?.();
-			sendAttachments();
-		}
-
-		if ( ! message ) {
-			textareaRef.current?.focus();
-			return;
-		}
-
-		try {
-			trackEvent( 'chat_message_action_send', {
-				message_length: inputValue.length,
-				provider: chat?.provider,
-			} );
-
-			const messageObj = {
-				content: inputValue,
-				role: 'user',
-				type: 'message',
-			} as Message;
-
-			if ( chat?.provider === 'zendesk' ) {
-				messageObj.metadata = {
-					temporary_id: crypto.randomUUID(),
-					local_timestamp: Date.now() / 1000,
-				};
+			// Allow submission if there's either a message or attachments
+			if ( ( message === '' && ! hasAttachments ) || isChatBusy ) {
+				return;
 			}
 
-			sendMessage( messageObj ).catch( ( error ) => {
-				if ( error?.type === 'abort' ) {
-					setInputValue( inputValue );
-				}
-			} );
-
-			// Clear input after zendesk messages are sent
-			if ( chat?.provider === 'zendesk' ) {
+			// Immediately clear the input field
+			if ( chat?.provider === 'odie' ) {
 				setInputValue( '' );
+			} else if ( chat.conversationId ) {
+				Smooch?.stopTyping?.();
+				sendAttachments();
 			}
 
-			trackEvent( 'chat_message_action_receive', {
-				message_length: inputValue.length,
-				provider: chat?.provider,
-			} );
-		} catch ( e ) {
-			const error = e as Error;
-			trackEvent( 'chat_message_error', {
-				error: error?.message,
-			} );
-		} finally {
-			textareaRef.current?.focus();
-		}
-	}, [
-		inputValue,
-		isChatBusy,
-		chat?.provider,
-		sendMessage,
-		trackEvent,
-		chat.conversationId,
-		sendAttachments,
-		hasAttachments,
-		setInputValue,
-		textareaRef,
-	] );
+			if ( ! message ) {
+				textareaRef.current?.focus();
+				return;
+			}
+
+			try {
+				trackEvent( 'chat_message_action_send', {
+					message_length: rawContent.length,
+					provider: chat?.provider,
+				} );
+
+				const messageObj = {
+					content: rawContent,
+					role: 'user',
+					type: 'message',
+				} as Message;
+
+				if ( chat?.provider === 'zendesk' ) {
+					messageObj.metadata = {
+						temporary_id: crypto.randomUUID(),
+						local_timestamp: Date.now() / 1000,
+					};
+				}
+
+				sendMessage( messageObj ).catch( ( error ) => {
+					if ( error?.type === 'abort' ) {
+						setInputValue( inputValue );
+					}
+				} );
+
+				// Clear input after zendesk messages are sent
+				if ( chat?.provider === 'zendesk' ) {
+					setInputValue( '' );
+				}
+
+				trackEvent( 'chat_message_action_receive', {
+					message_length: rawContent.length,
+					provider: chat?.provider,
+				} );
+			} catch ( e ) {
+				const error = e as Error;
+				trackEvent( 'chat_message_error', {
+					error: error?.message,
+				} );
+			} finally {
+				textareaRef.current?.focus();
+			}
+		},
+		[
+			inputValue,
+			isChatBusy,
+			chat?.provider,
+			sendMessage,
+			trackEvent,
+			chat.conversationId,
+			sendAttachments,
+			hasAttachments,
+			setInputValue,
+			textareaRef,
+		]
+	);
 }

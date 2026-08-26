@@ -1,1 +1,93 @@
 @import '@automattic/calypso-color-schemes/root-only';
+
+$help-center-docked-width: 410px;
+$help-center-dock-gap: 16px;
+$help-center-dock-radius: 8px;
+
+// Docked Help Center — site-editor-style frames: the canvas keeps the app
+// background, the sidebar sits directly on it (like the editor's rail), and
+// the main content and the assistant float side by side as bordered, rounded
+// panels. `has-docked-help-center` is toggled by OmnibarHelpCenter.
+.dashboard-root__body {
+	transition: padding-inline-end 0.25s ease-out;
+}
+
+.dashboard-root__content {
+	transition: transform 0.3s ease-in, margin 0.25s ease-out, border-radius 0.25s ease-out;
+}
+
+@media ( min-width: 480px ) {
+	html.has-docked-help-center {
+		// The page itself no longer scrolls — each panel scrolls internally.
+		overflow: hidden;
+
+		.dashboard-root__body {
+			padding-inline-end: calc( #{$help-center-docked-width} + #{$help-center-dock-gap} );
+		}
+
+		.dashboard-responsive-sidebar__sidebar {
+			background-color: transparent;
+			border-inline-end-color: transparent;
+		}
+
+		.dashboard-root__content {
+			margin: $help-center-dock-gap;
+			height: calc( 100vh - var( --masterbar-height, 47px ) - 2 * #{$help-center-dock-gap} );
+			box-sizing: border-box;
+			background: var( --dashboard__background-color );
+			border: 1px solid var( --dashboard-surface__border-color );
+			border-radius: $help-center-dock-radius;
+			overflow-x: hidden;
+			overflow-y: auto;
+		}
+
+		.help-center > div.help-center__container.is-desktop {
+			top: calc( var( --masterbar-height, 47px ) + #{$help-center-dock-gap} );
+			inset-inline-end: $help-center-dock-gap;
+			bottom: $help-center-dock-gap;
+			width: $help-center-docked-width;
+			height: auto;
+			max-height: none;
+			border-radius: $help-center-dock-radius;
+			border: 1px solid var( --dashboard-surface__border-color );
+			box-shadow: none;
+			overflow: clip;
+			// Dragging in floating mode leaves an inline translate() on the
+			// panel; a docked panel must sit exactly in its column. The slide-in
+			// uses the separate `translate` property, which `transform: none`
+			// doesn't suppress.
+			transform: none !important;
+			animation: help-center-dock-in 0.25s ease-out;
+
+			// The header rounds its own top corners at the floating panel's
+			// 16px; match the docked radius so the corners align.
+			.help-center__container-header {
+				border-start-start-radius: $help-center-dock-radius;
+				border-start-end-radius: $help-center-dock-radius;
+			}
+
+			// The header title doubles as the react-draggable handle; a docked
+			// panel must not be dragged out of its column.
+			.help-center-header__text {
+				pointer-events: none;
+			}
+
+			// The Card's Elevation layer paints a 16px-radius shadow inside the
+			// panel (it lives in an inner Content wrapper, so it survives
+			// clipping) — the docked panel's border is the only separation.
+			[data-wp-component='Elevation'] {
+				display: none;
+			}
+		}
+	}
+}
+
+@keyframes help-center-dock-in {
+	from {
+		translate: 100% 0;
+	}
+
+	to {
+		translate: 0 0;
+	}
+}

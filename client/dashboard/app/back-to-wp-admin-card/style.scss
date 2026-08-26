@@ -1,0 +1,134 @@
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/variables";
+@import "../responsive-sidebar/variables";
+
+.back-to-wp-admin-card {
+	position: fixed;
+	inset-block-end: 24px;
+	/* Centered within the sidebar column. */
+	inset-inline-start: ($sidebar-width - 240px) * 0.5;
+	z-index: 3;
+	width: 240px;
+	height: 180px;
+	border-radius: $radius-large;
+	background: $white;
+	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 12px 32px rgba(0, 0, 0, 0.25);
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	/* `backwards` keeps the card hidden during the delay but releases the
+	   transform after the animation, so the hover scale can apply. */
+	animation: back-to-wp-admin-card-enter 0.45s cubic-bezier(0.22, 1, 0.36, 1) 1.5s backwards;
+
+	&:hover,
+	&:focus-within {
+		transform: scale(1.04);
+		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 16px 40px rgba(0, 0, 0, 0.3);
+	}
+}
+
+.back-to-wp-admin-card.is-leaving {
+	animation: back-to-wp-admin-card-leave 0.2s ease-in both;
+}
+
+.back-to-wp-admin-card-link {
+	position: relative;
+	display: block;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	border-radius: inherit;
+
+	iframe {
+		pointer-events: none;
+	}
+}
+
+.back-to-wp-admin-card-preview {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: top;
+}
+
+.back-to-wp-admin-card-overlay {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: inherit;
+	background: rgba(0, 0, 0, 0.45);
+	opacity: 0;
+	/* Clicks outside the CTA fall through to the underlying link. */
+	pointer-events: none;
+	transition: opacity 0.15s ease;
+}
+
+.back-to-wp-admin-card-cta.components-button {
+	pointer-events: auto;
+}
+
+.back-to-wp-admin-card-dismiss.components-button {
+	position: absolute;
+	inset-block-start: 4px;
+	inset-inline-end: 4px;
+	width: 28px;
+	height: 28px;
+	min-width: 28px;
+	padding: 0;
+	justify-content: center;
+	color: $white;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.15s ease;
+
+	&:hover,
+	&:focus {
+		color: $white;
+	}
+}
+
+.back-to-wp-admin-card:hover .back-to-wp-admin-card-overlay,
+.back-to-wp-admin-card:focus-within .back-to-wp-admin-card-overlay {
+	opacity: 1;
+}
+
+.back-to-wp-admin-card:hover .back-to-wp-admin-card-dismiss.components-button,
+.back-to-wp-admin-card:focus-within .back-to-wp-admin-card-dismiss.components-button {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+@keyframes back-to-wp-admin-card-enter {
+	from {
+		opacity: 0;
+		transform: translateY(16px) scale(0.95);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+@keyframes back-to-wp-admin-card-leave {
+	to {
+		opacity: 0;
+		transform: translateY(8px) scale(0.97);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.back-to-wp-admin-card {
+		/* Keep a near-instant animation (not `none`) so animationend still
+		   fires and the dismissed card unmounts. */
+		animation-duration: 1ms;
+		animation-delay: 0ms;
+		transition: none;
+
+		&:hover,
+		&:focus-within {
+			transform: none;
+		}
+	}
+}

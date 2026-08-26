@@ -1,0 +1,221 @@
+/* Prototype chrome for the MSD: floating W fab + controls panel, matching the
+   global Prototype controls the untangling mu-plugin injects in wp-admin. */
+
+.untangling-mproto {
+	position: fixed;
+	inset-inline-end: 16px;
+	inset-block-end: 16px;
+	z-index: 999991;
+	font-family: -apple-system, blinkmacsystemfont, "Segoe UI", roboto, sans-serif;
+}
+
+.untangling-mproto-fab {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	padding: 0;
+	border: 1px solid #dcdcde;
+	border-radius: 50%;
+	background: #fff;
+	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
+	color: #3858e9;
+	cursor: pointer;
+}
+
+.untangling-mproto-panel {
+	position: absolute;
+	inset-inline-end: 0;
+	inset-block-end: 0;
+	width: 280px;
+	box-sizing: border-box;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	background: #fff;
+	box-shadow: 0 4px 16px rgba( 0, 0, 0, 0.15 );
+}
+
+.untangling-mproto-panel[hidden] {
+	display: none;
+}
+
+.untangling-mproto-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 16px;
+	border-bottom: 1px solid #f0f0f0;
+
+	span {
+		font-size: 11px;
+		font-weight: 500;
+		letter-spacing: 0.5px;
+		text-transform: uppercase;
+		color: #757575;
+	}
+}
+
+.untangling-mproto-min {
+	border: 0;
+	background: none;
+	padding: 0 2px;
+	color: #1e1e1e;
+	cursor: pointer;
+	font-size: 18px;
+	line-height: 1;
+}
+
+.untangling-mproto-body {
+	padding: 16px;
+
+	label {
+		display: block;
+		margin: 16px 0 8px;
+		font-size: 11px;
+		font-weight: 500;
+		letter-spacing: 0.5px;
+		text-transform: uppercase;
+		color: #1e1e1e;
+	}
+
+	label:first-child {
+		margin-top: 0;
+	}
+}
+
+.untangling-mproto-seg {
+	display: flex;
+	overflow: hidden;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+
+	button {
+		flex: 1;
+		border: 0;
+		background: #fff;
+		padding: 9px 0;
+		font-size: 13px;
+		color: #2c3338;
+		cursor: pointer;
+	}
+
+	button.is-active {
+		background: #2c3338;
+		color: #fff;
+		font-weight: 500;
+	}
+}
+
+.untangling-mproto-copy {
+	display: block;
+	margin-top: 14px;
+	border: 0;
+	background: none;
+	padding: 0;
+	color: #3858e9;
+	text-decoration: underline;
+	cursor: pointer;
+	font-size: 13px;
+}
+
+/* Omnibar upsell pill — same treatment as the wp-admin admin-bar pill
+   (quiet translucent blue, tooltip below), so the offer reads as the same
+   element on both surfaces. Palette declared once here; every value below
+   must stay identical to untangling_upsell_omnibar_css() in the mu-plugin. */
+#wpcom-omnibar a.masterbar__item.untangling-omnibar-nudge {
+	--nudge-pill-bg: rgba( 56, 88, 233, 0.22 );
+	--nudge-pill-bg-hover: rgba( 56, 88, 233, 0.42 );
+	--nudge-pill-ring: rgba( 120, 150, 255, 0.45 );
+	--nudge-pill-ring-hover: rgba( 150, 175, 255, 0.8 );
+	--nudge-pill-text: #dcdcde;
+	--nudge-pill-text-hover: var( --color-masterbar-text, #fff );
+	--nudge-gem: #8ba4ff;
+	--nudge-gem-hover: #b8c8ff;
+	--nudge-tip-bg: #1e1e1e;
+	--nudge-tip-text: #f0f0f1;
+
+	padding: 0 8px;
+
+	&:hover,
+	&:focus {
+		background: transparent;
+	}
+}
+
+#wpcom-omnibar .untangling-nudge-pill {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	/* The upsell glyph carries ~3px of intrinsic whitespace at 16px, so the
+	   icon-side padding and gap are smaller to read as visually even. */
+	gap: 4px;
+	height: 24px;
+	padding-block: 0;
+	padding-inline: 4px 8px;
+	border-radius: 4px;
+	background: var( --nudge-pill-bg );
+	box-shadow: inset 0 0 0 1px var( --nudge-pill-ring );
+	color: var( --nudge-pill-text );
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 24px;
+	white-space: nowrap;
+	transition: background 0.12s linear, box-shadow 0.12s linear, color 0.12s linear;
+}
+
+#wpcom-omnibar .untangling-nudge-pill .untangling-nudge-gem {
+	width: 16px;
+	height: 16px;
+	fill: var( --nudge-gem );
+	transition: fill 0.12s linear;
+}
+
+#wpcom-omnibar .untangling-omnibar-nudge:hover .untangling-nudge-pill,
+#wpcom-omnibar .untangling-omnibar-nudge:focus-visible .untangling-nudge-pill {
+	background: var( --nudge-pill-bg-hover );
+	box-shadow: inset 0 0 0 1px var( --nudge-pill-ring-hover );
+	color: var( --nudge-pill-text-hover );
+}
+
+#wpcom-omnibar .untangling-omnibar-nudge:hover .untangling-nudge-pill .untangling-nudge-gem {
+	fill: var( --nudge-gem-hover );
+}
+
+/* Cursor-following like the wp-admin pricing tips: --untangling-tip-x is set
+   by the delegated mouseover listener in prototype-controls.ts, and falls
+   back to the middle of the pill before the first mouseover. */
+#wpcom-omnibar .untangling-nudge-pill::after {
+	content: attr( data-tip );
+	position: absolute;
+	top: calc( 100% + 8px );
+	left: var( --untangling-tip-x, 50% );
+	transform: translateX( -50% );
+	width: max-content;
+	max-width: 260px;
+	padding: 4px 8px;
+	border-radius: 2px;
+	background: var( --nudge-tip-bg );
+	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.3 );
+	color: var( --nudge-tip-text );
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 1.4;
+	white-space: normal;
+	opacity: 0;
+	pointer-events: none;
+	z-index: 10;
+}
+
+#wpcom-omnibar .untangling-omnibar-nudge:hover .untangling-nudge-pill::after,
+#wpcom-omnibar .untangling-omnibar-nudge:focus-visible .untangling-nudge-pill::after {
+	opacity: 1;
+}
+
+/* The pill stays at every width; the nudge never shrinks, the site title
+   gives way first (the masterbar already ellipsizes it). */
+@media ( max-width: 782px ) {
+	#wpcom-omnibar .untangling-omnibar-nudge {
+		flex: 0 0 auto;
+	}
+}

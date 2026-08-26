@@ -918,8 +918,11 @@ body.is-mobile-app-view {
 			}
 		}
 
-		span.wpcom-button {
-			display: inline-block;
+		a.wpcom-button.components-button {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 0.25em;
 			color: #fff;
 			background-color: #3858e9;
 			border-color: #3858e9;
@@ -934,6 +937,7 @@ body.is-mobile-app-view {
 			font-size: inherit;
 
 			&:hover {
+				color: #fff;
 				background-color: #4664eb;
 				border-color: #4664eb;
 			}

@@ -39,7 +39,12 @@ import { SectionHeader } from '../../components/section-header';
 import { Stat } from '../../components/stat';
 import { SummaryButtonCardFooter } from '../../components/summary-button-card-footer';
 import { Text } from '../../components/text';
-import { getMockBloggerSite, SOLO_BLOGGER_SITE_SLUG } from './../overview-blogger/mock-sites';
+import {
+	getMockBloggerSite,
+	SOLO_BLOGGER_SITE_SLUG,
+	siteWpAdminLandingUrl,
+	wpAdminPageUrl,
+} from './../overview-blogger/mock-sites';
 import type { BloggerTier } from './../overview-blogger/mock-sites';
 import type { Site } from '@automattic/api-core';
 import type { ReactNode } from 'react';
@@ -53,9 +58,11 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 
 const { Tabs } = unlock( privateApis );
 
-const SSH_COMMAND = 'ssh lucastravels.wordpress.com@sftp.wp.com';
+const sshCommand = ( site: Site ) => `ssh ${ site.slug.split( '.' )[ 0 ] }@sftp.wp.com`;
 
-const planLink = ( site: Site ) => `https://wordpress.com/plans/${ site.slug }`;
+const planLink = ( site: Site ) =>
+	wpAdminPageUrl( site.options?.admin_url, 'admin.php?page=untangling-mysite&ms=plan' ) ??
+	`https://wordpress.com/plans/${ site.slug }`;
 
 // Stretches the SectionHeader across the card so its actions right-align;
 // same idiom as overview-domains-card.
@@ -97,6 +104,13 @@ const TIER_VITALS: Record< BloggerTier, Vital[] > = {
 			tone: 'warning',
 		},
 		{ strapline: 'Requests (7d)', metric: '58.2k', description: '+6% week over week' },
+	],
+	commerce: [
+		{ strapline: 'Uptime (30d)', metric: '99.99%', description: 'No incidents' },
+		{ strapline: 'Response time', metric: '203 ms', description: 'avg, 24h' },
+		{ strapline: 'Cache hit rate', metric: '91%', description: 'edge cache' },
+		{ strapline: 'Orders (7d)', metric: '38', description: '+14% week over week' },
+		{ strapline: 'Requests (7d)', metric: '41.7k', description: '+11% week over week' },
 	],
 };
 
@@ -164,10 +178,11 @@ const TIER_ACTIVE_THEME: Record< BloggerTier, string > = {
 	free: 'Stewart',
 	premium: 'Dorna',
 	business: 'Lente',
+	commerce: 'Tsubaki',
 };
 
 function SoftwareCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
-	const isBusiness = tier === 'business';
+	const isBusiness = tier === 'business' || tier === 'commerce';
 
 	return (
 		<Card role="article" className="dev-overview-fill">
@@ -198,7 +213,10 @@ function SoftwareCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
 									<Button
 										variant="link"
 										size="small"
-										href={ `https://wordpress.com/hosting-config/${ site.slug }` }
+										href={ wpAdminPageUrl(
+											site.options?.admin_url,
+											'admin.php?page=untangling-mysite&ms=hosting'
+										) }
 									>
 										Change
 									</Button>
@@ -253,6 +271,7 @@ const TIER_SCORES: Record< BloggerTier, { desktop: number; mobile: number; lastR
 	free: { desktop: 88, mobile: 71, lastRun: '1 day ago' },
 	premium: { desktop: 91, mobile: 78, lastRun: '3 days ago' },
 	business: { desktop: 82, mobile: 74, lastRun: '2 hours ago' },
+	commerce: { desktop: 85, mobile: 69, lastRun: '4 hours ago' },
 };
 
 function ScoreStat( { label, score }: { label: string; score: number } ) {
@@ -320,21 +339,27 @@ const TIER_PLAN_META: Record<
 	},
 	business: {
 		planName: 'Business plan',
-		storageUsed: '4.6 GB',
+		storageUsed: '41.8 GB',
 		storageMax: '50 GB',
-		storagePercent: 9,
+		storagePercent: 84,
+	},
+	commerce: {
+		planName: 'Commerce plan',
+		storageUsed: '22.4 GB',
+		storageMax: '50 GB',
+		storagePercent: 45,
 	},
 };
 
 function ResourcesCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
-	const isBusiness = tier === 'business';
+	const isBusiness = tier === 'business' || tier === 'commerce';
 	const meta =
 		site.slug === SOLO_BLOGGER_SITE_SLUG
 			? {
-					planName: 'Premium plan',
-					storageUsed: '12.2 GB',
-					storageMax: '13 GB',
-					storagePercent: 94,
+					planName: 'Free plan',
+					storageUsed: '716 MB',
+					storageMax: '1 GB',
+					storagePercent: 70,
 			  }
 			: TIER_PLAN_META[ tier ];
 
@@ -392,7 +417,7 @@ function EnvironmentsSection( {
 	columns: number;
 	gap: number;
 } ) {
-	const isBusiness = tier === 'business';
+	const isBusiness = tier === 'business' || tier === 'commerce';
 
 	return (
 		<VStack spacing={ 4 }>
@@ -405,7 +430,7 @@ function EnvironmentsSection( {
 					rows={
 						isBusiness
 							? [
-									{ label: 'URL', value: 'lucastravels.com' },
+									{ label: 'URL', value: site.slug },
 									{ label: 'WordPress', value: '7.0.1' },
 									{ label: 'PHP', value: '8.3' },
 									{ label: 'Object cache', value: 'Enabled' },
@@ -431,7 +456,7 @@ function EnvironmentsSection( {
 						badge="Synced"
 						badgeIntent="success"
 						rows={ [
-							{ label: 'URL', value: 'staging-4021.lucastravels.com' },
+							{ label: 'URL', value: `staging-4021.${ site.slug }` },
 							{ label: 'WordPress', value: '7.0.1' },
 							{ label: 'PHP', value: '8.3' },
 							{ label: 'Last synced', value: '2 days ago' },
@@ -455,7 +480,7 @@ function EnvironmentsSection( {
 						badge="Passing"
 						badgeIntent="success"
 						rows={ [
-							{ label: 'Repository', value: 'lucasmdo/lucastravels-theme' },
+							{ label: 'Repository', value: `lucasmdo/${ site.slug.split( '.' )[ 0 ] }-theme` },
 							{ label: 'Branch', value: 'main' },
 							{ label: 'Last deploy', value: '2h ago · a1b2c3d' },
 							{ label: 'Mode', value: 'Automatic on push' },
@@ -489,7 +514,7 @@ function AccessSection( {
 	columns: number;
 	gap: number;
 } ) {
-	const isBusiness = tier === 'business';
+	const isBusiness = tier === 'business' || tier === 'commerce';
 
 	return (
 		<VStack spacing={ 4 }>
@@ -603,21 +628,21 @@ const LOG_LINES: {
 		severity: 'Deploy',
 		severityClass: 'deploy',
 		date: 'Jul 14, 2026, 6:03 PM',
-		message: 'Deployment of lucasmdo/lucastravels-theme@main finished in 41s (a1b2c3d)',
+		message: 'Deploy from GitHub (main) finished in 41s (a1b2c3d)',
 		kind: 'deploy',
 	},
 	{
 		severity: 'Deploy',
 		severityClass: 'deploy',
 		date: 'Jul 12, 2026, 9:15 AM',
-		message: 'Deployment of lucasmdo/lucastravels-theme@main finished in 38s (e4f5a6b)',
+		message: 'Deploy from GitHub (main) finished in 38s (e4f5a6b)',
 		kind: 'deploy',
 	},
 ];
 
 function LogsCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
 	const [ filter, setFilter ] = useState< LogKind | 'all' >( 'all' );
-	const isBusiness = tier === 'business';
+	const isBusiness = tier === 'business' || tier === 'commerce';
 	const visibleLines =
 		filter === 'all' ? LOG_LINES : LOG_LINES.filter( ( line ) => line.kind === filter );
 
@@ -649,11 +674,7 @@ function LogsCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
 					title="Latest log entries"
 					level={ 3 }
 					actions={
-						<Button
-							variant="secondary"
-							size="compact"
-							href={ `https://wordpress.com/site-logs/${ site.slug }/php` }
-						>
+						<Button variant="secondary" size="compact" href={ `/sites/${ site.slug }/logs/php` }>
 							Open logs
 						</Button>
 					}
@@ -714,7 +735,7 @@ const DEV_PROMO_CONTENT: Record<
 > = {
 	free: {
 		title: 'Bring your own workflow',
-		body: 'Business unlocks the developer platform under this site — SSH and WP-CLI, custom plugins and themes, a staging site, and GitHub deployments.',
+		body: 'Business unlocks the developer platform under this site: SSH and WP-CLI, custom plugins and themes, a staging site, and GitHub deployments.',
 		terminal: [
 			{ command: 'wp plugin install wp-graphql --activate' },
 			{ command: 'git push origin main', comment: '# deploys in ~40s' },
@@ -722,7 +743,7 @@ const DEV_PROMO_CONTENT: Record<
 	},
 	premium: {
 		title: 'One plan away from full control',
-		body: 'Everything locked on this page ships with Business — SSH and WP-CLI, staging, GitHub deployments, and live server logs.',
+		body: 'Everything locked on this page ships with Business: SSH and WP-CLI, staging, GitHub deployments, and live server logs.',
 		terminal: [
 			{ command: 'wp theme activate dorna' },
 			{ command: 'tail -f logs/php-errors.log' },
@@ -731,7 +752,7 @@ const DEV_PROMO_CONTENT: Record<
 };
 
 function DevPromoBanner( { site, tier }: { site: Site; tier: BloggerTier } ) {
-	if ( tier === 'business' ) {
+	if ( tier === 'business' || tier === 'commerce' ) {
 		return null;
 	}
 	const content = DEV_PROMO_CONTENT[ tier ];
@@ -805,7 +826,7 @@ export default function DeveloperSiteOverview( { siteSlug }: { siteSlug: string 
 	}
 
 	const { site, tier } = mock;
-	const isBusiness = tier === 'business';
+	const isBusiness = tier === 'business' || tier === 'commerce';
 	const spacing = isSmallViewport ? 4 : 6;
 	const envColumns = isSmallViewport ? 1 : 3;
 
@@ -826,7 +847,7 @@ export default function DeveloperSiteOverview( { siteSlug }: { siteSlug: string 
 									__next40pxDefaultSize
 									variant="secondary"
 									icon={ code }
-									onClick={ () => window.navigator.clipboard?.writeText( SSH_COMMAND ) }
+									onClick={ () => window.navigator.clipboard?.writeText( sshCommand( site ) ) }
 								>
 									Copy SSH command
 								</Button>
@@ -834,7 +855,7 @@ export default function DeveloperSiteOverview( { siteSlug }: { siteSlug: string 
 							<Button
 								__next40pxDefaultSize
 								variant="primary"
-								href={ site.options?.admin_url }
+								href={ siteWpAdminLandingUrl( site.options?.admin_url ) }
 								icon={ wordpress }
 							>
 								WP Admin

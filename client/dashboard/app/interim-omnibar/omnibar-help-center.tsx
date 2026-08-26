@@ -1,7 +1,12 @@
 import config from '@automattic/calypso-config';
-import { Suspense, lazy, useCallback, useState } from 'react';
+import { useSelect } from '@wordpress/data';
+import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
+// eslint-disable-next-line no-restricted-imports
+import type { HelpCenterSelect } from '@automattic/data-stores';
+
+const HELP_CENTER_STORE = 'automattic/help-center';
 
 const AsyncHelpCenterApp = lazy( () => import( '../help-center/help-center-app' ) );
 
@@ -28,6 +33,38 @@ export default function OmnibarHelpCenter() {
 	const { user } = useAuth();
 	const { isShown, setShowHelpCenter } = useHelpCenter();
 	const [ shouldMount, setShouldMount ] = useState( hasHelpCenterQueryParam );
+	const isMinimized = useSelect(
+		( select ) =>
+			!! ( select( HELP_CENTER_STORE ) as HelpCenterSelect | undefined )?.getIsMinimized?.(),
+		[ isShown ]
+	);
+	const [ displayMode, setDisplayMode ] = useState< 'sidebar' | 'floating' >( () =>
+		window.localStorage.getItem( 'help-center-display-mode' ) === 'floating'
+			? 'floating'
+			: 'sidebar'
+	);
+
+	// The panel header's display-mode menu broadcasts switches via this event.
+	useEffect( () => {
+		const onModeChange = ( event: Event ) => {
+			setDisplayMode( ( event as CustomEvent ).detail === 'floating' ? 'floating' : 'sidebar' );
+		};
+		window.addEventListener( 'help-center-display-mode', onModeChange );
+		return () => {
+			window.removeEventListener( 'help-center-display-mode', onModeChange );
+		};
+	}, [] );
+
+	// Docked mode: the panel renders as a fixed right-hand column (like the site
+	// editor's secondary panels) and this class pushes the dashboard body aside.
+	// Minimizing falls back to the default bottom bar, so the push is released.
+	useEffect( () => {
+		const isDocked = isShown && ! isMinimized && displayMode === 'sidebar';
+		document.documentElement.classList.toggle( 'has-docked-help-center', isDocked );
+		return () => {
+			document.documentElement.classList.remove( 'has-docked-help-center' );
+		};
+	}, [ isShown, isMinimized, displayMode ] );
 
 	const handleClose = useCallback( () => {
 		setShowHelpCenter( false, undefined, true );

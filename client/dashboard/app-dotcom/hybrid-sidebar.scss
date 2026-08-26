@@ -1,0 +1,59 @@
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+/* Prototype: "Hybrid" sidebar variant — the Default sidebar's own styling
+   (light surface, item colors, border) narrowed to wp-admin's 160px column.
+   The content area and background stay exactly as the Default's. The
+   `is-hybrid-sidebar` class is applied to <html> by prototype-controls.ts;
+   switch it from the MSD Prototype controls or with `?sidebar=hybrid`. */
+
+$hybrid-sidebar-width: 160px;
+
+html.is-hybrid-sidebar {
+	.dashboard-responsive-sidebar__sidebar {
+		width: $hybrid-sidebar-width;
+		// The logo row is hidden below, so the `:not(:has(...))` fallback
+		// padding in sidebar.scss never fires; restore it here.
+		padding-block-start: $grid-unit-30;
+	}
+
+	.dashboard-root__body:has( > .dashboard-responsive-sidebar__sidebar ) {
+		padding-inline-start: $hybrid-sidebar-width;
+	}
+
+	.dashboard-responsive-sidebar {
+		width: $hybrid-sidebar-width;
+	}
+
+	.dashboard-root__body:has( .dashboard-responsive-sidebar.is-open ) .dashboard-root__content {
+		transform: translateX( $hybrid-sidebar-width );
+	}
+
+	// The 170px wordmark does not fit the 160px column; no logo in hybrid.
+	.dashboard-responsive-sidebar__logo {
+		display: none;
+	}
+
+	// The 160px column leaves less room; tighten paddings so labels fit.
+	.dashboard-sidebar-navigator__screen {
+		padding: 0 $grid-unit-10;
+	}
+
+	.dashboard-sidebar__expandable-panel .dashboard-sidebar__menu-item {
+		padding-inline: 24px 8px;
+		font-size: 13px;
+	}
+
+	@include break-medium() {
+		.dashboard-root__layout:has( .dashboard-responsive-sidebar__sidebar ) .wpcom-site__logo {
+			inset-inline-start: calc( 50% + #{$hybrid-sidebar-width * 0.5} );
+		}
+	}
+
+	// 240px card no longer fits the 160px column; shrink it to match.
+	.back-to-wp-admin-card {
+		inset-inline-start: 8px;
+		width: 144px;
+		height: 108px;
+	}
+}

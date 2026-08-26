@@ -1,0 +1,82 @@
+@import '@wordpress/base-styles/variables';
+
+/* Prototype: "WP Admin" page style — matches the mu-plugin's My Site pages
+   (title typography, 1008px column, card chrome) so the MSD ↔ wp-admin jump
+   reads as one product. The `is-wpadmin-style` class is applied to <html> by
+   prototype-controls.ts alongside `is-wpadmin-sidebar` when the "WP Admin"
+   MSD style is selected. Scope so far: Sites list + site overviews. */
+
+html.is-wpadmin-style {
+	// My Site page titles are 32px/1.2/500 in the system sans stack — no
+	// Recoleta on that side, so none here either.
+	--dashboard-h1__font-family: #{$default-font};
+	--dashboard-h1__font-weight: 500;
+	--dashboard-h1__line-height: 1.2;
+
+	// 960px content + 2×24px padding, like .ms-page. PageLayout sets
+	// --page-layout-max-width as an inline style, so the variable override
+	// needs !important; fixed-position children (the add-mailbox cart) read
+	// the variable too, which a plain max-width property would miss.
+	.dashboard-page-layout.is-large {
+		--page-layout-max-width: 1008px !important;
+		max-width: 1008px;
+	}
+
+	.dashboard-page-layout {
+		--page-layout-block-padding: 32px;
+	}
+
+	// This version drops the Discover page; the sidebar entry goes with it.
+	.dashboard-sidebar__menu-item[href='/discover'] {
+		display: none;
+	}
+
+	.dashboard-section-header.is-level-1 .dashboard-section-header__description {
+		font-size: 14px;
+		line-height: 20px;
+	}
+
+	.dashboard-section-header.is-level-2 .dashboard-section-header__heading {
+		font-weight: 500;
+		line-height: 1.3;
+	}
+
+	.components-card {
+		border-radius: 8px;
+		box-shadow: 0 0 0 1px #e0e0e0;
+	}
+
+	// Plain content cards only: DataViews tables (edge-to-edge by design) and
+	// card bodies with their own padding treatment must keep it — this rule
+	// out-specifies dataviews-overrides.scss and friends otherwise.
+	.components-card:not( .dashboard-overview-card )
+		> .components-card__body:not( :has( > .dataviews-wrapper ) ):not( .is-size-none ):not( .plugin-switcher-card-body ) {
+		padding: 24px;
+	}
+
+	// Pages that hardcode Recoleta in their own stylesheets; overridden here
+	// so the default look stays untouched.
+	h2.blogger-overview-promo__title {
+		font-family: $default-font;
+		font-weight: 500;
+	}
+
+	.blogger-overview-promo__earnings-value {
+		font-family: $default-font;
+	}
+
+	.site-trial-ended__title,
+	.site-trial-ended__price .plan-price__integer,
+	.email-provider-name,
+	.discover-hero-title,
+	.discover-community-title,
+	.discover-dev-duo-title {
+		font-family: $default-font;
+	}
+
+	// This version drops the site-preview card that floats over the sidebar
+	// after arriving from wp-admin.
+	.back-to-wp-admin-card {
+		display: none;
+	}
+}

@@ -29,4 +29,10 @@ export const DOTCOM_DASHBOARD_SECTION_PATHS = [
 	'/plugins',
 	'/me',
 	'/oauth/token',
+	// Prototype: paths still owned by legacy Calypso sections — claim them for
+	// the dashboard, whose router redirects them to /sites (legacyPathRedirects).
+	'/stats',
+	'/plans',
+	'/reader',
+	'/overview',
 ];

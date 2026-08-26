@@ -34,7 +34,7 @@ import { getSitePlanUpgradeUrl } from '../../utils/site-url';
 import { getVisibilityLabels } from '../../utils/site-visibility';
 import { canManageSite } from '../features';
 import { useAiLaunchpad } from '../hooks/use-ai-launchpad';
-import { getMockSitePreviewImage } from '../overview-blogger/mock-sites';
+import { mockSiteRemoteUrl } from '../overview-blogger/mock-sites';
 import { isSitePlanTrial } from '../plans';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
@@ -146,7 +146,7 @@ export function URL( { site, value }: { site: Site; value: string } ) {
 		<ExternalLink
 			className="dataviews-url-field"
 			style={ titleFieldTextOverflowStyles }
-			href={ site.URL }
+			href={ mockSiteRemoteUrl( site.URL ) ?? site.URL }
 		>
 			{ value }
 		</ExternalLink>
@@ -164,25 +164,6 @@ export function SiteIconLink( props: ComponentProps< typeof SiteIcon > ) {
 export function Preview( { site }: { site: Site } ) {
 	const [ resizeListener, { width } ] = useResizeObserver();
 	const { is_deleted, is_private, URL: url } = site;
-	const mockPreviewImage = getMockSitePreviewImage( site.slug );
-
-	if ( mockPreviewImage ) {
-		return (
-			<img
-				src={ mockPreviewImage }
-				alt={ site.name }
-				loading="lazy"
-				style={ {
-					display: 'block',
-					inlineSize: '100%',
-					blockSize: '100%',
-					objectFit: 'cover',
-					objectPosition: 'top center',
-					borderRadius: 'inherit',
-				} }
-			/>
-		);
-	}
 
 	// If the site is a private A8C site, X-Frame-Options is set to same
 	// origin.

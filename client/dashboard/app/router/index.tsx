@@ -95,6 +95,18 @@ const createRouteTree = ( config: AppConfig ) => {
 		children.push( startStoreRoute );
 	}
 
+	for ( const path of config.supports.legacyPathRedirects ?? [] ) {
+		children.push(
+			createRoute( {
+				getParentRoute: () => rootRoute,
+				path,
+				beforeLoad: ( { context }: { context: RouteContext } ) => {
+					throw dashboardRedirect( { to: context.config?.mainRoute ?? '/sites' } );
+				},
+			} )
+		);
+	}
+
 	children.push( catchAllRoute );
 
 	return rootRoute.addChildren( children );

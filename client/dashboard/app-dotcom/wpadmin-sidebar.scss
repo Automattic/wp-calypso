@@ -1,0 +1,133 @@
+@import '@wordpress/base-styles/mixins';
+
+/* Prototype: "WP Admin" sidebar variant — mimics wp-admin's #adminmenu as the
+   Studio sites actually render it (modern admin color scheme: 160px column,
+   #1e1e1e background, #3858e9 current/hover item, #0c0c0c submenu). The
+   `is-wpadmin-sidebar` class is applied to <html> by prototype-controls.ts;
+   switch it from the MSD Prototype controls or with `?sidebar=wpadmin`. */
+
+$wpadmin-sidebar-width: 160px;
+
+html.is-wpadmin-sidebar {
+	.dashboard-responsive-sidebar__sidebar {
+		--dashboard-menu-item__color: #fff;
+		--dashboard-menu-item-active__color: #fff;
+		--wp-admin-theme-color: #3858e9;
+
+		width: $wpadmin-sidebar-width;
+		gap: 0;
+		padding-block-start: 12px;
+		border-inline-end: none;
+		background-color: #1e1e1e;
+		color: #fff;
+	}
+
+	// The docked Help Center sets the sidebar transparent and wins on source
+	// order; keep the admin-menu column dark.
+	&.has-docked-help-center .dashboard-responsive-sidebar__sidebar {
+		background-color: #1e1e1e;
+	}
+
+	.dashboard-root__body:has( > .dashboard-responsive-sidebar__sidebar ) {
+		padding-inline-start: $wpadmin-sidebar-width;
+	}
+
+	.dashboard-responsive-sidebar {
+		width: $wpadmin-sidebar-width;
+	}
+
+	.dashboard-root__body:has( .dashboard-responsive-sidebar.is-open ) .dashboard-root__content {
+		transform: translateX( $wpadmin-sidebar-width );
+	}
+
+	// wp-admin carries the logo in the admin bar, not the menu column.
+	.dashboard-responsive-sidebar__logo {
+		display: none;
+	}
+
+	// Menu items run edge to edge, like #adminmenu.
+	.dashboard-sidebar-navigator__screen {
+		padding: 0;
+	}
+
+	.dashboard-sidebar__menu {
+		padding: 0;
+	}
+
+	.dashboard-responsive-sidebar__sidebar .components-button {
+		border-radius: 0;
+		color: #fff;
+	}
+
+	.components-button.dashboard-sidebar__menu-item {
+		height: 34px;
+		padding-inline: 8px;
+		font-size: 14px;
+		color: #fff;
+
+		// The modern scheme paints hover exactly like the current item.
+		&:hover:not( :disabled ),
+		&:focus-visible {
+			background: #3858e9;
+			color: #fff;
+		}
+
+		&.active {
+			background: #3858e9;
+			color: #fff;
+
+			&:hover:not( :disabled ) {
+				background: #3858e9;
+				color: #fff;
+			}
+		}
+	}
+
+	.dashboard-sidebar__expandable-panel {
+		background: #0c0c0c;
+
+		.dashboard-sidebar__menu-item {
+			height: 30px;
+			font-size: 13px;
+			color: #bcbcbc;
+
+			// Submenu hover is text-only in wp-admin — no fill.
+			&:hover:not( :disabled ),
+			&:focus-visible {
+				background: transparent;
+				color: #7b90ff;
+			}
+
+			&.active {
+				background: transparent;
+				color: #fff;
+
+				&:hover:not( :disabled ) {
+					background: transparent;
+					color: #fff;
+				}
+			}
+		}
+	}
+
+	.sidebar-menu-switcher-item .sidebar-menu-switcher-item__switcher button {
+		color: #fff;
+	}
+
+	// The switcher row's Text/ExternalLink carry their own light-theme colors.
+	.sidebar-menu-switcher-item span {
+		color: #fff;
+	}
+
+	.sidebar-menu-switcher-item .components-external-link,
+	.sidebar-menu-switcher-item .components-external-link span {
+		color: #7b90ff;
+	}
+
+	@include break-medium() {
+		.dashboard-root__layout:has( .dashboard-responsive-sidebar__sidebar ) .wpcom-site__logo {
+			inset-inline-start: calc( 50% + #{$wpadmin-sidebar-width * 0.5} );
+		}
+	}
+
+}

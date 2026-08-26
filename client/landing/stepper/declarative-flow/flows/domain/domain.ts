@@ -10,7 +10,7 @@ import {
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { hasPlanFeature } from 'calypso/dashboard/utils/site-features';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
@@ -100,7 +100,30 @@ const domain: FlowV2< typeof initialize > = {
 
 		const redirectTo = useQuery().get( 'redirect_to' ) || undefined;
 		const backTo = useQuery().get( 'back_to' ) || undefined;
+		// Prototype (untangling IA): the untangled wp-admin sends visitors here
+		// for the domain search only, and owns the pricing and checkout steps
+		// itself. When it passes untangling_pricing, hand the chosen domain
+		// straight back to it instead of continuing into the stepper's own
+		// plans/checkout — otherwise the flow shows a second, different pricing
+		// page, and the prototype's sites are mocks the real steps can't price.
+		const untanglingPricing = useQuery().get( 'untangling_pricing' ) || undefined;
 		const defaultRedirect = dashboardLink( `/sites/${ siteSlug }/domains` );
+
+		// The search reads the real WPCOM cart ('no-site' when there is no site),
+		// which outlives the tab. Handing off to the prototype's own checkout
+		// leaves whatever was picked sitting in that cart, so the next visit
+		// opens with a domain already in it and the mini cart claims "1 domain"
+		// before anything has been added. Start every prototype run from an
+		// empty cart, once per mount and before the first suggestion can be
+		// clicked, so a stale pick can never be mistaken for this session's.
+		const untanglingCartCleared = useRef( false );
+		useEffect( () => {
+			if ( ! untanglingPricing || untanglingCartCleared.current ) {
+				return;
+			}
+			untanglingCartCleared.current = true;
+			replaceProductsInCart( siteSlug ?? 'no-site', [] );
+		}, [ untanglingPricing, siteSlug ] );
 
 		const goToCheckout = ( siteSlug: string ) => {
 			// Check if cart contains only one domain product and it's a domain connection
@@ -180,6 +203,23 @@ const domain: FlowV2< typeof initialize > = {
 					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
 					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
+
+					if ( untanglingPricing ) {
+						const cart = providedDependencies.domainCart as MinimalRequestCartProduct[];
+						const chosenDomain =
+							cart?.[ 0 ]?.meta ??
+							( providedDependencies.domainItem as MinimalRequestCartProduct )?.meta;
+
+						// The prototype owns pricing and checkout from here, so the
+						// real cart has no further part to play. Empty it before
+						// leaving — and await it, or the navigation cancels the
+						// request in flight and the domain stays behind.
+						await replaceProductsInCart( siteSlug ?? 'no-site', [] );
+
+						return window.location.assign(
+							addQueryArgs( untanglingPricing, { domain: chosenDomain } )
+						);
+					}
 
 					if ( ! site ) {
 						return navigate( STEPS.NEW_OR_EXISTING_SITE.slug );

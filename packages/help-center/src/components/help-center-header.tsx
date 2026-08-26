@@ -12,12 +12,13 @@ import {
 	MenuItem,
 } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useMemo } from '@wordpress/element';
+import { useMemo, useState } from '@wordpress/element';
 import {
 	lineSolid,
 	moreVertical,
 	close,
 	chevronUp,
+	check,
 	Icon,
 	comment,
 	bell,
@@ -49,6 +50,102 @@ const MutedBellIcon = () => (
 		</svg>
 	</div>
 );
+
+type HelpCenterDisplayMode = 'sidebar' | 'floating';
+
+const DISPLAY_MODE_STORAGE_KEY = 'help-center-display-mode';
+export const DISPLAY_MODE_EVENT = 'help-center-display-mode';
+
+const getStoredDisplayMode = (): HelpCenterDisplayMode =>
+	typeof window !== 'undefined' &&
+	window.localStorage.getItem( DISPLAY_MODE_STORAGE_KEY ) === 'floating'
+		? 'floating'
+		: 'sidebar';
+
+// The outline rects carry an inline fill:none — host stylesheets set
+// `svg { fill: currentColor }`, which overrides the presentation attribute
+// and would turn the outline into a solid block.
+const SidebarModeIcon = () => (
+	<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+		<rect
+			x="4.25"
+			y="6.25"
+			width="15.5"
+			height="11.5"
+			rx="1.5"
+			stroke="currentColor"
+			strokeWidth="1.5"
+			style={ { fill: 'none' } }
+		/>
+		<rect x="14.75" y="8.25" width="3" height="7.5" rx="0.5" style={ { fill: 'currentColor' } } />
+	</svg>
+);
+
+const FloatingModeIcon = () => (
+	<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+		<rect
+			x="4.25"
+			y="6.25"
+			width="15.5"
+			height="11.5"
+			rx="1.5"
+			stroke="currentColor"
+			strokeWidth="1.5"
+			style={ { fill: 'none' } }
+		/>
+		<rect x="12.25" y="11.75" width="5.5" height="4" rx="0.5" style={ { fill: 'currentColor' } } />
+	</svg>
+);
+
+// Keeps unchecked items' labels on the same vertical line as the checked one.
+const menuIconSpacer = <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" />;
+
+// Sidebar ↔ floating switch, Dia-style. Only offered when the host page
+// supports the docked layout (the Multi-site Dashboard); the dashboard
+// listens for the event and re-lays-out the page.
+const DisplayModeMenu = () => {
+	const { __ } = useI18n();
+	const [ mode, setMode ] = useState< HelpCenterDisplayMode >( getStoredDisplayMode );
+
+	const changeMode = ( next: HelpCenterDisplayMode ) => {
+		setMode( next );
+		window.localStorage.setItem( DISPLAY_MODE_STORAGE_KEY, next );
+		window.dispatchEvent( new CustomEvent( DISPLAY_MODE_EVENT, { detail: next } ) );
+	};
+
+	return (
+		<DropdownMenu
+			icon={ mode === 'sidebar' ? <SidebarModeIcon /> : <FloatingModeIcon /> }
+			label={ __( 'Display mode', __i18n_text_domain__ ) }
+			popoverProps={ { inline: true } }
+		>
+			{ ( { onClose }: { onClose: () => void } ) => (
+				<MenuGroup>
+					<MenuItem
+						icon={ mode === 'sidebar' ? check : menuIconSpacer }
+						iconPosition="left"
+						onClick={ () => {
+							changeMode( 'sidebar' );
+							onClose();
+						} }
+					>
+						{ __( 'Sidebar', __i18n_text_domain__ ) }
+					</MenuItem>
+					<MenuItem
+						icon={ mode === 'floating' ? check : menuIconSpacer }
+						iconPosition="left"
+						onClick={ () => {
+							changeMode( 'floating' );
+							onClose();
+						} }
+					>
+						{ __( 'Floating', __i18n_text_domain__ ) }
+					</MenuItem>
+				</MenuGroup>
+			) }
+		</DropdownMenu>
+	);
+};
 
 const EllipsisMenu = () => {
 	const { __ } = useI18n();
@@ -260,6 +357,9 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 		);
 	}
 
+	const supportsDocking =
+		typeof document !== 'undefined' && !! document.querySelector( '.dashboard-root__layout' );
+
 	return (
 		<CardHeader className={ classNames }>
 			<Flex>
@@ -275,6 +375,7 @@ const HelpCenterHeader = ( { onDismiss }: Header ) => {
 						onClick={ () => setIsMinimized( true ) }
 					/>
 				) }
+				{ supportsDocking && <DisplayModeMenu /> }
 
 				<Button
 					className="help-center-header__close"

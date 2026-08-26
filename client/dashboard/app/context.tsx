@@ -69,6 +69,8 @@ export type AppConfig = {
 		commandPalette: boolean;
 		domainOnlySites: boolean;
 		startStoreRoute?: boolean;
+		/** Paths with no dashboard page yet that should redirect to the main route. */
+		legacyPathRedirects?: string[];
 		siteOverview: SiteOverviewSupports;
 		colorScheme: boolean;
 		darkMode: boolean;

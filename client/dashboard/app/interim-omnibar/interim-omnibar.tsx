@@ -49,7 +49,7 @@ const MOCK_ADMIN_MENU: AdminMenuItem[] = [
 				title: 'Updates',
 				type: 'menu-item',
 				count: 5,
-				url: 'http://localhost:8881/wp-admin/update-core.php',
+				url: 'http://localhost:8883/wp-admin/update-core.php',
 			},
 		],
 	},
@@ -59,9 +59,30 @@ const MOCK_ADMIN_MENU: AdminMenuItem[] = [
 		type: 'menu-item',
 		icon: 'dashicons-admin-comments',
 		count: 0,
-		url: 'http://localhost:8881/wp-admin/edit-comments.php',
+		url: 'http://localhost:8883/wp-admin/edit-comments.php',
 	},
 ];
+
+// Studio-backed mock sites have no stats screen; their Stats entry follows the
+// wp-admin side to /stats, which the dashboard redirects to /sites. The port
+// list mirrors mock-sites.ts, which cannot be imported here: this component is
+// rendered by client/document (SSR) and pulling the mock-site module into the
+// server bundle creates a circular import that breaks the whole document.
+const LOCAL_STUDIO_ORIGIN = /^http:\/\/localhost:888[235678]$/;
+
+function getStatsUrl( siteAdminUrl: string | null ): string | undefined {
+	if ( ! siteAdminUrl ) {
+		return undefined;
+	}
+	try {
+		if ( LOCAL_STUDIO_ORIGIN.test( new URL( siteAdminUrl ).origin ) ) {
+			return '/stats';
+		}
+	} catch {
+		return undefined;
+	}
+	return `${ siteAdminUrl }admin.php?page=stats`;
+}
 
 // Minimal placeholder so MasterbarLoggedIn doesn't crash during SSR.
 const emptyUser = {
@@ -193,7 +214,7 @@ export function InterimOmnibar( {
 					isJetpackNotAtomic={ !! site && site.jetpack && ! site.is_wpcom_atomic }
 					domainOnlySite={ !! site?.options?.is_domain_only }
 					canUserViewStats={ !! site }
-					statsAdminUrl={ siteAdminUrl ? `${ siteAdminUrl }admin.php?page=stats` : undefined }
+					statsAdminUrl={ getStatsUrl( siteAdminUrl ) }
 					statsSparkline={
 						hourlyViews && hourlyViews.length > 0 ? (
 							<StatsSparkline hourlyViews={ hourlyViews } />

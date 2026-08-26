@@ -3,6 +3,7 @@ import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { Badge } from '@automattic/ui';
+import { Button } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
@@ -820,7 +821,14 @@ class MasterbarLoggedIn extends Component {
 		const wpcomActions = [
 			{
 				label: (
-					<span className="button wpcom-button">
+					<Button
+						variant="primary"
+						className="wpcom-button"
+						href="/me/account"
+						onClick={ () =>
+							this.props.recordTracksEvent( 'calypso_masterbar_wpcom_account_clicked' )
+						}
+					>
 						{ translate( 'My {{wpcomIcon/}} WordPress.com Account', {
 							components: {
 								wpcomIcon:
@@ -831,10 +839,8 @@ class MasterbarLoggedIn extends Component {
 									),
 							},
 						} ) }
-					</span>
+					</Button>
 				),
-				url: '/me/account',
-				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_wpcom_account_clicked' ),
 				className: 'wpcom-link',
 			},
 		];

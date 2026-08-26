@@ -106,6 +106,7 @@ export function useHelpCenter() {
 		} ) => {
 			const url = addQueryArgs( '/odie', {
 				userFieldMessage: initialMessage,
+				query: initialMessage,
 				section,
 				siteUrl,
 				siteId: siteId != null ? String( siteId ) : undefined,

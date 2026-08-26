@@ -10,20 +10,26 @@ import { isEnabled } from '@automattic/calypso-config';
 import boot from '../app/boot';
 import { setWorkspace } from '../app/workspace';
 import {
+	getMockDomains,
 	getMockSitesForPersona,
+	hydrateMockBloggerSites,
+	isRemoteMsd,
 	seedMockBloggerSiteCaches,
 } from '../sites/overview-blogger/mock-sites';
 import Logo from './logo';
+import { initPrototypeControls } from './prototype-controls';
 import type {
 	FetchSitesOptions,
 	FetchPaginatedSitesOptions,
 	FetchDashboardSiteFiltersParams,
+	DomainSummary,
 	FetchPaginatedSitesResponse,
 	Site,
 } from '@automattic/api-core';
 import './style.scss';
 
 seedMockBloggerSiteCaches();
+initPrototypeControls();
 
 // Demo personas: `?persona=blogger` shows a single photography site in the
 // Essential workspace; `?persona=developer` restores the multi-site setup in
@@ -45,15 +51,24 @@ function resolvePersona(): 'developer' | 'blogger' {
 const persona = resolvePersona();
 const mockSites = getMockSitesForPersona( persona );
 
+// On a remote MSD (calypso.live) every visitor sees the same demo: the mock
+// sites only, never mixed with their own account's real sites.
+const mocksOnly = persona === 'blogger' || isRemoteMsd();
+
 const sitesQueryWithMocks = ( fetchSiteOptions?: FetchSitesOptions ) => {
 	const query = sitesQuery( 'all', fetchSiteOptions );
 	const baseQueryFn = query.queryFn as () => Promise< Site[] >;
 	return {
 		...query,
-		queryFn:
-			persona === 'blogger'
-				? async () => mockSites
-				: async () => [ ...mockSites, ...( await baseQueryFn() ) ],
+		queryFn: mocksOnly
+			? async () => {
+					await hydrateMockBloggerSites();
+					return mockSites;
+			  }
+			: async () => {
+					const [ realSites ] = await Promise.all( [ baseQueryFn(), hydrateMockBloggerSites() ] );
+					return [ ...mockSites, ...realSites ];
+			  },
 	};
 };
 
@@ -63,8 +78,8 @@ const paginatedSitesQueryWithMocks = ( fetchSiteOptions?: FetchPaginatedSitesOpt
 	return {
 		...query,
 		queryFn: async () => {
-			const response = await baseQueryFn();
-			if ( persona === 'blogger' ) {
+			const [ response ] = await Promise.all( [ baseQueryFn(), hydrateMockBloggerSites() ] );
+			if ( mocksOnly ) {
 				return { ...response, sites: mockSites, total: mockSites.length };
 			}
 			return {
@@ -73,6 +88,22 @@ const paginatedSitesQueryWithMocks = ( fetchSiteOptions?: FetchPaginatedSitesOpt
 				total: response.total + mockSites.length,
 			};
 		},
+	};
+};
+
+// The mock sites each own their free wpcom subdomain; blogger persona shows
+// only those, developer prepends them to the account's real domains.
+const domainsQueryWithMocks = () => {
+	const query = domainsQuery();
+	const baseQueryFn = query.queryFn as () => Promise< DomainSummary[] >;
+	const mockDomains = getMockDomains().filter( ( domain ) =>
+		mockSites.some( ( site ) => site.ID === domain.blog_id )
+	);
+	return {
+		...query,
+		queryFn: mocksOnly
+			? async () => mockDomains
+			: async () => [ ...mockDomains, ...( await baseQueryFn() ) ],
 	};
 };
 
@@ -87,7 +118,7 @@ boot( {
 		sites: true,
 		domains: true,
 		emails: true,
-		themes: true,
+		themes: false,
 		reader: true,
 		help: true,
 		notifications: true,
@@ -104,6 +135,7 @@ boot( {
 		plugins: true,
 		commandPalette: false,
 		domainOnlySites: true,
+		legacyPathRedirects: [ '/stats', '/plans', '/reader', '/overview' ],
 		siteOverview: {
 			preview: false,
 		},
@@ -120,6 +152,6 @@ boot( {
 		paginatedSitesQuery: paginatedSitesQueryWithMocks,
 		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
 			dashboardSiteFiltersQuery( 'all', fields ),
-		domainsQuery: () => domainsQuery(),
+		domainsQuery: domainsQueryWithMocks,
 	},
 } );

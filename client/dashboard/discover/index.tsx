@@ -65,10 +65,6 @@ interface Blueprint {
 
 type ShowcaseVersion = 'themes' | 'blueprints';
 
-const SHOWCASE_VERSIONS: ShowcaseVersion[] = [ 'themes', 'blueprints' ];
-
-const SHOWCASE_VERSION_STORAGE_KEY = 'discover-showcase-version';
-
 interface Panel {
 	icon: React.JSX.Element;
 	title: string;
@@ -79,10 +75,6 @@ interface Panel {
 }
 
 type CreatorHeroVersion = 'help' | 'ai' | 'original';
-
-const CREATOR_HERO_VERSIONS: CreatorHeroVersion[] = [ 'help', 'ai', 'original' ];
-
-const HERO_VERSION_STORAGE_KEY = 'discover-hero-version';
 
 const getCreatorHero = (): HeroContent => ( {
 	eyebrow: __( 'Made for creators' ),
@@ -494,18 +486,7 @@ function AiHero( { audience }: { audience: DiscoverAudience } ) {
 }
 
 function CreatorHero( { audience }: { audience: DiscoverAudience } ) {
-	const [ version, setVersion ] = useState< CreatorHeroVersion >( () => {
-		if ( typeof window === 'undefined' ) {
-			return 'help';
-		}
-		const stored = window.localStorage.getItem( HERO_VERSION_STORAGE_KEY ) as CreatorHeroVersion;
-		return CREATOR_HERO_VERSIONS.includes( stored ) ? stored : 'help';
-	} );
-
-	const switchVersion = ( next: CreatorHeroVersion ) => {
-		setVersion( next );
-		window.localStorage.setItem( HERO_VERSION_STORAGE_KEY, next );
-	};
+	const version: CreatorHeroVersion = 'help';
 
 	return (
 		<div className="discover-hero-wrap">
@@ -520,18 +501,6 @@ function CreatorHero( { audience }: { audience: DiscoverAudience } ) {
 					) }
 				</section>
 			) }
-			<div className="discover-hero-switcher">
-				{ CREATOR_HERO_VERSIONS.map( ( value, index ) => (
-					<button
-						key={ value }
-						type="button"
-						aria-pressed={ version === value }
-						onClick={ () => switchVersion( value ) }
-					>
-						{ `V${ index + 1 }` }
-					</button>
-				) ) }
-			</div>
 		</div>
 	);
 }
@@ -678,20 +647,7 @@ export default function Discover() {
 	const workspace = useWorkspace();
 	const isCreators = workspace === 'essential';
 	const audience: DiscoverAudience = isCreators ? 'creators' : 'developers';
-	const trackClick = useDiscoverTracks( audience );
-	const [ showcaseVersion, setShowcaseVersion ] = useState< ShowcaseVersion >( () => {
-		if ( typeof window === 'undefined' ) {
-			return 'themes';
-		}
-		const stored = window.localStorage.getItem( SHOWCASE_VERSION_STORAGE_KEY ) as ShowcaseVersion;
-		return SHOWCASE_VERSIONS.includes( stored ) ? stored : 'themes';
-	} );
-
-	const switchShowcaseVersion = ( next: ShowcaseVersion ) => {
-		setShowcaseVersion( next );
-		window.localStorage.setItem( SHOWCASE_VERSION_STORAGE_KEY, next );
-		trackClick( `showcase_version_${ next }` );
-	};
+	const showcaseVersion: ShowcaseVersion = 'themes';
 
 	return (
 		<div className="discover-page">
@@ -701,20 +657,6 @@ export default function Discover() {
 				) : (
 					<>
 						<CreatorHero audience={ audience } />
-						<div className="discover-mini-switch-anchor">
-							<div className="discover-mini-switch">
-								{ SHOWCASE_VERSIONS.map( ( value, index ) => (
-									<button
-										key={ value }
-										type="button"
-										aria-pressed={ showcaseVersion === value }
-										onClick={ () => switchShowcaseVersion( value ) }
-									>
-										{ `V${ index + 1 }` }
-									</button>
-								) ) }
-							</div>
-						</div>
 						<PageLayout>
 							<VStack spacing={ 14 }>
 								{ showcaseVersion === 'themes' ? (

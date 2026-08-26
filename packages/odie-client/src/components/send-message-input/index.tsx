@@ -201,10 +201,13 @@ export const OdieSendMessageButton = () => {
 
 	useEffect( () => {
 		if ( initialQuery && ! isProcessing && chat.status !== 'loading' ) {
-			setInputValue( initialQuery );
 			setInitialQuery( '' );
 			if ( chat.messages.length === 0 ) {
-				sendMessageHandler();
+				// Send the query directly — the input state may still hold text
+				// from a previous conversation at this point.
+				sendMessageHandler( initialQuery );
+			} else {
+				setInputValue( initialQuery );
 			}
 		}
 	}, [

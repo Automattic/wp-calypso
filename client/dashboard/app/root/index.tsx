@@ -17,6 +17,7 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import NotFound from '../404';
 import AccountRecoveryInterstitial from '../account-recovery-interstitial';
 import { bumpStat } from '../analytics';
+import BackToWpAdminCard from '../back-to-wp-admin-card';
 import { CheckoutSuccessFlashMessage } from '../checkout-success-flash-message';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
@@ -212,6 +213,7 @@ function Root() {
 			{ supports.help && <OmnibarAgentsManager /> }
 			<OmnibarSiteSwitcher />
 			<Snackbars />
+			<BackToWpAdminCard />
 			<CheckoutSuccessFlashMessage />
 			{ isResurrectedWelcomeModalEnabled && (
 				<ResurrectedWelcomeModalGate onEligibilityResolved={ handleResurrectedModalEligibility } />
