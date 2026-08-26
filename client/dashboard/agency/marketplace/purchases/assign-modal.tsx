@@ -6,19 +6,18 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
-import { __, sprintf } from '@wordpress/i18n';
+import { createInterpolateElement } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { DataViews } from '../../../components/dataviews';
-import type { AgencyLicense, AgencySite } from './mock-data';
+import type { AgencySite } from './mock-data';
 import type { Field, View } from '@wordpress/dataviews';
 
 export default function AssignLicenseModal( {
-	license,
 	sites,
 	onAssign,
 	onCancel,
 }: {
-	license: AgencyLicense;
 	sites: AgencySite[];
 	onAssign: ( site: AgencySite ) => void;
 	onCancel: () => void;
@@ -41,21 +40,13 @@ export default function AssignLicenseModal( {
 				id: 'site',
 				label: __( 'Site' ),
 				getValue: ( { item } ) => item.url,
-				render: ( { item } ) =>
-					item.connected ? (
-						<RadioControl
-							selected={ selected?.blogId === item.blogId ? String( item.blogId ) : '' }
-							options={ [ { label: item.url, value: String( item.blogId ) } ] }
-							onChange={ () => setSelected( item ) }
-						/>
-					) : (
-						<HStack justify="space-between" alignment="center">
-							<Text variant="muted">{ item.url }</Text>
-							<Text variant="muted" size={ 12 }>
-								{ __( 'Connect your WordPress.com user to assign' ) }
-							</Text>
-						</HStack>
-					),
+				render: ( { item } ) => (
+					<RadioControl
+						selected={ selected?.blogId === item.blogId ? String( item.blogId ) : '' }
+						options={ [ { label: item.url, value: String( item.blogId ) } ] }
+						onChange={ () => setSelected( item ) }
+					/>
+				),
 				enableGlobalSearch: true,
 				enableHiding: false,
 				enableSorting: false,
@@ -70,12 +61,13 @@ export default function AssignLicenseModal( {
 	);
 
 	return (
-		<VStack spacing={ 4 }>
-			<Text variant="muted">
-				{ sprintf(
-					/* translators: %s: product name */
-					__( 'Select the site to assign %s to.' ),
-					license.product
+		<VStack spacing={ 6 }>
+			<Text>
+				{ createInterpolateElement(
+					__(
+						"If you don't see the site in the list, connect it first via the <a>Sites Dashboard</a>."
+					),
+					{ a: <a href="/sites" /> }
 				) }
 			</Text>
 
@@ -90,16 +82,16 @@ export default function AssignLicenseModal( {
 			/>
 
 			<HStack justify="flex-end" spacing={ 3 }>
-				<Button variant="tertiary" onClick={ onCancel }>
+				<Button __next40pxDefaultSize variant="tertiary" onClick={ onCancel }>
 					{ __( 'Cancel' ) }
 				</Button>
 				<Button
-					variant="primary"
 					__next40pxDefaultSize
+					variant="primary"
 					disabled={ ! selected }
 					onClick={ () => selected && onAssign( selected ) }
 				>
-					{ __( 'Assign to site' ) }
+					{ __( 'Assign to selected site' ) }
 				</Button>
 			</HStack>
 		</VStack>
