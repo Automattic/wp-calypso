@@ -1,10 +1,18 @@
 import './style.scss';
 
 import { Step } from '@automattic/onboarding';
-import { ProgressBar } from '@wordpress/components';
+import { Button, ProgressBar } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect, useRef } from 'react';
 import ExpectationChecklist from 'calypso/components/expectation-checklist';
-import { useOverrunCopy, useStageSentences, useStageTitles } from './copy';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import {
+	useOverrunCopy,
+	useStageSentences,
+	useStageTitles,
+	useStalledActionLabel,
+	useStalledCopy,
+} from './copy';
 import { INSTALL_STAGES } from './get-install-stage';
 import { useInstallProgress } from './use-install-progress';
 
@@ -17,13 +25,17 @@ export default function InstallProgressCard( {
 	transferStatus,
 	currentStep,
 	startedAt,
+	siteSlug,
+	productSlug,
 }: {
 	transferStatus: string | null;
 	currentStep: number;
 	startedAt?: number | null;
+	siteSlug?: string | null;
+	productSlug?: string;
 } ) {
 	const translate = useTranslate();
-	const { stage, isOverrun, overallProgress } = useInstallProgress( {
+	const { stage, stageElapsed, isOverrun, isStalled, overallProgress } = useInstallProgress( {
 		transferStatus,
 		currentStep,
 		startedAt,
@@ -32,6 +44,22 @@ export default function InstallProgressCard( {
 	const stageTitles = useStageTitles();
 	const sentences = useStageSentences();
 	const overrunCopy = useOverrunCopy();
+	const stalledCopy = useStalledCopy();
+	const stalledActionLabel = useStalledActionLabel();
+
+	// The bar re-renders twice a second; keep the elapsed figure out of the effect's deps.
+	const stageElapsedRef = useRef( stageElapsed );
+	stageElapsedRef.current = stageElapsed;
+	const reportedStalledRef = useRef( false );
+	useEffect( () => {
+		if ( ! isStalled || reportedStalledRef.current ) {
+			return;
+		}
+		reportedStalledRef.current = true;
+		recordTracksEvent( 'calypso_marketplace_install_wait_stalled', { product_slug: productSlug } );
+	}, [ isStalled, productSlug ] );
+
+	const showEscape = isStalled && !! siteSlug;
 
 	return (
 		<div className="marketplace-install-progress">
@@ -40,9 +68,9 @@ export default function InstallProgressCard( {
 				<p className="marketplace-install-progress__stage" role="status">
 					{ sentences[ stageKey ] }
 				</p>
-				{ isOverrun && (
+				{ ( isStalled || isOverrun ) && (
 					<p className="marketplace-install-progress__overrun" role="status">
-						{ overrunCopy }
+						{ isStalled ? stalledCopy : overrunCopy }
 					</p>
 				) }
 			</div>
@@ -52,6 +80,21 @@ export default function InstallProgressCard( {
 					value={ overallProgress }
 					aria-label={ String( stageTitles[ stageKey ] ) }
 				/>
+				{ showEscape && (
+					<Button
+						className="marketplace-install-progress__escape"
+						variant="link"
+						href={ `/plugins/${ siteSlug }` }
+						onClick={ () =>
+							recordTracksEvent( 'calypso_marketplace_install_wait_stalled_click', {
+								product_slug: productSlug,
+								stage_seconds: Math.round( stageElapsedRef.current ),
+							} )
+						}
+					>
+						{ stalledActionLabel }
+					</Button>
+				) }
 			</div>
 			<ExpectationChecklist
 				title={ translate( "Here's what to expect" ) }

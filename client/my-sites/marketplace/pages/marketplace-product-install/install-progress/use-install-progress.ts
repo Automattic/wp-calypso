@@ -11,6 +11,13 @@ const MAX_UNCONFIRMED_PROGRESS = 92;
 // How far past a stage's typical duration we wait before saying it's running long.
 const OVERRUN_FACTOR = 1.6;
 
+// Once finishing has run this long the wait stops reassuring and offers a way out: 90s clears the
+// p95 of a healthy finishing stage while still catching every install that never activates.
+const STALLED_SECONDS = 90;
+
+// The only stage with somewhere to send people — before it the transfer itself is unfinished.
+const FINISHING_STAGE = INSTALL_STAGES.length - 1;
+
 /**
  * When this UI first learns the transfer is already past `preparing` — a refresh mid-transfer —
  * the real stage boundary was never observed. Estimate it from the transfer's start plus the
@@ -90,6 +97,7 @@ export function useInstallProgress( {
 		stage === 0 ? elapsed : Math.max( 0, ( now - stageStartedAt.current ) / 1000 );
 
 	const isOverrun = stageElapsed > INSTALL_STAGES[ stage ].expectedSeconds * OVERRUN_FACTOR;
+	const isStalled = stage === FINISHING_STAGE && stageElapsed > STALLED_SECONDS;
 
 	const getStageProgress = ( index: number ): number => {
 		if ( index < stage ) {
@@ -113,5 +121,5 @@ export function useInstallProgress( {
 			0
 		) / totalExpected;
 
-	return { stage, elapsed, stageElapsed, isOverrun, getStageProgress, overallProgress };
+	return { stage, elapsed, stageElapsed, isOverrun, isStalled, getStageProgress, overallProgress };
 }
