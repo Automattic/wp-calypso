@@ -18,6 +18,7 @@ import {
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import emailController from '../email/controller';
 import domainsController from './controller';
+import { dashboardDomainManagementLink } from './dashboard-redirects';
 import domainManagementController from './domain-management/controller';
 import {
 	DOMAIN_OVERVIEW,
@@ -270,16 +271,7 @@ export default function () {
 	registerStandardDomainManagementPages(
 		paths.domainManagementEdit,
 		domainManagementController.domainManagementEdit,
-		[
-			setupPreferences,
-			maybeRedirectToMultiSiteDashboard( ( params ) =>
-				// A site's free address is its slug, and the dashboard has no domain
-				// overview for it — managing it means changing the site address.
-				params.domain === params.site
-					? `/sites/${ params.site }/domains?action=change-site-address`
-					: `/domains/${ params.domain }`
-			),
-		]
+		[ setupPreferences, maybeRedirectToMultiSiteDashboard( dashboardDomainManagementLink ) ]
 	);
 
 	registerStandardDomainManagementPages(
