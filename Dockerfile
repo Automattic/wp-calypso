@@ -96,7 +96,7 @@ ENV IS_DEFAULT_BRANCH $is_default_branch
 ENV SENTRY_AUTH_TOKEN $sentry_auth_token
 
 ARG commit_sha="(unknown)"
-ARG workers=4
+ARG workers=2
 ARG node_memory=8192
 ARG profile=false
 ENV CONTAINER 'docker'
