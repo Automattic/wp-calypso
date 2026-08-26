@@ -59,7 +59,7 @@
 		"site-spec": true,
 		"two-factor/enhanced-security": true,
 		"webauthn/related-origin-requests": true,
-		"wordpress-agent-slack": false,
+		"wordpress-agent-slack": true,
 		"wordpress-ai-tools": true,
 		"wordpress-labs": false,
 		"wpcom-user-bootstrap": true
