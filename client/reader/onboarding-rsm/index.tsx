@@ -15,7 +15,6 @@ import { useSiteSubscriptions as useCachedSiteSubscriptions } from 'calypso/read
 import { useFollowedTags } from 'calypso/reader/data/tags';
 import { useNonSelfSubscriptionsCount } from 'calypso/reader/following/hooks/use-non-self-subscriptions-count';
 import {
-	type ReaderEarlyReadersInterest,
 	READER_EARLY_READERS_DECLINED_EVENT,
 	READER_EARLY_READERS_EXPERIMENT_NAME,
 	READER_EARLY_READERS_OPT_IN_EVENT,
@@ -395,12 +394,9 @@ const ReaderOnboardingRsm = ( {
 		openStep( 'discover' );
 	};
 
-	const handleEarlyReadersJoin = ( interest: ReaderEarlyReadersInterest ) => {
+	const handleEarlyReadersJoin = () => {
 		setHasJoinedEarlyReaders( true );
-		recordTracksEvent( READER_EARLY_READERS_OPT_IN_EVENT, {
-			...earlyReadersEventProps,
-			interest,
-		} );
+		recordTracksEvent( READER_EARLY_READERS_OPT_IN_EVENT, earlyReadersEventProps );
 	};
 
 	const handleEarlyReadersDecline = () => {

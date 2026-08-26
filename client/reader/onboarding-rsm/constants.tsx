@@ -10,20 +10,6 @@ export const READER_EARLY_READERS_DECLINED_EVENT = 'calypso_reader_early_readers
 // placement without making the v0 numbers ambiguous.
 export const READER_EARLY_READERS_SOURCE_STEP = 'onboarding_final';
 
-// Ship as the `interest` property of the opt-in event, and the pod-formation
-// query groups on them, so they must stay in sync with the matching
-// `TopicGroup.id` values in interests-modal/topic-groups.tsx. That type is a
-// plain `string`, so nothing verifies the pairing at build time. Labels are
-// intentionally shorter than the topic-group titles and are not derived.
-export const READER_EARLY_READERS_INTERESTS = [
-	'travel-world',
-	'food-drinks',
-	'photography-arts',
-	'nature-science',
-	'music-culture',
-] as const;
-
-export type ReaderEarlyReadersInterest = ( typeof READER_EARLY_READERS_INTERESTS )[ number ];
 export const READER_ONBOARDING_SEEN_PREFERENCE_KEY = 'has_seen_reader_onboarding';
 export const READER_ONBOARDING_DISMISSED_PREFERENCE_KEY = 'has_dismissed_reader_onboarding';
 export const READER_ONBOARDING_TRACKS_EVENT_PREFIX = 'calypso_reader_onboarding_';

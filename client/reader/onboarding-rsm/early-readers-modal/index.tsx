@@ -5,10 +5,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
-import clsx from 'clsx';
-import { useState } from 'react';
 import { StepIndicator } from 'calypso/reader/components/step-indicator';
-import { type ReaderEarlyReadersInterest } from 'calypso/reader/onboarding-rsm/constants';
 
 import './style.scss';
 
@@ -20,15 +17,9 @@ interface EarlyReadersModalProps {
 	hasJoined: boolean;
 	totalSteps?: number;
 	onDecline: () => void;
-	onJoin: ( interest: ReaderEarlyReadersInterest ) => void;
+	onJoin: () => void;
 	onFinish: () => void;
 }
-
-type InterestOption = {
-	slug: ReaderEarlyReadersInterest;
-	emoji: string;
-	label: string;
-};
 
 // Copy for both variants. Built per render rather than hoisted to module scope
 // because `__()` must run after the locale loads.
@@ -63,95 +54,43 @@ const getCopy = ( hasSite: boolean ) =>
 				],
 		  };
 
-const EarlyReadersOffer = ( {
-	subtitle,
-	selectedInterest,
-	onSelectInterest,
-}: {
-	subtitle: string;
-	selectedInterest: ReaderEarlyReadersInterest | null;
-	onSelectInterest: ( interest: ReaderEarlyReadersInterest ) => void;
-} ) => {
-	const interests: InterestOption[] = [
-		{ slug: 'travel-world', emoji: '✈️', label: __( 'Travel' ) },
-		{ slug: 'food-drinks', emoji: '🍜', label: __( 'Food & drink' ) },
-		{ slug: 'photography-arts', emoji: '📷', label: __( 'Photography & art' ) },
-		{ slug: 'nature-science', emoji: '🌿', label: __( 'Nature & science' ) },
-		{ slug: 'music-culture', emoji: '🎧', label: __( 'Music & culture' ) },
-	];
+const EarlyReadersOffer = ( { subtitle }: { subtitle: string } ) => (
+	<>
+		<VStack spacing={ 2 } className="early-readers-modal__intro">
+			<h2 className="early-readers-modal__title">{ __( 'Get your first readers' ) }</h2>
+			<p className="early-readers-modal__subtitle">{ subtitle }</p>
+		</VStack>
 
-	return (
-		<>
-			<VStack spacing={ 2 } className="early-readers-modal__intro">
-				<h2 className="early-readers-modal__title">{ __( 'Get your first readers' ) }</h2>
-				<p className="early-readers-modal__subtitle">{ subtitle }</p>
-			</VStack>
-
-			<div className="early-readers-modal__deal">
-				<div className="early-readers-modal__deal-card">
-					<p className="early-readers-modal__deal-heading">{ __( 'What you get' ) }</p>
-					<ul className="early-readers-modal__deal-list">
-						<li>
-							<span aria-hidden="true">📬</span>
-							{ __( 'Four people who will read your first post' ) }
-						</li>
-						<li>
-							<span aria-hidden="true">💬</span>
-							{ __( 'A real comment from each of them, not just a like' ) }
-						</li>
-						<li>
-							<span aria-hidden="true">👀</span>
-							{ __( 'Four new subscribers to start you off' ) }
-						</li>
-					</ul>
-				</div>
-				<div className="early-readers-modal__deal-card is-ask">
-					<p className="early-readers-modal__deal-heading">{ __( 'What you agree to' ) }</p>
-					<ol className="early-readers-modal__agree-list">
-						<li>{ __( 'Subscribe to your four writers' ) }</li>
-						<li>{ __( 'Read their first posts' ) }</li>
-						<li>{ __( 'Leave each of them a comment worth reading' ) }</li>
-					</ol>
-					<p className="early-readers-modal__time-note">
-						{ __( 'Takes about 20 minutes, once.' ) }
-					</p>
-				</div>
+		<div className="early-readers-modal__deal">
+			<div className="early-readers-modal__deal-card">
+				<p className="early-readers-modal__deal-heading">{ __( 'What you get' ) }</p>
+				<ul className="early-readers-modal__deal-list">
+					<li>
+						<span aria-hidden="true">📬</span>
+						{ __( 'Four people who will read your first post' ) }
+					</li>
+					<li>
+						<span aria-hidden="true">💬</span>
+						{ __( 'A real comment from each of them, not just a like' ) }
+					</li>
+					<li>
+						<span aria-hidden="true">👀</span>
+						{ __( 'Four new subscribers to start you off' ) }
+					</li>
+				</ul>
 			</div>
-
-			<VStack spacing={ 1 }>
-				<p className="early-readers-modal__picker-label">{ __( 'What are you writing about?' ) }</p>
-				<p className="early-readers-modal__picker-help">
-					{ __( 'We group people by topic so you’re reading things you actually care about.' ) }
-				</p>
-				<div
-					className="early-readers-modal__chips"
-					role="group"
-					aria-label={ __( 'Choose a topic' ) }
-				>
-					{ interests.map( ( interest ) => {
-						const isSelected = selectedInterest === interest.slug;
-						return (
-							<button
-								key={ interest.slug }
-								type="button"
-								className={ clsx( 'early-readers-modal__chip', {
-									'is-selected': isSelected,
-								} ) }
-								aria-pressed={ isSelected }
-								onClick={ () => onSelectInterest( interest.slug ) }
-							>
-								<span className="early-readers-modal__chip-emoji" aria-hidden="true">
-									{ interest.emoji }
-								</span>
-								{ interest.label }
-							</button>
-						);
-					} ) }
-				</div>
-			</VStack>
-		</>
-	);
-};
+			<div className="early-readers-modal__deal-card is-ask">
+				<p className="early-readers-modal__deal-heading">{ __( 'What you agree to' ) }</p>
+				<ol className="early-readers-modal__agree-list">
+					<li>{ __( 'Subscribe to your four writers' ) }</li>
+					<li>{ __( 'Read their first posts' ) }</li>
+					<li>{ __( 'Leave each of them a comment worth reading' ) }</li>
+				</ol>
+				<p className="early-readers-modal__time-note">{ __( 'Takes about 20 minutes, once.' ) }</p>
+			</div>
+		</div>
+	</>
+);
 
 const EarlyReadersConfirmation = ( { subtitle, steps }: { subtitle: string; steps: string[] } ) => (
 	<VStack spacing={ 4 } className="early-readers-modal__done">
@@ -179,10 +118,6 @@ export const EarlyReadersModal = ( {
 	onJoin,
 	onFinish,
 }: EarlyReadersModalProps ) => {
-	const [ selectedInterest, setSelectedInterest ] = useState< ReaderEarlyReadersInterest | null >(
-		null
-	);
-
 	const copy = getCopy( hasSite );
 
 	return (
@@ -191,11 +126,7 @@ export const EarlyReadersModal = ( {
 				{ hasJoined ? (
 					<EarlyReadersConfirmation subtitle={ copy.doneSubtitle } steps={ copy.steps } />
 				) : (
-					<EarlyReadersOffer
-						subtitle={ copy.subtitle }
-						selectedInterest={ selectedInterest }
-						onSelectInterest={ setSelectedInterest }
-					/>
+					<EarlyReadersOffer subtitle={ copy.subtitle } />
 				) }
 			</VStack>
 
@@ -212,12 +143,7 @@ export const EarlyReadersModal = ( {
 								<Button __next40pxDefaultSize variant="tertiary" onClick={ onDecline }>
 									{ __( 'No thanks' ) }
 								</Button>
-								<Button
-									__next40pxDefaultSize
-									variant="primary"
-									disabled={ ! selectedInterest }
-									onClick={ () => selectedInterest && onJoin( selectedInterest ) }
-								>
+								<Button __next40pxDefaultSize variant="primary" onClick={ onJoin }>
 									{ __( 'Join Early Readers' ) }
 								</Button>
 							</>

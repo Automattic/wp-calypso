@@ -140,7 +140,7 @@ jest.mock( 'calypso/reader/onboarding-rsm/early-readers-modal', () => ( {
 		hasSite: boolean;
 		hasJoined: boolean;
 		onDecline: () => void;
-		onJoin: ( interest: string ) => void;
+		onJoin: () => void;
 		onFinish: () => void;
 	} ) => (
 		<div
@@ -149,7 +149,7 @@ jest.mock( 'calypso/reader/onboarding-rsm/early-readers-modal', () => ( {
 			data-has-joined={ String( hasJoined ) }
 		>
 			<button onClick={ onDecline }>No thanks</button>
-			<button onClick={ () => onJoin( 'travel-world' ) }>Join Early Readers</button>
+			<button onClick={ onJoin }>Join Early Readers</button>
 			<button onClick={ onFinish }>Back to Reader</button>
 		</div>
 	),
@@ -1550,7 +1550,7 @@ describe( 'ReaderOnboardingRsm – Early Readers opt-in analytics', () => {
 		setTreatmentAssignment();
 	} );
 
-	it( 'records the opt-in event with the interest, site status, and blog id', async () => {
+	it( 'records the opt-in event with the site status and blog id', async () => {
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
@@ -1558,7 +1558,6 @@ describe( 'ReaderOnboardingRsm – Early Readers opt-in analytics', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Join Early Readers' } ) );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith( READER_EARLY_READERS_OPT_IN_EVENT, {
-			interest: 'travel-world',
 			has_site: false,
 			blog_id: 4242,
 			source_step: READER_EARLY_READERS_SOURCE_STEP,

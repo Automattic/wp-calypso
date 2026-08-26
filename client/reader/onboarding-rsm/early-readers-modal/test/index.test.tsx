@@ -23,13 +23,12 @@ beforeEach( () => {
 } );
 
 describe( 'EarlyReadersModal – the offer', () => {
-	it( 'renders the opt-in intro, the deal, and the topic picker', () => {
+	it( 'renders the opt-in intro and the deal', () => {
 		renderModal();
 
 		expect( screen.getByRole( 'heading', { name: 'Get your first readers' } ) ).toBeVisible();
 		expect( screen.getByText( 'What you get' ) ).toBeVisible();
 		expect( screen.getByText( 'What you agree to' ) ).toBeVisible();
-		expect( screen.getByRole( 'group', { name: 'Choose a topic' } ) ).toBeVisible();
 	} );
 
 	it( 'shows the has-site copy variant when the user has a site', () => {
@@ -61,58 +60,16 @@ describe( 'EarlyReadersModal – the offer', () => {
 		expect( defaultProps.onDecline ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'disables Join until an interest is selected', async () => {
+	it( 'calls onJoin when "Join Early Readers" is clicked', async () => {
 		const user = userEvent.setup();
 		renderModal();
 
-		expect( screen.getByRole( 'button', { name: 'Join Early Readers' } ) ).toBeDisabled();
+		const join = screen.getByRole( 'button', { name: 'Join Early Readers' } );
+		expect( join ).toBeEnabled();
 
-		await user.click( screen.getByRole( 'button', { name: /Travel/ } ) );
+		await user.click( join );
 
-		expect( screen.getByRole( 'button', { name: /Travel/ } ) ).toHaveAttribute(
-			'aria-pressed',
-			'true'
-		);
-		expect( screen.getByRole( 'button', { name: 'Join Early Readers' } ) ).toBeEnabled();
-	} );
-
-	it( 'selects only one interest at a time', async () => {
-		const user = userEvent.setup();
-		renderModal();
-
-		await user.click( screen.getByRole( 'button', { name: /Travel/ } ) );
-		await user.click( screen.getByRole( 'button', { name: /Food & drink/ } ) );
-
-		expect( screen.getByRole( 'button', { name: /Travel/ } ) ).toHaveAttribute(
-			'aria-pressed',
-			'false'
-		);
-		expect( screen.getByRole( 'button', { name: /Food & drink/ } ) ).toHaveAttribute(
-			'aria-pressed',
-			'true'
-		);
-	} );
-
-	it( 'reports the selected interest slug via onJoin', async () => {
-		const user = userEvent.setup();
-		renderModal();
-
-		await user.click( screen.getByRole( 'button', { name: /Photography & art/ } ) );
-		await user.click( screen.getByRole( 'button', { name: 'Join Early Readers' } ) );
-
-		expect( defaultProps.onJoin ).toHaveBeenCalledWith( 'photography-arts' );
-	} );
-
-	it( 'does not call onJoin when no interest is selected', async () => {
-		const user = userEvent.setup();
-		renderModal();
-
-		// The button is disabled, so this click is a no-op — but assert the
-		// handler's own guard too, since a future layout change could re-enable
-		// the button before an interest exists.
-		await user.click( screen.getByRole( 'button', { name: 'Join Early Readers' } ) );
-
-		expect( defaultProps.onJoin ).not.toHaveBeenCalled();
+		expect( defaultProps.onJoin ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
 
@@ -125,7 +82,6 @@ describe( 'EarlyReadersModal – the confirmation', () => {
 			screen.queryByRole( 'heading', { name: 'Get your first readers' } )
 		).not.toBeInTheDocument();
 		expect( screen.queryByText( 'What you get' ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'group', { name: 'Choose a topic' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'No thanks' } ) ).not.toBeInTheDocument();
 		expect(
 			screen.queryByRole( 'button', { name: 'Join Early Readers' } )
