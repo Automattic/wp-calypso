@@ -6,6 +6,7 @@ import {
 	getResponseRenderedTrackingProperties,
 	trackSplitScreenGuideClick,
 	trackSplitScreenGuideRendered,
+	type BigSkyEventName,
 } from './tracking';
 
 // Guards the props this package hands to the family recorder; the recorder
@@ -36,7 +37,7 @@ const expectPrivacySafePayload = ( properties: Record< string, unknown > ) => {
 type WindowWithAgentsManagerActions = Window & {
 	__agentsManagerActions?: {
 		recordBigSkyTracksEvent?: (
-			eventName: `jetpack_big_sky_${ string }`,
+			eventName: BigSkyEventName,
 			props?: Record< string, unknown >
 		) => void;
 	};

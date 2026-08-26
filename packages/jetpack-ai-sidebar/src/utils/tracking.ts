@@ -3,7 +3,7 @@
  */
 
 type TrackProperties = Record< string, string | number | boolean >;
-type BigSkyEventName = `jetpack_big_sky_${ string }`;
+export type BigSkyEventName = `jetpack_big_sky_${ string }`;
 
 type ReviewContext =
 	| 'notes_and_guidelines'

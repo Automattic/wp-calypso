@@ -39,7 +39,7 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 \* Available only while the chat panel is mounted. Always optional-chain these calls — they can be `undefined` even after `isReady` is `true`.
 
 `recordBigSkyTracksEvent` is absent on older Agents Manager bundles — optional-chain it too.
-`BigSkyEventName` requires the full `jetpack_big_sky_` prefix.
+`BigSkyEventName` is `` `jetpack_big_sky_${ string }` `` — the full prefix is required. The bare prefix alone, or any non-conforming name, is dropped without recording.
 
 ## Ready signal
 
