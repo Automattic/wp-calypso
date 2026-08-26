@@ -273,8 +273,6 @@ export default function () {
 		[
 			setupPreferences,
 			maybeRedirectToMultiSiteDashboard( ( { domain, site } ) => {
-				// A site's WordPress.com address has no overview of its own in the dashboard:
-				// the only thing to manage is the site address, on the site's domains page.
 				if ( site && domain.endsWith( '.wordpress.com' ) ) {
 					return `/sites/${ site }/domains?action=change-site-address`;
 				}
