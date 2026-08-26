@@ -14,15 +14,14 @@ import { addQueryArgs } from 'calypso/lib/url';
 import withDimensions from 'calypso/lib/with-dimensions';
 import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { useAliasedSiteSubscriptionFeedUrl } from 'calypso/reader/data/site-subscriptions';
 import DiscoverHeaderAndNavigation from 'calypso/reader/discover/components/header-and-navigation';
 import { SEARCH_TAB } from 'calypso/reader/discover/helper';
-import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
 import { recordAction } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import PostResults from './post-results';
 import Suggestion from './suggestion';
 import SuggestionProvider from './suggestion-provider';
+import { getSearchPlaceholderText } from './utils';
 import './style.scss';
 
 const WIDE_DISPLAY_CUTOFF = 660;
@@ -93,10 +92,7 @@ class SearchStream extends React.Component {
 			? 'search-stream__sort-picker is-wide'
 			: 'search-stream__sort-picker';
 
-		let searchPlaceholderText = this.props.searchPlaceholderText;
-		if ( ! searchPlaceholderText ) {
-			searchPlaceholderText = getSearchPlaceholderText();
-		}
+		const searchPlaceholderText = getSearchPlaceholderText();
 
 		const documentTitle = translate( '%s ‹ Reader', {
 			args: this.getTitle(),
@@ -185,17 +181,6 @@ const wrapWithMain = ( Component ) => ( props ) => (
 );
 /* eslint-enable */
 
-const ConnectedSearchStream = connect( null, {
+export default connect( null, {
 	recordReaderTracksEvent,
 } )( localize( SuggestionProvider( wrapWithMain( withDimensions( SearchStream ) ) ) ) );
-
-export default function SearchStreamContainer( props ) {
-	const aliasedFollowFeedUrl = useAliasedSiteSubscriptionFeedUrl( props.query || '' );
-
-	return (
-		<ConnectedSearchStream
-			{ ...props }
-			readerAliasedFollowFeedUrl={ props.query && aliasedFollowFeedUrl }
-		/>
-	);
-}
