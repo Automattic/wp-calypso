@@ -5,6 +5,7 @@ import { Button, __unstableMotion as motion } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
+import { getSelectedTextContext } from './get-selected-text';
 import './style.scss';
 
 const animations = {
@@ -36,9 +37,15 @@ export default function SelectedBlock() {
 
 		const blockType = getBlockType( selectedBlock.name );
 
+		// When the user selects text inside the block, show that text so the
+		// chip communicates the precise target of the request.
+		const selectedText = getSelectedTextContext( select );
+
 		return {
 			block: selectedBlock,
-			name: selectedBlock.attributes?.content?.text || blockType?.title,
+			name: selectedText
+				? `“${ selectedText.text }”`
+				: selectedBlock.attributes?.content?.text || blockType?.title,
 			icon: blockType?.icon,
 		};
 	}, [] );
