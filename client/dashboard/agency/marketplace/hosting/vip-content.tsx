@@ -48,14 +48,6 @@ function VipPitchCard() {
 			</CardHeader>
 			<CardBody>
 				<VStack spacing={ 5 }>
-					<Text as="p">
-						{ __(
-							'Combine the ease of WordPress with enterprise-grade security and scalability.'
-						) }
-					</Text>
-
-					<CardDivider />
-
 					<VStack spacing={ 3 }>
 						<Heading level={ 3 } size={ 16 }>
 							{ __( 'The platform the biggest brands trust.' ) }
