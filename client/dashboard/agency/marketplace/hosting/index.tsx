@@ -316,30 +316,14 @@ export default function MarketplaceHosting() {
 		new URLSearchParams( window.location.search ).has( 'alt' )
 	);
 
-	// Prototype-only: simulates returning-customer data that will come from
-	// license and usage queries ( see mockOwnership ).
-	const [ isExistingCustomer, setIsExistingCustomer ] = useState( () =>
-		new URLSearchParams( window.location.search ).has( 'existing' )
-	);
+	// Prototype-only: `?existing` simulates returning-customer data that will
+	// come from license and usage queries ( see mockOwnership ).
+	const isExistingCustomer = new URLSearchParams( window.location.search ).has( 'existing' );
 	const ownedSites = isExistingCustomer ? mockOwnership.wpcom.ownedSites : 0;
 	const pressableCurrentPlan = isExistingCustomer
 		? pressablePlans.find( ( p ) => p.slug === mockOwnership.pressable.planSlug )
 		: undefined;
 	const pressableUsage = isExistingCustomer ? mockOwnership.pressable.usage : undefined;
-
-	const handleExistingCustomerToggle = ( checked: boolean ) => {
-		setIsExistingCustomer( checked );
-		if ( checked ) {
-			const currentIndex = pressablePlans.findIndex(
-				( p ) => p.slug === mockOwnership.pressable.planSlug
-			);
-			setPressablePlanSlug(
-				pressablePlans[ currentIndex + 1 ]?.slug ?? mockOwnership.pressable.planSlug
-			);
-		} else {
-			setPressablePlanSlug( 'pressable-signature-1' );
-		}
-	};
 
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { data: apiProducts } = useQuery( agencyProductsQuery( agency?.id ?? 0 ) );
@@ -397,18 +381,6 @@ export default function MarketplaceHosting() {
 					}
 					actions={
 						<HStack spacing={ 4 } justify="flex-end">
-							<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
-								<ToggleControl
-									__nextHasNoMarginBottom
-									checked={ isExistingCustomer }
-									label={ __( 'Demo: existing customer' ) }
-									onChange={ handleExistingCustomerToggle }
-								/>
-							</HStack>
-							<Divider
-								orientation="vertical"
-								style={ { color: 'var(--dashboard-overview__divider-color)', height: '24px' } }
-							/>
 							<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
 								<Text variant="muted">{ __( 'Billed:' ) }</Text>
 								<Text variant={ term === 'monthly' ? undefined : 'muted' }>
