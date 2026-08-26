@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import chalk from 'chalk';
-import { BrowserContext, Page } from 'playwright';
+import { BrowserContext, Cookie, Page } from 'playwright';
 import { TestAccountName } from '..';
 import { getAccountSiteURL, getCalypsoURL } from '../data-helper';
 import { EmailClient } from '../email-client';
@@ -12,11 +12,6 @@ import { TOTPClient } from '../totp-client';
 import { withLoginLock } from './login-lock';
 import { LoginPage } from './pages/login-page';
 import type { TestAccountCredentials } from '../secrets';
-
-/**
- * Cookies read back out of an account's saved storage state.
- */
-export type SavedCookies = { name: string; value: string }[];
 
 /**
  * Represents the WPCOM test account.
@@ -93,9 +88,9 @@ export class TestAccount {
 	 * another worker wrote while this one waited.
 	 *
 	 * @param {Page} page Page object.
-	 * @param {SavedCookies} [rejected] Cookies already known to name a dead session.
+	 * @param {Cookie[]} [rejected] Cookies already known to name a dead session.
 	 */
-	async ensureFreshAuthCookies( page: Page, rejected?: SavedCookies ): Promise< void > {
+	async ensureFreshAuthCookies( page: Page, rejected?: Cookie[] ): Promise< void > {
 		// Adopt at most once. What another worker wrote can be dead the same way ours was, and
 		// the file can be rewritten again while this checks, so adopting a second time is a
 		// chase that need not ever settle. The second pass logs in instead.
@@ -326,7 +321,7 @@ export class TestAccount {
 	 * Saved cookies worth reusing, and undefined when the file is missing, stale, empty or
 	 * unreadable.
 	 */
-	private async readFreshAuthCookies(): Promise< SavedCookies | undefined > {
+	private async readFreshAuthCookies(): Promise< Cookie[] | undefined > {
 		if ( ! ( await this.hasFreshAuthCookies() ) ) {
 			return undefined;
 		}
