@@ -138,7 +138,7 @@ export default function MigrationsTagSitesModal( {
 	return (
 		<Modal
 			className="migrations-tag-sites-modal"
-			title={ __( 'Tag your transferred sites for commission.' ) }
+			title={ __( 'Tag the sites you moved to Automattic for commission.' ) }
 			onRequestClose={ handleOnClose }
 			size="large"
 		>
