@@ -122,9 +122,9 @@ jest.mock( 'calypso/reader/onboarding-rsm/interests-modal', () => ( {
 
 jest.mock( 'calypso/reader/onboarding-rsm/subscribe-modal', () => ( {
 	__esModule: true,
-	default: ( { onFinish }: { onFinish: () => void } ) => (
+	default: ( { onFinish, totalSteps }: { onFinish: () => void; totalSteps: number } ) => (
 		<div data-testid="subscribe-modal-content">
-			<button onClick={ onFinish }>Finish</button>
+			<button onClick={ onFinish }>{ totalSteps > 3 ? 'Continue' : 'Finish' }</button>
 		</div>
 	),
 } ) );
@@ -148,7 +148,7 @@ jest.mock( 'calypso/reader/onboarding-rsm/early-readers-modal', () => ( {
 			data-has-site={ String( hasSite ) }
 			data-has-joined={ String( hasJoined ) }
 		>
-			<button onClick={ onDecline }>No thanks</button>
+			<button onClick={ onDecline }>Finish</button>
 			<button onClick={ onJoin }>Join Early Readers</button>
 			<button onClick={ onFinish }>Back to Reader</button>
 		</div>
@@ -305,7 +305,7 @@ const navigateToDiscoverStep = async ( user: ReturnType< typeof userEvent.setup 
 
 const navigateToEarlyReadersStep = async ( user: ReturnType< typeof userEvent.setup > ) => {
 	await navigateToDiscoverStep( user );
-	await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+	await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 	await screen.findByTestId( 'early-readers-modal-content' );
 };
 
@@ -1351,13 +1351,13 @@ describe( 'ReaderOnboardingRsm – permanent checklist dismiss', () => {
 } );
 
 describe( 'ReaderOnboardingRsm – early-readers step (treatment)', () => {
-	it( 'shows the early-readers step after Finish instead of completing, and defers completion work', async () => {
+	it( 'shows the early-readers step after Continue instead of completing, and defers completion work', async () => {
 		setTreatmentAssignment();
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
 		await navigateToDiscoverStep( user );
-		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 
 		expect( await screen.findByTestId( 'early-readers-modal-content' ) ).toBeVisible();
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
@@ -1380,10 +1380,10 @@ describe( 'ReaderOnboardingRsm – early-readers step (treatment)', () => {
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
 		await navigateToDiscoverStep( user );
-		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'early-readers-modal-content' );
 
-		await user.click( screen.getByRole( 'button', { name: 'No thanks' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
 
 		expect( screen.queryByTestId( 'early-readers-modal-content' ) ).not.toBeInTheDocument();
 		expect( savePreference ).toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
@@ -1400,7 +1400,7 @@ describe( 'ReaderOnboardingRsm – early-readers step (treatment)', () => {
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
 		await navigateToDiscoverStep( user );
-		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'early-readers-modal-content' );
 
 		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
@@ -1423,7 +1423,7 @@ describe( 'ReaderOnboardingRsm – early-readers step (treatment)', () => {
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
 		await navigateToDiscoverStep( user );
-		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'early-readers-modal-content' );
 
 		await user.click( screen.getByRole( 'button', { name: 'Back to Reader' } ) );
@@ -1461,7 +1461,7 @@ describe( 'ReaderOnboardingRsm – early-readers step (treatment)', () => {
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
 		await navigateToDiscoverStep( user );
-		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'early-readers-modal-content' );
 
 		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
@@ -1496,7 +1496,7 @@ describe( 'ReaderOnboardingRsm – early-readers step (treatment)', () => {
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
 		await navigateToDiscoverStep( user );
-		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 
 		expect( await screen.findByTestId( 'early-readers-modal-content' ) ).toBeVisible();
 	} );
@@ -1525,7 +1525,7 @@ describe( 'ReaderOnboardingRsm – early-readers step (treatment)', () => {
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
 		await navigateToDiscoverStep( user );
-		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'early-readers-modal-content' );
 
 		expect( screen.getByTestId( 'early-readers-modal-content' ) ).toHaveAttribute(
@@ -1591,7 +1591,7 @@ describe( 'ReaderOnboardingRsm – Early Readers opt-in analytics', () => {
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
 		await navigateToEarlyReadersStep( user );
-		await user.click( screen.getByRole( 'button', { name: 'No thanks' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith( READER_EARLY_READERS_DECLINED_EVENT, {
 			has_site: false,
@@ -1653,7 +1653,7 @@ describe( 'ReaderOnboardingRsm – Early Readers opt-in analytics', () => {
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
 		await navigateToEarlyReadersStep( user );
-		await user.click( screen.getByRole( 'button', { name: 'No thanks' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
 
 		const declineCalls = jest
 			.mocked( recordTracksEvent )

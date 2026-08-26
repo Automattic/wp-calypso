@@ -1,10 +1,12 @@
 import {
 	Button,
+	RadioControl,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
+import { useState } from 'react';
 import { StepIndicator } from 'calypso/reader/components/step-indicator';
 
 import './style.scss';
@@ -20,6 +22,11 @@ interface EarlyReadersModalProps {
 	onJoin: () => void;
 	onFinish: () => void;
 }
+
+// Defaults to `decline` so the primary button's default action is to leave the
+// program, not to enter it: a user clicking through the flow on muscle memory
+// opts out rather than joining something they never read.
+type Choice = 'join' | 'decline';
 
 // Copy for both variants. Built per render rather than hoisted to module scope
 // because `__()` must run after the locale loads.
@@ -54,7 +61,15 @@ const getCopy = ( hasSite: boolean ) =>
 				],
 		  };
 
-const EarlyReadersOffer = ( { subtitle }: { subtitle: string } ) => (
+const EarlyReadersOffer = ( {
+	subtitle,
+	choice,
+	onChoiceChange,
+}: {
+	subtitle: string;
+	choice: Choice;
+	onChoiceChange: ( choice: Choice ) => void;
+} ) => (
 	<>
 		<VStack spacing={ 2 } className="early-readers-modal__intro">
 			<h2 className="early-readers-modal__title">{ __( 'Get your first readers' ) }</h2>
@@ -89,6 +104,18 @@ const EarlyReadersOffer = ( { subtitle }: { subtitle: string } ) => (
 				<p className="early-readers-modal__time-note">{ __( 'Takes about 20 minutes, once.' ) }</p>
 			</div>
 		</div>
+
+		<div className="early-readers-modal__choice">
+			<RadioControl
+				label={ __( 'Would you like to join?' ) }
+				selected={ choice }
+				options={ [
+					{ label: __( 'Sign me up' ), value: 'join' },
+					{ label: __( 'I’m not interested' ), value: 'decline' },
+				] }
+				onChange={ ( next ) => onChoiceChange( next === 'join' ? 'join' : 'decline' ) }
+			/>
+		</div>
 	</>
 );
 
@@ -118,6 +145,8 @@ export const EarlyReadersModal = ( {
 	onJoin,
 	onFinish,
 }: EarlyReadersModalProps ) => {
+	const [ choice, setChoice ] = useState< Choice >( 'decline' );
+
 	const copy = getCopy( hasSite );
 
 	return (
@@ -126,7 +155,11 @@ export const EarlyReadersModal = ( {
 				{ hasJoined ? (
 					<EarlyReadersConfirmation subtitle={ copy.doneSubtitle } steps={ copy.steps } />
 				) : (
-					<EarlyReadersOffer subtitle={ copy.subtitle } />
+					<EarlyReadersOffer
+						subtitle={ copy.subtitle }
+						choice={ choice }
+						onChoiceChange={ setChoice }
+					/>
 				) }
 			</VStack>
 
@@ -139,14 +172,13 @@ export const EarlyReadersModal = ( {
 								{ __( 'Back to Reader' ) }
 							</Button>
 						) : (
-							<>
-								<Button __next40pxDefaultSize variant="tertiary" onClick={ onDecline }>
-									{ __( 'No thanks' ) }
-								</Button>
-								<Button __next40pxDefaultSize variant="primary" onClick={ onJoin }>
-									{ __( 'Join Early Readers' ) }
-								</Button>
-							</>
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								onClick={ choice === 'join' ? onJoin : onDecline }
+							>
+								{ choice === 'join' ? __( 'Join Early Readers' ) : __( 'Finish' ) }
+							</Button>
 						) }
 					</HStack>
 				</HStack>

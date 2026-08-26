@@ -15,6 +15,11 @@
 	max-width: 620px;
 }
 
+.early-readers-modal__intro {
+	margin-inline: auto;
+	text-align: center;
+}
+
 .early-readers-modal__title {
 	font-family: Recoleta, sans-serif;
 	font-size: 2.75rem;
@@ -96,6 +101,19 @@
 	margin: 14px 0 0;
 	font-size: 0.75rem;
 	color: var( --color-text-subtle );
+}
+
+.early-readers-modal__choice {
+	.components-base-control__label {
+		font-size: 0.875rem;
+		font-weight: 600;
+		margin-block-end: 10px;
+	}
+
+	.components-radio-control__option label {
+		font-size: 0.875rem;
+		color: var( --color-text );
+	}
 }
 
 .early-readers-modal__done-check {

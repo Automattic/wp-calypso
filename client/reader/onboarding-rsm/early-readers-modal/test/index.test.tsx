@@ -23,12 +23,56 @@ beforeEach( () => {
 } );
 
 describe( 'EarlyReadersModal – the offer', () => {
-	it( 'renders the opt-in intro and the deal', () => {
+	it( 'renders the opt-in intro, the deal, and the join choice', () => {
 		renderModal();
 
 		expect( screen.getByRole( 'heading', { name: 'Get your first readers' } ) ).toBeVisible();
 		expect( screen.getByText( 'What you get' ) ).toBeVisible();
 		expect( screen.getByText( 'What you agree to' ) ).toBeVisible();
+		expect( screen.getByRole( 'radio', { name: 'Sign me up' } ) ).toBeVisible();
+		expect( screen.getByRole( 'radio', { name: 'I’m not interested' } ) ).toBeVisible();
+	} );
+
+	it( 'defaults to "I’m not interested", so the primary button finishes rather than joins', async () => {
+		const user = userEvent.setup();
+		renderModal();
+
+		expect( screen.getByRole( 'radio', { name: 'I’m not interested' } ) ).toBeChecked();
+		expect( screen.getByRole( 'radio', { name: 'Sign me up' } ) ).not.toBeChecked();
+		expect(
+			screen.queryByRole( 'button', { name: 'Join Early Readers' } )
+		).not.toBeInTheDocument();
+
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		expect( defaultProps.onDecline ).toHaveBeenCalledTimes( 1 );
+		expect( defaultProps.onJoin ).not.toHaveBeenCalled();
+	} );
+
+	it( 'relabels the primary button once "Sign me up" is selected', async () => {
+		const user = userEvent.setup();
+		renderModal();
+
+		await user.click( screen.getByRole( 'radio', { name: 'Sign me up' } ) );
+
+		expect( screen.queryByRole( 'button', { name: 'Finish' } ) ).not.toBeInTheDocument();
+		await user.click( screen.getByRole( 'button', { name: 'Join Early Readers' } ) );
+
+		expect( defaultProps.onJoin ).toHaveBeenCalledTimes( 1 );
+		expect( defaultProps.onDecline ).not.toHaveBeenCalled();
+	} );
+
+	it( 'lets the user switch back to declining after selecting "Sign me up"', async () => {
+		const user = userEvent.setup();
+		renderModal();
+
+		await user.click( screen.getByRole( 'radio', { name: 'Sign me up' } ) );
+		await user.click( screen.getByRole( 'radio', { name: 'I’m not interested' } ) );
+
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		expect( defaultProps.onDecline ).toHaveBeenCalledTimes( 1 );
+		expect( defaultProps.onJoin ).not.toHaveBeenCalled();
 	} );
 
 	it( 'shows the has-site copy variant when the user has a site', () => {
@@ -50,27 +94,6 @@ describe( 'EarlyReadersModal – the offer', () => {
 			)
 		).toBeVisible();
 	} );
-
-	it( 'calls onDecline when "No thanks" is clicked', async () => {
-		const user = userEvent.setup();
-		renderModal();
-
-		await user.click( screen.getByRole( 'button', { name: 'No thanks' } ) );
-
-		expect( defaultProps.onDecline ).toHaveBeenCalledTimes( 1 );
-	} );
-
-	it( 'calls onJoin when "Join Early Readers" is clicked', async () => {
-		const user = userEvent.setup();
-		renderModal();
-
-		const join = screen.getByRole( 'button', { name: 'Join Early Readers' } );
-		expect( join ).toBeEnabled();
-
-		await user.click( join );
-
-		expect( defaultProps.onJoin ).toHaveBeenCalledTimes( 1 );
-	} );
 } );
 
 describe( 'EarlyReadersModal – the confirmation', () => {
@@ -82,7 +105,7 @@ describe( 'EarlyReadersModal – the confirmation', () => {
 			screen.queryByRole( 'heading', { name: 'Get your first readers' } )
 		).not.toBeInTheDocument();
 		expect( screen.queryByText( 'What you get' ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'No thanks' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'radio', { name: 'Sign me up' } ) ).not.toBeInTheDocument();
 		expect(
 			screen.queryByRole( 'button', { name: 'Join Early Readers' } )
 		).not.toBeInTheDocument();
