@@ -52,6 +52,7 @@ function mockSitesEndpoint( sites: Site[] ) {
 }
 
 const BOUNCING_NOTICE_TITLE = 'Your account email isn’t receiving our messages';
+const RECOVERY_MATCH_NOTICE_TITLE = 'Your recovery email is the same as your account email';
 
 // Register before mockSitesEndpoint so the catch-all interceptor doesn't
 // consume the deleted-sites check request.
@@ -127,6 +128,66 @@ describe( '<Sites>', () => {
 
 		await screen.findByRole( 'button', { name: 'Add new site' } );
 		expect( screen.queryByText( BOUNCING_NOTICE_TITLE ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows the recovery-email-matches notice at the top of the sites list', async () => {
+		mockSitesEndpoint( mockSites );
+
+		render( <Sites />, {
+			user: {
+				site_count: mockSites.length,
+				recovery_email_matches_account_email: true,
+			} as User,
+			config: configWithMeSupport,
+		} );
+
+		expect( await screen.findByText( RECOVERY_MATCH_NOTICE_TITLE ) ).toBeVisible();
+	} );
+
+	test( 'hides the recovery-email-matches notice when the recovery email is a different address', async () => {
+		mockSitesEndpoint( mockSites );
+
+		render( <Sites />, {
+			user: {
+				site_count: mockSites.length,
+			} as User,
+			config: configWithMeSupport,
+		} );
+
+		await screen.findByRole( 'button', { name: 'Add new site' } );
+		expect( screen.queryByText( RECOVERY_MATCH_NOTICE_TITLE ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'hides the recovery-email-matches notice in variants without /me support', async () => {
+		mockSitesEndpoint( mockSites );
+
+		render( <Sites />, {
+			user: {
+				site_count: mockSites.length,
+				recovery_email_matches_account_email: true,
+			} as User,
+		} );
+
+		await screen.findByRole( 'button', { name: 'Add new site' } );
+		expect( screen.queryByText( RECOVERY_MATCH_NOTICE_TITLE ) ).not.toBeInTheDocument();
+	} );
+
+	// The arbiter shows one notice at a time, and an account email nothing reaches is the worse
+	// of the two problems.
+	test( 'shows the bouncing-email notice instead when both apply', async () => {
+		mockSitesEndpoint( mockSites );
+
+		render( <Sites />, {
+			user: {
+				site_count: mockSites.length,
+				email_bouncing: true,
+				recovery_email_matches_account_email: true,
+			} as User,
+			config: configWithMeSupport,
+		} );
+
+		expect( await screen.findByText( BOUNCING_NOTICE_TITLE ) ).toBeVisible();
+		expect( screen.queryByText( RECOVERY_MATCH_NOTICE_TITLE ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'renders empty state when the user has no sites', async () => {

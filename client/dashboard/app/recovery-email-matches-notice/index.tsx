@@ -1,0 +1,53 @@
+import { __, sprintf } from '@wordpress/i18n';
+import ComponentViewTracker from '../../components/component-view-tracker';
+import { Notice } from '../../components/notice';
+import RouterLinkButton from '../../components/router-link-button';
+import { useAnalytics } from '../analytics';
+import { useAuth } from '../auth';
+
+/**
+ * Whether the recovery-email-matches-account-email notice is eligible to show. Read at the call
+ * site so the notice never decides its own visibility inside the arbiter.
+ * See client/dashboard/sites/AGENTS.md.
+ *
+ * The flag rides on the authenticated user, which the dashboard already has before the first
+ * paint, so eligibility costs no request and cannot arrive late.
+ */
+export function useShouldShowRecoveryEmailMatchesNotice() {
+	const { user } = useAuth();
+	return !! user.recovery_email_matches_account_email;
+}
+
+export default function RecoveryEmailMatchesNotice() {
+	const { recordTracksEvent } = useAnalytics();
+	const { user } = useAuth();
+
+	return (
+		<>
+			<ComponentViewTracker eventName="calypso_dashboard_recovery_email_matches_notice_impression" />
+			<Notice
+				variant="warning"
+				title={ __( 'Your recovery email is the same as your account email' ) }
+				actions={
+					<RouterLinkButton
+						to="/me/security/account-recovery"
+						variant="primary"
+						onClick={ () =>
+							recordTracksEvent( 'calypso_dashboard_recovery_email_matches_notice_click' )
+						}
+					>
+						{ __( 'Set a recovery email' ) }
+					</RouterLinkButton>
+				}
+			>
+				{ sprintf(
+					// translators: %s is the user's account email address.
+					__(
+						'Your recovery email is %s, the same address you sign in with. If you ever lose access to it, you lose your way back into your account too. Set a different recovery email so we can always reach you.'
+					),
+					user.email
+				) }
+			</Notice>
+		</>
+	);
+}
