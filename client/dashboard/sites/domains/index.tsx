@@ -13,7 +13,7 @@ import {
 	DataViews,
 	DataViewsActionModal,
 	DataViewsCard,
-	useDeepLinkedAction,
+	useDeepLinkedDataViewsAction,
 } from '../../components/dataviews';
 import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
@@ -65,7 +65,7 @@ function SiteDomains() {
 	const searchParams = siteDomainsRoute.useSearch();
 	const navigate = useNavigate();
 
-	const deepLinkedAction = useDeepLinkedAction( {
+	const deepLinkedAction = useDeepLinkedDataViewsAction( {
 		queryParams: searchParams,
 		navigate,
 		actions,

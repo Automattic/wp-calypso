@@ -1,12 +1,10 @@
 import { Modal } from '@wordpress/components';
-import type { ActionModal } from '@wordpress/dataviews';
+import { useEffect, useState } from 'react';
+import type { Action, ActionModal } from '@wordpress/dataviews';
 
 /**
  * Renders a DataViews action's modal outside the row menu, with the chrome
- * DataViews would have given it.
- *
- * Use it where something other than a click has to open an action — a deep link,
- * say — so that route and menu open the very same modal.
+ * DataViews would have given it, so a deep link opens what a click does.
  */
 export function DataViewsActionModal< Item >( {
 	action,
@@ -30,4 +28,61 @@ export function DataViewsActionModal< Item >( {
 			<action.RenderModal items={ [ item ] } closeModal={ onClose } />
 		</Modal>
 	);
+}
+
+/**
+ * Opens one of a screen's DataViews actions from the URL, against the first item
+ * the action is eligible for. The result spreads into `DataViewsActionModal`:
+ *
+ *     const deepLinkedAction = useDeepLinkedDataViewsAction( {
+ *         queryParams,
+ *         navigate,
+ *         actions,
+ *         items,
+ *     } );
+ *
+ *     { deepLinkedAction && <DataViewsActionModal { ...deepLinkedAction } /> }
+ *
+ * A route should validate the param down to the actions it means to expose.
+ */
+export function useDeepLinkedDataViewsAction< Item >( {
+	queryParams,
+	navigate,
+	actions,
+	items,
+	paramName = 'action',
+}: {
+	queryParams?: Record< string, unknown >;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- hosts type their own search, as `useBasePersistentView` also finds.
+	navigate: ( options: { search: any; replace?: boolean } ) => void;
+	actions: Action< Item >[];
+	items: Item[];
+	paramName?: string;
+} ): { action: ActionModal< Item >; item: Item; onClose: () => void } | undefined {
+	const actionId = queryParams?.[ paramName ];
+
+	// Read once, so the modal survives the param being cleared below.
+	const [ requestedActionId ] = useState( () => actionId );
+	const [ isOpen, setIsOpen ] = useState( () => !! actionId );
+
+	useEffect( () => {
+		if ( ! actionId ) {
+			return;
+		}
+
+		// Drop the param, so a reload or a shared link doesn't reopen the modal.
+		navigate( { search: { ...queryParams, [ paramName ]: undefined }, replace: true } );
+		// `queryParams` is a new object every render; the param is what to key on.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ actionId, paramName ] );
+
+	const matchedAction = actions.find( ( action ) => action.id === requestedActionId );
+	const action = matchedAction && 'RenderModal' in matchedAction ? matchedAction : undefined;
+	const item = action && items.find( ( candidate ) => action.isEligible?.( candidate ) ?? true );
+
+	if ( ! isOpen || ! action || ! item ) {
+		return undefined;
+	}
+
+	return { action, item, onClose: () => setIsOpen( false ) };
 }
