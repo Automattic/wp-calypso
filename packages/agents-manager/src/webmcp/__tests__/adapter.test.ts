@@ -21,6 +21,15 @@ const createAbility = ( overrides: Partial< Ability > = {} ): Ability => ( {
 	...overrides,
 } );
 
+const createBlockTreeAbility = (): Ability => ( {
+	name: 'agents-manager/get-block-tree',
+	label: 'Get block tree',
+	description: 'Read the current editor block tree.',
+	category: 'big-sky',
+	input_schema: { type: 'object', properties: {} },
+	meta: { annotations: { clientRegistered: true, readonly: true, idempotent: true } },
+} );
+
 function createHarness( initialAbilities: Ability[] = [ createAbility() ] ) {
 	let abilities = initialAbilities;
 	const tools = new Map< string, WebMcpTool >();
@@ -68,6 +77,7 @@ describe( 'WebMCP adapter', () => {
 
 	it( 'requires both the explicit allowlist and client provenance', () => {
 		expect( shouldExposeWebMcpAbility( createAbility() ) ).toBe( true );
+		expect( shouldExposeWebMcpAbility( createBlockTreeAbility() ) ).toBe( true );
 		expect(
 			shouldExposeWebMcpAbility( createAbility( { meta: undefined, callback: jest.fn() } ) )
 		).toBe( true );
@@ -97,19 +107,93 @@ describe( 'WebMCP adapter', () => {
 		expect( tool ).toMatchObject( {
 			name: 'big_sky__apply_block_edits',
 			title: 'Apply block edits',
-			description: 'Apply deterministic edits to the current block canvas.',
+			description: expect.stringContaining( 'agents_manager__get_block_tree' ),
 			inputSchema: {
 				type: 'object',
-				properties: { edits: { type: 'array' } },
+				properties: {
+					updates: expect.objectContaining( { type: 'array' } ),
+					inserts: expect.objectContaining( { type: 'array' } ),
+					deletes: expect.objectContaining( {
+						type: 'array',
+						items: { type: 'string' },
+					} ),
+				},
+				additionalProperties: false,
 			},
-			annotations: { readOnlyHint: false },
+			annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false },
 		} );
 
-		const input = { edits: [ { clientId: 'block-1' } ] };
-		await expect( tool?.execute( input ) ).resolves.toEqual( { input } );
+		const input = {
+			updates: [ { clientId: 'block-1', name: 'core/paragraph', attributes: {} } ],
+			customCSS: 'body { display: none }',
+		};
+		await expect( tool?.execute( input ) ).resolves.toEqual( {
+			input: {
+				updates: input.updates,
+				reverseMap: {},
+				suppressAssistantMessage: true,
+			},
+		} );
 		expect( harness.toolProvider.executeAbility ).toHaveBeenCalledWith(
 			'big-sky/apply-block-edits',
-			input
+			{
+				updates: input.updates,
+				reverseMap: {},
+				suppressAssistantMessage: true,
+			}
+		);
+	} );
+
+	it( 'pairs the block-tree IDs with the edit bridge', async () => {
+		const harness = createHarness( [ createBlockTreeAbility(), createAbility() ] );
+		( harness.toolProvider.executeAbility as jest.Mock ).mockImplementation(
+			async ( name: string, input: unknown ) => {
+				if ( name === 'agents-manager/get-block-tree' ) {
+					return {
+						result: {
+							success: true,
+							details: {
+								blocks: [
+									{
+										clientId: 'group-1',
+										innerBlocks: [ { clientId: 'paragraph-1', innerBlocks: [] } ],
+									},
+								],
+							},
+						},
+						returnToAgent: true,
+					};
+				}
+
+				return { input };
+			}
+		);
+		await harness.adapter.sync();
+
+		const readTool = harness.tools.get( 'agents_manager__get_block_tree' );
+		expect( readTool ).toMatchObject( {
+			annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true },
+		} );
+		await readTool?.execute( {} );
+
+		const editInput = {
+			updates: [
+				{ clientId: 'paragraph-1', name: 'core/paragraph', attributes: { content: 'Updated' } },
+			],
+			summary: 'Updated the paragraph.',
+		};
+		await harness.tools.get( 'big_sky__apply_block_edits' )?.execute( editInput );
+
+		expect( harness.toolProvider.executeAbility ).toHaveBeenLastCalledWith(
+			'big-sky/apply-block-edits',
+			{
+				...editInput,
+				reverseMap: {
+					'group-1': 'group-1',
+					'paragraph-1': 'paragraph-1',
+				},
+				suppressAssistantMessage: true,
+			}
 		);
 	} );
 
@@ -160,7 +244,7 @@ describe( 'WebMCP adapter', () => {
 		expect( harness.modelContext.registerTool ).toHaveBeenCalledTimes( 1 );
 
 		const firstSignal = harness.signals.get( 'big_sky__apply_block_edits' );
-		harness.setAbilities( [ createAbility( { description: 'Updated description' } ) ] );
+		harness.setAbilities( [ createAbility( { label: 'Updated label' } ) ] );
 		await harness.adapter.sync();
 		expect( firstSignal?.aborted ).toBe( true );
 		expect( harness.modelContext.registerTool ).toHaveBeenCalledTimes( 2 );

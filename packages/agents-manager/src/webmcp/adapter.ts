@@ -1,4 +1,10 @@
 import { normalizeAbilityName } from '../abilities/ability-name';
+import {
+	APPLY_BLOCK_EDITS_ABILITY_NAME,
+	GET_BLOCK_TREE_ABILITY_NAME,
+	getWebMcpDescription,
+	getWebMcpInputSchema,
+} from './contracts';
 import type { Ability } from '../abilities/types';
 import type { ToolProvider } from '../extension-types';
 import type { WebMcpAdapter, WebMcpModelContext, WebMcpTool } from './types';
@@ -16,11 +22,14 @@ type CreateWebMcpAdapterOptions = {
 };
 
 /**
- * The initial experiment exposes only this client-side editor mutation. It edits
- * the current canvas without saving or publishing, and execution remains behind
- * the merged provider's permission checks and canvas guard.
+ * The experiment exposes one read-only editor snapshot and one client-side
+ * mutation. Execution remains behind the merged provider's permission checks
+ * and canvas guard.
  */
-export const WEBMCP_EDITOR_ABILITY_ALLOWLIST = new Set( [ 'big-sky/apply-block-edits' ] );
+export const WEBMCP_EDITOR_ABILITY_ALLOWLIST = new Set( [
+	APPLY_BLOCK_EDITS_ABILITY_NAME,
+	GET_BLOCK_TREE_ABILITY_NAME,
+] );
 
 export function shouldExposeWebMcpAbility( ability: Ability ): boolean {
 	if ( ! WEBMCP_EDITOR_ABILITY_ALLOWLIST.has( ability.name ) ) {
@@ -54,21 +63,95 @@ function createAbortError(): Error {
 	return error;
 }
 
-function createTool( ability: Ability, toolProvider: ToolProvider ): WebMcpTool {
+type ExecutionContext = {
+	knownBlockClientIds: Set< string >;
+};
+
+function isRecord( value: unknown ): value is Record< string, unknown > {
+	return !! value && typeof value === 'object' && ! Array.isArray( value );
+}
+
+function rememberBlockClientIds( result: unknown, context: ExecutionContext ): void {
+	if (
+		! isRecord( result ) ||
+		! isRecord( result.result ) ||
+		! isRecord( result.result.details )
+	) {
+		return;
+	}
+
+	const visit = ( blocks: unknown ) => {
+		if ( ! Array.isArray( blocks ) ) {
+			return;
+		}
+
+		for ( const block of blocks ) {
+			if ( ! isRecord( block ) ) {
+				continue;
+			}
+
+			if ( typeof block.clientId === 'string' ) {
+				context.knownBlockClientIds.add( block.clientId );
+			}
+			visit( block.innerBlocks );
+		}
+	};
+
+	context.knownBlockClientIds.clear();
+	visit( result.result.details.blocks );
+}
+
+function prepareApplyBlockEditsInput(
+	input: Record< string, unknown >,
+	context: ExecutionContext
+): Record< string, unknown > {
+	const reverseMap = Object.fromEntries(
+		Array.from( context.knownBlockClientIds, ( clientId ) => [ clientId, clientId ] )
+	);
+
+	return {
+		...( Array.isArray( input.updates ) ? { updates: input.updates } : {} ),
+		...( Array.isArray( input.inserts ) ? { inserts: input.inserts } : {} ),
+		...( Array.isArray( input.deletes ) ? { deletes: input.deletes } : {} ),
+		...( typeof input.summary === 'string' ? { summary: input.summary } : {} ),
+		reverseMap,
+		suppressAssistantMessage: true,
+	};
+}
+
+function createTool(
+	ability: Ability,
+	toolProvider: ToolProvider,
+	executionContext: ExecutionContext
+): WebMcpTool {
 	return {
 		name: normalizeAbilityName( ability.name ),
 		title: ability.label || ability.name,
-		description: ability.description || ability.label || ability.name,
-		inputSchema: normalizeInputSchema( ability.input_schema ),
+		description: getWebMcpDescription( ability ),
+		inputSchema: normalizeInputSchema( getWebMcpInputSchema( ability ) ),
 		annotations: {
 			readOnlyHint: ability.meta?.annotations?.readonly === true,
+			destructiveHint:
+				ability.name === APPLY_BLOCK_EDITS_ABILITY_NAME ||
+				ability.meta?.annotations?.destructive === true,
+			idempotentHint: ability.meta?.annotations?.idempotent === true,
 		},
 		execute: async ( input, options ) => {
 			if ( options?.signal?.aborted ) {
 				throw createAbortError();
 			}
 
-			return toolProvider.executeAbility( ability.name, input ?? {} );
+			const preparedInput =
+				ability.name === APPLY_BLOCK_EDITS_ABILITY_NAME
+					? prepareApplyBlockEditsInput( input ?? {}, executionContext )
+					: input ?? {};
+			const result = await toolProvider.executeAbility( ability.name, preparedInput );
+
+			if ( ability.name === GET_BLOCK_TREE_ABILITY_NAME ) {
+				rememberBlockClientIds( result, executionContext );
+			}
+
+			return result;
 		},
 	};
 }
@@ -90,6 +173,7 @@ export function createWebMcpAdapter( {
 }: CreateWebMcpAdapterOptions ): WebMcpAdapter {
 	const registrations = new Map< string, Registration >();
 	const pendingControllers = new Set< AbortController >();
+	const executionContext: ExecutionContext = { knownBlockClientIds: new Set() };
 	let disposed = false;
 	let syncRequested = false;
 	let syncQueue = Promise.resolve();
@@ -126,7 +210,7 @@ export function createWebMcpAdapter( {
 		}
 
 		for ( const [ abilityName, ability ] of eligible ) {
-			const tool = createTool( ability, toolProvider );
+			const tool = createTool( ability, toolProvider, executionContext );
 			const fingerprint = fingerprintTool( tool );
 			const current = registrations.get( abilityName );
 
@@ -196,6 +280,7 @@ export function createWebMcpAdapter( {
 				void unregister( registration );
 			}
 			registrations.clear();
+			executionContext.knownBlockClientIds.clear();
 		},
 	};
 }

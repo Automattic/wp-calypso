@@ -17,12 +17,19 @@ the original slash-based ability name through `toolProvider.executeAbility()`. W
 is eligible, the external provider's ability-setup hook also mounts at the stable Agents Manager
 lifecycle so hook-dependent abilities can register without opening the chat route.
 
-The initial allowlist contains only:
+The initial allowlist contains:
+
+- `agents-manager/get-block-tree`: an Agents Manager-owned, client-only ability that reads the live
+  Gutenberg tree. It returns real client IDs, block names, serializable attributes, nesting, the
+  current selection, and a block count. The WebMCP adapter remembers these IDs for the matching
+  edit call. It is annotated as read-only and idempotent.
 
 - `big-sky/apply-block-edits`: a client-registered ability that deterministically changes the
   current block-editor canvas. It does not save or publish the edit, so the result remains visible
-  and reviewable. On current trunk it is owned by the Big Sky fallback provider; the merged-provider
-  seam continues to work when ownership migrates to Agents Manager.
+  and reviewable. Its WebMCP contract supplies item-level schemas for updates, insertions, and
+  deletions, strips internal-only arguments, and injects an identity mapping for IDs from the most
+  recent block-tree read. On current trunk it is owned by the Big Sky fallback provider; the
+  merged-provider seam continues to work when ownership migrates to Agents Manager.
 
 An allowlisted ability is still rejected if it is marked server-registered. It must be marked
 client-registered or carry a client callback, which supports both registry-returned provider
@@ -32,8 +39,11 @@ abilities and direct Agents Manager-owned definitions.
 
 1. Open a post, page, or site editor with `?webmcp=1` and the browser's WebMCP testing feature on.
 2. Without opening Agents Manager chat, ask the browser agent to enumerate the page's tools.
-3. Confirm `big_sky__apply_block_edits` is the only tool from this adapter.
-4. Apply a small reversible edit and confirm the canvas changes without being saved or published.
+3. Confirm `agents_manager__get_block_tree` and `big_sky__apply_block_edits` are the only tools from
+   this adapter.
+4. Call `agents_manager__get_block_tree`, choose a returned client ID, then call
+   `big_sky__apply_block_edits` with that ID and a small reversible edit. Confirm the canvas changes
+   without being saved or published.
 5. Confirm the Network panel shows no Agenttic/orchestrator/model request.
 6. Navigate to another editor/site and confirm the tool now targets only the current canvas.
 7. Remove `webmcp=1` and reload; confirm the tool is absent.
@@ -43,6 +53,9 @@ The adapter reconciles the provider every two seconds only while the experiment 
 covers abilities registered by later React effects. Changing scope or unmounting Agents Manager
 aborts all registrations. An already-aborted tool execution is rejected, but an in-flight provider
 execution cannot currently be cancelled because `ToolProvider.executeAbility()` has no signal.
+
+The edit tool should be preceded by a fresh block-tree read. This keeps its targets aligned with the
+current editor and refreshes the identity map used by the Big Sky callback.
 
 To add another tool, verify its complete implementation and execution path are client-only,
 editor-scoped, deterministic, reviewable, non-administrative, and free of model/orchestrator calls.
