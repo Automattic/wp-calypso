@@ -132,7 +132,8 @@ export async function loadChatFromServer(
 export async function listConversationsFromServer(
 	botId: string,
 	config: Omit< OdieServiceConfig, 'botId' >,
-	useFirstMessage = false
+	useFirstMessage = false,
+	channelFilter?: { externalIdProvider: string; externalId: string }
 ): Promise< ServerConversationListItem[] > {
 	const { apiBaseUrl = DEFAULT_API_BASE_URL, authProvider } = config;
 
@@ -142,6 +143,12 @@ export async function listConversationsFromServer(
 	);
 
 	url.searchParams.set( 'truncation_method', useFirstMessage ? 'first_message' : 'last_message' );
+
+	// Optional server-side channel filter (narrowing-only; user scoping always applies first).
+	if ( channelFilter ) {
+		url.searchParams.set( 'external_id_provider', channelFilter.externalIdProvider );
+		url.searchParams.set( 'external_id', channelFilter.externalId );
+	}
 
 	logger( 'Listing conversations from server for bot: %s', botId );
 

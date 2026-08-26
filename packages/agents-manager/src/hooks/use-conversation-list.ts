@@ -15,12 +15,17 @@ import { normalizeZendeskConversations } from '../utils/zendesk';
 import { useShouldUseUnifiedAgent } from './use-should-use-unified-agent';
 
 export default function useConversationList() {
-	const { agentConfig, site, zendeskSmoochIntegrationKey } = useAgentsManagerContext();
+	const { agentConfig, site, sectionName, zendeskSmoochIntegrationKey } = useAgentsManagerContext();
 	const { agentId, authProvider } = agentConfig!;
 	const urlSearchParams = new URLSearchParams( window.location.search );
 	const hasAgentParam = urlSearchParams.has( 'agent' );
 	const botId = getConversationBotId( agentId, hasAgentParam );
 	const isReaderChat = isReaderChatAgent( agentId );
+	// Woo admin host only: scope history to the current store (chats are tagged server-side).
+	const wooStoreFilter =
+		sectionName === 'wooai-admin' && site?.ID
+			? { externalIdProvider: 'woo-merchant', externalId: String( site.ID ) }
+			: undefined;
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 
 	// Only fetch Zendesk conversations if the unified agent flag is enabled
@@ -37,8 +42,8 @@ export default function useConversationList() {
 		isError: isOrchestratorError,
 		error: orchestratorError,
 	} = useQuery< ServerConversationListItem[] >( {
-		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when `botId` changes
-		queryKey: [ 'agents-manager-conversation-list', botId ],
+		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when `botId` or the store scope changes
+		queryKey: [ 'agents-manager-conversation-list', botId, wooStoreFilter?.externalId ],
 		queryFn: async () => {
 			const result = await listConversationsFromServer(
 				botId,
@@ -46,7 +51,8 @@ export default function useConversationList() {
 					apiBaseUrl: API_BASE_URL,
 					authProvider,
 				},
-				true
+				true,
+				wooStoreFilter
 			);
 			return result;
 		},
