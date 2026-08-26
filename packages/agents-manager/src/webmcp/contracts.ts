@@ -2,6 +2,7 @@ import type { Ability } from '../abilities/types';
 
 export const GET_BLOCK_TREE_ABILITY_NAME = 'agents-manager/get-block-tree';
 export const APPLY_BLOCK_EDITS_ABILITY_NAME = 'big-sky/apply-block-edits';
+export const SHOW_TEMPLATE_ABILITY_NAME = 'big-sky/show-template';
 
 const BLOCK_DATA_SCHEMA = {
 	type: 'object',
@@ -90,6 +91,10 @@ export function getWebMcpInputSchema( ability: Ability ): Record< string, unknow
 export function getWebMcpDescription( ability: Ability ): string {
 	if ( ability.name === APPLY_BLOCK_EDITS_ABILITY_NAME ) {
 		return 'Applies deterministic edits to the current block-editor canvas. Call agents_manager__get_block_tree immediately before every edit and use the returned clientId values unchanged. The change remains unsaved and reviewable in the editor.';
+	}
+
+	if ( ability.name === SHOW_TEMPLATE_ABILITY_NAME ) {
+		return "Turns on the editor's Show template mode so headers and footers become available to agents_manager__get_block_tree. Use this when the requested header or footer is absent from the block tree, then read the block tree again before editing. This does not unlock a template part that is already visible but locked.";
 	}
 
 	return ability.description || ability.label || ability.name;

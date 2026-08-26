@@ -30,6 +30,17 @@ const createBlockTreeAbility = (): Ability => ( {
 	meta: { annotations: { clientRegistered: true, readonly: true, idempotent: true } },
 } );
 
+const createShowTemplateAbility = (): Ability => ( {
+	name: 'big-sky/show-template',
+	label: 'Show the page template',
+	description: 'Show the page template, then call big_sky__get_page_structure again.',
+	category: 'big-sky',
+	input_schema: { type: 'object', properties: {}, additionalProperties: false },
+	meta: {
+		annotations: { clientRegistered: true, readonly: false, idempotent: true },
+	},
+} );
+
 function createHarness( initialAbilities: Ability[] = [ createAbility() ] ) {
 	let abilities = initialAbilities;
 	const tools = new Map< string, WebMcpTool >();
@@ -78,6 +89,7 @@ describe( 'WebMCP adapter', () => {
 	it( 'requires both the explicit allowlist and client provenance', () => {
 		expect( shouldExposeWebMcpAbility( createAbility() ) ).toBe( true );
 		expect( shouldExposeWebMcpAbility( createBlockTreeAbility() ) ).toBe( true );
+		expect( shouldExposeWebMcpAbility( createShowTemplateAbility() ) ).toBe( true );
 		expect(
 			shouldExposeWebMcpAbility( createAbility( { meta: undefined, callback: jest.fn() } ) )
 		).toBe( true );
@@ -96,6 +108,42 @@ describe( 'WebMCP adapter', () => {
 				createAbility( { meta: { annotations: {} }, callback: undefined } )
 			)
 		).toBe( false );
+	} );
+
+	it( 'maps show-template guidance to the WebMCP block reader', async () => {
+		const harness = createHarness( [ createShowTemplateAbility() ] );
+		( harness.toolProvider.executeAbility as jest.Mock ).mockResolvedValue( {
+			result: {
+				success: true,
+				message: 'The template is showing.',
+				details: {
+					nextStep: 'Call big_sky__get_page_structure again before editing.',
+				},
+			},
+			returnToAgent: true,
+		} );
+		await harness.adapter.sync();
+
+		const tool = harness.tools.get( 'big_sky__show_template' );
+		expect( tool ).toMatchObject( {
+			description: expect.stringContaining( 'agents_manager__get_block_tree' ),
+			inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+			annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true },
+		} );
+		await expect( tool?.execute( {} ) ).resolves.toEqual( {
+			result: {
+				success: true,
+				message: 'The template is showing.',
+				details: {
+					nextStep: 'Call agents_manager__get_block_tree again before editing.',
+				},
+			},
+			returnToAgent: true,
+		} );
+		expect( harness.toolProvider.executeAbility ).toHaveBeenCalledWith(
+			'big-sky/show-template',
+			{}
+		);
 	} );
 
 	it( 'registers mapped metadata and executes through the provider with the original name', async () => {

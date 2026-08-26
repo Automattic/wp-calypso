@@ -2,6 +2,7 @@ import { normalizeAbilityName } from '../abilities/ability-name';
 import {
 	APPLY_BLOCK_EDITS_ABILITY_NAME,
 	GET_BLOCK_TREE_ABILITY_NAME,
+	SHOW_TEMPLATE_ABILITY_NAME,
 	getWebMcpDescription,
 	getWebMcpInputSchema,
 } from './contracts';
@@ -22,13 +23,13 @@ type CreateWebMcpAdapterOptions = {
 };
 
 /**
- * The experiment exposes one read-only editor snapshot and one client-side
- * mutation. Execution remains behind the merged provider's permission checks
- * and canvas guard.
+ * Execution remains behind the merged provider's permission checks and canvas
+ * guard.
  */
 export const WEBMCP_EDITOR_ABILITY_ALLOWLIST = new Set( [
 	APPLY_BLOCK_EDITS_ABILITY_NAME,
 	GET_BLOCK_TREE_ABILITY_NAME,
+	SHOW_TEMPLATE_ABILITY_NAME,
 ] );
 
 export function shouldExposeWebMcpAbility( ability: Ability ): boolean {
@@ -119,6 +120,31 @@ function prepareApplyBlockEditsInput(
 	};
 }
 
+function adaptResultForWebMcp( abilityName: string, value: unknown ): unknown {
+	if ( abilityName !== SHOW_TEMPLATE_ABILITY_NAME ) {
+		return value;
+	}
+
+	if ( typeof value === 'string' ) {
+		return value.replaceAll( 'big_sky__get_page_structure', 'agents_manager__get_block_tree' );
+	}
+
+	if ( Array.isArray( value ) ) {
+		return value.map( ( item ) => adaptResultForWebMcp( abilityName, item ) );
+	}
+
+	if ( isRecord( value ) ) {
+		return Object.fromEntries(
+			Object.entries( value ).map( ( [ key, item ] ) => [
+				key,
+				adaptResultForWebMcp( abilityName, item ),
+			] )
+		);
+	}
+
+	return value;
+}
+
 function createTool(
 	ability: Ability,
 	toolProvider: ToolProvider,
@@ -151,7 +177,7 @@ function createTool(
 				rememberBlockClientIds( result, executionContext );
 			}
 
-			return result;
+			return adaptResultForWebMcp( ability.name, result );
 		},
 	};
 }
