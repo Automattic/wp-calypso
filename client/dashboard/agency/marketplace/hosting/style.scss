@@ -73,12 +73,18 @@
 	box-shadow: inset 0 0 0 1.5px var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
 }
 
+// Docked concierge shrinks the dashboard content so it reflows beside the
+// chat instead of being covered.
+.has-docked-concierge .dashboard-root__content {
+	padding-inline-end: 460px;
+}
+
 .marketplace-hosting__concierge {
 	position: fixed;
 	inset-block: 0;
 	inset-inline-end: 0;
 	z-index: 1000;
-	inline-size: 400px;
+	inline-size: 460px;
 	max-inline-size: 100%;
 	display: flex;
 	flex-direction: column;
@@ -90,6 +96,7 @@
 .marketplace-hosting__concierge-agent {
 	flex: 1;
 	min-block-size: 0;
+	padding-inline: 8px;
 }
 
 .marketplace-hosting__concierge-header {
@@ -100,6 +107,10 @@
 	font-weight: 600;
 	color: var( --color-foreground );
 	border-block-end: 1px solid var( --color-input-border );
+
+	.components-button {
+		color: var( --color-foreground );
+	}
 }
 
 .marketplace-hosting__concierge-logo {

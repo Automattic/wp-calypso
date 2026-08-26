@@ -5,7 +5,7 @@ import AgentUI from '@automattic/agenttic-ui';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import OverviewCard from '../../../components/overview-card';
 import pressableDescriptor from '../exclusive-offers/images/pressable-descriptor.svg';
 import vipDescriptor from '../exclusive-offers/images/vip-descriptor.svg';
@@ -58,13 +58,13 @@ const TYPE_PROMPT = __( 'What are you building for them?' );
 const MGMT_PROMPT = __( 'And who’ll be running it day to day?' );
 
 const TYPE_SUGGESTIONS: Suggestion[] = [
-	{ id: 'content', label: __( 'A content or business site' ) },
-	{ id: 'store', label: __( 'An online store' ) },
-	{ id: 'enterprise', label: __( 'Enterprise or high-traffic' ) },
+	{ id: 'content', label: __( 'Content site' ) },
+	{ id: 'store', label: __( 'Online store' ) },
+	{ id: 'enterprise', label: __( 'Enterprise' ) },
 ];
 
 const MGMT_SUGGESTIONS: Suggestion[] = [
-	{ id: 'client', label: __( 'The client manages it' ) },
+	{ id: 'client', label: __( 'Client manages it' ) },
 	{ id: 'agency', label: __( 'We manage it' ) },
 ];
 
@@ -138,6 +138,22 @@ export default function HostingConcierge( {
 	] );
 	const [ suggestions, setSuggestions ] = useState< Suggestion[] >( TYPE_SUGGESTIONS );
 	const [ stage, setStage ] = useState< 'type' | 'mgmt' | 'result' >( 'type' );
+
+	// Dock the panel: shrink the dashboard content so it reflows beside the
+	// chat instead of being covered ( the Big Sky split-screen behaviour ).
+	useEffect( () => {
+		document.documentElement.classList.add( 'has-docked-concierge' );
+		const onKey = ( event: KeyboardEvent ) => {
+			if ( event.key === 'Escape' ) {
+				onClose();
+			}
+		};
+		document.addEventListener( 'keydown', onKey );
+		return () => {
+			document.documentElement.classList.remove( 'has-docked-concierge' );
+			document.removeEventListener( 'keydown', onKey );
+		};
+	}, [ onClose ] );
 
 	const recommend = ( brand: HostingBrand[ 'key' ] ) => {
 		const name = hostingBrands.find( ( b ) => b.key === brand )?.name ?? '';
