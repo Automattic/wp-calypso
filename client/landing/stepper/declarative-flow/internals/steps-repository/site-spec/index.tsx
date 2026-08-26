@@ -142,6 +142,9 @@ const SiteSpec: StepType = function SiteSpec() {
 
 	const ciabSiteCreationPromiseRef = useRef< Promise< number | null > | null >( null );
 	const shouldImportBlueprint = queryParams.get( 'blueprint_archive_import' ) === '1';
+	// A wow-funnel run already started the import server-side, before checkout. This page still
+	// waits on it and hands over, but must not start a second one.
+	const isWowFunnelRun = !! queryParams.get( 'wow_funnel' );
 	const blueprintArchiveSlug = queryParams.get( 'blueprint_slug' ) ?? '';
 	const blueprintArchiveSiteIdentifier = getBlueprintArchiveSiteIdentifier( {
 		siteSlug: queryParams.get( 'siteSlug' ),
@@ -428,10 +431,13 @@ const SiteSpec: StepType = function SiteSpec() {
 	);
 
 	// Kick off the background transfer + blueprint-archive import as soon as the
-	// spec page mounts, so it runs while the user reviews the spec.
+	// spec page mounts, so it runs while the user reviews the spec. A funnel run skips this:
+	// its build started before checkout and is likely finished by now, so the waits below are
+	// all this page needs to do.
 	useEffect( () => {
 		if (
 			! shouldImportBlueprint ||
+			isWowFunnelRun ||
 			! blueprintArchiveSlug ||
 			! blueprintArchiveSiteIdentifier ||
 			blueprintImportStartedRef.current
@@ -457,7 +463,12 @@ const SiteSpec: StepType = function SiteSpec() {
 					error: error instanceof Error ? error.message : String( error ),
 				} );
 			} );
-	}, [ shouldImportBlueprint, blueprintArchiveSlug, blueprintArchiveSiteIdentifier ] );
+	}, [
+		shouldImportBlueprint,
+		isWowFunnelRun,
+		blueprintArchiveSlug,
+		blueprintArchiveSiteIdentifier,
+	] );
 
 	if ( buildWowRequested && isLoadingAutomattician ) {
 		return <DocumentHead title={ translate( 'Build Your Site with AI' ) } />;

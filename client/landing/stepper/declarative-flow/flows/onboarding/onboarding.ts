@@ -46,6 +46,7 @@ import {
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import {
 	getWowFunnelDest,
+	getWowFunnelArgs,
 	getWowFunnelSlug,
 	getRememberedWowFunnelSite,
 	startWowFunnelSite,
@@ -140,6 +141,28 @@ const onboarding: FlowV2< typeof initialize > = {
 			if ( wowFunnelSlug && wowFunnelDest ) {
 				const siteSlug = providedDependencies.siteSlug as string;
 				const siteId = providedDependencies.siteId as number;
+
+				// dest=site-spec: the funnel's follow-up (e.g. the blueprint import) is already
+				// running server-side, so site-spec only waits on it and hands over. It must not
+				// start one — see the funnel guard on its kickoff effect.
+				if ( 'site-spec' === wowFunnelDest ) {
+					const blueprintSlug = queryParams.get( 'blueprint' ) ?? '';
+					logWowFunnelEvent( 'post_checkout_site_spec', {
+						funnel: wowFunnelSlug,
+						blog_id: siteId,
+					} );
+					return [
+						getBlueprintArchiveSiteSpecUrl( {
+							siteSlug,
+							siteId,
+							blueprintSlug,
+							ref: refParameter,
+						} ),
+						null,
+						null,
+					];
+				}
+
 				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
 				const siteUrl = site?.URL ?? `https://${ siteSlug }`;
 				logWowFunnelEvent( 'post_checkout_editor', { funnel: wowFunnelSlug, blog_id: siteId } );
@@ -625,7 +648,10 @@ const onboarding: FlowV2< typeof initialize > = {
 			if ( ! funnelSlug || getRememberedWowFunnelSite( funnelSlug ) ) {
 				return;
 			}
-			void startWowFunnelSite( { funnelSlug } ).catch( () => {
+			void startWowFunnelSite( {
+				funnelSlug,
+				funnelArgs: getWowFunnelArgs( queryParams ),
+			} ).catch( () => {
 				// Errors are logged in the util; the create-site step retries as a fallback.
 			} );
 		}, [ currentStepSlug, isLoggedIn ] );
