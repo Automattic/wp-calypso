@@ -1,5 +1,6 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { buildDotcomDashboardLink } from 'calypso/dashboard/app-dotcom/routing';
 import { useHandleClickLink } from './use-handle-click-link';
 
 import './style.scss';
@@ -7,6 +8,7 @@ import './style.scss';
 export const WordPressAgentCard = () => {
 	const translate = useTranslate();
 	const handleClickLink = useHandleClickLink();
+	const agentUrl = buildDotcomDashboardLink( '/me/agent' );
 
 	return (
 		<Card className="developer-features-list__item">
@@ -18,7 +20,7 @@ export const WordPressAgentCard = () => {
 				) }
 			</div>
 			<div className="developer-features-list__item-learn-more">
-				<a id="wordpress-agent" href="/me/agent" onClick={ handleClickLink }>
+				<a id="wordpress-agent" href={ agentUrl } onClick={ handleClickLink }>
 					{ translate( 'Manage connections' ) }
 				</a>
 			</div>

@@ -16,6 +16,10 @@ jest.mock( 'i18n-calypso', () => ( {
 	useTranslate: () => ( text: string ) => text,
 } ) );
 
+jest.mock( 'calypso/dashboard/app-dotcom/routing', () => ( {
+	buildDotcomDashboardLink: ( path: string ) => `http://my.localhost:3000${ path }`,
+} ) );
+
 jest.mock( '../use-handle-click-link', () => ( {
 	useHandleClickLink: () => mockHandleClickLink,
 } ) );
@@ -39,7 +43,7 @@ describe( 'WordPressAgentCard', () => {
 		expect( screen.queryByRole( 'button', { name: 'Disconnect' } ) ).not.toBeInTheDocument();
 
 		const link = screen.getByRole( 'link', { name: 'Manage connections' } );
-		expect( link ).toHaveAttribute( 'href', '/me/agent' );
+		expect( link ).toHaveAttribute( 'href', 'http://my.localhost:3000/me/agent' );
 
 		await user.click( link );
 		expect( mockHandleClickLink ).toHaveBeenCalledTimes( 1 );
