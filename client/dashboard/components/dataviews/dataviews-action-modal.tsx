@@ -4,7 +4,7 @@ import type { Action, ActionModal } from '@wordpress/dataviews';
 
 /**
  * Renders a DataViews action's modal outside the row menu, with the chrome
- * DataViews would have given it, so a deep link opens what a click does.
+ * DataViews would have given it.
  */
 export function DataViewsActionModal< Item >( {
 	action,
@@ -32,18 +32,7 @@ export function DataViewsActionModal< Item >( {
 
 /**
  * Opens one of a screen's DataViews actions from the URL, against the first item
- * the action is eligible for. The result spreads into `DataViewsActionModal`:
- *
- *     const deepLinkedAction = useDeepLinkedDataViewsAction( {
- *         queryParams,
- *         navigate,
- *         actions,
- *         items,
- *     } );
- *
- *     { deepLinkedAction && <DataViewsActionModal { ...deepLinkedAction } /> }
- *
- * A route should validate the param down to the actions it means to expose.
+ * the action is eligible for, then drops the param so a reload doesn't reopen it.
  */
 export function useDeepLinkedDataViewsAction< Item >( {
 	queryParams,
@@ -70,7 +59,6 @@ export function useDeepLinkedDataViewsAction< Item >( {
 			return;
 		}
 
-		// Drop the param, so a reload or a shared link doesn't reopen the modal.
 		navigate( { search: { ...queryParams, [ paramName ]: undefined }, replace: true } );
 		// `queryParams` is a new object every render; the param is what to key on.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
