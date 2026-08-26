@@ -75,8 +75,9 @@ test.describe(
 				await page.goto(
 					helperData.getCalypsoURL( `home/${ newSiteDetails?.blog_details.site_slug as string }` )
 				);
-				const currentPlan = await componentSidebar.getCurrentPlanName();
-				expect( currentPlan ).toBe( planName );
+				// The sidebar renders the previous plan until the purchase lands in the
+				// site's plan data, so poll rather than reading it once.
+				await expect.poll( () => componentSidebar.getCurrentPlanName() ).toBe( planName );
 			} );
 		} );
 

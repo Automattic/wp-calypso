@@ -73,7 +73,9 @@ test.describe(
 
 			await test.step( 'Then template content loads into editor', async () => {
 				const editorCanvas = await pageEditor.getEditorCanvas();
-				expect( await editorCanvas.textContent() ).toContain( pageTemplateFirstTextContent! );
+				await expect
+					.poll( () => editorCanvas.textContent() )
+					.toContain( pageTemplateFirstTextContent! );
 			} );
 
 			await test.step( 'When I open settings sidebar', async () => {

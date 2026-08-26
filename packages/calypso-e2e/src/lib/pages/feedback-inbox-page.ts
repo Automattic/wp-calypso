@@ -56,6 +56,15 @@ export class FeedbackInboxPage {
 	}
 
 	/**
+	 * Waits for the response row matching the given text to render.
+	 *
+	 * @param {string} text The text to match in the row.
+	 */
+	async waitForResponseRow( text: string ): Promise< void > {
+		await this.getResponseRow( text ).waitFor( { state: 'visible' } );
+	}
+
+	/**
 	 * View a response row that has the provided text.
 	 * Doesn't verify the row is selected, it just makes sure the response
 	 * is visible (inspector on desktop, modal on mobile)

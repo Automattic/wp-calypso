@@ -10,6 +10,7 @@ import {
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 import { expect, tags, test } from '../../lib/pw-base';
+import { isVisibleWithin } from '../shared';
 
 const features4SimpleSites = {
 	resharing: false,
@@ -228,7 +229,9 @@ test.describe(
 
 						// Look for the Share button within the modal dialog
 						reshareButton = reshareModal.getByRole( 'button', { name: 'Share', exact: true } );
-						isReshareButtonVisible = await reshareButton.isVisible();
+						// The modal renders before its buttons do, so a point-in-time check here
+						// reads as "not visible" and fails the assertion below.
+						isReshareButtonVisible = await isVisibleWithin( reshareButton );
 
 						// Close the share post modal by clicking the Close button within the modal
 						closeButton = reshareModal.getByRole( 'button', { name: 'Close' } ).first();
@@ -243,12 +246,12 @@ test.describe(
 						await upgradeButton.waitFor();
 					}
 
-					const content = await section.textContent();
-
 					const message =
 						'To re-share a post, you need to upgrade to the WordPress.com Premium plan';
 
-					expect( content?.includes( message ) ).toBe( ! features.resharing );
+					await expect
+						.poll( async () => ( await section.textContent() )?.includes( message ) )
+						.toBe( ! features.resharing );
 				} );
 
 				test( `Should verify that manual sharing ${

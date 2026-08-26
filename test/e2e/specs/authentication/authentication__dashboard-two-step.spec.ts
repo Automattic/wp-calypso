@@ -5,6 +5,7 @@ import {
 	apiCloseAccount,
 	apiWaitForBearerTokenAcceptance,
 	apiWaitForEmailVerification,
+	isVisibleWithin,
 } from '../shared';
 import type { LoginPage } from '@automattic/calypso-e2e';
 import type { CDPSession, Page } from 'playwright';
@@ -89,7 +90,9 @@ async function continueWithSecurityKey( page: Page ): Promise< void > {
 	const switchToSecurityKey = page.getByRole( 'button', {
 		name: /Continue with your security.key/,
 	} );
-	const canSwitchToSecurityKey = await switchToSecurityKey.isVisible();
+	// Which second factor the flow offers first is decided as the form renders, so give
+	// the switch a moment to appear rather than reading for it the instant we arrive.
+	const canSwitchToSecurityKey = await isVisibleWithin( switchToSecurityKey, 5_000 );
 	if ( canSwitchToSecurityKey ) {
 		await switchToSecurityKey.click();
 	}

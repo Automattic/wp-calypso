@@ -27,8 +27,17 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: [ tags.DASHBOARD_PR
 		} );
 
 		await test.step( 'Then I can not see my site if I check as an external visitor', async function () {
-			await pageIncognito.goto( sitePublic.blog_details.url );
-			expect( await pageIncognito.getPageText() ).toContain( 'Private Site' );
+			// The visibility change propagates asynchronously, so reload until it lands
+			// instead of reading the page once.
+			await expect
+				.poll(
+					async () => {
+						await pageIncognito.goto( sitePublic.blog_details.url );
+						return pageIncognito.getPageText();
+					},
+					{ timeout: 30 * 1000 }
+				)
+				.toContain( 'Private Site' );
 		} );
 	} );
 
@@ -55,8 +64,15 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: [ tags.DASHBOARD_PR
 		} );
 
 		await test.step( 'Then I can see the coming soon message if I visit as an external visitor', async function () {
-			await pageIncognito.goto( sitePublic.blog_details.url );
-			expect( await pageIncognito.getPageText() ).toContain( 'coming soon' );
+			await expect
+				.poll(
+					async () => {
+						await pageIncognito.goto( sitePublic.blog_details.url );
+						return pageIncognito.getPageText();
+					},
+					{ timeout: 30 * 1000 }
+				)
+				.toContain( 'coming soon' );
 		} );
 	} );
 
@@ -84,15 +100,23 @@ test.describe( 'Dashboard: Site Visibility Settings', { tag: [ tags.DASHBOARD_PR
 
 		await test.step( 'Then I can still my public site if I visit as an external visitor', async function () {
 			await pageIncognito.goto( sitePublic.blog_details.url );
+			const pageText = await pageIncognito.getPageText();
 			// Soft assert to allow for the possibility that the site is still private
 			// or coming soon, and to test the robots.txt test step even if these checks fail.
-			expect.soft( await pageIncognito.getPageText() ).not.toContain( 'Private Site' );
-			expect.soft( await pageIncognito.getPageText() ).not.toContain( 'coming soon' );
+			expect.soft( pageText ).not.toContain( 'Private Site' );
+			expect.soft( pageText ).not.toContain( 'coming soon' );
 		} );
 
 		await test.step( 'But search engine robots will see a disallow instruction', async function () {
-			await pageIncognito.goto( `${ sitePublic.blog_details.url }robots.txt` );
-			expect( await pageIncognito.getPageText() ).toContain( 'User-agent: *\nDisallow: /' );
+			await expect
+				.poll(
+					async () => {
+						await pageIncognito.goto( `${ sitePublic.blog_details.url }robots.txt` );
+						return pageIncognito.getPageText();
+					},
+					{ timeout: 30 * 1000 }
+				)
+				.toContain( 'User-agent: *\nDisallow: /' );
 		} );
 	} );
 } );

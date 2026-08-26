@@ -42,15 +42,14 @@ test.describe( 'Help Center in WP Admin', { tag: [ tags.JETPACK_WPCOM_INTEGRATIO
 		} );
 
 		await test.step( 'Is showing on the screen', async () => {
-			expect( await helpCenterComponent.isPopoverShown() ).toBeTruthy();
+			await expect.poll( () => helpCenterComponent.isPopoverShown() ).toBeTruthy();
 		} );
 
 		await test.step( 'Can be minimized', async () => {
 			await helpCenterComponent.minimizePopover();
-			const containerHeight = await helpCenterLocator.evaluate(
-				( el: HTMLElement ) => el.offsetHeight
-			);
-			expect( containerHeight ).toBe( 50 );
+			await expect
+				.poll( () => helpCenterLocator.evaluate( ( el: HTMLElement ) => el.offsetHeight ) )
+				.toBe( 50 );
 		} );
 
 		await test.step( 'The popover can be closed', async () => {
@@ -63,38 +62,37 @@ test.describe( 'Help Center in WP Admin', { tag: [ tags.JETPACK_WPCOM_INTEGRATIO
 		await test.step( 'Initial articles are shown', async () => {
 			await helpCenterComponent.openPopover();
 			const articles = helpCenterComponent.getArticles();
-			expect( await articles.count() ).toBeGreaterThanOrEqual( 1 );
+			await expect.poll( () => articles.count() ).toBeGreaterThanOrEqual( 1 );
 		} );
 
 		await test.step( 'Search returns proper results', async () => {
 			await helpCenterComponent.search( 'Change a Domain Name Address' );
-			const resultTitles = await helpCenterComponent.getArticles().allTextContents();
-			expect(
-				resultTitles.some(
-					( title ) => normalizeString( title )?.includes( 'Change a Domain Name Address' )
-				)
-			).toBeTruthy();
+			await expect
+				.poll( async () => {
+					const resultTitles = await helpCenterComponent.getArticles().allTextContents();
+					return resultTitles.some(
+						( title ) => normalizeString( title )?.includes( 'Change a Domain Name Address' )
+					);
+				} )
+				.toBeTruthy();
 		} );
 
 		await test.step( 'Post loads correctly', async () => {
-			const article = await helpCenterComponent.getArticles().first();
+			const article = helpCenterComponent.getArticles().first();
 			const articleTitle = await article.textContent();
-			await article.click();
 
-			await page.waitForResponse(
+			const articleResponsePromise = page.waitForResponse(
 				( response ) =>
 					response.url().includes( '/wpcom/v2/help/article' ) && response.status() === 200
 			);
+			await article.click();
+			await articleResponsePromise;
 
-			const articleHeader = await helpCenterLocator
-				.getByRole( 'article' )
-				.getByRole( 'heading' )
-				.first();
-			await articleHeader.waitFor( { state: 'visible' } );
+			const articleHeader = helpCenterLocator.getByRole( 'article' ).getByRole( 'heading' ).first();
 
-			expect( normalizeString( await articleHeader.textContent() ) ).toBe(
-				normalizeString( articleTitle )
-			);
+			await expect
+				.poll( async () => normalizeString( await articleHeader.textContent() ) )
+				.toBe( normalizeString( articleTitle ) );
 
 			await helpCenterComponent.goBack();
 		} );
@@ -106,9 +104,8 @@ test.describe( 'Help Center in WP Admin', { tag: [ tags.JETPACK_WPCOM_INTEGRATIO
 			const stillNeedHelpButton = helpCenterLocator.getByRole( 'link', {
 				name: 'Still need help?',
 			} );
-			await stillNeedHelpButton.waitFor( { state: 'visible' } );
 			await stillNeedHelpButton.click();
-			expect( await helpCenterComponent.getOdieChat().count() ).toBeTruthy();
+			await expect( helpCenterComponent.getOdieChat() ).toBeVisible();
 		} );
 
 		// Skipped: get forwarded to a human
@@ -131,7 +128,7 @@ test.describe( 'Help Center in WP Admin', { tag: [ tags.JETPACK_WPCOM_INTEGRATIO
 		await test.step( 'Open help center on page load', async () => {
 			await page.goto( pageUrl + '?help-center=home' );
 			await helpCenterLocator.waitFor( { state: 'visible' } );
-			expect( await helpCenterComponent.isPopoverShown() ).toBeTruthy();
+			await expect.poll( () => helpCenterComponent.isPopoverShown() ).toBeTruthy();
 		} );
 	} );
 } );

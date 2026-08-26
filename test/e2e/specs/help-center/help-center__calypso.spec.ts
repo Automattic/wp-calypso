@@ -44,56 +44,56 @@ test.describe( 'Help Center in Calypso', { tag: [ tags.CALYPSO_PR ] }, () => {
 		} );
 
 		await test.step( 'Help Center is showing on the screen', async () => {
-			expect( await helpCenterComponent.isPopoverShown() ).toBeTruthy();
+			await expect.poll( () => helpCenterComponent.isPopoverShown() ).toBeTruthy();
 		} );
 
 		await test.step( 'Help Center can be minimized', async () => {
 			await helpCenterComponent.minimizePopover();
-			await page.waitForTimeout( 200 );
-			const containerHeight = await helpCenterLocator.evaluate(
-				( el: HTMLElement ) => el.offsetHeight
-			);
-			expect( containerHeight ).toBe( 56 );
+			await expect
+				.poll( () => helpCenterLocator.evaluate( ( el: HTMLElement ) => el.offsetHeight ) )
+				.toBe( 56 );
 		} );
 
 		await test.step( 'Help Center can be maximized', async () => {
 			await helpCenterComponent.maximizePopover();
-			expect( await helpCenterComponent.isPopoverShown() ).toBeTruthy();
+			await expect.poll( () => helpCenterComponent.isPopoverShown() ).toBeTruthy();
 		} );
 
 		// Articles
 
 		await test.step( 'Initial articles are shown', async () => {
 			const articles = helpCenterComponent.getArticles();
-			expect( await articles.count() ).toBeGreaterThanOrEqual( 1 );
+			await expect.poll( () => articles.count() ).toBeGreaterThanOrEqual( 1 );
 		} );
 
 		await test.step( 'Search returns proper results', async () => {
 			await helpCenterComponent.search( 'Change a domain name address' );
-			const resultTitles = await helpCenterComponent.getArticles().allTextContents();
-			expect(
-				resultTitles.some(
-					( title ) => normalizeString( title )?.includes( 'Change a domain name address' )
-				)
-			).toBeTruthy();
+			await expect
+				.poll( async () => {
+					const resultTitles = await helpCenterComponent.getArticles().allTextContents();
+					return resultTitles.some(
+						( title ) => normalizeString( title )?.includes( 'Change a domain name address' )
+					);
+				} )
+				.toBeTruthy();
 		} );
 
 		await test.step( 'Post loads correctly', async () => {
 			const article = helpCenterComponent.getArticles().first();
 			const articleTitle = await article.textContent();
-			await article.click();
 
-			await page.waitForResponse(
+			const articleResponsePromise = page.waitForResponse(
 				( response ) =>
 					response.url().includes( '/wpcom/v2/help/article' ) && response.status() === 200
 			);
+			await article.click();
+			await articleResponsePromise;
 
 			const articleHeader = helpCenterLocator.getByRole( 'article' ).getByRole( 'heading' ).first();
-			await articleHeader.waitFor( { state: 'visible' } );
 
-			expect( normalizeString( await articleHeader.textContent() ) ).toBe(
-				normalizeString( articleTitle )
-			);
+			await expect
+				.poll( async () => normalizeString( await articleHeader.textContent() ) )
+				.toBe( normalizeString( articleTitle ) );
 
 			await helpCenterComponent.goBack();
 		} );
@@ -113,7 +113,7 @@ test.describe( 'Help Center in Calypso', { tag: [ tags.CALYPSO_PR ] }, () => {
 			);
 
 			await helpCenterLocator.waitFor( { state: 'visible' } );
-			expect( await helpCenterComponent.isPopoverShown() ).toBeTruthy();
+			await expect.poll( () => helpCenterComponent.isPopoverShown() ).toBeTruthy();
 		} );
 
 		await test.step( 'Open help center to Wapuu on page load', async () => {
@@ -124,8 +124,8 @@ test.describe( 'Help Center in Calypso', { tag: [ tags.CALYPSO_PR ] }, () => {
 			);
 
 			await helpCenterLocator.waitFor( { state: 'visible' } );
-			expect( await helpCenterComponent.isPopoverShown() ).toBeTruthy();
-			expect( await helpCenterComponent.getOdieChat().count() ).toBeTruthy();
+			await expect.poll( () => helpCenterComponent.isPopoverShown() ).toBeTruthy();
+			await expect( helpCenterComponent.getOdieChat() ).toBeVisible();
 		} );
 	} );
 
@@ -146,7 +146,7 @@ test.describe( 'Help Center in Calypso', { tag: [ tags.CALYPSO_PR ] }, () => {
 			await stillNeedHelpButton.waitFor( { state: 'visible' } );
 			await stillNeedHelpButton.click();
 
-			expect( await helpCenterLocator.locator( '#odie-messages-container' ).count() ).toBeTruthy();
+			await expect( helpCenterLocator.locator( '#odie-messages-container' ) ).toBeVisible();
 		} );
 
 		// It's rare that chat is disabled so I'm opting to add a message to the test
@@ -160,9 +160,8 @@ test.describe( 'Help Center in Calypso', { tag: [ tags.CALYPSO_PR ] }, () => {
 			await helpCenterComponent.startAIChat( 'talk to human' );
 
 			const contactSupportButton = helpCenterComponent.getContactSupportButton();
-			await contactSupportButton.waitFor( { state: 'visible', timeout: 30000 } );
 
-			expect( await contactSupportButton.count() ).toBeTruthy();
+			await expect( contactSupportButton ).toBeVisible( { timeout: 30000 } );
 		} );
 
 		test( 'start talking with a human', async ( { page } ) => {
@@ -172,9 +171,8 @@ test.describe( 'Help Center in Calypso', { tag: [ tags.CALYPSO_PR ] }, () => {
 			await contactSupportButton.click();
 
 			const zendeskMessaging = page.locator( 'iframe[title="Messaging window"]' );
-			await zendeskMessaging.waitFor( { state: 'visible' } );
 
-			expect( await zendeskMessaging.count() ).toBeTruthy();
+			await expect( zendeskMessaging ).toBeVisible();
 		} );
 	} );
 } );

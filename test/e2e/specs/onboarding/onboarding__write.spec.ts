@@ -10,7 +10,7 @@ import {
 	UserSignupPage,
 } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
-import { apiCloseAccount, fixme_retry } from '../shared';
+import { apiCloseAccount, fixme_retry, isVisibleWithin } from '../shared';
 
 test.describe(
 	DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ),
@@ -75,13 +75,17 @@ test.describe(
 
 			await test.step( 'Then I enter the onboarding flow for the selected domain', async () => {
 				await page.waitForURL( /home\/.*ref=onboarding/, { timeout: 60 * 1000 } );
-				expect( page.url() ).toContain( selectedFreeDomain );
+				// The wait above matches any site's Home, so give the redirect chain a chance
+				// to settle on the site that was just created.
+				await expect.poll( () => page.url() ).toContain( selectedFreeDomain );
 			} );
 
 			await test.step( 'When I select theme', async () => {
 				const startSiteFlow = new StartSiteFlow( page );
 				const showThemesButton = page.getByRole( 'button', { name: 'Show all Blog themes' } );
-				if ( ! ( await showThemesButton.isVisible() ) ) {
+				// `isVisible` is point-in-time, so a screen that is still rendering reads as
+				// "not shown" and silently skips the step. Wait it out before deciding.
+				if ( ! ( await isVisibleWithin( showThemesButton ) ) ) {
 					return;
 				}
 				await showThemesButton.click();
@@ -95,7 +99,7 @@ test.describe(
 
 			await test.step( 'When I write first post', async () => {
 				const writeFirstPostLink = page.getByRole( 'link', { name: 'Write your first post' } );
-				if ( ! ( await writeFirstPostLink.isVisible() ) ) {
+				if ( ! ( await isVisibleWithin( writeFirstPostLink ) ) ) {
 					return;
 				}
 				editorOpened = true;
@@ -135,10 +139,8 @@ test.describe(
 
 			await test.step( 'Then Launchpad is shown (if applicable)', async () => {
 				const title = page.getByText( "Let's get started!" );
-				if ( ! ( await title.isVisible() ) ) {
-					return;
-				}
-				await title.waitFor( { timeout: 30 * 1000 } );
+				// Launchpad only follows some flows, so its absence is not a failure.
+				await isVisibleWithin( title, 30 * 1000 );
 			} );
 		} );
 	}

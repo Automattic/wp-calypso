@@ -143,7 +143,7 @@ test.describe(
 			} );
 
 			await test.step( 'And I fill the "Use a domain I own" input', async function () {
-				expect( await pageUseADomainIAlreadyOwn.getDomainInputValue() ).toBe( blogName );
+				await expect.poll( () => pageUseADomainIAlreadyOwn.getDomainInputValue() ).toBe( blogName );
 				await pageUseADomainIAlreadyOwn.fillUseDomainIOwnInput( domain );
 			} );
 

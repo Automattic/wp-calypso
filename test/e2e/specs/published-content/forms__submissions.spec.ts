@@ -319,7 +319,9 @@ test.describe(
 			await test.step( 'Clear search to show both responses', async () => {
 				feedbackInboxPage = new FeedbackInboxPage( page );
 				await feedbackInboxPage.clearSearch( true );
-				await page.waitForTimeout( 1000 );
+				// Both responses coming back is what says the cleared list has rendered.
+				await feedbackInboxPage.waitForResponseRow( formData1.email );
+				await feedbackInboxPage.waitForResponseRow( formData2.email );
 			} );
 
 			await test.step( 'Click on first response', async () => {

@@ -7,6 +7,7 @@ import {
 	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
 import { tags, test } from '../../lib/pw-base';
+import { isVisibleWithin } from '../shared';
 
 test.describe(
 	DataHelper.createSuiteTitle( 'Editor: Navbar' ),
@@ -44,7 +45,8 @@ test.describe(
 			await test.step( 'Return to Calypso dashboard', async () => {
 				const WPAdminBarLocator = page.locator( '#wpadminbar' );
 				const isMobileClassicView =
-					envVariables.VIEWPORT_NAME === 'mobile' && ( await WPAdminBarLocator.isVisible() );
+					envVariables.VIEWPORT_NAME === 'mobile' &&
+					( await isVisibleWithin( WPAdminBarLocator, 5 * 1000 ) );
 
 				// The classic WP Admin Bar on mobile viewport doesn't have the
 				// "return" button, so let's not fail this test if it's the case.

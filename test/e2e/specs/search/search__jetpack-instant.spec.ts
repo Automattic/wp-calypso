@@ -90,8 +90,9 @@ test.describe(
 
 			await test.step( 'The search term pulls into the modal', async () => {
 				// See: https://github.com/Automattic/jetpack/issues/32753
-				const termInModal = ( await searchModalComponent.getSearchTerm() ).replace( /\+/g, ' ' );
-				expect( termInModal ).toEqual( searchString );
+				await expect
+					.poll( async () => ( await searchModalComponent.getSearchTerm() ).replace( /\+/g, ' ' ) )
+					.toEqual( searchString );
 			} );
 
 			await test.step( 'Clear the search term', async () => {
@@ -99,7 +100,7 @@ test.describe(
 					searchModalComponent.expectAndWaitForSearch( '' ),
 					searchModalComponent.clearSearchTerm(),
 				] );
-				expect( await searchModalComponent.getSearchTerm() ).toEqual( '' );
+				await expect.poll( () => searchModalComponent.getSearchTerm() ).toEqual( '' );
 			} );
 
 			await test.step( 'Close the modal', async () => {

@@ -20,7 +20,7 @@ import {
 	cancelDashboardPurchaseFlow,
 } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
-import { apiCloseAccount } from '../shared';
+import { apiCloseAccount, isVisibleWithin } from '../shared';
 
 /**
  * Checks the entire user lifecycle, from signup, onboarding, launch and plan cancellation.
@@ -147,11 +147,13 @@ test.describe(
 				const startSiteFlow = new StartSiteFlow( page );
 				const themeName = 'Attar';
 				const showThemesButton = page.getByRole( 'button', { name: 'Show all Blog themes' } );
-				if ( await showThemesButton.isVisible() ) {
+				// `isVisible` is point-in-time, so a screen that is still rendering reads as
+				// "not shown" and silently skips the step. Wait it out before deciding.
+				if ( await isVisibleWithin( showThemesButton ) ) {
 					await showThemesButton.click();
 				}
 				const themeLocator = page.getByRole( 'link', { name: themeName } );
-				if ( ! ( await themeLocator.isVisible() ) ) {
+				if ( ! ( await isVisibleWithin( themeLocator ) ) ) {
 					return;
 				}
 				await startSiteFlow.selectTheme( themeName );
@@ -160,10 +162,8 @@ test.describe(
 
 			await test.step( 'Then Launchpad is shown (if applicable)', async () => {
 				const title = page.getByText( "Let's get started!" );
-				if ( ! ( await title.isVisible() ) ) {
-					return;
-				}
-				await title.waitFor( { timeout: 30 * 1000 } );
+				// Launchpad only follows some flows, so its absence is not a failure.
+				await isVisibleWithin( title, 30 * 1000 );
 			} );
 
 			await test.step( 'Then site slug exists', async () => {
