@@ -12,7 +12,6 @@ import {
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { setSiteEditorAction } from '../../utils/site-editor-context';
 import { BIG_SKY_EVENT_PREFIX, recordBigSkyTracksEvent } from '../../utils/tracks';
-import type { BigSkyEventName } from '../../utils/tracks';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 /** Bridge-facing recorder: drops malformed calls instead of emitting `jetpack_big_sky_undefined`. */
@@ -20,12 +19,12 @@ function recordGuardedBigSkyTracksEvent(
 	eventName: string,
 	props?: Record< string, unknown >
 ): void {
-	if ( typeof eventName !== 'string' || ! eventName.startsWith( BIG_SKY_EVENT_PREFIX ) ) {
+	if ( typeof eventName !== 'string' || eventName === '' ) {
 		return;
 	}
 
-	// `startsWith` doesn't narrow to the template-literal type; the guard above proves it.
-	recordBigSkyTracksEvent( eventName as BigSkyEventName, props );
+	// Bridge callers pass the suffix only — see `recordBigSkyTracksEvent` in `global.d.ts`.
+	recordBigSkyTracksEvent( `${ BIG_SKY_EVENT_PREFIX }${ eventName }`, props );
 }
 
 /**
