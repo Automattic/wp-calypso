@@ -27,6 +27,7 @@ import { trash } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
+import { useAppContext } from '../../app/context';
 import { securitySshKeyRoute } from '../../app/router/me';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
@@ -89,12 +90,20 @@ const SshKeyCard = ( {
 };
 
 const AddSshKeyButton = () => {
+	const { supports } = useAppContext();
+
 	if ( isDashboardBackport() ) {
 		return (
 			<Button variant="secondary" target="_blank" href="/me/security/ssh-key" rel="noreferrer">
 				{ __( 'Add new SSH key ↗' ) }
 			</Button>
 		);
+	}
+
+	// The SSH key settings page only exists in dashboards that register the
+	// `/me/security` routes.
+	if ( ! ( supports.me && supports.me.security ) ) {
+		return null;
 	}
 
 	return (
