@@ -11,6 +11,7 @@ const mockAgentManager = {
 };
 let mockIsOpen = true;
 let mockHasAiChatEntry = false;
+const mockUseAbilitiesSetup = jest.fn();
 const mockCreateAgentConfig = jest.fn(
 	async ( { sessionId, agentId }: { sessionId: string; agentId: string } ) => ( {
 		agentId,
@@ -45,11 +46,18 @@ jest.mock( '../../utils/create-agent-config', () => ( {
 jest.mock( '../../hooks/use-agent-config', () => ( {
 	useAgentConfig: () => ( { agentId: 'wp-orchestrator', isLoading: false } ),
 } ) );
+jest.mock( '../../hooks/use-abilities-registration', () => ( {
+	__esModule: true,
+	default: jest.fn(),
+} ) );
 jest.mock( '../../hooks/use-open-chat-url-param', () => ( {
 	useOpenChatUrlParam: () => true,
 } ) );
 jest.mock( '../../utils/load-external-providers', () => ( {
-	loadExternalProviders: async () => ( { providerIds: [] } ),
+	loadExternalProviders: async () => ( {
+		providerIds: [],
+		useAbilitiesSetup: mockUseAbilitiesSetup,
+	} ),
 } ) );
 jest.mock( '../../hooks/use-empty-view-suggestions', () => ( {
 	useEmptyViewSuggestions: () => [],
@@ -102,8 +110,26 @@ describe( 'AgentSetup', () => {
 		mockIsOpen = true;
 		mockHasAiChatEntry = false;
 		sessionStorage.clear();
+		document.body.className = '';
+		window.history.replaceState( {}, '', '/' );
+		Object.defineProperty( document, 'modelContext', { configurable: true, value: undefined } );
 		setSessionSiteKey( 'no-site' );
 		setSessionUserId( undefined );
+	} );
+
+	it( 'mounts provider ability setup for eligible WebMCP without opening chat', async () => {
+		mockIsOpen = false;
+		mockHasAiChatEntry = true;
+		document.body.className = 'site-editor-php';
+		window.history.replaceState( {}, '', '/?webmcp=1' );
+		Object.defineProperty( document, 'modelContext', {
+			configurable: true,
+			value: { registerTool: jest.fn() },
+		} );
+
+		render( manager( 111 ) );
+
+		await waitFor( () => expect( mockUseAbilitiesSetup ).toHaveBeenCalled() );
 	} );
 
 	it( 'does not re-initialize while the chat view stays shown', async () => {
