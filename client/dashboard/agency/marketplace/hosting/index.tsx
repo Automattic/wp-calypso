@@ -7,7 +7,6 @@ import {
 	Guide,
 	Icon,
 	Modal,
-	ProgressBar,
 	TabPanel,
 	ToggleControl,
 	__experimentalToggleGroupControl as ToggleGroupControl,
@@ -372,10 +371,16 @@ function HostingGuide( {
 			className="marketplace-hosting__guide-modal"
 		>
 			<VStack spacing={ 5 }>
-				<ProgressBar
-					className="marketplace-hosting__guide-progress"
-					value={ ( ( step + 1 ) / ( total + 1 ) ) * 100 }
-				/>
+				<div className="marketplace-hosting__guide-steps" aria-hidden>
+					{ GUIDE_QUESTIONS.map( ( q, index ) => (
+						<span
+							key={ q.key }
+							className={
+								'marketplace-hosting__guide-step' + ( index <= step ? ' is-active' : '' )
+							}
+						/>
+					) ) }
+				</div>
 
 				{ question && (
 					<>
