@@ -9,22 +9,19 @@ import { useAuth } from '../auth';
  * Whether the recovery-email-matches-account-email notice is eligible to show. Read at the call
  * site so the notice never decides its own visibility inside the arbiter.
  * See client/dashboard/sites/AGENTS.md.
- *
- * The flag rides on the authenticated user, which the dashboard already has before the first
- * paint, so eligibility costs no request and cannot arrive late.
  */
-export function useShouldShowRecoveryEmailMatchesNotice() {
+export function useShouldShowRecoveryEmailMatchesAccountEmailNotice() {
 	const { user } = useAuth();
 	return !! user.recovery_email_matches_account_email;
 }
 
-export default function RecoveryEmailMatchesNotice() {
+export default function RecoveryEmailMatchesAccountEmailNotice() {
 	const { recordTracksEvent } = useAnalytics();
 	const { user } = useAuth();
 
 	return (
 		<>
-			<ComponentViewTracker eventName="calypso_dashboard_recovery_email_same_as_primary_notice_impression" />
+			<ComponentViewTracker eventName="calypso_dashboard_recovery_email_matches_account_email_notice_impression" />
 			<Notice
 				variant="warning"
 				title={ __( 'Your recovery email is the same as your account email' ) }
@@ -33,7 +30,9 @@ export default function RecoveryEmailMatchesNotice() {
 						to="/me/security/account-recovery"
 						variant="primary"
 						onClick={ () =>
-							recordTracksEvent( 'calypso_dashboard_recovery_email_same_as_primary_notice_click' )
+							recordTracksEvent(
+								'calypso_dashboard_recovery_email_matches_account_email_notice_click'
+							)
 						}
 					>
 						{ __( 'Update recovery email' ) }

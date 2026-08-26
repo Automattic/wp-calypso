@@ -130,7 +130,7 @@ describe( '<Sites>', () => {
 		expect( screen.queryByText( BOUNCING_NOTICE_TITLE ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'shows the recovery-email-matches notice at the top of the sites list', async () => {
+	test( 'shows the recovery-email-matches-account-email notice at the top of the sites list', async () => {
 		mockSitesEndpoint( mockSites );
 
 		render( <Sites />, {
@@ -144,7 +144,7 @@ describe( '<Sites>', () => {
 		expect( await screen.findByText( RECOVERY_MATCH_NOTICE_TITLE ) ).toBeVisible();
 	} );
 
-	test( 'hides the recovery-email-matches notice when the recovery email is a different address', async () => {
+	test( 'hides the recovery-email-matches-account-email notice when the recovery email is a different address', async () => {
 		mockSitesEndpoint( mockSites );
 
 		render( <Sites />, {
@@ -158,7 +158,7 @@ describe( '<Sites>', () => {
 		expect( screen.queryByText( RECOVERY_MATCH_NOTICE_TITLE ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'hides the recovery-email-matches notice in variants without /me support', async () => {
+	test( 'hides the recovery-email-matches-account-email notice in variants without /me support', async () => {
 		mockSitesEndpoint( mockSites );
 
 		render( <Sites />, {

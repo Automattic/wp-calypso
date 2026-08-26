@@ -18,9 +18,9 @@ import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
-import RecoveryEmailMatchesNotice, {
-	useShouldShowRecoveryEmailMatchesNotice,
-} from '../app/recovery-email-matches-notice';
+import RecoveryEmailMatchesAccountEmailNotice, {
+	useShouldShowRecoveryEmailMatchesAccountEmailNotice,
+} from '../app/recovery-email-matches-account-email-notice';
 import { sitesRoute } from '../app/router/sites';
 import SecurityKeyReregisterNotice, {
 	useShouldShowSecurityKeyReregisterNotice,
@@ -183,8 +183,9 @@ export default function Sites() {
 	const isAccountEmailBouncing = useShouldShowAccountEmailBouncingNotice();
 	const showAccountEmailBouncingNotice = supports.me && isAccountEmailBouncing;
 
-	const isRecoveryEmailMatching = useShouldShowRecoveryEmailMatchesNotice();
-	const showRecoveryEmailMatchesNotice = supports.me && isRecoveryEmailMatching;
+	const isRecoveryEmailMatchingAccountEmail = useShouldShowRecoveryEmailMatchesAccountEmailNotice();
+	const showRecoveryEmailMatchesAccountEmailNotice =
+		supports.me && isRecoveryEmailMatchingAccountEmail;
 
 	const defaultView = getDefaultView( {
 		siteCount: user.site_count,
@@ -289,7 +290,9 @@ export default function Sites() {
 					<SitesNoticeArbiter>
 						{ showSecurityKeyReregisterNotice && <SecurityKeyReregisterNotice /> }
 						{ showAccountEmailBouncingNotice && <AccountEmailBouncingNotice /> }
-						{ showRecoveryEmailMatchesNotice && <RecoveryEmailMatchesNotice /> }
+						{ showRecoveryEmailMatchesAccountEmailNotice && (
+							<RecoveryEmailMatchesAccountEmailNotice />
+						) }
 					</SitesNoticeArbiter>
 				}
 			>

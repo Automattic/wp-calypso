@@ -4,7 +4,9 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../test-utils';
-import RecoveryEmailMatchesNotice, { useShouldShowRecoveryEmailMatchesNotice } from '../index';
+import RecoveryEmailMatchesAccountEmailNotice, {
+	useShouldShowRecoveryEmailMatchesAccountEmailNotice,
+} from '../index';
 import type { User } from '@automattic/api-core';
 
 const ACCOUNT_EMAIL = 'owner@example.com';
@@ -20,13 +22,13 @@ function accountUser( { matches }: { matches?: boolean } = {} ) {
 // The hook is exercised through a probe component so it runs inside the same providers
 // the notice has on the sites list.
 function HookProbe() {
-	const shouldShow = useShouldShowRecoveryEmailMatchesNotice();
+	const shouldShow = useShouldShowRecoveryEmailMatchesAccountEmailNotice();
 	return <div>{ shouldShow ? 'should show' : 'should not show' }</div>;
 }
 
-describe( '<RecoveryEmailMatchesNotice>', () => {
+describe( '<RecoveryEmailMatchesAccountEmailNotice>', () => {
 	test( 'renders the warning and records an impression', async () => {
-		const { recordTracksEvent } = render( <RecoveryEmailMatchesNotice />, {
+		const { recordTracksEvent } = render( <RecoveryEmailMatchesAccountEmailNotice />, {
 			user: accountUser( { matches: true } ),
 		} );
 
@@ -35,13 +37,15 @@ describe( '<RecoveryEmailMatchesNotice>', () => {
 		).toBeVisible();
 		expect( screen.getByText( new RegExp( ACCOUNT_EMAIL ) ) ).toBeVisible();
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_recovery_email_same_as_primary_notice_impression',
+			'calypso_dashboard_recovery_email_matches_account_email_notice_impression',
 			undefined
 		);
 	} );
 
 	test( 'cannot be dismissed', async () => {
-		render( <RecoveryEmailMatchesNotice />, { user: accountUser( { matches: true } ) } );
+		render( <RecoveryEmailMatchesAccountEmailNotice />, {
+			user: accountUser( { matches: true } ),
+		} );
 
 		await screen.findByText( 'Your recovery email is the same as your account email' );
 		expect( screen.queryByRole( 'button', { name: 'Dismiss' } ) ).not.toBeInTheDocument();
@@ -50,7 +54,7 @@ describe( '<RecoveryEmailMatchesNotice>', () => {
 	test( 'offers updating the recovery email as its only action', async () => {
 		const user = userEvent.setup();
 
-		const { recordTracksEvent } = render( <RecoveryEmailMatchesNotice />, {
+		const { recordTracksEvent } = render( <RecoveryEmailMatchesAccountEmailNotice />, {
 			user: accountUser( { matches: true } ),
 		} );
 
@@ -60,7 +64,7 @@ describe( '<RecoveryEmailMatchesNotice>', () => {
 
 		await user.click( links[ 0 ] );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_recovery_email_same_as_primary_notice_click'
+			'calypso_dashboard_recovery_email_matches_account_email_notice_click'
 		);
 	} );
 
