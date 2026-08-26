@@ -41,7 +41,6 @@ function UnforwardedIconListItem(
 		className,
 		density = 'medium',
 		layout = 'inline',
-		suffixAlignment = 'center',
 	}: IconListItemProps,
 	ref: React.ForwardedRef< HTMLSpanElement >
 ) {
@@ -61,7 +60,6 @@ function UnforwardedIconListItem(
 
 	// Description forces top alignment regardless of layout
 	const outerAlignment = description ? 'flex-start' : layoutConfig.outerAlignment;
-	const innerAlignment = suffixAlignment === 'top' ? 'flex-start' : layoutConfig.innerAlignment;
 
 	return (
 		<VStack className={ clsx( 'icon-list-item', className ) } ref={ ref } as="span">
@@ -69,8 +67,7 @@ function UnforwardedIconListItem(
 				{ !! decoration && <span className="icon-list-item__decoration">{ decoration }</span> }
 				<LayoutComponent
 					className={ layoutConfig.className }
-					alignment={ innerAlignment }
-					{ ...( suffixAlignment === 'top' && { justify: 'space-between' } ) }
+					alignment={ layoutConfig.innerAlignment }
 					spacing={ suffixSpacing }
 					as="span"
 				>
