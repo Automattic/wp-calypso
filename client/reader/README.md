@@ -57,6 +57,7 @@ These routes are served by the module:
 | --------------------------- | ------------------------------- |
 | `/discover`                 | Discover (recommended content)  |
 | `/discover/recommended`     | Recommended content             |
+| `/discover/search`          | Search                          |
 | `/discover/freshly-pressed` | Freshly Pressed                 |
 | `/discover/tags`            | Featured tags                   |
 | `/discover/latest`          | Latest posts                    |

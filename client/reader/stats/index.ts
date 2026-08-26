@@ -96,6 +96,7 @@ const Routes: RoutesMapping[] = [
 			return `discover_tag:${ selectedTag }`;
 		},
 	},
+	{ route: startsWith( '/discover/search' ), tracking: 'search' },
 	{ route: matches( /discover\/.*/ ), tracking: 'discover_unknown' },
 
 	// Conversations

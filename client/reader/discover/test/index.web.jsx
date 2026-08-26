@@ -69,6 +69,12 @@ jest.mock( '../discover-document-head', () => ( {
 
 jest.mock( '../helper', () => ( {
 	RECOMMENDED_TAB: 'recommended',
+	SEARCH_TAB: 'search',
+} ) );
+
+jest.mock( '../search-controller', () => ( {
+	fetchTrendingTagsIfLoggedOut: jest.fn(),
+	search: jest.fn(),
 } ) );
 
 jest.mock( '../routes', () => ( {

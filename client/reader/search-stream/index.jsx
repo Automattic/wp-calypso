@@ -9,13 +9,14 @@ import PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import NavigationHeader from 'calypso/components/navigation-header';
 import SearchInput from 'calypso/components/search';
 import { addQueryArgs } from 'calypso/lib/url';
 import withDimensions from 'calypso/lib/with-dimensions';
 import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useAliasedSiteSubscriptionFeedUrl } from 'calypso/reader/data/site-subscriptions';
+import DiscoverHeaderAndNavigation from 'calypso/reader/discover/components/header-and-navigation';
+import { SEARCH_TAB } from 'calypso/reader/discover/helper';
 import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
 import { recordAction } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -129,10 +130,7 @@ class SearchStream extends React.Component {
 		return (
 			<div>
 				<DocumentHead title={ documentTitle } />
-				<NavigationHeader
-					title={ translate( 'Search' ) }
-					subtitle={ translate( 'Search for specific topics, authors, or blogs.' ) }
-				/>
+				<DiscoverHeaderAndNavigation selectedTab={ SEARCH_TAB } />
 				<div className="search-stream__fixed-area" ref={ this.handleFixedAreaMounted }>
 					<CompactCard className="search-stream__input-card">
 						<SearchInput

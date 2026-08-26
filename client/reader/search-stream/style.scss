@@ -13,23 +13,13 @@
 // .has-header-section only applies for logged out views
 .layout.has-header-section {
 	.search-stream__fixed-area {
-		position: static;
+		position: relative;
 		padding-top: 0;
 		margin-top: 0;
 	}
 
-	.is-section-reader {
-		.search-stream__fixed-area .navigation-header h1 {
-			@extend .wp-brand-font;
-			font-weight: 600;
-			font-size: 2.25rem;
-			line-height: 48px;
-			margin-bottom: 4px;
-		}
-
-		.layout__content {
-			background: var(--studio-white);
-		}
+	.is-section-reader .layout__content {
+		background: var(--studio-white);
 	}
 }
 
@@ -224,7 +214,7 @@
 	position: absolute;
 	z-index: z-index("root", ".search-stream__sort-picker");
 	right: 16px;
-	top: 100px;
+	top: 30px;
 	width: 170px;
 
 	@include break-small {
@@ -232,7 +222,6 @@
 	}
 
 	&.is-wide {
-		top: 30px;
 		right: 45px;
 	}
 
@@ -245,11 +234,10 @@
 
 div.is-section-reader:not(.is-logged-in) {
 	.search-stream__sort-picker {
-		top: 64px;
+		top: 6px;
 		right: 85px;
 
 		@include break-small {
-			top: 76px;
 			right: 70px;
 		}
 	}

@@ -7,7 +7,13 @@ import { addQueryArgs } from 'calypso/lib/url';
 import DiscoverNavigation from 'calypso/reader/discover/components/navigation';
 import DiscoverTagsNavigation from 'calypso/reader/discover/components/tags-navigation';
 import ReaderOnboardingGate from 'calypso/reader/onboarding/gate';
-import { RECOMMENDED_TAB, FRESHLY_PRESSED_TAB, TAGS_TAB, LATEST_TAB } from '../../helper';
+import {
+	RECOMMENDED_TAB,
+	FRESHLY_PRESSED_TAB,
+	TAGS_TAB,
+	LATEST_TAB,
+	SEARCH_TAB,
+} from '../../helper';
 import type { JSX } from 'react';
 
 export interface DiscoverHeaderAndNavigationProps {
@@ -39,6 +45,9 @@ export default function DiscoverHeaderAndNavigation(
 			break;
 		case RECOMMENDED_TAB:
 			subHeaderText = translate( 'Explore popular blogs that inspire, educate, and entertain.' );
+			break;
+		case SEARCH_TAB:
+			subHeaderText = translate( 'Search for specific topics, authors, or blogs.' );
 			break;
 		case LATEST_TAB:
 			subHeaderText = fixMe( {

@@ -777,6 +777,12 @@ describe( 'reader stats', () => {
 					searchParams: { selectedTag: 'test', sort: 'relevance' },
 				},
 				{
+					url: '/discover/search?q=test',
+					expected: 'search',
+					description: 'discover search page',
+					searchParams: { q: 'test' },
+				},
+				{
 					url: '/discover/wrong-url',
 					expected: 'discover_unknown',
 					description: 'discover wrong url',

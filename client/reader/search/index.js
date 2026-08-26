@@ -9,16 +9,7 @@ import {
 import { setLocaleMiddleware } from 'calypso/controller/shared';
 import { sidebar } from 'calypso/reader/controller';
 import { readerPage } from 'calypso/reader/lib/reader-router';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { fetchTrendingTags } from '../tags/controller';
-import { search } from './controller';
-
-const fetchTrendingTagsIfLoggedOut = ( context, next ) => {
-	if ( ! isUserLoggedIn( context.store.getState() ) ) {
-		return fetchTrendingTags( context, next );
-	}
-	next();
-};
+import { fetchTrendingTagsIfLoggedOut, search } from '../discover/search-controller';
 
 export default function () {
 	const langParam = getLanguageRouteParam();

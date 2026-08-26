@@ -23,8 +23,9 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import renderHeaderSection from '../lib/header-section';
 import { DiscoverDocumentHead } from './discover-document-head';
-import { RECOMMENDED_TAB } from './helper';
+import { RECOMMENDED_TAB, SEARCH_TAB } from './helper';
 import { getPrivateRoutes, getDiscoverRoutes, DISCOVER_PREFIX } from './routes';
+import { fetchTrendingTagsIfLoggedOut, search } from './search-controller';
 
 const loadDiscoverStream = () =>
 	import(
@@ -33,7 +34,22 @@ const loadDiscoverStream = () =>
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
+const getSelectedTab = ( context ) =>
+	getCurrentTabFromURL( context.path, DISCOVER_PREFIX, RECOMMENDED_TAB );
+
+const fetchSearchSuggestionsIfNeeded = ( context, next ) => {
+	if ( getSelectedTab( context ) === SEARCH_TAB ) {
+		return fetchTrendingTagsIfLoggedOut( context, next );
+	}
+	next();
+};
+
 const discover = ( context, next ) => {
+	const selectedTab = getSelectedTab( context );
+	if ( selectedTab === SEARCH_TAB ) {
+		return search( context, next );
+	}
+
 	const basePath = sectionify( context.path );
 	const fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Discover';
 	const streamKey = 'discover:recommended';
@@ -41,7 +57,6 @@ const discover = ( context, next ) => {
 	const state = context.store.getState();
 	const currentRoute = getCurrentRoute( state );
 	const currentQueryArgs = new URLSearchParams( getCurrentQueryArguments( state ) ).toString();
-	const selectedTab = getCurrentTabFromURL( context.path, DISCOVER_PREFIX, RECOMMENDED_TAB );
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 	recordTrack(
@@ -90,6 +105,7 @@ export default function ( router ) {
 		redirectInvalidLanguage,
 		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		setLocaleMiddleware(),
+		fetchSearchSuggestionsIfNeeded,
 		sidebar,
 		discover,
 		makeLayout,
