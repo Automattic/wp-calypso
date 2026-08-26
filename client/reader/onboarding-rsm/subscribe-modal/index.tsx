@@ -191,6 +191,8 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( {
 		onFinish();
 	}, [ onFinish ] );
 
+	const isLastStep = totalSteps <= 3;
+
 	return (
 		<>
 			{ promptVerification && <SubscribeVerificationNudge /> }
@@ -325,7 +327,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( {
 							disabled={ promptVerification }
 							accessibleWhenDisabled
 						>
-							{ __( 'Finish' ) }
+							{ isLastStep ? __( 'Finish' ) : __( 'Continue' ) }
 						</Button>
 					</HStack>
 				</HStack>

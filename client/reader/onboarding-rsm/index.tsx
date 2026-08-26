@@ -338,8 +338,8 @@ const ReaderOnboardingRsm = ( {
 	const handleStepClose = () => {
 		if ( currentStep ) {
 			recordStepClose( currentStep );
-			// Unlike the other steps, this one sits past the discover Finish, so
-			// dismissing it still finishes onboarding.
+			// Unlike the other steps, this one sits past the discover step's
+			// forward action, so dismissing it still finishes onboarding.
 			if ( currentStep === 'early-readers' ) {
 				// Closing the offer counts as a decline, keeping the opt-in rate's
 				// denominator whole. After a join the user is dismissing the
