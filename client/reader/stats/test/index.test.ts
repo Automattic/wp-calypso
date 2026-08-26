@@ -644,11 +644,6 @@ describe( 'reader stats', () => {
 					description: 'reader feed page with post',
 				},
 				{
-					url: '/reader/search',
-					expected: 'search',
-					description: 'reader search page',
-				},
-				{
 					url: '/reader/conversations',
 					expected: 'conversations',
 					description: 'reader conversations page',

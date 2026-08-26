@@ -180,16 +180,16 @@ export class ReaderSidebar extends Component {
 
 					<SidebarItem
 						className={ clsx( 'sidebar-streams__search', {
-							selected: path.startsWith( '/reader/search' ),
+							selected: path.startsWith( '/discover/search' ),
 						} ) }
 						label={ translate( 'Search' ) }
 						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.search ) }
 						customIcon={ <ReaderSearchIcon /> }
-						link="/reader/search"
+						link="/discover/search"
 					/>
 					<SidebarItem
 						className={ clsx( 'sidebar-streams__discover', {
-							selected: path.startsWith( '/discover' ),
+							selected: path.startsWith( '/discover' ) && ! path.startsWith( '/discover/search' ),
 						} ) }
 						label={ translate( 'Discover' ) }
 						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.discover ) }

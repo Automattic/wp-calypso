@@ -184,7 +184,7 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 | `/reader/blogs/:blog/posts/:post`                 | `client/reader/full-post/`                                                |
 | `/reader/a8c`                                     | `client/reader/a8c/main.jsx`                                              |
 | `/reader/p2`                                      | `client/reader/p2/main.jsx`                                               |
-| `/reader/search`                                  | `client/reader/search/`                                                   |
+| `/discover/search`                                | `client/reader/discover/search-controller.jsx`, `client/reader/search-stream/` |
 | `/reader/notifications`                           | `client/reader/notifications/`                                            |
 | `/reader/new`                                     | `client/reader/new-subscription/`                                         |
 | `/reader/subscriptions`                           | `client/reader/site-subscriptions-manager/`                               |

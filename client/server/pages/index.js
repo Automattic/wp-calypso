@@ -541,7 +541,7 @@ function setUpLoggedInRoute( req, res, next ) {
 					const searchParam = req.query.s || req.query.q;
 					if ( searchParam ) {
 						res.redirect(
-							'https://wordpress.com/reader/search?q=' + encodeURIComponent( searchParam )
+							'https://wordpress.com/discover/search?q=' + encodeURIComponent( searchParam )
 						);
 						return;
 					}

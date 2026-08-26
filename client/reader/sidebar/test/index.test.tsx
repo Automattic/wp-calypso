@@ -141,7 +141,7 @@ describe( 'ReaderSidebar', () => {
 				gaEvent: 'Clicked Reader Sidebar Search',
 				tracksEvent: 'calypso_reader_sidebar_search_clicked',
 			};
-			const path = '/reader/search';
+			const path = '/discover/search';
 
 			const clickHandler = instance.handleSidebarMenuClick( handler );
 			clickHandler( {}, path );

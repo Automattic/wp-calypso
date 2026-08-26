@@ -50,7 +50,6 @@ const exactMatch = ( path: string | string[] ) => ( value: string ) =>
 
 const isEmpty = ( value: string | undefined ) => value === '' || value === undefined;
 
-const SearchRoute = matches( /^(\/[^/]+)?\/reader\/search/ );
 const SinglePostRoute = matches( /^\/reader\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i );
 const BlogPageRoute = matches( /^\/reader\/(blogs|feeds)\/([0-9]+)$/i );
 
@@ -122,7 +121,6 @@ const Routes: RoutesMapping[] = [
 
 	{ route: SinglePostRoute, tracking: 'single_post' },
 	{ route: BlogPageRoute, tracking: 'blog_page' },
-	{ route: SearchRoute, tracking: 'search' },
 
 	{ route: exactMatch( '/home' ), tracking: 'home' },
 	{ route: exactMatch( '/reader' ), tracking: 'following' },

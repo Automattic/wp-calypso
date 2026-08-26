@@ -20,7 +20,7 @@ These routes are served by the module:
 | `/reader/blogs/:blog_id/posts/:post` | Full post (via blog)                                    |
 | `/reader/a8c`                        | Automattic employee posts                               |
 | `/reader/p2`                         | P2 posts                                                |
-| `/reader/search`                     | Reader search                                           |
+| `/reader/search`                     | Redirects to `/discover/search`                         |
 | `/reader/notifications`              | Reader notifications                                    |
 | `/reader/feeds/lookup/*`             | Feed URL lookup (redirects to `/reader/feeds/:feed_id`) |
 | `/activities/likes`                  | Liked posts                                             |
@@ -83,7 +83,7 @@ These routes are served by the module:
 
 ### Legacy redirects
 
-Many legacy `/read/*` routes redirect to Reader routes, often under `/reader/*`, but there are exceptions such as `/read/tag/:tag_name`, which redirects to `/tag/:tag_name`. Routes like `/following`, `/following/manage`, and `/recommendations` are also redirected. Locale prefixes (`/:lang/`) are supported on: `/reader`, `/reader/search`, `/tag/:tag`, `/tags`, and `/discover/*`.
+Many legacy `/read/*` routes redirect to Reader routes, often under `/reader/*`, but there are exceptions such as `/read/tag/:tag_name`, which redirects to `/tag/:tag_name`. Routes like `/following`, `/following/manage`, `/recommendations`, and `/reader/search` are also redirected. Locale prefixes (`/:lang/`) are supported on: `/reader`, `/tag/:tag`, `/tags`, and `/discover/*`.
 
 ## Block Rendering Development
 

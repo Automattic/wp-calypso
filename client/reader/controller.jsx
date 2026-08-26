@@ -569,15 +569,15 @@ export function setupReadRoutes() {
 		},
 		{
 			path: '/read/search',
-			getRedirect: () => '/reader/search',
+			getRedirect: () => '/discover/search',
 		},
 		{
 			path: `/${ langParam }/read/search`,
-			getRedirect: () => `/reader/search`,
+			getRedirect: () => `/discover/search`,
 		},
 		{
 			path: `/${ anyLangParam }/read/search`,
-			getRedirect: () => `/reader/search`,
+			getRedirect: () => `/discover/search`,
 		},
 		{
 			path: '/read/site/subscription/:blog_id',
