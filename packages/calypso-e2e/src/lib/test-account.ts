@@ -125,7 +125,7 @@ export class TestAccount {
 				return;
 			}
 
-			await page.goto( getCalypsoURL( '/' ) );
+			await page.goto( getCalypsoURL( '/home' ) );
 			if ( ! TestAccount.isLoginPage( page.url() ) ) {
 				return;
 			}
@@ -158,7 +158,6 @@ export class TestAccount {
 	 */
 	async logInExclusively( fn: () => Promise< void > ): Promise< void > {
 		await withLoginLock( this.accountName, async () => {
-			await this.discardAuthCookies();
 			await fn();
 		} );
 	}
