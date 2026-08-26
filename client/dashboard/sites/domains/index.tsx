@@ -1,6 +1,6 @@
 import { siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -63,9 +63,11 @@ function SiteDomains() {
 	const actions = useActions( { user, sites: [ site ] } );
 
 	const searchParams = siteDomainsRoute.useSearch();
+	const navigate = useNavigate();
 
 	const deepLinkedAction = useDeepLinkedAction( {
-		actionId: searchParams.action,
+		queryParams: searchParams,
+		navigate,
 		actions,
 		items: siteDomains,
 	} );

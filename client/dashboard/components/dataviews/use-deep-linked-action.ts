@@ -1,16 +1,17 @@
-import { useNavigate } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import type { Action, ActionModal } from '@wordpress/dataviews';
 
 /**
  * Opens one of a screen's DataViews actions from the URL.
  *
- * Pass the action id from the route's own search params — validated there, so a
- * screen only accepts the actions it means to expose — along with the actions and
- * items it renders. The result spreads straight into `DataViewsActionModal`:
+ * Pass the query params of the current page — the action id is read from `action`,
+ * which a route should validate down to the actions it means to expose — along
+ * with the actions and items the screen renders. The result spreads straight into
+ * `DataViewsActionModal`:
  *
  *     const deepLinkedAction = useDeepLinkedAction( {
- *         actionId: searchParams.action,
+ *         queryParams,
+ *         navigate,
  *         actions,
  *         items,
  *     } );
@@ -21,26 +22,33 @@ import type { Action, ActionModal } from '@wordpress/dataviews';
  * action that identifies its own row. The param is dropped from the URL on arrival
  * so a reload or a shared link doesn't reopen the modal.
  *
- * @param options              Options.
- * @param options.actionId     The action to open, from the route's search params.
- * @param options.actions      The actions the screen renders.
- * @param options.items        The items the screen renders.
- * @param options.paramName    The search param holding the action id.
+ * @param options             Options.
+ * @param options.queryParams The query params of the current page.
+ * @param options.navigate    Navigates to a new set of query params. Router-hosted
+ *                            screens pass `useNavigate()`; `page.js` screens pass a
+ *                            function of their own, as `useBasePersistentView`
+ *                            callers do.
+ * @param options.actions     The actions the screen renders.
+ * @param options.items       The items the screen renders.
+ * @param options.paramName   The query param holding the action id.
  * @returns The action, the item it opens against, and a close handler — or
  * `undefined` when there is nothing to open.
  */
 export function useDeepLinkedAction< Item >( {
-	actionId,
+	queryParams,
+	navigate,
 	actions,
 	items,
 	paramName = 'action',
 }: {
-	actionId?: string;
+	queryParams?: Record< string, unknown >;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- the two hosts type their own search differently, as `useBasePersistentView` also finds.
+	navigate: ( options: { search: any; replace?: boolean } ) => void;
 	actions: Action< Item >[];
 	items: Item[];
 	paramName?: string;
 } ): { action: ActionModal< Item >; item: Item; onClose: () => void } | undefined {
-	const navigate = useNavigate();
+	const actionId = queryParams?.[ paramName ];
 
 	// Read once, so the modal survives the param being cleared below.
 	const [ requestedActionId ] = useState( () => actionId );
@@ -51,16 +59,11 @@ export function useDeepLinkedAction< Item >( {
 			return;
 		}
 
-		// The router types a search updater against the route it is called from, which
-		// a hook shared by every screen has no way to name.
-		navigate( {
-			search: ( previous: Record< string, unknown > ) => ( {
-				...previous,
-				[ paramName ]: undefined,
-			} ),
-			replace: true,
-		} as unknown as Parameters< typeof navigate >[ 0 ] );
-	}, [ actionId, navigate, paramName ] );
+		navigate( { search: { ...queryParams, [ paramName ]: undefined }, replace: true } );
+		// `queryParams` is a new object every render, so keying on the param itself is
+		// what keeps this to the single navigation that clears it.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ actionId, paramName ] );
 
 	const matchedAction = actions.find( ( action ) => action.id === requestedActionId );
 	const action = matchedAction && 'RenderModal' in matchedAction ? matchedAction : undefined;

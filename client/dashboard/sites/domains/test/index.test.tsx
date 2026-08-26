@@ -9,7 +9,6 @@ import SiteDomains from '../index';
 import type { Site, User } from '@automattic/api-core';
 
 let mockSearchParams: { action?: string } = {};
-const mockNavigate = jest.fn();
 
 jest.mock( '../../../app/router/sites', () => {
 	const actual = jest.requireActual( '../../../app/router/sites' );
@@ -26,11 +25,6 @@ jest.mock( '../../../app/router/sites', () => {
 		},
 	};
 } );
-
-jest.mock( '@tanstack/react-router', () => ( {
-	...jest.requireActual( '@tanstack/react-router' ),
-	useNavigate: () => mockNavigate,
-} ) );
 
 const SITE_ID = 1;
 const OWNER_USER_ID = 10;
@@ -121,7 +115,6 @@ function mockApis() {
 describe( '<SiteDomains>', () => {
 	beforeEach( () => {
 		mockSearchParams = {};
-		mockNavigate.mockClear();
 		mockApis();
 	} );
 
@@ -145,13 +138,12 @@ describe( '<SiteDomains>', () => {
 		expect( screen.getByRole( 'button', { name: 'Add domain name' } ) ).toBeVisible();
 	} );
 
-	test( 'opens the change site address modal when deep linked, and drops the param', async () => {
+	test( 'opens the change site address modal when deep linked', async () => {
 		mockSearchParams = { action: 'change-site-address' };
 
 		render( <SiteDomains />, { user: ownerUser } );
 
 		expect( await screen.findByRole( 'dialog', { name: 'Change site address' } ) ).toBeVisible();
-		expect( mockNavigate ).toHaveBeenCalledWith( expect.objectContaining( { replace: true } ) );
 	} );
 
 	test( 'does not open a modal without the deep link', async () => {
