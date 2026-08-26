@@ -1,9 +1,10 @@
-// POC: reuse the real Big Sky agent chat UI directly. Production would route
-// this through @automattic/agents-manager like the omnibar does.
+// POC: reuse the real Big Sky agent chat UI directly (the docked, dark variant).
+// Production would route this through @automattic/agents-manager like the omnibar.
 // eslint-disable-next-line no-restricted-imports
-import { EmbeddedAgentUI } from '@automattic/agenttic-ui/embedded-agent-ui';
+import AgentUI from '@automattic/agenttic-ui';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { closeSmall } from '@wordpress/icons';
 import { useState } from 'react';
 import OverviewCard from '../../../components/overview-card';
 import pressableDescriptor from '../exclusive-offers/images/pressable-descriptor.svg';
@@ -12,11 +13,13 @@ import wpcomDescriptor from '../exclusive-offers/images/wordpressdotcom-descript
 import { hostingBrands } from './mock-data';
 import type { HostingBrand } from './mock-data';
 // eslint-disable-next-line no-restricted-imports
-import type { Message, Suggestion } from '@automattic/agenttic-ui/embedded-agent-ui';
+import type { Message, Suggestion } from '@automattic/agenttic-ui/dist/types';
 import type { ComponentType } from 'react';
 
 // eslint-disable-next-line no-restricted-imports
-import '@automattic/agenttic-ui/embedded-agent-ui.css';
+import '@automattic/agenttic-ui/global.css';
+// eslint-disable-next-line no-restricted-imports
+import '@automattic/agenttic-ui/index.css';
 
 const VIP_DEMO_URL =
 	'https://wpvip.com/get-a-demo/?utm_source=partner&utm_medium=referral&utm_campaign=a4a';
@@ -192,8 +195,14 @@ export default function HostingConcierge( {
 	};
 
 	return (
-		<div className="marketplace-hosting__concierge">
-			<EmbeddedAgentUI
+		<div className="marketplace-hosting__concierge agenttic dark">
+			<div className="marketplace-hosting__concierge-header">
+				<span>{ __( 'Hosting concierge' ) }</span>
+				<Button size="small" icon={ closeSmall } label={ __( 'Close' ) } onClick={ onClose } />
+			</div>
+			<AgentUI
+				className="agenttic dark marketplace-hosting__concierge-agent"
+				variant="embedded"
 				messages={ messages }
 				suggestions={ suggestions }
 				onSuggestionClick={ handleSuggestionClick }
