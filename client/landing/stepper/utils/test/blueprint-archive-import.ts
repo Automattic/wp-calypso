@@ -4,6 +4,7 @@
 import wpcom from 'calypso/lib/wp';
 import {
 	applyBlueprintSpec,
+	getBlueprintArchiveSiteSpecUrl,
 	getSiteEditorUrl,
 	getStandaloneBlueprintArchiveSlug,
 } from '../blueprint-archive-import';
@@ -159,5 +160,35 @@ describe( 'getSiteEditorUrl', () => {
 		expect(
 			getSiteEditorUrl( 'https://example.com/wp-admin/', { startWalkthrough: false } )
 		).not.toContain( 'blueprint-walkthrough' );
+	} );
+} );
+
+describe( 'getBlueprintArchiveSiteSpecUrl', () => {
+	/**
+	 * site-spec decides whether to start a blueprint import by looking for wow_funnel in its
+	 * own query string. A funnel run's import already ran server-side before checkout, so
+	 * dropping the param here makes the page import a second time over the finished site.
+	 */
+	it( 'carries the funnel through so site-spec can skip its own import', () => {
+		const url = getBlueprintArchiveSiteSpecUrl( {
+			siteSlug: 'example.wordpress.com',
+			siteId: 123,
+			blueprintSlug: 'coachava',
+			wowFunnel: 'blueprint',
+		} );
+
+		expect( url ).toContain( 'wow_funnel=blueprint' );
+		expect( url ).toContain( 'blueprint_archive_import=1' );
+		expect( url ).toContain( 'blueprint_slug=coachava' );
+	} );
+
+	it( 'omits the funnel for a standalone run', () => {
+		const url = getBlueprintArchiveSiteSpecUrl( {
+			siteSlug: 'example.wordpress.com',
+			siteId: 123,
+			blueprintSlug: 'coachava',
+		} );
+
+		expect( url ).not.toContain( 'wow_funnel' );
 	} );
 } );
