@@ -1,7 +1,6 @@
 import {
 	Button,
 	SelectControl,
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
@@ -184,32 +183,31 @@ function PlanSpecs( { category, plan }: { category: PlanCategory; plan?: Pressab
 }
 
 function CurrentPlanCard( { plan, usage }: { plan: PressablePlan; usage: PressableUsage } ) {
+	const sitesPercent = Math.round( ( usage.sites / plan.install ) * 100 );
+	const visitsPercent = Math.round( ( usage.visits / plan.visits ) * 100 );
+	const storagePercent = Math.round( ( usage.storageGB / plan.storage ) * 100 );
+
 	return (
 		<Card>
 			<CardHeader>
-				<HStack justify="space-between" alignment="center">
-					<SectionHeader
-						level={ 3 }
-						title={ sprintf(
-							/* translators: %s: plan name */
-							__( 'Your current plan: Pressable %s' ),
-							plan.name
-						) }
-					/>
-					<Button
-						variant="tertiary"
-						size="compact"
-						href="https://my.pressable.com"
-						target="_blank"
-						rel="noreferrer"
-					>
-						{ __( 'Manage in Pressable ↗' ) }
-					</Button>
-				</HStack>
+				<SectionHeader
+					level={ 3 }
+					title={ sprintf(
+						/* translators: %s: plan name */
+						__( 'Your Pressable %s plan' ),
+						plan.name
+					) }
+					actions={
+						<Button variant="link" href="https://my.pressable.com" target="_blank" rel="noreferrer">
+							{ __( 'Manage in Pressable ↗' ) }
+						</Button>
+					}
+				/>
 			</CardHeader>
 			<CardBody>
-				<HStack spacing={ 8 } alignment="flex-start">
+				<VStack spacing={ 4 } alignment="stretch">
 					<Stat
+						density="high"
 						strapline={ __( 'Sites created' ) }
 						metric={ String( usage.sites ) }
 						description={ sprintf(
@@ -217,9 +215,11 @@ function CurrentPlanCard( { plan, usage }: { plan: PressablePlan; usage: Pressab
 							__( 'of %d' ),
 							plan.install
 						) }
-						progressValue={ Math.round( ( usage.sites / plan.install ) * 100 ) }
+						progressValue={ sitesPercent }
+						progressLabel={ `${ sitesPercent }%` }
 					/>
 					<Stat
+						density="high"
 						strapline={ __( 'Visits this month' ) }
 						metric={ formatCompactNumber( usage.visits ) }
 						description={ sprintf(
@@ -227,10 +227,12 @@ function CurrentPlanCard( { plan, usage }: { plan: PressablePlan; usage: Pressab
 							__( 'of %s' ),
 							formatCompactNumber( plan.visits )
 						) }
-						progressValue={ Math.round( ( usage.visits / plan.visits ) * 100 ) }
-						progressColor={ usage.visits / plan.visits > 0.8 ? 'alert-yellow' : undefined }
+						progressValue={ visitsPercent }
+						progressLabel={ `${ visitsPercent }%` }
+						progressColor={ visitsPercent > 80 ? 'alert-yellow' : undefined }
 					/>
 					<Stat
+						density="high"
 						strapline={ __( 'Storage used' ) }
 						metric={ sprintf(
 							/* translators: %d: storage used in GB */
@@ -242,10 +244,11 @@ function CurrentPlanCard( { plan, usage }: { plan: PressablePlan; usage: Pressab
 							__( 'of %dGB' ),
 							plan.storage
 						) }
-						progressValue={ Math.round( ( usage.storageGB / plan.storage ) * 100 ) }
-						progressColor={ usage.storageGB / plan.storage > 0.8 ? 'alert-yellow' : undefined }
+						progressValue={ storagePercent }
+						progressLabel={ `${ storagePercent }%` }
+						progressColor={ storagePercent > 80 ? 'alert-yellow' : undefined }
 					/>
-				</HStack>
+				</VStack>
 			</CardBody>
 		</Card>
 	);
