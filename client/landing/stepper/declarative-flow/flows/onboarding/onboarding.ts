@@ -33,10 +33,7 @@ import { isPlanProductFree } from '../../../../../../packages/data-stores/src/pl
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
-import {
-	getBlueprintArchiveSiteSpecUrl,
-	getStandaloneBlueprintArchiveSlug,
-} from '../../../utils/blueprint-archive-import';
+import { getBlueprintArchiveSiteSpecUrl } from '../../../utils/blueprint-archive-import';
 import {
 	getBuildWowSiteIdentifier,
 	getBuildWowSiteSpecUrl,
@@ -116,12 +113,6 @@ const onboarding: FlowV2< typeof initialize > = {
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
 		const playgroundId = queryParams.get( 'playground' );
-		const buildDest = queryParams.get( 'build_dest' );
-		const blueprintArchiveSlug = getStandaloneBlueprintArchiveSlug(
-			blueprint,
-			playgroundId,
-			buildDest
-		);
 		const wowFunnelSlug = getWowFunnelSlug( queryParams );
 		const wowFunnelDest = getWowFunnelDest( queryParams );
 
@@ -187,24 +178,6 @@ const onboarding: FlowV2< typeof initialize > = {
 					siteSlug: providedDependencies.siteSlug as string,
 					siteId: providedDependencies.siteId as number,
 				};
-
-				// build_dest=wow: skip the Playground-based importer and land on the AI
-				// site-spec, which kicks off the background transfer-to-Atomic +
-				// blueprint-archive import and, on confirm, polls the import and
-				// redirects to the Site Editor. The blueprint step already verified the
-				// archive exists (and stripped build_dest when it does not).
-				if ( blueprintArchiveSlug ) {
-					return [
-						getBlueprintArchiveSiteSpecUrl( {
-							siteSlug: providedDependencies.siteSlug as string,
-							siteId: providedDependencies.siteId as number,
-							blueprintSlug: blueprintArchiveSlug,
-							ref: refParameter,
-						} ),
-						null,
-						null,
-					];
-				}
 
 				if ( playgroundId ) {
 					params.playground = playgroundId;
@@ -515,13 +488,10 @@ const onboarding: FlowV2< typeof initialize > = {
 							// replace the location to delete processing step from history.
 							window.location.replace(
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-									// build_dest=wow and the WoW funnel (dest=editor) go
-									// straight from checkout to their destination — no
-									// post-checkout-onboarding hop, no chooser.
-									redirect_to:
-										blueprintArchiveSlug || ( wowFunnelSlug && wowFunnelDest )
-											? destination
-											: redirectTo,
+									// The WoW funnel goes straight from checkout to its
+									// destination — no post-checkout-onboarding hop, no
+									// chooser.
+									redirect_to: wowFunnelSlug && wowFunnelDest ? destination : redirectTo,
 									signup: 1,
 									flow: ONBOARDING_FLOW,
 									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
@@ -533,9 +503,9 @@ const onboarding: FlowV2< typeof initialize > = {
 									steps_total: checkoutStepperPosition.total,
 								} )
 							);
-						} else if ( blueprintArchiveSlug || ( wowFunnelSlug && wowFunnelDest ) ) {
-							// build_dest=wow and the WoW funnel never show the
-							// setup-your-site-ai chooser; go straight to their destination.
+						} else if ( wowFunnelSlug && wowFunnelDest ) {
+							// The WoW funnel never shows the setup-your-site-ai chooser;
+							// go straight to its destination.
 							window.location.replace( destination );
 						} else if (
 							refParameter === WOO_HOSTING_SOLUTIONS_REF &&

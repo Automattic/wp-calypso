@@ -26,19 +26,10 @@ describe( 'getPlansIntent', () => {
 			expect( getPlansIntent( ONBOARDING_FLOW ) ).toBe( 'plans-playground' );
 		} );
 
-		it( 'hides the free plan when the blueprint targets Atomic via build_dest=wow', () => {
-			window.history.replaceState( {}, '', '/?blueprint=945&build_dest=wow' );
-			expect( getPlansIntent( ONBOARDING_FLOW ) ).toBe( 'plans-ai-assembler-paid-only' );
-		} );
-
-		it( 'keeps the default grid when build_dest is not wow', () => {
-			window.history.replaceState( {}, '', '/?blueprint=945&build_dest=simple' );
+		it( 'keeps the default grid for a plain blueprint import', () => {
+			// Without a funnel the blueprint builds on a Simple site, so the free plan stays.
+			window.history.replaceState( {}, '', '/?blueprint=945' );
 			expect( getPlansIntent( ONBOARDING_FLOW ) ).toBeNull();
-		} );
-
-		it( 'keeps playground precedence when build_dest=wow is present alongside playground', () => {
-			window.history.replaceState( {}, '', '/?blueprint=123&playground=abc&build_dest=wow' );
-			expect( getPlansIntent( ONBOARDING_FLOW ) ).toBe( 'plans-playground' );
 		} );
 	} );
 

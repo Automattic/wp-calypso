@@ -43,40 +43,6 @@ describe( 'BlueprintStep', () => {
 		currentSearch = '';
 	} );
 
-	it( 'keeps build_dest=wow when the blueprint has an archive', async () => {
-		( checkBlueprintExists as jest.Mock ).mockResolvedValue( true );
-		let searchAtSubmit = '';
-		const submit = jest.fn( () => {
-			searchAtSubmit = currentSearch;
-		} );
-
-		render( '/blueprint?blueprint=961&build_dest=wow', submit );
-
-		await waitFor( () => expect( submit ).toHaveBeenCalled() );
-		expect( checkBlueprintExists ).toHaveBeenCalledWith( '961' );
-		expect( searchAtSubmit ).toContain( 'build_dest=wow' );
-	} );
-
-	it( 'strips build_dest from the router before submitting when the archive is missing', async () => {
-		( checkBlueprintExists as jest.Mock ).mockResolvedValue( false );
-		let searchAtSubmit = '';
-		const submit = jest.fn( () => {
-			searchAtSubmit = currentSearch;
-		} );
-
-		render( '/blueprint?blueprint=961&build_dest=wow', submit );
-
-		await waitFor( () => expect( submit ).toHaveBeenCalled() );
-		// The fallback must be visible in the router's own params, otherwise the
-		// logged-out auth branch re-adds build_dest after sign-in.
-		expect( searchAtSubmit ).not.toContain( 'build_dest' );
-		expect( searchAtSubmit ).toContain( 'blueprint=961' );
-		expect( submit ).toHaveBeenCalledTimes( 1 );
-		expect( logBlueprintArchiveEvent ).toHaveBeenCalledWith( 'wow_archive_missing', {
-			blueprint: '961',
-		} );
-	} );
-
 	it( 'keeps the wow funnel when the blueprint has an archive', async () => {
 		( checkBlueprintExists as jest.Mock ).mockResolvedValue( true );
 		let searchAtSubmit = '';
@@ -104,11 +70,18 @@ describe( 'BlueprintStep', () => {
 		await waitFor( () => expect( submit ).toHaveBeenCalled() );
 		// Leaving the funnel on would build an Atomic site with nothing to import onto it, and
 		// leaving dest on would hand over to a site-spec waiting for an import that never runs.
+		// The fallback must be visible in the router's own params, otherwise the logged-out auth
+		// branch re-adds them after sign-in.
 		expect( searchAtSubmit ).not.toContain( 'wow_funnel' );
 		expect( searchAtSubmit ).not.toContain( 'dest' );
+		expect( searchAtSubmit ).toContain( 'blueprint=961' );
+		expect( submit ).toHaveBeenCalledTimes( 1 );
+		expect( logBlueprintArchiveEvent ).toHaveBeenCalledWith( 'wow_archive_missing', {
+			blueprint: '961',
+		} );
 	} );
 
-	it( 'does not look up an archive without build_dest=wow', async () => {
+	it( 'does not look up an archive outside the wow funnel', async () => {
 		const submit = jest.fn();
 
 		render( '/blueprint?blueprint=941', submit );
@@ -121,7 +94,7 @@ describe( 'BlueprintStep', () => {
 		( checkBlueprintExists as jest.Mock ).mockResolvedValue( true );
 		const submit = jest.fn();
 
-		render( '/blueprint?blueprint=coachava&build_dest=wow', submit );
+		render( '/blueprint?blueprint=coachava&wow_funnel=blueprint', submit );
 
 		await waitFor( () => expect( submit ).toHaveBeenCalled() );
 		expect( checkBlueprintExists ).toHaveBeenCalledWith( 'coachava' );
