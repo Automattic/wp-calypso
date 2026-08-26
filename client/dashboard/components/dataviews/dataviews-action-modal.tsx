@@ -1,5 +1,4 @@
 import { Modal } from '@wordpress/components';
-import { useEffect, useState } from 'react';
 import type { Action, ActionModal } from '@wordpress/dataviews';
 
 /**
@@ -32,7 +31,9 @@ export function DataViewsActionModal< Item >( {
 
 /**
  * Opens one of a screen's DataViews actions from the URL, against the first item
- * the action is eligible for, then drops the param so a reload doesn't reopen it.
+ * the action is eligible for. The param is what holds the modal open, and closing
+ * is what drops it, so a reload — or a trip through re-auth — resumes where the
+ * user left off.
  */
 export function useDeepLinkedDataViewsAction< Item >( {
 	queryParams,
@@ -50,27 +51,18 @@ export function useDeepLinkedDataViewsAction< Item >( {
 } ): { action: ActionModal< Item >; item: Item; onClose: () => void } | undefined {
 	const actionId = queryParams?.[ paramName ];
 
-	// Read once, so the modal survives the param being cleared below.
-	const [ requestedActionId ] = useState( () => actionId );
-	const [ isOpen, setIsOpen ] = useState( () => !! actionId );
-
-	useEffect( () => {
-		if ( ! actionId ) {
-			return;
-		}
-
-		navigate( { search: { ...queryParams, [ paramName ]: undefined }, replace: true } );
-		// `queryParams` is a new object every render; the param is what to key on.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ actionId, paramName ] );
-
-	const matchedAction = actions.find( ( action ) => action.id === requestedActionId );
+	const matchedAction = actions.find( ( action ) => action.id === actionId );
 	const action = matchedAction && 'RenderModal' in matchedAction ? matchedAction : undefined;
 	const item = action && items.find( ( candidate ) => action.isEligible?.( candidate ) ?? true );
 
-	if ( ! isOpen || ! action || ! item ) {
+	if ( ! action || ! item ) {
 		return undefined;
 	}
 
-	return { action, item, onClose: () => setIsOpen( false ) };
+	return {
+		action,
+		item,
+		onClose: () =>
+			navigate( { search: { ...queryParams, [ paramName ]: undefined }, replace: true } ),
+	};
 }

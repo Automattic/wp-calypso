@@ -102,35 +102,7 @@ describe( 'useDeepLinkedDataViewsAction', () => {
 		expect( result.current?.item ).toBe( items[ 1 ] );
 	} );
 
-	test( 'drops the param from the URL on arrival, keeping the others', () => {
-		renderHook( () =>
-			useDeepLinkedDataViewsAction( {
-				queryParams: { action: 'rename', page: 2 },
-				navigate,
-				actions,
-				items,
-			} )
-		);
-
-		expect( navigate ).toHaveBeenCalledWith( {
-			search: { action: undefined, page: 2 },
-			replace: true,
-		} );
-	} );
-
-	test( 'stays open once the param is gone', () => {
-		const { result, rerender } = renderHook(
-			( { queryParams }: { queryParams: Record< string, unknown > } ) =>
-				useDeepLinkedDataViewsAction( { queryParams, navigate, actions, items } ),
-			{ initialProps: { queryParams: { action: 'rename' } as Record< string, unknown > } }
-		);
-
-		rerender( { queryParams: {} } );
-
-		expect( result.current?.action ).toBe( modalAction );
-	} );
-
-	test( 'closes on request, and does not reopen', () => {
+	test( 'keeps the param until the modal closes, so a reload resumes it', () => {
 		const { result, rerender } = renderHook( () =>
 			useDeepLinkedDataViewsAction( {
 				queryParams: { action: 'rename' },
@@ -140,10 +112,61 @@ describe( 'useDeepLinkedDataViewsAction', () => {
 			} )
 		);
 
-		act( () => result.current?.onClose() );
+		expect( navigate ).not.toHaveBeenCalled();
+
 		rerender();
 
+		expect( result.current?.action ).toBe( modalAction );
+	} );
+
+	test( 'drops the param on close, keeping the others', () => {
+		const { result } = renderHook( () =>
+			useDeepLinkedDataViewsAction( {
+				queryParams: { action: 'rename', page: 2 },
+				navigate,
+				actions,
+				items,
+			} )
+		);
+
+		act( () => result.current?.onClose() );
+
+		expect( navigate ).toHaveBeenCalledWith( {
+			search: { action: undefined, page: 2 },
+			replace: true,
+		} );
+	} );
+
+	test( 'closes once the param is gone', () => {
+		const { result, rerender } = renderHook(
+			( { queryParams }: { queryParams: Record< string, unknown > } ) =>
+				useDeepLinkedDataViewsAction( { queryParams, navigate, actions, items } ),
+			{ initialProps: { queryParams: { action: 'rename' } as Record< string, unknown > } }
+		);
+
+		act( () => result.current?.onClose() );
+		rerender( { queryParams: {} } );
+
 		expect( result.current ).toBeUndefined();
+	} );
+
+	test( 'picks up an action that arrives after the first render', () => {
+		const { result, rerender } = renderHook(
+			( { actions: available }: { actions: Action< Item >[] } ) =>
+				useDeepLinkedDataViewsAction( {
+					queryParams: { action: 'rename' },
+					navigate,
+					actions: available,
+					items,
+				} ),
+			{ initialProps: { actions: [] as Action< Item >[] } }
+		);
+
+		expect( result.current ).toBeUndefined();
+
+		rerender( { actions } );
+
+		expect( result.current?.action ).toBe( modalAction );
 	} );
 
 	test( 'returns nothing without a deep link', () => {
@@ -197,6 +220,9 @@ describe( 'useDeepLinkedDataViewsAction', () => {
 		);
 
 		expect( result.current?.action ).toBe( modalAction );
+
+		act( () => result.current?.onClose() );
+
 		expect( navigate ).toHaveBeenCalledWith( {
 			search: { open: undefined },
 			replace: true,
