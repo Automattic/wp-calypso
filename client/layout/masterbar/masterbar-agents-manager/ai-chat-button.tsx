@@ -26,7 +26,8 @@ const MasterbarAiChatButton = () => {
 	// Toggle: close the chat if it's already showing, otherwise resume the active
 	// conversation and open it.
 	const handleClick = () => {
-		recordAgentsManagerTracksEvent( 'calypso_masterbar_agents_manager_ai_chat_clicked', {
+		recordAgentsManagerTracksEvent( 'calypso_agents_manager_ai_chat_clicked', {
+			surface: 'masterbar',
 			section: sectionName || 'unknown',
 			action: isChatVisible ? 'close' : 'open',
 		} );

@@ -204,6 +204,7 @@ describe( 'convertToolMessagesToComponents', () => {
 				name: 'test',
 				summary: 'Choose one of these options.',
 				contentType: 'my-component',
+				toolCallId: 'tool-call-1',
 				onResponseAction: mockResponseAction,
 			},
 		} );

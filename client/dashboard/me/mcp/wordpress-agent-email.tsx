@@ -3,11 +3,9 @@ import {
 	sitePostByEmailSettingsMutation,
 	sitePostByEmailSettingsQuery,
 } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	Button,
-	Icon,
 	Notice,
 	Spinner,
 	__experimentalText as Text,
@@ -15,12 +13,11 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { envelope } from '@wordpress/icons';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
-import { siteSettingsAIToolsRoute } from '../../app/router/sites';
+import { sitePlansRoute } from '../../app/router/sites';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import ClipboardInputControl from '../../components/clipboard-input-control';
@@ -38,14 +35,14 @@ function getErrorMessage( error: unknown, fallback: string ): string {
 	return error instanceof Error && error.message ? error.message : fallback;
 }
 
-function ManageEmailButton( { site }: { site: Site } ) {
+function ViewPlansButton( { site }: { site: Site } ) {
 	return (
 		<RouterLinkButton
-			variant="secondary"
-			to={ siteSettingsAIToolsRoute.fullPath }
+			variant="primary"
+			to={ sitePlansRoute.fullPath }
 			params={ { siteSlug: site.slug } }
 		>
-			{ __( 'Manage' ) }
+			{ __( 'View plans' ) }
 		</RouterLinkButton>
 	);
 }
@@ -98,12 +95,9 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 	if ( error ) {
 		return (
 			<CardBody>
-				<VStack spacing={ 4 }>
-					<Notice status="error" isDismissible={ false }>
-						{ getErrorMessage( error, __( 'Could not load this site’s email connection.' ) ) }
-					</Notice>
-					<ManageEmailButton site={ site } />
-				</VStack>
+				<Notice status="error" isDismissible={ false }>
+					{ getErrorMessage( error, __( 'Could not load this site’s email connection.' ) ) }
+				</Notice>
 			</CardBody>
 		);
 	}
@@ -113,12 +107,12 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 			<CardBody className="wordpress-agent-connection__row">
 				<SectionHeader
 					level={ 3 }
-					title={ __( 'Unavailable' ) }
+					title={ __( 'Email isn’t available for this site' ) }
 					description={ __(
-						'Upgrade this site’s plan to enable its WordPress Agent email address.'
+						'Upgrade this site’s plan to enable a WordPress Agent email address.'
 					) }
 				/>
-				<ManageEmailButton site={ site } />
+				<ViewPlansButton site={ site } />
 			</CardBody>
 		);
 	}
@@ -128,7 +122,7 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 			<CardBody className="wordpress-agent-connection__row">
 				<SectionHeader
 					level={ 3 }
-					title={ __( 'Not connected' ) }
+					title={ __( 'Not connected on this site' ) }
 					description={ __( 'Enable a private address for emailing this site’s WordPress Agent.' ) }
 				/>
 				<Button
@@ -145,17 +139,36 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 
 	return (
 		<CardBody>
-			<VStack spacing={ 3 }>
-				<ClipboardInputControl
-					label={ __( 'WordPress Agent email address' ) }
-					value={ agentEmailAddress }
-					readOnly
-					onCopy={ () => {
-						recordTracksEvent( 'calypso_wordpress_agent_email_address_copied', {
-							site_id: site.ID,
-						} );
-					} }
+			<VStack spacing={ 4 }>
+				<SectionHeader
+					level={ 3 }
+					title={ __( 'Connected' ) }
+					description={ __( 'This email address is ready to use.' ) }
 				/>
+				<div className="wordpress-agent-email__address-row">
+					<ClipboardInputControl
+						label={ __( 'AI agent email address' ) }
+						value={ agentEmailAddress }
+						readOnly
+						onCopy={ () => {
+							recordTracksEvent( 'calypso_wordpress_agent_email_address_copied', {
+								site_id: site.ID,
+							} );
+						} }
+					/>
+					<Button
+						variant="secondary"
+						href={ vCardHref }
+						download={ vCardFileName }
+						onClick={ () => {
+							recordTracksEvent( 'calypso_wordpress_agent_email_vcard_downloaded', {
+								site_id: site.ID,
+							} );
+						} }
+					>
+						{ __( 'Add to contacts' ) }
+					</Button>
+				</div>
 				<div className="wordpress-agent-email__footer">
 					<Text
 						as="p"
@@ -168,21 +181,6 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 							email: <strong>{ user.email }</strong>,
 						} ) }
 					</Text>
-					<div className="wordpress-agent-connection__actions">
-						<Button
-							variant="secondary"
-							href={ vCardHref }
-							download={ vCardFileName }
-							onClick={ () => {
-								recordTracksEvent( 'calypso_wordpress_agent_email_vcard_downloaded', {
-									site_id: site.ID,
-								} );
-							} }
-						>
-							{ __( 'Add to contacts' ) }
-						</Button>
-						<ManageEmailButton site={ site } />
-					</div>
 				</div>
 			</VStack>
 		</CardBody>
@@ -224,15 +222,14 @@ export default function WordPressAgentEmail() {
 						description={ __(
 							'Email WordPress Agent through a private address unique to each site.'
 						) }
-						decoration={ <Icon icon={ envelope } size={ 24 } /> }
-						actions={ <Badge intent="info">{ __( 'Per site' ) }</Badge> }
 					/>
 					<PreferencesLoginSiteDropdown
 						sites={ sites }
 						value={ selectedSite?.ID.toString() ?? '' }
 						onChange={ selectSite }
-						label={ __( 'Site' ) }
+						label={ __( 'Select site' ) }
 						isLoading={ sitesQuery.isLoading }
+						useSiteUrlAsLabel
 					/>
 					{ ! sitesQuery.isLoading && sites.length === 0 && (
 						<Notice status="info" isDismissible={ false }>

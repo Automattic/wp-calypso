@@ -20,6 +20,9 @@ import { getResolvedAgentId } from './resolved-agent-id';
 
 type TracksProps = Record< string, unknown >;
 
+export const BIG_SKY_EVENT_PREFIX = 'jetpack_big_sky_';
+export type BigSkyEventName = `${ typeof BIG_SKY_EVENT_PREFIX }${ string }`;
+
 type EditorSelectStore =
 	| {
 			getCurrentPostType?: () => string | undefined;
@@ -108,7 +111,7 @@ function getBigSkyPageProps(): TracksProps {
  * dashboards keep working.
  */
 export function recordBigSkyTracksEvent(
-	eventName: `jetpack_big_sky_${ string }`,
+	eventName: BigSkyEventName,
 	props: TracksProps = {}
 ): void {
 	if ( isReaderChatAgent( getResolvedAgentId() ) ) {
@@ -161,11 +164,9 @@ function getUnifiedBaseProps(): TracksProps {
 
 /**
  * Records an Agents Manager event using the shared unified property names.
- * Most events live under `calypso_agents_manager_`; the entry-point events
- * carry a host prefix instead (e.g. `calypso_editor_agents_manager_ai_chat_clicked`).
  */
 export function recordAgentsManagerTracksEvent(
-	eventName: `calypso_${ string }`,
+	eventName: `calypso_agents_manager_${ string }`,
 	props: TracksProps = {}
 ): void {
 	recordTracksEvent( eventName, { ...getUnifiedBaseProps(), ...props } );

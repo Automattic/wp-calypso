@@ -76,8 +76,8 @@ describe( 'MasterbarAiChatButton', () => {
 		expect( closeAgentsManagerChat ).toHaveBeenCalled();
 		expect( openAgentsManagerChat ).not.toHaveBeenCalled();
 		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
-			'calypso_masterbar_agents_manager_ai_chat_clicked',
-			{ section: 'test-section', action: 'close' }
+			'calypso_agents_manager_ai_chat_clicked',
+			{ surface: 'masterbar', section: 'test-section', action: 'close' }
 		);
 	} );
 
@@ -90,8 +90,8 @@ describe( 'MasterbarAiChatButton', () => {
 		expect( openAgentsManagerChat ).toHaveBeenCalled();
 		expect( closeAgentsManagerChat ).not.toHaveBeenCalled();
 		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
-			'calypso_masterbar_agents_manager_ai_chat_clicked',
-			{ section: 'test-section', action: 'open' }
+			'calypso_agents_manager_ai_chat_clicked',
+			{ surface: 'masterbar', section: 'test-section', action: 'open' }
 		);
 	} );
 
@@ -104,8 +104,8 @@ describe( 'MasterbarAiChatButton', () => {
 		await userEvent.click( screen.getByRole( 'button' ) );
 
 		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
-			'calypso_masterbar_agents_manager_ai_chat_clicked',
-			{ section: 'unknown', action: 'open' }
+			'calypso_agents_manager_ai_chat_clicked',
+			{ surface: 'masterbar', section: 'unknown', action: 'open' }
 		);
 	} );
 } );

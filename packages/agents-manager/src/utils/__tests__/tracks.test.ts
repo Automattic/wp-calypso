@@ -257,22 +257,23 @@ describe( 'tracks wrappers', () => {
 		} );
 	} );
 
-	describe( 'entry-point event names', () => {
-		it( 'records a host-prefixed name verbatim with the unified base-prop set', () => {
-			recordAgentsManagerTracksEvent( 'calypso_editor_agents_manager_ai_chat_clicked', {
+	describe( 'entry-point events', () => {
+		it( 'lets a caller-supplied surface override the base value', () => {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_ai_chat_clicked', {
+				surface: 'editor_toolbar',
 				section: 'gutenberg',
 				action: 'open',
 			} );
 
 			const [ eventName ] = mockRecordTracksEvent.mock.calls[ 0 ];
-			expect( eventName ).toBe( 'calypso_editor_agents_manager_ai_chat_clicked' );
+			expect( eventName ).toBe( 'calypso_agents_manager_ai_chat_clicked' );
 
 			expect( lastEventProps() ).toMatchObject( {
 				section: 'gutenberg',
 				action: 'open',
 				ai_session_id: 'session-xyz',
 				agent_name: 'dolly',
-				surface: 'editor',
+				surface: 'editor_toolbar',
 				is_test: true,
 			} );
 		} );
