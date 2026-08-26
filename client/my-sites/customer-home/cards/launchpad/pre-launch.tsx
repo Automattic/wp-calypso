@@ -25,10 +25,8 @@ const LaunchpadPreLaunch = ( props: LaunchpadPreLaunchProps ): JSX.Element => {
 
 	const launchUrl = addQueryArgs( '/start/launch-site', { siteSlug: site?.slug } );
 
-	// A free site can never qualify for the pre-launch modal (it needs a paid
-	// plan), so skip mounting the bridge for it — the redirect stays instant with
-	// no site/domains fetch. Unknown plans (site not loaded yet) fall through to
-	// the bridge, which settles the decision against authoritative data.
+	// A free site can never qualify (needs a paid plan), so skip the bridge and
+	// redirect instantly. Unknown plans fall through and settle in the bridge.
 	const isFreePlan = site?.plan?.is_free ?? false;
 
 	const handleTaskClick = ( task: Task ) => {
@@ -36,9 +34,7 @@ const LaunchpadPreLaunch = ( props: LaunchpadPreLaunchProps ): JSX.Element => {
 			return;
 		}
 
-		// Open the shared pre-launch bridge. It shows the confirmation modal for
-		// paid-plan + custom-domain sites and otherwise hands off to the
-		// `launchUrl` flow, matching the previous behavior.
+		// Hand off to the pre-launch bridge, which confirms for qualifying sites.
 		if ( isFreePlan ) {
 			window.location.assign( launchUrl );
 			return false;

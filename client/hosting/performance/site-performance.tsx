@@ -160,9 +160,8 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 
 	const [ isExperimentLoading, experimentVariant ] = useSiteLaunchGatingVariant();
 
-	// A free, already-public, or A4A dev site never opens the pre-launch modal, so
-	// skip mounting the bridge for those — the CTA redirect stays instant with no
-	// site/domains fetch.
+	// A free, already-public, or A4A dev site never qualifies, so skip the bridge
+	// and let the CTA redirect instantly.
 	const isFreePlan = site?.plan?.is_free ?? false;
 	const canOfferPreLaunch = ! isSitePublic && ! site?.is_a4a_dev_site && ! isFreePlan;
 	const [ isLaunchModalOpen, setIsLaunchModalOpen ] = useState( false );
@@ -198,11 +197,9 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 			path,
 		} );
 
-		// Site launch gating: 'semi_gated_site_launch' is the shipped default — it
-		// routes to the `/start/launch-site` flow, but opens the shared pre-launch
-		// bridge first for paid-plan + custom-domain sites and otherwise hands
-		// straight off to that flow. The other branches are scaffolding for future
-		// experiments; see useSiteLaunchGatingVariant().
+		// Gating: 'semi_gated_site_launch' is the shipped default, routing to
+		// `/start/launch-site` via the pre-launch bridge. Other branches are
+		// scaffolding for future experiments; see useSiteLaunchGatingVariant().
 		switch ( experimentVariant ) {
 			case 'semi_gated_site_launch':
 			case null:

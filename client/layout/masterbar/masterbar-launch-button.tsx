@@ -21,21 +21,16 @@ export const MasterbarLaunchButton = ( { siteId }: { siteId: number } ) => {
 	const [ isLaunchModalOpen, setIsLaunchModalOpen ] = useState( false );
 	const [ launchUrl, setLaunchUrl ] = useState( '' );
 
-	// A free site can never qualify for the pre-launch modal (it needs a paid
-	// plan), so skip mounting the bridge for it — the redirect stays instant with
-	// no site/domains fetch. Unknown plans (site not loaded yet) fall through to
-	// the bridge, which settles the decision against authoritative data.
+	// A free site can never qualify (needs a paid plan), so skip the bridge and
+	// redirect instantly. Unknown plans fall through and settle in the bridge.
 	const isFreePlan = site?.plan?.is_free ?? false;
 
 	const onLaunchSiteClick = () => {
 		dispatch( recordTracksEvent( 'calypso_masterbar_launch_site', { source: sectionName } ) );
 
-		// Site launch gating: 'semi_gated_site_launch' is the shipped default — it
-		// routes to the `/start/launch-site` flow, but opens the shared pre-launch
-		// bridge first, which shows the confirmation modal for paid-plan +
-		// custom-domain sites and otherwise hands straight off to that flow. The
-		// other branches are scaffolding for future experiments; see
-		// useSiteLaunchGatingVariant().
+		// Gating: 'semi_gated_site_launch' is the shipped default, routing to
+		// `/start/launch-site` via the pre-launch bridge. Other branches are
+		// scaffolding for future experiments; see useSiteLaunchGatingVariant().
 		switch ( variant ) {
 			case 'semi_gated_site_launch':
 			case null:
