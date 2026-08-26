@@ -16,7 +16,18 @@ function ReauthRedirect() {
 	return null;
 }
 
-function SessionError() {
+// `authorization_required` covers both a session that can no longer authenticate
+// and an account that is authenticated but not allowed to see something, and the
+// API gives us no way to tell them apart. So suggest the fix for the first rather
+// than diagnosing either, and offer support for when it does not help.
+function isAuthorizationError( error: Error ) {
+	return (
+		error.name === 'AuthorizationRequiredError' ||
+		( isWpError( error ) && error.error === 'authorization_required' )
+	);
+}
+
+function RefusedRequestError() {
 	// `useAuth` throws when there is no provider, and this component is the last
 	// thing standing between the user and a blank screen.
 	const auth = useContext( AuthContext );
@@ -34,7 +45,7 @@ function SessionError() {
 
 	return (
 		<PageLayout
-			header={ <PageHeader title={ __( 'There’s a problem with your session' ) } /> }
+			header={ <PageHeader title={ __( 'Something went wrong' ) } /> }
 			notices={
 				<Notice
 					variant="error"
@@ -82,17 +93,12 @@ function GenericError( { error }: { error: Error } ) {
  * anything scoped to one area belongs in that area's error component.
  */
 function UnknownError( { error }: { error: Error } ) {
-	if ( isWpError( error ) ) {
-		if ( error.error === 'reauthorization_required' ) {
-			return <ReauthRedirect />;
-		}
+	if ( isWpError( error ) && error.error === 'reauthorization_required' ) {
+		return <ReauthRedirect />;
+	}
 
-		// The API marks a request that carried no usable credential with this
-		// reason. An authorization failure without it is a genuine permission
-		// error, where signing in again would not help.
-		if ( error.reason === 'no_identity' ) {
-			return <SessionError />;
-		}
+	if ( isAuthorizationError( error ) ) {
+		return <RefusedRequestError />;
 	}
 
 	return <GenericError error={ error } />;

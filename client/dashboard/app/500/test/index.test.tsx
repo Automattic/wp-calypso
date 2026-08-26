@@ -20,12 +20,11 @@ function wpError( fields: Record< string, unknown >, message = RAW_API_MESSAGE )
 	} );
 }
 
-/** No credential was accepted, so signing in again is the fix. */
-function noIdentityError() {
-	return wpError( { error: 'authorization_required', reason: 'no_identity' } );
+function authorizationError() {
+	return wpError( { error: 'authorization_required' } );
 }
 
-/** Authenticated, but not allowed to see this. Signing in again changes nothing. */
+/** Authenticated, but not allowed to see this. Indistinguishable from the above. */
 function forbiddenError() {
 	return wpError(
 		{ error: 'authorization_required' },
@@ -63,13 +62,13 @@ describe( 'UnknownError', () => {
 			);
 
 			expect( window.location.href ).toContain( '/me/reauth-required' );
-			expect( container ).not.toHaveTextContent( /problem with your session/i );
+			expect( container ).not.toHaveTextContent( /trouble accessing data/i );
 		} );
 	} );
 
-	describe( 'when the request carried no usable credential', () => {
+	describe( 'when a request is refused', () => {
 		it( 'explains the problem instead of showing the raw API message', async () => {
-			renderWithLogout( noIdentityError(), jest.fn() );
+			renderWithLogout( authorizationError(), jest.fn() );
 
 			expect(
 				await screen.findByText( /trouble accessing data from your account/i )
@@ -79,7 +78,7 @@ describe( 'UnknownError', () => {
 
 		it( 'offers a way to log out and back in', async () => {
 			const logout = jest.fn();
-			renderWithLogout( noIdentityError(), logout );
+			renderWithLogout( authorizationError(), logout );
 
 			await userEvent.click( await screen.findByRole( 'button', { name: /log out/i } ) );
 
@@ -87,20 +86,21 @@ describe( 'UnknownError', () => {
 		} );
 
 		it( 'links to support', async () => {
-			renderWithLogout( noIdentityError(), jest.fn() );
+			renderWithLogout( authorizationError(), jest.fn() );
 
 			expect( await screen.findByRole( 'link', { name: /support/i } ) ).toBeVisible();
 		} );
 	} );
 
 	describe( 'when the account simply lacks access', () => {
-		it( 'does not tell the user to log in again', async () => {
+		// The API reports this identically to an unusable session, so the same
+		// screen is shown. The copy suggests logging back in rather than claiming
+		// it is the cause, and support is offered for when it does not help.
+		it( 'still offers a recovery path', async () => {
 			renderWithLogout( forbiddenError(), jest.fn() );
 
-			expect(
-				await screen.findByText( 'User or Token does not have access to specified site.' )
-			).toBeVisible();
-			expect( screen.queryByRole( 'button', { name: /log out/i } ) ).not.toBeInTheDocument();
+			expect( await screen.findByRole( 'button', { name: /log out/i } ) ).toBeVisible();
+			expect( screen.getByRole( 'link', { name: /support/i } ) ).toBeVisible();
 		} );
 	} );
 
