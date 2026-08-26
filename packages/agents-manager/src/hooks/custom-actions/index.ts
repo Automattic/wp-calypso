@@ -11,7 +11,7 @@ import {
 } from '../../utils/external-context';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { setSiteEditorAction } from '../../utils/site-editor-context';
-import { recordBigSkyTracksEvent } from '../../utils/tracks';
+import { BIG_SKY_EVENT_PREFIX, recordBigSkyTracksEvent } from '../../utils/tracks';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 /** Bridge-facing recorder: drops malformed calls instead of emitting `jetpack_big_sky_undefined`. */
@@ -23,7 +23,8 @@ function recordGuardedBigSkyTracksEvent(
 		return;
 	}
 
-	recordBigSkyTracksEvent( eventName, props );
+	// Bridge callers pass the suffix only — see `recordBigSkyTracksEvent` in `global.d.ts`.
+	recordBigSkyTracksEvent( `${ BIG_SKY_EVENT_PREFIX }${ eventName }`, props );
 }
 
 /**

@@ -29,6 +29,7 @@
  */
 /* eslint-disable react-hooks/rules-of-hooks */
 import {
+	abandonPendingLoginLockWaits,
 	AddPeoplePage,
 	AdvertisingPage,
 	AppleLoginPage,
@@ -127,10 +128,9 @@ export type CustomOptions = {
 /**
  * Test accounts exposed as a fixture of the same name, logged in on first use.
  *
- * The `prime-logins` setup project logs in as each of these before the suite starts, so
- * an account added here is primed rather than logged in inline. Two accounts are fixtures
- * without belonging here: `accountGivenByEnvironment`, which resolves at run time, and
- * `accountSMS`, whose 2FA code costs a Mailosaur email only a couple of specs need.
+ * Two accounts are fixtures without belonging here: `accountGivenByEnvironment`, which
+ * resolves at run time, and `accountSMS`, whose 2FA code costs a Mailosaur email only a
+ * couple of specs need.
  */
 export const fixtureAccounts = {
 	accountAtomic: 'atomicUser',
@@ -263,6 +263,7 @@ export const test = base.extend<
 	CustomOptions & {
 		[ K in keyof typeof fixtureAccounts ]: TestAccount;
 	} & {
+		_abandonLoginLockWaits: void;
 		_throttleActionHandler: void;
 		/**
 		 * Test account selected based on the current environment variables.
@@ -500,6 +501,17 @@ export const test = base.extend<
 	}
 >( {
 	viewportName: [ 'desktop', { option: true } ],
+	_abandonLoginLockWaits: [
+		async ( {}, use ) => {
+			await use();
+			// A timed-out test's await is abandoned, not cancelled, so a withLoginLock call it
+			// left waiting would keep polling and could take the lock during worker teardown.
+			// Any teardown running means the test body is over: a wait still pending belongs to
+			// no live test, so abandoning it here cannot fail one.
+			abandonPendingLoginLockWaits();
+		},
+		{ auto: true },
+	],
 	_throttleActionHandler: [
 		async ( {}, use, testInfo ) => {
 			const unregister = registerThrottleActionHandler( ( action, ids ) => {
