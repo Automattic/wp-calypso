@@ -161,9 +161,9 @@ export function getActions( {
 			isPrimary: true,
 			icon: globe,
 			isEligible: ( item ) => item.status === 'unassigned',
+			modalHeader: __( 'Which site would you like to assign this license to?' ),
 			RenderModal: ( { items, closeModal } ) => (
 				<AssignLicenseModal
-					license={ items[ 0 ] }
 					sites={ sites }
 					onAssign={ ( site ) => {
 						onAssign( items[ 0 ].licenseId, site );
