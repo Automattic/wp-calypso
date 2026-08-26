@@ -21,6 +21,22 @@
 	}
 }
 
+.marketplace-hosting__guide-grid {
+	display: grid;
+	grid-template-columns: repeat( 3, 1fr );
+	gap: 16px;
+	align-items: stretch;
+
+	@media ( max-width: 782px ) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.marketplace-hosting__guide-cta {
+	color: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+	font-weight: 600;
+}
+
 .marketplace-hosting__selector-card {
 	cursor: pointer;
 

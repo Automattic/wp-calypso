@@ -16,7 +16,7 @@ import {
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import { sprintf, _n, __ } from '@wordpress/i18n';
-import { cart, chevronDown, chevronUp, info } from '@wordpress/icons';
+import { cart, chevronDown, chevronUp, closeSmall, info } from '@wordpress/icons';
 import { useState } from 'react';
 import referralStep1 from 'calypso/assets/images/a8c-for-agencies/referral-step-1.jpg';
 import referralStep2 from 'calypso/assets/images/a8c-for-agencies/referral-step-2.jpg';
@@ -127,6 +127,107 @@ interface CartItem {
 }
 
 const HOSTING_LP_URL = 'https://automattic.com/for-agencies/hosting/';
+
+const GUIDE_OPTIONS: { brand: HostingBrand[ 'key' ]; situation: string; outcome: string }[] = [
+	{
+		brand: 'wpcom',
+		situation: __( 'A single site, or a handful' ),
+		outcome: __(
+			'Managed WordPress with staging, backups, and 24/7 support built in, so client sites just run.'
+		),
+	},
+	{
+		brand: 'pressable',
+		situation: __( 'A growing book of clients' ),
+		outcome: __(
+			'Traffic and storage pooled across every site, so your margin grows as you add clients.'
+		),
+	},
+	{
+		brand: 'vip',
+		situation: __( 'Enterprise or high-traffic clients' ),
+		outcome: __(
+			'Enterprise-grade security and scale, with guided onboarding for your biggest clients.'
+		),
+	},
+];
+
+function HostingGuide( {
+	onSelect,
+	onClose,
+}: {
+	onSelect: ( brand: HostingBrand[ 'key' ] ) => void;
+	onClose: () => void;
+} ) {
+	return (
+		<Card>
+			<CardBody>
+				<VStack spacing={ 4 }>
+					<HStack justify="space-between" alignment="flex-start">
+						<VStack spacing={ 1 }>
+							<Heading level={ 3 } size={ 16 }>
+								{ __( 'Which fits this client?' ) }
+							</Heading>
+							<Text variant="muted">
+								{ __(
+									'Pick the situation that matches and we’ll point you to the right platform.'
+								) }
+							</Text>
+						</VStack>
+						<Button
+							size="small"
+							icon={ closeSmall }
+							label={ __( 'Dismiss' ) }
+							onClick={ onClose }
+						/>
+					</HStack>
+					<div className="marketplace-hosting__guide-grid" role="group">
+						{ GUIDE_OPTIONS.map( ( option ) => {
+							const brand = hostingBrands.find( ( b ) => b.key === option.brand );
+							return (
+								<Card
+									key={ option.brand }
+									className="marketplace-hosting__selector-card"
+									onClick={ () => onSelect( option.brand ) }
+									role="button"
+									tabIndex={ 0 }
+									onKeyDown={ ( event: React.KeyboardEvent ) => {
+										if ( event.key === 'Enter' || event.key === ' ' ) {
+											event.preventDefault();
+											onSelect( option.brand );
+										}
+									} }
+								>
+									<CardBody>
+										<VStack spacing={ 3 } justify="space-between" style={ { height: '100%' } }>
+											<VStack spacing={ 2 }>
+												<Text size={ 12 } weight={ 600 } variant="muted" upperCase>
+													{ option.situation }
+												</Text>
+												<Text weight={ 600 }>{ brand?.name }</Text>
+												<Text variant="muted">{ option.outcome }</Text>
+											</VStack>
+											<Text className="marketplace-hosting__guide-cta">
+												{ sprintf(
+													/* translators: %s: hosting brand name */
+													__( 'Choose %s' ),
+													brand?.name ?? ''
+												) }
+											</Text>
+										</VStack>
+									</CardBody>
+								</Card>
+							);
+						} ) }
+					</div>
+					<ExternalLink href={ HOSTING_LP_URL }>
+						{ __( 'Compare all plans and features' ) }
+					</ExternalLink>
+				</VStack>
+			</CardBody>
+		</Card>
+	);
+}
 
 function MigrationOffer() {
 	const [ isExpanded, setIsExpanded ] = useState( false );
@@ -316,6 +417,8 @@ export default function MarketplaceHosting() {
 		new URLSearchParams( window.location.search ).has( 'alt' )
 	);
 
+	const [ isChooserOpen, setIsChooserOpen ] = useState( false );
+
 	// Prototype-only: `?existing` simulates returning-customer data that will
 	// come from license and usage queries ( see mockOwnership ).
 	const isExistingCustomer = new URLSearchParams( window.location.search ).has( 'existing' );
@@ -374,9 +477,13 @@ export default function MarketplaceHosting() {
 							{ __(
 								'Choose the right hosting for each client, from single sites to enterprise platforms.'
 							) }{ ' ' }
-							<ExternalLink href={ HOSTING_LP_URL }>
-								{ __( 'Compare hosting solutions' ) }
-							</ExternalLink>
+							<Button
+								variant="link"
+								onClick={ () => setIsChooserOpen( ( open ) => ! open ) }
+								aria-expanded={ isChooserOpen }
+							>
+								{ __( 'Not sure which fits?' ) }
+							</Button>
 						</>
 					}
 					actions={
@@ -442,7 +549,17 @@ export default function MarketplaceHosting() {
 		>
 			{ isGuideOpen && <ReferralGuide onClose={ () => setIsGuideOpen( false ) } /> }
 			{ SHOW_MIGRATION_OFFER && <MigrationOffer /> }
+			{ isChooserOpen && (
+				<HostingGuide
+					onSelect={ ( brand ) => {
+						setSelectedBrand( brand );
+						setIsChooserOpen( false );
+					} }
+					onClose={ () => setIsChooserOpen( false ) }
+				/>
+			) }
 			<TabPanel
+				key={ selectedBrand }
 				className="marketplace-hosting__tabs"
 				tabs={ hostingBrands.map( ( brand ) => ( { name: brand.key, title: brand.name } ) ) }
 				initialTabName={ selectedBrand }
