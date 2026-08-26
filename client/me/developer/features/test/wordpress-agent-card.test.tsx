@@ -16,8 +16,8 @@ jest.mock( 'i18n-calypso', () => ( {
 	useTranslate: () => ( text: string ) => text,
 } ) );
 
-jest.mock( 'calypso/dashboard/app-dotcom/routing', () => ( {
-	buildDotcomDashboardLink: ( path: string ) => `http://my.localhost:3000${ path }`,
+jest.mock( 'calypso/dashboard/utils/link', () => ( {
+	dashboardLink: ( path: string ) => `http://my.localhost:3000${ path }`,
 } ) );
 
 jest.mock( '../use-handle-click-link', () => ( {
