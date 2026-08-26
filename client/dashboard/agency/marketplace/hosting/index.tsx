@@ -7,6 +7,7 @@ import {
 	Guide,
 	Icon,
 	Modal,
+	ProgressBar,
 	TabPanel,
 	ToggleControl,
 	__experimentalToggleGroupControl as ToggleGroupControl,
@@ -27,8 +28,11 @@ import {
 	copy,
 	home,
 	info,
-	institution,
 	lifesaver,
+	page,
+	shield,
+	store,
+	tool,
 } from '@wordpress/icons';
 import { useState } from 'react';
 import referralStep1 from 'calypso/assets/images/a8c-for-agencies/referral-step-1.jpg';
@@ -41,6 +45,9 @@ import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { DomainUpsellIllustraction } from '../../../sites/overview-domain-upsell-card/upsell-illustration';
+import pressableDescriptor from '../exclusive-offers/images/pressable-descriptor.svg';
+import vipDescriptor from '../exclusive-offers/images/vip-descriptor.svg';
+import wpcomDescriptor from '../exclusive-offers/images/wordpressdotcom-descriptor.svg';
 import { CheckGrid, IncludedFeatures, JetpackComplete, Testimonials } from './content-sections';
 import demoIllustrationUrl from './demo-callout-illustration.svg';
 import {
@@ -142,79 +149,144 @@ interface CartItem {
 
 const HOSTING_LP_URL = 'https://automattic.com/for-agencies/hosting/';
 
-type GuideChoice = { value: string; icon: JSX.Element; label: string; hint: string };
+type GuideChoice = {
+	value: string;
+	icon: JSX.Element;
+	label: string;
+	hint: string;
+	chip: string;
+};
 
-// Two axes the for-agencies hosting LP uses to segment clients: portfolio size
-// and what the client needs most.
-const SCALE_CHOICES: GuideChoice[] = [
-	{
-		value: 'few',
-		icon: home,
-		label: __( 'Just one, or a few' ),
-		hint: __( 'A small business, nonprofit, or portfolio site.' ),
-	},
-	{
-		value: 'many',
-		icon: copy,
-		label: __( 'A whole portfolio' ),
-		hint: __( 'You manage many client sites and keep adding more.' ),
-	},
-];
+type GuideQuestion = { key: string; prompt: string; choices: GuideChoice[] };
 
-const NEED_CHOICES: GuideChoice[] = [
+// Three axes the for-agencies hosting LP uses to segment clients: portfolio
+// size, the kind of site, and what the client cares about most.
+const GUIDE_QUESTIONS: GuideQuestion[] = [
 	{
-		value: 'simple',
-		icon: lifesaver,
-		label: __( 'Simple and low-maintenance' ),
-		hint: __( 'A secure, reliable site with minimal upkeep.' ),
+		key: 'scale',
+		prompt: __( 'How many sites are you hosting?' ),
+		choices: [
+			{
+				value: 'few',
+				icon: home,
+				label: __( 'Just one, or a few' ),
+				hint: __( 'A small business, nonprofit, or portfolio site.' ),
+				chip: __( 'A few sites' ),
+			},
+			{
+				value: 'many',
+				icon: copy,
+				label: __( 'A whole portfolio' ),
+				hint: __( 'You manage many client sites and keep adding more.' ),
+				chip: __( 'Portfolio' ),
+			},
+		],
 	},
 	{
-		value: 'scale',
-		icon: chartBar,
-		label: __( 'Speed and room to scale' ),
-		hint: __( 'High performance for WordPress and WooCommerce as traffic grows.' ),
+		key: 'type',
+		prompt: __( 'What kind of site is it?' ),
+		choices: [
+			{
+				value: 'content',
+				icon: page,
+				label: __( 'A content or brochure site' ),
+				hint: __( 'Marketing sites, blogs, and portfolios.' ),
+				chip: __( 'Content site' ),
+			},
+			{
+				value: 'store',
+				icon: store,
+				label: __( 'An online store' ),
+				hint: __( 'WooCommerce and other transactional sites.' ),
+				chip: __( 'Online store' ),
+			},
+			{
+				value: 'app',
+				icon: tool,
+				label: __( 'A custom or high-scale build' ),
+				hint: __( 'Complex, high-traffic, or headless projects.' ),
+				chip: __( 'Custom build' ),
+			},
+		],
 	},
 	{
-		value: 'enterprise',
-		icon: institution,
-		label: __( 'Enterprise security and compliance' ),
-		hint: __( 'Mission-critical, high-stakes, or public-sector sites.' ),
+		key: 'priority',
+		prompt: __( 'What matters most to this client?' ),
+		choices: [
+			{
+				value: 'simple',
+				icon: lifesaver,
+				label: __( 'Simplicity and low upkeep' ),
+				hint: __( 'Secure and reliable with minimal management.' ),
+				chip: __( 'Low upkeep' ),
+			},
+			{
+				value: 'performance',
+				icon: chartBar,
+				label: __( 'Performance and margin' ),
+				hint: __( 'Fast sites and healthy margins as you grow.' ),
+				chip: __( 'Performance' ),
+			},
+			{
+				value: 'compliance',
+				icon: shield,
+				label: __( 'Security and compliance' ),
+				hint: __( 'Enterprise-grade security for high-stakes sites.' ),
+				chip: __( 'Compliance' ),
+			},
+		],
 	},
 ];
 
 // Recommendation copy mirrors the for-agencies hosting LP’s segment descriptions.
 const RECOMMENDATIONS: Record<
 	HostingBrand[ 'key' ],
-	{ icon: JSX.Element; outcome: string; proof: string[] }
+	{ logo: string; outcome: string; proof: string[] }
 > = {
 	wpcom: {
-		icon: home,
+		logo: wpcomDescriptor,
 		outcome: __(
 			'A secure site with better performance and minimal upkeep, with managed essentials like Jetpack and Akismet built in.'
 		),
-		proof: [ __( 'Managed essentials' ), __( 'Reliable uptime' ), __( 'Self-serve friendly' ) ],
+		proof: [
+			__( 'Staging, backups & CDN' ),
+			__( 'Reliable uptime' ),
+			__( 'Free migrations' ),
+			__( 'Per-site pricing' ),
+		],
 	},
 	pressable: {
-		icon: chartBar,
+		logo: pressableDescriptor,
 		outcome: __(
-			'Flexibility, speed, and room to scale, with free migrations, advanced tools, and global caching for high-performing sites.'
+			'Flexibility, speed, and room to scale, with free migrations and global caching, at pricing that keeps your margins healthy.'
 		),
-		proof: [ __( 'Free migrations' ), __( 'Global caching' ), __( 'Room to scale' ) ],
+		proof: [
+			__( 'Pooled traffic & storage' ),
+			__( 'Free migrations' ),
+			__( 'Global caching' ),
+			__( 'Healthy margins' ),
+		],
 	},
 	vip: {
-		icon: institution,
+		logo: vipDescriptor,
 		outcome: __(
 			'Unmatched speeds, dedicated support, and enterprise-grade security and compliance for high-scale, high-stakes sites.'
 		),
-		proof: [ __( 'Enterprise security' ), __( 'Dedicated support' ), __( 'Compliance' ) ],
+		proof: [
+			__( 'Enterprise security' ),
+			__( 'Dedicated support' ),
+			__( 'Compliance-ready' ),
+			__( 'Guided onboarding' ),
+		],
 	},
 };
 
-function recommendBrand( scale: string, need: string ): HostingBrand[ 'key' ] {
-	if ( need === 'enterprise' ) {
+function recommendBrand( answers: Record< string, string > ): HostingBrand[ 'key' ] {
+	const { scale, type, priority } = answers;
+	if ( priority === 'compliance' || type === 'app' ) {
 		return 'vip';
 	}
-	if ( scale === 'many' || need === 'scale' ) {
+	if ( scale === 'many' || type === 'store' || priority === 'performance' ) {
 		return 'pressable';
 	}
 	return 'wpcom';
@@ -268,17 +340,27 @@ function HostingGuide( {
 	onSelect: ( brand: HostingBrand[ 'key' ] ) => void;
 	onClose: () => void;
 } ) {
+	const total = GUIDE_QUESTIONS.length;
 	const [ step, setStep ] = useState( 0 );
-	const [ scale, setScale ] = useState< string | null >( null );
-	const [ need, setNeed ] = useState< string | null >( null );
+	const [ answers, setAnswers ] = useState< Record< string, string > >( {} );
 
-	const recommendedKey = scale && need ? recommendBrand( scale, need ) : null;
+	const isResult = step >= total;
+	const complete = GUIDE_QUESTIONS.every( ( q ) => answers[ q.key ] );
+	const recommendedKey = isResult && complete ? recommendBrand( answers ) : null;
 	const recommendation = recommendedKey ? RECOMMENDATIONS[ recommendedKey ] : null;
 	const brand = recommendedKey ? hostingBrands.find( ( b ) => b.key === recommendedKey ) : null;
+	const question = isResult ? null : GUIDE_QUESTIONS[ step ];
 
+	const recap = GUIDE_QUESTIONS.map(
+		( q ) => q.choices.find( ( c ) => c.value === answers[ q.key ] )?.chip
+	).filter( Boolean ) as string[];
+
+	const pick = ( key: string, value: string ) => {
+		setAnswers( ( current ) => ( { ...current, [ key ]: value } ) );
+		setStep( ( current ) => current + 1 );
+	};
 	const restart = () => {
-		setScale( null );
-		setNeed( null );
+		setAnswers( {} );
 		setStep( 0 );
 	};
 
@@ -290,50 +372,44 @@ function HostingGuide( {
 			className="marketplace-hosting__guide-modal"
 		>
 			<VStack spacing={ 5 }>
-				{ step < 2 && (
-					<VStack spacing={ 2 }>
-						<Text size={ 11 } weight={ 600 } variant="muted" upperCase>
-							{ sprintf(
-								/* translators: %1$d: current step, %2$d: total steps */
-								__( 'Question %1$d of %2$d' ),
-								step + 1,
-								2
-							) }
-						</Text>
-						<Heading level={ 2 } size={ 20 }>
-							{ step === 0
-								? __( 'How many client sites is this for?' )
-								: __( 'What does this client need most?' ) }
-						</Heading>
-					</VStack>
-				) }
+				<ProgressBar
+					className="marketplace-hosting__guide-progress"
+					value={ ( ( step + 1 ) / ( total + 1 ) ) * 100 }
+				/>
 
-				{ step === 0 && (
-					<GuideChoiceList
-						choices={ SCALE_CHOICES }
-						onPick={ ( value ) => {
-							setScale( value );
-							setStep( 1 );
-						} }
-					/>
-				) }
-
-				{ step === 1 && (
-					<VStack spacing={ 4 }>
+				{ question && (
+					<>
+						<VStack spacing={ 2 }>
+							<Text size={ 11 } weight={ 600 } variant="muted" upperCase>
+								{ sprintf(
+									/* translators: %1$d: current step, %2$d: total steps */
+									__( 'Step %1$d of %2$d' ),
+									step + 1,
+									total
+								) }
+							</Text>
+							<Heading level={ 2 } size={ 20 }>
+								{ question.prompt }
+							</Heading>
+						</VStack>
 						<GuideChoiceList
-							choices={ NEED_CHOICES }
-							onPick={ ( value ) => {
-								setNeed( value );
-								setStep( 2 );
-							} }
+							choices={ question.choices }
+							onPick={ ( value ) => pick( question.key, value ) }
 						/>
-						<Button variant="tertiary" onClick={ () => setStep( 0 ) }>
-							{ __( '← Back' ) }
-						</Button>
-					</VStack>
+						<HStack justify="space-between">
+							{ step > 0 ? (
+								<Button variant="tertiary" onClick={ () => setStep( step - 1 ) }>
+									{ __( '← Back' ) }
+								</Button>
+							) : (
+								<span />
+							) }
+							<ExternalLink href={ HOSTING_LP_URL }>{ __( 'Or compare all plans' ) }</ExternalLink>
+						</HStack>
+					</>
 				) }
 
-				{ step === 2 && recommendation && brand && (
+				{ isResult && recommendation && brand && (
 					<VStack spacing={ 4 }>
 						<Text size={ 11 } weight={ 600 } variant="muted" upperCase>
 							{ __( 'Here’s what we recommend' ) }
@@ -341,42 +417,50 @@ function HostingGuide( {
 						<Card className="marketplace-hosting__guide-result">
 							<CardBody>
 								<VStack spacing={ 4 }>
-									<HStack spacing={ 3 } alignment="center" justify="flex-start" expanded={ false }>
-										<div className="marketplace-hosting__guide-icon is-accent">
-											<Icon icon={ recommendation.icon } />
-										</div>
-										<VStack spacing={ 0 }>
-											<Text size={ 12 } weight={ 600 } variant="muted" upperCase>
-												{ __( 'Top pick' ) }
-											</Text>
-											<Text weight={ 600 } size={ 16 }>
-												{ brand.name }
-											</Text>
-										</VStack>
-									</HStack>
+									<VStack spacing={ 2 } alignment="flex-start">
+										<Text size={ 12 } weight={ 600 } variant="muted" upperCase>
+											{ __( 'Top pick' ) }
+										</Text>
+										<img
+											src={ recommendation.logo }
+											alt={ brand.name }
+											className="marketplace-hosting__guide-logo"
+										/>
+									</VStack>
 									<Text variant="muted">{ recommendation.outcome }</Text>
 									<CheckGrid items={ recommendation.proof } />
 								</VStack>
 							</CardBody>
 						</Card>
-						<HStack justify="space-between" wrap>
+						{ recap.length > 0 && (
+							<VStack spacing={ 2 }>
+								<Text size={ 11 } weight={ 600 } variant="muted" upperCase>
+									{ __( 'Based on your answers' ) }
+								</Text>
+								<div className="marketplace-hosting__guide-recap">
+									{ recap.map( ( chip ) => (
+										<span key={ chip } className="marketplace-hosting__guide-chip">
+											{ chip }
+										</span>
+									) ) }
+								</div>
+							</VStack>
+						) }
+						<HStack justify="space-between">
 							<Button variant="tertiary" onClick={ restart }>
 								{ __( 'Start over' ) }
 							</Button>
-							<HStack spacing={ 4 } justify="flex-end" expanded={ false }>
-								<ExternalLink href={ HOSTING_LP_URL }>{ __( 'Compare all plans' ) }</ExternalLink>
-								<Button
-									variant="primary"
-									__next40pxDefaultSize
-									onClick={ () => onSelect( brand.key ) }
-								>
-									{ sprintf(
-										/* translators: %s: hosting brand name */
-										__( 'Configure %s' ),
-										brand.name
-									) }
-								</Button>
-							</HStack>
+							<Button
+								variant="primary"
+								__next40pxDefaultSize
+								onClick={ () => onSelect( brand.key ) }
+							>
+								{ sprintf(
+									/* translators: %s: hosting brand name */
+									__( 'Configure %s' ),
+									brand.name
+								) }
+							</Button>
 						</HStack>
 					</VStack>
 				) }

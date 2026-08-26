@@ -73,6 +73,33 @@
 	box-shadow: inset 0 0 0 1.5px var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
 }
 
+.marketplace-hosting__guide-progress {
+	inline-size: 100%;
+}
+
+.marketplace-hosting__guide-logo {
+	block-size: 24px;
+	inline-size: auto;
+	object-fit: contain;
+	object-position: left;
+}
+
+.marketplace-hosting__guide-recap {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.marketplace-hosting__guide-chip {
+	display: inline-flex;
+	align-items: center;
+	padding-block: 3px;
+	padding-inline: 10px;
+	border-radius: 16px;
+	font-size: 12px;
+	box-shadow: inset 0 0 0 1px var( --dashboard-overview__divider-color );
+}
+
 .marketplace-hosting__selector-card {
 	cursor: pointer;
 
