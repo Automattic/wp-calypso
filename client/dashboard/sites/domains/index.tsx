@@ -1,7 +1,6 @@
 import { siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { Modal } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -11,7 +10,7 @@ import { useAppContext } from '../../app/context';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { siteRoute, siteDomainsRoute, siteSettingsRedirectRoute } from '../../app/router/sites';
-import { DataViews, DataViewsCard } from '../../components/dataviews';
+import { DataViews, DataViewsActionModal, DataViewsCard } from '../../components/dataviews';
 import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -28,38 +27,9 @@ import { isPendingPrimaryDomain } from '../../utils/domain';
 import { SitesNoticeArbiter } from '../notice-arbiter';
 import PrimaryDomainSelectorNotice from './primary-domain-selector-notice';
 import type { DomainSummary } from '@automattic/api-core';
-import type { ActionModal } from '@wordpress/dataviews';
 
 function getDomainId( domain: DomainSummary ) {
 	return `${ domain.domain }-${ domain.blog_id }`;
-}
-
-/**
- * Renders an action's modal outside the row menu, matching the chrome DataViews
- * would have given it, so a deep link opens the same thing a click does.
- */
-function DeepLinkedActionModal( {
-	action,
-	item,
-	onClose,
-}: {
-	action: ActionModal< DomainSummary >;
-	item: DomainSummary;
-	onClose: () => void;
-} ) {
-	const label = typeof action.label === 'function' ? action.label( [ item ] ) : action.label;
-	const modalHeader =
-		typeof action.modalHeader === 'function' ? action.modalHeader( [ item ] ) : action.modalHeader;
-
-	return (
-		<Modal
-			title={ modalHeader || label }
-			size={ action.modalSize ?? 'medium' }
-			onRequestClose={ onClose }
-		>
-			<action.RenderModal items={ [ item ] } closeModal={ onClose } />
-		</Modal>
-	);
 }
 
 function SiteDomains() {
@@ -185,7 +155,7 @@ function SiteDomains() {
 				/>
 			</DataViewsCard>
 			{ isDeepLinkedActionOpen && deepLinkedAction && deepLinkedDomain && (
-				<DeepLinkedActionModal
+				<DataViewsActionModal
 					action={ deepLinkedAction }
 					item={ deepLinkedDomain }
 					onClose={ () => setIsDeepLinkedActionOpen( false ) }
