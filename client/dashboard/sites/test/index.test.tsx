@@ -7,6 +7,7 @@ import { screen, waitFor, within } from '@testing-library/react';
 import nock from 'nock';
 import { APP_CONTEXT_DEFAULT_CONFIG } from '../../app/context';
 import { render } from '../../test-utils';
+import { getDefaultView } from '../dataviews';
 import Sites from '../index';
 import type { AppConfig } from '../../app/context';
 import type { Site, User } from '@automattic/api-core';
@@ -156,7 +157,7 @@ describe( '<Sites>', () => {
 		expect(
 			await screen.findByRole( 'heading', { name: /You don.t have any active sites/ } )
 		).toBeVisible();
-		const link = screen.getByRole( 'link', { name: 'View deleted sites' } );
+		const link = screen.getByRole( 'link', { name: 'Show deleted sites' } );
 		expect( link ).toBeVisible();
 		expect( link ).toHaveAttribute( 'href', expect.stringContaining( 'is_deleted=true' ) );
 		expect( screen.getByRole( 'link', { name: 'Create a site' } ) ).toBeVisible();
@@ -175,7 +176,7 @@ describe( '<Sites>', () => {
 			await screen.findByRole( 'heading', { name: /You don.t have any sites yet/ } )
 		).toBeVisible();
 		await waitFor( () => expect( deletedCheckScope.isDone() ).toBe( true ) );
-		expect( screen.queryByRole( 'link', { name: 'View deleted sites' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: 'Show deleted sites' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'falls back to the onboarding empty state when the deleted-sites check fails', async () => {
@@ -193,7 +194,7 @@ describe( '<Sites>', () => {
 		expect(
 			await screen.findByRole( 'heading', { name: /You don.t have any sites yet/ } )
 		).toBeVisible();
-		expect( screen.queryByRole( 'link', { name: 'View deleted sites' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: 'Show deleted sites' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'does not flash the onboarding empty state while the deleted-sites check is pending', async () => {
@@ -225,6 +226,52 @@ describe( '<Sites>', () => {
 		expect(
 			await screen.findByRole( 'heading', { name: /You don.t have any active sites/ } )
 		).toBeVisible();
+	} );
+
+	test( 'lists deleted sites alongside live ones when the deleted filter is on', async () => {
+		nock.cleanAll();
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/read/teams' )
+			.query( true )
+			.reply( 200, { teams: [] } );
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( '/rest/v1.1/me/preferences' )
+			.query( true )
+			.reply( 200, {
+				calypso_preferences: {
+					'hosting-dashboard-dataviews-view-sites': {
+						type: 'table',
+						perPage: 12,
+						fields: [ 'visibility', 'plan' ],
+						sort: { field: 'name', direction: 'asc' },
+						titleField: 'name',
+						mediaField: 'icon.ico',
+						descriptionField: 'URL',
+						showTitle: true,
+						showMedia: true,
+						showDescription: true,
+						filters: [ { field: 'is_deleted', operator: 'is', value: true } ],
+					},
+				},
+			} );
+
+		const deletedSite = { ...mockSites[ 1 ], ID: 3, name: 'My Deleted Site', is_deleted: true };
+		// Only a request that widens visibility returns both; a deleted-only
+		// request returns just the deleted site.
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.3/me/sites' )
+			.query( ( query ) => query.site_visibility === 'all' )
+			.reply( 200, { sites: [ mockSites[ 0 ], deletedSite ], total: 2 } );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.3/me/sites' )
+			.query( true )
+			.reply( 200, { sites: [ deletedSite ], total: 1 } );
+
+		render( <Sites />, { user: { site_count: 2 } as User } );
+
+		expect( await screen.findByText( 'My Deleted Site' ) ).toBeVisible();
+		expect( screen.getByText( 'My First Site' ) ).toBeVisible();
 	} );
 
 	test( 'collision listener rewrites wpcom site slug when it collides with a Jetpack site', async () => {
@@ -326,5 +373,67 @@ describe( '<Sites>', () => {
 		expect( row2[ 0 ] ).toHaveTextContent( 'my-second-site.wordpress.com' );
 		expect( row2[ 1 ] ).toHaveTextContent( 'Coming soon' );
 		expect( row2[ 2 ] ).toHaveTextContent( 'Free' );
+	} );
+
+	describe( 'staging filter', () => {
+		const stagingSite = {
+			ID: 3,
+			name: 'My Staging Site',
+			slug: 'my-staging-site.wpcomstaging.com',
+			URL: 'https://my-staging-site.wpcomstaging.com',
+			is_wpcom_staging_site: true,
+			is_coming_soon: false,
+			is_private: false,
+			site_migration: {},
+			plan: { product_slug: 'business-bundle', product_name_short: 'Business' },
+		} as Site;
+
+		function mockSitesEndpointByStagingParam() {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.3/me/sites' )
+				.query( ( query ) => query.include_staging === 'false' )
+				.reply( 200, { sites: mockSites, total: mockSites.length } );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.3/me/sites' )
+				.query( ( query ) => query.include_staging === 'true' )
+				.reply( 200, { sites: [ ...mockSites, stagingSite ], total: mockSites.length + 1 } );
+		}
+
+		test( 'excludes staging sites by default', async () => {
+			mockSitesEndpointByStagingParam();
+			render( <Sites />, { user: { site_count: 13 } as User } );
+
+			expect( await screen.findByText( 'My First Site' ) ).toBeVisible();
+			expect( screen.queryByText( 'My Staging Site' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'includes staging sites when the staging filter is set to show', async () => {
+			// The persisted view comes from user preferences, which the shared mock returns empty.
+			nock.cleanAll();
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.2/read/teams' )
+				.query( true )
+				.reply( 200, { teams: [] } );
+			nock( 'https://public-api.wordpress.com' )
+				.persist()
+				.get( '/rest/v1.1/me/preferences' )
+				.query( true )
+				.reply( 200, {
+					calypso_preferences: {
+						'hosting-dashboard-dataviews-view-sites': {
+							...getDefaultView( {
+								siteCount: 13,
+								isAutomattician: false,
+								isRestoringAccount: false,
+							} ),
+							filters: [ { field: 'staging', operator: 'is', value: true } ],
+						},
+					},
+				} );
+			mockSitesEndpointByStagingParam();
+			render( <Sites />, { user: { site_count: 13 } as User } );
+
+			expect( await screen.findByText( 'My Staging Site' ) ).toBeVisible();
+		} );
 	} );
 } );

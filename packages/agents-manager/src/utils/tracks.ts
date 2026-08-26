@@ -20,6 +20,9 @@ import { getResolvedAgentId } from './resolved-agent-id';
 
 type TracksProps = Record< string, unknown >;
 
+export const BIG_SKY_EVENT_PREFIX = 'jetpack_big_sky_';
+export type BigSkyEventName = `${ typeof BIG_SKY_EVENT_PREFIX }${ string }`;
+
 type EditorSelectStore =
 	| {
 			getCurrentPostType?: () => string | undefined;
@@ -108,7 +111,7 @@ function getBigSkyPageProps(): TracksProps {
  * dashboards keep working.
  */
 export function recordBigSkyTracksEvent(
-	eventName: `jetpack_big_sky_${ string }`,
+	eventName: BigSkyEventName,
 	props: TracksProps = {}
 ): void {
 	if ( isReaderChatAgent( getResolvedAgentId() ) ) {

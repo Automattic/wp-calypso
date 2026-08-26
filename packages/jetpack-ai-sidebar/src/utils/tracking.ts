@@ -2,11 +2,6 @@
  * Tracking helpers for Jetpack AI sidebar Tracks events.
  */
 
-import { recordTracksEvent as recordTracksEventBase } from '@automattic/calypso-analytics';
-import { select } from '@wordpress/data';
-
-const TRACKS_PREFIX = 'jetpack';
-
 type TrackProperties = Record< string, string | number | boolean >;
 
 type ReviewContext =
@@ -35,77 +30,9 @@ const REVIEW_CONTEXTS: ReadonlySet< string > = new Set< ReviewContext >( [
 
 type WindowWithAgentsManagerActions = Window & {
 	__agentsManagerActions?: {
-		getSessionId?: () => unknown;
+		recordBigSkyTracksEvent?: ( eventName: string, props?: Record< string, unknown > ) => void;
 	};
 };
-
-type EditorSelectStore =
-	| {
-			getCurrentPostType?: () => string | undefined;
-	  }
-	| undefined;
-
-type BigSkyTrackingData = {
-	sessionType: string;
-	screen: string;
-};
-
-function getSessionId(): string | undefined {
-	if ( typeof window === 'undefined' ) {
-		return undefined;
-	}
-
-	const agentsManagerActions = ( window as WindowWithAgentsManagerActions ).__agentsManagerActions;
-	const sessionId = agentsManagerActions?.getSessionId?.();
-	return typeof sessionId === 'string' && sessionId !== '' ? sessionId : undefined;
-}
-
-/** The `core/editor` store when registered — absent on non-editor surfaces. */
-function getEditorStore(): EditorSelectStore {
-	try {
-		return select( 'core/editor' ) as EditorSelectStore;
-	} catch {
-		return undefined;
-	}
-}
-
-function getCurrentPostType(): string {
-	try {
-		return getEditorStore()?.getCurrentPostType?.() ?? '';
-	} catch {
-		return '';
-	}
-}
-
-function getBigSkyTrackingData(): BigSkyTrackingData {
-	const state = typeof window !== 'undefined' ? window.bigSkyInitialState : undefined;
-	if ( ! state ) {
-		return { sessionType: 'unknown', screen: 'site-editor' };
-	}
-
-	return {
-		sessionType: state.isFreeTrial ? 'free-trial-session' : 'paid-user-session',
-		screen: state.currentScreen?.screen ?? 'site-editor',
-	};
-}
-
-function getIsTest(): boolean {
-	return typeof agentsManagerData !== 'undefined' && !! agentsManagerData?.isDevMode;
-}
-
-/** Reads the optional server-provided Automattician tracking signal. */
-function getIsA11n(): boolean | undefined {
-	const isA11n = typeof agentsManagerData !== 'undefined' ? agentsManagerData?.isA11n : undefined;
-	return typeof isA11n === 'boolean' ? isA11n : undefined;
-}
-
-/** Reads the canonical server-provided blog ID when available. */
-function getBlogId(): number | undefined {
-	const blogId = typeof agentsManagerData !== 'undefined' ? agentsManagerData?.site?.ID : undefined;
-	return typeof blogId === 'number' && Number.isInteger( blogId ) && blogId > 0
-		? blogId
-		: undefined;
-}
 
 /** Counts the non-null entries that a review response can render. */
 function countResponseItems( value: unknown ): number {
@@ -159,39 +86,40 @@ export function getResponseRenderedTrackingProperties(
 	return undefined;
 }
 
-function recordTracksEvent( eventName: string, properties: TrackProperties = {} ): void {
-	const sessionId = getSessionId();
-	const isA11n = getIsA11n();
-	const blogId = getBlogId();
-	const surface = getEditorStore() ? 'block_editor' : undefined;
-	recordTracksEventBase( `${ TRACKS_PREFIX }_${ eventName }`, {
-		// Defaults to block_editor unless caller overrides.
-		...( surface ? { surface } : {} ),
-		...properties,
-		// Send the session ID under both names: `ai_session_id` is the standard
-		// one, and `sessionid` is the older one that existing consumers still use.
-		...( sessionId ? { sessionid: sessionId, ai_session_id: sessionId } : {} ),
-		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
-		...( blogId !== undefined ? { blog_id: blogId } : {} ),
-	} );
+/**
+ * Sends a `jetpack_big_sky_*` event through the Agents Manager family
+ * recorder, which attaches the family's base props. `eventName` is the
+ * suffix after that prefix. A no-op until Agents Manager has published
+ * its actions bridge; returns whether the event was handed over.
+ */
+function recordBigSkyFamilyTracksEvent( eventName: string, properties: TrackProperties ): boolean {
+	if ( typeof window === 'undefined' ) {
+		return false;
+	}
+
+	const record = ( window as WindowWithAgentsManagerActions ).__agentsManagerActions
+		?.recordBigSkyTracksEvent;
+	if ( ! record ) {
+		return false;
+	}
+
+	record( eventName, properties );
+	return true;
 }
 
 interface TrackSplitScreenGuideOptions {
 	componentType: string;
+	toolCallId?: string;
 }
 
 function getSplitScreenGuideProperties( {
 	componentType,
+	toolCallId,
 }: TrackSplitScreenGuideOptions ): TrackProperties {
-	const bigSky = getBigSkyTrackingData();
-
 	return {
 		component_type: componentType,
 		guide_variant: 'inline_action_card',
-		post_type: getCurrentPostType(),
-		is_test: getIsTest(),
-		session_type: bigSky.sessionType,
-		screen: bigSky.screen,
+		...( toolCallId ? { tool_call_id: toolCallId } : {} ),
 	};
 }
 
@@ -199,16 +127,26 @@ function getSplitScreenGuideProperties( {
  * Tracks the split-screen guide's first visible appearance for a review result.
  * @param options               - Tracking options.
  * @param options.componentType - Existing show-component type.
+ * @param options.toolCallId    - Tool call that produced the containing response.
+ * @returns Whether the event reached the family recorder.
  */
-export function trackSplitScreenGuideRendered( options: TrackSplitScreenGuideOptions ): void {
-	recordTracksEvent( 'ai_split_screen_guide_rendered', getSplitScreenGuideProperties( options ) );
+export function trackSplitScreenGuideRendered( options: TrackSplitScreenGuideOptions ): boolean {
+	return recordBigSkyFamilyTracksEvent(
+		'split_screen_guide_rendered',
+		getSplitScreenGuideProperties( options )
+	);
 }
 
 /**
  * Tracks the split-screen guide action being selected.
  * @param options               - Tracking options.
  * @param options.componentType - Existing show-component type.
+ * @param options.toolCallId    - Tool call that produced the containing response.
+ * @returns Whether the event reached the family recorder.
  */
-export function trackSplitScreenGuideClick( options: TrackSplitScreenGuideOptions ): void {
-	recordTracksEvent( 'ai_split_screen_guide_click', getSplitScreenGuideProperties( options ) );
+export function trackSplitScreenGuideClick( options: TrackSplitScreenGuideOptions ): boolean {
+	return recordBigSkyFamilyTracksEvent(
+		'split_screen_guide_click',
+		getSplitScreenGuideProperties( options )
+	);
 }

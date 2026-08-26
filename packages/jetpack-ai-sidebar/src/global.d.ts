@@ -45,15 +45,6 @@ declare const agentsManagerData:
 	  }
 	| undefined;
 
-interface Window {
-	/** Big Sky injects this on editor surfaces. Narrowed to the fields used for Tracks context. */
-	bigSkyInitialState?: {
-		bigSkyVersion?: string;
-		isFreeTrial?: string;
-		currentScreen?: { screen?: string };
-	};
-}
-
 declare module '@wordpress/block-editor' {
 	import type { StoreDescriptor } from '@wordpress/data';
 
