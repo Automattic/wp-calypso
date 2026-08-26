@@ -415,7 +415,7 @@ async function isAgencyWooPaymentsSite( siteId: number ): Promise< boolean > {
 export const earnWooPaymentsSetupRoute = createRoute( {
 	// TODO: replace with a dedicated WooPayments capability when one exists.
 	staticData: { requiresAgencyCapability: 'a4a_read_referrals' },
-	head: () => ( { meta: [ { title: __( 'Site setup' ) } ] } ),
+	head: () => ( { meta: [ { title: __( 'Set up WooPayments' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'earn/woopayments/setup/$siteId',
 	beforeLoad: ( { params: { siteId } } ) => {
