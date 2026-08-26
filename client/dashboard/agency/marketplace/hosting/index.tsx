@@ -6,6 +6,7 @@ import {
 	ExternalLink,
 	Guide,
 	Icon,
+	Modal,
 	TabPanel,
 	ToggleControl,
 	__experimentalToggleGroupControl as ToggleGroupControl,
@@ -19,14 +20,15 @@ import {
 import { sprintf, _n, __ } from '@wordpress/i18n';
 import {
 	cart,
+	chartBar,
 	chevronDown,
 	chevronRight,
 	chevronUp,
-	closeSmall,
 	copy,
-	globe,
+	home,
 	info,
-	shield,
+	institution,
+	lifesaver,
 } from '@wordpress/icons';
 import { useState } from 'react';
 import referralStep1 from 'calypso/assets/images/a8c-for-agencies/referral-step-1.jpg';
@@ -140,47 +142,124 @@ interface CartItem {
 
 const HOSTING_LP_URL = 'https://automattic.com/for-agencies/hosting/';
 
-type GuideOption = {
-	brand: HostingBrand[ 'key' ];
-	icon: JSX.Element;
-	situation: string;
-	hint: string;
-	outcome: string;
-	proof: string[];
-};
+type GuideChoice = { value: string; icon: JSX.Element; label: string; hint: string };
 
-const GUIDE_OPTIONS: GuideOption[] = [
+// Two axes the for-agencies hosting LP uses to segment clients: portfolio size
+// and what the client needs most.
+const SCALE_CHOICES: GuideChoice[] = [
 	{
-		brand: 'wpcom',
-		icon: globe,
-		situation: __( 'Just one site, or a few' ),
-		hint: __( 'A small business, a portfolio, or a landing page.' ),
-		outcome: __(
-			'Managed WordPress with staging, backups, and 24/7 support built in, so client sites just run.'
-		),
-		proof: [ __( 'Free migrations' ), __( '24/7 expert support' ), __( 'Per-site pricing' ) ],
+		value: 'few',
+		icon: home,
+		label: __( 'Just one, or a few' ),
+		hint: __( 'A small business, nonprofit, or portfolio site.' ),
 	},
 	{
-		brand: 'pressable',
+		value: 'many',
 		icon: copy,
-		situation: __( 'A growing book of clients' ),
-		hint: __( 'You keep adding sites and want them under one roof.' ),
-		outcome: __(
-			'Traffic and storage pooled across every site, so your margin grows as you add clients.'
-		),
-		proof: [ __( 'Pooled resources' ), __( 'Volume pricing' ), __( 'Free migrations' ) ],
-	},
-	{
-		brand: 'vip',
-		icon: shield,
-		situation: __( 'Enterprise or high-traffic' ),
-		hint: __( 'Mission-critical sites that can’t afford to go down.' ),
-		outcome: __(
-			'Enterprise-grade security and scale, with guided onboarding for your biggest clients.'
-		),
-		proof: [ __( 'Enterprise security' ), __( 'Dedicated support' ), __( 'Guided onboarding' ) ],
+		label: __( 'A whole portfolio' ),
+		hint: __( 'You manage many client sites and keep adding more.' ),
 	},
 ];
+
+const NEED_CHOICES: GuideChoice[] = [
+	{
+		value: 'simple',
+		icon: lifesaver,
+		label: __( 'Simple and low-maintenance' ),
+		hint: __( 'A secure, reliable site with minimal upkeep.' ),
+	},
+	{
+		value: 'scale',
+		icon: chartBar,
+		label: __( 'Speed and room to scale' ),
+		hint: __( 'High performance for WordPress and WooCommerce as traffic grows.' ),
+	},
+	{
+		value: 'enterprise',
+		icon: institution,
+		label: __( 'Enterprise security and compliance' ),
+		hint: __( 'Mission-critical, high-stakes, or public-sector sites.' ),
+	},
+];
+
+// Recommendation copy mirrors the for-agencies hosting LP’s segment descriptions.
+const RECOMMENDATIONS: Record<
+	HostingBrand[ 'key' ],
+	{ icon: JSX.Element; outcome: string; proof: string[] }
+> = {
+	wpcom: {
+		icon: home,
+		outcome: __(
+			'A secure site with better performance and minimal upkeep, with managed essentials like Jetpack and Akismet built in.'
+		),
+		proof: [ __( 'Managed essentials' ), __( 'Reliable uptime' ), __( 'Self-serve friendly' ) ],
+	},
+	pressable: {
+		icon: chartBar,
+		outcome: __(
+			'Flexibility, speed, and room to scale, with free migrations, advanced tools, and global caching for high-performing sites.'
+		),
+		proof: [ __( 'Free migrations' ), __( 'Global caching' ), __( 'Room to scale' ) ],
+	},
+	vip: {
+		icon: institution,
+		outcome: __(
+			'Unmatched speeds, dedicated support, and enterprise-grade security and compliance for high-scale, high-stakes sites.'
+		),
+		proof: [ __( 'Enterprise security' ), __( 'Dedicated support' ), __( 'Compliance' ) ],
+	},
+};
+
+function recommendBrand( scale: string, need: string ): HostingBrand[ 'key' ] {
+	if ( need === 'enterprise' ) {
+		return 'vip';
+	}
+	if ( scale === 'many' || need === 'scale' ) {
+		return 'pressable';
+	}
+	return 'wpcom';
+}
+
+function GuideChoiceList( {
+	choices,
+	onPick,
+}: {
+	choices: GuideChoice[];
+	onPick: ( value: string ) => void;
+} ) {
+	return (
+		<VStack spacing={ 3 } role="group">
+			{ choices.map( ( choice ) => (
+				<Card
+					key={ choice.value }
+					className="marketplace-hosting__guide-option"
+					onClick={ () => onPick( choice.value ) }
+					role="button"
+					tabIndex={ 0 }
+					onKeyDown={ ( event: React.KeyboardEvent ) => {
+						if ( event.key === 'Enter' || event.key === ' ' ) {
+							event.preventDefault();
+							onPick( choice.value );
+						}
+					} }
+				>
+					<CardBody>
+						<HStack spacing={ 4 } alignment="center" justify="flex-start">
+							<div className="marketplace-hosting__guide-icon">
+								<Icon icon={ choice.icon } />
+							</div>
+							<VStack spacing={ 0 } expanded>
+								<Text weight={ 600 }>{ choice.label }</Text>
+								<Text variant="muted">{ choice.hint }</Text>
+							</VStack>
+							<Icon icon={ chevronRight } className="marketplace-hosting__guide-chevron" />
+						</HStack>
+					</CardBody>
+				</Card>
+			) ) }
+		</VStack>
+	);
+}
 
 function HostingGuide( {
 	onSelect,
@@ -189,120 +268,120 @@ function HostingGuide( {
 	onSelect: ( brand: HostingBrand[ 'key' ] ) => void;
 	onClose: () => void;
 } ) {
-	const [ answer, setAnswer ] = useState< HostingBrand[ 'key' ] | null >( null );
-	const recommendation = answer ? GUIDE_OPTIONS.find( ( o ) => o.brand === answer ) : null;
-	const brand = answer ? hostingBrands.find( ( b ) => b.key === answer ) : null;
+	const [ step, setStep ] = useState( 0 );
+	const [ scale, setScale ] = useState< string | null >( null );
+	const [ need, setNeed ] = useState< string | null >( null );
+
+	const recommendedKey = scale && need ? recommendBrand( scale, need ) : null;
+	const recommendation = recommendedKey ? RECOMMENDATIONS[ recommendedKey ] : null;
+	const brand = recommendedKey ? hostingBrands.find( ( b ) => b.key === recommendedKey ) : null;
+
+	const restart = () => {
+		setScale( null );
+		setNeed( null );
+		setStep( 0 );
+	};
 
 	return (
-		<Card>
-			<CardBody>
-				<VStack spacing={ 5 }>
-					<HStack justify="space-between" alignment="flex-start">
-						<VStack spacing={ 1 }>
-							<Heading level={ 3 } size={ 16 }>
-								{ recommendation
-									? __( 'Here’s what we recommend' )
-									: __( 'What are you hosting for this client?' ) }
-							</Heading>
-							<Text variant="muted">
-								{ recommendation
-									? __( 'Based on what you told us. You can switch platforms any time.' )
-									: __( 'Answer one question and we’ll point you to the right platform.' ) }
-							</Text>
-						</VStack>
-						<Button
-							size="small"
-							icon={ closeSmall }
-							label={ __( 'Dismiss' ) }
-							onClick={ onClose }
+		<Modal
+			title={ __( 'Find the right hosting' ) }
+			onRequestClose={ onClose }
+			size="medium"
+			className="marketplace-hosting__guide-modal"
+		>
+			<VStack spacing={ 5 }>
+				{ step < 2 && (
+					<VStack spacing={ 2 }>
+						<Text size={ 11 } weight={ 600 } variant="muted" upperCase>
+							{ sprintf(
+								/* translators: %1$d: current step, %2$d: total steps */
+								__( 'Question %1$d of %2$d' ),
+								step + 1,
+								2
+							) }
+						</Text>
+						<Heading level={ 2 } size={ 20 }>
+							{ step === 0
+								? __( 'How many client sites is this for?' )
+								: __( 'What does this client need most?' ) }
+						</Heading>
+					</VStack>
+				) }
+
+				{ step === 0 && (
+					<GuideChoiceList
+						choices={ SCALE_CHOICES }
+						onPick={ ( value ) => {
+							setScale( value );
+							setStep( 1 );
+						} }
+					/>
+				) }
+
+				{ step === 1 && (
+					<VStack spacing={ 4 }>
+						<GuideChoiceList
+							choices={ NEED_CHOICES }
+							onPick={ ( value ) => {
+								setNeed( value );
+								setStep( 2 );
+							} }
 						/>
-					</HStack>
+						<Button variant="tertiary" onClick={ () => setStep( 0 ) }>
+							{ __( '← Back' ) }
+						</Button>
+					</VStack>
+				) }
 
-					{ ! recommendation && (
-						<VStack spacing={ 3 } role="group">
-							{ GUIDE_OPTIONS.map( ( option ) => (
-								<Card
-									key={ option.brand }
-									className="marketplace-hosting__guide-option"
-									onClick={ () => setAnswer( option.brand ) }
-									role="button"
-									tabIndex={ 0 }
-									onKeyDown={ ( event: React.KeyboardEvent ) => {
-										if ( event.key === 'Enter' || event.key === ' ' ) {
-											event.preventDefault();
-											setAnswer( option.brand );
-										}
-									} }
-								>
-									<CardBody>
-										<HStack spacing={ 4 } alignment="center" justify="flex-start">
-											<div className="marketplace-hosting__guide-icon">
-												<Icon icon={ option.icon } />
-											</div>
-											<VStack spacing={ 0 } expanded>
-												<Text weight={ 600 }>{ option.situation }</Text>
-												<Text variant="muted">{ option.hint }</Text>
-											</VStack>
-											<Icon icon={ chevronRight } className="marketplace-hosting__guide-chevron" />
-										</HStack>
-									</CardBody>
-								</Card>
-							) ) }
-						</VStack>
-					) }
-
-					{ recommendation && brand && (
-						<VStack spacing={ 4 }>
-							<Card className="marketplace-hosting__guide-result">
-								<CardBody>
-									<VStack spacing={ 4 }>
-										<HStack justify="space-between" alignment="center" wrap>
-											<HStack
-												spacing={ 3 }
-												alignment="center"
-												justify="flex-start"
-												expanded={ false }
-											>
-												<div className="marketplace-hosting__guide-icon is-accent">
-													<Icon icon={ recommendation.icon } />
-												</div>
-												<VStack spacing={ 0 }>
-													<Text size={ 12 } weight={ 600 } variant="muted" upperCase>
-														{ __( 'Top pick' ) }
-													</Text>
-													<Text weight={ 600 } size={ 16 }>
-														{ brand.name }
-													</Text>
-												</VStack>
-											</HStack>
-											<Button
-												variant="primary"
-												__next40pxDefaultSize
-												onClick={ () => onSelect( recommendation.brand ) }
-											>
-												{ sprintf(
-													/* translators: %s: hosting brand name */
-													__( 'Configure %s' ),
-													brand.name
-												) }
-											</Button>
-										</HStack>
-										<Text variant="muted">{ recommendation.outcome }</Text>
-										<CheckGrid items={ recommendation.proof } />
-									</VStack>
-								</CardBody>
-							</Card>
-							<HStack justify="space-between">
-								<Button variant="tertiary" onClick={ () => setAnswer( null ) }>
-									{ __( 'See other options' ) }
-								</Button>
+				{ step === 2 && recommendation && brand && (
+					<VStack spacing={ 4 }>
+						<Text size={ 11 } weight={ 600 } variant="muted" upperCase>
+							{ __( 'Here’s what we recommend' ) }
+						</Text>
+						<Card className="marketplace-hosting__guide-result">
+							<CardBody>
+								<VStack spacing={ 4 }>
+									<HStack spacing={ 3 } alignment="center" justify="flex-start" expanded={ false }>
+										<div className="marketplace-hosting__guide-icon is-accent">
+											<Icon icon={ recommendation.icon } />
+										</div>
+										<VStack spacing={ 0 }>
+											<Text size={ 12 } weight={ 600 } variant="muted" upperCase>
+												{ __( 'Top pick' ) }
+											</Text>
+											<Text weight={ 600 } size={ 16 }>
+												{ brand.name }
+											</Text>
+										</VStack>
+									</HStack>
+									<Text variant="muted">{ recommendation.outcome }</Text>
+									<CheckGrid items={ recommendation.proof } />
+								</VStack>
+							</CardBody>
+						</Card>
+						<HStack justify="space-between" wrap>
+							<Button variant="tertiary" onClick={ restart }>
+								{ __( 'Start over' ) }
+							</Button>
+							<HStack spacing={ 4 } justify="flex-end" expanded={ false }>
 								<ExternalLink href={ HOSTING_LP_URL }>{ __( 'Compare all plans' ) }</ExternalLink>
+								<Button
+									variant="primary"
+									__next40pxDefaultSize
+									onClick={ () => onSelect( brand.key ) }
+								>
+									{ sprintf(
+										/* translators: %s: hosting brand name */
+										__( 'Configure %s' ),
+										brand.name
+									) }
+								</Button>
 							</HStack>
-						</VStack>
-					) }
-				</VStack>
-			</CardBody>
-		</Card>
+						</HStack>
+					</VStack>
+				) }
+			</VStack>
+		</Modal>
 	);
 }
 
