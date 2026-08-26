@@ -170,19 +170,23 @@ describe( 'loadExternalProviders', () => {
 		delete ( window as typeof window & { agentsManagerData?: unknown } ).agentsManagerData;
 	} );
 
-	it( 'does not merge external editor providers into Reader Chat', async () => {
-		const agentsManagerData = {
-			agentId: 'reader-chat',
-			agentProviders: [ 'https://widgets.wp.com/agents-manager/jetpack-ai-sidebar.provider.mjs' ],
-		};
-		setAgentsManagerData( agentsManagerData );
+	it.each( [ 'reader-chat', 'p2-reader-chat' ] )(
+		'does not merge external editor providers or metering into %s',
+		async ( agentId ) => {
+			const agentsManagerData = {
+				agentId,
+				agentProviders: [ 'https://widgets.wp.com/agents-manager/jetpack-ai-sidebar.provider.mjs' ],
+			};
+			setAgentsManagerData( agentsManagerData );
 
-		const providers = await loadExternalProviders();
+			const providers = await loadExternalProviders();
 
-		expect( providers.toolProvider ).toBeUndefined();
-		expect( providers.contextProvider ).toBeUndefined();
-		expect( providers.useSuggestions ).toEqual( expect.any( Function ) );
-	} );
+			expect( providers.toolProvider ).toBeUndefined();
+			expect( providers.contextProvider ).toBeUndefined();
+			expect( providers.useChatNotice ).toBeUndefined();
+			expect( providers.useSuggestions ).toEqual( expect.any( Function ) );
+		}
+	);
 
 	// With nothing configured, even `amToolProvider` stays absent — picker
 	// surfaces always register at least one external provider.
@@ -193,6 +197,18 @@ describe( 'loadExternalProviders', () => {
 		setAgentsManagerData( { agentProviders } );
 
 		await expect( loadExternalProviders() ).resolves.toEqual( {} );
+	} );
+
+	it( 'keeps the first chat-notice hook', async () => {
+		const firstNotice = jest.fn( () => ( { message: 'first' } ) );
+		const secondNotice = jest.fn( () => ( { message: 'second' } ) );
+		setAgentsManagerData( {
+			agentProviders: [ { useChatNotice: firstNotice }, { useChatNotice: secondNotice } ],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.useChatNotice ).toBe( firstNotice );
 	} );
 
 	it( 'merges abilities from multiple tool providers and dispatches execution to the owner', async () => {

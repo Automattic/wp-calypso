@@ -32,7 +32,7 @@ import type {
 	BigSkyMessage,
 } from '../types';
 import type { UseAgentChatReturn } from '@automattic/agenttic-client';
-import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
+import type { MarkdownComponents, MarkdownExtensions, NoticeConfig } from '@automattic/agenttic-ui';
 import type { ReactNode } from 'react';
 
 /**
@@ -155,6 +155,37 @@ export interface ProviderCapabilities {
 }
 
 /**
+ * Hook that returns a provider-owned notice above the composer. Agenttic clears
+ * `error` when the next send starts, so a provider that wants an error-derived
+ * notice to survive has to latch on it itself.
+ *
+ * Display only: the return value never reaches the submit path, and the backend
+ * stays the sole authority on whether a turn is allowed to run.
+ */
+// Keep this structural result compatible with JetpackAiChatNoticeResult across the provider boundary.
+export type ChatNoticeResult =
+	| ( NoticeConfig & {
+			/** Hide only the current error that this notice replaces. */
+			suppressCurrentError?: boolean;
+	  } )
+	| {
+			/** The provider handled the current error without rendering a notice. */
+			suppressCurrentError: true;
+	  };
+
+export type UseChatNoticeHook = ( props: {
+	error: string | null;
+	/** False on surfaces whose usage must not be fetched or displayed. */
+	enabled: boolean;
+	/** Whether the site is WordPress.com-hosted; absent when the host does not publish it. */
+	isWpcomPlatform?: boolean;
+	/** Changes only after the complete request or stream promise settles. */
+	settledRequestCount: number;
+	/** Current site identity for provider-owned status requests. */
+	siteId?: number;
+} ) => ChatNoticeResult | undefined;
+
+/**
  * OR-merge a provider's `capabilities` into the running map. Works on both
  * plain objects and lazy Proxies (probed by direct key access, not iteration).
  */
@@ -200,6 +231,8 @@ export interface LoadedProviders {
 	transformMessages?: TransformMessages;
 	siteBuildUtils?: SiteBuildUtils;
 	useCheckpoint?: UseCheckpointHook;
+	/** Provider-owned, display-only notice derived from the backend's rejection text. */
+	useChatNotice?: UseChatNoticeHook;
 	/**
 	 * Streamed task-update callback, forwarded to useAgentChat's `onTaskUpdate`.
 	 * Lets a provider react to streamed tool-argument deltas as they arrive — e.g.
@@ -611,6 +644,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedGetChatComponent: GetChatComponent | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
 	let mergedOnTaskUpdate: LoadedProviders[ 'onTaskUpdate' ] | undefined;
+	let mergedUseChatNotice: UseChatNoticeHook | undefined;
 	// OR-merged across all providers.
 	const mergedCapabilities: ProviderCapabilities = {};
 	let mergedSuppressEmptyViewDefaults = false;
@@ -710,6 +744,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 		if ( module.onTaskUpdate && ! mergedOnTaskUpdate ) {
 			mergedOnTaskUpdate = module.onTaskUpdate;
+		}
+		if ( module.useChatNotice && ! mergedUseChatNotice ) {
+			mergedUseChatNotice = module.useChatNotice;
 		}
 
 		mergeCapabilitiesInto( mergedCapabilities, module.capabilities );
@@ -873,6 +910,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		transformMessages: mergedTransformMessages,
 		siteBuildUtils: mergedSiteBuildUtils,
 		useCheckpoint: mergedUseCheckpoint,
+		useChatNotice: mergedUseChatNotice,
 		// Match peer fields: undefined when no provider opted in.
 		capabilities: Object.keys( mergedCapabilities ).length ? mergedCapabilities : undefined,
 		suppressEmptyViewDefaults: mergedSuppressEmptyViewDefaults ? true : undefined,

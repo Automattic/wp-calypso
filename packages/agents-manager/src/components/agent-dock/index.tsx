@@ -39,6 +39,7 @@ import type {
 	TransformMessages,
 	UseCheckpointHook,
 	ProviderCapabilities,
+	UseChatNoticeHook,
 } from '../../utils/load-external-providers';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 import './style.scss';
@@ -65,6 +66,8 @@ interface Props {
 	useCheckpoint?: UseCheckpointHook;
 	/** Optional capability flags declared by one or more loaded providers. */
 	capabilities?: ProviderCapabilities;
+	/** Provider-owned, display-only notice derived from the backend's rejection text. */
+	useChatNotice?: UseChatNoticeHook;
 }
 
 export default function AgentDock( {
@@ -79,6 +82,7 @@ export default function AgentDock( {
 	transformMessages,
 	useCheckpoint,
 	capabilities,
+	useChatNotice,
 }: Props ) {
 	const { agentConfig, siteKey, currentUser } = useAgentsManagerContext();
 
@@ -412,6 +416,7 @@ export default function AgentDock( {
 			transformMessages={ transformMessages }
 			useCheckpoint={ useCheckpoint }
 			capabilities={ capabilities }
+			useChatNotice={ useChatNotice }
 			isChatInputDisabled={ ! isChatEnabled }
 			onHasMessagesChange={ handleChatHasMessagesChange }
 		/>

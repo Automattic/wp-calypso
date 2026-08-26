@@ -159,7 +159,11 @@ export function getResponseRenderedTrackingProperties(
 	return undefined;
 }
 
-function recordTracksEvent( eventName: string, properties: TrackProperties = {} ): void {
+function recordTracksEvent(
+	eventName: string,
+	properties: TrackProperties = {},
+	{ includeBlogId = true }: { includeBlogId?: boolean } = {}
+): void {
 	const sessionId = getSessionId();
 	const isA11n = getIsA11n();
 	const blogId = getBlogId();
@@ -172,7 +176,7 @@ function recordTracksEvent( eventName: string, properties: TrackProperties = {} 
 		// one, and `sessionid` is the older one that existing consumers still use.
 		...( sessionId ? { sessionid: sessionId, ai_session_id: sessionId } : {} ),
 		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
-		...( blogId !== undefined ? { blog_id: blogId } : {} ),
+		...( includeBlogId && blogId !== undefined ? { blog_id: blogId } : {} ),
 	} );
 }
 
@@ -211,4 +215,18 @@ export function trackSplitScreenGuideRendered( options: TrackSplitScreenGuideOpt
  */
 export function trackSplitScreenGuideClick( options: TrackSplitScreenGuideOptions ): void {
 	recordTracksEvent( 'ai_split_screen_guide_click', getSplitScreenGuideProperties( options ) );
+}
+
+/**
+ * Tracks navigation from the out-of-credits notice to the upgrade flow. Quota
+ * values and site identity are deliberately omitted from this event.
+ */
+export function trackJetpackAiUpgrade(): void {
+	recordTracksEvent(
+		'ai_upgrade_button',
+		{
+			placement: 'jetpack-ai-sidebar-quota-notice',
+		},
+		{ includeBlogId: false }
+	);
 }

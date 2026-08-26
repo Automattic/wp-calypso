@@ -13,6 +13,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
 import {
 	getResponseRenderedTrackingProperties,
+	trackJetpackAiUpgrade,
 	trackSplitScreenGuideClick,
 	trackSplitScreenGuideRendered,
 } from './tracking';
@@ -236,6 +237,26 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		trackSplitScreenGuideClick( { componentType: 'proofread' } );
 
 		expect( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] ).not.toHaveProperty( 'blog_id' );
+	} );
+
+	it( 'tracks Jetpack AI upgrade navigation in the shared product funnel', () => {
+		trackJetpackAiUpgrade();
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith( 'jetpack_ai_upgrade_button', {
+			ai_session_id: 'test-session-id',
+			is_a11n: false,
+			placement: 'jetpack-ai-sidebar-quota-notice',
+			sessionid: 'test-session-id',
+			surface: 'block_editor',
+		} );
+		expect( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] ).not.toHaveProperty( 'blog_id' );
+		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] );
+	} );
+
+	it( 'reports no request count, which would be a stale page-load figure', () => {
+		trackJetpackAiUpgrade();
+
+		expect( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] ).not.toHaveProperty( 'requests_count' );
 	} );
 
 	it( 'uses Agents Manager test and Big Sky free-trial and screen context', () => {

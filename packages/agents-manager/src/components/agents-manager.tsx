@@ -314,6 +314,7 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 			transformMessages={ loadedProviders.transformMessages }
 			useCheckpoint={ loadedProviders.useCheckpoint }
 			capabilities={ loadedProviders.capabilities }
+			useChatNotice={ loadedProviders.useChatNotice }
 		/>
 	);
 }
