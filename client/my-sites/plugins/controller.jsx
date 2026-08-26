@@ -92,10 +92,9 @@ export function redirectMailPoetUpgrade( context, next ) {
 // values the old screen's `only` param could carry.
 const LEGACY_BUNDLED_PLUGIN_SLUGS = [ 'akismet', 'vaultpress' ];
 
-// `/plugins/setup` auto-installed those bundled plugins. The plans are gone and bundled plugins
-// are now features the site already carries, so the setup screen was removed — see
-// `usePreinstalledPremiumPlugin`. Plugin management is heading back to wp-admin, and keeping the
-// site in the path means that move can be made once for `/plugins` rather than special-cased here.
+// `/plugins/setup` auto-installed those bundled plugins. 
+// Because these old plans are retired, this setup route is deprecated
+// Sending folks to the relevant plugin detail page instead
 export function redirectLegacyPluginsSetup( context ) {
 	const siteFragment = context.params.site || getSiteFragment( context.path );
 	const pluginSlug = LEGACY_BUNDLED_PLUGIN_SLUGS.includes( context.query.only )
