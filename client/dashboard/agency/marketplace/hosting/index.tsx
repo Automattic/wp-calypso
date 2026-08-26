@@ -8,8 +8,6 @@ import {
 	Modal,
 	TabPanel,
 	ToggleControl,
-	__experimentalToggleGroupControl as ToggleGroupControl,
-	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	__experimentalDivider as Divider,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -871,26 +869,12 @@ export default function MarketplaceHosting() {
 								/>
 							</HStack>
 							<HStack spacing={ 1 } justify="flex-start" expanded={ false }>
-								{ useAltControls ? (
-									<ToggleGroupControl
-										__nextHasNoMarginBottom
-										hideLabelFromVision
-										isAdaptiveWidth
-										label={ __( 'Marketplace mode' ) }
-										value={ isReferralMode ? 'refer' : 'purchase' }
-										onChange={ ( value ) => handleReferralToggle( value === 'refer' ) }
-									>
-										<ToggleGroupControlOption value="purchase" label={ __( 'Purchase' ) } />
-										<ToggleGroupControlOption value="refer" label={ __( 'Refer' ) } />
-									</ToggleGroupControl>
-								) : (
-									<ToggleControl
-										__nextHasNoMarginBottom
-										checked={ isReferralMode }
-										label={ __( 'Refer products' ) }
-										onChange={ handleReferralToggle }
-									/>
-								) }
+								<ToggleControl
+									__nextHasNoMarginBottom
+									checked={ isReferralMode }
+									label={ __( 'Refer products' ) }
+									onChange={ handleReferralToggle }
+								/>
 								<Button
 									icon={ info }
 									size="small"
