@@ -2,9 +2,11 @@
  * @jest-environment jsdom
  */
 import config from '@automattic/calypso-config';
+import { isSupportSession } from '@automattic/calypso-support-session';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, renderHook, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { isCookieAuthMissing } from 'wpcom-proxy-request';
 import { bumpStat } from '../../analytics';
 import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../context';
 import { AuthProvider, sessionStateQuery, useSessionStateQuery } from '../index';
@@ -15,7 +17,19 @@ jest.mock( '../../analytics', () => ( {
 	bumpStat: jest.fn(),
 } ) );
 
+jest.mock( 'wpcom-proxy-request', () => ( {
+	...jest.requireActual( 'wpcom-proxy-request' ),
+	isCookieAuthMissing: jest.fn( () => false ),
+} ) );
+
+jest.mock( '@automattic/calypso-support-session', () => ( {
+	...jest.requireActual( '@automattic/calypso-support-session' ),
+	isSupportSession: jest.fn( () => false ),
+} ) );
+
 const mockedBumpStat = jest.mocked( bumpStat );
+const mockedIsCookieAuthMissing = jest.mocked( isCookieAuthMissing );
+const mockedIsSupportSession = jest.mocked( isSupportSession );
 
 const testUser = { ID: 1, username: 'testuser', language: 'en' } as User;
 
@@ -51,6 +65,9 @@ describe( '<AuthProvider> stats', () => {
 		config.disable( 'wpcom-user-bootstrap' );
 		delete window.currentUser;
 		window.sessionStorage.clear();
+		mockedIsCookieAuthMissing.mockReturnValue( false );
+		mockedIsSupportSession.mockReturnValue( false );
+		nock.cleanAll();
 	} );
 
 	test( 'bumps a success stat when the bootstrapped user is available', async () => {
@@ -153,6 +170,94 @@ describe( '<AuthProvider> stats', () => {
 			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'bounce:bootstrap' )
 		);
 		expect( mockedBumpStat ).not.toHaveBeenCalledWith( 'dashboard-auth-loop', expect.anything() );
+	} );
+
+	describe( 'when a request is refused but the code is ambiguous', () => {
+		async function renderSignedInAndFail( error: Error ) {
+			config.enable( 'wpcom-user-bootstrap' );
+			window.currentUser = testUser;
+
+			const { queryClient } = renderAuth();
+			expect( await screen.findByText( 'signed in' ) ).toBeVisible();
+
+			await expect(
+				queryClient.fetchQuery( {
+					queryKey: [ 'some-data' ],
+					queryFn: () => Promise.reject( error ),
+					retry: false,
+				} )
+			).rejects.toBe( error );
+		}
+
+		const forbidden = () =>
+			wpError( { status: 403, statusCode: 403, error: 'authorization_required' } );
+
+		test( 'bounces when the session turns out to be gone', async () => {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.1/me' )
+				.query( true )
+				.reply( 403, { error: 'authorization_required', message: 'User cannot access this' } );
+
+			await renderSignedInAndFail( forbidden() );
+
+			await waitFor( () =>
+				expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'bounce:forbidden' )
+			);
+		} );
+
+		test( 'leaves the user alone when the session is still good', async () => {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.1/me' )
+				.query( true )
+				.reply( 200, testUser );
+
+			await renderSignedInAndFail( forbidden() );
+
+			await waitFor( () =>
+				expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'probe-ok:forbidden' )
+			);
+			expect( mockedBumpStat ).not.toHaveBeenCalledWith(
+				'dashboard-auth',
+				expect.stringContaining( 'bounce:' )
+			);
+		} );
+
+		test( 'bounces on any failure once the proxy reports the auth cookie missing', async () => {
+			mockedIsCookieAuthMissing.mockReturnValue( true );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.1/me' )
+				.query( true )
+				.reply( 403, { error: 'authorization_required', message: 'User cannot access this' } );
+
+			await renderSignedInAndFail( wpError( { status: 500, statusCode: 500 } ) );
+
+			await waitFor( () =>
+				expect( mockedBumpStat ).toHaveBeenCalledWith(
+					'dashboard-auth',
+					'bounce:cookie-auth-missing'
+				)
+			);
+		} );
+
+		test( 'never bounces a support session', async () => {
+			mockedIsSupportSession.mockReturnValue( true );
+			mockedIsCookieAuthMissing.mockReturnValue( true );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.1/me' )
+				.query( true )
+				.reply( 403, { error: 'authorization_required', message: 'User cannot access this' } );
+
+			await renderSignedInAndFail( forbidden() );
+
+			// The session is never even probed, so nothing can bounce it.
+			await expect(
+				waitFor( () => expect( nock.isDone() ).toBe( true ), { timeout: 250 } )
+			).rejects.toThrow();
+			expect( mockedBumpStat ).not.toHaveBeenCalledWith(
+				'dashboard-auth',
+				expect.stringContaining( 'bounce:' )
+			);
+		} );
 	} );
 
 	test( 'bumps a bounce stat when the session expires mid-app', async () => {

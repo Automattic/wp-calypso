@@ -2,7 +2,7 @@ import { fetchUser, isWpError, User } from '@automattic/api-core';
 import { clearQueryClient, disablePersistQueryClient } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { setUser } from '@automattic/calypso-sentry';
-import { isSupportUserSession } from '@automattic/calypso-support-session';
+import { isSupportSession, isSupportUserSession } from '@automattic/calypso-support-session';
 import { magnificentNonEnLocales } from '@automattic/i18n-utils';
 import {
 	hashKey,
@@ -12,6 +12,7 @@ import {
 	type MutationCacheNotifyEvent,
 } from '@tanstack/react-query';
 import { createContext, useContext, useMemo, useEffect, useRef, useCallback } from 'react';
+import { isCookieAuthMissing } from 'wpcom-proxy-request';
 import { wpcomLink } from '../../utils/link';
 import { bumpStat } from '../analytics';
 import { useAppContext } from '../context';
@@ -124,6 +125,39 @@ export function useSessionStateQuery() {
 	return useQuery( sessionStateQuery() );
 }
 
+/**
+ * How confident we are that a failed request means the session itself is gone,
+ * and the stat suffix reported when it turns out to be right.
+ *
+ * `expired` is conclusive. The others also occur for reasons that have nothing
+ * to do with the session, so they are confirmed against `/me` before anyone is
+ * bounced.
+ */
+type AuthFailure = 'expired' | 'forbidden' | 'cookie-auth-missing';
+
+function classifyAuthFailure( { statusCode, error = '' }: WPError ): AuthFailure | null {
+	if ( statusCode === 401 && [ 'authorization_required', 'rest_forbidden' ].includes( error ) ) {
+		return 'expired';
+	}
+
+	// `wp_api_sec` is derived from `wordpress_sec`, so once that goes missing the
+	// API answers 403. The same code covers ordinary per-resource permission
+	// errors, which is why this one needs confirming.
+	if ( statusCode === 403 && error === 'authorization_required' ) {
+		return 'forbidden';
+	}
+
+	// The rest-proxy iframe reports the missing cookie itself, which catches the
+	// state even when the failing request does not look like an auth error. It is
+	// a sticky flag and also fires when third-party cookies are blocked, so on its
+	// own it never means more than "worth checking".
+	if ( isCookieAuthMissing() ) {
+		return 'cookie-auth-missing';
+	}
+
+	return null;
+}
+
 function getOAuthAuthorizeUrl( {
 	state,
 	next = '',
@@ -233,9 +267,14 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 	// A dead session fails every request alike, so one probe settles it for all of
 	// them.
 	const sessionProbe = useRef< Promise< boolean > | null >( null );
-	const confirmSessionExpired = useCallback( () => {
+	const confirmSessionExpired = useCallback( ( failure: AuthFailure ) => {
 		sessionProbe.current ??= fetchUser().then(
-			() => false,
+			() => {
+				// How often each signal turns out to be a false alarm is the thing we
+				// most need to know before acting on any of them more aggressively.
+				bumpStat( 'dashboard-auth', `probe-ok:${ failure }` );
+				return false;
+			},
 			( error: unknown ) =>
 				isWpError( error ) &&
 				( error.statusCode === 401 || error.error === 'authorization_required' )
@@ -285,17 +324,6 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 	// Subscribe to network errors and when errors occur due to being logged
 	// out, redirect the user to the log in screen.
 	useEffect( () => {
-		const isAuthError = ( { statusCode, error = '' }: WPError ) => {
-			return statusCode === 401 && [ 'authorization_required', 'rest_forbidden' ].includes( error );
-		};
-
-		// A missing or expired `wordpress_sec` invalidates `wp_api_sec` and the API
-		// answers 403 rather than 401. The same code covers per-resource permission
-		// errors, so confirm the whole session is gone before bouncing.
-		const isMaybeAuthError = ( { statusCode, error = '' }: WPError ) => {
-			return statusCode === 403 && error === 'authorization_required';
-		};
-
 		const handleEvent = ( event: MutationCacheNotifyEvent | QueryCacheNotifyEvent ) => {
 			// Errors fetching the user object itself are handled (and classified) below.
 			if ( 'query' in event && event.query.queryHash === hashKey( AUTH_QUERY_KEY ) ) {
@@ -303,22 +331,34 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 			}
 
 			if (
-				event.type === 'updated' &&
-				event.action.type === 'error' &&
-				isWpError( event.action.error )
+				event.type !== 'updated' ||
+				event.action.type !== 'error' ||
+				! isWpError( event.action.error )
 			) {
-				const error = event.action.error;
-
-				if ( isAuthError( error ) ) {
-					handleAuthError( 'expired' );
-				} else if ( isMaybeAuthError( error ) ) {
-					confirmSessionExpired().then( ( expired ) => {
-						if ( expired ) {
-							handleAuthError( 'expired' );
-						}
-					} );
-				}
+				return;
 			}
+
+			const failure = classifyAuthFailure( event.action.error );
+
+			if ( failure === null ) {
+				return;
+			}
+
+			if ( failure === 'expired' ) {
+				handleAuthError( failure );
+				return;
+			}
+
+			// Support sessions run on their own cookies and read as broken here.
+			if ( isSupportSession() ) {
+				return;
+			}
+
+			confirmSessionExpired( failure ).then( ( expired ) => {
+				if ( expired ) {
+					handleAuthError( failure );
+				}
+			} );
 		};
 		const unsubMutationCache = queryClient.getMutationCache().subscribe( handleEvent );
 		const unsubQueryCache = queryClient.getQueryCache().subscribe( handleEvent );
