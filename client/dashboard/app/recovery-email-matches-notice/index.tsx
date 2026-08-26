@@ -24,7 +24,7 @@ export default function RecoveryEmailMatchesNotice() {
 
 	return (
 		<>
-			<ComponentViewTracker eventName="calypso_dashboard_recovery_email_matches_notice_impression" />
+			<ComponentViewTracker eventName="calypso_dashboard_recovery_email_same_as_primary_notice_impression" />
 			<Notice
 				variant="warning"
 				title={ __( 'Your recovery email is the same as your account email' ) }
@@ -33,10 +33,10 @@ export default function RecoveryEmailMatchesNotice() {
 						to="/me/security/account-recovery"
 						variant="primary"
 						onClick={ () =>
-							recordTracksEvent( 'calypso_dashboard_recovery_email_matches_notice_click' )
+							recordTracksEvent( 'calypso_dashboard_recovery_email_same_as_primary_notice_click' )
 						}
 					>
-						{ __( 'Set a recovery email' ) }
+						{ __( 'Update recovery email' ) }
 					</RouterLinkButton>
 				}
 			>

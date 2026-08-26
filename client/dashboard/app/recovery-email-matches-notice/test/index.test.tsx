@@ -35,7 +35,7 @@ describe( '<RecoveryEmailMatchesNotice>', () => {
 		).toBeVisible();
 		expect( screen.getByText( new RegExp( ACCOUNT_EMAIL ) ) ).toBeVisible();
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_recovery_email_matches_notice_impression',
+			'calypso_dashboard_recovery_email_same_as_primary_notice_impression',
 			undefined
 		);
 	} );
@@ -47,7 +47,7 @@ describe( '<RecoveryEmailMatchesNotice>', () => {
 		expect( screen.queryByRole( 'button', { name: 'Dismiss' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'offers setting a recovery email as its only action', async () => {
+	test( 'offers updating the recovery email as its only action', async () => {
 		const user = userEvent.setup();
 
 		const { recordTracksEvent } = render( <RecoveryEmailMatchesNotice />, {
@@ -56,11 +56,11 @@ describe( '<RecoveryEmailMatchesNotice>', () => {
 
 		const links = await screen.findAllByRole( 'link' );
 		expect( links ).toHaveLength( 1 );
-		expect( links[ 0 ] ).toHaveAccessibleName( 'Set a recovery email' );
+		expect( links[ 0 ] ).toHaveAccessibleName( 'Update recovery email' );
 
 		await user.click( links[ 0 ] );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_recovery_email_matches_notice_click'
+			'calypso_dashboard_recovery_email_same_as_primary_notice_click'
 		);
 	} );
 
