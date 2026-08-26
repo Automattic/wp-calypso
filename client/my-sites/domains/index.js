@@ -18,7 +18,6 @@ import {
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import emailController from '../email/controller';
 import domainsController from './controller';
-import { getDashboardDomainManagementPath } from './dashboard-redirects';
 import domainManagementController from './domain-management/controller';
 import {
 	DOMAIN_OVERVIEW,
@@ -271,7 +270,23 @@ export default function () {
 	registerStandardDomainManagementPages(
 		paths.domainManagementEdit,
 		domainManagementController.domainManagementEdit,
-		[ setupPreferences, maybeRedirectToMultiSiteDashboard( getDashboardDomainManagementPath ) ]
+		[
+			setupPreferences,
+			maybeRedirectToMultiSiteDashboard( ( { domain, site } ) => {
+				// A site's WordPress.com address has no overview of its own in the dashboard:
+				// the only thing to manage is the site address, on the site's domains page. A
+				// staging address can't be changed at all, so it just lands there.
+				if ( site && domain.endsWith( '.wordpress.com' ) ) {
+					return `/sites/${ site }/domains?action=change-site-address`;
+				}
+
+				if ( site && domain.endsWith( '.wpcomstaging.com' ) ) {
+					return `/sites/${ site }/domains`;
+				}
+
+				return `/domains/${ domain }`;
+			} ),
+		]
 	);
 
 	registerStandardDomainManagementPages(
