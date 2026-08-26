@@ -57,15 +57,22 @@ const GREETING = __(
 const TYPE_PROMPT = __( 'What are you building for them?' );
 const MGMT_PROMPT = __( 'And who’ll be running it day to day?' );
 
+// Suggestions submit their label as a prompt ( autoSubmit ), which drives the
+// scripted flow through onSubmit — the way AgentUI expects suggestions to work.
 const TYPE_SUGGESTIONS: Suggestion[] = [
-	{ id: 'content', label: __( 'Content site' ) },
-	{ id: 'store', label: __( 'Online store' ) },
-	{ id: 'enterprise', label: __( 'Enterprise' ) },
+	{ id: 'content', label: __( 'Content site' ), prompt: __( 'Content site' ), autoSubmit: true },
+	{ id: 'store', label: __( 'Online store' ), prompt: __( 'Online store' ), autoSubmit: true },
+	{ id: 'enterprise', label: __( 'Enterprise' ), prompt: __( 'Enterprise' ), autoSubmit: true },
 ];
 
 const MGMT_SUGGESTIONS: Suggestion[] = [
-	{ id: 'client', label: __( 'Client manages it' ) },
-	{ id: 'agency', label: __( 'We manage it' ) },
+	{
+		id: 'client',
+		label: __( 'Client manages it' ),
+		prompt: __( 'Client manages it' ),
+		autoSubmit: true,
+	},
+	{ id: 'agency', label: __( 'We manage it' ), prompt: __( 'We manage it' ), autoSubmit: true },
 ];
 
 function RecommendationCard( {
@@ -180,34 +187,42 @@ export default function HostingConcierge( {
 		setStage( 'result' );
 	};
 
-	const handleSuggestionClick = ( suggestion: Suggestion ) => {
-		setMessages( ( current ) => [ ...current, userMessage( suggestion.label ) ] );
+	const nudge = () =>
+		setMessages( ( current ) => [
+			...current,
+			agentMessage( __( 'Tap one of the options and I’ll point you to the right platform.' ) ),
+		] );
+
+	const handleSubmit = ( text: string ) => {
+		const value = text.trim();
+		if ( ! value ) {
+			return;
+		}
+		setMessages( ( current ) => [ ...current, userMessage( value ) ] );
+
 		if ( stage === 'type' ) {
-			if ( suggestion.id === 'store' ) {
+			const option = TYPE_SUGGESTIONS.find( ( s ) => s.label === value );
+			if ( option?.id === 'store' ) {
 				recommend( 'pressable' );
-			} else if ( suggestion.id === 'enterprise' ) {
+			} else if ( option?.id === 'enterprise' ) {
 				recommend( 'vip' );
-			} else {
+			} else if ( option?.id === 'content' ) {
 				setMessages( ( current ) => [ ...current, agentMessage( MGMT_PROMPT ) ] );
 				setSuggestions( MGMT_SUGGESTIONS );
 				setStage( 'mgmt' );
+			} else {
+				nudge();
 			}
 		} else if ( stage === 'mgmt' ) {
-			recommend( suggestion.id === 'agency' ? 'pressable' : 'wpcom' );
+			const option = MGMT_SUGGESTIONS.find( ( s ) => s.label === value );
+			if ( option ) {
+				recommend( option.id === 'agency' ? 'pressable' : 'wpcom' );
+			} else {
+				nudge();
+			}
+		} else {
+			nudge();
 		}
-	};
-
-	const handleSubmit = ( text: string ) => {
-		if ( ! text.trim() ) {
-			return;
-		}
-		setMessages( ( current ) => [
-			...current,
-			userMessage( text ),
-			agentMessage(
-				__( 'Tap one of the options below and I’ll point you to the right platform.' )
-			),
-		] );
 	};
 
 	return (
@@ -221,7 +236,6 @@ export default function HostingConcierge( {
 				variant="embedded"
 				messages={ messages }
 				suggestions={ suggestions }
-				onSuggestionClick={ handleSuggestionClick }
 				onSubmit={ handleSubmit }
 				onClose={ onClose }
 				isProcessing={ false }

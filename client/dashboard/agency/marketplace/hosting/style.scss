@@ -76,7 +76,7 @@
 // Docked concierge shrinks the dashboard content so it reflows beside the
 // chat instead of being covered.
 .has-docked-concierge .dashboard-root__content {
-	padding-inline-end: 460px;
+	padding-inline-end: 380px;
 }
 
 .marketplace-hosting__concierge {
@@ -84,7 +84,7 @@
 	inset-block: 0;
 	inset-inline-end: 0;
 	z-index: 1000;
-	inline-size: 460px;
+	inline-size: 380px;
 	max-inline-size: 100%;
 	display: flex;
 	flex-direction: column;
