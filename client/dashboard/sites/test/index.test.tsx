@@ -7,6 +7,7 @@ import { screen, waitFor, within } from '@testing-library/react';
 import nock from 'nock';
 import { APP_CONTEXT_DEFAULT_CONFIG } from '../../app/context';
 import { render } from '../../test-utils';
+import { getDefaultView } from '../dataviews';
 import Sites from '../index';
 import type { AppConfig } from '../../app/context';
 import type { Site, User } from '@automattic/api-core';
@@ -372,5 +373,67 @@ describe( '<Sites>', () => {
 		expect( row2[ 0 ] ).toHaveTextContent( 'my-second-site.wordpress.com' );
 		expect( row2[ 1 ] ).toHaveTextContent( 'Coming soon' );
 		expect( row2[ 2 ] ).toHaveTextContent( 'Free' );
+	} );
+
+	describe( 'staging filter', () => {
+		const stagingSite = {
+			ID: 3,
+			name: 'My Staging Site',
+			slug: 'my-staging-site.wpcomstaging.com',
+			URL: 'https://my-staging-site.wpcomstaging.com',
+			is_wpcom_staging_site: true,
+			is_coming_soon: false,
+			is_private: false,
+			site_migration: {},
+			plan: { product_slug: 'business-bundle', product_name_short: 'Business' },
+		} as Site;
+
+		function mockSitesEndpointByStagingParam() {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.3/me/sites' )
+				.query( ( query ) => query.include_staging === 'false' )
+				.reply( 200, { sites: mockSites, total: mockSites.length } );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.3/me/sites' )
+				.query( ( query ) => query.include_staging === 'true' )
+				.reply( 200, { sites: [ ...mockSites, stagingSite ], total: mockSites.length + 1 } );
+		}
+
+		test( 'excludes staging sites by default', async () => {
+			mockSitesEndpointByStagingParam();
+			render( <Sites />, { user: { site_count: 13 } as User } );
+
+			expect( await screen.findByText( 'My First Site' ) ).toBeVisible();
+			expect( screen.queryByText( 'My Staging Site' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'includes staging sites when the staging filter is set to show', async () => {
+			// The persisted view comes from user preferences, which the shared mock returns empty.
+			nock.cleanAll();
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.2/read/teams' )
+				.query( true )
+				.reply( 200, { teams: [] } );
+			nock( 'https://public-api.wordpress.com' )
+				.persist()
+				.get( '/rest/v1.1/me/preferences' )
+				.query( true )
+				.reply( 200, {
+					calypso_preferences: {
+						'hosting-dashboard-dataviews-view-sites': {
+							...getDefaultView( {
+								siteCount: 13,
+								isAutomattician: false,
+								isRestoringAccount: false,
+							} ),
+							filters: [ { field: 'staging', operator: 'is', value: true } ],
+						},
+					},
+				} );
+			mockSitesEndpointByStagingParam();
+			render( <Sites />, { user: { site_count: 13 } as User } );
+
+			expect( await screen.findByText( 'My Staging Site' ) ).toBeVisible();
+		} );
 	} );
 } );

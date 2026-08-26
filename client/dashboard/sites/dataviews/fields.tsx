@@ -30,6 +30,8 @@ import type { AppConfig } from '../../app/context';
 import type { Site } from '@automattic/api-core';
 import type { Field, Operator, View } from '@wordpress/dataviews';
 
+export const STAGING_FILTER_FIELD = 'staging';
+
 function getDefaultFields( {
 	viewType,
 	queries,
@@ -232,6 +234,20 @@ function getDefaultFields( {
 				return getSiteProviderName( item ) ?? DEFAULT_PROVIDER_NAME;
 			},
 			render: ( { field, item } ) => field.getValue( { item } ),
+		},
+		{
+			id: STAGING_FILTER_FIELD,
+			type: 'boolean',
+			label: __( 'Staging sites' ),
+			elements: [
+				{ value: true, label: __( 'Show' ) },
+				{ value: false, label: __( 'Hide' ) },
+			],
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			enableHiding: false,
+			enableSorting: false,
 		},
 		{
 			id: 'is_deleted',
