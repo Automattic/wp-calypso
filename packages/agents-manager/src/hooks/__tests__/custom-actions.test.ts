@@ -7,6 +7,7 @@ import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import { useRegisterCustomActions, useSetupCustomActions } from '../custom-actions';
 
 jest.mock( '../../utils/tracks', () => ( {
+	BIG_SKY_EVENT_PREFIX: jest.requireActual( '../../utils/tracks' ).BIG_SKY_EVENT_PREFIX,
 	recordBigSkyTracksEvent: jest.fn(),
 } ) );
 
@@ -134,9 +135,12 @@ describe( 'useSetupCustomActions', () => {
 		window.__agentsManagerActions?.recordBigSkyTracksEvent?.( 'split_screen_guide_click', {
 			component_type: 'proofread',
 		} );
-		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'split_screen_guide_click', {
-			component_type: 'proofread',
-		} );
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_split_screen_guide_click',
+			{
+				component_type: 'proofread',
+			}
+		);
 
 		mockRecordBigSkyTracksEvent.mockClear();
 		window.__agentsManagerActions?.recordBigSkyTracksEvent?.( '' );
