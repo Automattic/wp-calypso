@@ -18,7 +18,7 @@ import {
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import emailController from '../email/controller';
 import domainsController from './controller';
-import { dashboardDomainManagementLink } from './dashboard-redirects';
+import { getDashboardDomainManagementPath } from './dashboard-redirects';
 import domainManagementController from './domain-management/controller';
 import {
 	DOMAIN_OVERVIEW,
@@ -271,7 +271,7 @@ export default function () {
 	registerStandardDomainManagementPages(
 		paths.domainManagementEdit,
 		domainManagementController.domainManagementEdit,
-		[ setupPreferences, maybeRedirectToMultiSiteDashboard( dashboardDomainManagementLink ) ]
+		[ setupPreferences, maybeRedirectToMultiSiteDashboard( getDashboardDomainManagementPath ) ]
 	);
 
 	registerStandardDomainManagementPages(

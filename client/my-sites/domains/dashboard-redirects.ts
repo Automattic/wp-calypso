@@ -15,7 +15,7 @@ const WPCOM_STAGING_ADDRESS_SUFFIX = '.wpcomstaging.com';
  * @param {string} [params.site] The slug of the site it belongs to.
  * @returns {string} The dashboard path to redirect to.
  */
-export function dashboardDomainManagementLink( {
+export function getDashboardDomainManagementPath( {
 	domain,
 	site,
 }: {
