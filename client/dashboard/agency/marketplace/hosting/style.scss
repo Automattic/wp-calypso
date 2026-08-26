@@ -120,6 +120,10 @@
 	object-position: left;
 }
 
+.marketplace-hosting__concierge-rec {
+	inline-size: 100%;
+}
+
 .marketplace-hosting__guide-compare {
 	display: grid;
 	grid-template-columns: repeat( 3, 1fr );

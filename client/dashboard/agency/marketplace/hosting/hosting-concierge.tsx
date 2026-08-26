@@ -2,14 +2,22 @@
 // Production would route this through @automattic/agents-manager like the omnibar.
 // eslint-disable-next-line no-restricted-imports
 import AgentUI from '@automattic/agenttic-ui';
-import { Button } from '@wordpress/components';
+import { Badge } from '@automattic/ui';
+import {
+	Button,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
 import { useEffect, useState } from 'react';
-import OverviewCard from '../../../components/overview-card';
+import { ButtonStack } from '../../../components/button-stack';
+import { Card, CardBody } from '../../../components/card';
 import pressableDescriptor from '../exclusive-offers/images/pressable-descriptor.svg';
 import vipDescriptor from '../exclusive-offers/images/vip-descriptor.svg';
 import wpcomDescriptor from '../exclusive-offers/images/wordpressdotcom-descriptor.svg';
+import { CheckList } from './content-sections';
 import { hostingBrands } from './mock-data';
 import type { HostingBrand } from './mock-data';
 // eslint-disable-next-line no-restricted-imports
@@ -24,93 +32,159 @@ import '@automattic/agenttic-ui/index.css';
 const VIP_DEMO_URL =
 	'https://wpvip.com/get-a-demo/?utm_source=partner&utm_medium=referral&utm_campaign=a4a';
 
+type BillingModel = 'resell' | 'refer';
+
 const BRAND_INFO: Record<
 	HostingBrand[ 'key' ],
-	{ logo: string; why: string; cta: 'configure' | 'demo' }
+	{ logo: string; pitch: string; proof: string[]; cta: 'buy' | 'demo' }
 > = {
 	wpcom: {
 		logo: wpcomDescriptor,
-		why: __(
-			'Managed WordPress with staging, backups, and 24/7 support built in, so client sites just run — billed per site.'
+		pitch: __(
+			'The low-touch, profitable pick for straightforward client sites. It’s managed WordPress your client can run themselves, so it stays off your support queue while you keep a clean per-site margin.'
 		),
-		cta: 'configure',
+		proof: [
+			__( 'Per-site pricing with volume discounts as you add sites' ),
+			__( 'Free migrations to move the client over' ),
+			__( 'Every site counts toward your Automattic for Agencies tier' ),
+		],
+		cta: 'buy',
 	},
 	pressable: {
 		logo: pressableDescriptor,
-		why: __(
-			'Traffic and storage pooled across all your client sites, with free migrations and pricing that keeps your margins healthy as you grow.'
+		pitch: __(
+			'Your margin engine. Pressable pools this site’s traffic and storage with the rest of your book, so your cost per site drops as you grow — and that spread is yours to keep. It’s also the performance tier for WooCommerce.'
 		),
-		cta: 'configure',
+		proof: [
+			__( 'Pooled plan: margin widens as your portfolio grows' ),
+			__( 'Built for WooCommerce speed and reliability' ),
+			__( 'Free white-glove migration, done for you' ),
+			__( 'Counts toward your Automattic for Agencies tier' ),
+		],
+		cta: 'buy',
 	},
 	vip: {
 		logo: vipDescriptor,
-		why: __(
-			'Enterprise-grade security, compliance, and dedicated support for high-scale, high-stakes sites.'
+		pitch: __(
+			'Enterprise-grade for high-stakes clients — media, government, and mission-critical sites. It’s a guided sale with dedicated support, and you earn a referral commission for bringing them in.'
 		),
+		proof: [
+			__( 'Enterprise security, compliance, and dedicated support' ),
+			__( 'Guided onboarding for your biggest clients' ),
+			__( 'Up to 20% one-time referral commission' ),
+		],
 		cta: 'demo',
 	},
 };
 
 const GREETING = __(
-	'Tell me about the client you’re setting up and I’ll recommend the right platform.'
+	'I’ll help you place this client on the right platform — and keep the margin on your side. What are you setting up for them?'
 );
-const TYPE_PROMPT = __( 'What are you building for them?' );
-const MGMT_PROMPT = __( 'And who’ll be running it day to day?' );
+const MONEY_PROMPT = __(
+	'Got it. How do you want to run the billing — host it under your plan and resell, or refer it and earn a commission?'
+);
+const BOOK_PROMPT = __( 'And how’s your client book with us looking right now?' );
 
-// Suggestions submit their label as a prompt ( autoSubmit ), which drives the
-// scripted flow through onSubmit — the way AgentUI expects suggestions to work.
 const TYPE_SUGGESTIONS: Suggestion[] = [
-	{ id: 'content', label: __( 'Content site' ), prompt: __( 'Content site' ), autoSubmit: true },
-	{ id: 'store', label: __( 'Online store' ), prompt: __( 'Online store' ), autoSubmit: true },
-	{ id: 'enterprise', label: __( 'Enterprise' ), prompt: __( 'Enterprise' ), autoSubmit: true },
-];
-
-const MGMT_SUGGESTIONS: Suggestion[] = [
 	{
-		id: 'client',
-		label: __( 'Client manages it' ),
-		prompt: __( 'Client manages it' ),
+		id: 'content',
+		label: __( 'Content or business site' ),
+		prompt: __( 'Content or business site' ),
 		autoSubmit: true,
 	},
-	{ id: 'agency', label: __( 'We manage it' ), prompt: __( 'We manage it' ), autoSubmit: true },
+	{ id: 'store', label: __( 'Online store' ), prompt: __( 'Online store' ), autoSubmit: true },
+	{
+		id: 'enterprise',
+		label: __( 'Enterprise or high-traffic' ),
+		prompt: __( 'Enterprise or high-traffic' ),
+		autoSubmit: true,
+	},
+];
+
+const MONEY_SUGGESTIONS: Suggestion[] = [
+	{
+		id: 'resell',
+		label: __( 'Host it and resell' ),
+		prompt: __( 'Host it and resell' ),
+		autoSubmit: true,
+	},
+	{
+		id: 'refer',
+		label: __( 'Refer for commission' ),
+		prompt: __( 'Refer for commission' ),
+		autoSubmit: true,
+	},
+];
+
+const BOOK_SUGGESTIONS: Suggestion[] = [
+	{
+		id: 'starting',
+		label: __( 'Just getting started' ),
+		prompt: __( 'Just getting started' ),
+		autoSubmit: true,
+	},
+	{
+		id: 'growing',
+		label: __( 'Growing — I host a bunch' ),
+		prompt: __( 'Growing — I host a bunch' ),
+		autoSubmit: true,
+	},
 ];
 
 function RecommendationCard( {
 	brand,
+	billing,
 	onConfigure,
 }: {
 	brand: HostingBrand[ 'key' ];
+	billing: BillingModel;
 	onConfigure: ( brand: HostingBrand[ 'key' ] ) => void;
 } ) {
 	const info = BRAND_INFO[ brand ];
 	const name = hostingBrands.find( ( b ) => b.key === brand )?.name;
 	return (
-		<OverviewCard
-			title={ __( 'Recommended for this client' ) }
-			heading={
-				<img src={ info.logo } alt={ name } className="marketplace-hosting__concierge-logo" />
-			}
-			description={ info.why }
-			intent="success"
-			shouldUseRouterLink={ false }
-			bottom={
-				info.cta === 'demo' ? (
-					<Button
-						variant="primary"
-						__next40pxDefaultSize
-						href={ VIP_DEMO_URL }
-						target="_blank"
-						rel="noreferrer"
-					>
-						{ __( 'Request a demo ↗' ) }
-					</Button>
-				) : (
-					<Button variant="primary" __next40pxDefaultSize onClick={ () => onConfigure( brand ) }>
-						{ __( 'Configure' ) }
-					</Button>
-				)
-			}
-		/>
+		<Card className="marketplace-hosting__concierge-rec">
+			<CardBody>
+				<VStack spacing={ 3 }>
+					<HStack justify="space-between" alignment="center">
+						<img src={ info.logo } alt={ name } className="marketplace-hosting__concierge-logo" />
+						<Badge intent="success">{ __( 'Recommended' ) }</Badge>
+					</HStack>
+					<Text>{ info.pitch }</Text>
+					<CheckList items={ info.proof } />
+					{ info.cta === 'demo' ? (
+						<ButtonStack justify="flex-start">
+							<Button
+								variant="primary"
+								__next40pxDefaultSize
+								href={ VIP_DEMO_URL }
+								target="_blank"
+								rel="noreferrer"
+							>
+								{ __( 'Request a demo ↗' ) }
+							</Button>
+						</ButtonStack>
+					) : (
+						<VStack spacing={ 2 } alignment="flex-start">
+							<Button
+								variant="primary"
+								__next40pxDefaultSize
+								onClick={ () => onConfigure( brand ) }
+							>
+								{ billing === 'refer'
+									? __( 'Add to referral cart' )
+									: __( 'Configure and add to cart' ) }
+							</Button>
+							<Text variant="muted" size={ 12 }>
+								{ billing === 'refer'
+									? __( 'Your client is billed directly; you earn commission on every renewal.' )
+									: __( 'You’re billed and keep the margin — switch to referral anytime.' ) }
+							</Text>
+						</VStack>
+					) }
+				</VStack>
+			</CardBody>
+		</Card>
 	);
 }
 
@@ -132,6 +206,8 @@ const userMessage = ( text: string ): Message => ( {
 	showIcon: false,
 } );
 
+type Stage = 'type' | 'money' | 'book' | 'result';
+
 export default function HostingConcierge( {
 	onConfigure,
 	onClose,
@@ -139,15 +215,10 @@ export default function HostingConcierge( {
 	onConfigure: ( brand: HostingBrand[ 'key' ] ) => void;
 	onClose: () => void;
 } ) {
-	const [ messages, setMessages ] = useState< Message[] >( () => [
-		agentMessage( GREETING ),
-		agentMessage( TYPE_PROMPT ),
-	] );
+	const [ messages, setMessages ] = useState< Message[] >( () => [ agentMessage( GREETING ) ] );
 	const [ suggestions, setSuggestions ] = useState< Suggestion[] >( TYPE_SUGGESTIONS );
-	const [ stage, setStage ] = useState< 'type' | 'mgmt' | 'result' >( 'type' );
+	const [ stage, setStage ] = useState< Stage >( 'type' );
 
-	// Dock the panel: shrink the dashboard content so it reflows beside the
-	// chat instead of being covered ( the Big Sky split-screen behaviour ).
 	useEffect( () => {
 		document.documentElement.classList.add( 'has-docked-concierge' );
 		const onKey = ( event: KeyboardEvent ) => {
@@ -162,12 +233,7 @@ export default function HostingConcierge( {
 		};
 	}, [ onClose ] );
 
-	const recommend = ( brand: HostingBrand[ 'key' ] ) => {
-		const name = hostingBrands.find( ( b ) => b.key === brand )?.name ?? '';
-		const intro = agentMessage(
-			/* translators: %s: hosting brand name */
-			__( 'Based on that, I’d put this client on %s. Here’s why:' ).replace( '%s', name )
-		);
+	const recommend = ( brand: HostingBrand[ 'key' ], model: BillingModel, why: string ) => {
 		const card: Message = {
 			id: `rec-${ messageSeq++ }`,
 			role: 'agent',
@@ -175,16 +241,22 @@ export default function HostingConcierge( {
 				{
 					type: 'component',
 					component: RecommendationCard as unknown as ComponentType,
-					componentProps: { brand, onConfigure },
+					componentProps: { brand, billing: model, onConfigure },
 				},
 			],
 			timestamp: messageSeq,
 			archived: false,
 			showIcon: false,
 		};
-		setMessages( ( current ) => [ ...current, intro, card ] );
+		setMessages( ( current ) => [ ...current, agentMessage( why ), card ] );
 		setSuggestions( [] );
 		setStage( 'result' );
+	};
+
+	const ask = ( prompt: string, nextSuggestions: Suggestion[], nextStage: Stage ) => {
+		setMessages( ( current ) => [ ...current, agentMessage( prompt ) ] );
+		setSuggestions( nextSuggestions );
+		setStage( nextStage );
 	};
 
 	const nudge = () =>
@@ -192,6 +264,8 @@ export default function HostingConcierge( {
 			...current,
 			agentMessage( __( 'Tap one of the options and I’ll point you to the right platform.' ) ),
 		] );
+
+	const [ clientType, setClientType ] = useState< string >( '' );
 
 	const handleSubmit = ( text: string ) => {
 		const value = text.trim();
@@ -202,23 +276,73 @@ export default function HostingConcierge( {
 
 		if ( stage === 'type' ) {
 			const option = TYPE_SUGGESTIONS.find( ( s ) => s.label === value );
-			if ( option?.id === 'store' ) {
-				recommend( 'pressable' );
-			} else if ( option?.id === 'enterprise' ) {
-				recommend( 'vip' );
-			} else if ( option?.id === 'content' ) {
-				setMessages( ( current ) => [ ...current, agentMessage( MGMT_PROMPT ) ] );
-				setSuggestions( MGMT_SUGGESTIONS );
-				setStage( 'mgmt' );
+			if ( option?.id === 'enterprise' ) {
+				recommend(
+					'vip',
+					'refer',
+					__(
+						'For an enterprise or high-traffic client, that’s WordPress VIP. It’s a guided sale, so the play here is to refer them in and earn the commission:'
+					)
+				);
+			} else if ( option?.id === 'content' || option?.id === 'store' ) {
+				setClientType( option.id );
+				ask( MONEY_PROMPT, MONEY_SUGGESTIONS, 'money' );
 			} else {
 				nudge();
 			}
-		} else if ( stage === 'mgmt' ) {
-			const option = MGMT_SUGGESTIONS.find( ( s ) => s.label === value );
-			if ( option ) {
-				recommend( option.id === 'agency' ? 'pressable' : 'wpcom' );
-			} else {
+		} else if ( stage === 'money' ) {
+			const option = MONEY_SUGGESTIONS.find( ( s ) => s.label === value );
+			if ( ! option ) {
 				nudge();
+				return;
+			}
+			const model = option.id as BillingModel;
+
+			if ( clientType === 'store' ) {
+				recommend(
+					'pressable',
+					model,
+					model === 'refer'
+						? __(
+								'A store means Pressable for the performance — and since you’re referring it, you’ll earn commission while your client is billed directly:'
+						  )
+						: __(
+								'For a store, Pressable is the pick — it’s built for WooCommerce, and reselling it lets you pool it with your other sites to protect your margin:'
+						  )
+				);
+			} else if ( model === 'refer' ) {
+				recommend(
+					'wpcom',
+					'refer',
+					__(
+						'For a straightforward site you’re referring, WordPress.com keeps it simple for the client and pays you a commission with zero billing to manage:'
+					)
+				);
+			} else {
+				ask( BOOK_PROMPT, BOOK_SUGGESTIONS, 'book' );
+			}
+		} else if ( stage === 'book' ) {
+			const option = BOOK_SUGGESTIONS.find( ( s ) => s.label === value );
+			if ( ! option ) {
+				nudge();
+				return;
+			}
+			if ( option.id === 'growing' ) {
+				recommend(
+					'pressable',
+					'resell',
+					__(
+						'Since you’re building a book of sites, put this one on Pressable — its pooled plan means every site you add widens your margin instead of stacking per-site costs:'
+					)
+				);
+			} else {
+				recommend(
+					'wpcom',
+					'resell',
+					__(
+						'While you’re getting started, WordPress.com keeps this low-touch and profitable per site. When your book grows, Pressable’s pooled pricing becomes the better margin play:'
+					)
+				);
 			}
 		} else {
 			nudge();
