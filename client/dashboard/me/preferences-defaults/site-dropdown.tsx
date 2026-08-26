@@ -25,6 +25,7 @@ interface PreferencesLoginSiteDropdownProps {
 	label?: string;
 	hideLabelFromVision?: boolean;
 	isLoading?: boolean;
+	useSiteUrlAsLabel?: boolean;
 }
 
 export default function PreferencesLoginSiteDropdown( {
@@ -34,11 +35,12 @@ export default function PreferencesLoginSiteDropdown( {
 	label = '',
 	hideLabelFromVision = false,
 	isLoading = false,
+	useSiteUrlAsLabel = false,
 }: PreferencesLoginSiteDropdownProps ) {
 	// Prepare options for ComboboxControl
 	const options: SiteOption[] = sites.map( ( site: Site ) => ( {
 		value: site.ID.toString(),
-		label: getSiteDisplayName( site ),
+		label: useSiteUrlAsLabel ? getSiteDisplayUrl( site ) : getSiteDisplayName( site ),
 		site,
 	} ) );
 

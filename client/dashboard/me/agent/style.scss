@@ -19,6 +19,21 @@
 	gap: 12px 24px;
 }
 
+.wordpress-agent-email__address-row {
+	display: grid;
+	grid-template-columns: minmax( 0, 1fr ) auto;
+	align-items: end;
+	gap: 16px;
+}
+
+.wordpress-agent-email__address-row > :first-child {
+	min-width: 0;
+}
+
+.wordpress-agent-email__address-row > .components-button {
+	margin-bottom: 1px;
+}
+
 .wordpress-agent-email__sender {
 	flex: 1 1 auto;
 	min-width: 0;
@@ -40,6 +55,24 @@
 	}
 }
 
+.wordpress-agent-slack__install-button.components-button {
+	--slack-brand-color: #4a154b;
+	--slack-brand-color-hover: #611f69;
+
+	gap: 8px;
+	background: var( --slack-brand-color );
+	border-color: var( --slack-brand-color );
+
+	img {
+		filter: invert( 1 );
+	}
+
+	&:hover:not( :disabled ) {
+		background: var( --slack-brand-color-hover );
+		border-color: var( --slack-brand-color-hover );
+	}
+}
+
 @media ( max-width: 480px ) {
 	.wordpress-agent-connection__row {
 		align-items: stretch;
@@ -56,6 +89,15 @@
 
 		.wordpress-agent-connection__actions {
 			justify-content: flex-start;
+		}
+	}
+
+	.wordpress-agent-email__address-row {
+		grid-template-columns: 1fr;
+		align-items: stretch;
+
+		.components-button {
+			justify-self: start;
 		}
 	}
 }
