@@ -4,6 +4,7 @@
 import { amToolProvider } from '../../abilities';
 import { restoreCheckpointAbility } from '../../abilities/restore-checkpoint';
 import { showComponentAbility } from '../../abilities/show-component';
+import { showTemplateAbility } from '../../abilities/show-template';
 import * as canvasBinding from '../canvas-binding';
 import { getAvailableCheckpoints } from '../checkpoints';
 import {
@@ -216,6 +217,7 @@ describe( 'loadExternalProviders', () => {
 			abilityShapes( [
 				restoreCheckpointAbility,
 				showComponentAbility,
+				showTemplateAbility,
 				createAbility( 'host/navigate' ),
 				createAbility( 'woocommerce/get-products' ),
 			] )
@@ -248,6 +250,7 @@ describe( 'loadExternalProviders', () => {
 			abilityShapes( [
 				restoreCheckpointAbility,
 				showComponentAbility,
+				showTemplateAbility,
 				createAbility( 'shared/action' ),
 			] )
 		);
@@ -334,6 +337,7 @@ describe( 'loadExternalProviders', () => {
 			abilityShapes( [
 				restoreCheckpointAbility,
 				showComponentAbility,
+				showTemplateAbility,
 				createAbility( 'host/navigate' ),
 			] )
 		);
@@ -807,6 +811,7 @@ describe( 'loadExternalProviders', () => {
 			abilityShapes( [
 				restoreCheckpointAbility,
 				showComponentAbility,
+				showTemplateAbility,
 				createAbility( 'big-sky/apply-block-edits' ),
 				createAbility( 'wpcom/manage-site' ),
 			] )

@@ -18,6 +18,11 @@ jest.mock( '../show-component', () => ( {
 	showComponentAbility: { name: 'big-sky/show-component', callback: mockShowComponentCallback },
 } ) );
 
+const mockShowTemplateCallback = jest.fn();
+jest.mock( '../show-template', () => ( {
+	showTemplateAbility: { name: 'big-sky/show-template', callback: mockShowTemplateCallback },
+} ) );
+
 import { executeAbilityFromList } from '../execute-ability';
 
 // Registration runs once per module instance, so each test loads fresh
@@ -73,7 +78,7 @@ describe( 'abilities facade', () => {
 		// Registration runs fire-and-forget with the load — let it settle.
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
-		expect( registerAbility ).toHaveBeenCalledTimes( 2 );
+		expect( registerAbility ).toHaveBeenCalledTimes( 3 );
 	} );
 
 	it.each( [
@@ -83,7 +88,7 @@ describe( 'abilities facade', () => {
 		document.body.classList.add( ...bodyClasses );
 		const { amToolProvider } = await load();
 
-		await expect( amToolProvider.getAbilities() ).resolves.toHaveLength( 2 );
+		await expect( amToolProvider.getAbilities() ).resolves.toHaveLength( 3 );
 	} );
 
 	it( 'stays closed on a custom-post-type editor screen', async () => {
@@ -102,7 +107,7 @@ describe( 'abilities facade', () => {
 		// Registration runs fire-and-forget with the load — let it settle.
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
-		expect( registerAbility ).toHaveBeenCalledTimes( 2 );
+		expect( registerAbility ).toHaveBeenCalledTimes( 3 );
 	} );
 
 	it( 'loads on the first execution, with no prior call', async () => {
@@ -287,12 +292,15 @@ describe( 'registerEditorAbilities', () => {
 		expect( registerAbilityCategory ).toHaveBeenCalledTimes( 1 );
 		expect( registerAbilityCategory ).toHaveBeenCalledWith( 'big-sky', expect.any( Object ) );
 
-		expect( registerAbility ).toHaveBeenCalledTimes( 2 );
+		expect( registerAbility ).toHaveBeenCalledTimes( 3 );
 		expect( registerAbility ).toHaveBeenCalledWith(
 			expect.objectContaining( { name: 'big-sky/restore-checkpoint' } )
 		);
 		expect( registerAbility ).toHaveBeenCalledWith(
 			expect.objectContaining( { name: 'big-sky/show-component' } )
+		);
+		expect( registerAbility ).toHaveBeenCalledWith(
+			expect.objectContaining( { name: 'big-sky/show-template' } )
 		);
 		expect( registerAbilityCategory.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
 			registerAbility.mock.invocationCallOrder[ 0 ]
@@ -310,7 +318,7 @@ describe( 'registerEditorAbilities', () => {
 		await editorAbilities.registerEditorAbilities();
 
 		expect( unregisterAbility ).toHaveBeenCalledWith( 'big-sky/restore-checkpoint' );
-		expect( registerAbility ).toHaveBeenCalledTimes( 3 );
+		expect( registerAbility ).toHaveBeenCalledTimes( 4 );
 	} );
 
 	it( 'does not unregister when the failure is not a collision', async () => {
@@ -322,7 +330,7 @@ describe( 'registerEditorAbilities', () => {
 		await editorAbilities.registerEditorAbilities();
 
 		expect( unregisterAbility ).not.toHaveBeenCalled();
-		expect( registerAbility ).toHaveBeenCalledTimes( 2 );
+		expect( registerAbility ).toHaveBeenCalledTimes( 3 );
 		expect( warn ).toHaveBeenCalled();
 		warn.mockRestore();
 	} );
