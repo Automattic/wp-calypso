@@ -440,7 +440,7 @@ export function getFields( {
 			render: ( { item }: { item: Purchase } ) => {
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				return (
-					<div>
+					<div className="active-upgrades__inline-status">
 						<PurchaseExpiryStatus purchase={ item } isSiteMissing={ ! site } />
 					</div>
 				);
