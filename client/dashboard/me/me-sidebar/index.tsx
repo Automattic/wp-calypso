@@ -1,5 +1,4 @@
 import { userSettingsQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -77,11 +76,9 @@ function MeMenuSidebar() {
 					{ __( 'Notifications' ) }
 				</SidebarMenuItem>
 			) }
-			{ isEnabled( 'mcp-settings' ) && (
-				<SidebarMenuItem icon={ comment } to="/me/agent">
-					{ __( 'WordPress Agent' ) }
-				</SidebarMenuItem>
-			) }
+			<SidebarMenuItem icon={ comment } to="/me/agent">
+				{ __( 'WordPress Agent' ) }
+			</SidebarMenuItem>
 			{ hasAppSupport( supports, 'apps' ) && (
 				<SidebarMenuItem icon={ buttons } to="/me/apps">
 					{ __( 'Apps' ) }
