@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { DomainSearchComponent } from '../../../lib/components/domain-search-component';
 import { UseADomainIOwnPage } from '../../../lib/pages/use-a-domain-i-own-page';
+import * as teamcity from '../../../lib/teamcity';
 import {
 	flushThrottleWrites,
 	registerThrottleActionHandler,
@@ -21,6 +22,11 @@ let actionHandler: jest.Mock;
 let unregister: () => void;
 
 beforeEach( () => {
+	// These tests raise flags through the real helpers. Left alone, the helpers
+	// tag the build running the unit tests and write the ban to its log, and
+	// every E2E build in the project reads that for the next six hours.
+	jest.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
+	jest.spyOn( teamcity, 'appendOwnBuildLog' ).mockResolvedValue( 200 );
 	actionHandler = jest.fn();
 	unregister = registerThrottleActionHandler( actionHandler );
 	[ ...ACTION_VARIABLES, ...EXPIRATION_VARIABLES ].forEach( ( name ) => {
@@ -35,6 +41,7 @@ afterEach( async () => {
 	[ ...ACTION_VARIABLES, ...EXPIRATION_VARIABLES ].forEach( ( name ) => {
 		delete process.env[ name ];
 	} );
+	jest.restoreAllMocks();
 } );
 
 /** Builds the response shape used by the domain helpers. */
@@ -44,6 +51,26 @@ function response( url: string, body: string, status = 200 ) {
 		text: async () => body,
 		url: () => url,
 	};
+}
+
+/** A page whose "Bring it over" button never appears. */
+function bringItOverPage(): Page {
+	const button = {
+		click: jest.fn( async () => {
+			throw new Error( 'locator timeout' );
+		} ),
+	};
+	return { getByRole: jest.fn( () => button ) } as unknown as Page;
+}
+
+/** A page whose "Skip purchase" button never appears. */
+function skipPurchasePage(): Page {
+	const button = {
+		waitFor: jest.fn( async () => {
+			throw new Error( 'locator timeout' );
+		} ),
+	};
+	return { getByRole: jest.fn( () => button ) } as unknown as Page;
 }
 
 /** A page whose first suggestion row never appears. */
@@ -188,6 +215,67 @@ describe( 'domain throttle actions', () => {
 			'policy applied'
 		);
 		expect( actionHandler ).toHaveBeenCalledWith( 'skip', [ 'domain-availability' ] );
+	} );
+
+	test( 'the "Bring it over" button acts on an availability ban when it never renders', async () => {
+		// The button is rendered off the availability query, so a ban leaves it
+		// absent and the click times out on a test that should have skipped.
+		const page = bringItOverPage();
+		process.env.THROTTLE_DOMAIN_AVAILABILITY_EXPIRATION = String( Date.now() + 60_000 );
+		actionHandler.mockImplementation( () => {
+			throw new Error( 'policy applied' );
+		} );
+
+		await expect( new DomainSearchComponent( page ).clickBringItOver() ).rejects.toThrow(
+			'policy applied'
+		);
+		expect( actionHandler ).toHaveBeenCalledWith( 'skip', [ 'domain-availability' ] );
+	} );
+
+	test( 'a "Bring it over" button that never appears keeps its own error when no ban is in force', async () => {
+		const page = bringItOverPage();
+
+		await expect( new DomainSearchComponent( page ).clickBringItOver() ).rejects.toThrow(
+			'locator timeout'
+		);
+		expect( actionHandler ).not.toHaveBeenCalled();
+	} );
+
+	test( 'the "Skip purchase" button acts on a suggestions ban when it never renders', async () => {
+		// `search` records a ban it meets mid-search and leaves acting to whichever
+		// caller needed the list. This is one of them: the button carries the free
+		// subdomain a second `/domains/suggestions` call answered with.
+		const page = skipPurchasePage();
+		process.env.THROTTLE_DOMAIN_SUGGESTIONS_EXPIRATION = String( Date.now() + 60_000 );
+		actionHandler.mockImplementation( () => {
+			throw new Error( 'policy applied' );
+		} );
+
+		await expect( new DomainSearchComponent( page ).skipPurchase() ).rejects.toThrow(
+			'policy applied'
+		);
+		expect( actionHandler ).toHaveBeenCalledWith( 'skip', [ 'domain-suggestions' ] );
+	} );
+
+	test( 'an availability ban leaves a missing "Skip purchase" button its own error', async () => {
+		// Nothing on this button comes from `is-available`. Reading that ban here
+		// would skip a test it had no part in, which is how a real failure hides.
+		const page = skipPurchasePage();
+		process.env.THROTTLE_DOMAIN_AVAILABILITY_EXPIRATION = String( Date.now() + 60_000 );
+
+		await expect( new DomainSearchComponent( page ).skipPurchase() ).rejects.toThrow(
+			'locator timeout'
+		);
+		expect( actionHandler ).not.toHaveBeenCalled();
+	} );
+
+	test( 'a "Skip purchase" button that never appears keeps its own error when no ban is in force', async () => {
+		const page = skipPurchasePage();
+
+		await expect( new DomainSearchComponent( page ).skipPurchase() ).rejects.toThrow(
+			'locator timeout'
+		);
+		expect( actionHandler ).not.toHaveBeenCalled();
 	} );
 
 	test( 'a suggestion row that never appears keeps its own error when no ban is in force', async () => {

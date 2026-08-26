@@ -29,6 +29,7 @@
  */
 /* eslint-disable react-hooks/rules-of-hooks */
 import {
+	abandonPendingLoginLockWaits,
 	AddPeoplePage,
 	AdvertisingPage,
 	AppleLoginPage,
@@ -122,30 +123,14 @@ export type CustomOptions = {
 	 * Set per-project in playwright.config.ts. Valid values: 'desktop' | 'mobile'.
 	 */
 	viewportName: string;
-	/**
-	 * Accounts the project logs in as before its specs start, so their workers read the
-	 * cookie cache instead of logging in at once. Set per-project in playwright.config.ts,
-	 * which turns it into the setup project the suite depends on.
-	 */
-	accountsToPrime: readonly TestAccountName[];
 };
-
-/**
- * Title of the login `setup/prime-logins.setup.ts` declares for an account, which a priming
- * project greps for to select the accounts it wants. Shared so the two cannot drift: a title
- * no project matches primes nothing and reports no error.
- */
-export const primeLoginTitle = ( accountName: TestAccountName ) =>
-	`prime login cookies: ${ accountName }`;
 
 /**
  * Test accounts exposed as a fixture of the same name, logged in on first use.
  *
- * A priming setup project logs in as some of these before the suite starts, so they are
- * primed rather than logged in inline; which ones is the `accountsToPrime` of the project
- * that depends on it. Two accounts are fixtures without belonging here:
- * `accountGivenByEnvironment`, which resolves at run time, and `accountSMS`, whose 2FA code
- * costs a Mailosaur email only a couple of specs need.
+ * Two accounts are fixtures without belonging here: `accountGivenByEnvironment`, which
+ * resolves at run time, and `accountSMS`, whose 2FA code costs a Mailosaur email only a
+ * couple of specs need.
  */
 export const fixtureAccounts = {
 	accountAtomic: 'atomicUser',
@@ -278,6 +263,7 @@ export const test = base.extend<
 	CustomOptions & {
 		[ K in keyof typeof fixtureAccounts ]: TestAccount;
 	} & {
+		_abandonLoginLockWaits: void;
 		_throttleActionHandler: void;
 		/**
 		 * Test account selected based on the current environment variables.
@@ -515,7 +501,17 @@ export const test = base.extend<
 	}
 >( {
 	viewportName: [ 'desktop', { option: true } ],
-	accountsToPrime: [ [], { option: true } ],
+	_abandonLoginLockWaits: [
+		async ( {}, use ) => {
+			await use();
+			// A timed-out test's await is abandoned, not cancelled, so a withLoginLock call it
+			// left waiting would keep polling and could take the lock during worker teardown.
+			// Any teardown running means the test body is over: a wait still pending belongs to
+			// no live test, so abandoning it here cannot fail one.
+			abandonPendingLoginLockWaits();
+		},
+		{ auto: true },
+	],
 	_throttleActionHandler: [
 		async ( {}, use, testInfo ) => {
 			const unregister = registerThrottleActionHandler( ( action, ids ) => {

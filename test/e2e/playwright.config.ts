@@ -1,27 +1,20 @@
 // Must come before ./lib/pw-base so .env is loaded before
 // @automattic/calypso-e2e's env-variables module is evaluated.
 import './load-env';
-import {
-	envVariables,
-	getAccountNamesToPrime,
-	validateThrottleActions,
-	type TestAccountName,
-} from '@automattic/calypso-e2e';
+import { envVariables, validateThrottleActions } from '@automattic/calypso-e2e';
 import {
 	defineConfig,
 	devices,
-	type PlaywrightTestConfig,
 	type PlaywrightTestProject,
 	type ReporterDescription,
 } from 'playwright/test';
-import { primeLoginTitle, tags, type CustomOptions } from './lib/pw-base';
+import { tags, type CustomOptions } from './lib/pw-base';
 
 // Reads every supported variable so an unsupported value fails here, before the suite starts,
 // instead of mid-spec on its first read.
 envVariables.validate();
 validateThrottleActions();
 
-type Config = PlaywrightTestConfig< CustomOptions >;
 type Project = PlaywrightTestProject< CustomOptions >;
 
 const outputPath = './output';
@@ -65,77 +58,6 @@ const mobileUse: NonNullable< Project[ 'use' ] > = {
 	viewportName: 'mobile',
 };
 
-/**
- * A setup project that logs the given accounts in before whatever depends on it runs.
- *
- * `setup/prime-logins.setup.ts` declares one login per known account and this picks them by
- * title: a project filters tests, it cannot generate them, and test files are loaded once for
- * the whole run.
- *
- * It borrows the desktop context so the login carries the e2e user agent suffix the backend
- * expects. The cookies it leaves are per account, not per device, so a mobile project
- * depending on it reuses them.
- */
-function primeProject( name: string, accountNames: readonly TestAccountName[] ): Project {
-	return {
-		name,
-		testMatch: /prime-logins\.setup\.ts/,
-		testDir: './setup',
-		// Titles hold no regex metacharacters. Anchoring on the end of the name keeps one
-		// account from selecting another it is a prefix of; the title can be followed by
-		// tags, hence the alternative to end-of-string.
-		//
-		// An empty list primes nothing. It cannot be left to join to '', which is a pattern
-		// matching every test: the project would quietly log in as all of them.
-		grep: accountNames.length
-			? new RegExp(
-					accountNames.map( ( account ) => `${ primeLoginTitle( account ) }(?:\\s|$)` ).join( '|' )
-			  )
-			: /(?!)/,
-		use: desktopUse,
-	};
-}
-
-/**
- * A suite project, preceded by the setup project that primes the accounts its `use` names.
- *
- * The list is read here rather than by a single shared setup project because `config.projects`
- * is not narrowed to the selected projects: at run time a shared one cannot tell which suite
- * pulled it in, and would prime every account every other suite asks for.
- */
-function suiteProject(
-	suite: Project & { name: string; use: { accountsToPrime: readonly TestAccountName[] } }
-): Project[] {
-	const primeName = `prime-${ suite.name }`;
-	return [
-		primeProject( primeName, suite.use.accountsToPrime ),
-		{ ...suite, dependencies: [ ...( suite.dependencies ?? [] ), primeName ] },
-	];
-}
-
-/**
- * Fails the run when accounts are named where nothing primes them. `accountsToPrime` is an
- * option on every `use`, shared or per project, but only `suiteProject` acts on it, so setting
- * it anywhere else would type-check and quietly do nothing.
- */
-function checkAccountsArePrimed( config: Config ): Config {
-	if ( config.use?.accountsToPrime?.length ) {
-		throw new Error(
-			'accountsToPrime belongs on a project built with suiteProject(), not on the shared use.'
-		);
-	}
-
-	for ( const { name, use, dependencies } of config.projects ?? [] ) {
-		if ( use?.accountsToPrime?.length && ! dependencies?.includes( `prime-${ name }` ) ) {
-			throw new Error(
-				`Project '${ name }' names accountsToPrime but nothing primes them. Build it with suiteProject().`
-			);
-		}
-	}
-
-	return config;
-}
-
 const loginBrowserUse = {
 	...devices[ 'Desktop Chrome HiDPI' ],
 	bypassCSP: true,
@@ -163,7 +85,7 @@ function getWorkers(): number | string {
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-const config: Config = {
+export default defineConfig< CustomOptions >( {
 	testDir: './specs',
 	/* Run tests in files in parallel */
 	fullyParallel: true,
@@ -210,42 +132,35 @@ const config: Config = {
 			testMatch: /throttle-check\.setup\.ts/,
 			testDir: './setup',
 		},
-		// Shared by `desktop` and `mobile`, which take their accounts from AUTHENTICATE_ACCOUNTS
-		// and the run's own environment rather than from a project.
-		primeProject( 'prime-logins', getAccountNamesToPrime() ),
 		{
 			name: 'desktop',
-			dependencies: [ 'mailosaur-usage-check', 'throttle-check', 'prime-logins' ],
+			dependencies: [ 'mailosaur-usage-check', 'throttle-check' ],
 			use: desktopUse,
 		},
 		{
 			name: 'mobile',
-			dependencies: [ 'mailosaur-usage-check', 'throttle-check', 'prime-logins' ],
+			dependencies: [ 'mailosaur-usage-check', 'throttle-check' ],
 			use: mobileUse,
 			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
 		},
-		...suiteProject( {
+		{
 			name: 'p2',
+			dependencies: [ 'throttle-check' ],
 			testDir: './specs/p2',
-			dependencies: [ 'throttle-check' ],
-			use: { ...desktopUse, accountsToPrime: [ 'p2User' ] },
-		} ),
-		...suiteProject( {
+			use: desktopUse,
+		},
+		{
 			name: 'i18n',
-			testDir: './specs/i18n',
 			dependencies: [ 'throttle-check' ],
-			use: { ...desktopUse, accountsToPrime: [ 'i18nUser' ] },
-		} ),
+			testDir: './specs/i18n',
+			use: desktopUse,
+		},
 		{
 			name: 'authentication',
-			// No 'prime-logins': these specs exercise the login flow itself, so warming
-			// the cookie cache would only add wall clock.
 			dependencies: [ 'mailosaur-usage-check', 'throttle-check' ],
 			retries: 0,
 			testDir: './specs/authentication',
 			use: loginBrowserUse,
 		},
 	],
-};
-
-export default defineConfig< CustomOptions >( checkAccountsArePrimed( config ) );
+} );

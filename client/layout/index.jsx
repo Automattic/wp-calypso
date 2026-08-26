@@ -25,6 +25,7 @@ import { Nav2026UniversalHeader } from 'calypso/layout/nav-2026-universal-header
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { ClassicColorSchemeProvider, withColorScheme } from 'calypso/lib/color-scheme';
+import { isE2ETest } from 'calypso/lib/e2e';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
 import {
@@ -553,6 +554,7 @@ export default withCurrentRoute(
 					sectionName,
 			  } );
 		const needsColorScheme =
+			! isE2ETest() &&
 			! sidebarIsHidden &&
 			( sidebarType === SidebarType.UnifiedSiteDefault ||
 				sidebarType === SidebarType.UnifiedSiteClassic );

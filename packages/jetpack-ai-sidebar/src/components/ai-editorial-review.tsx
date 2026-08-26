@@ -11,7 +11,7 @@ import { Panel, PanelBody } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useState, useCallback, useEffect, useMemo, useRef } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { Icon, check, undo } from '@wordpress/icons';
+import { Icon, undo } from '@wordpress/icons';
 /**
  * Internal dependencies
  */
@@ -35,7 +35,11 @@ import { getBulkResponseActionOutcome, type OnResponseAction } from '../utils/re
 import { useCopyToClipboard } from '../utils/use-copy-to-clipboard';
 import useLatestResponseAction from '../utils/use-latest-response-action';
 import BlockRef, { getBlockTypeName, type BlockSnapshot } from './block-ref';
-import ReviewCard, { ReviewCardActions, type ReviewCardRow } from './review-card';
+import ReviewCard, {
+	ReviewCardActions,
+	ReviewCardResolution,
+	type ReviewCardRow,
+} from './review-card';
 import ReviewerChip, { type ReviewerMetadata } from './reviewer-chip';
 import SplitScreenGuide from './split-screen-guide';
 
@@ -113,6 +117,8 @@ interface AiEditorialReviewProps {
 	postId?: EditorPostId;
 	/** Whether the containing chat message is no longer interactive. */
 	isMessageStale?: boolean;
+	/** Tool call that produced this response. Used for tracking. */
+	toolCallId?: string;
 	/** Reports completed user actions to the host that rendered this response. */
 	onResponseAction?: OnResponseAction;
 	/**
@@ -301,6 +307,7 @@ export default function AiEditorialReview( {
 	guideline_violations: guidelineViolationsProp,
 	postId,
 	isMessageStale = false,
+	toolCallId,
 	onResponseAction,
 	reviewers_metadata,
 	cached_at,
@@ -958,6 +965,7 @@ export default function AiEditorialReview( {
 		>
 			<SplitScreenGuide
 				componentType="ai-editorial-review"
+				toolCallId={ toolCallId }
 				isStale={ isMessageStale || isPostStale }
 			/>
 			{ isPostStale && (
@@ -1179,20 +1187,10 @@ export default function AiEditorialReview( {
 														) }
 													</header>
 													<div className="jetpack-ai-editorial-review__actions">
-														<span
-															className={ `jetpack-ai-editorial-review__resolution is-${ status }` }
-														>
-															{ status === 'accepted' && (
-																<Icon
-																	className="jetpack-ai-editorial-review__resolution-check"
-																	icon={ check }
-																	size={ 20 }
-																/>
-															) }
-															{ status === 'accepted'
-																? __( 'Applied', __i18n_text_domain__ )
-																: __( 'Dismissed', __i18n_text_domain__ ) }
-														</span>
+														<ReviewCardResolution
+															classPrefix="jetpack-ai-editorial-review"
+															status={ status }
+														/>
 														<button
 															type="button"
 															className="jetpack-ai-editorial-review__resolution-undo"

@@ -180,7 +180,15 @@ export class DomainSearchComponent {
 	 * Clicks on the button to bring over an external domain to WordPress.com
 	 */
 	async clickBringItOver(): Promise< void > {
-		await this.page.getByRole( 'button', { name: 'Bring it over' } ).click();
+		try {
+			await this.page.getByRole( 'button', { name: 'Bring it over' } ).click();
+		} catch ( error ) {
+			// The button is rendered off the availability query, so a `domain-availability`
+			// ban leaves it absent and the click times out. Checking here rather than before
+			// the click keeps a button that did render clickable.
+			handleActiveThrottles( [ 'domain-availability' ] );
+			throw error;
+		}
 	}
 
 	/**
@@ -457,7 +465,19 @@ export class DomainSearchComponent {
 	async skipPurchase(): Promise< string > {
 		const button = this.page.getByRole( 'button', { name: 'Skip purchase' } );
 
-		await button.waitFor();
+		try {
+			await button.waitFor();
+		} catch ( error ) {
+			// The button carries the free subdomain a second `/domains/suggestions`
+			// call answered with. `search` records a ban it meets mid-search but
+			// leaves acting to whichever caller needed the list, and this is one of
+			// them: without this the ban leaves the button absent and the wait spends
+			// its timeout. Never `domain-availability`: nothing on this button comes
+			// from `is-available`, and reading that ban here would skip a test it had
+			// no part in.
+			handleActiveThrottles( [ 'domain-suggestions' ] );
+			throw error;
+		}
 
 		let domain = await button.getAttribute( 'aria-label' );
 		domain = domain?.replace( 'Skip purchase and continue with ', '' ) ?? null;

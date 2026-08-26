@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
@@ -10,6 +9,7 @@ import { UserCard, type UserCardUser } from 'calypso/components/connect-screen/u
 import DocumentHead from 'calypso/components/data/document-head';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { navigateToLandingPage } from 'calypso/lib/landing-page';
 import { navigate } from 'calypso/lib/navigate';
 import {
 	detectPartnerConfig,
@@ -218,7 +218,7 @@ export function AcceptInviteScreen( { invite }: AcceptInviteScreenProps ) {
 	const handleDecline = useCallback( () => {
 		recordTracksEvent( 'calypso_invite_accept_logged_in_decline_button_click', trackingProps );
 		dispatch( infoNotice( translate( 'You declined to join.' ), { displayOnNextPage: true } ) );
-		page( '/' );
+		dispatch( navigateToLandingPage() );
 	}, [ dispatch, trackingProps, translate ] );
 
 	const getLoginUrl = useCallback( () => {

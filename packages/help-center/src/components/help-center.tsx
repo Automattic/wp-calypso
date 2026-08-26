@@ -62,9 +62,6 @@ const HelpCenter: React.FC< Container > = ( {
 		if ( ! shouldUseUnifiedAgent ) {
 			div = document.createElement( 'div' );
 			div.classList.add( 'help-center' );
-			div.setAttribute( 'role', 'dialog' );
-			div.setAttribute( 'aria-modal', 'true' );
-			div.setAttribute( 'aria-labelledby', 'header-text' );
 			document.body.appendChild( div );
 			setContainer( div );
 		}

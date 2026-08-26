@@ -370,6 +370,7 @@ export default function convertToolMessagesToComponents( {
 							...props,
 							...( summaryText && { summary: summaryText } ),
 							...ownerProps,
+							...( toolCallId ? { toolCallId } : {} ),
 							...responseActionProps,
 							...( isStale && { isMessageStale: true } ),
 						},

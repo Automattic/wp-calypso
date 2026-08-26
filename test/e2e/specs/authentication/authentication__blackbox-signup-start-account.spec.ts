@@ -1,5 +1,5 @@
 import { DataHelper, RestAPIClient, UserSignupPage } from '@automattic/calypso-e2e';
-import { useBlackboxTestKeyForCollect } from '../../lib/blackbox-test-key';
+import { useBlackboxTestKeyForCollect, waitForCollectData } from '../../lib/blackbox-test-key';
 import { expect, tags, test } from '../../lib/pw-base';
 import { apiCloseAccount } from '../shared';
 import type { NewUserResponse } from '@automattic/calypso-e2e';
@@ -31,14 +31,6 @@ test.describe( 'Signup: Blackbox /start/account', { tag: [ tags.AUTHENTICATION ]
 		}
 	} );
 
-	const waitForCollectResponse = ( page: Page ) =>
-		page.waitForResponse(
-			( response ) =>
-				response.request().method() === 'POST' &&
-				response.url().includes( 'blackbox-api.wp.com/v1/collect' ),
-			{ timeout: 60 * 1000 }
-		);
-
 	const waitForUsersNewRequest = ( page: Page ): Promise< Request > =>
 		page.waitForRequest(
 			( request ) => request.method() === 'POST' && /\/users\/new\?/.test( request.url() ),
@@ -67,7 +59,7 @@ test.describe( 'Signup: Blackbox /start/account', { tag: [ tags.AUTHENTICATION ]
 		await test.step( 'And I sign up with my email', async function () {
 			// Blackbox is suspended until the email form becomes the active
 			// surface, so the collect only fires during the signup interaction.
-			const collectResponse = waitForCollectResponse( page );
+			const collectData = waitForCollectData( page );
 			const usersNewRequest = waitForUsersNewRequest( page );
 
 			newUserDetails = await new UserSignupPage( page ).signupSocialFirstWithEmail(
@@ -80,7 +72,7 @@ test.describe( 'Signup: Blackbox /start/account', { tag: [ tags.AUTHENTICATION ]
 				email: testUser.email,
 			} );
 
-			const collectBody = await ( await collectResponse ).json();
+			const collectBody = await collectData;
 			expect( collectBody?.data?.session_id ).toBe( 'bbtest_allow__________' );
 
 			const request = await usersNewRequest;
@@ -105,7 +97,7 @@ test.describe( 'Signup: Blackbox /start/account', { tag: [ tags.AUTHENTICATION ]
 			await useBlackboxTestKeyForCollect( page, 'challenge' );
 		} );
 
-		const collectResponse = waitForCollectResponse( page );
+		const collectData = waitForCollectData( page );
 
 		await test.step( 'When I visit the signup page and reveal the email form', async function () {
 			await new UserSignupPage( page ).visit( { path: 'account' } );
@@ -127,7 +119,7 @@ test.describe( 'Signup: Blackbox /start/account', { tag: [ tags.AUTHENTICATION ]
 				await continueWithEmailButton.click();
 			}
 
-			const collectBody = await ( await collectResponse ).json();
+			const collectBody = await collectData;
 			expect( collectBody?.data?.session_id ).toBe( 'bbtest_challenge______' );
 			expect( collectBody?.data?.challenge ).toBeTruthy();
 		} );
@@ -162,7 +154,7 @@ test.describe( 'Signup: Blackbox /start/account', { tag: [ tags.AUTHENTICATION ]
 		} );
 
 		await test.step( 'And I sign up with my email', async function () {
-			const collectResponse = waitForCollectResponse( page );
+			const collectData = waitForCollectData( page );
 			const usersNewRequest = waitForUsersNewRequest( page );
 
 			newUserDetails = await new UserSignupPage( page ).signupSocialFirstWithEmail(
@@ -174,7 +166,7 @@ test.describe( 'Signup: Blackbox /start/account', { tag: [ tags.AUTHENTICATION ]
 				email: testUser.email,
 			} );
 
-			const collectBody = await ( await collectResponse ).json();
+			const collectBody = await collectData;
 			expect( collectBody?.data?.session_id ).toBe( 'bbtest_block__________' );
 
 			const request = await usersNewRequest;

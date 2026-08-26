@@ -42,6 +42,18 @@ describe( 'getPlansIntent', () => {
 		} );
 	} );
 
+	describe( 'onboarding flow wow_funnel param', () => {
+		it( 'hides the free plan for any wow_funnel value', () => {
+			window.history.replaceState( {}, '', '/?wow_funnel=blueprint' );
+			expect( getPlansIntent( ONBOARDING_FLOW ) ).toBe( 'plans-ai-assembler-paid-only' );
+		} );
+
+		it( 'keeps playground precedence over wow_funnel', () => {
+			window.history.replaceState( {}, '', '/?wow_funnel=blueprint&playground=abc' );
+			expect( getPlansIntent( ONBOARDING_FLOW ) ).toBe( 'plans-playground' );
+		} );
+	} );
+
 	describe( 'plan-upgrade flow (dashboard "Change plan" downgrade entry point)', () => {
 		it( 'maps to the upgrade-or-downgrade intent when allow_downgrade=true', () => {
 			window.history.replaceState( {}, '', '/?allow_downgrade=true' );

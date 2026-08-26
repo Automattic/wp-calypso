@@ -171,11 +171,8 @@ function formatSuggestionIds( suggestions: Suggestion[] ): string {
  */
 function getSelectedOptionId(
 	selectedSuggestion: Suggestion,
-	availableSuggestions: Suggestion[]
+	originalSuggestion: Suggestion | undefined
 ): string | undefined {
-	const originalSuggestion = availableSuggestions.find(
-		( suggestion ) => suggestion.id === selectedSuggestion.id
-	);
 	return originalSuggestion?.options?.find(
 		( option ) => option.value === selectedSuggestion.prompt
 	)?.id;
@@ -566,7 +563,7 @@ export default function OrchestratorChat( {
 		blockCurrentRequest();
 		abortCurrentRequest();
 
-		recordAgentsManagerTracksEvent( 'editor_canvas_move_request_aborted', {
+		recordAgentsManagerTracksEvent( 'calypso_agents_manager_editor_canvas_move_request_aborted', {
 			agent_id: agentConfig?.agentId,
 		} );
 
@@ -1217,7 +1214,7 @@ export default function OrchestratorChat( {
 			setHasUserSentMessage( true );
 			setUploadError( null );
 
-			recordBigSkyTracksEvent( 'chat_input_send_message', {
+			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message', {
 				message_length: message?.length || 0,
 				has_images: pendingImages.length > 0,
 			} );
@@ -1240,7 +1237,7 @@ export default function OrchestratorChat( {
 
 					const mediaObjects = await uploadImagesToWordPress();
 
-					recordBigSkyTracksEvent( 'file_upload_success', {
+					recordBigSkyTracksEvent( 'jetpack_big_sky_file_upload_success', {
 						count: mediaObjects.length,
 					} );
 
@@ -1263,13 +1260,13 @@ export default function OrchestratorChat( {
 					// composer-typed message stays in the input — the composer is
 					// back to its pre-send state.
 					if ( caughtError instanceof Error && caughtError.name === 'AbortError' ) {
-						recordBigSkyTracksEvent( 'file_upload_cancel', {
+						recordBigSkyTracksEvent( 'jetpack_big_sky_file_upload_cancel', {
 							count: pendingImages.length,
 						} );
 						return;
 					}
 
-					recordBigSkyTracksEvent( 'file_upload_error', {
+					recordBigSkyTracksEvent( 'jetpack_big_sky_file_upload_error', {
 						count: pendingImages.length,
 					} );
 					setUploadError(
@@ -1424,6 +1421,8 @@ export default function OrchestratorChat( {
 		};
 	}, [] );
 
+	const renderedSuggestionsRef = useRef< Suggestion[] >( [] );
+
 	const handleSuggestionClick = useCallback(
 		( suggestion: Suggestion | string, availableSuggestions?: Suggestion[] ) => {
 			const value =
@@ -1431,9 +1430,18 @@ export default function OrchestratorChat( {
 
 			const autoSubmit = typeof suggestion !== 'string' && !! suggestion.autoSubmit;
 			const suggestionId = typeof suggestion !== 'string' ? suggestion.id : undefined;
+			// A click routed through Agenttic's own container reports the footer list,
+			// which is empty while the chips live in the empty view.
+			const knownSuggestions = availableSuggestions?.length
+				? availableSuggestions
+				: renderedSuggestionsRef.current;
+			const originalSuggestion =
+				typeof suggestion !== 'string'
+					? knownSuggestions.find( ( available ) => available.id === suggestion.id )
+					: undefined;
 			const optionId =
 				typeof suggestion !== 'string'
-					? getSelectedOptionId( suggestion, availableSuggestions ?? [] )
+					? getSelectedOptionId( suggestion, originalSuggestion )
 					: undefined;
 			const blockType =
 				typeof suggestion !== 'string' && contextualSuggestionIds.has( suggestion.id )
@@ -1441,10 +1449,10 @@ export default function OrchestratorChat( {
 					: undefined;
 
 			if ( typeof suggestion !== 'string' ) {
-				recordBigSkyTracksEvent( 'chat_suggestion_click', {
+				recordBigSkyTracksEvent( 'jetpack_big_sky_chat_suggestion_click', {
 					suggestion_text: suggestion.prompt || '',
 					suggestion_id: suggestion.id || '',
-					available_suggestions: formatSuggestionIds( availableSuggestions ?? [] ),
+					available_suggestions: formatSuggestionIds( knownSuggestions ),
 					...( optionId ? { option_id: optionId } : {} ),
 					...( blockType ? { block_type: blockType } : {} ),
 				} );
@@ -1738,6 +1746,7 @@ export default function OrchestratorChat( {
 	} else if ( suggestions.length > 0 ) {
 		displayedEmptyViewSuggestions = suggestions;
 	}
+	renderedSuggestionsRef.current = displayedEmptyViewSuggestions;
 
 	// Track when a set of suggestions is rendered — the dynamic block-context
 	// suggestions or, on an empty chat, the empty-view starter chips. Mirrors
@@ -1771,7 +1780,7 @@ export default function OrchestratorChat( {
 		) {
 			return;
 		}
-		recordBigSkyTracksEvent( 'chat_suggestions_rendered', {
+		recordBigSkyTracksEvent( 'jetpack_big_sky_chat_suggestions_rendered', {
 			suggestions: formatSuggestionIds( displayedEmptyViewSuggestions ),
 			...( renderedSuggestionsBlockType ? { block_type: renderedSuggestionsBlockType } : {} ),
 		} );

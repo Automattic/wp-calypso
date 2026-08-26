@@ -26,11 +26,6 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
 		param("env.LOCALE", "en")
 		throttleActionParams()
-		// No AUTHENTICATE_ACCOUNTS here on purpose: it names the accounts the prime-logins
-		// setup project logs in as beyond the one the environment resolves to, and that is per
-		// test group, not per template. A build type running a group should set it; leaving it
-		// unset primes every account any group uses, which is safe but slower. See
-		// test/e2e/setup/prime-logins.setup.ts.
 		// required in the CTRF report
 		param("env.BRANCH_NAME", "%teamcity.build.branch%")
 		param("PROJECT", "desktop")
@@ -171,9 +166,8 @@ object CalypsoE2ETestsBuildTemplate : Template({
 			id = "set_extra_env_vars"
 			scriptContent = """
 				# Parse EXTRA_ENV_VARS param (KEY=value pairs) and set as TeamCity env params.
-				# Pairs are separated by semicolons so that a value can hold a comma, as
-				# AUTHENTICATE_ACCOUNTS does; a value with no semicolon keeps the older
-				# comma-separated form, so a saved custom run still parses.
+				# Pairs are separated by semicolons. A value with no semicolon keeps the
+				# older comma-separated form, so a saved custom run still parses.
 				if [[ -n "%EXTRA_ENV_VARS%" ]]; then
 					SEPARATOR=','
 					[[ "%EXTRA_ENV_VARS%" == *";"* ]] && SEPARATOR=';'
@@ -204,16 +198,6 @@ object CalypsoE2ETestsBuildTemplate : Template({
 					GREP_FLAG=""
 				fi
 				echo "Playwright grep flag: ${'$'}{GREP_FLAG:-(none, running all tests)}"
-
-				# AUTHENTICATE_ACCOUNTS names the accounts this build's group logs in as, so it
-				# is wrong for a build type whose group was adapted away to run everything: hand
-				# priming back its own default list instead. Only that adaptation clears the
-				# flag; a build type selecting its specs through PROJECT leaves TEST_GROUP empty
-				# on purpose and keeps its list.
-				if [[ "%IGNORE_TEST_GROUP_FOR_E2E_CHANGES%" == "true" && -z "${'$'}GREP_FLAG" ]]; then
-					echo "No test group: priming the default accounts instead of AUTHENTICATE_ACCOUNTS"
-					unset AUTHENTICATE_ACCOUNTS
-				fi
 
 				cd test/e2e
 				# Clear any stale teardown-leak markers from a reused checkout before this run.
