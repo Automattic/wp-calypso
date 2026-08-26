@@ -23,12 +23,6 @@
 	}
 }
 
-.search-stream__intro {
-	@include breakpoint-deprecated( "<660px" ) {
-		margin-left: 16px;
-	}
-}
-
 .search-stream .search {
 	margin-bottom: 0;
 	border-radius: 6px; /* stylelint-disable-line scales/radii */
@@ -83,16 +77,6 @@
 
 	.search__input-fade::before {
 		border-radius: 4px;
-	}
-}
-
-.search-stream__fixed-area .section-nav-tabs.is-dropdown {
-	margin: 0;
-}
-
-.search-stream__fixed-area .formatted-header.is-left-align.has-screen-options {
-	@media only screen and (max-width: 660px) {
-		display: none;
 	}
 }
 
@@ -251,11 +235,4 @@ div.is-section-reader:not(.is-logged-in) {
 
 .is-reader-page .search-stream .reader-post-card.card {
 	flex-basis: 100%; // Override the 50% flex-basis for post recommendations
-}
-
-
-.card.reader-search-card.is-photo {
-	@include breakpoint-deprecated( "<660px" ) {
-		z-index: z-index("root", ".reader-search-card");
-	}
 }
