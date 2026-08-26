@@ -387,18 +387,6 @@ export const earnWooPaymentsRoute = createRoute( {
 	)
 );
 
-/**
- * Whether the setup screen may run for `siteId`.
- *
- * The commissions table is the union of the agency's WooPayments licenses and its sites
- * with the plugin, so the setup route has to accept that same population — a license-only
- * site is not in the managed-sites list. That list stays as the fallback for the
- * add-a-site path, where the site has neither a license nor the plugin yet.
- *
- * Both list queries are agency-scoped, so checking them first also keeps arbitrary ids
- * away from the public `/sites/{id}` endpoint, which proves nothing about who manages
- * the site.
- */
 async function isAgencyWooPaymentsSite( siteId: number ): Promise< boolean > {
 	const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
 	if ( ! agency?.id ) {
