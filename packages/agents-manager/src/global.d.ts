@@ -114,9 +114,12 @@ interface AgentsManagerActions {
 	getSessionId: () => string;
 	/**
 	 * Records a Tracks event in the `jetpack_big_sky_` family with its base
-	 * props. `eventName` is the suffix after that prefix.
+	 * props. `eventName` includes the family prefix.
 	 */
-	recordBigSkyTracksEvent?: ( eventName: string, props?: Record< string, unknown > ) => void;
+	recordBigSkyTracksEvent?: (
+		eventName: import('./utils/tracks').BigSkyEventName,
+		props?: Record< string, unknown >
+	) => void;
 	setChatOpen: ( isOpen: boolean ) => void;
 	setChatDocked: ( isDocked: boolean ) => void;
 	setChatEnabled: ( isEnabled: boolean ) => void;
