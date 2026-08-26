@@ -1,9 +1,11 @@
 import { siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { Modal } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
@@ -26,9 +28,38 @@ import { isPendingPrimaryDomain } from '../../utils/domain';
 import { SitesNoticeArbiter } from '../notice-arbiter';
 import PrimaryDomainSelectorNotice from './primary-domain-selector-notice';
 import type { DomainSummary } from '@automattic/api-core';
+import type { ActionModal } from '@wordpress/dataviews';
 
 function getDomainId( domain: DomainSummary ) {
 	return `${ domain.domain }-${ domain.blog_id }`;
+}
+
+/**
+ * Renders an action's modal outside the row menu, matching the chrome DataViews
+ * would have given it, so a deep link opens the same thing a click does.
+ */
+function DeepLinkedActionModal( {
+	action,
+	item,
+	onClose,
+}: {
+	action: ActionModal< DomainSummary >;
+	item: DomainSummary;
+	onClose: () => void;
+} ) {
+	const label = typeof action.label === 'function' ? action.label( [ item ] ) : action.label;
+	const modalHeader =
+		typeof action.modalHeader === 'function' ? action.modalHeader( [ item ] ) : action.modalHeader;
+
+	return (
+		<Modal
+			title={ modalHeader || label }
+			size={ action.modalSize ?? 'medium' }
+			onRequestClose={ onClose }
+		>
+			<action.RenderModal items={ [ item ] } closeModal={ onClose } />
+		</Modal>
+	);
 }
 
 function SiteDomains() {
@@ -58,6 +89,33 @@ function SiteDomains() {
 	const actions = useActions( { user, sites: [ site ] } );
 
 	const searchParams = siteDomainsRoute.useSearch();
+	const navigate = useNavigate();
+
+	// The action is read once, so the modal survives the param being cleared below.
+	const [ deepLinkedActionId ] = useState( () => searchParams.action );
+	const matchedAction = actions.find( ( action ) => action.id === deepLinkedActionId );
+	const deepLinkedAction =
+		matchedAction && 'RenderModal' in matchedAction ? matchedAction : undefined;
+	const deepLinkedDomain = siteDomains.find(
+		( domain ) => deepLinkedAction?.isEligible?.( domain )
+	);
+	const [ isDeepLinkedActionOpen, setIsDeepLinkedActionOpen ] = useState(
+		() => !! searchParams.action
+	);
+
+	useEffect( () => {
+		if ( ! searchParams.action ) {
+			return;
+		}
+
+		// Drop the param so a reload or a shared URL doesn't reopen the modal.
+		navigate( {
+			to: siteDomainsRoute.fullPath,
+			params: { siteSlug },
+			search: ( previous: Record< string, unknown > ) => ( { ...previous, action: undefined } ),
+			replace: true,
+		} );
+	}, [ searchParams.action, navigate, siteSlug ] );
 
 	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'site-domains',
@@ -126,6 +184,13 @@ function SiteDomains() {
 					defaultLayouts={ DEFAULT_LAYOUTS }
 				/>
 			</DataViewsCard>
+			{ isDeepLinkedActionOpen && deepLinkedAction && deepLinkedDomain && (
+				<DeepLinkedActionModal
+					action={ deepLinkedAction }
+					item={ deepLinkedDomain }
+					onClose={ () => setIsDeepLinkedActionOpen( false ) }
+				/>
+			) }
 			<PerformanceTrackerStop />
 		</PageLayout>
 	);

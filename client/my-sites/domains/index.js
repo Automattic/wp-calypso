@@ -272,7 +272,13 @@ export default function () {
 		domainManagementController.domainManagementEdit,
 		[
 			setupPreferences,
-			maybeRedirectToMultiSiteDashboard( ( params ) => `/domains/${ params.domain }` ),
+			maybeRedirectToMultiSiteDashboard( ( params ) =>
+				// A site's free address is its slug, and the dashboard has no domain
+				// overview for it — managing it means changing the site address.
+				params.domain === params.site
+					? `/sites/${ params.site }/domains?action=change-site-address`
+					: `/domains/${ params.domain }`
+			),
 		]
 	);
 
