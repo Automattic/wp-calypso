@@ -3,11 +3,16 @@ import { translate, TranslateResult } from 'i18n-calypso';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import { LATEST_TAB, RECOMMENDED_TAB, SEARCH_TAB } from 'calypso/reader/discover/helper';
+import {
+	FRESHLY_PRESSED_TAB,
+	LATEST_TAB,
+	RECOMMENDED_TAB,
+	SEARCH_TAB,
+	TAGS_TAB,
+} from 'calypso/reader/discover/helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { FRESHLY_PRESSED_TAB } from '../../helper';
 import './style.scss';
 
 interface Tab {
@@ -51,7 +56,7 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 			path: '/discover/freshly-pressed',
 		},
 		{
-			slug: 'tags',
+			slug: TAGS_TAB,
 			title: translate( 'Tags' ),
 			path: '/discover/tags?selectedTag=dailyprompt',
 		},
