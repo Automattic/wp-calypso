@@ -362,7 +362,12 @@ function buildSuccessRedirect( {
 	purchaseId: number | undefined;
 } ): RedirectInstructions {
 	const fallbackUrl = getDefaultSuccessUrl( siteSlug, effectiveReceiptId );
-	let interpolated = interpolateReceiptId( redirectTo ?? fallbackUrl, effectiveReceiptId );
+	// A bare '/' is not a useful post-checkout destination, so use the thank-you page.
+	const isBareRoot = /^\/(?:[?#].*)?$/.test( redirectTo ?? '' );
+	let interpolated = interpolateReceiptId(
+		! redirectTo || isBareRoot ? fallbackUrl : redirectTo,
+		effectiveReceiptId
+	);
 	if ( interpolated.includes( ':purchaseId' ) ) {
 		if ( purchaseId === undefined ) {
 			return { url: fallbackUrl };

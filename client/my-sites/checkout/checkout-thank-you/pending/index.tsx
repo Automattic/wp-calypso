@@ -314,14 +314,6 @@ function useRedirectOnTransactionSuccess( {
 			if ( blogId && redirectTo?.includes( ':siteId' ) ) {
 				return redirectTo.replaceAll( ':siteId', String( blogId ) );
 			}
-			// A bare relative '/' that could not be resolved above is not a useful
-			// post-checkout destination; fall back to the default thank-you URL,
-			// keeping any query params.
-			if ( pathname === '/' && redirectTo?.startsWith( '/' ) && ! redirectTo.startsWith( '//' ) ) {
-				return finalReceiptId
-					? `/checkout/thank-you/${ siteSlug ?? 'no-site' }/${ finalReceiptId }${ search }`
-					: undefined;
-			}
 			return redirectTo;
 		} )();
 
