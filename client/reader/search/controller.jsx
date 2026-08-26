@@ -6,7 +6,6 @@ import {
 	trackUpdatesLoaded,
 	trackScrollPage,
 } from 'calypso/reader/controller-helper';
-import { SEARCH_TYPES } from 'calypso/reader/search-stream/search-stream-header';
 import { recordTrack } from 'calypso/reader/stats';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import renderHeaderSection from '../lib/header-section';
@@ -34,7 +33,7 @@ const exported = {
 		const mcKey = 'search';
 		const state = context.store.getState();
 
-		const { sort = 'relevance', q, show = SEARCH_TYPES.POSTS } = context.query;
+		const { sort = 'relevance', q } = context.query;
 		const searchSlug = q;
 
 		let streamKey = 'custom_recs_sites_with_images';
@@ -91,7 +90,6 @@ const exported = {
 							autoFocusInput={ autoFocusInput }
 							onQueryChange={ reportQueryChange }
 							onSortChange={ reportSortChange }
-							searchType={ show }
 							trendingTags={ context.params.trendingTags }
 							placeholder={ null }
 						/>
