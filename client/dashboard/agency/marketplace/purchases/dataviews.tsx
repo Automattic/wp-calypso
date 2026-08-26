@@ -3,9 +3,16 @@ import { __experimentalHStack as HStack, ExternalLink } from '@wordpress/compone
 import { __ } from '@wordpress/i18n';
 import { globe } from '@wordpress/icons';
 import { formatDate } from '../../../utils/datetime';
+import AssignLicenseModal from './assign-modal';
 import { PurchasesStatusBadge } from './status-badge';
-import type { AgencyLicense, LicenseStatus } from './mock-data';
+import type { AgencyLicense, AgencySite, LicenseStatus } from './mock-data';
 import type { Action, Field, SortDirection, View } from '@wordpress/dataviews';
+
+export type PurchasesActionHandlers = {
+	onNotice: ( message: string ) => void;
+	onAssign: ( licenseId: number, site: AgencySite ) => void;
+	sites: AgencySite[];
+};
 
 export const STATUS_LABELS: Record< LicenseStatus, string > = {
 	assigned: __( 'Assigned' ),
@@ -142,7 +149,11 @@ export function getFields( { locale }: { locale: string } ): Field< AgencyLicens
 
 export const getItemId = ( license: AgencyLicense ) => String( license.licenseId );
 
-export function getActions( onNotice: ( message: string ) => void ): Action< AgencyLicense >[] {
+export function getActions( {
+	onNotice,
+	onAssign,
+	sites,
+}: PurchasesActionHandlers ): Action< AgencyLicense >[] {
 	return [
 		{
 			id: 'assign',
@@ -150,12 +161,17 @@ export function getActions( onNotice: ( message: string ) => void ): Action< Age
 			isPrimary: true,
 			icon: globe,
 			isEligible: ( item ) => item.status === 'unassigned',
-			callback: ( items ) => {
-				onNotice(
-					/* translators: %s: product name */
-					__( 'Assigning is not available in this prototype.' ) + ` (${ items[ 0 ].product })`
-				);
-			},
+			RenderModal: ( { items, closeModal } ) => (
+				<AssignLicenseModal
+					license={ items[ 0 ] }
+					sites={ sites }
+					onAssign={ ( site ) => {
+						onAssign( items[ 0 ].licenseId, site );
+						closeModal?.();
+					} }
+					onCancel={ () => closeModal?.() }
+				/>
+			),
 		},
 		{
 			id: 'copy-key',

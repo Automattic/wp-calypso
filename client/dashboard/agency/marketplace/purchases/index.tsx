@@ -2,16 +2,17 @@ import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { usePersistentView } from '../../../app/hooks/use-persistent-view';
 import { useLocale } from '../../../app/locale';
 import { DataViews, DataViewsCard } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { DEFAULT_VIEW, getActions, getFields, getItemId } from './dataviews';
-import { fetchAgencyLicenses } from './mock-data';
+import { fetchAgencyLicenses, mockSites } from './mock-data';
+import type { AgencyLicense, AgencySite } from './mock-data';
 
 import './style.scss';
 
@@ -24,7 +25,18 @@ export default function MarketplacePurchases() {
 	const locale = useLocale();
 	const { createSuccessNotice } = useDispatch( noticesStore );
 
-	const { data: licenses = [], isLoading } = useQuery( agencyLicensesQuery() );
+	const { data: fetchedLicenses = [], isLoading } = useQuery( agencyLicensesQuery() );
+
+	// Prototype-only: overlay assignment changes on the fetched data so the
+	// assign flow is demoable without a real mutation.
+	const [ overrides, setOverrides ] = useState< Record< number, Partial< AgencyLicense > > >( {} );
+	const licenses = useMemo(
+		() =>
+			fetchedLicenses.map( ( license ) =>
+				overrides[ license.licenseId ] ? { ...license, ...overrides[ license.licenseId ] } : license
+			),
+		[ fetchedLicenses, overrides ]
+	);
 
 	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'marketplace-purchases',
@@ -34,7 +46,30 @@ export default function MarketplacePurchases() {
 	const fields = useMemo( () => getFields( { locale } ), [ locale ] );
 
 	const actions = useMemo(
-		() => getActions( ( message ) => createSuccessNotice( message, { type: 'snackbar' } ) ),
+		() =>
+			getActions( {
+				onNotice: ( message ) => createSuccessNotice( message, { type: 'snackbar' } ),
+				sites: mockSites,
+				onAssign: ( licenseId: number, site: AgencySite ) => {
+					setOverrides( ( current ) => ( {
+						...current,
+						[ licenseId ]: {
+							status: 'assigned',
+							siteUrl: site.url,
+							blogId: site.blogId,
+							attachedAt: new Date().toISOString(),
+						},
+					} ) );
+					createSuccessNotice(
+						sprintf(
+							/* translators: %s: site URL */
+							__( 'License assigned to %s.' ),
+							site.url
+						),
+						{ type: 'snackbar' }
+					);
+				},
+			} ),
 		[ createSuccessNotice ]
 	);
 
