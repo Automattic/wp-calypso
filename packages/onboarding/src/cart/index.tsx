@@ -33,6 +33,7 @@ interface GetNewSiteParams {
 	sourceSlug?: string;
 	siteIntent?: string;
 	provisionTarget?: string | null;
+	wowFunnel?: string;
 }
 
 type NewSiteParams = {
@@ -55,6 +56,7 @@ type NewSiteParams = {
 		site_accent_color?: string;
 		site_intent?: string;
 		early_provision_target?: string;
+		wow_funnel?: string;
 	};
 	validate: boolean;
 };
@@ -108,6 +110,7 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 		siteIntent,
 		partnerBundle,
 		provisionTarget,
+		wowFunnel,
 	} = params;
 
 	// We will use the default annotation instead of theme annotation as fallback,
@@ -133,6 +136,9 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 			...( siteIntent && { site_intent: siteIntent } ),
 			...( partnerBundle && { site_partner_bundle: partnerBundle } ),
 			...( provisionTarget && { early_provision_target: provisionTarget } ),
+			// WoW funnel: build the site's Atomic host before checkout. The slug names a
+			// registered funnel server-side (see wp-content/lib/atomic/funnels.php).
+			...( wowFunnel && { wow_funnel: wowFunnel } ),
 		},
 		validate: false,
 	};
@@ -159,7 +165,8 @@ export const createSite = async (
 	specId?: string | null,
 	ref?: string,
 	provisionTarget?: string | null,
-	aiLaunchpadEnabled?: boolean
+	aiLaunchpadEnabled?: boolean,
+	wowFunnel?: string
 ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
 
@@ -176,6 +183,7 @@ export const createSite = async (
 		siteIntent,
 		partnerBundle,
 		provisionTarget,
+		wowFunnel,
 	} );
 
 	// if ( isEmpty( bearerToken ) && 'onboarding-registrationless' === flowToCheck ) {

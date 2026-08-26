@@ -2,7 +2,7 @@ import {
 	AGENTS_MANAGER_STORE,
 	closeAgentsManagerChat,
 	openAgentsManagerChat,
-	recordFullNameAgentsManagerTracksEvent,
+	recordAgentsManagerTracksEvent,
 } from '@automattic/agents-manager';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -26,7 +26,8 @@ const MasterbarAiChatButton = () => {
 	// Toggle: close the chat if it's already showing, otherwise resume the active
 	// conversation and open it.
 	const handleClick = () => {
-		recordFullNameAgentsManagerTracksEvent( 'calypso_masterbar_agents_manager_ai_chat_clicked', {
+		recordAgentsManagerTracksEvent( 'calypso_agents_manager_ai_chat_clicked', {
+			surface: 'masterbar',
 			section: sectionName || 'unknown',
 			action: isChatVisible ? 'close' : 'open',
 		} );

@@ -117,6 +117,8 @@ interface AiEditorialReviewProps {
 	postId?: EditorPostId;
 	/** Whether the containing chat message is no longer interactive. */
 	isMessageStale?: boolean;
+	/** Tool call that produced this response. Used for tracking. */
+	toolCallId?: string;
 	/** Reports completed user actions to the host that rendered this response. */
 	onResponseAction?: OnResponseAction;
 	/**
@@ -279,6 +281,7 @@ export default function AiEditorialReview( {
 	guideline_violations: guidelineViolationsProp,
 	postId,
 	isMessageStale = false,
+	toolCallId,
 	onResponseAction,
 	reviewers_metadata,
 	cached_at,
@@ -822,6 +825,7 @@ export default function AiEditorialReview( {
 		>
 			<SplitScreenGuide
 				componentType="ai-editorial-review"
+				toolCallId={ toolCallId }
 				isStale={ isMessageStale || isPostStale }
 			/>
 			{ isPostStale && (

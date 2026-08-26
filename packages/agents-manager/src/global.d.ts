@@ -112,6 +112,11 @@ interface AgentsManagerExternalContextCard {
 interface AgentsManagerActions {
 	getChatState: () => Promise< AgentsManagerChatState >;
 	getSessionId: () => string;
+	/**
+	 * Records a Tracks event in the `jetpack_big_sky_` family with its base
+	 * props. `eventName` is the suffix after that prefix.
+	 */
+	recordBigSkyTracksEvent?: ( eventName: string, props?: Record< string, unknown > ) => void;
 	setChatOpen: ( isOpen: boolean ) => void;
 	setChatDocked: ( isDocked: boolean ) => void;
 	setChatEnabled: ( isEnabled: boolean ) => void;

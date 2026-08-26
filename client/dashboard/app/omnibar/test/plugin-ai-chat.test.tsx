@@ -5,7 +5,7 @@ import {
 	closeAgentsManagerChat,
 	isAgentsManagerChatVisible,
 	openAgentsManagerChat,
-	recordFullNameAgentsManagerTracksEvent,
+	recordAgentsManagerTracksEvent,
 	useShouldUseUnifiedAgent,
 } from '@automattic/agents-manager';
 import { renderHook } from '@testing-library/react';
@@ -15,7 +15,7 @@ jest.mock( '@automattic/agents-manager', () => ( {
 	closeAgentsManagerChat: jest.fn(),
 	isAgentsManagerChatVisible: jest.fn( () => false ),
 	openAgentsManagerChat: jest.fn(),
-	recordFullNameAgentsManagerTracksEvent: jest.fn(),
+	recordAgentsManagerTracksEvent: jest.fn(),
 	useShouldUseUnifiedAgent: jest.fn( () => true ),
 } ) );
 
@@ -45,9 +45,9 @@ describe( 'useAiChatPlugin', () => {
 		const { result } = renderHook( () => useAiChatPlugin( { sectionName: 'sites' } ) );
 		result.current?.onClick?.( {} as React.MouseEvent );
 
-		expect( recordFullNameAgentsManagerTracksEvent ).toHaveBeenCalledWith(
-			'calypso_masterbar_agents_manager_ai_chat_clicked',
-			{ section: 'sites', action: 'open' }
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_ai_chat_clicked',
+			{ surface: 'masterbar', section: 'sites', action: 'open' }
 		);
 		expect( openAgentsManagerChat ).toHaveBeenCalled();
 		expect( closeAgentsManagerChat ).not.toHaveBeenCalled();
@@ -59,9 +59,9 @@ describe( 'useAiChatPlugin', () => {
 		const { result } = renderHook( () => useAiChatPlugin( {} ) );
 		result.current?.onClick?.( {} as React.MouseEvent );
 
-		expect( recordFullNameAgentsManagerTracksEvent ).toHaveBeenCalledWith(
-			'calypso_masterbar_agents_manager_ai_chat_clicked',
-			{ section: 'unknown', action: 'close' }
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_ai_chat_clicked',
+			{ surface: 'masterbar', section: 'unknown', action: 'close' }
 		);
 		expect( closeAgentsManagerChat ).toHaveBeenCalled();
 		expect( openAgentsManagerChat ).not.toHaveBeenCalled();

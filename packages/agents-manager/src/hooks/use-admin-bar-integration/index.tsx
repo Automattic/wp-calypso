@@ -4,7 +4,7 @@ import { useEffect, useRef } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { AGENTS_MANAGER_STORE } from '../../stores';
-import { recordFullNameAgentsManagerTracksEvent } from '../../utils/tracks';
+import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import useHasAiChatEntryButton, {
 	ADMIN_BAR_AI_CHAT_BUTTON_ID,
 } from '../use-has-ai-chat-entry-button';
@@ -139,7 +139,8 @@ export default function useAdminBarIntegration( {
 		}
 
 		const handleClick = () => {
-			recordFullNameAgentsManagerTracksEvent( 'calypso_admin_bar_agents_manager_ai_chat_clicked', {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_ai_chat_clicked', {
+				surface: 'admin_bar',
 				section: sectionName || 'wp-admin',
 				action: isChatVisibleRef.current ? 'close' : 'open',
 			} );

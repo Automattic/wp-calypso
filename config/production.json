@@ -140,7 +140,7 @@
 		"push-notifications": true,
 		"resurrected-users/90-day-eligibility": true,
 		"reader/social": true,
-		"reader/shelves": false,
+		"reader/shelves": true,
 		"reader/full-errors": false,
 		"reader/msd-enabled": true,
 		"reader/onboarding-rsm": true,
@@ -182,6 +182,7 @@
 		"use-translation-chunks": true,
 		"wordpress-agent-slack": false,
 		"wordpress-ai-tools": true,
+		"wordpress-labs": false,
 		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "a4f69f6759",

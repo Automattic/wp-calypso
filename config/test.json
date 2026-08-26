@@ -124,6 +124,7 @@
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"wordpress-agent-slack": true,
+		"wordpress-labs": false,
 		"wpcom-user-bootstrap": false
 	}
 }

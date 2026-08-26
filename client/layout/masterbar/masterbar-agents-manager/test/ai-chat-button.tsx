@@ -4,7 +4,7 @@
 import {
 	closeAgentsManagerChat,
 	openAgentsManagerChat,
-	recordFullNameAgentsManagerTracksEvent,
+	recordAgentsManagerTracksEvent,
 } from '@automattic/agents-manager';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -21,7 +21,7 @@ jest.mock( '@automattic/agents-manager', () => ( {
 	AGENTS_MANAGER_STORE: 'automattic/agents-manager-test',
 	closeAgentsManagerChat: jest.fn(),
 	openAgentsManagerChat: jest.fn(),
-	recordFullNameAgentsManagerTracksEvent: jest.fn(),
+	recordAgentsManagerTracksEvent: jest.fn(),
 } ) );
 
 const testStore = createReduxStore( TEST_STORE, {
@@ -75,9 +75,9 @@ describe( 'MasterbarAiChatButton', () => {
 
 		expect( closeAgentsManagerChat ).toHaveBeenCalled();
 		expect( openAgentsManagerChat ).not.toHaveBeenCalled();
-		expect( recordFullNameAgentsManagerTracksEvent ).toHaveBeenCalledWith(
-			'calypso_masterbar_agents_manager_ai_chat_clicked',
-			{ section: 'test-section', action: 'close' }
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_ai_chat_clicked',
+			{ surface: 'masterbar', section: 'test-section', action: 'close' }
 		);
 	} );
 
@@ -89,9 +89,9 @@ describe( 'MasterbarAiChatButton', () => {
 
 		expect( openAgentsManagerChat ).toHaveBeenCalled();
 		expect( closeAgentsManagerChat ).not.toHaveBeenCalled();
-		expect( recordFullNameAgentsManagerTracksEvent ).toHaveBeenCalledWith(
-			'calypso_masterbar_agents_manager_ai_chat_clicked',
-			{ section: 'test-section', action: 'open' }
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_ai_chat_clicked',
+			{ surface: 'masterbar', section: 'test-section', action: 'open' }
 		);
 	} );
 
@@ -103,9 +103,9 @@ describe( 'MasterbarAiChatButton', () => {
 		} );
 		await userEvent.click( screen.getByRole( 'button' ) );
 
-		expect( recordFullNameAgentsManagerTracksEvent ).toHaveBeenCalledWith(
-			'calypso_masterbar_agents_manager_ai_chat_clicked',
-			{ section: 'unknown', action: 'open' }
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_ai_chat_clicked',
+			{ surface: 'masterbar', section: 'unknown', action: 'open' }
 		);
 	} );
 } );

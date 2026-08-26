@@ -42,7 +42,7 @@ export function useOpenChatUrlParam(): boolean {
 			const isReaderChat = isReaderChatHost();
 
 			if ( ! isReaderChat ) {
-				recordBigSkyTracksEvent( 'ai_editor_menu_opened' );
+				recordBigSkyTracksEvent( 'jetpack_big_sky_ai_editor_menu_opened' );
 			}
 
 			if ( ! isOpen ) {

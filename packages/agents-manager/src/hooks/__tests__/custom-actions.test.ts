@@ -3,7 +3,16 @@
  */
 import { renderHook } from '@testing-library/react';
 import { clearSiteEditorActions, getSiteEditorActions } from '../../utils/site-editor-context';
+import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import { useRegisterCustomActions, useSetupCustomActions } from '../custom-actions';
+
+jest.mock( '../../utils/tracks', () => ( {
+	recordBigSkyTracksEvent: jest.fn(),
+} ) );
+
+const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as jest.MockedFunction<
+	typeof recordBigSkyTracksEvent
+>;
 
 const mockSetIsOpen = jest.fn();
 const mockSetIsDocked = jest.fn();
@@ -114,8 +123,27 @@ describe( 'useSetupCustomActions', () => {
 
 		expect( snapshot?.setChatOpen ).toBeInstanceOf( Function );
 		expect( snapshot?.setChatDocked ).toBeInstanceOf( Function );
+		expect( snapshot?.recordBigSkyTracksEvent ).toBeInstanceOf( Function );
 		expect( snapshot?.resumeChat ).toBe( mockContext.resumeChat );
 		expect( snapshot?.isReady ).toBe( true );
+	} );
+
+	it( 'relays bridge Tracks calls and drops malformed event names', () => {
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		window.__agentsManagerActions?.recordBigSkyTracksEvent?.( 'split_screen_guide_click', {
+			component_type: 'proofread',
+		} );
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'split_screen_guide_click', {
+			component_type: 'proofread',
+		} );
+
+		mockRecordBigSkyTracksEvent.mockClear();
+		window.__agentsManagerActions?.recordBigSkyTracksEvent?.( '' );
+		( window.__agentsManagerActions?.recordBigSkyTracksEvent as unknown as ( n: unknown ) => void )(
+			123
+		);
+		expect( mockRecordBigSkyTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	it( 'opens Reader Chat without persisting shared Agents Manager state', () => {

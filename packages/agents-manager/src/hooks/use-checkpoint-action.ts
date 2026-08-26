@@ -252,7 +252,7 @@ export default function useCheckpointAction(
 					);
 				}
 				if ( didAttemptAction ) {
-					recordBigSkyTracksEvent( 'restore_checkpoint_action', {
+					recordBigSkyTracksEvent( 'jetpack_big_sky_restore_checkpoint_action', {
 						action: revert ? 'undo' : 'redo',
 						id: checkpointInfo.checkpointId,
 						outcome,

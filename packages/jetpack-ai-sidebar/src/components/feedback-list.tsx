@@ -94,6 +94,8 @@ export interface FeedbackListProps {
 	postId?: EditorPostId;
 	/** Whether the containing chat message is no longer interactive. */
 	isMessageStale?: boolean;
+	/** Tool call that produced this response. Used for tracking. */
+	toolCallId?: string;
 	/** Reports completed user actions to the host that rendered this response. */
 	onResponseAction?: OnResponseAction;
 	/** Title used when the flow provides flat items rather than sections. */
@@ -179,6 +181,7 @@ export default function FeedbackList( {
 	sections,
 	postId,
 	isMessageStale = false,
+	toolCallId,
 	onResponseAction,
 	sectionFallbackTitle,
 	staleWarning,
@@ -358,7 +361,11 @@ export default function FeedbackList( {
 			className={ `${ CLASS_PREFIX }${ isPostStale ? ' is-post-stale' : '' }` }
 			onMouseDownCapture={ handleRootMouseDown }
 		>
-			<SplitScreenGuide componentType={ componentType } isStale={ isMessageStale || isPostStale } />
+			<SplitScreenGuide
+				componentType={ componentType }
+				toolCallId={ toolCallId }
+				isStale={ isMessageStale || isPostStale }
+			/>
 			{ isPostStale && (
 				<p className={ `${ CLASS_PREFIX }__stale-warning` } role="note">
 					{ staleWarning }
