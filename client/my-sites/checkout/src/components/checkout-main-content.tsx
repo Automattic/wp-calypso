@@ -50,6 +50,7 @@ import {
 	type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
+import { useBlackboxProtection } from 'calypso/blocks/login/use-blackbox-protection';
 import Loading from 'calypso/components/loading';
 import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress';
 import { useShowOnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
@@ -381,9 +382,11 @@ function CheckoutSidebarNudge( {
 function PortaledCheckoutFormSubmit( {
 	validateForm,
 	submitButtonHeader,
+	disableSubmitButton,
 }: {
 	validateForm?: () => Promise< boolean >;
 	submitButtonHeader?: ReactNode;
+	disableSubmitButton?: boolean;
 } ) {
 	const { slotEl } = useSubmitButtonSlot();
 	if ( ! slotEl ) {
@@ -394,6 +397,7 @@ function PortaledCheckoutFormSubmit( {
 			validateForm={ validateForm }
 			continueToNextIncompleteStep
 			submitButtonHeader={ submitButtonHeader }
+			disableSubmitButton={ disableSubmitButton }
 		/>,
 		slotEl
 	);
@@ -458,6 +462,10 @@ export default function CheckoutMainContent( {
 	} = useShoppingCart( cartKey );
 
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteUrl ?? '' } );
+	const blackbox = useBlackboxProtection( {
+		feature: 'blackbox-signup',
+		suspended: ! isLoggedOutCart,
+	} );
 
 	// Shared sidebar slot for the active payment-method submit button. We render
 	// <CheckoutFormSubmit> inside <CheckoutStepGroup> so it keeps full step-state
@@ -822,7 +830,22 @@ export default function CheckoutMainContent( {
 	// money-back guarantee is surfaced up in the payment step instead (see
 	// paymentStepRefundCopy) — reassurance at the moment of entering card
 	// details — so the footer slot below the CTA stays empty.
-	const portaledSubmitButtonHeader = isLargeViewport ? undefined : <SubmitButtonHeader />;
+	const blackboxChallengeHeader =
+		isLoggedOutCart && blackbox.challenge ? (
+			<BlackboxChallengeWrapper>{ blackbox.challenge }</BlackboxChallengeWrapper>
+		) : null;
+	const portaledSubmitButtonHeader = (
+		<>
+			{ isLargeViewport ? null : <SubmitButtonHeader /> }
+			{ blackboxChallengeHeader }
+		</>
+	);
+	const mobileSubmitButtonHeader = (
+		<>
+			<SubmitButtonHeader />
+			{ blackboxChallengeHeader }
+		</>
+	);
 	// Refund copy, no icon, that continues the secure-encryption notice at payment
 	// entry. getRefundWindowCopy is null when no refund window applies; mirror
 	// CheckoutMoneyBackGuarantee's all-domains guard.
@@ -1083,12 +1106,14 @@ export default function CheckoutMainContent( {
 						<PortaledCheckoutFormSubmit
 							validateForm={ validateForm }
 							submitButtonHeader={ portaledSubmitButtonHeader }
+							disableSubmitButton={ blackbox.isSubmitBlocked }
 						/>
 					) : (
 						<CheckoutFormSubmit
 							validateForm={ validateForm }
-							submitButtonHeader={ <SubmitButtonHeader /> }
+							submitButtonHeader={ mobileSubmitButtonHeader }
 							submitButtonFooter={ mobileSubmitButtonFooter }
+							disableSubmitButton={ blackbox.isSubmitBlocked }
 						/>
 					) }
 				</CheckoutStepGroup>
@@ -2373,6 +2398,12 @@ function CheckoutTermsAndCheckboxes( {
 		</CheckoutTermsAndCheckboxesWrapper>
 	);
 }
+
+const BlackboxChallengeWrapper = styled.div`
+	.login__form-blackbox-challenge.has-visible-challenge {
+		margin-block-end: 8px;
+	}
+`;
 
 function SubmitButtonHeader() {
 	const translate = useTranslate();
