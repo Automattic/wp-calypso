@@ -51,6 +51,7 @@ import {
 	Testimonials,
 } from './content-sections';
 import demoIllustrationUrl from './demo-callout-illustration.svg';
+import HostingConcierge from './hosting-concierge';
 import {
 	hostingBrands,
 	formatUSD,
@@ -785,7 +786,11 @@ export default function MarketplaceHosting() {
 		new URLSearchParams( window.location.search ).has( 'alt' )
 	);
 
-	const [ isChooserOpen, setIsChooserOpen ] = useState( false );
+	// The old comparison/quiz modal stays reachable behind ?guide for reference.
+	const [ isChooserOpen, setIsChooserOpen ] = useState( () =>
+		new URLSearchParams( window.location.search ).has( 'guide' )
+	);
+	const [ isConciergeOpen, setIsConciergeOpen ] = useState( false );
 
 	// Prototype-only: `?existing` simulates returning-customer data that will
 	// come from license and usage queries ( see mockOwnership ).
@@ -847,10 +852,10 @@ export default function MarketplaceHosting() {
 							) }{ ' ' }
 							<Button
 								variant="link"
-								onClick={ () => setIsChooserOpen( ( open ) => ! open ) }
-								aria-expanded={ isChooserOpen }
+								onClick={ () => setIsConciergeOpen( true ) }
+								aria-expanded={ isConciergeOpen }
 							>
-								{ __( 'Not sure which fits?' ) }
+								{ __( 'Help me choose ↗' ) }
 							</Button>
 						</>
 					}
@@ -902,6 +907,15 @@ export default function MarketplaceHosting() {
 						setIsChooserOpen( false );
 					} }
 					onClose={ () => setIsChooserOpen( false ) }
+				/>
+			) }
+			{ isConciergeOpen && (
+				<HostingConcierge
+					onConfigure={ ( brand ) => {
+						setSelectedBrand( brand );
+						setIsConciergeOpen( false );
+					} }
+					onClose={ () => setIsConciergeOpen( false ) }
 				/>
 			) }
 			<TabPanel

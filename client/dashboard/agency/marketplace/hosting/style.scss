@@ -73,6 +73,64 @@
 	box-shadow: inset 0 0 0 1.5px var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
 }
 
+.marketplace-hosting__concierge {
+	position: fixed;
+	inset-block: 0;
+	inset-inline-end: 0;
+	z-index: 1000;
+	inline-size: 420px;
+	max-inline-size: 100%;
+	display: flex;
+	flex-direction: column;
+	background-color: var( --color-surface, var( --dashboard-overview__divider-color ) );
+	border-inline-start: 1px solid var( --color-border-subtle, var( --dashboard-overview__divider-color ) );
+}
+
+.marketplace-hosting__concierge-header {
+	padding: 16px 20px;
+	border-block-end: 1px solid var( --color-border-subtle, var( --dashboard-overview__divider-color ) );
+}
+
+.marketplace-hosting__concierge-body {
+	flex: 1;
+	overflow-y: auto;
+	padding: 20px;
+	align-items: stretch;
+}
+
+.marketplace-hosting__concierge-msg {
+	padding: 10px 14px;
+	border-radius: 8px;
+	max-inline-size: 85%;
+
+	&.is-assistant {
+		align-self: flex-start;
+		background-color: var( --color-border-subtle, var( --dashboard-overview__divider-color ) );
+	}
+
+	&.is-user {
+		align-self: flex-end;
+		box-shadow: inset 0 0 0 1px var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+	}
+}
+
+.marketplace-hosting__concierge-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.marketplace-hosting__concierge-logo {
+	block-size: 24px;
+	inline-size: auto;
+	object-fit: contain;
+	object-position: left;
+}
+
+.marketplace-hosting__concierge-restart {
+	align-self: flex-start;
+}
+
 .marketplace-hosting__guide-compare {
 	display: grid;
 	grid-template-columns: repeat( 3, 1fr );
