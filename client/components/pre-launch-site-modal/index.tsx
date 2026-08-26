@@ -16,23 +16,32 @@ interface PreLaunchSiteModalProps {
 	siteId: number;
 	isOpen: boolean;
 	onClose: () => void;
-	// Where launch is handed off to. The caller owns this so the destination
-	// (and the `/start/launch-site` path) stays explicit at each call site.
-	launchUrl: string;
+	// Redirect destination for the default surfaces. Optional: surfaces that
+	// launch in place pass `onConfirm`/`onSkip` instead of a URL.
+	launchUrl?: string;
+	// Run on confirm instead of redirecting to `launchUrl`, letting a caller
+	// launch in place (e.g. dispatch `launchSite`).
+	onConfirm?: () => void;
+	// Run for a non-qualifying site instead of redirecting to `launchUrl`, so the
+	// caller keeps ownership of that path (e.g. its own launch thunk).
+	onSkip?: () => void;
 }
 
 /**
  * Gates the classic "launch site" surfaces behind the pre-launch modal.
  *
  * A paid plan + custom domain makes the launch flow auto-skip its steps and
- * launch immediately, so those sites get a confirmation modal first (on confirm
- * we redirect to `launchUrl`). Every other site goes straight to `launchUrl`.
+ * launch immediately, so those sites get a confirmation modal first. Confirming
+ * (and every non-qualifying site) either redirects to `launchUrl` or, for
+ * in-place surfaces, runs the caller's `onConfirm`/`onSkip`.
  */
 function PreLaunchSiteModalContent( {
 	siteId,
 	isOpen,
 	onClose,
 	launchUrl,
+	onConfirm,
+	onSkip,
 }: PreLaunchSiteModalProps ) {
 	const [ isRedirecting, setIsRedirecting ] = useState( false );
 	const [ previewResizeListener, { width: previewWidth, height: previewHeight } ] =
@@ -77,14 +86,17 @@ function PreLaunchSiteModalContent( {
 		if ( decision !== 'pending' || ! isOpen || ! isSettled ) {
 			return;
 		}
-		setDecision( qualifiesForPreLaunch ? 'modal' : 'redirect' );
-	}, [ decision, isOpen, isSettled, qualifiesForPreLaunch ] );
-
-	useEffect( () => {
-		if ( decision === 'redirect' && launchUrl ) {
+		if ( qualifiesForPreLaunch ) {
+			setDecision( 'modal' );
+			return;
+		}
+		setDecision( 'redirect' );
+		if ( onSkip ) {
+			onSkip();
+		} else if ( launchUrl ) {
 			window.location.assign( launchUrl );
 		}
-	}, [ decision, launchUrl ] );
+	}, [ decision, isOpen, isSettled, qualifiesForPreLaunch, onSkip, launchUrl ] );
 
 	if ( decision !== 'modal' || ! isOpen || ! site ) {
 		return null;
@@ -102,7 +114,11 @@ function PreLaunchSiteModalContent( {
 			onClose={ onClose }
 			onLaunch={ () => {
 				setIsRedirecting( true );
-				window.location.assign( launchUrl );
+				if ( onConfirm ) {
+					onConfirm();
+				} else if ( launchUrl ) {
+					window.location.assign( launchUrl );
+				}
 			} }
 			preview={
 				site.URL ? (

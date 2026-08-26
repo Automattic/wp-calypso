@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
+import PreLaunchSiteModal from 'calypso/components/pre-launch-site-modal';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { getTaskList } from 'calypso/lib/checklist';
@@ -23,7 +24,13 @@ import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
 import getSites from 'calypso/state/selectors/get-sites';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { useSiteOption } from 'calypso/state/sites/hooks';
-import { getSiteOption, getSiteSlug, getCustomizerUrl } from 'calypso/state/sites/selectors';
+import { launchSite } from 'calypso/state/sites/launch/actions';
+import {
+	getSiteOption,
+	getSiteSlug,
+	getCustomizerUrl,
+	isCurrentPlanPaid,
+} from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CurrentTaskItem from './current-task-item';
 import { getTask } from './get-task';
@@ -33,7 +40,14 @@ import NavItem from './nav-item';
  */
 import './style.scss';
 
-const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask, isPodcastingSite ) => {
+const startTask = (
+	dispatch,
+	task,
+	siteId,
+	advanceToNextIncompleteTask,
+	isPodcastingSite,
+	openPreLaunch
+) => {
 	dispatch(
 		recordTracksEvent( 'calypso_checklist_task_start', {
 			checklist_name: 'new_blog',
@@ -54,7 +68,14 @@ const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask, isPodca
 	}
 
 	if ( task.actionDispatch ) {
-		dispatch( task.actionDispatch( ...task.actionDispatchArgs ) );
+		// Paid sites launching from here get the pre-launch confirmation first; the
+		// bridge decides and, if the site doesn't qualify, hands back to the task's
+		// own dispatch via onSkip.
+		if ( task.id === CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED && openPreLaunch ) {
+			openPreLaunch( task );
+		} else {
+			dispatch( task.actionDispatch( ...task.actionDispatchArgs ) );
+		}
 	}
 
 	if ( task.actionAdvanceToNext ) {
@@ -116,6 +137,7 @@ const SiteSetupList = ( {
 	isEmailUnverified,
 	isPodcastingSite,
 	isFSEActive,
+	isPaidPlan,
 	menusUrl,
 	siteId,
 	siteSlug,
@@ -130,9 +152,20 @@ const SiteSetupList = ( {
 	const [ useAccordionLayout, setUseAccordionLayout ] = useState( false );
 	const [ showAccordionSelectedTask, setShowAccordionSelectedTask ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
+	const [ isPreLaunchModalOpen, setIsPreLaunchModalOpen ] = useState( false );
+	const [ preLaunchTask, setPreLaunchTask ] = useState( null );
 
 	const dispatch = useDispatch();
 	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
+
+	// Paid sites route the launch task through the pre-launch confirmation; free
+	// sites keep dispatching the task directly (openPreLaunch stays undefined).
+	const openPreLaunch = isPaidPlan
+		? ( task ) => {
+				setPreLaunchTask( task );
+				setIsPreLaunchModalOpen( true );
+		  }
+		: undefined;
 
 	const isDomainUnverified =
 		tasks.filter(
@@ -265,7 +298,8 @@ const SiteSetupList = ( {
 							currentTask,
 							siteId,
 							advanceToNextIncompleteTask,
-							isPodcastingSite
+							isPodcastingSite,
+							openPreLaunch
 						)
 					}
 				/>
@@ -335,7 +369,8 @@ const SiteSetupList = ( {
 												currentTask,
 												siteId,
 												advanceToNextIncompleteTask,
-												isPodcastingSite
+												isPodcastingSite,
+												openPreLaunch
 											)
 										}
 										useAccordionLayout={ useAccordionLayout }
@@ -346,6 +381,21 @@ const SiteSetupList = ( {
 					} ) }
 				</ul>
 			</div>
+			{ isPaidPlan && (
+				<PreLaunchSiteModal
+					siteId={ siteId }
+					isOpen={ isPreLaunchModalOpen }
+					onClose={ () => setIsPreLaunchModalOpen( false ) }
+					onConfirm={ () => {
+						dispatch( launchSite( siteId ) );
+						setIsPreLaunchModalOpen( false );
+					} }
+					onSkip={ () =>
+						preLaunchTask &&
+						dispatch( preLaunchTask.actionDispatch( ...preLaunchTask.actionDispatchArgs ) )
+					}
+				/>
+			) }
 		</Card>
 	);
 };
@@ -375,6 +425,7 @@ const ConnectedSiteSetupList = connect( ( state, props ) => {
 		firstIncompleteTask: taskList.getFirstIncompleteTask(),
 		isEmailUnverified,
 		isFSEActive,
+		isPaidPlan: isCurrentPlanPaid( state, siteId ),
 		isPodcastingSite: !! getSiteOption( state, siteId, 'anchor_podcast' ),
 		menusUrl: getCustomizerUrl( state, siteId, null, null, 'add-menu' ),
 		siteId,

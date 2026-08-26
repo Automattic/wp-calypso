@@ -8,6 +8,7 @@ import { useState } from 'react';
 import useFetchAgencyFromBlog from 'calypso/a8c-for-agencies/data/agencies/use-fetch-agency-from-blog';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
+import PreLaunchSiteModal from 'calypso/components/pre-launch-site-modal';
 import SitePreviewLinks from 'calypso/components/site-preview-links';
 import { a4aLink } from 'calypso/dashboard/utils/link';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -107,6 +108,7 @@ const LaunchSite = () => {
 	const [ isLaunchConfirmationModalOpen, setLaunchConfirmationModalOpen ] = useState( false );
 	const openLaunchConfirmationModal = () => setLaunchConfirmationModalOpen( true );
 	const closeLaunchConfirmationModal = () => setLaunchConfirmationModalOpen( false );
+	const [ isPreLaunchModalOpen, setIsPreLaunchModalOpen ] = useState( false );
 
 	const dispatch = useDispatch();
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
@@ -161,10 +163,14 @@ const LaunchSite = () => {
 			} else {
 				openLaunchConfirmationModal();
 			}
-		} else {
+		} else if ( ! isPaidPlan ) {
 			dispatch(
 				launchSiteOrRedirectToLaunchSignupFlow( siteId, 'general-settings', site.title, 'yes' )
 			);
+		} else {
+			// Paid sites may qualify for the pre-launch confirmation; the bridge
+			// decides and, if not, hands back to the flow via onSkip.
+			setIsPreLaunchModalOpen( true );
 		}
 	};
 
@@ -259,6 +265,27 @@ const LaunchSite = () => {
 	return (
 		<>
 			{ renderConfirmationModal() }
+			{ isPaidPlan && (
+				<PreLaunchSiteModal
+					siteId={ siteId }
+					isOpen={ isPreLaunchModalOpen }
+					onClose={ () => setIsPreLaunchModalOpen( false ) }
+					onConfirm={ () => {
+						dispatch( launchSite( site.ID ) );
+						setIsPreLaunchModalOpen( false );
+					} }
+					onSkip={ () =>
+						dispatch(
+							launchSiteOrRedirectToLaunchSignupFlow(
+								siteId,
+								'general-settings',
+								site.title,
+								'yes'
+							)
+						)
+					}
+				/>
+			) }
 			<PanelCard>
 				<PanelCardHeading>{ translate( 'Launch site' ) }</PanelCardHeading>
 				{ renderContent() }

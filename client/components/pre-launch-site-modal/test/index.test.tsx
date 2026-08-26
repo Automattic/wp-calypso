@@ -180,6 +180,29 @@ describe( 'PreLaunchSiteModal', () => {
 		expect( assign ).not.toHaveBeenCalled();
 	} );
 
+	it( 'runs onConfirm instead of redirecting when the site qualifies', async () => {
+		const user = userEvent.setup();
+		const onConfirm = jest.fn();
+		renderBridge( { onConfirm } );
+
+		await screen.findByTestId( 'pre-launch-modal' );
+		await user.click( screen.getByRole( 'button', { name: 'Yes, launch site!' } ) );
+
+		expect( onConfirm ).toHaveBeenCalledTimes( 1 );
+		expect( assign ).not.toHaveBeenCalled();
+		expect( screen.getByTestId( 'pre-launch-modal' ) ).toHaveAttribute( 'data-launching', 'true' );
+	} );
+
+	it( 'runs onSkip instead of redirecting when the site does not qualify', async () => {
+		mockIsPaid = false;
+		const onSkip = jest.fn();
+		renderBridge( { onSkip } );
+
+		await waitFor( () => expect( onSkip ).toHaveBeenCalledTimes( 1 ) );
+		expect( assign ).not.toHaveBeenCalled();
+		expect( screen.queryByTestId( 'pre-launch-modal' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'redirects straight to the launch flow when the plan is not paid', async () => {
 		mockIsPaid = false;
 
