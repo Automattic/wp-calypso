@@ -112,10 +112,10 @@
 }
 
 .reader-blank-suggestions {
-	padding: 0 16px;
+	padding: 0 16px 36px;
 
 	@include break-small {
-		padding: 0;
+		padding: 0 0 36px;
 	}
 }
 
