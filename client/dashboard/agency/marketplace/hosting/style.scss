@@ -73,8 +73,21 @@
 	box-shadow: inset 0 0 0 1.5px var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
 }
 
-.marketplace-hosting__guide-progress {
+.marketplace-hosting__guide-steps {
+	display: flex;
+	gap: 6px;
 	inline-size: 100%;
+}
+
+.marketplace-hosting__guide-step {
+	flex: 1;
+	block-size: 4px;
+	border-radius: 2px;
+	background: var( --dashboard-overview__divider-color );
+
+	&.is-active {
+		background: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+	}
 }
 
 .marketplace-hosting__guide-logo {
