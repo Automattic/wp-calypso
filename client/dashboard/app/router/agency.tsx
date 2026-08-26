@@ -387,6 +387,42 @@ export const earnWooPaymentsRoute = createRoute( {
 	)
 );
 
+/**
+ * Whether the setup screen may run for `siteId`.
+ *
+ * The commissions table is the union of the agency's WooPayments licenses and its sites
+ * with the plugin, so the setup route has to accept that same population — a license-only
+ * site is not in the managed-sites list. That list stays as the fallback for the
+ * add-a-site path, where the site has neither a license nor the plugin yet.
+ *
+ * Both list queries are agency-scoped, so checking them first also keeps arbitrary ids
+ * away from the public `/sites/{id}` endpoint, which proves nothing about who manages
+ * the site.
+ */
+async function isAgencyWooPaymentsSite( siteId: number ): Promise< boolean > {
+	const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+	if ( ! agency?.id ) {
+		return false;
+	}
+
+	const [ licenses, sitesWithPlugins ] = await Promise.all( [
+		queryClient.ensureQueryData( wooPaymentsLicensesQuery( agency.id ) ),
+		queryClient.ensureQueryData( agencySitesWithPluginsQuery( agency.id, [ WOOPAYMENTS_PLUGIN ] ) ),
+	] );
+	if (
+		licenses.some( ( license ) => license.blog_id === siteId ) ||
+		sitesWithPlugins.some( ( site ) => site.blog_id === siteId )
+	) {
+		return true;
+	}
+
+	const site = await queryClient.ensureQueryData( siteByIdQuery( siteId ) );
+	const agencySite = await queryClient.ensureQueryData(
+		agencySiteQuery( getSiteDisplayUrl( site ) )
+	);
+	return !! agencySite;
+}
+
 // `/earn/woopayments/setup/$siteId` – install + activate WooPayments on a managed site
 export const earnWooPaymentsSetupRoute = createRoute( {
 	// TODO: replace with a dedicated WooPayments capability when one exists.
@@ -400,13 +436,7 @@ export const earnWooPaymentsSetupRoute = createRoute( {
 		}
 	},
 	loader: async ( { params: { siteId } } ) => {
-		// `siteByIdQuery` reads the public `/sites/{id}` endpoint, so a valid id proves
-		// nothing about who manages the site.
-		const site = await queryClient.ensureQueryData( siteByIdQuery( Number( siteId ) ) );
-		const agencySite = await queryClient.ensureQueryData(
-			agencySiteQuery( getSiteDisplayUrl( site ) )
-		);
-		if ( ! agencySite ) {
+		if ( ! ( await isAgencyWooPaymentsSite( Number( siteId ) ) ) ) {
 			throw dashboardRedirect( { to: '/earn/woopayments' } );
 		}
 	},
