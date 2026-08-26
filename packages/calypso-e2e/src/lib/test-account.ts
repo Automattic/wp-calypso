@@ -13,6 +13,11 @@ import { withLoginLock } from './login-lock';
 import { LoginPage } from './pages/login-page';
 import type { TestAccountCredentials } from '../secrets';
 
+// How many times a worker may adopt the cookies another worker saved before logging in
+// for itself: an adopted file can be dead on arrival, and each retry costs a lock hold
+// and a page load.
+const MAX_ADOPTIONS = 2;
+
 /**
  * Represents the WPCOM test account.
  */
@@ -91,21 +96,22 @@ export class TestAccount {
 	 * @param {Cookie[]} [rejected] Cookies already known to name a dead session.
 	 */
 	async ensureFreshAuthCookies( page: Page, rejected?: Cookie[] ): Promise< void > {
-		// Adopt at most once. What another worker wrote can be dead the same way ours was, and
-		// the file can be rewritten again while this checks, so adopting a second time is a
-		// chase that need not ever settle. The second pass logs in instead.
-		for ( let mayAdopt = true; ; mayAdopt = false ) {
+		// Each pass adopts a file it has not already rejected, up to the cap. Rejecting the
+		// adopted file before looping is what stops the same dead session being picked twice.
+		for ( let adoptions = 0; ; adoptions++ ) {
 			const adopted = await withLoginLock( this.accountName, async () => {
 				const cookies = await this.readFreshAuthCookies();
+				const isRejected = !! cookies && JSON.stringify( cookies ) === JSON.stringify( rejected );
 
-				if ( mayAdopt && cookies && JSON.stringify( cookies ) !== JSON.stringify( rejected ) ) {
+				if ( cookies && ! isRejected && adoptions < MAX_ADOPTIONS ) {
 					console.log( `Login lock: ${ this.accountName } adopted cookies from another worker.` );
 					await page.context().addCookies( cookies );
 					return cookies;
 				}
 
-				if ( cookies ) {
-					// Inside the lock: outside it another worker may already have replaced the file.
+				if ( isRejected ) {
+					// Only the file naming the session this worker proved dead. At the cap the
+					// file can hold a live session another worker has just saved.
 					await this.discardAuthCookies();
 				}
 
