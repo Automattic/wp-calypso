@@ -858,7 +858,7 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-sites',
-		paths: [ '/sites', 'sites/need-setup' ],
+		paths: [ '/sites' ],
 		module: 'calypso/a8c-for-agencies/sections/sites',
 		group: 'a8c-for-agencies',
 	},
