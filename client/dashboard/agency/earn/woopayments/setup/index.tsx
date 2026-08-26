@@ -50,7 +50,15 @@ export default function EarnWooPaymentsSetup() {
 
 	if ( ! site || isLoading ) {
 		return (
-			<PageLayout header={ <PageHeader title={ __( 'Site setup' ) } /> }>
+			<PageLayout
+				size="small"
+				header={
+					<PageHeader
+						title={ __( 'Set up WooPayments' ) }
+						description={ <TextSkeleton length={ 60 } /> }
+					/>
+				}
+			>
 				<TextSkeleton length={ 30 } />
 				<TextSkeleton length={ 30 } />
 			</PageLayout>
@@ -59,15 +67,14 @@ export default function EarnWooPaymentsSetup() {
 
 	return (
 		<PageLayout
+			size="small"
 			header={
 				<PageHeader
-					title={ sprintf(
+					title={ __( 'Set up WooPayments' ) }
+					description={ sprintf(
 						// translators: %s is the site domain, e.g. example.com
-						__( 'WooPayments is now ready to be configured on %s' ),
+						__( 'Follow these steps to install WooPayments on %s and start earning commissions.' ),
 						getSiteDisplayUrl( site )
-					) }
-					description={ __(
-						'Follow the steps below to complete the process so you can earn commissions.'
 					) }
 				/>
 			}

@@ -1,5 +1,6 @@
 import {
 	Button,
+	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -38,7 +39,7 @@ export default function SetupSteps( {
 				<Notice variant="error">
 					<Text>
 						{ __(
-							"We're sorry, we weren't able to install WooPayments on your site. Visit your WP-Admin to set up."
+							"WooPayments couldn't be installed automatically. Install it from WP-Admin instead."
 						) }
 					</Text>
 				</Notice>
@@ -68,24 +69,17 @@ export default function SetupSteps( {
 							>
 								{ isInstalled || isWooPaymentsActive
 									? __( 'Finish setup ↗' )
-									: __( 'Install and activate the plugin ↗' ) }
+									: __( 'Install the WooPayments plugin ↗' ) }
 							</Button>
 						)
 					}
 				/>
-				<ActionList.ActionItem
-					layout="stacked"
-					title={ __( 'Earn commissions' ) }
-					description={ __(
-						"Once the plugin is installed and configured, each time a transaction occurs, you'll earn commissions!"
-					) }
-					actions={
-						<Button variant="secondary" onClick={ onViewCommissionsClick }>
-							{ __( 'View WooPayments commissions' ) }
-						</Button>
-					}
-				/>
 			</ActionList>
+			<HStack justify="flex-start">
+				<Button variant="tertiary" onClick={ onViewCommissionsClick }>
+					{ __( 'View WooPayments commissions' ) }
+				</Button>
+			</HStack>
 		</VStack>
 	);
 }
