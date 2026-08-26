@@ -48,8 +48,11 @@ import {
 	getWowFunnelDest,
 	getWowFunnelArgs,
 	getWowFunnelSlug,
+	clearWowFunnelSite,
+	forgetWowFunnelRun,
 	getRememberedWowFunnelSite,
 	startWowFunnelSite,
+	wowFunnelSiteIsPaid,
 	logWowFunnelEvent,
 } from '../../../utils/wow-funnel';
 import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboarding-post-checkout-destination';
@@ -141,6 +144,11 @@ const onboarding: FlowV2< typeof initialize > = {
 			if ( wowFunnelSlug && wowFunnelDest ) {
 				const siteSlug = providedDependencies.siteSlug as string;
 				const siteId = providedDependencies.siteId as number;
+
+				// The run is over. Without this the remembered site outlives it for the whole
+				// browser session, and the next CTA click resumes this site instead of building
+				// a new one — offering a renewal of the plan just bought for it.
+				clearWowFunnelSite();
 
 				// dest=site-spec: the funnel's follow-up (e.g. the blueprint import) is already
 				// running server-side, so site-spec only waits on it and hands over. It must not
@@ -646,15 +654,36 @@ const onboarding: FlowV2< typeof initialize > = {
 			}
 			const queryParams = new URLSearchParams( window.location.search );
 			const funnelSlug = getWowFunnelSlug( queryParams );
-			if ( ! funnelSlug || getRememberedWowFunnelSite( funnelSlug ) ) {
+			const funnelArgs = getWowFunnelArgs( queryParams );
+			if ( ! funnelSlug ) {
 				return;
 			}
-			void startWowFunnelSite( {
-				funnelSlug,
-				funnelArgs: getWowFunnelArgs( queryParams ),
-			} ).catch( () => {
-				// Errors are logged in the util; the create-site step retries as a fallback.
-			} );
+
+			void ( async () => {
+				const remembered = getRememberedWowFunnelSite( funnelSlug, funnelArgs );
+				if ( remembered ) {
+					// A funnel run sells a plan for the site it builds, so a site that already has
+					// one must never be resumed: checkout would offer a second plan for a site
+					// that does not need one. Resume only while it is still unpaid.
+					const site = await resolveSelect( SITE_STORE )
+						.getSite( remembered.siteSlug )
+						.catch( () => null );
+
+					if ( ! wowFunnelSiteIsPaid( site ) ) {
+						return;
+					}
+
+					logWowFunnelEvent( 'remembered_site_already_paid', {
+						funnel: funnelSlug,
+						blog_id: remembered.blogId,
+					} );
+					forgetWowFunnelRun( funnelSlug, funnelArgs );
+				}
+
+				await startWowFunnelSite( { funnelSlug, funnelArgs } ).catch( () => {
+					// Errors are logged in the util; the create-site step retries as a fallback.
+				} );
+			} )();
 		}, [ currentStepSlug, isLoggedIn ] );
 	},
 };
