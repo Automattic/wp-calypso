@@ -1,0 +1,13 @@
+.marketplace-purchases__product-name {
+	font-weight: 500;
+}
+
+.marketplace-purchases__quantity {
+	color: var( --dashboard-color-text-subtle, var( --color-text-subtle ) );
+	font-variant-numeric: tabular-nums;
+}
+
+.marketplace-purchases__muted {
+	color: var( --dashboard-color-text-subtle, var( --color-text-subtle ) );
+	margin-inline-start: 2px;
+}
