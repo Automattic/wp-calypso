@@ -157,6 +157,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							siteId,
 							blueprintSlug,
 							ref: refParameter,
+							wowFunnel: wowFunnelSlug,
 						} ),
 						null,
 						null,
