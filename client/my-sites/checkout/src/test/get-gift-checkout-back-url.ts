@@ -61,10 +61,10 @@ describe( 'getGiftCheckoutBackUrl', () => {
 	it( 'keeps an existing scheme on the receiver URL', () => {
 		expect(
 			getGiftCheckoutBackUrl( {
-				giftDetails: { ...giftDetails, receiver_blog_url: 'https://giftedsite.wordpress.com' },
+				giftDetails: { ...giftDetails, receiver_blog_url: 'http://giftedsite.wordpress.com' },
 				referrer: '',
 			} )
-		).toBe( 'https://giftedsite.wordpress.com/' );
+		).toBe( 'http://giftedsite.wordpress.com/' );
 	} );
 
 	it( 'keeps the path of a receiver URL installed in a subdirectory', () => {

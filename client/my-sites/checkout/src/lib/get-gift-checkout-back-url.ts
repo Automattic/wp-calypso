@@ -19,8 +19,8 @@ function parseHttpUrl( value: string | undefined ): URL | undefined {
  * Where "Back" should go from a gift checkout: the page on the gifted site
  * the visitor came from when the referrer belongs to that site, otherwise
  * the gifted site itself. The referrer is only trusted when its host matches
- * the receiver URL the server put on the cart. That URL is a bare domain
- * (optionally with a path), so it is given a scheme before parsing.
+ * the receiver URL the server put on the cart. That URL usually arrives
+ * without a scheme, so one is added before parsing.
  */
 export function getGiftCheckoutBackUrl( {
 	giftDetails,
@@ -30,9 +30,10 @@ export function getGiftCheckoutBackUrl( {
 	referrer: string;
 } ): string | undefined {
 	const receiverBlogUrl = giftDetails?.receiver_blog_url;
-	const receiverUrl = parseHttpUrl(
-		receiverBlogUrl ? addSchemeIfMissing( receiverBlogUrl, 'https' ) : undefined
-	);
+	if ( ! receiverBlogUrl ) {
+		return undefined;
+	}
+	const receiverUrl = parseHttpUrl( addSchemeIfMissing( receiverBlogUrl, 'https' ) );
 	if ( ! receiverUrl ) {
 		return undefined;
 	}
