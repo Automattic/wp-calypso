@@ -37,13 +37,13 @@ const PLAN_TYPE_OPTIONS: { value: PlanCategory; label: string; description: stri
 		value: 'standard',
 		label: __( 'Standard' ),
 		description: __(
-			'Traffic and storage pooled across all your client sites — 1 to 150 installs.'
+			'Traffic and storage pooled across all your client sites, from 1 to 150 installs.'
 		),
 	},
 	{
 		value: 'enterprise',
 		label: __( 'Enterprise' ),
-		description: __( 'For large portfolios — 200 to 500 WordPress installs.' ),
+		description: __( 'For large portfolios of 200 to 500 WordPress installs.' ),
 	},
 	{
 		value: 'custom',
@@ -62,7 +62,7 @@ function planOptionLabel( plan: PressablePlan ) {
 	);
 	return sprintf(
 		/* translators: %1$s: plan name, %2$s: installs, %3$s: monthly visits, %4$d: storage in GB */
-		__( '%1$s — %2$s · %3$s visits · %4$dGB' ),
+		__( '%1$s · %2$s · %3$s visits · %4$dGB' ),
 		plan.name,
 		installs,
 		formatCompactNumber( plan.visits ),
@@ -284,7 +284,7 @@ export default function PressableContent( {
 											p.slug === currentPlan?.slug
 												? sprintf(
 														/* translators: %s: plan name and specs */
-														__( '%s — Current plan' ),
+														__( '%s (current plan)' ),
 														planOptionLabel( p )
 												  )
 												: planOptionLabel( p ),

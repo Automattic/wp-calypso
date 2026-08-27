@@ -508,7 +508,7 @@ function HostingGuide( {
 				<VStack spacing={ 5 }>
 					<Text variant="muted">
 						{ __(
-							'Answer for the client you’re setting up now — you can run different clients on different platforms.'
+							'Answer for the client you’re setting up now. You can run different clients on different platforms.'
 						) }
 					</Text>
 					<CompareColumns onConfigure={ onSelect } />

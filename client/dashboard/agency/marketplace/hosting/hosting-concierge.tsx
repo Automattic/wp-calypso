@@ -53,7 +53,7 @@ const BRAND_INFO: Record<
 	pressable: {
 		logo: pressableDescriptor,
 		pitch: __(
-			'Your margin engine. Pressable pools this site’s traffic and storage with the rest of your book, so your cost per site drops as you grow — and that spread is yours to keep. It’s also the performance tier for WooCommerce.'
+			'Your margin engine. Pressable pools this site’s traffic and storage with the rest of your book, so your cost per site drops as you grow, and that spread is yours to keep. It’s also the performance tier for WooCommerce.'
 		),
 		proof: [
 			__( 'Pooled plan: margin widens as your portfolio grows' ),
@@ -66,7 +66,7 @@ const BRAND_INFO: Record<
 	vip: {
 		logo: vipDescriptor,
 		pitch: __(
-			'Enterprise-grade for high-stakes clients — media, government, and mission-critical sites. It’s a guided sale with dedicated support, and you earn a referral commission for bringing them in.'
+			'Enterprise-grade for high-stakes clients: media, government, and mission-critical sites. It’s a guided sale with dedicated support, and you earn a referral commission for bringing them in.'
 		),
 		proof: [
 			__( 'Enterprise security, compliance, and dedicated support' ),
@@ -78,10 +78,10 @@ const BRAND_INFO: Record<
 };
 
 const GREETING = __(
-	'I’ll help you place this client on the right platform — and keep the margin on your side. What are you setting up for them?'
+	'I’ll help you place this client on the right platform, and keep the margin on your side. What are you setting up for them?'
 );
 const MONEY_PROMPT = __(
-	'Got it. How do you want to run the billing — host it under your plan and resell, or refer it and earn a commission?'
+	'Got it. How do you want to run the billing: host it under your plan and resell, or refer it and earn a commission?'
 );
 const BOOK_PROMPT = __( 'And how’s your client book with us looking right now?' );
 
@@ -125,8 +125,8 @@ const BOOK_SUGGESTIONS: Suggestion[] = [
 	},
 	{
 		id: 'growing',
-		label: __( 'Growing — I host a bunch' ),
-		prompt: __( 'Growing — I host a bunch' ),
+		label: __( 'Growing, I host a bunch' ),
+		prompt: __( 'Growing, I host a bunch' ),
 		autoSubmit: true,
 	},
 ];
@@ -178,7 +178,7 @@ function RecommendationCard( {
 							<Text variant="muted" size={ 12 }>
 								{ billing === 'refer'
 									? __( 'Your client is billed directly; you earn commission on every renewal.' )
-									: __( 'You’re billed and keep the margin — switch to referral anytime.' ) }
+									: __( 'You’re billed and keep the margin. Switch to referral anytime.' ) }
 							</Text>
 						</VStack>
 					) }
@@ -304,10 +304,10 @@ export default function HostingConcierge( {
 					model,
 					model === 'refer'
 						? __(
-								'A store means Pressable for the performance — and since you’re referring it, you’ll earn commission while your client is billed directly:'
+								'A store means Pressable for the performance, and since you’re referring it, you’ll earn commission while your client is billed directly:'
 						  )
 						: __(
-								'For a store, Pressable is the pick — it’s built for WooCommerce, and reselling it lets you pool it with your other sites to protect your margin:'
+								'For a store, Pressable is the pick. It’s built for WooCommerce, and reselling it lets you pool it with your other sites to protect your margin:'
 						  )
 				);
 			} else if ( model === 'refer' ) {
@@ -332,7 +332,7 @@ export default function HostingConcierge( {
 					'pressable',
 					'resell',
 					__(
-						'Since you’re building a book of sites, put this one on Pressable — its pooled plan means every site you add widens your margin instead of stacking per-site costs:'
+						'Since you’re building a book of sites, put this one on Pressable. Its pooled plan means every site you add widens your margin instead of stacking per-site costs:'
 					)
 				);
 			} else {
