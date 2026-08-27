@@ -337,9 +337,18 @@ const StatsPostDetailWrapper = ( props ) => {
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
 
+	const canHaveEmailStats = useSelector( ( state ) => {
+		const { supportsEmailStats } = getEnvStatsFeatureSupportChecks( state, siteId );
+		const subscriptionsEnabled =
+			isSimpleSite( state, siteId ) ||
+			isJetpackModuleActive( state, siteId, 'subscriptions', true );
+		return supportsEmailStats && subscriptionsEnabled;
+	} );
+
 	const { data: hasEmailStats = false } = usePostEmailStatsAvailabilityQuery(
 		siteId,
-		props.postId
+		props.postId,
+		canHaveEmailStats
 	);
 
 	const openDoc = () => {
