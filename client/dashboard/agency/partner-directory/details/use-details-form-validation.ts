@@ -78,12 +78,8 @@ export default function useDetailsFormValidation() {
 			newValidationError.minimumBudget = __( 'Please provide your minimum budget' );
 		}
 
-		if ( Object.keys( newValidationError ).length > 0 ) {
-			setValidationError( newValidationError );
-			return newValidationError;
-		}
-
-		return null;
+		setValidationError( newValidationError );
+		return Object.keys( newValidationError ).length > 0 ? newValidationError : null;
 	}, [] );
 
 	return { validate, validationError, updateValidationError };
