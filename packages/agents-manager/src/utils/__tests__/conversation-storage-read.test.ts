@@ -1,6 +1,13 @@
 /**
  * @jest-environment jsdom
  */
+/* eslint-disable import/order -- jest.mock calls must precede imports */
+jest.mock(
+	'@automattic/agenttic-client',
+	() => ( { CONVERSATION_STORAGE_KEY: 'a8c_agenttic_conversation_history' } ),
+	{ virtual: true }
+);
+
 import {
 	STORAGE_PREFIX,
 	clearStoredConversation,

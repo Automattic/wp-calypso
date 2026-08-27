@@ -1,15 +1,16 @@
 /**
  * Read-only access to agenttic-client's local conversation store, which it keeps
- * in `sessionStorage` under `a8c_agenttic_conversation_history_<storageKey>`. We
- * read it directly because the package re-exports the reconciliation primitives
- * but not `loadConversation` / `getStoredSessionIds`.
- *
- * Keep `STORAGE_PREFIX` in sync with agenttic's `STORAGE_KEY` in
- * `packages/agenttic-client/src/react/conversationStorage.ts`.
+ * in `sessionStorage` under `<CONVERSATION_STORAGE_KEY>_<storageKey>`. We read it
+ * directly because the package re-exports the reconciliation primitives but not
+ * `loadConversation` / `getStoredSessionIds`.
  */
-import type { DeliveryStatus, Message } from '@automattic/agenttic-client';
+import {
+	CONVERSATION_STORAGE_KEY,
+	type DeliveryStatus,
+	type Message,
+} from '@automattic/agenttic-client';
 
-export const STORAGE_PREFIX = 'a8c_agenttic_conversation_history_';
+export const STORAGE_PREFIX = `${ CONVERSATION_STORAGE_KEY }_`;
 
 interface StoredMessage {
 	role: 'user' | 'agent';

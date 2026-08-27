@@ -120,6 +120,7 @@ export {
 // panel boot to find in-flight turns that need to be reconciled with the
 // server.
 export {
+	STORAGE_KEY as CONVERSATION_STORAGE_KEY,
 	getUnresolvedMessages,
 	reconcileWithServer,
 	type DeliveryStatus,

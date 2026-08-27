@@ -803,6 +803,7 @@ export default function OrchestratorChat( {
 		[]
 	);
 	const reconcileSyncedRef = useRef( false );
+	const reconcileDismissedRef = useRef( false );
 	useEffect( () => {
 		if ( ! reconcileResult ) {
 			return;
@@ -837,8 +838,9 @@ export default function OrchestratorChat( {
 
 		// Show the reconciled transcript, and re-assert it if `useAgentChat`'s own
 		// mount-init clears the panel out from under us before the merchant has
-		// interacted. Once messages are present (or the merchant sends), stop.
-		if ( messages.length === 0 && ! hasUserSentMessage ) {
+		// interacted. Once messages are present, the merchant sends, or a
+		// provider deliberately clears the chat, stop.
+		if ( messages.length === 0 && ! hasUserSentMessage && ! reconcileDismissedRef.current ) {
 			loadMessages( reconcileResult.messages );
 		}
 	}, [ reconcileResult, messages.length, hasUserSentMessage, loadMessages, agentConfig ] );
@@ -1561,7 +1563,10 @@ export default function OrchestratorChat( {
 			// Transform Big Sky message format to `UIMessage` format and add to chat.
 			addMessage( convertBigSkyMessageToUIMessage( message ) );
 		},
-		clearMessages: () => loadMessages( [] ),
+		clearMessages: () => {
+			reconcileDismissedRef.current = true;
+			loadMessages( [] );
+		},
 		clearSuggestions,
 		getAgentManager,
 		isProcessing,

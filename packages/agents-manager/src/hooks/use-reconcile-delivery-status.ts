@@ -52,9 +52,20 @@ function messageText( message: Message ): string {
 		.join( '\n' );
 }
 
-/** Pick the newest stored conversation that still has an unresolved turn. */
-function findUnresolvedConversation(): LoadedConversation | null {
+/**
+ * Pick the newest stored conversation that still has an unresolved turn and
+ * could belong to this agent. Stored entries carry no agent id, so a server
+ * session is only a candidate when it is the one this agent is configured to
+ * resume; `local-*` keys are always candidates since they were minted for a
+ * send that never received a session id.
+ * @param sessionId - the session id the agent is configured to resume, if any.
+ */
+function findUnresolvedConversation( sessionId?: string | null ): LoadedConversation | null {
 	const candidates = listStoredConversations()
+		.filter(
+			( conversation ) =>
+				isLocalSessionKey( conversation.storageKey ) || conversation.storageKey === sessionId
+		)
 		.filter( ( conversation ) => getUnresolvedMessages( conversation.messages ).length > 0 )
 		.sort( ( a, b ) => b.lastUpdated - a.lastUpdated );
 
@@ -71,13 +82,14 @@ export default function useReconcileDeliveryStatus(): Result {
 	const hasRunRef = useRef( false );
 	const agentId = agentConfig?.agentId;
 	const authProvider = agentConfig?.authProvider;
+	const sessionId = agentConfig?.sessionId;
 
 	useEffect( () => {
 		if ( hasRunRef.current || ! agentId || isReaderChatAgent( agentId ) ) {
 			return;
 		}
 
-		const conversation = findUnresolvedConversation();
+		const conversation = findUnresolvedConversation( sessionId );
 		if ( ! conversation ) {
 			// Nothing in flight — mark as run so we don't re-scan on every change.
 			hasRunRef.current = true;
@@ -140,10 +152,11 @@ export default function useReconcileDeliveryStatus(): Result {
 				} );
 
 				// A `failed` turn is now surfaced in the panel with nothing left to
-				// reconcile, so drop the stored entry to stop it re-firing. A
-				// `server` outcome keeps the entry: the session continues and its
-				// transcript (with resolved statuses) is re-persisted normally.
-				if ( outcome === 'failed' ) {
+				// reconcile. Nothing re-persists that status until the next send, so
+				// drop the stored entry to stop it re-firing on a later mount. When
+				// the server had everything, the entry stays: the session continues
+				// and its transcript is re-persisted normally.
+				if ( failedTexts.length > 0 ) {
 					clearStoredConversation( storageKey );
 				}
 			} )
@@ -162,7 +175,7 @@ export default function useReconcileDeliveryStatus(): Result {
 		return () => {
 			cancelled = true;
 		};
-	}, [ agentId, authProvider ] );
+	}, [ agentId, authProvider, sessionId ] );
 
 	return { isReconciling, result };
 }
