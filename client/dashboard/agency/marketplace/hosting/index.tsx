@@ -1,4 +1,4 @@
-import { activeAgencyQuery, agencyProductsQuery } from '@automattic/api-queries';
+import { activeAgencyQuery, agencyTermProductsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
@@ -819,7 +819,7 @@ export default function MarketplaceHosting() {
 	const effectivePressableUsage = isReferralMode ? undefined : pressableUsage;
 
 	const { data: agency } = useQuery( activeAgencyQuery() );
-	const { data: apiProducts } = useQuery( agencyProductsQuery( agency?.id ?? 0 ) );
+	const { data: apiProducts } = useQuery( agencyTermProductsQuery( agency?.id ?? 0 ) );
 	const products = apiProducts as PricedProduct[] | undefined;
 
 	const wpcomApi = products?.find( ( p ) => p.family_slug === 'wpcom-hosting' );
