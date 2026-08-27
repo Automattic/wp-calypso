@@ -411,6 +411,7 @@ const sections = [
 			// Legacy paths that we need to support for backwards compatibility.
 			'/read(/?.*)',
 			'/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/read', // For locale-specific reader.
+			'/recommendations',
 		],
 		module: 'calypso/reader',
 		group: 'reader',
@@ -485,18 +486,6 @@ const sections = [
 		paths: [ '/read/saved' ],
 		module: 'calypso/reader/saved-stream',
 		group: 'reader',
-		trackLoadPerformance: true,
-	},
-	{
-		name: 'reader',
-		paths: [
-			'/reader/search',
-			'/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/reader/search',
-			'/recommendations',
-		],
-		module: 'calypso/reader/search',
-		group: 'reader',
-		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},
 	{
