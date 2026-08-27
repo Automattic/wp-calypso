@@ -4,9 +4,17 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../test-utils';
+import { bumpStat } from '../../analytics';
 import { AuthContext } from '../../auth';
 import UnknownError from '../index';
 import type { User } from '@automattic/api-core';
+
+jest.mock( '../../analytics', () => ( {
+	...jest.requireActual( '../../analytics' ),
+	bumpStat: jest.fn(),
+} ) );
+
+const mockedBumpStat = jest.mocked( bumpStat );
 
 const RAW_API_MESSAGE =
 	'An active access token must be used to query information about the current user.';
@@ -90,6 +98,13 @@ describe( 'UnknownError', () => {
 
 			expect( await screen.findByRole( 'link', { name: /support/i } ) ).toBeVisible();
 		} );
+
+		it( 'counts the user as stranded', async () => {
+			renderWithLogout( authorizationError(), jest.fn() );
+
+			await screen.findByRole( 'button', { name: /log out/i } );
+			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-error', 'refused-request' );
+		} );
 	} );
 
 	describe( 'when the account simply lacks access', () => {
@@ -110,6 +125,19 @@ describe( 'UnknownError', () => {
 
 			expect( await screen.findByText( 'Something specific broke' ) ).toBeVisible();
 			expect( screen.queryByRole( 'button', { name: /log out/i } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'still offers support, since the message alone is no help', async () => {
+			render( <UnknownError error={ new Error( 'Something specific broke' ) } /> );
+
+			expect( await screen.findByRole( 'link', { name: /support/i } ) ).toBeVisible();
+		} );
+
+		it( 'is not counted as a refused request', async () => {
+			render( <UnknownError error={ new Error( 'Something specific broke' ) } /> );
+
+			await screen.findByText( 'Something specific broke' );
+			expect( mockedBumpStat ).not.toHaveBeenCalled();
 		} );
 	} );
 } );

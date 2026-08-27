@@ -6,6 +6,7 @@ import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { reauthRequiredLink, wpcomLink } from '../../utils/link';
+import { bumpStat } from '../analytics';
 import { AuthContext } from '../auth';
 
 function ReauthRedirect() {
@@ -31,6 +32,12 @@ function RefusedRequestError() {
 	// `useAuth` throws when there is no provider, and this component is the last
 	// thing standing between the user and a blank screen.
 	const auth = useContext( AuthContext );
+
+	// Counts the users we failed to send to log in and left to recover by hand,
+	// which is the half of DOTCOM-14911 nothing measures today.
+	useEffect( () => {
+		bumpStat( 'dashboard-error', 'refused-request' );
+	}, [] );
 
 	// Logging out loads a chunk and clears stored state, either of which can fail
 	// in the very state that got the user here. Send them to log in regardless, so
@@ -79,7 +86,16 @@ function GenericError( { error }: { error: Error } ) {
 			header={
 				<PageHeader title={ __( '500 Error' ) } description={ __( 'Something wrong happened.' ) } />
 			}
-			notices={ <Notice variant="error">{ error.message }</Notice> }
+			notices={
+				<Notice
+					variant="error"
+					actions={
+						<ExternalLink href={ wpcomLink( '/help' ) }>{ __( 'Contact support' ) }</ExternalLink>
+					}
+				>
+					{ error.message }
+				</Notice>
+			}
 		></PageLayout>
 	);
 }
