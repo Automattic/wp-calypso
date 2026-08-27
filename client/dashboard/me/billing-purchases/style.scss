@@ -77,24 +77,29 @@ button.purchase-payment-method__update {
 	padding: 0 12px 12px 12px;
 }
 
-// The product description is secondary text, so its links stay muted until hover —
-// the same treatment `a.dataviews-url-field` gives URLs on the Sites list. The
-// `is-link` selectors are there to outweigh `Button`'s own link styling.
-.billing-purchase__product {
-	a,
-	a:visited,
-	a.is-link,
-	a.is-link:visited {
-		color: var(--dashboard__text-muted-color);
+// The description line is secondary text, so neither of its links gets the
+// underlined brand blue a link would normally take: the site name reads as part
+// of the sentence, and only the site URL stays coloured. The `is-link` selectors
+// are there to outweigh `Button`'s own link styling.
+.billing-purchase__site-url,
+.billing-purchase__site-url:visited {
+	text-decoration: none;
+}
+
+.billing-purchase__site-link,
+.billing-purchase__site-link:visited,
+a.is-link.billing-purchase__site-link,
+a.is-link.billing-purchase__site-link:visited {
+	color: var( --dashboard__text-color );
+	font-weight: 500;
+	text-decoration: none;
+
+	span {
 		text-decoration: none;
 	}
+}
 
-	a:hover,
-	a.is-link:hover {
-		color: var(--wp-admin-theme-color);
-	}
-
-	a span {
-		text-decoration: none;
-	}
+.billing-purchase__site-link:hover,
+a.is-link.billing-purchase__site-link:hover {
+	color: var( --wp-admin-theme-color );
 }

@@ -22,7 +22,7 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 					  sprintf( __( 'View %(siteName)s' ), { siteName: site.name } );
 			const linkText = site.name === site.slug ? __( 'View site' ) : site.slug;
 			return (
-				<div className="billing-purchase__product">
+				<div>
 					{ createInterpolateElement(
 						sprintf(
 							// translators: %(purchaseType)s: the product name. The string also contains the name of the site and the URL for the site e.g. Premium plan for Block Store (blockstore.com)
@@ -34,6 +34,7 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 						{
 							siteName: (
 								<RouterLinkButton
+									className="billing-purchase__site-link"
 									variant="link"
 									to={ purchasesRoute.fullPath }
 									search={ { site: site.ID } }
@@ -48,7 +49,12 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 								</RouterLinkButton>
 							),
 							siteDomain: (
-								<ExternalLink href={ 'https://' + site.slug } rel="noreferrer" title={ linkTitle }>
+								<ExternalLink
+									className="billing-purchase__site-url"
+									href={ 'https://' + site.slug }
+									rel="noreferrer"
+									title={ linkTitle }
+								>
 									{ linkText }
 								</ExternalLink>
 							),
@@ -60,7 +66,7 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 
 		if ( productType && site.slug ) {
 			return (
-				<div className="billing-purchase__product">
+				<div>
 					{ createInterpolateElement(
 						// translators: %(purchaseType)s: the product name. The string also contains the URL of the site and a link to visit the site (e.g. "Premium plan for blockstore.com (view site)")
 						sprintf( __( '%(purchaseType)s for <siteDomain /> (<viewSite />)' ), {
@@ -69,6 +75,7 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 						{
 							siteDomain: (
 								<RouterLinkButton
+									className="billing-purchase__site-link"
 									variant="link"
 									to={ purchasesRoute.fullPath }
 									search={ { site: site.ID } }
@@ -84,6 +91,7 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 							),
 							viewSite: (
 								<ExternalLink
+									className="billing-purchase__site-url"
 									href={ 'https://' + site.slug }
 									rel="noreferrer"
 									title={ __( 'View site' ) }
@@ -105,13 +113,14 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 					  sprintf( __( 'View %(siteName)s' ), { siteName: site.name } );
 			const linkText = site.name === site.slug ? __( 'View site' ) : site.slug;
 			return (
-				<div className="billing-purchase__product">
+				<div>
 					{ createInterpolateElement(
 						// translators: The string contains the name of the site, and the URL of the site e.g. for Block Store (blockstore.com)
 						__( 'for <siteName /> (<viewSite />)' ),
 						{
 							siteName: (
 								<RouterLinkButton
+									className="billing-purchase__site-link"
 									variant="link"
 									to={ purchasesRoute.fullPath }
 									search={ { site: site.ID } }
@@ -126,7 +135,12 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 								</RouterLinkButton>
 							),
 							viewSite: (
-								<ExternalLink href={ 'https://' + site.slug } rel="noreferrer" title={ linkTitle }>
+								<ExternalLink
+									className="billing-purchase__site-url"
+									href={ 'https://' + site.slug }
+									rel="noreferrer"
+									title={ linkTitle }
+								>
 									{ linkText }
 								</ExternalLink>
 							),
@@ -139,7 +153,7 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 
 	if ( ! site && productType ) {
 		return (
-			<div className="billing-purchase__product">
+			<div>
 				{ createInterpolateElement(
 					sprintf(
 						// translators: %(purchaseType)s: the product name, %(site)s: the site domain, followed by a link to view the site (e.g. "Premium plan for blockstore.com (view site)")
@@ -152,6 +166,7 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 					{
 						viewSite: (
 							<ExternalLink
+								className="billing-purchase__site-url"
 								href={ 'https://' + purchase.domain }
 								rel="noreferrer"
 								title={ __( 'View site' ) }
