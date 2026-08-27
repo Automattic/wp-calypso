@@ -109,7 +109,7 @@ export function EmptyDeletedSitesStateContent() {
 						size="compact"
 						__next40pxDefaultSize
 					>
-						{ __( 'View deleted sites' ) }
+						{ __( 'Show deleted sites' ) }
 					</RouterLinkButton>
 				}
 			/>

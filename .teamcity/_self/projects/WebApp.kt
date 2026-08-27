@@ -981,9 +981,6 @@ object PlaywrightTestPRMatrix : BuildType({
 		param("TEST_GROUP", "@calypso-pr")
         param("DOCKER_IMAGE_BUILD_NUMBER", "${BuildDockerImage.depParamRefs.buildNumber}")
 		param("IGNORE_TEST_GROUP_FOR_E2E_CHANGES", "true")
-		// calypsoPreReleaseUser is left out: the only @calypso-pr spec that logs in as it runs
-		// on trunk alone, and this build type never builds trunk.
-		param("env.AUTHENTICATE_ACCOUNTS", "atomicUser,commentingUser,defaultUser,gutenbergSimpleSiteUser,notificationsUser,siteEditorSimpleSiteUser,simpleSiteFreePlanUser,simpleSitePersonalPlanUser")
 	}
 
 	features {
@@ -1036,7 +1033,6 @@ object PreReleaseE2ETests : BuildType({
 		text("TEST_GROUP", "@calypso-release")
 		param("CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
 		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
-		param("env.AUTHENTICATE_ACCOUNTS", "atomicUser,calypsoPreReleaseUser,defaultUser,simpleSiteFreePlanUser,simpleSitePersonalPlanUser")
 	}
 
 	features {
@@ -1073,10 +1069,6 @@ object PlaywrightTestDashboardPRMatrix : BuildType({
 	params {
 		param("TEST_GROUP", "@dashboard-pr")
 		param("DOCKER_IMAGE_BUILD_NUMBER", "${BuildDockerImage.depParamRefs.buildNumber}")
-		// Every @dashboard-pr spec takes the account this environment resolves to, and
-		// nothing else. Naming it costs no extra login: prime-logins adds the resolved
-		// account to whatever is listed here and logs in as each account once.
-		param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteUser")
 	}
 
 	features {
@@ -1131,8 +1123,6 @@ object PlaywrightTestA4APRMatrix : BuildType({
 	params {
 		param("TEST_GROUP", "@a8c-for-agencies")
 		param("DOCKER_IMAGE_BUILD_NUMBER", "${BuildDockerImage.depParamRefs.buildNumber}")
-		// The @a8c-for-agencies specs sign up their own users and log in as no test account.
-		param("env.AUTHENTICATE_ACCOUNTS", "")
 	}
 
 	features {

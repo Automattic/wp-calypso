@@ -227,6 +227,14 @@ describe( 'SiteSpec Utils', () => {
 			expect( result.features?.siteBrief ).toBe( 'next' );
 		} );
 
+		it( 'should offer social links only', () => {
+			// `links` is a sub-feature of the next brief, so it only means
+			// anything alongside the siteBrief assertion above.
+			const result = getBuildWowSiteSpecConfig( { siteSlug: 'example.wordpress.com' } );
+
+			expect( result.features?.links ).toBe( 'social' );
+		} );
+
 		it( 'should leave the other flows on the default spec preview', () => {
 			// The widget gates the brief on a truthy features.siteBrief, so any
 			// flow that grows one starts rendering the brief. Pin that this one

@@ -11,7 +11,21 @@ import {
 } from '../../utils/external-context';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { setSiteEditorAction } from '../../utils/site-editor-context';
+import { BIG_SKY_EVENT_PREFIX, recordBigSkyTracksEvent } from '../../utils/tracks';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
+
+/** Bridge-facing recorder: drops malformed calls instead of emitting `jetpack_big_sky_undefined`. */
+function recordGuardedBigSkyTracksEvent(
+	eventName: string,
+	props?: Record< string, unknown >
+): void {
+	if ( typeof eventName !== 'string' || eventName === '' ) {
+		return;
+	}
+
+	// Bridge callers pass the suffix only — see `recordBigSkyTracksEvent` in `global.d.ts`.
+	recordBigSkyTracksEvent( `${ BIG_SKY_EVENT_PREFIX }${ eventName }`, props );
+}
 
 /**
  * Publish actions onto `window.__agentsManagerActions`. Cleanup removes only
@@ -210,6 +224,7 @@ export function useSetupCustomActions( {
 		isChatVisible,
 		getCurrentRoute,
 		getSessionId: getTabSessionId,
+		recordBigSkyTracksEvent: recordGuardedBigSkyTracksEvent,
 		setChatOpen,
 		setChatDocked,
 		setChatEnabled,
@@ -223,6 +238,9 @@ export function useSetupCustomActions( {
 		chatNavigate: navigate,
 		resumeChat,
 		isReady: true,
+		// See the field's doc in global.d.ts. Advertised here, where the API
+		// is assembled, so a host reading it can trust the events are wired.
+		broadcastsAgentActivity: true,
 	} );
 
 	// Hosts (e.g. CIAB) listen for `agents-manager-ready` to invoke actions without polling.

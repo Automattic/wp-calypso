@@ -14,6 +14,7 @@
 		},
 		"agencies-beta.automattic.com": {
 			"oauth_client_id": 95932,
+			"survicate_enabled": false,
 			"wpcom_login_url": false,
 			"features": { "oauth": true, "always_use_logout_url": true, "wpcom-user-bootstrap": false }
 		}
@@ -59,7 +60,7 @@
 		"site-spec": true,
 		"two-factor/enhanced-security": true,
 		"webauthn/related-origin-requests": true,
-		"wordpress-agent-slack": false,
+		"wordpress-agent-slack": true,
 		"wordpress-ai-tools": true,
 		"wordpress-labs": false,
 		"wpcom-user-bootstrap": true

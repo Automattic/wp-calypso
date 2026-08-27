@@ -36,7 +36,8 @@ export default function EditorAiChatButton( { onClose, onOpenChat }: Props ) {
 
 	// Mirrors the admin-bar button: close if showing, else resume the tab's conversation and open.
 	const handleToggle = () => {
-		recordAgentsManagerTracksEvent( 'calypso_editor_agents_manager_ai_chat_clicked', {
+		recordAgentsManagerTracksEvent( 'calypso_agents_manager_ai_chat_clicked', {
+			surface: 'editor_toolbar',
 			section: sectionName || 'gutenberg',
 			action: isChatVisible ? 'close' : 'open',
 		} );

@@ -11,7 +11,7 @@ import type { CSSProperties } from 'react';
 const WordPressMark = () => <Icon className="site-generation__wordpress-mark" icon={ wordpress } />;
 
 const CheckmarkIcon = (
-	<Icon aria-hidden="true" className="site-build-progress__check" icon={ check } size={ 12 } />
+	<Icon aria-hidden="true" className="site-build-progress__check" icon={ check } size={ 14 } />
 );
 
 function ActiveIndicator() {
@@ -198,9 +198,10 @@ function ErrorCanvas( { state, onReload }: { state: SiteGenerationState; onReloa
 function BuildProgress( { state }: { state: SiteGenerationState } ) {
 	const translate = useTranslate();
 	const hasFailed = state.status === 'failed';
+	const steps = state.steps;
 	// Every step is rendered up front, so the list itself never changes text as
 	// progress advances. This carries the announcement instead.
-	const activeStep = state.steps.find( ( step ) => step.status === 'active' );
+	const activeStep = steps.find( ( step ) => step.status === 'active' );
 
 	return (
 		<div className="site-build-progress">
@@ -213,14 +214,14 @@ function BuildProgress( { state }: { state: SiteGenerationState } ) {
 				{ ! hasFailed && activeStep?.label }
 			</p>
 			<ul aria-labelledby="site-generation-progress-title" className="site-build-progress__list">
-				{ state.steps.map( ( item, index ) => {
-					const nextStepStatus = state.steps[ index + 1 ]?.status;
+				{ steps.map( ( item, index ) => {
+					const nextStepStatus = steps[ index + 1 ]?.status;
 					const nextStepIsReached = nextStepStatus === 'done' || nextStepStatus === 'active';
 					return (
 						<li
 							aria-current={ item.status === 'active' ? 'step' : undefined }
 							className={ `site-build-progress__item site-build-progress__item--${ item.status }` }
-							data-last={ index === state.steps.length - 1 }
+							data-last={ index === steps.length - 1 }
 							data-next-reached={ nextStepIsReached }
 							key={ item.id }
 						>
@@ -231,7 +232,15 @@ function BuildProgress( { state }: { state: SiteGenerationState } ) {
 								{ item.status === 'done' && CheckmarkIcon }
 								{ item.status === 'active' && ! hasFailed && <ActiveIndicator /> }
 							</div>
-							<span className="site-build-progress__text">{ item.label }</span>
+							<span className="site-build-progress__text">
+								<span
+									className={ `site-build-progress__label${
+										item.status === 'active' && ! hasFailed ? ' site-build-progress__text-wave' : ''
+									}` }
+								>
+									{ item.label }
+								</span>
+							</span>
 							{ item.status === 'active' && ! hasFailed && item.startedAt !== undefined && (
 								<ElapsedTime startedAt={ item.startedAt } />
 							) }

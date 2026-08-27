@@ -5,6 +5,7 @@ import { cn } from '../../utils/classNames';
 import { fastSpringWithDelay } from '../animations';
 import { Button } from '../ui/button';
 import { SuggestionDropdown } from './SuggestionDropdown';
+import { SuggestionTooltip } from './SuggestionTooltip';
 import styles from './Suggestions.module.css';
 import type { Suggestion } from '../../types';
 
@@ -51,6 +52,10 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 		selectedSuggestion: Suggestion,
 		availableSuggestions: Suggestion[]
 	) => {
+		if ( selectedSuggestion.disabled ) {
+			return;
+		}
+
 		let shouldSubmit = true;
 		if ( selectedSuggestion.action ) {
 			shouldSubmit = await selectedSuggestion.action();
@@ -85,6 +90,47 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 				>
 					{ internalSuggestions.map( ( suggestion: Suggestion, index: number ) => {
 						const isEligibleForDescription = !! suggestion.description && layout !== 'horizontal';
+						const hasDisabledReason = !! suggestion.disabled && !! suggestion.disabledReason;
+						const reasonId = hasDisabledReason
+							? `agenttic-suggestion-reason-${ suggestion.id }`
+							: undefined;
+
+						const chip =
+							suggestion.options && suggestion.options.length > 0 ? (
+								<SuggestionDropdown
+									suggestion={ suggestion }
+									onSelect={ handleSuggestionClick }
+									availableSuggestions={ internalSuggestions }
+									onOpenChange={ onDropdownOpenChange }
+									showDescription={ isEligibleForDescription }
+									describedById={ reasonId }
+								/>
+							) : (
+								<Button
+									onClick={ ( e ) => {
+										e.stopPropagation();
+										handleSuggestionClick( suggestion, internalSuggestions );
+									} }
+									aria-disabled={ suggestion.disabled }
+									aria-describedby={ reasonId }
+									variant="outline"
+									className={ styles.button }
+								>
+									<div
+										className={ cn(
+											styles[ 'suggestion-content' ],
+											isEligibleForDescription
+												? styles[ 'suggestion-content--with-description' ]
+												: ''
+										) }
+									>
+										<span className={ styles.label }>{ suggestion.label }</span>
+										{ isEligibleForDescription && (
+											<span className={ styles.description }>{ suggestion.description }</span>
+										) }
+									</div>
+								</Button>
+							);
 
 						return (
 							<motion.div
@@ -97,37 +143,15 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 									delay: index * 0.05,
 								} }
 							>
-								{ suggestion.options && suggestion.options.length > 0 ? (
-									<SuggestionDropdown
-										suggestion={ suggestion }
-										onSelect={ handleSuggestionClick }
-										availableSuggestions={ internalSuggestions }
-										onOpenChange={ onDropdownOpenChange }
-										showDescription={ isEligibleForDescription }
-									/>
-								) : (
-									<Button
-										onClick={ ( e ) => {
-											e.stopPropagation();
-											handleSuggestionClick( suggestion, internalSuggestions );
-										} }
-										variant="outline"
-										className={ styles.button }
+								{ reasonId ? (
+									<SuggestionTooltip
+										label={ suggestion.disabledReason as string }
+										descriptionId={ reasonId }
 									>
-										<div
-											className={ cn(
-												styles[ 'suggestion-content' ],
-												isEligibleForDescription
-													? styles[ 'suggestion-content--with-description' ]
-													: ''
-											) }
-										>
-											<span className={ styles.label }>{ suggestion.label }</span>
-											{ isEligibleForDescription && (
-												<span className={ styles.description }>{ suggestion.description }</span>
-											) }
-										</div>
-									</Button>
+										{ chip }
+									</SuggestionTooltip>
+								) : (
+									chip
 								) }
 							</motion.div>
 						);

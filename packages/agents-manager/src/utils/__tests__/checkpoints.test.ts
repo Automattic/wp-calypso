@@ -9,13 +9,18 @@ const GLOBAL_STYLES_RECORD = {
 	styles: { typography: { fontSize: '16px' } },
 };
 
+const SITE_RECORD = { site_logo: 42 };
+
 // The record store is module state — each test loads a fresh module (and the
 // matching mock instances) to start clean.
 async function loadCheckpoints() {
 	jest.resetModules();
 	const { select, dispatch } = jest.requireMock( '@wordpress/data' );
 	const getGlobalStylesId = jest.fn().mockReturnValue( 'global-styles-1' );
-	const getEditedEntityRecord = jest.fn().mockReturnValue( GLOBAL_STYLES_RECORD );
+	const getEditedEntityRecord = jest.fn(
+		( _kind: string, name: string ): Record< string, unknown > | undefined =>
+			name === 'site' ? SITE_RECORD : GLOBAL_STYLES_RECORD
+	);
 	const editEntityRecord = jest.fn();
 	select.mockReturnValue( {
 		__experimentalGetCurrentGlobalStylesId: getGlobalStylesId,
@@ -105,6 +110,78 @@ describe( 'setCheckpoint', () => {
 			{ id: 'toolu_1', keys: [ 'button' ], summary: 'Second.' },
 			{ id: 'toolu_2', keys: [ 'font' ], summary: undefined },
 		] );
+	} );
+} );
+
+describe( 'logo domain', () => {
+	it( 'snapshots the current logo only for logo checkpoints', async () => {
+		const { setCheckpoint, getCheckpoint, checkpointKeys } = await loadCheckpoints();
+
+		setCheckpoint( 'logo-call', [ checkpointKeys.LOGO ] );
+		setCheckpoint( 'color-call', [ checkpointKeys.COLOR ] );
+
+		expect( getCheckpoint( 'logo-call' )?.logoBeforeUpdate ).toBe( 42 );
+		expect( getCheckpoint( 'color-call' )?.logoBeforeUpdate ).toBeUndefined();
+	} );
+
+	it( 'snapshots an unset logo, so restoring can clear it again', async () => {
+		const { setCheckpoint, getCheckpoint, checkpointKeys, getEditedEntityRecord } =
+			await loadCheckpoints();
+		getEditedEntityRecord.mockReturnValue( {} );
+
+		setCheckpoint( 'logo-call', [ checkpointKeys.LOGO ] );
+
+		expect( getCheckpoint( 'logo-call' )?.logoBeforeUpdate ).toBeNull();
+	} );
+
+	it( 'restores the snapshotted logo without touching the editor undo stack', async () => {
+		const { setCheckpoint, restoreCheckpoint, checkpointKeys, editEntityRecord } =
+			await loadCheckpoints();
+		setCheckpoint( 'logo-call', [ checkpointKeys.LOGO ] );
+
+		await restoreCheckpoint( 'logo-call' );
+
+		expect( editEntityRecord ).toHaveBeenCalledWith(
+			'root',
+			'site',
+			undefined,
+			{ site_logo: 42 },
+			{ undoIgnore: true }
+		);
+	} );
+
+	it( 'leaves the logo alone when the checkpoint does not scope it', async () => {
+		const { setCheckpoint, restoreCheckpoint, checkpointKeys, editEntityRecord } =
+			await loadCheckpoints();
+		setCheckpoint( 'color-call', [ checkpointKeys.COLOR ] );
+
+		await restoreCheckpoint( 'color-call' );
+
+		expect( editEntityRecord ).not.toHaveBeenCalledWith(
+			'root',
+			'site',
+			undefined,
+			expect.anything(),
+			expect.anything()
+		);
+	} );
+
+	it( 'keeps the logo snapshot out of the model-facing list', async () => {
+		const { setCheckpoint, getAvailableCheckpoints, checkpointKeys } = await loadCheckpoints();
+		setCheckpoint( 'logo-call', [ checkpointKeys.LOGO ] );
+
+		expect( getAvailableCheckpoints()[ 0 ] ).not.toHaveProperty( 'logoBeforeUpdate' );
+	} );
+
+	it( 'throws rather than silently skipping a logo restore with no snapshot', async () => {
+		const { setCheckpoint, restoreCheckpoint, checkpointKeys, getEditedEntityRecord } =
+			await loadCheckpoints();
+		getEditedEntityRecord.mockReturnValue( undefined );
+		setCheckpoint( 'logo-call', [ checkpointKeys.LOGO ] );
+
+		await expect( restoreCheckpoint( 'logo-call' ) ).rejects.toThrow(
+			'Checkpoint has no site-logo snapshot to restore.'
+		);
 	} );
 } );
 

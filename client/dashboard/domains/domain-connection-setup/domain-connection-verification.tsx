@@ -69,7 +69,7 @@ export default function DomainConnectionVerification( {
 							className="dashboard-domain-connection-verification__icon"
 							icon={ status === 'verifying' ? swatch : published }
 						/>
-						<Text className="dashboard-domain-connection-verification__title" size={ 10 }>
+						<Text className="dashboard-domain-connection-verification__title" size={ 15 }>
 							{ domainName }
 						</Text>
 						<Badge intent={ status === 'connected' ? 'success' : 'warning' }>

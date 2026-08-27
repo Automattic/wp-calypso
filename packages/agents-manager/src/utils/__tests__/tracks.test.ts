@@ -6,14 +6,14 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ) );
 jest.mock( '@wordpress/data', () => ( { select: jest.fn( () => ( {} ) ) } ) );
-jest.mock( '../agent-session', () => ( { getSessionId: jest.fn( () => 'session-xyz' ) } ) );
+jest.mock( '../agent-session', () => ( { getActiveSessionId: jest.fn( () => 'session-xyz' ) } ) );
 jest.mock( '../is-reader-chat-agent', () => {
 	const actual = jest.requireActual( '../is-reader-chat-agent' );
 	return { ...actual, isReaderChatHost: jest.fn( () => false ) };
 } );
 
 import { select } from '@wordpress/data';
-import { getSessionId } from '../agent-session';
+import { getActiveSessionId } from '../agent-session';
 import { isReaderChatHost } from '../is-reader-chat-agent';
 import { setResolvedAgentId } from '../resolved-agent-id';
 import {
@@ -25,7 +25,9 @@ import {
 const mockRecordTracksEvent = recordTracksEvent as jest.MockedFunction< typeof recordTracksEvent >;
 const mockIsReaderChatHost = isReaderChatHost as jest.MockedFunction< typeof isReaderChatHost >;
 const mockSelect = select as jest.MockedFunction< typeof select >;
-const mockGetSessionId = getSessionId as jest.MockedFunction< typeof getSessionId >;
+const mockGetActiveSessionId = getActiveSessionId as jest.MockedFunction<
+	typeof getActiveSessionId
+>;
 
 function lastEventProps(): Record< string, unknown > {
 	const call = mockRecordTracksEvent.mock.calls.at( -1 );
@@ -131,7 +133,7 @@ describe( 'tracks wrappers', () => {
 		} );
 
 		it( 'omits ai_session_id while no session exists yet', () => {
-			mockGetSessionId.mockReturnValueOnce( '' );
+			mockGetActiveSessionId.mockReturnValueOnce( '' );
 
 			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
 
@@ -257,22 +259,23 @@ describe( 'tracks wrappers', () => {
 		} );
 	} );
 
-	describe( 'entry-point event names', () => {
-		it( 'records a host-prefixed name verbatim with the unified base-prop set', () => {
-			recordAgentsManagerTracksEvent( 'calypso_editor_agents_manager_ai_chat_clicked', {
+	describe( 'entry-point events', () => {
+		it( 'lets a caller-supplied surface override the base value', () => {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_ai_chat_clicked', {
+				surface: 'editor_toolbar',
 				section: 'gutenberg',
 				action: 'open',
 			} );
 
 			const [ eventName ] = mockRecordTracksEvent.mock.calls[ 0 ];
-			expect( eventName ).toBe( 'calypso_editor_agents_manager_ai_chat_clicked' );
+			expect( eventName ).toBe( 'calypso_agents_manager_ai_chat_clicked' );
 
 			expect( lastEventProps() ).toMatchObject( {
 				section: 'gutenberg',
 				action: 'open',
 				ai_session_id: 'session-xyz',
 				agent_name: 'dolly',
-				surface: 'editor',
+				surface: 'editor_toolbar',
 				is_test: true,
 			} );
 		} );

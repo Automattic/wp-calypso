@@ -13,12 +13,15 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
 import { DOLLY_AGENT_ID } from '../constants';
-import { getSessionId } from './agent-session';
+import { getActiveSessionId } from './agent-session';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent, isReaderChatHost } from './is-reader-chat-agent';
 import { getResolvedAgentId } from './resolved-agent-id';
 
 type TracksProps = Record< string, unknown >;
+
+export const BIG_SKY_EVENT_PREFIX = 'jetpack_big_sky_';
+export type BigSkyEventName = `${ typeof BIG_SKY_EVENT_PREFIX }${ string }`;
 
 type EditorSelectStore =
 	| {
@@ -108,7 +111,7 @@ function getBigSkyPageProps(): TracksProps {
  * dashboards keep working.
  */
 export function recordBigSkyTracksEvent(
-	eventName: `jetpack_big_sky_${ string }`,
+	eventName: BigSkyEventName,
 	props: TracksProps = {}
 ): void {
 	if ( isReaderChatAgent( getResolvedAgentId() ) ) {
@@ -122,7 +125,7 @@ export function recordBigSkyTracksEvent(
 		is_test: getIsTest(),
 		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
 		...( blogId !== undefined ? { blog_id: blogId } : {} ),
-		sessionid: getSessionId(),
+		sessionid: getActiveSessionId(),
 		session_type: bigSky.sessionType,
 		// AM has no onboarding flow, so the phase is always the editor.
 		phase: 'editor',
@@ -149,7 +152,7 @@ function getUnifiedBaseProps(): TracksProps {
 	const isA11n = getIsA11n();
 	const blogId = getBlogId();
 	return {
-		ai_session_id: getSessionId(),
+		ai_session_id: getActiveSessionId(),
 		agent_name: getResolvedAgentId() ?? DOLLY_AGENT_ID,
 		surface: isReaderChatHost() ? 'reader-chat' : 'editor',
 		path: typeof window !== 'undefined' ? window.location.pathname : '',
@@ -161,11 +164,9 @@ function getUnifiedBaseProps(): TracksProps {
 
 /**
  * Records an Agents Manager event using the shared unified property names.
- * Most events live under `calypso_agents_manager_`; the entry-point events
- * carry a host prefix instead (e.g. `calypso_editor_agents_manager_ai_chat_clicked`).
  */
 export function recordAgentsManagerTracksEvent(
-	eventName: `calypso_${ string }`,
+	eventName: `calypso_agents_manager_${ string }`,
 	props: TracksProps = {}
 ): void {
 	recordTracksEvent( eventName, { ...getUnifiedBaseProps(), ...props } );

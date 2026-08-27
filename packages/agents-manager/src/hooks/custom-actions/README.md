@@ -17,6 +17,7 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 | -------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------- |
 | `getChatState`             | `() => Promise<{ isOpen, isDocked, floatingPosition }>` | Current chat state. Waits for the store to load before resolving.         |
 | `getSessionId`             | `() => string`                                          | Active session ID.                                                        |
+| `recordBigSkyTracksEvent`  | `(eventName: string, props?) => void`                   | Record a `jetpack_big_sky_` Tracks event; `eventName` omits that prefix.  |
 | `isChatVisible`            | `() => boolean`                                         | Whether the chat is visible (open and not minimized).                     |
 | `getCurrentRoute`          | `() => string`                                          | The chat's current route, e.g. `/chat`, `/history`, `/support-guides`.    |
 | `setChatOpen`              | `(isOpen: boolean) => void`                             | Open or close the chat. Opening also expands it from the minimized bar.   |
@@ -34,8 +35,11 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 | `chatNavigate`             | `NavigateFunction`                                      | The `react-router-dom` navigate function (path with options, or delta).   |
 | `resumeChat`               | `() => void`                                            | Reopen the chat, resuming this tab's conversation (not a new one).        |
 | `isReady`                  | `boolean`                                               | `true` once the API is fully populated and safe to call.                  |
+| `broadcastsAgentActivity`  | `boolean`                                               | Whether this build fires the [agent activity](#agent-activity) events.    |
 
 \* Available only while the chat panel is mounted. Always optional-chain these calls — they can be `undefined` even after `isReady` is `true`.
+
+`recordBigSkyTracksEvent` is absent on older Agents Manager bundles — optional-chain it too.
 
 ## Ready signal
 
@@ -66,6 +70,33 @@ window.addEventListener( 'agents-manager-conversation-changed', resync );
 ```
 
 Dispatched by `OrchestratorChat` as the transcript grows. Prefer this over the provider contract for chat interactions — providers are reserved for agent setup.
+
+## Agent activity
+
+Three more window events say what the agent is _doing_, for hosts that render their own editing surface around the chat and have to tell the agent's writes apart from the user's. Nothing else on the page can see that difference: an editor's own dirty state also changes on mount, so a page opening reads the same as an agent editing it.
+
+| Event                              | `detail`                        | Fires when                                                                                                                                            |
+| ---------------------------------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `agents-manager-turn-started`      | —                               | A turn began — a message was sent and the agent is working on it.                                                                                     |
+| `agents-manager-turn-ended`        | —                               | The turn finished or was aborted.                                                                                                                     |
+| `agents-manager-ability-completed` | `{ name: string, ok: boolean }` | An ability ran to completion, after it resolved or threw so anything it wrote has landed. `ok` is `false` when it threw or answered `success: false`. |
+
+The turn events are edges, not state: they fire on the change, so a listener that arrives mid-turn hears nothing until that turn ends. The turn is taken from the agent manager rather than from the chat, which is one route in the dock and can unmount while the stream carries on — a turn that ends while the chat is away has its end announced when the chat comes back, and until then a listener is told the agent is still working.
+
+Check `broadcastsAgentActivity` before relying on any of this. Against a build without it no events arrive, and the agent looks permanently silent:
+
+```js
+if ( window.__agentsManagerActions?.broadcastsAgentActivity ) {
+	window.addEventListener( 'agents-manager-turn-started', () => {
+		// the agent is working — attribute what changes next to it
+	} );
+	window.addEventListener( 'agents-manager-ability-completed', ( event ) => {
+		const { name, ok } = event.detail;
+	} );
+}
+```
+
+Defined in `utils/agent-activity-events.ts`.
 
 ## Initial values
 

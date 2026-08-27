@@ -1,5 +1,3 @@
-const anyLocaleRegex = '([a-z]{2,3}|[a-z]{2}-[a-z]{2})';
-
 const sections = [
 	{
 		name: 'root',
@@ -580,17 +578,6 @@ const sections = [
 		enableLoggedOut: false,
 	},
 	{
-		name: 'reader',
-		paths: [
-			'/reader/subscriptions',
-			'/reader/subscriptions/comments',
-			'/reader/subscriptions/pending',
-			'^/reader/subscriptions/(\\d+)(/)?$',
-		],
-		module: 'calypso/reader/site-subscriptions-manager',
-		group: 'reader',
-	},
-	{
 		name: 'auth',
 		paths: [ '/api/oauth/token' ],
 		module: 'calypso/auth',
@@ -715,14 +702,6 @@ const sections = [
 				href: 'https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap',
 			},
 		],
-	},
-	{
-		name: 'jetpack-cloud-manage-pricing',
-		paths: [ '/manage/pricing', `/${ anyLocaleRegex }/manage/pricing` ],
-		module: 'calypso/jetpack-cloud/sections/manage/pricing',
-		group: 'jetpack-cloud',
-		enableLoggedOut: true,
-		isomorphic: true,
 	},
 	{
 		name: 'jetpack-cloud-features-comparison',
@@ -868,7 +847,7 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-sites',
-		paths: [ '/sites', 'sites/need-setup' ],
+		paths: [ '/sites' ],
 		module: 'calypso/a8c-for-agencies/sections/sites',
 		group: 'a8c-for-agencies',
 	},
