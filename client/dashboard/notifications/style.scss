@@ -198,7 +198,14 @@
 }
 
 .dashboard-notifications-inbox__list .dataviews-view-list__group-header {
-	margin-block-start: 16px;
+	margin: 0;
+	padding: 16px 24px;
+	border-top: 1px solid var(--dashboard-header__border-color, #ddd);
+}
+
+/* The toolbar's own border already separates the first group. */
+.dashboard-notifications-inbox__list .dataviews-view-list > :first-child > .dataviews-view-list__group-header {
+	border-top: none;
 }
 
 .dashboard-notifications-inbox__note-avatar {
