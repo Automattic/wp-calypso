@@ -9,7 +9,11 @@ import 'calypso/state/automated-transfer/init';
  * @returns {?boolean} is transfer currently failed? null if unknown
  */
 export const isFailed = ( status ) =>
-	status ? status === transferStates.CONFLICTS || status === transferStates.FAILURE : null;
+	status
+		? status === transferStates.CONFLICTS ||
+		  status === transferStates.FAILURE ||
+		  status === transferStates.CLIENT_TIMEOUT
+		: null;
 
 /**
  * Indicates whether or not an automated transfer is failed for a given site

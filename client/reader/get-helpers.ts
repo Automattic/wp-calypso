@@ -185,54 +185,6 @@ export const getSiteAuthorName = ( site: ReaderSite ): string => {
 	return decodeEntities( authorFullName || '' );
 };
 
-interface isEligibleForUnseenArgs {
-	isWPForTeamsItem: boolean;
-	currentRoute?: string | null;
-	hasOrganization?: boolean | null;
-}
-
-/**
- * Check if route or feed/blog is eligible to use seen posts feature (unseen counts and mark as seen)
- */
-export const isEligibleForUnseen = ( {
-	isWPForTeamsItem = false,
-	currentRoute = null,
-	hasOrganization = null,
-}: isEligibleForUnseenArgs ): boolean => {
-	let isEligible = isWPForTeamsItem;
-	if ( hasOrganization !== null ) {
-		isEligible = hasOrganization;
-	}
-
-	if ( currentRoute ) {
-		if (
-			[ '/reader/a8c', '/reader/p2' ].includes( currentRoute ) ||
-			[ '/reader/feeds/', '/reader/blogs/' ].some( ( route ) => currentRoute.startsWith( route ) )
-		) {
-			return isEligible;
-		}
-
-		return false;
-	}
-
-	return isEligible;
-};
-
-interface CanBeMarkedAsSeenArgs {
-	post: ReaderPost | null;
-}
-
-/**
- * Check if the post/posts can be marked as seen based on the existence of `is_seen` flag and the current route.
- */
-export const canBeMarkedAsSeen = ( { post = null }: CanBeMarkedAsSeenArgs ): boolean => {
-	if ( post !== null ) {
-		return post.hasOwnProperty( 'is_seen' );
-	}
-
-	return false;
-};
-
 /**
  * Return Featured image alt text.
  */
@@ -272,3 +224,40 @@ export const getFollowerCount = ( feed: ReaderFeed, site: ReaderSite ): number |
 
 	return null;
 };
+
+interface GetSiteNameForSidebarArgs {
+	name?: string;
+	URL?: string;
+}
+
+const isFreeWpcomSubdomain = ( host = '' ): boolean => /\.wordpress\.com$/i.test( host );
+
+/**
+ * Label for a followed site: real title, else an `r/subreddit` handle, else the
+ * resolved domain. Untitled WordPress.com sites come back named after their free
+ * subdomain, so those fall through to the domain from `URL`.
+ */
+export function getReaderSidebarSiteName( site: GetSiteNameForSidebarArgs ): string {
+	const siteName = site.name ?? '';
+	// `name` may be URL-shaped, so normalize before the subdomain check.
+	const normalizedName = formatUrlForDisplay( siteName ) || siteName;
+
+	if ( siteName && ! isFreeWpcomSubdomain( normalizedName ) ) {
+		return siteName;
+	}
+
+	// A title-less subreddit reads best as its `r/name` (or `u/name`) handle, since
+	// every subreddit resolves to the same generic `reddit.com` domain. The host is
+	// anchored so only genuine `reddit.com` feeds qualify.
+	const reddit = site.URL?.match( /^https?:\/\/(?:[^/]+\.)?reddit\.com\/(r|user)\/([^/?#]+)/i );
+	if ( reddit ) {
+		return `${ reddit[ 1 ].toLowerCase() === 'user' ? 'u' : 'r' }/${ reddit[ 2 ] }`;
+	}
+
+	const siteDomain = site.URL ? getSiteDomain( { site: { URL: site.URL } } ) : undefined;
+	if ( siteDomain ) {
+		return siteDomain;
+	}
+
+	return siteName;
+}

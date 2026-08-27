@@ -8,6 +8,7 @@ import {
 	filterLanguageRevisions,
 	isTranslatedIncompletely,
 	isDefaultLocale,
+	getAnyLanguageRouteParam,
 	getLanguageSlugs,
 	localizeUrl,
 } from '@automattic/i18n-utils';
@@ -35,6 +36,7 @@ import {
 } from 'calypso/dashboard/app-dotcom/section';
 import { A4A_SIGNUP_PATHS } from 'calypso/dashboard/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
+import { JETPACK_COM_A4A_LANDING_PAGE } from 'calypso/jetpack-cloud/constants';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
@@ -266,6 +268,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	const authHelper = config.isEnabled( 'dev/auth-helper' );
 	const accountSettingsHelper = config.isEnabled( 'dev/account-settings-helper' );
 	const storeSandboxHelper = config.isEnabled( 'dev/store-sandbox-helper' );
+	const blackboxHelper = config.isEnabled( 'dev/blackbox-helper' );
 	// preferences helper requires a Redux store, which doesn't exist in Gutenboarding
 	const preferencesHelper =
 		config.isEnabled( 'dev/preferences-helper' ) && entrypoint !== 'entry-gutenboarding';
@@ -296,6 +299,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		authHelper,
 		preferencesHelper,
 		storeSandboxHelper,
+		blackboxHelper,
 		featuresHelper,
 		store: reduxStore,
 		target: 'evergreen',
@@ -1212,6 +1216,19 @@ function wpcomPages( app ) {
 	} );
 }
 
+function jetpackCloudPages( app ) {
+	const anyLangParam = getAnyLanguageRouteParam();
+
+	// The Jetpack Manage pricing page is disabled; send visitors to the Jetpack.com For
+	// Agencies landing page instead. A 302 rather than a 301 so the page can be restored
+	// without waiting out caches. The landing page is English-only, so no locale is carried
+	// over — see https://github.com/Automattic/wp-calypso/pull/90190.
+	// Query args are intentionally dropped rather than forwarded to a third-party domain.
+	app.get( [ '/manage/pricing', `/${ anyLangParam }/manage/pricing` ], function ( _req, res ) {
+		res.redirect( 302, JETPACK_COM_A4A_LANDING_PAGE );
+	} );
+}
+
 export default function pages() {
 	const app = express();
 
@@ -1226,6 +1243,11 @@ export default function pages() {
 
 	if ( ! ( isJetpackCloud() || isA8CForAgencies() || isDashboardEnv() ) ) {
 		wpcomPages( app );
+	}
+
+	// Registered before the section paths below, since express matches in registration order.
+	if ( isJetpackCloud() ) {
+		jetpackCloudPages( app );
 	}
 
 	/**

@@ -10,7 +10,7 @@ test.describe(
 		test( 'Loading LOHP fires wpcom_page_view event', async ( { pageIncognito } ) => {
 			const page = pageIncognito.getPage();
 			const tracksEventManager = new TracksEventManager( page );
-			tracksEventManager.init();
+			await tracksEventManager.init();
 
 			const didEventFirePromise = tracksEventManager.didEventFire( 'wpcom_page_view' );
 			await tracksEventManager.navigateToUrl( lohpUrl );
@@ -20,7 +20,7 @@ test.describe(
 		test( 'Clicking link on LOHP fires wpcom_homepage_link_click', async ( { pageIncognito } ) => {
 			const page = pageIncognito.getPage();
 			const tracksEventManager = new TracksEventManager( page );
-			tracksEventManager.init();
+			await tracksEventManager.init();
 
 			await tracksEventManager.navigateToUrl( lohpUrl );
 
@@ -34,7 +34,7 @@ test.describe(
 		} ) => {
 			const page = pageIncognito.getPage();
 			const tracksEventManager = new TracksEventManager( page );
-			tracksEventManager.init();
+			await tracksEventManager.init();
 
 			let requestUrlPromise = tracksEventManager.getRequestUrlForEvent( 'wpcom_page_view' );
 			await tracksEventManager.navigateToUrl( lohpUrl );

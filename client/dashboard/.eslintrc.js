@@ -72,7 +72,9 @@ module.exports = {
 							'!@automattic/agents-manager',
 							'!@automattic/i18n-utils',
 							'!@automattic/languages',
+							'!@automattic/language-picker',
 							'!@automattic/load-script',
+							'!@automattic/mini-cart',
 							'!@automattic/number-formatters',
 							'!@automattic/search',
 							'!@automattic/calypso-stripe',
@@ -87,6 +89,7 @@ module.exports = {
 							'!@automattic/browser-data-collector',
 							'!@automattic/omnibar',
 							'!@automattic/posthog',
+							'!@automattic/site-launch-modals',
 							// Please do not add exceptions which pull in Calypso code/concepts.
 							// See docs/package-imports.md for policy.
 						],

@@ -2,32 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { getStepIndexForStatus, pollForBuildWowStatus } from '../build-status-poller';
-
-describe( 'getStepIndexForStatus', () => {
-	// The shipping step list has five entries (see site-generation/index.tsx), which
-	// is the arity that matters and the one a three-step fixture cannot exercise —
-	// at three, the tail offset is zero and every mapping looks like identity.
-	it( 'maps the delivery walk onto the last three of the five shipping steps', () => {
-		expect( getStepIndexForStatus( 'delivering', 5 ) ).toBe( 2 );
-		expect( getStepIndexForStatus( 'activating', 5 ) ).toBe( 3 );
-		expect( getStepIndexForStatus( 'verifying', 5 ) ).toBe( 4 );
-	} );
-
-	it( 'returns null for a status outside the known walk', () => {
-		expect( getStepIndexForStatus( 'live', 5 ) ).toBeNull();
-		expect( getStepIndexForStatus( 'failed:whatever', 5 ) ).toBeNull();
-		expect( getStepIndexForStatus( '', 5 ) ).toBeNull();
-	} );
-
-	it( 'stays in range for step lists shorter than the delivery walk', () => {
-		expect( getStepIndexForStatus( 'delivering', 3 ) ).toBe( 0 );
-		expect( getStepIndexForStatus( 'verifying', 3 ) ).toBe( 2 );
-		expect( getStepIndexForStatus( 'verifying', 2 ) ).toBe( 1 );
-		expect( getStepIndexForStatus( 'verifying', 1 ) ).toBe( 0 );
-		expect( getStepIndexForStatus( 'delivering', 0 ) ).toBeNull();
-	} );
-} );
+import { pollForBuildWowStatus } from '../build-status-poller';
 
 describe( 'pollForBuildWowStatus', () => {
 	beforeEach( () => {
@@ -38,26 +13,23 @@ describe( 'pollForBuildWowStatus', () => {
 		jest.useRealTimers();
 	} );
 
-	it( 'reports progress and calls onReady once the status is live', async () => {
+	it( 'calls onReady once the status is live', async () => {
 		const fetchStatus = jest
 			.fn()
 			.mockResolvedValueOnce( { build_status: 'delivering' } )
 			.mockResolvedValueOnce( { build_status: 'live' } );
 		const onReady = jest.fn();
 		const onFailed = jest.fn();
-		const onProgress = jest.fn();
 
 		pollForBuildWowStatus( {
 			siteIdentifier: '123',
 			onReady,
 			onFailed,
-			onProgress,
 			pollIntervalMs: 1000,
 			fetchStatus,
 		} );
 
 		await jest.advanceTimersByTimeAsync( 0 );
-		expect( onProgress ).toHaveBeenCalledWith( 'delivering' );
 		expect( onReady ).not.toHaveBeenCalled();
 
 		await jest.advanceTimersByTimeAsync( 1000 );
@@ -81,7 +53,10 @@ describe( 'pollForBuildWowStatus', () => {
 		} );
 
 		await jest.advanceTimersByTimeAsync( 0 );
-		expect( onFailed ).toHaveBeenCalledWith( 'failed:build_wow_theme_activation_failed' );
+		expect( onFailed ).toHaveBeenCalledWith(
+			'failed:build_wow_theme_activation_failed',
+			undefined
+		);
 		expect( onReady ).not.toHaveBeenCalled();
 
 		await jest.advanceTimersByTimeAsync( 5000 );
@@ -115,19 +90,17 @@ describe( 'pollForBuildWowStatus', () => {
 			.mockResolvedValueOnce( { build_status: 1 } )
 			.mockResolvedValueOnce( { build_status: 'live' } );
 		const onReady = jest.fn();
-		const onProgress = jest.fn();
 
 		pollForBuildWowStatus( {
 			siteIdentifier: '123',
 			onReady,
 			onFailed: jest.fn(),
-			onProgress,
 			pollIntervalMs: 1000,
 			fetchStatus,
 		} );
 
 		await jest.advanceTimersByTimeAsync( 0 );
-		expect( onProgress ).not.toHaveBeenCalled();
+		expect( onReady ).not.toHaveBeenCalled();
 
 		await jest.advanceTimersByTimeAsync( 1000 );
 		expect( onReady ).toHaveBeenCalledTimes( 1 );
@@ -271,27 +244,6 @@ describe( 'pollForBuildWowStatus', () => {
 		] );
 	} );
 
-	it( 'keeps polling when onProgress throws', async () => {
-		const fetchStatus = jest.fn().mockResolvedValue( { build_status: 'delivering' } );
-		const onProgress = jest.fn( () => {
-			throw new Error( 'Render blew up' );
-		} );
-
-		pollForBuildWowStatus( {
-			siteIdentifier: '123',
-			onReady: jest.fn(),
-			onFailed: jest.fn(),
-			onProgress,
-			pollIntervalMs: 1000,
-			fetchStatus,
-		} );
-
-		await jest.advanceTimersByTimeAsync( 3000 );
-
-		expect( onProgress.mock.calls.length ).toBeGreaterThan( 1 );
-		expect( fetchStatus.mock.calls.length ).toBeGreaterThan( 1 );
-	} );
-
 	it( 'keeps polling when onRequestError throws', async () => {
 		const fetchStatus = jest.fn().mockRejectedValue( new Error( 'Unavailable' ) );
 		const onRequestError = jest.fn( () => {
@@ -375,5 +327,105 @@ describe( 'pollForBuildWowStatus', () => {
 		await jest.advanceTimersByTimeAsync( 5000 );
 
 		expect( fetchStatus ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'reports every ui block to onUpdate, including the terminal one', async () => {
+		const fetchStatus = jest
+			.fn()
+			.mockResolvedValueOnce( {
+				build_status: '',
+				ui: { state: 'generating', steps: [ { id: 'pages', label: 'Building', state: 'active' } ] },
+			} )
+			.mockResolvedValueOnce( {
+				build_status: 'live',
+				ui: { state: 'ready', is_terminal: true, steps: [] },
+			} );
+		const onUpdate = jest.fn();
+		const onReady = jest.fn();
+
+		pollForBuildWowStatus( {
+			siteIdentifier: '123',
+			onReady,
+			onFailed: jest.fn(),
+			onUpdate,
+			pollIntervalMs: 1000,
+			fetchStatus,
+		} );
+
+		await jest.advanceTimersByTimeAsync( 1000 );
+
+		expect( onUpdate ).toHaveBeenCalledTimes( 2 );
+		expect( onUpdate.mock.calls[ 0 ][ 0 ].state ).toBe( 'generating' );
+		expect( onReady ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'trusts the server ui verdict even without a raw build_status', async () => {
+		const fetchStatus = jest.fn().mockResolvedValue( { ui: { state: 'failed', can_retry: true } } );
+		const onFailed = jest.fn();
+
+		pollForBuildWowStatus( {
+			siteIdentifier: '123',
+			onReady: jest.fn(),
+			onFailed,
+			pollIntervalMs: 1000,
+			fetchStatus,
+		} );
+
+		await jest.advanceTimersByTimeAsync( 0 );
+
+		expect( onFailed ).toHaveBeenCalledWith( 'failed:unknown', {
+			state: 'failed',
+			can_retry: true,
+		} );
+		await jest.advanceTimersByTimeAsync( 5000 );
+		expect( fetchStatus ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'keeps working against a backend without the ui block', async () => {
+		const fetchStatus = jest
+			.fn()
+			.mockResolvedValueOnce( { build_status: 'delivering' } )
+			.mockResolvedValueOnce( { build_status: 'live' } );
+		const onUpdate = jest.fn();
+		const onReady = jest.fn();
+
+		pollForBuildWowStatus( {
+			siteIdentifier: '123',
+			onReady,
+			onFailed: jest.fn(),
+			onUpdate,
+			pollIntervalMs: 1000,
+			fetchStatus,
+		} );
+
+		await jest.advanceTimersByTimeAsync( 1000 );
+
+		expect( onUpdate ).not.toHaveBeenCalled();
+		expect( onReady ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'passes the failed ui block to onFailed', async () => {
+		const failedUi = {
+			state: 'failed',
+			can_retry: true,
+			label: 'We couldn’t finish building your site',
+			detail: 'You can start the build again right away.',
+		};
+		const fetchStatus = jest
+			.fn()
+			.mockResolvedValue( { build_status: 'failed:generation_failed', ui: failedUi } );
+		const onFailed = jest.fn();
+
+		pollForBuildWowStatus( {
+			siteIdentifier: '123',
+			onReady: jest.fn(),
+			onFailed,
+			pollIntervalMs: 1000,
+			fetchStatus,
+		} );
+
+		await jest.advanceTimersByTimeAsync( 0 );
+
+		expect( onFailed ).toHaveBeenCalledWith( 'failed:generation_failed', failedUi );
 	} );
 } );

@@ -1,7 +1,10 @@
 import { DataHelper, RestAPIClient, SecretsManager } from '@automattic/calypso-e2e';
 import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
 
-test.describe(
+// .fixme: muted project-wide since 2026-02-02 and failing every run — the invites endpoint
+// throttles in CI (`unauthorized: API calls to this endpoint have been disabled`). The mute
+// keeps builds green, so running it only wastes CI time. Underlying throttle tracked in TESTOPS-232.
+test.describe.fixme(
 	DataHelper.createSuiteTitle( 'Invite: Revoke' ),
 	{ tag: [ tags.CALYPSO_PR, tags.CALYPSO_RELEASE, tags.DESKTOP_ONLY ] },
 	() => {

@@ -62,6 +62,41 @@ describe( 'assertSuccessfulNewUserResponse', () => {
 } );
 
 describe( 'UserSignupPage', () => {
+	test( 'surfaces a rejected signup response without waiting for an ok response', async () => {
+		const locator = {
+			click: jest.fn( async () => undefined ),
+			fill: jest.fn( async () => undefined ),
+			isVisible: jest.fn( async () => true ),
+			scrollIntoViewIfNeeded: jest.fn( async () => undefined ),
+			waitFor: jest.fn( async () => undefined ),
+		};
+		const response = {
+			json: async () => ( {
+				body: { success: false, error: 'throttled', message: 'Limit reached.' },
+			} ),
+			ok: () => false,
+			request: () => ( { method: () => 'POST' } ),
+			status: () => 403,
+			url: () => 'https://public-api.wordpress.com/rest/v1.1/users/new?http_envelope=1',
+		};
+		const waitForResponse = jest.fn( async ( predicate: ( value: typeof response ) => boolean ) => {
+			if ( ! predicate( response ) ) {
+				throw new Error( 'response was not captured' );
+			}
+			return response;
+		} );
+		const page = {
+			getByRole: jest.fn( () => locator ),
+			locator: jest.fn( () => locator ),
+			waitForResponse,
+		} as unknown as Page;
+
+		await expect(
+			new UserSignupPage( page ).signup( 'test@example.com', 'tester', 'password' )
+		).rejects.toThrow( 'User signup did not create a usable account: throttled: Limit reached.' );
+		expect( waitForResponse ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	test( 'returns a partial invite signup response so the caller can retain it for cleanup', async () => {
 		// Deliberately omits bearer_token: the invite path must return the raw
 		// response for cleanup and must NOT run assertSuccessfulNewUserResponse,

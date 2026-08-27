@@ -87,6 +87,7 @@ export default function ZendeskChat( {
 		conversationTags: zendeskConversationTags,
 		conversationTicketFields,
 		smoochIntegrationKey: zendeskSmoochIntegrationKey,
+		siteId: site?.ID,
 	} );
 
 	return (

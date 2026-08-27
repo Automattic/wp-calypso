@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useSelector } from 'calypso/state';
@@ -27,6 +27,7 @@ const StatsCardUpdateJetpackVersion: React.FC< Props > = ( { className, siteId, 
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( `${ event_from }_${ tracksEvent }`, {
 			module: statType,
+			blog_id: siteId,
 		} );
 
 		// redirect to the Plugins page
@@ -39,7 +40,7 @@ const StatsCardUpdateJetpackVersion: React.FC< Props > = ( { className, siteId, 
 			onClick={ onClick }
 			copyText={ translate( 'Update your Jetpack plugin to see this feature.' ) }
 			buttonComponent={
-				<Button className="jetpack-emerald-button" onClick={ onClick } primary>
+				<Button variant="primary" onClick={ onClick }>
 					{ translate( 'Update Jetpack plugin' ) }
 				</Button>
 			}

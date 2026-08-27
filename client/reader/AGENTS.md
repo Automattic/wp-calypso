@@ -27,7 +27,7 @@ File Reader issues under the **Reader** Linear team (key `READ`, e.g. `READ-532`
 - Shared dark-mode tokens and component-wide overrides for components used across multiple Calypso surfaces live in `client/lib/color-scheme/dark-theme.scss`. Prefer adding or reusing values there when the style belongs to shared components outside Reader or affects multiple areas.
 - When adding a component that is not already used in a dark-mode-supported surface, verify it in dark mode and add or reuse overrides where needed. If the component is already covered by the existing dark-mode baseline, assume the shared styling holds unless the new usage introduces new variants, states, wrappers, or local CSS.
 - Keep Reader-only dark-mode exceptions close to the Reader stylesheet that owns the surface, and prefer overriding existing CSS custom properties over hardcoded colors.
-- For styles authored inside a CSS Module (`*.module.scss`), `:root`-based overrides cannot reach the scope-hashed class. Use the shared `when-dark-theme` mixin from `calypso/assets/stylesheets/shared/mixins/dark-theme`; see `packages/ui/AGENTS.md`.
+- For styles authored inside a CSS Module (`*.module.scss`), `:root`-based overrides cannot reach the scope-hashed class. Use the shared `when-dark-theme` mixin from `calypso/assets/stylesheets/shared/mixins/dark-theme` (defined in `client/assets/stylesheets/shared/mixins/_dark-theme.scss`).
 
 ### Data fetching migration
 
@@ -84,7 +84,7 @@ export function useReadFoo( id: string | null | undefined, options?: ReadFooQuer
 }
 ```
 
-Callers then pass config explicitly — `useReadFoo( id, { enabled: ! isCreate, refetchOnMount: 'always' } )` — instead of `useReadFoo( isCreate ? null : id )`. See `useSpaceBySlug` in `client/reader/data/spaces/index.ts`.
+Callers then pass config explicitly — `useReadFoo( id, { enabled: ! isCreate, refetchOnMount: 'always' } )` — instead of `useReadFoo( isCreate ? null : id )`. See `useShelfBySlug` in `client/reader/data/shelves/index.ts`.
 
 ### Mutation factories must accept the consumer's `QueryClient`
 
@@ -163,7 +163,7 @@ patches React Query caches, walk this list:
 
 ### Stream keys
 
-Stream types are identified by unique keys. Examples of stream keys include `following`, `feed:{feedId}`, `site:{siteId}`, `tag:{tagSlug}`, `search:{json}`, `discover:*`, `conversations`, `conversations-a8c`, `p2`, `a8c`, `likes`, `recommendations_posts`, `recent`, `recent:{feedId}`, `list:{...}`, `user:{id}`, `tag_popular:{tag}`, `space:{spaceId}` (a Reader Space's posts feed, served by `/wpcom/v2/reader/spaces/{id}/posts`), `space_discover:{spaceId}` (a Reader Space's Discover feed — recommended on-topic posts the user doesn't follow, served by `/wpcom/v2/reader/spaces/{id}/discover`), and `custom_recs_*`. These keys index state in `state.reader.streams`.
+Stream types are identified by unique keys. Examples of stream keys include `following`, `feed:{feedId}`, `site:{siteId}`, `tag:{tagSlug}`, `search:{json}`, `discover:*`, `conversations`, `conversations-a8c`, `p2`, `a8c`, `likes`, `recommendations_posts`, `recent`, `recent:{feedId}`, `list:{...}`, `user:{id}`, `tag_popular:{tag}`, `shelf:{shelfId}` (a Reader Shelf's posts feed, served by `/wpcom/v2/reader/shelves/{id}/posts`), `shelf_discover:{shelfId}` (a Reader Shelf's Discover feed — recommended on-topic posts the user doesn't follow, served by `/wpcom/v2/reader/shelves/{id}/discover`), and `custom_recs_*`. These keys index state in `state.reader.streams`.
 
 ### Post keys
 

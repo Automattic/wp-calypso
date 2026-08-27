@@ -109,6 +109,7 @@ export class LoginForm extends Component {
 		isSendingEmail: PropTypes.bool,
 		cancelSocialAccountConnectLinking: PropTypes.func,
 		isJetpack: PropTypes.bool,
+		isUserAccountEmailUpdateRedirect: PropTypes.bool,
 		loginButtonText: PropTypes.string,
 		isGravatarFixedAccountLogin: PropTypes.bool.isRequired,
 		isGravPoweredClient: PropTypes.bool,
@@ -482,10 +483,6 @@ export class LoginForm extends Component {
 			return this.props.translate( 'Your username' );
 		}
 
-		if ( this.isPasswordView() ) {
-			return this.renderChangeUsername();
-		}
-
 		return (
 			// Since the input receives focus on page load, screen reader users don't have any context
 			// for what credentials to use. Unlike other users, they won't have seen the informative
@@ -703,6 +700,7 @@ export class LoginForm extends Component {
 			isGravPoweredClient,
 			isGravatarFixedAccountLogin,
 			isSocialFirst,
+			isUserAccountEmailUpdateRedirect,
 		} = this.props;
 
 		const isLastUsedPassword =
@@ -750,6 +748,16 @@ export class LoginForm extends Component {
 			);
 		};
 
+		const renderUserAccountEmailUpdateNotice = () => {
+			return (
+				<Notice variant="info">
+					{ this.props.translate(
+						'Please log in using the original email address for your account, not the updated email address you are verifying.'
+					) }
+				</Notice>
+			);
+		};
+
 		const renderSocialLinkingNotice = () => {
 			return (
 				<Notice variant="error">
@@ -774,6 +782,9 @@ export class LoginForm extends Component {
 
 				<div className="login__form-userdata">
 					{ linkingSocialUser && renderSocialLinkingNotice() }
+					{ isUserAccountEmailUpdateRedirect && renderUserAccountEmailUpdateNotice() }
+
+					{ this.isPasswordView() && this.renderChangeUsername() }
 
 					<FormLabel
 						htmlFor="usernameOrEmail"

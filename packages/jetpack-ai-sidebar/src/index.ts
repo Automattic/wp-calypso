@@ -9,7 +9,8 @@
 /**
  * WordPress dependencies
  */
-import { useSelect } from '@wordpress/data';
+import { serialize } from '@wordpress/blocks';
+import { select as selectDataStore, useSelect } from '@wordpress/data';
 import { useState, useEffect, useMemo } from '@wordpress/element';
 import { __, _x } from '@wordpress/i18n';
 /**
@@ -24,6 +25,7 @@ import ImageAltTextPicker from './components/image-alt-text-picker';
 import './components/image-alt-text-picker.scss';
 import PostFeedback from './components/post-feedback';
 import Proofread from './components/proofread';
+import './components/split-screen-guide.scss';
 import SeoDescriptionPicker from './components/seo-description-picker';
 import SeoTitlePicker from './components/seo-title-picker';
 import './components/base-suggestion-picker.scss';
@@ -44,9 +46,16 @@ import {
 	rememberSelectedBlock,
 	clearRememberedSelectedBlock,
 	notifyBlockActionComplete,
+	canUndoBlockEdit,
+	undoBlockEdit,
 	BLOCK_ACTION_COMPLETE_EVENT,
 	SELECTED_BLOCK_CLEAR_EVENT,
 } from './utils/block-actions';
+import {
+	isImageStudioAvailable,
+	openImageStudioForBlock,
+	openImageStudioForFeaturedImage,
+} from './utils/image-studio';
 import {
 	isAiEditorialReviewEnabled,
 	isBlockTransformationsEnabled,
@@ -56,16 +65,13 @@ import {
 	isOptimizeTitleSuggestionEnabled,
 	isSeoSuggestionsEnabled,
 } from './utils/preview-features';
+import { SUGGESTION_ACTION_COMPLETE_EVENT } from './utils/suggestion-events';
 import {
 	UPDATE_BLOCK_CONTENT_TOOL_ID,
 	UPDATE_BLOCK_CONTENT_ABILITY,
 	isUpdateBlockContentTool,
 } from './utils/tool-provider';
-import {
-	type BlockTransformationSuggestionType,
-	trackAiEditorialReviewSuggestionRendered,
-	trackBlockTransformationSuggestionRendered,
-} from './utils/tracking';
+import { getResponseRenderedTrackingProperties } from './utils/tracking';
 import type { SuggestionOption } from '@automattic/agenttic-client';
 import type { ComponentType } from 'react';
 
@@ -80,23 +86,96 @@ let wasAgentProcessing = false;
 let pendingBlockShimmerClientId: string | null = null;
 let blockShimmerStartedForRequest = false;
 let suppressCurrentPageContentForNextContext = false;
-let jetpackAIRequestScopeForNextContext: 'selected-block' | null = null;
 
-/** Whether `_suggestion_rendered` has fired this page life (once-per-session). */
-let suggestionRenderedFiredOnce = false;
+type BlockEditSnapshot = {
+	clientId: string;
+	contentBefore: string;
+	contentAfter: string;
+	editableAttribute?: string;
+	editorBlocksSignatureAfter: string | undefined;
+};
 
-/** Block transformation suggestions whose rendered event has fired this page life. */
-const blockTransformationSuggestionRenderedKeys = new Set< string >();
+const blockEditSnapshots = new Map< string, BlockEditSnapshot >();
+const editorBlocksSignatures = new WeakMap< any[], string >();
+
+function getCurrentEditorBlocks(): any[] | undefined {
+	try {
+		const blockEditor = selectDataStore( 'core/block-editor' ) as {
+			getBlocks?: () => any[];
+		};
+		const blocks = blockEditor?.getBlocks?.();
+		return Array.isArray( blocks ) ? blocks : undefined;
+	} catch {
+		return undefined;
+	}
+}
+
+function getEditorBlocksSignature( blocks: any[] | undefined ): string | undefined {
+	if ( ! blocks ) {
+		return undefined;
+	}
+	const cachedSignature = editorBlocksSignatures.get( blocks );
+	if ( cachedSignature !== undefined ) {
+		return cachedSignature;
+	}
+
+	try {
+		const signature = serialize( blocks );
+		editorBlocksSignatures.set( blocks, signature );
+		return signature;
+	} catch {
+		return undefined;
+	}
+}
+
+function canSwapBlockEditSnapshot( snapshot: BlockEditSnapshot ): boolean {
+	if (
+		! canUndoBlockEdit( snapshot.clientId, snapshot.contentAfter, snapshot.editableAttribute )
+	) {
+		return false;
+	}
+	if ( snapshot.editorBlocksSignatureAfter === undefined ) {
+		return false;
+	}
+
+	const currentEditorBlocks = getCurrentEditorBlocks();
+	return (
+		currentEditorBlocks !== undefined &&
+		getEditorBlocksSignature( currentEditorBlocks ) === snapshot.editorBlocksSignatureAfter
+	);
+}
+
+/**
+ * Uses the selector the legacy "Improve with AI" panel gates on. It is blocks-only
+ * and never reads the title, so a titled post with no body counts as empty. An
+ * editor that cannot answer reports "not empty", so nothing greys out on a store
+ * we cannot read.
+ */
+function isPostContentEmpty(): boolean {
+	const isEditedPostEmpty = ( window as any ).wp?.data?.select?.( 'core/editor' )
+		?.isEditedPostEmpty;
+	return typeof isEditedPostEmpty === 'function' && isEditedPostEmpty() === true;
+}
 
 /** Default suggestion shown when no block is selected. */
 const OPTIMIZE_TITLE_SUGGESTION = {
 	id: 'optimize-title',
 	label: __( 'Optimize Title', __i18n_text_domain__ ),
-	description: __(
-		'Refine the title based on your post’s content and SEO best practices.',
-		__i18n_text_domain__
-	),
 	prompt: __( 'Optimize the title of this post', __i18n_text_domain__ ),
+};
+
+/**
+ * Post-level suggestion that opens Image Studio directly instead of routing
+ * through the agent — same "action instead of prompt" escape hatch the
+ * block-level generate-image/edit-image suggestions use. Always opens in
+ * generate mode: it creates a new image and overwrites whatever featured
+ * image is currently set, it does not pre-load the existing one for editing.
+ */
+const GENERATE_FEATURED_IMAGE_SUGGESTION = {
+	id: 'generate-featured-image',
+	label: __( 'Generate featured image', __i18n_text_domain__ ),
+	prompt: '',
+	action: () => ! openImageStudioForFeaturedImage(),
 };
 
 /**
@@ -108,7 +187,6 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 const GENERATE_EXCERPT_SUGGESTION = {
 	id: 'generate-excerpt',
 	label: __( 'Generate Excerpt', __i18n_text_domain__ ),
-	description: __( 'Generate an excerpt for your post.', __i18n_text_domain__ ),
 	prompt: __( 'Generate an excerpt for this post', __i18n_text_domain__ ),
 };
 
@@ -131,10 +209,6 @@ const GENERATE_EXCERPT_SUGGESTION = {
 const SEO_ENHANCER_SUGGESTION = {
 	id: 'seo-enhancer',
 	label: __( 'SEO Enhancer', __i18n_text_domain__ ),
-	description: __(
-		'Generate metadata for the contents of the post to optimize SEO.',
-		__i18n_text_domain__
-	),
 	prompt: '',
 	options: [
 		{
@@ -158,36 +232,48 @@ const SEO_ENHANCER_SUGGESTION = {
 	],
 };
 
-/** Editor-level suggestion to run AI Editorial Review on saved content. */
-const AI_EDITORIAL_REVIEW_SUGGESTION = {
+/**
+ * The three review tools share one dropdown. Each option's `value` is the whole
+ * prompt, which the dropdown submits verbatim because the parent `prompt` is empty
+ * — the same arrangement SEO Enhancer uses.
+ */
+const GET_FEEDBACK_SUGGESTION_ID = 'get-feedback';
+
+const AI_EDITORIAL_REVIEW_OPTION = {
 	id: 'ai-editorial-review',
-	label: __( 'Editorial Review', __i18n_text_domain__ ),
-	description: __( 'In-depth review against your content guidelines.', __i18n_text_domain__ ),
-	prompt: __(
+	label: __( 'In-depth review against guidelines', __i18n_text_domain__ ),
+	value: __(
 		'Run an AI Editorial Review for this post. Check the content, reviewer notes, and site guidelines, then surface conflicts, implications, guideline issues, and suggested edits.',
 		__i18n_text_domain__
 	),
 };
 
-const POST_FEEDBACK_SUGGESTION = {
+const POST_FEEDBACK_OPTION = {
 	id: 'generate-feedback',
-	label: __( 'Simple Review', __i18n_text_domain__ ),
-	description: __( 'Quick feedback on your content’s structure.', __i18n_text_domain__ ),
-	prompt: __(
+	label: __( 'Quick feedback on structure', __i18n_text_domain__ ),
+	value: __(
 		'Generate feedback for this saved post. Review the saved title and saved block content for content structure, reader clarity, completeness, media/caption/link issues, and obvious publishability concerns. Return practical feedback with one-click suggestions when safe.',
 		__i18n_text_domain__
 	),
 };
 
-const PROOFREAD_SUGGESTION = {
+const PROOFREAD_OPTION = {
 	id: 'proofread-content',
-	label: __( 'Proofread', __i18n_text_domain__ ),
-	description: __( 'Correct spelling, grammar, and punctuation.', __i18n_text_domain__ ),
-	prompt: __(
+	label: __( 'Spelling and grammar check', __i18n_text_domain__ ),
+	value: __(
 		'Proofread this saved post for spelling, grammar, and punctuation. Review the saved title and saved block content, and return practical fixes with one-click suggestions when safe.',
 		__i18n_text_domain__
 	),
 };
+
+/**
+ * Both abilities read the saved post, so the edited page content would mislead
+ * them. Matched by prompt rather than id: a dropdown submits its parent's id.
+ */
+const SAVED_POST_PROMPTS: Set< string > = new Set( [
+	POST_FEEDBACK_OPTION.value,
+	PROOFREAD_OPTION.value,
+] );
 
 const LIMITED_BLOCK_SUGGESTION_PRIORITY = [
 	'translate',
@@ -252,6 +338,66 @@ function currentPostTypeSupportsExcerpt(
 }
 
 /**
+ * Unresolved counts as supported: only posts and pages reach this chip, and
+ * both register it. Registering a support with arguments stores those
+ * arguments, so match the editor and treat any truthy value as support.
+ * @see checkSupport in @wordpress/editor
+ */
+function postTypeRecordSupportsThumbnail(
+	postTypeRecord: { supports?: Record< string, unknown > } | undefined
+): boolean {
+	if ( ! postTypeRecord ) {
+		return true;
+	}
+	return !! postTypeRecord.supports?.thumbnail;
+}
+
+/**
+ * Themes can pass a list of post types to add_theme_support, so the support is
+ * a boolean or a list.
+ * @see PostFeaturedImageCheck in @wordpress/editor
+ */
+function themeSupportsThumbnail(
+	currentPostType: string,
+	themeSupports: { 'post-thumbnails'?: boolean | string[] } | undefined
+): boolean {
+	// core-data returns {} until the theme resolves; a resolved theme always has the key.
+	const support = themeSupports?.[ 'post-thumbnails' ];
+	if ( support === undefined ) {
+		return true;
+	}
+	return Array.isArray( support ) ? support.includes( currentPostType ) : !! support;
+}
+
+/**
+ * The post type and theme checks the editor makes before it renders the
+ * featured image panel. The editor hides the panel while either one is still
+ * resolving; the chip shows instead, so a slow read never hides it for good.
+ */
+function currentPostTypeSupportsFeaturedImage(
+	currentPostType: string | undefined = getCurrentEditorPostType()
+): boolean {
+	if ( ! currentPostType ) {
+		return false;
+	}
+	const coreStore = ( window as any ).wp?.data?.select?.( 'core' );
+	return (
+		postTypeRecordSupportsThumbnail( coreStore?.getPostType?.( currentPostType ) ) &&
+		themeSupportsThumbnail( currentPostType, coreStore?.getThemeSupports?.() )
+	);
+}
+
+function isFeaturedImageSuggestionAvailable(
+	currentPostType: string | undefined = getCurrentEditorPostType()
+): boolean {
+	// Image Studio first: the core-store reads can trigger a REST resolution.
+	if ( ! isImageStudioAvailable() ) {
+		return false;
+	}
+	return currentPostTypeSupportsFeaturedImage( currentPostType );
+}
+
+/**
  * Editor entities that support whole-content Jetpack AI suggestions.
  */
 const EDITOR_LEVEL_SUGGESTION_POST_TYPES = new Set( [ 'post', 'page' ] );
@@ -305,19 +451,48 @@ function isProofreadAvailable(
 	);
 }
 
-function trackAiEditorialReviewSuggestionRenderedOnce(): void {
-	if ( suggestionRenderedFiredOnce ) {
-		return;
-	}
-	suggestionRenderedFiredOnce = true;
-	trackAiEditorialReviewSuggestionRendered();
-}
+/**
+ * The review tools as one dropdown, carrying only the options this post qualifies
+ * for. With none available the dropdown is dropped entirely.
+ */
+function getFeedbackSuggestions( currentPostType?: string, currentPostId?: EditorPostId | null ) {
+	const options = [
+		...( isGenerateFeedbackAvailable( currentPostType, currentPostId )
+			? [ POST_FEEDBACK_OPTION ]
+			: [] ),
+		...( isProofreadAvailable( currentPostType, currentPostId ) ? [ PROOFREAD_OPTION ] : [] ),
+		...( isAiEditorialReviewAvailable( currentPostType ) ? [ AI_EDITORIAL_REVIEW_OPTION ] : [] ),
+	];
 
-function getAiEditorialReviewSuggestions( currentPostType?: string ) {
-	if ( ! isAiEditorialReviewAvailable( currentPostType ) ) {
+	if ( options.length === 0 ) {
 		return [];
 	}
-	return [ AI_EDITORIAL_REVIEW_SUGGESTION ];
+
+	return [
+		{
+			id: GET_FEEDBACK_SUGGESTION_ID,
+			label: __( 'Get feedback', __i18n_text_domain__ ),
+			// Empty, so the dropdown submits the picked option's value verbatim.
+			prompt: '',
+			options,
+		},
+	];
+}
+
+/**
+ * `generate-featured-image` is absent on purpose: it opens Image Studio, where the
+ * user writes their own prompt.
+ */
+const CONTENT_DEPENDENT_SUGGESTION_IDS: Set< string > = new Set( [
+	OPTIMIZE_TITLE_SUGGESTION.id,
+	GENERATE_EXCERPT_SUGGESTION.id,
+	// Every review behind this chip needs content, so the chip gates as a whole.
+	GET_FEEDBACK_SUGGESTION_ID,
+	SEO_ENHANCER_SUGGESTION.id,
+] );
+
+function getContentRequiredReason(): string {
+	return __( 'This feature requires content to work.', __i18n_text_domain__ );
 }
 
 function getPostLevelSuggestions(
@@ -329,23 +504,35 @@ function getPostLevelSuggestions(
 		return [];
 	}
 
-	return [
+	const suggestions = [
+		...( isFeaturedImageSuggestionAvailable( currentPostType )
+			? [ GENERATE_FEATURED_IMAGE_SUGGESTION ]
+			: [] ),
 		...( isOptimizeTitleSuggestionEnabled() ? [ OPTIMIZE_TITLE_SUGGESTION ] : [] ),
 		...( isExcerptSuggestionAvailable( currentPostType, supportsExcerpt )
 			? [ GENERATE_EXCERPT_SUGGESTION ]
 			: [] ),
-		...( isGenerateFeedbackAvailable( currentPostType, currentPostId )
-			? [ POST_FEEDBACK_SUGGESTION ]
-			: [] ),
-		...( isProofreadAvailable( currentPostType, currentPostId ) ? [ PROOFREAD_SUGGESTION ] : [] ),
-		...getAiEditorialReviewSuggestions( currentPostType ),
+		...getFeedbackSuggestions( currentPostType, currentPostId ),
 		// Surface the SEO Enhancer dropdown last.
 		...( isSeoSuggestionsEnabled() ? [ SEO_ENHANCER_SUGGESTION ] : [] ),
 	];
+
+	if ( ! isPostContentEmpty() ) {
+		return suggestions;
+	}
+
+	// Greyed out rather than dropped, so a blank post still shows what is on offer.
+	const disabledReason = getContentRequiredReason();
+
+	return suggestions.map( ( suggestion ) =>
+		CONTENT_DEPENDENT_SUGGESTION_IDS.has( suggestion.id )
+			? { ...suggestion, disabled: true, disabledReason }
+			: suggestion
+	);
 }
 
 function getReservedSuggestions< T extends { id: string } >( suggestions: T[] ): T[] {
-	return [ POST_FEEDBACK_SUGGESTION.id, PROOFREAD_SUGGESTION.id, AI_EDITORIAL_REVIEW_SUGGESTION.id ]
+	return [ GET_FEEDBACK_SUGGESTION_ID ]
 		.map( ( id ) => suggestions.find( ( suggestion ) => suggestion.id === id ) )
 		.filter( Boolean ) as T[];
 }
@@ -395,6 +582,7 @@ function applySuggestionLimit< T extends { id: string } >(
 
 const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
 const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
+const UPDATE_BLOCK_CONTENT_AGENT_TOOL_ID = 'wpcom__update_block_content';
 const SHOW_COMPONENT_ABILITY_NAME = 'jetpack-ai/show-component';
 const LEGACY_SHOW_COMPONENT_ABILITY_NAME = 'big-sky/show-component';
 const SHOW_COMPONENT_TOOL_IDS = [ SHOW_COMPONENT_TOOL_ID, LEGACY_SHOW_COMPONENT_TOOL_ID ];
@@ -470,6 +658,10 @@ function handleShowComponent( input: any ): any {
 		isCurrent: true,
 		hideZoomAction: true,
 	};
+	const responseTrackingProperties = getResponseRenderedTrackingProperties( type, componentProps );
+	if ( responseTrackingProperties ) {
+		data.responseTrackingProperties = responseTrackingProperties;
+	}
 	if ( type === 'ai-editorial-review' || type === 'post-feedback' || type === 'proofread' ) {
 		const reviewedPostId =
 			normalizeEditorPostId( componentProps.postId ) ?? getCurrentEditorPostId();
@@ -629,6 +821,96 @@ function isLegacyShowComponentTool( toolId: string ): boolean {
 	return toolId === LEGACY_SHOW_COMPONENT_TOOL_ID || toolId === LEGACY_SHOW_COMPONENT_ABILITY_NAME;
 }
 
+function createUpdateBlockContentAgentMessage(
+	toolCallId: string,
+	result: Record< string, unknown >
+): string {
+	return JSON.stringify( {
+		tool_id: UPDATE_BLOCK_CONTENT_AGENT_TOOL_ID,
+		tool_call_id: toolCallId,
+		data: {
+			result,
+			followUpTasks: false,
+		},
+	} );
+}
+
+async function handleUpdateBlockContentForChat( input: any ): Promise< any > {
+	const toolCallId =
+		typeof input?.toolCallId === 'string' && input.toolCallId ? input.toolCallId : undefined;
+	const result = await handleUpdateBlockContent( input );
+	if ( result?.success !== true ) {
+		if ( toolCallId ) {
+			blockEditSnapshots.delete( toolCallId );
+		}
+		const error =
+			typeof result?.error === 'string' && result.error ? result.error : 'Block update failed';
+		const message = __( 'I could not update the block. Please try again.', __i18n_text_domain__ );
+		const agentMessage = toolCallId
+			? createUpdateBlockContentAgentMessage( toolCallId, {
+					success: false,
+					message,
+					error,
+			  } )
+			: result?.agentMessage;
+		return {
+			...result,
+			returnToAgent: false,
+			...( agentMessage && { agentMessage } ),
+		};
+	}
+
+	const outcome =
+		typeof result.contentBefore === 'string' &&
+		typeof result.contentAfter === 'string' &&
+		result.contentBefore === result.contentAfter
+			? 'no-changes'
+			: 'updated';
+
+	if ( toolCallId ) {
+		if (
+			outcome === 'updated' &&
+			typeof result.clientId === 'string' &&
+			typeof result.contentBefore === 'string' &&
+			typeof result.contentAfter === 'string'
+		) {
+			const editorBlocksAfter = getCurrentEditorBlocks();
+			blockEditSnapshots.set( toolCallId, {
+				clientId: result.clientId,
+				contentBefore: result.contentBefore,
+				contentAfter: result.contentAfter,
+				editorBlocksSignatureAfter: getEditorBlocksSignature( editorBlocksAfter ),
+				...( typeof result.editableAttribute === 'string' && {
+					editableAttribute: result.editableAttribute,
+				} ),
+			} );
+		} else {
+			blockEditSnapshots.delete( toolCallId );
+		}
+	}
+
+	let message = typeof input?.summary === 'string' ? input.summary.trim() : '';
+	if ( ! message ) {
+		message =
+			outcome === 'updated'
+				? __( 'Updated the selected block.', __i18n_text_domain__ )
+				: __( 'No changes were needed.', __i18n_text_domain__ );
+	}
+	const agentMessage = toolCallId
+		? createUpdateBlockContentAgentMessage( toolCallId, {
+				success: true,
+				message,
+				outcome,
+		  } )
+		: result.agentMessage;
+
+	return {
+		...result,
+		outcome,
+		...( agentMessage && { agentMessage } ),
+	};
+}
+
 export const toolProvider = {
 	/**
 	 * Client-side abilities this provider handles: `wpcom/update-block-content`
@@ -661,7 +943,7 @@ export const toolProvider = {
 				? [
 						{
 							...UPDATE_BLOCK_CONTENT_ABILITY,
-							callback: handleUpdateBlockContent,
+							callback: handleUpdateBlockContentForChat,
 						},
 				  ]
 				: [] ),
@@ -686,8 +968,12 @@ export const toolProvider = {
 	 */
 	async executeAbility( name: string, args: any ): Promise< any > {
 		if ( isUpdateBlockContentTool( name ) ) {
-			const result = await handleUpdateBlockContent( args );
-			return { result, returnToAgent: false };
+			const result = await handleUpdateBlockContentForChat( args );
+			return {
+				result,
+				returnToAgent: false,
+				...( result.agentMessage && { agentMessage: result.agentMessage } ),
+			};
 		}
 
 		if ( isLegacyShowComponentTool( name ) && shouldDelegateLegacyShowComponent( args ) ) {
@@ -757,9 +1043,7 @@ export const contextProvider = {
 		let selectedBlockContent = '';
 		let currentPostType: string | undefined;
 		const suppressCurrentPageContent = suppressCurrentPageContentForNextContext;
-		const jetpackAIRequestScope = jetpackAIRequestScopeForNextContext;
 		suppressCurrentPageContentForNextContext = false;
-		jetpackAIRequestScopeForNextContext = null;
 
 		if ( wpData ) {
 			const editor = wpData.select( 'core/editor' );
@@ -792,7 +1076,6 @@ export const contextProvider = {
 			},
 			currentPageContent,
 			selectedBlockClientId,
-			...( jetpackAIRequestScope && { jetpackAIRequestScope } ),
 			// Forward the host's SEO Enhancer verdict (plan + Jetpack SEO Tools
 			// module + kill switches) so the orchestrator can drop the SEO
 			// suggestion abilities when they aren't usable on this site — e.g. a
@@ -803,11 +1086,6 @@ export const contextProvider = {
 					id: 'selected-block-content',
 					type: 'selected-block-content',
 					data: selectedBlockContent ? { content: selectedBlockContent } : null,
-				},
-				{
-					id: 'ai-editorial-review-contract',
-					type: 'ai-editorial-review-contract',
-					data: { version: 2 },
 				},
 			],
 		};
@@ -853,15 +1131,15 @@ export function getChatComponent( type: string ): ComponentType | null {
 
 /**
  * Provider hook consumed by AM's `use-checkpoint-action` so Undo buttons
- * can attach to show-component messages. Snapshots the selected top-level
- * post fields (title by default, excerpt for the excerpt picker) on
+ * can attach to show-component and block-edit messages. Snapshots the selected
+ * top-level post fields (title by default, excerpt for the excerpt picker) on
  * `setCheckpoint(id, fields)` and restores exactly those fields on
  * `restoreCheckpoint(id)` via `core/editor` dispatch — restoring one picker's
- * checkpoint must not clobber another field's later edits. Only title and
- * excerpt are supported: meta (SEO pickers) and block-attribute (image alt
- * text) changes are not checkpointed. Stubs the rest of AM's
- * `UseCheckpointReturn` interface — only the three methods above are used on
- * this path.
+ * checkpoint must not clobber another field's later edits. Block-edit snapshots
+ * are captured by `handleUpdateBlockContentForChat`; meta (SEO pickers) and
+ * image alt text changes are not checkpointed. Stubs the rest of AM's
+ * `UseCheckpointReturn` interface; block-edit checkpoints also support safe
+ * inline Undo and Redo through `canSwapCheckpoint` and `swapCheckpoint`.
  * @returns {Object} The checkpoint API AM consumes.
  */
 const postSnapshots: Map< string, Partial< Record< CheckpointField, string > > > = new Map();
@@ -877,9 +1155,53 @@ export function useCheckpoint(): any {
 			postSnapshots.set( id, snapshot );
 		},
 		hasCheckpoint( id: string ): boolean {
-			return postSnapshots.has( id );
+			return postSnapshots.has( id ) || blockEditSnapshots.has( id );
+		},
+		canSwapCheckpoint( id: string ): boolean | undefined {
+			const snapshot = blockEditSnapshots.get( id );
+			return snapshot ? canSwapBlockEditSnapshot( snapshot ) : undefined;
+		},
+		async swapCheckpoint( id: string ): Promise< void > {
+			const snapshot = blockEditSnapshots.get( id );
+			if (
+				! snapshot ||
+				! canSwapBlockEditSnapshot( snapshot ) ||
+				! undoBlockEdit(
+					snapshot.clientId,
+					snapshot.contentBefore,
+					snapshot.contentAfter,
+					snapshot.editableAttribute
+				)
+			) {
+				throw new Error( 'Failed to swap block edit checkpoint.' );
+			}
+
+			const editorBlocksAfter = getCurrentEditorBlocks();
+			blockEditSnapshots.set( id, {
+				...snapshot,
+				contentBefore: snapshot.contentAfter,
+				contentAfter: snapshot.contentBefore,
+				editorBlocksSignatureAfter: getEditorBlocksSignature( editorBlocksAfter ),
+			} );
 		},
 		async restoreCheckpoint( id: string ): Promise< void > {
+			const blockEditSnapshot = blockEditSnapshots.get( id );
+			if ( blockEditSnapshot ) {
+				if ( ! canSwapBlockEditSnapshot( blockEditSnapshot ) ) {
+					throw new Error( 'Failed to restore block edit checkpoint.' );
+				}
+				const didRestore = undoBlockEdit(
+					blockEditSnapshot.clientId,
+					blockEditSnapshot.contentBefore,
+					blockEditSnapshot.contentAfter,
+					blockEditSnapshot.editableAttribute
+				);
+				if ( ! didRestore ) {
+					throw new Error( 'Failed to restore block edit checkpoint.' );
+				}
+				return;
+			}
+
 			const previous = postSnapshots.get( id );
 			if ( previous === undefined ) {
 				return;
@@ -894,7 +1216,7 @@ export function useCheckpoint(): any {
 
 	// Return the full shape AM's UseCheckpointReturn expects. Methods we
 	// don't implement are safe no-op stubs — AM only calls the three above
-	// for the show-component / title-picker flow.
+	// for the show-component and block-edit flows.
 	return {
 		...api,
 		getLastEditorState: () => null,
@@ -905,6 +1227,7 @@ export function useCheckpoint(): any {
 		getLatestUserMessageId: () => undefined,
 		clearCheckpoint: ( id: string ) => {
 			postSnapshots.delete( id );
+			blockEditSnapshots.delete( id );
 		},
 	};
 }
@@ -921,6 +1244,9 @@ export function getEmptyViewSuggestions(): Array< {
 	description?: string;
 	prompt?: string;
 	options?: SuggestionOption[];
+	disabled?: boolean;
+	disabledReason?: string;
+	action?: () => boolean | Promise< boolean >;
 } > {
 	return getPostLevelSuggestions( getCurrentEditorPostType() );
 }
@@ -937,9 +1263,11 @@ type BlockSuggestion = {
 	id: string;
 	label: string;
 	prompt: string;
-	type: BlockTransformationSuggestionType;
 	condition: ( block: any ) => boolean;
 	options?: SuggestionOption[];
+	// Runs on click instead of sending the prompt. AgentUI submits the prompt
+	// only when this resolves true, so returning false keeps the chat untouched.
+	action?: () => boolean | Promise< boolean >;
 };
 
 /** Change-tone dropdown options; `value` is the full localized prompt filled on selection. */
@@ -1067,7 +1395,6 @@ const BLOCK_SUGGESTIONS: BlockSuggestion[] = [
 		label: __( 'Translate content', __i18n_text_domain__ ),
 		// Empty prompt — the picked option's `value` is the full prompt sent.
 		prompt: '',
-		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
 		options: TRANSLATE_LANGUAGE_OPTIONS,
 	},
@@ -1075,7 +1402,6 @@ const BLOCK_SUGGESTIONS: BlockSuggestion[] = [
 		id: 'change-tone',
 		label: __( 'Change tone', __i18n_text_domain__ ),
 		prompt: '',
-		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
 		options: CHANGE_TONE_OPTIONS,
 	},
@@ -1083,46 +1409,37 @@ const BLOCK_SUGGESTIONS: BlockSuggestion[] = [
 		id: 'check-grammar',
 		label: __( 'Check grammar', __i18n_text_domain__ ),
 		prompt: __( 'Check the grammar and spelling of this text', __i18n_text_domain__ ),
-		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
 	},
 	{
 		id: 'simplify-text',
 		label: __( 'Simplify text', __i18n_text_domain__ ),
 		prompt: __( 'Simplify this text to make it easier to read', __i18n_text_domain__ ),
-		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
 	},
 	{
 		id: 'generate-alt-text',
 		label: __( 'Generate alt text', __i18n_text_domain__ ),
 		prompt: __( 'Generate descriptive alt text for this image', __i18n_text_domain__ ),
-		type: 'image',
 		condition: ( block: any ) => IMAGE_BLOCK_TYPES.includes( block?.name ),
 	},
+	{
+		id: 'generate-image',
+		label: __( 'Generate image', __i18n_text_domain__ ),
+		// Empty prompt — opening Image Studio replaces sending anything to the agent.
+		prompt: '',
+		condition: ( block: any ) => block?.name === 'core/image' && isImageStudioAvailable(),
+		action: () => ! openImageStudioForBlock( getSelectedOrRememberedBlock(), 'generate' ),
+	},
+	{
+		id: 'edit-image',
+		label: __( 'Edit image', __i18n_text_domain__ ),
+		prompt: '',
+		condition: ( block: any ) =>
+			block?.name === 'core/image' && !! block?.attributes?.id && isImageStudioAvailable(),
+		action: () => ! openImageStudioForBlock( getSelectedOrRememberedBlock(), 'edit' ),
+	},
 ];
-
-function trackRenderedBlockTransformationSuggestions(
-	suggestions: BlockSuggestion[],
-	block: any
-): void {
-	if ( typeof block?.name !== 'string' ) {
-		return;
-	}
-
-	suggestions.forEach( ( suggestion ) => {
-		const renderedKey = `${ suggestion.id }:${ block.name }`;
-		if ( blockTransformationSuggestionRenderedKeys.has( renderedKey ) ) {
-			return;
-		}
-		blockTransformationSuggestionRenderedKeys.add( renderedKey );
-		trackBlockTransformationSuggestionRendered( {
-			suggestionId: suggestion.id,
-			suggestionType: suggestion.type,
-			blockType: block.name,
-		} );
-	} );
-}
 
 // ---------- capabilities ----------
 
@@ -1141,20 +1458,22 @@ export const capabilities = {
  * Block-aware dynamic suggestions for the AM sidebar.
  *
  * Returns contextual suggestions based on the selected block type.
- * Hides after a suggestion is clicked, then restores block suggestions only
- * after a block action completes.
+ * Hides after a suggestion is clicked, then restores suggestions after a
+ * suggestion action completes.
+ *
+ * Post-level suggestions (Optimize Title, reviews, SEO) are not returned
+ * here — they surface through `getEmptyViewSuggestions`, so they render only
+ * while the chat and its input are empty.
  * @returns {Object} Object containing a suggestions array.
  */
-export function useSuggestions(
-	maxSuggestions?: number,
-	{ suggestionsVisible = true }: { suggestionsVisible?: boolean } = {}
-): {
+export function useSuggestions( maxSuggestions?: number ): {
 	suggestions: Array< {
 		id: string;
 		label: string;
 		description?: string;
 		prompt?: string;
 		options?: SuggestionOption[];
+		action?: () => boolean | Promise< boolean >;
 	} >;
 	replaceEmptyViewSuggestions: boolean;
 } {
@@ -1173,22 +1492,25 @@ export function useSuggestions(
 			pendingBlockShimmerClientId = BLOCK_SUGGESTIONS.some( matchesSuggestion )
 				? getSelectedOrRememberedBlock()?.clientId ?? null
 				: null;
-			jetpackAIRequestScopeForNextContext = null;
 
-			if ( BLOCK_SUGGESTIONS.some( matchesSuggestion ) ) {
-				jetpackAIRequestScopeForNextContext = 'selected-block';
-			}
-
-			if ( matchesSuggestion( POST_FEEDBACK_SUGGESTION ) ) {
-				suppressCurrentPageContentForNextContext = true;
-			}
-			if ( matchesSuggestion( PROOFREAD_SUGGESTION ) ) {
+			if ( typeof value === 'string' && SAVED_POST_PROMPTS.has( value ) ) {
 				suppressCurrentPageContentForNextContext = true;
 			}
 		};
 		window.addEventListener( 'big-sky-inline-suggestion-click', handleSuggestionClick, true );
 		return () => {
 			window.removeEventListener( 'big-sky-inline-suggestion-click', handleSuggestionClick, true );
+		};
+	}, [] );
+
+	useEffect( () => {
+		const handleSuggestionActionComplete = () => setHidden( false );
+		window.addEventListener( SUGGESTION_ACTION_COMPLETE_EVENT, handleSuggestionActionComplete );
+		return () => {
+			window.removeEventListener(
+				SUGGESTION_ACTION_COMPLETE_EVENT,
+				handleSuggestionActionComplete
+			);
 		};
 	}, [] );
 
@@ -1218,21 +1540,11 @@ export function useSuggestions(
 	const editorContext = useSelect( ( select ) => {
 		const blockEditor = select( 'core/block-editor' ) as { getSelectedBlock?: () => any };
 		const editor = select( 'core/editor' ) as {
-			getCurrentPostId?: () => EditorPostId | null | undefined;
 			getCurrentPostType?: () => string | undefined;
 		};
-		const core = select( 'core' ) as {
-			getPostType?: ( name: string ) => { supports?: Record< string, boolean > } | undefined;
-		};
-		const postType = editor?.getCurrentPostType?.();
 		return {
 			selectedBlock: blockEditor?.getSelectedBlock?.() ?? null,
-			postId: normalizeEditorPostId( editor?.getCurrentPostId?.() ),
-			postType,
-			supportsExcerpt:
-				postType && isExcerptSuggestionEnabled()
-					? postTypeRecordSupportsExcerpt( postType, core?.getPostType?.( postType ) )
-					: false,
+			postType: editor?.getCurrentPostType?.(),
 		};
 	}, [] );
 
@@ -1243,15 +1555,6 @@ export function useSuggestions(
 	}, [ editorContext.selectedBlock?.clientId ] );
 
 	const selectedBlock = editorContext.selectedBlock;
-	const postLevelSuggestions = useMemo(
-		() =>
-			getPostLevelSuggestions(
-				editorContext.postType,
-				editorContext.postId,
-				editorContext.supportsExcerpt
-			),
-		[ editorContext.postId, editorContext.postType, editorContext.supportsExcerpt ]
-	);
 	const blockTransformationsEnabled = isBlockTransformationsEnabled();
 	const applicable = useMemo(
 		() =>
@@ -1262,83 +1565,28 @@ export function useSuggestions(
 	);
 	const blockTransformationSuggestions = useMemo(
 		() =>
-			applicable.map( ( { id, label, prompt, options } ) => ( { id, label, prompt, options } ) ),
+			applicable.map( ( { id, label, prompt, options, action } ) => ( {
+				id,
+				label,
+				prompt,
+				options,
+				action,
+			} ) ),
 		[ applicable ]
 	);
-	// Editor-level reviews (Optimize Title, Generate Feedback, AI Editorial Review)
-	// show only with no block selected; a selected block shows block transforms.
+	// Only block transforms are returned dynamically; post-level chips come
+	// from getEmptyViewSuggestions and render only in the chat's empty view.
 	const visibleSuggestions = useMemo( () => {
-		if ( hidden ) {
+		if ( hidden || ! selectedBlock ) {
 			return [];
 		}
-		// Both branches narrow to this shared shape; the explicit annotation lets
-		// the generic applySuggestionLimit infer a single element type across them.
-		const activeSuggestions: Array< {
-			id: string;
-			label: string;
-			prompt: string;
-			options?: SuggestionOption[];
-		} > = selectedBlock ? blockTransformationSuggestions : postLevelSuggestions;
-		return applySuggestionLimit( activeSuggestions, maxSuggestions );
-	}, [
-		blockTransformationSuggestions,
-		hidden,
-		maxSuggestions,
-		postLevelSuggestions,
-		selectedBlock,
-	] );
-	const visibleSuggestionIds = useMemo(
-		() => new Set( visibleSuggestions.map( ( suggestion ) => suggestion.id ) ),
-		[ visibleSuggestions ]
-	);
-	const visibleBlockTransformationSuggestions = useMemo(
-		() => applicable.filter( ( suggestion ) => visibleSuggestionIds.has( suggestion.id ) ),
-		[ applicable, visibleSuggestionIds ]
-	);
-	const visibleBlockTransformationSuggestionsKey = visibleBlockTransformationSuggestions
-		.map( ( suggestion ) => suggestion.id )
-		.join( '|' );
-	const isAiEditorialReviewSuggestionVisible = visibleSuggestionIds.has(
-		AI_EDITORIAL_REVIEW_SUGGESTION.id
-	);
-
+		return applySuggestionLimit( blockTransformationSuggestions, maxSuggestions );
+	}, [ blockTransformationSuggestions, hidden, maxSuggestions, selectedBlock ] );
 	useEffect( () => {
 		if ( editorContext.selectedBlock ) {
 			rememberSelectedBlock( editorContext.selectedBlock );
 		}
 	}, [ editorContext.selectedBlock?.clientId, editorContext.selectedBlock ] );
-
-	useEffect( () => {
-		if ( ! suggestionsVisible || hidden || ! isAiEditorialReviewSuggestionVisible ) {
-			return;
-		}
-		trackAiEditorialReviewSuggestionRenderedOnce();
-	}, [ hidden, isAiEditorialReviewSuggestionVisible, suggestionsVisible ] );
-
-	useEffect( () => {
-		if (
-			! suggestionsVisible ||
-			hidden ||
-			! selectedBlock ||
-			! blockTransformationsEnabled ||
-			visibleBlockTransformationSuggestions.length === 0
-		) {
-			return;
-		}
-		trackRenderedBlockTransformationSuggestions(
-			visibleBlockTransformationSuggestions,
-			selectedBlock
-		);
-	}, [
-		blockTransformationsEnabled,
-		hidden,
-		selectedBlock,
-		selectedBlock?.name,
-		suggestionsVisible,
-		visibleBlockTransformationSuggestions,
-		visibleBlockTransformationSuggestions.length,
-		visibleBlockTransformationSuggestionsKey,
-	] );
 
 	return {
 		suggestions: visibleSuggestions,

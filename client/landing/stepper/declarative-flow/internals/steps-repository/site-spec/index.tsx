@@ -8,6 +8,17 @@ import { useCallback, useEffect, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import {
+	applyBlueprintSpec,
+	getBlueprintArchiveSiteIdentifier,
+	getSiteAdminUrl,
+	getSiteEditorUrl,
+	logBlueprintArchiveEvent,
+	startBlueprintArchiveImport,
+	waitForAtomicTransferComplete,
+	waitForBlueprintImportComplete,
+} from 'calypso/landing/stepper/utils/blueprint-archive-import';
+import {
+	getBuildWowGraph,
 	getBuildWowSiteIdentifier,
 	isBuildWowEnabled,
 	logBuildWowEvent,
@@ -16,6 +27,7 @@ import {
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useSiteSpec } from 'calypso/lib/site-spec';
 import {
+	getBlueprintSiteSpecConfig,
 	getBuildWowSiteSpecConfig,
 	getCiabSiteSpecConfig,
 	getEarlyProvisionSiteSpecConfig,
@@ -129,8 +141,18 @@ const SiteSpec: StepType = function SiteSpec() {
 	} );
 
 	const ciabSiteCreationPromiseRef = useRef< Promise< number | null > | null >( null );
+	const shouldImportBlueprint = queryParams.get( 'blueprint_archive_import' ) === '1';
+	// A wow-funnel run already started the import server-side, before checkout. This page still
+	// waits on it and hands over, but must not start a second one.
+	const isWowFunnelRun = !! queryParams.get( 'wow_funnel' );
+	const blueprintArchiveSlug = queryParams.get( 'blueprint_slug' ) ?? '';
+	const blueprintArchiveSiteIdentifier = getBlueprintArchiveSiteIdentifier( {
+		siteSlug: queryParams.get( 'siteSlug' ),
+		siteId: queryParams.get( 'siteId' ),
+	} );
 	const messageCountRef = useRef( 0 );
 	const isSubmittingRef = useRef( false );
+	const blueprintImportStartedRef = useRef( false );
 
 	const handleCiabMessage = useCallback( () => {
 		messageCountRef.current += 1;
@@ -261,7 +283,11 @@ const SiteSpec: StepType = function SiteSpec() {
 					site_identifier: buildWowSiteIdentifier,
 				} );
 
-				const response = await requestBuildWowSite( buildWowSiteIdentifier, specId );
+				const response = await requestBuildWowSite(
+					buildWowSiteIdentifier,
+					specId,
+					getBuildWowGraph( queryParams )
+				);
 				responseBlogId = response.blog_id;
 
 				logBuildWowEvent(
@@ -283,6 +309,7 @@ const SiteSpec: StepType = function SiteSpec() {
 					throw new Error( 'Build-wow response is missing the Site Editor URL.' );
 				}
 
+				const ref = queryParams.get( 'ref' );
 				const source = queryParams.get( 'source' );
 				const destination = addQueryArgs( response.site_editor_url, {
 					spec_id: specId,
@@ -304,6 +331,8 @@ const SiteSpec: StepType = function SiteSpec() {
 					siteSlug: buildWowSiteIdentifier,
 					specId,
 					editorUrl: destination,
+					...( ref ? { ref } : {} ),
+					...( source ? { source } : {} ),
 				} );
 			} catch ( error ) {
 				logBuildWowEvent(
@@ -338,6 +367,109 @@ const SiteSpec: StepType = function SiteSpec() {
 		handleEarlyProvisionSpecConfirm,
 	] );
 
+	// Blueprint archive import: the transfer-to-Atomic + archive restore runs in
+	// the background (kicked off on mount below). On spec confirm we poll the
+	// canonical Atomic transfer endpoint, then the import status, and finally hand
+	// the user off to the Atomic Site Editor.
+	const handleBlueprintArchiveSpecConfirm = useCallback(
+		async ( specData: unknown ) => {
+			if ( isSubmittingRef.current ) {
+				return;
+			}
+
+			if ( ! blueprintArchiveSiteIdentifier ) {
+				// eslint-disable-next-line no-console
+				console.error( 'Failed to finish blueprint import: missing target site.' );
+				return;
+			}
+
+			isSubmittingRef.current = true;
+
+			try {
+				logBlueprintArchiveEvent( 'spec_confirm_poll_start', {
+					site_identifier: blueprintArchiveSiteIdentifier,
+				} );
+
+				await waitForAtomicTransferComplete( blueprintArchiveSiteIdentifier );
+				await waitForBlueprintImportComplete( blueprintArchiveSiteIdentifier );
+
+				// Only once the restore is done: it replaces the site's options
+				// wholesale, so a spec applied earlier would be overwritten.
+				// Never blocks the hand-off — applyBlueprintSpec() resolves either way.
+				const specId = getSpecId( specData );
+				const applied = await applyBlueprintSpec(
+					blueprintArchiveSiteIdentifier,
+					specId,
+					blueprintArchiveSlug
+				);
+				logBlueprintArchiveEvent( 'apply_spec_done', {
+					site_identifier: blueprintArchiveSiteIdentifier,
+					applied,
+					has_spec_id: Boolean( specId ),
+				} );
+
+				const adminUrl = await getSiteAdminUrl( blueprintArchiveSiteIdentifier );
+				const siteEditorUrl = getSiteEditorUrl( adminUrl, {
+					startWalkthrough: applied,
+				} );
+
+				logBlueprintArchiveEvent( 'redirect_site_editor', {
+					site_identifier: blueprintArchiveSiteIdentifier,
+				} );
+				window.location.href = siteEditorUrl;
+			} catch ( error ) {
+				logBlueprintArchiveEvent( 'spec_confirm_error', {
+					site_identifier: blueprintArchiveSiteIdentifier,
+					error: error instanceof Error ? error.message : String( error ),
+				} );
+				// eslint-disable-next-line no-console
+				console.error( 'Failed to finish blueprint import:', error );
+				isSubmittingRef.current = false;
+			}
+		},
+		[ blueprintArchiveSiteIdentifier, blueprintArchiveSlug ]
+	);
+
+	// Kick off the background transfer + blueprint-archive import as soon as the
+	// spec page mounts, so it runs while the user reviews the spec. A funnel run skips this:
+	// its build started before checkout and is likely finished by now, so the waits below are
+	// all this page needs to do.
+	useEffect( () => {
+		if (
+			! shouldImportBlueprint ||
+			isWowFunnelRun ||
+			! blueprintArchiveSlug ||
+			! blueprintArchiveSiteIdentifier ||
+			blueprintImportStartedRef.current
+		) {
+			return;
+		}
+
+		blueprintImportStartedRef.current = true;
+
+		logBlueprintArchiveEvent( 'start_request', {
+			site_identifier: blueprintArchiveSiteIdentifier,
+		} );
+
+		startBlueprintArchiveImport( blueprintArchiveSiteIdentifier, blueprintArchiveSlug )
+			.then( () => {
+				logBlueprintArchiveEvent( 'start_success', {
+					site_identifier: blueprintArchiveSiteIdentifier,
+				} );
+			} )
+			.catch( ( error ) => {
+				logBlueprintArchiveEvent( 'start_error', {
+					site_identifier: blueprintArchiveSiteIdentifier,
+					error: error instanceof Error ? error.message : String( error ),
+				} );
+			} );
+	}, [
+		shouldImportBlueprint,
+		isWowFunnelRun,
+		blueprintArchiveSlug,
+		blueprintArchiveSiteIdentifier,
+	] );
+
 	if ( buildWowRequested && isLoadingAutomattician ) {
 		return <DocumentHead title={ translate( 'Build Your Site with AI' ) } />;
 	}
@@ -360,6 +492,15 @@ const SiteSpec: StepType = function SiteSpec() {
 			<SiteSpecContainer
 				siteSpecConfig={ getEarlyProvisionSiteSpecConfig() }
 				onSpecConfirm={ handleEarlyProvisionSpecConfirm }
+			/>
+		);
+	} else if ( shouldImportBlueprint ) {
+		siteSpecStep = (
+			<SiteSpecContainer
+				siteSpecConfig={ getBlueprintSiteSpecConfig( {
+					blueprintId: blueprintArchiveSlug,
+				} ) }
+				onSpecConfirm={ handleBlueprintArchiveSpecConfirm }
 			/>
 		);
 	} else if ( activeFlow === 'ciab' ) {

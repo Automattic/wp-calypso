@@ -30,10 +30,14 @@ const activeSelf: TeamMember = {
 const pendingInvite: TeamMember = { id: 4, email: 'pending@example.com', status: 'pending' };
 const expiredInvite: TeamMember = { id: 5, email: 'expired@example.com', status: 'expired' };
 
-function setup( { canRemove = true }: { canRemove?: boolean } = {} ) {
+function setup( {
+	canRemove = true,
+	canInvite = true,
+}: { canRemove?: boolean; canInvite?: boolean } = {} ) {
 	const { result } = renderHook( () =>
 		useTeamActions( {
 			canRemove,
+			canInvite,
 			currentUserEmail: CURRENT_USER_EMAIL,
 			onResendInvite: () => {},
 			onConfirmAction: () => {},
@@ -94,5 +98,11 @@ describe( 'useTeamActions eligibility', () => {
 		expect( isEligible( 'remove-team-member', activeOther ) ).toBe( false );
 		// Transfer stays available; it is not capability-gated.
 		expect( isEligible( 'transfer-ownership', activeOther ) ).toBe( true );
+	} );
+
+	it( 'gates resend/cancel invite behind the invite capability', () => {
+		const isEligible = setup( { canInvite: false } );
+		expect( isEligible( 'resend-user-invite', pendingInvite ) ).toBe( false );
+		expect( isEligible( 'cancel-user-invite', pendingInvite ) ).toBe( false );
 	} );
 } );

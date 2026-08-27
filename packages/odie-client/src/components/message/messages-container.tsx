@@ -91,7 +91,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			if ( alreadyHasActiveZendeskChatId ) {
 				// Redirect to the existing Zendesk chat.
 				searchParams.set( 'id', alreadyHasActiveZendeskChatId );
-				return navigate( '/odie?' + searchParams.toString() );
+				navigate( '/odie?' + searchParams.toString() );
+				return;
 			}
 
 			// Don't create a new conversation if the user has reached the limit.

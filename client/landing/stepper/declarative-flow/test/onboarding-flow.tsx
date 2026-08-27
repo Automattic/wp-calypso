@@ -38,6 +38,9 @@ jest.mock( 'calypso/lib/analytics/survicate', () => ( {
 // tick instead of waiting on a real network fetch.
 jest.mock( 'calypso/lib/explat', () => ( {
 	loadExperimentAssignment: jest.fn( () => Promise.resolve( { variationName: null } ) ),
+	// A plain function, not jest.fn: the suite's beforeEach resetAllMocks would wipe a jest.fn's
+	// implementation, leaving useExperiment returning undefined (its tuple is destructured).
+	useExperiment: () => [ false, null ],
 } ) );
 
 describe( 'Onboarding Flow', () => {
@@ -138,6 +141,7 @@ describe( 'Onboarding Flow', () => {
 				expect( addSurvicate ).toHaveBeenCalledWith( {
 					email: 'test@example.com',
 					registrationDate: '2024-01-15T00:00:00+00:00',
+					userId: 123,
 				} );
 
 				rerender(

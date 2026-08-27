@@ -27,7 +27,6 @@ import {
 } from 'calypso/state/stats/plan-usage/selectors';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
-const JETPACK_STATS_TIERED_BILLING_LIVE_DATE_2024_01_04 = '2024-01-04T05:30:00+00:00';
 const JETPACK_BUSINESS_PLANS = [ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ];
 
 /**
@@ -113,7 +112,7 @@ export const hasSupportedVideoPressUse = ( state: object, siteId: number | null 
 
 export const shouldShowPaywallNotice = ( state: object, siteId: number | null ): boolean => {
 	return (
-		! hasSupportedCommercialUse( state, siteId ) && getShouldShowPaywallNotice( state, siteId )
+		getShouldShowPaywallNotice( state, siteId ) && ! hasSupportedCommercialUse( state, siteId )
 	);
 };
 
@@ -121,10 +120,12 @@ export const shouldShowPaywallAfterGracePeriod = (
 	state: object,
 	siteId: number | null
 ): boolean => {
-	// Make the paywall check more robust by checking the purchase.
+	// Usage check first: it short-circuits on a plain object lookup, whereas the purchase check
+	// scans every site purchase and `shouldGateStats` has already run it once per call.
 	return (
-		! hasSupportedCommercialUse( state, siteId ) &&
-		getShouldShowPaywallAfterGracePeriod( state, siteId )
+		getShouldShowPaywallAfterGracePeriod( state, siteId ) &&
+		// Make the paywall check more robust by checking the purchase.
+		! hasSupportedCommercialUse( state, siteId )
 	);
 };
 
@@ -164,19 +165,6 @@ export default function useStatsPurchases( siteId: number | null ) {
 	const isGrowthPlanOwned = useMemo( () => hasGrowthPlan( sitePurchases ), [ sitePurchases ] );
 	const isBusinessPlanOwned = useMemo( () => hasBusinessPlan( sitePurchases ), [ sitePurchases ] );
 
-	const isLegacyCommercialLicense = useMemo( () => {
-		const purchases = filterPurchasesByProducts( sitePurchases, [
-			PRODUCT_JETPACK_STATS_MONTHLY,
-			PRODUCT_JETPACK_STATS_YEARLY,
-			PRODUCT_JETPACK_STATS_BI_YEARLY,
-		] );
-
-		if ( purchases.length === 0 ) {
-			return false;
-		}
-		return purchases[ 0 ].subscribedDate < JETPACK_STATS_TIERED_BILLING_LIVE_DATE_2024_01_04;
-	}, [ sitePurchases ] );
-
 	return {
 		isRequestingSitePurchases,
 		isFreeOwned,
@@ -186,7 +174,6 @@ export default function useStatsPurchases( siteId: number | null ) {
 		isCompletePlanOwned,
 		isGrowthPlanOwned,
 		isBusinessPlanOwned,
-		isLegacyCommercialLicense,
 		hasLoadedSitePurchases,
 		hasAnyPlan: isFreeOwned || isCommercialOwned || isPWYWOwned || supportCommercialUse,
 		hasAnyStatsPlan: isCommercialOwned || isPWYWOwned || isFreeOwned,

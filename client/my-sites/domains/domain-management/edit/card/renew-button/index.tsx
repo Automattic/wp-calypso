@@ -69,7 +69,13 @@ function RenewButton( {
 	}
 
 	function handleRenew() {
-		dispatch( handleRenewNowClick( purchase as Purchase, selectedSite.slug, { tracksProps } ) );
+		// Temporary bridge (SHILL-2256): this component still receives the
+		// camelCase Purchase. Remove once it takes the raw shape.
+		dispatch(
+			handleRenewNowClick( ( purchase as Purchase ).rawPurchase, selectedSite.slug, {
+				tracksProps,
+			} )
+		);
 	}
 
 	return (

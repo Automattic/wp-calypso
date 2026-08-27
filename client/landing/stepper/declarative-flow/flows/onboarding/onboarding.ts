@@ -34,16 +34,29 @@ import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
 import {
+	getBlueprintArchiveSiteSpecUrl,
+	getStandaloneBlueprintArchiveSlug,
+} from '../../../utils/blueprint-archive-import';
+import {
 	getBuildWowSiteIdentifier,
 	getBuildWowSiteSpecUrl,
 	logBuildWowEvent,
 	requestBuildWowSite,
 } from '../../../utils/build-wow';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
+import {
+	getWowFunnelDest,
+	getWowFunnelArgs,
+	getWowFunnelSlug,
+	getRememberedWowFunnelSite,
+	startWowFunnelSite,
+	logWowFunnelEvent,
+} from '../../../utils/wow-funnel';
 import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboarding-post-checkout-destination';
 import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
+import { useIsPostPlanSelectionEmailVerification } from '../../internals/steps-repository/__user/use-email-verification-gate';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import { getOnboardingStepperPosition } from './step-counter-config';
@@ -54,6 +67,7 @@ function initialize() {
 		STEPS.DOMAIN_SEARCH,
 		STEPS.USE_MY_DOMAIN,
 		STEPS.UNIFIED_PLANS,
+		STEPS.EMAIL_VERIFICATION,
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
 		STEPS.POST_CHECKOUT_ONBOARDING,
@@ -70,6 +84,9 @@ const onboarding: FlowV2< typeof initialize > = {
 	initialize,
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
+		// Variant B: the account step doesn't gate; the verification step is met after the free plan
+		// selection or, for a paid order, on return from checkout.
+		const postPlanSelectionEmailVerification = useIsPostPlanSelectionEmailVerification( flowName );
 
 		const {
 			setDomain,
@@ -99,6 +116,14 @@ const onboarding: FlowV2< typeof initialize > = {
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
 		const playgroundId = queryParams.get( 'playground' );
+		const buildDest = queryParams.get( 'build_dest' );
+		const blueprintArchiveSlug = getStandaloneBlueprintArchiveSlug(
+			blueprint,
+			playgroundId,
+			buildDest
+		);
+		const wowFunnelSlug = getWowFunnelSlug( queryParams );
+		const wowFunnelDest = getWowFunnelDest( queryParams );
 
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
@@ -108,6 +133,43 @@ const onboarding: FlowV2< typeof initialize > = {
 			planCartItem: MinimalRequestCartProduct | null,
 			launchpadPersonalizationVariation: LaunchpadPersonalizationVariation
 		): Promise< [ string, string | null, string | null ] > => {
+			// A funnel CTA can ask for a specific post-checkout destination; today that means the
+			// Site Editor on the built Atomic site. The build ran during domain selection and
+			// checkout, so the transfer is normally complete; the URL goes through the site's own
+			// domain, which follows the Simple->Atomic switch (same shape as the ai-site-builder
+			// hand-off). With no dest, the ordinary destinations below apply.
+			if ( wowFunnelSlug && wowFunnelDest ) {
+				const siteSlug = providedDependencies.siteSlug as string;
+				const siteId = providedDependencies.siteId as number;
+
+				// dest=site-spec: the funnel's follow-up (e.g. the blueprint import) is already
+				// running server-side, so site-spec only waits on it and hands over. It must not
+				// start one — see the funnel guard on its kickoff effect.
+				if ( 'site-spec' === wowFunnelDest ) {
+					const blueprintSlug = queryParams.get( 'blueprint' ) ?? '';
+					logWowFunnelEvent( 'post_checkout_site_spec', {
+						funnel: wowFunnelSlug,
+						blog_id: siteId,
+					} );
+					return [
+						getBlueprintArchiveSiteSpecUrl( {
+							siteSlug,
+							siteId,
+							blueprintSlug,
+							ref: refParameter,
+							wowFunnel: wowFunnelSlug,
+						} ),
+						null,
+						null,
+					];
+				}
+
+				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
+				const siteUrl = site?.URL ?? `https://${ siteSlug }`;
+				logWowFunnelEvent( 'post_checkout_editor', { funnel: wowFunnelSlug, blog_id: siteId } );
+				return [ `${ siteUrl }/wp-admin/site-editor.php?canvas=edit&p=%2F`, null, null ];
+			}
+
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
 				return [ `/home/${ providedDependencies.siteSlug }`, null, null ];
 			}
@@ -117,7 +179,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				const isFree =
 					! planCartItem || isPlanProductFree( {} as unknown as State, planCartItem?.product_id );
 
-				if ( isFree && ! blueprint ) {
+				if ( isFree && playgroundId ) {
 					// Redirect free plan users to a home page
 					return [ `/home/${ providedDependencies.siteSlug }`, null, null ];
 				}
@@ -127,10 +189,28 @@ const onboarding: FlowV2< typeof initialize > = {
 					siteId: providedDependencies.siteId as number,
 				};
 
-				if ( blueprint ) {
-					params.blueprint = blueprint;
-				} else if ( playgroundId ) {
+				// build_dest=wow: skip the Playground-based importer and land on the AI
+				// site-spec, which kicks off the background transfer-to-Atomic +
+				// blueprint-archive import and, on confirm, polls the import and
+				// redirects to the Site Editor. The blueprint step already verified the
+				// archive exists (and stripped build_dest when it does not).
+				if ( blueprintArchiveSlug ) {
+					return [
+						getBlueprintArchiveSiteSpecUrl( {
+							siteSlug: providedDependencies.siteSlug as string,
+							siteId: providedDependencies.siteId as number,
+							blueprintSlug: blueprintArchiveSlug,
+							ref: refParameter,
+						} ),
+						null,
+						null,
+					];
+				}
+
+				if ( playgroundId ) {
 					params.playground = playgroundId;
+				} else if ( blueprint ) {
+					params.blueprint = blueprint;
 				}
 
 				return [
@@ -205,7 +285,7 @@ const onboarding: FlowV2< typeof initialize > = {
 						providedDependencies.mode &&
 						providedDependencies.domain
 					) {
-						const destination = addQueryArgs( '/use-my-domain', {
+						const destination = addQueryArgs( 'use-my-domain', {
 							...getQueryArgs( window.location.href ),
 							step: providedDependencies.mode,
 							initialQuery: providedDependencies.domain,
@@ -243,7 +323,22 @@ const onboarding: FlowV2< typeof initialize > = {
 					setProductCartItems( products.filter( ( product ) => product !== null ) );
 
 					setSignupCompleteFlowName( flowName );
+
+					// A fully free order never reaches checkout, so the post-plan-selection gate is met here,
+					// right after the plan is chosen, before the site is created.
+					if ( postPlanSelectionEmailVerification && ! pickedPlan ) {
+						return navigate(
+							'email-verification?next=create-site' as typeof currentStepSlug,
+							undefined,
+							false
+						);
+					}
+
 					return navigate( 'create-site', undefined, false );
+				}
+				case 'email-verification': {
+					const next = queryParams.get( 'next' ) || 'create-site';
+					return navigate( next as typeof currentStepSlug );
 				}
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
@@ -384,7 +479,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							 * redirect the user back to Playground to start the import.
 							 */
 							const playgroundId = getQueryArg( window.location.href, 'playground' );
-							const redirectTo: string =
+							let redirectTo: string =
 								playgroundId &&
 								! isPlanProductFree( {} as unknown as State, planCartItem?.product_id )
 									? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
@@ -401,12 +496,33 @@ const onboarding: FlowV2< typeof initialize > = {
 											}
 									  );
 
+							// Variant B: a paid order meets the post-plan-selection gate on return from checkout,
+							// before post-checkout-onboarding. The Playground import path keeps its own
+							// return target.
+							if ( postPlanSelectionEmailVerification && ! playgroundId ) {
+								redirectTo = addQueryArgs(
+									withLocale( '/setup/onboarding/email-verification', locale ),
+									{
+										next: 'post-checkout-onboarding',
+										siteSlug,
+										...( refParameter ? { ref: refParameter } : {} ),
+										...( diyLaunchpad ? { 'diy-launchpad': diyLaunchpad } : {} ),
+									}
+								);
+							}
+
 							const checkoutStepperPosition = getOnboardingStepperPosition( 'checkout' );
 
 							// replace the location to delete processing step from history.
 							window.location.replace(
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-									redirect_to: redirectTo,
+									// build_dest=wow and the WoW funnel (dest=editor) go
+									// straight from checkout to their destination — no
+									// post-checkout-onboarding hop, no chooser.
+									redirect_to:
+										blueprintArchiveSlug || ( wowFunnelSlug && wowFunnelDest )
+											? destination
+											: redirectTo,
 									signup: 1,
 									flow: ONBOARDING_FLOW,
 									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
@@ -418,6 +534,10 @@ const onboarding: FlowV2< typeof initialize > = {
 									steps_total: checkoutStepperPosition.total,
 								} )
 							);
+						} else if ( blueprintArchiveSlug || ( wowFunnelSlug && wowFunnelDest ) ) {
+							// build_dest=wow and the WoW funnel never show the
+							// setup-your-site-ai chooser; go straight to their destination.
+							window.location.replace( destination );
 						} else if (
 							refParameter === WOO_HOSTING_SOLUTIONS_REF &&
 							isEnabled( 'onboarding/woo-hosting-post-purchase-setup-choice' )
@@ -501,14 +621,41 @@ const onboarding: FlowV2< typeof initialize > = {
 		 */
 		useEffect( () => {
 			if ( isLoggedIn && user?.email && user?.date ) {
-				addSurvicate( { email: user.email, registrationDate: user.date } );
+				addSurvicate( { email: user.email, registrationDate: user.date, userId: user.ID } );
 			}
-		}, [ isLoggedIn, currentStepSlug, user?.email, user?.date ] );
+		}, [ isLoggedIn, currentStepSlug, user?.email, user?.date, user?.ID ] );
 
 		// Preload the visual split experiment
 		useEffect( () => {
 			loadExperimentAssignment( 'calypso_plans_page_visual_separation_2025_09_v2' );
 		}, [] );
+
+		// WoW funnel: create the Simple site as soon as the customer is in the flow, so its
+		// Atomic host builds (and any follow-up work) while they pick a domain and check out.
+		// Single-flight — the create-site step consumes the same site rather than creating a
+		// second one. Only fires once the funnel step is known (currentStepSlug set) and the
+		// user is logged in.
+		//
+		// The funnel is an internal-only experiment, but the gate lives server-side: /sites/new
+		// only honours the option for Automatticians and the plan-gate skip is bound to the
+		// option it writes. For anyone else this creates the site the flow would create anyway,
+		// with the funnel option ignored.
+		useEffect( () => {
+			if ( ! currentStepSlug || ! isLoggedIn ) {
+				return;
+			}
+			const queryParams = new URLSearchParams( window.location.search );
+			const funnelSlug = getWowFunnelSlug( queryParams );
+			if ( ! funnelSlug || getRememberedWowFunnelSite( funnelSlug ) ) {
+				return;
+			}
+			void startWowFunnelSite( {
+				funnelSlug,
+				funnelArgs: getWowFunnelArgs( queryParams ),
+			} ).catch( () => {
+				// Errors are logged in the util; the create-site step retries as a fallback.
+			} );
+		}, [ currentStepSlug, isLoggedIn ] );
 	},
 };
 

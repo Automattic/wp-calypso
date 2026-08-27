@@ -1,4 +1,4 @@
-import { Badge } from '@automattic/components';
+import { Badge } from '@automattic/ui';
 import {
 	__experimentalNavigatorButton as NavigatorButton,
 	__experimentalItem as Item,
@@ -78,7 +78,7 @@ export const SidebarNavigatorMenuItem = ( {
 		<li>
 			<NavigatorButton as={ SidebarItem } path={ path }>
 				<div className="sidebar-menu-item__title-with-badge">
-					{ title } { badge && <Badge type="info">{ badge }</Badge> }
+					{ title } { badge && <Badge>{ badge }</Badge> }
 				</div>
 			</NavigatorButton>
 		</li>

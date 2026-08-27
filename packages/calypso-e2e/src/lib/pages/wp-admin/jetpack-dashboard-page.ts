@@ -1,4 +1,5 @@
 import { Page } from 'playwright';
+import { completeJetpackSso } from './jetpack-sso';
 
 export type DashboardTabs = 'At a Glance' | 'My Plan';
 export type SettingsTabs =
@@ -41,6 +42,7 @@ export class JetpackDashboardPage {
 		await this.page.goto( `https://${ siteSlug }/wp-admin/admin.php?page=jetpack#/dashboard`, {
 			timeout: 15 * 1000,
 		} );
+		await completeJetpackSso( this.page );
 	}
 
 	/**

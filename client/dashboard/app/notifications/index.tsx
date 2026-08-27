@@ -5,6 +5,7 @@ import { bellUnread, bell } from '@wordpress/icons';
 import clsx from 'clsx';
 import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
+import { Text } from '../../components/text';
 import { dashboardLink } from '../../utils/link';
 import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
@@ -62,6 +63,25 @@ export default function Notifications( {
 	useEffect( () => {
 		omnibarEvents.notificationsOpen.emit( isOpen );
 	}, [ isOpen ] );
+
+	useEffect( () => {
+		let unsubscribe: ( () => void ) | undefined;
+		let cancelled = false;
+
+		import( '@automattic/notifications/src/app/client' ).then( ( { subscribeUnseenCount } ) => {
+			if ( ! cancelled ) {
+				unsubscribe = subscribeUnseenCount( wpcom, ( count ) => {
+					setHasUnseenNotifications( count > 0 );
+					omnibarEvents.notificationsUnseenCount.emit( count );
+				} );
+			}
+		} );
+
+		return () => {
+			cancelled = true;
+			unsubscribe?.();
+		};
+	}, [] );
 
 	const handleClose = () => {
 		handleToggle( false );
@@ -126,7 +146,7 @@ export default function Notifications( {
 		};
 	}, [ handleOmnibarToggle ] );
 
-	return (
+	const dropdown = (
 		<Dropdown
 			popoverProps={ {
 				placement: 'bottom-start',
@@ -134,6 +154,11 @@ export default function Notifications( {
 				focusOnMount: true,
 				flip: false,
 				shift: true,
+				// Render in place so the popover is positioned against the fixed
+				// container below. Portalled to the body, its coordinates are
+				// document-relative and have to be recomputed on every scroll
+				// frame, which visibly lags behind the fixed masterbar.
+				...( anchor && { inline: true } ),
 				...( anchor ? { anchor: popoverAnchor } : anchorEl && { anchor: anchorEl } ),
 				onFocusOutside: () => {
 					// When focus moves to the omnibar (e.g. clicking the
@@ -165,7 +190,13 @@ export default function Notifications( {
 				)
 			}
 			renderContent={ () => (
-				<Suspense fallback={ null }>
+				<Suspense
+					fallback={
+						<Text variant="muted" style={ { display: 'block', padding: '8px 12px' } }>
+							{ __( 'Loading…' ) }
+						</Text>
+					}
+				>
 					<AsyncNotificationApp
 						locale={ locale }
 						isDismissible={ isMobileViewport }
@@ -176,4 +207,10 @@ export default function Notifications( {
 			) }
 		/>
 	);
+
+	if ( ! anchor ) {
+		return dropdown;
+	}
+
+	return <div className="dashboard-notifications__popover-container">{ dropdown }</div>;
 }

@@ -17,6 +17,7 @@ import { useDraftCleanup } from '../hooks/use-draft-cleanup';
 import { useErrorNotice } from '../hooks/use-error-notice';
 import { useImageLoaded } from '../hooks/use-image-loaded';
 import { useImageStudioAgentSync } from '../hooks/use-image-studio-agent-sync';
+import { useImageStudioErrorTracking } from '../hooks/use-image-studio-error-tracking';
 import { useImageStudioFeedback } from '../hooks/use-image-studio-feedback';
 import { useImageStudioMessageDisplay } from '../hooks/use-image-studio-message-display';
 import { useImageStudioSuggestions } from '../hooks/use-image-studio-suggestions';
@@ -166,18 +167,7 @@ function ImageStudioAgentChat( {
 				messageLength: message?.length || 0,
 			} );
 
-			try {
-				await agentChatProps.onSubmit?.( message );
-			} catch ( error ) {
-				// Track the error
-				trackImageStudioError( {
-					mode,
-					errorType: mode === ImageStudioMode.Edit ? 'edit_failed' : 'generation_failed',
-					attachmentId,
-				} );
-				// Re-throw to allow error to be handled by the UI
-				throw error;
-			}
+			await agentChatProps.onSubmit?.( message );
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ agentChatProps, onChatSubmit, mode ]
@@ -185,6 +175,7 @@ function ImageStudioAgentChat( {
 
 	const { error: agentError, ...agentUiProps } = agentChatProps;
 
+	useImageStudioErrorTracking( agentError, mode, attachmentId );
 	useErrorNotice( agentError, addNotice, mode );
 
 	const isProcessing = agentChatProps.isProcessing || isAnnotationSaving;

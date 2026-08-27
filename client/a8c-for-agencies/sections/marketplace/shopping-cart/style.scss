@@ -8,6 +8,12 @@
 	}
 }
 
+.shopping-cart__button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
 .badge.shopping-cart__button-badge {
 	display: flex;
 	@include heading-small;

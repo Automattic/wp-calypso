@@ -993,6 +993,7 @@ export type SitelessCheckoutType =
 	| 'marketplace'
 	| 'a4a'
 	| 'unified'
+	| 'wpcom'
 	| undefined;
 
 /**
@@ -1022,6 +1023,11 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	 * Marks a product as having been added by the siteless `/checkout/unified` route.
 	 */
 	isUnifiedSitelessCheckout?: boolean;
+
+	/**
+	 * Marks a product as having been added by the siteless `/checkout/wpcom` route.
+	 */
+	isWpcomSitelessCheckout?: boolean;
 
 	isAkismetSitelessCheckout?: boolean;
 	isJetpackCheckout?: boolean;
@@ -1118,6 +1124,7 @@ export type DomainContactDetailsExtra = {
 	ca?: CaDomainContactExtraDetails | null;
 	uk?: UkDomainContactExtraDetails | null;
 	fr?: FrDomainContactExtraDetails | null;
+	in?: InDomainContactExtraDetails | null;
 };
 
 export type CaDomainContactExtraDetails = {
@@ -1137,6 +1144,11 @@ export type FrDomainContactExtraDetails = {
 	registrantVatId?: string;
 	trademarkNumber?: string;
 	sirenSiret?: string;
+};
+
+export type InDomainContactExtraDetails = {
+	nexusDeclaration?: boolean;
+	nexusConnectionType?: string;
 };
 
 export interface TermsOfServiceRecord {

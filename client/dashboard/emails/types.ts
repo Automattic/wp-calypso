@@ -13,7 +13,6 @@ export interface Email {
 	forwardingTo?: string;
 	storageUsed?: number;
 	storageLimit?: number;
-	canUserManage: boolean;
 	status:
 		| 'active'
 		| 'pending'

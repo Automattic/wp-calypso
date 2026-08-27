@@ -1,7 +1,9 @@
 package _self
 
+import _self.lib.utils.cancelSupersededBuilds
 import _self.lib.utils.mergeTrunk
 import _self.lib.utils.allBranchesExceptMergeQueue
+import _self.lib.utils.throttleActionParams
 
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
@@ -23,7 +25,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		param("env.NODE_CONFIG_ENV", "test")
 		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
 		param("env.LOCALE", "en")
-		param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
+		throttleActionParams()
 		// required in the CTRF report
 		param("env.BRANCH_NAME", "%teamcity.build.branch%")
 		param("PROJECT", "desktop")
@@ -45,6 +47,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
     	}
 
 		commitStatusPublisher {
+			id = "calypso_e2e_commit_status_publisher"
 			vcsRootExtId = "${Settings.WpCalypso.id}"
 			publisher = github {
 				githubUrl = "https://api.github.com"
@@ -56,6 +59,8 @@ object CalypsoE2ETestsBuildTemplate : Template({
 	}
 
   	steps {
+		cancelSupersededBuilds()
+
 		mergeTrunk( skipIfConflict = true )
 
     	bashNodeScript {
@@ -160,9 +165,13 @@ object CalypsoE2ETestsBuildTemplate : Template({
 			name = "Set extra environment variables"
 			id = "set_extra_env_vars"
 			scriptContent = """
-				# Parse EXTRA_ENV_VARS param (comma-separated KEY=value pairs) and set as TeamCity env params
+				# Parse EXTRA_ENV_VARS param (KEY=value pairs) and set as TeamCity env params.
+				# Pairs are separated by semicolons. A value with no semicolon keeps the
+				# older comma-separated form, so a saved custom run still parses.
 				if [[ -n "%EXTRA_ENV_VARS%" ]]; then
-					IFS=',' read -ra ENV_PAIRS <<< "%EXTRA_ENV_VARS%"
+					SEPARATOR=','
+					[[ "%EXTRA_ENV_VARS%" == *";"* ]] && SEPARATOR=';'
+					IFS="${'$'}SEPARATOR" read -ra ENV_PAIRS <<< "%EXTRA_ENV_VARS%"
 					for pair in "${'$'}{ENV_PAIRS[@]}"; do
 						KEY="${'$'}{pair%%=*}"
 						VALUE="${'$'}{pair#*=}"
@@ -216,6 +225,18 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				# check would find nothing and pass a leaking run green. Markers are named
 				# account-*.json wherever they land.
 				MARKERS=${'$'}( find test/e2e/output -name 'account-*.json' 2>/dev/null || true )
+				# The end-of-run reaper clears a record once its account is closed or
+				# written out as a marker above. A record still here means that never
+				# happened - the reaper did not run (aborted run, crashed worker), timed
+				# out, or could not record the leak - so the account is still open.
+				# Count only: these records hold bearer tokens and must not be echoed
+				# into the build log.
+				PENDING=${'$'}( find test/e2e/.teardown-pending -name 'pending-*.json' 2>/dev/null || true )
+				if [ -n "${'$'}PENDING" ]; then
+					PENDING_COUNT=${'$'}( printf '%s\n' "${'$'}PENDING" | wc -l | tr -d ' ' )
+					echo "E2E TEARDOWN LEAK - ${'$'}PENDING_COUNT deferred account close(s) were not completed."
+					echo "##teamcity[buildProblem description='E2E teardown leak: ${'$'}PENDING_COUNT deferred close(s) not completed' identity='e2e_teardown_pending']"
+				fi
 				if [ -n "${'$'}MARKERS" ]; then
 					COUNT=${'$'}( printf '%s\n' "${'$'}MARKERS" | wc -l | tr -d ' ' )
 					echo "E2E TEARDOWN LEAK - the following test users were not closed (their blogs leak with them):"
@@ -261,7 +282,6 @@ object CalypsoE2ETestsBuildTemplate : Template({
 		// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have been muted previously.
 		nonZeroExitCode = false
 
-		// Support retries using the --onlyFailures flag in Jest.
 		supportTestRetry = true
 
 		// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner crashes and no tests are run.

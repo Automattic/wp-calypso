@@ -4,7 +4,6 @@ import {
 	TextareaControl,
 	ExternalLink,
 	__experimentalHStack as HStack,
-	__experimentalSpacer as Spacer,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -12,12 +11,27 @@ import { __, sprintf } from '@wordpress/i18n';
 import { check, copy } from '@wordpress/icons';
 import { useCallback, useMemo, useState } from 'react';
 import { Card, CardBody } from '../../../components/card';
-import { CollapsibleCard } from '../../../components/collapsible-card';
+import { SectionHeader } from '../../../components/section-header';
 import { AGENT_CONFIGS, DEFAULT_AGENT_ID } from './agent-configs';
 import type { AgentConfig } from './agent-configs';
 import type { RecordTracksEvent } from './types';
+import type { ReactNode } from 'react';
 
 import './style.scss';
+
+function SetupSteps( { steps }: { steps: ReactNode[] } ) {
+	return (
+		<ol className="mcp-connect-agent__steps">
+			{ steps.map( ( step, index ) => (
+				<li key={ index }>
+					<Text as="p" variant="muted">
+						{ step }
+					</Text>
+				</li>
+			) ) }
+		</ol>
+	);
+}
 
 function ConfigSnippet( {
 	snippet,
@@ -33,7 +47,7 @@ function ConfigSnippet( {
 	return (
 		<>
 			<HStack alignment="center" justify="space-between" spacing={ 2 }>
-				<Text variant="muted">
+				<Text as="p" variant="muted">
 					{ file
 						? sprintf(
 								/* translators: %(file)s is the config file name */
@@ -46,6 +60,7 @@ function ConfigSnippet( {
 					style={ { flexShrink: 0 } }
 					variant="tertiary"
 					icon={ copied ? check : copy }
+					iconSize={ 20 }
 					label={ copied ? __( 'Copied' ) : __( 'Copy configuration' ) }
 					showTooltip
 					onClick={ onCopy }
@@ -110,22 +125,23 @@ export default function McpConnectAgent( {
 	const hasSteps = !! selectedAgent.quickSetup && selectedAgent.quickSetup.length > 0;
 	const hasQuickSetup = hasSteps || !! selectedAgent.installAction;
 
-	return (
-		<>
-			<Spacer marginBottom={ 8 } style={ { maxWidth: '650px' } }>
-				<Text size={ 15 }>
-					{ __(
-						'Get instructions for connecting your external AI assistant to your Automattic for Agencies account via MCP.'
-					) }
-				</Text>
-			</Spacer>
+	// The documentation link belongs at the end of the last configuration card, so
+	// it stays reachable whichever setup paths this agent offers.
+	const docsLink = (
+		<ExternalLink href={ selectedAgent.docsUrl }>{ selectedAgent.docsLabel }</ExternalLink>
+	);
 
-			<VStack spacing={ 4 } className="mcp-connect-agent">
-				<Card>
-					<CardBody>
+	return (
+		<VStack spacing={ 4 } className="mcp-connect-agent">
+			<Card>
+				<CardBody>
+					<VStack spacing={ 4 }>
+						<SectionHeader level={ 3 } title={ __( 'Choose your AI assistant' ) } />
 						<SelectControl
+							__next40pxDefaultSize
 							__nextHasNoMarginBottom
-							label={ __( 'Choose your AI assistant' ) }
+							label={ __( 'AI assistant' ) }
+							help={ __( 'Pick your assistant to get the matching setup instructions.' ) }
 							value={ selectedAgent.id }
 							options={ AGENT_CONFIGS.map( ( agent ) => ( {
 								label: agent.label,
@@ -133,94 +149,76 @@ export default function McpConnectAgent( {
 							} ) ) }
 							onChange={ onAgentChange }
 						/>
+					</VStack>
+				</CardBody>
+			</Card>
+
+			{ hasQuickSetup && (
+				<Card>
+					<CardBody>
+						<VStack spacing={ 4 }>
+							<SectionHeader level={ 3 } title={ __( 'Quick setup' ) } />
+							{ selectedAgent.quickSetupDescription && (
+								<Text as="p" variant="muted">
+									{ selectedAgent.quickSetupDescription }
+								</Text>
+							) }
+							{ hasSteps && <SetupSteps steps={ selectedAgent.quickSetup as ReactNode[] } /> }
+							{ selectedAgent.installAction && (
+								<>
+									<Text as="p" variant="muted">
+										{ __(
+											'Or use the one-click install to add the Automattic for Agencies MCP app.'
+										) }
+									</Text>
+									<Button
+										style={ { width: 'fit-content' } }
+										variant="primary"
+										href={ selectedAgent.installAction.deepLink }
+										onClick={ onInstallActionClick }
+									>
+										{ selectedAgent.installAction.label }
+									</Button>
+								</>
+							) }
+						</VStack>
 					</CardBody>
 				</Card>
+			) }
 
-				{ hasQuickSetup && (
-					<Card>
-						<CardBody>
-							<VStack spacing={ 3 }>
-								<Text weight={ 600 } size={ 15 }>
-									{ __( 'Quick setup' ) }
-								</Text>
-								{ selectedAgent.quickSetupDescription && (
-									<Text variant="muted">{ selectedAgent.quickSetupDescription }</Text>
-								) }
-								{ hasSteps && (
-									<ol>
-										{ selectedAgent.quickSetup!.map( ( step, index ) => (
-											<li key={ index }>
-												<Text>{ step }</Text>
-											</li>
-										) ) }
-									</ol>
-								) }
-								{ selectedAgent.installAction && (
-									<>
-										<Text>
-											{ __(
-												'Or use the one-click install to add the Automattic for Agencies MCP app.'
-											) }
-										</Text>
-										<Button
-											style={ { width: 'fit-content' } }
-											variant="primary"
-											href={ selectedAgent.installAction.deepLink }
-											onClick={ onInstallActionClick }
-										>
-											{ selectedAgent.installAction.label }
-										</Button>
-									</>
-								) }
-							</VStack>
-						</CardBody>
-					</Card>
-				) }
+			{ selectedAgent.manualSetupSnippet && (
+				<Card>
+					<CardBody>
+						<VStack spacing={ 4 }>
+							<SectionHeader level={ 3 } title={ __( 'Manual setup' ) } />
+							<ConfigSnippet
+								snippet={ selectedAgent.manualSetupSnippet }
+								file={ selectedAgent.manualSetupFile }
+								copied={ copied }
+								onCopy={ () =>
+									copySnippet(
+										selectedAgent.manualSetupSnippet as string,
+										'calypso_a4a_ai_mcp_manual_config_copied',
+										setCopied
+									)
+								}
+							/>
+							{ ! selectedAgent.fallbackSetup && docsLink }
+						</VStack>
+					</CardBody>
+				</Card>
+			) }
 
-				{ selectedAgent.manualSetupSnippet && (
-					<Card>
-						<CardBody>
-							<VStack spacing={ 3 }>
-								<Text weight={ 600 } size={ 15 }>
-									{ __( 'Manual setup' ) }
-								</Text>
-								<ConfigSnippet
-									snippet={ selectedAgent.manualSetupSnippet }
-									file={ selectedAgent.manualSetupFile }
-									copied={ copied }
-									onCopy={ () =>
-										copySnippet(
-											selectedAgent.manualSetupSnippet as string,
-											'calypso_a4a_ai_mcp_manual_config_copied',
-											setCopied
-										)
-									}
-								/>
-							</VStack>
-						</CardBody>
-					</Card>
-				) }
-
-				{ selectedAgent.fallbackSetup && (
-					<CollapsibleCard
-						initialExpanded={ false }
-						toggleLabel={ __( 'Toggle fallback setup' ) }
-						header={
-							<Text weight={ 600 } size={ 15 }>
-								{ __( 'Older clients or troubleshooting' ) }
+			{ selectedAgent.fallbackSetup && (
+				<Card>
+					<CardBody>
+						<VStack spacing={ 4 }>
+							<SectionHeader level={ 3 } title={ __( 'Older clients or troubleshooting' ) } />
+							<Text as="p" variant="muted">
+								{ selectedAgent.fallbackSetup.description }
 							</Text>
-						}
-					>
-						<VStack spacing={ 3 }>
-							<Text variant="muted">{ selectedAgent.fallbackSetup.description }</Text>
 							{ selectedAgent.fallbackSetup.steps && (
-								<ol>
-									{ selectedAgent.fallbackSetup.steps.map( ( step, index ) => (
-										<li key={ index }>
-											<Text>{ step }</Text>
-										</li>
-									) ) }
-								</ol>
+								<SetupSteps steps={ selectedAgent.fallbackSetup.steps } />
 							) }
 							<ConfigSnippet
 								snippet={ selectedAgent.fallbackSetup.snippet }
@@ -234,12 +232,13 @@ export default function McpConnectAgent( {
 									)
 								}
 							/>
+							{ docsLink }
 						</VStack>
-					</CollapsibleCard>
-				) }
+					</CardBody>
+				</Card>
+			) }
 
-				<ExternalLink href={ selectedAgent.docsUrl } children={ selectedAgent.docsLabel } />
-			</VStack>
-		</>
+			{ ! selectedAgent.manualSetupSnippet && ! selectedAgent.fallbackSetup && docsLink }
+		</VStack>
 	);
 }

@@ -30,21 +30,24 @@ import {
 	applyReviewEdit,
 	clearActiveBlockFocus,
 	clearActiveBlockFocusUnlessBlockReferenceClick,
+	countCurrentTextOccurrences,
 	getEditableBlockContent,
 	hasEditableBlockTarget,
 	toggleBlockReferenceFocus,
 	undoBlockEdit,
 } from '../utils/block-actions';
 import {
-	countOccurrences,
 	flattenBlocks,
 	getEditorContentBlocks,
 	type BlockEditorStore,
 	type EditorStore,
 } from '../utils/blocks';
+import { getBulkResponseActionOutcome, type OnResponseAction } from '../utils/response-action';
 import { useCopyToClipboard } from '../utils/use-copy-to-clipboard';
+import useLatestResponseAction from '../utils/use-latest-response-action';
 import { type BlockSnapshot } from './block-ref';
 import ReviewCard, { type ReviewCardRow } from './review-card';
+import SplitScreenGuide from './split-screen-guide';
 
 export interface FeedbackListItem {
 	title: string;
@@ -81,10 +84,18 @@ export type EditorPostId = number | string;
  * come from the show-component payload; everything here is flow configuration.
  */
 export interface FeedbackListProps {
+	/** Existing show-component type used to segment guide tracking. */
+	componentType: string;
 	summary: string;
 	items?: FeedbackListItem[];
 	sections?: FeedbackListSection[];
 	postId?: EditorPostId;
+	/** Whether the containing chat message is no longer interactive. */
+	isMessageStale?: boolean;
+	/** Tool call that produced this response. Used for tracking. */
+	toolCallId?: string;
+	/** Reports completed user actions to the host that rendered this response. */
+	onResponseAction?: OnResponseAction;
 	/** Title used when the flow provides flat items rather than sections. */
 	sectionFallbackTitle: string;
 	/** Warning shown when the reviewed post no longer matches the editor. */
@@ -184,7 +195,7 @@ function getApplyUnavailableReason(
 		return __( 'Needs manual edit - unsupported edit target.', __i18n_text_domain__ );
 	}
 
-	const occurrences = countOccurrences(
+	const occurrences = countCurrentTextOccurrences(
 		getEditableBlockContent( block, item.editable_attribute, item.current_text ),
 		item.current_text
 	);
@@ -197,16 +208,16 @@ function getApplyUnavailableReason(
 	return undefined;
 }
 
-/**
- * Render a flat, item-based feedback list.
- * @param {FeedbackListProps} props Component props.
- * @returns React element.
- */
+/** Renders actionable feedback items and their bulk-apply control. */
 export default function FeedbackList( {
+	componentType,
 	summary,
 	items,
 	sections,
 	postId,
+	isMessageStale = false,
+	toolCallId,
+	onResponseAction,
 	sectionFallbackTitle,
 	staleWarning,
 	failureMessage,
@@ -247,6 +258,7 @@ export default function FeedbackList( {
 	const setItemStatus = useCallback( ( key: string, status: ItemStatus ) => {
 		setItemStatuses( ( prev ) => ( { ...prev, [ key ]: status } ) );
 	}, [] );
+	const fireResponseAction = useLatestResponseAction( onResponseAction, isLatestPostContextStale );
 
 	const focusBlock = useCallback(
 		( index: number ) => {
@@ -271,19 +283,27 @@ export default function FeedbackList( {
 	}, [] );
 
 	const applyItem = useCallback(
-		async ( item: FeedbackListItem, sectionIndex: number, itemIndex: number ) => {
+		async (
+			item: FeedbackListItem,
+			sectionIndex: number,
+			itemIndex: number
+		): Promise< boolean > => {
 			const key = getItemKey( sectionIndex, itemIndex );
 			const block = item.block_index === null ? null : flatBlocks[ item.block_index ];
-			if ( isLatestPostContextStale() || getApplyUnavailableReason( item, block ) ) {
+			const previousStatus = itemStatuses[ key ] ?? 'pending';
+			if ( isLatestPostContextStale() ) {
+				return false;
+			}
+			if ( getApplyUnavailableReason( item, block ) ) {
 				setItemStatus( key, 'failed' );
-				return;
+				return false;
 			}
 
 			setItemStatus( key, 'applying' );
 			const clientId = block?.clientId;
 			if ( ! clientId || ! item.suggested_text ) {
 				setItemStatus( key, 'failed' );
-				return;
+				return false;
 			}
 
 			let result: Awaited< ReturnType< typeof applyReviewEdit > >;
@@ -297,8 +317,17 @@ export default function FeedbackList( {
 					item.editable_attribute
 				);
 			} catch {
+				if ( isLatestPostContextStale() ) {
+					setItemStatus( key, previousStatus );
+					return false;
+				}
 				setItemStatus( key, 'failed' );
-				return;
+				return false;
+			}
+
+			if ( isLatestPostContextStale() ) {
+				setItemStatus( key, previousStatus );
+				return false;
 			}
 
 			if (
@@ -314,12 +343,13 @@ export default function FeedbackList( {
 					editableAttribute: result.editableAttribute,
 				};
 				setItemStatus( key, 'accepted' );
-				return;
+				return true;
 			}
 
 			setItemStatus( key, 'failed' );
+			return false;
 		},
-		[ flatBlocks, isLatestPostContextStale, setItemStatus ]
+		[ flatBlocks, isLatestPostContextStale, itemStatuses, setItemStatus ]
 	);
 
 	// Pending, one-click-applicable items, used for the "Apply all" action.
@@ -350,20 +380,46 @@ export default function FeedbackList( {
 			return;
 		}
 		setBulkRunning( true );
-		for ( const target of applyAllTargets ) {
-			// Apply sequentially so each edit validates against the live block.
-			// eslint-disable-next-line no-await-in-loop
-			await applyItem( target.item, target.sectionIndex, target.itemIndex );
+		try {
+			let successCount = 0;
+			let failureCount = 0;
+			for ( const target of applyAllTargets ) {
+				if ( isLatestPostContextStale() ) {
+					return;
+				}
+				// Apply sequentially so each edit validates against the live block.
+				// eslint-disable-next-line no-await-in-loop
+				const succeeded = await applyItem( target.item, target.sectionIndex, target.itemIndex );
+				if ( isLatestPostContextStale() ) {
+					return;
+				}
+				if ( succeeded ) {
+					successCount++;
+				} else {
+					failureCount++;
+				}
+			}
+			fireResponseAction( {
+				action: 'bulk_accept',
+				target: 'edit',
+				outcome: getBulkResponseActionOutcome( successCount, failureCount ),
+				itemCount: successCount + failureCount,
+			} );
+		} finally {
+			setBulkRunning( false );
 		}
-		setBulkRunning( false );
-	}, [ applyAllTargets, applyItem, bulkRunning, isLatestPostContextStale ] );
+	}, [ applyAllTargets, applyItem, bulkRunning, fireResponseAction, isLatestPostContextStale ] );
 
 	const undoItem = useCallback(
-		( key: string ) => {
+		( key: string, status: ItemStatus ) => {
 			if ( isLatestPostContextStale() ) {
-				return;
+				return false;
 			}
 			const snapshot = editSnapshots.current[ key ];
+			if ( status === 'accepted' && ! snapshot ) {
+				setItemStatus( key, 'failed' );
+				return false;
+			}
 			if ( snapshot ) {
 				const didUndo = undoBlockEdit(
 					snapshot.clientId,
@@ -373,20 +429,23 @@ export default function FeedbackList( {
 				);
 				if ( ! didUndo ) {
 					setItemStatus( key, 'failed' );
-					return;
+					return false;
 				}
 				delete editSnapshots.current[ key ];
 			}
 			setItemStatus( key, 'pending' );
+			return true;
 		},
 		[ isLatestPostContextStale, setItemStatus ]
 	);
 
 	const dismissItem = useCallback(
 		( key: string ) => {
-			if ( ! isPostStale ) {
-				setItemStatus( key, 'dismissed' );
+			if ( isPostStale ) {
+				return false;
 			}
+			setItemStatus( key, 'dismissed' );
+			return true;
 		},
 		[ isPostStale, setItemStatus ]
 	);
@@ -396,6 +455,11 @@ export default function FeedbackList( {
 			className={ `${ CLASS_PREFIX }${ isPostStale ? ' is-post-stale' : '' }` }
 			onMouseDownCapture={ handleRootMouseDown }
 		>
+			<SplitScreenGuide
+				componentType={ componentType }
+				toolCallId={ toolCallId }
+				isStale={ isMessageStale || isPostStale }
+			/>
 			{ isPostStale && (
 				<p className={ `${ CLASS_PREFIX }__stale-warning` } role="note">
 					{ staleWarning }
@@ -443,7 +507,7 @@ export default function FeedbackList( {
 								const currentTextPresent =
 									!! item.current_text &&
 									!! block &&
-									countOccurrences(
+									countCurrentTextOccurrences(
 										getEditableBlockContent( block, item.editable_attribute, item.current_text ),
 										item.current_text
 									) >= 1;
@@ -519,7 +583,18 @@ export default function FeedbackList( {
 										copied={ copiedKey === key }
 										disabled={ isPostStale || bulkRunning }
 										failureMessage={ failureMessage }
-										onApply={ () => applyItem( item, sectionIndex, itemIndex ) }
+										onApply={ () => {
+											void applyItem( item, sectionIndex, itemIndex ).then( ( succeeded ) => {
+												if ( isLatestPostContextStale() ) {
+													return;
+												}
+												fireResponseAction( {
+													action: 'accept',
+													target: 'edit',
+													outcome: succeeded ? 'success' : 'failed',
+												} );
+											} );
+										} }
 										onGoToSection={ () => {
 											if ( item.block_index !== null && item.block_index !== undefined ) {
 												focusBlock( item.block_index );
@@ -530,8 +605,26 @@ export default function FeedbackList( {
 												copyItem( key, suggestionText );
 											}
 										} }
-										onDismiss={ () => dismissItem( key ) }
-										onUndo={ () => undoItem( key ) }
+										onDismiss={ () => {
+											if ( dismissItem( key ) ) {
+												fireResponseAction( {
+													action: 'dismiss',
+													target: 'edit',
+													outcome: 'success',
+												} );
+											}
+										} }
+										onUndo={ () => {
+											const succeeded = undoItem( key, status );
+											if ( isLatestPostContextStale() ) {
+												return;
+											}
+											fireResponseAction( {
+												action: 'undo',
+												target: 'edit',
+												outcome: succeeded ? 'success' : 'failed',
+											} );
+										} }
 										onFocusBlock={ focusCurrentPostBlock }
 									/>
 								);

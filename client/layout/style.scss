@@ -577,10 +577,6 @@ body.is-mobile-app-view {
 	padding-top: var( --masterbar-height );
 }
 
-.is-nav-2026-assignment-loading {
-	display: none;
-}
-
 // Source of truth for the fixed 2026 nav's geometry; everything that clears or sticks
 // to the nav derives from these vars.
 .layout:has( .x-nav--2026-redesign ) {
@@ -612,8 +608,7 @@ body.is-mobile-app-view {
 
 // These surfaces float the nav over their hero, so don't reserve its space.
 .layout.is-section-patterns:has( .x-nav--2026-redesign ) .layout__header-section,
-.layout.is-theme-showcase-modern:has( .x-nav--2026-redesign ) .layout__header-section,
-.layout.is-section-plugins:not( .is-logged-in ):has( .x-nav--2026-redesign ) .layout__header-section {
+.layout.is-section-themes.is-theme-showcase-modern:has( .x-nav--2026-redesign ) .layout__header-section,
+.layout.is-section-plugins:not( .is-logged-in ):has( .plugins-browser ):has( .x-nav--2026-redesign ) .layout__header-section {
 	min-height: 0;
 }
-

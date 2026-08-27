@@ -11,8 +11,6 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
-import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -42,29 +40,6 @@ import './style.scss';
  * }} StatsNavItem
  */
 
-// Use HOC to wrap hooks of `react-query` for fetching the notice visibility state.
-function withNoticeHook( HookedComponent ) {
-	return function WrappedComponent( props ) {
-		const { data: showSettingsTooltip, refetch: refetchNotices } = useNoticeVisibilityQuery(
-			props.siteId,
-			'traffic_page_settings'
-		);
-
-		const { mutateAsync: mutateNoticeVisbilityAsync } = useNoticeVisibilityMutation(
-			props.siteId,
-			'traffic_page_settings'
-		);
-
-		return (
-			<HookedComponent
-				{ ...props }
-				showSettingsTooltip={ showSettingsTooltip }
-				refetchNotices={ refetchNotices }
-				mutateNoticeVisbilityAsync={ mutateNoticeVisbilityAsync }
-			/>
-		);
-	};
-}
 /**
  * @param { { navItems: StatsNavItem[], selectedItemName: keyof typeof allNavItems, isLegacy: boolean, interval: string, pathTemplate: string } } props
  */
@@ -166,7 +141,6 @@ class StatsNavigation extends Component {
 		isLegacy: PropTypes.bool,
 		adminUrl: PropTypes.string,
 		showLock: PropTypes.bool,
-		delayTooltipPresentation: PropTypes.bool,
 	};
 
 	isValidItem = ( item ) => {
@@ -271,25 +245,6 @@ class StatsNavigation extends Component {
 	}
 }
 
-function shouldDelayTooltipPresentation( state, siteId ) {
-	// Check the 'created_at' time stamp.
-	// Can return null (Redux hydration?) which we'll treat as a delay.
-	const siteCreatedTimeStamp = getSiteOption( state, siteId, 'created_at' );
-	if ( siteCreatedTimeStamp === null ) {
-		return true;
-	}
-
-	// Check if the site is less than one week old.
-	const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
-	const siteIsLessThanOneWeekOld =
-		new Date( siteCreatedTimeStamp ) > new Date( Date.now() - WEEK_IN_MILLISECONDS );
-	if ( siteIsLessThanOneWeekOld ) {
-		return true;
-	}
-
-	return false;
-}
-
 export default connect(
 	( state, { siteId, selectedItem } ) => {
 		return {
@@ -307,8 +262,7 @@ export default connect(
 			siteId,
 			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),
 			adminUrl: getSiteAdminUrl( state, siteId ),
-			delayTooltipPresentation: shouldDelayTooltipPresentation( state, siteId ),
 		};
 	},
 	{ requestModuleToggles, updateModuleToggles }
-)( localize( withNoticeHook( StatsNavigation ) ) );
+)( localize( StatsNavigation ) );

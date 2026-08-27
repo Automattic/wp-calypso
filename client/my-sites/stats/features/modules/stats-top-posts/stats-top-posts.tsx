@@ -77,6 +77,7 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 	const onStatTypeChange = ( option: StatTypeOptionType ) => {
 		trackStatsAnalyticsEvent( 'stats_posts_module_menu_clicked', {
 			stat_type: option.analyticsId,
+			blog_id: siteId,
 		} );
 
 		setLocalStatType( option.value );

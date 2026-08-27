@@ -24,6 +24,11 @@ declare const __i18n_text_domain__: string;
  */
 declare const agentsManagerData:
 	| {
+			isDevMode?: boolean;
+			/** Whether the current request is attributed to an Automattician for tracking. */
+			isA11n?: boolean;
+			/** The site's canonical identity; injected on wp-admin. */
+			site?: { ID?: number; domain?: string };
 			jetpackAiSidebar?: {
 				enabled: boolean;
 				features?: {

@@ -27,6 +27,45 @@ describe( 'mapValidationMessagesToFieldErrors', () => {
 
 		expect( mapValidationMessagesToFieldErrors( messages ) ).toEqual( {} );
 	} );
+
+	it( 'maps the dotted ccTLD keys the endpoint reports .uk errors under', () => {
+		const messages = {
+			'extra.uk.registrant_type': [ 'Please choose a registrant type.' ],
+			'extra.uk.registration_number': [ 'Please use a valid registration number.' ],
+			email: [ 'Invalid email.' ],
+		} as unknown as ContactValidationResponseMessages;
+
+		expect( mapValidationMessagesToFieldErrors( messages ) ).toEqual( {
+			email: 'Invalid email.',
+			ukRegistrantType: 'Please choose a registrant type.',
+			ukRegistrationNumber: 'Please use a valid registration number.',
+		} );
+	} );
+
+	it( 'maps the dotted ccTLD keys the endpoint reports .fr and .ca errors under', () => {
+		const messages = {
+			'extra.fr.registrant_type': [ 'Please choose a registrant type.' ],
+			'extra.fr.siren_siret': [ 'Please use a valid SIREN or SIRET number.' ],
+			'extra.ca.legal_type': [ 'Please choose a legal type.' ],
+		} as unknown as ContactValidationResponseMessages;
+
+		expect( mapValidationMessagesToFieldErrors( messages ) ).toEqual( {
+			frRegistrantType: 'Please choose a registrant type.',
+			frSirenSiret: 'Please use a valid SIREN or SIRET number.',
+			caLegalType: 'Please choose a legal type.',
+		} );
+	} );
+
+	it( 'attaches VAT errors to the .fr VAT field, which the schema files under vat_id', () => {
+		const messages = {
+			vat_id: [ 'Please use a valid VAT number.' ],
+		} as unknown as ContactValidationResponseMessages;
+
+		expect( mapValidationMessagesToFieldErrors( messages ) ).toEqual( {
+			vatId: 'Please use a valid VAT number.',
+			frRegistrantVatId: 'Please use a valid VAT number.',
+		} );
+	} );
 } );
 
 const SMS_COUNTRY_CODES: SMSCountryCode[] = [

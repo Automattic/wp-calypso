@@ -15,7 +15,6 @@ import {
 	isPersonal,
 	isPremium,
 	isBusiness,
-	isEcommerce,
 	isPlan,
 	isComplete,
 	isDomainProduct,
@@ -27,7 +26,6 @@ import {
 	isJetpackProduct,
 	isConciergeSession,
 	isTitanMail,
-	isPro,
 	applyTestFiltersToPlansList,
 	isWpComMonthlyPlan,
 	JETPACK_BACKUP_T1_PRODUCTS,
@@ -35,7 +33,6 @@ import {
 	JETPACK_LEGACY_PLANS,
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_SECURITY_T1_PLANS,
-	isP2Plus,
 	getMonthlyPlanByYearly,
 	hasMarketplaceProduct,
 	isDIFMProduct,
@@ -48,10 +45,6 @@ import {
 	is100Year,
 	isJetpackGrowthPlan,
 	JETPACK_GROWTH_UPGRADE_MAP,
-	PLAN_MONTHLY_PERIOD,
-	PLAN_ANNUAL_PERIOD,
-	PLAN_BIENNIAL_PERIOD,
-	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import {
@@ -69,6 +62,7 @@ import { Plans, type SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_CANCEL, SUPPORT_ROOT } from '@automattic/urls';
 import { useQuery } from '@tanstack/react-query';
+import { Button as WPButton } from '@wordpress/components';
 import { check, column, Icon, payment, reusableBlock, tool, trash, cloud } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, LocalizeProps, useTranslate } from 'i18n-calypso';
@@ -85,20 +79,24 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import Notice from 'calypso/dashboard/components/notice';
+import { hasPlanExpiryNotice } from 'calypso/dashboard/components/plan-expiry-notice';
 import {
 	getCancelButtonCopy,
 	getRemoveButtonCopy,
 } from 'calypso/dashboard/me/billing-purchases/purchase-settings/get-cancel-remove-copy';
+import { getPlanChangeAction } from 'calypso/dashboard/me/billing-purchases/purchase-settings/get-plan-change-action';
 import {
 	getPurchaseCancellationFlowType,
+	hasAmountAvailableToRefund,
 	isA4ABillingDragonPurchase,
 	isA4AHoldingSitePurchase,
 	isAkismetHoldingSitePurchase,
-	isJetpackHoldingSitePurchase,
+	isDotcomPlan,
 	isMarketplaceHoldingSitePurchase,
+	isManageableByUser,
+	isPartnerPurchase,
 } from 'calypso/dashboard/utils/purchase';
 import reinstallPlugins from 'calypso/data/marketplace/reinstall-plugins-api';
 import HundredYearPlanLogo from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/hundred-year-plan-step-wrapper/hundred-year-plan-logo';
@@ -106,7 +104,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedDomain, resolveDomainStatus } from 'calypso/lib/domains';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { handleRenewMultiplePurchasesClick, handleRenewNowClick } from 'calypso/lib/purchases';
-import { createPurchaseObject } from 'calypso/lib/purchases/assembler';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
 import ProductLink from 'calypso/me/purchases/product-link';
@@ -152,17 +149,15 @@ import {
 	getDisplayName,
 	getName,
 	getRenewalPriceInSmallestUnit,
-	hasAmountAvailableToRefund,
 	hasPaymentMethod,
 	isCloseToExpiration,
 	isExpiredAndInGracePeriod,
 	isExpiredOrRemoved,
 	isExpiredWithNoAutoRenewAttemptsLeft,
+	isIncludedWithPlan,
 	isPaidWithCredits,
-	isPartnerPurchase,
 	isRemoved,
 	isRenewable,
-	isWithinRefundWindowDowngradeEligible,
 	needsToRenewSoon,
 	purchaseType,
 	shouldRenderMonthlyRenewalOption,
@@ -254,24 +249,6 @@ interface ManagePurchaseState {
 	isReinstalling: boolean;
 }
 
-// Map the purchase's billing term to the plan grid's `intervalType` param so the
-// Stepper grid opens on the same term as the current plan. Downgrades only work
-// within the same term, and the grid hides the term selector in the downgrade flow.
-function getPlanGridIntervalType( billPeriodDays: number ): string | undefined {
-	switch ( billPeriodDays ) {
-		case PLAN_MONTHLY_PERIOD:
-			return 'monthly';
-		case PLAN_ANNUAL_PERIOD:
-			return 'yearly';
-		case PLAN_BIENNIAL_PERIOD:
-			return '2yearly';
-		case PLAN_TRIENNIAL_PERIOD:
-			return '3yearly';
-		default:
-			return undefined;
-	}
-}
-
 class ManagePurchase extends Component<
 	ManagePurchaseProps & ManagePurchaseConnectedProps & LocalizeProps,
 	ManagePurchaseState
@@ -317,20 +294,14 @@ class ManagePurchase extends Component<
 			return;
 		}
 
-		const options = redirectTo ? { redirectTo } : undefined;
+		const options = { redirectTo, tracksProps: { position: 'manage-purchase' } };
 		const isSitelessRenewal =
 			isAkismetHoldingSitePurchase( purchase ) ||
 			isMarketplaceHoldingSitePurchase( purchase ) ||
 			isA4AHoldingSitePurchase( purchase );
 
 		// If this renewal is for a siteless purchase, we'll drop the site slug
-		// Temporary bridge (SHILL-2256): handleRenewNowClick still expects the
-		// camelCase Purchase. Remove once it reads the raw shape.
-		this.props.handleRenewNowClick(
-			createPurchaseObject( purchase as unknown as Parameters< typeof createPurchaseObject >[ 0 ] ),
-			! isSitelessRenewal ? siteSlug : '',
-			options
-		);
+		this.props.handleRenewNowClick( purchase, ! isSitelessRenewal ? siteSlug : '', options );
 	};
 
 	handleRenewMonthly = () => {
@@ -355,15 +326,7 @@ class ManagePurchase extends Component<
 	handleRenewMultiplePurchases = ( purchases: Purchase[] ) => {
 		const { siteSlug, redirectTo } = this.props;
 		const options = redirectTo ? { redirectTo } : undefined;
-		// Temporary bridge (SHILL-2256): handleRenewMultiplePurchasesClick still
-		// expects the camelCase Purchase. Remove once it reads the raw shape.
-		this.props.handleRenewMultiplePurchasesClick(
-			purchases.map( ( p ) =>
-				createPurchaseObject( p as unknown as Parameters< typeof createPurchaseObject >[ 0 ] )
-			),
-			siteSlug,
-			options
-		);
+		this.props.handleRenewMultiplePurchasesClick( purchases, siteSlug, options );
 	};
 
 	isPendingDomainRegistration( purchase: Purchase ): boolean {
@@ -376,6 +339,22 @@ class ManagePurchase extends Component<
 		return domain?.pendingRegistrationAtRegistry ?? false;
 	}
 
+	/**
+	 * The prominent renewal control. Note that the "Renew now" nav item further
+	 * down applies fewer conditions than this, so there are purchases it offers
+	 * to renew that this one does not. Whether that difference is intentional
+	 * isn't clear.
+	 *
+	 * The purchase list applies the same conditions to its own renewal link:
+	 * both the ones below and the ownership and lock checks in the JSX that
+	 * renders this. It copied this control rather than the nav item because the
+	 * purchase list link is prominent in the same way this one is.
+	 *
+	 * The conditions are repeated rather than shared because this page reads the
+	 * raw `@automattic/api-core` purchase while the list still reads the
+	 * camelCase `@automattic/data-stores` one (SHILL-2256), so each side needs
+	 * different field names.
+	 */
 	renderRenewButton() {
 		const { purchase, translate } = this.props;
 		if ( ! purchase ) {
@@ -420,26 +399,36 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		if ( isPartnerPurchase( purchase ) || isA4ABillingDragonPurchase( purchase ) ) {
+		if ( ! purchase.is_upgradable ) {
 			return null;
 		}
 
-		const isUpgradeablePlan =
-			isPlan( purchase ) &&
-			! isEcommerce( purchase ) &&
-			! isPro( purchase ) &&
-			! isComplete( purchase ) &&
-			! is100Year( purchase ) &&
-			! isP2Plus( purchase );
+		// Deliberately hidden once expired: the nav item still offers the link, we
+		// just don't give it prominence here.
+		if ( isExpiredOrRemoved( purchase ) ) {
+			return null;
+		}
+
+		// Shares its destination with the nav item so the two can't disagree, but
+		// always promotes upgrades — downgrades are offered in the list below.
+		if ( isDotcomPlan( purchase ) ) {
+			const action = this.buildPlanChangeAction( { upgradeOnly: true } );
+			if ( ! action ) {
+				return null;
+			}
+			return (
+				<Button primary={ !! preventRenewal } compact href={ action.href }>
+					{ action.title }
+				</Button>
+			);
+		}
+
+		const isUpgradeablePlan = isPlan( purchase ) && ! isComplete( purchase );
 		const isUpgradeableProduct =
 			! isPlan( purchase ) &&
 			( isJetpackBackupT1Slug( purchase.product_slug ) || isAkismetProduct( purchase ) );
 
 		if ( ! isUpgradeablePlan && ! isUpgradeableProduct ) {
-			return null;
-		}
-
-		if ( isExpiredOrRemoved( purchase ) ) {
 			return null;
 		}
 
@@ -453,7 +442,7 @@ class ManagePurchase extends Component<
 		// Show the upgrade button without the primary style if both buttons are present
 		return (
 			<Button primary={ !! preventRenewal } compact href={ upgradeUrl }>
-				{ translate( 'Upgrade plan' ) }
+				{ isUpgradeablePlan ? translate( 'Upgrade plan' ) : translate( 'Upgrade product' ) }
 			</Button>
 		);
 	}
@@ -627,80 +616,65 @@ class ManagePurchase extends Component<
 		return `/plans/${ siteSlug }`;
 	}
 
-	shouldRenderDowngradeOption(): boolean {
-		const { purchase } = this.props;
-		if ( ! purchase || ! isPlan( purchase ) ) {
-			return false;
-		}
-		if ( ! purchase.is_plan_type_downgradable ) {
-			return false;
-		}
-		const expiredOrRefundDowngrade =
-			config.isEnabled( 'plans/expired-downgrade' ) &&
-			( isExpiredAndInGracePeriod( purchase ) ||
-				isWithinRefundWindowDowngradeEligible( purchase ) );
-		const delayedDowngrade = config.isEnabled( 'plans/delayed-downgrade' );
-		return expiredOrRefundDowngrade || delayedDowngrade;
-	}
-
-	renderChangePlanNavItem() {
-		const { purchase, siteSlug, getManagePurchaseUrlFor = managePurchase, translate } = this.props;
-		if ( ! this.shouldRenderDowngradeOption() || ! purchase ) {
-			return null;
-		}
-		// Route to the Stepper plan-upgrade flow, whose plan grid and downgrade
-		// dialog are more polished than the classic `/plans` page. The downgrade
-		// logic itself is shared (both pages render `PlansFeaturesMain`), and it
-		// reads `redirect_to`/`cancel_to` straight off the URL, so we still land
-		// back on this manage-purchase page afterwards. The `:purchaseId`
-		// placeholder is substituted with the newly-provisioned plan's purchase by
-		// either the instant-downgrade handler or the checkout pending page
-		// (analogous to `:receiptId`).
-		const redirectTo = getManagePurchaseUrlFor( siteSlug, ':purchaseId' ) + '?plan_changed=true';
-		const cancelTo = getManagePurchaseUrlFor( siteSlug, purchase.ID );
-		const intervalType = getPlanGridIntervalType( purchase.bill_period_days );
-		const href = addQueryArgs(
-			{
-				siteSlug,
-				allow_downgrade: 'true',
-				redirect_to: redirectTo,
-				cancel_to: cancelTo,
-				...( intervalType && { intervalType } ),
-			},
-			'/setup/plan-upgrade'
-		);
-		return (
-			<CompactCard tagName="a" displayAsLink href={ href }>
-				<Icon icon={ column } className="card__icon" />
-				{ translate( 'Change plan' ) }
-			</CompactCard>
-		);
-	}
-
-	renderUpgradeNavItem() {
-		const { purchase, translate } = this.props;
-		if ( this.shouldRenderDowngradeOption() ) {
-			return null;
-		}
+	/**
+	 * The `:purchaseId` placeholder is substituted with the newly-provisioned
+	 * plan's purchase by either the instant-downgrade handler or the checkout
+	 * pending page (analogous to `:receiptId`).
+	 */
+	buildPlanChangeAction( { upgradeOnly = false }: { upgradeOnly?: boolean } = {} ) {
+		const { purchase, siteSlug, getManagePurchaseUrlFor = managePurchase } = this.props;
 		if ( ! purchase ) {
 			return null;
 		}
-		if (
-			isJetpackHoldingSitePurchase( purchase ) ||
-			isPartnerPurchase( purchase ) ||
-			isA4ABillingDragonPurchase( purchase )
-		) {
+		return getPlanChangeAction( purchase, {
+			upgradeOnly,
+			cancelTo: getManagePurchaseUrlFor( siteSlug, purchase.ID ),
+			redirectTo: getManagePurchaseUrlFor( siteSlug, ':purchaseId' ),
+		} );
+	}
+
+	/**
+	 * The single entry point for moving a purchase onto something else.
+	 * WordPress.com plans can change in either direction and route to the Stepper
+	 * plan-upgrade flow, whose plan grid and downgrade dialog are more polished
+	 * than the classic `/plans` page. The downgrade logic itself is shared (both
+	 * pages render `PlansFeaturesMain`), and it reads `redirect_to`/`cancel_to`
+	 * straight off the URL, so we still land back on this manage-purchase page
+	 * afterwards. Everything else can only upgrade, and keeps its own
+	 * per-product destination.
+	 */
+	renderProductChangeNavItem() {
+		const { purchase, translate } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
+		if ( isDotcomPlan( purchase ) ) {
+			const action = this.buildPlanChangeAction();
+			if ( ! action ) {
+				return null;
+			}
+			return (
+				<CompactCard
+					tagName="a"
+					displayAsLink
+					href={ action.href }
+					// Downgrades are not tracked here; they could be if desired, but
+					// historically only the upgrade case ever was.
+					onClick={ action.offersDowngrades ? undefined : this.handleUpgradeClick }
+				>
+					<Icon icon={ column } className="card__icon" />
+					{ action.title }
+				</CompactCard>
+			);
+		}
+
+		if ( ! purchase.is_upgradable ) {
 			return null;
 		}
 
-		const isUpgradeablePlan =
-			purchase &&
-			isPlan( purchase ) &&
-			! isEcommerce( purchase ) &&
-			! isPro( purchase ) &&
-			! isComplete( purchase ) &&
-			! isP2Plus( purchase ) &&
-			! is100Year( purchase );
+		// Allow Jetpack plans except the top one (Jetpack Complete) to be
+		// upgraded. WordPress.com plans were already handled above.
+		const isUpgradeablePlan = isPlan( purchase ) && ! isComplete( purchase );
 
 		const isUpgradeableBackupProduct = (
 			JETPACK_BACKUP_T1_PRODUCTS as ReadonlyArray< string >
@@ -708,6 +682,12 @@ class ManagePurchase extends Component<
 		const isUpgradeableProduct = isUpgradeableBackupProduct;
 
 		if ( ! isUpgradeablePlan && ! isUpgradeableProduct ) {
+			return null;
+		}
+
+		const upgradeUrl = this.getUpgradeUrl();
+
+		if ( ! upgradeUrl ) {
 			return null;
 		}
 
@@ -720,8 +700,6 @@ class ManagePurchase extends Component<
 		} else {
 			buttonText = isUpgradeablePlan ? translate( 'Upgrade plan' ) : translate( 'Upgrade product' );
 		}
-
-		const upgradeUrl = this.getUpgradeUrl();
 
 		return (
 			<CompactCard
@@ -867,15 +845,26 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
+		// Only support can cancel or remove some purchases. `is_removable` is false
+		// server-side for these, but visibility here is driven by auto-renew state
+		// instead, so the check has to be repeated.
+		if ( ! isManageableByUser( purchase ) ) {
+			return null;
+		}
+
 		const canRefund = hasAmountAvailableToRefund( purchase );
 		const autoRenewOn = !! purchase.is_auto_renew_enabled;
+		// A domain connection bundled with a plan renews with that plan, so Cancel
+		// is never offered for it (see `canAutoRenewBeTurnedOff`) and removal is the
+		// only action available — regardless of what auto-renew reports.
+		const isBundledDomainConnection = isIncludedWithPlan( purchase ) && isDomainMapping( purchase );
 
 		// Show Remove when auto-renew is off, OR when the purchase is in its
 		// post-expiry grace period (Cancel is not offered there, so Remove is the
 		// only way to act on it — matching the Dashboard). The refund-eligible case
 		// is surfaced inside the cancel flow via RefundEligibilityNotice instead of
 		// a parallel Remove CTA.
-		if ( autoRenewOn && ! isExpiredAndInGracePeriod( purchase ) ) {
+		if ( ! isBundledDomainConnection && autoRenewOn && ! isExpiredAndInGracePeriod( purchase ) ) {
 			return null;
 		}
 
@@ -937,9 +926,7 @@ class ManagePurchase extends Component<
 			<CancelPurchaseForm
 				disableButtons={ this.state.isRemoving }
 				purchase={ purchase }
-				linkedPurchases={ this.getActiveMarketplaceSubscriptions().map( ( p ) =>
-					createPurchaseObject( p as unknown as Parameters< typeof createPurchaseObject >[ 0 ] )
-				) }
+				linkedPurchases={ this.getActiveMarketplaceSubscriptions() }
 				isVisible={ this.state.isCancelSurveyVisible }
 				onClose={ this.closeDialog }
 				onSurveyComplete={ this.cancelSubscription }
@@ -1011,6 +998,20 @@ class ManagePurchase extends Component<
 		const { ID: id } = purchase;
 
 		if ( ! canAutoRenewBeTurnedOff( purchase ) ) {
+			return null;
+		}
+
+		// The host owns the billing relationship for a host-managed plan, so
+		// cancelling has to happen there. `is_cancelable` is false server-side for
+		// these, but visibility here is driven by auto-renew state instead, so the
+		// check has to be repeated. Agency-provisioned purchases are bought through
+		// WordPress.com and stay cancellable.
+		if ( purchase.is_host_managed ) {
+			return null;
+		}
+
+		// Only support can cancel or remove some purchases.
+		if ( ! isManageableByUser( purchase ) ) {
 			return null;
 		}
 
@@ -1306,14 +1307,7 @@ class ManagePurchase extends Component<
 
 				<span className="manage-purchase__settings-link">
 					{ ! isJetpackCloud() && site && (
-						// Temporary bridge (SHILL-2256): ProductLink still expects the
-						// camelCase Purchase. Remove once it reads the raw shape.
-						<ProductLink
-							purchase={ createPurchaseObject(
-								purchase as unknown as Parameters< typeof createPurchaseObject >[ 0 ]
-							) }
-							selectedSite={ site }
-						/>
+						<ProductLink purchase={ purchase } selectedSite={ site } />
 					) }
 				</span>
 
@@ -1440,15 +1434,7 @@ class ManagePurchase extends Component<
 		return (
 			<Fragment>
 				{ ( this.props.showHeader ?? true ) && (
-					// Temporary bridge (SHILL-2256): PurchaseSiteHeader still expects the
-					// camelCase Purchase. Remove once it reads the raw shape.
-					<PurchaseSiteHeader
-						siteId={ siteId }
-						name={ siteName }
-						purchase={ createPurchaseObject(
-							purchase as unknown as Parameters< typeof createPurchaseObject >[ 0 ]
-						) }
-					/>
+					<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
 				) }
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
@@ -1461,29 +1447,19 @@ class ManagePurchase extends Component<
 									: purchaseType( purchase ) }
 							</div>
 							<div className="manage-purchase__price">
-								{ isPartnerPurchase( purchase ) && ! isA4ABillingDragonPurchase( purchase ) ? (
-									<div className="manage-purchase__contact-partner">
-										{ translate( 'Please contact %(partnerName)s for details', {
-											args: {
-												partnerName: purchase.partner_name ?? '',
-											},
-										} ) }
-									</div>
-								) : (
-									<>
-										{ isPurchaseOneTimePurchase( purchase ) && (
-											<PlanPrice
-												rawPrice={ purchase.regular_price_integer }
-												isSmallestUnit
-												currencyCode={ purchase.currency_code }
-												isOnSale={ !! purchase.sale_amount }
-											/>
-										) }
-									</>
+								{ /* A partner-managed purchase has no WordPress.com price to show, and
+								     the "contact the partner" guidance now lives in PurchaseNotice. */ }
+								{ ! purchase.is_partner_managed && isPurchaseOneTimePurchase( purchase ) && (
+									<PlanPrice
+										rawPrice={ purchase.regular_price_integer }
+										isSmallestUnit
+										currencyCode={ purchase.currency_code }
+										isOnSale={ !! purchase.sale_amount }
+									/>
 								) }
 							</div>
 						</div>
-						{ isProductOwner && ! purchase.is_locked && (
+						{ isProductOwner && ! purchase.is_locked && ! hasPlanExpiryNotice( purchase ) && (
 							<div className="manage-purchase__renew-upgrade-buttons">
 								{ this.renderUpgradeButton( preventRenewal ) }
 								{ this.renderStorageUpgradeButton( preventRenewal ) }
@@ -1512,7 +1488,10 @@ class ManagePurchase extends Component<
 				) }
 				{ isProductOwner && ! purchase.is_locked && (
 					<>
-						{ this.renderChangePlanNavItem() }
+						{ /* Applies fewer conditions than `renderRenewButton` above, which also
+						     rules out partner-managed, non-renewable, site-less and free
+						     Akismet subscriptions. Whether that difference is intentional
+						     isn't clear. */ }
 						{ ! preventRenewal &&
 							! renderMonthlyRenewalOption &&
 							! isActive100YearPurchase &&
@@ -1521,7 +1500,7 @@ class ManagePurchase extends Component<
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewAnnuallyNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }
 						{ /* TODO: Add ability to Renew Akismet subscription */ }
-						{ this.renderUpgradeNavItem() }
+						{ this.renderProductChangeNavItem() }
 						{ this.renderUpgradeStorageNavItem() }
 						{ this.renderEditPaymentMethodNavItem() }
 						{ config.isEnabled( 'jetpack/crm-downloads' ) && this.renderCrmDownloadsNavItem() }
@@ -1611,36 +1590,48 @@ class ManagePurchase extends Component<
 				>
 					{ this.props.cardTitle || titles.managePurchase }
 				</HeaderCake>
-				{ showExpiryNotice ? (
-					<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
-						<NoticeAction href={ `/plans/${ siteSlug || '' }` }>
-							{ translate( 'View plans' ) }
-						</NoticeAction>
-					</Notice>
-				) : (
-					<PurchaseNotice
-						isDataLoading={ this.isDataLoading( this.props ) }
-						handleRenew={ this.handleRenew }
-						handleRenewMultiplePurchases={ this.handleRenewMultiplePurchases }
-						selectedSite={ site }
+				<div className="manage-purchase__notices">
+					{ showExpiryNotice ? (
+						<Notice
+							variant="info"
+							actions={
+								<WPButton variant="secondary" href={ `/plans/${ siteSlug || '' }` }>
+									{ translate( 'View plans' ) }
+								</WPButton>
+							}
+						>
+							<PlanRenewalMessage />
+						</Notice>
+					) : (
+						<PurchaseNotice
+							isDataLoading={ this.isDataLoading( this.props ) }
+							handleRenew={ this.handleRenew }
+							handleRenewMultiplePurchases={ this.handleRenewMultiplePurchases }
+							selectedSite={ site }
+							purchase={ purchase }
+							purchaseAttachedTo={ purchaseAttachedTo }
+							renewableSitePurchases={ renewableSitePurchases }
+							changePaymentMethodPath={ changePaymentMethodPath }
+							viewOtherPlansUrl={ this.buildPlanChangeAction()?.href }
+							renewReturnUrl={ ( getManagePurchaseUrlFor ?? managePurchase )(
+								siteSlug,
+								purchase.ID
+							) }
+							getManagePurchaseUrlFor={ getManagePurchaseUrlFor ?? managePurchase }
+							isProductOwner={ isProductOwner ?? false }
+							willAtomicSiteRevert={ willAtomicSiteRevert }
+							getAddNewPaymentMethodUrlFor={
+								getAddNewPaymentMethodUrlFor ?? getAddNewPaymentMethodPath
+							}
+						/>
+					) }
+					<PlanOverlapNotice
+						isSiteLevel={ this.props.isSiteLevel ?? false }
+						selectedSiteId={ this.props.selectedSiteId ?? 0 }
+						siteId={ this.props.siteId ?? 0 }
 						purchase={ purchase }
-						purchaseAttachedTo={ purchaseAttachedTo }
-						renewableSitePurchases={ renewableSitePurchases }
-						changePaymentMethodPath={ changePaymentMethodPath }
-						getManagePurchaseUrlFor={ getManagePurchaseUrlFor ?? managePurchase }
-						isProductOwner={ isProductOwner ?? false }
-						willAtomicSiteRevert={ willAtomicSiteRevert }
-						getAddNewPaymentMethodUrlFor={
-							getAddNewPaymentMethodUrlFor ?? getAddNewPaymentMethodPath
-						}
 					/>
-				) }
-				<PlanOverlapNotice
-					isSiteLevel={ this.props.isSiteLevel ?? false }
-					selectedSiteId={ this.props.selectedSiteId ?? 0 }
-					siteId={ this.props.siteId ?? 0 }
-					purchase={ purchase }
-				/>
+				</div>
 				{ this.renderPurchaseDetail( preventRenewal ) }
 			</Fragment>
 		);
@@ -1759,11 +1750,6 @@ function PlanOverlapNotice( {
 	siteId: number;
 	purchase: Purchase;
 } ) {
-	// Temporary bridge (SHILL-2256): ProductPlanOverlapNotices still expects the
-	// camelCase Purchase. Remove once it reads the raw shape.
-	const currentPurchase = createPurchaseObject(
-		purchase as unknown as Parameters< typeof createPurchaseObject >[ 0 ]
-	);
 	if ( isSiteLevel ) {
 		if ( ! selectedSiteId ) {
 			// Probably still loading
@@ -1776,7 +1762,7 @@ function PlanOverlapNotice( {
 				plans={ JETPACK_PLANS }
 				products={ JETPACK_PRODUCTS_LIST }
 				siteId={ selectedSiteId }
-				currentPurchase={ currentPurchase }
+				currentPurchase={ purchase }
 			/>
 		);
 	}
@@ -1791,7 +1777,7 @@ function PlanOverlapNotice( {
 			plans={ JETPACK_PLANS }
 			products={ JETPACK_PRODUCTS_LIST }
 			siteId={ siteId }
-			currentPurchase={ currentPurchase }
+			currentPurchase={ purchase }
 		/>
 	);
 }

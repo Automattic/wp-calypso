@@ -5,6 +5,7 @@ import page from '@automattic/calypso-router';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { HelpCenter } from '@automattic/data-stores';
 import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
+import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -21,16 +22,9 @@ import { StatsNoticeProps } from './types';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-const getStatsPurchaseURL = (
-	siteId: number | null,
-	isOdysseyStats: boolean,
-	hasFreeStats = false
-) => {
+const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
-	const purchasePath = `/stats/purchase/${ siteId }?from=${ from }-stats-upgrade-notice${
-		hasFreeStats ? '&productType=personal' : ''
-	}`;
-	return purchasePath;
+	return `/stats/purchase/${ siteId }?from=${ from }-stats-upgrade-notice&productType=commercial`;
 };
 
 const DoYouLoveJetpackStatsNotice = ( {
@@ -54,34 +48,39 @@ const DoYouLoveJetpackStatsNotice = ( {
 	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const dismissNotice = () => {
-		isOdysseyStats
-			? recordTracksEvent( 'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_dismissed' )
-			: recordTracksEvent( 'calypso_stats_do_you_love_jetpack_stats_notice_dismissed' );
+		recordTracksEvent(
+			isOdysseyStats
+				? 'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_dismissed'
+				: 'calypso_stats_do_you_love_jetpack_stats_notice_dismissed',
+			{ blog_id: siteId }
+		);
 
 		setNoticeDismissed( true );
 		postponeNoticeAsync();
 	};
 
 	const openWPCOMPaidStatsUpsellModal = () => {
-		recordTracksEvent( 'calypso_stats_do_you_love_jetpack_stats_notice_upgrade_button_clicked' );
+		recordTracksEvent( 'calypso_stats_do_you_love_jetpack_stats_notice_upgrade_button_clicked', {
+			blog_id: siteId,
+		} );
 		dispatch( toggleUpsellModal( siteId, STATS_DO_YOU_LOVE_JETPACK_STATS_NOTICE ) );
 	};
 
 	const gotoJetpackStatsProduct = () => {
-		isOdysseyStats
-			? recordTracksEvent(
-					'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_support_button_clicked'
-			  )
-			: recordTracksEvent(
-					'calypso_stats_do_you_love_jetpack_stats_notice_support_button_clicked'
-			  );
+		recordTracksEvent(
+			isOdysseyStats
+				? 'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_support_button_clicked'
+				: 'calypso_stats_do_you_love_jetpack_stats_notice_support_button_clicked',
+			{ blog_id: siteId }
+		);
 
 		trackStatsAnalyticsEvent( 'stats_upgrade_clicked', {
 			type: 'notice-love-stats',
+			blog_id: siteId,
 		} );
 
 		// Allow some time for the event to be recorded before redirecting.
-		setTimeout( () => page( getStatsPurchaseURL( siteId, isOdysseyStats, hasFreeStats ) ), 250 );
+		setTimeout( () => page( getStatsPurchaseURL( siteId, isOdysseyStats ) ), 250 );
 	};
 
 	const handleCTAClick = () => {
@@ -93,11 +92,14 @@ const DoYouLoveJetpackStatsNotice = ( {
 
 	useEffect( () => {
 		if ( ! noticeDismissed ) {
-			isOdysseyStats
-				? recordTracksEvent( 'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_viewed' )
-				: recordTracksEvent( 'calypso_stats_do_you_love_jetpack_stats_notice_viewed' );
+			recordTracksEvent(
+				isOdysseyStats
+					? 'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_viewed'
+					: 'calypso_stats_do_you_love_jetpack_stats_notice_viewed',
+				{ blog_id: siteId }
+			);
 		}
-	}, [ noticeDismissed, isOdysseyStats ] );
+	}, [ noticeDismissed, isOdysseyStats, siteId ] );
 
 	if ( noticeDismissed ) {
 		return null;
@@ -115,7 +117,7 @@ const DoYouLoveJetpackStatsNotice = ( {
 	} ) as string;
 
 	const learnMoreLink = isWPCOMSite
-		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
+		? 'https://wordpress.com/support/stats/#upgrade-your-stats'
 		: 'https://jetpack.com/redirect/?source=jetpack-stats-learn-more-about-new-pricing';
 
 	const paidStatsRemoveHardcoding = hasEnTranslation(
@@ -136,7 +138,9 @@ const DoYouLoveJetpackStatsNotice = ( {
 
 	const description = isWPCOMPaidStatsFlow
 		? paidStatsRemoveHardcoding
-		: translate( 'Upgrade to support future development and stop the upgrade banners.' );
+		: translate(
+				'Upgrade to unlock UTM tracking, device stats, and region and city stats, and get priority support.'
+		  );
 
 	const CTAText = isWPCOMPaidStatsFlow ? translate( 'Upgrade' ) : translate( 'Upgrade my Stats' );
 
@@ -159,9 +163,9 @@ const DoYouLoveJetpackStatsNotice = ( {
 			>
 				<p key="desc">{ description }</p>
 				<p key="cta">
-					<button type="button" className="notice-banner__action-button" onClick={ handleCTAClick }>
+					<Button variant="primary" onClick={ handleCTAClick }>
 						{ CTAText }
-					</button>
+					</Button>
 					<a
 						className="notice-banner__action-link"
 						href={ localizedLearnMoreLink }

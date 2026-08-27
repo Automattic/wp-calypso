@@ -7,10 +7,16 @@
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
+import { SUGGESTION_ACTION_COMPLETE_EVENT } from '../utils/suggestion-events';
 import ExcerptPicker from './excerpt-picker';
 
 const mockEditPost = jest.fn();
+const mockRevealSidebarField = jest.fn().mockResolvedValue( true );
 let mockCurrentExcerpt: string | undefined;
+
+jest.mock( '../utils/reveal-sidebar-field', () => ( {
+	revealSidebarField: ( ...args: unknown[] ) => mockRevealSidebarField( ...args ),
+} ) );
 
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: ( store: string ) => {
@@ -34,6 +40,7 @@ jest.mock( '@wordpress/data', () => ( {
 describe( 'ExcerptPicker', () => {
 	beforeEach( () => {
 		mockEditPost.mockClear();
+		mockRevealSidebarField.mockClear();
 		mockCurrentExcerpt = undefined;
 	} );
 
@@ -69,6 +76,28 @@ describe( 'ExcerptPicker', () => {
 		fireEvent.click( button );
 		expect( button ).toHaveAttribute( 'aria-pressed', 'true' );
 		expect( onComplete ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'notifies the sidebar when an excerpt is applied', () => {
+		const handleComplete = jest.fn();
+		window.addEventListener( SUGGESTION_ACTION_COMPLETE_EVENT, handleComplete );
+		try {
+			render( <ExcerptPicker excerpts={ excerpts } /> );
+
+			fireEvent.click( screen.getByText( excerpts[ 0 ].excerpt ) );
+
+			expect( handleComplete ).toHaveBeenCalledTimes( 1 );
+		} finally {
+			window.removeEventListener( SUGGESTION_ACTION_COMPLETE_EVENT, handleComplete );
+		}
+	} );
+
+	it( 'reveals the excerpt in the document sidebar once applied', () => {
+		render( <ExcerptPicker excerpts={ excerpts } /> );
+
+		fireEvent.click( screen.getByText( excerpts[ 0 ].excerpt ) );
+
+		expect( mockRevealSidebarField ).toHaveBeenCalledWith( 'excerpt' );
 	} );
 
 	it( 'renders no options without crashing when the excerpts prop is malformed', () => {

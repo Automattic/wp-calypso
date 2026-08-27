@@ -93,11 +93,10 @@ export const isTestModeEnvironment = () => {
 		return false;
 	}
 
-	// In the Calypso SPA context, env_id follows the config file convention and ends with
-	// 'development', 'horizon', or 'stage' (e.g. 'dashboard-stage', 'jetpack-cloud-horizon').
-	// In the widgets.wp.com bundle context (apps/help-center, apps/agents-manager), config.js
-	// sets env_id to 'staging' for proxied/dev users. Both map to test mode.
-	const testEnvironmentSuffixes = [ 'development', 'horizon', 'stage', 'staging' ];
+	// In the Calypso SPA context, only local development env_ids are test mode, e.g.
+	// 'development' or 'jetpack-cloud-development'. 'staging' is set by
+	// apps/agents-manager/config.js for dev-mode users and also maps to test mode.
+	const testEnvironmentSuffixes = [ 'development', 'staging' ];
 	const isTestEnvironment = testEnvironmentSuffixes.some(
 		( suffix ) => envId === suffix || envId?.endsWith( `-${ suffix }` )
 	);
@@ -139,6 +138,41 @@ export const getBadRatingReasons = () => {
 		{ label: __( 'The Happiness Engineer was unhelpful.', __i18n_text_domain__ ), value: '1003' },
 	];
 };
+
+/**
+ * A CSAT trigger message is a WPCOM-configured Zendesk message flagged with metadata.type
+ * 'csat', prompting the responder to rate their support experience via our own thumbs-up/down
+ * UI (as opposed to a `zd:surveys` message, which is Zendesk's native CSAT Survey feature).
+ */
+export const isCsatTriggerMessage = ( message: Pick< ZendeskMessage, 'metadata' > ) =>
+	message?.metadata?.type === 'csat';
+
+/**
+ * A CSAT Survey message is delivered via Zendesk's native Surveys feature, identified by its
+ * `source.type`. See https://developer.zendesk.com/api-reference/ticketing/ticket-management/csat_survey_responses/
+ */
+export const isZendeskSurveyMessage = ( message: Pick< ZendeskMessage, 'source' > ) =>
+	message?.source?.type === 'zd:surveys';
+
+/**
+ * Extracts a CSAT Survey Response's id from its action `uri` (the last path segment). Returns
+ * null if `uri` isn't a valid URL -- callers should treat that the same as "no survey response".
+ */
+export const getZendeskSurveyResponseId = ( uri: string ): string | null => {
+	try {
+		return new URL( uri ).pathname.split( '/' ).filter( Boolean ).pop() ?? null;
+	} catch {
+		return null;
+	}
+};
+
+/**
+ * The conversation metadata key a CSAT Survey Response's rating is persisted under (see
+ * useSurveyResponseRating in @automattic/odie-client). Shared so any other reader of a
+ * conversation's metadata -- e.g. a chat history list -- derives the same key.
+ */
+export const getSurveyResponseRatingMetadataKey = ( surveyResponseId: string ) =>
+	`zd_survey_rating_${ surveyResponseId }`;
 
 /**
  * Converts a ZendeskMessage to the agenttic-ui Message interface format

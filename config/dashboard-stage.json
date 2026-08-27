@@ -14,6 +14,7 @@
 		},
 		"agencies-beta.automattic.com": {
 			"oauth_client_id": 95931,
+			"survicate_enabled": false,
 			"wpcom_login_url": false,
 			"features": { "oauth": true, "always_use_logout_url": true, "wpcom-user-bootstrap": false }
 		}
@@ -33,10 +34,12 @@
 		"dashboard/account-recovery-interstitial": false,
 		"dashboard/dark-mode-rollout": true,
 		"dashboard/enable-percentage-rollout": true,
+		"dashboard/omnibar-radical": true,
 		"dashboard/opt-in-welcome-modal": true,
 		"dashboard/simulate-full-rollout": true,
 		"dashboard/wp-beta-program": true,
 		"dev/store-sandbox-helper": true,
+		"dolly/telegram": true,
 		"domain-transfer-redesign": true,
 		"emails/titan-tiers": false,
 		"marketplace-redesign": true,
@@ -52,11 +55,14 @@
 		"plans/upgradeable-storage": true,
 		"posthog-tracking": true,
 		"purchases/split-cancel-remove": false,
+		"resurrected-users/90-day-eligibility": true,
 		"rum-tracking/logstash": true,
 		"site-spec": true,
 		"two-factor/enhanced-security": true,
 		"webauthn/related-origin-requests": true,
+		"wordpress-agent-slack": true,
 		"wordpress-ai-tools": true,
+		"wordpress-labs": false,
 		"wpcom-user-bootstrap": true
 	},
 	"enable_all_sections": false,

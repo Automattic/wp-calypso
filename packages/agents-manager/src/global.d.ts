@@ -28,6 +28,12 @@ declare const agentsManagerData:
 			helpCenterUrl?: string;
 			/** Dev/internal context (localhost, jurassic, proxied a11ns, internal Atomic). Drives `is_test`. */
 			isDevMode?: boolean;
+			/** Whether the current request is attributed to an Automattician for tracking. */
+			isA11n?: boolean;
+			/** Whether the site is WordPress.com-hosted (Simple/WoA). */
+			isWpcomPlatform?: boolean;
+			/** The site's canonical identity; injected on wp-admin only. */
+			site?: { ID?: number; domain?: string };
 			emptyViewHeading?: string;
 			emptyViewHelp?: string;
 	  }
@@ -106,6 +112,11 @@ interface AgentsManagerExternalContextCard {
 interface AgentsManagerActions {
 	getChatState: () => Promise< AgentsManagerChatState >;
 	getSessionId: () => string;
+	/**
+	 * Records a Tracks event in the `jetpack_big_sky_` family with its base
+	 * props. `eventName` is the suffix after that prefix.
+	 */
+	recordBigSkyTracksEvent?: ( eventName: string, props?: Record< string, unknown > ) => void;
 	setChatOpen: ( isOpen: boolean ) => void;
 	setChatDocked: ( isDocked: boolean ) => void;
 	setChatEnabled: ( isEnabled: boolean ) => void;
@@ -131,6 +142,15 @@ interface AgentsManagerActions {
 	 * instead of waiting for the `agents-manager-ready` event.
 	 */
 	isReady?: boolean;
+	/**
+	 * Set to `true` by builds that broadcast the agent's activity as window
+	 * events — `agents-manager-turn-started`, `agents-manager-turn-ended` and
+	 * `agents-manager-ability-completed`; see `utils/agent-activity-events.ts`.
+	 * A host that acts on the agent's silence (Big Sky's easy mode writes over
+	 * edits it can attribute to nobody) must check this first: against a build
+	 * without it, the agent is always silent.
+	 */
+	broadcastsAgentActivity?: boolean;
 }
 
 /**

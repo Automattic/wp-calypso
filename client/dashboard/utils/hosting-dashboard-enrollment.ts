@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import type { HostingDashboardOptIn } from '@automattic/api-core';
 
-const ROLLOUT_PERCENTAGE = 50;
+const ROLLOUT_PERCENTAGE = 100;
 
 // When rollout begins, users registered after this ID (i.e. new users) are enrolled.
 const NEW_USER_ID_THRESHOLD = 282953237;
@@ -102,9 +102,9 @@ export function isOptInToggleVisible(
 }
 
 /**
- * Whether the advanced notice should be visible for this user. Hidden for
- * escape-hatched users (forced opt-in or opt-out), whose enrollment changes
- * only via support tooling.
+ * Whether the advanced notice should be visible for this user. Shown to every
+ * user once the flag is on, except escape-hatched users (forced opt-in or
+ * opt-out), whose enrollment changes only via support tooling.
  */
 export function isAdvancedNoticeVisible(
 	preference: HostingDashboardOptIn | undefined,
@@ -114,9 +114,5 @@ export function isAdvancedNoticeVisible(
 		return false;
 	}
 
-	return (
-		config.isEnabled( 'dashboard/rollout-advance-notice' ) &&
-		!! userId &&
-		userId % 100 < ROLLOUT_PERCENTAGE
-	);
+	return config.isEnabled( 'dashboard/rollout-advance-notice' ) && !! userId;
 }

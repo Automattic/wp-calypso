@@ -4,6 +4,7 @@ import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { ODIE_DEFAULT_BOT_SLUG_LEGACY } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { generateUUID } from '../utils';
+import { requestLoggedOutWpcomOdie } from './request-logged-out-wpcom-odie';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import type { OdieChat, ReturnedChat } from '../types';
 
@@ -33,18 +34,23 @@ export const useOdieChat = (
 				...( sessionId && { session_id: sessionId } ),
 			} ).toString();
 
-			const data = (
-				canAccessWpcomApis()
-					? await wpcomRequest( {
+			const path = `/odie/chat/${ botSlug }/${ chatId }?${ queryParams }`;
+			let data: ReturnedChat;
+
+			if ( canAccessWpcomApis() ) {
+				data = sessionId
+					? await requestLoggedOutWpcomOdie< ReturnedChat >( path )
+					: await wpcomRequest( {
 							method: 'GET',
-							path: `/odie/chat/${ botSlug }/${ chatId }?${ queryParams }`,
+							path,
 							apiNamespace: 'wpcom/v2',
-					  } )
-					: await apiFetch( {
-							path: `/help-center/odie/chat/${ botSlug }/${ chatId }?${ queryParams }`,
-							method: 'GET',
-					  } )
-			) as ReturnedChat;
+					  } );
+			} else {
+				data = await apiFetch( {
+					path: `/help-center/odie/chat/${ botSlug }/${ chatId }?${ queryParams }`,
+					method: 'GET',
+				} );
+			}
 
 			return {
 				messages: ( data.messages || [] ).map( ( message ) => ( {

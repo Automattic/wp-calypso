@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
-import { Purchases, SiteDetails } from '@automattic/data-stores';
+import { SiteDetails } from '@automattic/data-stores';
 import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import {
@@ -12,14 +12,15 @@ import {
 } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
+import { isTransferredOwnership } from 'calypso/dashboard/utils/purchase';
 import { MembershipSubscription } from 'calypso/lib/purchases/types';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { setRoute } from 'calypso/state/route/actions';
-import { isTransferredOwnership } from '../hooks/use-is-transferred-ownership';
 import {
 	usePurchasesFieldDefinitions,
 	useMembershipsFieldDefinitions,
 } from './hooks/use-field-definitions';
+import type { Purchase } from '@automattic/api-core';
 import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
 
 import './style.scss';
@@ -212,9 +213,9 @@ export function PurchasesDataViews( {
 	transferredOwnershipPurchases = [],
 	getManagePurchaseUrlFor,
 }: {
-	purchases: Purchases.Purchase[];
+	purchases: Purchase[];
 	sites: SiteDetails[];
-	transferredOwnershipPurchases?: Purchases.Purchase[];
+	transferredOwnershipPurchases?: Purchase[];
 	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
 } ) {
 	const translate = useTranslate();
@@ -229,7 +230,7 @@ export function PurchasesDataViews( {
 	const sitesWithPurchases = useMemo( () => {
 		return Array.from(
 			purchases.reduce( ( collected, purchase ) => {
-				const siteForPurchase = sites.find( ( site ) => site.ID === purchase.siteId );
+				const siteForPurchase = sites.find( ( site ) => site.ID === purchase.blog_id );
 				if ( siteForPurchase ) {
 					collected.add( siteForPurchase );
 				}
@@ -253,17 +254,17 @@ export function PurchasesDataViews( {
 			{
 				id: 'manage-purchase',
 				label: translate( 'Manage purchase', { textOnly: true } ),
-				isEligible: ( item: Purchases.Purchase ) => {
+				isEligible: ( item: Purchase ) => {
 					// Hide manage button for transferred ownership purchases
 					const hasTransferredOwnership = isTransferredOwnership(
-						item.id,
+						item.ID,
 						transferredOwnershipPurchases
 					);
-					return Boolean( item.domain && item.id ) && ! hasTransferredOwnership;
+					return Boolean( item.domain && item.ID ) && ! hasTransferredOwnership;
 				},
-				callback: ( items: Purchases.Purchase[] ) => {
-					const siteUrl = items[ 0 ].siteSlug || items[ 0 ].domain;
-					const subscriptionId = items[ 0 ].id;
+				callback: ( items: Purchase[] ) => {
+					const siteUrl = items[ 0 ].site_slug || items[ 0 ].domain;
+					const subscriptionId = items[ 0 ].ID;
 					if ( ! siteUrl ) {
 						// eslint-disable-next-line no-console
 						console.error( 'Cannot display manage purchase page for subscription without site' );
@@ -281,8 +282,8 @@ export function PurchasesDataViews( {
 		[ translate, getManagePurchaseUrlFor, transferredOwnershipPurchases ]
 	);
 
-	const getItemId = ( item: Purchases.Purchase ) => {
-		return item.id.toString();
+	const getItemId = ( item: Purchase ) => {
+		return item.ID.toString();
 	};
 	return (
 		<Card id="purchases-list" className="section-content" tagName="section">

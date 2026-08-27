@@ -1,23 +1,52 @@
-import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync } from 'node:fs';
+import {
+	existsSync,
+	mkdirSync,
+	mkdtempSync,
+	readdirSync,
+	readFileSync,
+	rmSync,
+	writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { describe, expect, test, jest, beforeEach, afterEach } from '@jest/globals';
+import nock from 'nock';
+import { SecretsManager } from '../secrets';
 import {
 	clearAccountLeak,
 	closeAccountAndRecordLeak,
 	isAccountClosedError,
+	reapPendingCloses,
 	recordAccountLeak,
+	recordPendingClose,
 } from '../teardown-markers';
 import type { RestAPIClient } from '../rest-api-client';
+import type { Secrets } from '../secrets';
+
+// The reap tests drive a real RestAPIClient, whose closeAccount reads secrets.
+// `SecretsManager.secrets` throws when decrypted-secrets.json is absent, and the
+// unit-test CI build never decrypts it.
+jest.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation(
+	() =>
+		( {
+			calypsoOauthApplication: { client_id: 'some_value', client_secret: 'some_value' },
+			gmailTestEmail: 'a8c.e2e@gmail.com',
+			storeSandboxCookieValue: 'sandbox_ticket',
+		} ) as unknown as Secrets
+);
 
 let leakDir: string;
+let pendingDir: string;
 
 beforeEach( () => {
 	leakDir = mkdtempSync( path.join( tmpdir(), 'teardown-markers-' ) );
+	pendingDir = mkdtempSync( path.join( tmpdir(), 'teardown-pending-' ) );
 } );
 
 afterEach( () => {
 	rmSync( leakDir, { recursive: true, force: true } );
+	rmSync( pendingDir, { recursive: true, force: true } );
+	nock.cleanAll();
 } );
 
 const markerFile = ( userID: number ): string => path.join( leakDir, `account-${ userID }.json` );
@@ -36,6 +65,7 @@ const details = {
 const fakeClient = ( impl: {
 	closeAccount: () => Promise< unknown >;
 	getMyAccountInformation: () => Promise< unknown >;
+	getBearerToken?: () => Promise< string >;
 } ): RestAPIClient => impl as unknown as RestAPIClient;
 
 describe( 'teardown-markers: record / clear', () => {
@@ -380,6 +410,8 @@ describe( 'closeAccountAndRecordLeak', () => {
 	} );
 
 	test( 'never throws even when the client throws', async () => {
+		// Resolving to true means the account was accounted for: the probe could not
+		// confirm it was gone, so a leak marker was written.
 		await expect(
 			closeAccountAndRecordLeak(
 				fakeClient( {
@@ -393,6 +425,176 @@ describe( 'closeAccountAndRecordLeak', () => {
 				details,
 				leakDir
 			)
-		).resolves.toBeUndefined();
+		).resolves.toBe( true );
+	} );
+} );
+
+describe( 'teardown-markers: deferred Atomic closes', () => {
+	const atomicRefusal = { error: 'atomic-site', message: 'active atomic sites' };
+	const pendingFile = ( userID: number ): string =>
+		path.join( pendingDir, `pending-${ userID }.json` );
+	// `closeAccount` refuses to act unless `/me` confirms the token belongs to the
+	// very account it was asked to close, so the stub has to match on all three.
+	const me = { ID: details.userID, username: details.username, email: details.email };
+
+	/**
+	 * Stubs every endpoint a reap touches: the identity precheck, the plan-cancel
+	 * retry, and the close itself.
+	 *
+	 * @param {unknown} closeReply Body the close endpoint returns.
+	 */
+	function mockReapEndpoints( closeReply: unknown ) {
+		nock( 'https://public-api.wordpress.com' ).persist().get( '/rest/v1.1/me' ).reply( 200, me );
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( '/rest/v1.2/me/purchases' )
+			.reply( 200, [] );
+		return nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.post( '/rest/v1.1/me/account/close' )
+			.reply( 200, closeReply as nock.Body );
+	}
+
+	test( 'defers instead of waiting when the Atomic site is still deprovisioning', async () => {
+		const closeAccount = jest.fn( async () => atomicRefusal );
+
+		await closeAccountAndRecordLeak(
+			fakeClient( {
+				closeAccount,
+				getMyAccountInformation: jest.fn( async () => ( {} ) ),
+				getBearerToken: jest.fn( async () => 'token-2001' ),
+			} ),
+			details,
+			leakDir,
+			pendingDir
+		);
+
+		// One attempt, no poll: the wait now belongs to the end-of-run reaper.
+		expect( closeAccount ).toHaveBeenCalledTimes( 1 );
+		expect( existsSync( markerFile( details.userID ) ) ).toBe( false );
+
+		const record = JSON.parse( readFileSync( pendingFile( details.userID ), 'utf8' ) );
+		expect( record.userID ).toBe( details.userID );
+		expect( record.bearerToken ).toBe( 'token-2001' );
+	} );
+
+	test( 'records a leak rather than deferring when the bearer token is unavailable', async () => {
+		await closeAccountAndRecordLeak(
+			fakeClient( {
+				closeAccount: jest.fn( async () => atomicRefusal ),
+				getMyAccountInformation: jest.fn( async () => ( {} ) ),
+				getBearerToken: jest.fn( async () => {
+					throw new Error( 'no token' );
+				} ),
+			} ),
+			details,
+			leakDir,
+			pendingDir
+		);
+
+		expect( existsSync( pendingFile( details.userID ) ) ).toBe( false );
+		expect( existsSync( markerFile( details.userID ) ) ).toBe( true );
+	} );
+
+	test( 'reap closes a deferred account and leaves no leak marker', async () => {
+		recordPendingClose( pendingDir, {
+			userID: details.userID,
+			username: details.username,
+			email: details.email,
+			bearerToken: 'token-2001',
+		} );
+
+		const close = mockReapEndpoints( { success: true } );
+
+		await reapPendingCloses( pendingDir, leakDir );
+
+		expect( close.isDone() ).toBe( true );
+		expect( existsSync( pendingFile( details.userID ) ) ).toBe( false );
+		expect( existsSync( markerFile( details.userID ) ) ).toBe( false );
+	} );
+
+	test( 'reap turns an account it cannot close into a leak marker', async () => {
+		recordPendingClose( pendingDir, {
+			userID: details.userID,
+			username: details.username,
+			email: details.email,
+			bearerToken: 'token-2001',
+		} );
+		// A non-atomic refusal ends the close loop immediately, so this covers the
+		// reaper's bookkeeping without waiting out the deprovision retry window.
+		mockReapEndpoints( { success: false, error: 'unknown_error' } );
+
+		await reapPendingCloses( pendingDir, leakDir );
+
+		// Cleared only because the leak is now reported by the marker instead; the
+		// record carries a bearer token and must not outlive its evidence.
+		expect( existsSync( pendingFile( details.userID ) ) ).toBe( false );
+		expect( existsSync( markerFile( details.userID ) ) ).toBe( true );
+	} );
+
+	test( 'reap is a no-op when nothing was deferred', async () => {
+		await expect( reapPendingCloses( pendingDir, leakDir ) ).resolves.toBeUndefined();
+		expect( readdirSync( leakDir ) ).toEqual( [] );
+	} );
+
+	test( 'records a leak rather than deferring when the pending record cannot be written', async () => {
+		// An unwritable pendingDir must not swallow the account: with no deferred
+		// owner, the leak marker is the only remaining signal.
+		rmSync( pendingDir, { recursive: true, force: true } );
+		writeFileSync( pendingDir, 'not a directory' );
+
+		await closeAccountAndRecordLeak(
+			fakeClient( {
+				closeAccount: jest.fn( async () => atomicRefusal ),
+				getMyAccountInformation: jest.fn( async () => ( {} ) ),
+				getBearerToken: jest.fn( async () => 'token-2001' ),
+			} ),
+			details,
+			leakDir,
+			pendingDir
+		);
+
+		expect( existsSync( markerFile( details.userID ) ) ).toBe( true );
+	} );
+
+	test( 'reap keeps the pending record when the leak marker cannot be written', async () => {
+		recordPendingClose( pendingDir, {
+			userID: details.userID,
+			username: details.username,
+			email: details.email,
+			bearerToken: 'token-2001',
+		} );
+		// Losing both signals at once would leave the account invisible to CI.
+		rmSync( leakDir, { recursive: true, force: true } );
+		writeFileSync( leakDir, 'not a directory' );
+
+		mockReapEndpoints( { success: false, error: 'unknown_error' } );
+
+		await reapPendingCloses( pendingDir, leakDir );
+
+		expect( existsSync( pendingFile( details.userID ) ) ).toBe( true );
+	} );
+
+	test( 'reap skips a malformed record instead of crashing, and leaves it for CI', async () => {
+		mkdirSync( pendingDir, { recursive: true } );
+		writeFileSync( path.join( pendingDir, 'pending-2001.json' ), 'null' );
+		writeFileSync( path.join( pendingDir, 'pending-2002.json' ), '{"userID":2002' );
+
+		await expect( reapPendingCloses( pendingDir, leakDir ) ).resolves.toBeUndefined();
+
+		expect( existsSync( path.join( pendingDir, 'pending-2001.json' ) ) ).toBe( true );
+		expect( existsSync( path.join( pendingDir, 'pending-2002.json' ) ) ).toBe( true );
+	} );
+
+	test( 'reap skips a record with an empty token rather than falling back to a password login', async () => {
+		mkdirSync( pendingDir, { recursive: true } );
+		writeFileSync(
+			path.join( pendingDir, `pending-${ details.userID }.json` ),
+			JSON.stringify( { ...details, bearerToken: '' } )
+		);
+
+		// No nock scopes: any HTTP attempt (notably a wp-login.php password login
+		// with an empty password) would throw a disallowed-net-connect error.
+		await expect( reapPendingCloses( pendingDir, leakDir ) ).resolves.toBeUndefined();
 	} );
 } );
