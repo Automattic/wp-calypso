@@ -223,30 +223,30 @@ step" → Worked example** section of [`README.md`](README.md); the tables below
 
 #### `STEPS.UNIFIED_PLANS` (slug: `'plans'`)
 
-| Prop                                                                                                  | Type                                            | What it does                                                                     |
-| ----------------------------------------------------------------------------------------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------- |
-| `isInSignup`                                                                                          | `boolean`                                       | `true` = signup pricing (free plan shown); `false` = upgrade pricing             |
-| `isStepperUpgradeFlow`                                                                                | `boolean`                                       | Enables upgrade-specific behavior in PlansFeaturesMain                           |
-| `selectedFeature`                                                                                     | `string`                                        | Highlights a plan that includes this feature slug                                |
-| `displayedIntervals`                                                                                  | `('monthly'\|'yearly'\|'2yearly'\|'3yearly')[]` | Restricts which billing cycles are shown                                         |
-| `headerText` / `subHeaderText`                                                                        | `string`                                        | Override the per-intent header / sub-header copy                                 |
-| `hideFreePlan`, `hideEnterprisePlan`, `hidePersonalPlan`, `hidePremiumPlan`, `hideEcommercePlan`, `hidePlanTypeSelector` | `boolean`                     | Hide a specific plan / the plan-type selector (each OR-ed over the computed default) |
-| `defaultInterval`                                                                                     | `'monthly'\|'yearly'\|'2yearly'\|'3yearly'`     | Seeds the billing term (the URL still wins once the user switches)               |
-| `highlightLabelOverrides`                                                                             | `{ [PlanSlug]?: TranslateResult }`              | Re-labels a plan's highlight tag (top pill)                                       |
-| `titleBadgeOverrides`                                                                                 | `{ [PlanSlug]?: TranslateResult }`              | Re-labels the badge next to a plan's title (features grid only)                  |
-| `taglineOverrides`                                                                                    | `{ [PlanSlug]?: TranslateResult }`              | Overrides a plan's tagline, winning over computed and experiment copy (features grid only) |
-| `wrapperProps.hideBack`                                                                               | `boolean`                                       | Hides the back button                                                            |
-| `wrapperProps.goBack`                                                                                 | `() => void`                                    | Custom back button handler                                                       |
+| Prop                                                                                                                     | Type                                            | What it does                                                                               |
+| ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `isInSignup`                                                                                                             | `boolean`                                       | `true` = signup pricing (free plan shown); `false` = upgrade pricing                       |
+| `isStepperUpgradeFlow`                                                                                                   | `boolean`                                       | Enables upgrade-specific behavior in PlansFeaturesMain                                     |
+| `selectedFeature`                                                                                                        | `string`                                        | Highlights a plan that includes this feature slug                                          |
+| `displayedIntervals`                                                                                                     | `('monthly'\|'yearly'\|'2yearly'\|'3yearly')[]` | Restricts which billing cycles are shown                                                   |
+| `headerText` / `subHeaderText`                                                                                           | `string`                                        | Override the per-intent header / sub-header copy                                           |
+| `hideFreePlan`, `hideEnterprisePlan`, `hidePersonalPlan`, `hidePremiumPlan`, `hideEcommercePlan`, `hidePlanTypeSelector` | `boolean`                                       | Hide a specific plan / the plan-type selector (each OR-ed over the computed default)       |
+| `defaultInterval`                                                                                                        | `'monthly'\|'yearly'\|'2yearly'\|'3yearly'`     | Seeds the billing term (the URL still wins once the user switches)                         |
+| `highlightLabelOverrides`                                                                                                | `{ [PlanSlug]?: TranslateResult }`              | Re-labels a plan's highlight tag (top pill)                                                |
+| `titleBadgeOverrides`                                                                                                    | `{ [PlanSlug]?: TranslateResult }`              | Re-labels the badge next to a plan's title (features grid only)                            |
+| `taglineOverrides`                                                                                                       | `{ [PlanSlug]?: TranslateResult }`              | Overrides a plan's tagline, winning over computed and experiment copy (features grid only) |
+| `wrapperProps.hideBack`                                                                                                  | `boolean`                                       | Hides the back button                                                                      |
+| `wrapperProps.goBack`                                                                                                    | `() => void`                                    | Custom back button handler                                                                 |
 
 #### `STEPS.DOMAIN_SEARCH` (slug: `'domains'`)
 
 | Prop                                               | Type       | What it does                                                        |
-| -------------------------------------------------- | ---------- | ------------------------------------------------------------------ |
-| `headerText` / `subHeaderText`                     | `string`   | Override the step heading / sub-heading                            |
+| -------------------------------------------------- | ---------- | ------------------------------------------------------------------- |
+| `headerText` / `subHeaderText`                     | `string`   | Override the step heading / sub-heading                             |
 | `hideUseMyDomainLink`                              | `boolean`  | Suppress the "Use a domain I own" CTA (V2 top bar + V1 skip button) |
-| `hideFreeDomainPromo`                              | `boolean`  | Hide the free-domain-for-a-year banner                            |
-| `freeDomainPromoTitle` / `freeDomainPromoSubtitle` | `string`   | Copy overrides for that banner                                    |
-| `allowedTlds`                                      | `string[]` | Per-flow TLD filter (the URL `?tld=` param can override)          |
+| `hideFreeDomainPromo`                              | `boolean`  | Hide the free-domain-for-a-year banner                              |
+| `freeDomainPromoTitle` / `freeDomainPromoSubtitle` | `string`   | Copy overrides for that banner                                      |
+| `allowedTlds`                                      | `string[]` | Per-flow TLD filter (the URL `?tld=` param can override)            |
 
 #### The register / user step (slug: `'user'`, auto-injected)
 
@@ -254,10 +254,10 @@ Auto-injected by `stepsWithRequiredLogin()` — it is **not** in the flow's `ini
 so its props are passed under a reserved `user` key of `useStepsProps()` (the return type is
 widened via `MapStepsToTheirAcceptedProps<[ typeof PRIVATE_STEPS.USER ]>`).
 
-| Prop                           | Type       | What it does                                                    |
-| ------------------------------ | ---------- | --------------------------------------------------------------- |
-| `headerText` / `subHeaderText` | `string`   | Override the "Create your account" heading / add a sub-heading  |
-| `hideLoginLink`                | `boolean`  | Hide the top-level "Log in" link (V2 top bar / V1 footer)       |
+| Prop                           | Type       | What it does                                                   |
+| ------------------------------ | ---------- | -------------------------------------------------------------- |
+| `headerText` / `subHeaderText` | `string`   | Override the "Create your account" heading / add a sub-heading |
+| `hideLoginLink`                | `boolean`  | Hide the top-level "Log in" link (V2 top bar / V1 footer)      |
 | `allowedSocialServices`        | `string[]` | Restrict which social sign-in providers are offered            |
 
 ```ts
