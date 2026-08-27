@@ -66,7 +66,7 @@ export default function SshKey( {
 							<Text variant="muted" lineHeight="20px" size="13px">
 								{ sshKey.sha256 }
 							</Text>
-							<Badge intent="info">
+							<Badge intent="informational">
 								{ sprintf(
 									/* translators: %s is when the SSH key was attached. */
 									__( 'Attached on %s' ),

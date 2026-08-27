@@ -89,7 +89,7 @@ export default function ApplicationDetailsModal( { application, onClose }: Props
 						value={
 							<VStack spacing={ 2 }>
 								<Badge
-									intent="default"
+									intent="draft"
 									style={ {
 										maxWidth: 'fit-content',
 									} }
