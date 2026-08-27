@@ -780,7 +780,7 @@ export default function MarketplaceHosting() {
 	const [ quantity, setQuantity ] = useState( 3 );
 	const [ pressablePlanSlug, setPressablePlanSlug ] = useState( () => {
 		if ( ! new URLSearchParams( window.location.search ).has( 'existing' ) ) {
-			return 'pressable-signature-1';
+			return 'pressable-build';
 		}
 		const currentIndex = pressablePlans.findIndex(
 			( p ) => p.slug === mockOwnership.pressable.planSlug

@@ -1,10 +1,9 @@
 /**
- * Prototype-only pricing data, shaped after the `/agency/products` response
- * (see APIProductFamilyProduct in client/a8c-for-agencies), so it can be
- * replaced by an @automattic/api-queries factory without reshaping the UI.
- * The WordPress.com yearly ladder and the Pressable Signature plan specs
- * mirror production; monthly figures and unlabeled Signature prices are
- * placeholders pending real Billing Dragon data.
+ * Prototype fallbacks and plan specs. Real prices (WordPress.com tiers and
+ * Pressable term prices) come from the live `/agency/products` endpoint via
+ * agencyTermProductsQuery; these values are only used if that call is
+ * unavailable. Pressable plan specs (installs/visits/storage) mirror
+ * production's PLAN_DATA, keyed by the real product slugs.
  */
 
 export interface TierPrice {
@@ -67,102 +66,101 @@ export interface PressablePlan {
 	visits: number;
 	storage: number;
 	worker: number;
-	category: 'signature' | 'signature-high' | 'premium';
+	category: 'standard' | 'enterprise';
 	yearly_price?: number;
 	monthly_price?: number;
 }
 
-export const pressableSignaturePlans: PressablePlan[] = [
+export const pressableStandardPlans: PressablePlan[] = [
 	{
-		slug: 'pressable-signature-1',
-		name: 'Signature 1',
+		slug: 'pressable-build',
+		name: 'Build',
 		install: 1,
 		visits: 30000,
 		storage: 20,
-		worker: 5,
-		category: 'signature',
-		yearly_price: 250,
+		worker: 10,
+		category: 'standard',
 	},
 	{
-		slug: 'pressable-signature-2',
-		name: 'Signature 2',
+		slug: 'pressable-growth',
+		name: 'Growth',
 		install: 3,
 		visits: 50000,
 		storage: 30,
-		worker: 5,
-		category: 'signature',
+		worker: 10,
+		category: 'standard',
 	},
 	{
-		slug: 'pressable-signature-3',
-		name: 'Signature 3',
+		slug: 'pressable-advanced',
+		name: 'Advanced',
 		install: 5,
 		visits: 75000,
 		storage: 35,
-		worker: 5,
-		category: 'signature',
+		worker: 10,
+		category: 'standard',
 	},
 	{
-		slug: 'pressable-signature-4',
-		name: 'Signature 4',
+		slug: 'pressable-pro',
+		name: 'Pro',
 		install: 10,
 		visits: 150000,
 		storage: 50,
-		worker: 5,
-		category: 'signature',
+		worker: 10,
+		category: 'standard',
 	},
 	{
-		slug: 'pressable-signature-5',
-		name: 'Signature 5',
+		slug: 'pressable-premium',
+		name: 'Premium',
 		install: 20,
 		visits: 400000,
 		storage: 80,
-		worker: 5,
-		category: 'signature',
+		worker: 10,
+		category: 'standard',
 	},
 	{
-		slug: 'pressable-signature-6',
-		name: 'Signature 6',
+		slug: 'pressable-business',
+		name: 'Business',
 		install: 50,
 		visits: 1000000,
 		storage: 200,
-		worker: 5,
-		category: 'signature',
+		worker: 10,
+		category: 'standard',
 	},
 	{
-		slug: 'pressable-signature-7',
-		name: 'Signature 7',
+		slug: 'pressable-business-80',
+		name: 'Business 80',
 		install: 80,
 		visits: 1600000,
 		storage: 275,
-		worker: 5,
-		category: 'signature',
+		worker: 10,
+		category: 'standard',
 	},
 	{
-		slug: 'pressable-signature-8',
-		name: 'Signature 8',
+		slug: 'pressable-business-100',
+		name: 'Business 100',
 		install: 100,
 		visits: 2000000,
 		storage: 325,
-		worker: 5,
-		category: 'signature',
+		worker: 10,
+		category: 'standard',
 	},
 	{
-		slug: 'pressable-signature-9',
-		name: 'Signature 9',
+		slug: 'pressable-business-120',
+		name: 'Business 120',
 		install: 120,
 		visits: 2400000,
 		storage: 375,
-		worker: 5,
-		category: 'signature',
+		worker: 10,
+		category: 'standard',
 	},
 	{
-		slug: 'pressable-signature-10',
-		name: 'Signature 10',
+		slug: 'pressable-business-150',
+		name: 'Business 150',
 		install: 150,
 		visits: 3000000,
 		storage: 450,
-		worker: 5,
-		category: 'signature',
+		worker: 10,
+		category: 'standard',
 	},
 ];
 
@@ -174,7 +172,7 @@ export const mockOwnership = {
 		ownedSites: 7,
 	},
 	pressable: {
-		planSlug: 'pressable-signature-3',
+		planSlug: 'pressable-advanced',
 		usage: {
 			sites: 4,
 			visits: 62000,
@@ -183,204 +181,75 @@ export const mockOwnership = {
 	},
 };
 
-export const pressableSignatureHighPlans: PressablePlan[] = [
+export const pressableEnterprisePlans: PressablePlan[] = [
 	{
-		slug: 'pressable-signature-11',
-		name: 'Signature 11',
+		slug: 'pressable-enterprise-4',
+		name: 'Enterprise 4',
 		install: 200,
 		visits: 4000000,
 		storage: 500,
-		worker: 5,
-		category: 'signature-high',
+		worker: 10,
+		category: 'enterprise',
 	},
 	{
-		slug: 'pressable-signature-12',
-		name: 'Signature 12',
+		slug: 'pressable-enterprise-5',
+		name: 'Enterprise 5',
 		install: 250,
 		visits: 5000000,
 		storage: 550,
-		worker: 5,
-		category: 'signature-high',
+		worker: 10,
+		category: 'enterprise',
 	},
 	{
-		slug: 'pressable-signature-13',
-		name: 'Signature 13',
+		slug: 'pressable-enterprise-6',
+		name: 'Enterprise 6',
 		install: 300,
 		visits: 6000000,
 		storage: 600,
-		worker: 5,
-		category: 'signature-high',
+		worker: 10,
+		category: 'enterprise',
 	},
 	{
-		slug: 'pressable-signature-14',
-		name: 'Signature 14',
+		slug: 'pressable-enterprise-7',
+		name: 'Enterprise 7',
 		install: 350,
 		visits: 7000000,
 		storage: 700,
-		worker: 5,
-		category: 'signature-high',
+		worker: 10,
+		category: 'enterprise',
 	},
 	{
-		slug: 'pressable-signature-15',
-		name: 'Signature 15',
+		slug: 'pressable-enterprise-8',
+		name: 'Enterprise 8',
 		install: 400,
 		visits: 8000000,
 		storage: 800,
-		worker: 5,
-		category: 'signature-high',
+		worker: 10,
+		category: 'enterprise',
 	},
 	{
-		slug: 'pressable-signature-16',
-		name: 'Signature 16',
+		slug: 'pressable-enterprise-9',
+		name: 'Enterprise 9',
 		install: 450,
 		visits: 9000000,
 		storage: 900,
-		worker: 5,
-		category: 'signature-high',
+		worker: 10,
+		category: 'enterprise',
 	},
 	{
-		slug: 'pressable-signature-17',
-		name: 'Signature 17',
+		slug: 'pressable-enterprise-10',
+		name: 'Enterprise 10',
 		install: 500,
 		visits: 10000000,
 		storage: 1000,
-		worker: 5,
-		category: 'signature-high',
+		worker: 10,
+		category: 'enterprise',
 	},
 ];
-
-export const pressablePremiumPlans: PressablePlan[] = [
-	{
-		slug: 'pressable-premium-1',
-		name: 'Premium 1',
-		install: 1,
-		visits: 150000,
-		storage: 30,
-		worker: 10,
-		category: 'premium',
-	},
-	{
-		slug: 'pressable-premium-2',
-		name: 'Premium 2',
-		install: 1,
-		visits: 250000,
-		storage: 40,
-		worker: 10,
-		category: 'premium',
-	},
-	{
-		slug: 'pressable-premium-3',
-		name: 'Premium 3',
-		install: 1,
-		visits: 350000,
-		storage: 50,
-		worker: 13,
-		category: 'premium',
-	},
-	{
-		slug: 'pressable-premium-4',
-		name: 'Premium 4',
-		install: 1,
-		visits: 500000,
-		storage: 60,
-		worker: 15,
-		category: 'premium',
-	},
-	{
-		slug: 'pressable-premium-5',
-		name: 'Premium 5',
-		install: 1,
-		visits: 750000,
-		storage: 70,
-		worker: 15,
-		category: 'premium',
-	},
-	{
-		slug: 'pressable-premium-6',
-		name: 'Premium 6',
-		install: 1,
-		visits: 1000000,
-		storage: 80,
-		worker: 17,
-		category: 'premium',
-	},
-	{
-		slug: 'pressable-premium-7',
-		name: 'Premium 7',
-		install: 1,
-		visits: 2000000,
-		storage: 90,
-		worker: 17,
-		category: 'premium',
-	},
-	{
-		slug: 'pressable-premium-8',
-		name: 'Premium 8',
-		install: 1,
-		visits: 3000000,
-		storage: 100,
-		worker: 20,
-		category: 'premium',
-	},
-	{
-		slug: 'pressable-premium-9',
-		name: 'Premium 9',
-		install: 1,
-		visits: 5000000,
-		storage: 125,
-		worker: 20,
-		category: 'premium',
-	},
-	{
-		slug: 'pressable-premium-10',
-		name: 'Premium 10',
-		install: 1,
-		visits: 7000000,
-		storage: 150,
-		worker: 25,
-		category: 'premium',
-	},
-	{
-		slug: 'pressable-premium-11',
-		name: 'Premium 11',
-		install: 1,
-		visits: 10000000,
-		storage: 175,
-		worker: 25,
-		category: 'premium',
-	},
-];
-
-// Placeholder yearly prices so every plan shows a figure in the prototype.
-// Anchored on the real Signature 1 ($250) and Signature 11 ($13,250) captures;
-// the rest are mock, pending real Billing Dragon data.
-const PRESSABLE_YEARLY_PLACEHOLDER: Record< string, number > = {
-	'pressable-signature-1': 250,
-	'pressable-signature-2': 450,
-	'pressable-signature-3': 650,
-	'pressable-signature-4': 1250,
-	'pressable-signature-5': 2000,
-	'pressable-signature-6': 4000,
-	'pressable-signature-7': 6400,
-	'pressable-signature-8': 8000,
-	'pressable-signature-9': 9600,
-	'pressable-signature-10': 12000,
-	'pressable-signature-11': 13250,
-	'pressable-signature-12': 15000,
-	'pressable-signature-13': 18000,
-	'pressable-signature-14': 21000,
-	'pressable-signature-15': 24000,
-	'pressable-signature-16': 27000,
-	'pressable-signature-17': 30000,
-};
-
-const withPlaceholderPrice = ( plan: PressablePlan ): PressablePlan =>
-	plan.yearly_price ? plan : { ...plan, yearly_price: PRESSABLE_YEARLY_PLACEHOLDER[ plan.slug ] };
 
 export const pressablePlans: PressablePlan[] = [
-	...pressableSignaturePlans.map( withPlaceholderPrice ),
-	...pressableSignatureHighPlans.map( withPlaceholderPrice ),
-	...pressablePremiumPlans,
+	...pressableStandardPlans,
+	...pressableEnterprisePlans,
 ];
 
 export const PRESSABLE_OVERAGES = {
