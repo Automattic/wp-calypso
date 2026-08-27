@@ -64,6 +64,7 @@ export type {
 	HelpCenterSite,
 	HelpCenterSelect,
 	Dispatch as HelpCenterDispatch,
+	LoggedOutOdieChat,
 } from './help-center/types';
 export type {
 	AgentsManagerSelect,

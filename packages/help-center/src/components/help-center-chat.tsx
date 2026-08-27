@@ -30,6 +30,7 @@ export function HelpCenterChat( {
 		newInteractionsBotSlug,
 		newLoggedOutInteractionsBotSlug,
 		newInteractionsBotVersion,
+		launcherContext,
 	} = useHelpCenterContext();
 	const featureConfig = useFeatureConfig();
 	const { search } = useLocation();
@@ -80,6 +81,7 @@ export function HelpCenterChat( {
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
 			forceEmailSupport={ Boolean( forceEmailSupport ) }
 			isChatRestricted={ Boolean( isChatRestricted ) }
+			launcherContext={ launcherContext }
 		>
 			<div className="help-center__container-chat">
 				<OdieAssistant />
