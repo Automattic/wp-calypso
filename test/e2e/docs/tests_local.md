@@ -1,4 +1,4 @@
-[<-- Test Environment](./test_environment.md) | [Top](./../README.md) | [Running tests on CI -->](./tests_ci.md)
+[← Documentation index](./overview.md)
 
 # Running tests on your machine
 
@@ -8,7 +8,9 @@
   - [Prerequisites](#prerequisites)
   - [Running tests](#running-tests)
     - [Individual spec files](#individual-spec-files)
-    - [Test Group](#test-group)
+    - [Test tag](#test-tag)
+    - [Suite scripts](#suite-scripts)
+    - [Running from the Playwright VSCode extension](#running-from-the-playwright-vscode-extension)
   - [Advanced techniques](#advanced-techniques)
     - [Save authentication cookies](#save-authentication-cookies)
     - [Use the mobile viewport](#use-the-mobile-viewport)
@@ -47,59 +49,82 @@ yarn workspace wp-e2e-tests build --watch
 Specify the file(s) directly:
 
 ```bash
-yarn test -- <path_to-File_1> <path_to_file_2>
+yarn test:pw -- <path_to_file_1> <path_to_file_2> --reporter=list
 ```
 
-### Test Group
+`--reporter=list` keeps a failing run from opening the HTML report and holding the terminal. Drop it, then `yarn playwright show-report`, when you want that report. Every command below takes it too.
 
-We use [jest-runner-groups](https://github.com/eugene-manuilov/jest-runner-groups) to group and run suites of specs.
+### Test tag
 
-Use the `--group` arg to provide a suite to test `Jest`. For example, to run all specs that are executed on CI for a commit:
+Specs are grouped by the tags declared on their `test.describe` block. Use Playwright's
+`--grep` to run a suite. For example, to run all specs that are executed on CI for a commit:
 
 ```bash
 # If within test/e2e directory
-yarn test --group=calypso-pr
+yarn test:pw:calypso-pr --reporter=list
 
 # If at repo root
-yarn workspace wp-e2e-tests test --group=calypso-pr
+yarn workspace wp-e2e-tests test:pw:calypso-pr --reporter=list
 ```
 
-See the [list of groups](tests_ci.md#featuretest-groups).
+See the [list of tags](tests_ci.md#featuretest-tags).
+
+### Suite scripts
+
+Each of these greps a tag, or pins a viewport, so you do not have to:
+
+| Script                     | Runs                                                          |
+| -------------------------- | ------------------------------------------------------------- |
+| `test:pw:desktop`          | the desktop viewport only.                                    |
+| `test:pw:mobile`           | the mobile viewport only.                                     |
+| `test:pw:calypso-pr`       | the specs run for every commit to a feature branch.           |
+| `test:pw:calypso-release`  | the specs run for every PR merged into `trunk`.               |
+| `test:pw:dashboard-pr`     | the Dashboard specs run for every commit to a feature branch. |
+| `test:pw:authentication`   | login, 2FA and security key specs.                            |
+| `test:pw:a8c-for-agencies` | the A8C for Agencies specs.                                   |
+| `test:pw:i18n`             | the internationalization specs.                               |
+| `test:pw:p2`               | the P2 specs.                                                 |
+
+### Running from the Playwright VSCode extension
+
+Once you have installed the [Playwright VSCode extension](./setup.md), you can run and debug
+specs from the extension pane or from the spec file itself.
+
+![Run and Debug Tests](./files/run-debug-tests.webp)
+
+To set environment variables for the extension, such as `CALYPSO_BASE_URL`:
+
+1. "View -> Extensions"
+2. Locate Playwright and click "Settings"
+3. Locate `Playwright: Env` and "Edit in settings.json"
+4. Add or update any environment variables under `playwright.env`:
+
+```
+"playwright.env": {
+  "CALYPSO_BASE_URL": "http://calypso.localhost:3000"
+},
+```
+
+![Playwright VSCode Extension Settings](./files/pw-extensionsettings.webp)
 
 ## Advanced techniques
 
 ### Save authentication cookies
 
-The `prime-logins` setup project logs in as a list of accounts before the main test suite runs and saves their cookies to be re-used until expiry (typically 3 days). Every project except `authentication` waits for it, so the specs read those cookies instead of logging in themselves.
-
-By default it primes the list in [`setup/prime-logins.setup.ts`](../setup/prime-logins.setup.ts). To prime a different set, name the accounts found in [Secret Manager](../../../packages/calypso-e2e/src/secrets/secrets-manager.ts), separated by commas:
-
-```bash
-export AUTHENTICATE_ACCOUNTS=simpleSitePersonalPlanUser,atomicUser,defaultUser
-```
-
-Either list is primed alongside the account the current environment variables select, the one behind the `accountGivenByEnvironment` fixture.
-
-Set it to an empty value to skip priming altogether; whatever needs an account then logs in when it first runs.
+Authentication cookies are cached per account under `COOKIES_PATH`. The first worker that needs an account logs in while holding that account’s lock and writes the cookie file; other workers wait for the lock, then reuse that file. There is no separate priming step.
 
 ### Use the mobile viewport
 
-By default, tests run against the `desktop` viewport size, approximately 1920x1080. The following viewports are currently supported:
+By default, tests run against the `desktop` viewport size, approximately 1920x1080. Two projects run specs:
 
-- mobile
-- desktop
+- `chrome`: Desktop Chrome HiDPI, the `desktop` viewport.
+- `mobile`: Pixel 7, the `mobile` viewport. Specs tagged `@desktop-only` are skipped.
 
 To launch a spec with mobile viewport:
 
 ```bash
-yarn test:mobile -- <path_to_spec>
+yarn test:pw:mobile <path_to_spec> --reporter=list
 ```
-
-To use the manual method, either:
-
-a. set the viewport size to persist in the shell: `export VIEWPORT_NAME=<viewport>`
-
-b. set the viewport size for the command only: `VIEWPORT_NAME=<viewport> yarn jest <test_path>`
 
 ### Target a different environment
 
@@ -115,7 +140,7 @@ By default these tests target <http://calypso.localhost:3000>. To target a webap
 
    a. set the variable to persist in the shell: `export CALYPSO_BASE_URL=<url>`
 
-   b. set the variable for the command only: `CALYPSO_BASE_URL=<url> yarn jest <test_path>`
+   b. set the variable for the command only: `CALYPSO_BASE_URL=<url> yarn test:pw -- <test_path> --reporter=list`
 
 <img alt="Local Calypso Webapp" src="https://cldup.com/1WwDmUXWen.png" />
 <sup><center>Example: webapp running on localhost.</center></sup>
@@ -126,8 +151,6 @@ Refer to the [Debugging](debugging.md) page for techniques on running a test in 
 
 #### Notes on TypeScript
 
-Because Jest, the test runner, is already configured to use Babel as a transpiler before executing scripts, there is no extra pre-build command you need to execute to run TypeScript test scripts. You can simply just have Jest run all the scripts in the `specs` directory, and it will automatically take care of running both `.js` and `.ts` files.
+Playwright Test transpiles TypeScript specs itself, so there is no extra pre-build command needed to run them.
 
-Please note: [Babel does not do type-checking as it runs](https://jestjs.io/docs/getting-started#using-typescript), so if you want to do a specific type-check for your test scripts, you can use the local `tsconfig.json` by running `yarn tsc --project ./tsconfig.json`. This type-checking step is run as part of the Jest CI script, so all types will be checked before tests are run on TeamCity.
-
-The local `tsconfig.json` also adds global Jest typings, so you do **not** need to explicitly import `describe` or `it` into your TypeScript testing files—this applies only if your `tsconfig.json` is correctly referenced and up-to-date; users with custom setups should ensure their configuration includes Jest typings.
+It does not type-check as it runs. To type-check the specs, run `yarn tsc --noEmit --project test/e2e/tsconfig.json` from the repo root.

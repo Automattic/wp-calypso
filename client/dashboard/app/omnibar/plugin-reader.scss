@@ -1,3 +1,13 @@
+$omnibar-reader-active-radius: 4px;
+
+@mixin omnibar-reader-active-corner( $x ) {
+	mask: radial-gradient(
+		circle at $x 0,
+		transparent $omnibar-reader-active-radius,
+		var( --color-sidebar-background ) $omnibar-reader-active-radius
+	);
+}
+
 .omnibar .omnibar__reader {
 	@media ( max-width: 360px ) {
 		display: none;
@@ -10,5 +20,51 @@
 
 	@media ( min-width: 782px ) {
 		width: 24px;
+	}
+}
+
+.omnibar .omnibar__menu.omnibar__reader.is-active {
+	position: relative;
+	background: var( --color-masterbar-item-active-background );
+}
+
+.is-global-sidebar-visible .omnibar .omnibar__menu.omnibar__reader.is-active {
+	--omnibar-text-color: var( --color-sidebar-menu-selected-text );
+	--omnibar-highlight-color: var( --color-sidebar-menu-selected-text );
+	--omnibar-icon-color: var( --color-sidebar-menu-selected-text );
+
+	background: var( --color-sidebar-background );
+	border-start-start-radius: $omnibar-reader-active-radius;
+	border-start-end-radius: $omnibar-reader-active-radius;
+
+	&::before,
+	&::after {
+		content: '';
+		position: absolute;
+		bottom: 0;
+		width: $omnibar-reader-active-radius;
+		height: $omnibar-reader-active-radius;
+		background-color: var( --color-sidebar-background );
+		pointer-events: none;
+	}
+
+	&::before {
+		inset-inline-start: -$omnibar-reader-active-radius;
+		@include omnibar-reader-active-corner( 0 );
+	}
+
+	&::after {
+		inset-inline-end: -$omnibar-reader-active-radius;
+		@include omnibar-reader-active-corner( 100% );
+	}
+
+	[dir="rtl"] & {
+		&::before {
+			@include omnibar-reader-active-corner( 100% );
+		}
+
+		&::after {
+			@include omnibar-reader-active-corner( 0 );
+		}
 	}
 }

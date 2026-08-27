@@ -33,6 +33,7 @@ import { encodeProductForUrl } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import i18n, { type TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
+import { isMarketplaceHoldingSitePurchase as isRawMarketplaceHoldingSitePurchase } from 'calypso/dashboard/utils/purchase';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
@@ -44,6 +45,7 @@ import {
 } from 'calypso/me/purchases/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
 import type { Purchase } from './types';
+import type { Purchase as RawPurchase } from '@automattic/api-core';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
@@ -348,17 +350,20 @@ export function getSubscriptionEndDate( purchase: Purchase ): string {
  * @param {Object} [options.tracksProps] - where was the renew button clicked from
  */
 export function handleRenewNowClick(
-	purchase: Purchase,
+	purchase: RawPurchase,
 	siteSlug: string,
 	options: { redirectTo?: string; cancelTo?: string; tracksProps?: TracksProps } = {}
 ) {
 	return ( dispatch: CalypsoDispatch ) => {
 		try {
-			const renewItem = getRenewalItemFromProduct( purchase, { domain: purchase.meta } );
+			const renewItem = getRenewalItemFromProduct(
+				{ ...purchase, id: Number( purchase.ID ), isRenewable: purchase.is_renewable },
+				{ domain: purchase.meta }
+			);
 
 			// Track the renew now submit.
 			recordTracksEvent( 'calypso_purchases_renew_now_click', {
-				product_slug: purchase.productSlug,
+				product_slug: purchase.product_slug,
 				...options.tracksProps,
 			} );
 
@@ -374,7 +379,7 @@ export function handleRenewNowClick(
 
 			if ( isAkismetProduct( { product_slug: productSlugs[ 0 ] } ) ) {
 				serviceSlug = 'akismet/';
-			} else if ( isMarketplaceHoldingSitePurchase( purchase ) ) {
+			} else if ( isRawMarketplaceHoldingSitePurchase( purchase ) ) {
 				serviceSlug = 'marketplace/';
 			}
 
@@ -406,7 +411,7 @@ export function handleRenewNowClick(
  * @param {Object} [options.tracksProps] - where was the renew button clicked from
  */
 export function handleRenewMultiplePurchasesClick(
-	purchases: Purchase[],
+	purchases: RawPurchase[],
 	siteSlug: string,
 	options: { redirectTo?: string; tracksProps?: TracksProps } = {}
 ) {
@@ -415,15 +420,20 @@ export function handleRenewMultiplePurchasesClick(
 			purchases.forEach( ( purchase ) => {
 				// Track the renew now submit.
 				recordTracksEvent( 'calypso_purchases_renew_multiple_click', {
-					product_slug: purchase.productSlug,
+					product_slug: purchase.product_slug,
 					...options.tracksProps,
 				} );
 			} );
 
 			const renewItems = purchases.map( ( otherPurchase ) =>
-				getRenewalItemFromProduct( otherPurchase, {
-					domain: otherPurchase.meta,
-				} )
+				getRenewalItemFromProduct(
+					{
+						...otherPurchase,
+						id: Number( otherPurchase.ID ),
+						isRenewable: otherPurchase.is_renewable,
+					},
+					{ domain: otherPurchase.meta }
+				)
 			);
 			const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( renewItems );
 
@@ -816,12 +826,17 @@ export function hasAmountAvailableToRefund( purchase: Purchase ): boolean {
 
 /**
  * Returns true if the plan is eligible for an instant, self-serve downgrade: the
- * plan is still within its initial refund window (not a renewal) and has neither
- * expired nor entered its post-expiry grace period.
+ * plan has a refundable receipt and has neither expired nor entered its
+ * post-expiry grace period.
  *
- * Note: this intentionally does NOT require a refundable amount. Instant
- * downgrades are also offered for plans that were paid with credits or are
- * otherwise free, where no money would be refunded.
+ * `isRefundable` covers any refundable receipt, so it holds both for an initial
+ * purchase and for a renewal that is still within its own refund window — both
+ * cases where an instant downgrade costs neither side money.
+ *
+ * Note: this intentionally does NOT require a refundable amount. A refundable
+ * receipt worth nothing generally means the purchase was free (or fully paid
+ * with credits), which is still a valid instant downgrade — it just issues no
+ * refund, and the confirmation modal drops its refund line accordingly.
  *
  * The caller is responsible for confirming the purchase is a plan (see `isPlan`
  * from `@automattic/calypso-products`). This is distinct from
@@ -829,7 +844,7 @@ export function hasAmountAvailableToRefund( purchase: Purchase ): boolean {
  * plans whose expiry date has already passed.
  */
 export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boolean {
-	return purchase.isWithinInitialRefundWindow && ! isExpiredOrRemoved( purchase );
+	return purchase.isRefundable && ! isExpiredOrRemoved( purchase );
 }
 
 /**

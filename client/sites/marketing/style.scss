@@ -140,8 +140,7 @@
 	margin-right: 0;
 }
 
-.buttons__sharing-settings,
-.connections__sharing-settings {
+.buttons__sharing-settings {
 	// labels, checkboxes, radio
 
 	label label {
@@ -165,119 +164,6 @@
 
 	@include breakpoint-deprecated( "<480px" ) {
 		padding: 0 0.25em;
-	}
-}
-
-.connections__sharing-settings.connections__sharing-connections {
-	@include breakpoint-deprecated( "<480px" ) {
-		padding: 16px 0;
-	}
-
-	.sharing-service-example {
-		display: inline-block;
-		vertical-align: top;
-		width: 48%;
-
-		@include breakpoint-deprecated( "<660px" ) {
-			display: block;
-			width: 100%;
-			margin: 20px 0;
-			padding: 0;
-		}
-
-		&:first-child {
-			padding-right: 4%;
-
-			@include breakpoint-deprecated( "<660px" ) {
-				border-bottom: 1px solid var(--color-neutral-0);
-				padding-bottom: 10px;
-			}
-
-			@include breakpoint-deprecated( "<480px" ) {
-				margin-bottom: 16px;
-				padding: 0 0 16px;
-			}
-		}
-
-		.form-button {
-
-			@include breakpoint-deprecated( "<480px" ) {
-				width: 100%;
-			}
-		}
-
-		&.is-single {
-			width: 100%;
-		}
-	}
-
-	.service-example__screenshot {
-		border: 1px solid var(--color-neutral-0);
-
-		img {
-			vertical-align: top;
-		}
-	}
-
-	.nextdoor .service-example__screenshot {
-		border: none;
-	}
-
-	.service-example__screenshot-label {
-		margin-top: 10px;
-	}
-
-	.connections__sharing-service-tip {
-		margin-top: 16px;
-		font-size: $font-body-small;
-		color: var(--color-neutral-40);
-
-		.gridicons-info {
-			margin-right: 3px;
-			vertical-align: text-bottom;
-		}
-	}
-
-	.connections__sharing-service-tip:empty {
-		display: none;
-	}
-
-	.sharing-service {
-		position: relative;
-		overflow: hidden;
-		background: var(--color-surface);
-
-		&.not-connected .sharing-service-examples {
-			display: block;
-		}
-
-		&.not-connected .connections__sharing-service-accounts-detail,
-		&.not-connected .connections__sharing-service-tip {
-			display: none;
-		}
-	}
-
-	.sharing-service-examples {
-		display: none;
-	}
-
-	.connections__sharing-service-accounts-detail {
-		h2 {
-			font-size: 1rem;
-		}
-
-		.new-account {
-			padding-bottom: 0.48em;
-			background: var(--color-surface);
-			#content & {
-				font-size: 0.875rem;
-			}
-		}
-	}
-
-	.connections__sharing-service-connected-accounts {
-		margin-left: 0;
-		margin-bottom: 8px;
 	}
 }
 
@@ -1205,10 +1091,6 @@
 
 .sharing-buttons-label-editor__input {
 	max-width: 300px;
-}
-
-.connections__sharing-connections__mailchimp-gutenberg_explanation {
-	margin-top: 1.5em;
 }
 
 .connections__signup {

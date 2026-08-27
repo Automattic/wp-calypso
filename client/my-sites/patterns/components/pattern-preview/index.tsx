@@ -29,10 +29,12 @@ export const ASPECT_RATIO = 7 / 4;
 
 // This style is injected into pattern preview iframes to prevent users from navigating away from
 // the pattern preview page and from submitting forms.
-const noClickStyle = {
-	css: 'a[href], button, input, textarea { pointer-events: none; }',
-	isGlobalStyles: true,
-};
+const noClickStyles = [
+	{
+		css: 'a[href], button, input, textarea { pointer-events: none; }',
+		isGlobalStyles: true,
+	},
+];
 
 // Firefox and Safari have trouble rendering elements in iframes with `writing-mode` styles. This
 // hacky script is injected into pattern preview iframes to force rerender those elements.
@@ -305,7 +307,7 @@ function PatternPreviewFragment( {
 					minHeight={ nodeSize.width ? nodeSize.width / ASPECT_RATIO : undefined }
 					patternId={ patternId }
 					scripts={ redrawScript }
-					styles={ [ noClickStyle ] }
+					styles={ noClickStyles }
 					viewportWidth={ viewportWidth }
 				/>
 			</div>

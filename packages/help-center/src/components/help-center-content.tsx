@@ -186,6 +186,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 									currentSiteDomain={ currentSiteDomain }
 									isEligibleForChat={ isUserEligibleForPaidSupport }
 									forceEmailSupport={ !! forceEmailSupport || ! featureConfig.chat.enabled }
+									siteId={ site?.ID }
 								/>
 							}
 						/>

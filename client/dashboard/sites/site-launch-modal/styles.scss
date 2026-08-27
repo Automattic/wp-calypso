@@ -1,0 +1,12 @@
+@import '@wordpress/base-styles/variables';
+
+// The preview thumbnail is rendered by this app and passed into the modal's
+// `preview` prop, so its styling stays here rather than in the package.
+.site-launch-pre-launch-modal__thumbnail {
+	position: relative;
+	flex-shrink: 0;
+	inline-size: 114px;
+	block-size: 88px;
+	overflow: hidden;
+	border-radius: $radius-medium;
+}

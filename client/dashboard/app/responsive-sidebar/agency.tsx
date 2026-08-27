@@ -5,6 +5,7 @@ import { home, globe, layout, pages, tag, currencyDollar, people } from '@wordpr
 import { SidebarExpandableMenuItem, SidebarMenuItem } from '../../components/sidebar';
 import { useAppContext } from '../context';
 import {
+	agencyPartnerDirectoryRoute,
 	agencySitesRoute,
 	agencyTeamRoute,
 	agencyTiersRoute,
@@ -13,9 +14,10 @@ import {
 	earnPayoutSettingsRoute,
 	earnReferralsRoute,
 	earnWooPaymentsRoute,
-	exclusiveOffersRoute,
+	isMarketplaceSectionAvailable,
 	isRouteAllowedByCapabilities,
 	learnRoute,
+	marketplaceSections,
 	mcpRoute,
 } from '../router/agency';
 import type { AnyRoute } from '@tanstack/react-router';
@@ -27,12 +29,20 @@ export default function AgencySidebar() {
 	if ( agency.isClientUser || ! supports.agency ) {
 		return null;
 	}
+	const agencySupports = supports.agency;
 
 	// Menu items are hidden rather than left to bounce off the route guard in
 	// `agencyRoute.beforeLoad`, which would redirect to /overview with an error.
 	const capabilities = activeAgency?.user?.capabilities ?? [];
 	const canAccess = ( route: AnyRoute ) => isRouteAllowedByCapabilities( route, capabilities );
 
+	const canAccessTiers = !! supports.agency.tiers && canAccess( agencyTiersRoute );
+	const canAccessPartnerDirectory =
+		!! ( supports.agency.partnerDirectory && activeAgency?.partner_directory?.allowed ) &&
+		canAccess( agencyPartnerDirectoryRoute );
+	const accessibleMarketplaceSections = marketplaceSections.filter( ( section ) =>
+		isMarketplaceSectionAvailable( section, agencySupports, capabilities )
+	);
 	const canAccessLearn = !! supports.agency.learn && canAccess( learnRoute );
 	const canAccessMcp =
 		!! ( supports.agency.mcp && activeAgency?.mcp?.allowed ) && canAccess( mcpRoute );
@@ -61,20 +71,29 @@ export default function AgencySidebar() {
 					{ __( 'Team' ) }
 				</SidebarMenuItem>
 			) }
-			{ supports.agency.tiers && canAccess( agencyTiersRoute ) && (
-				<SidebarExpandableMenuItem label={ __( 'Agency' ) } icon={ globe } to="/agency/tiers">
-					<SidebarMenuItem to="/agency/tiers">{ __( 'Tiers' ) }</SidebarMenuItem>
+			{ ( canAccessTiers || canAccessPartnerDirectory ) && (
+				<SidebarExpandableMenuItem
+					label={ __( 'Agency' ) }
+					icon={ globe }
+					to={ canAccessTiers ? '/agency/tiers' : '/agency/partner-directory' }
+				>
+					{ canAccessTiers && (
+						<SidebarMenuItem to="/agency/tiers">{ __( 'Tiers' ) }</SidebarMenuItem>
+					) }
+					{ canAccessPartnerDirectory && (
+						<SidebarMenuItem to="/agency/partner-directory">
+							{ __( 'Partner Directories' ) }
+						</SidebarMenuItem>
+					) }
 				</SidebarExpandableMenuItem>
 			) }
-			{ supports.agency.exclusiveOffers && canAccess( exclusiveOffersRoute ) && (
-				<SidebarExpandableMenuItem
-					label={ __( 'Marketplace' ) }
-					icon={ tag }
-					to="/marketplace/exclusive-offers"
-				>
-					<SidebarMenuItem to="/marketplace/exclusive-offers">
-						{ __( 'Exclusive offers' ) }
-					</SidebarMenuItem>
+			{ accessibleMarketplaceSections.length > 0 && (
+				<SidebarExpandableMenuItem label={ __( 'Marketplace' ) } icon={ tag } to="/marketplace">
+					{ accessibleMarketplaceSections.map( ( { route, label } ) => (
+						<SidebarMenuItem key={ route.fullPath } to={ route.fullPath }>
+							{ label() }
+						</SidebarMenuItem>
+					) ) }
 				</SidebarExpandableMenuItem>
 			) }
 			{ ( canAccessLearn || canAccessMcp ) && (
@@ -83,7 +102,7 @@ export default function AgencySidebar() {
 						<SidebarMenuItem to="/resources/learn">{ __( 'Learn' ) }</SidebarMenuItem>
 					) }
 					{ canAccessMcp && (
-						<SidebarMenuItem to="/resources/ai-mcp">{ __( 'MCP' ) }</SidebarMenuItem>
+						<SidebarMenuItem to="/resources/ai-mcp">{ __( 'AI and MCP' ) }</SidebarMenuItem>
 					) }
 				</SidebarExpandableMenuItem>
 			) }

@@ -1090,6 +1090,35 @@ export const hostingDashboardRoute = createRoute( {
 	)
 );
 
+export const wordpressLabsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'WordPress Labs' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'wordpress-labs',
+	beforeLoad: async () => {
+		if ( ! isEnabled( 'wordpress-labs' ) ) {
+			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
+		}
+	},
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+			queryClient.prefetchQuery( allSitesQuery() ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../me/wordpress-labs' ).then( ( d ) =>
+		createLazyRoute( 'wordpress-labs' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const appearanceRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1220,6 +1249,44 @@ export const profileLegacyRedirectRoute = createRoute( {
 	},
 } );
 
+const validateAgentConnectionSearch = (
+	search: Record< string, unknown >
+): {
+	pair_token?: string;
+	slack?: string;
+	telegram_id?: string;
+	token?: string;
+	ts?: string;
+	bot?: string;
+} => ( {
+	...( typeof search.pair_token === 'string' ? { pair_token: search.pair_token } : {} ),
+	...( typeof search.slack === 'string' ? { slack: search.slack } : {} ),
+	...( typeof search.telegram_id === 'string' ? { telegram_id: search.telegram_id } : {} ),
+	...( typeof search.token === 'string' ? { token: search.token } : {} ),
+	...( typeof search.ts === 'string' ? { ts: search.ts } : {} ),
+	...( typeof search.bot === 'string' ? { bot: search.bot } : {} ),
+} );
+
+export const agentRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'WordPress Agent' ),
+			},
+		],
+	} ),
+	getParentRoute: () => meRoute,
+	path: 'agent',
+	validateSearch: validateAgentConnectionSearch,
+	loader: async () => queryClient.ensureQueryData( isAutomatticianQuery() ),
+} ).lazy( () =>
+	import( '../../me/agent' ).then( ( d ) =>
+		createLazyRoute( 'agent' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const mcpRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1348,6 +1415,9 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	if ( config.optIn ) {
 		preferencesChildren.push( hostingDashboardRoute );
 	}
+	if ( isEnabled( 'wordpress-labs' ) ) {
+		preferencesChildren.push( wordpressLabsRoute );
+	}
 	if ( config.supports.darkMode && config.supports.colorScheme ) {
 		preferencesChildren.push( appearanceRoute );
 	}
@@ -1439,6 +1509,10 @@ export const createMeRoutes = ( config: AppConfig ) => {
 
 	if ( config.supports.me.apps ) {
 		meRoutes.push( appsRoute );
+	}
+
+	if ( isEnabled( 'mcp-settings' ) ) {
+		meRoutes.push( agentRoute );
 	}
 
 	return [ meRoute.addChildren( meRoutes ) ];

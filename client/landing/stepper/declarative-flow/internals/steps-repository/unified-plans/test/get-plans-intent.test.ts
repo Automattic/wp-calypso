@@ -25,6 +25,33 @@ describe( 'getPlansIntent', () => {
 			window.history.replaceState( {}, '', '/?blueprint=123&playground=abc' );
 			expect( getPlansIntent( ONBOARDING_FLOW ) ).toBe( 'plans-playground' );
 		} );
+
+		it( 'hides the free plan when the blueprint targets Atomic via build_dest=wow', () => {
+			window.history.replaceState( {}, '', '/?blueprint=945&build_dest=wow' );
+			expect( getPlansIntent( ONBOARDING_FLOW ) ).toBe( 'plans-ai-assembler-paid-only' );
+		} );
+
+		it( 'keeps the default grid when build_dest is not wow', () => {
+			window.history.replaceState( {}, '', '/?blueprint=945&build_dest=simple' );
+			expect( getPlansIntent( ONBOARDING_FLOW ) ).toBeNull();
+		} );
+
+		it( 'keeps playground precedence when build_dest=wow is present alongside playground', () => {
+			window.history.replaceState( {}, '', '/?blueprint=123&playground=abc&build_dest=wow' );
+			expect( getPlansIntent( ONBOARDING_FLOW ) ).toBe( 'plans-playground' );
+		} );
+	} );
+
+	describe( 'onboarding flow wow_funnel param', () => {
+		it( 'hides the free plan for any wow_funnel value', () => {
+			window.history.replaceState( {}, '', '/?wow_funnel=blueprint' );
+			expect( getPlansIntent( ONBOARDING_FLOW ) ).toBe( 'plans-ai-assembler-paid-only' );
+		} );
+
+		it( 'keeps playground precedence over wow_funnel', () => {
+			window.history.replaceState( {}, '', '/?wow_funnel=blueprint&playground=abc' );
+			expect( getPlansIntent( ONBOARDING_FLOW ) ).toBe( 'plans-playground' );
+		} );
 	} );
 
 	describe( 'plan-upgrade flow (dashboard "Change plan" downgrade entry point)', () => {

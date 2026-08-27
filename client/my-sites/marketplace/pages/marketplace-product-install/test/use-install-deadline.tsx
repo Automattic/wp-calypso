@@ -3,7 +3,7 @@
  */
 import { siteLatestAtomicTransferQuery } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import React, { useState } from 'react';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { INSTALL_DEADLINE_MS, useInstallDeadline } from '../use-install-deadline';
@@ -90,6 +90,14 @@ describe( 'useInstallDeadline', () => {
 		expect( result.current.hasTimedOut ).toBe( true );
 	} );
 
+	it( 'reports a 404 lookup as an authoritative no-transfer result', async () => {
+		const { result } = renderDeadline();
+
+		await waitFor( () => expect( result.current.isTransferLookupComplete ).toBe( true ) );
+
+		expect( result.current.isTransferLookupNotFound ).toBe( true );
+	} );
+
 	it( 'stays disarmed when the wait is not running', async () => {
 		const { result } = renderDeadline( false );
 		await advance( INSTALL_DEADLINE_MS * 2 );
@@ -107,7 +115,60 @@ describe( 'useInstallDeadline', () => {
 		const { result } = renderDeadline();
 		await advance( 30000 );
 
+		expect( result.current.isTransferFresh ).toBe( true );
 		expect( result.current.hasTimedOut ).toBe( true );
+	} );
+
+	// The staged wait reads its stages from here: the raw status the endpoint reports, and when the
+	// transfer began, so the clock survives a refresh.
+	it( 'exposes the watched transfer’s status and start time as they change', async () => {
+		const startedAt = Date.now() - 8000;
+		mockFetchLatestAtomicTransfer.mockResolvedValue(
+			transfer( { status: 'active', agoMs: 8000 } )
+		);
+		const { result, rerender } = renderDeadline();
+		await advance( 6000 );
+
+		expect( result.current.transferStatus ).toBe( 'active' );
+		expect( result.current.transferStartedAt ).toBe( startedAt );
+
+		mockFetchLatestAtomicTransfer.mockResolvedValue(
+			transfer( { status: 'provisioned', agoMs: Date.now() - startedAt } )
+		);
+		rerender();
+		await advance( 6000 );
+		expect( result.current.transferStatus ).toBe( 'provisioned' );
+
+		mockFetchLatestAtomicTransfer.mockResolvedValue(
+			transfer( { status: 'completed', agoMs: Date.now() - startedAt } )
+		);
+		rerender();
+		await advance( 6000 );
+		expect( result.current.transferStatus ).toBe( 'completed' );
+		expect( result.current.transferStartedAt ).toBe( startedAt );
+	} );
+
+	it( 'reports no start time when the transfer’s timestamp cannot be parsed', async () => {
+		mockFetchLatestAtomicTransfer.mockResolvedValue( {
+			...transfer( { status: 'active' } ),
+			created_at: 'not a date',
+		} );
+		const { result } = renderDeadline();
+		await advance( 6000 );
+
+		expect( result.current.transferStatus ).toBe( 'active' );
+		expect( result.current.transferStartedAt ).toBeNull();
+	} );
+
+	it( 'does not expose a settled transfer this wait never watched running', async () => {
+		mockFetchLatestAtomicTransfer.mockResolvedValue(
+			transfer( { id: 99, status: 'completed', agoMs: 3 * 60 * 1000 } )
+		);
+		const { result } = renderDeadline();
+		await advance( 6000 );
+
+		expect( result.current.transferStatus ).toBeNull();
+		expect( result.current.transferStartedAt ).toBeNull();
 	} );
 
 	it( 'reports a transfer that errored after this wait watched it running', async () => {

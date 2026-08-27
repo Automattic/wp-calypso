@@ -15,12 +15,20 @@ import AgencyOverviewHeader from './overview-header';
 // '#contact-support' placeholder in agency/tiers/constants.ts — wire both up together.
 const CONTACT_SUPPORT_URL = '#contact-support';
 
+// TODO: the MSD dashboard has no partner-directory screen yet — point the growth
+// card there once it exists.
+const PARTNER_DIRECTORY_URL = '#partner-directory';
+
 export default function AgencyOverview() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { recordTracksEvent } = useAnalytics();
 	const locale = useLocale();
 	const agencyId = agency?.id ?? 0;
 	const approvalStatus = agency?.approval_status;
+	const hasPartnerDirectoryListing =
+		!! agency?.profile?.partner_directory_application?.directories.some(
+			( { status } ) => status === 'approved'
+		);
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall( agency?.id );
 
 	if ( ! agency ) {
@@ -49,10 +57,14 @@ export default function AgencyOverview() {
 				influencedRevenue={ agency.influenced_revenue ?? 0 }
 				approvalStatus={ approvalStatus }
 				capabilities={ agency.user?.capabilities }
+				hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
 				links={ {
 					tiers: '/agency/tiers',
+					sites: '/sites',
 					referrals: '/earn/referrals',
 					woopayments: '/earn/woopayments',
+					marketplace: '/marketplace',
+					partnerDirectory: PARTNER_DIRECTORY_URL,
 					contactSupport: CONTACT_SUPPORT_URL,
 					helpful: [
 						{

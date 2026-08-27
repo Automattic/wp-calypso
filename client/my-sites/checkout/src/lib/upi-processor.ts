@@ -2,7 +2,7 @@ import { makeErrorResponse, makeSuccessResponse } from '@automattic/composite-ch
 import { createElement } from 'react';
 import { flushSync } from 'react-dom';
 import { Root, createRoot } from 'react-dom/client';
-import { PurchaseOrderStatus, fetchPurchaseOrder } from '../hooks/use-purchase-order';
+import { RawOrder, fetchPurchaseOrder } from '../hooks/use-purchase-order';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from '../lib/get-domain-details';
 import getPostalCode from '../lib/get-postal-code';
@@ -166,14 +166,20 @@ export default async function upiProcessor(
 			} );
 
 			let orderStatus = 'processing';
+			let orderFailureMessage: string | undefined;
 			while ( isModalActive && [ 'processing', 'async-pending' ].includes( orderStatus ) ) {
-				orderStatus = await pollForOrderStatus( response.order_id, 2000, genericErrorMessage );
+				const order = await pollForOrderStatus( response.order_id, 2000, genericErrorMessage );
+				orderStatus = order.processing_status;
+				orderFailureMessage = order.error_message;
 			}
 			// `payment-confirmed` is treated as success: Stripe has accepted the payment
 			// but order finalization can still take a while. Hand off to the framework's
 			// pending page rather than keeping the user waiting in the modal.
 			if ( orderStatus !== 'success' && orderStatus !== 'payment-confirmed' ) {
-				throw new Error( explicitClosureMessage ?? genericFailureMessage );
+				// Prefer the specific, backend-translated Stripe failure message
+				// (e.g. "Your card has insufficient funds.") over the generic
+				// fallback, matching what synchronous card failures show. See SHILL-1811.
+				throw new Error( explicitClosureMessage ?? orderFailureMessage ?? genericFailureMessage );
 			}
 
 			safeDismissModal();
@@ -264,7 +270,7 @@ async function pollForOrderStatus(
 	orderId: number,
 	pollInterval: number,
 	genericErrorMessage: string
-): Promise< PurchaseOrderStatus > {
+): Promise< RawOrder > {
 	const orderData = await fetchPurchaseOrder( orderId );
 	if ( ! orderData ) {
 		// eslint-disable-next-line no-console
@@ -275,10 +281,10 @@ async function pollForOrderStatus(
 		orderData.processing_status === 'success' ||
 		orderData.processing_status === 'payment-confirmed'
 	) {
-		return orderData.processing_status;
+		return orderData;
 	}
 	await new Promise( ( resolve ) => setTimeout( resolve, pollInterval ) );
-	return orderData.processing_status;
+	return orderData;
 }
 
 function createModalContainer(): HTMLElement {

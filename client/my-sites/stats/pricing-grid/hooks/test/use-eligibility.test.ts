@@ -4,7 +4,7 @@
 
 import { renderHook } from '@testing-library/react';
 import { getPurchasesError } from 'calypso/state/purchases/selectors';
-import { getSiteOption } from 'calypso/state/sites/selectors';
+import { getSiteOption, isWpcomSite } from 'calypso/state/sites/selectors';
 import useStatsPurchases from '../../../hooks/use-stats-purchases';
 import useIsPricingGridEligible from '../use-eligibility';
 
@@ -23,9 +23,11 @@ function mockSite( {
 	connectedAt = POST_LAUNCH_DATE as string | number | null,
 	hasAnyPlan = false,
 	isLoadingPurchases = false,
+	isWpcom = false,
 	purchasesError = null as object | null,
 } = {} ) {
 	( getSiteOption as jest.Mock ).mockReturnValue( connectedAt );
+	( isWpcomSite as unknown as jest.Mock ).mockReturnValue( isWpcom );
 	( getPurchasesError as unknown as jest.Mock ).mockReturnValue( purchasesError );
 	( useStatsPurchases as jest.Mock ).mockReturnValue( {
 		hasAnyPlan,
@@ -45,7 +47,7 @@ describe( 'useIsPricingGridEligible', () => {
 
 		expect( result.current ).toEqual( {
 			isEligible: true,
-			isNewConnection: true,
+			isApplicable: true,
 			isLoading: false,
 		} );
 	} );
@@ -56,7 +58,16 @@ describe( 'useIsPricingGridEligible', () => {
 		const { result } = renderHook( () => useIsPricingGridEligible( SITE_ID ) );
 
 		expect( result.current.isEligible ).toBe( false );
-		expect( result.current.isNewConnection ).toBe( false );
+		expect( result.current.isApplicable ).toBe( false );
+	} );
+
+	it( 'is not eligible for a WordPress.com site', () => {
+		mockSite( { isWpcom: true } );
+
+		const { result } = renderHook( () => useIsPricingGridEligible( SITE_ID ) );
+
+		expect( result.current.isEligible ).toBe( false );
+		expect( result.current.isApplicable ).toBe( false );
 	} );
 
 	it( 'is not eligible when the site already holds a Stats plan', () => {
@@ -80,7 +91,7 @@ describe( 'useIsPricingGridEligible', () => {
 
 		const { result } = renderHook( () => useIsPricingGridEligible( SITE_ID ) );
 
-		expect( result.current.isNewConnection ).toBe( true );
+		expect( result.current.isApplicable ).toBe( true );
 	} );
 
 	it( 'is not eligible when the connection date is missing', () => {
@@ -92,7 +103,7 @@ describe( 'useIsPricingGridEligible', () => {
 		expect( result.current.isLoading ).toBe( false );
 	} );
 
-	it( 'only reports loading for newly connected sites', () => {
+	it( 'only reports loading for sites the grid applies to', () => {
 		mockSite( { isLoadingPurchases: true } );
 
 		const { result } = renderHook( () => useIsPricingGridEligible( SITE_ID ) );
@@ -104,5 +115,11 @@ describe( 'useIsPricingGridEligible', () => {
 		const { result: preLaunch } = renderHook( () => useIsPricingGridEligible( SITE_ID ) );
 
 		expect( preLaunch.current.isLoading ).toBe( false );
+
+		mockSite( { isWpcom: true, isLoadingPurchases: true } );
+
+		const { result: wpcom } = renderHook( () => useIsPricingGridEligible( SITE_ID ) );
+
+		expect( wpcom.current.isLoading ).toBe( false );
 	} );
 } );

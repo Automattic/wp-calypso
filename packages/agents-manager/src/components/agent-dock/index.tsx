@@ -17,9 +17,9 @@ import useReaderChatPersistence from '../../hooks/use-reader-chat-persistence';
 import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-agent';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
+import { saveSessionId } from '../../utils/agent-session';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
-import { persistLastActivity } from '../../utils/persist-last-activity';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -31,11 +31,11 @@ import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
 import ZendeskChat from '../zendesk-chat';
 import type {
-	NavigationContinuationHook,
 	AbilitiesSetupHook,
 	GetChatComponent,
 	UseSuggestionsHook,
 	SiteBuildUtils,
+	TransformMessages,
 	UseCheckpointHook,
 	ProviderCapabilities,
 } from '../../utils/load-external-providers';
@@ -49,8 +49,6 @@ interface Props {
 	markdownComponents?: MarkdownComponents;
 	/** Custom markdown extensions. */
 	markdownExtensions?: MarkdownExtensions;
-	/** Navigation continuation hook for post-navigation conversation resumption. */
-	useNavigationContinuation?: NavigationContinuationHook;
 	/** The external providers' abilities-setup hook (e.g. Big Sky, jetpack-ai-sidebar). Invoked after custom actions registration. */
 	useProviderAbilitiesSetup?: AbilitiesSetupHook;
 	/** Hook for providing dynamic suggestions based on context (e.g., selected block). */
@@ -59,6 +57,7 @@ interface Props {
 	getChatComponent?: GetChatComponent;
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
+	transformMessages?: TransformMessages;
 	/** Hook for saving and restoring editor state so that AI actions can be undone. */
 	useCheckpoint?: UseCheckpointHook;
 	/** Optional capability flags declared by one or more loaded providers. */
@@ -69,15 +68,15 @@ export default function AgentDock( {
 	emptyViewSuggestions = [],
 	markdownComponents = {},
 	markdownExtensions = {},
-	useNavigationContinuation,
 	useProviderAbilitiesSetup,
 	getChatComponent,
 	useSuggestions,
 	siteBuildUtils,
+	transformMessages,
 	useCheckpoint,
 	capabilities,
 }: Props ) {
-	const { siteKey, agentConfig } = useAgentsManagerContext();
+	const { agentConfig, siteKey, currentUser } = useAgentsManagerContext();
 
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
@@ -133,18 +132,18 @@ export default function AgentDock( {
 		// Only open the sidebar; keep the current route. Admin-bar items
 		// set their own route (e.g. history) before opening it.
 		onOpenSidebar: () => {
-			recordBigSkyTracksEvent( 'sidebar_open_click' );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_sidebar_open_click' );
 			setOpenState( true );
 		},
 		onCloseSidebar: () => {
-			recordBigSkyTracksEvent( 'sidebar_close_click' );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_sidebar_close_click' );
 			setOpenState( false );
 		},
 		onDock: () => {
-			recordBigSkyTracksEvent( 'ai_chat_docked' );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_ai_chat_docked' );
 		},
 		onUndock: () => {
-			recordBigSkyTracksEvent( 'ai_chat_undocked' );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_ai_chat_undocked' );
 		},
 		isSplitScreen,
 	} );
@@ -155,7 +154,7 @@ export default function AgentDock( {
 		if ( isDocked ) {
 			closeSidebar();
 		} else {
-			recordBigSkyTracksEvent( 'dock_back_button_click' );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_dock_back_button_click' );
 			setOpenState( false );
 		}
 	};
@@ -235,7 +234,7 @@ export default function AgentDock( {
 	);
 
 	const handleExpand = () => {
-		recordBigSkyTracksEvent( 'dock_assistant_icon_click' );
+		recordBigSkyTracksEvent( 'jetpack_big_sky_dock_assistant_icon_click' );
 		if ( isMinimized ) {
 			setIsMinimized( false );
 		}
@@ -253,11 +252,12 @@ export default function AgentDock( {
 			}
 			navigate( '/zendesk', { state: { conversationId: conversation.conversation_id } } );
 		} else {
-			const sessionId = conversation.session_id || '';
+			if ( conversation.session_id ) {
+				saveSessionId( conversation.session_id, agentConfig?.agentId, siteKey, currentUser?.ID );
+			}
 
-			persistLastActivity( siteKey );
 			handleAbort();
-			navigate( '/chat', { state: { sessionId } } );
+			navigate( '/chat' );
 		}
 	};
 
@@ -269,8 +269,10 @@ export default function AgentDock( {
 
 		// Every item fires the unified AM event; items whose Big Sky event
 		// is already live also dual-fire it so those dashboards keep working.
-		const recordMoreOptionsClick = ( type: string ) =>
-			recordAgentsManagerTracksEvent( 'ai_chat_more_options_click', { type } );
+		const recordMoreOptionsClick = ( menuItem: string ) =>
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_ai_chat_more_options_click', {
+				menu_item: menuItem,
+			} );
 
 		const options = [
 			{
@@ -279,7 +281,7 @@ export default function AgentDock( {
 				isDisabled: pathname === '/chat' && isOrchestratorChatEmpty,
 				onClick: () => {
 					recordMoreOptionsClick( 'reset_chat' );
-					recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
+					recordBigSkyTracksEvent( 'jetpack_big_sky_ai_chat_more_options_click', {
 						type: 'reset_chat',
 					} );
 					navigate( '/' );
@@ -307,7 +309,7 @@ export default function AgentDock( {
 						: __( 'Split screen sidebar', __i18n_text_domain__ ),
 					onClick: () => {
 						recordMoreOptionsClick( isSplitScreen ? 'exit_split_screen' : 'split_screen' );
-						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
+						recordBigSkyTracksEvent( 'jetpack_big_sky_ai_chat_more_options_click', {
 							type: isSplitScreen ? 'exit_split_screen' : 'split_screen',
 						} );
 						setIsSplitScreen( ! isSplitScreen );
@@ -351,7 +353,7 @@ export default function AgentDock( {
 					title: __( 'Switch to floating', __i18n_text_domain__ ),
 					onClick: () => {
 						recordMoreOptionsClick( 'undock' );
-						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
+						recordBigSkyTracksEvent( 'jetpack_big_sky_ai_chat_more_options_click', {
 							type: 'undock',
 						} );
 						undock();
@@ -365,7 +367,7 @@ export default function AgentDock( {
 					title: __( 'Switch to sidebar', __i18n_text_domain__ ),
 					onClick: () => {
 						recordMoreOptionsClick( 'dock' );
-						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
+						recordBigSkyTracksEvent( 'jetpack_big_sky_ai_chat_more_options_click', {
 							type: 'dock',
 						} );
 						dock();
@@ -398,13 +400,14 @@ export default function AgentDock( {
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
 			isCompactMode={ isCompactMode }
-			useNavigationContinuation={ useNavigationContinuation }
 			useProviderAbilitiesSetup={ useProviderAbilitiesSetup }
 			useSuggestions={ useSuggestions }
 			getChatComponent={ getChatComponent }
 			siteBuildUtils={ siteBuildUtils }
+			transformMessages={ transformMessages }
 			useCheckpoint={ useCheckpoint }
 			capabilities={ capabilities }
+			isChatInputDisabled={ ! isChatEnabled }
 			onHasMessagesChange={ handleChatHasMessagesChange }
 		/>
 	);
@@ -454,12 +457,6 @@ export default function AgentDock( {
 			chatHeaderOptions={ chatHeaderOptions }
 		/>
 	);
-
-	// When the chat is disabled there's nothing to open, so render nothing — the editor
-	// entry-point buttons would otherwise be dead.
-	if ( ! isChatEnabled ) {
-		return null;
-	}
 
 	return (
 		<>

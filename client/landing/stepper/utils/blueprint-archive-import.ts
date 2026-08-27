@@ -8,6 +8,14 @@ export const BLUEPRINT_ARCHIVE_IMPORT_QUERY_VALUE = '1';
 // Reuse the flow that already hosts the AI site-spec step.
 const BLUEPRINT_ARCHIVE_SITE_SPEC_PATH = '/setup/ai-site-builder-spec/site-spec';
 
+export function getStandaloneBlueprintArchiveSlug(
+	blueprint: string | null,
+	playgroundId: string | null,
+	buildDest: string | null
+): string | null {
+	return ! playgroundId && buildDest === 'wow' ? blueprint : null;
+}
+
 type ImportStatusResponse = {
 	importId?: string | null;
 	siteId?: number | null;
@@ -67,12 +75,14 @@ export function getBlueprintArchiveSiteSpecUrl( {
 	blueprintSlug,
 	ref,
 	source,
+	wowFunnel,
 }: {
 	siteSlug?: string | null;
 	siteId?: string | number | null;
 	blueprintSlug: string;
 	ref?: string | null;
 	source?: string | null;
+	wowFunnel?: string | null;
 } ): string {
 	return addQueryArgs( BLUEPRINT_ARCHIVE_SITE_SPEC_PATH, {
 		blueprint_archive_import: BLUEPRINT_ARCHIVE_IMPORT_QUERY_VALUE,
@@ -81,6 +91,10 @@ export function getBlueprintArchiveSiteSpecUrl( {
 		...( siteId && String( siteId ) !== '0' ? { siteId } : {} ),
 		...( ref ? { ref } : {} ),
 		...( source ? { source } : {} ),
+		// A funnel run's import already ran server-side, before checkout. site-spec keys its
+		// "do not start one" guard off this param, so it has to survive into the URL — without
+		// it the page cannot tell a funnel hand-off from a standalone run and imports again.
+		...( wowFunnel ? { wow_funnel: wowFunnel } : {} ),
 	} );
 }
 
@@ -214,6 +228,48 @@ export async function waitForAtomicTransferComplete(
 	);
 }
 
+/**
+ * Reconcile the confirmed site spec with the freshly imported blueprint site:
+ * writes the owner's site title/tagline, records which blueprint the site was
+ * built from, and stores the collected details as agent context so the editor
+ * can offer to personalize the blueprint's demo copy.
+ *
+ * Must run AFTER waitForBlueprintImportComplete(): the archive restore replaces
+ * the site's options wholesale, so anything written before it is overwritten.
+ *
+ * Resolves either way — a failure here costs the user personalization, not
+ * their site, so it must never block the hand-off to the editor.
+ */
+export async function applyBlueprintSpec(
+	siteIdentifier: string,
+	specId: string,
+	blueprintSlug?: string | null
+): Promise< boolean > {
+	if ( ! specId ) {
+		return false;
+	}
+
+	try {
+		await wpcom.req.post(
+			{
+				path: `/sites/${ siteIdentifier }/big-sky/apply-blueprint-spec`,
+				apiNamespace: 'wpcom/v2',
+			},
+			{
+				spec_id: specId,
+				...( blueprintSlug ? { blueprint_id: blueprintSlug } : {} ),
+			}
+		);
+		return true;
+	} catch ( error ) {
+		logBlueprintArchiveEvent( 'apply_spec_error', {
+			site_identifier: siteIdentifier,
+			error: error instanceof Error ? error.message : String( error ),
+		} );
+		return false;
+	}
+}
+
 export async function getSiteAdminUrl( siteIdentifier: string ): Promise< string > {
 	const site = ( await wpcom.req.get(
 		{
@@ -232,9 +288,79 @@ export async function getSiteAdminUrl( siteIdentifier: string ): Promise< string
 /**
  * Build the Site Editor URL from a site's wp-admin URL.
  */
-export function getSiteEditorUrl( adminUrl: string ): string {
+export function getSiteEditorUrl(
+	adminUrl: string,
+	{ startWalkthrough = false }: { startWalkthrough?: boolean } = {}
+): string {
 	const base = adminUrl.endsWith( '/' ) ? adminUrl : `${ adminUrl }/`;
-	return `${ base }site-editor.php`;
+	const url = `${ base }site-editor.php`;
+
+	// `go` tells Big Sky this arrival came from onboarding, so it personalizes the
+	// copy instead of waiting to be spoken to. It never re-runs: the flag stays in
+	// the editor URL, so a site that has already been personalized has to see it
+	// and do nothing. `reset` is the way to run it again.
+	//
+	// `canvas=edit` is load-bearing: Big Sky's assembler only mounts on the
+	// editing canvas (useShouldLoadBigSky requires canvasMode === 'edit'), and a
+	// plain site-editor.php load stays in view mode — the kickoff, the copy mask,
+	// and the walkthrough all silently never run without it. The welcome-guide
+	// overlay this parameter was once blamed for came from sites where Big Sky
+	// had not been enabled by hand-off time (the enable race fixed on the wpcom
+	// side); when Big Sky mounts, it suppresses the guide itself.
+	//
+	// Only set when the spec applied; there is nothing to personalize from
+	// otherwise.
+	const editorUrl = startWalkthrough
+		? addQueryArgs( url, { 'blueprint-walkthrough': 'go', canvas: 'edit' } )
+		: url;
+
+	return withJetpackSso( editorUrl );
+}
+
+/**
+ * Route an Atomic wp-admin URL through Jetpack SSO so the customer arrives
+ * logged in.
+ *
+ * They have a WordPress.com session, not a session on their Atomic site, and
+ * those are different things. Sending them straight to wp-admin showed them a
+ * login form for a site they had just made — asking them to sign in to
+ * something they had not been told was separate. Jetpack SSO trades the session
+ * they have for the one they need and forwards them on.
+ * @param adminUrl Absolute wp-admin URL to land on.
+ * @returns The SSO URL, or the original when it cannot be parsed.
+ */
+function withJetpackSso( adminUrl: string ): string {
+	let target: URL;
+	try {
+		target = new URL( adminUrl );
+	} catch {
+		// Not something we can rewrite. Hand back what we were given rather than
+		// dropping the customer's redirect entirely.
+		return adminUrl;
+	}
+
+	// SSO lives on the site's own host. A *.wordpress.com address is the
+	// WordPress.com side of an Atomic site rather than the site itself, and
+	// logging in there does not produce a session for wp-admin.
+	if ( target.hostname.endsWith( '.wordpress.com' ) ) {
+		target.hostname = target.hostname.replace( '.wordpress.com', '.wpcomstaging.com' );
+	}
+
+	const login = new URL( target.href );
+	login.pathname = '/wp-login.php';
+	login.search = '';
+
+	// Deliberately NOT `action=jetpack-sso`. Jetpack only saves the
+	// `jetpack_sso_redirect_to` cookie — the sole carrier of the destination
+	// across the WordPress.com round trip — on the plain login path; a direct
+	// `action=jetpack-sso` entry skips save_cookies() and the return leg falls
+	// back to admin_url(), landing the customer on /wp-admin with the deep link
+	// gone. A plain wp-login.php?redirect_to=… saves the cookie, and wpcomsh
+	// auto-forwards Calypso-referred visitors to WordPress.com SSO anyway.
+	return addQueryArgs( login.href, {
+		// Relative, so the redirect cannot be pointed off-site.
+		redirect_to: `${ target.pathname }${ target.search }`,
+	} );
 }
 
 export function logBlueprintArchiveEvent(

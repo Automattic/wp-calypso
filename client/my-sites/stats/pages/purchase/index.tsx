@@ -7,7 +7,7 @@ import page from '@automattic/calypso-router';
 import { ProductsList } from '@automattic/data-stores';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -23,7 +23,6 @@ import { getSiteSlug, getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useStatsPurchases from '../../hooks/use-stats-purchases';
 import PageViewTracker from '../../stats-page-view-tracker';
-import { StatsPurchaseNoticePage } from '../../stats-purchase/stats-purchase-notice';
 import {
 	StatsSingleItemPagePurchase,
 	StatsSingleItemPersonalPurchasePage,
@@ -54,9 +53,7 @@ const StatsPurchasePage = ( {
 		isRequestingSitePurchases,
 		isFreeOwned,
 		isPWYWOwned,
-		isCommercialOwned,
 		supportCommercialUse,
-		isLegacyCommercialLicense,
 		hasLoadedSitePurchases,
 		hasAnyPlan,
 	} = useStatsPurchases( siteId );
@@ -122,32 +119,13 @@ const StatsPurchasePage = ( {
 
 	const maxSliderPrice = commercialMonthlyProduct?.cost;
 
-	const redirectToCommercial = query?.productType === 'commercial'; // allow multiple visit to upgrade commercial tier.
-	// Redirect to personal is there is the query param is set, the site doesn't have personal license yet, and it's not redirecting to commercial
-	const redirectToPersonal =
-		query?.productType === 'personal' && ! isPWYWOwned && ! redirectToCommercial;
-	// Whether it's forced to redirect to a product
-	const isForceProductRedirect = redirectToPersonal || redirectToCommercial;
 	const noPlanOwned = ! supportCommercialUse && ! isFreeOwned && ! isPWYWOwned;
-	// Legacy commercial licenses don't have limits.
-	const allowCommercialTierUpgrade = isCommercialOwned && ! isLegacyCommercialLicense;
 
-	// We show purchase page if there is no plan owned or if we are forcing a product redirect
-	// VIP sites are exempt from being shown this page.
-	const showPurchasePage = noPlanOwned || isForceProductRedirect || allowCommercialTierUpgrade;
-
-	// The paid plan is the default upgrade landing regardless of commercial classification; the
-	// PWYW page is only reachable when explicitly requested via `productType=personal`.
-	const variant = useMemo( () => {
-		let pageVariant = 'commercial';
-		if ( ! showPurchasePage ) {
-			// TODO: Remove the notice page — even a site that already owns a plan will eventually want to upgrade to a higher tier.
-			pageVariant = 'notice';
-		} else if ( redirectToPersonal ) {
-			pageVariant = 'personal';
-		}
-		return pageVariant;
-	}, [ showPurchasePage, redirectToPersonal ] );
+	// The paid plan is the default landing, including for sites that already own one so they can
+	// move up a tier. The PWYW page is reachable only on explicit request, and only for sites that
+	// don't already have it — an existing PWYW owner is sent to the paid plan instead, since that
+	// is the only upgrade left to offer them.
+	const variant = query?.productType === 'personal' && ! isPWYWOwned ? 'personal' : 'commercial';
 
 	const showNavigation = ! isLoading && ! hasAnyPlan && query.from?.startsWith( 'cmp-red' );
 
@@ -189,55 +167,39 @@ const StatsPurchasePage = ( {
 				<QuerySitePurchases siteId={ siteId } />
 				<QueryProductsList type="jetpack" />
 				{ isLoading && <div className="stats-purchase-page__loader">{ PageLoading }</div> }
-				{
-					// a plan is owned or not forced to purchase - show a notice page
-					! isLoading && ! showPurchasePage && (
-						<StatsPurchaseNoticePage
-							siteId={ siteId }
-							siteSlug={ siteSlug }
-							isCommercialOwned={ supportCommercialUse }
-							isFreeOwned={ isFreeOwned }
-							isPWYWOwned={ isPWYWOwned }
-						/>
-					)
-				}
-				{
-					// there is still plans to purchase - show the purchase page
-					! isLoading && showPurchasePage && (
-						<>
-							{
-								// the default upgrade landing - show the paid plan purchase page
-								variant === 'commercial' && (
-									<div className="stats-purchase-page__notice">
-										<StatsSingleItemPagePurchase
-											siteSlug={ siteSlug ?? '' }
-											planValue={ commercialProduct?.cost }
-											currencyCode={ commercialProduct?.currency_code }
-											siteId={ siteId }
-											redirectUri={ query.redirect_uri ?? '' }
-											from={ query.from ?? '' }
-											isCommercial={ isCommercial }
-										/>
-									</div>
-								)
-							}
-							{
-								// the personal product was explicitly requested - show the PWYW purchase page
-								variant === 'personal' && (
-									<StatsSingleItemPersonalPurchasePage
-										siteSlug={ siteSlug || '' }
-										maxSliderPrice={ maxSliderPrice ?? 10 }
-										pwywProduct={ pwywProduct }
+				{ ! isLoading && (
+					<>
+						{
+							// the default upgrade landing - show the paid plan purchase page
+							variant === 'commercial' && (
+								<div className="stats-purchase-page__notice">
+									<StatsSingleItemPagePurchase
+										siteSlug={ siteSlug ?? '' }
+										planValue={ commercialProduct?.cost }
+										currencyCode={ commercialProduct?.currency_code }
 										siteId={ siteId }
 										redirectUri={ query.redirect_uri ?? '' }
 										from={ query.from ?? '' }
-										disableFreeProduct={ ! noPlanOwned }
 									/>
-								)
-							}
-						</>
-					)
-				}
+								</div>
+							)
+						}
+						{
+							// the personal product was explicitly requested - show the PWYW purchase page
+							variant === 'personal' && (
+								<StatsSingleItemPersonalPurchasePage
+									siteSlug={ siteSlug || '' }
+									maxSliderPrice={ maxSliderPrice ?? 10 }
+									pwywProduct={ pwywProduct }
+									siteId={ siteId }
+									redirectUri={ query.redirect_uri ?? '' }
+									from={ query.from ?? '' }
+									disableFreeProduct={ ! noPlanOwned }
+								/>
+							)
+						}
+					</>
+				) }
 			</div>
 		</Main>
 	);

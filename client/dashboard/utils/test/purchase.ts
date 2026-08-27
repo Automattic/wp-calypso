@@ -16,8 +16,11 @@ import {
 	isExpiredWithNoAutoRenewAttemptsLeft,
 	creditCardExpiresBeforeSubscription,
 	getRenewalUrlFromPurchase,
+	getTitleForDisplay,
 	isPurchaseDowngradeEligible,
+	isWithinRefundWindowDowngradeEligible,
 } from '../purchase';
+import { getStudioCodeAiCreditsTitle } from '../studio-code-ai-credits';
 import type { Purchase } from '@automattic/api-core';
 
 function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
@@ -489,9 +492,159 @@ describe( 'isPurchaseDowngradeEligible', () => {
 				makePurchase( {
 					is_plan: true,
 					is_plan_type_downgradable: true,
-					is_within_initial_refund_window: true,
+					is_refundable: true,
 				} )
 			)
 		).toBe( true );
+	} );
+} );
+
+describe( 'isWithinRefundWindowDowngradeEligible', () => {
+	const downgradablePlan = ( overrides: Partial< Purchase > = {} ) =>
+		makePurchase( { is_plan: true, is_plan_type_downgradable: true, ...overrides } );
+
+	test( 'is true for a refundable plan', () => {
+		expect(
+			isWithinRefundWindowDowngradeEligible( downgradablePlan( { is_refundable: true } ) )
+		).toBe( true );
+	} );
+
+	test( 'is true for a refundable renewal outside the initial refund window', () => {
+		expect(
+			isWithinRefundWindowDowngradeEligible(
+				downgradablePlan( { is_within_initial_refund_window: false, is_refundable: true } )
+			)
+		).toBe( true );
+	} );
+
+	test( 'is false once no receipt is refundable, even inside the initial refund window', () => {
+		expect(
+			isWithinRefundWindowDowngradeEligible(
+				downgradablePlan( { is_within_initial_refund_window: true, is_refundable: false } )
+			)
+		).toBe( false );
+	} );
+
+	test( 'is false for a plan in its post-expiry grace period even when refundable', () => {
+		expect(
+			isWithinRefundWindowDowngradeEligible(
+				downgradablePlan( {
+					is_refundable: true,
+					expiry_status: 'expired',
+					subscription_status: 'active',
+				} )
+			)
+		).toBe( false );
+	} );
+
+	test( 'is false for a non-plan product', () => {
+		expect(
+			isWithinRefundWindowDowngradeEligible(
+				makePurchase( { is_plan: false, is_plan_type_downgradable: true, is_refundable: true } )
+			)
+		).toBe( false );
+	} );
+} );
+
+describe( 'getStudioCodeAiCreditsTitle', () => {
+	const STUDIO_NAME = 'Studio Code AI Credits';
+
+	test( 'uses a separator for thousands of credits', () => {
+		expect( getStudioCodeAiCreditsTitle( STUDIO_NAME, 1000 ) ).toBe(
+			'Studio Code AI Credits (1,000 credits)'
+		);
+	} );
+
+	test( 'uses the singular form for one credit', () => {
+		expect( getStudioCodeAiCreditsTitle( STUDIO_NAME, 1 ) ).toBe(
+			'Studio Code AI Credits (1 credit)'
+		);
+	} );
+} );
+
+describe( 'getTitleForDisplay', () => {
+	const priceTier = {
+		minimum_units: 1,
+		minimum_price: 0,
+		minimum_price_display: '$0',
+		maximum_price: 0,
+	};
+
+	test( 'shows credit count for a Studio Code AI Credits purchase', () => {
+		expect(
+			getTitleForDisplay(
+				makePurchase( {
+					product_slug: 'studio-code-ai-credits',
+					product_name: 'Studio Code AI Credits',
+					renewal_price_tier_usage_quantity: 500,
+				} )
+			)
+		).toBe( 'Studio Code AI Credits (500 credits)' );
+	} );
+
+	test.each( [ null, undefined, 0 ] )(
+		'shows the product name for a quantity of %p',
+		( quantity ) => {
+			expect(
+				getTitleForDisplay(
+					makePurchase( {
+						product_slug: 'studio-code-ai-credits',
+						product_name: 'Studio Code AI Credits',
+						renewal_price_tier_usage_quantity: quantity,
+					} )
+				)
+			).toBe( 'Studio Code AI Credits' );
+		}
+	);
+
+	test( 'shows request count for Akismet Pro', () => {
+		expect(
+			getTitleForDisplay(
+				makePurchase( {
+					product_slug: 'ak_pro5h_yearly',
+					product_name: 'Akismet Pro (500 requests/month)',
+					renewal_price_tier_usage_quantity: 2,
+				} )
+			)
+		).toBe( 'Akismet Pro (1000 requests/month)' );
+	} );
+
+	test( 'shows request count for Jetpack AI', () => {
+		expect(
+			getTitleForDisplay(
+				makePurchase( {
+					product_name: 'Jetpack AI Assistant',
+					is_jetpack_ai_product: true,
+					renewal_price_tier_usage_quantity: 1000,
+					price_tier_list: [ priceTier ],
+				} )
+			)
+		).toBe( 'Jetpack AI Assistant (1,000 requests per month)' );
+	} );
+
+	test( 'shows view count for Jetpack Stats', () => {
+		expect(
+			getTitleForDisplay(
+				makePurchase( {
+					product_name: 'Jetpack Stats',
+					is_jetpack_stats_product: true,
+					is_free_jetpack_stats_product: false,
+					renewal_price_tier_usage_quantity: 10000,
+					price_tier_list: [ priceTier ],
+				} )
+			)
+		).toBe( 'Jetpack Stats (10,000 views per month)' );
+	} );
+
+	test( 'shows storage size for the storage add-on', () => {
+		expect(
+			getTitleForDisplay(
+				makePurchase( {
+					product_slug: 'wordpress_com_1gb_space_addon_yearly',
+					product_name: 'Extra Storage',
+					renewal_price_tier_usage_quantity: 50,
+				} )
+			)
+		).toBe( 'Extra Storage 50 GB' );
 	} );
 } );

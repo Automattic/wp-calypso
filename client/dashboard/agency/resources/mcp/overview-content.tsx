@@ -1,35 +1,39 @@
-import {
-	Icon,
-	ToggleControl,
-	__experimentalHStack as HStack,
-	__experimentalSpacer as Spacer,
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { Icon, ToggleControl, __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { check } from '@wordpress/icons';
-import clsx from 'clsx';
-import { Card, CardBody } from '../../../components/card';
+import { connection, listView, pencil, seen } from '@wordpress/icons';
+import { Card, CardBody, CardDivider } from '../../../components/card';
+import { SectionHeader } from '../../../components/section-header';
 import SummaryButton from '../../../components/summary-button';
-import McpStarterPrompts from './starter-prompts-content';
+import { getAbilitiesForToolType } from './tool-types';
 import type { RecordTracksEvent } from './types';
-import type { McpSettings, McpSettingsUpdate } from '@automattic/api-core';
+import type { McpAvailableAbility, McpSettings, McpSettingsUpdate } from '@automattic/api-core';
 import type { MouseEvent } from 'react';
 
-import './style.scss';
-
-const MCP_TOOLS_PATH = '/resources/ai-mcp/tools';
+const MCP_READ_TOOLS_PATH = '/resources/ai-mcp/read';
+const MCP_WRITE_TOOLS_PATH = '/resources/ai-mcp/write';
 const MCP_CONNECT_PATH = '/resources/ai-mcp/connect';
+const MCP_PROMPTS_PATH = '/resources/ai-mcp/prompts';
 
-function StepNumber( { n, completed }: { n: number; completed?: boolean } ) {
-	return (
-		<span
-			className={ clsx( 'mcp-overview__step-number', { 'is-completed': completed } ) }
-			aria-hidden="true"
-		>
-			{ completed ? <Icon icon={ check } size={ 18 } /> : n }
-		</span>
-	);
+function getToolsBadge( abilities: McpAvailableAbility[] ) {
+	if ( abilities.length === 0 ) {
+		return { text: __( 'No tools available' ) };
+	}
+
+	const enabledCount = abilities.filter( ( ability ) => ability.enabled ).length;
+
+	if ( enabledCount === abilities.length ) {
+		return { text: __( 'All enabled' ), intent: 'success' as const };
+	}
+
+	if ( enabledCount === 0 ) {
+		return { text: __( 'None enabled' ) };
+	}
+
+	return {
+		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
+		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, abilities.length ),
+		intent: 'info' as const,
+	};
 }
 
 interface McpOverviewProps {
@@ -38,8 +42,10 @@ interface McpOverviewProps {
 	isSaving?: boolean;
 	onSave: ( update: McpSettingsUpdate ) => void;
 	recordTracksEvent?: RecordTracksEvent;
-	toolsPath?: string;
+	readToolsPath?: string;
+	writeToolsPath?: string;
 	connectPath?: string;
+	promptsPath?: string;
 	onNavigate?: ( path: string ) => void;
 }
 
@@ -49,8 +55,10 @@ export default function McpOverview( {
 	isSaving,
 	onSave,
 	recordTracksEvent = () => {},
-	toolsPath = MCP_TOOLS_PATH,
+	readToolsPath = MCP_READ_TOOLS_PATH,
+	writeToolsPath = MCP_WRITE_TOOLS_PATH,
 	connectPath = MCP_CONNECT_PATH,
+	promptsPath = MCP_PROMPTS_PATH,
 	onNavigate,
 }: McpOverviewProps ) {
 	const handleNavClick =
@@ -63,96 +71,82 @@ export default function McpOverview( {
 		};
 
 	const availableAbilities = settings?.available_abilities ?? [];
-	const enabledCount = availableAbilities.filter( ( ability ) => ability.enabled ).length;
-	const totalCount = availableAbilities.length;
-	const mainEnabled = !! settings?.enabled;
+	const readAbilities = getAbilitiesForToolType( availableAbilities, 'read' );
+	const writeAbilities = getAbilitiesForToolType( availableAbilities, 'write' );
+	const mcpEnabled = !! settings?.enabled;
 
 	const onMainToggle = ( next: boolean ) => {
 		recordTracksEvent( 'calypso_a4a_ai_mcp_enable_toggled', { enabled: next } );
 		onSave( { enabled: next } );
 	};
 
-	const availableToolsBadge =
-		totalCount > 0
-			? {
-					/* translators: %(enabledCount)d enabled, %(totalCount)d total */
-					text: sprintf( __( '%(enabledCount)d of %(totalCount)d enabled' ), {
-						enabledCount,
-						totalCount,
-					} ) as string,
-					intent: ( enabledCount > 0 ? 'info' : undefined ) as 'info' | undefined,
-			  }
-			: { text: __( 'No tools available' ) as string };
-
 	return (
-		<>
-			<Spacer marginBottom={ 8 } style={ { maxWidth: '650px' } }>
-				<Text size={ 15 }>
-					{ __(
-						'Connect an AI agent to check site health, tier progress, payouts, and more across your agency, on demand. Set it up in three easy steps and put your agent to work.'
-					) }
-				</Text>
-			</Spacer>
+		<VStack spacing={ 4 }>
+			<Card>
+				<CardBody>
+					<VStack spacing={ 4 }>
+						<SectionHeader
+							level={ 3 }
+							title={ __( 'External AI agent access' ) }
+							description={ __(
+								'Allow external AI agents to access your Automattic for Agencies account and sites via MCP.'
+							) }
+						/>
+						<ToggleControl
+							__nextHasNoMarginBottom
+							checked={ mcpEnabled }
+							disabled={ isLoading || isSaving }
+							label={ __( 'Enable MCP access' ) }
+							onChange={ onMainToggle }
+						/>
+					</VStack>
+				</CardBody>
 
-			<VStack spacing={ 4 }>
-				<Card>
-					<CardBody>
-						<HStack alignment="flex-start" justify="space-between" spacing={ 4 }>
-							<HStack
-								className="mcp-overview__step-heading"
-								alignment="flex-start"
-								justify="flex-start"
-								spacing={ 3 }
-							>
-								<StepNumber n={ 1 } completed={ mainEnabled } />
-								<VStack spacing={ 1 }>
-									<Text weight={ 600 } size={ 15 }>
-										{ __( 'Enable MCP access' ) }
-									</Text>
-									<Text variant="muted">
-										{ __(
-											'Allow external AI agents to access your Automattic for Agencies account via MCP.'
-										) }
-									</Text>
-								</VStack>
-							</HStack>
-							<ToggleControl
-								__nextHasNoMarginBottom
-								label=""
-								aria-label={ __( 'Enable MCP access' ) }
-								checked={ mainEnabled }
-								onChange={ onMainToggle }
-								disabled={ isLoading || isSaving }
-							/>
-						</HStack>
-					</CardBody>
-				</Card>
+				{ mcpEnabled && (
+					<>
+						<CardDivider style={ { borderColor: 'var(--color-border-subtle)' } } />
+						<SummaryButton
+							density="medium"
+							title={ __( 'Read' ) }
+							decoration={ <Icon icon={ seen } size={ 24 } /> }
+							badges={ [ getToolsBadge( readAbilities ) ] }
+							href={ readToolsPath }
+							onClick={ handleNavClick(
+								readToolsPath,
+								'calypso_a4a_ai_mcp_available_tools_click'
+							) }
+						/>
+						<SummaryButton
+							density="medium"
+							title={ __( 'Write' ) }
+							decoration={ <Icon icon={ pencil } size={ 24 } /> }
+							badges={ [ getToolsBadge( writeAbilities ) ] }
+							href={ writeToolsPath }
+							onClick={ handleNavClick( writeToolsPath, 'calypso_a4a_ai_mcp_write_tools_click' ) }
+						/>
+					</>
+				) }
+			</Card>
 
-				<SummaryButton
-					title={ __( 'Select tools' ) }
-					description={ __( 'Choose what AI agents can do in your account.' ) }
-					decoration={ <StepNumber n={ 2 } /> }
-					badges={ [ availableToolsBadge ] }
-					href={ toolsPath }
-					disabled={ ! mainEnabled }
-					onClick={ handleNavClick( toolsPath, 'calypso_a4a_ai_mcp_available_tools_click' ) }
-				/>
+			{ mcpEnabled && (
+				<>
+					<SummaryButton
+						title={ __( 'Connect external AI assistant' ) }
+						description={ __( 'Get instructions for connecting your external AI assistant.' ) }
+						decoration={ <Icon icon={ connection } size={ 24 } /> }
+						href={ connectPath }
+						onClick={ handleNavClick( connectPath, 'calypso_a4a_ai_mcp_connect_click' ) }
+					/>
 
-				<SummaryButton
-					title={ __( 'Connect your AI agent' ) }
-					description={ __(
-						'Required — add the MCP connection to your AI agent to finish setup.'
-					) }
-					decoration={ <StepNumber n={ 3 } /> }
-					href={ connectPath }
-					disabled={ ! mainEnabled }
-					onClick={ handleNavClick( connectPath, 'calypso_a4a_ai_mcp_connect_click' ) }
-				/>
-			</VStack>
-
-			<Spacer marginTop={ 8 } marginBottom={ 0 }>
-				<McpStarterPrompts recordTracksEvent={ recordTracksEvent } disabled={ ! mainEnabled } />
-			</Spacer>
-		</>
+					<SummaryButton
+						title={ __( 'Starter prompts' ) }
+						description={ __( 'Ready-made prompts to copy into your connected assistant.' ) }
+						decoration={ <Icon icon={ listView } size={ 24 } /> }
+						href={ promptsPath }
+						onClick={ handleNavClick( promptsPath, 'calypso_a4a_ai_mcp_starter_prompts_click' ) }
+					/>
+				</>
+			) }
+		</VStack>
 	);
 }

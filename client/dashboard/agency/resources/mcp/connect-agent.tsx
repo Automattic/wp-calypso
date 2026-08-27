@@ -10,10 +10,14 @@ export default function McpConnectAgentScreen() {
 
 	return (
 		<PageLayout
+			size="small"
 			header={
 				<PageHeader
-					title={ __( 'Connect external AI assistant' ) }
 					prefix={ <Breadcrumbs length={ 2 } /> }
+					title={ __( 'Connect external AI assistant' ) }
+					description={ __(
+						'Get instructions for connecting your external AI assistant to your Automattic for Agencies account via MCP.'
+					) }
 				/>
 			}
 		>

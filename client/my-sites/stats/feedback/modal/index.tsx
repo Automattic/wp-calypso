@@ -2,7 +2,6 @@ import { Button, Modal, TextareaControl } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useCallback, useEffect } from 'react';
-import StatsButton from 'calypso/my-sites/stats/components/stats-button';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import {
 	NOTICES_KEY_ABLE_TO_SUBMIT_FEEDBACK,
@@ -173,10 +172,10 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 							</em>
 						</strong>
 					) }
-					<StatsButton
-						primary
+					<Button
+						variant="primary"
 						onClick={ onFormSubmit }
-						busy={ isSubmittingFeedback }
+						isBusy={ isSubmittingFeedback }
 						disabled={
 							isCheckingAbilityToSubmitFeedback ||
 							! isAbleToSubmitFeedback ||
@@ -186,7 +185,7 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 						}
 					>
 						{ translate( 'Submit' ) }
-					</StatsButton>
+					</Button>
 				</div>
 			</div>
 		</Modal>

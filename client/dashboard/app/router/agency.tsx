@@ -19,15 +19,23 @@ import {
 	referralsQuery,
 	referralCommissionPayoutQuery,
 	tipaltiPayeeQuery,
+	wooCountryRegionsQuery,
 	wooPaymentsLicensesQuery,
 	WOOPAYMENTS_PLUGIN,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { hasApprovedDirectory } from '../../agency/partner-directory/lib';
+import {
+	PARTNER_DIRECTORY_DETAILS_SEGMENT,
+	PARTNER_DIRECTORY_EXPERTISE_SEGMENT,
+	PARTNER_DIRECTORY_ROUTE,
+} from '../../agency/partner-directory/paths';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
+import type { AgencySupports } from '../context';
 import type { AgencyCapability } from '@automattic/api-core';
 import type { AnyRoute, StaticDataRouteOption } from '@tanstack/react-router';
 
@@ -137,6 +145,158 @@ export const agencyTiersRoute = createRoute( {
 	)
 );
 
+// `/agency/partner-directory` – layout that gates on the partner directory program
+export const agencyPartnerDirectoryRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_partner_directory' },
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Partner Directories' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: PARTNER_DIRECTORY_ROUTE,
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( ! agency?.partner_directory?.allowed ) {
+			throw redirectAsNotAllowed( { to: '/overview' } );
+		}
+	},
+} );
+
+const agencyPartnerDirectoryIndexRoute = createRoute( {
+	getParentRoute: () => agencyPartnerDirectoryRoute,
+	path: '/',
+	loader: () => queryClient.ensureQueryData( activeAgencyQuery() ),
+} ).lazy( () =>
+	import( '../../agency/partner-directory' ).then( ( d ) =>
+		createLazyRoute( 'agency-partner-directory' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// `/agency/partner-directory/expertise` – apply to or update the directory application
+export const agencyPartnerDirectoryExpertiseRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Share your expertise' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyPartnerDirectoryRoute,
+	path: PARTNER_DIRECTORY_EXPERTISE_SEGMENT,
+	loader: () => queryClient.ensureQueryData( activeAgencyQuery() ),
+} ).lazy( () =>
+	import( '../../agency/partner-directory/expertise' ).then( ( d ) =>
+		createLazyRoute( 'agency-partner-directory-expertise' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// `/marketplace/hosting` – hosting plans an agency can buy or refer
+export const marketplaceHostingRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_marketplace' },
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Hosting' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'marketplace/hosting',
+} ).lazy( () =>
+	import( '../../agency/marketplace/hosting' ).then( ( d ) =>
+		createLazyRoute( 'marketplace-hosting' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// `/agency/partner-directory/details` – the agency's public profile details
+export const agencyPartnerDirectoryDetailsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Agency details' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyPartnerDirectoryRoute,
+	path: PARTNER_DIRECTORY_DETAILS_SEGMENT,
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		// Mirror the classic app: the profile details are only editable once a
+		// directory was approved.
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( ! hasApprovedDirectory( agency?.profile?.partner_directory_application ) ) {
+			throw redirectAsNotAllowed( { to: PARTNER_DIRECTORY_ROUTE } );
+		}
+	},
+	loader: () =>
+		Promise.all( [
+			queryClient.ensureQueryData( activeAgencyQuery() ),
+			queryClient.ensureQueryData( wooCountryRegionsQuery() ),
+		] ),
+} ).lazy( () =>
+	import( '../../agency/partner-directory/details' ).then( ( d ) =>
+		createLazyRoute( 'agency-partner-directory-details' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// `/marketplace/products` – à la carte products an agency can buy or refer
+export const marketplaceProductsRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_marketplace' },
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Products' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'marketplace/products',
+} ).lazy( () =>
+	import( '../../agency/marketplace/products' ).then( ( d ) =>
+		createLazyRoute( 'marketplace-products' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// `/marketplace/purchases` – licenses, invoices, and payment methods
+export const marketplacePurchasesRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_jetpack_licensing' },
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Purchases' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'marketplace/purchases',
+} ).lazy( () =>
+	import( '../../agency/marketplace/purchases' ).then( ( d ) =>
+		createLazyRoute( 'marketplace-purchases' )( {
+			component: d.default,
+		} )
+	)
+);
+
 // `/marketplace/exclusive-offers` – partner offers (Refer / Resell)
 export const exclusiveOffersRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_exclusive_offers' },
@@ -156,6 +316,73 @@ export const exclusiveOffersRoute = createRoute( {
 		} )
 	)
 );
+
+export type MarketplaceSection = {
+	route: AnyRoute;
+	supports: keyof AgencySupports;
+	label: () => string;
+};
+
+// The Marketplace sections in sidebar order: the sidebar renders one sub-item
+// per accessible section, and the `/marketplace` redirect sends the user to
+// the first section their app variant supports and their capabilities allow.
+// Purchases is part of the Marketplace feature, so it shares the flag.
+export const marketplaceSections: MarketplaceSection[] = [
+	{ route: marketplaceHostingRoute, supports: 'marketplace', label: () => __( 'Hosting' ) },
+	{ route: marketplaceProductsRoute, supports: 'marketplace', label: () => __( 'Products' ) },
+	{
+		route: exclusiveOffersRoute,
+		supports: 'exclusiveOffers',
+		label: () => __( 'Exclusive offers' ),
+	},
+	{ route: marketplacePurchasesRoute, supports: 'marketplace', label: () => __( 'Purchases' ) },
+];
+
+export function isMarketplaceSectionAvailable(
+	section: MarketplaceSection,
+	agencySupports: AgencySupports,
+	capabilities: readonly string[]
+): boolean {
+	return (
+		agencySupports[ section.supports ] &&
+		isRouteAllowedByCapabilities( section.route, capabilities )
+	);
+}
+
+// `/marketplace` – no screen of its own; sends the user to the first Marketplace
+// section their capabilities allow, so stale `/marketplace` links keep working.
+export const marketplaceRoute = createRoute( {
+	// Any-of: reaching the redirect only requires access to one of the sections.
+	staticData: {
+		requiresAgencyCapability: [
+			'a4a_read_marketplace',
+			'a4a_read_exclusive_offers',
+			'a4a_jetpack_licensing',
+		],
+	},
+	getParentRoute: () => agencyRoute,
+	path: 'marketplace',
+	beforeLoad: async ( { cause, context } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const agencySupports = context.config.supports.agency;
+		const activeAgency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		const capabilities = activeAgency?.user?.capabilities ?? [];
+		const destination = agencySupports
+			? marketplaceSections.find( ( section ) =>
+					isMarketplaceSectionAvailable( section, agencySupports, capabilities )
+			  )?.route
+			: undefined;
+
+		if ( ! destination ) {
+			throw redirectAsNotAllowed( { to: '/overview' } );
+		}
+
+		throw dashboardRedirect( { to: destination.fullPath } );
+	},
+} );
 
 // `/resources/learn` – guides, articles, and training for agencies
 export const learnRoute = createRoute( {
@@ -189,7 +416,7 @@ const ensureMcpSettings = async () => {
 
 export const mcpRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_learn' },
-	head: () => ( { meta: [ { title: __( 'MCP' ) } ] } ),
+	head: () => ( { meta: [ { title: __( 'AI and MCP' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'resources/ai-mcp',
 	beforeLoad: async ( { cause } ) => {
@@ -214,14 +441,35 @@ const mcpOverviewRoute = createRoute( {
 	)
 );
 
-const mcpAvailableToolsRoute = createRoute( {
-	head: () => ( { meta: [ { title: __( 'Available tools' ) } ] } ),
+const mcpReadToolsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Read' ) } ] } ),
 	getParentRoute: () => mcpRoute,
-	path: 'tools',
+	path: 'read',
 	loader: ensureMcpSettings,
 } ).lazy( () =>
-	import( '../../agency/resources/mcp/available-tools' ).then( ( d ) =>
-		createLazyRoute( 'resources-mcp-tools' )( { component: d.default } )
+	import( '../../agency/resources/mcp/read-tools' ).then( ( d ) =>
+		createLazyRoute( 'resources-mcp-read' )( { component: d.default } )
+	)
+);
+
+const mcpWriteToolsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Write' ) } ] } ),
+	getParentRoute: () => mcpRoute,
+	path: 'write',
+	loader: ensureMcpSettings,
+} ).lazy( () =>
+	import( '../../agency/resources/mcp/write-tools' ).then( ( d ) =>
+		createLazyRoute( 'resources-mcp-write' )( { component: d.default } )
+	)
+);
+
+const mcpStarterPromptsRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Starter prompts' ) } ] } ),
+	getParentRoute: () => mcpRoute,
+	path: 'prompts',
+} ).lazy( () =>
+	import( '../../agency/resources/mcp/starter-prompts' ).then( ( d ) =>
+		createLazyRoute( 'resources-mcp-prompts' )( { component: d.default } )
 	)
 );
 
@@ -812,9 +1060,24 @@ export const createAgencyRoutes = () => [
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
 		agencyTiersRoute,
+		agencyPartnerDirectoryRoute.addChildren( [
+			agencyPartnerDirectoryIndexRoute,
+			agencyPartnerDirectoryExpertiseRoute,
+			agencyPartnerDirectoryDetailsRoute,
+		] ),
+		marketplaceRoute,
+		marketplaceHostingRoute,
+		marketplaceProductsRoute,
+		marketplacePurchasesRoute,
 		exclusiveOffersRoute,
 		learnRoute,
-		mcpRoute.addChildren( [ mcpOverviewRoute, mcpAvailableToolsRoute, mcpConnectRoute ] ),
+		mcpRoute.addChildren( [
+			mcpOverviewRoute,
+			mcpReadToolsRoute,
+			mcpWriteToolsRoute,
+			mcpStarterPromptsRoute,
+			mcpConnectRoute,
+		] ),
 		agencySitesRoute,
 		agencyTeamRoute,
 		earnOverviewRoute,

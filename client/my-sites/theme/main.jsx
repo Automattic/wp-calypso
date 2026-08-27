@@ -184,10 +184,15 @@ function BlueprintCtaButton( {
 		return null;
 	}
 
-	// The onboarding blueprint step (getBlueprintID) accepts a numeric
-	// blueprint-library id via ?blueprint=<id>.
+	// The onboarding blueprint step accepts a blueprint-library post id or slug via ?blueprint=.
+	// wow_funnel=blueprint builds the Atomic site from the blueprint's archive *before* checkout,
+	// so the finished site is waiting the moment the customer pays; dest=site-spec hands them to
+	// the AI site-spec afterwards. The step falls back to the legacy Simple-site runner when the
+	// blueprint has no archive.
 	const href = addQueryArgs( '/setup/onboarding/blueprint', {
 		blueprint: blueprintId,
+		wow_funnel: 'blueprint',
+		dest: 'site-spec',
 		ref: `theme-${ themeId }`,
 	} );
 

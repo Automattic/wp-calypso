@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { useInterval } from 'calypso/lib/interval';
 import { useSelector, useDispatch } from 'calypso/state';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { transferCompleteStates } from 'calypso/state/automated-transfer/constants';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { usePostTransferPluginRecovery } from './use-post-transfer-plugin-recovery';
@@ -26,6 +26,7 @@ export function useThankYouRedirect( {
 	pluginActive,
 	atomicFlow,
 	automatedTransferStatus,
+	durableTransferCompleted,
 	isTransferredUpload,
 	halted = false,
 }: {
@@ -41,6 +42,7 @@ export function useThankYouRedirect( {
 	pluginActive: boolean;
 	atomicFlow: boolean;
 	automatedTransferStatus: string | null;
+	durableTransferCompleted: boolean;
 	isTransferredUpload: boolean;
 	/** The wait has been called off — an error screen is up, so nothing here should keep polling. */
 	halted?: boolean;
@@ -53,7 +55,9 @@ export function useThankYouRedirect( {
 		enabled:
 			! halted &&
 			!! siteId &&
-			( ! atomicFlow || automatedTransferStatus === transferStates.COMPLETE ),
+			( ! atomicFlow ||
+				transferCompleteStates.includes( automatedTransferStatus ) ||
+				durableTransferCompleted ),
 		refetchInterval: ( query ) =>
 			query.state.data && isAtomicTransferredSite( query.state.data ) ? false : 2000,
 		staleTime: 0,
@@ -85,7 +89,7 @@ export function useThankYouRedirect( {
 	// site was still Simple.
 	const uploadTransferSettled =
 		isTransferredUpload &&
-		automatedTransferStatus === transferStates.COMPLETE &&
+		transferCompleteStates.includes( automatedTransferStatus ) &&
 		!! isAtomicTransferReady;
 
 	usePostTransferPluginRecovery( {

@@ -3,9 +3,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import {
 	createRevertedTransferWatcher,
+	isRevertedTransferStatus,
 	transferStates,
 } from 'calypso/landing/stepper/utils/atomic-transfer-outcome';
 import { useInterval } from 'calypso/lib/interval';
+import { parseTransferCreatedAt } from './transfer-created-at';
 import type { AtomicTransfer } from '@automattic/api-core';
 
 // Matches the wait in Stepper's useWaitForAtomic (1000 * 300), so both places give up on a transfer
@@ -26,7 +28,7 @@ const SETTLED_STATUSES: string[] = [
 	transferStates.RELOCATING_REVERT,
 ];
 
-const isSettled = ( status?: string ) => !! status && SETTLED_STATUSES.includes( status );
+export const isSettled = ( status?: string ) => !! status && SETTLED_STATUSES.includes( status );
 
 type HaltedOutcome = 'timeout' | 'transfer-failed';
 
@@ -54,10 +56,27 @@ export type InstallWaitDiagnostics = {
  * we have watched that same transfer id in flight. An `error` is attributed the same way, or by
  * having started after this wait did.
  */
-export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabled: boolean } ): {
+export function useInstallDeadline( {
+	siteId,
+	enabled,
+	isTransferFromAttempt,
+}: {
+	siteId: number;
+	enabled: boolean;
+	isTransferFromAttempt?: ( transfer: AtomicTransfer ) => boolean;
+} ): {
 	hasTimedOut: boolean;
 	hasTransferFailed: boolean;
+	// The transfer this wait is about, as the endpoint last reported it: its raw status and when it
+	// started. Null until a transfer of ours has been seen. This is the only fine-grained status
+	// source on this page — the Redux slice hears just start and complete on the plugin path.
+	transferStatus: string | null;
+	transferStartedAt: number | null;
 	diagnostics: InstallWaitDiagnostics;
+	transfer: AtomicTransfer | undefined;
+	isTransferFresh: boolean;
+	isTransferLookupComplete: boolean;
+	isTransferLookupNotFound: boolean;
 } {
 	const [ now, setNow ] = useState( () => Date.now() );
 	// Null while the wait is not running. The clock is stamped when it starts, never while it is
@@ -97,7 +116,9 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 	// deadline the moment this mounts — latching a timeout on an install that has since completed.
 	const {
 		data: transfer,
+		error: transferError,
 		isFetchedAfterMount,
+		isError: isTransferError,
 		isSuccess,
 	} = useQuery( {
 		...siteLatestAtomicTransferQuery( siteId ),
@@ -107,8 +128,9 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 			// A settled record only ends the poll once it is this wait's. Otherwise it is the previous
 			// attempt's, still the site's latest because ours has not been created yet.
 			const isOurs =
-				latest?.atomic_transfer_id !== undefined &&
-				latest.atomic_transfer_id === seenInFlightId.current;
+				!! latest &&
+				( latest.atomic_transfer_id === seenInFlightId.current ||
+					isTransferFromAttempt?.( latest ) );
 			return isSettled( latest?.status ) && isOurs ? false : POLL_MS;
 		},
 		// A site that has never transferred answers 404, which is an answer rather than an outage.
@@ -117,6 +139,18 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 
 	const isInFlight = !! transfer && ! isSettled( transfer.status );
 	const hasFreshInFlightTransfer = isFetchedAfterMount && isSuccess && isInFlight;
+
+	// Ours: seen in flight during this wait, created after it began, or carrying this attempt's
+	// marker. A settled record that is none of those is the previous attempt's, still the site's
+	// latest because ours does not exist yet. Same three proofs the poll and the failure effect use.
+	const isOurTransfer =
+		!! transfer &&
+		isFetchedAfterMount &&
+		isSuccess &&
+		( isInFlight ||
+			transfer.atomic_transfer_id === seenInFlightId.current ||
+			!! isTransferFromAttempt?.( transfer ) ||
+			( waitBeganAt !== null && parseTransferCreatedAt( transfer.created_at ) >= waitBeganAt ) );
 
 	useEffect( () => {
 		if ( ! transfer || waitBeganAt === null ) {
@@ -127,16 +161,27 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 			seenInFlightId.current = transfer.atomic_transfer_id;
 			return;
 		}
-		const startedDuringThisWait = Date.parse( transfer.created_at ) >= waitBeganAt;
-		const isOurs = transfer.atomic_transfer_id === seenInFlightId.current || startedDuringThisWait;
-		if ( reverted || ( transfer.status === transferStates.ERROR && isOurs ) ) {
+		const startedDuringThisWait = parseTransferCreatedAt( transfer.created_at ) >= waitBeganAt;
+		const isKnownAttempt =
+			isFetchedAfterMount && isSuccess && !! isTransferFromAttempt?.( transfer );
+		const isOurs =
+			transfer.atomic_transfer_id === seenInFlightId.current ||
+			startedDuringThisWait ||
+			isKnownAttempt;
+		if (
+			reverted ||
+			( transfer.status === transferStates.ERROR && isOurs ) ||
+			( isRevertedTransferStatus( transfer.status ) && isKnownAttempt )
+		) {
 			setFailureSeen( true );
 		}
-	}, [ transfer, waitBeganAt ] );
+	}, [ transfer, waitBeganAt, isFetchedAfterMount, isSuccess, isTransferFromAttempt ] );
 
 	// A live transfer is the thing being waited on, so it owns the clock; its start survives a
 	// refresh where a mount-anchored timer would not.
-	const transferStartedAt = hasFreshInFlightTransfer ? Date.parse( transfer.created_at ) : NaN;
+	const transferStartedAt = hasFreshInFlightTransfer
+		? parseTransferCreatedAt( transfer.created_at )
+		: NaN;
 	const waitStartedAt =
 		waitBeganAt === null
 			? null
@@ -167,7 +212,10 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 	// What the wait could see when it ended. `is_stuck` is the server's own verdict on the same
 	// question this hook answers — in flight and older than its threshold — so recording both says
 	// whether five minutes is measuring what the backend's thirty are.
-	const transferAgeMs = transfer?.created_at ? now - Date.parse( transfer.created_at ) : null;
+	const transferCreatedAt = transfer?.created_at
+		? parseTransferCreatedAt( transfer.created_at )
+		: NaN;
+	const transferAgeMs = Number.isFinite( transferCreatedAt ) ? now - transferCreatedAt : null;
 	const diagnostics: InstallWaitDiagnostics = {
 		has_transfer: !! transfer,
 		transfer_status: transfer?.status ?? null,
@@ -180,9 +228,22 @@ export function useInstallDeadline( { siteId, enabled }: { siteId: number; enabl
 		deadline_seconds: Math.round( INSTALL_DEADLINE_MS / 1000 ),
 	};
 
+	// An unparseable timestamp is no anchor at all: hand back null so the caller falls back to its
+	// own clock, rather than a NaN that silently poisons every duration derived from it.
+	const ourTransferStartedAt = isOurTransfer ? parseTransferCreatedAt( transfer.created_at ) : NaN;
+
 	return {
 		hasTimedOut: haltedOutcome === 'timeout' || isDeadlineExceeded,
 		hasTransferFailed: haltedOutcome === 'transfer-failed' || hasTransferFailed,
+		transferStatus: isOurTransfer ? transfer.status : null,
+		transferStartedAt: Number.isFinite( ourTransferStartedAt ) ? ourTransferStartedAt : null,
 		diagnostics,
+		transfer,
+		isTransferFresh: isFetchedAfterMount && isSuccess,
+		isTransferLookupComplete: isFetchedAfterMount,
+		isTransferLookupNotFound:
+			isFetchedAfterMount &&
+			isTransferError &&
+			( transferError as { status?: number } )?.status === 404,
 	};
 }

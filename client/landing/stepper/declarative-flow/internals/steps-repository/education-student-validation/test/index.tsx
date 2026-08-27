@@ -53,7 +53,7 @@ describe( 'EducationStudentValidation', () => {
 
 		expect(
 			screen.getByRole( 'heading', {
-				name: 'Welcome to the WordPress.com Education Program',
+				name: 'Your site starts here',
 			} )
 		).toBeVisible();
 		expect( screen.getByLabelText( 'Invitation code' ) ).toBeVisible();

@@ -1,11 +1,18 @@
 import { __ } from '@wordpress/i18n';
-import ButtonPicker from '../components/button-picker';
-import ColorPicker from '../components/color-picker';
+import ChatResponseRenderedTracker, {
+	createChatResponseActionCallback,
+} from '../components/chat-response-tracking';
 import { EscalationButton } from '../components/escalation-button';
-import FontPicker from '../components/font-picker';
 import isAmAbilitiesDisabled from './is-am-abilities-disabled';
+import lazyComponent from './lazy-component';
 import { isShowComponentTool } from './show-component-tools';
-import { getDisplayMessageFromToolData, isDisplayableToolMessageTool } from './tool-message-utils';
+import {
+	APPLY_BLOCK_EDITS_TOOL_ID,
+	getApplyBlockEditsOutcome,
+	getDisplayMessageFromToolData,
+	isBlockEditToolId,
+	isDisplayableToolMessageTool,
+} from './tool-message-utils';
 import type { GetChatComponent } from './load-external-providers';
 import type { ShowComponentType } from '../abilities/show-component';
 import type { UIMessage } from '@automattic/agenttic-client';
@@ -19,10 +26,20 @@ export interface AgentsManagerUIMessage extends UIMessage {
 
 // AM-owned components by `ShowComponentType`. These take precedence over
 // provider components — AM is the single source of truth for each migrated type.
+//
+// The pickers carry the block-editor preview stack, so they load on demand:
+// a picker row fetches its chunk when it first renders, and other chats never
+// download it.
 const AM_COMPONENTS: Record< ShowComponentType, React.ComponentType > = {
-	'button-picker': ButtonPicker as React.ComponentType,
-	'color-picker': ColorPicker as React.ComponentType,
-	'font-picker': FontPicker as React.ComponentType,
+	'button-picker': lazyComponent(
+		() => import( /* webpackChunkName: "am-button-picker" */ '../components/button-picker' )
+	),
+	'color-picker': lazyComponent(
+		() => import( /* webpackChunkName: "am-color-picker" */ '../components/color-picker' )
+	),
+	'font-picker': lazyComponent(
+		() => import( /* webpackChunkName: "am-font-picker" */ '../components/font-picker' )
+	),
 };
 
 function getAmComponent( type: string ): React.ComponentType | null {
@@ -45,7 +62,7 @@ interface MessageWithContextFlags extends UIMessage {
 	};
 }
 
-function isContextOnlyMessage( message: UIMessage ): boolean {
+export function isContextOnlyMessage( message: UIMessage ): boolean {
 	return (
 		( message as MessageWithContextFlags ).context?.flags?.context_only === true ||
 		message.content?.some( ( content ) => {
@@ -135,6 +152,68 @@ function hasLaterAgentToolMessageInSameTurn(
 	return false;
 }
 
+function hasLaterApplyBlockEditsOutcome(
+	messages: UIMessage[],
+	currentIndex: number,
+	toolCallId: string
+): boolean {
+	for ( const laterMessage of messages.slice( currentIndex + 1 ) ) {
+		if ( laterMessage.role === 'user' ) {
+			return false;
+		}
+
+		const laterText = laterMessage.content?.[ 0 ]?.text;
+		if ( ! hasAgentRole( laterMessage ) || ! laterText ) {
+			continue;
+		}
+
+		try {
+			const laterData = JSON.parse( laterText );
+			if (
+				laterData?.tool_call_id === toolCallId &&
+				getApplyBlockEditsOutcome( laterData.tool_id, laterData.data )
+			) {
+				return true;
+			}
+		} catch ( _error ) {}
+	}
+
+	return false;
+}
+
+function followsTerminalApplyBlockEditsOutcome(
+	messages: UIMessage[],
+	currentIndex: number
+): boolean {
+	for ( let index = currentIndex - 1; index >= 0; index-- ) {
+		const earlierMessage = messages[ index ];
+		if ( earlierMessage.role === 'user' ) {
+			return false;
+		}
+
+		const earlierText = earlierMessage.content?.[ 0 ]?.text;
+		if ( ! hasAgentRole( earlierMessage ) || ! earlierText ) {
+			continue;
+		}
+
+		try {
+			const earlierData = JSON.parse( earlierText );
+			if ( typeof earlierData?.tool_id !== 'string' ) {
+				continue;
+			}
+
+			return (
+				!! getApplyBlockEditsOutcome( earlierData.tool_id, earlierData.data ) &&
+				earlierData.data?.followUpTasks !== true
+			);
+		} catch ( _error ) {
+			return false;
+		}
+	}
+
+	return false;
+}
+
 /**
  * Converts tool-related messages to component messages.
  */
@@ -187,7 +266,7 @@ export default function convertToolMessagesToComponents( {
 		try {
 			textData = JSON.parse( firstContentText );
 		} catch ( _error ) {
-			return [ message ];
+			return followsTerminalApplyBlockEditsOutcome( array, index ) ? [] : [ message ];
 		}
 
 		if (
@@ -195,13 +274,25 @@ export default function convertToolMessagesToComponents( {
 			textData === null ||
 			typeof textData.tool_id !== 'string'
 		) {
-			return [ message ];
+			return followsTerminalApplyBlockEditsOutcome( array, index ) ? [] : [ message ];
 		}
 
 		// Handle `show-component` tool message
 		if ( isShowComponentTool( textData.tool_id ) ) {
 			const toolData = textData.data ?? {};
-			const { type: contentType, props, followUpTasks, isCurrent, postId, summary } = toolData;
+			const {
+				type: contentType,
+				props,
+				followUpTasks,
+				isCurrent,
+				postId,
+				summary,
+				responseTrackingProperties,
+			} = toolData;
+			const toolCallId =
+				typeof textData.tool_call_id === 'string' && textData.tool_call_id
+					? textData.tool_call_id
+					: undefined;
 			// The testing switch flips rendering to the provider components too,
 			// so the comparison covers the whole flow.
 			const amComponent = isAmAbilitiesDisabled() ? null : getAmComponent( contentType );
@@ -247,6 +338,19 @@ export default function convertToolMessagesToComponents( {
 			const isPageChanged =
 				!! postId && !! currentPostId && String( postId ) !== String( currentPostId );
 			const isStale = hasUserReplied || ! isCurrent || isPageChanged;
+			const shouldTrackResponse = ! isStale;
+			let responseActionProps = {};
+			if ( ! amComponent ) {
+				responseActionProps = {
+					onResponseAction: shouldTrackResponse
+						? createChatResponseActionCallback( {
+								componentType: contentType,
+								toolId: textData.tool_id,
+								...( toolCallId ? { toolCallId } : {} ),
+						  } )
+						: undefined,
+				};
+			}
 
 			const componentMessage: AgentsManagerUIMessage = {
 				...message,
@@ -266,9 +370,25 @@ export default function convertToolMessagesToComponents( {
 							...props,
 							...( summaryText && { summary: summaryText } ),
 							...ownerProps,
+							...( toolCallId ? { toolCallId } : {} ),
+							...responseActionProps,
 							...( isStale && { isMessageStale: true } ),
 						},
 					},
+					...( shouldTrackResponse
+						? [
+								{
+									type: 'component' as const,
+									component: ChatResponseRenderedTracker as React.ComponentType,
+									componentProps: {
+										componentType: contentType,
+										toolId: textData.tool_id,
+										...( toolCallId ? { toolCallId } : {} ),
+										...( responseTrackingProperties ? { responseTrackingProperties } : {} ),
+									},
+								},
+						  ]
+						: [] ),
 				],
 				disabled: isStale,
 				suppressThinking: followUpTasks !== true,
@@ -283,10 +403,40 @@ export default function convertToolMessagesToComponents( {
 				return [];
 			}
 
-			const summary = getDisplayMessageFromToolData( textData.data );
-			if ( ! summary ) {
+			const blockEditOutcome = getApplyBlockEditsOutcome( textData.tool_id, textData.data );
+			const isLegacySuccessfulApplyBlockEditsResult =
+				textData.tool_id === APPLY_BLOCK_EDITS_TOOL_ID && textData.data?.result?.success === true;
+			if (
+				isBlockEditToolId( textData.tool_id ) &&
+				! blockEditOutcome &&
+				! isLegacySuccessfulApplyBlockEditsResult
+			) {
 				return [];
 			}
+			const summary = getDisplayMessageFromToolData( textData.data );
+			if ( ! summary && blockEditOutcome !== 'no-changes' ) {
+				return [];
+			}
+			if (
+				typeof textData.tool_call_id === 'string' &&
+				hasLaterApplyBlockEditsOutcome( array, index, textData.tool_call_id )
+			) {
+				return [];
+			}
+			const content =
+				blockEditOutcome === 'no-changes'
+					? [
+							{
+								type: 'text' as const,
+								text: __( '✓ No changes needed', __i18n_text_domain__ ),
+							},
+					  ]
+					: [
+							{
+								type: 'text' as const,
+								text: summary as string,
+							},
+					  ];
 
 			// Tool summaries with follow-up tasks are intermediate status updates. When
 			// rehydrating history, a later tool message in the same user turn (for example,
@@ -303,12 +453,7 @@ export default function convertToolMessagesToComponents( {
 				{
 					...message,
 					suppressThinking: true,
-					content: [
-						{
-							type: 'text' as const,
-							text: summary,
-						},
-					],
+					content,
 				},
 			];
 		}

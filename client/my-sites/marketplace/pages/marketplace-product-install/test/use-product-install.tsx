@@ -2,12 +2,18 @@
  * @jest-environment jsdom
  */
 import { act } from '@testing-library/react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import {
+	PLUGIN_ACTIVATE_REQUEST,
+	PLUGIN_ACTIVATE_REQUEST_FAILURE,
+} from 'calypso/state/action-types';
 import marketplaceReducer from 'calypso/state/marketplace/reducer';
 import pluginsReducer from 'calypso/state/plugins/reducer';
 import themesReducer from 'calypso/state/themes/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { useProductInstall } from '../use-product-install';
+import type { AtomicTransfer } from '@automattic/api-core';
 
 // useProductInstall reads several section-lazy slices that the bare test store doesn't register.
 const reducers = {
@@ -18,18 +24,50 @@ const reducers = {
 };
 
 // The deadline hook has its own suite; here we only assert how this hook arms it.
-type DeadlineArgs = { siteId: number; productSlug: string; enabled: boolean };
+type DeadlineArgs = {
+	siteId: number;
+	enabled: boolean;
+	isTransferFromAttempt?: ( transfer: AtomicTransfer ) => boolean;
+};
 
-const mockUseInstallDeadline = jest.fn( ( args: DeadlineArgs ) => ( {
-	hasTimedOut: false,
-	hasTransferFailed: false,
-	receivedEnabled: args.enabled,
-} ) );
+const diagnostics = {
+	has_transfer: false,
+	transfer_status: null,
+	transfer_age_seconds: null,
+	transfer_is_stuck: null,
+	transfer_in_lossless_revert: null,
+	waited_seconds: 0,
+	anchored_to: 'wait_start' as const,
+	deadline_seconds: 300,
+};
+
+const deadlineVerdict =
+	( verdict: { hasTimedOut: boolean; hasTransferFailed: boolean } ) => ( args: DeadlineArgs ) => ( {
+		...verdict,
+		receivedEnabled: args.enabled,
+		diagnostics,
+		transfer: undefined,
+		isTransferFresh: false,
+		isTransferLookupComplete: true,
+	} );
+
+const noDeadlineVerdict = deadlineVerdict( { hasTimedOut: false, hasTransferFailed: false } );
+
+const mockUseInstallDeadline = jest.fn( noDeadlineVerdict );
 
 jest.mock( '../use-install-deadline', () => ( {
 	...jest.requireActual( '../use-install-deadline' ),
 	useInstallDeadline: ( args: DeadlineArgs ) => mockUseInstallDeadline( args ),
 } ) );
+
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
+} ) );
+
+const errorViewEvents = () =>
+	jest
+		.mocked( recordTracksEvent )
+		.mock.calls.filter( ( [ name ] ) => name === 'calypso_marketplace_install_error_view' );
 
 const SITE_ID = 1;
 
@@ -168,6 +206,10 @@ describe( 'useProductInstall', () => {
 	} );
 
 	describe( 'error', () => {
+		afterEach( () => {
+			mockUseInstallDeadline.mockImplementation( noDeadlineVerdict );
+		} );
+
 		it( 'has no error before any grace period elapses', () => {
 			const { result } = renderProductInstall( { pluginSlug: 'give' } );
 			expect( result.current.error ).toBeNull();
@@ -200,6 +242,174 @@ describe( 'useProductInstall', () => {
 			}
 		);
 
+		// Upload flow has no route slug; statuses live under the dispatched plugin id.
+		it( 'surfaces a failed activation instead of waiting out the deadline', () => {
+			jest.useFakeTimers();
+			try {
+				const { result, store } = renderHookWithProvider( () => useProductInstall( {} ), {
+					reducers,
+					initialState: {
+						...uploadAwaitingActivation( 'direct' ),
+						marketplace: {
+							purchaseFlow: {
+								primaryDomain: 'example.wordpress.com',
+								pluginInstallationStatus: 'in-progress',
+							},
+						},
+					},
+				} );
+
+				act( () => {
+					jest.advanceTimersByTime( 2000 );
+				} );
+				expect( result.current.error ).toBeNull();
+
+				act( () => {
+					store.dispatch( {
+						type: PLUGIN_ACTIVATE_REQUEST_FAILURE,
+						action: 'ACTIVATE_PLUGIN',
+						siteId: SITE_ID,
+						pluginId: 'uploaded/uploaded',
+						error: { message: 'Plugin file does not exist.' },
+					} );
+				} );
+
+				expect( result.current.error ).toEqual( { type: 'generic' } );
+			} finally {
+				jest.useRealTimers();
+			}
+		} );
+
+		it( 'ignores a failure left behind by an earlier attempt on a fresh mount', () => {
+			jest.useFakeTimers();
+			try {
+				const staleFailure = uploadAwaitingActivation( 'direct' );
+				const { result } = renderHookWithProvider( () => useProductInstall( {} ), {
+					reducers,
+					initialState: {
+						...staleFailure,
+						marketplace: {
+							purchaseFlow: {
+								primaryDomain: 'example.wordpress.com',
+								pluginInstallationStatus: 'in-progress',
+							},
+						},
+						plugins: {
+							...staleFailure.plugins,
+							installed: {
+								...staleFailure.plugins.installed,
+								status: {
+									[ SITE_ID ]: {
+										'uploaded/uploaded': { status: 'error', error: { message: 'stale' } },
+									},
+								},
+							},
+						},
+					},
+				} );
+
+				expect( result.current.error ).toBeNull();
+
+				// The retry's request overwrites the status but keeps the stale `error` field.
+				act( () => {
+					jest.advanceTimersByTime( 2000 );
+				} );
+				expect( result.current.error ).toBeNull();
+			} finally {
+				jest.useRealTimers();
+			}
+		} );
+
+		// The component instance survives SPA navigation to another product's install page.
+		it( 'drops a latched failure when the product changes', () => {
+			const { result, store, rerender } = renderHookWithProvider(
+				( { slug }: { slug: string } ) => useProductInstall( { pluginSlug: slug } ),
+				{
+					reducers,
+					initialState: { ui: { selectedSiteId: SITE_ID } },
+					initialProps: { slug: 'plugin-a' },
+				}
+			);
+
+			act( () => {
+				store.dispatch( {
+					type: PLUGIN_ACTIVATE_REQUEST,
+					action: 'ACTIVATE_PLUGIN',
+					siteId: SITE_ID,
+					pluginId: 'plugin-a',
+				} );
+			} );
+			act( () => {
+				store.dispatch( {
+					type: PLUGIN_ACTIVATE_REQUEST_FAILURE,
+					action: 'ACTIVATE_PLUGIN',
+					siteId: SITE_ID,
+					pluginId: 'plugin-a',
+					error: { message: 'activation failed' },
+				} );
+			} );
+			expect( result.current.error ).toEqual( { type: 'generic' } );
+
+			rerender( { slug: 'plugin-b' } );
+			expect( result.current.error ).toBeNull();
+		} );
+
+		// The swap lands while both installs are in-progress; the new product's failure must still register.
+		it( 'still catches a failure after swapping products between two in-progress installs', () => {
+			const activationRequest = ( pluginId: string ) => ( {
+				type: PLUGIN_ACTIVATE_REQUEST,
+				action: 'ACTIVATE_PLUGIN',
+				siteId: SITE_ID,
+				pluginId,
+			} );
+			const { result, store, rerender } = renderHookWithProvider(
+				( { slug }: { slug: string } ) => useProductInstall( { pluginSlug: slug } ),
+				{
+					reducers,
+					initialState: { ui: { selectedSiteId: SITE_ID } },
+					initialProps: { slug: 'plugin-a' },
+				}
+			);
+
+			act( () => {
+				store.dispatch( activationRequest( 'plugin-a' ) );
+				store.dispatch( activationRequest( 'plugin-b' ) );
+			} );
+			rerender( { slug: 'plugin-b' } );
+			expect( result.current.error ).toBeNull();
+
+			act( () => {
+				store.dispatch( {
+					type: PLUGIN_ACTIVATE_REQUEST_FAILURE,
+					action: 'ACTIVATE_PLUGIN',
+					siteId: SITE_ID,
+					pluginId: 'plugin-b',
+					error: { message: 'activation failed' },
+				} );
+			} );
+			expect( result.current.error ).toEqual( { type: 'generic' } );
+		} );
+
+		it( 'reports the dedicated timeout error when the wait runs out', () => {
+			mockUseInstallDeadline.mockImplementation(
+				deadlineVerdict( { hasTimedOut: true, hasTransferFailed: false } )
+			);
+
+			const { result } = renderProductInstall( {}, uploadAwaitingActivation( 'direct' ) );
+
+			expect( result.current.error ).toEqual( { type: 'timeout' } );
+		} );
+
+		it( 'reports the transfer failure ahead of a timeout', () => {
+			mockUseInstallDeadline.mockImplementation(
+				deadlineVerdict( { hasTimedOut: true, hasTransferFailed: true } )
+			);
+
+			const { result } = renderProductInstall( {}, uploadAwaitingActivation( 'direct' ) );
+
+			expect( result.current.error ).toEqual( { type: 'transfer-failed' } );
+		} );
+
 		// The upload page sends the customer here as soon as the upload starts. Counting that time
 		// against a deadline calibrated for server-side transfers would fail a large file on a slow
 		// connection — an install that was going to succeed.
@@ -230,6 +440,49 @@ describe( 'useProductInstall', () => {
 			expect( mockUseInstallDeadline.mock.calls.at( -1 )?.[ 0 ] ).toMatchObject( {
 				enabled: true,
 			} );
+		} );
+	} );
+
+	describe( 'error view impression', () => {
+		beforeEach( () => {
+			jest.mocked( recordTracksEvent ).mockClear();
+		} );
+		afterEach( () => {
+			mockUseInstallDeadline.mockImplementation( noDeadlineVerdict );
+		} );
+
+		it( 'fires once for a preflight error, which never reaches the wait telemetry', () => {
+			jest.useFakeTimers();
+			try {
+				const { rerender } = renderProductInstall( { pluginSlug: 'give' } );
+				expect( errorViewEvents() ).toHaveLength( 0 );
+
+				act( () => {
+					jest.advanceTimersByTime( 2000 );
+				} );
+				rerender();
+
+				expect( errorViewEvents() ).toHaveLength( 1 );
+				expect( errorViewEvents()[ 0 ][ 1 ] ).toMatchObject( {
+					error_type: 'non-installable-plan',
+					flow: 'plugin',
+					product_slug: 'give',
+				} );
+			} finally {
+				jest.useRealTimers();
+			}
+		} );
+
+		it( 'fires once for a transfer failure', () => {
+			mockUseInstallDeadline.mockImplementation(
+				deadlineVerdict( { hasTimedOut: true, hasTransferFailed: true } )
+			);
+
+			const { rerender } = renderProductInstall( {}, uploadAwaitingActivation( 'direct' ) );
+			rerender();
+
+			expect( errorViewEvents() ).toHaveLength( 1 );
+			expect( errorViewEvents()[ 0 ][ 1 ] ).toMatchObject( { error_type: 'transfer-failed' } );
 		} );
 	} );
 } );

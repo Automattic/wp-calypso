@@ -7,6 +7,12 @@ describe( 'getHelpCenterTracksProperties', () => {
 		).toEqual( { source: 'odie', blog_id: 11, site_context_source: 'explicit' } );
 	} );
 
+	test( 'falls back to the Help Center context site when the explicit site is invalid', () => {
+		expect(
+			getHelpCenterTracksProperties( { source: 'odie' }, { explicitSiteId: 0, siteId: 22 } )
+		).toEqual( { source: 'odie', blog_id: 22, site_context_source: 'help_center_context' } );
+	} );
+
 	test( 'uses Help Center context site', () => {
 		expect( getHelpCenterTracksProperties( {}, { siteId: 22 } ) ).toEqual( {
 			blog_id: 22,

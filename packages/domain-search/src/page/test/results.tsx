@@ -43,6 +43,14 @@ const memberLineHas =
 		element?.classList.contains( 'bundle-card__members' ) === true &&
 		( element.textContent ?? '' ).includes( domain );
 
+// `findByRole` with a name filter rebuilds the accessibility tree for the whole
+// results page on every poll, which costs more than the request chain it waits
+// for. Wait on the cheap text query, then assert the role once it is there.
+const findBundleCta = async () => {
+	await screen.findByText( 'Get bundle' );
+	return screen.getByRole( 'button', { name: 'Get bundle' } );
+};
+
 const findBundleMember = ( domain: string ) => screen.findByText( memberLineHas( domain ) );
 const getBundleMember = ( domain: string ) => screen.getByText( memberLineHas( domain ) );
 const queryBundleMember = ( domain: string ) => screen.queryByText( memberLineHas( domain ) );
@@ -1455,7 +1463,7 @@ describe( 'ResultsPage', () => {
 				</TestDomainSearch>
 			);
 
-			expect( await screen.findByRole( 'button', { name: 'Get bundle' } ) ).toBeInTheDocument();
+			expect( await findBundleCta() ).toBeInTheDocument();
 			// The companion (.net) is offered; the primary (.com) is not chipped.
 			expect( screen.getByText( '.net' ) ).toBeInTheDocument();
 			expect(
@@ -1517,7 +1525,7 @@ describe( 'ResultsPage', () => {
 
 			// The offer renders once, inside the featured-inline wrapper below the
 			// featured cards — never duplicated into the regular suggestions list.
-			expect( await screen.findByRole( 'button', { name: 'Get bundle' } ) ).toBeInTheDocument();
+			expect( await findBundleCta() ).toBeInTheDocument();
 			const featuredInlineWrapper = container.querySelector(
 				'.domain-search--results__featured-inline-bundles'
 			);

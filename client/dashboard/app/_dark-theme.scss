@@ -421,10 +421,6 @@
 		}
 	}
 
-	.plugin-switcher-item-name {
-		color: var( --dashboard__text-color );
-	}
-
 	.plugin-icon-wrapper.is-fallback {
 		background: var( --wp-components-color-gray-200 );
 		border-color: var( --wp-components-color-gray-300 );
@@ -491,6 +487,14 @@
 	}
 }
 
+@mixin dashboard-dark-theme-site-launch-modal {
+	.celebration-modal--content,
+	.site-launch-pre-launch-modal__preview-card {
+		background-color: var( --wp-components-color-gray-200 );
+		color: var( --dashboard__text-color );
+	}
+}
+
 // :root variables overridden for dark theme
 @mixin dashboard-dark-theme {
 	@include color-scheme-dark-theme-tokens;
@@ -518,6 +522,7 @@
 	@include dashboard-dark-theme-scan;
 	@include dashboard-dark-theme-section-header;
 	@include color-scheme-dark-theme-site-icon;
+	@include dashboard-dark-theme-site-launch-modal;
 	@include dashboard-dark-theme-site-logs-badges;
 	@include color-scheme-dark-theme-summary-button;
 }

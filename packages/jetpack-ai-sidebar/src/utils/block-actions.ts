@@ -25,6 +25,8 @@ export interface CheckpointApi {
 	setCheckpoint: ( id: string, fields?: CheckpointField[] ) => void;
 	hasCheckpoint: ( id: string ) => boolean;
 	restoreCheckpoint: ( id: string ) => Promise< void >;
+	canSwapCheckpoint?: ( id: string ) => boolean | undefined;
+	swapCheckpoint?: ( id: string ) => Promise< void >;
 }
 
 // ---------- Module state ----------
@@ -714,6 +716,7 @@ export function handleUpdateBlockContent( input: any ): any {
 			returnToAgent: false,
 		};
 	}
+	const snapshotAttribute = snapshot.attributeName;
 
 	// Substring replace when currentText is a non-empty span present in the block.
 	// If that span no longer exists, fail rather than replacing the whole block
@@ -751,11 +754,7 @@ export function handleUpdateBlockContent( input: any ): any {
 	// Short delay so the shimmer is visible before content swaps
 	return new Promise< any >( ( resolve ) => {
 		setTimeout( () => {
-			const latestSnapshot = getBlockSnapshot(
-				targetClientId,
-				snapshot?.attributeName,
-				currentText
-			);
+			let latestSnapshot = getBlockSnapshot( targetClientId, snapshotAttribute, currentText );
 			const resolveFailure = ( error: string ) => {
 				if ( blockEl ) {
 					removeProcessingEffect( blockEl );
@@ -769,6 +768,25 @@ export function handleUpdateBlockContent( input: any ): any {
 				resolveFailure( 'context changed' );
 				return;
 			}
+
+			if ( ! latestSnapshot && hasCurrentText ) {
+				const fallback = findBlockSnapshotByCurrentText( currentText, snapshotAttribute );
+				if ( fallback.error ) {
+					resolveFailure( fallback.error );
+					return;
+				}
+				if ( fallback.snapshot ) {
+					latestSnapshot = getBlockSnapshot(
+						fallback.snapshot.clientId,
+						fallback.snapshot.attributeName,
+						currentText
+					);
+					if ( latestSnapshot ) {
+						targetClientId = latestSnapshot.clientId;
+					}
+				}
+			}
+
 			if ( ! latestSnapshot ) {
 				resolveFailure( 'block not found' );
 				return;
@@ -804,6 +822,23 @@ export function handleUpdateBlockContent( input: any ): any {
 					clientId: targetClientId,
 				} );
 				resolveFailure( 'block content changed while applying edit' );
+				return;
+			}
+
+			if ( nextContent === latestSnapshot.content ) {
+				if ( blockEl ) {
+					removeProcessingEffect( blockEl );
+				}
+				notifyBlockActionComplete();
+				resolve( {
+					success: true,
+					clientId: targetClientId,
+					contentBefore: latestSnapshot.content,
+					contentAfter: nextContent,
+					editableAttribute: latestSnapshot.attributeName,
+					returnToAgent: false,
+					...( summary ? { agentMessage: summary } : {} ),
+				} );
 				return;
 			}
 
@@ -908,4 +943,13 @@ export function undoBlockEdit(
 	} catch {
 		return false;
 	}
+}
+
+export function canUndoBlockEdit(
+	clientId: string,
+	expectedContent: string,
+	editableAttribute?: string
+): boolean {
+	const snapshot = getBlockSnapshot( clientId, editableAttribute, undefined, expectedContent );
+	return !! snapshot?.attributeName && snapshot.content === expectedContent;
 }

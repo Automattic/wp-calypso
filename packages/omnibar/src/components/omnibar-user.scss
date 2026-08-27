@@ -1,7 +1,7 @@
 .omnibar,
 .omnibar__popover {
 	.omnibar__user {
-		padding-top: 8px;
+		padding-top: 4px;
 		padding-bottom: 10px;
 	}
 
@@ -32,13 +32,12 @@
 			display: block;
 			object-fit: cover;
 			border-radius: 50%;
-			background: var( --omnibar-avatar-ring-color );
+			background: var( --omnibar-avatar-background );
 		}
 	}
 
 	.omnibar__user-label {
 		gap: 6px;
-		white-space: nowrap;
 	}
 
 	.omnibar__user-username {
@@ -55,6 +54,10 @@
 	justify-content: flex-end;
 	padding-inline-end: 10px;
 
+	@media ( max-width: 480px ) {
+		padding-inline-end: 7px;
+	}
+
 	@media ( min-width: 782px ) {
 		justify-content: center;
 		padding-inline-end: 8px;
@@ -67,16 +70,29 @@
 
 .omnibar__popover {
 	.omnibar__user-avatar {
-		width: 64px;
-		height: 64px;
-		border: 0;
+		display: none;
 	}
 
-	[role='group']:has( .omnibar__user ) [role='menuitem'] {
-		padding-inline-start: 88px;
-	}
+	@media ( min-width: 782px ) {
+		.omnibar__user-avatar {
+			display: inline-flex;
+			width: 64px;
+			height: 64px;
+			border: 0;
 
-	.omnibar__user .omnibar__user-avatar {
-		margin-inline-start: -72px;
+			> * {
+				background: none;
+			}
+		}
+
+		[role='group']:has( .omnibar__user ) [role='menuitem'] {
+			padding-inline-start: 96px;
+		}
+
+		.omnibar__user .omnibar__user-avatar {
+			top: 10px;
+			margin-inline-start: -80px;
+			margin-inline-end: 8px;
+		}
 	}
 }

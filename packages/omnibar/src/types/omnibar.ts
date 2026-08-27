@@ -10,6 +10,7 @@ export interface OmnibarNode {
 	href?: string;
 	onClick?: ( event: React.MouseEvent ) => void;
 	disabled?: boolean;
+	active?: boolean;
 	className?: string;
 	meta?: SiteActionNodeMeta & UserInfoNodeMeta;
 	render?: ( node: OmnibarNode ) => React.ReactNode;
@@ -22,6 +23,8 @@ export type OmnibarNodeBuilders = Record<
 >;
 
 export type OmnibarHrefResolver = ( href: string ) => string;
+
+export type OmnibarNodeTransformer = ( node: OmnibarNode ) => OmnibarNode;
 
 export interface SiteActionNodeMeta {
 	subtitle?: string;

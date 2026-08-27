@@ -20,6 +20,7 @@ import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import CartMessageCleanup from './cart-message-cleanup';
 import ClientCheckoutError from './checkout-error';
 import ClientCheckoutPlaceholder from './checkout-placeholder';
+import getPurchasedWPCOMPlanSlug from './lib/get-purchased-wpcom-plan-slug';
 import getSuccessRedirectUrl from './lib/get-success-redirect-url';
 import type { ShoppingCartItem } from '../types';
 
@@ -254,7 +255,8 @@ function BillingDragonCheckoutContent( {
 				sitelessCheckoutType="a4a"
 				redirectTo={ getSuccessRedirectUrl(
 					window.location.origin,
-					shouldClearCartOnSuccess && ! isPlanCheckout
+					shouldClearCartOnSuccess && ! isPlanCheckout,
+					isPlanCheckout ? null : getPurchasedWPCOMPlanSlug( cartItems )
 				) }
 				customizedPreviousPath="/marketplace"
 				siteSlug={ siteSlug ?? '' }

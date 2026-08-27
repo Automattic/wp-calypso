@@ -3,17 +3,14 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
+import { useInterval } from 'calypso/lib/interval';
 import { useSelector, useDispatch } from 'calypso/state';
-import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
-import {
-	getAutomatedTransferStatus,
-	isFetchingAutomatedTransferStatus,
-} from 'calypso/state/automated-transfer/selectors';
+import { transferCompleteStates } from 'calypso/state/automated-transfer/constants';
+import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchase-flow/actions';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
-import { getPluginsOnSite } from 'calypso/state/plugins/installed/selectors';
+import { getPluginsOnSite, isRequesting } from 'calypso/state/plugins/installed/selectors';
 import { isPluginActive } from 'calypso/state/plugins/installed/selectors-ts';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { areFetched, areFetching, getPlugins } from 'calypso/state/plugins/wporg/selectors';
@@ -21,20 +18,27 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { ThankYouPluginSection } from './marketplace-thank-you-plugin-section';
+import { THANK_YOU_RECOVERY_INTERVAL_MS } from './use-thank-you-deadline';
 
-type ThankYouData = [
-	React.ReactElement[],
-	boolean,
-	boolean,
-	string,
-	string,
-	string[],
-	boolean,
-	React.ReactElement | null,
-	boolean,
-];
+type ThankYouData = {
+	pluginsSection: React.ReactElement[];
+	allPluginsFetched: boolean;
+	allPluginsActivated: boolean;
+	pluginTitle: string;
+	pluginSubtitle: string;
+	pluginsProgressbarSteps: string[];
+	isAtomicNeeded: boolean;
+	thankYouHeaderAction: React.ReactElement | null;
+	isLoaded: boolean;
+	retry: () => void;
+};
 
-export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYouData {
+const PLUGIN_POLL_INTERVAL_MS = 3000;
+
+export default function usePluginsThankYouData(
+	pluginSlugs: string[],
+	isRecoveryMode: boolean
+): ThankYouData {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -94,9 +98,6 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const isJetpackSelfHosted = isJetpack && ! isAtomic;
 
-	const isFetchingTransferStatus = useSelector( ( state ) =>
-		isFetchingAutomatedTransferStatus( state, siteId )
-	);
 	// Consolidate the plugin information from the .org and .com sources in a single list
 	const pluginsInformationList = useMemo( () => {
 		return pluginsOnSite.reduce(
@@ -138,49 +139,39 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ areAllWporgPluginsFetched, areWporgPluginsFetched, pluginSlugs, dispatch, wporgPlugins ] );
 
-	useEffect( () => {
-		if ( ! isFetchingTransferStatus && transferStatus !== transferStates.COMPLETE ) {
-			dispatch( fetchAutomatedTransferStatus( siteId as number ) );
-		}
-	}, [ dispatch, isFetchingTransferStatus, siteId, transferStatus ] );
+	const isRequestingPlugins = useSelector( ( state ) =>
+		siteId ? isRequesting( state, siteId ) : false
+	);
 
-	// Site is already Atomic (or just transferred).
-	// Poll the plugin installation status.
+	const isPluginPollActive =
+		!! siteId &&
+		pluginSlugs.length > 0 &&
+		( isJetpackSelfHosted || transferCompleteStates.includes( transferStatus ) ) &&
+		! ( allPluginsFetched && allPluginsActivated );
+
 	useEffect( () => {
-		if (
-			! siteId ||
-			( ! isJetpackSelfHosted && transferStatus !== transferStates.COMPLETE ) ||
-			( allPluginsFetched && allPluginsActivated ) ||
-			pluginSlugs.length === 0
-		) {
+		if ( ! isPluginPollActive || ! siteId ) {
 			return;
 		}
 
-		const abortController = new AbortController();
+		dispatch( fetchSitePlugins( siteId ) );
+	}, [ dispatch, isPluginPollActive, siteId ] );
+	let pluginPollInterval: number | null = null;
+	if ( isPluginPollActive ) {
+		pluginPollInterval = isRecoveryMode ? THANK_YOU_RECOVERY_INTERVAL_MS : PLUGIN_POLL_INTERVAL_MS;
+	}
 
-		async function fetchPlugins() {
-			if ( abortController.signal.aborted ) {
-				return;
-			}
-
-			await dispatch( fetchSitePlugins( siteId ) );
-			fetchPlugins();
+	useInterval( () => {
+		if ( siteId && ! isRequestingPlugins ) {
+			dispatch( fetchSitePlugins( siteId ) );
 		}
+	}, pluginPollInterval );
 
-		fetchPlugins();
-
-		return () => {
-			abortController.abort();
-		};
-	}, [
-		dispatch,
-		siteId,
-		transferStatus,
-		isJetpackSelfHosted,
-		allPluginsFetched,
-		allPluginsActivated,
-		pluginSlugs,
-	] );
+	const retry = useCallback( () => {
+		if ( siteId && pluginSlugs.length > 0 && ! isRequestingPlugins ) {
+			dispatch( fetchSitePlugins( siteId ) );
+		}
+	}, [ dispatch, isRequestingPlugins, pluginSlugs.length, siteId ] );
 
 	const pluginsSection = pluginsInformationList.map( ( plugin: any ) => {
 		return <ThankYouPluginSection plugin={ plugin } key={ `plugin_${ plugin.slug }` } />;
@@ -228,17 +219,18 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 	// so atomic is always needed as long as we have plugins
 	const isAtomicNeeded = pluginSlugs.length > 0;
 
-	return [
+	return {
 		pluginsSection,
 		allPluginsFetched,
 		allPluginsActivated,
-		title,
-		subtitle,
-		thankyouSteps,
+		pluginTitle: title,
+		pluginSubtitle: subtitle,
+		pluginsProgressbarSteps: thankyouSteps,
 		isAtomicNeeded,
 		thankYouHeaderAction,
-		true,
-	];
+		isLoaded: true,
+		retry,
+	};
 }
 
 type Plugin = {
