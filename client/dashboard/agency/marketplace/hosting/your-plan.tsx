@@ -36,9 +36,7 @@ export default function YourPlan( {
 	onAddToCart,
 }: YourPlanProps ) {
 	const price = brand === 'wpcom' ? getTieredPrice( product, quantity, term, ownedSites ) : null;
-	const isCustomPlan = brand === 'pressable' && ! plan;
-	const isPremiumPlan = brand === 'pressable' && plan?.category === 'premium';
-	const isContactSales = isCustomPlan || isPremiumPlan;
+	const isContactSales = brand === 'pressable' && ! plan;
 	const isUpgrade = brand === 'pressable' && !! currentPlan && ! isContactSales;
 	const isCurrentPlan = isUpgrade && plan?.slug === currentPlan?.slug;
 
@@ -112,11 +110,8 @@ export default function YourPlan( {
 						<>
 							<VStack spacing={ 1 }>
 								<Text size={ 18 } weight={ 600 }>
-									{ isPremiumPlan ? __( 'From US$350 per month' ) : __( 'Custom pricing' ) }
+									{ __( 'Custom pricing' ) }
 								</Text>
-								{ isPremiumPlan && (
-									<Text variant="muted">{ __( 'Per site, when billed monthly.' ) }</Text>
-								) }
 							</VStack>
 							<VStack spacing={ 4 } alignment="flex-start">
 								<Button
