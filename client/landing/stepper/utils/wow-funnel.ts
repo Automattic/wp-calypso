@@ -1,6 +1,13 @@
 import { Site } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, createSite } from '@automattic/onboarding';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { getTransferFailureMessage } from './atomic-transfer-outcome';
+import {
+	getSiteAdminUrl,
+	getSiteEditorUrl,
+	waitForAtomicTransferComplete,
+	waitForBlueprintImportComplete,
+} from './blueprint-archive-import';
 
 /**
  * A WoW funnel is a CTA-selected onboarding path whose end state is always an Atomic site,
@@ -12,17 +19,95 @@ import { logToLogstash } from 'calypso/lib/logstash';
  */
 
 /**
- * Where the customer lands after checkout, when the CTA asks for somewhere specific.
+ * Where the customer lands at the END of a funnel — always on the built site.
  *
- * - `editor`    — straight into the Site Editor on the built Atomic site.
- * - `site-spec` — the AI site-spec, which polls the funnel's build and hands over when it lands.
+ * - `editor` — straight into the Site Editor on the built Atomic site.
  *
- * No (or unrecognized) `dest` means no override: the flow's ordinary post-checkout destination
- * applies.
+ * Keeping every destination remote is what makes "end of funnel" a structural fact rather than
+ * something inferred from the dest value. Calypso-side work is not a destination; it is an
+ * interstitial that runs before the hand-off (see WowFunnelInterstitial).
  */
-export type WowFunnelDest = 'editor' | 'site-spec';
+export type WowFunnelDest = 'editor';
 
-const WOW_FUNNEL_DESTS: WowFunnelDest[] = [ 'editor', 'site-spec' ];
+const WOW_FUNNEL_DESTS: WowFunnelDest[] = [ 'editor' ];
+
+/**
+ * A Calypso-side step a funnel inserts between checkout and the hand-off.
+ *
+ * - `site-spec` — collects the owner's details and applies them to the built site.
+ *
+ * Interstitials live in their own flows and are reached by URL, so they are an ordered list of
+ * hops rather than steps spliced into onboarding's step list. The last hop owns the readiness
+ * wait and the hand-off, both through the shared helpers below — so a funnel's terminal
+ * behaviour is identical whether or not it has interstitials.
+ */
+export type WowFunnelInterstitial = 'site-spec';
+
+/**
+ * What must be true before the customer is handed to the destination.
+ *
+ * One predicate per funnel is enough because each funnel's is transitively the last thing in its
+ * chain: the blueprint import runs behind the Atomic transfer (the backup_import job initiates
+ * the transfer as its first step), so `import` already implies `transfer`.
+ */
+export type WowFunnelReadiness = 'transfer' | 'import';
+
+export type WowFunnelConfig = {
+	/** Calypso-side hops between checkout and the hand-off, in order. */
+	interstitials: WowFunnelInterstitial[];
+	/** Where the customer lands when the CTA does not override it. */
+	dest: WowFunnelDest;
+	/** What the loading screen waits on before handing over. */
+	readiness: WowFunnelReadiness;
+	/** How long that wait runs before it gives up and raises a timeout. */
+	waitTimeoutSeconds: number;
+};
+
+const DEFAULT_WOW_FUNNEL_CONFIG: WowFunnelConfig = {
+	interstitials: [],
+	dest: 'editor',
+	readiness: 'transfer',
+	// The observed fast-provision build is well under a minute; this is headroom, not a target.
+	waitTimeoutSeconds: 180,
+};
+
+/**
+ * Per-funnel overrides. Anything unset falls back to DEFAULT_WOW_FUNNEL_CONFIG, so a new funnel
+ * that just wants "empty Atomic site, then the editor" needs no entry here at all.
+ *
+ * Mirrors the server-side registry in wp-content/lib/atomic/wow-funnels.php by slug only: PHP owns
+ * what the BUILD does (context, theme, follow-up), this owns what the FLOW does. Keeping flow
+ * config client-side also keeps it off the critical path of the post-checkout hand-off.
+ */
+const WOW_FUNNEL_CONFIG: Record< string, Partial< WowFunnelConfig > > = {
+	default: {},
+	blueprint: {
+		interstitials: [ 'site-spec' ],
+		readiness: 'import',
+		// The archive restore is genuinely long; this matches the wait site-spec already ran.
+		waitTimeoutSeconds: 900,
+	},
+};
+
+/**
+ * Whether the slug names a funnel this client knows how to run.
+ *
+ * The server ignores an unregistered slug outright — it never enrols the blog and never starts a
+ * build — so the client has to degrade the same way. Without this check a typo'd slug would take
+ * the funnel path and then sit on the loading screen waiting for a transfer that was never going
+ * to happen. Mirrors the server registry by slug; a funnel the server knows and this list does
+ * not falls back to ordinary onboarding, which is the same safe failure.
+ */
+export function isKnownWowFunnel( funnelSlug: string | null ): funnelSlug is string {
+	return !! funnelSlug && Object.prototype.hasOwnProperty.call( WOW_FUNNEL_CONFIG, funnelSlug );
+}
+
+export function getWowFunnelConfig( funnelSlug: string | null ): WowFunnelConfig {
+	return {
+		...DEFAULT_WOW_FUNNEL_CONFIG,
+		...( ( funnelSlug && WOW_FUNNEL_CONFIG[ funnelSlug ] ) || {} ),
+	};
+}
 
 /**
  * A funnel site created for this flow, remembered so the create-site step can consume it rather
@@ -70,9 +155,19 @@ export function getWowFunnelArgs( queryParams: URLSearchParams ): Record< string
 	return args;
 }
 
-export function getWowFunnelDest( queryParams: URLSearchParams ): WowFunnelDest | null {
+/**
+ * The funnel's destination. `dest` in the URL is an OVERRIDE for a CTA that wants somewhere other
+ * than the funnel's default; absent or unrecognized, the configured default applies.
+ *
+ * Never null: a missing `dest` used to drop the customer silently into ordinary onboarding
+ * destinations, which looked like working onboarding and wasn't.
+ */
+export function getWowFunnelDest(
+	queryParams: URLSearchParams,
+	funnelSlug: string | null
+): WowFunnelDest {
 	const dest = queryParams.get( 'dest' );
-	return WOW_FUNNEL_DESTS.find( ( d ) => d === dest ) ?? null;
+	return WOW_FUNNEL_DESTS.find( ( d ) => d === dest ) ?? getWowFunnelConfig( funnelSlug ).dest;
 }
 
 export function logWowFunnelEvent(
@@ -213,4 +308,98 @@ export function startWowFunnelSite( {
 	} );
 
 	return request;
+}
+
+const WAIT_TIMED_OUT = Symbol( 'wow-funnel-wait-timed-out' );
+
+/**
+ * Wait until the funnel's build is genuinely ready to be handed over.
+ *
+ * This is the gate that was missing: the hand-off used to fire the moment checkout returned, on
+ * the assumption that the build had finished during domain selection and checkout. It usually
+ * had. When it had not, the customer landed on the pre-switcheroo Simple site — the site was
+ * fine and finished moments later, but their first impression was the wrong site.
+ *
+ * Throws on failure or timeout, matching how every other Atomic wait in stepper reports (see
+ * bundle-transfer, use-wait-for-atomic), so the flow's existing exception handling routes it to
+ * the shared error step with a message that already reads correctly for a timeout.
+ */
+export async function waitForWowFunnelReady( {
+	funnelSlug,
+	siteIdentifier,
+}: {
+	funnelSlug: string;
+	siteIdentifier: string;
+} ): Promise< void > {
+	const { readiness, waitTimeoutSeconds } = getWowFunnelConfig( funnelSlug );
+
+	const work = ( async () => {
+		// Every readiness level starts with the transfer — the site cannot be ready before it is
+		// Atomic — and `import` simply waits for one more thing behind it.
+		await waitForAtomicTransferComplete( siteIdentifier );
+		if ( 'import' === readiness ) {
+			await waitForBlueprintImportComplete( siteIdentifier );
+		}
+	} )();
+
+	let timer: ReturnType< typeof setTimeout > | undefined;
+	const timeout = new Promise< typeof WAIT_TIMED_OUT >( ( resolve ) => {
+		timer = setTimeout( () => resolve( WAIT_TIMED_OUT ), waitTimeoutSeconds * 1000 );
+	} );
+
+	try {
+		// Settling the work promise here (rather than letting the race reject) keeps a late
+		// rejection from surfacing as an unhandled rejection after a timeout has already won.
+		const outcome = await Promise.race( [
+			work.then(
+				() => 'ready' as const,
+				() => 'failed' as const
+			),
+			timeout,
+		] );
+
+		if ( WAIT_TIMED_OUT === outcome ) {
+			logWowFunnelEvent( 'handoff_wait_timeout', {
+				funnel: funnelSlug,
+				readiness,
+				timeout_seconds: waitTimeoutSeconds,
+			} );
+			throw new Error( getTransferFailureMessage( 'timeout' ) );
+		}
+
+		if ( 'failed' === outcome ) {
+			logWowFunnelEvent( 'handoff_wait_failed', { funnel: funnelSlug, readiness } );
+			throw new Error( getTransferFailureMessage( 'error' ) );
+		}
+	} finally {
+		clearTimeout( timer );
+	}
+}
+
+/**
+ * Build the URL the funnel hands the customer over to.
+ *
+ * Resolved AFTER the readiness wait, deliberately: a funnel site's address changes mid-flow when
+ * the Simple site becomes Atomic, so a URL captured at flow start points at the old one. Goes
+ * through the site's own admin URL and Jetpack SSO for the same reason the blueprint hand-off
+ * does — the customer holds a WordPress.com session, not a session on their new Atomic site.
+ */
+export async function getWowFunnelHandoffUrl( {
+	dest,
+	siteIdentifier,
+	startWalkthrough = false,
+}: {
+	dest: WowFunnelDest;
+	siteIdentifier: string;
+	startWalkthrough?: boolean;
+} ): Promise< string > {
+	switch ( dest ) {
+		case 'editor':
+		default: {
+			const adminUrl = await getSiteAdminUrl( siteIdentifier );
+			// `p` opens the front page rather than whatever the editor last had; `canvasEdit`
+			// because a plain site-editor.php load stays in view mode.
+			return getSiteEditorUrl( adminUrl, { canvasEdit: true, path: '/', startWalkthrough } );
+		}
+	}
 }

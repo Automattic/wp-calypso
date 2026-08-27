@@ -290,7 +290,11 @@ export async function getSiteAdminUrl( siteIdentifier: string ): Promise< string
  */
 export function getSiteEditorUrl(
 	adminUrl: string,
-	{ startWalkthrough = false }: { startWalkthrough?: boolean } = {}
+	{
+		startWalkthrough = false,
+		canvasEdit = false,
+		path,
+	}: { startWalkthrough?: boolean; canvasEdit?: boolean; path?: string } = {}
 ): string {
 	const base = adminUrl.endsWith( '/' ) ? adminUrl : `${ adminUrl }/`;
 	const url = `${ base }site-editor.php`;
@@ -310,9 +314,19 @@ export function getSiteEditorUrl(
 	//
 	// Only set when the spec applied; there is nothing to personalize from
 	// otherwise.
-	const editorUrl = startWalkthrough
-		? addQueryArgs( url, { 'blueprint-walkthrough': 'go', canvas: 'edit' } )
-		: url;
+	const args: Record< string, string > = {};
+	if ( startWalkthrough ) {
+		args[ 'blueprint-walkthrough' ] = 'go';
+	}
+	// The walkthrough needs the editing canvas; a caller can also ask for it on its own, which is
+	// what the funnel hand-off does — a plain site-editor.php load stays in view mode.
+	if ( startWalkthrough || canvasEdit ) {
+		args.canvas = 'edit';
+	}
+	if ( path ) {
+		args.p = path;
+	}
+	const editorUrl = Object.keys( args ).length > 0 ? addQueryArgs( url, args ) : url;
 
 	return withJetpackSso( editorUrl );
 }
