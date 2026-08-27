@@ -7,6 +7,10 @@ interface EmailRateResponse {
 	total_opens?: number;
 }
 
+function hasEmailStats( data?: EmailRateResponse ) {
+	return ( data?.total_sends ?? 0 ) > 0 || ( data?.total_opens ?? 0 ) > 0;
+}
+
 function queryEmailRate( siteId: number, postId: number ): Promise< EmailRateResponse > {
 	return wpcom.req.get( `/sites/${ siteId }/stats/opens/emails/${ postId }/rate` );
 }
@@ -25,7 +29,9 @@ export default function usePostEmailStatsAvailabilityQuery(
 		queryKey: [ 'stats', 'emails', 'rate', siteId, postId ],
 		queryFn: () => queryEmailRate( siteId as number, postId ),
 		enabled: enabled && !! siteId && postId > 0,
-		staleTime: 1000 * 60 * 5,
-		select: ( data ) => ( data?.total_sends ?? 0 ) > 0 || ( data?.total_opens ?? 0 ) > 0,
+		// A "no email stats" answer can be transient while a newsletter is still being sent,
+		// so only a positive result is kept for a while.
+		staleTime: ( query ) => ( hasEmailStats( query.state.data ) ? 1000 * 60 * 5 : 0 ),
+		select: hasEmailStats,
 	} );
 }
