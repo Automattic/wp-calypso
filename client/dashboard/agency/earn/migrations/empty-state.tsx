@@ -40,7 +40,9 @@ export default function MigrationsCommissionsEmptyState( {
 						/>
 						{ canTagSitesForCommission && (
 							<EmptyState.ActionItem
-								title={ __( 'This list shows every site connected to your account. Tag the ones you moved to Automattic so we can pay you for them.' ) }
+								title={ __(
+									'This list shows every site connected to your account. Tag the ones you moved to Automattic so we can pay you for them.'
+								) }
 								description={
 									<>
 										{ __(

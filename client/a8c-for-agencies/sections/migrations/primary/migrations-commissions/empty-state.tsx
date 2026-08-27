@@ -32,7 +32,9 @@ export default function MigrationsCommissionsEmptyState( {
 			/>
 			{ canTagSitesForCommission && (
 				<StepSectionItem
-					heading={ __( 'This list shows every site connected to your account. Tag the ones you moved to Automattic so we can pay you for them.' ) }
+					heading={ __(
+						'This list shows every site connected to your account. Tag the ones you moved to Automattic so we can pay you for them.'
+					) }
 					description={
 						<>
 							{ __(
