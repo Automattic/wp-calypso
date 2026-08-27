@@ -4,7 +4,8 @@ import { readSubscribedListsQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useQuery } from '@tanstack/react-query';
-import { Icon, commentAuthorAvatar, plus } from '@wordpress/icons';
+import { Button } from '@wordpress/components';
+import { Icon, commentAuthorAvatar, plus, search } from '@wordpress/icons';
 import clsx from 'clsx';
 import closest from 'component-closest';
 import i18n, { localize } from 'i18n-calypso';
@@ -81,6 +82,16 @@ const TrackingKeys = {
 		action: 'clicked_reader_sidebar_saved',
 		gaEvent: 'Clicked Reader Sidebar Saved',
 		tracksEvent: 'calypso_reader_sidebar_saved_clicked',
+	},
+	addNew: {
+		action: 'clicked_reader_sidebar_add_new',
+		gaEvent: 'Clicked Reader Sidebar Add New',
+		tracksEvent: 'calypso_reader_sidebar_add_new_clicked',
+	},
+	search: {
+		action: 'clicked_reader_sidebar_search',
+		gaEvent: 'Clicked Reader Sidebar Search',
+		tracksEvent: 'calypso_reader_sidebar_search_clicked',
 	},
 };
 
@@ -164,7 +175,37 @@ export class ReaderSidebar extends Component {
 
 		return (
 			<div className="sidebar-menu-container">
-				<AppTitle />
+				<div className="reader-sidebar__title-row">
+					<AppTitle />
+					<div className="reader-sidebar__title-actions">
+						<Button
+							className={ clsx( 'reader-sidebar__title-action', {
+								'is-selected': path.startsWith( '/reader/new' ),
+							} ) }
+							href="/reader/new"
+							icon={ plus }
+							iconSize={ 24 }
+							label={ translate( 'New subscription' ) }
+							showTooltip
+							onClick={ ( event ) =>
+								this.handleSidebarMenuClick( TrackingKeys.addNew )( event, '/reader/new' )
+							}
+						/>
+						<Button
+							className={ clsx( 'reader-sidebar__title-action', {
+								'is-selected': path.startsWith( '/discover/search' ),
+							} ) }
+							href="/discover/search"
+							icon={ search }
+							iconSize={ 24 }
+							label={ translate( 'Search' ) }
+							showTooltip
+							onClick={ ( event ) =>
+								this.handleSidebarMenuClick( TrackingKeys.search )( event, '/discover/search' )
+							}
+						/>
+					</div>
+				</div>
 				<SidebarMenu>
 					<li className="reader-sidebar__section-header" role="presentation">
 						<span role="heading" aria-level="3">

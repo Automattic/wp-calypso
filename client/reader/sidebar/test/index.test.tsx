@@ -80,6 +80,34 @@ describe( 'ReaderSidebar', () => {
 		} );
 	} );
 
+	describe( 'title actions', () => {
+		it( 'links to the new subscription page and to search', () => {
+			const instance = new ReaderSidebar( defaultProps );
+
+			render( instance.renderSidebarMenu() );
+
+			expect( screen.getByRole( 'link', { name: 'New subscription' } ) ).toHaveAttribute(
+				'href',
+				'/reader/new'
+			);
+			expect( screen.getByRole( 'link', { name: 'Search' } ) ).toHaveAttribute(
+				'href',
+				'/discover/search'
+			);
+		} );
+
+		it( 'marks the search action as selected on the search page', () => {
+			const instance = new ReaderSidebar( { ...defaultProps, path: '/discover/search' } );
+
+			render( instance.renderSidebarMenu() );
+
+			expect( screen.getByRole( 'link', { name: 'Search' } ) ).toHaveClass( 'is-selected' );
+			expect( screen.getByRole( 'link', { name: 'New subscription' } ) ).not.toHaveClass(
+				'is-selected'
+			);
+		} );
+	} );
+
 	describe( 'handleSidebarMenuClick', () => {
 		let instance: ReaderSidebar;
 
