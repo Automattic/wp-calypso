@@ -33,39 +33,6 @@ const interceptConnections = ( connections: WordPressAgentSlackConnection[] ) =>
 	nock( API ).get( '/wpcom/v2/wordpress-agent/slack/connections' ).reply( 200, { connections } );
 
 describe( '<WordPressAgentSlack />', () => {
-	test( 'pairs the account and refreshes the connected workspaces', async () => {
-		interceptConnections( [] );
-		const pairRequest = nock( API )
-			.post( '/wpcom/v2/wordpress-agent/slack/pair', { token: 'pair-token' } )
-			.reply( 200, {} );
-		interceptConnections( [ CONNECTION ] );
-
-		const { recordTracksEvent } = render( <WordPressAgentSlack pairToken="pair-token" />, {
-			user: USER,
-		} );
-
-		expect(
-			await screen.findByRole( 'heading', {
-				name: 'Connect your WordPress.com account Test User (@testuser) to this Slack workspace?',
-			} )
-		).toBeVisible();
-		await userEvent.click( screen.getByRole( 'button', { name: 'Connect account' } ) );
-
-		await waitFor( () => expect( pairRequest.isDone() ).toBe( true ) );
-		expect(
-			await screen.findByText( 'Your Slack account is connected.', {
-				selector: '.components-notice__content',
-			} )
-		).toBeVisible();
-		expect( await screen.findByRole( 'heading', { name: CONNECTION.team_name } ) ).toBeVisible();
-		expect(
-			screen.getByText( 'connected', { selector: 'strong' } ).parentElement
-		).toHaveTextContent( 'Your account is connected.' );
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_wordpress_agent_slack_pair_success'
-		);
-	} );
-
 	test( 'disconnects a Slack workspace and refreshes the list', async () => {
 		interceptConnections( [ CONNECTION ] );
 		const disconnectRequest = nock( API )

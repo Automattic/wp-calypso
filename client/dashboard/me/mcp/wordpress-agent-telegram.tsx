@@ -2,25 +2,16 @@ import {
 	wordpressAgentTelegramConnectMutation,
 	wordpressAgentTelegramDisconnectMutation,
 	wordpressAgentTelegramStatusQuery,
-	wordpressAgentTelegramTokenConnectMutation,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Notice, Spinner } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { __ } from '@wordpress/i18n';
+import { useEffect, useMemo, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { useAuth } from '../../app/auth';
 import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import type { WordPressAgentTelegramAuthPayload } from '@automattic/api-core';
-
-interface WordPressAgentTelegramProps {
-	telegramId?: string;
-	token?: string;
-	timestamp?: string;
-	bot?: string;
-}
 
 declare global {
 	interface Window {
@@ -34,27 +25,14 @@ function getErrorMessage( error: unknown, fallback: string ): string {
 	return error instanceof Error && error.message ? error.message : fallback;
 }
 
-function getTelegramBotUrl( bot?: string ) {
-	return bot ? `https://t.me/${ encodeURIComponent( bot ) }` : undefined;
-}
-
-export default function WordPressAgentTelegram( {
-	telegramId,
-	token,
-	timestamp,
-	bot,
-}: WordPressAgentTelegramProps ) {
+export default function WordPressAgentTelegram() {
 	const { recordTracksEvent } = useAnalytics();
-	const { user } = useAuth();
 	const queryClient = useQueryClient();
 	const containerRef = useRef< HTMLDivElement | null >( null );
 	const injectedContainerRef = useRef< HTMLDivElement | null >( null );
-	const [ pairingDismissed, setPairingDismissed ] = useState( false );
-	const [ pairingComplete, setPairingComplete ] = useState( false );
 	const statusQuery = useQuery( wordpressAgentTelegramStatusQuery() );
 	const connectMutation = useMutation( wordpressAgentTelegramConnectMutation( queryClient ) );
 	const connectTelegram = connectMutation.mutate;
-	const tokenMutation = useMutation( wordpressAgentTelegramTokenConnectMutation( queryClient ) );
 	const disconnectMutation = useMutation( wordpressAgentTelegramDisconnectMutation( queryClient ) );
 
 	const botUsername = config( 'dolly_telegram_bot_username' ) as unknown as string | undefined;
@@ -83,20 +61,6 @@ export default function WordPressAgentTelegram( {
 	const isConnected = Boolean(
 		statusQuery.data?.connected || statusQuery.data?.telegram_user_id != null
 	);
-	const hasAnyCallbackParam = Boolean( telegramId || token || timestamp || bot );
-	const hasCompleteCallback = Boolean( telegramId && token && timestamp );
-	const displayName = user.display_name;
-	const username =
-		displayName && user.username && displayName !== user.username
-			? `${ displayName } (@${ user.username })`
-			: displayName || user.username;
-	const pairingTitle = username
-		? sprintf(
-				/* translators: %s is the WordPress.com user's display name and/or username. */
-				__( 'Connect your WordPress.com account %s to Telegram?' ),
-				username
-		  )
-		: __( 'Connect your WordPress.com account to Telegram?' );
 
 	useEffect( () => {
 		if ( ! isConfigured || isConnected || ! isStatusReady ) {
@@ -158,50 +122,18 @@ export default function WordPressAgentTelegram( {
 		return null;
 	}
 
-	const connectViaToken = () => {
-		if ( ! telegramId || ! token || ! timestamp ) {
-			return;
-		}
-
-		tokenMutation.mutate(
-			{
-				telegram_id: telegramId,
-				token,
-				ts: timestamp,
-				...( bot && { bot } ),
-			},
-			{
-				onSuccess: () => {
-					recordTracksEvent( 'calypso_telegram_connect_via_token_success', {
-						source: 'calypso_token',
-					} );
-					setPairingComplete( true );
-				},
-				onError: ( error ) => {
-					recordTracksEvent( 'calypso_telegram_connect_via_token_error', {
-						source: 'calypso_token',
-						error: error.message || 'unknown',
-					} );
-				},
-			}
-		);
-	};
-
 	const disconnect = () => {
 		disconnectMutation.mutate( undefined, {
 			onSuccess: () => {
 				recordTracksEvent( 'calypso_wordpress_agent_telegram_disconnect' );
 				connectMutation.reset();
-				tokenMutation.reset();
-				setPairingComplete( false );
 			},
 		} );
 	};
 
-	const error =
-		statusQuery.error || connectMutation.error || tokenMutation.error || disconnectMutation.error;
+	const error = statusQuery.error || connectMutation.error || disconnectMutation.error;
 	let errorFallback: string = __( 'Could not load your Telegram connection.' );
-	if ( connectMutation.error || tokenMutation.error ) {
+	if ( connectMutation.error ) {
 		errorFallback = __( 'Failed to connect Telegram. Please try again.' );
 	} else if ( disconnectMutation.error ) {
 		errorFallback = __( 'Failed to disconnect Telegram. Please try again.' );
@@ -209,52 +141,6 @@ export default function WordPressAgentTelegram( {
 
 	return (
 		<>
-			{ hasAnyCallbackParam && ! hasCompleteCallback && (
-				<Notice status="error" isDismissible={ false }>
-					{ __( 'This Telegram connection link is invalid or incomplete.' ) }
-				</Notice>
-			) }
-			{ hasCompleteCallback && ! pairingDismissed && ! pairingComplete && (
-				<Card>
-					<CardBody className="wordpress-agent-connection__row">
-						<SectionHeader
-							level={ 3 }
-							title={ pairingTitle }
-							description={ __(
-								'Connect your account to use WordPress Agent when you message it in Telegram.'
-							) }
-						/>
-						<div className="wordpress-agent-connection__actions">
-							<Button variant="secondary" onClick={ () => setPairingDismissed( true ) }>
-								{ __( 'Cancel' ) }
-							</Button>
-							<Button
-								variant="primary"
-								onClick={ connectViaToken }
-								isBusy={ tokenMutation.isPending }
-								disabled={ tokenMutation.isPending }
-							>
-								{ __( 'Connect' ) }
-							</Button>
-						</div>
-					</CardBody>
-				</Card>
-			) }
-			{ pairingComplete && (
-				<Notice status="success" isDismissible={ false }>
-					{ __( 'Telegram connected successfully.' ) }
-					{ getTelegramBotUrl( bot ) && (
-						<Button
-							variant="link"
-							href={ getTelegramBotUrl( bot ) }
-							target="_blank"
-							rel="noreferrer"
-						>
-							{ __( 'Open Telegram' ) }
-						</Button>
-					) }
-				</Notice>
-			) }
 			{ connectMutation.isSuccess && (
 				<Notice status="success" isDismissible={ false }>
 					{ __( 'Telegram connected successfully.' ) }

@@ -75,44 +75,4 @@ describe( '<WordPressAgentTelegram />', () => {
 		} );
 		expect( screen.getByText( 'Chat with WordPress Agent on Telegram.' ) ).toBeVisible();
 	} );
-
-	test( 'connects from a Telegram token callback', async () => {
-		interceptStatus( false );
-		const tokenRequest = nock( API )
-			.post( '/wpcom/v2/telegram-bot/connect-via-token', {
-				telegram_id: '123',
-				token: 'token',
-				ts: '456',
-				bot: 'wordpressagentbot',
-			} )
-			.reply( 200, {} );
-
-		render(
-			<WordPressAgentTelegram
-				telegramId="123"
-				token="token"
-				timestamp="456"
-				bot="wordpressagentbot"
-			/>,
-			{ user: USER }
-		);
-
-		expect(
-			await screen.findByRole( 'heading', {
-				name: 'Connect your WordPress.com account Test User (@testuser) to Telegram?',
-			} )
-		).toBeVisible();
-		await userEvent.click( screen.getByRole( 'button', { name: 'Connect' } ) );
-
-		await waitFor( () => expect( tokenRequest.isDone() ).toBe( true ) );
-		expect(
-			await screen.findByText( 'Telegram connected successfully.', {
-				selector: '.components-notice__content',
-			} )
-		).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Open Telegram' } ) ).toHaveAttribute(
-			'href',
-			'https://t.me/wordpressagentbot'
-		);
-	} );
 } );
