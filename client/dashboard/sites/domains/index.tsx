@@ -4,6 +4,7 @@ import { Link, useNavigate } from '@tanstack/react-router';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useRef } from 'react';
 import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
@@ -62,8 +63,16 @@ function SiteDomains() {
 		...domainQuery( primaryDomainCandidate?.domain ?? '' ),
 		enabled: !! primaryDomainCandidate,
 	} );
+	const isCandidatePending = !! candidateDomain && isPendingPrimaryDomain( candidateDomain );
+	// Keep the notice mounted once it has appeared. It shares the polling query
+	// with this page, so dropping it as soon as the domain is set up would unmount
+	// it before it can announce completion and dismiss itself.
+	const hasShownPendingNotice = useRef( false );
+	if ( isCandidatePending ) {
+		hasShownPendingNotice.current = true;
+	}
 	const pendingDomain =
-		candidateDomain && isPendingPrimaryDomain( candidateDomain ) ? candidateDomain : undefined;
+		isCandidatePending || hasShownPendingNotice.current ? candidateDomain : undefined;
 
 	const { data: redirect } = useSuspenseQuery( siteRedirectQuery( site.ID ) );
 	const hasRedirect = redirect && Object.keys( redirect ).length > 0;

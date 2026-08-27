@@ -5,7 +5,8 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useRef } from 'react';
-import { isPendingPrimaryDomain } from '../../utils/domain';
+import { useAppContext } from '../../app/context';
+import { hasCustomPrimaryDomain, isPendingPrimaryDomain } from '../../utils/domain';
 import { Notice } from '../notice';
 
 interface PendingPrimaryDomainNoticeProps {
@@ -17,6 +18,8 @@ export default function PendingPrimaryDomainNotice( {
 	domainName,
 	onComplete,
 }: PendingPrimaryDomainNoticeProps ) {
+	const { queries } = useAppContext();
+
 	const { data: polledDomain } = useQuery( {
 		...domainQuery( domainName ),
 		refetchInterval: ( query ) => {
@@ -26,21 +29,36 @@ export default function PendingPrimaryDomainNotice( {
 		meta: { persist: false },
 	} );
 
-	const isPending = ! polledDomain || isPendingPrimaryDomain( polledDomain );
+	// WordPress.com only sets a domain as primary on its own when the site has no
+	// custom primary address yet.
+	const { data: allDomains } = useQuery( {
+		...queries.domainsQuery(),
+		enabled: !! polledDomain,
+	} );
+
+	const isPending =
+		!! polledDomain &&
+		!! allDomains &&
+		! hasCustomPrimaryDomain(
+			allDomains.filter( ( domain ) => domain.blog_id === polledDomain.blog_id )
+		) &&
+		isPendingPrimaryDomain( polledDomain );
 
 	// Track whether the domain was ever actually pending, so we don't fire
 	// a spurious snackbar when rendered for a non-pending domain.
 	const wasPendingRef = useRef( false );
-	if ( isPending && polledDomain ) {
+	if ( isPending ) {
 		wasPendingRef.current = true;
 	}
 
-	// Show completion snackbar when primary domain setup finishes.
+	// Announce the domain only once it has actually become the primary address.
+	// Setup finishing is not enough: the job promotes the domain on a later retry.
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const onCompleteRef = useRef( onComplete );
 	onCompleteRef.current = onComplete;
+	const isPrimary = !! polledDomain?.primary_domain;
 	useEffect( () => {
-		if ( ! isPending && wasPendingRef.current ) {
+		if ( isPrimary && wasPendingRef.current ) {
 			createSuccessNotice(
 				sprintf(
 					/* translators: %s is the domain name */
@@ -51,9 +69,9 @@ export default function PendingPrimaryDomainNotice( {
 			);
 			onCompleteRef.current?.();
 		}
-	}, [ isPending, createSuccessNotice, domainName ] );
+	}, [ isPrimary, createSuccessNotice, domainName ] );
 
-	if ( ! isPending || ! polledDomain ) {
+	if ( ! isPending ) {
 		return null;
 	}
 
