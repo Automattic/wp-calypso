@@ -5,17 +5,8 @@ import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { a4aLink } from '../../utils/link';
 import PartnerDirectoryDashboardContent from './dashboard-content';
-import { PARTNER_DIRECTORY_EXPERTISE_ROUTE } from './paths';
-
-/*
- * TODO: The profile and lead matching screens are not migrated to the
- * dashboard yet, so this links to the classic A4A app — and lead matching is
- * not reachable from here at all until it migrates. Switch to dashboard
- * routes once those screens are migrated.
- */
-const PROFILE_URL = a4aLink( '/partner-directory/agency-details' );
+import { PARTNER_DIRECTORY_DETAILS_ROUTE, PARTNER_DIRECTORY_EXPERTISE_ROUTE } from './paths';
 
 export default function AgencyPartnerDirectory() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
@@ -34,7 +25,7 @@ export default function AgencyPartnerDirectory() {
 					agency={ agency }
 					recordTracksEvent={ recordTracksEvent }
 					expertiseUrl={ PARTNER_DIRECTORY_EXPERTISE_ROUTE }
-					profileUrl={ PROFILE_URL }
+					profileUrl={ PARTNER_DIRECTORY_DETAILS_ROUTE }
 					openSupportGuide={ openSupportGuide }
 				/>
 			) }
