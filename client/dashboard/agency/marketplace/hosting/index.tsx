@@ -29,6 +29,7 @@ import {
 	store,
 	tool,
 } from '@wordpress/icons';
+import { SVG, Path } from '@wordpress/primitives';
 import { useState } from 'react';
 import referralStep1 from 'calypso/assets/images/a8c-for-agencies/referral-step-1.jpg';
 import referralStep2 from 'calypso/assets/images/a8c-for-agencies/referral-step-2.jpg';
@@ -598,6 +599,45 @@ function HostingGuide( {
 	);
 }
 
+const aiSparkle = (
+	<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+		<Path d="M11 2.5l1.7 4.4 4.4 1.7-4.4 1.7L11 14.7 9.3 10.3 4.9 8.6l4.4-1.7L11 2.5z" />
+		<Path d="M17.5 13.5l.85 2.15 2.15.85-2.15.85-.85 2.15-.85-2.15-2.15-.85 2.15-.85.85-2.15z" />
+	</SVG>
+);
+
+function ConciergeRailCard( { onOpen }: { onOpen: () => void } ) {
+	return (
+		<Card className="marketplace-hosting__concierge-card">
+			<CardBody>
+				<VStack spacing={ 4 }>
+					<HStack spacing={ 3 } alignment="flex-start" justify="flex-start">
+						<div className="marketplace-hosting__concierge-card-icon">
+							<Icon icon={ aiSparkle } />
+						</div>
+						<VStack spacing={ 1 } expanded>
+							<Text weight={ 600 }>{ __( 'Not sure this is the right fit?' ) }</Text>
+							<Text variant="muted">
+								{ __(
+									'Tell the concierge about your client and it’ll recommend the platform with the best fit and the healthiest margin.'
+								) }
+							</Text>
+						</VStack>
+					</HStack>
+					<Button
+						variant="secondary"
+						__next40pxDefaultSize
+						className="marketplace-hosting__concierge-card-cta"
+						onClick={ onOpen }
+					>
+						{ __( 'Help me choose' ) }
+					</Button>
+				</VStack>
+			</CardBody>
+		</Card>
+	);
+}
+
 function MigrationOffer() {
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
@@ -855,7 +895,7 @@ export default function MarketplaceHosting() {
 								onClick={ () => setIsConciergeOpen( true ) }
 								aria-expanded={ isConciergeOpen }
 							>
-								{ __( 'Help me choose ↗' ) }
+								{ __( 'Help me choose' ) }
 							</Button>
 						</>
 					}
@@ -974,25 +1014,29 @@ export default function MarketplaceHosting() {
 						<Testimonials brand="wpcom" />
 					</VStack>
 					<div className="marketplace-hosting__rail">
-						<YourPlan
-							brand="wpcom"
-							product={ wpcomProduct }
-							term={ term }
-							quantity={ quantity }
-							ownedSites={ ownedSites }
-							onAddToCart={ () =>
-								addToCart( {
-									id: 'wpcom-hosting',
-									family: 'wpcom-hosting',
-									label: sprintf(
-										/* translators: %d: number of sites */
-										_n( '%d WordPress.com site', '%d WordPress.com sites', quantity ),
-										quantity
-									),
-									total: getTieredPrice( wpcomProduct, quantity, term, ownedSites ).discountedCost,
-								} )
-							}
-						/>
+						<VStack spacing={ 4 }>
+							<YourPlan
+								brand="wpcom"
+								product={ wpcomProduct }
+								term={ term }
+								quantity={ quantity }
+								ownedSites={ ownedSites }
+								onAddToCart={ () =>
+									addToCart( {
+										id: 'wpcom-hosting',
+										family: 'wpcom-hosting',
+										label: sprintf(
+											/* translators: %d: number of sites */
+											_n( '%d WordPress.com site', '%d WordPress.com sites', quantity ),
+											quantity
+										),
+										total: getTieredPrice( wpcomProduct, quantity, term, ownedSites )
+											.discountedCost,
+									} )
+								}
+							/>
+							<ConciergeRailCard onOpen={ () => setIsConciergeOpen( true ) } />
+						</VStack>
 					</div>
 				</div>
 			) }
@@ -1017,28 +1061,31 @@ export default function MarketplaceHosting() {
 						<Testimonials brand="pressable" />
 					</VStack>
 					<div className="marketplace-hosting__rail">
-						<YourPlan
-							brand="pressable"
-							term={ term }
-							quantity={ 1 }
-							plan={ pressablePlan }
-							currentPlan={ pressableCurrentPlan }
-							onAddToCart={ () =>
-								addToCart( {
-									id: 'pressable-hosting',
-									family: 'pressable-hosting',
-									label: sprintf(
-										/* translators: %s: plan name */
-										__( 'Pressable %s' ),
-										pressablePlan?.name ?? ''
-									),
-									total:
-										( term === 'yearly'
-											? pressablePlan?.yearly_price
-											: pressablePlan?.monthly_price ) ?? null,
-								} )
-							}
-						/>
+						<VStack spacing={ 4 }>
+							<YourPlan
+								brand="pressable"
+								term={ term }
+								quantity={ 1 }
+								plan={ pressablePlan }
+								currentPlan={ pressableCurrentPlan }
+								onAddToCart={ () =>
+									addToCart( {
+										id: 'pressable-hosting',
+										family: 'pressable-hosting',
+										label: sprintf(
+											/* translators: %s: plan name */
+											__( 'Pressable %s' ),
+											pressablePlan?.name ?? ''
+										),
+										total:
+											( term === 'yearly'
+												? pressablePlan?.yearly_price
+												: pressablePlan?.monthly_price ) ?? null,
+									} )
+								}
+							/>
+							<ConciergeRailCard onOpen={ () => setIsConciergeOpen( true ) } />
+						</VStack>
 					</div>
 				</div>
 			) }
