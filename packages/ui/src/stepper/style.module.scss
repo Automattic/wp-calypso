@@ -27,13 +27,11 @@
 	width: var( --a8c-ui-stepper-indicator-size );
 	height: var( --a8c-ui-stepper-indicator-size );
 	flex-shrink: 0;
-	color: var( --wpds-color-fg-interactive-neutral );
+	color: var( --wpds-color-foreground-interactive-neutral );
+}
 
-	// Render the glyph circle at the Figma size (16 -> 18) without affecting
-	// the 24px layout box.
-	svg {
-		transform: scale( calc( 18 / 16 ) );
-	}
+.icon {
+	transform: scale( calc( 18 / 16 ) );
 }
 
 // The number span only renders for number-variant steps without a status
