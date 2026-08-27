@@ -1,9 +1,10 @@
-import { siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
-import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { domainQuery, siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
+import { useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useRef } from 'react';
 import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
@@ -27,7 +28,11 @@ import {
 	SITE_CONTEXT_VIEW,
 	useBulkActionsProgressNotice,
 } from '../../domains/dataviews';
-import { isPendingPrimaryDomain } from '../../utils/domain';
+import {
+	hasCustomPrimaryDomain,
+	isPendingPrimaryDomain,
+	isPendingPrimaryDomainCandidate,
+} from '../../utils/domain';
 import { SitesNoticeArbiter } from '../notice-arbiter';
 import PrimaryDomainSelectorNotice from './primary-domain-selector-notice';
 import type { DomainSummary } from '@automattic/api-core';
@@ -49,7 +54,25 @@ function SiteDomains() {
 		},
 	} );
 
-	const pendingDomain = siteDomains.find( isPendingPrimaryDomain );
+	// Whether the domain is still pending depends on fields the domains list
+	// doesn't carry, so resolve the candidate before deciding which notice to show.
+	const primaryDomainCandidate = hasCustomPrimaryDomain( siteDomains )
+		? undefined
+		: siteDomains.find( isPendingPrimaryDomainCandidate );
+	const { data: candidateDomain, isLoading: isCheckingCandidate } = useQuery( {
+		...domainQuery( primaryDomainCandidate?.domain ?? '' ),
+		enabled: !! primaryDomainCandidate,
+	} );
+	const isCandidatePending = !! candidateDomain && isPendingPrimaryDomain( candidateDomain );
+	// Keep the notice mounted once it has appeared. It shares the polling query
+	// with this page, so dropping it as soon as the domain is set up would unmount
+	// it before it can announce completion and dismiss itself.
+	const hasShownPendingNotice = useRef( false );
+	if ( isCandidatePending ) {
+		hasShownPendingNotice.current = true;
+	}
+	const pendingDomain =
+		isCandidatePending || hasShownPendingNotice.current ? candidateDomain : undefined;
 
 	const { data: redirect } = useSuspenseQuery( siteRedirectQuery( site.ID ) );
 	const hasRedirect = redirect && Object.keys( redirect ).length > 0;
@@ -99,7 +122,7 @@ function SiteDomains() {
 								onComplete={ () => queryClient.invalidateQueries( queries.domainsQuery() ) }
 							/>
 						) }
-						{ ! hasRedirect && ! pendingDomain && (
+						{ ! hasRedirect && ! pendingDomain && ! isCheckingCandidate && (
 							<PrimaryDomainSelectorNotice domains={ siteDomains } site={ site } user={ user } />
 						) }
 						{ hasRedirect && (

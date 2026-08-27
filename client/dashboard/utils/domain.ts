@@ -413,15 +413,47 @@ export function isTldInMaintenance( domain: Domain ) {
 }
 
 /**
- * Returns true if a domain is a registration that should become primary but
- * the background job hasn't completed yet. Used on CIAB dashboards to show
- * a "setting up" notice.
+ * Returns true if the site already has a custom primary address. WordPress.com
+ * only sets a registered domain as the primary address on its own when the site
+ * doesn't have one yet.
  */
-export function isPendingPrimaryDomain( domain: DomainSummary ): boolean {
+export function hasCustomPrimaryDomain( siteDomains: DomainSummary[] ): boolean {
+	return siteDomains.some(
+		( domain ) => domain.primary_domain && domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
+	);
+}
+
+/**
+ * Returns true if a domain is a registration that WordPress.com could set as
+ * the site's primary address on its own. Callers must also check that the site
+ * has no custom primary address yet with hasCustomPrimaryDomain().
+ */
+export function isPendingPrimaryDomainCandidate( domain: DomainSummary ): boolean {
 	return (
 		domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION &&
 		domain.can_set_as_primary &&
 		! domain.primary_domain &&
 		! domain.expired
+	);
+}
+
+// The job retries for about 44 hours before it gives up, so a domain registered
+// longer ago than that is not waiting on it any more.
+const PENDING_PRIMARY_DOMAIN_WINDOW_IN_MINUTES = 2 * 24 * 60;
+
+/**
+ * Returns true if a registration is still waiting to be set as the site's
+ * primary address. The background job that does it is queued when the domain is
+ * registered and waits for the domain to resolve to WordPress.com with a valid
+ * certificate, so a domain that already resolves, or that was registered too
+ * long ago for the job to still be running, is not waiting on anything.
+ */
+export function isPendingPrimaryDomain( domain: Domain ): boolean {
+	return (
+		isPendingPrimaryDomainCandidate( domain ) &&
+		isRecentlyRegistered( domain.registration_date, PENDING_PRIMARY_DOMAIN_WINDOW_IN_MINUTES ) &&
+		( ! domain.points_to_wpcom ||
+			domain.ssl_status === 'pending' ||
+			domain.ssl_status === 'newly_registered' )
 	);
 }

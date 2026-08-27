@@ -90,7 +90,36 @@ const nonOwnerUser = {
 	meta: { data: { flags: { active_flags: [] } } },
 } as unknown as User;
 
-function mockApis() {
+const nonPrimaryDomain = {
+	...domain,
+	domain: 'second-domain.com',
+	primary_domain: false,
+	can_set_as_primary: true,
+};
+
+// A site whose primary address is still its included one, so WordPress.com may
+// still set a registered domain as primary on its own.
+const siteAddressIsPrimary = [
+	nonPrimaryDomain,
+	{ ...defaultAddressDomain, primary_domain: true },
+];
+
+function mockDomainDetails( domainName: string, overrides = {} ) {
+	nock( 'https://public-api.wordpress.com' )
+		.persist()
+		.get( `/rest/v1.2/domain-details/${ domainName }` )
+		.query( true )
+		.reply( 200, {
+			...nonPrimaryDomain,
+			domain: domainName,
+			points_to_wpcom: false,
+			ssl_status: 'newly_registered',
+			registration_date: new Date().toISOString(),
+			...overrides,
+		} );
+}
+
+function mockApis( domains = [ domain, defaultAddressDomain ] ) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/rest/v1.1/sites/${ site.slug }` )
 		.query( true )
@@ -99,7 +128,7 @@ function mockApis() {
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.2/all-domains' )
 		.query( true )
-		.reply( 200, { domains: [ domain, defaultAddressDomain ] } );
+		.reply( 200, { domains } );
 
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/rest/v1.1/sites/${ SITE_ID }/domains/redirect` )
@@ -144,6 +173,45 @@ describe( '<SiteDomains>', () => {
 		render( <SiteDomains />, { user: ownerUser } );
 
 		expect( await screen.findByRole( 'dialog', { name: 'Change site address' } ) ).toBeVisible();
+	} );
+
+	test( 'does not announce a new primary address when the site already has one', async () => {
+		nock.cleanAll();
+		mockApis( [ domain, nonPrimaryDomain, defaultAddressDomain ] );
+		mockDomainDetails( nonPrimaryDomain.domain );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		// The site gets the primary address picker, not the "setting one up" notice.
+		expect(
+			await screen.findByRole( 'link', { name: 'Upgrade to an annual paid plan' } )
+		).toBeVisible();
+		expect( screen.queryByText( 'Setting up your custom domain' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not announce a primary address the job has given up on', async () => {
+		nock.cleanAll();
+		mockApis( siteAddressIsPrimary );
+		mockDomainDetails( nonPrimaryDomain.domain, {
+			registration_date: '2023-07-10T00:00:00+00:00',
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		expect(
+			await screen.findByRole( 'link', { name: 'Upgrade to an annual paid plan' } )
+		).toBeVisible();
+		expect( screen.queryByText( 'Setting up your custom domain' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'announces a primary address that is still being set up', async () => {
+		nock.cleanAll();
+		mockApis( siteAddressIsPrimary );
+		mockDomainDetails( nonPrimaryDomain.domain );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		expect( await screen.findByText( 'Setting up your custom domain' ) ).toBeVisible();
 	} );
 
 	test( 'does not open a modal without the deep link', async () => {

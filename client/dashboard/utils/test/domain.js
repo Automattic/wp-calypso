@@ -3,7 +3,9 @@ import {
 	canEnableAutoRenew,
 	findRegistrantWhois,
 	findPrivacyServiceWhois,
+	hasCustomPrimaryDomain,
 	isPendingPrimaryDomain,
+	isPendingPrimaryDomainCandidate,
 } from '../domain';
 
 describe( 'utils', () => {
@@ -36,30 +38,73 @@ describe( 'utils', () => {
 		} );
 	} );
 
-	describe( 'isPendingPrimaryDomain', () => {
+	describe( 'hasCustomPrimaryDomain', () => {
+		const siteAddress = {
+			subtype: { id: DomainSubtype.DEFAULT_ADDRESS, label: 'Default' },
+			primary_domain: true,
+		};
+		const registration = {
+			subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Registration' },
+			primary_domain: false,
+		};
+
+		test( 'returns false when the included site address is still the primary', () => {
+			expect( hasCustomPrimaryDomain( [ siteAddress, registration ] ) ).toBe( false );
+		} );
+
+		test( 'returns true when a registration is the primary', () => {
+			expect(
+				hasCustomPrimaryDomain( [
+					{ ...siteAddress, primary_domain: false },
+					{ ...registration, primary_domain: true },
+				] )
+			).toBe( true );
+		} );
+
+		test( 'returns true when a connection is the primary', () => {
+			expect(
+				hasCustomPrimaryDomain( [
+					{ ...siteAddress, primary_domain: false },
+					{
+						subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Connection' },
+						primary_domain: true,
+					},
+				] )
+			).toBe( true );
+		} );
+	} );
+
+	describe( 'isPendingPrimaryDomainCandidate', () => {
 		const baseDomain = {
 			subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Registration' },
 			can_set_as_primary: true,
 			primary_domain: false,
+			expired: false,
 		};
 
-		test( 'returns true for a registered domain that can be set as primary but is not yet primary', () => {
-			expect( isPendingPrimaryDomain( baseDomain ) ).toBe( true );
+		test( 'returns true for a registration that is not yet primary', () => {
+			expect( isPendingPrimaryDomainCandidate( baseDomain ) ).toBe( true );
 		} );
 
 		test( 'returns false when domain is already primary', () => {
-			expect( isPendingPrimaryDomain( { ...baseDomain, primary_domain: true } ) ).toBe( false );
-		} );
-
-		test( 'returns false when domain cannot be set as primary', () => {
-			expect( isPendingPrimaryDomain( { ...baseDomain, can_set_as_primary: false } ) ).toBe(
+			expect( isPendingPrimaryDomainCandidate( { ...baseDomain, primary_domain: true } ) ).toBe(
 				false
 			);
 		} );
 
+		test( 'returns false when domain cannot be set as primary', () => {
+			expect(
+				isPendingPrimaryDomainCandidate( { ...baseDomain, can_set_as_primary: false } )
+			).toBe( false );
+		} );
+
+		test( 'returns false when domain is expired', () => {
+			expect( isPendingPrimaryDomainCandidate( { ...baseDomain, expired: true } ) ).toBe( false );
+		} );
+
 		test( 'returns false for non-registration domains', () => {
 			expect(
-				isPendingPrimaryDomain( {
+				isPendingPrimaryDomainCandidate( {
 					...baseDomain,
 					subtype: { id: DomainSubtype.DEFAULT_ADDRESS, label: 'Default' },
 				} )
@@ -68,10 +113,56 @@ describe( 'utils', () => {
 
 		test( 'returns false for domain connections', () => {
 			expect(
-				isPendingPrimaryDomain( {
+				isPendingPrimaryDomainCandidate( {
 					...baseDomain,
 					subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Connection' },
 				} )
+			).toBe( false );
+		} );
+	} );
+
+	describe( 'isPendingPrimaryDomain', () => {
+		const baseDomain = {
+			subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Registration' },
+			can_set_as_primary: true,
+			primary_domain: false,
+			expired: false,
+			points_to_wpcom: false,
+			ssl_status: 'newly_registered',
+			registration_date: new Date().toISOString(),
+		};
+
+		test( 'returns true while the domain does not resolve to WordPress.com yet', () => {
+			expect( isPendingPrimaryDomain( baseDomain ) ).toBe( true );
+		} );
+
+		test( 'returns true while the certificate is still pending', () => {
+			expect(
+				isPendingPrimaryDomain( {
+					...baseDomain,
+					points_to_wpcom: true,
+					ssl_status: 'pending',
+				} )
+			).toBe( true );
+		} );
+
+		test( 'returns false for a domain that is already set up but is not primary', () => {
+			expect(
+				isPendingPrimaryDomain( {
+					...baseDomain,
+					points_to_wpcom: true,
+					ssl_status: 'active',
+				} )
+			).toBe( false );
+		} );
+
+		test( 'returns false when domain is already primary', () => {
+			expect( isPendingPrimaryDomain( { ...baseDomain, primary_domain: true } ) ).toBe( false );
+		} );
+
+		test( 'returns false once the job has had time to give up', () => {
+			expect(
+				isPendingPrimaryDomain( { ...baseDomain, registration_date: '2023-07-10T00:00:00+00:00' } )
 			).toBe( false );
 		} );
 	} );

@@ -13,6 +13,12 @@ interface PendingPrimaryDomainNoticeProps {
 	onComplete?: () => void;
 }
 
+/**
+ * Announces that WordPress.com is setting a registered domain as the site's
+ * primary address. Callers own the site-level half of that condition: only
+ * render this when the site has no custom primary address yet, which
+ * hasCustomPrimaryDomain() answers from the site's domains.
+ */
 export default function PendingPrimaryDomainNotice( {
 	domainName,
 	onComplete,
@@ -26,21 +32,23 @@ export default function PendingPrimaryDomainNotice( {
 		meta: { persist: false },
 	} );
 
-	const isPending = ! polledDomain || isPendingPrimaryDomain( polledDomain );
+	const isPending = !! polledDomain && isPendingPrimaryDomain( polledDomain );
 
 	// Track whether the domain was ever actually pending, so we don't fire
 	// a spurious snackbar when rendered for a non-pending domain.
 	const wasPendingRef = useRef( false );
-	if ( isPending && polledDomain ) {
+	if ( isPending ) {
 		wasPendingRef.current = true;
 	}
 
-	// Show completion snackbar when primary domain setup finishes.
+	// Announce the domain only once it has actually become the primary address.
+	// Setup finishing is not enough: the job promotes the domain on a later retry.
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const onCompleteRef = useRef( onComplete );
 	onCompleteRef.current = onComplete;
+	const isPrimary = !! polledDomain?.primary_domain;
 	useEffect( () => {
-		if ( ! isPending && wasPendingRef.current ) {
+		if ( isPrimary && wasPendingRef.current ) {
 			createSuccessNotice(
 				sprintf(
 					/* translators: %s is the domain name */
@@ -51,9 +59,9 @@ export default function PendingPrimaryDomainNotice( {
 			);
 			onCompleteRef.current?.();
 		}
-	}, [ isPending, createSuccessNotice, domainName ] );
+	}, [ isPrimary, createSuccessNotice, domainName ] );
 
-	if ( ! isPending || ! polledDomain ) {
+	if ( ! isPending ) {
 		return null;
 	}
 
