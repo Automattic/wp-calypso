@@ -396,6 +396,7 @@ __metadata:
     "@radix-ui/react-popover": "npm:^1.1.15"
     "@radix-ui/react-scroll-area": "npm:^1.2.9"
     "@radix-ui/react-slot": "npm:^1.2.3"
+    "@radix-ui/react-tooltip": "npm:1.2.9"
     "@storybook/addon-a11y": "npm:^9.0.18"
     "@storybook/addon-docs": "npm:^9.0.18"
     "@storybook/addon-essentials": "npm:9.0.0-alpha.12"
@@ -7813,6 +7814,36 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@radix-ui/react-tooltip@npm:1.2.9":
+  version: 1.2.9
+  resolution: "@radix-ui/react-tooltip@npm:1.2.9"
+  dependencies:
+    "@radix-ui/primitive": "npm:1.1.4"
+    "@radix-ui/react-compose-refs": "npm:1.1.3"
+    "@radix-ui/react-context": "npm:1.1.4"
+    "@radix-ui/react-dismissable-layer": "npm:1.1.12"
+    "@radix-ui/react-id": "npm:1.1.2"
+    "@radix-ui/react-popper": "npm:1.3.0"
+    "@radix-ui/react-portal": "npm:1.1.11"
+    "@radix-ui/react-presence": "npm:1.1.6"
+    "@radix-ui/react-primitive": "npm:2.1.5"
+    "@radix-ui/react-slot": "npm:1.2.5"
+    "@radix-ui/react-use-controllable-state": "npm:1.2.3"
+    "@radix-ui/react-visually-hidden": "npm:1.2.5"
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-dom": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: fc109d0967485b21d8360a3d5a193102bd8281e45eda3dd4db7735ac3d4ad18269cac5c320641950be413575f6d466c02e8f10e3fd8a9bfca33dd4816bb260fd
+  languageName: node
+  linkType: hard
+
 "@radix-ui/react-use-callback-ref@npm:1.0.1":
   version: 1.0.1
   resolution: "@radix-ui/react-use-callback-ref@npm:1.0.1"
@@ -8000,6 +8031,25 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 0a088412bb831fd1d59f9058352aca384c2d0a07b894b35707b3486eea4a1d8a37a04fb117379f9a8a46a921b0092f97b29b517689c8f97029ec73eb68973521
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-visually-hidden@npm:1.2.5":
+  version: 1.2.5
+  resolution: "@radix-ui/react-visually-hidden@npm:1.2.5"
+  dependencies:
+    "@radix-ui/react-primitive": "npm:2.1.5"
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-dom": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: 9d0169a1950cbc4a9c47893e7101fc1286bfec85489665692f818c4322a8614dcccab873ce06099220c20dc454d978153e29fc6fb23d37bc89c10b8ed4f037db
   languageName: node
   linkType: hard
 

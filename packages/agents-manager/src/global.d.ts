@@ -142,6 +142,15 @@ interface AgentsManagerActions {
 	 * instead of waiting for the `agents-manager-ready` event.
 	 */
 	isReady?: boolean;
+	/**
+	 * Set to `true` by builds that broadcast the agent's activity as window
+	 * events — `agents-manager-turn-started`, `agents-manager-turn-ended` and
+	 * `agents-manager-ability-completed`; see `utils/agent-activity-events.ts`.
+	 * A host that acts on the agent's silence (Big Sky's easy mode writes over
+	 * edits it can attribute to nobody) must check this first: against a build
+	 * without it, the agent is always silent.
+	 */
+	broadcastsAgentActivity?: boolean;
 }
 
 /**

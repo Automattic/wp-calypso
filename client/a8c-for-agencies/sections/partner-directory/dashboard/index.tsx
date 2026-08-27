@@ -77,6 +77,7 @@ const PartnerDirectoryDashboard = () => {
 			onPublishSuccess={ onPublishSuccess }
 			onPublishError={ onPublishError }
 			openSupportGuide={ showSupportGuide }
+			shouldUseRouterLink={ false }
 		/>
 	);
 };
