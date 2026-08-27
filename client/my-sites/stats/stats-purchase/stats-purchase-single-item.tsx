@@ -6,7 +6,6 @@ import {
 	PLAN_JETPACK_BUSINESS,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button as CalypsoButton } from '@automattic/components';
 import { formatNumberCompact } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -15,7 +14,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import { useJetpackConnectionStatus } from 'calypso/my-sites/stats/hooks/use-jetpack-connection-status';
 import { useSelector } from 'calypso/state';
-import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { getSiteAdminUrl, getSiteOption, getIsSimpleSite } from 'calypso/state/sites/selectors';
 import useAvailableUpgradeTiers from '../hooks/use-available-upgrade-tiers';
 import usePlanUsageQuery, { getUsageLimitStatus } from '../hooks/use-plan-usage-query';
@@ -238,7 +236,6 @@ const StatsCommercialPurchase = ( {
 	eventProps,
 }: StatsCommercialPurchaseProps ) => {
 	const translate = useTranslate();
-	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	const tiers = useAvailableUpgradeTiers( siteId ) || [];
 	const haveTiers = tiers.length > 0;
 	const {
@@ -270,8 +267,6 @@ const StatsCommercialPurchase = ( {
 
 	const { isNearLimit, isOverLimit } = getUsageLimitStatus( usageData );
 
-	// The button of @automattic/components has built-in color scheme support for Calypso.
-	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
 	const startingTierQuantity = haveTiers ? getTierQuantity( tiers[ 0 ] ) : 0;
 	const [ purchaseTierQuantity, setPurchaseTierQuantity ] = useState( startingTierQuantity ?? 0 );
 
@@ -392,9 +387,8 @@ const StatsCommercialPurchase = ( {
 				</div>
 			) }
 			<div className="stats-purchase-wizard__actions">
-				<ButtonComponent
+				<Button
 					variant="primary"
-					primary={ isWPCOMSite ? true : undefined }
 					disabled={ ! haveTiers || needsConnectionForUpgrade }
 					onClick={ () =>
 						gotoCheckoutPage( {
@@ -413,13 +407,13 @@ const StatsCommercialPurchase = ( {
 					}
 				>
 					{ continueButtonText }
-				</ButtonComponent>
-				<ButtonComponent variant="secondary" onClick={ handleCheckoutPostponed }>
+				</Button>
+				<Button variant="secondary" onClick={ handleCheckoutPostponed }>
 					{ postponeLabel ??
 						( needsConnectionForFreePlan
 							? translate( 'Start for free' )
 							: translate( 'I will do it later' ) ) }
-				</ButtonComponent>
+				</Button>
 			</div>
 			<div className="stats-purchase-page__footnotes">
 				<p>{ translate( '(*) 14-day money-back guarantee' ) }</p>

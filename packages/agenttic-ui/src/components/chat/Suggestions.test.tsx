@@ -42,6 +42,18 @@ const makeContext = (
 let container: HTMLDivElement;
 let root: Root;
 
+// Throws rather than returning undefined: a missing chip would otherwise turn
+// every click into a no-op and let a negative assertion pass vacuously.
+const getButton = ( label: string ): HTMLButtonElement => {
+	const button = Array.from( container.querySelectorAll( 'button' ) ).find(
+		( candidate ) => candidate.textContent?.includes( label )
+	);
+	if ( ! button ) {
+		throw new Error( `No button found containing "${ label }".` );
+	}
+	return button;
+};
+
 beforeEach( () => {
 	container = document.createElement( 'div' );
 	document.body.appendChild( container );
@@ -157,5 +169,136 @@ describe( 'Suggestions dropdown description wiring', () => {
 		} );
 
 		expect( container.textContent ).not.toContain( 'Adjust the tone of your post.' );
+	} );
+} );
+
+describe( 'Suggestions disabled', () => {
+	const dropdownSuggestion: Suggestion = {
+		id: 'seo',
+		label: 'SEO Enhancer',
+		prompt: '',
+		options: [ { id: 'title', label: 'Title', value: 'Write a title' } ],
+	};
+
+	it( 'renders a plain suggestion as a disabled button', () => {
+		render( 'embedded', vi.fn(), {
+			suggestions: [ { id: 'a', label: 'A', prompt: 'A', disabled: true } ],
+		} );
+
+		expect( getButton( 'A' ).getAttribute( 'aria-disabled' ) ).toBe( 'true' );
+	} );
+
+	it( 'renders a dropdown suggestion as a disabled trigger', () => {
+		render( 'embedded', vi.fn(), {
+			suggestions: [ { ...dropdownSuggestion, disabled: true } ],
+		} );
+
+		expect( getButton( 'SEO Enhancer' ).getAttribute( 'aria-disabled' ) ).toBe( 'true' );
+	} );
+
+	it( 'runs neither the action nor the submit for a disabled suggestion', async () => {
+		const action = vi.fn( () => true );
+		const onSubmit = vi.fn();
+		render( 'embedded', vi.fn(), {
+			suggestions: [ { id: 'a', label: 'A', prompt: 'A', action, disabled: true } ],
+			onSubmit,
+		} );
+
+		await act( async () => {
+			getButton( 'A' ).click();
+		} );
+
+		expect( action ).not.toHaveBeenCalled();
+		expect( onSubmit ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not open the option list of a disabled dropdown', async () => {
+		const onDropdownOpenChange = vi.fn();
+		render( 'embedded', vi.fn(), {
+			suggestions: [ { ...dropdownSuggestion, disabled: true } ],
+			onDropdownOpenChange,
+		} );
+
+		await act( async () => {
+			getButton( 'SEO Enhancer' ).click();
+		} );
+
+		expect( onDropdownOpenChange ).not.toHaveBeenCalledWith( true );
+		expect( container.textContent ).not.toContain( 'Title' );
+	} );
+} );
+
+describe( 'Suggestions disabled tooltip', () => {
+	const disabledWithReason: Suggestion = {
+		id: 'a',
+		label: 'A',
+		prompt: 'A',
+		disabled: true,
+		disabledReason: 'Add content first.',
+	};
+
+	it( 'keeps a disabled chip focusable so the tooltip is reachable', () => {
+		render( 'embedded', vi.fn(), { suggestions: [ disabledWithReason ] } );
+
+		// A real `disabled` button leaves the tab order, so a tooltip could never
+		// reach a keyboard user.
+		expect( getButton( 'A' ).disabled ).toBe( false );
+		expect( getButton( 'A' ).tabIndex ).not.toBe( -1 );
+		expect( getButton( 'A' ).getAttribute( 'aria-disabled' ) ).toBe( 'true' );
+	} );
+
+	// SEO Enhancer is this shape in production: a dropdown, gated on empty
+	// content, carrying a reason. It also nests a Radix popover trigger inside a
+	// Radix tooltip trigger, which fails quietly when it breaks.
+	it( 'describes a disabled dropdown trigger and keeps its list shut', async () => {
+		const onDropdownOpenChange = vi.fn();
+		render( 'embedded', vi.fn(), {
+			suggestions: [
+				{
+					id: 'seo',
+					label: 'SEO Enhancer',
+					prompt: '',
+					options: [ { id: 'title', label: 'Title', value: 'Write a title' } ],
+					disabled: true,
+					disabledReason: 'Add content first.',
+				},
+			],
+			onDropdownOpenChange,
+		} );
+
+		const describedBy = getButton( 'SEO Enhancer' ).getAttribute( 'aria-describedby' );
+		expect( describedBy ).toBeTruthy();
+		expect( document.getElementById( describedBy as string )?.textContent ).toBe(
+			'Add content first.'
+		);
+
+		await act( async () => {
+			getButton( 'SEO Enhancer' ).click();
+		} );
+
+		expect( onDropdownOpenChange ).not.toHaveBeenCalledWith( true );
+		expect( container.textContent ).not.toContain( 'Title' );
+	} );
+
+	it( 'describes the disabled chip itself, not its wrapper', () => {
+		render( 'embedded', vi.fn(), { suggestions: [ disabledWithReason ] } );
+
+		// Radix describes its trigger, and only while the tooltip is open, so the
+		// reason has to hang off the button for assistive technology and touch.
+		const describedBy = getButton( 'A' ).getAttribute( 'aria-describedby' );
+		expect( describedBy ).toBeTruthy();
+		expect( document.getElementById( describedBy as string )?.textContent ).toBe(
+			'Add content first.'
+		);
+	} );
+
+	it( 'leaves an enabled chip undescribed even when it carries a stale reason', () => {
+		render( 'embedded', vi.fn(), {
+			suggestions: [ { id: 'a', label: 'A', prompt: 'A', disabledReason: 'Unused.' } ],
+		} );
+
+		expect( getButton( 'A' ).getAttribute( 'aria-disabled' ) ).toBeNull();
+		expect( getButton( 'A' ).getAttribute( 'aria-describedby' ) ).toBeNull();
+		expect( document.body.textContent ).not.toContain( 'Unused.' );
 	} );
 } );

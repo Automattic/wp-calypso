@@ -1,5 +1,7 @@
 /* eslint-disable no-restricted-imports */
 import { useGetHistoryChats } from '@automattic/help-center/src/hooks/use-get-history-chats';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
+import { isPlansPresalesExperience } from '@automattic/odie-client/src/constants';
 import { useCurrentSupportInteraction } from '@automattic/odie-client/src/data/use-current-support-interaction';
 import {
 	CardHeader,
@@ -152,10 +154,17 @@ const useHeaderText = () => {
 	const { __ } = useI18n();
 	const { pathname } = useLocation();
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
+	const { launcherContext } = useHelpCenterContext();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const isConversationWithZendesk = currentSupportInteraction?.events.some(
 		( event ) => event.event_source === 'zendesk'
 	);
+	// Same gate as the greeting, plus the title's own translation so a locale
+	// never shows an English title over a localized panel.
+	const isPlansPresales =
+		isPlansPresalesExperience( launcherContext, hasEnTranslation ) &&
+		hasEnTranslation( 'Plans Assistant', undefined, __i18n_text_domain__ );
 
 	return useMemo( () => {
 		switch ( pathname ) {
@@ -171,8 +180,11 @@ const useHeaderText = () => {
 			case '/success':
 				return __( 'Message Submitted', __i18n_text_domain__ );
 			case '/odie':
-				return isConversationWithZendesk
-					? __( 'Support Team', __i18n_text_domain__ )
+				if ( isConversationWithZendesk ) {
+					return __( 'Support Team', __i18n_text_domain__ );
+				}
+				return isPlansPresales
+					? __( 'Plans Assistant', __i18n_text_domain__ )
 					: __( 'Support Assistant', __i18n_text_domain__ );
 			case '/chat-history':
 				return __( 'Support history', __i18n_text_domain__ );
@@ -181,7 +193,7 @@ const useHeaderText = () => {
 			default:
 				return __( 'Help Center', __i18n_text_domain__ );
 		}
-	}, [ __, isConversationWithZendesk, pathname ] );
+	}, [ __, isConversationWithZendesk, isPlansPresales, pathname ] );
 };
 
 const HeaderText = () => {

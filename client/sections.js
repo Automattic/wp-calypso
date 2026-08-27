@@ -567,17 +567,6 @@ const sections = [
 		enableLoggedOut: false,
 	},
 	{
-		name: 'reader',
-		paths: [
-			'/reader/subscriptions',
-			'/reader/subscriptions/comments',
-			'/reader/subscriptions/pending',
-			'^/reader/subscriptions/(\\d+)(/)?$',
-		],
-		module: 'calypso/reader/site-subscriptions-manager',
-		group: 'reader',
-	},
-	{
 		name: 'auth',
 		paths: [ '/api/oauth/token' ],
 		module: 'calypso/auth',
@@ -847,7 +836,7 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-sites',
-		paths: [ '/sites', 'sites/need-setup' ],
+		paths: [ '/sites' ],
 		module: 'calypso/a8c-for-agencies/sections/sites',
 		group: 'a8c-for-agencies',
 	},

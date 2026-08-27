@@ -13,7 +13,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
 import { DOLLY_AGENT_ID } from '../constants';
-import { getSessionId } from './agent-session';
+import { getActiveSessionId } from './agent-session';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent, isReaderChatHost } from './is-reader-chat-agent';
 import { getResolvedAgentId } from './resolved-agent-id';
@@ -125,7 +125,7 @@ export function recordBigSkyTracksEvent(
 		is_test: getIsTest(),
 		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
 		...( blogId !== undefined ? { blog_id: blogId } : {} ),
-		sessionid: getSessionId(),
+		sessionid: getActiveSessionId(),
 		session_type: bigSky.sessionType,
 		// AM has no onboarding flow, so the phase is always the editor.
 		phase: 'editor',
@@ -152,7 +152,7 @@ function getUnifiedBaseProps(): TracksProps {
 	const isA11n = getIsA11n();
 	const blogId = getBlogId();
 	return {
-		ai_session_id: getSessionId(),
+		ai_session_id: getActiveSessionId(),
 		agent_name: getResolvedAgentId() ?? DOLLY_AGENT_ID,
 		surface: isReaderChatHost() ? 'reader-chat' : 'editor',
 		path: typeof window !== 'undefined' ? window.location.pathname : '',

@@ -108,16 +108,23 @@ jest.mock(
 		}
 
 		function MockEmptyView( {
+			help,
 			suggestions = [],
 			onSuggestionClick,
 		}: {
+			help?: string;
 			suggestions?: Suggestion[];
 			onSuggestionClick?: (
 				selectedSuggestion: Suggestion,
 				availableSuggestions: Suggestion[]
 			) => void;
 		} ) {
-			return <MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSuggestionClick } />;
+			return (
+				<>
+					{ help && <p>{ help }</p> }
+					<MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSuggestionClick } />
+				</>
+			);
 		}
 
 		function MockSuggestions( {
@@ -172,7 +179,10 @@ jest.mock( '@wordpress/data', () => ( {
 		} ) ),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text, isRTL: () => false } ) );
+jest.mock( '@wordpress/i18n', () => ( {
+	__: ( text: string ) => text,
+	isRTL: () => false,
+} ) );
 jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: jest.fn(),
 	recordAgentsManagerTracksEvent: jest.fn(),
@@ -323,6 +333,28 @@ describe( 'AgentChat', () => {
 		expect( mockInputProps ).toHaveBeenCalledWith(
 			expect.objectContaining( { readOnly: true, disabled: true } )
 		);
+	} );
+
+	// The chip carries its own reason, so the help line stays the same whether or
+	// not anything is disabled.
+	it( 'keeps the plain help line when a suggestion is disabled', () => {
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: [
+				{
+					id: 'optimize-title',
+					label: 'Optimize title',
+					prompt: 'Optimize.',
+					disabled: true,
+					disabledReason: 'This feature will be available once content is added to the page.',
+				},
+			],
+		} );
+
+		expect( screen.getByText( 'Got a different request? Ask away.' ) ).toBeInTheDocument();
+		expect(
+			screen.queryByText( /This feature will be available once content is added/ )
+		).toBeNull();
 	} );
 
 	it( 'forwards empty view suggestion clicks to the shared suggestion handler', async () => {

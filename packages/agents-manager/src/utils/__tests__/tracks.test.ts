@@ -6,14 +6,14 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ) );
 jest.mock( '@wordpress/data', () => ( { select: jest.fn( () => ( {} ) ) } ) );
-jest.mock( '../agent-session', () => ( { getSessionId: jest.fn( () => 'session-xyz' ) } ) );
+jest.mock( '../agent-session', () => ( { getActiveSessionId: jest.fn( () => 'session-xyz' ) } ) );
 jest.mock( '../is-reader-chat-agent', () => {
 	const actual = jest.requireActual( '../is-reader-chat-agent' );
 	return { ...actual, isReaderChatHost: jest.fn( () => false ) };
 } );
 
 import { select } from '@wordpress/data';
-import { getSessionId } from '../agent-session';
+import { getActiveSessionId } from '../agent-session';
 import { isReaderChatHost } from '../is-reader-chat-agent';
 import { setResolvedAgentId } from '../resolved-agent-id';
 import {
@@ -25,7 +25,9 @@ import {
 const mockRecordTracksEvent = recordTracksEvent as jest.MockedFunction< typeof recordTracksEvent >;
 const mockIsReaderChatHost = isReaderChatHost as jest.MockedFunction< typeof isReaderChatHost >;
 const mockSelect = select as jest.MockedFunction< typeof select >;
-const mockGetSessionId = getSessionId as jest.MockedFunction< typeof getSessionId >;
+const mockGetActiveSessionId = getActiveSessionId as jest.MockedFunction<
+	typeof getActiveSessionId
+>;
 
 function lastEventProps(): Record< string, unknown > {
 	const call = mockRecordTracksEvent.mock.calls.at( -1 );
@@ -131,7 +133,7 @@ describe( 'tracks wrappers', () => {
 		} );
 
 		it( 'omits ai_session_id while no session exists yet', () => {
-			mockGetSessionId.mockReturnValueOnce( '' );
+			mockGetActiveSessionId.mockReturnValueOnce( '' );
 
 			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
 
