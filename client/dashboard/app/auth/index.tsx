@@ -133,18 +133,37 @@ export function useSessionStateQuery() {
  * to do with the session, so they are confirmed against `/me` before anyone is
  * bounced.
  */
-type AuthFailure = 'expired' | 'forbidden' | 'cookie-auth-missing';
+type AuthFailure = 'expired' | 'refused' | 'cookie-auth-missing';
 
-function classifyAuthFailure( { statusCode, error = '' }: WPError ): AuthFailure | null {
-	if ( statusCode === 401 && [ 'authorization_required', 'rest_forbidden' ].includes( error ) ) {
+// The two REST surfaces the dashboard talks to disagree about where the machine
+// readable code goes: `/rest/v1.x` answers `{ error }`, everything registered
+// through the WP REST infrastructure answers `{ code }`. Most of the dashboard is
+// on the latter, so reading only one of them misses most of the app. The slug
+// alone does not say which to expect — `authorization_required` arrives under
+// both — so read whichever is populated. Keep the string check: the proxy also
+// puts the HTTP status on `code` as a number.
+function getErrorCode( error: WPError ): string {
+	if ( typeof error.error === 'string' ) {
+		return error.error;
+	}
+	return typeof error.code === 'string' ? error.code : '';
+}
+
+function classifyAuthFailure( error: WPError ): AuthFailure | null {
+	const { statusCode } = error;
+
+	if (
+		statusCode === 401 &&
+		[ 'authorization_required', 'rest_forbidden' ].includes( getErrorCode( error ) )
+	) {
 		return 'expired';
 	}
 
-	// `wp_api_sec` is derived from `wordpress_sec`, so once that goes missing the
-	// API answers 403. The same code covers ordinary per-resource permission
-	// errors, which is why this one needs confirming.
-	if ( statusCode === 403 && error === 'authorization_required' ) {
-		return 'forbidden';
+	// The codes for a refused request vary by surface and are not worth matching
+	// individually. Anything refused is treated as suspicion only, and the check
+	// against `/me` is what decides, so being generous here costs one request.
+	if ( statusCode === 401 || statusCode === 403 ) {
+		return 'refused';
 	}
 
 	// The rest-proxy iframe reports at handshake whether it had anything to

@@ -192,6 +192,10 @@ describe( '<AuthProvider> stats', () => {
 		const forbidden = () =>
 			wpError( { status: 403, statusCode: 403, error: 'authorization_required' } );
 
+		// What every endpoint registered through the WP REST infrastructure returns.
+		const forbiddenRestShape = () =>
+			Object.assign( wpError( { status: 403, statusCode: 403 } ), { code: 'unauthorized' } );
+
 		test( 'bounces when the session turns out to be gone', async () => {
 			nock( 'https://public-api.wordpress.com' )
 				.get( '/rest/v1.1/me' )
@@ -201,7 +205,7 @@ describe( '<AuthProvider> stats', () => {
 			await renderSignedInAndFail( forbidden() );
 
 			await waitFor( () =>
-				expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'bounce:forbidden' )
+				expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'bounce:refused' )
 			);
 		} );
 
@@ -214,7 +218,7 @@ describe( '<AuthProvider> stats', () => {
 			await renderSignedInAndFail( forbidden() );
 
 			await waitFor( () =>
-				expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'probe-ok:forbidden' )
+				expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'probe-ok:refused' )
 			);
 			expect( mockedBumpStat ).not.toHaveBeenCalledWith(
 				'dashboard-auth',
@@ -236,6 +240,19 @@ describe( '<AuthProvider> stats', () => {
 					'dashboard-auth',
 					'bounce:cookie-auth-missing'
 				)
+			);
+		} );
+
+		test( 'bounces on the WP REST error shape too', async () => {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.1/me' )
+				.query( true )
+				.reply( 403, { error: 'authorization_required', message: 'User cannot access this' } );
+
+			await renderSignedInAndFail( forbiddenRestShape() );
+
+			await waitFor( () =>
+				expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'bounce:refused' )
 			);
 		} );
 
