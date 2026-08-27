@@ -186,8 +186,12 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 			box-sizing: border-box;
 			border-radius: 5px; // stylelint-disable-line scales/radii
 		}
+		// --color-accent-light is the `-30` step of the decorative highlight, which the admin theme
+		// colour has no equivalent of, so the ring is mixed towards the surface to keep the same
+		// weight. Scoped to the button here rather than re-pointing the variable, which also serves
+		// this popover's own chrome.
 		button:focus {
-			box-shadow: 0 0 0 2px var(--color-accent-light);
+			box-shadow: 0 0 0 2px color-mix(in srgb, var(--wp-admin-theme-color) 60%, var(--color-surface));
 		}
 	}
 
