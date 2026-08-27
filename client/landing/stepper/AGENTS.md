@@ -261,13 +261,16 @@ widened via `MapStepsToTheirAcceptedProps<[ typeof PRIVATE_STEPS.USER ]>`).
 | `allowedSocialServices`        | `string[]` | Restrict which social sign-in providers are offered            |
 
 ```ts
-useStepsProps() {
-	return {
-		domains: { hideUseMyDomainLink: true },
-		plans: { hideFreePlan: true, defaultInterval: 'yearly' },
-		user: { hideLoginLink: true }, // reserved `user` key for the auto-injected step
-	};
-}
+const myFlow: FlowV2< typeof initialize > = {
+	// ...
+	useStepsProps() {
+		return {
+			domains: { hideUseMyDomainLink: true },
+			plans: { hideFreePlan: true, defaultInterval: 'yearly' },
+			user: { hideLoginLink: true }, // reserved `user` key for the auto-injected step
+		};
+	},
+};
 ```
 
 ### Store-based customizations (set in `initialize()`)
