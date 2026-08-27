@@ -19,6 +19,13 @@
 
 	// Calypso's own Button takes the same two roles from --color-accent that a design-system primary
 	// takes from the components accent: the resting fill, and a darker shade on hover.
+	//
+	// Stats' own call sites are all gone, but this cannot go with them: the remaining primaries come
+	// from shared components Stats only renders — EmptyContent's action button, Banner's call to
+	// action, PromoCardBlock, and Dialog's button bar, which applies `is-primary` as a className
+	// rather than a prop and so reaches the react-modal portal root too. Converting those is a
+	// cross-cutting change well outside Stats, so the bridge outlives the call sites it was written
+	// for.
 	.button.is-primary {
 		--color-accent: var(--wp-admin-theme-color);
 		--color-accent-60: var(--wp-admin-theme-color-darker-10);

@@ -245,6 +245,9 @@ export function useSetupCustomActions( {
 		chatNavigate: navigate,
 		resumeChat,
 		isReady: true,
+		// See the field's doc in global.d.ts. Advertised here, where the API
+		// is assembled, so a host reading it can trust the events are wired.
+		broadcastsAgentActivity: true,
 	} );
 
 	// Hosts (e.g. CIAB) listen for `agents-manager-ready` to invoke actions without polling.

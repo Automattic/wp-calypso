@@ -4,7 +4,11 @@ import {
 	createClient,
 	updateToolResultsWithResolvedPromises,
 } from '../client/index';
-import { createTextMessage, extractToolCallsFromMessage } from '../client/utils/index';
+import {
+	createTextMessage,
+	createToolResultDataPart,
+	extractToolCallsFromMessage,
+} from '../client/utils/index';
 import { type AgentManager, getAgentManager } from './agentManager';
 import { clearConversation, loadConversation, storeConversation } from './conversationStorage';
 import type {
@@ -27,6 +31,7 @@ vi.mock( '../client/index', () => ( {
 
 vi.mock( '../client/utils/index', () => ( {
 	createTextMessage: vi.fn(),
+	createToolResultDataPart: vi.fn(),
 	extractToolCallsFromMessage: vi.fn(),
 	generateMessageId: vi.fn( () => 'test-message-id' ),
 } ) );
@@ -439,6 +444,48 @@ describe( 'agentManager', () => {
 			await agentManager.createAgent( 'test-key', testConfig );
 		} );
 
+		it( 'sendToolResult supersedes a stale recorded result for the same call', async () => {
+			// The executor records a local result for every executed tool; a
+			// later tool-result send must replace it, not duplicate it.
+			const callPart = {
+				type: 'data' as const,
+				data: { toolCallId: 'call-1', toolId: 'nav', arguments: {} },
+			};
+			const staleResultPart = {
+				type: 'data' as const,
+				data: { toolCallId: 'call-1', toolId: 'nav', result: { success: true } },
+			};
+			await agentManager.replaceMessages( 'test-key', [
+				{ role: 'agent', kind: 'message', parts: [ callPart ], messageId: 'm1' },
+				{ role: 'agent', kind: 'message', parts: [ staleResultPart ], messageId: 'm2' },
+			] as Message[] );
+
+			mockClient.sendMessageStream.mockImplementation( async function* () {} );
+			vi.mocked( createToolResultDataPart ).mockImplementationOnce(
+				( toolCallId: string, toolId: string, result: unknown ) => ( {
+					type: 'data',
+					data: { toolCallId, toolId, result },
+				} )
+			);
+
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			for await ( const update of agentManager.sendToolResult( 'test-key', 'call-1', 'nav', {
+				success: false,
+			} ) ) {
+				// Drain.
+			}
+
+			const parts = agentManager
+				.getConversationHistory( 'test-key' )
+				.flatMap( ( message ) => message.parts );
+			const resultParts = parts.filter(
+				( part: any ) => part.type === 'data' && 'result' in ( part.data ?? {} )
+			);
+			expect( resultParts ).toHaveLength( 1 );
+			expect( ( resultParts[ 0 ] as any ).data.result ).toEqual( { success: false } );
+			expect( parts.some( ( part: any ) => 'arguments' in ( part.data ?? {} ) ) ).toBe( true );
+		} );
+
 		it( 'should stream messages from agent', async () => {
 			const mockUpdates: TaskUpdate[] = [
 				{
@@ -532,6 +579,88 @@ describe( 'agentManager', () => {
 
 			expect( results ).toHaveLength( 2 );
 			expect( extractToolCallsFromMessage ).toHaveBeenCalledWith( mockToolCallMessage );
+		} );
+	} );
+
+	describe( 'isTurnInFlight', () => {
+		beforeEach( async () => {
+			await agentManager.createAgent( 'test-key', testConfig );
+		} );
+
+		/**
+		 * Run a turn to completion against a scripted stream.
+		 * @param updates What the client yields.
+		 */
+		async function runTurn( updates: TaskUpdate[] ) {
+			mockClient.sendMessageStream.mockImplementation( async function* () {
+				for ( const update of updates ) {
+					yield update;
+				}
+			} );
+
+			for await ( const update of agentManager.sendMessageStream( 'test-key', 'Hello' ) ) {
+				void update;
+			}
+		}
+
+		it( 'is false before any turn has run', () => {
+			expect( agentManager.isTurnInFlight( 'test-key' ) ).toBe( false );
+		} );
+
+		it( 'is false for an agent that does not exist', () => {
+			// Asked to decide whether to say anything at all, so an absent agent
+			// is a normal answer rather than the throw the mutators use.
+			expect( agentManager.isTurnInFlight( 'no-such-key' ) ).toBe( false );
+		} );
+
+		it( 'is false once the turn completes', async () => {
+			await runTurn( [
+				{
+					id: 'task-123',
+					status: { state: 'completed', message: mockAgentMessage },
+					final: true,
+					text: 'Done',
+				},
+			] );
+
+			expect( agentManager.isTurnInFlight( 'test-key' ) ).toBe( false );
+		} );
+
+		it( 'stays true while the turn is paused on a tool call', async () => {
+			// The stream ends here and the turn carries on in `sendToolResult`.
+			// A signal that dropped in this gap would flicker once per tool call.
+			await runTurn( [
+				{
+					id: 'task-123',
+					status: { state: 'input-required', message: mockAgentMessage },
+					final: true,
+					text: 'Working',
+				},
+			] );
+
+			expect( agentManager.isTurnInFlight( 'test-key' ) ).toBe( true );
+		} );
+
+		it( 'is false after the stream throws', async () => {
+			// Nothing further will arrive to resolve the turn, so a flag left set
+			// would report it as running for the life of the page.
+			mockClient.sendMessageStream.mockImplementation( async function* () {
+				yield {
+					id: 'task-123',
+					status: { state: 'working', message: mockAgentMessage },
+					final: false,
+					text: 'Working',
+				} as TaskUpdate;
+				throw new Error( 'network died' );
+			} );
+
+			await expect( async () => {
+				for await ( const update of agentManager.sendMessageStream( 'test-key', 'Hello' ) ) {
+					void update;
+				}
+			} ).rejects.toThrow( 'network died' );
+
+			expect( agentManager.isTurnInFlight( 'test-key' ) ).toBe( false );
 		} );
 	} );
 

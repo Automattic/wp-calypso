@@ -1,0 +1,12 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.partner-directory-expertise__client-sites {
+	display: grid;
+	grid-template-columns: 1fr;
+	row-gap: 16px;
+
+	@media ( min-width: #{ $break-medium } ) {
+		grid-template-columns: 1fr 1fr;
+		column-gap: 32px;
+	}
+}

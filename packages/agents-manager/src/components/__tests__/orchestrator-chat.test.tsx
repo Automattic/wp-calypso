@@ -10,6 +10,7 @@ import type { ComponentProps } from 'react';
 const mockUseAgentChat = jest.fn();
 const mockUpdateSessionId = jest.fn();
 let mockManagerHasAgent = true;
+let mockManagerTurnInFlight = false;
 let mockAgentChatConfig: { onTaskUpdate?: ( update: TaskUpdate ) => Promise< void > } | undefined;
 let mockConversationConfig:
 	| {
@@ -292,6 +293,7 @@ jest.mock(
 		getAgentManager: () => ( {
 			updateSessionId: mockUpdateSessionId,
 			hasAgent: () => mockManagerHasAgent,
+			isTurnInFlight: () => mockManagerTurnInFlight,
 		} ),
 		useAgentChat: ( config: typeof mockAgentChatConfig ) => {
 			mockAgentChatConfig = config;
@@ -649,6 +651,7 @@ describe( 'OrchestratorChat', () => {
 		mockBlockEditorStoreThrows = false;
 		sessionStorage.clear();
 		mockManagerHasAgent = true;
+		mockManagerTurnInFlight = false;
 		mockHasEditorRedo = false;
 		mockOpenPost = null;
 		mockEditorBlocks = [];

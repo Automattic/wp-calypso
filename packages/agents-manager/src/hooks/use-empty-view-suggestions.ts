@@ -144,7 +144,7 @@ function readOverrideSuggestions(): Suggestion[] | null {
 
 function getSuggestionsKey( suggestions: Suggestion[] | null ): string | null {
 	return suggestions
-		? JSON.stringify( suggestions.map( ( s ) => [ s.id, s.label, s.prompt ] ) )
+		? JSON.stringify( suggestions.map( ( s ) => [ s.id, s.label, s.prompt, s.disabled ] ) )
 		: null;
 }
 
@@ -187,21 +187,31 @@ export function isPageOrSiteEditorSurface(
 	return sectionName === 'site-editor';
 }
 
+/**
+ * Providers key suggestions on `isEditedPostEmpty`, so the effect below has to
+ * re-run when it flips. Hosts with no editor store (Reader chat, Plugin
+ * Compass) report false.
+ */
 export function usePageOrSiteEditorSurface() {
 	const { sectionName, currentRoute } = useAgentsManagerContext();
-	const currentPostType = useSelect( ( select ) => {
+	const { currentPostType, isEditedPostEmpty } = useSelect( ( select ) => {
 		try {
 			const editorStore = select( 'core/editor' ) as {
 				getCurrentPostType?: () => string | undefined;
+				isEditedPostEmpty?: () => boolean;
 			};
-			return editorStore?.getCurrentPostType?.();
+			return {
+				currentPostType: editorStore?.getCurrentPostType?.(),
+				isEditedPostEmpty: editorStore?.isEditedPostEmpty?.() === true,
+			};
 		} catch {
-			return undefined;
+			return { currentPostType: undefined, isEditedPostEmpty: false };
 		}
 	}, [] );
 
 	return {
 		currentPostType,
+		isEditedPostEmpty,
 		isPageOrSiteEditorSurface: isPageOrSiteEditorSurface(
 			sectionName,
 			currentRoute,
@@ -226,8 +236,11 @@ export function useEmptyViewSuggestions( {
 	loadedProviders,
 }: UseEmptyViewSuggestionsOptions ): Suggestion[] | null {
 	const isReaderChat = isReaderChatHost();
-	const { currentPostType, isPageOrSiteEditorSurface: shouldShowSiteEditorSuggestions } =
-		usePageOrSiteEditorSurface();
+	const {
+		currentPostType,
+		isPageOrSiteEditorSurface: shouldShowSiteEditorSuggestions,
+		isEditedPostEmpty,
+	} = usePageOrSiteEditorSurface();
 
 	// Default suggestions - used when Big Sky doesn't provide custom ones
 	const defaultSuggestions = useMemo(
@@ -362,6 +375,7 @@ export function useEmptyViewSuggestions( {
 		overrideVersion,
 		shouldShowSiteEditorSuggestions,
 		currentPostType,
+		isEditedPostEmpty,
 	] );
 
 	return emptyViewSuggestions;
