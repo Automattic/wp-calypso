@@ -41,6 +41,12 @@ describe( 'useAiChatPlugin', () => {
 		expect( result.current ).toBeUndefined();
 	} );
 
+	it( 'carries the class that marks it as the chat entry button', () => {
+		const { result } = renderHook( () => useAiChatPlugin( { sectionName: 'sites' } ) );
+
+		expect( result.current?.className ).toBe( 'masterbar__item-agents-manager-ai-chat' );
+	} );
+
 	it( 'records the masterbar event with the section and opens the chat on click', () => {
 		const { result } = renderHook( () => useAiChatPlugin( { sectionName: 'sites' } ) );
 		result.current?.onClick?.( {} as React.MouseEvent );
