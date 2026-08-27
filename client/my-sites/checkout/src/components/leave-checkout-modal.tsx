@@ -7,6 +7,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getPreviousRoute from '../../../../state/selectors/get-previous-route';
 import useCartKey from '../../use-cart-key';
 import useValidCheckoutBackUrl from '../hooks/use-valid-checkout-back-url';
+import { getGiftCheckoutBackUrl } from '../lib/get-gift-checkout-back-url';
 import { leaveCheckout } from '../lib/leave-checkout';
 
 export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
@@ -25,6 +26,10 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 	);
 	const cartKey = useCartKey();
 	const { responseCart, replaceProductsInCart } = useShoppingCart( cartKey );
+	const giftBackUrl = getGiftCheckoutBackUrl( {
+		giftDetails: responseCart.gift_details,
+		referrer: document.referrer,
+	} );
 	// Used to lazily clear the siteless 'no-site'/'no-user' carts used by
 	// signup steps before a site exists. /start/domain/domain-only adds the
 	// domain to 'no-site' (logged-in) or 'no-user' (logged-out); if the user
@@ -51,7 +56,8 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 		}
 		leaveCheckout( {
 			siteSlug: siteUrl,
-			forceCheckoutBackUrl: options?.forceBackUrl ?? stepBackUrl ?? forceCheckoutBackUrl,
+			forceCheckoutBackUrl:
+				options?.forceBackUrl ?? stepBackUrl ?? forceCheckoutBackUrl ?? giftBackUrl,
 			previousPath,
 			tracksEvent: 'calypso_masterbar_close_clicked',
 			userHasClearedCart: userHasClearedCart,
