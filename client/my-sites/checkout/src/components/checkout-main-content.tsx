@@ -476,7 +476,7 @@ export default function CheckoutMainContent( {
 
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteUrl ?? '' } );
 	const blackbox = useBlackboxProtection( {
-		feature: 'blackbox-signup',
+		feature: 'blackbox-userless-checkout',
 		suspended: ! isLoggedOutCart,
 	} );
 
