@@ -1,8 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import { render } from '../../../test-utils';
 import { bumpStat } from '../../analytics';
 import { AuthContext } from '../../auth';
@@ -40,6 +41,22 @@ function forbiddenError() {
 	);
 }
 
+/** The session is gone: asking who we are fails like everything else. */
+function mockDeadSession() {
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me' )
+		.query( true )
+		.reply( 403, { error: 'authorization_required', message: 'No active access token' } );
+}
+
+/** The session works; this account just cannot see this particular thing. */
+function mockWorkingSession() {
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me' )
+		.query( true )
+		.reply( 200, { ID: 1, username: 'testuser', language: 'en' } );
+}
+
 function renderWithLogout( error: Error, logout: () => Promise< void > ) {
 	const user = { ID: 1, username: 'testuser', language: 'en' } as User;
 	return render(
@@ -74,7 +91,9 @@ describe( 'UnknownError', () => {
 		} );
 	} );
 
-	describe( 'when a request is refused', () => {
+	describe( 'when a request is refused and the session is gone', () => {
+		beforeEach( mockDeadSession );
+
 		it( 'explains the problem instead of showing the raw API message', async () => {
 			renderWithLogout( authorizationError(), jest.fn() );
 
@@ -103,19 +122,46 @@ describe( 'UnknownError', () => {
 			renderWithLogout( authorizationError(), jest.fn() );
 
 			await screen.findByRole( 'button', { name: /log out/i } );
-			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-error', 'refused-request' );
+			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-error', 'dead-session' );
 		} );
 	} );
 
 	describe( 'when the account simply lacks access', () => {
-		// The API reports this identically to an unusable session, so the same
-		// screen is shown. The copy suggests logging back in rather than claiming
-		// it is the cause, and support is offered for when it does not help.
-		it( 'still offers a recovery path', async () => {
+		beforeEach( mockWorkingSession );
+
+		it( 'says so instead of blaming the session', async () => {
 			renderWithLogout( forbiddenError(), jest.fn() );
 
-			expect( await screen.findByRole( 'button', { name: /log out/i } ) ).toBeVisible();
-			expect( screen.getByRole( 'link', { name: /support/i } ) ).toBeVisible();
+			expect( await screen.findByText( /doesn’t have permission/i ) ).toBeVisible();
+			expect( screen.queryByRole( 'button', { name: /log out/i } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'still offers support', async () => {
+			renderWithLogout( forbiddenError(), jest.fn() );
+
+			expect( await screen.findByRole( 'link', { name: /support/i } ) ).toBeVisible();
+		} );
+
+		it( 'is not counted as a dead session', async () => {
+			renderWithLogout( forbiddenError(), jest.fn() );
+
+			await screen.findByText( /doesn’t have permission/i );
+			expect( mockedBumpStat ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'when the session cannot be checked at all', () => {
+		it( 'falls back to suggesting a fresh log in', async () => {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.1/me' )
+				.query( true )
+				.replyWithError( 'offline' );
+			renderWithLogout( authorizationError(), jest.fn() );
+
+			// Wrong advice a user can act on beats correct advice they cannot.
+			await waitFor( async () =>
+				expect( await screen.findByRole( 'button', { name: /log out/i } ) ).toBeVisible()
+			);
 		} );
 	} );
 
@@ -133,7 +179,7 @@ describe( 'UnknownError', () => {
 			expect( await screen.findByRole( 'link', { name: /support/i } ) ).toBeVisible();
 		} );
 
-		it( 'is not counted as a refused request', async () => {
+		it( 'is not counted as a dead session either', async () => {
 			render( <UnknownError error={ new Error( 'Something specific broke' ) } /> );
 
 			await screen.findByText( 'Something specific broke' );
