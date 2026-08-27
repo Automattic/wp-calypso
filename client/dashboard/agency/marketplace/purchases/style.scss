@@ -12,3 +12,14 @@
 	margin-inline-start: 2px;
 }
 
+.marketplace-purchases__revoke-details {
+	padding: 12px 16px;
+	border-radius: 4px;
+	background: var( --dashboard-color-surface-secondary, var( --color-surface-secondary ) );
+}
+
+.marketplace-purchases__revoke-key {
+	font-family: var( --dashboard-font-family-monospace, monospace );
+	word-break: break-all;
+}
+

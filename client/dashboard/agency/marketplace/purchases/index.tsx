@@ -69,6 +69,16 @@ export default function MarketplacePurchases() {
 						{ type: 'snackbar' }
 					);
 				},
+				onRevoke: ( licenseId: number ) => {
+					setOverrides( ( current ) => ( {
+						...current,
+						[ licenseId ]: {
+							status: 'revoked',
+							revokedAt: new Date().toISOString(),
+						},
+					} ) );
+					createSuccessNotice( __( 'License revoked.' ), { type: 'snackbar' } );
+				},
 			} ),
 		[ createSuccessNotice ]
 	);
