@@ -28,7 +28,7 @@ import { useLoadingMessageIndex } from './hooks/use-loading-message-index';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
 import HundredYearPlanFlowProcessingScreen from './hundred-year-plan-flow-processing-screen';
 import TailoredFlowPreCheckoutScreen from './tailored-flow-precheckout-screen';
-import type { ProcessingLoadingMessage, LoadingMessage } from './hooks/types';
+import type { ProcessingLoadingMessage } from './hooks/types';
 import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { SiteIntent } from '@automattic/data-stores/src/onboard';
@@ -68,7 +68,7 @@ const ProcessingStep: StepType< {
 
 	const { __ } = useI18n();
 	const defaultLoadingMessages = useProcessingLoadingMessages( flow );
-	const loadingMessages: LoadingMessage[] =
+	const loadingMessages: ProcessingLoadingMessage[] =
 		props.loadingMessages && props.loadingMessages.length > 0
 			? props.loadingMessages
 			: defaultLoadingMessages;
