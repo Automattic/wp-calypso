@@ -9,7 +9,6 @@ import {
 	computeVisibleNotes,
 	countUnreadNotes,
 	editCommentContent,
-	getAvailableNoteActions,
 	getListEndReason,
 	getPendingUndoableAction,
 	hasMoreNotesFor,
@@ -474,55 +473,6 @@ const makeCommentNote = ( extra: Partial< Note > = {} ): Note =>
 		meta: { ids: { site: 7, post: 5, comment: 9 } },
 		...extra,
 	} as Partial< Note > );
-
-describe( 'getAvailableNoteActions', () => {
-	it( 'maps the payload action keys from the last actions block', () => {
-		const note = makeCommentNote( {
-			body: [
-				{ text: 'ignored' },
-				{
-					text: '',
-					actions: {
-						'replyto-comment': true,
-						'approve-comment': false,
-						'like-comment': true,
-						'spam-comment': true,
-						'trash-comment': true,
-						'edit-comment': true,
-						'answer-prompt': 'https://example.com/prompt',
-					},
-				},
-			] as Note[ 'body' ],
-		} );
-
-		expect( getAvailableNoteActions( note ) ).toEqual( {
-			replyToComment: true,
-			likePost: false,
-			likeComment: true,
-			approveComment: true,
-			spamComment: true,
-			trashComment: true,
-			editComment: true,
-			answerPromptHref: 'https://example.com/prompt',
-			follow: null,
-		} );
-	} );
-
-	it( 'derives follow from a user block on non-comment notes only', () => {
-		const body = [
-			{ text: '', meta: { ids: { site: 77 } }, actions: { follow: false } },
-		] as Note[ 'body' ];
-
-		const followNote = makeNote( 1, { type: 'follow', body } );
-		expect( getAvailableNoteActions( followNote ).follow ).toEqual( {
-			siteId: 77,
-			isFollowing: false,
-		} );
-
-		const commentNote = makeNote( 2, { type: 'comment', body } );
-		expect( getAvailableNoteActions( commentNote ).follow ).toBeNull();
-	} );
-} );
 
 describe( 'approval and like dispatchers', () => {
 	it( 'dispatches the approve thunk with the mirrored legacy args', () => {

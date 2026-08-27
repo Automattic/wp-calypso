@@ -12,7 +12,6 @@
  */
 import { getClient, initClient } from '@automattic/notifications/src/app/client';
 import {
-	getActions,
 	getEditCommentLink,
 	getReferenceId,
 } from '@automattic/notifications/src/panel/helpers/notes';
@@ -298,50 +297,8 @@ export function acquireEngineVisibility(): () => void {
 	};
 }
 
-export type AvailableNoteActions = {
-	replyToComment: boolean;
-	likePost: boolean;
-	likeComment: boolean;
-	approveComment: boolean;
-	spamComment: boolean;
-	trashComment: boolean;
-	editComment: boolean;
-	answerPromptHref: string | null;
-	follow: { siteId: number; isFollowing: boolean } | null;
-};
-
-/**
- * Which actions this note supports, derived from the payload the same way the
- * popup's actions pane does: the last body block carrying an `actions` object,
- * plus follow from a user block on non-comment notes.
- */
-export function getAvailableNoteActions( note: Note ): AvailableNoteActions {
-	const raw = getActions( note ) as Record< string, unknown >;
-	const has = ( key: string ) => key in raw;
-
-	let follow: AvailableNoteActions[ 'follow' ] = null;
-	if ( note.type !== 'comment' ) {
-		for ( const block of note.body ?? [] ) {
-			const siteId = block.meta?.ids?.site;
-			if ( siteId && block.actions && 'follow' in block.actions ) {
-				follow = { siteId, isFollowing: !! block.actions.follow };
-				break;
-			}
-		}
-	}
-
-	return {
-		replyToComment: has( 'replyto-comment' ),
-		likePost: has( 'like-post' ),
-		likeComment: has( 'like-comment' ),
-		approveComment: has( 'approve-comment' ),
-		spamComment: has( 'spam-comment' ),
-		trashComment: has( 'trash-comment' ),
-		editComment: has( 'edit-comment' ),
-		answerPromptHref: has( 'answer-prompt' ) ? String( raw[ 'answer-prompt' ] ) : null,
-		follow,
-	};
-}
+export { getAvailableNoteActions } from '@automattic/notifications/src/common/actions';
+export type { AvailableNoteActions } from '@automattic/notifications/src/common/actions';
 
 export function useIsNoteApproved( note: Note ): boolean {
 	return useNotesSelector( ( state ) => !! getIsNoteApproved( state, note ) );
