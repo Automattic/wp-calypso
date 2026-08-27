@@ -10,13 +10,11 @@ import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useState, useEffect, useRef } from 'react';
 import { ConfirmDialog, DialogContent, DialogFooter } from 'calypso/components/confirm-dialog';
-import { useExperiment } from 'calypso/lib/explat';
 import { useSiteSubscriptions as useCachedSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import { useFollowedTags } from 'calypso/reader/data/tags';
 import { useNonSelfSubscriptionsCount } from 'calypso/reader/following/hooks/use-non-self-subscriptions-count';
 import {
 	READER_EARLY_READERS_DECLINED_EVENT,
-	READER_EARLY_READERS_EXPERIMENT_NAME,
 	READER_EARLY_READERS_OPT_IN_EVENT,
 	READER_EARLY_READERS_SOURCE_STEP,
 	READER_ONBOARDING_ELIGIBLE_REGISTRATION_DATE,
@@ -233,24 +231,9 @@ const ReaderOnboardingRsm = ( {
 
 	const shouldRenderOnboarding = shouldShowOnboarding && ! isSuppressed;
 
-	// Early Readers opt-in step (a 4th step after discover), throttled via
-	// ExPlat. `isEligible` restricts assignment to users who actually see
-	// onboarding, so the experiment's exposure population matches the
-	// onboarding-viewed population rather than every Reader visitor.
-	//
-	// `reader/early-readers` forces the step without a live assignment. It is
-	// deliberately separate from `reader/force-onboarding` so that forcing the
-	// flow open (the only practical way to reach it without a fresh account)
-	// still lets you see the control experience.
-	const [ , earlyReadersAssignment ] = useExperiment( READER_EARLY_READERS_EXPERIMENT_NAME, {
-		isEligible: shouldShowOnboarding,
-	} );
-	const showEarlyReadersStep =
-		isEnabled( 'reader/early-readers' ) || earlyReadersAssignment?.variationName === 'treatment';
-	// Can flip from 3 to 4 mid-flow if the assignment resolves after the welcome
-	// step renders. Accepted for v0: cosmetic, and the alternative is blocking
-	// the modal on the assignment.
-	const totalOnboardingSteps = showEarlyReadersStep ? 4 : 3;
+	// The Early Readers opt-in step (a 4th step after discover) ships to everyone
+	// who sees onboarding.
+	const totalOnboardingSteps = 4;
 
 	// Lazy-initialize the blog map now that we know the modal will be shown.
 	// Placing this after shouldRenderOnboarding means getTopicGroups /
@@ -381,12 +364,8 @@ const ReaderOnboardingRsm = ( {
 	};
 
 	const handleDiscoverFinish = () => {
-		if ( showEarlyReadersStep ) {
-			runStepSideEffects( 'discover' );
-			openStep( 'early-readers' );
-			return;
-		}
-		completeOnboarding( 'discover' );
+		runStepSideEffects( 'discover' );
+		openStep( 'early-readers' );
 	};
 
 	const handleEarlyReadersBack = () => {

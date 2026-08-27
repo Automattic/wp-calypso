@@ -1,5 +1,4 @@
 export const READER_ONBOARDING_PREFERENCE_KEY = 'has_completed_reader_onboarding';
-export const READER_EARLY_READERS_EXPERIMENT_NAME = 'calypso_reader_early_readers_v0';
 
 // Deliberately outside the `calypso_reader_onboarding_` prefix: these measure
 // the Early Readers program's own funnel, not onboarding step navigation.
