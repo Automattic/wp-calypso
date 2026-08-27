@@ -30,19 +30,22 @@ export default function PendingPrimaryDomainNotice( {
 	} );
 
 	// WordPress.com only sets a domain as primary on its own when the site has no
-	// custom primary address yet.
+	// custom primary address yet. Answering that needs the site's other domains, so
+	// only fetch them when this domain looks pending on its own.
+	const mayBePending = !! polledDomain && isPendingPrimaryDomain( polledDomain );
+
 	const { data: allDomains } = useQuery( {
 		...queries.domainsQuery(),
-		enabled: !! polledDomain,
+		enabled: mayBePending,
 	} );
 
 	const isPending =
+		mayBePending &&
 		!! polledDomain &&
 		!! allDomains &&
 		! hasCustomPrimaryDomain(
 			allDomains.filter( ( domain ) => domain.blog_id === polledDomain.blog_id )
-		) &&
-		isPendingPrimaryDomain( polledDomain );
+		);
 
 	// Track whether the domain was ever actually pending, so we don't fire
 	// a spurious snackbar when rendered for a non-pending domain.
