@@ -75,12 +75,14 @@ export function getBlueprintArchiveSiteSpecUrl( {
 	blueprintSlug,
 	ref,
 	source,
+	wowFunnel,
 }: {
 	siteSlug?: string | null;
 	siteId?: string | number | null;
 	blueprintSlug: string;
 	ref?: string | null;
 	source?: string | null;
+	wowFunnel?: string | null;
 } ): string {
 	return addQueryArgs( BLUEPRINT_ARCHIVE_SITE_SPEC_PATH, {
 		blueprint_archive_import: BLUEPRINT_ARCHIVE_IMPORT_QUERY_VALUE,
@@ -89,6 +91,10 @@ export function getBlueprintArchiveSiteSpecUrl( {
 		...( siteId && String( siteId ) !== '0' ? { siteId } : {} ),
 		...( ref ? { ref } : {} ),
 		...( source ? { source } : {} ),
+		// A funnel run's import already ran server-side, before checkout. site-spec keys its
+		// "do not start one" guard off this param, so it has to survive into the URL — without
+		// it the page cannot tell a funnel hand-off from a standalone run and imports again.
+		...( wowFunnel ? { wow_funnel: wowFunnel } : {} ),
 	} );
 }
 

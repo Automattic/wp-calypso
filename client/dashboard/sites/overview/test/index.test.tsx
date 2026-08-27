@@ -53,6 +53,14 @@ const site = {
 	},
 } as unknown as Site;
 
+// Default: site is not associated with an agency (the agency-blog endpoint
+// returns `partner_for_blog_not_found`). Individual tests can override this to
+// simulate an agency-managed site.
+let agencyBlogResponse: { status: number; body: unknown } = {
+	status: 404,
+	body: { code: 'partner_for_blog_not_found' },
+};
+
 function mockSite( mockedSite: Site ) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/rest/v1.1/sites/${ mockedSite.slug }` )
@@ -84,11 +92,19 @@ async function waitForFeatureGatedCards( planName: string ) {
 
 describe( '<SiteOverview>', () => {
 	beforeEach( () => {
+		agencyBlogResponse = { status: 404, body: { code: 'partner_for_blog_not_found' } };
+
 		nock( 'https://public-api.wordpress.com' )
 			.persist()
 			.get( '/rest/v1.1/me/preferences' )
 			.query( true )
 			.reply( 200, { calypso_preferences: {} } );
+
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( `/wpcom/v2/agency/blog/${ site.ID }` )
+			.query( true )
+			.reply( () => [ agencyBlogResponse.status, agencyBlogResponse.body ] );
 
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/all-domains' )
@@ -318,6 +334,36 @@ describe( '<SiteOverview>', () => {
 		// Dev-license sites don't render the domains card or its upsell.
 		await waitFor( () =>
 			expect( screen.queryByText( 'The perfect domain awaits' ) ).not.toBeInTheDocument()
+		);
+	} );
+
+	test( 'does not render the DIFM upsell for an unlaunched A4A dev site', async () => {
+		mockSite( { ...site, launch_status: 'unlaunched', is_a4a_dev_site: true } as Site );
+		render( <SiteOverview siteSlug={ site.slug } /> );
+
+		await screen.findByRole( 'heading', { name: 'Test Site' } );
+		await waitForFeatureGatedCards( 'Business' );
+
+		// Agency sites don't render the DIFM upsell, even when unlaunched.
+		await waitFor( () =>
+			expect( screen.queryByText( 'We’ll bring your vision to life' ) ).not.toBeInTheDocument()
+		);
+	} );
+
+	test( 'does not render the DIFM upsell for an unlaunched agency-managed site', async () => {
+		agencyBlogResponse = {
+			status: 200,
+			body: { name: 'Test Site', referral_status: 'active' },
+		};
+		mockSite( { ...site, launch_status: 'unlaunched', is_wpcom_atomic: true } as Site );
+		render( <SiteOverview siteSlug={ site.slug } /> );
+
+		await screen.findByRole( 'heading', { name: 'Test Site' } );
+		await waitForFeatureGatedCards( 'Business' );
+
+		// Agency sites don't render the DIFM upsell, even when unlaunched.
+		await waitFor( () =>
+			expect( screen.queryByText( 'We’ll bring your vision to life' ) ).not.toBeInTheDocument()
 		);
 	} );
 
