@@ -133,40 +133,21 @@
 	}
 }
 
-.marketplace-hosting__concierge-card {
-	cursor: pointer;
-	transition: box-shadow 0.1s ease-in-out;
-	background: color-mix(
-		in srgb,
-		var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) 4%,
-		var( --color-surface )
-	);
-	box-shadow: inset 0 0 0 1px
-		color-mix(
-			in srgb,
-			var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) 18%,
-			var( --color-surface )
-		);
+.marketplace-hosting__platform-bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 8px 24px;
+	border-block-end: 1px solid var( --dashboard-overview__divider-color );
 
-	&:hover,
-	&:focus-visible {
-		box-shadow: inset 0 0 0 1.5px var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+	.marketplace-hosting__tabs {
+		flex: 1 1 auto;
 	}
 }
 
-.marketplace-hosting__concierge-card-icon {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	inline-size: 32px;
-	block-size: 32px;
-	border-radius: 50%;
+.marketplace-hosting__choose-pill.components-button {
 	flex-shrink: 0;
-	background: color-mix(
-		in srgb,
-		var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) 14%,
-		var( --color-surface )
-	);
 
 	svg {
 		fill: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
@@ -413,10 +394,10 @@
 	padding: 0;
 }
 
-/* TabPanel draws no baseline under the tab list; consumers add their own
-   (see stats-navigation). Use the page's divider token. */
-.marketplace-hosting__tabs .components-tab-panel__tabs {
-	border-block-end: 1px solid var( --dashboard-overview__divider-color );
+/* The platform bar (tabs + concierge affordance) owns the baseline so it spans
+   the full row; the tab list itself draws none (see stats-navigation). */
+.marketplace-hosting__platform-bar .components-tab-panel__tabs {
+	border-block-end: none;
 }
 
 /* The round brand badge is the left cap of the descriptor lockups (the same

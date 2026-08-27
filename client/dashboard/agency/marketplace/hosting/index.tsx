@@ -606,38 +606,6 @@ const aiSparkle = (
 	</SVG>
 );
 
-function ConciergeRailCard( { onOpen }: { onOpen: () => void } ) {
-	return (
-		<Card
-			className="marketplace-hosting__concierge-card"
-			onClick={ onOpen }
-			role="button"
-			tabIndex={ 0 }
-			onKeyDown={ ( event: React.KeyboardEvent ) => {
-				if ( event.key === 'Enter' || event.key === ' ' ) {
-					event.preventDefault();
-					onOpen();
-				}
-			} }
-		>
-			<CardBody>
-				<HStack spacing={ 3 } alignment="center" justify="flex-start">
-					<div className="marketplace-hosting__concierge-card-icon">
-						<Icon icon={ aiSparkle } />
-					</div>
-					<VStack spacing={ 0 } expanded>
-						<Text weight={ 600 }>{ __( 'Not sure this is the right fit?' ) }</Text>
-						<Text variant="muted">
-							{ __( 'Ask the concierge which platform fits this client.' ) }
-						</Text>
-					</VStack>
-					<Icon icon={ chevronRight } className="marketplace-hosting__guide-chevron" />
-				</HStack>
-			</CardBody>
-		</Card>
-	);
-}
-
 function MigrationOffer() {
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
@@ -885,20 +853,9 @@ export default function MarketplaceHosting() {
 			header={
 				<PageHeader
 					title={ __( 'Hosting' ) }
-					description={
-						<>
-							{ __(
-								'Choose the right hosting for each client, from single sites to enterprise platforms.'
-							) }{ ' ' }
-							<Button
-								variant="link"
-								onClick={ () => setIsConciergeOpen( true ) }
-								aria-expanded={ isConciergeOpen }
-							>
-								{ __( 'Help me choose' ) }
-							</Button>
-						</>
-					}
+					description={ __(
+						'Choose the right hosting for each client, from single sites to enterprise platforms.'
+					) }
 					actions={
 						<div className="marketplace-hosting__header-actions">
 							<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
@@ -984,15 +941,27 @@ export default function MarketplaceHosting() {
 					onClose={ () => setIsConciergeOpen( false ) }
 				/>
 			) }
-			<TabPanel
-				key={ selectedBrand }
-				className="marketplace-hosting__tabs"
-				tabs={ hostingBrands.map( ( brand ) => ( { name: brand.key, title: brand.name } ) ) }
-				initialTabName={ selectedBrand }
-				onSelect={ ( tabName ) => setSelectedBrand( tabName as HostingBrand[ 'key' ] ) }
-			>
-				{ () => null }
-			</TabPanel>
+			<div className="marketplace-hosting__platform-bar">
+				<TabPanel
+					key={ selectedBrand }
+					className="marketplace-hosting__tabs"
+					tabs={ hostingBrands.map( ( brand ) => ( { name: brand.key, title: brand.name } ) ) }
+					initialTabName={ selectedBrand }
+					onSelect={ ( tabName ) => setSelectedBrand( tabName as HostingBrand[ 'key' ] ) }
+				>
+					{ () => null }
+				</TabPanel>
+				<Button
+					variant="tertiary"
+					size="compact"
+					icon={ aiSparkle }
+					className="marketplace-hosting__choose-pill"
+					onClick={ () => setIsConciergeOpen( true ) }
+					aria-expanded={ isConciergeOpen }
+				>
+					{ __( 'Not sure? Help me choose' ) }
+				</Button>
+			</div>
 			{ selectedBrand === 'wpcom' && (
 				<div className="marketplace-hosting__layout">
 					<VStack spacing={ 8 } justify="flex-start">
@@ -1035,7 +1004,6 @@ export default function MarketplaceHosting() {
 									} )
 								}
 							/>
-							<ConciergeRailCard onOpen={ () => setIsConciergeOpen( true ) } />
 						</VStack>
 					</div>
 				</div>
@@ -1084,7 +1052,6 @@ export default function MarketplaceHosting() {
 									} )
 								}
 							/>
-							<ConciergeRailCard onOpen={ () => setIsConciergeOpen( true ) } />
 						</VStack>
 					</div>
 				</div>
