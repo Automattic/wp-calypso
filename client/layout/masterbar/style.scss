@@ -1055,12 +1055,6 @@ body.is-mobile-app-view {
 		margin-left: 16px;
 		min-width: 0;
 	}
-
-	// TODO: Remove this once the new Badge APIs are implemented (DS-203).
-	.masterbar__info-badge {
-		background-color: var(--color-global-masterbar-site-info-badge-background, rgba(255, 255, 255, 0.1));
-		color: var(--color-global-masterbar-site-info-badge-color, var(--color-masterbar-submenu-text)) !important; //override the link color
-	}
 }
 
 .button > .masterbar__site-info,
