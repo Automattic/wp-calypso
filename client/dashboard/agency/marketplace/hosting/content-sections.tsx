@@ -185,7 +185,7 @@ export function JetpackComplete() {
 					className="marketplace-hosting__card-header"
 					title={ __( 'Jetpack Complete included' ) }
 					description={ __(
-						'Every Pressable site comes with a free Jetpack Complete license — a $899/year/site value.'
+						'Every Pressable site comes with a free Jetpack Complete license, a $899/year/site value.'
 					) }
 					level={ 3 }
 					decoration={

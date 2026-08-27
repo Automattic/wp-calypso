@@ -386,12 +386,9 @@
 
 
 
-/* Upstream bug shim: core Guide's page-control <ul> sets margin: 0 but not
-   padding: 0, relying on wp-admin's global list reset. The dashboard has no
-   such reset, so the browser's 40px list padding shifts the dots off center.
-   Remove when fixed in @wordpress/components (guide/style.scss). */
+/* Hide the guide's pagination dots — they read as clutter over the imagery. */
 .marketplace-hosting__referral-guide .components-guide__page-control {
-	padding: 0;
+	display: none;
 }
 
 /* The platform bar (tabs + concierge affordance) owns the baseline so it spans

@@ -164,7 +164,7 @@ export default function YourPlan( {
 								<Text variant="muted">
 									{ sprintf(
 										/* translators: %1$d: discount percentage, %2$d: total sites, %3$d: owned sites, %4$d: new sites */
-										__( '%1$d%% off at %2$d total sites — your %3$d existing sites count.' ),
+										__( '%1$d%% off at %2$d total sites. Your %3$d existing sites count.' ),
 										Math.round( price.discountPercent * 100 ),
 										ownedSites + quantity,
 										ownedSites
