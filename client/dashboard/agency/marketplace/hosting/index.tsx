@@ -810,6 +810,14 @@ export default function MarketplaceHosting() {
 		: undefined;
 	const pressableUsage = isExistingCustomer ? mockOwnership.pressable.usage : undefined;
 
+	// Referral mode mirrors main: quantity is fixed at 1, and owned inventory and
+	// existing plans are ignored — no volume discount and no upgrade path —
+	// because the client is billed directly at the standard per-item rate.
+	const effectiveOwnedSites = isReferralMode ? 0 : ownedSites;
+	const effectiveQuantity = isReferralMode ? 1 : quantity;
+	const effectivePressableCurrentPlan = isReferralMode ? undefined : pressableCurrentPlan;
+	const effectivePressableUsage = isReferralMode ? undefined : pressableUsage;
+
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { data: apiProducts } = useQuery( agencyProductsQuery( agency?.id ?? 0 ) );
 	const products = apiProducts as PricedProduct[] | undefined;
@@ -916,10 +924,11 @@ export default function MarketplaceHosting() {
 								family: 'wpcom-hosting',
 								label: sprintf(
 									/* translators: %d: number of sites */
-									_n( '%d WordPress.com site', '%d WordPress.com sites', quantity ),
-									quantity
+									_n( '%d WordPress.com site', '%d WordPress.com sites', effectiveQuantity ),
+									effectiveQuantity
 								),
-								total: getTieredPrice( wpcomProduct, quantity, term, ownedSites ).discountedCost,
+								total: getTieredPrice( wpcomProduct, effectiveQuantity, term, effectiveOwnedSites )
+									.discountedCost,
 							} );
 						} else if ( brand === 'pressable' ) {
 							addToCart( {
@@ -971,8 +980,9 @@ export default function MarketplaceHosting() {
 								product={ wpcomProduct }
 								term={ term }
 								onQuantityChange={ setQuantity }
-								ownedSites={ ownedSites }
+								ownedSites={ effectiveOwnedSites }
 								altQuantityControl={ useAltControls }
+								isReferralMode={ isReferralMode }
 							/>
 							<DevSitesBanner />
 						</VStack>
@@ -989,19 +999,24 @@ export default function MarketplaceHosting() {
 								brand="wpcom"
 								product={ wpcomProduct }
 								term={ term }
-								quantity={ quantity }
-								ownedSites={ ownedSites }
+								quantity={ effectiveQuantity }
+								ownedSites={ effectiveOwnedSites }
+								isReferralMode={ isReferralMode }
 								onAddToCart={ () =>
 									addToCart( {
 										id: 'wpcom-hosting',
 										family: 'wpcom-hosting',
 										label: sprintf(
 											/* translators: %d: number of sites */
-											_n( '%d WordPress.com site', '%d WordPress.com sites', quantity ),
-											quantity
+											_n( '%d WordPress.com site', '%d WordPress.com sites', effectiveQuantity ),
+											effectiveQuantity
 										),
-										total: getTieredPrice( wpcomProduct, quantity, term, ownedSites )
-											.discountedCost,
+										total: getTieredPrice(
+											wpcomProduct,
+											effectiveQuantity,
+											term,
+											effectiveOwnedSites
+										).discountedCost,
 									} )
 								}
 							/>
@@ -1016,8 +1031,8 @@ export default function MarketplaceHosting() {
 							<PressableContent
 								planSlug={ pressablePlanSlug }
 								onPlanChange={ setPressablePlanSlug }
-								currentPlan={ pressableCurrentPlan }
-								usage={ pressableUsage }
+								currentPlan={ effectivePressableCurrentPlan }
+								usage={ effectivePressableUsage }
 							/>
 							<ScheduleDemoBanner />
 						</VStack>
@@ -1036,7 +1051,8 @@ export default function MarketplaceHosting() {
 								term={ term }
 								quantity={ 1 }
 								plan={ pressablePlan }
-								currentPlan={ pressableCurrentPlan }
+								currentPlan={ effectivePressableCurrentPlan }
+								isReferralMode={ isReferralMode }
 								onAddToCart={ () =>
 									addToCart( {
 										id: 'pressable-hosting',

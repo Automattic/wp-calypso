@@ -20,6 +20,7 @@ type YourPlanProps = {
 	product?: HostingProduct;
 	ownedSites?: number;
 	currentPlan?: PressablePlan;
+	isReferralMode?: boolean;
 	onAddToCart: () => void;
 };
 
@@ -31,6 +32,7 @@ export default function YourPlan( {
 	product = wpcomHosting,
 	ownedSites = 0,
 	currentPlan,
+	isReferralMode = false,
 	onAddToCart,
 }: YourPlanProps ) {
 	const price = brand === 'wpcom' ? getTieredPrice( product, quantity, term, ownedSites ) : null;
@@ -67,7 +69,16 @@ export default function YourPlan( {
 			: ( term === 'yearly' ? plan?.yearly_price : plan?.monthly_price ) ?? null;
 
 	let ctaLabel;
-	if ( brand === 'wpcom' ) {
+	if ( isReferralMode ) {
+		ctaLabel =
+			brand === 'wpcom'
+				? __( 'Add to referral' )
+				: sprintf(
+						/* translators: %s: plan name */
+						__( 'Add %s to referral' ),
+						plan?.name ?? ''
+				  );
+	} else if ( brand === 'wpcom' ) {
 		ctaLabel = sprintf(
 			/* translators: %d: number of sites */
 			_n( 'Add %d site to cart', 'Add %d sites to cart', quantity ),
@@ -196,7 +207,11 @@ export default function YourPlan( {
 							<CardDivider />
 							<HStack spacing={ 2 } justify="flex-start" alignment="center">
 								<Icon icon={ check } className="marketplace-hosting__check" />
-								<Text variant="muted">{ __( 'Cancel anytime.' ) }</Text>
+								<Text variant="muted">
+									{ isReferralMode
+										? __( 'You earn commission when your client pays.' )
+										: __( 'Cancel anytime.' ) }
+								</Text>
 							</HStack>
 						</>
 					) }
