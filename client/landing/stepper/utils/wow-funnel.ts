@@ -115,11 +115,35 @@ export function getWowFunnelConfig( funnelSlug: string | null ): WowFunnelConfig
  */
 export type RememberedWowFunnelSite = {
 	funnelSlug: string;
+	/**
+	 * Identifies the run, not just the funnel. Two CTAs can share a funnel slug and differ in
+	 * what they build — the blueprint funnel's whole subject is its `blueprint_slug` — so the
+	 * slug alone would resume a site built from a different blueprint.
+	 */
+	funnelKey: string;
 	blogId: number;
 	siteSlug: string;
 };
 
 const SESSION_KEY = 'wow-funnel-created-site';
+
+/**
+ * A stable identity for one funnel run: the slug plus the args that decide what gets built.
+ *
+ * @param funnelSlug The funnel slug.
+ * @param funnelArgs Args from the entry URL.
+ * @returns A key that changes whenever the run would build something different.
+ */
+export function getWowFunnelKey(
+	funnelSlug: string,
+	funnelArgs: Record< string, string > = {}
+): string {
+	const args = Object.keys( funnelArgs )
+		.sort()
+		.map( ( key ) => `${ key }=${ funnelArgs[ key ] }` )
+		.join( '&' );
+	return args ? `${ funnelSlug }:${ args }` : funnelSlug;
+}
 
 /**
  * In-flight background-creation promises, keyed by funnel slug. Lets the create-site step await the
@@ -192,7 +216,7 @@ function readRemembered(): RememberedWowFunnelSite | null {
 			return null;
 		}
 		const parsed = JSON.parse( raw ) as RememberedWowFunnelSite;
-		if ( parsed && parsed.funnelSlug && parsed.blogId && parsed.siteSlug ) {
+		if ( parsed && parsed.funnelKey && parsed.blogId && parsed.siteSlug ) {
 			return parsed;
 		}
 	} catch {
@@ -201,9 +225,13 @@ function readRemembered(): RememberedWowFunnelSite | null {
 	return null;
 }
 
-export function getRememberedWowFunnelSite( funnelSlug: string ): RememberedWowFunnelSite | null {
+export function getRememberedWowFunnelSite(
+	funnelSlug: string,
+	funnelArgs: Record< string, string > = {}
+): RememberedWowFunnelSite | null {
 	const remembered = readRemembered();
-	return remembered && remembered.funnelSlug === funnelSlug ? remembered : null;
+	const key = getWowFunnelKey( funnelSlug, funnelArgs );
+	return remembered && remembered.funnelKey === key ? remembered : null;
 }
 
 function rememberWowFunnelSite( site: RememberedWowFunnelSite ): void {
@@ -224,6 +252,37 @@ export function clearWowFunnelSite(): void {
 }
 
 /**
+ * Forget a funnel run completely, so the next entry builds a new site.
+ *
+ * Clearing sessionStorage alone is not enough: the in-flight cache holds the resolved promise for
+ * the run's site, and startWowFunnelSite() consults it after the remembered-site check — so the
+ * discarded site would be handed straight back.
+ *
+ * @param funnelSlug The funnel slug.
+ * @param funnelArgs Args from the entry URL.
+ */
+export function forgetWowFunnelRun(
+	funnelSlug: string,
+	funnelArgs: Record< string, string > = {}
+): void {
+	clearWowFunnelSite();
+	inFlight[ getWowFunnelKey( funnelSlug, funnelArgs ) ] = undefined;
+}
+
+/**
+ * Is this site already paid for?
+ *
+ * A funnel run exists to sell a plan for the site it builds, so a site that already has one must
+ * never be resumed — checkout would offer a second plan for a site that does not need one.
+ *
+ * @param site The site, as returned by the site store.
+ * @returns True when the site holds a paid plan.
+ */
+export function wowFunnelSiteIsPaid( site: { plan?: { is_free?: boolean } } | undefined ): boolean {
+	return !! site?.plan && ! site.plan.is_free;
+}
+
+/**
  * Create the funnel's Simple site (which the server immediately fast-provisions to Atomic), once.
  *
  * Single-flight: concurrent callers for the same funnel share one request, and a site already
@@ -240,12 +299,14 @@ export function startWowFunnelSite( {
 	funnelArgs?: Record< string, string >;
 	siteTitle?: string;
 } ): Promise< RememberedWowFunnelSite > {
-	const remembered = getRememberedWowFunnelSite( funnelSlug );
+	const funnelKey = getWowFunnelKey( funnelSlug, funnelArgs );
+
+	const remembered = getRememberedWowFunnelSite( funnelSlug, funnelArgs );
 	if ( remembered ) {
 		return Promise.resolve( remembered );
 	}
 
-	const existing = inFlight[ funnelSlug ];
+	const existing = inFlight[ funnelKey ];
 	if ( existing ) {
 		return existing;
 	}
@@ -285,6 +346,7 @@ export function startWowFunnelSite( {
 
 		const result: RememberedWowFunnelSite = {
 			funnelSlug,
+			funnelKey,
 			blogId: site.siteId,
 			siteSlug: site.siteSlug,
 		};
@@ -297,14 +359,14 @@ export function startWowFunnelSite( {
 		return result;
 	} )();
 
-	inFlight[ funnelSlug ] = request;
+	inFlight[ funnelKey ] = request;
 	request.catch( ( error ) => {
 		logWowFunnelEvent( 'start_site_error', {
 			funnel: funnelSlug,
 			error: error instanceof Error ? error.message : String( error ),
 		} );
 		// Clear so a later attempt (e.g. the create-site fallback) can retry.
-		inFlight[ funnelSlug ] = undefined;
+		inFlight[ funnelKey ] = undefined;
 	} );
 
 	return request;
