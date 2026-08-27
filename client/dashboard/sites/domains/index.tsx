@@ -1,5 +1,5 @@
 import { siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
-import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -18,7 +18,6 @@ import {
 import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import PendingPrimaryDomainNotice from '../../components/pending-primary-domain-notice';
 import AddDomainButton from '../../domains/add-domain-button';
 import {
 	useActions,
@@ -27,7 +26,6 @@ import {
 	SITE_CONTEXT_VIEW,
 	useBulkActionsProgressNotice,
 } from '../../domains/dataviews';
-import { isPendingPrimaryDomain } from '../../utils/domain';
 import { SitesNoticeArbiter } from '../notice-arbiter';
 import PrimaryDomainSelectorNotice from './primary-domain-selector-notice';
 import type { DomainSummary } from '@automattic/api-core';
@@ -37,7 +35,6 @@ function getDomainId( domain: DomainSummary ) {
 }
 
 function SiteDomains() {
-	const queryClient = useQueryClient();
 	const { queries } = useAppContext();
 	const { siteSlug } = siteRoute.useParams();
 	const { user } = useAuth();
@@ -48,8 +45,6 @@ function SiteDomains() {
 			return data.filter( ( domain ) => domain.blog_id === site.ID );
 		},
 	} );
-
-	const pendingDomain = siteDomains.find( isPendingPrimaryDomain );
 
 	const { data: redirect } = useSuspenseQuery( siteRedirectQuery( site.ID ) );
 	const hasRedirect = redirect && Object.keys( redirect ).length > 0;
@@ -93,13 +88,7 @@ function SiteDomains() {
 					{ /* Action feedback, not an on-load banner: rendered outside the arbiter. */ }
 					{ bulkActionsNotice }
 					<SitesNoticeArbiter>
-						{ ! hasRedirect && pendingDomain && (
-							<PendingPrimaryDomainNotice
-								domainName={ pendingDomain.domain }
-								onComplete={ () => queryClient.invalidateQueries( queries.domainsQuery() ) }
-							/>
-						) }
-						{ ! hasRedirect && ! pendingDomain && (
+						{ ! hasRedirect && (
 							<PrimaryDomainSelectorNotice domains={ siteDomains } site={ site } user={ user } />
 						) }
 						{ hasRedirect && (
