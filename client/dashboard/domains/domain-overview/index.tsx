@@ -18,6 +18,7 @@ import { domainRoute } from '../../app/router/domains';
 import SnackbarBackButton from '../../app/snackbar-back-button';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import PendingPrimaryDomainNotice from '../../components/pending-primary-domain-notice';
 import { formatDate } from '../../utils/datetime';
 import { getDomainRenewalUrl, isTldInMaintenance } from '../../utils/domain';
 import { TLDMaintenanceNotice } from '../maintenance-notice';
@@ -27,6 +28,11 @@ import IcannSuspensionNotice from './icann-suspension-notice';
 import PendingRegistrationNotice from './pending-registration-notice';
 import DomainOverviewSettings from './settings';
 import TransferredDomainDetails from './transferred-domain-details';
+
+// Hidden: no API signal tells a pending primary swap from a domain that is
+// simply not primary, so the notice showed on every non-primary domain and
+// never cleared. See DOMENG-1081.
+const SHOW_PENDING_PRIMARY_DOMAIN_NOTICE: boolean = false;
 
 export default function DomainOverview() {
 	const locale = useLocale();
@@ -130,6 +136,9 @@ export default function DomainOverview() {
 				) }
 				{ domain.is_pending_icann_verification && (
 					<IcannSuspensionNotice domainName={ domain.domain } />
+				) }
+				{ SHOW_PENDING_PRIMARY_DOMAIN_NOTICE && (
+					<PendingPrimaryDomainNotice domainName={ domain.domain } />
 				) }
 				{ domain.subtype.id !== DomainSubtype.DOMAIN_TRANSFER && (
 					<>
