@@ -1,3 +1,4 @@
+import { addSchemeIfMissing } from 'calypso/lib/url';
 import type { ResponseCartGiftDetails } from '@automattic/shopping-cart';
 
 const HTTP_PROTOCOLS = [ 'http:', 'https:' ];
@@ -18,7 +19,8 @@ function parseHttpUrl( value: string | undefined ): URL | undefined {
  * Where "Back" should go from a gift checkout: the page on the gifted site
  * the visitor came from when the referrer belongs to that site, otherwise
  * the gifted site itself. The referrer is only trusted when its host matches
- * the receiver URL the server put on the cart.
+ * the receiver URL the server put on the cart. That URL is a bare domain
+ * (optionally with a path), so it is given a scheme before parsing.
  */
 export function getGiftCheckoutBackUrl( {
 	giftDetails,
@@ -27,7 +29,10 @@ export function getGiftCheckoutBackUrl( {
 	giftDetails: ResponseCartGiftDetails | undefined;
 	referrer: string;
 } ): string | undefined {
-	const receiverUrl = parseHttpUrl( giftDetails?.receiver_blog_url );
+	const receiverBlogUrl = giftDetails?.receiver_blog_url;
+	const receiverUrl = parseHttpUrl(
+		receiverBlogUrl ? addSchemeIfMissing( receiverBlogUrl, 'https' ) : undefined
+	);
 	if ( ! receiverUrl ) {
 		return undefined;
 	}
@@ -37,5 +42,5 @@ export function getGiftCheckoutBackUrl( {
 		return referrerUrl.href;
 	}
 
-	return giftDetails?.receiver_blog_url;
+	return receiverUrl.href;
 }

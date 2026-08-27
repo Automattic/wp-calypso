@@ -1,12 +1,9 @@
-/**
- * @jest-environment jsdom
- */
-import { getGiftCheckoutBackUrl } from '../get-gift-checkout-back-url';
+import { getGiftCheckoutBackUrl } from '../lib/get-gift-checkout-back-url';
 
 const giftDetails = {
 	receiver_blog_id: 123,
 	receiver_blog_slug: 'giftedsite.wordpress.com',
-	receiver_blog_url: 'https://giftedsite.wordpress.com',
+	receiver_blog_url: 'giftedsite.wordpress.com',
 };
 
 describe( 'getGiftCheckoutBackUrl', () => {
@@ -37,28 +34,55 @@ describe( 'getGiftCheckoutBackUrl', () => {
 		).toBe( 'https://giftedsite.wordpress.com/2026/08/27/hello-world/' );
 	} );
 
-	it( 'returns the receiver URL when the referrer is on another host', () => {
+	it( 'returns the normalized receiver URL when the referrer is on another host', () => {
 		expect( getGiftCheckoutBackUrl( { giftDetails, referrer: 'https://evil.example.com/' } ) ).toBe(
-			'https://giftedsite.wordpress.com'
+			'https://giftedsite.wordpress.com/'
 		);
 	} );
 
 	it( 'returns the receiver URL when the referrer is on a subdomain of the gifted host', () => {
 		expect(
 			getGiftCheckoutBackUrl( { giftDetails, referrer: 'https://sub.giftedsite.wordpress.com/' } )
-		).toBe( 'https://giftedsite.wordpress.com' );
+		).toBe( 'https://giftedsite.wordpress.com/' );
 	} );
 
 	it( 'returns the receiver URL when there is no referrer', () => {
 		expect( getGiftCheckoutBackUrl( { giftDetails, referrer: '' } ) ).toBe(
-			'https://giftedsite.wordpress.com'
+			'https://giftedsite.wordpress.com/'
 		);
 	} );
 
 	it( 'returns the receiver URL when the referrer is not http(s)', () => {
 		expect( getGiftCheckoutBackUrl( { giftDetails, referrer: 'javascript:alert(1)' } ) ).toBe(
-			'https://giftedsite.wordpress.com'
+			'https://giftedsite.wordpress.com/'
 		);
+	} );
+
+	it( 'keeps an existing scheme on the receiver URL', () => {
+		expect(
+			getGiftCheckoutBackUrl( {
+				giftDetails: { ...giftDetails, receiver_blog_url: 'https://giftedsite.wordpress.com' },
+				referrer: '',
+			} )
+		).toBe( 'https://giftedsite.wordpress.com/' );
+	} );
+
+	it( 'keeps the path of a receiver URL installed in a subdirectory', () => {
+		expect(
+			getGiftCheckoutBackUrl( {
+				giftDetails: { ...giftDetails, receiver_blog_url: 'example.com/blog' },
+				referrer: '',
+			} )
+		).toBe( 'https://example.com/blog' );
+	} );
+
+	it( 'returns the referrer when it matches the host of a subdirectory receiver URL', () => {
+		expect(
+			getGiftCheckoutBackUrl( {
+				giftDetails: { ...giftDetails, receiver_blog_url: 'example.com/blog' },
+				referrer: 'https://example.com/some-post/',
+			} )
+		).toBe( 'https://example.com/some-post/' );
 	} );
 
 	it( 'returns undefined when the receiver URL cannot be parsed', () => {
