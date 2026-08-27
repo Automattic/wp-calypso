@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
+import type { ComponentProps } from 'react';
 
 export const getSeverityLabel = ( severity: number ): string => {
 	if ( severity >= 5 ) {
@@ -19,7 +20,9 @@ export const getSeverityLabel = ( severity: number ): string => {
 	return __( 'Low' );
 };
 
-export const getSeverityIntent = ( severity: number ): 'none' | 'high' | 'medium' | 'low' => {
+export const getSeverityIntent = (
+	severity: number
+): ComponentProps< typeof Badge >[ 'intent' ] => {
 	if ( severity >= 5 ) {
 		return 'high';
 	}
