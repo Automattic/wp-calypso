@@ -24,7 +24,7 @@ export default function DomainDiagnosticsSettingsSummary( {
 		{
 			text: __( 'Issues with DNS email records' ),
 			intent: domainDiagnostics.email_dns_records.dismissed_email_dns_issues_notice
-				? undefined
+				? ( 'draft' as const )
 				: ( 'high' as const ),
 		},
 	];

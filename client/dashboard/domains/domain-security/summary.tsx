@@ -24,7 +24,7 @@ export default function NameServersSettingsSummary( {
 		if ( domain.is_dnssec_enabled ) {
 			badges.push( { text: __( 'DNSSEC enabled' ), intent: 'stable' as const } );
 		} else {
-			badges.push( { text: __( 'DNSSEC disabled' ), intent: undefined } );
+			badges.push( { text: __( 'DNSSEC disabled' ), intent: 'draft' as const } );
 		}
 	}
 

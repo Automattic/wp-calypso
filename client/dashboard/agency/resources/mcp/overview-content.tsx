@@ -16,7 +16,7 @@ const MCP_PROMPTS_PATH = '/resources/ai-mcp/prompts';
 
 function getToolsBadge( abilities: McpAvailableAbility[] ) {
 	if ( abilities.length === 0 ) {
-		return { text: __( 'No tools available' ) };
+		return { text: __( 'No tools available' ), intent: 'draft' as const };
 	}
 
 	const enabledCount = abilities.filter( ( ability ) => ability.enabled ).length;
@@ -26,7 +26,7 @@ function getToolsBadge( abilities: McpAvailableAbility[] ) {
 	}
 
 	if ( enabledCount === 0 ) {
-		return { text: __( 'None enabled' ) };
+		return { text: __( 'None enabled' ), intent: 'draft' as const };
 	}
 
 	return {

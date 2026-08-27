@@ -88,7 +88,7 @@ function getReadBadge( tools: Array< [ string, McpAbility ] > ) {
 		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'Disabled' ) };
+		return { text: __( 'Disabled' ), intent: 'draft' as const };
 	}
 	return {
 		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
@@ -106,7 +106,7 @@ function getWriteBadge( tools: Array< [ string, McpAbility ] > ) {
 		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'Disabled' ) };
+		return { text: __( 'Disabled' ), intent: 'draft' as const };
 	}
 	return {
 		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
@@ -301,7 +301,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const defaultToolEnabled = userSettings?.mcp_abilities?.site_level_enabled_default ?? false;
 	const defaultBadge = defaultToolEnabled
 		? { text: __( 'All enabled' ), intent: 'stable' as const }
-		: { text: __( 'Disabled' ) };
+		: { text: __( 'Disabled' ), intent: 'draft' as const };
 	const readBadge = hasSiteAbilityOverrides ? getReadBadge( readTools ) : defaultBadge;
 	const writeBadge = hasSiteAbilityOverrides ? getWriteBadge( writeTools ) : defaultBadge;
 	const mcpMutation = useMutation(

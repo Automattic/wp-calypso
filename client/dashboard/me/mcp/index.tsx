@@ -44,7 +44,7 @@ function getReadBadge( tools: Array< [ string, McpAbility ] > ) {
 		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'None enabled' ) };
+		return { text: __( 'None enabled' ), intent: 'draft' as const };
 	}
 	return {
 		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
@@ -62,7 +62,7 @@ function getWriteBadge( tools: Array< [ string, McpAbility ] > ) {
 		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'Disabled' ) };
+		return { text: __( 'Disabled' ), intent: 'draft' as const };
 	}
 	return {
 		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
@@ -92,12 +92,12 @@ function McpComponent() {
 	const exceptionBadge =
 		exceptionCount > 0
 			? { text: `${ exceptionCount } exceptions`, intent: 'low' as const }
-			: { text: __( 'No exceptions' ) };
+			: { text: __( 'No exceptions' ), intent: 'draft' as const };
 
 	const addSiteBadge =
 		enabledSiteIds.length > 0
 			? { text: `${ enabledSiteIds.length } sites`, intent: 'stable' as const }
-			: { text: __( 'No sites added' ) };
+			: { text: __( 'No sites added' ), intent: 'draft' as const };
 
 	const readBadge = getReadBadge( readTools );
 	const writeBadge = getWriteBadge( writeTools );

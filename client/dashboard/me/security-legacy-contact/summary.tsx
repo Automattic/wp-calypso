@@ -15,7 +15,7 @@ export default function SecurityLegacyContactSummary( { density }: { density?: D
 	const badges: SummaryButtonBadgeProps[] = [
 		{
 			text: contact ? __( 'Legacy contact added' ) : __( 'No legacy contact added' ),
-			intent: contact ? 'stable' : 'none',
+			intent: contact ? 'stable' : 'draft',
 		},
 	];
 

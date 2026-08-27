@@ -20,7 +20,7 @@ export default function SiteRedirectSettingsSummary( {
 	if ( site.options?.is_redirect ) {
 		badges = [ { text: __( 'Enabled' ), intent: 'stable' as const } ];
 	} else {
-		badges = [ { text: __( 'Disabled' ), intent: 'none' as const } ];
+		badges = [ { text: __( 'Disabled' ), intent: 'draft' as const } ];
 	}
 
 	return (

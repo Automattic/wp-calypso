@@ -27,7 +27,7 @@ function BadgeList( { badges }: { badges: SummaryButtonProps[ 'badges' ] } ) {
 			className="summary-button-badge-list"
 		>
 			{ badges?.map( ( badge ) => (
-				<Badge key={ badge.text } intent={ badge.intent }>
+				<Badge key={ badge.text } intent={ badge.intent ?? 'draft' }>
 					{ badge.text }
 				</Badge>
 			) ) }

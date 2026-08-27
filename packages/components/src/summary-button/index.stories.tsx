@@ -9,7 +9,7 @@ const badgeOptions: Record< string, SummaryButtonBadgeProps[] > = {
 	'Three Badges': [
 		{ text: 'Active', intent: 'stable' },
 		{ text: 'Auto-renew on', intent: 'informational' },
-		{ text: 'Primary', intent: 'none' },
+		{ text: 'Primary', intent: 'draft' },
 	],
 	'Two Badges': [
 		{ text: 'Needs attention', intent: 'medium' },

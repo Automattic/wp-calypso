@@ -37,13 +37,13 @@ export const Default: Story = {
 				key="theme"
 				title="Theme"
 				decoration={ <Icon icon={ brush } /> }
-				badges={ [ { text: 'Twenty Twenty-Four' } ] }
+				badges={ [ { text: 'Twenty Twenty-Four', intent: 'draft' } ] }
 			/>,
 			<SummaryButton
 				key="home"
 				title="Homepage settings"
 				decoration={ <Icon icon={ home } /> }
-				badges={ [ { text: 'Latest posts' } ] }
+				badges={ [ { text: 'Latest posts', intent: 'draft' } ] }
 			/>,
 		],
 	},
@@ -80,14 +80,14 @@ export const WithDescriptionsInButtons: Story = {
 				title="Theme"
 				description="Change the look and feel of your site"
 				decoration={ <Icon icon={ brush } /> }
-				badges={ [ { text: 'Twenty Twenty-Four' } ] }
+				badges={ [ { text: 'Twenty Twenty-Four', intent: 'draft' } ] }
 			/>,
 			<SummaryButton
 				key="home"
 				title="Homepage settings"
 				description="Choose what appears on your homepage"
 				decoration={ <Icon icon={ home } /> }
-				badges={ [ { text: 'Latest posts' } ] }
+				badges={ [ { text: 'Latest posts', intent: 'draft' } ] }
 			/>,
 		],
 	},

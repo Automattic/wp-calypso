@@ -13,7 +13,7 @@ export default function PreferencesBlockedSites( { density }: { density?: Densit
 
 	const badges =
 		count === 0
-			? [ { text: __( 'None' ) } ]
+			? [ { text: __( 'None' ), intent: 'draft' as const } ]
 			: [
 					{
 						text: sprintf(
