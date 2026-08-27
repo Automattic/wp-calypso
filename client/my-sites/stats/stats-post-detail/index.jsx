@@ -65,7 +65,7 @@ class StatsPostDetail extends Component {
 		} ),
 		editUrl: PropTypes.string,
 		openSupportDoc: PropTypes.func,
-		hasEmailStats: PropTypes.bool,
+		isEmailTabsAvailable: PropTypes.bool,
 	};
 
 	state = {
@@ -201,10 +201,7 @@ class StatsPostDetail extends Component {
 			showViewLink,
 			previewUrl,
 			supportsUTMStats,
-			isSubscriptionsModuleActive,
-			supportsEmailStats,
-			hasEmailStats,
-			isSimple,
+			isEmailTabsAvailable,
 			breadcrumbTrail,
 		} = this.props;
 
@@ -233,11 +230,6 @@ class StatsPostDetail extends Component {
 
 		// TODO: Refactor navigationItems to a single object with backLink and title attributes.
 		const navigationItems = this.getNavigationItemsWithTitle( this.getTitle() );
-
-		const subscriptionsEnabled = isSimple || isSubscriptionsModuleActive;
-		// postId > 0: Show the tabs for posts except for the Home Page (postId = 0).
-		const isEmailTabsAvailable =
-			subscriptionsEnabled && postId > 0 && supportsEmailStats && hasEmailStats;
 
 		return (
 			<Main
@@ -337,19 +329,19 @@ const StatsPostDetailWrapper = ( props ) => {
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
 
-	const canHaveEmailStats = useSelector( ( state ) => {
-		const { supportsEmailStats } = getEnvStatsFeatureSupportChecks( state, siteId );
-		const subscriptionsEnabled =
-			isSimpleSite( state, siteId ) ||
-			isJetpackModuleActive( state, siteId, 'subscriptions', true );
-		return supportsEmailStats && subscriptionsEnabled;
-	} );
+	// `connect` wraps this component, so the environment checks arrive as props;
+	// the whole email-tabs rule lives here rather than being re-derived in render.
+	const { supportsEmailStats, isSimple, isSubscriptionsModuleActive, postId } = props;
+	const canHaveEmailStats = supportsEmailStats && ( isSimple || isSubscriptionsModuleActive );
 
 	const { data: hasEmailStats = false } = usePostEmailStatsAvailabilityQuery(
 		siteId,
-		props.postId,
+		postId,
 		canHaveEmailStats
 	);
+
+	// postId > 0: show the tabs for posts except for the Home Page (postId = 0).
+	const isEmailTabsAvailable = canHaveEmailStats && postId > 0 && hasEmailStats;
 
 	const openDoc = () => {
 		if ( isJetpack ) {
@@ -365,7 +357,7 @@ const StatsPostDetailWrapper = ( props ) => {
 			siteId={ siteId }
 			breadcrumbTrail={ breadcrumbTrail }
 			openSupportDoc={ openDoc }
-			hasEmailStats={ hasEmailStats }
+			isEmailTabsAvailable={ isEmailTabsAvailable }
 		/>
 	);
 };
