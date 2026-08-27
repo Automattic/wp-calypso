@@ -37,8 +37,6 @@ export default function SelectedBlock() {
 
 		const blockType = getBlockType( selectedBlock.name );
 
-		// When the user selects text inside the block, show that text so the
-		// chip communicates the precise target of the request.
 		const selectedText = getSelectedTextContext( select );
 
 		return {
