@@ -25,6 +25,10 @@ import {
 import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import {
+	PARTNER_DIRECTORY_EXPERTISE_SEGMENT,
+	PARTNER_DIRECTORY_ROUTE,
+} from '../../agency/partner-directory/paths';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
@@ -137,7 +141,7 @@ export const agencyTiersRoute = createRoute( {
 	)
 );
 
-// `/agency/partner-directory` – partner directory application dashboard
+// `/agency/partner-directory` – layout that gates on the partner directory program
 export const agencyPartnerDirectoryRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_partner_directory' },
 	head: () => ( {
@@ -148,7 +152,7 @@ export const agencyPartnerDirectoryRoute = createRoute( {
 		],
 	} ),
 	getParentRoute: () => agencyRoute,
-	path: 'agency/partner-directory',
+	path: PARTNER_DIRECTORY_ROUTE,
 	beforeLoad: async ( { cause } ) => {
 		if ( cause === 'preload' ) {
 			return;
@@ -159,10 +163,35 @@ export const agencyPartnerDirectoryRoute = createRoute( {
 			throw redirectAsNotAllowed( { to: '/overview' } );
 		}
 	},
+} );
+
+const agencyPartnerDirectoryIndexRoute = createRoute( {
+	getParentRoute: () => agencyPartnerDirectoryRoute,
+	path: '/',
 	loader: () => queryClient.ensureQueryData( activeAgencyQuery() ),
 } ).lazy( () =>
 	import( '../../agency/partner-directory' ).then( ( d ) =>
 		createLazyRoute( 'agency-partner-directory' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// `/agency/partner-directory/expertise` – apply to or update the directory application
+export const agencyPartnerDirectoryExpertiseRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Share your expertise' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyPartnerDirectoryRoute,
+	path: PARTNER_DIRECTORY_EXPERTISE_SEGMENT,
+	loader: () => queryClient.ensureQueryData( activeAgencyQuery() ),
+} ).lazy( () =>
+	import( '../../agency/partner-directory/expertise' ).then( ( d ) =>
+		createLazyRoute( 'agency-partner-directory-expertise' )( {
 			component: d.default,
 		} )
 	)
@@ -864,7 +893,10 @@ export const createAgencyRoutes = () => [
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
 		agencyTiersRoute,
-		agencyPartnerDirectoryRoute,
+		agencyPartnerDirectoryRoute.addChildren( [
+			agencyPartnerDirectoryIndexRoute,
+			agencyPartnerDirectoryExpertiseRoute,
+		] ),
 		exclusiveOffersRoute,
 		learnRoute,
 		mcpRoute.addChildren( [
