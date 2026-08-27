@@ -47,12 +47,10 @@ import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login
 import {
 	getWowFunnelConfig,
 	getWowFunnelDest,
-	getWowFunnelHandoffUrl,
 	getWowFunnelArgs,
 	getWowFunnelSlug,
 	getRememberedWowFunnelSite,
 	isKnownWowFunnel,
-	waitForWowFunnelReady,
 	startWowFunnelSite,
 	logWowFunnelEvent,
 } from '../../../utils/wow-funnel';
@@ -75,6 +73,7 @@ function initialize() {
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
 		STEPS.POST_CHECKOUT_ONBOARDING,
+		STEPS.WOW_FUNNEL_HANDOFF,
 		STEPS.SETUP_YOUR_SITE_AI,
 	];
 
@@ -168,18 +167,29 @@ const onboarding: FlowV2< typeof initialize > = {
 					];
 				}
 
-				// Wait for the build before handing over. Checkout can finish before the
-				// Simple->Atomic switcheroo does, and redirecting on the flow-start URL then
-				// lands the customer on the old Simple site. The hand-off URL is resolved from
-				// the site only once it is ready, so it always names the site that now exists.
-				const siteIdentifier = siteSlug || String( siteId );
-				await waitForWowFunnelReady( { funnelSlug: wowFunnelSlug, siteIdentifier } );
-				const handoffUrl = await getWowFunnelHandoffUrl( {
+				// Hand off through the funnel's own post-checkout page rather than pointing
+				// checkout straight at the built site. This function runs BEFORE checkout — its
+				// result becomes checkout's redirect_to — so the readiness wait cannot live
+				// here; it has to be on a page the customer reaches after paying.
+				logWowFunnelEvent( 'post_checkout_handoff', {
+					funnel: wowFunnelSlug,
+					blog_id: siteId,
 					dest: wowFunnelDest,
-					siteIdentifier,
 				} );
-				logWowFunnelEvent( 'post_checkout_editor', { funnel: wowFunnelSlug, blog_id: siteId } );
-				return [ handoffUrl, null, null ];
+				return [
+					addQueryArgs(
+						withLocale( `/setup/${ ONBOARDING_FLOW }/${ STEPS.WOW_FUNNEL_HANDOFF.slug }`, locale ),
+						{
+							wow_funnel: wowFunnelSlug,
+							dest: wowFunnelDest,
+							siteSlug,
+							// Skip siteId when it's 0/falsy: "0" in the URL poisons the site lookup.
+							...( siteId ? { siteId } : {} ),
+						}
+					),
+					null,
+					null,
+				];
 			}
 
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
@@ -354,6 +364,10 @@ const onboarding: FlowV2< typeof initialize > = {
 				}
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
+				case 'wow-funnel-handoff':
+					// Success replaces location with the built site itself, so the only thing
+					// that reaches navigation here is a failed or timed-out wait.
+					return navigate( STEPS.ERROR.slug );
 				case 'post-checkout-onboarding': {
 					setShouldShowNotification( providedDependencies?.siteId as number );
 					return navigate( 'processing' );
