@@ -1,5 +1,10 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { FetchJetpackLicensesOptions, JetpackLicense } from './types';
+import type {
+	FetchJetpackLicensesOptions,
+	JetpackLicense,
+	JetpackLicenseCounts,
+	JetpackLicenseDownloadUrl,
+} from './types';
 
 const FETCH_SIZE = 100;
 
@@ -40,4 +45,32 @@ export async function fetchJetpackLicenses(
 	}
 
 	return licenses;
+}
+
+export async function fetchJetpackLicenseCounts(
+	agencyId: number
+): Promise< JetpackLicenseCounts > {
+	return wpcom.req.get(
+		{
+			apiNamespace: 'wpcom/v2',
+			path: '/jetpack-licensing/licenses/counts',
+		},
+		{ agency_id: agencyId }
+	);
+}
+
+export async function fetchJetpackLicenseDownloadUrl(
+	agencyId: number | undefined,
+	licenseKey: string
+): Promise< JetpackLicenseDownloadUrl > {
+	if ( ! agencyId ) {
+		throw new Error( 'Agency ID is required to download a license' );
+	}
+	return wpcom.req.get(
+		{
+			apiNamespace: 'wpcom/v2',
+			path: `/jetpack-licensing/license/${ licenseKey }/download`,
+		},
+		{ agency_id: agencyId }
+	);
 }

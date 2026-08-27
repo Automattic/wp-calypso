@@ -14,9 +14,10 @@ import {
 	earnPayoutSettingsRoute,
 	earnReferralsRoute,
 	earnWooPaymentsRoute,
-	exclusiveOffersRoute,
+	isMarketplaceSectionAvailable,
 	isRouteAllowedByCapabilities,
 	learnRoute,
+	marketplaceSections,
 	mcpRoute,
 } from '../router/agency';
 import type { AnyRoute } from '@tanstack/react-router';
@@ -28,6 +29,7 @@ export default function AgencySidebar() {
 	if ( agency.isClientUser || ! supports.agency ) {
 		return null;
 	}
+	const agencySupports = supports.agency;
 
 	// Menu items are hidden rather than left to bounce off the route guard in
 	// `agencyRoute.beforeLoad`, which would redirect to /overview with an error.
@@ -38,6 +40,9 @@ export default function AgencySidebar() {
 	const canAccessPartnerDirectory =
 		!! ( supports.agency.partnerDirectory && activeAgency?.partner_directory?.allowed ) &&
 		canAccess( agencyPartnerDirectoryRoute );
+	const accessibleMarketplaceSections = marketplaceSections.filter( ( section ) =>
+		isMarketplaceSectionAvailable( section, agencySupports, capabilities )
+	);
 	const canAccessLearn = !! supports.agency.learn && canAccess( learnRoute );
 	const canAccessMcp =
 		!! ( supports.agency.mcp && activeAgency?.mcp?.allowed ) && canAccess( mcpRoute );
@@ -82,15 +87,13 @@ export default function AgencySidebar() {
 					) }
 				</SidebarExpandableMenuItem>
 			) }
-			{ supports.agency.exclusiveOffers && canAccess( exclusiveOffersRoute ) && (
-				<SidebarExpandableMenuItem
-					label={ __( 'Marketplace' ) }
-					icon={ tag }
-					to="/marketplace/exclusive-offers"
-				>
-					<SidebarMenuItem to="/marketplace/exclusive-offers">
-						{ __( 'Exclusive offers' ) }
-					</SidebarMenuItem>
+			{ accessibleMarketplaceSections.length > 0 && (
+				<SidebarExpandableMenuItem label={ __( 'Marketplace' ) } icon={ tag } to="/marketplace">
+					{ accessibleMarketplaceSections.map( ( { route, label } ) => (
+						<SidebarMenuItem key={ route.fullPath } to={ route.fullPath }>
+							{ label() }
+						</SidebarMenuItem>
+					) ) }
 				</SidebarExpandableMenuItem>
 			) }
 			{ ( canAccessLearn || canAccessMcp ) && (

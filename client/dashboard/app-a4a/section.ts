@@ -9,7 +9,7 @@ export const A4A_DASHBOARD_SECTION_PATHS = [
 	'/team',
 	'/oauth/token',
 	'/overview',
-	'/marketplace/exclusive-offers',
+	'/marketplace',
 	'/agency/tiers',
 	'/agency/partner-directory',
 	'/agency/partner-directory/expertise',

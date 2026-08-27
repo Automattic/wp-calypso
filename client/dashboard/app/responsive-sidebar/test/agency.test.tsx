@@ -13,6 +13,7 @@ const agencySupports: AgencySupports = {
 	overview: true,
 	tiers: true,
 	partnerDirectory: true,
+	marketplace: true,
 	exclusiveOffers: true,
 	learn: true,
 	mcp: true,
@@ -60,7 +61,9 @@ describe( '<AgencySidebar>', () => {
 			'a4a_read_managed_sites',
 			'a4a_read_users',
 			'a4a_read_agency_tier',
+			'a4a_read_marketplace',
 			'a4a_read_exclusive_offers',
+			'a4a_jetpack_licensing',
 			'a4a_read_learn',
 			'a4a_read_referrals',
 			'a4a_read_migrations',
@@ -101,6 +104,25 @@ describe( '<AgencySidebar>', () => {
 		expect( screen.getByRole( 'link', { name: 'Payout settings' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Referrals' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'link', { name: 'WooPayments' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'keeps the Marketplace menu but drops the sub-items the user cannot reach', async () => {
+		await renderSidebar( [ 'a4a_read_marketplace' ] );
+
+		expect( screen.getByRole( 'button', { name: 'Marketplace' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Hosting' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Products' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: 'Exclusive offers' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: 'Purchases' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows only Purchases under Marketplace for a licensing-only user', async () => {
+		await renderSidebar( [ 'a4a_jetpack_licensing' ] );
+
+		expect( screen.getByRole( 'button', { name: 'Marketplace' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Purchases' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: 'Hosting' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: 'Products' } ) ).not.toBeInTheDocument();
 	} );
 
 	// Partner Directory is gated by both an agency flag

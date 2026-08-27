@@ -35,6 +35,7 @@ import {
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
+import type { AgencySupports } from '../context';
 import type { AgencyCapability } from '@automattic/api-core';
 import type { AnyRoute, StaticDataRouteOption } from '@tanstack/react-router';
 
@@ -200,6 +201,26 @@ export const agencyPartnerDirectoryExpertiseRoute = createRoute( {
 	)
 );
 
+// `/marketplace/hosting` – hosting plans an agency can buy or refer
+export const marketplaceHostingRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_marketplace' },
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Hosting' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'marketplace/hosting',
+} ).lazy( () =>
+	import( '../../agency/marketplace/hosting' ).then( ( d ) =>
+		createLazyRoute( 'marketplace-hosting' )( {
+			component: d.default,
+		} )
+	)
+);
+
 // `/agency/partner-directory/details` – the agency's public profile details
 export const agencyPartnerDirectoryDetailsRoute = createRoute( {
 	head: () => ( {
@@ -236,6 +257,46 @@ export const agencyPartnerDirectoryDetailsRoute = createRoute( {
 	)
 );
 
+// `/marketplace/products` – à la carte products an agency can buy or refer
+export const marketplaceProductsRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_marketplace' },
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Products' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'marketplace/products',
+} ).lazy( () =>
+	import( '../../agency/marketplace/products' ).then( ( d ) =>
+		createLazyRoute( 'marketplace-products' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// `/marketplace/purchases` – licenses, invoices, and payment methods
+export const marketplacePurchasesRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_jetpack_licensing' },
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Purchases' ),
+			},
+		],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'marketplace/purchases',
+} ).lazy( () =>
+	import( '../../agency/marketplace/purchases' ).then( ( d ) =>
+		createLazyRoute( 'marketplace-purchases' )( {
+			component: d.default,
+		} )
+	)
+);
+
 // `/marketplace/exclusive-offers` – partner offers (Refer / Resell)
 export const exclusiveOffersRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_exclusive_offers' },
@@ -255,6 +316,73 @@ export const exclusiveOffersRoute = createRoute( {
 		} )
 	)
 );
+
+export type MarketplaceSection = {
+	route: AnyRoute;
+	supports: keyof AgencySupports;
+	label: () => string;
+};
+
+// The Marketplace sections in sidebar order: the sidebar renders one sub-item
+// per accessible section, and the `/marketplace` redirect sends the user to
+// the first section their app variant supports and their capabilities allow.
+// Purchases is part of the Marketplace feature, so it shares the flag.
+export const marketplaceSections: MarketplaceSection[] = [
+	{ route: marketplaceHostingRoute, supports: 'marketplace', label: () => __( 'Hosting' ) },
+	{ route: marketplaceProductsRoute, supports: 'marketplace', label: () => __( 'Products' ) },
+	{
+		route: exclusiveOffersRoute,
+		supports: 'exclusiveOffers',
+		label: () => __( 'Exclusive offers' ),
+	},
+	{ route: marketplacePurchasesRoute, supports: 'marketplace', label: () => __( 'Purchases' ) },
+];
+
+export function isMarketplaceSectionAvailable(
+	section: MarketplaceSection,
+	agencySupports: AgencySupports,
+	capabilities: readonly string[]
+): boolean {
+	return (
+		agencySupports[ section.supports ] &&
+		isRouteAllowedByCapabilities( section.route, capabilities )
+	);
+}
+
+// `/marketplace` – no screen of its own; sends the user to the first Marketplace
+// section their capabilities allow, so stale `/marketplace` links keep working.
+export const marketplaceRoute = createRoute( {
+	// Any-of: reaching the redirect only requires access to one of the sections.
+	staticData: {
+		requiresAgencyCapability: [
+			'a4a_read_marketplace',
+			'a4a_read_exclusive_offers',
+			'a4a_jetpack_licensing',
+		],
+	},
+	getParentRoute: () => agencyRoute,
+	path: 'marketplace',
+	beforeLoad: async ( { cause, context } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const agencySupports = context.config.supports.agency;
+		const activeAgency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		const capabilities = activeAgency?.user?.capabilities ?? [];
+		const destination = agencySupports
+			? marketplaceSections.find( ( section ) =>
+					isMarketplaceSectionAvailable( section, agencySupports, capabilities )
+			  )?.route
+			: undefined;
+
+		if ( ! destination ) {
+			throw redirectAsNotAllowed( { to: '/overview' } );
+		}
+
+		throw dashboardRedirect( { to: destination.fullPath } );
+	},
+} );
 
 // `/resources/learn` – guides, articles, and training for agencies
 export const learnRoute = createRoute( {
@@ -937,6 +1065,10 @@ export const createAgencyRoutes = () => [
 			agencyPartnerDirectoryExpertiseRoute,
 			agencyPartnerDirectoryDetailsRoute,
 		] ),
+		marketplaceRoute,
+		marketplaceHostingRoute,
+		marketplaceProductsRoute,
+		marketplacePurchasesRoute,
 		exclusiveOffersRoute,
 		learnRoute,
 		mcpRoute.addChildren( [
