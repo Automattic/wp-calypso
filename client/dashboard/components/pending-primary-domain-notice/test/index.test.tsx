@@ -8,14 +8,16 @@ import { render } from '../../../test-utils';
 import PendingPrimaryDomainNotice from '../index';
 
 function mockDomainQuery( domainName: string, overrides = {} ) {
-	nock( 'https://public-api.wordpress.com' )
-		.persist()
+	return nock( 'https://public-api.wordpress.com' )
 		.get( `/rest/v1.2/domain-details/${ domainName }` )
 		.reply( 200, {
 			domain: domainName,
 			subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Registration' },
 			can_set_as_primary: true,
 			primary_domain: false,
+			expired: false,
+			points_to_wpcom: false,
+			ssl_status: 'newly_registered',
 			...overrides,
 		} );
 }
@@ -44,5 +46,18 @@ describe( '<PendingPrimaryDomainNotice>', () => {
 			expect( screen.getByText( 'Setting up your custom domain' ) ).toBeVisible();
 		} );
 		expect( screen.queryByRole( 'button', { name: 'Dismiss' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders nothing for a non-primary domain that is already set up', async () => {
+		const scope = mockDomainQuery( 'example.com', {
+			points_to_wpcom: true,
+			ssl_status: 'active',
+		} );
+		render( <PendingPrimaryDomainNotice domainName="example.com" /> );
+
+		await waitFor( () => {
+			expect( scope.isDone() ).toBe( true );
+		} );
+		expect( screen.queryByText( 'Setting up your custom domain' ) ).not.toBeInTheDocument();
 	} );
 } );

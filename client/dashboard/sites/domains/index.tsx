@@ -27,7 +27,7 @@ import {
 	SITE_CONTEXT_VIEW,
 	useBulkActionsProgressNotice,
 } from '../../domains/dataviews';
-import { isPendingPrimaryDomain } from '../../utils/domain';
+import { hasCustomPrimaryDomain, isPendingPrimaryDomainCandidate } from '../../utils/domain';
 import { SitesNoticeArbiter } from '../notice-arbiter';
 import PrimaryDomainSelectorNotice from './primary-domain-selector-notice';
 import type { DomainSummary } from '@automattic/api-core';
@@ -49,7 +49,9 @@ function SiteDomains() {
 		},
 	} );
 
-	const pendingDomain = siteDomains.find( isPendingPrimaryDomain );
+	const pendingDomain = hasCustomPrimaryDomain( siteDomains )
+		? undefined
+		: siteDomains.find( isPendingPrimaryDomainCandidate );
 
 	const { data: redirect } = useSuspenseQuery( siteRedirectQuery( site.ID ) );
 	const hasRedirect = redirect && Object.keys( redirect ).length > 0;
