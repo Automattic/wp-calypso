@@ -1,7 +1,6 @@
 @import '@automattic/components/src/horizontal-bar-list/stats-variables';
 
-/* The rate tooltips carry a one-sentence explanation; cap the width so the
-   note wraps instead of stretching the popover across the card. */
+/* Keep the tooltip note from stretching the popover across the card. */
 .stats-email__tooltip-note {
 	max-width: 220px;
 	white-space: normal;
@@ -11,20 +10,14 @@
 .stats-emails--four-columns {
 	$metric-column-width: 88px;
 
-	/* Narrow-width fallback per design: instead of squeezing the title into
-	   ellipsis dust, the table keeps a minimum width and slides horizontally
-	   inside the card. The scroll lives on .stats-card__content because that
-	   element clips overflow; the card title and footer stay put while it
-	   slides. */
+	/* At narrow widths the table keeps a minimum width and scrolls inside the card. */
 	.stats-card__content {
 		overflow-x: auto;
 	}
 
-	/* fit-content gives the sticky title slack inside its min-width containing
-	   block; without it the auto-width block fills the 620px header and the
-	   sticky clamp has nowhere to move, dragging the title off-screen. The
-	   $padding-outside inset mirrors the card's own horizontal padding, so the stuck
-	   position matches the resting one and the title never appears to move. */
+	/* fit-content is required: an auto-width block fills the header and the sticky
+	   title gets dragged off-screen. The inset matches the card padding so the
+	   stuck and resting positions coincide. */
 	.stats-card-header--main {
 		position: sticky;
 		inset-inline-start: $padding-outside;
@@ -37,9 +30,6 @@
 		inset-inline-start: $padding-outside;
 	}
 
-	/* Same box semantics on both sides: the header wrapper and each row carry
-	   the identical $padding-outside, so a shared min-width keeps their
-	   content boxes, and therefore the columns, in lockstep. */
 	.stats-card-header,
 	.horizontal-bar-list-item {
 		min-width: 620px;
@@ -49,17 +39,12 @@
 		box-sizing: border-box;
 	}
 
-	/* The metric column's header lives outside the additional-columns wrapper;
-	   bottom-align the whole header row and give that label the same track
-	   width so it wraps like its siblings instead of floating at the top. */
+	/* The metric header sits outside the additional-columns wrapper; bottom-align so
+	   it wraps like its siblings. */
 	.stats-card--column-header {
 		align-items: flex-end;
 	}
 
-	/* Both sides anchor from the end with identical geometry: the metric
-	   cell matches the rows' value cell ($metric-column-width), and the
-	   additional blocks push toward the end, so header and row columns
-	   coincide at any scroll width. */
 	.stats-card--column-header__left {
 		width: auto;
 		flex: 1 1 auto;
@@ -81,9 +66,8 @@
 		margin-inline-start: auto;
 	}
 
-	/* The shared bar sizes itself for a single value column (fixed width calc,
-	   flex-shrink 0). With four columns that overflows the row in Firefox and
-	   the title stops truncating, so let the bar shrink and ellipsize. */
+	/* The shared bar assumes a single value column; with four it overflows in Firefox
+	   unless it can shrink. */
 	.horizontal-bar-list-item-bar {
 		width: auto;
 		flex: 1 1 auto;
@@ -102,10 +86,8 @@
 		align-items: flex-end;
 		gap: 0 8px;
 
-		/* Fixed tracks keep the header and every row vertically aligned no
-		   matter how long a translated header runs; long single-word headers
-		   (sv "Öppningsfrekvens") wrap via hyphenation instead of widening
-		   their column. */
+		/* Fixed tracks so long translated headers (sv "Öppningsfrekvens") wrap instead
+		   of widening the column. */
 		> span {
 			flex: 0 0 $metric-column-width;
 			min-width: 0;

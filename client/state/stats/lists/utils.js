@@ -1224,10 +1224,7 @@ export const normalizers = {
 			return [];
 		}
 
-		// Never-emailed, engagement-free posts belong filtered out of this list,
-		// but that has to happen server-side, before pagination, so freed slots
-		// backfill and the CSV export agrees with the UI (STATS-452). The client
-		// renders what the API returns.
+		// Never-emailed posts are filtered server-side, before pagination (STATS-452).
 		const emailsData = data?.posts ?? [];
 
 		return emailsData.map(

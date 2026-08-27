@@ -49,9 +49,7 @@ export const OpensTooltipContent: React.FC< { item: EmailStatsItem } > = ( { ite
 	const translate = useTranslate();
 	const sends = toCount( item.total_sends );
 	const opens = toCount( item.opens );
-	// The same rule the cell uses, so the tooltip never shows a rate the cell
-	// just declared unknown. A true zero reuses the detailed line with zeros
-	// instead of introducing a new string.
+	// Same rule as the cell, so the tooltip never shows a rate the cell marked unknown.
 	const rateKnown = isRateKnown( { uniques: toCount( item.unique_opens ), totals: opens, sends } );
 
 	return (
@@ -93,7 +91,6 @@ export const ClicksTooltipContent: React.FC< { item: EmailStatsItem } > = ( { it
 	const translate = useTranslate();
 	const sends = toCount( item.total_sends );
 	const clicks = toCount( item.clicks );
-	// Same rule as the cell; see OpensTooltipContent.
 	const rateKnown = isRateKnown( {
 		uniques: toCount( item.unique_clicks ),
 		totals: clicks,
