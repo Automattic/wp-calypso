@@ -334,6 +334,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/post-checkout/post-checkout-onboarding' ),
 	},
 
+	WOW_FUNNEL_HANDOFF: {
+		slug: 'wow-funnel-handoff',
+		asyncComponent: () => import( './steps-repository/wow-funnel-handoff' ),
+	},
+
 	SETUP_YOUR_SITE_AI: {
 		slug: 'setup-your-site-ai',
 		asyncComponent: () => import( './steps-repository/setup-your-site-ai' ),

@@ -45,13 +45,17 @@ import {
 } from '../../../utils/build-wow';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import {
-	getWowFunnelDest,
-	getWowFunnelArgs,
-	getWowFunnelSlug,
+	clearWowFunnelSite,
 	getRememberedWowFunnelSite,
-	startWowFunnelSite,
+	getWowFunnelArgs,
+	getWowFunnelConfig,
+	getWowFunnelDest,
+	getWowFunnelSlug,
+	isKnownWowFunnel,
 	logWowFunnelEvent,
+	wowFunnelSiteIsPaid,
 } from '../../../utils/wow-funnel';
+import { forgetWowFunnelRun, startWowFunnelSite } from '../../../utils/wow-funnel-site';
 import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboarding-post-checkout-destination';
 import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
@@ -71,6 +75,7 @@ function initialize() {
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
 		STEPS.POST_CHECKOUT_ONBOARDING,
+		STEPS.WOW_FUNNEL_HANDOFF,
 		STEPS.SETUP_YOUR_SITE_AI,
 	];
 
@@ -123,7 +128,7 @@ const onboarding: FlowV2< typeof initialize > = {
 			buildDest
 		);
 		const wowFunnelSlug = getWowFunnelSlug( queryParams );
-		const wowFunnelDest = getWowFunnelDest( queryParams );
+		const wowFunnelDest = getWowFunnelDest( queryParams, wowFunnelSlug );
 
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
@@ -133,19 +138,24 @@ const onboarding: FlowV2< typeof initialize > = {
 			planCartItem: MinimalRequestCartProduct | null,
 			launchpadPersonalizationVariation: LaunchpadPersonalizationVariation
 		): Promise< [ string, string | null, string | null ] > => {
-			// A funnel CTA can ask for a specific post-checkout destination; today that means the
-			// Site Editor on the built Atomic site. The build ran during domain selection and
-			// checkout, so the transfer is normally complete; the URL goes through the site's own
-			// domain, which follows the Simple->Atomic switch (same shape as the ai-site-builder
-			// hand-off). With no dest, the ordinary destinations below apply.
-			if ( wowFunnelSlug && wowFunnelDest ) {
+			// Every funnel ends on the built site. A funnel with Calypso-side work hops to that
+			// interstitial first; the interstitial owns the readiness wait and the hand-off, via
+			// the same helpers used below, so a funnel's terminal behaviour is identical either
+			// way. A funnel with no interstitials waits and hands over right here.
+			if ( isKnownWowFunnel( wowFunnelSlug ) ) {
 				const siteSlug = providedDependencies.siteSlug as string;
 				const siteId = providedDependencies.siteId as number;
+				const { interstitials } = getWowFunnelConfig( wowFunnelSlug );
 
-				// dest=site-spec: the funnel's follow-up (e.g. the blueprint import) is already
-				// running server-side, so site-spec only waits on it and hands over. It must not
-				// start one — see the funnel guard on its kickoff effect.
-				if ( 'site-spec' === wowFunnelDest ) {
+				// The run is over. Without this the remembered site outlives it for the whole
+				// browser session, and the next CTA click resumes this site instead of building
+				// a new one — offering a renewal of the plan just bought for it.
+				clearWowFunnelSite();
+
+				// site-spec: the funnel's follow-up (e.g. the blueprint import) is already running
+				// server-side, so site-spec only waits on it and hands over. It must not start
+				// one — see the funnel guard on its kickoff effect.
+				if ( interstitials.includes( 'site-spec' ) ) {
 					const blueprintSlug = queryParams.get( 'blueprint' ) ?? '';
 					logWowFunnelEvent( 'post_checkout_site_spec', {
 						funnel: wowFunnelSlug,
@@ -164,10 +174,29 @@ const onboarding: FlowV2< typeof initialize > = {
 					];
 				}
 
-				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
-				const siteUrl = site?.URL ?? `https://${ siteSlug }`;
-				logWowFunnelEvent( 'post_checkout_editor', { funnel: wowFunnelSlug, blog_id: siteId } );
-				return [ `${ siteUrl }/wp-admin/site-editor.php?canvas=edit&p=%2F`, null, null ];
+				// Hand off through the funnel's own post-checkout page rather than pointing
+				// checkout straight at the built site. This function runs BEFORE checkout — its
+				// result becomes checkout's redirect_to — so the readiness wait cannot live
+				// here; it has to be on a page the customer reaches after paying.
+				logWowFunnelEvent( 'post_checkout_handoff', {
+					funnel: wowFunnelSlug,
+					blog_id: siteId,
+					dest: wowFunnelDest,
+				} );
+				return [
+					addQueryArgs(
+						withLocale( `/setup/${ ONBOARDING_FLOW }/${ STEPS.WOW_FUNNEL_HANDOFF.slug }`, locale ),
+						{
+							wow_funnel: wowFunnelSlug,
+							dest: wowFunnelDest,
+							siteSlug,
+							// Skip siteId when it's 0/falsy: "0" in the URL poisons the site lookup.
+							...( siteId ? { siteId } : {} ),
+						}
+					),
+					null,
+					null,
+				];
 			}
 
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
@@ -342,6 +371,10 @@ const onboarding: FlowV2< typeof initialize > = {
 				}
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
+				case 'wow-funnel-handoff':
+					// Success replaces location with the built site itself, so the only thing
+					// that reaches navigation here is a failed or timed-out wait.
+					return navigate( STEPS.ERROR.slug );
 				case 'post-checkout-onboarding': {
 					setShouldShowNotification( providedDependencies?.siteId as number );
 					return navigate( 'processing' );
@@ -520,7 +553,7 @@ const onboarding: FlowV2< typeof initialize > = {
 									// straight from checkout to their destination — no
 									// post-checkout-onboarding hop, no chooser.
 									redirect_to:
-										blueprintArchiveSlug || ( wowFunnelSlug && wowFunnelDest )
+										blueprintArchiveSlug || isKnownWowFunnel( wowFunnelSlug )
 											? destination
 											: redirectTo,
 									signup: 1,
@@ -534,7 +567,7 @@ const onboarding: FlowV2< typeof initialize > = {
 									steps_total: checkoutStepperPosition.total,
 								} )
 							);
-						} else if ( blueprintArchiveSlug || ( wowFunnelSlug && wowFunnelDest ) ) {
+						} else if ( blueprintArchiveSlug || isKnownWowFunnel( wowFunnelSlug ) ) {
 							// build_dest=wow and the WoW funnel never show the
 							// setup-your-site-ai chooser; go straight to their destination.
 							window.location.replace( destination );
@@ -646,15 +679,36 @@ const onboarding: FlowV2< typeof initialize > = {
 			}
 			const queryParams = new URLSearchParams( window.location.search );
 			const funnelSlug = getWowFunnelSlug( queryParams );
-			if ( ! funnelSlug || getRememberedWowFunnelSite( funnelSlug ) ) {
+			const funnelArgs = getWowFunnelArgs( queryParams );
+			if ( ! funnelSlug ) {
 				return;
 			}
-			void startWowFunnelSite( {
-				funnelSlug,
-				funnelArgs: getWowFunnelArgs( queryParams ),
-			} ).catch( () => {
-				// Errors are logged in the util; the create-site step retries as a fallback.
-			} );
+
+			void ( async () => {
+				const remembered = getRememberedWowFunnelSite( funnelSlug, funnelArgs );
+				if ( remembered ) {
+					// A funnel run sells a plan for the site it builds, so a site that already has
+					// one must never be resumed: checkout would offer a second plan for a site
+					// that does not need one. Resume only while it is still unpaid.
+					const site = await resolveSelect( SITE_STORE )
+						.getSite( remembered.siteSlug )
+						.catch( () => null );
+
+					if ( ! wowFunnelSiteIsPaid( site ) ) {
+						return;
+					}
+
+					logWowFunnelEvent( 'remembered_site_already_paid', {
+						funnel: funnelSlug,
+						blog_id: remembered.blogId,
+					} );
+					forgetWowFunnelRun( funnelSlug, funnelArgs );
+				}
+
+				await startWowFunnelSite( { funnelSlug, funnelArgs } ).catch( () => {
+					// Errors are logged in the util; the create-site step retries as a fallback.
+				} );
+			} )();
 		}, [ currentStepSlug, isLoggedIn ] );
 	},
 };
