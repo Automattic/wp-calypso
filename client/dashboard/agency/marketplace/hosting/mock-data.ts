@@ -351,9 +351,35 @@ export const pressablePremiumPlans: PressablePlan[] = [
 	},
 ];
 
+// Placeholder yearly prices so every plan shows a figure in the prototype.
+// Anchored on the real Signature 1 ($250) and Signature 11 ($13,250) captures;
+// the rest are mock, pending real Billing Dragon data.
+const PRESSABLE_YEARLY_PLACEHOLDER: Record< string, number > = {
+	'pressable-signature-1': 250,
+	'pressable-signature-2': 450,
+	'pressable-signature-3': 650,
+	'pressable-signature-4': 1250,
+	'pressable-signature-5': 2000,
+	'pressable-signature-6': 4000,
+	'pressable-signature-7': 6400,
+	'pressable-signature-8': 8000,
+	'pressable-signature-9': 9600,
+	'pressable-signature-10': 12000,
+	'pressable-signature-11': 13250,
+	'pressable-signature-12': 15000,
+	'pressable-signature-13': 18000,
+	'pressable-signature-14': 21000,
+	'pressable-signature-15': 24000,
+	'pressable-signature-16': 27000,
+	'pressable-signature-17': 30000,
+};
+
+const withPlaceholderPrice = ( plan: PressablePlan ): PressablePlan =>
+	plan.yearly_price ? plan : { ...plan, yearly_price: PRESSABLE_YEARLY_PLACEHOLDER[ plan.slug ] };
+
 export const pressablePlans: PressablePlan[] = [
-	...pressableSignaturePlans,
-	...pressableSignatureHighPlans,
+	...pressableSignaturePlans.map( withPlaceholderPrice ),
+	...pressableSignatureHighPlans.map( withPlaceholderPrice ),
 	...pressablePremiumPlans,
 ];
 
