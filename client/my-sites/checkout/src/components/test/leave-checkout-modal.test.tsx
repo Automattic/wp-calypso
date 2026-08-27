@@ -538,6 +538,24 @@ describe( 'useCheckoutLeaveModal gift checkout', () => {
 		);
 	} );
 
+	it( 'lets a step-back destination win over the gifted site', async () => {
+		setReferrer( 'https://giftedsite.wordpress.com/' );
+		const { result } = await renderGiftHook( {
+			gift_details: giftDetails,
+			is_gift_purchase: true,
+		} );
+
+		await act( async () => {
+			result.current.clickStepBack( 'https://wordpress.com/setup/onboarding/domains' );
+		} );
+
+		expect( leaveCheckout ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				forceCheckoutBackUrl: 'https://wordpress.com/setup/onboarding/domains',
+			} )
+		);
+	} );
+
 	it( 'leaves non-gift carts alone', async () => {
 		setReferrer( 'https://giftedsite.wordpress.com/' );
 		const { result } = await renderGiftHook( {} );
