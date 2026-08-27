@@ -185,15 +185,15 @@ describe( 'waitForWowFunnelReady', () => {
 	it( 'waits only on the transfer for a transfer-readiness funnel', async () => {
 		await waitForWowFunnelReady( { funnelSlug: 'default', siteIdentifier: 'site.example.com' } );
 
-		expect( mockTransferWait ).toHaveBeenCalledWith( 'site.example.com' );
+		expect( mockTransferWait ).toHaveBeenCalledWith( 'site.example.com', { initialDelayMs: 0 } );
 		expect( mockImportWait ).not.toHaveBeenCalled();
 	} );
 
 	it( 'waits on the transfer and then the import for an import-readiness funnel', async () => {
 		await waitForWowFunnelReady( { funnelSlug: 'blueprint', siteIdentifier: 'site.example.com' } );
 
-		expect( mockTransferWait ).toHaveBeenCalledWith( 'site.example.com' );
-		expect( mockImportWait ).toHaveBeenCalledWith( 'site.example.com' );
+		expect( mockTransferWait ).toHaveBeenCalledWith( 'site.example.com', { initialDelayMs: 0 } );
+		expect( mockImportWait ).toHaveBeenCalledWith( 'site.example.com', { initialDelayMs: 0 } );
 	} );
 
 	it( 'throws when the build fails, so the flow routes to the error step', async () => {
