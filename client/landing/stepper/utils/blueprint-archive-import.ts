@@ -139,16 +139,26 @@ export async function startBlueprintArchiveImport(
 /**
  * Poll the site's import status until the backup import finishes.
  * Resolves on success; throws on a terminal failure or timeout.
+ *
+ * `initialDelayMs` defaults to a full poll interval, because a caller that has just *started* the
+ * work must not read the previous run's terminal state: `/atomic/transfers/latest` returns the
+ * site's latest transfer, not the one you asked about (see createRevertedTransferWatcher). Pass 0
+ * only when the work was started before this page existed, where an immediate check is both safe
+ * and the difference between handing over at once and sitting on a loading screen for nothing.
  */
 export async function waitForBlueprintImportComplete(
 	siteIdentifier: string,
-	{ totalTimeoutSeconds = 900, pollIntervalMs = 5000 } = {}
+	{ totalTimeoutSeconds = 900, pollIntervalMs = 5000, initialDelayMs = pollIntervalMs } = {}
 ): Promise< void > {
 	const maxFinishTime = Date.now() + totalTimeoutSeconds * 1000;
 	let lastStatus: string | null | undefined;
+	let delayMs = initialDelayMs;
 
 	while ( Date.now() < maxFinishTime ) {
-		await wait( pollIntervalMs );
+		if ( delayMs > 0 ) {
+			await wait( delayMs );
+		}
+		delayMs = pollIntervalMs;
 
 		try {
 			const status = ( await wpcom.req.get( {
@@ -189,16 +199,26 @@ export async function waitForBlueprintImportComplete(
  * archive restore afterwards, so transfer-complete happens before the content
  * is restored. Pair this with waitForBlueprintImportComplete() for full
  * readiness.
+ *
+ * `initialDelayMs` defaults to a full poll interval, because a caller that has just *started* the
+ * work must not read the previous run's terminal state: `/atomic/transfers/latest` returns the
+ * site's latest transfer, not the one you asked about (see createRevertedTransferWatcher). Pass 0
+ * only when the work was started before this page existed, where an immediate check is both safe
+ * and the difference between handing over at once and sitting on a loading screen for nothing.
  */
 export async function waitForAtomicTransferComplete(
 	siteIdentifier: string,
-	{ totalTimeoutSeconds = 900, pollIntervalMs = 5000 } = {}
+	{ totalTimeoutSeconds = 900, pollIntervalMs = 5000, initialDelayMs = pollIntervalMs } = {}
 ): Promise< void > {
 	const maxFinishTime = Date.now() + totalTimeoutSeconds * 1000;
 	let lastStatus: TransferStates | undefined;
+	let delayMs = initialDelayMs;
 
 	while ( Date.now() < maxFinishTime ) {
-		await wait( pollIntervalMs );
+		if ( delayMs > 0 ) {
+			await wait( delayMs );
+		}
+		delayMs = pollIntervalMs;
 
 		try {
 			const transfer = ( await wpcom.req.get( {

@@ -7,11 +7,12 @@ import {
 	getBlueprintArchiveSiteSpecUrl,
 	getSiteEditorUrl,
 	getStandaloneBlueprintArchiveSlug,
+	waitForAtomicTransferComplete,
 } from '../blueprint-archive-import';
 
 jest.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
-	default: { req: { post: jest.fn() } },
+	default: { req: { post: jest.fn(), get: jest.fn() } },
 } ) );
 
 jest.mock( 'calypso/lib/logstash', () => ( {
@@ -19,6 +20,7 @@ jest.mock( 'calypso/lib/logstash', () => ( {
 } ) );
 
 const mockPost = wpcom.req.post as jest.Mock;
+const mockGet = wpcom.req.get as jest.Mock;
 
 describe( 'getStandaloneBlueprintArchiveSlug', () => {
 	it( 'returns the Blueprint archive slug for a standalone build_dest=wow flow', () => {
@@ -190,5 +192,65 @@ describe( 'getBlueprintArchiveSiteSpecUrl', () => {
 		} );
 
 		expect( url ).not.toContain( 'wow_funnel' );
+	} );
+} );
+
+describe( 'waitForAtomicTransferComplete first-poll timing', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
+	afterEach( () => {
+		jest.useRealTimers();
+	} );
+
+	it( 'waits a full interval before its first request by default', async () => {
+		jest.useFakeTimers();
+		mockGet.mockResolvedValue( { status: 'completed' } );
+
+		const pending = waitForAtomicTransferComplete( 'site.example.com', { pollIntervalMs: 5000 } );
+
+		// A caller that just started the work must not read the previous run's terminal state,
+		// so nothing may be asked until an interval has passed.
+		await Promise.resolve();
+		expect( mockGet ).not.toHaveBeenCalled();
+
+		await jest.advanceTimersByTimeAsync( 5000 );
+		await pending;
+		expect( mockGet ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'asks immediately when initialDelayMs is 0, so an already-finished build hands over at once', async () => {
+		jest.useFakeTimers();
+		mockGet.mockResolvedValue( { status: 'completed' } );
+
+		// The funnel's build starts before checkout; making the customer sit through a poll
+		// interval to learn something already true is the whole bug this guards.
+		await waitForAtomicTransferComplete( 'site.example.com', {
+			pollIntervalMs: 5000,
+			initialDelayMs: 0,
+		} );
+
+		expect( mockGet ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'still spaces out later polls when the first says not-yet', async () => {
+		jest.useFakeTimers();
+		mockGet
+			.mockResolvedValueOnce( { status: 'relocating_switcheroo' } )
+			.mockResolvedValue( { status: 'completed' } );
+
+		const pending = waitForAtomicTransferComplete( 'site.example.com', {
+			pollIntervalMs: 5000,
+			initialDelayMs: 0,
+		} );
+
+		await Promise.resolve();
+		await Promise.resolve();
+		expect( mockGet ).toHaveBeenCalledTimes( 1 );
+
+		await jest.advanceTimersByTimeAsync( 5000 );
+		await pending;
+		expect( mockGet ).toHaveBeenCalledTimes( 2 );
 	} );
 } );

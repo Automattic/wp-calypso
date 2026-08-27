@@ -277,12 +277,19 @@ export async function waitForWowFunnelReady( {
 } ): Promise< void > {
 	const { readiness, waitTimeoutSeconds } = getWowFunnelConfig( funnelSlug );
 
+	// Check before sleeping. A funnel's build starts before checkout, so by the time this runs it
+	// has usually already finished — and the default poll waits a full interval before its first
+	// request, which would hold the customer on a loading screen for five seconds to learn
+	// something that was already true. Safe here precisely because the work predates this page:
+	// there is no risk of reading a previous run's terminal state.
+	const pollNow = { initialDelayMs: 0 };
+
 	const work = ( async () => {
 		// Every readiness level starts with the transfer — the site cannot be ready before it is
 		// Atomic — and `import` simply waits for one more thing behind it.
-		await waitForAtomicTransferComplete( siteIdentifier );
+		await waitForAtomicTransferComplete( siteIdentifier, pollNow );
 		if ( 'import' === readiness ) {
-			await waitForBlueprintImportComplete( siteIdentifier );
+			await waitForBlueprintImportComplete( siteIdentifier, pollNow );
 		}
 	} )();
 
