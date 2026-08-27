@@ -26,3 +26,64 @@
 	text-transform: uppercase;
 	color: var( --color-text-subtle );
 }
+
+.follow-sites__content .search.follow-sites__search {
+	height: 56px;
+	margin: 0;
+	border: 1px solid var( --color-neutral-10 );
+	border-radius: 8px;
+	box-shadow: none;
+
+	&.is-open.has-focus,
+	&.is-open.has-focus:hover {
+		border-color: var( --color-primary );
+		box-shadow: 0 0 0 1px var( --color-primary );
+	}
+
+	.search__input.form-text-input[type="search"] {
+		font-size: 1rem;
+	}
+}
+
+.follow-sites__results {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.follow-sites__list {
+	align-self: stretch;
+
+	.reader-subscription-list-item {
+		padding: 12px 8px;
+		margin: 0 -8px;
+		border-radius: 6px; /* stylelint-disable-line scales/radii */
+
+		&:hover {
+			background: var( --color-neutral-0 );
+		}
+	}
+}
+
+.follow-sites__empty {
+	margin: 0;
+	color: var( --color-text-subtle );
+}
+
+.follow-sites__load-more.components-button,
+.follow-sites__search-posts.components-button {
+	margin-top: 16px;
+}
+
+.follow-sites__search-posts.components-button {
+	align-self: stretch;
+	justify-content: flex-start;
+	padding-top: 20px;
+	border-top: 1px solid var( --color-neutral-5 );
+	text-decoration: none;
+	color: var( --color-text );
+
+	&:hover {
+		color: var( --color-link );
+	}
+}

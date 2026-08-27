@@ -5,3 +5,6 @@ export const READER_POST_OPTIONS_MENU = 'reader-post-options-menu';
 export const READER_SUGGESTED_FOLLOWS_DIALOG = 'reader-suggested-follows-dialog';
 export const READER_SEARCH_POPULAR_SITES = 'reader-search-popular-sites';
 export const READER_DISCOVER = 'reader-discover';
+export const READER_FOLLOW_SITES_SEARCH = 'reader-follow-sites-search';
+export const READER_FOLLOW_SITES_PACK = 'reader-follow-sites-pack';
+export const READER_FOLLOW_SITES_POPULAR = 'reader-follow-sites-popular';
