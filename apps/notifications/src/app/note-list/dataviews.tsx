@@ -13,29 +13,33 @@ import {
 	update,
 } from '@wordpress/icons';
 import clsx from 'clsx';
+import { getNoticonName } from '../../common/icon-map';
 import { getTimeGroupIndex } from '../../common/time-groups';
 import { html } from '../../panel/indices-to-html';
 import NoteIcon from '../note-icon';
 import trophyGridicon from '../note-icon/trophy-gridicon';
+import type { NoticonName } from '../../common/icon-map';
 import type { Note } from '../types';
 import type { Field } from '@wordpress/dataviews';
 import type { JSX } from 'react';
 import './dataviews-overrides.scss';
 
-const iconMap: { [ key in string ]: JSX.Element } = {
-	'\uf814': comment, // mention
-	'\uf300': comment,
-	'\uf801': plus,
-	'\uf455': info,
-	'\uf470': lockOutline,
-	'\uf806': chartBar, // stats
-	'\uf805': update, // reblog
-	'\uf408': thumbsUp, // star
-	'\uf804': trophyGridicon, // trophy
-	'\uf467': comment, // reply
-	'\uf414': caution, // warning
-	'\uf418': check,
-	'\uf447': store, // cart
+// This shell's visuals for the shared semantic names; reply deliberately
+// renders as a comment icon here.
+const iconMap: Record< NoticonName, JSX.Element > = {
+	mention: comment,
+	comment,
+	add: plus,
+	info,
+	lock: lockOutline,
+	stats: chartBar,
+	reblog: update,
+	star: thumbsUp,
+	trophy: trophyGridicon,
+	reply: comment,
+	warning: caution,
+	checkmark: check,
+	cart: store,
 };
 
 const groupTitles = [
@@ -57,7 +61,7 @@ export function getFields(): Field< Note >[] {
 					size={ 32 }
 					badge={
 						<span className={ clsx( 'wpnc__gridicon', { 'is-unread': ! item.read } ) }>
-							<Icon icon={ iconMap[ item.noticon ] ?? info } size={ 14 } />
+							<Icon icon={ iconMap[ getNoticonName( item.noticon ) ] } size={ 14 } />
 						</span>
 					}
 				/>

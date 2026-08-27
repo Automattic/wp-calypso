@@ -2,7 +2,7 @@ import { getTimeGroupIndex } from '@automattic/notifications/src/common/time-gro
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { FALLBACK_NOTICON_ICON, NOTICON_ICONS } from './note-icons';
+import { getNoticonIcon } from './note-icons';
 import type { Note } from './engine';
 import type { Field } from '@wordpress/dataviews';
 
@@ -199,7 +199,7 @@ export function getFields(): Field< Note >[] {
 				<span className="dashboard-notifications-inbox__avatar">
 					<img src={ item.icon } alt="" width={ 32 } height={ 32 } />
 					<span className="dashboard-notifications-inbox__noticon" aria-hidden="true">
-						<Icon icon={ NOTICON_ICONS[ item.noticon ] ?? FALLBACK_NOTICON_ICON } size={ 14 } />
+						<Icon icon={ getNoticonIcon( item.noticon ) } size={ 14 } />
 					</span>
 					{ ! item.read && (
 						<span className="dashboard-notifications-inbox__unread-dot" aria-hidden="true" />

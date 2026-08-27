@@ -20,7 +20,7 @@ import {
 	getNoteUserRef,
 } from './fields';
 import NoteActions from './note-actions';
-import { FALLBACK_NOTICON_ICON, NOTICON_ICONS } from './note-icons';
+import { getNoticonIcon } from './note-icons';
 import type { Note } from './engine';
 import type { NoteBlock } from './fields';
 
@@ -210,7 +210,7 @@ export default function NoteDetail( {
 				className="dashboard-notifications-inbox__detail-nav"
 			>
 				<span className="dashboard-notifications-inbox__type-chip" aria-hidden="true">
-					<Icon icon={ NOTICON_ICONS[ note.noticon ] ?? FALLBACK_NOTICON_ICON } size={ 16 } />
+					<Icon icon={ getNoticonIcon( note.noticon ) } size={ 16 } />
 				</span>
 				<Text weight={ 500 }>{ getNoteTypeLabel( note ) }</Text>
 				<Button
