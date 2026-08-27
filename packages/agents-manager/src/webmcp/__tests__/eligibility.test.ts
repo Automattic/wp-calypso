@@ -8,14 +8,25 @@ describe( 'WebMCP eligibility', () => {
 	beforeEach( () => {
 		document.body.className = 'site-editor-php';
 		window.history.replaceState( {}, '', '/' );
+		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
 		Object.defineProperty( document, 'modelContext', { configurable: true, value: undefined } );
 		Object.defineProperty( navigator, 'modelContext', { configurable: true, value: undefined } );
 	} );
 
-	it( 'is default-off and requires the exact query opt-in', () => {
-		expect( isWebMcpExperimentEnabled( '' ) ).toBe( false );
-		expect( isWebMcpExperimentEnabled( '?webmcp=0' ) ).toBe( false );
-		expect( isWebMcpExperimentEnabled( '?webmcp=1' ) ).toBe( true );
+	it( 'is default-off and uses the server-provided development mode', () => {
+		expect( isWebMcpExperimentEnabled() ).toBe( false );
+
+		window.history.replaceState( {}, '', '/?webmcp=1' );
+		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+			isDevMode: false,
+		};
+		expect( isWebMcpExperimentEnabled() ).toBe( false );
+
+		window.history.replaceState( {}, '', '/' );
+		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+			isDevMode: true,
+		};
+		expect( isWebMcpExperimentEnabled() ).toBe( true );
 	} );
 
 	it( 'prefers document.modelContext and falls back to navigator.modelContext', () => {
@@ -32,12 +43,16 @@ describe( 'WebMCP eligibility', () => {
 	} );
 
 	it( 'is a no-op in unsupported browsers', () => {
-		window.history.replaceState( {}, '', '/?webmcp=1' );
+		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+			isDevMode: true,
+		};
 		expect( canExposeWebMcpTools() ).toBe( false );
 	} );
 
 	it( 'is a no-op on non-editor routes', () => {
-		window.history.replaceState( {}, '', '/?webmcp=1' );
+		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+			isDevMode: true,
+		};
 		document.body.className = 'wp-admin';
 		Object.defineProperty( document, 'modelContext', {
 			configurable: true,
@@ -47,7 +62,9 @@ describe( 'WebMCP eligibility', () => {
 	} );
 
 	it( 'qualifies only when enabled in a supported editor and browser', () => {
-		window.history.replaceState( {}, '', '/?webmcp=1' );
+		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+			isDevMode: true,
+		};
 		Object.defineProperty( document, 'modelContext', {
 			configurable: true,
 			value: { registerTool: jest.fn() },

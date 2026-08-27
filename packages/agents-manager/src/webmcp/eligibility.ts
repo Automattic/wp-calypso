@@ -1,3 +1,4 @@
+import { getAgentsManagerInlineData } from '../utils/get-agents-manager-inline-data';
 import { isEditorPage } from '../utils/is-editor-page';
 import type { WebMcpModelContext } from './types';
 
@@ -13,8 +14,8 @@ function isModelContext( value: unknown ): value is WebMcpModelContext {
 	);
 }
 
-export function isWebMcpExperimentEnabled( search = window.location.search ): boolean {
-	return new URLSearchParams( search ).get( 'webmcp' ) === '1';
+export function isWebMcpExperimentEnabled(): boolean {
+	return getAgentsManagerInlineData()?.isDevMode === true;
 }
 
 export function getWebMcpModelContext(
