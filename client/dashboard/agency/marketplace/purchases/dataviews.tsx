@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { globe } from '@wordpress/icons';
 import { formatDate } from '../../../utils/datetime';
 import AssignLicenseModal from './assign-modal';
+import RevokeLicenseModal from './revoke-modal';
 import { PurchasesStatusBadge } from './status-badge';
 import type { AgencyLicense, AgencySite, LicenseStatus } from './mock-data';
 import type { Action, Field, SortDirection, View } from '@wordpress/dataviews';
@@ -11,6 +12,7 @@ import type { Action, Field, SortDirection, View } from '@wordpress/dataviews';
 export type PurchasesActionHandlers = {
 	onNotice: ( message: string ) => void;
 	onAssign: ( licenseId: number, site: AgencySite ) => void;
+	onRevoke: ( licenseId: number ) => void;
 	sites: AgencySite[];
 };
 
@@ -152,6 +154,7 @@ export const getItemId = ( license: AgencyLicense ) => String( license.licenseId
 export function getActions( {
 	onNotice,
 	onAssign,
+	onRevoke,
 	sites,
 }: PurchasesActionHandlers ): Action< AgencyLicense >[] {
 	return [
@@ -195,13 +198,19 @@ export function getActions( {
 		{
 			id: 'revoke',
 			label: __( 'Revoke license' ),
+			isDestructive: true,
 			isEligible: ( item ) => item.status !== 'revoked',
-			callback: ( items ) => {
-				onNotice(
-					/* translators: %s: product name */
-					__( 'Revoking is not available in this prototype.' ) + ` (${ items[ 0 ].product })`
-				);
-			},
+			modalHeader: __( 'Revoke license?' ),
+			RenderModal: ( { items, closeModal } ) => (
+				<RevokeLicenseModal
+					license={ items[ 0 ] }
+					onRevoke={ () => {
+						onRevoke( items[ 0 ].licenseId );
+						closeModal?.();
+					} }
+					onCancel={ () => closeModal?.() }
+				/>
+			),
 		},
 	];
 }
