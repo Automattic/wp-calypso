@@ -7,11 +7,11 @@ import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wp from 'calypso/lib/wp';
 import { stringifyBody } from 'calypso/state/login/utils';
 
-function isBlackboxSignupEnabled() {
+function isBlackboxUserlessCheckoutEnabled() {
 	return (
 		!! config( 'blackbox_api_key' ) &&
 		config.isEnabled( 'blackbox' ) &&
-		config.isEnabled( 'blackbox-signup' )
+		config.isEnabled( 'blackbox-userless-checkout' )
 	);
 }
 
@@ -98,7 +98,9 @@ export async function createAccount( {
 	}
 
 	const blogName = newSiteParams?.blog_name;
-	const blackboxSessionId = isBlackboxSignupEnabled() ? await getBlackboxSessionId() : undefined;
+	const blackboxSessionId = isBlackboxUserlessCheckoutEnabled()
+		? await getBlackboxSessionId()
+		: undefined;
 
 	try {
 		const response = await wp.req.post( '/users/new', {
@@ -125,7 +127,7 @@ export async function createAccount( {
 		createAccountCallback( response );
 		return response;
 	} catch ( error ) {
-		if ( isBlackboxSignupEnabled() ) {
+		if ( isBlackboxUserlessCheckoutEnabled() ) {
 			resetBlackbox();
 		}
 		const errorMessage = ( error as Error )?.message

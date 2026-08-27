@@ -32,7 +32,7 @@ const createAccountArgs = {
 describe( 'createAccount', () => {
 	beforeEach( () => {
 		config.enable( 'blackbox' );
-		config.enable( 'blackbox-signup' );
+		config.enable( 'blackbox-userless-checkout' );
 		( getBlackboxSessionId as jest.Mock ).mockReset();
 		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( undefined );
 		delete window.Blackbox;
@@ -48,8 +48,8 @@ describe( 'createAccount', () => {
 		expect( getRequestBody()?.blackbox_session_id ).toBe( 'ABCDEFGHIJKLMNOPQRSTuv' );
 	} );
 
-	it( 'omits blackbox_session_id when the signup feature flag is off', async () => {
-		config.disable( 'blackbox-signup' );
+	it( 'omits blackbox_session_id when the userless checkout feature flag is off', async () => {
+		config.disable( 'blackbox-userless-checkout' );
 		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
 		const getRequestBody = interceptUsersNew();
 
