@@ -608,31 +608,31 @@ const aiSparkle = (
 
 function ConciergeRailCard( { onOpen }: { onOpen: () => void } ) {
 	return (
-		<Card className="marketplace-hosting__concierge-card">
+		<Card
+			className="marketplace-hosting__concierge-card"
+			onClick={ onOpen }
+			role="button"
+			tabIndex={ 0 }
+			onKeyDown={ ( event: React.KeyboardEvent ) => {
+				if ( event.key === 'Enter' || event.key === ' ' ) {
+					event.preventDefault();
+					onOpen();
+				}
+			} }
+		>
 			<CardBody>
-				<VStack spacing={ 4 }>
-					<HStack spacing={ 3 } alignment="flex-start" justify="flex-start">
-						<div className="marketplace-hosting__concierge-card-icon">
-							<Icon icon={ aiSparkle } />
-						</div>
-						<VStack spacing={ 1 } expanded>
-							<Text weight={ 600 }>{ __( 'Not sure this is the right fit?' ) }</Text>
-							<Text variant="muted">
-								{ __(
-									'Tell the concierge about your client and it’ll recommend the platform with the best fit and the healthiest margin.'
-								) }
-							</Text>
-						</VStack>
-					</HStack>
-					<Button
-						variant="secondary"
-						__next40pxDefaultSize
-						className="marketplace-hosting__concierge-card-cta"
-						onClick={ onOpen }
-					>
-						{ __( 'Help me choose' ) }
-					</Button>
-				</VStack>
+				<HStack spacing={ 3 } alignment="center" justify="flex-start">
+					<div className="marketplace-hosting__concierge-card-icon">
+						<Icon icon={ aiSparkle } />
+					</div>
+					<VStack spacing={ 0 } expanded>
+						<Text weight={ 600 }>{ __( 'Not sure this is the right fit?' ) }</Text>
+						<Text variant="muted">
+							{ __( 'Ask the concierge which platform fits this client.' ) }
+						</Text>
+					</VStack>
+					<Icon icon={ chevronRight } className="marketplace-hosting__guide-chevron" />
+				</HStack>
 			</CardBody>
 		</Card>
 	);
