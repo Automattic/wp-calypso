@@ -83,6 +83,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	currentUser,
 	forceEmailSupport = false,
 	isChatRestricted = false,
+	launcherContext,
 	children,
 } ) => {
 	const { dynamicNewInteractionsBotSlug, isMinimized, isChatLoaded } = useSelect(
@@ -209,6 +210,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				version: overriddenVersion,
 				forceEmailSupport,
 				isChatRestricted,
+				launcherContext,
 			} }
 		>
 			{ children }
