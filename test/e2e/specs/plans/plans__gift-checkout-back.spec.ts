@@ -11,7 +11,9 @@ test.describe( 'Plans: Gift checkout Back navigation', { tag: [ tags.CALYPSO_REL
 	} ) => {
 		const siteUrl = accountDefaultUser.getSiteURL( { protocol: true } );
 		const siteSlug = accountDefaultUser.getSiteURL( { protocol: false } );
-		const siteUrlPattern = new RegExp( `^${ escapeRegExp( siteUrl.replace( /\/$/, '' ) ) }` );
+		const siteUrlPattern = new RegExp(
+			`^${ escapeRegExp( siteUrl.replace( /\/$/, '' ) ) }/?(?:[?#]|$)`
+		);
 		let giftCheckoutUrl = '';
 
 		await test.step( 'Given the site has a plan subscription that can be gifted', async function () {
@@ -28,7 +30,7 @@ test.describe( 'Plans: Gift checkout Back navigation', { tag: [ tags.CALYPSO_REL
 		await test.step( 'When I open gift checkout from the site while logged in and click Back', async function () {
 			await accountDefaultUser.authenticate( page );
 			await page.goto( giftCheckoutUrl, { referer: siteUrl } );
-			await page.getByRole( 'button', { name: 'Back' } ).click();
+			await page.getByRole( 'button', { name: 'Back', exact: true } ).click();
 		} );
 
 		await test.step( 'Then I land on the gifted site', async function () {
@@ -38,7 +40,7 @@ test.describe( 'Plans: Gift checkout Back navigation', { tag: [ tags.CALYPSO_REL
 		await test.step( 'When I open gift checkout from the site while logged out and click Back', async function () {
 			const incognito = pageIncognito.getPage();
 			await incognito.goto( giftCheckoutUrl, { referer: siteUrl } );
-			await incognito.getByRole( 'button', { name: 'Back' } ).click();
+			await incognito.getByRole( 'button', { name: 'Back', exact: true } ).click();
 		} );
 
 		await test.step( 'Then I land on the gifted site as a logged-out visitor', async function () {
