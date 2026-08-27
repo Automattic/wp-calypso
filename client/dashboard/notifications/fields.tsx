@@ -1,3 +1,8 @@
+import {
+	getNoteExcerpt,
+	getNoteSender,
+	getNoteTitle,
+} from '@automattic/notifications/src/common/summary';
 import { getTimeGroupIndex } from '@automattic/notifications/src/common/time-groups';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -35,9 +40,7 @@ export function getNoteTypeLabel( note: Note ): string {
 	}
 }
 
-export function getNoteTitle( note: Note ): string {
-	return note.subject[ 0 ]?.text ?? note.title;
-}
+export { getNoteExcerpt, getNoteSender, getNoteTitle };
 
 const TITLE_BOLD_RANGE_TYPES = new Set( [ 'user', 'post', 'b' ] );
 
@@ -83,20 +86,6 @@ export function getTitleSegments( note: Note ): TitleSegment[] {
 		segments.push( { text: block.text.slice( cursor ), bold: false, url: null } );
 	}
 	return segments;
-}
-
-// The actor who triggered the note: the header's leading user range (how the
-// legacy panel identifies the sender), falling back to the body's user block.
-export function getNoteSender( note: Note ): string | null {
-	const header = note.header?.[ 0 ];
-	if ( header?.ranges?.[ 0 ]?.type === 'user' && header.text ) {
-		return header.text;
-	}
-	return note.body?.find( ( block ) => block.type === 'user' )?.text ?? null;
-}
-
-export function getNoteExcerpt( note: Note ): string | null {
-	return note.subject.length > 1 ? note.subject[ 1 ].text : null;
 }
 
 export type NoteBlock = Note[ 'body' ][ number ];

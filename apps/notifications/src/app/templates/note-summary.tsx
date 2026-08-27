@@ -4,25 +4,11 @@ import {
 	__experimentalVStack as VStack,
 	ExternalLink,
 } from '@wordpress/components';
+import { getHeaderLink } from '../../common/summary';
 import { html } from '../../panel/indices-to-html';
 import NoteIcon from '../note-icon';
 import type { Note, Subject } from '../types';
 import type { CSSProperties } from 'react';
-
-// Resolve the link used to wrap the header avatar / subject text. A user range
-// whose id differs from the site id links to the Reader profile (some site
-// notifications populate id with the siteId); anything else falls back to the
-// range's own url. Mirrors the legacy `SummaryInSingle` behaviour.
-const getHeaderLink = ( block: Subject ): string | undefined => {
-	const range = block.ranges?.[ 0 ];
-	if ( ! range ) {
-		return undefined;
-	}
-	if ( range.type === 'user' && range.id && range.id !== range.site_id ) {
-		return `https://wordpress.com/reader/users/id/${ range.id }`;
-	}
-	return range.url;
-};
 
 const iconWrapStyle: CSSProperties = { display: 'flex', flexShrink: 0 };
 

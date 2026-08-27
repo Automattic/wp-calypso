@@ -6,7 +6,6 @@ import {
 	getBlockSegments,
 	getFields,
 	getNoteBodyParts,
-	getNoteSender,
 	getNoteUserRef,
 	getTitleSegments,
 } from '../fields';
@@ -29,32 +28,6 @@ function makeNote( id: number, overrides: Partial< Note > = {} ): Note {
 		...overrides,
 	} as Note;
 }
-
-describe( 'getNoteSender', () => {
-	it( 'reads the sender from the header user range', () => {
-		const note = makeNote( 1, {
-			header: [
-				{
-					text: 'Alice Adams',
-					ranges: [ { type: 'user', indices: [ 0, 11 ], id: 7, parent: null } ],
-				},
-				{ text: 'A snippet' },
-			],
-		} );
-		expect( getNoteSender( note ) ).toBe( 'Alice Adams' );
-	} );
-
-	it( 'falls back to the body user block', () => {
-		const note = makeNote( 2, {
-			body: [ { text: 'Bob Brown', type: 'user' } ],
-		} );
-		expect( getNoteSender( note ) ).toBe( 'Bob Brown' );
-	} );
-
-	it( 'returns null when no sender is present', () => {
-		expect( getNoteSender( makeNote( 3 ) ) ).toBeNull();
-	} );
-} );
 
 describe( 'search fields', () => {
 	const notes = [
