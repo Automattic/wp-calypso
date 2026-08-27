@@ -13,6 +13,7 @@ import {
 	update,
 } from '@wordpress/icons';
 import clsx from 'clsx';
+import { getTimeGroupIndex } from '../../common/time-groups';
 import { html } from '../../panel/indices-to-html';
 import NoteIcon from '../note-icon';
 import trophyGridicon from '../note-icon/trophy-gridicon';
@@ -37,8 +38,6 @@ const iconMap: { [ key in string ]: JSX.Element } = {
 	'\uf447': store, // cart
 };
 
-const DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
-
 const groupTitles = [
 	__( 'Today' ),
 	__( 'Yesterday' ),
@@ -46,26 +45,6 @@ const groupTitles = [
 	__( 'Older than a week' ),
 	__( 'Older than a month' ),
 ];
-
-// Map a note's timestamp to its time-group index (0 = Today … 4 = Older than a month).
-const getTimeGroupKey = ( timestamp: string ): number => {
-	const now = new Date().setHours( 0, 0, 0, 0 );
-	const timeBoundaries = [
-		Infinity,
-		now,
-		new Date( now - DAY_MILLISECONDS ),
-		new Date( now - DAY_MILLISECONDS * 6 ),
-		new Date( now - DAY_MILLISECONDS * 30 ),
-		-Infinity,
-	];
-
-	const timeGroups = timeBoundaries
-		.slice( 0, -1 )
-		.map( ( val, index ) => [ val, timeBoundaries[ index + 1 ] ] );
-
-	const time = new Date( timestamp );
-	return timeGroups.findIndex( ( [ after, before ] ) => before < time && time <= after );
-};
 
 export function getFields(): Field< Note >[] {
 	return [
@@ -118,7 +97,7 @@ export function getFields(): Field< Note >[] {
 			id: 'timeGroup',
 			label: __( 'Date' ),
 			enableSorting: false,
-			getValue: ( { item } ) => groupTitles[ getTimeGroupKey( item.timestamp ) ],
+			getValue: ( { item } ) => groupTitles[ getTimeGroupIndex( item.timestamp ) ],
 		},
 	];
 }
