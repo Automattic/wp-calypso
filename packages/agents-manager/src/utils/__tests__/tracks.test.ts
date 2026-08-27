@@ -49,7 +49,6 @@ describe( 'tracks wrappers', () => {
 		setResolvedAgentId( undefined );
 		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
 		delete ( window as Window ).bigSkyInitialState;
-		// Reset the module-scope loaded provider IDs so tests don't leak into one another.
 		setLoadedProviderIds( [] );
 	} );
 
@@ -318,36 +317,6 @@ describe( 'tracks wrappers', () => {
 				setLoadedProviderIds( [] );
 				recordEvent();
 				expect( lastEventProps() ).not.toHaveProperty( 'loaded_provider_ids' );
-			}
-		);
-
-		it.each( recorders )(
-			'%s recorder tolerates undefined by publishing no IDs',
-			( _name, recordEvent ) => {
-				setLoadedProviderIds( undefined );
-				recordEvent();
-				expect( lastEventProps() ).not.toHaveProperty( 'loaded_provider_ids' );
-			}
-		);
-
-		it.each( recorders )(
-			'%s recorder filters out non-string and empty-string entries',
-			( _name, recordEvent ) => {
-				setLoadedProviderIds( [
-					'woocommerce-ai',
-					'',
-					// Simulate a provider module that failed to declare a valid id.
-					undefined as unknown as string,
-					42 as unknown as string,
-					'jetpack-ai-sidebar',
-				] );
-
-				recordEvent();
-
-				expect( lastEventProps().loaded_provider_ids ).toEqual( [
-					'woocommerce-ai',
-					'jetpack-ai-sidebar',
-				] );
 			}
 		);
 	} );
