@@ -120,8 +120,17 @@
 	object-position: left;
 }
 
-.marketplace-hosting__concierge-rec {
+// The recommendation card lives inside the dark .agenttic chat, so give it a
+// dark surface too — the inherited light text stays readable and it reads as
+// part of the agent rather than a jarring white block.
+.agenttic .marketplace-hosting__concierge-rec {
 	inline-size: 100%;
+	box-shadow: inset 0 0 0 1px var( --color-input-border );
+
+	&,
+	.components-card__body {
+		background-color: var( --color-popover-muted, var( --color-surface ) );
+	}
 }
 
 .marketplace-hosting__guide-compare {
@@ -190,6 +199,10 @@
 .marketplace-hosting__selector-check {
 	fill: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
 	flex-shrink: 0;
+
+	&.is-hidden {
+		visibility: hidden;
+	}
 }
 
 .marketplace-hosting__avatar {

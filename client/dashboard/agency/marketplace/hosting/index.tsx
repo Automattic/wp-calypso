@@ -912,6 +912,32 @@ export default function MarketplaceHosting() {
 			{ isConciergeOpen && (
 				<HostingConcierge
 					onConfigure={ ( brand ) => {
+						if ( brand === 'wpcom' ) {
+							addToCart( {
+								id: 'wpcom-hosting',
+								family: 'wpcom-hosting',
+								label: sprintf(
+									/* translators: %d: number of sites */
+									_n( '%d WordPress.com site', '%d WordPress.com sites', quantity ),
+									quantity
+								),
+								total: getTieredPrice( wpcomProduct, quantity, term, ownedSites ).discountedCost,
+							} );
+						} else if ( brand === 'pressable' ) {
+							addToCart( {
+								id: 'pressable-hosting',
+								family: 'pressable-hosting',
+								label: sprintf(
+									/* translators: %s: plan name */
+									__( 'Pressable %s' ),
+									pressablePlan?.name ?? ''
+								),
+								total:
+									( term === 'yearly'
+										? pressablePlan?.yearly_price
+										: pressablePlan?.monthly_price ) ?? null,
+							} );
+						}
 						setSelectedBrand( brand );
 						setIsConciergeOpen( false );
 					} }

@@ -47,9 +47,12 @@ export default function OptionCards( { label, options, selected, onSelect }: Opt
 							<VStack spacing={ 2 }>
 								<HStack justify="space-between" alignment="center">
 									<Text weight={ 600 }>{ option.label }</Text>
-									{ isSelected && (
-										<Icon icon={ check } className="marketplace-hosting__selector-check" />
-									) }
+									<Icon
+										icon={ check }
+										className={ clsx( 'marketplace-hosting__selector-check', {
+											'is-hidden': ! isSelected,
+										} ) }
+									/>
 								</HStack>
 								<Text variant="muted">{ option.description }</Text>
 							</VStack>
