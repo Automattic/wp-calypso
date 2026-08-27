@@ -1,8 +1,11 @@
 import { renderHook, waitFor } from '@testing-library/react';
+import apiFetch from '@wordpress/api-fetch';
 import useWebMcpTools from '../use-webmcp-tools';
 import type { Ability } from '../../abilities/types';
 import type { ToolProvider } from '../../extension-types';
 import type { WebMcpTool } from '../../webmcp/types';
+
+jest.mock( '@wordpress/api-fetch' );
 
 const ability: Ability = {
 	name: 'big-sky/apply-block-edits',
@@ -15,6 +18,7 @@ const ability: Ability = {
 
 describe( 'useWebMcpTools', () => {
 	beforeEach( () => {
+		jest.mocked( apiFetch ).mockReset().mockResolvedValue( [] );
 		document.body.className = 'site-editor-php';
 		window.history.replaceState( {}, '', '/?webmcp=1' );
 		Object.defineProperty( navigator, 'modelContext', { configurable: true, value: undefined } );

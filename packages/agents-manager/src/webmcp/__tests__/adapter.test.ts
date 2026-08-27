@@ -134,6 +134,13 @@ describe( 'WebMCP adapter', () => {
 		).toBe( false );
 		expect(
 			shouldExposeWebMcpAbility(
+				createServerAbility( 'wpcom/get-posts', {
+					meta: { annotations: { serverRegistered: true, readonly: false } },
+				} )
+			)
+		).toBe( false );
+		expect(
+			shouldExposeWebMcpAbility(
 				createAbility( { meta: { annotations: {} }, callback: undefined } )
 			)
 		).toBe( false );

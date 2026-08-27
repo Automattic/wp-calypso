@@ -11,6 +11,8 @@ import type { Ability } from '../abilities/types';
 import type { ToolProvider } from '../extension-types';
 import type { WebMcpAdapter, WebMcpModelContext, WebMcpTool } from './types';
 
+export { createWebMcpToolProvider } from './server-ability-provider';
+
 type Registration = {
 	abortController: AbortController;
 	fingerprint: string;
@@ -39,7 +41,7 @@ export function shouldExposeWebMcpAbility( ability: Ability ): boolean {
 	const annotations = ability.meta?.annotations;
 
 	if ( WEBMCP_SERVER_ABILITY_ALLOWLIST.has( ability.name ) ) {
-		return annotations?.serverRegistered === true;
+		return annotations?.serverRegistered === true && annotations.readonly === true;
 	}
 
 	if ( ! WEBMCP_EDITOR_ABILITY_ALLOWLIST.has( ability.name ) ) {

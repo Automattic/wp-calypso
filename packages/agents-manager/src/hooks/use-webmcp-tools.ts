@@ -26,12 +26,15 @@ export default function useWebMcpTools( {
 		let adapter: import('../webmcp/types').WebMcpAdapter | undefined;
 
 		import( /* webpackChunkName: "am-webmcp" */ '../webmcp/adapter' )
-			.then( ( { createWebMcpAdapter } ) => {
+			.then( ( { createWebMcpAdapter, createWebMcpToolProvider } ) => {
 				if ( disposed ) {
 					return;
 				}
 
-				adapter = createWebMcpAdapter( { toolProvider, modelContext } );
+				adapter = createWebMcpAdapter( {
+					toolProvider: createWebMcpToolProvider( toolProvider ),
+					modelContext,
+				} );
 				adapter.sync().catch( ( error ) => {
 					// eslint-disable-next-line no-console
 					console.warn( '[AgentsManager] Failed to synchronize WebMCP tools:', error );
