@@ -3,6 +3,7 @@ import {
 	APPLY_BLOCK_EDITS_ABILITY_NAME,
 	GET_BLOCK_TREE_ABILITY_NAME,
 	SHOW_TEMPLATE_ABILITY_NAME,
+	WEBMCP_SERVER_ABILITY_NAMES,
 	getWebMcpDescription,
 	getWebMcpInputSchema,
 } from './contracts';
@@ -32,12 +33,19 @@ export const WEBMCP_EDITOR_ABILITY_ALLOWLIST = new Set( [
 	SHOW_TEMPLATE_ABILITY_NAME,
 ] );
 
+export const WEBMCP_SERVER_ABILITY_ALLOWLIST = new Set< string >( WEBMCP_SERVER_ABILITY_NAMES );
+
 export function shouldExposeWebMcpAbility( ability: Ability ): boolean {
+	const annotations = ability.meta?.annotations;
+
+	if ( WEBMCP_SERVER_ABILITY_ALLOWLIST.has( ability.name ) ) {
+		return annotations?.serverRegistered === true;
+	}
+
 	if ( ! WEBMCP_EDITOR_ABILITY_ALLOWLIST.has( ability.name ) ) {
 		return false;
 	}
 
-	const annotations = ability.meta?.annotations;
 	if ( annotations?.serverRegistered === true ) {
 		return false;
 	}

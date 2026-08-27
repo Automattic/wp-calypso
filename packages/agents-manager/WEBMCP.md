@@ -37,9 +37,15 @@ The allowlist contains:
   publish content. The WebMCP adapter translates the ability's Big Sky-specific next-step reference
   to `agents_manager__get_block_tree`.
 
-An allowlisted ability is still rejected if it is marked server-registered. It must be marked
-client-registered or carry a client callback, which supports both registry-returned provider
-abilities and direct Agents Manager-owned definitions.
+- `wpcom/get-block-schemas`, `wpcom/get-content-guidelines`, `wpcom/get-posts`,
+  `wpcom/get-site-stats`, and `core/get-site-info`: read-only server abilities registered by
+  Gutenberg from the current site's Abilities REST API. Their existing input schemas, permission
+  checks, and authenticated site-specific execution path are preserved. The adapter also includes
+  each ability's server-provided instructions in the WebMCP description when present.
+
+Client abilities must be in the editor allowlist and be client-registered or carry a client
+callback. Server abilities must be in the separate server allowlist and marked server-registered;
+neither allowlist grants eligibility to a lookalike from the other provenance.
 
 ## Testing
 
@@ -50,10 +56,12 @@ abilities and direct Agents Manager-owned definitions.
 2. Sandbox `widgets.wp.com` to wpdev and run `WPCOM_SANDBOX=wpdev yarn dev --sync` from
    `apps/agents-manager`.
 3. Open a post, page, or site editor with `?webmcp=1` using GPT-5.6 Sol or Terra.
-4. Ask Codex to inspect the current page's Site tools. Confirm it discovers
+4. Ask Codex to inspect the current page's Site tools. Confirm it discovers all eight tools:
    `agents_manager__get_block_tree`, `big_sky__show_template`, and
-   `big_sky__apply_block_edits` natively; do not use DevTools or call `document.modelContext`
-   directly for this path.
+   `big_sky__apply_block_edits`, plus `wpcom__get_block_schemas`,
+   `wpcom__get_content_guidelines`, `wpcom__get_posts`, `wpcom__get_site_stats`, and
+   `core__get_site_info`. Do not use DevTools or call `document.modelContext` directly for this
+   path.
 5. Call `agents_manager__get_block_tree`. If a requested template part is absent, call
    `big_sky__show_template`, then read the tree again.
 6. Call `big_sky__apply_block_edits` with a client ID from the latest tree, or insert a small test
@@ -66,7 +74,7 @@ abilities and direct Agents Manager-owned definitions.
 1. Open a post, page, or site editor with `?webmcp=1` and the browser's WebMCP testing feature on.
 2. Without opening Agents Manager chat, enumerate the page's tools through
    `document.modelContext.getTools()`.
-3. Confirm the same three tools are present.
+3. Confirm the same eight tools are present and that the five server tools expose input schemas.
 4. Call `agents_manager__get_block_tree`, choose a returned client ID, then call
    `big_sky__apply_block_edits` with that ID and a small reversible edit. Confirm the canvas changes
    without publishing the page.
@@ -83,7 +91,7 @@ execution cannot currently be cancelled because `ToolProvider.executeAbility()` 
 The edit tool should be preceded by a fresh block-tree read. This keeps its targets aligned with the
 current editor and refreshes the identity map used by the Big Sky callback.
 
-To add another tool, verify its complete implementation and execution path are client-only,
-editor-scoped, deterministic, reviewable, non-administrative, and free of model/orchestrator calls.
-Then add its original ability name to `WEBMCP_EDITOR_ABILITY_ALLOWLIST` with a concise safety
-rationale and tests proving server lookalikes remain excluded.
+To add another tool, verify its complete implementation, permissions, annotations, and execution
+path. Add client tools to `WEBMCP_EDITOR_ABILITY_ALLOWLIST` or REST-backed tools to
+`WEBMCP_SERVER_ABILITY_NAMES`, with tests proving the opposite provenance and unlisted abilities
+remain excluded.

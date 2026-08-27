@@ -1,4 +1,5 @@
 import { createWebMcpAdapter, normalizeInputSchema, shouldExposeWebMcpAbility } from '../adapter';
+import { WEBMCP_SERVER_ABILITY_NAMES } from '../contracts';
 import type { Ability } from '../../abilities/types';
 import type { ToolProvider } from '../../extension-types';
 import type { WebMcpModelContext, WebMcpTool } from '../types';
@@ -39,6 +40,23 @@ const createShowTemplateAbility = (): Ability => ( {
 	meta: {
 		annotations: { clientRegistered: true, readonly: false, idempotent: true },
 	},
+} );
+
+const createServerAbility = ( name: string, overrides: Partial< Ability > = {} ): Ability => ( {
+	name,
+	label: name,
+	description: `Description for ${ name }`,
+	category: 'wpcom',
+	input_schema: { type: 'object', properties: {} },
+	meta: {
+		annotations: {
+			serverRegistered: true,
+			readonly: true,
+			idempotent: true,
+		},
+		instructions: `Instructions for ${ name }`,
+	},
+	...overrides,
 } );
 
 function createHarness( initialAbilities: Ability[] = [ createAbility() ] ) {
@@ -86,10 +104,13 @@ describe( 'WebMCP adapter', () => {
 		} );
 	} );
 
-	it( 'requires both the explicit allowlist and client provenance', () => {
+	it( 'requires the explicit allowlist and matching client or server provenance', () => {
 		expect( shouldExposeWebMcpAbility( createAbility() ) ).toBe( true );
 		expect( shouldExposeWebMcpAbility( createBlockTreeAbility() ) ).toBe( true );
 		expect( shouldExposeWebMcpAbility( createShowTemplateAbility() ) ).toBe( true );
+		for ( const name of WEBMCP_SERVER_ABILITY_NAMES ) {
+			expect( shouldExposeWebMcpAbility( createServerAbility( name ) ) ).toBe( true );
+		}
 		expect(
 			shouldExposeWebMcpAbility( createAbility( { meta: undefined, callback: jest.fn() } ) )
 		).toBe( true );
@@ -103,11 +124,41 @@ describe( 'WebMCP adapter', () => {
 				} )
 			)
 		).toBe( false );
+		expect( shouldExposeWebMcpAbility( createServerAbility( 'wpcom/delete-site' ) ) ).toBe( false );
+		expect(
+			shouldExposeWebMcpAbility(
+				createServerAbility( 'wpcom/get-posts', {
+					meta: { annotations: { clientRegistered: true } },
+				} )
+			)
+		).toBe( false );
 		expect(
 			shouldExposeWebMcpAbility(
 				createAbility( { meta: { annotations: {} }, callback: undefined } )
 			)
 		).toBe( false );
+	} );
+
+	it( 'registers a server ability with its schema and executes through the provider', async () => {
+		const ability = createServerAbility( 'wpcom/get-posts', {
+			input_schema: {
+				type: 'object',
+				properties: { fields: { type: 'string', enum: [ 'summary', 'full' ] } },
+			},
+		} );
+		const harness = createHarness( [ ability ] );
+		await harness.adapter.sync();
+
+		const tool = harness.tools.get( 'wpcom__get_posts' );
+		expect( tool ).toMatchObject( {
+			description: expect.stringContaining( 'Instructions for wpcom/get-posts' ),
+			inputSchema: ability.input_schema,
+			annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true },
+		} );
+		await tool?.execute( { fields: 'summary' } );
+		expect( harness.toolProvider.executeAbility ).toHaveBeenCalledWith( 'wpcom/get-posts', {
+			fields: 'summary',
+		} );
 	} );
 
 	it( 'maps show-template guidance to the WebMCP block reader', async () => {
