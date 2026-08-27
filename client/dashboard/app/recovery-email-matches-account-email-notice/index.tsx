@@ -42,7 +42,7 @@ export default function RecoveryEmailMatchesAccountEmailNotice() {
 				{ sprintf(
 					// translators: %s is the user's account email address.
 					__(
-						'Your recovery email %s is the same address you sign in with, so losing access to it locks you out of your account. Set a different one so we can always reach you.'
+						'Your recovery email %s is the address you sign in with, so losing access to it locks you out of your account. Set a different one so we can always reach you.'
 					),
 					user.email
 				) }
