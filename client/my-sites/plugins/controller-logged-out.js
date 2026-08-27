@@ -267,7 +267,10 @@ export async function fetchPlugin( context, next ) {
 	// is a dead end. Send the request to the plugin browser instead. The redirect
 	// is temporary because a product can stop being retired.
 	if ( getPrefetchedMarketplaceProduct( queryClient, options.pluginSlug )?.is_retired ) {
-		return context.res.redirect( 302, '/plugins' );
+		// `ssrSetupLocale` has already redirected any locale that is not a
+		// magnificent one, so a `lang` param here is safe to keep in the path.
+		const { lang } = context.params;
+		return context.res.redirect( 302, lang ? `/${ lang }/plugins` : '/plugins' );
 	}
 
 	next();

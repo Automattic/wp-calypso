@@ -167,6 +167,22 @@ describe( 'fetchPlugin', () => {
 		expect( next ).not.toHaveBeenCalled();
 	} );
 
+	test( 'keeps the locale in the redirect for a localized request', async () => {
+		const next = jest.fn();
+		const context = makePluginContext( {
+			isMarketplaceProduct: true,
+			cachedProduct: { slug: PLUGIN_SLUG, is_retired: true },
+		} );
+		context.path = `/de/plugins/${ PLUGIN_SLUG }`;
+		context.lang = 'de';
+		context.params.lang = 'de';
+
+		await fetchPlugin( context, next );
+
+		expect( context.res.redirect ).toHaveBeenCalledWith( 302, '/de/plugins' );
+		expect( next ).not.toHaveBeenCalled();
+	} );
+
 	test( 'renders normally when is_retired is false', async () => {
 		const next = jest.fn();
 		const context = makePluginContext( {

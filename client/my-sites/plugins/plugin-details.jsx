@@ -5,7 +5,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, download } from '@wordpress/icons';
 import clsx from 'clsx';
 import { fixMe, useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -26,6 +26,7 @@ import { useESPlugin } from 'calypso/data/marketplace/use-es-query';
 import { useMarketplaceReviewsQuery } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getSoftwareSlug } from 'calypso/lib/plugins/utils';
 import { MarketplaceReviewsCards } from 'calypso/my-sites/marketplace/components/reviews-cards';
 import { ReviewsModal } from 'calypso/my-sites/marketplace/components/reviews-modal';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
@@ -56,6 +57,7 @@ import { canPublishProductReviews } from 'calypso/state/marketplace/selectors';
 import {
 	getPluginOnSites,
 	isRequestingForAllSites,
+	isRequestingForSites,
 } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import {
@@ -190,11 +192,48 @@ function PluginDetails( props ) {
 	const isRetiredProduct =
 		isMarketplaceProduct && isWpComPluginFetched && !! wpComPluginData?.is_retired;
 
+	// Retiring a product cancels its subscriptions but leaves the plugin installed,
+	// and this page is where a site owner deactivates or removes it. So the redirect
+	// must wait for the installed-plugins fetch that `QueryPlugins` starts on mount,
+	// and must stand down when the plugin is installed on a site in scope. The
+	// installed-plugins state is keyed by the software slug, not the product slug.
+	const isRequestingInstalledPlugins = useSelector(
+		( state ) => isRequestingForAllSites( state ) || isRequestingForSites( state, siteIds )
+	);
+	const isRetiredPluginInstalled = useSelector(
+		( state ) =>
+			isRetiredProduct &&
+			!! getPluginOnSites( state, siteIds, getSoftwareSlug( wpComPluginData, true ) )
+	);
+	const hasRequestedInstalledPlugins = useRef( false );
+	const canHaveInstalledPlugins = sitesWithPlugins.length > 0;
+	const retiredRedirectPath = localizePath(
+		selectedSite?.slug ? `/plugins/${ selectedSite.slug }` : '/plugins'
+	);
+
 	useEffect( () => {
-		if ( isRetiredProduct ) {
-			page.redirect( '/plugins' );
+		if ( isRequestingInstalledPlugins ) {
+			hasRequestedInstalledPlugins.current = true;
+			return;
 		}
-	}, [ isRetiredProduct ] );
+		if ( ! isRetiredProduct || isRequestingSites ) {
+			return;
+		}
+		if (
+			canHaveInstalledPlugins &&
+			( isRetiredPluginInstalled || ! hasRequestedInstalledPlugins.current )
+		) {
+			return;
+		}
+		page.redirect( retiredRedirectPath );
+	}, [
+		isRequestingInstalledPlugins,
+		isRetiredProduct,
+		isRetiredPluginInstalled,
+		isRequestingSites,
+		canHaveInstalledPlugins,
+		retiredRedirectPath,
+	] );
 
 	// Unify plugin details
 	const fullPlugin = useMemo( () => {
