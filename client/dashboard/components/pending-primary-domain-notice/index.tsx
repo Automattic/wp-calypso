@@ -5,8 +5,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useRef } from 'react';
-import { useAppContext } from '../../app/context';
-import { hasCustomPrimaryDomain, isPendingPrimaryDomain } from '../../utils/domain';
+import { isPendingPrimaryDomain } from '../../utils/domain';
 import { Notice } from '../notice';
 
 interface PendingPrimaryDomainNoticeProps {
@@ -14,12 +13,16 @@ interface PendingPrimaryDomainNoticeProps {
 	onComplete?: () => void;
 }
 
+/**
+ * Announces that WordPress.com is setting a registered domain as the site's
+ * primary address. Callers own the site-level half of that condition: only
+ * render this when the site has no custom primary address yet, which
+ * hasCustomPrimaryDomain() answers from the site's domains.
+ */
 export default function PendingPrimaryDomainNotice( {
 	domainName,
 	onComplete,
 }: PendingPrimaryDomainNoticeProps ) {
-	const { queries } = useAppContext();
-
 	const { data: polledDomain } = useQuery( {
 		...domainQuery( domainName ),
 		refetchInterval: ( query ) => {
@@ -29,23 +32,7 @@ export default function PendingPrimaryDomainNotice( {
 		meta: { persist: false },
 	} );
 
-	// WordPress.com only sets a domain as primary on its own when the site has no
-	// custom primary address yet. Answering that needs the site's other domains, so
-	// only fetch them when this domain looks pending on its own.
-	const mayBePending = !! polledDomain && isPendingPrimaryDomain( polledDomain );
-
-	const { data: allDomains } = useQuery( {
-		...queries.domainsQuery(),
-		enabled: mayBePending,
-	} );
-
-	const isPending =
-		mayBePending &&
-		!! polledDomain &&
-		!! allDomains &&
-		! hasCustomPrimaryDomain(
-			allDomains.filter( ( domain ) => domain.blog_id === polledDomain.blog_id )
-		);
+	const isPending = !! polledDomain && isPendingPrimaryDomain( polledDomain );
 
 	// Track whether the domain was ever actually pending, so we don't fire
 	// a spurious snackbar when rendered for a non-pending domain.

@@ -24,37 +24,7 @@ function mockDomainQuery( domainName: string, overrides = {} ) {
 		} );
 }
 
-// The site's primary address is still its included one, so WordPress.com may
-// still set a registered domain as primary on its own.
-function mockSiteDomains( overrides = {} ) {
-	nock( 'https://public-api.wordpress.com' )
-		.persist()
-		.get( '/rest/v1.2/all-domains' )
-		.query( true )
-		.reply( 200, {
-			domains: [
-				{
-					domain: 'example.com',
-					blog_id: 1,
-					subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Registration' },
-					primary_domain: false,
-					...overrides,
-				},
-				{
-					domain: 'example.wordpress.com',
-					blog_id: 1,
-					subtype: { id: DomainSubtype.DEFAULT_ADDRESS, label: 'Default' },
-					primary_domain: true,
-				},
-			],
-		} );
-}
-
 describe( '<PendingPrimaryDomainNotice>', () => {
-	beforeEach( () => {
-		mockSiteDomains();
-	} );
-
 	afterEach( () => {
 		nock.cleanAll();
 	} );
@@ -85,18 +55,6 @@ describe( '<PendingPrimaryDomainNotice>', () => {
 			points_to_wpcom: true,
 			ssl_status: 'active',
 		} );
-		render( <PendingPrimaryDomainNotice domainName="example.com" /> );
-
-		await waitFor( () => {
-			expect( scope.isDone() ).toBe( true );
-		} );
-		expect( screen.queryByText( 'Setting up your custom domain' ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'renders nothing when the site already has a custom primary address', async () => {
-		nock.cleanAll();
-		mockSiteDomains( { primary_domain: true } );
-		const scope = mockDomainQuery( 'example.com' );
 		render( <PendingPrimaryDomainNotice domainName="example.com" /> );
 
 		await waitFor( () => {
