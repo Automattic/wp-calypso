@@ -4,6 +4,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SearchInput from 'calypso/components/search';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import PopularSites from './popular-sites';
 import SiteSearchResults from './site-search-results';
 import StarterPacks from './starter-packs';
 import type { JSX } from 'react';
@@ -43,7 +44,14 @@ export default function ReaderFollowSitesPage(): JSX.Element {
 					onSearch={ handleSearch }
 					disableAutocorrect
 				/>
-				{ isSearching ? <SiteSearchResults query={ query } /> : <StarterPacks /> }
+				{ isSearching ? (
+					<SiteSearchResults query={ query } />
+				) : (
+					<>
+						<StarterPacks />
+						<PopularSites />
+					</>
+				) }
 			</div>
 		</ReaderMain>
 	);
