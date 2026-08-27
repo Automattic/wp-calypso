@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
 	Dropdown,
-	Guide,
 	Icon,
 	Modal,
 	TabPanel,
@@ -52,6 +51,7 @@ import {
 	Testimonials,
 } from './content-sections';
 import demoIllustrationUrl from './demo-callout-illustration.svg';
+import GuideModal from './guide-modal';
 import HostingConcierge from './hosting-concierge';
 import {
 	hostingBrands,
@@ -122,21 +122,13 @@ const REFERRAL_GUIDE_STEPS = [
 
 function ReferralGuide( { onClose }: { onClose: () => void } ) {
 	return (
-		<Guide
-			onFinish={ onClose }
-			contentLabel={ __( 'How referral mode works' ) }
-			pages={ REFERRAL_GUIDE_STEPS.map( ( step ) => ( {
-				image: step.media,
-				content: (
-					<>
-						<Heading level={ 2 } size={ 16 }>
-							{ step.title }
-						</Heading>
-						<Text as="p" variant="muted">
-							{ step.description }
-						</Text>
-					</>
-				),
+		<GuideModal
+			onClose={ onClose }
+			dismissable
+			steps={ REFERRAL_GUIDE_STEPS.map( ( step ) => ( {
+				title: step.title,
+				description: step.description,
+				preview: step.media,
 			} ) ) }
 		/>
 	);
