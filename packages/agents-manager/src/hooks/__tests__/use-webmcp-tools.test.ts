@@ -20,11 +20,15 @@ describe( 'useWebMcpTools', () => {
 	beforeEach( () => {
 		jest.mocked( apiFetch ).mockReset().mockResolvedValue( [] );
 		document.body.className = 'site-editor-php';
-		window.history.replaceState( {}, '', '/?webmcp=1' );
+		window.history.replaceState( {}, '', '/' );
+		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+			isDevMode: true,
+		};
 		Object.defineProperty( navigator, 'modelContext', { configurable: true, value: undefined } );
 	} );
 
 	afterEach( () => {
+		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
 		Object.defineProperty( document, 'modelContext', { configurable: true, value: undefined } );
 	} );
 
@@ -61,8 +65,10 @@ describe( 'useWebMcpTools', () => {
 		expect( registrations[ 1 ].signal?.aborted ).toBe( true );
 	} );
 
-	it( 'does not load tools while the experiment is disabled', async () => {
-		window.history.replaceState( {}, '', '/' );
+	it( 'does not load tools outside development mode', async () => {
+		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+			isDevMode: false,
+		};
 		const registerTool = jest.fn();
 		Object.defineProperty( document, 'modelContext', {
 			configurable: true,

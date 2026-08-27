@@ -108,6 +108,7 @@ describe( 'AgentSetup', () => {
 		sessionStorage.clear();
 		document.body.className = '';
 		window.history.replaceState( {}, '', '/' );
+		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
 		Object.defineProperty( document, 'modelContext', { configurable: true, value: undefined } );
 		setSessionSiteKey( 'no-site' );
 		setSessionUserId( undefined );
@@ -117,7 +118,9 @@ describe( 'AgentSetup', () => {
 		mockIsOpen = false;
 		mockHasAiChatEntry = true;
 		document.body.className = 'site-editor-php';
-		window.history.replaceState( {}, '', '/?webmcp=1' );
+		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+			isDevMode: true,
+		};
 		Object.defineProperty( document, 'modelContext', {
 			configurable: true,
 			value: { registerTool: jest.fn() },
@@ -128,7 +131,7 @@ describe( 'AgentSetup', () => {
 		await waitFor( () => expect( mockUseAbilitiesSetup ).toHaveBeenCalled() );
 	} );
 
-	it( 'does not mount provider ability setup without WebMCP opt-in', async () => {
+	it( 'does not mount provider ability setup outside development mode', async () => {
 		document.body.className = 'site-editor-php';
 		Object.defineProperty( document, 'modelContext', {
 			configurable: true,
