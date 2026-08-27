@@ -31,9 +31,9 @@ import {
 	getWowFunnelArgs,
 	getWowFunnelSlug,
 	logWowFunnelEvent,
-	startWowFunnelSite,
 	wowFunnelSiteIsPaid,
 } from 'calypso/landing/stepper/utils/wow-funnel';
+import { startWowFunnelSite } from 'calypso/landing/stepper/utils/wow-funnel-site';
 import { resolveLaunchpadPersonalizationVariation } from 'calypso/lib/ai-launchpad';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';

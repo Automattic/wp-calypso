@@ -45,18 +45,17 @@ import {
 } from '../../../utils/build-wow';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import {
+	clearWowFunnelSite,
+	getRememberedWowFunnelSite,
+	getWowFunnelArgs,
 	getWowFunnelConfig,
 	getWowFunnelDest,
-	getWowFunnelArgs,
 	getWowFunnelSlug,
-	clearWowFunnelSite,
-	forgetWowFunnelRun,
-	getRememberedWowFunnelSite,
 	isKnownWowFunnel,
-	startWowFunnelSite,
-	wowFunnelSiteIsPaid,
 	logWowFunnelEvent,
+	wowFunnelSiteIsPaid,
 } from '../../../utils/wow-funnel';
+import { forgetWowFunnelRun, startWowFunnelSite } from '../../../utils/wow-funnel-site';
 import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboarding-post-checkout-destination';
 import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
