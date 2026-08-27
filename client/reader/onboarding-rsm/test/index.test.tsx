@@ -9,6 +9,9 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import {
+	READER_EARLY_READERS_DECLINED_EVENT,
+	READER_EARLY_READERS_OPT_IN_EVENT,
+	READER_EARLY_READERS_SOURCE_STEP,
 	READER_ONBOARDING_DISMISSED_PREFERENCE_KEY,
 	READER_ONBOARDING_ELIGIBLE_REGISTRATION_DATE,
 	READER_ONBOARDING_PREFERENCE_KEY,
@@ -119,9 +122,35 @@ jest.mock( 'calypso/reader/onboarding-rsm/interests-modal', () => ( {
 
 jest.mock( 'calypso/reader/onboarding-rsm/subscribe-modal', () => ( {
 	__esModule: true,
-	default: ( { onFinish }: { onFinish: () => void } ) => (
+	default: ( { onFinish, totalSteps }: { onFinish: () => void; totalSteps: number } ) => (
 		<div data-testid="subscribe-modal-content">
-			<button onClick={ onFinish }>Finish</button>
+			<button onClick={ onFinish }>{ totalSteps > 3 ? 'Continue' : 'Finish' }</button>
+		</div>
+	),
+} ) );
+
+jest.mock( 'calypso/reader/onboarding-rsm/early-readers-modal', () => ( {
+	EarlyReadersModal: ( {
+		hasSite,
+		hasJoined,
+		onDecline,
+		onJoin,
+		onFinish,
+	}: {
+		hasSite: boolean;
+		hasJoined: boolean;
+		onDecline: () => void;
+		onJoin: () => void;
+		onFinish: () => void;
+	} ) => (
+		<div
+			data-testid="early-readers-modal-content"
+			data-has-site={ String( hasSite ) }
+			data-has-joined={ String( hasJoined ) }
+		>
+			<button onClick={ onDecline }>Finish</button>
+			<button onClick={ onJoin }>Join Early Readers</button>
+			<button onClick={ onFinish }>Back to Reader</button>
 		</div>
 	),
 } ) );
@@ -144,6 +173,12 @@ jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	// cases stay isolated. Individual tests can override per-case.
 	getCurrentUserDate: jest.fn().mockReturnValue( '2020-01-01T00:00:00Z' ),
 	isCurrentUserEmailVerified: jest.fn().mockReturnValue( true ),
+	getCurrentUserSiteCount: jest.fn().mockReturnValue( 0 ),
+} ) );
+
+jest.mock( 'calypso/state/selectors/get-primary-site-id', () => ( {
+	__esModule: true,
+	default: jest.fn().mockReturnValue( 4242 ),
 } ) );
 
 const mockRefreshFollowingStreams = jest.fn();
@@ -224,8 +259,11 @@ beforeEach( () => {
 	) as {
 		useNonSelfSubscriptionsCount: jest.Mock;
 	};
-	const { getCurrentUserDate } = jest.requireMock( 'calypso/state/current-user/selectors' ) as {
+	const { getCurrentUserDate, getCurrentUserSiteCount } = jest.requireMock(
+		'calypso/state/current-user/selectors'
+	) as {
 		getCurrentUserDate: jest.Mock;
+		getCurrentUserSiteCount: jest.Mock;
 	};
 	useFollowedTags.mockImplementation( () => ( { data: [], isPending: false } ) );
 	useCachedSiteSubscriptions.mockReturnValue( { subscriptions: [] } );
@@ -234,7 +272,29 @@ beforeEach( () => {
 		nonSelfSubscriptionsCount: 0,
 	} ) );
 	getCurrentUserDate.mockReturnValue( '2020-01-01T00:00:00Z' );
+	getCurrentUserSiteCount.mockReturnValue( 0 );
 } );
+
+const navigateToDiscoverStep = async ( user: ReturnType< typeof userEvent.setup > ) => {
+	await screen.findByTestId( 'welcome-modal-content' );
+	await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+	await screen.findByTestId( 'interests-modal-content' );
+	await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+	await screen.findByTestId( 'subscribe-modal-content' );
+};
+
+const navigateToEarlyReadersStep = async ( user: ReturnType< typeof userEvent.setup > ) => {
+	await navigateToDiscoverStep( user );
+	await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+	await screen.findByTestId( 'early-readers-modal-content' );
+};
+
+// Onboarding no longer ends at discover: the early-readers step sits past it,
+// and its primary button declines by default, which is what completes the flow.
+const finishOnboardingFromEarlyReaders = async ( user: ReturnType< typeof userEvent.setup > ) => {
+	await navigateToEarlyReadersStep( user );
+	await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+};
 
 describe( 'ReaderOnboardingRsm – back button navigation', () => {
 	// The welcome step auto-opens because hasSeenOnboarding is null (mocked via getPreference).
@@ -296,7 +356,7 @@ describe( 'ReaderOnboardingRsm – stream refresh on step close', () => {
 		expect( mockRefreshFollowingStreams ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'calls refreshFollowingStreams when the discover step is closed via Finish', async () => {
+	it( 'calls refreshFollowingStreams when the discover step is closed via Continue', async () => {
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
@@ -308,7 +368,7 @@ describe( 'ReaderOnboardingRsm – stream refresh on step close', () => {
 
 		mockRefreshFollowingStreams.mockClear();
 
-		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 
 		expect( mockRefreshFollowingStreams ).toHaveBeenCalledTimes( 1 );
 	} );
@@ -433,17 +493,15 @@ describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
 		expect( recordTracksEvent ).not.toHaveBeenCalledWith( closeEventFor( 'discover' ) );
 	} );
 
-	it( 'does not record discover_modal_close when the user clicks Finish from discover', async () => {
+	it( 'does not record discover_modal_close when the user advances from discover', async () => {
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
-		await screen.findByTestId( 'welcome-modal-content' );
-		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
-		await screen.findByTestId( 'interests-modal-content' );
-		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-		await screen.findByTestId( 'subscribe-modal-content' );
+		await navigateToDiscoverStep( user );
 
 		jest.mocked( recordTracksEvent ).mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'early-readers-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
@@ -501,20 +559,11 @@ describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
 } );
 
 describe( 'ReaderOnboardingRsm – welcome digest flush', () => {
-	const navigateToDiscoverStep = async ( user: ReturnType< typeof userEvent.setup > ) => {
-		await screen.findByTestId( 'welcome-modal-content' );
-		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
-		await screen.findByTestId( 'interests-modal-content' );
-		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-		await screen.findByTestId( 'subscribe-modal-content' );
-	};
-
-	it( 'calls flushOnboardingWelcomeDigest when the user clicks Finish on the discover step', async () => {
+	it( 'calls flushOnboardingWelcomeDigest when the user finishes from the early-readers step', async () => {
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
-		await navigateToDiscoverStep( user );
-		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+		await finishOnboardingFromEarlyReaders( user );
 
 		expect( flushOnboardingWelcomeDigest ).toHaveBeenCalledTimes( 1 );
 	} );
@@ -570,20 +619,11 @@ describe( 'ReaderOnboardingRsm – welcome digest flush', () => {
 } );
 
 describe( 'ReaderOnboardingRsm – onboarding completion', () => {
-	const navigateToSubscribeStep = async ( user: ReturnType< typeof userEvent.setup > ) => {
-		await screen.findByTestId( 'welcome-modal-content' );
-		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
-		await screen.findByTestId( 'interests-modal-content' );
-		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-		await screen.findByTestId( 'subscribe-modal-content' );
-	};
-
-	it( 'saves the completion preference and records completed when Finish is clicked', async () => {
+	it( 'saves the completion preference and records completed when the flow is finished', async () => {
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
-		await navigateToSubscribeStep( user );
-		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+		await finishOnboardingFromEarlyReaders( user );
 
 		expect( savePreference ).toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
@@ -595,11 +635,11 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 		);
 	} );
 
-	it( 'does not save completion when the discover step is closed without Finish', async () => {
+	it( 'does not save completion when the discover step is closed without finishing', async () => {
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
-		await navigateToSubscribeStep( user );
+		await navigateToDiscoverStep( user );
 		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
 
 		expect( savePreference ).not.toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
@@ -640,8 +680,7 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
-		await navigateToSubscribeStep( user );
-		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+		await finishOnboardingFromEarlyReaders( user );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
@@ -669,8 +708,7 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
-		await navigateToSubscribeStep( user );
-		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+		await finishOnboardingFromEarlyReaders( user );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
@@ -693,8 +731,7 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
-		await navigateToSubscribeStep( user );
-		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+		await finishOnboardingFromEarlyReaders( user );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
@@ -964,7 +1001,7 @@ describe( 'ReaderOnboardingRsm - forceShow snapshot', () => {
 		expect( screen.getByTestId( 'welcome-modal-content' ) ).toBeVisible();
 	} );
 
-	it( 'hides onboarding for the session after the user clicks Finish on the subscribe step', async () => {
+	it( 'hides onboarding for the session after the user completes onboarding', async () => {
 		seedAboveEligibilityThresholds();
 		const useNonSelfSubscriptionsCount = getUseNonSelfSubscriptionsCountMock();
 		useNonSelfSubscriptionsCount.mockImplementation( () => ( {
@@ -972,7 +1009,7 @@ describe( 'ReaderOnboardingRsm - forceShow snapshot', () => {
 			nonSelfSubscriptionsCount: 0,
 		} ) );
 
-		// Flip the completion preference to true once the user clicks Finish so
+		// Flip the completion preference to true once the user finishes so
 		// `meetsEligibility` also remains false after this point without coupling
 		// to dispatch timing.
 		const getPreference = getPreferenceMock();
@@ -983,13 +1020,15 @@ describe( 'ReaderOnboardingRsm - forceShow snapshot', () => {
 		const onRender = jest.fn();
 		renderWithProvider( <ReaderOnboardingRsm onRender={ onRender } /> );
 
-		// Drive the user through to Finish.
+		// Drive the user through to the end of the flow.
 		await screen.findByTestId( 'welcome-modal-content' );
 		const user = userEvent.setup();
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'subscribe-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'early-readers-modal-content' );
 
 		getPreference.mockImplementation( ( _state: unknown, key: string ) =>
 			key === READER_ONBOARDING_PREFERENCE_KEY ? true : null
@@ -1288,5 +1327,280 @@ describe( 'ReaderOnboardingRsm – permanent checklist dismiss', () => {
 		expect(
 			screen.queryByRole( 'button', { name: 'Dismiss onboarding checklist' } )
 		).not.toBeInTheDocument();
+	} );
+} );
+
+describe( 'ReaderOnboardingRsm – early-readers step (treatment)', () => {
+	it( 'shows the early-readers step after Continue instead of completing, and defers completion work', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToDiscoverStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+		expect( await screen.findByTestId( 'early-readers-modal-content' ) ).toBeVisible();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }early_readers_modal_open`
+		);
+		// Discover's step side effects still ran on the transition.
+		expect( mockRefreshFollowingStreams ).toHaveBeenCalled();
+		// Completion work is deferred to the early-readers exits.
+		expect( savePreference ).not.toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
+		expect( flushOnboardingWelcomeDigest ).not.toHaveBeenCalled();
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.anything()
+		);
+	} );
+
+	it( 'completes onboarding when the user declines', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToDiscoverStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'early-readers-modal-content' );
+
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		expect( screen.queryByTestId( 'early-readers-modal-content' ) ).not.toBeInTheDocument();
+		expect( savePreference ).toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
+		expect( flushOnboardingWelcomeDigest ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.any( Object )
+		);
+	} );
+
+	it( 'completes onboarding when the step is dismissed (X / outside click)', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToDiscoverStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'early-readers-modal-content' );
+
+		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
+
+		expect( screen.queryByTestId( 'early-readers-modal-content' ) ).not.toBeInTheDocument();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }early_readers_modal_close`
+		);
+		expect( savePreference ).toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
+		expect( flushOnboardingWelcomeDigest ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.any( Object )
+		);
+	} );
+
+	it( 'completes onboarding when finishing from the confirmation state', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToDiscoverStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'early-readers-modal-content' );
+
+		await user.click( screen.getByRole( 'button', { name: 'Back to Reader' } ) );
+
+		expect( screen.queryByTestId( 'early-readers-modal-content' ) ).not.toBeInTheDocument();
+		expect( savePreference ).toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
+		expect( flushOnboardingWelcomeDigest ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.any( Object )
+		);
+	} );
+
+	it( 'passes the user’s site status through to the step', async () => {
+		const { getCurrentUserSiteCount } = jest.requireMock(
+			'calypso/state/current-user/selectors'
+		) as { getCurrentUserSiteCount: jest.Mock };
+		getCurrentUserSiteCount.mockReturnValue( 2 );
+
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToEarlyReadersStep( user );
+
+		expect( screen.getByTestId( 'early-readers-modal-content' ) ).toHaveAttribute(
+			'data-has-site',
+			'true'
+		);
+	} );
+
+	it( 'navigates back to the discover step without completing', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToDiscoverStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'early-readers-modal-content' );
+
+		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
+
+		expect( await screen.findByTestId( 'subscribe-modal-content' ) ).toBeVisible();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }early_readers_modal_back`
+		);
+		expect( savePreference ).not.toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
+		expect( flushOnboardingWelcomeDigest ).not.toHaveBeenCalled();
+	} );
+
+	it( 'shows the early-readers step under reader/force-onboarding', async () => {
+		// Forcing onboarding open is the only practical way to reach this flow
+		// without a fresh account, so the step has to be reachable that way.
+		jest
+			.mocked( isEnabled )
+			.mockImplementation( ( flag: string ) => flag === 'reader/force-onboarding' );
+
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToDiscoverStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+		expect( await screen.findByTestId( 'early-readers-modal-content' ) ).toBeVisible();
+		expect( savePreference ).not.toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
+	} );
+
+	it( 'latches the joined state and hides the Back button after opting in', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToDiscoverStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'early-readers-modal-content' );
+
+		expect( screen.getByTestId( 'early-readers-modal-content' ) ).toHaveAttribute(
+			'data-has-joined',
+			'false'
+		);
+		expect( screen.getByRole( 'button', { name: 'Back' } ) ).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: 'Join Early Readers' } ) );
+
+		expect( screen.getByTestId( 'early-readers-modal-content' ) ).toHaveAttribute(
+			'data-has-joined',
+			'true'
+		);
+		// Back would imply the opt-in can be walked back into the discover step.
+		expect( screen.queryByRole( 'button', { name: 'Back' } ) ).not.toBeInTheDocument();
+	} );
+} );
+
+describe( 'ReaderOnboardingRsm – Early Readers opt-in analytics', () => {
+	beforeEach( () => {} );
+
+	it( 'records the opt-in event with the site status and blog id', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToEarlyReadersStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Join Early Readers' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( READER_EARLY_READERS_OPT_IN_EVENT, {
+			has_site: false,
+			blog_id: 4242,
+			source_step: READER_EARLY_READERS_SOURCE_STEP,
+		} );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			READER_EARLY_READERS_DECLINED_EVENT,
+			expect.anything()
+		);
+	} );
+
+	it( 'reports has_site: true for a user who already has a site', async () => {
+		const { getCurrentUserSiteCount } = jest.requireMock(
+			'calypso/state/current-user/selectors'
+		) as { getCurrentUserSiteCount: jest.Mock };
+		getCurrentUserSiteCount.mockReturnValue( 1 );
+
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToEarlyReadersStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Join Early Readers' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			READER_EARLY_READERS_OPT_IN_EVENT,
+			expect.objectContaining( { has_site: true } )
+		);
+	} );
+
+	it( 'records an explicit decline with decline_method: button', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToEarlyReadersStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( READER_EARLY_READERS_DECLINED_EVENT, {
+			has_site: false,
+			blog_id: 4242,
+			source_step: READER_EARLY_READERS_SOURCE_STEP,
+			decline_method: 'button',
+		} );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			READER_EARLY_READERS_OPT_IN_EVENT,
+			expect.anything()
+		);
+	} );
+
+	it( 'records a dismiss as an implicit decline so the opt-in rate keeps its denominator', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToEarlyReadersStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			READER_EARLY_READERS_DECLINED_EVENT,
+			expect.objectContaining( { decline_method: 'dismiss' } )
+		);
+	} );
+
+	it( 'does not record a decline when the confirmation state is dismissed after joining', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToEarlyReadersStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Join Early Readers' } ) );
+
+		jest.mocked( recordTracksEvent ).mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
+
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			READER_EARLY_READERS_DECLINED_EVENT,
+			expect.anything()
+		);
+	} );
+
+	it( 'does not record a decline when the user navigates Back to discover', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToEarlyReadersStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
+
+		await screen.findByTestId( 'subscribe-modal-content' );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			READER_EARLY_READERS_DECLINED_EVENT,
+			expect.anything()
+		);
+	} );
+
+	it( 'records exactly one decline per exit', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToEarlyReadersStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		const declineCalls = jest
+			.mocked( recordTracksEvent )
+			.mock.calls.filter( ( [ eventName ] ) => eventName === READER_EARLY_READERS_DECLINED_EVENT );
+		expect( declineCalls ).toHaveLength( 1 );
 	} );
 } );
