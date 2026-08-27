@@ -47,6 +47,8 @@ const waitForPrefs = () => async ( dispatch, getState ) => {
 };
 
 const getSitesLink = ( isDashboardOptIn ) => {
+	bumpStat( 'landing-page', 'sites' );
+
 	if ( isDashboardOptIn ) {
 		bumpStat( 'dashboard-redirect', 'landing-page' );
 		return dashboardLink( '/sites' );
@@ -68,6 +70,7 @@ export async function getLoggedInLandingPage( { dispatch, getState } ) {
 	const useReaderAsLandingPage = hasReadersAsLandingPage( getState() );
 
 	if ( useReaderAsLandingPage ) {
+		bumpStat( 'landing-page', 'reader' );
 		return '/reader';
 	}
 
@@ -79,6 +82,7 @@ export async function getLoggedInLandingPage( { dispatch, getState } ) {
 
 	if ( ! primarySiteSlug ) {
 		if ( getIsSubscriptionOnly( getState() ) ) {
+			bumpStat( 'landing-page', 'reader' );
 			return '/reader';
 		}
 
@@ -90,11 +94,14 @@ export async function getLoggedInLandingPage( { dispatch, getState } ) {
 
 	if ( isCustomerHomeEnabled ) {
 		if ( isAdminInterfaceWPAdmin( getState(), primarySiteId ) ) {
+			bumpStat( 'landing-page', 'wp-admin' );
 			return getSiteAdminUrl( getState(), primarySiteId );
 		}
+		bumpStat( 'landing-page', 'customer-home' );
 		return `/home/${ primarySiteSlug }`;
 	}
 
+	bumpStat( 'landing-page', 'stats' );
 	return `/stats/day/${ primarySiteSlug }`;
 }
 

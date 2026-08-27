@@ -14,15 +14,15 @@ import { logToLogstash } from 'calypso/lib/logstash';
 /**
  * Where the customer lands after checkout, when the CTA asks for somewhere specific.
  *
- * - `editor` — straight into the Site Editor on the built Atomic site.
+ * - `editor`    — straight into the Site Editor on the built Atomic site.
+ * - `site-spec` — the AI site-spec, which polls the funnel's build and hands over when it lands.
  *
  * No (or unrecognized) `dest` means no override: the flow's ordinary post-checkout destination
- * applies. Other funnels add their own values alongside their server-side funnel (e.g. the
- * blueprint funnel's site-spec hand-off).
+ * applies.
  */
-export type WowFunnelDest = 'editor';
+export type WowFunnelDest = 'editor' | 'site-spec';
 
-const WOW_FUNNEL_DESTS: WowFunnelDest[] = [ 'editor' ];
+const WOW_FUNNEL_DESTS: WowFunnelDest[] = [ 'editor', 'site-spec' ];
 
 /**
  * A funnel site created for this flow, remembered so the create-site step can consume it rather
@@ -50,6 +50,24 @@ export function getWowFunnelSlug( queryParams: URLSearchParams ): string | null 
 	// Mirror sanitize_key(): lowercase, [a-z0-9_-] only.
 	const slug = raw.toLowerCase().replace( /[^a-z0-9_-]/g, '' );
 	return slug || null;
+}
+
+/**
+ * Input the funnel's server-side follow-up needs, read off the entry URL.
+ *
+ * Sent as `wow_funnel_args` to /sites/new, where the registered funnel's follow-up consumes it —
+ * the blueprint funnel, for instance, seeds its archive import from `blueprint_slug`. Empty for
+ * funnels that do no follow-up work.
+ */
+export function getWowFunnelArgs( queryParams: URLSearchParams ): Record< string, string > {
+	const args: Record< string, string > = {};
+
+	const blueprint = queryParams.get( 'blueprint' );
+	if ( blueprint ) {
+		args.blueprint_slug = blueprint;
+	}
+
+	return args;
 }
 
 export function getWowFunnelDest( queryParams: URLSearchParams ): WowFunnelDest | null {
@@ -120,9 +138,11 @@ export function clearWowFunnelSite(): void {
  */
 export function startWowFunnelSite( {
 	funnelSlug,
+	funnelArgs,
 	siteTitle,
 }: {
 	funnelSlug: string;
+	funnelArgs?: Record< string, string >;
 	siteTitle?: string;
 } ): Promise< RememberedWowFunnelSite > {
 	const remembered = getRememberedWowFunnelSite( funnelSlug );
@@ -160,7 +180,8 @@ export function startWowFunnelSite( {
 			undefined, // ref.
 			undefined, // provisionTarget.
 			undefined, // aiLaunchpadEnabled.
-			funnelSlug
+			funnelSlug,
+			funnelArgs
 		);
 
 		if ( ! site ) {

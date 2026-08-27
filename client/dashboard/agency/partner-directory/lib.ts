@@ -81,6 +81,15 @@ export function isAgencyProfileComplete( profile?: AgencyProfile | null ): boole
 }
 
 /**
+ * Whether at least one directory listing in the application was approved.
+ */
+export function hasApprovedDirectory(
+	application?: AgencyPartnerDirectoryApplication | null
+): boolean {
+	return application?.directories?.some( ( { status } ) => status === 'approved' ) ?? false;
+}
+
+/**
  * Whether the application flow is fully completed: the profile is published
  * and at least one directory listing is approved and published.
  */

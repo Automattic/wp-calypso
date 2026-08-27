@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import {
+	getActiveSessionId,
 	setSessionSiteKey,
 	setSessionUserId,
 	getSessionId,
@@ -9,6 +10,7 @@ import {
 	clearSessionId,
 	getOrCreateSessionId,
 } from '../agent-session';
+import { setResolvedAgentId } from '../resolved-agent-id';
 
 // Sessions for the `ORCHESTRATOR_AGENT_ID` agent ('wp-orchestrator') use the
 // unsuffixed base key. Reference it here so tests don't hard-code the mapping silently.
@@ -126,6 +128,26 @@ describe( 'saveSessionId / getSessionId', () => {
 
 		expect( getSessionId( undefined, siteKey, userId ) ).toBe( '' );
 		expect( getSessionId( undefined, '123', 101 ) ).toBe( 'user-101-session' );
+	} );
+} );
+
+describe( 'getActiveSessionId', () => {
+	afterEach( () => {
+		setResolvedAgentId( undefined );
+	} );
+
+	it( 'reads under the published agent scope, matching the mounted chat', () => {
+		setResolvedAgentId( 'dolly' );
+		saveSessionId( 'dolly-session', 'dolly' );
+		saveSessionId( 'orchestrator-session' );
+
+		expect( getActiveSessionId() ).toBe( 'dolly-session' );
+	} );
+
+	it( 'falls back to the orchestrator scope before an agent is resolved', () => {
+		saveSessionId( 'tab-session' );
+
+		expect( getActiveSessionId() ).toBe( 'tab-session' );
 	} );
 } );
 

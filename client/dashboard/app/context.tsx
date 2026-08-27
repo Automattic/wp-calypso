@@ -18,6 +18,7 @@ export type AgencySupports = {
 	overview: boolean;
 	tiers: boolean;
 	partnerDirectory: boolean;
+	marketplace: boolean;
 	exclusiveOffers: boolean;
 	learn: boolean;
 	mcp: boolean;

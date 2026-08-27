@@ -469,7 +469,7 @@ const siteSetupFlow: Flow = {
 		}
 
 		if ( ! siteSlug && ! siteId ) {
-			redirect( '/' );
+			redirect( '/home' );
 			result = {
 				state: AssertConditionState.FAILURE,
 				message: 'site-setup did not provide the site slug or site id it is configured to.',
@@ -477,7 +477,7 @@ const siteSetupFlow: Flow = {
 		}
 
 		if ( fetchingSiteError ) {
-			redirect( '/' );
+			redirect( '/home' );
 			result = {
 				state: AssertConditionState.FAILURE,
 				message: fetchingSiteError.message,

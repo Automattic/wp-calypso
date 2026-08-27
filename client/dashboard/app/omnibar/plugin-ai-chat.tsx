@@ -55,6 +55,7 @@ export function useAiChatPlugin( {
 		id: 'ai-chat',
 		label: __( 'Ask AI' ),
 		icon: <BigSkyIcon />,
+		className: 'masterbar__item-agents-manager-ai-chat',
 		onClick: handleClick,
 	};
 }
