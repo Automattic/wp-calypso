@@ -1,6 +1,9 @@
+import { addQueryArgs } from '@wordpress/url';
+import { withLocale } from 'calypso/landing/stepper/declarative-flow/helpers/with-locale';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { getTransferFailureMessage } from './atomic-transfer-outcome';
 import {
+	applyBlueprintSpec,
 	getSiteAdminUrl,
 	getSiteEditorUrl,
 	waitForAtomicTransferComplete,
@@ -50,6 +53,17 @@ export type WowFunnelInterstitial = 'site-spec';
  */
 export type WowFunnelReadiness = 'transfer' | 'import';
 
+/**
+ * Work a funnel runs once its build is ready and before the customer is handed over.
+ *
+ * - `apply-blueprint-spec` — writes the owner's confirmed details onto the imported site.
+ *
+ * It has to happen here rather than in the interstitial that collected the input, because the
+ * blueprint restore replaces the site's options wholesale: anything applied before the import
+ * finishes is overwritten. Ready, then apply, then hand over.
+ */
+export type WowFunnelAfterReady = 'apply-blueprint-spec';
+
 export type WowFunnelConfig = {
 	/** Calypso-side hops between checkout and the hand-off, in order. */
 	interstitials: WowFunnelInterstitial[];
@@ -59,6 +73,8 @@ export type WowFunnelConfig = {
 	readiness: WowFunnelReadiness;
 	/** How long that wait runs before it gives up and raises a timeout. */
 	waitTimeoutSeconds: number;
+	/** Optional work to run after the build is ready, before the hand-off. */
+	afterReady?: WowFunnelAfterReady;
 };
 
 const DEFAULT_WOW_FUNNEL_CONFIG: WowFunnelConfig = {
@@ -82,6 +98,7 @@ const WOW_FUNNEL_CONFIG: Record< string, Partial< WowFunnelConfig > > = {
 	blueprint: {
 		interstitials: [ 'site-spec' ],
 		readiness: 'import',
+		afterReady: 'apply-blueprint-spec',
 		// The archive restore is genuinely long; this matches the wait site-spec already ran.
 		waitTimeoutSeconds: 900,
 	},
@@ -353,4 +370,92 @@ export async function getWowFunnelHandoffUrl( {
 			return getSiteEditorUrl( adminUrl, { canvasEdit: true, path: '/', startWalkthrough } );
 		}
 	}
+}
+
+/**
+ * Slug of the step that holds the customer while the build finishes, then hands over.
+ *
+ * Every funnel ends here, whether it reached it straight from checkout or by way of an
+ * interstitial, so the terminal behaviour is defined in exactly one place.
+ */
+export const WOW_FUNNEL_HANDOFF_STEP = 'wow-funnel-handoff';
+
+// Mirrors ONBOARDING_FLOW rather than importing it: that constant lives in the
+// '@automattic/onboarding' barrel, which is precisely what this module was split away from (see
+// wow-funnel-site.ts). One string is a cheaper price than dragging the component library back in.
+const WOW_FUNNEL_FLOW = 'onboarding';
+
+/**
+ * URL of the hand-off step, with everything it needs to finish the funnel on its own.
+ *
+ * It is reached by a fresh page load — from checkout, or from an interstitial in another flow —
+ * so nothing can be assumed to survive in flow state. Whatever the last leg needs travels in the
+ * query string.
+ */
+export function getWowFunnelHandoffStepUrl( {
+	funnelSlug,
+	dest,
+	siteSlug,
+	siteId,
+	specId,
+	blueprintSlug,
+	locale = '',
+}: {
+	funnelSlug: string;
+	dest: WowFunnelDest;
+	siteSlug?: string | null;
+	siteId?: string | number | null;
+	specId?: string | null;
+	blueprintSlug?: string | null;
+	locale?: string;
+} ): string {
+	return addQueryArgs(
+		withLocale( `/setup/${ WOW_FUNNEL_FLOW }/${ WOW_FUNNEL_HANDOFF_STEP }`, locale ),
+		{
+			wow_funnel: funnelSlug,
+			dest,
+			...( siteSlug ? { siteSlug } : {} ),
+			// Skip a 0/falsy siteId: "0" in the URL poisons the next page's site lookup.
+			...( siteId && String( siteId ) !== '0' ? { siteId: String( siteId ) } : {} ),
+			...( specId ? { spec_id: specId } : {} ),
+			...( blueprintSlug ? { blueprint_slug: blueprintSlug } : {} ),
+		}
+	);
+}
+
+/**
+ * Run the funnel's post-ready work, if its definition has any.
+ *
+ * Mirrors the server registry's `follow_up`: the funnel decides what happens, the hand-off step
+ * only knows that something might. Returns whether the hand-off should start the walkthrough,
+ * which today is the same question as "did a spec get applied".
+ *
+ * Never throws. A funnel that gets this far has a built site the customer paid for; failing to
+ * personalise it costs them some copy, not their site, so it must not turn into an error screen.
+ */
+export async function runWowFunnelAfterReady( {
+	funnelSlug,
+	siteIdentifier,
+	specId,
+	blueprintSlug,
+}: {
+	funnelSlug: string;
+	siteIdentifier: string;
+	specId?: string | null;
+	blueprintSlug?: string | null;
+} ): Promise< { startWalkthrough: boolean } > {
+	const { afterReady } = getWowFunnelConfig( funnelSlug );
+
+	if ( 'apply-blueprint-spec' !== afterReady || ! specId ) {
+		return { startWalkthrough: false };
+	}
+
+	const applied = await applyBlueprintSpec( siteIdentifier, specId, blueprintSlug );
+	logWowFunnelEvent( 'after_ready_applied', {
+		funnel: funnelSlug,
+		action: afterReady,
+		applied,
+	} );
+
+	return { startWalkthrough: applied };
 }

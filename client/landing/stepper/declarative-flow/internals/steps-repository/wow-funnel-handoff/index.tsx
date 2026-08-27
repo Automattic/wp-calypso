@@ -11,6 +11,7 @@ import {
 	getWowFunnelSlug,
 	isKnownWowFunnel,
 	logWowFunnelEvent,
+	runWowFunnelAfterReady,
 	waitForWowFunnelReady,
 } from 'calypso/landing/stepper/utils/wow-funnel';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
@@ -44,6 +45,10 @@ const WowFunnelHandoff: StepType = function WowFunnelHandoff( { navigation, flow
 	const dest = getWowFunnelDest( queryParams, funnelSlug );
 	const siteSlug = queryParams.get( 'siteSlug' );
 	const siteId = queryParams.get( 'siteId' );
+	// Input for the funnel's post-ready work, carried here because flow state does not survive
+	// the page loads between checkout, an interstitial and this step.
+	const specId = queryParams.get( 'spec_id' );
+	const blueprintSlug = queryParams.get( 'blueprint_slug' );
 	const siteIdentifier = siteSlug || ( siteId && siteId !== '0' ? siteId : null );
 
 	// Strict mode mounts effects twice, and this one navigates away; a second run would start a
@@ -79,9 +84,24 @@ const WowFunnelHandoff: StepType = function WowFunnelHandoff( { navigation, flow
 			try {
 				await waitForWowFunnelReady( { funnelSlug, siteIdentifier } );
 
+				// Whatever the funnel does between "ready" and "handed over" — for the blueprint
+				// funnel, writing the confirmed spec onto the imported site. Ordering is the
+				// point: the archive restore replaces the site's options wholesale, so this can
+				// only run once the wait above says the import is done.
+				const { startWalkthrough } = await runWowFunnelAfterReady( {
+					funnelSlug,
+					siteIdentifier,
+					specId,
+					blueprintSlug,
+				} );
+
 				// Resolved only now, so it names the site that exists after the transfer rather
 				// than the one this flow started with.
-				const handoffUrl = await getWowFunnelHandoffUrl( { dest, siteIdentifier } );
+				const handoffUrl = await getWowFunnelHandoffUrl( {
+					dest,
+					siteIdentifier,
+					startWalkthrough,
+				} );
 
 				logWowFunnelEvent( 'handoff_redirect', { funnel: funnelSlug, dest } );
 				window.location.replace( handoffUrl );
@@ -97,7 +117,17 @@ const WowFunnelHandoff: StepType = function WowFunnelHandoff( { navigation, flow
 				);
 			}
 		} )();
-	}, [ __, dest, funnelSlug, requestedFunnelSlug, setSiteSetupError, siteIdentifier, submit ] );
+	}, [
+		__,
+		blueprintSlug,
+		dest,
+		funnelSlug,
+		requestedFunnelSlug,
+		setSiteSetupError,
+		siteIdentifier,
+		specId,
+		submit,
+	] );
 
 	const title = __( 'Getting your site ready…' );
 

@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import {
+	applyBlueprintSpec,
 	waitForAtomicTransferComplete,
 	waitForBlueprintImportComplete,
 } from '../blueprint-archive-import';
@@ -10,8 +11,10 @@ import {
 	getRememberedWowFunnelSite,
 	getWowFunnelConfig,
 	getWowFunnelDest,
+	getWowFunnelHandoffStepUrl,
 	getWowFunnelKey,
 	isKnownWowFunnel,
+	runWowFunnelAfterReady,
 	waitForWowFunnelReady,
 	wowFunnelSiteIsPaid,
 } from '../wow-funnel';
@@ -26,10 +29,12 @@ jest.mock( '../blueprint-archive-import', () => ( {
 	waitForBlueprintImportComplete: jest.fn( () => Promise.resolve() ),
 	getSiteAdminUrl: jest.fn(),
 	getSiteEditorUrl: jest.fn(),
+	applyBlueprintSpec: jest.fn( () => Promise.resolve( true ) ),
 } ) );
 
 const mockTransferWait = waitForAtomicTransferComplete as jest.Mock;
 const mockImportWait = waitForBlueprintImportComplete as jest.Mock;
+const mockApplySpec = applyBlueprintSpec as jest.Mock;
 
 const never = () => new Promise< void >( () => {} );
 
@@ -246,5 +251,89 @@ describe( 'waitForWowFunnelReady', () => {
 		await Promise.resolve();
 
 		jest.useRealTimers();
+	} );
+} );
+
+describe( 'getWowFunnelHandoffStepUrl', () => {
+	it( 'carries everything the hand-off needs, since flow state does not survive the page loads', () => {
+		const url = getWowFunnelHandoffStepUrl( {
+			funnelSlug: 'blueprint',
+			dest: 'editor',
+			siteSlug: 'site.example.com',
+			siteId: 123,
+			specId: 'spec-abc',
+			blueprintSlug: 'coachava',
+		} );
+
+		expect( url ).toContain( '/setup/onboarding/wow-funnel-handoff' );
+		expect( url ).toContain( 'wow_funnel=blueprint' );
+		expect( url ).toContain( 'spec_id=spec-abc' );
+		expect( url ).toContain( 'blueprint_slug=coachava' );
+	} );
+
+	it( "omits a zero site id, which would poison the next page's site lookup", () => {
+		const url = getWowFunnelHandoffStepUrl( {
+			funnelSlug: 'default',
+			dest: 'editor',
+			siteSlug: 'site.example.com',
+			siteId: 0,
+		} );
+
+		expect( url ).not.toContain( 'siteId' );
+	} );
+} );
+
+describe( 'runWowFunnelAfterReady', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockApplySpec.mockImplementation( () => Promise.resolve( true ) );
+	} );
+
+	it( 'does nothing for a funnel with no post-ready work', async () => {
+		const result = await runWowFunnelAfterReady( {
+			funnelSlug: 'default',
+			siteIdentifier: 'site.example.com',
+			specId: 'spec-abc',
+		} );
+
+		expect( mockApplySpec ).not.toHaveBeenCalled();
+		expect( result.startWalkthrough ).toBe( false );
+	} );
+
+	it( 'applies the spec for the blueprint funnel and starts the walkthrough', async () => {
+		const result = await runWowFunnelAfterReady( {
+			funnelSlug: 'blueprint',
+			siteIdentifier: 'site.example.com',
+			specId: 'spec-abc',
+			blueprintSlug: 'coachava',
+		} );
+
+		expect( mockApplySpec ).toHaveBeenCalledWith( 'site.example.com', 'spec-abc', 'coachava' );
+		expect( result.startWalkthrough ).toBe( true );
+	} );
+
+	it( 'skips the work when there is no spec to apply', async () => {
+		const result = await runWowFunnelAfterReady( {
+			funnelSlug: 'blueprint',
+			siteIdentifier: 'site.example.com',
+			specId: null,
+		} );
+
+		expect( mockApplySpec ).not.toHaveBeenCalled();
+		expect( result.startWalkthrough ).toBe( false );
+	} );
+
+	it( 'does not start the walkthrough when applying the spec failed', async () => {
+		// applyBlueprintSpec resolves either way by design: losing personalization must not
+		// cost the customer the site they paid for.
+		mockApplySpec.mockImplementation( () => Promise.resolve( false ) );
+
+		const result = await runWowFunnelAfterReady( {
+			funnelSlug: 'blueprint',
+			siteIdentifier: 'site.example.com',
+			specId: 'spec-abc',
+		} );
+
+		expect( result.startWalkthrough ).toBe( false );
 	} );
 } );

@@ -26,10 +26,9 @@ import {
 } from 'calypso/landing/stepper/utils/build-wow';
 import {
 	getWowFunnelDest,
-	getWowFunnelHandoffUrl,
+	getWowFunnelHandoffStepUrl,
 	getWowFunnelSlug,
 	isKnownWowFunnel,
-	waitForWowFunnelReady,
 } from 'calypso/landing/stepper/utils/wow-funnel';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useSiteSpec } from 'calypso/lib/site-spec';
@@ -403,19 +402,35 @@ const SiteSpec: StepType = function SiteSpec() {
 					site_identifier: blueprintArchiveSiteIdentifier,
 				} );
 
-				// As a funnel interstitial this step owns the funnel's readiness wait, so it
-				// goes through the shared helper — one definition of "ready" per funnel, and one
-				// timeout. Outside a funnel this is a plain blueprint-archive run, which keeps
-				// its own unbounded waits.
+				// As a funnel interstitial, this step's job ends the moment the spec is confirmed.
+				// Hand straight to wow-funnel-handoff and let it own the rest — waiting for the
+				// import, applying the spec, and the redirect. Doing that here instead left the
+				// customer sitting on this form with no indication anything was happening, and
+				// duplicated a terminal sequence that is supposed to live in one place.
 				if ( wowFunnelSlug ) {
-					await waitForWowFunnelReady( {
+					const handoffUrl = getWowFunnelHandoffStepUrl( {
 						funnelSlug: wowFunnelSlug,
-						siteIdentifier: blueprintArchiveSiteIdentifier,
+						dest: wowFunnelDest,
+						siteSlug: queryParams.get( 'siteSlug' ),
+						siteId: queryParams.get( 'siteId' ),
+						specId: getSpecId( specData ),
+						blueprintSlug: blueprintArchiveSlug,
+						// No locale segment: reading it here needs the redux store, which this
+						// step renders without. The hand-off step translates its own copy from
+						// the account locale, and its destination is the site's wp-admin, so the
+						// segment buys nothing worth a store dependency.
 					} );
-				} else {
-					await waitForAtomicTransferComplete( blueprintArchiveSiteIdentifier );
-					await waitForBlueprintImportComplete( blueprintArchiveSiteIdentifier );
+					logBlueprintArchiveEvent( 'redirect_funnel_handoff', {
+						site_identifier: blueprintArchiveSiteIdentifier,
+					} );
+					window.location.assign( handoffUrl );
+					return;
 				}
+
+				// Outside a funnel this is a plain blueprint-archive run, which keeps its own
+				// waits and its own hand-off.
+				await waitForAtomicTransferComplete( blueprintArchiveSiteIdentifier );
+				await waitForBlueprintImportComplete( blueprintArchiveSiteIdentifier );
 
 				// Only once the restore is done: it replaces the site's options
 				// wholesale, so a spec applied earlier would be overwritten.
@@ -432,16 +447,11 @@ const SiteSpec: StepType = function SiteSpec() {
 					has_spec_id: Boolean( specId ),
 				} );
 
-				// Resolved after the wait either way, so the URL names the site that now exists.
-				const siteEditorUrl = wowFunnelSlug
-					? await getWowFunnelHandoffUrl( {
-							dest: wowFunnelDest,
-							siteIdentifier: blueprintArchiveSiteIdentifier,
-							startWalkthrough: applied,
-					  } )
-					: getSiteEditorUrl( await getSiteAdminUrl( blueprintArchiveSiteIdentifier ), {
-							startWalkthrough: applied,
-					  } );
+				// Resolved after the wait, so the URL names the site that now exists.
+				const siteEditorUrl = getSiteEditorUrl(
+					await getSiteAdminUrl( blueprintArchiveSiteIdentifier ),
+					{ startWalkthrough: applied }
+				);
 
 				logBlueprintArchiveEvent( 'redirect_site_editor', {
 					site_identifier: blueprintArchiveSiteIdentifier,
@@ -457,7 +467,13 @@ const SiteSpec: StepType = function SiteSpec() {
 				isSubmittingRef.current = false;
 			}
 		},
-		[ blueprintArchiveSiteIdentifier, blueprintArchiveSlug, wowFunnelSlug, wowFunnelDest ]
+		[
+			blueprintArchiveSiteIdentifier,
+			blueprintArchiveSlug,
+			queryParams,
+			wowFunnelSlug,
+			wowFunnelDest,
+		]
 	);
 
 	// Kick off the background transfer + blueprint-archive import as soon as the
