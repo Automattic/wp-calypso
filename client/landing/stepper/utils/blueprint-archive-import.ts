@@ -148,7 +148,11 @@ export async function startBlueprintArchiveImport(
  */
 export async function waitForBlueprintImportComplete(
 	siteIdentifier: string,
-	{ totalTimeoutSeconds = 900, pollIntervalMs = 5000, initialDelayMs = pollIntervalMs } = {}
+	{
+		totalTimeoutSeconds = 900,
+		pollIntervalMs = 5000,
+		initialDelayMs = pollIntervalMs,
+	}: { totalTimeoutSeconds?: number; pollIntervalMs?: number; initialDelayMs?: number } = {}
 ): Promise< void > {
 	const maxFinishTime = Date.now() + totalTimeoutSeconds * 1000;
 	let lastStatus: string | null | undefined;
@@ -208,7 +212,11 @@ export async function waitForBlueprintImportComplete(
  */
 export async function waitForAtomicTransferComplete(
 	siteIdentifier: string,
-	{ totalTimeoutSeconds = 900, pollIntervalMs = 5000, initialDelayMs = pollIntervalMs } = {}
+	{
+		totalTimeoutSeconds = 900,
+		pollIntervalMs = 5000,
+		initialDelayMs = pollIntervalMs,
+	}: { totalTimeoutSeconds?: number; pollIntervalMs?: number; initialDelayMs?: number } = {}
 ): Promise< void > {
 	const maxFinishTime = Date.now() + totalTimeoutSeconds * 1000;
 	let lastStatus: TransferStates | undefined;
