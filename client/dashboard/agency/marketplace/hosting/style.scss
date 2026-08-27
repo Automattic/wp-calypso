@@ -134,41 +134,43 @@
 }
 
 .marketplace-hosting__concierge-card {
+	cursor: pointer;
+	transition: box-shadow 0.1s ease-in-out;
 	background: color-mix(
 		in srgb,
-		var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) 5%,
+		var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) 4%,
 		var( --color-surface )
 	);
 	box-shadow: inset 0 0 0 1px
 		color-mix(
 			in srgb,
-			var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) 22%,
+			var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) 18%,
 			var( --color-surface )
 		);
+
+	&:hover,
+	&:focus-visible {
+		box-shadow: inset 0 0 0 1.5px var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+	}
 }
 
 .marketplace-hosting__concierge-card-icon {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	inline-size: 36px;
-	block-size: 36px;
+	inline-size: 32px;
+	block-size: 32px;
 	border-radius: 50%;
 	flex-shrink: 0;
 	background: color-mix(
 		in srgb,
-		var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) 12%,
+		var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) 14%,
 		var( --color-surface )
 	);
 
 	svg {
 		fill: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
 	}
-}
-
-.marketplace-hosting__concierge-card-cta.components-button {
-	inline-size: 100%;
-	justify-content: center;
 }
 
 .marketplace-hosting__guide-compare {
