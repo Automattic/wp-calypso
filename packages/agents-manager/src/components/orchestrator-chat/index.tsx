@@ -37,6 +37,7 @@ import useCopyAction from '../../hooks/use-copy-action';
 import { usePageOrSiteEditorSurface } from '../../hooks/use-empty-view-suggestions';
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import { useImageUpload } from '../../hooks/use-image-upload';
+import { useNavigationContinuation } from '../../hooks/use-navigation-continuation';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSourcesAction from '../../hooks/use-sources-action';
 import {
@@ -70,7 +71,6 @@ import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import type { BigSkyMessage } from '../../types';
 import type {
-	NavigationContinuationHook,
 	AbilitiesSetupHook,
 	GetChatComponent,
 	UseSuggestionsHook,
@@ -294,8 +294,6 @@ interface Props {
 	markdownExtensions: MarkdownExtensions;
 	/** Indicates if the floating chat is in compact mode. */
 	isCompactMode: boolean;
-	/** Navigation continuation hook for post-navigation conversation resumption. */
-	useNavigationContinuation?: NavigationContinuationHook;
 	/** The external providers' abilities-setup hook (e.g. Big Sky, jetpack-ai-sidebar). Invoked after custom actions registration. */
 	useProviderAbilitiesSetup?: AbilitiesSetupHook;
 	/** Hook for providing dynamic suggestions based on context (e.g., selected block). */
@@ -327,7 +325,6 @@ export default function OrchestratorChat( {
 	markdownComponents,
 	markdownExtensions,
 	isCompactMode,
-	useNavigationContinuation,
 	useProviderAbilitiesSetup,
 	useSuggestions,
 	getChatComponent,
@@ -723,6 +720,21 @@ export default function OrchestratorChat( {
 		? getReaderChatErrorMessage( error )
 		: getOrchestratorErrorMessage( error );
 
+	// Resume the conversation after a `wp-admin-navigate` full page reload;
+	// while such a resume is pending, hydration below must not replace the
+	// client-held history (see the hook's docblock).
+	const { hadParkedNavigation, flushPendingNavigation } = useNavigationContinuation( {
+		isProcessing,
+		sendToolResult: async ( params ) => {
+			await onSubmit( params.message, {
+				type: 'tool_result',
+				toolCallId: params.toolCallId,
+				toolId: params.toolId,
+				sessionId: params.sessionId,
+			} );
+		},
+	} );
+
 	const { isLoading: isLoadingConversation } = useConversation( {
 		maxPages: isReaderChat ? 1 : 10,
 		enabled: shouldLoadConversation,
@@ -756,8 +768,18 @@ export default function OrchestratorChat( {
 					invalidateCheckpointAction( checkpointId );
 				}
 			} );
-			// Update the UI with the loaded messages
-			loadMessages( loadedMessages );
+
+			// With a resume pending, the tab's own store holds the conversation
+			// the parked call lives in — hydrate only if its restore came up
+			// empty (e.g. a quota-failed persist). Read the manager, not React
+			// state: `messages` stays empty until the async agent init lands.
+			if (
+				! hadParkedNavigation ||
+				agentManager.getConversationHistory( agentConfig!.agentId ).length === 0
+			) {
+				loadMessages( loadedMessages );
+			}
+
 			// Make sure future messages go to the right session
 			agentManager.updateSessionId( agentConfig!.agentId, serverSessionId );
 
@@ -1296,6 +1318,11 @@ export default function OrchestratorChat( {
 
 			submitDispatchedRef.current = true;
 			try {
+				// Answer a still-parked `wp-admin-navigate` call before this
+				// message goes out, so it meets an already-truthful conversation.
+				// A fast no-op otherwise, and it never throws.
+				await flushPendingNavigation();
+
 				// Images dispatch via agenttic's `imageUrls` option — the resulting
 				// `FilePart`s persist in conversation history with their metadata.
 				await ( imageData ? onSubmit( message, { imageUrls: imageData } ) : onSubmit( message ) );
@@ -1310,6 +1337,7 @@ export default function OrchestratorChat( {
 			consumeNextMessageExternalContextEntries();
 		},
 		[
+			flushPendingNavigation,
 			inputValue,
 			isUploadingImages,
 			onSubmit,
@@ -1378,22 +1406,6 @@ export default function OrchestratorChat( {
 			removeExternalContextEntry( entryId );
 		} );
 	}, [] );
-
-	// Handle navigation continuation if hook is provided
-	// This allows to resume conversations after full page navigation
-	useNavigationContinuation?.( {
-		isProcessing,
-		sendToolResult: async ( params ) => {
-			await onSubmit( params.message, {
-				type: 'tool_result',
-				toolCallId: params.toolCallId,
-				toolId: params.toolId,
-				sessionId: params.sessionId,
-			} );
-		},
-		sessionId: getTabSessionId(),
-		pathname: window.location.pathname,
-	} );
 
 	// Listen for inline suggestion clicks dispatched by external providers or the Agenttic bridge below.
 	useEffect( () => {
