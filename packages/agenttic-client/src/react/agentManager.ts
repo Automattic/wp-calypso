@@ -215,6 +215,13 @@ export interface AgentManager {
 	getConversationHistory: ( key: string ) => Message[];
 	updateSessionId: ( key: string, sessionId: string ) => void;
 	abortCurrentRequest: ( key: string ) => void;
+	/**
+	 * Whether a user turn is still in flight, tool follow-ups included.
+	 *
+	 * Asked of the manager rather than of whatever renders the chat: the stream
+	 * runs here, on the singleton, and outlives the React tree that started it.
+	 */
+	isTurnInFlight: ( key: string ) => boolean;
 	clear: () => void;
 }
 
@@ -559,101 +566,74 @@ function createAgentManager(): AgentManager {
 
 			const outboundSessionId = toOutboundSessionId( sessionId || managedAgent.sessionId );
 
-			for await ( const update of client.sendMessageStream( {
-				message: messageObj,
-				withHistory,
-				sessionId: outboundSessionId,
-				abortSignal: abortController.signal,
-				...otherOptions,
-				...( messageMetadata &&
-					Object.keys( messageMetadata ).length > 0 && {
-						metadata: messageMetadata,
-					} ),
-			} ) ) {
-				// Capture sessionId from server response (always trust the server)
-				if ( update.sessionId ) {
-					const oldSessionId = managedAgent.sessionId;
-					// Always update the sessionId for consistency, even if unchanged
-					// (this is a simple assignment and keeps code straightforward)
-					managedAgent.sessionId = update.sessionId;
+			// Whether the stream ever said how the turn ends: a final update, or
+			// the `input-required` pause that hands the turn to `sendToolResult`.
+			let sawTurnTerminus = false;
 
-					if ( oldSessionId !== update.sessionId ) {
-						notifySessionIdChange( managedAgent.onSessionIdChange, update.sessionId );
-					}
+			try {
+				for await ( const update of client.sendMessageStream( {
+					message: messageObj,
+					withHistory,
+					sessionId: outboundSessionId,
+					abortSignal: abortController.signal,
+					...otherOptions,
+					...( messageMetadata &&
+						Object.keys( messageMetadata ).length > 0 && {
+							metadata: messageMetadata,
+						} ),
+				} ) ) {
+					// Capture sessionId from server response (always trust the server)
+					if ( update.sessionId ) {
+						const oldSessionId = managedAgent.sessionId;
+						// Always update the sessionId for consistency, even if unchanged
+						// (this is a simple assignment and keeps code straightforward)
+						managedAgent.sessionId = update.sessionId;
 
-					// Update localStorage only when sessionId actually changes
-					// This handles two scenarios:
-					// 1. Initial session creation (oldSessionId is null/undefined)
-					// 2. Temporary -> stable session ID transitions
-					// Note: We intentionally skip updating storage when IDs are equal
-					if (
-						update.sessionId &&
-						oldSessionId !== update.sessionId &&
-						managedAgent.sessionIdStorageKey
-					) {
-						log(
-							'Session ID %s, updating localStorage',
-							oldSessionId
-								? `changed from ${ oldSessionId } to ${ update.sessionId }`
-								: `received: ${ update.sessionId }`
-						);
-						updateSessionIdInLocalStorage( managedAgent.sessionIdStorageKey, update.sessionId );
-					}
-
-					// Persist under the server id and drop the temp local-* key
-					// (skip when conversationStorageKey owns the slot name).
-					if (
-						oldSessionId?.startsWith( 'local-' ) &&
-						oldSessionId !== update.sessionId &&
-						! managedAgent.conversationStorageKey
-					) {
-						if ( withHistory ) {
-							await persistConversationHistory( key, currentConversationHistory );
+						if ( oldSessionId !== update.sessionId ) {
+							notifySessionIdChange( managedAgent.onSessionIdChange, update.sessionId );
 						}
-						await clearConversation( oldSessionId );
+
+						// Update localStorage only when sessionId actually changes
+						// This handles two scenarios:
+						// 1. Initial session creation (oldSessionId is null/undefined)
+						// 2. Temporary -> stable session ID transitions
+						// Note: We intentionally skip updating storage when IDs are equal
+						if (
+							update.sessionId &&
+							oldSessionId !== update.sessionId &&
+							managedAgent.sessionIdStorageKey
+						) {
+							log(
+								'Session ID %s, updating localStorage',
+								oldSessionId
+									? `changed from ${ oldSessionId } to ${ update.sessionId }`
+									: `received: ${ update.sessionId }`
+							);
+							updateSessionIdInLocalStorage( managedAgent.sessionIdStorageKey, update.sessionId );
+						}
+
+						// Persist under the server id and drop the temp local-* key
+						// (skip when conversationStorageKey owns the slot name).
+						if (
+							oldSessionId?.startsWith( 'local-' ) &&
+							oldSessionId !== update.sessionId &&
+							! managedAgent.conversationStorageKey
+						) {
+							if ( withHistory ) {
+								await persistConversationHistory( key, currentConversationHistory );
+							}
+							await clearConversation( oldSessionId );
+						}
 					}
-				}
 
-				// Save tool interactions when input is required (this saves the agent message with tool calls)
-				if ( update.status?.state === 'input-required' && update.status?.message ) {
-					// Capture the tool call IDs for this batch
-					const toolCalls = extractToolCallsFromMessage( update.status.message );
-					currentToolCallIds = toolCalls.map( ( call ) => call.data.toolCallId as string );
+					// Save tool interactions when input is required (this saves the agent message with tool calls)
+					if ( update.status?.state === 'input-required' && update.status?.message ) {
+						// Capture the tool call IDs for this batch
+						const toolCalls = extractToolCallsFromMessage( update.status.message );
+						currentToolCallIds = toolCalls.map( ( call ) => call.data.toolCallId as string );
 
-					const toolMessage = extractNewContentFromMessage( update.status.message );
-					currentConversationHistory = [ ...currentConversationHistory, toolMessage ];
-
-					// Update agent's conversation history immediately
-					managedAgent.conversationHistory = currentConversationHistory;
-					// Persist only if withHistory is true
-					if ( withHistory ) {
-						await persistConversationHistory( key, currentConversationHistory );
-					}
-				}
-
-				// Capture tool results when tools are executed (state becomes 'working' after tool execution)
-				if ( update.status?.state === 'working' && update.status?.message && ! update.final ) {
-					// Extract ALL tool results first
-					const allToolResults = extractToolResultsFromMessage( update.status.message );
-
-					// Filter to only include results that match current tool call IDs
-					const currentToolResults = allToolResults.filter( ( result ) =>
-						currentToolCallIds.includes( result.data.toolCallId as string )
-					);
-
-					if ( currentToolResults.length > 0 ) {
-						// Create a message containing just the matching tool results
-						const toolResultMessage: Message = {
-							role: 'agent',
-							kind: 'message',
-							parts: currentToolResults,
-							messageId: generateMessageId(),
-						};
-
-						currentConversationHistory = [
-							...currentConversationHistory,
-							extractNewContentFromMessage( toolResultMessage ),
-						];
+						const toolMessage = extractNewContentFromMessage( update.status.message );
+						currentConversationHistory = [ ...currentConversationHistory, toolMessage ];
 
 						// Update agent's conversation history immediately
 						managedAgent.conversationHistory = currentConversationHistory;
@@ -661,71 +641,129 @@ function createAgentManager(): AgentManager {
 						if ( withHistory ) {
 							await persistConversationHistory( key, currentConversationHistory );
 						}
-					} else if ( messageCarriesToolPayload( update.status.message ) ) {
-						// A tool produced a renderable agent message (e.g. a
-						// picker) and the turn is still continuing to the agent.
-						// Append it so it renders live, but deliberately leave
-						// `currentToolCallIds` untouched: the agent continuation
-						// may still echo tool results that must match the
-						// in-flight tool calls.
-						currentConversationHistory = [
-							...currentConversationHistory,
-							extractNewContentFromMessage( update.status.message ),
-						];
+					}
+
+					// Capture tool results when tools are executed (state becomes 'working' after tool execution)
+					if ( update.status?.state === 'working' && update.status?.message && ! update.final ) {
+						// Extract ALL tool results first
+						const allToolResults = extractToolResultsFromMessage( update.status.message );
+
+						// Filter to only include results that match current tool call IDs
+						const currentToolResults = allToolResults.filter( ( result ) =>
+							currentToolCallIds.includes( result.data.toolCallId as string )
+						);
+
+						if ( currentToolResults.length > 0 ) {
+							// Create a message containing just the matching tool results
+							const toolResultMessage: Message = {
+								role: 'agent',
+								kind: 'message',
+								parts: currentToolResults,
+								messageId: generateMessageId(),
+							};
+
+							currentConversationHistory = [
+								...currentConversationHistory,
+								extractNewContentFromMessage( toolResultMessage ),
+							];
+
+							// Update agent's conversation history immediately
+							managedAgent.conversationHistory = currentConversationHistory;
+							// Persist only if withHistory is true
+							if ( withHistory ) {
+								await persistConversationHistory( key, currentConversationHistory );
+							}
+						} else if ( messageCarriesToolPayload( update.status.message ) ) {
+							// A tool produced a renderable agent message (e.g. a
+							// picker) and the turn is still continuing to the agent.
+							// Append it so it renders live, but deliberately leave
+							// `currentToolCallIds` untouched: the agent continuation
+							// may still echo tool results that must match the
+							// in-flight tool calls.
+							currentConversationHistory = [
+								...currentConversationHistory,
+								extractNewContentFromMessage( update.status.message ),
+							];
+
+							managedAgent.conversationHistory = currentConversationHistory;
+							if ( withHistory ) {
+								await persistConversationHistory( key, currentConversationHistory );
+							}
+						}
+					}
+
+					if ( update.final || update.status?.state === 'input-required' ) {
+						sawTurnTerminus = true;
+					}
+
+					if ( update.final && update.status?.state !== 'input-required' ) {
+						// Clear tool call tracking for next batch
+						currentToolCallIds = [];
+
+						// Resolve only the in-flight opener; older pending stay.
+						const inFlightId = managedAgent.inFlightUserMessageId;
+						const nextStatus =
+							update.status?.state === 'failed' || update.status?.state === 'canceled'
+								? 'failed'
+								: 'complete';
+						if ( inFlightId ) {
+							currentConversationHistory = currentConversationHistory.map( ( m ) => {
+								if ( m.messageId !== inFlightId ) {
+									return m;
+								}
+								const status = m.metadata?.deliveryStatus;
+								if ( status === 'pending' || status === 'streaming' ) {
+									return {
+										...m,
+										metadata: {
+											...( m.metadata || {} ),
+											deliveryStatus: nextStatus,
+										},
+									};
+								}
+								return m;
+							} );
+							managedAgent.inFlightUserMessageId = null;
+						}
+
+						if ( update.status?.message ) {
+							const finalAgentMessage = extractNewContentFromMessage( update.status.message );
+							currentConversationHistory = [ ...currentConversationHistory, finalAgentMessage ];
+						}
 
 						managedAgent.conversationHistory = currentConversationHistory;
 						if ( withHistory ) {
 							await persistConversationHistory( key, currentConversationHistory );
 						}
 					}
+
+					yield update;
 				}
 
-				if ( update.final && update.status?.state !== 'input-required' ) {
-					// Clear tool call tracking for next batch
-					currentToolCallIds = [];
-
-					// Resolve only the in-flight opener; older pending stay.
-					const inFlightId = managedAgent.inFlightUserMessageId;
-					const nextStatus =
-						update.status?.state === 'failed' || update.status?.state === 'canceled'
-							? 'failed'
-							: 'complete';
-					if ( inFlightId ) {
-						currentConversationHistory = currentConversationHistory.map( ( m ) => {
-							if ( m.messageId !== inFlightId ) {
-								return m;
-							}
-							const status = m.metadata?.deliveryStatus;
-							if ( status === 'pending' || status === 'streaming' ) {
-								return {
-									...m,
-									metadata: {
-										...( m.metadata || {} ),
-										deliveryStatus: nextStatus,
-									},
-								};
-							}
-							return m;
-						} );
-						managedAgent.inFlightUserMessageId = null;
-					}
-
-					if ( update.status?.message ) {
-						const finalAgentMessage = extractNewContentFromMessage( update.status.message );
-						currentConversationHistory = [ ...currentConversationHistory, finalAgentMessage ];
-					}
-
-					managedAgent.conversationHistory = currentConversationHistory;
-					if ( withHistory ) {
-						await persistConversationHistory( key, currentConversationHistory );
-					}
+				// A stream can run out without a word about the turn: an SSE reader
+				// that hits EOF mid-turn reads as a clean finish. Nothing further
+				// will arrive to resolve the opener, so the turn is over whether or
+				// not the server said so — left set, it would report the agent as
+				// working for the life of the page.
+				if ( ! sawTurnTerminus ) {
+					managedAgent.inFlightUserMessageId = null;
 				}
-
-				yield update;
+			} catch ( error ) {
+				// A turn that threw is over, and nothing further will arrive to
+				// resolve its in-flight message. Left set, it would report the turn
+				// as still running for the life of the page. Not cleared when the
+				// generator is merely closed early: a turn pausing on a tool call
+				// ends this stream and continues in `sendToolResult`.
+				managedAgent.inFlightUserMessageId = null;
+				throw error;
+			} finally {
+				// Only when the slot is still this stream's: one that outlived its
+				// chat can finish after a remount has started a newer stream, and
+				// clearing it then would leave `abortCurrentRequest` nothing to cancel.
+				if ( managedAgent.currentAbortController === abortController ) {
+					managedAgent.currentAbortController = null;
+				}
 			}
-
-			// Clear abort controller when stream completes
-			managedAgent.currentAbortController = null;
 		},
 
 		/**
@@ -839,6 +877,14 @@ function createAgentManager(): AgentManager {
 				managedAgent.currentAbortController.abort();
 				managedAgent.currentAbortController = null;
 			}
+		},
+
+		isTurnInFlight( key: string ): boolean {
+			// An agent that does not exist has no turn. Deliberately not the
+			// `not found` throw the mutating methods use: callers ask this to
+			// decide whether to say anything at all, and a chat that has not
+			// created its agent yet is a normal answer, not an error.
+			return Boolean( agents.get( key )?.inFlightUserMessageId );
 		},
 
 		clear(): void {

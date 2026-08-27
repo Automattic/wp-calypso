@@ -23,6 +23,7 @@ import './style.scss';
 interface WelcomeModalProps {
 	onClose: () => void;
 	onContinue: () => void;
+	totalSteps?: number;
 }
 
 type WelcomeTileItem = {
@@ -121,7 +122,7 @@ const renderTileImage = ( item: WelcomeTileItem ) => {
 // Renders the body of the "welcome" step. The shared <Modal> wrapper is
 // provided by the parent (`ReaderOnboardingRsm`) so transitions between
 // steps don't unmount/remount the modal frame.
-const WelcomeModal: React.FC< WelcomeModalProps > = ( { onClose, onContinue } ) => {
+const WelcomeModal: React.FC< WelcomeModalProps > = ( { onClose, onContinue, totalSteps = 3 } ) => {
 	return (
 		<>
 			<VStack spacing={ 8 } className="reader-welcome-modal__content">
@@ -161,7 +162,7 @@ const WelcomeModal: React.FC< WelcomeModalProps > = ( { onClose, onContinue } ) 
 
 			<div className="reader-onboarding-modal__footer">
 				<HStack justify="space-between" className="reader-onboarding-modal__footer-actions">
-					<StepIndicator totalSteps={ 3 } currentStep={ 1 } />
+					<StepIndicator totalSteps={ totalSteps } currentStep={ 1 } />
 					<HStack
 						spacing={ 2 }
 						justify="right"

@@ -63,7 +63,7 @@ export default function AgencyOverview() {
 					sites: '/sites',
 					referrals: '/earn/referrals',
 					woopayments: '/earn/woopayments',
-					marketplace: '/marketplace/exclusive-offers',
+					marketplace: '/marketplace',
 					partnerDirectory: PARTNER_DIRECTORY_URL,
 					contactSupport: CONTACT_SUPPORT_URL,
 					helpful: [

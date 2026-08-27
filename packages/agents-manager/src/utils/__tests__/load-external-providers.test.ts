@@ -3,8 +3,10 @@
  */
 import { amToolProvider } from '../../abilities';
 import { restoreCheckpointAbility } from '../../abilities/restore-checkpoint';
+import { setSiteLogoAbility } from '../../abilities/set-site-logo';
 import { showComponentAbility } from '../../abilities/show-component';
 import { showTemplateAbility } from '../../abilities/show-template';
+import { wpAdminNavigateAbility } from '../../abilities/wp-admin-navigate';
 import * as canvasBinding from '../canvas-binding';
 import { getAvailableCheckpoints } from '../checkpoints';
 import {
@@ -215,7 +217,9 @@ describe( 'loadExternalProviders', () => {
 
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
+				wpAdminNavigateAbility,
 				restoreCheckpointAbility,
+				setSiteLogoAbility,
 				showComponentAbility,
 				showTemplateAbility,
 				createAbility( 'host/navigate' ),
@@ -248,7 +252,9 @@ describe( 'loadExternalProviders', () => {
 
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
+				wpAdminNavigateAbility,
 				restoreCheckpointAbility,
+				setSiteLogoAbility,
 				showComponentAbility,
 				showTemplateAbility,
 				createAbility( 'shared/action' ),
@@ -308,9 +314,11 @@ describe( 'loadExternalProviders', () => {
 
 		const providers = await loadExternalProviders();
 
-		await expect( providers.toolProvider?.getAbilities() ).resolves.toEqual( [
-			createAbility( 'big-sky/show-component' ),
-		] );
+		// Editor abilities flip to the provider copy; the fully migrated
+		// all-surface abilities stay AM's.
+		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
+			abilityShapes( [ wpAdminNavigateAbility, createAbility( 'big-sky/show-component' ) ] )
+		);
 		await expect(
 			providers.toolProvider?.executeAbility( 'big_sky__show_component', {} )
 		).resolves.toEqual( { handledBy: 'big-sky' } );
@@ -335,7 +343,9 @@ describe( 'loadExternalProviders', () => {
 
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
+				wpAdminNavigateAbility,
 				restoreCheckpointAbility,
+				setSiteLogoAbility,
 				showComponentAbility,
 				showTemplateAbility,
 				createAbility( 'host/navigate' ),
@@ -809,7 +819,9 @@ describe( 'loadExternalProviders', () => {
 
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
+				wpAdminNavigateAbility,
 				restoreCheckpointAbility,
+				setSiteLogoAbility,
 				showComponentAbility,
 				showTemplateAbility,
 				createAbility( 'big-sky/apply-block-edits' ),

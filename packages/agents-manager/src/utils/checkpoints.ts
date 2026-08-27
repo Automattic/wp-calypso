@@ -1,13 +1,14 @@
 import { store as coreStore } from '@wordpress/core-data';
 import { dispatch, select } from '@wordpress/data';
+import { getSiteLogo, setSiteLogo, type SiteLogo } from './site-logo';
 
 /**
  * AM-owned checkpoint store: in-memory, per page load, keyed by tool call id.
  *
  * Ported from Big Sky's `use-checkpoint` as plain functions — AM abilities
- * execute as plain callbacks, so no hook wiring is needed. Only the
- * global-styles domain (`color`/`font`/`button` keys) restores today; the
- * block, page, and navigation domains land with their abilities. Until then,
+ * execute as plain callbacks, so no hook wiring is needed. The global-styles
+ * (`color`/`font`/`button`) and site-logo domains restore today; the block,
+ * page, and navigation domains land with their abilities. Until then,
  * checkpoints for those domains live in Big Sky's store and restore through
  * the `provider-checkpoints` bridge.
  *
@@ -23,6 +24,7 @@ export const checkpointKeys = {
 	COLOR: 'color',
 	FONT: 'font',
 	BUTTON: 'button',
+	LOGO: 'logo',
 } as const;
 
 const THEME_KEYS: string[] = [ checkpointKeys.COLOR, checkpointKeys.FONT, checkpointKeys.BUTTON ];
@@ -38,6 +40,8 @@ export interface CheckpointMetadata {
 	restoredCheckpointToolId?: string;
 }
 
+// A type alias, not an interface: interfaces have no implicit index
+// signature, so they do not satisfy the `Record< string, unknown >` below.
 type GlobalStylesSnapshot = {
 	settings: Record< string, unknown >;
 	styles: Record< string, unknown >;
@@ -48,6 +52,7 @@ export interface CheckpointRecord extends CheckpointMetadata {
 	checkpointKeys: string[];
 	createdAt: number;
 	themeBeforeUpdate?: GlobalStylesSnapshot;
+	logoBeforeUpdate?: SiteLogo;
 }
 
 const records = new Map< string, CheckpointRecord >();
@@ -56,16 +61,19 @@ const records = new Map< string, CheckpointRecord >();
 // live edited record, and non-serializable values must not survive into them.
 const deepClone = < T >( value: T ): T => JSON.parse( JSON.stringify( value ) );
 
-type CoreSelect = {
+interface CoreSelect {
 	__experimentalGetCurrentGlobalStylesId?: () => string | undefined;
 	getEditedEntityRecord: (
 		kind: string,
 		name: string,
 		id: string
-	) => { settings?: Record< string, unknown >; styles?: Record< string, unknown > } | undefined;
-};
+	) =>
+		| { settings?: Record< string, unknown >; styles?: Record< string, unknown > }
+		| false
+		| undefined;
+}
 
-type CoreDispatch = {
+interface CoreDispatch {
 	editEntityRecord: (
 		kind: string,
 		name: string,
@@ -73,7 +81,7 @@ type CoreDispatch = {
 		edits: Record< string, unknown >,
 		options: { undoIgnore: boolean }
 	) => void;
-};
+}
 
 // `select`/`dispatch` return `undefined` on surfaces where the `core-data`
 // store is not registered — every access stays optional.
@@ -132,6 +140,18 @@ function restoreThemeSnapshot( checkpoint: CheckpointRecord ): void {
 	);
 }
 
+function restoreLogoSnapshot( checkpoint: CheckpointRecord ): void {
+	if ( ! checkpoint.checkpointKeys.includes( checkpointKeys.LOGO ) ) {
+		return;
+	}
+
+	if ( checkpoint.logoBeforeUpdate === undefined ) {
+		throw new Error( 'Checkpoint has no site-logo snapshot to restore.' );
+	}
+
+	setSiteLogo( checkpoint.logoBeforeUpdate );
+}
+
 /**
  * Snapshots the current editor state under the given id; the keys scope what
  * a restore applies.
@@ -146,6 +166,7 @@ export function setCheckpoint(
 	}
 
 	const themeBeforeUpdate = captureThemeSnapshot();
+	const logoBeforeUpdate = keys.includes( checkpointKeys.LOGO ) ? getSiteLogo() : undefined;
 
 	records.set( id, {
 		...metadata,
@@ -153,6 +174,7 @@ export function setCheckpoint(
 		checkpointKeys: keys,
 		createdAt: Date.now(),
 		...( themeBeforeUpdate && { themeBeforeUpdate } ),
+		...( logoBeforeUpdate !== undefined && { logoBeforeUpdate } ),
 	} );
 }
 
@@ -183,15 +205,16 @@ export async function restoreCheckpoint( id: string ): Promise< void > {
 	}
 
 	restoreThemeSnapshot( checkpoint );
+	restoreLogoSnapshot( checkpoint );
 }
 
-export type CheckpointContextItem = CheckpointMetadata & {
+export interface CheckpointContextItem extends CheckpointMetadata {
 	checkpointId: string;
 	checkpointIndex: number;
 	checkpointKeys: string[];
 	createdAt: number;
 	isLatestForTool?: boolean;
-};
+}
 
 /**
  * The AM-held checkpoints advertised to the agent via the client context for
@@ -207,13 +230,15 @@ export function getAvailableCheckpoints(): CheckpointContextItem[] {
 		}
 	} );
 
-	// The snapshot stays out of the model-facing list.
-	return checkpoints.map( ( { id, themeBeforeUpdate: _snapshot, ...checkpoint }, index ) => ( {
-		...checkpoint,
-		checkpointId: id,
-		checkpointIndex: index,
-		...( checkpoint.toolId && {
-			isLatestForTool: latestIndexByToolId[ checkpoint.toolId ] === index,
-		} ),
-	} ) );
+	// Snapshots stay out of the model-facing list.
+	return checkpoints.map(
+		( { id, themeBeforeUpdate: _theme, logoBeforeUpdate: _logo, ...checkpoint }, index ) => ( {
+			...checkpoint,
+			checkpointId: id,
+			checkpointIndex: index,
+			...( checkpoint.toolId && {
+				isLatestForTool: latestIndexByToolId[ checkpoint.toolId ] === index,
+			} ),
+		} )
+	);
 }
