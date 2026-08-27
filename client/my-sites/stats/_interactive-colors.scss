@@ -106,6 +106,39 @@
 		--color-primary-dark: var(--wp-admin-theme-color-darker-20);
 	}
 
+	// SelectDropdown is what the nav tab row collapses into on narrow viewports, and it ships to the
+	// whole product from packages/components, so the re-point has to happen here rather than in its
+	// own stylesheet. The variables are set on the root because the reads are spread across its
+	// parts: --color-accent on `__item` for the selected row's fill and the hover text, --color-primary
+	// on `__container`, `__header` and `__options` for the focus border, focus ring and open-list
+	// border.
+	//
+	// --color-primary-light is mixed towards the surface rather than darkened the way the segmented
+	// control's is. Both components name the same variable, but they use it for opposite ends: the
+	// segmented control darkens on hover against white, while these two draw a ring that has to stay
+	// legible against the selected row's own fill of --color-primary. The scheme value is the `-30`
+	// step — lighter than the fill — so following the name and darkening it would leave the keyboard
+	// focus indicator all but invisible on a selected row.
+	.select-dropdown {
+		--color-accent: var(--wp-admin-theme-color);
+		--color-primary: var(--wp-admin-theme-color);
+		--color-primary-light: color-mix(in srgb, var(--wp-admin-theme-color) 60%, var(--color-surface));
+	}
+
+	// The nav tab rows: the selected fill and the focus ring from --color-primary in
+	// client/components/section-nav/item.scss, and, once the row list stacks below $break-mobile, a
+	// hover and focus fill from --color-accent in client/blocks/stats-navigation/style.scss.
+	//
+	// That block also renders on the Google My Business stats page, which is not one of the roots
+	// this mixin is applied at, so the entry belongs here rather than in the block's own stylesheet —
+	// editing it there would repaint a page that has no admin theme colour to follow.
+	.section-nav-tab__link,
+	.subscribers-count {
+		--color-accent: var(--wp-admin-theme-color);
+		--color-primary: var(--wp-admin-theme-color);
+		--color-primary-light: color-mix(in srgb, var(--wp-admin-theme-color) 60%, var(--color-surface));
+	}
+
 	// The legend checkbox is styled to read as a pair with the chart type toggle beside it, and
 	// resolves --wp-components-color-accent to do so. Its own fallback names --color-accent rather
 	// than the admin theme colour, so wherever nothing pins the variable it lands on the accent and
