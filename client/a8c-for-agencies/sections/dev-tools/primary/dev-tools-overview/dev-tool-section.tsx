@@ -49,7 +49,7 @@ export default function DevToolSection( {
 					<>
 						<HStack alignment="left">
 							<Heading level={ 3 }>{ name }</Heading>
-							<Badge>{ badge }</Badge>
+							<Badge intent="none">{ badge }</Badge>
 						</HStack>
 						<Text className="dev-tools-overview__tagline" weight={ 500 }>
 							{ tagline }

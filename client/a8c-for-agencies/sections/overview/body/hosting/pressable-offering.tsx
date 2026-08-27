@@ -53,7 +53,7 @@ const PressableOffering = () => {
 				<HStack spacing={ 3 }>
 					<span>{ translate( 'Pressable' ) }</span>
 					{ isPressableRegular && (
-						<Badge intent="success">{ translate( "You're signed up!" ) }</Badge>
+						<Badge intent="stable">{ translate( "You're signed up!" ) }</Badge>
 					) }
 				</HStack>
 			</h3>

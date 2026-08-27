@@ -65,18 +65,14 @@ export default function AgencyTierProgressCard( {
 						</Heading>
 						<VStack spacing={ 1 }>
 							{ tierStatus === 'early_access' && (
-								<Badge
-									style={ { width: 'fit-content', marginBottom: '4px' } }
-									intent="default"
-									children={ __( 'Early access' ) }
-								/>
+								<Badge style={ { width: 'fit-content', marginBottom: '4px' } } intent="none">
+									{ __( 'Early access' ) }
+								</Badge>
 							) }
 							{ tierStatus === 'tier_protected' && (
-								<Badge
-									style={ { width: 'fit-content', marginBottom: '4px' } }
-									intent="default"
-									children={ __( 'Tier-level protected' ) }
-								/>
+								<Badge style={ { width: 'fit-content', marginBottom: '4px' } } intent="none">
+									{ __( 'Tier-level protected' ) }
+								</Badge>
 							) }
 							<Heading level={ 3 } weight={ 500 }>
 								{ currentTier.name }
