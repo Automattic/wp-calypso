@@ -80,7 +80,7 @@ test.describe( 'Checkout: Blackbox userless Jetpack', { tag: [ tags.CALYPSO_RELE
 			await expect(
 				page.locator( '.login__form-blackbox-challenge.has-visible-challenge' )
 			).toBeVisible();
-			await expect( page.getByRole( 'button', { name: /Pay (now|with)/ } ) ).toBeDisabled();
+			await expect( page.locator( '.checkout-submit-button--active button' ) ).toBeDisabled();
 		} );
 	} );
 
