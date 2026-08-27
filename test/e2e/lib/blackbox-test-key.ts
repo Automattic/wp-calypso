@@ -1,3 +1,5 @@
+import { DataHelper } from '@automattic/calypso-e2e';
+import type { NewTestUserDetails } from '@automattic/calypso-e2e';
 import type { Page } from '@playwright/test';
 
 const BLACKBOX_COLLECT_ROUTE = 'https://blackbox-api.wp.com/v1/collect**';
@@ -63,4 +65,13 @@ export async function useBlackboxTestKeyForCollect(
 			},
 		} );
 	} );
+}
+
+/**
+ * Siteless / passwordless signup generates the username from the email.
+ * A Mailosaur address is `e2eflowtestingblackbox<id>@inbox.mailosaur.net`,
+ * which sanitizes to a test-loop username and passes close-account email checks.
+ */
+export function getBlackboxTestLoopUser(): NewTestUserDetails {
+	return DataHelper.getNewTestUser( { usernamePrefix: 'blackbox', useMailosaur: true } );
 }
