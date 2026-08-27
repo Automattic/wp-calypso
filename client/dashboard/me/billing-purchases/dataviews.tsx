@@ -74,7 +74,7 @@ export function BillingPurchaseInfoPopover( { children }: { children: ReactNode 
 }
 
 function ProductIcon( { icon, label }: { icon: ReactElement; label: string } ) {
-	const containerSize = 36;
+	const containerSize = 52;
 	const iconSize = 20;
 	return (
 		<span
@@ -97,7 +97,7 @@ function ProductIcon( { icon, label }: { icon: ReactElement; label: string } ) {
 }
 
 function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purchase } ) {
-	const size = 36;
+	const size = 52;
 
 	if ( purchase.is_jetpack_plan_or_product ) {
 		return (
@@ -440,7 +440,7 @@ export function getFields( {
 			render: ( { item }: { item: Purchase } ) => {
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				return (
-					<div className="active-upgrades__inline-status">
+					<div className="billing-purchases__middle-valign">
 						<PurchaseExpiryStatus purchase={ item } isSiteMissing={ ! site } />
 					</div>
 				);
@@ -474,7 +474,7 @@ export function getFields( {
 				}
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				return (
-					<HStack justify="flex-start" spacing={ 1 }>
+					<HStack justify="flex-start" spacing={ 1 } className="billing-purchases__middle-valign">
 						<PurchasePaymentMethod purchase={ item } isSiteMissing={ ! site } />
 						{ isBackupMethodAvailable && mightStillAutoRenew( item ) && (
 							<BackupPaymentMethodNotice />
