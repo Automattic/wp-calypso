@@ -106,25 +106,6 @@
 		--color-primary-dark: var(--wp-admin-theme-color-darker-20);
 	}
 
-	// A nav tab row takes its selected fill from --color-primary in
-	// client/components/section-nav/item.scss, and, once the list stacks below $break-mobile, a
-	// hover fill from --color-accent in client/blocks/stats-navigation/style.scss.
-	//
-	// That block also renders on the Google My Business stats page, which is not one of the roots
-	// this mixin is applied at, so the entry belongs here rather than in the block's own stylesheet —
-	// editing it there would repaint a page that has no admin theme colour to follow.
-	.section-nav-tab__link {
-		--color-accent: var(--wp-admin-theme-color);
-		--color-primary: var(--wp-admin-theme-color);
-	}
-
-	// The action menu a stats list row opens draws its item text from --color-primary, through the
-	// shared dropdown-menu mixin in client/assets/stylesheets. Below $break-mobile only — that is
-	// where stats-list/style.scss applies the mixin to this list unconditionally.
-	.module-content-list-item-actions {
-		--color-primary: var(--wp-admin-theme-color);
-	}
-
 	// The legend checkbox is styled to read as a pair with the chart type toggle beside it, and
 	// resolves --wp-components-color-accent to do so. Its own fallback names --color-accent rather
 	// than the admin theme colour, so wherever nothing pins the variable it lands on the accent and
