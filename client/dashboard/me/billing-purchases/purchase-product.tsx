@@ -34,6 +34,7 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 						{
 							siteName: (
 								<RouterLinkButton
+									className="billing-purchases__site-name"
 									variant="link"
 									to={ purchasesRoute.fullPath }
 									search={ { site: site.ID } }
@@ -48,7 +49,12 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 								</RouterLinkButton>
 							),
 							siteDomain: (
-								<ExternalLink href={ 'https://' + site.slug } rel="noreferrer" title={ linkTitle }>
+								<ExternalLink
+									className="billing-purchases__site-url"
+									href={ 'https://' + site.slug }
+									rel="noreferrer"
+									title={ linkTitle }
+								>
 									{ linkText }
 								</ExternalLink>
 							),
@@ -68,6 +74,7 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 							purchaseType: <span>{ productType }</span>,
 							siteDomain: (
 								<RouterLinkButton
+									className="billing-purchases__site-name"
 									variant="link"
 									to={ purchasesRoute.fullPath }
 									search={ { site: site.ID } }
@@ -83,6 +90,7 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 							),
 							viewSite: (
 								<ExternalLink
+									className="billing-purchases__site-url"
 									href={ 'https://' + site.slug }
 									rel="noreferrer"
 									title={ __( 'View site' ) }
@@ -111,6 +119,7 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 						{
 							siteName: (
 								<RouterLinkButton
+									className="billing-purchases__site-name"
 									variant="link"
 									to={ purchasesRoute.fullPath }
 									search={ { site: site.ID } }
@@ -125,7 +134,12 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 								</RouterLinkButton>
 							),
 							viewSite: (
-								<ExternalLink href={ 'https://' + site.slug } rel="noreferrer" title={ linkTitle }>
+								<ExternalLink
+									className="billing-purchases__site-url"
+									href={ 'https://' + site.slug }
+									rel="noreferrer"
+									title={ linkTitle }
+								>
 									{ linkText }
 								</ExternalLink>
 							),
@@ -151,6 +165,7 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 					{
 						viewSite: (
 							<ExternalLink
+								className="billing-purchases__site-url"
 								href={ 'https://' + purchase.domain }
 								rel="noreferrer"
 								title={ __( 'View site' ) }

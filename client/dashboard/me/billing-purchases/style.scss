@@ -1,13 +1,5 @@
 @use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
 
-.dataviews-layout__container {
-	tr {
-		td:has(.billing-purchases__middle-valign), td.dataviews-view-table__actions-column--sticky {
-			vertical-align: middle;
-		}
-	}
-}
-
 img.payment-method-image {
 	vertical-align: middle;
 }
@@ -62,6 +54,14 @@ img.payment-method-image {
 	}
 }
 
+.dataviews-layout__container {
+	tr {
+		td:has(.billing-purchases__middle-valign), td.dataviews-view-table__actions-column--sticky {
+			vertical-align: middle;
+		}
+	}
+}
+
 .dataviews-view-table__cell-content-wrapper .purchase-payment-method__wrapper {
 	width: fit-content;
 }
@@ -70,15 +70,14 @@ img.payment-method-image {
 	margin-top: 4px;
 }
 
-.dataviews-view-table__primary-column-content {
-	a.components-button.is-link {
-		text-decoration: none;
-		color: #2f2f2f;
-		font-weight: 500;
-	}
-	a.components-external-link > span.components-external-link__contents {
-		text-decoration: none;
-	}
+a.is-link.billing-purchases__site-name {
+	text-decoration: none;
+	color: #1e1e1e;
+	font-weight: 500;
+}
+
+a.components-external-link.billing-purchases__site-url > span.components-external-link__contents {
+	text-decoration: none;
 }
 
 button.purchase-payment-method__update {
