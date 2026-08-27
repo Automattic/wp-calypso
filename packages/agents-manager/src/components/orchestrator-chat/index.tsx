@@ -22,6 +22,7 @@ import { __ } from '@wordpress/i18n';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import { useRegisterCustomActions } from '../../hooks/custom-actions';
+import useAbilitiesRegistration from '../../hooks/use-abilities-registration';
 import useAgentTraceIds from '../../hooks/use-agent-trace-ids';
 import { useBroadcastConversationActivity } from '../../hooks/use-broadcast-conversation-activity';
 import { useBroadcastTurnActivity } from '../../hooks/use-broadcast-turn-activity';
@@ -1539,6 +1540,8 @@ export default function OrchestratorChat( {
 		setIsBuildingSite,
 		setThinkingMessage,
 	} );
+
+	useAbilitiesRegistration();
 
 	const displayedMessages = useMemo< AgentsManagerUIMessage[] >( () => {
 		// The stable checkpoint getter reads these values through refs.

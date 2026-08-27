@@ -9,7 +9,6 @@ import { useSelect } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AgentsManagerContextProvider, useAgentsManagerContext } from '../contexts';
-import useAbilitiesRegistration from '../hooks/use-abilities-registration';
 import { useAgentConfig } from '../hooks/use-agent-config';
 import { useEmptyViewSuggestions } from '../hooks/use-empty-view-suggestions';
 import useHasAiChatEntryButton from '../hooks/use-has-ai-chat-entry-button';
@@ -191,7 +190,6 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 
 	const sessionId = resolveTabSessionId( isNewChat, agentId, siteKey, userId );
 
-	useAbilitiesRegistration();
 	useWebMcpTools( {
 		toolProvider: loadedProvidersRef.current?.toolProvider,
 		scope: `${ siteKey }:${ currentRoute ?? '' }:${ window.location.pathname }${

@@ -46,10 +46,6 @@ jest.mock( '../../utils/create-agent-config', () => ( {
 jest.mock( '../../hooks/use-agent-config', () => ( {
 	useAgentConfig: () => ( { agentId: 'wp-orchestrator', isLoading: false } ),
 } ) );
-jest.mock( '../../hooks/use-abilities-registration', () => ( {
-	__esModule: true,
-	default: jest.fn(),
-} ) );
 jest.mock( '../../hooks/use-open-chat-url-param', () => ( {
 	useOpenChatUrlParam: () => true,
 } ) );
@@ -130,6 +126,19 @@ describe( 'AgentSetup', () => {
 		render( manager( 111 ) );
 
 		await waitFor( () => expect( mockUseAbilitiesSetup ).toHaveBeenCalled() );
+	} );
+
+	it( 'does not mount provider ability setup without WebMCP opt-in', async () => {
+		document.body.className = 'site-editor-php';
+		Object.defineProperty( document, 'modelContext', {
+			configurable: true,
+			value: { registerTool: jest.fn() },
+		} );
+
+		render( manager( 111 ) );
+
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalled() );
+		expect( mockUseAbilitiesSetup ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not re-initialize while the chat view stays shown', async () => {
