@@ -799,9 +799,7 @@ export default function OrchestratorChat( {
 	// server: it adopts the real transcript when the turn landed, or reports it
 	// `failed` so we can surface a retry when it never did.
 	const { isReconciling, result: reconcileResult } = useReconcileDeliveryStatus();
-	const [ failedRetries, setFailedRetries ] = useState< Array< { id: string; text: string } > >(
-		[]
-	);
+	const [ failedRetries, setFailedRetries ] = useState< string[] >( [] );
 	const reconcileSyncedRef = useRef( false );
 	const reconcileDismissedRef = useRef( false );
 	useEffect( () => {
@@ -815,25 +813,18 @@ export default function OrchestratorChat( {
 		if ( ! reconcileSyncedRef.current ) {
 			reconcileSyncedRef.current = true;
 
-			if ( reconcileResult.outcome === 'server' && reconcileResult.serverSessionId ) {
+			if ( reconcileResult.outcome === 'server' ) {
 				// The server had the turn: point future sends at the real session.
-				getAgentManager().updateSessionId( agentConfig!.agentId, reconcileResult.serverSessionId );
+				getAgentManager().updateSessionId( agentConfig!.agentId, reconcileResult.storageKey );
 				// Persist it as this tab's session the same way `useConversation`'s
 				// onSuccess does, so it writes under the site the config was
 				// created for.
-				if ( agentConfig!.sessionId !== reconcileResult.serverSessionId ) {
-					agentConfig!.onSessionIdChange?.( reconcileResult.serverSessionId );
+				if ( agentConfig!.sessionId !== reconcileResult.storageKey ) {
+					agentConfig!.onSessionIdChange?.( reconcileResult.storageKey );
 				}
 			}
 
-			if ( reconcileResult.failedTexts.length > 0 ) {
-				setFailedRetries(
-					reconcileResult.failedTexts.map( ( text, index ) => ( {
-						id: `${ reconcileResult.storageKey }-${ index }`,
-						text,
-					} ) )
-				);
-			}
+			setFailedRetries( reconcileResult.failedTexts );
 		}
 
 		// Show the reconciled transcript, and re-assert it if `useAgentChat`'s own
@@ -1434,8 +1425,8 @@ export default function OrchestratorChat( {
 	// Retry a failed turn: drop its affordance and re-send the original prompt as
 	// a fresh turn. Deliberately does not repopulate the composer.
 	const handleRetryFailed = useCallback(
-		( id: string, text: string ) => {
-			setFailedRetries( ( previous ) => previous.filter( ( retry ) => retry.id !== id ) );
+		( text: string ) => {
+			setFailedRetries( ( previous ) => previous.filter( ( retry ) => retry !== text ) );
 			void submitChatMessage( text );
 		},
 		[ submitChatMessage ]
@@ -1761,17 +1752,17 @@ export default function OrchestratorChat( {
 		// transcript so the affordance is never lost.
 		if ( failedRetries.length > 0 ) {
 			const makeRetryMessage = (
-				retry: { id: string; text: string },
+				retry: string,
 				anchor?: AgentsManagerUIMessage
 			): AgentsManagerUIMessage => ( {
-				id: `failed-retry-${ retry.id }`,
+				id: `failed-retry-${ retry }`,
 				role: 'agent',
 				content: [
 					{
 						type: 'component',
 						component: RetryFailedMessage as React.ComponentType,
 						componentProps: {
-							onRetry: () => handleRetryFailed( retry.id, retry.text ),
+							onRetry: () => handleRetryFailed( retry ),
 						},
 					},
 				],
@@ -1789,7 +1780,7 @@ export default function OrchestratorChat( {
 					continue;
 				}
 				const text = message.content?.find( ( content ) => content.type === 'text' )?.text;
-				const matchIndex = remainingRetries.findIndex( ( retry ) => retry.text === text );
+				const matchIndex = remainingRetries.indexOf( text ?? '' );
 				if ( matchIndex !== -1 ) {
 					const [ retry ] = remainingRetries.splice( matchIndex, 1 );
 					messagesWithRetries.push( makeRetryMessage( retry, message ) );
@@ -1847,6 +1838,12 @@ export default function OrchestratorChat( {
 	const shouldSuppressTransientThinking = Boolean(
 		latestDisplayedMessage?.role === 'agent' && latestDisplayedMessage.suppressThinking
 	);
+	let processingMessage = progressMessage;
+	if ( isUploadingImages ) {
+		processingMessage = __( 'Uploading images…', __i18n_text_domain__ );
+	} else if ( isReconciling ) {
+		processingMessage = __( 'Picking up your previous question…', __i18n_text_domain__ );
+	}
 	const showProcessingIndicator =
 		( isProcessing || isReconciling || ( isThinking && ! isBuildingSite ) ) &&
 		! shouldSuppressTransientThinking;
@@ -1931,15 +1928,7 @@ export default function OrchestratorChat( {
 			suggestions={ suggestions }
 			emptyViewSuggestions={ displayedEmptyViewSuggestions }
 			isProcessing={ showProcessingIndicator || isUploadingImages }
-			thinkingMessage={ ( () => {
-				if ( isUploadingImages ) {
-					return __( 'Uploading images…', __i18n_text_domain__ );
-				}
-				if ( isReconciling ) {
-					return __( 'Picking up your previous question…', __i18n_text_domain__ );
-				}
-				return progressMessage;
-			} )() }
+			thinkingMessage={ processingMessage }
 			error={ chatError || uploadError }
 			onSubmit={ onSubmitWithImages }
 			onAbort={ handleAbort }

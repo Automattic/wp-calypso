@@ -290,6 +290,7 @@ const mockAgentChat = jest.fn(
 jest.mock(
 	'@automattic/agenttic-client',
 	() => ( {
+		getStoredSessionIds: async () => [],
 		getAgentManager: () => ( {
 			updateSessionId: mockUpdateSessionId,
 			hasAgent: () => mockManagerHasAgent,

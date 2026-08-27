@@ -4,33 +4,69 @@
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 import type { Message } from '@automattic/agenttic-client';
 
+const mockPrefix = 'a8c_agenttic_conversation_history_';
+const STORAGE_PREFIX = mockPrefix;
+
 const isUnresolved = ( message: Message ) =>
 	message.metadata?.deliveryStatus === 'pending' ||
 	message.metadata?.deliveryStatus === 'streaming';
 
 jest.mock(
 	'@automattic/agenttic-client',
-	() => ( {
-		getUnresolvedMessages: jest.fn( ( messages: Message[] ) => messages.filter( isUnresolved ) ),
-		// Mimics the real primitive closely enough to exercise the hook's wiring:
-		// server transcript wins when present, otherwise unresolved turns fail.
-		reconcileWithServer: jest.fn( async ( messages: Message[], fetchServer ) => {
-			const server = await fetchServer();
-			if ( server && server.length > 0 ) {
-				return server;
-			}
-			return messages.map( ( message: Message ) =>
-				isUnresolved( message )
-					? {
-							...message,
-							metadata: { ...( message.metadata || {} ), deliveryStatus: 'failed' },
-					  }
-					: message
+	() => {
+		// Minimal stand-ins for agenttic's sessionStorage-backed conversation store.
+		const storedKeys = () =>
+			Object.keys( globalThis.sessionStorage )
+				.filter( ( key ) => key.startsWith( mockPrefix ) )
+				.map( ( key ) => key.slice( mockPrefix.length ) );
+		const restore = ( key: string ): Message[] =>
+			JSON.parse(
+				globalThis.sessionStorage.getItem( `${ mockPrefix }${ key }` ) ?? '{"messages":[]}'
+			).messages.map(
+				( m: {
+					role: 'user' | 'agent';
+					content: string;
+					timestamp: number;
+					deliveryStatus?: string;
+				} ) => ( {
+					role: m.role,
+					kind: 'message',
+					messageId: `m-${ m.timestamp }`,
+					parts: [ { type: 'text', text: m.content } ],
+					metadata: { timestamp: m.timestamp, deliveryStatus: m.deliveryStatus },
+				} )
 			);
-		} ),
-		loadAllMessagesFromServer: jest.fn(),
-		CONVERSATION_STORAGE_KEY: 'a8c_agenttic_conversation_history',
-	} ),
+		return {
+			getUnresolvedMessages: jest.fn( ( messages: Message[] ) => messages.filter( isUnresolved ) ),
+			// Mimics the real primitive closely enough to exercise the hook's wiring:
+			// server transcript wins when present, otherwise unresolved turns fail.
+			reconcileWithServer: jest.fn( async ( messages: Message[], fetchServer ) => {
+				const server = await fetchServer();
+				if ( server && server.length > 0 ) {
+					return server;
+				}
+				return messages.map( ( message: Message ) =>
+					isUnresolved( message )
+						? {
+								...message,
+								metadata: { ...( message.metadata || {} ), deliveryStatus: 'failed' },
+						  }
+						: message
+				);
+			} ),
+			loadAllMessagesFromServer: jest.fn(),
+			getStoredSessionIds: jest.fn( async () => storedKeys() ),
+			loadConversation: jest.fn( async ( key: string ) => ( { messages: restore( key ) } ) ),
+			clearConversation: jest.fn( async ( key: string ) =>
+				globalThis.sessionStorage.removeItem( `${ mockPrefix }${ key }` )
+			),
+			messageTextContent: ( message: Message ) =>
+				message.parts
+					.filter( ( part ): part is { type: 'text'; text: string } => part.type === 'text' )
+					.map( ( part ) => part.text )
+					.join( '\n' ),
+		};
+	},
 	{ virtual: true }
 );
 
@@ -49,7 +85,6 @@ import {
 } from '@automattic/agenttic-client';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { useAgentsManagerContext } from '../../contexts';
-import { STORAGE_PREFIX } from '../../utils/conversation-storage-read';
 import useReconcileDeliveryStatus from '../use-reconcile-delivery-status';
 
 const mockContext = useAgentsManagerContext as jest.Mock;
@@ -120,7 +155,6 @@ describe( 'useReconcileDeliveryStatus', () => {
 
 		expect( mockLoadAll ).not.toHaveBeenCalled();
 		expect( result.current.result!.outcome ).toBe( 'failed' );
-		expect( result.current.result!.serverSessionId ).toBeNull();
 		expect( result.current.result!.failedTexts ).toEqual( [ 'go big' ] );
 		// No message left unresolved, and the stale orphan is cleared.
 		expect( getUnresolvedMessages( result.current.result!.messages ) ).toHaveLength( 0 );
@@ -153,7 +187,7 @@ describe( 'useReconcileDeliveryStatus', () => {
 
 		expect( mockLoadAll ).toHaveBeenCalledTimes( 1 );
 		expect( result.current.result!.outcome ).toBe( 'server' );
-		expect( result.current.result!.serverSessionId ).toBe( 'uuid-1' );
+		expect( result.current.result!.storageKey ).toBe( 'uuid-1' );
 		expect( getUnresolvedMessages( result.current.result!.messages ) ).toHaveLength( 0 );
 		// A live session's transcript is preserved, not cleared.
 		expect( sessionStorage.getItem( `${ STORAGE_PREFIX }uuid-1` ) ).not.toBeNull();

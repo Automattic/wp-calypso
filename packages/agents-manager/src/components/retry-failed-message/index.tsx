@@ -13,8 +13,6 @@ interface Props {
  * Plain `<button>`, not `@wordpress/components`: importing that package here
  * pulls the whole component index into `orchestrator-chat`'s module graph and
  * breaks its test suite on `@wordpress/data`.
- * @param props
- * @param props.onRetry
  */
 export default function RetryFailedMessage( { onRetry }: Props ) {
 	return (

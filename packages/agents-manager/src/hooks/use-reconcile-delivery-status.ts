@@ -9,8 +9,12 @@
  * resolution lives in `reconcileWithServer`; this is the discovery and wiring.
  */
 import {
+	clearConversation,
+	getStoredSessionIds,
 	getUnresolvedMessages,
 	loadAllMessagesFromServer,
+	loadConversation,
+	messageTextContent,
 	reconcileWithServer,
 	type Message,
 } from '@automattic/agenttic-client';
@@ -18,23 +22,13 @@ import { useEffect, useRef, useState } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
 import { getConversationBotId } from '../utils/conversation-bot-id';
-import {
-	clearStoredConversation,
-	isLocalSessionKey,
-	listStoredConversations,
-	type LoadedConversation,
-} from '../utils/conversation-storage-read';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
-
-/** `server`: the server had the turn. `failed`: it never landed. */
-export type ReconcileOutcome = 'server' | 'failed';
 
 export interface ReconcileResult {
 	storageKey: string;
-	outcome: ReconcileOutcome;
+	/** `server`: the server had the turn (`storageKey` is its session id). `failed`: it never landed. */
+	outcome: 'server' | 'failed';
 	messages: Message[];
-	/** Only set when `outcome === 'server'`. */
-	serverSessionId: string | null;
 	/** Text of each user turn that ended up `failed`, for the retry affordance. */
 	failedTexts: string[];
 }
@@ -45,31 +39,34 @@ interface Result {
 	result: ReconcileResult | null;
 }
 
-function messageText( message: Message ): string {
-	return message.parts
-		.filter( ( part ): part is { type: 'text'; text: string } => part.type === 'text' )
-		.map( ( part ) => part.text )
-		.join( '\n' );
-}
+const latestTimestamp = ( messages: Message[] ) =>
+	Math.max( 0, ...messages.map( ( message ) => Number( message.metadata?.timestamp ) || 0 ) );
 
 /**
  * Pick the newest stored conversation that still has an unresolved turn and
  * could belong to this agent. Stored entries carry no agent id, so a server
  * session is only a candidate when it is the one this agent is configured to
- * resume; `local-*` keys are always candidates since they were minted for a
+ * resume; `local-*` keys are always candidates since agenttic mints them for a
  * send that never received a session id.
- * @param sessionId - the session id the agent is configured to resume, if any.
  */
-function findUnresolvedConversation( sessionId?: string | null ): LoadedConversation | null {
-	const candidates = listStoredConversations()
-		.filter(
-			( conversation ) =>
-				isLocalSessionKey( conversation.storageKey ) || conversation.storageKey === sessionId
-		)
-		.filter( ( conversation ) => getUnresolvedMessages( conversation.messages ).length > 0 )
-		.sort( ( a, b ) => b.lastUpdated - a.lastUpdated );
-
-	return candidates[ 0 ] ?? null;
+async function findUnresolvedConversation(
+	sessionId?: string | null
+): Promise< { storageKey: string; messages: Message[] } | null > {
+	const keys = ( await getStoredSessionIds() ).filter(
+		( key ) => key.startsWith( 'local-' ) || key === sessionId
+	);
+	const conversations = await Promise.all(
+		keys.map( async ( storageKey ) => ( {
+			storageKey,
+			messages: ( await loadConversation( storageKey ) ).messages,
+		} ) )
+	);
+	return (
+		conversations
+			.filter( ( { messages } ) => getUnresolvedMessages( messages ).length > 0 )
+			.sort( ( a, b ) => latestTimestamp( b.messages ) - latestTimestamp( a.messages ) )[ 0 ] ??
+		null
+	);
 }
 
 export default function useReconcileDeliveryStatus(): Result {
@@ -88,66 +85,56 @@ export default function useReconcileDeliveryStatus(): Result {
 		if ( hasRunRef.current || ! agentId || isReaderChatAgent( agentId ) ) {
 			return;
 		}
-
-		const conversation = findUnresolvedConversation( sessionId );
-		if ( ! conversation ) {
-			// Nothing in flight — mark as run so we don't re-scan on every change.
-			hasRunRef.current = true;
-			return;
-		}
-
 		hasRunRef.current = true;
-		const { storageKey, messages } = conversation;
 
 		let cancelled = false;
-		let serverHadMessages = false;
 
-		// A `local-*` key means the send was aborted before the server assigned a
-		// session id, so there is nothing to fetch — resolve `null` and let the
-		// primitive mark the turn `failed`.
-		const fetchServer = isLocalSessionKey( storageKey )
-			? () => Promise.resolve< Message[] | null >( null )
-			: async (): Promise< Message[] | null > => {
-					const urlSearchParams = new URLSearchParams( window.location.search );
-					const botId = getConversationBotId( agentId, urlSearchParams.has( 'agent' ) );
-					const serverResult = await loadAllMessagesFromServer(
-						storageKey,
-						{ botId, apiBaseUrl: API_BASE_URL, authProvider },
-						10,
-						true
-					);
-					serverHadMessages = serverResult.messages.length > 0;
-					return serverResult.messages;
-			  };
+		const run = async () => {
+			const conversation = await findUnresolvedConversation( sessionId );
+			if ( ! conversation || cancelled ) {
+				return;
+			}
+			const { storageKey, messages } = conversation;
+			let serverHadMessages = false;
 
-		setIsReconciling( true );
+			// A `local-*` key means the send was aborted before the server assigned
+			// a session id, so there is nothing to fetch — resolve `null` and let
+			// the primitive mark the turn `failed`.
+			const fetchServer = storageKey.startsWith( 'local-' )
+				? () => Promise.resolve< Message[] | null >( null )
+				: async () => {
+						const botId = getConversationBotId(
+							agentId,
+							new URLSearchParams( window.location.search ).has( 'agent' )
+						);
+						const serverResult = await loadAllMessagesFromServer(
+							storageKey,
+							{ botId, apiBaseUrl: API_BASE_URL, authProvider },
+							10,
+							true
+						);
+						serverHadMessages = serverResult.messages.length > 0;
+						return serverResult.messages;
+				  };
 
-		reconcileWithServer( messages, fetchServer )
-			.then( ( reconciled ) => {
-				if ( cancelled ) {
-					return;
-				}
-
+			setIsReconciling( true );
+			try {
+				const reconciled = await reconcileWithServer( messages, fetchServer );
 				// Fetch threw (offline/500): the primitive returns the input
 				// unchanged with the turn still unresolved. Leave storage intact so
 				// a later mount can retry instead of guessing.
-				if ( getUnresolvedMessages( reconciled ).length > 0 ) {
+				if ( cancelled || getUnresolvedMessages( reconciled ).length > 0 ) {
 					return;
 				}
 
 				const failedTexts = reconciled
-					.filter(
-						( message ) => message.role === 'user' && message.metadata?.deliveryStatus === 'failed'
-					)
-					.map( messageText );
-
-				const outcome: ReconcileOutcome = serverHadMessages ? 'server' : 'failed';
+					.filter( ( m ) => m.role === 'user' && m.metadata?.deliveryStatus === 'failed' )
+					.map( messageTextContent );
 
 				setResult( {
 					storageKey,
-					outcome,
+					outcome: serverHadMessages ? 'server' : 'failed',
 					messages: reconciled,
-					serverSessionId: outcome === 'server' ? storageKey : null,
 					failedTexts,
 				} );
 
@@ -157,20 +144,15 @@ export default function useReconcileDeliveryStatus(): Result {
 				// the server had everything, the entry stays: the session continues
 				// and its transcript is re-persisted normally.
 				if ( failedTexts.length > 0 ) {
-					clearStoredConversation( storageKey );
+					await clearConversation( storageKey );
 				}
-			} )
-			.catch( ( error ) => {
-				// `reconcileWithServer` swallows fetch errors, so reaching here is
-				// unexpected. Leave storage intact and surface nothing.
-				// eslint-disable-next-line no-console
-				console.error( '[useReconcileDeliveryStatus] Reconciliation failed:', error );
-			} )
-			.finally( () => {
+			} finally {
 				if ( ! cancelled ) {
 					setIsReconciling( false );
 				}
-			} );
+			}
+		};
+		void run();
 
 		return () => {
 			cancelled = true;
