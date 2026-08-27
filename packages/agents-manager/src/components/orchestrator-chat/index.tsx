@@ -25,6 +25,7 @@ import { useRegisterCustomActions } from '../../hooks/custom-actions';
 import useAbilitiesRegistration from '../../hooks/use-abilities-registration';
 import useAgentTraceIds from '../../hooks/use-agent-trace-ids';
 import { useBroadcastConversationActivity } from '../../hooks/use-broadcast-conversation-activity';
+import { useBroadcastTurnActivity } from '../../hooks/use-broadcast-turn-activity';
 import useCheckpointAction, {
 	getCheckpointIdForMessage,
 	invalidateCheckpointAction,
@@ -1710,6 +1711,10 @@ export default function OrchestratorChat( {
 
 	// Broadcast conversation activity so other bundles can re-sync transcript cards.
 	useBroadcastConversationActivity( messageCount );
+
+	// Broadcast the turn's edges so a host editing surface can tell the agent's
+	// writes from a block settling itself on mount.
+	useBroadcastTurnActivity( agentConfig?.agentId, isProcessing );
 
 	const latestDisplayedMessage = displayedMessages[ displayedMessages.length - 1 ];
 	const shouldSuppressTransientThinking = Boolean(

@@ -44,6 +44,8 @@ export interface Suggestion {
 	action?: () => boolean | Promise< boolean >;
 	autoSubmit?: boolean; // When true, clicking the suggestion automatically submits it to the LLM
 	options?: SuggestionOption[]; // When present, renders as a dropdown picker
+	disabled?: boolean; // Greyed out and inert. For a feature with nothing to act on yet; drop one the user can never use
+	disabledReason?: string; // Tooltip on a disabled suggestion, explaining what would make it usable
 }
 
 export interface QuestionChoice {

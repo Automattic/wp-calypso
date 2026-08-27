@@ -14,6 +14,7 @@
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
 import { amToolProvider, getAmCheckpointContext } from '../abilities';
 import { findAbilityByName } from '../abilities/ability-name';
+import { withAbilityCompletionBroadcast } from './ability-completion-broadcast';
 import { withCanvasBinding, withCanvasGuard } from './canvas-guard';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent } from './is-reader-chat-agent';
@@ -793,7 +794,10 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	// After the branch, deliberately: the single-provider path above assigns
 	// `allToolProviders[ 0 ]` straight through, so a guard applied inside the
 	// multi-provider closure would silently not exist on those surfaces.
-	mergedToolProvider = withCanvasGuard( mergedToolProvider );
+	//
+	// Announcement inside the guard: an ability the guard refuses never ran,
+	// so there is no completion to announce for it.
+	mergedToolProvider = withCanvasGuard( withAbilityCompletionBroadcast( mergedToolProvider ) );
 
 	// Merge transformMessages: compose in registration order, so each provider
 	// rewrites what the previous one produced. Unlike the singleton exports this

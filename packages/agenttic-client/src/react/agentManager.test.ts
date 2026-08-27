@@ -535,6 +535,88 @@ describe( 'agentManager', () => {
 		} );
 	} );
 
+	describe( 'isTurnInFlight', () => {
+		beforeEach( async () => {
+			await agentManager.createAgent( 'test-key', testConfig );
+		} );
+
+		/**
+		 * Run a turn to completion against a scripted stream.
+		 * @param updates What the client yields.
+		 */
+		async function runTurn( updates: TaskUpdate[] ) {
+			mockClient.sendMessageStream.mockImplementation( async function* () {
+				for ( const update of updates ) {
+					yield update;
+				}
+			} );
+
+			for await ( const update of agentManager.sendMessageStream( 'test-key', 'Hello' ) ) {
+				void update;
+			}
+		}
+
+		it( 'is false before any turn has run', () => {
+			expect( agentManager.isTurnInFlight( 'test-key' ) ).toBe( false );
+		} );
+
+		it( 'is false for an agent that does not exist', () => {
+			// Asked to decide whether to say anything at all, so an absent agent
+			// is a normal answer rather than the throw the mutators use.
+			expect( agentManager.isTurnInFlight( 'no-such-key' ) ).toBe( false );
+		} );
+
+		it( 'is false once the turn completes', async () => {
+			await runTurn( [
+				{
+					id: 'task-123',
+					status: { state: 'completed', message: mockAgentMessage },
+					final: true,
+					text: 'Done',
+				},
+			] );
+
+			expect( agentManager.isTurnInFlight( 'test-key' ) ).toBe( false );
+		} );
+
+		it( 'stays true while the turn is paused on a tool call', async () => {
+			// The stream ends here and the turn carries on in `sendToolResult`.
+			// A signal that dropped in this gap would flicker once per tool call.
+			await runTurn( [
+				{
+					id: 'task-123',
+					status: { state: 'input-required', message: mockAgentMessage },
+					final: true,
+					text: 'Working',
+				},
+			] );
+
+			expect( agentManager.isTurnInFlight( 'test-key' ) ).toBe( true );
+		} );
+
+		it( 'is false after the stream throws', async () => {
+			// Nothing further will arrive to resolve the turn, so a flag left set
+			// would report it as running for the life of the page.
+			mockClient.sendMessageStream.mockImplementation( async function* () {
+				yield {
+					id: 'task-123',
+					status: { state: 'working', message: mockAgentMessage },
+					final: false,
+					text: 'Working',
+				} as TaskUpdate;
+				throw new Error( 'network died' );
+			} );
+
+			await expect( async () => {
+				for await ( const update of agentManager.sendMessageStream( 'test-key', 'Hello' ) ) {
+					void update;
+				}
+			} ).rejects.toThrow( 'network died' );
+
+			expect( agentManager.isTurnInFlight( 'test-key' ) ).toBe( false );
+		} );
+	} );
+
 	describe( 'resetConversation', () => {
 		it( 'should reset conversation history', async () => {
 			await agentManager.createAgent( 'test-key', testConfig );

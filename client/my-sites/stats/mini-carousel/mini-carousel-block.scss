@@ -27,13 +27,13 @@
 		}
 	}
 
-	&__close-button {
-		border: 0 !important;
-		font-size: $font-body-extra-small !important;
+	// Compounded with the component's own class rather than raised with !important: both selectors
+	// are single-class, so source order alone would decide which font size wins.
+	&__close-button.components-button {
+		font-size: $font-body-extra-small;
 	}
 
 	&__close-button-icon {
-		vertical-align: middle;
-		margin-top: -4px;
+		margin-inline-start: 2px;
 	}
 }
