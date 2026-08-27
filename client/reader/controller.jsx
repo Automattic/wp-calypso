@@ -30,6 +30,10 @@ const loadNewSubscription = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-reader-new-subscription" */ 'calypso/reader/new-subscription'
 	);
+const loadFollowSites = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-follow-sites" */ 'calypso/reader/follow-sites'
+	);
 const loadFeedStream = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-reader-feed-stream" */ 'calypso/reader/feed-stream'
@@ -132,6 +136,13 @@ export function loadNewSubscriptionPage( context, next ) {
 	);
 
 	trackPageLoad( '/reader/new', 'Reader > New Subscription', 'reader-new-subscription' );
+	next();
+}
+
+export function loadFollowSitesPage( context, next ) {
+	context.primary = <AsyncLoad require={ loadFollowSites } placeholder={ null } />;
+
+	trackPageLoad( '/reader/follow', 'Reader > Follow Sites', 'reader-follow-sites' );
 	next();
 }
 

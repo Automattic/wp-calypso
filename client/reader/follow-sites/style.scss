@@ -1,0 +1,28 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.is-reader-page .main.follow-sites {
+	padding: 0;
+}
+
+.follow-sites__content {
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
+	max-width: 968px;
+	margin: 0 auto;
+	padding: 24px 16px 48px;
+
+	@include break-medium {
+		padding-inline: 32px;
+	}
+}
+
+.follow-sites__section-title {
+	margin: 0 0 12px;
+	font-size: 0.75rem;
+	font-weight: 500;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var( --color-text-subtle );
+}

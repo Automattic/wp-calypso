@@ -28,6 +28,7 @@ import {
 	pendingSubscriptionsManager,
 	setupReadRoutes,
 	loadNewSubscriptionPage,
+	loadFollowSitesPage,
 } from './controller';
 import postCacheMiddleware from './data/post/middleware';
 import { readerNotFound } from './lib/reader-router';
@@ -91,6 +92,18 @@ export default async function (): Promise< void > {
 		makeLayout,
 		clientRender
 	);
+
+	if ( config.isEnabled( 'reader/follow-sites' ) ) {
+		page(
+			'/reader/follow',
+			redirectLoggedOutToSignup,
+			sidebar,
+			setSelectedSiteIdByOrigin,
+			loadFollowSitesPage,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	// Feed stream
 	page(

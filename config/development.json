@@ -188,6 +188,7 @@
 		"resurrected-users/90-day-eligibility": true,
 		"reader/social": true,
 		"reader/shelves": true,
+		"reader/follow-sites": true,
 		"reader/full-errors": true,
 		"reader/msd-enabled": true,
 		"reader/onboarding-rsm": true,

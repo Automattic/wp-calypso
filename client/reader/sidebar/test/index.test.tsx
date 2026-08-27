@@ -80,6 +80,32 @@ describe( 'ReaderSidebar', () => {
 		} );
 	} );
 
+	describe( 'Follow sites button', () => {
+		it( 'renders a link to /reader/follow when the feature is enabled', () => {
+			jest
+				.mocked( isEnabled )
+				.mockImplementation( ( feature: string ) =>
+					[ 'reader/shelves', 'reader/follow-sites' ].includes( feature )
+				);
+			const instance = new ReaderSidebar( defaultProps );
+
+			render( instance.renderSidebarMenu() );
+
+			expect( screen.getByRole( 'link', { name: 'Follow sites' } ) ).toHaveAttribute(
+				'href',
+				'/reader/follow'
+			);
+		} );
+
+		it( 'is hidden when the feature is disabled', () => {
+			const instance = new ReaderSidebar( defaultProps );
+
+			render( instance.renderSidebarMenu() );
+
+			expect( screen.queryByRole( 'link', { name: 'Follow sites' } ) ).not.toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'handleSidebarMenuClick', () => {
 		let instance: ReaderSidebar;
 

@@ -4,6 +4,7 @@ import { readSubscribedListsQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useQuery } from '@tanstack/react-query';
+import { Button } from '@wordpress/components';
 import { Icon, commentAuthorAvatar, plus } from '@wordpress/icons';
 import clsx from 'clsx';
 import closest from 'component-closest';
@@ -88,6 +89,11 @@ const TrackingKeys = {
 		gaEvent: 'Clicked Reader Sidebar Saved',
 		tracksEvent: 'calypso_reader_sidebar_saved_clicked',
 	},
+	followSites: {
+		action: 'clicked_reader_sidebar_follow_sites',
+		gaEvent: 'Clicked Reader Sidebar Follow Sites',
+		tracksEvent: 'calypso_reader_sidebar_follow_sites_clicked',
+	},
 };
 
 /**
@@ -170,7 +176,24 @@ export class ReaderSidebar extends Component {
 
 		return (
 			<div className="sidebar-menu-container">
-				<AppTitle />
+				<div className="reader-sidebar__title-row">
+					<AppTitle />
+					{ isEnabled( 'reader/follow-sites' ) && (
+						<Button
+							className={ clsx( 'reader-sidebar__follow-sites', {
+								'is-selected': path.startsWith( '/reader/follow' ),
+							} ) }
+							href="/reader/follow"
+							icon={ plus }
+							iconSize={ 24 }
+							label={ translate( 'Follow sites' ) }
+							showTooltip
+							onClick={ ( event ) =>
+								this.handleSidebarMenuClick( TrackingKeys.followSites )( event, '/reader/follow' )
+							}
+						/>
+					) }
+				</div>
 				<SidebarMenu>
 					<li className="reader-sidebar__section-header" role="presentation">
 						<span role="heading" aria-level="3">
