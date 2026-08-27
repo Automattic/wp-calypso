@@ -84,6 +84,11 @@ button.purchase-payment-method__update {
 .billing-purchase__site-url,
 .billing-purchase__site-url:visited {
 	text-decoration: none;
+
+	// `ExternalLink` underlines its inner span rather than the anchor.
+	.components-external-link__contents {
+		text-decoration: none;
+	}
 }
 
 .billing-purchase__site-link,
