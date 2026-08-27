@@ -40,6 +40,7 @@ type WpcomConfiguratorProps = {
 	product?: HostingProduct;
 	ownedSites?: number;
 	altQuantityControl?: boolean;
+	isReferralMode?: boolean;
 };
 
 export default function WpcomConfigurator( {
@@ -48,6 +49,7 @@ export default function WpcomConfigurator( {
 	product = wpcomHosting,
 	ownedSites = 0,
 	altQuantityControl = false,
+	isReferralMode = false,
 }: WpcomConfiguratorProps ) {
 	const [ preset, setPreset ] = useState< string >( '3' );
 	const [ customQuantity, setCustomQuantity ] = useState( altQuantityControl ? 3 : 10 );
@@ -76,11 +78,13 @@ export default function WpcomConfigurator( {
 					<VStack spacing={ 3 }>
 						<HStack justify="space-between" alignment="center">
 							<Heading level={ 3 } size={ 13 }>
-								{ ownedSites > 0
-									? __( 'How many more sites do you need?' )
-									: __( 'How many sites do you need?' ) }
+								{ isReferralMode && __( 'Refer WordPress.com hosting' ) }
+								{ ! isReferralMode &&
+									( ownedSites > 0
+										? __( 'How many more sites do you need?' )
+										: __( 'How many sites do you need?' ) ) }
 							</Heading>
-							{ ownedSites > 0 && (
+							{ ! isReferralMode && ownedSites > 0 && (
 								<Badge>
 									{ sprintf(
 										/* translators: %d: number of sites the agency already owns */
@@ -90,7 +94,14 @@ export default function WpcomConfigurator( {
 								</Badge>
 							) }
 						</HStack>
-						{ ! altQuantityControl && (
+						{ isReferralMode && (
+							<Text variant="muted">
+								{ __(
+									'Refer a single site to your client. They’re billed directly at the standard rate, and you earn commission when they pay.'
+								) }
+							</Text>
+						) }
+						{ ! isReferralMode && ! altQuantityControl && (
 							<ToggleGroupControl
 								__nextHasNoMarginBottom
 								__next40pxDefaultSize
@@ -111,7 +122,7 @@ export default function WpcomConfigurator( {
 								<ToggleGroupControlOption value="custom" label={ __( 'Custom' ) } />
 							</ToggleGroupControl>
 						) }
-						{ isCustom && (
+						{ ! isReferralMode && isCustom && (
 							<TextControl
 								__nextHasNoMarginBottom
 								__next40pxDefaultSize
@@ -127,7 +138,7 @@ export default function WpcomConfigurator( {
 								} }
 							/>
 						) }
-						{ altQuantityControl && currentDiscount > 0 && (
+						{ ! isReferralMode && altQuantityControl && currentDiscount > 0 && (
 							<Text variant="muted">
 								<span className="marketplace-hosting__price-strikethrough">
 									{ formatUSD( price.basePerUnit ) }
@@ -140,28 +151,29 @@ export default function WpcomConfigurator( {
 								) }
 							</Text>
 						) }
-						{ nudge ? (
-							<Text variant="muted">
-								{ sprintf(
-									/* translators: %1$d: number of sites to add, %2$d: discount percentage */
-									_n(
-										'Add %1$d more site to unlock %2$d%% off.',
-										'Add %1$d more sites to unlock %2$d%% off.',
-										nudge.addMore
-									),
-									nudge.addMore,
-									Math.round( nudge.discountPercent * 100 )
-								) }
-							</Text>
-						) : (
-							<Text variant="muted">
-								{ sprintf(
-									/* translators: %d: discount percentage */
-									__( 'You’ve unlocked the maximum %d%% discount.' ),
-									Math.round( currentDiscount * 100 )
-								) }
-							</Text>
-						) }
+						{ ! isReferralMode &&
+							( nudge ? (
+								<Text variant="muted">
+									{ sprintf(
+										/* translators: %1$d: number of sites to add, %2$d: discount percentage */
+										_n(
+											'Add %1$d more site to unlock %2$d%% off.',
+											'Add %1$d more sites to unlock %2$d%% off.',
+											nudge.addMore
+										),
+										nudge.addMore,
+										Math.round( nudge.discountPercent * 100 )
+									) }
+								</Text>
+							) : (
+								<Text variant="muted">
+									{ sprintf(
+										/* translators: %d: discount percentage */
+										__( 'You’ve unlocked the maximum %d%% discount.' ),
+										Math.round( currentDiscount * 100 )
+									) }
+								</Text>
+							) ) }
 					</VStack>
 					<CardDivider />
 					<VStack spacing={ 3 }>
