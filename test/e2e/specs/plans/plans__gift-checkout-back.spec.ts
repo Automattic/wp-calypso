@@ -9,7 +9,6 @@ async function getGiftCheckoutUrl( account: TestAccount ): Promise< string > {
 		( purchase ) =>
 			purchase.product_slug.includes( 'bundle' ) && ! purchase.product_slug.includes( 'trial' )
 	);
-	expect( plan, `No plan purchase found on ${ siteSlug }` ).toBeTruthy();
 	if ( ! plan ) {
 		throw new Error( `No plan purchase found on ${ siteSlug }` );
 	}
@@ -45,7 +44,7 @@ test.describe( 'Plans: Gift checkout Back navigation', { tag: [ tags.CALYPSO_REL
 			giftCheckoutUrl = await getGiftCheckoutUrl( accountDefaultUser );
 		} );
 
-		await test.step( 'When I open gift checkout from the site and click Back', async function () {
+		await test.step( 'When I open gift checkout from the site, click Back and empty the cart', async function () {
 			await accountDefaultUser.authenticate( page );
 			await page.goto( giftCheckoutUrl, { referer: siteUrl } );
 			await goBackFromCheckout( page );
@@ -71,7 +70,7 @@ test.describe( 'Plans: Gift checkout Back navigation', { tag: [ tags.CALYPSO_REL
 			giftCheckoutUrl = await getGiftCheckoutUrl( account );
 		} );
 
-		await test.step( 'When I open gift checkout from the site and click Back', async function () {
+		await test.step( 'When I open gift checkout from the site, click Back and empty the cart', async function () {
 			await page.goto( giftCheckoutUrl, { referer: siteUrl } );
 			await goBackFromCheckout( page );
 		} );
