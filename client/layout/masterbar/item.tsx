@@ -1,5 +1,4 @@
 import { Gridicon, Button } from '@automattic/components';
-import { ExternalLink } from '@wordpress/components';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment, forwardRef } from 'react';
@@ -22,7 +21,6 @@ interface MasterbarSubItemProps {
 	url?: string;
 	onClick?: () => void;
 	className?: string;
-	openInNewTab?: boolean;
 }
 
 type MasterbarItemOwnProps = {
@@ -140,12 +138,7 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 							'masterbar__item-subitems-item--odd': groupIndex % 2 === 1,
 						} ) }
 					>
-						{ item.url && item.openInNewTab && (
-							<ExternalLink href={ item.url } onClick={ item.onClick } rel="noopener">
-								{ item.label }
-							</ExternalLink>
-						) }
-						{ item.url && ! item.openInNewTab && (
+						{ item.url && (
 							<a
 								href={ item.url }
 								onClick={ item.onClick }

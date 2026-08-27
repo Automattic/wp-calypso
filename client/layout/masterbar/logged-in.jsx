@@ -316,13 +316,6 @@ class MasterbarLoggedIn extends Component {
 							url: dashboardLink( '/plugins/manage' ),
 							onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_plugins_clicked' ),
 						},
-						{
-							label: translate( 'Themes' ),
-							url: wpcomLink( '/themes' ),
-							openInNewTab: true,
-							className: 'masterbar__item-subitems-item-external',
-							onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_themes_clicked' ),
-						},
 					],
 					...( this.props.isSimpleSite
 						? []
