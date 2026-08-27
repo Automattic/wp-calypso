@@ -68,10 +68,16 @@ describe( 'createAccount', () => {
 	} );
 
 	it( 'resets Blackbox when account creation fails', async () => {
-		window.Blackbox = { reset: jest.fn() };
+		const reset = jest.fn();
+		window.Blackbox = {
+			configure: jest.fn(),
+			collect: jest.fn(),
+			getSessionId: jest.fn(),
+			reset,
+		};
 		interceptUsersNew( 500, { error: 'internal_server_error', message: 'fail' } );
 
 		await expect( createAccount( createAccountArgs ) ).rejects.toThrow();
-		expect( window.Blackbox.reset ).toHaveBeenCalledTimes( 1 );
+		expect( reset ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
