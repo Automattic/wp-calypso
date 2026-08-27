@@ -1,4 +1,5 @@
-import { isWpError } from '@automattic/api-core';
+import { fetchUser, isWpError } from '@automattic/api-core';
+import { useQuery } from '@tanstack/react-query';
 import { Button, ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useContext, useEffect } from 'react';
@@ -17,26 +18,86 @@ function ReauthRedirect() {
 	return null;
 }
 
-// `authorization_required` covers both a session that can no longer authenticate
-// and an account that is authenticated but not allowed to see something, and the
-// API gives us no way to tell them apart. So suggest the fix for the first rather
-// than diagnosing either, and offer support for when it does not help.
+// A refused request means either that the session can no longer authenticate or
+// that the account simply is not allowed to see this, and the error says the same
+// thing in both cases. The v1 endpoints report the code as `error` and the ones
+// registered through the WP REST infrastructure report it as `code`.
 function isAuthorizationError( error: Error ) {
-	return (
-		error.name === 'AuthorizationRequiredError' ||
-		( isWpError( error ) && error.error === 'authorization_required' )
-	);
+	if ( error.name === 'AuthorizationRequiredError' ) {
+		return true;
+	}
+
+	if ( ! isWpError( error ) ) {
+		return false;
+	}
+
+	const code = typeof error.error === 'string' ? error.error : error.code;
+	return code === 'authorization_required' || code === 'rest_forbidden';
+}
+
+/**
+ * Whether the session behind this screen still works.
+ *
+ * Asking for the current user is the only way to tell the two causes apart: it
+ * succeeds for an account that is merely missing a permission, and fails the same
+ * way as everything else once the session is gone.
+ */
+function useHasWorkingSession() {
+	const { data, isPending } = useQuery( {
+		queryKey: [ 'auth', 'session-probe' ],
+		queryFn: () =>
+			fetchUser().then(
+				() => true,
+				() => false
+			),
+		retry: false,
+		gcTime: 0,
+		meta: { persist: false },
+	} );
+
+	return { hasWorkingSession: data ?? false, isPending };
 }
 
 function RefusedRequestError() {
+	const { hasWorkingSession, isPending } = useHasWorkingSession();
+
+	// Better a moment of nothing than a moment of the wrong advice.
+	if ( isPending ) {
+		return null;
+	}
+
+	return hasWorkingSession ? <PermissionError /> : <SessionError />;
+}
+
+function PermissionError() {
+	return (
+		<PageLayout
+			header={ <PageHeader title={ __( 'You don’t have access to this' ) } /> }
+			notices={
+				<Notice
+					variant="error"
+					actions={
+						<ExternalLink href={ wpcomLink( '/help' ) }>{ __( 'Contact support' ) }</ExternalLink>
+					}
+				>
+					{ __( 'Your account doesn’t have permission to view this page.' ) }
+				</Notice>
+			}
+		></PageLayout>
+	);
+}
+
+function SessionError() {
 	// `useAuth` throws when there is no provider, and this component is the last
 	// thing standing between the user and a blank screen.
 	const auth = useContext( AuthContext );
 
 	// Counts the users we failed to send to log in and left to recover by hand,
-	// which is the half of DOTCOM-14911 nothing measures today.
+	// which is the half of DOTCOM-14911 nothing measures today. The probe has
+	// confirmed the session by this point, so this is not diluted by people who
+	// merely lack a permission.
 	useEffect( () => {
-		bumpStat( 'dashboard-error', 'refused-request' );
+		bumpStat( 'dashboard-error', 'dead-session' );
 	}, [] );
 
 	// Logging out loads a chunk and clears stored state, either of which can fail
