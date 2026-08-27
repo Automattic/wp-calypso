@@ -60,6 +60,7 @@ export type Block = {
 			comment?: number;
 			reply_comment?: number;
 			user?: number;
+			prompt?: number;
 		};
 		links?: {
 			site?: string;
