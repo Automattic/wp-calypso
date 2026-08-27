@@ -540,8 +540,9 @@ describe( 'Stepper error status', () => {
 			</Stepper.Root>
 		);
 		const label = screen.getByText( 'Step 1 of 1, error' );
-		const indicator = label.closest( '[data-indicator-variant]' );
-		expect( indicator?.querySelector( 'svg' ) ).not.toBeNull();
+		const icon = label.closest( '[data-indicator-variant]' )?.querySelector( 'svg' );
+		expect( icon ).toHaveAttribute( 'fill', 'currentColor' );
+		expect( icon ).toHaveAttribute( 'aria-hidden', 'true' );
 	} );
 } );
 
@@ -743,10 +744,11 @@ describe( 'Stepper indicatorVariant', () => {
 		expect( numericLabel ).toHaveAttribute( 'aria-hidden', 'true' );
 		// Steps with a status render an icon instead of the number.
 		expect( screen.queryByText( '2' ) ).not.toBeInTheDocument();
-		const completedIndicator = screen
+		const completedIcon = screen
 			.getByText( 'Step 2 of 2, completed' )
-			.closest( '[data-indicator-variant]' );
-		expect( completedIndicator?.querySelector( 'svg' ) ).not.toBeNull();
+			.closest( '[data-indicator-variant]' )
+			?.querySelector( 'svg' );
+		expect( completedIcon ).toHaveAttribute( 'fill', 'currentColor' );
 	} );
 } );
 

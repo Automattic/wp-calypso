@@ -37,7 +37,7 @@ export const StepperIndicator = forwardRef< HTMLSpanElement, StepperIndicatorPro
 		// completed/error; upcoming/current keep the numbered circle.
 		const indicator: ReactNode =
 			indicatorVariant === 'bullet' || status ? (
-				<Icon icon={ STATE_ICONS[ state ] } className={ styles.icon } />
+				<Icon icon={ STATE_ICONS[ state ] } className={ styles.icon } fill="currentColor" />
 			) : (
 				<span aria-hidden="true" className={ styles.number }>
 					{ stepNumber }
