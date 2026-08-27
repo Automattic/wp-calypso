@@ -18,6 +18,7 @@ function mockDomainQuery( domainName: string, overrides = {} ) {
 			expired: false,
 			points_to_wpcom: false,
 			ssl_status: 'newly_registered',
+			registration_date: new Date().toISOString(),
 			...overrides,
 		} );
 }

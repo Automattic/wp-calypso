@@ -1,5 +1,5 @@
-import { siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
-import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { domainQuery, siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
+import { useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -27,7 +27,11 @@ import {
 	SITE_CONTEXT_VIEW,
 	useBulkActionsProgressNotice,
 } from '../../domains/dataviews';
-import { hasCustomPrimaryDomain, isPendingPrimaryDomainCandidate } from '../../utils/domain';
+import {
+	hasCustomPrimaryDomain,
+	isPendingPrimaryDomain,
+	isPendingPrimaryDomainCandidate,
+} from '../../utils/domain';
 import { SitesNoticeArbiter } from '../notice-arbiter';
 import PrimaryDomainSelectorNotice from './primary-domain-selector-notice';
 import type { DomainSummary } from '@automattic/api-core';
@@ -49,9 +53,17 @@ function SiteDomains() {
 		},
 	} );
 
-	const pendingDomain = hasCustomPrimaryDomain( siteDomains )
+	// Whether the domain is still pending depends on fields the domains list
+	// doesn't carry, so resolve the candidate before deciding which notice to show.
+	const primaryDomainCandidate = hasCustomPrimaryDomain( siteDomains )
 		? undefined
 		: siteDomains.find( isPendingPrimaryDomainCandidate );
+	const { data: candidateDomain, isLoading: isCheckingCandidate } = useQuery( {
+		...domainQuery( primaryDomainCandidate?.domain ?? '' ),
+		enabled: !! primaryDomainCandidate,
+	} );
+	const pendingDomain =
+		candidateDomain && isPendingPrimaryDomain( candidateDomain ) ? candidateDomain : undefined;
 
 	const { data: redirect } = useSuspenseQuery( siteRedirectQuery( site.ID ) );
 	const hasRedirect = redirect && Object.keys( redirect ).length > 0;
@@ -101,7 +113,7 @@ function SiteDomains() {
 								onComplete={ () => queryClient.invalidateQueries( queries.domainsQuery() ) }
 							/>
 						) }
-						{ ! hasRedirect && ! pendingDomain && (
+						{ ! hasRedirect && ! pendingDomain && ! isCheckingCandidate && (
 							<PrimaryDomainSelectorNotice domains={ siteDomains } site={ site } user={ user } />
 						) }
 						{ hasRedirect && (

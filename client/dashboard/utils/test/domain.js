@@ -129,6 +129,7 @@ describe( 'utils', () => {
 			expired: false,
 			points_to_wpcom: false,
 			ssl_status: 'newly_registered',
+			registration_date: new Date().toISOString(),
 		};
 
 		test( 'returns true while the domain does not resolve to WordPress.com yet', () => {
@@ -157,6 +158,12 @@ describe( 'utils', () => {
 
 		test( 'returns false when domain is already primary', () => {
 			expect( isPendingPrimaryDomain( { ...baseDomain, primary_domain: true } ) ).toBe( false );
+		} );
+
+		test( 'returns false once the job has had time to give up', () => {
+			expect(
+				isPendingPrimaryDomain( { ...baseDomain, registration_date: '2023-07-10T00:00:00+00:00' } )
+			).toBe( false );
 		} );
 	} );
 

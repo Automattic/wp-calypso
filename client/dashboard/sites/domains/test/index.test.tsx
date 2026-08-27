@@ -90,14 +90,34 @@ const nonOwnerUser = {
 	meta: { data: { flags: { active_flags: [] } } },
 } as unknown as User;
 
-// A registration that WordPress.com is still setting up, added to a site that
-// already has a primary address.
-const newlyRegisteredDomain = {
+const nonPrimaryDomain = {
 	...domain,
 	domain: 'second-domain.com',
 	primary_domain: false,
 	can_set_as_primary: true,
 };
+
+// A site whose primary address is still its included one, so WordPress.com may
+// still set a registered domain as primary on its own.
+const siteAddressIsPrimary = [
+	nonPrimaryDomain,
+	{ ...defaultAddressDomain, primary_domain: true },
+];
+
+function mockDomainDetails( domainName: string, overrides = {} ) {
+	nock( 'https://public-api.wordpress.com' )
+		.persist()
+		.get( `/rest/v1.2/domain-details/${ domainName }` )
+		.query( true )
+		.reply( 200, {
+			...nonPrimaryDomain,
+			domain: domainName,
+			points_to_wpcom: false,
+			ssl_status: 'newly_registered',
+			registration_date: new Date().toISOString(),
+			...overrides,
+		} );
+}
 
 function mockApis( domains = [ domain, defaultAddressDomain ] ) {
 	nock( 'https://public-api.wordpress.com' )
@@ -157,16 +177,8 @@ describe( '<SiteDomains>', () => {
 
 	test( 'does not announce a new primary address when the site already has one', async () => {
 		nock.cleanAll();
-		mockApis( [ domain, newlyRegisteredDomain, defaultAddressDomain ] );
-		nock( 'https://public-api.wordpress.com' )
-			.persist()
-			.get( `/rest/v1.2/domain-details/${ newlyRegisteredDomain.domain }` )
-			.query( true )
-			.reply( 200, {
-				...newlyRegisteredDomain,
-				points_to_wpcom: false,
-				ssl_status: 'newly_registered',
-			} );
+		mockApis( [ domain, nonPrimaryDomain, defaultAddressDomain ] );
+		mockDomainDetails( nonPrimaryDomain.domain );
 
 		render( <SiteDomains />, { user: ownerUser } );
 
@@ -175,6 +187,31 @@ describe( '<SiteDomains>', () => {
 			await screen.findByRole( 'link', { name: 'Upgrade to an annual paid plan' } )
 		).toBeVisible();
 		expect( screen.queryByText( 'Setting up your custom domain' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not announce a primary address the job has given up on', async () => {
+		nock.cleanAll();
+		mockApis( siteAddressIsPrimary );
+		mockDomainDetails( nonPrimaryDomain.domain, {
+			registration_date: '2023-07-10T00:00:00+00:00',
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		expect(
+			await screen.findByRole( 'link', { name: 'Upgrade to an annual paid plan' } )
+		).toBeVisible();
+		expect( screen.queryByText( 'Setting up your custom domain' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'announces a primary address that is still being set up', async () => {
+		nock.cleanAll();
+		mockApis( siteAddressIsPrimary );
+		mockDomainDetails( nonPrimaryDomain.domain );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		expect( await screen.findByText( 'Setting up your custom domain' ) ).toBeVisible();
 	} );
 
 	test( 'does not open a modal without the deep link', async () => {

@@ -437,15 +437,21 @@ export function isPendingPrimaryDomainCandidate( domain: DomainSummary ): boolea
 	);
 }
 
+// The job retries for about 44 hours before it gives up, so a domain registered
+// longer ago than that is not waiting on it any more.
+const PENDING_PRIMARY_DOMAIN_WINDOW_IN_MINUTES = 2 * 24 * 60;
+
 /**
  * Returns true if a registration is still waiting to be set as the site's
- * primary address. The background job that does it waits for the domain to
- * resolve to WordPress.com with a valid certificate, so a domain that already
- * resolves is not waiting on anything.
+ * primary address. The background job that does it is queued when the domain is
+ * registered and waits for the domain to resolve to WordPress.com with a valid
+ * certificate, so a domain that already resolves, or that was registered too
+ * long ago for the job to still be running, is not waiting on anything.
  */
 export function isPendingPrimaryDomain( domain: Domain ): boolean {
 	return (
 		isPendingPrimaryDomainCandidate( domain ) &&
+		isRecentlyRegistered( domain.registration_date, PENDING_PRIMARY_DOMAIN_WINDOW_IN_MINUTES ) &&
 		( ! domain.points_to_wpcom ||
 			domain.ssl_status === 'pending' ||
 			domain.ssl_status === 'newly_registered' )
