@@ -72,7 +72,7 @@ img.payment-method-image {
 
 a.is-link.billing-purchases__site-name {
 	text-decoration: none;
-	color: #1e1e1e;
+	color: var( --dashboard__text-color );
 	font-weight: 500;
 }
 

@@ -115,7 +115,9 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 				<div>
 					{ createInterpolateElement(
 						// translators: The string contains the name of the site, and the URL of the site e.g. for Block Store (blockstore.com)
-						__( 'Site plan for <siteName /> (<viewSite />)' ),
+						purchase.is_plan
+							? __( 'Site plan for <siteName /> (<viewSite />)' )
+							: __( 'for <siteName /> (<viewSite />)' ),
 						{
 							siteName: (
 								<RouterLinkButton
