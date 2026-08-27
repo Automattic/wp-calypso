@@ -5,12 +5,15 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { purchaseSettingsRoute } from '../../../app/router/me';
+import { purchaseSettingsRoute, cancelPurchaseRoute } from '../../../app/router/me';
 import { Card, CardBody } from '../../../components/card';
 import InlineSupportLink from '../../../components/inline-support-link';
 import SegmentedBar, { type SegmentedBarSegment } from '../../../components/segmented-bar';
 import { Text } from '../../../components/text';
-import { shouldShowRemoveAction } from '../../domain-overview/actions.utils';
+import {
+	shouldShowRemoveAction,
+	shouldShowCancelAction,
+} from '../../domain-overview/actions.utils';
 import type { ReactNode } from 'react';
 
 interface InboundTransferStepProps {
@@ -84,6 +87,11 @@ export const InboundTransferStep = ( {
 							</InlineSupportLink>
 							{ purchase && shouldShowRemoveAction( domain, purchase ) && (
 								<Link to={ purchaseSettingsRoute.fullPath } params={ { purchaseId: purchase.ID } }>
+									{ __( 'Cancel transfer' ) }
+								</Link>
+							) }
+							{ purchase && shouldShowCancelAction( domain, purchase ) && (
+								<Link to={ cancelPurchaseRoute.fullPath } params={ { purchaseId: purchase.ID } }>
 									{ __( 'Cancel transfer' ) }
 								</Link>
 							) }
