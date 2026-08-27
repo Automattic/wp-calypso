@@ -141,7 +141,7 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 						} ) }
 					>
 						{ item.url && item.openInNewTab && (
-							<ExternalLink href={ item.url } onClick={ item.onClick }>
+							<ExternalLink href={ item.url } onClick={ item.onClick } rel="noopener">
 								{ item.label }
 							</ExternalLink>
 						) }

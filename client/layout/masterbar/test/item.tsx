@@ -21,7 +21,6 @@ describe( 'MasterbarItem sub-items', () => {
 		const link = screen.getByRole( 'link', { name: /Themes/ } );
 		expect( link ).toHaveAttribute( 'target', '_blank' );
 		expect( link ).toHaveAttribute( 'href', 'https://wordpress.com/themes' );
-		// ExternalLink hardens the rel against reverse-tabnabbing.
 		expect( link.getAttribute( 'rel' ) ).toContain( 'noopener' );
 	} );
 
