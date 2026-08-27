@@ -1,6 +1,6 @@
 import { INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from '@automattic/urls';
-import { Icon } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { Icon, __experimentalVStack as VStack } from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
 import { backup, envelope, globe, shield, wordpress } from '@wordpress/icons';
 import ConnectIcon from '../transfer-or-connect/icons/connect';
 import TransferIcon from '../transfer-or-connect/icons/transfer';
@@ -24,12 +24,15 @@ const transferSupported = {
 	},
 	get topText() {
 		return (
-			<>
+			<VStack as="span" spacing={ 2 }>
 				<span>
 					{ __( 'We become your provider and you can manage everything from one place.' ) }
 				</span>
-				<span>{ __( 'Takes 5–7 days.' ) }</span>
-			</>
+				<span>
+					{ /* translators: how long a domain transfer takes to complete */ }
+					{ __( 'Takes 5–7 days.' ) }
+				</span>
+			</VStack>
 		);
 	},
 	learnMoreLink: INCOMING_DOMAIN_TRANSFER,
@@ -53,20 +56,37 @@ const transferNotSupported = {
 	learnMoreLink: INCOMING_DOMAIN_TRANSFER,
 };
 
+// `losingRegistrar` comes from the inbound-transfer-status endpoint, which is allowed to fail
+// silently, so it is often unavailable — fall back to generic wording when it is.
+export function getConnectSupportedTopText( losingRegistrar ) {
+	return (
+		<VStack as="span" spacing={ 2 }>
+			<span>
+				{ losingRegistrar
+					? sprintf(
+							/* translators: %s - the domain registrar the user is currently with (ex.: GoDaddy, Namecheap) */
+							__( 'Your domain name stays with %s and will just point to your new site.' ),
+							losingRegistrar
+					  )
+					: __(
+							'Your domain name stays with your current registrar and will just point to your new site.'
+					  ) }
+			</span>
+			<span>
+				{ /* translators: how long connecting a domain takes to complete */ }
+				{ __( 'Takes a few hours.' ) }
+			</span>
+		</VStack>
+	);
+}
+
 const connectSupported = {
 	illustration: connectIllustration,
 	get titleText() {
 		return optionTitleText.connect;
 	},
 	get topText() {
-		return (
-			<>
-				<span>
-					{ __( 'Your domain name stays with GoDaddy and will just point to your new site.' ) }
-				</span>
-				<span>{ __( 'Takes a few hours.' ) }</span>
-			</>
-		);
+		return getConnectSupportedTopText();
 	},
 	learnMoreLink: MAP_EXISTING_DOMAIN,
 	get benefits() {
