@@ -30,14 +30,20 @@ jest.mock( '../hosting-activation-button', () => ( { text }: { text: string } ) 
 
 const site = { ID: 1, slug: 'example.wordpress.com' } as Site;
 
-const renderCallout = () =>
-	render(
-		<QueryClientProvider
-			client={ new QueryClient( { defaultOptions: { queries: { retry: false } } } ) }
-		>
-			<HostingActivationCallout site={ site } path="/hosting-features/:site" />
-		</QueryClientProvider>
+const renderCallout = ( siteId = 1 ) => {
+	const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	return render(
+		<QueryClientProvider client={ client }>
+			<HostingActivationCallout
+				site={ { ...site, ID: siteId } as Site }
+				path="/hosting-features/:site"
+			/>
+		</QueryClientProvider>,
+		{
+			wrapper: undefined,
+		}
 	);
+};
 
 const elapse = async ( ms: number ) => {
 	for ( let elapsed = 0; elapsed < ms; elapsed += 1000 ) {
@@ -86,6 +92,27 @@ describe( 'HostingActivationCallout', () => {
 
 		await elapse( 60_000 );
 		expect( mockSite.mock.calls.length ).toBe( settled );
+	} );
+
+	// SPA navigation keeps this component mounted, so a spent clock must not follow the user.
+	it( 'starts a newly selected site on its own clock', async () => {
+		mockTransfer.mockResolvedValue( { status: 'completed' } );
+		const { rerender } = renderCallout( 1 );
+		await elapse( 125_000 );
+		expect( screen.getByText( 'Activate' ) ).toBeVisible();
+
+		rerender(
+			<QueryClientProvider
+				client={ new QueryClient( { defaultOptions: { queries: { retry: false } } } ) }
+			>
+				<HostingActivationCallout
+					site={ { ...site, ID: 2 } as Site }
+					path="/hosting-features/:site"
+				/>
+			</QueryClientProvider>
+		);
+		await elapse( 3000 );
+		expect( screen.getByText( 'Activating…' ) ).toBeVisible();
 	} );
 
 	it( 'keeps the label honest for a transfer that failed outright', async () => {

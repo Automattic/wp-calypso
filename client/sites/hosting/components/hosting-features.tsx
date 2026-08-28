@@ -66,11 +66,21 @@ const HostingFeatures = ( { path, showAsTools }: HostingFeaturesProps ) => {
 	const { data: siteTransferData } = useSiteTransferStatusQuery( siteId || undefined );
 
 	const isTransferCompleted = siteTransferData?.status === transferStates.COMPLETED;
-	const [ activationStalled, setActivationStalled ] = useState( false );
 
-	const completedSinceRef = useRef< number | null >( null );
-	if ( isTransferCompleted && completedSinceRef.current === null ) {
-		completedSinceRef.current = Date.now();
+	// Keyed by site: the page stays mounted across a site switch, so the next site must inherit
+	// neither the previous one's clock nor its verdict.
+	const [ stalledSiteId, setStalledSiteId ] = useState< number | null >( null );
+	const activationStalled = stalledSiteId !== null && stalledSiteId === siteId;
+
+	const waitRef = useRef< { siteId: number | null; since: number | null } >( {
+		siteId,
+		since: null,
+	} );
+	if ( waitRef.current.siteId !== siteId ) {
+		waitRef.current = { siteId, since: null };
+	}
+	if ( isTransferCompleted && waitRef.current.since === null ) {
+		waitRef.current.since = Date.now();
 	}
 
 	// The redirect below reads Redux, which nothing here refreshes, so a completed transfer would
@@ -85,8 +95,8 @@ const HostingFeatures = ( { path, showAsTools }: HostingFeaturesProps ) => {
 
 	useInterval(
 		() => {
-			if ( Date.now() - ( completedSinceRef.current ?? Date.now() ) >= ACTIVATION_DEADLINE_MS ) {
-				setActivationStalled( true );
+			if ( Date.now() - ( waitRef.current.since ?? Date.now() ) >= ACTIVATION_DEADLINE_MS ) {
+				setStalledSiteId( siteId );
 				return;
 			}
 			dispatch( requestSite( siteId ) );

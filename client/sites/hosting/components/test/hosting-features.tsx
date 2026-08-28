@@ -7,6 +7,7 @@ import HostingFeatures from '../hosting-features';
 const mockDispatch = jest.fn();
 let mockTransferStatus = 'completed';
 let mockIsSiteAtomic = false;
+let mockSiteId = 1;
 
 jest.mock( 'calypso/landing/stepper/hooks/use-site-transfer-status-query', () => ( {
 	useSiteTransferStatusQuery: () => ( {
@@ -25,7 +26,7 @@ jest.mock( 'calypso/state/sites/selectors', () => ( {
 	getSiteSlug: () => 'example.wordpress.com',
 } ) );
 jest.mock( 'calypso/state/ui/selectors', () => ( {
-	getSelectedSiteId: () => 1,
+	getSelectedSiteId: () => mockSiteId,
 	getSelectedSite: () => ( { plan: { expired: false } } ),
 } ) );
 jest.mock( 'calypso/state/sites/actions', () => ( {
@@ -53,6 +54,7 @@ describe( 'HostingFeatures', () => {
 		jest.useFakeTimers();
 		mockTransferStatus = 'completed';
 		mockIsSiteAtomic = false;
+		mockSiteId = 1;
 	} );
 	afterEach( () => jest.useRealTimers() );
 
@@ -86,6 +88,21 @@ describe( 'HostingFeatures', () => {
 		await elapse( 125_000 );
 		expect( screen.getByText( 'Activation is taking longer than expected' ) ).toBeVisible();
 		expect( screen.queryByText( 'Activating hosting features' ) ).not.toBeInTheDocument();
+	} );
+
+	// The page stays mounted across a site switch, so a spent clock must not follow the user.
+	it( 'starts a newly selected site on its own clock', async () => {
+		const { rerender } = render( <HostingFeatures /> );
+		await elapse( 125_000 );
+		expect( screen.getByText( 'Activation is taking longer than expected' ) ).toBeVisible();
+
+		mockSiteId = 2;
+		rerender( <HostingFeatures /> );
+		await elapse( 1000 );
+		expect( screen.getByText( 'Activating hosting features' ) ).toBeVisible();
+		expect(
+			screen.queryByText( 'Activation is taking longer than expected' )
+		).not.toBeInTheDocument();
 	} );
 
 	it( 'stops refreshing the site once the wait has run out', async () => {

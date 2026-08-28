@@ -30,7 +30,11 @@ export function HostingActivationCallout( {
 	redirectUrl?: string;
 } ) {
 	const dispatch = useDispatch();
-	const [ activationStalled, setActivationStalled ] = useState( false );
+
+	// Keyed by site: SPA navigation keeps this component mounted, so the next site must inherit
+	// neither the previous one's clock nor its verdict.
+	const [ stalledSiteId, setStalledSiteId ] = useState< number | null >( null );
+	const activationStalled = stalledSiteId === site.ID;
 
 	const { data: latestAtomicTransfer } = useQuery( {
 		...siteLatestAtomicTransferQuery( site.ID ),
@@ -42,9 +46,15 @@ export function HostingActivationCallout( {
 
 	// The transfer says `completed` before the site answers as Atomic, so this is the wait that
 	// needs the deadline — without one it polls for the life of the tab.
-	const completedSinceRef = useRef< number | null >( null );
-	if ( isTransferCompleted && completedSinceRef.current === null ) {
-		completedSinceRef.current = Date.now();
+	const waitRef = useRef< { siteId: number; since: number | null } >( {
+		siteId: site.ID,
+		since: null,
+	} );
+	if ( waitRef.current.siteId !== site.ID ) {
+		waitRef.current = { siteId: site.ID, since: null };
+	}
+	if ( isTransferCompleted && waitRef.current.since === null ) {
+		waitRef.current.since = Date.now();
 	}
 
 	const { data: atomicSite } = useQuery( {
@@ -64,8 +74,8 @@ export function HostingActivationCallout( {
 
 	useInterval(
 		() => {
-			if ( Date.now() - ( completedSinceRef.current ?? Date.now() ) >= ACTIVATION_DEADLINE_MS ) {
-				setActivationStalled( true );
+			if ( Date.now() - ( waitRef.current.since ?? Date.now() ) >= ACTIVATION_DEADLINE_MS ) {
+				setStalledSiteId( site.ID );
 			}
 		},
 		isTransferCompleted && ! isActivated && ! activationStalled ? EVERY_SECOND : null
