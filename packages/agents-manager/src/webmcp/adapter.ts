@@ -1,3 +1,4 @@
+import { parse } from '@wordpress/blocks';
 import { normalizeAbilityName } from '../abilities/ability-name';
 import {
 	APPLY_BLOCK_EDITS_ABILITY_NAME,
@@ -10,6 +11,7 @@ import {
 import type { Ability } from '../abilities/types';
 import type { ToolProvider } from '../extension-types';
 import type { WebMcpAdapter, WebMcpModelContext, WebMcpTool } from './types';
+import type { Block } from '@wordpress/blocks';
 
 export { createWebMcpToolProvider } from './server-ability-provider';
 
@@ -116,13 +118,37 @@ function prepareApplyBlockEditsInput(
 	input: Record< string, unknown >,
 	context: ExecutionContext
 ): Record< string, unknown > {
+	const toBlockData = ( block: Block ): Record< string, unknown > => ( {
+		name: block.name,
+		attributes: block.attributes,
+		...( block.innerBlocks.length ? { innerBlocks: block.innerBlocks.map( toBlockData ) } : {} ),
+	} );
+	const inserts = Array.isArray( input.inserts )
+		? input.inserts.flatMap( ( insert ) => {
+				if ( ! isRecord( insert ) || typeof insert.blockMarkup !== 'string' ) {
+					return [ insert ];
+				}
+
+				const blocks = parse( insert.blockMarkup );
+				if ( blocks.length === 0 ) {
+					throw new Error( 'The supplied blockMarkup did not contain any Gutenberg blocks.' );
+				}
+
+				const { blockMarkup: _blockMarkup, block: _block, ...placement } = insert;
+				return blocks.map( ( block, offset ) => ( {
+					...placement,
+					...( typeof placement.index === 'number' ? { index: placement.index + offset } : {} ),
+					block: toBlockData( block ),
+				} ) );
+		  } )
+		: undefined;
 	const reverseMap = Object.fromEntries(
 		Array.from( context.knownBlockClientIds, ( clientId ) => [ clientId, clientId ] )
 	);
 
 	return {
 		...( Array.isArray( input.updates ) ? { updates: input.updates } : {} ),
-		...( Array.isArray( input.inserts ) ? { inserts: input.inserts } : {} ),
+		...( inserts ? { inserts } : {} ),
 		...( Array.isArray( input.deletes ) ? { deletes: input.deletes } : {} ),
 		...( typeof input.summary === 'string' ? { summary: input.summary } : {} ),
 		reverseMap,

@@ -1,8 +1,14 @@
+import * as blocks from '@wordpress/blocks';
 import { createWebMcpAdapter, normalizeInputSchema, shouldExposeWebMcpAbility } from '../adapter';
 import { WEBMCP_SERVER_ABILITY_NAMES } from '../contracts';
 import type { Ability } from '../../abilities/types';
 import type { ToolProvider } from '../../extension-types';
 import type { WebMcpModelContext, WebMcpTool } from '../types';
+
+jest.mock( '@wordpress/blocks', () => ( {
+	...jest.requireActual( '@wordpress/blocks' ),
+	parse: jest.fn(),
+} ) );
 
 const createAbility = ( overrides: Partial< Ability > = {} ): Ability => ( {
 	name: 'big-sky/apply-block-edits',
@@ -88,6 +94,10 @@ function createHarness( initialAbilities: Ability[] = [ createAbility() ] ) {
 }
 
 describe( 'WebMCP adapter', () => {
+	beforeEach( () => {
+		jest.mocked( blocks.parse ).mockReset().mockReturnValue( [] );
+	} );
+
 	it( 'normalizes missing and malformed input schemas', () => {
 		expect( normalizeInputSchema( undefined ) ).toEqual( { type: 'object', properties: {} } );
 		expect( normalizeInputSchema( 'invalid' ) ).toEqual( { type: 'object', properties: {} } );
@@ -301,6 +311,79 @@ describe( 'WebMCP adapter', () => {
 				suppressAssistantMessage: true,
 			}
 		);
+	} );
+
+	it( 'turns pattern markup into ordered block insertions', async () => {
+		jest.mocked( blocks.parse ).mockReturnValue( [
+			{
+				clientId: 'parsed-heading',
+				name: 'core/heading',
+				isValid: true,
+				attributes: { content: 'Pattern heading' },
+				innerBlocks: [],
+			},
+			{
+				clientId: 'parsed-paragraph',
+				name: 'core/paragraph',
+				isValid: true,
+				attributes: { content: 'Pattern copy' },
+				innerBlocks: [],
+			},
+		] );
+		const harness = createHarness();
+		await harness.adapter.sync();
+
+		await harness.tools.get( 'big_sky__apply_block_edits' )?.execute( {
+			inserts: [
+				{
+					parentClientId: 'group-1',
+					index: 2,
+					blockMarkup:
+						'<!-- wp:heading --><h2 class="wp-block-heading">Pattern heading</h2><!-- /wp:heading --><!-- wp:paragraph --><p>Pattern copy</p><!-- /wp:paragraph -->',
+				},
+			],
+			summary: 'Inserted a pattern.',
+		} );
+
+		expect( harness.toolProvider.executeAbility ).toHaveBeenCalledWith(
+			'big-sky/apply-block-edits',
+			{
+				inserts: [
+					{
+						parentClientId: 'group-1',
+						index: 2,
+						block: {
+							name: 'core/heading',
+							attributes: { content: 'Pattern heading' },
+						},
+					},
+					{
+						parentClientId: 'group-1',
+						index: 3,
+						block: {
+							name: 'core/paragraph',
+							attributes: { content: 'Pattern copy' },
+						},
+					},
+				],
+				summary: 'Inserted a pattern.',
+				reverseMap: {},
+				suppressAssistantMessage: true,
+			}
+		);
+		expect( blocks.parse ).toHaveBeenCalledWith( expect.stringContaining( 'Pattern heading' ) );
+	} );
+
+	it( 'rejects empty pattern markup before dispatching the edit', async () => {
+		const harness = createHarness();
+		await harness.adapter.sync();
+
+		await expect(
+			harness.tools.get( 'big_sky__apply_block_edits' )?.execute( {
+				inserts: [ { blockMarkup: '' } ],
+			} )
+		).rejects.toThrow( 'did not contain any Gutenberg blocks' );
+		expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
 	} );
 
 	it( 'returns structured provider results without double encoding', async () => {

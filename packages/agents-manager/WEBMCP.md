@@ -5,8 +5,9 @@ WebMCP API. The browser agent supplies the model and all reasoning. This adapter
 Agenttic agent, open Agents Manager chat, or call the WordPress.com AI orchestrator.
 
 This is a staff-testing proof of concept, not a production-supported integration. It is disabled by
-default. Enable it on a supported post, page, or site editor URL with `?webmcp=1` in a browser that
-implements `document.modelContext.registerTool` (or the older `navigator.modelContext` location).
+default. It is enabled only when the Agents Manager inline data reports `isDevMode: true`, on a
+supported post, page, or site editor URL in a browser that implements
+`document.modelContext.registerTool` (or the older `navigator.modelContext` location).
 
 ## Execution and exposure
 
@@ -27,8 +28,9 @@ The allowlist contains:
 - `big-sky/apply-block-edits`: a client-registered ability that deterministically changes the
   current block-editor canvas. It does not save or publish the edit, so the result remains visible
   and reviewable. Its WebMCP contract supplies item-level schemas for updates, insertions, and
-  deletions, strips internal-only arguments, and injects an identity mapping for IDs from the most
-  recent block-tree read. On current trunk it is owned by the Big Sky fallback provider; the
+  deletions, accepts serialized Gutenberg pattern markup as an insertion, strips internal-only
+  arguments, and injects an identity mapping for IDs from the most recent block-tree read. On
+  current trunk it is owned by the Big Sky fallback provider; the
   merged-provider seam continues to work when ownership migrates to Agents Manager.
 
 - `big-sky/show-template`: an Agents Manager-owned, client-only ability that turns on the editor's
@@ -38,7 +40,8 @@ The allowlist contains:
   to `agents_manager__get_block_tree`.
 
 - `wpcom/get-block-schemas`, `wpcom/get-content-guidelines`, `wpcom/get-posts`,
-  `wpcom/get-site-stats`, and `core/get-site-info`: read-only server abilities registered by
+  `wpcom/get-site-stats`, `wpcom/patterns-list`, `wpcom/patterns-get`, and `core/get-site-info`:
+  read-only server abilities registered by
   Gutenberg from the current site's Abilities REST API. Their existing input schemas, permission
   checks, and authenticated site-specific execution path are preserved. The adapter also includes
   each ability's server-provided instructions in the WebMCP description when present.
@@ -55,33 +58,38 @@ neither allowlist grants eligibility to a lookalike from the other provenance.
    account in that browser profile.
 2. Sandbox `widgets.wp.com` to wpdev and run `WPCOM_SANDBOX=wpdev yarn dev --sync` from
    `apps/agents-manager`.
-3. Open a post, page, or site editor with `?webmcp=1` using GPT-5.6 Sol or Terra.
-4. Ask Codex to inspect the current page's Site tools. Confirm it discovers all eight tools:
+3. Open a post, page, or site editor where the inline Agents Manager data has `isDevMode: true`
+   using GPT-5.6 Sol or Terra.
+4. Ask Codex to inspect the current page's Site tools. Confirm it discovers all ten tools:
    `agents_manager__get_block_tree`, `big_sky__show_template`, and
    `big_sky__apply_block_edits`, plus `wpcom__get_block_schemas`,
    `wpcom__get_content_guidelines`, `wpcom__get_posts`, `wpcom__get_site_stats`, and
-   `core__get_site_info`. Do not use DevTools or call `document.modelContext` directly for this
-   path.
+   `wpcom__patterns_list`, `wpcom__patterns_get`, and `core__get_site_info`. Do not use DevTools or
+   call `document.modelContext` directly for this path.
 5. Call `agents_manager__get_block_tree`. If a requested template part is absent, call
    `big_sky__show_template`, then read the tree again.
 6. Call `big_sky__apply_block_edits` with a client ID from the latest tree, or insert a small test
    block on an empty page. Read the tree one final time and confirm the expected block and
    attributes are present.
-7. Do not publish the page. Discard the test changes or remove any auto-draft the editor created.
+7. Call `wpcom__patterns_list`, choose a pattern, and fetch it with `wpcom__patterns_get`. Pass its
+   `content` to `big_sky__apply_block_edits` as `inserts[0].blockMarkup`, then confirm the pattern's
+   blocks appear on the canvas in order.
+8. Do not publish the page. Discard the test changes or remove any auto-draft the editor created.
 
 ### Direct browser API fallback
 
-1. Open a post, page, or site editor with `?webmcp=1` and the browser's WebMCP testing feature on.
+1. Open a post, page, or site editor with `isDevMode: true` and the browser's WebMCP testing feature
+   on.
 2. Without opening Agents Manager chat, enumerate the page's tools through
    `document.modelContext.getTools()`.
-3. Confirm the same eight tools are present and that the five server tools expose input schemas.
+3. Confirm the same ten tools are present and that the seven server tools expose input schemas.
 4. Call `agents_manager__get_block_tree`, choose a returned client ID, then call
    `big_sky__apply_block_edits` with that ID and a small reversible edit. Confirm the canvas changes
    without publishing the page.
 5. Confirm the Network panel shows no Agenttic/orchestrator/model request.
 6. Navigate to another editor/site and confirm the tool now targets only the current canvas.
-7. Remove `webmcp=1` and reload; confirm the tool is absent.
-8. Use `?webmcp=1&am_abilities=0` to exercise the external-provider ownership path during migration.
+7. Force `isDevMode: false` in the inline data and reload; confirm the tools are absent.
+8. Use `?am_abilities=0` to exercise the external-provider ownership path during migration.
 
 The adapter reconciles the provider every two seconds only while the experiment is eligible. This
 covers abilities registered by later React effects. Changing scope or unmounting Agents Manager

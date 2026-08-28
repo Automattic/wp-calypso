@@ -8,6 +8,8 @@ export const WEBMCP_SERVER_ABILITY_NAMES = [
 	'wpcom/get-content-guidelines',
 	'wpcom/get-posts',
 	'wpcom/get-site-stats',
+	'wpcom/patterns-list',
+	'wpcom/patterns-get',
 	'core/get-site-info',
 ] as const;
 
@@ -59,7 +61,8 @@ export const APPLY_BLOCK_EDITS_WEBMCP_INPUT_SCHEMA: Record< string, unknown > = 
 		},
 		inserts: {
 			type: 'array',
-			description: 'New blocks to insert.',
+			description:
+				'New blocks to insert. Use blockMarkup with content returned by wpcom__patterns_get to insert a pattern.',
 			items: {
 				type: 'object',
 				properties: {
@@ -74,8 +77,13 @@ export const APPLY_BLOCK_EDITS_WEBMCP_INPUT_SCHEMA: Record< string, unknown > = 
 						description: 'Zero-based insertion position.',
 					},
 					block: { $ref: '#/$defs/blockData' },
+					blockMarkup: {
+						type: 'string',
+						description:
+							'Serialized Gutenberg block markup returned in the content field by wpcom__patterns_get. All top-level blocks are inserted in order.',
+					},
 				},
-				required: [ 'block' ],
+				oneOf: [ { required: [ 'block' ] }, { required: [ 'blockMarkup' ] } ],
 				additionalProperties: false,
 			},
 		},
@@ -103,7 +111,7 @@ export function getWebMcpInputSchema( ability: Ability ): Record< string, unknow
 
 export function getWebMcpDescription( ability: Ability ): string {
 	if ( ability.name === APPLY_BLOCK_EDITS_ABILITY_NAME ) {
-		return 'Applies deterministic edits to the current block-editor canvas. Call agents_manager__get_block_tree immediately before every edit and use the returned clientId values unchanged. The change remains unsaved and reviewable in the editor.';
+		return 'Applies deterministic edits to the current block-editor canvas. Call agents_manager__get_block_tree immediately before every edit and use the returned clientId values unchanged. To insert a block pattern, call wpcom__patterns_list, fetch one with wpcom__patterns_get, then pass its content as an insert blockMarkup value. The change remains unsaved and reviewable in the editor.';
 	}
 
 	if ( ability.name === SHOW_TEMPLATE_ABILITY_NAME ) {
