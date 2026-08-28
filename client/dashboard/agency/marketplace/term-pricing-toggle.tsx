@@ -29,10 +29,11 @@ export default function TermPricingToggle() {
 			<Text variant={ termPricing === 'monthly' ? undefined : 'muted' }>{ __( 'Monthly' ) }</Text>
 			<ToggleControl
 				__nextHasNoMarginBottom
+				aria-label={ __( 'Yearly billing' ) }
 				checked={ termPricing === 'yearly' }
-				label={ __( 'Yearly' ) }
 				onChange={ handleToggle }
 			/>
+			<Text variant={ termPricing === 'yearly' ? undefined : 'muted' }>{ __( 'Yearly' ) }</Text>
 		</HStack>
 	);
 }
