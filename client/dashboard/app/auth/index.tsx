@@ -1,4 +1,4 @@
-import { fetchUser, isWpError, User } from '@automattic/api-core';
+import { classifyAuthError, fetchUser, User } from '@automattic/api-core';
 import { clearQueryClient, disablePersistQueryClient } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { setUser } from '@automattic/calypso-sentry';
@@ -16,7 +16,6 @@ import { wpcomLink } from '../../utils/link';
 import { bumpStat } from '../analytics';
 import { useAppContext } from '../context';
 import { OAUTH_CALLBACK_PATH } from './oauth-callback';
-import type { WPError } from '@automattic/api-core';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
 
@@ -96,11 +95,11 @@ export const sessionStateQuery = () => ( {
 	queryFn: (): Promise< SessionState > =>
 		fetchUser().then(
 			() => 'alive' as const,
+			// `/me` has no per-resource permission dimension, so any auth failure
+			// against it means the session itself is gone, not that this account
+			// may not look.
 			( error: unknown ) =>
-				isWpError( error ) &&
-				( error.statusCode === 401 || error.error === 'authorization_required' )
-					? ( 'dead' as const )
-					: ( 'unknown' as const )
+				classifyAuthError( error ) !== null ? ( 'dead' as const ) : ( 'unknown' as const )
 		),
 	retry: false,
 	// One answer serves the whole page: a dead session fails every request alike.
@@ -172,10 +171,7 @@ function getAuthErrorReason( error: unknown ): string {
 	if ( error instanceof Error && error.message === BOOTSTRAP_ERROR_MESSAGE ) {
 		return 'bootstrap';
 	}
-	if (
-		isWpError( error ) &&
-		( error.error === 'authorization_required' || error.statusCode === 401 )
-	) {
+	if ( classifyAuthError( error ) !== null ) {
 		return 'unauthorized';
 	}
 	return 'error';
@@ -259,10 +255,6 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 	// Subscribe to network errors and when errors occur due to being logged
 	// out, redirect the user to the log in screen.
 	useEffect( () => {
-		const isAuthError = ( { statusCode, error = '' }: WPError ) => {
-			return statusCode === 401 && [ 'authorization_required', 'rest_forbidden' ].includes( error );
-		};
-
 		const handleEvent = ( event: MutationCacheNotifyEvent | QueryCacheNotifyEvent ) => {
 			// Errors fetching the user object itself are handled (and classified) below.
 			if ( 'query' in event && event.query.queryHash === hashKey( AUTH_QUERY_KEY ) ) {
@@ -272,8 +264,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 			if (
 				event.type === 'updated' &&
 				event.action.type === 'error' &&
-				isWpError( event.action.error ) &&
-				isAuthError( event.action.error )
+				classifyAuthError( event.action.error ) === 'expired'
 			) {
 				handleAuthError( 'expired' );
 			}

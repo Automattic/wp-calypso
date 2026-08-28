@@ -1,4 +1,4 @@
-import { isWpError } from '@automattic/api-core';
+import { classifyAuthError, isWpError } from '@automattic/api-core';
 import { Button, ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useContext, useEffect } from 'react';
@@ -15,21 +15,6 @@ function ReauthRedirect() {
 	}, [] );
 
 	return null;
-}
-
-// `authorization_required` covers both a dead session and a plain permission
-// error. v1 endpoints report the code as `error`, WP REST ones as `code`.
-function isAuthorizationError( error: Error ) {
-	if ( error.name === 'AuthorizationRequiredError' ) {
-		return true;
-	}
-
-	if ( ! isWpError( error ) ) {
-		return false;
-	}
-
-	const code = typeof error.error === 'string' ? error.error : error.code;
-	return code === 'authorization_required' || code === 'rest_forbidden';
 }
 
 function RefusedRequestError() {
@@ -146,7 +131,7 @@ function UnknownError( { error }: { error: Error } ) {
 		return <ReauthRedirect />;
 	}
 
-	if ( isAuthorizationError( error ) ) {
+	if ( classifyAuthError( error ) !== null ) {
 		return <RefusedRequestError />;
 	}
 

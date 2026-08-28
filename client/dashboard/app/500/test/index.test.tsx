@@ -41,6 +41,11 @@ function forbiddenError() {
 	);
 }
 
+/** The same refusal from a WP REST endpoint, which reports the code in `code`. */
+function restForbiddenError() {
+	return wpError( { code: 'rest_forbidden' }, 'Sorry, you are not allowed to do that.' );
+}
+
 function mockDeadSession() {
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/me' )
@@ -121,6 +126,16 @@ describe( 'UnknownError', () => {
 
 			await screen.findByRole( 'button', { name: /log out/i } );
 			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-error', 'dead-session' );
+		} );
+	} );
+
+	describe( 'when a WP REST endpoint refuses the request', () => {
+		beforeEach( mockWorkingSession );
+
+		it( 'is recognised as an authorization problem, not an unknown failure', async () => {
+			renderWithLogout( restForbiddenError(), jest.fn() );
+
+			expect( await screen.findByText( /doesn’t have permission/i ) ).toBeVisible();
 		} );
 	} );
 

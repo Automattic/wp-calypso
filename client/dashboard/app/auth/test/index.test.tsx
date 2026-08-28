@@ -19,7 +19,7 @@ const mockedBumpStat = jest.mocked( bumpStat );
 
 const testUser = { ID: 1, username: 'testuser', language: 'en' } as User;
 
-function wpError( fields: { status: number; statusCode: number; error?: string } ) {
+function wpError( fields: { status: number; statusCode: number; error?: string; code?: string } ) {
 	return Object.assign( new Error( 'boom' ), fields );
 }
 
@@ -241,5 +241,56 @@ describe( 'useSessionStateQuery', () => {
 			waitFor( () => expect( nock.isDone() ).toBe( true ), { timeout: 250 } )
 		).rejects.toThrow();
 		expect( result.current.data ).toBe( 'alive' );
+	} );
+} );
+
+describe( '<AuthProvider> reaction to a failing request elsewhere in the app', () => {
+	beforeEach( () => {
+		Object.defineProperty( window, 'location', {
+			writable: true,
+			value: { href: 'https://example.com/sites', pathname: '/sites', search: '' },
+		} );
+
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me' )
+			.query( true )
+			.reply( 200, testUser );
+	} );
+
+	async function failOneRequest( error: Error ) {
+		const { queryClient } = renderAuth();
+		expect( await screen.findByText( 'signed in' ) ).toBeVisible();
+
+		await queryClient
+			.fetchQuery( {
+				queryKey: [ 'somewhere-else' ],
+				queryFn: () => Promise.reject( error ),
+				retry: false,
+			} )
+			.catch( () => {} );
+
+		return queryClient;
+	}
+
+	test( 'bounces when a WP REST endpoint reports the request was never authenticated', async () => {
+		await failOneRequest( wpError( { status: 401, statusCode: 401, code: 'rest_forbidden' } ) );
+
+		await waitFor( () => expect( window.location.href ).toContain( '/log-in?redirect_to=' ) );
+	} );
+
+	test( 'leaves a refused-but-authenticated request to the error screen', async () => {
+		await failOneRequest(
+			wpError( { status: 403, statusCode: 403, error: 'authorization_required' } )
+		);
+
+		await waitFor( () => expect( screen.getByText( 'signed in' ) ).toBeVisible() );
+		expect( window.location.href ).not.toContain( '/log-in' );
+	} );
+
+	test( 'ignores a failure that is not about authorization', async () => {
+		await failOneRequest( wpError( { status: 401, statusCode: 401, error: 'server_error' } ) );
+
+		await waitFor( () => expect( screen.getByText( 'signed in' ) ).toBeVisible() );
+		expect( window.location.href ).not.toContain( '/log-in' );
 	} );
 } );
