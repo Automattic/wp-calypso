@@ -459,6 +459,15 @@
 		background-color: var( --wp-components-color-gray-200 );
 		color: var( --dashboard__text-color );
 	}
+
+	.site-launch-pre-launch-modal__thumbnail,
+	.site-launch-pre-launch-modal__thumbnail::before {
+		background-color: var( --wp-components-color-gray-300 );
+	}
+
+	.site-launch-pre-launch-modal__meta svg {
+		fill: var( --dashboard__text-color );
+	}
 }
 
 // :root variables overridden for dark theme
