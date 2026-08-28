@@ -61,17 +61,12 @@ function PermissionError() {
 }
 
 function SessionError() {
-	// `useAuth` would throw without a provider, and this is the last screen before
-	// a blank page.
 	const auth = useContext( AuthContext );
 
-	// Counts users left to recover by hand (DOTCOM-14911).
 	useEffect( () => {
 		bumpStat( 'dashboard-error', 'dead-session' );
 	}, [] );
 
-	// Logging out loads a chunk and clears stored state, either of which can fail
-	// in the state that got the user here.
 	const handleLogout = async () => {
 		try {
 			await auth?.logout();
