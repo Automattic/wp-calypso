@@ -136,6 +136,57 @@ function reject(
 }
 
 /**
+ * Whether the post holds nothing the writer would mind losing.
+ *
+ * `isEditedPostEmpty()` is stricter than what the writer sees: it allows zero
+ * blocks or one empty default block, so a post showing a blank canvas but
+ * carrying two empty paragraphs reads as non-empty. Pressing Enter once on an
+ * empty post is enough to reach that, and the draft was then refused with "the
+ * post already has content" against a visibly blank screen.
+ *
+ * So fall back to the blocks: a post whose every block is an empty paragraph is
+ * empty as far as the writer is concerned. Any real text, or any block that is
+ * not a paragraph, still counts as content and stays protected.
+ *
+ * @param editor - The `core/editor` store.
+ * @returns Whether a draft may be written into the post.
+ */
+function isPostEffectivelyEmpty( editor: any ): boolean {
+	if ( selectSafely< boolean >( editor, 'isEditedPostEmpty' ) === true ) {
+		return true;
+	}
+
+	const blockEditor = getWpDataStore( 'select', 'core/block-editor' );
+	const blocks = selectSafely< unknown[] >( blockEditor, 'getBlocks' );
+
+	// An unreadable block list counts as content: refusing costs the user a
+	// retry, overwriting costs them their words.
+	if ( ! Array.isArray( blocks ) || blocks.length === 0 ) {
+		return false;
+	}
+
+	return blocks.every( ( block ) => {
+		const candidate = block as { name?: unknown; attributes?: { content?: unknown } };
+
+		if ( candidate?.name !== 'core/paragraph' ) {
+			return false;
+		}
+
+		const content = candidate?.attributes?.content;
+
+		if ( content === undefined || content === null ) {
+			return true;
+		}
+
+		// RichText content is a string here, but can be a value object elsewhere.
+		const text =
+			typeof content === 'string' ? content : ( content as { text?: unknown } )?.text ?? '';
+
+		return typeof text === 'string' && text.trim() === '';
+	} );
+}
+
+/**
  * Handle the apply-draft-content tool call: parse the model's block markup and
  * put it in the editor, but only while the post is still empty.
  * @param input - Tool input: `{ markup, contentType, summary, title? }`.
@@ -168,7 +219,7 @@ export function handleApplyDraftContent( input: any ): ApplyDraftContentResult {
 	}
 
 	// The whole point of the guard: never overwrite writing the user already has.
-	if ( ! editor.isEditedPostEmpty() ) {
+	if ( ! isPostEffectivelyEmpty( editor ) ) {
 		return reject(
 			contentType,
 			'post_not_empty',

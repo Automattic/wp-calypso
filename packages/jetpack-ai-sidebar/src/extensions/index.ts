@@ -2,8 +2,10 @@ import { addFilter } from '@wordpress/hooks';
 import { isBlockToolbarButtonEnabled } from '../utils/preview-features';
 import { withJetpackAiToolbarButton } from './block-toolbar-extension';
 import { registerDraftEntry } from './draft-entry';
+import { withDraftAssistPlaceholder } from './draft-placeholder';
 
 let filtersRegistered = false;
+let draftPlaceholderRegistered = false;
 
 function registerBlockToolbarFilter(): void {
 	if ( filtersRegistered ) {
@@ -23,9 +25,26 @@ function registerBlockToolbarFilter(): void {
 	addFilter( 'editor.BlockEdit', 'jetpack-ai-sidebar/block-toolbar', withJetpackAiToolbarButton );
 }
 
+function registerDraftPlaceholderFilter(): void {
+	if ( draftPlaceholderRegistered ) {
+		return;
+	}
+
+	draftPlaceholderRegistered = true;
+	addFilter(
+		'editor.BlockEdit',
+		'jetpack-ai-sidebar/draft-placeholder',
+		withDraftAssistPlaceholder
+	);
+}
+
 export function registerBlockEditorFilters(): void {
 	registerBlockToolbarFilter();
 	// Independently flag-gated: the draft entry point must register even when
 	// the block toolbar button is off.
 	registerDraftEntry();
+	// The HOC checks the flag per render rather than at registration, so it is
+	// safe to add unconditionally and cannot lose a race against the host
+	// injecting `agentsManagerData`.
+	registerDraftPlaceholderFilter();
 }

@@ -1,6 +1,7 @@
 const mockAddFilter = jest.fn();
 const mockWithJetpackAiToolbarButton = jest.fn();
 const mockRegisterDraftEntry = jest.fn();
+const mockWithDraftAssistPlaceholder = jest.fn();
 
 jest.mock( '@wordpress/hooks', () => ( {
 	addFilter: mockAddFilter,
@@ -14,6 +15,10 @@ jest.mock( './draft-entry', () => ( {
 	registerDraftEntry: mockRegisterDraftEntry,
 } ) );
 
+jest.mock( './draft-placeholder', () => ( {
+	withDraftAssistPlaceholder: mockWithDraftAssistPlaceholder,
+} ) );
+
 function installPreview( features: Record< string, boolean > = {}, enabled = true ) {
 	( globalThis as Record< string, unknown > ).agentsManagerData = {
 		jetpackAiSidebar: {
@@ -21,6 +26,27 @@ function installPreview( features: Record< string, boolean > = {}, enabled = tru
 			features,
 		},
 	};
+}
+
+/**
+ * The draft placeholder filter registers unconditionally: the HOC checks the
+ * feature flag on every render, so registration cannot lose a race against the
+ * host injecting `agentsManagerData`.
+ * @returns The addFilter calls that registered the placeholder HOC.
+ */
+function placeholderFilterCalls() {
+	return mockAddFilter.mock.calls.filter(
+		( call ) => call[ 1 ] === 'jetpack-ai-sidebar/draft-placeholder'
+	);
+}
+
+/**
+ * @returns The addFilter calls that registered the block toolbar button.
+ */
+function toolbarFilterCalls() {
+	return mockAddFilter.mock.calls.filter(
+		( call ) => call[ 1 ] === 'jetpack-ai-sidebar/block-toolbar'
+	);
 }
 
 function enableToolbarButton() {
@@ -57,7 +83,8 @@ describe( 'Jetpack AI sidebar extension registration', () => {
 		registerBlockEditorFilters();
 		registerBlockEditorFilters();
 
-		expect( mockAddFilter ).toHaveBeenCalledTimes( 1 );
+		expect( toolbarFilterCalls() ).toHaveLength( 1 );
+		expect( placeholderFilterCalls() ).toHaveLength( 1 );
 	} );
 
 	it( 'registers the filter regardless of block transformations', async () => {
@@ -66,7 +93,8 @@ describe( 'Jetpack AI sidebar extension registration', () => {
 
 		registerBlockEditorFilters();
 
-		expect( mockAddFilter ).toHaveBeenCalledTimes( 1 );
+		expect( toolbarFilterCalls() ).toHaveLength( 1 );
+		expect( placeholderFilterCalls() ).toHaveLength( 1 );
 	} );
 
 	it.each( [
@@ -81,7 +109,9 @@ describe( 'Jetpack AI sidebar extension registration', () => {
 
 		registerBlockEditorFilters();
 
-		expect( mockAddFilter ).not.toHaveBeenCalled();
+		expect( toolbarFilterCalls() ).toHaveLength( 0 );
+		// Registered regardless: the HOC itself is flag-gated per render.
+		expect( placeholderFilterCalls() ).toHaveLength( 1 );
 	} );
 
 	it( 'registers the draft entry point even when the toolbar button is disabled', async () => {
@@ -90,7 +120,9 @@ describe( 'Jetpack AI sidebar extension registration', () => {
 
 		registerBlockEditorFilters();
 
-		expect( mockAddFilter ).not.toHaveBeenCalled();
+		expect( toolbarFilterCalls() ).toHaveLength( 0 );
+		// Registered regardless: the HOC itself is flag-gated per render.
+		expect( placeholderFilterCalls() ).toHaveLength( 1 );
 		expect( mockRegisterDraftEntry ).toHaveBeenCalledTimes( 1 );
 	} );
 
