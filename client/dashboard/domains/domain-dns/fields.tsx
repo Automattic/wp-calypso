@@ -1,18 +1,7 @@
+import { DNS_RECORD_TYPES } from '@automattic/api-core';
 import { __, sprintf } from '@wordpress/i18n';
-import type { DnsRecord, DnsRecordType } from '@automattic/api-core';
+import type { DnsRecord } from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';
-
-const DNS_RECORD_TYPES: DnsRecordType[] = [
-	'A',
-	'AAAA',
-	'ALIAS',
-	'CAA',
-	'CNAME',
-	'MX',
-	'NS',
-	'SRV',
-	'TXT',
-];
 
 const trimDot = ( str?: string ) => {
 	return str ? str.replace( /\.$/, '' ) : '';

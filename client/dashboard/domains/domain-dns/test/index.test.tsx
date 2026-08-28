@@ -157,6 +157,23 @@ describe( 'DomainDns', () => {
 		expect( screen.queryByText( '192.0.2.1' ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'shows an empty state when no records match the selected filters', async () => {
+		mockDomainApiRequest( getDefaultDomainData() );
+		mockDnsApiRequest( [ { id: '2', type: 'A', name: domainName, data: '192.0.2.1' } ] );
+		const user = userEvent.setup();
+
+		render( <DomainDns /> );
+
+		expect( await screen.findByText( '192.0.2.1' ) ).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: 'Add filter' } ) );
+		await user.click( screen.getByRole( 'menuitem', { name: 'Type' } ) );
+		await user.click( await screen.findByRole( 'option', { name: 'TXT' } ) );
+
+		expect( await screen.findByText( 'No DNS records match the selected filters.' ) ).toBeVisible();
+		expect( screen.queryByText( '192.0.2.1' ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'searches DNS records by name and value', async () => {
 		mockDomainApiRequest( getDefaultDomainData() );
 		mockDnsApiRequest( [
@@ -170,11 +187,26 @@ describe( 'DomainDns', () => {
 
 		expect( await screen.findByText( '192.0.2.1' ) ).toBeVisible();
 
-		await user.type( screen.getByRole( 'searchbox', { name: 'Search' } ), 'spf' );
+		const searchbox = screen.getByRole( 'searchbox', { name: 'Search' } );
+
+		await user.type( searchbox, 'spf' );
 
 		await waitFor( () => {
 			expect( screen.queryByText( '192.0.2.1' ) ).not.toBeInTheDocument();
 		} );
 		expect( screen.getByText( 'v=spf1 -all' ) ).toBeVisible();
+		expect( screen.queryByText( 'www' ) ).not.toBeInTheDocument();
+
+		await user.clear( searchbox );
+		await user.type( searchbox, 'www' );
+
+		expect( await screen.findByText( 'www' ) ).toBeVisible();
+		expect( screen.queryByText( 'v=spf1 -all' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( '192.0.2.1' ) ).not.toBeInTheDocument();
+
+		await user.clear( searchbox );
+		await user.type( searchbox, 'nomatch' );
+
+		expect( await screen.findByText( 'No DNS records match your search.' ) ).toBeVisible();
 	} );
 } );

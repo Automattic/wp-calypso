@@ -359,7 +359,13 @@ export default function DomainDns() {
 						getItemId={ getDnsRecordId }
 						isLoading={ isLoading }
 						defaultLayouts={ DEFAULT_LAYOUTS }
-						empty={ <p>{ __( 'No DNS records match your search.' ) }</p> }
+						empty={
+							<p>
+								{ view.search
+									? __( 'No DNS records match your search.' )
+									: __( 'No DNS records match the selected filters.' ) }
+							</p>
+						}
 					/>
 				) }
 			</DataViewsCard>
