@@ -18,7 +18,6 @@ jest.mock( '@wordpress/hooks', () => ( {
 } ) );
 
 const DEFAULT_PLACEHOLDER = 'Type / to choose a block';
-const DRAFT_PLACEHOLDER = 'Type /draft to get started with AI';
 
 type DraftEntryModule = typeof import('./draft-entry');
 
@@ -180,7 +179,7 @@ describe( 'draft assist entry point', () => {
 	describe( 'registration', () => {
 		it( 'registers the autocompleter filter and swaps the placeholder when enabled', async () => {
 			installFeature();
-			const stores = installEditorStores();
+			installEditorStores();
 			const { registerDraftEntry, DRAFT_ENTRY_FILTER_NAMESPACE, addDraftCompleter } =
 				await loadDraftEntry();
 
@@ -191,9 +190,6 @@ describe( 'draft assist entry point', () => {
 				DRAFT_ENTRY_FILTER_NAMESPACE,
 				addDraftCompleter
 			);
-			expect( stores.updateSettings ).toHaveBeenCalledWith( {
-				bodyPlaceholder: DRAFT_PLACEHOLDER,
-			} );
 		} );
 
 		it( 'registers only once', async () => {
@@ -216,222 +212,22 @@ describe( 'draft assist entry point', () => {
 			if ( features ) {
 				installFeature( features );
 			}
-			const stores = installEditorStores();
+			installEditorStores();
 			const { registerDraftEntry } = await loadDraftEntry();
 
 			registerDraftEntry();
 
 			expect( mockAddFilter ).not.toHaveBeenCalled();
-			expect( stores.subscribe ).not.toHaveBeenCalled();
-			expect( stores.updateSettings ).not.toHaveBeenCalled();
 		} );
 
 		it( 'does nothing when the sidebar itself is disabled', async () => {
 			installFeature( { draftAssist: true }, false );
-			const stores = installEditorStores();
+			installEditorStores();
 			const { registerDraftEntry } = await loadDraftEntry();
 
 			registerDraftEntry();
 
 			expect( mockAddFilter ).not.toHaveBeenCalled();
-			expect( stores.updateSettings ).not.toHaveBeenCalled();
-		} );
-
-		it( 'retries when wp.data is not registered yet', async () => {
-			jest.useFakeTimers();
-			installFeature();
-			installEditorStores( { withWpData: false } );
-			const { registerDraftEntry } = await loadDraftEntry();
-
-			registerDraftEntry();
-			const stores = installEditorStores();
-			jest.advanceTimersByTime( 300 );
-
-			expect( stores.subscribe ).toHaveBeenCalled();
-			expect( stores.updateSettings ).toHaveBeenCalledWith( {
-				bodyPlaceholder: DRAFT_PLACEHOLDER,
-			} );
-		} );
-	} );
-
-	describe( 'placeholder', () => {
-		it( 'restores the previous placeholder once the post has content', async () => {
-			installFeature();
-			const stores = installEditorStores();
-			const { registerDraftEntry } = await loadDraftEntry();
-
-			registerDraftEntry();
-			expect( stores.settings.bodyPlaceholder ).toBe( DRAFT_PLACEHOLDER );
-
-			stores.setPostEmpty( false );
-			stores.notify();
-
-			expect( stores.settings.bodyPlaceholder ).toBe( DEFAULT_PLACEHOLDER );
-		} );
-
-		it( 're-applies the prompt when the editor pushes its own settings back', async () => {
-			installFeature();
-			const stores = installEditorStores();
-			const { registerDraftEntry } = await loadDraftEntry();
-
-			registerDraftEntry();
-			// The editor recomputes its settings and overwrites ours.
-			stores.settings.bodyPlaceholder = DEFAULT_PLACEHOLDER;
-			stores.notify();
-
-			expect( stores.settings.bodyPlaceholder ).toBe( DRAFT_PLACEHOLDER );
-		} );
-
-		it( 'does not restore a placeholder someone else now owns', async () => {
-			installFeature();
-			const stores = installEditorStores();
-			const { registerDraftEntry } = await loadDraftEntry();
-
-			registerDraftEntry();
-			stores.settings.bodyPlaceholder = 'Another plugin owns this';
-			stores.setPostEmpty( false );
-			stores.notify();
-
-			expect( stores.settings.bodyPlaceholder ).toBe( 'Another plugin owns this' );
-		} );
-
-		it( 'stays out of the way on unsupported post types', async () => {
-			installFeature();
-			const stores = installEditorStores( { postType: 'wp_template' } );
-			const { registerDraftEntry } = await loadDraftEntry();
-
-			registerDraftEntry();
-
-			expect( stores.updateSettings ).not.toHaveBeenCalled();
-			expect( stores.settings.bodyPlaceholder ).toBe( DEFAULT_PLACEHOLDER );
-		} );
-
-		it( 'survives a selector that throws instead of breaking the store loop', async () => {
-			installFeature();
-			const stores = installEditorStores( { isEditedPostEmptyThrows: true } );
-			const { registerDraftEntry } = await loadDraftEntry();
-
-			// A throw here would otherwise propagate into wp.data's listener loop
-			// and take out every other subscriber on the page.
-			expect( () => registerDraftEntry() ).not.toThrow();
-			expect( () => stores.notify() ).not.toThrow();
-			expect( stores.updateSettings ).not.toHaveBeenCalled();
-		} );
-
-		it( 'survives getSettings throwing', async () => {
-			installFeature();
-			const stores = installEditorStores( { getSettingsThrows: true } );
-			const { registerDraftEntry } = await loadDraftEntry();
-
-			expect( () => registerDraftEntry() ).not.toThrow();
-			expect( () => stores.notify() ).not.toThrow();
-			expect( stores.updateSettings ).not.toHaveBeenCalled();
-		} );
-
-		it( 'does not track the entry point as shown', async () => {
-			installFeature();
-			const stores = installEditorStores();
-			const { registerDraftEntry } = await loadDraftEntry();
-
-			registerDraftEntry();
-			stores.settings.bodyPlaceholder = DEFAULT_PLACEHOLDER;
-			stores.notify();
-
-			// Setting `bodyPlaceholder` renders nothing on Gutenberg 23.8+, so counting
-			// it as shown reported a prompt the writer never saw. The placeholder HOC
-			// records it instead, when it actually reaches the screen.
-			expect( getTracksCalls( 'jetpack_ai_draft_assist_entry_point_shown' ) ).toEqual( [] );
-		} );
-	} );
-
-	describe( 'subscription lifetime', () => {
-		it( 'unsubscribes instead of syncing forever on an unsupported post type', async () => {
-			installFeature();
-			const stores = installEditorStores( { postType: 'wp_template' } );
-			const { registerDraftEntry } = await loadDraftEntry();
-
-			registerDraftEntry();
-
-			expect( stores.unsubscribe ).toHaveBeenCalledTimes( 1 );
-			expect( stores.listenerCount() ).toBe( 0 );
-		} );
-
-		it( 'keeps listening until the editor has resolved a post type', async () => {
-			installFeature();
-			const stores = installEditorStores( { postType: '' } );
-			const { registerDraftEntry } = await loadDraftEntry();
-
-			registerDraftEntry();
-			expect( stores.unsubscribe ).not.toHaveBeenCalled();
-			expect( stores.updateSettings ).not.toHaveBeenCalled();
-
-			stores.setPostType( 'post' );
-			stores.notify();
-
-			expect( stores.settings.bodyPlaceholder ).toBe( DRAFT_PLACEHOLDER );
-			expect( stores.listenerCount() ).toBe( 1 );
-		} );
-
-		it( 'gives the placeholder back and stops when the post type turns out unsupported', async () => {
-			installFeature();
-			const stores = installEditorStores( { postType: '' } );
-			const { registerDraftEntry } = await loadDraftEntry();
-
-			registerDraftEntry();
-			stores.setPostType( 'post' );
-			stores.notify();
-			expect( stores.settings.bodyPlaceholder ).toBe( DRAFT_PLACEHOLDER );
-
-			stores.setPostType( 'wp_template' );
-			stores.notify();
-
-			expect( stores.settings.bodyPlaceholder ).toBe( DEFAULT_PLACEHOLDER );
-			expect( stores.unsubscribe ).toHaveBeenCalledTimes( 1 );
-			expect( stores.listenerCount() ).toBe( 0 );
-		} );
-
-		it( 'stops when the feature flag stops being available', async () => {
-			installFeature();
-			const stores = installEditorStores();
-			const { registerDraftEntry } = await loadDraftEntry();
-
-			registerDraftEntry();
-			delete ( globalThis as any ).agentsManagerData;
-			stores.notify();
-
-			expect( stores.settings.bodyPlaceholder ).toBe( DEFAULT_PLACEHOLDER );
-			expect( stores.unsubscribe ).toHaveBeenCalledTimes( 1 );
-			expect( stores.listenerCount() ).toBe( 0 );
-		} );
-
-		it( 'stops syncing after an explicit teardown', async () => {
-			installFeature();
-			const stores = installEditorStores();
-			const { registerDraftEntry, stopBodyPlaceholderSync } = await loadDraftEntry();
-
-			registerDraftEntry();
-			stopBodyPlaceholderSync();
-			stores.updateSettings.mockClear();
-			stores.settings.bodyPlaceholder = DEFAULT_PLACEHOLDER;
-			stores.notify();
-
-			expect( stores.unsubscribe ).toHaveBeenCalledTimes( 1 );
-			expect( stores.listenerCount() ).toBe( 0 );
-			expect( stores.updateSettings ).not.toHaveBeenCalled();
-			expect( stores.settings.bodyPlaceholder ).toBe( DEFAULT_PLACEHOLDER );
-		} );
-
-		it( 'is safe to tear down more than once, and before anything subscribed', async () => {
-			installFeature();
-			const stores = installEditorStores();
-			const { registerDraftEntry, stopBodyPlaceholderSync } = await loadDraftEntry();
-
-			expect( () => stopBodyPlaceholderSync() ).not.toThrow();
-			registerDraftEntry();
-			stopBodyPlaceholderSync();
-
-			expect( () => stopBodyPlaceholderSync() ).not.toThrow();
-			expect( stores.unsubscribe ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 

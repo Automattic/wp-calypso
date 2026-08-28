@@ -1,12 +1,13 @@
 /**
  * Draft assist editor entry point.
  *
- * On an empty post or page it swaps the block editor's `bodyPlaceholder` for a
- * "Type /draft to get started with AI" prompt, and registers a `/draft`
- * autocompleter that opens the Jetpack AI sidebar with a starter prompt.
+ * Registers a `/draft` autocompleter that opens the Jetpack AI sidebar with a
+ * starter prompt, gated on the `draftAssist` preview feature and on the editor
+ * showing a post or page.
  *
- * Both halves are gated on the `draftAssist` preview feature and on the editor
- * being a post or page.
+ * The prompt shown in an empty post lives in `draft-placeholder.tsx`. This file
+ * used to set it through the `bodyPlaceholder` editor setting; Gutenberg 23.8
+ * stopped rendering the component that read it.
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -40,8 +41,6 @@ const CHAT_COMPOSER_POLL_INTERVAL_MS = 100;
 const CHAT_COMPOSER_MAX_ATTEMPTS = 50;
 
 /** Retries for `wp.data` not being registered yet when this bundle loads. */
-const STORE_RETRY_INTERVAL_MS = 300;
-const STORE_MAX_RETRIES = 20;
 
 type AgentsManagerActions = {
 	isReady?: boolean;
@@ -73,10 +72,6 @@ type DraftCompleter = {
 // ---------- Module state ----------
 
 let draftEntryRegistered = false;
-let placeholderSyncUnsubscribe: ( () => void ) | null = null;
-let placeholderSyncRetries = 0;
-let placeholderApplied = false;
-let defaultBodyPlaceholder: string | undefined;
 let isWaitingForAgentsManagerReady = false;
 let pendingPrompt: string | null = null;
 
@@ -145,145 +140,6 @@ function getDraftAssistContentType(): DraftAssistContentType | null {
 
 function isDraftAssistAvailable(): boolean {
 	return isDraftAssistEnabled() && getDraftAssistContentType() !== null;
-}
-
-// ---------- Placeholder swap ----------
-
-function getDraftPlaceholder(): string {
-	return __( 'Type /draft to get started with AI', __i18n_text_domain__ );
-}
-
-/**
- * Hand the placeholder back to whoever owned it before us.
- * @param currentPlaceholder - The placeholder currently in the editor settings.
- */
-function restoreBodyPlaceholder( currentPlaceholder: string | undefined ): void {
-	if ( ! placeholderApplied ) {
-		return;
-	}
-	placeholderApplied = false;
-	const previousPlaceholder = defaultBodyPlaceholder;
-	defaultBodyPlaceholder = undefined;
-	if ( currentPlaceholder !== getDraftPlaceholder() ) {
-		// Someone else owns the placeholder now — don't stomp on it.
-		return;
-	}
-	callStoreMethod( getWpDataStore( 'dispatch', 'core/block-editor' ), 'updateSettings', {
-		bodyPlaceholder: previousPlaceholder,
-	} );
-}
-
-/**
- * Keep `bodyPlaceholder` in sync with post emptiness.
- *
- * Back-compat only. Gutenberg 23.8 replaced the default block appender — the sole
- * consumer of `bodyPlaceholder` — with a ghost paragraph for empty posts, so on
- * current editors this sets a value nothing reads and
- * `withDraftAssistPlaceholder` does the visible work. It is kept because wpcom
- * pins Gutenberg centrally and rolls versions back, and on <23.8 this is the only
- * thing that renders the prompt.
- *
- * The editor re-pushes its own settings whenever they change, so this runs on
- * every store tick and re-applies. The value the editor last set is captured
- * each time so restoring hands back whatever it currently wants, not a stale
- * snapshot; and restore is skipped when something else already changed the
- * placeholder out from under us.
- *
- * Once it is clear draft assist does not apply to this editor at all, the
- * subscription is dropped rather than left running for the page's lifetime.
- */
-function syncBodyPlaceholder(): void {
-	const settings = callStoreMethod< { bodyPlaceholder?: unknown } >(
-		getWpDataStore( 'select', 'core/block-editor' ),
-		'getSettings'
-	);
-	if ( ! settings ) {
-		return;
-	}
-
-	const draftPlaceholder = getDraftPlaceholder();
-	const currentPlaceholder =
-		typeof settings.bodyPlaceholder === 'string' ? settings.bodyPlaceholder : undefined;
-	// An undefined post type only means the editor has not resolved one yet, so
-	// keep waiting; a resolved post type we don't support never becomes one we do.
-	const postType = getCurrentPostType();
-	if (
-		! isDraftAssistEnabled() ||
-		( postType !== undefined && ! isDraftAssistPostType( postType ) )
-	) {
-		restoreBodyPlaceholder( currentPlaceholder );
-		stopBodyPlaceholderSync();
-		return;
-	}
-
-	const contentType = isDraftAssistPostType( postType ) ? postType : null;
-	const isPostEmpty =
-		callStoreMethod< boolean >( getWpDataStore( 'select', 'core/editor' ), 'isEditedPostEmpty' ) ===
-		true;
-
-	if ( !! contentType && isPostEmpty ) {
-		if ( currentPlaceholder === draftPlaceholder ) {
-			return;
-		}
-		const blockEditor = getWpDataStore( 'dispatch', 'core/block-editor' );
-		if ( typeof blockEditor?.updateSettings !== 'function' ) {
-			return;
-		}
-		defaultBodyPlaceholder = currentPlaceholder;
-		callStoreMethod( blockEditor, 'updateSettings', { bodyPlaceholder: draftPlaceholder } );
-		placeholderApplied = true;
-
-		// Deliberately does NOT record the entry point as shown. Setting
-		// `bodyPlaceholder` no longer renders anything on Gutenberg 23.8+, so firing
-		// the event here counted a prompt nobody saw. `withDraftAssistPlaceholder`
-		// records it instead, when the placeholder actually reaches the screen.
-		return;
-	}
-
-	restoreBodyPlaceholder( currentPlaceholder );
-}
-
-function startBodyPlaceholderSync(): void {
-	if ( placeholderSyncUnsubscribe ) {
-		return;
-	}
-
-	const wpData = getWpData();
-	if ( typeof wpData?.subscribe !== 'function' ) {
-		// The bundle can load before `wp.data` is registered; retry briefly.
-		if ( placeholderSyncRetries >= STORE_MAX_RETRIES ) {
-			return;
-		}
-		placeholderSyncRetries++;
-		setTimeout( startBodyPlaceholderSync, STORE_RETRY_INTERVAL_MS );
-		return;
-	}
-
-	const unsubscribe = callStoreMethod< () => void >( wpData, 'subscribe', syncBodyPlaceholder );
-	placeholderSyncUnsubscribe = typeof unsubscribe === 'function' ? unsubscribe : null;
-	// Runs after the assignment so this first pass can already unsubscribe when
-	// draft assist does not apply to the editor that just loaded.
-	syncBodyPlaceholder();
-}
-
-/**
- * Drop the placeholder subscription.
- *
- * Called as soon as the entry point turns out not to apply — otherwise the sync
- * would run on every `wp.data` store tick for the lifetime of the page, on
- * every editor including the ones draft assist never touches. Also the teardown
- * the tests use between cases.
- */
-export function stopBodyPlaceholderSync(): void {
-	const unsubscribe = placeholderSyncUnsubscribe;
-	placeholderSyncUnsubscribe = null;
-	if ( typeof unsubscribe === 'function' ) {
-		try {
-			unsubscribe();
-		} catch {
-			// Nothing to do: the registry is the one holding the listener.
-		}
-	}
 }
 
 // ---------- Chat trigger ----------
@@ -454,5 +310,4 @@ export function registerDraftEntry(): void {
 
 	draftEntryRegistered = true;
 	addFilter( 'editor.Autocomplete.completers', DRAFT_ENTRY_FILTER_NAMESPACE, addDraftCompleter );
-	startBodyPlaceholderSync();
 }
