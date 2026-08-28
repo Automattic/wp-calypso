@@ -56,4 +56,5 @@ export interface UserPreferences {
 	two_step_security_key_reregister_required?: boolean;
 	'a4a-dashboard-pd-not-approved-popover'?: boolean;
 	'a4a-marketplace-referral-guide-seen'?: boolean;
+	'a4a-marketplace-term-pricing'?: 'monthly' | 'yearly';
 }
