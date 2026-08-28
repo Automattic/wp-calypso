@@ -274,6 +274,7 @@ interface PostTypeMockOptions {
 	themeSupportsResolved?: boolean;
 	/** Whole getThemeSupports return value, for a store that returns something else. */
 	themeSupportsReturnValue?: unknown;
+	/** Whether `core/editor` reports the post as empty; drives the draft suggestion. */
 	isPostEmpty?: boolean;
 	/** Drops the selector, as an editor predating it would. */
 	omitIsEditedPostEmpty?: boolean;
@@ -356,6 +357,7 @@ function installContextProviderMock( postType = 'post', postId: EditorPostId | n
 					return {
 						getCurrentPostId: () => postId,
 						getCurrentPostType: () => postType,
+						isEditedPostEmpty: () => false,
 					};
 				}
 				if ( store === 'core/block-editor' ) {
@@ -2012,6 +2014,44 @@ describe( 'getEmptyViewSuggestions', () => {
 		delete ( globalThis as any ).agentsManagerData;
 		delete ( window as any ).wp;
 		mockImageStudioActions = null;
+	} );
+
+	it( 'offers a draft only on an empty post, and offers it first', () => {
+		installAiEditorialReviewData( { draftAssist: true } );
+		installPostTypeMock( 'post', 123, { isPostEmpty: true } );
+
+		const suggestions = getEmptyViewSuggestions();
+		const draft = suggestions.find( ( suggestion ) => suggestion.id === 'draft-post' );
+
+		expect( draft ).toEqual(
+			expect.objectContaining( {
+				label: 'Write a draft',
+				// Must match the /draft editor trigger, so both entry points start the
+				// same conversation.
+				prompt: 'Help me draft this post',
+			} )
+		);
+		// On an empty post nothing else here has anything to work on.
+		expect( suggestions[ 0 ].id ).toBe( 'draft-post' );
+	} );
+
+	it( 'does not offer a draft once the post has content', () => {
+		installAiEditorialReviewData( { draftAssist: true } );
+		installPostTypeMock( 'post', 123, { isPostEmpty: false } );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		// Offering it would promise something the ability then refuses.
+		expect( ids ).not.toContain( 'draft-post' );
+	} );
+
+	it( 'does not offer a draft when the feature is off', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post', 123, { isPostEmpty: true } );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'draft-post' );
 	} );
 
 	it( 'hides post suggestions without a sidebar config', () => {

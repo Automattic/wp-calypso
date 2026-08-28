@@ -57,6 +57,7 @@ import {
 	BLOCK_ACTION_COMPLETE_EVENT,
 	SELECTED_BLOCK_CLEAR_EVENT,
 } from './utils/block-actions';
+import { isDraftAssistPostType } from './utils/draft-assist';
 import {
 	isImageStudioAvailable,
 	openImageStudioForBlock,
@@ -174,6 +175,23 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 	id: 'optimize-title',
 	label: __( 'Optimize Title', __i18n_text_domain__ ),
 	prompt: __( 'Optimize the title of this post', __i18n_text_domain__ ),
+};
+
+/**
+ * Editor-level suggestion to write a first draft into the open post.
+ *
+ * Only offered on an empty post: it is the one editor action that needs a blank
+ * canvas rather than existing content, which is also why it sits first — on an
+ * empty post every other suggestion here has nothing to work on.
+ *
+ * The prompt matches the `/draft` editor trigger exactly, so both entry points
+ * start the same conversation and the assistant cannot behave differently
+ * depending on which one the writer used.
+ */
+const DRAFT_POST_SUGGESTION = {
+	id: 'draft-post',
+	label: __( 'Write a draft', __i18n_text_domain__ ),
+	prompt: __( 'Help me draft this post', __i18n_text_domain__ ),
 };
 
 /**
@@ -381,6 +399,23 @@ function currentPostTypeSupportsFeaturedImage(
 	);
 }
 
+/**
+ * Whether to offer writing a draft.
+ *
+ * Mirrors the `/draft` entry point: the feature flag, a post type draft assist
+ * writes into, and an empty post. Offering it on a post with content would
+ * promise something the ability then refuses, which reads as a broken button.
+ * @param currentPostType - The post type currently open in the editor.
+ * @returns Whether the suggestion should be shown.
+ */
+function isDraftSuggestionAvailable( currentPostType?: string ): boolean {
+	if ( ! isDraftAssistEnabled() || ! isDraftAssistPostType( currentPostType ) ) {
+		return false;
+	}
+
+	return isPostContentEmpty();
+}
+
 function isFeaturedImageSuggestionAvailable(
 	currentPostType: string | undefined = getCurrentEditorPostType()
 ): boolean {
@@ -499,6 +534,8 @@ function getPostLevelSuggestions(
 	}
 
 	const suggestions = [
+		// First: on an empty post this is the only one of these that can do anything.
+		...( isDraftSuggestionAvailable( currentPostType ) ? [ DRAFT_POST_SUGGESTION ] : [] ),
 		...( isFeaturedImageSuggestionAvailable( currentPostType )
 			? [ GENERATE_FEATURED_IMAGE_SUGGESTION ]
 			: [] ),

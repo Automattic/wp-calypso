@@ -173,13 +173,14 @@ export type DraftAssistRejectionReason =
  * `/draft` placeholder replacing the default one on an empty post or page.
  * @param options             - Tracking options
  * @param options.contentType - Editor entity the entry point is offered on.
+ * @returns Whether the event reached the family recorder.
  */
 export function trackDraftAssistEntryPointShown( {
 	contentType,
 }: {
 	contentType: DraftAssistContentType;
-} ): void {
-	recordTracksEvent( 'ai_draft_assist_entry_point_shown', {
+} ): boolean {
+	return recordBigSkyFamilyTracksEvent( 'jetpack_big_sky_draft_assist_entry_point_shown', {
 		content_type: contentType,
 	} );
 }
@@ -189,6 +190,7 @@ export function trackDraftAssistEntryPointShown( {
  * @param options                  - Tracking options
  * @param options.contentType      - Editor entity the draft was requested for.
  * @param options.fromSlashCommand - Whether the `/draft` autocompleter fired it.
+ * @returns Whether the event reached the family recorder.
  */
 export function trackDraftAssistEntryPointTriggered( {
 	contentType,
@@ -196,8 +198,8 @@ export function trackDraftAssistEntryPointTriggered( {
 }: {
 	contentType: DraftAssistContentType;
 	fromSlashCommand: boolean;
-} ): void {
-	recordTracksEvent( 'ai_draft_assist_entry_point_triggered', {
+} ): boolean {
+	return recordBigSkyFamilyTracksEvent( 'jetpack_big_sky_draft_assist_entry_point_triggered', {
 		content_type: contentType,
 		from_slash_command: fromSlashCommand,
 	} );
@@ -209,6 +211,7 @@ export function trackDraftAssistEntryPointTriggered( {
  * @param options.contentType - Editor entity the draft was applied to.
  * @param options.blockCount  - Number of top-level blocks the markup parsed into.
  * @param options.hasTitle    - Whether the draft also set the post title.
+ * @returns Whether the event reached the family recorder.
  */
 export function trackDraftAssistDraftApplied( {
 	contentType,
@@ -218,8 +221,8 @@ export function trackDraftAssistDraftApplied( {
 	contentType: DraftAssistContentType;
 	blockCount: number;
 	hasTitle: boolean;
-} ): void {
-	recordTracksEvent( 'ai_draft_assist_draft_applied', {
+} ): boolean {
+	return recordBigSkyFamilyTracksEvent( 'jetpack_big_sky_draft_assist_draft_applied', {
 		content_type: contentType,
 		block_count: blockCount,
 		has_title: hasTitle,
@@ -232,6 +235,7 @@ export function trackDraftAssistDraftApplied( {
  * @param options             - Tracking options
  * @param options.contentType - Editor entity the draft was meant for.
  * @param options.reason      - Why the draft was refused.
+ * @returns Whether the event reached the family recorder.
  */
 export function trackDraftAssistDraftRejected( {
 	contentType,
@@ -239,8 +243,8 @@ export function trackDraftAssistDraftRejected( {
 }: {
 	contentType: DraftAssistContentType;
 	reason: DraftAssistRejectionReason;
-} ): void {
-	recordTracksEvent( 'ai_draft_assist_draft_rejected', {
+} ): boolean {
+	return recordBigSkyFamilyTracksEvent( 'jetpack_big_sky_draft_assist_draft_rejected', {
 		content_type: contentType,
 		reason,
 	} );
