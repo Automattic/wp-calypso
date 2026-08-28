@@ -48,6 +48,18 @@ export function useSendMessageHandler( {
 		}
 
 		try {
+			// The user's message is appended by `sendMessage` below, so an empty user
+			// history here means this send opens the conversation.
+			const isConversationStart =
+				chat?.provider === 'odie' && ! chat.messages?.some( ( { role } ) => role === 'user' );
+
+			if ( isConversationStart ) {
+				trackEvent( 'chat_conversation_start', {
+					message_length: inputValue.length,
+					provider: chat?.provider,
+				} );
+			}
+
 			trackEvent( 'chat_message_action_send', {
 				message_length: inputValue.length,
 				provider: chat?.provider,
@@ -93,6 +105,7 @@ export function useSendMessageHandler( {
 		inputValue,
 		isChatBusy,
 		chat?.provider,
+		chat.messages,
 		sendMessage,
 		trackEvent,
 		chat.conversationId,
