@@ -14,7 +14,7 @@ export default function ProductBadges( { product }: Props ) {
 	return (
 		<div className="product-badges">
 			{ badges.map( ( badge: string ) => (
-				<Badge key={ badge } intent="none">
+				<Badge key={ badge } intent="draft">
 					{ badge }
 				</Badge>
 			) ) }
