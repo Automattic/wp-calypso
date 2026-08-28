@@ -67,7 +67,7 @@ import BodySectionCssClass from './body-section-css-class';
 import { getColorScheme, getColorSchemeFromCurrentQuery, refreshColorScheme } from './color-scheme';
 import HelpCenterLoader from './help-center-loader';
 import LayoutLoader from './loader';
-import { shouldLoadInlineHelp, handleScroll } from './utils';
+import { shouldLoadInlineHelp, handleScroll, resetSidebarScrollState } from './utils';
 
 /*
  * Hotfix for card and button styles hierarchy after <GdprBanner /> removal (see: #70601)
@@ -153,9 +153,21 @@ const Omnibar = ( props ) => (
 
 const READER_DARK_MODE_BODY_CLASS = 'is-reader-dark-mode';
 
-function SidebarScrollSynchronizer() {
+function SidebarScrollSynchronizer( { currentRoute } ) {
 	const isNarrow = useBreakpoint( '<660px' );
 	const active = ! isNarrow && ! config.isEnabled( 'jetpack-cloud' ); // Jetpack cloud hasn't yet aligned with WPCOM.
+
+	// `handleScroll` growing `#content` is the only thing that makes the window
+	// scrollable when the sidebar is taller than it. Until that runs there is
+	// nothing to scroll, so no scroll event can arrive to trigger it. Run it on
+	// mount, and again per route, since the menu height changes between sections
+	// and the unmount path wipes the styles on the way to a global-sidebar page.
+	useEffect( () => {
+		if ( active ) {
+			resetSidebarScrollState();
+			handleScroll( { type: 'resize' } );
+		}
+	}, [ active, currentRoute ] );
 
 	useEffect( () => {
 		if ( active ) {
@@ -391,7 +403,7 @@ class Layout extends Component {
 				/>
 				<PluginCompassAgentLoader sectionName={ this.props.sectionName } />
 				{ ! shouldDisableSidebarScrollSynchronizer && (
-					<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
+					<SidebarScrollSynchronizer currentRoute={ this.props.currentRoute } />
 				) }
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass

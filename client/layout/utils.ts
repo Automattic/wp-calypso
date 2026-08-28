@@ -33,7 +33,22 @@ export function shouldLoadInlineHelp( sectionName: string, currentRoute: string 
 	);
 }
 
-export const handleScroll = ( event: React.UIEvent< HTMLElement > ): void => {
+/**
+ * Clears the pinning state, which outlives the component that drives it.
+ *
+ * `handleScroll` writes inline styles to `#secondary`, and the unmount path wipes
+ * them. Without this reset the state machine resumes against a DOM it no longer
+ * matches, and the first scroll takes the wrong branch.
+ */
+export function resetSidebarScrollState(): void {
+	lastScrollPosition = 0;
+	sidebarTop = 0;
+	pinnedSidebarTop = true;
+	pinnedSidebarBottom = false;
+	ticking = false;
+}
+
+export const handleScroll = ( event: { type: string } ): void => {
 	// Do not run until next requestAnimationFrame or if running out of browser context.
 	if ( ticking ) {
 		return;
