@@ -188,11 +188,19 @@ const OPTIMIZE_TITLE_SUGGESTION = {
  * start the same conversation and the assistant cannot behave differently
  * depending on which one the writer used.
  */
-const DRAFT_POST_SUGGESTION = {
-	id: 'draft-post',
-	label: __( 'Write a draft', __i18n_text_domain__ ),
-	prompt: __( 'Help me draft this post', __i18n_text_domain__ ),
-};
+function getDraftSuggestion( contentType: 'post' | 'page' ) {
+	return {
+		id: 'draft-post',
+		label: __( 'Write a draft', __i18n_text_domain__ ),
+		// Say which one. The suggestion is offered for pages too, and asking for "this
+		// post" on a page contradicts the contentType the ability is given, which shapes
+		// the output — an article rather than a sectioned page.
+		prompt:
+			'page' === contentType
+				? __( 'Help me draft this page', __i18n_text_domain__ )
+				: __( 'Help me draft this post', __i18n_text_domain__ ),
+	};
+}
 
 /**
  * Post-level suggestion that opens Image Studio directly instead of routing
@@ -535,7 +543,9 @@ function getPostLevelSuggestions(
 
 	const suggestions = [
 		// First: on an empty post this is the only one of these that can do anything.
-		...( isDraftSuggestionAvailable( currentPostType ) ? [ DRAFT_POST_SUGGESTION ] : [] ),
+		...( isDraftSuggestionAvailable( currentPostType )
+			? [ getDraftSuggestion( currentPostType === 'page' ? 'page' : 'post' ) ]
+			: [] ),
 		...( isFeaturedImageSuggestionAvailable( currentPostType )
 			? [ GENERATE_FEATURED_IMAGE_SUGGESTION ]
 			: [] ),
@@ -1135,7 +1145,12 @@ export const contextProvider = {
 			// says the client can actually handle the tool call. Without it the
 			// orchestrator would route `jetpack_ai__apply_draft_content` to clients
 			// that never registered a handler. Do not rename.
-			jetpackAiDraftAssistEnabled: isDraftAssistEnabled(),
+			// Post type matters, not just the flag. The applier refuses anything that is
+			// not a post or page, and in the site editor `core/editor` serves templates
+			// — so on a template this said "I can handle it", the server generated a
+			// whole draft and uploaded an image, and only then did the client refuse.
+			jetpackAiDraftAssistEnabled:
+				isDraftAssistEnabled() && isDraftAssistPostType( getCurrentEditorPostType() ),
 			contextEntries: [
 				{
 					id: 'selected-block-content',

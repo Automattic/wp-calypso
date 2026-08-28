@@ -60,6 +60,14 @@ export const withDraftAssistPlaceholder = createHigherOrderComponent(
 						return false;
 					}
 
+					// Gutenberg builds a ghost for any empty block list, including an empty
+					// Group or Columns inside a post that already has content. Requiring the
+					// whole document to be empty keeps the prompt on the one canvas it means
+					// — and stops it recording an impression it did not earn.
+					if ( typeof store.getBlockCount === 'function' && store.getBlockCount() > 0 ) {
+						return false;
+					}
+
 					// Real blocks resolve; the ghost does not exist in the store.
 					return ! store.getBlock( props.clientId );
 				},

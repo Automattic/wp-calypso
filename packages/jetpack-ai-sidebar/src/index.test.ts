@@ -476,7 +476,25 @@ describe( 'contextProvider.getClientContext', () => {
 	// category on every editor surface and cannot see this client's flag.
 	it( 'forwards jetpackAiDraftAssistEnabled = true when the host enables draft assist', () => {
 		installAiEditorialReviewData( { draftAssist: true } );
+		installPostTypeMock( 'post' );
 		expect( contextProvider.getClientContext().jetpackAiDraftAssistEnabled ).toBe( true );
+	} );
+
+	it( 'does not claim draft support on an editor surface the applier refuses', () => {
+		installAiEditorialReviewData( { draftAssist: true } );
+		installPostTypeMock( 'wp_template' );
+
+		// The server reads this as "the client can handle the tool call". On a template
+		// it cannot, and saying true meant a whole draft was generated and an image
+		// uploaded before the client refused.
+		expect( contextProvider.getClientContext().jetpackAiDraftAssistEnabled ).toBe( false );
+	} );
+
+	it( 'does not claim draft support before the post type resolves', () => {
+		installAiEditorialReviewData( { draftAssist: true } );
+		installPostTypeMock( undefined );
+
+		expect( contextProvider.getClientContext().jetpackAiDraftAssistEnabled ).toBe( false );
 	} );
 
 	it( 'forwards jetpackAiDraftAssistEnabled = false when the host disables draft assist', () => {
@@ -2033,6 +2051,17 @@ describe( 'getEmptyViewSuggestions', () => {
 		);
 		// On an empty post nothing else here has anything to work on.
 		expect( suggestions[ 0 ].id ).toBe( 'draft-post' );
+	} );
+
+	it( 'asks for a page, not a post, when the editor is showing a page', () => {
+		installAiEditorialReviewData( { draftAssist: true } );
+		installPostTypeMock( 'page', 123, { postIsEmpty: true } );
+
+		const draft = getEmptyViewSuggestions().find( ( s ) => s.id === 'draft-post' );
+
+		// The ability is told contentType 'page', which shapes the output. Asking for
+		// "this post" in the same breath contradicts it.
+		expect( draft?.prompt ).toBe( 'Help me draft this page' );
 	} );
 
 	it( 'does not offer a draft once the post has content', () => {
