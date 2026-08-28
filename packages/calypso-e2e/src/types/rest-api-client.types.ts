@@ -34,11 +34,20 @@ export interface SettingsParams {
 	[ key: string ]: string | number;
 }
 
+export interface SiteSettingsParams {
+	[ key: string ]: string | number | boolean;
+}
+
 export interface NewCommentParams {
 	content: string;
 }
 
 /* Response Interfaces */
+
+export interface SiteSettingsResponse {
+	name: string;
+	settings: { [ key: string ]: unknown };
+}
 
 export interface BearerTokenResponse {
 	success: true;
