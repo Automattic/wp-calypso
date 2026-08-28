@@ -25,7 +25,6 @@ export function generateSteps( {
 	addWithPluginPlanToCart = noop,
 	addAddOnsToCart = noop,
 	createAccount = noop,
-	createSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
 	addDomainToCart = noop,
@@ -100,12 +99,6 @@ export function generateSteps( {
 				intent: 'plans-site-selected-legacy',
 				deemphasizeFreePlan: true,
 			},
-		},
-
-		site: {
-			stepName: 'site',
-			apiRequestFunction: createSite,
-			providesDependencies: [ 'siteSlug' ],
 		},
 
 		user: {

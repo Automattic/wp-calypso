@@ -81,37 +81,37 @@ interface McpAbility {
 
 function getReadBadge( tools: Array< [ string, McpAbility ] > ) {
 	if ( tools.length === 0 ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
 	if ( enabledCount === tools.length ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'Disabled' ) };
+		return { text: __( 'Disabled' ), intent: 'draft' as const };
 	}
 	return {
 		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
 		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, tools.length ),
-		intent: 'info' as const,
+		intent: 'informational' as const,
 	};
 }
 
 function getWriteBadge( tools: Array< [ string, McpAbility ] > ) {
 	if ( tools.length === 0 ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
 	if ( enabledCount === tools.length ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'Disabled' ) };
+		return { text: __( 'Disabled' ), intent: 'draft' as const };
 	}
 	return {
 		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
 		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, tools.length ),
-		intent: 'info' as const,
+		intent: 'informational' as const,
 	};
 }
 
@@ -123,7 +123,7 @@ const features = [
 ];
 
 const upgradeRequiredText = __( 'Upgrade your plan to enable this setting.' );
-const upgradeRequiredBadge = { text: __( 'Upgrade required' ), intent: 'info' as const };
+const upgradeRequiredBadge = { text: __( 'Upgrade required' ), intent: 'informational' as const };
 
 function UpgradeRequiredBadge() {
 	return (
@@ -300,8 +300,8 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const hasSiteAbilityOverrides = Object.keys( siteAbilities ).length > 0;
 	const defaultToolEnabled = userSettings?.mcp_abilities?.site_level_enabled_default ?? false;
 	const defaultBadge = defaultToolEnabled
-		? { text: __( 'All enabled' ), intent: 'success' as const }
-		: { text: __( 'Disabled' ) };
+		? { text: __( 'All enabled' ), intent: 'stable' as const }
+		: { text: __( 'Disabled' ), intent: 'draft' as const };
 	const readBadge = hasSiteAbilityOverrides ? getReadBadge( readTools ) : defaultBadge;
 	const writeBadge = hasSiteAbilityOverrides ? getWriteBadge( writeTools ) : defaultBadge;
 	const mcpMutation = useMutation(

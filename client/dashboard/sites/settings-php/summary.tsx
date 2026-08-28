@@ -27,8 +27,8 @@ export default function PHPSettingsSummary( { site, density }: { site: Site; den
 			{
 				text: version,
 				intent: versionCompare( version, recommendedValue, '>=' )
-					? ( 'success' as const )
-					: ( 'warning' as const ),
+					? ( 'stable' as const )
+					: ( 'low' as const ),
 			},
 		];
 	};

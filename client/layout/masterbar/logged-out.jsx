@@ -59,7 +59,7 @@ class MasterbarLoggedOut extends Component {
 
 	renderSearchItem() {
 		const { translate } = this.props;
-		const searchUrl = addLocaleToPathLocaleInFront( '/reader/search' );
+		const searchUrl = addLocaleToPathLocaleInFront( '/discover/search' );
 
 		return (
 			<Item url={ searchUrl }>

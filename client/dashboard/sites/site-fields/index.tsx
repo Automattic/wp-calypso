@@ -6,7 +6,6 @@ import {
 	siteEngagementStatsQuery,
 	siteUptimeQuery,
 } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
@@ -16,6 +15,7 @@ import {
 } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useInView } from 'react-intersection-observer';
 import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT, normalizeVariation } from 'calypso/lib/ai-launchpad';
 import { useExperiment } from 'calypso/lib/explat';
@@ -104,21 +104,21 @@ export function NameRenderer( {
 	const renderBadge = () => {
 		switch ( badge ) {
 			case 'redirect':
-				return <Badge>{ __( 'Redirect' ) }</Badge>;
+				return <Badge intent="draft">{ __( 'Redirect' ) }</Badge>;
 			case 'staging':
-				return <Badge>{ __( 'Staging' ) }</Badge>;
+				return <Badge intent="draft">{ __( 'Staging' ) }</Badge>;
 			case 'trial':
-				return <Badge>{ __( 'Trial' ) }</Badge>;
+				return <Badge intent="draft">{ __( 'Trial' ) }</Badge>;
 			case 'p2':
-				return <Badge>{ __( 'P2' ) }</Badge>;
+				return <Badge intent="draft">{ __( 'P2' ) }</Badge>;
 			case 'deleted':
-				return <Badge intent="error">{ __( 'Deleted' ) }</Badge>;
+				return <Badge intent="high">{ __( 'Deleted' ) }</Badge>;
 			case 'difm_lite_in_progress':
-				return <Badge>{ __( 'Express service' ) }</Badge>;
+				return <Badge intent="draft">{ __( 'Express service' ) }</Badge>;
 			case 'migration_pending':
-				return <Badge intent="warning">{ __( 'Migration pending' ) }</Badge>;
+				return <Badge intent="low">{ __( 'Migration pending' ) }</Badge>;
 			case 'migration_started':
-				return <Badge intent="info">{ __( 'Migration started' ) }</Badge>;
+				return <Badge intent="informational">{ __( 'Migration started' ) }</Badge>;
 			default:
 				return null;
 		}

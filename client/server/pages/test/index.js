@@ -1251,7 +1251,7 @@ describe( 'main app', () => {
 				} );
 
 				expect( response.redirect ).toHaveBeenCalledWith(
-					'https://wordpress.com/reader/search?q=my%20search'
+					'https://wordpress.com/discover/search?q=my%20search'
 				);
 			} );
 
@@ -1266,7 +1266,7 @@ describe( 'main app', () => {
 				} );
 
 				expect( response.redirect ).toHaveBeenCalledWith(
-					'https://wordpress.com/reader/search?q=my%20search'
+					'https://wordpress.com/discover/search?q=my%20search'
 				);
 			} );
 

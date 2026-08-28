@@ -31,7 +31,7 @@ export const getFilters = () => ( {
 		emptyLinkMessage: __(
 			'Join a conversation: search for blogs that share your interests in the Reader.'
 		),
-		emptyLink: 'https://wordpress.com/reader/search/',
+		emptyLink: 'https://wordpress.com/discover/search/',
 		query: { type: 'comment' },
 		filter: ( { type } ) => 'comment' === type,
 	},

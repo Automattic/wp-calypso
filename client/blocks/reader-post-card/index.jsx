@@ -1,5 +1,4 @@
 import { Card } from '@automattic/components';
-import { localeRegexString } from '@automattic/i18n-utils';
 import { truncate } from '@automattic/js-utils';
 import clsx from 'clsx';
 import closest from 'component-closest';
@@ -170,12 +169,9 @@ class ReaderPostCard extends Component {
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
 		const isConversations = currentRoute.startsWith( '/reader/conversations' );
 		const isDiscoverPage = currentRoute.startsWith( '/discover' );
-		const isReaderSearchPage = new RegExp( `^(/${ localeRegexString })?/reader/search` ).test(
-			currentRoute
-		);
 
 		const shouldShowPostCardComments = ! isConversations;
-		const showSuggestedFollows = isReaderSearchPage || isDiscoverPage;
+		const showSuggestedFollows = isDiscoverPage;
 		const freshlyPressedOn = getFreshlyPressedOn( this.props.streamKey, post );
 
 		const classes = clsx( 'reader-post-card', {
