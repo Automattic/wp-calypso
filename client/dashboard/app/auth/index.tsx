@@ -285,23 +285,21 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		};
 	}, [ user ] );
 
-	// A dead session fails every request alike, so one probe settles it for all of
-	// them.
-	const sessionProbe = useRef< Promise< boolean > | null >( null );
-	const confirmSessionExpired = useCallback( ( failure: AuthFailure ) => {
-		sessionProbe.current ??= fetchUser().then(
-			() => {
-				// How often each signal turns out to be a false alarm is the thing we
-				// most need to know before acting on any of them more aggressively.
-				bumpStat( 'dashboard-auth', `probe-ok:${ failure }` );
-				return false;
-			},
-			( error: unknown ) =>
-				isWpError( error ) &&
-				( error.statusCode === 401 || error.error === 'authorization_required' )
-		);
-		return sessionProbe.current;
-	}, [] );
+	const confirmSessionExpired = useCallback(
+		( failure: AuthFailure ) =>
+			queryClient.fetchQuery( sessionStateQuery() ).then( ( state ) => {
+				if ( state === 'alive' ) {
+					// How often each signal turns out to be a false alarm is the thing we
+					// most need to know before acting on any of them more aggressively.
+					bumpStat( 'dashboard-auth', `probe-ok:${ failure }` );
+				}
+
+				// Nobody is bounced on a guess: an unanswered probe leaves the user where
+				// they are.
+				return state === 'dead';
+			} ),
+		[ queryClient ]
+	);
 
 	const handleAuthError = useCallback(
 		( reason: string ) => {

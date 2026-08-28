@@ -275,6 +275,68 @@ describe( '<AuthProvider> stats', () => {
 				expect.stringContaining( 'bounce:' )
 			);
 		} );
+
+		test( 'leaves the user alone when the probe never answers', async () => {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.1/me' )
+				.query( true )
+				.replyWithError( 'offline' );
+
+			await renderSignedInAndFail( forbidden() );
+
+			await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+			expect( mockedBumpStat ).not.toHaveBeenCalledWith(
+				'dashboard-auth',
+				expect.stringContaining( 'bounce:' )
+			);
+		} );
+
+		test( 'probes once even for a refusal arriving after the first answer', async () => {
+			// A second probe would find a dead session and bounce, so leaving the reply
+			// queued makes an extra request visible rather than merely uncounted.
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.1/me' )
+				.query( true )
+				.reply( 200, testUser );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.1/me' )
+				.query( true )
+				.reply( 403, { error: 'authorization_required', message: 'User cannot access this' } );
+
+			config.enable( 'wpcom-user-bootstrap' );
+			window.currentUser = testUser;
+
+			const { queryClient } = renderAuth();
+			expect( await screen.findByText( 'signed in' ) ).toBeVisible();
+
+			const failOnce = ( key: string ) =>
+				expect(
+					queryClient.fetchQuery( {
+						queryKey: [ key ],
+						queryFn: () => Promise.reject( forbidden() ),
+						retry: false,
+					} )
+				).rejects.toThrow();
+
+			// Errors trickle in rather than arriving together, so the probe has already
+			// settled by the time the second one is classified. Deduplicating requests
+			// in flight is not enough to cover this.
+			await failOnce( 'a' );
+			await waitFor( () =>
+				expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'probe-ok:refused' )
+			);
+
+			await failOnce( 'b' );
+
+			await expect(
+				waitFor( () => expect( nock.isDone() ).toBe( true ), { timeout: 250 } )
+			).rejects.toThrow();
+			expect( scope.isDone() ).toBe( true );
+			expect( mockedBumpStat ).not.toHaveBeenCalledWith(
+				'dashboard-auth',
+				expect.stringContaining( 'bounce:' )
+			);
+		} );
 	} );
 
 	test( 'bumps a bounce stat when the session expires mid-app', async () => {
