@@ -67,7 +67,9 @@ export function DeploymentLogsModalContent( {
 
 				<HStack spacing={ 3 } alignment="left">
 					{ deployment.is_active_deployment && (
-						<Badge style={ { flexShrink: 0 } }>{ __( 'Active deployment' ) }</Badge>
+						<Badge intent="draft" style={ { flexShrink: 0 } }>
+							{ __( 'Active deployment' ) }
+						</Badge>
 					) }
 
 					<ExternalLink
