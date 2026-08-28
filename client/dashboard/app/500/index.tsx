@@ -125,14 +125,6 @@ function GenericError( { error }: { error: Error } ) {
 	);
 }
 
-/**
- * The dashboard's last-resort error screen.
- *
- * Route error boundaries fall back to this, and the area-specific error
- * components (site, domain) delegate to it for anything they do not recognise.
- * Only add a branch here for a failure that can happen anywhere in the app;
- * anything scoped to one area belongs in that area's error component.
- */
 function UnknownError( { error }: { error: Error } ) {
 	if ( isWpError( error ) && error.error === 'reauthorization_required' ) {
 		return <ReauthRedirect />;
