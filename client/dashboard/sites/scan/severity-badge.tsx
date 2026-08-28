@@ -1,6 +1,5 @@
+import { Badge } from '@automattic/ui';
 import { __ } from '@wordpress/i18n';
-import { Badge } from '@wordpress/ui';
-import type { ComponentProps } from 'react';
 
 export const getSeverityLabel = ( severity: number ): string => {
 	if ( severity >= 5 ) {
@@ -20,16 +19,14 @@ export const getSeverityLabel = ( severity: number ): string => {
 	return __( 'Low' );
 };
 
-export const getSeverityIntent = (
-	severity: number
-): ComponentProps< typeof Badge >[ 'intent' ] => {
+export const getSeverityIntent = ( severity: number ): 'default' | 'error' | 'warning' => {
 	if ( severity >= 5 ) {
-		return 'high';
+		return 'error';
 	}
 	if ( severity >= 4 ) {
-		return 'medium';
+		return 'warning';
 	}
-	return 'low';
+	return 'default';
 };
 
 export const SeverityBadge = ( { severity }: { severity: number } ) => {
