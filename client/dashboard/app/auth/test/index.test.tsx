@@ -224,9 +224,8 @@ describe( 'useSessionStateQuery', () => {
 			.get( '/rest/v1.1/me' )
 			.query( true )
 			.reply( 200, testUser );
-		// Queued for a refetch to consume. Serving stale data while revalidating would
-		// still read as 'alive' at first, so flipping the answer is what makes an
-		// extra request visible.
+		// A refetch would consume this and flip the answer, so an extra request shows
+		// up rather than passing unnoticed.
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/me' )
 			.query( true )

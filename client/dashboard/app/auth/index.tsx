@@ -79,22 +79,17 @@ function isAuthBounceRecord( value: unknown ): value is AuthBounceRecord {
 /**
  * Whether the session behind the current page can still authenticate.
  *
- * `unknown` is kept apart from `dead` because callers disagree about what to do
- * with a probe that never got an answer: nobody should be bounced on a guess,
- * but a user already looking at an error screen is better off being told to log
- * in again than being told nothing.
+ * `unknown` is separate from `dead` so a caller can choose not to act on a
+ * guess.
  */
 export type SessionState = 'alive' | 'dead' | 'unknown';
 
 export const SESSION_STATE_QUERY_KEY = [ 'auth', 'session-state' ];
 
 /**
- * Asks the API who we are, which is the only way to tell a session that can no
- * longer authenticate from an account that is merely missing a permission: the
- * two are reported identically on the request that failed.
- *
- * Shared so that one incident costs one request. A dead session fails every
- * request alike, so the answer holds for the rest of the page.
+ * Requesting the current user is the only way to tell a dead session from an
+ * account that merely lacks a permission: the failing request reports both the
+ * same way.
  */
 export const sessionStateQuery = () => ( {
 	queryKey: SESSION_STATE_QUERY_KEY,
@@ -108,6 +103,7 @@ export const sessionStateQuery = () => ( {
 					: ( 'unknown' as const )
 		),
 	retry: false,
+	// One answer serves the whole page: a dead session fails every request alike.
 	staleTime: Infinity,
 	meta: { persist: false },
 } );

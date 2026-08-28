@@ -17,10 +17,8 @@ function ReauthRedirect() {
 	return null;
 }
 
-// A refused request means either that the session can no longer authenticate or
-// that the account simply is not allowed to see this, and the error says the same
-// thing in both cases. The v1 endpoints report the code as `error` and the ones
-// registered through the WP REST infrastructure report it as `code`.
+// `authorization_required` covers both a dead session and a plain permission
+// error. v1 endpoints report the code as `error`, WP REST ones as `code`.
 function isAuthorizationError( error: Error ) {
 	if ( error.name === 'AuthorizationRequiredError' ) {
 		return true;
@@ -37,13 +35,13 @@ function isAuthorizationError( error: Error ) {
 function RefusedRequestError() {
 	const { data: sessionState, isPending } = useSessionStateQuery();
 
-	// Better a moment of nothing than a moment of the wrong advice.
+	// Render nothing rather than flash the wrong advice.
 	if ( isPending ) {
 		return null;
 	}
 
-	// A session we could not reach is treated as gone: wrong advice the user can
-	// act on beats correct advice they cannot.
+	// An unreachable session is treated as dead: wrong advice the user can act on
+	// beats correct advice they cannot.
 	return sessionState === 'alive' ? <PermissionError /> : <SessionError />;
 }
 
@@ -66,21 +64,17 @@ function PermissionError() {
 }
 
 function SessionError() {
-	// `useAuth` throws when there is no provider, and this component is the last
-	// thing standing between the user and a blank screen.
+	// `useAuth` would throw without a provider, and this is the last screen before
+	// a blank page.
 	const auth = useContext( AuthContext );
 
-	// Counts the users we failed to send to log in and left to recover by hand,
-	// which is the half of DOTCOM-14911 nothing measures today. The probe has
-	// confirmed the session by this point, so this is not diluted by people who
-	// merely lack a permission.
+	// Counts users left to recover by hand (DOTCOM-14911).
 	useEffect( () => {
 		bumpStat( 'dashboard-error', 'dead-session' );
 	}, [] );
 
 	// Logging out loads a chunk and clears stored state, either of which can fail
-	// in the very state that got the user here. Send them to log in regardless, so
-	// the button is never a dead end.
+	// in the state that got the user here.
 	const handleLogout = async () => {
 		try {
 			await auth?.logout();
