@@ -5,10 +5,12 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { AgencyDetailsPayload } from '../../agency-details-form/types';
+import useAcquisitionProps from '../../hooks/use-acquisition-props';
 
 export function useHandleWPCOMRedirect() {
 	const dispatch = useDispatch();
 	const locale = useLocale();
+	const acquisitionProps = useAcquisitionProps();
 	const notificationId = 'a4a-agency-signup-form-wpcom-redirect';
 
 	const handleWPCOMRedirect = useCallback(
@@ -34,6 +36,7 @@ export function useHandleWPCOMRedirect() {
 						postal_code: payload.postalCode,
 						state: payload.state,
 						referer: payload.referer,
+						...acquisitionProps,
 					} )
 				);
 				authUrl.search = new URLSearchParams( {
@@ -48,7 +51,7 @@ export function useHandleWPCOMRedirect() {
 				dispatch( errorNotice( JSON.stringify( error ), { id: notificationId } ) );
 			}
 		},
-		[ dispatch, locale ]
+		[ dispatch, locale, acquisitionProps ]
 	);
 
 	return handleWPCOMRedirect;
