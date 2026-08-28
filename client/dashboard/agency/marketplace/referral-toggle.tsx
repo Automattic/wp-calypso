@@ -11,6 +11,7 @@ import { useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useMarketplaceType } from './use-marketplace-type';
 import useReferralsGuide from './use-referrals-guide';
+import { useTermPricing } from './use-term-pricing';
 import type { MarketplaceType } from './use-marketplace-type';
 
 // Shared with the classic A4A marketplace so the guide only shows once across dashboards.
@@ -20,6 +21,7 @@ export default function ReferralToggle() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { recordTracksEvent } = useAnalytics();
 	const { marketplaceType, updateMarketplaceType } = useMarketplaceType();
+	const { termPricing } = useTermPricing();
 	const { openGuide, guideModal } = useReferralsGuide();
 
 	const { data: guideSeen, isFetched } = useQuery( userPreferenceQuery( GUIDE_SEEN_PREFERENCE ) );
@@ -40,6 +42,7 @@ export default function ReferralToggle() {
 		updateMarketplaceType( nextType );
 		recordTracksEvent( 'calypso_a4a_marketplace_referral_toggle', {
 			purchase_mode: nextType,
+			term_pricing: termPricing,
 		} );
 	};
 
