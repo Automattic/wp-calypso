@@ -52,7 +52,7 @@ function getStatusIntent( status: DeploymentStatusValue ) {
 		case 'pending':
 			return 'low';
 		default:
-			return 'none';
+			return 'draft';
 	}
 }
 

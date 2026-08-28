@@ -31,7 +31,7 @@ const getStatusIntent = ( status: string ): ComponentProps< typeof Badge >[ 'int
 		case 'ignored':
 			return 'informational';
 		default:
-			return 'none';
+			return 'draft';
 	}
 };
 

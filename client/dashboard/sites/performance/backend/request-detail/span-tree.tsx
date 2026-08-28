@@ -21,7 +21,7 @@ const CATEGORY_INTENT: Record< string, ComponentProps< typeof Badge >[ 'intent' 
 	db: 'medium',
 	external: 'medium',
 	cache: 'stable',
-	wp_core: 'none',
+	wp_core: 'draft',
 	template: 'informational',
 	transaction: 'informational',
 };
