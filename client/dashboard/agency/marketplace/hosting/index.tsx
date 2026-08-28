@@ -908,18 +908,24 @@ export default function MarketplaceHosting() {
 			) }
 			{ isConciergeOpen && (
 				<HostingConcierge
-					onConfigure={ ( brand ) => {
+					onConfigure={ ( brand, billing ) => {
+						// The concierge's billing conclusion drives the page: a referral
+						// flips the page into referral mode and prices it accordingly
+						// (single site, no volume discount), matching the toggle.
+						const referring = billing === 'refer';
+						setIsReferralMode( referring );
+						const wpQuantity = referring ? 1 : effectiveQuantity;
+						const wpOwned = referring ? 0 : effectiveOwnedSites;
 						if ( brand === 'wpcom' ) {
 							addToCart( {
 								id: 'wpcom-hosting',
 								family: 'wpcom-hosting',
 								label: sprintf(
 									/* translators: %d: number of sites */
-									_n( '%d WordPress.com site', '%d WordPress.com sites', effectiveQuantity ),
-									effectiveQuantity
+									_n( '%d WordPress.com site', '%d WordPress.com sites', wpQuantity ),
+									wpQuantity
 								),
-								total: getTieredPrice( wpcomProduct, effectiveQuantity, term, effectiveOwnedSites )
-									.discountedCost,
+								total: getTieredPrice( wpcomProduct, wpQuantity, term, wpOwned ).discountedCost,
 							} );
 						} else if ( brand === 'pressable' ) {
 							addToCart( {

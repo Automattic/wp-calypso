@@ -148,7 +148,7 @@ function RecommendationCard( {
 }: {
 	brand: HostingBrand[ 'key' ];
 	billing: BillingModel;
-	onConfigure: ( brand: HostingBrand[ 'key' ] ) => void;
+	onConfigure: ( brand: HostingBrand[ 'key' ], billing: BillingModel ) => void;
 } ) {
 	const info = BRAND_INFO[ brand ];
 	const name = hostingBrands.find( ( b ) => b.key === brand )?.name;
@@ -157,7 +157,10 @@ function RecommendationCard( {
 			<CardBody>
 				<VStack spacing={ 3 }>
 					<HStack justify="space-between" alignment="center">
-						<img src={ info.logo } alt={ name } className="marketplace-hosting__concierge-logo" />
+						<HStack spacing={ 2 } alignment="center" justify="flex-start" expanded={ false }>
+							<img src={ info.logo } alt="" className="marketplace-hosting__concierge-mark" />
+							<Text weight={ 600 }>{ name }</Text>
+						</HStack>
 						<span className="marketplace-hosting__concierge-rec-badge">
 							{ __( 'Recommended' ) }
 						</span>
@@ -181,7 +184,7 @@ function RecommendationCard( {
 							<Button
 								variant="primary"
 								__next40pxDefaultSize
-								onClick={ () => onConfigure( brand ) }
+								onClick={ () => onConfigure( brand, billing ) }
 							>
 								{ billing === 'refer'
 									? __( 'Add to referral cart' )
@@ -224,7 +227,7 @@ export default function HostingConcierge( {
 	onConfigure,
 	onClose,
 }: {
-	onConfigure: ( brand: HostingBrand[ 'key' ] ) => void;
+	onConfigure: ( brand: HostingBrand[ 'key' ], billing: BillingModel ) => void;
 	onClose: () => void;
 } ) {
 	const [ messages, setMessages ] = useState< Message[] >( () => [ agentMessage( GREETING ) ] );
