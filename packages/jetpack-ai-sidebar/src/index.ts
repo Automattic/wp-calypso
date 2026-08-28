@@ -574,6 +574,69 @@ const SHOW_COMPONENT_ABILITY_NAME = 'jetpack-ai/show-component';
 const LEGACY_SHOW_COMPONENT_ABILITY_NAME = 'big-sky/show-component';
 const SHOW_COMPONENT_TOOL_IDS = [ SHOW_COMPONENT_TOOL_ID, LEGACY_SHOW_COMPONENT_TOOL_ID ];
 
+const CHAT_COMPONENTS: Record< string, ComponentType > = {
+	'excerpt-picker': ExcerptPicker as ComponentType,
+	'title-picker': TitlePicker as ComponentType,
+	'seo-title-picker': SeoTitlePicker as ComponentType,
+	'seo-description-picker': SeoDescriptionPicker as ComponentType,
+	'image-alt-text-picker': ImageAltTextPicker as ComponentType,
+	'ai-editorial-review': AiEditorialReview as ComponentType,
+	'post-feedback': PostFeedback as ComponentType,
+	proofread: Proofread as ComponentType,
+};
+
+const SHOW_COMPONENT_TYPES = Object.keys( CHAT_COMPONENTS );
+
+function hasPickerOptions(
+	props: Record< string, unknown >,
+	optionsKey: string,
+	valueKey: string
+): boolean {
+	const options = props[ optionsKey ];
+	return (
+		Array.isArray( options ) &&
+		options.length > 0 &&
+		options.every( ( option ) => {
+			if ( ! option || typeof option !== 'object' || Array.isArray( option ) ) {
+				return false;
+			}
+			const value = ( option as Record< string, unknown > )[ valueKey ];
+			return typeof value === 'string' && value.trim() !== '';
+		} )
+	);
+}
+
+function hasRenderableShowComponentProps( type: string, props: unknown ): boolean {
+	if ( ! props || typeof props !== 'object' || Array.isArray( props ) ) {
+		return false;
+	}
+
+	const componentProps = props as Record< string, unknown >;
+	switch ( type ) {
+		case 'excerpt-picker':
+			return hasPickerOptions( componentProps, 'excerpts', 'excerpt' );
+		case 'title-picker':
+		case 'seo-title-picker':
+			return hasPickerOptions( componentProps, 'titles', 'title' );
+		case 'seo-description-picker':
+			return hasPickerOptions( componentProps, 'descriptions', 'description' );
+		case 'image-alt-text-picker':
+			return (
+				hasPickerOptions( componentProps, 'images', 'alt' ) &&
+				( componentProps.images as unknown[] ).every( ( image ) => {
+					const clientId = ( image as Record< string, unknown > ).clientId;
+					return typeof clientId === 'string' && clientId.trim() !== '';
+				} )
+			);
+		case 'ai-editorial-review':
+		case 'post-feedback':
+		case 'proofread':
+			return typeof componentProps.summary === 'string' && componentProps.summary.trim() !== '';
+		default:
+			return false;
+	}
+}
+
 /**
  * Client-side ability definition for `jetpack-ai/show-component`.
  *
@@ -590,7 +653,7 @@ const SHOW_COMPONENT_ABILITY: any = {
 	input_schema: {
 		type: 'object',
 		properties: {
-			type: { type: 'string' },
+			type: { type: 'string', enum: SHOW_COMPONENT_TYPES },
 			props: { type: 'object' },
 			summary: {
 				type: 'string',
@@ -598,7 +661,7 @@ const SHOW_COMPONENT_ABILITY: any = {
 					'One line naming what this step produced, in the language of the current user message. Recorded as the completed step, so a multi-step request continues from it. For example: "Proofread the post and found 2 typos."',
 			},
 		},
-		required: [ 'type' ],
+		required: [ 'type', 'props' ],
 	},
 };
 
@@ -606,6 +669,13 @@ const LEGACY_SHOW_COMPONENT_ABILITY: any = {
 	...SHOW_COMPONENT_ABILITY,
 	id: LEGACY_SHOW_COMPONENT_TOOL_ID,
 	name: LEGACY_SHOW_COMPONENT_ABILITY_NAME,
+	input_schema: {
+		...SHOW_COMPONENT_ABILITY.input_schema,
+		properties: {
+			...SHOW_COMPONENT_ABILITY.input_schema.properties,
+			type: { type: 'string' },
+		},
+	},
 };
 
 function hasShowComponentType( type: unknown ): type is string {
@@ -663,11 +733,10 @@ function handleShowComponent( input: any ): any {
 		return showComponentError( `show-component: no component registered for type "${ type }"` );
 	}
 
-	// Every component maps straight over its options, so one rendered without
-	// props throws inside React and takes the chat down with it. A registered
-	// type is not enough. Mirrors `big-sky/show-component`.
-	if ( ! props || typeof props !== 'object' || Object.keys( props ).length === 0 ) {
-		return showComponentError( 'show-component: props must be an object with properties' );
+	if ( ! hasRenderableShowComponentProps( type, props ) ) {
+		return showComponentError(
+			`show-component: props do not contain renderable data for type "${ type }"`
+		);
 	}
 
 	const componentProps: Record< string, unknown > = { ...props };
@@ -1137,31 +1206,9 @@ export const contextProvider = {
  * @returns {ComponentType|null} The matching component, or null.
  */
 export function getChatComponent( type: string ): ComponentType | null {
-	if ( type === 'excerpt-picker' ) {
-		return ExcerptPicker as ComponentType;
-	}
-	if ( type === 'title-picker' ) {
-		return TitlePicker as ComponentType;
-	}
-	if ( type === 'seo-title-picker' ) {
-		return SeoTitlePicker as ComponentType;
-	}
-	if ( type === 'seo-description-picker' ) {
-		return SeoDescriptionPicker as ComponentType;
-	}
-	if ( type === 'image-alt-text-picker' ) {
-		return ImageAltTextPicker as ComponentType;
-	}
-	if ( type === 'ai-editorial-review' ) {
-		return AiEditorialReview as ComponentType;
-	}
-	if ( type === 'post-feedback' ) {
-		return PostFeedback as ComponentType;
-	}
-	if ( type === 'proofread' ) {
-		return Proofread as ComponentType;
-	}
-	return null;
+	return Object.prototype.hasOwnProperty.call( CHAT_COMPONENTS, type )
+		? CHAT_COMPONENTS[ type ]
+		: null;
 }
 
 // ---------- useCheckpoint ----------

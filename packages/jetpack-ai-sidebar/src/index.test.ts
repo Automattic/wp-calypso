@@ -510,6 +510,7 @@ describe( 'getChatComponent', () => {
 		expect( getChatComponent( 'font-picker' ) ).toBeNull();
 		expect( getChatComponent( '' ) ).toBeNull();
 		expect( getChatComponent( 'anything-else' ) ).toBeNull();
+		expect( getChatComponent( 'toString' ) ).toBeNull();
 	} );
 } );
 
@@ -3551,8 +3552,27 @@ describe( 'toolProvider', () => {
 		it( 'asks for a step summary in the show-component schema', async () => {
 			const abilities = await toolProvider.getAbilities();
 			const showComponent = abilities.find( ( a: any ) => a.name === SHOW_COMPONENT_ABILITY_NAME );
+			const legacyShowComponent = abilities.find(
+				( a: any ) => a.name === LEGACY_SHOW_COMPONENT_ABILITY_NAME
+			);
 
 			expect( showComponent?.input_schema?.properties?.summary?.type ).toBe( 'string' );
+			expect( showComponent?.input_schema?.required ).toEqual(
+				expect.arrayContaining( [ 'type', 'props' ] )
+			);
+			expect( showComponent?.input_schema?.properties?.type?.enum ).toEqual(
+				expect.arrayContaining( [
+					'title-picker',
+					'seo-description-picker',
+					'image-alt-text-picker',
+					'proofread',
+				] )
+			);
+			expect( showComponent?.input_schema?.properties?.type?.enum ).not.toContain(
+				'seo-description'
+			);
+			// The migration ability still delegates component types owned by Big Sky.
+			expect( legacyShowComponent?.input_schema?.properties?.type?.enum ).toBeUndefined();
 		} );
 
 		it( 'delegates non-Jetpack legacy show-component callbacks to Big Sky', async () => {
@@ -3642,10 +3662,13 @@ describe( 'toolProvider', () => {
 			[ 'omitted', undefined ],
 			[ 'empty', {} ],
 			[ 'not an object', 'some text' ],
+			[ 'an array', [ { description: 'Description' } ] ],
+			[ 'the wrong option property', { titles: [ { title: 'Title' } ] } ],
+			[ 'an empty option array', { descriptions: [] } ],
+			[ 'invalid option entries', { descriptions: [ {} ] } ],
 		] )( 'rejects %s props instead of rendering a picker that crashes', async ( _label, props ) => {
-			// Every picker maps straight over its options, so a component rendered
-			// without them throws. The registered type alone is not enough to
-			// render — reject here, where the agent can still recover.
+			// New executions need enough data to render a useful component. Old
+			// history remains tolerant inside the components themselves.
 			const { result, returnToAgent } = ( await toolProvider.executeAbility(
 				SHOW_COMPONENT_TOOL_ID,
 				{
@@ -3688,7 +3711,7 @@ describe( 'toolProvider', () => {
 			async ( name ) => {
 				const { result } = ( await toolProvider.executeAbility( name, {
 					type: 'title-picker',
-					props: { titles: [] },
+					props: { titles: [ { title: 'Title' } ] },
 				} ) ) as any;
 
 				expect( JSON.parse( result.agentMessage ).tool_id ).toBe( SHOW_COMPONENT_TOOL_ID );
@@ -3725,7 +3748,7 @@ describe( 'toolProvider', () => {
 				SHOW_COMPONENT_TOOL_ID,
 				{
 					type: 'title-picker',
-					props: { titles: [] },
+					props: { titles: [ { title: 'Title' } ] },
 				}
 			) ) as any;
 
@@ -3743,7 +3766,7 @@ describe( 'toolProvider', () => {
 		it( 'reports the supplied summary as the result message', async () => {
 			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
 				type: 'proofread',
-				props: { items: [] },
+				props: { summary: 'Proofread complete.', items: [] },
 				summary: 'Proofread complete. Fixed 2 typos.',
 			} ) ) as any;
 
@@ -3758,7 +3781,7 @@ describe( 'toolProvider', () => {
 		] )( 'omits the result message given %s', async ( _label, summary ) => {
 			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
 				type: 'title-picker',
-				props: { titles: [] },
+				props: { titles: [ { title: 'Title' } ] },
 				summary,
 			} ) ) as any;
 
@@ -3768,11 +3791,20 @@ describe( 'toolProvider', () => {
 		} );
 
 		it.each( [
-			[ 'proofread', { items: [ {}, {} ] }, { suggested_edit_count: 2 } ],
-			[ 'post-feedback', { items: [ {} ] }, { suggested_edit_count: 1 } ],
+			[
+				'proofread',
+				{ summary: 'Proofread complete.', items: [ {}, {} ] },
+				{ suggested_edit_count: 2 },
+			],
+			[
+				'post-feedback',
+				{ summary: 'Feedback complete.', items: [ {} ] },
+				{ suggested_edit_count: 1 },
+			],
 			[
 				'ai-editorial-review',
 				{
+					summary: 'Review complete.',
 					suggested_edits: [ {}, {} ],
 					conflicts: [ {} ],
 					implications: [],

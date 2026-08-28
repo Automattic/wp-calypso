@@ -137,6 +137,7 @@ describe( 'ImageAltTextPicker', () => {
 	] )( 'renders without options when %s, instead of throwing', ( _label, images ) => {
 		// History strips the picker options to save tokens, so a restored row can
 		// reach this component with nothing to show. Mirrors usePickerVariations.
-		expect( () => render( <ImageAltTextPicker images={ images } /> ) ).not.toThrow();
+		const { container } = render( <ImageAltTextPicker images={ images } /> );
+		expect( container ).toBeEmptyDOMElement();
 	} );
 } );

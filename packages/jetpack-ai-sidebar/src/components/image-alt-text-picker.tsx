@@ -36,6 +36,8 @@ interface ImageAltTextPickerProps {
 	onResponseAction?: OnResponseAction;
 }
 
+const EMPTY_ALT_TEXT_SUGGESTIONS: AltTextSuggestion[] = [];
+
 /** Renders image alt-text suggestions and applies them in one action. */
 export default function ImageAltTextPicker( {
 	images,
@@ -44,12 +46,15 @@ export default function ImageAltTextPicker( {
 }: ImageAltTextPickerProps ) {
 	const [ applied, setApplied ] = useState( false );
 	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
+	// The props arrive from an orchestrator tool payload, so guard the shape
+	// instead of trusting the TypeScript type.
+	const rows = Array.isArray( images ) ? images : EMPTY_ALT_TEXT_SUGGESTIONS;
 
 	const handleApplyAll = useCallback( () => {
 		let completedCount = 0;
 		// Updates stop on the first throw; earlier completions produce `partial_failed`.
 		try {
-			images.forEach( ( image ) => {
+			rows.forEach( ( image ) => {
 				updateBlockAttributes( image.clientId, { alt: image.alt } );
 				completedCount++;
 			} );
@@ -70,17 +75,13 @@ export default function ImageAltTextPicker( {
 			itemCount: completedCount,
 		} );
 		onComplete?.();
-	}, [ images, updateBlockAttributes, onComplete, onResponseAction ] );
+	}, [ rows, updateBlockAttributes, onComplete, onResponseAction ] );
 
-	if ( ! images?.length ) {
+	if ( ! rows.length ) {
 		return null;
 	}
 
-	const count = images.length;
-
-	// The props arrive from an orchestrator tool payload, so guard the shape
-	// instead of trusting the TypeScript type.
-	const rows = Array.isArray( images ) ? images : [];
+	const count = rows.length;
 
 	return (
 		<div className="jetpack-ai-image-alt-text-picker">
