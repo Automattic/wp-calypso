@@ -361,42 +361,10 @@
 }
 
 .marketplace-hosting__stepper {
-	display: inline-flex;
-	align-items: center;
-	border-radius: 4px;
-	overflow: hidden;
-	box-shadow: inset 0 0 0 1px var( --dashboard-overview__divider-color );
-}
+	inline-size: 150px;
 
-.marketplace-hosting__stepper-button.components-button {
-	block-size: 40px;
-	min-inline-size: 40px;
-	justify-content: center;
-	border-radius: 0;
-	font-size: 18px;
-}
-
-.marketplace-hosting__stepper-input {
-	inline-size: 56px;
-	block-size: 40px;
-	border: none;
-	box-shadow:
-		inset 1px 0 0 var( --dashboard-overview__divider-color ),
-		inset -1px 0 0 var( --dashboard-overview__divider-color );
-	text-align: center;
-	font-size: 14px;
-	font-variant-numeric: tabular-nums;
-	background: var( --color-surface );
-	appearance: textfield;
-
-	&::-webkit-outer-spin-button,
-	&::-webkit-inner-spin-button {
-		appearance: none;
-		margin: 0;
-	}
-
-	&:focus {
-		outline: none;
+	.components-input-control__container {
+		border-radius: 4px;
 	}
 }
 

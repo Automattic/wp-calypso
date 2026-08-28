@@ -1,6 +1,6 @@
 import { Badge } from '@automattic/ui';
 import {
-	Button,
+	__experimentalNumberControl as NumberControl,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	__experimentalHStack as HStack,
@@ -124,47 +124,21 @@ export default function WpcomConfigurator( {
 						) }
 						{ ! isReferralMode && isCustom && (
 							<HStack justify="space-between" alignment="center" spacing={ 4 } wrap>
-								<div
+								<NumberControl
 									className="marketplace-hosting__stepper"
-									role="group"
-									aria-label={ __( 'Number of sites' ) }
-								>
-									<Button
-										className="marketplace-hosting__stepper-button"
-										label={ __( 'Fewer sites' ) }
-										disabled={ customQuantity <= 1 }
-										onClick={ () => {
-											const next = Math.max( 1, customQuantity - 1 );
-											setCustomQuantity( next );
-											onQuantityChange( next );
-										} }
-									>
-										&#8722;
-									</Button>
-									<input
-										type="number"
-										min={ 1 }
-										className="marketplace-hosting__stepper-input"
-										aria-label={ __( 'Number of sites' ) }
-										value={ customQuantity }
-										onChange={ ( event ) => {
-											const next = Math.max( 1, Number( event.target.value ) || 1 );
-											setCustomQuantity( next );
-											onQuantityChange( next );
-										} }
-									/>
-									<Button
-										className="marketplace-hosting__stepper-button"
-										label={ __( 'More sites' ) }
-										onClick={ () => {
-											const next = customQuantity + 1;
-											setCustomQuantity( next );
-											onQuantityChange( next );
-										} }
-									>
-										+
-									</Button>
-								</div>
+									__next40pxDefaultSize
+									isShiftStepEnabled
+									min={ 1 }
+									label={ __( 'Number of sites' ) }
+									hideLabelFromVision
+									spinControls="custom"
+									value={ String( customQuantity ) }
+									onChange={ ( value ) => {
+										const next = Math.max( 1, Number( value ) || 1 );
+										setCustomQuantity( next );
+										onQuantityChange( next );
+									} }
+								/>
 								<VStack spacing={ 1 } alignment="flex-end">
 									<Text weight={ 600 }>
 										{ formatUSD( price.perUnit ) }
