@@ -3,7 +3,7 @@
  */
 
 import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { useSelect } from '@wordpress/data';
 // eslint-disable-next-line import/order
 import React from 'react';
@@ -28,13 +28,22 @@ const makeAttachment = ( overrides = {} ) => ( {
 	...overrides,
 } );
 
+const mockOpenImageStudio = jest.fn();
+const mockApplyDisclosureToCaption = jest.fn( () => 'CAPTION_RESULT' );
+let mockAiDisclosureHidden = true;
+
 jest.mock( '@wordpress/core-data', () => ( {
 	store: 'core',
 } ) );
 
 jest.mock( '@wordpress/data', () => ( {
-	dispatch: jest.fn( () => ( { openImageStudio: jest.fn() } ) ),
+	dispatch: jest.fn( () => ( { openImageStudio: mockOpenImageStudio } ) ),
+	select: jest.fn( () => ( { getAiDisclosureHidden: () => mockAiDisclosureHidden } ) ),
 	useSelect: jest.fn(),
+} ) );
+
+jest.mock( './utils', () => ( {
+	applyDisclosureToCaption: ( ...args: unknown[] ) => mockApplyDisclosureToCaption( ...args ),
 } ) );
 
 jest.mock( '@wordpress/block-editor', () => ( {
@@ -44,8 +53,16 @@ jest.mock( '@wordpress/block-editor', () => ( {
 } ) );
 
 jest.mock( '@wordpress/components', () => ( {
-	ToolbarButton: ( { children, label }: { children: React.ReactNode; label: string } ) => (
-		<button data-testid="toolbar-button" aria-label={ label }>
+	ToolbarButton: ( {
+		children,
+		label,
+		onClick,
+	}: {
+		children: React.ReactNode;
+		label: string;
+		onClick?: () => void;
+	} ) => (
+		<button data-testid="toolbar-button" aria-label={ label } onClick={ onClick }>
 			{ children }
 		</button>
 	),
@@ -86,6 +103,8 @@ import { withImageStudioToolbarButton } from './image-toolbar-extension';
 
 const BlockEdit = () => <div data-testid="block-edit" />;
 
+const mockSetAttributes = jest.fn();
+
 function renderToolbar( {
 	attachment = makeAttachment(),
 	hasResolved = true,
@@ -94,7 +113,7 @@ function renderToolbar( {
 }: {
 	attachment?: ReturnType< typeof makeAttachment > | null;
 	hasResolved?: boolean;
-	attributes?: { id?: number; url?: string };
+	attributes?: { id?: number; url?: string; caption?: string };
 	name?: string;
 } = {} ) {
 	( useSelect as jest.Mock ).mockImplementation(
@@ -107,13 +126,15 @@ function renderToolbar( {
 
 	const Component = withImageStudioToolbarButton( BlockEdit );
 	return render(
-		<Component name={ name } attributes={ attributes } setAttributes={ jest.fn() } />
+		<Component name={ name } attributes={ attributes } setAttributes={ mockSetAttributes } />
 	);
 }
 
 describe( 'withImageStudioToolbarButton', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockAiDisclosureHidden = true;
+		mockApplyDisclosureToCaption.mockReturnValue( 'CAPTION_RESULT' );
 	} );
 
 	it( 'should return a component compatible with class extends', () => {
@@ -246,6 +267,50 @@ describe( 'withImageStudioToolbarButton', () => {
 			} );
 			expect( screen.getByTestId( 'block-edit' ) ).toBeInTheDocument();
 			expect( screen.queryByTestId( 'toolbar-button' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'AI disclosure caption', () => {
+		// Open Image Studio via the toolbar button, then run the close callback it
+		// was given (the edit→apply path) with a freshly edited image.
+		function applyEditedImage(
+			image: { id?: number; url?: string },
+			attributes: { id?: number; url?: string; caption?: string } = { id: 1, url: BASE_URL }
+		) {
+			renderToolbar( { attributes } );
+			fireEvent.click( screen.getByTestId( 'toolbar-button' ) );
+			const handleClose = mockOpenImageStudio.mock.calls.at( -1 )?.[ 1 ] as (
+				image: unknown
+			) => void;
+			handleClose( image );
+		}
+
+		it( 'sets the caption from the disclosure preference and existing caption', () => {
+			mockAiDisclosureHidden = false;
+			applyEditedImage(
+				{ id: 789, url: 'https://example.com/edited.jpg' },
+				{ id: 1, url: BASE_URL, caption: 'My photo' }
+			);
+
+			// showDisclosure = !hidden = true; existing caption forwarded to the helper.
+			expect( mockApplyDisclosureToCaption ).toHaveBeenCalledWith( 'My photo', true );
+			expect( mockSetAttributes ).toHaveBeenCalledWith(
+				expect.objectContaining( { id: 789, caption: 'CAPTION_RESULT' } )
+			);
+		} );
+
+		it( 'passes showDisclosure=false when the preference is hidden', () => {
+			mockAiDisclosureHidden = true;
+			applyEditedImage( { id: 789, url: 'https://example.com/edited.jpg' } );
+
+			expect( mockApplyDisclosureToCaption ).toHaveBeenCalledWith( '', false );
+		} );
+
+		it( 'does not apply when the close callback receives no image id', () => {
+			applyEditedImage( { url: 'https://example.com/edited.jpg' } );
+
+			expect( mockApplyDisclosureToCaption ).not.toHaveBeenCalled();
+			expect( mockSetAttributes ).not.toHaveBeenCalled();
 		} );
 	} );
 } );

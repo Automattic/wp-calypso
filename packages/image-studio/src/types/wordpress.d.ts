@@ -56,6 +56,7 @@ export interface CurriedImageStudioSelectors {
 	getOriginalAttachmentId: () => number | null;
 	getDraftIds: () => number[];
 	getHasUpdatedMetadata: () => boolean;
+	getAiDisclosureHidden: () => boolean;
 	getCanvasMetadata: () => import('../store').CanvasMetadata | null;
 	getIsAnnotationSaving: () => boolean;
 	getAnnotatedAttachmentIds: () => number[];
