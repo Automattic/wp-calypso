@@ -1,6 +1,8 @@
-import { useEffect } from '@wordpress/element';
-import { canExposeWebMcpTools, getWebMcpModelContext } from '../webmcp/eligibility';
+import { useEffect, useState } from '@wordpress/element';
+import { isEditorPage } from '../utils/is-editor-page';
+import { getWebMcpModelContext, isWebMcpExperimentEnabled } from '../webmcp/eligibility';
 import type { ToolProvider } from '../extension-types';
+import type { WebMcpModelContext } from '../webmcp/types';
 
 const RECONCILIATION_INTERVAL_MS = 2000;
 
@@ -10,14 +12,30 @@ export default function useWebMcpTools( {
 }: {
 	toolProvider?: ToolProvider;
 	scope: string;
-} ): void {
+} ): boolean {
+	const isEligible = isWebMcpExperimentEnabled() && isEditorPage();
+	const [ modelContext, setModelContext ] = useState< WebMcpModelContext | undefined >( () =>
+		isEligible ? getWebMcpModelContext() : undefined
+	);
+	const activeModelContext = isEligible ? modelContext : undefined;
+
 	useEffect( () => {
-		if ( ! toolProvider || ! canExposeWebMcpTools() ) {
+		if ( ! isEligible ) {
 			return;
 		}
 
-		const modelContext = getWebMcpModelContext();
-		if ( ! modelContext ) {
+		const interval = setInterval( () => {
+			const nextModelContext = getWebMcpModelContext();
+			setModelContext( ( currentModelContext ) =>
+				currentModelContext === nextModelContext ? currentModelContext : nextModelContext
+			);
+		}, RECONCILIATION_INTERVAL_MS );
+
+		return () => clearInterval( interval );
+	}, [ isEligible, scope ] );
+
+	useEffect( () => {
+		if ( ! toolProvider || ! activeModelContext ) {
 			return;
 		}
 
@@ -33,7 +51,7 @@ export default function useWebMcpTools( {
 
 				adapter = createWebMcpAdapter( {
 					toolProvider: createWebMcpToolProvider( toolProvider ),
-					modelContext,
+					modelContext: activeModelContext,
 				} );
 				adapter.sync().catch( ( error ) => {
 					// eslint-disable-next-line no-console
@@ -59,5 +77,7 @@ export default function useWebMcpTools( {
 			}
 			adapter?.dispose();
 		};
-	}, [ scope, toolProvider ] );
+	}, [ activeModelContext, scope, toolProvider ] );
+
+	return !! activeModelContext;
 }

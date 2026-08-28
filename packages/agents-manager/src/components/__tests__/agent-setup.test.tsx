@@ -131,6 +131,31 @@ describe( 'AgentSetup', () => {
 		await waitFor( () => expect( mockUseAbilitiesSetup ).toHaveBeenCalled() );
 	} );
 
+	it( 'mounts provider ability setup when WebMCP appears after mount', async () => {
+		jest.useFakeTimers();
+		mockIsOpen = false;
+		mockHasAiChatEntry = true;
+		document.body.className = 'site-editor-php';
+		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+			isDevMode: true,
+		};
+
+		render( manager( 111 ) );
+		await act( async () => {} );
+		expect( mockUseAbilitiesSetup ).not.toHaveBeenCalled();
+
+		Object.defineProperty( document, 'modelContext', {
+			configurable: true,
+			value: { registerTool: jest.fn() },
+		} );
+		await act( async () => {
+			jest.advanceTimersByTime( 2000 );
+		} );
+
+		expect( mockUseAbilitiesSetup ).toHaveBeenCalled();
+		jest.useRealTimers();
+	} );
+
 	it( 'does not mount provider ability setup outside development mode', async () => {
 		document.body.className = 'site-editor-php';
 		Object.defineProperty( document, 'modelContext', {

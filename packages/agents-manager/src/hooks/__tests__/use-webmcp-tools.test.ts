@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import apiFetch from '@wordpress/api-fetch';
 import useWebMcpTools from '../use-webmcp-tools';
 import type { Ability } from '../../abilities/types';
@@ -83,5 +83,33 @@ describe( 'useWebMcpTools', () => {
 		await Promise.resolve();
 		expect( registerTool ).not.toHaveBeenCalled();
 		unmount();
+	} );
+
+	it( 'registers tools when the model context appears after mount', async () => {
+		jest.useFakeTimers();
+		const registerTool = jest.fn();
+		const toolProvider: ToolProvider = {
+			getAbilities: jest.fn( async () => [ ability ] ),
+			executeAbility: jest.fn(),
+		};
+
+		const { result, unmount } = renderHook( () =>
+			useWebMcpTools( { toolProvider, scope: 'site-1' } )
+		);
+		expect( result.current ).toBe( false );
+
+		Object.defineProperty( document, 'modelContext', {
+			configurable: true,
+			value: { registerTool },
+		} );
+		await act( async () => {
+			jest.advanceTimersByTime( 2000 );
+			await Promise.resolve();
+		} );
+
+		expect( result.current ).toBe( true );
+		expect( registerTool ).toHaveBeenCalledTimes( 1 );
+		unmount();
+		jest.useRealTimers();
 	} );
 } );

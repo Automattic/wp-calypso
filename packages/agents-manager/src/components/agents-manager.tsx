@@ -23,7 +23,6 @@ import {
 	type AbilitiesSetupHook,
 	type LoadedProviders,
 } from '../utils/load-external-providers';
-import { canExposeWebMcpTools } from '../webmcp/eligibility';
 import AgentDock from './agent-dock';
 import { PersistentRouter } from './persistent-router';
 import type { JSX } from 'react';
@@ -190,7 +189,7 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 
 	const sessionId = resolveTabSessionId( isNewChat, agentId, siteKey, userId );
 
-	useWebMcpTools( {
+	const canExposeWebMcpTools = useWebMcpTools( {
 		toolProvider: loadedProvidersRef.current?.toolProvider,
 		scope: `${ siteKey }:${ currentRoute ?? '' }:${ window.location.pathname }${
 			window.location.search
@@ -340,7 +339,7 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 
 	return (
 		<>
-			{ loadedProviders.useAbilitiesSetup && canExposeWebMcpTools() && (
+			{ loadedProviders.useAbilitiesSetup && canExposeWebMcpTools && (
 				<WebMcpProviderAbilitiesSetup
 					useProviderAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
 				/>
