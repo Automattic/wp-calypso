@@ -79,6 +79,16 @@ export function createWebMcpToolProvider( toolProvider: ToolProvider ): ToolProv
 				throw new Error( `WebMCP server ability is unavailable: ${ name }` );
 			}
 
+			if ( ability.meta?.annotations?.readonly !== true ) {
+				return apiFetch( {
+					method: 'POST',
+					path: addQueryArgs( `/wp-abilities/v1/abilities/${ name }/run`, {
+						webmcp: 1,
+					} ),
+					data: { input },
+				} );
+			}
+
 			return apiFetch( {
 				method: 'GET',
 				path: addQueryArgs( `/wp-abilities/v1/abilities/${ name }/run`, {

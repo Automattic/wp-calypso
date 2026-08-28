@@ -151,6 +151,13 @@ describe( 'WebMCP adapter', () => {
 		).toBe( false );
 		expect(
 			shouldExposeWebMcpAbility(
+				createServerAbility( 'wpcom/media-create', {
+					meta: { annotations: { serverRegistered: true, readonly: false } },
+				} )
+			)
+		).toBe( true );
+		expect(
+			shouldExposeWebMcpAbility(
 				createAbility( { meta: { annotations: {} }, callback: undefined } )
 			)
 		).toBe( false );

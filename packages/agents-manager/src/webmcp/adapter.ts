@@ -7,6 +7,7 @@ import {
 	WEBMCP_SERVER_ABILITY_NAMES,
 	getWebMcpDescription,
 	getWebMcpInputSchema,
+	isWebMcpMutatingServerAbilityName,
 } from './contracts';
 import type { Ability } from '../abilities/types';
 import type { ToolProvider } from '../extension-types';
@@ -43,7 +44,10 @@ export function shouldExposeWebMcpAbility( ability: Ability ): boolean {
 	const annotations = ability.meta?.annotations;
 
 	if ( WEBMCP_SERVER_ABILITY_ALLOWLIST.has( ability.name ) ) {
-		return annotations?.serverRegistered === true && annotations.readonly === true;
+		return (
+			annotations?.serverRegistered === true &&
+			( annotations.readonly === true || isWebMcpMutatingServerAbilityName( ability.name ) )
+		);
 	}
 
 	if ( ! WEBMCP_EDITOR_ABILITY_ALLOWLIST.has( ability.name ) ) {

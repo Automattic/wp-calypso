@@ -46,6 +46,10 @@ The allowlist contains:
   checks, and authenticated site-specific execution path are preserved. The adapter also includes
   each ability's server-provided instructions in the WebMCP description when present.
 
+- `wpcom/media-create`: an explicitly allowlisted mutating server ability that uploads base64-encoded
+  files to the site's media library after user confirmation. WebMCP sends its input as a JSON POST
+  body and preserves its existing authentication, site capability, MIME validation, and size checks.
+
 Client abilities must be in the editor allowlist and be client-registered or carry a client
 callback. Server abilities must be in the separate server allowlist and marked server-registered;
 neither allowlist grants eligibility to a lookalike from the other provenance.
@@ -60,10 +64,11 @@ neither allowlist grants eligibility to a lookalike from the other provenance.
    `apps/agents-manager`.
 3. Open a post, page, or site editor where the inline Agents Manager data has `isDevMode: true`
    using GPT-5.6 Sol or Terra.
-4. Ask Codex to inspect the current page's Site tools. Confirm it discovers all ten tools:
+4. Ask Codex to inspect the current page's Site tools. Confirm it discovers all eleven tools:
    `agents_manager__get_block_tree`, `big_sky__show_template`, and
    `big_sky__apply_block_edits`, plus `wpcom__get_block_schemas`,
-   `wpcom__get_content_guidelines`, `wpcom__get_posts`, `wpcom__get_site_stats`, and
+   `wpcom__get_content_guidelines`, `wpcom__get_posts`, `wpcom__get_site_stats`,
+   `wpcom__media_create`, and
    `wpcom__patterns_list`, `wpcom__patterns_get`, and `core__get_site_info`. Do not use DevTools or
    call `document.modelContext` directly for this path.
 5. Call `agents_manager__get_block_tree`. If a requested template part is absent, call
@@ -74,7 +79,10 @@ neither allowlist grants eligibility to a lookalike from the other provenance.
 7. Call `wpcom__patterns_list`, choose a pattern, and fetch it with `wpcom__patterns_get`. Pass its
    `content` to `big_sky__apply_block_edits` as `inserts[0].blockMarkup`, then confirm the pattern's
    blocks appear on the canvas in order.
-8. Do not publish the page. Discard the test changes or remove any auto-draft the editor created.
+8. After confirming the upload with the user, call `wpcom__media_create` with a small test image and
+   confirm its returned attachment ID and URL exist in the site's media library. Delete the test
+   attachment afterward.
+9. Do not publish the page. Discard the test changes or remove any auto-draft the editor created.
 
 ### Direct browser API fallback
 
@@ -82,7 +90,7 @@ neither allowlist grants eligibility to a lookalike from the other provenance.
    on.
 2. Without opening Agents Manager chat, enumerate the page's tools through
    `document.modelContext.getTools()`.
-3. Confirm the same ten tools are present and that the seven server tools expose input schemas.
+3. Confirm the same eleven tools are present and that the eight server tools expose input schemas.
 4. Call `agents_manager__get_block_tree`, choose a returned client ID, then call
    `big_sky__apply_block_edits` with that ID and a small reversible edit. Confirm the canvas changes
    without publishing the page.

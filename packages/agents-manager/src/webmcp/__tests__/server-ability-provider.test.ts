@@ -23,6 +23,15 @@ const serverAbility: Ability = {
 	meta: { annotations: { readonly: true, idempotent: true } },
 };
 
+const mutatingServerAbility: Ability = {
+	name: 'wpcom/media-create',
+	label: 'Upload media',
+	description: 'Upload media to this site.',
+	category: 'wpcom',
+	input_schema: { type: 'object', properties: {} },
+	meta: { annotations: { readonly: false, destructive: false, idempotent: false } },
+};
+
 describe( 'WebMCP server ability provider', () => {
 	beforeEach( () => {
 		jest.mocked( apiFetch ).mockReset();
@@ -98,6 +107,36 @@ describe( 'WebMCP server ability provider', () => {
 		expect( apiFetch ).toHaveBeenLastCalledWith( {
 			method: 'GET',
 			path: expect.stringMatching( /wp-abilities\/v1\/abilities\/wpcom\/get-posts\/run/ ),
+		} );
+		expect( toolProvider.executeAbility ).not.toHaveBeenCalled();
+	} );
+
+	it( 'executes mutating server abilities through POST with a JSON body', async () => {
+		jest
+			.mocked( apiFetch )
+			.mockResolvedValueOnce( [ mutatingServerAbility ] )
+			.mockResolvedValueOnce( { data: { id: 123, source_url: 'https://example.com/image.jpg' } } );
+		const toolProvider: ToolProvider = {
+			getAbilities: jest.fn( async () => [ clientAbility ] ),
+			executeAbility: jest.fn(),
+		};
+		const provider = createWebMcpToolProvider( toolProvider );
+		const input = {
+			wpcom_site: 'example.wordpress.com',
+			file_content_base64: 'aW1hZ2U=',
+			filename: 'image.jpg',
+			mime_type: 'image/jpeg',
+			user_confirmed: true,
+		};
+
+		await provider.executeAbility( 'wpcom/media-create', input );
+
+		expect( apiFetch ).toHaveBeenLastCalledWith( {
+			method: 'POST',
+			path: expect.stringMatching(
+				/wp-abilities\/v1\/abilities\/wpcom\/media-create\/run.*webmcp=1/
+			),
+			data: { input },
 		} );
 		expect( toolProvider.executeAbility ).not.toHaveBeenCalled();
 	} );

@@ -8,15 +8,22 @@ export const WEBMCP_SERVER_ABILITY_NAMES = [
 	'wpcom/get-content-guidelines',
 	'wpcom/get-posts',
 	'wpcom/get-site-stats',
+	'wpcom/media-create',
 	'wpcom/patterns-list',
 	'wpcom/patterns-get',
 	'core/get-site-info',
 ] as const;
 
+export const WEBMCP_MUTATING_SERVER_ABILITY_NAMES = [ 'wpcom/media-create' ] as const;
+
 export type WebMcpServerAbilityName = ( typeof WEBMCP_SERVER_ABILITY_NAMES )[ number ];
 
 export function isWebMcpServerAbilityName( name: string ): name is WebMcpServerAbilityName {
 	return ( WEBMCP_SERVER_ABILITY_NAMES as readonly string[] ).includes( name );
+}
+
+export function isWebMcpMutatingServerAbilityName( name: string ): boolean {
+	return ( WEBMCP_MUTATING_SERVER_ABILITY_NAMES as readonly string[] ).includes( name );
 }
 
 const BLOCK_DATA_SCHEMA = {
