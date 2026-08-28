@@ -328,7 +328,7 @@ describe( 'draft assist entry point', () => {
 			expect( stores.updateSettings ).not.toHaveBeenCalled();
 		} );
 
-		it( 'tracks the entry point being shown once', async () => {
+		it( 'does not track the entry point as shown', async () => {
 			installFeature();
 			const stores = installEditorStores();
 			const { registerDraftEntry } = await loadDraftEntry();
@@ -337,9 +337,10 @@ describe( 'draft assist entry point', () => {
 			stores.settings.bodyPlaceholder = DEFAULT_PLACEHOLDER;
 			stores.notify();
 
-			expect( getTracksCalls( 'jetpack_ai_draft_assist_entry_point_shown' ) ).toEqual( [
-				[ 'jetpack_ai_draft_assist_entry_point_shown', { content_type: 'post' } ],
-			] );
+			// Setting `bodyPlaceholder` renders nothing on Gutenberg 23.8+, so counting
+			// it as shown reported a prompt the writer never saw. The placeholder HOC
+			// records it instead, when it actually reaches the screen.
+			expect( getTracksCalls( 'jetpack_ai_draft_assist_entry_point_shown' ) ).toEqual( [] );
 		} );
 	} );
 

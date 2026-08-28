@@ -1,8 +1,10 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { isDraftAssistPostType } from '../utils/draft-assist';
 import { isDraftAssistEnabled } from '../utils/preview-features';
+import { trackDraftAssistEntryPointShown } from '../utils/tracking';
 import type { ComponentType } from 'react';
 
 /**
@@ -38,6 +40,9 @@ type ParagraphEditProps = {
  * If a future Gutenberg drops the ghost and restores the appender, this simply
  * stops matching, and `bodyPlaceholder` starts working again on its own.
  */
+/** Fires once per editor session; the HOC wraps every block, so an instance guard would not do. */
+const hasTrackedShown = { current: false };
+
 export const withDraftAssistPlaceholder = createHigherOrderComponent(
 	( BlockEdit: ComponentType< ParagraphEditProps > ) => {
 		const WithDraftAssistPlaceholder = ( props: ParagraphEditProps ) => {
@@ -68,7 +73,19 @@ export const withDraftAssistPlaceholder = createHigherOrderComponent(
 				return editor?.getCurrentPostType?.();
 			}, [] );
 
-			if ( ! isGhostParagraph || ! isDraftAssistEnabled() || ! isDraftAssistPostType( postType ) ) {
+			const shouldShowPrompt =
+				isGhostParagraph && isDraftAssistEnabled() && isDraftAssistPostType( postType );
+
+			// Recorded here rather than where the placeholder is *set*, because this is
+			// where it is actually rendered. Once per editor session, not per re-render.
+			useEffect( () => {
+				if ( shouldShowPrompt && ! hasTrackedShown.current && isDraftAssistPostType( postType ) ) {
+					hasTrackedShown.current = true;
+					trackDraftAssistEntryPointShown( { contentType: postType } );
+				}
+			}, [ shouldShowPrompt, postType ] );
+
+			if ( ! shouldShowPrompt ) {
 				return <BlockEdit { ...props } />;
 			}
 

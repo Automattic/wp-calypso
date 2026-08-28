@@ -17,7 +17,6 @@ import { isDraftAssistPostType } from '../utils/draft-assist';
 import { isDraftAssistEnabled } from '../utils/preview-features';
 import {
 	type DraftAssistContentType,
-	trackDraftAssistEntryPointShown,
 	trackDraftAssistEntryPointTriggered,
 } from '../utils/tracking';
 
@@ -78,7 +77,6 @@ let placeholderSyncUnsubscribe: ( () => void ) | null = null;
 let placeholderSyncRetries = 0;
 let placeholderApplied = false;
 let defaultBodyPlaceholder: string | undefined;
-let entryPointShownTracked = false;
 let isWaitingForAgentsManagerReady = false;
 let pendingPrompt: string | null = null;
 
@@ -178,6 +176,13 @@ function restoreBodyPlaceholder( currentPlaceholder: string | undefined ): void 
 /**
  * Keep `bodyPlaceholder` in sync with post emptiness.
  *
+ * Back-compat only. Gutenberg 23.8 replaced the default block appender — the sole
+ * consumer of `bodyPlaceholder` — with a ghost paragraph for empty posts, so on
+ * current editors this sets a value nothing reads and
+ * `withDraftAssistPlaceholder` does the visible work. It is kept because wpcom
+ * pins Gutenberg centrally and rolls versions back, and on <23.8 this is the only
+ * thing that renders the prompt.
+ *
  * The editor re-pushes its own settings whenever they change, so this runs on
  * every store tick and re-applies. The value the editor last set is captured
  * each time so restoring hands back whatever it currently wants, not a stale
@@ -228,10 +233,10 @@ function syncBodyPlaceholder(): void {
 		callStoreMethod( blockEditor, 'updateSettings', { bodyPlaceholder: draftPlaceholder } );
 		placeholderApplied = true;
 
-		if ( ! entryPointShownTracked ) {
-			entryPointShownTracked = true;
-			trackDraftAssistEntryPointShown( { contentType } );
-		}
+		// Deliberately does NOT record the entry point as shown. Setting
+		// `bodyPlaceholder` no longer renders anything on Gutenberg 23.8+, so firing
+		// the event here counted a prompt nobody saw. `withDraftAssistPlaceholder`
+		// records it instead, when the placeholder actually reaches the screen.
 		return;
 	}
 

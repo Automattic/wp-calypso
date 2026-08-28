@@ -1,5 +1,5 @@
 import { addFilter } from '@wordpress/hooks';
-import { isBlockToolbarButtonEnabled } from '../utils/preview-features';
+import { isBlockToolbarButtonEnabled, isDraftAssistEnabled } from '../utils/preview-features';
 import { withJetpackAiToolbarButton } from './block-toolbar-extension';
 import { registerDraftEntry } from './draft-entry';
 import { withDraftAssistPlaceholder } from './draft-placeholder';
@@ -27,6 +27,16 @@ function registerBlockToolbarFilter(): void {
 
 function registerDraftPlaceholderFilter(): void {
 	if ( draftPlaceholderRegistered ) {
+		return;
+	}
+
+	// Gate registration on the flag, like registerBlockToolbarFilter() above.
+	// This HOC wraps EVERY block's edit component, and measured at 2,000 blocks it
+	// made store ticks 24-35x slower. Registering it for users who cannot use the
+	// feature meant ~100% of editor users paying that and 0% getting anything.
+	// registerDraftEntry() already reads the flag at registration time, so the
+	// "cannot lose a race against agentsManagerData" argument does not hold here.
+	if ( ! isDraftAssistEnabled() ) {
 		return;
 	}
 
