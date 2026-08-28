@@ -1,3 +1,4 @@
+@import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
 .domain-search--step-wrapper {
@@ -31,5 +32,41 @@
 
 	.step-wrapper__navigation-link {
 		color: #1d2327;
+	}
+}
+
+// The shared @automattic/domain-search overlay is built for the Stepper, which
+// pins a fixed top bar, publishes its height as --step-container-v2-top-bar-height,
+// and drops the H1 on mobile once results show. The classic signup StepWrapper
+// does none of that, so the overlay (position: fixed; inset-block-start:
+// var(..., 0)) pins to the viewport top and covers the hero while the results
+// reserve ~123px for it, producing the reported overlap plus a large gap. Give
+// signup the same context on mobile in the results state: pin the nav as a fixed
+// top bar, publish its height so the overlay sits directly below it, drop the
+// hero (the overlay's compact banner replaces it, as in the Stepper), and push
+// the content below the bar. Scoped to the results state + mobile so the
+// initial/empty state and desktop stay untouched.
+@media ( max-width: #{ $break-small - 1px } ) {
+	.step-wrapper--domain-search:has( .domain-search--results ) {
+		--step-container-v2-top-bar-height: 56px;
+
+		.step-wrapper__navigation.action-buttons.no-sticky {
+			position: fixed;
+			inset-block-start: 0;
+			inset-inline: 0;
+			height: var( --step-container-v2-top-bar-height );
+			margin: 0;
+			padding-inline: 16px;
+			background-color: var( --color-surface );
+			z-index: 1;
+		}
+
+		.step-wrapper__header {
+			display: none;
+		}
+
+		.step-wrapper__content {
+			padding-block-start: var( --step-container-v2-top-bar-height );
+		}
 	}
 }
