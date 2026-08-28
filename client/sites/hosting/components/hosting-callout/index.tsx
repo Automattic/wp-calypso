@@ -5,16 +5,18 @@ import { useQuery } from '@tanstack/react-query';
 import { Button, __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Callout } from 'calypso/dashboard/components/callout';
 import HostingFeatureList from 'calypso/dashboard/sites/hosting-feature-list';
 import {
 	isAtomicTransferInProgress,
 	isAtomicTransferredSite,
 } from 'calypso/dashboard/utils/site-atomic-transfers';
+import { EVERY_SECOND, useInterval } from 'calypso/lib/interval';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
+import { ACTIVATION_DEADLINE_MS } from '../activation-wait';
 import HostingActivationButton from '../hosting-activation-button';
 import illustrationUrl from './hosting-callout-illustration.svg';
 
@@ -28,40 +30,46 @@ export function HostingActivationCallout( {
 	redirectUrl?: string;
 } ) {
 	const dispatch = useDispatch();
+	const [ activationStalled, setActivationStalled ] = useState( false );
+
 	const { data: latestAtomicTransfer } = useQuery( {
 		...siteLatestAtomicTransferQuery( site.ID ),
-		refetchInterval: ( query ) => {
-			if ( ! query.state.data ) {
-				return 0;
-			}
-
-			return isAtomicTransferInProgress( query.state.data.status ) ? 5000 : false;
-		},
-		refetchIntervalInBackground: true,
+		refetchInterval: ( query ) =>
+			query.state.data && isAtomicTransferInProgress( query.state.data.status ) ? 5000 : false,
 	} );
+
+	const isTransferCompleted = latestAtomicTransfer?.status === 'completed';
+
+	// The transfer says `completed` before the site answers as Atomic, so this is the wait that
+	// needs the deadline — without one it polls for the life of the tab.
+	const completedSinceRef = useRef< number | null >( null );
+	if ( isTransferCompleted && completedSinceRef.current === null ) {
+		completedSinceRef.current = Date.now();
+	}
 
 	const { data: atomicSite } = useQuery( {
 		...siteByIdQuery( site.ID ),
-		refetchInterval: ( query ) => {
-			if ( ! query.state.data ) {
-				return 0;
-			}
-
-			return ! isAtomicTransferredSite( query.state.data ) ? 2000 : false;
-		},
-		enabled: latestAtomicTransfer?.status === 'completed',
+		refetchInterval: ( query ) =>
+			query.state.data && isAtomicTransferredSite( query.state.data ) ? false : 2000,
+		enabled: isTransferCompleted && ! activationStalled,
 	} );
 
 	const isActivating =
+		! activationStalled &&
 		latestAtomicTransfer &&
-		( isAtomicTransferInProgress( latestAtomicTransfer.status ) ||
-			// Keep displaying “Activating…” until the page redirects.
-			latestAtomicTransfer?.status === 'completed' );
+		// Keep displaying “Activating…” until the page redirects.
+		( isAtomicTransferInProgress( latestAtomicTransfer.status ) || isTransferCompleted );
 
-	const isActivated =
-		latestAtomicTransfer?.status === 'completed' &&
-		atomicSite &&
-		isAtomicTransferredSite( atomicSite );
+	const isActivated = isTransferCompleted && atomicSite && isAtomicTransferredSite( atomicSite );
+
+	useInterval(
+		() => {
+			if ( Date.now() - ( completedSinceRef.current ?? Date.now() ) >= ACTIVATION_DEADLINE_MS ) {
+				setActivationStalled( true );
+			}
+		},
+		isTransferCompleted && ! isActivated && ! activationStalled ? EVERY_SECOND : null
+	);
 
 	useEffect( () => {
 		const handleActivated = async () => {
