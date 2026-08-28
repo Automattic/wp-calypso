@@ -2,7 +2,6 @@
 // Production would route this through @automattic/agents-manager like the omnibar.
 // eslint-disable-next-line no-restricted-imports
 import AgentUI from '@automattic/agenttic-ui';
-import { Badge } from '@automattic/ui';
 import {
 	Button,
 	__experimentalHStack as HStack,
@@ -11,7 +10,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
 import pressableDescriptor from '../exclusive-offers/images/pressable-descriptor.svg';
@@ -131,6 +130,17 @@ const BOOK_SUGGESTIONS: Suggestion[] = [
 	},
 ];
 
+const MIGRATE_PROMPT = __( 'Is this a fresh build, or are you moving an existing site over?' );
+const MIGRATE_SUGGESTIONS: Suggestion[] = [
+	{ id: 'new', label: __( 'A new build' ), prompt: __( 'A new build' ), autoSubmit: true },
+	{
+		id: 'migrating',
+		label: __( 'Migrating an existing site' ),
+		prompt: __( 'Migrating an existing site' ),
+		autoSubmit: true,
+	},
+];
+
 function RecommendationCard( {
 	brand,
 	billing,
@@ -148,7 +158,9 @@ function RecommendationCard( {
 				<VStack spacing={ 3 }>
 					<HStack justify="space-between" alignment="center">
 						<img src={ info.logo } alt={ name } className="marketplace-hosting__concierge-logo" />
-						<Badge intent="success">{ __( 'Recommended' ) }</Badge>
+						<span className="marketplace-hosting__concierge-rec-badge">
+							{ __( 'Recommended' ) }
+						</span>
 					</HStack>
 					<Text>{ info.pitch }</Text>
 					<CheckList items={ info.proof } />
@@ -206,7 +218,7 @@ const userMessage = ( text: string ): Message => ( {
 	showIcon: false,
 } );
 
-type Stage = 'type' | 'money' | 'book' | 'result';
+type Stage = 'type' | 'migrate' | 'money' | 'book' | 'result';
 
 export default function HostingConcierge( {
 	onConfigure,
@@ -233,6 +245,8 @@ export default function HostingConcierge( {
 		};
 	}, [ onClose ] );
 
+	const migratingRef = useRef( false );
+
 	const recommend = ( brand: HostingBrand[ 'key' ], model: BillingModel, why: string ) => {
 		const card: Message = {
 			id: `rec-${ messageSeq++ }`,
@@ -248,7 +262,19 @@ export default function HostingConcierge( {
 			archived: false,
 			showIcon: false,
 		};
-		setMessages( ( current ) => [ ...current, agentMessage( why ), card ] );
+		setMessages( ( current ) => {
+			const next = [ ...current, agentMessage( why ), card ];
+			if ( migratingRef.current ) {
+				next.push(
+					agentMessage(
+						brand === 'pressable'
+							? __( 'And since you’re migrating, Pressable does it white-glove for free.' )
+							: __( 'And since you’re migrating, we’ll move the site over for free.' )
+					)
+				);
+			}
+			return next;
+		} );
 		setSuggestions( [] );
 		setStage( 'result' );
 	};
@@ -276,7 +302,20 @@ export default function HostingConcierge( {
 
 		if ( stage === 'type' ) {
 			const option = TYPE_SUGGESTIONS.find( ( s ) => s.label === value );
-			if ( option?.id === 'enterprise' ) {
+			if ( option?.id === 'enterprise' || option?.id === 'content' || option?.id === 'store' ) {
+				setClientType( option.id );
+				ask( MIGRATE_PROMPT, MIGRATE_SUGGESTIONS, 'migrate' );
+			} else {
+				nudge();
+			}
+		} else if ( stage === 'migrate' ) {
+			const option = MIGRATE_SUGGESTIONS.find( ( s ) => s.label === value );
+			if ( ! option ) {
+				nudge();
+				return;
+			}
+			migratingRef.current = option.id === 'migrating';
+			if ( clientType === 'enterprise' ) {
 				recommend(
 					'vip',
 					'refer',
@@ -284,11 +323,8 @@ export default function HostingConcierge( {
 						'For an enterprise or high-traffic client, that’s WordPress VIP. It’s a guided sale, so the play here is to refer them in and earn the commission:'
 					)
 				);
-			} else if ( option?.id === 'content' || option?.id === 'store' ) {
-				setClientType( option.id );
-				ask( MONEY_PROMPT, MONEY_SUGGESTIONS, 'money' );
 			} else {
-				nudge();
+				ask( MONEY_PROMPT, MONEY_SUGGESTIONS, 'money' );
 			}
 		} else if ( stage === 'money' ) {
 			const option = MONEY_SUGGESTIONS.find( ( s ) => s.label === value );
