@@ -5,11 +5,16 @@ import { onlineManager } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { render } from '../../../test-utils';
 import { bumpStat } from '../../analytics';
 import { AuthContext } from '../../auth';
 import UnknownError from '../index';
 import type { User } from '@automattic/api-core';
+
+jest.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: jest.fn( () => Promise.resolve() ),
+} ) );
 
 jest.mock( '../../analytics', () => ( {
 	...jest.requireActual( '../../analytics' ),
@@ -17,6 +22,7 @@ jest.mock( '../../analytics', () => ( {
 } ) );
 
 const mockedBumpStat = jest.mocked( bumpStat );
+const mockedLogToLogstash = jest.mocked( logToLogstash );
 
 const RAW_API_MESSAGE =
 	'An active access token must be used to query information about the current user.';
@@ -220,6 +226,60 @@ describe( 'UnknownError', () => {
 			renderWithLogout( authorizationError(), jest.fn() );
 
 			await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+		} );
+	} );
+
+	describe( 'auditing why the request was refused', () => {
+		/** Carries the endpoint's own explanation alongside the code. */
+		function unauthenticatedError() {
+			return wpError( { error: 'authorization_required', reason: 'unauthenticated' } );
+		}
+
+		it( 'records the endpoint reason next to what the session check found', async () => {
+			mockDeadSession();
+			renderWithLogout( unauthenticatedError(), jest.fn() );
+
+			await waitFor( () => expect( mockedLogToLogstash ).toHaveBeenCalled() );
+			expect( mockedLogToLogstash.mock.calls[ 0 ][ 0 ] ).toMatchObject( {
+				feature: 'calypso_client',
+				extra: {
+					type: 'dashboard_refused_request',
+					session_state: 'dead',
+					reason: 'unauthenticated',
+					code: 'authorization_required',
+					status: 403,
+				},
+			} );
+		} );
+
+		it( 'records the disagreement when the session is actually fine', async () => {
+			mockWorkingSession();
+			renderWithLogout( unauthenticatedError(), jest.fn() );
+
+			await waitFor( () => expect( mockedLogToLogstash ).toHaveBeenCalled() );
+			expect( mockedLogToLogstash.mock.calls[ 0 ][ 0 ] ).toMatchObject( {
+				extra: { session_state: 'alive', reason: 'unauthenticated' },
+			} );
+		} );
+
+		it( 'reads the reason out of the WP REST envelope too', async () => {
+			mockDeadSession();
+			renderWithLogout(
+				wpError( { code: 'rest_forbidden', data: { status: 403, reason: 'unauthenticated' } } ),
+				jest.fn()
+			);
+
+			await waitFor( () => expect( mockedLogToLogstash ).toHaveBeenCalled() );
+			expect( mockedLogToLogstash.mock.calls[ 0 ][ 0 ] ).toMatchObject( {
+				extra: { code: 'rest_forbidden', reason: 'unauthenticated' },
+			} );
+		} );
+
+		it( 'does not log for errors that are not refusals', async () => {
+			render( <UnknownError error={ new Error( 'Something specific broke' ) } /> );
+
+			await screen.findByText( 'Something specific broke' );
+			expect( mockedLogToLogstash ).not.toHaveBeenCalled();
 		} );
 	} );
 

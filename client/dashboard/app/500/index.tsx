@@ -2,6 +2,7 @@ import { isWpError } from '@automattic/api-core';
 import { Button, ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useContext, useEffect } from 'react';
+import { logToLogstash } from 'calypso/lib/logstash';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -32,14 +33,53 @@ function isAuthorizationError( error: Error ) {
 	return code === 'authorization_required' || code === 'rest_forbidden';
 }
 
-function RefusedRequestError() {
+// The endpoint reports why it refused. Recording that beside what the session
+// check independently found is what makes the two comparable.
+function describeRefusal( error: Error ) {
+	if ( ! isWpError( error ) ) {
+		return { error_name: error.name };
+	}
+
+	const data =
+		typeof error.data === 'object' && error.data !== null
+			? ( error.data as Record< string, unknown > )
+			: undefined;
+
+	return {
+		error_name: error.name,
+		status: error.statusCode,
+		code: typeof error.error === 'string' ? error.error : error.code,
+		// v1 carries this at the top level, the WP REST envelope nests it.
+		reason: error.reason ?? data?.reason,
+	};
+}
+
+function RefusedRequestError( { error }: { error: Error } ) {
 	const { data: sessionState } = useSessionStateQuery();
 
 	useEffect( () => {
-		if ( sessionState ) {
-			bumpStat( 'dashboard-error', `refused:${ sessionState }` );
+		if ( ! sessionState ) {
+			return;
 		}
-	}, [ sessionState ] );
+
+		bumpStat( 'dashboard-error', `refused:${ sessionState }` );
+
+		// This endpoint needs the session that may be the very thing that is broken, so
+		// a dead session is the case least likely to be recorded here. The stat above
+		// is the one that always arrives.
+		logToLogstash( {
+			feature: 'calypso_client',
+			message: 'Dashboard refused request',
+			severity: 'debug',
+			tags: [ 'dashboard' ],
+			extra: {
+				type: 'dashboard_refused_request',
+				session_state: sessionState,
+				...describeRefusal( error ),
+				path: window.location.href,
+			},
+		} ).catch( () => {} );
+	}, [ sessionState, error ] );
 
 	// Until the session is known to be fine, assume it is not: a stalled check must
 	// not leave the user staring at nothing.
@@ -131,7 +171,7 @@ function UnknownError( { error }: { error: Error } ) {
 	}
 
 	if ( isAuthorizationError( error ) ) {
-		return <RefusedRequestError />;
+		return <RefusedRequestError error={ error } />;
 	}
 
 	return <GenericError error={ error } />;
