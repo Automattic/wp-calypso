@@ -1,5 +1,4 @@
-import { fetchUser, isWpError } from '@automattic/api-core';
-import { useQuery } from '@tanstack/react-query';
+import { isWpError } from '@automattic/api-core';
 import { Button, ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useContext, useEffect } from 'react';
@@ -8,7 +7,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { reauthRequiredLink, wpcomLink } from '../../utils/link';
 import { bumpStat } from '../analytics';
-import { AuthContext } from '../auth';
+import { AuthContext, useSessionStateQuery } from '../auth';
 
 function ReauthRedirect() {
 	useEffect( () => {
@@ -35,38 +34,17 @@ function isAuthorizationError( error: Error ) {
 	return code === 'authorization_required' || code === 'rest_forbidden';
 }
 
-/**
- * Whether the session behind this screen still works.
- *
- * Asking for the current user is the only way to tell the two causes apart: it
- * succeeds for an account that is merely missing a permission, and fails the same
- * way as everything else once the session is gone.
- */
-function useHasWorkingSession() {
-	const { data, isPending } = useQuery( {
-		queryKey: [ 'auth', 'session-probe' ],
-		queryFn: () =>
-			fetchUser().then(
-				() => true,
-				() => false
-			),
-		retry: false,
-		gcTime: 0,
-		meta: { persist: false },
-	} );
-
-	return { hasWorkingSession: data ?? false, isPending };
-}
-
 function RefusedRequestError() {
-	const { hasWorkingSession, isPending } = useHasWorkingSession();
+	const { data: sessionState, isPending } = useSessionStateQuery();
 
 	// Better a moment of nothing than a moment of the wrong advice.
 	if ( isPending ) {
 		return null;
 	}
 
-	return hasWorkingSession ? <PermissionError /> : <SessionError />;
+	// A session we could not reach is treated as gone: wrong advice the user can
+	// act on beats correct advice they cannot.
+	return sessionState === 'alive' ? <PermissionError /> : <SessionError />;
 }
 
 function PermissionError() {
