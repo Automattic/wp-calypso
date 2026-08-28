@@ -74,7 +74,7 @@ export function BillingPurchaseInfoPopover( { children }: { children: ReactNode 
 }
 
 function ProductIcon( { icon, label }: { icon: ReactElement; label: string } ) {
-	const containerSize = 52;
+	const containerSize = 48;
 	const iconSize = 20;
 	return (
 		<span
@@ -97,7 +97,7 @@ function ProductIcon( { icon, label }: { icon: ReactElement; label: string } ) {
 }
 
 function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purchase } ) {
-	const size = 52;
+	const size = 48;
 
 	if ( purchase.is_jetpack_plan_or_product ) {
 		return (

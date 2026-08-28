@@ -54,14 +54,6 @@ img.payment-method-image {
 	}
 }
 
-.dataviews-layout__container {
-	tr {
-		td:has(.billing-purchases__middle-valign), td.dataviews-view-table__actions-column--sticky {
-			vertical-align: middle;
-		}
-	}
-}
-
 .dataviews-view-table__cell-content-wrapper .purchase-payment-method__wrapper {
 	width: fit-content;
 }
