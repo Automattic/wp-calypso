@@ -1,5 +1,6 @@
 import { clearStepPersistedState, EDUCATION_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
@@ -29,6 +30,7 @@ import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 export const STUDENT_PLAN_SLUG = 'wp_bundle_student_yearly';
+export const EDUCATION_BUNDLED_TLDS = [ 'blog', 'art' ];
 
 function initialize() {
 	const steps = [
@@ -48,6 +50,20 @@ const education: FlowV2< typeof initialize > = {
 	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,
 	initialize,
+	useStepsProps() {
+		const { __ } = useI18n();
+
+		return {
+			[ STEPS.DOMAIN_SEARCH.slug ]: {
+				headerText: __( 'Your plan includes a free domain name' ),
+				subHeaderText: __(
+					'Get a .blog or .art domain name for free, or choose a different extension at regular price.'
+				),
+				hideFreeDomainPromo: true,
+				freeForFirstYearTlds: EDUCATION_BUNDLED_TLDS,
+			},
+		};
+	},
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
 		const locale = useFlowLocale();
