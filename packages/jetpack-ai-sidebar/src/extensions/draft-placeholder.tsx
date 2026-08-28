@@ -46,52 +46,50 @@ const hasTrackedShown = { current: false };
 export const withDraftAssistPlaceholder = createHigherOrderComponent(
 	( BlockEdit: ComponentType< ParagraphEditProps > ) => {
 		const WithDraftAssistPlaceholder = ( props: ParagraphEditProps ) => {
-			const isGhostParagraph = useSelect(
+			// One subscription, and it returns before touching any store for a block that
+			// is not a paragraph — this HOC wraps every block's edit component, so what it
+			// does on the way out matters as much as what it does on the way in.
+			const contentType = useSelect(
 				( select ) => {
-					if ( props.name !== 'core/paragraph' ) {
-						return false;
+					if ( props.name !== 'core/paragraph' || ! isDraftAssistEnabled() ) {
+						return null;
 					}
 
-					const store = select( 'core/block-editor' ) as
-						| { getBlock?: ( clientId: string ) => unknown; getBlockCount?: () => number }
+					const blockEditor = select( 'core/block-editor' ) as
+						| { getBlockCount?: () => number }
 						| undefined;
 
-					if ( typeof store?.getBlock !== 'function' ) {
-						return false;
+					// Zero blocks in the document means nothing real is being rendered, so
+					// this paragraph is Gutenberg's ghost for the empty post. That is the
+					// whole test: a store lookup on the client id would also match ghosts
+					// inside an empty Group in a post that already has content.
+					if (
+						typeof blockEditor?.getBlockCount !== 'function' ||
+						blockEditor.getBlockCount() > 0
+					) {
+						return null;
 					}
 
-					// Gutenberg builds a ghost for any empty block list, including an empty
-					// Group or Columns inside a post that already has content. Requiring the
-					// whole document to be empty keeps the prompt on the one canvas it means
-					// — and stops it recording an impression it did not earn.
-					if ( typeof store.getBlockCount === 'function' && store.getBlockCount() > 0 ) {
-						return false;
-					}
+					const editor = select( 'core/editor' ) as
+						| { getCurrentPostType?: () => unknown }
+						| undefined;
+					const postType = editor?.getCurrentPostType?.();
 
-					// Real blocks resolve; the ghost does not exist in the store.
-					return ! store.getBlock( props.clientId );
+					return isDraftAssistPostType( postType ) ? postType : null;
 				},
-				[ props.name, props.clientId ]
+				[ props.name ]
 			);
 
-			const postType = useSelect( ( select ) => {
-				const editor = select( 'core/editor' ) as
-					| { getCurrentPostType?: () => unknown }
-					| undefined;
-				return editor?.getCurrentPostType?.();
-			}, [] );
-
-			const shouldShowPrompt =
-				isGhostParagraph && isDraftAssistEnabled() && isDraftAssistPostType( postType );
+			const shouldShowPrompt = null !== contentType;
 
 			// Recorded here rather than where the placeholder is *set*, because this is
 			// where it is actually rendered. Once per editor session, not per re-render.
 			useEffect( () => {
-				if ( shouldShowPrompt && ! hasTrackedShown.current && isDraftAssistPostType( postType ) ) {
+				if ( shouldShowPrompt && ! hasTrackedShown.current ) {
 					hasTrackedShown.current = true;
-					trackDraftAssistEntryPointShown( { contentType: postType } );
+					trackDraftAssistEntryPointShown( { contentType } );
 				}
-			}, [ shouldShowPrompt, postType ] );
+			}, [ shouldShowPrompt, contentType ] );
 
 			if ( ! shouldShowPrompt ) {
 				return <BlockEdit { ...props } />;
