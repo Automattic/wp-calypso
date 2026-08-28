@@ -3,7 +3,8 @@
  */
 import { DomainSubtype, type Domain, type DnsRecord } from '@automattic/api-core';
 import { QueryClient } from '@tanstack/react-query';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import DomainDns from '../index';
@@ -132,5 +133,48 @@ describe( 'DomainDns', () => {
 		render( <DomainDns /> );
 
 		expect( await screen.findByText( CNAME_WARNING ) ).toBeVisible();
+	} );
+
+	test( 'filters DNS records by type', async () => {
+		mockDomainApiRequest( getDefaultDomainData() );
+		mockDnsApiRequest( [
+			{ ...defaultCnameRecord, id: '1' },
+			{ id: '2', type: 'A', name: domainName, data: '192.0.2.1' },
+			{ id: '3', type: 'TXT', name: domainName, data: 'v=spf1 -all' },
+		] );
+		const user = userEvent.setup();
+
+		render( <DomainDns /> );
+
+		expect( await screen.findByText( '192.0.2.1' ) ).toBeVisible();
+		expect( screen.getByText( 'v=spf1 -all' ) ).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: 'Add filter' } ) );
+		await user.click( screen.getByRole( 'menuitem', { name: 'Type' } ) );
+		await user.click( await screen.findByRole( 'option', { name: 'TXT' } ) );
+
+		expect( await screen.findByText( 'v=spf1 -all' ) ).toBeVisible();
+		expect( screen.queryByText( '192.0.2.1' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'searches DNS records by name and value', async () => {
+		mockDomainApiRequest( getDefaultDomainData() );
+		mockDnsApiRequest( [
+			{ ...defaultCnameRecord, id: '1' },
+			{ id: '2', type: 'A', name: domainName, data: '192.0.2.1' },
+			{ id: '3', type: 'TXT', name: domainName, data: 'v=spf1 -all' },
+		] );
+		const user = userEvent.setup();
+
+		render( <DomainDns /> );
+
+		expect( await screen.findByText( '192.0.2.1' ) ).toBeVisible();
+
+		await user.type( screen.getByRole( 'searchbox', { name: 'Search' } ), 'spf' );
+
+		await waitFor( () => {
+			expect( screen.queryByText( '192.0.2.1' ) ).not.toBeInTheDocument();
+		} );
+		expect( screen.getByText( 'v=spf1 -all' ) ).toBeVisible();
 	} );
 } );

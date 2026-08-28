@@ -1,6 +1,18 @@
 import { __, sprintf } from '@wordpress/i18n';
-import type { DnsRecord } from '@automattic/api-core';
-import type { Field } from '@wordpress/dataviews';
+import type { DnsRecord, DnsRecordType } from '@automattic/api-core';
+import type { Field, Operator } from '@wordpress/dataviews';
+
+const DNS_RECORD_TYPES: DnsRecordType[] = [
+	'A',
+	'AAAA',
+	'ALIAS',
+	'CAA',
+	'CNAME',
+	'MX',
+	'NS',
+	'SRV',
+	'TXT',
+];
 
 const trimDot = ( str?: string ) => {
 	return str ? str.replace( /\.$/, '' ) : '';
@@ -13,6 +25,11 @@ export function useDnsFields( domainName: string ): Field< DnsRecord >[] {
 			label: __( 'Type' ),
 			enableHiding: false,
 			enableSorting: true,
+			enableGlobalSearch: true,
+			elements: DNS_RECORD_TYPES.map( ( type ) => ( { value: type, label: type } ) ),
+			filterBy: {
+				operators: [ 'isAny' as Operator ],
+			},
 			getValue: ( { item } ) => item.type,
 		},
 		{
@@ -20,6 +37,7 @@ export function useDnsFields( domainName: string ): Field< DnsRecord >[] {
 			label: __( 'Name' ),
 			enableHiding: false,
 			enableSorting: true,
+			enableGlobalSearch: true,
 			getValue: ( { item } ) => {
 				const { name, service, protocol, type } = item;
 
@@ -41,6 +59,7 @@ export function useDnsFields( domainName: string ): Field< DnsRecord >[] {
 			label: __( 'Value' ),
 			enableHiding: false,
 			enableSorting: true,
+			enableGlobalSearch: true,
 			getValue: ( { item } ) => {
 				const { type, aux, port, weight } = item;
 				const data = trimDot( item.data );
