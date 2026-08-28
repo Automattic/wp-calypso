@@ -118,6 +118,32 @@ describe( 'getSelectedTextContext', () => {
 		} );
 	} );
 
+	it( 'drops inline-object placeholders from the text but keeps their offsets', () => {
+		// "\ufffc" is what rich-text stores for an inline image / footnote.
+		mockGetBlockAttributes.mockReturnValue( {
+			content: { text: 'Welcome \ufffcto our new product page' },
+		} );
+		mockGetSelectionStart.mockReturnValue( point( 0 ) );
+		mockGetSelectionEnd.mockReturnValue( point( 16 ) );
+
+		expect( getSelectedTextContext( select ) ).toEqual( {
+			text: 'Welcome to our ',
+			attributeKey: 'content',
+			start: 0,
+			end: 16,
+		} );
+	} );
+
+	it( 'returns null when only an inline object is selected', () => {
+		mockGetBlockAttributes.mockReturnValue( {
+			content: { text: 'Welcome \ufffcto our new product page' },
+		} );
+		mockGetSelectionStart.mockReturnValue( point( 8 ) );
+		mockGetSelectionEnd.mockReturnValue( point( 9 ) );
+
+		expect( getSelectedTextContext( select ) ).toBeNull();
+	} );
+
 	it( 'returns null when the attribute is not text-like', () => {
 		mockGetBlockAttributes.mockReturnValue( { content: undefined } );
 		mockGetSelectionStart.mockReturnValue( point( 0 ) );

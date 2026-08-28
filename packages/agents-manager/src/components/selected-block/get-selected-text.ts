@@ -8,6 +8,14 @@ export interface SelectedTextContext {
 }
 
 /**
+ * Characters `@wordpress/rich-text` reserves inside a value's `text`: the
+ * object replacement character standing in for inline objects (images,
+ * footnotes) and the zero-width no-break space used as padding. They occupy
+ * a selection index but are not text the user selected.
+ */
+const RESERVED_CHARACTERS = /[\ufffc\ufeff]/gu;
+
+/**
  * Get the plain text of a block attribute value.
  *
  * Rich-text attributes (RichTextData) expose a `text` property whose indices
@@ -72,7 +80,8 @@ export function getSelectedTextContext(
 
 	const start = Math.min( selectionStart.offset, selectionEnd.offset );
 	const end = Math.max( selectionStart.offset, selectionEnd.offset );
-	const text = plainText.slice( start, end );
+	// Strip only after slicing so `start`/`end` stay in the editor's index space.
+	const text = plainText.slice( start, end ).replace( RESERVED_CHARACTERS, '' );
 
 	if ( ! text ) {
 		return null;
