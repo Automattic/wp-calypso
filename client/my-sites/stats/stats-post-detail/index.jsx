@@ -332,7 +332,7 @@ const StatsPostDetailWrapper = ( props ) => {
 	// `connect` wraps this component, so the environment checks arrive as props;
 	// the whole email-tabs rule lives here rather than being re-derived in render.
 	const { supportsEmailStats, isSimple, isSubscriptionsModuleActive, postId } = props;
-	const canHaveEmailStats = supportsEmailStats && ( isSimple || isSubscriptionsModuleActive );
+	const canHaveEmailStats = !! supportsEmailStats && !! ( isSimple || isSubscriptionsModuleActive );
 
 	const { data: hasEmailStats = false } = usePostEmailStatsAvailabilityQuery(
 		siteId,

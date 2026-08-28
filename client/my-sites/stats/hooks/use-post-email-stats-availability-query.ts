@@ -3,11 +3,11 @@ import wpcom from 'calypso/lib/wp';
 import getDefaultQueryParams from './default-query-params';
 
 interface EmailRateResponse {
-	total_sends?: number;
-	total_opens?: number;
+	total_sends?: number | null;
+	total_opens?: number | null;
 }
 
-function hasEmailStats( data?: EmailRateResponse ) {
+export function hasEmailStats( data?: EmailRateResponse ) {
 	return ( data?.total_sends ?? 0 ) > 0 || ( data?.total_opens ?? 0 ) > 0;
 }
 
@@ -28,10 +28,10 @@ export default function usePostEmailStatsAvailabilityQuery(
 		...getDefaultQueryParams(),
 		queryKey: [ 'stats', 'emails', 'opens', 'rate', siteId, postId ],
 		queryFn: () => queryEmailRate( siteId as number, postId ),
-		enabled: enabled && !! siteId && postId > 0,
+		enabled: !! enabled && !! siteId && postId > 0,
 		// A "no email stats" answer can be transient while a newsletter is still being sent,
 		// so only a positive result is kept for a while.
-		staleTime: ( query ) => ( hasEmailStats( query.state.data ) ? 1000 * 60 * 5 : 0 ),
+		staleTime: ( query ) => ( hasEmailStats( query.state.data ) ? 1000 * 60 * 5 : 1000 * 30 ),
 		// A failed request reads the same as "no email stats" and hides the tabs, so
 		// let a remount retry instead of pinning the error until a full reload
 		// (the shared defaults set retryOnMount: false).
