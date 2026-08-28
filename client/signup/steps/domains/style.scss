@@ -36,37 +36,49 @@
 }
 
 // The shared @automattic/domain-search overlay is built for the Stepper, which
-// pins a fixed top bar, publishes its height as --step-container-v2-top-bar-height,
-// and drops the H1 on mobile once results show. The classic signup StepWrapper
-// does none of that, so the overlay (position: fixed; inset-block-start:
-// var(..., 0)) pins to the viewport top and covers the hero while the results
-// reserve ~123px for it, producing the reported overlap plus a large gap. Give
-// signup the same context on mobile in the results state: pin the nav as a fixed
-// top bar, publish its height so the overlay sits directly below it, drop the
-// hero (the overlay's compact banner replaces it, as in the Stepper), and push
-// the content below the bar. Scoped to the results state + mobile so the
-// initial/empty state and desktop stay untouched.
+// pins a fixed WP top bar (setting --step-container-v2-top-bar-height) and hides
+// the H1 on mobile. The classic signup StepWrapper does neither, and it also has
+// its own SignupHeader (logo + progress bar) pinned at the top, so the package's
+// fixed overlay (inset-block-start: var(..., 0)) lands on the viewport top and
+// covers the hero, while the results reserve ~123px for it, producing the reported
+// overlap plus a large gap. Make the overlay sticky instead: it flows below the
+// signup header and hero, pins on scroll, and never paints over the top chrome.
+// With the overlay in flow the reservation is unnecessary. Scoped to the signup
+// wrapper and the results state so Stepper flows and the empty state are untouched.
 @media ( max-width: #{ $break-small - 1px } ) {
-	.step-wrapper--domain-search:has( .domain-search--results ) {
-		--step-container-v2-top-bar-height: 56px;
-
-		.step-wrapper__navigation.action-buttons.no-sticky {
-			position: fixed;
-			inset-block-start: 0;
-			inset-inline: 0;
-			height: var( --step-container-v2-top-bar-height );
-			margin: 0;
-			padding-inline: 16px;
-			background-color: var( --color-surface );
-			z-index: 1;
+	.step-wrapper--domain-search {
+		.domain-search--results__sticky-overlay {
+			position: sticky;
+			// The StepWrapper pads its content horizontally, which would box the
+			// overlay in; break it out to the full viewport width so it reaches the
+			// edges like the Stepper's fixed overlay. The overlay's own rows keep
+			// their 1rem inline padding, so the search field still lines up with the
+			// results below.
+			margin-inline: calc( 50% - 50vw );
 		}
 
+		.domain-search--results {
+			padding-block-start: 0;
+		}
+	}
+
+	// Once results show, drop the hero (H1 + subheader) to reclaim vertical space,
+	// as the Stepper does on mobile. The WordPress logo (SignupHeader) and the
+	// "Use a domain I own" action are separate elements, so they stay.
+	.step-wrapper--domain-search:has( .domain-search--results ) {
 		.step-wrapper__header {
 			display: none;
 		}
 
-		.step-wrapper__content {
-			padding-block-start: var( --step-container-v2-top-bar-height );
+		// With the hero gone, pull the nav action up toward the top edge.
+		.step-wrapper__navigation.action-buttons.no-sticky {
+			inset-block-start: 6px;
 		}
+	}
+
+	// The logo lives in SignupHeader, a sibling of the steps, so scope it via the
+	// flow wrapper. Pull it up toward the top edge now that the hero is hidden.
+	.signup:has( .step-wrapper--domain-search .domain-search--results ) .signup-header {
+		margin-block-start: -8px;
 	}
 }
