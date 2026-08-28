@@ -12,7 +12,6 @@ export interface SiteSettings {
 	wpcom_prevent_third_party_sharing?: boolean;
 	wpcom_gifting_subscription?: boolean;
 	wpcom_performance_report_url?: string;
-	wpcom_legacy_contact?: string;
 	wpcom_locked_mode?: boolean;
 	mcp_abilities?: SiteMcpAbilities;
 }
