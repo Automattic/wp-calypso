@@ -103,6 +103,9 @@ export const sessionStateQuery = () => ( {
 					: ( 'unknown' as const )
 		),
 	retry: false,
+	// Without this the query is parked in `pending` while the browser is offline,
+	// and callers waiting on a verdict never get one.
+	networkMode: 'always' as const,
 	// One answer serves the whole page: a dead session fails every request alike.
 	staleTime: Infinity,
 	meta: { persist: false },

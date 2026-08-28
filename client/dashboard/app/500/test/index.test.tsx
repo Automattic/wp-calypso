@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { onlineManager } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -119,8 +120,11 @@ describe( 'UnknownError', () => {
 		it( 'counts the user as stranded', async () => {
 			renderWithLogout( authorizationError(), jest.fn() );
 
-			await screen.findByRole( 'button', { name: /log out/i } );
-			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-error', 'dead-session' );
+			// The screen shows this before the check resolves, so the stat is what says
+			// the session was actually confirmed gone.
+			await waitFor( () =>
+				expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-error', 'refused:dead' )
+			);
 		} );
 	} );
 
@@ -140,11 +144,12 @@ describe( 'UnknownError', () => {
 			expect( await screen.findByRole( 'link', { name: /support/i } ) ).toBeVisible();
 		} );
 
-		it( 'is not counted as a dead session', async () => {
+		it( 'is recorded as a permission problem, not a dead session', async () => {
 			renderWithLogout( forbiddenError(), jest.fn() );
 
 			await screen.findByText( /doesn’t have permission/i );
-			expect( mockedBumpStat ).not.toHaveBeenCalled();
+			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-error', 'refused:alive' );
+			expect( mockedBumpStat ).not.toHaveBeenCalledWith( 'dashboard-error', 'refused:dead' );
 		} );
 	} );
 
@@ -159,6 +164,62 @@ describe( 'UnknownError', () => {
 			await waitFor( async () =>
 				expect( await screen.findByRole( 'button', { name: /log out/i } ) ).toBeVisible()
 			);
+		} );
+
+		it( 'records that the session was never established, not that it died', async () => {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.1/me' )
+				.query( true )
+				.replyWithError( 'offline' );
+			renderWithLogout( authorizationError(), jest.fn() );
+
+			await waitFor( () =>
+				expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-error', 'refused:unknown' )
+			);
+			expect( mockedBumpStat ).not.toHaveBeenCalledWith( 'dashboard-error', 'refused:dead' );
+		} );
+	} );
+
+	describe( 'when the check has not answered yet', () => {
+		it( 'shows something to act on rather than a blank screen', async () => {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.1/me' )
+				.query( true )
+				.delay( 30000 )
+				.reply( 200, { ID: 1, username: 'testuser', language: 'en' } );
+
+			const { container } = renderWithLogout( authorizationError(), jest.fn() );
+
+			expect( await screen.findByRole( 'button', { name: /log out/i } ) ).toBeVisible();
+			expect( container ).not.toBeEmptyDOMElement();
+		} );
+	} );
+
+	describe( 'when the browser is offline', () => {
+		beforeEach( () => onlineManager.setOnline( false ) );
+		afterEach( () => onlineManager.setOnline( true ) );
+
+		it( 'still gives the user something to act on rather than a blank screen', async () => {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.1/me' )
+				.query( true )
+				.replyWithError( 'offline' );
+
+			const { container } = renderWithLogout( authorizationError(), jest.fn() );
+
+			expect( await screen.findByRole( 'button', { name: /log out/i } ) ).toBeVisible();
+			expect( container ).not.toBeEmptyDOMElement();
+		} );
+
+		it( 'still asks the API rather than waiting for the browser to come back', async () => {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.1/me' )
+				.query( true )
+				.replyWithError( 'offline' );
+
+			renderWithLogout( authorizationError(), jest.fn() );
+
+			await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 		} );
 	} );
 

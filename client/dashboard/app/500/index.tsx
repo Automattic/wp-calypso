@@ -33,12 +33,16 @@ function isAuthorizationError( error: Error ) {
 }
 
 function RefusedRequestError() {
-	const { data: sessionState, isPending } = useSessionStateQuery();
+	const { data: sessionState } = useSessionStateQuery();
 
-	if ( isPending ) {
-		return null;
-	}
+	useEffect( () => {
+		if ( sessionState ) {
+			bumpStat( 'dashboard-error', `refused:${ sessionState }` );
+		}
+	}, [ sessionState ] );
 
+	// Until the session is known to be fine, assume it is not: a stalled check must
+	// not leave the user staring at nothing.
 	return sessionState === 'alive' ? <PermissionError /> : <SessionError />;
 }
 
@@ -62,10 +66,6 @@ function PermissionError() {
 
 function SessionError() {
 	const auth = useContext( AuthContext );
-
-	useEffect( () => {
-		bumpStat( 'dashboard-error', 'dead-session' );
-	}, [] );
 
 	const handleLogout = async () => {
 		try {
