@@ -1,0 +1,67 @@
+/* Quiet translucent pill: the bar is chrome, so the chip borrows the blue for
+   the icon and ring rather than filling solid like a page-level CTA would. */
+
+.masterbar__item.masterbar__item-free-domain-chip {
+	--free-domain-chip-bg: rgba( 56, 88, 233, 0.22 );
+	--free-domain-chip-bg-hover: rgba( 56, 88, 233, 0.42 );
+	--free-domain-chip-ring: rgba( 120, 150, 255, 0.45 );
+	--free-domain-chip-ring-hover: rgba( 150, 175, 255, 0.8 );
+	--free-domain-chip-text: #dcdcde;
+	--free-domain-chip-text-hover: var( --color-masterbar-text, #fff );
+	--free-domain-chip-icon: #8ba4ff;
+	--free-domain-chip-icon-hover: #b8c8ff;
+
+	padding: 0 8px;
+
+	&:hover,
+	&:focus {
+		background: transparent;
+	}
+}
+
+.masterbar__free-domain-chip-pill {
+	display: inline-flex;
+	align-items: center;
+	/* The upsell glyph carries ~3px of intrinsic whitespace at 16px, so the
+	   icon-side padding and gap are smaller to read as visually even. */
+	gap: 4px;
+	height: 24px;
+	padding-block: 0;
+	padding-inline: 4px 8px;
+	border-radius: 4px;
+	background: var( --free-domain-chip-bg );
+	box-shadow: inset 0 0 0 1px var( --free-domain-chip-ring );
+	color: var( --free-domain-chip-text );
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 24px;
+	white-space: nowrap;
+	transition: background 0.12s linear, box-shadow 0.12s linear, color 0.12s linear;
+
+	svg {
+		fill: var( --free-domain-chip-icon );
+		transition: fill 0.12s linear;
+	}
+}
+
+.masterbar__item-free-domain-chip:hover .masterbar__free-domain-chip-pill,
+.masterbar__item-free-domain-chip:focus-visible .masterbar__free-domain-chip-pill {
+	background: var( --free-domain-chip-bg-hover );
+	box-shadow: inset 0 0 0 1px var( --free-domain-chip-ring-hover );
+	color: var( --free-domain-chip-text-hover );
+}
+
+.masterbar__item-free-domain-chip:hover .masterbar__free-domain-chip-pill svg,
+.masterbar__item-free-domain-chip:focus-visible .masterbar__free-domain-chip-pill svg {
+	fill: var( --free-domain-chip-icon-hover );
+}
+
+/* The full pill stays at every width; --always-show-content opts it out of the
+   masterbar's 46px mobile item squeeze. It keeps its own metrics against the
+   mobile font-size bump. */
+@media only screen and (max-width: 781px) {
+	.masterbar__free-domain-chip-pill {
+		font-size: 12px;
+		line-height: 24px;
+	}
+}

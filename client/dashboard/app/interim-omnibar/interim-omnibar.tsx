@@ -22,6 +22,7 @@ import { getSitePlanUrl } from '../../utils/site-url';
 import { logout } from '../auth';
 import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
 import { getUserLanguage } from '../shared-locale-loader';
+import { OmnibarFreeDomainChip } from './omnibar-free-domain-chip';
 import { OmnibarLaunchButton } from './omnibar-launch-button';
 import { createOmnibarStore } from './omnibar-store';
 import type { User, Site } from '@automattic/api-core';
@@ -174,6 +175,7 @@ export function InterimOmnibar( {
 					}
 					isUnlaunchedSite={ isUnlaunchedSite }
 					launchButton={ isUnlaunchedSite && site ? <OmnibarLaunchButton site={ site } /> : null }
+					freeDomainChip={ site ? <OmnibarFreeDomainChip site={ site } /> : null }
 					isTrial={ false }
 					isSiteP2={ !! site?.options?.is_wpforteams_site }
 					isP2Hub={ !! site?.options?.p2_hub_blog_id && site.options.p2_hub_blog_id === site.ID }

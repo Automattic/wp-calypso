@@ -92,6 +92,7 @@ export default function Omnibar( {
 							cartManagerClient={ cartManagerClient }
 							sectionGroup={ sectionGroup }
 							sectionName={ sectionName ?? undefined }
+							surface="calypso"
 						/>
 					</div>
 				</AnalyticsProvider>

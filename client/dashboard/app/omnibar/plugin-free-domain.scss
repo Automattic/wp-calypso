@@ -1,0 +1,75 @@
+/* Quiet translucent pill: the bar is chrome, so the chip borrows the admin
+   theme blue for the fill and the omnibar highlight for the ring/icon rather
+   than filling solid like a page-level CTA would. */
+
+.omnibar .omnibar__menu.omnibar__free-domain {
+	--free-domain-chip-accent: var( --wp-admin-theme-color, #3858e9 );
+	--free-domain-chip-bg: color-mix( in srgb, var( --free-domain-chip-accent ) 22%, transparent );
+	--free-domain-chip-bg-hover: color-mix(
+		in srgb,
+		var( --free-domain-chip-accent ) 42%,
+		transparent
+	);
+	--free-domain-chip-ring: color-mix( in srgb, var( --omnibar-highlight-color ) 45%, transparent );
+	--free-domain-chip-ring-hover: color-mix(
+		in srgb,
+		var( --omnibar-highlight-color ) 80%,
+		transparent
+	);
+	--free-domain-chip-text: color-mix( in srgb, var( --omnibar-text-color ) 87%, transparent );
+	--free-domain-chip-text-hover: var( --omnibar-text-color );
+	--free-domain-chip-icon: var( --omnibar-highlight-color );
+	--free-domain-chip-icon-hover: color-mix(
+		in srgb,
+		var( --omnibar-highlight-color ) 70%,
+		var( --omnibar-text-color )
+	);
+
+	padding-inline: 8px;
+
+	&:hover,
+	&:focus-visible,
+	&:active {
+		background-color: transparent;
+	}
+}
+
+.omnibar .omnibar__menu.omnibar__free-domain .omnibar__free-domain-chip {
+	display: inline-flex;
+	align-items: center;
+	/* The upsell glyph carries ~3px of intrinsic whitespace at 16px, so the
+	   icon-side padding and gap are smaller to read as visually even. */
+	gap: 4px;
+	height: 24px;
+	padding-block: 0;
+	padding-inline: 4px 8px;
+	border-radius: 4px;
+	background: var( --free-domain-chip-bg );
+	box-shadow: inset 0 0 0 1px var( --free-domain-chip-ring );
+	color: var( --free-domain-chip-text );
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 24px;
+	white-space: nowrap;
+	transition: background 0.12s linear, box-shadow 0.12s linear, color 0.12s linear;
+
+	svg {
+		width: 16px;
+		height: 16px;
+		fill: var( --free-domain-chip-icon );
+		color: var( --free-domain-chip-icon );
+		transition: fill 0.12s linear;
+	}
+}
+
+.omnibar .omnibar__menu.omnibar__free-domain:hover .omnibar__free-domain-chip,
+.omnibar .omnibar__menu.omnibar__free-domain:focus-visible .omnibar__free-domain-chip {
+	background: var( --free-domain-chip-bg-hover );
+	box-shadow: inset 0 0 0 1px var( --free-domain-chip-ring-hover );
+	color: var( --free-domain-chip-text-hover );
+
+	svg {
+		fill: var( --free-domain-chip-icon-hover );
+		color: var( --free-domain-chip-icon-hover );
+	}
+}

@@ -17,6 +17,7 @@ import { omnibarEvents } from './events';
 import { OmnibarHomeIcon } from './home';
 import { useAiChatPlugin } from './plugin-ai-chat';
 import { addDashboardNode, useDashboardPlugin } from './plugin-dashboard';
+import { useFreeDomainPlugin } from './plugin-free-domain';
 import { useHelpCenterPlugin } from './plugin-help-center';
 import { useLanguageSwitcherPlugin } from './plugin-language-switcher';
 import { useLaunchSitePlugin } from './plugin-launch-site';
@@ -29,6 +30,7 @@ import { useStatsSparklinePlugin } from './plugin-stats-sparkline';
 import { buildWpcomAccountNode } from './plugin-wpcom-account';
 import { RESPONSIVE_MENU_NODE_ID, trackOmnibarNodes, useRecordOmnibarNodeClick } from './tracking';
 import type { AppConfig } from '../context';
+import type { FreeDomainUpsellSurface } from '../free-domain-upsell';
 import type { User } from '@automattic/api-core';
 import type { OmnibarNodeBuilders } from '@automattic/omnibar';
 import type { ShoppingCartManagerClient } from '@automattic/shopping-cart';
@@ -67,15 +69,23 @@ export default function OmnibarContainer( {
 	cartManagerClient,
 	sectionGroup,
 	sectionName,
+	surface = 'msd',
 }: {
 	user?: User;
 	cartManagerClient: ShoppingCartManagerClient;
 	sectionGroup?: string;
 	sectionName?: string;
+	/** Which app hosts this omnibar; used for per-surface tracking props. */
+	surface?: FreeDomainUpsellSurface;
 } ) {
 	return (
 		<ShoppingCartProvider managerClient={ cartManagerClient }>
-			<ConnectedOmnibar user={ user } sectionGroup={ sectionGroup } sectionName={ sectionName } />
+			<ConnectedOmnibar
+				user={ user }
+				sectionGroup={ sectionGroup }
+				sectionName={ sectionName }
+				surface={ surface }
+			/>
 		</ShoppingCartProvider>
 	);
 }
@@ -84,10 +94,12 @@ function ConnectedOmnibar( {
 	user,
 	sectionGroup,
 	sectionName,
+	surface,
 }: {
 	user?: User;
 	sectionGroup?: string;
 	sectionName?: string;
+	surface: FreeDomainUpsellSurface;
 } ) {
 	const { supports } = useAppContext();
 	const recordNodeClick = useRecordOmnibarNodeClick();
@@ -171,12 +183,14 @@ function ConnectedOmnibar( {
 	const { node: shoppingCartNode, panel: shoppingCartPanel } = useShoppingCartPlugin( { site } );
 	const statsSparklineNode = useStatsSparklinePlugin( { site } );
 	const launchSiteNode = useLaunchSitePlugin( { site } );
+	const freeDomainNode = useFreeDomainPlugin( { site, surface } );
 	const dashboardNode = useDashboardPlugin( { site, sectionGroup } );
 	const siteNode = addDashboardNode( baseOmnibarNodes.site, dashboardNode );
 	const siteActions = [
 		...( baseOmnibarNodes.siteActions ?? [] ),
 		statsSparklineNode,
 		launchSiteNode,
+		freeDomainNode,
 	].filter( ( node ) => node !== undefined );
 
 	const plugins = baseOmnibarNodes.user

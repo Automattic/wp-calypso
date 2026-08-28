@@ -115,6 +115,7 @@ class MasterbarLoggedIn extends Component {
 		statsSparkline: PropTypes.node,
 		useUnifiedAgent: PropTypes.bool,
 		launchButton: PropTypes.node,
+		freeDomainChip: PropTypes.node,
 		sitePlanUrl: PropTypes.string,
 		commandPalette: PropTypes.bool,
 	};
@@ -1044,6 +1045,7 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderStatsSparkline() }
 					{ this.renderLanguageSwitcher() }
 					{ this.renderLaunchButton() }
+					{ this.props.freeDomainChip }
 				</div>
 				<div className="masterbar__section masterbar__section--right">
 					{ this.renderCart() }
