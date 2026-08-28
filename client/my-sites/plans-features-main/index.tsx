@@ -35,7 +35,7 @@ import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI, AddOns, Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/number-formatters';
-import { isAnyHostingFlow } from '@automattic/onboarding';
+import { DOMAIN_FLOW, isAnyHostingFlow } from '@automattic/onboarding';
 import {
 	FeaturesGrid,
 	ComparisonGrid,
@@ -558,8 +558,13 @@ const PlansFeaturesMain = ( {
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
 	const getPlanTypeDestination = usePlanTypeDestinationCallback();
 
+	// In the domain flow for an existing site, continuing with the free plan keeps the
+	// paid domain in the cart — it just can't be used as the site's primary address.
+	const isDomainRetainedOnFreePlan = flowName === DOMAIN_FLOW && !! siteId;
+
 	const resolveModal = useModalResolutionCallback( {
 		isCustomDomainAllowedOnFreePlan,
+		isDomainRetainedOnFreePlan,
 		flowName,
 		paidDomainName,
 		intent: intentFromProps,
@@ -584,13 +589,16 @@ const PlansFeaturesMain = ( {
 		);
 
 	const resolvedSubdomainName: DataResponse< { domain_name: string } > = useMemo( () => {
+		if ( isDomainRetainedOnFreePlan && siteSlug ) {
+			return { isLoading: false, result: { domain_name: siteSlug } };
+		}
 		return {
 			isLoading: signupFlowSubdomain ? false : wpcomFreeDomainSuggestion.isLoading,
 			result: signupFlowSubdomain
 				? { domain_name: signupFlowSubdomain }
 				: wpcomFreeDomainSuggestion.result,
 		};
-	}, [ signupFlowSubdomain, wpcomFreeDomainSuggestion ] );
+	}, [ signupFlowSubdomain, wpcomFreeDomainSuggestion, isDomainRetainedOnFreePlan, siteSlug ] );
 
 	const filteredDisplayedIntervals = useFilteredDisplayedIntervals( {
 		productSlug: currentPlan?.productSlug,
