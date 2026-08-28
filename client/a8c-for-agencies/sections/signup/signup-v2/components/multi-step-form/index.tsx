@@ -2,15 +2,16 @@ import page from '@automattic/calypso-router';
 import { APIError } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
 import A4ALogo, {
 	LOGO_COLOR_SECONDARY_ALT,
 	LOGO_COLOR_SECONDARY,
 } from 'calypso/a8c-for-agencies/components/a4a-logo';
 import { useIsDarkMode } from 'calypso/a8c-for-agencies/hooks/use-is-dark-mode';
 import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/signup/types';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import useCreateSignupMutation from '../../../hooks/use-create-signup-mutation';
 import StepProgress from '../step-progress';
 import BlueprintForm from './blueprint-form';
@@ -38,6 +39,15 @@ type Step = {
 	isActive: boolean;
 	value: number;
 };
+
+const ACQUISITION_QUERY_PARAMS = [
+	'utm_source',
+	'utm_medium',
+	'utm_campaign',
+	'utm_term',
+	'utm_content',
+	'ref',
+];
 
 const STEP_NOT_STARTED = 0;
 const STEP_HALFWAY = 50;
@@ -86,6 +96,20 @@ const MultiStepForm = ( {
 	const [ currentStep, setCurrentStep ] = useState( 1 );
 	const dispatch = useDispatch();
 	const isDarkMode = useIsDarkMode();
+	const queryArgs = useSelector( getCurrentQueryArguments );
+
+	// Keys are omitted entirely when unset so we never record empty values.
+	const acquisitionProps = useMemo(
+		() =>
+			ACQUISITION_QUERY_PARAMS.reduce< Record< string, string > >( ( props, key ) => {
+				const value = queryArgs?.[ key ];
+				if ( typeof value === 'string' && value !== '' ) {
+					props[ key ] = value;
+				}
+				return props;
+			}, {} ),
+		[ queryArgs ]
+	);
 
 	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {} );
 
@@ -136,10 +160,11 @@ const MultiStepForm = ( {
 			dispatch(
 				recordTracksEvent( 'calypso_a4a_agency_signup_form_view', {
 					step: viewMap[ step as keyof typeof viewMap ],
+					...acquisitionProps,
 				} )
 			);
 		},
-		[ dispatch ]
+		[ dispatch, acquisitionProps ]
 	);
 
 	const updateDataAndContinue = useCallback(
