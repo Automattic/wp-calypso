@@ -85,23 +85,26 @@ const HostingFeatures = ( { path, showAsTools }: HostingFeaturesProps ) => {
 
 	// The redirect below reads Redux, which nothing here refreshes, so a completed transfer would
 	// otherwise never reach it and the page would spin on a success.
-	const isAwaitingAtomic = !! siteId && isTransferCompleted && ! isSiteAtomic;
+	const awaitingAtomicSiteId = isTransferCompleted && ! isSiteAtomic ? siteId : null;
 
 	useEffect( () => {
-		if ( isAwaitingAtomic ) {
-			dispatch( requestSite( siteId ) );
+		if ( awaitingAtomicSiteId ) {
+			dispatch( requestSite( awaitingAtomicSiteId ) );
 		}
-	}, [ isAwaitingAtomic, siteId, dispatch ] );
+	}, [ awaitingAtomicSiteId, dispatch ] );
 
 	useInterval(
 		() => {
-			if ( Date.now() - ( waitRef.current.since ?? Date.now() ) >= ACTIVATION_DEADLINE_MS ) {
-				setStalledSiteId( siteId );
+			if ( ! awaitingAtomicSiteId ) {
 				return;
 			}
-			dispatch( requestSite( siteId ) );
+			if ( Date.now() - ( waitRef.current.since ?? Date.now() ) >= ACTIVATION_DEADLINE_MS ) {
+				setStalledSiteId( awaitingAtomicSiteId );
+				return;
+			}
+			dispatch( requestSite( awaitingAtomicSiteId ) );
 		},
-		isAwaitingAtomic && ! activationStalled ? EVERY_FIVE_SECONDS : null
+		awaitingAtomicSiteId && ! activationStalled ? EVERY_FIVE_SECONDS : null
 	);
 
 	const shouldRenderActivatingCopy =
