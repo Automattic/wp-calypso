@@ -1,6 +1,6 @@
 import { Badge } from '@automattic/ui';
 import {
-	TextControl,
+	Button,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	__experimentalHStack as HStack,
@@ -123,33 +123,71 @@ export default function WpcomConfigurator( {
 							</ToggleGroupControl>
 						) }
 						{ ! isReferralMode && isCustom && (
-							<TextControl
-								__nextHasNoMarginBottom
-								__next40pxDefaultSize
-								type="number"
-								min={ 1 }
-								label={ __( 'Number of sites' ) }
-								hideLabelFromVision={ ! altQuantityControl }
-								value={ String( customQuantity ) }
-								onChange={ ( value ) => {
-									const next = Math.max( 1, Number( value ) || 1 );
-									setCustomQuantity( next );
-									onQuantityChange( next );
-								} }
-							/>
-						) }
-						{ ! isReferralMode && altQuantityControl && currentDiscount > 0 && (
-							<Text variant="muted">
-								<span className="marketplace-hosting__price-strikethrough">
-									{ formatUSD( price.basePerUnit ) }
-								</span>{ ' ' }
-								{ sprintf(
-									/* translators: %1$s: discounted per-site price, %2$d: discount percentage */
-									__( '%1$s per site, per year with your %2$d%% volume discount.' ),
-									formatUSD( price.perUnit ),
-									Math.round( currentDiscount * 100 )
-								) }
-							</Text>
+							<HStack justify="space-between" alignment="center" spacing={ 4 } wrap>
+								<div
+									className="marketplace-hosting__stepper"
+									role="group"
+									aria-label={ __( 'Number of sites' ) }
+								>
+									<Button
+										className="marketplace-hosting__stepper-button"
+										label={ __( 'Fewer sites' ) }
+										disabled={ customQuantity <= 1 }
+										onClick={ () => {
+											const next = Math.max( 1, customQuantity - 1 );
+											setCustomQuantity( next );
+											onQuantityChange( next );
+										} }
+									>
+										&#8722;
+									</Button>
+									<input
+										type="number"
+										min={ 1 }
+										className="marketplace-hosting__stepper-input"
+										aria-label={ __( 'Number of sites' ) }
+										value={ customQuantity }
+										onChange={ ( event ) => {
+											const next = Math.max( 1, Number( event.target.value ) || 1 );
+											setCustomQuantity( next );
+											onQuantityChange( next );
+										} }
+									/>
+									<Button
+										className="marketplace-hosting__stepper-button"
+										label={ __( 'More sites' ) }
+										onClick={ () => {
+											const next = customQuantity + 1;
+											setCustomQuantity( next );
+											onQuantityChange( next );
+										} }
+									>
+										+
+									</Button>
+								</div>
+								<VStack spacing={ 1 } alignment="flex-end">
+									<Text weight={ 600 }>
+										{ formatUSD( price.perUnit ) }
+										<Text as="span" variant="muted">
+											{ __( '/site per year' ) }
+										</Text>
+									</Text>
+									{ currentDiscount > 0 && (
+										<HStack spacing={ 2 } justify="flex-end" expanded={ false }>
+											<Text variant="muted" className="marketplace-hosting__price-strikethrough">
+												{ formatUSD( price.basePerUnit ) }
+											</Text>
+											<Badge intent="success">
+												{ sprintf(
+													/* translators: %d: discount percentage */
+													__( '%d%% off' ),
+													Math.round( currentDiscount * 100 )
+												) }
+											</Badge>
+										</HStack>
+									) }
+								</VStack>
+							</HStack>
 						) }
 						{ ! isReferralMode &&
 							( nudge ? (
