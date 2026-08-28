@@ -1,5 +1,5 @@
 import { siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
-import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -18,7 +18,6 @@ import {
 import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import PendingPrimaryDomainNotice from '../../components/pending-primary-domain-notice';
 import AddDomainButton from '../../domains/add-domain-button';
 import {
 	useActions,
@@ -32,17 +31,11 @@ import { SitesNoticeArbiter } from '../notice-arbiter';
 import PrimaryDomainSelectorNotice from './primary-domain-selector-notice';
 import type { DomainSummary } from '@automattic/api-core';
 
-// Hidden: no API signal tells a pending primary swap from a domain that is
-// simply not primary, so the notice showed on every non-primary domain and
-// never cleared. See DOMENG-1081.
-const SHOW_PENDING_PRIMARY_DOMAIN_NOTICE: boolean = false;
-
 function getDomainId( domain: DomainSummary ) {
 	return `${ domain.domain }-${ domain.blog_id }`;
 }
 
 function SiteDomains() {
-	const queryClient = useQueryClient();
 	const { queries } = useAppContext();
 	const { siteSlug } = siteRoute.useParams();
 	const { user } = useAuth();
@@ -98,12 +91,6 @@ function SiteDomains() {
 					{ /* Action feedback, not an on-load banner: rendered outside the arbiter. */ }
 					{ bulkActionsNotice }
 					<SitesNoticeArbiter>
-						{ SHOW_PENDING_PRIMARY_DOMAIN_NOTICE && ! hasRedirect && pendingDomain && (
-							<PendingPrimaryDomainNotice
-								domainName={ pendingDomain.domain }
-								onComplete={ () => queryClient.invalidateQueries( queries.domainsQuery() ) }
-							/>
-						) }
 						{ ! hasRedirect && ! pendingDomain && (
 							<PrimaryDomainSelectorNotice domains={ siteDomains } site={ site } user={ user } />
 						) }
