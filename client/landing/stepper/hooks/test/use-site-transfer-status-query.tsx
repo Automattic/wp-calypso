@@ -15,8 +15,7 @@ jest.mock( 'calypso/lib/wp', () => ( {
 	req: { get: ( ...args: unknown[] ) => mockGetStatus( ...args ) },
 } ) );
 
-// The hook's own test-mode constants: 300ms between polls, a 6s watch on `none`, a 30s deadline
-// on a live transfer.
+// Test-mode constants: 300ms per poll, 6s watch on `none`, 30s transfer deadline.
 const POLL_MS = 300;
 
 const respondWith = ( status: string ) => mockGetStatus.mockResolvedValue( { status } );
@@ -31,8 +30,7 @@ const renderQuery = ( siteId = 1, client = makeClient() ) =>
 		),
 	} );
 
-// Advance a poll at a time, flushing between: each refetch has to resolve before the query can
-// schedule the next one, so one big jump would silently count a single poll.
+// One poll at a time, flushing between: a refetch must resolve before the next is scheduled.
 const elapse = async ( ms: number ) => {
 	for ( let elapsed = 0; elapsed < ms; elapsed += POLL_MS ) {
 		await act( async () => {
@@ -58,8 +56,7 @@ describe( 'useSiteTransferStatusQuery', () => {
 		expect( mockGetStatus.mock.calls.length ).toBeGreaterThan( 1 );
 	} );
 
-	// The bug: a site with no transfer polled every 3s for as long as the tab lived. Eleven
-	// forgotten tabs produced 96% of the traffic on this endpoint.
+	// The bug: 11 forgotten tabs made 96% of this endpoint's traffic.
 	it( 'stops polling a site that has no transfer', async () => {
 		respondWith( transferStates.NONE );
 		renderQuery();
@@ -93,8 +90,7 @@ describe( 'useSiteTransferStatusQuery', () => {
 		expect( mockGetStatus.mock.calls.length ).toBe( settled );
 	} );
 
-	// Both sites sit in the same phase, so without keying the window by site the second one inherits
-	// the first one's spent clock and never polls at all.
+	// Same phase for both sites, so an unkeyed window hands the second one a spent clock.
 	it( 'gives a newly selected site its own watch window', async () => {
 		respondWith( transferStates.NONE );
 		const client = makeClient();
@@ -108,13 +104,12 @@ describe( 'useSiteTransferStatusQuery', () => {
 		rerender( { siteId: 2 } );
 		const afterFirstSite = mockGetStatus.mock.calls.length;
 
-		// A full window's worth of polls, not the handful a spent clock would allow before stopping.
+		// A full window of polls, not the handful a spent clock allows before stopping.
 		await elapse( 3000 );
 		expect( mockGetStatus.mock.calls.length - afterFirstSite ).toBeGreaterThanOrEqual( 8 );
 	} );
 
-	// Retries run on their own schedule, so a failing endpoint would otherwise keep the request
-	// lifecycle alive well past the window the interval already closed.
+	// Retries run on their own schedule, outliving the interval the window already closed.
 	it( 'stops retrying a failing poll once the window has closed', async () => {
 		respondWith( transferStates.NONE );
 		renderQuery();
