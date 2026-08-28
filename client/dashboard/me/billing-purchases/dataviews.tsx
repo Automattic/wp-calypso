@@ -440,7 +440,7 @@ export function getFields( {
 			render: ( { item }: { item: Purchase } ) => {
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				return (
-					<div className="billing-purchases__middle-valign">
+					<div>
 						<PurchaseExpiryStatus purchase={ item } isSiteMissing={ ! site } />
 					</div>
 				);
@@ -474,7 +474,7 @@ export function getFields( {
 				}
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				return (
-					<HStack justify="flex-start" spacing={ 1 } className="billing-purchases__middle-valign">
+					<HStack justify="flex-start" spacing={ 1 }>
 						<PurchasePaymentMethod purchase={ item } isSiteMissing={ ! site } />
 						{ isBackupMethodAvailable && mightStillAutoRenew( item ) && (
 							<BackupPaymentMethodNotice />
