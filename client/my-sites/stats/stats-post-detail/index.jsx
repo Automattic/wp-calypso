@@ -334,11 +334,9 @@ const StatsPostDetailWrapper = ( props ) => {
 	const { supportsEmailStats, isSimple, isSubscriptionsModuleActive, postId } = props;
 	const canHaveEmailStats = !! supportsEmailStats && !! ( isSimple || isSubscriptionsModuleActive );
 
-	const { data: hasEmailStats = false } = usePostEmailStatsAvailabilityQuery(
-		siteId,
-		postId,
-		canHaveEmailStats
-	);
+	const { data, isError } = usePostEmailStatsAvailabilityQuery( siteId, postId, canHaveEmailStats );
+	// A failed request would otherwise read as "never emailed"; fail open instead.
+	const hasEmailStats = data ?? isError;
 
 	// postId > 0: show the tabs for posts except for the Home Page (postId = 0).
 	const isEmailTabsAvailable = canHaveEmailStats && postId > 0 && hasEmailStats;

@@ -11,7 +11,7 @@ export function hasEmailStats( data?: EmailRateResponse ) {
 	return ( data?.total_sends ?? 0 ) > 0 || ( data?.total_opens ?? 0 ) > 0;
 }
 
-function queryEmailRate( siteId: number, postId: number ): Promise< EmailRateResponse > {
+function queryEmailRate( siteId: number | null, postId: number ): Promise< EmailRateResponse > {
 	return wpcom.req.get( `/sites/${ siteId }/stats/opens/emails/${ postId }/rate` );
 }
 
@@ -27,7 +27,7 @@ export default function usePostEmailStatsAvailabilityQuery(
 	return useQuery( {
 		...getDefaultQueryParams(),
 		queryKey: [ 'stats', 'emails', 'opens', 'rate', siteId, postId ],
-		queryFn: () => queryEmailRate( siteId as number, postId ),
+		queryFn: () => queryEmailRate( siteId, postId ),
 		enabled: !! enabled && !! siteId && postId > 0,
 		// A "no email stats" answer can be transient while a newsletter is still being sent,
 		// so only a positive result is kept for a while.
@@ -36,6 +36,7 @@ export default function usePostEmailStatsAvailabilityQuery(
 		// let a remount retry instead of pinning the error until a full reload
 		// (the shared defaults set retryOnMount: false).
 		retryOnMount: true,
+		meta: { persist: false },
 		select: hasEmailStats,
 	} );
 }
