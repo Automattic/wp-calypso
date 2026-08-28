@@ -52,8 +52,12 @@ describe( 'useChatNotice', () => {
 		expect( result.current ).toBeUndefined();
 	} );
 
-	it( 'recognizes the current backend rejection', () => {
-		const { result } = renderHook( () => useChatNotice( { error: CURRENT_ENDPOINT_ERROR } ) );
+	it.each( [
+		CURRENT_ENDPOINT_ERROR,
+		'Protocol request error: ai_credit_allowance_exhausted.',
+		'You have used all AI credits included with this site for this month.',
+	] )( 'recognizes a backend rejection: %s', ( error ) => {
+		const { result } = renderHook( () => useChatNotice( { error } ) );
 
 		expect( result.current ).toMatchObject( {
 			message: 'You’ve reached your Jetpack AI usage limit.',

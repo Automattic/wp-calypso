@@ -253,10 +253,17 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] );
 	} );
 
-	it( 'reports no request count, which would be a stale page-load figure', () => {
+	it( 'keeps allowance state out of upgrade tracking', () => {
 		trackJetpackAiUpgrade();
 
-		expect( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] ).not.toHaveProperty( 'requests_count' );
+		const properties = mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ];
+		expect( Object.keys( properties ).sort() ).toEqual( [
+			'ai_session_id',
+			'is_a11n',
+			'placement',
+			'sessionid',
+			'surface',
+		] );
 	} );
 
 	it( 'uses Agents Manager test and Big Sky free-trial and screen context', () => {

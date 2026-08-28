@@ -179,6 +179,10 @@ export type UseChatNoticeHook = ( props: {
 	enabled: boolean;
 	/** Whether the site is WordPress.com-hosted; absent when the host does not publish it. */
 	isWpcomPlatform?: boolean;
+	/** Credit status from the latest terminal task result in this site and agent scope. */
+	aiCredits?: unknown;
+	/** Changes whenever a terminal task result is received in this site and agent scope. */
+	aiCreditsRevision?: number;
 	/** Changes only after the complete request or stream promise settles. */
 	settledRequestCount: number;
 	/** Current site identity for provider-owned status requests. */

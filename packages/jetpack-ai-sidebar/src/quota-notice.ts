@@ -3,9 +3,9 @@ import { __ } from '@wordpress/i18n';
 import { trackJetpackAiUpgrade } from './utils/tracking';
 
 const QUOTA_EXHAUSTED_CODE_MESSAGE =
-	/^(?:(?:(?:protocol request|streaming) error|http \d{3}):\s*)?jetpack_ai_quota_exhausted(?:[.!:\s]|$)/i;
+	/^(?:(?:(?:protocol request|streaming) error|http \d{3}):\s*)?(?:jetpack_ai_quota_exhausted|ai_credit_allowance_exhausted)(?:[.!:\s]|$)/i;
 const QUOTA_EXHAUSTED_MESSAGE =
-	/^(?:(?:(?:protocol request|streaming) error|http \d{3}):\s*)?(?:you have reached your jetpack ai usage limit|jetpack ai usage limit reached)(?:[.!:\s]|$)/i;
+	/^(?:(?:(?:protocol request|streaming) error|http \d{3}):\s*)?(?:you have reached your jetpack ai usage limit|jetpack ai usage limit reached|you have used all ai credits included with this site for this month)(?:[.!:\s]|$)/i;
 
 export interface JetpackAiChatNotice {
 	message: string;

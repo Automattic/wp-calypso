@@ -1329,21 +1329,100 @@ describe( 'OrchestratorChat', () => {
 		);
 	} );
 
-	it( 'renders the provider notice derived from the agent error', () => {
+	it( 'passes terminal AI credits to the provider and clears them on omission', async () => {
+		const useChatNotice = jest.fn();
+		const view = render( chat( { useChatNotice } ) );
+		const aiCredits = {
+			credits_limit: 15_000,
+			credits_used: 3_000,
+			credits_remaining: 12_000,
+			blocked: false,
+			resets_at: '2026-10-01T00:00:00+00:00',
+			upgrade_url: null,
+		};
+
+		await act( async () => {
+			await mockAgentChatConfig?.onTaskUpdate?.( {
+				id: 'task-with-credits',
+				status: { state: 'completed' },
+				final: true,
+				text: '',
+				aiCredits,
+			} );
+		} );
+
+		expect( useChatNotice ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { aiCredits, aiCreditsRevision: 1 } )
+		);
+
+		await act( async () => {
+			await mockAgentChatConfig?.onTaskUpdate?.( {
+				id: 'task-without-credits',
+				status: { state: 'completed' },
+				final: true,
+				text: '',
+			} );
+		} );
+
+		expect( useChatNotice ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { aiCredits: undefined, aiCreditsRevision: 2 } )
+		);
+
+		await act( async () => {
+			await mockAgentChatConfig?.onTaskUpdate?.( {
+				id: 'task-with-new-credits',
+				status: { state: 'completed' },
+				final: true,
+				text: '',
+				aiCredits,
+			} );
+		} );
+		mockSiteKey = 'site-2';
+		view.rerender( chat( { useChatNotice } ) );
+		expect( useChatNotice ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { aiCredits: undefined, aiCreditsRevision: undefined } )
+		);
+
+		mockSiteKey = 'site-1';
+		view.rerender( chat( { useChatNotice } ) );
+		expect( useChatNotice ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { aiCredits: undefined, aiCreditsRevision: undefined } )
+		);
+
+		await act( async () => {
+			await mockAgentChatConfig?.onTaskUpdate?.( {
+				id: 'fresh-task-after-scope-change',
+				status: { state: 'completed' },
+				final: true,
+				text: '',
+				aiCredits,
+			} );
+		} );
+		expect( useChatNotice ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { aiCredits, aiCreditsRevision: 4 } )
+		);
+	} );
+
+	it( 'keeps submission enabled while rendering an exhausted provider notice', async () => {
 		const notice = {
-			message: 'You’re out of free credits.',
+			message: 'You’ve used this month’s Jetpack AI allowance (0% left).',
 			status: 'error' as const,
 			dismissible: false,
 			suppressCurrentError: true,
 			action: { label: 'Upgrade', onClick: jest.fn() },
 		};
 		const useChatNotice = jest.fn( () => notice );
-		mockUseAgentChat.mockReturnValue( agentChatReturn( { error: 'jetpack_ai_quota_exhausted' } ) );
+		const onSubmit = jest.fn().mockResolvedValue( undefined );
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { error: 'ai_credit_allowance_exhausted', onSubmit } )
+		);
 
 		render( chat( { useChatNotice } ) );
 
 		expect( useChatNotice ).toHaveBeenCalledWith( {
-			error: 'jetpack_ai_quota_exhausted',
+			aiCredits: undefined,
+			aiCreditsRevision: undefined,
+			error: 'ai_credit_allowance_exhausted',
 			enabled: true,
 			isWpcomPlatform: undefined,
 			settledRequestCount: 0,
@@ -1352,6 +1431,9 @@ describe( 'OrchestratorChat', () => {
 		expect( mockAgentChat.mock.calls.at( -1 )![ 0 ] ).toEqual(
 			expect.objectContaining( { notice, error: null } )
 		);
+
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+		await waitFor( () => expect( onSubmit ).toHaveBeenCalledWith( 'Describe these images' ) );
 	} );
 
 	it( 'suppresses a handled provider error without rendering an empty notice', () => {

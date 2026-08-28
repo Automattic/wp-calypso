@@ -9,5 +9,9 @@
 		"types": [ "jest", "@testing-library/jest-dom" ]
 	},
 	"include": [ "src", "src/*.json", "types" ],
-	"references": [ { "path": "../viewport" }, { "path": "../support-articles" } ]
+	"references": [
+		{ "path": "../agenttic-client" },
+		{ "path": "../viewport" },
+		{ "path": "../support-articles" }
+	]
 }

@@ -343,6 +343,7 @@ export default function OrchestratorChat( {
 	onHasMessagesChange,
 }: Props ) {
 	const { agentConfig, getTabSessionId, site, siteKey, currentUser } = useAgentsManagerContext();
+	const taskResultScopeKey = JSON.stringify( [ siteKey, agentConfig?.agentId ?? '' ] );
 
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isThinking, setIsThinking ] = useState( false );
@@ -361,6 +362,17 @@ export default function OrchestratorChat( {
 	const [ isRegenerating, setIsRegenerating ] = useState( false );
 	const [ hasUserSentMessage, setHasUserSentMessage ] = useState( false );
 	const [ settledRequestCount, setSettledRequestCount ] = useState( 0 );
+	const [ latestTaskResult, setLatestTaskResult ] = useState< {
+		scopeKey: string;
+		aiCredits?: unknown;
+		revision: number;
+	} >();
+	const taskResultRevisionRef = useRef( 0 );
+	useEffect( () => {
+		setLatestTaskResult( ( current ) =>
+			current?.scopeKey === taskResultScopeKey ? current : undefined
+		);
+	}, [ taskResultScopeKey ] );
 	const currentPostId = useSelect( ( select ) => {
 		const editor = select( 'core/editor' ) as { getCurrentPostId?: () => number | string };
 		return editor?.getCurrentPostId?.();
@@ -497,6 +509,12 @@ export default function OrchestratorChat( {
 					update.final === true ||
 					[ 'completed', 'canceled', 'failed' ].includes( update.status.state );
 				if ( isTerminal && isCurrentStreamGeneration ) {
+					taskResultRevisionRef.current += 1;
+					setLatestTaskResult( {
+						scopeKey: taskResultScopeKey,
+						aiCredits: update.aiCredits,
+						revision: taskResultRevisionRef.current,
+					} );
 					const finalMessageId = update.status.message?.messageId ?? update.agentMessage?.messageId;
 					const completedSuccessfully =
 						update.status.state === 'completed' ||
@@ -523,7 +541,7 @@ export default function OrchestratorChat( {
 				await onTaskUpdate?.( update );
 			},
 		};
-	}, [ agentConfig, checkpointStreamGeneration ] );
+	}, [ agentConfig, checkpointStreamGeneration, taskResultScopeKey ] );
 
 	const {
 		addMessage,
@@ -780,6 +798,10 @@ export default function OrchestratorChat( {
 		error,
 		enabled: ! isReaderChat,
 		isWpcomPlatform: getAgentsManagerInlineData()?.isWpcomPlatform,
+		aiCredits:
+			latestTaskResult?.scopeKey === taskResultScopeKey ? latestTaskResult.aiCredits : undefined,
+		aiCreditsRevision:
+			latestTaskResult?.scopeKey === taskResultScopeKey ? latestTaskResult.revision : undefined,
 		settledRequestCount,
 		siteId: typeof site?.ID === 'number' ? site.ID : undefined,
 	} );

@@ -1,13 +1,15 @@
 {
 	"name": "@automattic/agenttic-client",
-	"version": "0.1.89",
+	"version": "0.1.90",
 	"type": "module",
 	"description": "A TypeScript client library for connection to the Automattic agent framework.",
 	"main": "dist/index.js",
 	"module": "dist/index.js",
+	"calypso:src": "src/index.ts",
 	"types": "dist/index.d.ts",
 	"exports": {
 		".": {
+			"calypso:src": "./src/index.ts",
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js"
 		},

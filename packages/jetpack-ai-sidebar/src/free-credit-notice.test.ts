@@ -3,7 +3,11 @@
  */
 import { act, renderHook, waitFor } from '@testing-library/react';
 import apiFetch from '@wordpress/api-fetch';
-import { getFreeCreditStatus, useJetpackFreeCreditChatNotice } from './free-credit-notice';
+import {
+	formatRemainingPercentage,
+	getJetpackAiStatus,
+	useJetpackFreeCreditChatNotice,
+} from './free-credit-notice';
 import { trackJetpackAiUpgrade } from './utils/tracking';
 
 jest.mock( '@wordpress/api-fetch', () => ( {
@@ -44,6 +48,18 @@ const featureResponse = ( requestsCount = 0 ) => ( {
 	},
 } );
 
+const aiCredits = ( used = 0, limit = 15_000 ) => {
+	const remaining = Math.max( 0, limit - used );
+	return {
+		credits_limit: limit,
+		credits_used: used,
+		credits_remaining: remaining,
+		blocked: remaining === 0,
+		resets_at: '2026-10-01T00:00:00+00:00',
+		upgrade_url: null,
+	};
+};
+
 const defaultProps = {
 	error: null,
 	enabled: true,
@@ -80,18 +96,90 @@ afterEach( () => {
 	}
 } );
 
-describe( 'getFreeCreditStatus', () => {
-	it( 'uses the all-time free request count and clamps remaining credits to zero', () => {
-		expect( getFreeCreditStatus( featureResponse( 21 ) ) ).toEqual( {
+describe( 'getJetpackAiStatus', () => {
+	it.each( [
+		[ 3_000, 15_000, 12_000 ],
+		[ 360, 1_000, 640 ],
+	] as const )(
+		'accepts a backend-owned cost allowance with %d used of %d',
+		( used, limit, remaining ) => {
+			expect( getJetpackAiStatus( featureResponse(), aiCredits( used, limit ) ) ).toEqual( {
+				kind: 'cost',
+				limit,
+				used,
+				remaining,
+				resetsAt: '2026-10-01T00:00:00+00:00',
+				isExhausted: false,
+				upgradeUrl: null,
+			} );
+		}
+	);
+
+	it( 'accepts Z for the UTC reset boundary', () => {
+		expect(
+			getJetpackAiStatus( featureResponse(), {
+				...aiCredits(),
+				resets_at: '2026-10-01T00:00:00Z',
+			} )
+		).toMatchObject( { kind: 'cost', remaining: 15_000 } );
+	} );
+
+	it( 'prefers the terminal cost snapshot over legacy request fields', () => {
+		expect(
+			getJetpackAiStatus( { ...featureResponse(), 'requests-count': 19 }, aiCredits( 3_000 ) )
+		).toMatchObject( { kind: 'cost', remaining: 12_000 } );
+	} );
+
+	it.each( [
+		[ 'positive limit', { credits_limit: 0 } ],
+		[ 'integer usage', { credits_used: '360' } ],
+		[ 'balance', { credits_remaining: 999 } ],
+		[ 'blocked state', { blocked: true } ],
+		[ 'UTC reset', { resets_at: '2026-10-01T00:00:00-05:00' } ],
+		[ 'sub-millisecond reset', { resets_at: '2026-10-01T00:00:00.0001Z' } ],
+		[ 'calendar-month reset', { resets_at: '2026-10-02T00:00:00Z' } ],
+	] )( 'falls back to legacy requests for an invalid %s', ( _field, override ) => {
+		expect(
+			getJetpackAiStatus( featureResponse( 3 ), { ...aiCredits(), ...override } )
+		).toMatchObject( { kind: 'legacy', requestsRemaining: 17 } );
+	} );
+
+	it( 'does not turn malformed cost data into a balance without a valid fallback', () => {
+		expect( getJetpackAiStatus( {}, { ...aiCredits(), credits_used: 1.5 } ) ).toBeUndefined();
+	} );
+
+	it( 'accepts a post-turn overshoot clamped to zero', () => {
+		expect( getJetpackAiStatus( {}, aiCredits( 15_001 ) ) ).toMatchObject( {
+			kind: 'cost',
 			remaining: 0,
+			isExhausted: true,
+		} );
+	} );
+
+	it( 'rejects the WordPress.com plans URL from the terminal response', () => {
+		expect(
+			getJetpackAiStatus(
+				{},
+				{
+					...aiCredits(),
+					upgrade_url: 'https://wordpress.com/plans/example.com',
+				}
+			)
+		).toMatchObject( { kind: 'cost', upgradeUrl: null } );
+	} );
+
+	it( 'uses the legacy all-time free request count and clamps remaining requests to zero', () => {
+		expect( getJetpackAiStatus( featureResponse( 21 ) ) ).toEqual( {
+			kind: 'legacy',
+			requestsRemaining: 0,
 			isExhausted: true,
 			upgradeUrl: UPGRADE_URL,
 		} );
 	} );
 
-	it( 'ignores a paid tier', () => {
+	it( 'ignores a legacy paid tier without an authoritative cost allowance', () => {
 		expect(
-			getFreeCreditStatus( {
+			getJetpackAiStatus( {
 				...featureResponse(),
 				'current-tier': { slug: 'jetpack_ai_yearly', value: 1, limit: 100 },
 			} )
@@ -100,7 +188,7 @@ describe( 'getFreeCreditStatus', () => {
 
 	it( 'does not treat malformed free-tier data as a paid tier', () => {
 		expect(
-			getFreeCreditStatus( {
+			getJetpackAiStatus( {
 				...featureResponse(),
 				'requests-count': '3',
 			} )
@@ -109,21 +197,35 @@ describe( 'getFreeCreditStatus', () => {
 
 	it( 'uses the site-specific free limit before the tier default', () => {
 		expect(
-			getFreeCreditStatus( {
+			getJetpackAiStatus( {
 				...featureResponse( 20 ),
 				'is-over-limit': false,
 				'requests-limit': 1000,
 			} )
-		).toMatchObject( { remaining: 980, isExhausted: false } );
+		).toMatchObject( { kind: 'legacy', requestsRemaining: 980, isExhausted: false } );
 	} );
 
 	it( 'keeps the status but drops an untrusted upgrade URL', () => {
 		expect(
-			getFreeCreditStatus( {
+			getJetpackAiStatus( {
 				...featureResponse(),
 				'upgrade-url': 'https://wordpress.com.evil.example/checkout',
 			} )
-		).toMatchObject( { remaining: 20, upgradeUrl: null } );
+		).toMatchObject( { kind: 'legacy', requestsRemaining: 20, upgradeUrl: null } );
+	} );
+} );
+
+describe( 'formatRemainingPercentage', () => {
+	it.each( [
+		[ 15_000, 15_000, '100%' ],
+		[ 14_999, 15_000, '99%' ],
+		[ 7_500, 15_000, '50%' ],
+		[ 150, 15_000, '1%' ],
+		[ 149, 15_000, '<1%' ],
+		[ 1, 15_000, '<1%' ],
+		[ 0, 15_000, '0%' ],
+	] )( 'formats %d of %d as %s', ( remaining, limit, expected ) => {
+		expect( formatRemainingPercentage( remaining, limit ) ).toBe( expected );
 	} );
 } );
 
@@ -131,6 +233,9 @@ describe( 'WordPress.com-hosted status', () => {
 	it.each( [
 		[ 'Simple', PUBLIC_API_ROOT ],
 		[ 'Atomic', LOCAL_API_ROOT ],
+		[ 'Big Sky', LOCAL_API_ROOT ],
+		[ 'Garden', LOCAL_API_ROOT ],
+		[ 'Flex', LOCAL_API_ROOT ],
 	] )( 'does not fetch or show the Jetpack AI notice on %s', ( _siteType, root ) => {
 		testWindow.wpApiSettings = { root };
 		mockApiFetch.mockResolvedValue( featureResponse() );
@@ -139,6 +244,7 @@ describe( 'WordPress.com-hosted status', () => {
 				...defaultProps,
 				error: CURRENT_ENDPOINT_ERROR,
 				isWpcomPlatform: true,
+				aiCredits: aiCredits( 3_000 ),
 			} )
 		);
 
@@ -152,6 +258,222 @@ describe( 'Self-hosted status', () => {
 		testWindow.wpApiSettings = { root: LOCAL_API_ROOT };
 	} );
 
+	it.each( [
+		[ 3_000, 15_000, '80% of this month’s Jetpack AI allowance left' ],
+		[ 250, 1_000, '75% of this month’s Jetpack AI allowance left' ],
+	] as const )( 'shows a post-turn balance with %d used of %d', async ( used, limit, balance ) => {
+		mockApiFetch.mockResolvedValue( featureResponse() );
+		const { result, unmount } = renderHook( () =>
+			useJetpackFreeCreditChatNotice( {
+				...defaultProps,
+				aiCredits: aiCredits( used, limit ),
+			} )
+		);
+
+		await waitFor( () => {
+			expect( result.current?.message ).toBe( `${ balance }. Resets on October 1, 2026 (UTC).` );
+			expect( result.current?.action ).toMatchObject( { label: 'Upgrade' } );
+		} );
+		unmount();
+	} );
+
+	it( 'shows the authoritative exhausted state with the monthly reset', async () => {
+		mockApiFetch.mockResolvedValue( featureResponse() );
+		const { result, unmount } = renderHook( () =>
+			useJetpackFreeCreditChatNotice( {
+				...defaultProps,
+				aiCredits: aiCredits( 15_000 ),
+			} )
+		);
+
+		await waitFor( () =>
+			expect( result.current ).toMatchObject( {
+				message:
+					'You’ve used this month’s Jetpack AI allowance (0% left). It resets on October 1, 2026 (UTC).',
+				status: 'error',
+				dismissible: false,
+			} )
+		);
+		unmount();
+	} );
+
+	it( 'falls back to legacy request wording for a malformed terminal snapshot', async () => {
+		mockApiFetch.mockResolvedValue( featureResponse( 3 ) );
+		const { result, unmount } = renderHook( () =>
+			useJetpackFreeCreditChatNotice( {
+				...defaultProps,
+				aiCredits: { ...aiCredits(), credits_remaining: 1 },
+			} )
+		);
+
+		await waitFor( () => expect( result.current?.message ).toBe( '17 free requests left' ) );
+		unmount();
+	} );
+
+	it( 'clears a stale cost balance when a later terminal result omits it', async () => {
+		mockApiFetch.mockResolvedValue( featureResponse( 3 ) );
+		const initialProps = { ...defaultProps, aiCredits: aiCredits( 3_000 ) };
+		const { result, rerender, unmount } = renderHook(
+			( props: typeof initialProps | typeof defaultProps ) =>
+				useJetpackFreeCreditChatNotice( props ),
+			{ initialProps }
+		);
+
+		await waitFor( () =>
+			expect( result.current?.message ).toBe(
+				'80% of this month’s Jetpack AI allowance left. Resets on October 1, 2026 (UTC).'
+			)
+		);
+		rerender( defaultProps );
+		expect( result.current?.message ).toBe( '17 free requests left' );
+		unmount();
+	} );
+
+	it( 'retires the pre-upgrade balance after the local endpoint confirms a paid tier', async () => {
+		const paidLegacyResponse = {
+			...featureResponse(),
+			'is-over-limit': false,
+			'current-tier': { slug: 'jetpack_ai_yearly', value: 1, limit: 100 },
+		};
+		mockApiFetch
+			.mockResolvedValueOnce( featureResponse( 20 ) )
+			.mockResolvedValueOnce( paidLegacyResponse );
+		const initialProps = {
+			...defaultProps,
+			error: CURRENT_ENDPOINT_ERROR as string | null,
+			aiCredits: aiCredits( 15_000 ),
+			aiCreditsRevision: 1,
+		};
+		const { result, rerender, unmount } = renderHook(
+			( props: typeof initialProps ) => useJetpackFreeCreditChatNotice( props ),
+			{ initialProps }
+		);
+
+		await waitFor( () =>
+			expect( result.current ).toMatchObject( {
+				message:
+					'You’ve used this month’s Jetpack AI allowance (0% left). It resets on October 1, 2026 (UTC).',
+				status: 'error',
+				action: { label: 'Upgrade' },
+			} )
+		);
+		mockOpen.mockImplementationOnce( () => {
+			window.dispatchEvent( new Event( 'focus' ) );
+			return null;
+		} );
+		result.current?.action?.onClick();
+		expect( mockApiFetch ).toHaveBeenCalledTimes( 1 );
+		expect( mockTrackJetpackAiUpgrade ).toHaveBeenCalledWith();
+		expect( mockOpen ).toHaveBeenCalledWith( UPGRADE_URL, '_blank', 'noopener,noreferrer' );
+
+		act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+
+		await waitFor( () => {
+			expect( mockApiFetch ).toHaveBeenNthCalledWith( 2, {
+				path: '/wpcom/v2/jetpack-ai/ai-assistant-feature?skip_cache=true',
+			} );
+			expect( result.current ).toEqual( { suppressCurrentError: true } );
+		} );
+		rerender( {
+			...initialProps,
+			aiCredits: aiCredits( 3_000 ),
+			aiCreditsRevision: 2,
+		} );
+		await waitFor( () =>
+			expect( result.current ).toMatchObject( {
+				message: '80% of this month’s Jetpack AI allowance left. Resets on October 1, 2026 (UTC).',
+				suppressCurrentError: true,
+			} )
+		);
+		act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+		expect( mockApiFetch ).toHaveBeenCalledTimes( 2 );
+		unmount();
+	} );
+
+	it( 'does not reuse upgrade context after its cached fallback completes', async () => {
+		jest.useFakeTimers();
+		try {
+			const paidLegacyResponse = {
+				...featureResponse(),
+				'is-over-limit': false,
+				'current-tier': { slug: 'jetpack_ai_yearly', value: 1, limit: 100 },
+			};
+			mockApiFetch
+				.mockResolvedValueOnce( featureResponse() )
+				.mockResolvedValueOnce( featureResponse() )
+				.mockResolvedValueOnce( featureResponse() )
+				.mockResolvedValueOnce( featureResponse() )
+				.mockResolvedValueOnce( paidLegacyResponse );
+			const initialProps = {
+				...defaultProps,
+				aiCredits: aiCredits( 15_000 ),
+				aiCreditsRevision: 1,
+			};
+			const { result, rerender, unmount } = renderHook(
+				( props: typeof initialProps ) => useJetpackFreeCreditChatNotice( props ),
+				{ initialProps }
+			);
+
+			await act( async () => Promise.resolve() );
+			result.current?.action?.onClick();
+			act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+			await act( async () => Promise.resolve() );
+
+			act( () => jest.advanceTimersByTime( 61_000 ) );
+			await act( async () => Promise.resolve() );
+			rerender( { ...initialProps, settledRequestCount: 1 } );
+			await act( async () => Promise.resolve() );
+			act( () => jest.advanceTimersByTime( 61_000 ) );
+			await act( async () => Promise.resolve() );
+
+			expect( mockApiFetch ).toHaveBeenCalledTimes( 5 );
+			expect( result.current?.message ).toBe(
+				'You’ve used this month’s Jetpack AI allowance (0% left). It resets on October 1, 2026 (UTC).'
+			);
+			unmount();
+		} finally {
+			jest.clearAllTimers();
+			jest.useRealTimers();
+		}
+	} );
+
+	it( 'refreshes after returning from a rejection-only upgrade action', async () => {
+		const paidLegacyResponse = {
+			...featureResponse(),
+			'current-tier': { slug: 'jetpack_ai_yearly', value: 1, limit: 100 },
+		};
+		mockApiFetch
+			.mockResolvedValueOnce( paidLegacyResponse )
+			.mockResolvedValueOnce( paidLegacyResponse );
+		const { result, unmount } = renderHook( () =>
+			useJetpackFreeCreditChatNotice( {
+				...defaultProps,
+				error: `${ CURRENT_ENDPOINT_ERROR } Upgrade at ${ UPGRADE_URL }`,
+			} )
+		);
+
+		await waitFor( () => expect( mockApiFetch ).toHaveBeenCalledTimes( 1 ) );
+		expect( result.current ).toMatchObject( {
+			message: 'You’ve reached your Jetpack AI usage limit.',
+			status: 'error',
+			dismissible: false,
+			suppressCurrentError: true,
+			action: { label: 'Upgrade' },
+		} );
+		result.current?.action?.onClick();
+		expect( mockApiFetch ).toHaveBeenCalledTimes( 1 );
+
+		act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+
+		await waitFor( () => {
+			expect( mockApiFetch ).toHaveBeenNthCalledWith( 2, {
+				path: '/wpcom/v2/jetpack-ai/ai-assistant-feature?skip_cache=true',
+			} );
+			expect( result.current ).toEqual( { suppressCurrentError: true } );
+		} );
+		unmount();
+	} );
+
 	it( 'uses the local endpoint without polling an idle session', async () => {
 		jest.useFakeTimers();
 		try {
@@ -161,7 +483,7 @@ describe( 'Self-hosted status', () => {
 			);
 
 			await act( async () => Promise.resolve() );
-			expect( result.current?.message ).toBe( '20 free credits left' );
+			expect( result.current?.message ).toBe( '20 free requests left' );
 			expect( mockApiFetch ).toHaveBeenCalledWith( {
 				path: '/wpcom/v2/jetpack-ai/ai-assistant-feature',
 			} );
@@ -182,7 +504,7 @@ describe( 'Self-hosted status', () => {
 
 		await waitFor( () =>
 			expect( result.current ).toMatchObject( {
-				message: 'You’re out of free credits.',
+				message: 'You’re out of free requests.',
 				status: 'error',
 				dismissible: false,
 				action: { label: 'Upgrade' },
@@ -212,7 +534,7 @@ describe( 'Self-hosted status', () => {
 			useJetpackFreeCreditChatNotice( { ...defaultProps, isWpcomPlatform: false } )
 		);
 
-		await waitFor( () => expect( result.current?.message ).toBe( '20 free credits left' ) );
+		await waitFor( () => expect( result.current?.message ).toBe( '20 free requests left' ) );
 		expect( mockApiFetch ).toHaveBeenCalledTimes( 1 );
 		unmount();
 	} );
@@ -236,7 +558,7 @@ describe( 'Self-hosted status', () => {
 			expect( mockApiFetch ).toHaveBeenNthCalledWith( 2, {
 				path: '/wpcom/v2/jetpack-ai/ai-assistant-feature?skip_cache=true',
 			} );
-			expect( result.current?.message ).toBe( '19 free credits left' );
+			expect( result.current?.message ).toBe( '19 free requests left' );
 
 			act( () => jest.advanceTimersByTime( 60_999 ) );
 			expect( mockApiFetch ).toHaveBeenCalledTimes( 2 );
@@ -247,7 +569,7 @@ describe( 'Self-hosted status', () => {
 			expect( mockApiFetch ).toHaveBeenNthCalledWith( 3, {
 				path: '/wpcom/v2/jetpack-ai/ai-assistant-feature',
 			} );
-			expect( result.current?.message ).toBe( '19 free credits left' );
+			expect( result.current?.message ).toBe( '19 free requests left' );
 			unmount();
 		} finally {
 			jest.clearAllTimers();
@@ -322,7 +644,7 @@ describe( 'Self-hosted status', () => {
 		expect( mockApiFetch ).toHaveBeenNthCalledWith( 3, {
 			path: '/wpcom/v2/jetpack-ai/ai-assistant-feature?skip_cache=true',
 		} );
-		expect( result.current?.message ).toBe( '17 free credits left' );
+		expect( result.current?.message ).toBe( '17 free requests left' );
 		unmount();
 	} );
 
@@ -339,17 +661,17 @@ describe( 'Self-hosted status', () => {
 			);
 
 			await act( async () => Promise.resolve() );
-			expect( result.current?.message ).toBe( '16 free credits left' );
+			expect( result.current?.message ).toBe( '16 free requests left' );
 
 			rerender( { ...defaultProps, settledRequestCount: 1 } );
 			await act( async () => Promise.resolve() );
 			expect( mockApiFetch ).toHaveBeenCalledTimes( 2 );
-			expect( result.current?.message ).toBe( '16 free credits left' );
+			expect( result.current?.message ).toBe( '16 free requests left' );
 
 			act( () => jest.advanceTimersByTime( 61_000 ) );
 			await act( async () => Promise.resolve() );
 			expect( mockApiFetch ).toHaveBeenCalledTimes( 3 );
-			expect( result.current?.message ).toBe( '15 free credits left' );
+			expect( result.current?.message ).toBe( '15 free requests left' );
 			unmount();
 		} finally {
 			jest.clearAllTimers();
@@ -372,11 +694,11 @@ describe( 'Self-hosted status', () => {
 			await act( async () => Promise.resolve() );
 			rerender( { ...defaultProps, settledRequestCount: 1 } );
 			await act( async () => Promise.resolve() );
-			expect( result.current?.message ).toBe( '20 free credits left' );
+			expect( result.current?.message ).toBe( '20 free requests left' );
 
 			act( () => jest.advanceTimersByTime( 61_000 ) );
 			await act( async () => Promise.resolve() );
-			expect( result.current?.message ).toBe( '19 free credits left' );
+			expect( result.current?.message ).toBe( '19 free requests left' );
 			unmount();
 		} finally {
 			jest.clearAllTimers();
@@ -514,6 +836,21 @@ describe( 'Self-hosted status', () => {
 } );
 
 describe( 'routing and compatibility fallbacks', () => {
+	it( 'shows a terminal cost snapshot without a local status endpoint', () => {
+		const { result } = renderHook( () =>
+			useJetpackFreeCreditChatNotice( {
+				...defaultProps,
+				aiCredits: aiCredits( 3_000 ),
+			} )
+		);
+
+		expect( mockApiFetch ).not.toHaveBeenCalled();
+		expect( result.current?.message ).toBe(
+			'80% of this month’s Jetpack AI allowance left. Resets on October 1, 2026 (UTC).'
+		);
+		expect( result.current?.action ).toBeUndefined();
+	} );
+
 	it.each( [
 		[ 'missing', undefined ],
 		[ 'non-string', 123 ],
@@ -561,7 +898,7 @@ describe( 'routing and compatibility fallbacks', () => {
 			} )
 		);
 
-		await waitFor( () => expect( result.current?.message ).toBe( '20 free credits left' ) );
+		await waitFor( () => expect( result.current?.message ).toBe( '20 free requests left' ) );
 		expect( mockApiFetch ).toHaveBeenCalledTimes( 1 );
 		unmount();
 	} );
@@ -624,7 +961,87 @@ describe( 'notice composition', () => {
 		testWindow.wpApiSettings = { root: LOCAL_API_ROOT };
 	} );
 
-	it( 'keeps the exhausted state when the cached count still has one credit', async () => {
+	it( 'does not recover a new quota rejection from an older positive snapshot', async () => {
+		mockApiFetch.mockResolvedValue( featureResponse() );
+		const initialProps: Parameters< typeof useJetpackFreeCreditChatNotice >[ 0 ] = {
+			...defaultProps,
+			aiCredits: aiCredits( 3_000 ),
+			aiCreditsRevision: 1,
+		};
+		const { result, rerender, unmount } = renderHook(
+			( props: typeof initialProps ) => useJetpackFreeCreditChatNotice( props ),
+			{ initialProps }
+		);
+
+		await waitFor( () =>
+			expect( result.current?.message ).toBe(
+				'80% of this month’s Jetpack AI allowance left. Resets on October 1, 2026 (UTC).'
+			)
+		);
+		rerender( { ...initialProps, error: CURRENT_ENDPOINT_ERROR } );
+		expect( result.current ).toMatchObject( {
+			message: 'You’ve reached your Jetpack AI usage limit.',
+			suppressCurrentError: true,
+		} );
+
+		rerender( {
+			...initialProps,
+			aiCredits: undefined,
+			aiCreditsRevision: 2,
+			error: CURRENT_ENDPOINT_ERROR,
+			settledRequestCount: 1,
+		} );
+		expect( result.current ).toMatchObject( {
+			message: 'You’re out of free requests.',
+			suppressCurrentError: true,
+		} );
+		unmount();
+	} );
+
+	it( 'keeps suppressing a recovered rejection if a later status is exhausted', async () => {
+		mockApiFetch.mockResolvedValue( featureResponse() );
+		const initialProps = {
+			...defaultProps,
+			error: null as string | null,
+			isWpcomPlatform: false,
+			aiCredits: aiCredits( 15_000 ),
+			aiCreditsRevision: 1,
+		};
+		const { result, rerender, unmount } = renderHook(
+			( props: typeof initialProps ) => useJetpackFreeCreditChatNotice( props ),
+			{ initialProps }
+		);
+
+		await act( async () => Promise.resolve() );
+		rerender( { ...initialProps, error: CURRENT_ENDPOINT_ERROR } );
+		rerender( {
+			...initialProps,
+			error: CURRENT_ENDPOINT_ERROR,
+			aiCredits: aiCredits( 1_500 ),
+			aiCreditsRevision: 2,
+		} );
+		await waitFor( () =>
+			expect( result.current ).toMatchObject( {
+				message: '90% of this month’s Jetpack AI allowance left. Resets on October 1, 2026 (UTC).',
+				suppressCurrentError: true,
+			} )
+		);
+
+		rerender( {
+			...initialProps,
+			error: CURRENT_ENDPOINT_ERROR,
+			aiCredits: aiCredits( 15_000 ),
+			aiCreditsRevision: 3,
+		} );
+		expect( result.current ).toMatchObject( {
+			message:
+				'You’ve used this month’s Jetpack AI allowance (0% left). It resets on October 1, 2026 (UTC).',
+			suppressCurrentError: true,
+		} );
+		unmount();
+	} );
+
+	it( 'keeps the exhausted state when the cached count still has one request', async () => {
 		mockApiFetch.mockResolvedValue( featureResponse( 19 ) );
 		const initialProps = {
 			...defaultProps,
@@ -636,18 +1053,18 @@ describe( 'notice composition', () => {
 			{ initialProps }
 		);
 
-		await waitFor( () => expect( result.current?.message ).toBe( '1 free credit left' ) );
+		await waitFor( () => expect( result.current?.message ).toBe( '1 free request left' ) );
 		rerender( { ...initialProps, error: CURRENT_ENDPOINT_ERROR } );
 
 		expect( result.current ).toMatchObject( {
-			message: 'You’re out of free credits.',
+			message: 'You’re out of free requests.',
 			status: 'error',
 			suppressCurrentError: true,
 		} );
 
 		rerender( initialProps );
 		expect( result.current ).toMatchObject( {
-			message: 'You’re out of free credits.',
+			message: 'You’re out of free requests.',
 			status: 'error',
 			suppressCurrentError: false,
 		} );
@@ -672,10 +1089,10 @@ describe( 'notice composition', () => {
 			);
 
 			await act( async () => Promise.resolve() );
-			expect( result.current?.message ).toBe( '1 free credit left' );
+			expect( result.current?.message ).toBe( '1 free request left' );
 
 			rerender( { ...initialProps, error: CURRENT_ENDPOINT_ERROR } );
-			expect( result.current?.message ).toBe( 'You’re out of free credits.' );
+			expect( result.current?.message ).toBe( 'You’re out of free requests.' );
 
 			rerender( {
 				...initialProps,
@@ -683,11 +1100,11 @@ describe( 'notice composition', () => {
 				settledRequestCount: 1,
 			} );
 			await act( async () => Promise.resolve() );
-			expect( result.current?.message ).toBe( 'You’re out of free credits.' );
+			expect( result.current?.message ).toBe( 'You’re out of free requests.' );
 
 			act( () => jest.advanceTimersByTime( 61_000 ) );
 			await act( async () => Promise.resolve() );
-			expect( result.current?.message ).toBe( '1 free credit left' );
+			expect( result.current?.message ).toBe( '1 free request left' );
 			expect( result.current?.suppressCurrentError ).toBe( true );
 			unmount();
 		} finally {
@@ -719,7 +1136,7 @@ describe( 'notice composition', () => {
 
 			await act( async () => Promise.resolve() );
 			rerender( { ...initialProps, error: CURRENT_ENDPOINT_ERROR } );
-			expect( result.current?.message ).toBe( 'You’re out of free credits.' );
+			expect( result.current?.message ).toBe( 'You’re out of free requests.' );
 
 			rerender( {
 				...initialProps,
@@ -794,12 +1211,12 @@ describe( 'notice composition', () => {
 			{ initialProps }
 		);
 
-		await waitFor( () => expect( result.current?.message ).toBe( '1 free credit left' ) );
+		await waitFor( () => expect( result.current?.message ).toBe( '1 free request left' ) );
 		rerender( { ...initialProps, error: CURRENT_ENDPOINT_ERROR } );
-		expect( result.current?.message ).toBe( 'You’re out of free credits.' );
+		expect( result.current?.message ).toBe( 'You’re out of free requests.' );
 
 		rerender( { ...initialProps, siteId: 456 } );
-		await waitFor( () => expect( result.current?.message ).toBe( '15 free credits left' ) );
+		await waitFor( () => expect( result.current?.message ).toBe( '15 free requests left' ) );
 		unmount();
 	} );
 

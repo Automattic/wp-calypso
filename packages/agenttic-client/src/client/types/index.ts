@@ -334,6 +334,8 @@ export interface TaskUpdate {
 	status: TaskStatus;
 	final?: boolean;
 	artifact?: Artifact;
+	/** Credit status from the server's task result. Not persisted to messages. */
+	aiCredits?: unknown;
 	text: string; // Extracted text from status.message
 	agentMessage?: Message; // Optional separate agent message for when returnToAgent is false
 	progressMessage?: string; // Optional progress message extracted from progress parts

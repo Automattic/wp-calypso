@@ -294,7 +294,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/agents-manager@workspace:packages/agents-manager"
   dependencies:
-    "@automattic/agenttic-client": "npm:^0.1.89"
+    "@automattic/agenttic-client": "workspace:^"
     "@automattic/agenttic-ui": "npm:^0.1.89"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
