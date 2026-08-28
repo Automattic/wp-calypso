@@ -306,6 +306,16 @@ class MasterbarLoggedIn extends Component {
 							url: dashboardOptIn ? dashboardLink( '/domains' ) : '/domains/manage',
 							onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_domains_clicked' ),
 						},
+						{
+							label: translate( 'Emails' ),
+							url: dashboardLink( '/emails' ),
+							onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_emails_clicked' ),
+						},
+						{
+							label: translate( 'Plugins' ),
+							url: dashboardLink( '/plugins/manage' ),
+							onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_plugins_clicked' ),
+						},
 					],
 					...( this.props.isSimpleSite
 						? []
