@@ -9,6 +9,7 @@ let sidebarTop = 0; // Current sidebar top position.
 let pinnedSidebarTop = true; // We pin sidebar to the top by default.
 let pinnedSidebarBottom = false;
 let ticking = false; // Used for Scroll event throttling.
+let frameHandle: number | null = null; // Pending throttled frame, so a reset can cancel it.
 
 export function shouldLoadInlineHelp( sectionName: string, currentRoute: string ) {
 	if ( isWpMobileApp() ) {
@@ -41,11 +42,26 @@ export function shouldLoadInlineHelp( sectionName: string, currentRoute: string 
  * matches, and the first scroll takes the wrong branch.
  */
 export function resetSidebarScrollState(): void {
+	// A frame scheduled by the previous route would otherwise run against the state
+	// we are about to clear, and pin the sidebar at scroll position 0.
+	if ( frameHandle !== null ) {
+		window.cancelAnimationFrame( frameHandle );
+		frameHandle = null;
+	}
 	lastScrollPosition = 0;
 	sidebarTop = 0;
 	pinnedSidebarTop = true;
 	pinnedSidebarBottom = false;
 	ticking = false;
+}
+
+/**
+ * Drops the inline styles `handleScroll` writes. It is the only writer of inline
+ * styles on these two elements.
+ */
+export function clearSidebarScrollStyles(): void {
+	document.getElementById( 'content' )?.removeAttribute( 'style' );
+	document.getElementById( 'secondary' )?.removeAttribute( 'style' );
 }
 
 type LayoutMetrics = {
@@ -74,7 +90,8 @@ export function syncSidebarHeight(): LayoutMetrics {
 	const masterbarHeight = getMasterbarElement()?.getBoundingClientRect().height;
 
 	// Check whether we need to adjust content height so that scroll events are triggered.
-	// Sidebar has overflow: initial and position:fixed, so content is our only chance for scroll events.
+	// `.layout__secondary` is position:fixed and clipped, so the content is our only
+	// chance for scroll events.
 	if ( contentEl && contentHeight && masterbarHeight && secondaryElHeight ) {
 		if ( contentHeight < secondaryElHeight ) {
 			// Adjust the content height so that it matches the sidebar + masterbar vertical scroll estate.
@@ -117,7 +134,8 @@ export const handleScroll = ( event: { type: string } ): void => {
 		( secondaryElHeight + masterbarHeight > windowHeight || 'resize' === event.type ) // Only run when sidebar & masterbar are taller than window height OR we have a resize event
 	) {
 		// Throttle scroll event
-		window.requestAnimationFrame( function () {
+		frameHandle = window.requestAnimationFrame( function () {
+			frameHandle = null;
 			const maxScroll = secondaryElHeight + masterbarHeight - windowHeight; // Max sidebar inner scroll.
 			const scrollY = -document.body.getBoundingClientRect().top; // Get current scroll position.
 

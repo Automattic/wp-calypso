@@ -70,6 +70,7 @@ import LayoutLoader from './loader';
 import {
 	shouldLoadInlineHelp,
 	handleScroll,
+	clearSidebarScrollStyles,
 	resetSidebarScrollState,
 	syncSidebarHeight,
 } from './utils';
@@ -172,7 +173,11 @@ function SidebarScrollSynchronizer( { currentRoute } ) {
 			return;
 		}
 
+		// Drop the previous route's inline styles before measuring: they survive a
+		// route change, and a sidebar taller than the viewport never clears them, so
+		// the new page would inherit a stale offset and a stale content height.
 		resetSidebarScrollState();
+		clearSidebarScrollStyles();
 		syncSidebarHeight();
 
 		const secondaryEl = document.getElementById( 'secondary' );
@@ -218,10 +223,7 @@ function SidebarScrollSynchronizer( { currentRoute } ) {
 			if ( active ) {
 				window.removeEventListener( 'scroll', handleScroll );
 				window.removeEventListener( 'resize', handleScroll );
-
-				// remove style attributes added by `handleScroll`
-				document.getElementById( 'content' )?.removeAttribute( 'style' );
-				document.getElementById( 'secondary' )?.removeAttribute( 'style' );
+				clearSidebarScrollStyles();
 			}
 		};
 	}, [ active ] );

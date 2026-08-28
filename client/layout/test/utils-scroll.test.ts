@@ -1,7 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-import { handleScroll, resetSidebarScrollState, syncSidebarHeight } from '../utils';
+import {
+	clearSidebarScrollStyles,
+	handleScroll,
+	resetSidebarScrollState,
+	syncSidebarHeight,
+} from '../utils';
 
 const MASTERBAR_HEIGHT = 46;
 const VIEWPORT_HEIGHT = 600;
@@ -98,5 +103,21 @@ describe( 'handleScroll', () => {
 		expect( document.getElementById( 'content' )?.style.minHeight ).toBe(
 			`${ 1200 + MASTERBAR_HEIGHT }px`
 		);
+	} );
+} );
+
+describe( 'clearSidebarScrollStyles', () => {
+	it( 'drops the offset a previous route left on the sidebar', () => {
+		buildLayout( { sidebarHeight: 1200, contentHeight: 400 } );
+		const secondary = document.getElementById( 'secondary' ) as HTMLElement;
+		secondary.style.position = 'absolute';
+		secondary.style.top = '800px';
+
+		clearSidebarScrollStyles();
+		syncSidebarHeight();
+
+		// A sidebar taller than the viewport never reaches the reinstate branch, so
+		// without this the new page inherits the old page's offset.
+		expect( secondary.getAttribute( 'style' ) ).toBeNull();
 	} );
 } );
