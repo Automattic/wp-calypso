@@ -377,8 +377,10 @@ flows keep working unchanged:
 - The `domain-search` step exposes `headerText`, `subHeaderText`, `hideUseMyDomainLink`
   (suppresses the "Use a domain I own" CTA on both V2 top bar and V1 skip-button surfaces),
   `hideFreeDomainPromo` (hides the free-domain-for-a-year banner), `freeDomainPromoTitle`
-  and `freeDomainPromoSubtitle` (copy overrides for that banner), and `allowedTlds`
-  (per-flow TLD filter that the URL `?tld=` query param can override). All optional and
+  and `freeDomainPromoSubtitle` (copy overrides for that banner), `allowedTlds`
+  (per-flow TLD filter that the URL `?tld=` query param can override), and
+  `freeForFirstYearTlds` (TLDs priced as free for the first year in suggestions and the cart).
+  All optional and
   default-safe; the same prop is applied across all three render paths
   (HundredYearPlanStepWrapper, V2 `Step.CenteredColumnLayout`, V1 `StepContainer`). See
   [`steps-repository/domain-search/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/domain-search/index.tsx).
