@@ -67,7 +67,12 @@ import BodySectionCssClass from './body-section-css-class';
 import { getColorScheme, getColorSchemeFromCurrentQuery, refreshColorScheme } from './color-scheme';
 import HelpCenterLoader from './help-center-loader';
 import LayoutLoader from './loader';
-import { shouldLoadInlineHelp, handleScroll, resetSidebarScrollState } from './utils';
+import {
+	shouldLoadInlineHelp,
+	handleScroll,
+	resetSidebarScrollState,
+	syncSidebarHeight,
+} from './utils';
 
 /*
  * Hotfix for card and button styles hierarchy after <GdprBanner /> removal (see: #70601)
@@ -157,16 +162,50 @@ function SidebarScrollSynchronizer( { currentRoute } ) {
 	const isNarrow = useBreakpoint( '<660px' );
 	const active = ! isNarrow && ! config.isEnabled( 'jetpack-cloud' ); // Jetpack cloud hasn't yet aligned with WPCOM.
 
-	// `handleScroll` growing `#content` is the only thing that makes the window
-	// scrollable when the sidebar is taller than it. Until that runs there is
-	// nothing to scroll, so no scroll event can arrive to trigger it. Run it on
-	// mount, and again per route, since the menu height changes between sections
-	// and the unmount path wipes the styles on the way to a global-sidebar page.
+	// Sizing `#content` is the only thing that makes the window scrollable when the
+	// sidebar is taller than it. Until that runs there is nothing to scroll, so no
+	// scroll event can arrive to trigger it. Run it on mount and per route, since
+	// the menu height changes between sections and the unmount path wipes the
+	// styles on the way to a global-sidebar page.
 	useEffect( () => {
-		if ( active ) {
-			resetSidebarScrollState();
-			handleScroll( { type: 'resize' } );
+		if ( ! active ) {
+			return;
 		}
+
+		resetSidebarScrollState();
+		syncSidebarHeight();
+
+		const secondaryEl = document.getElementById( 'secondary' );
+		if ( ! secondaryEl ) {
+			return;
+		}
+
+		// The menu arrives after the route renders. Both `#secondary` and `.sidebar`
+		// are anchored to their parent's edges, so their box never changes when items
+		// land and a ResizeObserver would stay silent — watch the subtree instead.
+		let lastHeight = secondaryEl.scrollHeight;
+		let frame = null;
+		const observer = new MutationObserver( () => {
+			if ( frame ) {
+				return;
+			}
+			frame = window.requestAnimationFrame( () => {
+				frame = null;
+				if ( secondaryEl.scrollHeight === lastHeight ) {
+					return;
+				}
+				lastHeight = secondaryEl.scrollHeight;
+				syncSidebarHeight();
+			} );
+		} );
+		observer.observe( secondaryEl, { childList: true, subtree: true } );
+
+		return () => {
+			if ( frame ) {
+				window.cancelAnimationFrame( frame );
+			}
+			observer.disconnect();
+		};
 	}, [ active, currentRoute ] );
 
 	useEffect( () => {

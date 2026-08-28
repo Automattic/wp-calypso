@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { handleScroll, resetSidebarScrollState } from '../utils';
+import { handleScroll, resetSidebarScrollState, syncSidebarHeight } from '../utils';
 
 const MASTERBAR_HEIGHT = 46;
 const VIEWPORT_HEIGHT = 600;
@@ -27,7 +27,7 @@ function buildLayout( { sidebarHeight, contentHeight }: Record< string, number >
 	stub( document.getElementById( 'content' ) as HTMLElement, { scrollHeight: contentHeight } );
 }
 
-describe( 'handleScroll', () => {
+describe( 'syncSidebarHeight', () => {
 	beforeEach( () => {
 		resetSidebarScrollState();
 		window.innerHeight = VIEWPORT_HEIGHT;
@@ -36,7 +36,7 @@ describe( 'handleScroll', () => {
 	it( 'grows the content so the window can scroll far enough to reach the whole sidebar', () => {
 		buildLayout( { sidebarHeight: 1200, contentHeight: 400 } );
 
-		handleScroll( { type: 'resize' } );
+		syncSidebarHeight();
 
 		expect( document.getElementById( 'content' )?.style.minHeight ).toBe(
 			`${ 1200 + MASTERBAR_HEIGHT }px`
@@ -46,7 +46,7 @@ describe( 'handleScroll', () => {
 	it( 'measures the omnibar when it stands in for the masterbar', () => {
 		buildLayout( { sidebarHeight: 1200, contentHeight: 400 } );
 
-		handleScroll( { type: 'resize' } );
+		syncSidebarHeight();
 
 		// Without the omnibar fallback the height would be undefined and the block skipped,
 		// leaving min-height unset — the bug this suite guards.
@@ -56,7 +56,7 @@ describe( 'handleScroll', () => {
 	it( 'leaves the content alone when the sidebar already fits', () => {
 		buildLayout( { sidebarHeight: 300, contentHeight: 400 } );
 
-		handleScroll( { type: 'resize' } );
+		syncSidebarHeight();
 
 		expect( document.getElementById( 'content' )?.style.minHeight ).toBe( 'initial' );
 	} );
@@ -65,8 +65,35 @@ describe( 'handleScroll', () => {
 		buildLayout( { sidebarHeight: 1200, contentHeight: 400 } );
 		document.getElementById( 'wpcom-omnibar' )?.remove();
 
-		handleScroll( { type: 'resize' } );
+		syncSidebarHeight();
 
 		expect( document.getElementById( 'content' )?.style.minHeight ).toBe( '' );
+	} );
+
+	it( 'leaves the sidebar pinning alone, so a route change cannot unpin at scroll 0', () => {
+		buildLayout( { sidebarHeight: 1200, contentHeight: 400 } );
+
+		syncSidebarHeight();
+
+		// `handleScroll` would set position/top here. Doing that at scroll position 0
+		// drops the sidebar out of its fixed box and strands the menu off-screen.
+		expect( document.getElementById( 'secondary' )?.getAttribute( 'style' ) ).toBeNull();
+	} );
+} );
+
+describe( 'handleScroll', () => {
+	beforeEach( () => {
+		resetSidebarScrollState();
+		window.innerHeight = VIEWPORT_HEIGHT;
+	} );
+
+	it( 'still sizes the content, so scroll and resize events keep working', () => {
+		buildLayout( { sidebarHeight: 1200, contentHeight: 400 } );
+
+		handleScroll( { type: 'resize' } );
+
+		expect( document.getElementById( 'content' )?.style.minHeight ).toBe(
+			`${ 1200 + MASTERBAR_HEIGHT }px`
+		);
 	} );
 } );

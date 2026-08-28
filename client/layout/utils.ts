@@ -48,12 +48,24 @@ export function resetSidebarScrollState(): void {
 	ticking = false;
 }
 
-export const handleScroll = ( event: { type: string } ): void => {
-	// Do not run until next requestAnimationFrame or if running out of browser context.
-	if ( ticking ) {
-		return;
-	}
+type LayoutMetrics = {
+	windowHeight: number;
+	contentHeight?: number;
+	secondaryEl: HTMLElement | null;
+	secondaryElHeight?: number;
+	masterbarHeight?: number;
+};
 
+/**
+ * Sizes `#content` so the window can scroll far enough to reveal a sidebar taller
+ * than the viewport, and returns the measurements it took.
+ *
+ * Split out of `handleScroll` because it has to run whenever the layout changes —
+ * on mount, per route, and when the menu finishes loading — while the pinning in
+ * `handleScroll` belongs to real scroll gestures. Running the pinning at scroll
+ * position 0 unpins the sidebar against stale measurements.
+ */
+export function syncSidebarHeight(): LayoutMetrics {
 	const windowHeight = window.innerHeight;
 	const contentEl = document.getElementById( 'content' );
 	const contentHeight = contentEl?.scrollHeight;
@@ -81,6 +93,18 @@ export const handleScroll = ( event: { type: string } ): void => {
 			secondaryEl.removeAttribute( 'style' );
 		}
 	}
+
+	return { windowHeight, contentHeight, secondaryEl, secondaryElHeight, masterbarHeight };
+}
+
+export const handleScroll = ( event: { type: string } ): void => {
+	// Do not run until next requestAnimationFrame or if running out of browser context.
+	if ( ticking ) {
+		return;
+	}
+
+	const { windowHeight, contentHeight, secondaryEl, secondaryElHeight, masterbarHeight } =
+		syncSidebarHeight();
 
 	if (
 		secondaryEl &&
