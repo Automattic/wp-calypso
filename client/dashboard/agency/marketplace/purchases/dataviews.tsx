@@ -198,7 +198,6 @@ export function getActions( {
 		{
 			id: 'revoke',
 			label: __( 'Revoke license' ),
-			isDestructive: true,
 			isEligible: ( item ) => item.status !== 'revoked',
 			modalHeader: __( 'Revoke license?' ),
 			RenderModal: ( { items, closeModal } ) => (
