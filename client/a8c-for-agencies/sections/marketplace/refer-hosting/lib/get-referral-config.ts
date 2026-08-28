@@ -21,12 +21,12 @@ export const getReferralConfig = (
 		premium: translate( 'Submit Premium plan referral' ),
 	}[ type ],
 	companyTitle: {
-		enterprise: translate( "Your client's company information" ),
-		premium: translate( "Your client's company information" ),
+		enterprise: translate( 'Your client’s company information' ),
+		premium: translate( 'Your client’s company information' ),
 	}[ type ],
 	contactTitle: {
-		enterprise: translate( "Your client's contact information" ),
-		premium: translate( "Your client's contact information" ),
+		enterprise: translate( 'Your client’s contact information' ),
+		premium: translate( 'Your client’s contact information' ),
 	}[ type ],
 	events: {
 		formSubmit: {
