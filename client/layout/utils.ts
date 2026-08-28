@@ -43,7 +43,10 @@ export const handleScroll = ( event: React.UIEvent< HTMLElement > ): void => {
 	const contentHeight = contentEl?.scrollHeight;
 	const secondaryEl = document.getElementById( 'secondary' ); // Or referred as sidebar.
 	const secondaryElHeight = secondaryEl?.scrollHeight;
-	const masterbarHeight = document.getElementById( 'header' )?.getBoundingClientRect().height;
+	// The omnibar replaces the masterbar on some environments, under a different id.
+	const masterbarHeight = (
+		document.getElementById( 'header' ) ?? document.getElementById( 'wpcom-omnibar' )
+	)?.getBoundingClientRect().height;
 
 	// Check whether we need to adjust content height so that scroll events are triggered.
 	// Sidebar has overflow: initial and position:fixed, so content is our only chance for scroll events.

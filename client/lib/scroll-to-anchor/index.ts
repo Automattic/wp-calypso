@@ -39,7 +39,10 @@ export default function scrollToAnchor( options: { offset: number; container?: H
 	const el = hash && document.getElementById( hash.substring( 1 ) );
 
 	if ( hash && el ) {
-		const offsetHeight = document.getElementById( 'header' )?.offsetHeight || 0;
+		// The omnibar replaces the masterbar on some environments, under a different id.
+		const masterbarEl =
+			document.getElementById( 'header' ) ?? document.getElementById( 'wpcom-omnibar' );
+		const offsetHeight = masterbarEl?.offsetHeight || 0;
 		const y = getOffsetTop( el, options.container ) - offsetHeight - offset;
 		scrollTo( { y, container: options.container } );
 	}
