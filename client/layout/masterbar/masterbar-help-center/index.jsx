@@ -46,6 +46,24 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 	const isMenuPanelExperimentEnabled =
 		! isLoadingExperimentAssignment && experimentAssignment?.variationName === 'menu_popover';
 
+	// One impression per section view, so it divides cleanly into the click events
+	// below; site context is whatever has resolved by then.
+	useEffect( () => {
+		recordTracksEvent(
+			'calypso_inlinehelp_impression',
+			withSiteContext(
+				{
+					location: 'help-center',
+					entry_point: 'masterbar',
+					section: sectionName,
+				},
+				siteContextSource,
+				site?.ID
+			)
+		);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ sectionName ] );
+
 	const trackIconInteraction = () => {
 		recordTracksEvent(
 			`wpcom_help_center_icon_interaction`,

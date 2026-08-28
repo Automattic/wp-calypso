@@ -12,6 +12,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { Icon, backup, comment, page, rss, video } from '@wordpress/icons';
+import { useEffect } from 'react';
 import { useAnalytics } from '../analytics';
 import { useHelpCenter } from '../help-center';
 import type { AnalyticsClient } from '../analytics';
@@ -176,6 +177,24 @@ export function useHelpCenterPlugin( { sectionName }: { sectionName?: string } )
 	const { isShown: isHelpCenterShown, setShowHelpCenter } = useHelpCenter();
 	const { recordTracksEvent } = useAnalytics();
 	const { data: omnibarSiteId } = useQuery( omnibarSiteIdQuery() );
+
+	// One impression per section view, so it divides cleanly into the click events
+	// this plugin records; site context is whatever has resolved by then.
+	useEffect( () => {
+		recordTracksEvent(
+			'calypso_inlinehelp_impression',
+			withSiteContext(
+				{
+					location: 'help-center',
+					entry_point: 'omnibar',
+					section: sectionName,
+				},
+				'omnibar',
+				omnibarSiteId
+			)
+		);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ sectionName ] );
 
 	if ( shouldUseUnifiedAgent ) {
 		return {
