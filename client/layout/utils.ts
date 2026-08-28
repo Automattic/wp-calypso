@@ -85,10 +85,14 @@ export function syncSidebarHeight(): LayoutMetrics {
 			windowHeight >= secondaryElHeight + masterbarHeight &&
 			contentEl &&
 			secondaryEl &&
-			( contentEl.style.minHeight !== 'initial' || secondaryEl.style.position )
+			( contentEl.style.minHeight || secondaryEl.style.position )
 		) {
-			// In case that window is taller than the sidebar we reinstate the content min-height. CSS code: client/layout/style.scss:30.
-			contentEl.style.minHeight = 'initial';
+			// Hand `min-height` back to the stylesheet rather than forcing `initial`.
+			// Inline `initial` also overrode the `101vh` rule that keeps the page just
+			// scrollable enough for a scroll event to reach this handler, so once a short
+			// sidebar had cleared it, the next taller sidebar had no way to bootstrap.
+			// CSS code: client/my-sites/sidebar/style.scss:166.
+			contentEl.style.removeProperty( 'min-height' );
 			// In case that window is taller than the sidebar after resize we need to clean up any previously set inline styles
 			secondaryEl.removeAttribute( 'style' );
 		}

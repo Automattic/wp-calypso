@@ -53,12 +53,15 @@ describe( 'syncSidebarHeight', () => {
 		expect( document.getElementById( 'content' )?.style.minHeight ).not.toBe( '' );
 	} );
 
-	it( 'leaves the content alone when the sidebar already fits', () => {
+	it( 'hands min-height back to the stylesheet when the sidebar already fits', () => {
 		buildLayout( { sidebarHeight: 300, contentHeight: 400 } );
+		( document.getElementById( 'content' ) as HTMLElement ).style.minHeight = '900px';
 
 		syncSidebarHeight();
 
-		expect( document.getElementById( 'content' )?.style.minHeight ).toBe( 'initial' );
+		// Not `initial`: that would also override the 101vh rule that keeps the page
+		// scrollable, leaving the next taller sidebar with no scroll event to bootstrap.
+		expect( document.getElementById( 'content' )?.style.minHeight ).toBe( '' );
 	} );
 
 	it( 'does nothing when no bar is rendered', () => {
