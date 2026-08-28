@@ -437,10 +437,9 @@ const SiteSpec: StepType = function SiteSpec() {
 					? await getWowFunnelHandoffUrl( {
 							dest: wowFunnelDest,
 							siteIdentifier: blueprintArchiveSiteIdentifier,
-							startWalkthrough: applied,
 					  } )
 					: getSiteEditorUrl( await getSiteAdminUrl( blueprintArchiveSiteIdentifier ), {
-							startWalkthrough: applied,
+							canvasEdit: applied,
 					  } );
 
 				logBlueprintArchiveEvent( 'redirect_site_editor', {

@@ -338,11 +338,9 @@ export async function waitForWowFunnelReady( {
 export async function getWowFunnelHandoffUrl( {
 	dest,
 	siteIdentifier,
-	startWalkthrough = false,
 }: {
 	dest: WowFunnelDest;
 	siteIdentifier: string;
-	startWalkthrough?: boolean;
 } ): Promise< string > {
 	switch ( dest ) {
 		case 'editor':
@@ -350,7 +348,7 @@ export async function getWowFunnelHandoffUrl( {
 			const adminUrl = await getSiteAdminUrl( siteIdentifier );
 			// `p` opens the front page rather than whatever the editor last had; `canvasEdit`
 			// because a plain site-editor.php load stays in view mode.
-			return getSiteEditorUrl( adminUrl, { canvasEdit: true, path: '/', startWalkthrough } );
+			return getSiteEditorUrl( adminUrl, { canvasEdit: true, path: '/' } );
 		}
 	}
 }
