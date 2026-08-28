@@ -1,3 +1,4 @@
+import { getMasterbarElement } from 'calypso/lib/masterbar-element';
 import scrollTo from 'calypso/lib/scroll-to';
 
 // Danger! Recursive
@@ -39,10 +40,7 @@ export default function scrollToAnchor( options: { offset: number; container?: H
 	const el = hash && document.getElementById( hash.substring( 1 ) );
 
 	if ( hash && el ) {
-		// The omnibar replaces the masterbar on some environments, under a different id.
-		const masterbarEl =
-			document.getElementById( 'header' ) ?? document.getElementById( 'wpcom-omnibar' );
-		const offsetHeight = masterbarEl?.offsetHeight || 0;
+		const offsetHeight = getMasterbarElement()?.offsetHeight || 0;
 		const y = getOffsetTop( el, options.container ) - offsetHeight - offset;
 		scrollTo( { y, container: options.container } );
 	}

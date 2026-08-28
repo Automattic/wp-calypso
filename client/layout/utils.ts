@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { DEFAULT_FLOW, getFlowFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
+import { getMasterbarElement } from 'calypso/lib/masterbar-element';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 
 let lastScrollPosition = 0; // Used for calculating scroll direction.
@@ -43,10 +44,7 @@ export const handleScroll = ( event: React.UIEvent< HTMLElement > ): void => {
 	const contentHeight = contentEl?.scrollHeight;
 	const secondaryEl = document.getElementById( 'secondary' ); // Or referred as sidebar.
 	const secondaryElHeight = secondaryEl?.scrollHeight;
-	// The omnibar replaces the masterbar on some environments, under a different id.
-	const masterbarHeight = (
-		document.getElementById( 'header' ) ?? document.getElementById( 'wpcom-omnibar' )
-	)?.getBoundingClientRect().height;
+	const masterbarHeight = getMasterbarElement()?.getBoundingClientRect().height;
 
 	// Check whether we need to adjust content height so that scroll events are triggered.
 	// Sidebar has overflow: initial and position:fixed, so content is our only chance for scroll events.
