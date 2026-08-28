@@ -7,10 +7,10 @@ import {
 	siteByIdQuery,
 } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
-import { Badge } from '@automattic/ui';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useMemo } from 'react';
 import { useLocale } from '../../app/locale';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
