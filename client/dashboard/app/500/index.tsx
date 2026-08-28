@@ -35,13 +35,10 @@ function isAuthorizationError( error: Error ) {
 function RefusedRequestError() {
 	const { data: sessionState, isPending } = useSessionStateQuery();
 
-	// Render nothing rather than flash the wrong advice.
 	if ( isPending ) {
 		return null;
 	}
 
-	// An unreachable session is treated as dead: wrong advice the user can act on
-	// beats correct advice they cannot.
 	return sessionState === 'alive' ? <PermissionError /> : <SessionError />;
 }
 
