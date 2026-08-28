@@ -38,7 +38,7 @@
 	}
 
 	.dashboard-referrals-guide__content {
-		--wp-components-color-foreground: #{$gray-900};
+		--wp-components-color-foreground: var(--dashboard__text-color, #{$gray-900});
 
 		// Tall enough for the longest step, so the modal keeps a steady
 		// height while paging through the guide.

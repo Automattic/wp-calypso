@@ -5,7 +5,6 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import ReferralToggle from '../referral-toggle';
@@ -27,8 +26,6 @@ const PLACEHOLDERS: Record< HostingBrandKey, string > = {
 };
 
 export default function MarketplaceHosting() {
-	const [ selectedBrand, setSelectedBrand ] = useState< HostingBrandKey >( 'wpcom' );
-
 	return (
 		<PageLayout
 			header={
@@ -52,12 +49,9 @@ export default function MarketplaceHosting() {
 		>
 			<TabPanel
 				tabs={ HOSTING_BRANDS.map( ( brand ) => ( { name: brand.key, title: brand.name } ) ) }
-				initialTabName={ selectedBrand }
-				onSelect={ ( tabName ) => setSelectedBrand( tabName as HostingBrandKey ) }
 			>
-				{ () => null }
+				{ ( tab ) => <Text variant="muted">{ PLACEHOLDERS[ tab.name as HostingBrandKey ] }</Text> }
 			</TabPanel>
-			<Text variant="muted">{ PLACEHOLDERS[ selectedBrand ] }</Text>
 		</PageLayout>
 	);
 }

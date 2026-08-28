@@ -53,6 +53,8 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'reader-profile-hidden-sites': 'hidsit',
 	two_step_security_key_reregister_required: '2fakey',
 	'a4a-dashboard-pd-not-approved-popover': 'a4apd',
+	'a4a-marketplace-referral-guide-seen': 'a4agde',
+	'a4a-marketplace-term-pricing': 'a4aterm',
 };
 
 const dynamicPreferenceStatPrefixes: Record< string, string > = {
