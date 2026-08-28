@@ -1,7 +1,10 @@
 import { useCallback } from 'react';
 import useCreateAgencyMutation from 'calypso/a8c-for-agencies/sections/signup/agency-details-form/hooks/use-create-agency-mutation';
 import useAcquisitionProps from 'calypso/a8c-for-agencies/sections/signup/hooks/use-acquisition-props';
-import { saveSignupDataToLocalStorage } from 'calypso/a8c-for-agencies/sections/signup/lib/signup-data-to-local-storage';
+import {
+	saveAcquisitionPropsToLocalStorage,
+	saveSignupDataToLocalStorage,
+} from 'calypso/a8c-for-agencies/sections/signup/lib/signup-data-to-local-storage';
 import { useHandleWPCOMRedirect } from 'calypso/a8c-for-agencies/sections/signup/signup-form/hooks/use-handle-wpcom-redirect';
 import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/signup/types';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -41,7 +44,10 @@ export default function useSubmitSignup() {
 			};
 
 			if ( shouldRedirectToWPCOM ) {
+				// The WPCOM round trip returns to a URL without the acquisition params,
+				// so persist them for the event we record once the user is back.
 				saveSignupDataToLocalStorage( data );
+				saveAcquisitionPropsToLocalStorage( acquisitionProps );
 				handleWPCOMRedirect( data );
 				return;
 			}

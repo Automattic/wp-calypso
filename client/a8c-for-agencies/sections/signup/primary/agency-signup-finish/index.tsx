@@ -19,6 +19,7 @@ import useCreateAgencyMutation from '../../agency-details-form/hooks/use-create-
 import { getSignupDataFromRequestParameters } from '../../lib/signup-data-from-reqest-parameters';
 import {
 	clearSignupDataFromLocalStorage,
+	getAcquisitionPropsFromLocalStorage,
 	getSignupDataFromLocalStorage,
 	saveSignupDataToLocalStorage,
 } from '../../lib/signup-data-to-local-storage';
@@ -30,6 +31,7 @@ export default function AgencySignupFinish() {
 	const notificationId = 'a4a-agency-signup-form';
 	const userLoggedIn = useSelector( isUserLoggedIn );
 	const signupData = getSignupDataFromRequestParameters() ?? getSignupDataFromLocalStorage();
+	const acquisitionProps = getAcquisitionPropsFromLocalStorage();
 	const agency = useSelector( getActiveAgency );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -93,6 +95,7 @@ export default function AgencySignupFinish() {
 					postal_code: signupData.postalCode,
 					state: signupData.state,
 					referer: signupData.referer,
+					...acquisitionProps,
 				} )
 			);
 		}
