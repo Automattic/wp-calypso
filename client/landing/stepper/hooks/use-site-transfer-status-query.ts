@@ -83,16 +83,30 @@ type Options = Pick< UseQueryOptions, 'retry' >;
  */
 export const useSiteTransferStatusQuery = ( siteId: number | undefined, options?: Options ) => {
 	// Wall clock rather than a tick count: a throttled background tab would otherwise stretch either
-	// bound far past the time it is meant to describe.
-	const phaseRef = useRef< { phase: WatchPhase | null; since: number } >( {
-		phase: null,
-		since: Date.now(),
-	} );
+	// bound far past the time it is meant to describe. Keyed by site as well as phase, so switching
+	// sites cannot hand the next one an already-spent window.
+	const phaseRef = useRef< {
+		siteId: number | undefined;
+		phase: WatchPhase | null;
+		since: number;
+	} >( { siteId, phase: null, since: Date.now() } );
+
+	// Before any status arrives there is no window to be inside of, and the first load still needs
+	// its retries.
+	const isWithinWatchWindow = () => {
+		const { phase, since } = phaseRef.current;
+		if ( ! phase ) {
+			return true;
+		}
+		return Date.now() - since < ( phase === 'none' ? NONE_WATCH_MS : TRANSFER_DEADLINE_MS );
+	};
 
 	return useQuery( {
 		queryKey: getSiteTransferStatusQueryKey( siteId! ),
 		queryFn: () => fetchStatus( siteId! ),
-		retry: options?.retry ?? 20,
+		// Retries outlive the interval otherwise: a failing endpoint would keep a poll alive well past
+		// the bound this hook advertises.
+		retry: options?.retry ?? ( ( failureCount ) => isWithinWatchWindow() && failureCount < 20 ),
 		select: ( data ) => {
 			return {
 				isTransferring: data?.status ? isTransferring( data.status as TransferStates ) : false,
@@ -110,16 +124,11 @@ export const useSiteTransferStatusQuery = ( siteId: number | undefined, options?
 		refetchInterval: ( { state } ) => {
 			const phase = watchPhase( state.data?.status );
 
-			if ( phase !== phaseRef.current.phase ) {
-				phaseRef.current = { phase, since: Date.now() };
+			if ( phase !== phaseRef.current.phase || siteId !== phaseRef.current.siteId ) {
+				phaseRef.current = { siteId, phase, since: Date.now() };
 			}
 
-			if ( ! phase ) {
-				return false;
-			}
-
-			const limit = phase === 'none' ? NONE_WATCH_MS : TRANSFER_DEADLINE_MS;
-			return Date.now() - phaseRef.current.since < limit ? REFETCH_TIME : false;
+			return phase && isWithinWatchWindow() ? REFETCH_TIME : false;
 		},
 		enabled: !! siteId,
 	} );
