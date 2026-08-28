@@ -179,7 +179,11 @@ const buildApp = ( environment ) => {
 		},
 		withAuthenticatedUser() {
 			defaultCookies.wordpress_logged_in = true;
-			tearDown.push( () => delete defaultCookies.wordpress_logged_in );
+			defaultCookies.wordpress_sec = true;
+			tearDown.push( () => {
+				delete defaultCookies.wordpress_logged_in;
+				delete defaultCookies.wordpress_sec;
+			} );
 		},
 		withAnonymousUser() {
 			defaultCookies.wordpress_logged_in = false;
@@ -963,7 +967,28 @@ describe( 'main app', () => {
 		} );
 
 		it( 'detects if it is logged in based on a cookie', async () => {
+			const { request } = await app.run( {
+				request: { cookies: { wordpress_logged_in: true, wordpress_sec: true } },
+			} );
+			expect( request.context.isLoggedIn ).toBe( true );
+		} );
+
+		it( 'accepts a hashed secure auth cookie', async () => {
+			const { request } = await app.run( {
+				request: { cookies: { wordpress_logged_in: true, wordpress_sec_0ff1ce: true } },
+			} );
+			expect( request.context.isLoggedIn ).toBe( true );
+		} );
+
+		it( 'is not logged in when the secure auth cookie is missing', async () => {
 			const { request } = await app.run( { request: { cookies: { wordpress_logged_in: true } } } );
+			expect( request.context.isLoggedIn ).toBe( false );
+		} );
+
+		it( 'is logged in without a secure auth cookie during a support session', async () => {
+			const { request } = await app.run( {
+				request: { cookies: { wordpress_logged_in: true, support_session_id: true } },
+			} );
 			expect( request.context.isLoggedIn ).toBe( true );
 		} );
 	} );
@@ -1245,7 +1270,7 @@ describe( 'main app', () => {
 				const { response } = await app.run( {
 					request: {
 						url: '/',
-						cookies: { wordpress_logged_in: true },
+						cookies: { wordpress_logged_in: true, wordpress_sec: true },
 						query: { s: 'my search' },
 					},
 				} );
@@ -1260,7 +1285,7 @@ describe( 'main app', () => {
 				const { response } = await app.run( {
 					request: {
 						url: '/',
-						cookies: { wordpress_logged_in: true },
+						cookies: { wordpress_logged_in: true, wordpress_sec: true },
 						query: { q: 'my search' },
 					},
 				} );
@@ -1275,7 +1300,7 @@ describe( 'main app', () => {
 				const { response } = await app.run( {
 					request: {
 						url: '/',
-						cookies: { wordpress_logged_in: true },
+						cookies: { wordpress_logged_in: true, wordpress_sec: true },
 						query: { newuseremail: 'any value' },
 					},
 				} );
@@ -1290,7 +1315,7 @@ describe( 'main app', () => {
 				const { response } = await app.run( {
 					request: {
 						url: '/',
-						cookies: { wordpress_logged_in: true },
+						cookies: { wordpress_logged_in: true, wordpress_sec: true },
 						query: { action: 'wpcom-invite-users' },
 					},
 				} );

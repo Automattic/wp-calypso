@@ -2,7 +2,7 @@ import { fetchUser, isWpError, User } from '@automattic/api-core';
 import { clearQueryClient, disablePersistQueryClient } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { setUser } from '@automattic/calypso-sentry';
-import { isSupportUserSession } from '@automattic/calypso-support-session';
+import { isSupportSession, isSupportUserSession } from '@automattic/calypso-support-session';
 import { magnificentNonEnLocales } from '@automattic/i18n-utils';
 import {
 	hashKey,
@@ -12,6 +12,7 @@ import {
 	type MutationCacheNotifyEvent,
 } from '@tanstack/react-query';
 import { createContext, useContext, useMemo, useEffect, useRef, useCallback } from 'react';
+import { isCookieAuthMissing } from 'wpcom-proxy-request';
 import { wpcomLink } from '../../utils/link';
 import { bumpStat } from '../analytics';
 import { useAppContext } from '../context';
@@ -23,6 +24,14 @@ export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
 const BOOTSTRAP_ERROR_MESSAGE = 'Failed to bootstrap user object';
 
 const AUTH_BOUNCE_COUNT_KEY = 'wpcom_auth_bounce_count';
+
+// Whether a redirect to log in has been started. Consumers use this to tell a
+// recoverable auth failure from one that leaves the user stranded in the app.
+let authRedirectInFlight = false;
+
+export function isAuthRedirectInFlight(): boolean {
+	return authRedirectInFlight;
+}
 
 const AUTH_LOOP_WINDOW_MS = 30 * 1000;
 
@@ -114,6 +123,60 @@ export const sessionStateQuery = () => ( {
 
 export function useSessionStateQuery() {
 	return useQuery( sessionStateQuery() );
+}
+
+/**
+ * How confident we are that a failed request means the session itself is gone,
+ * and the stat suffix reported when it turns out to be right.
+ *
+ * `expired` is conclusive. The others also occur for reasons that have nothing
+ * to do with the session, so they are confirmed against `/me` before anyone is
+ * bounced.
+ */
+type AuthFailure = 'expired' | 'refused' | 'cookie-auth-missing';
+
+// The two REST surfaces the dashboard talks to disagree about where the machine
+// readable code goes: `/rest/v1.x` answers `{ error }`, everything registered
+// through the WP REST infrastructure answers `{ code }`. Most of the dashboard is
+// on the latter, so reading only one of them misses most of the app. The slug
+// alone does not say which to expect — `authorization_required` arrives under
+// both — so read whichever is populated. Keep the string check: the proxy also
+// puts the HTTP status on `code` as a number.
+function getErrorCode( error: WPError ): string {
+	if ( typeof error.error === 'string' ) {
+		return error.error;
+	}
+	return typeof error.code === 'string' ? error.code : '';
+}
+
+function classifyAuthFailure( error: WPError ): AuthFailure | null {
+	const { statusCode } = error;
+
+	if (
+		statusCode === 401 &&
+		[ 'authorization_required', 'rest_forbidden' ].includes( getErrorCode( error ) )
+	) {
+		return 'expired';
+	}
+
+	// The codes for a refused request vary by surface and are not worth matching
+	// individually. Anything refused is treated as suspicion only, and the check
+	// against `/me` is what decides, so being generous here costs one request.
+	if ( statusCode === 401 || statusCode === 403 ) {
+		return 'refused';
+	}
+
+	// The rest-proxy iframe reports at handshake whether it had anything to
+	// authenticate with, which catches the state even when the failing request
+	// does not look like an auth error. It is only ever a hint: it also fires for
+	// blocked third-party cookies, it tests the token for presence rather than
+	// validity, and being a one-off handshake it never reports a session that dies
+	// later.
+	if ( isCookieAuthMissing() ) {
+		return 'cookie-auth-missing';
+	}
+
+	return null;
 }
 
 function getOAuthAuthorizeUrl( {
@@ -222,6 +285,22 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		};
 	}, [ user ] );
 
+	const confirmSessionExpired = useCallback(
+		( failure: AuthFailure ) =>
+			queryClient.fetchQuery( sessionStateQuery() ).then( ( state ) => {
+				if ( state === 'alive' ) {
+					// How often each signal turns out to be a false alarm is the thing we
+					// most need to know before acting on any of them more aggressively.
+					bumpStat( 'dashboard-auth', `probe-ok:${ failure }` );
+				}
+
+				// Nobody is bounced on a guess: an unanswered probe leaves the user where
+				// they are.
+				return state === 'dead';
+			} ),
+		[ queryClient ]
+	);
+
 	const handleAuthError = useCallback(
 		( reason: string ) => {
 			// Prevents repeated calls to redirect
@@ -230,6 +309,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 			}
 
 			authErrorHandled.current = true;
+			authRedirectInFlight = true;
 
 			bumpStat( 'dashboard-auth', `bounce:${ reason }` );
 			trackAuthBounceLoop();
@@ -263,10 +343,6 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 	// Subscribe to network errors and when errors occur due to being logged
 	// out, redirect the user to the log in screen.
 	useEffect( () => {
-		const isAuthError = ( { statusCode, error = '' }: WPError ) => {
-			return statusCode === 401 && [ 'authorization_required', 'rest_forbidden' ].includes( error );
-		};
-
 		const handleEvent = ( event: MutationCacheNotifyEvent | QueryCacheNotifyEvent ) => {
 			// Errors fetching the user object itself are handled (and classified) below.
 			if ( 'query' in event && event.query.queryHash === hashKey( AUTH_QUERY_KEY ) ) {
@@ -274,13 +350,34 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 			}
 
 			if (
-				event.type === 'updated' &&
-				event.action.type === 'error' &&
-				isWpError( event.action.error ) &&
-				isAuthError( event.action.error )
+				event.type !== 'updated' ||
+				event.action.type !== 'error' ||
+				! isWpError( event.action.error )
 			) {
-				handleAuthError( 'expired' );
+				return;
 			}
+
+			const failure = classifyAuthFailure( event.action.error );
+
+			if ( failure === null ) {
+				return;
+			}
+
+			if ( failure === 'expired' ) {
+				handleAuthError( failure );
+				return;
+			}
+
+			// Support sessions run on their own cookies and read as broken here.
+			if ( isSupportSession() ) {
+				return;
+			}
+
+			confirmSessionExpired( failure ).then( ( expired ) => {
+				if ( expired ) {
+					handleAuthError( failure );
+				}
+			} );
 		};
 		const unsubMutationCache = queryClient.getMutationCache().subscribe( handleEvent );
 		const unsubQueryCache = queryClient.getQueryCache().subscribe( handleEvent );
@@ -288,7 +385,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 			unsubMutationCache();
 			unsubQueryCache();
 		};
-	}, [ queryClient, handleAuthError ] );
+	}, [ queryClient, handleAuthError, confirmSessionExpired ] );
 
 	const successStatBumped = useRef( false );
 	useEffect( () => {

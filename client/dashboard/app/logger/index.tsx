@@ -3,6 +3,7 @@ import calypsoConfig from '@automattic/calypso-config';
 import { captureException } from '@automattic/calypso-sentry';
 import { camelToSnakeCase } from '@automattic/js-utils';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { isAuthRedirectInFlight } from '../auth';
 import { maybeReloadForChunkError } from '../chunk-load-recovery';
 import type { AnyRouter } from '@tanstack/react-router';
 import type { ErrorInfo } from 'react';
@@ -21,11 +22,15 @@ export function initLogger( router: AnyRouter ) {
 }
 
 function isBenignError( error: Error ) {
-	// Ignore errors related to missing auth tokens.
-	// The user will get redirected to the login page / second auth factor.
 	switch ( error.name ) {
+		// Only benign while we are actually bouncing the user to log in. With no
+		// redirect in flight the session is dead but the app stays up, and that is
+		// the state worth reporting.
 		case 'AuthorizationRequiredError':
 		case 'ReauthorizationRequiredError':
+			return isAuthRedirectInFlight();
+
+		// The user is expected to sort out their own domain permissions.
 		case 'DomainPermissionError':
 			return true;
 	}

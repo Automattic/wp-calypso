@@ -111,10 +111,20 @@ function getCurrentCommitShortChecksum() {
  * accordingly. The handler is called very early (immediately after parsing the cookies) and
  * all following handlers (including the locale and redirect ones) can rely on the context values.
  */
+function hasSecureAuthCookie( cookies ) {
+	return Object.keys( cookies ).some( ( name ) => name.startsWith( 'wordpress_sec' ) );
+}
+
 function setupLoggedInContext( req, res, next ) {
 	const isSupportSession = !! req.get( 'x-support-session' ) || !! req.cookies.support_session_id;
 	const isSSP = !! req.cookies.ssp;
-	const isLoggedIn = !! req.cookies.wordpress_logged_in;
+	// `wordpress_logged_in` on its own is not enough to call the API: `wp_api_sec`
+	// is derived from `wordpress_sec`, so once that expires every request 403s
+	// while the app still renders as logged in. Treat it as logged out instead, so
+	// the user is sent to log in and gets a complete set of cookies back.
+	const isLoggedIn =
+		!! req.cookies.wordpress_logged_in &&
+		( hasSecureAuthCookie( req.cookies ) || isSupportSession );
 
 	req.context = {
 		...req.context,
