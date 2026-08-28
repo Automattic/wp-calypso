@@ -120,6 +120,16 @@
 	object-position: left;
 }
 
+// The brand descriptor is a lockup with a dark wordmark that vanishes on the
+// dark card; crop to just the badge and render the name as (white) text.
+.marketplace-hosting__concierge-mark {
+	inline-size: 24px;
+	block-size: 24px;
+	object-fit: cover;
+	object-position: left center;
+	flex-shrink: 0;
+}
+
 // The recommendation card lives inside the dark .agenttic chat, so give it a
 // dark surface too — the inherited light text stays readable and it reads as
 // part of the agent rather than a jarring white block.
