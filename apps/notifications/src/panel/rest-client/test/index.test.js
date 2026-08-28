@@ -786,4 +786,102 @@ describe( 'RestClient', () => {
 			expect( client.gettingFilteredNotes ).toBe( true );
 		} );
 	} );
+
+	describe( 'query timing', () => {
+		const timingEvents = () =>
+			( window._tkq || [] )
+				.filter( ( [ , event ] ) => event === 'calypso_notification_query_response' )
+				.map( ( [ , , properties ] ) => properties );
+
+		beforeEach( () => {
+			window._tkq = [];
+			// Sampling is a coin flip; pin it so every rate below 1 is excluded and
+			// each test opts in explicitly.
+			jest.spyOn( Math, 'random' ).mockReturnValue( 0.5 );
+		} );
+
+		afterEach( () => {
+			Math.random.mockRestore();
+		} );
+
+		it( 'records the round-trip time of a head refresh', () => {
+			client.getNotes();
+			expect( timingEvents() ).toEqual( [] );
+
+			jest.advanceTimersByTime( 250 );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 100 ), last_seen_time: 0 } );
+
+			expect( timingEvents() ).toEqual( [
+				{
+					request: 'getNotes',
+					response_time_in_ms: 250,
+					sample_rate: 1,
+					result: 'success',
+					status: null,
+					code: null,
+					note_count: 10,
+					number: 10,
+					is_load_more: false,
+				},
+			] );
+		} );
+
+		it( 'records a failed query with its status, and still runs the callback', () => {
+			client.getNotes();
+			jest.advanceTimersByTime( 80 );
+			getCalls[ 0 ].callback( { status: 503, error: 'unavailable' }, null );
+
+			expect( timingEvents() ).toEqual( [
+				expect.objectContaining( {
+					request: 'getNotes',
+					response_time_in_ms: 80,
+					result: 'error',
+					status: 503,
+					code: 'unavailable',
+					note_count: null,
+				} ),
+			] );
+			// The error path's own bookkeeping still ran.
+			expect( client.gettingNotes ).toBe( false );
+		} );
+
+		it( 'tags a load-more page and carries the filter on a filtered tab', () => {
+			seedFirstWindow();
+			window._tkq = [];
+
+			client.setFilter( 'unread' );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 100 ), last_seen_time: 0 } );
+
+			expect( timingEvents() ).toEqual( [
+				expect.objectContaining( {
+					request: 'getFilteredNotes',
+					filter: UNREAD_KEY,
+					is_load_more: false,
+				} ),
+			] );
+		} );
+
+		it( 'samples the background poll rather than recording every one', () => {
+			seedFirstWindow();
+			window._tkq = [];
+
+			// An unchanged window keeps the poll from cascading into a full fetch,
+			// so each call here is one isolated request.
+			const poll = () => {
+				client.getNotesList();
+				getCalls[ 0 ].callback( null, { notes: fullPage( 10, 100 ), last_seen_time: 0 } );
+				getCalls.length = 0;
+			};
+
+			poll();
+			expect( timingEvents() ).toEqual( [] );
+
+			Math.random.mockReturnValue( 0.001 );
+			poll();
+
+			expect( timingEvents() ).toEqual( [
+				expect.objectContaining( { request: 'getNotesList', sample_rate: 0.01 } ),
+			] );
+		} );
+	} );
 } );

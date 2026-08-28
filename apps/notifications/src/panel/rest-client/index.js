@@ -22,6 +22,48 @@ const settings = {
 	max_limit: 200,
 };
 
+// getNotesList is a background poll running on every logged-in page, so it is
+// sampled to keep it from swamping the other queries; weight by `sample_rate`.
+const QUERY_SAMPLE_RATES = {
+	getNote: 1,
+	getNotes: 1,
+	getFilteredNotes: 1,
+	getNotesList: 0.01,
+};
+
+/**
+ * Wrap a notes query callback so its round-trip time reaches Tracks.
+ *
+ * Timing stops before `callback` runs, so the measurement covers the request
+ * itself — network included — and not the store updates its response triggers.
+ * @param {string} request Name of the calling query, matching its logError tag.
+ * @param {Object} properties Extra props describing the query.
+ * @param {Function} callback The original wpcom callback.
+ * @returns {Function} A callback that records timing, then delegates.
+ */
+function timeQuery( request, properties, callback ) {
+	const sampleRate = QUERY_SAMPLE_RATES[ request ];
+	const isSampled = Math.random() < sampleRate;
+	const startedAt = isSampled ? performance.now() : 0;
+
+	return ( error, data ) => {
+		if ( isSampled ) {
+			recordTracksEvent( 'calypso_notification_query_response', {
+				request,
+				response_time_in_ms: Math.round( performance.now() - startedAt ),
+				sample_rate: sampleRate,
+				result: error ? 'error' : 'success',
+				status: error?.status ?? null,
+				code: error?.error ?? null,
+				note_count: data?.notes?.length ?? null,
+				...properties,
+			} );
+		}
+
+		callback( error, data );
+	};
+}
+
 export function Client() {
 	this.noteList = [];
 	this.gettingNotes = false;
@@ -167,14 +209,18 @@ function getNote( note_id ) {
 		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash,variant',
 	};
 
-	fetchNote( note_id, parameters, ( error, data ) => {
-		if ( error ) {
-			logError( error, { request: 'getNote', note_id, status: error.status, code: error.error } );
-			return;
-		}
-		store.dispatch( actions.notes.addNotes( data.notes ) );
-		ready.call( this );
-	} );
+	fetchNote(
+		note_id,
+		parameters,
+		timeQuery( 'getNote', {}, ( error, data ) => {
+			if ( error ) {
+				logError( error, { request: 'getNote', note_id, status: error.status, code: error.error } );
+				return;
+			}
+			store.dispatch( actions.notes.addNotes( data.notes ) );
+			ready.call( this );
+		} )
+	);
 }
 
 /**
@@ -217,7 +263,7 @@ function getNotes( before ) {
 		store.dispatch( actions.ui.loadNotes() );
 	}
 
-	listNotes( parameters, ( error, data ) => {
+	const onNotes = ( error, data ) => {
 		this.gettingNotes = false;
 
 		if ( error ) {
@@ -324,7 +370,12 @@ function getNotes( before ) {
 		if ( this.filter ) {
 			this.getFilteredNotes();
 		}
-	} );
+	};
+
+	listNotes(
+		parameters,
+		timeQuery( 'getNotes', { number: parameters.number, is_load_more: Boolean( before ) }, onNotes )
+	);
 }
 
 function getNotesList() {
@@ -344,7 +395,7 @@ function getNotesList() {
 		number: settings.initial_limit,
 	};
 
-	listNotes( parameters, ( error, data ) => {
+	const onNotesList = ( error, data ) => {
 		debug( 'getNotesList callback:', error, data );
 		this.gettingNotes = false;
 		if ( error ) {
@@ -414,7 +465,9 @@ function getNotesList() {
 
 		/* Grab updates/changes from server if they exist */
 		return serverHasChanges ? this.getNotes() : ready.call( this );
-	} );
+	};
+
+	listNotes( parameters, timeQuery( 'getNotesList', { number: parameters.number }, onNotesList ) );
 }
 
 /**
@@ -478,7 +531,7 @@ function getFilteredNotes( before ) {
 		store.dispatch( actions.ui.loadNotes( { filter: key } ) );
 	}
 
-	listNotes( parameters, ( error, data ) => {
+	const onFilteredNotes = ( error, data ) => {
 		this.gettingFilteredNotes = false;
 
 		// A tab switch while this was in flight left the newly-active tab's own
@@ -551,7 +604,16 @@ function getFilteredNotes( before ) {
 		if ( activeTabNeedsFetch ) {
 			this.getFilteredNotes();
 		}
-	} );
+	};
+
+	listNotes(
+		parameters,
+		timeQuery(
+			'getFilteredNotes',
+			{ number: parameters.number, filter: key, is_load_more: Boolean( before ) },
+			onFilteredNotes
+		)
+	);
 }
 
 /**
