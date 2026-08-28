@@ -33,7 +33,7 @@ function authorizationError() {
 	return wpError( { error: 'authorization_required' } );
 }
 
-/** Authenticated, but not allowed to see this. Indistinguishable from the above. */
+/** Authenticated, but not allowed to see this — identical to the above. */
 function forbiddenError() {
 	return wpError(
 		{ error: 'authorization_required' },
@@ -41,7 +41,6 @@ function forbiddenError() {
 	);
 }
 
-/** The session is gone: asking who we are fails like everything else. */
 function mockDeadSession() {
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/me' )
@@ -49,7 +48,6 @@ function mockDeadSession() {
 		.reply( 403, { error: 'authorization_required', message: 'No active access token' } );
 }
 
-/** The session works; this account just cannot see this particular thing. */
 function mockWorkingSession() {
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/me' )
@@ -158,7 +156,6 @@ describe( 'UnknownError', () => {
 				.replyWithError( 'offline' );
 			renderWithLogout( authorizationError(), jest.fn() );
 
-			// Wrong advice a user can act on beats correct advice they cannot.
 			await waitFor( async () =>
 				expect( await screen.findByRole( 'button', { name: /log out/i } ) ).toBeVisible()
 			);
