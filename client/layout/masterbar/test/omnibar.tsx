@@ -4,14 +4,8 @@
 import { render } from '@testing-library/react';
 import Omnibar from '../omnibar';
 
-/**
- * `#wpcom-omnibar` is a contract, not an implementation detail: `scrollToAnchor`,
- * `handleScroll`, and a dozen call sites under `client/dashboard/app/` look the
- * element up by that id. This test fails if the id is renamed or dropped.
- *
- * It does not cover the server-rendered copies in `client/document/index.jsx`,
- * which repeat the id as separate string literals.
- */
+// `#wpcom-omnibar` is a contract: `handleScroll` and `scrollToAnchor` measure the
+// bar by that id, and break silently if it is renamed or dropped.
 
 jest.mock( 'calypso/dashboard/app/omnibar/omnibar', () => () => <div>Omnibar contents</div> );
 
