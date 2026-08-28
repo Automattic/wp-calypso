@@ -16,12 +16,6 @@ const PRODUCTION_CHECKOUT_URL = /^https:\/\/wordpress\.com\/checkout\//;
 const GIFTED_SITE_OWNER = 'defaultUser';
 const LOGGED_IN_GIFTER = 'simpleSiteFreePlanUser';
 
-async function enableGiftingBanner( owner: TestAccount ): Promise< void > {
-	await owner.restAPI.setSiteSettings( owner.getSiteURL( { protocol: false } ), {
-		wpcom_gifting_subscription: true,
-	} );
-}
-
 async function redirectProductionCheckoutToCalypso( page: Page ): Promise< void > {
 	const calypsoOrigin = new URL( DataHelper.getCalypsoURL( '/' ) ).origin;
 	await page.route( PRODUCTION_CHECKOUT_URL, ( route ) => {
@@ -61,15 +55,31 @@ async function goBackFromCheckout( page: Page, choice: BackChoice ): Promise< vo
 test.describe( 'Plans: Gift checkout Back navigation', { tag: [ tags.CALYPSO_RELEASE ] }, () => {
 	const owner = new TestAccount( GIFTED_SITE_OWNER );
 	const siteUrl = owner.getSiteURL( { protocol: true } );
+	const siteSlug = owner.getSiteURL( { protocol: false } );
 	const siteOrigin = new URL( siteUrl ).origin;
+	let previousGiftingSetting: unknown;
+
+	// The gifting banner setting and the gifter's siteless cart are shared server
+	// state, so this file runs in a single worker: the banner is enabled once and
+	// restored after the last test, and the logged-in tests run in order so one
+	// cannot empty the cart while the other is mid-checkout.
+	test.describe.configure( { mode: 'default' } );
+
+	test.beforeAll( async () => {
+		const { settings } = await owner.restAPI.getSiteSettings( siteSlug );
+		previousGiftingSetting = settings.wpcom_gifting_subscription;
+		await owner.restAPI.setSiteSettings( siteSlug, { wpcom_gifting_subscription: true } );
+	} );
+
+	test.afterAll( async () => {
+		if ( previousGiftingSetting === false ) {
+			await owner.restAPI.setSiteSettings( siteSlug, { wpcom_gifting_subscription: false } );
+		}
+	} );
 
 	test.describe( 'Logged-in gifter', () => {
-		// Gift checkout runs on the gifter's siteless cart, which is shared server
-		// state: these tests run in order so one cannot empty the cart while the
-		// other is mid-checkout, and a saved cart is emptied afterwards so it does
-		// not leak into every later siteless checkout of the shared account.
-		test.describe.configure( { mode: 'default' } );
-
+		// A saved cart is emptied afterwards so it does not leak into every later
+		// siteless checkout of the shared account.
 		test.afterEach( async () => {
 			await new TestAccount( LOGGED_IN_GIFTER ).restAPI.clearMyShoppingCart( 'no-site' );
 		} );
@@ -79,10 +89,6 @@ test.describe( 'Plans: Gift checkout Back navigation', { tag: [ tags.CALYPSO_REL
 				accountSimpleSiteFreePlan,
 				page,
 			} ) => {
-				await test.step( 'Given the site shows the gifting banner', async function () {
-					await enableGiftingBanner( owner );
-				} );
-
 				await test.step( 'When I click Gift in the banner on the site', async function () {
 					await accountSimpleSiteFreePlan.authenticate( page );
 					await openGiftCheckoutFromSite( page, siteUrl );
@@ -107,10 +113,6 @@ test.describe( 'Plans: Gift checkout Back navigation', { tag: [ tags.CALYPSO_REL
 				pageIncognito,
 			} ) => {
 				const page = pageIncognito.getPage();
-
-				await test.step( 'Given the site shows the gifting banner', async function () {
-					await enableGiftingBanner( owner );
-				} );
 
 				await test.step( 'When I click Gift in the banner on the site', async function () {
 					await openGiftCheckoutFromSite( page, siteUrl );
