@@ -589,6 +589,9 @@ const DomainSearchStep: StepType< {
 				topBar={
 					<Step.TopBar
 						leftElement={ getTopBarLeftElement() }
+						centerElement={
+							showProgress ? <OnboardingProgress currentStep="domains" /> : undefined
+						}
 						rightElement={ getTopBarRightElement() }
 					/>
 				}
@@ -600,12 +603,9 @@ const DomainSearchStep: StepType< {
 					// page's primary affordance — the H1/subText are dropped so
 					// high-quality results can fill the limited vertical space.
 					// The empty/initial state keeps the heading on mobile.
-					<>
-						{ showProgress && <OnboardingProgress currentStep="domains" /> }
-						{ ! ( isMobileViewport && query ) && (
-							<Step.Heading text={ headerText } subText={ subHeaderText } />
-						) }
-					</>
+					! ( isMobileViewport && query ) && (
+						<Step.Heading text={ headerText } subText={ subHeaderText } />
+					)
 				}
 			>
 				{ domainSearchElement }

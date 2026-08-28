@@ -1132,21 +1132,6 @@ export default function CheckoutMainContent( {
 				<Step.TwoColumnLayout
 					firstColumnWidth={ 8 }
 					secondColumnWidth={ 4 }
-					heading={
-						showProgress ? (
-							<OnboardingProgress
-								currentStep="checkout"
-								onStepSelect={ ( step ) =>
-									handleProgressStepSelect( step, {
-										forceCheckoutBackUrlDomains,
-										forceCheckoutBackUrl,
-										clickStepBack: leaveModalProps.clickStepBack,
-										clickClose: leaveModalProps.clickClose,
-									} )
-								}
-							/>
-						) : undefined
-					}
 					topBar={ ( { isLargeViewport } ) => {
 						const topBar = (
 							<Step.TopBar
@@ -1154,6 +1139,21 @@ export default function CheckoutMainContent( {
 									showProgress ? undefined : (
 										<Step.BackButton onClick={ leaveModalProps.clickClose } />
 									)
+								}
+								centerElement={
+									showProgress ? (
+										<OnboardingProgress
+											currentStep="checkout"
+											onStepSelect={ ( step ) =>
+												handleProgressStepSelect( step, {
+													forceCheckoutBackUrlDomains,
+													forceCheckoutBackUrl,
+													clickStepBack: leaveModalProps.clickStepBack,
+													clickClose: leaveModalProps.clickClose,
+												} )
+											}
+										/>
+									) : undefined
 								}
 								rightElement={
 									<>
