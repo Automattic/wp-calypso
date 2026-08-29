@@ -982,6 +982,9 @@ async function* processAgentResponseStream(
 								state: 'completed',
 								message: finalAgentMessage,
 							},
+							...( enhancedUpdate.aiCredits !== undefined && {
+								aiCredits: enhancedUpdate.aiCredits,
+							} ),
 							final: true,
 							text: combinedAgentText,
 						};

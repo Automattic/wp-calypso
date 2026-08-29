@@ -141,6 +141,99 @@ describe( 'Client', () => {
 			expect( result.text ).toBe( 'Done after tool call.' );
 		} );
 
+		it( 'preserves AI credits on a synthetic final agent message', async () => {
+			const aiCredits = {
+				credits_limit: 10_000,
+				credits_used: 1_700,
+				credits_remaining: 8_300,
+				blocked: false,
+			};
+			const mockToolProvider: ToolProvider = {
+				async getAvailableTools() {
+					return [
+						{
+							id: 'apply-edit',
+							name: 'Apply edit',
+							description: 'Apply an editor change',
+							input_schema: {
+								type: 'object',
+								properties: {},
+							},
+						},
+					];
+				},
+				async executeTool() {
+					return {
+						result: { success: true },
+						returnToAgent: false,
+						agentMessage: 'The edit was applied.',
+					};
+				},
+			};
+
+			const encoder = new TextEncoder();
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: new ReadableStream( {
+					start( controller ) {
+						const inputRequiredEvent = JSON.stringify( {
+							jsonrpc: '2.0',
+							id: 'req-apply-edit',
+							result: {
+								type: 'TaskStatusUpdateEvent',
+								taskId: 'task-apply-edit',
+								status: {
+									state: 'input-required',
+									message: {
+										messageId: 'resp-apply-edit',
+										role: 'agent',
+										kind: 'message',
+										parts: [
+											{
+												type: 'data',
+												data: {
+													toolCallId: 'call-apply-edit',
+													toolId: 'apply-edit',
+													arguments: {},
+												},
+											},
+										],
+									},
+									final: true,
+								},
+								ai_credits: aiCredits,
+							},
+						} );
+
+						controller.enqueue( encoder.encode( `data: ${ inputRequiredEvent }\n\n` ) );
+						controller.close();
+					},
+				} ),
+			} );
+
+			const client = createClient( {
+				agentId: 'test-agent',
+				toolProvider: mockToolProvider,
+			} );
+			const updates = [];
+			for await ( const update of client.sendMessageStream( {
+				message: createTextMessage( 'Apply this edit' ),
+			} ) ) {
+				updates.push( update );
+			}
+
+			expect( mockFetch ).toHaveBeenCalledTimes( 1 );
+			expect( updates.at( -1 ) ).toMatchObject( {
+				final: true,
+				text: 'The edit was applied.',
+				aiCredits,
+			} );
+		} );
+
 		it( 'preserves final input-required events when an advertised tool has no executable handler', async () => {
 			const mockToolProvider: ToolProvider = {
 				async getAvailableTools() {
