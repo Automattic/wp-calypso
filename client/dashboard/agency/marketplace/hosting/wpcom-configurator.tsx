@@ -139,7 +139,13 @@ export default function WpcomConfigurator( {
 										onQuantityChange( next );
 									} }
 								/>
-								<VStack spacing={ 1 } alignment="flex-start">
+								<HStack
+									spacing={ 2 }
+									justify="flex-start"
+									alignment="center"
+									expanded={ false }
+									wrap
+								>
 									<Text weight={ 600 }>
 										{ formatUSD( price.perUnit ) }
 										<Text as="span" variant="muted">
@@ -147,7 +153,7 @@ export default function WpcomConfigurator( {
 										</Text>
 									</Text>
 									{ currentDiscount > 0 && (
-										<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
+										<>
 											<Text variant="muted" className="marketplace-hosting__price-strikethrough">
 												{ formatUSD( price.basePerUnit ) }
 											</Text>
@@ -158,9 +164,9 @@ export default function WpcomConfigurator( {
 													Math.round( currentDiscount * 100 )
 												) }
 											</Badge>
-										</HStack>
+										</>
 									) }
-								</VStack>
+								</HStack>
 							</HStack>
 						) }
 						{ ! isReferralMode &&
