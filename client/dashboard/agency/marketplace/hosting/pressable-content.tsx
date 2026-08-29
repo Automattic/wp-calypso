@@ -99,6 +99,7 @@ function PlanSpecs( { category, plan }: { category: PlanCategory; plan?: Pressab
 				{ __( 'Your traffic and storage limits are shared amongst your total sites.' ) }
 			</Text>
 			<CheckGrid
+				columns={ 3 }
 				items={ [
 					sprintf(
 						/* translators: %d: number of WordPress installs */

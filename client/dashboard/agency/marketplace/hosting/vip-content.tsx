@@ -79,7 +79,7 @@ function VipCapabilitiesCard() {
 				/>
 			</CardHeader>
 			<CardBody>
-				<CheckGrid items={ VIP_CAPABILITIES } />
+				<CheckGrid items={ VIP_CAPABILITIES } columns={ 3 } />
 			</CardBody>
 		</Card>
 	);
