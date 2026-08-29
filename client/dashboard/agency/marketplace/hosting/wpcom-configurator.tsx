@@ -142,34 +142,46 @@ export default function WpcomConfigurator( {
 										onQuantityChange( next );
 									} }
 								/>
-								<VStack spacing={ 1 } alignment="flex-start">
-									<Text weight={ 600 }>
-										{ formatUSD( price.perUnit ) }
-										<Text as="span" variant="muted">
-											{ __( '/site per year' ) }
-										</Text>
-									</Text>
-									{ currentDiscount > 0 && (
-										<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
-											<Text variant="muted" className="marketplace-hosting__price-strikethrough">
-												{ formatUSD( price.basePerUnit ) }
+								<VStack spacing={ 2 } alignment="flex-start">
+									<HStack
+										spacing={ 3 }
+										justify="flex-start"
+										alignment="center"
+										expanded={ false }
+										wrap
+									>
+										<Text weight={ 600 }>
+											{ formatUSD( price.perUnit ) }
+											<Text as="span" variant="muted">
+												{ __( '/site per year' ) }
 											</Text>
-											<Badge intent="success">
-												{ sprintf(
-													/* translators: %d: discount percentage */
-													__( '%d%% off' ),
-													Math.round( currentDiscount * 100 )
-												) }
-											</Badge>
-										</HStack>
-									) }
-								</VStack>
-								{ milestones.length > 0 && (
-									<VStack spacing={ 1 } alignment="flex-start">
-										<Text size={ 11 } weight={ 600 } variant="muted" upperCase>
-											{ __( 'Buy more, save more' ) }
 										</Text>
-										<HStack spacing={ 2 } justify="flex-start" expanded={ false } wrap>
+										{ currentDiscount > 0 && (
+											<>
+												<Text variant="muted" className="marketplace-hosting__price-strikethrough">
+													{ formatUSD( price.basePerUnit ) }
+												</Text>
+												<Badge intent="success">
+													{ sprintf(
+														/* translators: %d: discount percentage */
+														__( '%d%% off' ),
+														Math.round( currentDiscount * 100 )
+													) }
+												</Badge>
+											</>
+										) }
+									</HStack>
+									{ milestones.length > 0 && (
+										<HStack
+											spacing={ 2 }
+											justify="flex-start"
+											alignment="center"
+											expanded={ false }
+											wrap
+										>
+											<Text variant="muted" size={ 12 }>
+												{ __( 'Buy more, save more' ) }
+											</Text>
 											{ milestones.map( ( milestone ) => (
 												<Button
 													key={ milestone.quantity }
@@ -188,11 +200,12 @@ export default function WpcomConfigurator( {
 												</Button>
 											) ) }
 										</HStack>
-									</VStack>
-								) }
+									) }
+								</VStack>
 							</HStack>
 						) }
 						{ ! isReferralMode &&
+							! ( isCustom && milestones.length > 0 ) &&
 							( nudge ? (
 								<Text variant="muted">
 									{ sprintf(
