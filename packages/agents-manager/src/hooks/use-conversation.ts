@@ -16,12 +16,9 @@ interface Config {
 	maxPages?: number;
 	enabled?: boolean;
 	/**
-	 * Keep refetching while a question is still unanswered on the server: the
-	 * loaded transcript ends on a user turn, or a turn this tab sent (still
-	 * `pending` in the local store) is not yet followed by a reply — the server
-	 * persists a turn only once it starts processing it, so right after a page
-	 * change it may be missing entirely. Stops once the reply lands or after
-	 * `POLL_TIMEOUT_MS`.
+	 * Refetch until a question is answered: the transcript ends on a user turn,
+	 * or a turn this tab sent (`pending` in the local store) has no reply yet —
+	 * the server persists a turn only once it starts processing it.
 	 */
 	refetchWhileAwaitingReply?: boolean;
 	onSuccess?: ( messages: Message[], sessionId: string ) => void;
@@ -31,7 +28,7 @@ interface Result {
 	data: { messages: Message[]; sessionId?: string } | undefined;
 	isLoading: boolean;
 	isError: boolean;
-	/** True while polling for a reply to a transcript-final user turn. */
+	/** True while polling for an unanswered question. */
 	isAwaitingReply: boolean;
 }
 
@@ -78,17 +75,9 @@ export default function useConversation( {
 	const [ pendingTexts, setPendingTexts ] = useState< string[] >( [] );
 
 	useEffect( () => {
-		if ( ! refetchWhileAwaitingReply || ! sessionId ) {
-			return;
+		if ( sessionId ) {
+			loadPendingTexts( sessionId ).then( setPendingTexts );
 		}
-		let cancelled = false;
-		loadPendingTexts( sessionId )
-			.then( ( texts ) => ! cancelled && setPendingTexts( texts ) )
-			.catch( () => {} );
-		return () => {
-			cancelled = true;
-		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- read the local store once per session
 	}, [ sessionId ] );
 
 	const shouldPoll = ( current?: { messages: Message[] } ): boolean => {

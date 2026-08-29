@@ -738,10 +738,9 @@ export default function OrchestratorChat( {
 	const { isLoading: isLoadingConversation, isAwaitingReply } = useConversation( {
 		maxPages: isReaderChat ? 1 : 10,
 		enabled: shouldLoadConversation,
-		// A transcript that ends on a user turn means the server is still
-		// answering a question asked before this page loaded. Poll for the reply
-		// unless the merchant has taken over the conversation in this tab.
-		refetchWhileAwaitingReply: ! isReaderChat && ! hasUserSentMessage && ! isProcessing,
+		// Poll for a reply to a question sent before this page loaded, unless the
+		// merchant has taken over the conversation in this tab.
+		refetchWhileAwaitingReply: ! hasUserSentMessage && ! isProcessing,
 		onSuccess: ( loadedMessages, serverSessionId ) => {
 			if ( isReaderChat && ( hasUserSentMessage || messages.length > 0 || isProcessing ) ) {
 				return;
