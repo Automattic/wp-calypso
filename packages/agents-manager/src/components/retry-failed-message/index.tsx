@@ -6,10 +6,6 @@ interface Props {
 }
 
 /**
- * Inline notice beneath a user turn that never reached the server (reconciled as
- * `failed` on mount). Retry dispatches a fresh send rather than repopulating the
- * composer, so the merchant isn't left with a stale draft to resend by hand.
- *
  * Plain `<button>`, not `@wordpress/components`: importing that package here
  * pulls the whole component index into `orchestrator-chat`'s module graph and
  * breaks its test suite on `@wordpress/data`.

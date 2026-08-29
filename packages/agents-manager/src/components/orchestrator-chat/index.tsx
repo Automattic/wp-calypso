@@ -797,27 +797,23 @@ export default function OrchestratorChat( {
 	// Recover a first-message turn orphaned by a page change before the server
 	// assigned a session (WOOAI-872 / WOOAI-847): show it as `failed` with a
 	// retry instead of losing it.
-	const { isReconciling, result: reconcileResult } = useReconcileDeliveryStatus();
+	const reconcileResult = useReconcileDeliveryStatus();
 	const [ failedRetries, setFailedRetries ] = useState< string[] >( [] );
-	const reconcileSyncedRef = useRef( false );
 	const reconcileDismissedRef = useRef( false );
 	useEffect( () => {
-		if ( ! reconcileResult ) {
-			return;
-		}
-
-		// Attach retry affordances once; guarded separately from the transcript
-		// load below so it never repeats if the load has to re-run.
-		if ( ! reconcileSyncedRef.current ) {
-			reconcileSyncedRef.current = true;
-			setFailedRetries( reconcileResult.failedTexts );
-		}
-
+		setFailedRetries( reconcileResult?.failedTexts ?? [] );
+	}, [ reconcileResult ] );
+	useEffect( () => {
 		// Show the reconciled transcript, and re-assert it if `useAgentChat`'s own
 		// mount-init clears the panel out from under us before the merchant has
 		// interacted. Once messages are present, the merchant sends, or a
 		// provider deliberately clears the chat, stop.
-		if ( messages.length === 0 && ! hasUserSentMessage && ! reconcileDismissedRef.current ) {
+		if (
+			reconcileResult &&
+			messages.length === 0 &&
+			! hasUserSentMessage &&
+			! reconcileDismissedRef.current
+		) {
 			loadMessages( reconcileResult.messages );
 		}
 	}, [ reconcileResult, messages.length, hasUserSentMessage, loadMessages ] );
@@ -1829,15 +1825,8 @@ export default function OrchestratorChat( {
 	const shouldSuppressTransientThinking = Boolean(
 		latestDisplayedMessage?.role === 'agent' && latestDisplayedMessage.suppressThinking
 	);
-	let processingMessage = progressMessage;
-	if ( isUploadingImages ) {
-		processingMessage = __( 'Uploading images…', __i18n_text_domain__ );
-	} else if ( isReconciling ) {
-		processingMessage = __( 'Picking up your previous question…', __i18n_text_domain__ );
-	}
 	const showProcessingIndicator =
-		( isProcessing || isReconciling || ( isThinking && ! isBuildingSite ) ) &&
-		! shouldSuppressTransientThinking;
+		( isProcessing || ( isThinking && ! isBuildingSite ) ) && ! shouldSuppressTransientThinking;
 
 	// Determine which suggestions to show following Big Sky's logic:
 	// - Empty chat: show provider empty-view chips plus dynamic chips.
@@ -1919,7 +1908,9 @@ export default function OrchestratorChat( {
 			suggestions={ suggestions }
 			emptyViewSuggestions={ displayedEmptyViewSuggestions }
 			isProcessing={ showProcessingIndicator || isUploadingImages }
-			thinkingMessage={ processingMessage }
+			thinkingMessage={
+				isUploadingImages ? __( 'Uploading images…', __i18n_text_domain__ ) : progressMessage
+			}
 			error={ chatError || uploadError }
 			onSubmit={ onSubmitWithImages }
 			onAbort={ handleAbort }

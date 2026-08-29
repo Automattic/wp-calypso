@@ -2,14 +2,11 @@
  * Recover a first-message orphan on panel mount.
  *
  * The first send of a session is persisted under a client-minted `local-*`
- * key until the server assigns a session id. If the page changes before that
- * happens, the destination page mounts with no session and never loads the
- * turn: the merchant's question silently disappears. This hook finds such a
- * turn, marks it `failed`, and hands it to the panel so it can show the
- * question with a retry.
- *
- * Turns that already belong to a server session are not handled here —
- * `useConversation` reloads that transcript on mount.
+ * key until the server assigns a session id. If the page changes before that,
+ * no page ever loads the turn again. Mark it `failed` and hand it to the panel
+ * so the question is shown with a retry instead of silently disappearing.
+ * Turns that already belong to a server session are reloaded by
+ * `useConversation`, not here.
  */
 import {
 	clearConversation,
@@ -25,44 +22,29 @@ import { useAgentsManagerContext } from '../contexts';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 
 export interface ReconcileResult {
-	storageKey: string;
 	messages: Message[];
 	/** Text of each user turn marked `failed`, for the retry affordance. */
 	failedTexts: string[];
 }
 
-interface Result {
-	isReconciling: boolean;
-	/** `null` until reconciliation settles, and when there was nothing to do. */
-	result: ReconcileResult | null;
-}
-
-const latestTimestamp = ( messages: Message[] ) =>
-	Math.max( 0, ...messages.map( ( message ) => Number( message.metadata?.timestamp ) || 0 ) );
-
-/** Newest `local-*` conversation that still has an unresolved turn. */
 async function findOrphanedConversation(): Promise< {
 	storageKey: string;
 	messages: Message[];
 } | null > {
-	const keys = ( await getStoredSessionIds() ).filter( ( key ) => key.startsWith( 'local-' ) );
-	const conversations = await Promise.all(
-		keys.map( async ( storageKey ) => ( {
-			storageKey,
-			messages: ( await loadConversation( storageKey ) ).messages,
-		} ) )
-	);
-	return (
-		conversations
-			.filter( ( { messages } ) => getUnresolvedMessages( messages ).length > 0 )
-			.sort( ( a, b ) => latestTimestamp( b.messages ) - latestTimestamp( a.messages ) )[ 0 ] ??
-		null
-	);
+	for ( const storageKey of ( await getStoredSessionIds() ).filter( ( key ) =>
+		key.startsWith( 'local-' )
+	) ) {
+		const { messages } = await loadConversation( storageKey );
+		if ( getUnresolvedMessages( messages ).length > 0 ) {
+			return { storageKey, messages };
+		}
+	}
+	return null;
 }
 
-export default function useReconcileDeliveryStatus(): Result {
+/** `null` until reconciliation settles, and when there was nothing to recover. */
+export default function useReconcileDeliveryStatus(): ReconcileResult | null {
 	const { agentConfig } = useAgentsManagerContext();
-	const [ isReconciling, setIsReconciling ] = useState( false );
 	const [ result, setResult ] = useState< ReconcileResult | null >( null );
 
 	// Once per mount, and never for Reader Chat (no history to recover into).
@@ -75,45 +57,25 @@ export default function useReconcileDeliveryStatus(): Result {
 		}
 		hasRunRef.current = true;
 
-		let cancelled = false;
-
-		const run = async () => {
-			const conversation = await findOrphanedConversation();
-			if ( ! conversation || cancelled ) {
+		findOrphanedConversation().then( async ( conversation ) => {
+			if ( ! conversation ) {
 				return;
 			}
-			const { storageKey, messages } = conversation;
-
-			setIsReconciling( true );
-			try {
-				// A `local-*` key never received a session id, so there is nothing
-				// to fetch: resolve `null` and let the primitive mark the turn failed.
-				const reconciled = await reconcileWithServer( messages, () => Promise.resolve( null ) );
-				if ( cancelled ) {
-					return;
-				}
-
-				const failedTexts = reconciled
+			// A `local-*` key never received a session id, so there is nothing to
+			// fetch: resolve `null` and let the primitive mark the turn failed.
+			const messages = await reconcileWithServer( conversation.messages, () =>
+				Promise.resolve( null )
+			);
+			setResult( {
+				messages,
+				failedTexts: messages
 					.filter( ( m ) => m.role === 'user' && m.metadata?.deliveryStatus === 'failed' )
-					.map( messageTextContent );
-
-				setResult( { storageKey, messages: reconciled, failedTexts } );
-
-				// The turn is now surfaced in the panel; drop the stored entry so it
-				// does not re-fire on a later mount.
-				await clearConversation( storageKey );
-			} finally {
-				if ( ! cancelled ) {
-					setIsReconciling( false );
-				}
-			}
-		};
-		void run();
-
-		return () => {
-			cancelled = true;
-		};
+					.map( messageTextContent ),
+			} );
+			// Surfaced in the panel now; drop the stored entry so it does not re-fire.
+			await clearConversation( conversation.storageKey );
+		} );
 	}, [ agentId ] );
 
-	return { isReconciling, result };
+	return result;
 }

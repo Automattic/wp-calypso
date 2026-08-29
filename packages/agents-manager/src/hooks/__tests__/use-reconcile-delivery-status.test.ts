@@ -121,7 +121,7 @@ describe( 'useReconcileDeliveryStatus', () => {
 		await flush();
 
 		expect( mockReconcile ).not.toHaveBeenCalled();
-		expect( result.current.result ).toBeNull();
+		expect( result.current ).toBeNull();
 	} );
 
 	it( 'is a no-op when nothing is unresolved', async () => {
@@ -132,7 +132,7 @@ describe( 'useReconcileDeliveryStatus', () => {
 		await flush();
 
 		expect( mockReconcile ).not.toHaveBeenCalled();
-		expect( result.current.result ).toBeNull();
+		expect( result.current ).toBeNull();
 	} );
 
 	it( 'marks a local-* orphan failed without hitting the server (fast switch)', async () => {
@@ -140,11 +140,11 @@ describe( 'useReconcileDeliveryStatus', () => {
 		seed( 'local-1', [ { role: 'user', content: 'go big', deliveryStatus: 'pending' } ] );
 
 		const { result } = renderHook( () => useReconcileDeliveryStatus() );
-		await waitFor( () => expect( result.current.result ).not.toBeNull() );
+		await waitFor( () => expect( result.current ).not.toBeNull() );
 
-		expect( result.current.result!.failedTexts ).toEqual( [ 'go big' ] );
+		expect( result.current!.failedTexts ).toEqual( [ 'go big' ] );
 		// No message left unresolved, and the stale orphan is cleared.
-		expect( getUnresolvedMessages( result.current.result!.messages ) ).toHaveLength( 0 );
+		expect( getUnresolvedMessages( result.current!.messages ) ).toHaveLength( 0 );
 		expect( sessionStorage.getItem( `${ STORAGE_PREFIX }local-1` ) ).toBeNull();
 	} );
 
@@ -156,7 +156,7 @@ describe( 'useReconcileDeliveryStatus', () => {
 		await flush();
 
 		expect( mockReconcile ).not.toHaveBeenCalled();
-		expect( result.current.result ).toBeNull();
+		expect( result.current ).toBeNull();
 		expect( sessionStorage.getItem( `${ STORAGE_PREFIX }uuid-1` ) ).not.toBeNull();
 	} );
 
@@ -165,8 +165,8 @@ describe( 'useReconcileDeliveryStatus', () => {
 		seed( 'local-1', [ { role: 'user', content: 'q', deliveryStatus: 'pending' } ] );
 
 		const { result } = renderHook( () => useReconcileDeliveryStatus() );
-		await waitFor( () => expect( result.current.result ).not.toBeNull() );
+		await waitFor( () => expect( result.current ).not.toBeNull() );
 
-		expect( result.current.result!.failedTexts ).toEqual( [ 'q' ] );
+		expect( result.current!.failedTexts ).toEqual( [ 'q' ] );
 	} );
 } );
