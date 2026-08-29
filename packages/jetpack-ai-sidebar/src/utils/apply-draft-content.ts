@@ -147,7 +147,6 @@ function reject(
  * So fall back to the blocks: a post whose every block is an empty paragraph is
  * empty as far as the writer is concerned. Any real text, or any block that is
  * not a paragraph, still counts as content and stays protected.
- *
  * @param editor - The `core/editor` store.
  * @returns Whether a draft may be written into the post.
  */

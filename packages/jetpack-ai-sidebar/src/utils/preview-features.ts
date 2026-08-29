@@ -51,7 +51,7 @@ export function isExcerptSuggestionEnabled(): boolean {
 }
 
 /**
- * Draft assist: the `/draft` editor entry point and the
+ * Draft assist: the sidebar suggestion and the
  * `jetpack-ai/apply-draft-content` client ability that writes the first draft
  * into an empty post. The host (Jetpack) populates `features.draftAssist`.
  */

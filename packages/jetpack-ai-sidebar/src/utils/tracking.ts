@@ -169,43 +169,6 @@ export type DraftAssistRejectionReason =
 	| 'unsupported_post_type';
 
 /**
- * Tracks the draft assist entry point becoming visible in the editor — i.e. the
- * `/draft` placeholder replacing the default one on an empty post or page.
- * @param options             - Tracking options
- * @param options.contentType - Editor entity the entry point is offered on.
- * @returns Whether the event reached the family recorder.
- */
-export function trackDraftAssistEntryPointShown( {
-	contentType,
-}: {
-	contentType: DraftAssistContentType;
-} ): boolean {
-	return recordBigSkyFamilyTracksEvent( 'jetpack_big_sky_draft_assist_entry_point_shown', {
-		content_type: contentType,
-	} );
-}
-
-/**
- * Tracks the user firing the draft assist entry point.
- * @param options                  - Tracking options
- * @param options.contentType      - Editor entity the draft was requested for.
- * @param options.fromSlashCommand - Whether the `/draft` autocompleter fired it.
- * @returns Whether the event reached the family recorder.
- */
-export function trackDraftAssistEntryPointTriggered( {
-	contentType,
-	fromSlashCommand,
-}: {
-	contentType: DraftAssistContentType;
-	fromSlashCommand: boolean;
-} ): boolean {
-	return recordBigSkyFamilyTracksEvent( 'jetpack_big_sky_draft_assist_entry_point_triggered', {
-		content_type: contentType,
-		from_slash_command: fromSlashCommand,
-	} );
-}
-
-/**
  * Tracks a generated draft being written into the editor canvas.
  * @param options             - Tracking options
  * @param options.contentType - Editor entity the draft was applied to.

@@ -1,7 +1,7 @@
 /**
  * Shared draft assist constraints.
  *
- * The editor entry point (`extensions/draft-entry.ts`) and the
+ * The sidebar suggestion (`index.ts`) and the
  * `jetpack-ai/apply-draft-content` handler (`utils/apply-draft-content.ts`) must
  * agree on which editor entities draft assist may touch. The handler cannot
  * infer it from the entry point: the ability is registered for the whole editor

@@ -2043,9 +2043,7 @@ describe( 'getEmptyViewSuggestions', () => {
 
 		expect( draft ).toEqual(
 			expect.objectContaining( {
-				label: 'Write a draft',
-				// Must match the /draft editor trigger, so both entry points start the
-				// same conversation.
+				label: 'Draft a new post',
 				prompt: 'Help me draft this post',
 			} )
 		);

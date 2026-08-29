@@ -184,14 +184,16 @@ const OPTIMIZE_TITLE_SUGGESTION = {
  * canvas rather than existing content, which is also why it sits first — on an
  * empty post every other suggestion here has nothing to work on.
  *
- * The prompt matches the `/draft` editor trigger exactly, so both entry points
- * start the same conversation and the assistant cannot behave differently
- * depending on which one the writer used.
+ * This is the only entry point: draft assist is offered from the sidebar, not
+ * from the block editor canvas.
  */
 function getDraftSuggestion( contentType: 'post' | 'page' ) {
 	return {
 		id: 'draft-post',
-		label: __( 'Write a draft', __i18n_text_domain__ ),
+		label:
+			'page' === contentType
+				? __( 'Draft a new page', __i18n_text_domain__ )
+				: __( 'Draft a new post', __i18n_text_domain__ ),
 		// Say which one. The suggestion is offered for pages too, and asking for "this
 		// post" on a page contradicts the contentType the ability is given, which shapes
 		// the output — an article rather than a sectioned page.
@@ -410,8 +412,7 @@ function currentPostTypeSupportsFeaturedImage(
 /**
  * Whether to offer writing a draft.
  *
- * Mirrors the `/draft` entry point: the feature flag, a post type draft assist
- * writes into, and an empty post. Offering it on a post with content would
+ * The feature flag, a post type draft assist writes into, and an empty post. Offering it on a post with content would
  * promise something the ability then refuses, which reads as a broken button.
  * @param currentPostType - The post type currently open in the editor.
  * @returns Whether the suggestion should be shown.
