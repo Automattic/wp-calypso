@@ -296,10 +296,7 @@ describe( 'tracks wrappers', () => {
 
 				recordEvent();
 
-				expect( lastEventProps().loaded_provider_ids ).toEqual( [
-					'woocommerce-ai',
-					'jetpack-ai-sidebar',
-				] );
+				expect( lastEventProps().loaded_provider_ids ).toBe( 'woocommerce-ai,jetpack-ai-sidebar' );
 			}
 		);
 

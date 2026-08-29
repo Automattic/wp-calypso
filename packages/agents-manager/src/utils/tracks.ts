@@ -42,7 +42,8 @@ export function setLoadedProviderIds( ids: readonly string[] | undefined ): void
 }
 
 function getLoadedProviderIdsProp(): TracksProps {
-	return loadedProviderIds.length ? { loaded_provider_ids: loadedProviderIds } : {};
+	// Tracks properties must be scalar; multi-valued props are comma-joined by convention.
+	return loadedProviderIds.length ? { loaded_provider_ids: loadedProviderIds.join( ',' ) } : {};
 }
 
 /** Reads the optional server-provided Automattician tracking signal. */
