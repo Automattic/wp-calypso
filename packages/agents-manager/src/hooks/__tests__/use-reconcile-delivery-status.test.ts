@@ -54,7 +54,6 @@ jest.mock(
 						: message
 				);
 			} ),
-			loadAllMessagesFromServer: jest.fn(),
 			getStoredSessionIds: jest.fn( async () => storedKeys() ),
 			loadConversation: jest.fn( async ( key: string ) => ( { messages: restore( key ) } ) ),
 			clearConversation: jest.fn( async ( key: string ) =>
@@ -74,21 +73,12 @@ jest.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: jest.fn(),
 } ) );
 
-jest.mock( '../../utils/conversation-bot-id', () => ( {
-	getConversationBotId: jest.fn( () => 'wpcom-agent-wp_orchestrator' ),
-} ) );
-
-import {
-	getUnresolvedMessages,
-	loadAllMessagesFromServer,
-	reconcileWithServer,
-} from '@automattic/agenttic-client';
+import { getUnresolvedMessages, reconcileWithServer } from '@automattic/agenttic-client';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { useAgentsManagerContext } from '../../contexts';
 import useReconcileDeliveryStatus from '../use-reconcile-delivery-status';
 
 const mockContext = useAgentsManagerContext as jest.Mock;
-const mockLoadAll = loadAllMessagesFromServer as jest.Mock;
 const mockReconcile = reconcileWithServer as jest.Mock;
 
 function seed(
@@ -119,7 +109,6 @@ async function flush(): Promise< void > {
 describe( 'useReconcileDeliveryStatus', () => {
 	beforeEach( () => {
 		sessionStorage.clear();
-		mockLoadAll.mockReset();
 		mockReconcile.mockClear();
 		( getUnresolvedMessages as jest.Mock ).mockClear();
 	} );
@@ -153,81 +142,22 @@ describe( 'useReconcileDeliveryStatus', () => {
 		const { result } = renderHook( () => useReconcileDeliveryStatus() );
 		await waitFor( () => expect( result.current.result ).not.toBeNull() );
 
-		expect( mockLoadAll ).not.toHaveBeenCalled();
-		expect( result.current.result!.outcome ).toBe( 'failed' );
 		expect( result.current.result!.failedTexts ).toEqual( [ 'go big' ] );
 		// No message left unresolved, and the stale orphan is cleared.
 		expect( getUnresolvedMessages( result.current.result!.messages ) ).toHaveLength( 0 );
 		expect( sessionStorage.getItem( `${ STORAGE_PREFIX }local-1` ) ).toBeNull();
 	} );
 
-	it( 'adopts the server transcript and syncs the session (thinking switch)', async () => {
+	it( 'ignores unresolved turns that belong to a server session', async () => {
 		setAgent( 'wp-orchestrator', 'uuid-1' );
 		seed( 'uuid-1', [ { role: 'user', content: 'q', deliveryStatus: 'pending' } ] );
-		mockLoadAll.mockResolvedValue( {
-			messages: [
-				{
-					role: 'user',
-					kind: 'message',
-					messageId: 's1',
-					parts: [ { type: 'text', text: 'q' } ],
-					metadata: { deliveryStatus: 'complete' },
-				},
-				{
-					role: 'agent',
-					kind: 'message',
-					messageId: 's2',
-					parts: [ { type: 'text', text: 'here you go' } ],
-				},
-			],
-		} );
-
-		const { result } = renderHook( () => useReconcileDeliveryStatus() );
-		await waitFor( () => expect( result.current.result ).not.toBeNull() );
-
-		expect( mockLoadAll ).toHaveBeenCalledTimes( 1 );
-		expect( result.current.result!.outcome ).toBe( 'server' );
-		expect( result.current.result!.storageKey ).toBe( 'uuid-1' );
-		expect( getUnresolvedMessages( result.current.result!.messages ) ).toHaveLength( 0 );
-		// A live session's transcript is preserved, not cleared.
-		expect( sessionStorage.getItem( `${ STORAGE_PREFIX }uuid-1` ) ).not.toBeNull();
-	} );
-
-	it( 'leaves the turn pending when the server fetch throws (offline)', async () => {
-		setAgent( 'wp-orchestrator', 'uuid-1' );
-		seed( 'uuid-1', [ { role: 'user', content: 'q', deliveryStatus: 'pending' } ] );
-		// The real primitive swallows fetch errors and returns the input unchanged.
-		mockReconcile.mockImplementationOnce( async ( messages: Message[], fetchServer ) => {
-			try {
-				await fetchServer();
-			} catch {
-				return messages;
-			}
-			return messages;
-		} );
-		mockLoadAll.mockRejectedValue( new Error( 'offline' ) );
-
-		const { result } = renderHook( () => useReconcileDeliveryStatus() );
-		await flush();
-		await flush();
-
-		// Still unresolved → no result surfaced, storage untouched for a later retry.
-		expect( mockReconcile ).toHaveBeenCalledTimes( 1 );
-		expect( result.current.result ).toBeNull();
-		expect( sessionStorage.getItem( `${ STORAGE_PREFIX }uuid-1` ) ).not.toBeNull();
-	} );
-
-	it( 'ignores an unresolved server session that is not the one this agent resumes', async () => {
-		setAgent( 'wp-orchestrator', 'uuid-mine' );
-		seed( 'uuid-other-agent', [ { role: 'user', content: 'q', deliveryStatus: 'pending' } ], 5 );
 
 		const { result } = renderHook( () => useReconcileDeliveryStatus() );
 		await flush();
 
 		expect( mockReconcile ).not.toHaveBeenCalled();
-		expect( mockLoadAll ).not.toHaveBeenCalled();
 		expect( result.current.result ).toBeNull();
-		expect( sessionStorage.getItem( `${ STORAGE_PREFIX }uuid-other-agent` ) ).not.toBeNull();
+		expect( sessionStorage.getItem( `${ STORAGE_PREFIX }uuid-1` ) ).not.toBeNull();
 	} );
 
 	it( 'still picks up a local-* orphan when the agent resumes another session', async () => {
@@ -237,39 +167,6 @@ describe( 'useReconcileDeliveryStatus', () => {
 		const { result } = renderHook( () => useReconcileDeliveryStatus() );
 		await waitFor( () => expect( result.current.result ).not.toBeNull() );
 
-		expect( result.current.result!.outcome ).toBe( 'failed' );
 		expect( result.current.result!.failedTexts ).toEqual( [ 'q' ] );
-	} );
-
-	it( 'clears the stored entry when the server session lacks the orphaned turn', async () => {
-		setAgent( 'wp-orchestrator', 'uuid-1' );
-		seed( 'uuid-1', [
-			{ role: 'user', content: 'first', deliveryStatus: 'complete' },
-			{ role: 'user', content: 'lost', deliveryStatus: 'pending' },
-		] );
-		const server = [
-			{
-				role: 'user',
-				kind: 'message',
-				messageId: 's1',
-				parts: [ { type: 'text', text: 'first' } ],
-				metadata: { deliveryStatus: 'complete' },
-			},
-		];
-		mockLoadAll.mockResolvedValue( { messages: server } );
-		mockReconcile.mockImplementationOnce( async ( messages: Message[], fetchServer ) => {
-			const fetched = await fetchServer();
-			return [
-				...fetched,
-				{ ...messages[ 1 ], metadata: { ...messages[ 1 ].metadata, deliveryStatus: 'failed' } },
-			];
-		} );
-
-		const { result } = renderHook( () => useReconcileDeliveryStatus() );
-		await waitFor( () => expect( result.current.result ).not.toBeNull() );
-
-		expect( result.current.result!.outcome ).toBe( 'server' );
-		expect( result.current.result!.failedTexts ).toEqual( [ 'lost' ] );
-		expect( sessionStorage.getItem( `${ STORAGE_PREFIX }uuid-1` ) ).toBeNull();
 	} );
 } );

@@ -794,10 +794,9 @@ export default function OrchestratorChat( {
 		},
 	} );
 
-	// Reconcile an in-flight turn that was orphaned by a page change before the
-	// reply came back (WOOAI-872 / WOOAI-847). On mount the hook checks the
-	// server: it adopts the real transcript when the turn landed, or reports it
-	// `failed` so we can surface a retry when it never did.
+	// Recover a first-message turn orphaned by a page change before the server
+	// assigned a session (WOOAI-872 / WOOAI-847): show it as `failed` with a
+	// retry instead of losing it.
 	const { isReconciling, result: reconcileResult } = useReconcileDeliveryStatus();
 	const [ failedRetries, setFailedRetries ] = useState< string[] >( [] );
 	const reconcileSyncedRef = useRef( false );
@@ -807,23 +806,10 @@ export default function OrchestratorChat( {
 			return;
 		}
 
-		// One-time side effects: adopt the server session and attach retry
-		// affordances. Guarded separately from the transcript load below so they
-		// never repeat if the load has to re-run.
+		// Attach retry affordances once; guarded separately from the transcript
+		// load below so it never repeats if the load has to re-run.
 		if ( ! reconcileSyncedRef.current ) {
 			reconcileSyncedRef.current = true;
-
-			if ( reconcileResult.outcome === 'server' ) {
-				// The server had the turn: point future sends at the real session.
-				getAgentManager().updateSessionId( agentConfig!.agentId, reconcileResult.storageKey );
-				// Persist it as this tab's session the same way `useConversation`'s
-				// onSuccess does, so it writes under the site the config was
-				// created for.
-				if ( agentConfig!.sessionId !== reconcileResult.storageKey ) {
-					agentConfig!.onSessionIdChange?.( reconcileResult.storageKey );
-				}
-			}
-
 			setFailedRetries( reconcileResult.failedTexts );
 		}
 
@@ -834,7 +820,7 @@ export default function OrchestratorChat( {
 		if ( messages.length === 0 && ! hasUserSentMessage && ! reconcileDismissedRef.current ) {
 			loadMessages( reconcileResult.messages );
 		}
-	}, [ reconcileResult, messages.length, hasUserSentMessage, loadMessages, agentConfig ] );
+	}, [ reconcileResult, messages.length, hasUserSentMessage, loadMessages ] );
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const maxDynamicSuggestions = isDocked ? undefined : 3;
