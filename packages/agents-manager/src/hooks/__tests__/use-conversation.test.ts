@@ -75,4 +75,64 @@ describe( 'useConversation', () => {
 			} )
 		);
 	} );
+
+	describe( 'refetchWhileAwaitingReply', () => {
+		const setOrchestrator = () =>
+			mockUseAgentsManagerContext.mockReturnValue( {
+				agentConfig: { agentId: 'wp-orchestrator', sessionId: 's1', authProvider: {} },
+			} );
+		const user = { role: 'user', kind: 'message', messageId: 'u', parts: [] };
+		const agent = { role: 'agent', kind: 'message', messageId: 'a', parts: [] };
+		const intervalFor = ( messages: unknown[] ) => {
+			const { refetchInterval } = mockUseQuery.mock.calls[ 0 ][ 0 ];
+			return refetchInterval( { state: { data: { messages } } } );
+		};
+
+		it( 'polls while the transcript ends on a user turn', () => {
+			setOrchestrator();
+			mockUseQuery.mockReturnValue( {
+				data: { messages: [ user ] },
+				error: null,
+				isError: false,
+				isLoading: false,
+			} );
+
+			const { result } = renderHook( () => useConversation( { refetchWhileAwaitingReply: true } ) );
+
+			expect( intervalFor( [ user ] ) ).toBe( 3000 );
+			expect( result.current.isAwaitingReply ).toBe( true );
+		} );
+
+		it( 'stops once a reply lands', () => {
+			setOrchestrator();
+			mockUseQuery.mockReturnValue( {
+				data: { messages: [ user, agent ] },
+				error: null,
+				isError: false,
+				isLoading: false,
+			} );
+
+			const { result } = renderHook( () => useConversation( { refetchWhileAwaitingReply: true } ) );
+
+			expect( intervalFor( [ user, agent ] ) ).toBe( false );
+			expect( result.current.isAwaitingReply ).toBe( false );
+		} );
+
+		it( 'does not poll unless asked to', () => {
+			setOrchestrator();
+			renderHook( () => useConversation( {} ) );
+			expect( intervalFor( [ user ] ) ).toBe( false );
+		} );
+
+		it( 'gives up after the timeout', () => {
+			setOrchestrator();
+			const now = jest.spyOn( Date, 'now' ).mockReturnValue( 1_000 );
+			renderHook( () => useConversation( { refetchWhileAwaitingReply: true } ) );
+
+			expect( intervalFor( [ user ] ) ).toBe( 3000 );
+			now.mockReturnValue( 1_000 + 90_000 );
+			expect( intervalFor( [ user ] ) ).toBe( false );
+			now.mockRestore();
+		} );
+	} );
 } );

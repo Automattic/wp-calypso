@@ -735,9 +735,13 @@ export default function OrchestratorChat( {
 		},
 	} );
 
-	const { isLoading: isLoadingConversation } = useConversation( {
+	const { isLoading: isLoadingConversation, isAwaitingReply } = useConversation( {
 		maxPages: isReaderChat ? 1 : 10,
 		enabled: shouldLoadConversation,
+		// A transcript that ends on a user turn means the server is still
+		// answering a question asked before this page loaded. Poll for the reply
+		// unless the merchant has taken over the conversation in this tab.
+		refetchWhileAwaitingReply: ! isReaderChat && ! hasUserSentMessage && ! isProcessing,
 		onSuccess: ( loadedMessages, serverSessionId ) => {
 			if ( isReaderChat && ( hasUserSentMessage || messages.length > 0 || isProcessing ) ) {
 				return;
@@ -1732,8 +1736,15 @@ export default function OrchestratorChat( {
 	const shouldSuppressTransientThinking = Boolean(
 		latestDisplayedMessage?.role === 'agent' && latestDisplayedMessage.suppressThinking
 	);
+	let processingMessage = progressMessage;
+	if ( isUploadingImages ) {
+		processingMessage = __( 'Uploading images…', __i18n_text_domain__ );
+	} else if ( isAwaitingReply ) {
+		processingMessage = __( 'Waiting for the reply…', __i18n_text_domain__ );
+	}
 	const showProcessingIndicator =
-		( isProcessing || ( isThinking && ! isBuildingSite ) ) && ! shouldSuppressTransientThinking;
+		( isProcessing || isAwaitingReply || ( isThinking && ! isBuildingSite ) ) &&
+		! shouldSuppressTransientThinking;
 
 	// Determine which suggestions to show following Big Sky's logic:
 	// - Empty chat: show provider empty-view chips plus dynamic chips.
@@ -1815,9 +1826,7 @@ export default function OrchestratorChat( {
 			suggestions={ suggestions }
 			emptyViewSuggestions={ displayedEmptyViewSuggestions }
 			isProcessing={ showProcessingIndicator || isUploadingImages }
-			thinkingMessage={
-				isUploadingImages ? __( 'Uploading images…', __i18n_text_domain__ ) : progressMessage
-			}
+			thinkingMessage={ processingMessage }
 			error={ chatError || uploadError }
 			onSubmit={ onSubmitWithImages }
 			onAbort={ handleAbort }
