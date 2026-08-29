@@ -139,34 +139,35 @@ export default function WpcomConfigurator( {
 										onQuantityChange( next );
 									} }
 								/>
-								<HStack
-									spacing={ 2 }
-									justify="flex-start"
-									alignment="center"
-									expanded={ false }
-									wrap
-								>
+								<VStack spacing={ 1 } alignment="flex-start">
 									<Text weight={ 600 }>
 										{ formatUSD( price.perUnit ) }
 										<Text as="span" variant="muted">
 											{ __( '/site per year' ) }
 										</Text>
 									</Text>
-									{ currentDiscount > 0 && (
-										<>
-											<Text variant="muted" className="marketplace-hosting__price-strikethrough">
-												{ formatUSD( price.basePerUnit ) }
-											</Text>
-											<Badge intent="success">
-												{ sprintf(
-													/* translators: %d: discount percentage */
-													__( '%d%% off' ),
-													Math.round( currentDiscount * 100 )
-												) }
-											</Badge>
-										</>
-									) }
-								</HStack>
+									<HStack
+										spacing={ 2 }
+										justify="flex-start"
+										alignment="center"
+										expanded={ false }
+										className={
+											'marketplace-hosting__price-secondary' +
+											( currentDiscount > 0 ? '' : ' is-hidden' )
+										}
+									>
+										<Text variant="muted" className="marketplace-hosting__price-strikethrough">
+											{ formatUSD( price.basePerUnit ) }
+										</Text>
+										<Badge intent="success">
+											{ sprintf(
+												/* translators: %d: discount percentage */
+												__( '%d%% off' ),
+												Math.round( Math.max( currentDiscount, 0 ) * 100 )
+											) }
+										</Badge>
+									</HStack>
+								</VStack>
 							</HStack>
 						) }
 						{ ! isReferralMode &&

@@ -373,6 +373,12 @@
 	text-decoration: line-through;
 }
 
+// Keep the discount line's height reserved so stepping quantity never shifts
+// the row; just hide it when there's no discount.
+.marketplace-hosting__price-secondary.is-hidden {
+	visibility: hidden;
+}
+
 .marketplace-hosting__stepper {
 	inline-size: 150px;
 
