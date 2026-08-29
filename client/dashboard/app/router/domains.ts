@@ -1,4 +1,4 @@
-import { DomainSubtype, DomainTransferStatus } from '@automattic/api-core';
+import { DomainSubtype, DomainTransferStatus, isWpError } from '@automattic/api-core';
 import {
 	domainDiagnosticsQuery,
 	domainQuery,
@@ -115,6 +115,36 @@ export const domainsContactInfoRoute = createRoute( {
 	)
 );
 
+const fetchDomainOrNotFound = async ( domainName: string ) => {
+	try {
+		return await queryClient.ensureQueryData( domainQuery( domainName ) );
+	} catch ( error ) {
+		if ( isWpError( error ) && error.statusCode === 400 && error.error === 'invalid_domain' ) {
+			throw notFound();
+		}
+		throw error;
+	}
+};
+
+// Legacy Calypso domain management lived under `/domains/manage`. Those paths
+// would otherwise be read as `/domains/$domainName` with a domain named
+// "manage", so keep old links and bookmarks pointing at the domains list.
+export const domainsLegacyManageRoute = createRoute( {
+	getParentRoute: () => domainsRoute,
+	path: 'manage/$',
+	beforeLoad: () => {
+		throw dashboardRedirect( { to: '/domains' } );
+	},
+} );
+
+export const domainsLegacyManageIndexRoute = createRoute( {
+	getParentRoute: () => domainsRoute,
+	path: 'manage',
+	beforeLoad: () => {
+		throw dashboardRedirect( { to: '/domains' } );
+	},
+} );
+
 // Domain management root route
 export const domainRoute = createRoute( {
 	head: ( { params } ) => ( {
@@ -128,7 +158,7 @@ export const domainRoute = createRoute( {
 	path: 'domains/$domainName',
 	errorComponent: lazyRouteComponent( () => import( '../../domains/domain/error' ) ),
 	loader: async ( { params: { domainName }, location } ) => {
-		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
+		const domain = await fetchDomainOrNotFound( domainName );
 		const isNameServersSubRoute = location.pathname.includes( '/name-servers' );
 		const isTransferSubRoute = location.pathname.includes( '/transfer' );
 		const isContactInfoSubRoute = location.pathname.includes( '/contact-info' );
@@ -729,7 +759,12 @@ export const domainConnectionSetupRoute = createRoute( {
 
 export const createDomainsRoutes = () => {
 	return [
-		domainsRoute.addChildren( [ domainsIndexRoute, domainsContactInfoRoute ] ),
+		domainsRoute.addChildren( [
+			domainsIndexRoute,
+			domainsContactInfoRoute,
+			domainsLegacyManageIndexRoute,
+			domainsLegacyManageRoute,
+		] ),
 		domainRoute.addChildren( [
 			domainOverviewRoute,
 			domainDnsRoute.addChildren( [ domainDnsIndexRoute, domainDnsAddRoute, domainDnsEditRoute ] ),
