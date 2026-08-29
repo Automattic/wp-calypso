@@ -1,6 +1,5 @@
 import { Badge } from '@automattic/ui';
 import {
-	Button,
 	__experimentalNumberControl as NumberControl,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
@@ -17,7 +16,6 @@ import wpcomDescriptor from '../exclusive-offers/images/wordpressdotcom-descript
 import { CheckGrid } from './content-sections';
 import {
 	formatUSD,
-	getDiscountMilestones,
 	getNextDiscountNudge,
 	getTieredPrice,
 	hostingBrands,
@@ -60,7 +58,6 @@ export default function WpcomConfigurator( {
 	const quantity = isCustom ? customQuantity : Number( preset );
 	const price = getTieredPrice( product, quantity, term, ownedSites );
 	const nudge = getNextDiscountNudge( product, quantity, term, ownedSites );
-	const milestones = getDiscountMilestones( product, quantity, term, ownedSites );
 	const currentDiscount = price.discountPercent;
 
 	return (
@@ -126,92 +123,47 @@ export default function WpcomConfigurator( {
 							</ToggleGroupControl>
 						) }
 						{ ! isReferralMode && isCustom && (
-							<VStack spacing={ 3 }>
-								<HStack
-									justify="flex-start"
-									alignment="center"
-									spacing={ 4 }
-									wrap
-									expanded={ false }
-								>
-									<NumberControl
-										className="marketplace-hosting__stepper"
-										__next40pxDefaultSize
-										isShiftStepEnabled
-										min={ 1 }
-										label={ __( 'Number of sites' ) }
-										hideLabelFromVision
-										spinControls="custom"
-										value={ String( customQuantity ) }
-										onChange={ ( value ) => {
-											const next = Math.max( 1, Number( value ) || 1 );
-											setCustomQuantity( next );
-											onQuantityChange( next );
-										} }
-									/>
-									<HStack
-										spacing={ 2 }
-										justify="flex-start"
-										alignment="center"
-										expanded={ false }
-										wrap
-									>
-										<Text weight={ 600 }>
-											{ formatUSD( price.perUnit ) }
-											<Text as="span" variant="muted">
-												{ __( '/site per year' ) }
+							<HStack justify="flex-start" alignment="center" spacing={ 4 } wrap expanded={ false }>
+								<NumberControl
+									className="marketplace-hosting__stepper"
+									__next40pxDefaultSize
+									isShiftStepEnabled
+									min={ 1 }
+									label={ __( 'Number of sites' ) }
+									hideLabelFromVision
+									spinControls="custom"
+									value={ String( customQuantity ) }
+									onChange={ ( value ) => {
+										const next = Math.max( 1, Number( value ) || 1 );
+										setCustomQuantity( next );
+										onQuantityChange( next );
+									} }
+								/>
+								<VStack spacing={ 1 } alignment="flex-start">
+									<Text weight={ 600 }>
+										{ formatUSD( price.perUnit ) }
+										<Text as="span" variant="muted">
+											{ __( '/site per year' ) }
+										</Text>
+									</Text>
+									{ currentDiscount > 0 && (
+										<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
+											<Text variant="muted" className="marketplace-hosting__price-strikethrough">
+												{ formatUSD( price.basePerUnit ) }
 											</Text>
-										</Text>
-										{ currentDiscount > 0 && (
-											<>
-												<Text variant="muted" className="marketplace-hosting__price-strikethrough">
-													{ formatUSD( price.basePerUnit ) }
-												</Text>
-												<Badge intent="success">
-													{ sprintf(
-														/* translators: %d: discount percentage */
-														__( '%d%% off' ),
-														Math.round( currentDiscount * 100 )
-													) }
-												</Badge>
-											</>
-										) }
-									</HStack>
-								</HStack>
-								{ milestones.length > 0 && (
-									<HStack
-										spacing={ 2 }
-										justify="flex-start"
-										alignment="center"
-										expanded={ false }
-										wrap
-									>
-										<Text variant="muted" size={ 12 }>
-											{ __( 'Buy more, save more' ) }
-										</Text>
-										{ milestones.map( ( milestone ) => (
-											<Button
-												key={ milestone.quantity }
-												className="marketplace-hosting__tier-chip"
-												onClick={ () => {
-													setCustomQuantity( milestone.quantity );
-													onQuantityChange( milestone.quantity );
-												} }
-											>
+											<Badge intent="success">
 												{ sprintf(
-													/* translators: %1$d: number of sites, %2$d: discount percentage */
-													__( '%1$d sites · %2$d%% off' ),
-													milestone.quantity,
-													milestone.discountPercent
+													/* translators: %d: discount percentage */
+													__( '%d%% off' ),
+													Math.round( currentDiscount * 100 )
 												) }
-											</Button>
-										) ) }
-									</HStack>
-								) }
-							</VStack>
+											</Badge>
+										</HStack>
+									) }
+								</VStack>
+							</HStack>
 						) }
 						{ ! isReferralMode &&
-							! ( isCustom && milestones.length > 0 ) &&
 							( nudge ? (
 								<Text variant="muted">
 									{ sprintf(
