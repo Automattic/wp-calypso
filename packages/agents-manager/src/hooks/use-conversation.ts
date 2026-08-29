@@ -1,6 +1,12 @@
-import { loadAllMessagesFromServer, type Message } from '@automattic/agenttic-client';
+import {
+	getUnresolvedMessages,
+	loadAllMessagesFromServer,
+	loadConversation,
+	messageTextContent,
+	type Message,
+} from '@automattic/agenttic-client';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useRef } from '@wordpress/element';
+import { useEffect, useRef, useState } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
 import { getConversationBotId } from '../utils/conversation-bot-id';
@@ -10,9 +16,12 @@ interface Config {
 	maxPages?: number;
 	enabled?: boolean;
 	/**
-	 * Keep refetching while the loaded transcript ends on a user turn — the
-	 * server has the question but is still answering (e.g. the page changed
-	 * mid-reply). Polling stops once a reply lands or after `POLL_TIMEOUT_MS`.
+	 * Keep refetching while a question is still unanswered on the server: the
+	 * loaded transcript ends on a user turn, or a turn this tab sent (still
+	 * `pending` in the local store) is not yet followed by a reply — the server
+	 * persists a turn only once it starts processing it, so right after a page
+	 * change it may be missing entirely. Stops once the reply lands or after
+	 * `POLL_TIMEOUT_MS`.
 	 */
 	refetchWhileAwaitingReply?: boolean;
 	onSuccess?: ( messages: Message[], sessionId: string ) => void;
@@ -34,6 +43,22 @@ function endsOnUserTurn( data?: { messages: Message[] } ): boolean {
 	return last?.role === 'user';
 }
 
+/** Whether the transcript has an agent reply after the last user turn with `text`. */
+function hasReplyTo( messages: Message[], text: string ): boolean {
+	const index = messages.findLastIndex(
+		( m ) => m.role === 'user' && messageTextContent( m ) === text
+	);
+	return index !== -1 && messages.slice( index + 1 ).some( ( m ) => m.role === 'agent' );
+}
+
+/** Text of user turns this tab sent that were still in flight when it last persisted. */
+async function loadPendingTexts( sessionId: string ): Promise< string[] > {
+	const { messages } = await loadConversation( sessionId );
+	return getUnresolvedMessages( messages )
+		.filter( ( m ) => m.role === 'user' )
+		.map( messageTextContent );
+}
+
 /**
  * Fetches a conversation from the server when a `sessionId` is available.
  */
@@ -50,9 +75,27 @@ export default function useConversation( {
 	const onSuccessRef = useRef( onSuccess );
 	onSuccessRef.current = onSuccess;
 	const pollStartedAtRef = useRef< number | null >( null );
+	const [ pendingTexts, setPendingTexts ] = useState< string[] >( [] );
+
+	useEffect( () => {
+		if ( ! refetchWhileAwaitingReply || ! sessionId ) {
+			return;
+		}
+		let cancelled = false;
+		loadPendingTexts( sessionId )
+			.then( ( texts ) => ! cancelled && setPendingTexts( texts ) )
+			.catch( () => {} );
+		return () => {
+			cancelled = true;
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- read the local store once per session
+	}, [ sessionId ] );
 
 	const shouldPoll = ( current?: { messages: Message[] } ): boolean => {
-		if ( ! refetchWhileAwaitingReply || ! endsOnUserTurn( current ) ) {
+		const unanswered =
+			endsOnUserTurn( current ) ||
+			( !! current && pendingTexts.some( ( text ) => ! hasReplyTo( current.messages, text ) ) );
+		if ( ! refetchWhileAwaitingReply || ! unanswered ) {
 			pollStartedAtRef.current = null;
 			return false;
 		}

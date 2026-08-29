@@ -6,6 +6,14 @@ jest.mock(
 	'@automattic/agenttic-client',
 	() => ( {
 		loadAllMessagesFromServer: jest.fn(),
+		loadConversation: jest.fn( async () => ( { messages: [] } ) ),
+		getUnresolvedMessages: ( messages: Array< { metadata?: { deliveryStatus?: string } } > ) =>
+			messages.filter( ( m ) => m.metadata?.deliveryStatus === 'pending' ),
+		messageTextContent: ( m: { parts: Array< { type: string; text?: string } > } ) =>
+			m.parts
+				.filter( ( part ) => part.type === 'text' )
+				.map( ( part ) => part.text )
+				.join( '\n' ),
 	} ),
 	{ virtual: true }
 );
@@ -18,8 +26,9 @@ jest.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: jest.fn(),
 } ) );
 
+import { loadConversation } from '@automattic/agenttic-client';
 import { useQuery } from '@tanstack/react-query';
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { useAgentsManagerContext } from '../../contexts';
 import useConversation from '../use-conversation';
 
@@ -122,6 +131,33 @@ describe( 'useConversation', () => {
 			setOrchestrator();
 			renderHook( () => useConversation( {} ) );
 			expect( intervalFor( [ user ] ) ).toBe( false );
+		} );
+
+		it( 'polls while a locally pending turn has no reply on the server yet', async () => {
+			setOrchestrator();
+			const pendingUser = {
+				role: 'user',
+				kind: 'message',
+				messageId: 'p',
+				parts: [ { type: 'text', text: 'still waiting' } ],
+				metadata: { deliveryStatus: 'pending' },
+			};
+			( loadConversation as jest.Mock ).mockResolvedValueOnce( { messages: [ pendingUser ] } );
+			// Server transcript ends on an older agent turn and lacks the pending question.
+			mockUseQuery.mockReturnValue( {
+				data: { messages: [ user, agent ] },
+				error: null,
+				isError: false,
+				isLoading: false,
+			} );
+
+			const { result } = renderHook( () => useConversation( { refetchWhileAwaitingReply: true } ) );
+			await waitFor( () => expect( result.current.isAwaitingReply ).toBe( true ) );
+
+			const { refetchInterval } = mockUseQuery.mock.calls.at( -1 )[ 0 ];
+			expect( refetchInterval( { state: { data: { messages: [ user, agent ] } } } ) ).toBe( 3000 );
+			const answered = [ user, agent, { ...pendingUser, metadata: {} }, agent ];
+			expect( refetchInterval( { state: { data: { messages: answered } } } ) ).toBe( false );
 		} );
 
 		it( 'gives up after the timeout', () => {
