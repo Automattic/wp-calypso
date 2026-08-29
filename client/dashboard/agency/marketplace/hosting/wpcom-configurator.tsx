@@ -126,25 +126,31 @@ export default function WpcomConfigurator( {
 							</ToggleGroupControl>
 						) }
 						{ ! isReferralMode && isCustom && (
-							<HStack justify="flex-start" alignment="center" spacing={ 4 } wrap expanded={ false }>
-								<NumberControl
-									className="marketplace-hosting__stepper"
-									__next40pxDefaultSize
-									isShiftStepEnabled
-									min={ 1 }
-									label={ __( 'Number of sites' ) }
-									hideLabelFromVision
-									spinControls="custom"
-									value={ String( customQuantity ) }
-									onChange={ ( value ) => {
-										const next = Math.max( 1, Number( value ) || 1 );
-										setCustomQuantity( next );
-										onQuantityChange( next );
-									} }
-								/>
-								<VStack spacing={ 2 } alignment="flex-start">
+							<VStack spacing={ 3 }>
+								<HStack
+									justify="flex-start"
+									alignment="center"
+									spacing={ 4 }
+									wrap
+									expanded={ false }
+								>
+									<NumberControl
+										className="marketplace-hosting__stepper"
+										__next40pxDefaultSize
+										isShiftStepEnabled
+										min={ 1 }
+										label={ __( 'Number of sites' ) }
+										hideLabelFromVision
+										spinControls="custom"
+										value={ String( customQuantity ) }
+										onChange={ ( value ) => {
+											const next = Math.max( 1, Number( value ) || 1 );
+											setCustomQuantity( next );
+											onQuantityChange( next );
+										} }
+									/>
 									<HStack
-										spacing={ 3 }
+										spacing={ 2 }
 										justify="flex-start"
 										alignment="center"
 										expanded={ false }
@@ -171,38 +177,38 @@ export default function WpcomConfigurator( {
 											</>
 										) }
 									</HStack>
-									{ milestones.length > 0 && (
-										<HStack
-											spacing={ 2 }
-											justify="flex-start"
-											alignment="center"
-											expanded={ false }
-											wrap
-										>
-											<Text variant="muted" size={ 12 }>
-												{ __( 'Buy more, save more' ) }
-											</Text>
-											{ milestones.map( ( milestone ) => (
-												<Button
-													key={ milestone.quantity }
-													className="marketplace-hosting__tier-chip"
-													onClick={ () => {
-														setCustomQuantity( milestone.quantity );
-														onQuantityChange( milestone.quantity );
-													} }
-												>
-													{ sprintf(
-														/* translators: %1$d: number of sites, %2$d: discount percentage */
-														__( '%1$d sites · %2$d%% off' ),
-														milestone.quantity,
-														milestone.discountPercent
-													) }
-												</Button>
-											) ) }
-										</HStack>
-									) }
-								</VStack>
-							</HStack>
+								</HStack>
+								{ milestones.length > 0 && (
+									<HStack
+										spacing={ 2 }
+										justify="flex-start"
+										alignment="center"
+										expanded={ false }
+										wrap
+									>
+										<Text variant="muted" size={ 12 }>
+											{ __( 'Buy more, save more' ) }
+										</Text>
+										{ milestones.map( ( milestone ) => (
+											<Button
+												key={ milestone.quantity }
+												className="marketplace-hosting__tier-chip"
+												onClick={ () => {
+													setCustomQuantity( milestone.quantity );
+													onQuantityChange( milestone.quantity );
+												} }
+											>
+												{ sprintf(
+													/* translators: %1$d: number of sites, %2$d: discount percentage */
+													__( '%1$d sites · %2$d%% off' ),
+													milestone.quantity,
+													milestone.discountPercent
+												) }
+											</Button>
+										) ) }
+									</HStack>
+								) }
+							</VStack>
 						) }
 						{ ! isReferralMode &&
 							! ( isCustom && milestones.length > 0 ) &&
