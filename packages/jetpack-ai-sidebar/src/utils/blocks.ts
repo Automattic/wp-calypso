@@ -8,14 +8,37 @@ export type BlockEditorStore = {
 	getBlocks?: ( rootClientId?: string ) => BlockSnapshot[];
 	getBlocksByName?: ( blockName: string ) => string[];
 	__experimentalGetGlobalBlocksByName?: ( blockName: string ) => string[];
+	getSelectedBlock?: () => BlockSnapshot | null;
+	getSelectedBlockClientId?: () => string | null;
 };
 
+export type EditorPostId = number | string | null;
+
 export type EditorStore = {
+	getCurrentPostId?: () => EditorPostId | undefined;
 	getCurrentPostType?: () => string | undefined;
 	getRenderingMode?: () => string | undefined;
 };
 
+export type EditorContentSelection = {
+	block: BlockSnapshot;
+	clientId: string;
+	postId: EditorPostId;
+	postType: string;
+};
+
 const CONTENT_POST_TYPES = new Set( [ 'post', 'page' ] );
+
+function normaliseEditorPostId( postId: EditorPostId | undefined ): EditorPostId {
+	if ( typeof postId === 'number' ) {
+		return postId > 0 ? postId : null;
+	}
+	if ( typeof postId === 'string' ) {
+		const trimmedPostId = postId.trim();
+		return trimmedPostId && trimmedPostId !== '0' ? trimmedPostId : null;
+	}
+	return null;
+}
 
 export function getEditorContentBlocks(
 	blockEditor?: BlockEditorStore,
@@ -56,6 +79,40 @@ export function flattenBlocks( blocks: BlockSnapshot[] ): BlockSnapshot[] {
 	};
 	walk( blocks );
 	return out;
+}
+
+export function getEditorContentSelection(
+	blockEditor?: BlockEditorStore,
+	editor?: EditorStore,
+	rememberedClientId?: string
+): EditorContentSelection | null {
+	const postId = normaliseEditorPostId( editor?.getCurrentPostId?.() );
+	const postType = editor?.getCurrentPostType?.();
+	if ( ! postType || ! CONTENT_POST_TYPES.has( postType ) ) {
+		return null;
+	}
+
+	const selectedClientId =
+		blockEditor?.getSelectedBlockClientId?.() ??
+		blockEditor?.getSelectedBlock?.()?.clientId ??
+		rememberedClientId;
+	if ( ! selectedClientId ) {
+		return null;
+	}
+
+	const block = flattenBlocks( getEditorContentBlocks( blockEditor, editor ) ).find(
+		( candidate ) => candidate.clientId === selectedClientId
+	);
+	if ( ! block ) {
+		return null;
+	}
+
+	return {
+		block,
+		clientId: selectedClientId,
+		postId,
+		postType,
+	};
 }
 
 /** Count occurrences of `needle` in `source` (overlapping matches counted). */

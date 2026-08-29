@@ -96,6 +96,26 @@ describe( 'withCanvasGuard', () => {
 		expect( executeAbility ).not.toHaveBeenCalled();
 	} );
 
+	it( 'refuses a Jetpack block-content update once the canvas has moved', async () => {
+		setOpenPost( ABOUT_PAGE );
+		bindToOpenCanvas();
+		setOpenPost( CONTACT_PAGE );
+
+		const executeAbility = jest.fn();
+		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
+
+		const result = await guarded!.executeAbility( 'wpcom__update_block_content', {
+			clientId: 'paragraph',
+			content: 'Changed copy',
+		} );
+
+		expect( executeAbility ).not.toHaveBeenCalled();
+		expect( result ).toMatchObject( {
+			returnToAgent: true,
+			result: { success: false, error: 'editor_canvas_moved' },
+		} );
+	} );
+
 	it( 'refuses a canvas write when the editor has no page open at all', async () => {
 		// The looping case: page-design polls for a canvas to appear, so letting this
 		// through leaves the agent retrying against a page that is never coming back.
@@ -389,6 +409,7 @@ describe( 'withCanvasGuard, dispatched through ability callbacks', () => {
 				Promise.resolve( [
 					{ name: 'big-sky/editor-navigate', callback },
 					{ name: 'big-sky/stream-page-design', callback },
+					{ name: 'wpcom/update-block-content', callback },
 				] )
 			),
 			executeAbility: jest.fn(),
@@ -435,6 +456,26 @@ describe( 'withCanvasGuard, dispatched through ability callbacks', () => {
 		expect( callback ).not.toHaveBeenCalled();
 		// The same envelope the guarded abilities return from their own callbacks,
 		// so agenttic-client reads `returnToAgent` off it unchanged.
+		expect( result ).toMatchObject( {
+			returnToAgent: true,
+			result: { success: false, error: 'editor_canvas_moved' },
+		} );
+	} );
+
+	it( 'guards Jetpack block updates dispatched through their callback', async () => {
+		setOpenPost( ABOUT_PAGE );
+		bindToOpenCanvas();
+		setOpenPost( CONTACT_PAGE );
+
+		const callback = jest.fn();
+		const guarded = withCanvasGuard( createCallbackProvider( callback ) );
+
+		const result = await callAbility( guarded!, 'wpcom/update-block-content', {
+			clientId: 'paragraph',
+			content: 'Changed copy',
+		} );
+
+		expect( callback ).not.toHaveBeenCalled();
 		expect( result ).toMatchObject( {
 			returnToAgent: true,
 			result: { success: false, error: 'editor_canvas_moved' },

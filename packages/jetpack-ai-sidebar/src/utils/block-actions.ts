@@ -8,7 +8,13 @@
 
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { dispatch, select } from '@wordpress/data';
-import { countOccurrences } from './blocks';
+import {
+	countOccurrences,
+	flattenBlocks,
+	getEditorContentBlocks,
+	getEditorContentSelection,
+	type EditorContentSelection,
+} from './blocks';
 
 /**
  * Post fields a picker checkpoint can snapshot and restore.
@@ -53,6 +59,45 @@ function getBlockEditorSelect(): any | null {
 	} catch {
 		return null;
 	}
+}
+
+function getEditorSelect(): any | null {
+	try {
+		const wpData = ( window as any ).wp?.data;
+		if ( ! wpData?.select ) {
+			return null;
+		}
+		return wpData.select( 'core/editor' ) ?? null;
+	} catch {
+		return null;
+	}
+}
+
+function getEditorContentBlockList(): any[] {
+	return flattenBlocks(
+		getEditorContentBlocks( getBlockEditorSelect() ?? undefined, getEditorSelect() ?? undefined )
+	);
+}
+
+function getCurrentEditorContentSelection(): EditorContentSelection | null {
+	const selectedOrRememberedBlock = getSelectedOrRememberedBlock();
+	return getEditorContentSelection(
+		getBlockEditorSelect() ?? undefined,
+		getEditorSelect() ?? undefined,
+		selectedOrRememberedBlock?.clientId
+	);
+}
+
+function isSameEditorContentSelection(
+	expected: EditorContentSelection,
+	actual: EditorContentSelection | null
+): boolean {
+	return (
+		actual !== null &&
+		actual.clientId === expected.clientId &&
+		actual.postType === expected.postType &&
+		String( actual.postId ) === String( expected.postId )
+	);
 }
 
 function getWindowBlockEditorDispatch(): any | null {
@@ -539,16 +584,20 @@ export function hasEditableBlockTarget(
 	return !! resolveEditableBlockAttribute( block, { attributeName, currentText } );
 }
 
-function getBlockSnapshot(
+type BlockContentSnapshot = {
+	clientId: string;
+	name: string;
+	content: string;
+	attributeName?: string;
+};
+
+function getBlockSnapshotFromBlock(
+	block: any,
 	clientId: string,
 	attributeName?: string,
 	currentText?: string,
 	expectedContent?: string
-): { clientId: string; name: string; content: string; attributeName?: string } | null {
-	const block = getBlockEditorSelect()?.getBlock?.( clientId );
-	if ( ! block ) {
-		return null;
-	}
+): BlockContentSnapshot {
 	const resolvedAttribute = resolveEditableBlockAttribute( block, {
 		attributeName,
 		currentText,
@@ -562,6 +611,46 @@ function getBlockSnapshot(
 	};
 }
 
+function getBlockSnapshot(
+	clientId: string,
+	attributeName?: string,
+	currentText?: string,
+	expectedContent?: string
+): BlockContentSnapshot | null {
+	const block = getEditorContentBlockList().find(
+		( candidate ) => candidate.clientId === clientId
+	);
+	return block
+		? getBlockSnapshotFromBlock( block, clientId, attributeName, currentText, expectedContent )
+		: null;
+}
+
+function getUniqueCurrentTextAttribute(
+	block: any,
+	currentText: string,
+	attributeName?: string
+): { attributeName?: string; matchCount: number } {
+	const attributeNames = attributeName ? [ attributeName ] : getStringLikeAttributeNames( block );
+	let matchedAttribute: string | undefined;
+	let matchCount = 0;
+
+	attributeNames.forEach( ( candidate ) => {
+		const candidateCount = countCurrentTextOccurrences(
+			getAttributeContent( block, candidate ) ?? '',
+			currentText
+		);
+		if ( candidateCount > 0 ) {
+			matchedAttribute = candidate;
+			matchCount += candidateCount;
+		}
+	} );
+
+	return {
+		...( matchCount === 1 && matchedAttribute ? { attributeName: matchedAttribute } : {} ),
+		matchCount,
+	};
+}
+
 function findBlockSnapshotByCurrentText(
 	currentText: string,
 	attributeName?: string
@@ -569,7 +658,7 @@ function findBlockSnapshotByCurrentText(
 	snapshot?: { clientId: string; name: string; content: string; attributeName: string };
 	error?: string;
 } {
-	const blocks = getBlockEditorSelect()?.getBlocks?.() ?? [];
+	const blocks = getEditorContentBlockList();
 	const matches: Array< {
 		clientId: string;
 		name: string;
@@ -577,7 +666,7 @@ function findBlockSnapshotByCurrentText(
 		attributeName: string;
 	} > = [];
 
-	const visit = ( block: any ) => {
+	blocks.forEach( ( block: any ) => {
 		if ( ! block ) {
 			return;
 		}
@@ -602,11 +691,7 @@ function findBlockSnapshotByCurrentText(
 				matches.push( snapshot );
 			}
 		} );
-
-		( block.innerBlocks ?? [] ).forEach( visit );
-	};
-
-	blocks.forEach( visit );
+	} );
 
 	if ( matches.length === 1 ) {
 		return { snapshot: matches[ 0 ] };
@@ -617,6 +702,10 @@ function findBlockSnapshotByCurrentText(
 	return {};
 }
 
+type HandleUpdateBlockContentOptions = {
+	requireSelectedEditorContent?: boolean;
+};
+
 /**
  * Handle the update-block-content tool call: apply text changes to a block.
  * @param {any} input - Tool input with clientId, content, optional summary / currentText,
@@ -626,7 +715,10 @@ function findBlockSnapshotByCurrentText(
  * @returns Result with success flag and (on success) the pre-edit `contentBefore`
  *   so callers can revert later via `undoBlockEdit`.
  */
-export function handleUpdateBlockContent( input: any ): any {
+export function handleUpdateBlockContent(
+	input: any,
+	{ requireSelectedEditorContent = false }: HandleUpdateBlockContentOptions = {}
+): any {
 	const { clientId, content, summary, currentText, shouldApply } = input;
 	const editableAttribute = normaliseAttributeName(
 		input.editableAttribute ?? input.attributeName
@@ -646,8 +738,71 @@ export function handleUpdateBlockContent( input: any ): any {
 
 	const hasCurrentText = typeof currentText === 'string' && currentText !== '';
 	let targetClientId = clientId;
-	let snapshot = getBlockSnapshot( targetClientId, editableAttribute, currentText );
-	if ( ! snapshot ) {
+	const capturedSelection = requireSelectedEditorContent
+		? getCurrentEditorContentSelection()
+		: null;
+	if ( requireSelectedEditorContent && ! capturedSelection ) {
+		return {
+			success: false,
+			error: 'selected block is not editable post content',
+			returnToAgent: false,
+		};
+	}
+
+	let snapshot: BlockContentSnapshot | null = null;
+	if ( capturedSelection ) {
+		if ( clientId === capturedSelection.clientId ) {
+			snapshot = getBlockSnapshotFromBlock(
+				capturedSelection.block,
+				capturedSelection.clientId,
+				editableAttribute,
+				currentText
+			);
+		} else if ( hasCurrentText ) {
+			const selectedMatch = getUniqueCurrentTextAttribute(
+				capturedSelection.block,
+				currentText,
+				editableAttribute
+			);
+			if ( selectedMatch.matchCount === 0 ) {
+				return {
+					success: false,
+					error: 'currentText not found in selected block content',
+					returnToAgent: false,
+				};
+			}
+			if ( selectedMatch.matchCount > 1 || ! selectedMatch.attributeName ) {
+				// eslint-disable-next-line no-console
+				console.warn( '[Jetpack AI] currentText matches multiple spans in block content', {
+					clientId,
+				} );
+				return {
+					success: false,
+					error: 'currentText matches multiple spans in block content',
+					returnToAgent: false,
+				};
+			}
+
+			targetClientId = capturedSelection.clientId;
+			snapshot = getBlockSnapshotFromBlock(
+				capturedSelection.block,
+				targetClientId,
+				selectedMatch.attributeName,
+				currentText
+			);
+			// eslint-disable-next-line no-console
+			console.warn( '[Jetpack AI] stale clientId matched by currentText', {
+				clientId,
+				targetClientId,
+			} );
+		} else {
+			return { success: false, error: 'block not found', returnToAgent: false };
+		}
+	} else {
+		snapshot = getBlockSnapshot( targetClientId, editableAttribute, currentText );
+	}
+
+	if ( ! capturedSelection && ! snapshot ) {
 		if ( hasCurrentText ) {
 			const selectedClientId = getBlockEditorSelect()?.getSelectedBlockClientId?.();
 			if ( selectedClientId ) {
@@ -704,10 +859,9 @@ export function handleUpdateBlockContent( input: any ): any {
 				} );
 			}
 		}
-
-		if ( ! snapshot ) {
-			return { success: false, error: 'block not found', returnToAgent: false };
-		}
+	}
+	if ( ! snapshot ) {
+		return { success: false, error: 'block not found', returnToAgent: false };
 	}
 	if ( ! snapshot.attributeName ) {
 		return {
@@ -754,7 +908,6 @@ export function handleUpdateBlockContent( input: any ): any {
 	// Short delay so the shimmer is visible before content swaps
 	return new Promise< any >( ( resolve ) => {
 		setTimeout( () => {
-			let latestSnapshot = getBlockSnapshot( targetClientId, snapshotAttribute, currentText );
 			const resolveFailure = ( error: string ) => {
 				if ( blockEl ) {
 					removeProcessingEffect( blockEl );
@@ -769,7 +922,27 @@ export function handleUpdateBlockContent( input: any ): any {
 				return;
 			}
 
-			if ( ! latestSnapshot && hasCurrentText ) {
+			let latestSnapshot: BlockContentSnapshot | null;
+			if ( capturedSelection ) {
+				const latestSelection = getCurrentEditorContentSelection();
+				if (
+					! latestSelection ||
+					! isSameEditorContentSelection( capturedSelection, latestSelection )
+				) {
+					resolveFailure( 'context changed' );
+					return;
+				}
+				latestSnapshot = getBlockSnapshotFromBlock(
+					latestSelection.block,
+					targetClientId,
+					snapshotAttribute,
+					currentText
+				);
+			} else {
+				latestSnapshot = getBlockSnapshot( targetClientId, snapshotAttribute, currentText );
+			}
+
+			if ( ! capturedSelection && ! latestSnapshot && hasCurrentText ) {
 				const fallback = findBlockSnapshotByCurrentText( currentText, snapshotAttribute );
 				if ( fallback.error ) {
 					resolveFailure( fallback.error );
@@ -822,6 +995,14 @@ export function handleUpdateBlockContent( input: any ): any {
 					clientId: targetClientId,
 				} );
 				resolveFailure( 'block content changed while applying edit' );
+				return;
+			}
+
+			if (
+				capturedSelection &&
+				! isSameEditorContentSelection( capturedSelection, getCurrentEditorContentSelection() )
+			) {
+				resolveFailure( 'context changed' );
 				return;
 			}
 

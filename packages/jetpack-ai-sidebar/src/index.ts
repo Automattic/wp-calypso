@@ -35,6 +35,8 @@ import {
 	type CheckpointApi,
 	type CheckpointField,
 	applyReviewEdit,
+	getEditableBlockContent,
+	hasEditableBlockTarget,
 	findBlockElement,
 	findBlockListLayout,
 	handleUpdateBlockContent,
@@ -51,6 +53,12 @@ import {
 	BLOCK_ACTION_COMPLETE_EVENT,
 	SELECTED_BLOCK_CLEAR_EVENT,
 } from './utils/block-actions';
+import {
+	getEditorContentSelection,
+	type BlockEditorStore,
+	type EditorContentSelection,
+	type EditorStore,
+} from './utils/blocks';
 import {
 	isImageStudioAvailable,
 	openImageStudioForBlock,
@@ -99,6 +107,24 @@ type BlockEditSnapshot = {
 
 const blockEditSnapshots = new Map< string, BlockEditSnapshot >();
 const editorBlocksSignatures = new WeakMap< any[], string >();
+
+function getCurrentEditableContentSelection(): EditorContentSelection | null {
+	try {
+		const wpData = ( window as any ).wp?.data;
+		if ( ! wpData?.select ) {
+			return null;
+		}
+
+		const selection = getEditorContentSelection(
+			wpData.select( 'core/block-editor' ) as BlockEditorStore,
+			wpData.select( 'core/editor' ) as EditorStore,
+			getSelectedOrRememberedBlock()?.clientId
+		);
+		return selection && hasEditableBlockTarget( selection.block ) ? selection : null;
+	} catch {
+		return null;
+	}
+}
 
 function getCurrentEditorBlocks(): any[] | undefined {
 	try {
@@ -799,7 +825,9 @@ function createUpdateBlockContentAgentMessage(
 async function handleUpdateBlockContentForChat( input: any ): Promise< any > {
 	const toolCallId =
 		typeof input?.toolCallId === 'string' && input.toolCallId ? input.toolCallId : undefined;
-	const result = await handleUpdateBlockContent( input );
+	const result = await handleUpdateBlockContent( input, {
+		requireSelectedEditorContent: true,
+	} );
 	if ( result?.success !== true ) {
 		if ( toolCallId ) {
 			blockEditSnapshots.delete( toolCallId );
@@ -900,7 +928,7 @@ export const toolProvider = {
 			abilities = filterAbility( abilities, toolId );
 		}
 		const jetpackAbilities = [
-			...( isBlockTransformationsEnabled()
+			...( isBlockTransformationsEnabled() && getCurrentEditableContentSelection()
 				? [
 						{
 							...UPDATE_BLOCK_CONTENT_ABILITY,
@@ -964,29 +992,21 @@ export const toolProvider = {
  * @param {any} block - The block to serialize.
  * @returns {any} Serialized block with name, clientId, attributes, innerBlocks.
  */
-function serializeBlock( block: any ): any {
+
+function serializeBlock( block: any, blockEditor?: BlockEditorStore ): any {
+	const innerBlocks =
+		block.name === 'core/post-content' && block.clientId
+			? blockEditor?.getBlocks?.( block.clientId ) ?? block.innerBlocks ?? []
+			: block.innerBlocks ?? [];
+
 	return {
 		name: block.name,
 		clientId: block.clientId,
 		attributes: block.attributes,
-		innerBlocks: ( block.innerBlocks || [] ).map( serializeBlock ),
+		innerBlocks: innerBlocks.map( ( innerBlock: any ) =>
+			serializeBlock( innerBlock, blockEditor )
+		),
 	};
-}
-
-/**
- * Extract the full text content from a block's content attribute.
- * Handles both plain strings and RichTextData objects.
- * @param {any} rawContent - The block's content attribute value.
- * @returns {string} The resolved HTML string.
- */
-function resolveBlockContent( rawContent: any ): string {
-	if ( typeof rawContent === 'string' ) {
-		return rawContent;
-	}
-	if ( rawContent?.toHTMLString ) {
-		return rawContent.toHTMLString();
-	}
-	return '';
 }
 
 /**
@@ -1013,14 +1033,14 @@ export const contextProvider = {
 			const blockEditor = wpData.select( 'core/block-editor' );
 			if ( blockEditor ) {
 				const blocks = blockEditor.getBlocks?.() ?? [];
-				currentPageContent = suppressCurrentPageContent ? [] : blocks.map( serializeBlock );
-				const selectedBlock = getSelectedOrRememberedBlock();
-				if ( selectedBlock?.clientId ) {
-					selectedBlockClientId = selectedBlock.clientId;
-					rememberSelectedBlock( selectedBlock );
-					if ( selectedBlock.attributes?.content ) {
-						selectedBlockContent = resolveBlockContent( selectedBlock.attributes.content );
-					}
+				currentPageContent = suppressCurrentPageContent
+					? []
+					: blocks.map( ( block: any ) => serializeBlock( block, blockEditor ) );
+				const selectedContent = getCurrentEditableContentSelection();
+				if ( selectedContent ) {
+					selectedBlockClientId = selectedContent.clientId;
+					rememberSelectedBlock( selectedContent.block );
+					selectedBlockContent = getEditableBlockContent( selectedContent.block );
 				}
 			}
 		}

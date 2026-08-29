@@ -42,9 +42,12 @@ import type { ContextProvider, ToolProvider } from '../types';
 // `big_sky__apply_block_edits`. Matching the registered form against the name that
 // actually arrives would never hit, leaving the guard inert in production.
 const CANVAS_BOUND_ABILITIES = new Set(
-	[ 'big-sky/apply-block-edits', 'big-sky/stream-page-design', 'big-sky/restore-checkpoint' ].map(
-		normalizeAbilityName
-	)
+	[
+		'big-sky/apply-block-edits',
+		'big-sky/stream-page-design',
+		'big-sky/restore-checkpoint',
+		'wpcom/update-block-content',
+	].map( normalizeAbilityName )
 );
 
 // Abilities whose whole job is to move the canvas, so the move they cause must not

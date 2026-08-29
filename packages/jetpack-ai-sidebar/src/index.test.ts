@@ -18,7 +18,11 @@ import Proofread from './components/proofread';
 import SeoDescriptionPicker from './components/seo-description-picker';
 import SeoTitlePicker from './components/seo-title-picker';
 import TitlePicker from './components/title-picker';
-import { clearActiveBlockFocus, undoBlockEdit } from './utils/block-actions';
+import {
+	clearActiveBlockFocus,
+	clearRememberedSelectedBlock,
+	undoBlockEdit,
+} from './utils/block-actions';
 import { SUGGESTION_ACTION_COMPLETE_EVENT } from './utils/suggestion-events';
 import {
 	applyReviewEdit,
@@ -34,6 +38,10 @@ import {
 } from './index';
 
 Element.prototype.scrollIntoView = jest.fn();
+
+afterEach( () => {
+	clearRememberedSelectedBlock();
+} );
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
@@ -432,12 +440,15 @@ describe( 'contextProvider.getClientContext', () => {
 	} );
 
 	it( 'provides the selected block content', () => {
-		mockSelectedBlock = {
-			clientId: 'selected-block',
-			name: 'core/paragraph',
-			attributes: { content: 'Selected paragraph' },
-		};
-		installPostTypeMock( 'post' );
+		installWpDataMockWithBlockEditor(
+			{
+				'selected-block': {
+					name: 'core/paragraph',
+					attributes: { content: 'Selected paragraph' },
+				},
+			},
+			{ selectedBlockClientId: 'selected-block' }
+		);
 
 		expect( contextProvider.getClientContext().contextEntries ).toEqual( [
 			{
@@ -446,6 +457,111 @@ describe( 'contextProvider.getClientContext', () => {
 				data: { content: 'Selected paragraph' },
 			},
 		] );
+	} );
+
+	it( 'does not expose a selected template header as editable block context', () => {
+		installWpDataMockWithBlockEditor(
+			{
+				header: {
+					name: 'core/paragraph',
+					attributes: { content: 'Template header copy' },
+				},
+				'post-content': {
+					name: 'core/post-content',
+					attributes: {},
+				},
+				'page-paragraph': {
+					name: 'core/paragraph',
+					attributes: { content: 'Page copy' },
+				},
+			},
+			{
+				selectedBlockClientId: 'header',
+				rootClientIds: [ 'header', 'post-content' ],
+				controlledBlockClientIdsByRoot: {
+					'post-content': [ 'page-paragraph' ],
+				},
+				currentPostType: 'page',
+				renderingMode: 'template-locked',
+			}
+		);
+
+		expect( contextProvider.getClientContext() ).toMatchObject( {
+			currentPageContent: [
+				{
+					clientId: 'header',
+					name: 'core/paragraph',
+					attributes: { content: 'Template header copy' },
+				},
+				{
+					clientId: 'post-content',
+					name: 'core/post-content',
+					innerBlocks: [
+						{
+							clientId: 'page-paragraph',
+							name: 'core/paragraph',
+							attributes: { content: 'Page copy' },
+						},
+					],
+				},
+			],
+			selectedBlockClientId: '',
+			contextEntries: [
+				{
+					id: 'selected-block-content',
+					type: 'selected-block-content',
+					data: null,
+				},
+			],
+		} );
+	} );
+
+	it( 'exposes a selected page block from the controlled post-content tree', () => {
+		installWpDataMockWithBlockEditor(
+			{
+				'post-content': {
+					name: 'core/post-content',
+					attributes: {},
+				},
+				'page-paragraph': {
+					name: 'core/paragraph',
+					attributes: { content: 'Page copy' },
+				},
+			},
+			{
+				selectedBlockClientId: 'page-paragraph',
+				rootClientIds: [ 'post-content' ],
+				controlledBlockClientIdsByRoot: {
+					'post-content': [ 'page-paragraph' ],
+				},
+				currentPostType: 'page',
+				renderingMode: 'template-locked',
+			}
+		);
+
+		expect( contextProvider.getClientContext() ).toMatchObject( {
+			currentPageContent: [
+				{
+					clientId: 'post-content',
+					name: 'core/post-content',
+					innerBlocks: [
+						{
+							clientId: 'page-paragraph',
+							name: 'core/paragraph',
+							attributes: { content: 'Page copy' },
+						},
+					],
+				},
+			],
+			selectedBlockClientId: 'page-paragraph',
+			contextEntries: [
+				{
+					id: 'selected-block-content',
+					type: 'selected-block-content',
+					data: { content: 'Page copy' },
+				},
+			],
+		} );
 	} );
 
 	it( 'forwards jetpackSEOSuggestionsEnabled = true when the host enables SEO suggestions', () => {
@@ -2960,7 +3076,15 @@ describe( 'contextProvider', () => {
 			name: 'core/paragraph',
 			attributes: { content: 'Selected paragraph' },
 		};
-		installPostTypeMock( 'post' );
+		installWpDataMockWithBlockEditor(
+			{
+				'selected-block': {
+					name: 'core/paragraph',
+					attributes: { content: 'Selected paragraph' },
+				},
+			},
+			{ selectedBlockClientId: 'selected-block' }
+		);
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
 
@@ -3013,9 +3137,9 @@ describe( 'contextProvider', () => {
 
 describe( 'toolProvider', () => {
 	beforeEach( () => {
-		// Ensure wp.abilities is undefined so getAbilities falls into the
-		// empty-base case and only includes the provider's own definitions.
-		( window as any ).wp = {};
+		// Provide an eligible selected post-content block. wp.abilities remains
+		// undefined so getAbilities only includes the provider's own definitions.
+		installWpDataMockWithBlockEditor();
 	} );
 
 	afterEach( () => {
@@ -3034,6 +3158,50 @@ describe( 'toolProvider', () => {
 			expect( names ).toContain( LEGACY_SHOW_COMPONENT_ABILITY_NAME );
 			expect( names ).not.toContain( SHOW_COMPONENT_TOOL_ID );
 			expect( names ).not.toContain( LEGACY_SHOW_COMPONENT_TOOL_ID );
+		} );
+
+		it( 'omits update-block-content when no editable post-content block is selected', async () => {
+			installWpDataMockWithBlockEditor( undefined, { selectedBlockClientId: null } );
+
+			const abilities = await toolProvider.getAbilities();
+			const names = abilities.map( ( ability: any ) => ability.name );
+
+			expect( names ).not.toContain( 'wpcom/update-block-content' );
+			expect( names ).toContain( SHOW_COMPONENT_ABILITY_NAME );
+		} );
+
+		it( 'omits update-block-content for a selected template header', async () => {
+			installWpDataMockWithBlockEditor(
+				{
+					header: {
+						name: 'core/paragraph',
+						attributes: { content: 'Template header copy' },
+					},
+					'post-content': {
+						name: 'core/post-content',
+						attributes: {},
+					},
+					'page-paragraph': {
+						name: 'core/paragraph',
+						attributes: { content: 'Page copy' },
+					},
+				},
+				{
+					selectedBlockClientId: 'header',
+					rootClientIds: [ 'header', 'post-content' ],
+					controlledBlockClientIdsByRoot: {
+						'post-content': [ 'page-paragraph' ],
+					},
+					currentPostType: 'page',
+					renderingMode: 'template-locked',
+				}
+			);
+
+			const abilities = await toolProvider.getAbilities();
+			const names = abilities.map( ( ability: any ) => ability.name );
+
+			expect( names ).not.toContain( 'wpcom/update-block-content' );
+			expect( names ).toContain( SHOW_COMPONENT_ABILITY_NAME );
 		} );
 
 		it( 'wires a callback on each provided ability', async () => {
@@ -3104,14 +3272,17 @@ describe( 'toolProvider', () => {
 			checkpoint.clearCheckpoint( 'call-update-block' );
 		} );
 
-		it( 'checkpoints the re-resolved clientId after a delayed block reparse', async () => {
+		it( 'retargets a stale clientId only to the selected block with matching currentText', async () => {
 			jest.useFakeTimers();
-			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor( {
-				'first-live-client-id': {
-					name: 'core/paragraph',
-					attributes: { content: 'Teh quick fox jump over teh dog.' },
+			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor(
+				{
+					'first-live-client-id': {
+						name: 'core/paragraph',
+						attributes: { content: 'Teh quick fox jump over teh dog.' },
+					},
 				},
-			} );
+				{ selectedBlockClientId: 'first-live-client-id' }
+			);
 			const checkpoint = useCheckpoint();
 			const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 			const abilities = await toolProvider.getAbilities();
@@ -3126,17 +3297,12 @@ describe( 'toolProvider', () => {
 				toolCallId: 'call-reparsed-block',
 				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
 			} );
-			blocks[ 'second-live-client-id' ] = {
-				...blocks[ 'first-live-client-id' ],
-				attributes: { ...blocks[ 'first-live-client-id' ].attributes },
-			};
-			delete blocks[ 'first-live-client-id' ];
 			jest.advanceTimersByTime( 1000 );
 			const result = await pending;
 
 			expect( result ).toMatchObject( {
 				success: true,
-				clientId: 'second-live-client-id',
+				clientId: 'first-live-client-id',
 				contentBefore: 'Teh quick fox jump over teh dog.',
 				contentAfter: 'A quick fox leaps over the dog.',
 			} );
@@ -3145,16 +3311,81 @@ describe( 'toolProvider', () => {
 				targetClientId: 'first-live-client-id',
 			} );
 			expect( blockUpdates[ 0 ] ).toEqual( {
-				clientId: 'second-live-client-id',
+				clientId: 'first-live-client-id',
 				attrs: { content: 'A quick fox leaps over the dog.' },
 			} );
 			expect( checkpoint.canSwapCheckpoint( 'call-reparsed-block' ) ).toBe( true );
 			await checkpoint.swapCheckpoint( 'call-reparsed-block' );
-			expect( blocks[ 'second-live-client-id' ].attributes.content ).toBe(
+			expect( blocks[ 'first-live-client-id' ].attributes.content ).toBe(
 				'Teh quick fox jump over teh dog.'
 			);
 			checkpoint.clearCheckpoint( 'call-reparsed-block' );
 			warn.mockRestore();
+		} );
+
+		it( 'rejects a direct update to an unselected content block', async () => {
+			const { blockUpdates } = installWpDataMockWithBlockEditor(
+				{
+					selected: {
+						name: 'core/paragraph',
+						attributes: { content: 'Selected copy' },
+					},
+					unselected: {
+						name: 'core/paragraph',
+						attributes: { content: 'Other copy' },
+					},
+				},
+				{ selectedBlockClientId: 'selected' }
+			);
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const result = await updateBlock.callback( {
+				clientId: 'unselected',
+				content: 'Changed other copy',
+			} );
+
+			expect( result ).toMatchObject( {
+				success: false,
+				error: 'block not found',
+				returnToAgent: false,
+			} );
+			expect( blockUpdates ).toEqual( [] );
+		} );
+
+		it( 'does not recover a stale clientId from currentText in an unselected block', async () => {
+			const { blockUpdates } = installWpDataMockWithBlockEditor(
+				{
+					selected: {
+						name: 'core/paragraph',
+						attributes: { content: 'Selected copy' },
+					},
+					unselected: {
+						name: 'core/paragraph',
+						attributes: { content: 'Unique other copy' },
+					},
+				},
+				{ selectedBlockClientId: 'selected' }
+			);
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const result = await updateBlock.callback( {
+				clientId: 'stale-client-id',
+				content: 'Changed other copy',
+				currentText: 'Unique other copy',
+			} );
+
+			expect( result ).toMatchObject( {
+				success: false,
+				error: 'currentText not found in selected block content',
+				returnToAgent: false,
+			} );
+			expect( blockUpdates ).toEqual( [] );
 		} );
 
 		it( 'swaps a block checkpoint between the updated and original content', async () => {
@@ -3416,7 +3647,7 @@ describe( 'toolProvider', () => {
 
 			expect( result ).toMatchObject( {
 				success: false,
-				error: 'block not found',
+				error: 'context changed',
 				returnToAgent: false,
 			} );
 			expect( JSON.parse( result.agentMessage ) ).toEqual( {
@@ -3426,12 +3657,77 @@ describe( 'toolProvider', () => {
 					result: {
 						success: false,
 						message: 'I could not update the block. Please try again.',
-						error: 'block not found',
+						error: 'context changed',
 					},
 					followUpTasks: false,
 				},
 			} );
 			expect( checkpoint.hasCheckpoint( 'call-missing-target' ) ).toBe( false );
+		} );
+
+		it( 'fails without mutation when selection changes during the delayed update', async () => {
+			jest.useFakeTimers();
+			const { blockUpdates, editorContext } = installWpDataMockWithBlockEditor(
+				{
+					selected: {
+						name: 'core/paragraph',
+						attributes: { content: 'Selected copy' },
+					},
+					other: {
+						name: 'core/paragraph',
+						attributes: { content: 'Other copy' },
+					},
+				},
+				{ selectedBlockClientId: 'selected' }
+			);
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const pending = updateBlock.callback( {
+				clientId: 'selected',
+				content: 'Changed selected copy',
+				toolCallId: 'call-selection-changed',
+			} );
+			editorContext.selectedBlockClientId = 'other';
+			jest.advanceTimersByTime( 1000 );
+			const result = await pending;
+
+			expect( result ).toMatchObject( {
+				success: false,
+				error: 'context changed',
+				returnToAgent: false,
+			} );
+			expect( blockUpdates ).toEqual( [] );
+			expect( useCheckpoint().hasCheckpoint( 'call-selection-changed' ) ).toBe( false );
+		} );
+
+		it( 'fails without mutation when the editor canvas changes during the delayed update', async () => {
+			jest.useFakeTimers();
+			const { blockUpdates, editorContext } = installWpDataMockWithBlockEditor();
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const pending = updateBlock.callback( {
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				content: 'Changed copy',
+				toolCallId: 'call-canvas-changed',
+			} );
+			editorContext.currentPostId = 456;
+			editorContext.currentPostType = 'page';
+			jest.advanceTimersByTime( 1000 );
+			const result = await pending;
+
+			expect( result ).toMatchObject( {
+				success: false,
+				error: 'context changed',
+				returnToAgent: false,
+			} );
+			expect( blockUpdates ).toEqual( [] );
+			expect( useCheckpoint().hasCheckpoint( 'call-canvas-changed' ) ).toBe( false );
 		} );
 
 		it( 'documents the completed-edit summary contract in the update-block-content schema', async () => {
@@ -3446,6 +3742,9 @@ describe( 'toolProvider', () => {
 			expect( summaryDescription ).toContain( 'Changed "stuffs" to "stuff".' );
 			expect( summaryDescription ).toContain( 'no changes were needed' );
 			expect( summaryDescription ).not.toContain( 'brief user-friendly description' );
+			expect( updateBlock.description ).toContain( 'currently selected editable text block' );
+			expect( updateBlock.description ).toContain( 'open editor buffer' );
+			expect( updateBlock.description ).toContain( 'does not save or publish' );
 		} );
 
 		it( 'delegates non-Jetpack legacy show-component callbacks to Big Sky', async () => {
@@ -3995,16 +4294,36 @@ function installWpDataMockWithBlockEditor(
 			attributes: { content: 'original block content' },
 		},
 	},
-	options: { selectedBlockClientId?: string; rootClientIds?: string[] } = {}
+	options: {
+		selectedBlockClientId?: string | null;
+		rootClientIds?: string[];
+		controlledBlockClientIdsByRoot?: Record< string, string[] >;
+		currentPostId?: number | string | null;
+		currentPostType?: string;
+		renderingMode?: string;
+	} = {}
 ) {
 	const editorState: { title: string } = { title: 'original' };
 	const blockUpdates: Array< { clientId: string; attrs: Record< string, unknown > } > = [];
 	const selectedClientIds: string[] = [];
+	const editorContext = {
+		selectedBlockClientId: Object.prototype.hasOwnProperty.call( options, 'selectedBlockClientId' )
+			? options.selectedBlockClientId ?? null
+			: Object.keys( blocks )[ 0 ] ?? null,
+		currentPostId: Object.prototype.hasOwnProperty.call( options, 'currentPostId' )
+			? options.currentPostId ?? null
+			: 123,
+		currentPostType: options.currentPostType ?? 'post',
+		renderingMode: options.renderingMode ?? 'post-only',
+	};
 	( window as any ).wp = {
 		data: {
 			select: ( store: string ) => {
 				if ( store === 'core/editor' ) {
 					return {
+						getCurrentPostId: () => editorContext.currentPostId,
+						getCurrentPostType: () => editorContext.currentPostType,
+						getRenderingMode: () => editorContext.renderingMode,
 						getEditedPostAttribute: ( attr: string ) =>
 							attr === 'title' ? editorState.title : undefined,
 					};
@@ -4013,17 +4332,29 @@ function installWpDataMockWithBlockEditor(
 					return {
 						getBlock: ( clientId: string ) =>
 							blocks[ clientId ] ? { clientId, ...blocks[ clientId ] } : null,
-						getSelectedBlockClientId: () => options.selectedBlockClientId ?? null,
-						getBlocks: () =>
+						getSelectedBlock: () => {
+							const clientId = editorContext.selectedBlockClientId;
+							return clientId && blocks[ clientId ] ? { clientId, ...blocks[ clientId ] } : null;
+						},
+						getSelectedBlockClientId: () => editorContext.selectedBlockClientId,
+						getBlocksByName: ( blockName: string ) =>
 							Object.entries( blocks )
+								.filter( ( [ , block ] ) => block.name === blockName )
+								.map( ( [ clientId ] ) => clientId ),
+						getBlocks: ( rootClientId?: string ) => {
+							const controlledClientIds = rootClientId
+								? options.controlledBlockClientIdsByRoot?.[ rootClientId ] ?? []
+								: options.rootClientIds;
+							return Object.entries( blocks )
 								.filter(
 									( [ clientId ] ) =>
-										! options.rootClientIds || options.rootClientIds.includes( clientId )
+										! controlledClientIds || controlledClientIds.includes( clientId )
 								)
 								.map( ( [ clientId, block ] ) => ( {
 									clientId,
 									...block,
-								} ) ),
+								} ) );
+						},
 					};
 				}
 				return undefined;
@@ -4051,6 +4382,7 @@ function installWpDataMockWithBlockEditor(
 						},
 						selectBlock: ( clientId: string ) => {
 							selectedClientIds.push( clientId );
+							editorContext.selectedBlockClientId = clientId;
 						},
 					};
 				}
@@ -4058,7 +4390,7 @@ function installWpDataMockWithBlockEditor(
 			},
 		},
 	};
-	return { editorState, blockUpdates, blocks, selectedClientIds };
+	return { editorState, blockUpdates, blocks, selectedClientIds, editorContext };
 }
 
 describe( 'applyReviewEdit', () => {
@@ -4457,7 +4789,7 @@ describe( 'applyReviewEdit', () => {
 		warn.mockRestore();
 	} );
 
-	it( 'uses the live selected block when stale page content is outside the root block tree', async () => {
+	it( 'uses the controlled post-content tree when the selected page block is outside the template root', async () => {
 		const { blockUpdates } = installWpDataMockWithBlockEditor(
 			{
 				'page-content-client-id': {
@@ -4475,6 +4807,11 @@ describe( 'applyReviewEdit', () => {
 			{
 				selectedBlockClientId: 'page-content-client-id',
 				rootClientIds: [ 'template-client-id' ],
+				controlledBlockClientIdsByRoot: {
+					'template-client-id': [ 'page-content-client-id' ],
+				},
+				currentPostType: 'page',
+				renderingMode: 'template-locked',
 			}
 		);
 		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
@@ -4500,6 +4837,105 @@ describe( 'applyReviewEdit', () => {
 			},
 		] );
 		warn.mockRestore();
+	} );
+
+	it( 'rejects a template block outside the controlled post-content tree', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor(
+			{
+				'header-client-id': {
+					name: 'core/paragraph',
+					attributes: { content: 'Template header copy' },
+				},
+				'post-content-client-id': {
+					name: 'core/post-content',
+					attributes: {},
+				},
+				'page-content-client-id': {
+					name: 'core/paragraph',
+					attributes: { content: 'Page body copy' },
+				},
+			},
+			{
+				rootClientIds: [ 'header-client-id', 'post-content-client-id' ],
+				controlledBlockClientIdsByRoot: {
+					'post-content-client-id': [ 'page-content-client-id' ],
+				},
+				currentPostType: 'page',
+				renderingMode: 'template-locked',
+			}
+		);
+
+		const result = await applyReviewEdit(
+			'header-client-id',
+			'Changed template header copy',
+			undefined,
+			'Template header copy'
+		);
+
+		expect( result ).toMatchObject( { success: false, error: 'block not found' } );
+		expect( blockUpdates ).toEqual( [] );
+	} );
+
+	it( 'rejects block updates outside post and page entities', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor(
+			{
+				'template-paragraph': {
+					name: 'core/paragraph',
+					attributes: { content: 'Template copy' },
+				},
+			},
+			{
+				currentPostType: 'wp_template',
+				renderingMode: 'template-locked',
+			}
+		);
+
+		const result = await applyReviewEdit(
+			'template-paragraph',
+			'Changed template copy',
+			undefined,
+			'Template copy'
+		);
+
+		expect( result ).toMatchObject( { success: false, error: 'block not found' } );
+		expect( blockUpdates ).toEqual( [] );
+	} );
+
+	it( 'revalidates that the target remains in post content before the delayed write', async () => {
+		const controlledBlockClientIdsByRoot = {
+			'post-content-client-id': [ 'page-content-client-id' ],
+		};
+		const { blockUpdates } = installWpDataMockWithBlockEditor(
+			{
+				'post-content-client-id': {
+					name: 'core/post-content',
+					attributes: {},
+				},
+				'page-content-client-id': {
+					name: 'core/paragraph',
+					attributes: { content: 'Page body copy' },
+				},
+			},
+			{
+				rootClientIds: [ 'post-content-client-id' ],
+				controlledBlockClientIdsByRoot,
+				currentPostType: 'page',
+				renderingMode: 'template-locked',
+			}
+		);
+
+		const pending = applyReviewEdit(
+			'page-content-client-id',
+			'Changed page body copy',
+			undefined,
+			'Page body copy'
+		);
+		controlledBlockClientIdsByRoot[ 'post-content-client-id' ] = [];
+		jest.advanceTimersByTime( 1000 );
+		const result = await pending;
+
+		expect( result ).toMatchObject( { success: false, error: 'block not found' } );
+		expect( blockUpdates ).toEqual( [] );
 	} );
 
 	it( 'revalidates currentText against the latest block content before writing', async () => {
@@ -4732,11 +5168,20 @@ describe( 'applyReviewEdit', () => {
 				select: ( store: string ) => {
 					if ( store === 'core/block-editor' ) {
 						return {
-							getBlock: ( clientId: string ) => ( {
-								clientId,
-								name: 'core/paragraph',
-								attributes: { content: 'original block content' },
-							} ),
+							getBlocksByName: () => [],
+							getBlocks: () => [
+								{
+									clientId: '550e8400-e29b-41d4-a716-446655440000',
+									name: 'core/paragraph',
+									attributes: { content: 'original block content' },
+								},
+							],
+						};
+					}
+					if ( store === 'core/editor' ) {
+						return {
+							getCurrentPostType: () => 'post',
+							getRenderingMode: () => 'post-only',
 						};
 					}
 					return undefined;

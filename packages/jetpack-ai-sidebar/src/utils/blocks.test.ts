@@ -1,4 +1,4 @@
-import { getEditorContentBlocks, type EditorStore } from './blocks';
+import { getEditorContentBlocks, getEditorContentSelection, type EditorStore } from './blocks';
 import type { BlockSnapshot } from '../components/block-ref';
 
 const rootBlocks: BlockSnapshot[] = [
@@ -30,11 +30,13 @@ const contentBlocks: BlockSnapshot[] = [
 ];
 
 const postEditor: EditorStore = {
+	getCurrentPostId: () => 123,
 	getCurrentPostType: () => 'post',
 	getRenderingMode: () => 'post-only',
 };
 
 const pageSiteEditor: EditorStore = {
+	getCurrentPostId: () => 456,
 	getCurrentPostType: () => 'page',
 	getRenderingMode: () => 'template-locked',
 };
@@ -126,4 +128,83 @@ describe( 'getEditorContentBlocks', () => {
 			expect( getBlocks ).not.toHaveBeenCalled();
 		}
 	);
+} );
+
+describe( 'getEditorContentSelection', () => {
+	const getBlocks = ( rootClientId?: string ) =>
+		rootClientId === 'post-content' ? contentBlocks : rootBlocks;
+
+	it( 'returns a selected editable block from the page content tree', () => {
+		expect(
+			getEditorContentSelection(
+				{
+					getBlocks,
+					getBlocksByName: () => [ 'post-content' ],
+					getSelectedBlockClientId: () => 'paragraph',
+				},
+				pageSiteEditor
+			)
+		).toEqual( {
+			block: contentBlocks[ 0 ],
+			clientId: 'paragraph',
+			postId: 456,
+			postType: 'page',
+		} );
+	} );
+
+	it( 'uses a stable null post ID for a new unsaved page', () => {
+		expect(
+			getEditorContentSelection(
+				{
+					getBlocks,
+					getBlocksByName: () => [ 'post-content' ],
+					getSelectedBlockClientId: () => 'paragraph',
+				},
+				{
+					...pageSiteEditor,
+					getCurrentPostId: () => 0,
+				}
+			)
+		).toMatchObject( { clientId: 'paragraph', postId: null, postType: 'page' } );
+	} );
+
+	it( 'rejects a selected template block outside the page content tree', () => {
+		expect(
+			getEditorContentSelection(
+				{
+					getBlocks,
+					getBlocksByName: () => [ 'post-content' ],
+					getSelectedBlockClientId: () => 'header',
+				},
+				pageSiteEditor
+			)
+		).toBeNull();
+	} );
+
+	it( 'rejects an empty selection', () => {
+		expect(
+			getEditorContentSelection(
+				{
+					getBlocks,
+					getBlocksByName: () => [ 'post-content' ],
+					getSelectedBlockClientId: () => null,
+				},
+				pageSiteEditor
+			)
+		).toBeNull();
+	} );
+
+	it( 'accepts a remembered selection that remains in post content', () => {
+		expect(
+			getEditorContentSelection(
+				{
+					getBlocks,
+					getBlocksByName: () => [ 'post-content' ],
+					getSelectedBlockClientId: () => null,
+				},
+				pageSiteEditor,
+				'paragraph'
+			)
+		).toMatchObject( { clientId: 'paragraph', postId: 456, postType: 'page' } );
+	} );
 } );
