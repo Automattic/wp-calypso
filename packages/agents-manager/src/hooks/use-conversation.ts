@@ -33,7 +33,8 @@ interface Result {
 }
 
 const POLL_INTERVAL_MS = 3000;
-const POLL_TIMEOUT_MS = 90_000;
+// Tool-heavy turns (catalog reviews, batch edits) can run for minutes.
+const POLL_TIMEOUT_MS = 5 * 60_000;
 
 function endsOnUserTurn( data?: { messages: Message[] } ): boolean {
 	const last = data?.messages[ data.messages.length - 1 ];

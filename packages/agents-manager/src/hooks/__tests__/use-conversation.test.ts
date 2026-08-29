@@ -167,7 +167,7 @@ describe( 'useConversation', () => {
 			renderHook( () => useConversation( { refetchWhileAwaitingReply: true } ) );
 
 			expect( intervalFor( [ user ] ) ).toBe( 3000 );
-			now.mockReturnValue( 1_000 + 90_000 );
+			now.mockReturnValue( 1_000 + 5 * 60_000 );
 			expect( intervalFor( [ user ] ) ).toBe( false );
 			now.mockRestore();
 		} );
