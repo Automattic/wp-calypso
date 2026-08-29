@@ -1406,14 +1406,29 @@ export default function OrchestratorChat( {
 
 	// Retry a failed turn: drop its affordance and the failed bubble, then re-send
 	// the original prompt as a fresh turn. Deliberately does not repopulate the
-	// composer.
+	// composer. If the send never dispatches, put both back so the question is
+	// not lost a second time.
 	const handleRetryFailed = useCallback(
-		( text: string, failedMessageId?: string ) => {
+		async ( text: string, failedMessageId?: string ) => {
 			setFailedRetries( ( previous ) => previous.filter( ( retry ) => retry !== text ) );
 			if ( failedMessageId ) {
 				setDeletedMessageIds( ( previous ) => new Set( previous ).add( failedMessageId ) );
 			}
-			void submitChatMessage( text );
+			submitDispatchedRef.current = false;
+			await submitChatMessage( text );
+			if ( submitDispatchedRef.current ) {
+				return;
+			}
+			setFailedRetries( ( previous ) =>
+				previous.includes( text ) ? previous : [ ...previous, text ]
+			);
+			if ( failedMessageId ) {
+				setDeletedMessageIds( ( previous ) => {
+					const next = new Set( previous );
+					next.delete( failedMessageId );
+					return next;
+				} );
+			}
 		},
 		[ submitChatMessage ]
 	);

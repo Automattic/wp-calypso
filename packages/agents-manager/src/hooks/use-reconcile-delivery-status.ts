@@ -56,25 +56,43 @@ export default function useReconcileDeliveryStatus(): ReconcileResult | null {
 			return;
 		}
 		hasRunRef.current = true;
+		let cancelled = false;
 
-		findOrphanedConversation().then( async ( conversation ) => {
-			if ( ! conversation ) {
-				return;
-			}
-			// A `local-*` key never received a session id, so there is nothing to
-			// fetch: resolve `null` and let the primitive mark the turn failed.
-			const messages = await reconcileWithServer( conversation.messages, () =>
-				Promise.resolve( null )
-			);
-			setResult( {
-				messages,
-				failedTexts: messages
-					.filter( ( m ) => m.role === 'user' && m.metadata?.deliveryStatus === 'failed' )
-					.map( messageTextContent ),
+		findOrphanedConversation()
+			.then( async ( conversation ) => {
+				if ( ! conversation || cancelled ) {
+					return;
+				}
+				// A `local-*` key never received a session id, so there is nothing to
+				// fetch: resolve `null` and let the primitive mark the turn failed.
+				const messages = await reconcileWithServer( conversation.messages, () =>
+					Promise.resolve( null )
+				);
+				if ( cancelled ) {
+					return;
+				}
+				setResult( {
+					messages,
+					failedTexts: messages
+						.filter( ( m ) => m.role === 'user' && m.metadata?.deliveryStatus === 'failed' )
+						.map( messageTextContent ),
+				} );
+				// Surfaced in the panel now; drop the stored entry so it does not re-fire.
+				await clearConversation( conversation.storageKey );
+			} )
+			.catch( ( error ) => {
+				// Leave the stored entry so the next mount can try again.
+				hasRunRef.current = false;
+				if ( cancelled ) {
+					return;
+				}
+				// eslint-disable-next-line no-console
+				console.error( '[useReconcileDeliveryStatus] Failed to recover orphaned turn:', error );
 			} );
-			// Surfaced in the panel now; drop the stored entry so it does not re-fire.
-			await clearConversation( conversation.storageKey );
-		} );
+
+		return () => {
+			cancelled = true;
+		};
 	}, [ agentId ] );
 
 	return result;

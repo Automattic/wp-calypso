@@ -11,7 +11,7 @@ import type {
 	TextPart,
 } from '../client/types/index';
 
-export const STORAGE_KEY = 'a8c_agenttic_conversation_history';
+const STORAGE_KEY = 'a8c_agenttic_conversation_history';
 
 /**
  * Configuration for conversation storage

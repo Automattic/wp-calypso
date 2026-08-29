@@ -169,4 +169,18 @@ describe( 'useReconcileDeliveryStatus', () => {
 
 		expect( result.current!.failedTexts ).toEqual( [ 'q' ] );
 	} );
+
+	it( 'leaves the orphan in storage if reconciliation throws', async () => {
+		setAgent();
+		seed( 'local-1', [ { role: 'user', content: 'q', deliveryStatus: 'pending' } ] );
+		mockReconcile.mockRejectedValueOnce( new Error( 'boom' ) );
+		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+
+		const { result } = renderHook( () => useReconcileDeliveryStatus() );
+		await waitFor( () => expect( mockReconcile ).toHaveBeenCalled() );
+
+		expect( result.current ).toBeNull();
+		expect( sessionStorage.getItem( `${ STORAGE_PREFIX }local-1` ) ).not.toBeNull();
+		consoleError.mockRestore();
+	} );
 } );

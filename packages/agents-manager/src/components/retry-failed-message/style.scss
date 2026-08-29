@@ -13,9 +13,19 @@
 
 .agents-manager__retry-failed-message-button {
 	padding: 4px 12px;
-	border: 1px solid var( --color-neutral-10 );
+	border: 1px solid var( --color-muted );
 	border-radius: 2px;
 	background: transparent;
+	color: var( --color-foreground );
 	font-size: 14px;
 	cursor: pointer;
+
+	&:hover:not( :disabled ) {
+		background-color: color-mix( in srgb, var( --color-foreground ) 8%, transparent );
+	}
+
+	&:focus-visible {
+		outline: 2px solid var( --color-primary );
+		outline-offset: 2px;
+	}
 }
