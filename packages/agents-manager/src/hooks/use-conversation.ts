@@ -128,6 +128,8 @@ export default function useConversation( {
 		enabled: enabled && !! sessionId && ! isReaderChatAgent( agentId ),
 		refetchOnWindowFocus: false,
 		refetchInterval: ( query ) => ( shouldPoll( query.state.data ) ? POLL_INTERVAL_MS : false ),
+		// Keep waiting for the reply even if the merchant switches tabs meanwhile.
+		refetchIntervalInBackground: true,
 	} );
 
 	useEffect(

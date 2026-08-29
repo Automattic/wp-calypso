@@ -109,6 +109,7 @@ describe( 'useConversation', () => {
 			const { result } = renderHook( () => useConversation( { refetchWhileAwaitingReply: true } ) );
 
 			expect( intervalFor( [ user ] ) ).toBe( 3000 );
+			expect( mockUseQuery.mock.calls[ 0 ][ 0 ].refetchIntervalInBackground ).toBe( true );
 			expect( result.current.isAwaitingReply ).toBe( true );
 		} );
 
