@@ -93,9 +93,14 @@ export function CheckList( { items }: { items: string[] } ) {
 	);
 }
 
-export function CheckGrid( { items }: { items: string[] } ) {
+export function CheckGrid( { items, columns = 2 }: { items: string[]; columns?: 2 | 3 } ) {
 	return (
-		<div className="marketplace-hosting__includes">
+		<div
+			className={
+				'marketplace-hosting__includes' +
+				( columns === 3 ? ' marketplace-hosting__includes-3col' : '' )
+			}
+		>
 			{ items.map( ( item ) => (
 				<HStack key={ item } spacing={ 2 } justify="flex-start" alignment="center">
 					<Icon icon={ check } className="marketplace-hosting__check" />

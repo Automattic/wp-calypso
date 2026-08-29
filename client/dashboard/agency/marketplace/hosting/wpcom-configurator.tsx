@@ -192,7 +192,7 @@ export default function WpcomConfigurator( {
 						<Heading level={ 3 } size={ 13 }>
 							{ __( 'What’s included' ) }
 						</Heading>
-						<CheckGrid items={ WHATS_INCLUDED } />
+						<CheckGrid items={ WHATS_INCLUDED } columns={ 3 } />
 					</VStack>
 				</VStack>
 			</CardBody>
