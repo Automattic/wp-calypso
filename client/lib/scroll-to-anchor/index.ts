@@ -1,4 +1,4 @@
-import { getMasterbarElement } from 'calypso/lib/masterbar-element';
+import { getOmnibarElement } from 'calypso/lib/omnibar-element';
 import scrollTo from 'calypso/lib/scroll-to';
 
 // Danger! Recursive
@@ -40,7 +40,7 @@ export default function scrollToAnchor( options: { offset: number; container?: H
 	const el = hash && document.getElementById( hash.substring( 1 ) );
 
 	if ( hash && el ) {
-		const offsetHeight = getMasterbarElement()?.offsetHeight || 0;
+		const offsetHeight = getOmnibarElement()?.offsetHeight || 0;
 		const y = getOffsetTop( el, options.container ) - offsetHeight - offset;
 		scrollTo( { y, container: options.container } );
 	}

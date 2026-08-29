@@ -1,8 +1,8 @@
-import { getMasterbarElement } from 'calypso/lib/masterbar-element';
+import { getOmnibarElement } from 'calypso/lib/omnibar-element';
 
 export function calculateMetricsSectionScrollOffset() {
 	let offset = 0;
-	const headerEl = getMasterbarElement();
+	const headerEl = getOmnibarElement();
 	const menuHeight = 92;
 
 	// Offset to account for Masterbar if it is fixed position

@@ -67,13 +67,7 @@ import BodySectionCssClass from './body-section-css-class';
 import { getColorScheme, getColorSchemeFromCurrentQuery, refreshColorScheme } from './color-scheme';
 import HelpCenterLoader from './help-center-loader';
 import LayoutLoader from './loader';
-import {
-	shouldLoadInlineHelp,
-	handleScroll,
-	clearSidebarScrollStyles,
-	resetSidebarScrollState,
-	syncSidebarHeight,
-} from './utils';
+import { shouldLoadInlineHelp, handleScroll, clearSidebarScrollStyles } from './utils';
 
 /*
  * Hotfix for card and button styles hierarchy after <GdprBanner /> removal (see: #70601)
@@ -159,36 +153,26 @@ const Omnibar = ( props ) => (
 
 const READER_DARK_MODE_BODY_CLASS = 'is-reader-dark-mode';
 
-function SidebarScrollSynchronizer( { currentRoute } ) {
+function SidebarScrollSynchronizer() {
 	const isNarrow = useBreakpoint( '<660px' );
 	const active = ! isNarrow && ! config.isEnabled( 'jetpack-cloud' ); // Jetpack cloud hasn't yet aligned with WPCOM.
 
-	// Sizing `#content` is the only thing that makes the window scrollable when the
-	// sidebar is taller than it. Until that runs there is nothing to scroll, so no
-	// scroll event can arrive to trigger it. Run it on mount and per route, since
-	// the menu height changes between sections and the unmount path wipes the
-	// styles on the way to a global-sidebar page.
+	// Sizing `#content` is what makes the window scrollable, so until it runs there is no
+	// scroll event to trigger it.
 	useEffect( () => {
 		if ( ! active ) {
 			return;
 		}
 
-		// Drop the previous route's inline styles before measuring: they survive a
-		// route change, and a sidebar taller than the viewport never clears them, so
-		// the new page would inherit a stale offset and a stale content height.
-		resetSidebarScrollState();
 		clearSidebarScrollStyles();
-		syncSidebarHeight();
+		handleScroll();
 
-		const secondaryEl = document.getElementById( 'secondary' );
-		if ( ! secondaryEl ) {
+		const contentEl = document.getElementById( 'content' );
+		if ( ! contentEl ) {
 			return;
 		}
 
-		// The menu arrives after the route renders. Both `#secondary` and `.sidebar`
-		// are anchored to their parent's edges, so their box never changes when items
-		// land and a ResizeObserver would stay silent — watch the subtree instead.
-		let lastHeight = secondaryEl.scrollHeight;
+		let lastHeight = 0;
 		let frame = null;
 		const observer = new MutationObserver( () => {
 			if ( frame ) {
@@ -196,14 +180,15 @@ function SidebarScrollSynchronizer( { currentRoute } ) {
 			}
 			frame = window.requestAnimationFrame( () => {
 				frame = null;
-				if ( secondaryEl.scrollHeight === lastHeight ) {
+				const height = document.getElementById( 'secondary' )?.scrollHeight ?? 0;
+				if ( height === lastHeight ) {
 					return;
 				}
-				lastHeight = secondaryEl.scrollHeight;
-				syncSidebarHeight();
+				lastHeight = height;
+				handleScroll();
 			} );
 		} );
-		observer.observe( secondaryEl, { childList: true, subtree: true } );
+		observer.observe( contentEl, { childList: true, subtree: true } );
 
 		return () => {
 			if ( frame ) {
@@ -211,7 +196,7 @@ function SidebarScrollSynchronizer( { currentRoute } ) {
 			}
 			observer.disconnect();
 		};
-	}, [ active, currentRoute ] );
+	}, [ active ] );
 
 	useEffect( () => {
 		if ( active ) {
@@ -443,9 +428,7 @@ class Layout extends Component {
 					loadAgentsManager={ loadAgentsManager }
 				/>
 				<PluginCompassAgentLoader sectionName={ this.props.sectionName } />
-				{ ! shouldDisableSidebarScrollSynchronizer && (
-					<SidebarScrollSynchronizer currentRoute={ this.props.currentRoute } />
-				) }
+				{ ! shouldDisableSidebarScrollSynchronizer && <SidebarScrollSynchronizer /> }
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass
 					layoutFocus={ this.props.currentLayoutFocus }

@@ -1,15 +1,8 @@
 import { useRef } from 'react';
 import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { DEFAULT_FLOW, getFlowFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
-import { getMasterbarElement } from 'calypso/lib/masterbar-element';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
-
-let lastScrollPosition = 0; // Used for calculating scroll direction.
-let sidebarTop = 0; // Current sidebar top position.
-let pinnedSidebarTop = true; // We pin sidebar to the top by default.
-let pinnedSidebarBottom = false;
-let ticking = false; // Used for Scroll event throttling.
-let frameHandle: number | null = null; // Pending throttled frame, so a reset can cancel it.
+import { getOmnibarElement } from 'calypso/lib/omnibar-element';
 
 export function shouldLoadInlineHelp( sectionName: string, currentRoute: string ) {
 	if ( isWpMobileApp() ) {
@@ -35,29 +28,7 @@ export function shouldLoadInlineHelp( sectionName: string, currentRoute: string 
 }
 
 /**
- * Clears the pinning state, which outlives the component that drives it.
- *
- * `handleScroll` writes inline styles to `#secondary`, and the unmount path wipes
- * them. Without this reset the state machine resumes against a DOM it no longer
- * matches, and the first scroll takes the wrong branch.
- */
-export function resetSidebarScrollState(): void {
-	// A frame scheduled by the previous route would otherwise run against the state
-	// we are about to clear, and pin the sidebar at scroll position 0.
-	if ( frameHandle !== null ) {
-		window.cancelAnimationFrame( frameHandle );
-		frameHandle = null;
-	}
-	lastScrollPosition = 0;
-	sidebarTop = 0;
-	pinnedSidebarTop = true;
-	pinnedSidebarBottom = false;
-	ticking = false;
-}
-
-/**
- * Drops the inline styles `handleScroll` writes. It is the only writer of inline
- * styles on these two elements.
+ * Drops the inline styles `handleScroll` and `syncSidebarHeight` write.
  */
 export function clearSidebarScrollStyles(): void {
 	document.getElementById( 'content' )?.removeAttribute( 'style' );
@@ -66,168 +37,64 @@ export function clearSidebarScrollStyles(): void {
 
 type LayoutMetrics = {
 	windowHeight: number;
-	contentHeight?: number;
 	secondaryEl: HTMLElement | null;
 	secondaryElHeight?: number;
 	masterbarHeight?: number;
 };
 
 /**
- * Sizes `#content` so the window can scroll far enough to reveal a sidebar taller
- * than the viewport, and returns the measurements it took.
- *
- * Split out of `handleScroll` because it has to run whenever the layout changes —
- * on mount, per route, and when the menu finishes loading — while the pinning in
- * `handleScroll` belongs to real scroll gestures. Running the pinning at scroll
- * position 0 unpins the sidebar against stale measurements.
+ * Sizes `#content` so the window can scroll far enough to reveal a sidebar taller than
+ * the viewport, and returns the measurements it took.
  */
 export function syncSidebarHeight(): LayoutMetrics {
 	const windowHeight = window.innerHeight;
 	const contentEl = document.getElementById( 'content' );
-	const contentHeight = contentEl?.scrollHeight;
 	const secondaryEl = document.getElementById( 'secondary' ); // Or referred as sidebar.
 	const secondaryElHeight = secondaryEl?.scrollHeight;
-	const masterbarHeight = getMasterbarElement()?.getBoundingClientRect().height;
+	const masterbarHeight = getOmnibarElement()?.getBoundingClientRect().height;
 
 	// Check whether we need to adjust content height so that scroll events are triggered.
-	// `.layout__secondary` is position:fixed and clipped, so the content is our only
-	// chance for scroll events.
-	if ( contentEl && contentHeight && masterbarHeight && secondaryElHeight ) {
-		if ( contentHeight < secondaryElHeight ) {
-			// Adjust the content height so that it matches the sidebar + masterbar vertical scroll estate.
-			contentEl.style.minHeight = secondaryElHeight + masterbarHeight + 'px';
-		}
-
-		if (
-			windowHeight >= secondaryElHeight + masterbarHeight &&
-			contentEl &&
-			secondaryEl &&
-			( contentEl.style.minHeight || secondaryEl.style.position )
-		) {
-			// Hand `min-height` back to the stylesheet rather than forcing `initial`.
-			// Inline `initial` also overrode the `101vh` rule that keeps the page just
-			// scrollable enough for a scroll event to reach this handler, so once a short
-			// sidebar had cleared it, the next taller sidebar had no way to bootstrap.
-			// CSS code: client/my-sites/sidebar/style.scss:166.
+	// Sidebar has overflow: initial and position:fixed, so content is our only chance for scroll events.
+	if ( contentEl && secondaryEl && masterbarHeight && secondaryElHeight ) {
+		if ( secondaryElHeight + masterbarHeight > windowHeight ) {
+			contentEl.style.minHeight = `${ secondaryElHeight + masterbarHeight }px`;
+		} else {
 			contentEl.style.removeProperty( 'min-height' );
 			// In case that window is taller than the sidebar after resize we need to clean up any previously set inline styles
 			secondaryEl.removeAttribute( 'style' );
 		}
 	}
 
-	return { windowHeight, contentHeight, secondaryEl, secondaryElHeight, masterbarHeight };
+	return { windowHeight, secondaryEl, secondaryElHeight, masterbarHeight };
 }
 
-export const handleScroll = ( event: { type: string } ): void => {
-	// Do not run until next requestAnimationFrame or if running out of browser context.
-	if ( ticking ) {
+export const handleScroll = (): void => {
+	const { windowHeight, secondaryEl, secondaryElHeight, masterbarHeight } = syncSidebarHeight();
+
+	if ( ! secondaryEl || ! secondaryElHeight || ! masterbarHeight ) {
 		return;
 	}
 
-	const { windowHeight, contentHeight, secondaryEl, secondaryElHeight, masterbarHeight } =
-		syncSidebarHeight();
+	if ( secondaryElHeight + masterbarHeight <= windowHeight ) {
+		// The menu fits, and `syncSidebarHeight` has already handed it back to the stylesheet.
+		return;
+	}
 
-	if (
-		secondaryEl &&
-		secondaryElHeight !== undefined &&
-		masterbarHeight !== undefined &&
-		( secondaryElHeight + masterbarHeight > windowHeight || 'resize' === event.type ) // Only run when sidebar & masterbar are taller than window height OR we have a resize event
-	) {
-		// Throttle scroll event
-		frameHandle = window.requestAnimationFrame( function () {
-			frameHandle = null;
-			const maxScroll = secondaryElHeight + masterbarHeight - windowHeight; // Max sidebar inner scroll.
-			const scrollY = -document.body.getBoundingClientRect().top; // Get current scroll position.
+	const maxScroll = secondaryElHeight + masterbarHeight - windowHeight;
+	const scrollY = -document.body.getBoundingClientRect().top; // Negative while overscrolling.
 
-			// Check for overscrolling, this happens when swiping up at the top of the document in modern browsers.
-			if ( scrollY < 0 ) {
-				// Stick the sidebar to the top.
-				if ( ! pinnedSidebarTop ) {
-					pinnedSidebarTop = true;
-					pinnedSidebarBottom = false;
-					secondaryEl.style.position = 'fixed';
-					secondaryEl.style.top = '0';
-					secondaryEl.style.bottom = '0';
-				}
-
-				ticking = false;
-				return;
-			} else if ( scrollY + windowHeight > document.body.scrollHeight - 1 ) {
-				// When overscrolling at the bottom, stick the sidebar to the bottom.
-				if ( ! pinnedSidebarBottom ) {
-					pinnedSidebarBottom = true;
-					pinnedSidebarTop = false;
-
-					secondaryEl.style.position = 'fixed';
-					secondaryEl.style.top = 'inherit';
-					secondaryEl.style.bottom = '0';
-				}
-
-				ticking = false;
-				return;
-			}
-
-			if ( scrollY >= lastScrollPosition ) {
-				// When a down scroll has been detected.
-
-				if ( pinnedSidebarTop ) {
-					pinnedSidebarTop = false;
-					sidebarTop = masterbarHeight;
-
-					if ( scrollY > maxScroll ) {
-						//In case we have already passed the available scroll of the sidebar, add the current scroll
-						sidebarTop += scrollY;
-					}
-
-					secondaryEl.style.position = 'absolute';
-					secondaryEl.style.top = `${ sidebarTop }px`;
-					secondaryEl.style.bottom = 'inherit';
-				} else if (
-					! pinnedSidebarBottom &&
-					scrollY + masterbarHeight > maxScroll + secondaryEl.offsetTop
-				) {
-					// Pin it to the bottom.
-					pinnedSidebarBottom = true;
-
-					secondaryEl.style.position = 'fixed';
-					secondaryEl.style.top = 'inherit';
-					secondaryEl.style.bottom = '0';
-				}
-			} else if ( scrollY < lastScrollPosition ) {
-				// When a scroll up is detected.
-
-				// If it was pinned to the bottom, unpin and calculate relative scroll.
-				if ( pinnedSidebarBottom ) {
-					pinnedSidebarBottom = false;
-
-					// Calculate new offset position.
-					sidebarTop = Math.max( 0, scrollY + masterbarHeight - maxScroll );
-					if ( contentHeight === secondaryElHeight + masterbarHeight ) {
-						// When content is originally shorter than the sidebar and
-						// we have already made it equal to the sidebar + masterbar
-						// the offset will always be the masterbar height (top position).
-						sidebarTop = masterbarHeight;
-					}
-
-					secondaryEl.style.position = 'absolute';
-					secondaryEl.style.top = `${ sidebarTop }px`;
-					secondaryEl.style.bottom = 'inherit';
-				} else if ( ! pinnedSidebarTop && scrollY + masterbarHeight < sidebarTop ) {
-					// Pin it to the top.
-					pinnedSidebarTop = true;
-					sidebarTop = masterbarHeight;
-
-					secondaryEl.style.position = 'fixed';
-					secondaryEl.style.top = `${ sidebarTop }px`;
-					secondaryEl.style.bottom = 'inherit';
-				}
-			}
-
-			lastScrollPosition = scrollY;
-
-			ticking = false;
-		} );
-		ticking = true;
+	if ( scrollY > maxScroll ) {
+		secondaryEl.style.position = 'fixed';
+		secondaryEl.style.top = 'auto';
+		secondaryEl.style.bottom = '0';
+	} else if ( scrollY <= 0 ) {
+		secondaryEl.style.position = 'fixed';
+		secondaryEl.style.top = `${ masterbarHeight }px`;
+		secondaryEl.style.bottom = '0';
+	} else {
+		secondaryEl.style.position = 'absolute';
+		secondaryEl.style.top = `${ masterbarHeight }px`;
+		secondaryEl.style.bottom = 'auto';
 	}
 };
 
