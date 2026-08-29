@@ -1,5 +1,6 @@
 import { Badge } from '@automattic/ui';
 import {
+	Button,
 	__experimentalNumberControl as NumberControl,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
@@ -16,6 +17,7 @@ import wpcomDescriptor from '../exclusive-offers/images/wordpressdotcom-descript
 import { CheckGrid } from './content-sections';
 import {
 	formatUSD,
+	getDiscountMilestones,
 	getNextDiscountNudge,
 	getTieredPrice,
 	hostingBrands,
@@ -58,6 +60,7 @@ export default function WpcomConfigurator( {
 	const quantity = isCustom ? customQuantity : Number( preset );
 	const price = getTieredPrice( product, quantity, term, ownedSites );
 	const nudge = getNextDiscountNudge( product, quantity, term, ownedSites );
+	const milestones = getDiscountMilestones( product, quantity, term, ownedSites );
 	const currentDiscount = price.discountPercent;
 
 	return (
@@ -161,6 +164,32 @@ export default function WpcomConfigurator( {
 										</HStack>
 									) }
 								</VStack>
+								{ milestones.length > 0 && (
+									<VStack spacing={ 1 } alignment="flex-start">
+										<Text size={ 11 } weight={ 600 } variant="muted" upperCase>
+											{ __( 'Buy more, save more' ) }
+										</Text>
+										<HStack spacing={ 2 } justify="flex-start" expanded={ false } wrap>
+											{ milestones.map( ( milestone ) => (
+												<Button
+													key={ milestone.quantity }
+													className="marketplace-hosting__tier-chip"
+													onClick={ () => {
+														setCustomQuantity( milestone.quantity );
+														onQuantityChange( milestone.quantity );
+													} }
+												>
+													{ sprintf(
+														/* translators: %1$d: number of sites, %2$d: discount percentage */
+														__( '%1$d sites · %2$d%% off' ),
+														milestone.quantity,
+														milestone.discountPercent
+													) }
+												</Button>
+											) ) }
+										</HStack>
+									</VStack>
+								) }
 							</HStack>
 						) }
 						{ ! isReferralMode &&
