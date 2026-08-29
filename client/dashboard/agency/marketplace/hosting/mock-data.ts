@@ -412,6 +412,34 @@ export function getTieredPrice(
 	};
 }
 
+// Distinct higher discount tiers the agency could jump to, for "buy more, save
+// more" shortcuts. Returns the immediate next break and the best available.
+export function getDiscountMilestones(
+	product: HostingProduct,
+	quantity: number,
+	term: 'monthly' | 'yearly',
+	ownedUnits = 0
+): { quantity: number; discountPercent: number }[] {
+	const ladder =
+		( term === 'yearly' ? product.tier_yearly_prices : product.tier_monthly_prices ) ?? [];
+	const base = term === 'yearly' ? product.yearly_price : product.monthly_price;
+	const currentPercent = Math.round(
+		getTieredPrice( product, quantity, term, ownedUnits ).discountPercent * 100
+	);
+	const seen = new Set< number >();
+	const ups: { quantity: number; discountPercent: number }[] = [];
+	for ( const tier of ladder ) {
+		const percent = Math.round( ( 1 - tier.price / base ) * 100 );
+		const newSites = tier.units - ownedUnits;
+		if ( percent <= currentPercent || newSites <= quantity || seen.has( percent ) ) {
+			continue;
+		}
+		seen.add( percent );
+		ups.push( { quantity: newSites, discountPercent: percent } );
+	}
+	return ups.length <= 2 ? ups : [ ups[ 0 ], ups[ ups.length - 1 ] ];
+}
+
 export function getNextDiscountNudge(
 	product: HostingProduct,
 	quantity: number,

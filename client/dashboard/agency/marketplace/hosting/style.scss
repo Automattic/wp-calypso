@@ -381,6 +381,20 @@
 	}
 }
 
+.marketplace-hosting__tier-chip.components-button {
+	block-size: auto;
+	padding-block: 4px;
+	padding-inline: 12px;
+	border-radius: 16px;
+	font-size: 12px;
+	box-shadow: inset 0 0 0 1px var( --dashboard-overview__divider-color );
+
+	&:hover:not( :disabled ),
+	&:focus-visible {
+		box-shadow: inset 0 0 0 1.5px var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+	}
+}
+
 .marketplace-hosting__compare {
 	inline-size: 100%;
 	border-collapse: collapse;
