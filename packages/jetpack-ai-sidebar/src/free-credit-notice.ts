@@ -31,6 +31,7 @@ interface AiCreditSnapshotPayload {
 	credits_used?: unknown;
 	credits_remaining?: unknown;
 	blocked?: unknown;
+	exhausted?: unknown;
 	resets_at?: unknown;
 	upgrade_url?: unknown;
 }
@@ -192,15 +193,19 @@ function getAiCreditAllowanceStatus( aiCredits: unknown ): AiCreditAllowanceStat
 	const used = snapshot.credits_used;
 	const remaining = snapshot.credits_remaining;
 	const resetsAt = snapshot.resets_at;
-	const isExhausted = snapshot.blocked;
+	const blocked = snapshot.blocked;
+	const hasExhaustionState = Object.prototype.hasOwnProperty.call( snapshot, 'exhausted' );
+	const isExhausted = hasExhaustionState ? snapshot.exhausted : blocked;
 
 	if (
 		! isPositiveInteger( limit ) ||
 		! isNonNegativeInteger( used ) ||
 		! isNonNegativeInteger( remaining ) ||
 		remaining !== Math.max( 0, limit - used ) ||
+		typeof blocked !== 'boolean' ||
 		typeof isExhausted !== 'boolean' ||
 		isExhausted !== ( remaining === 0 ) ||
+		( blocked && ! isExhausted ) ||
 		! getUtcMonthBoundary( resetsAt ) ||
 		typeof resetsAt !== 'string'
 	) {

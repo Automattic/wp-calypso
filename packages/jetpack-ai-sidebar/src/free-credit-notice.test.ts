@@ -55,6 +55,7 @@ const aiCredits = ( used = 0, limit = 15_000 ) => {
 		credits_used: used,
 		credits_remaining: remaining,
 		blocked: remaining === 0,
+		exhausted: remaining === 0,
 		resets_at: '2026-10-01T00:00:00+00:00',
 		upgrade_url: null,
 	};
@@ -134,7 +135,11 @@ describe( 'getJetpackAiStatus', () => {
 		[ 'positive limit', { credits_limit: 0 } ],
 		[ 'integer usage', { credits_used: '360' } ],
 		[ 'balance', { credits_remaining: 999 } ],
-		[ 'blocked state', { blocked: true } ],
+		[ 'required blocked state', { blocked: undefined } ],
+		[ 'blocked state type', { blocked: 'yes' } ],
+		[ 'blocked without exhaustion', { blocked: true } ],
+		[ 'exhaustion state', { exhausted: 'yes' } ],
+		[ 'exhaustion balance', { exhausted: true } ],
 		[ 'UTC reset', { resets_at: '2026-10-01T00:00:00-05:00' } ],
 		[ 'sub-millisecond reset', { resets_at: '2026-10-01T00:00:00.0001Z' } ],
 		[ 'calendar-month reset', { resets_at: '2026-10-02T00:00:00Z' } ],
@@ -150,6 +155,32 @@ describe( 'getJetpackAiStatus', () => {
 
 	it( 'accepts a post-turn overshoot clamped to zero', () => {
 		expect( getJetpackAiStatus( {}, aiCredits( 15_001 ) ) ).toMatchObject( {
+			kind: 'cost',
+			remaining: 0,
+			isExhausted: true,
+		} );
+	} );
+
+	it( 'accepts terminal exhaustion without backend admission', () => {
+		expect(
+			getJetpackAiStatus(
+				{},
+				{
+					...aiCredits( 15_000 ),
+					blocked: false,
+				}
+			)
+		).toMatchObject( {
+			kind: 'cost',
+			remaining: 0,
+			isExhausted: true,
+		} );
+	} );
+
+	it( 'uses blocked as exhaustion for a legacy cost snapshot', () => {
+		const { exhausted: _exhausted, ...legacySnapshot } = aiCredits( 15_000 );
+
+		expect( getJetpackAiStatus( {}, legacySnapshot ) ).toMatchObject( {
 			kind: 'cost',
 			remaining: 0,
 			isExhausted: true,
