@@ -97,7 +97,7 @@ describe( 'useConversation', () => {
 			return refetchInterval( { state: { data: { messages } } } );
 		};
 
-		it( 'polls while the transcript ends on a user turn', () => {
+		it( 'polls while the transcript ends on a user turn', async () => {
 			setOrchestrator();
 			mockUseQuery.mockReturnValue( {
 				data: { messages: [ user ] },
@@ -107,13 +107,14 @@ describe( 'useConversation', () => {
 			} );
 
 			const { result } = renderHook( () => useConversation( { refetchWhileAwaitingReply: true } ) );
+			await waitFor( () => expect( loadConversation ).toHaveBeenCalled() );
 
 			expect( intervalFor( [ user ] ) ).toBe( 3000 );
 			expect( mockUseQuery.mock.calls[ 0 ][ 0 ].refetchIntervalInBackground ).toBe( true );
 			expect( result.current.isAwaitingReply ).toBe( true );
 		} );
 
-		it( 'stops once a reply lands', () => {
+		it( 'stops once a reply lands', async () => {
 			setOrchestrator();
 			mockUseQuery.mockReturnValue( {
 				data: { messages: [ user, agent ] },
@@ -123,6 +124,7 @@ describe( 'useConversation', () => {
 			} );
 
 			const { result } = renderHook( () => useConversation( { refetchWhileAwaitingReply: true } ) );
+			await waitFor( () => expect( loadConversation ).toHaveBeenCalled() );
 
 			expect( intervalFor( [ user, agent ] ) ).toBe( false );
 			expect( result.current.isAwaitingReply ).toBe( false );
@@ -132,6 +134,7 @@ describe( 'useConversation', () => {
 			setOrchestrator();
 			renderHook( () => useConversation( {} ) );
 			expect( intervalFor( [ user ] ) ).toBe( false );
+			expect( loadConversation ).not.toHaveBeenCalled();
 		} );
 
 		it( 'polls while a locally pending turn has no reply on the server yet', async () => {
@@ -161,10 +164,30 @@ describe( 'useConversation', () => {
 			expect( refetchInterval( { state: { data: { messages: answered } } } ) ).toBe( false );
 		} );
 
-		it( 'gives up after the timeout', () => {
+		it( 'does not poll on the lag case if the local store cannot be read', async () => {
+			setOrchestrator();
+			const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+			( loadConversation as jest.Mock ).mockRejectedValueOnce( new Error( 'quota' ) );
+			mockUseQuery.mockReturnValue( {
+				data: { messages: [ user, agent ] },
+				error: null,
+				isError: false,
+				isLoading: false,
+			} );
+
+			const { result } = renderHook( () => useConversation( { refetchWhileAwaitingReply: true } ) );
+			await waitFor( () => expect( loadConversation ).toHaveBeenCalled() );
+
+			expect( result.current.isAwaitingReply ).toBe( false );
+			expect( intervalFor( [ user, agent ] ) ).toBe( false );
+			consoleError.mockRestore();
+		} );
+
+		it( 'gives up after the timeout', async () => {
 			setOrchestrator();
 			const now = jest.spyOn( Date, 'now' ).mockReturnValue( 1_000 );
 			renderHook( () => useConversation( { refetchWhileAwaitingReply: true } ) );
+			await waitFor( () => expect( loadConversation ).toHaveBeenCalled() );
 
 			expect( intervalFor( [ user ] ) ).toBe( 3000 );
 			now.mockReturnValue( 1_000 + 5 * 60_000 );

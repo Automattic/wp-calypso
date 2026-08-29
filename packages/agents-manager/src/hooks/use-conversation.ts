@@ -76,10 +76,28 @@ export default function useConversation( {
 	const [ pendingTexts, setPendingTexts ] = useState< string[] >( [] );
 
 	useEffect( () => {
-		if ( sessionId ) {
-			loadPendingTexts( sessionId ).then( setPendingTexts );
+		if ( ! refetchWhileAwaitingReply || ! sessionId ) {
+			setPendingTexts( [] );
+			return;
 		}
-	}, [ sessionId ] );
+		let cancelled = false;
+		loadPendingTexts( sessionId )
+			.then( ( texts ) => {
+				if ( ! cancelled ) {
+					setPendingTexts( texts );
+				}
+			} )
+			.catch( ( loadError ) => {
+				// eslint-disable-next-line no-console
+				console.error( '[useConversation] Error loading pending turns:', loadError );
+				if ( ! cancelled ) {
+					setPendingTexts( [] );
+				}
+			} );
+		return () => {
+			cancelled = true;
+		};
+	}, [ refetchWhileAwaitingReply, sessionId ] );
 
 	const shouldPoll = ( current?: { messages: Message[] } ): boolean => {
 		const unanswered =
