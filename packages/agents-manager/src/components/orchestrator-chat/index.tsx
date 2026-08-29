@@ -1422,11 +1422,15 @@ export default function OrchestratorChat( {
 
 	useRegisterCustomActions( { setChatInput, submitChatMessage } );
 
-	// Retry a failed turn: drop its affordance and re-send the original prompt as
-	// a fresh turn. Deliberately does not repopulate the composer.
+	// Retry a failed turn: drop its affordance and the failed bubble, then re-send
+	// the original prompt as a fresh turn. Deliberately does not repopulate the
+	// composer.
 	const handleRetryFailed = useCallback(
-		( text: string ) => {
+		( text: string, failedMessageId?: string ) => {
 			setFailedRetries( ( previous ) => previous.filter( ( retry ) => retry !== text ) );
+			if ( failedMessageId ) {
+				setDeletedMessageIds( ( previous ) => new Set( previous ).add( failedMessageId ) );
+			}
 			void submitChatMessage( text );
 		},
 		[ submitChatMessage ]
@@ -1753,7 +1757,8 @@ export default function OrchestratorChat( {
 		if ( failedRetries.length > 0 ) {
 			const makeRetryMessage = (
 				retry: string,
-				anchor?: AgentsManagerUIMessage
+				anchor?: AgentsManagerUIMessage,
+				failedMessageId?: string
 			): AgentsManagerUIMessage => ( {
 				id: `failed-retry-${ retry }`,
 				role: 'agent',
@@ -1762,7 +1767,7 @@ export default function OrchestratorChat( {
 						type: 'component',
 						component: RetryFailedMessage as React.ComponentType,
 						componentProps: {
-							onRetry: () => handleRetryFailed( retry ),
+							onRetry: () => handleRetryFailed( retry, failedMessageId ),
 						},
 					},
 				],
@@ -1783,7 +1788,7 @@ export default function OrchestratorChat( {
 				const matchIndex = remainingRetries.indexOf( text ?? '' );
 				if ( matchIndex !== -1 ) {
 					const [ retry ] = remainingRetries.splice( matchIndex, 1 );
-					messagesWithRetries.push( makeRetryMessage( retry, message ) );
+					messagesWithRetries.push( makeRetryMessage( retry, message, message.id ) );
 				}
 			}
 			for ( const retry of remainingRetries ) {
