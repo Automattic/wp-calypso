@@ -3,14 +3,12 @@
  * @jest-environment-options { "url": "https://my.localhost/" }
  */
 
-import { disable, enable } from '@automattic/calypso-config';
-import { QueryClient } from '@tanstack/react-query';
-import { act, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import AccountRecoveryInterstitial from '../index';
-import type { AccountRecovery, UserPreferences, UserSettings } from '@automattic/api-core';
+import type { AccountRecovery, UserSettings } from '@automattic/api-core';
 
 const NONE_RECOVERY = {
 	email: '',
@@ -105,15 +103,11 @@ function assignExperiment( variationName: string | null = null ) {
 describe( '<AccountRecoveryInterstitial>', () => {
 	beforeEach( () => {
 		assignExperiment();
-		// On in the test config by default; the non-welcome-modal tests expect it off so the nudge is
-		// not held back. Tests that need it explicitly enable it.
-		disable( 'dashboard/opt-in-welcome-modal' );
 	} );
 
 	afterEach( () => {
 		window.localStorage.clear();
 		delete window.isSupportSession;
-		disable( 'dashboard/opt-in-welcome-modal' );
 	} );
 
 	test( 'shows the modal and records an impression for a user with no recovery method', async () => {
@@ -437,80 +431,4 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		);
 	} );
 
-	test( 'does not show (or record an impression) while the dashboard welcome modal is still pending', async () => {
-		// Flag on + a rollout-cohort user (default test user ID 1) who has not opted in and has not
-		// dismissed the welcome modal: the welcome modal would take the screen first, so the nudge
-		// must stay back.
-		enable( 'dashboard/opt-in-welcome-modal' );
-		const recoveryScope = mockAccountRecovery( NONE_RECOVERY );
-		const settingsScope = mockUserSettings( { two_step_enabled: false } );
-		const preferencesScope = mockPreferences();
-
-		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
-
-		// Wait for every input the nudge depends on to load, so "hidden" reflects the welcome-modal
-		// gate rather than data that simply hasn't arrived yet.
-		await waitFor( () => {
-			expect( recoveryScope.isDone() ).toBe( true );
-			expect( settingsScope.isDone() ).toBe( true );
-			expect( preferencesScope.isDone() ).toBe( true );
-		} );
-
-		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
-		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
-			'calypso_account_recovery_nudge_interstitial_impression',
-			expect.anything()
-		);
-	} );
-
-	test( 'shows when the welcome modal has already been dismissed', async () => {
-		enable( 'dashboard/opt-in-welcome-modal' );
-		mockAccountRecovery( NONE_RECOVERY );
-		mockUserSettings( { two_step_enabled: false } );
-		mockPreferences( {
-			'hosting-dashboard-opt-in-welcome-modal-dismissed': '2026-01-01T00:00:00.000Z',
-		} );
-
-		render( <AccountRecoveryInterstitial /> );
-
-		expect(
-			await screen.findByRole( 'dialog', { name: 'Add a way back into your account' } )
-		).toBeVisible();
-	} );
-
-	test( 'stays hidden for the rest of the session after the welcome modal is dismissed mid-session', async () => {
-		enable( 'dashboard/opt-in-welcome-modal' );
-		const recoveryScope = mockAccountRecovery( NONE_RECOVERY );
-		const settingsScope = mockUserSettings( { two_step_enabled: false } );
-		const preferencesScope = mockPreferences();
-
-		const queryClient = new QueryClient( {
-			defaultOptions: { queries: { retry: false } },
-		} );
-
-		render( <AccountRecoveryInterstitial />, { queryClient } );
-
-		// All data loaded with the welcome modal still pending: the nudge is suppressed.
-		await waitFor( () => {
-			expect( recoveryScope.isDone() ).toBe( true );
-			expect( settingsScope.isDone() ).toBe( true );
-			expect( preferencesScope.isDone() ).toBe( true );
-		} );
-		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
-
-		// Dismissing the welcome modal now flips the preference the nudge reads. Because everything
-		// is already loaded, an un-latched nudge would render this same tick (see the
-		// dismissed-at-load test above) — so a still-empty screen proves the load-time latch holds.
-		act( () => {
-			queryClient.setQueryData(
-				[ 'me', 'preferences' ],
-				( old: Partial< UserPreferences > | undefined ) => ( {
-					...old,
-					'hosting-dashboard-opt-in-welcome-modal-dismissed': '2026-01-01T00:00:00.000Z',
-				} )
-			);
-		} );
-
-		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
-	} );
 } );

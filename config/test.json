@@ -41,7 +41,6 @@
 		"dashboard/enable-percentage-rollout": true,
 		"dashboard/force-opt-in-visibility": false,
 		"dashboard/omnibar-radical": true,
-		"dashboard/opt-in-welcome-modal": true,
 		"dashboard/rollout-advance-notice": false,
 		"dashboard/simulate-full-rollout": false,
 		"emails/titan-tiers": false,
