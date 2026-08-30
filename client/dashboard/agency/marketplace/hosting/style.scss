@@ -348,8 +348,12 @@
 
 .marketplace-hosting__brand-strip {
 	display: grid;
-	grid-template-columns: repeat( auto-fill, minmax( 130px, 1fr ) );
+	grid-template-columns: repeat( 3, 1fr );
 	gap: 12px;
+
+	@media ( max-width: 660px ) {
+		grid-template-columns: repeat( 2, 1fr );
+	}
 }
 
 .marketplace-hosting__brand-cell {

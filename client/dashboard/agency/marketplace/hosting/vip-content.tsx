@@ -10,7 +10,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import cnnLogo from 'calypso/assets/images/logos/cnn.svg';
 import metaLogo from 'calypso/assets/images/logos/meta.svg';
-import newYorkPostLogo from 'calypso/assets/images/logos/new-york-post.svg';
 import newsCorpLogo from 'calypso/assets/images/logos/news-corp.svg';
 import salesforceLogo from 'calypso/assets/images/logos/salesforce.svg';
 import slackLogo from 'calypso/assets/images/logos/slack.svg';
@@ -29,7 +28,6 @@ const CLIENT_BRANDS = [
 	{ name: 'Spotify', logo: spotifyLogo },
 	{ name: 'CNN', logo: cnnLogo },
 	{ name: 'News Corp', logo: newsCorpLogo },
-	{ name: 'New York Post', logo: newYorkPostLogo },
 ];
 
 function VipPitchCard() {
