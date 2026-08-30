@@ -16,6 +16,7 @@ import {
 	formatUSD,
 	getNextDiscountNudge,
 	getTieredPrice,
+	getVolumeTiers,
 	hostingBrands,
 	wpcomHosting,
 } from './mock-data';
@@ -50,6 +51,7 @@ export default function WpcomConfigurator( {
 	const price = getTieredPrice( product, quantity, term, ownedSites );
 	const nudge = getNextDiscountNudge( product, quantity, term, ownedSites );
 	const currentDiscount = price.discountPercent;
+	const volumeTiers = getVolumeTiers( product, term );
 
 	return (
 		<Card>
@@ -93,51 +95,96 @@ export default function WpcomConfigurator( {
 							</Text>
 						) }
 						{ ! isReferralMode && (
-							<HStack justify="flex-start" alignment="center" spacing={ 4 } wrap expanded={ false }>
-								<NumberControl
-									className="marketplace-hosting__stepper"
-									__next40pxDefaultSize
-									isShiftStepEnabled
-									min={ 1 }
-									label={ __( 'Number of sites' ) }
-									hideLabelFromVision
-									spinControls="custom"
-									value={ String( quantity ) }
-									onChange={ ( value ) => {
-										const next = Math.max( 1, Number( value ) || 1 );
-										setQuantity( next );
-										onQuantityChange( next );
-									} }
-								/>
-								<VStack spacing={ 1 } alignment="flex-start">
-									<Text weight={ 600 }>
-										{ formatUSD( price.perUnit ) }
-										<Text as="span" variant="muted">
-											{ __( '/site per year' ) }
+							<HStack justify="space-between" alignment="flex-start" spacing={ 6 } wrap>
+								<HStack
+									justify="flex-start"
+									alignment="center"
+									spacing={ 4 }
+									wrap
+									expanded={ false }
+								>
+									<NumberControl
+										className="marketplace-hosting__stepper"
+										__next40pxDefaultSize
+										isShiftStepEnabled
+										min={ 1 }
+										label={ __( 'Number of sites' ) }
+										hideLabelFromVision
+										spinControls="custom"
+										value={ String( quantity ) }
+										onChange={ ( value ) => {
+											const next = Math.max( 1, Number( value ) || 1 );
+											setQuantity( next );
+											onQuantityChange( next );
+										} }
+									/>
+									<VStack spacing={ 1 } alignment="flex-start">
+										<Text weight={ 600 }>
+											{ formatUSD( price.perUnit ) }
+											<Text as="span" variant="muted">
+												{ __( '/site per year' ) }
+											</Text>
 										</Text>
-									</Text>
-									<HStack
-										spacing={ 2 }
-										justify="flex-start"
-										alignment="center"
-										expanded={ false }
-										className={
-											'marketplace-hosting__price-secondary' +
-											( currentDiscount > 0 ? '' : ' is-hidden' )
-										}
-									>
-										<Text variant="muted" className="marketplace-hosting__price-strikethrough">
-											{ formatUSD( price.basePerUnit ) }
-										</Text>
-										<Badge intent="success">
-											{ sprintf(
-												/* translators: %d: discount percentage */
-												__( '%d%% off' ),
-												Math.round( Math.max( currentDiscount, 0 ) * 100 )
-											) }
-										</Badge>
-									</HStack>
-								</VStack>
+										<HStack
+											spacing={ 2 }
+											justify="flex-start"
+											alignment="center"
+											expanded={ false }
+											className={
+												'marketplace-hosting__price-secondary' +
+												( currentDiscount > 0 ? '' : ' is-hidden' )
+											}
+										>
+											<Text variant="muted" className="marketplace-hosting__price-strikethrough">
+												{ formatUSD( price.basePerUnit ) }
+											</Text>
+											<Badge intent="success">
+												{ sprintf(
+													/* translators: %d: discount percentage */
+													__( '%d%% off' ),
+													Math.round( Math.max( currentDiscount, 0 ) * 100 )
+												) }
+											</Badge>
+										</HStack>
+									</VStack>
+								</HStack>
+								{ volumeTiers.length > 1 && (
+									<div className="marketplace-hosting__volume-table">
+										{ volumeTiers.map( ( tier ) => (
+											<button
+												key={ tier.quantity }
+												type="button"
+												className={
+													'marketplace-hosting__volume-row' +
+													( tier.quantity === quantity ? ' is-active' : '' )
+												}
+												onClick={ () => {
+													setQuantity( tier.quantity );
+													onQuantityChange( tier.quantity );
+												} }
+											>
+												<span>
+													{ sprintf(
+														/* translators: %d: number of sites */
+														_n( '%d site', '%d sites', tier.quantity ),
+														tier.quantity
+													) }
+												</span>
+												<span className="marketplace-hosting__volume-price">
+													{ formatUSD( tier.perUnit ) }
+												</span>
+												<span className="marketplace-hosting__volume-save">
+													{ tier.percent > 0
+														? sprintf(
+																/* translators: %d: discount percentage */ __( '%d%% off' ),
+																tier.percent
+														  )
+														: '' }
+												</span>
+											</button>
+										) ) }
+									</div>
+								) }
 							</HStack>
 						) }
 						{ ! isReferralMode &&

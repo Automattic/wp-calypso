@@ -406,6 +406,56 @@
 	}
 }
 
+.marketplace-hosting__volume-table {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-inline-size: 240px;
+	font-size: 12px;
+}
+
+.marketplace-hosting__volume-row {
+	display: grid;
+	grid-template-columns: 68px 1fr auto;
+	gap: 12px;
+	align-items: baseline;
+	padding: 5px 10px;
+	border: 0;
+	border-radius: 4px;
+	background: none;
+	color: inherit;
+	font: inherit;
+	text-align: start;
+	cursor: pointer;
+	transition: background 0.1s ease-in-out;
+
+	&:hover,
+	&:focus-visible {
+		background: color-mix(
+			in srgb,
+			var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) 6%,
+			var( --color-surface )
+		);
+	}
+
+	&.is-active {
+		font-weight: 600;
+		background: color-mix(
+			in srgb,
+			var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) 10%,
+			var( --color-surface )
+		);
+	}
+}
+
+.marketplace-hosting__volume-price {
+	color: var( --dashboard-color-text-subtle, var( --color-text-subtle ) );
+}
+
+.marketplace-hosting__volume-save {
+	color: var( --dashboard__foreground-color-success, var( --wp-components-color-accent ) );
+}
+
 .marketplace-hosting__compare {
 	inline-size: 100%;
 	border-collapse: collapse;

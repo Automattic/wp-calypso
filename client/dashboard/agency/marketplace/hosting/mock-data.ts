@@ -412,6 +412,34 @@ export function getTieredPrice(
 	};
 }
 
+// A compact volume-pricing table: the distinct discount tiers (site count →
+// per-site price → % off), sampled to at most five rows for a clean display.
+export function getVolumeTiers(
+	product: HostingProduct,
+	term: 'monthly' | 'yearly'
+): { quantity: number; perUnit: number; percent: number }[] {
+	const ladder =
+		( term === 'yearly' ? product.tier_yearly_prices : product.tier_monthly_prices ) ?? [];
+	const base = term === 'yearly' ? product.yearly_price : product.monthly_price;
+	const seen = new Set< number >();
+	const tiers: { quantity: number; perUnit: number; percent: number }[] = [];
+	for ( const tier of ladder ) {
+		const percent = Math.round( ( 1 - tier.price / base ) * 100 );
+		if ( seen.has( percent ) ) {
+			continue;
+		}
+		seen.add( percent );
+		tiers.push( { quantity: tier.units, perUnit: tier.price, percent } );
+	}
+	if ( tiers.length <= 5 ) {
+		return tiers;
+	}
+	// Keep the first (base) and last (max), sampling the rest evenly.
+	const last = tiers.length - 1;
+	const picks = [ 0, Math.round( last / 3 ), Math.round( ( 2 * last ) / 3 ), last ];
+	return [ ...new Set( picks ) ].map( ( index ) => tiers[ index ] );
+}
+
 export function getNextDiscountNudge(
 	product: HostingProduct,
 	quantity: number,
