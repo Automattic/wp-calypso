@@ -147,6 +147,28 @@ export default function WpcomConfigurator( {
 										</HStack>
 									</VStack>
 								</HStack>
+								{ nudge ? (
+									<Text variant="muted">
+										{ sprintf(
+											/* translators: %1$d: number of sites to add, %2$d: discount percentage */
+											_n(
+												'Add %1$d more site to unlock %2$d%% off.',
+												'Add %1$d more sites to unlock %2$d%% off.',
+												nudge.addMore
+											),
+											nudge.addMore,
+											Math.round( nudge.discountPercent * 100 )
+										) }
+									</Text>
+								) : (
+									<Text variant="muted">
+										{ sprintf(
+											/* translators: %d: discount percentage */
+											__( 'You’ve unlocked the maximum %d%% discount.' ),
+											Math.round( currentDiscount * 100 )
+										) }
+									</Text>
+								) }
 								{ volumeTiers.length > 1 && (
 									<div className="marketplace-hosting__volume-grid">
 										{ volumeTiers.map( ( tier ) => (
@@ -189,29 +211,6 @@ export default function WpcomConfigurator( {
 								) }
 							</VStack>
 						) }
-						{ ! isReferralMode &&
-							( nudge ? (
-								<Text variant="muted">
-									{ sprintf(
-										/* translators: %1$d: number of sites to add, %2$d: discount percentage */
-										_n(
-											'Add %1$d more site to unlock %2$d%% off.',
-											'Add %1$d more sites to unlock %2$d%% off.',
-											nudge.addMore
-										),
-										nudge.addMore,
-										Math.round( nudge.discountPercent * 100 )
-									) }
-								</Text>
-							) : (
-								<Text variant="muted">
-									{ sprintf(
-										/* translators: %d: discount percentage */
-										__( 'You’ve unlocked the maximum %d%% discount.' ),
-										Math.round( currentDiscount * 100 )
-									) }
-								</Text>
-							) ) }
 					</VStack>
 					<CardDivider />
 					<VStack spacing={ 3 }>
