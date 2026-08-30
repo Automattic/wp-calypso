@@ -1609,4 +1609,13 @@ describe( 'dashboard app', () => {
 		expect( response.statusCode ).not.toBe( 404 );
 		expect( app.getMocks().serverRender ).toHaveBeenCalled();
 	} );
+
+	it( 'serves robots.txt that disallows all paths', async () => {
+		const { response } = await app.run( {
+			request: { url: '/robots.txt', hostname: 'my.wordpress.com' },
+		} );
+
+		expect( response.setHeader ).toHaveBeenCalledWith( 'Content-Type', 'text/plain' );
+		expect( response.send ).toHaveBeenCalledWith( 'User-agent: *\nDisallow: /\n' );
+	} );
 } );
