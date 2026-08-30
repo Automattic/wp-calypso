@@ -169,7 +169,7 @@ export default function WpcomConfigurator( {
 										) }
 									</Text>
 								) }
-								{ volumeTiers.length > 1 && (
+								{ ownedSites === 0 && volumeTiers.length > 1 && (
 									<div className="marketplace-hosting__volume-grid">
 										{ volumeTiers.map( ( tier ) => (
 											<button
