@@ -8,7 +8,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import AccountRecoveryInterstitial from '../index';
-import type { AccountRecovery, UserSettings } from '@automattic/api-core';
+import type { AccountRecovery, UserPreferences, UserSettings } from '@automattic/api-core';
 
 const NONE_RECOVERY = {
 	email: '',
