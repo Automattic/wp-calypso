@@ -348,8 +348,12 @@
 
 .marketplace-hosting__brand-strip {
 	display: grid;
-	grid-template-columns: repeat( 3, 1fr );
+	grid-template-columns: repeat( 6, 1fr );
 	gap: 12px;
+
+	@media ( max-width: 960px ) {
+		grid-template-columns: repeat( 3, 1fr );
+	}
 
 	@media ( max-width: 660px ) {
 		grid-template-columns: repeat( 2, 1fr );
@@ -361,7 +365,7 @@
 	align-items: center;
 	justify-content: center;
 	block-size: 72px;
-	padding: 16px 20px;
+	padding: 12px;
 	border-radius: 8px;
 	box-shadow: inset 0 0 0 1px var( --dashboard-overview__divider-color );
 
