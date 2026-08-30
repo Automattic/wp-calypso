@@ -779,13 +779,6 @@ export default function MarketplaceHosting() {
 		return pressablePlans[ currentIndex + 1 ]?.slug ?? mockOwnership.pressable.planSlug;
 	} );
 
-	// Prototype-only: `?alt` shows the alternative controls suggested in the i1
-	// feedback — a plain quantity input instead of presets, and a segmented
-	// Purchase/Refer switch instead of the toggle.
-	const [ useAltControls ] = useState( () =>
-		new URLSearchParams( window.location.search ).has( 'alt' )
-	);
-
 	// The old comparison/quiz modal stays reachable behind ?guide for reference.
 	const [ isChooserOpen, setIsChooserOpen ] = useState( () =>
 		new URLSearchParams( window.location.search ).has( 'guide' )
@@ -978,7 +971,6 @@ export default function MarketplaceHosting() {
 								term={ term }
 								onQuantityChange={ setQuantity }
 								ownedSites={ effectiveOwnedSites }
-								altQuantityControl={ useAltControls }
 								isReferralMode={ isReferralMode }
 							/>
 							<DevSitesBanner />

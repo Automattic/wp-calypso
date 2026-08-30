@@ -1,8 +1,6 @@
 import { Badge } from '@automattic/ui';
 import {
 	__experimentalNumberControl as NumberControl,
-	__experimentalToggleGroupControl as ToggleGroupControl,
-	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
@@ -23,8 +21,6 @@ import {
 } from './mock-data';
 import type { HostingProduct } from './mock-data';
 
-const PRESET_QUANTITIES = [ 1, 3, 5 ];
-
 const WHATS_INCLUDED = [
 	'50GB of storage',
 	'Free staging site',
@@ -39,7 +35,6 @@ type WpcomConfiguratorProps = {
 	onQuantityChange: ( quantity: number ) => void;
 	product?: HostingProduct;
 	ownedSites?: number;
-	altQuantityControl?: boolean;
 	isReferralMode?: boolean;
 };
 
@@ -48,14 +43,10 @@ export default function WpcomConfigurator( {
 	onQuantityChange,
 	product = wpcomHosting,
 	ownedSites = 0,
-	altQuantityControl = false,
 	isReferralMode = false,
 }: WpcomConfiguratorProps ) {
-	const [ preset, setPreset ] = useState< string >( '3' );
-	const [ customQuantity, setCustomQuantity ] = useState( altQuantityControl ? 3 : 10 );
+	const [ quantity, setQuantity ] = useState( 3 );
 
-	const isCustom = altQuantityControl || preset === 'custom';
-	const quantity = isCustom ? customQuantity : Number( preset );
 	const price = getTieredPrice( product, quantity, term, ownedSites );
 	const nudge = getNextDiscountNudge( product, quantity, term, ownedSites );
 	const currentDiscount = price.discountPercent;
@@ -101,28 +92,7 @@ export default function WpcomConfigurator( {
 								) }
 							</Text>
 						) }
-						{ ! isReferralMode && ! altQuantityControl && (
-							<ToggleGroupControl
-								__nextHasNoMarginBottom
-								__next40pxDefaultSize
-								isBlock
-								hideLabelFromVision
-								label={ __( 'Number of sites' ) }
-								value={ preset }
-								onChange={ ( value ) => {
-									setPreset( String( value ) );
-									onQuantityChange(
-										String( value ) === 'custom' ? customQuantity : Number( value )
-									);
-								} }
-							>
-								{ PRESET_QUANTITIES.map( ( q ) => (
-									<ToggleGroupControlOption key={ q } value={ String( q ) } label={ String( q ) } />
-								) ) }
-								<ToggleGroupControlOption value="custom" label={ __( 'Custom' ) } />
-							</ToggleGroupControl>
-						) }
-						{ ! isReferralMode && isCustom && (
+						{ ! isReferralMode && (
 							<HStack justify="flex-start" alignment="center" spacing={ 4 } wrap expanded={ false }>
 								<NumberControl
 									className="marketplace-hosting__stepper"
@@ -132,10 +102,10 @@ export default function WpcomConfigurator( {
 									label={ __( 'Number of sites' ) }
 									hideLabelFromVision
 									spinControls="custom"
-									value={ String( customQuantity ) }
+									value={ String( quantity ) }
 									onChange={ ( value ) => {
 										const next = Math.max( 1, Number( value ) || 1 );
-										setCustomQuantity( next );
+										setQuantity( next );
 										onQuantityChange( next );
 									} }
 								/>
