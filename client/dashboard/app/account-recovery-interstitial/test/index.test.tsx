@@ -430,5 +430,4 @@ describe( '<AccountRecoveryInterstitial>', () => {
 			expect.anything()
 		);
 	} );
-
 } );
