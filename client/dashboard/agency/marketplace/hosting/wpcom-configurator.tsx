@@ -95,7 +95,7 @@ export default function WpcomConfigurator( {
 							</Text>
 						) }
 						{ ! isReferralMode && (
-							<HStack justify="flex-start" alignment="flex-start" spacing={ 8 } wrap>
+							<VStack spacing={ 4 } alignment="stretch">
 								<HStack
 									justify="flex-start"
 									alignment="center"
@@ -140,8 +140,7 @@ export default function WpcomConfigurator( {
 											</Text>
 											<Badge intent="success">
 												{ sprintf(
-													/* translators: %d: discount percentage */
-													__( '%d%% off' ),
+													/* translators: %d: discount percentage */ __( '%d%% off' ),
 													Math.round( Math.max( currentDiscount, 0 ) * 100 )
 												) }
 											</Badge>
@@ -149,48 +148,46 @@ export default function WpcomConfigurator( {
 									</VStack>
 								</HStack>
 								{ volumeTiers.length > 1 && (
-									<div className="marketplace-hosting__volume-card">
-										<Text size={ 11 } weight={ 600 } variant="muted" upperCase>
-											{ __( 'Price per site' ) }
-										</Text>
-										<div className="marketplace-hosting__volume-table">
-											{ volumeTiers.map( ( tier ) => (
-												<button
-													key={ tier.quantity }
-													type="button"
-													className={
-														'marketplace-hosting__volume-row' +
-														( tier.quantity === quantity ? ' is-active' : '' )
-													}
-													onClick={ () => {
-														setQuantity( tier.quantity );
-														onQuantityChange( tier.quantity );
-													} }
-												>
-													<span>
-														{ sprintf(
-															/* translators: %d: number of sites */
-															_n( '%d site', '%d sites', tier.quantity ),
+									<div className="marketplace-hosting__volume-grid">
+										{ volumeTiers.map( ( tier ) => (
+											<button
+												key={ tier.quantity }
+												type="button"
+												className={
+													'marketplace-hosting__volume-cell' +
+													( tier.quantity === quantity ? ' is-active' : '' )
+												}
+												onClick={ () => {
+													setQuantity( tier.quantity );
+													onQuantityChange( tier.quantity );
+												} }
+											>
+												<span className="marketplace-hosting__volume-cell-sites">
+													{ sprintf(
+														/* translators: %d: number of sites */ _n(
+															'%d site',
+															'%d sites',
 															tier.quantity
-														) }
-													</span>
-													<span className="marketplace-hosting__volume-price">
-														{ formatUSD( tier.perUnit ) }
-													</span>
-													<span className="marketplace-hosting__volume-save">
-														{ tier.percent > 0
-															? sprintf(
-																	/* translators: %d: discount percentage */ __( '%d%% off' ),
-																	tier.percent
-															  )
-															: '' }
-													</span>
-												</button>
-											) ) }
-										</div>
+														),
+														tier.quantity
+													) }
+												</span>
+												<span className="marketplace-hosting__volume-cell-price">
+													{ formatUSD( tier.perUnit ) }
+												</span>
+												<span className="marketplace-hosting__volume-cell-save">
+													{ tier.percent > 0
+														? sprintf(
+																/* translators: %d: discount percentage */ __( '%d%% off' ),
+																tier.percent
+														  )
+														: ' ' }
+												</span>
+											</button>
+										) ) }
 									</div>
 								) }
-							</HStack>
+							</VStack>
 						) }
 						{ ! isReferralMode &&
 							( nudge ? (

@@ -406,62 +406,58 @@
 	}
 }
 
-.marketplace-hosting__volume-card {
-	display: flex;
-	flex-direction: column;
+.marketplace-hosting__volume-grid {
+	display: grid;
+	grid-template-columns: repeat( 4, 1fr );
 	gap: 8px;
-	padding: 12px 14px;
-	border-radius: 8px;
-	box-shadow: inset 0 0 0 1px var( --dashboard-overview__divider-color );
+
+	@media ( max-width: 660px ) {
+		grid-template-columns: repeat( 2, 1fr );
+	}
 }
 
-.marketplace-hosting__volume-table {
+.marketplace-hosting__volume-cell {
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
-	min-inline-size: 232px;
-	font-size: 12px;
-}
-
-.marketplace-hosting__volume-row {
-	display: grid;
-	grid-template-columns: 68px 1fr auto;
-	gap: 12px;
-	align-items: baseline;
-	padding: 5px 10px;
+	padding: 10px 12px;
 	border: 0;
-	border-radius: 4px;
+	border-radius: 8px;
 	background: none;
 	color: inherit;
 	font: inherit;
 	text-align: start;
 	cursor: pointer;
-	transition: background 0.1s ease-in-out;
+	box-shadow: inset 0 0 0 1px var( --dashboard-overview__divider-color );
+	transition: box-shadow 0.1s ease-in-out;
 
 	&:hover,
 	&:focus-visible {
+		box-shadow: inset 0 0 0 1.5px var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+	}
+
+	&.is-active {
+		box-shadow: inset 0 0 0 1.5px var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
 		background: color-mix(
 			in srgb,
 			var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) 6%,
 			var( --color-surface )
 		);
 	}
-
-	&.is-active {
-		font-weight: 600;
-		background: color-mix(
-			in srgb,
-			var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) 10%,
-			var( --color-surface )
-		);
-	}
 }
 
-.marketplace-hosting__volume-price {
+.marketplace-hosting__volume-cell-sites {
+	font-weight: 600;
+	font-size: 13px;
+}
+
+.marketplace-hosting__volume-cell-price {
+	font-size: 13px;
 	color: var( --dashboard-color-text-subtle, var( --color-text-subtle ) );
 }
 
-.marketplace-hosting__volume-save {
+.marketplace-hosting__volume-cell-save {
+	font-size: 12px;
 	color: var( --dashboard__foreground-color-success, var( --wp-components-color-accent ) );
 }
 
