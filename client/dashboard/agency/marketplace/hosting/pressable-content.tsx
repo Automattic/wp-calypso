@@ -275,24 +275,30 @@ export default function PressableContent( {
 								/>
 							</VStack>
 							{ category !== 'custom' && (
-								<SelectControl
-									__nextHasNoMarginBottom
-									__next40pxDefaultSize
-									label={ __( 'Plan' ) }
-									value={ planSlug }
-									options={ categoryPlans.map( ( p ) => ( {
-										label:
-											p.slug === currentPlan?.slug
-												? sprintf(
-														/* translators: %s: plan name and specs */
-														__( '%s (current plan)' ),
-														planOptionLabel( p )
-												  )
-												: planOptionLabel( p ),
-										value: p.slug,
-									} ) ) }
-									onChange={ onPlanChange }
-								/>
+								<VStack spacing={ 3 }>
+									<Heading level={ 3 } size={ 13 }>
+										{ __( 'Select your plan' ) }
+									</Heading>
+									<SelectControl
+										__nextHasNoMarginBottom
+										__next40pxDefaultSize
+										label={ __( 'Select your plan' ) }
+										hideLabelFromVision
+										value={ planSlug }
+										options={ categoryPlans.map( ( p ) => ( {
+											label:
+												p.slug === currentPlan?.slug
+													? sprintf(
+															/* translators: %s: plan name and specs */
+															__( '%s (current plan)' ),
+															planOptionLabel( p )
+													  )
+													: planOptionLabel( p ),
+											value: p.slug,
+										} ) ) }
+										onChange={ onPlanChange }
+									/>
+								</VStack>
 							) }
 						</VStack>
 
