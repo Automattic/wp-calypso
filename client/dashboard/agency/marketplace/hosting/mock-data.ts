@@ -261,23 +261,20 @@ export const hostingBrands: HostingBrand[] = [
 	{
 		key: 'wpcom',
 		name: 'WordPress.com',
-		description:
-			'Best for most client sites. Managed WordPress with staging, backups, and 24/7 expert support.',
+		description: 'Per-site managed WordPress with staging, backups, and 24/7 expert support.',
 		priceNote: 'From US$300 per site, per year',
 		product: wpcomHosting,
 	},
 	{
 		key: 'pressable',
 		name: 'Pressable',
-		description:
-			'Best for growing portfolios. Plans that pool traffic and storage across all your client sites.',
+		description: 'Pooled plans that share traffic and storage across your client portfolio.',
 		priceNote: 'From US$250 per year',
 	},
 	{
 		key: 'vip',
 		name: 'WordPress VIP',
-		description:
-			'Best for enterprise clients. Enterprise-grade security, scale, and guided onboarding.',
+		description: 'Enterprise-grade security, scale, and guided onboarding for high-stakes clients.',
 		priceNote: 'Custom pricing',
 	},
 ];
