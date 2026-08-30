@@ -95,7 +95,7 @@ export default function WpcomConfigurator( {
 							</Text>
 						) }
 						{ ! isReferralMode && (
-							<HStack justify="space-between" alignment="flex-start" spacing={ 6 } wrap>
+							<HStack justify="flex-start" alignment="flex-start" spacing={ 8 } wrap>
 								<HStack
 									justify="flex-start"
 									alignment="center"
@@ -149,40 +149,45 @@ export default function WpcomConfigurator( {
 									</VStack>
 								</HStack>
 								{ volumeTiers.length > 1 && (
-									<div className="marketplace-hosting__volume-table">
-										{ volumeTiers.map( ( tier ) => (
-											<button
-												key={ tier.quantity }
-												type="button"
-												className={
-													'marketplace-hosting__volume-row' +
-													( tier.quantity === quantity ? ' is-active' : '' )
-												}
-												onClick={ () => {
-													setQuantity( tier.quantity );
-													onQuantityChange( tier.quantity );
-												} }
-											>
-												<span>
-													{ sprintf(
-														/* translators: %d: number of sites */
-														_n( '%d site', '%d sites', tier.quantity ),
-														tier.quantity
-													) }
-												</span>
-												<span className="marketplace-hosting__volume-price">
-													{ formatUSD( tier.perUnit ) }
-												</span>
-												<span className="marketplace-hosting__volume-save">
-													{ tier.percent > 0
-														? sprintf(
-																/* translators: %d: discount percentage */ __( '%d%% off' ),
-																tier.percent
-														  )
-														: '' }
-												</span>
-											</button>
-										) ) }
+									<div className="marketplace-hosting__volume-card">
+										<Text size={ 11 } weight={ 600 } variant="muted" upperCase>
+											{ __( 'Price per site' ) }
+										</Text>
+										<div className="marketplace-hosting__volume-table">
+											{ volumeTiers.map( ( tier ) => (
+												<button
+													key={ tier.quantity }
+													type="button"
+													className={
+														'marketplace-hosting__volume-row' +
+														( tier.quantity === quantity ? ' is-active' : '' )
+													}
+													onClick={ () => {
+														setQuantity( tier.quantity );
+														onQuantityChange( tier.quantity );
+													} }
+												>
+													<span>
+														{ sprintf(
+															/* translators: %d: number of sites */
+															_n( '%d site', '%d sites', tier.quantity ),
+															tier.quantity
+														) }
+													</span>
+													<span className="marketplace-hosting__volume-price">
+														{ formatUSD( tier.perUnit ) }
+													</span>
+													<span className="marketplace-hosting__volume-save">
+														{ tier.percent > 0
+															? sprintf(
+																	/* translators: %d: discount percentage */ __( '%d%% off' ),
+																	tier.percent
+															  )
+															: '' }
+													</span>
+												</button>
+											) ) }
+										</div>
 									</div>
 								) }
 							</HStack>

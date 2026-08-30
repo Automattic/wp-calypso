@@ -406,11 +406,20 @@
 	}
 }
 
+.marketplace-hosting__volume-card {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 12px 14px;
+	border-radius: 8px;
+	box-shadow: inset 0 0 0 1px var( --dashboard-overview__divider-color );
+}
+
 .marketplace-hosting__volume-table {
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
-	min-inline-size: 240px;
+	min-inline-size: 232px;
 	font-size: 12px;
 }
 
