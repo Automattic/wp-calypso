@@ -35,7 +35,6 @@
 		"dashboard/dark-mode-rollout": true,
 		"dashboard/enable-percentage-rollout": true,
 		"dashboard/omnibar-radical": true,
-		"dashboard/opt-in-welcome-modal": true,
 		"dashboard/simulate-full-rollout": true,
 		"dashboard/wp-beta-program": true,
 		"dev/store-sandbox-helper": true,
