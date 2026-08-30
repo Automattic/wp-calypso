@@ -302,6 +302,7 @@ jest.mock(
 	} ),
 	{ virtual: true }
 );
+jest.mock( '@wordpress/api-fetch' );
 jest.mock( '@wordpress/data', () => {
 	const { useEffect, useReducer, useRef } = jest.requireActual< typeof import('react') >( 'react' );
 
@@ -347,6 +348,7 @@ jest.mock( '../../contexts', () => {
 				onSessionIdChange: ( sessionId: string ) => saveSessionId( sessionId, 'wp-orchestrator' ),
 			},
 			getTabSessionId: () => mockTabSessionId ?? '',
+			site: { ID: 123 },
 			siteKey: mockSiteKey,
 			currentUser: mockCurrentUserId === undefined ? undefined : { ID: mockCurrentUserId },
 		} ),
@@ -358,6 +360,7 @@ jest.mock( '../../hooks/custom-actions', () => ( {
 jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: jest.fn(),
 	recordAgentsManagerTracksEvent: jest.fn(),
+	recordJetpackAiUpgradeButtonClick: jest.fn(),
 } ) );
 jest.mock( '../../hooks/use-abilities-registration', () => () => {} );
 jest.mock( '../../hooks/use-conversation', () => ( config: typeof mockConversationConfig ) => {
@@ -660,6 +663,164 @@ describe( 'OrchestratorChat', () => {
 		mockRevertedCheckpointIds.clear();
 		mockAgentChatConfig = undefined;
 		mockConversationConfig = undefined;
+		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
+	} );
+
+	it( 'refreshes provider status only after a submitted request settles', async () => {
+		let resolveSubmit: () => void = () => {};
+		const submitPromise = new Promise< void >( ( resolve ) => {
+			resolveSubmit = resolve;
+		} );
+		const useChatNotice = jest.fn();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { onSubmit: jest.fn( () => submitPromise ) } )
+		);
+
+		render( chat( { useChatNotice } ) );
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		expect( useChatNotice ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { settledRequestCount: 0 } )
+		);
+		await act( async () => {
+			resolveSubmit();
+			await submitPromise;
+		} );
+		await waitFor( () =>
+			expect( useChatNotice ).toHaveBeenLastCalledWith(
+				expect.objectContaining( { settledRequestCount: 1 } )
+			)
+		);
+	} );
+
+	it( 'refreshes provider status only after regeneration settles', async () => {
+		let resolveRegenerate: () => void = () => {};
+		const regeneratePromise = new Promise< void >( ( resolve ) => {
+			resolveRegenerate = resolve;
+		} );
+		const useChatNotice = jest.fn();
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { getRegenerateHandler: jest.fn( () => () => regeneratePromise ) } )
+		);
+
+		render( chat( { useChatNotice } ) );
+		const config = mockUseRegenerateAction.mock.calls.at( -1 )![ 0 ] as {
+			getRegenerateHandler?: ( message: unknown ) => ( () => Promise< void > ) | undefined;
+		};
+		const regenerate = config.getRegenerateHandler?.( { id: 'agent-1' } );
+		let pendingRegenerate: Promise< void > | undefined;
+		act( () => {
+			pendingRegenerate = regenerate?.();
+		} );
+
+		expect( useChatNotice ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { settledRequestCount: 0 } )
+		);
+		await act( async () => {
+			resolveRegenerate();
+			await pendingRegenerate;
+		} );
+		await waitFor( () =>
+			expect( useChatNotice ).toHaveBeenLastCalledWith(
+				expect.objectContaining( { settledRequestCount: 1 } )
+			)
+		);
+	} );
+
+	it( 'passes terminal AI credits to the provider and clears them on omission and scope change', async () => {
+		const useChatNotice = jest.fn();
+		const view = render( chat( { useChatNotice } ) );
+		const aiCredits = {
+			credits_limit: 15_000,
+			credits_used: 3_000,
+			credits_remaining: 12_000,
+			blocked: false,
+			resets_at: '2026-10-01T00:00:00+00:00',
+			upgrade_url: null,
+		};
+
+		await act( async () => {
+			await mockAgentChatConfig?.onTaskUpdate?.( {
+				id: 'task-with-credits',
+				status: { state: 'completed' },
+				final: true,
+				text: '',
+				aiCredits,
+			} );
+		} );
+		expect( useChatNotice ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { aiCredits, aiCreditsRevision: 1 } )
+		);
+
+		await act( async () => {
+			await mockAgentChatConfig?.onTaskUpdate?.( {
+				id: 'task-without-credits',
+				status: { state: 'completed' },
+				final: true,
+				text: '',
+			} );
+		} );
+		expect( useChatNotice ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { aiCredits: undefined, aiCreditsRevision: 2 } )
+		);
+
+		await act( async () => {
+			await mockAgentChatConfig?.onTaskUpdate?.( {
+				id: 'task-with-new-credits',
+				status: { state: 'completed' },
+				final: true,
+				text: '',
+				aiCredits,
+			} );
+		} );
+		mockSiteKey = 'site-2';
+		view.rerender( chat( { useChatNotice } ) );
+		expect( useChatNotice ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { aiCredits: undefined, aiCreditsRevision: undefined } )
+		);
+	} );
+
+	it( 'renders an exhausted provider notice without disabling submission', async () => {
+		const notice = {
+			message: 'You’ve used this month’s Jetpack AI allowance (0% left).',
+			status: 'error' as const,
+			dismissible: false,
+			suppressCurrentError: true,
+		};
+		const useChatNotice = jest.fn( () => notice );
+		const onSubmit = jest.fn().mockResolvedValue( undefined );
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { error: 'ai_credit_allowance_exhausted', onSubmit } )
+		);
+
+		render( chat( { useChatNotice } ) );
+
+		expect( useChatNotice ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				error: 'ai_credit_allowance_exhausted',
+				enabled: true,
+				settledRequestCount: 0,
+				siteId: 123,
+			} )
+		);
+		expect( mockAgentChat.mock.calls.at( -1 )![ 0 ] ).toEqual(
+			expect.objectContaining( { notice, error: null, isChatInputDisabled: undefined } )
+		);
+
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+		await waitFor( () => expect( onSubmit ).toHaveBeenCalledWith( 'Describe these images' ) );
+	} );
+
+	it( 'keeps the provider notice disabled on Reader Chat', () => {
+		mockIsReaderChatAgent.mockReturnValue( true );
+		const useChatNotice = jest.fn( () => ( { message: 'No AI requests remaining' } ) );
+
+		render( chat( { useChatNotice } ) );
+
+		expect( useChatNotice ).toHaveBeenCalledWith( expect.objectContaining( { enabled: false } ) );
+		expect( mockAgentChat.mock.calls.at( -1 )![ 0 ] ).toEqual(
+			expect.objectContaining( { notice: undefined } )
+		);
 	} );
 
 	it( 'ignores a conversation result for a discarded agent', () => {

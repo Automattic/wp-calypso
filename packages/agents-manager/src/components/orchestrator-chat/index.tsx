@@ -9,6 +9,7 @@ import {
 	type MarkdownComponents,
 	type MarkdownExtensions,
 } from '@automattic/agenttic-ui';
+import apiFetch from '@wordpress/api-fetch';
 import { select as selectDataStore, useSelect } from '@wordpress/data';
 import {
 	useState,
@@ -59,6 +60,7 @@ import {
 	type ExternalContextCardAction,
 } from '../../utils/external-context';
 import { generateUUID } from '../../utils/generate-uuid';
+import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { mergeEmptyViewSuggestions } from '../../utils/merge-empty-view-suggestions';
 import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
@@ -66,7 +68,11 @@ import { setProviderCheckpoints } from '../../utils/provider-checkpoints';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
 import { isShowComponentTool } from '../../utils/show-component-tools';
 import { isBlockEditToolId } from '../../utils/tool-message-utils';
-import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
+import {
+	recordAgentsManagerTracksEvent,
+	recordBigSkyTracksEvent,
+	recordJetpackAiUpgradeButtonClick,
+} from '../../utils/tracks';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import type { BigSkyMessage } from '../../types';
@@ -78,6 +84,7 @@ import type {
 	TransformMessages,
 	UseCheckpointHook,
 	ProviderCapabilities,
+	UseChatNoticeHook,
 } from '../../utils/load-external-providers';
 
 const streamedCheckpointMessagesBySession = new Map< string, Map< string, UIMessage > >();
@@ -308,6 +315,8 @@ interface Props {
 	useCheckpoint?: UseCheckpointHook;
 	/** Optional capability flags declared by one or more loaded providers. */
 	capabilities?: ProviderCapabilities;
+	/** Provider-owned, display-only notice shown through AgentChat's shared notice slot. */
+	useChatNotice?: UseChatNoticeHook;
 	/** Renders the chat with a disabled input. Driven by `setChatEnabled( false )`. */
 	isChatInputDisabled?: boolean;
 	/** Called when the has-messages state changes. */
@@ -332,10 +341,12 @@ export default function OrchestratorChat( {
 	transformMessages,
 	useCheckpoint,
 	capabilities,
+	useChatNotice,
 	isChatInputDisabled,
 	onHasMessagesChange,
 }: Props ) {
-	const { agentConfig, getTabSessionId, siteKey, currentUser } = useAgentsManagerContext();
+	const { agentConfig, getTabSessionId, site, siteKey, currentUser } = useAgentsManagerContext();
+	const taskResultScopeKey = JSON.stringify( [ siteKey, agentConfig?.agentId ?? '' ] );
 
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isThinking, setIsThinking ] = useState( false );
@@ -353,6 +364,18 @@ export default function OrchestratorChat( {
 	>( new Map() );
 	const [ isRegenerating, setIsRegenerating ] = useState( false );
 	const [ hasUserSentMessage, setHasUserSentMessage ] = useState( false );
+	const [ settledRequestCount, setSettledRequestCount ] = useState( 0 );
+	const [ latestTaskResult, setLatestTaskResult ] = useState< {
+		scopeKey: string;
+		aiCredits?: unknown;
+		revision: number;
+	} >();
+	const taskResultRevisionRef = useRef( 0 );
+	useEffect( () => {
+		setLatestTaskResult( ( current ) =>
+			current?.scopeKey === taskResultScopeKey ? current : undefined
+		);
+	}, [ taskResultScopeKey ] );
 	const currentPostId = useSelect( ( select ) => {
 		const editor = select( 'core/editor' ) as { getCurrentPostId?: () => number | string };
 		return editor?.getCurrentPostId?.();
@@ -489,6 +512,12 @@ export default function OrchestratorChat( {
 					update.final === true ||
 					[ 'completed', 'canceled', 'failed' ].includes( update.status.state );
 				if ( isTerminal && isCurrentStreamGeneration ) {
+					taskResultRevisionRef.current += 1;
+					setLatestTaskResult( {
+						scopeKey: taskResultScopeKey,
+						aiCredits: update.aiCredits,
+						revision: taskResultRevisionRef.current,
+					} );
 					const finalMessageId = update.status.message?.messageId ?? update.agentMessage?.messageId;
 					const completedSuccessfully =
 						update.status.state === 'completed' ||
@@ -515,7 +544,7 @@ export default function OrchestratorChat( {
 				await onTaskUpdate?.( update );
 			},
 		};
-	}, [ agentConfig, checkpointStreamGeneration ] );
+	}, [ agentConfig, checkpointStreamGeneration, taskResultScopeKey ] );
 
 	const {
 		addMessage,
@@ -633,6 +662,7 @@ export default function OrchestratorChat( {
 					await handler();
 				} finally {
 					streamedCheckpointMessagesRef.current.regeneratingMessageId = undefined;
+					setSettledRequestCount( ( count ) => count + 1 );
 				}
 			};
 		},
@@ -719,6 +749,25 @@ export default function OrchestratorChat( {
 	const chatError = isReaderChat
 		? getReaderChatErrorMessage( error )
 		: getOrchestratorErrorMessage( error );
+	// Providers resolve before this component mounts, so this hook stays stable for its lifetime.
+	const providerNoticeResult = useChatNotice?.( {
+		error,
+		enabled: ! isReaderChat,
+		isWpcomPlatform: getAgentsManagerInlineData()?.isWpcomPlatform,
+		aiCredits:
+			latestTaskResult?.scopeKey === taskResultScopeKey ? latestTaskResult.aiCredits : undefined,
+		aiCreditsRevision:
+			latestTaskResult?.scopeKey === taskResultScopeKey ? latestTaskResult.revision : undefined,
+		settledRequestCount,
+		siteId: typeof site?.ID === 'number' ? site.ID : undefined,
+		requestStatus: apiFetch,
+		recordUpgradeClick: recordJetpackAiUpgradeButtonClick,
+	} );
+	const providerNotice =
+		providerNoticeResult && 'message' in providerNoticeResult ? providerNoticeResult : undefined;
+	const chatNotice = isReaderChat ? undefined : providerNotice;
+	const displayedChatError =
+		! isReaderChat && providerNoticeResult?.suppressCurrentError ? null : chatError;
 
 	// Resume the conversation after a `wp-admin-navigate` full page reload;
 	// while such a resume is pending, hydration below must not replace the
@@ -726,12 +775,16 @@ export default function OrchestratorChat( {
 	const { hadParkedNavigation, flushPendingNavigation } = useNavigationContinuation( {
 		isProcessing,
 		sendToolResult: async ( params ) => {
-			await onSubmit( params.message, {
-				type: 'tool_result',
-				toolCallId: params.toolCallId,
-				toolId: params.toolId,
-				sessionId: params.sessionId,
-			} );
+			try {
+				await onSubmit( params.message, {
+					type: 'tool_result',
+					toolCallId: params.toolCallId,
+					toolId: params.toolId,
+					sessionId: params.sessionId,
+				} );
+			} finally {
+				setSettledRequestCount( ( count ) => count + 1 );
+			}
 		},
 	} );
 
@@ -1332,6 +1385,8 @@ export default function OrchestratorChat( {
 				submitDispatchedRef.current = false;
 				setInputValue( ( currentValue ) => ( currentValue === '' ? message : currentValue ) );
 				return;
+			} finally {
+				setSettledRequestCount( ( count ) => count + 1 );
 			}
 
 			consumeNextMessageExternalContextEntries();
@@ -1818,7 +1873,7 @@ export default function OrchestratorChat( {
 			thinkingMessage={
 				isUploadingImages ? __( 'Uploading images…', __i18n_text_domain__ ) : progressMessage
 			}
-			error={ chatError || uploadError }
+			error={ displayedChatError || uploadError }
 			onSubmit={ onSubmitWithImages }
 			onAbort={ handleAbort }
 			isLoadingConversation={ isLoadingConversation }
@@ -1837,6 +1892,7 @@ export default function OrchestratorChat( {
 			groupWritingSuggestions={ groupWritingSuggestions }
 			imageUpload={ imageUpload }
 			isChatInputDisabled={ isChatInputDisabled }
+			notice={ chatNotice }
 			showFeedbackInput={ showFeedbackInput }
 			onSubmitFeedbackText={ submitFeedbackText }
 			onCancelFeedback={ resetFeedback }

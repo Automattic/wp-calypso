@@ -868,6 +868,121 @@ describe( 'parseSSEStream', () => {
 		expect( updates[ 0 ].final ).toBe( true );
 	} );
 
+	it( 'preserves AI credits from a terminal task result', async () => {
+		const aiCredits = {
+			credits_limit: 15_000,
+			credits_used: 3_000,
+			credits_remaining: 12_000,
+			blocked: false,
+			resets_at: '2026-10-01T00:00:00+00:00',
+			upgrade_url: null,
+		};
+		const updates = [];
+		const stream = streamFromEvents( [
+			{
+				jsonrpc: '2.0',
+				result: {
+					type: 'TaskStatusUpdateEvent',
+					taskId: 'task-with-extensions',
+					status: {
+						state: 'completed',
+						final: true,
+						message: {
+							kind: 'message',
+							messageId: 'response-with-extensions',
+							role: 'agent',
+							parts: [ { type: 'text', text: 'Done' } ],
+						},
+					},
+					ai_credits: aiCredits,
+				},
+			},
+		] );
+
+		for await ( const update of parseSSEStream( stream ) ) {
+			updates.push( update );
+		}
+
+		expect( updates ).toHaveLength( 1 );
+		expect( updates[ 0 ].aiCredits ).toEqual( aiCredits );
+	} );
+
+	it( 'yields terminal AI credits before propagating a protocol error', async () => {
+		const updates = [];
+		const stream = streamFromEvents( [
+			{
+				jsonrpc: '2.0',
+				error: { code: -32000, message: 'AI credit allowance exhausted' },
+				result: {
+					type: 'TaskStatusUpdateEvent',
+					taskId: 'task-exhausted',
+					status: {
+						state: 'failed',
+						final: true,
+						message: {
+							kind: 'message',
+							messageId: 'response-exhausted',
+							role: 'agent',
+							parts: [ { type: 'text', text: 'Allowance exhausted' } ],
+						},
+					},
+					ai_credits: {
+						credits_limit: 15_000,
+						credits_used: 15_000,
+						credits_remaining: 0,
+						blocked: true,
+						resets_at: '2026-10-01T00:00:00+00:00',
+						upgrade_url: null,
+					},
+				},
+			},
+		] );
+		let thrown: unknown;
+
+		try {
+			for await ( const update of parseSSEStream( stream ) ) {
+				updates.push( update );
+			}
+		} catch ( error ) {
+			thrown = error;
+		}
+
+		expect( updates ).toHaveLength( 1 );
+		expect( updates[ 0 ] ).toMatchObject( {
+			final: true,
+			status: { state: 'failed' },
+			aiCredits: { credits_remaining: 0, blocked: true },
+		} );
+		expect( thrown ).toEqual( new Error( 'Streaming error: AI credit allowance exhausted' ) );
+	} );
+
+	it( 'does not swallow an error when a combined payload is handled as a delta', async () => {
+		const stream = streamFromEvents( [
+			{
+				jsonrpc: '2.0',
+				method: 'message/delta',
+				params: {
+					id: 'task-with-error',
+					delta: { type: 'delta', deltaType: 'content', content: 'partial' },
+				},
+				error: { code: -32000, message: 'Terminal failure' },
+				result: { status: { state: 'failed', final: true } },
+			},
+		] );
+		const updates = [];
+		let thrown: unknown;
+		try {
+			for await ( const update of parseSSEStream( stream, { supportDeltas: true } ) ) {
+				updates.push( update );
+			}
+		} catch ( error ) {
+			thrown = error;
+		}
+
+		expect( updates ).toHaveLength( 1 );
+		expect( thrown ).toEqual( new Error( 'Streaming error: Terminal failure' ) );
+	} );
+
 	describe( 'delta pacing', () => {
 		afterEach( () => {
 			vi.unstubAllGlobals();

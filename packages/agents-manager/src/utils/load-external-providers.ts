@@ -33,7 +33,7 @@ import type {
 	BigSkyMessage,
 } from '../types';
 import type { UseAgentChatReturn } from '@automattic/agenttic-client';
-import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
+import type { MarkdownComponents, MarkdownExtensions, NoticeConfig } from '@automattic/agenttic-ui';
 import type { ReactNode } from 'react';
 
 /**
@@ -139,6 +139,36 @@ export interface ProviderCapabilities {
 	supportsRegenerateAction?: boolean;
 }
 
+export type ChatNoticeResult =
+	| ( NoticeConfig & {
+			/** Hide only the current error that this notice replaces. */
+			suppressCurrentError?: boolean;
+	  } )
+	| {
+			/** The provider handled the current error without rendering a notice. */
+			suppressCurrentError: true;
+	  };
+
+export type UseChatNoticeHook = ( props: {
+	error: string | null;
+	/** False on surfaces whose usage must not be fetched or displayed. */
+	enabled: boolean;
+	/** Whether the site is WordPress.com-hosted; absent when the host does not publish it. */
+	isWpcomPlatform?: boolean;
+	/** Credit status from the latest terminal task result in this site and agent scope. */
+	aiCredits?: unknown;
+	/** Changes whenever a terminal task result is received in this site and agent scope. */
+	aiCreditsRevision?: number;
+	/** Changes only after the complete request or stream promise settles. */
+	settledRequestCount: number;
+	/** Current site identity for provider-owned status requests. */
+	siteId?: number;
+	/** Authenticated same-origin REST requester supplied by Agents Manager. */
+	requestStatus: < T >( options: { path: string } ) => Promise< T >;
+	/** Records the shared upgrade funnel click without coupling providers to analytics packages. */
+	recordUpgradeClick: () => void;
+} ) => ChatNoticeResult | undefined;
+
 /**
  * OR-merge a provider's `capabilities` into the running map. Works on both
  * plain objects and lazy Proxies (probed by direct key access, not iteration).
@@ -184,6 +214,8 @@ export interface LoadedProviders {
 	transformMessages?: TransformMessages;
 	siteBuildUtils?: SiteBuildUtils;
 	useCheckpoint?: UseCheckpointHook;
+	/** Provider-owned, display-only notice shown through AgentChat's shared notice slot. */
+	useChatNotice?: UseChatNoticeHook;
 	/**
 	 * Streamed task-update callback, forwarded to useAgentChat's `onTaskUpdate`.
 	 * Lets a provider react to streamed tool-argument deltas as they arrive — e.g.
@@ -594,6 +626,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedGetChatComponent: GetChatComponent | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
 	let mergedOnTaskUpdate: LoadedProviders[ 'onTaskUpdate' ] | undefined;
+	let mergedUseChatNotice: UseChatNoticeHook | undefined;
 	// OR-merged across all providers.
 	const mergedCapabilities: ProviderCapabilities = {};
 	let mergedSuppressEmptyViewDefaults = false;
@@ -690,6 +723,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 		if ( module.onTaskUpdate && ! mergedOnTaskUpdate ) {
 			mergedOnTaskUpdate = module.onTaskUpdate;
+		}
+		if ( module.useChatNotice && ! mergedUseChatNotice ) {
+			mergedUseChatNotice = module.useChatNotice;
 		}
 
 		mergeCapabilitiesInto( mergedCapabilities, module.capabilities );
@@ -850,6 +886,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		providerIds: allProviderIds.length ? allProviderIds : undefined,
 		useAbilitiesSetup: mergedAbilitiesSetup,
 		onTaskUpdate: mergedOnTaskUpdate,
+		useChatNotice: mergedUseChatNotice,
 		useSuggestions: mergedUseSuggestions,
 		getChatComponent: mergedGetChatComponent,
 		transformMessages: mergedTransformMessages,

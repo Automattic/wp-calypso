@@ -199,8 +199,11 @@ export async function* parseSSEStream(
 				hasProcessedDelta = true;
 			}
 
-			if ( event.error ) {
-				throw new Error( `Streaming error: ${ event.error.message }` );
+			const streamError = event.error
+				? new Error( `Streaming error: ${ event.error.message }` )
+				: null;
+			if ( streamError && ! event.result?.status ) {
+				throw streamError;
 			}
 
 			// Handle delta messages
@@ -262,6 +265,9 @@ export async function* parseSSEStream(
 					sessionId: event.result.sessionId,
 					status: event.result.status,
 					final: isFinalTaskUpdate( event.result ),
+					...( event.result.ai_credits !== undefined && {
+						aiCredits: event.result.ai_credits,
+					} ),
 					text: extractTextFromMessage( statusMessage ),
 					progressMessage: progress?.summary,
 					progressPhase: progress?.phase,
@@ -288,6 +294,9 @@ export async function* parseSSEStream(
 						sessionId: event.result.sessionId,
 						status: event.result.status,
 						final: isFinalTaskUpdate( event.result ),
+						...( event.result.ai_credits !== undefined && {
+							aiCredits: event.result.ai_credits,
+						} ),
 						text: extractTextFromMessage( statusMessage ),
 						progressMessage: progress?.summary,
 						progressPhase: progress?.phase,
@@ -295,6 +304,10 @@ export async function* parseSSEStream(
 					};
 					yield update;
 				}
+			}
+
+			if ( streamError ) {
+				throw streamError;
 			}
 		}
 	};

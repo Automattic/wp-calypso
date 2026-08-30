@@ -80,6 +80,8 @@ import { getResponseRenderedTrackingProperties } from './utils/tracking';
 import type { SuggestionOption } from '@automattic/agenttic-client';
 import type { ComponentType } from 'react';
 
+export { useJetpackFreeCreditChatNotice } from './free-credit-notice';
+
 // Re-export block-action helpers as part of the package's public surface.
 export { applyReviewEdit, findBlockElement, findBlockListLayout };
 export { registerBlockEditorFilters } from './extensions';
