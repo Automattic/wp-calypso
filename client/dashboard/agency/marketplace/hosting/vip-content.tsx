@@ -57,7 +57,9 @@ function VipPitchCard() {
 
 					<div className="marketplace-hosting__brand-strip">
 						{ CLIENT_BRANDS.map( ( brand ) => (
-							<img key={ brand.name } src={ brand.logo } alt={ brand.name } />
+							<div key={ brand.name } className="marketplace-hosting__brand-cell">
+								<img src={ brand.logo } alt={ brand.name } />
+							</div>
 						) ) }
 					</div>
 				</VStack>
