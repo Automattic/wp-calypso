@@ -810,8 +810,18 @@ export default function OrchestratorChat( {
 	const [ failedRetries, setFailedRetries ] = useState< OrphanedTurn[] >( [] );
 	const reconcileDismissedRef = useRef( false );
 	useEffect( () => {
+		// Reconciliation can settle after the chat was cleared. The dismissal is
+		// final: the merchant asked for a blank panel, not for the recovered
+		// question to reappear a moment later.
+		if ( reconcileDismissedRef.current ) {
+			return;
+		}
 		setFailedRetries( reconcileResult ?? [] );
 	}, [ reconcileResult ] );
+	const dismissRecovery = useCallback( () => {
+		reconcileDismissedRef.current = true;
+		setFailedRetries( [] );
+	}, [] );
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const maxDynamicSuggestions = isDocked ? undefined : 3;
@@ -1541,7 +1551,7 @@ export default function OrchestratorChat( {
 			addMessage( convertBigSkyMessageToUIMessage( message ) );
 		},
 		clearMessages: () => {
-			reconcileDismissedRef.current = true;
+			dismissRecovery();
 			loadMessages( [] );
 		},
 		clearSuggestions,
