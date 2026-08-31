@@ -8,8 +8,9 @@ import {
 	recordAgentsManagerTracksEvent,
 	useShouldUseUnifiedAgent,
 } from '@automattic/agents-manager';
-import { renderHook } from '@testing-library/react';
+import { render, renderHook } from '@testing-library/react';
 import { useAiChatPlugin } from '../plugin-ai-chat';
+import type { AdminBarNode } from '@automattic/omnibar';
 
 jest.mock( '@automattic/agents-manager', () => ( {
 	closeAgentsManagerChat: jest.fn(),
@@ -26,6 +27,20 @@ const mockUseShouldUseUnifiedAgent = useShouldUseUnifiedAgent as jest.MockedFunc
 	typeof useShouldUseUnifiedAgent
 >;
 
+const AI_CHAT_NODE = {
+	id: 'agents-manager-ai-chat',
+	title: '<span>Ask AI</span>',
+	parent: 'top-secondary',
+	href: '',
+	group: false,
+	meta: {
+		menu_title: 'Ask AI',
+		icon: '<svg class="ab-icon" viewBox="0 0 24 24"><path d="M1 2z" /></svg>',
+	},
+} as AdminBarNode;
+
+const adminBarNodes = [ AI_CHAT_NODE ];
+
 describe( 'useAiChatPlugin', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -36,19 +51,46 @@ describe( 'useAiChatPlugin', () => {
 	it( 'returns no node when the unified agent is unavailable', () => {
 		mockUseShouldUseUnifiedAgent.mockReturnValue( false );
 
-		const { result } = renderHook( () => useAiChatPlugin( { sectionName: 'sites' } ) );
+		const { result } = renderHook( () =>
+			useAiChatPlugin( { sectionName: 'sites', adminBarNodes } )
+		);
 
 		expect( result.current ).toBeUndefined();
 	} );
 
+	it( 'returns no node when the admin bar has no AI chat node', () => {
+		const { result } = renderHook( () =>
+			useAiChatPlugin( { sectionName: 'sites', adminBarNodes: [] } )
+		);
+
+		expect( result.current ).toBeUndefined();
+	} );
+
+	it( 'takes its label, tooltip and icon from the admin bar node', () => {
+		const { result } = renderHook( () =>
+			useAiChatPlugin( { sectionName: 'sites', adminBarNodes } )
+		);
+
+		const { container } = render( result.current?.icon as React.ReactElement );
+
+		expect( result.current?.label ).toBe( 'Ask AI' );
+		expect( result.current?.tooltip ).toBe( 'Ask AI' );
+		expect( container.querySelector( 'svg' ) ).toHaveAttribute( 'viewBox', '0 0 24 24' );
+		expect( container.querySelector( 'path' ) ).toHaveAttribute( 'd', 'M1 2z' );
+	} );
+
 	it( 'carries the class that marks it as the chat entry button', () => {
-		const { result } = renderHook( () => useAiChatPlugin( { sectionName: 'sites' } ) );
+		const { result } = renderHook( () =>
+			useAiChatPlugin( { sectionName: 'sites', adminBarNodes } )
+		);
 
 		expect( result.current?.className ).toBe( 'masterbar__item-agents-manager-ai-chat' );
 	} );
 
 	it( 'records the masterbar event with the section and opens the chat on click', () => {
-		const { result } = renderHook( () => useAiChatPlugin( { sectionName: 'sites' } ) );
+		const { result } = renderHook( () =>
+			useAiChatPlugin( { sectionName: 'sites', adminBarNodes } )
+		);
 		result.current?.onClick?.( {} as React.MouseEvent );
 
 		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
@@ -62,7 +104,7 @@ describe( 'useAiChatPlugin', () => {
 	it( 'records an unknown section and closes a visible chat on click', () => {
 		mockIsChatVisible.mockReturnValue( true );
 
-		const { result } = renderHook( () => useAiChatPlugin( {} ) );
+		const { result } = renderHook( () => useAiChatPlugin( { adminBarNodes } ) );
 		result.current?.onClick?.( {} as React.MouseEvent );
 
 		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(

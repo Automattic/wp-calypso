@@ -128,10 +128,14 @@ function ConnectedOmnibar( {
 		[ authUser ]
 	);
 
+	const adminBarNodes = useMemo(
+		() => siteNodes ?? dashboardNodes ?? [],
+		[ siteNodes, dashboardNodes ]
+	);
+
 	const baseOmnibarNodes = useMemo( () => {
-		const nodes = siteNodes ?? dashboardNodes ?? [];
 		const result = buildOmnibarNodesFromAdminBarNodes(
-			removeUnsupportedNodes( nodes, supports ),
+			removeUnsupportedNodes( adminBarNodes, supports ),
 			nodeBuilders,
 			createHrefResolver( siteNodes ? site?.options?.admin_url : undefined )
 		);
@@ -159,11 +163,11 @@ function ConnectedOmnibar( {
 		}
 
 		return result;
-	}, [ dashboardNodes, siteNodes, site, supports, nodeBuilders ] );
+	}, [ adminBarNodes, siteNodes, site, supports, nodeBuilders ] );
 
 	const readerPluginNode = useReaderPlugin( { sectionGroup } );
-	const helpCenterPluginNode = useHelpCenterPlugin( { sectionName } );
-	const aiChatPluginNode = useAiChatPlugin( { sectionName } );
+	const helpCenterPluginNode = useHelpCenterPlugin( { sectionName, adminBarNodes } );
+	const aiChatPluginNode = useAiChatPlugin( { sectionName, adminBarNodes } );
 	const notificationsPluginNode = useNotificationsPlugin( { user } );
 	const { node: languageSwitcherNode, panel: languageSwitcherPanel } = useLanguageSwitcherPlugin( {
 		user,

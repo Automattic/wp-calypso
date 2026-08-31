@@ -11,38 +11,30 @@ import { withSiteContext } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { Icon, backup, comment, page, rss, video } from '@wordpress/icons';
+import { useMemo } from 'react';
 import { useAnalytics } from '../analytics';
 import { useHelpCenter } from '../help-center';
+import { adminBarIcon } from './admin-bar-icon';
 import type { AnalyticsClient } from '../analytics';
-import type { OmnibarNode } from '@automattic/omnibar';
+import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
 import './plugin-help-center.scss';
 
 type RecordTracksEvent = AnalyticsClient[ 'recordTracksEvent' ];
 
+const AGENTS_MANAGER_NODE_ID = 'agents-manager';
+const SECONDARY_GROUP_NODE_ID = 'agents-manager-menu-panel-links';
+
 function HelpIcon() {
 	return (
-		<svg
-			className="omnibar__help-icon"
-			width="24"
-			height="24"
-			viewBox="0 0 24 24"
-			xmlns="http://www.w3.org/2000/svg"
-		>
-			<path
-				fillRule="evenodd"
-				clipRule="evenodd"
-				d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm-1 16v-2h2v2h-2zm2-3v-1.141A3.991 3.991 0 0016 10a4 4 0 00-8 0h2c0-1.103.897-2 2-2s2 .897 2 2-.897 2-2 2a1 1 0 00-1 1v2h2z"
-			/>
-		</svg>
-	);
-}
-
-function menuIcon( icon: JSX.Element ) {
-	return (
-		<span className="omnibar__help-menu-icon">
-			<Icon icon={ icon } />
+		<span className="omnibar__help-icon">
+			<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+				<path
+					fillRule="evenodd"
+					clipRule="evenodd"
+					d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm-1 16v-2h2v2h-2zm2-3v-1.141A3.991 3.991 0 0016 10a4 4 0 00-8 0h2c0-1.103.897-2 2-2s2 .897 2 2-.897 2-2 2a1 1 0 00-1 1v2h2z"
+				/>
+			</svg>
 		</span>
 	);
 }
@@ -103,86 +95,79 @@ function handleMenuClick(
 	);
 }
 
-function getAgentsManagerMenuNodes(
+function buildAgentsManagerMenuNodes(
+	adminBarNodes: AdminBarNode[],
 	recordTracksEvent: RecordTracksEvent,
 	omnibarSiteId: number | null | undefined,
 	sectionName: string | undefined
 ): OmnibarNode[] {
-	return [
-		{
-			id: 'help-chat',
-			group: true,
-			children: [
-				{
-					id: 'chat-support',
-					title: __( 'Chat support' ),
-					icon: menuIcon( comment ),
-					onClick: () => handleMenuClick( recordTracksEvent, '/chat', omnibarSiteId, sectionName ),
-				},
-				{
-					id: 'chat-history',
-					title: __( 'Chat history' ),
-					icon: menuIcon( backup ),
-					onClick: () =>
-						handleMenuClick( recordTracksEvent, '/history', omnibarSiteId, sectionName ),
-				},
-			],
-		},
-		{
-			id: 'help-resources',
-			group: true,
-			variant: 'secondary',
-			children: [
-				{
-					id: 'support-guides',
-					title: __( 'Support guides' ),
-					icon: menuIcon( page ),
-					onClick: () =>
-						handleMenuClick( recordTracksEvent, '/support-guides', omnibarSiteId, sectionName ),
-				},
-				{
-					id: 'courses',
-					title: __( 'Courses' ),
-					icon: menuIcon( video ),
-					onClick: () =>
-						handleMenuClick(
-							recordTracksEvent,
-							localizeUrl( 'https://wordpress.com/support/courses/' ),
-							omnibarSiteId,
-							sectionName,
-							true
-						),
-				},
-				{
-					id: 'product-updates',
-					title: __( 'Product updates' ),
-					icon: menuIcon( rss ),
-					onClick: () =>
-						handleMenuClick(
-							recordTracksEvent,
-							localizeUrl( 'https://wordpress.com/blog/category/product-features/' ),
-							omnibarSiteId,
-							sectionName,
-							true
-						),
-				},
-			],
-		},
-	];
+	return adminBarNodes
+		.filter( ( node ) => node.group && node.parent === AGENTS_MANAGER_NODE_ID )
+		.map(
+			( group ): OmnibarNode => ( {
+				id: group.id,
+				group: true,
+				// Not keyed on `ab-sub-secondary`: wp-admin marks both groups with it, Calypso shades one.
+				...( group.id === SECONDARY_GROUP_NODE_ID ? { variant: 'secondary' as const } : {} ),
+				children: adminBarNodes
+					.filter( ( node ) => node.parent === group.id && ( node.meta?.route || node.href ) )
+					.map( ( node ): OmnibarNode => {
+						const route = node.meta?.route;
+						const destination = route ?? localizeUrl( node.href );
+
+						return {
+							id: node.id,
+							title: node.meta?.menu_title,
+							icon: adminBarIcon( 'omnibar__help-menu-icon', node.meta?.icon ),
+							onClick: () =>
+								handleMenuClick(
+									recordTracksEvent,
+									destination,
+									omnibarSiteId,
+									sectionName,
+									! route
+								),
+						};
+					} ),
+			} )
+		);
 }
 
-export function useHelpCenterPlugin( { sectionName }: { sectionName?: string } ): OmnibarNode {
+export function useHelpCenterPlugin( {
+	sectionName,
+	adminBarNodes,
+}: {
+	sectionName?: string;
+	adminBarNodes: AdminBarNode[];
+} ): OmnibarNode {
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 	const { isShown: isHelpCenterShown, setShowHelpCenter } = useHelpCenter();
 	const { recordTracksEvent } = useAnalytics();
 	const { data: omnibarSiteId } = useQuery( omnibarSiteIdQuery() );
 
-	if ( shouldUseUnifiedAgent ) {
+	const helpNode = adminBarNodes.find( ( node ) => node.id === AGENTS_MANAGER_NODE_ID );
+
+	// Building the menu parses an SVG per node, and this runs on every omnibar render.
+	const children = useMemo(
+		() =>
+			buildAgentsManagerMenuNodes( adminBarNodes, recordTracksEvent, omnibarSiteId, sectionName ),
+		[ adminBarNodes, recordTracksEvent, omnibarSiteId, sectionName ]
+	);
+	const icon = useMemo(
+		() => adminBarIcon( 'omnibar__help-icon', helpNode?.meta?.icon ),
+		[ helpNode?.meta?.icon ]
+	);
+
+	if ( shouldUseUnifiedAgent && helpNode ) {
 		return {
-			id: 'help-center',
-			label: __( 'Help' ),
-			icon: <HelpIcon />,
-			children: getAgentsManagerMenuNodes( recordTracksEvent, omnibarSiteId, sectionName ),
+			id: helpNode.id,
+			label: helpNode.meta?.menu_title,
+			icon,
+			tooltip: helpNode.meta?.menu_title,
+			// Disconnected sites get a link instead of a dropdown, opened in a new tab as in wp-admin.
+			...( children.length
+				? { children }
+				: { href: helpNode.href, target: helpNode.meta?.target, rel: helpNode.meta?.rel } ),
 		};
 	}
 
