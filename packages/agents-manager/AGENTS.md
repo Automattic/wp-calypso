@@ -27,6 +27,23 @@ cd apps/agents-manager && yarn dev --sync
 - **i18n**: Use `@wordpress/i18n` with the `__i18n_text_domain__` text domain placeholder — passed unquoted as it is a global constant, not a string literal. The webpack `DefinePlugin` replaces it with `'default'` at build time.
 - **Curly quotes**: Preserve `""` `''` exactly as they appear. Do not convert to unicode escapes or ASCII equivalents.
 
+## Working in Heavily Shared Components
+
+A heavily shared component is one rendered by multiple agent chats or surfaces — `components/orchestrator-chat` (the largest), `components/agent-chat`, `components/agent-dock`. They accrete cross-cutting logic fast, making changes — AI-generated ones most of all — hard to read and review. Target shape: a thin composition layer — hooks at the top, minimal glue, render at the bottom.
+
+These rules are MUSTs, not suggestions. They apply to every change that adds or modifies state, effects, handlers, or behavior in such a component:
+
+1. **One mechanism, one hook.** All state, refs, effects, and callbacks implementing a single behavior MUST live together in one custom hook under `src/hooks/`, named after the behavior (`use-image-upload`, `use-navigation-continuation` are the pattern). A mechanism's pieces MUST NOT be spread across the component body.
+2. **New cross-cutting logic starts as a hook, not inline.** A change that adds a `useState` + `useEffect` + handler cluster to one of these components MUST extract it into a hook in the same PR. If a hook already owns that behavior, it MUST be extended — a parallel hook MUST NOT be added.
+3. **Pure logic goes to `utils/`.** New logic with no React state — parsing, formatting, list transforms — MUST be a pure function with explicit inputs and outputs. When adding a stage to a multi-stage derivation (e.g. a large `useMemo` shaping the transcript), the stage MUST be a named pure function, so the derivation stays an ordered pipeline.
+4. **Keep hook APIs narrow.** A hook MUST take explicit inputs and return only what callers use. When two mechanisms share state, it MUST be passed explicitly between them — never coupled through the component closure.
+5. **One gate per surface difference.** Surface- or provider-specific behavior MUST be gated in a single place — a prop, a capability flag, the provider contract (`extension-types.ts`), or one derived value (as `isReaderChat` is) — and MUST NOT be re-tested with scattered ad-hoc conditionals through the body. Behavior owned by a provider MUST come through the contract, not be hardcoded in shared code.
+6. **Changing existing behavior needs a blast-radius check.** A shared component's props, events, and observable behavior are a contract with every surface. Before changing or removing any, you MUST find all consumers — every chat entry, the `-disconnected` variants, and external providers if `extension-types.ts` is involved (see Pitfalls) — and confirm each still behaves as intended.
+7. **Docblock the why.** Every hook MUST have a docblock stating which mechanism it implements and why it exists — the race, product behavior, or platform quirk. That context is what keeps grouped logic safe to move later.
+8. **Shared weight is universal weight.** Any import added to shared code ships to every surface — you MUST check the Performance section before importing anything heavy.
+
+Before finishing a change to one of these components, check the diff against each rule above.
+
 ## Performance
 
 One source ships to every surface, so weight one surface needs is weight they all carry — `reader-chat` most of all, since it bundles its dependencies instead of externalizing them.
