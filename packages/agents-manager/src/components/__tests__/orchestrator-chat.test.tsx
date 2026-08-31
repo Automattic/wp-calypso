@@ -351,7 +351,11 @@ jest.mock(
 					: message
 			);
 		},
-		clearConversation: ( key: string ) => mockClearConversation( key ),
+		clearConversation: ( key: string ) => {
+			mockClearConversation( key );
+			mockStoredSessionIds = mockStoredSessionIds.filter( ( id ) => id !== key );
+			delete mockStoredConversations[ key ];
+		},
 		messageTextContent: ( message: MockStoredMessage ) =>
 			message.parts
 				.filter( ( part ) => part.type === 'text' )
@@ -3858,6 +3862,43 @@ describe( 'OrchestratorChat', () => {
 			expect( await findRetry() ).toBeVisible();
 			expect( screen.getByText( 'ship the sale banner' ) ).toBeVisible();
 			expect( screen.getByTestId( 'input-value' ) ).toHaveTextContent( '' );
+		} );
+
+		it( 'offers one retry, not two, after retrying and changing page', async () => {
+			// The reviewer's amber case. Simulates agenttic: `loadMessages` replaces
+			// the agent's history, and a send appends the new user turn to that
+			// history and persists the lot under the session it mints.
+			let agentHistory: MockStoredMessage[] = [];
+			const loadMessages = jest.fn( ( messages: MockStoredMessage[] ) => {
+				agentHistory = messages;
+			} );
+			const onSubmit = jest.fn( async ( text: string ) => {
+				agentHistory = [
+					...agentHistory,
+					{
+						messageId: `m-${ agentHistory.length + 2 }`,
+						role: 'user',
+						parts: [ { type: 'text', text } ],
+						metadata: { deliveryStatus: 'pending' },
+					},
+				];
+				mockStoredSessionIds = [ ...mockStoredSessionIds, 'local-2' ];
+				mockStoredConversations[ 'local-2' ] = agentHistory;
+			} );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { loadMessages, onSubmit } ) );
+			seedOrphan();
+
+			const { unmount } = render( chat() );
+			fireEvent.click( await findRetry() );
+			await waitFor( () => expect( onSubmit ).toHaveBeenCalled() );
+
+			// Page change inside the window, before the server assigns a session.
+			unmount();
+			agentHistory = [];
+			render( chat() );
+
+			await findRetry();
+			expect( screen.getAllByRole( 'button', { name: 'Retry' } ) ).toHaveLength( 1 );
 		} );
 
 		it( 'a provider new chat dismisses it for good', async () => {
