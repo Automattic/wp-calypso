@@ -13,7 +13,7 @@ function matchedRouteIds( pathname: string ) {
 		context: { config: APP_CONTEXT_DEFAULT_CONFIG },
 	} );
 
-	return router.matchRoutes( { pathname, search: {} } ).map( ( match ) => match.routeId );
+	return router.matchRoutes( pathname, {} ).map( ( match ) => match.routeId );
 }
 
 describe( 'domains routes', () => {

@@ -39,6 +39,7 @@ import {
 	checkDomainNotPendingRegistration,
 } from '../../utils/domain-permissions';
 import { queryParamToArray } from '../../utils/url';
+import { resolveLegacyDomainPath } from './legacy-domain-paths';
 import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
 
@@ -128,12 +129,15 @@ const fetchDomainOrNotFound = async ( domainName: string ) => {
 
 // Legacy Calypso domain management lived under `/domains/manage`. Those paths
 // would otherwise be read as `/domains/$domainName` with a domain named
-// "manage", so keep old links and bookmarks pointing at the domains list.
+// "manage", so translate them to their dashboard equivalent.
 export const domainsLegacyManageRoute = createRoute( {
 	getParentRoute: () => domainsRoute,
 	path: 'manage/$',
-	beforeLoad: () => {
-		throw dashboardRedirect( { to: '/domains' } );
+	beforeLoad: ( { params } ) => {
+		throw dashboardRedirect( {
+			href: resolveLegacyDomainPath( ( params as { _splat?: string } )._splat ?? '' ),
+			replace: true,
+		} );
 	},
 } );
 
@@ -141,7 +145,7 @@ export const domainsLegacyManageIndexRoute = createRoute( {
 	getParentRoute: () => domainsRoute,
 	path: 'manage',
 	beforeLoad: () => {
-		throw dashboardRedirect( { to: '/domains' } );
+		throw dashboardRedirect( { to: '/domains', replace: true } );
 	},
 } );
 

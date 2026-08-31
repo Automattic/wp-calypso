@@ -16,7 +16,7 @@ import {
 	siteBySlugQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-table/src/utils/paths';
+import { domainUseMyDomain } from '@automattic/domains-table/src/utils/paths';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls';
@@ -1241,7 +1241,7 @@ function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 						'There was an error when initiating your domain transfer. Please <a>see the details or retry</a>.'
 					),
 					{
-						a: <a href={ domainManagementEdit( purchase.site_slug, domain.domain, null ) } />,
+						a: <Link to={ domainRoute.to } params={ { domainName: domain.domain } } />,
 					}
 				) }
 			</Text>
@@ -1260,10 +1260,12 @@ function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 					{
 						a: (
 							<a
-								href={ domainUseMyDomain(
-									purchase.site_slug,
-									purchase.meta,
-									useMyDomainInputMode.startPendingTransfer
+								href={ wpcomLink(
+									domainUseMyDomain(
+										purchase.site_slug,
+										purchase.meta,
+										useMyDomainInputMode.startPendingTransfer
+									)
 								) }
 							/>
 						),
