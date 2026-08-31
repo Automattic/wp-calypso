@@ -48,8 +48,8 @@ Before finishing a change to one of these components, check the diff against eac
 
 One source ships to every surface, so weight one surface needs is weight they all carry — `reader-chat` most of all, since it bundles its dependencies instead of externalizing them.
 
-- **Load heavy, surface-specific code on demand.** Components go through `lazyComponent()` (`utils/lazy-component.ts`); other modules take a gated dynamic `import()`, as `abilities/index.ts` does. One static import of `@wordpress/block-editor`, `blocks`, `core-data`, or `media-utils` anywhere in the shared chat path pulls that tree into every entry.
-- **Measure before and after** — `webpack-bundle-analyzer`, or the per-entry sizes from `yarn build` in `apps/agents-manager`. Import chains are easy to misjudge by reading.
+- **Heavy, surface-specific code MUST load on demand.** Components go through `lazyComponent()` (`utils/lazy-component.ts`); other modules take a gated dynamic `import()`, as `abilities/index.ts` does. A static import of `@wordpress/block-editor`, `blocks`, `core-data`, or `media-utils` MUST NOT be added anywhere in the shared chat path — it pulls that tree into every entry.
+- **Changes that add a dependency or touch a lazy-loading seam MUST be measured before and after** — `webpack-bundle-analyzer`, or the per-entry sizes from `yarn build` in `apps/agents-manager`. Import chains are easy to misjudge by reading.
 
 ## Ability Scoping
 
