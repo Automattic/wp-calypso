@@ -52,6 +52,7 @@ export { getNoteExcerpt, getNoteSender, getNoteTitle };
 export { getBlockSegments, getTitleSegments } from '@automattic/notifications/src/common/segments';
 export type { BlockSegment, TitleSegment } from '@automattic/notifications/src/common/segments';
 export {
+	getNoteLikedComment,
 	getNoteParentComment,
 	getNoteUserRef,
 } from '@automattic/notifications/src/common/body-parts';

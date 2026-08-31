@@ -14,6 +14,7 @@ import { getRelativeTimeString } from '../utils/datetime';
 import { openNote, useNote } from './engine';
 import {
 	getNoteBodyParts,
+	getNoteLikedComment,
 	getNoteParentComment,
 	getNoteExcerpt,
 	getNoteTypeLabel,
@@ -264,7 +265,10 @@ export default function NoteDetail( {
 	const headerBlocks =
 		note.type === 'like' || note.type === 'comment_like' ? note.header ?? [] : [];
 	const headerUser = headerBlocks.length > 0 ? getNoteUserRef( headerBlocks[ 0 ] ) : null;
-	const headerSnippet = headerBlocks[ 1 ]?.text ?? null;
+	const likedComment = getNoteLikedComment( note );
+	// A liked comment is shown as the comment itself, below, so the header does
+	// not repeat it as a snippet.
+	const headerSnippet = likedComment ? null : headerBlocks[ 1 ]?.text ?? null;
 
 	const badgeMedia = ( note.body ?? [] )
 		.flatMap( ( block ) => block.media ?? [] )
@@ -396,7 +400,14 @@ export default function NoteDetail( {
 				</VStack>
 			</HStack>
 			<VStack spacing={ 3 } className="dashboard-notifications-inbox__body">
-				{ ! comment && excerpt && <Text>{ excerpt }</Text> }
+				{ likedComment && (
+					<blockquote className="dashboard-notifications-inbox__quote">
+						<Text as="p">
+							<BlockText block={ likedComment } />
+						</Text>
+					</blockquote>
+				) }
+				{ ! comment && ! likedComment && excerpt && <Text>{ excerpt }</Text> }
 				{ contextRuns.map( ( run, index ) =>
 					'users' in run ? (
 						<VStack

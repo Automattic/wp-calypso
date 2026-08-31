@@ -115,6 +115,19 @@ export function getNoteParentComment( note: Note ): NoteParentComment | null {
 	};
 }
 
+/**
+ * The comment a `comment_like` note is about. The payload carries it only in
+ * the note header — a liked comment has no body block of its own — so this is
+ * the one place its text is available without fetching the comment.
+ */
+export function getNoteLikedComment( note: Note ): Subject | null {
+	if ( note.type !== 'comment_like' ) {
+		return null;
+	}
+	const snippet = note.header?.[ 1 ];
+	return snippet?.text?.trim() ? snippet : null;
+}
+
 export type NoteUserRef = {
 	name: string;
 	avatarUrl: string | null;

@@ -1,5 +1,6 @@
 import {
 	getNoteBodyParts,
+	getNoteLikedComment,
 	getNoteParentComment,
 	getNoteUserRef,
 	getSignature,
@@ -226,6 +227,43 @@ describe( 'getNoteParentComment', () => {
 					header: [ { text: 'A site', ranges: [] }, note.header![ 1 ] ],
 				} )
 			)
+		).toBeNull();
+	} );
+} );
+
+describe( 'getNoteLikedComment', () => {
+	const likeNote = ( overrides: Partial< Note > = {} ) =>
+		makeNote( {
+			type: 'comment_like',
+			header: [
+				{
+					text: 'Alice Adams',
+					ranges: [ { type: 'user', indices: [ 0, 11 ], id: 7, parent: null } ],
+				},
+				{ text: 'The comment they liked' },
+			],
+			...overrides,
+		} );
+
+	it( 'reads the liked comment from the note header', () => {
+		expect( getNoteLikedComment( likeNote() )?.text ).toBe( 'The comment they liked' );
+	} );
+
+	it( 'ignores post likes, whose header snippet is the post title', () => {
+		expect( getNoteLikedComment( likeNote( { type: 'like' } ) ) ).toBeNull();
+	} );
+
+	it( 'ignores other note types', () => {
+		expect( getNoteLikedComment( likeNote( { type: 'comment' } ) ) ).toBeNull();
+	} );
+
+	it( 'returns null when the header carries no comment', () => {
+		const note = likeNote();
+		expect(
+			getNoteLikedComment( makeNote( { ...note, header: [ note.header![ 0 ] ] } ) )
+		).toBeNull();
+		expect(
+			getNoteLikedComment( makeNote( { ...note, header: [ note.header![ 0 ], { text: '  ' } ] } ) )
 		).toBeNull();
 	} );
 } );
