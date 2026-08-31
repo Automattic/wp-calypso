@@ -105,7 +105,7 @@ function MyComponent() {
 }
 ```
 
-Feedback utilities are also exported: `useFeedbackAction`, `submitFeedback`, `rateMessage`, and the `FeedbackInput` component.
+Feedback utilities are also exported: `useFeedbackAction`, `submitFeedback`, `rateMessage`, and the `FeedbackInput` component. Chat UI actions (`openAgentsManagerChat`, `closeAgentsManagerChat`, `isAgentsManagerChatVisible`, `getAgentsManagerChatRoute`) and `recordAgentsManagerTracksEvent` are exported as well.
 
 ### Exported Types
 
@@ -135,27 +135,10 @@ interface ToolProvider {
 
 ### Ability Interface
 
-Based on the WordPress Abilities API:
+`Ability` is re-exported from `@wordpress/abilities`, which owns the authoritative shape (`name`, `label`, `description`, `category`, schemas, callbacks, and `meta`):
 
 ```tsx
-interface Ability {
-	name: string;
-	label: string;
-	description: string;
-	category: string;
-	input_schema?: Record< string, any >;
-	output_schema?: Record< string, any >;
-	callback?: ( input: any ) => any | Promise< any >;
-	permissionCallback?: ( input?: any ) => boolean | Promise< boolean >;
-	meta?: {
-		annotations?: {
-			readonly?: boolean | null;
-			destructive?: boolean | null;
-			idempotent?: boolean | null;
-		};
-		[ key: string ]: any;
-	};
-}
+import type { Ability } from '@automattic/agents-manager';
 ```
 
 ### ContextProvider Interface
@@ -169,7 +152,14 @@ interface ClientContextType {
 	url: string;
 	pathname: string;
 	search: string;
-	environment: 'wp-admin' | 'ciab-admin' | 'calypso' | string;
+	environment:
+		| 'wp-admin'
+		| 'ciab-admin'
+		| 'calypso'
+		| 'wp-admin-disconnected'
+		| 'gutenberg-disconnected'
+		| 'ciab-disconnected'
+		| string;
 	contextEntries?: ContextEntry[];
 	[ key: string ]: any;
 }
