@@ -63,14 +63,15 @@ export type AvailableNoteActions = {
 /**
  * Which actions this note supports, derived from the payload the same way the
  * popup's actions pane does: the last body block carrying an `actions` object,
- * plus follow from a user block on non-comment notes.
+ * plus follow from a user block. Comment and comment-like notes are about a
+ * comment, not about the person, so neither offers to subscribe to their site.
  */
 export function getAvailableNoteActions( note: Note ): AvailableNoteActions {
 	const raw = getActions( note );
 	const has = ( key: string ) => key in raw;
 
 	let follow: AvailableNoteActions[ 'follow' ] = null;
-	if ( note.type !== 'comment' ) {
+	if ( note.type !== 'comment' && note.type !== 'comment_like' ) {
 		for ( const block of note.body ?? [] ) {
 			const siteId = block.meta?.ids?.site;
 			if ( siteId && block.actions && 'follow' in block.actions ) {

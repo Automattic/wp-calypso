@@ -327,7 +327,7 @@
 }
 
 .dashboard-notifications-inbox__body-image {
-	max-width: 128px;
+	width: 100%;
 	height: auto;
 	vertical-align: middle;
 }
@@ -386,10 +386,16 @@
 	}
 }
 
-.dashboard-notifications-inbox__quote {
+.dashboard-notifications-inbox__quote,
+.dashboard-notifications-inbox__body blockquote {
 	margin: 0;
 	padding: 0 16px;
 	border-inline-start: 3px solid var(--dashboard-header__border-color, #ddd);
+}
+
+.dashboard-notifications-inbox__body blockquote blockquote {
+	margin-block: 8px;
+	padding-inline: 12px 0;
 }
 
 .dashboard-notifications-inbox__body code {
