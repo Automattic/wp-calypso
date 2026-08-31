@@ -22,7 +22,7 @@
 
 ## Packages
 
-- **Agents Manager** (`packages/agents-manager`) — shared component library for WordPress.com's unified AI agent experience, running in Calypso, Simple, Atomic, and CIAB sites. Also deployed via `apps/agents-manager/` to `widgets.wp.com`. See its `AGENTS.md` for architecture and conventions.
+- **Agents Manager** (`packages/agents-manager`) — shared component library for WordPress.com's unified AI agent experience, running in Calypso, Simple, and Atomic sites. Also deployed via `apps/agents-manager/` to `widgets.wp.com`. See its `AGENTS.md` for architecture and conventions.
 - **Help Center** (`packages/help-center`) — shared component library for WordPress.com support. Also deployed via `apps/help-center/` to `widgets.wp.com`.
 - **Image Studio** (`packages/image-studio`) — AI-powered image editing and generation
 - **Calypso Products** (`packages/calypso-products`) — ⚠️ **Avoid.** Deprecated/frozen: a bloated client-side duplicate of product data the backend already owns. Don't add to it; prefer backend-driven data (e.g. `@automattic/api-queries`). See `packages/calypso-products/AGENTS.md`.

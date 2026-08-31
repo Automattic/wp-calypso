@@ -13,11 +13,9 @@ The Agents Manager runs in multiple different environments:
 3. In Atomic sites
    - as a plugin to Gutenberg editor.
    - as a wpadminbar menu item.
-4. In CIAB (Commerce in a Box)
-   - as a Next Admin SPA integration.
-5. In the WooCommerce AI admin
+4. In the WooCommerce AI admin
    - as a standalone chat container.
-6. On public blog frontends
+5. On public blog frontends
    - as Reader Chat for logged-out visitors.
 
 ### How to develop the Agents Manager

@@ -1,6 +1,6 @@
 # Agents Manager Package
 
-`@automattic/agents-manager` is the shared component library for WordPress.com's unified AI agent experience. It runs in Calypso, Simple sites, Atomic sites, and CIAB — all from the same source.
+`@automattic/agents-manager` is the shared component library for WordPress.com's unified AI agent experience. It runs in Calypso, Simple sites, and Atomic sites — all from the same source.
 
 ## Cross-Repo Boundaries
 
@@ -15,7 +15,7 @@
 # Unit tests (from repo root)
 yarn jest -c test/packages/jest.config.js --testPathPattern=agents-manager
 
-# Sandbox testing (Simple/Atomic/CIAB)
+# Sandbox testing (Simple/Atomic)
 cd apps/agents-manager && yarn dev --sync
 # Then visit any site — only widgets.wp.com needs sandboxing, not the site itself
 ```
@@ -69,7 +69,7 @@ AM ability registration (`registerAmAbilities()`) is called wherever the chat mo
 
 ## Pitfalls
 
-- **Two deployment targets**: Every change must work in both Calypso (SPA) and Simple/Atomic/CIAB (via `widgets.wp.com` bundles). They use different bootstrap paths.
+- **Two deployment targets**: Every change must work in both Calypso (SPA) and Simple/Atomic (via `widgets.wp.com` bundles). They use different bootstrap paths.
 - **Async chunks resolve from the entry script's URL** (webpack `publicPath: "auto"`): the abilities chunk and any new lazy seam must be verified on both targets plus the inlined `reader-chat` bundle — a chunk that 404s fails silently as a missing feature, not an error page. All entries share `dist/`, so chunk filenames and the chunk-loading global are entry-unique (`output-chunk-filename` + `chunkLoadingGlobal` per config) — a same-named chunk from another entry's build would overwrite it.
 - **asset.json sync gap**: Adding/removing `@wordpress/*` dependencies changes `.asset.json` files, which Jetpack fetches from production — not your sandbox. Dependency changes require a deploy to take effect on Atomic.
 - **Unregistered script handles**: `@wordpress/*` packages WordPress doesn't register as scripts (e.g. `@wordpress/abilities`, `@wordpress/ui`) must stay force-bundled in `apps/agents-manager/webpack.config.js` — an externalized unregistered dependency makes `WP_Scripts` silently drop the whole bundle.
