@@ -24,6 +24,7 @@ cd apps/agents-manager && yarn dev --sync
 
 ## Conventions
 
+- **`@wordpress/*` for React APIs, UI elements, and icons**: import React APIs from `@wordpress/element` (keep bare `react` imports type-only), UI elements from `@wordpress/components`, and icons from `@wordpress/icons`. This matches the existing code and the script externals WordPress registers on wp-admin/editor surfaces — a different source ships a duplicate copy.
 - **i18n**: Use `@wordpress/i18n` with the `__i18n_text_domain__` text domain placeholder — passed unquoted as it is a global constant, not a string literal. The webpack `DefinePlugin` replaces it with `'default'` at build time.
 - **Curly quotes**: Preserve `""` `''` exactly as they appear. Do not convert to unicode escapes or ASCII equivalents.
 
