@@ -276,6 +276,8 @@ interface PostTypeMockOptions {
 	themeSupportsReturnValue?: unknown;
 	/** Whether `core/editor` reports the post as empty; drives the draft suggestion. */
 	isPostEmpty?: boolean;
+	/** Canvas contents, for the draft suggestion's blank-paragraph fallback. */
+	blocks?: unknown[];
 	/** Drops the selector, as an editor predating it would. */
 	omitIsEditedPostEmpty?: boolean;
 }
@@ -292,6 +294,7 @@ function installPostTypeMock(
 		themeSupportsResolved = true,
 		isPostEmpty = false,
 		omitIsEditedPostEmpty = false,
+		blocks = [],
 	} = options;
 
 	// remove_post_type_support unsets the key, so an explicit undefined omits it.
@@ -325,7 +328,7 @@ function installPostTypeMock(
 					return {
 						getSelectedBlock: () => mockSelectedBlock,
 						getBlock: ( clientId: string ) => mockBlocksByClientId[ clientId ],
-						getBlocks: () => [],
+						getBlocks: () => blocks,
 					};
 				}
 				if ( store === 'core' ) {
@@ -2062,9 +2065,30 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( draft?.prompt ).toBe( 'Help me draft this page' );
 	} );
 
+	it( 'still offers a draft on a canvas of empty paragraphs', () => {
+		installAiEditorialReviewData( { draftAssist: true } );
+		// isEditedPostEmpty() allows only one empty block, so two taps of Enter
+		// make a visibly blank post report as content. The handler writes into
+		// this post, so the suggestion has to offer it.
+		installPostTypeMock( 'post', 123, {
+			isPostEmpty: false,
+			blocks: [
+				{ name: 'core/paragraph', attributes: { content: '' } },
+				{ name: 'core/paragraph', attributes: { content: '' } },
+			],
+		} );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'draft-post' );
+	} );
+
 	it( 'does not offer a draft once the post has content', () => {
 		installAiEditorialReviewData( { draftAssist: true } );
-		installPostTypeMock( 'post', 123, { isPostEmpty: false } );
+		installPostTypeMock( 'post', 123, {
+			isPostEmpty: false,
+			blocks: [ { name: 'core/paragraph', attributes: { content: 'Words worth keeping.' } } ],
+		} );
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 

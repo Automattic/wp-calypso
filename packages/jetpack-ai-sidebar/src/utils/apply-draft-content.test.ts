@@ -39,6 +39,7 @@ function installEditorMock( {
 	withTitleSelector = true,
 	resetBlocksThrows = false,
 	editPostThrows = false,
+	blocks,
 }: {
 	isEmpty?: boolean;
 	/** `null` stands for an editor that has not resolved a post type yet. */
@@ -49,6 +50,8 @@ function installEditorMock( {
 	withTitleSelector?: boolean;
 	resetBlocksThrows?: boolean;
 	editPostThrows?: boolean;
+	/** Canvas contents for the `getBlocks` fallback. Omitted drops the selector. */
+	blocks?: unknown[];
 } = {} ) {
 	let currentTitle = existingTitle;
 	const editPost = jest.fn( ( edits: { title?: string } ) => {
@@ -69,17 +72,23 @@ function installEditorMock( {
 	const getEditedPostAttribute = jest.fn( ( attribute: string ) =>
 		attribute === 'title' ? currentTitle : undefined
 	);
+	const getBlocks = jest.fn( () => blocks );
 
 	( window as any ).wp = {
 		data: {
-			select: ( store: string ) =>
-				store === 'core/editor' && withEditor
-					? {
-							isEditedPostEmpty,
-							getCurrentPostType,
-							...( withTitleSelector ? { getEditedPostAttribute } : {} ),
-					  }
-					: undefined,
+			select: ( store: string ) => {
+				if ( store === 'core/editor' && withEditor ) {
+					return {
+						isEditedPostEmpty,
+						getCurrentPostType,
+						...( withTitleSelector ? { getEditedPostAttribute } : {} ),
+					};
+				}
+				if ( store === 'core/block-editor' && blocks !== undefined ) {
+					return { getBlocks };
+				}
+				return undefined;
+			},
 			dispatch: ( store: string ) => {
 				if ( store === 'core/editor' && withEditor ) {
 					return { editPost };
@@ -98,6 +107,7 @@ function installEditorMock( {
 		isEditedPostEmpty,
 		getCurrentPostType,
 		getEditedPostAttribute,
+		getBlocks,
 		getTitle: () => currentTitle,
 	};
 }
@@ -183,6 +193,72 @@ describe( 'handleApplyDraftContent', () => {
 				{ content_type: 'post', reason: 'post_not_empty' },
 			],
 		] );
+	} );
+
+	describe( 'when isEditedPostEmpty() says the post is not empty', () => {
+		// It allows zero blocks or one empty default block, so two taps of Enter
+		// make a visibly blank canvas report as content. The block list decides.
+		function applyOnto( blocks: unknown[] ) {
+			const mock = installEditorMock( { isEmpty: false, blocks } );
+			const result = handleApplyDraftContent( {
+				markup: MARKUP,
+				contentType: 'post',
+				summary: 'Drafted an intro.',
+			} );
+			return { ...mock, result };
+		}
+
+		it.each( [
+			[ 'a plain empty string', '' ],
+			[ 'whitespace only', '   ' ],
+			[ 'undefined content', undefined ],
+			[ 'a RichText value object', { text: '' } ],
+		] )( 'writes anyway when every block is a paragraph with %s', ( _label, content ) => {
+			const { resetBlocks, result } = applyOnto( [
+				{ name: 'core/paragraph', attributes: { content } },
+				{ name: 'core/paragraph', attributes: { content } },
+			] );
+
+			expect( result.success ).toBe( true );
+			expect( resetBlocks ).toHaveBeenCalled();
+		} );
+
+		it( 'refuses when a paragraph carries real text', () => {
+			const { resetBlocks, result } = applyOnto( [
+				{ name: 'core/paragraph', attributes: { content: '' } },
+				{ name: 'core/paragraph', attributes: { content: 'Words worth keeping.' } },
+			] );
+
+			expect( result.success ).toBe( false );
+			expect( resetBlocks ).not.toHaveBeenCalled();
+		} );
+
+		it( 'refuses when a RichText value object carries real text', () => {
+			const { resetBlocks, result } = applyOnto( [
+				{ name: 'core/paragraph', attributes: { content: { text: 'Words worth keeping.' } } },
+			] );
+
+			expect( result.success ).toBe( false );
+			expect( resetBlocks ).not.toHaveBeenCalled();
+		} );
+
+		it( 'refuses on any block that is not a paragraph, however empty it looks', () => {
+			const { resetBlocks, result } = applyOnto( [ { name: 'core/spacer', attributes: {} } ] );
+
+			expect( result.success ).toBe( false );
+			expect( resetBlocks ).not.toHaveBeenCalled();
+		} );
+
+		it.each( [
+			[ 'the block list is unreadable', undefined ],
+			[ 'the block list is empty', [] ],
+		] )( 'refuses when %s', ( _label, blocks ) => {
+			// Refusing costs a retry; overwriting costs the user their words.
+			const { resetBlocks, result } = applyOnto( blocks as unknown[] );
+
+			expect( result.success ).toBe( false );
+			expect( resetBlocks ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	it( 'sets the title when one is supplied and the post has none', () => {

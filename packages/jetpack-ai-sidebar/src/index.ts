@@ -57,7 +57,7 @@ import {
 	BLOCK_ACTION_COMPLETE_EVENT,
 	SELECTED_BLOCK_CLEAR_EVENT,
 } from './utils/block-actions';
-import { isDraftAssistPostType } from './utils/draft-assist';
+import { isDraftAssistPostType, isPostEffectivelyEmpty } from './utils/draft-assist';
 import {
 	isImageStudioAvailable,
 	openImageStudioForBlock,
@@ -422,7 +422,9 @@ function isDraftSuggestionAvailable( currentPostType?: string ): boolean {
 		return false;
 	}
 
-	return isPostContentEmpty();
+	// The handler's own check, so the suggestion is never offered on a post it
+	// would then refuse — and never hidden on one it would accept.
+	return isPostEffectivelyEmpty();
 }
 
 function isFeaturedImageSuggestionAvailable(

@@ -85,16 +85,14 @@ For tools that perform an editor action (like `update-block-content`):
 4. Register the ability in `toolProvider.getAbilities()` with a callback
 5. Add a fallback case in `toolProvider.executeAbility()`
 
-## Editor entry points
+## Draft assist
 
-`registerBlockEditorFilters()` (called once by `apps/agents-manager/jetpack-ai-sidebar.js`) registers the block toolbar button.
+`draftAssist` flag, posts and pages only. One entry point: the `draft-post` suggestion in `getEmptyViewSuggestions()` (`src/index.ts`), offered first in the sidebar's empty view. There is deliberately no block-editor entry point — a `/draft` autocompleter and a `bodyPlaceholder` swap both existed and were removed.
 
-**Draft assist** (`draftAssist` flag, post/page only) has exactly one entry point: the `draft-post` suggestion in `getEmptyViewSuggestions()` (`src/index.ts`), shown in the sidebar's empty view. It is offered first, and only when the flag is on, the post type is one the handler accepts, and the post is empty — offering it otherwise promises something the ability then refuses. There is deliberately no block-editor entry point: a `/draft` autocompleter and a `bodyPlaceholder` swap both existed and were removed.
-
-- **`jetpackAiDraftAssistEnabled` is a capability claim, not just a flag**: wpcom reads it as "this client can handle the tool call", so it is sent only when the flag is on AND the post type is one the handler accepts. Sending it on a template meant the server generated a whole draft and uploaded an image before the client refused.
-- **Handler guards** (`utils/apply-draft-content.ts`): the ability is registered for the whole editor surface, so `handleApplyDraftContent` re-checks everything the suggestion checks. It refuses (returning `returnToAgent: true` so the agent can explain) unless the post type is in `DRAFT_ASSIST_POST_TYPES` (`utils/draft-assist.ts`, shared with the entry point — in the site editor `core/editor` serves templates, where an "empty" entity is normal and a draft would become site-wide content) and `isEditedPostEmpty()` is true. It must never blank a post.
-- **Title is never overwritten**: `isEditedPostEmpty()` is content-only — it ignores the title (Gutenberg `packages/editor/src/store/selectors.js`), so an "empty" post can still carry a title the user typed. The handler reads `getEditedPostAttribute( 'title' )` and writes the model's (trimmed) title only when the editor positively reports an empty one; otherwise it applies the body, skips the title, and reports `titleSkipped: true`. Do not weaken this to "the model will omit `title`".
-- **Parsing is not a validation step**: `@wordpress/blocks` is externalized to the host's `wp.blocks`, whose `parse()` turns non-block text into freeform / `core/missing` blocks — it does not return `[]` and does not throw. Prose that isn't block markup is therefore applied as-is, which is fine because the post is empty by the guard above. The `length === 0` branch is defensive only; don't write tests that mock `parse` into rejecting, they assert a path production never takes.
+- **One emptiness check, shared** (`utils/draft-assist.ts`): the suggestion and `handleApplyDraftContent` both call `isPostEffectivelyEmpty()`. They must never disagree — offering a draft the handler then refuses reads as a broken button. `isEditedPostEmpty()` alone is not enough: it allows one empty block, so two taps of Enter make a blank canvas report as content. Anything unreadable counts as content, because refusing costs a retry and overwriting costs the user their words.
+- **Handler guards** (`utils/apply-draft-content.ts`): the ability is registered for the whole editor surface, so the handler re-checks everything the suggestion checks and refuses with `returnToAgent: true` so the agent can explain. Post type must be in `DRAFT_ASSIST_POST_TYPES` — in the site editor `core/editor` serves templates, where "empty" is normal and a draft would become site-wide content.
+- **Title is never overwritten**: `isEditedPostEmpty()` is content-only, so an "empty" post can still carry a title the user typed. The handler writes the model's title only when the editor positively reports an empty one; otherwise it applies the body and reports `titleSkipped: true`. Do not weaken this to "the model will omit `title`".
+- **Parsing is not a validation step**: `@wordpress/blocks` is externalized to the host's `wp.blocks`, whose `parse()` turns non-block text into freeform / `core/missing` blocks — it does not return `[]` and does not throw. The `length === 0` branch is defensive only; don't write tests that mock `parse` into rejecting, they assert a path production never takes.
 
 ## Context Provider
 
@@ -108,7 +106,7 @@ For tools that perform an editor action (like `update-block-content`):
 
 Changes here affect AI response quality. The orchestrator uses `selectedBlockClientId` to target block operations and `currentPageContent` for whole-page understanding.
 
-**The feature-verdict keys are pinned cross-repo contracts — don't rename them, and always send `false` rather than omitting the key.** wpcom grants those abilities by ability category on every editor surface and has no view of this client's preview flags; its exclusions read these keys to decide whether the ability is usable here. Drop `jetpackAiDraftAssistEnabled` and production clients that never registered `handleApplyDraftContent` get the tool routed to them and answer "No handler found for tool".
+**The feature-verdict keys are pinned cross-repo contracts — don't rename them, and always send `false` rather than omitting the key.** wpcom grants those abilities by ability category on every editor surface and has no view of this client's preview flags; its exclusions read these keys to decide whether the ability is usable here. Drop `jetpackAiDraftAssistEnabled` and production clients that never registered `handleApplyDraftContent` get the tool routed to them and answer "No handler found for tool". It is a capability claim, not just a flag: send it only when the flag is on AND the post type is one the handler accepts — sending it on a template made the server generate a whole draft and upload an image before the client refused.
 
 ## Checkpoint / Undo
 
