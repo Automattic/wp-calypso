@@ -152,14 +152,7 @@ interface ClientContextType {
 	url: string;
 	pathname: string;
 	search: string;
-	environment:
-		| 'wp-admin'
-		| 'ciab-admin'
-		| 'calypso'
-		| 'wp-admin-disconnected'
-		| 'gutenberg-disconnected'
-		| 'ciab-disconnected'
-		| string;
+	environment: 'wp-admin' | 'calypso' | string; // full union in `src/extension-types.ts`
 	contextEntries?: ContextEntry[];
 	[ key: string ]: any;
 }
