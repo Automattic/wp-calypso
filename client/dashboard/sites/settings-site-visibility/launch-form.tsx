@@ -10,7 +10,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import Notice from '../../components/notice';
-import { a4aLink, dashboardLinkWithBackport } from '../../utils/link';
+import { a4aLink } from '../../utils/link';
 import { SiteLaunchButton } from '../site-launch-button';
 import AgencyDevelopmentSiteLaunchModal from '../site-launch-button/agency-development-site-launch-modal';
 import TrialUpsellNotice from './trial-upsell-notice';
@@ -132,7 +132,7 @@ export function LaunchForm( { site }: { site: Site } ) {
 					<SiteLaunchButton
 						site={ site }
 						tracksContext="site_settings"
-						postLaunchUrl={ dashboardLinkWithBackport( `/sites/${ site.slug }` ) }
+						flowDestination={ `/sites/${ site.slug }` }
 					/>
 				}
 			>

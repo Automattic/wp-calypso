@@ -82,6 +82,16 @@ describe( 'Signup Flows Configuration', () => {
 				} )
 			).toBe( '/sites/test-site?celebrateLaunch=true' );
 		} );
+
+		test( 'falls back to back_to when redirect_to was cleared on flow entry', () => {
+			expect(
+				getDestination( {
+					siteSlug: 'test-site',
+					back_to: '/sites/test-site/settings/site-visibility',
+					redirect_to: null,
+				} )
+			).toBe( '/sites/test-site/settings/site-visibility?celebrateLaunch=true' );
+		} );
 	} );
 
 	describe( 'filterDestination with checkout URLs', () => {

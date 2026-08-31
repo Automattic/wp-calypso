@@ -10,13 +10,13 @@ export function SiteLaunchButton( {
 	tracksContext,
 	launchUrl,
 	LaunchModal,
-	postLaunchUrl,
+	flowDestination,
 }: {
 	site: Site;
 	tracksContext: string;
 	launchUrl?: string;
 	LaunchModal?: A4aLaunchModalComponent;
-	postLaunchUrl?: string;
+	flowDestination?: string;
 } ) {
 	const { queries } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
@@ -24,7 +24,7 @@ export function SiteLaunchButton( {
 	const { isLoading, isExperimentLoading, isHidden, isDisabled, isBusy, href, onClick, modal } =
 		useSiteLaunch( site, {
 			tracksContext,
-			postLaunchUrl,
+			flowDestination,
 			a4aLaunchUrl: launchUrl,
 			a4aLaunchModal: LaunchModal,
 			domainsOptions: queries.domainsQuery(),
