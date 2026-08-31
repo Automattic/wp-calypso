@@ -861,6 +861,8 @@ This mixin generates alias variables for a color palette. For example, the
 			--dashboard-item-selected-hover__background-color
 		);
 		--color-global-masterbar-site-info-background: var( --wp-components-color-gray-200 );
+		--color-global-masterbar-site-info-badge-background: var( --wp-components-color-gray-300 );
+		--color-global-masterbar-site-info-badge-color: var( --wp-components-color-gray-800 );
 		--color-sidebar-submenu-background: var( --dashboard-item-selected__background-color );
 	}
 }

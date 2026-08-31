@@ -6,7 +6,6 @@ import { Gridicon } from '@automattic/components';
 import { store as commandsStore } from '@wordpress/commands';
 import { dispatch } from '@wordpress/data';
 import { displayShortcut } from '@wordpress/keycodes';
-import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -521,9 +520,9 @@ class MasterbarLoggedIn extends Component {
 
 		return badges.length > 0
 			? badges.map( ( badge ) => (
-					<Badge intent="none" key={ badge }>
+					<span className="masterbar__site-badge-value" key={ badge }>
 						{ badge }
-					</Badge>
+					</span>
 			  ) )
 			: null;
 	}
@@ -597,7 +596,7 @@ class MasterbarLoggedIn extends Component {
 					<div className="masterbar__site-info masterbar__site-plan">
 						<span className="masterbar__site-info-label">{ translate( 'Plan' ) }</span>
 						<div className="masterbar__info-badges">
-							<Badge intent="none">{ sitePlanName }</Badge>
+							<span className="masterbar__site-badge-value">{ sitePlanName }</span>
 						</div>
 					</div>
 				),
