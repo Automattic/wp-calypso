@@ -1076,14 +1076,10 @@ body.is-mobile-app-view {
 	flex-shrink: 0;
 	padding-inline: 8px;
 	border-radius: 2px;
-	background-color: var(--color-global-masterbar-site-info-badge-background, rgba(255, 255, 255, 0.15));
-	color: var(--color-global-masterbar-site-info-badge-color, var(--color-masterbar-submenu-text));
+	background-color: var(--color-global-masterbar-site-info-badge-background, rgba(255, 255, 255, 0.1));
+	color: var(--color-global-masterbar-site-info-badge-color, var(--color-masterbar-submenu-text)) !important; // override the link color
 	font-size: 12px;
 	line-height: 24px;
-}
-
-.masterbar__item-subitems-item:hover .masterbar__site-badge-value {
-	color: var(--color-global-masterbar-site-info-badge-color, var(--color-masterbar-submenu-text));
 }
 
 .masterbar__item-reader-label {
