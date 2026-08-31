@@ -11,6 +11,21 @@ const mockUseAgentChat = jest.fn();
 const mockUpdateSessionId = jest.fn();
 let mockManagerHasAgent = true;
 let mockManagerTurnInFlight = false;
+let mockStoredSessionIds: string[] = [];
+let mockStoredConversations: Record< string, MockStoredMessage[] > = {};
+let mockLiveSessionIds: string[] = [];
+const mockClearConversation = jest.fn();
+
+type MockStoredMessage = {
+	messageId: string;
+	role: 'user' | 'agent';
+	parts: Array< { type: string; text?: string } >;
+	metadata?: { deliveryStatus?: string };
+};
+
+const mockUnresolved = ( message: MockStoredMessage ) =>
+	message.metadata?.deliveryStatus === 'pending' ||
+	message.metadata?.deliveryStatus === 'streaming';
 let mockAgentChatConfig: { onTaskUpdate?: ( update: TaskUpdate ) => Promise< void > } | undefined;
 let mockConversationConfig:
 	| {
@@ -147,8 +162,17 @@ const mockCheckpointActions = () => {
 	);
 };
 
+type MockMessagePart = {
+	type: string;
+	text?: string;
+	component?: React.ComponentType< Record< string, unknown > >;
+	componentProps?: Record< string, unknown >;
+};
+type MockMessage = { id: string; role: string; content?: MockMessagePart[] };
+
 const mockAgentChat = jest.fn(
 	( {
+		messages = [],
 		onSuggestionClick,
 		onSubmit,
 		onAbort,
@@ -157,7 +181,7 @@ const mockAgentChat = jest.fn(
 		onInputChange,
 		emptyViewSuggestions = [],
 	}: {
-		messages?: unknown[];
+		messages?: MockMessage[];
 		onSuggestionClick: (
 			suggestion: Suggestion | string,
 			availableSuggestions?: Suggestion[]
@@ -271,6 +295,22 @@ const mockAgentChat = jest.fn(
 			<button onClick={ () => onAbort?.() }>Stop</button>
 			{ error && <div data-testid="chat-error">{ error }</div> }
 			<div data-testid="input-value">{ inputValue }</div>
+			<ul data-testid="messages">
+				{ messages.map( ( message ) => (
+					<li key={ message.id } data-testid={ `message-${ message.id }` }>
+						{ message.content?.map( ( part, index ) => {
+							if ( part.type === 'text' ) {
+								return <span key={ index }>{ part.text }</span>;
+							}
+							if ( part.type === 'component' && part.component ) {
+								const Rendered = part.component;
+								return <Rendered key={ index } { ...( part.componentProps ?? {} ) } />;
+							}
+							return null;
+						} ) }
+					</li>
+				) ) }
+			</ul>
 			<ul data-testid="empty-view-suggestions">
 				{ emptyViewSuggestions.map( ( suggestion ) => (
 					<li key={ suggestion.id }>
@@ -290,12 +330,33 @@ const mockAgentChat = jest.fn(
 jest.mock(
 	'@automattic/agenttic-client',
 	() => ( {
-		getStoredSessionIds: async () => [],
+		getStoredSessionIds: async () => mockStoredSessionIds,
+		loadConversation: async ( key: string ) => ( {
+			messages: mockStoredConversations[ key ] ?? [],
+		} ),
+		getUnresolvedMessages: ( messages: MockStoredMessage[] ) => messages.filter( mockUnresolved ),
+		reconcileWithServer: async (
+			messages: MockStoredMessage[],
+			fetchServer: () => Promise< MockStoredMessage[] | null >
+		) => {
+			await fetchServer();
+			return messages.map( ( message ) =>
+				mockUnresolved( message )
+					? { ...message, metadata: { ...message.metadata, deliveryStatus: 'failed' } }
+					: message
+			);
+		},
+		clearConversation: ( key: string ) => mockClearConversation( key ),
+		messageTextContent: ( message: MockStoredMessage ) =>
+			message.parts
+				.filter( ( part ) => part.type === 'text' )
+				.map( ( part ) => part.text )
+				.join( '\n' ),
 		getAgentManager: () => ( {
 			updateSessionId: mockUpdateSessionId,
 			hasAgent: () => mockManagerHasAgent,
 			isTurnInFlight: () => mockManagerTurnInFlight,
-			getLiveSessionIds: () => [],
+			getLiveSessionIds: () => mockLiveSessionIds,
 		} ),
 		useAgentChat: ( config: typeof mockAgentChatConfig ) => {
 			mockAgentChatConfig = config;
@@ -662,6 +723,9 @@ describe( 'OrchestratorChat', () => {
 		mockRevertedCheckpointIds.clear();
 		mockAgentChatConfig = undefined;
 		mockConversationConfig = undefined;
+		mockStoredSessionIds = [];
+		mockStoredConversations = {};
+		mockLiveSessionIds = [];
 	} );
 
 	it( 'ignores a conversation result for a discarded agent', () => {
@@ -3704,6 +3768,113 @@ describe( 'OrchestratorChat', () => {
 			} );
 
 			expect( getBlockingMove() ).toBeNull();
+		} );
+	} );
+	describe( 'recovering a first-message orphan', () => {
+		const seedOrphan = ( text = 'ship the sale banner', storageKey = 'local-1' ) => {
+			mockStoredSessionIds = [ storageKey ];
+			mockStoredConversations = {
+				[ storageKey ]: [
+					{
+						messageId: 'm-1',
+						role: 'user',
+						parts: [ { type: 'text', text } ],
+						metadata: { deliveryStatus: 'pending' },
+					},
+				],
+			};
+		};
+
+		const findRetry = () => screen.findByRole( 'button', { name: 'Retry' } );
+
+		it( 'shows the orphaned question with a retry', async () => {
+			seedOrphan();
+
+			render( chat() );
+
+			expect( await screen.findByText( 'ship the sale banner' ) ).toBeVisible();
+			expect( await findRetry() ).toBeVisible();
+			expect( screen.getByText( "This message didn't reach the assistant." ) ).toHaveAttribute(
+				'role',
+				'status'
+			);
+		} );
+
+		it( 'never loads the recovered turn into the session', async () => {
+			seedOrphan();
+			const loadMessages = jest.fn();
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { loadMessages } ) );
+
+			render( chat() );
+
+			await findRetry();
+			// Loading it would persist the orphan under whatever session the panel
+			// holds and replay it with the next turn.
+			expect( loadMessages ).not.toHaveBeenCalled();
+		} );
+
+		it( 'leaves a turn a live agent still holds alone', async () => {
+			seedOrphan();
+			mockLiveSessionIds = [ 'local-1' ];
+
+			render( chat() );
+
+			await waitFor( () => expect( mockAgentChat ).toHaveBeenCalled() );
+			expect( screen.queryByText( 'ship the sale banner' ) ).not.toBeInTheDocument();
+			expect( mockClearConversation ).not.toHaveBeenCalled();
+		} );
+
+		it( 'retry sends the prompt as a fresh turn and drops the affordance', async () => {
+			seedOrphan();
+			const onSubmit = jest.fn().mockResolvedValue( undefined );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+
+			render( chat() );
+			fireEvent.click( await findRetry() );
+
+			await waitFor( () => expect( onSubmit ).toHaveBeenCalledWith( 'ship the sale banner' ) );
+			await waitFor( () =>
+				expect( screen.queryByRole( 'button', { name: 'Retry' } ) ).not.toBeInTheDocument()
+			);
+			expect( screen.queryByText( 'ship the sale banner' ) ).not.toBeInTheDocument();
+			expect( screen.getByTestId( 'input-value' ) ).toHaveTextContent( '' );
+		} );
+
+		it( 'a retry that never dispatches comes back without touching the composer', async () => {
+			seedOrphan();
+			const onSubmit = jest.fn().mockRejectedValue( new Error( 'offline' ) );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
+
+			render( chat() );
+			fireEvent.click( await findRetry() );
+
+			// Back as it was, and offered once: a composer holding the same prompt
+			// would be a second way to send the same question.
+			expect( await findRetry() ).toBeVisible();
+			expect( screen.getByText( 'ship the sale banner' ) ).toBeVisible();
+			expect( screen.getByTestId( 'input-value' ) ).toHaveTextContent( '' );
+		} );
+
+		it( 'a provider new chat dismisses it for good', async () => {
+			seedOrphan();
+			let providerApi: { clearMessages: () => void } | undefined;
+			const useProviderAbilitiesSetup = ( api: { clearMessages: () => void } ) => {
+				providerApi = api;
+			};
+
+			render(
+				chat( {
+					useProviderAbilitiesSetup: useProviderAbilitiesSetup as ComponentProps<
+						typeof OrchestratorChat
+					>[ 'useProviderAbilitiesSetup' ],
+				} )
+			);
+			await findRetry();
+
+			act( () => providerApi!.clearMessages() );
+
+			expect( screen.queryByRole( 'button', { name: 'Retry' } ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'ship the sale banner' ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );
