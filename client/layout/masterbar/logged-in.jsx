@@ -520,7 +520,7 @@ class MasterbarLoggedIn extends Component {
 
 		return badges.length > 0
 			? badges.map( ( badge ) => (
-					<span className="masterbar__site-badge-value" key={ badge }>
+					<span className="masterbar__site-badge" key={ badge }>
 						{ badge }
 					</span>
 			  ) )
@@ -596,7 +596,7 @@ class MasterbarLoggedIn extends Component {
 					<div className="masterbar__site-info masterbar__site-plan">
 						<span className="masterbar__site-info-label">{ translate( 'Plan' ) }</span>
 						<div className="masterbar__info-badges">
-							<span className="masterbar__site-badge-value">{ sitePlanName }</span>
+							<span className="masterbar__site-badge">{ sitePlanName }</span>
 						</div>
 					</div>
 				),
