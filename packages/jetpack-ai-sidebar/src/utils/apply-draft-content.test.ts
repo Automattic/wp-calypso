@@ -4,15 +4,10 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
-} ) );
-
 jest.mock( '@wordpress/blocks', () => ( {
 	parse: jest.fn(),
 } ) );
 
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { parse } from '@wordpress/blocks';
 import {
 	APPLY_DRAFT_CONTENT_ABILITY,
@@ -23,9 +18,14 @@ import {
 } from './apply-draft-content';
 
 const mockedParse = parse as jest.MockedFunction< typeof parse >;
-const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
-	typeof recordTracksEvent
->;
+
+type WindowWithAgentsManagerActions = Window & {
+	__agentsManagerActions?: {
+		recordBigSkyTracksEvent?: ( eventName: string, props?: Record< string, unknown > ) => void;
+	};
+};
+
+const mockRecordBigSkyTracksEvent = jest.fn();
 
 const PARAGRAPH_BLOCK = { name: 'core/paragraph', attributes: { content: 'Drafted.' } } as any;
 const MARKUP = '<!-- wp:paragraph --><p>Drafted.</p><!-- /wp:paragraph -->';
@@ -103,7 +103,7 @@ function installEditorMock( {
 }
 
 function getTracksCalls( eventName: string ) {
-	return mockedRecordTracksEvent.mock.calls.filter( ( [ name ] ) => name === eventName );
+	return mockRecordBigSkyTracksEvent.mock.calls.filter( ( [ name ] ) => name === eventName );
 }
 
 describe( 'apply-draft-content ability descriptor', () => {
@@ -131,10 +131,14 @@ describe( 'handleApplyDraftContent', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockedParse.mockReturnValue( [ PARAGRAPH_BLOCK ] );
+		( window as WindowWithAgentsManagerActions ).__agentsManagerActions = {
+			recordBigSkyTracksEvent: mockRecordBigSkyTracksEvent,
+		};
 	} );
 
 	afterEach( () => {
 		delete ( window as any ).wp;
+		delete ( window as WindowWithAgentsManagerActions ).__agentsManagerActions;
 	} );
 
 	it( 'writes the parsed blocks into an empty post', () => {
@@ -173,9 +177,9 @@ describe( 'handleApplyDraftContent', () => {
 		expect( result.error ).toMatch( /already has content/ );
 		// The agent needs the refusal so it can tell the user why nothing happened.
 		expect( result.returnToAgent ).toBe( true );
-		expect( getTracksCalls( 'jetpack_ai_draft_assist_draft_rejected' ) ).toEqual( [
+		expect( getTracksCalls( 'jetpack_big_sky_draft_assist_draft_rejected' ) ).toEqual( [
 			[
-				'jetpack_ai_draft_assist_draft_rejected',
+				'jetpack_big_sky_draft_assist_draft_rejected',
 				{ content_type: 'post', reason: 'post_not_empty' },
 			],
 		] );
@@ -311,9 +315,9 @@ describe( 'handleApplyDraftContent', () => {
 			expect( isEditedPostEmpty ).not.toHaveBeenCalled();
 			expect( result ).toMatchObject( { success: false, returnToAgent: true } );
 			expect( result.error ).toMatch( /only writes into posts and pages/ );
-			expect( getTracksCalls( 'jetpack_ai_draft_assist_draft_rejected' ) ).toEqual( [
+			expect( getTracksCalls( 'jetpack_big_sky_draft_assist_draft_rejected' ) ).toEqual( [
 				[
-					'jetpack_ai_draft_assist_draft_rejected',
+					'jetpack_big_sky_draft_assist_draft_rejected',
 					{ content_type: 'post', reason: 'unsupported_post_type' },
 				],
 			] );
@@ -386,9 +390,9 @@ describe( 'handleApplyDraftContent', () => {
 			expect( editPost ).not.toHaveBeenCalled();
 			expect( result ).toMatchObject( { success: false, returnToAgent: true } );
 			expect( result.error ).toMatch( /could not be parsed/ );
-			expect( getTracksCalls( 'jetpack_ai_draft_assist_draft_rejected' ) ).toEqual( [
+			expect( getTracksCalls( 'jetpack_big_sky_draft_assist_draft_rejected' ) ).toEqual( [
 				[
-					'jetpack_ai_draft_assist_draft_rejected',
+					'jetpack_big_sky_draft_assist_draft_rejected',
 					{ content_type: 'post', reason: 'invalid_markup' },
 				],
 			] );
@@ -437,9 +441,9 @@ describe( 'handleApplyDraftContent', () => {
 
 		expect( result ).toMatchObject( { success: false, returnToAgent: true } );
 		expect( result.error ).toMatch( /Editor not available/ );
-		expect( getTracksCalls( 'jetpack_ai_draft_assist_draft_rejected' ) ).toEqual( [
+		expect( getTracksCalls( 'jetpack_big_sky_draft_assist_draft_rejected' ) ).toEqual( [
 			[
-				'jetpack_ai_draft_assist_draft_rejected',
+				'jetpack_big_sky_draft_assist_draft_rejected',
 				{ content_type: 'post', reason: 'editor_unavailable' },
 			],
 		] );
@@ -484,7 +488,7 @@ describe( 'handleApplyDraftContent', () => {
 			title: 'About us',
 		} );
 
-		const [ call ] = getTracksCalls( 'jetpack_ai_draft_assist_draft_applied' );
+		const [ call ] = getTracksCalls( 'jetpack_big_sky_draft_assist_draft_applied' );
 		expect( call[ 1 ] ).toEqual( {
 			content_type: 'page',
 			block_count: 2,

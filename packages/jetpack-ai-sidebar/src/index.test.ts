@@ -2053,7 +2053,7 @@ describe( 'getEmptyViewSuggestions', () => {
 
 	it( 'asks for a page, not a post, when the editor is showing a page', () => {
 		installAiEditorialReviewData( { draftAssist: true } );
-		installPostTypeMock( 'page', 123, { postIsEmpty: true } );
+		installPostTypeMock( 'page', 123, { isPostEmpty: true } );
 
 		const draft = getEmptyViewSuggestions().find( ( s ) => s.id === 'draft-post' );
 
