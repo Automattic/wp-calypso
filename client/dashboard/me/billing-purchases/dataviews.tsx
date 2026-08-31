@@ -309,7 +309,7 @@ export function getFields( {
 				return (
 					<HStack justify="flex-start" spacing={ 1 }>
 						<PurchaseSettingLink purchase={ item } disabled={ isTransferred }>
-							{ getTitleForListDisplay( item ) }
+							{ getTitleForListDisplay( item, false ) }
 						</PurchaseSettingLink>
 						<OwnerInfo purchase={ item } isTransferredOwnership={ isTransferred } />
 					</HStack>

@@ -364,7 +364,7 @@ export function getBillPeriodLabel( purchase: Purchase ): string {
  * differently. For example, domains are displayed with the domain name as the
  * title and the product name as the subtitle (see `getSubtitleForDisplay`).
  */
-export function getTitleForDisplay( purchase: Purchase ): string {
+export function getTitleForDisplay( purchase: Purchase, includeProductType = true ): string {
 	if ( purchase.is_hundred_year_domain ) {
 		return __( '100-Year Domain Registration' );
 	}
@@ -432,16 +432,19 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 	}
 
 	if ( purchase.is_plan ) {
-		/* translators: %(productName)s is the product name "WordPress.com Personal" */
-		return sprintf( __( '%(productName)s Plan' ), {
-			productName: purchase.product_name.replace( /\s*\(.*$/, '' ).trim(),
-		} );
+		if ( includeProductType ) {
+			/* translators: %(productName)s is the product name "WordPress.com Personal" */
+			return sprintf( __( '%(productName)s Plan' ), {
+				productName: purchase.product_name.replace( /\s*\(.*$/, '' ).trim(),
+			} );
+		}
+		return purchase.product_name.replace( /\s*\(.*$/, '' ).trim();
 	}
 
 	return purchase.product_name;
 }
 
-export function getTitleForListDisplay( purchase: Purchase ): string {
+export function getTitleForListDisplay( purchase: Purchase, includeProductType = true ): string {
 	if ( purchase.is_domain_registration && purchase.meta ) {
 		if ( purchase.is_hundred_year_domain ) {
 			// translators: %s is the domain name, e.g. "100-Year Domain Registration: example.com"
@@ -450,7 +453,7 @@ export function getTitleForListDisplay( purchase: Purchase ): string {
 		// translators: %s is the domain name, e.g. "Domain Registration: example.com"
 		return sprintf( __( 'Domain Registration: %s' ), purchase.meta );
 	}
-	return getTitleForDisplay( purchase );
+	return getTitleForDisplay( purchase, includeProductType );
 }
 
 /**

@@ -68,8 +68,14 @@ a.is-link.billing-purchases__site-name {
 	font-weight: 500;
 }
 
-a.components-external-link.billing-purchases__site-url > span.components-external-link__contents {
-	text-decoration: none;
+a.components-external-link.billing-purchases__site-url {
+	> span.components-external-link__contents {
+		text-decoration: none;
+	}
+
+	> .components-external-link__icon {
+		display: none;
+	}
 }
 
 button.purchase-payment-method__update {
