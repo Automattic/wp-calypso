@@ -10,6 +10,7 @@ import { check } from '@wordpress/icons';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import { getTieredPrice, formatUSD, wpcomHosting } from './mock-data';
+import { getPressablePlanDisplayName } from './pressable-plan-display-names';
 import type { HostingProduct, PressablePlan } from './mock-data';
 
 type YourPlanProps = {
@@ -40,12 +41,14 @@ export default function YourPlan( {
 	const isUpgrade = brand === 'pressable' && !! currentPlan && ! isContactSales;
 	const isCurrentPlan = isUpgrade && plan?.slug === currentPlan?.slug;
 
+	const planDisplayName = getPressablePlanDisplayName( plan?.slug, plan?.name ?? '' );
+
 	let planLabel;
 	if ( brand !== 'wpcom' ) {
 		planLabel = sprintf(
 			/* translators: %s: plan name */
 			__( 'Pressable %s' ),
-			plan?.name ?? __( 'Custom' )
+			planDisplayName || __( 'Performance Custom' )
 		);
 	} else if ( ownedSites > 0 ) {
 		planLabel = sprintf(
@@ -74,7 +77,7 @@ export default function YourPlan( {
 				: sprintf(
 						/* translators: %s: plan name */
 						__( 'Add %s to referral' ),
-						plan?.name ?? ''
+						planDisplayName
 				  );
 	} else if ( brand === 'wpcom' ) {
 		ctaLabel = sprintf(
@@ -88,13 +91,13 @@ export default function YourPlan( {
 		ctaLabel = sprintf(
 			/* translators: %s: plan name */
 			__( 'Upgrade to %s' ),
-			plan?.name ?? ''
+			planDisplayName
 		);
 	} else {
 		ctaLabel = sprintf(
 			/* translators: %s: plan name */
 			__( 'Add %s to cart' ),
-			plan?.name ?? ''
+			planDisplayName
 		);
 	}
 
@@ -176,7 +179,7 @@ export default function YourPlan( {
 									{ sprintf(
 										/* translators: %s: current plan name */
 										__( 'Replaces your current %s plan.' ),
-										currentPlan.name
+										getPressablePlanDisplayName( currentPlan.slug, currentPlan.name )
 									) }
 								</Text>
 							) }

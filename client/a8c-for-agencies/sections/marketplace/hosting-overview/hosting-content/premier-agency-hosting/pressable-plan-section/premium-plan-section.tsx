@@ -57,7 +57,7 @@ export default function PremiumPlanSection( {
 
 				<div className="premium-plan-section__content">
 					<div className="premium-plan-section__heading">
-						{ translate( 'Earn %(commission)s%% on Premium Plan Referrals', {
+						{ translate( 'Earn %(commission)s%% on Performance Plan Referrals', {
 							args: {
 								commission: PRESSABLE_PREMIUM_PLAN_COMMISSION_PERCENTAGE,
 							},
@@ -99,7 +99,7 @@ export default function PremiumPlanSection( {
 			</HostingPlanSection.Card>
 			<HostingPlanSection.Details
 				heading={ translate(
-					'Premium plans from %(price)s per month. Get %(commission)s%% commission when you refer.',
+					'Performance plans from %(price)s per month. Get %(commission)s%% commission when you refer.',
 					{
 						args: {
 							price: formatCurrency( 350, 'USD', {

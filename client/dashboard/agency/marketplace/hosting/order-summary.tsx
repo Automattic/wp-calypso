@@ -9,6 +9,7 @@ import {
 import { sprintf, _n, __ } from '@wordpress/i18n';
 import { Card, CardBody, CardDivider } from '../../../components/card';
 import { getTieredPrice, formatUSD, wpcomHosting } from './mock-data';
+import { getPressablePlanDisplayName } from './pressable-plan-display-names';
 import type { PressablePlan } from './mock-data';
 
 type OrderSummaryProps = {
@@ -78,7 +79,10 @@ export default function OrderSummary( {
 					{ brand === 'pressable' && plan && (
 						<VStack spacing={ 2 }>
 							<HStack justify="space-between">
-								<Text>{ `Pressable ${ plan.name }` }</Text>
+								<Text>{ `Pressable ${ getPressablePlanDisplayName(
+									plan.slug,
+									plan.name
+								) }` }</Text>
 								<Text>
 									{ plan.yearly_price
 										? formatUSD( plan.yearly_price )
