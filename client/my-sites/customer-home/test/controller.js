@@ -4,8 +4,10 @@
 
 import page from '@automattic/calypso-router';
 import { fetchLaunchpad } from '@automattic/data-stores';
+import { QueryClient } from '@tanstack/react-query';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { prefetchHomeLayout } from 'calypso/data/home/use-home-layout-query';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getLoggedInLandingPage } from 'calypso/lib/landing-page';
 import { canCurrentUserUseCustomerHome } from 'calypso/state/sites/selectors';
@@ -23,6 +25,11 @@ jest.mock( '@automattic/data-stores', () => ( {
 
 jest.mock( 'calypso/lib/explat', () => ( {
 	loadExperimentAssignment: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/data/home/use-home-layout-query', () => ( {
+	...jest.requireActual( 'calypso/data/home/use-home-layout-query' ),
+	prefetchHomeLayout: jest.fn( () => Promise.resolve( { primary: [] } ) ),
 } ) );
 
 jest.mock( '@automattic/api-core', () => ( {
@@ -190,6 +197,7 @@ describe( 'maybeRedirect', () => {
 		path: '/home/test.wordpress.com',
 		pathname: '/home/test.wordpress.com',
 		params: { site: 'test.wordpress.com' },
+		queryClient: new QueryClient(),
 	} );
 
 	beforeEach( () => {
@@ -230,6 +238,30 @@ describe( 'maybeRedirect', () => {
 	it( 'renders the page when the launchpad request fails', async () => {
 		loadExperimentAssignment.mockResolvedValue( { variationName: null } );
 		fetchLaunchpad.mockRejectedValue( new Error( 'network' ) );
+		const next = jest.fn();
+
+		await maybeRedirect( buildSiteContext(), next );
+		await flushPromises();
+
+		expect( next ).toHaveBeenCalled();
+	} );
+
+	it( 'requests the card layout from the route rather than leaving it to the cards', async () => {
+		loadExperimentAssignment.mockResolvedValue( { variationName: null } );
+		fetchLaunchpad.mockResolvedValue( { launchpad_screen: 'off' } );
+		const next = jest.fn();
+
+		await maybeRedirect( buildSiteContext(), next );
+		await flushPromises();
+
+		expect( prefetchHomeLayout ).toHaveBeenCalledWith( expect.anything(), 1, expect.any( Object ) );
+		expect( next ).toHaveBeenCalled();
+	} );
+
+	it( 'still renders the page when the card layout request fails', async () => {
+		loadExperimentAssignment.mockResolvedValue( { variationName: null } );
+		fetchLaunchpad.mockResolvedValue( { launchpad_screen: 'off' } );
+		prefetchHomeLayout.mockRejectedValueOnce( new Error( 'network' ) );
 		const next = jest.fn();
 
 		await maybeRedirect( buildSiteContext(), next );
