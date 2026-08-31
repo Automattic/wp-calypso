@@ -29,6 +29,9 @@ export const getSeverityIntent = (
 	if ( severity >= 4 ) {
 		return 'medium';
 	}
+	if ( severity >= 3 ) {
+		return 'draft';
+	}
 	return 'low';
 };
 

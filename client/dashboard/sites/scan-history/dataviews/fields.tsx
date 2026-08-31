@@ -29,7 +29,7 @@ const getStatusIntent = ( status: string ): ComponentProps< typeof Badge >[ 'int
 		case 'fixed':
 			return 'stable';
 		case 'ignored':
-			return 'informational';
+			return 'low';
 		default:
 			return 'draft';
 	}
