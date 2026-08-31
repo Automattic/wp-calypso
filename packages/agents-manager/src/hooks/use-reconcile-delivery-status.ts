@@ -18,6 +18,7 @@
  */
 import {
 	clearConversation,
+	getAgentManager,
 	getStoredSessionIds,
 	getUnresolvedMessages,
 	loadConversation,
@@ -40,8 +41,15 @@ async function findOrphanedConversation(): Promise< {
 	storageKey: string;
 	messages: Message[];
 } | null > {
-	for ( const storageKey of ( await getStoredSessionIds() ).filter( ( key ) =>
-		key.startsWith( 'local-' )
+	// An agent outlives the panel that shows it: closing the chat or stepping
+	// through `/history` unmounts this hook while the first turn keeps
+	// streaming, and that turn is still `pending` under its `local-*` key. Skip
+	// anything a live agent holds. The manager is per page load, so a genuine
+	// orphan never has one.
+	const liveSessionIds = new Set( getAgentManager().getLiveSessionIds() );
+
+	for ( const storageKey of ( await getStoredSessionIds() ).filter(
+		( key ) => key.startsWith( 'local-' ) && ! liveSessionIds.has( key )
 	) ) {
 		const { messages } = await loadConversation( storageKey );
 		if ( getUnresolvedMessages( messages ).length > 0 ) {

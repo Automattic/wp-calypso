@@ -7,6 +7,8 @@ import type { Message } from '@automattic/agenttic-client';
 const mockPrefix = 'a8c_agenttic_conversation_history_';
 const STORAGE_PREFIX = mockPrefix;
 
+const mockLiveSessionIds: string[] = [];
+
 const isUnresolved = ( message: Message ) =>
 	message.metadata?.deliveryStatus === 'pending' ||
 	message.metadata?.deliveryStatus === 'streaming';
@@ -59,6 +61,9 @@ jest.mock(
 			clearConversation: jest.fn( async ( key: string ) =>
 				globalThis.sessionStorage.removeItem( `${ mockPrefix }${ key }` )
 			),
+			getAgentManager: () => ( {
+				getLiveSessionIds: () => mockLiveSessionIds,
+			} ),
 			messageTextContent: ( message: Message ) =>
 				message.parts
 					.filter( ( part ): part is { type: 'text'; text: string } => part.type === 'text' )
@@ -109,6 +114,7 @@ async function flush(): Promise< void > {
 describe( 'useReconcileDeliveryStatus', () => {
 	beforeEach( () => {
 		sessionStorage.clear();
+		mockLiveSessionIds.length = 0;
 		mockReconcile.mockClear();
 		( getUnresolvedMessages as jest.Mock ).mockClear();
 	} );
@@ -167,6 +173,34 @@ describe( 'useReconcileDeliveryStatus', () => {
 		await waitFor( () => expect( result.current ).not.toBeNull() );
 
 		expect( result.current!.map( ( turn ) => turn.text ) ).toEqual( [ 'q' ] );
+	} );
+
+	it( 'leaves a local-* turn alone while a live agent still holds it', async () => {
+		// The panel unmounted mid-turn (chat closed, or a step through
+		// `/history`) and remounted while the agent kept streaming.
+		setAgent();
+		seed( 'local-1', [ { role: 'user', content: 'still going', deliveryStatus: 'pending' } ] );
+		mockLiveSessionIds.push( 'local-1' );
+
+		const { result } = renderHook( () => useReconcileDeliveryStatus() );
+		await flush();
+
+		expect( mockReconcile ).not.toHaveBeenCalled();
+		expect( result.current ).toBeNull();
+		expect( sessionStorage.getItem( `${ STORAGE_PREFIX }local-1` ) ).not.toBeNull();
+	} );
+
+	it( 'recovers a local-* orphan no live agent holds', async () => {
+		setAgent();
+		seed( 'local-1', [ { role: 'user', content: 'orphaned', deliveryStatus: 'pending' } ] );
+		seed( 'local-2', [ { role: 'user', content: 'still going', deliveryStatus: 'pending' } ] );
+		mockLiveSessionIds.push( 'local-2' );
+
+		const { result } = renderHook( () => useReconcileDeliveryStatus() );
+		await waitFor( () => expect( result.current ).not.toBeNull() );
+
+		expect( result.current!.map( ( turn ) => turn.text ) ).toEqual( [ 'orphaned' ] );
+		expect( sessionStorage.getItem( `${ STORAGE_PREFIX }local-2` ) ).not.toBeNull();
 	} );
 
 	it( 'leaves the orphan in storage if reconciliation throws', async () => {
