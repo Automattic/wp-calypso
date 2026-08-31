@@ -236,6 +236,31 @@ function NotificationsInbox( {
 		setActiveTab( CATEGORY_TO_TAB[ category ] );
 	}, [ category ] );
 
+	// The selection lives in the path: an unfiltered list carries the note id
+	// as its only segment, a filtered one appends it to the category.
+	const navigateToNote = useCallback(
+		( noteId: string | undefined, replace = false ) => {
+			if ( ! noteId ) {
+				if ( category === 'all' ) {
+					navigate( { to: '/notifications', replace } );
+				} else {
+					navigate( { to: '/notifications/$category', params: { category }, replace } );
+				}
+				return;
+			}
+			if ( category === 'all' ) {
+				navigate( { to: '/notifications/$category', params: { category: noteId }, replace } );
+			} else {
+				navigate( {
+					to: '/notifications/$category/$noteId',
+					params: { category, noteId },
+					replace,
+				} );
+			}
+		},
+		[ category, navigate ]
+	);
+
 	const setSelectedNote = ( noteId: string | undefined ) => {
 		hasSelectedRef.current = true;
 		if ( noteId ) {
@@ -243,30 +268,21 @@ function NotificationsInbox( {
 				category,
 			} );
 		}
-		navigate( {
-			to: category === 'all' ? '/notifications' : '/notifications/$category',
-			params: { category },
-			search: { note: noteId },
-		} );
+		navigateToNote( noteId );
 	};
 
-	// Opening through the normal path (?note= renders the detail pane, which
-	// calls openNote) marks the note read, exactly like a real open. On mobile
-	// the detail pane replaces the list, so auto-open would hide it — skip.
+	// Opening through the normal path (the note segment renders the detail pane,
+	// which calls openNote) marks the note read, exactly like a real open. On
+	// mobile the detail pane replaces the list, so auto-open would hide it — skip.
 	const handleFirstNoteLoaded = useCallback(
 		( firstNoteId: string ) => {
 			if ( note || hasSelectedRef.current || ! isDesktop ) {
 				return;
 			}
 			hasSelectedRef.current = true;
-			navigate( {
-				to: category === 'all' ? '/notifications' : '/notifications/$category',
-				params: { category },
-				search: { note: firstNoteId },
-				replace: true,
-			} );
+			navigateToNote( firstNoteId, true );
 		},
-		[ note, isDesktop, category, navigate ]
+		[ note, isDesktop, navigateToNote ]
 	);
 
 	// Previous/next walk the tab's list order; a deep-linked note that isn't

@@ -1,3 +1,4 @@
+import { useRouterState } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { archive, comment, people, starEmpty, unseen } from '@wordpress/icons';
 import { SidebarBackButton, SidebarMenu, SidebarMenuItem } from '../components/sidebar';
@@ -14,9 +15,20 @@ function UnreadCount() {
 }
 
 function NotificationsSidebarMenu() {
+	// A selected note is a path segment, so the unfiltered list reads as
+	// /notifications/<noteId>. Matching that exactly would unhighlight All, and
+	// matching it loosely would highlight All on every category, so the exact
+	// match is dropped only while the note id is the sole segment.
+	const pathname = useRouterState( { select: ( state ) => state.location.pathname } );
+	const isNoteInAllList = /^\/notifications\/\d+$/.test( pathname );
+
 	return (
 		<SidebarMenu>
-			<SidebarMenuItem icon={ archive } to="/notifications" activeOptions={ { exact: true } }>
+			<SidebarMenuItem
+				icon={ archive }
+				to="/notifications"
+				activeOptions={ isNoteInAllList ? undefined : { exact: true } }
+			>
 				{ __( 'All' ) }
 			</SidebarMenuItem>
 			<SidebarMenuItem icon={ unseen } to="/notifications/unread">

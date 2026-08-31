@@ -72,6 +72,17 @@ describe( 'Notifications bell / inbox mutual exclusion', () => {
 		} );
 	} );
 
+	it( 'does not open the dropdown while a note is selected in the path', async () => {
+		setPath( '/notifications/12345' );
+		renderBell();
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Notifications' } ) );
+
+		await waitFor( () => {
+			expect( screen.queryByTestId( 'notifications-panel' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
 	it( 're-asserts engine visibility for the inbox while its route is active', async () => {
 		setPath( '/notifications' );
 		renderBell();
