@@ -36,6 +36,7 @@
 		"dashboard/account-recovery-interstitial": false,
 		"dashboard/dark-mode-rollout": false,
 		"dashboard/enable-percentage-rollout": true,
+		"dashboard/omnibar-radical": true,
 		"dashboard/simulate-full-rollout": false,
 		"dashboard/wp-beta-program": true,
 		"dolly/telegram": true,
