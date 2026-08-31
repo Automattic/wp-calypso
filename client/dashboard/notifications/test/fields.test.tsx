@@ -71,6 +71,28 @@ describe( 'getNoteBodyParts', () => {
 		expect( parts.postscript ).toEqual( [] );
 	} );
 
+	it( 'keeps the user block on replies, whose header shows the comment answered', () => {
+		const parts = getNoteBodyParts(
+			makeNote( 5, {
+				url: 'https://example.com/post',
+				meta: { ids: { parent_comment: 42 } },
+				header: [
+					{
+						text: 'Rob Pugh on A look into notifications',
+						ranges: [ { type: 'user', indices: [ 0, 8 ], id: 7, parent: null } ],
+					},
+					{ text: 'The original comment' },
+				],
+				body: [
+					{ text: 'Dennis Snell', type: 'user' },
+					{ text: 'The reply', type: 'comment' },
+				],
+			} )
+		);
+		expect( parts.context.map( ( block ) => block.text ) ).toEqual( [ 'Dennis Snell' ] );
+		expect( parts.comment?.text ).toBe( 'The reply' );
+	} );
+
 	it( 'keeps blocks after the comment below it', () => {
 		const parts = getNoteBodyParts(
 			makeNote( 4, {
@@ -226,7 +248,11 @@ describe( 'getBlockSegments', () => {
 		} );
 		expect( segments ).toEqual( [
 			{ text: 'New achievement! ' },
-			{ text: 'See all your achievements', type: 'link', url: 'https://wordpress.com/me/achievements' },
+			{
+				text: 'See all your achievements',
+				type: 'link',
+				url: 'https://wordpress.com/me/achievements',
+			},
 			{ text: '.' },
 		] );
 	} );

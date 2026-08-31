@@ -171,7 +171,15 @@ function UserRow( { note, block }: { note: Note; block: NoteBlock } ) {
 					) : (
 						name
 					) }
-					{ user.homeTitle && <Text variant="muted">{ user.homeTitle }</Text> }
+					{ note.type === 'comment' ? (
+						<Text variant="muted">
+							{ [ getRelativeTimeString( new Date( note.timestamp ) ), user.homeTitle ]
+								.filter( Boolean )
+								.join( ' · ' ) }
+						</Text>
+					) : (
+						user.homeTitle && <Text variant="muted">{ user.homeTitle }</Text>
+					) }
 				</VStack>
 			</HStack>
 			{ user.canFollow && (
@@ -342,83 +350,71 @@ export default function NoteDetail( {
 				{ badgeMedia.length === 0 && (
 					<img
 						className="dashboard-notifications-inbox__note-avatar"
-						src={ headerUser?.avatarUrl ?? note.icon }
+						src={ parentComment?.avatarUrl ?? headerUser?.avatarUrl ?? note.icon }
 						alt=""
 						width={ 40 }
 						height={ 40 }
 					/>
 				) }
 				<VStack spacing={ 0 }>
-					{ headerUser ? (
+					{ parentComment && (
 						<>
-							{ headerUser.url ? (
-								<a
-									className="dashboard-notifications-inbox__user-row-name"
-									href={ headerUser.url }
-									target="_blank"
-									rel="noreferrer"
-								>
-									<Text weight={ 600 }>{ headerUser.name }</Text>
-								</a>
-							) : (
-								<Text weight={ 600 }>{ headerUser.name }</Text>
-							) }
-							{ headerSnippet && (
-								<Text className="dashboard-notifications-inbox__note-title">
-									<a href={ note.url } target="_blank" rel="noreferrer">
-										{ headerSnippet }
-									</a>
-								</Text>
-							) }
-						</>
-					) : (
-						title
-					) }
-					{ note.url ? (
-						<a
-							className="dashboard-notifications-inbox__note-time"
-							href={ note.url }
-							target="_blank"
-							rel="noreferrer"
-						>
-							<Text variant="muted">{ getRelativeTimeString( new Date( note.timestamp ) ) }</Text>
-						</a>
-					) : (
-						<Text variant="muted">{ getRelativeTimeString( new Date( note.timestamp ) ) }</Text>
-					) }
-				</VStack>
-			</HStack>
-			<VStack spacing={ 3 } className="dashboard-notifications-inbox__body">
-				{ parentComment && (
-					<HStack
-						spacing={ 3 }
-						justify="flex-start"
-						alignment="flex-start"
-						className="dashboard-notifications-inbox__parent-comment"
-					>
-						{ parentComment.avatarUrl && (
-							<img
-								className="dashboard-notifications-inbox__parent-comment-avatar"
-								src={ parentComment.avatarUrl }
-								alt=""
-								width={ 32 }
-								height={ 32 }
-							/>
-						) }
-						<VStack spacing={ 0 }>
 							<Text>
 								<BlockText block={ parentComment.author } />
 							</Text>
-							{ parentComment.url ? (
-								<a href={ parentComment.url } target="_blank" rel="noreferrer">
-									{ parentComment.excerpt.text }
-								</a>
-							) : (
-								<Text variant="muted">{ parentComment.excerpt.text }</Text>
-							) }
-						</VStack>
-					</HStack>
-				) }
+							<Text className="dashboard-notifications-inbox__note-title">
+								{ parentComment.url ? (
+									<a href={ parentComment.url } target="_blank" rel="noreferrer">
+										{ parentComment.excerpt.text }
+									</a>
+								) : (
+									parentComment.excerpt.text
+								) }
+							</Text>
+						</>
+					) }
+					{ ! parentComment &&
+						( headerUser ? (
+							<>
+								{ headerUser.url ? (
+									<a
+										className="dashboard-notifications-inbox__user-row-name"
+										href={ headerUser.url }
+										target="_blank"
+										rel="noreferrer"
+									>
+										<Text weight={ 600 }>{ headerUser.name }</Text>
+									</a>
+								) : (
+									<Text weight={ 600 }>{ headerUser.name }</Text>
+								) }
+								{ headerSnippet && (
+									<Text className="dashboard-notifications-inbox__note-title">
+										<a href={ note.url } target="_blank" rel="noreferrer">
+											{ headerSnippet }
+										</a>
+									</Text>
+								) }
+							</>
+						) : (
+							title
+						) ) }
+					{ ! parentComment &&
+						( note.url ? (
+							<a
+								className="dashboard-notifications-inbox__note-time"
+								href={ note.url }
+								target="_blank"
+								rel="noreferrer"
+							>
+								<Text variant="muted">{ getRelativeTimeString( new Date( note.timestamp ) ) }</Text>
+							</a>
+						) : (
+							<Text variant="muted">{ getRelativeTimeString( new Date( note.timestamp ) ) }</Text>
+						) ) }
+				</VStack>
+			</HStack>
+			<VStack spacing={ 3 } className="dashboard-notifications-inbox__body">
 				{ ! comment && excerpt && <Text>{ excerpt }</Text> }
 				{ contextRuns.map( ( run, index ) =>
 					'users' in run ? (

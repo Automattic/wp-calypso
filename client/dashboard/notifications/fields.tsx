@@ -1,4 +1,7 @@
-import { getNoteBodyParts as classifyNoteBody } from '@automattic/notifications/src/common/body-parts';
+import {
+	getNoteBodyParts as classifyNoteBody,
+	getNoteParentComment,
+} from '@automattic/notifications/src/common/body-parts';
 import { getTitleSegments } from '@automattic/notifications/src/common/segments';
 import {
 	getNoteExcerpt,
@@ -64,11 +67,12 @@ export type NoteBlock = Note[ 'body' ][ number ];
  * Split the note's body blocks for display: the comment block becomes quoted
  * content; the rest are context lines. On comment notes the user blocks are
  * dropped (the header already names the sender), while on other note types
- * they are real content (who liked/followed).
+ * they are real content (who liked/followed). Replies keep theirs: their
+ * header shows the comment being answered, so nothing else names the sender.
  */
 export function getNoteBodyParts( note: Note ): NoteBodyParts {
 	const { context, comment, postscript } = classifyNoteBody( note );
-	if ( ! comment ) {
+	if ( ! comment || getNoteParentComment( note ) ) {
 		return { context, comment, postscript };
 	}
 	const keep = ( block: NoteBlock ) => block.type !== 'user';
