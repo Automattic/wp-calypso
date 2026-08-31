@@ -15,6 +15,7 @@ export type Range = {
 	class?: string;
 	style?: string;
 	context?: string;
+	value?: string;
 };
 
 export type Media = {

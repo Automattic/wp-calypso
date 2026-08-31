@@ -46,7 +46,7 @@ export function getTitleSegments( note: Note ): TitleSegment[] {
 	return segments;
 }
 
-export type BlockSegment = { text: string; url?: string };
+export type BlockSegment = { text: string; url?: string; type?: string };
 
 /**
  * Split a block's text into plain and linked segments using its `ranges`
@@ -68,7 +68,7 @@ export function getBlockSegments( block: Block ): BlockSegment[] {
 		if ( start > cursor ) {
 			segments.push( { text: block.text.slice( cursor, start ) } );
 		}
-		segments.push( { text: block.text.slice( start, end ), url: range.url } );
+		segments.push( { text: block.text.slice( start, end ), url: range.url, type: range.type } );
 		cursor = end;
 	}
 	if ( cursor < block.text.length ) {
