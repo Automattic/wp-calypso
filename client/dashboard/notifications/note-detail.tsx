@@ -363,13 +363,7 @@ export default function NoteDetail( {
 								<BlockText block={ parentComment.author } />
 							</Text>
 							<Text className="dashboard-notifications-inbox__note-title">
-								{ parentComment.url ? (
-									<a href={ parentComment.url } target="_blank" rel="noreferrer">
-										{ parentComment.excerpt.text }
-									</a>
-								) : (
-									parentComment.excerpt.text
-								) }
+								{ parentComment.excerpt.text }
 							</Text>
 						</>
 					) }
