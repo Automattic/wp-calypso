@@ -446,8 +446,6 @@ describe( 'getRenewalUrlFromPurchase', () => {
 } );
 
 describe( 'isPurchaseDowngradeEligible', () => {
-	// Both `plans/expired-downgrade` and `plans/delayed-downgrade` are enabled in
-	// every config, so these exercise the shipping behaviour.
 	test( 'is true for a downgradable plan', () => {
 		expect(
 			isPurchaseDowngradeEligible(
