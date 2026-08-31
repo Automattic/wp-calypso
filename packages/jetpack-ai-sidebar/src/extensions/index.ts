@@ -4,7 +4,7 @@ import { withJetpackAiToolbarButton } from './block-toolbar-extension';
 
 let filtersRegistered = false;
 
-function registerBlockToolbarFilter(): void {
+export function registerBlockEditorFilters(): void {
 	if ( filtersRegistered ) {
 		return;
 	}
@@ -20,8 +20,4 @@ function registerBlockToolbarFilter(): void {
 
 	filtersRegistered = true;
 	addFilter( 'editor.BlockEdit', 'jetpack-ai-sidebar/block-toolbar', withJetpackAiToolbarButton );
-}
-
-export function registerBlockEditorFilters(): void {
-	registerBlockToolbarFilter();
 }

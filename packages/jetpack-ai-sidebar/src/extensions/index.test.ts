@@ -18,15 +18,6 @@ function installPreview( features: Record< string, boolean > = {}, enabled = tru
 	};
 }
 
-/**
- * @returns The addFilter calls that registered the block toolbar button.
- */
-function toolbarFilterCalls() {
-	return mockAddFilter.mock.calls.filter(
-		( call ) => call[ 1 ] === 'jetpack-ai-sidebar/block-toolbar'
-	);
-}
-
 function enableToolbarButton() {
 	installPreview( { blockToolbarButton: true } );
 }
@@ -60,7 +51,7 @@ describe( 'Jetpack AI sidebar extension registration', () => {
 		registerBlockEditorFilters();
 		registerBlockEditorFilters();
 
-		expect( toolbarFilterCalls() ).toHaveLength( 1 );
+		expect( mockAddFilter ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'registers the filter regardless of block transformations', async () => {
@@ -69,7 +60,7 @@ describe( 'Jetpack AI sidebar extension registration', () => {
 
 		registerBlockEditorFilters();
 
-		expect( toolbarFilterCalls() ).toHaveLength( 1 );
+		expect( mockAddFilter ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it.each( [
@@ -84,6 +75,6 @@ describe( 'Jetpack AI sidebar extension registration', () => {
 
 		registerBlockEditorFilters();
 
-		expect( toolbarFilterCalls() ).toHaveLength( 0 );
+		expect( mockAddFilter ).not.toHaveBeenCalled();
 	} );
 } );
