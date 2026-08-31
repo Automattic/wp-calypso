@@ -22,10 +22,8 @@ import {
 	getTitanSubscriptionId,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
-import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import type { EmailAccount } from 'calypso/data/emails/types';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
-import type { AppState } from 'calypso/types';
 
 export function getNumberOfMailboxesText( domain: ResponseDomain ) {
 	if ( hasGSuiteWithUs( domain ) ) {
@@ -65,23 +63,11 @@ export function getNumberOfMailboxesText( domain: ResponseDomain ) {
 }
 
 /**
- * Retrieves the email purchase associated to the specified domain.
- * @param state - global Redux state
- * @param domain - domain object
- * @returns the corresponding email purchase, or null if not found
- */
-export function getEmailPurchaseByDomain( state: AppState, domain: ResponseDomain ) {
-	const subscriptionId = getEmailSubscriptionIdByDomain( domain );
-
-	return subscriptionId ? getByPurchaseId( state, subscriptionId ) : null;
-}
-
-/**
  * Retrieves the identifier of the email subscription for the specified domain.
  * @param domain - domain object
  * @returns the corresponding subscription id, or null if not found
  */
-function getEmailSubscriptionIdByDomain( domain: ResponseDomain ) {
+export function getEmailSubscriptionIdByDomain( domain: ResponseDomain ) {
 	let subscriptionId = null;
 
 	if ( hasGSuiteWithUs( domain ) ) {
