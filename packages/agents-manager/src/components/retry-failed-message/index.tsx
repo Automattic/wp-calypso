@@ -13,7 +13,7 @@ interface Props {
 export default function RetryFailedMessage( { onRetry }: Props ) {
 	return (
 		<div className="agents-manager__retry-failed-message">
-			<p className="agents-manager__retry-failed-message-text">
+			<p className="agents-manager__retry-failed-message-text" role="status">
 				{ __( "This message didn't reach the assistant.", __i18n_text_domain__ ) }
 			</p>
 			<button
