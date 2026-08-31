@@ -1,4 +1,9 @@
-import { getNoteBodyParts, getNoteUserRef, getSignature } from '../body-parts';
+import {
+	getNoteBodyParts,
+	getNoteParentComment,
+	getNoteUserRef,
+	getSignature,
+} from '../body-parts';
 import type { Note } from '../types';
 
 const makeNote = ( overrides: Partial< Note > = {} ): Note =>
@@ -155,5 +160,72 @@ describe( 'getNoteUserRef', () => {
 			homeTitle: null,
 			homeUrl: null,
 		} );
+	} );
+} );
+
+describe( 'getNoteParentComment', () => {
+	const replyNote = ( overrides: Partial< Note > = {} ) =>
+		makeNote( {
+			url: 'https://example.com/post',
+			meta: { ids: { parent_comment: 42 } },
+			header: [
+				{
+					text: 'Rob Pugh on A look into notifications',
+					ranges: [
+						{ type: 'user', indices: [ 0, 8 ], id: 7, parent: null },
+						{ type: 'post', indices: [ 12, 37 ], id: 9, parent: null },
+					],
+					media: [ { type: 'image', indices: [ 0, 0 ], url: 'https://example.com/rob.jpg' } ],
+				},
+				{ text: 'And should we consider some kind of alert' },
+			],
+			...overrides,
+		} );
+
+	it( 'reads the parent comment from the note header', () => {
+		const parent = getNoteParentComment( replyNote() );
+		expect( parent?.author.text ).toBe( 'Rob Pugh on A look into notifications' );
+		expect( parent?.excerpt.text ).toBe( 'And should we consider some kind of alert' );
+		expect( parent?.avatarUrl ).toBe( 'https://example.com/rob.jpg' );
+	} );
+
+	it( 'anchors the link to the parent comment', () => {
+		expect( getNoteParentComment( replyNote() )?.url ).toBe(
+			'https://example.com/post#comment-42'
+		);
+	} );
+
+	it( 'replaces an existing fragment rather than appending one', () => {
+		const parent = getNoteParentComment(
+			replyNote( { url: 'https://example.com/post#comment-99' } )
+		);
+		expect( parent?.url ).toBe( 'https://example.com/post#comment-42' );
+	} );
+
+	it( 'drops the header media so the avatar is not rendered twice', () => {
+		expect( getNoteParentComment( replyNote() )?.author.media ).toBeUndefined();
+	} );
+
+	it( 'returns null when the note is not a reply', () => {
+		expect( getNoteParentComment( replyNote( { meta: { ids: {} } } ) ) ).toBeNull();
+	} );
+
+	it( 'returns null when the header has no excerpt to show', () => {
+		const note = replyNote();
+		expect(
+			getNoteParentComment( makeNote( { ...note, header: [ note.header![ 0 ] ] } ) )
+		).toBeNull();
+	} );
+
+	it( 'returns null when the header does not lead with a user', () => {
+		const note = replyNote();
+		expect(
+			getNoteParentComment(
+				makeNote( {
+					...note,
+					header: [ { text: 'A site', ranges: [] }, note.header![ 1 ] ],
+				} )
+			)
+		).toBeNull();
 	} );
 } );

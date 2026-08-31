@@ -104,6 +104,7 @@ export type Note = {
 			site?: number;
 			post?: number;
 			comment?: number;
+			parent_comment?: number;
 			reply_comment?: number;
 			user?: number;
 		};

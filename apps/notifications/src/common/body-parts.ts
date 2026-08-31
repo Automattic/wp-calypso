@@ -1,4 +1,4 @@
-import type { Block, Note } from './types';
+import type { Block, Note, Subject } from './types';
 
 export type NoteBlockSignature = { type: string; id: number | string | null };
 
@@ -81,6 +81,38 @@ export function getNoteBodyParts( note: Note ): NoteBodyParts {
 	const postscript = commentIndex === -1 ? [] : blocks.slice( commentIndex + 1 );
 
 	return { context, comment: commentBlock, postscript };
+}
+
+export type NoteParentComment = {
+	/** Names the parent's author and the post it sits on; media stripped so the avatar is not rendered twice. */
+	author: Subject;
+	/** The parent comment's excerpt. */
+	excerpt: Subject;
+	avatarUrl: string | null;
+	/** Deep link to the parent comment, when the note carries a url to anchor. */
+	url: string | null;
+};
+
+/**
+ * The comment a reply note is answering. The payload keeps it in the note
+ * header rather than the body, which is why the panel renders that header
+ * (`SummaryInSingle`) as the reply's context; `meta.ids.parent_comment` is
+ * what marks the note as a reply and anchors the link.
+ */
+export function getNoteParentComment( note: Note ): NoteParentComment | null {
+	const parentId = note.meta?.ids?.parent_comment;
+	const [ author, excerpt ] = note.header ?? [];
+
+	if ( ! parentId || ! author || ! excerpt || author.ranges?.[ 0 ]?.type !== 'user' ) {
+		return null;
+	}
+
+	return {
+		author: { text: author.text, ranges: author.ranges },
+		excerpt,
+		avatarUrl: author.media?.[ 0 ]?.url ?? null,
+		url: note.url ? `${ note.url.split( '#' )[ 0 ] }#comment-${ parentId }` : null,
+	};
 }
 
 export type NoteUserRef = {

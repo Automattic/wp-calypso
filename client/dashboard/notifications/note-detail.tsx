@@ -14,6 +14,7 @@ import { getRelativeTimeString } from '../utils/datetime';
 import { openNote, setFollowStatus, useNote } from './engine';
 import {
 	getNoteBodyParts,
+	getNoteParentComment,
 	getNoteExcerpt,
 	getNoteTypeLabel,
 	getTitleSegments,
@@ -276,6 +277,7 @@ export default function NoteDetail( {
 
 	const excerpt = getNoteExcerpt( note );
 	const { context, comment, postscript } = getNoteBodyParts( note );
+	const parentComment = getNoteParentComment( note );
 
 	// Blocks render in payload order, like the legacy panel; consecutive user
 	// blocks fold into one list.
@@ -387,6 +389,36 @@ export default function NoteDetail( {
 				</VStack>
 			</HStack>
 			<VStack spacing={ 3 } className="dashboard-notifications-inbox__body">
+				{ parentComment && (
+					<HStack
+						spacing={ 3 }
+						justify="flex-start"
+						alignment="flex-start"
+						className="dashboard-notifications-inbox__parent-comment"
+					>
+						{ parentComment.avatarUrl && (
+							<img
+								className="dashboard-notifications-inbox__parent-comment-avatar"
+								src={ parentComment.avatarUrl }
+								alt=""
+								width={ 32 }
+								height={ 32 }
+							/>
+						) }
+						<VStack spacing={ 0 }>
+							<Text>
+								<BlockText block={ parentComment.author } />
+							</Text>
+							{ parentComment.url ? (
+								<a href={ parentComment.url } target="_blank" rel="noreferrer">
+									{ parentComment.excerpt.text }
+								</a>
+							) : (
+								<Text variant="muted">{ parentComment.excerpt.text }</Text>
+							) }
+						</VStack>
+					</HStack>
+				) }
 				{ ! comment && excerpt && <Text>{ excerpt }</Text> }
 				{ contextRuns.map( ( run, index ) =>
 					'users' in run ? (

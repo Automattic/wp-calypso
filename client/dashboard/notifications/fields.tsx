@@ -48,8 +48,15 @@ export { getNoteExcerpt, getNoteSender, getNoteTitle };
 
 export { getBlockSegments, getTitleSegments } from '@automattic/notifications/src/common/segments';
 export type { BlockSegment, TitleSegment } from '@automattic/notifications/src/common/segments';
-export { getNoteUserRef } from '@automattic/notifications/src/common/body-parts';
-export type { NoteBodyParts, NoteUserRef } from '@automattic/notifications/src/common/body-parts';
+export {
+	getNoteParentComment,
+	getNoteUserRef,
+} from '@automattic/notifications/src/common/body-parts';
+export type {
+	NoteBodyParts,
+	NoteParentComment,
+	NoteUserRef,
+} from '@automattic/notifications/src/common/body-parts';
 
 export type NoteBlock = Note[ 'body' ][ number ];
 

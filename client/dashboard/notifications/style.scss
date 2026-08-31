@@ -393,6 +393,16 @@
 	white-space: pre-line;
 }
 
+.dashboard-notifications-inbox__parent-comment {
+	padding-bottom: 12px;
+	border-bottom: 1px solid var(--wpds-color-stroke-surface-neutral-weak, #f0f0f0);
+}
+
+.dashboard-notifications-inbox__parent-comment-avatar {
+	flex-shrink: 0;
+	border-radius: 50%;
+}
+
 .dashboard-notifications-inbox__body a {
 	color: var(--wp-admin-theme-color, #3858e9);
 }
