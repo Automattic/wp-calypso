@@ -1,4 +1,7 @@
+import { getSignature } from '../../common/body-parts';
 import { html as toHtml } from '../indices-to-html';
+
+export { getSignature };
 
 /**
  * Adds markup to some common text patterns
@@ -184,56 +187,6 @@ export function p( html, className ) {
 }
 
 export const pSoup = ( items ) => items.map( toHtml ).map( internalP );
-
-export function getSignature( blocks, note ) {
-	if ( ! blocks || ! blocks.length ) {
-		return [];
-	}
-
-	return blocks.map( function ( block ) {
-		let type = 'text';
-		let id = null;
-
-		if ( 'undefined' !== typeof block.type ) {
-			type = block.type;
-		}
-
-		if ( note && note.meta && note.meta.ids && note.meta.ids.reply_comment ) {
-			if (
-				block.ranges &&
-				block.ranges.length > 1 &&
-				block.ranges[ 1 ].id === note.meta.ids.reply_comment
-			) {
-				type = 'reply';
-				id = block.ranges[ 1 ].id;
-			}
-		}
-
-		if (
-			'undefined' === typeof block.meta ||
-			'undefined' === typeof block.meta.ids ||
-			Object.keys( block.meta.ids ).length < 1
-		) {
-			return { type: type, id: id };
-		}
-
-		if ( 'undefined' !== typeof block.meta.ids.prompt ) {
-			type = 'prompt';
-			id = block.meta.ids.prompt;
-		} else if ( 'undefined' !== typeof block.meta.ids.comment ) {
-			type = 'comment';
-			id = block.meta.ids.comment;
-		} else if ( 'undefined' !== typeof block.meta.ids.post ) {
-			type = 'post';
-			id = block.meta.ids.post;
-		} else if ( 'undefined' !== typeof block.meta.ids.user ) {
-			type = 'user';
-			id = block.meta.ids.user;
-		}
-
-		return { type: type, id: id };
-	} );
-}
 
 export function formatString() {
 	const args = [].slice.apply( arguments );

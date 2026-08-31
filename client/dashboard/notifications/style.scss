@@ -162,6 +162,16 @@
 	svg {
 		fill: currentcolor;
 	}
+
+	&.is-unread {
+		background: var(--wp-admin-theme-color, #3858e9);
+	}
+
+	/* Pending-approval comments, matching the legacy panel's warning bubble
+	   (--color-warning / studio-yellow-50). */
+	&.is-unapproved {
+		background: #9d6e00;
+	}
 }
 
 .dashboard-notifications-inbox__avatar {
@@ -176,16 +186,6 @@
 	}
 }
 
-.dashboard-notifications-inbox__unread-dot {
-	position: absolute;
-	top: 2px;
-	inset-inline-end: 2px;
-	width: 10px;
-	height: 10px;
-	border-radius: 50%;
-	background: var(--wp-admin-theme-color, #3858e9);
-	border: 2px solid var(--dashboard__background-color, #fff);
-}
 
 .dashboard-notifications-inbox__list-toolbar.dataviews__view-actions {
 	border-bottom: 1px solid var(--dashboard-header__border-color, #ddd);
@@ -203,9 +203,29 @@
 	border-top: 1px solid var(--dashboard-header__border-color, #ddd);
 }
 
+/* The list layout's Stack wrapper spaces date groups apart via an inline
+   style, so only !important can zero it; the group headers' own padding and
+   borders provide the rhythm. */
+.dashboard-notifications-inbox__list .dataviews-view-list {
+	gap: 0 !important;
+}
+
 /* The toolbar's own border already separates the first group. */
 .dashboard-notifications-inbox__list .dataviews-view-list > :first-child > .dataviews-view-list__group-header {
 	border-top: none;
+}
+
+.dashboard-notifications-inbox__list .dataviews-view-list div[role="article"] + div[role="article"] {
+	border-top: 1px solid var(--wpds-color-stroke-surface-neutral-weak, #f0f0f0);
+}
+
+/* Tint the outer row box so it runs edge to edge; the translucent separator
+   has the same weight as the neutral one on white but stays visible on blue. */
+.dashboard-notifications-inbox__list
+	.dataviews-view-list
+	div[role="article"]:has(.dashboard-notifications-inbox__noticon.is-unread) {
+	background: color-mix(in srgb, var(--wp-admin-theme-color, #3858e9) 10%, transparent);
+	border-top-color: rgba(0, 0, 0, 0.06);
 }
 
 .dashboard-notifications-inbox__note-avatar {
@@ -213,8 +233,16 @@
 	flex-shrink: 0;
 }
 
-.dashboard-notifications-inbox__detail-nav > .components-button:first-of-type {
+.dashboard-notifications-inbox__detail-nav-actions {
 	margin-inline-start: auto;
+}
+
+.dashboard-notifications-inbox__note-time {
+	text-decoration: none;
+
+	&:hover span {
+		text-decoration: underline;
+	}
 }
 
 .dashboard-notifications-inbox__type-chip {
@@ -283,6 +311,27 @@
 .dashboard-notifications-inbox__footer {
 	border-top: 1px solid var(--dashboard-header__border-color, #ddd);
 	padding-top: 16px;
+
+	&:empty {
+		display: none;
+	}
+}
+
+.dashboard-notifications-inbox__badge-media {
+	display: block;
+	margin: 16px auto 0;
+	max-width: 128px;
+	height: auto;
+}
+
+.dashboard-notifications-inbox__body-image {
+	max-width: 128px;
+	height: auto;
+	vertical-align: middle;
+}
+
+.dashboard-notifications-inbox__block-text {
+	white-space: pre-line;
 }
 
 .dashboard-notifications-inbox__body {

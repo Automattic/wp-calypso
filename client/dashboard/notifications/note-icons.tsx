@@ -1,3 +1,4 @@
+import { getNoticonName } from '@automattic/notifications/src/common/icon-map';
 import {
 	chartBar,
 	caution,
@@ -11,6 +12,7 @@ import {
 	update,
 } from '@wordpress/icons';
 import { SVG, G, Path } from '@wordpress/primitives';
+import type { NoticonName } from '@automattic/notifications/src/common/icon-map';
 import type { JSX } from 'react';
 
 // Gridicons the wp icon set has no equivalent for (same shapes the legacy
@@ -33,21 +35,25 @@ const reply: JSX.Element = (
 	</SVG>
 );
 
-/** The note's context icon, keyed by its `noticon` glyph. */
-export const NOTICON_ICONS: Record< string, JSX.Element > = {
-	'\uf814': comment, // mention
-	'\uf300': comment,
-	'\uf801': plus,
-	'\uf455': info,
-	'\uf470': lockOutline,
-	'\uf806': chartBar, // stats
-	'\uf805': update, // reblog
-	'\uf408': thumbsUp, // star
-	'\uf804': trophy,
-	'\uf467': reply,
-	'\uf414': caution, // warning
-	'\uf418': check,
-	'\uf447': store, // cart
+// This shell's visuals for the shared semantic names — the reply arrow is
+// deliberate (the panel redesign shows a comment icon instead).
+const ICONS_BY_NAME: Record< NoticonName, JSX.Element > = {
+	mention: comment,
+	comment,
+	add: plus,
+	info,
+	lock: lockOutline,
+	stats: chartBar,
+	reblog: update,
+	star: thumbsUp,
+	trophy,
+	reply,
+	warning: caution,
+	checkmark: check,
+	cart: store,
 };
 
-export const FALLBACK_NOTICON_ICON = info;
+/** The note's context icon for its `noticon` glyph. */
+export function getNoticonIcon( glyph: string ): JSX.Element {
+	return ICONS_BY_NAME[ getNoticonName( glyph ) ];
+}

@@ -226,7 +226,7 @@ describe( 'getBlockSegments', () => {
 		} );
 		expect( segments ).toEqual( [
 			{ text: 'New achievement! ' },
-			{ text: 'See all your achievements', url: 'https://wordpress.com/me/achievements' },
+			{ text: 'See all your achievements', type: 'link', url: 'https://wordpress.com/me/achievements' },
 			{ text: '.' },
 		] );
 	} );
@@ -248,6 +248,9 @@ describe( 'getBlockSegments', () => {
 				{ type: 'link', indices: [ 5, 9 ], url: 'https://c.example', id: 5, parent: null },
 			],
 		} );
-		expect( segments ).toEqual( [ { text: 'abcd', url: 'https://a.example' }, { text: 'ef' } ] );
+		expect( segments ).toEqual( [
+			{ text: 'abcd', type: 'link', url: 'https://a.example' },
+			{ text: 'ef' },
+		] );
 	} );
 } );
