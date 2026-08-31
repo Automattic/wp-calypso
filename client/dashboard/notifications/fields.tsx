@@ -9,6 +9,7 @@ import { getTimeGroupIndex } from '@automattic/notifications/src/common/time-gro
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
+import { getAvailableNoteActions, useIsNoteApproved } from './engine';
 import { getNoticonIcon } from './note-icons';
 import type { Note } from './engine';
 import type { NoteBodyParts } from '@automattic/notifications/src/common/body-parts';
@@ -67,22 +68,32 @@ export function getNoteBodyParts( note: Note ): NoteBodyParts {
 	return { context: context.filter( keep ), comment, postscript: postscript.filter( keep ) };
 }
 
+function NoteIcon( { note }: { note: Note } ) {
+	const isApproved = useIsNoteApproved( note );
+	const isUnapprovedComment =
+		note.type === 'comment' && getAvailableNoteActions( note ).approveComment && ! isApproved;
+	return (
+		<span className="dashboard-notifications-inbox__avatar">
+			<img src={ note.icon } alt="" width={ 32 } height={ 32 } />
+			<span
+				className={ clsx( 'dashboard-notifications-inbox__noticon', {
+					'is-unread': ! note.read,
+					'is-unapproved': isUnapprovedComment,
+				} ) }
+				aria-hidden="true"
+			>
+				<Icon icon={ getNoticonIcon( note.noticon ) } size={ 14 } />
+			</span>
+		</span>
+	);
+}
+
 export function getFields(): Field< Note >[] {
 	return [
 		{
 			id: 'icon',
 			label: __( 'Icon' ),
-			render: ( { item } ) => (
-				<span className="dashboard-notifications-inbox__avatar">
-					<img src={ item.icon } alt="" width={ 32 } height={ 32 } />
-					<span className="dashboard-notifications-inbox__noticon" aria-hidden="true">
-						<Icon icon={ getNoticonIcon( item.noticon ) } size={ 14 } />
-					</span>
-					{ ! item.read && (
-						<span className="dashboard-notifications-inbox__unread-dot" aria-hidden="true" />
-					) }
-				</span>
-			),
+			render: ( { item } ) => <NoteIcon note={ item } />,
 		},
 		{
 			id: 'title',
