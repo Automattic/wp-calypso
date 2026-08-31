@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { EXTERNAL_PRESSABLE_AUTH_URL } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useGetProductPricingInfo } from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-marketplace';
+import { getPressablePlanDisplayName } from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/pressable-plan-display-names';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -41,10 +42,15 @@ export default function RegularPlanCardContent( {
 		  };
 
 	const ctaLabel = useMemo( () => {
+		const planName = getPressablePlanDisplayName(
+			plan.slug,
+			plan.name.replace( /Pressable/g, '' )
+		);
+
 		if ( isReferralMode ) {
 			return translate( 'Add %(planName)s to referral', {
 				args: {
-					planName: plan.name.replace( /Pressable/g, '' ),
+					planName,
 				},
 				comment: '%(planName)s is the name of the plan.',
 			} );
@@ -52,11 +58,11 @@ export default function RegularPlanCardContent( {
 
 		return translate( 'Add %(planName)s to cart', {
 			args: {
-				planName: plan.name.replace( /Pressable/g, '' ),
+				planName,
 			},
 			comment: '%(planName)s is the name of the plan.',
 		} );
-	}, [ isReferralMode, plan.name, translate ] );
+	}, [ isReferralMode, plan.name, plan.slug, translate ] );
 
 	const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
 

@@ -20,6 +20,11 @@ import {
 import getNormalizedSliderSelection from '../lib/get-normalized-slider-selection';
 import getPressablePlan, { PressablePlan } from '../lib/get-pressable-plan';
 import getSliderOptions from '../lib/get-slider-options';
+import {
+	DISPLAY_TIER_AGENCY,
+	DISPLAY_TIER_STANDARD,
+	isDisplayTier,
+} from '../lib/pressable-plan-display-names';
 import { FilterType } from '../types';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
@@ -73,8 +78,12 @@ export default function PlanSelectionFilter( {
 		() =>
 			getSliderOptions(
 				filterType,
-				plans.map( ( plan ) => getPressablePlan( plan.slug ) ),
-				areSignaturePlans ? PLAN_CATEGORY_SIGNATURE : PLAN_CATEGORY_STANDARD,
+				plans
+					.map( ( plan ) => getPressablePlan( plan.slug ) )
+					.filter( ( plan ) =>
+						areSignaturePlans ? isDisplayTier( plan?.slug, DISPLAY_TIER_STANDARD ) : true
+					),
+				areSignaturePlans ? undefined : PLAN_CATEGORY_STANDARD,
 				isMobile
 			),
 		[ filterType, isMobile, plans, areSignaturePlans ]
@@ -84,8 +93,12 @@ export default function PlanSelectionFilter( {
 		() => [
 			...getSliderOptions(
 				filterType,
-				plans.map( ( plan ) => getPressablePlan( plan.slug ) ),
-				areSignaturePlans ? PLAN_CATEGORY_SIGNATURE_HIGH : PLAN_CATEGORY_ENTERPRISE,
+				plans
+					.map( ( plan ) => getPressablePlan( plan.slug ) )
+					.filter( ( plan ) =>
+						areSignaturePlans ? isDisplayTier( plan?.slug, DISPLAY_TIER_AGENCY ) : true
+					),
+				areSignaturePlans ? undefined : PLAN_CATEGORY_ENTERPRISE,
 				isMobile
 			),
 			...( isPremiumPlanTab
@@ -271,16 +284,12 @@ export default function PlanSelectionFilter( {
 				? [
 						{
 							name: PLAN_CATEGORY_SIGNATURE,
-							title: isDesktop
-								? translate( 'Signature plans 1-10' )
-								: translate( 'Signature 1-10' ),
+							title: translate( 'Standard' ),
 							disabled: disableStandardTab,
 						},
 						{
 							name: PLAN_CATEGORY_SIGNATURE_HIGH,
-							title: isDesktop
-								? translate( 'Signature plans 11-17' )
-								: translate( 'Signature 11-17' ),
+							title: translate( 'Agency' ),
 						},
 				  ]
 				: [
@@ -294,17 +303,12 @@ export default function PlanSelectionFilter( {
 							title: isDesktop ? translate( 'Enterprise plans' ) : translate( 'Enterprise' ),
 						},
 				  ] ),
-			hasNewPremiumPlans
-				? {
-						name: PLAN_CATEGORY_PREMIUM,
-						title: isDesktop ? translate( 'Premium plans 1-11' ) : translate( 'Premium 1-11' ),
-				  }
-				: {
-						name: PLAN_CATEGORY_PREMIUM,
-						title: isDesktop ? translate( 'Premium plans' ) : translate( 'Premium' ),
-				  },
+			{
+				name: PLAN_CATEGORY_PREMIUM,
+				title: translate( 'Performance' ),
+			},
 		],
-		[ areSignaturePlans, isDesktop, translate, disableStandardTab, hasNewPremiumPlans ]
+		[ areSignaturePlans, isDesktop, translate, disableStandardTab ]
 	);
 
 	if ( isLoading ) {

@@ -16,6 +16,12 @@ import {
 import getPressablePlan, {
 	PressablePlan,
 } from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/get-pressable-plan';
+import {
+	DISPLAY_TIER_AGENCY,
+	DISPLAY_TIER_PERFORMANCE,
+	getPressableDisplayTier,
+	getPressablePlanDisplayName,
+} from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/pressable-plan-display-names';
 import PlanSelectionFilter from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/plan-selection/filter';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -265,6 +271,34 @@ export default function PressablePlanSection( {
 	const isStandardPlan =
 		! areSignaturePlans && selectedPlanInfo?.category === PLAN_CATEGORY_STANDARD;
 
+	const displayTier = getPressableDisplayTier( selectedPlan?.slug );
+
+	const selectedTierCopy = useMemo( () => {
+		if ( ! selectedPlan || displayTier === DISPLAY_TIER_PERFORMANCE ) {
+			return translate(
+				'With Performance plans, your traffic & storage limits are shared amongst your total sites.'
+			);
+		}
+
+		if ( displayTier === DISPLAY_TIER_AGENCY ) {
+			return translate(
+				'With Agency plans, your traffic & storage limits are shared amongst your total sites.'
+			);
+		}
+
+		return translate(
+			'With Standard plans, your traffic & storage limits are shared amongst your total sites.'
+		);
+	}, [ displayTier, selectedPlan, translate ] );
+
+	const legacyTierCopy = isStandardPlan
+		? translate(
+				'With Signature plans, your traffic & storage limits are shared amongst your total sites.'
+		  )
+		: translate(
+				'With Enterprise plans, your traffic & storage limits are shared amongst your total sites.'
+		  );
+
 	const onScheduleDemo = useCallback( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_marketplace_hosting_pressable_schedule_demo_click' )
@@ -302,7 +336,12 @@ export default function PressablePlanSection( {
 			</HostingPlanSection.Card>
 			<HostingPlanSection.Details
 				heading={
-					isCustomPlan ? translate( 'Custom' ) : selectedPlan.name.replace( /Pressable/g, '' )
+					isCustomPlan
+						? translate( 'Performance Custom' )
+						: getPressablePlanDisplayName(
+								selectedPlan.slug,
+								selectedPlan.name.replace( /Pressable/g, '' )
+						  )
 				}
 			>
 				{ isReferralMode ? (
@@ -312,15 +351,7 @@ export default function PressablePlanSection( {
 						) }
 					</p>
 				) : (
-					<p>
-						{ areSignaturePlans || isStandardPlan
-							? translate(
-									'With Signature plans, your traffic & storage limits are shared amongst your total sites.'
-							  )
-							: translate(
-									'With Enterprise plans, your traffic & storage limits are shared amongst your total sites.'
-							  ) }
-					</p>
+					<p>{ areSignaturePlans ? selectedTierCopy : legacyTierCopy }</p>
 				) }
 
 				{ isCustomPlan ? (

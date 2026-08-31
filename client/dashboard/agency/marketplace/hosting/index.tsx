@@ -62,6 +62,7 @@ import {
 	wpcomHosting,
 } from './mock-data';
 import PressableContent from './pressable-content';
+import { getPressablePlanDisplayName } from './pressable-plan-display-names';
 import VipContent from './vip-content';
 import WpcomConfigurator from './wpcom-configurator';
 import YourPlan from './your-plan';
@@ -927,7 +928,7 @@ export default function MarketplaceHosting() {
 								label: sprintf(
 									/* translators: %s: plan name */
 									__( 'Pressable %s' ),
-									pressablePlan?.name ?? ''
+									getPressablePlanDisplayName( pressablePlan?.slug, pressablePlan?.name ?? '' )
 								),
 								total:
 									( term === 'yearly'
@@ -1049,7 +1050,7 @@ export default function MarketplaceHosting() {
 										label: sprintf(
 											/* translators: %s: plan name */
 											__( 'Pressable %s' ),
-											pressablePlan?.name ?? ''
+											getPressablePlanDisplayName( pressablePlan?.slug, pressablePlan?.name ?? '' )
 										),
 										total:
 											( term === 'yearly'

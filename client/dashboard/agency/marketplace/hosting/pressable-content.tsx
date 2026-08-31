@@ -20,7 +20,14 @@ import {
 	formatCompactNumber,
 } from './mock-data';
 import OptionCards from './option-cards';
+import {
+	DISPLAY_TIER_AGENCY,
+	DISPLAY_TIER_STANDARD,
+	getPressableDisplayTier,
+	getPressablePlanDisplayName,
+} from './pressable-plan-display-names';
 import type { PressablePlan } from './mock-data';
+import type { PressableDisplayTier } from './pressable-plan-display-names';
 
 export type PressableUsage = {
 	sites: number;
@@ -36,23 +43,27 @@ const PLAN_TYPE_OPTIONS: { value: PlanCategory; label: string; description: stri
 	{
 		value: 'standard',
 		label: __( 'Standard' ),
-		description: __(
-			'Traffic and storage pooled across all your client sites, from 1 to 150 installs.'
-		),
+		description: __( 'For a single site or a small portfolio, 1 to 10 WordPress installs.' ),
 	},
 	{
 		value: 'enterprise',
-		label: __( 'Enterprise' ),
-		description: __( 'For large portfolios of 200 to 500 WordPress installs.' ),
+		label: __( 'Agency' ),
+		description: __( 'Pooled traffic and storage across a client portfolio, 20 to 500 installs.' ),
 	},
 	{
 		value: 'custom',
-		label: __( 'Custom' ),
+		label: __( 'Performance' ),
 		description: __(
-			'More than 500 installs or 10M visits per month? We’ll size a plan to your portfolio.'
+			'Dedicated infrastructure for high traffic and mission critical sites, sales assisted.'
 		),
 	},
 ];
+
+/** Which proposed tier each plan-type card stands for. */
+const CARD_DISPLAY_TIER: Partial< Record< PlanCategory, PressableDisplayTier > > = {
+	standard: DISPLAY_TIER_STANDARD,
+	enterprise: DISPLAY_TIER_AGENCY,
+};
 
 function planOptionLabel( plan: PressablePlan ) {
 	const installs = sprintf(
@@ -63,7 +74,7 @@ function planOptionLabel( plan: PressablePlan ) {
 	return sprintf(
 		/* translators: %1$s: plan name, %2$s: installs, %3$s: monthly visits, %4$d: storage in GB */
 		__( '%1$s · %2$s · %3$s visits · %4$dGB' ),
-		plan.name,
+		getPressablePlanDisplayName( plan.slug, plan.name ),
 		installs,
 		formatCompactNumber( plan.visits ),
 		plan.storage
@@ -75,7 +86,7 @@ function PlanSpecs( { category, plan }: { category: PlanCategory; plan?: Pressab
 		return (
 			<VStack spacing={ 3 }>
 				<Heading level={ 3 } size={ 13 }>
-					{ __( 'Custom' ) }
+					{ __( 'Performance Custom' ) }
 				</Heading>
 				<CheckGrid
 					items={ [
@@ -156,7 +167,7 @@ function CurrentPlanCard( { plan, usage }: { plan: PressablePlan; usage: Pressab
 					title={ sprintf(
 						/* translators: %s: plan name */
 						__( 'Your Pressable %s plan' ),
-						plan.name
+						getPressablePlanDisplayName( plan.slug, plan.name )
 					) }
 					actions={
 						<Button variant="link" href="https://my.pressable.com" target="_blank" rel="noreferrer">
@@ -228,7 +239,9 @@ export default function PressableContent( {
 } ) {
 	const [ category, setCategory ] = useState< PlanCategory >( 'standard' );
 
-	const categoryPlans = pressablePlans.filter( ( p ) => p.category === category );
+	const categoryPlans = pressablePlans.filter(
+		( p ) => getPressableDisplayTier( p.slug ) === CARD_DISPLAY_TIER[ category ]
+	);
 	const plan = pressablePlans.find( ( p ) => p.slug === planSlug );
 
 	const handleCategoryChange = ( next: PlanCategory ) => {
@@ -237,7 +250,9 @@ export default function PressableContent( {
 			onPlanChange( PRESSABLE_CUSTOM_SLUG );
 			return;
 		}
-		const first = pressablePlans.find( ( p ) => p.category === next );
+		const first = pressablePlans.find(
+			( p ) => getPressableDisplayTier( p.slug ) === CARD_DISPLAY_TIER[ next ]
+		);
 		if ( first ) {
 			onPlanChange( first.slug );
 		}
