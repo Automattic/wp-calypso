@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, createRootRoute, createRoute, createRouter } from '@tanstack/react-router';
 import { render, screen } from '@testing-library/react';
 import { AnalyticsProvider } from '../../../app/analytics';
+import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
 import { createDomainsRoutes } from '../../../app/router/domains';
 import { rootRoute } from '../../../app/router/root';
 import { DomainNameField } from '../field-domain-name';
@@ -14,9 +15,13 @@ import type { DomainSummary } from '@automattic/api-core';
 
 // The `domainOverviewRoute`/`domainTransferRoute` singletons only get their
 // `fullPath` populated once a router builds the real route tree. Build it once
-// here so the field's `to={ route.fullPath }` resolves to a real template.
+// here so the field's `to={ route.fullPath }` resolves to a real template. The
+// router is never navigated, so the context value only has to satisfy the type.
 beforeAll( () => {
-	createRouter( { routeTree: rootRoute.addChildren( createDomainsRoutes() ) } );
+	createRouter( {
+		routeTree: rootRoute.addChildren( createDomainsRoutes() ),
+		context: { config: APP_CONTEXT_DEFAULT_CONFIG },
+	} );
 } );
 
 const getMockedDomain = ( customProps: Partial< DomainSummary > = {} ): DomainSummary =>
