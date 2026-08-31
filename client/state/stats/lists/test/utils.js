@@ -1623,10 +1623,9 @@ describe( 'utils', () => {
 								type: 'link',
 							},
 						],
-						poster: null,
+						poster: '',
 						label: 'Press This!',
 						page: '/stats/day/videodetails/en.blog.wordpress.com?post=111111111',
-						post_id: 111111111,
 						value: 32,
 					},
 				] );
@@ -1671,13 +1670,12 @@ describe( 'utils', () => {
 						poster: 'https://videos.files.wordpress.com/abc123/poster.jpg',
 						label: 'Press This!',
 						page: '/stats/day/videodetails/en.blog.wordpress.com?post=111111111',
-						post_id: 111111111,
 						value: 32,
 					},
 				] );
 			} );
 
-			test( 'should fall back to a null poster when the API sends none', () => {
+			test( 'should fall back to an empty poster when the API sends none', () => {
 				const [ item ] = normalizers.statsVideoPlays(
 					{
 						date: '2017-01-12',
@@ -1704,8 +1702,7 @@ describe( 'utils', () => {
 					}
 				);
 
-				expect( item.poster ).toBeNull();
-				expect( item.post_id ).toBe( 111111111 );
+				expect( item.poster ).toBe( '' );
 			} );
 		} );
 

@@ -669,11 +669,10 @@ export const normalizers = {
 				? `/stats/${ query.period }/videodetails/${ site.slug }?post=${ item.post_id }`
 				: null;
 			return {
-				post_id: item.post_id,
 				label: item.title,
 				page: detailPage,
 				value: item.plays,
-				poster: item.poster ?? null,
+				poster: item.poster ?? '',
 				actions: [
 					{
 						type: 'link',
