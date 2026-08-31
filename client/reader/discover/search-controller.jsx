@@ -8,7 +8,6 @@ import {
 import { recordTrack } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import renderHeaderSection from '../lib/header-section';
 import { fetchTrendingTags } from '../tags/controller';
 
 const loadSearchStream = () =>
@@ -53,10 +52,6 @@ export const search = ( context, next ) => {
 	}
 
 	const autoFocusInput = ! searchSlug || context.query.focus === '1';
-
-	if ( ! isUserLoggedIn( state ) ) {
-		context.renderHeaderSection = renderHeaderSection;
-	}
 
 	context.primary = (
 		<AsyncLoad
