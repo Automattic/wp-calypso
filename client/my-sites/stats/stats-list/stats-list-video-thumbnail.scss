@@ -21,3 +21,11 @@
 		fill: var(--color-neutral-40);
 	}
 }
+
+// horizontal-bar-list paints every svg in a hovered row white, which vanishes against the thumbnail's own light background.
+.horizontal-bar-list .horizontal-bar-list-item:hover,
+.horizontal-bar-list .horizontal-bar-list-item:focus {
+	.stats-list__video-thumbnail svg {
+		fill: var(--color-neutral-40);
+	}
+}
