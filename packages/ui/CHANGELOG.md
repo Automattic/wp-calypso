@@ -1,3 +1,9 @@
+## Unreleased
+
+### Breaking Changes
+
+- `Badge`: Remove component. Use `Badge` from `@wordpress/ui` instead.
+
 ## 2.0.0
 
 ### Breaking Changes
@@ -12,10 +18,6 @@
 ## 1.0.3
 
 - Declare React 19 compatibility for package consumers (#111721).
-
-### Breaking Changes
-
-- `Badge`: Remove component. Use `Badge` from `@wordpress/ui` instead.
 
 ## 1.0.2
 
