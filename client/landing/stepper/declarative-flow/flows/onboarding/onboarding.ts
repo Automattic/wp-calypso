@@ -73,6 +73,7 @@ import { useIsPostPlanSelectionEmailVerification } from '../../internals/steps-r
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import { getOnboardingStepperPosition } from './step-counter-config';
+import type { WowFunnelDest } from '../../../utils/wow-funnel';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { Store } from 'redux';
 
