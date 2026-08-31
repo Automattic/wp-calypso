@@ -93,6 +93,8 @@ export const EligibilityWarnings = ( {
 }: Props ) => {
 	const warnings = eligibilityData.eligibilityWarnings || [];
 	const listHolds = eligibilityData.eligibilityHolds || [];
+	const hasValidBlockingHold =
+		hasBlockingHold( listHolds ) && ! isAtomicSiteWithoutBusinessPlan( listHolds );
 
 	const [ selectedGeoAffinity, setSelectedGeoAffinity ] = useState( '' );
 
@@ -102,7 +104,7 @@ export const EligibilityWarnings = ( {
 		{
 			'eligibility-warnings__placeholder': isPlaceholder,
 			'eligibility-warnings--with-indent': showWarnings,
-			'eligibility-warnings--blocking-hold': hasBlockingHold( listHolds ),
+			'eligibility-warnings--blocking-hold': hasValidBlockingHold,
 			'eligibility-warnings--without-title':
 				context !== 'plugin-details' && context !== 'hosting-features',
 		},
@@ -174,7 +176,7 @@ export const EligibilityWarnings = ( {
 				eventProperties={ { context, path } }
 			/>
 
-			{ ! isPlaceholder && context === 'plugin-details' && hasBlockingHold( listHolds ) && (
+			{ ! isPlaceholder && hasValidBlockingHold && (
 				<CompactCard>
 					<HardBlockingNotice
 						holds={ listHolds }
@@ -184,16 +186,18 @@ export const EligibilityWarnings = ( {
 				</CompactCard>
 			) }
 
-			{ ( isPlaceholder || filteredHolds.length > 0 ) && ! showFreeTrial && (
-				<CompactCard>
-					<HoldList
-						context={ context }
-						holds={ filteredHolds }
-						isPlaceholder={ isPlaceholder }
-						isMarketplace={ isMarketplace }
-					/>
-				</CompactCard>
-			) }
+			{ ( isPlaceholder || filteredHolds.length > 0 ) &&
+				! showFreeTrial &&
+				! hasValidBlockingHold && (
+					<CompactCard>
+						<HoldList
+							context={ context }
+							holds={ filteredHolds }
+							isPlaceholder={ isPlaceholder }
+							isMarketplace={ isMarketplace }
+						/>
+					</CompactCard>
+				) }
 
 			{ showThisSiteIsEligibleMessage && (
 				<CompactCard>
@@ -233,26 +237,28 @@ export const EligibilityWarnings = ( {
 			<CompactCard>
 				<div className="eligibility-warnings__confirm-buttons">
 					<SupportLink onShowHelpAssistant={ onDismiss } />
-					<Button
-						variant="primary"
-						__next40pxDefaultSize
-						disabled={
-							isProceedButtonDisabled( isEligible, listHolds ) ||
-							siteIsSavingSettings ||
-							siteIsLaunching ||
-							disableContinueButton
-						}
-						isBusy={ siteIsLaunching || siteIsSavingSettings || disableContinueButton }
-						onClick={ logEventAndProceed }
-					>
-						{ getProceedButtonText(
-							listHolds,
-							translate,
-							context,
-							showFreeTrial,
-							atomicTransferAction
-						) }
-					</Button>
+					{ ! hasValidBlockingHold && (
+						<Button
+							variant="primary"
+							__next40pxDefaultSize
+							disabled={
+								isProceedButtonDisabled( isEligible, listHolds ) ||
+								siteIsSavingSettings ||
+								siteIsLaunching ||
+								disableContinueButton
+							}
+							isBusy={ siteIsLaunching || siteIsSavingSettings || disableContinueButton }
+							onClick={ logEventAndProceed }
+						>
+							{ getProceedButtonText(
+								listHolds,
+								translate,
+								context,
+								showFreeTrial,
+								atomicTransferAction
+							) }
+						</Button>
+					) }
 				</div>
 			</CompactCard>
 		</div>

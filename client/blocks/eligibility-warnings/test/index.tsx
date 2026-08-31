@@ -100,19 +100,35 @@ describe( '<EligibilityWarnings>', () => {
 		expect( container.querySelectorAll( '.calypso-notice' ) ).toHaveLength( 1 );
 	} );
 
-	it( 'dimly renders the hold card when AT has been blocked by a sticker', () => {
+	it( 'hides the hold list and Continue button when AT has been blocked by a sticker', () => {
 		const state = createState( {
 			holds: [ 'BLOCKED_ATOMIC_TRANSFER', 'SITE_PRIVATE' ],
 		} );
 
-		const { getByTestId, getByText } = renderWithStore(
+		const { queryByTestId, queryByText } = renderWithStore(
 			<EligibilityWarnings backUrl="" onProceed={ noop } />,
 			state
 		);
 
-		expect( getByTestId( 'HoldList-Card' ) ).toHaveClass( 'eligibility-warnings__hold-list-dim' );
-		expect( getByText( 'Help' ) ).toHaveAttribute( 'disabled' );
-		expect( getByText( 'Continue' ) ).toBeDisabled();
+		expect( queryByTestId( 'HoldList-Card' ) ).not.toBeInTheDocument();
+		expect( queryByText( 'Continue' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders only the in-progress notice when a transfer already exists', () => {
+		const state = createState( {
+			holds: [ 'TRANSFER_ALREADY_EXISTS' ],
+		} );
+
+		const { container, queryByTestId, queryByText } = renderWithStore(
+			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+			state
+		);
+
+		const notice = container.querySelector( '.calypso-notice' );
+		expect( notice ).toBeVisible();
+		expect( notice ).toHaveTextContent( /Installation in progress/ );
+		expect( queryByTestId( 'HoldList-Card' ) ).not.toBeInTheDocument();
+		expect( queryByText( 'Continue' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders warning notices when the API returns warnings', () => {

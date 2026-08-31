@@ -2,7 +2,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_BUSINESS, PLAN_PERSONAL, getPlan } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
-import clsx from 'clsx';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import ExcessiveDiskSpace from 'calypso/blocks/eligibility-warnings/excessive-disk-space';
 import CardHeading from 'calypso/components/card-heading';
@@ -267,72 +266,53 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 		isMarketplace,
 		hasEnTranslation,
 	} );
-	const blockingMessages = getBlockingMessages( translate );
-
-	const blockingHold = holds.find( ( h ) => isHardBlockingHoldType( h, blockingMessages ) );
-	const hasValidBlockingHold = blockingHold && ! isAtomicSiteWithoutBusinessPlan( holds );
 
 	return (
-		<>
-			{ ! isPlaceholder && context !== 'plugin-details' && (
-				<HardBlockingNotice
-					holds={ holds }
-					translate={ translate }
-					blockingMessages={ blockingMessages }
-				/>
-			) }
-			<div
-				className={ clsx( 'eligibility-warnings__hold-list', {
-					'eligibility-warnings__hold-list-dim': hasValidBlockingHold,
-				} ) }
-				data-testid="HoldList-Card"
-			>
-				<CardHeading>
-					<span className="eligibility-warnings__hold-heading">
-						{ getCardHeading( context, translate ) }
-					</span>
-				</CardHeading>
-				{ isPlaceholder && (
-					<div>
-						<div className="eligibility-warnings__hold">
-							<Gridicon icon="notice-outline" size={ 24 } />
-							<div className="eligibility-warnings__message" />
-						</div>
-						<div className="eligibility-warnings__hold">
-							<Gridicon icon="notice-outline" size={ 24 } />
-							<div className="eligibility-warnings__message" />
-						</div>
+		<div className="eligibility-warnings__hold-list" data-testid="HoldList-Card">
+			<CardHeading>
+				<span className="eligibility-warnings__hold-heading">
+					{ getCardHeading( context, translate ) }
+				</span>
+			</CardHeading>
+			{ isPlaceholder && (
+				<div>
+					<div className="eligibility-warnings__hold">
+						<Gridicon icon="notice-outline" size={ 24 } />
+						<div className="eligibility-warnings__message" />
 					</div>
-				) }
-				{ ! isPlaceholder &&
-					holds.map( ( hold ) =>
-						! isKnownHoldType( hold, holdMessages ) ? null : (
-							<div className="eligibility-warnings__hold" key={ hold }>
-								<div className="eligibility-warnings__message">
-									<div className="eligibility-warnings__message-title">
-										{ holdMessages[ hold ].title }
-									</div>
-									<p className="eligibility-warnings__message-description">
-										{ holdMessages[ hold ].description }
-									</p>
+					<div className="eligibility-warnings__hold">
+						<Gridicon icon="notice-outline" size={ 24 } />
+						<div className="eligibility-warnings__message" />
+					</div>
+				</div>
+			) }
+			{ ! isPlaceholder &&
+				holds.map( ( hold ) =>
+					! isKnownHoldType( hold, holdMessages ) ? null : (
+						<div className="eligibility-warnings__hold" key={ hold }>
+							<div className="eligibility-warnings__message">
+								<div className="eligibility-warnings__message-title">
+									{ holdMessages[ hold ].title }
 								</div>
-								{ holdMessages[ hold ].supportUrl && (
-									<div className="eligibility-warnings__hold-action">
-										<Button
-											compact
-											disabled={ !! hasValidBlockingHold }
-											href={ holdMessages[ hold ].supportUrl ?? '' }
-											rel="noopener noreferrer"
-										>
-											{ translate( 'Help' ) }
-										</Button>
-									</div>
-								) }
+								<p className="eligibility-warnings__message-description">
+									{ holdMessages[ hold ].description }
+								</p>
 							</div>
-						)
-					) }
-			</div>
-		</>
+							{ holdMessages[ hold ].supportUrl && (
+								<div className="eligibility-warnings__hold-action">
+									<Button
+										compact
+										href={ holdMessages[ hold ].supportUrl ?? '' }
+										rel="noopener noreferrer"
+									>
+										{ translate( 'Help' ) }
+									</Button>
+								</div>
+							) }
+						</div>
+					)
+				) }
+		</div>
 	);
 };
 
