@@ -2,10 +2,12 @@ import { getAnyLanguageRouteParam } from '@automattic/i18n-utils';
 import { makeLayout, ssrSetupLocale } from 'calypso/controller';
 import DiscoverHeaderAndNavigation from 'calypso/reader/discover/components/header-and-navigation';
 import PostPlaceholder from 'calypso/reader/stream/post-placeholder';
+import { setDiscoverLoggedOutHero } from './components/logged-out-hero';
 import { DiscoverDocumentHead } from './discover-document-head';
 import { getLocalizedRoutes, getSelectedTab } from './routes';
 
 const discoverSsr = ( context, next ) => {
+	setDiscoverLoggedOutHero( context );
 	const selectedTab = getSelectedTab( context.path );
 
 	context.primary = (

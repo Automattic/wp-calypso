@@ -19,6 +19,7 @@ import { readerNotFound } from 'calypso/reader/lib/reader-router';
 import { recordTrack } from 'calypso/reader/stats';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { setDiscoverLoggedOutHero } from './components/logged-out-hero';
 import { DiscoverDocumentHead } from './discover-document-head';
 import { getPrivateRoutes, getDiscoverRoutes, getSearchRoutes, getSelectedTab } from './routes';
 import { fetchTrendingTagsIfLoggedOut, search } from './search-controller';
@@ -46,6 +47,8 @@ const discover = ( context, next ) => {
 		{ content: selectedTab },
 		{ pathnameOverride: `${ currentRoute }?${ currentQueryArgs }` }
 	);
+
+	setDiscoverLoggedOutHero( context );
 
 	context.primary = (
 		<>

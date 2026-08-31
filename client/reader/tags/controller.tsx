@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import wpcom from 'calypso/lib/wp';
 import performanceMark, { PartialContext } from 'calypso/server/lib/performance-mark';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { getCurrentUserLocale, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import TagsPage from './main';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
@@ -44,6 +44,10 @@ const TagsPageDocumentHead = () => {
 };
 
 export const tagsListing = ( context: PageJSContext, next: () => void ) => {
+	if ( ! isUserLoggedIn( context.store.getState() ) ) {
+		context.renderHeaderSection = renderHeaderSection;
+	}
+
 	context.primary = (
 		<>
 			<TagsPageDocumentHead />
@@ -55,6 +59,26 @@ export const tagsListing = ( context: PageJSContext, next: () => void ) => {
 	);
 	next();
 };
+
+const TagsPageHeaderSection = () => {
+	const translate = useTranslate();
+
+	return (
+		<div className="reader-hero">
+			<h1>
+				{
+					// translators: The title of the reader trending tags page
+					translate( 'Popular Tags' )
+				}
+			</h1>
+			<p>{ translate( "For every one of your interests, there's a tag on WordPress.com." ) }</p>
+		</div>
+	);
+};
+
+function renderHeaderSection() {
+	return <TagsPageHeaderSection />;
+}
 
 export const fetchTrendingTags = ( context: PageJSContext, next: ( e?: Error ) => void ) => {
 	if ( context.cachedMarkup ) {
