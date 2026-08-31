@@ -423,11 +423,13 @@ export function post( context, next ) {
 	// tab strip doesn't pop in after the page renders.
 	const state = context.store.getState();
 	const { supportsEmailStats } = getEnvStatsFeatureSupportChecks( state, siteId );
+	// Module state is often not loaded yet at route time (QueryJetpackModules runs
+	// after mount, and /me/sites does not carry active_modules), so only a definite
+	// "inactive" skips the warm-up; the page's own `enabled` check stays strict.
 	const canHaveEmailStats =
 		!! supportsEmailStats &&
-		!! (
-			isSimpleSite( state, siteId ) || isJetpackModuleActive( state, siteId, 'subscriptions', true )
-		);
+		( isSimpleSite( state, siteId ) ||
+			isJetpackModuleActive( state, siteId, 'subscriptions', true ) !== false );
 	if ( canHaveEmailStats && postId > 0 ) {
 		context.queryClient.prefetchQuery( postEmailStatsAvailabilityQueryOptions( siteId, postId ) );
 	}
