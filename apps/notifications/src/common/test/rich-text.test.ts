@@ -74,7 +74,7 @@ describe( 'getRichNodes', () => {
 		expect( nodes[ 1 ] ).toMatchObject( { kind: 'element', type: 'link' } );
 	} );
 
-	it( 'drops spans that overlap a consumed area', () => {
+	it( 'still renders an overlapping span, as the panel does', () => {
 		const nodes = getRichNodes(
 			block( {
 				text: 'abcdef',
@@ -91,7 +91,12 @@ describe( 'getRichNodes', () => {
 				url: 'https://a.example',
 				children: [ { kind: 'text', text: 'abcd' } ],
 			},
-			{ kind: 'text', text: 'ef' },
+			{
+				kind: 'element',
+				type: 'link',
+				url: 'https://b.example',
+				children: [ { kind: 'text', text: 'ef' } ],
+			},
 		] );
 	} );
 
@@ -128,7 +133,7 @@ describe( 'getRichNodes', () => {
 			text: 'See it',
 			ranges: [ { type: 'link', indices: [ 0, 6 ], id: 1, parent: null, url: 'https://ex.test' } ],
 			media: [
-				{ type: 'image', indices: [ 6, 6 ], id: 2, parent: 1, url: 'https://ex.test/i.png' },
+				{ type: 'image', indices: [ 3, 3 ], id: 2, parent: 1, url: 'https://ex.test/i.png' },
 			],
 		} );
 
@@ -138,5 +143,17 @@ describe( 'getRichNodes', () => {
 		expect( link.kind === 'element' && link.children.some( ( c ) => c.kind === 'image' ) ).toBe(
 			true
 		);
+	} );
+
+	it( 'keeps an image that sits past the link as a sibling', () => {
+		const nodes = getRichNodes( {
+			text: 'See it',
+			ranges: [ { type: 'link', indices: [ 0, 6 ], id: 1, parent: null, url: 'https://ex.test' } ],
+			media: [
+				{ type: 'image', indices: [ 6, 6 ], id: 2, parent: null, url: 'https://ex.test/i.png' },
+			],
+		} );
+
+		expect( nodes.map( ( node ) => node.kind ) ).toEqual( [ 'element', 'image' ] );
 	} );
 } );

@@ -14,32 +14,19 @@ export type RichNode =
 	| { kind: 'icon'; value: string };
 
 type Span = {
-	start: number;
-	end: number;
 	id?: string | number;
 	parent?: string | number | null;
 	range?: Range;
 	media?: Media;
 };
 
-function toSpan( source: Range | Media, isMedia: boolean ): Span {
-	const [ start, end ] = source.indices ?? [ 0, 0 ];
-	const link = { start, end, id: source.id, parent: source.parent };
-	return isMedia ? { ...link, media: source as Media } : { ...link, range: source as Range };
-}
-
-// How deeply the payload nests this span, following `parent` while the ancestor
-// is present. A span must be built before anything it contains, whatever their
-// lengths, or a container declared around a zero-length span closes empty.
-function nestingDepth( span: Span, byId: Map< string | number, Span > ): number {
-	let depth = 0;
-	let parent = span.parent != null ? byId.get( span.parent ) : undefined;
-	while ( parent && depth <= byId.size ) {
-		depth++;
-		parent = parent.parent != null ? byId.get( parent.parent ) : undefined;
-	}
-	return depth;
-}
+// One applicable span at one text position, as the panel's index map holds it.
+type Entry = {
+	id?: string | number;
+	parent?: string | number | null;
+	len: number;
+	span: Span;
+};
 
 function toNode( span: Span, text: string, children: RichNode[] ): RichNode {
 	if ( span.media ) {
@@ -47,7 +34,7 @@ function toNode( span: Span, text: string, children: RichNode[] ): RichNode {
 			kind: 'image',
 			imageType: span.media.type,
 			url: span.media.url,
-			alt: text.slice( span.start, span.end ).trim(),
+			alt: text.trim(),
 			width: span.media.width,
 			height: span.media.height,
 		};
@@ -64,67 +51,126 @@ function toNode( span: Span, text: string, children: RichNode[] ): RichNode {
 	};
 }
 
-function build( text: string, start: number, end: number, spans: Span[] ): RichNode[] {
+function pushText( nodes: RichNode[], text: string ) {
+	if ( text ) {
+		nodes.push( { kind: 'text', text } );
+	}
+}
+
+/**
+ * Walk one depth of the index map, emitting text between spans and recursing
+ * into each span that starts here. Ported from the panel's `build_chunks`; the
+ * selection rules below are what keep nesting faithful to the payload.
+ */
+function buildChunks( text: string, positions: Entry[][] ): RichNode[] {
 	const nodes: RichNode[] = [];
-	let cursor = start;
-	let i = 0;
-	while ( i < spans.length ) {
-		const span = spans[ i ];
-		i++;
-		if ( span.start < cursor || span.end > end ) {
+	const remaining = positions.map( ( entries ) => entries.slice() );
+	let textStart: number | null = null;
+
+	for ( let i = 0; i < positions.length; i++ ) {
+		if ( remaining[ i ].length === 0 ) {
+			if ( textStart === null ) {
+				textStart = i;
+			}
 			continue;
 		}
-		if ( span.start > cursor ) {
-			nodes.push( { kind: 'text', text: text.slice( cursor, span.start ) } );
+
+		if ( textStart !== null ) {
+			pushText( nodes, text.substring( textStart, i ) );
+			textStart = null;
 		}
-		const children: Span[] = [];
-		const contains = ( other: Span ) =>
-			( other.parent != null && other.parent === span.id ) ||
-			( other.start < span.end && other.end <= span.end );
-		while ( i < spans.length && ( spans[ i ].start < span.end || contains( spans[ i ] ) ) ) {
-			if ( contains( spans[ i ] ) ) {
-				children.push( spans[ i ] );
+
+		let picked: Entry | null = null;
+		for ( const candidate of remaining[ i ] ) {
+			// Recursion has to start at the outermost span, so anything whose
+			// parent is also here waits to be reached from inside that parent.
+			if (
+				candidate.parent != null &&
+				remaining[ i ].some( ( entry ) => entry.id === candidate.parent )
+			) {
+				continue;
 			}
-			i++;
+			// An empty span wins, or it would be swallowed by a sibling that
+			// happens to start at the same place.
+			if ( candidate.len === 0 ) {
+				picked = candidate;
+				break;
+			}
+			if ( picked === null || candidate.len > picked.len ) {
+				picked = candidate;
+			}
 		}
-		nodes.push( toNode( span, text, build( text, span.start, span.end, children ) ) );
-		cursor = span.end;
+
+		if ( picked === null ) {
+			remaining[ i ] = [];
+			i--;
+			continue;
+		}
+
+		// An empty span still descends one position, which is how a link
+		// wrapping nothing but an image reaches that image.
+		const width = picked.len > 0 ? picked.len : 1;
+		const innerText = text.substr( i, picked.len );
+		const inner = positions
+			.slice( i, i + width )
+			.map( ( entries ) => entries.filter( ( entry ) => picked?.parent !== entry.parent ) );
+
+		nodes.push( toNode( picked.span, innerText, buildChunks( innerText, inner ) ) );
+
+		remaining[ i ] = remaining[ i ].filter( ( entry ) => entry.len > 0 );
+		i += picked.len - 1;
 	}
-	if ( cursor < end ) {
-		nodes.push( { kind: 'text', text: text.slice( cursor, end ) } );
+
+	if ( textStart !== null ) {
+		pushText( nodes, text.substring( textStart ) );
 	}
+
 	return nodes;
 }
 
 /**
  * Nested display tree for a block's text, ranges, and media — the pure
- * counterpart of the panel's `indices-to-html` renderer. Overlapping spans
- * keep the earlier/longer one; zero-length spans (inline icons) sort before
- * content spans starting at the same position, matching the panel.
+ * counterpart of the panel's `indices-to-html` renderer, built from the same
+ * index map so both surfaces nest a payload the same way.
  */
 export function getRichNodes( block: Block ): RichNode[] {
-	const isZero = ( s: Span ) => ( s.end - s.start === 0 ? 0 : 1 );
-	const candidates = [
-		...( block.ranges ?? [] ).map( ( range ) => toSpan( range, false ) ),
-		...( block.media ?? [] ).map( ( media ) => toSpan( media, true ) ),
-	].filter( ( s ) => s.start >= 0 && s.end >= s.start && s.end <= block.text.length );
+	const text = block.text ?? '';
+	const spans: Span[] = [
+		...( block.ranges ?? [] ).map( ( range ) => ( {
+			id: range.id,
+			parent: range.parent,
+			range,
+		} ) ),
+		...( block.media ?? [] ).map( ( media ) => ( {
+			id: media.id,
+			parent: media.parent,
+			media,
+		} ) ),
+	];
 
-	const byId = new Map< string | number, Span >();
-	for ( const span of candidates ) {
-		if ( span.id != null ) {
-			byId.set( span.id, span );
-		}
+	const positions: Entry[][] = [];
+	for ( let i = 0; i < Math.max( text.length, 1 ); i++ ) {
+		positions[ i ] = [];
 	}
-	const depths = new Map< Span, number >(
-		candidates.map( ( s ) => [ s, nestingDepth( s, byId ) ] )
-	);
 
-	const spans = candidates.sort(
-		( a, b ) =>
-			a.start - b.start ||
-			( depths.get( a ) ?? 0 ) - ( depths.get( b ) ?? 0 ) ||
-			isZero( a ) - isZero( b ) ||
-			b.end - b.start - ( a.end - a.start )
-	);
-	return build( block.text, 0, block.text.length, spans );
+	const sources = [ ...( block.ranges ?? [] ), ...( block.media ?? [] ) ];
+	sources.forEach( ( source, index ) => {
+		const [ start, stop ] = source.indices ?? [ 0, 0 ];
+		if ( start < 0 || stop < start || stop > text.length ) {
+			return;
+		}
+		const entry = { id: source.id, parent: source.parent, span: spans[ index ] };
+		if ( stop > start ) {
+			for ( let i = start; i < stop && i < positions.length; i++ ) {
+				positions[ i ].push( { ...entry, len: stop - start } );
+			}
+			return;
+		}
+		if ( ! positions[ start ] ) {
+			positions[ start ] = [];
+		}
+		positions[ start ].push( { ...entry, len: 0 } );
+	} );
+
+	return buildChunks( text, positions );
 }
