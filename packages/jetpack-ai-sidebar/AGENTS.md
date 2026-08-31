@@ -85,7 +85,7 @@ For tools that perform an editor action (like `update-block-content`):
 4. Register the ability in `toolProvider.getAbilities()` with a callback
 5. Add a fallback case in `toolProvider.executeAbility()`
 
-## Editor entry points (`src/extensions/`)
+## Editor entry points
 
 `registerBlockEditorFilters()` (called once by `apps/agents-manager/jetpack-ai-sidebar.js`) registers the block toolbar button.
 
@@ -156,4 +156,4 @@ Test files go alongside source: `foo.ts` → `foo.test.ts`.
 - Before/after screenshots for UI changes (especially TitlePicker or shimmer effects)
 - Test with both block selected and no block selected states
 
-**Last updated**: 2026-07-28
+**Last updated**: 2026-08-31
