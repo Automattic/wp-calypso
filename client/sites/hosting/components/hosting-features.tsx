@@ -60,9 +60,7 @@ const HostingFeatures = ( { path, showAsTools }: HostingFeaturesProps ) => {
 
 	const hasEnTranslation = useHasEnTranslation();
 
-	const { data: siteTransferData } = useSiteTransferStatusQuery( siteId || undefined, {
-		refetchIntervalInBackground: true,
-	} );
+	const { data: siteTransferData } = useSiteTransferStatusQuery( siteId || undefined );
 
 	const shouldRenderActivatingCopy =
 		( siteTransferData?.isTransferring || siteTransferData?.status === transferStates.COMPLETED ) &&

@@ -1,5 +1,4 @@
 import { deleteSshKeyMutation } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
 import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
@@ -10,6 +9,7 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { pencil as edit, trash } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
@@ -66,7 +66,7 @@ export default function SshKey( {
 							<Text variant="muted" lineHeight="20px" size="13px">
 								{ sshKey.sha256 }
 							</Text>
-							<Badge intent="info">
+							<Badge intent="informational">
 								{ sprintf(
 									/* translators: %s is when the SSH key was attached. */
 									__( 'Attached on %s' ),

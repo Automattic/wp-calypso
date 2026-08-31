@@ -5,4 +5,5 @@ const React = require( 'react' );
 
 module.exports = {
 	FormInputValidation: ( { text } ) => React.createElement( 'p', null, text ),
+	TimeSince: ( { date } ) => React.createElement( 'time', { dateTime: date }, date ),
 };

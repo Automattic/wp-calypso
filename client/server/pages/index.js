@@ -541,7 +541,7 @@ function setUpLoggedInRoute( req, res, next ) {
 					const searchParam = req.query.s || req.query.q;
 					if ( searchParam ) {
 						res.redirect(
-							'https://wordpress.com/reader/search?q=' + encodeURIComponent( searchParam )
+							'https://wordpress.com/discover/search?q=' + encodeURIComponent( searchParam )
 						);
 						return;
 					}
@@ -1367,6 +1367,12 @@ export default function pages() {
 
 	// Multi-site Dashboard routing.
 	if ( isDashboardEnv() ) {
+		// Disallow all indexing of MSD paths.
+		app.get( '/robots.txt', ( _req, res ) => {
+			res.setHeader( 'Content-Type', 'text/plain' );
+			res.send( 'User-agent: *\nDisallow: /\n' );
+		} );
+
 		// Serve the dashboard shell for any otherwise-unmatched path so the client
 		// router renders its own not-found page, instead of falling through to default.
 		DASHBOARD_VARIANTS.forEach( ( variant ) =>
