@@ -16,13 +16,29 @@ export type RichNode =
 type Span = {
 	start: number;
 	end: number;
+	id?: string | number;
+	parent?: string | number | null;
 	range?: Range;
 	media?: Media;
 };
 
 function toSpan( source: Range | Media, isMedia: boolean ): Span {
 	const [ start, end ] = source.indices ?? [ 0, 0 ];
-	return isMedia ? { start, end, media: source as Media } : { start, end, range: source as Range };
+	const link = { start, end, id: source.id, parent: source.parent };
+	return isMedia ? { ...link, media: source as Media } : { ...link, range: source as Range };
+}
+
+// How deeply the payload nests this span, following `parent` while the ancestor
+// is present. A span must be built before anything it contains, whatever their
+// lengths, or a container declared around a zero-length span closes empty.
+function nestingDepth( span: Span, byId: Map< string | number, Span > ): number {
+	let depth = 0;
+	let parent = span.parent != null ? byId.get( span.parent ) : undefined;
+	while ( parent && depth <= byId.size ) {
+		depth++;
+		parent = parent.parent != null ? byId.get( parent.parent ) : undefined;
+	}
+	return depth;
 }
 
 function toNode( span: Span, text: string, children: RichNode[] ): RichNode {
@@ -62,8 +78,11 @@ function build( text: string, start: number, end: number, spans: Span[] ): RichN
 			nodes.push( { kind: 'text', text: text.slice( cursor, span.start ) } );
 		}
 		const children: Span[] = [];
-		while ( i < spans.length && spans[ i ].start < span.end ) {
-			if ( spans[ i ].end <= span.end ) {
+		const contains = ( other: Span ) =>
+			( other.parent != null && other.parent === span.id ) ||
+			( other.start < span.end && other.end <= span.end );
+		while ( i < spans.length && ( spans[ i ].start < span.end || contains( spans[ i ] ) ) ) {
+			if ( contains( spans[ i ] ) ) {
 				children.push( spans[ i ] );
 			}
 			i++;
@@ -85,14 +104,27 @@ function build( text: string, start: number, end: number, spans: Span[] ): RichN
  */
 export function getRichNodes( block: Block ): RichNode[] {
 	const isZero = ( s: Span ) => ( s.end - s.start === 0 ? 0 : 1 );
-	const spans = [
+	const candidates = [
 		...( block.ranges ?? [] ).map( ( range ) => toSpan( range, false ) ),
 		...( block.media ?? [] ).map( ( media ) => toSpan( media, true ) ),
-	]
-		.filter( ( s ) => s.start >= 0 && s.end >= s.start && s.end <= block.text.length )
-		.sort(
-			( a, b ) =>
-				a.start - b.start || isZero( a ) - isZero( b ) || b.end - b.start - ( a.end - a.start )
-		);
+	].filter( ( s ) => s.start >= 0 && s.end >= s.start && s.end <= block.text.length );
+
+	const byId = new Map< string | number, Span >();
+	for ( const span of candidates ) {
+		if ( span.id != null ) {
+			byId.set( span.id, span );
+		}
+	}
+	const depths = new Map< Span, number >(
+		candidates.map( ( s ) => [ s, nestingDepth( s, byId ) ] )
+	);
+
+	const spans = candidates.sort(
+		( a, b ) =>
+			a.start - b.start ||
+			( depths.get( a ) ?? 0 ) - ( depths.get( b ) ?? 0 ) ||
+			isZero( a ) - isZero( b ) ||
+			b.end - b.start - ( a.end - a.start )
+	);
 	return build( block.text, 0, block.text.length, spans );
 }

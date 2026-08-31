@@ -94,4 +94,49 @@ describe( 'getRichNodes', () => {
 			{ kind: 'text', text: 'ef' },
 		] );
 	} );
+
+	it( 'nests an image inside the link declared around it', () => {
+		const nodes = getRichNodes( {
+			text: '',
+			ranges: [ { type: 'link', indices: [ 0, 0 ], id: 1, parent: null, url: 'https://ex.test' } ],
+			media: [
+				{ type: 'image', indices: [ 0, 0 ], id: 2, parent: 1, url: 'https://ex.test/i.png' },
+			],
+		} );
+
+		expect( nodes ).toEqual( [
+			{
+				kind: 'element',
+				type: 'link',
+				url: 'https://ex.test',
+				children: [
+					{
+						kind: 'image',
+						imageType: 'image',
+						url: 'https://ex.test/i.png',
+						alt: '',
+						width: undefined,
+						height: undefined,
+					},
+				],
+			},
+		] );
+	} );
+
+	it( 'nests an image inside a link that also covers text', () => {
+		const nodes = getRichNodes( {
+			text: 'See it',
+			ranges: [ { type: 'link', indices: [ 0, 6 ], id: 1, parent: null, url: 'https://ex.test' } ],
+			media: [
+				{ type: 'image', indices: [ 6, 6 ], id: 2, parent: 1, url: 'https://ex.test/i.png' },
+			],
+		} );
+
+		expect( nodes ).toHaveLength( 1 );
+		const link = nodes[ 0 ];
+		expect( link.kind ).toBe( 'element' );
+		expect( link.kind === 'element' && link.children.some( ( c ) => c.kind === 'image' ) ).toBe(
+			true
+		);
+	} );
 } );
