@@ -76,9 +76,9 @@ const getFetchPaginatedSitesOptions = (
 	// not include these sites. Otherwise, a regular user might still be a member of an
 	// a8c-owned site, so always include those sites in the result as there's no way to
 	// filter them.
-	const shouldIncludeA8COwned = isAutomattician
-		? ! filters.some( ( item: Filter ) => item.field === 'is_a8c' && item.value === false )
-		: true;
+	const shouldIncludeA8COwned =
+		! isAutomattician ||
+		! filters.some( ( item: Filter ) => item.field === 'is_a8c' && item.value === false );
 
 	const options: FetchPaginatedSitesOptions = {
 		source: isDashboardBackport() && isDefaultView ? 'dashboard-site-list-default' : undefined,
