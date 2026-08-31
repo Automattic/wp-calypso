@@ -706,28 +706,194 @@ function setUpCSP( req, res, next ) {
 			'https://analytics.twitter.com', // Twitter/X analytics tracking pixels
 			'https://www.facebook.com', // Facebook Pixel tracking endpoint
 			'https://alb.reddit.com', // Reddit tracking pixel
-			'https://*.google.com', // Google Ads remarketing pixels (www.google.com and subdomains)
-			'https://*.google.com.my',
-			'https://*.google.co.uk', // Google Ads remarketing pixels (United Kingdom)
-			'https://*.google.de', // Google Ads remarketing pixels (Germany)
-			'https://*.google.fr', // Google Ads remarketing pixels (France)
-			'https://*.google.es', // Google Ads remarketing pixels (Spain)
-			'https://*.google.it', // Google Ads remarketing pixels (Italy)
-			'https://*.google.ca', // Google Ads remarketing pixels (Canada)
-			'https://*.google.com.au', // Google Ads remarketing pixels (Australia)
-			'https://*.google.co.jp', // Google Ads remarketing pixels (Japan)
-			'https://*.google.com.br', // Google Ads remarketing pixels (Brazil)
-			'https://*.google.com.pk', // Google Ads remarketing pixels (Pakistan)
-			'https://*.google.co.in', // Google Ads remarketing pixels (India)
-			'https://*.google.com.mx', // Google Ads remarketing pixels (Mexico)
-			'https://*.google.nl', // Google Ads remarketing pixels (Netherlands)
-			'https://*.google.co.id', // Google Ads remarketing pixels (Indonesia)
-			'https://*.google.cd', // Google Ads remarketing pixels (Congo)
-			'https://*.google.lu', // Google Ads remarketing pixels (Luxembourg)
-			'https://*.google.com.tr', // Google Ads remarketing pixels (Turkey)
-			'https://*.google.sm', // Google Ads remarketing pixels (San Marino)
-			'https://*.google.com.ng', // Google Ads remarketing pixels (Nigeria)
-			'https://*.google.co.ma', // Google Ads remarketing pixels (Morocco)
+			// based on https://www.google.com/supported_domains, wildcard for TLD is not allowed.
+			'*.google.com', // Google Ads remarketing pixel
+			'*.google.ad', // Google Ads remarketing pixel
+			'*.google.ae', // Google Ads remarketing pixel
+			'*.google.com.af', // Google Ads remarketing pixel
+			'*.google.com.ag', // Google Ads remarketing pixel
+			'*.google.al', // Google Ads remarketing pixel
+			'*.google.am', // Google Ads remarketing pixel
+			'*.google.co.ao', // Google Ads remarketing pixel
+			'*.google.com.ar', // Google Ads remarketing pixel
+			'*.google.as', // Google Ads remarketing pixel
+			'*.google.at', // Google Ads remarketing pixel
+			'*.google.com.au', // Google Ads remarketing pixel
+			'*.google.az', // Google Ads remarketing pixel
+			'*.google.ba', // Google Ads remarketing pixel
+			'*.google.com.bd', // Google Ads remarketing pixel
+			'*.google.be', // Google Ads remarketing pixel
+			'*.google.bf', // Google Ads remarketing pixel
+			'*.google.bg', // Google Ads remarketing pixel
+			'*.google.com.bh', // Google Ads remarketing pixel
+			'*.google.bi', // Google Ads remarketing pixel
+			'*.google.bj', // Google Ads remarketing pixel
+			'*.google.com.bn', // Google Ads remarketing pixel
+			'*.google.com.bo', // Google Ads remarketing pixel
+			'*.google.com.br', // Google Ads remarketing pixel
+			'*.google.bs', // Google Ads remarketing pixel
+			'*.google.bt', // Google Ads remarketing pixel
+			'*.google.co.bw', // Google Ads remarketing pixel
+			'*.google.by', // Google Ads remarketing pixel
+			'*.google.com.bz', // Google Ads remarketing pixel
+			'*.google.ca', // Google Ads remarketing pixel
+			'*.google.cd', // Google Ads remarketing pixel
+			'*.google.cf', // Google Ads remarketing pixel
+			'*.google.cg', // Google Ads remarketing pixel
+			'*.google.ch', // Google Ads remarketing pixel
+			'*.google.ci', // Google Ads remarketing pixel
+			'*.google.co.ck', // Google Ads remarketing pixel
+			'*.google.cl', // Google Ads remarketing pixel
+			'*.google.cm', // Google Ads remarketing pixel
+			'*.google.cn', // Google Ads remarketing pixel
+			'*.google.com.co', // Google Ads remarketing pixel
+			'*.google.co.cr', // Google Ads remarketing pixel
+			'*.google.com.cu', // Google Ads remarketing pixel
+			'*.google.cv', // Google Ads remarketing pixel
+			'*.google.com.cy', // Google Ads remarketing pixel
+			'*.google.cz', // Google Ads remarketing pixel
+			'*.google.de', // Google Ads remarketing pixel
+			'*.google.dj', // Google Ads remarketing pixel
+			'*.google.dk', // Google Ads remarketing pixel
+			'*.google.dm', // Google Ads remarketing pixel
+			'*.google.com.do', // Google Ads remarketing pixel
+			'*.google.dz', // Google Ads remarketing pixel
+			'*.google.com.ec', // Google Ads remarketing pixel
+			'*.google.ee', // Google Ads remarketing pixel
+			'*.google.com.eg', // Google Ads remarketing pixel
+			'*.google.es', // Google Ads remarketing pixel
+			'*.google.com.et', // Google Ads remarketing pixel
+			'*.google.fi', // Google Ads remarketing pixel
+			'*.google.com.fj', // Google Ads remarketing pixel
+			'*.google.fm', // Google Ads remarketing pixel
+			'*.google.fr', // Google Ads remarketing pixel
+			'*.google.ga', // Google Ads remarketing pixel
+			'*.google.ge', // Google Ads remarketing pixel
+			'*.google.gg', // Google Ads remarketing pixel
+			'*.google.com.gh', // Google Ads remarketing pixel
+			'*.google.com.gi', // Google Ads remarketing pixel
+			'*.google.gl', // Google Ads remarketing pixel
+			'*.google.gm', // Google Ads remarketing pixel
+			'*.google.gr', // Google Ads remarketing pixel
+			'*.google.com.gt', // Google Ads remarketing pixel
+			'*.google.gy', // Google Ads remarketing pixel
+			'*.google.com.hk', // Google Ads remarketing pixel
+			'*.google.hn', // Google Ads remarketing pixel
+			'*.google.hr', // Google Ads remarketing pixel
+			'*.google.ht', // Google Ads remarketing pixel
+			'*.google.hu', // Google Ads remarketing pixel
+			'*.google.co.id', // Google Ads remarketing pixel
+			'*.google.ie', // Google Ads remarketing pixel
+			'*.google.co.il', // Google Ads remarketing pixel
+			'*.google.im', // Google Ads remarketing pixel
+			'*.google.co.in', // Google Ads remarketing pixel
+			'*.google.iq', // Google Ads remarketing pixel
+			'*.google.is', // Google Ads remarketing pixel
+			'*.google.it', // Google Ads remarketing pixel
+			'*.google.je', // Google Ads remarketing pixel
+			'*.google.com.jm', // Google Ads remarketing pixel
+			'*.google.jo', // Google Ads remarketing pixel
+			'*.google.co.jp', // Google Ads remarketing pixel
+			'*.google.co.ke', // Google Ads remarketing pixel
+			'*.google.com.kh', // Google Ads remarketing pixel
+			'*.google.ki', // Google Ads remarketing pixel
+			'*.google.kg', // Google Ads remarketing pixel
+			'*.google.co.kr', // Google Ads remarketing pixel
+			'*.google.com.kw', // Google Ads remarketing pixel
+			'*.google.kz', // Google Ads remarketing pixel
+			'*.google.la', // Google Ads remarketing pixel
+			'*.google.com.lb', // Google Ads remarketing pixel
+			'*.google.li', // Google Ads remarketing pixel
+			'*.google.lk', // Google Ads remarketing pixel
+			'*.google.co.ls', // Google Ads remarketing pixel
+			'*.google.lt', // Google Ads remarketing pixel
+			'*.google.lu', // Google Ads remarketing pixel
+			'*.google.lv', // Google Ads remarketing pixel
+			'*.google.com.ly', // Google Ads remarketing pixel
+			'*.google.co.ma', // Google Ads remarketing pixel
+			'*.google.md', // Google Ads remarketing pixel
+			'*.google.me', // Google Ads remarketing pixel
+			'*.google.mg', // Google Ads remarketing pixel
+			'*.google.mk', // Google Ads remarketing pixel
+			'*.google.ml', // Google Ads remarketing pixel
+			'*.google.com.mm', // Google Ads remarketing pixel
+			'*.google.mn', // Google Ads remarketing pixel
+			'*.google.com.mt', // Google Ads remarketing pixel
+			'*.google.mu', // Google Ads remarketing pixel
+			'*.google.mv', // Google Ads remarketing pixel
+			'*.google.mw', // Google Ads remarketing pixel
+			'*.google.com.mx', // Google Ads remarketing pixel
+			'*.google.com.my', // Google Ads remarketing pixel
+			'*.google.co.mz', // Google Ads remarketing pixel
+			'*.google.com.na', // Google Ads remarketing pixel
+			'*.google.com.ng', // Google Ads remarketing pixel
+			'*.google.com.ni', // Google Ads remarketing pixel
+			'*.google.ne', // Google Ads remarketing pixel
+			'*.google.nl', // Google Ads remarketing pixel
+			'*.google.no', // Google Ads remarketing pixel
+			'*.google.com.np', // Google Ads remarketing pixel
+			'*.google.nr', // Google Ads remarketing pixel
+			'*.google.nu', // Google Ads remarketing pixel
+			'*.google.co.nz', // Google Ads remarketing pixel
+			'*.google.com.om', // Google Ads remarketing pixel
+			'*.google.com.pa', // Google Ads remarketing pixel
+			'*.google.com.pe', // Google Ads remarketing pixel
+			'*.google.com.pg', // Google Ads remarketing pixel
+			'*.google.com.ph', // Google Ads remarketing pixel
+			'*.google.com.pk', // Google Ads remarketing pixel
+			'*.google.pl', // Google Ads remarketing pixel
+			'*.google.pn', // Google Ads remarketing pixel
+			'*.google.com.pr', // Google Ads remarketing pixel
+			'*.google.ps', // Google Ads remarketing pixel
+			'*.google.pt', // Google Ads remarketing pixel
+			'*.google.com.py', // Google Ads remarketing pixel
+			'*.google.com.qa', // Google Ads remarketing pixel
+			'*.google.ro', // Google Ads remarketing pixel
+			'*.google.ru', // Google Ads remarketing pixel
+			'*.google.rw', // Google Ads remarketing pixel
+			'*.google.com.sa', // Google Ads remarketing pixel
+			'*.google.com.sb', // Google Ads remarketing pixel
+			'*.google.sc', // Google Ads remarketing pixel
+			'*.google.se', // Google Ads remarketing pixel
+			'*.google.com.sg', // Google Ads remarketing pixel
+			'*.google.sh', // Google Ads remarketing pixel
+			'*.google.si', // Google Ads remarketing pixel
+			'*.google.sk', // Google Ads remarketing pixel
+			'*.google.com.sl', // Google Ads remarketing pixel
+			'*.google.sn', // Google Ads remarketing pixel
+			'*.google.so', // Google Ads remarketing pixel
+			'*.google.sm', // Google Ads remarketing pixel
+			'*.google.sr', // Google Ads remarketing pixel
+			'*.google.st', // Google Ads remarketing pixel
+			'*.google.com.sv', // Google Ads remarketing pixel
+			'*.google.td', // Google Ads remarketing pixel
+			'*.google.tg', // Google Ads remarketing pixel
+			'*.google.co.th', // Google Ads remarketing pixel
+			'*.google.com.tj', // Google Ads remarketing pixel
+			'*.google.tl', // Google Ads remarketing pixel
+			'*.google.tm', // Google Ads remarketing pixel
+			'*.google.tn', // Google Ads remarketing pixel
+			'*.google.to', // Google Ads remarketing pixel
+			'*.google.com.tr', // Google Ads remarketing pixel
+			'*.google.tt', // Google Ads remarketing pixel
+			'*.google.com.tw', // Google Ads remarketing pixel
+			'*.google.co.tz', // Google Ads remarketing pixel
+			'*.google.com.ua', // Google Ads remarketing pixel
+			'*.google.co.ug', // Google Ads remarketing pixel
+			'*.google.co.uk', // Google Ads remarketing pixel
+			'*.google.com.uy', // Google Ads remarketing pixel
+			'*.google.co.uz', // Google Ads remarketing pixel
+			'*.google.com.vc', // Google Ads remarketing pixel
+			'*.google.co.ve', // Google Ads remarketing pixel
+			'*.google.co.vi', // Google Ads remarketing pixel
+			'*.google.com.vn', // Google Ads remarketing pixel
+			'*.google.vu', // Google Ads remarketing pixel
+			'*.google.ws', // Google Ads remarketing pixel
+			'*.google.rs', // Google Ads remarketing pixel
+			'*.google.co.za', // Google Ads remarketing pixel
+			'*.google.co.zm', // Google Ads remarketing pixel
+			'*.google.co.zw', // Google Ads remarketing pixel
+			'*.google.cat', // Google Ads remarketing pixel
 			'https://gravatar.com', // Gravatar assets (root domain)
 			'https://linkmaker.itunes.apple.com', // Apple App Store badges
 			'https://cdn.smooch.io', // Smooch/Sunshine Conversations images
@@ -797,7 +963,7 @@ function setUpCSP( req, res, next ) {
 			'https://www.facebook.com', // Facebook Pixel tracking endpoint
 			'https://bat.bing.com', // Bing Ads API
 			'https://px.ads.linkedin.com', // LinkedIn ads pixel
-			'https://survey.survicate.com', // Survicate API
+			'https://*.survicate.com', // Survicate API
 			'*.sentry.io',
 			'*.reddit.com',
 			'https://video.bsky.app', // Bluesky video manifests (hls.js fetches the HLS playlist for Reader ATmosphere thread view)
@@ -815,6 +981,9 @@ function setUpCSP( req, res, next ) {
 			'https://ekr.zdassets.com', // Zendesk composer
 			'https://*.config.smooch.io', // Smooch/Sunshine Conversations config
 			'https://bzr.openai.com', // OpenAI Ads tracking pixel
+			'https://bzrcdn.openai.com', // OpenAI Ads tracking pixel
+			'https://t.co', // Twitter tracking pixel
+			'https://analytics.twitter.com', // Twitter/X analytics tracking pixels
 		],
 		'report-uri': [ '/cspreport' ],
 	};
