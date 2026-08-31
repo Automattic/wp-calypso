@@ -173,6 +173,38 @@ describe( '<SiteLaunchButton>', () => {
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'points Back at the page the launch started from, and post-launch elsewhere', async () => {
+		mockDomainsApi( [ createMockDomain( 'kaonashi.wordpress.com', false ) ] );
+		window.history.pushState( {}, '', '/sites/kaonashi.wordpress.com/settings/site-visibility' );
+
+		render(
+			<SiteLaunchButton
+				site={ createMockSite( {
+					plan: {
+						product_slug: 'free_plan',
+						product_name: 'Free',
+						is_free: true,
+					},
+				} as Partial< Site > ) }
+				tracksContext="test"
+				postLaunchUrl="https://my.wordpress.com/sites/kaonashi.wordpress.com"
+			/>
+		);
+
+		const launchLink = await screen.findByRole( 'link', { name: 'Launch your site' } );
+		const query = new URL( launchLink.getAttribute( 'href' ) ?? '', window.location.origin )
+			.searchParams;
+
+		expect( query.get( 'back_to' ) ).toContain(
+			'/sites/kaonashi.wordpress.com/settings/site-visibility'
+		);
+		expect( query.get( 'redirect_to' ) ).toBe(
+			'https://my.wordpress.com/sites/kaonashi.wordpress.com'
+		);
+
+		window.history.pushState( {}, '', '/' );
+	} );
+
 	test( 'renders a link to the launch flow for a free site without an immediate launch', async () => {
 		mockDomainsApi( [ createMockDomain( 'kaonashi.wordpress.com', false ) ] );
 

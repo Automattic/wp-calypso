@@ -55,6 +55,35 @@ describe( 'Signup Flows Configuration', () => {
 		} );
 	} );
 
+	describe( 'launch-site destination', () => {
+		beforeAll( () => {
+			// The suites above stub `getFlows` with fixtures; these assertions need the real config.
+			jest.restoreAllMocks();
+		} );
+
+		const getDestination = ( dependencies ) =>
+			flows.getFlows()[ 'launch-site' ].destination( dependencies );
+
+		test( 'returns the user to where the flow was started from', () => {
+			expect(
+				getDestination( {
+					siteSlug: 'test-site',
+					back_to: '/sites/test-site/settings/site-visibility',
+				} )
+			).toBe( '/sites/test-site/settings/site-visibility?celebrateLaunch=true' );
+		} );
+
+		test( 'prefers redirect_to, so the post-launch landing can differ from where Back goes', () => {
+			expect(
+				getDestination( {
+					siteSlug: 'test-site',
+					back_to: '/sites/test-site/settings/site-visibility',
+					redirect_to: '/sites/test-site',
+				} )
+			).toBe( '/sites/test-site?celebrateLaunch=true' );
+		} );
+	} );
+
 	describe( 'filterDestination with checkout URLs', () => {
 		// Mock the required modules
 		beforeAll( () => {

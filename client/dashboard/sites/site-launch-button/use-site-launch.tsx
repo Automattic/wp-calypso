@@ -26,7 +26,9 @@ type RecordTracksEvent = ( eventName: string, properties?: Record< string, unkno
 
 export interface UseSiteLaunchOptions {
 	tracksContext: string;
+	/** Where the launch flow's Back button returns to. Defaults to the current page. */
 	backTo?: string;
+	/** Where the user lands once the site is live. Defaults to the page they launched from. */
 	postLaunchUrl?: string;
 	a4aLaunchUrl?: string;
 	a4aLaunchModal?: A4aLaunchModalComponent;
@@ -98,9 +100,10 @@ export function useSiteLaunch(
 			back_to: backTo
 				? dashboardLinkWithBackport( backTo )
 				: redirectToDashboardLink( { supportBackport: true } ),
+			...( postLaunchUrl ? { redirect_to: postLaunchUrl } : {} ),
 			dashboard: getCurrentDashboard(),
 		} );
-	}, [ site, backTo ] );
+	}, [ site, backTo, postLaunchUrl ] );
 
 	const track = () => {
 		recordTracksEvent( 'calypso_dashboard_site_launch_button_click', { context: tracksContext } );
