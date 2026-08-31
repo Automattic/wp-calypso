@@ -10,7 +10,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
-import { memo, useState } from 'react';
+import { memo, useState, ComponentProps } from 'react';
 import { urlToSlug } from '../../../utils/url';
 import type { RecordTracksEvent } from './types';
 import type { WooPaymentsData } from '@automattic/api-core';
@@ -117,7 +117,10 @@ export const WooPaymentsStatusColumn = ( {
 		);
 	}
 
-	const getStatusProps = (): { statusText: string; statusType: 'stable' | 'high' } | null => {
+	const getStatusProps = (): {
+		statusText: string;
+		statusType: NonNullable< ComponentProps< typeof Badge >[ 'intent' ] >;
+	} | null => {
 		switch ( state ) {
 			case 'active':
 				return {

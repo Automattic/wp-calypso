@@ -1,9 +1,11 @@
 import { __ } from '@wordpress/i18n';
 import type { TipaltiPayee } from '@automattic/api-core';
+import type { Badge } from '@wordpress/ui';
+import type { ComponentProps } from 'react';
 
 interface AccountStatus {
 	statusType: 'success' | 'warning' | 'error';
-	badgeIntent: 'stable' | 'medium' | 'high';
+	badgeIntent: NonNullable< ComponentProps< typeof Badge >[ 'intent' ] >;
 	status: string;
 	statusReason?: string;
 	actionRequired: boolean;

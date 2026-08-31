@@ -19,6 +19,7 @@ import LayoutHeader, {
 } from 'calypso/layout/hosting-dashboard/header';
 import useGetTipaltiIFrameURL from '../../hooks/use-get-tipalti-iframe-url';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
+import type { ComponentProps } from 'react';
 
 import './style.scss';
 
@@ -68,7 +69,7 @@ function PaymentStatusBadge( {
 	tooltip,
 	children,
 }: {
-	intent: 'stable' | 'medium' | 'high';
+	intent: NonNullable< ComponentProps< typeof Badge >[ 'intent' ] >;
 	tooltip?: string;
 	children?: string;
 } ) {

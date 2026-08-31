@@ -9,6 +9,7 @@ import { Badge } from '@wordpress/ui';
 import { OWNER_ROLE } from '../constants';
 import type { TeamMember, TeamMemberStatus } from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';
+import type { ComponentProps } from 'react';
 
 function getRoleLabel( role?: string ): string {
 	// Currently there are only two roles: owner and member. More may come later.
@@ -27,7 +28,9 @@ function getStatusLabel( status: TeamMemberStatus ): string {
 	}
 }
 
-function getStatusIntent( status: TeamMemberStatus ): 'stable' | 'medium' | 'high' {
+function getStatusIntent(
+	status: TeamMemberStatus
+): NonNullable< ComponentProps< typeof Badge >[ 'intent' ] > {
 	switch ( status ) {
 		case 'active':
 			return 'stable';

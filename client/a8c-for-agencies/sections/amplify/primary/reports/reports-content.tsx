@@ -27,7 +27,7 @@ import ArchiveReportConfirmationDialog from './archive-report-confirmation-dialo
 import useAmplifyReportRows, { AmplifyReportRow } from './use-report-rows';
 import type { Action, Field } from '@wordpress/dataviews';
 import type { AmplifyMode } from 'calypso/a8c-for-agencies/data/amplify/types';
-import type { ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 
 function modeLabel( mode: AmplifyMode ): string {
 	switch ( mode ) {
@@ -55,7 +55,7 @@ function ScoreBadge( { score, label }: { score: number | null; label: string } )
 	if ( score === null ) {
 		return null;
 	}
-	let intent: 'stable' | 'medium' | 'high';
+	let intent: NonNullable< ComponentProps< typeof Badge >[ 'intent' ] >;
 	if ( score >= 80 ) {
 		intent = 'stable';
 	} else if ( score >= 50 ) {

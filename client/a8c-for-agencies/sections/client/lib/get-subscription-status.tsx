@@ -1,9 +1,12 @@
+import type { Badge } from '@wordpress/ui';
+import type { ComponentProps } from 'react';
+
 export const getSubscriptionStatus = (
 	status: string,
 	translate: ( key: string ) => string
 ): {
 	children: string | undefined;
-	type: 'draft' | 'stable' | 'medium' | 'informational' | 'high' | undefined;
+	type: ComponentProps< typeof Badge >[ 'intent' ];
 } => {
 	switch ( status ) {
 		case 'pending':

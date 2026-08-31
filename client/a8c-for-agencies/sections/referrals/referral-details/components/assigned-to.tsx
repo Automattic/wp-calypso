@@ -4,7 +4,7 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { ExternalLink, Tooltip } from '@wordpress/components';
 import { Badge } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, ComponentProps } from 'react';
 import InfoModal from 'calypso/a8c-for-agencies/components/a4a-info-modal';
 import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import A4APopoverTrigger from 'calypso/a8c-for-agencies/components/a4a-popover/trigger';
@@ -22,7 +22,7 @@ type Props = {
 	data?: APIProductFamilyProduct[];
 };
 
-type BadgeIntent = 'draft' | 'informational' | 'stable' | 'medium' | 'high';
+type BadgeIntent = NonNullable< ComponentProps< typeof Badge >[ 'intent' ] >;
 
 function getPurchaseStatus(
 	purchase: ReferralPurchase,

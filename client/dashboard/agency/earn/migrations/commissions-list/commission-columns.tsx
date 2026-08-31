@@ -8,7 +8,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
-import { useState } from 'react';
+import { useState, ComponentProps } from 'react';
 import { formatDate } from '../../../../utils/datetime';
 import { urlToSlug } from '../../../../utils/url';
 
@@ -46,7 +46,7 @@ export const ReviewStatusColumn = ( {
 
 	const getStatusProps = (): {
 		statusText: string;
-		intent: 'stable' | 'informational' | 'medium';
+		intent: NonNullable< ComponentProps< typeof Badge >[ 'intent' ] >;
 	} | null => {
 		switch ( reviewStatus ) {
 			case 'paid':

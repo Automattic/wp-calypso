@@ -1,7 +1,9 @@
 import { __ } from '@wordpress/i18n';
 import type { ReferralPurchase } from '@automattic/api-core';
+import type { Badge } from '@wordpress/ui';
+import type { ComponentProps } from 'react';
 
-export type PurchaseStatusBadgeIntent = 'draft' | 'informational' | 'stable' | 'medium' | 'high';
+export type PurchaseStatusBadgeIntent = NonNullable< ComponentProps< typeof Badge >[ 'intent' ] >;
 
 /**
  * A purchase reports its own status rather than its referral order's, so an

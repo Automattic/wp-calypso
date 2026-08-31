@@ -1,6 +1,8 @@
 import { __ } from '@wordpress/i18n';
+import type { Badge } from '@wordpress/ui';
+import type { ComponentProps } from 'react';
 
-export type ReferralStatusBadgeIntent = 'draft' | 'informational' | 'stable' | 'medium' | 'high';
+export type ReferralStatusBadgeIntent = NonNullable< ComponentProps< typeof Badge >[ 'intent' ] >;
 
 export function getReferralStatus( status: string ): {
 	status: string;
