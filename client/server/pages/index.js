@@ -894,6 +894,7 @@ function setUpCSP( req, res, next ) {
 			'https://*.google.co.zm', // Google Ads remarketing pixel
 			'https://*.google.co.zw', // Google Ads remarketing pixel
 			'https://*.google.cat', // Google Ads remarketing pixel
+			'https://*.googletagmanager.com', // Google Tag Manager
 			'https://gravatar.com', // Gravatar assets (root domain)
 			'https://linkmaker.itunes.apple.com', // Apple App Store badges
 			'https://cdn.smooch.io', // Smooch/Sunshine Conversations images
@@ -969,6 +970,7 @@ function setUpCSP( req, res, next ) {
 			'https://video.bsky.app', // Bluesky video manifests (hls.js fetches the HLS playlist for Reader ATmosphere thread view)
 			'https://video.cdn.bsky.app', // Bluesky video CDN (segment URLs 302-redirect here)
 			'https://analytics.tiktok.com', // TikTok tracking pixel
+			'https://analytics-ipv6.tiktokw.us', // TikTok tracking pixel
 			'https://a.quora.com', //Quora tracking pixel
 			// Payment provider APIs (for tokenization and payment processing)
 			'*.stripe.com', // Stripe API calls
