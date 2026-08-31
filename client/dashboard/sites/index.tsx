@@ -72,10 +72,8 @@ const getFetchPaginatedSitesOptions = (
 ): FetchPaginatedSitesOptions => {
 	const filters = view.filters ?? [];
 
-	// Only Automatticians have the is_a8c filter. If the filter is set to exclude then do
-	// not include these sites. Otherwise, a regular user might still be a member of an
-	// a8c-owned site, so always include those sites in the result as there's no way to
-	// filter them.
+	// Non-Automatticians can be members of a8c-owned sites but have no filter to
+	// control their visibility, so always include them.
 	const shouldIncludeA8COwned =
 		! isAutomattician ||
 		! filters.some( ( item: Filter ) => item.field === 'is_a8c' && item.value === false );
