@@ -1,6 +1,6 @@
-import { Badge } from '@automattic/ui';
 import { Tooltip } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { getReferralStatus } from './lib/get-referral-status';
 import type { Referral } from '@automattic/api-core';
 

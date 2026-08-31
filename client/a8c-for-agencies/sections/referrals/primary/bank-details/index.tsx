@@ -1,6 +1,6 @@
-import { Badge } from '@automattic/ui';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Tooltip } from '@wordpress/components';
+import { Badge } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
@@ -68,7 +68,7 @@ function PaymentStatusBadge( {
 	tooltip,
 	children,
 }: {
-	intent: 'success' | 'warning' | 'error';
+	intent: 'stable' | 'medium' | 'high';
 	tooltip?: string;
 	children?: string;
 } ) {
@@ -114,7 +114,7 @@ export default function ReferralsBankDetails( { type }: { type?: 'migrations' | 
 									components: {
 										badge: (
 											<PaymentStatusBadge
-												intent={ accountStatus.statusType }
+												intent={ accountStatus.badgeIntent }
 												tooltip={ accountStatus.statusReason }
 											/>
 										),

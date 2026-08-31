@@ -3,6 +3,7 @@ import type { TipaltiPayee } from '@automattic/api-core';
 
 interface AccountStatus {
 	statusType: 'success' | 'warning' | 'error';
+	badgeIntent: 'stable' | 'medium' | 'high';
 	status: string;
 	statusReason?: string;
 	actionRequired: boolean;
@@ -65,8 +66,15 @@ export function getAccountStatus( data: TipaltiPayee | null | undefined ): Accou
 		return null;
 	}
 
+	const badgeIntents: Record< string, AccountStatus[ 'badgeIntent' ] > = {
+		success: 'stable',
+		warning: 'medium',
+		error: 'high',
+	};
+
 	return {
 		...statusMeta,
+		badgeIntent: badgeIntents[ statusMeta.statusType ],
 		actionRequired: [ 'warning', 'error' ].includes( statusMeta.statusType ),
 	} as AccountStatus;
 }

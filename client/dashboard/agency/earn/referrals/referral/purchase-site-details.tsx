@@ -1,6 +1,6 @@
-import { Badge } from '@automattic/ui';
 import { ExternalLink, Tooltip } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import RouterLinkButton from '../../../../components/router-link-button';
 import { urlToSlug } from '../../../../utils/url';
 import { findAgencyProduct } from '../lib/get-product-name';
@@ -25,7 +25,7 @@ export default function PurchaseSiteDetails( {
 	if ( purchase.site_assigned ) {
 		const product = findAgencyProduct( purchase.product_id, products );
 		if ( product?.slug.startsWith( 'pressable' ) ) {
-			return <Badge intent="success">{ __( 'Pressable' ) }</Badge>;
+			return <Badge intent="stable">{ __( 'Pressable' ) }</Badge>;
 		}
 
 		const siteSlug = urlToSlug( purchase.site_assigned );

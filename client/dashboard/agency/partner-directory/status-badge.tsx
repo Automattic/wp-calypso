@@ -1,4 +1,4 @@
-import { Badge } from '@automattic/ui';
+import { Badge } from '@wordpress/ui';
 import NotApprovedPopover from './not-approved-popover';
 import type { DirectoryStatusBadge } from './lib';
 

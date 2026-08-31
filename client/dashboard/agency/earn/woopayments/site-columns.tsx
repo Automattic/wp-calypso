@@ -1,6 +1,5 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
-import { Badge } from '@automattic/ui';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -10,6 +9,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import { memo, useState } from 'react';
 import { urlToSlug } from '../../../utils/url';
 import type { RecordTracksEvent } from './types';
@@ -117,17 +117,17 @@ export const WooPaymentsStatusColumn = ( {
 		);
 	}
 
-	const getStatusProps = (): { statusText: string; statusType: 'success' | 'error' } | null => {
+	const getStatusProps = (): { statusText: string; statusType: 'stable' | 'high' } | null => {
 		switch ( state ) {
 			case 'active':
 				return {
 					statusText: __( 'Active' ),
-					statusType: 'success',
+					statusType: 'stable',
 				};
 			case 'disconnected':
 				return {
 					statusText: __( 'Disconnected' ),
-					statusType: 'error',
+					statusType: 'high',
 				};
 			default:
 				return null;
@@ -171,13 +171,13 @@ export const CommissionEligibilityColumn = ( {
 	const statusProps = isCommissionEligible
 		? {
 				statusText: __( 'Eligible' ),
-				statusType: 'success' as const,
+				statusType: 'stable' as const,
 				showInfoIcon: false,
 				ineligibleReason: undefined,
 		  }
 		: {
 				statusText: __( 'Not eligible' ),
-				statusType: 'error' as const,
+				statusType: 'high' as const,
 				showInfoIcon: true,
 				ineligibleReason: ineligibleSite?.ineligible_reason,
 		  };

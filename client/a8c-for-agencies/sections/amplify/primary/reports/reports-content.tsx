@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/ui';
 import { useBreakpoint } from '@automattic/viewport-react';
 import {
 	Button,
@@ -10,6 +9,7 @@ import {
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { download } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import { useMemo, useState } from 'react';
 import {
 	DATAVIEWS_TABLE,
@@ -55,13 +55,13 @@ function ScoreBadge( { score, label }: { score: number | null; label: string } )
 	if ( score === null ) {
 		return null;
 	}
-	let intent: 'success' | 'warning' | 'error';
+	let intent: 'stable' | 'medium' | 'high';
 	if ( score >= 80 ) {
-		intent = 'success';
+		intent = 'stable';
 	} else if ( score >= 50 ) {
-		intent = 'warning';
+		intent = 'medium';
 	} else {
-		intent = 'error';
+		intent = 'high';
 	}
 	return (
 		<Badge intent={ intent }>
@@ -123,7 +123,7 @@ export default function AmplifyReportsContent() {
 				label: __( 'Analysis type' ),
 				getValue: ( { item }: { item: AmplifyReportRow } ) => modeLabel( item.mode ),
 				render: ( { item }: { item: AmplifyReportRow } ): ReactNode => (
-					<Badge>{ modeLabel( item.mode ) }</Badge>
+					<Badge intent="draft">{ modeLabel( item.mode ) }</Badge>
 				),
 				enableHiding: true,
 				enableSorting: true,
@@ -176,7 +176,7 @@ export default function AmplifyReportsContent() {
 				render: ( { item }: { item: AmplifyReportRow } ): ReactNode => {
 					if ( item.rowStatus === 'failed' ) {
 						return (
-							<Badge intent="error" title={ item.failureReason }>
+							<Badge intent="high" title={ item.failureReason }>
 								{ __( 'Analysis failed' ) }
 							</Badge>
 						);

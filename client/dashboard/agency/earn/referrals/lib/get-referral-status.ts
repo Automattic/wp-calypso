@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 
-export type ReferralStatusBadgeIntent = 'default' | 'info' | 'success' | 'warning' | 'error';
+export type ReferralStatusBadgeIntent = 'draft' | 'informational' | 'stable' | 'medium' | 'high';
 
 export function getReferralStatus( status: string ): {
 	status: string;
@@ -10,32 +10,32 @@ export function getReferralStatus( status: string ): {
 		case 'active':
 			return {
 				status: __( 'Active' ),
-				type: 'success',
+				type: 'stable',
 			};
 		case 'pending':
 			return {
 				status: __( 'Pending' ),
-				type: 'warning',
+				type: 'medium',
 			};
 		case 'canceled':
 			return {
 				status: __( 'Canceled' ),
-				type: 'info',
+				type: 'informational',
 			};
 		case 'error':
 			return {
 				status: __( 'Error' ),
-				type: 'error',
+				type: 'high',
 			};
 		case 'archived':
 			return {
 				status: __( 'Archived' ),
-				type: 'default',
+				type: 'draft',
 			};
 		default:
 			return {
 				status: __( 'Mixed' ),
-				type: 'warning',
+				type: 'medium',
 			};
 	}
 }
