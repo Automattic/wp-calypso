@@ -83,7 +83,6 @@ function InboxList( {
 		mediaField: 'icon',
 		fields: [],
 		page: 1,
-		search: '',
 		infiniteScrollEnabled: true,
 		startPosition: 1,
 		// Group notes into time sections ("Today", "Yesterday", …). `direction`
@@ -103,8 +102,8 @@ function InboxList( {
 	// Field identities must stay stable or DataViews remounts every cell per re-render.
 	const fields = useMemo( () => getFields(), [] );
 
-	// Search runs client-side over the loaded notes only — the engine's server
-	// filter is driven by the sidebar categories, never by DataViews view state.
+	// The engine's server filter is driven by the sidebar categories, never by
+	// DataViews view state; this just paginates the loaded notes into the window.
 	const { data, paginationInfo } = filterSortAndPaginate( notes, view, fields );
 
 	// `filterSortAndPaginate` reports `totalItems` as the count of notes loaded
@@ -116,9 +115,8 @@ function InboxList( {
 		? { ...paginationInfo, totalItems: paginationInfo.totalItems + NOTES_PER_PAGE }
 		: paginationInfo;
 
-	// End-of-list note once scrolling truly stops: skip while searching (the
-	// client-side match set ending isn't the notification list ending).
-	const endReason = ! hasMore && data.length > 0 && ! view.search ? getListEndReason( tab ) : null;
+	// End-of-list note once scrolling truly stops.
+	const endReason = ! hasMore && data.length > 0 ? getListEndReason( tab ) : null;
 
 	const infiniteScrollHandler = useCallback( () => {
 		if ( ! isLoading ) {
@@ -155,7 +153,6 @@ function InboxList( {
 			// cached rows it just mounted with.
 			isLoading={ false }
 			defaultLayouts={ { list: {}, table: {} } }
-			search
 			paginationInfo={ effectivePaginationInfo }
 			empty={
 				showEmptyLoader ? (
@@ -165,9 +162,7 @@ function InboxList( {
 				) : (
 					<VStack alignment="center" style={ { padding: '40px 0' } }>
 						<Text size={ 15 } weight={ 500 }>
-							{ view.search
-								? __( 'No notifications match your search.' )
-								: EMPTY_MESSAGES[ category ] }
+							{ EMPTY_MESSAGES[ category ] }
 						</Text>
 					</VStack>
 				)
@@ -178,14 +173,11 @@ function InboxList( {
 			onChangeSelection={ ( selection ) => onSelectNote( selection[ 0 ] ) }
 		>
 			<HStack
-				justify="space-between"
+				justify="flex-end"
 				alignment="top"
 				spacing={ 2 }
 				className="dashboard-notifications-inbox__list-toolbar dataviews__view-actions"
 			>
-				<div className="dataviews__search">
-					<DataViews.Search />
-				</div>
 				<DataViews.ViewConfig />
 			</HStack>
 			<DataViews.Layout />

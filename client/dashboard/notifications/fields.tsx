@@ -231,7 +231,6 @@ export function getFields(): Field< Note >[] {
 		{
 			id: 'title',
 			label: __( 'Title' ),
-			enableGlobalSearch: true,
 			getValue: ( { item } ) => getNoteTitle( item ),
 			render: ( { item } ) => (
 				<span
@@ -248,18 +247,8 @@ export function getFields(): Field< Note >[] {
 		{
 			id: 'description',
 			label: __( 'Excerpt' ),
-			enableGlobalSearch: true,
 			getValue: ( { item } ) => getNoteExcerpt( item ) ?? '',
 			render: ( { item } ) => getNoteExcerpt( item ),
-		},
-		{
-			// Search-only field so typing a person's name narrows the list; never
-			// added to the view's `fields`, so it doesn't render as a column.
-			id: 'sender',
-			label: __( 'Sender' ),
-			enableGlobalSearch: true,
-			enableSorting: false,
-			getValue: ( { item } ) => getNoteSender( item ) ?? '',
 		},
 		{
 			// Group-only field for the time-section headers; never added to the
