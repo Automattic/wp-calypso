@@ -1254,8 +1254,11 @@ export default function OrchestratorChat( {
 	// programmatic submit) lands before the `isUploadingImages` state does.
 	const isUploadingRef = useRef( false );
 
-	const onSubmitWithImages = useCallback(
-		async ( message: string ) => {
+	const dispatchChatMessage = useCallback(
+		async (
+			message: string,
+			{ restoreComposerOnFailure = true }: { restoreComposerOnFailure?: boolean } = {}
+		) => {
 			submitDispatchedRef.current = false;
 
 			// The composer is committed while a batch uploads — drop re-entrant
@@ -1360,8 +1363,12 @@ export default function OrchestratorChat( {
 			} catch {
 				// A rejected dispatch already surfaces via agenttic's error state;
 				// put the message back (unless a newer draft replaced it) for a retry.
+				// A caller that owns its own retry affordance opts out, so the same
+				// prompt is not offered twice.
 				submitDispatchedRef.current = false;
-				setInputValue( ( currentValue ) => ( currentValue === '' ? message : currentValue ) );
+				if ( restoreComposerOnFailure ) {
+					setInputValue( ( currentValue ) => ( currentValue === '' ? message : currentValue ) );
+				}
 				return;
 			}
 
@@ -1376,6 +1383,13 @@ export default function OrchestratorChat( {
 			setChatInput,
 			uploadImagesToWordPress,
 		]
+	);
+
+	// `AgentUI`'s `onSubmit` contract: `( message, files? )`. Options stay off it,
+	// so a programmatic caller reaches for `dispatchChatMessage` directly.
+	const onSubmitWithImages = useCallback(
+		( message: string ) => dispatchChatMessage( message ),
+		[ dispatchChatMessage ]
 	);
 
 	const handleAbort = useCallback( () => {
@@ -1395,7 +1409,7 @@ export default function OrchestratorChat( {
 				return;
 			}
 
-			await onSubmitWithImages( submittedMessage );
+			await dispatchChatMessage( submittedMessage );
 			// Clear only a dispatched message — an aborted or failed send keeps
 			// the composer intact, and the user may have typed a new draft.
 			if ( submitDispatchedRef.current ) {
@@ -1404,7 +1418,7 @@ export default function OrchestratorChat( {
 				);
 			}
 		},
-		[ inputValue, onSubmitWithImages ]
+		[ dispatchChatMessage, inputValue ]
 	);
 
 	useRegisterCustomActions( { setChatInput, submitChatMessage } );
@@ -1417,7 +1431,10 @@ export default function OrchestratorChat( {
 		async ( turn: OrphanedTurn ) => {
 			setFailedRetries( ( previous ) => previous.filter( ( retry ) => retry.id !== turn.id ) );
 			submitDispatchedRef.current = false;
-			await submitChatMessage( turn.text );
+			// Not `submitChatMessage`: this send owns the composer neither on the way
+			// in (the recovered prompt was never typed) nor on the way out, where
+			// putting it back would leave two ways to retry the same question.
+			await dispatchChatMessage( turn.text, { restoreComposerOnFailure: false } );
 			if ( submitDispatchedRef.current ) {
 				return;
 			}
@@ -1425,7 +1442,7 @@ export default function OrchestratorChat( {
 				previous.some( ( retry ) => retry.id === turn.id ) ? previous : [ ...previous, turn ]
 			);
 		},
-		[ submitChatMessage ]
+		[ dispatchChatMessage ]
 	);
 
 	const handleContextCardAction = useCallback(
