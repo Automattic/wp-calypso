@@ -27,15 +27,6 @@ const usePlanIntentFromSiteMeta = (): IntentFromSiteMeta => {
 		};
 	}
 
-	// A site on the eCommerce free trial has no `site_intent` (the trial is created
-	// without a plan in the cart), so scope its plans to the commerce-oriented grid.
-	if ( isECommerceTrial ) {
-		return {
-			processing: false,
-			intent: 'plans-business-trial',
-		};
-	}
-
 	const siteIntent = siteIntentResponse.data?.site_intent;
 
 	// ai-site-builder flow is specifically the free trial for big sky
@@ -61,6 +52,15 @@ const usePlanIntentFromSiteMeta = (): IntentFromSiteMeta => {
 		return {
 			processing: false,
 			intent: 'plans-videopress',
+		};
+	}
+
+	// A site on the eCommerce free trial has no `site_intent` (the trial is created
+	// without a plan in the cart), so scope its plans to the commerce-oriented grid.
+	if ( isECommerceTrial ) {
+		return {
+			processing: false,
+			intent: 'plans-business-trial',
 		};
 	}
 
