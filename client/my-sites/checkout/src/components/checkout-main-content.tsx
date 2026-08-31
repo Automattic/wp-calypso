@@ -1152,7 +1152,11 @@ export default function CheckoutMainContent( {
 							<Step.TopBar
 								leftElement={
 									showProgress ? undefined : (
-										<Step.BackButton onClick={ leaveModalProps.clickClose } />
+										<Step.BackButton
+											onClick={ leaveModalProps.clickClose }
+											disabled={ leaveModalProps.isLeavePending }
+											accessibleWhenDisabled
+										/>
 									)
 								}
 								rightElement={

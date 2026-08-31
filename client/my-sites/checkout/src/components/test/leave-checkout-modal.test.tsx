@@ -321,6 +321,9 @@ describe( 'useCheckoutLeaveModal.clickStepBack', () => {
 		const { result } = renderHook( () => useCheckoutLeaveModal( { siteUrl: NEW_SITE_SLUG } ), {
 			wrapper: Wrapper,
 		} );
+		await waitFor( () =>
+			expect( client.forCartKey( NEW_SITE_CART_KEY ).getState().isLoading ).toBe( false )
+		);
 
 		await act( async () => {
 			result.current.clickStepBack( 'https://mynewsite.wordpress.com/setup/onboarding/domains' );
@@ -567,5 +570,126 @@ describe( 'useCheckoutLeaveModal gift checkout', () => {
 		expect( leaveCheckout ).toHaveBeenCalledWith(
 			expect.objectContaining( { forceCheckoutBackUrl: undefined } )
 		);
+	} );
+
+	describe( 'when the cart is still loading', () => {
+		/**
+		 * Render the hook against a cart whose fetch is held open, so "Back" can
+		 * be clicked while the cart is still loading. `resolveCart` completes the
+		 * fetch with the given cart contents.
+		 */
+		function renderGiftHookWithPendingCart() {
+			let releaseCart: ( cart: ResponseCart ) => void = () => {};
+			const cartPromise = new Promise< ResponseCart >( ( resolve ) => {
+				releaseCart = resolve;
+			} );
+			const client = createShoppingCartManagerClient( {
+				getCart: () => cartPromise,
+				setCart: async ( cartKey, newCart: RequestCart ) => ( {
+					...getEmptyResponseCart(),
+					cart_key: cartKey,
+					products: newCart.products as ResponseCartProduct[],
+				} ),
+			} );
+			const rendered = renderHook( () => useCheckoutLeaveModal( { siteUrl: '' } ), {
+				wrapper: buildWrapper( client ),
+			} );
+			expect( client.forCartKey( GIFT_CART_KEY ).getState().isLoading ).toBe( true );
+
+			const resolveCart = async ( seed: Partial< ResponseCart > ) => {
+				await act( async () => {
+					releaseCart( {
+						...getEmptyResponseCart(),
+						cart_key: GIFT_CART_KEY,
+						products: [],
+						...seed,
+					} );
+					await cartPromise;
+				} );
+			};
+			return { ...rendered, resolveCart };
+		}
+
+		it( 'holds "Back" until the cart loads, then uses the gifted site', async () => {
+			setReferrer( '' );
+			const { result, resolveCart } = renderGiftHookWithPendingCart();
+
+			await act( async () => {
+				result.current.clickClose();
+			} );
+			expect( leaveCheckout ).not.toHaveBeenCalled();
+			expect( result.current.isLeavePending ).toBe( true );
+
+			await resolveCart( { gift_details: giftDetails, is_gift_purchase: true } );
+
+			await waitFor( () =>
+				expect( leaveCheckout ).toHaveBeenCalledWith(
+					expect.objectContaining( { forceCheckoutBackUrl: 'https://giftedsite.wordpress.com/' } )
+				)
+			);
+			expect( result.current.isLeavePending ).toBe( false );
+		} );
+
+		it( 'holds "Back" until the cart loads, then asks about a cart with products', async () => {
+			setReferrer( '' );
+			const { result, resolveCart } = renderGiftHookWithPendingCart();
+
+			await act( async () => {
+				result.current.clickClose();
+			} );
+			expect( result.current.isModalVisible ).toBe( false );
+
+			await resolveCart( {
+				gift_details: giftDetails,
+				is_gift_purchase: true,
+				products: [ planProduct ],
+			} );
+
+			await waitFor( () => expect( result.current.isModalVisible ).toBe( true ) );
+			expect( leaveCheckout ).not.toHaveBeenCalled();
+		} );
+
+		it( 'holds a step-back destination until the cart loads', async () => {
+			setReferrer( '' );
+			const { result, resolveCart } = renderGiftHookWithPendingCart();
+
+			await act( async () => {
+				result.current.clickStepBack( 'https://wordpress.com/setup/onboarding/domains' );
+			} );
+			expect( leaveCheckout ).not.toHaveBeenCalled();
+
+			await resolveCart( { gift_details: giftDetails, is_gift_purchase: true } );
+
+			await waitFor( () =>
+				expect( leaveCheckout ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						forceCheckoutBackUrl: 'https://wordpress.com/setup/onboarding/domains',
+					} )
+				)
+			);
+		} );
+
+		it( 'does not trap the user when the cart never loads', async () => {
+			jest.useFakeTimers();
+			try {
+				setReferrer( '' );
+				const { result } = renderGiftHookWithPendingCart();
+
+				act( () => {
+					result.current.clickClose();
+				} );
+				expect( leaveCheckout ).not.toHaveBeenCalled();
+
+				act( () => {
+					jest.advanceTimersByTime( 5000 );
+				} );
+
+				expect( leaveCheckout ).toHaveBeenCalledWith(
+					expect.objectContaining( { forceCheckoutBackUrl: undefined } )
+				);
+			} finally {
+				jest.useRealTimers();
+			}
+		} );
 	} );
 } );
