@@ -178,14 +178,9 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 };
 
 /**
- * Editor-level suggestion to write a first draft into the open post.
+ * Suggestion to write a first draft into the open post.
  *
- * Only offered on an empty post: it is the one editor action that needs a blank
- * canvas rather than existing content, which is also why it sits first — on an
- * empty post every other suggestion here has nothing to work on.
- *
- * This is the only entry point: draft assist is offered from the sidebar, not
- * from the block editor canvas.
+ * Draft assist's only entry point — deliberately not offered from the canvas.
  */
 function getDraftSuggestion( contentType: 'post' | 'page' ) {
 	return {
@@ -194,9 +189,8 @@ function getDraftSuggestion( contentType: 'post' | 'page' ) {
 			'page' === contentType
 				? __( 'Draft a new page', __i18n_text_domain__ )
 				: __( 'Draft a new post', __i18n_text_domain__ ),
-		// Say which one. The suggestion is offered for pages too, and asking for "this
-		// post" on a page contradicts the contentType the ability is given, which shapes
-		// the output — an article rather than a sectioned page.
+		// Name the entity: asking for "this post" on a page contradicts the
+		// contentType the ability is given, which shapes the output.
 		prompt:
 			'page' === contentType
 				? __( 'Help me draft this page', __i18n_text_domain__ )
@@ -410,10 +404,8 @@ function currentPostTypeSupportsFeaturedImage(
 }
 
 /**
- * Whether to offer writing a draft.
- *
- * The feature flag, a post type draft assist writes into, and an empty post. Offering it on a post with content would
- * promise something the ability then refuses, which reads as a broken button.
+ * Whether to offer writing a draft: the flag, a post type the handler accepts,
+ * and an empty post — the handler's own checks, so the two cannot disagree.
  * @param currentPostType - The post type currently open in the editor.
  * @returns Whether the suggestion should be shown.
  */
@@ -422,8 +414,6 @@ function isDraftSuggestionAvailable( currentPostType?: string ): boolean {
 		return false;
 	}
 
-	// The handler's own check, so the suggestion is never offered on a post it
-	// would then refuse — and never hidden on one it would accept.
 	return isPostEffectivelyEmpty();
 }
 
@@ -1142,16 +1132,11 @@ export const contextProvider = {
 			// suggestion abilities when they aren't usable on this site — e.g. a
 			// free-text query on a self-hosted site with the SEO module disabled.
 			jetpackSEOSuggestionsEnabled: isSeoSuggestionsEnabled(),
-			// Pinned cross-repo contract with the wpcom draft ability: the server
-			// grants it by ability category on every editor surface and has no view
-			// of this client's preview flag, so it drops the ability unless this key
-			// says the client can actually handle the tool call. Without it the
-			// orchestrator would route `jetpack_ai__apply_draft_content` to clients
-			// that never registered a handler. Do not rename.
-			// Post type matters, not just the flag. The applier refuses anything that is
-			// not a post or page, and in the site editor `core/editor` serves templates
-			// — so on a template this said "I can handle it", the server generated a
-			// whole draft and uploaded an image, and only then did the client refuse.
+			// Pinned cross-repo contract — do not rename, and send `false` rather
+			// than omitting it. wpcom drops the draft ability unless this says the
+			// client can handle the tool call. Post type is part of the claim: on a
+			// template, saying "yes" cost a whole generated draft and an uploaded
+			// image before the client refused.
 			jetpackAiDraftAssistEnabled:
 				isDraftAssistEnabled() && isDraftAssistPostType( getCurrentEditorPostType() ),
 			contextEntries: [
