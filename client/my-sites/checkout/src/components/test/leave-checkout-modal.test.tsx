@@ -691,5 +691,51 @@ describe( 'useCheckoutLeaveModal gift checkout', () => {
 				jest.useRealTimers();
 			}
 		} );
+
+		it( 'does not let repeat clicks postpone the escape hatch', async () => {
+			jest.useFakeTimers();
+			try {
+				setReferrer( '' );
+				const { result } = renderGiftHookWithPendingCart();
+
+				act( () => {
+					result.current.clickClose();
+				} );
+				act( () => {
+					jest.advanceTimersByTime( 4000 );
+				} );
+				act( () => {
+					result.current.clickClose();
+				} );
+				act( () => {
+					jest.advanceTimersByTime( 4000 );
+				} );
+
+				expect( leaveCheckout ).toHaveBeenCalledTimes( 1 );
+			} finally {
+				jest.useRealTimers();
+			}
+		} );
+
+		it( 'keeps the first destination when a second click lands before the cart loads', async () => {
+			setReferrer( '' );
+			const { result, resolveCart } = renderGiftHookWithPendingCart();
+
+			await act( async () => {
+				result.current.clickStepBack( 'https://wordpress.com/setup/onboarding/domains' );
+			} );
+			await act( async () => {
+				result.current.clickStepBack( 'https://wordpress.com/setup/onboarding/plans' );
+			} );
+
+			await resolveCart( { gift_details: giftDetails, is_gift_purchase: true } );
+
+			await waitFor( () => expect( leaveCheckout ).toHaveBeenCalledTimes( 1 ) );
+			expect( leaveCheckout ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					forceCheckoutBackUrl: 'https://wordpress.com/setup/onboarding/domains',
+				} )
+			);
+		} );
 	} );
 } );

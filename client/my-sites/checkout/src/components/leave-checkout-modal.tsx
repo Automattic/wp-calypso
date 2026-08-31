@@ -94,6 +94,15 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 	// — acting then confirms nothing and sends the gifter to their own home —
 	// so the click is held until the cart settles.
 	const requestLeave = ( backUrl?: string ) => {
+		// The click already waiting on the cart owns the destination. Registering
+		// a new one restarts the timeout below, so without this a user clicking
+		// repeatedly at a cart that never settles would never be let out.
+		if ( pendingLeave ) {
+			return;
+		}
+		// A plain close must use the default back URL, not a step-back URL left
+		// over from an earlier `clickStepBack` whose modal was dismissed.
+		setStepBackUrl( backUrl );
 		if ( isCartLoading ) {
 			setPendingLeave( { backUrl } );
 			return;
@@ -123,14 +132,10 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 	}, [ pendingLeave, isCartLoading ] );
 
 	const clickClose = () => {
-		// A plain close must use the default back URL, not a step-back URL left
-		// over from an earlier `clickStepBack` whose modal was dismissed.
-		setStepBackUrl( undefined );
 		requestLeave();
 	};
 
 	const clickStepBack = ( destinationUrl: string ) => {
-		setStepBackUrl( destinationUrl );
 		requestLeave( destinationUrl );
 	};
 
