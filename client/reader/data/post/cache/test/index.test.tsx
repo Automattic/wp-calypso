@@ -248,6 +248,51 @@ describe( 'reader post cache', () => {
 		} );
 	} );
 
+	it( 'keeps distinct blog posts from the same feed from colliding when feed item IDs are zero', () => {
+		const queryClient = makeQueryClient();
+		const feedId = 90433325;
+		const siteId = 1007522;
+		// Older externally-crawled posts on the same feed often carry
+		// `feed_item_ID: 0` (never assigned one), not a real, shared id.
+		const posts = [
+			blogPost( 231, {
+				site_ID: siteId,
+				feed_ID: feedId,
+				feed_item_ID: 0,
+				global_ID: undefined,
+				title: 'Celebration of the suffering woman',
+			} ),
+			blogPost( 284, {
+				site_ID: siteId,
+				feed_ID: feedId,
+				feed_item_ID: 0,
+				global_ID: undefined,
+				title: 'Subtle art of choosing the best books',
+			} ),
+			blogPost( 188, {
+				site_ID: siteId,
+				feed_ID: feedId,
+				feed_item_ID: 0,
+				global_ID: undefined,
+				title: 'Nay.. Not dead',
+			} ),
+		];
+
+		// Simulate each post syncing in on its own page fetch, the way the
+		// infinite stream upserts one page's posts at a time.
+		posts.forEach( ( post ) => upsertPostCache( queryClient, [ post ] ) );
+
+		expect( getCachedPost( queryClient, { blogId: siteId, postId: 231 } ) ).toMatchObject( {
+			title: 'Celebration of the suffering woman',
+		} );
+		expect( getCachedPost( queryClient, { blogId: siteId, postId: 284 } ) ).toMatchObject( {
+			title: 'Subtle art of choosing the best books',
+		} );
+		expect( getCachedPost( queryClient, { blogId: siteId, postId: 188 } ) ).toMatchObject( {
+			title: 'Nay.. Not dead',
+		} );
+	} );
+
 	it( 'exposes dynamic cached post lists through useCachedPosts', async () => {
 		const queryClient = makeQueryClient();
 		const postKeys = [
