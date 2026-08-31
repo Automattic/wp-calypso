@@ -25,8 +25,8 @@ import {
 import { redirectToLaunchpad } from 'calypso/utils';
 import CustomerHome from './main';
 
-export default async function renderHome( context, next ) {
-	const state = await context.store.getState();
+export default function renderHome( context, next ) {
+	const state = context.store.getState();
 	const site = getSelectedSite( state );
 
 	// Scroll to the top
@@ -120,6 +120,11 @@ export async function maybeRedirect( context, next ) {
 		}
 	}
 
+	// Started before the assignment below is awaited, not after it: nothing renders until
+	// this middleware calls `next()`, and the two requests are independent, so awaiting them
+	// in sequence adds a whole round trip to the time the boot placeholder stays on screen.
+	const launchpadPromise = fetchLaunchpad( slug ).catch( () => null );
+
 	// The no_guidance launchpad-personalization variation gets no guidance surface at all:
 	// keep these sites off My Home, landing them on the plain wp-admin dashboard.
 	const personalizationAssignment = await loadExperimentAssignment(
@@ -140,7 +145,7 @@ export async function maybeRedirect( context, next ) {
 			launchpad_screen: launchpadScreenOption,
 			site_intent: siteIntentOption,
 			checklist: launchpadChecklist,
-		} = await fetchLaunchpad( slug );
+		} = ( await launchpadPromise ) ?? {};
 
 		const shouldShowLaunchpad = ! isRemovedFlow( siteIntentOption );
 
