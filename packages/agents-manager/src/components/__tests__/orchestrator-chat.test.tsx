@@ -168,7 +168,12 @@ type MockMessagePart = {
 	component?: React.ComponentType< Record< string, unknown > >;
 	componentProps?: Record< string, unknown >;
 };
-type MockMessage = { id: string; role: string; content?: MockMessagePart[] };
+type MockMessage = {
+	id: string;
+	role: string;
+	content?: MockMessagePart[];
+	[ key: string ]: unknown;
+};
 
 const mockAgentChat = jest.fn(
 	( {
@@ -3295,7 +3300,7 @@ describe( 'OrchestratorChat', () => {
 
 		render( chat( { capabilities: { supportsRegenerateAction: true } } ) );
 
-		const messages = mockAgentChat.mock.calls[ 0 ][ 0 ].messages as Array< {
+		const messages = mockAgentChat.mock.calls[ 0 ][ 0 ].messages as unknown as Array< {
 			actions: Array< { id: string; disabled?: boolean } >;
 		} >;
 

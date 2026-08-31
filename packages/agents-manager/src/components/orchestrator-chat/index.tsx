@@ -38,9 +38,7 @@ import { usePageOrSiteEditorSurface } from '../../hooks/use-empty-view-suggestio
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import { useImageUpload } from '../../hooks/use-image-upload';
 import { useNavigationContinuation } from '../../hooks/use-navigation-continuation';
-import useReconcileDeliveryStatus, {
-	type OrphanedTurn,
-} from '../../hooks/use-reconcile-delivery-status';
+import useOrphanedTurnRecovery from '../../hooks/use-orphaned-turn-recovery';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSourcesAction from '../../hooks/use-sources-action';
 import {
@@ -72,7 +70,7 @@ import { isBlockEditToolId } from '../../utils/tool-message-utils';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
-import RetryFailedMessage from '../retry-failed-message';
+import insertRetryAffordances from './recovered-turn-messages';
 import type { BigSkyMessage } from '../../types';
 import type {
 	AbilitiesSetupHook,
@@ -796,33 +794,6 @@ export default function OrchestratorChat( {
 		},
 	} );
 
-	// Recover a first-message turn orphaned by a page change before the server
-	// assigned a session (WOOAI-872 / WOOAI-847): show it as `failed` with a
-	// retry instead of losing it.
-	//
-	// The recovered turn is rendered, never loaded. `loadMessages` would hand it
-	// to the agent, which persists its history under whatever session the panel
-	// currently holds and replays it with the next turn — duplicating a
-	// conversation the merchant never reopened, and racing `useConversation`'s
-	// own hydration for the same slot. Retry re-sends the text as a fresh turn,
-	// so nothing below needs it in history.
-	const reconcileResult = useReconcileDeliveryStatus();
-	const [ failedRetries, setFailedRetries ] = useState< OrphanedTurn[] >( [] );
-	const reconcileDismissedRef = useRef( false );
-	useEffect( () => {
-		// Reconciliation can settle after the chat was cleared. The dismissal is
-		// final: the merchant asked for a blank panel, not for the recovered
-		// question to reappear a moment later.
-		if ( reconcileDismissedRef.current ) {
-			return;
-		}
-		setFailedRetries( reconcileResult ?? [] );
-	}, [ reconcileResult ] );
-	const dismissRecovery = useCallback( () => {
-		reconcileDismissedRef.current = true;
-		setFailedRetries( [] );
-	}, [] );
-
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const maxDynamicSuggestions = isDocked ? undefined : 3;
 	const dynamicSuggestions = useSuggestions?.( maxDynamicSuggestions );
@@ -1433,20 +1404,21 @@ export default function OrchestratorChat( {
 	// the original prompt as a fresh turn. Deliberately does not repopulate the
 	// composer. If the send never dispatches, put both back so the question is
 	// not lost a second time.
-	const handleRetryFailed = useCallback( async ( turn: OrphanedTurn ) => {
-		setFailedRetries( ( previous ) => previous.filter( ( retry ) => retry.id !== turn.id ) );
+	// Recover a first-message turn orphaned by a page change before the server
+	// assigned a session (WOOAI-872 / WOOAI-847): show it as `failed` with a
+	// retry instead of losing it.
+	//
+	// Not `submitChatMessage`: this send owns the composer neither on the way in
+	// (the recovered prompt was never typed) nor on the way out, where putting it
+	// back would leave two ways to retry the same question.
+	const sendRetry = useCallback( async ( text: string ) => {
 		submitDispatchedRef.current = false;
-		// Not `submitChatMessage`: this send owns the composer neither on the way
-		// in (the recovered prompt was never typed) nor on the way out, where
-		// putting it back would leave two ways to retry the same question.
-		await dispatchChatMessageRef.current( turn.text, { restoreComposerOnFailure: false } );
-		if ( submitDispatchedRef.current ) {
-			return;
-		}
-		setFailedRetries( ( previous ) =>
-			previous.some( ( retry ) => retry.id === turn.id ) ? previous : [ ...previous, turn ]
-		);
+		await dispatchChatMessageRef.current( text, { restoreComposerOnFailure: false } );
+		return submitDispatchedRef.current;
 	}, [] );
+	const { failedRetries, handleRetryFailed, dismissRecovery } = useOrphanedTurnRecovery( {
+		sendRetry,
+	} );
 
 	const handleContextCardAction = useCallback(
 		( card: ExternalContextCard, action: ExternalContextCardAction ) => {
@@ -1763,45 +1735,7 @@ export default function OrchestratorChat( {
 			};
 		} );
 
-		// Append each recovered turn as its own question bubble followed by the
-		// retry affordance. These are display-only: they belong to no session, so
-		// they trail whatever the transcript already holds rather than being woven
-		// into it.
-		if ( failedRetries.length > 0 ) {
-			const baseTimestamp =
-				( currentMessages[ currentMessages.length - 1 ]?.timestamp ?? Date.now() ) + 1;
-
-			currentMessages = [
-				...currentMessages,
-				...failedRetries.flatMap( ( turn, index ): AgentsManagerUIMessage[] => [
-					{
-						id: `failed-turn-${ turn.id }`,
-						role: 'user',
-						content: [ { type: 'text', text: turn.text } ],
-						timestamp: baseTimestamp + index * 2,
-						archived: false,
-						showIcon: true,
-					},
-					{
-						id: `failed-retry-${ turn.id }`,
-						role: 'agent',
-						content: [
-							{
-								type: 'component',
-								component: RetryFailedMessage as React.ComponentType,
-								componentProps: {
-									onRetry: () => handleRetryFailed( turn ),
-								},
-							},
-						],
-						timestamp: baseTimestamp + index * 2 + 1,
-						archived: false,
-						showIcon: false,
-						suppressThinking: true,
-					},
-				] ),
-			];
-		}
+		currentMessages = insertRetryAffordances( currentMessages, failedRetries, handleRetryFailed );
 
 		return currentMessages;
 	}, [
