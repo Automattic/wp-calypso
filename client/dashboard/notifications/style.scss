@@ -22,11 +22,13 @@
 
 /* DataViews' infinite scroll listens on its own .dataviews-layout__container
    (flex: 1, overflow: auto in stock styles); it only scrolls if the pane has a
-   bounded height, so pin the list to the viewport like the detail pane. */
+   bounded height, so pin the list to the viewport like the detail pane. The
+   offset also clears the PageHeader above the layout so the pane stays inside
+   the viewport with a gutter instead of running off the bottom. */
 .dashboard-notifications-inbox__list {
 	position: sticky;
 	top: calc(var(--masterbar-height, 0px) + 24px);
-	height: calc(100vh - var(--masterbar-height, 0px) - 48px);
+	height: calc(100dvh - var(--masterbar-height, 0px) - 120px);
 
 	.components-card,
 	.components-card__body,
@@ -331,7 +333,7 @@
 }
 
 .dashboard-notifications-inbox__block-text {
-	white-space: pre-line;
+	white-space: normal;
 }
 
 .dashboard-notifications-inbox__body {
@@ -386,11 +388,16 @@
 
 .dashboard-notifications-inbox__quote {
 	margin: 0;
-	padding: 12px 16px;
+	padding: 0 16px;
 	border-inline-start: 3px solid var(--dashboard-header__border-color, #ddd);
+}
+
+.dashboard-notifications-inbox__body code {
+	padding: 0.1em 0.4em;
+	font-size: 0.9em;
 	background: var(--dashboard__background-color-secondary, #f6f7f7);
-	border-radius: 2px;
-	white-space: pre-line;
+	border: 1px solid var(--dashboard-header__border-color, #ddd);
+	border-radius: 3px;
 }
 
 .dashboard-notifications-inbox__body a {

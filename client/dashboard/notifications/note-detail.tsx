@@ -11,7 +11,7 @@ import { arrowLeft, chevronLeft, chevronRight, external, Icon } from '@wordpress
 import { Fragment, useEffect, useState } from 'react';
 import { Card, CardBody } from '../components/card';
 import { getRelativeTimeString } from '../utils/datetime';
-import { openNote, setFollowStatus, useNote } from './engine';
+import { openNote, useNote } from './engine';
 import {
 	getNoteBodyParts,
 	getNoteParentComment,
@@ -122,24 +122,6 @@ function BlockText( { block }: { block: NoteBlock } ) {
 
 function UserRow( { note, block }: { note: Note; block: NoteBlock } ) {
 	const user = getNoteUserRef( block );
-	const [ isFollowing, setIsFollowing ] = useState( user.isFollowing );
-	const [ isBusy, setIsBusy ] = useState( false );
-
-	const toggleFollow = async () => {
-		if ( user.siteId === null || isBusy ) {
-			return;
-		}
-		setIsBusy( true );
-		const previous = isFollowing;
-		setIsFollowing( ! previous );
-		try {
-			setIsFollowing( await setFollowStatus( note, user.siteId, ! previous ) );
-		} catch {
-			setIsFollowing( previous );
-		} finally {
-			setIsBusy( false );
-		}
-	};
 
 	const avatar = user.avatarUrl ? (
 		<img src={ user.avatarUrl } alt="" width={ 32 } height={ 32 } />
@@ -149,50 +131,55 @@ function UserRow( { note, block }: { note: Note; block: NoteBlock } ) {
 
 	const name = <Text weight={ 600 }>{ user.name }</Text>;
 
+	const blog =
+		user.homeTitle && user.homeUrl ? (
+			<a
+				className="dashboard-notifications-inbox__user-row-name"
+				href={ user.homeUrl }
+				target="_blank"
+				rel="noreferrer"
+			>
+				{ user.homeTitle }
+			</a>
+		) : (
+			user.homeTitle || null
+		);
+
 	return (
 		<HStack
 			className="dashboard-notifications-inbox__user-row"
 			spacing={ 3 }
-			justify="space-between"
+			justify="flex-start"
 			alignment="center"
 		>
-			<HStack spacing={ 3 } justify="flex-start" alignment="center">
-				<span className="dashboard-notifications-inbox__user-row-avatar">{ avatar }</span>
-				<VStack spacing={ 0 }>
-					{ user.url ? (
-						<a
-							className="dashboard-notifications-inbox__user-row-name"
-							href={ user.url }
-							target="_blank"
-							rel="noreferrer"
-						>
-							{ name }
-						</a>
-					) : (
-						name
-					) }
-					{ note.type === 'comment' ? (
-						<Text variant="muted">
-							{ [ getRelativeTimeString( new Date( note.timestamp ) ), user.homeTitle ]
-								.filter( Boolean )
-								.join( ' · ' ) }
-						</Text>
-					) : (
-						user.homeTitle && <Text variant="muted">{ user.homeTitle }</Text>
-					) }
-				</VStack>
-			</HStack>
-			{ user.canFollow && (
-				<Button
-					variant="secondary"
-					size="small"
-					isPressed={ isFollowing }
-					isBusy={ isBusy }
-					onClick={ toggleFollow }
-				>
-					{ isFollowing ? __( 'Subscribed' ) : __( 'Subscribe' ) }
-				</Button>
-			) }
+			<span className="dashboard-notifications-inbox__user-row-avatar">{ avatar }</span>
+			<VStack spacing={ 0 }>
+				{ user.url ? (
+					<a
+						className="dashboard-notifications-inbox__user-row-name"
+						href={ user.url }
+						target="_blank"
+						rel="noreferrer"
+					>
+						{ name }
+					</a>
+				) : (
+					name
+				) }
+				{ note.type === 'comment' ? (
+					<Text variant="muted">
+						{ getRelativeTimeString( new Date( note.timestamp ) ) }
+						{ blog && (
+							<>
+								{ ' · ' }
+								{ blog }
+							</>
+						) }
+					</Text>
+				) : (
+					blog && <Text variant="muted">{ blog }</Text>
+				) }
+			</VStack>
 		</HStack>
 	);
 }
