@@ -1,16 +1,17 @@
-import { Badge } from '@automattic/ui';
 import {
 	Icon,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { FormattedTime } from '../../../components/formatted-time';
 import { formatYmd } from '../../../utils/datetime';
 import { SeverityBadge, getSeverityLabel } from '../../scan/severity-badge';
 import { getThreatIcon, sortSeverity } from '../../scan/utils';
 import type { Threat } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
+import type { ComponentProps } from 'react';
 
 const getStatusLabel = ( status: string ): string => {
 	switch ( status ) {
@@ -23,14 +24,14 @@ const getStatusLabel = ( status: string ): string => {
 	}
 };
 
-const getStatusIntent = ( status: string ): 'default' | 'success' | 'warning' => {
+const getStatusIntent = ( status: string ): ComponentProps< typeof Badge >[ 'intent' ] => {
 	switch ( status ) {
 		case 'fixed':
-			return 'success';
+			return 'stable';
 		case 'ignored':
-			return 'warning';
+			return 'low';
 		default:
-			return 'default';
+			return 'draft';
 	}
 };
 
