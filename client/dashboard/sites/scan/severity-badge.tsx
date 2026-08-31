@@ -32,7 +32,7 @@ export const getSeverityIntent = (
 	if ( severity >= 3 ) {
 		return 'draft';
 	}
-	return 'low';
+	return 'draft';
 };
 
 export const SeverityBadge = ( { severity }: { severity: number } ) => {
