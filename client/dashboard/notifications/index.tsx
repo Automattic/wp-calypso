@@ -6,7 +6,7 @@ import {
 	Spinner,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { filterSortAndPaginate } from '@wordpress/dataviews';
+import { filterSortAndPaginate, DataViews as WPDataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAnalytics } from '../app/analytics';
@@ -178,9 +178,9 @@ function InboxList( {
 				spacing={ 2 }
 				className="dashboard-notifications-inbox__list-toolbar dataviews__view-actions"
 			>
-				<DataViews.ViewConfig />
+				<WPDataViews.ViewConfig />
 			</HStack>
-			<DataViews.Layout />
+			<WPDataViews.Layout />
 			{ hasMore && data.length > 0 && isLoading && (
 				// DataViews suppresses its own load-more spinner when notes are
 				// grouped, so this stands in for it, below the list rows.
