@@ -149,6 +149,32 @@ describe( 'PlanUpsellModal tests', () => {
 	} );
 
 	describe( 'useModalResolutionCallback hook related tests', () => {
+		test( 'A paid domain retained on the free plan should show the FREE_PLAN_PAID_DOMAIN_DIALOG on the domain flow', () => {
+			const { result } = renderHook( () =>
+				useModalResolutionCallback( {
+					isCustomDomainAllowedOnFreePlan: false,
+					isDomainRetainedOnFreePlan: true,
+					flowName: 'domain',
+					paidDomainName: 'yourgroovydomain.com',
+					intent: null,
+				} )
+			);
+			expect( result.current( PLAN_FREE ) ).toBe( FREE_PLAN_PAID_DOMAIN_DIALOG );
+		} );
+
+		test( 'A paid domain not retained on the free plan should still show the PAID_PLAN_PAID_DOMAIN_DIALOG on the domain flow', () => {
+			const { result } = renderHook( () =>
+				useModalResolutionCallback( {
+					isCustomDomainAllowedOnFreePlan: false,
+					isDomainRetainedOnFreePlan: false,
+					flowName: 'domain',
+					paidDomainName: 'yourgroovydomain.com',
+					intent: null,
+				} )
+			);
+			expect( result.current( PLAN_FREE ) ).toBe( PAID_PLAN_PAID_DOMAIN_DIALOG );
+		} );
+
 		test( 'Free plan and free domain selection should not show any modals on the onboarding flow when all other modals are hidden', () => {
 			const { result } = renderHook( () =>
 				useModalResolutionCallback( {
