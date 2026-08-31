@@ -141,11 +141,8 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 	return (
 		<div className="badge-assigned-to">
 			{ tooltip ? (
-				// Badge does not forward refs, so Tooltip needs a DOM element to anchor to.
 				<Tooltip text={ tooltip }>
-					<span style={ { display: 'inline-flex' } }>
-						<Badge intent={ statusType }>{ statusText }</Badge>
-					</span>
+					<Badge intent={ statusType }>{ statusText }</Badge>
 				</Tooltip>
 			) : (
 				<Badge intent={ statusType }>{ statusText }</Badge>

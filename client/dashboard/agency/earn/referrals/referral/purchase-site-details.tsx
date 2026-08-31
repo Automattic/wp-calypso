@@ -47,10 +47,5 @@ export default function PurchaseSiteDetails( {
 		? __( 'When your client pays, you can initiate this site.' )
 		: __( 'When your client pays, you can assign this product to a site.' );
 
-	// Badge does not forward refs, so Tooltip needs a DOM element to anchor to.
-	return (
-		<Tooltip text={ tooltip }>
-			<span style={ { display: 'inline-flex' } }>{ badge }</span>
-		</Tooltip>
-	);
+	return <Tooltip text={ tooltip }>{ badge }</Tooltip>;
 }

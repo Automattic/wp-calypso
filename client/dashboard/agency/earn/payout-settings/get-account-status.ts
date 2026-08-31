@@ -14,7 +14,7 @@ export function getAccountStatus( data: TipaltiPayee | null | undefined ): Accou
 		return null;
 	}
 	const { Status, IsPayable, PayableReason } = data;
-	let statusMeta = null;
+	let statusMeta: Pick< AccountStatus, 'statusType' | 'status' | 'statusReason' > | null = null;
 	switch ( Status ) {
 		case 'Active':
 			if ( ! IsPayable ) {
@@ -66,7 +66,7 @@ export function getAccountStatus( data: TipaltiPayee | null | undefined ): Accou
 		return null;
 	}
 
-	const badgeIntents: Record< string, AccountStatus[ 'badgeIntent' ] > = {
+	const badgeIntents: Record< AccountStatus[ 'statusType' ], AccountStatus[ 'badgeIntent' ] > = {
 		success: 'stable',
 		warning: 'medium',
 		error: 'high',
@@ -76,5 +76,5 @@ export function getAccountStatus( data: TipaltiPayee | null | undefined ): Accou
 		...statusMeta,
 		badgeIntent: badgeIntents[ statusMeta.statusType ],
 		actionRequired: [ 'warning', 'error' ].includes( statusMeta.statusType ),
-	} as AccountStatus;
+	};
 }

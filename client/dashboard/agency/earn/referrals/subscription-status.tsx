@@ -58,10 +58,5 @@ export default function SubscriptionStatus( { item }: { item: Referral } ) {
 		.filter( Boolean )
 		.join( ', ' );
 
-	// Badge does not forward refs, so Tooltip needs a DOM element to anchor to.
-	return (
-		<Tooltip text={ tooltipText }>
-			<span style={ { display: 'inline-flex' } }>{ badge }</span>
-		</Tooltip>
-	);
+	return <Tooltip text={ tooltipText }>{ badge }</Tooltip>;
 }
