@@ -1136,7 +1136,7 @@ export default function CheckoutMainContent( {
 						showProgress ? (
 							<OnboardingProgress
 								currentStep="checkout"
-								isStepSelectDisabled={ leaveModalProps.isLeavePending }
+								isStepSelectDisabled={ leaveModalProps.isLeaveDisabled }
 								onStepSelect={ ( step ) =>
 									handleProgressStepSelect( step, {
 										forceCheckoutBackUrlDomains,
@@ -1155,7 +1155,7 @@ export default function CheckoutMainContent( {
 									showProgress ? undefined : (
 										<Step.BackButton
 											onClick={ leaveModalProps.clickClose }
-											disabled={ leaveModalProps.isLeavePending }
+											disabled={ leaveModalProps.isLeaveDisabled }
 											accessibleWhenDisabled
 										/>
 									)

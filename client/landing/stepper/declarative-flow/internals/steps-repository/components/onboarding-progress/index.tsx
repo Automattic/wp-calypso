@@ -7,8 +7,8 @@ type Props = {
 	currentStep: 'domains' | 'plans' | 'checkout';
 	onStepSelect?: ( step: 'domains' | 'plans' ) => void;
 	/**
-	 * Blocks navigation to the earlier steps while a previous selection is still
-	 * being acted on, so the user can see the click was registered.
+	 * Blocks navigation to the earlier steps while the current step is not yet
+	 * ready to act on a selection.
 	 */
 	isStepSelectDisabled?: boolean;
 };

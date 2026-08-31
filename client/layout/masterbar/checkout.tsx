@@ -100,7 +100,7 @@ const CheckoutMasterbar = ( {
 					showCloseButton ? (
 						<Step.BackButton
 							onClick={ leaveModalProps.clickClose }
-							disabled={ leaveModalProps.isLeavePending }
+							disabled={ leaveModalProps.isLeaveDisabled }
 							accessibleWhenDisabled
 						/>
 					) : undefined

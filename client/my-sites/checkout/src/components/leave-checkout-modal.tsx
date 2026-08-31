@@ -1,7 +1,7 @@
 import { useShoppingCart, useShoppingCartManagerClient } from '@automattic/shopping-cart';
 import { Button, Modal, __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getPreviousRoute from '../../../../state/selectors/get-previous-route';
@@ -10,16 +10,9 @@ import useValidCheckoutBackUrl from '../hooks/use-valid-checkout-back-url';
 import { getGiftCheckoutBackUrl } from '../lib/get-gift-checkout-back-url';
 import { leaveCheckout } from '../lib/leave-checkout';
 
-// A cart request that never settles must not trap the user in checkout, so a
-// deferred "Back" gives up on the cart after this long and leaves anyway.
-const PENDING_LEAVE_TIMEOUT = 5000;
-
 export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const [ stepBackUrl, setStepBackUrl ] = useState< string | undefined >( undefined );
-	const [ pendingLeave, setPendingLeave ] = useState< { backUrl?: string } | undefined >(
-		undefined
-	);
 	const forceCheckoutBackUrl = useValidCheckoutBackUrl( siteUrl );
 	// When a flow supplies a dedicated "back to domains" URL, emptying the cart
 	// sends the user there rather than to the plan-step back URL — the plan they
@@ -80,6 +73,9 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 	);
 
 	const confirmOrLeave = ( backUrl?: string ) => {
+		// A plain close must use the default back URL, not a step-back URL left
+		// over from an earlier `clickStepBack` whose modal was dismissed.
+		setStepBackUrl( backUrl );
 		if ( shouldClearCartWhenLeaving && responseCart.products.length > 0 ) {
 			recordTracksEvent( 'calypso_masterbar_checkout_close_modal_displayed' );
 			setIsModalVisible( true );
@@ -88,55 +84,12 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 		closeAndLeave( { closedWithoutConfirmation: true, forceBackUrl: backUrl } );
 	};
 
-	// The cart answers both questions "Back" depends on: whether to ask about
-	// saving the cart (does it hold anything?) and, for a gift checkout, where
-	// to go (`gift_details`). Neither is known while the cart is still loading
-	// — acting then confirms nothing and sends the gifter to their own home —
-	// so the click is held until the cart settles.
-	const requestLeave = ( backUrl?: string ) => {
-		// The click already waiting on the cart owns the destination. Registering
-		// a new one restarts the timeout below, so without this a user clicking
-		// repeatedly at a cart that never settles would never be let out.
-		if ( pendingLeave ) {
-			return;
-		}
-		// A plain close must use the default back URL, not a step-back URL left
-		// over from an earlier `clickStepBack` whose modal was dismissed.
-		setStepBackUrl( backUrl );
-		if ( isCartLoading ) {
-			setPendingLeave( { backUrl } );
-			return;
-		}
-		confirmOrLeave( backUrl );
-	};
-
-	const confirmOrLeaveRef = useRef( confirmOrLeave );
-	useEffect( () => {
-		confirmOrLeaveRef.current = confirmOrLeave;
-	} );
-
-	useEffect( () => {
-		if ( ! pendingLeave ) {
-			return;
-		}
-		const leaveNow = () => {
-			setPendingLeave( undefined );
-			confirmOrLeaveRef.current( pendingLeave.backUrl );
-		};
-		if ( ! isCartLoading ) {
-			leaveNow();
-			return;
-		}
-		const timeoutId = setTimeout( leaveNow, PENDING_LEAVE_TIMEOUT );
-		return () => clearTimeout( timeoutId );
-	}, [ pendingLeave, isCartLoading ] );
-
 	const clickClose = () => {
-		requestLeave();
+		confirmOrLeave();
 	};
 
 	const clickStepBack = ( destinationUrl: string ) => {
-		requestLeave( destinationUrl );
+		confirmOrLeave( destinationUrl );
 	};
 
 	const clearCartAndLeave = async () => {
@@ -175,7 +128,11 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 	return {
 		isModalVisible,
 		setIsModalVisible,
-		isLeavePending: pendingLeave !== undefined,
+		// The cart answers both questions "Back" depends on: whether to ask about
+		// saving the cart (does it hold anything?) and, for a gift checkout, where
+		// to go (`gift_details`). Neither is known until the cart arrives, so the
+		// control stays disabled rather than acting on a placeholder.
+		isLeaveDisabled: isCartLoading,
 		clickClose,
 		clickStepBack,
 		closeAndLeave,

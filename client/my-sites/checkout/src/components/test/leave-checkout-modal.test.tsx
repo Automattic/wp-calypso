@@ -574,9 +574,9 @@ describe( 'useCheckoutLeaveModal gift checkout', () => {
 
 	describe( 'when the cart is still loading', () => {
 		/**
-		 * Render the hook against a cart whose fetch is held open, so "Back" can
-		 * be clicked while the cart is still loading. `resolveCart` completes the
-		 * fetch with the given cart contents.
+		 * Render the hook against a cart whose fetch is held open, so the loading
+		 * window can be observed. `resolveCart` completes the fetch with the given
+		 * cart contents.
 		 */
 		function renderGiftHookWithPendingCart() {
 			let releaseCart: ( cart: ResponseCart ) => void = () => {};
@@ -610,131 +610,26 @@ describe( 'useCheckoutLeaveModal gift checkout', () => {
 			return { ...rendered, resolveCart };
 		}
 
-		it( 'holds "Back" until the cart loads, then uses the gifted site', async () => {
+		it( 'keeps "Back" disabled while the cart is loading', () => {
+			setReferrer( '' );
+			const { result } = renderGiftHookWithPendingCart();
+
+			expect( result.current.isLeaveDisabled ).toBe( true );
+		} );
+
+		it( 'enables "Back" once the cart arrives, and then uses the gifted site', async () => {
 			setReferrer( '' );
 			const { result, resolveCart } = renderGiftHookWithPendingCart();
+
+			await resolveCart( { gift_details: giftDetails, is_gift_purchase: true } );
+			await waitFor( () => expect( result.current.isLeaveDisabled ).toBe( false ) );
 
 			await act( async () => {
 				result.current.clickClose();
 			} );
-			expect( leaveCheckout ).not.toHaveBeenCalled();
-			expect( result.current.isLeavePending ).toBe( true );
 
-			await resolveCart( { gift_details: giftDetails, is_gift_purchase: true } );
-
-			await waitFor( () =>
-				expect( leaveCheckout ).toHaveBeenCalledWith(
-					expect.objectContaining( { forceCheckoutBackUrl: 'https://giftedsite.wordpress.com/' } )
-				)
-			);
-			expect( result.current.isLeavePending ).toBe( false );
-		} );
-
-		it( 'holds "Back" until the cart loads, then asks about a cart with products', async () => {
-			setReferrer( '' );
-			const { result, resolveCart } = renderGiftHookWithPendingCart();
-
-			await act( async () => {
-				result.current.clickClose();
-			} );
-			expect( result.current.isModalVisible ).toBe( false );
-
-			await resolveCart( {
-				gift_details: giftDetails,
-				is_gift_purchase: true,
-				products: [ planProduct ],
-			} );
-
-			await waitFor( () => expect( result.current.isModalVisible ).toBe( true ) );
-			expect( leaveCheckout ).not.toHaveBeenCalled();
-		} );
-
-		it( 'holds a step-back destination until the cart loads', async () => {
-			setReferrer( '' );
-			const { result, resolveCart } = renderGiftHookWithPendingCart();
-
-			await act( async () => {
-				result.current.clickStepBack( 'https://wordpress.com/setup/onboarding/domains' );
-			} );
-			expect( leaveCheckout ).not.toHaveBeenCalled();
-
-			await resolveCart( { gift_details: giftDetails, is_gift_purchase: true } );
-
-			await waitFor( () =>
-				expect( leaveCheckout ).toHaveBeenCalledWith(
-					expect.objectContaining( {
-						forceCheckoutBackUrl: 'https://wordpress.com/setup/onboarding/domains',
-					} )
-				)
-			);
-		} );
-
-		it( 'does not trap the user when the cart never loads', async () => {
-			jest.useFakeTimers();
-			try {
-				setReferrer( '' );
-				const { result } = renderGiftHookWithPendingCart();
-
-				act( () => {
-					result.current.clickClose();
-				} );
-				expect( leaveCheckout ).not.toHaveBeenCalled();
-
-				act( () => {
-					jest.advanceTimersByTime( 5000 );
-				} );
-
-				expect( leaveCheckout ).toHaveBeenCalledWith(
-					expect.objectContaining( { forceCheckoutBackUrl: undefined } )
-				);
-			} finally {
-				jest.useRealTimers();
-			}
-		} );
-
-		it( 'does not let repeat clicks postpone the escape hatch', async () => {
-			jest.useFakeTimers();
-			try {
-				setReferrer( '' );
-				const { result } = renderGiftHookWithPendingCart();
-
-				act( () => {
-					result.current.clickClose();
-				} );
-				act( () => {
-					jest.advanceTimersByTime( 4000 );
-				} );
-				act( () => {
-					result.current.clickClose();
-				} );
-				act( () => {
-					jest.advanceTimersByTime( 4000 );
-				} );
-
-				expect( leaveCheckout ).toHaveBeenCalledTimes( 1 );
-			} finally {
-				jest.useRealTimers();
-			}
-		} );
-
-		it( 'keeps the first destination when a second click lands before the cart loads', async () => {
-			setReferrer( '' );
-			const { result, resolveCart } = renderGiftHookWithPendingCart();
-
-			await act( async () => {
-				result.current.clickStepBack( 'https://wordpress.com/setup/onboarding/domains' );
-			} );
-			await act( async () => {
-				result.current.clickStepBack( 'https://wordpress.com/setup/onboarding/plans' );
-			} );
-
-			await resolveCart( { gift_details: giftDetails, is_gift_purchase: true } );
-
-			await waitFor( () => expect( leaveCheckout ).toHaveBeenCalledTimes( 1 ) );
 			expect( leaveCheckout ).toHaveBeenCalledWith(
-				expect.objectContaining( {
-					forceCheckoutBackUrl: 'https://wordpress.com/setup/onboarding/domains',
-				} )
+				expect.objectContaining( { forceCheckoutBackUrl: 'https://giftedsite.wordpress.com/' } )
 			);
 		} );
 	} );
