@@ -1392,6 +1392,12 @@ export default function OrchestratorChat( {
 		[ dispatchChatMessage ]
 	);
 
+	// The dispatch path closes over the composer draft, so it changes identity on
+	// every keystroke. Callbacks that ride in the transcript read it through this
+	// ref instead, or the whole message list rebuilds as the merchant types.
+	const dispatchChatMessageRef = useRef( dispatchChatMessage );
+	dispatchChatMessageRef.current = dispatchChatMessage;
+
 	const handleAbort = useCallback( () => {
 		// `abortUpload` reports whether it stopped an in-flight batch, so a stop
 		// that lands just after the upload settles still aborts the agent request.
@@ -1427,23 +1433,20 @@ export default function OrchestratorChat( {
 	// the original prompt as a fresh turn. Deliberately does not repopulate the
 	// composer. If the send never dispatches, put both back so the question is
 	// not lost a second time.
-	const handleRetryFailed = useCallback(
-		async ( turn: OrphanedTurn ) => {
-			setFailedRetries( ( previous ) => previous.filter( ( retry ) => retry.id !== turn.id ) );
-			submitDispatchedRef.current = false;
-			// Not `submitChatMessage`: this send owns the composer neither on the way
-			// in (the recovered prompt was never typed) nor on the way out, where
-			// putting it back would leave two ways to retry the same question.
-			await dispatchChatMessage( turn.text, { restoreComposerOnFailure: false } );
-			if ( submitDispatchedRef.current ) {
-				return;
-			}
-			setFailedRetries( ( previous ) =>
-				previous.some( ( retry ) => retry.id === turn.id ) ? previous : [ ...previous, turn ]
-			);
-		},
-		[ dispatchChatMessage ]
-	);
+	const handleRetryFailed = useCallback( async ( turn: OrphanedTurn ) => {
+		setFailedRetries( ( previous ) => previous.filter( ( retry ) => retry.id !== turn.id ) );
+		submitDispatchedRef.current = false;
+		// Not `submitChatMessage`: this send owns the composer neither on the way
+		// in (the recovered prompt was never typed) nor on the way out, where
+		// putting it back would leave two ways to retry the same question.
+		await dispatchChatMessageRef.current( turn.text, { restoreComposerOnFailure: false } );
+		if ( submitDispatchedRef.current ) {
+			return;
+		}
+		setFailedRetries( ( previous ) =>
+			previous.some( ( retry ) => retry.id === turn.id ) ? previous : [ ...previous, turn ]
+		);
+	}, [] );
 
 	const handleContextCardAction = useCallback(
 		( card: ExternalContextCard, action: ExternalContextCardAction ) => {
