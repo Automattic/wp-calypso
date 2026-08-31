@@ -93,9 +93,9 @@ class VideoPressStatsModule extends Component {
 						className="videopress-stats-module__bar"
 						style={ { '--bar-fill-percentage': `${ fillPercentage }%` } }
 					>
-						<StatsListVideoThumbnail poster={ poster } />
 						<a href={ href } onClick={ onClick }>
-							{ title }
+							<StatsListVideoThumbnail poster={ poster } />
+							<span className="videopress-stats-module__title">{ title }</span>
 						</a>
 					</div>
 				</div>
