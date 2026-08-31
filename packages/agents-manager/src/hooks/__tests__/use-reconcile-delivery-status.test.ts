@@ -142,9 +142,8 @@ describe( 'useReconcileDeliveryStatus', () => {
 		const { result } = renderHook( () => useReconcileDeliveryStatus() );
 		await waitFor( () => expect( result.current ).not.toBeNull() );
 
-		expect( result.current!.failedTexts ).toEqual( [ 'go big' ] );
-		// No message left unresolved, and the stale orphan is cleared.
-		expect( getUnresolvedMessages( result.current!.messages ) ).toHaveLength( 0 );
+		expect( result.current!.map( ( turn ) => turn.text ) ).toEqual( [ 'go big' ] );
+		// The stale orphan is cleared, so the next mount does not re-surface it.
 		expect( sessionStorage.getItem( `${ STORAGE_PREFIX }local-1` ) ).toBeNull();
 	} );
 
@@ -167,7 +166,7 @@ describe( 'useReconcileDeliveryStatus', () => {
 		const { result } = renderHook( () => useReconcileDeliveryStatus() );
 		await waitFor( () => expect( result.current ).not.toBeNull() );
 
-		expect( result.current!.failedTexts ).toEqual( [ 'q' ] );
+		expect( result.current!.map( ( turn ) => turn.text ) ).toEqual( [ 'q' ] );
 	} );
 
 	it( 'leaves the orphan in storage if reconciliation throws', async () => {

@@ -3,8 +3,16 @@
  *
  * The first send of a session is persisted under a client-minted `local-*`
  * key until the server assigns a session id. If the page changes before that,
- * no page ever loads the turn again. Mark it `failed` and hand it to the panel
- * so the question is shown with a retry instead of silently disappearing.
+ * no page ever loads the turn again. Surface it as a failed turn so the panel
+ * can show the question with a retry instead of losing it silently.
+ *
+ * The recovered turn is handed back as a descriptor, not as conversation
+ * history: it is presentational only. Loading it into the agent would persist
+ * it under whatever session the panel currently holds and send it back with
+ * the next turn's history, duplicating a conversation the merchant never
+ * reopened. Retry re-sends the text as a fresh turn, so nothing downstream
+ * needs the orphan in history.
+ *
  * Turns that already belong to a server session are reloaded by
  * `useConversation`, not here.
  */
@@ -21,10 +29,11 @@ import { useEffect, useRef, useState } from '@wordpress/element';
 import { useAgentsManagerContext } from '../contexts';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 
-export interface ReconcileResult {
-	messages: Message[];
-	/** Text of each user turn marked `failed`, for the retry affordance. */
-	failedTexts: string[];
+/** A user turn that never reached the server, for the retry affordance. */
+export interface OrphanedTurn {
+	/** Stable within a result: React key and retry identity. */
+	id: string;
+	text: string;
 }
 
 async function findOrphanedConversation(): Promise< {
@@ -43,9 +52,9 @@ async function findOrphanedConversation(): Promise< {
 }
 
 /** `null` until reconciliation settles, and when there was nothing to recover. */
-export default function useReconcileDeliveryStatus(): ReconcileResult | null {
+export default function useReconcileDeliveryStatus(): OrphanedTurn[] | null {
 	const { agentConfig } = useAgentsManagerContext();
-	const [ result, setResult ] = useState< ReconcileResult | null >( null );
+	const [ orphanedTurns, setOrphanedTurns ] = useState< OrphanedTurn[] | null >( null );
 
 	// Once per mount, and never for Reader Chat (no history to recover into).
 	const hasRunRef = useRef( false );
@@ -71,12 +80,11 @@ export default function useReconcileDeliveryStatus(): ReconcileResult | null {
 				if ( cancelled ) {
 					return;
 				}
-				setResult( {
-					messages,
-					failedTexts: messages
+				setOrphanedTurns(
+					messages
 						.filter( ( m ) => m.role === 'user' && m.metadata?.deliveryStatus === 'failed' )
-						.map( messageTextContent ),
-				} );
+						.map( ( m ) => ( { id: m.messageId, text: messageTextContent( m ) } ) )
+				);
 				// Surfaced in the panel now; drop the stored entry so it does not re-fire.
 				await clearConversation( conversation.storageKey );
 			} )
@@ -95,5 +103,5 @@ export default function useReconcileDeliveryStatus(): ReconcileResult | null {
 		};
 	}, [ agentId ] );
 
-	return result;
+	return orphanedTurns;
 }

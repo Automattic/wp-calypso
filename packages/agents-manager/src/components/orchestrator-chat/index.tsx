@@ -38,7 +38,9 @@ import { usePageOrSiteEditorSurface } from '../../hooks/use-empty-view-suggestio
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import { useImageUpload } from '../../hooks/use-image-upload';
 import { useNavigationContinuation } from '../../hooks/use-navigation-continuation';
-import useReconcileDeliveryStatus from '../../hooks/use-reconcile-delivery-status';
+import useReconcileDeliveryStatus, {
+	type OrphanedTurn,
+} from '../../hooks/use-reconcile-delivery-status';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSourcesAction from '../../hooks/use-sources-action';
 import {
@@ -797,26 +799,19 @@ export default function OrchestratorChat( {
 	// Recover a first-message turn orphaned by a page change before the server
 	// assigned a session (WOOAI-872 / WOOAI-847): show it as `failed` with a
 	// retry instead of losing it.
+	//
+	// The recovered turn is rendered, never loaded. `loadMessages` would hand it
+	// to the agent, which persists its history under whatever session the panel
+	// currently holds and replays it with the next turn — duplicating a
+	// conversation the merchant never reopened, and racing `useConversation`'s
+	// own hydration for the same slot. Retry re-sends the text as a fresh turn,
+	// so nothing below needs it in history.
 	const reconcileResult = useReconcileDeliveryStatus();
-	const [ failedRetries, setFailedRetries ] = useState< string[] >( [] );
+	const [ failedRetries, setFailedRetries ] = useState< OrphanedTurn[] >( [] );
 	const reconcileDismissedRef = useRef( false );
 	useEffect( () => {
-		setFailedRetries( reconcileResult?.failedTexts ?? [] );
+		setFailedRetries( reconcileResult ?? [] );
 	}, [ reconcileResult ] );
-	useEffect( () => {
-		// Show the reconciled transcript, and re-assert it if `useAgentChat`'s own
-		// mount-init clears the panel out from under us before the merchant has
-		// interacted. Once messages are present, the merchant sends, or a
-		// provider deliberately clears the chat, stop.
-		if (
-			reconcileResult &&
-			messages.length === 0 &&
-			! hasUserSentMessage &&
-			! reconcileDismissedRef.current
-		) {
-			loadMessages( reconcileResult.messages );
-		}
-	}, [ reconcileResult, messages.length, hasUserSentMessage, loadMessages ] );
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const maxDynamicSuggestions = isDocked ? undefined : 3;
@@ -1409,26 +1404,16 @@ export default function OrchestratorChat( {
 	// composer. If the send never dispatches, put both back so the question is
 	// not lost a second time.
 	const handleRetryFailed = useCallback(
-		async ( text: string, failedMessageId?: string ) => {
-			setFailedRetries( ( previous ) => previous.filter( ( retry ) => retry !== text ) );
-			if ( failedMessageId ) {
-				setDeletedMessageIds( ( previous ) => new Set( previous ).add( failedMessageId ) );
-			}
+		async ( turn: OrphanedTurn ) => {
+			setFailedRetries( ( previous ) => previous.filter( ( retry ) => retry.id !== turn.id ) );
 			submitDispatchedRef.current = false;
-			await submitChatMessage( text );
+			await submitChatMessage( turn.text );
 			if ( submitDispatchedRef.current ) {
 				return;
 			}
 			setFailedRetries( ( previous ) =>
-				previous.includes( text ) ? previous : [ ...previous, text ]
+				previous.some( ( retry ) => retry.id === turn.id ) ? previous : [ ...previous, turn ]
 			);
-			if ( failedMessageId ) {
-				setDeletedMessageIds( ( previous ) => {
-					const next = new Set( previous );
-					next.delete( failedMessageId );
-					return next;
-				} );
-			}
 		},
 		[ submitChatMessage ]
 	);
@@ -1748,52 +1733,44 @@ export default function OrchestratorChat( {
 			};
 		} );
 
-		// Render an inline retry affordance beneath each failed user turn. Matched
-		// by text to its user message; any left over (text not on screen) trail the
-		// transcript so the affordance is never lost.
+		// Append each recovered turn as its own question bubble followed by the
+		// retry affordance. These are display-only: they belong to no session, so
+		// they trail whatever the transcript already holds rather than being woven
+		// into it.
 		if ( failedRetries.length > 0 ) {
-			const makeRetryMessage = (
-				retry: string,
-				anchor?: AgentsManagerUIMessage,
-				failedMessageId?: string
-			): AgentsManagerUIMessage => ( {
-				id: `failed-retry-${ retry }`,
-				role: 'agent',
-				content: [
-					{
-						type: 'component',
-						component: RetryFailedMessage as React.ComponentType,
-						componentProps: {
-							onRetry: () => handleRetryFailed( retry, failedMessageId ),
-						},
-					},
-				],
-				timestamp: ( anchor?.timestamp ?? Date.now() ) + 1,
-				archived: false,
-				showIcon: false,
-				suppressThinking: true,
-			} );
+			const baseTimestamp =
+				( currentMessages[ currentMessages.length - 1 ]?.timestamp ?? Date.now() ) + 1;
 
-			const remainingRetries = [ ...failedRetries ];
-			const messagesWithRetries: AgentsManagerUIMessage[] = [];
-			for ( const message of currentMessages ) {
-				messagesWithRetries.push( message );
-				if ( message.role !== 'user' ) {
-					continue;
-				}
-				const text = message.content?.find( ( content ) => content.type === 'text' )?.text;
-				const matchIndex = remainingRetries.indexOf( text ?? '' );
-				if ( matchIndex !== -1 ) {
-					const [ retry ] = remainingRetries.splice( matchIndex, 1 );
-					messagesWithRetries.push( makeRetryMessage( retry, message, message.id ) );
-				}
-			}
-			for ( const retry of remainingRetries ) {
-				messagesWithRetries.push(
-					makeRetryMessage( retry, currentMessages[ currentMessages.length - 1 ] )
-				);
-			}
-			currentMessages = messagesWithRetries;
+			currentMessages = [
+				...currentMessages,
+				...failedRetries.flatMap( ( turn, index ): AgentsManagerUIMessage[] => [
+					{
+						id: `failed-turn-${ turn.id }`,
+						role: 'user',
+						content: [ { type: 'text', text: turn.text } ],
+						timestamp: baseTimestamp + index * 2,
+						archived: false,
+						showIcon: true,
+					},
+					{
+						id: `failed-retry-${ turn.id }`,
+						role: 'agent',
+						content: [
+							{
+								type: 'component',
+								component: RetryFailedMessage as React.ComponentType,
+								componentProps: {
+									onRetry: () => handleRetryFailed( turn ),
+								},
+							},
+						],
+						timestamp: baseTimestamp + index * 2 + 1,
+						archived: false,
+						showIcon: false,
+						suppressThinking: true,
+					},
+				] ),
+			];
 		}
 
 		return currentMessages;
