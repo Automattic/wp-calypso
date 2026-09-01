@@ -65,12 +65,15 @@ function SingleEventCard( {
 								href={ cta.url }
 								target={ cta.isExternal ? '_blank' : undefined }
 								rel={ cta.isExternal ? 'noreferrer' : undefined }
-								onClick={ () =>
+								onClick={ () => {
 									recordTracksEvent?.( 'calypso_a4a_overview_event_cta_click', {
 										event_id: id,
 										cta_id: cta.id,
-									} )
-								}
+									} );
+									if ( cta.legacyTrackEventName ) {
+										recordTracksEvent?.( cta.legacyTrackEventName );
+									}
+								} }
 							>
 								{ cta.isExternal ? <NewTabLabel>{ cta.label }</NewTabLabel> : cta.label }
 							</Button>

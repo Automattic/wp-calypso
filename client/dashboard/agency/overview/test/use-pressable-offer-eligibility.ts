@@ -51,6 +51,12 @@ describe( 'hasBenefitedFromIntroductoryOffer', () => {
 
 		expect( hasBenefitedFromIntroductoryOffer( licenses ) ).toBe( true );
 	} );
+
+	it( 'counts a license issued exactly on the offer start date as benefited', () => {
+		const licenses = [ license( { issued_at: '2026-08-11 00:00:00' } ) ];
+
+		expect( hasBenefitedFromIntroductoryOffer( licenses ) ).toBe( true );
+	} );
 } );
 
 describe( 'hasPlanEligibleForExpansionOffer', () => {

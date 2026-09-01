@@ -9,6 +9,9 @@ export const PROGRAM_INCENTIVES_URL = 'https://automattic.com/for-agencies/progr
 // Inlined from client/a8c-for-agencies/components/a4a-pressable-offer/constants
 // so the dashboard has no dependency on the classic A4A app.
 export const PRESSABLE_Q3_2026_OFFER_START_DATE = '2026-08-11';
+/** The day after the offer ends: the promo cards and the license fetch behind
+ * the expansion offer both stop at this date. */
+export const PRESSABLE_Q3_2026_OFFER_ENDS_AT = '2026-10-01';
 export const PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL =
 	'https://pressable.com/legal/late-summer-promotion-terms-and-conditions/';
 export const PRESSABLE_EXPANSION_OFFER_TERMS_URL =

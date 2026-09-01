@@ -5,7 +5,7 @@ import {
 } from '@automattic/api-core';
 import { jetpackAgencyLicensesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { PRESSABLE_Q3_2026_OFFER_START_DATE } from './constants';
+import { PRESSABLE_Q3_2026_OFFER_ENDS_AT, PRESSABLE_Q3_2026_OFFER_START_DATE } from './constants';
 import type { Agency, JetpackLicense } from '@automattic/api-core';
 
 // The offer only covers moves up within the Signature and Premium tiers, the
@@ -62,7 +62,11 @@ export default function usePressableOfferEligibility( agency: Agency | null | un
 	// A regular Pressable plan (not bought through the A4A marketplace) has a null A4A id.
 	const ownsPressableThroughA4A = !! pressable?.pressable_id && pressable?.a4a_id !== null;
 	const isBillingDragonAgency = agency?.billing_system === 'billingdragon';
-	const mayBeEligibleForExpansionOffer = isBillingDragonAgency && ownsPressableThroughA4A;
+	// Once the offer ends the cards can never render, so don't pay for the
+	// license fetch either.
+	const isOfferActive = new Date() < new Date( PRESSABLE_Q3_2026_OFFER_ENDS_AT );
+	const mayBeEligibleForExpansionOffer =
+		isOfferActive && isBillingDragonAgency && ownsPressableThroughA4A;
 
 	const { data: licenses, isFetched } = useQuery( {
 		...jetpackAgencyLicensesQuery( agency?.id ?? 0, {

@@ -4,6 +4,7 @@ import {
 	MARKETPLACE_HOSTING_PRESSABLE_PATH,
 	PRESSABLE_EXPANSION_OFFER_TERMS_URL,
 	PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
+	PRESSABLE_Q3_2026_OFFER_ENDS_AT,
 } from './constants';
 
 export interface FeaturedEventCta {
@@ -14,6 +15,11 @@ export interface FeaturedEventCta {
 	variant?: 'primary' | 'secondary';
 	/** Opens the link in a new tab, with the new-tab arrow on the label. */
 	isExternal?: boolean;
+	/**
+	 * Also fired on click: the per-CTA event name the classic News and updates
+	 * section fires, so funnels keyed on it keep working across the transition.
+	 */
+	legacyTrackEventName?: string;
 }
 
 export interface FeaturedEvent {
@@ -93,15 +99,19 @@ export const PRESSABLE_INTRO_OFFER_EVENT: FeaturedEvent = {
 			label: __( 'View promo details' ),
 			url: MARKETPLACE_HOSTING_PRESSABLE_PATH,
 			variant: 'primary',
+			legacyTrackEventName:
+				'calypso_a4a_overview_events_a4a_pressable_promo_offer_q3_2026_view_promo_details_click',
 		},
 		{
 			id: 'see-full-terms',
 			label: __( 'See full terms' ),
 			url: PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
 			isExternal: true,
+			legacyTrackEventName:
+				'calypso_a4a_overview_events_a4a_pressable_promo_offer_q3_2026_see_full_terms_click',
 		},
 	],
-	endsAt: '2026-10-01',
+	endsAt: PRESSABLE_Q3_2026_OFFER_ENDS_AT,
 };
 
 export const PRESSABLE_EXPANSION_OFFER_EVENT: FeaturedEvent = {
@@ -126,12 +136,16 @@ export const PRESSABLE_EXPANSION_OFFER_EVENT: FeaturedEvent = {
 			url: PRESSABLE_EXPANSION_OFFER_TERMS_URL,
 			variant: 'primary',
 			isExternal: true,
+			legacyTrackEventName:
+				'calypso_a4a_overview_events_a4a_pressable_expansion_offer_view_promo_details_click',
 		},
 		{
 			id: 'see-pressable-plans',
 			label: __( 'See Pressable plans' ),
 			url: MARKETPLACE_HOSTING_PRESSABLE_PATH,
+			legacyTrackEventName:
+				'calypso_a4a_overview_events_a4a_pressable_expansion_offer_see_pressable_plans_click',
 		},
 	],
-	endsAt: '2026-10-01',
+	endsAt: PRESSABLE_Q3_2026_OFFER_ENDS_AT,
 };
