@@ -1,6 +1,6 @@
-import { Badge } from '@automattic/ui';
 import { Tooltip } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { getReferralStatus } from './lib/get-referral-status';
 import type { Referral } from '@automattic/api-core';
 
@@ -58,10 +58,5 @@ export default function SubscriptionStatus( { item }: { item: Referral } ) {
 		.filter( Boolean )
 		.join( ', ' );
 
-	// Badge does not forward refs, so Tooltip needs a DOM element to anchor to.
-	return (
-		<Tooltip text={ tooltipText }>
-			<span style={ { display: 'inline-flex' } }>{ badge }</span>
-		</Tooltip>
-	);
+	return <Tooltip text={ tooltipText }>{ badge }</Tooltip>;
 }

@@ -225,12 +225,14 @@ export function getRememberedWowFunnelSite(
 	return remembered && remembered.funnelKey === key ? remembered : null;
 }
 
-export function rememberWowFunnelSite( site: RememberedWowFunnelSite ): void {
+export function rememberWowFunnelSite( site: RememberedWowFunnelSite ): boolean {
 	try {
 		window.sessionStorage.setItem( SESSION_KEY, JSON.stringify( site ) );
+		return true;
 	} catch {
 		// sessionStorage unavailable — the module-level in-flight cache still de-dupes within the
 		// session, and create-site falls back to creating the site itself.
+		return false;
 	}
 }
 

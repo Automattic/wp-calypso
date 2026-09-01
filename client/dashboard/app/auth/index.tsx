@@ -76,6 +76,45 @@ function isAuthBounceRecord( value: unknown ): value is AuthBounceRecord {
 	);
 }
 
+/**
+ * Whether the session behind the current page can still authenticate.
+ *
+ * `unknown` is separate from `dead` so a caller can choose not to act on a
+ * guess.
+ */
+export type SessionState = 'alive' | 'dead' | 'unknown';
+
+export const SESSION_STATE_QUERY_KEY = [ 'auth', 'session-state' ];
+
+/**
+ * Requesting the current user is the only way to tell a dead session from an
+ * account that merely lacks a permission: the failing request reports both the
+ * same way.
+ */
+export const sessionStateQuery = () => ( {
+	queryKey: SESSION_STATE_QUERY_KEY,
+	queryFn: (): Promise< SessionState > =>
+		fetchUser().then(
+			() => 'alive' as const,
+			( error: unknown ) =>
+				isWpError( error ) &&
+				( error.statusCode === 401 || error.error === 'authorization_required' )
+					? ( 'dead' as const )
+					: ( 'unknown' as const )
+		),
+	retry: false,
+	// Without this the query is parked in `pending` while the browser is offline,
+	// and callers waiting on a verdict never get one.
+	networkMode: 'always' as const,
+	// One answer serves the whole page: a dead session fails every request alike.
+	staleTime: Infinity,
+	meta: { persist: false },
+} );
+
+export function useSessionStateQuery() {
+	return useQuery( sessionStateQuery() );
+}
+
 function getOAuthAuthorizeUrl( {
 	state,
 	next = '',

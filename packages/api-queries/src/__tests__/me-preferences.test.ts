@@ -55,7 +55,6 @@ describe( 'user preference mutation meta', () => {
 		const preferenceKeys: Array< keyof UserPreferences > = [
 			'recentSites',
 			'hosting-dashboard-dark-mode-announcement-dismissed',
-			'hosting-dashboard-opt-in-welcome-modal-dismissed',
 			'account-recovery-interstitial-snoozed-until',
 			'reader-profile-posts-visibility',
 			'reader-profile-sites-visibility',

@@ -33,7 +33,6 @@ import './style.scss';
 interface InterestsModalProps {
 	onContinue: () => void;
 	promptVerification: boolean;
-	totalSteps?: number;
 	// Whether the user has performed any subscribe action (individual tag
 	// follow or pack subscribe) during the current onboarding session. The
 	// parent owns this flag so it persists across remounts of this modal —
@@ -64,7 +63,6 @@ const MAX_INTEREST_TOPICS = 40;
 const InterestsModal: React.FC< InterestsModalProps > = ( {
 	onContinue,
 	promptVerification,
-	totalSteps = 3,
 	hasFollowed,
 	onFollowed,
 	packBlogsById = new Map(),
@@ -375,7 +373,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 
 			<div className="reader-onboarding-modal__footer">
 				<HStack justify="space-between" className="reader-onboarding-modal__footer-actions">
-					<StepIndicator totalSteps={ totalSteps } currentStep={ 2 } />
+					<StepIndicator totalSteps={ 3 } currentStep={ 2 } />
 					<HStack spacing={ 2 } justify="right" className="reader-onboarding-modal__footer-buttons">
 						<Button
 							__next40pxDefaultSize

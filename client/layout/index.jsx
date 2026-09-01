@@ -67,7 +67,7 @@ import BodySectionCssClass from './body-section-css-class';
 import { getColorScheme, getColorSchemeFromCurrentQuery, refreshColorScheme } from './color-scheme';
 import HelpCenterLoader from './help-center-loader';
 import LayoutLoader from './loader';
-import { shouldLoadInlineHelp, handleScroll } from './utils';
+import { shouldLoadInlineHelp, handleScroll, clearSidebarScrollStyles } from './utils';
 
 /*
  * Hotfix for card and button styles hierarchy after <GdprBanner /> removal (see: #70601)
@@ -157,6 +157,47 @@ function SidebarScrollSynchronizer() {
 	const isNarrow = useBreakpoint( '<660px' );
 	const active = ! isNarrow && ! config.isEnabled( 'jetpack-cloud' ); // Jetpack cloud hasn't yet aligned with WPCOM.
 
+	// Sizing `#content` is what makes the window scrollable, so until it runs there is no
+	// scroll event to trigger it.
+	useEffect( () => {
+		if ( ! active ) {
+			return;
+		}
+
+		clearSidebarScrollStyles();
+		handleScroll();
+
+		const contentEl = document.getElementById( 'content' );
+		if ( ! contentEl ) {
+			return;
+		}
+
+		let lastHeight = 0;
+		let frame = null;
+		const observer = new MutationObserver( () => {
+			if ( frame ) {
+				return;
+			}
+			frame = window.requestAnimationFrame( () => {
+				frame = null;
+				const height = document.getElementById( 'secondary' )?.scrollHeight ?? 0;
+				if ( height === lastHeight ) {
+					return;
+				}
+				lastHeight = height;
+				handleScroll();
+			} );
+		} );
+		observer.observe( contentEl, { childList: true, subtree: true } );
+
+		return () => {
+			if ( frame ) {
+				window.cancelAnimationFrame( frame );
+			}
+			observer.disconnect();
+		};
+	}, [ active ] );
+
 	useEffect( () => {
 		if ( active ) {
 			window.addEventListener( 'scroll', handleScroll );
@@ -167,10 +208,7 @@ function SidebarScrollSynchronizer() {
 			if ( active ) {
 				window.removeEventListener( 'scroll', handleScroll );
 				window.removeEventListener( 'resize', handleScroll );
-
-				// remove style attributes added by `handleScroll`
-				document.getElementById( 'content' )?.removeAttribute( 'style' );
-				document.getElementById( 'secondary' )?.removeAttribute( 'style' );
+				clearSidebarScrollStyles();
 			}
 		};
 	}, [ active ] );
@@ -390,9 +428,7 @@ class Layout extends Component {
 					loadAgentsManager={ loadAgentsManager }
 				/>
 				<PluginCompassAgentLoader sectionName={ this.props.sectionName } />
-				{ ! shouldDisableSidebarScrollSynchronizer && (
-					<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
-				) }
+				{ ! shouldDisableSidebarScrollSynchronizer && <SidebarScrollSynchronizer /> }
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass
 					layoutFocus={ this.props.currentLayoutFocus }

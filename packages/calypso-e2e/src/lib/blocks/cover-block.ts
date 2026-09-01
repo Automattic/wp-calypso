@@ -73,10 +73,11 @@ export class CoverBlock {
 		const editorParent = await this.editor.parent();
 		// Gutenberg >= 23.9 renders block styles as a radiogroup with visible labels;
 		// older versions render buttons labelled via aria-label.
-		const styleButton = editorParent
-			.getByRole( 'radio', { name: style, exact: true } )
-			.or( editorParent.locator( `button[aria-label="${ style }"]` ) );
-		await styleButton.first().click();
+		const styleButton = editorParent.locator( `button[aria-label="${ style }"]` );
+		const styleRadio = editorParent.getByRole( 'radio', { name: style, exact: true } );
+		// `editorParent` is the whole editor body, so a same-labelled control in a mounted but
+		// hidden panel can win DOM order; only the rendered style preview is clickable.
+		await styleButton.or( styleRadio ).filter( { visible: true } ).first().click();
 
 		const blockId = await this.block.getAttribute( 'data-block' );
 		const styleSelector = `.is-style-${ style.toLowerCase().replace( ' ', '-' ) }`;
