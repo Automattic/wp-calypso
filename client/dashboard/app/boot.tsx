@@ -41,8 +41,6 @@ function boot( config: AppConfig ) {
 		throw new Error( 'No root element found' );
 	}
 	const root = createRoot( rootElement, {
-		// Report commit-phase crashes that bypass every error boundary (e.g.
-		// browser-translation DOM interference). See DOTMSD-1514.
 		onUncaughtError: handleUncaughtError,
 	} );
 

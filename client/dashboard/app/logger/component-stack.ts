@@ -1,14 +1,10 @@
 // The exception stacktrace for translation-induced commit crashes is ~50 frames
 // of react-dom internals, identical for every crash site, so Sentry groups them
-// all into one issue (CALYPSO-3G00). Shaping the React component stack as a
-// synthetic error's `.stack` and chaining it via `cause` gives Sentry
-// symbolicable, in-app `client/dashboard/…` frames to group on instead, splitting
-// the mega-issue per failing component. The default LinkedErrors integration
-// (@sentry/react v7, key `cause`) turns the chained error into a grouped
-// exception. See DOTMSD-1514.
+// all into one issue. Shaping the React component stack as a synthetic error's
+// `.stack` and chaining it via `cause` gives Sentry symbolicable, in-app
+// `client/dashboard/…` frames to group on instead, splitting the mega-issue per
+// failing component.
 
-// Trim to the innermost frames: full chains drag in shared router/layout ancestry
-// and distort grouping.
 const MAX_COMPONENT_STACK_FRAMES = 8;
 
 /**
@@ -20,7 +16,7 @@ export function attachComponentStackAsCause( error: Error, componentStack?: stri
 		return;
 	}
 
-	// Don't clobber an existing cause chain.
+	// Don't clobber existing cause chain.
 	if ( ( error as { cause?: unknown } ).cause != null ) {
 		return;
 	}

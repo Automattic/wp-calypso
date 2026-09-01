@@ -141,9 +141,6 @@ export const getRouter = ( config: AppConfig ) => {
 	} );
 
 	// Give Sentry navigation breadcrumbs and a route_id tag on the dashboard.
-	// `beforeBreadcrumb` drops navigation breadcrumbs lacking `should_capture`,
-	// and the route_id tag makes every event — including boundary-bypassing and
-	// non-React errors — facetable by page. See DOTMSD-1514.
 	router.subscribe( 'onResolved', ( { fromLocation, toLocation } ) => {
 		const routeId = router.state.matches.at( -1 )?.routeId;
 		if ( routeId ) {
