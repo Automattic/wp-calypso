@@ -754,7 +754,10 @@ const onboarding: FlowV2< typeof initialize > = {
 								);
 							}
 
-							const checkoutStepperPosition = getOnboardingStepperPosition( 'checkout' );
+							const checkoutStepperPosition = getOnboardingStepperPosition(
+								'checkout',
+								skipsPlans
+							);
 
 							// replace the location to delete processing step from history.
 							window.location.replace(

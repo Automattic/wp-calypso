@@ -21,14 +21,26 @@ export const ONBOARDING_STEPPER_GROUP_BY_SLUG: Record< string, OnboardingStepper
 	plans: 'plans',
 };
 
-export const ONBOARDING_STEPPER_TOTAL = ONBOARDING_STEPPER_GROUPS.length;
+/** The groups this visit actually walks through. A preselected plan never sees the grid. */
+export function getOnboardingStepperGroups(
+	skipsPlans = false
+): readonly OnboardingStepperGroup[] {
+	return skipsPlans
+		? ONBOARDING_STEPPER_GROUPS.filter( ( group ) => group !== 'plans' )
+		: ONBOARDING_STEPPER_GROUPS;
+}
 
-export function getOnboardingStepperPosition( group: OnboardingStepperGroup ): {
+export function getOnboardingStepperPosition(
+	group: OnboardingStepperGroup,
+	skipsPlans = false
+): {
 	current: number;
 	total: number;
 } {
+	const groups = getOnboardingStepperGroups( skipsPlans );
+
 	return {
-		current: ONBOARDING_STEPPER_GROUPS.indexOf( group ) + 1,
-		total: ONBOARDING_STEPPER_TOTAL,
+		current: groups.indexOf( group ) + 1,
+		total: groups.length,
 	};
 }

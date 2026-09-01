@@ -51,6 +51,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import Loading from 'calypso/components/loading';
+import { getOnboardingStepperGroups } from 'calypso/landing/stepper/declarative-flow/flows/onboarding/step-counter-config';
 import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress';
 import { useShowOnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
@@ -495,6 +496,9 @@ export default function CheckoutMainContent( {
 		stepsCurrent <= stepsTotal
 			? { current: stepsCurrent, total: stepsTotal }
 			: null;
+	// The redirecting flow reports how many steps its visit had. Onboarding sends one fewer when
+	// the plan arrived preselected, so the grid was never among them.
+	const hidePlansStep = stepsTotal === getOnboardingStepperGroups( true ).length;
 	const selectedSiteData = useSelector( getSelectedSite );
 	const wpcomDomain = useSelector( ( state ) =>
 		getWpComDomainBySiteId( state, selectedSiteData?.ID )
@@ -1136,6 +1140,7 @@ export default function CheckoutMainContent( {
 						showProgress ? (
 							<OnboardingProgress
 								currentStep="checkout"
+								hidePlansStep={ hidePlansStep }
 								isStepSelectDisabled={ leaveModalProps.isLeaveDisabled }
 								onStepSelect={ ( step ) =>
 									handleProgressStepSelect( step, {

@@ -17,6 +17,13 @@ describe( 'OnboardingProgress', () => {
 		expect( onStepSelect ).toHaveBeenCalledWith( 'plans' );
 	} );
 
+	it( 'leaves the plans step out when the plan was chosen before the flow', () => {
+		render( <OnboardingProgress currentStep="domains" hidePlansStep /> );
+
+		expect( screen.queryByRole( 'tab', { name: /Select a plan/ } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'tab', { name: /Complete payment/ } ) ).toBeVisible();
+	} );
+
 	it( 'does not call onStepSelect for the current step', async () => {
 		const onStepSelect = jest.fn();
 		render( <OnboardingProgress currentStep="checkout" onStepSelect={ onStepSelect } /> );

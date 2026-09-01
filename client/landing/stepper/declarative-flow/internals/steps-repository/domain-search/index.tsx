@@ -30,6 +30,8 @@ import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { getCurrentQueryParams } from 'calypso/landing/stepper/utils/get-current-query-params';
+import { skipsPlansStep } from 'calypso/landing/stepper/utils/preselected-plan';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
@@ -613,7 +615,12 @@ const DomainSearchStep: StepType< {
 					// high-quality results can fill the limited vertical space.
 					// The empty/initial state keeps the heading on mobile.
 					<>
-						{ showProgress && <OnboardingProgress currentStep="domains" /> }
+						{ showProgress && (
+							<OnboardingProgress
+								currentStep="domains"
+								hidePlansStep={ skipsPlansStep( getCurrentQueryParams(), planCartItem ) }
+							/>
+						) }
 						{ ! ( isMobileViewport && query ) && (
 							<Step.Heading text={ headerText } subText={ subHeaderText } />
 						) }

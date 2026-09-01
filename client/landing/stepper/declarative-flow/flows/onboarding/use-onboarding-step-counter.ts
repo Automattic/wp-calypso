@@ -1,9 +1,14 @@
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
+import { useSelect } from '@wordpress/data';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
+import { skipsPlansStep } from '../../../utils/preselected-plan';
 import {
 	getOnboardingStepperPosition,
 	ONBOARDING_STEPPER_GROUP_BY_SLUG,
 } from './step-counter-config';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 /**
  * Returns `{ current, total }` for the onboarding Stepper indicator.
@@ -23,6 +28,10 @@ export function useOnboardingStepCounter(
 	slug: string
 ): { current: number; total: number } | null {
 	const isMobileViewport = useViewportMatch( 'small', '<' );
+	const planCartItem = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+		[]
+	);
 
 	if ( flow !== ONBOARDING_FLOW || ! isMobileViewport ) {
 		return null;
@@ -33,5 +42,8 @@ export function useOnboardingStepCounter(
 		return null;
 	}
 
-	return getOnboardingStepperPosition( group );
+	return getOnboardingStepperPosition(
+		group,
+		skipsPlansStep( getCurrentQueryParams(), planCartItem )
+	);
 }
