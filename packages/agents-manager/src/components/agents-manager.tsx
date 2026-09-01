@@ -13,6 +13,7 @@ import { useAgentConfig } from '../hooks/use-agent-config';
 import { useEmptyViewSuggestions } from '../hooks/use-empty-view-suggestions';
 import useHasAiChatEntryButton from '../hooks/use-has-ai-chat-entry-button';
 import { useOpenChatUrlParam } from '../hooks/use-open-chat-url-param';
+import { useSmallViewportDefaultClosed } from '../hooks/use-small-viewport-default-closed';
 import useWebMcpTools from '../hooks/use-webmcp-tools';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import { clearSessionId, getOrCreateSessionId, getSessionId } from '../utils/agent-session';
@@ -106,7 +107,11 @@ export default function AgentsManager( {
 	// the chat first-renders already open in both docked and undocked modes.
 	const isOpenParamHandled = useOpenChatUrlParam();
 
-	if ( ! isStoreReady || ! isOpenParamHandled ) {
+	// On small viewports the floating chat covers the whole screen, so a
+	// persisted-open chat starts closed there; `?ai-open=true` still wins.
+	const isSmallViewportDefaultApplied = useSmallViewportDefaultClosed();
+
+	if ( ! isStoreReady || ! isOpenParamHandled || ! isSmallViewportDefaultApplied ) {
 		return null;
 	}
 

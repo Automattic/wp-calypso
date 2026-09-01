@@ -13,6 +13,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { AI } from '../../components/icons';
 import observeEditorCanvasPointerDown from '../../utils/observe-editor-canvas-pointerdown';
+import { DEFAULT_DESKTOP_MEDIA_QUERY } from '../desktop-media-query';
 import { ResponsiveUndockContext } from './responsive-undock-context';
 
 // On Gutenberg editor screens, only dock when fullscreen mode is on —
@@ -90,7 +91,7 @@ export default function useAgentLayoutManager( {
 	isReady = true,
 	defaultDocked = true,
 	defaultOpen = false,
-	desktopMediaQuery = '(min-width: 1200px)',
+	desktopMediaQuery = DEFAULT_DESKTOP_MEDIA_QUERY,
 	onOpenSidebar = () => {},
 	onCloseSidebar = () => {},
 	onDock = () => {},
