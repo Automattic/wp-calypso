@@ -27,3 +27,24 @@ export function getSafeEditorUrl( rawUrl: string | null ): string | null {
 
 	return isAllowedHost ? parsed.href : null;
 }
+
+// The editor URL the site-spec step captured came from the build's POST
+// response, before the generated front page existed, so it names no route.
+// Once the build is live the status endpoint's site_editor_url points at
+// that page on the edit canvas: prefer it, and carry over the query args the
+// flow added to the captured URL (spec_id, source) that it does not have.
+// Anything unusable falls back to the captured URL.
+export function getLiveEditorUrl( capturedUrl: string, liveUrl: unknown ): string {
+	const safeLiveUrl = getSafeEditorUrl( typeof liveUrl === 'string' ? liveUrl : null );
+	if ( ! safeLiveUrl ) {
+		return capturedUrl;
+	}
+
+	const destination = new URL( safeLiveUrl );
+	new URL( capturedUrl ).searchParams.forEach( ( value, key ) => {
+		if ( ! destination.searchParams.has( key ) ) {
+			destination.searchParams.append( key, value );
+		}
+	} );
+	return destination.href;
+}
