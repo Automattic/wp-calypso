@@ -29,6 +29,8 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 		responseCart,
 		replaceProductsInCart,
 		isLoading: isCartLoading,
+		isPendingUpdate: isCartPendingUpdate,
+		loadingError: cartLoadingError,
 	} = useShoppingCart( cartKey );
 	const giftBackUrl = getGiftCheckoutBackUrl( {
 		giftDetails: responseCart.gift_details,
@@ -132,7 +134,16 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 		// saving the cart (does it hold anything?) and, for a gift checkout, where
 		// to go (`gift_details`). Neither is known until the cart arrives, so the
 		// control stays disabled rather than acting on a placeholder.
-		isLeaveDisabled: isCartLoading,
+		//
+		// `isLoading` alone is not enough: it only covers the initial fetch, and
+		// the products this URL asks for are added afterwards, in a second
+		// round-trip. The gap is widest for the siteless carts a gift checkout
+		// uses, because a 'no-user' cart never fetches — it resolves its initial
+		// cart locally and empty — so the control would go live while the gifted
+		// plan (and with it `gift_details`) is still on its way to the server.
+		// `isPendingUpdate` covers that window. A cart that failed to load stops
+		// waiting, so a broken cart can't trap the user in checkout.
+		isLeaveDisabled: ( isCartLoading || isCartPendingUpdate ) && ! cartLoadingError,
 		clickClose,
 		clickStepBack,
 		closeAndLeave,

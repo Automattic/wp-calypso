@@ -633,4 +633,102 @@ describe( 'useCheckoutLeaveModal gift checkout', () => {
 			);
 		} );
 	} );
+
+	describe( 'when the gifted plan has not reached the server yet', () => {
+		/**
+		 * Reproduce the logged-out gift checkout: a 'no-user' cart never fetches,
+		 * so its initial cart resolves locally and empty, and the gifted plan only
+		 * exists on the cart once checkout has sent it to the server. `releaseCart`
+		 * completes that round-trip.
+		 */
+		async function renderGiftHookWithPendingProducts() {
+			let releaseCart: () => void = () => {};
+			let isCartSyncing = false;
+			const cartSync = new Promise< void >( ( resolve ) => {
+				releaseCart = resolve;
+			} );
+			const client = createShoppingCartManagerClient( {
+				getCart: async () => ( {
+					...getEmptyResponseCart(),
+					cart_key: GIFT_CART_KEY,
+					products: [],
+				} ),
+				setCart: async ( cartKey ) => {
+					isCartSyncing = true;
+					await cartSync;
+					return {
+						...getEmptyResponseCart(),
+						cart_key: cartKey,
+						products: [ planProduct ],
+						gift_details: giftDetails,
+						is_gift_purchase: true,
+					};
+				},
+			} );
+			const rendered = renderHook( () => useCheckoutLeaveModal( { siteUrl: '' } ), {
+				wrapper: buildWrapper( client ),
+			} );
+			await waitFor( () =>
+				expect( client.forCartKey( GIFT_CART_KEY ).getState().isLoading ).toBe( false )
+			);
+
+			// Checkout adds the products named by the URL; the hook lives in the
+			// masterbar, which shares the cart but never adds to it itself.
+			await act( async () => {
+				client
+					.forCartKey( GIFT_CART_KEY )
+					.actions.addProductsToCart( [
+						{ product_slug: planProduct.product_slug, product_id: planProduct.product_id },
+					] )
+					.catch( () => {} );
+			} );
+
+			await waitFor( () => expect( isCartSyncing ).toBe( true ) );
+
+			return {
+				...rendered,
+				releaseCart: async () => {
+					await act( async () => {
+						releaseCart();
+						await cartSync;
+					} );
+				},
+			};
+		}
+
+		it( 'keeps "Back" disabled until the cart comes back with the gift', async () => {
+			setReferrer( '' );
+			const { result, releaseCart } = await renderGiftHookWithPendingProducts();
+
+			expect( result.current.isLeaveDisabled ).toBe( true );
+
+			await releaseCart();
+			await waitFor( () => expect( result.current.isLeaveDisabled ).toBe( false ) );
+
+			await act( async () => {
+				result.current.closeAndLeave();
+			} );
+
+			expect( leaveCheckout ).toHaveBeenCalledWith(
+				expect.objectContaining( { forceCheckoutBackUrl: 'https://giftedsite.wordpress.com/' } )
+			);
+		} );
+	} );
+
+	it( 'enables "Back" when the cart fails to load so checkout is never a dead end', async () => {
+		setReferrer( '' );
+		const client = createShoppingCartManagerClient( {
+			getCart: async () => {
+				throw new Error( 'network down' );
+			},
+			setCart: async () => {
+				throw new Error( 'network down' );
+			},
+		} );
+		const { result } = renderHook( () => useCheckoutLeaveModal( { siteUrl: '' } ), {
+			wrapper: buildWrapper( client ),
+		} );
+
+		await waitFor( () => expect( result.current.isLeaveDisabled ).toBe( false ) );
+	} );
 } );
