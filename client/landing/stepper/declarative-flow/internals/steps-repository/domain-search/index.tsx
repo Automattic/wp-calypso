@@ -480,8 +480,10 @@ const DomainSearchStep: StepType< {
 
 	if ( shouldUseStepContainerV2( flow ) ) {
 		const getTopBarLeftElement = () => {
+			// The progress rail lives in the top bar beside the logo, so it takes
+			// the left slot that would otherwise carry the back button.
 			if ( showProgress ) {
-				return;
+				return <OnboardingProgress currentStep="domains" />;
 			}
 
 			if ( isNewHostedSiteCreationFlow( flow ) ) {
@@ -601,7 +603,6 @@ const DomainSearchStep: StepType< {
 					// high-quality results can fill the limited vertical space.
 					// The empty/initial state keeps the heading on mobile.
 					<>
-						{ showProgress && <OnboardingProgress currentStep="domains" /> }
 						{ ! ( isMobileViewport && query ) && (
 							<Step.Heading text={ headerText } subText={ subHeaderText } />
 						) }
