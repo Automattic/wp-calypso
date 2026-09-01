@@ -5,6 +5,7 @@ import {
 	getBlockSegments,
 	getNoteBodyParts,
 	getNoteSender,
+	getNoteTypeLabel,
 	getNoteUserRef,
 	getNoteView,
 	getReplyRecipient,
@@ -321,7 +322,7 @@ describe( 'getNoteView', () => {
 		}
 		expect( view.body.text ).toBe( 'Nice post!' );
 		expect( view.author.map( ( s ) => s.text ) ).toEqual( [ 'Alice commented on A post' ] );
-		expect( view.post ).toEqual( [] );
+		expect( view.postLink ).toBeNull();
 		expect( view.context ).toEqual( [] );
 		expect( view.avatarUrl ).toBe( base.icon );
 	} );
@@ -345,7 +346,11 @@ describe( 'getNoteView', () => {
 			throw new Error( 'expected comment' );
 		}
 		expect( view.author.map( ( s ) => s.text ) ).toEqual( [ 'Alice' ] );
-		expect( view.post.map( ( s ) => s.text ) ).toEqual( [ ' mentioned you on ', 'A post' ] );
+		expect( view.postLink ).toEqual( {
+			text: 'A post',
+			bold: true,
+			url: 'https://example.com/post/',
+		} );
 	} );
 
 	it( 'resolves a reply as a thread: parent from the header, reply from the body', () => {
@@ -371,7 +376,7 @@ describe( 'getNoteView', () => {
 			return;
 		}
 		expect( view.parent.author.map( ( s ) => s.text ) ).toEqual( [ 'Bob' ] );
-		expect( view.parent.post.map( ( s ) => s.text ) ).toEqual( [ ' on ', 'A post' ] );
+		expect( view.parent.postLink?.text ).toBe( 'A post' );
 		expect( view.parent.avatarUrl ).toBe( 'https://example.com/bob.png' );
 		expect( view.parent.isTruncated ).toBe( true );
 		expect( view.parent.url ).toBe( 'https://example.com/post/#comment-2' );
@@ -490,5 +495,16 @@ describe( 'isReplyToUser', () => {
 
 	it( 'is false for a comment that is not a reply', () => {
 		expect( isReplyToUser( { meta: { ids: {} } } as unknown as Note, 7 ) ).toBe( false );
+	} );
+} );
+
+describe( 'getNoteTypeLabel', () => {
+	it( 'labels a comment carrying the mention glyph as a mention', () => {
+		expect( getNoteTypeLabel( { type: 'comment', noticon: '\uf300' } as unknown as Note ) ).toBe(
+			'Comment'
+		);
+		expect( getNoteTypeLabel( { type: 'comment', noticon: '\uf814' } as unknown as Note ) ).toBe(
+			'Mention'
+		);
 	} );
 } );

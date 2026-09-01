@@ -5,15 +5,15 @@ import {
 	Button,
 	Spinner,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { arrowLeft, chevronLeft, chevronRight, external, Icon } from '@wordpress/icons';
+import { arrowLeft, chevronLeft, chevronRight, Icon } from '@wordpress/icons';
 import { useEffect, useMemo, useState } from 'react';
 import { Card, CardBody } from '../components/card';
 import { openNote, useNote } from './engine';
 import { getNoticonIcon } from './note-icons';
 import { getNoteView } from './note-model';
 import NoteViewSwitch from './note-views';
-import { TitleText } from './rich-text';
 import type { Note } from './engine';
 import type { NoteView, TitleSegment } from './note-model';
 
@@ -43,14 +43,12 @@ function DetailFrame( { onClose, children }: { onClose: () => void; children: Re
 
 function DetailNav( {
 	note,
-	typeLabel,
-	context,
+	heading,
 	onPrevious,
 	onNext,
 }: {
 	note: Note;
-	typeLabel: string;
-	context?: React.ReactNode;
+	heading: React.ReactNode;
 	onPrevious?: ( () => void ) | null;
 	onNext?: ( () => void ) | null;
 } ) {
@@ -64,23 +62,12 @@ function DetailNav( {
 			<span className="dashboard-notifications-inbox__type-chip" aria-hidden="true">
 				<Icon icon={ getNoticonIcon( note.noticon ) } size={ 16 } />
 			</span>
-			<Text weight={ 500 }>{ typeLabel }</Text>
-			{ context }
+			{ heading }
 			<HStack
 				spacing={ 1 }
 				expanded={ false }
 				className="dashboard-notifications-inbox__detail-nav-actions"
 			>
-				{ note.url && (
-					<Button
-						size="small"
-						icon={ external }
-						label={ __( 'Open on site' ) }
-						href={ note.url }
-						target="_blank"
-						rel="noreferrer"
-					/>
-				) }
 				<Button
 					size="small"
 					icon={ chevronLeft }
@@ -100,17 +87,40 @@ function DetailNav( {
 	);
 }
 
-// Comments are headed by what happened and where, leaving the author line to
-// the name and time.
-function getHeadingSegments( view: NoteView ): TitleSegment[] {
+function getPostLink( view: NoteView ): TitleSegment | null {
 	switch ( view.kind ) {
 		case 'thread':
-			return view.parent.post;
+			return view.parent.postLink;
 		case 'comment':
-			return view.post;
+			return view.postLink;
 		default:
-			return [];
+			return null;
 	}
+}
+
+// Comments are headed by their type and the post, as one sentence, leaving the
+// author line to the name and time.
+function Heading( { view }: { view: NoteView } ) {
+	const post = getPostLink( view );
+	if ( ! post ) {
+		return <Text weight={ 500 }>{ view.typeLabel }</Text>;
+	}
+	const postNode = post.url ? (
+		<a href={ post.url } target="_blank" rel="noreferrer">
+			{ post.text }
+		</a>
+	) : (
+		<span>{ post.text }</span>
+	);
+	return (
+		<Text className="dashboard-notifications-inbox__note-title">
+			{ createInterpolateElement(
+				/* translators: <label/> is the notification type (Comment, Mention); <post/> is the post title. */
+				__( '<label /> on <post />' ),
+				{ label: <strong>{ view.typeLabel }</strong>, post: postNode }
+			) }
+		</Text>
+	);
 }
 
 export default function NoteDetail( {
@@ -155,18 +165,11 @@ export default function NoteDetail( {
 		);
 	}
 
-	const heading = getHeadingSegments( view );
-	const context = heading.length > 0 && <TitleText segments={ heading } />;
+	const heading = <Heading view={ view } />;
 
 	return (
 		<DetailFrame onClose={ onClose }>
-			<DetailNav
-				note={ note }
-				typeLabel={ view.typeLabel }
-				context={ context }
-				onPrevious={ onPrevious }
-				onNext={ onNext }
-			/>
+			<DetailNav note={ note } heading={ heading } onPrevious={ onPrevious } onNext={ onNext } />
 			<NoteViewSwitch view={ view } />
 		</DetailFrame>
 	);

@@ -4,6 +4,7 @@ import {
 	getNoteParentComment,
 	getNoteUserRef,
 } from '@automattic/notifications/src/common/body-parts';
+import { getNoticonName } from '@automattic/notifications/src/common/icon-map';
 import { getBlockSegments, getTitleSegments } from '@automattic/notifications/src/common/segments';
 import { getNoteExcerpt, getNoteSender } from '@automattic/notifications/src/common/summary';
 import { __ } from '@wordpress/i18n';
@@ -41,7 +42,7 @@ export type NoteBlock = Note[ 'body' ][ number ];
 export function getNoteTypeLabel( note: Note ): string {
 	switch ( note.type ) {
 		case 'comment':
-			return __( 'Comment' );
+			return getNoticonName( note.noticon ) === 'mention' ? __( 'Mention' ) : __( 'Comment' );
 		case 'comment_like':
 			return __( 'Comment like' );
 		case 'like':
@@ -115,6 +116,12 @@ export function getContextRuns( blocks: NoteBlock[] ): ContextRun[] {
 	return runs;
 }
 
+// The post a title names is its last emphasised range after the author.
+function getPostLink( segments: TitleSegment[] ): TitleSegment | null {
+	const post = segments.slice( 1 ).filter( ( segment ) => segment.bold );
+	return post.length > 0 ? post[ post.length - 1 ] : null;
+}
+
 type NoteViewBase = {
 	note: Note;
 	typeLabel: string;
@@ -132,8 +139,8 @@ export type NoteView = NoteViewBase &
 				parent: {
 					/** The parent's author, on its own. */
 					author: TitleSegment[];
-					/** Where it sits: " on {post}", for a heading. */
-					post: TitleSegment[];
+					/** The post it sits on, for a heading. */
+					postLink: TitleSegment | null;
 					excerpt: string;
 					url: string | null;
 					isTruncated: boolean;
@@ -150,8 +157,8 @@ export type NoteView = NoteViewBase &
 				avatarUrl: string;
 				/** The commenter, on their own. */
 				author: TitleSegment[];
-				/** What they did and where: " commented on {post}", for a heading. */
-				post: TitleSegment[];
+				/** The post commented on, for a heading. */
+				postLink: TitleSegment | null;
 				body: NoteBlock;
 		  }
 		| { kind: 'achievement'; excerpt: string | null }
@@ -196,7 +203,7 @@ export function getNoteView( note: Note ): NoteView {
 				// The header's first range is the author (getNoteParentComment
 				// guarantees it), so the first segment is the name.
 				author: authorSegments.slice( 0, 1 ),
-				post: authorSegments.slice( 1 ),
+				postLink: getPostLink( authorSegments ),
 				excerpt: parentComment.excerpt.text,
 				url: parentComment.url,
 				isTruncated: isTruncated( parentComment.excerpt.text ),
@@ -219,7 +226,7 @@ export function getNoteView( note: Note ): NoteView {
 			kind: 'comment',
 			avatarUrl: note.icon,
 			author: leadsWithAuthor ? title.slice( 0, 1 ) : title,
-			post: leadsWithAuthor ? title.slice( 1 ) : [],
+			postLink: leadsWithAuthor ? getPostLink( title ) : null,
 			body: comment,
 		};
 	}
