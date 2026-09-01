@@ -1,3 +1,4 @@
+import { DomainProductSlugs, DotcomFeatures } from '@automattic/api-core';
 import {
 	OnboardActions,
 	OnboardSelect,
@@ -8,6 +9,9 @@ import { addProductsToCart, DOMAIN_AND_PLAN_FLOW } from '@automattic/onboarding'
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect, useRef } from 'react';
+import { hasPlanFeature } from 'calypso/dashboard/utils/site-features';
+import wpcom from 'calypso/lib/wp';
+import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
 import { SIGNUP_DOMAIN_ORIGIN } from '../../../../../lib/analytics/signup';
 import { useQuery } from '../../../hooks/use-query';
 import { useSite } from '../../../hooks/use-site';
@@ -35,6 +39,12 @@ const domainUpsell: Flow = {
 		const site = useSite();
 		const hasQualifyingPlan =
 			!! site?.plan && ! site.plan.is_free && site.plan.billing_period !== 'Monthly';
+		// Connecting a domain is bundled with every paid plan, so there is nothing left to buy.
+		const mappingIsIncludedInPlan =
+			!! site &&
+			( ( !! site.plan && ! site.plan.is_free ) ||
+				hasPlanFeature( site, DotcomFeatures.DOMAIN_MAPPING ) );
+		const domainConnectionSetupUrl = useQuery().get( 'domainConnectionSetupUrl' );
 		const { getDomainCartItems, getPlanCartItem } = useSelect(
 			( select ) => ( {
 				getDomainCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItems,
@@ -51,6 +61,12 @@ const domainUpsell: Flow = {
 			launchpadScreenOption === 'skipped' || ! backTo ? `/home/${ siteSlug }` : backTo;
 
 		const submittedDomains = useRef( false );
+
+		function getDomainConnectionSetupUrl( domain: string ) {
+			return domainConnectionSetupUrl
+				? domainConnectionSetupUrl.replace( '%s', domain )
+				: domainMappingSetup( siteSlug, domain, '', false, true );
+		}
 
 		async function addToCartAndRedirectToCheckout( { includePlan = true } = {} ) {
 			const planCartItem = getPlanCartItem();
@@ -137,7 +153,54 @@ const domainUpsell: Flow = {
 						return navigate( destination as typeof currentStep );
 					}
 
+					// The step verified domain ownership and created the mapping itself, so all
+					// that is left is to walk the user through pointing the domain at the site.
+					if (
+						'ownershipVerificationCompleted' in providedDependencies &&
+						providedDependencies.domain
+					) {
+						submittedDomains.current = true;
+
+						return window.location.assign(
+							getDomainConnectionSetupUrl( providedDependencies.domain as string )
+						);
+					}
+
+					// The domain can only be connected once the user has bought a plan.
+					if ( 'skipToPlan' in providedDependencies ) {
+						return navigate( STEPS.PLANS.slug );
+					}
+
 					submittedDomains.current = true;
+
+					const domainCartItem = providedDependencies.domainCartItem as
+						| MinimalRequestCartProduct
+						| undefined;
+
+					if ( ! domainCartItem ) {
+						return navigate( STEPS.PLANS.slug );
+					}
+
+					// Nothing to charge for: connect the domain right away and send the user to the
+					// setup instructions rather than through an empty checkout.
+					if (
+						site &&
+						mappingIsIncludedInPlan &&
+						domainCartItem.product_slug === DomainProductSlugs.DOMAIN_MAPPING
+					) {
+						const domain = domainCartItem.meta as string;
+
+						try {
+							await wpcom.req.post( `/sites/${ site.ID }/add-domain-mapping`, { domain } );
+
+							return window.location.assign( getDomainConnectionSetupUrl( domain ) );
+						} catch {
+							// Fall through to checkout, which can process the mapping as well.
+						}
+					}
+
+					setDomainCartItem( domainCartItem );
+					setDomainCartItems( [ domainCartItem ] );
 
 					if ( hasQualifyingPlan ) {
 						return addToCartAndRedirectToCheckout( { includePlan: false } );
