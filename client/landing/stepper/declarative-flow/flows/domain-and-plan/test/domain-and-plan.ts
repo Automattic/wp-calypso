@@ -84,6 +84,22 @@ const FREE_SITE = {
 
 const MAPPING_CART_ITEM = { product_slug: 'domain_map', meta: 'example.com' };
 const TRANSFER_CART_ITEM = { product_slug: 'domain_transfer', meta: 'example.com' };
+const PAID_MONTHLY_SITE = {
+	ID: 123,
+	plan: {
+		product_slug: 'value_bundle_monthly',
+		is_free: false,
+		billing_period: 'Monthly',
+		features: { active: [ 'domain-mapping' ] },
+	},
+};
+
+// `features` is required by the type but can be absent in real API responses.
+const SITE_WITHOUT_PLAN_FEATURES = {
+	ID: 123,
+	plan: { product_slug: 'free_plan', is_free: true, billing_period: '' },
+};
+
 const PLAN_CART_ITEM = { product_slug: 'value_bundle' };
 
 const submitStep = async ( step: string, providedDependencies: Record< string, unknown > = {} ) => {
@@ -104,6 +120,31 @@ const submitStep = async ( step: string, providedDependencies: Record< string, u
 
 const submitUseMyDomain = ( providedDependencies: Record< string, unknown > ) =>
 	submitStep( 'use-my-domain', providedDependencies );
+
+/**
+ * `submittedDomains` is a ref on the hook instance, so the submit and the later
+ * goBack have to share one render to observe it.
+ */
+const submitUseMyDomainThenGoBack = async ( providedDependencies: Record< string, unknown > ) => {
+	const navigate = jest.fn();
+	let currentStep = 'use-my-domain';
+
+	const { result, rerender } = renderHook( () =>
+		domainAndPlan.useStepNavigation.call(
+			domainAndPlan,
+			currentStep as Parameters< typeof domainAndPlan.useStepNavigation >[ 0 ],
+			navigate
+		)
+	);
+
+	await result.current.submit?.( providedDependencies );
+
+	currentStep = 'plans';
+	rerender();
+	result.current.goBack?.();
+
+	return { goBackFromPlans: navigate };
+};
 
 describe( 'domain-and-plan flow use-my-domain navigation', () => {
 	const originalLocation = window.location;
@@ -195,6 +236,50 @@ describe( 'domain-and-plan flow use-my-domain navigation', () => {
 
 		expect( navigate ).toHaveBeenCalledWith( 'plans' );
 		expect( window.location.assign ).not.toHaveBeenCalled();
+	} );
+
+	it( 'sends a paying customer to checkout, not the plans step, when the mapping request fails', async () => {
+		( useSite as jest.Mock ).mockReturnValue( PAID_MONTHLY_SITE );
+		( wpcom.req.post as jest.Mock ).mockRejectedValueOnce( new Error( 'nope' ) );
+		mockGetDomainCartItems.mockReturnValue( [ MAPPING_CART_ITEM ] );
+
+		const { navigate } = await submitUseMyDomain( { domainCartItem: MAPPING_CART_ITEM } );
+
+		expect( navigate ).not.toHaveBeenCalled();
+		expect( addProductsToCart ).toHaveBeenCalledWith( 'example.wordpress.com', 'domain-and-plan', [
+			MAPPING_CART_ITEM,
+		] );
+		expect( window.location.assign ).toHaveBeenCalledWith(
+			expect.stringContaining( '/checkout/example.wordpress.com' )
+		);
+	} );
+
+	it( 'keeps the plans-step back button pointed at domain search after skipping to plans', async () => {
+		( useSite as jest.Mock ).mockReturnValue( FREE_SITE );
+
+		const { goBackFromPlans } = await submitUseMyDomainThenGoBack( { skipToPlan: true } );
+
+		expect( goBackFromPlans ).toHaveBeenCalledWith( 'domains' );
+		expect( window.location.assign ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not throw when the plan is missing its features list', async () => {
+		( useSite as jest.Mock ).mockReturnValue( SITE_WITHOUT_PLAN_FEATURES );
+
+		const { navigate } = await submitUseMyDomain( { domainCartItem: MAPPING_CART_ITEM } );
+
+		expect( navigate ).toHaveBeenCalledWith( 'plans' );
+	} );
+
+	it( 'ignores an off-site connection setup URL', async () => {
+		mockQueryArgs = 'domainConnectionSetupUrl=https%3A%2F%2Fevil.example%2F%25s';
+		( useSite as jest.Mock ).mockReturnValue( PAID_ANNUAL_SITE );
+
+		await submitUseMyDomain( { domainCartItem: MAPPING_CART_ITEM } );
+
+		expect( window.location.assign ).toHaveBeenCalledWith(
+			'/domains/mapping/example.wordpress.com/setup/example.com?firstVisit=true'
+		);
 	} );
 
 	it( 'uses the connection setup URL supplied by the entry point when there is one', async () => {

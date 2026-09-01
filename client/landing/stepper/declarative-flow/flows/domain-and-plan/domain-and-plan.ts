@@ -9,7 +9,8 @@ import { addProductsToCart, DOMAIN_AND_PLAN_FLOW } from '@automattic/onboarding'
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect, useRef } from 'react';
-import { hasPlanFeature } from 'calypso/dashboard/utils/site-features';
+import { dashboardOrigins } from 'calypso/dashboard/utils/link';
+import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import wpcom from 'calypso/lib/wp';
 import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
 import { SIGNUP_DOMAIN_ORIGIN } from '../../../../../lib/analytics/signup';
@@ -40,11 +41,23 @@ const domainUpsell: Flow = {
 		const hasQualifyingPlan =
 			!! site?.plan && ! site.plan.is_free && site.plan.billing_period !== 'Monthly';
 		// Connecting a domain is bundled with every paid plan, so there is nothing left to buy.
+		// `features` can be missing at runtime even though the type says otherwise, so this
+		// deliberately does not use `hasPlanFeature()`, which would throw during render.
 		const mappingIsIncludedInPlan =
-			!! site &&
-			( ( !! site.plan && ! site.plan.is_free ) ||
-				hasPlanFeature( site, DotcomFeatures.DOMAIN_MAPPING ) );
-		const domainConnectionSetupUrl = useQuery().get( 'domainConnectionSetupUrl' );
+			( !! site?.plan && ! site.plan.is_free ) ||
+			!! site?.plan?.features?.active?.includes( DotcomFeatures.DOMAIN_MAPPING );
+
+		const domainConnectionSetupUrlParam = useQuery().get( 'domainConnectionSetupUrl' );
+		// The template is attacker-controllable through the URL and is handed to
+		// `window.location.assign()`, so only accept relative paths and dashboard origins.
+		const domainConnectionSetupUrl =
+			domainConnectionSetupUrlParam &&
+			( isRelativeUrl( domainConnectionSetupUrlParam ) ||
+				dashboardOrigins().some( ( origin ) =>
+					domainConnectionSetupUrlParam.startsWith( origin )
+				) )
+				? domainConnectionSetupUrlParam
+				: null;
 		const { getDomainCartItems, getPlanCartItem } = useSelect(
 			( select ) => ( {
 				getDomainCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItems,
@@ -186,12 +199,12 @@ const domainUpsell: Flow = {
 						);
 					}
 
+					submittedDomains.current = true;
+
 					// The domain can only be connected once the user has bought a plan.
 					if ( 'skipToPlan' in providedDependencies ) {
 						return navigate( STEPS.PLANS.slug );
 					}
-
-					submittedDomains.current = true;
 
 					const domainCartItem = providedDependencies.domainCartItem as
 						| MinimalRequestCartProduct
@@ -201,26 +214,29 @@ const domainUpsell: Flow = {
 						return navigate( STEPS.PLANS.slug );
 					}
 
+					setDomainCartItem( domainCartItem );
+					setDomainCartItems( [ domainCartItem ] );
+
+					const domain = domainCartItem.meta;
+
 					// Nothing to charge for: connect the domain right away and send the user to the
 					// setup instructions rather than through an empty checkout.
 					if (
 						site &&
+						domain &&
 						mappingIsIncludedInPlan &&
 						domainCartItem.product_slug === DomainProductSlugs.DOMAIN_MAPPING
 					) {
-						const domain = domainCartItem.meta as string;
-
 						try {
 							await wpcom.req.post( `/sites/${ site.ID }/add-domain-mapping`, { domain } );
 
 							return window.location.assign( getDomainConnectionSetupUrl( domain ) );
 						} catch {
-							// Fall through to checkout, which can process the mapping as well.
+							// The plan already covers the connection, so let checkout retry it. Falling
+							// through to the plans step would ask a paying customer to buy a plan twice.
+							return addToCartAndRedirectToCheckout( { includePlan: false } );
 						}
 					}
-
-					setDomainCartItem( domainCartItem );
-					setDomainCartItems( [ domainCartItem ] );
 
 					if ( hasQualifyingPlan ) {
 						return addToCartAndRedirectToCheckout( { includePlan: false } );
