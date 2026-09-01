@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import foodImage from 'calypso/assets/images/reader/onboarding/food.webp';
+import heroImage from 'calypso/assets/images/reader/discover-hero.webp';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
@@ -23,7 +23,7 @@ export const DiscoverLoggedOutHero = () => {
 				</a>
 			</div>
 			<div className="discover-logged-out-hero__images" aria-hidden="true">
-				<img src={ foodImage } alt="" width={ 640 } height={ 907 } decoding="async" />
+				<img src={ heroImage } alt="" width={ 800 } height={ 504 } decoding="async" />
 			</div>
 		</div>
 	);
