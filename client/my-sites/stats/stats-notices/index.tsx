@@ -12,6 +12,7 @@ import {
 import usePlanUsageQuery, {
 	getUsageLimitStatus,
 } from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
+import usePremiumAnalyticsStatusQuery from 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query';
 import { shouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { useSelector, useDispatch } from 'calypso/state';
 import { resetSiteState } from 'calypso/state/purchases/actions';
@@ -134,9 +135,28 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	const { data } = usePlanUsageQuery( siteId );
 	const { isNearLimit, isOverLimit } = getUsageLimitStatus( data );
 
+	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
+
+	// Only cohort sites pay for this round-trip: the server decides who is offered the preview, and
+	// everyone else never reaches the query. It has to be resolved out here rather than inside the
+	// notice, because a notice that wins its conflict group and then renders nothing takes the
+	// upsells and the JITM slot down with it — the parent only sees the element, not the null.
+	const isOfferedTrafficTabPreview = serverNoticesVisibility?.traffic_tab_preview === true;
+	const {
+		data: hasPremiumAnalytics,
+		isLoading: isLoadingPremiumAnalyticsStatus,
+		isError: isPremiumAnalyticsStatusError,
+	} = usePremiumAnalyticsStatusQuery( siteId, isOfferedTrafficTabPreview );
+
+	// A failed read covers two cases that both mean "don't offer the switch": the route 403s for
+	// anyone who can't administer the site, and it doesn't exist on a Jetpack too old to serve it.
+	const canEnableTrafficTabPreview =
+		isOfferedTrafficTabPreview && ! isPremiumAnalyticsStatusError && ! hasPremiumAnalytics;
+
 	const noticeOptions = {
 		siteId,
 		isOdysseyStats,
+		canEnableTrafficTabPreview,
 		isWpcom,
 		isVip,
 		isP2,
@@ -156,8 +176,6 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		hasWpcomUpsell,
 	};
 
-	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
-
 	// TODO: Integrate checking purchases and plans loaded state into `hasSiteProductJetpackStatsPaid`.
 	const hasLoadedPurchases = useSelector( hasLoadedSitePurchasesFromServer );
 	// Only check plans loaded state for supporting Stats on WPCOM.
@@ -169,7 +187,10 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		! hasLoadedPlans ||
 		isLoading ||
 		isError ||
-		isRequestingSitePurchases
+		isRequestingSitePurchases ||
+		// Waiting here rather than rendering an upsell and swapping it for the preview a moment
+		// later. Only sites the server offered the preview to ever wait.
+		isLoadingPremiumAnalyticsStatus
 	) {
 		return null;
 	}

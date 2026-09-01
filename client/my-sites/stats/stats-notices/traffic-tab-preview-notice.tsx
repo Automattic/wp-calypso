@@ -5,12 +5,11 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import usePremiumAnalyticsStatusMutation from 'calypso/my-sites/stats/hooks/use-premium-analytics-status-mutation';
-import usePremiumAnalyticsStatusQuery from 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query';
 import { useSelector } from 'calypso/state';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import { StatsNoticeProps } from './types';
 
-const PREMIUM_ANALYTICS_PAGE_SLUG = 'jetpack-premium-analytics-wp-admin';
+const PREMIUM_ANALYTICS_PAGE_PATH = 'admin.php?page=jetpack-premium-analytics-wp-admin';
 
 const trackEvent = ( isOdysseyStats: boolean, name: string, siteId: number | null ) => {
 	const prefix = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
@@ -21,11 +20,18 @@ const trackEvent = ( isOdysseyStats: boolean, name: string, siteId: number | nul
 
 const TrafficTabPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
 	const translate = useTranslate();
-	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+	const dashboardUrl = useSelector( ( state ) =>
+		getSiteAdminUrl( state, siteId, PREMIUM_ANALYTICS_PAGE_PATH )
+	);
+	// Scoped to the site rather than held as a flag: the notices host reuses this component across
+	// site switches in Calypso, so a plain boolean would carry one site's dismissal to the next.
 	const [ dismissedSiteId, setDismissedSiteId ] = useState< number | null >( null );
+	const [ failedSiteId, setFailedSiteId ] = useState< number | null >( null );
 
-	const { data: isAlreadyEnabled, isLoading, isError } = usePremiumAnalyticsStatusQuery( siteId );
-	const { mutate: enablePreview, isPending: isEnabling } =
+	const noticeDismissed = dismissedSiteId === siteId;
+	const enableFailed = failedSiteId === siteId;
+
+	const { mutateAsync: enablePreviewAsync, isPending: isEnabling } =
 		usePremiumAnalyticsStatusMutation( siteId );
 
 	// Dismissal is news-based, not time-based: the invitation shouldn't come back on a timer, and a
@@ -37,11 +43,6 @@ const TrafficTabPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps )
 		3650 * 24 * 3600
 	);
 
-	// A failed status read stands in for two cases that both mean "don't invite this person": the
-	// route 403s for anyone who can't administer the site, and it doesn't exist at all on a Jetpack
-	// too old to serve it. Either way there is no point offering a switch they can't throw.
-	const isVisible = dismissedSiteId !== siteId && ! isLoading && ! isError && ! isAlreadyEnabled;
-
 	const dismissNotice = () => {
 		trackEvent( isOdysseyStats, 'dismissed', siteId );
 
@@ -50,28 +51,39 @@ const TrafficTabPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps )
 		postponeNoticeAsync().catch( () => {} );
 	};
 
-	const enableTrafficTabPreview = () => {
+	const enableTrafficTabPreview = async () => {
 		trackEvent( isOdysseyStats, 'enable_button_clicked', siteId );
+		setFailedSiteId( null );
 
-		enablePreview( true, {
-			onSuccess: () => {
-				// The site only picks the flag up on a fresh page load, so land the customer in the
-				// dashboard rather than re-rendering here. Dismiss too: the invitation has been
-				// accepted, and classic Stats stays reachable from the menu.
-				postponeNoticeAsync().catch( () => {} );
-				window.location.href = `${ adminUrl }admin.php?page=${ PREMIUM_ANALYTICS_PAGE_SLUG }`;
-			},
-		} );
+		try {
+			// Record the dismissal first and wait for it. Navigation tears down the proxy iframe
+			// Calypso posts these through, so a request fired alongside it can be lost — and losing
+			// this one leaves the invitation standing after it has been accepted.
+			await postponeNoticeAsync().catch( () => {} );
+
+			const { enabled } = await enablePreviewAsync( true );
+			if ( ! enabled ) {
+				setFailedSiteId( siteId );
+				return;
+			}
+
+			// The site only picks the flag up on a fresh page load, so send the customer into the
+			// dashboard rather than re-rendering here.
+			window.location.href = dashboardUrl as string;
+		} catch {
+			setFailedSiteId( siteId );
+		}
 	};
 
 	useEffect( () => {
-		if ( isVisible ) {
+		if ( ! noticeDismissed ) {
 			trackEvent( isOdysseyStats, 'viewed', siteId );
 		}
-		// Fires once the notice actually reaches the screen, which is a request later than mount.
-	}, [ isVisible, isOdysseyStats, siteId ] );
+	}, [ noticeDismissed, isOdysseyStats, siteId ] );
 
-	if ( ! isVisible ) {
+	// Without somewhere to land, accepting would switch the dashboard on and drop the customer on a
+	// 404. getSiteAdminUrl() returns null when the site record carries no admin_url.
+	if ( noticeDismissed || ! dashboardUrl ) {
 		return null;
 	}
 
@@ -91,6 +103,11 @@ const TrafficTabPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps )
 						'We’ve rebuilt your traffic stats from the ground up — clearer charts, and widgets you can move and resize to suit how you read your site. You can switch it on for this site and take a look.'
 					) }
 				</p>
+				{ enableFailed && (
+					<p key="error" role="alert">
+						{ translate( 'Something went wrong switching it on. Please try again.' ) }
+					</p>
+				) }
 				<p key="cta">
 					<Button
 						variant="primary"

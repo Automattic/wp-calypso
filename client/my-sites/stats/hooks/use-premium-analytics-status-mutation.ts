@@ -1,5 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
+import {
+	premiumAnalyticsStatusQueryKey,
+	premiumAnalyticsStatusRequest,
+} from './use-premium-analytics-status-query';
+
+type PremiumAnalyticsStatus = {
+	enabled: boolean;
+};
 
 /**
  * Switch the new analytics dashboard on or off for a site.
@@ -12,15 +20,17 @@ import wpcom from 'calypso/lib/wp';
 export default function usePremiumAnalyticsStatusMutation( siteId: number | null ) {
 	const queryClient = useQueryClient();
 
-	return useMutation( {
+	return useMutation< PremiumAnalyticsStatus, unknown, boolean >( {
 		mutationFn: ( enabled: boolean ) =>
-			wpcom.req.post( {
-				apiNamespace: 'wpcom/v2',
-				path: `/sites/${ siteId }/premium-analytics/status`,
-				body: { enabled },
-			} ),
-		onSuccess: ( _data, enabled ) => {
-			queryClient.setQueryData( [ 'stats', 'premium-analytics-status', siteId ], { enabled } );
+			wpcom.req.post( premiumAnalyticsStatusRequest( siteId ), { enabled } ),
+		retry: 1,
+		retryDelay: 3 * 1000,
+		// Cache what the site reported, not what we asked for: a 200 saying `false` means the write
+		// didn't take, and treating it as success would send someone to a page that isn't there.
+		onSuccess: ( data ) => {
+			queryClient.setQueryData( premiumAnalyticsStatusQueryKey( siteId ), {
+				enabled: !! data?.enabled,
+			} );
 		},
 	} );
 }

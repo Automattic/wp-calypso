@@ -36,10 +36,13 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 	{
 		component: TrafficTabPreviewNotice,
 		noticeId: 'traffic_tab_preview',
-		// Deliberately ranked above the upsell notices: the invitation only runs while the new
-		// dashboard is in preview, and the server decides who is in that cohort, whereas the
-		// upsells are perpetual and come back the moment this one is dismissed or accepted.
-		isVisibleFunc: ( { isVip, isP2 }: StatsNoticeProps ) => ! isVip && ! isP2,
+		// Ranked above the upsell notices in CONFLICT_NOTICE_ID_GROUPS: the invitation only runs
+		// while the new dashboard is in preview, and the server decides who is in that cohort,
+		// whereas the upsells are perpetual and come back the moment this one is dismissed or
+		// accepted. Eligibility is resolved by the parent, so this notice never wins the group and
+		// then renders nothing — that would suppress the upsells and the JITM for an empty slot.
+		isVisibleFunc: ( { isVip, isP2, canEnableTrafficTabPreview }: StatsNoticeProps ) =>
+			!! ( canEnableTrafficTabPreview && ! isVip && ! isP2 ),
 		disabled: false,
 	},
 	{

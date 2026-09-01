@@ -1,12 +1,18 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TrafficTabPreviewNotice from '../traffic-tab-preview-notice';
 
+const mockGetSiteAdminUrl = jest.fn();
+jest.mock( 'calypso/state/sites/selectors/get-site-admin-url', () => ( {
+	__esModule: true,
+	default: ( ...args: unknown[] ) => mockGetSiteAdminUrl( ...args ),
+} ) );
+
 jest.mock( 'calypso/state', () => ( {
-	useSelector: () => 'https://example.com/wp-admin/',
+	useSelector: ( selector: ( state: unknown ) => unknown ) => selector( {} ),
 } ) );
 
 const mockRecordTracksEvent = jest.fn();
@@ -14,43 +20,36 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: ( ...args: unknown[] ) => mockRecordTracksEvent( ...args ),
 } ) );
 
-const mockUseNoticeVisibilityMutation = jest.fn< { mutateAsync: jest.Mock }, unknown[] >( () => ( {
-	mutateAsync: jest.fn( () => Promise.resolve() ),
-} ) );
+const mockPostponeNotice = jest.fn();
+const mockUseNoticeVisibilityMutation = jest.fn();
 jest.mock( 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation', () => ( {
 	__esModule: true,
 	default: ( ...args: unknown[] ) => mockUseNoticeVisibilityMutation( ...args ),
 } ) );
 
-const mockStatusQuery = jest.fn();
-jest.mock( 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query', () => ( {
-	__esModule: true,
-	default: () => mockStatusQuery(),
-} ) );
-
 const mockEnablePreview = jest.fn();
 jest.mock( 'calypso/my-sites/stats/hooks/use-premium-analytics-status-mutation', () => ( {
 	__esModule: true,
-	default: () => ( { mutate: mockEnablePreview, isPending: false } ),
+	default: () => ( { mutateAsync: mockEnablePreview, isPending: false } ),
 } ) );
 
-const statusResult = ( overrides = {} ) => ( {
-	data: false,
-	isLoading: false,
-	isError: false,
-	...overrides,
-} );
+const DASHBOARD_URL =
+	'https://example.com/wp-admin/admin.php?page=jetpack-premium-analytics-wp-admin';
 
-const renderNotice = () =>
-	render( <TrafficTabPreviewNotice siteId={ 123 } isOdysseyStats={ false } /> );
+const renderNotice = ( isOdysseyStats = false ) =>
+	render( <TrafficTabPreviewNotice siteId={ 123 } isOdysseyStats={ isOdysseyStats } /> );
 
 describe( 'TrafficTabPreviewNotice', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockStatusQuery.mockReturnValue( statusResult() );
+		mockGetSiteAdminUrl.mockReturnValue( DASHBOARD_URL );
+		mockPostponeNotice.mockResolvedValue( undefined );
+		mockUseNoticeVisibilityMutation.mockReturnValue( { mutateAsync: mockPostponeNotice } );
+		mockEnablePreview.mockResolvedValue( { enabled: true } );
+		Object.defineProperty( window, 'location', { value: { href: '' }, writable: true } );
 	} );
 
-	it( 'invites a site that does not have the new dashboard yet', () => {
+	it( 'invites the site to switch the new dashboard on', () => {
 		renderNotice();
 
 		expect( screen.getByText( 'Try the new Traffic page' ) ).toBeVisible();
@@ -58,24 +57,18 @@ describe( 'TrafficTabPreviewNotice', () => {
 		expect( screen.getByRole( 'button', { name: 'close' } ) ).toBeVisible();
 	} );
 
-	it( 'stays out of the way while the status is still loading', () => {
-		mockStatusQuery.mockReturnValue( statusResult( { isLoading: true } ) );
-
+	it( 'asks the selector for the dashboard page, not the bare admin root', () => {
 		renderNotice();
 
-		expect( screen.queryByText( 'Try the new Traffic page' ) ).not.toBeInTheDocument();
+		expect( mockGetSiteAdminUrl ).toHaveBeenCalledWith(
+			expect.anything(),
+			123,
+			'admin.php?page=jetpack-premium-analytics-wp-admin'
+		);
 	} );
 
-	it( 'does not invite a site that already has the new dashboard', () => {
-		mockStatusQuery.mockReturnValue( statusResult( { data: true } ) );
-
-		renderNotice();
-
-		expect( screen.queryByText( 'Try the new Traffic page' ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'stays hidden when the status cannot be read, which covers non-admins and older Jetpacks', () => {
-		mockStatusQuery.mockReturnValue( statusResult( { isError: true, data: undefined } ) );
+	it( 'renders nothing when the site record has no admin URL to land on', () => {
+		mockGetSiteAdminUrl.mockReturnValue( null );
 
 		renderNotice();
 
@@ -93,22 +86,17 @@ describe( 'TrafficTabPreviewNotice', () => {
 		);
 	} );
 
-	it( 'records an impression only once the notice actually reaches the screen', () => {
-		mockStatusQuery.mockReturnValue( statusResult( { isLoading: true } ) );
-		const { rerender } = renderNotice();
+	it( 'records exactly one impression', () => {
+		renderNotice();
 
-		expect( mockRecordTracksEvent ).not.toHaveBeenCalled();
-
-		mockStatusQuery.mockReturnValue( statusResult() );
-		rerender( <TrafficTabPreviewNotice siteId={ 123 } isOdysseyStats={ false } /> );
-
-		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_stats_traffic_tab_preview_notice_viewed',
-			{ blog_id: 123 }
-		);
+		expect(
+			mockRecordTracksEvent.mock.calls.filter(
+				( [ name ] ) => name === 'calypso_stats_traffic_tab_preview_notice_viewed'
+			)
+		).toHaveLength( 1 );
 	} );
 
-	it( 'enables the dashboard and tracks the click', async () => {
+	it( 'enables the dashboard and sends the customer into it', async () => {
 		renderNotice();
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Try it now' } ) );
@@ -117,11 +105,49 @@ describe( 'TrafficTabPreviewNotice', () => {
 			'calypso_stats_traffic_tab_preview_notice_enable_button_clicked',
 			{ blog_id: 123 }
 		);
-		expect( mockEnablePreview ).toHaveBeenCalledWith( true, expect.anything() );
+		expect( mockEnablePreview ).toHaveBeenCalledWith( true );
+		await waitFor( () => expect( window.location.href ).toBe( DASHBOARD_URL ) );
+	} );
+
+	it( 'records the dismissal before navigating away, so it cannot be lost in the teardown', async () => {
+		const order: string[] = [];
+		mockPostponeNotice.mockImplementation( () => {
+			order.push( 'postpone' );
+			return Promise.resolve();
+		} );
+		mockEnablePreview.mockImplementation( () => {
+			order.push( 'enable' );
+			return Promise.resolve( { enabled: true } );
+		} );
+
+		renderNotice();
+		await userEvent.click( screen.getByRole( 'button', { name: 'Try it now' } ) );
+
+		await waitFor( () => expect( order ).toEqual( [ 'postpone', 'enable' ] ) );
+	} );
+
+	it( 'stays put and explains itself when the write fails', async () => {
+		mockEnablePreview.mockRejectedValue( new Error( 'nope' ) );
+
+		renderNotice();
+		await userEvent.click( screen.getByRole( 'button', { name: 'Try it now' } ) );
+
+		expect( await screen.findByRole( 'alert' ) ).toBeVisible();
+		expect( window.location.href ).toBe( '' );
+	} );
+
+	it( 'does not navigate when the site reports the dashboard is still off', async () => {
+		mockEnablePreview.mockResolvedValue( { enabled: false } );
+
+		renderNotice();
+		await userEvent.click( screen.getByRole( 'button', { name: 'Try it now' } ) );
+
+		expect( await screen.findByRole( 'alert' ) ).toBeVisible();
+		expect( window.location.href ).toBe( '' );
 	} );
 
 	it( 'tracks dismissals under the Odyssey prefix when running in wp-admin', async () => {
-		render( <TrafficTabPreviewNotice siteId={ 123 } isOdysseyStats /> );
+		renderNotice( true );
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
 
@@ -129,6 +155,7 @@ describe( 'TrafficTabPreviewNotice', () => {
 			'jetpack_odyssey_stats_traffic_tab_preview_notice_dismissed',
 			{ blog_id: 123 }
 		);
+		expect( mockPostponeNotice ).toHaveBeenCalled();
 	} );
 
 	it( 'does not hide the notice for a different site after a dismissal', async () => {
