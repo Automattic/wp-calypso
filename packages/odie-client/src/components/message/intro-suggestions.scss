@@ -1,0 +1,45 @@
+/* Pin agenttic-ui Suggestions (vertical layout) in normal flow. The library's
+   base container class is position:absolute at the same specificity as the
+   vertical layout's position:static, so stylesheet order decides — this rule
+   out-specifies both deterministically. data-slot is the library's stable hook. */
+.odie-intro-suggestions[data-slot='suggestions'] {
+	position: static;
+	margin-bottom: 8px;
+	/* The component is a framer-motion div that floats itself up via an inline
+	   translateY transform even in vertical layout; !important is required to
+	   beat the inline style. Paired with translateY={0} on the component. */
+	transform: none !important;
+
+	/* Follow-up mode: compact horizontal pill row above the composer. The
+	   library's base container provides the row + horizontal scroll; drop its
+	   inset padding so pills align with the composer edges, size the pills
+	   down to reference proportions, and fade the right edge so a clipped
+	   pill reads as "scrolls" rather than "broken". */
+	&.odie-intro-suggestions--followups {
+		/* The library container is overflow-y: hidden — zero padding clips the
+		   pills' top borders. Keep a few px vertical, keep left flush with the
+		   composer, and leave right room so the last pill can scroll clear of
+		   the fade. */
+		padding: 3px 24px 3px 0;
+		mask-image: linear-gradient( to right, #000 calc( 100% - 24px ), transparent );
+
+		button {
+			height: auto;
+			padding: 8px 14px;
+			/* 16px is the largest radius on the stylelint scale; at this chip
+			   height it renders as a full pill, and every chip in a horizontal
+			   row shares it. */
+			border-radius: 16px;
+			font-size: 13px;
+			line-height: 1.3;
+			white-space: nowrap;
+			flex-shrink: 0;
+		}
+
+		/* rtlcss flips the padding shorthand but not gradient directions, so
+		   the fade needs its own RTL override to stay on the scroll edge. */
+		[dir='rtl'] & {
+			mask-image: linear-gradient( to left, #000 calc( 100% - 24px ), transparent );
+		}
+	}
+}

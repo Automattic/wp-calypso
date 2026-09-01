@@ -263,6 +263,16 @@ const getOdieInitialPromptContext = ( botNameSlug: OdieAllowedBots ): Context | 
 	}
 };
 
+// DESIGN PROTOTYPE knob, shared with components/message/intro-suggestions.
+// Unset means on; set localStorage.agentsManagerAskAi to '0' to disable.
+export const isAskAiPrototypeEnabled = (): boolean => {
+	try {
+		return window.localStorage?.getItem( 'agentsManagerAskAi' ) !== '0';
+	} catch {
+		return false;
+	}
+};
+
 export const getOdieInitialMessage = (
 	botNameSlug: OdieAllowedBots,
 	displayName: string,
@@ -282,6 +292,15 @@ export const getOdieInitialMessage = (
 				__i18n_text_domain__
 		  );
 
+	// DESIGN PROTOTYPE: fold the human-handoff hint into the greeting — the
+	// topic suggestions below it are all support questions in this variant.
+	const effectiveIntroMessage = isAskAiPrototypeEnabled()
+		? __(
+				"I'm your Support Assistant. You can ask for a human at any time, just type “Human”.",
+				__i18n_text_domain__
+		  )
+		: introMessage;
+
 	return {
 		content: `**${ sprintf(
 			/* translators: %(name)s: the user's display name */
@@ -290,7 +309,7 @@ export const getOdieInitialMessage = (
 				/* translators: fallback used when the user's display name isn't available */
 				name: displayName || __( 'there', __i18n_text_domain__ ),
 			}
-		).trim() } 👋** \n\n ${ introMessage }`,
+		).trim() } 👋** \n\n ${ effectiveIntroMessage }`,
 		role: 'bot',
 		type: 'introduction',
 		context: getOdieInitialPromptContext( botNameSlug ),
