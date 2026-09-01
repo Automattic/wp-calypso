@@ -11,7 +11,7 @@ import {
 	userSettingsQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { Badge } from '@automattic/ui';
+import { Badge } from '@wordpress/ui';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -128,7 +128,7 @@ const upgradeRequiredBadge = { text: __( 'Upgrade required' ), intent: 'informat
 function UpgradeRequiredBadge() {
 	return (
 		<Tooltip text={ upgradeRequiredText } placement="top">
-			<Badge intent="info">{ upgradeRequiredBadge.text }</Badge>
+			<Badge intent="informational">{ upgradeRequiredBadge.text }</Badge>
 		</Tooltip>
 	);
 }
