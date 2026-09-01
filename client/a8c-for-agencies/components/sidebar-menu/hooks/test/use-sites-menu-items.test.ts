@@ -15,14 +15,12 @@ jest.mock( 'calypso/my-sites/sidebar/utils', () => ( {
 	itemLinkMatches: ( link: string, path: string ) => link === path,
 } ) );
 
-const mockUseFetchPendingSites =
-	jest.requireMock< { default: jest.Mock } >(
-		'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites'
-	).default;
-const mockUseNoActiveSite =
-	jest.requireMock< { default: jest.Mock } >(
-		'calypso/a8c-for-agencies/hooks/use-no-active-site'
-	).default;
+const mockUseFetchPendingSites = jest.requireMock< { default: jest.Mock } >(
+	'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites'
+).default;
+const mockUseNoActiveSite = jest.requireMock< { default: jest.Mock } >(
+	'calypso/a8c-for-agencies/hooks/use-no-active-site'
+).default;
 
 const pendingSite = {
 	features: {
