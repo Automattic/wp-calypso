@@ -10,6 +10,11 @@
 	top: calc(var(--masterbar-height, 0px) + 24px);
 }
 
+/* Never shorter than the list beside it, which is pinned to the viewport. */
+.dashboard-notifications-inbox__detail {
+	min-height: calc(100dvh - var(--masterbar-height, 0px) - 120px);
+}
+
 .dashboard-notifications-inbox__back {
 	display: none;
 }
@@ -56,6 +61,10 @@
 
 	.dashboard-notifications-inbox__detail-pane {
 		position: static;
+	}
+
+	.dashboard-notifications-inbox__detail {
+		min-height: 0;
 	}
 
 	.dashboard-notifications-inbox__back {
