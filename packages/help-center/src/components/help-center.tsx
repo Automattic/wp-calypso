@@ -38,16 +38,19 @@ const HelpCenter: React.FC< Container > = ( {
 	}, [] );
 	const { currentUser, site } = useHelpCenterContext();
 	const { setCurrentUser } = useDispatch( HELP_CENTER_STORE );
-	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging(
-		!! currentUser?.ID,
-		site?.ID
-	);
 	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
 		useGetSupportInteractions( 'zendesk' );
 	const hasOpenZendeskConversations =
 		! isLoadingOpenInteractions && supportInteractionsOpen
 			? supportInteractionsOpen?.length > 0
 			: false;
+	// The connectivity check costs a network request per page load, so only run it once
+	// its answer can change something: the Help Center is open, or Smooch may need to
+	// mount for unread notifications.
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging(
+		!! currentUser?.ID && ( isHelpCenterShown || hasOpenZendeskConversations ),
+		site?.ID
+	);
 
 	useEffect( () => {
 		if ( currentUser ) {
