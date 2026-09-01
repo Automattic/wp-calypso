@@ -90,7 +90,8 @@ export function useSiteGeneration( {
 		);
 		const stopStatusPolling = pollForBuildWowStatus( {
 			siteIdentifier,
-			// The marker lets the editor greet a freshly generated site.
+			// The marker tells the editor this is a fresh handoff, so it
+			// welcomes the user instead of showing canned suggestions.
 			onReady: () =>
 				window.location.assign( addQueryArgs( editorUrl, { from: 'site-generation' } ) ),
 			onFailed: ( status, ui ) => {

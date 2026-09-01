@@ -136,7 +136,10 @@ describe( 'useSiteGeneration', () => {
 			renderHook( () =>
 				useSiteGeneration( {
 					siteIdentifier: '123',
-					editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
+					// The production editor URL already carries query args
+					// (page, spec_id): the marker must merge, not clobber.
+					editorUrl:
+						'https://example.wordpress.com/wp-admin/admin.php?page=easy-site-editor&spec_id=abc',
 					steps: STEPS,
 				} )
 			);
@@ -146,7 +149,7 @@ describe( 'useSiteGeneration', () => {
 				onReady();
 			} );
 			expect( window.location.assign ).toHaveBeenCalledWith(
-				'https://example.wordpress.com/wp-admin/site-editor.php?from=site-generation'
+				'https://example.wordpress.com/wp-admin/admin.php?page=easy-site-editor&spec_id=abc&from=site-generation'
 			);
 		} finally {
 			Object.defineProperty( window, 'location', {
