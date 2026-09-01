@@ -1,51 +1,54 @@
-import { attachComponentStackAsCause } from '../component-stack';
+import { getComponentStackFingerprint } from '../component-stack';
 
-describe( 'attachComponentStackAsCause', () => {
-	it( 'attaches a synthetic cause whose stack holds the component frames', () => {
-		const error = new Error( 'Boom' );
-		attachComponentStackAsCause(
-			error,
-			'\n    at Text (https://example.com/chunk.js:1:2)\n    at Callout (https://example.com/chunk.js:3:4)'
-		);
-
-		const cause = ( error as { cause?: Error } ).cause;
-		expect( cause ).toBeInstanceOf( Error );
-		expect( cause?.name ).toBe( 'ReactComponentStack' );
-		expect( cause?.stack ).toContain( 'at Text (https://example.com/chunk.js:1:2)' );
-		expect( cause?.stack ).toContain( 'at Callout (https://example.com/chunk.js:3:4)' );
+describe( 'getComponentStackFingerprint', () => {
+	it( 'splits the default grouping by the innermost components (Chromium frames)', () => {
+		expect(
+			getComponentStackFingerprint(
+				'\n    at Text (https://example.com/chunk.js:1:2)\n    at Callout (https://example.com/chunk.js:3:4)'
+			)
+		).toEqual( [ '{{ default }}', 'Text', 'Callout' ] );
 	} );
 
-	it( 'trims the stack to the innermost frames', () => {
-		const frames = Array.from(
+	it( 'parses Firefox and Safari frames', () => {
+		expect(
+			getComponentStackFingerprint( '\nText@https://example.com/chunk.js:1:2\nCallout@unknown:0:0' )
+		).toEqual( [ '{{ default }}', 'Text', 'Callout' ] );
+	} );
+
+	it( 'parses bare component names', () => {
+		expect( getComponentStackFingerprint( '\nText\nCallout' ) ).toEqual( [
+			'{{ default }}',
+			'Text',
+			'Callout',
+		] );
+	} );
+
+	it( 'skips host elements, which are identical across crash sites', () => {
+		expect(
+			getComponentStackFingerprint(
+				'\n    at div (<anonymous>)\n    at span (<anonymous>)\n    at Callout (https://example.com/chunk.js:3:4)'
+			)
+		).toEqual( [ '{{ default }}', 'Callout' ] );
+	} );
+
+	it( 'trims to the innermost components', () => {
+		const stack = Array.from(
 			{ length: 20 },
 			( _, i ) => `    at Component${ i } (https://example.com/chunk.js:${ i }:0)`
 		).join( '\n' );
 
-		const error = new Error( 'Boom' );
-		attachComponentStackAsCause( error, frames );
-
-		const stack = ( error as { cause?: Error } ).cause?.stack ?? '';
-		expect( stack ).toContain( 'at Component0 ' );
-		expect( stack ).toContain( 'at Component7 ' );
-		expect( stack ).not.toContain( 'at Component8 ' );
+		expect( getComponentStackFingerprint( stack ) ).toEqual( [
+			'{{ default }}',
+			'Component0',
+			'Component1',
+			'Component2',
+		] );
 	} );
 
-	it( 'does not clobber an existing cause', () => {
-		const original = new Error( 'original cause' );
-		const error = new Error( 'Boom' );
-		( error as { cause?: unknown } ).cause = original;
-
-		attachComponentStackAsCause( error, '    at Text (https://example.com/chunk.js:1:2)' );
-
-		expect( ( error as { cause?: unknown } ).cause ).toBe( original );
-	} );
-
-	it( 'does nothing for an empty or frameless stack', () => {
-		const error = new Error( 'Boom' );
-		attachComponentStackAsCause( error, '' );
-		expect( ( error as { cause?: unknown } ).cause ).toBeUndefined();
-
-		attachComponentStackAsCause( error, 'no frames here' );
-		expect( ( error as { cause?: unknown } ).cause ).toBeUndefined();
+	it( 'returns undefined when there is nothing to group on', () => {
+		expect( getComponentStackFingerprint( '' ) ).toBeUndefined();
+		expect( getComponentStackFingerprint( null ) ).toBeUndefined();
+		expect( getComponentStackFingerprint( undefined ) ).toBeUndefined();
+		expect( getComponentStackFingerprint( '    at div (<anonymous>)' ) ).toBeUndefined();
 	} );
 } );

@@ -125,24 +125,25 @@ describe( 'handleOnCatch', () => {
 		} );
 
 		expect( mockedCaptureException ).toHaveBeenCalledTimes( 1 );
+		expect( mockedCaptureException ).toHaveBeenCalledTimes( 1 );
 		expect( mockedCaptureException ).toHaveBeenCalledWith( error, {
-			tags: {
-				calypso_section: 'dashboard',
-				site_slug: 'my-site',
-				some_id: '123',
-				dom_google_translate: 'true',
+			captureContext: {
+				tags: {
+					calypso_section: 'dashboard',
+					site_slug: 'my-site',
+					some_id: '123',
+					dom_google_translate: 'true',
+				},
+				contexts: {
+					'dom-interference': { fontCount: 3 },
+					react: { componentStack: 'at SitePage' },
+				},
+				extra: { previous_path: '/sites/my-site' },
+				// Splits the react-dom mega-issue by the failing component without
+				// touching `exception.values`.
+				fingerprint: [ '{{ default }}', 'SitePage' ],
 			},
-			contexts: {
-				'dom-interference': { fontCount: 3 },
-				react: { componentStack: 'at SitePage' },
-			},
-			extra: { previous_path: '/sites/my-site' },
 		} );
-
-		// The component stack is chained as `cause` so Sentry can symbolicate and
-		// group by the failing component.
-		expect( ( error as { cause?: Error } ).cause ).toBeInstanceOf( Error );
-		expect( ( error as { cause?: Error } ).cause?.stack ).toContain( 'at SitePage' );
 	} );
 
 	it( 'reports no previous path when the error happens on a fresh page load', () => {
@@ -215,14 +216,20 @@ describe( 'handleUncaughtError', () => {
 
 		expect( mockedLogToLogstash ).toHaveBeenCalledTimes( 1 );
 		expect( mockedCaptureException ).toHaveBeenCalledWith( error, {
-			tags: {
-				calypso_section: 'dashboard',
-				dom_google_translate: 'true',
+			captureContext: {
+				tags: {
+					calypso_section: 'dashboard',
+					dom_google_translate: 'true',
+				},
+				contexts: {
+					'dom-interference': { fontCount: 3 },
+					react: { componentStack: 'at DomainUpsellCardContent' },
+				},
+				fingerprint: [ '{{ default }}', 'DomainUpsellCardContent' ],
 			},
-			contexts: {
-				'dom-interference': { fontCount: 3 },
-				react: { componentStack: 'at DomainUpsellCardContent' },
-			},
+			// Without this React's own `reportGlobalError` path is bypassed and
+			// Sentry would default the event to `handled: true`.
+			mechanism: { type: 'react.onUncaughtError', handled: false },
 		} );
 		expect( consoleError ).toHaveBeenCalledWith( error );
 	} );

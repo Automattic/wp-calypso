@@ -50,16 +50,22 @@ describe( 'getDomInterferenceReport', () => {
 		expect( context.fontCount ).toBe( 2 );
 	} );
 
-	it( 'collects deduped custom-element tag names', () => {
-		document.body.innerHTML = '<my-widget></my-widget><my-widget></my-widget><other-el></other-el>';
+	it( 'flags partial probe coverage on engines with undetectable built-in translation', () => {
+		const userAgent = jest.spyOn( navigator, 'userAgent', 'get' );
 
-		const { context } = getDomInterferenceReport();
-
-		expect( context.customElements ).toEqual(
-			expect.arrayContaining( [ 'my-widget', 'other-el' ] )
+		userAgent.mockReturnValue(
+			'Mozilla/5.0 (Macintosh) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36'
 		);
-		expect(
-			( context.customElements as string[] ).filter( ( n ) => n === 'my-widget' )
-		).toHaveLength( 1 );
+		expect( getDomInterferenceReport().tags.dom_probe_coverage ).toBe( 'full' );
+
+		userAgent.mockReturnValue( 'Mozilla/5.0 (Macintosh; rv:130.0) Gecko/20100101 Firefox/130.0' );
+		expect( getDomInterferenceReport().tags.dom_probe_coverage ).toBe( 'partial' );
+
+		userAgent.mockReturnValue(
+			'Mozilla/5.0 (Macintosh) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15'
+		);
+		expect( getDomInterferenceReport().tags.dom_probe_coverage ).toBe( 'partial' );
+
+		userAgent.mockRestore();
 	} );
 } );

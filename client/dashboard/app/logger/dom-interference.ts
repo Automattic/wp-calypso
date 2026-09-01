@@ -5,8 +5,6 @@
  * commit phase. Run only when an error is being reported.
  */
 
-const MAX_CUSTOM_ELEMENTS = 50;
-
 export interface DomInterferenceReport {
 	// Faceted in Sentry, so string-valued.
 	tags: Record< string, string >;
@@ -51,16 +49,15 @@ export function getDomInterferenceReport(): DomInterferenceReport {
 
 		tags.dom_doc_lang = html.lang || '';
 
+		// Every probe above keys on a DOM artefact only Chromium and extension
+		// translators leave behind. Safari and Firefox translate text nodes in
+		// place with no marker, so a `false` there means "undetectable", not
+		// "not translated".
+		tags.dom_probe_coverage = /Chrome|Chromium|Edg\//.test( navigator.userAgent )
+			? 'full'
+			: 'partial';
+
 		context.fontCount = document.querySelectorAll< Element >( 'font' ).length;
-		context.navigatorLanguages = Array.from( navigator.languages ?? [] );
-		// Custom-element tag names catch unknown extensions injecting web components.
-		context.customElements = Array.from(
-			new Set(
-				Array.from( document.querySelectorAll( '*' ) )
-					.map( ( element ) => element.tagName.toLowerCase() )
-					.filter( ( name ) => name.includes( '-' ) )
-			)
-		).slice( 0, MAX_CUSTOM_ELEMENTS );
 	} catch {
 		// Diagnostics must never throw while an error is already being reported.
 	}

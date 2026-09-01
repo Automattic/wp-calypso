@@ -4,7 +4,7 @@ import { captureException } from '@automattic/calypso-sentry';
 import { camelToSnakeCase } from '@automattic/js-utils';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { maybeReloadForChunkError } from '../chunk-load-recovery';
-import { attachComponentStackAsCause } from './component-stack';
+import { getComponentStackFingerprint } from './component-stack';
 import { getDomInterferenceReport } from './dom-interference';
 import type { AnyRouter } from '@tanstack/react-router';
 import type { ErrorInfo } from 'react';
@@ -47,6 +47,7 @@ interface ReportOptions {
 	calypso_section?: string;
 	routeParams?: Record< string, unknown >;
 	previousPath?: string;
+	mechanism?: { type: string; handled: boolean };
 }
 
 /**
@@ -73,8 +74,8 @@ function handleDashboardError(
 }
 
 /**
- * Enriches every report with a DOM-interference fingerprint and a chained,
- * symbolicable component stack.
+ * Enriches every report with a DOM-interference fingerprint and a Sentry
+ * fingerprint derived from the failing React component.
  */
 function reportDashboardError(
 	error: Error,
@@ -106,19 +107,23 @@ function reportDashboardError(
 		return;
 	}
 
-	attachComponentStackAsCause( error, componentStack );
+	const fingerprint = getComponentStackFingerprint( componentStack );
 
 	captureException( error, {
-		tags: {
-			calypso_section: options.calypso_section,
-			...options.routeParams,
-			...domInterference.tags,
+		captureContext: {
+			tags: {
+				calypso_section: options.calypso_section,
+				...options.routeParams,
+				...domInterference.tags,
+			},
+			...( options.previousPath ? { extra: { previous_path: options.previousPath } } : {} ),
+			contexts: {
+				'dom-interference': domInterference.context,
+				...( componentStack ? { react: { componentStack } } : {} ),
+			},
+			...( fingerprint ? { fingerprint } : {} ),
 		},
-		...( options.previousPath ? { extra: { previous_path: options.previousPath } } : {} ),
-		contexts: {
-			'dom-interference': domInterference.context,
-			...( componentStack ? { react: { componentStack } } : {} ),
-		},
+		...( options.mechanism ? { mechanism: options.mechanism } : {} ),
 	} );
 }
 
@@ -154,7 +159,10 @@ export function handleOnCatch(
  * that bypass every error boundary (the `handled:no` subset in Sentry), which
  * otherwise arrive as bare `window.onerror` events with no component or route
  * context. React no longer rethrows to `window.onerror` once this is provided,
- * so this is the only reporting path for those errors.
+ * so this is the only reporting path for those errors — and the mechanism has to
+ * be set explicitly, since `captureException` would otherwise stamp them
+ * `handled: true` and drop them out of the `handled:no` facet and out of
+ * crash-free-session rate.
  */
 export function handleUncaughtError( error: unknown, errorInfo: { componentStack?: string } ) {
 	try {
@@ -162,6 +170,7 @@ export function handleUncaughtError( error: unknown, errorInfo: { componentStack
 		handleDashboardError( normalizedError, errorInfo.componentStack, {
 			severity: calypsoConfig( 'env_id' ) === 'dashboard-production' ? 'error' : 'debug',
 			calypso_section: 'dashboard',
+			mechanism: { type: 'react.onUncaughtError', handled: false },
 		} );
 	} catch {
 		// A throwing error handler would replace the original crash with a less
