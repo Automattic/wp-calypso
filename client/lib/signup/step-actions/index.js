@@ -5,6 +5,11 @@ import {
 	PRODUCT_1GB_SPACE,
 	getPlan,
 	TERM_MONTHLY,
+	PLAN_PERSONAL_TRIAL_MONTHLY,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PLAN_HOSTING_TRIAL_MONTHLY,
+	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Site, AddOns } from '@automattic/data-stores';
@@ -1088,10 +1093,22 @@ export function maybeAddStorageAddonToCart( stepName, defaultDependencies, nextP
 	}
 }
 
+const FREE_TRIAL_PLAN_SLUGS = [
+	PLAN_PERSONAL_TRIAL_MONTHLY,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PLAN_HOSTING_TRIAL_MONTHLY,
+	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
+];
+
 export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 	const { isPaidPlan, sitePlanSlug, submitSignupStep } = nextProps;
 	const fulfilledDependencies = [];
 	const dependenciesFromDefaults = {};
+
+	// A free trial has a non-free product ID, so it reads as a paid plan. Keep the plan
+	// step available so trial sites can still purchase the underlying plan on launch.
+	const isFreeTrialPlan = FREE_TRIAL_PLAN_SLUGS.includes( sitePlanSlug );
 
 	// Check for plan-specific default theme
 	if ( defaultDependencies && defaultDependencies.themeSlugWithRepo ) {
@@ -1099,7 +1116,7 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 		dependenciesFromDefaults.themeSlugWithRepo = defaultDependencies.themeSlugWithRepo;
 	}
 
-	if ( isPaidPlan ) {
+	if ( isPaidPlan && ! isFreeTrialPlan ) {
 		const cartItems = undefined;
 		submitSignupStep(
 			{ stepName, cartItems, wasSkipped: true },
