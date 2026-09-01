@@ -813,18 +813,14 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
 }
 
 /**
- * Returns true if the plan is eligible for an instant, self-serve downgrade: the
- * plan has a refundable receipt and has neither expired nor entered its
- * post-expiry grace period.
+ * Returns true if the plan is eligible for an instant, self-serve downgrade,
+ * performed now via the cancel endpoint rather than scheduled for renewal.
  *
- * `is_refundable` covers any refundable receipt, so it holds both for an initial
- * purchase and for a renewal that is still within its own refund window — both
- * cases where an instant downgrade costs neither side money.
- *
- * Note: this intentionally does NOT require a refundable amount. A refundable
- * receipt worth nothing generally means the purchase was free (or fully paid
- * with credits), which is still a valid instant downgrade — it just issues no
- * refund, and the confirmation modal drops its refund line accordingly.
+ * The server answers this directly through `is_instant_downgrade_available`,
+ * which already accounts for expiry and for receipts worth nothing (a comped
+ * plan or a 100%-off coupon downgrades instantly and simply issues no refund).
+ * Do not reintroduce a `is_refundable` check here: that asks a different
+ * question and gave the wrong answer for zero-cost purchases.
  *
  * This is distinct from {@link isExpiredAndInGracePeriod}, which gates the
  * downgrade-to-checkout flow for plans whose expiry date has already passed.
@@ -833,8 +829,7 @@ export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boo
 	return (
 		purchase.is_plan_type_downgradable &&
 		purchase.is_plan &&
-		purchase.is_refundable &&
-		! isExpiredOrRemoved( purchase )
+		purchase.is_instant_downgrade_available
 	);
 }
 
