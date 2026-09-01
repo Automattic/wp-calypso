@@ -41,7 +41,9 @@ export function useLaunchSitePlugin( { site }: { site?: Site } ): {
 	const { isLoading, isExperimentLoading, isDisabled, isBusy, href, onClick, modal } =
 		useSiteLaunch( launchSite, {
 			tracksContext: 'omnibar',
-			backTo: siteOverviewUrl,
+			// The omnibar rides along on every screen, so Back belongs on the page the user left
+			// (the `backTo` default); only the post-launch landing is the site overview.
+			flowDestination: siteOverviewUrl,
 			postLaunchUrl: dashboardLinkWithBackport( siteOverviewUrl ),
 			domainsOptions: { ...queries.domainsQuery(), enabled: isLaunchable },
 			recordTracksEvent,

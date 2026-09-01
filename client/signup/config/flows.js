@@ -124,18 +124,35 @@ function getSignupDestination( { siteSlug, redirect_to, localeSlug, flowName } )
 	return redirectTo;
 }
 
+/**
+ * The wp-admin page the launch flow was started from, for launches that started in wp-admin.
+ *
+ * The `ref` query arg carries that page as a site-relative path, so the URL is always pinned to the
+ * site's own host.
+ * @param {Object} dependencies the signup dependency store
+ * @returns {?string} the wp-admin URL, or null when the launch did not start in wp-admin
+ */
+export function getWpAdminLaunchReturnUrl( dependencies ) {
+	const ref = dependencies.refParameter?.trim() ?? '';
+
+	if ( ref !== 'wp-admin' && ! ref.startsWith( 'wp-admin/' ) ) {
+		return null;
+	}
+
+	return `https://${ dependencies.siteSlug }/${ ref }`;
+}
+
 function getLaunchReturnTarget( dependencies ) {
 	// If a back_to parameter is provided, use it as the destination
 	if ( dependencies.back_to ) {
 		return { url: dependencies.back_to, celebrateArgs: { celebrateLaunch: 'true' } };
 	}
 
-	const ref = dependencies.refParameter?.trim() ?? '';
-	const isWpAdminPath = ref === 'wp-admin' || ref.startsWith( 'wp-admin/' );
+	const wpAdminUrl = getWpAdminLaunchReturnUrl( dependencies );
 
-	if ( isWpAdminPath ) {
+	if ( wpAdminUrl ) {
 		return {
-			url: `https://${ dependencies.siteSlug }/${ ref }`,
+			url: wpAdminUrl,
 			celebrateArgs: { 'celebrate-launch': 'true' },
 		};
 	}
