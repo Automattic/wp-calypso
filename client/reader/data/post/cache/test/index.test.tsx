@@ -291,6 +291,11 @@ describe( 'reader post cache', () => {
 		expect( getCachedPost( queryClient, { blogId: siteId, postId: 188 } ) ).toMatchObject( {
 			title: 'Nay.. Not dead',
 		} );
+
+		// Locks in the fix at its source: no `feed-0-{feedId}` entry should exist
+		// for any of these posts to share, so a later identity branch can't
+		// resurrect the collision by matching against it.
+		expect( getCachedPost( queryClient, { feedId, postId: 0 } ) ).toBeNull();
 	} );
 
 	it( 'keeps distinct blog posts from colliding when a shared `0` sits in feed_item_IDs', () => {
