@@ -124,6 +124,12 @@ function getIndividualConfig( options = {} ) {
 					if ( request === '@wordpress/ui' ) {
 						return null;
 					}
+					// No branch for @wordpress/router or @wordpress/private-apis —
+					// core registers both handles and they must stay external. Each
+					// keeps module-scope state the editor already owns (the router's
+					// history, `unlock()`'s WeakMap); a bundled second copy forks it
+					// and silently breaks `editor-navigate`.
+
 					// The plugin maps `react`/`react-dom` but not this deep import,
 					// so it would get bundled — a second react-dom copy (v19) that
 					// crashes against the page's external React. WordPress's

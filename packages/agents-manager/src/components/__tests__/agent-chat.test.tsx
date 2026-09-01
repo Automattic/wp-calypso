@@ -210,6 +210,11 @@ jest.mock( '../selected-block', () => ( {
 	__esModule: true,
 	default: mockSelectedBlock,
 } ) );
+const mockEditorHistoryBridge = jest.fn( () => null );
+jest.mock( '../editor-history-bridge', () => ( {
+	__esModule: true,
+	default: mockEditorHistoryBridge,
+} ) );
 jest.mock( '../../utils/is-plugin-compass-agent', () => ( {
 	isPluginCompassHost: () => false,
 } ) );
@@ -250,6 +255,7 @@ describe( 'AgentChat', () => {
 		jest.clearAllMocks();
 		mockHasAiChatEntry.mockReturnValue( false );
 		document.body.className = '';
+		window.history.replaceState( {}, '', '/wp-admin/index.php' );
 	} );
 
 	it( 'renders the selected-block chip only on editor pages', async () => {
@@ -263,6 +269,30 @@ describe( 'AgentChat', () => {
 		// The lazy chunk resolves in a microtask — flush before asserting absence.
 		await act( () => Promise.resolve() );
 		expect( mockSelectedBlock ).not.toHaveBeenCalled();
+	} );
+
+	it( 'mounts the editor history bridge only in the site editor', async () => {
+		document.body.classList.add( 'site-editor-php' );
+		renderAgentChat();
+		await waitFor( () => expect( mockEditorHistoryBridge ).toHaveBeenCalled() );
+
+		mockEditorHistoryBridge.mockClear();
+		document.body.className = '';
+		renderAgentChat();
+		await act( () => Promise.resolve() );
+		expect( mockEditorHistoryBridge ).not.toHaveBeenCalled();
+	} );
+
+	it( 'skips the bridge when ?am_abilities=0 hands navigation back to the provider', async () => {
+		window.history.replaceState( {}, '', '/wp-admin/site-editor.php?am_abilities=0' );
+		document.body.classList.add( 'site-editor-php' );
+
+		renderAgentChat();
+		await act( () => Promise.resolve() );
+
+		// Without the published history the callback takes the whole-page path,
+		// which is what the provider's own copy does.
+		expect( mockEditorHistoryBridge ).not.toHaveBeenCalled();
 	} );
 
 	const imageUpload = ( isUploadingImages: boolean ) =>

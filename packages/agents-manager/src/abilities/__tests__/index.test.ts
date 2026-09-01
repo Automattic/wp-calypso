@@ -350,14 +350,17 @@ describe( 'registerEditorAbilities', () => {
 
 	it( 'replaces a provider copy when the name is already registered', async () => {
 		const { editorAbilities, getAbility, registerAbility, unregisterAbility } = await load();
+		// Whichever ability registers first: the collision is the mechanism
+		// under test, not the list's order.
+		const [ collidingAbility ] = editorAbilities.getEditorAbilities();
 		registerAbility.mockRejectedValueOnce(
-			new Error( 'Ability "agents-manager/get-block-tree" is already registered' )
+			new Error( `Ability "${ collidingAbility.name }" is already registered` )
 		);
-		getAbility.mockReturnValue( { name: 'agents-manager/get-block-tree' } );
+		getAbility.mockReturnValue( { name: collidingAbility.name } );
 
 		await editorAbilities.registerEditorAbilities();
 
-		expect( unregisterAbility ).toHaveBeenCalledWith( 'agents-manager/get-block-tree' );
+		expect( unregisterAbility ).toHaveBeenCalledWith( collidingAbility.name );
 		// One extra call: the collision is retried after unregistering.
 		expect( registerAbility ).toHaveBeenCalledTimes(
 			editorAbilities.getEditorAbilities().length + 1
