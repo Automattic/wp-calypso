@@ -8,13 +8,16 @@ import { HostingCard, HostingCardGrid } from 'calypso/components/hosting-card';
 import { HostingHero, HostingHeroButton } from 'calypso/components/hosting-hero';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSiteTransferStatusQuery } from 'calypso/landing/stepper/hooks/use-site-transfer-status-query';
+import { EVERY_FIVE_SECONDS, useInterval } from 'calypso/lib/interval';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { useActivationDeadline } from './activation-wait';
 import HostingActivationButton from './hosting-activation-button';
 
 import './hosting-features.scss';
@@ -62,9 +65,34 @@ const HostingFeatures = ( { path, showAsTools }: HostingFeaturesProps ) => {
 
 	const { data: siteTransferData } = useSiteTransferStatusQuery( siteId || undefined );
 
+	const isTransferCompleted = siteTransferData?.status === transferStates.COMPLETED;
+
+	// The redirect below reads Redux, which nothing here refreshes, so a completed transfer would
+	// otherwise never reach it and the page would spin on a success.
+	const awaitingAtomicSiteId = isTransferCompleted && ! isSiteAtomic ? siteId : null;
+
+	const activationStalled = useActivationDeadline( siteId, awaitingAtomicSiteId !== null );
+
+	useEffect( () => {
+		if ( awaitingAtomicSiteId ) {
+			dispatch( requestSite( awaitingAtomicSiteId ) );
+		}
+	}, [ awaitingAtomicSiteId, dispatch ] );
+
+	useInterval(
+		() => {
+			if ( ! awaitingAtomicSiteId ) {
+				return;
+			}
+			dispatch( requestSite( awaitingAtomicSiteId ) );
+		},
+		awaitingAtomicSiteId && ! activationStalled ? EVERY_FIVE_SECONDS : null
+	);
+
 	const shouldRenderActivatingCopy =
-		( siteTransferData?.isTransferring || siteTransferData?.status === transferStates.COMPLETED ) &&
-		! isPlanExpired;
+		( siteTransferData?.isTransferring || isTransferCompleted ) &&
+		! isPlanExpired &&
+		! activationStalled;
 
 	useEffect( () => {
 		if ( isSiteAtomic && ! isPlanExpired ) {
@@ -126,6 +154,14 @@ const HostingFeatures = ( { path, showAsTools }: HostingFeaturesProps ) => {
 		: translate( 'Activate all developer tools' );
 
 	const activateTitleAsTools = translate( 'Activate all advanced tools' );
+
+	const activationStalledTitle = translate( 'Activation is taking longer than expected' );
+	const activationStalledDescription = translate(
+		'Your site is still being set up. Check back in a few minutes — there is nothing you need to do.',
+		{
+			comment: 'Shown when a site takes unusually long to finish activating hosting features.',
+		}
+	);
 
 	const activationStatusTitle = translate( 'Activating hosting features' );
 	const activationStatusTitleAsTools = translate( 'Activating advanced tools' );
@@ -197,7 +233,15 @@ const HostingFeatures = ( { path, showAsTools }: HostingFeaturesProps ) => {
 	let title;
 	let description;
 	let buttons;
-	if ( shouldRenderActivatingCopy ) {
+	if ( activationStalled ) {
+		title = activationStalledTitle;
+		description = activationStalledDescription;
+		buttons = (
+			<HostingHeroButton href={ `/overview/${ siteId }` }>
+				{ translate( 'Go to your site' ) }
+			</HostingHeroButton>
+		);
+	} else if ( shouldRenderActivatingCopy ) {
 		title = showAsTools ? activationStatusTitleAsTools : activationStatusTitle;
 		description = showAsTools ? activationStatusDescriptionAsTools : activationStatusDescription;
 	} else if ( showActivationButton ) {

@@ -65,13 +65,13 @@ import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
 import { useFormattedTime } from '../../../components/formatted-time';
+import InlineSupportLink from '../../../components/inline-support-link';
 import { MetadataList, MetadataItem } from '../../../components/metadata-list';
 import OverviewCard from '../../../components/overview-card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { getPlanExpiryUrgency, hasPlanExpiryNotice } from '../../../components/plan-expiry-notice';
 import SiteIcon from '../../../components/site-icon';
-import { Text as IntentText } from '../../../components/text';
 import SiteBandwidthStat from '../../../sites/overview-plan-card/site-bandwidth-stat';
 import SiteStorageStat from '../../../sites/overview-plan-card/site-storage-stat';
 import { formatDate } from '../../../utils/datetime';
@@ -115,6 +115,7 @@ import {
 } from '../../../utils/site-url';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
+import { BillingPurchaseInfoPopover } from '../dataviews';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import AkismetApiKeyCard from './akismet-api-key-card';
 import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
@@ -868,18 +869,44 @@ function getFields( {
 					}
 					return undefined;
 				} )();
-				// The first branch above reads "You will be billed on 1 August", a
-				// statement of what is going to happen; coloring it would contradict
-				// it. Only the expiry wordings take a color.
-				const expiryUrgency = isRenewingBeforeExpiration( purchase )
-					? null
-					: getPlanExpiryUrgency( purchase );
-				const help =
-					helpText && ( expiryUrgency === 'warning' || expiryUrgency === 'error' ) ? (
-						<IntentText intent={ expiryUrgency }>{ helpText }</IntentText>
-					) : (
-						helpText
-					);
+				const help = ( () => {
+					if ( ! helpText ) {
+						return helpText;
+					}
+					if (
+						purchase.expiry_date &&
+						purchase.renew_date &&
+						! purchase.is_hundred_year_domain &&
+						purchase.is_auto_renew_enabled &&
+						purchase.renew_date !== purchase.expiry_date &&
+						( purchase.expiry_status === 'active' || purchase.expiry_status === 'auto-renewing' )
+					) {
+						return (
+							<HStack spacing={ 1 } expanded={ false }>
+								<span>{ helpText }</span>
+								<BillingPurchaseInfoPopover>
+									{ createInterpolateElement(
+										/* translators: <expireDate /> is a date and inlineSupportLink is a web link. */
+										__(
+											'Your subscription is paid through <expireDate></expireDate>, but will be renewed prior to that date. <inlineSupportLink>Learn more</inlineSupportLink>'
+										),
+										{
+											expireDate: (
+												<span>
+													{ formatDate( new Date( purchase.expiry_date ), locale, {
+														dateStyle: 'long',
+													} ) }
+												</span>
+											),
+											inlineSupportLink: <InlineSupportLink supportContext="autorenewal" />,
+										}
+									) }
+								</BillingPurchaseInfoPopover>
+							</HStack>
+						);
+					}
+					return helpText;
+				} )();
 				if (
 					! purchase.is_rechargeable &&
 					! purchase.is_iap_purchase &&

@@ -6,6 +6,7 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_BUSINESS_2_YEARS,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import nock from 'nock';
 import flows from 'calypso/signup/config/flows';
@@ -262,6 +263,23 @@ describe( 'isPlanFulfilled()', () => {
 		const nextProps = {
 			isPaidPlan: false,
 			sitePlanSlug: 'sitePlanSlug',
+			submitSignupStep,
+		};
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+		expect( submitSignupStep ).not.toHaveBeenCalled();
+
+		isPlanFulfilled( stepName, undefined, nextProps );
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+		expect( submitSignupStep ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should not remove a step for a free trial plan', () => {
+		const stepName = 'plans';
+		const nextProps = {
+			isPaidPlan: true,
+			sitePlanSlug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
 			submitSignupStep,
 		};
 
