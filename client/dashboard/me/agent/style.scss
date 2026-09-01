@@ -12,13 +12,6 @@
 	padding-block: 48px;
 }
 
-.wordpress-agent-email__footer {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 12px 24px;
-}
-
 .wordpress-agent-email__address-row {
 	display: grid;
 	grid-template-columns: minmax( 0, 1fr ) auto;
@@ -31,8 +24,6 @@
 }
 
 .wordpress-agent-email__sender {
-	flex: 1 1 auto;
-	min-width: 0;
 	overflow-wrap: anywhere;
 }
 
@@ -73,15 +64,6 @@
 
 	.wordpress-agent-connection__actions {
 		justify-content: flex-end;
-	}
-
-	.wordpress-agent-email__footer {
-		align-items: stretch;
-		flex-direction: column;
-
-		.wordpress-agent-connection__actions {
-			justify-content: flex-start;
-		}
 	}
 
 	.wordpress-agent-email__address-row {

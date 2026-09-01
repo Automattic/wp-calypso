@@ -6,13 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { Badge } from '@automattic/ui';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-	Button,
-	Notice,
-	Spinner,
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { Button, Notice, Spinner, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
@@ -21,6 +15,7 @@ import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
+import { Text } from '../../components/text';
 import type { ReactNode } from 'react';
 
 interface WordPressAgentSlackProps {
@@ -153,7 +148,7 @@ export default function WordPressAgentSlack( {
 	} else {
 		connectionsContent = (
 			<CardBody>
-				<Text as="p" variant="muted" size="13px" lineHeight="20px">
+				<Text as="p" variant="muted">
 					{ __( 'You have not connected WordPress Agent to a Slack workspace yet.' ) }
 				</Text>
 			</CardBody>

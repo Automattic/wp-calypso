@@ -4,13 +4,7 @@ import {
 	sitePostByEmailSettingsQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import {
-	Button,
-	Notice,
-	Spinner,
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { Button, Notice, Spinner, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
@@ -23,6 +17,7 @@ import { Card, CardBody, CardDivider } from '../../components/card';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
+import { Text } from '../../components/text';
 import {
 	getAgentEmailAddress,
 	getAgentEmailVCardDataUrl,
@@ -167,19 +162,11 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 						{ __( 'Add to contacts' ) }
 					</Button>
 				</div>
-				<div className="wordpress-agent-email__footer">
-					<Text
-						as="p"
-						variant="muted"
-						size="13px"
-						lineHeight="20px"
-						className="wordpress-agent-email__sender"
-					>
-						{ createInterpolateElement( __( 'Only responds to email from <email />.' ), {
-							email: <strong>{ user.email }</strong>,
-						} ) }
-					</Text>
-				</div>
+				<Text as="p" variant="muted" className="wordpress-agent-email__sender">
+					{ createInterpolateElement( __( 'Only responds to email from <email />.' ), {
+						email: <strong>{ user.email }</strong>,
+					} ) }
+				</Text>
 			</VStack>
 		</CardBody>
 	);
