@@ -1,7 +1,10 @@
 import { omnibarSiteIdQuery, siteByIdQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+// eslint-disable-next-line no-restricted-imports -- constants-only module, keeps data-stores out of the main bundle
+import { HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT } from '@automattic/data-stores/src/help-center/constants';
 import { useQuery } from '@tanstack/react-query';
 import { Suspense, lazy, useCallback, useState } from 'react';
+import { useExperiment } from 'calypso/lib/explat';
 import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
 import type HelpCenterApp from '../help-center/help-center-app';
@@ -60,6 +63,9 @@ export default function OmnibarHelpCenter() {
 		...siteByIdQuery( omnibarSiteId ?? 0 ),
 		enabled: !! omnibarSiteId,
 	} );
+	const [ , getHelpChatForwardAssignment ] = useExperiment(
+		HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT
+	);
 
 	const handleClose = useCallback( () => {
 		setShowHelpCenter( false, undefined, true );
@@ -85,6 +91,10 @@ export default function OmnibarHelpCenter() {
 				onboardingUrl={ config( 'wpcom_signup_url' ) }
 				sectionName="dashboard"
 				site={ site ? toHelpCenterSite( site ) : null }
+				experimentVariations={ {
+					[ HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT ]:
+						getHelpChatForwardAssignment?.variationName ?? null,
+				} }
 			/>
 		</Suspense>
 	);
