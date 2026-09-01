@@ -64,7 +64,7 @@ const TagsPageHeaderSection = () => {
 	const translate = useTranslate();
 
 	return (
-		<>
+		<div className="reader-hero">
 			<h1>
 				{
 					// translators: The title of the reader trending tags page
@@ -72,7 +72,7 @@ const TagsPageHeaderSection = () => {
 				}
 			</h1>
 			<p>{ translate( "For every one of your interests, there's a tag on WordPress.com." ) }</p>
-		</>
+		</div>
 	);
 };
 

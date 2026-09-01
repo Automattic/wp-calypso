@@ -13,7 +13,6 @@ import { recordTrack } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import renderHeaderSection from '../lib/header-section';
 
 const loadMain = () =>
 	import(
@@ -21,6 +20,24 @@ const loadMain = () =>
 	);
 
 const analyticsPageTitle = 'Reader';
+
+const TagStreamHeaderSection = () => {
+	return (
+		<div className="reader-hero">
+			<h2>
+				{
+					// translators: The title of the reader tag page
+					translate( 'WordPress Reader' )
+				}
+			</h2>
+			<h1>{ translate( 'Enjoy millions of blogs at your fingertips.' ) }</h1>
+		</div>
+	);
+};
+
+function renderHeaderSection() {
+	return <TagStreamHeaderSection />;
+}
 
 export const tagListing = ( context, next ) => {
 	const basePath = '/tag/:slug';
