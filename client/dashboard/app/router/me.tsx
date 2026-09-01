@@ -137,11 +137,16 @@ export const preferencesRoute = createRoute( {
 export const preferencesIndexRoute = createRoute( {
 	getParentRoute: () => preferencesRoute,
 	path: '/',
-	loader: async () => {
+	loader: async ( { context } ) => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-			queryClient.ensureQueryData( readTeamsQuery() ),
+			// Only the Reader preferences section reads teams, and it only exists
+			// when reader is supported. Avoid adding the teams fetch as an
+			// unrelated failure point for variants without Reader (e.g. CIAB).
+			...( context.config.supports.reader
+				? [ queryClient.ensureQueryData( readTeamsQuery() ) ]
+				: [] ),
 		] );
 	},
 } ).lazy( () =>
