@@ -291,6 +291,28 @@ export default function NoteDetail( {
 		}
 	}
 
+	const contextNodes = contextRuns.map( ( run, index ) =>
+		'users' in run ? (
+			<VStack key={ index } spacing={ 0 } className="dashboard-notifications-inbox__user-list">
+				{ run.users.map( ( block, userIndex ) => (
+					<UserRow key={ userIndex } note={ note } block={ block } />
+				) ) }
+			</VStack>
+		) : (
+			<Text key={ index } variant="muted" className="dashboard-notifications-inbox__block-text">
+				<BlockText block={ run.block } />
+			</Text>
+		)
+	);
+
+	const commentQuote = comment ? (
+		<blockquote className="dashboard-notifications-inbox__quote">
+			<Text as="p">
+				<BlockText block={ comment } />
+			</Text>
+		</blockquote>
+	) : null;
+
 	return (
 		<DetailFrame onClose={ onClose }>
 			<HStack
@@ -405,33 +427,16 @@ export default function NoteDetail( {
 					</blockquote>
 				) }
 				{ ! comment && ! likedComment && excerpt && <Text>{ excerpt }</Text> }
-				{ contextRuns.map( ( run, index ) =>
-					'users' in run ? (
-						<VStack
-							key={ index }
-							spacing={ 0 }
-							className="dashboard-notifications-inbox__user-list"
-						>
-							{ run.users.map( ( block, userIndex ) => (
-								<UserRow key={ userIndex } note={ note } block={ block } />
-							) ) }
-						</VStack>
-					) : (
-						<Text
-							key={ index }
-							variant="muted"
-							className="dashboard-notifications-inbox__block-text"
-						>
-							<BlockText block={ run.block } />
-						</Text>
-					)
-				) }
-				{ comment && (
-					<blockquote className="dashboard-notifications-inbox__quote">
-						<Text as="p">
-							<BlockText block={ comment } />
-						</Text>
-					</blockquote>
+				{ parentComment ? (
+					<VStack spacing={ 3 } className="dashboard-notifications-inbox__reply">
+						{ contextNodes }
+						{ commentQuote }
+					</VStack>
+				) : (
+					<>
+						{ contextNodes }
+						{ commentQuote }
+					</>
 				) }
 				{ postscript.map( ( block, index ) => (
 					<Text key={ index } variant="muted" className="dashboard-notifications-inbox__block-text">

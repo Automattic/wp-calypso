@@ -448,3 +448,25 @@
 .dashboard-notifications-inbox__body a {
 	color: var(--wp-admin-theme-color, #3858e9);
 }
+
+// A reply sits under the comment it answers, sharing that comment's avatar
+// column so both authors' text starts at the same place.
+.dashboard-notifications-inbox__reply {
+	--dashboard-notifications-inbox__avatar-size: 40px;
+	--dashboard-notifications-inbox__avatar-gap: 12px;
+
+	padding-inline-start: 24px;
+
+	.dashboard-notifications-inbox__user-row-avatar,
+	.dashboard-notifications-inbox__user-row-avatar img {
+		width: var(--dashboard-notifications-inbox__avatar-size);
+		height: var(--dashboard-notifications-inbox__avatar-size);
+	}
+
+	.dashboard-notifications-inbox__quote {
+		margin-inline-start: calc(
+			var(--dashboard-notifications-inbox__avatar-size) +
+				var(--dashboard-notifications-inbox__avatar-gap)
+		);
+	}
+}
