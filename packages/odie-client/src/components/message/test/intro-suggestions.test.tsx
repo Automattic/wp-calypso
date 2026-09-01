@@ -90,7 +90,7 @@ describe( 'IntroSuggestions', () => {
 		mockTrackEvent.mockClear();
 		mockSendMessage.mockReset();
 		mockSendMessage.mockResolvedValue( undefined );
-		window.localStorage.removeItem( 'agentsManagerAskAi' );
+		window.localStorage.setItem( 'agentsManagerAskAi', '1' );
 	} );
 
 	it( 'shows the top five topics vertically on a fresh chat', () => {
@@ -149,6 +149,11 @@ describe( 'IntroSuggestions', () => {
 			suggestion: 'custom-domain',
 			topic: 'domains',
 		} );
+		expect( mockTrackEvent ).toHaveBeenCalledWith( 'chat_message_action_send', {
+			message_length: 'How do I connect a custom domain?'.length,
+			provider: 'odie',
+			context: 'intro_suggestion',
+		} );
 		// Asked question drops out; the rest of the topic stays, now horizontal.
 		expect( screen.queryByText( 'How do I connect a custom domain?' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'When does SSL activate on my domain?' ) ).toBeInTheDocument();
@@ -197,14 +202,27 @@ describe( 'IntroSuggestions', () => {
 		expect( mockSendMessage ).not.toHaveBeenCalled();
 	} );
 
-	it( 'restores the question chip when the send is aborted', async () => {
-		mockSendMessage.mockRejectedValue( { type: 'abort' } );
+	it( 'resets asked questions and drill-down when the conversation is cleared', async () => {
+		mockMessages = [ userMessage( 'How do I connect a custom domain?' ) ];
+		const { rerender } = render( <IntroSuggestions /> );
+		fireEvent.click( screen.getByText( 'Domains' ) );
+		expect( await screen.findByText( '‹ All topics' ) ).toBeInTheDocument();
+
+		// "New chat" empties chat.messages without unmounting the component.
+		mockMessages = [];
+		rerender( <IntroSuggestions /> );
+
+		expect( screen.getByTestId( 'suggestions' ) ).toHaveAttribute( 'data-layout', 'vertical' );
+		expect( screen.queryByText( '‹ All topics' ) ).not.toBeInTheDocument();
+		fireEvent.click( screen.getByText( 'Domains' ) );
+		expect( await screen.findByText( 'How do I connect a custom domain?' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders nothing while the chat is escalating to a human', () => {
+		mockStatus = 'transfer';
 		render( <IntroSuggestions /> );
 
-		fireEvent.click( screen.getByText( 'Domains' ) );
-		fireEvent.click( await screen.findByText( 'How do I connect a custom domain?' ) );
-
-		expect( await screen.findByText( 'How do I connect a custom domain?' ) ).toBeInTheDocument();
+		expect( screen.queryByTestId( 'suggestions' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders nothing during a live human (Zendesk) conversation', () => {
@@ -224,6 +242,13 @@ describe( 'IntroSuggestions', () => {
 
 	it( 'renders nothing when the prototype knob is off', () => {
 		window.localStorage.setItem( 'agentsManagerAskAi', '0' );
+		render( <IntroSuggestions /> );
+
+		expect( screen.queryByTestId( 'suggestions' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders nothing when the knob is unset — the shipping default', () => {
+		window.localStorage.removeItem( 'agentsManagerAskAi' );
 		render( <IntroSuggestions /> );
 
 		expect( screen.queryByTestId( 'suggestions' ) ).not.toBeInTheDocument();

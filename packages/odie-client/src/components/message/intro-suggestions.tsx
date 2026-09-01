@@ -172,14 +172,27 @@ export const IntroSuggestions = () => {
 	const [ askedIds, setAskedIds ] = useState< string[] >( [] );
 	const [ activeTopicId, setActiveTopicId ] = useState< string | null >( null );
 
+	// "New chat" clears chat.messages without unmounting this component, so
+	// local state has to reset with it or the fresh conversation inherits the
+	// old one's asked questions and drill-down position.
+	const messageCount = chat.messages?.length ?? 0;
+	const [ prevMessageCount, setPrevMessageCount ] = useState( messageCount );
+	if ( messageCount !== prevMessageCount ) {
+		setPrevMessageCount( messageCount );
+		if ( messageCount === 0 ) {
+			setAskedIds( [] );
+			setActiveTopicId( null );
+		}
+	}
+
 	if ( ! isAskAiPrototypeEnabled() ) {
 		return null;
 	}
 
 	// Mirrors the intro-card gate in messages-container: these are bot-starter
 	// prompts, so never render them over a live human (Zendesk) conversation,
-	// and not while history is still loading on panel (re)mount.
-	if ( chat.provider === 'zendesk' || chat.status === 'loading' ) {
+	// mid-escalation, or while history is still loading on panel (re)mount.
+	if ( chat.provider === 'zendesk' || chat.status === 'loading' || chat.status === 'transfer' ) {
 		return null;
 	}
 
@@ -258,23 +271,27 @@ export const IntroSuggestions = () => {
 				if ( isBusy ) {
 					return;
 				}
+				const content = selected.prompt ?? selected.label;
 				trackEvent( 'chat_intro_suggestion_click', {
 					suggestion: selected.id,
 					topic: activeTopic?.id,
 				} );
+				// Same funnel event as every composer send, so suggestion-driven
+				// messages stay visible to existing send metrics.
+				trackEvent( 'chat_message_action_send', {
+					message_length: content.length,
+					provider: chat.provider,
+					context: 'intro_suggestion',
+				} );
 				setAskedIds( [ ...askedIds, selected.id ] );
 				const messageObj = {
-					content: selected.prompt ?? selected.label,
+					content,
 					role: 'user',
 					type: 'message',
 				} as Message;
-				// Aborted sends put the chip back so the question can be retried,
-				// mirroring how the composer restores its input on abort.
-				sendMessage( messageObj ).catch( ( error: { type?: string } ) => {
-					if ( error?.type === 'abort' ) {
-						setAskedIds( ( ids ) => ids.filter( ( id ) => id !== selected.id ) );
-					}
-				} );
+				// Failures surface through the mutation's own error UI; the
+				// optimistic user message stays in history either way.
+				sendMessage( messageObj ).catch( () => {} );
 			} }
 		/>
 	);

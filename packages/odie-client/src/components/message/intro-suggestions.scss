@@ -26,9 +26,8 @@
 		button {
 			height: auto;
 			padding: 8px 14px;
-			/* 16px is the largest radius on the stylelint scale; at this chip
-			   height it renders as a full pill, and every chip in a horizontal
-			   row shares it. */
+			/* On-scale radius that renders as a full pill at this chip height;
+			   every chip in a horizontal row shares it. */
 			border-radius: 16px;
 			font-size: 13px;
 			line-height: 1.3;

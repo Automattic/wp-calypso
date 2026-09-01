@@ -264,10 +264,11 @@ const getOdieInitialPromptContext = ( botNameSlug: OdieAllowedBots ): Context | 
 };
 
 // DESIGN PROTOTYPE knob, shared with components/message/intro-suggestions.
-// Unset means on; set localStorage.agentsManagerAskAi to '0' to disable.
+// Opt-in so an accidental merge ships nothing: off unless
+// localStorage.agentsManagerAskAi is '1'.
 export const isAskAiPrototypeEnabled = (): boolean => {
 	try {
-		return window.localStorage?.getItem( 'agentsManagerAskAi' ) !== '0';
+		return window.localStorage?.getItem( 'agentsManagerAskAi' ) === '1';
 	} catch {
 		return false;
 	}
