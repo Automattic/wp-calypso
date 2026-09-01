@@ -146,7 +146,7 @@ describe( 'useSiteGeneration', () => {
 				onReady();
 			} );
 			expect( window.location.assign ).toHaveBeenCalledWith(
-				'https://example.wordpress.com/wp-admin/site-editor.php'
+				'https://example.wordpress.com/wp-admin/site-editor.php?from=site-generation'
 			);
 		} finally {
 			Object.defineProperty( window, 'location', {

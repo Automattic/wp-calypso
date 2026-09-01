@@ -1,3 +1,4 @@
+import { addQueryArgs } from '@wordpress/url';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { logBuildWowEvent, requestBuildWowSite } from 'calypso/landing/stepper/utils/build-wow';
 import { pollForBuildWowStatus } from './build-status-poller';
@@ -89,7 +90,9 @@ export function useSiteGeneration( {
 		);
 		const stopStatusPolling = pollForBuildWowStatus( {
 			siteIdentifier,
-			onReady: () => window.location.assign( editorUrl ),
+			// The marker lets the editor greet a freshly generated site.
+			onReady: () =>
+				window.location.assign( addQueryArgs( editorUrl, { from: 'site-generation' } ) ),
 			onFailed: ( status, ui ) => {
 				logBuildWowEvent( 'site_generation_failed', {
 					status,
