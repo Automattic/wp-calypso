@@ -8,7 +8,7 @@ $omnibar-reader-active-radius: 4px;
 	);
 }
 
-.omnibar .omnibar__reader {
+.omnibar .omnibar__menu.omnibar__reader {
 	@media ( max-width: 360px ) {
 		display: none;
 	}

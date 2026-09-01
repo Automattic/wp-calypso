@@ -225,12 +225,14 @@ export function getRememberedWowFunnelSite(
 	return remembered && remembered.funnelKey === key ? remembered : null;
 }
 
-export function rememberWowFunnelSite( site: RememberedWowFunnelSite ): void {
+export function rememberWowFunnelSite( site: RememberedWowFunnelSite ): boolean {
 	try {
 		window.sessionStorage.setItem( SESSION_KEY, JSON.stringify( site ) );
+		return true;
 	} catch {
 		// sessionStorage unavailable — the module-level in-flight cache still de-dupes within the
 		// session, and create-site falls back to creating the site itself.
+		return false;
 	}
 }
 
@@ -338,11 +340,9 @@ export async function waitForWowFunnelReady( {
 export async function getWowFunnelHandoffUrl( {
 	dest,
 	siteIdentifier,
-	startWalkthrough = false,
 }: {
 	dest: WowFunnelDest;
 	siteIdentifier: string;
-	startWalkthrough?: boolean;
 } ): Promise< string > {
 	switch ( dest ) {
 		case 'editor':
@@ -350,7 +350,7 @@ export async function getWowFunnelHandoffUrl( {
 			const adminUrl = await getSiteAdminUrl( siteIdentifier );
 			// `p` opens the front page rather than whatever the editor last had; `canvasEdit`
 			// because a plain site-editor.php load stays in view mode.
-			return getSiteEditorUrl( adminUrl, { canvasEdit: true, path: '/', startWalkthrough } );
+			return getSiteEditorUrl( adminUrl, { canvasEdit: true, path: '/' } );
 		}
 	}
 }

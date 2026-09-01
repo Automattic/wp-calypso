@@ -130,37 +130,37 @@ describe( 'getSiteEditorUrl', () => {
 	 */
 	it( 'keeps the redirect relative', () => {
 		const url = getSiteEditorUrl( 'https://example.com/wp-admin/', {
-			startWalkthrough: true,
+			canvasEdit: true,
 		} );
 		const redirect = new URL( url ).searchParams.get( 'redirect_to' );
 
-		expect( redirect ).toBe( '/wp-admin/site-editor.php?blueprint-walkthrough=go&canvas=edit' );
-	} );
-
-	/**
-	 * The flag is how Big Sky knows to open the copy walkthrough instead of
-	 * waiting for the customer to speak first.
-	 */
-	it( 'flags the walkthrough when the spec was applied', () => {
-		expect(
-			getSiteEditorUrl( 'https://example.com/wp-admin/', { startWalkthrough: true } )
-		).toContain( encodeURIComponent( 'blueprint-walkthrough=go' ) );
+		expect( redirect ).toBe( '/wp-admin/site-editor.php?canvas=edit' );
 	} );
 
 	/**
 	 * Big Sky's assembler only mounts on the editing canvas; a plain
-	 * site-editor.php load stays in view mode and the walkthrough silently
-	 * never starts. The hand-off must force edit mode.
+	 * site-editor.php load stays in view mode and the assistant never appears.
+	 * The hand-off must force edit mode.
 	 */
 	it( 'forces the editing canvas so Big Sky mounts', () => {
-		expect(
-			getSiteEditorUrl( 'https://example.com/wp-admin/', { startWalkthrough: true } )
-		).toContain( encodeURIComponent( 'canvas=edit' ) );
+		expect( getSiteEditorUrl( 'https://example.com/wp-admin/', { canvasEdit: true } ) ).toContain(
+			encodeURIComponent( 'canvas=edit' )
+		);
 	} );
 
-	it( 'leaves the flag off when the spec did not apply', () => {
+	it( 'leaves the canvas alone when the spec did not apply', () => {
 		expect(
-			getSiteEditorUrl( 'https://example.com/wp-admin/', { startWalkthrough: false } )
+			getSiteEditorUrl( 'https://example.com/wp-admin/', { canvasEdit: false } )
+		).not.toContain( 'canvas' );
+	} );
+
+	/**
+	 * The copy walkthrough is rolled back: the editor opens quietly and the
+	 * customer speaks first. Nothing on the hand-off may start it.
+	 */
+	it( 'never asks Big Sky to start the copy walkthrough', () => {
+		expect(
+			getSiteEditorUrl( 'https://example.com/wp-admin/', { canvasEdit: true, path: '/' } )
 		).not.toContain( 'blueprint-walkthrough' );
 	} );
 } );

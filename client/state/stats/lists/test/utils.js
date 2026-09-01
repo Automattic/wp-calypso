@@ -2538,6 +2538,106 @@ describe( 'utils', () => {
 				] );
 			} );
 		} );
+
+		describe( 'statsEmailsSummary()', () => {
+			const site = { slug: 'en.blog.wordpress.com' };
+
+			test( 'should return an empty array if data is null', () => {
+				expect( normalizers.statsEmailsSummary() ).toEqual( [] );
+			} );
+
+			test( 'should render every row the API returns, including all-zero rows', () => {
+				// Filtering never-emailed posts is a server-side concern (STATS-452):
+				// dropping rows after pagination would leave the card short-handed
+				// and out of sync with the CSV export.
+				expect(
+					normalizers.statsEmailsSummary(
+						{
+							posts: [
+								{
+									id: 1,
+									title: 'Never emailed',
+									date: '2020-01-01 00:00:00',
+									total_sends: 0,
+									opens: 0,
+									clicks: 0,
+								},
+								{
+									id: 3,
+									title: 'Legacy send with engagement',
+									date: '2020-01-01 00:00:00',
+									total_sends: 0,
+									opens: 5,
+									clicks: 2,
+								},
+							],
+						},
+						{},
+						10,
+						site
+					)
+				).toMatchObject( [ { id: 1 }, { id: 3, opens: 5, clicks: 2 } ] );
+			} );
+
+			test( 'should map fields and default missing counts to zero strings', () => {
+				expect(
+					normalizers.statsEmailsSummary(
+						{
+							posts: [
+								{
+									id: 4,
+									title: 'Tracked send',
+									date: '2024-01-01 00:00:00',
+									total_sends: 100,
+									opens: 26,
+									clicks: 5,
+									opens_rate: 0.11,
+									clicks_rate: 0.03,
+									unique_opens: 11,
+									unique_clicks: 3,
+								},
+							],
+						},
+						{},
+						10,
+						site
+					)
+				).toMatchObject( [
+					{
+						id: 4,
+						label: 'Tracked send',
+						value: 0.03,
+						opens: 26,
+						clicks: 5,
+						opens_rate: 0.11,
+						clicks_rate: 0.03,
+						unique_opens: 11,
+						unique_clicks: 3,
+						total_sends: 100,
+						page: '/stats/email/opens/day/4/en.blog.wordpress.com',
+					},
+				] );
+
+				expect(
+					normalizers.statsEmailsSummary(
+						{ posts: [ { id: 5, title: 'Untracked send', date: '2024-01-01', total_sends: 100 } ] },
+						{},
+						10,
+						site
+					)
+				).toMatchObject( [
+					{
+						id: 5,
+						value: '0',
+						opens: '0',
+						clicks: '0',
+						unique_opens: '0',
+						unique_clicks: '0',
+						total_sends: 100,
+					},
+				] );
+			} );
+		} );
 	} );
 
 	describe( 'getChartLabels', () => {

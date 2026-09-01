@@ -318,37 +318,26 @@ export async function getSiteAdminUrl( siteIdentifier: string ): Promise< string
  */
 export function getSiteEditorUrl(
 	adminUrl: string,
-	{
-		startWalkthrough = false,
-		canvasEdit = false,
-		path,
-	}: { startWalkthrough?: boolean; canvasEdit?: boolean; path?: string } = {}
+	{ canvasEdit = false, path }: { canvasEdit?: boolean; path?: string } = {}
 ): string {
 	const base = adminUrl.endsWith( '/' ) ? adminUrl : `${ adminUrl }/`;
 	const url = `${ base }site-editor.php`;
 
-	// `go` tells Big Sky this arrival came from onboarding, so it personalizes the
-	// copy instead of waiting to be spoken to. It never re-runs: the flag stays in
-	// the editor URL, so a site that has already been personalized has to see it
-	// and do nothing. `reset` is the way to run it again.
+	// The hand-off used to carry `blueprint-walkthrough=go`, which told Big Sky to
+	// open the conversation itself and rewrite the page's copy while the customer
+	// watched. That walkthrough is rolled back for now, so nothing here starts it
+	// and the editor opens quietly. The wpcom side still understands the
+	// parameter, so bringing it back is a small change here.
 	//
-	// `canvas=edit` is load-bearing: Big Sky's assembler only mounts on the
-	// editing canvas (useShouldLoadBigSky requires canvasMode === 'edit'), and a
-	// plain site-editor.php load stays in view mode — the kickoff, the copy mask,
-	// and the walkthrough all silently never run without it. The welcome-guide
-	// overlay this parameter was once blamed for came from sites where Big Sky
-	// had not been enabled by hand-off time (the enable race fixed on the wpcom
-	// side); when Big Sky mounts, it suppresses the guide itself.
-	//
-	// Only set when the spec applied; there is nothing to personalize from
-	// otherwise.
+	// `canvas=edit` stays, and is load-bearing for reasons of its own: Big Sky's
+	// assembler only mounts on the editing canvas (useShouldLoadBigSky requires
+	// canvasMode === 'edit'), and a plain site-editor.php load stays in view mode,
+	// so the assistant never appears at all. The welcome-guide overlay this
+	// parameter was once blamed for came from sites where Big Sky had not been
+	// enabled by hand-off time (the enable race fixed on the wpcom side); when Big
+	// Sky mounts, it suppresses the guide itself.
 	const args: Record< string, string > = {};
-	if ( startWalkthrough ) {
-		args[ 'blueprint-walkthrough' ] = 'go';
-	}
-	// The walkthrough needs the editing canvas; a caller can also ask for it on its own, which is
-	// what the funnel hand-off does — a plain site-editor.php load stays in view mode.
-	if ( startWalkthrough || canvasEdit ) {
+	if ( canvasEdit ) {
 		args.canvas = 'edit';
 	}
 	if ( path ) {

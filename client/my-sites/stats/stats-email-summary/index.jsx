@@ -12,6 +12,7 @@ import DownloadCsvUpsell from 'calypso/my-sites/stats/stats-download-csv-upsell'
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
+import { isRateKnown, toCount } from '../features/modules/stats-emails/is-rate-known';
 import {
 	TooltipWrapper,
 	OpensTooltipContent,
@@ -22,6 +23,7 @@ import StatsModule from '../stats-module';
 import PageViewTracker from '../stats-page-view-tracker';
 import '../summary/style.scss';
 import '../stats-module/summary-nav.scss';
+import '../features/modules/stats-emails/style.scss';
 
 // Inner component that records the current screen before the wrapper reads breadcrumb trail.
 // useLayoutEffect fires before the parent wrapper's useEffect in useStatsBreadcrumbTrail,
@@ -119,26 +121,37 @@ const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) =
 							header: (
 								<>
 									<span>{ translate( 'Opens' ) }</span>
+									<span>{ translate( 'Open rate' ) }</span>
+									<span>{ translate( 'Clicks' ) }</span>
 								</>
 							),
 							body: ( item ) => {
-								const opensUnique = parseInt( item.unique_opens, 10 );
-								const opens = parseInt( item.opens, 10 );
-								const hasUniquesData = opensUnique > 0 || opens === 0;
+								const opens = toCount( item.opens );
+								const rateKnown = isRateKnown( {
+									uniques: toCount( item.unique_opens ),
+									totals: opens,
+									sends: toCount( item.total_sends ),
+								} );
 								return (
-									<TooltipWrapper
-										value={
-											hasUniquesData
-												? `${ formatNumber( item.opens_rate, {
-														numberFormatOptions: {
-															maximumFractionDigits: 2,
-														},
-												  } ) }%`
-												: '—'
-										}
-										item={ item }
-										TooltipContent={ OpensTooltipContent }
-									/>
+									<>
+										<span>{ formatNumber( opens ) }</span>
+										<span>
+											<TooltipWrapper
+												value={
+													rateKnown
+														? `${ formatNumber( item.opens_rate ?? 0, {
+																numberFormatOptions: {
+																	maximumFractionDigits: 2,
+																},
+														  } ) }%`
+														: '—'
+												}
+												item={ item }
+												TooltipContent={ OpensTooltipContent }
+											/>
+										</span>
+										<span>{ formatNumber( toCount( item.clicks ) ) }</span>
+									</>
 								);
 							},
 						} }
@@ -149,18 +162,20 @@ const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) =
 						statType="statsEmailsSummary"
 						mainItemLabel={ translate( 'Latest Emails' ) }
 						hideSummaryLink
-						metricLabel={ translate( 'Clicks' ) }
+						metricLabel={ translate( 'Click rate' ) }
 						valueField="clicks_rate"
 						formatValue={ ( value, item ) => {
 							if ( item?.clicks !== undefined ) {
-								const clicksUnique = parseInt( item.unique_clicks, 10 );
-								const clicks = parseInt( item.clicks, 10 );
-								const hasUniquesData = clicksUnique > 0 || clicks === 0;
+								const rateKnown = isRateKnown( {
+									uniques: toCount( item.unique_clicks ),
+									totals: toCount( item.clicks ),
+									sends: toCount( item.total_sends ),
+								} );
 								return (
 									<TooltipWrapper
 										value={
-											hasUniquesData
-												? `${ formatNumber( item.clicks_rate, {
+											rateKnown
+												? `${ formatNumber( item.clicks_rate ?? 0, {
 														numberFormatOptions: {
 															maximumFractionDigits: 2,
 														},
@@ -175,6 +190,7 @@ const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) =
 							return <span>{ value }</span>;
 						} }
 						listItemClassName="stats__summary--narrow-mobile"
+						className="stats-emails--four-columns"
 					/>
 				</div>
 			</div>

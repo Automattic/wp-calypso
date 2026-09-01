@@ -12,11 +12,11 @@ describe( 'Signup Flows Configuration', () => {
 		} );
 
 		test( 'should return the full flow when the user is not logged in', () => {
-			expect( flows.getFlow( 'main', false ).steps ).toEqual( [ 'user', 'site' ] );
+			expect( flows.getFlow( 'main', false ).steps ).toEqual( [ 'user', 'domains' ] );
 		} );
 
 		test( 'should remove the user step from the flow when the user is logged in', () => {
-			expect( flows.getFlow( 'main', true ).steps ).toEqual( [ 'site' ] );
+			expect( flows.getFlow( 'main', true ).steps ).toEqual( [ 'domains' ] );
 		} );
 	} );
 
@@ -29,8 +29,8 @@ describe( 'Signup Flows Configuration', () => {
 			flows.excludeStep();
 		} );
 
-		test( 'should exclude site step from getFlow', () => {
-			flows.excludeStep( 'site' );
+		test( 'should exclude domains step from getFlow', () => {
+			flows.excludeStep( 'domains' );
 			expect( flows.getFlow( 'main', false ).steps ).toEqual( [ 'user' ] );
 		} );
 	} );
