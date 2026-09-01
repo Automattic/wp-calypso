@@ -9,8 +9,7 @@
 .onboarding-progress {
 	display: flex;
 	justify-content: center;
-	padding: 8px 0;
-	margin-block-end: 32px;
+	margin-block-end: var( --wpds-dimension-gap-lg );
 	// Ensure the stepper paints above the sticky checkout sidebar, which is positioned
 	// and would otherwise overlap the heading row at the same stacking level.
 	position: relative;
@@ -18,12 +17,70 @@
 
 	.onboarding-progress-step {
 		display: flex;
-		justify-content: center;
+		align-items: center;
+		// Positioning context for the revealed label below.
+		position: relative;
+
+		// Connector from this step to the next one.
+		&:not( :last-child )::after {
+			content: '';
+			flex: none;
+			width: var( --wpds-dimension-gap-xl );
+			height: var( --wpds-border-width-xs );
+			background-color: var( --wpds-color-stroke-surface-neutral );
+		}
 	}
 
 	.onboarding-progress-trigger {
 		display: flex;
 		align-items: center;
-		padding: 12px 16px;
+		padding: var( --wpds-dimension-padding-xs ) var( --wpds-dimension-padding-sm );
+	}
+
+	.onboarding-progress-title {
+		white-space: nowrap;
+		font-size: var( --wpds-typography-font-size-sm );
+		line-height: var( --wpds-typography-line-height-xs );
+	}
+
+	// Peek behaviour.
+	//
+	// Only the current step shows its label inline. Every other label is lifted
+	// out of the flow and parked under its own dot, so revealing it on hover or
+	// focus never reflows the rail and never shifts the page.
+	//
+	// It is hidden with opacity rather than `display: none` or
+	// `visibility: hidden` on purpose: the text has to stay in the
+	// accessibility tree, because it is what gives each step its accessible
+	// name ("Step 2 of 3, completed Domain"). Sighted pointer and keyboard
+	// users get it back on demand; screen reader users never lost it.
+	.onboarding-progress-step:not( [data-current] ) .onboarding-progress-title {
+		position: absolute;
+		top: 100%;
+		// Physical `left` on purpose: paired with a -50% translate this centres
+		// the label under the dot identically in LTR and RTL.
+		left: 50%;
+		transform: translate( -50%, -2px );
+		z-index: 1;
+		opacity: 0;
+		pointer-events: none;
+		padding: 2px var( --wpds-dimension-padding-sm );
+		border: var( --wpds-border-width-xs ) solid var( --wpds-color-stroke-surface-neutral );
+		border-radius: var( --wpds-border-radius-sm );
+		background-color: var( --wpds-color-background-surface-neutral-strong );
+		color: var( --wpds-color-foreground-content-neutral );
+	}
+
+	.onboarding-progress-step:not( [data-current] ) .onboarding-progress-trigger:hover .onboarding-progress-title,
+	.onboarding-progress-step:not( [data-current] ) .onboarding-progress-trigger:focus-visible .onboarding-progress-title {
+		opacity: 1;
+		transform: translate( -50%, 0 );
+	}
+
+	// Only opacity and transform animate, so the reveal stays off the main thread.
+	@media ( prefers-reduced-motion: no-preference ) {
+		.onboarding-progress-step:not( [data-current] ) .onboarding-progress-title {
+			transition: opacity 120ms ease, transform 120ms ease;
+		}
 	}
 }
