@@ -496,6 +496,7 @@
 	--dashboard-notifications-inbox__avatar-gap: 12px;
 
 	box-sizing: border-box;
+	margin-block-start: 8px;
 	padding-inline-start: calc(
 		var(--dashboard-notifications-inbox__avatar-size) +
 			var(--dashboard-notifications-inbox__avatar-gap)
