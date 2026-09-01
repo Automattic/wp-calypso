@@ -9,7 +9,9 @@ import type {
 	PerformanceMetricAuditDetailsItem,
 } from '@automattic/api-core';
 
-const breakAllStyle = { wordBreak: 'break-all' } as const;
+// DataViews sets white-space: nowrap on the cell wrapper, which suppresses every wrap
+// opportunity; word-break alone has no effect without overriding it.
+const wrapLongValueStyle = { whiteSpace: 'normal', wordBreak: 'break-all' } as const;
 
 const renderNode = (
 	data: { [ key: string ]: any },
@@ -78,7 +80,7 @@ const PerformanceInsightTable = ( {
 					case 'url':
 					case 'source-location':
 						return (
-							<span style={ breakAllStyle }>
+							<span style={ wrapLongValueStyle }>
 								{ typeof value.location === 'object'
 									? [ value.location.url, value.location.line, value.location.column ].join( ':' )
 									: value?.url }
@@ -103,7 +105,7 @@ const PerformanceInsightTable = ( {
 					case 'score':
 						return <Text intent={ Number( value ) > 6 ? 'error' : 'warning' }>{ value }</Text>;
 					default:
-						return <span style={ breakAllStyle }>{ value }</span>;
+						return <span style={ wrapLongValueStyle }>{ value }</span>;
 				}
 			}
 			return value;
