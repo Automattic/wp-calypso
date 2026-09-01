@@ -1,4 +1,20 @@
 import { __ } from '@wordpress/i18n';
+import PressableLogo from 'calypso/assets/images/a8c-for-agencies/events/pressable-logo.svg';
+import {
+	MARKETPLACE_HOSTING_PRESSABLE_PATH,
+	PRESSABLE_EXPANSION_OFFER_TERMS_URL,
+	PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
+} from './constants';
+
+export interface FeaturedEventCta {
+	/** Used as the `cta_id` tracks property, so keep it stable per CTA. */
+	id: string;
+	label: string;
+	url: string;
+	variant?: 'primary' | 'secondary';
+	/** Opens the link in a new tab, with the new-tab arrow on the label. */
+	isExternal?: boolean;
+}
 
 export interface FeaturedEvent {
 	/** Used as the `event_id` tracks property, so keep it stable per event. */
@@ -14,8 +30,7 @@ export interface FeaturedEvent {
 	subtitle: string;
 	/** One entry per paragraph. */
 	description: string[];
-	ctaLabel: string;
-	url: string;
+	ctas: FeaturedEventCta[];
 	/** ISO date the card stops showing itself, typically the day after the event. */
 	endsAt: string;
 }
@@ -42,7 +57,81 @@ export const FEATURED_EVENT: FeaturedEvent | null = {
 			'Come talk shop with our partner managers, get answers in person, and grab a pin while they last.'
 		),
 	],
-	ctaLabel: __( 'Get your spot!' ),
-	url: 'https://us.wordcamp.org/2026/',
+	ctas: [
+		{
+			id: 'register',
+			label: __( 'Get your spot!' ),
+			url: 'https://us.wordcamp.org/2026/',
+			isExternal: true,
+		},
+	],
 	endsAt: '2026-08-20',
+};
+
+/**
+ * The Q3 2026 Pressable promos, shown to eligible agencies alongside the
+ * featured event. Which one an agency sees is decided by the shells through
+ * the eligibility props on AgencyOverviewContent: the introductory offer
+ * targets agencies without a Pressable plan through A4A, the expansion offer
+ * agencies with one that missed the introductory offer.
+ */
+export const PRESSABLE_INTRO_OFFER_EVENT: FeaturedEvent = {
+	id: 'a4a-pressable-promo-offer-2026-q3',
+	logo: PressableLogo,
+	logoAlt: __( 'Pressable' ),
+	when: __( 'Limited time offer · Until September 30, 2026' ),
+	title: __( 'Get up to 6 months of free Pressable hosting on new plans!' ),
+	subtitle: __( 'Automattic for Agencies & Pressable' ),
+	description: [
+		__(
+			'Enjoy up to 6 months free on Pressable Signature and Premium Plans with Automattic for Agencies. Choose annual billing for 6 months free or monthly billing for 3 months free, while still earning revenue share and reseller incentives.'
+		),
+	],
+	ctas: [
+		{
+			id: 'view-promo-details',
+			label: __( 'View promo details' ),
+			url: MARKETPLACE_HOSTING_PRESSABLE_PATH,
+			variant: 'primary',
+		},
+		{
+			id: 'see-full-terms',
+			label: __( 'See full terms' ),
+			url: PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
+			isExternal: true,
+		},
+	],
+	endsAt: '2026-10-01',
+};
+
+export const PRESSABLE_EXPANSION_OFFER_EVENT: FeaturedEvent = {
+	id: 'a4a-pressable-expansion-offer-2026-q3',
+	logo: PressableLogo,
+	logoAlt: __( 'Pressable' ),
+	when: __( 'Limited time offer · Until September 30, 2026' ),
+	title: __( 'Upgrade your Pressable plan and get up to 6 months of the upgrade free' ),
+	subtitle: __( 'Automattic for Agencies & Pressable' ),
+	description: [
+		__(
+			'Move up a Pressable plan tier and we’ll cover part of the increase: 6 months’ worth on annual upgrades, 3 months’ worth on monthly.'
+		),
+		__(
+			'For example, an annual upgrade from $10,000 to $13,250/yr is a $3,250 increase, so you’d save $1,625. The discount is calculated on that increase. Migrating 50+ sites? You may qualify for a custom incentive, up to $25,000.'
+		),
+	],
+	ctas: [
+		{
+			id: 'view-promo-details',
+			label: __( 'View promo details' ),
+			url: PRESSABLE_EXPANSION_OFFER_TERMS_URL,
+			variant: 'primary',
+			isExternal: true,
+		},
+		{
+			id: 'see-pressable-plans',
+			label: __( 'See Pressable plans' ),
+			url: MARKETPLACE_HOSTING_PRESSABLE_PATH,
+		},
+	],
+	endsAt: '2026-10-01',
 };

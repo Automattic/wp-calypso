@@ -1,6 +1,8 @@
 import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
 import { CONTACT_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
+import useIsEligibleForExpansionOffer from 'calypso/a8c-for-agencies/components/a4a-pressable-offer/hooks/use-is-eligible-for-expansion-offer';
+import usePressableOfferEligibility from 'calypso/a8c-for-agencies/components/a4a-pressable-offer/hooks/use-pressable-offer-eligibility';
 import { ONBOARDING_TOUR_HASH } from 'calypso/a8c-for-agencies/components/hoc/with-onboarding-tour/hooks/use-onboarding-tour';
 import {
 	A4A_AGENCY_TIER_LINK,
@@ -17,10 +19,15 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-export default function DashboardOverviewBody() {
+function DashboardOverviewBodyContent( {
+	isEligibleForPressableExpansionOffer,
+}: {
+	isEligibleForPressableExpansionOffer: boolean;
+} ) {
 	const dispatch = useDispatch();
 	const agency = useSelector( getActiveAgency );
 	const approvalStatus = agency?.approval_status;
+	const { isEligibleForIntroductoryOffer } = usePressableOfferEligibility();
 	const hasPartnerDirectoryListing =
 		!! agency?.profile?.partner_directory_application?.directories.some(
 			( { status } ) => status === 'approved'
@@ -51,6 +58,8 @@ export default function DashboardOverviewBody() {
 			approvalStatus={ approvalStatus }
 			capabilities={ agency.user?.capabilities }
 			hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
+			isEligibleForPressableIntroOffer={ isEligibleForIntroductoryOffer }
+			isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 			links={ {
 				tiers: A4A_AGENCY_TIER_LINK,
 				sites: A4A_SITES_LINK,
@@ -85,4 +94,26 @@ export default function DashboardOverviewBody() {
 			recordTracksEvent={ handleRecordTracksEvent }
 		/>
 	);
+}
+
+function ContentWithExpansionOfferCheck() {
+	const isEligibleForExpansionOffer = useIsEligibleForExpansionOffer();
+
+	return (
+		<DashboardOverviewBodyContent
+			isEligibleForPressableExpansionOffer={ isEligibleForExpansionOffer }
+		/>
+	);
+}
+
+export default function DashboardOverviewBody() {
+	const { mayBeEligibleForExpansionOffer } = usePressableOfferEligibility();
+
+	// Gate before rendering so the license fetch behind the expansion offer
+	// check only runs for agencies that own a Pressable plan through A4A.
+	if ( mayBeEligibleForExpansionOffer ) {
+		return <ContentWithExpansionOfferCheck />;
+	}
+
+	return <DashboardOverviewBodyContent isEligibleForPressableExpansionOffer={ false } />;
 }
