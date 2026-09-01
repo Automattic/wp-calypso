@@ -13,6 +13,7 @@ import { openNote, useNote } from './engine';
 import { getNoticonIcon } from './note-icons';
 import { getNoteView } from './note-model';
 import NoteViewSwitch from './note-views';
+import { TitleText } from './rich-text';
 import type { Note } from './engine';
 
 // The engine has no error signal for a missing note: `openNote` just keeps
@@ -42,11 +43,13 @@ function DetailFrame( { onClose, children }: { onClose: () => void; children: Re
 function DetailNav( {
 	note,
 	typeLabel,
+	context,
 	onPrevious,
 	onNext,
 }: {
 	note: Note;
 	typeLabel: string;
+	context?: React.ReactNode;
 	onPrevious?: ( () => void ) | null;
 	onNext?: ( () => void ) | null;
 } ) {
@@ -61,6 +64,7 @@ function DetailNav( {
 				<Icon icon={ getNoticonIcon( note.noticon ) } size={ 16 } />
 			</span>
 			<Text weight={ 500 }>{ typeLabel }</Text>
+			{ context }
 			<HStack
 				spacing={ 1 }
 				expanded={ false }
@@ -137,11 +141,15 @@ export default function NoteDetail( {
 		);
 	}
 
+	// A thread is headed by where the parent comment sits.
+	const context = view.kind === 'thread' && <TitleText segments={ view.parent.post } />;
+
 	return (
 		<DetailFrame onClose={ onClose }>
 			<DetailNav
 				note={ note }
 				typeLabel={ view.typeLabel }
+				context={ context }
 				onPrevious={ onPrevious }
 				onNext={ onNext }
 			/>

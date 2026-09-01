@@ -523,6 +523,37 @@ export function getNoteEditLink( note: Note ): string | undefined {
 	return getEditCommentLink( note );
 }
 
+export type ParentCommentRef = { siteId: number; commentId: number };
+export type ParentCommentDetails = { date: string; url: string | null };
+
+export function getParentCommentRef( note: Note ): ParentCommentRef | null {
+	const siteId = getReferenceId( note, 'site' );
+	const commentId = note.meta?.ids?.parent_comment;
+	return siteId && commentId ? { siteId: Number( siteId ), commentId: Number( commentId ) } : null;
+}
+
+/**
+ * The comment a reply answers. The note only carries its excerpt, so anything
+ * else about it (its date, for one) comes from the comments endpoint.
+ */
+export function fetchParentComment( {
+	siteId,
+	commentId,
+}: ParentCommentRef ): Promise< ParentCommentDetails | null > {
+	return new Promise( ( resolve, reject ) => {
+		getWpcom()
+			.site( siteId )
+			.comment( commentId )
+			.get( ( error: Error | null, data: { date?: string; URL?: string } ) => {
+				if ( error ) {
+					reject( error );
+					return;
+				}
+				resolve( data?.date ? { date: data.date, url: data.URL ?? null } : null );
+			} );
+	} );
+}
+
 const followStatTypes: Record< string, string > = {
 	comment: 'note_commented_post',
 	comment_like: 'note_liked_comment',

@@ -347,7 +347,8 @@ describe( 'getNoteView', () => {
 		if ( view.kind !== 'thread' ) {
 			return;
 		}
-		expect( view.parent.author.map( ( s ) => s.text ) ).toEqual( [ 'Bob', ' on ', 'A post' ] );
+		expect( view.parent.author.map( ( s ) => s.text ) ).toEqual( [ 'Bob' ] );
+		expect( view.parent.post.map( ( s ) => s.text ) ).toEqual( [ ' on ', 'A post' ] );
 		expect( view.parent.avatarUrl ).toBe( 'https://example.com/bob.png' );
 		expect( view.parent.isTruncated ).toBe( true );
 		expect( view.parent.url ).toBe( 'https://example.com/post/#comment-2' );

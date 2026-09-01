@@ -1,6 +1,7 @@
 import { __experimentalText as Text, Button } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import { Fragment } from 'react';
+import { getRelativeTimeString } from '../utils/datetime';
 import { getNoticonIcon } from './note-icons';
 import { getRichNodes } from './note-model';
 import type { NoteBlock, RichNode, TitleSegment } from './note-model';
@@ -89,6 +90,23 @@ export function BlockText( { block }: { block: NoteBlock } ) {
 				<RichNodeView key={ index } node={ node } />
 			) ) }
 		</>
+	);
+}
+
+/** A relative time, linked when there is somewhere to go. */
+export function Timestamp( { timestamp, url }: { timestamp: string; url: string | null } ) {
+	const time = <Text variant="muted">{ getRelativeTimeString( new Date( timestamp ) ) }</Text>;
+	return url ? (
+		<a
+			className="dashboard-notifications-inbox__note-time"
+			href={ url }
+			target="_blank"
+			rel="noreferrer"
+		>
+			{ time }
+		</a>
+	) : (
+		time
 	);
 }
 

@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -5,10 +6,22 @@ import {
 	ExternalLink,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { getRelativeTimeString } from '../utils/datetime';
+import { fetchParentComment, getParentCommentRef } from './engine';
 import NoteActions from './note-actions';
-import { BlockText, TitleText } from './rich-text';
+import { BlockText, Timestamp, TitleText } from './rich-text';
+import type { Note } from './engine';
 import type { ContextRun, NoteBlock, NoteUserRef, NoteView } from './note-model';
+
+/** The parent comment's details for a reply note; idle for anything else. */
+function useParentCommentDetails( note: Note | null ) {
+	const parentRef = note ? getParentCommentRef( note ) : null;
+	return useQuery( {
+		queryKey: [ 'notifications', 'parent-comment', parentRef ],
+		queryFn: () => ( parentRef ? fetchParentComment( parentRef ) : null ),
+		enabled: !! parentRef,
+		staleTime: Infinity,
+	} ).data;
+}
 
 function Avatar( { user, size = 32 }: { user: NoteUserRef | null; size?: number } ) {
 	return (
@@ -35,22 +48,6 @@ function UserName( { user }: { user: NoteUserRef } ) {
 		</a>
 	) : (
 		name
-	);
-}
-
-function Timestamp( { timestamp, url }: { timestamp: string; url: string | null } ) {
-	const time = <Text variant="muted">{ getRelativeTimeString( new Date( timestamp ) ) }</Text>;
-	return url ? (
-		<a
-			className="dashboard-notifications-inbox__note-time"
-			href={ url }
-			target="_blank"
-			rel="noreferrer"
-		>
-			{ time }
-		</a>
-	) : (
-		time
 	);
 }
 
@@ -169,11 +166,22 @@ function Body( { children, isCentered }: { children: React.ReactNode; isCentered
 
 function ThreadView( { view }: { view: Extract< NoteView, { kind: 'thread' } > } ) {
 	const { parent, reply, note } = view;
+	const parentDetails = useParentCommentDetails( note );
 	return (
 		<>
 			<Header avatarUrl={ parent.avatarUrl ?? note.icon }>
 				<VStack spacing={ 1 }>
-					<TitleText segments={ parent.author } />
+					<TitleText segments={ parent.author }>
+						{ parentDetails?.date && (
+							<>
+								<Text variant="muted"> · </Text>
+								<Timestamp
+									timestamp={ parentDetails.date }
+									url={ parent.url ?? parentDetails.url }
+								/>
+							</>
+						) }
+					</TitleText>
 					<Text className="dashboard-notifications-inbox__note-title dashboard-notifications-inbox__body">
 						{ parent.excerpt }
 						{ parent.url && parent.isTruncated && (

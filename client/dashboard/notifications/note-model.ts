@@ -130,7 +130,10 @@ export type NoteView = NoteViewBase &
 		| {
 				kind: 'thread';
 				parent: {
+					/** The parent's author, on its own. */
 					author: TitleSegment[];
+					/** Where it sits: " on {post}", for a heading. */
+					post: TitleSegment[];
 					excerpt: string;
 					url: string | null;
 					isTruncated: boolean;
@@ -172,16 +175,20 @@ export function getNoteView( note: Note ): NoteView {
 	const parentComment = getNoteParentComment( note );
 	if ( parentComment ) {
 		const authorBlock = context.find( ( block ) => block.type === 'user' );
+		const authorSegments = getBlockSegments( parentComment.author ).map( ( segment ) => ( {
+			text: segment.text,
+			bold: segment.type === 'user' || segment.type === 'post',
+			url: segment.url ?? null,
+		} ) );
 		return {
 			...base,
 			kind: 'thread',
 			context: getContextRuns( context.filter( ( block ) => block.type !== 'user' ) ),
 			parent: {
-				author: getBlockSegments( parentComment.author ).map( ( segment ) => ( {
-					text: segment.text,
-					bold: segment.type === 'user' || segment.type === 'post',
-					url: segment.url ?? null,
-				} ) ),
+				// The header's first range is the author (getNoteParentComment
+				// guarantees it), so the first segment is the name.
+				author: authorSegments.slice( 0, 1 ),
+				post: authorSegments.slice( 1 ),
 				excerpt: parentComment.excerpt.text,
 				url: parentComment.url,
 				isTruncated: isTruncated( parentComment.excerpt.text ),
