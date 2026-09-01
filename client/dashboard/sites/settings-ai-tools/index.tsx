@@ -11,7 +11,6 @@ import {
 	userSettingsQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { Badge } from '@wordpress/ui';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -36,6 +35,7 @@ import {
 	seen,
 	termDescription,
 } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import { useState } from 'react';
 import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
 import {
