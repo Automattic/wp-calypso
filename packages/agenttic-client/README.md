@@ -577,9 +577,10 @@ unadvertised tool names, or a confirmation inside `executeTool` itself.
 
 Matching is per tool call: each call in an `input-required` message is
 dispatched only if its own id is in one of the lists (or is a registered
-ability). Calls with no handler are skipped and named in a debug log line;
-when no call in the message matches, nothing runs and the update stays
-final.
+ability). A call with no handler is never dispatched; it is answered with an
+error result — so the agent learns the step failed rather than waiting on a
+result that never arrives — and named in a debug log line. When no call in the
+message matches, nothing runs and the update stays final.
 
 ## Development
 

@@ -1466,6 +1466,109 @@ describe( 'Client', () => {
 			expect( executedTools ).toEqual( [ 'spec_confirm' ] );
 			expect( result.final ).toBe( true );
 			expect( result.text ).toBe( 'Confirmed.' );
+
+			// The continuation replays the agent message with both calls, so
+			// the unhandled one still needs a result of its own — an error,
+			// since nothing here could run it.
+			const continuationBody = JSON.parse( mockFetch.mock.calls[ 1 ][ 1 ].body );
+			const unknownResult = continuationBody.params.message.parts.find(
+				( part: any ) =>
+					part.type === 'data' &&
+					part.data?.toolCallId === 'call-unknown' &&
+					// The replayed agent message carries the original call for
+					// the same id; the result part is the one without arguments.
+					! ( 'arguments' in part.data )
+			);
+
+			expect( unknownResult ).toBeDefined();
+			expect( unknownResult.data.toolId ).toBe( 'some_unknown_tool' );
+			expect( unknownResult.metadata.error ).toBe( 'No handler found for tool: some_unknown_tool' );
+		} );
+
+		it( 'matches abilities and dispatchable tools from the same provider', async () => {
+			// The Agents Manager merges several providers into one, so a single
+			// provider can expose both kinds at once. Matching is per call, so
+			// neither kind may shadow the other.
+			const executed: string[] = [];
+			const ability = {
+				name: 'big-sky/apply-block-edits',
+				label: 'Apply Block Edits',
+				description: 'Applies block edits to the canvas',
+				category: 'big-sky',
+				callback: async () => {
+					executed.push( 'ability' );
+					return { result: { success: true }, returnToAgent: true };
+				},
+			};
+
+			const mockToolProvider: ToolProvider = {
+				async getAvailableTools() {
+					return [];
+				},
+				async getDispatchableTools() {
+					return [ dispatchableTool ];
+				},
+				async getAbilities() {
+					return [ ability ];
+				},
+				async executeTool( toolId: string ) {
+					executed.push( toolId );
+					return { result: { ok: true }, returnToAgent: true };
+				},
+			};
+
+			const mixedEvent = JSON.stringify( {
+				jsonrpc: '2.0',
+				id: 'req-ability-mixed',
+				result: {
+					type: 'TaskStatusUpdateEvent',
+					taskId: 'task-ability-mixed',
+					status: {
+						state: 'input-required',
+						message: {
+							messageId: 'resp-ability-mixed',
+							role: 'agent',
+							kind: 'message',
+							parts: [
+								{
+									type: 'data',
+									data: {
+										toolCallId: 'call-dispatchable',
+										toolId: 'spec_confirm',
+										arguments: { confirmed: true },
+									},
+								},
+								{
+									type: 'data',
+									data: {
+										toolCallId: 'call-ability',
+										toolId: 'big_sky__apply_block_edits',
+										arguments: {},
+									},
+								},
+							],
+						},
+						final: true,
+					},
+					sessionId: 'session-ability-mixed',
+				},
+			} );
+
+			mockFetch.mockResolvedValueOnce( mockSSEResponse( mixedEvent ) );
+			mockFetch.mockResolvedValueOnce( mockSSEResponse( completionEvent ) );
+
+			const client = createClient( {
+				agentId: 'test-agent',
+				toolProvider: mockToolProvider,
+			} );
+
+			const result = await sendMessageAndWait( client, {
+				message: createTextMessage( 'Confirm the spec' ),
+			} );
+
+			expect( executed ).toEqual( [ 'spec_confirm', 'ability' ] );
+			expect( result.final ).toBe( true );
+			expect( result.text ).toBe( 'Confirmed.' );
 		} );
 	} );
 

@@ -148,7 +148,7 @@ async function executeToolOrAbility(
  */
 const toolResultPromises = new Map< string, { promise: Promise< any >; resolvedValue: any } >();
 
-interface MatchingToolCallbacksOptions {
+interface MatchingToolCallsOptions {
 	/**
 	 * Whether a registered ability counts as a match. Defaults to true.
 	 *
@@ -172,33 +172,52 @@ interface MatchingToolCallbacksOptions {
 }
 
 /**
- * Narrow a message's tool calls to the ones this provider can actually run.
+ * A message's tool calls, split by whether this provider can run them.
+ */
+interface MatchingToolCalls {
+	/** Calls with a handler, in message order. */
+	matched: ToolCallDataPart[];
+	/** Calls with no handler, in message order. */
+	unmatched: ToolCallDataPart[];
+}
+
+const NO_MATCHING_TOOL_CALLS: MatchingToolCalls = Object.freeze( {
+	matched: [],
+	unmatched: [],
+} );
+
+/**
+ * Split a message's tool calls by whether this provider can actually run them.
  *
- * Callers dispatch exactly what comes back, so a call the provider has no
- * handler for is dropped rather than forwarded to `executeTool` on the
- * strength of some *other* call in the same message matching.
+ * Callers dispatch exactly what `matched` holds, so a call the provider has no
+ * handler for is never forwarded to `executeTool` on the strength of some
+ * *other* call in the same message matching. `unmatched` is returned rather
+ * than discarded because a dispatched call still owes the agent a result — see
+ * the `input-required` branch in `processAgentResponseStream`.
  * @param toolProvider                - The tool provider to check
  * @param message                     - The message containing tool calls
  * @param options                     - Which handler kinds count as a match
  * @param options.includeAbilities    - Whether a registered ability counts as a match
  * @param options.includeDispatchable - Whether a tool from getDispatchableTools counts as a match
- * @returns Promise resolving to the executable subset of the message's tool calls, in message order
+ * @returns Promise resolving to the message's tool calls split into matched and unmatched
  */
 async function getMatchingToolCalls(
 	toolProvider: any,
 	message: Message,
-	{ includeAbilities = true, includeDispatchable = true }: MatchingToolCallbacksOptions = {}
-): Promise< ToolCallDataPart[] > {
+	{ includeAbilities = true, includeDispatchable = true }: MatchingToolCallsOptions = {}
+): Promise< MatchingToolCalls > {
 	if ( ! toolProvider || ! message ) {
-		return [];
+		return NO_MATCHING_TOOL_CALLS;
 	}
 
 	const toolCalls = extractToolCallsFromMessage( message );
 	if ( toolCalls.length === 0 ) {
-		return [];
+		return NO_MATCHING_TOOL_CALLS;
 	}
 
 	const executableIds = new Set< string >();
+	const isExecutable = ( toolCall: ToolCallDataPart ) =>
+		executableIds.has( toolCall.data.toolId as string );
 
 	// Advertised and dispatchable tools match by id and execute through the
 	// same executeTool; only which getter supplies the list differs.
@@ -222,7 +241,11 @@ async function getMatchingToolCalls(
 		}
 	}
 
-	if ( includeAbilities && toolProvider.getAbilities ) {
+	// Ability discovery can be a round trip, so skip it once every call in this
+	// message is already accounted for. A partial match still needs it: an
+	// ability riding along with an advertised tool has to resolve too, because
+	// matching is per call.
+	if ( includeAbilities && toolProvider.getAbilities && ! toolCalls.every( isExecutable ) ) {
 		try {
 			const abilities = await toolProvider.getAbilities();
 			for ( const ability of abilities ) {
@@ -236,7 +259,13 @@ async function getMatchingToolCalls(
 		}
 	}
 
-	return toolCalls.filter( ( toolCall ) => executableIds.has( toolCall.data.toolId as string ) );
+	const matched: ToolCallDataPart[] = [];
+	const unmatched: ToolCallDataPart[] = [];
+	for ( const toolCall of toolCalls ) {
+		( isExecutable( toolCall ) ? matched : unmatched ).push( toolCall );
+	}
+
+	return { matched, unmatched };
 }
 
 /**
@@ -564,26 +593,22 @@ async function* processAgentResponseStream(
 			update.status.state === 'input-required' && update.status.message && toolProvider
 				? update.status.message
 				: undefined;
-		const inputRequiredCalls = inputRequiredMessage
-			? extractToolCallsFromMessage( inputRequiredMessage )
-			: [];
-		// Only the calls this provider has a handler for. An unhandled call
-		// riding along in the same message is dropped rather than pushed at
-		// executeTool because a sibling call matched.
-		const inputRequiredToolCalls = inputRequiredMessage
-			? await getMatchingToolCalls( toolProvider, inputRequiredMessage )
-			: [];
+		// Only the calls this provider has a handler for are dispatched. An
+		// unhandled call riding along in the same message is not pushed at
+		// executeTool because a sibling call matched; it is answered with an
+		// error result below instead.
+		const { matched: inputRequiredToolCalls, unmatched: unhandledInputRequiredCalls } =
+			inputRequiredMessage
+				? await getMatchingToolCalls( toolProvider, inputRequiredMessage )
+				: NO_MATCHING_TOOL_CALLS;
 		const hasInputRequiredToolCalls = inputRequiredToolCalls.length > 0;
 
-		// A dropped handoff otherwise fails silently: the update passes
+		// An unhandled handoff otherwise fails silently: the update passes
 		// through as final and the stream just ends, with nothing to say the
 		// backend asked for a tool nobody here can run.
-		const unhandledInputRequiredCalls = inputRequiredCalls.filter(
-			( toolCall ) => ! inputRequiredToolCalls.includes( toolCall )
-		);
 		if ( unhandledInputRequiredCalls.length > 0 ) {
 			logger(
-				'No handler for input-required tool calls %o; they are skipped. ' +
+				'No handler for input-required tool calls %o. ' +
 					'Advertise the tool via getAvailableTools, or list it in ' +
 					'getDispatchableTools if the agent must not call it.',
 				unhandledInputRequiredCalls.map( ( toolCall ) => toolCall.data.toolId )
@@ -614,7 +639,7 @@ async function* processAgentResponseStream(
 		// dispatching registered abilities from it runs them twice per call,
 		// the first time on an unvalidated payload, and discards the result so
 		// the agent never learns the call failed.
-		const runningToolCalls =
+		const { matched: runningToolCalls } =
 			update.status.state === 'running' && update.status.message && toolProvider
 				? // A provider can expose advertised tools, dispatchable tools and
 				  // abilities at once (the Agents Manager merges several providers
@@ -625,7 +650,7 @@ async function* processAgentResponseStream(
 						includeAbilities: false,
 						includeDispatchable: false,
 				  } )
-				: [];
+				: NO_MATCHING_TOOL_CALLS;
 		if ( runningToolCalls.length > 0 ) {
 			// Execute tools async without blocking the stream
 			for ( const toolCall of runningToolCalls ) {
@@ -671,6 +696,23 @@ async function* processAgentResponseStream(
 
 				// Track tool calls and results for message enhancement
 				const toolParts: ( ToolCallDataPart | ToolResultDataPart )[] = [];
+
+				// Answer the calls nothing here can run with an error result
+				// rather than dropping them. The continuation replays the agent
+				// message with every call the backend dispatched, so a call left
+				// without a matching result is an error on the next turn, not a
+				// no-op — and the error tells the agent the step failed.
+				for ( const toolCall of unhandledInputRequiredCalls ) {
+					const toolResult = createToolResultDataPart(
+						toolCall.data.toolCallId as string,
+						toolCall.data.toolId as string,
+						undefined,
+						`No handler found for tool: ${ toolCall.data.toolId }`
+					);
+
+					toolResults.push( toolResult );
+					toolParts.push( toolResult );
+				}
 
 				// Track agent messages from tool executions
 				const agentMessages: Message[] = [];
