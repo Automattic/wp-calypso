@@ -24,6 +24,25 @@
 	}
 }
 
+.discover-logged-out-hero__cta {
+	display: inline-block;
+	background: var( --color-text );
+	color: var( --color-text-inverted );
+	font-size: 16px;
+	font-weight: 500;
+	line-height: 1;
+	padding: 16px 32px;
+	border-radius: 4px;
+	text-decoration: none;
+	margin-block-start: 16px;
+
+	&:hover,
+	&:focus {
+		background: var( --color-neutral-70 );
+		color: var( --color-text-inverted );
+	}
+}
+
 .discover-logged-out-hero__images {
 	flex: 1 1 45%;
 	display: flex;
