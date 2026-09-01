@@ -68,13 +68,31 @@ const domainUpsell: Flow = {
 				: domainMappingSetup( siteSlug, domain, '', false, true );
 		}
 
+		function getPostCheckoutUrl( domainCartItems: MinimalRequestCartProduct[] ) {
+			// A connected domain still has to be pointed at the site once it is paid for, so
+			// finish on the setup instructions rather than wherever the user came from. More
+			// than one domain in the cart makes the destination ambiguous, so leave it alone.
+			if ( domainCartItems.length !== 1 ) {
+				return returnUrl;
+			}
+
+			const [ domainCartItem ] = domainCartItems;
+			const domain = domainCartItem.meta;
+
+			if ( domainCartItem.product_slug !== DomainProductSlugs.DOMAIN_MAPPING || ! domain ) {
+				return returnUrl;
+			}
+
+			return getDomainConnectionSetupUrl( domain );
+		}
+
 		async function addToCartAndRedirectToCheckout( { includePlan = true } = {} ) {
 			const planCartItem = getPlanCartItem();
-			const domainCartItems = getDomainCartItems();
+			const domainCartItems = getDomainCartItems() ?? [];
 
 			const cartItems = [
 				...( includePlan && planCartItem ? [ planCartItem ] : [] ),
-				...( domainCartItems && domainCartItems.length > 0 ? domainCartItems : [] ),
+				...domainCartItems,
 			];
 
 			if ( cartItems.length > 0 ) {
@@ -82,7 +100,9 @@ const domainUpsell: Flow = {
 			}
 
 			return window.location.assign(
-				`/checkout/${ siteSlug }?redirect_to=${ encodeURIComponent( returnUrl ) }`
+				`/checkout/${ siteSlug }?redirect_to=${ encodeURIComponent(
+					getPostCheckoutUrl( domainCartItems )
+				) }`
 			);
 		}
 

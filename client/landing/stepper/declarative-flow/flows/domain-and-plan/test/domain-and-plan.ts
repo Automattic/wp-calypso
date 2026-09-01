@@ -11,7 +11,7 @@ import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 const mockSetDomainCartItem = jest.fn();
 const mockSetDomainCartItems = jest.fn();
 const mockGetDomainCartItems = jest.fn( (): MinimalRequestCartProduct[] => [] );
-const mockGetPlanCartItem = jest.fn( () => null );
+const mockGetPlanCartItem = jest.fn( (): MinimalRequestCartProduct | null => null );
 
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
@@ -44,8 +44,10 @@ jest.mock( 'calypso/lib/wp', () => ( {
 	req: { post: jest.fn( () => Promise.resolve( {} ) ) },
 } ) );
 
+let mockQueryArgs = '';
+
 jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
-	useQuery: () => new URLSearchParams( '' ),
+	useQuery: () => new URLSearchParams( mockQueryArgs ),
 } ) );
 
 jest.mock( 'calypso/landing/stepper/hooks/use-site-slug', () => ( {
@@ -82,6 +84,26 @@ const FREE_SITE = {
 
 const MAPPING_CART_ITEM = { product_slug: 'domain_map', meta: 'example.com' };
 const TRANSFER_CART_ITEM = { product_slug: 'domain_transfer', meta: 'example.com' };
+const PLAN_CART_ITEM = { product_slug: 'value_bundle' };
+
+const submitStep = async ( step: string, providedDependencies: Record< string, unknown > = {} ) => {
+	const navigate = jest.fn();
+	const { result } = renderHook( () =>
+		// `useStepNavigation` reads `this.name`, so it must be invoked bound to the flow.
+		domainAndPlan.useStepNavigation.call(
+			domainAndPlan,
+			step as Parameters< typeof domainAndPlan.useStepNavigation >[ 0 ],
+			navigate
+		)
+	);
+
+	await result.current.submit?.( providedDependencies );
+
+	return { navigate };
+};
+
+const submitUseMyDomain = ( providedDependencies: Record< string, unknown > ) =>
+	submitStep( 'use-my-domain', providedDependencies );
 
 describe( 'domain-and-plan flow use-my-domain navigation', () => {
 	const originalLocation = window.location;
@@ -108,25 +130,10 @@ describe( 'domain-and-plan flow use-my-domain navigation', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockQueryArgs = '';
 		mockGetDomainCartItems.mockReturnValue( [] );
 		mockGetPlanCartItem.mockReturnValue( null );
 	} );
-
-	const submitUseMyDomain = async ( providedDependencies: Record< string, unknown > ) => {
-		const navigate = jest.fn();
-		const { result } = renderHook( () =>
-			// `useStepNavigation` reads `this.name`, so it must be invoked bound to the flow.
-			domainAndPlan.useStepNavigation.call(
-				domainAndPlan,
-				'use-my-domain' as Parameters< typeof domainAndPlan.useStepNavigation >[ 0 ],
-				navigate
-			)
-		);
-
-		await result.current.submit?.( providedDependencies );
-
-		return { navigate };
-	};
 
 	it( 'connects the domain directly and lands on the connection setup page when mapping is included in the plan', async () => {
 		( useSite as jest.Mock ).mockReturnValue( PAID_ANNUAL_SITE );
@@ -175,7 +182,9 @@ describe( 'domain-and-plan flow use-my-domain navigation', () => {
 			TRANSFER_CART_ITEM,
 		] );
 		expect( window.location.assign ).toHaveBeenCalledWith(
-			expect.stringContaining( '/checkout/example.wordpress.com' )
+			`/checkout/example.wordpress.com?redirect_to=${ encodeURIComponent(
+				'/home/example.wordpress.com'
+			) }`
 		);
 	} );
 
@@ -186,5 +195,90 @@ describe( 'domain-and-plan flow use-my-domain navigation', () => {
 
 		expect( navigate ).toHaveBeenCalledWith( 'plans' );
 		expect( window.location.assign ).not.toHaveBeenCalled();
+	} );
+
+	it( 'uses the connection setup URL supplied by the entry point when there is one', async () => {
+		mockQueryArgs =
+			'domainConnectionSetupUrl=https%3A%2F%2Fmy.wordpress.com%2Fdomains%2F%25s%2Fdomain-connection-setup';
+		( useSite as jest.Mock ).mockReturnValue( PAID_ANNUAL_SITE );
+
+		await submitUseMyDomain( { domainCartItem: MAPPING_CART_ITEM } );
+
+		expect( window.location.assign ).toHaveBeenCalledWith(
+			'https://my.wordpress.com/domains/example.com/domain-connection-setup'
+		);
+	} );
+} );
+
+describe( 'domain-and-plan flow post-checkout destination', () => {
+	const originalLocation = window.location;
+
+	beforeAll( () => {
+		Object.defineProperty( window, 'location', {
+			value: {
+				...originalLocation,
+				assign: jest.fn(),
+				href: 'https://wordpress.com/setup/domain-and-plan/plans',
+			},
+			writable: true,
+			configurable: true,
+		} );
+	} );
+
+	afterAll( () => {
+		Object.defineProperty( window, 'location', {
+			value: originalLocation,
+			writable: true,
+			configurable: true,
+		} );
+	} );
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockQueryArgs = '';
+		( useSite as jest.Mock ).mockReturnValue( FREE_SITE );
+		mockGetDomainCartItems.mockReturnValue( [] );
+		mockGetPlanCartItem.mockReturnValue( PLAN_CART_ITEM );
+	} );
+
+	it( 'finishes on the connection setup page after the plan that unlocks the connection is paid for', async () => {
+		mockGetDomainCartItems.mockReturnValue( [ MAPPING_CART_ITEM ] );
+
+		await submitStep( 'plans', { goToCheckout: true } );
+
+		expect( addProductsToCart ).toHaveBeenCalledWith( 'example.wordpress.com', 'domain-and-plan', [
+			PLAN_CART_ITEM,
+			MAPPING_CART_ITEM,
+		] );
+		expect( window.location.assign ).toHaveBeenCalledWith(
+			`/checkout/example.wordpress.com?redirect_to=${ encodeURIComponent(
+				'/domains/mapping/example.wordpress.com/setup/example.com?firstVisit=true'
+			) }`
+		);
+	} );
+
+	it( 'keeps the default destination when the cart holds more than one domain', async () => {
+		mockGetDomainCartItems.mockReturnValue( [
+			MAPPING_CART_ITEM,
+			{ product_slug: 'domain_map', meta: 'second.com' },
+		] );
+
+		await submitStep( 'plans', { goToCheckout: true } );
+
+		expect( window.location.assign ).toHaveBeenCalledWith(
+			`/checkout/example.wordpress.com?redirect_to=${ encodeURIComponent(
+				'/home/example.wordpress.com'
+			) }`
+		);
+	} );
+
+	it( 'keeps the default destination when no domain is being connected', async () => {
+		await submitStep( 'plans', { goToCheckout: true } );
+
+		expect( window.location.assign ).toHaveBeenCalledWith(
+			`/checkout/example.wordpress.com?redirect_to=${ encodeURIComponent(
+				'/home/example.wordpress.com'
+			) }`
+		);
 	} );
 } );
