@@ -1,6 +1,6 @@
 import { Tooltip } from '@automattic/components';
-import { Badge } from '@automattic/ui';
 import { Button } from '@wordpress/components';
+import { Badge } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
@@ -29,10 +29,10 @@ export const ReportStatusColumn = ( { status }: { status: ReportStatus } ) => {
 	const translate = useTranslate();
 
 	const statusConfig = {
-		pending: { intent: 'info' as const, text: translate( 'Preparing' ) },
-		processed: { intent: 'success' as const, text: translate( 'Ready to send' ) },
-		sent: { intent: 'success' as const, text: translate( 'Sent' ) },
-		error: { intent: 'error' as const, text: translate( 'Error' ) },
+		pending: { intent: 'informational' as const, text: translate( 'Preparing' ) },
+		processed: { intent: 'stable' as const, text: translate( 'Ready to send' ) },
+		sent: { intent: 'stable' as const, text: translate( 'Sent' ) },
+		error: { intent: 'high' as const, text: translate( 'Error' ) },
 	};
 
 	const config = statusConfig[ status ];

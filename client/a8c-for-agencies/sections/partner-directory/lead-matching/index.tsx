@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
-import { Badge } from '@automattic/ui';
 import { Card, CardBody, ToggleControl, Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
@@ -513,7 +513,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 					<CardBody className="partner-directory-lead-matching__status-content">
 						{ eligibilityState === 'eligible' && (
 							<>
-								<Badge intent="success">{ __( 'Eligible for leads' ) }</Badge>
+								<Badge intent="stable">{ __( 'Eligible for leads' ) }</Badge>
 								<span className="partner-directory-lead-matching__status-text">
 									{ __( 'Your preferences are saved. You can update them anytime.' ) }
 								</span>
@@ -521,7 +521,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 						) }
 						{ eligibilityState === 'not-accepting' && (
 							<>
-								<Badge intent="warning">{ __( 'Not eligible' ) }</Badge>
+								<Badge intent="medium">{ __( 'Not eligible' ) }</Badge>
 								<span className="partner-directory-lead-matching__status-text">
 									{ __(
 										'Turn on Accepting new clients to be included in lead matching and receive leads.'
@@ -531,7 +531,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 						) }
 						{ eligibilityState === 'ready' && (
 							<>
-								<Badge intent="info">{ __( '1 step left' ) }</Badge>
+								<Badge intent="informational">{ __( '1 step left' ) }</Badge>
 								<span className="partner-directory-lead-matching__status-text">
 									{ __(
 										'All questions answered — click Update preferences to start receiving leads'
