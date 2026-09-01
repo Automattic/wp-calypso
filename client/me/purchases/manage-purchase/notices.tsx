@@ -1636,11 +1636,6 @@ class PurchaseNotice extends Component<
 			return planChangedRedirectNotice;
 		}
 
-		// These delayed-downgrade notices are intentionally left ungated by
-		// `plans/delayed-downgrade` so a scheduled downgrade (and its cancel
-		// button) always stays visible, even if the flag is turned off as a kill
-		// switch while a downgrade is pending.
-		//
 		// Transient success notice after scheduling — only shown when the
 		// persistent warning isn't available yet (e.g. data still loading).
 		if ( ! purchase.is_delayed_downgrade_pending ) {

@@ -320,13 +320,7 @@ const PlansFeaturesMain = ( {
 		enabled: !! currentPlanPurchaseId,
 	} );
 	const isWithinRefundWindow =
-		config.isEnabled( 'plans/expired-downgrade' ) &&
-		!! currentPurchase &&
-		currentPurchase.is_refundable &&
-		! currentPurchase.is_past_expiry_date;
-	// The delayed-downgrade flow (schedule a downgrade at renewal for an active
-	// plan) is gated separately from the launched expired/refund downgrade flow.
-	const isDelayedDowngradeEnabled = config.isEnabled( 'plans/delayed-downgrade' );
+		!! currentPurchase && currentPurchase.is_refundable && ! currentPurchase.is_past_expiry_date;
 	// Three downgrade modes:
 	//   'instant'  — within refund window: cancel+refund via the cancel endpoint
 	//   'checkout' — expired plan: route to checkout to purchase the new plan
@@ -334,7 +328,7 @@ const PlansFeaturesMain = ( {
 	let downgradeMode: 'instant' | 'checkout' | 'delayed';
 	if ( isWithinRefundWindow ) {
 		downgradeMode = 'instant';
-	} else if ( isDelayedDowngradeEnabled && ! isPlanExpired ) {
+	} else if ( ! isPlanExpired ) {
 		downgradeMode = 'delayed';
 	} else {
 		downgradeMode = 'checkout';
@@ -743,7 +737,6 @@ const PlansFeaturesMain = ( {
 		// For expired plans, intercept paid-plan downgrades to show a confirmation modal.
 		// Free-plan downgrades are handled separately (they route to the cancel flow).
 		if (
-			config.isEnabled( 'plans/expired-downgrade' ) &&
 			isPlanExpired &&
 			! isFreePlan( planSlug ) &&
 			sitePlansData?.find( ( p ) => p.productSlug === planSlug )?.availableForDowngrade
@@ -767,7 +760,6 @@ const PlansFeaturesMain = ( {
 		// For active paid plans (not expired, not in refund window), intercept
 		// paid-plan downgrades to schedule the downgrade at end-of-term instead.
 		if (
-			isDelayedDowngradeEnabled &&
 			! isPlanExpired &&
 			! isWithinRefundWindow &&
 			currentPurchase?.is_plan_type_downgradable &&
