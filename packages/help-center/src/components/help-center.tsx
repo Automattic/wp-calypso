@@ -44,9 +44,8 @@ const HelpCenter: React.FC< Container > = ( {
 		! isLoadingOpenInteractions && supportInteractionsOpen
 			? supportInteractionsOpen?.length > 0
 			: false;
-	// The connectivity check costs a network request per page load, so only run it once
-	// its answer can change something: the Help Center is open, or Smooch may need to
-	// mount for unread notifications.
+	// Only check connectivity when the answer can matter: the panel is open, or Smooch
+	// may need to mount for unread notifications.
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging(
 		!! currentUser?.ID && ( isHelpCenterShown || hasOpenZendeskConversations ),
 		site?.ID

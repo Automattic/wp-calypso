@@ -15,8 +15,8 @@ const QUERY_KEY = [ 'canConnectToZendesk' ];
  * ones. Version 2 reports once per settled query instead of once per observer per state.
  * Version 3 attaches the support site as `blog_id` when a consumer knows it; only the
  * request event gained anything in v3, the error event merely shares the counter.
- * Version 4 declares `site_context_source: 'none'` when no consumer supplied a site,
- * instead of omitting the property.
+ * Version 4 declares `site_context_source: 'none'` instead of omitting it when no
+ * consumer supplied a site.
  */
 const REPORTING_VERSION = 4;
 

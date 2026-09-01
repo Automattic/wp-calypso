@@ -18,9 +18,7 @@ export const useGetSupportInteractions = (
 	// No auth cookie yet (e.g. right after in-stepper signup) means these authed requests
 	// would 401 and leave the panel stuck loading; skip them and render the logged-out home.
 	const isAuthed = !! currentUser?.ID && ! isCookieAuthMissing();
-	// Subscribe without fetching: the interactions endpoint is a WordPress.com API and
-	// works regardless of Zendesk connectivity. Whoever needs the connectivity answer
-	// (e.g. the Help Center root, to mount Smooch) triggers the check; here it only
+	// Subscribe without fetching: the Help Center root triggers the check; here it only
 	// hides Zendesk conversations once the user is known to be unable to open them.
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( false, site?.ID );
 
