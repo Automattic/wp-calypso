@@ -34,6 +34,7 @@ import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/w
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
+import getPluginUploadFile from 'calypso/state/selectors/get-plugin-upload-file';
 import getPluginUploadMethod from 'calypso/state/selectors/get-plugin-upload-method';
 import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-progress';
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
@@ -145,6 +146,12 @@ export type ProductInstallError =
 	| { type: 'non-installable-plan' }
 	| { type: 'no-direct-access-upload' }
 	| { type: 'theme-direct-install' }
+	| {
+			type: 'plugin-exists';
+			pluginSlug: string;
+			installedVersion?: string;
+			uploadedVersion?: string;
+	  }
 	| { type: 'rejected-upload'; reason: 'exists' | 'malicious' | 'too-big' }
 	| { type: 'transfer-failed' }
 	| { type: 'timeout' }
@@ -194,6 +201,8 @@ export function useProductInstall( {
 	const uploadedPluginSlug = useSelector( ( state ) =>
 		getUploadedPluginId( state, siteId )
 	) as string;
+	const uploadErrorPluginSlug = pluginUploadError?.plugin_slug;
+	const pluginUploadFile = useSelector( ( state ) => getPluginUploadFile( state, siteId ) );
 	const pluginUploadComplete = useSelector( ( state ) => isPluginUploadComplete( state, siteId ) );
 	// A zip upload that brought the site to Atomic. Its plugin arrives with the transfer rather than
 	// through an install this page dispatched, so the recovery poll is what watches for it — and
@@ -214,6 +223,9 @@ export function useProductInstall( {
 		: marketplacePlugin?.software_slug || marketplacePlugin?.org_slug || pluginSlug;
 	const installedPlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, siteId, installedPluginSlug )
+	);
+	const existingPlugin = useSelector( ( state ) =>
+		uploadErrorPluginSlug ? getPluginOnSite( state, siteId, uploadErrorPluginSlug ) : undefined
 	);
 	const pluginActive = useSelector( ( state ) =>
 		isPluginActive( state, siteId, installedPluginSlug )
@@ -376,6 +388,14 @@ export function useProductInstall( {
 		}
 		if ( themeSlug && noDirectAccessError && ! directInstallationAllowed ) {
 			return { type: 'theme-direct-install' };
+		}
+		if ( isPluginUploadFlow && pluginExists && uploadErrorPluginSlug && pluginUploadFile ) {
+			return {
+				type: 'plugin-exists',
+				pluginSlug: uploadErrorPluginSlug,
+				installedVersion: existingPlugin?.version,
+				uploadedVersion: pluginUploadError?.plugin_version,
+			};
 		}
 		if ( pluginExists ) {
 			return { type: 'rejected-upload', reason: 'exists' };
