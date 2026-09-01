@@ -2,11 +2,7 @@
  * @jest-environment jsdom
  */
 
-import {
-	isAutomatticianQuery,
-	queryClient,
-	rawUserPreferencesQuery,
-} from '@automattic/api-queries';
+import { queryClient, rawUserPreferencesQuery, readTeamsQuery } from '@automattic/api-queries';
 import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import PreferencesReader from '..';
@@ -20,7 +16,7 @@ beforeEach( () => {
 } );
 
 function seedTeams( isAutomattician: boolean ) {
-	queryClient.setQueryData( isAutomatticianQuery().queryKey, {
+	queryClient.setQueryData( readTeamsQuery().queryKey, {
 		number: isAutomattician ? 1 : 0,
 		teams: isAutomattician ? [ { slug: 'a8c', title: 'Automattic' } ] : [],
 	} );

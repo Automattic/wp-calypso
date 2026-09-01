@@ -141,7 +141,7 @@ export const preferencesIndexRoute = createRoute( {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-			queryClient.ensureQueryData( isAutomatticianQuery() ),
+			queryClient.ensureQueryData( readTeamsQuery() ),
 		] );
 	},
 } ).lazy( () =>
