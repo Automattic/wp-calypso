@@ -1,10 +1,28 @@
 @import '@wordpress/theme/design-tokens.css';
 
-// A segmented bar in the top bar: one pill per step beside the WordPress logo,
-// filled up to the step you are on. No labels, no numbers, no dots. It costs
-// nothing in the content column, so unlike the previous treatment there is no
-// wrapper padding to compensate for here.
+// A segmented bar centred in the top bar: one pill per step, filled up to the
+// step you are on. No labels, no numbers, no dots. It costs nothing in the
+// content column, so unlike the previous treatment there is no wrapper padding
+// to compensate for here.
 //
+// Geometry and colour come from the Figma spec: three 32x5px pills, 12px gaps,
+// 120px overall, fully round ends.
+
+// Centring. The rail goes into the top bar's left slot, which sits next to the
+// logo, so it is lifted out of flow and centred against the bar itself. Scoped
+// with :has() so back buttons in every other flow keep their normal position.
+.step-container-v2__top-bar:has( .onboarding-progress ) {
+	position: relative;
+}
+
+.step-container-v2__top-bar-left-element:has( .onboarding-progress ) {
+	position: absolute;
+	// Physical `left` on purpose: paired with a -50% translate this centres the
+	// rail identically in LTR and RTL.
+	left: 50%;
+	transform: translateX( -50% );
+}
+
 // The component's own styles are scoped by `[data-indicator-variant]`, which
 // the root always renders. Qualifying selectors with that attribute is what
 // lets these rules win without resorting to !important.
@@ -12,28 +30,45 @@
 	display: flex;
 	align-items: center;
 
+	// The gap lives here rather than on the trigger's padding, so it stays the
+	// 12px from the spec and never eats into the click target.
+	.onboarding-progress-list {
+		display: flex;
+		align-items: center;
+		gap: var( --wpds-dimension-gap-md );
+	}
+
 	.onboarding-progress-step {
 		display: flex;
 		align-items: center;
 	}
 
-	// The visible bar is 4px tall, so the trigger carries the padding that makes
-	// a usable pointer and touch target out of it.
+	// The trigger renders as a @wordpress/ui Button, which brings a min-width of
+	// roughly 4ch plus padding, an 8px gap, and inline padding. None of that
+	// suits a 32px pill: it forces the button wider than the bar and leaves dead
+	// space beside it, so all of it is cleared here. The vertical padding stays,
+	// since that is what makes a usable pointer target out of a 5px bar.
 	.onboarding-progress-trigger {
 		display: flex;
 		align-items: center;
-		padding: var( --wpds-dimension-padding-sm ) var( --wpds-dimension-gap-xs );
+		gap: 0;
+		width: auto;
+		min-width: 0;
 		min-height: 0;
+		padding-block: var( --wpds-dimension-padding-md );
+		padding-inline: 0;
 	}
 
 	// The indicator IS the pill. Overrides the component's circle geometry.
 	.onboarding-progress-step .onboarding-progress-indicator[data-indicator-variant] {
 		width: var( --wpds-dimension-size-md );
-		height: var( --wpds-dimension-size-5xs );
-		// Half the 4px height, so the ends come out fully round.
-		border-radius: var( --wpds-border-radius-sm );
+		height: 5px;
+		// The spec asks for 1000px, meaning "always fully round". Anything over
+		// half the height clamps to the same result, and 3px is on the scale
+		// this repo's stylelint config allows.
+		border-radius: 3px;
 		border: 0;
-		background: var( --wpds-color-stroke-surface-neutral );
+		background: var( --wpds-color-background-interactive-neutral-strong-disabled );
 	}
 
 	// Steps reached so far are filled. Completed and current read the same on
@@ -41,10 +76,10 @@
 	// and unfilled is what carries the meaning.
 	.onboarding-progress-step[data-status='completed'] .onboarding-progress-indicator[data-indicator-variant],
 	.onboarding-progress-step[data-current] .onboarding-progress-indicator[data-indicator-variant] {
-		background: var( --wpds-color-background-interactive-neutral-strong );
+		background: var( --wpds-color-foreground-interactive-neutral );
 	}
 
-	// The check glyph and the current-step dome would otherwise sit inside a 4px
+	// The check glyph and the current-step dome would otherwise sit inside a 5px
 	// pill. The indicator's visually hidden step text is a sibling and is not
 	// affected by this.
 	.onboarding-progress-indicator svg {
@@ -65,7 +100,7 @@
 		border: 0;
 	}
 
-	// Completed steps are the only navigable ones.
+	// Not in the Figma, but completed steps are navigable and need to say so.
 	.onboarding-progress-trigger:hover:not( [aria-disabled='true'] ) .onboarding-progress-indicator[data-indicator-variant] {
 		background: var( --wpds-color-foreground-interactive-brand );
 	}

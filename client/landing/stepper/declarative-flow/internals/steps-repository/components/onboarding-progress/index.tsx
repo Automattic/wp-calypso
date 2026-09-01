@@ -46,7 +46,7 @@ export function OnboardingProgress( { currentStep, onStepSelect, isStepSelectDis
 			linear
 			className="onboarding-progress"
 		>
-			<UIStepper.List>
+			<UIStepper.List className="onboarding-progress-list">
 				<UIStepper.Step
 					value="domains"
 					status={ domainsStepStatus }
