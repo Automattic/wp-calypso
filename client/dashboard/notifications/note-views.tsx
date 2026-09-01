@@ -228,8 +228,10 @@ function CommentView( { view }: { view: Extract< NoteView, { kind: 'comment' } >
 	return (
 		<>
 			<Header avatarUrl={ view.avatarUrl }>
-				<TitleText segments={ view.title } />
-				<Timestamp timestamp={ view.timestamp } url={ view.url } />
+				<TitleText segments={ view.title }>
+					<Text variant="muted"> · </Text>
+					<Timestamp timestamp={ view.timestamp } url={ view.url } />
+				</TitleText>
 				<Message block={ view.body } />
 				<NoteActions note={ view.note } />
 			</Header>

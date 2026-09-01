@@ -93,7 +93,13 @@ export function BlockText( { block }: { block: NoteBlock } ) {
 }
 
 /** Title-style segments: bold names, links where the range carries one. */
-export function TitleText( { segments }: { segments: TitleSegment[] } ) {
+export function TitleText( {
+	segments,
+	children,
+}: {
+	segments: TitleSegment[];
+	children?: React.ReactNode;
+} ) {
 	return (
 		<Text className="dashboard-notifications-inbox__note-title">
 			{ segments.map( ( segment, index ) => {
@@ -106,6 +112,7 @@ export function TitleText( { segments }: { segments: TitleSegment[] } ) {
 					<Fragment key={ index }>{ text }</Fragment>
 				);
 			} ) }
+			{ children }
 		</Text>
 	);
 }
