@@ -203,7 +203,17 @@ export function getNoteView( note: Note ): NoteView {
 		( block.media ?? [] ).some( ( media ) => media.type === 'badge' )
 	);
 	if ( hasBadge ) {
-		return { ...base, kind: 'achievement', excerpt };
+		// The "See all your achievements" line is a call to action for the
+		// panel; the inbox has room to show the achievement itself.
+		const isAchievementsLink = ( block: NoteBlock ) =>
+			( block.ranges ?? [] ).some( ( range ) => range.url?.includes( '/me/achievements' ) );
+		return {
+			...base,
+			kind: 'achievement',
+			excerpt,
+			context: getContextRuns( context.filter( ( block ) => ! isAchievementsLink( block ) ) ),
+			postscript: postscript.filter( ( block ) => ! isAchievementsLink( block ) ),
+		};
 	}
 
 	if ( note.type === 'like' || note.type === 'comment_like' ) {

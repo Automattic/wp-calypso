@@ -412,11 +412,18 @@ describe( 'getNoteView', () => {
 					text: 'Congratulations!',
 					media: [ { type: 'badge', url: 'https://example.com/badge.png' } ],
 				},
+				{
+					text: 'See all your achievements.',
+					ranges: [
+						{ type: 'link', indices: [ 0, 25 ], url: 'https://wordpress.com/me/achievements' },
+					],
+				},
 			],
 		} as unknown as Note );
 		expect( view.kind ).toBe( 'achievement' );
 		expect( view.typeLabel ).toBe( 'Like milestone achievement' );
 		expect( view.context ).toHaveLength( 1 );
+		expect( view.postscript ).toEqual( [] );
 	} );
 
 	it( 'falls back to a generic layout', () => {
