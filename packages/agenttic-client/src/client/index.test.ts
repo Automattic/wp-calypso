@@ -1396,6 +1396,77 @@ describe( 'Client', () => {
 			expect( result.final ).toBe( true );
 			expect( result.status.state ).toBe( 'input-required' );
 		} );
+
+		it( 'executes only the matching call when an unhandled call rides along', async () => {
+			// Matching is per call, not per message: one dispatchable match
+			// must not carry an unrelated tool id into executeTool with it.
+			const executedTools: string[] = [];
+			const mockToolProvider: ToolProvider = {
+				async getAvailableTools() {
+					return [];
+				},
+				async getDispatchableTools() {
+					return [ dispatchableTool ];
+				},
+				async executeTool( toolId: string ) {
+					executedTools.push( toolId );
+					return { result: { ok: true }, returnToAgent: true };
+				},
+			};
+
+			const mixedEvent = JSON.stringify( {
+				jsonrpc: '2.0',
+				id: 'req-mixed',
+				result: {
+					type: 'TaskStatusUpdateEvent',
+					taskId: 'task-mixed',
+					status: {
+						state: 'input-required',
+						message: {
+							messageId: 'resp-mixed',
+							role: 'agent',
+							kind: 'message',
+							parts: [
+								{
+									type: 'data',
+									data: {
+										toolCallId: 'call-known',
+										toolId: 'spec_confirm',
+										arguments: { confirmed: true },
+									},
+								},
+								{
+									type: 'data',
+									data: {
+										toolCallId: 'call-unknown',
+										toolId: 'some_unknown_tool',
+										arguments: {},
+									},
+								},
+							],
+						},
+						final: true,
+					},
+					sessionId: 'session-mixed',
+				},
+			} );
+
+			mockFetch.mockResolvedValueOnce( mockSSEResponse( mixedEvent ) );
+			mockFetch.mockResolvedValueOnce( mockSSEResponse( completionEvent ) );
+
+			const client = createClient( {
+				agentId: 'test-agent',
+				toolProvider: mockToolProvider,
+			} );
+
+			const result = await sendMessageAndWait( client, {
+				message: createTextMessage( 'Confirm the spec' ),
+			} );
+
+			expect( executedTools ).toEqual( [ 'spec_confirm' ] );
+			expect( result.final ).toBe( true );
+			expect( result.text ).toBe( 'Confirmed.' );
+		} );
 	} );
 
 	describe( 'File part preservation in conversation history', () => {

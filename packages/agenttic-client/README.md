@@ -566,15 +566,20 @@ model-chosen call is dispatched only against this list.
 `getDispatchableTools()` covers the other direction. Tools it returns are
 **never advertised to the agent**, but the client will still execute them
 (through the same `executeTool`) when the **backend** dispatches them in an
-`input-required` handoff. Use it for backend-driven steps the model must not
-be able to invoke on its own — a confirmation step, for example.
+`input-required` handoff. Use it for backend-driven steps the agent has no
+reason to choose for itself — a confirmation step, for example.
 
-The gate is per message: when none of an `input-required` message's tool
-calls match either list (or a registered ability), nothing is executed —
-the update stays final and a debug log line explains which tool ids went
-unhandled. When at least one call matches, every call in that message is
-dispatched through `executeTool`, matched or not, so a provider's
-`executeTool` should be prepared to reject tool ids it does not recognize.
+Keeping a tool off the advertisement list is not an authorization boundary.
+`input-required` is also the path model-chosen calls take to `executeTool`,
+so a call naming a dispatchable id still runs if the backend relays one.
+Anything that must not run on the model's say-so needs the backend to reject
+unadvertised tool names, or a confirmation inside `executeTool` itself.
+
+Matching is per tool call: each call in an `input-required` message is
+dispatched only if its own id is in one of the lists (or is a registered
+ability). Calls with no handler are skipped and named in a debug log line;
+when no call in the message matches, nothing runs and the update stays
+final.
 
 ## Development
 

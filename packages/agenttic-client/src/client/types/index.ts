@@ -378,11 +378,18 @@ export interface ToolProvider {
 	/**
 	 * Tools the client executes when the backend dispatches them in an
 	 * `input-required` handoff, WITHOUT advertising them to the agent as
-	 * callable. Use this for backend-driven handoffs the model must not be
-	 * able to invoke on its own (a confirmation step, for example). Tools
-	 * listed here are executed through `executeTool`, exactly like
-	 * advertised tools; they are ignored for `running`-state echoes, which
-	 * only ever dispatch advertised tools.
+	 * callable. Use this for backend-driven handoffs the agent has no reason
+	 * to choose for itself (a confirmation step, for example). Tools listed
+	 * here are executed through `executeTool`, exactly like advertised tools;
+	 * they are ignored for `running`-state echoes, which only ever dispatch
+	 * advertised tools.
+	 *
+	 * This keeps the tool out of the agent's tool list — it is not an
+	 * authorization boundary. `input-required` is also how model-chosen calls
+	 * reach `executeTool`, so a call naming a dispatchable id still runs if
+	 * the backend relays one. Anything that must not run on the model's say-so
+	 * needs the backend to reject unadvertised tool names, or a confirmation
+	 * inside `executeTool` itself.
 	 */
 	getDispatchableTools?: () => Promise< Tool[] >;
 	executeTool?: (
