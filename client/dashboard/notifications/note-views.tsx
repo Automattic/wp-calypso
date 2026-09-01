@@ -125,6 +125,36 @@ function Message( { block }: { block: NoteBlock } ) {
 	);
 }
 
+/**
+ * Surrounds the comment being acted on: hovering reads as a card and clicking
+ * anywhere outside its own controls opens the comment.
+ */
+function CommentCard( { url, children }: { url: string | null; children: React.ReactNode } ) {
+	const open = ( event: React.MouseEvent< HTMLDivElement > ) => {
+		const target = event.target as HTMLElement;
+		if ( ! url || target.closest( 'a, button, textarea, input, [role="menu"]' ) ) {
+			return;
+		}
+		if ( window.getSelection()?.toString() ) {
+			return;
+		}
+		window.open( url, '_blank', 'noreferrer' );
+	};
+	return (
+		<div
+			className={
+				url
+					? 'dashboard-notifications-inbox__comment-card is-clickable'
+					: 'dashboard-notifications-inbox__comment-card'
+			}
+			onClick={ open }
+			role="presentation"
+		>
+			{ children }
+		</div>
+	);
+}
+
 /** Avatar column beside a stacked header; every non-achievement layout starts this way. */
 function Header( {
 	avatarUrl,
@@ -196,37 +226,36 @@ function ThreadView( { view }: { view: Extract< NoteView, { kind: 'thread' } > }
 				</VStack>
 			</Header>
 			<Body>
-				<HStack
-					spacing={ 3 }
-					justify="flex-start"
-					alignment="flex-start"
-					className="dashboard-notifications-inbox__reply"
-				>
-					<Avatar user={ reply.author } />
-					<VStack spacing={ 1 } className="dashboard-notifications-inbox__column">
-						{ reply.author && (
-							<HStack spacing={ 1 } justify="flex-start" alignment="center" expanded={ false }>
-								<UserName user={ reply.author } />
-								<Text variant="muted">
-									{ sprintf(
-										/* translators: %s is the name of the person being replied to. */
-										__( 'to %s' ),
-										reply.replyingTo
-									) }
-								</Text>
-								<Text variant="muted">·</Text>
-								<Timestamp timestamp={ view.timestamp } url={ view.url } />
-							</HStack>
-						) }
-						<ContextBlocks runs={ view.context } />
-						{ reply.body && (
-							<Text className="dashboard-notifications-inbox__block-text">
-								<BlockText block={ reply.body } />
-							</Text>
-						) }
-						<NoteActions note={ note } />
-					</VStack>
-				</HStack>
+				<div className="dashboard-notifications-inbox__reply">
+					<CommentCard url={ view.url }>
+						<HStack spacing={ 3 } justify="flex-start" alignment="flex-start">
+							<Avatar user={ reply.author } />
+							<VStack spacing={ 1 } className="dashboard-notifications-inbox__column">
+								{ reply.author && (
+									<HStack spacing={ 1 } justify="flex-start" alignment="center" expanded={ false }>
+										<UserName user={ reply.author } />
+										<Text variant="muted">
+											{ sprintf(
+												/* translators: %s is the name of the person being replied to. */
+												__( 'to %s' ),
+												reply.replyingTo
+											) }
+										</Text>
+										<Text variant="muted">·</Text>
+										<Timestamp timestamp={ view.timestamp } url={ view.url } />
+									</HStack>
+								) }
+								<ContextBlocks runs={ view.context } />
+								{ reply.body && (
+									<Text className="dashboard-notifications-inbox__block-text">
+										<BlockText block={ reply.body } />
+									</Text>
+								) }
+								<NoteActions note={ note } />
+							</VStack>
+						</HStack>
+					</CommentCard>
+				</div>
 				<Postscript blocks={ view.postscript } />
 			</Body>
 		</>
@@ -237,14 +266,16 @@ function CommentView( { view }: { view: Extract< NoteView, { kind: 'comment' } >
 	const hasBody = view.context.length > 0 || view.postscript.length > 0;
 	return (
 		<>
-			<Header avatarUrl={ view.avatarUrl }>
-				<TitleText segments={ view.author }>
-					<Text variant="muted"> · </Text>
-					<Timestamp timestamp={ view.timestamp } url={ view.url } />
-				</TitleText>
-				<Message block={ view.body } />
-				<NoteActions note={ view.note } />
-			</Header>
+			<CommentCard url={ view.url }>
+				<Header avatarUrl={ view.avatarUrl }>
+					<TitleText segments={ view.author }>
+						<Text variant="muted"> · </Text>
+						<Timestamp timestamp={ view.timestamp } url={ view.url } />
+					</TitleText>
+					<Message block={ view.body } />
+					<NoteActions note={ view.note } />
+				</Header>
+			</CommentCard>
 			{ hasBody && (
 				<Body>
 					<ContextBlocks runs={ view.context } />

@@ -503,6 +503,21 @@
 	);
 }
 
+.dashboard-notifications-inbox__comment-card {
+	margin: -12px;
+	padding: 12px;
+	border-radius: 8px;
+	transition: background-color 0.1s ease-out;
+
+	&.is-clickable {
+		cursor: pointer;
+	}
+
+	&.is-clickable:hover {
+		background: var(--dashboard__background-color-secondary, #f6f7f7);
+	}
+}
+
 .dashboard-notifications-inbox__column {
 	flex: 1 1 auto;
 	min-width: 0;
