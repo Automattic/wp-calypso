@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/ui';
 import {
 	__experimentalNavigatorButton as NavigatorButton,
 	__experimentalItem as Item,
@@ -6,6 +5,7 @@ import {
 	FlexBlock,
 } from '@wordpress/components';
 import { Icon, chevronRightSmall, external } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import { TranslateResult } from 'i18n-calypso';
 
@@ -78,7 +78,7 @@ export const SidebarNavigatorMenuItem = ( {
 		<li>
 			<NavigatorButton as={ SidebarItem } path={ path }>
 				<div className="sidebar-menu-item__title-with-badge">
-					{ title } { badge && <Badge>{ badge }</Badge> }
+					{ title } { badge && <Badge intent="draft">{ badge }</Badge> }
 				</div>
 			</NavigatorButton>
 		</li>
