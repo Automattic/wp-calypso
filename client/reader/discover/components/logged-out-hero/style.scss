@@ -44,13 +44,11 @@
 }
 
 .discover-logged-out-hero__images {
-	flex: 1 1 45%;
-	display: flex;
-	gap: 16px;
 	height: 280px;
-	min-width: 0;
 
 	@include break-medium {
+		flex: 0 0 auto;
+		width: 288px;
 		height: 300px;
 	}
 
@@ -60,23 +58,5 @@
 		object-fit: cover;
 		border-radius: 8px;
 		display: block;
-	}
-
-	> img {
-		flex: 1 1 55%;
-		min-width: 0;
-	}
-}
-
-.discover-logged-out-hero__images-column {
-	flex: 1 1 45%;
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
-	min-width: 0;
-
-	img {
-		flex: 1 1 50%;
-		min-height: 0;
 	}
 }
