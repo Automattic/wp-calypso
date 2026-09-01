@@ -19,7 +19,7 @@ beforeEach( () => {
 	} );
 } );
 
-function seedAutomattician( isAutomattician: boolean ) {
+function seedTeams( isAutomattician: boolean ) {
 	queryClient.setQueryData( isAutomatticianQuery().queryKey, {
 		number: isAutomattician ? 1 : 0,
 		teams: isAutomattician ? [ { slug: 'a8c', title: 'Automattic' } ] : [],
@@ -33,8 +33,8 @@ function seedSeenPostsPreference( enabled?: boolean ) {
 }
 
 describe( '<PreferencesReader>', () => {
-	test( 'hides the summary for non-Automatticians', async () => {
-		seedAutomattician( false );
+	test( 'hides the summary when seen posts is not available', async () => {
+		seedTeams( false );
 		seedSeenPostsPreference( true );
 
 		const { container } = render( <PreferencesReader />, { queryClient } );
@@ -44,8 +44,8 @@ describe( '<PreferencesReader>', () => {
 		} );
 	} );
 
-	test( 'links to the Reader preferences page for Automatticians', async () => {
-		seedAutomattician( true );
+	test( 'links to the Reader preferences page when seen posts is available', async () => {
+		seedTeams( true );
 		seedSeenPostsPreference( true );
 
 		render( <PreferencesReader />, { queryClient } );
@@ -57,7 +57,7 @@ describe( '<PreferencesReader>', () => {
 	} );
 
 	test( 'shows a read-status-on badge when the preference is enabled', async () => {
-		seedAutomattician( true );
+		seedTeams( true );
 		seedSeenPostsPreference( true );
 
 		render( <PreferencesReader />, { queryClient } );
@@ -66,7 +66,7 @@ describe( '<PreferencesReader>', () => {
 	} );
 
 	test( 'shows a read-status-off badge when the preference is disabled', async () => {
-		seedAutomattician( true );
+		seedTeams( true );
 		seedSeenPostsPreference( false );
 
 		render( <PreferencesReader />, { queryClient } );
@@ -75,7 +75,7 @@ describe( '<PreferencesReader>', () => {
 	} );
 
 	test( 'defaults to on when the preference is unset', async () => {
-		seedAutomattician( true );
+		seedTeams( true );
 		seedSeenPostsPreference();
 
 		render( <PreferencesReader />, { queryClient } );

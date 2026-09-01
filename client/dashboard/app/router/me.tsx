@@ -8,6 +8,7 @@ import {
 	domainQuery,
 	geoLocationQuery,
 	isAutomatticianQuery,
+	isSeenPostsAvailable,
 	legacyContactQuery,
 	legacyContactsQuery,
 	monetizeSubscriptionsQuery,
@@ -1071,9 +1072,8 @@ export const preferencesReaderRoute = createRoute( {
 	getParentRoute: () => preferencesRoute,
 	path: 'reader',
 	beforeLoad: async () => {
-		const teams = await queryClient.ensureQueryData( isAutomatticianQuery() );
-		const isAutomattician = teams.teams.some( ( team ) => team.slug === 'a8c' );
-		if ( ! isAutomattician ) {
+		const data = await queryClient.ensureQueryData( isAutomatticianQuery() );
+		if ( ! isSeenPostsAvailable( data.teams ) ) {
 			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
 		}
 	},

@@ -17,18 +17,9 @@ jest.mock( 'calypso/reader/stats', () => ( {
 	recordGaEvent: jest.fn(),
 } ) );
 
-jest.mock( '@automattic/api-queries', () => ( {
-	...jest.requireActual( '@automattic/api-queries' ),
-	isAutomatticianQuery: () => ( {
-		queryKey: [ 'test', 'is-automattician' ],
-		queryFn: () => true,
-		initialData: true,
-	} ),
-} ) );
-
-let mockSeenPostsPreferenceEnabled = true;
+let mockSeenPostsUiEnabled = true;
 jest.mock( 'calypso/reader/data/seen-posts', () => ( {
-	useSeenPostsPreferenceEnabled: () => mockSeenPostsPreferenceEnabled,
+	useIsSeenPostsUiEnabled: () => mockSeenPostsUiEnabled,
 	useMarkAllAsSeenMutation: () => ( { mutate: jest.fn() } ),
 } ) );
 
@@ -70,7 +61,7 @@ describe( 'ReaderSidebarRecent unseen counts', () => {
 	afterEach( () => {
 		mockSubscribedSites = [];
 		mockSubscribedFeedsInfo = { unseenCount: 0, feedIds: [], feedUrls: [] };
-		mockSeenPostsPreferenceEnabled = true;
+		mockSeenPostsUiEnabled = true;
 	} );
 
 	test( 'shows the total unseen count for the section, summed across all followed sites', () => {
@@ -107,8 +98,8 @@ describe( 'ReaderSidebarRecent unseen counts', () => {
 		expect( betaRow?.querySelector( '.a8c-count' ) ).toBeNull();
 	} );
 
-	test( 'hides unseen counts when the seen posts preference is disabled', () => {
-		mockSeenPostsPreferenceEnabled = false;
+	test( 'hides unseen counts when seen posts UI is disabled', () => {
+		mockSeenPostsUiEnabled = false;
 		mockSubscribedFeedsInfo = { unseenCount: 8, feedIds: [], feedUrls: [] };
 
 		const { container } = renderRecentDropdown( [

@@ -1,4 +1,4 @@
-import { isAutomatticianQuery, userPreferenceQuery } from '@automattic/api-queries';
+import { isSeenPostsAvailable, readTeamsQuery, userPreferenceQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
@@ -6,12 +6,12 @@ import RouterLinkSummaryButton from '../../components/router-link-summary-button
 import type { Density } from '@automattic/components/src/summary-button/types';
 
 export default function PreferencesReader( { density }: { density?: Density } ) {
-	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
+	const { data: teamsData } = useSuspenseQuery( readTeamsQuery() );
 	const { data: isSeenPostsEnabled } = useSuspenseQuery(
 		userPreferenceQuery( 'reader-seen-posts' )
 	);
 
-	if ( ! isAutomattician ) {
+	if ( ! isSeenPostsAvailable( teamsData.teams ) ) {
 		return null;
 	}
 

@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { isAutomatticianQuery } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -9,10 +8,10 @@ import { ComponentProps } from 'react';
 import MoreMenuActions from '../index';
 
 const mockMarkAllAsSeen = jest.fn();
-let mockSeenPostsPreferenceEnabled = true;
+let mockSeenPostsUiEnabled = true;
 jest.mock( 'calypso/reader/data/seen-posts', () => ( {
 	useMarkAllAsSeenMutation: () => ( { mutate: mockMarkAllAsSeen } ),
-	useSeenPostsPreferenceEnabled: () => mockSeenPostsPreferenceEnabled,
+	useIsSeenPostsUiEnabled: () => mockSeenPostsUiEnabled,
 } ) );
 
 const mockRecordReaderTracksEvent = jest.fn();
@@ -51,11 +50,6 @@ function renderMoreMenuActions( props = {} ) {
 		},
 	} );
 
-	queryClient.setQueryData( isAutomatticianQuery().queryKey, {
-		number: 1,
-		teams: [ { slug: 'a8c', title: 'Automattic' } ],
-	} );
-
 	return render(
 		<QueryClientProvider client={ queryClient }>
 			<MoreMenuActions { ...defaultProps } { ...props } />
@@ -70,7 +64,7 @@ async function openMoreActionsMenu( user: ReturnType< typeof userEvent.setup > )
 describe( 'MoreMenuActions', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockSeenPostsPreferenceEnabled = true;
+		mockSeenPostsUiEnabled = true;
 	} );
 
 	test( 'renders the mark all as read action', async () => {
@@ -84,9 +78,9 @@ describe( 'MoreMenuActions', () => {
 		expect( screen.getByRole( 'menuitem', { name: 'Mark all as read' } ) ).toBeEnabled();
 	} );
 
-	test( 'hides mark as read when the seen posts preference is disabled', async () => {
+	test( 'hides mark as read when seen posts UI is disabled', async () => {
 		const user = userEvent.setup();
-		mockSeenPostsPreferenceEnabled = false;
+		mockSeenPostsUiEnabled = false;
 		renderMoreMenuActions( singleFeedProps );
 
 		await openMoreActionsMenu( user );

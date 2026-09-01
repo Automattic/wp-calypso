@@ -5,7 +5,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
-import { useSeenPostsPreferenceEnabled } from 'calypso/reader/data/seen-posts';
+import { useIsSeenPostsUiEnabled } from 'calypso/reader/data/seen-posts';
 import {
 	useOrganizationFeedsInfo,
 	useOrganizationSiteSubscriptions,
@@ -27,7 +27,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 			feedIds: PropTypes.array,
 			feedUrls: PropTypes.array,
 		} ),
-		isSeenPostsPreferenceEnabled: PropTypes.bool,
+		isSeenPostsUiEnabled: PropTypes.bool,
 	};
 
 	toggleMenu = () => {
@@ -43,7 +43,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 	};
 
 	renderSites() {
-		const { sites, path, organization } = this.props;
+		const { sites, path, organization, isSeenPostsUiEnabled } = this.props;
 		const fallbackPath = organization.slug ? `/reader/${ organization.slug }` : '/reader';
 
 		return sites.map(
@@ -54,6 +54,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 						path={ path }
 						site={ site }
 						fallbackPath={ fallbackPath }
+						isSeenPostsUiEnabled={ isSeenPostsUiEnabled }
 					/>
 				)
 		);
@@ -72,7 +73,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 	}
 
 	render() {
-		const { organization, path, sites, feedsInfo, isSeenPostsPreferenceEnabled } = this.props;
+		const { organization, path, sites, feedsInfo, isSeenPostsUiEnabled } = this.props;
 
 		if ( ! organization.sites_count ) {
 			return null;
@@ -85,9 +86,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 				expanded={ this.props.isOrganizationOpen }
 				title={ organization.title }
 				customCount={
-					isSeenPostsPreferenceEnabled ? (
-						<ReaderUnreadCount count={ feedsInfo.unseenCount } />
-					) : undefined
+					isSeenPostsUiEnabled ? <ReaderUnreadCount count={ feedsInfo.unseenCount } /> : undefined
 				}
 				onClick={ this.selectMenu }
 				expandableIconClick={ this.toggleMenu }
@@ -117,14 +116,14 @@ export class ReaderSidebarOrganizationsList extends Component {
 function OrganizationsListWithFollows( props ) {
 	const sites = useOrganizationSiteSubscriptions( props.organization.id );
 	const feedsInfo = useOrganizationFeedsInfo( props.organization.id );
-	const isSeenPostsPreferenceEnabled = useSeenPostsPreferenceEnabled();
+	const isSeenPostsUiEnabled = useIsSeenPostsUiEnabled();
 
 	return (
 		<ReaderSidebarOrganizationsList
 			{ ...props }
 			sites={ sites }
 			feedsInfo={ feedsInfo }
-			isSeenPostsPreferenceEnabled={ isSeenPostsPreferenceEnabled }
+			isSeenPostsUiEnabled={ isSeenPostsUiEnabled }
 		/>
 	);
 }

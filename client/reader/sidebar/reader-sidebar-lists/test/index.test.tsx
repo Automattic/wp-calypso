@@ -13,24 +13,15 @@ jest.mock( 'calypso/reader/stats', () => ( {
 } ) );
 
 const mockMarkAllAsSeen = jest.fn();
-let mockSeenPostsPreferenceEnabled = true;
+let mockSeenPostsUiEnabled = true;
 jest.mock( 'calypso/reader/data/seen-posts', () => ( {
 	useMarkAllAsSeenMutation: () => ( { mutate: mockMarkAllAsSeen } ),
-	useSeenPostsPreferenceEnabled: () => mockSeenPostsPreferenceEnabled,
+	useIsSeenPostsUiEnabled: () => mockSeenPostsUiEnabled,
 } ) );
 
 const mockRecordReaderTracksEvent = jest.fn();
 jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
 	useRecordReaderTracksEvent: () => mockRecordReaderTracksEvent,
-} ) );
-
-jest.mock( '@automattic/api-queries', () => ( {
-	...jest.requireActual( '@automattic/api-queries' ),
-	isAutomatticianQuery: () => ( {
-		queryKey: [ 'is-automattician' ],
-		queryFn: () => true,
-		initialData: true,
-	} ),
 } ) );
 
 function makeList( ID: number, feeds: { feed_id: number; unseen_count: number }[] ): ReadList {
@@ -54,7 +45,7 @@ function getHeaderCount( container: HTMLElement ): HTMLElement | null {
 
 describe( 'ReaderSidebarLists', () => {
 	beforeEach( () => {
-		mockSeenPostsPreferenceEnabled = true;
+		mockSeenPostsUiEnabled = true;
 	} );
 
 	describe( 'unseen count', () => {
@@ -92,8 +83,8 @@ describe( 'ReaderSidebarLists', () => {
 			expect( getHeaderCount( container ) ).toHaveTextContent( '9' );
 		} );
 
-		it( 'hides the header count when the seen posts preference is disabled', () => {
-			mockSeenPostsPreferenceEnabled = false;
+		it( 'hides the header count when seen posts UI is disabled', () => {
+			mockSeenPostsUiEnabled = false;
 			const lists = [
 				makeList( 1, [
 					{ feed_id: 10, unseen_count: 2 },
