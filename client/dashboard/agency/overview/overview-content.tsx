@@ -129,12 +129,12 @@ export default function AgencyOverviewContent( {
 				/>
 			</VStack>
 			<VStack spacing={ spacing } justify="flex-start">
+				<HelpfulLinksCard links={ links.helpful } recordTracksEvent={ recordTracksEvent } />
 				<EventCard
 					isEligibleForPressableIntroOffer={ isEligibleForPressableIntroOffer }
 					isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 					recordTracksEvent={ recordTracksEvent }
 				/>
-				<HelpfulLinksCard links={ links.helpful } recordTracksEvent={ recordTracksEvent } />
 			</VStack>
 		</Grid>
 	);
