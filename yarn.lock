@@ -2848,7 +2848,6 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@wordpress/url": "npm:^4.48.0"
     i18n-calypso: "workspace:^"
-    social-logos: "npm:^3.1.18"
     typescript: "npm:^6.0.3"
   peerDependencies:
     "@wordpress/data": ^10.48.0
