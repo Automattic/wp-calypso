@@ -34,6 +34,7 @@ export function HostingActivationCallout( {
 		...siteLatestAtomicTransferQuery( site.ID ),
 		refetchInterval: ( query ) =>
 			query.state.data && isAtomicTransferInProgress( query.state.data.status ) ? 5000 : false,
+		refetchIntervalInBackground: true,
 	} );
 
 	const isTransferCompleted = latestAtomicTransfer?.status === 'completed';
