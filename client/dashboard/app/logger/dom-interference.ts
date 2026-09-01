@@ -2,10 +2,9 @@
  * Cheap, one-off DOM probes that fingerprint page-mutating agents (browser
  * translation, extensions) which reparent React-managed text nodes and cause
  * `NotFoundError: Failed to execute 'insertBefore' on 'Node'` crashes in React's
- * commit phase. Run only when an error is being reported. See DOTMSD-1514.
+ * commit phase. Run only when an error is being reported.
  */
 
-const MAX_ATTR_VALUE_LENGTH = 100;
 const MAX_CUSTOM_ELEMENTS = 50;
 
 export interface DomInterferenceReport {
@@ -13,18 +12,6 @@ export interface DomInterferenceReport {
 	tags: Record< string, string >;
 	// Richer detail, attached as a Sentry context and to logstash.
 	context: Record< string, unknown >;
-}
-
-function dumpAttributes( element: Element | null | undefined ): Record< string, string > {
-	const dump: Record< string, string > = {};
-	if ( ! element ) {
-		return dump;
-	}
-	for ( const attribute of Array.from( element.attributes ) ) {
-		// Attribute values can, in rare cases, hold user content; cap length as PII mitigation.
-		dump[ attribute.name ] = attribute.value.slice( 0, MAX_ATTR_VALUE_LENGTH );
-	}
-	return dump;
 }
 
 /**
@@ -64,8 +51,6 @@ export function getDomInterferenceReport(): DomInterferenceReport {
 
 		tags.dom_doc_lang = html.lang || '';
 
-		context.documentElementAttributes = dumpAttributes( html );
-		context.bodyAttributes = dumpAttributes( document.body );
 		context.fontCount = document.querySelectorAll< Element >( 'font' ).length;
 		context.navigatorLanguages = Array.from( navigator.languages ?? [] );
 		// Custom-element tag names catch unknown extensions injecting web components.

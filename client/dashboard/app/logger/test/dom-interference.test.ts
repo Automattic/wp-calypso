@@ -50,8 +50,7 @@ describe( 'getDomInterferenceReport', () => {
 		expect( context.fontCount ).toBe( 2 );
 	} );
 
-	it( 'collects deduped custom-element tag names and caps attribute value length', () => {
-		document.documentElement.setAttribute( 'data-long', 'x'.repeat( 200 ) );
+	it( 'collects deduped custom-element tag names', () => {
 		document.body.innerHTML = '<my-widget></my-widget><my-widget></my-widget><other-el></other-el>';
 
 		const { context } = getDomInterferenceReport();
@@ -62,8 +61,5 @@ describe( 'getDomInterferenceReport', () => {
 		expect(
 			( context.customElements as string[] ).filter( ( n ) => n === 'my-widget' )
 		).toHaveLength( 1 );
-		expect(
-			( context.documentElementAttributes as Record< string, string > )[ 'data-long' ]
-		).toHaveLength( 100 );
 	} );
 } );

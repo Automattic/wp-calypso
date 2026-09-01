@@ -50,12 +50,11 @@ interface ReportOptions {
 }
 
 /**
- * Shared reporting path for dashboard errors, whether caught by a router/error
- * boundary or by React's root `onUncaughtError` handler. Enriches every report
- * with a DOM-interference fingerprint and a chained, symbolicable component
- * stack. See DOTMSD-1514.
+ * Shared entry point for dashboard errors, whether caught by a router/error
+ * boundary or by React's root `onUncaughtError` handler. Decides whether an
+ * error is worth reporting, then delegates to `reportDashboardError`.
  */
-function reportDashboardError(
+function handleDashboardError(
 	error: Error,
 	componentStack: string | null | undefined,
 	options: ReportOptions
@@ -70,6 +69,18 @@ function reportDashboardError(
 		return;
 	}
 
+	reportDashboardError( error, componentStack, options );
+}
+
+/**
+ * Enriches every report with a DOM-interference fingerprint and a chained,
+ * symbolicable component stack.
+ */
+function reportDashboardError(
+	error: Error,
+	componentStack: string | null | undefined,
+	options: ReportOptions
+) {
 	const domInterference = getDomInterferenceReport();
 
 	logToLogstash( {
@@ -129,7 +140,7 @@ export function handleOnCatch(
 		] )
 	);
 
-	reportDashboardError( error, errorInfo.componentStack, {
+	handleDashboardError( error, errorInfo.componentStack, {
 		severity: options.severity,
 		dashboard_backport: options.dashboard_backport,
 		calypso_section: options.calypso_section,
@@ -148,7 +159,7 @@ export function handleOnCatch(
 export function handleUncaughtError( error: unknown, errorInfo: { componentStack?: string } ) {
 	try {
 		const normalizedError = error instanceof Error ? error : new Error( String( error ) );
-		reportDashboardError( normalizedError, errorInfo.componentStack, {
+		handleDashboardError( normalizedError, errorInfo.componentStack, {
 			severity: calypsoConfig( 'env_id' ) === 'dashboard-production' ? 'error' : 'debug',
 			calypso_section: 'dashboard',
 		} );
