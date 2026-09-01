@@ -2,8 +2,12 @@ import config from '@automattic/calypso-config';
 import { Page } from '@wordpress/admin-ui';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import { useSelector } from 'calypso/state';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const isBlazePlugin = config.isEnabled( 'is_running_in_blaze_plugin' );
 
@@ -29,13 +33,30 @@ export function BlazeFooter() {
  */
 export default function BlazePage( { actions, children }: Props ) {
 	const translate = useTranslate();
+	const siteId = useSelector( getSelectedSiteId );
+	const isSelfHosted = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
 
 	return (
 		<Page
 			className="promote-post-i2__page"
 			visual={ isBlazePlugin ? undefined : <JetpackLogo size={ 24 } monochrome={ false } /> }
 			title="Blaze Ads"
-			subTitle={ translate( 'Promote your posts and pages across WordPress.com and Tumblr.' ) }
+			subTitle={ translate(
+				'Promote your posts and pages across WordPress.com and Tumblr. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+				{
+					components: {
+						learnMoreLink: (
+							<InlineSupportLink
+								supportContext="advertising"
+								showIcon={ false }
+								showSupportModal={ ! isSelfHosted }
+							/>
+						),
+					},
+				}
+			) }
 			showSidebarToggle={ false }
 			actions={ actions }
 		>
