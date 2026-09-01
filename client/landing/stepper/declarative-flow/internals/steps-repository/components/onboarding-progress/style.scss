@@ -86,20 +86,6 @@
 		display: none;
 	}
 
-	// The step name still gives each segment its accessible name, so it is
-	// clipped rather than removed.
-	.onboarding-progress-title {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		padding: 0;
-		margin: -1px;
-		overflow: hidden;
-		clip-path: inset( 50% );
-		white-space: nowrap;
-		border: 0;
-	}
-
 	// Not in the Figma, but completed steps are navigable and need to say so.
 	.onboarding-progress-trigger:hover:not( [aria-disabled='true'] ) .onboarding-progress-indicator[data-indicator-variant] {
 		background: var( --wpds-color-foreground-interactive-brand );

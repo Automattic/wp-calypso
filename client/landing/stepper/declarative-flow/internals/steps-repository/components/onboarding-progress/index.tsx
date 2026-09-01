@@ -1,5 +1,6 @@
 import { Stepper as UIStepper } from '@automattic/ui';
 import { useI18n } from '@wordpress/react-i18n';
+import { VisuallyHidden } from '@wordpress/ui';
 
 import './style.scss';
 
@@ -55,9 +56,9 @@ export function OnboardingProgress( { currentStep, onStepSelect, isStepSelectDis
 				>
 					<UIStepper.Trigger className="onboarding-progress-trigger">
 						<UIStepper.Indicator className="onboarding-progress-indicator" />
-						<UIStepper.Title className="onboarding-progress-title">
+						<VisuallyHidden render={ <UIStepper.Title /> }>
 							{ _x( 'Domain', 'onboarding purchase step' ) }
-						</UIStepper.Title>
+						</VisuallyHidden>
 					</UIStepper.Trigger>
 				</UIStepper.Step>
 				<UIStepper.Step
@@ -68,17 +69,17 @@ export function OnboardingProgress( { currentStep, onStepSelect, isStepSelectDis
 				>
 					<UIStepper.Trigger className="onboarding-progress-trigger">
 						<UIStepper.Indicator className="onboarding-progress-indicator" />
-						<UIStepper.Title className="onboarding-progress-title">
+						<VisuallyHidden render={ <UIStepper.Title /> }>
 							{ _x( 'Plan', 'onboarding purchase step' ) }
-						</UIStepper.Title>
+						</VisuallyHidden>
 					</UIStepper.Trigger>
 				</UIStepper.Step>
 				<UIStepper.Step value="checkout" className="onboarding-progress-step">
 					<UIStepper.Trigger className="onboarding-progress-trigger">
 						<UIStepper.Indicator className="onboarding-progress-indicator" />
-						<UIStepper.Title className="onboarding-progress-title">
+						<VisuallyHidden render={ <UIStepper.Title /> }>
 							{ _x( 'Payment', 'onboarding purchase step' ) }
-						</UIStepper.Title>
+						</VisuallyHidden>
 					</UIStepper.Trigger>
 				</UIStepper.Step>
 			</UIStepper.List>
