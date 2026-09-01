@@ -32,6 +32,7 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 		isPendingUpdate: isCartPendingUpdate,
 		loadingError: cartLoadingError,
 	} = useShoppingCart( cartKey );
+	const hasCartFailed = Boolean( cartLoadingError );
 	const giftBackUrl = getGiftCheckoutBackUrl( {
 		giftDetails: responseCart.gift_details,
 		referrer: document.referrer,
@@ -141,9 +142,12 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 		// uses, because a 'no-user' cart never fetches — it resolves its initial
 		// cart locally and empty — so the control would go live while the gifted
 		// plan (and with it `gift_details`) is still on its way to the server.
-		// `isPendingUpdate` covers that window. A cart that failed to load stops
-		// waiting, so a broken cart can't trap the user in checkout.
-		isLeaveDisabled: ( isCartLoading || isCartPendingUpdate ) && ! cartLoadingError,
+		// `isPendingUpdate` covers that window.
+		//
+		// A failed cart is the exception: it reports itself as forever pending
+		// (its cache status never returns to valid), so waiting on it would trap
+		// the user in checkout. Let them leave instead.
+		isLeaveDisabled: ! hasCartFailed && ( isCartLoading || isCartPendingUpdate ),
 		clickClose,
 		clickStepBack,
 		closeAndLeave,
