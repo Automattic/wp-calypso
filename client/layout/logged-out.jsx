@@ -273,22 +273,18 @@ const LayoutLoggedOut = ( {
 			'themes',
 		].includes( sectionName )
 	) {
-		const nonMonochromeSections = [ 'plugins', 'themes', 'theme' ];
-
-		const className = clsx( {
-			'is-style-monochrome':
-				isEnabled( 'site-profiler/metrics' ) && ! nonMonochromeSections.includes( sectionName ),
-		} );
+		const nonMonochromeSections = [ 'plugins', 'reader', 'themes', 'theme' ];
+		const isMonochromeNav =
+			isEnabled( 'site-profiler/metrics' ) && ! nonMonochromeSections.includes( sectionName );
 
 		masterbar = (
 			<Nav2026UniversalHeader
 				isLoggedIn={ isLoggedIn }
 				sectionName={ sectionName }
-				className={ className }
-				{ ...( isEnabled( 'site-profiler/metrics' ) &&
-					! nonMonochromeSections.includes( sectionName ) && {
-						logoColor: 'white',
-					} ) }
+				className={ clsx( { 'is-style-monochrome': isMonochromeNav } ) }
+				{ ...( isMonochromeNav && {
+					logoColor: 'white',
+				} ) }
 				{ ...( isThemeShowcaseModern && { logoColor: 'var(--studio-black)' } ) }
 				{ ...( sectionName === 'subscriptions' && { variant: 'minimal' } ) }
 				{ ...( sectionName === 'patterns' && {
