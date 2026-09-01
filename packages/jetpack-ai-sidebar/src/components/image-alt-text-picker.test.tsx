@@ -134,7 +134,7 @@ describe( 'ImageAltTextPicker', () => {
 	it.each( [
 		[ 'omitted', undefined ],
 		[ 'not an array', 'text' as any ],
-	] )( 'renders without options when %s, instead of throwing', ( _label, images ) => {
+	] )( 'renders nothing when the options are %s, instead of throwing', ( _label, images ) => {
 		// History strips the picker options to save tokens, so a restored row can
 		// reach this component with nothing to show. Mirrors usePickerVariations.
 		const { container } = render( <ImageAltTextPicker images={ images } /> );

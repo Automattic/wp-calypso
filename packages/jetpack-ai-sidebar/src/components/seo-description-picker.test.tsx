@@ -100,9 +100,21 @@ describe( 'SeoDescriptionPicker', () => {
 	it.each( [
 		[ 'omitted', undefined ],
 		[ 'not an array', 'text' as any ],
-	] )( 'renders without options when %s, instead of throwing', ( _label, descriptions ) => {
-		// History strips the picker options to save tokens, so a restored row can
-		// reach this component with nothing to show. Mirrors usePickerVariations.
-		expect( () => render( <SeoDescriptionPicker descriptions={ descriptions } /> ) ).not.toThrow();
+		[
+			'an array of invalid entries',
+			[ null, {}, { description: 7 }, { description: '  ' } ] as any,
+		],
+	] )( 'renders nothing when the options are %s, instead of throwing', ( _label, descriptions ) => {
+		// History strips the picker options to save tokens, and a malformed
+		// payload can carry unusable entries. Mirrors usePickerVariations.
+		const { container } = render( <SeoDescriptionPicker descriptions={ descriptions } /> );
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	it( 'skips invalid entries and renders the valid options', () => {
+		const mixed = [ null, {}, { description: 7 }, { description: 'Valid description.' } ] as any;
+		render( <SeoDescriptionPicker descriptions={ mixed } /> );
+		expect( screen.getByText( 'Valid description.' ) ).toBeInTheDocument();
+		expect( screen.getAllByRole( 'button' ) ).toHaveLength( 1 );
 	} );
 } );

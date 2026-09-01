@@ -68,7 +68,11 @@ export default function SeoTitlePicker( {
 
 	// The props arrive from an orchestrator tool payload, so guard the shape
 	// instead of trusting the TypeScript type.
-	const options = Array.isArray( titles ) ? titles.map( ( option ) => option.title ) : [];
+	const options = Array.isArray( titles )
+		? titles
+				.map( ( option ) => option?.title )
+				.filter( ( title ): title is string => typeof title === 'string' && title.trim() !== '' )
+		: [];
 
 	return (
 		<BaseSuggestionPicker

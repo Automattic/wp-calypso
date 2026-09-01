@@ -1,15 +1,16 @@
 /**
  * BaseSuggestionPicker — shared single-select suggestion list for the chat sidebar.
  *
- * Renders an intro line followed by a list of suggestion cards. Clicking a card
- * applies that value via the `onApply` callback and highlights it; the picker
- * stays visible so the user can click through options. An optional inline
- * confirmation (`appliedMessage`) is shown once a value has been applied.
+ * Renders an intro line followed by a list of suggestion cards, or nothing at
+ * all when there are no options. Clicking a card applies that value via the
+ * `onApply` callback and highlights it; the picker stays visible so the user
+ * can click through options. An optional inline confirmation
+ * (`appliedMessage`) is shown once a value has been applied.
  *
- * This is the shared building block behind the title-picker, seo-title-picker
- * and seo-description-picker wrappers — they differ only in their intro text,
- * what "apply" writes to, and their confirmation copy, so the rendering and
- * selection live here once.
+ * This is the shared building block behind the title-picker, seo-title-picker,
+ * seo-description-picker and excerpt-picker wrappers — they differ only in
+ * their intro text, what "apply" writes to, and their confirmation copy, so
+ * the rendering and selection live here once.
  */
 
 /**
@@ -76,6 +77,12 @@ export default function BaseSuggestionPicker( {
 	const derivedAppliedValue =
 		currentValue !== undefined && options.includes( currentValue ) ? currentValue : null;
 	const effectiveAppliedValue = appliedValue ?? derivedAppliedValue;
+
+	// History slims the picker props away, and a malformed payload can carry
+	// only unusable entries, so a row can arrive with nothing to show.
+	if ( ! options.length ) {
+		return null;
+	}
 
 	return (
 		<div className="jetpack-ai-base-suggestion-picker">

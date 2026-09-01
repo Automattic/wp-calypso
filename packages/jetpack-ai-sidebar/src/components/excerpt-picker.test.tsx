@@ -100,14 +100,6 @@ describe( 'ExcerptPicker', () => {
 		expect( mockRevealSidebarField ).toHaveBeenCalledWith( 'excerpt' );
 	} );
 
-	it( 'renders no options without crashing when the excerpts prop is malformed', () => {
-		render( <ExcerptPicker excerpts={ undefined as any } /> );
-		expect( document.querySelectorAll( 'button' ) ).toHaveLength( 0 );
-
-		render( <ExcerptPicker excerpts={ 'not-an-array' as any } /> );
-		expect( document.querySelectorAll( 'button' ) ).toHaveLength( 0 );
-	} );
-
 	it( 'marks the option matching the current post excerpt as applied on mount', () => {
 		mockCurrentExcerpt = excerpts[ 0 ].excerpt;
 		render( <ExcerptPicker excerpts={ excerpts } /> );
@@ -121,9 +113,18 @@ describe( 'ExcerptPicker', () => {
 	it.each( [
 		[ 'omitted', undefined ],
 		[ 'not an array', 'text' as any ],
-	] )( 'renders without options when %s, instead of throwing', ( _label, excerpts ) => {
-		// History strips the picker options to save tokens, so a restored row can
-		// reach this component with nothing to show. Mirrors usePickerVariations.
-		expect( () => render( <ExcerptPicker excerpts={ excerpts } /> ) ).not.toThrow();
+		[ 'an array of invalid entries', [ null, {}, { excerpt: 7 }, { excerpt: '  ' } ] as any ],
+	] )( 'renders nothing when the options are %s, instead of throwing', ( _label, excerpts ) => {
+		// History strips the picker options to save tokens, and a malformed
+		// payload can carry unusable entries. Mirrors usePickerVariations.
+		const { container } = render( <ExcerptPicker excerpts={ excerpts } /> );
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	it( 'skips invalid entries and renders the valid options', () => {
+		const mixed = [ null, {}, { excerpt: 7 }, { excerpt: 'A valid excerpt.' } ] as any;
+		render( <ExcerptPicker excerpts={ mixed } /> );
+		expect( screen.getByText( 'A valid excerpt.' ) ).toBeInTheDocument();
+		expect( screen.getAllByRole( 'button' ) ).toHaveLength( 1 );
 	} );
 } );

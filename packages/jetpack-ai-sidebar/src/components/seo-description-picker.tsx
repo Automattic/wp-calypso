@@ -68,7 +68,12 @@ export default function SeoDescriptionPicker( {
 	// The props arrive from an orchestrator tool payload, so guard the shape
 	// instead of trusting the TypeScript type.
 	const options = Array.isArray( descriptions )
-		? descriptions.map( ( option ) => option.description )
+		? descriptions
+				.map( ( option ) => option?.description )
+				.filter(
+					( description ): description is string =>
+						typeof description === 'string' && description.trim() !== ''
+				)
 		: [];
 
 	return (

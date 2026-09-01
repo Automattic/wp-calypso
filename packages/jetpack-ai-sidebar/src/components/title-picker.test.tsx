@@ -87,9 +87,18 @@ describe( 'TitlePicker', () => {
 	it.each( [
 		[ 'omitted', undefined ],
 		[ 'not an array', 'text' as any ],
-	] )( 'renders without options when %s, instead of throwing', ( _label, titles ) => {
-		// History strips the picker options to save tokens, so a restored row can
-		// reach this component with nothing to show. Mirrors usePickerVariations.
-		expect( () => render( <TitlePicker titles={ titles } /> ) ).not.toThrow();
+		[ 'an array of invalid entries', [ null, {}, { title: 7 }, { title: '  ' } ] as any ],
+	] )( 'renders nothing when the options are %s, instead of throwing', ( _label, titles ) => {
+		// History strips the picker options to save tokens, and a malformed
+		// payload can carry unusable entries. Mirrors usePickerVariations.
+		const { container } = render( <TitlePicker titles={ titles } /> );
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	it( 'skips invalid entries and renders the valid options', () => {
+		const mixed = [ null, {}, { title: 7 }, { title: 'Valid Title' } ] as any;
+		render( <TitlePicker titles={ mixed } /> );
+		expect( screen.getByText( 'Valid Title' ) ).toBeInTheDocument();
+		expect( screen.getAllByRole( 'button' ) ).toHaveLength( 1 );
 	} );
 } );
