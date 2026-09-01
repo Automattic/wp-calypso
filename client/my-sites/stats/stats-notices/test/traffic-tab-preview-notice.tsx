@@ -130,4 +130,15 @@ describe( 'TrafficTabPreviewNotice', () => {
 			{ blog_id: 123 }
 		);
 	} );
+
+	it( 'does not hide the notice for a different site after a dismissal', async () => {
+		const { rerender } = renderNotice();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
+		expect( screen.queryByText( 'Try the new Traffic page' ) ).not.toBeInTheDocument();
+
+		rerender( <TrafficTabPreviewNotice siteId={ 456 } isOdysseyStats={ false } /> );
+
+		expect( screen.getByText( 'Try the new Traffic page' ) ).toBeVisible();
+	} );
 } );

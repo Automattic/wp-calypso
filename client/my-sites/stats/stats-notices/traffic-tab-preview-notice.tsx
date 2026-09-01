@@ -22,7 +22,7 @@ const trackEvent = ( isOdysseyStats: boolean, name: string, siteId: number | nul
 const TrafficTabPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
 	const translate = useTranslate();
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
-	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
+	const [ dismissedSiteId, setDismissedSiteId ] = useState< number | null >( null );
 
 	const { data: isAlreadyEnabled, isLoading, isError } = usePremiumAnalyticsStatusQuery( siteId );
 	const { mutate: enablePreview, isPending: isEnabling } =
@@ -40,12 +40,12 @@ const TrafficTabPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps )
 	// A failed status read stands in for two cases that both mean "don't invite this person": the
 	// route 403s for anyone who can't administer the site, and it doesn't exist at all on a Jetpack
 	// too old to serve it. Either way there is no point offering a switch they can't throw.
-	const isVisible = ! noticeDismissed && ! isLoading && ! isError && ! isAlreadyEnabled;
+	const isVisible = dismissedSiteId !== siteId && ! isLoading && ! isError && ! isAlreadyEnabled;
 
 	const dismissNotice = () => {
 		trackEvent( isOdysseyStats, 'dismissed', siteId );
 
-		setNoticeDismissed( true );
+		setDismissedSiteId( siteId );
 		// Best-effort: the local state above already hides the notice for this session.
 		postponeNoticeAsync().catch( () => {} );
 	};
