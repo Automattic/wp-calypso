@@ -71,7 +71,7 @@ describe( 'getAvailableNoteActions', () => {
 		} );
 	} );
 
-	it( 'derives follow from a user block, except on notes about a comment', () => {
+	it( 'derives follow-back from a follow note only', () => {
 		const body = [
 			{ text: '', meta: { ids: { site: 77 } }, actions: { follow: false } },
 		] as Note[ 'body' ];
@@ -80,10 +80,7 @@ describe( 'getAvailableNoteActions', () => {
 			siteId: 77,
 			isFollowing: false,
 		} );
-		expect( getAvailableNoteActions( makeNote( { type: 'like', body } ) ).follow ).toEqual( {
-			siteId: 77,
-			isFollowing: false,
-		} );
+		expect( getAvailableNoteActions( makeNote( { type: 'like', body } ) ).follow ).toBeNull();
 		expect( getAvailableNoteActions( makeNote( { type: 'comment', body } ) ).follow ).toBeNull();
 		expect(
 			getAvailableNoteActions( makeNote( { type: 'comment_like', body } ) ).follow
