@@ -217,26 +217,30 @@ interface ExternalProps {
 
 type Props = ExternalProps & LocalizeProps;
 
+/*
+	For Atomic sites on plans below Business the API returns the holds TRANSFER_ALREADY_EXISTS and NO_BUSINESS_PLAN.
+	Because TRANSFER_ALREADY_EXISTS is present and 'blocking' it would show an "Upload in progress" notice even when there isn't one.
+	In this scenario we treat the blocking hold as invalid so the caller renders the upgrade prompt instead.
+*/
+export function getValidBlockingHold( holds: string[] ): string | undefined {
+	if ( isAtomicSiteWithoutBusinessPlan( holds ) ) {
+		return undefined;
+	}
+
+	const blockingMessages = getBlockingMessages( ( str: string ) => str );
+	return holds.find( ( hold ) => isHardBlockingHoldType( hold, blockingMessages ) );
+}
+
 export const HardBlockingNotice = ( {
-	holds,
+	blockingHold,
 	translate,
 	blockingMessages,
 }: {
-	holds: string[];
+	blockingHold: string | undefined;
 	translate: LocalizeProps[ 'translate' ];
 	blockingMessages: ReturnType< typeof getBlockingMessages >;
 } ) => {
-	const blockingHold = holds.find( ( h ): h is keyof ReturnType< typeof getBlockingMessages > =>
-		isHardBlockingHoldType( h, blockingMessages )
-	);
-
-	/*
-		For Atomic sites on plans below Business it will return the holds TRANSFER_ALREADY_EXISTS and NO_BUSINESS_PLAN.
-		Because TRANSFER_ALREADY_EXISTS is present and 'blocking' it will show an "Upload in progress" notice even when there isn't one.
-		In this scenario we need to check if it's an Atomic ste (TRANSFER_ALREADY_EXISTS) on a plan below Business (NO_BUSINESS_PLAN)
-		so we can stop the render of "Upload in progress" and prompt them to upgrade instead.
-	*/
-	if ( ! blockingHold || isAtomicSiteWithoutBusinessPlan( holds ) ) {
+	if ( ! blockingHold || ! isHardBlockingHoldType( blockingHold, blockingMessages ) ) {
 		return null;
 	}
 

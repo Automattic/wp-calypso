@@ -11,6 +11,7 @@ import EligibilityWarnings, {
 } from 'calypso/blocks/eligibility-warnings';
 import {
 	getBlockingMessages,
+	getValidBlockingHold,
 	HardBlockingNotice,
 	hasBlockingHold as hasBlockingHoldFunc,
 } from 'calypso/blocks/eligibility-warnings/hold-list';
@@ -128,7 +129,7 @@ function BlockingHoldNotice( {
 	return (
 		<HardBlockingNotice
 			translate={ translate }
-			holds={ holds }
+			blockingHold={ getValidBlockingHold( holds ) }
 			blockingMessages={ blockingMessages }
 		/>
 	);

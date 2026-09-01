@@ -131,6 +131,21 @@ describe( '<EligibilityWarnings>', () => {
 		expect( queryByText( 'Continue' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'shows the upgrade path, not the blocking notice, for an Atomic site below Business', () => {
+		const state = createState( {
+			holds: [ 'TRANSFER_ALREADY_EXISTS', 'NO_BUSINESS_PLAN' ],
+		} );
+
+		const { container, getByTestId, getByText } = renderWithStore(
+			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+			state
+		);
+
+		expect( container.querySelector( '.calypso-notice' ) ).not.toBeInTheDocument();
+		expect( getByTestId( 'HoldList-Card' ) ).toBeVisible();
+		expect( getByText( 'Upgrade and continue' ) ).toBeEnabled();
+	} );
+
 	it( 'renders warning notices when the API returns warnings', () => {
 		const state = createState( {
 			warnings: [

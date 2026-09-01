@@ -29,7 +29,12 @@ import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import HoldList, { hasBlockingHold, HardBlockingNotice, getBlockingMessages } from './hold-list';
+import HoldList, {
+	hasBlockingHold,
+	getValidBlockingHold,
+	HardBlockingNotice,
+	getBlockingMessages,
+} from './hold-list';
 import SupportLink from './support-link';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 import WarningList, { type AtomicTransferAction } from './warning-list';
@@ -93,8 +98,8 @@ export const EligibilityWarnings = ( {
 }: Props ) => {
 	const warnings = eligibilityData.eligibilityWarnings || [];
 	const listHolds = eligibilityData.eligibilityHolds || [];
-	const hasValidBlockingHold =
-		hasBlockingHold( listHolds ) && ! isAtomicSiteWithoutBusinessPlan( listHolds );
+	const validBlockingHold = getValidBlockingHold( listHolds );
+	const hasValidBlockingHold = !! validBlockingHold;
 
 	const [ selectedGeoAffinity, setSelectedGeoAffinity ] = useState( '' );
 
@@ -179,7 +184,7 @@ export const EligibilityWarnings = ( {
 			{ ! isPlaceholder && hasValidBlockingHold && (
 				<CompactCard>
 					<HardBlockingNotice
-						holds={ listHolds }
+						blockingHold={ validBlockingHold }
 						translate={ translate }
 						blockingMessages={ blockingMessages }
 					/>
