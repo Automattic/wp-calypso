@@ -126,32 +126,51 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 
 	const buildWithAISummary = (
 		<SummaryButton
-			title={ translate( 'Build with AI' ) }
+			title={ i18n.fixMe( {
+				text: 'Create a custom design',
+				newCopy: translate( 'Create a custom design' ),
+				oldCopy: translate( 'Build with AI' ),
+			} ) }
 			description={ i18n.fixMe( {
-				text: 'Describe your idea and let AI help you refine your site.',
-				newCopy: translate( 'Describe your idea and let AI help you refine your site.' ),
-				oldCopy: translate( 'Prompt, edit, and launch a site in just a few clicks.' ),
+				text: 'Describe your idea and the WordPress Agent builds it.',
+				newCopy: translate( 'Describe your idea and the WordPress Agent builds it.' ),
+				oldCopy: translate( 'Describe your idea and let AI help you refine your site.' ),
 			} ) }
 			decoration={ <BigSkyLogo.CentralLogo heartless /> }
 			onClick={ handleBuildWithAIClick }
 		/>
 	);
 
+	const startWithTemplateCard = (
+		<SummaryButton
+			title={ i18n.fixMe( {
+				text: 'Start with a template',
+				newCopy: translate( 'Start with a template' ),
+				oldCopy: translate( 'Manual setup' ),
+			} ) }
+			description={ i18n.fixMe( {
+				text: 'Get a simple, ready-to-go site to make your own.',
+				newCopy: translate( 'Get a simple, ready-to-go site to make your own.' ),
+				oldCopy: translate( 'Get started instantly with a simple, ready-to-go WordPress site.' ),
+			} ) }
+			decoration={ <Icon icon={ layout } /> }
+			onClick={ handleBlankSite }
+		/>
+	);
+
 	const stepContent = (
 		<VStack alignment="top" spacing={ 3 }>
-			{ showPromptInput ? buildWithAIPromptCard : buildWithAISummary }
-			<SummaryButton
-				title={ i18n.fixMe( {
-					text: 'Manual setup',
-					newCopy: translate( 'Manual setup' ),
-					oldCopy: translate( 'Start with a blank site' ),
-				} ) }
-				description={ translate(
-					'Get started instantly with a simple, ready-to-go WordPress site.'
-				) }
-				decoration={ <Icon icon={ layout } /> }
-				onClick={ handleBlankSite }
-			/>
+			{ showPromptInput ? (
+				<>
+					{ buildWithAIPromptCard }
+					{ startWithTemplateCard }
+				</>
+			) : (
+				<>
+					{ startWithTemplateCard }
+					{ buildWithAISummary }
+				</>
+			) }
 			{ isAutomattician && (
 				<SummaryButton
 					title="Generate Theme"
@@ -171,13 +190,15 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 			topBar={ <Step.TopBar /> }
 			heading={
 				<Step.Heading
-					text={ translate( 'Set up your site' ) }
+					text={ i18n.fixMe( {
+						text: 'Let’s design your site',
+						newCopy: translate( 'Let’s design your site' ),
+						oldCopy: translate( 'Set up your site' ),
+					} ) }
 					subText={ i18n.fixMe( {
-						text: "Whatever you're making, there's an easy way to get started.",
-						newCopy: translate( "Whatever you're making, there's an easy way to get started." ),
-						oldCopy: translate(
-							"No matter what you want to do, there's an easy way to get started."
-						),
+						text: 'Choose how to begin — you can change it anytime.',
+						newCopy: translate( 'Choose how to begin — you can change it anytime.' ),
+						oldCopy: translate( "Whatever you're making, there's an easy way to get started." ),
 					} ) }
 				/>
 			}
