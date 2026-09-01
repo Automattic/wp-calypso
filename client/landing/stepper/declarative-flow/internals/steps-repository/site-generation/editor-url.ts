@@ -1,3 +1,5 @@
+import { addQueryArgs, getQueryArgs } from '@wordpress/url';
+
 const ALLOWED_HOST_SUFFIXES = [ '.wordpress.com', '.wpcomstaging.com' ];
 
 export function getSafeEditorUrl( rawUrl: string | null ): string | null {
@@ -40,11 +42,8 @@ export function getLiveEditorUrl( capturedUrl: string, liveUrl: unknown ): strin
 		return capturedUrl;
 	}
 
-	const destination = new URL( safeLiveUrl );
-	new URL( capturedUrl ).searchParams.forEach( ( value, key ) => {
-		if ( ! destination.searchParams.has( key ) ) {
-			destination.searchParams.append( key, value );
-		}
+	return addQueryArgs( safeLiveUrl, {
+		...getQueryArgs( capturedUrl ),
+		...getQueryArgs( safeLiveUrl ),
 	} );
-	return destination.href;
 }
