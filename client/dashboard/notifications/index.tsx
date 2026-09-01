@@ -1,6 +1,5 @@
 import { useNavigate } from '@tanstack/react-router';
 import {
-	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Spinner,
@@ -172,14 +171,6 @@ function InboxList( {
 			onChangeView={ setView }
 			onChangeSelection={ ( selection ) => onSelectNote( selection[ 0 ] ) }
 		>
-			<HStack
-				justify="flex-end"
-				alignment="top"
-				spacing={ 2 }
-				className="dashboard-notifications-inbox__list-toolbar dataviews__view-actions"
-			>
-				<WPDataViews.ViewConfig />
-			</HStack>
 			<WPDataViews.Layout />
 			{ hasMore && data.length > 0 && isLoading && (
 				// DataViews suppresses its own load-more spinner when notes are
