@@ -9,6 +9,7 @@ import {
 	getNoteView,
 	getReplyRecipient,
 	getTitleSegments,
+	isReplyToUser,
 } from '../note-model';
 import type { Note } from '../engine';
 
@@ -441,5 +442,22 @@ describe( 'getReplyRecipient', () => {
 				body: [ { type: 'user', text: 'Alice' } ],
 			} as unknown as Note )
 		).toBe( 'Alice' );
+	} );
+} );
+
+describe( 'isReplyToUser', () => {
+	const reply = ( authorId: number ) =>
+		( {
+			meta: { ids: { parent_comment: 2 } },
+			header: [ { text: 'Bob', ranges: [ { type: 'user', id: authorId, indices: [ 0, 3 ] } ] } ],
+		} ) as unknown as Note;
+
+	it( 'is true only when the parent comment belongs to the user', () => {
+		expect( isReplyToUser( reply( 7 ), 7 ) ).toBe( true );
+		expect( isReplyToUser( reply( 8 ), 7 ) ).toBe( false );
+	} );
+
+	it( 'is false for a comment that is not a reply', () => {
+		expect( isReplyToUser( { meta: { ids: {} } } as unknown as Note, 7 ) ).toBe( false );
 	} );
 } );

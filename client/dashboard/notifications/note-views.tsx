@@ -179,7 +179,7 @@ function ThreadView( { view }: { view: Extract< NoteView, { kind: 'thread' } > }
 						{ parent.url && parent.isTruncated && (
 							<>
 								{ ' ' }
-								<ExternalLink href={ parent.url }>{ __( 'Read original' ) }</ExternalLink>
+								<ExternalLink href={ parent.url }>{ __( 'Continue reading' ) }</ExternalLink>
 							</>
 						) }
 					</Text>

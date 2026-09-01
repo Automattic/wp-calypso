@@ -59,8 +59,13 @@ export function getNoteTypeLabel( note: Note ): string {
 	}
 }
 
-export function isReplyNote( note: Note ): boolean {
-	return !! note.meta?.ids?.parent_comment;
+/** Whether the note is a reply to one of the given user's own comments. */
+export function isReplyToUser( note: Note, userId: number ): boolean {
+	if ( ! note.meta?.ids?.parent_comment ) {
+		return false;
+	}
+	const parentAuthor = note.header?.[ 0 ]?.ranges?.[ 0 ];
+	return parentAuthor?.type === 'user' && Number( parentAuthor.id ) === userId;
 }
 
 // A reply answers the note's own comment, whose author is the body's user

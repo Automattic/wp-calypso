@@ -9,6 +9,7 @@ import { filterSortAndPaginate, DataViews as WPDataViews } from '@wordpress/data
 import { __ } from '@wordpress/i18n';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAnalytics } from '../app/analytics';
+import { useAuth } from '../app/auth';
 import { DataViews, DataViewsCard } from '../components/dataviews';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
@@ -98,8 +99,9 @@ function InboxList( {
 	const view = { ...initialView, perPage: NOTES_PER_PAGE };
 	const startPosition = view.startPosition ?? 1;
 
+	const { user } = useAuth();
 	// Field identities must stay stable or DataViews remounts every cell per re-render.
-	const fields = useMemo( () => getFields(), [] );
+	const fields = useMemo( () => getFields( { currentUserId: user.ID } ), [ user.ID ] );
 
 	// The engine's server filter is driven by the sidebar categories, never by
 	// DataViews view state; this just paginates the loaded notes into the window.

@@ -8,7 +8,7 @@ import {
 	getNoteTitle,
 	getTimeGroupIndex,
 	getTitleSegments,
-	isReplyNote,
+	isReplyToUser,
 } from './note-model';
 import type { Note } from './engine';
 import type { Field } from '@wordpress/dataviews';
@@ -42,7 +42,7 @@ function NoteIcon( { note }: { note: Note } ) {
 }
 
 /** DataViews fields for the inbox list. */
-export function getFields(): Field< Note >[] {
+export function getFields( { currentUserId }: { currentUserId: number } ): Field< Note >[] {
 	return [
 		{
 			id: 'icon',
@@ -59,7 +59,7 @@ export function getFields(): Field< Note >[] {
 						'is-unread': ! item.read,
 					} ) }
 				>
-					{ isReplyNote( item ) && (
+					{ isReplyToUser( item, currentUserId ) && (
 						<Icon
 							className="dashboard-notifications-inbox__title-icon"
 							icon={ replyIcon }
