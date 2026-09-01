@@ -102,6 +102,39 @@ describe( 'SetupYourSiteAIStep', () => {
 		} );
 	} );
 
+	describe( 'card selection', () => {
+		it( 'submits the blank-site choice from the template card', () => {
+			renderStep();
+
+			fireEvent.click( screen.getByRole( 'button', { name: 'Start with a template' } ) );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_onboarding_setup_your_site_with_ai_selection',
+				{ selection: 'blank-site' }
+			);
+			expect( navigation.submit ).toHaveBeenCalledWith( {
+				setupChoice: 'blank-site',
+				siteSlug: 'example.wordpress.com',
+			} );
+		} );
+
+		it( 'submits the build-with-ai choice from the custom design card', () => {
+			renderStep();
+
+			fireEvent.click( screen.getByRole( 'button', { name: 'Create a custom design' } ) );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_onboarding_setup_your_site_with_ai_selection',
+				{ selection: 'build-with-ai', has_prompt: false }
+			);
+			expect( navigation.submit ).toHaveBeenCalledWith( {
+				setupChoice: 'build-with-ai',
+				siteSlug: 'example.wordpress.com',
+				siteId: 123,
+			} );
+		} );
+	} );
+
 	describe( 'Generate Theme (Automattician only)', () => {
 		it( 'hides the Generate Theme option for non-Automatticians', () => {
 			mockUseReactQuery.mockReturnValue( { data: false } );
