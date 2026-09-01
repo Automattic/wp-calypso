@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen, waitForElementToBeRemoved } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -73,10 +73,6 @@ describe( '<BillingDetailsField>', () => {
 } );
 
 describe( '<UserVatDetails>', () => {
-	afterEach( () => {
-		nock.cleanAll();
-	} );
-
 	test( 'shows the tax identity the receipt was issued under, not the current one', async () => {
 		mockCurrentTaxDetails();
 		render(
@@ -121,7 +117,8 @@ describe( '<UserVatDetails>', () => {
 			/>
 		);
 
-		await waitForElementToBeRemoved( () => screen.queryByTestId( 'loading' ) );
-		expect( screen.queryByText( 'VAT Details' ) ).not.toBeInTheDocument();
+		await waitFor( () => {
+			expect( screen.queryByText( 'VAT Details' ) ).not.toBeInTheDocument();
+		} );
 	} );
 } );
