@@ -37,12 +37,9 @@ jest.mock( '../hosting-activation-button', () => () => null );
 jest.mock( 'calypso/components/inline-support-link', () => () => null );
 
 const elapse = async ( ms: number ) => {
-	for ( let elapsed = 0; elapsed < ms; elapsed += 1000 ) {
-		await act( async () => {
-			jest.advanceTimersByTime( 1000 );
-			await Promise.resolve();
-		} );
-	}
+	await act( async () => {
+		await jest.advanceTimersByTimeAsync( ms );
+	} );
 };
 
 const requestSiteCalls = () =>

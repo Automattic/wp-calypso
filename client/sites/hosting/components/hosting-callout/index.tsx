@@ -5,18 +5,17 @@ import { useQuery } from '@tanstack/react-query';
 import { Button, __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import { Callout } from 'calypso/dashboard/components/callout';
 import HostingFeatureList from 'calypso/dashboard/sites/hosting-feature-list';
 import {
 	isAtomicTransferInProgress,
 	isAtomicTransferredSite,
 } from 'calypso/dashboard/utils/site-atomic-transfers';
-import { EVERY_SECOND, useInterval } from 'calypso/lib/interval';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
-import { ACTIVATION_DEADLINE_MS } from '../activation-wait';
+import { useActivationDeadline } from '../activation-wait';
 import HostingActivationButton from '../hosting-activation-button';
 import illustrationUrl from './hosting-callout-illustration.svg';
 
@@ -31,11 +30,6 @@ export function HostingActivationCallout( {
 } ) {
 	const dispatch = useDispatch();
 
-	// Keyed by site: SPA navigation keeps this component mounted, so the next site must inherit
-	// neither the previous one's clock nor its verdict.
-	const [ stalledSiteId, setStalledSiteId ] = useState< number | null >( null );
-	const activationStalled = stalledSiteId === site.ID;
-
 	const { data: latestAtomicTransfer } = useQuery( {
 		...siteLatestAtomicTransferQuery( site.ID ),
 		refetchInterval: ( query ) =>
@@ -46,40 +40,24 @@ export function HostingActivationCallout( {
 
 	// The transfer says `completed` before the site answers as Atomic, so this is the wait that
 	// needs the deadline — without one it polls for the life of the tab.
-	const waitRef = useRef< { siteId: number; since: number | null } >( {
-		siteId: site.ID,
-		since: null,
-	} );
-	if ( waitRef.current.siteId !== site.ID ) {
-		waitRef.current = { siteId: site.ID, since: null };
-	}
-	if ( isTransferCompleted && waitRef.current.since === null ) {
-		waitRef.current.since = Date.now();
-	}
+	const deadlinePassed = useActivationDeadline( site.ID, isTransferCompleted );
 
 	const { data: atomicSite } = useQuery( {
 		...siteByIdQuery( site.ID ),
 		refetchInterval: ( query ) =>
 			query.state.data && isAtomicTransferredSite( query.state.data ) ? false : 2000,
-		enabled: isTransferCompleted && ! activationStalled,
+		enabled: isTransferCompleted && ! deadlinePassed,
 	} );
+
+	const isActivated = isTransferCompleted && atomicSite && isAtomicTransferredSite( atomicSite );
+
+	const activationStalled = deadlinePassed && ! isActivated;
 
 	const isActivating =
 		! activationStalled &&
 		latestAtomicTransfer &&
 		// Keep displaying “Activating…” until the page redirects.
 		( isAtomicTransferInProgress( latestAtomicTransfer.status ) || isTransferCompleted );
-
-	const isActivated = isTransferCompleted && atomicSite && isAtomicTransferredSite( atomicSite );
-
-	useInterval(
-		() => {
-			if ( Date.now() - ( waitRef.current.since ?? Date.now() ) >= ACTIVATION_DEADLINE_MS ) {
-				setStalledSiteId( site.ID );
-			}
-		},
-		isTransferCompleted && ! isActivated && ! activationStalled ? EVERY_SECOND : null
-	);
 
 	useEffect( () => {
 		const handleActivated = async () => {

@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 import { HostingCard, HostingCardGrid } from 'calypso/components/hosting-card';
 import { HostingHero, HostingHeroButton } from 'calypso/components/hosting-hero';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -17,7 +17,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { ACTIVATION_DEADLINE_MS } from './activation-wait';
+import { useActivationDeadline } from './activation-wait';
 import HostingActivationButton from './hosting-activation-button';
 
 import './hosting-features.scss';
@@ -67,25 +67,11 @@ const HostingFeatures = ( { path, showAsTools }: HostingFeaturesProps ) => {
 
 	const isTransferCompleted = siteTransferData?.status === transferStates.COMPLETED;
 
-	// Keyed by site: the page stays mounted across a site switch, so the next site must inherit
-	// neither the previous one's clock nor its verdict.
-	const [ stalledSiteId, setStalledSiteId ] = useState< number | null >( null );
-	const activationStalled = stalledSiteId !== null && stalledSiteId === siteId;
-
-	const waitRef = useRef< { siteId: number | null; since: number | null } >( {
-		siteId,
-		since: null,
-	} );
-	if ( waitRef.current.siteId !== siteId ) {
-		waitRef.current = { siteId, since: null };
-	}
-	if ( isTransferCompleted && waitRef.current.since === null ) {
-		waitRef.current.since = Date.now();
-	}
-
 	// The redirect below reads Redux, which nothing here refreshes, so a completed transfer would
 	// otherwise never reach it and the page would spin on a success.
 	const awaitingAtomicSiteId = isTransferCompleted && ! isSiteAtomic ? siteId : null;
+
+	const activationStalled = useActivationDeadline( siteId, awaitingAtomicSiteId !== null );
 
 	useEffect( () => {
 		if ( awaitingAtomicSiteId ) {
@@ -96,10 +82,6 @@ const HostingFeatures = ( { path, showAsTools }: HostingFeaturesProps ) => {
 	useInterval(
 		() => {
 			if ( ! awaitingAtomicSiteId ) {
-				return;
-			}
-			if ( Date.now() - ( waitRef.current.since ?? Date.now() ) >= ACTIVATION_DEADLINE_MS ) {
-				setStalledSiteId( awaitingAtomicSiteId );
 				return;
 			}
 			dispatch( requestSite( awaitingAtomicSiteId ) );
