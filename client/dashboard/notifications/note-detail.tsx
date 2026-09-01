@@ -69,18 +69,15 @@ function RichNodeView( { node }: { node: RichNode } ) {
 			return <>{ node.text }</>;
 		case 'icon':
 			return <Icon icon={ getNoticonIcon( node.value ) } size={ 16 } />;
-		case 'image':
-			return (
-				<img
-					className={
-						node.imageType === 'badge'
-							? 'dashboard-notifications-inbox__badge-media'
-							: 'dashboard-notifications-inbox__body-image'
-					}
-					src={ node.url }
-					alt={ node.alt }
-				/>
-			);
+		case 'image': {
+			let imageClass = 'dashboard-notifications-inbox__body-image';
+			if ( node.imageType === 'badge' ) {
+				imageClass = 'dashboard-notifications-inbox__badge-media';
+			} else if ( node.url.includes( '/i/emojis/' ) ) {
+				imageClass = 'dashboard-notifications-inbox__body-emoji';
+			}
+			return <img className={ imageClass } src={ node.url } alt={ node.alt } />;
+		}
 		case 'element': {
 			const children = node.children.map( ( child, index ) => (
 				<RichNodeView key={ index } node={ child } />

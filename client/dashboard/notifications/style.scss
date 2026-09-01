@@ -235,6 +235,11 @@
 	flex-shrink: 0;
 }
 
+.dashboard-notifications-inbox__detail-nav {
+	padding-bottom: 16px;
+	border-bottom: 1px solid var(--dashboard-header__border-color, #ddd);
+}
+
 .dashboard-notifications-inbox__detail-nav-actions {
 	margin-inline-start: auto;
 }
@@ -283,6 +288,12 @@
 	}
 }
 
+/* Accent bar on the active category. Scoped by href so this override lands only
+   on the notifications sidebar, not every section sharing the menu component. */
+.dashboard-sidebar__menu-item.active[href^='/notifications'] {
+	box-shadow: inset 3px 0 0 var(--wp-admin-theme-color, #3858e9);
+}
+
 .dashboard-sidebar__menu-item span:has(> .dashboard-notifications-inbox__unread-count) {
 	display: flex;
 	flex-grow: 1;
@@ -319,6 +330,23 @@
 	}
 }
 
+/* Let the header and footer borders run edge to edge by escaping the CardBody
+   padding (24px at the Card's medium size, 16px at small on narrow screens),
+   then re-inset their own content. */
+.dashboard-notifications-inbox__detail-nav,
+.dashboard-notifications-inbox__footer {
+	margin-inline: -24px;
+	padding-inline: 24px;
+}
+
+@media (max-width: 781px) {
+	.dashboard-notifications-inbox__detail-nav,
+	.dashboard-notifications-inbox__footer {
+		margin-inline: -16px;
+		padding-inline: 16px;
+	}
+}
+
 .dashboard-notifications-inbox__badge-media {
 	display: block;
 	margin: 16px auto 0;
@@ -329,6 +357,15 @@
 .dashboard-notifications-inbox__body-image {
 	max-width: 100%;
 	height: auto;
+	vertical-align: middle;
+}
+
+/* Emoji come through as regular image media at their full PNG size; size them
+   to the text like the legacy panel (which renders them in a 1em inline box). */
+.dashboard-notifications-inbox__body-emoji {
+	display: inline-block;
+	width: 1em;
+	height: 1em;
 	vertical-align: middle;
 }
 
@@ -395,7 +432,9 @@
 
 .dashboard-notifications-inbox__body blockquote blockquote {
 	margin-block: 8px;
-	padding-inline: 12px 0;
+	padding-inline: 0;
+	border-inline-start: none;
+	font-style: italic;
 }
 
 .dashboard-notifications-inbox__body code {
