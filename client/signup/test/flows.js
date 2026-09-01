@@ -134,13 +134,33 @@ describe( 'Signup Flows Configuration', () => {
 			expect( getWpAdminLaunchReturnUrl( { siteSlug: 'test-site.wordpress.com' } ) ).toBeNull();
 		} );
 
-		test( 'keeps the URL on the site host for a ref that only looks like a wp-admin path', () => {
+		test( 'returns null for a ref that only looks like a wp-admin path', () => {
 			expect(
 				getWpAdminLaunchReturnUrl( {
 					siteSlug: 'test-site.wordpress.com',
 					refParameter: 'wp-admin.evil.com',
 				} )
 			).toBeNull();
+		} );
+
+		test( 'returns null for a slug that would move the URL off the site host', () => {
+			expect(
+				getWpAdminLaunchReturnUrl( {
+					siteSlug: 'test-site.wordpress.com@evil.com',
+					refParameter: 'wp-admin',
+				} )
+			).toBeNull();
+			expect(
+				getWpAdminLaunchReturnUrl( {
+					siteSlug: 'test-site.wordpress.com/../..',
+					refParameter: 'wp-admin',
+				} )
+			).toBeNull();
+		} );
+
+		test( 'returns null when there is no site to return to', () => {
+			expect( getWpAdminLaunchReturnUrl( { refParameter: 'wp-admin' } ) ).toBeNull();
+			expect( getWpAdminLaunchReturnUrl( { siteSlug: '', refParameter: 'wp-admin' } ) ).toBeNull();
 		} );
 	} );
 

@@ -127,8 +127,10 @@ function getSignupDestination( { siteSlug, redirect_to, localeSlug, flowName } )
 /**
  * The wp-admin page the launch flow was started from, for launches that started in wp-admin.
  *
- * The `ref` query arg carries that page as a site-relative path, so the URL is always pinned to the
- * site's own host.
+ * The `ref` query arg carries that page as a site-relative path, and the slug supplies the host, so
+ * callers must pass a slug they trust. Anything that would move the URL off that host — credentials
+ * in the slug, a path, a slug that isn't a hostname at all — resolves to null rather than to
+ * somewhere the caller didn't intend.
  * @param {Object} dependencies the signup dependency store
  * @returns {?string} the wp-admin URL, or null when the launch did not start in wp-admin
  */
@@ -139,7 +141,15 @@ export function getWpAdminLaunchReturnUrl( dependencies ) {
 		return null;
 	}
 
-	return `https://${ dependencies.siteSlug }/${ ref }`;
+	const siteSlug = dependencies.siteSlug?.trim() ?? '';
+
+	try {
+		const url = new URL( `/${ ref }`, `https://${ siteSlug }` );
+
+		return url.host === siteSlug.toLowerCase() ? url.href : null;
+	} catch {
+		return null;
+	}
 }
 
 function getLaunchReturnTarget( dependencies ) {
