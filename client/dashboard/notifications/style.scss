@@ -382,6 +382,14 @@
 
 .dashboard-notifications-inbox__body {
 	line-height: 1.6;
+
+	p:first-child {
+		margin-top: 0;
+	}
+
+	p:last-child {
+		margin-bottom: 0;
+	}
 }
 
 .dashboard-notifications-inbox__user-list {
@@ -421,6 +429,18 @@
 	}
 }
 
+/* The comment being answered names its author and post the way a reply names
+   its author: emphasised, and not styled as links until hovered. */
+.dashboard-notifications-inbox__parent-author a {
+	font-weight: 600;
+	color: inherit;
+	text-decoration: none;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
 .dashboard-notifications-inbox__user-row-name {
 	color: inherit;
 	text-decoration: none;
@@ -457,13 +477,16 @@
 	color: var(--wp-admin-theme-color, #3858e9);
 }
 
-// A reply sits under the comment it answers, sharing that comment's avatar
-// column so both authors' text starts at the same place.
+// A reply sits under the comment it answers, its avatar starting at that
+// comment's text column so the thread reads as nested, the way P2 does.
 .dashboard-notifications-inbox__reply {
 	--dashboard-notifications-inbox__avatar-size: 40px;
 	--dashboard-notifications-inbox__avatar-gap: 12px;
 
-	padding-inline-start: 24px;
+	padding-inline-start: calc(
+		var(--dashboard-notifications-inbox__avatar-size) +
+			var(--dashboard-notifications-inbox__avatar-gap)
+	);
 
 	.dashboard-notifications-inbox__user-row-avatar,
 	.dashboard-notifications-inbox__user-row-avatar img {
@@ -471,19 +494,12 @@
 		height: var(--dashboard-notifications-inbox__avatar-size);
 	}
 
+	// The message lines up under its author's name, not under the avatar.
+	.dashboard-notifications-inbox__block-text,
 	.dashboard-notifications-inbox__quote {
 		margin-inline-start: calc(
 			var(--dashboard-notifications-inbox__avatar-size) +
 				var(--dashboard-notifications-inbox__avatar-gap)
 		);
-	}
-}
-
-.dashboard-notifications-inbox__reply-box {
-	width: 100%;
-
-	.components-base-control,
-	.components-textarea-control__input {
-		width: 100%;
 	}
 }

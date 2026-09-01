@@ -6,7 +6,7 @@ import {
 	Button,
 	Spinner,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { arrowLeft, chevronLeft, chevronRight, external, Icon } from '@wordpress/icons';
 import { Fragment, useEffect, useState } from 'react';
 import { Card, CardBody } from '../components/card';
@@ -118,7 +118,15 @@ function BlockText( { block }: { block: NoteBlock } ) {
 	);
 }
 
-function UserRow( { note, block }: { note: Note; block: NoteBlock } ) {
+function UserRow( {
+	note,
+	block,
+	replyingTo,
+}: {
+	note: Note;
+	block: NoteBlock;
+	replyingTo?: string;
+} ) {
 	const user = getNoteUserRef( block );
 
 	const avatar = user.avatarUrl ? (
@@ -143,6 +151,52 @@ function UserRow( { note, block }: { note: Note; block: NoteBlock } ) {
 			user.homeTitle || null
 		);
 
+	const nameLink = user.url ? (
+		<a
+			className="dashboard-notifications-inbox__user-row-name"
+			href={ user.url }
+			target="_blank"
+			rel="noreferrer"
+		>
+			{ name }
+		</a>
+	) : (
+		name
+	);
+
+	// A reply says who it answers and when, on one line beside the name.
+	if ( replyingTo ) {
+		return (
+			<HStack
+				className="dashboard-notifications-inbox__user-row"
+				spacing={ 2 }
+				justify="flex-start"
+				alignment="center"
+			>
+				<span className="dashboard-notifications-inbox__user-row-avatar">{ avatar }</span>
+				<HStack spacing={ 1 } justify="flex-start" alignment="center" expanded={ false }>
+					{ nameLink }
+					<Text variant="muted">
+						{ sprintf(
+							/* translators: %s is the name of the person being replied to. */
+							__( 'to %s' ),
+							replyingTo
+						) }
+					</Text>
+					<Text variant="muted">·</Text>
+					<a
+						className="dashboard-notifications-inbox__note-time"
+						href={ note.url }
+						target="_blank"
+						rel="noreferrer"
+					>
+						<Text variant="muted">{ getRelativeTimeString( new Date( note.timestamp ) ) }</Text>
+					</a>
+				</HStack>
+			</HStack>
+		);
+	}
+
 	return (
 		<HStack
 			className="dashboard-notifications-inbox__user-row"
@@ -152,18 +206,7 @@ function UserRow( { note, block }: { note: Note; block: NoteBlock } ) {
 		>
 			<span className="dashboard-notifications-inbox__user-row-avatar">{ avatar }</span>
 			<VStack spacing={ 0 }>
-				{ user.url ? (
-					<a
-						className="dashboard-notifications-inbox__user-row-name"
-						href={ user.url }
-						target="_blank"
-						rel="noreferrer"
-					>
-						{ name }
-					</a>
-				) : (
-					name
-				) }
+				{ nameLink }
 				{ note.type === 'comment' ? (
 					<Text variant="muted">
 						{ getRelativeTimeString( new Date( note.timestamp ) ) }
@@ -295,7 +338,12 @@ export default function NoteDetail( {
 		'users' in run ? (
 			<VStack key={ index } spacing={ 0 } className="dashboard-notifications-inbox__user-list">
 				{ run.users.map( ( block, userIndex ) => (
-					<UserRow key={ userIndex } note={ note } block={ block } />
+					<UserRow
+						key={ userIndex }
+						note={ note }
+						block={ block }
+						replyingTo={ parentComment?.authorName }
+					/>
 				) ) }
 			</VStack>
 		) : (
@@ -305,13 +353,23 @@ export default function NoteDetail( {
 		)
 	);
 
-	const commentQuote = comment ? (
-		<blockquote className="dashboard-notifications-inbox__quote">
-			<Text as="p">
+	let commentBody = null;
+	if ( comment && parentComment ) {
+		// In a thread the comment is the message itself, not something quoted.
+		commentBody = (
+			<Text className="dashboard-notifications-inbox__block-text">
 				<BlockText block={ comment } />
 			</Text>
-		</blockquote>
-	) : null;
+		);
+	} else if ( comment ) {
+		commentBody = (
+			<blockquote className="dashboard-notifications-inbox__quote">
+				<Text as="p">
+					<BlockText block={ comment } />
+				</Text>
+			</blockquote>
+		);
+	}
 
 	return (
 		<DetailFrame onClose={ onClose }>
@@ -356,7 +414,11 @@ export default function NoteDetail( {
 					/>
 				</HStack>
 			</HStack>
-			<HStack spacing={ 3 } justify="flex-start" alignment="center">
+			<HStack
+				spacing={ 3 }
+				justify="flex-start"
+				alignment={ parentComment ? 'flex-start' : 'center' }
+			>
 				{ badgeMedia.length === 0 && (
 					<img
 						className="dashboard-notifications-inbox__note-avatar"
@@ -368,14 +430,14 @@ export default function NoteDetail( {
 				) }
 				<VStack spacing={ 0 }>
 					{ parentComment && (
-						<>
-							<Text>
+						<VStack spacing={ 3 }>
+							<Text className="dashboard-notifications-inbox__parent-author">
 								<BlockText block={ parentComment.author } />
 							</Text>
 							<Text className="dashboard-notifications-inbox__note-title">
 								{ parentComment.excerpt.text }
 							</Text>
-						</>
+						</VStack>
 					) }
 					{ ! parentComment &&
 						( headerUser ? (
@@ -430,12 +492,12 @@ export default function NoteDetail( {
 				{ parentComment ? (
 					<VStack spacing={ 3 } className="dashboard-notifications-inbox__reply">
 						{ contextNodes }
-						{ commentQuote }
+						{ commentBody }
 					</VStack>
 				) : (
 					<>
 						{ contextNodes }
-						{ commentQuote }
+						{ commentBody }
 					</>
 				) }
 				{ postscript.map( ( block, index ) => (

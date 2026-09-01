@@ -91,6 +91,8 @@ export type NoteParentComment = {
 	avatarUrl: string | null;
 	/** Deep link to the parent comment, when the note carries a url to anchor. */
 	url: string | null;
+	/** Just the author's name, for addressing the reply to them. */
+	authorName: string;
 };
 
 /**
@@ -107,11 +109,14 @@ export function getNoteParentComment( note: Note ): NoteParentComment | null {
 		return null;
 	}
 
+	const [ nameStart, nameEnd ] = author.ranges[ 0 ].indices ?? [ 0, 0 ];
+
 	return {
 		author: { text: author.text, ranges: author.ranges },
 		excerpt,
 		avatarUrl: author.media?.[ 0 ]?.url ?? null,
 		url: note.url ? `${ note.url.split( '#' )[ 0 ] }#comment-${ parentId }` : null,
+		authorName: author.text.slice( nameStart, nameEnd ),
 	};
 }
 
