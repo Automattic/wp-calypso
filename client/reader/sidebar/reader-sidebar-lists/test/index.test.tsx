@@ -13,8 +13,10 @@ jest.mock( 'calypso/reader/stats', () => ( {
 } ) );
 
 const mockMarkAllAsSeen = jest.fn();
+let mockSeenPostsPreferenceEnabled = true;
 jest.mock( 'calypso/reader/data/seen-posts', () => ( {
 	useMarkAllAsSeenMutation: () => ( { mutate: mockMarkAllAsSeen } ),
+	useSeenPostsPreferenceEnabled: () => mockSeenPostsPreferenceEnabled,
 } ) );
 
 const mockRecordReaderTracksEvent = jest.fn();
@@ -51,6 +53,10 @@ function getHeaderCount( container: HTMLElement ): HTMLElement | null {
 }
 
 describe( 'ReaderSidebarLists', () => {
+	beforeEach( () => {
+		mockSeenPostsPreferenceEnabled = true;
+	} );
+
 	describe( 'unseen count', () => {
 		it( 'shows no header count when there are no lists', () => {
 			const { container } = renderWithProvider(
@@ -84,6 +90,22 @@ describe( 'ReaderSidebarLists', () => {
 			);
 
 			expect( getHeaderCount( container ) ).toHaveTextContent( '9' );
+		} );
+
+		it( 'hides the header count when the seen posts preference is disabled', () => {
+			mockSeenPostsPreferenceEnabled = false;
+			const lists = [
+				makeList( 1, [
+					{ feed_id: 10, unseen_count: 2 },
+					{ feed_id: 11, unseen_count: 3 },
+				] ),
+			];
+
+			const { container } = renderWithProvider(
+				<ReaderSidebarLists lists={ lists } path="/reader" isOpen />
+			);
+
+			expect( getHeaderCount( container ) ).toBeNull();
 		} );
 	} );
 

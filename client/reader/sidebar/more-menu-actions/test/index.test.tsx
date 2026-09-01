@@ -9,8 +9,10 @@ import { ComponentProps } from 'react';
 import MoreMenuActions from '../index';
 
 const mockMarkAllAsSeen = jest.fn();
+let mockSeenPostsPreferenceEnabled = true;
 jest.mock( 'calypso/reader/data/seen-posts', () => ( {
 	useMarkAllAsSeenMutation: () => ( { mutate: mockMarkAllAsSeen } ),
+	useSeenPostsPreferenceEnabled: () => mockSeenPostsPreferenceEnabled,
 } ) );
 
 const mockRecordReaderTracksEvent = jest.fn();
@@ -68,6 +70,7 @@ async function openMoreActionsMenu( user: ReturnType< typeof userEvent.setup > )
 describe( 'MoreMenuActions', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockSeenPostsPreferenceEnabled = true;
 	} );
 
 	test( 'renders the mark all as read action', async () => {
@@ -79,6 +82,17 @@ describe( 'MoreMenuActions', () => {
 		await openMoreActionsMenu( user );
 
 		expect( screen.getByRole( 'menuitem', { name: 'Mark all as read' } ) ).toBeEnabled();
+	} );
+
+	test( 'hides mark as read when the seen posts preference is disabled', async () => {
+		const user = userEvent.setup();
+		mockSeenPostsPreferenceEnabled = false;
+		renderMoreMenuActions( singleFeedProps );
+
+		await openMoreActionsMenu( user );
+
+		expect( screen.queryByRole( 'menuitem', { name: 'Mark as read' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'menuitem', { name: 'Unsubscribe' } ) ).toBeEnabled();
 	} );
 
 	test( 'marks all posts as seen and records the tracks event', async () => {

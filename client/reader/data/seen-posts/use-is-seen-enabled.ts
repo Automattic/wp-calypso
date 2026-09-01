@@ -7,6 +7,7 @@ import {
 import { useSelector } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { useSeenPostsPreferenceEnabled } from './use-seen-posts-preference-enabled';
 
 const SEEN_DISABLED_ROUTES = [
 	'/activities/likes',
@@ -24,12 +25,17 @@ interface IsSeenEnabledArgs {
  * Returns true if the user can mark a post as seen.
  */
 export function useIsSeenEnabled( { feedId, blogId, post }: IsSeenEnabledArgs ): boolean {
+	const isPreferenceEnabled = useSeenPostsPreferenceEnabled();
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 	const isSubscribed = useIsSubscribed( { feedId, blogId } );
 	const hasOrganization = useHasSiteSubscriptionOrganization( feedId, blogId );
 	const isWPForTeamsItem = useSelector( ( state ) => isSiteWPForTeams( state, Number( blogId ) ) );
 	const { data: subscribedLists } = useQuery( readSubscribedListsQuery() );
 	const currentRoute = useSelector( getCurrentRoute );
+
+	if ( ! isPreferenceEnabled ) {
+		return false;
+	}
 
 	if ( currentRoute && SEEN_DISABLED_ROUTES.includes( currentRoute ) ) {
 		return false;

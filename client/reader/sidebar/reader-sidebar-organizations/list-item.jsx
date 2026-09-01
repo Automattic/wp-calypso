@@ -9,6 +9,7 @@ import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
 import { getReaderSidebarSiteName } from 'calypso/reader/get-helpers';
 import MoreMenuActions from 'calypso/reader/sidebar/more-menu-actions';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderSidebarHelper from '../helper';
 import { MenuItem, MenuItemLink } from '../menu';
@@ -18,6 +19,7 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 		site: PropTypes.object,
 		path: PropTypes.string,
 		fallbackPath: PropTypes.string,
+		isSeenPostsPreferenceEnabled: PropTypes.bool,
 	};
 
 	handleSidebarClick = () => {
@@ -29,7 +31,7 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 	};
 
 	render() {
-		const { site, path, moment, fallbackPath } = this.props;
+		const { site, path, moment, fallbackPath, isSeenPostsPreferenceEnabled } = this.props;
 		const computedClassName = ReaderSidebarHelper.itemLinkClass(
 			'/reader/feeds/' + site.feed_ID,
 			path
@@ -71,7 +73,7 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 								} }
 							/>
 						) }
-						<ReaderUnreadCount count={ site.unseen_count } />
+						{ isSeenPostsPreferenceEnabled && <ReaderUnreadCount count={ site.unseen_count } /> }
 					</span>
 				</MenuItemLink>
 			</MenuItem>
@@ -80,6 +82,11 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 	}
 }
 
-export default connect( null, {
-	recordReaderTracksEvent,
-} )( withLocalizedMoment( ReaderSidebarOrganizationsListItem ) );
+export default connect(
+	( state ) => ( {
+		isSeenPostsPreferenceEnabled: getPreference( state, 'reader-seen-posts' ) ?? true,
+	} ),
+	{
+		recordReaderTracksEvent,
+	}
+)( withLocalizedMoment( ReaderSidebarOrganizationsListItem ) );

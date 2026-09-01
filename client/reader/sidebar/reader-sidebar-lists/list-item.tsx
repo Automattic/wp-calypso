@@ -6,6 +6,7 @@ import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import AutoDirection from 'calypso/components/auto-direction';
 import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
+import { useSeenPostsPreferenceEnabled } from 'calypso/reader/data/seen-posts';
 import { getListStreamKey } from 'calypso/reader/list/controller';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -30,6 +31,7 @@ const ReaderSidebarListsListItem = ( {
 	const translate = useTranslate();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
+	const isSeenPostsPreferenceEnabled = useSeenPostsPreferenceEnabled();
 	const currentUser = useSelector( getCurrentUser );
 	const itemRef = useRef< HTMLLIElement >( null );
 
@@ -71,7 +73,7 @@ const ReaderSidebarListsListItem = ( {
 	// Show author name in parentheses if the list is owned by someone other than the current user
 	const isOwnedByCurrentUser = currentUser && list.owner === currentUser.username;
 	const displayTitle = isOwnedByCurrentUser ? list.title : `${ list.title } (${ list.owner })`;
-	const isSeenEnabled = isAutomattician;
+	const isSeenEnabled = Boolean( isAutomattician ) && isSeenPostsPreferenceEnabled;
 	const unseenCount = list.feeds?.reduce( ( t, feed ) => t + ( feed.unseen_count ?? 0 ), 0 ) ?? 0;
 	const feedIds = list.feeds?.map( ( feed ) => feed.feed_id ) ?? [];
 

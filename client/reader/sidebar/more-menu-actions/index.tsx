@@ -5,7 +5,10 @@ import { useQuery } from '@tanstack/react-query';
 import { DropdownMenu } from '@wordpress/components';
 import { check, moreHorizontal, trash } from '@wordpress/icons';
 import { fixMe, useTranslate } from 'i18n-calypso';
-import { useMarkAllAsSeenMutation } from 'calypso/reader/data/seen-posts';
+import {
+	useMarkAllAsSeenMutation,
+	useSeenPostsPreferenceEnabled,
+} from 'calypso/reader/data/seen-posts';
 import { useUnsubscribeWithUndo } from 'calypso/reader/data/site-subscriptions/use-unsubscribe-with-undo';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 
@@ -34,6 +37,7 @@ export default function MoreMenuActions( {
 }: MoreMenuActionsProps ) {
 	const translate = useTranslate();
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
+	const isSeenPostsPreferenceEnabled = useSeenPostsPreferenceEnabled();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const { mutate: markAllAsSeen } = useMarkAllAsSeenMutation();
 	const unsubscribeWithUndo = useUnsubscribeWithUndo();
@@ -87,7 +91,7 @@ export default function MoreMenuActions( {
 	const controls = [];
 
 	// Remove when SeenPost feature is available for all users.
-	if ( isAutomattician ) {
+	if ( isAutomattician && isSeenPostsPreferenceEnabled ) {
 		const markAsSeenControl = {
 			title,
 			icon: check,

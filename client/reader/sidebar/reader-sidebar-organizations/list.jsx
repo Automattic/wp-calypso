@@ -5,6 +5,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
+import { useSeenPostsPreferenceEnabled } from 'calypso/reader/data/seen-posts';
 import {
 	useOrganizationFeedsInfo,
 	useOrganizationSiteSubscriptions,
@@ -26,6 +27,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 			feedIds: PropTypes.array,
 			feedUrls: PropTypes.array,
 		} ),
+		isSeenPostsPreferenceEnabled: PropTypes.bool,
 	};
 
 	toggleMenu = () => {
@@ -70,7 +72,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 	}
 
 	render() {
-		const { organization, path, sites, feedsInfo } = this.props;
+		const { organization, path, sites, feedsInfo, isSeenPostsPreferenceEnabled } = this.props;
 
 		if ( ! organization.sites_count ) {
 			return null;
@@ -82,7 +84,11 @@ export class ReaderSidebarOrganizationsList extends Component {
 			<ExpandableSidebarMenu
 				expanded={ this.props.isOrganizationOpen }
 				title={ organization.title }
-				customCount={ <ReaderUnreadCount count={ feedsInfo.unseenCount } /> }
+				customCount={
+					isSeenPostsPreferenceEnabled ? (
+						<ReaderUnreadCount count={ feedsInfo.unseenCount } />
+					) : undefined
+				}
 				onClick={ this.selectMenu }
 				expandableIconClick={ this.toggleMenu }
 				disableFlyout
@@ -111,8 +117,16 @@ export class ReaderSidebarOrganizationsList extends Component {
 function OrganizationsListWithFollows( props ) {
 	const sites = useOrganizationSiteSubscriptions( props.organization.id );
 	const feedsInfo = useOrganizationFeedsInfo( props.organization.id );
+	const isSeenPostsPreferenceEnabled = useSeenPostsPreferenceEnabled();
 
-	return <ReaderSidebarOrganizationsList { ...props } sites={ sites } feedsInfo={ feedsInfo } />;
+	return (
+		<ReaderSidebarOrganizationsList
+			{ ...props }
+			sites={ sites }
+			feedsInfo={ feedsInfo }
+			isSeenPostsPreferenceEnabled={ isSeenPostsPreferenceEnabled }
+		/>
+	);
 }
 
 export default connect(

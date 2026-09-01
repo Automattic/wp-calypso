@@ -27,6 +27,7 @@ interface SetUp {
 	wpForTeamsBlogIds?: number[];
 	subscribedListFeedIds?: number[];
 	route?: string;
+	readerSeenPostsPreference?: boolean | null;
 }
 
 function setUp( {
@@ -35,6 +36,7 @@ function setUp( {
 	wpForTeamsBlogIds = [],
 	subscribedListFeedIds = [],
 	route,
+	readerSeenPostsPreference,
 }: SetUp = {} ) {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
@@ -75,6 +77,15 @@ function setUp( {
 			),
 		},
 		route: { path: { current: route ?? null } },
+		preferences:
+			readerSeenPostsPreference === undefined
+				? undefined
+				: {
+						remoteValues:
+							readerSeenPostsPreference === null
+								? {}
+								: { 'reader-seen-posts': readerSeenPostsPreference },
+				  },
 	};
 	const store = createStore( () => state );
 
@@ -296,6 +307,47 @@ describe( 'useIsSeenEnabled', () => {
 		it( 'returns true on non-disabled route route when the user is otherwise eligible', () => {
 			const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID } ), {
 				wrapper: setUp( { ...eligible, route: '/reader' } ),
+			} );
+
+			expect( result.current ).toBe( true );
+		} );
+	} );
+
+	describe( 'reader-seen-posts preference', () => {
+		const eligible = { subscriptions: [ organizationSubscription ] };
+
+		it( 'defaults to enabled when the preference is unset', () => {
+			const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID } ), {
+				wrapper: setUp( { ...eligible, readerSeenPostsPreference: null } ),
+			} );
+
+			expect( result.current ).toBe( true );
+		} );
+
+		it( 'returns false when the preference is disabled for an Automattician', () => {
+			const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID } ), {
+				wrapper: setUp( {
+					subscriptions: [ subscription ],
+					isAutomattician: true,
+					readerSeenPostsPreference: false,
+				} ),
+			} );
+
+			expect( result.current ).toBe( false );
+		} );
+
+		it( 'returns false when the preference is disabled even if the post is already seen', () => {
+			const { result } = renderHook(
+				() => useIsSeenEnabled( { feedId: FEED_ID, post: { is_seen: true } } ),
+				{ wrapper: setUp( { ...eligible, readerSeenPostsPreference: false } ) }
+			);
+
+			expect( result.current ).toBe( false );
+		} );
+
+		it( 'returns true when the preference is explicitly enabled', () => {
+			const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID } ), {
+				wrapper: setUp( { ...eligible, readerSeenPostsPreference: true } ),
 			} );
 
 			expect( result.current ).toBe( true );

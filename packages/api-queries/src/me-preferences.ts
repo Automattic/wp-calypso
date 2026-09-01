@@ -17,6 +17,7 @@ const defaultValues: Required< UserPreferences > = {
 		useReaderAsLandingPage: false,
 		updatedAt: 0,
 	},
+	'reader-seen-posts': true,
 	'sites-landing-page': {
 		useSitesAsLandingPage: false,
 		updatedAt: 0,
@@ -41,6 +42,7 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'account-recovery-interstitial-snoozed-until': 'acctrec',
 	'account-recovery-interstitial-dismiss-count': 'acrdis',
 	'reader-landing-page': 'rdland',
+	'reader-seen-posts': 'rdseen',
 	'sites-landing-page': 'stland',
 	'achievements-visibility': 'achvis',
 	'achievements-global-notifications': 'achnot',

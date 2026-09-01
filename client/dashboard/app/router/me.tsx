@@ -139,6 +139,7 @@ export const preferencesIndexRoute = createRoute( {
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+			queryClient.ensureQueryData( isAutomatticianQuery() ),
 		] );
 	},
 } ).lazy( () =>
@@ -1059,6 +1060,37 @@ export const blockedSitesRoute = createRoute( {
 	)
 );
 
+export const preferencesReaderRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Reader' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'reader',
+	beforeLoad: async () => {
+		const teams = await queryClient.ensureQueryData( isAutomatticianQuery() );
+		const isAutomattician = teams.teams.some( ( team ) => team.slug === 'a8c' );
+		if ( ! isAutomattician ) {
+			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
+		}
+	},
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+			queryClient.ensureQueryData( isAutomatticianQuery() ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../me/reader' ).then( ( d ) =>
+		createLazyRoute( 'preferences-reader' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const hostingDashboardRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1411,6 +1443,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	];
 	if ( config.supports.reader ) {
 		preferencesChildren.push( blockedSitesRoute );
+		preferencesChildren.push( preferencesReaderRoute );
 	}
 	if ( config.optIn ) {
 		preferencesChildren.push( hostingDashboardRoute );
