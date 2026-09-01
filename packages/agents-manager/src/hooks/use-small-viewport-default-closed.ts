@@ -5,10 +5,7 @@ import { DEFAULT_DESKTOP_MEDIA_QUERY } from './desktop-media-query';
 import { hasOpenChatUrlParam } from './use-open-chat-url-param';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
-/**
- * Whether the viewport is below the desktop breakpoint the dock uses. Reads
- * the host's override when one is set, like `AgentDock` does.
- */
+/** Whether the viewport is below the desktop breakpoint the dock uses. */
 function isSmallViewport(): boolean {
 	if ( typeof window === 'undefined' || ! window.matchMedia ) {
 		return false;
