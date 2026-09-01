@@ -22,6 +22,7 @@ const MarketplaceProductInstall = ( {
 } ) => {
 	const {
 		siteId,
+		selectedSiteSlug,
 		currentStep,
 		steps,
 		additionalSteps,
@@ -77,6 +78,8 @@ const MarketplaceProductInstall = ( {
 						transferStatus={ transferStatus }
 						currentStep={ currentStep }
 						startedAt={ transferStartedAt }
+						siteSlug={ selectedSiteSlug }
+						productSlug={ pluginSlug || themeSlug }
 					/>
 				) }
 				{ ! error && ! isTransferWait && (

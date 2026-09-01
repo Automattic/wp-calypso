@@ -798,6 +798,7 @@ export function useProductInstall( {
 
 	return {
 		siteId,
+		selectedSiteSlug,
 		currentStep,
 		steps,
 		additionalSteps,
