@@ -1,8 +1,9 @@
 import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+import { formatNumber } from '@automattic/number-formatters';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Icon, __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { seen, pencil, notAllowed, connection, globe } from '@wordpress/icons';
 import { getOverridesToMatch, groupIntentKey } from '../../../me/mcp/group-intents';
 import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
@@ -91,12 +92,26 @@ function McpComponent() {
 	const exceptionCount = disabledSiteIds.length;
 	const exceptionBadge =
 		exceptionCount > 0
-			? { text: `${ exceptionCount } exceptions`, intent: 'low' as const }
+			? {
+					text: sprintf(
+						/* translators: %s is the formatted number of site exceptions */
+						_n( '%s exception', '%s exceptions', exceptionCount ),
+						formatNumber( exceptionCount )
+					),
+					intent: 'low' as const,
+			  }
 			: { text: __( 'No exceptions' ), intent: 'draft' as const };
 
 	const addSiteBadge =
 		enabledSiteIds.length > 0
-			? { text: `${ enabledSiteIds.length } sites`, intent: 'stable' as const }
+			? {
+					text: sprintf(
+						/* translators: %s is the formatted number of sites with MCP access */
+						_n( '%s site', '%s sites', enabledSiteIds.length ),
+						formatNumber( enabledSiteIds.length )
+					),
+					intent: 'stable' as const,
+			  }
 			: { text: __( 'No sites added' ), intent: 'draft' as const };
 
 	const readBadge = getReadBadge( readTools );
