@@ -1,8 +1,11 @@
 import { __ } from '@wordpress/i18n';
 import type { TipaltiPayee } from '@automattic/api-core';
+import type { Badge } from '@wordpress/ui';
+import type { ComponentProps } from 'react';
 
 interface AccountStatus {
 	statusType: 'success' | 'warning' | 'error';
+	badgeIntent: NonNullable< ComponentProps< typeof Badge >[ 'intent' ] >;
 	status: string;
 	statusReason?: string;
 	actionRequired: boolean;
@@ -13,7 +16,7 @@ export function getAccountStatus( data: TipaltiPayee | null | undefined ): Accou
 		return null;
 	}
 	const { Status, IsPayable, PayableReason } = data;
-	let statusMeta = null;
+	let statusMeta: Pick< AccountStatus, 'statusType' | 'status' | 'statusReason' > | null = null;
 	switch ( Status ) {
 		case 'Active':
 			if ( ! IsPayable ) {
@@ -65,8 +68,15 @@ export function getAccountStatus( data: TipaltiPayee | null | undefined ): Accou
 		return null;
 	}
 
+	const badgeIntents: Record< AccountStatus[ 'statusType' ], AccountStatus[ 'badgeIntent' ] > = {
+		success: 'stable',
+		warning: 'medium',
+		error: 'high',
+	};
+
 	return {
 		...statusMeta,
+		badgeIntent: badgeIntents[ statusMeta.statusType ],
 		actionRequired: [ 'warning', 'error' ].includes( statusMeta.statusType ),
-	} as AccountStatus;
+	};
 }

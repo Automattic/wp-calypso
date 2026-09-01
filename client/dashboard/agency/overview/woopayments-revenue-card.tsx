@@ -1,6 +1,5 @@
 import { agencyWooPaymentsDataQuery } from '@automattic/api-queries';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
-import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHeading as Heading,
@@ -8,6 +7,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { ButtonStack } from '../../components/button-stack';
 import { Callout } from '../../components/callout';
 import { Card, CardBody } from '../../components/card';
@@ -56,7 +56,7 @@ function WooPaymentsEmptyState( {
 					</Text>
 					{ lockedNote && (
 						<HStack justify="flex-start" expanded={ false }>
-							<Badge>{ lockedNote }</Badge>
+							<Badge intent="draft">{ lockedNote }</Badge>
 						</HStack>
 					) }
 				</VStack>

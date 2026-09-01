@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/ui';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -6,9 +5,11 @@ import {
 } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { OWNER_ROLE } from '../constants';
 import type { TeamMember, TeamMemberStatus } from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';
+import type { ComponentProps } from 'react';
 
 function getRoleLabel( role?: string ): string {
 	// Currently there are only two roles: owner and member. More may come later.
@@ -27,15 +28,17 @@ function getStatusLabel( status: TeamMemberStatus ): string {
 	}
 }
 
-function getStatusIntent( status: TeamMemberStatus ): 'success' | 'warning' | 'error' {
+function getStatusIntent(
+	status: TeamMemberStatus
+): NonNullable< ComponentProps< typeof Badge >[ 'intent' ] > {
 	switch ( status ) {
 		case 'active':
-			return 'success';
+			return 'stable';
 		case 'expired':
-			return 'error';
+			return 'high';
 		case 'pending':
 		default:
-			return 'warning';
+			return 'medium';
 	}
 }
 

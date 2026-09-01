@@ -321,6 +321,9 @@ describe( 'useCheckoutLeaveModal.clickStepBack', () => {
 		const { result } = renderHook( () => useCheckoutLeaveModal( { siteUrl: NEW_SITE_SLUG } ), {
 			wrapper: Wrapper,
 		} );
+		await waitFor( () =>
+			expect( client.forCartKey( NEW_SITE_CART_KEY ).getState().isLoading ).toBe( false )
+		);
 
 		await act( async () => {
 			result.current.clickStepBack( 'https://mynewsite.wordpress.com/setup/onboarding/domains' );
@@ -567,5 +570,67 @@ describe( 'useCheckoutLeaveModal gift checkout', () => {
 		expect( leaveCheckout ).toHaveBeenCalledWith(
 			expect.objectContaining( { forceCheckoutBackUrl: undefined } )
 		);
+	} );
+
+	describe( 'when the cart is still loading', () => {
+		/**
+		 * Render the hook against a cart whose fetch is held open, so the loading
+		 * window can be observed. `resolveCart` completes the fetch with the given
+		 * cart contents.
+		 */
+		function renderGiftHookWithPendingCart() {
+			let releaseCart: ( cart: ResponseCart ) => void = () => {};
+			const cartPromise = new Promise< ResponseCart >( ( resolve ) => {
+				releaseCart = resolve;
+			} );
+			const client = createShoppingCartManagerClient( {
+				getCart: () => cartPromise,
+				setCart: async ( cartKey, newCart: RequestCart ) => ( {
+					...getEmptyResponseCart(),
+					cart_key: cartKey,
+					products: newCart.products as ResponseCartProduct[],
+				} ),
+			} );
+			const rendered = renderHook( () => useCheckoutLeaveModal( { siteUrl: '' } ), {
+				wrapper: buildWrapper( client ),
+			} );
+			expect( client.forCartKey( GIFT_CART_KEY ).getState().isLoading ).toBe( true );
+
+			const resolveCart = async ( seed: Partial< ResponseCart > ) => {
+				await act( async () => {
+					releaseCart( {
+						...getEmptyResponseCart(),
+						cart_key: GIFT_CART_KEY,
+						products: [],
+						...seed,
+					} );
+					await cartPromise;
+				} );
+			};
+			return { ...rendered, resolveCart };
+		}
+
+		it( 'keeps "Back" disabled while the cart is loading', () => {
+			setReferrer( '' );
+			const { result } = renderGiftHookWithPendingCart();
+
+			expect( result.current.isLeaveDisabled ).toBe( true );
+		} );
+
+		it( 'enables "Back" once the cart arrives, and then uses the gifted site', async () => {
+			setReferrer( '' );
+			const { result, resolveCart } = renderGiftHookWithPendingCart();
+
+			await resolveCart( { gift_details: giftDetails, is_gift_purchase: true } );
+			await waitFor( () => expect( result.current.isLeaveDisabled ).toBe( false ) );
+
+			await act( async () => {
+				result.current.clickClose();
+			} );
+
+			expect( leaveCheckout ).toHaveBeenCalledWith(
+				expect.objectContaining( { forceCheckoutBackUrl: 'https://giftedsite.wordpress.com/' } )
+			);
+		} );
 	} );
 } );
