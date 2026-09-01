@@ -48,6 +48,9 @@ export function seedPostEmailStatsAvailability(
 	siteId: number | null,
 	postId: number
 ) {
+	if ( ! siteId || postId <= 0 ) {
+		return;
+	}
 	const { queryKey } = postEmailStatsAvailabilityQueryOptions( siteId, postId );
 	if ( hasEmailStats( queryClient.getQueryData( queryKey ) ) ) {
 		return;

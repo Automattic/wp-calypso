@@ -51,6 +51,15 @@ describe( 'seedPostEmailStatsAvailability', () => {
 		expect( queryClient.getQueryState( queryKey )?.dataUpdatedAt ).toBe( 0 );
 	} );
 
+	it( 'is a no-op without a valid siteId and postId', () => {
+		const queryClient = new QueryClient();
+
+		seedPostEmailStatsAvailability( queryClient, null, POST_ID );
+		seedPostEmailStatsAvailability( queryClient, SITE_ID, 0 );
+
+		expect( queryClient.getQueryCache().getAll() ).toHaveLength( 0 );
+	} );
+
 	it( 'leaves a cached positive untouched', () => {
 		const queryClient = new QueryClient();
 		const real = { total_sends: 68036, total_opens: 9109 };
