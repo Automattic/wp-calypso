@@ -3,6 +3,7 @@
  */
 import { useQuery as useReactQuery } from '@tanstack/react-query';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteData } from '../../../../../hooks/use-site-data';
 import SetupYourSiteAIStep from '../index';
@@ -59,7 +60,7 @@ jest.mock( '../../../hooks/use-purchase-plan-notification', () => ( {
 	usePurchasePlanNotification: jest.fn(),
 } ) );
 
-describe( 'SetupYourSiteAIStep – Generate Theme (Automattician only)', () => {
+describe( 'SetupYourSiteAIStep', () => {
 	const mockUseReactQuery = useReactQuery as jest.Mock;
 	const mockUseSiteData = useSiteData as jest.Mock;
 	const navigation = { submit: jest.fn() };
@@ -73,38 +74,62 @@ describe( 'SetupYourSiteAIStep – Generate Theme (Automattician only)', () => {
 			/>
 		);
 
+	const getButtonNames = () =>
+		screen
+			.getAllByRole( 'button' )
+			.map( ( button ) => button.getAttribute( 'aria-label' ) || button.textContent );
+
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockQueryParams = new URLSearchParams();
+		mockUseReactQuery.mockReturnValue( { data: false } );
 		mockUseSiteData.mockReturnValue( { siteSlug: 'example.wordpress.com', siteId: 123 } );
 	} );
 
-	it( 'hides the Generate Theme option for non-Automatticians', () => {
-		mockUseReactQuery.mockReturnValue( { data: false } );
+	describe( 'card order', () => {
+		it( 'renders the template card before the custom design card by default', () => {
+			renderStep();
 
-		renderStep();
+			expect( getButtonNames() ).toEqual( [ 'Start with a template', 'Create a custom design' ] );
+		} );
 
-		expect( screen.queryByText( 'Generate Theme' ) ).not.toBeInTheDocument();
+		it( 'keeps the AI prompt card before the template card for the Woo hosting solutions ref', () => {
+			mockQueryParams = new URLSearchParams( { ref: WOO_HOSTING_SOLUTIONS_REF } );
+
+			renderStep();
+
+			expect( getButtonNames() ).toEqual( [ 'Build with AI', 'Start with a template' ] );
+		} );
 	} );
 
-	it( 'shows Generate Theme and submits the generate-theme choice for Automatticians', () => {
-		mockUseReactQuery.mockReturnValue( { data: true } );
+	describe( 'Generate Theme (Automattician only)', () => {
+		it( 'hides the Generate Theme option for non-Automatticians', () => {
+			mockUseReactQuery.mockReturnValue( { data: false } );
 
-		renderStep();
+			renderStep();
 
-		const button = screen.getByText( 'Generate Theme' );
-		expect( button ).toBeInTheDocument();
+			expect( screen.queryByText( 'Generate Theme' ) ).not.toBeInTheDocument();
+		} );
 
-		fireEvent.click( button );
+		it( 'shows Generate Theme and submits the generate-theme choice for Automatticians', () => {
+			mockUseReactQuery.mockReturnValue( { data: true } );
 
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_onboarding_setup_your_site_with_ai_selection',
-			{ selection: 'generate-theme' }
-		);
-		expect( navigation.submit ).toHaveBeenCalledWith( {
-			setupChoice: 'generate-theme',
-			siteSlug: 'example.wordpress.com',
-			siteId: 123,
+			renderStep();
+
+			const button = screen.getByText( 'Generate Theme' );
+			expect( button ).toBeInTheDocument();
+
+			fireEvent.click( button );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_onboarding_setup_your_site_with_ai_selection',
+				{ selection: 'generate-theme' }
+			);
+			expect( navigation.submit ).toHaveBeenCalledWith( {
+				setupChoice: 'generate-theme',
+				siteSlug: 'example.wordpress.com',
+				siteId: 123,
+			} );
 		} );
 	} );
 } );
