@@ -85,6 +85,22 @@ describe( '<AgencyPartnerDirectory>', () => {
 		expect( screen.getByText( 'WordPress.com' ) ).toBeVisible();
 	} );
 
+	test( 'links the directory name when a directory is approved but not yet published', async () => {
+		mockAgency( {
+			status: 'pending',
+			directories: [ { directory: 'wordpress', status: 'approved', urls: [], note: '' } ],
+			feedback_url: '',
+			is_published: false,
+		} );
+
+		render( <AgencyPartnerDirectory /> );
+
+		expect( await screen.findByText( 'Approved' ) ).toBeVisible();
+		const directoryLink = screen.getByRole( 'link', { name: 'WordPress.com' } );
+		expect( directoryLink ).toBeVisible();
+		expect( directoryLink ).toHaveAttribute( 'href', 'https://wordpress.com/development-services/' );
+	} );
+
 	test( 'opens the update-expertise popover when a directory was rejected', async () => {
 		mockAgency( {
 			status: 'pending',
