@@ -17,10 +17,6 @@ beforeEach( () => {
 	} );
 } );
 
-afterEach( () => {
-	nock.cleanAll();
-} );
-
 function seedSeenPostsPreference( enabled?: boolean ) {
 	queryClient.setQueryData( rawUserPreferencesQuery().queryKey, {
 		...( enabled === undefined ? {} : { 'reader-seen-posts': enabled } ),

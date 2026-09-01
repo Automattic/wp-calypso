@@ -18,6 +18,7 @@ import {
 	purchaseQuery,
 	queryClient,
 	rawUserPreferencesQuery,
+	readTeamsQuery,
 	receiptQuery,
 	siteBySlugQuery,
 	siteFeaturesQuery,
@@ -1072,16 +1073,13 @@ export const preferencesReaderRoute = createRoute( {
 	getParentRoute: () => preferencesRoute,
 	path: 'reader',
 	beforeLoad: async () => {
-		const data = await queryClient.ensureQueryData( isAutomatticianQuery() );
+		const data = await queryClient.ensureQueryData( readTeamsQuery() );
 		if ( ! isSeenPostsAvailable( data.teams ) ) {
 			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
 		}
 	},
 	loader: async () => {
-		await Promise.all( [
-			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-			queryClient.ensureQueryData( isAutomatticianQuery() ),
-		] );
+		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 	},
 } ).lazy( () =>
 	import( '../../me/reader' ).then( ( d ) =>
