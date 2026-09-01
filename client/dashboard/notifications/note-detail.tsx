@@ -15,6 +15,7 @@ import { getNoteView } from './note-model';
 import NoteViewSwitch from './note-views';
 import { TitleText } from './rich-text';
 import type { Note } from './engine';
+import type { NoteView, TitleSegment } from './note-model';
 
 // The engine has no error signal for a missing note: `openNote` just keeps
 // waiting for it to land in the store. Fall back to an empty state after this
@@ -99,6 +100,19 @@ function DetailNav( {
 	);
 }
 
+// Comments are headed by what happened and where, leaving the author line to
+// the name and time.
+function getHeadingSegments( view: NoteView ): TitleSegment[] {
+	switch ( view.kind ) {
+		case 'thread':
+			return view.parent.post;
+		case 'comment':
+			return view.post;
+		default:
+			return [];
+	}
+}
+
 export default function NoteDetail( {
 	noteId,
 	onClose,
@@ -141,8 +155,8 @@ export default function NoteDetail( {
 		);
 	}
 
-	// A thread is headed by where the parent comment sits.
-	const context = view.kind === 'thread' && <TitleText segments={ view.parent.post } />;
+	const heading = getHeadingSegments( view );
+	const context = heading.length > 0 && <TitleText segments={ heading } />;
 
 	return (
 		<DetailFrame onClose={ onClose }>

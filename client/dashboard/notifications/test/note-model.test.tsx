@@ -320,9 +320,32 @@ describe( 'getNoteView', () => {
 			return;
 		}
 		expect( view.body.text ).toBe( 'Nice post!' );
-		expect( view.title[ 0 ].text ).toBe( 'Alice commented on A post' );
+		expect( view.author.map( ( s ) => s.text ) ).toEqual( [ 'Alice commented on A post' ] );
+		expect( view.post ).toEqual( [] );
 		expect( view.context ).toEqual( [] );
 		expect( view.avatarUrl ).toBe( base.icon );
+	} );
+
+	it( 'splits a comment title into the author and what they did', () => {
+		const view = getNoteView( {
+			...base,
+			type: 'comment',
+			subject: [
+				{
+					text: 'Alice mentioned you on A post',
+					ranges: [
+						{ type: 'user', indices: [ 0, 5 ] },
+						{ type: 'post', indices: [ 23, 29 ], url: 'https://example.com/post/' },
+					],
+				},
+			],
+			body: [ user( 'Alice' ), commentBlock ],
+		} as unknown as Note );
+		if ( view.kind !== 'comment' ) {
+			throw new Error( 'expected comment' );
+		}
+		expect( view.author.map( ( s ) => s.text ) ).toEqual( [ 'Alice' ] );
+		expect( view.post.map( ( s ) => s.text ) ).toEqual( [ ' mentioned you on ', 'A post' ] );
 	} );
 
 	it( 'resolves a reply as a thread: parent from the header, reply from the body', () => {

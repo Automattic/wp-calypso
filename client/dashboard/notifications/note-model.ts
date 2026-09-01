@@ -145,7 +145,15 @@ export type NoteView = NoteViewBase &
 					body: NoteBlock | null;
 				};
 		  }
-		| { kind: 'comment'; avatarUrl: string; title: TitleSegment[]; body: NoteBlock }
+		| {
+				kind: 'comment';
+				avatarUrl: string;
+				/** The commenter, on their own. */
+				author: TitleSegment[];
+				/** What they did and where: " commented on {post}", for a heading. */
+				post: TitleSegment[];
+				body: NoteBlock;
+		  }
 		| { kind: 'achievement'; excerpt: string | null }
 		| {
 				kind: 'like';
@@ -203,7 +211,17 @@ export function getNoteView( note: Note ): NoteView {
 	}
 
 	if ( comment ) {
-		return { ...base, kind: 'comment', avatarUrl: note.icon, title, body: comment };
+		// The subject leads with the commenter as a bold range; without one the
+		// whole title stands in for the name.
+		const leadsWithAuthor = title.length > 1 && title[ 0 ].bold;
+		return {
+			...base,
+			kind: 'comment',
+			avatarUrl: note.icon,
+			author: leadsWithAuthor ? title.slice( 0, 1 ) : title,
+			post: leadsWithAuthor ? title.slice( 1 ) : [],
+			body: comment,
+		};
 	}
 
 	const hasBadge = ( note.body ?? [] ).some( ( block ) =>
