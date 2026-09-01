@@ -39,7 +39,8 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 	const agency = useSelector( getActiveAgency );
 	const { site } = useHelpCenterSite();
 	const [ , getHelpChatForwardAssignment ] = useExperiment(
-		HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT
+		HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT,
+		{ isEligible: loadHelpCenter }
 	);
 
 	if ( ! loadHelpCenter ) {

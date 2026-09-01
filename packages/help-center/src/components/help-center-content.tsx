@@ -91,7 +91,9 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		newLoggedOutInteractionsBotSlug,
 		experimentVariations,
 	} = useHelpCenterContext();
-	const getHelpChatForwardVariation =
+	// Read via a ref so a late-resolving assignment doesn't re-fire the page-open event.
+	const getHelpChatForwardVariationRef = useRef< string | null >( null );
+	getHelpChatForwardVariationRef.current =
 		experimentVariations?.[ HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT ] ?? null;
 	const recordTracksEvent = useHelpCenterTracksEvent();
 	const featureConfig = useFeatureConfig();
@@ -124,7 +126,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 			force_site_id: true,
 			location: 'help-center',
 			is_free_user: ! isUserEligibleForPaidSupport,
-			get_help_chat_forward_variation: getHelpChatForwardVariation,
+			get_help_chat_forward_variation: getHelpChatForwardVariationRef.current,
 		} );
 	}, [
 		location.pathname,
@@ -132,7 +134,6 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		sectionName,
 		isUserEligibleForPaidSupport,
 		recordTracksEvent,
-		getHelpChatForwardVariation,
 	] );
 
 	useEffect( () => {
