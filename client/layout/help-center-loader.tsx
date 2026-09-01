@@ -1,4 +1,5 @@
 import { HelpCenter } from '@automattic/data-stores';
+import { HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT } from '@automattic/data-stores/src/help-center/constants';
 import { useLocale } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useDispatch } from '@wordpress/data';
@@ -6,6 +7,7 @@ import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
+import { useExperiment } from 'calypso/lib/explat';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { onboardingUrl } from 'calypso/lib/paths';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -36,6 +38,9 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 	const user = useSelector( getCurrentUser );
 	const agency = useSelector( getActiveAgency );
 	const { site } = useHelpCenterSite();
+	const [ , getHelpChatForwardAssignment ] = useExperiment(
+		HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT
+	);
 
 	if ( ! loadHelpCenter ) {
 		return null;
@@ -69,6 +74,10 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
 			onboardingUrl={ onboardingUrl() }
 			googleMailServiceFamily={ getGoogleMailServiceFamily() }
+			experimentVariations={ {
+				[ HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT ]:
+					getHelpChatForwardAssignment?.variationName ?? null,
+			} }
 			{ ...additionalHelpCenterProps }
 		/>
 	);

@@ -34,6 +34,11 @@ export type HelpCenterRequiredInformation = {
 	 * Page the launcher was opened from, when the host page sets one. Tailors the greeting and title.
 	 */
 	launcherContext?: string;
+	/**
+	 * ExPlat variation names keyed by experiment name, resolved by the host app.
+	 * The Help Center packages have no ExPlat access of their own.
+	 */
+	experimentVariations?: Record< string, string | null >;
 };
 
 const defaultContext: HelpCenterRequiredInformation = {
