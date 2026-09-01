@@ -33,8 +33,15 @@ export function postEmailStatsAvailabilityQueryOptions( siteId: number | null, p
 
 /**
  * Mark a post as having email stats without waiting for the request, for navigations
- * from a page that already proves they exist (e.g. the email detail tabs). The counts
- * are a placeholder; nothing reads them besides hasEmailStats. Real responses win.
+ * from a page that suggests they exist (e.g. the email detail tabs). The counts are a
+ * placeholder; nothing reads them besides hasEmailStats.
+ *
+ * The seed is written as already-stale data (updatedAt: 0): the tab strip renders
+ * from it immediately, but the mount refetch still runs, so a wrong seed (a deep
+ * link to the email page of a never-emailed post) corrects itself within one round
+ * trip. That also makes it safe to overwrite a stale cached negative. A cached
+ * positive is left untouched - it needs no seed, and replacing it would only queue
+ * a pointless refetch.
  */
 export function seedPostEmailStatsAvailability(
 	queryClient: QueryClient,
@@ -42,9 +49,10 @@ export function seedPostEmailStatsAvailability(
 	postId: number
 ) {
 	const { queryKey } = postEmailStatsAvailabilityQueryOptions( siteId, postId );
-	if ( queryClient.getQueryData( queryKey ) === undefined ) {
-		queryClient.setQueryData( queryKey, { total_sends: 1 } );
+	if ( hasEmailStats( queryClient.getQueryData( queryKey ) ) ) {
+		return;
 	}
+	queryClient.setQueryData( queryKey, { total_sends: 1 }, { updatedAt: 0 } );
 }
 
 /**

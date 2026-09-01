@@ -426,10 +426,15 @@ export function post( context, next ) {
 	// Module state is often not loaded yet at route time (QueryJetpackModules runs
 	// after mount, and /me/sites does not carry active_modules), so only a definite
 	// "inactive" skips the warm-up; the page's own `enabled` check stays strict.
+	// The module store is read directly first: the fallback variant discards a
+	// definite `false` and can fall through to an unknown site option.
+	const subscriptionsModuleActive = isJetpackModuleActive( state, siteId, 'subscriptions' );
 	const canHaveEmailStats =
 		!! supportsEmailStats &&
 		( isSimpleSite( state, siteId ) ||
-			isJetpackModuleActive( state, siteId, 'subscriptions', true ) !== false );
+			( subscriptionsModuleActive !== null
+				? subscriptionsModuleActive
+				: isJetpackModuleActive( state, siteId, 'subscriptions', true ) !== false ) );
 	if ( canHaveEmailStats && postId > 0 ) {
 		context.queryClient.prefetchQuery( postEmailStatsAvailabilityQueryOptions( siteId, postId ) );
 	}
