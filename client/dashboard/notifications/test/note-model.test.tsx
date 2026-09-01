@@ -6,8 +6,10 @@ import {
 	getNoteBodyParts,
 	getNoteSender,
 	getNoteUserRef,
+	getNoteView,
+	getReplyRecipient,
 	getTitleSegments,
-} from '../fields';
+} from '../note-model';
 import type { Note } from '../engine';
 
 function makeNote( id: number, overrides: Partial< Note > = {} ): Note {
@@ -278,5 +280,166 @@ describe( 'getBlockSegments', () => {
 			{ text: 'abcd', type: 'link', url: 'https://a.example' },
 			{ text: 'ef' },
 		] );
+	} );
+} );
+
+describe( 'getNoteView', () => {
+	const base = {
+		id: 1,
+		read: 0,
+		noticon: '',
+		timestamp: '2026-09-01T00:00:00Z',
+		icon: 'https://example.com/icon.png',
+		url: 'https://example.com/post/',
+		title: 'A note',
+		note_hash: 1,
+		subject: [ { text: 'Alice commented on A post' } ],
+		meta: { ids: {} },
+	};
+	const user = ( name: string ) => ( {
+		type: 'user',
+		text: name,
+		meta: { ids: { user: 5, site: 9 } },
+		media: [ { type: 'image', url: 'https://example.com/' + name + '.png' } ],
+	} );
+	const commentBlock = {
+		type: 'comment',
+		text: 'Nice post!',
+		meta: { ids: { comment: 3, site: 9 } },
+	};
+
+	it( 'resolves a plain comment as its own message under the title', () => {
+		const view = getNoteView( {
+			...base,
+			type: 'comment',
+			body: [ user( 'Alice' ), commentBlock ],
+		} as unknown as Note );
+		expect( view.kind ).toBe( 'comment' );
+		if ( view.kind !== 'comment' ) {
+			return;
+		}
+		expect( view.body.text ).toBe( 'Nice post!' );
+		expect( view.title[ 0 ].text ).toBe( 'Alice commented on A post' );
+		expect( view.context ).toEqual( [] );
+		expect( view.avatarUrl ).toBe( base.icon );
+	} );
+
+	it( 'resolves a reply as a thread: parent from the header, reply from the body', () => {
+		const view = getNoteView( {
+			...base,
+			type: 'comment',
+			meta: { ids: { parent_comment: 2, comment: 3 } },
+			header: [
+				{
+					text: 'Bob on A post',
+					ranges: [
+						{ type: 'user', indices: [ 0, 3 ], url: 'https://example.com/bob' },
+						{ type: 'post', indices: [ 7, 13 ], url: 'https://example.com/post/' },
+					],
+					media: [ { type: 'image', url: 'https://example.com/bob.png' } ],
+				},
+				{ text: 'The parent comment…' },
+			],
+			body: [ user( 'Alice' ), commentBlock ],
+		} as unknown as Note );
+		expect( view.kind ).toBe( 'thread' );
+		if ( view.kind !== 'thread' ) {
+			return;
+		}
+		expect( view.parent.author.map( ( s ) => s.text ) ).toEqual( [ 'Bob', ' on ', 'A post' ] );
+		expect( view.parent.avatarUrl ).toBe( 'https://example.com/bob.png' );
+		expect( view.parent.isTruncated ).toBe( true );
+		expect( view.parent.url ).toBe( 'https://example.com/post/#comment-2' );
+		expect( view.reply.author?.name ).toBe( 'Alice' );
+		expect( view.reply.replyingTo ).toBe( 'Bob' );
+		expect( view.reply.body?.text ).toBe( 'Nice post!' );
+		expect( view.context ).toEqual( [] );
+	} );
+
+	it( 'resolves a like with the liker header and the likers as one user run', () => {
+		const view = getNoteView( {
+			...base,
+			type: 'like',
+			header: [
+				{ text: 'Carol', ranges: [ { type: 'user', indices: [ 0, 5 ] } ] },
+				{ text: 'A post' },
+			],
+			body: [ user( 'Carol' ), user( 'Dan' ) ],
+		} as unknown as Note );
+		expect( view.kind ).toBe( 'like' );
+		if ( view.kind !== 'like' ) {
+			return;
+		}
+		expect( view.liker?.name ).toBe( 'Carol' );
+		expect( view.snippet ).toBe( 'A post' );
+		expect( view.likedComment ).toBeNull();
+		expect( view.context ).toEqual( [
+			{
+				kind: 'users',
+				users: [
+					expect.objectContaining( { name: 'Carol' } ),
+					expect.objectContaining( { name: 'Dan' } ),
+				],
+			},
+		] );
+	} );
+
+	it( 'shows the liked comment itself instead of the header snippet', () => {
+		const view = getNoteView( {
+			...base,
+			type: 'comment_like',
+			header: [
+				{ text: 'Carol', ranges: [ { type: 'user', indices: [ 0, 5 ] } ] },
+				{ text: 'The comment that was liked' },
+			],
+			body: [ user( 'Carol' ) ],
+		} as unknown as Note );
+		if ( view.kind !== 'like' ) {
+			throw new Error( 'expected like' );
+		}
+		expect( view.snippet ).toBeNull();
+		expect( view.likedComment?.text ).toBe( 'The comment that was liked' );
+		expect( view.excerpt ).toBeNull();
+	} );
+
+	it( 'resolves a badge note as an achievement', () => {
+		const view = getNoteView( {
+			...base,
+			type: 'like_milestone_achievement',
+			body: [
+				{
+					text: 'Congratulations!',
+					media: [ { type: 'badge', url: 'https://example.com/badge.png' } ],
+				},
+			],
+		} as unknown as Note );
+		expect( view.kind ).toBe( 'achievement' );
+		expect( view.typeLabel ).toBe( 'Like milestone achievement' );
+		expect( view.context ).toHaveLength( 1 );
+	} );
+
+	it( 'falls back to a generic layout', () => {
+		const view = getNoteView( {
+			...base,
+			type: 'post',
+			body: [ { text: 'New post' } ],
+		} as unknown as Note );
+		expect( view.kind ).toBe( 'generic' );
+		if ( view.kind !== 'generic' ) {
+			return;
+		}
+		expect( view.title[ 0 ].text ).toBe( 'Alice commented on A post' );
+		expect( view.context ).toEqual( [ { kind: 'text', block: { text: 'New post' } } ] );
+	} );
+} );
+
+describe( 'getReplyRecipient', () => {
+	it( 'names the commenter from the body, not the header context', () => {
+		expect(
+			getReplyRecipient( {
+				header: [ { text: 'Bob on A post', ranges: [ { type: 'user', indices: [ 0, 3 ] } ] } ],
+				body: [ { type: 'user', text: 'Alice' } ],
+			} as unknown as Note )
+		).toBe( 'Alice' );
 	} );
 } );

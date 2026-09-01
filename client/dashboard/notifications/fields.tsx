@@ -1,21 +1,16 @@
-import {
-	getNoteBodyParts as classifyNoteBody,
-	getNoteParentComment,
-} from '@automattic/notifications/src/common/body-parts';
-import { getTitleSegments } from '@automattic/notifications/src/common/segments';
-import {
-	getNoteExcerpt,
-	getNoteSender,
-	getNoteTitle,
-} from '@automattic/notifications/src/common/summary';
-import { getTimeGroupIndex } from '@automattic/notifications/src/common/time-groups';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { getAvailableNoteActions, useIsNoteApproved } from './engine';
-import { getNoticonIcon } from './note-icons';
+import { getNoticonIcon, replyIcon } from './note-icons';
+import {
+	getNoteExcerpt,
+	getNoteTitle,
+	getTimeGroupIndex,
+	getTitleSegments,
+	isReplyNote,
+} from './note-model';
 import type { Note } from './engine';
-import type { NoteBodyParts } from '@automattic/notifications/src/common/body-parts';
 import type { Field } from '@wordpress/dataviews';
 
 const groupTitles = [
@@ -25,60 +20,6 @@ const groupTitles = [
 	__( 'Older than a week' ),
 	__( 'Older than a month' ),
 ];
-
-export function getNoteTypeLabel( note: Note ): string {
-	switch ( note.type ) {
-		case 'comment':
-			return __( 'Comment' );
-		case 'comment_like':
-			return __( 'Comment like' );
-		case 'like':
-			return __( 'Like' );
-		case 'follow':
-			return __( 'New subscriber' );
-		case 'post':
-			return __( 'New post' );
-		case 'reblog':
-			return __( 'Reblog' );
-		default: {
-			const label = note.type.replace( /_/g, ' ' );
-			return label.charAt( 0 ).toUpperCase() + label.slice( 1 );
-		}
-	}
-}
-
-export { getNoteExcerpt, getNoteSender, getNoteTitle };
-
-export { getBlockSegments, getTitleSegments } from '@automattic/notifications/src/common/segments';
-export type { BlockSegment, TitleSegment } from '@automattic/notifications/src/common/segments';
-export {
-	getNoteLikedComment,
-	getNoteParentComment,
-	getNoteUserRef,
-} from '@automattic/notifications/src/common/body-parts';
-export type {
-	NoteBodyParts,
-	NoteParentComment,
-	NoteUserRef,
-} from '@automattic/notifications/src/common/body-parts';
-
-export type NoteBlock = Note[ 'body' ][ number ];
-
-/**
- * Split the note's body blocks for display: the comment block becomes quoted
- * content; the rest are context lines. On comment notes the user blocks are
- * dropped (the header already names the sender), while on other note types
- * they are real content (who liked/followed). Replies keep theirs: their
- * header shows the comment being answered, so nothing else names the sender.
- */
-export function getNoteBodyParts( note: Note ): NoteBodyParts {
-	const { context, comment, postscript } = classifyNoteBody( note );
-	if ( ! comment || getNoteParentComment( note ) ) {
-		return { context, comment, postscript };
-	}
-	const keep = ( block: NoteBlock ) => block.type !== 'user';
-	return { context: context.filter( keep ), comment, postscript: postscript.filter( keep ) };
-}
 
 function NoteIcon( { note }: { note: Note } ) {
 	const isApproved = useIsNoteApproved( note );
@@ -100,6 +41,7 @@ function NoteIcon( { note }: { note: Note } ) {
 	);
 }
 
+/** DataViews fields for the inbox list. */
 export function getFields(): Field< Note >[] {
 	return [
 		{
@@ -117,6 +59,13 @@ export function getFields(): Field< Note >[] {
 						'is-unread': ! item.read,
 					} ) }
 				>
+					{ isReplyNote( item ) && (
+						<Icon
+							className="dashboard-notifications-inbox__title-icon"
+							icon={ replyIcon }
+							size={ 16 }
+						/>
+					) }
 					{ getTitleSegments( item ).map( ( segment, index ) =>
 						segment.bold ? <strong key={ index }>{ segment.text }</strong> : segment.text
 					) }

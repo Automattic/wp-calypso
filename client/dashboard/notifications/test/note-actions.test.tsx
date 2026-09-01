@@ -56,7 +56,8 @@ const note = {
 	title: 'A note',
 	note_hash: 1,
 	subject: [ { text: 'Alice commented' } ],
-	body: [],
+	header: [ { text: 'Bob on A post', ranges: [ { type: 'user', indices: [ 0, 3 ] } ] } ],
+	body: [ { type: 'user', text: 'Alice' } ],
 } as unknown as Note;
 
 const mockActions = ( overrides: Partial< AvailableNoteActions > ) => {
@@ -74,8 +75,8 @@ describe( 'NoteActions', () => {
 		render( <NoteActions note={ note } /> );
 		expect( screen.getByRole( 'button', { name: 'Approve' } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Like' } ) ).toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'Reply' } ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'Trash' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'textbox' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'More actions' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders nothing when the note supports no actions', () => {
@@ -102,9 +103,11 @@ describe( 'NoteActions', () => {
 	it( 'fires the undo-first spam and trash flows without a confirm', async () => {
 		mockActions( { spamComment: true, trashComment: true } );
 		render( <NoteActions note={ note } /> );
-		await userEvent.click( screen.getByRole( 'button', { name: 'Spam' } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'More actions' } ) );
+		await userEvent.click( await screen.findByRole( 'menuitem', { name: 'Mark as spam' } ) );
 		expect( spamNote ).toHaveBeenCalledWith( note );
-		await userEvent.click( screen.getByRole( 'button', { name: 'Trash' } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'More actions' } ) );
+		await userEvent.click( await screen.findByRole( 'menuitem', { name: 'Move to trash' } ) );
 		expect( trashNote ).toHaveBeenCalledWith( note );
 	} );
 
@@ -120,9 +123,20 @@ describe( 'NoteActions', () => {
 	it( 'sends a reply through the adapter', async () => {
 		mockActions( { replyToComment: true } );
 		render( <NoteActions note={ note } /> );
+		expect( screen.queryByRole( 'textbox' ) ).not.toBeInTheDocument();
 		await userEvent.click( screen.getByRole( 'button', { name: 'Reply' } ) );
+		expect( screen.getByRole( 'button', { name: 'Send' } ) ).toBeDisabled();
+		expect( screen.getByPlaceholderText( 'Reply to Alice…' ) ).toBeInTheDocument();
 		await userEvent.type( screen.getByRole( 'textbox' ), 'Thanks!' );
-		await userEvent.click( screen.getByRole( 'button', { name: 'Send reply' } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Send' } ) );
+		expect( replyToNote ).toHaveBeenCalledWith( note, 'Thanks!' );
+	} );
+
+	it( 'sends a reply with Cmd+Enter', async () => {
+		mockActions( { replyToComment: true } );
+		render( <NoteActions note={ note } /> );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Reply' } ) );
+		await userEvent.type( screen.getByRole( 'textbox' ), 'Thanks!{Meta>}{Enter}{/Meta}' );
 		expect( replyToNote ).toHaveBeenCalledWith( note, 'Thanks!' );
 	} );
 } );

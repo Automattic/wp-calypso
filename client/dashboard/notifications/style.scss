@@ -149,6 +149,12 @@
 	font-weight: 600;
 }
 
+.dashboard-notifications-inbox__title-icon {
+	vertical-align: text-bottom;
+	margin-inline-end: 4px;
+	fill: currentcolor;
+}
+
 .dashboard-notifications-inbox__noticon {
 	position: absolute;
 	bottom: -4px;
@@ -248,7 +254,15 @@
 	flex-shrink: 0;
 }
 
+.dashboard-notifications-inbox__detail .components-card__body {
+	padding-bottom: 40px;
+}
+
+/* The header border runs edge to edge by escaping the CardBody padding (24px
+   at the Card's medium size, 16px at small on narrow screens). */
 .dashboard-notifications-inbox__detail-nav {
+	margin-inline: -24px;
+	padding-inline: 24px;
 	padding-bottom: 16px;
 	border-bottom: 1px solid var(--dashboard-header__border-color, #ddd);
 }
@@ -280,7 +294,29 @@
 	}
 }
 
-.dashboard-notifications-inbox__actions .components-button.is-pressed,
+.dashboard-notifications-inbox__actions {
+	margin-block-start: 12px;
+
+	// Small buttons pad 8px, so the leading icons line up with the text above.
+	.dashboard-notifications-inbox__actions-row {
+		margin-inline-start: -8px;
+	}
+
+	.components-button.is-tertiary:not(.is-destructive) {
+		color: #757575;
+
+		&:hover:not(:disabled) {
+			background: var(--dashboard__background-color-secondary, #f6f7f7);
+			color: var(--wp-admin-theme-color, #3858e9);
+		}
+
+		&.is-pressed {
+			background: transparent;
+			color: var(--wp-admin-theme-color, #3858e9);
+		}
+	}
+}
+
 .dashboard-notifications-inbox__user-row .components-button.is-pressed {
 	background: var(--wp-admin-theme-color, #3858e9);
 	border-color: var(--wp-admin-theme-color, #3858e9);
@@ -328,27 +364,8 @@
 	background: var(--dashboard__background-color-secondary, #f6f7f7);
 }
 
-.dashboard-notifications-inbox__footer {
-	border-top: 1px solid var(--dashboard-header__border-color, #ddd);
-	padding-top: 16px;
-
-	&:empty {
-		display: none;
-	}
-}
-
-/* Let the header and footer borders run edge to edge by escaping the CardBody
-   padding (24px at the Card's medium size, 16px at small on narrow screens),
-   then re-inset their own content. */
-.dashboard-notifications-inbox__detail-nav,
-.dashboard-notifications-inbox__footer {
-	margin-inline: -24px;
-	padding-inline: 24px;
-}
-
 @media (max-width: 781px) {
-	.dashboard-notifications-inbox__detail-nav,
-	.dashboard-notifications-inbox__footer {
+	.dashboard-notifications-inbox__detail-nav {
 		margin-inline: -16px;
 		padding-inline: 16px;
 	}
@@ -356,9 +373,14 @@
 
 .dashboard-notifications-inbox__badge-media {
 	display: block;
-	margin: 16px auto 0;
+	margin: 0 auto 24px;
 	max-width: 128px;
 	height: auto;
+}
+
+.dashboard-notifications-inbox__body.is-achievement {
+	padding-top: 16px;
+	text-align: center;
 }
 
 .dashboard-notifications-inbox__body-image {
@@ -378,18 +400,20 @@
 
 .dashboard-notifications-inbox__block-text {
 	white-space: normal;
+
+	// Only the block's outer paragraphs drop their margins; nested ones (inside a
+	// blockquote, say) keep their spacing.
+	> p:first-child {
+		margin-top: 0;
+	}
+
+	> p:last-child {
+		margin-bottom: 0;
+	}
 }
 
 .dashboard-notifications-inbox__body {
 	line-height: 1.6;
-
-	p:first-child {
-		margin-top: 0;
-	}
-
-	p:last-child {
-		margin-bottom: 0;
-	}
 }
 
 .dashboard-notifications-inbox__user-list {
@@ -429,11 +453,9 @@
 	}
 }
 
-/* The comment being answered names its author and post the way a reply names
-   its author: emphasised, and not styled as links until hovered. */
-.dashboard-notifications-inbox__parent-author a {
-	font-weight: 600;
-	color: inherit;
+.dashboard-notifications-inbox__user-row-name,
+.dashboard-notifications-inbox__user-row-name .components-text {
+	color: var(--wp-admin-theme-color, #3858e9);
 	text-decoration: none;
 
 	&:hover {
@@ -441,16 +463,6 @@
 	}
 }
 
-.dashboard-notifications-inbox__user-row-name {
-	color: inherit;
-	text-decoration: none;
-
-	&:hover {
-		text-decoration: underline;
-	}
-}
-
-.dashboard-notifications-inbox__quote,
 .dashboard-notifications-inbox__body blockquote {
 	margin: 0;
 	padding: 0 16px;
@@ -480,26 +492,25 @@
 // A reply sits under the comment it answers, its avatar starting at that
 // comment's text column so the thread reads as nested, the way P2 does.
 .dashboard-notifications-inbox__reply {
-	--dashboard-notifications-inbox__avatar-size: 40px;
+	--dashboard-notifications-inbox__avatar-size: 32px;
 	--dashboard-notifications-inbox__avatar-gap: 12px;
 
+	box-sizing: border-box;
 	padding-inline-start: calc(
 		var(--dashboard-notifications-inbox__avatar-size) +
 			var(--dashboard-notifications-inbox__avatar-gap)
 	);
+}
 
-	.dashboard-notifications-inbox__user-row-avatar,
-	.dashboard-notifications-inbox__user-row-avatar img {
-		width: var(--dashboard-notifications-inbox__avatar-size);
-		height: var(--dashboard-notifications-inbox__avatar-size);
-	}
+.dashboard-notifications-inbox__header-comment {
+	margin-block-start: 4px;
+}
 
-	// The message lines up under its author's name, not under the avatar.
-	.dashboard-notifications-inbox__block-text,
-	.dashboard-notifications-inbox__quote {
-		margin-inline-start: calc(
-			var(--dashboard-notifications-inbox__avatar-size) +
-				var(--dashboard-notifications-inbox__avatar-gap)
-		);
+.dashboard-notifications-inbox__reply-box {
+	width: 100%;
+
+	.components-base-control,
+	.components-textarea-control__input {
+		width: 100%;
 	}
 }

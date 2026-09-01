@@ -57,3 +57,5 @@ const ICONS_BY_NAME: Record< NoticonName, JSX.Element > = {
 export function getNoticonIcon( glyph: string ): JSX.Element {
 	return ICONS_BY_NAME[ getNoticonName( glyph ) ];
 }
+
+export const replyIcon = reply;
