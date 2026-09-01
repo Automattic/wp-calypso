@@ -128,7 +128,7 @@ const upgradeRequiredBadge = { text: __( 'Upgrade required' ), intent: 'informat
 function UpgradeRequiredBadge() {
 	return (
 		<Tooltip text={ upgradeRequiredText } placement="top">
-			<Badge intent="informational">{ upgradeRequiredBadge.text }</Badge>
+			<Badge intent={ upgradeRequiredBadge.intent }>{ upgradeRequiredBadge.text }</Badge>
 		</Tooltip>
 	);
 }
