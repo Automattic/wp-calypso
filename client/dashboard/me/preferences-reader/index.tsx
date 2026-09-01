@@ -1,8 +1,7 @@
 import { isAutomatticianQuery, userPreferenceQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { postAuthor } from '@wordpress/icons';
+import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
@@ -29,7 +28,7 @@ export default function PreferencesReader( { density }: { density?: Density } ) 
 			to="/me/preferences/reader"
 			title={ __( 'Reader' ) }
 			description={ __( 'Manage how the Reader shows posts you have already read.' ) }
-			decoration={ <Icon icon={ postAuthor } size={ 24 } /> }
+			decoration={ <ReaderIcon width={ 24 } height={ 24 } /> }
 			badges={ badges }
 		/>
 	);

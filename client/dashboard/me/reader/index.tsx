@@ -42,7 +42,7 @@ export default function ReaderPreferences() {
 							level={ 3 }
 							title={ __( 'Show read status' ) }
 							description={ __(
-								'Dim posts you have already opened, show unread counts in the sidebar, and keep Mark as read / Mark all as read actions. Turn this off to hide those.'
+								'Dims posts you have already opened, shows unread counts in the sidebar, and surfaces Mark as read actions.'
 							) }
 						/>
 						<ToggleControl
