@@ -76,9 +76,17 @@ const PerformanceInsightTable = ( {
 					case 'url':
 					case 'source-location':
 						if ( typeof value.location === 'object' ) {
-							return [ value.location.url, value.location.line, value.location.column ].join( ':' );
+							return (
+								<span style={ { wordBreak: 'break-all' } }>
+									{ [
+										value.location.url,
+										value.location.line,
+										value.location.column,
+									].join( ':' ) }
+								</span>
+							);
 						}
-						return value?.url;
+						return <span style={ { wordBreak: 'break-all' } }>{ value?.url }</span>;
 				}
 
 				return value?.value;
