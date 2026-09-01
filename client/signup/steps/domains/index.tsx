@@ -393,11 +393,13 @@ const DomainSearchUI = (
 				dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
 
 			// A launch started from wp-admin has no `back_to`; `ref` carries the page it started
-			// from, so Back returns there instead of leaving the user in the sites list.
+			// from, so Back returns there instead of leaving the user in the sites list. The host
+			// comes from the site the flow loaded rather than from `siteSlug`, which is raw query
+			// input and would otherwise point Back at any host an attacker cared to name.
 			const wpAdminBackUrl =
 				'launch-site' === flowName
 					? getWpAdminLaunchReturnUrl( {
-							siteSlug: queryObject.siteSlug,
+							siteSlug: site?.slug,
 							refParameter: queryObject.ref,
 					  } )
 					: null;
@@ -422,7 +424,7 @@ const DomainSearchUI = (
 		previousStepName,
 		goBack,
 		userSiteCount,
-		queryObject.siteSlug,
+		site?.slug,
 		queryObject.ref,
 		__,
 	] );
