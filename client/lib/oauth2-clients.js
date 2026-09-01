@@ -115,8 +115,9 @@ const fullyDecode = ( value ) => {
 	return decoded;
 };
 
-// Reads the app's OAuth2 callback (redirect_uri) out of a login query. It is
-// nested inside redirect_to, but may also appear as a direct query param.
+// Reads the app's OAuth2 callback (redirect_uri) out of a login or signup query.
+// It may appear as a direct query param, nested inside redirect_to (login), or
+// nested inside oauth2_redirect (signup, see getSignupUrl).
 export const getOAuth2RedirectUri = ( query ) => {
 	if ( ! query ) {
 		return null;
@@ -124,11 +125,16 @@ export const getOAuth2RedirectUri = ( query ) => {
 	if ( typeof query.redirect_uri === 'string' ) {
 		return query.redirect_uri;
 	}
-	if ( typeof query.redirect_to !== 'string' ) {
-		return null;
+	for ( const param of [ 'redirect_to', 'oauth2_redirect' ] ) {
+		if ( typeof query[ param ] !== 'string' ) {
+			continue;
+		}
+		const redirectUri = getQueryArg( query[ param ], 'redirect_uri' );
+		if ( typeof redirectUri === 'string' ) {
+			return redirectUri;
+		}
 	}
-	const redirectUri = getQueryArg( query.redirect_to, 'redirect_uri' );
-	return typeof redirectUri === 'string' ? redirectUri : null;
+	return null;
 };
 
 export const isJetpackAppRedirectUri = ( redirectUri ) => {
