@@ -28,12 +28,16 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 	const {
 		responseCart,
 		replaceProductsInCart,
-		isLoading: isCartLoading,
+		isPendingUpdate: isCartPendingUpdate,
+		loadingError: cartLoadingError,
 	} = useShoppingCart( cartKey );
+	const hasCartFailed = Boolean( cartLoadingError );
 	const giftBackUrl = getGiftCheckoutBackUrl( {
 		giftDetails: responseCart.gift_details,
 		referrer: document.referrer,
 	} );
+	const isGiftCheckout = window.location.pathname.includes( '/gift/' );
+	const isAwaitingGiftDetails = isGiftCheckout && ! responseCart.gift_details;
 	// Used to lazily clear the siteless 'no-site'/'no-user' carts used by
 	// signup steps before a site exists. /start/domain/domain-only adds the
 	// domain to 'no-site' (logged-in) or 'no-user' (logged-out); if the user
@@ -128,11 +132,27 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 	return {
 		isModalVisible,
 		setIsModalVisible,
-		// The cart answers both questions "Back" depends on: whether to ask about
-		// saving the cart (does it hold anything?) and, for a gift checkout, where
-		// to go (`gift_details`). Neither is known until the cart arrives, so the
-		// control stays disabled rather than acting on a placeholder.
-		isLeaveDisabled: isCartLoading,
+		// "Back" asks the cart two questions, and waits on each only until that
+		// answer is trustworthy.
+		//
+		// "Does it hold anything?" decides whether to offer to save the cart. An
+		// empty cart is ambiguous mid-update, because the products a checkout URL
+		// asks for arrive after the initial fetch, in a second round-trip. A cart
+		// that already holds products answers regardless, so later updates — a
+		// coupon, a tax recalculation — leave the control alone.
+		//
+		// "Where does a gift go?" is answered by `gift_details`, so gift checkouts
+		// wait on that datum rather than on the cart settling: a 'no-user' cart
+		// never fetches and settles locally empty while the gifted plan is still
+		// in flight, and a 'no-site' cart may settle holding a leftover item from
+		// an earlier signup. Both look answerable before they are.
+		//
+		// A failed cart answers neither, but waiting on it would trap the user, so
+		// let them leave — without `gift_details` a gift falls back to `cancel_to`.
+		// The escape is not permanent: a later reload clears the error.
+		isLeaveDisabled:
+			! hasCartFailed &&
+			( isAwaitingGiftDetails || ( isCartPendingUpdate && responseCart.products.length === 0 ) ),
 		clickClose,
 		clickStepBack,
 		closeAndLeave,

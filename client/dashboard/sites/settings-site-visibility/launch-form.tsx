@@ -132,7 +132,7 @@ export function LaunchForm( { site }: { site: Site } ) {
 					<SiteLaunchButton
 						site={ site }
 						tracksContext="site_settings"
-						backTo={ `/sites/${ site.slug }` }
+						flowDestination={ `/sites/${ site.slug }` }
 					/>
 				}
 			>
