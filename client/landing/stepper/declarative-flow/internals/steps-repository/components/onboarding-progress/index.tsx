@@ -14,16 +14,17 @@ type Props = {
 };
 
 /**
- * The onboarding purchase progress rail, as a text rail in the top bar.
+ * The onboarding purchase progress rail, as a segmented bar in the top bar.
  *
  * Renders beside the WordPress logo rather than above the page content, so it
- * costs no vertical space in the content column at all. There are no
- * indicators: the steps are one word each, separated by a middot, and status
- * is carried by weight and colour.
+ * costs no vertical space in the content column. Nothing is drawn but three
+ * pills: the steps reached so far are filled, the rest are not.
  *
- * `Stepper.Indicator` is still rendered even though no dot is drawn. It is
- * what supplies the "Step 2 of 3, completed" text for screen readers, so it is
- * visually clipped in style.scss rather than dropped from the tree.
+ * Both the indicator and the title are still rendered even though neither is
+ * drawn as such. `Stepper.Indicator` becomes the pill and carries the
+ * "Step 2 of 3, completed" text; `Stepper.Title` supplies the step name. Both
+ * are what give each segment an accessible name, so the title is clipped in
+ * style.scss rather than dropped from the tree.
  */
 export function OnboardingProgress( { currentStep, onStepSelect, isStepSelectDisabled }: Props ) {
 	const { __, _x } = useI18n();

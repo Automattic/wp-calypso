@@ -1,9 +1,13 @@
 @import '@wordpress/theme/design-tokens.css';
 
-// A text rail in the top bar: no indicators, no connectors, just the three
-// step names beside the WordPress logo. It costs nothing in the content
-// column, so unlike the previous treatment there is no wrapper padding to
-// compensate for here.
+// A segmented bar in the top bar: one pill per step beside the WordPress logo,
+// filled up to the step you are on. No labels, no numbers, no dots. It costs
+// nothing in the content column, so unlike the previous treatment there is no
+// wrapper padding to compensate for here.
+//
+// The component's own styles are scoped by `[data-indicator-variant]`, which
+// the root always renders. Qualifying selectors with that attribute is what
+// lets these rules win without resorting to !important.
 .onboarding-progress {
 	display: flex;
 	align-items: center;
@@ -11,28 +15,45 @@
 	.onboarding-progress-step {
 		display: flex;
 		align-items: center;
-
-		// Separator between steps. A pseudo-element on the step wrapper rather
-		// than a real node inside the tablist, so it stays out of every tab's
-		// accessible name.
-		&:not( :last-child )::after {
-			content: '\00b7';
-			color: var( --wpds-color-stroke-interactive-neutral );
-			padding-inline: var( --wpds-dimension-padding-xs );
-		}
 	}
 
+	// The visible bar is 4px tall, so the trigger carries the padding that makes
+	// a usable pointer and touch target out of it.
 	.onboarding-progress-trigger {
 		display: flex;
 		align-items: center;
-		padding: var( --wpds-dimension-padding-xs ) var( --wpds-dimension-padding-xs );
+		padding: var( --wpds-dimension-padding-sm ) var( --wpds-dimension-gap-xs );
 		min-height: 0;
 	}
 
-	// No dot is drawn in this treatment, but the indicator still carries the
-	// "Step 2 of 3, completed" text that gives each step its accessible name.
-	// Clip it instead of removing it.
-	.onboarding-progress-indicator {
+	// The indicator IS the pill. Overrides the component's circle geometry.
+	.onboarding-progress-step .onboarding-progress-indicator[data-indicator-variant] {
+		width: var( --wpds-dimension-size-md );
+		height: var( --wpds-dimension-size-5xs );
+		// Half the 4px height, so the ends come out fully round.
+		border-radius: var( --wpds-border-radius-sm );
+		border: 0;
+		background: var( --wpds-color-stroke-surface-neutral );
+	}
+
+	// Steps reached so far are filled. Completed and current read the same on
+	// purpose: together they are the progress, and the boundary between filled
+	// and unfilled is what carries the meaning.
+	.onboarding-progress-step[data-status='completed'] .onboarding-progress-indicator[data-indicator-variant],
+	.onboarding-progress-step[data-current] .onboarding-progress-indicator[data-indicator-variant] {
+		background: var( --wpds-color-background-interactive-neutral-strong );
+	}
+
+	// The check glyph and the current-step dome would otherwise sit inside a 4px
+	// pill. The indicator's visually hidden step text is a sibling and is not
+	// affected by this.
+	.onboarding-progress-indicator svg {
+		display: none;
+	}
+
+	// The step name still gives each segment its accessible name, so it is
+	// clipped rather than removed.
+	.onboarding-progress-title {
 		position: absolute;
 		width: 1px;
 		height: 1px;
@@ -44,23 +65,8 @@
 		border: 0;
 	}
 
-	// The component's own styles set title colours from the step status, so
-	// these selectors are scoped one level deeper to win. Completed and current
-	// keep the component's neutral; only upcoming is pulled back to weak, and
-	// everything drops to 12px for the top bar.
-	.onboarding-progress-step .onboarding-progress-title {
-		font-size: var( --wpds-typography-font-size-sm );
-		line-height: var( --wpds-typography-line-height-xs );
-		white-space: nowrap;
-	}
-
-	.onboarding-progress-step:not( [data-status] ):not( [data-current] ) .onboarding-progress-title {
-		color: var( --wpds-color-foreground-content-neutral-weak );
-	}
-
-	// Completed steps are the only navigable ones, so give the pointer an extra
-	// cue beyond the component's brand hover colour.
-	.onboarding-progress-trigger:hover:not( [aria-disabled='true'] ) .onboarding-progress-title {
-		text-decoration: underline;
+	// Completed steps are the only navigable ones.
+	.onboarding-progress-trigger:hover:not( [aria-disabled='true'] ) .onboarding-progress-indicator[data-indicator-variant] {
+		background: var( --wpds-color-foreground-interactive-brand );
 	}
 }
