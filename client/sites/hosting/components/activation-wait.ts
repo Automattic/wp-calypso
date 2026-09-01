@@ -10,6 +10,7 @@ export function useActivationDeadline( siteId: number | null, isWaiting: boolean
 	const [ stalledSiteId, setStalledSiteId ] = useState< number | null >( null );
 
 	useEffect( () => {
+		setStalledSiteId( null );
 		if ( ! isWaiting || siteId === null ) {
 			return;
 		}
@@ -17,5 +18,5 @@ export function useActivationDeadline( siteId: number | null, isWaiting: boolean
 		return () => clearTimeout( timer );
 	}, [ isWaiting, siteId ] );
 
-	return stalledSiteId !== null && stalledSiteId === siteId;
+	return isWaiting && stalledSiteId !== null && stalledSiteId === siteId;
 }
