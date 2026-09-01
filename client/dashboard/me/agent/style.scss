@@ -30,10 +30,6 @@
 	min-width: 0;
 }
 
-.wordpress-agent-email__address-row > .components-button {
-	margin-bottom: 1px;
-}
-
 .wordpress-agent-email__sender {
 	flex: 1 1 auto;
 	min-width: 0;
@@ -62,10 +58,6 @@
 	gap: 8px;
 	background: var( --slack-brand-color );
 	border-color: var( --slack-brand-color );
-
-	img {
-		filter: invert( 1 );
-	}
 
 	&:hover:not( :disabled ) {
 		background: var( --slack-brand-color-hover );

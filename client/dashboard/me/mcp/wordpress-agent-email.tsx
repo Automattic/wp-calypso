@@ -38,6 +38,7 @@ function getErrorMessage( error: unknown, fallback: string ): string {
 function ViewPlansButton( { site }: { site: Site } ) {
 	return (
 		<RouterLinkButton
+			__next40pxDefaultSize
 			variant="primary"
 			to={ sitePlansRoute.fullPath }
 			params={ { siteSlug: site.slug } }
@@ -126,6 +127,7 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 					description={ __( 'Enable a private address for emailing this site’s WordPress Agent.' ) }
 				/>
 				<Button
+					__next40pxDefaultSize
 					variant="primary"
 					onClick={ enableEmail }
 					isBusy={ emailMutation.isPending }
@@ -140,11 +142,6 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 	return (
 		<CardBody>
 			<VStack spacing={ 4 }>
-				<SectionHeader
-					level={ 3 }
-					title={ __( 'Connected' ) }
-					description={ __( 'This email address is ready to use.' ) }
-				/>
 				<div className="wordpress-agent-email__address-row">
 					<ClipboardInputControl
 						label={ __( 'AI agent email address' ) }
@@ -157,6 +154,7 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 						} }
 					/>
 					<Button
+						__next40pxDefaultSize
 						variant="secondary"
 						href={ vCardHref }
 						download={ vCardFileName }

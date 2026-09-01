@@ -6,7 +6,13 @@ import {
 } from '@automattic/api-queries';
 import { Badge } from '@automattic/ui';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Notice, Spinner, __experimentalVStack as VStack } from '@wordpress/components';
+import {
+	Button,
+	Notice,
+	Spinner,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
@@ -130,6 +136,7 @@ export default function WordPressAgentSlack( {
 						}
 					/>
 					<Button
+						__next40pxDefaultSize
 						variant="secondary"
 						isDestructive
 						onClick={ () => disconnect( connection.team_id ) }
@@ -146,7 +153,9 @@ export default function WordPressAgentSlack( {
 	} else {
 		connectionsContent = (
 			<CardBody>
-				{ __( 'You have not connected WordPress Agent to a Slack workspace yet.' ) }
+				<Text as="p" variant="muted" size="13px" lineHeight="20px">
+					{ __( 'You have not connected WordPress Agent to a Slack workspace yet.' ) }
+				</Text>
 			</CardBody>
 		);
 	}
@@ -185,6 +194,7 @@ export default function WordPressAgentSlack( {
 							) }
 						/>
 						<Button
+							__next40pxDefaultSize
 							variant="primary"
 							onClick={ pair }
 							isBusy={ pairMutation.isPending }
@@ -200,6 +210,7 @@ export default function WordPressAgentSlack( {
 				<CardBody className="wordpress-agent-connection__row">
 					<SectionHeader level={ 3 } title={ installTitle } description={ installDescription } />
 					<Button
+						__next40pxDefaultSize
 						variant="primary"
 						className="wordpress-agent-slack__install-button"
 						onClick={ install }

@@ -90,7 +90,6 @@ describe( '<WordPressAgentEmail />', () => {
 		expect( screen.getByRole( 'combobox', { name: 'Select site' } ) ).toHaveValue(
 			'email-agent.wordpress.com'
 		);
-		expect( screen.getByRole( 'heading', { name: 'Connected' } ) ).toBeVisible();
 		expect( screen.getByLabelText( 'AI agent email address' ) ).toHaveValue(
 			'agent+secret@post.wordpress.com'
 		);
