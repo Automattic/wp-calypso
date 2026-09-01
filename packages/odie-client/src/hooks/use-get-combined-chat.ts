@@ -28,8 +28,7 @@ function isEqual( message1: Message, message2: Message ) {
 }
 
 /**
- * A user message sent through Zendesk: only those carry a `temporary_id`, so Odie messages
- * don't match.
+ * A user message sent through Zendesk: only those carry a `temporary_id`, so Odie messages don't match.
  * @param message - The message to check.
  * @returns Whether the message is a Zendesk message sent by the user.
  */
