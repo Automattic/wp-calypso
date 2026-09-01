@@ -503,6 +503,11 @@
 	);
 }
 
+.dashboard-notifications-inbox__column {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
 .dashboard-notifications-inbox__header-comment {
 	margin-block-start: 4px;
 }

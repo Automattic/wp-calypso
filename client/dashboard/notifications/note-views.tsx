@@ -144,7 +144,9 @@ function Header( {
 					height={ 32 }
 				/>
 			) }
-			<VStack spacing={ 0 }>{ children }</VStack>
+			<VStack spacing={ 0 } className="dashboard-notifications-inbox__column">
+				{ children }
+			</VStack>
 		</HStack>
 	);
 }
@@ -201,7 +203,7 @@ function ThreadView( { view }: { view: Extract< NoteView, { kind: 'thread' } > }
 					className="dashboard-notifications-inbox__reply"
 				>
 					<Avatar user={ reply.author } />
-					<VStack spacing={ 1 }>
+					<VStack spacing={ 1 } className="dashboard-notifications-inbox__column">
 						{ reply.author && (
 							<HStack spacing={ 1 } justify="flex-start" alignment="center" expanded={ false }>
 								<UserName user={ reply.author } />
