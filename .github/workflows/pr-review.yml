@@ -83,7 +83,7 @@ jobs:
           PR_USER_TYPE: ${{ github.event.pull_request.user.type || github.event.issue.user.type }}
           BASE_REPO: ${{ github.repository }}
         run: |
-          if [ "$PR_USER_TYPE" = "Bot" ] && [ "$PR_USER" != "agent-sandbox-automattic[bot]" ]; then
+          if [ "$PR_USER_TYPE" = "Bot" ]; then
             echo "::error::Author $PR_USER is a Bot; denying review."
             exit 1
           fi
