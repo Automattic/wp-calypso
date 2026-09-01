@@ -7,6 +7,7 @@ import FreeSiteUpgradeNotice from './free-site-upgrade-notice';
 import GDPRCookieConsentNotice from './gdpr-cookie-consent-notice';
 import PaidPlanPurchaseSuccessJetpackStatsNotice from './paid-plan-purchase-success-notice';
 import TierUpgradeNotice from './tier-upgrade-notice';
+import TrafficTabPreviewNotice from './traffic-tab-preview-notice';
 import { StatsNoticeProps } from './types';
 
 type StatsNoticeType = {
@@ -30,6 +31,15 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 		noticeId: 'client_free_plan_purchase_success',
 		isVisibleFunc: ( { statsPurchaseSuccess }: StatsNoticeProps ) =>
 			statsPurchaseSuccess === 'free',
+		disabled: false,
+	},
+	{
+		component: TrafficTabPreviewNotice,
+		noticeId: 'traffic_tab_preview',
+		// Deliberately ranked above the upsell notices: the invitation only runs while the new
+		// dashboard is in preview, and the server decides who is in that cohort, whereas the
+		// upsells are perpetual and come back the moment this one is dismissed or accepted.
+		isVisibleFunc: ( { isVip, isP2 }: StatsNoticeProps ) => ! isVip && ! isP2,
 		disabled: false,
 	},
 	{
