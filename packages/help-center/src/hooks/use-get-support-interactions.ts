@@ -20,7 +20,10 @@ export const useGetSupportInteractions = (
 	const isAuthed = !! currentUser?.ID && ! isCookieAuthMissing();
 	// Subscribe without fetching: the Help Center root triggers the check; here it only
 	// hides Zendesk conversations once the user is known to be unable to open them.
-	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( false, site?.ID );
+	const { data: canConnectToZendesk, isError: canConnectErrored } = useCanConnectToZendeskMessaging(
+		false,
+		site?.ID
+	);
 
 	const isZendeskProvider = provider === 'zendesk' || provider === 'zendesk-staging';
 	const shouldFetch = enabled && isAuthed;
@@ -30,7 +33,7 @@ export const useGetSupportInteractions = (
 		queryFn: () => handleSupportInteractionsFetch( 'GET', '?per_page=100&page=1', isTestMode ),
 		select: ( response ) => {
 			if ( provider ) {
-				if ( isZendeskProvider && canConnectToZendesk === false ) {
+				if ( isZendeskProvider && ( canConnectToZendesk === false || canConnectErrored ) ) {
 					return [];
 				}
 				return response.filter( ( interaction ) =>
