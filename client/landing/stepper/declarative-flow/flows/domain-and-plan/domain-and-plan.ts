@@ -10,7 +10,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect, useRef } from 'react';
 import { dashboardOrigins } from 'calypso/dashboard/utils/link';
-import { isRelativeUrl } from 'calypso/dashboard/utils/url';
+import { hasPlanFeature } from 'calypso/dashboard/utils/site-features';
 import wpcom from 'calypso/lib/wp';
 import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
 import { SIGNUP_DOMAIN_ORIGIN } from '../../../../../lib/analytics/signup';
@@ -24,6 +24,43 @@ import type { Flow } from '../../internals/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const DOMAIN_UPSELL_STEPS = [ STEPS.DOMAIN_SEARCH, STEPS.USE_MY_DOMAIN, STEPS.PLANS ];
+
+/**
+ * The `domainConnectionSetupUrl` template arrives via the query string and ends up in
+ * `window.location.replace()`, so resolve it the way the browser will and accept only
+ * this origin and the dashboard's. Substring checks are bypassable
+ * (`https://my.wordpress.com.evil.example`, `/\evil.example`), hence parsed origins.
+ */
+function isSafeDomainConnectionSetupUrl( value: string ) {
+	try {
+		const resolvedOrigin = new URL( value, window.location.origin ).origin;
+
+		return (
+			resolvedOrigin === window.location.origin || dashboardOrigins().includes( resolvedOrigin )
+		);
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * The name of the domain being connected, when the cart holds exactly that and
+ * nothing else. Shared by the direct-connect branch and the post-checkout
+ * destination so the two paths cannot drift apart.
+ */
+function getSingleMappingDomain( domainCartItems: MinimalRequestCartProduct[] ) {
+	if ( domainCartItems.length !== 1 ) {
+		return null;
+	}
+
+	const [ domainCartItem ] = domainCartItems;
+
+	if ( domainCartItem.product_slug !== DomainProductSlugs.DOMAIN_MAPPING ) {
+		return null;
+	}
+
+	return domainCartItem.meta ?? null;
+}
 
 const domainUpsell: Flow = {
 	name: DOMAIN_AND_PLAN_FLOW,
@@ -41,21 +78,14 @@ const domainUpsell: Flow = {
 		const hasQualifyingPlan =
 			!! site?.plan && ! site.plan.is_free && site.plan.billing_period !== 'Monthly';
 		// Connecting a domain is bundled with every paid plan, so there is nothing left to buy.
-		// `features` can be missing at runtime even though the type says otherwise, so this
-		// deliberately does not use `hasPlanFeature()`, which would throw during render.
 		const mappingIsIncludedInPlan =
 			( !! site?.plan && ! site.plan.is_free ) ||
-			!! site?.plan?.features?.active?.includes( DotcomFeatures.DOMAIN_MAPPING );
+			( !! site && hasPlanFeature( site, DotcomFeatures.DOMAIN_MAPPING ) );
 
 		const domainConnectionSetupUrlParam = useQuery().get( 'domainConnectionSetupUrl' );
-		// The template is attacker-controllable through the URL and is handed to
-		// `window.location.assign()`, so only accept relative paths and dashboard origins.
 		const domainConnectionSetupUrl =
 			domainConnectionSetupUrlParam &&
-			( isRelativeUrl( domainConnectionSetupUrlParam ) ||
-				dashboardOrigins().some( ( origin ) =>
-					domainConnectionSetupUrlParam.startsWith( origin )
-				) )
+			isSafeDomainConnectionSetupUrl( domainConnectionSetupUrlParam )
 				? domainConnectionSetupUrlParam
 				: null;
 		const { getDomainCartItems, getPlanCartItem } = useSelect(
@@ -83,20 +113,10 @@ const domainUpsell: Flow = {
 
 		function getPostCheckoutUrl( domainCartItems: MinimalRequestCartProduct[] ) {
 			// A connected domain still has to be pointed at the site once it is paid for, so
-			// finish on the setup instructions rather than wherever the user came from. More
-			// than one domain in the cart makes the destination ambiguous, so leave it alone.
-			if ( domainCartItems.length !== 1 ) {
-				return returnUrl;
-			}
+			// finish on the setup instructions rather than wherever the user came from.
+			const domain = getSingleMappingDomain( domainCartItems );
 
-			const [ domainCartItem ] = domainCartItems;
-			const domain = domainCartItem.meta;
-
-			if ( domainCartItem.product_slug !== DomainProductSlugs.DOMAIN_MAPPING || ! domain ) {
-				return returnUrl;
-			}
-
-			return getDomainConnectionSetupUrl( domain );
+			return domain ? getDomainConnectionSetupUrl( domain ) : returnUrl;
 		}
 
 		async function addToCartAndRedirectToCheckout( { includePlan = true } = {} ) {
@@ -194,7 +214,9 @@ const domainUpsell: Flow = {
 					) {
 						submittedDomains.current = true;
 
-						return window.location.assign(
+						// replace() rather than assign(): Back must not land on a submit step
+						// for a mapping that already exists.
+						return window.location.replace(
 							getDomainConnectionSetupUrl( providedDependencies.domain as string )
 						);
 					}
@@ -217,20 +239,17 @@ const domainUpsell: Flow = {
 					setDomainCartItem( domainCartItem );
 					setDomainCartItems( [ domainCartItem ] );
 
-					const domain = domainCartItem.meta;
+					const domain = getSingleMappingDomain( [ domainCartItem ] );
 
 					// Nothing to charge for: connect the domain right away and send the user to the
 					// setup instructions rather than through an empty checkout.
-					if (
-						site &&
-						domain &&
-						mappingIsIncludedInPlan &&
-						domainCartItem.product_slug === DomainProductSlugs.DOMAIN_MAPPING
-					) {
+					if ( site && domain && mappingIsIncludedInPlan ) {
 						try {
 							await wpcom.req.post( `/sites/${ site.ID }/add-domain-mapping`, { domain } );
 
-							return window.location.assign( getDomainConnectionSetupUrl( domain ) );
+							// replace() rather than assign(): Back must not land on a submit step
+							// for a mapping that already exists.
+							return window.location.replace( getDomainConnectionSetupUrl( domain ) );
 						} catch {
 							// The plan already covers the connection, so let checkout retry it. Falling
 							// through to the plans step would ask a paying customer to buy a plan twice.

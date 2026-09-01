@@ -154,7 +154,9 @@ describe( 'domain-and-plan flow use-my-domain navigation', () => {
 			value: {
 				...originalLocation,
 				assign: jest.fn(),
+				replace: jest.fn(),
 				href: 'https://wordpress.com/setup/domain-and-plan/use-my-domain',
+				origin: 'https://wordpress.com',
 			},
 			writable: true,
 			configurable: true,
@@ -184,7 +186,7 @@ describe( 'domain-and-plan flow use-my-domain navigation', () => {
 		expect( wpcom.req.post ).toHaveBeenCalledWith( '/sites/123/add-domain-mapping', {
 			domain: 'example.com',
 		} );
-		expect( window.location.assign ).toHaveBeenCalledWith(
+		expect( window.location.replace ).toHaveBeenCalledWith(
 			'/domains/mapping/example.wordpress.com/setup/example.com?firstVisit=true'
 		);
 		expect( navigate ).not.toHaveBeenCalled();
@@ -196,7 +198,7 @@ describe( 'domain-and-plan flow use-my-domain navigation', () => {
 		await submitUseMyDomain( { ownershipVerificationCompleted: true, domain: 'example.com' } );
 
 		expect( wpcom.req.post ).not.toHaveBeenCalled();
-		expect( window.location.assign ).toHaveBeenCalledWith(
+		expect( window.location.replace ).toHaveBeenCalledWith(
 			'/domains/mapping/example.wordpress.com/setup/example.com?firstVisit=true'
 		);
 	} );
@@ -271,13 +273,18 @@ describe( 'domain-and-plan flow use-my-domain navigation', () => {
 		expect( navigate ).toHaveBeenCalledWith( 'plans' );
 	} );
 
-	it( 'ignores an off-site connection setup URL', async () => {
-		mockQueryArgs = 'domainConnectionSetupUrl=https%3A%2F%2Fevil.example%2F%25s';
+	it.each( [
+		[ 'off-site URL', 'https://evil.example/%s' ],
+		[ 'origin-extension host', 'https://my.wordpress.com.evil.example/%s' ],
+		[ 'userinfo trick', 'https://my.wordpress.com@evil.example/%s' ],
+		[ 'backslash protocol-relative', '/\\evil.example/%s' ],
+	] )( 'ignores a malicious connection setup URL (%s)', async ( _label, template ) => {
+		mockQueryArgs = `domainConnectionSetupUrl=${ encodeURIComponent( template ) }`;
 		( useSite as jest.Mock ).mockReturnValue( PAID_ANNUAL_SITE );
 
 		await submitUseMyDomain( { domainCartItem: MAPPING_CART_ITEM } );
 
-		expect( window.location.assign ).toHaveBeenCalledWith(
+		expect( window.location.replace ).toHaveBeenCalledWith(
 			'/domains/mapping/example.wordpress.com/setup/example.com?firstVisit=true'
 		);
 	} );
@@ -289,7 +296,7 @@ describe( 'domain-and-plan flow use-my-domain navigation', () => {
 
 		await submitUseMyDomain( { domainCartItem: MAPPING_CART_ITEM } );
 
-		expect( window.location.assign ).toHaveBeenCalledWith(
+		expect( window.location.replace ).toHaveBeenCalledWith(
 			'https://my.wordpress.com/domains/example.com/domain-connection-setup'
 		);
 	} );
@@ -303,7 +310,9 @@ describe( 'domain-and-plan flow post-checkout destination', () => {
 			value: {
 				...originalLocation,
 				assign: jest.fn(),
+				replace: jest.fn(),
 				href: 'https://wordpress.com/setup/domain-and-plan/plans',
+				origin: 'https://wordpress.com',
 			},
 			writable: true,
 			configurable: true,
