@@ -3,6 +3,7 @@
  */
 import { amToolProvider } from '../../abilities';
 import { applyUpdateThemeAbility } from '../../abilities/apply-update-theme';
+import { editorNavigateAbility } from '../../abilities/editor-navigate';
 import { getBlockTreeAbility } from '../../abilities/get-block-tree';
 import { restoreCheckpointAbility } from '../../abilities/restore-checkpoint';
 import { setSiteLogoAbility } from '../../abilities/set-site-logo';
@@ -245,6 +246,7 @@ describe( 'loadExternalProviders', () => {
 			abilityShapes( [
 				wpAdminNavigateAbility,
 				applyUpdateThemeAbility,
+				editorNavigateAbility,
 				restoreCheckpointAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
@@ -282,6 +284,7 @@ describe( 'loadExternalProviders', () => {
 			abilityShapes( [
 				wpAdminNavigateAbility,
 				applyUpdateThemeAbility,
+				editorNavigateAbility,
 				restoreCheckpointAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
@@ -387,6 +390,7 @@ describe( 'loadExternalProviders', () => {
 			abilityShapes( [
 				wpAdminNavigateAbility,
 				applyUpdateThemeAbility,
+				editorNavigateAbility,
 				restoreCheckpointAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
@@ -865,6 +869,7 @@ describe( 'loadExternalProviders', () => {
 			abilityShapes( [
 				wpAdminNavigateAbility,
 				applyUpdateThemeAbility,
+				editorNavigateAbility,
 				restoreCheckpointAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
