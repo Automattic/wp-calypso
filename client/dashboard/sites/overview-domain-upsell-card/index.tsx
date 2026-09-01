@@ -13,8 +13,7 @@ import { getCurrentDashboard } from '../../app/routing';
 import { Callout } from '../../components/callout';
 import { TextBlur } from '../../components/text-blur';
 import UpsellCTAButton from '../../components/upsell-cta-button';
-import { getDomainConnectionSetupTemplateUrl } from '../../utils/domain-url';
-import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { dashboardLink, redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { DomainUpsellIllustraction } from './upsell-illustration';
 import type { Site } from '@automattic/api-core';
 
@@ -103,7 +102,10 @@ const DomainUpsellCardContent = ( {
 		getDomainAndPlanUpsellUrl( {
 			siteSlug: site.slug,
 			backUrl,
-			domainConnectionSetupUrl: getDomainConnectionSetupTemplateUrl(),
+			// The literal template rather than getDomainConnectionSetupTemplateUrl():
+			// reading the route's fullPath drags the whole dashboard router into any
+			// test that renders this card. Same path as my-sites/domains/controller.jsx.
+			domainConnectionSetupUrl: dashboardLink( '/domains/%s/domain-connection-setup' ),
 		} )
 	);
 

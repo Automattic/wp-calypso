@@ -43,13 +43,6 @@ jest.mock( 'calypso/lib/domains', () => ( {
 	getDomainAndPlanUpsellUrl: () => '/upsell-url',
 } ) );
 
-// Reading the real template URL pulls the dashboard router, and with it the command
-// palette, into this test.
-jest.mock( '../../../utils/domain-url', () => ( {
-	getDomainConnectionSetupTemplateUrl: () =>
-		'https://my.wordpress.com/domains/%s/domain-connection-setup',
-} ) );
-
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createErrorNotice: mockCreateErrorNotice,
