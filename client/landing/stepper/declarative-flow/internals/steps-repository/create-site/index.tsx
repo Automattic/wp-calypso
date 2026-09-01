@@ -29,6 +29,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import {
 	getWowFunnelArgs,
+	getWowFunnelFromWfm,
 	getWowFunnelSlug,
 	logWowFunnelEvent,
 	wowFunnelSiteIsPaid,
@@ -234,6 +235,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 				funnelSlug: wowFunnelSlug,
 				funnelArgs: getWowFunnelArgs( urlQueryParams ),
 				siteTitle: selectedSiteTitle,
+				fromWfm: getWowFunnelFromWfm( urlQueryParams ),
 			} );
 
 			// Last line of defence against selling a second plan for the same site. The flow entry
