@@ -9,6 +9,8 @@ import type {
 	PerformanceMetricAuditDetailsItem,
 } from '@automattic/api-core';
 
+const breakAllStyle = { wordBreak: 'break-all' } as const;
+
 const renderNode = (
 	data: { [ key: string ]: any },
 	fullPageScreenshot: SitePerformanceReport[ 'fullPageScreenshot' ]
@@ -75,18 +77,13 @@ const PerformanceInsightTable = ( {
 						return getFormattedNumber( value.value );
 					case 'url':
 					case 'source-location':
-						if ( typeof value.location === 'object' ) {
-							return (
-								<span style={ { wordBreak: 'break-all' } }>
-									{ [
-										value.location.url,
-										value.location.line,
-										value.location.column,
-									].join( ':' ) }
-								</span>
-							);
-						}
-						return <span style={ { wordBreak: 'break-all' } }>{ value?.url }</span>;
+						return (
+							<span style={ breakAllStyle }>
+								{ typeof value.location === 'object'
+									? [ value.location.url, value.location.line, value.location.column ].join( ':' )
+									: value?.url }
+							</span>
+						);
 				}
 
 				return value?.value;
@@ -106,7 +103,7 @@ const PerformanceInsightTable = ( {
 					case 'score':
 						return <Text intent={ Number( value ) > 6 ? 'error' : 'warning' }>{ value }</Text>;
 					default:
-						return <span style={ { wordBreak: 'break-all' } }>{ value }</span>;
+						return <span style={ breakAllStyle }>{ value }</span>;
 				}
 			}
 			return value;
