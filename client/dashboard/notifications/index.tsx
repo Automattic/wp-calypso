@@ -7,7 +7,8 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { filterSortAndPaginate, DataViews as WPDataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { DataViews, DataViewsCard } from '../components/dataviews';
@@ -133,6 +134,18 @@ function InboxList( {
 		}
 	}, [ startPosition, notes, isLoading, hasMore, infiniteScrollHandler ] );
 
+	// DataViews scrolls its own layout container and offers no footer slot, so
+	// the foot is portaled in after the rows to scroll with them.
+	const sentinelRef = useRef< HTMLDivElement >( null );
+	const [ scrollContainer, setScrollContainer ] = useState< HTMLElement | null >( null );
+	useLayoutEffect( () => {
+		setScrollContainer(
+			sentinelRef.current?.parentElement?.querySelector< HTMLElement >(
+				'.dataviews-layout__container'
+			) ?? null
+		);
+	}, [ category, data.length ] );
+
 	if ( ! hasInitiallyLoadedRef.current ) {
 		return (
 			<VStack alignment="center" style={ { padding: '40px 0' } }>
@@ -143,6 +156,27 @@ function InboxList( {
 
 	// Spinner instead of an empty message while the view may still be filling.
 	const showEmptyLoader = hasMore || isLoading;
+
+	const foot = (
+		<>
+			{ hasMore && data.length > 0 && isLoading && (
+				// DataViews suppresses its own load-more spinner when notes are
+				// grouped, so this stands in for it, below the list rows.
+				<VStack alignment="center" style={ { flexShrink: 0, padding: '12px 0' } }>
+					<Spinner />
+				</VStack>
+			) }
+			{ endReason && (
+				<VStack alignment="center" style={ { flexShrink: 0, padding: '12px 0' } }>
+					<Text variant="muted">
+						{ endReason === 'cap'
+							? __( 'Showing your most recent notifications.' )
+							: __( 'You’re all caught up.' ) }
+					</Text>
+				</VStack>
+			) }
+		</>
+	);
 
 	return (
 		<DataViews< Note >
@@ -174,22 +208,8 @@ function InboxList( {
 			onChangeSelection={ ( selection ) => onSelectNote( selection[ 0 ] ) }
 		>
 			<WPDataViews.Layout />
-			{ hasMore && data.length > 0 && isLoading && (
-				// DataViews suppresses its own load-more spinner when notes are
-				// grouped, so this stands in for it, below the list rows.
-				<VStack alignment="center" style={ { flexShrink: 0, padding: '12px 0' } }>
-					<Spinner />
-				</VStack>
-			) }
-			{ endReason && (
-				<VStack alignment="center" style={ { flexShrink: 0, padding: '12px 0' } }>
-					<Text variant="muted">
-						{ endReason === 'cap'
-							? __( 'Showing your most recent notifications.' )
-							: __( 'You’re all caught up.' ) }
-					</Text>
-				</VStack>
-			) }
+			<div ref={ sentinelRef } hidden />
+			{ scrollContainer ? createPortal( foot, scrollContainer ) : foot }
 		</DataViews>
 	);
 }
