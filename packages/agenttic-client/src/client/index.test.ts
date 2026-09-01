@@ -1188,6 +1188,216 @@ describe( 'Client', () => {
 		} );
 	} );
 
+	describe( 'Dispatchable (non-advertised) tools', () => {
+		const dispatchableTool = {
+			id: 'spec_confirm',
+			name: 'Spec Confirm',
+			description: 'Backend-dispatched confirmation step',
+			input_schema: {
+				type: 'object' as const,
+				properties: {},
+			},
+		};
+
+		const inputRequiredEventFor = ( toolId: string ) =>
+			JSON.stringify( {
+				jsonrpc: '2.0',
+				id: 'req-dispatchable',
+				result: {
+					type: 'TaskStatusUpdateEvent',
+					taskId: 'task-dispatchable',
+					status: {
+						state: 'input-required',
+						message: {
+							messageId: 'resp-dispatchable',
+							role: 'agent',
+							kind: 'message',
+							parts: [
+								{
+									type: 'data',
+									data: {
+										toolCallId: 'call-dispatchable',
+										toolId,
+										arguments: { confirmed: true },
+									},
+								},
+							],
+						},
+						final: true,
+					},
+					sessionId: 'session-dispatchable',
+				},
+			} );
+
+		const completionEvent = JSON.stringify( {
+			jsonrpc: '2.0',
+			id: 'req-dispatchable-complete',
+			result: {
+				type: 'TaskStatusUpdateEvent',
+				taskId: 'task-dispatchable',
+				status: {
+					state: 'completed',
+					message: {
+						role: 'agent',
+						kind: 'message',
+						parts: [ { type: 'text', text: 'Confirmed.' } ],
+					},
+					final: true,
+				},
+				sessionId: 'session-dispatchable',
+			},
+		} );
+
+		const mockSSEResponse = ( payload: string ) => ( {
+			ok: true,
+			status: 200,
+			headers: new Headers( { 'content-type': 'text/event-stream' } ),
+			body: new ReadableStream( {
+				start( controller ) {
+					controller.enqueue( new TextEncoder().encode( `data: ${ payload }\n\n` ) );
+					controller.close();
+				},
+			} ),
+		} );
+
+		it( 'executes a backend-dispatched tool that is listed only in getDispatchableTools', async () => {
+			// The input-required caller is the backend, not the model, so a
+			// tool can be executable without ever being advertised to the
+			// agent (BSKY-2024).
+			let executedToolId: string | undefined;
+			const mockToolProvider: ToolProvider = {
+				async getAvailableTools() {
+					return [];
+				},
+				async getDispatchableTools() {
+					return [ dispatchableTool ];
+				},
+				async executeTool( toolId: string ) {
+					executedToolId = toolId;
+					return {
+						result: { ok: true },
+						returnToAgent: true,
+					};
+				},
+			};
+
+			mockFetch.mockResolvedValueOnce( mockSSEResponse( inputRequiredEventFor( 'spec_confirm' ) ) );
+			mockFetch.mockResolvedValueOnce( mockSSEResponse( completionEvent ) );
+
+			const client = createClient( {
+				agentId: 'test-agent',
+				toolProvider: mockToolProvider,
+			} );
+
+			const result = await sendMessageAndWait( client, {
+				message: createTextMessage( 'Confirm the spec' ),
+			} );
+
+			expect( executedToolId ).toBe( 'spec_confirm' );
+			expect( mockFetch ).toHaveBeenCalledTimes( 2 );
+			expect( result.final ).toBe( true );
+			expect( result.text ).toBe( 'Confirmed.' );
+		} );
+
+		it( 'does not execute a dispatchable-only tool from a running status echo', async () => {
+			// Dispatchable tools are backend-dispatched only. A running echo
+			// reports a model-chosen call, and the model can only choose
+			// advertised tools, so a dispatchable match here would mean the
+			// agent invoked a tool it was never offered.
+			const executedTools: string[] = [];
+			const mockToolProvider: ToolProvider = {
+				async getAvailableTools() {
+					return [];
+				},
+				async getDispatchableTools() {
+					return [ dispatchableTool ];
+				},
+				async executeTool( toolId: string ) {
+					executedTools.push( toolId );
+					return { result: { ok: true }, returnToAgent: true };
+				},
+			};
+
+			const runningEvent = JSON.stringify( {
+				jsonrpc: '2.0',
+				id: 'req-running-dispatchable',
+				result: {
+					type: 'TaskStatusUpdateEvent',
+					taskId: 'task-running-dispatchable',
+					status: {
+						state: 'running',
+						message: {
+							messageId: 'running-dispatchable',
+							role: 'agent',
+							kind: 'message',
+							parts: [
+								{
+									type: 'data',
+									data: {
+										toolCallId: 'call-running',
+										toolId: 'spec_confirm',
+										arguments: { confirmed: true },
+									},
+								},
+							],
+						},
+						final: true,
+					},
+				},
+			} );
+
+			mockFetch.mockResolvedValueOnce( mockSSEResponse( runningEvent ) );
+
+			const client = createClient( {
+				agentId: 'test-agent',
+				toolProvider: mockToolProvider,
+			} );
+
+			const updates = [];
+			for await ( const update of client.sendMessageStream( {
+				message: createTextMessage( 'Test message' ),
+			} ) ) {
+				updates.push( update );
+			}
+
+			expect( executedTools ).toHaveLength( 0 );
+			expect( updates ).toHaveLength( 1 );
+			expect( updates[ 0 ].status.state ).toBe( 'running' );
+		} );
+
+		it( 'leaves an input-required update final when the tool matches no list', async () => {
+			// Without a matching advertised or dispatchable tool the handoff
+			// cannot run; the update must pass through as final instead of
+			// hanging the stream on a continuation that will never come.
+			const mockToolProvider: ToolProvider = {
+				async getAvailableTools() {
+					return [];
+				},
+				async getDispatchableTools() {
+					return [ dispatchableTool ];
+				},
+				async executeTool() {
+					throw new Error( 'Should not execute' );
+				},
+			};
+
+			mockFetch.mockResolvedValueOnce( mockSSEResponse( inputRequiredEventFor( 'unknown_tool' ) ) );
+
+			const client = createClient( {
+				agentId: 'test-agent',
+				toolProvider: mockToolProvider,
+			} );
+
+			const result = await sendMessageAndWait( client, {
+				message: createTextMessage( 'Confirm the spec' ),
+			} );
+
+			expect( mockFetch ).toHaveBeenCalledTimes( 1 );
+			expect( result.final ).toBe( true );
+			expect( result.status.state ).toBe( 'input-required' );
+		} );
+	} );
+
 	describe( 'File part preservation in conversation history', () => {
 		it( 'should preserve file parts in conversation history when continuing after tool execution', async () => {
 			// Arrange: Create a mock tool provider with a tool that returns to agent

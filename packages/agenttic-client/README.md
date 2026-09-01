@@ -552,9 +552,29 @@ type AuthProvider = () => Promise< Record< string, string > >;
 type ContextProvider = { getClientContext: () => any };
 type ToolProvider = {
 	getAvailableTools: () => Promise< Tool[] >;
+	getDispatchableTools?: () => Promise< Tool[] >;
 	executeTool: ( toolId: string, args: any ) => Promise< any >;
 };
 ```
+
+### Advertised vs dispatchable tools
+
+`getAvailableTools()` is the advertisement list: every tool it returns is
+offered to the agent as callable, and a `running`-state echo of a
+model-chosen call is dispatched only against this list.
+
+`getDispatchableTools()` covers the other direction. Tools it returns are
+**never advertised to the agent**, but the client will still execute them
+(through the same `executeTool`) when the **backend** dispatches them in an
+`input-required` handoff. Use it for backend-driven steps the model must not
+be able to invoke on its own — a confirmation step, for example.
+
+The gate is per message: when none of an `input-required` message's tool
+calls match either list (or a registered ability), nothing is executed —
+the update stays final and a debug log line explains which tool ids went
+unhandled. When at least one call matches, every call in that message is
+dispatched through `executeTool`, matched or not, so a provider's
+`executeTool` should be prepared to reject tool ids it does not recognize.
 
 ## Development
 

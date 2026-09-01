@@ -375,6 +375,16 @@ export interface ToolExecutionResult {
 
 export interface ToolProvider {
 	getAvailableTools?: () => Promise< Tool[] >;
+	/**
+	 * Tools the client executes when the backend dispatches them in an
+	 * `input-required` handoff, WITHOUT advertising them to the agent as
+	 * callable. Use this for backend-driven handoffs the model must not be
+	 * able to invoke on its own (a confirmation step, for example). Tools
+	 * listed here are executed through `executeTool`, exactly like
+	 * advertised tools; they are ignored for `running`-state echoes, which
+	 * only ever dispatch advertised tools.
+	 */
+	getDispatchableTools?: () => Promise< Tool[] >;
 	executeTool?: (
 		toolId: string,
 		args: any,

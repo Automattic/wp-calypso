@@ -157,20 +157,31 @@ interface MatchingToolCallbacksOptions {
 	 * state branch in `processAgentResponseStream`.
 	 */
 	includeAbilities?: boolean;
+	/**
+	 * Whether a tool from `getDispatchableTools` counts as a match. Defaults
+	 * to true.
+	 *
+	 * Dispatchable tools are backend-dispatched only: they are never
+	 * advertised to the agent, so they must never match for `running`-state
+	 * echoes of model-chosen calls. Only the `input-required` handoff, where
+	 * the backend is the caller, may count them.
+	 */
+	includeDispatchable?: boolean;
 }
 
 /**
  * Check if any tool calls in a message have matching callbacks
- * @param toolProvider             - The tool provider to check
- * @param message                  - The message containing tool calls
- * @param options                  - Which handler kinds count as a match
- * @param options.includeAbilities - Whether a registered ability counts as a match
+ * @param toolProvider                - The tool provider to check
+ * @param message                     - The message containing tool calls
+ * @param options                     - Which handler kinds count as a match
+ * @param options.includeAbilities    - Whether a registered ability counts as a match
+ * @param options.includeDispatchable - Whether a tool from getDispatchableTools counts as a match
  * @returns Promise resolving to boolean indicating if any tools can be executed
  */
 async function hasMatchingToolCallbacks(
 	toolProvider: any,
 	message: Message,
-	{ includeAbilities = true }: MatchingToolCallbacksOptions = {}
+	{ includeAbilities = true, includeDispatchable = true }: MatchingToolCallbacksOptions = {}
 ): Promise< boolean > {
 	if ( ! toolProvider || ! message ) {
 		return false;
@@ -181,20 +192,28 @@ async function hasMatchingToolCallbacks(
 		return false;
 	}
 
-	if ( toolProvider.getAvailableTools ) {
-		try {
-			const availableTools = await toolProvider.getAvailableTools();
-
-			const hasMatchingTool =
-				!! toolProvider.executeTool &&
-				toolCalls.some( ( toolCall ) =>
-					availableTools.some( ( tool: any ) => tool.id === toolCall.data.toolId )
-				);
-			if ( hasMatchingTool ) {
-				return true;
+	// Advertised and dispatchable tools match by id and execute through the
+	// same executeTool; only which getter supplies the list differs.
+	const toolListGetters = [
+		toolProvider.getAvailableTools,
+		includeDispatchable ? toolProvider.getDispatchableTools : undefined,
+	];
+	if ( toolProvider.executeTool ) {
+		for ( const getTools of toolListGetters ) {
+			if ( ! getTools ) {
+				continue;
 			}
-		} catch {
-			// Continue checking abilities when tool discovery fails.
+			try {
+				const tools = await getTools.call( toolProvider );
+				const hasMatchingTool = toolCalls.some( ( toolCall ) =>
+					tools.some( ( tool: any ) => tool.id === toolCall.data.toolId )
+				);
+				if ( hasMatchingTool ) {
+					return true;
+				}
+			} catch {
+				// Continue checking the other handler kinds when tool discovery fails.
+			}
 		}
 	}
 
@@ -543,13 +562,25 @@ async function* processAgentResponseStream(
 			update.status.state === 'input-required' && update.status.message && toolProvider
 				? update.status.message
 				: undefined;
+		const inputRequiredCalls = inputRequiredMessage
+			? extractToolCallsFromMessage( inputRequiredMessage )
+			: [];
 		const hasInputRequiredToolCalls = inputRequiredMessage
 			? await hasMatchingToolCallbacks( toolProvider, inputRequiredMessage )
 			: false;
-		const inputRequiredToolCalls =
-			hasInputRequiredToolCalls && inputRequiredMessage
-				? extractToolCallsFromMessage( inputRequiredMessage )
-				: [];
+		const inputRequiredToolCalls = hasInputRequiredToolCalls ? inputRequiredCalls : [];
+
+		// A dropped handoff otherwise fails silently: the update passes
+		// through as final and the stream just ends, with nothing to say the
+		// backend asked for a tool nobody here can run.
+		if ( ! hasInputRequiredToolCalls && inputRequiredCalls.length > 0 ) {
+			logger(
+				'No handler for input-required tool calls %o; the update stays final. ' +
+					'Advertise the tool via getAvailableTools, or list it in ' +
+					'getDispatchableTools if the agent must not call it.',
+				inputRequiredCalls.map( ( toolCall ) => toolCall.data.toolId )
+			);
+		}
 
 		// Capture sessionId from server response for fresh chats
 		// This ensures continuations use the sessionId assigned by the server
@@ -581,6 +612,7 @@ async function* processAgentResponseStream(
 			toolProvider &&
 			( await hasMatchingToolCallbacks( toolProvider, update.status.message, {
 				includeAbilities: false,
+				includeDispatchable: false,
 			} ) )
 		) {
 			// A provider can expose both advertised tools and abilities (the
