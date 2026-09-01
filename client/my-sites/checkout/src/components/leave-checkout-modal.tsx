@@ -25,7 +25,11 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 		'checkoutBackUrlDomains'
 	);
 	const cartKey = useCartKey();
-	const { responseCart, replaceProductsInCart } = useShoppingCart( cartKey );
+	const {
+		responseCart,
+		replaceProductsInCart,
+		isLoading: isCartLoading,
+	} = useShoppingCart( cartKey );
 	const giftBackUrl = getGiftCheckoutBackUrl( {
 		giftDetails: responseCart.gift_details,
 		referrer: document.referrer,
@@ -68,28 +72,24 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 		'/checkout/failed-purchases'
 	);
 
-	const clickClose = () => {
+	const confirmOrLeave = ( backUrl?: string ) => {
 		// A plain close must use the default back URL, not a step-back URL left
 		// over from an earlier `clickStepBack` whose modal was dismissed.
-		setStepBackUrl( undefined );
+		setStepBackUrl( backUrl );
 		if ( shouldClearCartWhenLeaving && responseCart.products.length > 0 ) {
 			recordTracksEvent( 'calypso_masterbar_checkout_close_modal_displayed' );
 			setIsModalVisible( true );
 			return;
 		}
-		closeAndLeave( {
-			closedWithoutConfirmation: true,
-		} );
+		closeAndLeave( { closedWithoutConfirmation: true, forceBackUrl: backUrl } );
+	};
+
+	const clickClose = () => {
+		confirmOrLeave();
 	};
 
 	const clickStepBack = ( destinationUrl: string ) => {
-		setStepBackUrl( destinationUrl );
-		if ( shouldClearCartWhenLeaving && responseCart.products.length > 0 ) {
-			recordTracksEvent( 'calypso_masterbar_checkout_close_modal_displayed' );
-			setIsModalVisible( true );
-			return;
-		}
-		closeAndLeave( { closedWithoutConfirmation: true, forceBackUrl: destinationUrl } );
+		confirmOrLeave( destinationUrl );
 	};
 
 	const clearCartAndLeave = async () => {
@@ -128,6 +128,11 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 	return {
 		isModalVisible,
 		setIsModalVisible,
+		// The cart answers both questions "Back" depends on: whether to ask about
+		// saving the cart (does it hold anything?) and, for a gift checkout, where
+		// to go (`gift_details`). Neither is known until the cart arrives, so the
+		// control stays disabled rather than acting on a placeholder.
+		isLeaveDisabled: isCartLoading,
 		clickClose,
 		clickStepBack,
 		closeAndLeave,

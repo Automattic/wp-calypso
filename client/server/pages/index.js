@@ -728,6 +728,8 @@ function setUpCSP( req, res, next ) {
 			'https://*.google.sm', // Google Ads remarketing pixels (San Marino)
 			'https://*.google.com.ng', // Google Ads remarketing pixels (Nigeria)
 			'https://*.google.co.ma', // Google Ads remarketing pixels (Morocco)
+			'https://*.google.ro', // Google Ads remarketing pixels (Morocco)
+			'https://*.googletagmanager.com', // Google Tag Manager
 			'https://gravatar.com', // Gravatar assets (root domain)
 			'https://linkmaker.itunes.apple.com', // Apple App Store badges
 			'https://cdn.smooch.io', // Smooch/Sunshine Conversations images
@@ -797,12 +799,13 @@ function setUpCSP( req, res, next ) {
 			'https://www.facebook.com', // Facebook Pixel tracking endpoint
 			'https://bat.bing.com', // Bing Ads API
 			'https://px.ads.linkedin.com', // LinkedIn ads pixel
-			'https://survey.survicate.com', // Survicate API
+			'https://*.survicate.com', // Survicate API
 			'*.sentry.io',
 			'*.reddit.com',
 			'https://video.bsky.app', // Bluesky video manifests (hls.js fetches the HLS playlist for Reader ATmosphere thread view)
 			'https://video.cdn.bsky.app', // Bluesky video CDN (segment URLs 302-redirect here)
 			'https://analytics.tiktok.com', // TikTok tracking pixel
+			'https://analytics-ipv6.tiktokw.us', // TikTok tracking pixel
 			'https://a.quora.com', //Quora tracking pixel
 			// Payment provider APIs (for tokenization and payment processing)
 			'*.stripe.com', // Stripe API calls
@@ -814,7 +817,9 @@ function setUpCSP( req, res, next ) {
 			'wss://*.zendesk.com', // Zendesk WebSocket connections
 			'https://ekr.zdassets.com', // Zendesk composer
 			'https://*.config.smooch.io', // Smooch/Sunshine Conversations config
-			'https://bzr.openai.com', // OpenAI Ads tracking pixel
+			'https://*.openai.com', // OpenAI Ads tracking pixel
+			'https://t.co', // Twitter tracking pixel
+			'https://analytics.twitter.com', // Twitter/X analytics tracking pixels
 		],
 		'report-uri': [ '/cspreport' ],
 	};
