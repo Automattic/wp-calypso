@@ -107,12 +107,11 @@ class VerificationCodeForm extends Component {
 
 		let buttonText = translate( 'Continue' );
 		let helpText = translate( 'Enter the code from your authenticator app.' );
-		let labelText = translate( '6-Digit code' );
+		let labelText = translate( 'Verification code' );
 		let smallPrint;
 
 		if ( twoFactorEmailNonce ) {
 			helpText = translate( 'Enter the code from the email we sent you.' );
-			labelText = translate( '9-Digit code' );
 		}
 
 		if ( twoFactorAuthType === 'sms' ) {
