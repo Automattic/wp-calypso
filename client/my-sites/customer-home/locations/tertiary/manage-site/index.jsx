@@ -12,6 +12,7 @@ import {
 	ACTION_QUICK_POST,
 	ACTION_WP_FOR_TEAMS_QUICK_LINKS,
 	FEATURE_GO_MOBILE,
+	FEATURE_JETPACK_PROMO,
 	FEATURE_QUICK_START,
 	FEATURE_SUPPORT,
 	FEATURE_SITE_PREVIEW,
@@ -20,6 +21,7 @@ import {
 } from 'calypso/my-sites/customer-home/cards/constants';
 import AppPromo from 'calypso/my-sites/customer-home/cards/features/app-promo';
 import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-search';
+import JetpackPromo from 'calypso/my-sites/customer-home/cards/features/jetpack-promo';
 import QuickStart from 'calypso/my-sites/customer-home/cards/features/quick-start';
 import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
 import Stats from 'calypso/my-sites/customer-home/cards/features/stats';
@@ -30,6 +32,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const cardComponents = {
 	[ FEATURE_GO_MOBILE ]: AppPromo,
+	[ FEATURE_JETPACK_PROMO ]: JetpackPromo,
 	[ FEATURE_SUPPORT ]: HelpSearch,
 	[ FEATURE_SITE_PREVIEW ]: SitePreview,
 	[ ACTION_QUICK_LINKS ]: QuickLinks,
@@ -56,6 +59,7 @@ const ManageSite = () => {
 
 	return (
 		<>
+			<JetpackPromo />
 			{ cards.map(
 				( card, index ) =>
 					cardComponents[ card ] &&

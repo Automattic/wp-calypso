@@ -14,6 +14,7 @@ export const EDUCATION_BLOGGING_QUICK_START = 'home-education-blogging-quick-sta
 export const EDUCATION_SITE_EDITOR_QUICK_START = 'home-education-site-editor-quick-start';
 export const FEATURE_DOMAIN_UPSELL = 'home-feature-domain-upsell';
 export const FEATURE_GO_MOBILE = 'home-feature-go-mobile';
+export const FEATURE_JETPACK_PROMO = 'home-feature-jetpack-promo';
 export const FEATURE_QUICK_START = 'home-feature-quick-start';
 export const FEATURE_STATS = 'home-feature-stats';
 export const FEATURE_SUPPORT = 'home-feature-support';
