@@ -72,7 +72,7 @@ export default function SearchResultsModern( {
 	// Get wpcom themes.
 	const {
 		getPrice,
-		themes: wpcomThemes,
+		themes: allWpcomThemes,
 		isActive,
 		isInstalling,
 		isLivePreviewStarted,
@@ -82,6 +82,14 @@ export default function SearchResultsModern( {
 		filterString,
 		getThemeDetailsUrl,
 	} = useThemeCollection( wpcomQuery );
+
+	// The themes endpoint returns retired themes whenever there is a search term, so that a
+	// theme retired on wpcom still takes precedence over its wporg counterpart. They are not
+	// activatable, so drop them here as `interlaceThemes` does for the classic showcase.
+	const wpcomThemes = useMemo(
+		() => allWpcomThemes.filter( ( theme: Theme ) => ! theme.retired ),
+		[ allWpcomThemes ]
+	);
 
 	// Get wporg themes from Redux.
 	const wporgThemes: Theme[] =
