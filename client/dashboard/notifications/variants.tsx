@@ -16,6 +16,21 @@ export type InboxListSlotProps = {
 	onFirstNoteLoaded: ( noteId: string ) => void;
 };
 
+/** Props the detail pane slot receives (the default is NoteDetail). */
+export type DetailPaneSlotProps = {
+	noteId: string;
+	onClose: () => void;
+	onPrevious?: ( () => void ) | null;
+	onNext?: ( () => void ) | null;
+};
+
+/** The rendered panes, for a variant that arranges the screen itself. */
+export type ShellSlotProps = {
+	list: React.ReactNode;
+	detail: React.ReactNode;
+	hasSelectedNote: boolean;
+};
+
 /**
  * One testable version of the inbox. Everything is optional: a variant can be
  * a CSS skin (className), restyle one note kind (detailViews), replace the
@@ -31,8 +46,12 @@ export type InboxVariant = {
 	detailViews?: DetailViewOverrides;
 	/** Replace the detail content for every kind at once. */
 	Detail?: ComponentType< { view: NoteView } >;
+	/** Replace the whole detail pane, frame and nav included. */
+	DetailPane?: ComponentType< DetailPaneSlotProps >;
 	/** Replace the list pane. */
 	List?: ComponentType< InboxListSlotProps >;
+	/** Arrange the screen itself (panes come in rendered; wrap or place them freely). */
+	Shell?: ComponentType< ShellSlotProps >;
 };
 
 /**

@@ -312,6 +312,32 @@ function NotificationsInbox( {
 			: null;
 
 	const List = variant.List ?? InboxList;
+	const DetailPane = variant.DetailPane ?? NoteDetail;
+
+	const listNode = (
+		<DataViewsCard>
+			<List
+				key={ category }
+				category={ category }
+				selectedNoteId={ note }
+				onSelectNote={ setSelectedNote }
+				onFirstNoteLoaded={ handleFirstNoteLoaded }
+			/>
+		</DataViewsCard>
+	);
+
+	const detailNode = note ? (
+		<DetailPane
+			noteId={ note }
+			onClose={ () => setSelectedNote( undefined ) }
+			onPrevious={ onPrevious }
+			onNext={ onNext }
+		/>
+	) : (
+		<VStack alignment="center" className="dashboard-notifications-inbox__detail-placeholder">
+			<Text variant="muted">{ __( 'Select a notification to read it.' ) }</Text>
+		</VStack>
+	);
 
 	return (
 		<PageLayout
@@ -323,40 +349,18 @@ function NotificationsInbox( {
 			}
 		>
 			<InboxVariantProvider value={ variant }>
-				<div
-					className={ `dashboard-notifications-inbox__layout ${ variant.className ?? '' } ${
-						note ? 'has-selected-note' : ''
-					}` }
-				>
-					<div className="dashboard-notifications-inbox__list">
-						<DataViewsCard>
-							<List
-								key={ category }
-								category={ category }
-								selectedNoteId={ note }
-								onSelectNote={ setSelectedNote }
-								onFirstNoteLoaded={ handleFirstNoteLoaded }
-							/>
-						</DataViewsCard>
+				{ variant.Shell ? (
+					<variant.Shell list={ listNode } detail={ detailNode } hasSelectedNote={ !! note } />
+				) : (
+					<div
+						className={ `dashboard-notifications-inbox__layout ${ variant.className ?? '' } ${
+							note ? 'has-selected-note' : ''
+						}` }
+					>
+						<div className="dashboard-notifications-inbox__list">{ listNode }</div>
+						<div className="dashboard-notifications-inbox__detail-pane">{ detailNode }</div>
 					</div>
-					<div className="dashboard-notifications-inbox__detail-pane">
-						{ note ? (
-							<NoteDetail
-								noteId={ note }
-								onClose={ () => setSelectedNote( undefined ) }
-								onPrevious={ onPrevious }
-								onNext={ onNext }
-							/>
-						) : (
-							<VStack
-								alignment="center"
-								className="dashboard-notifications-inbox__detail-placeholder"
-							>
-								<Text variant="muted">{ __( 'Select a notification to read it.' ) }</Text>
-							</VStack>
-						) }
-					</div>
-				</div>
+				) }
 			</InboxVariantProvider>
 		</PageLayout>
 	);
