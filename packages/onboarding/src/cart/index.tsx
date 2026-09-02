@@ -35,6 +35,7 @@ interface GetNewSiteParams {
 	provisionTarget?: string | null;
 	wowFunnel?: string;
 	wowFunnelArgs?: Record< string, string >;
+	wowFunnelFromWfm?: boolean;
 }
 
 type NewSiteParams = {
@@ -59,6 +60,7 @@ type NewSiteParams = {
 		early_provision_target?: string;
 		wow_funnel?: string;
 		wow_funnel_args?: Record< string, string >;
+		from_wfm?: 1;
 	};
 	validate: boolean;
 };
@@ -114,6 +116,7 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 		provisionTarget,
 		wowFunnel,
 		wowFunnelArgs,
+		wowFunnelFromWfm,
 	} = params;
 
 	// We will use the default annotation instead of theme annotation as fallback,
@@ -145,6 +148,9 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 			// Input for the funnel's server-side follow-up (e.g. the blueprint archive to import).
 			...( wowFunnelArgs &&
 				Object.keys( wowFunnelArgs ).length > 0 && { wow_funnel_args: wowFunnelArgs } ),
+			// CTA opt-in to claim a pre-provisioned site from the WoW fleet. The server falls
+			// back to the ordinary funnel build when no fleet site can be claimed.
+			...( wowFunnel && wowFunnelFromWfm && { from_wfm: 1 as const } ),
 		},
 		validate: false,
 	};
@@ -173,7 +179,8 @@ export const createSite = async (
 	provisionTarget?: string | null,
 	aiLaunchpadEnabled?: boolean,
 	wowFunnel?: string,
-	wowFunnelArgs?: Record< string, string >
+	wowFunnelArgs?: Record< string, string >,
+	wowFunnelFromWfm?: boolean
 ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
 
@@ -192,6 +199,7 @@ export const createSite = async (
 		provisionTarget,
 		wowFunnel,
 		wowFunnelArgs,
+		wowFunnelFromWfm,
 	} );
 
 	// if ( isEmpty( bearerToken ) && 'onboarding-registrationless' === flowToCheck ) {

@@ -53,6 +53,7 @@ import {
 	getWowFunnelArgs,
 	getWowFunnelConfig,
 	getWowFunnelDest,
+	getWowFunnelFromWfm,
 	getWowFunnelSlug,
 	isKnownWowFunnel,
 	logWowFunnelEvent,
@@ -837,6 +838,7 @@ const onboarding: FlowV2< typeof initialize > = {
 			const queryParams = new URLSearchParams( window.location.search );
 			const funnelSlug = getWowFunnelSlug( queryParams );
 			const funnelArgs = getWowFunnelArgs( queryParams );
+			const fromWfm = getWowFunnelFromWfm( queryParams );
 			if ( ! funnelSlug ) {
 				return;
 			}
@@ -862,7 +864,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					forgetWowFunnelRun( funnelSlug, funnelArgs );
 				}
 
-				await startWowFunnelSite( { funnelSlug, funnelArgs } ).catch( () => {
+				await startWowFunnelSite( { funnelSlug, funnelArgs, fromWfm } ).catch( () => {
 					// Errors are logged in the util; the create-site step retries as a fallback.
 				} );
 			} )();
