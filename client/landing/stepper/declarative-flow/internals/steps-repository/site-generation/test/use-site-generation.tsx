@@ -168,7 +168,7 @@ describe( 'useSiteGeneration', () => {
 				useSiteGeneration( {
 					siteIdentifier: '123',
 					editorUrl:
-						'https://example.wordpress.com/wp-admin/site-editor.php?easy-mode=true&spec_id=spec-1',
+						'https://example.wordpress.com/wp-admin/site-editor.php?easy-mode=true&source=dashboard',
 					steps: STEPS,
 				} )
 			);
@@ -182,7 +182,7 @@ describe( 'useSiteGeneration', () => {
 				} );
 			} );
 			expect( window.location.assign ).toHaveBeenCalledWith(
-				'https://example.wordpress.com/wp-admin/site-editor.php?easy-mode=true&p=%2Fpage%2F12&canvas=edit&spec_id=spec-1'
+				'https://example.wordpress.com/wp-admin/site-editor.php?easy-mode=true&p=%2Fpage%2F12&canvas=edit&source=dashboard'
 			);
 		} finally {
 			Object.defineProperty( window, 'location', {
