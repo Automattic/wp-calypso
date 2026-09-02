@@ -54,6 +54,7 @@ class PasswordlessSignupForm extends Component {
 		// activationEmailFrom. Guards the submit itself, not just the button, so Enter can't slip past.
 		isSubmitBlocked: PropTypes.bool,
 		useConnectScreenActions: PropTypes.bool,
+		hasCoreInputStyles: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -429,7 +430,9 @@ class PasswordlessSignupForm extends Component {
 			<div className="signup-form__passwordless-form-wrapper">
 				<LoggedOutForm onSubmit={ this.onFormSubmit } noValidate>
 					<ValidationFieldset errorMessages={ errorMessages }>
-						<FormLabel htmlFor="signup-email">{ this.getLabelText() }</FormLabel>
+						<FormLabel htmlFor="signup-email" hasCoreStylesNoCaps={ this.props.hasCoreInputStyles }>
+							{ this.getLabelText() }
+						</FormLabel>
 						<FormTextInput
 							autoCapitalize="off"
 							autoCorrect="off"
@@ -442,6 +445,7 @@ class PasswordlessSignupForm extends Component {
 							onBlur={ this.onInputBlur }
 							disabled={ isSubmitting || !! this.props.disabled }
 							placeholder={ this.props.inputPlaceholder }
+							hasCoreStyles={ this.props.hasCoreInputStyles }
 							// eslint-disable-next-line jsx-a11y/no-autofocus -- It's the only field on the page
 							autoFocus
 						/>
