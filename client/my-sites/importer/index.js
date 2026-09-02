@@ -1,11 +1,15 @@
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { navigation, redirectWithoutSite, sites, siteSelection } from 'calypso/my-sites/controller';
+import { navigation, redirectWithoutSite, siteSelection } from 'calypso/my-sites/controller';
 import { importSite, importSubstackSite } from 'calypso/my-sites/importer/controller';
 import addTracker from './tracker';
 
 export default function () {
-	page( '/import', siteSelection, navigation, sites, makeLayout, clientRender );
+	page( '/import', () => {
+		window.location.replace(
+			'/setup/site-migration/sitePicker?platform=unknown&ref=calypso-importer'
+		);
+	} );
 
 	page(
 		'/import/:site_id',
