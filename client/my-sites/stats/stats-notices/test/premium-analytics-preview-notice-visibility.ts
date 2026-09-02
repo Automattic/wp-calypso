@@ -15,7 +15,7 @@ const eligibleSite: StatsNoticeProps = {
 	siteId: 123,
 	isOdysseyStats: false,
 	canManageOptions: true,
-	hasAdvancedStats: true,
+	hasCommercialStats: true,
 	isPremiumAnalyticsEnabled: false,
 	isVip: false,
 	isP2: false,
@@ -64,14 +64,14 @@ describe( 'premium_analytics_preview notice visibility', () => {
 	 * The preview is for sites that already have UTM, device and region/city views. A WPCOM site on
 	 * FEATURE_STATS_PAID has those gated, so "paid stats" alone is not enough.
 	 */
-	it( 'stays hidden for a site without the advanced Stats features', () => {
+	it( 'stays hidden for a site without the commercial Stats features', () => {
 		expect(
-			premiumAnalyticsPreviewNotice?.isVisibleFunc( { ...eligibleSite, hasAdvancedStats: false } )
+			premiumAnalyticsPreviewNotice?.isVisibleFunc( { ...eligibleSite, hasCommercialStats: false } )
 		).toBe( false );
 		expect(
 			premiumAnalyticsPreviewNotice?.isVisibleFunc( {
 				...eligibleSite,
-				hasAdvancedStats: undefined,
+				hasCommercialStats: undefined,
 			} )
 		).toBe( false );
 	} );

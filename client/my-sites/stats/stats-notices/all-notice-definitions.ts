@@ -49,12 +49,12 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			isVip,
 			isP2,
 			canManageOptions,
-			hasAdvancedStats,
+			hasCommercialStats,
 			isPremiumAnalyticsEnabled,
 		}: StatsNoticeProps ) =>
 			!! (
 				canManageOptions &&
-				hasAdvancedStats &&
+				hasCommercialStats &&
 				isPremiumAnalyticsEnabled === false &&
 				! isVip &&
 				! isP2

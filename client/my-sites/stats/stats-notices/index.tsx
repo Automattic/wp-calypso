@@ -148,12 +148,14 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		( state ) => !! canCurrentUser( state as object, siteId as number, 'manage_options' )
 	);
 
-	// The preview is for sites that already have the advanced Stats features — UTM, device, and
+	// The preview is for sites on the commercial Stats tier — the one carrying UTM, device and
 	// region/city views. Asking the gate rather than a plan or product flag: those four always move
 	// together through it, so one stands for all of them, and it is the same answer Stats itself
 	// gives when deciding whether to show them. Note a WPCOM site on FEATURE_STATS_PAID does *not*
-	// qualify — that tier is precisely the one these are gated behind.
-	const hasAdvancedStats = useSelector(
+	// qualify — that tier is precisely the one these are gated behind. `supportCommercialUse` is
+	// the same question for a self-hosted Jetpack site, but it only counts Jetpack purchases, so it
+	// would leave out every Simple and Atomic site — where the preview rolls out first.
+	const hasCommercialStats = useSelector(
 		( state ) => ! shouldGateStats( state, siteId, STATS_FEATURE_UTM_STATS )
 	);
 
@@ -165,7 +167,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		usePremiumAnalyticsStatusQuery(
 			siteId,
 			canManageOptions &&
-				hasAdvancedStats &&
+				hasCommercialStats &&
 				serverNoticesVisibility?.premium_analytics_preview === true
 		);
 
@@ -173,7 +175,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		siteId,
 		isOdysseyStats,
 		canManageOptions,
-		hasAdvancedStats,
+		hasCommercialStats,
 		isPremiumAnalyticsEnabled,
 		isWpcom,
 		isVip,

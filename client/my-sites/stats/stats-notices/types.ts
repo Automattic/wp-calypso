@@ -26,7 +26,7 @@ export interface StatsNoticeProps {
 	isNearLimit?: boolean;
 	hasWpcomUpsell?: boolean;
 	canManageOptions?: boolean;
-	hasAdvancedStats?: boolean;
+	hasCommercialStats?: boolean;
 	isPremiumAnalyticsEnabled?: boolean;
 }
 
