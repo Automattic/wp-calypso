@@ -145,7 +145,13 @@ function Message( { block }: { block: NoteBlock } ) {
  * Surrounds the comment being acted on: hovering reads as a card and clicking
  * anywhere outside its own controls opens the comment.
  */
-function CommentCard( { url, children }: { url: string | null; children: React.ReactNode } ) {
+export function CommentCard( {
+	url,
+	children,
+}: {
+	url: string | null;
+	children: React.ReactNode;
+} ) {
 	const open = ( event: React.MouseEvent< HTMLDivElement > ) => {
 		const target = event.target as HTMLElement;
 		if ( ! url || target.closest( 'a, button, textarea, input, [role="menu"]' ) ) {
