@@ -37,11 +37,14 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 	{
 		component: PremiumAnalyticsPreviewNotice,
 		noticeId: 'premium_analytics_preview',
-		// Ranked above the upsell notices in CONFLICT_NOTICE_ID_GROUPS: the invitation only runs
-		// while the new dashboard is in preview, and the server decides who is in that cohort,
-		// whereas the upsells are perpetual and come back the moment this one is dismissed or
-		// accepted. Eligibility is resolved by the parent, so this notice never wins the group and
-		// then renders nothing — that would suppress the upsells and the JITM for an empty slot.
+		// In CONFLICT_NOTICE_ID_GROUPS above `tier_upgrade`, which is the notice it can actually
+		// turn up beside: that one wants commercial use too. The upsells are not really rivals -
+		// they need a site without paid Stats, and this one needs the tier that carries them.
+		// The invitation wins because it only runs while the dashboard is in preview and the
+		// server picks the cohort, where the near-limit warning returns on the next load.
+		// Eligibility is resolved by the parent, so this notice never wins the group and then
+		// renders nothing — that would suppress the rest of the group and the JITM for an empty
+		// slot.
 		// `isPremiumAnalyticsEnabled` is deliberately compared to false rather than negated. It is
 		// three-valued: undefined means the site never reported the setting at all — a Jetpack too
 		// old to register it, or a read that failed — which is not the same as the dashboard being

@@ -49,8 +49,9 @@ const CONFLICT_NOTICE_ID_GROUPS: Record< string, Array< NoticeIdType > > = {
 		'gdpr_cookie_consent',
 		'client_paid_plan_purchase_success',
 		'client_free_plan_purchase_success',
-		// Above the upsells: the preview invitation is temporary and cohort-limited, and the
-		// upsells return as soon as it is dismissed or accepted.
+		// Above `tier_upgrade`, the one id below whose audience it genuinely shares: both want a
+		// site with commercial use. The upsells in between need an unpaid site, so they and the
+		// invitation hardly ever come up together.
 		'premium_analytics_preview',
 		// The two legacy upsell ids and `free_site_upgrade` are mutually exclusive: their
 		// registry entries are enabled on opposite sides of the commercial paywall kill switch.

@@ -93,26 +93,31 @@ describe( 'premium_analytics_preview notice visibility', () => {
 		client_free_plan_purchase_success: false,
 	};
 
-	it( 'outranks the upsell notices, so an eligible site is invited rather than upsold', () => {
+	/**
+	 * `tier_upgrade` is the notice this one can genuinely turn up beside: it wants a site with
+	 * commercial use, and so does the invitation. The upsells need a site without paid Stats, so
+	 * they are covered here for completeness rather than because the combination is reachable.
+	 */
+	it( 'outranks the near-limit warning, so an eligible site is invited rather than warned', () => {
 		const resolved = processConflictNotices( {
 			...noPurchaseJustHappened,
 			premium_analytics_preview: true,
-			free_site_upgrade: true,
 			tier_upgrade: true,
+			free_site_upgrade: true,
 		} );
 
 		expect( resolved.premium_analytics_preview ).toBe( true );
-		expect( resolved.free_site_upgrade ).toBe( false );
 		expect( resolved.tier_upgrade ).toBe( false );
+		expect( resolved.free_site_upgrade ).toBe( false );
 	} );
 
-	it( 'leaves the upsells alone when the site is not being invited', () => {
+	it( 'leaves the rest of the group alone when the site is not being invited', () => {
 		const resolved = processConflictNotices( {
 			...noPurchaseJustHappened,
 			premium_analytics_preview: false,
-			free_site_upgrade: true,
+			tier_upgrade: true,
 		} );
 
-		expect( resolved.free_site_upgrade ).toBe( true );
+		expect( resolved.tier_upgrade ).toBe( true );
 	} );
 } );
