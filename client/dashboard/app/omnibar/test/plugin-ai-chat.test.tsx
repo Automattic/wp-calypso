@@ -6,7 +6,6 @@ import {
 	isAgentsManagerChatVisible,
 	openAgentsManagerChat,
 	recordAgentsManagerTracksEvent,
-	useShouldUseUnifiedAgent,
 } from '@automattic/agents-manager';
 import { render, renderHook } from '@testing-library/react';
 import { useAiChatPlugin } from '../plugin-ai-chat';
@@ -17,17 +16,13 @@ jest.mock( '@automattic/agents-manager', () => ( {
 	isAgentsManagerChatVisible: jest.fn( () => false ),
 	openAgentsManagerChat: jest.fn(),
 	recordAgentsManagerTracksEvent: jest.fn(),
-	useShouldUseUnifiedAgent: jest.fn( () => true ),
 } ) );
 
 const mockIsChatVisible = isAgentsManagerChatVisible as jest.MockedFunction<
 	typeof isAgentsManagerChatVisible
 >;
-const mockUseShouldUseUnifiedAgent = useShouldUseUnifiedAgent as jest.MockedFunction<
-	typeof useShouldUseUnifiedAgent
->;
 
-const AI_CHAT_NODE = {
+const AI_CHAT_NODE: AdminBarNode = {
 	id: 'agents-manager-ai-chat',
 	title: '<span>Ask AI</span>',
 	parent: 'top-secondary',
@@ -35,9 +30,9 @@ const AI_CHAT_NODE = {
 	group: false,
 	meta: {
 		menu_title: 'Ask AI',
-		icon: '<svg class="ab-icon" viewBox="0 0 24 24"><path d="M1 2z" /></svg>',
+		icon: 'ask-ai',
 	},
-} as AdminBarNode;
+};
 
 const adminBarNodes = [ AI_CHAT_NODE ];
 
@@ -45,17 +40,6 @@ describe( 'useAiChatPlugin', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockIsChatVisible.mockReturnValue( false );
-		mockUseShouldUseUnifiedAgent.mockReturnValue( true );
-	} );
-
-	it( 'returns no node when the unified agent is unavailable', () => {
-		mockUseShouldUseUnifiedAgent.mockReturnValue( false );
-
-		const { result } = renderHook( () =>
-			useAiChatPlugin( { sectionName: 'sites', adminBarNodes } )
-		);
-
-		expect( result.current ).toBeUndefined();
 	} );
 
 	it( 'returns no node when the admin bar has no AI chat node', () => {
@@ -75,8 +59,7 @@ describe( 'useAiChatPlugin', () => {
 
 		expect( result.current?.label ).toBe( 'Ask AI' );
 		expect( result.current?.tooltip ).toBe( 'Ask AI' );
-		expect( container.querySelector( 'svg' ) ).toHaveAttribute( 'viewBox', '0 0 24 24' );
-		expect( container.querySelector( 'path' ) ).toHaveAttribute( 'd', 'M1 2z' );
+		expect( container.querySelector( '.omnibar__ai-chat-icon > svg' ) ).toBeVisible();
 	} );
 
 	it( 'carries the class that marks it as the chat entry button', () => {

@@ -3,7 +3,6 @@ import {
 	getAgentsManagerChatRoute,
 	isAgentsManagerChatVisible,
 	openAgentsManagerChat,
-	useShouldUseUnifiedAgent,
 } from '@automattic/agents-manager';
 import { omnibarSiteIdQuery } from '@automattic/api-queries';
 // eslint-disable-next-line no-restricted-imports -- Help Center host events need explicit site attribution.
@@ -11,7 +10,6 @@ import { withSiteContext } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { useMemo } from 'react';
 import { useAnalytics } from '../analytics';
 import { useHelpCenter } from '../help-center';
 import { adminBarIcon } from './admin-bar-icon';
@@ -24,20 +22,6 @@ type RecordTracksEvent = AnalyticsClient[ 'recordTracksEvent' ];
 
 const AGENTS_MANAGER_NODE_ID = 'agents-manager';
 const SECONDARY_GROUP_NODE_ID = 'agents-manager-menu-panel-links';
-
-function HelpIcon() {
-	return (
-		<span className="omnibar__help-icon">
-			<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-				<path
-					fillRule="evenodd"
-					clipRule="evenodd"
-					d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm-1 16v-2h2v2h-2zm2-3v-1.141A3.991 3.991 0 0016 10a4 4 0 00-8 0h2c0-1.103.897-2 2-2s2 .897 2 2-.897 2-2 2a1 1 0 00-1 1v2h2z"
-				/>
-			</svg>
-		</span>
-	);
-}
 
 function handleMenuClick(
 	recordTracksEvent: RecordTracksEvent,
@@ -118,7 +102,7 @@ function buildAgentsManagerMenuNodes(
 						return {
 							id: node.id,
 							title: node.meta?.menu_title,
-							icon: adminBarIcon( 'omnibar__help-menu-icon', node.meta?.icon ),
+							icon: adminBarIcon( node.meta?.icon, 'omnibar__help-menu-icon' ),
 							onClick: () =>
 								handleMenuClick(
 									recordTracksEvent,
@@ -140,29 +124,25 @@ export function useHelpCenterPlugin( {
 	sectionName?: string;
 	adminBarNodes: AdminBarNode[];
 } ): OmnibarNode {
-	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 	const { isShown: isHelpCenterShown, setShowHelpCenter } = useHelpCenter();
 	const { recordTracksEvent } = useAnalytics();
 	const { data: omnibarSiteId } = useQuery( omnibarSiteIdQuery() );
 
 	const helpNode = adminBarNodes.find( ( node ) => node.id === AGENTS_MANAGER_NODE_ID );
 
-	// Building the menu parses an SVG per node, and this runs on every omnibar render.
-	const children = useMemo(
-		() =>
-			buildAgentsManagerMenuNodes( adminBarNodes, recordTracksEvent, omnibarSiteId, sectionName ),
-		[ adminBarNodes, recordTracksEvent, omnibarSiteId, sectionName ]
-	);
-	const icon = useMemo(
-		() => adminBarIcon( 'omnibar__help-icon', helpNode?.meta?.icon ),
-		[ helpNode?.meta?.icon ]
-	);
+	// The backend only sends these nodes to eligible users, so their presence is the gate.
+	if ( helpNode ) {
+		const children = buildAgentsManagerMenuNodes(
+			adminBarNodes,
+			recordTracksEvent,
+			omnibarSiteId,
+			sectionName
+		);
 
-	if ( shouldUseUnifiedAgent && helpNode ) {
 		return {
 			id: helpNode.id,
 			label: helpNode.meta?.menu_title,
-			icon,
+			icon: adminBarIcon( helpNode.meta?.icon, 'omnibar__help-icon' ),
 			tooltip: helpNode.meta?.menu_title,
 			// Disconnected sites get a link instead of a dropdown, opened in a new tab as in wp-admin.
 			...( children.length
@@ -174,7 +154,7 @@ export function useHelpCenterPlugin( {
 	return {
 		id: 'help-center',
 		label: __( 'Help' ),
-		icon: <HelpIcon />,
+		icon: adminBarIcon( 'help', 'omnibar__help-icon' ),
 		onClick: () => setShowHelpCenter( ! isHelpCenterShown ),
 	};
 }

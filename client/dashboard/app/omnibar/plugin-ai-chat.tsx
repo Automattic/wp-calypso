@@ -3,9 +3,7 @@ import {
 	isAgentsManagerChatVisible,
 	openAgentsManagerChat,
 	recordAgentsManagerTracksEvent,
-	useShouldUseUnifiedAgent,
 } from '@automattic/agents-manager';
-import { useMemo } from 'react';
 import { adminBarIcon } from './admin-bar-icon';
 import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
@@ -20,14 +18,9 @@ export function useAiChatPlugin( {
 	sectionName?: string;
 	adminBarNodes: AdminBarNode[];
 } ): OmnibarNode | undefined {
-	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 	const aiChatNode = adminBarNodes.find( ( node ) => node.id === AI_CHAT_NODE_ID );
-	const icon = useMemo(
-		() => adminBarIcon( 'omnibar__ai-chat-icon', aiChatNode?.meta?.icon ),
-		[ aiChatNode?.meta?.icon ]
-	);
-
-	if ( ! shouldUseUnifiedAgent || ! aiChatNode ) {
+	// The backend only sends this node to eligible users, so its presence is the gate.
+	if ( ! aiChatNode ) {
 		return undefined;
 	}
 
@@ -50,7 +43,7 @@ export function useAiChatPlugin( {
 	return {
 		id: aiChatNode.id,
 		label: aiChatNode.meta?.menu_title,
-		icon,
+		icon: adminBarIcon( aiChatNode.meta?.icon, 'omnibar__ai-chat-icon' ),
 		tooltip: aiChatNode.meta?.menu_title,
 		className: 'masterbar__item-agents-manager-ai-chat',
 		onClick: handleClick,

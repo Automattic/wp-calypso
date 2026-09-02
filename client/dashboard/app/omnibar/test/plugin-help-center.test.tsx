@@ -6,7 +6,6 @@ import {
 	getAgentsManagerChatRoute,
 	isAgentsManagerChatVisible,
 	openAgentsManagerChat,
-	useShouldUseUnifiedAgent,
 } from '@automattic/agents-manager';
 import { render, renderHook } from '@testing-library/react';
 import { useHelpCenter } from '../../help-center';
@@ -18,7 +17,6 @@ jest.mock( '@automattic/agents-manager', () => ( {
 	getAgentsManagerChatRoute: jest.fn( () => undefined ),
 	isAgentsManagerChatVisible: jest.fn( () => false ),
 	openAgentsManagerChat: jest.fn(),
-	useShouldUseUnifiedAgent: jest.fn( () => true ),
 } ) );
 jest.mock( '@automattic/api-queries', () => ( { omnibarSiteIdQuery: jest.fn( () => ( {} ) ) } ) );
 jest.mock( '@automattic/calypso-analytics', () => ( {
@@ -35,9 +33,6 @@ jest.mock( '../../help-center', () => ( {
 	useHelpCenter: jest.fn( () => ( { isShown: false, setShowHelpCenter: jest.fn() } ) ),
 } ) );
 
-const mockUseShouldUseUnifiedAgent = useShouldUseUnifiedAgent as jest.MockedFunction<
-	typeof useShouldUseUnifiedAgent
->;
 const mockIsChatVisible = isAgentsManagerChatVisible as jest.MockedFunction<
 	typeof isAgentsManagerChatVisible
 >;
@@ -47,17 +42,16 @@ const mockGetChatRoute = getAgentsManagerChatRoute as jest.MockedFunction<
 const mockUseHelpCenter = useHelpCenter as jest.MockedFunction< typeof useHelpCenter >;
 const setShowHelpCenter = jest.fn();
 
-const ICON = '<svg viewBox="0 0 24 24"><path d="M1 2z" /></svg>';
+const ICON = 'help';
 
-const node = ( id: string, extra: Partial< AdminBarNode > = {} ): AdminBarNode =>
-	( {
-		id,
-		title: `<span>${ id }</span>`,
-		parent: 'agents-manager',
-		href: '',
-		group: false,
-		...extra,
-	} ) as AdminBarNode;
+const node = ( id: string, extra: Partial< AdminBarNode > = {} ): AdminBarNode => ( {
+	id,
+	title: `<span>${ id }</span>`,
+	parent: 'agents-manager',
+	href: '',
+	group: false,
+	...extra,
+} );
 
 const HELP_NODES: AdminBarNode[] = [
 	node( 'agents-manager', {
@@ -96,7 +90,6 @@ const childrenOf = ( n: OmnibarNode | undefined, id: string ) =>
 describe( 'useHelpCenterPlugin', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockUseShouldUseUnifiedAgent.mockReturnValue( true );
 		mockIsChatVisible.mockReturnValue( false );
 		mockGetChatRoute.mockReturnValue( undefined );
 		mockUseHelpCenter.mockReturnValue( {
@@ -112,8 +105,10 @@ describe( 'useHelpCenterPlugin', () => {
 		expect( result.label ).toBe( 'Help Center' );
 		expect( result.tooltip ).toBe( 'Help Center' );
 		expect(
-			render( result.icon as React.ReactElement ).container.querySelector( 'path' )
-		).toHaveAttribute( 'd', 'M1 2z' );
+			render( result.icon as React.ReactElement ).container.querySelector(
+				'.omnibar__help-icon > svg'
+			)
+		).toBeVisible();
 	} );
 
 	it( 'builds the groups in payload order, shading only the resources group', () => {
@@ -147,6 +142,20 @@ describe( 'useHelpCenterPlugin', () => {
 		item?.onClick?.( {} as React.MouseEvent );
 
 		expect( openAgentsManagerChat ).toHaveBeenCalledWith( expected );
+	} );
+
+	it( 'skips items that have neither a route nor a link', () => {
+		const result = renderPlugin( [
+			...HELP_NODES,
+			node( 'agents-manager-mystery', {
+				parent: 'agents-manager-menu-panel-chat',
+				meta: { menu_title: 'Mystery', icon: ICON },
+			} ),
+		] );
+
+		expect(
+			childrenOf( result, 'agents-manager-menu-panel-chat' ).map( ( item ) => item.id )
+		).toEqual( [ 'agents-manager-chat-support', 'agents-manager-chat-history' ] );
 	} );
 
 	it( 'closes the chat when the active route is clicked again', () => {
@@ -198,13 +207,8 @@ describe( 'useHelpCenterPlugin', () => {
 		expect( result.children ).toBeUndefined();
 	} );
 
-	it.each( [
-		[ 'the unified agent is unavailable', HELP_NODES, false ],
-		[ 'the payload has no agents manager node', [], true ],
-	] )( 'falls back to the legacy Help Center when %s', ( _label, nodes, unified ) => {
-		mockUseShouldUseUnifiedAgent.mockReturnValue( unified as boolean );
-
-		const result = renderPlugin( nodes as AdminBarNode[] );
+	it( 'falls back to the legacy Help Center when the payload has no agents manager node', () => {
+		const result = renderPlugin( [] );
 
 		const { container } = render( result.icon as React.ReactElement );
 
