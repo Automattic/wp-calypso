@@ -28,9 +28,10 @@ jest.mock( 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation', () => 
 } ) );
 
 const mockEnablePreview = jest.fn();
+let mockIsEnabling = false;
 jest.mock( 'calypso/my-sites/stats/hooks/use-premium-analytics-status-mutation', () => ( {
 	__esModule: true,
-	default: () => ( { mutateAsync: mockEnablePreview, isPending: false } ),
+	default: () => ( { mutateAsync: mockEnablePreview, isPending: mockIsEnabling } ),
 } ) );
 
 const DASHBOARD_URL =
@@ -46,6 +47,7 @@ describe( 'TrafficTabPreviewNotice', () => {
 		mockPostponeNotice.mockResolvedValue( undefined );
 		mockUseNoticeVisibilityMutation.mockReturnValue( { mutateAsync: mockPostponeNotice } );
 		mockEnablePreview.mockResolvedValue( { enabled: true } );
+		mockIsEnabling = false;
 		Object.defineProperty( window, 'location', { value: { href: '' }, writable: true } );
 	} );
 
@@ -96,7 +98,7 @@ describe( 'TrafficTabPreviewNotice', () => {
 		).toHaveLength( 1 );
 	} );
 
-	it( 'enables the dashboard and sends the customer into it', async () => {
+	it( 'enables the dashboard and offers a link into it, without navigating', async () => {
 		renderNotice();
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Try it now' } ) );
@@ -106,10 +108,27 @@ describe( 'TrafficTabPreviewNotice', () => {
 			{ blog_id: 123 }
 		);
 		expect( mockEnablePreview ).toHaveBeenCalledWith( true );
-		await waitFor( () => expect( window.location.href ).toBe( DASHBOARD_URL ) );
+
+		const link = await screen.findByRole( 'link', { name: 'Go to the new Traffic page' } );
+		expect( link ).toHaveAttribute( 'href', DASHBOARD_URL );
+		expect(
+			screen.getByText( 'The new Traffic page is switched on for this site.' )
+		).toBeVisible();
+		// The customer chooses when to leave the page they were reading.
+		expect( window.location.href ).toBe( '' );
 	} );
 
-	it( 'records the dismissal before navigating away, so it cannot be lost in the teardown', async () => {
+	it( 'shows the button busy while the write is in flight', () => {
+		mockIsEnabling = true;
+
+		renderNotice();
+
+		const button = screen.getByRole( 'button', { name: 'Switching it on…' } );
+		expect( button ).toBeDisabled();
+		expect( button ).toHaveClass( 'is-busy' );
+	} );
+
+	it( 'records the dismissal before switching on, so following the link cannot lose it', async () => {
 		const order: string[] = [];
 		mockPostponeNotice.mockImplementation( () => {
 			order.push( 'postpone' );
@@ -136,14 +155,16 @@ describe( 'TrafficTabPreviewNotice', () => {
 		expect( window.location.href ).toBe( '' );
 	} );
 
-	it( 'does not navigate when the site reports the dashboard is still off', async () => {
+	it( 'does not offer the link when the site reports the dashboard is still off', async () => {
 		mockEnablePreview.mockResolvedValue( { enabled: false } );
 
 		renderNotice();
 		await userEvent.click( screen.getByRole( 'button', { name: 'Try it now' } ) );
 
 		expect( await screen.findByRole( 'alert' ) ).toBeVisible();
-		expect( window.location.href ).toBe( '' );
+		expect(
+			screen.queryByRole( 'link', { name: 'Go to the new Traffic page' } )
+		).not.toBeInTheDocument();
 	} );
 
 	it( 'tracks dismissals under the Odyssey prefix when running in wp-admin', async () => {

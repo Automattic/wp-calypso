@@ -27,9 +27,11 @@ const TrafficTabPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps )
 	// site switches in Calypso, so a plain boolean would carry one site's dismissal to the next.
 	const [ dismissedSiteId, setDismissedSiteId ] = useState< number | null >( null );
 	const [ failedSiteId, setFailedSiteId ] = useState< number | null >( null );
+	const [ enabledSiteId, setEnabledSiteId ] = useState< number | null >( null );
 
 	const noticeDismissed = dismissedSiteId === siteId;
 	const enableFailed = failedSiteId === siteId;
+	const isEnabled = enabledSiteId === siteId;
 
 	const { mutateAsync: enablePreviewAsync, isPending: isEnabling } =
 		usePremiumAnalyticsStatusMutation( siteId );
@@ -56,9 +58,9 @@ const TrafficTabPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps )
 		setFailedSiteId( null );
 
 		try {
-			// Record the dismissal first and wait for it. Navigation tears down the proxy iframe
-			// Calypso posts these through, so a request fired alongside it can be lost — and losing
-			// this one leaves the invitation standing after it has been accepted.
+			// Record the dismissal first, and wait for it. Accepting the invitation retires it, and
+			// the customer may well follow the link out of this page as soon as it appears — a
+			// request still in flight when they do is a request that may never arrive.
 			await postponeNoticeAsync().catch( () => {} );
 
 			const { enabled } = await enablePreviewAsync( true );
@@ -67,9 +69,10 @@ const TrafficTabPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps )
 				return;
 			}
 
-			// The site only picks the flag up on a fresh page load, so send the customer into the
-			// dashboard rather than re-rendering here.
-			window.location.href = dashboardUrl as string;
+			// Hand over a link rather than navigating for them: the dashboard only exists on a
+			// fresh page load, and being thrown out of the page you were reading is a poor reward
+			// for saying yes.
+			setEnabledSiteId( siteId );
 		} catch {
 			setFailedSiteId( siteId );
 		}
@@ -99,9 +102,11 @@ const TrafficTabPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps )
 				onClose={ dismissNotice }
 			>
 				<p key="desc">
-					{ translate(
-						'We’ve rebuilt your traffic stats from the ground up — clearer charts, and widgets you can move and resize to suit how you read your site. You can switch it on for this site and take a look.'
-					) }
+					{ isEnabled
+						? translate( 'The new Traffic page is switched on for this site.' )
+						: translate(
+								'We’ve rebuilt your traffic stats from the ground up — clearer charts, and widgets you can move and resize to suit how you read your site. You can switch it on for this site and take a look.'
+						  ) }
 				</p>
 				{ enableFailed && (
 					<p key="error" role="alert">
@@ -109,14 +114,20 @@ const TrafficTabPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps )
 					</p>
 				) }
 				<p key="cta">
-					<Button
-						variant="primary"
-						onClick={ enableTrafficTabPreview }
-						isBusy={ isEnabling }
-						disabled={ isEnabling }
-					>
-						{ translate( 'Try it now' ) }
-					</Button>
+					{ isEnabled ? (
+						<Button variant="primary" href={ dashboardUrl }>
+							{ translate( 'Go to the new Traffic page' ) }
+						</Button>
+					) : (
+						<Button
+							variant="primary"
+							onClick={ enableTrafficTabPreview }
+							isBusy={ isEnabling }
+							disabled={ isEnabling }
+						>
+							{ isEnabling ? translate( 'Switching it on…' ) : translate( 'Try it now' ) }
+						</Button>
+					) }
 				</p>
 			</NoticeBanner>
 		</div>
