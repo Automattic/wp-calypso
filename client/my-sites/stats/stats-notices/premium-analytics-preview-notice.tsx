@@ -67,12 +67,12 @@ const PremiumAnalyticsPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeP
 			// Hand over a link rather than navigating for them: the dashboard only exists on a
 			// fresh page load, and being thrown out of the page you were reading is a poor reward
 			// for saying yes.
+			//
+			// Deliberately no dismissal here. An enabled site already fails the eligibility rule, so
+			// the invitation is gone on the next load either way — and recording one would refetch
+			// the notices, which now answers "dismissed" and unmounts this notice mid-sentence,
+			// taking the link with it.
 			setEnabledSiteId( siteId );
-
-			// Retire the invitation, but never make anyone wait on it. It is a slow round-trip that
-			// can fail on its own, the local state above has already hidden the invitation here,
-			// and nothing navigates away from this page now, so it has time to land.
-			postponeNoticeAsync().catch( () => {} );
 		} catch {
 			setFailedSiteId( siteId );
 		}

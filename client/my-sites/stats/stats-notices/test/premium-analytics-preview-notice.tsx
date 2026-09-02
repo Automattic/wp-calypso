@@ -128,25 +128,20 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		expect( button ).toHaveClass( 'is-busy' );
 	} );
 
-	it( 'never makes the customer wait on the dismissal round-trip', async () => {
-		const order: string[] = [];
-		// A dismissal that never settles must not hold the button, nor the link.
-		mockPostponeNotice.mockImplementation( () => {
-			order.push( 'postpone' );
-			return new Promise( () => {} );
-		} );
-		mockEnablePreview.mockImplementation( () => {
-			order.push( 'enable' );
-			return Promise.resolve( true );
-		} );
-
+	/**
+	 * Recording a dismissal refetches the notices, which then answers "dismissed" and unmounts this
+	 * notice - taking the link with it before anyone can follow it. An enabled site already fails
+	 * the eligibility rule, so the invitation is gone on the next load without one.
+	 */
+	it( 'does not record a dismissal when the invitation is accepted', async () => {
 		renderNotice();
+
 		await userEvent.click( screen.getByRole( 'button', { name: 'Try it now' } ) );
 
 		expect(
 			await screen.findByRole( 'link', { name: 'Go to the new Traffic page' } )
 		).toBeVisible();
-		expect( order ).toEqual( [ 'enable', 'postpone' ] );
+		expect( mockPostponeNotice ).not.toHaveBeenCalled();
 	} );
 
 	it( 'stays put and explains itself when the write fails', async () => {
