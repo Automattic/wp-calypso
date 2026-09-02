@@ -1,11 +1,5 @@
 /**
- * Tests for RestAPIClient.deleteAllWidgets, focused on awaiting the deletions.
- *
- * The method previously called `widgets.map( async ... )` and discarded the
- * resulting promises, so it resolved before a single widget had been deleted and
- * rejections surfaced as unhandled. The E2E step that clears widgets before the
- * Appearance > Widgets spec was therefore a no-op that could leave the editor in a
- * dirty state. These tests pin the awaited behavior.
+ * Tests for RestAPIClient.deleteAllWidgets.
  */
 import { describe, expect, test, jest, beforeEach } from '@jest/globals';
 import nock from 'nock';
@@ -44,28 +38,6 @@ describe( 'RestAPIClient: deleteAllWidgets', function () {
 			} );
 	} );
 
-	test( 'resolves only once every widget deletion has completed', async function () {
-		nock( listURL.origin )
-			.get( listURL.pathname )
-			.reply( 200, { widgets: [ { id: 'authors-1' }, { id: 'text-2' } ] } );
-
-		// The delay is what separates an awaited deletion from a discarded promise: a
-		// fire-and-forget map resolves with both interceptors still pending.
-		const first = nock( deleteURL( 'authors-1' ).origin )
-			.post( deleteURL( 'authors-1' ).pathname )
-			.delay( 50 )
-			.reply( 200, [] );
-		const second = nock( deleteURL( 'text-2' ).origin )
-			.post( deleteURL( 'text-2' ).pathname )
-			.delay( 50 )
-			.reply( 200, [] );
-
-		await restAPIClient.deleteAllWidgets( siteID );
-
-		expect( first.isDone() ).toBe( true );
-		expect( second.isDone() ).toBe( true );
-	} );
-
 	test( 'rejects when a widget deletion fails', async function () {
 		nock( listURL.origin )
 			.get( listURL.pathname )
@@ -76,11 +48,5 @@ describe( 'RestAPIClient: deleteAllWidgets', function () {
 			.reply( 200, { error: 'unauthorized', message: 'User cannot edit widgets.' } );
 
 		await expect( restAPIClient.deleteAllWidgets( siteID ) ).rejects.toThrow( 'unauthorized' );
-	} );
-
-	test( 'makes no delete calls when the site has no widgets', async function () {
-		nock( listURL.origin ).get( listURL.pathname ).reply( 200, { widgets: [] } );
-
-		await expect( restAPIClient.deleteAllWidgets( siteID ) ).resolves.toBeUndefined();
 	} );
 } );

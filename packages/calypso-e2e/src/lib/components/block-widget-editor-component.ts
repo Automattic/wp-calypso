@@ -12,12 +12,9 @@ const selectors = {
 	blockSearch: 'input[placeholder="Search"]',
 };
 
-// The container is server-rendered, so it is present as soon as the response is parsed.
-const EDITOR_SHELL_TIMEOUT = 15 * 1000;
-
 // The editor boots from deferred module scripts, which hold back both `load` and
-// `domcontentloaded`. The default action timeout is far too short a budget for that,
-// and this wait, not the one above, is what absorbs a slow boot.
+// `domcontentloaded`. This wait is what absorbs a slow boot, so it needs a budget far
+// beyond the default action timeout.
 const EDITOR_READY_TIMEOUT = 60 * 1000;
 
 /**
@@ -46,16 +43,15 @@ export class BlockWidgetEditorComponent {
 	 * @param {string} legacyWidget Name of the legacy widget variation, eg. 'authors'.
 	 */
 	async waitUntilLoaded( legacyWidget: string ): Promise< void > {
-		await this.page.locator( selectors.editor ).waitFor( { timeout: EDITOR_SHELL_TIMEOUT } );
+		await this.page.locator( selectors.editor ).waitFor();
 
 		await this.page.waitForFunction(
-			( name ) => {
+			( name ) =>
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				const blocks = ( window as any )?.wp?.data?.select( 'core/blocks' );
-				const variations = blocks?.getBlockVariations( 'core/legacy-widget' ) ?? [];
-
-				return variations.some( ( variation: { name: string } ) => variation.name === name );
-			},
+				!! ( window as any ).wp?.data
+					?.select( 'core/blocks' )
+					?.getBlockVariations( 'core/legacy-widget' )
+					?.some( ( variation: { name: string } ) => variation.name === name ),
 			legacyWidget,
 			{ timeout: EDITOR_READY_TIMEOUT }
 		);
