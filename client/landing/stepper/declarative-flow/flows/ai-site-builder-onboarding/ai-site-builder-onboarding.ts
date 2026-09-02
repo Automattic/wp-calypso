@@ -37,9 +37,8 @@ const SiteIntent = Onboard.SiteIntent;
 /**
  * The build-wow site spec, entered straight from checkout. The build-wow
  * endpoint provisions the Atomic site and queues the build when the spec is
- * confirmed there, so no site preparation is needed on the way in. The spec
- * widget reads `prompt` off the page URL itself, and a spec_id carried from
- * entry confirms that spec on arrival instead of asking again.
+ * confirmed there, so no site preparation is needed on the way in. A spec_id
+ * carried from entry confirms that spec on arrival instead of asking again.
  */
 function getBuildWowDestination( {
 	siteSlug,
@@ -56,10 +55,9 @@ function getBuildWowDestination( {
 	prompt: string;
 	specId: string | null;
 } ): string {
-	return addQueryArgs( getBuildWowSiteSpecUrl( { siteSlug, siteId, ref, source } ), {
-		...( prompt && { prompt } ),
-		...( specId && { spec_id: specId } ),
-	} );
+	const specUrl = getBuildWowSiteSpecUrl( { siteSlug, siteId, ref, source, prompt } );
+
+	return specId ? addQueryArgs( specUrl, { spec_id: specId } ) : specUrl;
 }
 
 async function initialize( reduxStore: Store ) {
