@@ -28,6 +28,7 @@ interface SetUp {
 	subscribedListFeedIds?: number[];
 	route?: string;
 	readerSeenPostsPreference?: boolean | null;
+	remotePreferencesReceived?: boolean;
 }
 
 function setUp( {
@@ -37,6 +38,7 @@ function setUp( {
 	subscribedListFeedIds = [],
 	route,
 	readerSeenPostsPreference,
+	remotePreferencesReceived = true,
 }: SetUp = {} ) {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
@@ -69,6 +71,13 @@ function setUp( {
 		],
 	} );
 
+	let remoteValues: Record< string, boolean > | null = {};
+	if ( ! remotePreferencesReceived ) {
+		remoteValues = null;
+	} else if ( readerSeenPostsPreference != null ) {
+		remoteValues = { 'reader-seen-posts': readerSeenPostsPreference };
+	}
+
 	const state = {
 		currentUser: { id: USER_ID },
 		sites: {
@@ -77,15 +86,7 @@ function setUp( {
 			),
 		},
 		route: { path: { current: route ?? null } },
-		preferences:
-			readerSeenPostsPreference === undefined
-				? undefined
-				: {
-						remoteValues:
-							readerSeenPostsPreference === null
-								? {}
-								: { 'reader-seen-posts': readerSeenPostsPreference },
-				  },
+		preferences: { remoteValues },
 	};
 	const store = createStore( () => state );
 
@@ -322,6 +323,14 @@ describe( 'useIsSeenEnabled', () => {
 			} );
 
 			expect( result.current ).toBe( true );
+		} );
+
+		it( 'stays disabled while remote preferences have not loaded', () => {
+			const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID } ), {
+				wrapper: setUp( { ...eligible, remotePreferencesReceived: false } ),
+			} );
+
+			expect( result.current ).toBe( false );
 		} );
 
 		it( 'returns false when the preference is disabled for an Automattician', () => {
