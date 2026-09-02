@@ -593,7 +593,6 @@ const onboarding: FlowV2< typeof initialize > = {
 									siteSlug,
 									siteId,
 									ref: refParameter,
-									prompt,
 								} )
 							);
 							return;

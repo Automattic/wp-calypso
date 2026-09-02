@@ -181,7 +181,7 @@ describe( 'SetupYourSiteAIStep', () => {
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_onboarding_setup_your_site_with_ai_selection',
-				{ selection: 'generate-theme', has_prompt: false }
+				{ selection: 'generate-theme' }
 			);
 			expect( navigation.submit ).toHaveBeenCalledWith( {
 				setupChoice: 'generate-theme',
@@ -208,31 +208,8 @@ describe( 'SetupYourSiteAIStep', () => {
 			} );
 		} );
 
-		it( 'submits the generate-theme choice with the prompt from the Woo hosting solutions form', () => {
+		it( 'keeps the Woo hosting solutions form on build-with-ai even with the swap enabled', () => {
 			mockQueryParams = new URLSearchParams( { ref: WOO_HOSTING_SOLUTIONS_REF } );
-
-			renderStep();
-
-			fireEvent.change( screen.getByPlaceholderText( 'Take bookings for a hair salon…' ), {
-				target: { value: '  a hair salon  ' },
-			} );
-			fireEvent.click( screen.getByRole( 'button', { name: 'Build with AI' } ) );
-
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_onboarding_setup_your_site_with_ai_selection',
-				{ selection: 'generate-theme', has_prompt: true }
-			);
-			expect( navigation.submit ).toHaveBeenCalledWith( {
-				setupChoice: 'generate-theme',
-				siteSlug: 'example.wordpress.com',
-				siteId: 123,
-				prompt: 'a hair salon',
-			} );
-		} );
-
-		it( 'keeps the Woo hosting solutions form on build-with-ai for a Personal plan', () => {
-			mockQueryParams = new URLSearchParams( { ref: WOO_HOSTING_SOLUTIONS_REF } );
-			setSitePlan( 'personal-bundle' );
 
 			renderStep();
 
@@ -327,17 +304,13 @@ describe( 'SetupYourSiteAIStep', () => {
 			expect( getButtonNames() ).toEqual( [ 'Start with a template', 'Create a custom design' ] );
 		} );
 
-		it( 'renders after the cards on the Woo hosting solutions variant for Automatticians', () => {
+		it( 'is hidden on the Woo hosting solutions variant, which stays on the legacy builder', () => {
 			mockUseReactQuery.mockReturnValue( { data: true } );
 			mockQueryParams = new URLSearchParams( { ref: WOO_HOSTING_SOLUTIONS_REF } );
 
 			renderStep();
 
-			expect( getButtonNames() ).toEqual( [
-				'Build with AI',
-				'Start with a template',
-				legacyLinkName,
-			] );
+			expect( getButtonNames() ).toEqual( [ 'Build with AI', 'Start with a template' ] );
 		} );
 	} );
 
@@ -408,7 +381,7 @@ describe( 'SetupYourSiteAIStep', () => {
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_onboarding_setup_your_site_with_ai_selection',
-				{ selection: 'generate-theme', has_prompt: false }
+				{ selection: 'generate-theme' }
 			);
 			expect( navigation.submit ).toHaveBeenCalledWith( {
 				setupChoice: 'generate-theme',

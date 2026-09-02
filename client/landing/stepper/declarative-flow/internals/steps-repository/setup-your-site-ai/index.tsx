@@ -77,17 +77,15 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		} );
 	};
 
-	const submitGenerateTheme = ( trimmedPrompt?: string ) => {
+	const submitGenerateTheme = () => {
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
 			selection: 'generate-theme',
-			has_prompt: Boolean( trimmedPrompt ),
 		} );
 
 		navigation.submit( {
 			setupChoice: 'generate-theme',
 			siteSlug,
 			siteId,
-			prompt: trimmedPrompt || undefined,
 		} );
 	};
 
@@ -98,19 +96,15 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		submitBuildWithAI();
 	};
 
+	// The Woo hosting-solutions prompt form stays on the legacy builder regardless
+	// of the swap: only that path runs the store spec interview (store type, address
+	// for tax and shipping) and a WooCommerce-aware build.
 	const handleBuildWithAISubmit = ( event: FormEvent ) => {
 		event.preventDefault();
 		if ( ! claimSubmit() ) {
 			return;
 		}
-
-		const trimmedPrompt = prompt.trim();
-		if ( offerBuildWow ) {
-			submitGenerateTheme( trimmedPrompt );
-			return;
-		}
-
-		submitBuildWithAI( trimmedPrompt );
+		submitBuildWithAI( prompt.trim() );
 	};
 
 	const handleBlankSite = () => {
@@ -262,9 +256,9 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 				<>
 					{ startWithTemplateCard }
 					{ buildWithAISummary }
+					{ legacySiteBuilderSection }
 				</>
 			) }
-			{ legacySiteBuilderSection }
 			{ generateThemeCard }
 		</VStack>
 	);
