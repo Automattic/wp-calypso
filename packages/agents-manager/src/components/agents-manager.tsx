@@ -23,6 +23,7 @@ import {
 	type AbilitiesSetupHook,
 	type LoadedProviders,
 } from '../utils/load-external-providers';
+import { setLoadedProviderIds } from '../utils/tracks';
 import { canExposeWebMcpTools } from '../webmcp/eligibility';
 import AgentDock from './agent-dock';
 import { PersistentRouter } from './persistent-router';
@@ -277,6 +278,7 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 			if ( ! providers ) {
 				providers = await loadExternalProviders();
 				loadedProvidersRef.current = providers;
+				setLoadedProviderIds( providers.providerIds );
 
 				if ( isSuperseded ) {
 					return;

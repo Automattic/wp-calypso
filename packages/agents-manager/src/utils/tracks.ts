@@ -35,6 +35,18 @@ type CoreSelectStore =
 	| { getEntityRecord?: ( kind: string, name: string, key?: number ) => unknown }
 	| undefined;
 
+/** Published once by `AgentSetup` after `loadExternalProviders()` resolves. */
+let loadedProviderIds: readonly string[] = [];
+
+export function setLoadedProviderIds( ids: readonly string[] | undefined ): void {
+	loadedProviderIds = ids ?? [];
+}
+
+function getLoadedProviderIdsProp(): TracksProps {
+	// Tracks properties must be scalar; multi-valued props are comma-joined by convention.
+	return loadedProviderIds.length ? { loaded_provider_ids: loadedProviderIds.join( ',' ) } : {};
+}
+
 /** Reads the optional server-provided Automattician tracking signal. */
 function getIsA11n(): boolean | undefined {
 	const isA11n = getAgentsManagerInlineData()?.isA11n;
@@ -132,6 +144,7 @@ export function recordBigSkyTracksEvent(
 		phase: 'editor',
 		big_sky_version: bigSky.bigSkyVersion,
 		screen: bigSky.screen,
+		...getLoadedProviderIdsProp(),
 		...getBigSkyPageProps(),
 	};
 
@@ -163,6 +176,7 @@ function getUnifiedBaseProps(): TracksProps {
 		is_test: getIsTest(),
 		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
 		...( blogId !== undefined ? { blog_id: blogId } : {} ),
+		...getLoadedProviderIdsProp(),
 	};
 }
 
