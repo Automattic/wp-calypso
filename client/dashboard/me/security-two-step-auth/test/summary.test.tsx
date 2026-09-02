@@ -4,6 +4,9 @@
 
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { dispatch, select } from '@wordpress/data';
+import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import SecurityTwoStepAuthSummary from '../summary';
@@ -23,6 +26,9 @@ function mockUserSettings( data: Partial< UserSettings > ) {
 afterEach( () => {
 	nock.cleanAll();
 	( isSupportSession as jest.Mock ).mockReturnValue( false );
+	select( noticesStore )
+		.getNotices()
+		.forEach( ( notice ) => dispatch( noticesStore ).removeNotice( notice.id ) );
 } );
 
 describe( '<SecurityTwoStepAuthSummary>', () => {
@@ -42,15 +48,25 @@ describe( '<SecurityTwoStepAuthSummary>', () => {
 		expect( await screen.findByText( 'Enabled' ) ).toBeVisible();
 	} );
 
-	test( 'points to the User Report Card instead of a state inside a support session', async () => {
+	test( 'shows no state and points to the User Report Card inside a support session', async () => {
 		( isSupportSession as jest.Mock ).mockReturnValue( true );
 		mockUserSettings( { two_step_enabled: false } );
 
 		render( <SecurityTwoStepAuthSummary /> );
 
-		expect( await screen.findByText( 'Support session' ) ).toBeVisible();
-		expect( screen.getByText( /Use the User Report Card/ ) ).toBeVisible();
+		expect( await screen.findByText( 'Not available during a support session' ) ).toBeVisible();
 		expect( screen.queryByText( 'Enabled' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Not enabled' ) ).not.toBeInTheDocument();
+
+		await userEvent.click( screen.getByText( 'Two-step authentication' ) );
+
+		expect( select( noticesStore ).getNotices() ).toEqual( [
+			expect.objectContaining( {
+				status: 'error',
+				type: 'snackbar',
+				content:
+					'Two-step authentication status is not available during a support session. Use the User Report Card for the full configuration.',
+			} ),
+		] );
 	} );
 } );
