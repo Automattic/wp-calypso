@@ -2,7 +2,13 @@ import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import { makeLayout, ssrSetupLocale } from 'calypso/controller';
 import { setHrefLangLinks, setLocalizedCanonicalUrl } from 'calypso/controller/localized-links';
 import { setupPreferences } from 'calypso/controller/preferences';
-import { details, fetchThemeDetailsData, fetchThemeFilters, notFoundError } from './controller';
+import {
+	details,
+	fetchThemeDetailsData,
+	fetchThemeFilters,
+	notFoundError,
+	redirectToLowerCaseThemeSlug,
+} from './controller';
 
 export default function ( router ) {
 	const langParam = getLanguageRouteParam();
@@ -10,6 +16,7 @@ export default function ( router ) {
 	router( '/theme', ( { res } ) => res.redirect( '/themes' ) );
 	router(
 		`/${ langParam }/theme/:slug/:section(setup|support)?/:site_id?`,
+		redirectToLowerCaseThemeSlug,
 		ssrSetupLocale,
 		setupPreferences,
 		fetchThemeFilters,
