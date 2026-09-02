@@ -7,23 +7,19 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import AddWooPaymentsToSiteTable, { type WooPaymentsSiteItem } from './add-site-table';
 import type { RecordTracksEvent } from '../types';
 
 import './style.scss';
 
-// Adding WooPayments to a site links out to the classic A4A site-setup flow, which is not part of
-// the dashboard.
-const A4A_WOOPAYMENTS_SITE_SETUP_LINK = '/woopayments/site-setup';
 const A4A_SITES_LINK = '/sites';
 
 interface AddWooPaymentsToSiteModalProps {
 	agencyId: number;
 	excludedSiteIds: number[];
 	recordTracksEvent: RecordTracksEvent;
-	navigate: ( url: string ) => void;
+	onSelectSite: ( siteId: number ) => void;
 	onClose: () => void;
 }
 
@@ -31,7 +27,7 @@ export default function AddWooPaymentsToSiteModal( {
 	agencyId,
 	excludedSiteIds,
 	recordTracksEvent,
-	navigate,
+	onSelectSite,
 	onClose,
 }: AddWooPaymentsToSiteModalProps ) {
 	const [ selectedSite, setSelectedSite ] = useState< WooPaymentsSiteItem | null >( null );
@@ -39,11 +35,7 @@ export default function AddWooPaymentsToSiteModal( {
 	const handleAddSite = () => {
 		if ( selectedSite ) {
 			recordTracksEvent( 'calypso_a4a_woopayments_add_site_confirm_click' );
-			navigate(
-				addQueryArgs( A4A_WOOPAYMENTS_SITE_SETUP_LINK, {
-					site_id: selectedSite.rawSite.blog_id,
-				} )
-			);
+			onSelectSite( selectedSite.rawSite.blog_id );
 		}
 	};
 
