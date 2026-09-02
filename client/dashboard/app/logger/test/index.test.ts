@@ -125,7 +125,6 @@ describe( 'handleOnCatch', () => {
 		} );
 
 		expect( mockedCaptureException ).toHaveBeenCalledTimes( 1 );
-		expect( mockedCaptureException ).toHaveBeenCalledTimes( 1 );
 		expect( mockedCaptureException ).toHaveBeenCalledWith( error, {
 			captureContext: {
 				tags: {
