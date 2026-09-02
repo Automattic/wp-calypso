@@ -86,6 +86,12 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		renderNotice();
 
 		expect( screen.queryByText( 'Try the new Traffic page' ) ).not.toBeInTheDocument();
+		// An impression for a banner nobody saw would inflate exactly the population the guard
+		// exists to exclude.
+		expect( mockRecordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_stats_premium_analytics_preview_notice_viewed',
+			expect.anything()
+		);
 	} );
 
 	it( 'records exactly one impression', () => {
@@ -112,6 +118,10 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		const link = await screen.findByRole( 'link', { name: 'Go to the new Traffic page' } );
 		expect( link ).toHaveAttribute( 'href', DASHBOARD_URL );
 		expect( screen.getByText( 'The new Traffic page is on' ) ).toBeVisible();
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_stats_premium_analytics_preview_notice_enabled',
+			{ blog_id: 123 }
+		);
 		// The customer chooses when to leave the page they were reading.
 		expect( window.location.href ).toBe( '' );
 	} );
@@ -180,6 +190,51 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 			'href',
 			expect.stringContaining( 'jetpack.com/contact-support' )
 		);
+	} );
+
+	/**
+	 * Two failed attempts to accept would otherwise read as two rejections, and the second
+	 * dismissal ends the invitation for good.
+	 */
+	it( 'does not count closing a failed attempt as a dismissal', async () => {
+		mockEnablePreview.mockRejectedValue( new Error( 'nope' ) );
+
+		renderNotice();
+		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
+		expect( await screen.findByRole( 'alert' ) ).toBeVisible();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
+
+		expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument();
+		expect( mockPostponeNotice ).not.toHaveBeenCalled();
+		expect( mockPostponeNoticeIndefinitely ).not.toHaveBeenCalled();
+		expect( localStorage.getItem( 'jetpack_stats_premium_analytics_preview_dismissals_123' ) ).toBe(
+			null
+		);
+	} );
+
+	it( 'records why an enable failed, so uptake can be told from breakage', async () => {
+		mockEnablePreview.mockResolvedValue( false );
+
+		renderNotice();
+		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
+
+		expect( await screen.findByRole( 'alert' ) ).toBeVisible();
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_stats_premium_analytics_preview_notice_enable_failed',
+			{ blog_id: 123, reason: 'not_enabled' }
+		);
+
+		mockEnablePreview.mockRejectedValue( new Error( 'nope' ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+
+		expect(
+			mockRecordTracksEvent.mock.calls.some(
+				( [ name, properties ] ) =>
+					name === 'calypso_stats_premium_analytics_preview_notice_enable_failed' &&
+					properties?.reason === 'request_failed'
+			)
+		).toBe( true );
 	} );
 
 	it( 'does not offer the link when the site reports the dashboard is still off', async () => {

@@ -21,6 +21,7 @@ import { useSelector, useDispatch } from 'calypso/state';
 import { resetSiteState } from 'calypso/state/purchases/actions';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getSiteFeatures from 'calypso/state/selectors/get-site-features';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
@@ -38,6 +39,7 @@ import useStatsPurchases, { shouldShowPaywallNotice } from '../hooks/use-stats-p
 import { AllTimeData } from '../sections/all-time-highlights-section';
 import ALL_STATS_NOTICES from './all-notice-definitions';
 import JITMWrapper from './jitm-wrapper';
+import isPremiumAnalyticsPreviewCohort from './premium-analytics-preview-cohort';
 import { StatsNoticeProps, StatsNoticesProps } from './types';
 import './style.scss';
 
@@ -155,15 +157,20 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	// qualify — that tier is precisely the one these are gated behind. `supportCommercialUse` is
 	// the same question for a self-hosted Jetpack site, but it only counts Jetpack purchases, so it
 	// would leave out every Simple and Atomic site — where the preview rolls out first.
+	//
+	// The features have to be in before that answer means anything: `shouldGateStats` reports
+	// "not gated" while they are still loading, which is the safe default for an upsell and the
+	// wrong one for an invitation — it would offer the preview to a site that never had the tier.
 	const hasCommercialStats = useSelector(
-		( state ) => ! shouldGateStats( state, siteId, STATS_FEATURE_UTM_STATS )
+		( state ) =>
+			!! getSiteFeatures( state, siteId ) &&
+			! shouldGateStats( state, siteId, STATS_FEATURE_UTM_STATS )
 	);
 
 	// Only sites that could actually accept the invitation pay for this round-trip, and the server
-	// decides the cohort on top. `isWpcom` mirrors the registry's rollout boundary, and earns its
-	// place here twice over: the request below also holds every notice back while it is in flight,
-	// so without it a self-hosted site would sit on its own upsell waiting for an answer it has no
-	// use for.
+	// decides the cohort on top. The same rule the registry uses, deliberately: the request below
+	// holds every notice back while it is in flight, so a site that asks it needlessly sits on its
+	// own upsell waiting for an answer nothing will use.
 	//
 	// Resolved out here rather than inside the notice: a notice that wins its conflict group and
 	// then renders nothing takes the upsells and the JITM slot down with it, because the parent
@@ -171,10 +178,13 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	const { data: isPremiumAnalyticsEnabled, isLoading: isLoadingPremiumAnalyticsStatus } =
 		usePremiumAnalyticsStatusQuery(
 			siteId,
-			isWpcom &&
-				canManageOptions &&
-				hasCommercialStats &&
-				serverNoticesVisibility?.premium_analytics_preview === true
+			isPremiumAnalyticsPreviewCohort( {
+				isWpcom,
+				isVip,
+				isP2,
+				canManageOptions,
+				hasCommercialStats,
+			} ) && serverNoticesVisibility?.premium_analytics_preview === true
 		);
 
 	const noticeOptions = {

@@ -118,7 +118,9 @@ const PremiumAnalyticsPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeP
 		postpone().catch( () => {} );
 	};
 
-	// Closing the confirmation is not a rejection, so it stays out of the dismissal count.
+	// Neither the confirmation nor a failed attempt is a rejection, so closing those stays out of
+	// the dismissal count - a site whose write failed twice would otherwise be counted as having
+	// said no twice, and never asked again.
 	const hideNotice = () => setDismissedSiteId( siteId );
 
 	const enablePremiumAnalyticsPreview = async () => {
@@ -128,9 +130,12 @@ const PremiumAnalyticsPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeP
 		try {
 			const enabled = await enablePreviewAsync( true );
 			if ( ! enabled ) {
+				trackEvent( isOdysseyStats, 'enable_failed', siteId, { reason: 'not_enabled' } );
 				setFailedSiteId( siteId );
 				return;
 			}
+
+			trackEvent( isOdysseyStats, 'enabled', siteId );
 
 			// Hand over a link rather than navigating for them: the dashboard only exists on a
 			// fresh page load, and being thrown out of the page you were reading is a poor reward
@@ -142,15 +147,18 @@ const PremiumAnalyticsPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeP
 			// taking the link with it.
 			setEnabledSiteId( siteId );
 		} catch {
+			trackEvent( isOdysseyStats, 'enable_failed', siteId, { reason: 'request_failed' } );
 			setFailedSiteId( siteId );
 		}
 	};
 
+	// `dashboardUrl` is part of the condition, not just the render: without it the banner returns
+	// null below, and an impression for a banner nobody saw is worse than none.
 	useEffect( () => {
-		if ( ! noticeDismissed ) {
+		if ( ! noticeDismissed && dashboardUrl ) {
 			trackEvent( isOdysseyStats, 'viewed', siteId );
 		}
-	}, [ noticeDismissed, isOdysseyStats, siteId ] );
+	}, [ noticeDismissed, dashboardUrl, isOdysseyStats, siteId ] );
 
 	// Without somewhere to land, accepting would switch the dashboard on and drop the customer on a
 	// 404. getSiteAdminUrl() returns null when the site record carries no admin_url.
@@ -166,7 +174,7 @@ const PremiumAnalyticsPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeP
 					title={ translate( 'The new Traffic page is on' ) }
 					onClose={ hideNotice }
 				>
-					<p key="desc">
+					<p key="desc" role="status">
 						{ translate( 'You’ll find it in the main menu alongside your current Stats.' ) }
 					</p>
 					<p key="cta">
@@ -185,7 +193,7 @@ const PremiumAnalyticsPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeP
 				<NoticeBanner
 					level="error"
 					title={ translate( 'We couldn’t switch on the new Traffic page' ) }
-					onClose={ dismissNotice }
+					onClose={ hideNotice }
 				>
 					<p key="desc" role="alert">
 						{ translate(

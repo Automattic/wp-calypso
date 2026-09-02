@@ -7,6 +7,7 @@ import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-succ
 import FreeSiteUpgradeNotice from './free-site-upgrade-notice';
 import GDPRCookieConsentNotice from './gdpr-cookie-consent-notice';
 import PaidPlanPurchaseSuccessJetpackStatsNotice from './paid-plan-purchase-success-notice';
+import isPremiumAnalyticsPreviewCohort from './premium-analytics-preview-cohort';
 import PremiumAnalyticsPreviewNotice from './premium-analytics-preview-notice';
 import TierUpgradeNotice from './tier-upgrade-notice';
 import { StatsNoticeProps } from './types';
@@ -37,12 +38,11 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 	{
 		component: PremiumAnalyticsPreviewNotice,
 		noticeId: 'premium_analytics_preview',
-		// `isWpcom` - true for Simple and Atomic alike - is a rollout boundary rather than part of
-		// who the preview is for: WPCOM sites go first, and self-hosted Jetpack sites join by
-		// deleting that one clause and the matching one in the parent's query gate. It would sit
-		// better beside the flag in `disabled`, which is where the other temporary switches live,
-		// but that is resolved once at module load with no site in scope - anything that depends
-		// on the site has to be asked here.
+		// Who the site has to be lives in `isPremiumAnalyticsPreviewCohort`, shared with the parent
+		// so the request that gates this notice is spent on exactly the sites that could accept it.
+		// It would sit better beside the flag in `disabled`, which is where the other temporary
+		// switches live, but that is resolved once at module load with no site in scope - anything
+		// depending on the site has to be asked here.
 		// In CONFLICT_NOTICE_ID_GROUPS so only one banner ever shows, though nothing in the group
 		// is a natural rival while the invitation is WPCOM-only: the upsells need a site without
 		// paid Stats, and `tier_upgrade` needs a self-hosted one. Ranked high regardless, so a
@@ -54,22 +54,8 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 		// three-valued: undefined means the site never reported the setting at all — a Jetpack too
 		// old to register it, or a read that failed — which is not the same as the dashboard being
 		// off, and must not read as "go ahead and offer it".
-		isVisibleFunc: ( {
-			isWpcom,
-			isVip,
-			isP2,
-			canManageOptions,
-			hasCommercialStats,
-			isPremiumAnalyticsEnabled,
-		}: StatsNoticeProps ) =>
-			!! (
-				isWpcom &&
-				canManageOptions &&
-				hasCommercialStats &&
-				isPremiumAnalyticsEnabled === false &&
-				! isVip &&
-				! isP2
-			),
+		isVisibleFunc: ( options: StatsNoticeProps ) =>
+			isPremiumAnalyticsPreviewCohort( options ) && options.isPremiumAnalyticsEnabled === false,
 		disabled: ! isEnabled( 'stats/premium-analytics-preview' ),
 	},
 	{
