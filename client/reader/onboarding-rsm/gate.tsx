@@ -1,15 +1,10 @@
-import { isEnabled } from '@automattic/calypso-config';
 import AsyncLoad from 'calypso/components/async-load';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
-const loadOnboardingRsm = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-reader-onboarding-rsm" */ 'calypso/reader/onboarding-rsm'
-	);
 const loadOnboarding = () =>
 	import(
-		/* webpackChunkName: "async-load-calypso-reader-onboarding" */ 'calypso/reader/onboarding'
+		/* webpackChunkName: "async-load-calypso-reader-onboarding-rsm" */ 'calypso/reader/onboarding-rsm'
 	);
 
 type ReaderOnboardingGateProps = {
@@ -27,9 +22,5 @@ export default function ReaderOnboardingGate( props: ReaderOnboardingGateProps )
 		return null;
 	}
 
-	return isEnabled( 'reader/onboarding-rsm' ) ? (
-		<AsyncLoad require={ loadOnboardingRsm } { ...props } placeholder={ null } />
-	) : (
-		<AsyncLoad require={ loadOnboarding } { ...props } placeholder={ null } />
-	);
+	return <AsyncLoad require={ loadOnboarding } { ...props } placeholder={ null } />;
 }
