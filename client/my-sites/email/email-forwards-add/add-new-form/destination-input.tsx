@@ -59,9 +59,7 @@ export function DestinationsInput( props: DestinationsInputProps ) {
 					}
 					return error;
 				} }
-				placeholder={ translate(
-					'These are the target email addresses where your emails will be forwarded.'
-				) }
+				placeholder={ translate( 'you@example.com' ) }
 			/>
 			{ values.map( ( value ) => (
 				<input key={ value } type="hidden" name="destinations" value={ value } />
