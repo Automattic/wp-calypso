@@ -397,5 +397,11 @@
 		.wpnc-app__detail-pane {
 			border-color: var( --wpnc-divider__color );
 		}
+
+		// The reply gridicon ships a light-mode gray fill; lighten it so it
+		// stays legible on the dark surface.
+		.wpnc__gridicon .gridicons-reply {
+			fill: var( --wp-components-color-gray-700, #9aa2b1 );
+		}
 	}
 }

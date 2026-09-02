@@ -177,6 +177,12 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 		border-radius: $wpnc-pane-radius;
 		box-shadow: $wpnc-pane-shadow;
 		pointer-events: auto;
+
+		// The light 12% shadow is invisible on a dark backdrop; deepen it so
+		// the pane still reads as elevated.
+		@include ui-mixins.when-dark-theme {
+			box-shadow: 0 0 16px rgba(0, 0, 0, 0.5);
+		}
 	}
 
 	.wpnc-app__detail-pane {

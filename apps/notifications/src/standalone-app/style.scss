@@ -1,3 +1,4 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 @import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/colors";
 @import "@wordpress/base-styles/breakpoints";
@@ -37,6 +38,18 @@ body {
 	border-radius: 4px;
 	box-shadow: 0 0 16px rgba(0, 0, 0, 0.12);
 	overflow: hidden;
+
+	@include ui-mixins.when-dark-theme {
+		border-color: var(--wp-components-color-gray-400, #424855);
+	}
+
+	// Scoped below the large breakpoint so the dark shadow doesn't override
+	// the `box-shadow: none` reset in the break-large block further down.
+	@media (max-width: #{$break-large - 1px}) {
+		@include ui-mixins.when-dark-theme {
+			box-shadow: 0 0 16px rgba(0, 0, 0, 0.5);
+		}
+	}
 
 	@include break-small {
 		max-width: 448px;
