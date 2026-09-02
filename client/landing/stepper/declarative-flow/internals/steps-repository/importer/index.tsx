@@ -3,7 +3,7 @@ import { Step, StepContainer } from '@automattic/onboarding';
 import { ProgressBar } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 import { getImportDragConfig } from 'calypso/blocks/importer/components/importer-drag/config';
 import NotAuthorized from 'calypso/blocks/importer/components/not-authorized';
 import NotFound from 'calypso/blocks/importer/components/not-found';
@@ -13,6 +13,7 @@ import QuerySites from 'calypso/components/data/query-sites';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSaveHostingFlowPathStep } from 'calypso/landing/stepper/hooks/use-save-hosting-flow-path-step';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
+import { useSiteResolution } from 'calypso/landing/stepper/hooks/use-site-resolution';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { logToLogstash } from 'calypso/lib/logstash';
@@ -31,8 +32,7 @@ import {
 import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { requestSites } from 'calypso/state/sites/actions';
-import { isRequestingSite, hasAllSitesList } from 'calypso/state/sites/selectors';
+import { isRequestingSite } from 'calypso/state/sites/selectors';
 import { StepProps } from '../../types';
 import { useAtomicTransferQueryParamUpdate } from './hooks/use-atomic-transfer-query-param-update';
 import { useInitialQueryRun } from './hooks/use-initial-query-run';
@@ -70,6 +70,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		 */
 		const currentUser = useSelector( getCurrentUser );
 		const { site, siteId, siteSlug } = useSiteData();
+		const hasSiteResolutionFinished = useSiteResolution();
 		const runImportInitially = useInitialQueryRun( siteId );
 		const canImport = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );
 		const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
@@ -78,15 +79,13 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const fromSiteData = useSelector( getUrlData );
 		const stepNavigator = useStepNavigator( flow, navigation, siteId, siteSlug, site, fromSite );
 		const currentPath = window.location.pathname + window.location.search;
-		const hasAllSitesFetched = useSelector( hasAllSitesList );
 
 		const isRequestingCurrentSite = useSelector( ( state ) =>
 			siteId ? isRequestingSite( state, siteId ) : false
 		);
 
-		const isLoading = useMemo( () => {
-			return ! isImporterStatusHydrated || ! hasAllSitesFetched || isRequestingCurrentSite;
-		}, [ isImporterStatusHydrated, hasAllSitesFetched, isRequestingCurrentSite ] );
+		const isLoading =
+			! isImporterStatusHydrated || ! hasSiteResolutionFinished || isRequestingCurrentSite;
 
 		const skipToDashboardAction = useCallback( () => {
 			recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
@@ -100,10 +99,6 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		/**
 	 	↓ Effects
 		 */
-		useEffect( () => {
-			dispatch( requestSites() );
-		}, [ dispatch ] );
-
 		useAtomicTransferQueryParamUpdate( siteId );
 		useEffect( fetchImporters, [ siteId ] );
 		useEffect( checkFromSiteData, [ fromSiteData?.url ] );
