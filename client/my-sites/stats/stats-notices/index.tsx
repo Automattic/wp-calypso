@@ -157,9 +157,11 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		isError: isPremiumAnalyticsStatusError,
 	} = usePremiumAnalyticsStatusQuery( siteId, isOfferedTrafficTabPreview );
 
-	// A failed read means the site can't serve the route at all — a Jetpack too old to have it.
+	// Strictly false, never just falsy: undefined means the site never offered the setting — a
+	// Jetpack too old to register it — which is not the same as the dashboard being off. A failed
+	// read is the same story from the other direction.
 	const canEnableTrafficTabPreview =
-		isOfferedTrafficTabPreview && ! isPremiumAnalyticsStatusError && ! hasPremiumAnalytics;
+		isOfferedTrafficTabPreview && ! isPremiumAnalyticsStatusError && hasPremiumAnalytics === false;
 
 	const noticeOptions = {
 		siteId,

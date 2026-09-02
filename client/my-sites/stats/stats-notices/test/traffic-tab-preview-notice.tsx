@@ -46,7 +46,7 @@ describe( 'TrafficTabPreviewNotice', () => {
 		mockGetSiteAdminUrl.mockReturnValue( DASHBOARD_URL );
 		mockPostponeNotice.mockResolvedValue( undefined );
 		mockUseNoticeVisibilityMutation.mockReturnValue( { mutateAsync: mockPostponeNotice } );
-		mockEnablePreview.mockResolvedValue( { enabled: true } );
+		mockEnablePreview.mockResolvedValue( true );
 		mockIsEnabling = false;
 		Object.defineProperty( window, 'location', { value: { href: '' }, writable: true } );
 	} );
@@ -137,7 +137,7 @@ describe( 'TrafficTabPreviewNotice', () => {
 		} );
 		mockEnablePreview.mockImplementation( () => {
 			order.push( 'enable' );
-			return Promise.resolve( { enabled: true } );
+			return Promise.resolve( true );
 		} );
 
 		renderNotice();
@@ -160,7 +160,7 @@ describe( 'TrafficTabPreviewNotice', () => {
 	} );
 
 	it( 'does not offer the link when the site reports the dashboard is still off', async () => {
-		mockEnablePreview.mockResolvedValue( { enabled: false } );
+		mockEnablePreview.mockResolvedValue( false );
 
 		renderNotice();
 		await userEvent.click( screen.getByRole( 'button', { name: 'Try it now' } ) );

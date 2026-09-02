@@ -58,7 +58,7 @@ const TrafficTabPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps )
 		setFailedSiteId( null );
 
 		try {
-			const { enabled } = await enablePreviewAsync( true );
+			const enabled = await enablePreviewAsync( true );
 			if ( ! enabled ) {
 				setFailedSiteId( siteId );
 				return;
