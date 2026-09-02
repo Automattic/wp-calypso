@@ -1,14 +1,19 @@
+import clsx from 'clsx';
+import { getSiteName } from './dataviews/site-data';
 import type { AgencySite } from '@automattic/api-core';
 
-// TODO: make this fallback themeable (incl. dark mode) once A4A supports dark mode.
-const FALLBACK_SITE_COLOR = 'linear-gradient( 45deg, #ff0056, #ff8a78, #57b7ff, #9c00d4 )';
+import '../../components/site-icon/style.scss';
 
+// Mirrors the dotcom SiteIcon: the real icon when the site has one, and the
+// first-initial letter tile otherwise.
 export default function AgencySiteIcon( { site, size }: { site: AgencySite; size: number } ) {
 	const ico = site.icon?.img || site.icon?.ico;
+	const className = clsx( { 'is-small': size <= 16 } );
 
 	if ( ico ) {
 		return (
 			<img
+				className={ clsx( 'site-icon', className ) }
 				src={ ico }
 				alt=""
 				width={ size }
@@ -21,28 +26,19 @@ export default function AgencySiteIcon( { site, size }: { site: AgencySite; size
 					width: size,
 					height: size,
 					minWidth: size,
-					borderRadius: 4,
 					objectFit: 'cover',
-					outline: '1px solid rgba( 0, 0, 0, 0.04 )',
-					outlineOffset: -1,
 				} }
 			/>
 		);
 	}
 
 	return (
-		<span
+		<div
 			aria-hidden="true"
-			style={ {
-				display: 'block',
-				boxSizing: 'border-box',
-				flexShrink: 0,
-				width: size,
-				height: size,
-				minWidth: size,
-				borderRadius: 4,
-				background: site.site_color || FALLBACK_SITE_COLOR,
-			} }
-		/>
+			className={ clsx( 'site-letter', className ) }
+			style={ { width: size, height: size, minWidth: size, fontSize: size * 0.5 } }
+		>
+			<span>{ getSiteName( site ).charAt( 0 ) }</span>
+		</div>
 	);
 }

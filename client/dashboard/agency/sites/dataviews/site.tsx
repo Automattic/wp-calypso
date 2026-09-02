@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { ExternalLink, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { titleFieldTextOverflowStyles } from '../../../sites/site-fields';
 import AgencySiteIcon from '../site-icon';
 import { getDisplayUrl, getSiteName, getSiteUrl } from './site-data';
 import type { AgencySite } from '@automattic/api-core';
@@ -54,7 +55,11 @@ export function getSiteUrlField(): Field< AgencySite > {
 		enableGlobalSearch: true,
 		getValue: ( { item } ) => getDisplayUrl( item ),
 		render: ( { item } ) => (
-			<ExternalLink className="dataviews-url-field" href={ getSiteUrl( item ) }>
+			<ExternalLink
+				className="dataviews-url-field"
+				style={ titleFieldTextOverflowStyles }
+				href={ getSiteUrl( item ) }
+			>
 				{ getDisplayUrl( item ) }
 			</ExternalLink>
 		),
