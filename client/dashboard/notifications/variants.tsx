@@ -37,9 +37,18 @@ export type InboxVariant = {
 
 /**
  * Register experiments here. The picker only appears when there is more than
- * one entry, so the default-only registry adds no UI.
+ * one entry, so a default-only registry adds no UI.
+ *
+ * Base or variant? A change every design should get — data, behaviour, fixes,
+ * anything in the model or engine — lands in the base files. A change meant to
+ * be compared against the current design lands in a variant. If a variant
+ * needs data the model doesn't expose, extend NoteView for everyone instead of
+ * deriving it inside the variant.
  */
-export const INBOX_VARIANTS: InboxVariant[] = [ { key: 'default', label: __( 'Default' ) } ];
+export const INBOX_VARIANTS: InboxVariant[] = [
+	{ key: 'default', label: __( 'Default' ) },
+	{ key: 'compact', label: __( 'Compact' ), className: 'is-variant-compact' },
+];
 
 const STORAGE_KEY = 'dashboard-notifications-inbox-variant';
 

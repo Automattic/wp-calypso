@@ -545,3 +545,36 @@
 		width: 100%;
 	}
 }
+
+/* The Compact variant: a CSS-only skin (see variants.tsx) that tightens both
+   panes for readers who want more on screen. */
+.dashboard-notifications-inbox__layout.is-variant-compact {
+	.dataviews-view-list div[role="article"] .dataviews-view-list__item-wrapper {
+		padding: 8px 24px;
+	}
+
+	.dataviews-view-list__group-header {
+		padding-block: 8px;
+	}
+
+	.dashboard-notifications-inbox__detail .components-card__body {
+		padding-bottom: 24px;
+	}
+
+	.dashboard-notifications-inbox__detail-nav {
+		padding-bottom: 12px;
+	}
+
+	.dashboard-notifications-inbox__comment-card {
+		margin: -8px;
+		padding: 8px;
+	}
+
+	.dashboard-notifications-inbox__actions {
+		margin-block-start: 8px;
+	}
+
+	.dashboard-notifications-inbox__badge-media {
+		max-width: 96px;
+	}
+}
