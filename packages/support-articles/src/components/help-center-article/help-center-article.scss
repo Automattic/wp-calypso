@@ -537,11 +537,10 @@
 				}
 			}
 
-			// Videos span the full width of the Help Center, bleeding past the
-			// article's horizontal padding.
+			// Drop the browser's default <figure> side margins so videos match
+			// the text width.
 			.wp-block-embed.is-type-video {
-				margin-inline: -16px;
-				inline-size: calc( 100% + 32px );
+				margin-inline: 0;
 				max-inline-size: none;
 			}
 
