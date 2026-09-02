@@ -15,6 +15,7 @@ const eligibleSite: StatsNoticeProps = {
 	siteId: 123,
 	isOdysseyStats: false,
 	canEnableTrafficTabPreview: true,
+	hasAdvancedStats: true,
 	isVip: false,
 	isP2: false,
 };
@@ -42,6 +43,19 @@ describe( 'traffic_tab_preview notice visibility', () => {
 				...eligibleSite,
 				canEnableTrafficTabPreview: undefined,
 			} )
+		).toBe( false );
+	} );
+
+	/**
+	 * The preview is for sites that already have UTM, device and region/city views. A WPCOM site on
+	 * FEATURE_STATS_PAID has those gated, so "paid stats" alone is not enough.
+	 */
+	it( 'stays hidden for a site without the advanced Stats features', () => {
+		expect(
+			trafficTabPreviewNotice?.isVisibleFunc( { ...eligibleSite, hasAdvancedStats: false } )
+		).toBe( false );
+		expect(
+			trafficTabPreviewNotice?.isVisibleFunc( { ...eligibleSite, hasAdvancedStats: undefined } )
 		).toBe( false );
 	} );
 

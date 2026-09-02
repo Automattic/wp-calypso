@@ -41,8 +41,13 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 		// whereas the upsells are perpetual and come back the moment this one is dismissed or
 		// accepted. Eligibility is resolved by the parent, so this notice never wins the group and
 		// then renders nothing — that would suppress the upsells and the JITM for an empty slot.
-		isVisibleFunc: ( { isVip, isP2, canEnableTrafficTabPreview }: StatsNoticeProps ) =>
-			!! ( canEnableTrafficTabPreview && ! isVip && ! isP2 ),
+		isVisibleFunc: ( {
+			isVip,
+			isP2,
+			hasAdvancedStats,
+			canEnableTrafficTabPreview,
+		}: StatsNoticeProps ) =>
+			!! ( canEnableTrafficTabPreview && hasAdvancedStats && ! isVip && ! isP2 ),
 		disabled: false,
 	},
 	{

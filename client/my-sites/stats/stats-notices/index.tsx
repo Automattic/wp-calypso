@@ -2,7 +2,10 @@ import config from '@automattic/calypso-config';
 import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
 import { useState, useEffect } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import { STATS_FEATURE_PAGE_TRAFFIC } from 'calypso/my-sites/stats/constants';
+import {
+	STATS_FEATURE_PAGE_TRAFFIC,
+	STATS_FEATURE_UTM_STATS,
+} from 'calypso/my-sites/stats/constants';
 import {
 	DEFAULT_NOTICES_VISIBILITY,
 	Notices,
@@ -145,12 +148,21 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		( state ) => !! canCurrentUser( state as object, siteId as number, 'manage_options' )
 	);
 
+	// The preview is for sites that already have the advanced Stats features — UTM, device, and
+	// region/city views. Asking the gate rather than a plan or product flag: those four always move
+	// together through it, so one stands for all of them, and it is the same answer Stats itself
+	// gives when deciding whether to show them. Note a WPCOM site on FEATURE_STATS_PAID does *not*
+	// qualify — that tier is precisely the one these are gated behind.
+	const hasAdvancedStats = useSelector(
+		( state ) => ! shouldGateStats( state, siteId, STATS_FEATURE_UTM_STATS )
+	);
+
 	// Only cohort sites pay for this round-trip: the server decides who is offered the preview, and
 	// everyone else never reaches the query. It has to be resolved out here rather than inside the
 	// notice, because a notice that wins its conflict group and then renders nothing takes the
 	// upsells and the JITM slot down with it — the parent only sees the element, not the null.
 	const isOfferedTrafficTabPreview =
-		canManageOptions && serverNoticesVisibility?.traffic_tab_preview === true;
+		canManageOptions && hasAdvancedStats && serverNoticesVisibility?.traffic_tab_preview === true;
 	const {
 		data: hasPremiumAnalytics,
 		isLoading: isLoadingPremiumAnalyticsStatus,
@@ -167,6 +179,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		siteId,
 		isOdysseyStats,
 		canEnableTrafficTabPreview,
+		hasAdvancedStats,
 		isWpcom,
 		isVip,
 		isP2,
