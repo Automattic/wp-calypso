@@ -12,6 +12,11 @@ const selectors = {
 	blockSearch: 'input[placeholder="Search"]',
 };
 
+// Server-rendered, so present once the response is parsed: 0.9-1.9s measured on the
+// production configs. The margin absorbs the PR suite, where contention from a full
+// parallel run stretches this spec five-fold.
+const EDITOR_SHELL_TIMEOUT = 15 * 1000;
+
 // The editor boots from deferred module scripts, which hold back both `load` and
 // `domcontentloaded`. This wait is what absorbs a slow boot, so it needs a budget far
 // beyond the default action timeout.
@@ -43,7 +48,7 @@ export class BlockWidgetEditorComponent {
 	 * @param {string} legacyWidget Name of the legacy widget variation, eg. 'authors'.
 	 */
 	async waitUntilLoaded( legacyWidget: string ): Promise< void > {
-		await this.page.locator( selectors.editor ).waitFor();
+		await this.page.locator( selectors.editor ).waitFor( { timeout: EDITOR_SHELL_TIMEOUT } );
 
 		await this.page.waitForFunction(
 			( name ) =>
