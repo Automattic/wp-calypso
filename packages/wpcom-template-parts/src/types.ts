@@ -19,17 +19,23 @@ export interface HeaderProps {
 }
 
 export interface FooterProps {
-	onLanguageChange?: React.ChangeEventHandler< HTMLSelectElement >;
 	isLoggedIn?: boolean;
 	currentRoute?: string;
+	/**
+	 * Fills the Company column's `x-nav-footer--ccpa-dnsd` slot — on WPCOM the
+	 * twin's do-not-sell script injects its link there. Pass a single anchor
+	 * (e.g. a "Do Not Sell or Share My Personal Information" link wired to the
+	 * do-not-sell dialog); the empty li renders regardless so the anchor point
+	 * always exists.
+	 */
 	additionalCompanyLinks?: React.ReactNode;
 }
 export interface PureFooterProps extends FooterProps {
 	localizeUrl?: ReturnType< typeof useLocalizeUrl >;
 	locale?: string;
-	isEnglishLocale?: boolean;
 	automatticBranding?: ReturnType< typeof getAutomatticBrandingNoun >;
-	languageOptions?: LanguageOptions;
+	/** Render the link columns as collapsed tap-to-expand stacks (small screens). */
+	collapseStacks?: boolean;
 }
 
 export interface MenuItemProps {
@@ -56,5 +62,3 @@ export interface ClickableItemProps extends MenuItemProps {
 	/** Fires when the item's link gains keyboard focus (2026 nav dropdown dismissal parity). */
 	onItemFocus?: () => void;
 }
-
-export type LanguageOptions = Record< string, string >;

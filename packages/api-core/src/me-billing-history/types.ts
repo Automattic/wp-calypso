@@ -38,6 +38,28 @@ export interface TaxVendorInfo {
 	tax_name: string;
 }
 
+/**
+ * The buyer's tax identity as the document currently standing for a receipt
+ * states it: the reissue that supersedes it where there is one, and the receipt
+ * as issued where there is not.
+ *
+ * Not the same as the user's current details from `userTaxDetailsQuery`, which
+ * describe who they are today rather than who the receipt was issued to. Prefer
+ * this whenever rendering a receipt.
+ *
+ * Same shape as the `/me/vat-info` response minus `can_user_edit`, so either
+ * can be handed to the same renderer.
+ */
+export interface TaxCustomerInfo {
+	/**
+	 * Uppercase country code, or an empty string where none is on record.
+	 */
+	country: string;
+	id: string | null;
+	name: string | null;
+	address: string | null;
+}
+
 export interface ReceiptItemCostOverride {
 	id: number;
 	human_readable_reason: string;
@@ -119,6 +141,12 @@ export interface Receipt {
 	credit: string;
 	items: ReceiptItem[];
 	tax_vendor_info?: TaxVendorInfo;
+	/**
+	 * Optional only because responses cached before this field shipped will not
+	 * carry it; the API always sends it. Fall back to the user's current details
+	 * when it is absent.
+	 */
+	tax_customer_info?: TaxCustomerInfo;
 	tax_breakdown?: TaxBreakdownEntry[];
 	checkout_type?: string;
 	/**

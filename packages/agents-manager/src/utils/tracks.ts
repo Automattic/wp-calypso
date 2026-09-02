@@ -16,6 +16,7 @@ import { DOLLY_AGENT_ID } from '../constants';
 import { getActiveSessionId } from './agent-session';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent, isReaderChatHost } from './is-reader-chat-agent';
+import { getLoadedProviderIds } from './loaded-provider-ids';
 import { getResolvedAgentId } from './resolved-agent-id';
 
 type TracksProps = Record< string, unknown >;
@@ -154,6 +155,9 @@ function getUnifiedBaseProps(): TracksProps {
 	return {
 		ai_session_id: getActiveSessionId(),
 		agent_name: getResolvedAgentId() ?? DOLLY_AGENT_ID,
+		// Sorted so the same provider set always yields the same value; 'none'
+		// until the providers load (events can fire before the chat mounts).
+		provider_ids: getLoadedProviderIds()?.slice().sort().join( ',' ) || 'none',
 		surface: isReaderChatHost() ? 'reader-chat' : 'editor',
 		path: typeof window !== 'undefined' ? window.location.pathname : '',
 		is_test: getIsTest(),

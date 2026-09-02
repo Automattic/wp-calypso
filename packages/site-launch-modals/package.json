@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/site-launch-modals",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "Presentational modals for the WordPress.com site-launch flow (pre-launch confirmation and post-launch celebration).",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",

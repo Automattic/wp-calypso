@@ -43,7 +43,12 @@ import {
 	renderJetpackSearch10kTierBreakdown,
 	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
 } from './utils';
-import type { Receipt, ReceiptItem, ReceiptItemCostOverride } from '@automattic/api-core';
+import type {
+	Receipt,
+	ReceiptItem,
+	ReceiptItemCostOverride,
+	TaxCustomerInfo,
+} from '@automattic/api-core';
 import './styles.scss';
 
 export interface IntroductoryOfferTerms {
@@ -286,8 +291,30 @@ type ReceiptTaxDetail = {
 	value: ReactNode;
 };
 
-function UserVatDetails( { receipt }: { receipt: Receipt } ) {
-	const { data: vatDetails } = useSuspenseQuery( userTaxDetailsQuery() );
+/**
+ * The tax identity to print on a receipt.
+ *
+ * A receipt describes a supply that already happened, so it has to name the
+ * party it happened with. The API says who that was, taking account of any
+ * reissue that has since superseded the receipt. The user's current details are
+ * only a stand-in for receipts served by an API that predates the field, where
+ * they remain the best guess available.
+ */
+function useReceiptVatDetails( receipt: Receipt ): TaxCustomerInfo {
+	const { data: userTaxDetails } = useSuspenseQuery( userTaxDetailsQuery() );
+
+	return (
+		receipt.tax_customer_info ?? {
+			country: userTaxDetails.country ?? '',
+			id: userTaxDetails.id ?? null,
+			name: userTaxDetails.name ?? null,
+			address: userTaxDetails.address ?? null,
+		}
+	);
+}
+
+export function UserVatDetails( { receipt }: { receipt: Receipt } ) {
+	const vatDetails = useReceiptVatDetails( receipt );
 	const sendEmailMutation = useMutation(
 		withSnackbar( sendReceiptEmailMutation(), {
 			success: __( 'Your receipt was sent by email successfully.' ),

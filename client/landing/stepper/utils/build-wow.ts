@@ -74,16 +74,22 @@ export function getBuildWowSiteIdentifier( {
 	return null;
 }
 
+/**
+ * The spec widget reads `prompt` off the page URL and sends it as the opening
+ * message, so a prompt collected earlier rides along here.
+ */
 export function getBuildWowSiteSpecUrl( {
 	siteSlug,
 	siteId,
 	ref,
 	source,
+	prompt,
 }: {
 	siteSlug?: string | null;
 	siteId?: string | number | null;
 	ref?: string | null;
 	source?: string | null;
+	prompt?: string | null;
 } ): string {
 	return addQueryArgs( BUILD_WOW_SITE_SPEC_PATH, {
 		build_wow: BUILD_WOW_QUERY_VALUE,
@@ -91,6 +97,7 @@ export function getBuildWowSiteSpecUrl( {
 		...( siteId && String( siteId ) !== '0' ? { siteId } : {} ),
 		...( ref ? { ref } : {} ),
 		...( source ? { source } : {} ),
+		...( prompt ? { prompt } : {} ),
 	} );
 }
 

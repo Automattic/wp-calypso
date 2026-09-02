@@ -107,12 +107,11 @@ class VerificationCodeForm extends Component {
 
 		let buttonText = translate( 'Continue' );
 		let helpText = translate( 'Enter the code from your authenticator app.' );
-		let labelText = translate( '6-Digit code' );
+		let labelText = translate( 'Verification code' );
 		let smallPrint;
 
 		if ( twoFactorEmailNonce ) {
 			helpText = translate( 'Enter the code from the email we sent you.' );
-			labelText = translate( '9-Digit code' );
 		}
 
 		if ( twoFactorAuthType === 'sms' ) {
@@ -158,7 +157,9 @@ class VerificationCodeForm extends Component {
 							isError={ requestError && requestError.field === 'twoStepCode' }
 							id="twoStepCode"
 							name="twoStepCode"
-							method={ twoFactorAuthType }
+							// An email nonce means the code was emailed, whatever the route says.
+							// Resolved the same way onSubmitForm does.
+							method={ twoFactorEmailNonce ? 'email' : twoFactorAuthType }
 							ref={ this.saveRef }
 							disabled={ this.state.isDisabled }
 							placeholder={ this.props.verificationCodeInputPlaceholder }
