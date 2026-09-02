@@ -1,17 +1,5 @@
 @use 'calypso/reader/shelves/colors' as shelf-colors;
 
-// The full-post action bar sizes its controls at 8px/16px padding, but
-// `.components-button.has-icon.is-next-40px-default-size` outranks that shared
-// rule and would pin this to a 40px square, 2px short of its neighbours.
-.reader-subscribe-with-shelf__shelves.components-button.has-icon {
-	width: 58px;
-	height: 42px;
-	padding: 8px 16px;
-	border: 1px solid var( --color-neutral-10 );
-	border-radius: 4px;
-	background: var( --color-surface );
-}
-
 // Fixed-height flex column: static header + feed preview + search, a scrolling
 // list, and a pinned footer — so only the list scrolls, not the whole modal.
 // Mirrors the customize-shelf modal layout.
