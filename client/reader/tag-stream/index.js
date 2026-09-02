@@ -38,5 +38,5 @@ export default function () {
 	);
 
 	// Catch-all for unrecognized /tag/* paths (after the specific /tag/:tag route).
-	page( '/tag/*', readerNotFound );
+	page( '/tag/*', redirectLoggedOutToDiscoverTags, readerNotFound );
 }

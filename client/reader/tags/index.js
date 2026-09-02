@@ -25,5 +25,5 @@ export default function ( router ) {
 		clientRender
 	);
 
-	router( '/tags/*', readerNotFound );
+	router( '/tags/*', redirectLoggedOutToDiscoverTags, readerNotFound );
 }

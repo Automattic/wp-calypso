@@ -421,7 +421,8 @@ export function redirectLoggedOutToDiscover( context, next ) {
 }
 
 /**
- * Middleware to redirect logged out users to the Discover tags tab.
+ * Middleware to redirect logged out users to the Discover tags tab, selecting
+ * the requested tag when the route has one.
  * Intended for the tag pages, which no longer support logged out users.
  * @param   {Object}   context Context object
  * @param   {Function} next    Calls next middleware
@@ -433,7 +434,8 @@ export function redirectLoggedOutToDiscoverTags( context, next ) {
 		next();
 		return;
 	}
-	return page.redirect( '/discover/tags?selectedTag=dailyprompt' );
+	const tag = context.params.tag ? encodeURIComponent( context.params.tag ) : 'dailyprompt';
+	return page.redirect( `/discover/tags?selectedTag=${ tag }` );
 }
 
 /**

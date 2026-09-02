@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import page from '@automattic/calypso-router';
+import { redirectLoggedOutToDiscoverTags } from 'calypso/reader/controller';
 import { readerNotFound } from 'calypso/reader/lib/reader-router';
 import initTags from '../index';
 
@@ -47,7 +48,11 @@ describe( 'reader tags routes', () => {
 
 		initTags( router );
 
-		expect( router ).toHaveBeenCalledWith( '/tags/*', readerNotFound );
-		expect( page ).not.toHaveBeenCalledWith( '/tags/*', readerNotFound );
+		expect( router ).toHaveBeenCalledWith(
+			'/tags/*',
+			redirectLoggedOutToDiscoverTags,
+			readerNotFound
+		);
+		expect( page ).not.toHaveBeenCalled();
 	} );
 } );

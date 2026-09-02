@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import page from '@automattic/calypso-router';
+import { redirectLoggedOutToDiscoverTags } from 'calypso/reader/controller';
 import { readerNotFound } from 'calypso/reader/lib/reader-router';
 import initTagStream from '../index';
 
@@ -51,6 +52,10 @@ describe( 'reader tag stream routes', () => {
 	it( 'registers the tag catch-all', () => {
 		initTagStream();
 
-		expect( page ).toHaveBeenCalledWith( '/tag/*', readerNotFound );
+		expect( page ).toHaveBeenCalledWith(
+			'/tag/*',
+			redirectLoggedOutToDiscoverTags,
+			readerNotFound
+		);
 	} );
 } );
