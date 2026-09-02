@@ -21,6 +21,7 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 } ) );
 
 const mockPostponeNotice = jest.fn();
+const mockPostponeNoticeIndefinitely = jest.fn();
 const mockUseNoticeVisibilityMutation = jest.fn();
 jest.mock( 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation', () => ( {
 	__esModule: true,
@@ -37,15 +38,25 @@ jest.mock( 'calypso/my-sites/stats/hooks/use-premium-analytics-status-mutation',
 const DASHBOARD_URL =
 	'https://example.com/wp-admin/admin.php?page=jetpack-premium-analytics-wp-admin';
 
+const THIRTY_DAYS = 30 * 24 * 3600;
+const TEN_YEARS = 3650 * 24 * 3600;
+
 const renderNotice = ( isOdysseyStats = false ) =>
 	render( <PremiumAnalyticsPreviewNotice siteId={ 123 } isOdysseyStats={ isOdysseyStats } /> );
 
 describe( 'PremiumAnalyticsPreviewNotice', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		localStorage.clear();
 		mockGetSiteAdminUrl.mockReturnValue( DASHBOARD_URL );
 		mockPostponeNotice.mockResolvedValue( undefined );
-		mockUseNoticeVisibilityMutation.mockReturnValue( { mutateAsync: mockPostponeNotice } );
+		mockPostponeNoticeIndefinitely.mockResolvedValue( undefined );
+		// The component holds one mutation per postponement length; hand each its own spy.
+		mockUseNoticeVisibilityMutation.mockImplementation( ( ...args: unknown[] ) =>
+			args[ 3 ] === TEN_YEARS
+				? { mutateAsync: mockPostponeNoticeIndefinitely }
+				: { mutateAsync: mockPostponeNotice }
+		);
 		mockEnablePreview.mockResolvedValue( true );
 		mockIsEnabling = false;
 		Object.defineProperty( window, 'location', { value: { href: '' }, writable: true } );
@@ -55,7 +66,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		renderNotice();
 
 		expect( screen.getByText( 'Try the new Traffic page' ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Try it now' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Switch it on' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'close' } ) ).toBeVisible();
 	} );
 
@@ -77,17 +88,6 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		expect( screen.queryByText( 'Try the new Traffic page' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'postpones dismissals of its own notice id off any practical timer', () => {
-		renderNotice();
-
-		expect( mockUseNoticeVisibilityMutation ).toHaveBeenCalledWith(
-			123,
-			'premium_analytics_preview',
-			'postponed',
-			3650 * 24 * 3600
-		);
-	} );
-
 	it( 'records exactly one impression', () => {
 		renderNotice();
 
@@ -101,7 +101,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 	it( 'enables the dashboard and offers a link into it, without navigating', async () => {
 		renderNotice();
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'Try it now' } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
 
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_stats_premium_analytics_preview_notice_enable_button_clicked',
@@ -111,14 +111,12 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 
 		const link = await screen.findByRole( 'link', { name: 'Go to the new Traffic page' } );
 		expect( link ).toHaveAttribute( 'href', DASHBOARD_URL );
-		expect(
-			screen.getByText( 'The new Traffic page is switched on for this site.' )
-		).toBeVisible();
+		expect( screen.getByText( 'The new Traffic page is on' ) ).toBeVisible();
 		// The customer chooses when to leave the page they were reading.
 		expect( window.location.href ).toBe( '' );
 	} );
 
-	it( 'shows the button busy while the write is in flight', () => {
+	it( 'hides the close button while the write is in flight', () => {
 		mockIsEnabling = true;
 
 		renderNotice();
@@ -126,6 +124,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		const button = screen.getByRole( 'button', { name: 'Switching it on…' } );
 		expect( button ).toBeDisabled();
 		expect( button ).toHaveClass( 'is-busy' );
+		expect( screen.queryByRole( 'button', { name: 'close' } ) ).not.toBeInTheDocument();
 	} );
 
 	/**
@@ -136,29 +135,58 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 	it( 'does not record a dismissal when the invitation is accepted', async () => {
 		renderNotice();
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'Try it now' } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
 
 		expect(
 			await screen.findByRole( 'link', { name: 'Go to the new Traffic page' } )
 		).toBeVisible();
 		expect( mockPostponeNotice ).not.toHaveBeenCalled();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
+
+		expect( screen.queryByText( 'The new Traffic page is on' ) ).not.toBeInTheDocument();
+		expect( mockPostponeNotice ).not.toHaveBeenCalled();
 	} );
 
-	it( 'stays put and explains itself when the write fails', async () => {
+	it( 'offers a retry and a way to reach support when the write fails', async () => {
 		mockEnablePreview.mockRejectedValue( new Error( 'nope' ) );
 
 		renderNotice();
-		await userEvent.click( screen.getByRole( 'button', { name: 'Try it now' } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
 
 		expect( await screen.findByRole( 'alert' ) ).toBeVisible();
+		expect( screen.getByText( 'We couldn’t switch on the new Traffic page' ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: /Contact support/ } ) ).toHaveAttribute(
+			'href',
+			'/help/contact'
+		);
 		expect( window.location.href ).toBe( '' );
+
+		mockEnablePreview.mockResolvedValue( true );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+
+		expect(
+			await screen.findByRole( 'link', { name: 'Go to the new Traffic page' } )
+		).toBeVisible();
+	} );
+
+	it( 'points self-hosted sites at Jetpack support rather than the Calypso contact form', async () => {
+		mockEnablePreview.mockRejectedValue( new Error( 'nope' ) );
+
+		renderNotice( true );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
+
+		expect( await screen.findByRole( 'link', { name: /Contact support/ } ) ).toHaveAttribute(
+			'href',
+			expect.stringContaining( 'jetpack.com/contact-support' )
+		);
 	} );
 
 	it( 'does not offer the link when the site reports the dashboard is still off', async () => {
 		mockEnablePreview.mockResolvedValue( false );
 
 		renderNotice();
-		await userEvent.click( screen.getByRole( 'button', { name: 'Try it now' } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
 
 		expect( await screen.findByRole( 'alert' ) ).toBeVisible();
 		expect(
@@ -173,9 +201,40 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
 			'jetpack_odyssey_stats_premium_analytics_preview_notice_dismissed',
-			{ blog_id: 123 }
+			{ blog_id: 123, dismissal_count: 1 }
 		);
 		expect( mockPostponeNotice ).toHaveBeenCalled();
+	} );
+
+	it( 'holds the invitation back for a month on the first dismissal', async () => {
+		renderNotice();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
+
+		expect( mockUseNoticeVisibilityMutation ).toHaveBeenCalledWith(
+			123,
+			'premium_analytics_preview',
+			'postponed',
+			THIRTY_DAYS
+		);
+		expect( mockPostponeNotice ).toHaveBeenCalledTimes( 1 );
+		expect( mockPostponeNoticeIndefinitely ).not.toHaveBeenCalled();
+	} );
+
+	it( 'stops inviting the site once it has been turned down twice', async () => {
+		const { unmount } = renderNotice();
+		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
+		unmount();
+
+		renderNotice();
+		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
+
+		expect( mockPostponeNoticeIndefinitely ).toHaveBeenCalledTimes( 1 );
+		expect( mockPostponeNotice ).toHaveBeenCalledTimes( 1 );
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_stats_premium_analytics_preview_notice_dismissed',
+			{ blog_id: 123, dismissal_count: 2 }
+		);
 	} );
 
 	it( 'does not hide the notice for a different site after a dismissal', async () => {
