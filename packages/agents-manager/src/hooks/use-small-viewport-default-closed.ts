@@ -1,8 +1,8 @@
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import { AGENTS_MANAGER_STORE } from '../stores';
+import { hasOpenChatUrlParam } from '../utils/open-chat-url-param';
 import { DEFAULT_DESKTOP_MEDIA_QUERY } from './desktop-media-query';
-import { hasOpenChatUrlParam } from './use-open-chat-url-param';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 /** Whether the viewport is below the desktop breakpoint the dock uses. */
