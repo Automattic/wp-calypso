@@ -1,10 +1,7 @@
-import { isAutomatticianQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { isBusinessPlan, isEcommercePlan, isPremiumPlan } from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
 import { AI_SITE_BUILDER_ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { useQuery as useReactQuery } from '@tanstack/react-query';
 import { useDispatch, dispatch, resolveSelect, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
@@ -25,7 +22,8 @@ import {
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
-import { getBuildWowSiteSpecUrl, logBuildWowEvent } from '../../../utils/build-wow';
+import { getBuildWowSiteSpecUrl } from '../../../utils/build-wow';
+import { planSupportsBuildWow } from '../../../utils/build-wow-plans';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
@@ -35,43 +33,6 @@ import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import type { Store } from 'redux';
 
 const SiteIntent = Onboard.SiteIntent;
-
-const AUTOMATTICIAN_LOOKUP_TIMEOUT_MS = 10 * 1000;
-
-type AutomatticianLookup = { data?: boolean; error?: unknown };
-
-/**
- * Bounded so a hung teams request cannot hold the checkout handoff: a timeout
- * reads as a failed lookup and takes the legacy destination.
- */
-async function lookUpAutomattician(
-	fetchIsAutomattician: () => Promise< AutomatticianLookup >
-): Promise< AutomatticianLookup > {
-	let timer: ReturnType< typeof setTimeout > | undefined;
-	const timeout = new Promise< AutomatticianLookup >( ( resolve ) => {
-		timer = setTimeout(
-			() => resolve( { error: new Error( 'Automattician lookup timed out' ) } ),
-			AUTOMATTICIAN_LOOKUP_TIMEOUT_MS
-		);
-	} );
-
-	try {
-		return await Promise.race( [ fetchIsAutomattician(), timeout ] );
-	} finally {
-		clearTimeout( timer );
-	}
-}
-
-/**
- * build-wow transfers the site to Atomic, which is only available on these plans;
- * a Personal purchase would dead-end after paying.
- */
-function planSupportsBuildWow( planSlug: string | undefined ): boolean {
-	return (
-		!! planSlug &&
-		( isPremiumPlan( planSlug ) || isBusinessPlan( planSlug ) || isEcommercePlan( planSlug ) )
-	);
-}
 
 /**
  * The build-wow site spec, entered straight from checkout. The build-wow
@@ -153,13 +114,6 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 			[]
 		);
-		// Lazy: nothing fires while the user step is still logged out. The
-		// processing handler refetches it once the answer decides the destination.
-		const { refetch: fetchIsAutomattician } = useReactQuery( {
-			...isAutomatticianQuery(),
-			enabled: false,
-		} );
-
 		/**
 		 * Prepare the freshly created site for Big Sky and return the site editor
 		 * URL that launches the Site Spec experience: publish a Home page, set it
@@ -288,29 +242,17 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 						return navigate( STEPS.ERROR.slug );
 					}
 
-					// Where enabled, Automatticians land on the build-wow theme generation
-					// flow after checkout, the same destination the post-checkout "Create
-					// a custom design" card sends them to. The build-wow endpoint prepares
-					// the site itself, so the Big Sky editor preparation below is only for
-					// the legacy site editor destination everyone else keeps.
-					// The build-wow destination lives in the ai-site-builder-spec flow, which
-					// bounces to plain onboarding without the site-spec feature.
-					const shouldOfferBuildWow =
+					// Where the site builder swap is enabled, checkout lands on the build-wow
+					// theme generation flow, the same destination the post-checkout "Create a
+					// custom design" card uses. The build-wow endpoint prepares the site
+					// itself, so the Big Sky editor preparation is only for the legacy site
+					// editor destination. That destination lives in the ai-site-builder-spec
+					// flow, which bounces to plain onboarding without the site-spec feature,
+					// and needs an Atomic-capable plan.
+					const useBuildWow =
 						config.isEnabled( 'calypso/ai-site-builder-build-wow' ) &&
 						config.isEnabled( 'site-spec' ) &&
 						planSupportsBuildWow( planCartItem?.product_slug );
-					const automatticianLookup = shouldOfferBuildWow
-						? await lookUpAutomattician( fetchIsAutomattician )
-						: null;
-
-					if ( automatticianLookup?.error ) {
-						logBuildWowEvent( 'onboarding_automattician_lookup_failed', {
-							site_slug: siteSlug,
-							error: String( automatticianLookup.error ),
-						} );
-					}
-
-					const useBuildWow = automatticianLookup?.data === true;
 
 					const prompt =
 						query.get( 'prompt' ) || window.sessionStorage.getItem( 'stored_ai_prompt' ) || '';
@@ -339,6 +281,7 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 						siteSlug,
 						...( prompt && { prompt } ),
 						...( source && { source } ),
+						...( ref && { ref } ),
 						...( specId && { spec_id: specId } ),
 					};
 					const checkoutBackUrl = pathToUrl(

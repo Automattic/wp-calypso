@@ -3,7 +3,7 @@
  */
 import config from '@automattic/calypso-config';
 import { useQuery as useReactQuery } from '@tanstack/react-query';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteData } from '../../../../../hooks/use-site-data';
@@ -62,6 +62,10 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/landing/stepper/utils/build-wow-plans', () => ( {
+	planSupportsBuildWow: ( slug?: string ) => !! slug && slug !== 'personal-bundle',
+} ) );
+
 jest.mock( '../../../../../hooks/use-query', () => ( {
 	useQuery: () => mockQueryParams,
 } ) );
@@ -80,6 +84,9 @@ describe( 'SetupYourSiteAIStep', () => {
 	const isEnabled = jest.spyOn( config, 'isEnabled' );
 	const navigation = { submit: jest.fn() };
 
+	const legacyLinkName = 'Create a custom design with the legacy site builder';
+	const legacyNoteText = '(Note: this link is only visible to Automatticians)';
+
 	const renderStep = () =>
 		render(
 			<SetupYourSiteAIStep
@@ -94,12 +101,22 @@ describe( 'SetupYourSiteAIStep', () => {
 			.getAllByRole( 'button' )
 			.map( ( button ) => button.getAttribute( 'aria-label' ) || button.textContent );
 
+	const setSitePlan = ( productSlug: string ) =>
+		mockUseSiteData.mockReturnValue( {
+			site: { plan: { product_slug: productSlug } },
+			siteSlug: 'example.wordpress.com',
+			siteId: 123,
+		} );
+
+	const clickCustomDesign = () =>
+		fireEvent.click( screen.getByRole( 'button', { name: 'Create a custom design' } ) );
+
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockQueryParams = new URLSearchParams();
 		isEnabled.mockReturnValue( true );
 		mockUseReactQuery.mockReturnValue( { data: false } );
-		mockUseSiteData.mockReturnValue( { siteSlug: 'example.wordpress.com', siteId: 123 } );
+		setSitePlan( 'business-bundle' );
 	} );
 
 	describe( 'card order', () => {
@@ -134,70 +151,10 @@ describe( 'SetupYourSiteAIStep', () => {
 			} );
 		} );
 
-		it( 'submits the build-with-ai choice from the custom design card', () => {
+		it( 'submits the generate-theme choice from the custom design card with the swap enabled', () => {
 			renderStep();
 
-			fireEvent.click( screen.getByRole( 'button', { name: 'Create a custom design' } ) );
-
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_onboarding_setup_your_site_with_ai_selection',
-				{ selection: 'build-with-ai', has_prompt: false }
-			);
-			expect( navigation.submit ).toHaveBeenCalledWith( {
-				setupChoice: 'build-with-ai',
-				siteSlug: 'example.wordpress.com',
-				siteId: 123,
-			} );
-		} );
-	} );
-
-	describe( 'Automattician routing', () => {
-		const legacyLinkName = 'Create a custom design with the legacy site builder';
-		const legacyNoteText = '(Note: this link is only visible to Automatticians)';
-
-		it( 'does not render the legacy site builder link for non-Automatticians', () => {
-			mockUseReactQuery.mockReturnValue( { data: false } );
-
-			renderStep();
-
-			expect( screen.queryByRole( 'button', { name: legacyLinkName } ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( legacyNoteText ) ).not.toBeInTheDocument();
-		} );
-
-		it( 'renders the Automattician-only note under the legacy site builder link', () => {
-			mockUseReactQuery.mockReturnValue( { data: true } );
-
-			renderStep();
-
-			expect( screen.getByText( legacyNoteText ) ).toBeInTheDocument();
-		} );
-
-		it( 'renders the legacy site builder link after the custom design card for Automatticians', () => {
-			mockUseReactQuery.mockReturnValue( { data: true } );
-
-			renderStep();
-
-			expect( getButtonNames() ).toEqual( [
-				'Start with a template',
-				'Create a custom design',
-				legacyLinkName,
-			] );
-		} );
-
-		it( 'no longer renders a separate Generate Theme option for Automatticians', () => {
-			mockUseReactQuery.mockReturnValue( { data: true } );
-
-			renderStep();
-
-			expect( screen.queryByText( 'Generate Theme' ) ).not.toBeInTheDocument();
-		} );
-
-		it( 'submits the generate-theme choice from the custom design card for Automatticians', () => {
-			mockUseReactQuery.mockReturnValue( { data: true } );
-
-			renderStep();
-
-			fireEvent.click( screen.getByRole( 'button', { name: 'Create a custom design' } ) );
+			clickCustomDesign();
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_onboarding_setup_your_site_with_ai_selection',
@@ -210,42 +167,58 @@ describe( 'SetupYourSiteAIStep', () => {
 			} );
 		} );
 
-		it( 'waits for a pending Automattician lookup before routing the custom design card', async () => {
-			const refetch = jest.fn().mockResolvedValue( { data: true } );
-			mockUseReactQuery.mockReturnValue( { data: undefined, isPending: true, refetch } );
+		it( 'submits the build-with-ai choice from the custom design card on a Personal plan', () => {
+			setSitePlan( 'personal-bundle' );
 
 			renderStep();
 
-			fireEvent.click( screen.getByRole( 'button', { name: 'Create a custom design' } ) );
+			clickCustomDesign();
 
-			await waitFor( () =>
-				expect( navigation.submit ).toHaveBeenCalledWith( {
-					setupChoice: 'generate-theme',
-					siteSlug: 'example.wordpress.com',
-					siteId: 123,
-				} )
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_onboarding_setup_your_site_with_ai_selection',
+				{ selection: 'build-with-ai', has_prompt: false }
 			);
-			expect( refetch ).toHaveBeenCalledTimes( 1 );
+			expect( navigation.submit ).toHaveBeenCalledWith( {
+				setupChoice: 'build-with-ai',
+				siteSlug: 'example.wordpress.com',
+				siteId: 123,
+			} );
 		} );
 
-		it( 'falls back to build-with-ai when the pending Automattician lookup fails', async () => {
-			const refetch = jest.fn().mockResolvedValue( { data: undefined, isError: true } );
-			mockUseReactQuery.mockReturnValue( { data: undefined, isPending: true, refetch } );
+		it( 'submits a choice only once per visit', () => {
+			renderStep();
+
+			clickCustomDesign();
+			clickCustomDesign();
+			fireEvent.click( screen.getByRole( 'button', { name: 'Start with a template' } ) );
+
+			expect( navigation.submit ).toHaveBeenCalledTimes( 1 );
+		} );
+	} );
+
+	describe( 'legacy site builder link', () => {
+		it( 'is hidden for non-Automatticians', () => {
+			renderStep();
+
+			expect( screen.queryByRole( 'button', { name: legacyLinkName } ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( legacyNoteText ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'renders after the custom design card, with its note, for Automatticians', () => {
+			mockUseReactQuery.mockReturnValue( { data: true } );
 
 			renderStep();
 
-			fireEvent.click( screen.getByRole( 'button', { name: 'Create a custom design' } ) );
-
-			await waitFor( () =>
-				expect( navigation.submit ).toHaveBeenCalledWith( {
-					setupChoice: 'build-with-ai',
-					siteSlug: 'example.wordpress.com',
-					siteId: 123,
-				} )
-			);
+			expect( getButtonNames() ).toEqual( [
+				'Start with a template',
+				'Create a custom design',
+				legacyLinkName,
+			] );
+			expect( screen.getByText( legacyNoteText ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Generate Theme' ) ).not.toBeInTheDocument();
 		} );
 
-		it( 'submits the build-with-ai choice from the legacy site builder link', () => {
+		it( 'submits the build-with-ai choice', () => {
 			mockUseReactQuery.mockReturnValue( { data: true } );
 
 			renderStep();
@@ -263,7 +236,16 @@ describe( 'SetupYourSiteAIStep', () => {
 			} );
 		} );
 
-		it( 'keeps the Woo hosting solutions prompt card on the legacy builder without the link', () => {
+		it( 'is hidden on a Personal plan, where the card already goes to the legacy builder', () => {
+			mockUseReactQuery.mockReturnValue( { data: true } );
+			setSitePlan( 'personal-bundle' );
+
+			renderStep();
+
+			expect( getButtonNames() ).toEqual( [ 'Start with a template', 'Create a custom design' ] );
+		} );
+
+		it( 'is hidden on the Woo hosting solutions variant, which has no custom design card', () => {
 			mockUseReactQuery.mockReturnValue( { data: true } );
 			mockQueryParams = new URLSearchParams( { ref: WOO_HOSTING_SOLUTIONS_REF } );
 
@@ -274,8 +256,6 @@ describe( 'SetupYourSiteAIStep', () => {
 	} );
 
 	describe( 'with the site builder swap disabled', () => {
-		const legacyLinkName = 'Create a custom design with the legacy site builder';
-
 		beforeEach( () => {
 			isEnabled.mockImplementation(
 				( flag: string ) => flag !== 'calypso/ai-site-builder-build-wow'
@@ -283,8 +263,6 @@ describe( 'SetupYourSiteAIStep', () => {
 		} );
 
 		it( 'renders only the two cards for non-Automatticians', () => {
-			mockUseReactQuery.mockReturnValue( { data: false } );
-
 			renderStep();
 
 			expect( getButtonNames() ).toEqual( [ 'Start with a template', 'Create a custom design' ] );
@@ -301,9 +279,7 @@ describe( 'SetupYourSiteAIStep', () => {
 				'Generate Theme',
 			] );
 			expect( screen.queryByRole( 'button', { name: legacyLinkName } ) ).not.toBeInTheDocument();
-			expect(
-				screen.queryByText( '(Note: this link is only visible to Automatticians)' )
-			).not.toBeInTheDocument();
+			expect( screen.queryByText( legacyNoteText ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'keeps the Generate Theme card on the Woo hosting solutions variant for Automatticians', () => {
@@ -319,12 +295,12 @@ describe( 'SetupYourSiteAIStep', () => {
 			] );
 		} );
 
-		it( 'submits the build-with-ai choice from the custom design card for Automatticians', () => {
+		it( 'submits the build-with-ai choice from the custom design card', () => {
 			mockUseReactQuery.mockReturnValue( { data: true } );
 
 			renderStep();
 
-			fireEvent.click( screen.getByRole( 'button', { name: 'Create a custom design' } ) );
+			clickCustomDesign();
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_onboarding_setup_your_site_with_ai_selection',

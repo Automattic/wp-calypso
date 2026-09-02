@@ -12,8 +12,8 @@ Paid-only onboarding for the AI Site Builder (Big Sky). Replaces the free-trial
 5. Confirm you land in the Big Sky Site Spec editor (`site-editor.php?canvas=edit&ai-step=spec`).
 6. Confirm a `?prompt=` query param passed at entry is forwarded to the Site Spec editor.
 7. Where the `calypso/ai-site-builder-build-wow` feature is enabled (development and staging),
-   confirm that as an Automattician buying Premium, Business, or Commerce (Personal stays on the
-   legacy path, since build-wow needs an Atomic site) checkout instead lands on the build-wow site spec
+   confirm that buying Premium, Business, or Commerce (Personal stays on the legacy path, since
+   build-wow needs an Atomic site) lands checkout on the build-wow site spec
    (`/setup/ai-site-builder-spec/site-spec?build_wow=1`), the same destination as the
    post-checkout "Create a custom design" card, and that `source`/`ref`/`prompt` are carried over.
 

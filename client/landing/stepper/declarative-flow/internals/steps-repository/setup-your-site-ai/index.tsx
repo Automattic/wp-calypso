@@ -13,8 +13,9 @@ import {
 } from '@wordpress/components';
 import { arrowUp, layout, brush } from '@wordpress/icons';
 import i18n, { useTranslate } from 'i18n-calypso';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useRef, useState } from 'react';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
+import { planSupportsBuildWow } from 'calypso/landing/stepper/utils/build-wow-plans';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSiteData } from '../../../../hooks/use-site-data';
@@ -33,17 +34,25 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	usePurchasePlanNotification( siteId, site?.plan?.product_slug );
 	const showPromptInput = ref === WOO_HOSTING_SOLUTIONS_REF;
 	const [ prompt, setPrompt ] = useState( '' );
-	// Automatticians get an entry point into the build-wow AI theme generation
-	// flow (which provisions a WP Cloud site up front): a separate "Generate
-	// Theme" card, or, where the site builder swap is enabled, the custom design
-	// card itself with the previous Big Sky builder kept reachable via a link.
-	const {
-		data: isAutomattician,
-		isPending: isAutomatticianPending,
-		refetch: refetchIsAutomattician,
-	} = useReactQuery( isAutomatticianQuery() );
+	// Where the site builder swap is enabled, the custom design card goes to the
+	// build-wow AI theme generation flow (which provisions a WP Cloud site up
+	// front) on any Atomic-capable plan, and Automatticians get a link back to the
+	// previous Big Sky builder. Otherwise Automatticians get a separate "Generate
+	// Theme" card into build-wow, as before the swap.
+	const { data: isAutomattician } = useReactQuery( isAutomatticianQuery() );
 	const swapSiteBuilders =
 		config.isEnabled( 'calypso/ai-site-builder-build-wow' ) && config.isEnabled( 'site-spec' );
+	const offerBuildWow = swapSiteBuilders && planSupportsBuildWow( site?.plan?.product_slug );
+
+	// One choice per visit: submitting navigates away, so later clicks are ignored.
+	const isSubmittingRef = useRef( false );
+	const claimSubmit = () => {
+		if ( isSubmittingRef.current ) {
+			return false;
+		}
+		isSubmittingRef.current = true;
+		return true;
+	};
 
 	const submitBuildWithAI = ( trimmedPrompt?: string ) => {
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
@@ -60,15 +69,24 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	};
 
 	const handleBuildWithAIClick = () => {
+		if ( ! claimSubmit() ) {
+			return;
+		}
 		submitBuildWithAI();
 	};
 
 	const handleBuildWithAISubmit = ( event: FormEvent ) => {
 		event.preventDefault();
+		if ( ! claimSubmit() ) {
+			return;
+		}
 		submitBuildWithAI( prompt.trim() );
 	};
 
 	const handleBlankSite = () => {
+		if ( ! claimSubmit() ) {
+			return;
+		}
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
 			selection: 'blank-site',
 		} );
@@ -79,7 +97,7 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		} );
 	};
 
-	const handleGenerateTheme = () => {
+	const submitGenerateTheme = () => {
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
 			selection: 'generate-theme',
 		} );
@@ -91,18 +109,21 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		} );
 	};
 
-	const handleCustomDesignClick = async () => {
-		if ( swapSiteBuilders ) {
-			// A click before the lookup settles waits on the in-flight request rather
-			// than silently taking the legacy path; a failed lookup still falls back.
-			const automattician = isAutomatticianPending
-				? ( await refetchIsAutomattician() ).data
-				: isAutomattician;
+	const handleGenerateTheme = () => {
+		if ( ! claimSubmit() ) {
+			return;
+		}
+		submitGenerateTheme();
+	};
 
-			if ( automattician ) {
-				handleGenerateTheme();
-				return;
-			}
+	const handleCustomDesignClick = () => {
+		if ( ! claimSubmit() ) {
+			return;
+		}
+
+		if ( offerBuildWow ) {
+			submitGenerateTheme();
+			return;
 		}
 
 		submitBuildWithAI();
@@ -168,7 +189,7 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		/>
 	);
 
-	const legacySiteBuilderSection = swapSiteBuilders && isAutomattician && (
+	const legacySiteBuilderSection = offerBuildWow && isAutomattician && (
 		<VStack spacing={ 1 } alignment="left" className="setup-your-site-ai-step__legacy-builder">
 			<Step.LinkButton
 				className="setup-your-site-ai-step__legacy-builder-link"
