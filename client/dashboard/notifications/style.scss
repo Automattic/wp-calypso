@@ -245,9 +245,11 @@
 	border-top-color: rgba(0, 0, 0, 0.06);
 }
 
-/* Accent bar on the currently-selected notification row. The list paints its
-   selected background on the inner wrapper, which would otherwise cover this. */
+/* Accent bar and background on the currently-selected notification row. Both
+   sit on the outer box so they run edge to edge; the list's own selected
+   background on the inner wrapper would cover the bar, so it stays transparent. */
 .dashboard-notifications-inbox__list .dataviews-view-list div[role="article"].is-selected {
+	background: var(--dashboard__background-color-secondary, #f6f7f7);
 	box-shadow: inset 3px 0 0 var(--wp-admin-theme-color, #3858e9);
 }
 
