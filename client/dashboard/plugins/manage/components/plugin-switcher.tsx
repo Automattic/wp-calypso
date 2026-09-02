@@ -22,7 +22,7 @@ export const PluginSwitcher = ( {
 	onChangeView,
 	paginationInfo,
 }: {
-	pluginsWithIcon: PluginListRow[];
+	pluginsWithIcon?: PluginListRow[];
 	searchableFields: Field< PluginListRow >[];
 	selectedPluginSlug?: string;
 	view: View;
@@ -141,8 +141,9 @@ export const PluginSwitcher = ( {
 					filter={
 						<PluginUpdatesFilter
 							siteCount={
-								pluginsWithIcon.filter( ( plugin ) => plugin.sitesWithPluginUpdate.length > 0 )
-									.length
+								( pluginsWithIcon ?? [] ).filter(
+									( plugin ) => plugin.sitesWithPluginUpdate.length > 0
+								).length
 							}
 							updatesField={ updatesField }
 							view={ view }

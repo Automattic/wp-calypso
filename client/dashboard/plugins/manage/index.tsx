@@ -44,8 +44,9 @@ const searchableFields = [
 export default function PluginsList() {
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 	const isSmallViewport = useViewportMatch( 'xlarge', '<' );
-	const { data: sitesPlugins, isLoading: sitesPluginsLoading } = useQuery( pluginsQuery() );
-	const { sitesById } = useSitesById();
+	const { data: sitesPlugins, isLoading: pluginsQueryLoading } = useQuery( pluginsQuery() );
+	const { sitesById, isLoadingSites } = useSitesById();
+	const sitesPluginsLoading = pluginsQueryLoading || isLoadingSites;
 	const { pluginId: pluginSlug } = useParams( { strict: false } );
 	const fields = useMemo( () => {
 		return searchableFields.map( ( searchableField ) => ( {
@@ -150,7 +151,7 @@ export default function PluginsList() {
 					<PluginSites selectedPluginSlug={ selectedPluginSlug } />
 				) : (
 					<PluginSwitcher
-						pluginsWithIcon={ pluginsWithIcon }
+						pluginsWithIcon={ sitesPluginsLoading ? undefined : pluginsWithIcon }
 						searchableFields={ searchableFields }
 						view={ view }
 						onChangeView={ setView }
@@ -174,7 +175,7 @@ export default function PluginsList() {
 		>
 			<Grid columns={ 2 } gap={ 3 } templateColumns="392px 1fr">
 				<PluginSwitcher
-					pluginsWithIcon={ pluginsWithIcon }
+					pluginsWithIcon={ sitesPluginsLoading ? undefined : pluginsWithIcon }
 					searchableFields={ searchableFields }
 					selectedPluginSlug={ selectedPluginSlug }
 					view={ view }

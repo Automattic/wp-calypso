@@ -39,6 +39,13 @@ export function mapApiPluginsToDataViewPlugins(
 
 	Object.entries( pluginsBySite ).forEach( ( [ siteIdStr, plugins ] ) => {
 		const siteId = Number( siteIdStr );
+		// The API can report sites that are not part of the dashboard's site
+		// list (hidden, filtered out, or without the update_plugins capability).
+		// Skip them so counts match what the site-level views can display.
+		const site = sitesById.get( siteId );
+		if ( ! site ) {
+			return;
+		}
 		( plugins as PluginItem[] ).forEach( ( p ) => {
 			if ( ! p.id ) {
 				return;
@@ -71,25 +78,22 @@ export function mapApiPluginsToDataViewPlugins(
 				entry.isManaged = true;
 			}
 
-			const site = sitesById.get( siteId );
-			if ( site ) {
-				const { autoupdate } = getAllowedPluginActions(
-					{ isPluginActive: p.active, ...site, isPluginManaged: entry.isManaged },
-					p.slug
-				);
+			const { autoupdate } = getAllowedPluginActions(
+				{ isPluginActive: p.active, ...site, isPluginManaged: entry.isManaged },
+				p.slug
+			);
 
-				entry.autoupdateAllowedCount += autoupdate ? 1 : 0;
+			entry.autoupdateAllowedCount += autoupdate ? 1 : 0;
 
-				if ( autoupdate ) {
-					if ( p.update ) {
-						entry.updatableSites.push( siteId );
-					}
+			if ( autoupdate ) {
+				if ( p.update ) {
+					entry.updatableSites.push( siteId );
+				}
 
-					if ( p.autoupdate ) {
-						entry.autoupdatedSites.push( siteId );
-					} else {
-						entry.notAutoupdatedSites.push( siteId );
-					}
+				if ( p.autoupdate ) {
+					entry.autoupdatedSites.push( siteId );
+				} else {
+					entry.notAutoupdatedSites.push( siteId );
 				}
 			}
 
