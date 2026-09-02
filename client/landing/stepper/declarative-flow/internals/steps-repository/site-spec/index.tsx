@@ -334,7 +334,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 				const source = queryParams.get( 'source' );
 				// No spec_id on the editor URL: that param asks the editor plugin
 				// to build the site itself, and this build already ran on the
-				// server. Carrying it would start a second build on the canvas.
+				// server. A second build on the canvas wipes the generated pages.
 				const destination = addQueryArgs( response.site_editor_url, source ? { source } : {} );
 
 				logBuildWowEvent(

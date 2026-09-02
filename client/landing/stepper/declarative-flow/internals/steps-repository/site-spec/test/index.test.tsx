@@ -216,8 +216,6 @@ describe( 'SiteSpec early provisioning step', () => {
 		expect( redirect.searchParams.get( 'specId' ) ).toBe( 'spec-456' );
 		expect( redirect.searchParams.get( 'ref' ) ).toBe( 'site-card' );
 		expect( redirect.searchParams.get( 'source' ) ).toBe( 'site-overview' );
-		// spec_id stays off the editor URL: on the editor it means "build the
-		// site here", and this build already ran on the server.
 		expect( redirect.searchParams.get( 'editorUrl' ) ).toBe(
 			'https://example.wordpress.com/wp-admin/site-editor.php?source=site-overview'
 		);
