@@ -23,15 +23,13 @@ export default function ReaderPreferences() {
 		saveSeenPostsPreference( enabled, {
 			onSuccess: () => {
 				createSuccessNotice(
-					enabled ? __( 'Show read status enabled.' ) : __( 'Show read status disabled.' ),
+					enabled ? __( 'Read status enabled.' ) : __( 'Read status disabled.' ),
 					{ type: 'snackbar' }
 				);
 			},
 			onError: () => {
 				createErrorNotice(
-					enabled
-						? __( 'Failed to enable Show read status.' )
-						: __( 'Failed to disable Show read status.' ),
+					enabled ? __( 'Failed to enable read status.' ) : __( 'Failed to disable read status.' ),
 					{ type: 'snackbar' }
 				);
 			},
@@ -54,7 +52,7 @@ export default function ReaderPreferences() {
 					<VStack spacing={ 4 }>
 						<SectionHeader
 							level={ 3 }
-							title={ __( 'Show read status' ) }
+							title={ __( 'Read status' ) }
 							description={ __(
 								'Dims posts you have already opened, shows unread counts in the sidebar, and surfaces Mark as read actions.'
 							) }

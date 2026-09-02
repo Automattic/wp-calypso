@@ -1079,8 +1079,16 @@ export const preferencesReaderRoute = createRoute( {
 	getParentRoute: () => preferencesRoute,
 	path: 'reader',
 	beforeLoad: async () => {
-		const data = await queryClient.ensureQueryData( readTeamsQuery() );
-		if ( ! isSeenPostsAvailable( data.teams ) ) {
+		// Treat a failed teams request as "not available" rather than letting it
+		// reject the route: a deep link here while /read/teams is down should fall
+		// back to the preferences index, not render an error page.
+		let teams;
+		try {
+			( { teams } = await queryClient.ensureQueryData( readTeamsQuery() ) );
+		} catch {
+			teams = undefined;
+		}
+		if ( ! isSeenPostsAvailable( teams ) ) {
 			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
 		}
 	},
