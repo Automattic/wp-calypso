@@ -183,6 +183,7 @@ class PlansComponent extends Component {
 
 		return (
 			<PlansFeaturesMain
+				enableClassicPlansEmptyGridRecovery
 				isInSiteDashboard={ isUntangled }
 				redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
 				customerType={ this.props.customerType }

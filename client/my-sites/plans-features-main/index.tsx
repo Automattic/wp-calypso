@@ -134,6 +134,7 @@ export interface PlansFeaturesMainProps {
 	intent?: PlansIntent | null;
 	isInSiteDashboard?: boolean;
 	isInSignup?: boolean;
+	enableClassicPlansEmptyGridRecovery?: boolean;
 	isCustomDomainAllowedOnFreePlan?: boolean;
 	plansWithScroll?: boolean;
 	customerType?: string;
@@ -255,6 +256,7 @@ const PlansFeaturesMain = ( {
 	hideUnavailableFeatures = false,
 	isInSiteDashboard = false,
 	isInSignup = false,
+	enableClassicPlansEmptyGridRecovery = false,
 	isCustomDomainAllowedOnFreePlan = false,
 	isStepperUpgradeFlow = false,
 	isLaunchPage = false,
@@ -625,7 +627,51 @@ const PlansFeaturesMain = ( {
 	const planFromUpsells = usePlanFromUpsells();
 	const defaultWpcomPlansIntent = useDefaultWpcomPlansIntent();
 	const [ forceDefaultPlans, setForceDefaultPlans ] = useState( false );
+	const [ automaticDefaultPlansRecoveryContext, setAutomaticDefaultPlansRecoveryContext ] =
+		useState< string | null >( null );
+	const currentAutomaticRecoveryContext = enableClassicPlansEmptyGridRecovery
+		? JSON.stringify( {
+				siteId,
+				sitePlanSlug,
+				intent: intentFromSiteMeta.intent,
+				term,
+				isInSiteDashboard,
+				isInSignup,
+				isSubdomainNotGenerated: ! resolvedSubdomainName.result,
+				selectedFeature,
+				selectedPlan,
+				planTypeSelector,
+				previousRoute,
+				hideFreePlan,
+				hidePersonalPlan,
+				hidePremiumPlan,
+				hideBusinessPlan,
+				hideEcommercePlan,
+				hideEnterprisePlan,
+		  } )
+		: null;
+	const isAutomaticDefaultPlansRecoveryActive =
+		enableClassicPlansEmptyGridRecovery &&
+		automaticDefaultPlansRecoveryContext === currentAutomaticRecoveryContext;
+	const shouldUseAutomaticDefaultIntent = Boolean(
+		isAutomaticDefaultPlansRecoveryActive &&
+			! intentFromProps &&
+			! planFromUpsells &&
+			intentFromSiteMeta.intent &&
+			intentFromSiteMeta.intent !== defaultWpcomPlansIntent
+	);
 	const [ intent, setIntent ] = useState< PlansIntent | undefined >( undefined );
+	const isAutomaticDefaultPlansRecoveryResetPending = Boolean(
+		enableClassicPlansEmptyGridRecovery &&
+			automaticDefaultPlansRecoveryContext &&
+			automaticDefaultPlansRecoveryContext !== currentAutomaticRecoveryContext &&
+			! forceDefaultPlans &&
+			! intentFromProps &&
+			! planFromUpsells &&
+			intentFromSiteMeta.intent &&
+			intentFromSiteMeta.intent !== defaultWpcomPlansIntent &&
+			intent === defaultWpcomPlansIntent
+	);
 	/**
 	 * Keep the `useEffect` here strictly about intent resolution.
 	 * This is fairly critical logic and may generate side effects if not handled properly.
@@ -645,11 +691,18 @@ const PlansFeaturesMain = ( {
 			const resolvedIntent = planFromUpsells
 				? defaultWpcomPlansIntent
 				: intentFromProps || intentFromSiteMeta.intent || defaultWpcomPlansIntent;
+			const effectiveIntent = shouldUseAutomaticDefaultIntent
+				? defaultWpcomPlansIntent
+				: resolvedIntent;
 
 			// Always update intent when intent is not set.
 			// When the escape hatch is used (forceDefaultPlans), do not override with intentFromProps.
-			if ( ! intent || ( ! forceDefaultPlans && intentFromProps !== intent ) ) {
-				setIntent( resolvedIntent );
+			if (
+				! intent ||
+				shouldUseAutomaticDefaultIntent ||
+				( ! forceDefaultPlans && intentFromProps !== intent )
+			) {
+				setIntent( effectiveIntent );
 			}
 		}
 	}, [
@@ -660,6 +713,7 @@ const PlansFeaturesMain = ( {
 		forceDefaultPlans,
 		intentFromSiteMeta.processing,
 		defaultWpcomPlansIntent,
+		shouldUseAutomaticDefaultIntent,
 	] );
 
 	const isDisplayingPlansNeededForFeature =
@@ -923,6 +977,32 @@ const PlansFeaturesMain = ( {
 		isExperimentVariant,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
+
+	const shouldStartAutomaticDefaultPlansRecovery = Boolean(
+		enableClassicPlansEmptyGridRecovery &&
+			! forceDefaultPlans &&
+			! intentFromProps &&
+			! planFromUpsells &&
+			intentFromSiteMeta.intent &&
+			intentFromSiteMeta.intent !== defaultWpcomPlansIntent &&
+			intent === intentFromSiteMeta.intent &&
+			gridPlansForFeaturesGridRaw?.length === 0
+	);
+
+	useEffect( () => {
+		if (
+			shouldStartAutomaticDefaultPlansRecovery &&
+			automaticDefaultPlansRecoveryContext !== currentAutomaticRecoveryContext
+		) {
+			setAutomaticDefaultPlansRecoveryContext( currentAutomaticRecoveryContext );
+			setIntent( defaultWpcomPlansIntent );
+		}
+	}, [
+		shouldStartAutomaticDefaultPlansRecovery,
+		automaticDefaultPlansRecoveryContext,
+		currentAutomaticRecoveryContext,
+		defaultWpcomPlansIntent,
+	] );
 
 	const isIndiaA4A = useIsIndiaA4A();
 
@@ -1224,6 +1304,8 @@ const PlansFeaturesMain = ( {
 
 	const isPlansGridReady =
 		! isLoadingGridPlans &&
+		! shouldStartAutomaticDefaultPlansRecovery &&
+		! isAutomaticDefaultPlansRecoveryResetPending &&
 		! resolvedSubdomainName.isLoading &&
 		! isRenewalPricingExperimentLoading &&
 		! isPlansGridRedesignExperimentLoading;
