@@ -157,29 +157,22 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		( state ) => ! shouldGateStats( state, siteId, STATS_FEATURE_UTM_STATS )
 	);
 
-	// Only cohort sites pay for this round-trip: the server decides who is offered the preview, and
-	// everyone else never reaches the query. It has to be resolved out here rather than inside the
-	// notice, because a notice that wins its conflict group and then renders nothing takes the
-	// upsells and the JITM slot down with it — the parent only sees the element, not the null.
-	const isOfferedTrafficTabPreview =
-		canManageOptions && hasAdvancedStats && serverNoticesVisibility?.traffic_tab_preview === true;
-	const {
-		data: hasPremiumAnalytics,
-		isLoading: isLoadingPremiumAnalyticsStatus,
-		isError: isPremiumAnalyticsStatusError,
-	} = usePremiumAnalyticsStatusQuery( siteId, isOfferedTrafficTabPreview );
-
-	// Strictly false, never just falsy: undefined means the site never offered the setting — a
-	// Jetpack too old to register it — which is not the same as the dashboard being off. A failed
-	// read is the same story from the other direction.
-	const canEnableTrafficTabPreview =
-		isOfferedTrafficTabPreview && ! isPremiumAnalyticsStatusError && hasPremiumAnalytics === false;
+	// Only sites that could actually accept the invitation pay for this round-trip, and the server
+	// decides the cohort on top. Resolved out here rather than inside the notice: a notice that
+	// wins its conflict group and then renders nothing takes the upsells and the JITM slot down
+	// with it, because the parent only ever sees the element, not the null.
+	const { data: isPremiumAnalyticsEnabled, isLoading: isLoadingPremiumAnalyticsStatus } =
+		usePremiumAnalyticsStatusQuery(
+			siteId,
+			canManageOptions && hasAdvancedStats && serverNoticesVisibility?.traffic_tab_preview === true
+		);
 
 	const noticeOptions = {
 		siteId,
 		isOdysseyStats,
-		canEnableTrafficTabPreview,
+		canManageOptions,
 		hasAdvancedStats,
+		isPremiumAnalyticsEnabled,
 		isWpcom,
 		isVip,
 		isP2,

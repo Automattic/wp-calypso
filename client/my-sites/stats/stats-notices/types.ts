@@ -25,8 +25,9 @@ export interface StatsNoticeProps {
 	isOverLimit?: boolean;
 	isNearLimit?: boolean;
 	hasWpcomUpsell?: boolean;
-	canEnableTrafficTabPreview?: boolean;
+	canManageOptions?: boolean;
 	hasAdvancedStats?: boolean;
+	isPremiumAnalyticsEnabled?: boolean;
 }
 
 export interface NoticeBodyProps {

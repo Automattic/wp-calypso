@@ -14,8 +14,9 @@ const trafficTabPreviewNotice = ALL_STATS_NOTICES.find(
 const eligibleSite: StatsNoticeProps = {
 	siteId: 123,
 	isOdysseyStats: false,
-	canEnableTrafficTabPreview: true,
+	canManageOptions: true,
 	hasAdvancedStats: true,
+	isPremiumAnalyticsEnabled: false,
 	isVip: false,
 	isP2: false,
 };
@@ -30,19 +31,32 @@ describe( 'traffic_tab_preview notice visibility', () => {
 		expect( trafficTabPreviewNotice?.isVisibleFunc( eligibleSite ) ).toBe( true );
 	} );
 
-	it( 'stays hidden unless the parent says the site can enable it', () => {
+	it( 'does not invite a site that already has the dashboard', () => {
 		expect(
 			trafficTabPreviewNotice?.isVisibleFunc( {
 				...eligibleSite,
-				canEnableTrafficTabPreview: false,
+				isPremiumAnalyticsEnabled: true,
 			} )
 		).toBe( false );
-		// Undefined is the shape every other notice sees; it must not read as eligible.
+	} );
+
+	/**
+	 * Undefined means the site never reported the setting - a Jetpack too old to register it, or a
+	 * read that failed. Not the same as off, and it must not read as an invitation to switch on
+	 * something the site cannot serve.
+	 */
+	it( 'stays hidden when the site never reported the setting', () => {
 		expect(
 			trafficTabPreviewNotice?.isVisibleFunc( {
 				...eligibleSite,
-				canEnableTrafficTabPreview: undefined,
+				isPremiumAnalyticsEnabled: undefined,
 			} )
+		).toBe( false );
+	} );
+
+	it( 'stays hidden for anyone who cannot administer the site', () => {
+		expect(
+			trafficTabPreviewNotice?.isVisibleFunc( { ...eligibleSite, canManageOptions: false } )
 		).toBe( false );
 	} );
 
