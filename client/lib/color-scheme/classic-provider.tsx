@@ -10,7 +10,13 @@ import {
 import type { ColorSchemeContextType } from './shared';
 import type { ReactNode } from 'react';
 
-export function ClassicColorSchemeProvider( { children }: { children: ReactNode } ) {
+export function ClassicColorSchemeProvider( {
+	children,
+	enabled = true,
+}: {
+	children: ReactNode;
+	enabled?: boolean;
+} ) {
 	const isReady = useSelector( hasReceivedRemotePreferences );
 	const savedColorScheme = useSelector( ( state ) => getPreference( state, PREFERENCE_KEY ) );
 	const colorScheme = isColorScheme( savedColorScheme ) ? savedColorScheme : DEFAULT_SCHEME;
@@ -23,6 +29,7 @@ export function ClassicColorSchemeProvider( { children }: { children: ReactNode 
 	return (
 		<ColorSchemeContextProvider
 			colorScheme={ colorScheme }
+			enabled={ enabled }
 			isReady={ isReady }
 			restoreOnUnmount
 			setColorScheme={ setColorScheme }

@@ -132,6 +132,7 @@ export type WPComOtherProductSlug = ( typeof WPCOM_OTHER_PRODUCTS )[ number ];
 export interface WPComPlan extends Plan {
 	getPlanTagline?: () => TranslateResult;
 	getNewsletterTagLine?: () => TranslateResult;
+	/** @deprecated The blog-onboarding plans intent is no longer produced by any flow; retained only for external consumers. */
 	getBlogOnboardingTagLine?: () => TranslateResult;
 	getPlanCompareFeatures?: (
 		experiment?: string,
@@ -142,8 +143,11 @@ export interface WPComPlan extends Plan {
 	getPortfolioSignupFeatures?: () => Feature[];
 	getNewsletterSignupFeatures?: () => Feature[];
 	getNewsletterHighlightedFeatures?: () => Feature[];
+	/** @deprecated The blog-onboarding plans intent is no longer produced by any flow; retained only for external consumers. */
 	getBlogOnboardingSignupFeatures?: () => Feature[];
+	/** @deprecated The blog-onboarding plans intent is no longer produced by any flow; retained only for external consumers. */
 	getBlogOnboardingHighlightedFeatures?: () => Feature[];
+	/** @deprecated The blog-onboarding plans intent is no longer produced by any flow; retained only for external consumers. */
 	getBlogOnboardingSignupJetpackFeatures?: () => Feature[];
 	getSenseiFeatures?: ( term?: Product[ 'term' ] ) => () => Feature[];
 	getSenseiHighlightedFeatures?: () => Feature[];
@@ -412,8 +416,11 @@ export type Plan = BillingTerm & {
 	 */
 	getInferiorFeatures?: () => Feature[];
 	getNewsletterSignupFeatures?: () => Feature[];
+	/** @deprecated The blog-onboarding plans intent is no longer produced by any flow; retained only for external consumers. */
 	getBlogOnboardingSignupFeatures?: () => Feature[];
+	/** @deprecated The blog-onboarding plans intent is no longer produced by any flow; retained only for external consumers. */
 	getBlogOnboardingHighlightedFeatures?: () => Feature[];
+	/** @deprecated The blog-onboarding plans intent is no longer produced by any flow; retained only for external consumers. */
 	getBlogOnboardingSignupJetpackFeatures?: () => Feature[];
 
 	/**

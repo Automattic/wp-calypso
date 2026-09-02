@@ -11,7 +11,6 @@ import {
 	getOdieErrorMessageNonEligible,
 	getExistingConversationMessage,
 	getConversationLimitReachedMessage,
-	ODIE_DEFAULT_BOT_SLUG_LEGACY,
 	getErrorMessageUnknownError,
 } from '../constants';
 import { useOdieAssistantContext } from '../context';
@@ -20,32 +19,15 @@ import { useLoggedOutSession } from '../hooks/use-logged-out-session';
 import { useOpenInteractionStatusMap } from '../hooks/use-open-interaction-status-map';
 import { generateUUID, getOdieIdFromInteraction, getIsRequestingHumanSupport } from '../utils';
 import { hasRecentEscalationAttempt } from '../utils/chat-utils';
+import { getBotSlug } from '../utils/get-bot-slug';
 import { getOpenLiveInteractions } from '../utils/get-open-live-interactions';
+import { getIsAgentsManagerAvailable } from '../utils/is-agents-manager-available';
+import { requestLoggedOutWpcomOdie } from './request-logged-out-wpcom-odie';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
 import type { Chat, Message, ReturnedChat, SupportInteraction } from '../types';
 
 const HELP_CENTER_STORE = HelpCenter.register();
-
-function getBotSlug(
-	supportInteraction: SupportInteraction | undefined,
-	newInteractionsBotSlug: string,
-	loggedOutOdieBotSlug = 'wpcom-workflow-chat_loggedout',
-	isLoggedOutSession: boolean
-): string {
-	if ( supportInteraction ) {
-		// Legacy support interactions have their botSlug set to `''`. We need to use the legacy bot slug for them.
-		return supportInteraction.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY;
-	}
-
-	if ( isLoggedOutSession ) {
-		return loggedOutOdieBotSlug;
-	}
-
-	// When the interaction is undefined, it means we're sending the first message to Odie, which is done before the interaction is created.
-	// In this case, we use the new interactions bot slug.
-	return newInteractionsBotSlug;
-}
 
 const getErrorMessageForSiteIdAndInternalMessageId = (
 	selectedSiteId: number | null | undefined,
@@ -129,12 +111,15 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		forceEmailSupport,
 		trackEvent,
 		newInteractionsBotSlug,
+		newLoggedOutInteractionsBotSlug,
+		externalChatProvider,
+		externalChatId,
 	} = useOdieAssistantContext();
 
 	const botSlug = getBotSlug(
 		currentSupportInteraction,
 		newInteractionsBotSlug,
-		loggedOutOdieBotSlug ?? undefined,
+		loggedOutOdieBotSlug ?? newLoggedOutInteractionsBotSlug,
 		// The user can be logged in but still wants to continue the logged out session.
 		isLoggedOutSession || ! isLoggedIn
 	);
@@ -149,9 +134,9 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 	);
 
 	const updateLoggedOutSession = useCallback(
-		( chatId: string, sessionId: string, botSlug: string ) => {
+		( chatId: number, sessionId: string, botSlug: string ) => {
 			const params = new URLSearchParams( location.search );
-			params.set( 'chatId', chatId );
+			params.set( 'chatId', chatId.toString() );
 			params.set( 'sessionId', sessionId );
 			params.set( 'botSlug', botSlug );
 			navigate( `${ location.pathname }?${ params.toString() }`, { replace: true } );
@@ -213,6 +198,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 					! hasBeenWarnedAboutExistingConversation &&
 					! hasTriedToEscalateToSupport
 				) {
+					trackEvent( 'chat_existing_conversation_prompt' );
 					setChat( ( prevChat ) => ( {
 						...prevChat,
 						...props,
@@ -265,31 +251,58 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			const pathname = window.location.pathname;
 
 			const currentScreen = { url };
+			const isAgentsManagerAvailable = getIsAgentsManagerAvailable();
+			const context = { selectedSiteId, currentScreen, pathname, isAgentsManagerAvailable };
 
-			return canAccessWpcomApis()
-				? wpcomRequest< ReturnedChat >( {
-						method: 'POST',
-						path: `/odie/chat/${ botSlug }${ chatIdSegment }`,
-						apiNamespace: 'wpcom/v2',
-						signal,
-						body: {
-							message: message.content,
-							...( version && { version } ),
-							...( sessionId && { session_id: sessionId } ),
-							context: { selectedSiteId, currentScreen, pathname },
-						},
-				  } )
-				: apiFetch< ReturnedChat >( {
-						path: `/help-center/odie/chat/${ botSlug }${ chatIdSegment }`,
-						method: 'POST',
-						signal,
-						data: {
-							message: message.content,
-							...( version && { version } ),
-							...( sessionId && { session_id: sessionId } ),
-							context: { selectedSiteId, currentScreen, pathname },
-						},
-				  } );
+			if ( canAccessWpcomApis() ) {
+				if ( isLoggedOutSession ) {
+					return requestLoggedOutWpcomOdie< ReturnedChat >(
+						`/odie/chat/${ botSlug }${ chatIdSegment }`,
+						{
+							method: 'POST',
+							signal,
+							body: {
+								message: message.content,
+								...( version && { version } ),
+								...( sessionId && { session_id: sessionId } ),
+								...( externalChatProvider && {
+									external_chat_provider: externalChatProvider,
+								} ),
+								...( externalChatId && { external_chat_id: externalChatId } ),
+								context,
+							},
+						}
+					);
+				}
+
+				return wpcomRequest< ReturnedChat >( {
+					method: 'POST',
+					path: `/odie/chat/${ botSlug }${ chatIdSegment }`,
+					apiNamespace: 'wpcom/v2',
+					signal,
+					body: {
+						message: message.content,
+						...( version && { version } ),
+						...( externalChatProvider && { external_chat_provider: externalChatProvider } ),
+						...( externalChatId && { external_chat_id: externalChatId } ),
+						context,
+					},
+				} );
+			}
+
+			return apiFetch< ReturnedChat >( {
+				path: `/help-center/odie/chat/${ botSlug }${ chatIdSegment }`,
+				method: 'POST',
+				signal,
+				data: {
+					message: message.content,
+					...( version && { version } ),
+					...( sessionId && { session_id: sessionId } ),
+					...( externalChatProvider && { external_chat_provider: externalChatProvider } ),
+					...( externalChatId && { external_chat_id: externalChatId } ),
+					context,
+				},
+			} );
 		},
 		onMutate: () => {
 			setChatStatus( 'sending' );
@@ -329,13 +342,13 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			try {
 				if ( isLoggedOutSession ) {
 					// If the user is not logged in, we don't need to create a new support interaction.
-					updateLoggedOutSession( chatId.toString(), returnedChat.session_id, botSlug );
+					updateLoggedOutSession( chatId, returnedChat.session_id, botSlug );
 				} else if ( ! supportInteraction && chatId ) {
 					supportInteraction = await startNewInteraction( {
 						event_external_id: chatId.toString(),
 						event_source: 'odie',
 					} );
-				} else if ( supportInteraction && ! odieId && chatId ) {
+				} else if ( supportInteraction && chatId && String( chatId ) !== String( odieId ?? '' ) ) {
 					supportInteraction = await addEventToInteraction( {
 						interactionId: supportInteraction.uuid,
 						eventData: {

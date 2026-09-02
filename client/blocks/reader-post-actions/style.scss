@@ -1,5 +1,4 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
-@import "@wordpress/base-styles/mixins";
 
 :root .reader-post-actions {
 	display: flex;
@@ -43,36 +42,6 @@
 				opacity: 1;
 			}
 		}
-
-		// Override freshly-pressed button CSS custom property for consistent styling
-		.freshly-pressed {
-			--color-foreground: var( --color-text-subtle );
-
-			svg {
-				fill: var( --color-text-subtle );
-				opacity: 0.6;
-			}
-		}
-
-		// Hide label on smaller screens
-		.freshly-pressed__button-label {
-			display: none;
-
-			@include break-large {
-				display: inline;
-			}
-		}
-
-		// Hover states
-		.freshly-pressed:hover {
-			color: var(--color-link);
-			--color-foreground: var(--color-link);
-
-			svg {
-				fill: var(--color-link);
-				opacity: 1;
-			}
-		}
 	}
 
 	// When like/comment buttons have no visible label text, collapse the gap
@@ -82,11 +51,6 @@
 		&:has(.comment-button__label-count:empty) {
 			display: none;
 		}
-	}
-
-	// Float freshly-pressed button to the right
-	.reader-post-actions__item:has(.freshly-pressed) {
-		margin-inline-start: auto;
 	}
 }
 

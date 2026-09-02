@@ -1,5 +1,5 @@
+import { isEmpty } from '@automattic/js-utils';
 import debugFactory from 'debug';
-import { isEmpty } from 'lodash';
 import { stringify } from 'qs';
 import { setSectionMiddleware } from 'calypso/controller';
 import performanceMark from 'calypso/server/lib/performance-mark';

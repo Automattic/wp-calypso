@@ -8,9 +8,11 @@ const defaultValues: Required< UserPreferences > = {
 	'hosting-dashboard-color-scheme': 'light',
 	'hosting-dashboard-dark-mode-announcement-dismissed': '',
 	'hosting-dashboard-opt-in': { value: 'unset', updated_at: '' },
-	'hosting-dashboard-opt-in-welcome-modal-dismissed': '',
 	'hosting-dashboard-welcome-notice-dismissed': '',
+	'wordpress-labs-opt-in': { value: 'unset', updated_at: '' },
+	'wordpress-labs-excluded-sites': [],
 	'account-recovery-interstitial-snoozed-until': 0,
+	'account-recovery-interstitial-dismiss-count': 0,
 	'reader-landing-page': {
 		useReaderAsLandingPage: false,
 		updatedAt: 0,
@@ -24,7 +26,59 @@ const defaultValues: Required< UserPreferences > = {
 	'reader-profile-posts-visibility': 'public',
 	'reader-profile-sites-visibility': 'public',
 	'reader-profile-hidden-sites': [],
+	two_step_security_key_reregister_required: false,
+	'a4a-dashboard-pd-not-approved-popover': false,
 };
+
+const staticPreferenceStatIds: Record< string, string > = {
+	recentSites: 'recent',
+	'hosting-dashboard-color-scheme': 'color',
+	'hosting-dashboard-dark-mode-announcement-dismissed': 'darkann',
+	'hosting-dashboard-opt-in': 'optin',
+	'hosting-dashboard-welcome-notice-dismissed': 'welcome',
+	'wordpress-labs-opt-in': 'wplabin',
+	'wordpress-labs-excluded-sites': 'wplabex',
+	'account-recovery-interstitial-snoozed-until': 'acctrec',
+	'account-recovery-interstitial-dismiss-count': 'acrdis',
+	'reader-landing-page': 'rdland',
+	'sites-landing-page': 'stland',
+	'achievements-visibility': 'achvis',
+	'achievements-global-notifications': 'achnot',
+	'reader-profile-posts-visibility': 'postvis',
+	'reader-profile-sites-visibility': 'sitevis',
+	'reader-profile-hidden-sites': 'hidsit',
+	two_step_security_key_reregister_required: '2fakey',
+	'a4a-dashboard-pd-not-approved-popover': 'a4apd',
+};
+
+const dynamicPreferenceStatPrefixes: Record< string, string > = {
+	'hosting-dashboard-dataviews-view': 'dvview',
+	'hosting-dashboard-visit-count': 'visits',
+	'hosting-dashboard-overview-storage-notice-dismissed': 'storage',
+	'hosting-dashboard-tours': 'tours',
+	'hosting-dashboard-time-mismatch-warning-dismissed': 'timewrn',
+	'hosting-dashboard-wp-beta-notice-dismissed': 'wpbeta',
+	'cancel-purchase-survey-completed': 'cncsvy',
+	'cancellation-offer-accepted-notice-dismissed': 'cncofr',
+};
+
+function getUserPreferenceMutationStatId(
+	statId: string,
+	preferenceName: keyof UserPreferences
+): string {
+	const preferenceKey = String( preferenceName );
+	const staticStatId = staticPreferenceStatIds[ preferenceKey ];
+
+	if ( staticStatId ) {
+		return `${ statId }.${ staticStatId }`;
+	}
+
+	const dynamicStatId = Object.entries( dynamicPreferenceStatPrefixes ).find( ( [ prefix ] ) =>
+		preferenceKey.startsWith( `${ prefix }-` )
+	)?.[ 1 ];
+
+	return `${ statId }.${ dynamicStatId ?? 'other' }`;
+}
 
 // Returns all user preferences, without applying any defaults.
 export const rawUserPreferencesQuery = () =>
@@ -50,6 +104,9 @@ export const userPreferenceQuery = < P extends keyof UserPreferences >( preferen
 
 export const userPreferenceMutation = < P extends keyof UserPreferences >( preferenceName: P ) =>
 	mutationOptions( {
+		meta: {
+			statId: getUserPreferenceMutationStatId( 'user-pref-update', preferenceName ),
+		},
 		mutationFn: ( data: UserPreferences[ P ] ) =>
 			updatePreferences( {
 				[ preferenceName ]: data ?? null, // null means deleting the preference
@@ -65,6 +122,9 @@ export const userPreferenceOptimisticMutation = < P extends keyof UserPreference
 	preferenceName: P
 ) =>
 	mutationOptions( {
+		meta: {
+			statId: getUserPreferenceMutationStatId( 'user-pref-opt-update', preferenceName ),
+		},
 		mutationFn: userPreferenceMutation( preferenceName ).mutationFn,
 		onMutate: async ( value ) => {
 			await queryClient.cancelQueries( { queryKey: rawUserPreferencesQuery().queryKey } );
@@ -86,6 +146,7 @@ export const userPreferenceOptimisticMutation = < P extends keyof UserPreference
 
 export const userPreferencesMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'user-prefs-update' },
 		mutationFn: ( data: Partial< UserPreferences > ) => updatePreferences( data ),
 		onSuccess: ( newData ) => {
 			queryClient.setQueryData( rawUserPreferencesQuery().queryKey, ( oldData ) =>

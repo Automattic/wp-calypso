@@ -1,10 +1,12 @@
 import { Domain } from '@automattic/api-core';
-import { Notice } from '@wordpress/components';
+import config from '@automattic/calypso-config';
+import { ExternalLink, Notice } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { wpcomLink } from '../../utils/link';
 
-const CALYPSO_CONTACT = '/help/contact';
+const SUPPORT_CONTACT_URL = wpcomLink( '/support/contact' );
 
 type EmailNonDomainOwnerMessageProps = {
 	domain?: Domain;
@@ -21,14 +23,14 @@ export const EmailNonDomainOwnerNotice = ( props: EmailNonDomainOwnerMessageProp
 		s: domain?.domain || '',
 	} );
 
-	const loginUrl = addQueryArgs( '/log-in/', {
-		redirect_to: window.location.pathname,
+	const loginUrl = addQueryArgs( config( 'wpcom_login_url' ) || wpcomLink( '/log-in' ), {
+		redirect_to: window.location.href,
 	} );
 
 	const selectedDomainName = domain?.domain ?? '';
 	const elements = {
-		contactSupportLink: <a href={ CALYPSO_CONTACT } rel="noopener noreferrer" target="_blank" />,
-		loginLink: <a href={ loginUrl } rel="external" />,
+		contactSupportLink: <ExternalLink href={ SUPPORT_CONTACT_URL } children={ null } />,
+		loginLink: <ExternalLink href={ loginUrl } children={ null } />,
 		reachOutLink: isPrivacyAvailable ? (
 			<a href={ contactOwnerUrl } rel="noopener noreferrer" target="_blank" />
 		) : (

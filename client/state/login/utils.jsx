@@ -1,7 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { omit } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { get } from 'lodash';
 import { lostPassword } from 'calypso/lib/paths';
 
 export function getSMSMessageFromResponse( response ) {
@@ -117,7 +116,7 @@ export function getErrorFromHTTPError( httpError ) {
 	let message = httpError?.response?.body?.data?.errors?.[ 0 ]?.message;
 
 	if ( ! message ) {
-		message = get( httpError, 'response.body.data', httpError.message );
+		message = httpError?.response?.body?.data ?? httpError.message;
 	}
 
 	return { code, message, field };

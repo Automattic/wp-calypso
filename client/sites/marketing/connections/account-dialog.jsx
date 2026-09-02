@@ -2,7 +2,6 @@ import { Dialog } from '@automattic/components';
 import clsx from 'clsx';
 import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { filter } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -81,7 +80,9 @@ class AccountDialog extends Component {
 	}
 
 	getAccountsByConnectedStatus( isConnected ) {
-		return filter( this.props.accounts, { isConnected } );
+		return ( this.props.accounts ?? [] ).filter(
+			( account ) => account.isConnected === isConnected
+		);
 	}
 
 	getAccountToConnect() {

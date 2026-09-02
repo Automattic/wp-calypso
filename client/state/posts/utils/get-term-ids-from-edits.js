@@ -1,5 +1,4 @@
-import { mapValues } from '@automattic/js-utils';
-import { isEmpty, map } from 'lodash';
+import { mapValues, isEmpty } from '@automattic/js-utils';
 
 /**
  * Takes existing term post edits and updates the `terms_by_id` attribute
@@ -38,7 +37,7 @@ export function getTermIdsFromEdits( post ) {
 	return {
 		...post,
 		terms_by_id: mapValues( taxonomies, ( taxonomy ) => {
-			const termIds = map( taxonomy, 'ID' );
+			const termIds = taxonomy.map( ( t ) => t?.ID );
 
 			// Hack: qs omits empty arrays in wpcom.js request, which prevents
 			// removing all terms for a given taxonomy since the empty array is not sent to the API

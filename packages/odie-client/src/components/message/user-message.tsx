@@ -16,6 +16,7 @@ import {
 	getIsRequestingHumanSupport,
 	getIsLastBotMessage,
 	getIsErrorMessage,
+	isStaleOdieChat,
 } from '../../utils';
 import BotMessageActions from './bot-message-actions';
 import CustomALink from './custom-a-link';
@@ -86,7 +87,10 @@ export const UserMessage = ( {
 	const isMessageShowingDisclaimer =
 		message.context?.question_tags?.inquiry_type !== 'request-for-human-support';
 
-	const showGetSupport = isLastBotMessage && ( isRequestingHumanSupport || isErrorMessage );
+	// A stale chat can't be replied to, so escalating out of it would open a live conversation
+	// hanging off an abandoned interaction. The closed footer is the only way forward.
+	const showGetSupport =
+		isLastBotMessage && ( isRequestingHumanSupport || isErrorMessage ) && ! isStaleOdieChat( chat );
 	const showActionButtons = ! isRequestingHumanSupport && ! isErrorMessage;
 
 	const messageContent = () => {
@@ -127,10 +131,11 @@ export const UserMessage = ( {
 				<>
 					{ showGetSupport && (
 						<GetSupport
-							onClickAdditionalEvent={ ( destination ) => {
+							onClickAdditionalEvent={ ( destination, props ) => {
 								trackEvent( 'chat_get_support', {
 									location: 'user-message',
 									destination,
+									...props,
 								} );
 							} }
 						/>

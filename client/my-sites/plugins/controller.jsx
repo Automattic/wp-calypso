@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { some } from 'lodash';
 import { createElement } from 'react';
 import { PluginsScheduledUpdates } from 'calypso/blocks/plugins-scheduled-updates';
 import { PluginsScheduledUpdatesMultisite } from 'calypso/blocks/plugins-scheduled-updates-multisite';
@@ -270,7 +269,7 @@ export function jetpackCanUpdate( context, next ) {
 	let redirectToPlugins = false;
 
 	if ( 'updates' === context.params.pluginFilter && selectedSites.length ) {
-		redirectToPlugins = ! some( selectedSites, function ( site ) {
+		redirectToPlugins = ! selectedSites.some( function ( site ) {
 			return site && site.jetpack && site.canUpdateFiles;
 		} );
 

@@ -1,5 +1,4 @@
 import { CompactCard } from '@automattic/components';
-import { get } from 'lodash';
 import { connect } from 'react-redux';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import SocialLoginActionButton from './action-button';
@@ -41,6 +40,6 @@ export default connect( ( state, { service } ) => {
 	const socialLoginConnection = connections.find( isConnectionForService( service ) );
 	return {
 		isConnected: !! socialLoginConnection,
-		socialConnectionEmail: get( socialLoginConnection, 'service_user_email', '' ),
+		socialConnectionEmail: socialLoginConnection?.service_user_email ?? '',
 	};
 } )( SocialLoginService );

@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { isMigrationInProgress } from 'calypso/data/site-migration';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
@@ -43,6 +44,7 @@ export function redirectToSiteOverview( context: PageJSContext ) {
 
 	dispatch( waitForPrefs() ).finally( () => {
 		if ( hasDashboardOptIn( getState() ) ) {
+			bumpStat( 'dashboard-redirect', 'site-overview' );
 			window.location.replace( dashboardLink( path ) );
 			return;
 		}

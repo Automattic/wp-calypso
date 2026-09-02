@@ -61,7 +61,7 @@ export function OptionContent( {
 				onClick={ onSelect }
 				href={ href }
 				disabled={ disabled || isPlaceholder || noAction }
-				badges={ recommended ? [ { text: __( 'Recommended' ), intent: 'success' } ] : undefined }
+				badges={ recommended ? [ { text: __( 'Recommended' ), intent: 'stable' } ] : undefined }
 			/>
 			{ benefits && (
 				<VStack

@@ -1,4 +1,4 @@
-import { merge } from 'lodash';
+import { merge } from '@automattic/js-utils';
 import {
 	POST_TYPES_TAXONOMIES_RECEIVE,
 	POST_TYPES_TAXONOMIES_REQUEST,

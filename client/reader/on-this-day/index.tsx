@@ -334,6 +334,7 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 						feedId={ selectedItem.feedId }
 						blogId={ selectedItem.blogId }
 						postId={ selectedItem.postId }
+						placeholder={ null }
 						onClose={ () => {
 							const focusItem = itemRefs.current[ selectedItem?.postId?.toString() ?? '' ];
 							if ( ! isWide ) {

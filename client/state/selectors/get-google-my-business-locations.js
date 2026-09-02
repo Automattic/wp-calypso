@@ -1,4 +1,3 @@
-import { filter } from 'lodash';
 import { getAvailableExternalAccounts } from 'calypso/state/sharing/selectors';
 import { getSiteKeyringsForService } from 'calypso/state/site-keyrings/selectors';
 
@@ -13,9 +12,9 @@ export default function getGoogleMyBusinessLocations( state, siteId ) {
 		return [];
 	}
 
-	const externalUsers = filter( getAvailableExternalAccounts( state, 'google_my_business' ), {
-		keyringConnectionId: googleMyBusinessSiteKeyring.keyring_id,
-	} );
+	const externalUsers = getAvailableExternalAccounts( state, 'google_my_business' ).filter(
+		( account ) => account.keyringConnectionId === googleMyBusinessSiteKeyring.keyring_id
+	);
 
 	externalUsers.forEach( ( externalUser ) => {
 		externalUser.isConnected = externalUser.ID === googleMyBusinessSiteKeyring.external_user_id;

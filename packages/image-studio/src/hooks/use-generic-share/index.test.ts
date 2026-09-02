@@ -12,6 +12,7 @@ let mockState: {
 	currentAttachmentId: number | null;
 	entryPoint: string;
 	isAiProcessing: boolean;
+	postPermalink: string | null;
 };
 
 jest.mock( '@wordpress/data', () => ( {
@@ -27,6 +28,11 @@ jest.mock( '@wordpress/data', () => ( {
 				return {
 					getEntryPoint: () => mockState.entryPoint,
 					getImageStudioAiProcessing: () => mockState.isAiProcessing,
+				};
+			}
+			if ( storeName === 'core/editor' ) {
+				return {
+					getPermalink: () => mockState.postPermalink,
 				};
 			}
 			return {};
@@ -121,6 +127,7 @@ describe( 'useGenericShare', () => {
 			currentAttachmentId: 555,
 			entryPoint: 'post_editor_feature_clip',
 			isAiProcessing: false,
+			postPermalink: null,
 		};
 		mockAddNotice.mockResolvedValue( undefined );
 		// The share button must never open a tab or download anything itself —
@@ -181,6 +188,36 @@ describe( 'useGenericShare', () => {
 				surface: 'modal',
 				method: 'web-share',
 			} );
+		} );
+
+		it( 'includes the post permalink as share text when available', async () => {
+			mockState.postPermalink = 'https://example.com/my-post/';
+			const mockShare = jest.fn().mockResolvedValue( undefined );
+			setNavigatorShare( { share: mockShare, canShare: jest.fn().mockReturnValue( true ) } );
+			global.fetch = fetchReturning( new Blob( [ 'video' ], { type: 'video/mp4' } ) );
+
+			const { result } = renderHook( () => useGenericShare( 'modal' ) );
+			await act( async () => {
+				await result.current.handleShare();
+			} );
+
+			expect( mockShare ).toHaveBeenCalledWith(
+				expect.objectContaining( { text: 'https://example.com/my-post/' } )
+			);
+		} );
+
+		it( 'omits share text when no permalink is available', async () => {
+			mockState.postPermalink = null;
+			const mockShare = jest.fn().mockResolvedValue( undefined );
+			setNavigatorShare( { share: mockShare, canShare: jest.fn().mockReturnValue( true ) } );
+			global.fetch = fetchReturning( new Blob( [ 'v' ], { type: 'video/mp4' } ) );
+
+			const { result } = renderHook( () => useGenericShare( 'modal' ) );
+			await act( async () => {
+				await result.current.handleShare();
+			} );
+
+			expect( mockShare.mock.calls[ 0 ][ 0 ] ).not.toHaveProperty( 'text' );
 		} );
 
 		it( 'silently exits when the user dismisses the share sheet', async () => {

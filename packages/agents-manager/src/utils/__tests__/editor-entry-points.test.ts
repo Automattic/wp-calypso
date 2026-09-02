@@ -1,14 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import {
-	isAdminBarInEditor,
-	isEditorAiEntryEnabled,
-	isEditorHelpMenuEnabled,
-} from '../editor-entry-points';
-import { getAgentsManagerInlineData } from '../get-agents-manager-inline-data';
-import { isEditorPage } from '../is-editor-page';
-
 jest.mock( '../get-agents-manager-inline-data', () => ( {
 	getAgentsManagerInlineData: jest.fn(),
 } ) );
@@ -16,8 +8,6 @@ jest.mock( '../is-editor-page', () => ( {
 	isEditorPage: jest.fn(),
 } ) );
 
-const mockInlineData = getAgentsManagerInlineData as jest.Mock;
-const mockIsEditorPage = isEditorPage as jest.Mock;
 const ADMIN_BAR_IN_EDITOR_CLASS = 'has-admin-bar-in-editor';
 // Saved so each suite can restore it — `setDesktop` overwrites `window.matchMedia`.
 const originalMatchMedia = window.matchMedia;
@@ -27,6 +17,24 @@ type TestWindow = Window & { __experimentalAdminBarInEditor?: boolean };
 function setOmnibarActive( active: boolean ) {
 	( window as TestWindow ).__experimentalAdminBarInEditor = active;
 }
+
+// `isAdminBarInEditor` snapshots its result on first read, so reset the module before each test to
+// re-run those tests against a fresh snapshot.
+let isAdminBarInEditor: () => boolean;
+let isEditorAiEntryEnabled: () => boolean;
+let isEditorHelpMenuEnabled: () => boolean;
+let mockInlineData: jest.Mock;
+let mockIsEditorPage: jest.Mock;
+
+beforeEach( async () => {
+	jest.resetModules();
+	( { isAdminBarInEditor, isEditorAiEntryEnabled, isEditorHelpMenuEnabled } = await import(
+		'../editor-entry-points'
+	) );
+	mockInlineData = ( await import( '../get-agents-manager-inline-data' ) )
+		.getAgentsManagerInlineData as unknown as jest.Mock;
+	mockIsEditorPage = ( await import( '../is-editor-page' ) ).isEditorPage as unknown as jest.Mock;
+} );
 
 describe( 'isAdminBarInEditor', () => {
 	afterEach( () => {
@@ -52,6 +60,29 @@ describe( 'isAdminBarInEditor', () => {
 		setOmnibarActive( false );
 		expect( isAdminBarInEditor() ).toBe( false );
 	} );
+
+	it( 'returns true when a visible #wpadminbar is present', () => {
+		const adminBar = document.createElement( 'div' );
+		adminBar.id = 'wpadminbar';
+		// jsdom reports offsetHeight as 0, so stub a visible height.
+		Object.defineProperty( adminBar, 'offsetHeight', { value: 32, configurable: true } );
+		document.body.appendChild( adminBar );
+
+		expect( isAdminBarInEditor() ).toBe( true );
+
+		adminBar.remove();
+	} );
+
+	it( 'returns false when #wpadminbar is present but hidden', () => {
+		const adminBar = document.createElement( 'div' );
+		adminBar.id = 'wpadminbar';
+		Object.defineProperty( adminBar, 'offsetHeight', { value: 0, configurable: true } );
+		document.body.appendChild( adminBar );
+
+		expect( isAdminBarInEditor() ).toBe( false );
+
+		adminBar.remove();
+	} );
 } );
 
 describe( 'isEditorAiEntryEnabled', () => {
@@ -62,43 +93,31 @@ describe( 'isEditorAiEntryEnabled', () => {
 	}
 
 	afterEach( () => {
-		mockInlineData.mockReset();
 		mockIsEditorPage.mockReset();
 		delete ( window as TestWindow ).__experimentalAdminBarInEditor;
 		window.matchMedia = originalMatchMedia;
 	} );
 
-	it( 'returns true on an editor page, in a dev context, on desktop, with the omnibar off', () => {
+	it( 'returns true on an editor page, on desktop, with the omnibar off', () => {
 		mockIsEditorPage.mockReturnValue( true );
-		mockInlineData.mockReturnValue( { isDevMode: true } );
 		setDesktop( true );
 		expect( isEditorAiEntryEnabled() ).toBe( true );
 	} );
 
 	it( 'returns false outside an editor page', () => {
 		mockIsEditorPage.mockReturnValue( false );
-		mockInlineData.mockReturnValue( { isDevMode: true } );
-		setDesktop( true );
-		expect( isEditorAiEntryEnabled() ).toBe( false );
-	} );
-
-	it( 'returns false outside dev mode', () => {
-		mockIsEditorPage.mockReturnValue( true );
-		mockInlineData.mockReturnValue( { isDevMode: false } );
 		setDesktop( true );
 		expect( isEditorAiEntryEnabled() ).toBe( false );
 	} );
 
 	it( 'returns false on mobile', () => {
 		mockIsEditorPage.mockReturnValue( true );
-		mockInlineData.mockReturnValue( { isDevMode: true } );
 		setDesktop( false );
 		expect( isEditorAiEntryEnabled() ).toBe( false );
 	} );
 
 	it( 'returns false when the omnibar experiment is active', () => {
 		mockIsEditorPage.mockReturnValue( true );
-		mockInlineData.mockReturnValue( { isDevMode: true } );
 		setDesktop( true );
 		setOmnibarActive( true );
 		expect( isEditorAiEntryEnabled() ).toBe( false );

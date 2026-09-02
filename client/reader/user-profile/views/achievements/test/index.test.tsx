@@ -25,6 +25,12 @@ jest.mock( '../achievements-settings', () => ( {
 	default: () => <button data-testid="achievements-settings">Settings</button>,
 } ) );
 
+jest.mock( 'calypso/reader/user-profile/components/private-tab-notice', () => ( {
+	__esModule: true,
+	default: ( { title }: { title: string } ) => (
+		<div data-testid="private-tab-notice">{ title }</div>
+	),
+} ) );
 const mockActivityStreakProps = jest.fn();
 jest.mock( '../activity-streak', () => ( {
 	__esModule: true,

@@ -1,7 +1,6 @@
 import { isTitanMail, WPCOM_DIFM_LITE } from '@automattic/calypso-products';
-import { snakeCase } from '@automattic/js-utils';
+import { snakeCase, isEmpty } from '@automattic/js-utils';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
-import { isEmpty } from 'lodash';
 import { assertValidDependencies } from 'calypso/lib/signup/asserts';
 import {
 	SIGNUP_PROGRESS_SAVE_STEP,

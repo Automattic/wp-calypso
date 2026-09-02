@@ -53,23 +53,6 @@ beforeEach( () => {
 } );
 
 describe( 'SiteLogs page', () => {
-	test.each( [
-		[ LogType.ACTIVITY, 'Activity' ],
-		[ LogType.PHP, 'PHP errors' ],
-		[ LogType.SERVER, 'Web server' ],
-	] )( 'on selecting tab %s, navigates to /%s', async ( logSlug, tabLabel ) => {
-		// Different initial log type that the one under test
-		const initialLogType = logSlug !== LogType.PHP ? LogType.PHP : LogType.SERVER;
-		const { router } = render( <SiteLogs logType={ initialLogType } siteSlug="test-site" /> );
-
-		// Click another tab
-		await userEvent.click( await screen.findByRole( 'tab', { name: tabLabel } ) );
-
-		await waitFor( () => {
-			expect( router.state.location.pathname ).toBe( `/sites/test-site/logs/${ logSlug }` );
-		} );
-	} );
-
 	test( 'shows the custom error log notice when the PHP errors log is empty', async () => {
 		mockPhpLogs( [] );
 		render( <SiteLogs logType={ LogType.PHP } siteSlug="test-site" /> );
@@ -97,11 +80,11 @@ describe( 'SiteLogs page', () => {
 		expect( screen.queryByText( /paths aren’t shown here/ ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'does not show the custom error log notice on the Web server tab', async () => {
+	test( 'does not show the custom error log notice on the Web server log', async () => {
 		render( <SiteLogs logType={ LogType.SERVER } siteSlug="test-site" /> );
 
 		// Wait for the page to settle on a stable element before asserting absence.
-		await screen.findByRole( 'tab', { name: 'Web server' } );
+		await screen.findByRole( 'button', { name: /^Date range:/ } );
 
 		expect( screen.queryByText( /paths aren’t shown here/ ) ).not.toBeInTheDocument();
 	} );

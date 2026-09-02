@@ -1,6 +1,7 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "calypso/dashboard/app/wp-components-overrides.scss";
 
 $wpnc-pane-width: 448px;
 $wpnc-pane-border: 1px solid var(--color-border-subtle, #c3c4c7);
@@ -80,6 +81,24 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	position: relative;
 	width: 100%;
 	height: 100%;
+}
+
+.wpnc-app__error {
+	position: absolute;
+	inset: 0;
+	z-index: 3;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 24px;
+	box-sizing: border-box;
+	background: color-mix(in srgb, var(--color-surface, #fff) 85%, transparent);
+}
+
+.wpnc-app__error-notice {
+	width: 100%;
+	margin: 0;
 }
 
 // Both panes use absolute positioning so they can overlap during the slide.

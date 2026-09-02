@@ -165,7 +165,13 @@ describe( 'useCancelMutationOnConfirm', () => {
 		} );
 	} );
 
-	test( 'fireMutationOnConfirm does NOT capture snapshotPurchase for CANCEL_AUTORENEW flow', async () => {
+	// The auto-renew mutation invalidates userPurchasesQuery, whose ['upgrades']
+	// key is a prefix of purchaseQuery's ['upgrades', id]. Without a snapshot the
+	// live purchase refetches mid-survey with is_auto_renew_enabled: false, which
+	// re-derives the flow type under the survey — a refundable purchase flips to
+	// CANCEL_WITH_REFUND and onSurveyComplete then reports a refund that never
+	// happened.
+	test( 'fireMutationOnConfirm captures snapshotPurchase for CANCEL_AUTORENEW flow', async () => {
 		const mutations = makeMutations();
 		const queryClient = makeQueryClient();
 
@@ -185,7 +191,7 @@ describe( 'useCancelMutationOnConfirm', () => {
 		await waitFor( () =>
 			expect( mutations.setPurchaseAutoRenewMutation.mutateAsync ).toHaveBeenCalled()
 		);
-		expect( result.current.snapshotPurchase ).toBeNull();
+		expect( result.current.snapshotPurchase ).toBe( mockPurchase );
 	} );
 
 	test( 'isPending is true while the mutation is in flight, false after it resolves', async () => {

@@ -20,5 +20,6 @@ export const receiptQuery = ( receiptId: number, options?: { includeFailedPurcha
 
 export const sendReceiptEmailMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'receipt-email-send' },
 		mutationFn: ( receiptId: string ) => sendBillingReceiptEmail( receiptId ),
 	} );

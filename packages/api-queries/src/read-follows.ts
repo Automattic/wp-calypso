@@ -163,19 +163,18 @@ export const getAliasedSiteSubscriptionFeedUrl = (
 		subscriptionMatchesFeedUrl( subscription, feedUrl )
 	)?.feed_URL;
 
-export const getIsSubscribedFromData = (
+type SiteSubscriptionLookup = {
+	feedUrl?: string | null;
+	feedId?: number | string | null;
+	blogId?: number | string | null;
+};
+
+/** Followed subscription matching feed URL, feed id, or blog id. */
+export const getSiteSubscriptionFromData = (
 	data: SiteSubscriptionsInfiniteData | undefined,
-	{
-		feedUrl,
-		feedId,
-		blogId,
-	}: {
-		feedUrl?: string | null;
-		feedId?: number | string | null;
-		blogId?: number | string | null;
-	}
-): boolean =>
-	getSiteSubscriptionsFromData( data ).some( ( subscription ) => {
+	{ feedUrl, feedId, blogId }: SiteSubscriptionLookup
+): SiteSubscriptionItem | undefined =>
+	getSiteSubscriptionsFromData( data ).find( ( subscription ) => {
 		if ( ! subscription.is_following ) {
 			return false;
 		}
@@ -199,6 +198,11 @@ export const getIsSubscribedFromData = (
 
 		return false;
 	} );
+
+export const getIsSubscribedFromData = (
+	data: SiteSubscriptionsInfiniteData | undefined,
+	lookup: SiteSubscriptionLookup
+): boolean => Boolean( getSiteSubscriptionFromData( data, lookup ) );
 
 export const getSubscribedSitesFromData = (
 	data: SiteSubscriptionsInfiniteData | undefined,
@@ -397,6 +401,7 @@ export const markSiteSubscriptionUnfollowed = ( queryClient: QueryClient, feedUr
 
 export const followSiteMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< SiteSubscriptionItem, Error, FollowSiteParams >( {
+		meta: { statId: 'read-site-follow' },
 		mutationFn: ( params ) => followSite( params ),
 		onSuccess: ( subscription, params ) => {
 			patchSiteSubscription( queryClient, {
@@ -409,6 +414,7 @@ export const followSiteMutation = ( queryClient: QueryClient ) =>
 
 export const unfollowSiteMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< unknown, Error, UnfollowSiteParams >( {
+		meta: { statId: 'read-site-unfollow' },
 		mutationFn: ( params ) => unfollowSite( params ),
 		onSuccess: async ( _response, params ) => {
 			if ( params.feedUrl ) {
@@ -431,6 +437,55 @@ type SiteSubscriptionDeliveryPatchKind =
 	| 'comment-email'
 	| 'email-frequency'
 	| 'notification';
+
+/**
+ * Patch the unseen_count of a subscription in the site subscriptions query data.
+ * This is used to optimistically update the unseen_count when marking posts as
+ * seen/unseen.
+ */
+export const patchSubscriptionSeenCount = (
+	queryClient: QueryClient,
+	match: { feedIds?: number[]; blogId?: number },
+	update: ( currentCount: number ) => number
+) => {
+	if ( ! match.feedIds?.length && ! match.blogId ) {
+		return;
+	}
+
+	const feedIdSet = new Set( match.feedIds?.map( Number ) );
+
+	queryClient.setQueryData< SiteSubscriptionsInfiniteData >(
+		getSiteSubscriptionsQueryKey(),
+		( data ) => {
+			if ( ! data ) {
+				return data;
+			}
+
+			return {
+				...data,
+				pages: data.pages.map( ( page: SiteSubscriptionsPage ) => ( {
+					...page,
+					subscriptions: page.subscriptions.map(
+						( subscription: SiteSubscriptionItem ): SiteSubscriptionItem => {
+							// Match by feed ID or blog ID. Return subscription unchanged if no match.
+							if (
+								( match.feedIds?.length && ! feedIdSet.has( Number( subscription.feed_ID ) ) ) ||
+								( match.blogId && Number( subscription.blog_ID ) !== Number( match.blogId ) )
+							) {
+								return subscription;
+							}
+
+							const current = subscription.unseen_count ?? 0;
+							const newUnseenCount = Math.max( 0, update( current ) );
+
+							return { ...subscription, unseen_count: newUnseenCount };
+						}
+					),
+				} ) ),
+			};
+		}
+	);
+};
 
 const patchSiteSubscriptionDeliveryMethods = (
 	queryClient: QueryClient,
@@ -515,6 +570,7 @@ const rollbackOptimisticDeliveryPatch = (
 export const updateSitePostEmailSubscriptionMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< unknown, Error, FollowDeliveryParams, SiteSubscriptionDeliveryMutationContext >(
 		{
+			meta: { statId: 'read-post-email-sub-update' },
 			mutationFn: ( params ) => updateSitePostEmailSubscription( params ),
 			onMutate: ( params ) => withOptimisticDeliveryPatch( queryClient, params, 'post-email' ),
 			onError: ( _error, _params, context ) =>
@@ -526,6 +582,7 @@ export const updateSitePostEmailSubscriptionMutation = ( queryClient: QueryClien
 export const updateSiteCommentEmailSubscriptionMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< unknown, Error, FollowDeliveryParams, SiteSubscriptionDeliveryMutationContext >(
 		{
+			meta: { statId: 'read-cmt-email-sub-update' },
 			mutationFn: ( params ) => updateSiteCommentEmailSubscription( params ),
 			onMutate: ( params ) => withOptimisticDeliveryPatch( queryClient, params, 'comment-email' ),
 			onError: ( _error, _params, context ) =>
@@ -537,6 +594,7 @@ export const updateSiteCommentEmailSubscriptionMutation = ( queryClient: QueryCl
 export const updateSitePostEmailDeliveryFrequencyMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< unknown, Error, FollowDeliveryParams, SiteSubscriptionDeliveryMutationContext >(
 		{
+			meta: { statId: 'read-post-email-freq-update' },
 			mutationFn: ( params ) => updateSitePostEmailDeliveryFrequency( params ),
 			onMutate: ( params ) => withOptimisticDeliveryPatch( queryClient, params, 'email-frequency' ),
 			onError: ( _error, _params, context ) =>
@@ -548,6 +606,7 @@ export const updateSitePostEmailDeliveryFrequencyMutation = ( queryClient: Query
 export const updateSitePostNotificationSubscriptionMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< unknown, Error, FollowDeliveryParams, SiteSubscriptionDeliveryMutationContext >(
 		{
+			meta: { statId: 'read-post-notif-sub-update' },
 			mutationFn: ( params ) => updateSitePostNotificationSubscription( params ),
 			onMutate: ( params ) => withOptimisticDeliveryPatch( queryClient, params, 'notification' ),
 			onError: ( _error, _params, context ) =>

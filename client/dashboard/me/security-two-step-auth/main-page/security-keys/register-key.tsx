@@ -1,5 +1,9 @@
-import { registerTwoStepAuthSecurityKeyMutation } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
+import {
+	registerTwoStepAuthSecurityKeyMutation,
+	userPreferenceMutation,
+	userPreferenceQuery,
+} from '@automattic/api-queries';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	Modal,
 	Button,
@@ -14,6 +18,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
 import { ButtonStack } from '../../../../components/button-stack';
+import { getSecurityKeyHostname } from '../../utils';
 import type { Field } from '@wordpress/dataviews';
 
 type SecurityKeyFormData = {
@@ -30,7 +35,14 @@ export default function RegisterKey( { onClose }: { onClose: () => void } ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const { mutateAsync: registerSecurityKey, isPending: isRegisteringSecurityKey } = useMutation(
-		registerTwoStepAuthSecurityKeyMutation()
+		registerTwoStepAuthSecurityKeyMutation( getSecurityKeyHostname() )
+	);
+
+	const { data: isReregisterRequired } = useQuery(
+		userPreferenceQuery( 'two_step_security_key_reregister_required' )
+	);
+	const { mutate: setReregisterRequired } = useMutation(
+		userPreferenceMutation( 'two_step_security_key_reregister_required' )
 	);
 
 	const handleSubmit = async ( e: React.FormEvent< HTMLFormElement > ) => {
@@ -40,6 +52,9 @@ export default function RegisterKey( { onClose }: { onClose: () => void } ) {
 		);
 		registerSecurityKey( formData.keyName.trim(), {
 			onSuccess: () => {
+				if ( isReregisterRequired ) {
+					setReregisterRequired( false );
+				}
 				createSuccessNotice(
 					/* translators: %s is the security key name */
 					sprintf( __( 'Security key "%s" added.' ), formData.keyName ),

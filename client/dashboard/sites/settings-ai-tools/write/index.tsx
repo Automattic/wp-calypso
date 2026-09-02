@@ -18,6 +18,7 @@ import {
 } from '../../../../me/mcp/utils';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { siteRoute } from '../../../app/router/sites';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
@@ -77,15 +78,12 @@ export default function SiteAIToolsWrite() {
 	);
 	const writeTools = allTools.filter( ( [ toolId, tool ] ) => isWriteTool( toolId, tool ) );
 
-	const mutation = useMutation( {
-		...userSettingsMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'MCP settings saved.' ),
-				error: __( 'Failed to save MCP settings.' ),
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( userSettingsMutation(), {
+			success: __( 'MCP settings saved.' ),
+			error: __( 'Failed to save MCP settings.' ),
+		} )
+	);
 
 	// When there are no existing overrides, materialize the implicit default alongside the change
 	// so subsequent edits have a full baseline to work from.

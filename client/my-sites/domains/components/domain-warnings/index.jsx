@@ -12,7 +12,6 @@ import {
 } from '@automattic/urls';
 import _debug from 'debug';
 import { localize } from 'i18n-calypso';
-import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -210,7 +209,7 @@ export class DomainWarnings extends PureComponent {
 					) ) }
 				</ul>
 			);
-			if ( map( wrongMappedDomains, 'name' ).every( isSubdomain ) ) {
+			if ( wrongMappedDomains.map( ( domain ) => domain?.name ).every( isSubdomain ) ) {
 				text = translate( "Some of your domains' DNS records need to be configured.", {
 					context: 'Notice for mapped subdomain that has DNS records need to set up',
 				} );

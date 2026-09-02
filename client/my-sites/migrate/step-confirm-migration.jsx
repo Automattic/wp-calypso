@@ -9,7 +9,6 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -38,8 +37,8 @@ class StepConfirmMigration extends Component {
 		const { sourceSite, startMigration, targetSiteSlug, targetSite } = this.props;
 		const sourceSiteId = sourceSite?.ID;
 		const targetSiteId = targetSite?.ID;
-		const sourceSiteSlug = get( sourceSite, 'slug', sourceSiteId );
-		const sourceSiteUrl = get( sourceSite, 'URL', sourceSiteId );
+		const sourceSiteSlug = sourceSite?.slug ?? sourceSiteId;
+		const sourceSiteUrl = sourceSite?.URL ?? sourceSiteId;
 
 		const hasCompatiblePlan = this.isTargetSitePlanCompatible();
 

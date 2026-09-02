@@ -2,6 +2,7 @@ import { determineUrlType, URL_TYPE } from '@automattic/calypso-url';
 import { addQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import { logmeinUrl } from 'calypso/lib/logmein';
 
 type InviteType = {
@@ -211,6 +212,9 @@ export function getRedirectAfterAccept( invite: InviteType, hasDashboardOptIn: b
 			return getDestinationUrl( readerPath );
 
 		default:
+			if ( hasDashboardOptIn ) {
+				bumpStat( 'dashboard-redirect', 'invite-accept' );
+			}
 			return getDestinationUrl( mySitesPath );
 	}
 }

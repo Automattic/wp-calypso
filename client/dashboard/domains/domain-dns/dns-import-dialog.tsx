@@ -10,6 +10,7 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useEffect } from 'react';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import type { DnsRecord } from '@automattic/api-core';
 
@@ -30,16 +31,13 @@ export default function DnsImportDialog( {
 }: DnsImportDialogProps ) {
 	const [ selectedRecords, setSelectedRecords ] = useState< Set< string > >( new Set() );
 
-	const updateDnsMutation = useMutation( {
-		...domainDnsMutation( domainName ),
-		meta: {
-			snackbar: {
-				/* translators: %s is the domain name */
-				success: sprintf( __( 'DNS records saved for %s.' ), domainName ),
-				error: { source: 'server' },
-			},
-		},
-	} );
+	const updateDnsMutation = useMutation(
+		withSnackbar( domainDnsMutation( domainName ), {
+			/* translators: %s is the domain name */
+			success: sprintf( __( 'DNS records saved for %s.' ), domainName ),
+			error: { source: 'server' },
+		} )
+	);
 
 	// Initialize all records as selected when records change
 	useEffect( () => {

@@ -11,7 +11,28 @@ import {
 } from '../../utils/external-context';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { setSiteEditorAction } from '../../utils/site-editor-context';
+import {
+	BIG_SKY_EVENT_PREFIX,
+	recordBigSkyTracksEvent,
+	type BigSkyEventName,
+} from '../../utils/tracks';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
+
+/** Bridge-facing recorder: drops malformed calls instead of emitting `jetpack_big_sky_undefined`. */
+function recordGuardedBigSkyTracksEvent(
+	eventName: BigSkyEventName,
+	props?: Record< string, unknown >
+): void {
+	if (
+		typeof eventName !== 'string' ||
+		! eventName.startsWith( BIG_SKY_EVENT_PREFIX ) ||
+		eventName === BIG_SKY_EVENT_PREFIX
+	) {
+		return;
+	}
+
+	recordBigSkyTracksEvent( eventName, props );
+}
 
 /**
  * Publish actions onto `window.__agentsManagerActions`. Cleanup removes only
@@ -48,7 +69,7 @@ interface SetupProps {
 	closeSidebar: () => void;
 	canDock: boolean;
 	setIsCompactMode: ( isCompact: boolean ) => void;
-	setShouldRenderChat: ( shouldRender: boolean ) => void;
+	setIsChatEnabled: ( isEnabled: boolean ) => void;
 	setDesktopMediaQuery: ( query: string ) => void;
 }
 
@@ -64,7 +85,7 @@ export function useSetupCustomActions( {
 	closeSidebar,
 	canDock,
 	setIsCompactMode,
-	setShouldRenderChat,
+	setIsChatEnabled,
 	setDesktopMediaQuery,
 }: SetupProps ): void {
 	const { hasLoaded, isOpen, isDocked, isMinimized, floatingPosition } = useSelect( ( select ) => {
@@ -72,7 +93,7 @@ export function useSetupCustomActions( {
 		return store.getAgentsManagerState();
 	}, [] );
 	const { setIsOpen, setIsDocked, setIsMinimized } = useDispatch( AGENTS_MANAGER_STORE );
-	const { agentConfig, getActiveSessionId, resumeActiveChat } = useAgentsManagerContext();
+	const { agentConfig, getTabSessionId, resumeChat } = useAgentsManagerContext();
 	const navigate = useNavigate();
 	const location = useLocation();
 	// Keep the latest location in a ref so `getCurrentRoute` stays a stable
@@ -156,9 +177,9 @@ export function useSetupCustomActions( {
 				return;
 			}
 
-			setShouldRenderChat( isEnabled );
+			setIsChatEnabled( isEnabled );
 		},
-		[ setShouldRenderChat ]
+		[ setIsChatEnabled ]
 	);
 
 	const setChatDesktopMediaQuery = useCallback(
@@ -209,7 +230,8 @@ export function useSetupCustomActions( {
 		getChatState,
 		isChatVisible,
 		getCurrentRoute,
-		getSessionId: getActiveSessionId,
+		getSessionId: getTabSessionId,
+		recordBigSkyTracksEvent: recordGuardedBigSkyTracksEvent,
 		setChatOpen,
 		setChatDocked,
 		setChatEnabled,
@@ -221,8 +243,11 @@ export function useSetupCustomActions( {
 		removeContextCard: removeExternalContextCard,
 		setSiteEditorAction,
 		chatNavigate: navigate,
-		resumeChat: resumeActiveChat,
+		resumeChat,
 		isReady: true,
+		// See the field's doc in global.d.ts. Advertised here, where the API
+		// is assembled, so a host reading it can trust the events are wired.
+		broadcastsAgentActivity: true,
 	} );
 
 	// Hosts (e.g. CIAB) listen for `agents-manager-ready` to invoke actions without polling.

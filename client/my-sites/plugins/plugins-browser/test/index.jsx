@@ -71,8 +71,8 @@ import {
 	PLAN_BLOGGER,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
+import { merge } from '@automattic/js-utils';
 import { screen } from '@testing-library/react';
-import { merge } from 'lodash';
 import documentHead from 'calypso/state/document-head/reducer';
 import { reducer as jetpackConnectionHealth } from 'calypso/state/jetpack-connection-health/reducer';
 import plugins from 'calypso/state/plugins/reducer';

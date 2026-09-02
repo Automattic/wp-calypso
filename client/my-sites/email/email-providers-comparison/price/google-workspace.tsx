@@ -17,6 +17,8 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
+import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 import './style.scss';
@@ -56,7 +58,13 @@ const GoogleWorkspacePrice = ( {
 	const translate = useTranslate();
 
 	const productSlug = getGoogleWorkspaceProductSlug( intervalLength );
-	const product = useSelector( ( state ) => getProductBySlug( state, productSlug ) );
+	const selectedSite = useSelector( getSelectedSite );
+	const siteId = domain?.blogId ?? selectedSite?.ID;
+	const globalProduct = useSelector( ( state ) => getProductBySlug( state, productSlug ) );
+	const siteProduct = useSelector( ( state ) =>
+		getSiteAvailableProduct( state, siteId, productSlug )
+	);
+	const product = siteProduct ?? globalProduct;
 
 	const canPurchaseGSuite = useSelector( canUserPurchaseGSuite );
 

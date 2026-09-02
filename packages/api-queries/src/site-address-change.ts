@@ -10,11 +10,13 @@ import { siteQueryFilter } from './site';
 
 export const validateSiteAddressChangeMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'site-address-validate' },
 		mutationFn: ( data: ValidateSiteAddressData ) => validateSiteAddress( data ),
 	} );
 
 export const changeSiteAddressChangeMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'site-address-change' },
 		mutationFn: ( data: ChangeSiteAddressData ) => changeSiteAddress( data ),
 		onSuccess: ( data, { siteId } ) => {
 			queryClient.invalidateQueries( siteQueryFilter( siteId ) );

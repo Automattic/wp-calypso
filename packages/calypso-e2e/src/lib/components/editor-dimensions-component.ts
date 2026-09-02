@@ -20,7 +20,7 @@ export class EditorDimensionsComponent {
 	private editor: EditorComponent;
 
 	// Usually low-level components don't contain other components like this.
-	// In this case however, because the popover is always used whereever this component is,
+	// In this case however, because the popover is always used wherever this component is,
 	// and tieing it together at a higher level is kind of messy, it makes sense to add it here.
 	private editorPopoverMenuComponent: EditorPopoverMenuComponent;
 

@@ -1,9 +1,7 @@
-import { get } from 'lodash';
-
 import 'calypso/state/domains/init';
 
 export function isUpdatingWhois( state, domain ) {
-	return get( state, [ 'domains', 'management', 'isSaving', `${ domain }`, 'saving' ], false );
+	return state?.domains?.management?.isSaving?.[ `${ domain }` ]?.saving ?? false;
 }
 
 export function getWhoisData( state, domain ) {
@@ -14,11 +12,7 @@ export function getWhoisSaveError( state, domain ) {
 	const status = state?.domains?.management?.isSaving?.[ `${ domain }` ]?.status ?? null;
 
 	if ( ! isUpdatingWhois( state, domain ) && 'error' === status ) {
-		return get(
-			state,
-			[ 'domains', 'management', 'isSaving', `${ domain }`, 'error' ],
-			'unknown error'
-		);
+		return state?.domains?.management?.isSaving?.[ `${ domain }` ]?.error ?? 'unknown error';
 	}
 
 	return null;

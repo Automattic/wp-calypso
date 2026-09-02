@@ -1,8 +1,7 @@
 /* eslint-disable no-case-declarations */
 
-import { mapValues } from '@automattic/js-utils';
+import { mapValues, merge } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
-import { merge } from 'lodash';
 import TermQueryManager from 'calypso/lib/query-manager/term';
 import {
 	TERM_REMOVE,

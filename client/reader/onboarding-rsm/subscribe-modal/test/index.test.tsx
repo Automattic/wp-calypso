@@ -111,7 +111,7 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 
 // ── Shared step indicator (not under test here) ──────────────────────────────
 
-jest.mock( 'calypso/reader/onboarding-rsm/step-indicator', () => ( {
+jest.mock( 'calypso/reader/components/step-indicator', () => ( {
 	StepIndicator: () => null,
 } ) );
 
@@ -261,6 +261,38 @@ describe( 'SubscribeModal – site preview analytics', () => {
 			'calypso_reader_onboarding_discover_modal_site_previewed',
 			expect.anything()
 		);
+	} );
+
+	it( 'places `inert` on the preview stream wrapper, not the scroll container', () => {
+		const recommendations = [ makeRecommendation( 0 ) ];
+		mockedRecommendationsHook.mockReturnValue( {
+			...defaultRecommendationsHookValue,
+			combinedRecommendations: recommendations,
+			recommendations,
+		} );
+
+		const { container } = renderWithProvider(
+			<SubscribeModal onFinish={ jest.fn() } promptVerification={ false } />
+		);
+
+		const scrollContainer = container.querySelector< HTMLElement >(
+			'.subscribe-modal__preview-stream-container'
+		);
+		const inertWrapper = container.querySelector< HTMLElement >(
+			'.subscribe-modal__preview-stream-inner'
+		);
+
+		// The scroll container must NOT be inert: an inert element hit-tests as
+		// `pointer-events: none`, so wheel/touch scrolls fall through it to its
+		// `overflow: hidden` parent and the preview column stops scrolling. (This
+		// regressed once React 19 began emitting the `inert` attribute for real —
+		// under React 18 the boolean prop was silently dropped.)
+		expect( scrollContainer ).not.toBeNull();
+		expect( inertWrapper ).not.toBeNull();
+		expect( scrollContainer ).not.toHaveAttribute( 'inert' );
+		// `inert` still removes the non-interactive preview content from the tab
+		// order + a11y tree — just one level in, on the wrapper around the stream.
+		expect( inertWrapper ).toHaveAttribute( 'inert' );
 	} );
 
 	it( 'prefetches recommendation streams through the React Query stream cache', () => {

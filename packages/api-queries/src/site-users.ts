@@ -16,6 +16,7 @@ export const siteCurrentUserQuery = ( siteId: number ) =>
 
 export const siteUserDeleteMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-user-delete' },
 		mutationFn: ( userId: number ) => deleteSiteUser( siteId, userId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( siteQueryFilter( siteId ) );

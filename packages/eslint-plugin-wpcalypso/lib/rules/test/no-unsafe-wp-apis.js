@@ -12,12 +12,12 @@ const options = [ { '@wordpress/package': [ '__experimentalSafe', '__unstableSaf
 
 ruleTester.run( 'no-unsafe-wp-apis', rule, {
 	valid: [
-		{ code: "import _ from 'lodash';", options },
-		{ code: "import { map } from 'lodash';", options },
-		{ code: "import { __experimentalFoo } from 'lodash';", options },
-		{ code: "import { __unstableFoo } from 'lodash';", options },
-		{ code: "import _, { __unstableFoo } from 'lodash';", options },
-		{ code: "import * as _ from 'lodash';", options },
+		{ code: "import _ from 'external-module';", options },
+		{ code: "import { map } from 'external-module';", options },
+		{ code: "import { __experimentalFoo } from 'external-module';", options },
+		{ code: "import { __unstableFoo } from 'external-module';", options },
+		{ code: "import _, { __unstableFoo } from 'external-module';", options },
+		{ code: "import * as _ from 'external-module';", options },
 
 		{ code: "import _ from './x';", options },
 		{ code: "import { map } from './x';", options },

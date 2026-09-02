@@ -2,7 +2,6 @@ import { omit, pick } from '@automattic/js-utils';
 import debugFactory from 'debug';
 import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose, bindActionCreators } from 'redux';
@@ -114,7 +113,11 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			const launchpadTasksToComplete = [];
 
 			Object.entries( FIELDS_TO_LAUNCHPAD_TASKS ).forEach( ( [ field, taskSlugs ] ) => {
-				if ( get( this.state.modifiedFields, field ) ) {
+				// `field` can be a dotted path (e.g. `subscription_options.welcome`)
+				// into the nested `modifiedFields` map, so walk each segment.
+				if (
+					field.split( '.' ).reduce( ( value, key ) => value?.[ key ], this.state.modifiedFields )
+				) {
 					const slugs = Array.isArray( taskSlugs ) ? taskSlugs : [ taskSlugs ];
 					launchpadTasksToComplete.push( ...slugs );
 				}

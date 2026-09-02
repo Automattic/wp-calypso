@@ -1,4 +1,4 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
 import { HelpCenter } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import {
@@ -8,6 +8,7 @@ import {
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import { useHelpCenterSite } from 'calypso/layout/use-help-center-site';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
@@ -20,6 +21,7 @@ const SupportLink = ( {
 	onShowHelpAssistant?: () => void;
 } & LocalizeProps ) => {
 	const sectionName = useSelector( getSectionName );
+	const { site, siteContextSource } = useHelpCenterSite();
 	const { show, isMinimized } = useDateStoreSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
@@ -38,11 +40,17 @@ const SupportLink = ( {
 		if ( ! show ) {
 			setShowHelpCenter( true );
 
-			recordTracksEvent( 'calypso_inlinehelp_show', {
-				force_site_id: true,
-				location: 'help-center',
-				section: sectionName,
-			} );
+			recordTracksEvent(
+				'calypso_inlinehelp_show',
+				withSiteContext(
+					{
+						location: 'help-center',
+						section: sectionName,
+					},
+					siteContextSource,
+					site?.ID
+				)
+			);
 		}
 
 		if ( isMinimized ) {
@@ -54,6 +62,8 @@ const SupportLink = ( {
 		show,
 		setShowHelpCenter,
 		sectionName,
+		siteContextSource,
+		site?.ID,
 		isMinimized,
 		setIsMinimized,
 	] );

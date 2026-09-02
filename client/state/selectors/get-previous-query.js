@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/route/init';
 
 /**
@@ -7,6 +5,6 @@ import 'calypso/state/route/init';
  * @param {Object} state - global redux state
  * @returns {string} previous query value
  */
-export const getPreviousQuery = ( state ) => get( state, 'route.query.previous', '' );
+export const getPreviousQuery = ( state ) => state?.route?.query?.previous ?? '';
 
 export default getPreviousQuery;

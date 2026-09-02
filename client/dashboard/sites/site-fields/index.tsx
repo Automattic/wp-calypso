@@ -6,7 +6,6 @@ import {
 	siteEngagementStatsQuery,
 	siteUptimeQuery,
 } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
@@ -16,7 +15,10 @@ import {
 } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useInView } from 'react-intersection-observer';
+import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT, normalizeVariation } from 'calypso/lib/ai-launchpad';
+import { useExperiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../../app/analytics';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import SiteIcon from '../../components/site-icon';
@@ -31,6 +33,7 @@ import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
 import { getSitePlanUpgradeUrl } from '../../utils/site-url';
 import { getVisibilityLabels } from '../../utils/site-visibility';
 import { canManageSite } from '../features';
+import { useAiLaunchpad } from '../hooks/use-ai-launchpad';
 import { isSitePlanTrial } from '../plans';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
@@ -101,21 +104,21 @@ export function NameRenderer( {
 	const renderBadge = () => {
 		switch ( badge ) {
 			case 'redirect':
-				return <Badge>{ __( 'Redirect' ) }</Badge>;
+				return <Badge intent="draft">{ __( 'Redirect' ) }</Badge>;
 			case 'staging':
-				return <Badge>{ __( 'Staging' ) }</Badge>;
+				return <Badge intent="draft">{ __( 'Staging' ) }</Badge>;
 			case 'trial':
-				return <Badge>{ __( 'Trial' ) }</Badge>;
+				return <Badge intent="draft">{ __( 'Trial' ) }</Badge>;
 			case 'p2':
-				return <Badge>{ __( 'P2' ) }</Badge>;
+				return <Badge intent="draft">{ __( 'P2' ) }</Badge>;
 			case 'deleted':
-				return <Badge intent="error">{ __( 'Deleted' ) }</Badge>;
+				return <Badge intent="high">{ __( 'Deleted' ) }</Badge>;
 			case 'difm_lite_in_progress':
-				return <Badge>{ __( 'Express service' ) }</Badge>;
+				return <Badge intent="draft">{ __( 'Express service' ) }</Badge>;
 			case 'migration_pending':
-				return <Badge intent="warning">{ __( 'Migration pending' ) }</Badge>;
+				return <Badge intent="low">{ __( 'Migration pending' ) }</Badge>;
 			case 'migration_started':
-				return <Badge intent="info">{ __( 'Migration started' ) }</Badge>;
+				return <Badge intent="informational">{ __( 'Migration started' ) }</Badge>;
 			default:
 				return null;
 		}
@@ -333,6 +336,19 @@ export function MediaStorage( { site }: { site?: Site } ) {
 
 function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {
 	const { recordTracksEvent } = useAnalytics();
+	const { isCompleted, setupUrl } = useAiLaunchpad( siteSlug );
+	const [ , personalizationAssignment ] = useExperiment( LAUNCHPAD_PERSONALIZATION_EXPERIMENT );
+
+	if ( isCompleted ) {
+		return null;
+	}
+
+	// The no_guidance launchpad-personalization variation shows no launchpad mention at all.
+	if ( normalizeVariation( personalizationAssignment?.variationName ) === 'no_guidance' ) {
+		return null;
+	}
+
+	const href = setupUrl ?? wpcomLink( `/home/${ siteSlug }` );
 
 	// TODO: We have to fix the obscured focus ring issue as the dataview's field value container
 	// uses `overflow:hidden` to prevent any of the fields from overflowing.
@@ -340,7 +356,7 @@ function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {
 		<>
 			<ComponentViewTracker eventName="calypso_dashboard_sites_site_launch_nag_impression" />
 			<ExternalLink
-				href={ wpcomLink( `/home/${ siteSlug }` ) }
+				href={ href }
 				onClick={ () => {
 					recordTracksEvent( 'calypso_dashboard_sites_site_launch_nag_click' );
 				} }

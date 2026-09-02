@@ -1,13 +1,12 @@
 import { removePurchaseMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useCallback } from 'react';
-import { purchaseSettingsRoute } from '../../../app/router/me';
 import DomainRemovalConfirmationStep from './domain-removal-confirmation-step';
 import DomainRemovalWarningStep from './domain-removal-warning-step';
+import { usePostRemovalNavigation } from './use-post-removal-navigation';
 import type { Purchase } from '@automattic/api-core';
 
 import './style.scss';
@@ -21,8 +20,8 @@ type RemovalStep = 'warning' | 'confirmation';
 
 export default function DomainRemovalFlow( { purchase, onCancel }: DomainRemovalFlowProps ) {
 	const [ currentStep, setCurrentStep ] = useState< RemovalStep >( 'warning' );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const navigate = useNavigate();
+	const { createErrorNotice } = useDispatch( noticesStore );
+	const { navigateAfterRemoval, invalidateSiteAfterRemoval } = usePostRemovalNavigation( purchase );
 	const { mutate: removePurchase, isPending: isRemovingPurchase } = useMutation(
 		removePurchaseMutation()
 	);
@@ -35,20 +34,16 @@ export default function DomainRemovalFlow( { purchase, onCancel }: DomainRemoval
 		removePurchase( purchase.ID, {
 			onSuccess: () => {
 				const domainName = purchase.meta || purchase.product_name;
-				createSuccessNotice(
+				invalidateSiteAfterRemoval();
+				navigateAfterRemoval(
 					sprintf(
 						/* translators: %(domain)s is a domain name */
 						__( 'The domain %(domain)s was removed from your account.' ),
 						{
 							domain: domainName,
 						}
-					),
-					{ type: 'snackbar' }
+					)
 				);
-				navigate( {
-					to: purchaseSettingsRoute.fullPath,
-					params: { purchaseId: purchase.ID },
-				} );
 			},
 			onError: () => {
 				const domainName = purchase.meta || purchase.product_name;
@@ -64,7 +59,13 @@ export default function DomainRemovalFlow( { purchase, onCancel }: DomainRemoval
 				);
 			},
 		} );
-	}, [ purchase, removePurchase, createSuccessNotice, createErrorNotice, navigate ] );
+	}, [
+		purchase,
+		removePurchase,
+		createErrorNotice,
+		navigateAfterRemoval,
+		invalidateSiteAfterRemoval,
+	] );
 
 	return (
 		<div>

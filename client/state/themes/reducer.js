@@ -1,7 +1,6 @@
 import { getThemeIdFromStylesheet } from '@automattic/data-stores';
 import { mapValues, omit } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
-import { map } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
@@ -340,7 +339,7 @@ const queriesReducer = ( state = {}, action ) => {
 				// Always 'patch' to avoid overwriting existing fields when receiving
 				// from a less rich endpoint such as /mine
 				( m ) =>
-					m.receive( map( themes, fromApi ), {
+					m.receive( themes.map( fromApi ), {
 						query,
 						found,
 						patch: true,

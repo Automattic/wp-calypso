@@ -42,6 +42,7 @@ export const SITE_FIELDS = [
 	'garden_partner',
 	'garden_is_provisioned',
 	'big_sky_enabled',
+	'atomic_email_block',
 ];
 
 export const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
@@ -52,6 +53,7 @@ export const SITE_OPTIONS = [
 	'created_at',
 	'unmapped_url',
 	'is_difm_lite_in_progress',
+	'difm_lite_site_options',
 	'is_gating_business_q1',
 	'is_domain_only',
 	'is_redirect',
@@ -64,6 +66,10 @@ export const SITE_OPTIONS = [
 	'software_version',
 	'updated_at',
 	'woocommerce_is_active',
+	'wpcom_admin_interface',
+	'wpcom_ai_launchpad_enabled',
+	'wpcom_ai_launchpad_dismissed',
+	'wpcom_ai_launchpad_completed',
 	'wpcom_production_blog_id',
 ];
 

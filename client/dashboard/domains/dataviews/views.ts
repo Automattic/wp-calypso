@@ -41,6 +41,10 @@ export function recordDomainViewChanges(
 	newView: View,
 	recordTracksEvent: AnalyticsClient[ 'recordTracksEvent' ]
 ) {
+	if ( ! oldView.search && newView.search ) {
+		recordTracksEvent( 'calypso_dashboard_domains_search' );
+	}
+
 	if (
 		oldView.sort?.field !== newView.sort?.field ||
 		oldView.sort?.direction !== newView.sort?.direction

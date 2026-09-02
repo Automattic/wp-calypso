@@ -1,7 +1,6 @@
 import { loadScript, loadjQueryDependentScript } from '@automattic/load-script';
 import clsx from 'clsx';
 import debugFactory from 'debug';
-import { filter, forEach } from 'lodash';
 import { createRef, PureComponent } from 'react';
 import { createRoot } from 'react-dom/client';
 import DotPager from '../dot-pager';
@@ -40,7 +39,7 @@ const SLIDESHOW_URLS = {
 function processEmbeds( domNode ) {
 	Object.entries( embedsToLookFor ).forEach( ( [ embedSelector, fn ] ) => {
 		const nodes = domNode.querySelectorAll( embedSelector );
-		forEach( filter( nodes, nodeNeedsProcessing ), fn );
+		Array.from( nodes ).filter( nodeNeedsProcessing ).forEach( fn );
 	} );
 }
 
@@ -167,12 +166,11 @@ function embedTumblr( domNode ) {
 	tumblrLoader = true;
 
 	function removeScript() {
-		forEach(
-			document.querySelectorAll( 'script[src="https://secure.assets.tumblr.com/post.js"]' ),
-			function ( el ) {
-				el.parentNode.removeChild( el );
-			}
-		);
+		Array.from(
+			document.querySelectorAll( 'script[src="https://secure.assets.tumblr.com/post.js"]' )
+		).forEach( function ( el ) {
+			el.parentNode.removeChild( el );
+		} );
 		tumblrLoader = false;
 	}
 
@@ -212,7 +210,7 @@ function embedSlideshow( domNode ) {
 
 	// Remove no JS warning so user doesn't have to look at it while several scripts load
 	const warningElements = domNode.parentNode.getElementsByClassName( 'jetpack-slideshow-noscript' );
-	forEach( warningElements, ( el ) => {
+	Array.from( warningElements ).forEach( ( el ) => {
 		el.classList.add( 'hidden' );
 	} );
 

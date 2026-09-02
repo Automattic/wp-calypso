@@ -92,7 +92,7 @@ export class PluginsPage {
 	/**
 	 * Visit a specific page within the Plugins feature at `/plugins/page`.
 	 *
-	 * If optional paramter `site` is specified, this method will
+	 * If optional parameter `site` is specified, this method will
 	 * attempt to load `/plugins/<page>/<site>` endpoint.
 	 *
 	 * @param {string} page Sub-page to visit.
@@ -297,7 +297,11 @@ export class PluginsPage {
 	async clickInstallPlugin(): Promise< void > {
 		const button = await this.page.locator( selectors.installButton );
 
-		const text = await button.innerText();
+		// The CTA is gated behind the marketplace queries, which a cold Calypso
+		// boot leaves past the 10s global actionTimeout.
+		const installButtonTimeout = 30 * 1000;
+
+		const text = await button.innerText( { timeout: installButtonTimeout } );
 		if ( /^(Purchase|Upgrade) and activate$/.test( text ) ) {
 			await Promise.all( [ this.page.waitForResponse( /eligibility/ ), button.click() ] );
 			// Modal will appear to re-confirm to the user that an upgrade is necessary.

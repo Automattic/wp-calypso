@@ -14,6 +14,7 @@ export const siteDefensiveModeSettingsQuery = ( siteId: number ) =>
 
 export const siteDefensiveModeSettingsMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-def-mode-update' },
 		mutationFn: ( data: DefensiveModeSettingsUpdate ) =>
 			updateEdgeCacheDefensiveModeSettings( siteId, data ),
 		onSuccess: ( data ) => {

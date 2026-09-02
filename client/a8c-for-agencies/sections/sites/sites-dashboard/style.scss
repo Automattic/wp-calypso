@@ -1,12 +1,12 @@
-@import "@automattic/typography/styles/variables";
+@import '@automattic/typography/styles/variables';
 
-@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import 'calypso/assets/stylesheets/shared/mixins/breakpoints';
 
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
 
-.main.hosting-dashboard-layout.sites-dashboard {
+.is-section-a8c-for-agencies-sites .main.hosting-dashboard-layout.sites-dashboard {
 	.hosting-dashboard-layout-column {
 		.hosting-dashboard-layout-column__container {
 			display: flex;
@@ -175,6 +175,11 @@
 
 	@media ( min-width: $break-large ) {
 		&.sites-dashboard__layout:not( .preview-hidden ) {
+			// The error preview sets its own content padding.
+			.hosting-dashboard-item-view:not( .site-error-preview ) .hosting-dashboard-item-view__content {
+				padding-block-start: 24px;
+			}
+
 			.sites-overview {
 				padding: 0;
 
@@ -232,45 +237,6 @@
 				}
 
 				.dataviews-view-list__fields {
-					display: flex;
-					justify-content: space-between;
-				}
-
-				/* This styling is a bit of a hack: To make the site name clickable area larger, will need
-				 * to hide the other fields when in preview mode.
-				 */
-				.dataviews-view-list__field {
-					// Hide the field except first (Site name) and last (actions menu)
-					&:not( :first-child ):not( :last-child ) {
-						display: none;
-					}
-
-					// Force the site name to take up the full width
-					&:first-child {
-						flex-grow: 1;
-
-						.sites-dataviews__site {
-							width: 100%;
-							justify-content: flex-start;
-						}
-					}
-				}
-
-				// Ideally instead of reusing the site name full field
-				// We should be setting a media field and a primary field.
-				.dataviews-view-list__media-wrapper {
-					display: none;
-				}
-				.dataviews-view-list__primary-field {
-					display: none;
-				}
-
-				.sites-overview__stats-trend,
-				.sites-overview__column-action-button,
-				.sites-overview__row-status,
-				.toggle-activate-monitoring__toggle-button,
-				.sites-dataviews__favorite-btn-wrapper,
-				.sites-overview__boost-score {
 					display: none;
 				}
 
@@ -310,6 +276,13 @@
 	}
 
 	&.sites-dashboard__layout {
+		.backup__page > .admin-ui-navigable-region,
+		.scan > .admin-ui-navigable-region,
+		.scan-new > .admin-ui-navigable-region,
+		.activity-log-v2 > .admin-ui-navigable-region {
+			background-color: transparent;
+		}
+
 		.activity-card-list .activity-card .activity-card__time {
 			background: none;
 		}
@@ -319,18 +292,18 @@
 		.button.toolbar__button {
 			background: transparent;
 			border-color: transparent;
-			color: var(--color-neutral-70);
+			color: var( --color-neutral-70 );
 
 			&:hover {
 				background: transparent;
 				border-color: transparent;
-				color: var(--color-neutral-70);
+				color: var( --color-neutral-70 );
 			}
 
 			&:focus {
 				background: transparent;
 				border-color: transparent;
-				color: var(--color-neutral-70);
+				color: var( --color-neutral-70 );
 				box-shadow: none;
 			}
 		}
@@ -563,6 +536,9 @@
 		color: var( --color-accent-5 );
 	}
 	.sites-overview__stats-trend {
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		padding: 0 8px 0 4px;
 	}
 	.sites-overview__stats-trend__up,
@@ -836,6 +812,18 @@
 		@extend .sites-overview__column-content;
 		padding: 15px;
 		color: var( --color-scary-50 );
+	}
+
+	// Scoped here rather than on the shared status column, which Jetpack Cloud also renders.
+	// The hover underline sits on the value so it picks up the status color; on the anchor
+	// it would resolve to the link blue instead.
+	.sites-overview__row-status > a {
+		text-decoration: none;
+
+		&:hover > *,
+		&:focus-visible > * {
+			text-decoration: underline;
+		}
 	}
 
 	@mixin boost-score-style( $color, $background-color ) {

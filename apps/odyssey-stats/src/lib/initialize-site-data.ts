@@ -1,61 +1,49 @@
+import { isError } from '@automattic/js-utils';
 import { Store } from 'redux';
-import wpcom from 'calypso/lib/wp';
 import {
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
 	SITE_REQUEST_SUCCESS,
 	ODYSSEY_SITE_RECEIVE,
 } from 'calypso/state/action-types';
-import { getSite, isRequestingSite } from 'calypso/state/sites/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
 import { IAppState, CalypsoDispatch } from 'calypso/state/types';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import config from './config-api';
-import { getApiNamespace, getApiPath } from './get-api';
+import { querySite } from './query-site';
 
 /**
- * Initialize site data in the Redux store and fetch site details if needed.
- * This includes setting the selected site and fetching its data from the WordPress.com API.
+ * Select the embedded site and fetch its details before the app renders any route, so
+ * components mounted alongside stats-main (e.g. OdysseyQuerySitePurchases, via
+ * getEnvStatsFeatureSupportChecks) don't see incomplete site data on their first render.
+ * OdysseyQuerySites -- the Odyssey replacement for calypso/components/data/query-sites,
+ * mounted by stats-main -- reuses the same querySite fetch and simply no-ops once this has
+ * already populated the store.
  */
 export async function initializeSiteData(
 	store: Store< IAppState > & { dispatch: CalypsoDispatch }
 ): Promise< void > {
 	const siteId = config( 'blog_id' );
 	const dispatch = store.dispatch;
-	const state = store.getState();
 
 	dispatch( setSelectedSiteId( siteId ) );
 
-	const isRequesting = isRequestingSite( state, siteId );
-	const site = getSite( state, siteId );
+	const site = getSite( store.getState(), siteId );
 
-	// If options stored on WPCOM exists or it's already requesting, we do not need to fetch it again.
-	if ( ( site?.options && 'is_commercial' in site.options ) || isRequesting ) {
+	// If options stored on WPCOM already exist, we don't need to fetch it again.
+	if ( site?.options && 'is_commercial' in site.options ) {
 		return;
 	}
 
-	dispatch( { type: SITE_REQUEST, siteId: siteId } );
+	dispatch( { type: SITE_REQUEST, siteId } );
 
-	try {
-		const data = await wpcom.req.get(
-			{
-				path: getApiPath( '/site', { siteId } ),
-				apiNamespace: getApiNamespace(),
-			},
-			{
-				// Only add the http_envelope flag if it's a Simple Classic site.
-				http_envelope: ! config.isEnabled( 'is_running_in_jetpack_site' ),
-			}
-		);
+	const siteData = await querySite( siteId );
 
-		// For Jetpack/Atomic sites, data format is { data: JSON string of SiteDetails }
-		const siteData =
-			config.isEnabled( 'is_running_in_jetpack_site' ) && 'data' in data
-				? JSON.parse( data.data )
-				: data;
-
-		dispatch( { type: ODYSSEY_SITE_RECEIVE, site: siteData } );
-		dispatch( { type: SITE_REQUEST_SUCCESS, siteId } );
-	} catch ( error ) {
+	if ( isError( siteData ) ) {
 		dispatch( { type: SITE_REQUEST_FAILURE, siteId } );
+		return;
 	}
+
+	dispatch( { type: ODYSSEY_SITE_RECEIVE, site: siteData } );
+	dispatch( { type: SITE_REQUEST_SUCCESS, siteId } );
 }

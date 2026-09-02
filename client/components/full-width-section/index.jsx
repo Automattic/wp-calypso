@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 
 import './style.scss';
 
+/**
+ * @param {{ children?: import('react').ReactNode; className?: string; enabled?: boolean }} props
+ */
 const FullWidthSection = ( { children, className, enabled = false } ) => {
 	if ( ! enabled ) {
 		return children;

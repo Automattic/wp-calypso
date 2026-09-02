@@ -1,16 +1,12 @@
-import { Onboard } from '@automattic/data-stores';
 import { BackButton, NextButton, SubTitle, Title } from '@automattic/onboarding';
-import { useSelect, useDispatch } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, useState } from 'react';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { UrlData, GoToStep, RecordTracksEvent } from '../types';
 import { convertPlatformName, convertToFriendlyWebsiteName } from '../util';
 import ImportPlatformDetails, { coveredPlatforms } from './platform-details';
 import ImportPreview from './preview';
-import type { OnboardSelect } from '@automattic/data-stores';
 import type { ImporterPlatform } from 'calypso/lib/importer/types';
 import './style.scss';
 
@@ -117,11 +113,6 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( {
 	recordTracksEvent,
 } ) => {
 	const { __ } = useI18n();
-	const goals = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
-		[]
-	);
-	const { setGoals } = useDispatch( ONBOARD_STORE );
 
 	const recordReadyScreenEvent = () => {
 		recordTracksEvent( trackEventName, {
@@ -142,14 +133,6 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( {
 		goToStep( 'capture' );
 	};
 
-	const onBackToGoalsBtnClick = () => {
-		// clean up the import goal
-		const goalSet = new Set( goals );
-		goalSet.delete( Onboard.SiteGoal.Import );
-		setGoals( Array.from( goalSet ) );
-		goToStep( 'goals' );
-	};
-
 	useEffect( recordReadyScreenEvent, [] );
 
 	return (
@@ -159,12 +142,11 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( {
 					<Title>{ __( "Your existing content can't be imported" ) }</Title>
 					<SubTitle>
 						{ __(
-							"Unfortunately, your content is on a platform that we don't yet support. Try Building a new WordPress site instead."
+							"Unfortunately, your content is on a platform that we don't yet support. Try a different site."
 						) }
 					</SubTitle>
 
 					<div className="import__buttons-group">
-						<NextButton onClick={ onBackToGoalsBtnClick }>{ __( 'Back to goals' ) }</NextButton>
 						<div>
 							<BackButton onClick={ onBackBtnClick }>{ __( 'Back to start' ) }</BackButton>
 						</div>
@@ -264,11 +246,6 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 	recordTracksEvent,
 } ) => {
 	const { __ } = useI18n();
-	const goals = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
-		[]
-	);
-	const { setGoals } = useDispatch( ONBOARD_STORE );
 
 	const recordReadyScreenEvent = () => {
 		recordTracksEvent( trackEventName, {
@@ -285,26 +262,9 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 		} );
 	};
 
-	const recordStartBuildingEvent = () => {
-		recordTracksEvent( trackEventName, {
-			...trackEventParams,
-			action: 'start-building',
-		} );
-	};
-
 	const onBackBtnClick = () => {
 		recordBackToStartEvent();
 		goToStep( 'capture' );
-	};
-
-	const onBackToGoalsBtnClick = () => {
-		// event tracking
-		recordStartBuildingEvent();
-		// clean up the import goal
-		const goalSet = new Set( goals );
-		goalSet.delete( Onboard.SiteGoal.Import );
-		setGoals( Array.from( goalSet ) );
-		goToStep( 'goals' );
 	};
 
 	useEffect( recordReadyScreenEvent, [] );
@@ -319,7 +279,7 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 							sprintf(
 								/* translators: the website could be any domain (eg: "yourname.com") */
 								__(
-									'It looks like <strong>%(website)s</strong> is already on WordPress.com. Try a different address or start building a new site instead.'
+									'It looks like <strong>%(website)s</strong> is already on WordPress.com. Try a different address.'
 								),
 								{
 									website: convertToFriendlyWebsiteName( urlData.url ),
@@ -330,7 +290,6 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 					</SubTitle>
 
 					<div className="import__buttons-group">
-						<NextButton onClick={ onBackToGoalsBtnClick }>{ __( 'Back to goals' ) }</NextButton>
 						<div>
 							<BackButton onClick={ onBackBtnClick }>{ __( 'Back to start' ) }</BackButton>
 						</div>

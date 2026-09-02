@@ -1,0 +1,17 @@
+.migrations-tag-sites-modal {
+	// The Modal has no dedicated footer slot, and its content is the scrolling
+	// element. Move the content's bottom padding onto the sticky footer so its
+	// opaque background covers the list all the way down and no rows peek
+	// through beneath the buttons.
+	.components-modal__content {
+		padding-block-end: 0;
+	}
+}
+
+.migrations-tag-sites-modal__footer {
+	position: sticky;
+	inset-block-end: 0;
+	z-index: 1;
+	padding-block: 16px 24px;
+	background: var( --color-surface );
+}

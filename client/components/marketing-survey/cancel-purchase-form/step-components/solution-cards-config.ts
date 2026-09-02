@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
+import type { Purchase } from '@automattic/api-core';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { Purchase } from 'calypso/lib/purchases/types';
 import type { ReactElement } from 'react';
 
 const BUILT_BY_URL = 'https://wordpress.com/website-design-service/?ref=wpcom-cancel-flow';
@@ -125,8 +125,8 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 	},
 	{
 		id: 'ask-ai-assistant',
-		title: 'Ask our AI assistant',
-		subtitle: 'Use our AI assistant to quickly find solutions.',
+		title: 'Ask WordPress Agent',
+		subtitle: 'Use WordPress Agent to quickly find solutions.',
 		onClick: ( ctx ) => {
 			ctx.setOpenOdieWithContext( {
 				initialMessage:

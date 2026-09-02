@@ -5,6 +5,7 @@ import { queryClient } from './query-client';
 
 export const domainNoticeMutation = ( domainName: string, noticeType: string ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-notice-set' },
 		mutationFn: ( noticeMessage: string ) =>
 			setDomainNotice( domainName, noticeType, noticeMessage ),
 		onSuccess: () => {

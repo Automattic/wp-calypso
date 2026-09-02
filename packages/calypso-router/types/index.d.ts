@@ -10,7 +10,7 @@ interface Page {
 	/**
 	 * Expose Route
 	 */
-	Route: Route;
+	Route: typeof Route;
 	/**
 	 * Expose Context
 	 */
@@ -186,9 +186,10 @@ interface Page {
 
 class Route {
 	/**
-	 * Initialize `Route` with the given HTTP `path` & `options`
+	 * Initialize `Route` with the given HTTP `path`, `options`, and owning `Page`
+	 * instance (this fork's constructor reads the instance's strict-matching mode).
 	 */
-	constructor( path: string, options?: RouteOptions ): Route;
+	constructor( path: string, options: RouteOptions | null | undefined, pageInstance: Page );
 	/**
 	 * Return route middleware with the given callback `fn()`.
 	 */
@@ -196,7 +197,7 @@ class Route {
 	/**
 	 * Check if this route matches `path`, if so populate `params`.
 	 */
-	match( path: string, params?: unknown ): boolean;
+	match( path: string, params?: Record< string, unknown > ): boolean;
 }
 
 interface RouteOptions {
@@ -291,6 +292,27 @@ class Context {
 
 const page: Page;
 
-export { Page, Callback, Context, Options, Route, RouteOptions };
+interface RouteRegistry {
+	/**
+	 * Register route(s) like `page( path, ...callbacks )`, also recording the path
+	 * so `has()` can match against it.
+	 */
+	page( path: string | string[] | RegExp, ...callbacks: Callback[] ): void;
+	/**
+	 * Whether any recorded route matches `path` (same matching semantics as dispatch).
+	 */
+	has( path: string ): boolean;
+}
+
+/**
+ * Create a registry that pairs route registration with a queryable record of the
+ * registered paths. Useful for section-scoped catch-alls that must distinguish
+ * real routes from unknown paths.
+ */
+function createRouteRegistry( pageInstance?: Page ): RouteRegistry;
+
+export { Page, Callback, Context, Options, Route, RouteOptions, RouteRegistry };
+
+export { createRouteRegistry };
 
 export default page;

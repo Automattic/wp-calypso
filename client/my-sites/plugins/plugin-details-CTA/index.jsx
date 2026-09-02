@@ -17,6 +17,7 @@ import { setQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs } from 'calypso/lib/route';
 import { userCan } from 'calypso/lib/site/utils';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
+import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { ManageSitePluginsDialog } from 'calypso/my-sites/plugins/manage-site-plugins-dialog';
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
@@ -482,6 +483,10 @@ function GetStartedButton( { onClick, plugin, isMarketplaceProduct, startFreeTri
 			ref: sectionName + '-lp',
 			plugin: plugin.slug,
 			billing_period: isMarketplaceProduct ? billingPeriod : '',
+			// Default the plans grid to the billing interval the user was viewing here, so a
+			// monthly selection isn't silently reset to yearly on the plans step.
+			intervalType:
+				isMarketplaceProduct && billingPeriod === IntervalLength.MONTHLY ? 'monthly' : 'yearly',
 		},
 		startFreeTrial ? 'start/hosting' : '/start/with-plugin'
 	);

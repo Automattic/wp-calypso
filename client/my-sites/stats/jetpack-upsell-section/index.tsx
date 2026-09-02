@@ -6,6 +6,7 @@ import { getSiteTitle } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import UpsellCard from './upsell-card';
 import {
+	filterUpsellsBySiteFeatures,
 	getAvailableUpsells,
 	getUpsellFeatureSlugs,
 	Product,
@@ -43,11 +44,9 @@ function getVisibleUpsells( siteId: number | null, siteFeatures: string[] ): Pro
 		return [];
 	}
 
-	// Filter available upsells against site features.
-	// If an upsell has even one feature that is not active on the site, present it to the user.
-	const filteredUpsells = getAvailableUpsells().filter( ( upsell ) =>
-		upsell.features.some( ( feature ) => ! siteFeatures.includes( feature ) )
-	);
+	// Hide upsells for products the site already owns, either directly or through
+	// a bundling plan (e.g. don't upsell Backup to a site on Jetpack Security).
+	const filteredUpsells = filterUpsellsBySiteFeatures( getAvailableUpsells(), siteFeatures );
 
 	// Add the checkout URL to the results.
 	const finalUpsells = filteredUpsells.map( ( upsell ) => {

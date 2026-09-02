@@ -1,5 +1,3 @@
-import { filter } from 'lodash';
-
 import 'calypso/state/reader/init';
 
 /**
@@ -7,12 +5,6 @@ import 'calypso/state/reader/init';
  * @returns {boolean} true if we are fetching site blocks
  */
 export default function isFetchingSiteBlocks( state ) {
-	const inflightPages = state?.reader?.siteBlocks?.inflightPages;
-	if ( ! inflightPages || inflightPages.length < 1 ) {
-		return false;
-	}
-
-	const fetchingPages = filter( inflightPages, ( inflightPage ) => inflightPage === true );
-
-	return fetchingPages.length > 0;
+	const inflightPages = state?.reader?.siteBlocks?.inflightPages ?? {};
+	return Object.values( inflightPages ).some( ( inflightPage ) => inflightPage === true );
 }

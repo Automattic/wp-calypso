@@ -1,4 +1,4 @@
-import { isDomainAndPlanFlow, isStartWritingFlow, StepContainer } from '@automattic/onboarding';
+import { isDomainAndPlanFlow, StepContainer } from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useQuery } from '../../../../hooks/use-query';
 import PlansWrapper from './plans-wrapper';
@@ -24,7 +24,7 @@ const plans: Step< {
 	const handleSubmit = ( plan: MinimalRequestCartProduct | null ) => {
 		const providedDependencies = {
 			plan,
-			goToCheckout: isDomainAndPlanFlow( flow ) || isStartWritingFlow( flow ),
+			goToCheckout: isDomainAndPlanFlow( flow ),
 		};
 
 		submit?.( providedDependencies );

@@ -1,5 +1,5 @@
 <!--
-Link a related Github/Linear issue to this PR. If the PR does not immediately resolve the issue,
+Link a related GitHub/Linear issue to this PR. If the PR does not immediately resolve the issue,
 for example, it requires a separate deployment to production, avoid
 using the "fixes" keyword. Consider using "part of" instead.
 -->

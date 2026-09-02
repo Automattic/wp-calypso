@@ -15,6 +15,11 @@ export interface AgencyDetailsSignupPayload {
 	country: string;
 	postalCode: string;
 	phoneNumber?: string;
+	phone?: {
+		phoneNumberFull?: string;
+		phoneNumber?: string;
+		countryCode?: string;
+	};
 	state: string;
 	referer?: string | null;
 	tos?: 'consented';
@@ -26,4 +31,6 @@ export interface AgencyDetailsSignupPayload {
 	agencySize?: string;
 	plansToOfferProducts?: 'Yes' | 'No';
 	initialSource?: string;
+	bypass_duplicate_check?: boolean;
+	skip_hubspot?: boolean;
 }

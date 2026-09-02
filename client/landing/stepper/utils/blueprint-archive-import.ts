@@ -1,0 +1,412 @@
+import { addQueryArgs } from '@wordpress/url';
+import { logToLogstash } from 'calypso/lib/logstash';
+import wpcom from 'calypso/lib/wp';
+import { transferStates, TransferStates } from 'calypso/state/automated-transfer/constants';
+
+export const BLUEPRINT_ARCHIVE_IMPORT_QUERY_VALUE = '1';
+
+// Reuse the flow that already hosts the AI site-spec step.
+const BLUEPRINT_ARCHIVE_SITE_SPEC_PATH = '/setup/ai-site-builder-spec/site-spec';
+
+export function getStandaloneBlueprintArchiveSlug(
+	blueprint: string | null,
+	playgroundId: string | null,
+	buildDest: string | null
+): string | null {
+	return ! playgroundId && buildDest === 'wow' ? blueprint : null;
+}
+
+type ImportStatusResponse = {
+	importId?: string | null;
+	siteId?: number | null;
+	type?: string | null;
+	importStatus?: string | null;
+};
+
+type SiteResponse = {
+	URL?: string;
+	options?: {
+		admin_url?: string;
+	};
+};
+
+type AtomicTransferResponse = {
+	status?: TransferStates;
+};
+
+const wait = ( ms: number ) => new Promise< void >( ( resolve ) => setTimeout( resolve, ms ) );
+
+// Terminal states returned by GET /sites/{id}/imports (see Import_V1_1_Helpers::translate_status).
+const IMPORT_SUCCESS = 'importSuccess';
+const IMPORT_FAILURE_STATUSES = [ 'importFailure', 'importExpired', 'importStopped' ];
+
+// Terminal Atomic transfer states (see calypso/state/automated-transfer/constants).
+const ATOMIC_TRANSFER_COMPLETE_STATES: TransferStates[] = [
+	transferStates.COMPLETE,
+	transferStates.COMPLETED,
+];
+const ATOMIC_TRANSFER_FAILURE_STATES: TransferStates[] = [
+	transferStates.FAILURE,
+	transferStates.ERROR,
+	transferStates.REVERTED,
+];
+
+export function getBlueprintArchiveSiteIdentifier( {
+	siteSlug,
+	siteId,
+}: {
+	siteSlug?: string | null;
+	siteId?: string | number | null;
+} ): string | null {
+	if ( siteSlug ) {
+		return siteSlug;
+	}
+
+	if ( siteId && String( siteId ) !== '0' ) {
+		return String( siteId );
+	}
+
+	return null;
+}
+
+export function getBlueprintArchiveSiteSpecUrl( {
+	siteSlug,
+	siteId,
+	blueprintSlug,
+	ref,
+	source,
+	wowFunnel,
+}: {
+	siteSlug?: string | null;
+	siteId?: string | number | null;
+	blueprintSlug: string;
+	ref?: string | null;
+	source?: string | null;
+	wowFunnel?: string | null;
+} ): string {
+	return addQueryArgs( BLUEPRINT_ARCHIVE_SITE_SPEC_PATH, {
+		blueprint_archive_import: BLUEPRINT_ARCHIVE_IMPORT_QUERY_VALUE,
+		blueprint_slug: blueprintSlug,
+		...( siteSlug ? { siteSlug } : {} ),
+		...( siteId && String( siteId ) !== '0' ? { siteId } : {} ),
+		...( ref ? { ref } : {} ),
+		...( source ? { source } : {} ),
+		// A funnel run's import already ran server-side, before checkout. site-spec keys its
+		// "do not start one" guard off this param, so it has to survive into the URL — without
+		// it the page cannot tell a funnel hand-off from a standalone run and imports again.
+		...( wowFunnel ? { wow_funnel: wowFunnel } : {} ),
+	} );
+}
+
+/**
+ * Pre-checkout validation: does the blueprint slug resolve to a usable archive
+ * on the host site? Resolves true/false; never throws.
+ */
+export async function checkBlueprintExists( blueprintSlug: string ): Promise< boolean > {
+	if ( ! blueprintSlug ) {
+		return false;
+	}
+
+	try {
+		await wpcom.req.get( {
+			path: `/blueprint-archive/${ encodeURIComponent( blueprintSlug ) }`,
+			apiNamespace: 'wpcom/v2',
+		} );
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * Kick off the background transfer-to-Atomic + blueprint-archive restore.
+ * The single backup_import job handles both and tracks progress on the
+ * site's import record, which we poll below.
+ */
+export async function startBlueprintArchiveImport(
+	siteIdentifier: string,
+	blueprintSlug: string
+): Promise< ImportStatusResponse > {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdentifier }/blueprint-archive-import`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ blueprint_slug: blueprintSlug }
+	);
+}
+
+/**
+ * Poll the site's import status until the backup import finishes.
+ * Resolves on success; throws on a terminal failure or timeout.
+ *
+ * `initialDelayMs` defaults to a full poll interval, because a caller that has just *started* the
+ * work must not read the previous run's terminal state: `/atomic/transfers/latest` returns the
+ * site's latest transfer, not the one you asked about (see createRevertedTransferWatcher). Pass 0
+ * only when the work was started before this page existed, where an immediate check is both safe
+ * and the difference between handing over at once and sitting on a loading screen for nothing.
+ */
+export async function waitForBlueprintImportComplete(
+	siteIdentifier: string,
+	{
+		totalTimeoutSeconds = 900,
+		pollIntervalMs = 5000,
+		initialDelayMs = pollIntervalMs,
+	}: { totalTimeoutSeconds?: number; pollIntervalMs?: number; initialDelayMs?: number } = {}
+): Promise< void > {
+	const maxFinishTime = Date.now() + totalTimeoutSeconds * 1000;
+	let lastStatus: string | null | undefined;
+	let delayMs = initialDelayMs;
+
+	while ( Date.now() < maxFinishTime ) {
+		if ( delayMs > 0 ) {
+			await wait( delayMs );
+		}
+		delayMs = pollIntervalMs;
+
+		try {
+			const status = ( await wpcom.req.get( {
+				path: `/sites/${ siteIdentifier }/imports`,
+				apiVersion: '1.1',
+			} ) ) as ImportStatusResponse;
+			lastStatus = status?.importStatus;
+
+			if ( lastStatus === IMPORT_SUCCESS ) {
+				return;
+			}
+
+			if ( lastStatus && IMPORT_FAILURE_STATUSES.includes( lastStatus ) ) {
+				throw new Error( `Blueprint import failed with status: ${ lastStatus }` );
+			}
+		} catch ( error ) {
+			// A terminal failure we raised ourselves should propagate; transient
+			// request errors (e.g. mid-transfer blips) should keep polling.
+			if ( error instanceof Error && error.message.startsWith( 'Blueprint import failed' ) ) {
+				throw error;
+			}
+			continue;
+		}
+	}
+
+	throw new Error(
+		`Timed out waiting for blueprint import. Last status: ${ String( lastStatus ) }.`
+	);
+}
+
+/**
+ * Poll the canonical Atomic transfer status endpoint until the site's transfer
+ * to Atomic completes. Resolves on a complete state; throws on a terminal
+ * failure or timeout. A missing transfer (404 before the backup_import job
+ * initiates it) is treated as "keep waiting".
+ *
+ * Note: the backup_import job runs the transfer as its FIRST step and the
+ * archive restore afterwards, so transfer-complete happens before the content
+ * is restored. Pair this with waitForBlueprintImportComplete() for full
+ * readiness.
+ *
+ * `initialDelayMs` defaults to a full poll interval, because a caller that has just *started* the
+ * work must not read the previous run's terminal state: `/atomic/transfers/latest` returns the
+ * site's latest transfer, not the one you asked about (see createRevertedTransferWatcher). Pass 0
+ * only when the work was started before this page existed, where an immediate check is both safe
+ * and the difference between handing over at once and sitting on a loading screen for nothing.
+ */
+export async function waitForAtomicTransferComplete(
+	siteIdentifier: string,
+	{
+		totalTimeoutSeconds = 900,
+		pollIntervalMs = 5000,
+		initialDelayMs = pollIntervalMs,
+	}: { totalTimeoutSeconds?: number; pollIntervalMs?: number; initialDelayMs?: number } = {}
+): Promise< void > {
+	const maxFinishTime = Date.now() + totalTimeoutSeconds * 1000;
+	let lastStatus: TransferStates | undefined;
+	let delayMs = initialDelayMs;
+
+	while ( Date.now() < maxFinishTime ) {
+		if ( delayMs > 0 ) {
+			await wait( delayMs );
+		}
+		delayMs = pollIntervalMs;
+
+		try {
+			const transfer = ( await wpcom.req.get( {
+				path: `/sites/${ siteIdentifier }/atomic/transfers/latest`,
+				apiNamespace: 'wpcom/v2',
+			} ) ) as AtomicTransferResponse;
+			lastStatus = transfer?.status;
+
+			if ( lastStatus && ATOMIC_TRANSFER_COMPLETE_STATES.includes( lastStatus ) ) {
+				return;
+			}
+
+			if ( lastStatus && ATOMIC_TRANSFER_FAILURE_STATES.includes( lastStatus ) ) {
+				throw new Error( `Atomic transfer failed with status: ${ lastStatus }` );
+			}
+		} catch ( error ) {
+			if ( error instanceof Error && error.message.startsWith( 'Atomic transfer failed' ) ) {
+				throw error;
+			}
+			// Missing transfer / transient error: keep polling.
+			continue;
+		}
+	}
+
+	throw new Error(
+		`Timed out waiting for Atomic transfer. Last status: ${ String( lastStatus ) }.`
+	);
+}
+
+/**
+ * Reconcile the confirmed site spec with the freshly imported blueprint site:
+ * writes the owner's site title/tagline, records which blueprint the site was
+ * built from, and stores the collected details as agent context so the editor
+ * can offer to personalize the blueprint's demo copy.
+ *
+ * Must run AFTER waitForBlueprintImportComplete(): the archive restore replaces
+ * the site's options wholesale, so anything written before it is overwritten.
+ *
+ * Resolves either way — a failure here costs the user personalization, not
+ * their site, so it must never block the hand-off to the editor.
+ */
+export async function applyBlueprintSpec(
+	siteIdentifier: string,
+	specId: string,
+	blueprintSlug?: string | null
+): Promise< boolean > {
+	if ( ! specId ) {
+		return false;
+	}
+
+	try {
+		await wpcom.req.post(
+			{
+				path: `/sites/${ siteIdentifier }/big-sky/apply-blueprint-spec`,
+				apiNamespace: 'wpcom/v2',
+			},
+			{
+				spec_id: specId,
+				...( blueprintSlug ? { blueprint_id: blueprintSlug } : {} ),
+			}
+		);
+		return true;
+	} catch ( error ) {
+		logBlueprintArchiveEvent( 'apply_spec_error', {
+			site_identifier: siteIdentifier,
+			error: error instanceof Error ? error.message : String( error ),
+		} );
+		return false;
+	}
+}
+
+export async function getSiteAdminUrl( siteIdentifier: string ): Promise< string > {
+	const site = ( await wpcom.req.get(
+		{
+			path: `/sites/${ siteIdentifier }`,
+			apiVersion: '1.1',
+		},
+		{
+			fields: 'ID,URL,options',
+			options: 'admin_url',
+		}
+	) ) as SiteResponse;
+
+	return site?.options?.admin_url ?? `https://${ siteIdentifier }/wp-admin/`;
+}
+
+/**
+ * Build the Site Editor URL from a site's wp-admin URL.
+ */
+export function getSiteEditorUrl(
+	adminUrl: string,
+	{ canvasEdit = false, path }: { canvasEdit?: boolean; path?: string } = {}
+): string {
+	const base = adminUrl.endsWith( '/' ) ? adminUrl : `${ adminUrl }/`;
+	const url = `${ base }site-editor.php`;
+
+	// The hand-off used to carry `blueprint-walkthrough=go`, which told Big Sky to
+	// open the conversation itself and rewrite the page's copy while the customer
+	// watched. That walkthrough is rolled back for now, so nothing here starts it
+	// and the editor opens quietly. The wpcom side still understands the
+	// parameter, so bringing it back is a small change here.
+	//
+	// `canvas=edit` stays, and is load-bearing for reasons of its own: Big Sky's
+	// assembler only mounts on the editing canvas (useShouldLoadBigSky requires
+	// canvasMode === 'edit'), and a plain site-editor.php load stays in view mode,
+	// so the assistant never appears at all. The welcome-guide overlay this
+	// parameter was once blamed for came from sites where Big Sky had not been
+	// enabled by hand-off time (the enable race fixed on the wpcom side); when Big
+	// Sky mounts, it suppresses the guide itself.
+	const args: Record< string, string > = {};
+	if ( canvasEdit ) {
+		args.canvas = 'edit';
+	}
+	if ( path ) {
+		args.p = path;
+	}
+	const editorUrl = Object.keys( args ).length > 0 ? addQueryArgs( url, args ) : url;
+
+	return withJetpackSso( editorUrl );
+}
+
+/**
+ * Route an Atomic wp-admin URL through Jetpack SSO so the customer arrives
+ * logged in.
+ *
+ * They have a WordPress.com session, not a session on their Atomic site, and
+ * those are different things. Sending them straight to wp-admin showed them a
+ * login form for a site they had just made — asking them to sign in to
+ * something they had not been told was separate. Jetpack SSO trades the session
+ * they have for the one they need and forwards them on.
+ * @param adminUrl Absolute wp-admin URL to land on.
+ * @returns The SSO URL, or the original when it cannot be parsed.
+ */
+function withJetpackSso( adminUrl: string ): string {
+	let target: URL;
+	try {
+		target = new URL( adminUrl );
+	} catch {
+		// Not something we can rewrite. Hand back what we were given rather than
+		// dropping the customer's redirect entirely.
+		return adminUrl;
+	}
+
+	// SSO lives on the site's own host. A *.wordpress.com address is the
+	// WordPress.com side of an Atomic site rather than the site itself, and
+	// logging in there does not produce a session for wp-admin.
+	if ( target.hostname.endsWith( '.wordpress.com' ) ) {
+		target.hostname = target.hostname.replace( '.wordpress.com', '.wpcomstaging.com' );
+	}
+
+	const login = new URL( target.href );
+	login.pathname = '/wp-login.php';
+	login.search = '';
+
+	// Deliberately NOT `action=jetpack-sso`. Jetpack only saves the
+	// `jetpack_sso_redirect_to` cookie — the sole carrier of the destination
+	// across the WordPress.com round trip — on the plain login path; a direct
+	// `action=jetpack-sso` entry skips save_cookies() and the return leg falls
+	// back to admin_url(), landing the customer on /wp-admin with the deep link
+	// gone. A plain wp-login.php?redirect_to=… saves the cookie, and wpcomsh
+	// auto-forwards Calypso-referred visitors to WordPress.com SSO anyway.
+	return addQueryArgs( login.href, {
+		// Relative, so the redirect cannot be pointed off-site.
+		redirect_to: `${ target.pathname }${ target.search }`,
+	} );
+}
+
+export function logBlueprintArchiveEvent(
+	type: string,
+	properties: Record< string, unknown > = {},
+	blogId?: number
+): void {
+	void logToLogstash( {
+		feature: 'calypso_client',
+		message: 'Blueprint archive import onboarding',
+		severity: 'debug',
+		...( blogId ? { blog_id: blogId } : {} ),
+		properties: {
+			type: `blueprint_archive_import_${ type }`,
+			...properties,
+		},
+	} ).catch( () => {} );
+}

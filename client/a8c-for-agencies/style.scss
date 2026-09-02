@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 
 // custom properties for a8c-for-agencies
@@ -19,6 +20,8 @@
 	--color-text-black: var(--studio-black);
 	--wp-components-color-accent: var(--studio-automattic-blue-50);
 	--wp-admin-theme-color: var(--studio-automattic-blue-50);
+	// Match the dashboard so backported components' links use the brand primary.
+	--color-link: var(--color-primary);
 
 	// FIXME: Need to move this colors to a color scheme file
 	--color-scary-0: var(--studio-red-0);
@@ -89,33 +92,13 @@
 }
 
 .theme-a8c-for-agencies {
+	// Keep wrapped text from stranding a single word on the last line. This is
+	// inherited, so it reaches components borrowed from other clients too.
+	text-wrap: pretty;
 
-	.components-button,
-	.button {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		white-space: nowrap;
-
-		@include heading-medium;
-
-		box-sizing: border-box;
-		border-radius: 4px;
-
-		border-color: var(--color-accent-5);
-		fill: var(--color-accent-100);
-
-		&:hover,
-		&:focus-visible {
-			background-color: var(--color-accent-0);
-		}
-
-		&.is-borderless.is-primary.is-active,
-		&.is-borderless.is-primary:active,
-		&.is-borderless.is-primary:focus,
-		&.is-borderless.is-primary:hover {
-			color: var(--color-primary-60);
-		}
+	// `pretty` only fixes the last line. Short blocks need every line evened out.
+	:is(h1, h2, h3, h4, h5, h6, li, td, th, dd, figcaption) {
+		text-wrap: balance;
 	}
 
 	.button.split-button__toggle {
@@ -273,12 +256,6 @@
 		margin: 0 8px 0 0;
 	}
 
-	.components-checkbox-control__input[type="checkbox"]:checked,
-	.components-checkbox-control__input[type="checkbox"]:indeterminate {
-		background: var(--color-primary-50);
-		border-color: var(--color-primary-50);
-	}
-
 	.components-checkbox-control__input[type="checkbox"]:focus {
 		box-shadow: none;
 		outline: none;
@@ -294,7 +271,7 @@
 		outline: none;
 	}
 
-	.components-button.is-tertiary {
+	.components-button.is-tertiary:not( .dataviews-view-table-header-button ) {
 		color: var(--color-primary-60);
 	}
 
@@ -468,6 +445,13 @@
 		border: none;
 		background: var(--color-surface);
 	}
+}
+
+// A4A checkout finishes on the wordpress.com pending page, which ships its own 24px rule for this title. That
+// stylesheet belongs to the checkout section and is never loaded here, so without this the title would jump from
+// 32px to 24px as the browser crosses over.
+.theme-a8c-for-agencies .checkout__pending-content .wpcom__loading-title {
+	font-size: $font-title-medium;
 }
 
 // Universal Text Styles

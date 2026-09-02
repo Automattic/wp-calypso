@@ -15,9 +15,17 @@ import {
 	emailSummary,
 	redirectToDaySummary,
 } from 'calypso/my-sites/stats/controller';
+import { withPricingGridGate } from 'calypso/my-sites/stats/pricing-grid/gate';
 import config from './lib/config-api';
 import { makeLayout, render as clientRender } from './page-middleware/layout';
+import preConnection from './pre-connection/controller';
 import 'calypso/my-sites/stats/style.scss';
+
+/**
+ * The plan choice a site is shown before it is connected. Every other route is keyed by a site,
+ * which is exactly what such a site does not have yet.
+ */
+export const PRE_CONNECTION_PATH = '/stats/pricing';
 
 const statsPage = ( url: string, controller: Callback ) => {
 	page( url, controller, makeLayout, clientRender );
@@ -25,6 +33,10 @@ const statsPage = ( url: string, controller: Callback ) => {
 
 const redirectToSiteTrafficPage = () => {
 	page.redirect( `/stats/day/${ config( 'blog_id' ) }` );
+};
+
+const redirectToPreConnection = () => {
+	page.redirect( PRE_CONNECTION_PATH );
 };
 
 export default function ( pageBase = '/' ) {
@@ -50,6 +62,15 @@ export default function ( pageBase = '/' ) {
 
 	page.base( pageBase );
 
+	// Nothing else is reachable without a connection: every remaining route is scoped to a site,
+	// and the data behind them lives on WordPress.com.
+	if ( ! config( 'blog_id' ) ) {
+		statsPage( PRE_CONNECTION_PATH, preConnection );
+		statsPage( '*', redirectToPreConnection );
+		page( { hashbang: true } );
+		return;
+	}
+
 	// Redirect this to default /stats/day view in order to keep
 	// the paths and page view reporting consistent.
 	page( '/', '/stats/day/:site' );
@@ -61,8 +82,10 @@ export default function ( pageBase = '/' ) {
 	statsPage( '/stats/subscribers/:site', subscribers );
 	statsPage( `/stats/subscribers/:period(${ validPeriods })/:site`, subscribers );
 
-	// Stat Site Pages
-	statsPage( `/stats/:period(${ validTrafficPagePeriods })/:site`, site );
+	// Stat Site Pages. The traffic page doubles as the landing page, so it carries
+	// the pricing grid gate: eligible new sites see the plan choice instead of the
+	// dashboard until they pick one.
+	statsPage( `/stats/:period(${ validTrafficPagePeriods })/:site`, withPricingGridGate( site ) );
 
 	// Redirect this to default /stats/day/:module/:site view to
 	// keep the paths and page view reporting consistent.

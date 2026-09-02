@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash';
+import { isEmpty } from '@automattic/js-utils';
 import flows from '../flows';
 import { generateFlows } from '../flows-pure';
 import { getStepModuleMap } from '../step-components';
@@ -141,9 +141,6 @@ describe( 'index', () => {
 			flow.steps.forEach( ( step ) => definedSteps.delete( step ) );
 		} );
 
-		// Remove the `site` step manually since it is used in tests.
-		definedSteps.delete( 'site' );
-
 		// Do not consider the user step as deprecated since there is still a config flag
 		// deciding whether user-social or user is used.
 		definedSteps.delete( 'user' );
@@ -157,5 +154,22 @@ describe( 'index', () => {
 		definedSteps.delete( 'mailbox-domain' );
 
 		expect( definedSteps ).toEqual( new Set() );
+	} );
+
+	test( 'intervalType must be an optional query dependency where it is used (it has a default)', () => {
+		// `intervalType` defaults to yearly when absent, so a flow that carries it through the URL
+		// must also mark it optional — otherwise the flow controller rejects otherwise-valid URLs
+		// that omit it.
+		const flowDefinitions = generateFlows();
+
+		const flowsWithMandatoryIntervalType = Object.entries( flowDefinitions )
+			.filter( ( [ , flow ] ) => {
+				const provided = flow.providesDependenciesInQuery ?? [];
+				const optional = flow.optionalDependenciesInQuery ?? [];
+				return provided.includes( 'intervalType' ) && ! optional.includes( 'intervalType' );
+			} )
+			.map( ( [ flowName ] ) => flowName );
+
+		expect( flowsWithMandatoryIntervalType ).toEqual( [] );
 	} );
 } );

@@ -1,4 +1,3 @@
-import { filter } from 'lodash';
 import { getKeyringConnectionsByName } from 'calypso/state/sharing/keyring/selectors';
 import { getSiteKeyringsForService } from 'calypso/state/site-keyrings/selectors';
 
@@ -49,5 +48,5 @@ export default function getSiteUserConnectionsForGoogleMyBusiness( state, siteId
 		}
 	} );
 
-	return filter( locations, { isConnected: true } );
+	return locations.filter( ( location ) => location.isConnected === true );
 }

@@ -28,12 +28,14 @@ import {
 	getWordPressHostingFeaturesGroupedForFeaturesGrid,
 	isWooHostedPlan,
 	isWooHostedFreePlan,
+	isWpcomEnterpriseGridPlan,
+	isEcommercePlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI, AddOns, Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/number-formatters';
-import { isAnyHostingFlow } from '@automattic/onboarding';
+import { DOMAIN_FLOW, isAnyHostingFlow } from '@automattic/onboarding';
 import {
 	FeaturesGrid,
 	ComparisonGrid,
@@ -81,6 +83,7 @@ import {
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanDifferentiatorsExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plan-differentiators-experiment';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
+import usePlansGridRedesignExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
@@ -100,6 +103,7 @@ import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availabi
 import useDefaultWpcomPlansIntent from './hooks/use-default-wpcom-plans-intent';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import useGenerateActionHook from './hooks/use-generate-action-hook';
+import { useIsIndiaA4A } from './hooks/use-is-india-a4a';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
 import { useRenewalPricingExperiment } from './hooks/use-renewal-price-experiment';
@@ -109,6 +113,7 @@ import type {
 	PlansIntent,
 	DataResponse,
 	SupportedUrlFriendlyTermType,
+	GridPlan,
 } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { IAppState } from 'calypso/state/types';
@@ -123,6 +128,8 @@ const PlanComparisonHeader = styled.h1`
 `;
 export interface PlansFeaturesMainProps {
 	highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+	titleBadgeOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+	taglineOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	siteId?: number | null;
 	intent?: PlansIntent | null;
 	isInSiteDashboard?: boolean;
@@ -231,6 +238,8 @@ const PlansFeaturesMain = ( {
 	plansWithScroll,
 	discountEndDate,
 	highlightLabelOverrides,
+	titleBadgeOverrides,
+	taglineOverrides,
 	hideFreePlan,
 	hidePersonalPlan,
 	hidePremiumPlan,
@@ -288,10 +297,11 @@ const PlansFeaturesMain = ( {
 	);
 	const isPlanExpired = !! sitePlansData?.find( ( p ) => p.currentPlan )?.expired;
 
-	// Refund-window instant downgrade: when the current plan is still within its
-	// initial refund window, a downgrade is performed instantly via the cancel
-	// endpoint instead of routing the user to checkout. This applies regardless of
-	// whether any money would be refunded (e.g. plans paid with credits or free).
+	// Refund-window instant downgrade: when the server reports the plan can be
+	// downgraded instantly, the downgrade is performed via the cancel endpoint
+	// instead of routing the user to checkout. This applies regardless of whether
+	// any money would be refunded (e.g. comped plans, 100%-off coupons, or plans
+	// paid entirely with credits).
 	const reduxDispatch = useReduxDispatch();
 	const queryClient = useQueryClient();
 	const cancelAndRefundMutation = useMutation( cancelAndRefundPurchaseMutation() );
@@ -309,22 +319,16 @@ const PlansFeaturesMain = ( {
 		...purchaseQuery( currentPlanPurchaseId ?? 0 ),
 		enabled: !! currentPlanPurchaseId,
 	} );
-	const isWithinRefundWindow =
-		config.isEnabled( 'plans/expired-downgrade' ) &&
-		!! currentPurchase &&
-		currentPurchase.is_within_initial_refund_window &&
-		! currentPurchase.is_past_expiry_date;
-	// The delayed-downgrade flow (schedule a downgrade at renewal for an active
-	// plan) is gated separately from the launched expired/refund downgrade flow.
-	const isDelayedDowngradeEnabled = config.isEnabled( 'plans/delayed-downgrade' );
+	const isInstantDowngradeAvailable =
+		!! currentPurchase && currentPurchase.is_instant_downgrade_available;
 	// Three downgrade modes:
-	//   'instant'  — within refund window: cancel+refund via the cancel endpoint
+	//   'instant'  — server allows it now: cancel+refund via the cancel endpoint
 	//   'checkout' — expired plan: route to checkout to purchase the new plan
-	//   'delayed'  — active plan, not in refund window: schedule downgrade at renewal
+	//   'delayed'  — active plan, no instant downgrade: schedule downgrade at renewal
 	let downgradeMode: 'instant' | 'checkout' | 'delayed';
-	if ( isWithinRefundWindow ) {
+	if ( isInstantDowngradeAvailable ) {
 		downgradeMode = 'instant';
-	} else if ( isDelayedDowngradeEnabled && ! isPlanExpired ) {
+	} else if ( ! isPlanExpired ) {
 		downgradeMode = 'delayed';
 	} else {
 		downgradeMode = 'checkout';
@@ -431,11 +435,15 @@ const PlansFeaturesMain = ( {
 					}
 
 					// Fallback: deep-link to the new plan's settings page (or the plans
-					// page) with a notice.
+					// page) with a notice. Use `plan_changed` (not `downgraded`) so the
+					// accurate "Your plan has been updated to X" notice shows: this is a
+					// generic plan downgrade that may stay on annual billing, whereas
+					// `downgraded=true` is reserved for the monthly-switch flow and reads
+					// "You've switched to monthly billing."
 					window.location.href =
 						newPurchase && siteSlug
-							? `${ managePurchase( siteSlug, newPurchase.ID ) }?downgraded=true`
-							: `/plans/${ siteSlug }?downgraded=true`;
+							? `${ managePurchase( siteSlug, newPurchase.ID ) }?plan_changed=true`
+							: `/plans/${ siteSlug }?plan_changed=true`;
 				},
 				onError: ( error: Error ) => {
 					setIsDowngrading( false );
@@ -544,8 +552,13 @@ const PlansFeaturesMain = ( {
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
 	const getPlanTypeDestination = usePlanTypeDestinationCallback();
 
+	// In the domain flow for an existing site, continuing with the free plan keeps the
+	// paid domain in the cart — it just can't be used as the site's primary address.
+	const isDomainRetainedOnFreePlan = flowName === DOMAIN_FLOW && !! siteId;
+
 	const resolveModal = useModalResolutionCallback( {
 		isCustomDomainAllowedOnFreePlan,
+		isDomainRetainedOnFreePlan,
 		flowName,
 		paidDomainName,
 		intent: intentFromProps,
@@ -570,13 +583,16 @@ const PlansFeaturesMain = ( {
 		);
 
 	const resolvedSubdomainName: DataResponse< { domain_name: string } > = useMemo( () => {
+		if ( isDomainRetainedOnFreePlan && siteSlug ) {
+			return { isLoading: false, result: { domain_name: siteSlug } };
+		}
 		return {
 			isLoading: signupFlowSubdomain ? false : wpcomFreeDomainSuggestion.isLoading,
 			result: signupFlowSubdomain
 				? { domain_name: signupFlowSubdomain }
 				: wpcomFreeDomainSuggestion.result,
 		};
-	}, [ signupFlowSubdomain, wpcomFreeDomainSuggestion ] );
+	}, [ signupFlowSubdomain, wpcomFreeDomainSuggestion, isDomainRetainedOnFreePlan, siteSlug ] );
 
 	const filteredDisplayedIntervals = useFilteredDisplayedIntervals( {
 		productSlug: currentPlan?.productSlug,
@@ -668,9 +684,7 @@ const PlansFeaturesMain = ( {
 	 * showSimplifiedFeatures should be true always and this variable should be removed.
 	 * It exists temporarily till the flows with the following intents are removed.
 	 */
-	const showSimplifiedFeatures = ! (
-		intent && [ 'plans-newsletter', 'plans-blog-onboarding' ].includes( intent )
-	);
+	const showSimplifiedFeatures = ! ( intent && [ 'plans-newsletter' ].includes( intent ) );
 
 	const {
 		showDifferentiatorHeader,
@@ -679,6 +693,15 @@ const PlansFeaturesMain = ( {
 		useFocusedNewCopyTaglines,
 		isExperimentVariant,
 	} = usePlanDifferentiatorsExperiment( { isInSignup, siteId } );
+	const {
+		isLoading: isPlansGridRedesignExperimentLoading,
+		showDifferentiatorHeader: showPlansGridRedesignDifferentiatorHeader,
+		showEnterpriseBottomCard,
+		showWooCommerceBottomCard,
+		usePlansGridRedesignFeatures,
+		usePlansGridRedesign,
+		usePlansGridRedesignNewDescription,
+	} = usePlansGridRedesignExperiment( { flowName, isInSignup, siteId } );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
@@ -690,7 +713,7 @@ const PlansFeaturesMain = ( {
 		if ( currentPlanPurchaseId ) {
 			try {
 				await queryClient.ensureQueryData(
-					purchaseCancelFeaturesQuery( currentPlanPurchaseId, 'control', planSlug )
+					purchaseCancelFeaturesQuery( currentPlanPurchaseId, 'treatment', planSlug )
 				);
 			} catch {
 				// Open the modal regardless; its own query will retry and show a spinner.
@@ -714,7 +737,6 @@ const PlansFeaturesMain = ( {
 		// For expired plans, intercept paid-plan downgrades to show a confirmation modal.
 		// Free-plan downgrades are handled separately (they route to the cancel flow).
 		if (
-			config.isEnabled( 'plans/expired-downgrade' ) &&
 			isPlanExpired &&
 			! isFreePlan( planSlug ) &&
 			sitePlansData?.find( ( p ) => p.productSlug === planSlug )?.availableForDowngrade
@@ -723,11 +745,11 @@ const PlansFeaturesMain = ( {
 			return true;
 		}
 
-		// For plans still within their refund window, intercept paid-plan downgrades
-		// to show a confirmation modal that performs the downgrade instantly (paid out
-		// of the refund) instead of routing to checkout.
+		// For plans the server will downgrade instantly, intercept paid-plan
+		// downgrades to show a confirmation modal that performs the downgrade now
+		// (paid out of the refund, if any) instead of routing to checkout.
 		if (
-			isWithinRefundWindow &&
+			isInstantDowngradeAvailable &&
 			! isFreePlan( planSlug ) &&
 			sitePlansData?.find( ( p ) => p.productSlug === planSlug )?.availableForDowngrade
 		) {
@@ -735,12 +757,11 @@ const PlansFeaturesMain = ( {
 			return true;
 		}
 
-		// For active paid plans (not expired, not in refund window), intercept
-		// paid-plan downgrades to schedule the downgrade at end-of-term instead.
+		// For active paid plans (not expired, no instant downgrade available),
+		// intercept paid-plan downgrades to schedule the downgrade at end-of-term.
 		if (
-			isDelayedDowngradeEnabled &&
 			! isPlanExpired &&
-			! isWithinRefundWindow &&
+			! isInstantDowngradeAvailable &&
 			currentPurchase?.is_plan_type_downgradable &&
 			! isFreePlan( planSlug ) &&
 			sitePlansData?.find( ( p ) => p.productSlug === planSlug )?.availableForDowngrade
@@ -764,6 +785,39 @@ const PlansFeaturesMain = ( {
 		return false;
 	};
 
+	const isUpgradeOrDowngradeFlow =
+		intent === 'plans-upgrade' || intent === 'plans-upgrade-or-downgrade';
+	const isDelayedDowngradePending =
+		isUpgradeOrDowngradeFlow && !! currentPurchase?.is_delayed_downgrade_pending;
+	const delayedDowngradeToProductSlug = isDelayedDowngradePending
+		? currentPurchase?.delayed_downgrade_to_product_slug ?? null
+		: null;
+
+	// When a delayed downgrade is scheduled, the current plan's CTA renews the
+	// existing plan (rather than passively reading "Your plan") so the user is
+	// reminded they can keep their plan instead of letting the downgrade apply.
+	const renewCurrentPlanWithPendingDowngrade = () => {
+		if ( ! siteSlug || ! currentPlanPurchaseId || ! currentPurchase?.product_slug ) {
+			return;
+		}
+		recordTracksEvent( 'calypso_plan_features_renew_pending_downgrade_click', {
+			current_plan: sitePlanSlug,
+		} );
+		const redirectTarget = redirectTo ?? getQueryArg( window.location.href, 'redirect_to' );
+		const cancelTarget = getQueryArg( window.location.href, 'cancel_to' );
+		const checkoutQuery: Record< string, string > = {};
+		if ( typeof redirectTarget === 'string' ) {
+			checkoutQuery.redirect_to = redirectTarget;
+		}
+		if ( typeof cancelTarget === 'string' ) {
+			checkoutQuery.cancel_to = cancelTarget;
+		}
+		window.location.href = addQueryArgs(
+			checkoutQuery,
+			`/checkout/${ currentPurchase.product_slug }/renew/${ currentPlanPurchaseId }/${ siteSlug }`
+		);
+	};
+
 	const useAction = useGenerateActionHook( {
 		siteId,
 		cartHandler: onUpgradeClick,
@@ -777,6 +831,9 @@ const PlansFeaturesMain = ( {
 		enableCategorisedFeatures: showSimplifiedFeatures,
 		redirectTo,
 		pluginSlug,
+		isDelayedDowngradePending,
+		delayedDowngradeToProductSlug,
+		onRenewCurrentPlan: renewCurrentPlanWithPendingDowngrade,
 	} );
 
 	const isDomainOnlySite = useSelector( ( state: IAppState ) =>
@@ -792,6 +849,19 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 	};
 
+	// Badge the plan a scheduled downgrade will land on so the user remembers it
+	// is queued. Keyed by exact product slug, so the badge only shows while the grid
+	// is displaying the downgrade target's term.
+	const highlightLabelOverridesWithDowngrade = useMemo( () => {
+		if ( ! delayedDowngradeToProductSlug ) {
+			return highlightLabelOverrides;
+		}
+		return {
+			...highlightLabelOverrides,
+			[ delayedDowngradeToProductSlug as PlanSlug ]: translate( 'Downgrade scheduled' ),
+		};
+	}, [ highlightLabelOverrides, delayedDowngradeToProductSlug, translate ] );
+
 	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
 		allFeaturesList: getFeaturesList(),
@@ -799,7 +869,7 @@ const PlansFeaturesMain = ( {
 		eligibleForFreeHostingTrial,
 		hasRedeemedDomainCredit: currentPlan?.hasRedeemedDomainCredit,
 		hiddenPlans,
-		highlightLabelOverrides,
+		highlightLabelOverrides: highlightLabelOverridesWithDowngrade,
 		intent: shouldForceDefaultPlansBasedOnIntent( intent ) ? defaultWpcomPlansIntent : intent,
 		isDisplayingPlansNeededForFeature,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
@@ -816,6 +886,7 @@ const PlansFeaturesMain = ( {
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
 		useFocusedNewCopyTaglines,
+		usePlansGridRedesignNewDescription,
 		isExperimentVariant,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
@@ -826,7 +897,9 @@ const PlansFeaturesMain = ( {
 		coupon,
 		eligibleForFreeHostingTrial,
 		hasRedeemedDomainCredit: currentPlan?.hasRedeemedDomainCredit,
-		highlightLabelOverrides,
+		highlightLabelOverrides: highlightLabelOverridesWithDowngrade,
+		titleBadgeOverrides,
+		taglineOverrides,
 		hiddenPlans,
 		hideCurrentPlan: isInSiteDashboard,
 		intent,
@@ -843,23 +916,96 @@ const PlansFeaturesMain = ( {
 		term,
 		reflectStorageSelectionInPlanPrices: true,
 		useVar42NoAiFeatures,
+		usePlansGridRedesignFeatures,
 		showPricingDifferentiationFeaturePills,
 		useFocusedNewCopyTaglines,
+		usePlansGridRedesignNewDescription,
 		isExperimentVariant,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
 
+	const isIndiaA4A = useIsIndiaA4A();
+
+	// India A4A test: re-skin the Enterprise card with the Automattic for Agencies title/tagline.
+	const applyA4AIndiaCopy = useCallback(
+		( gridPlans: GridPlan[] | null ) => {
+			if ( ! isIndiaA4A || ! gridPlans ) {
+				return gridPlans;
+			}
+
+			return gridPlans.map( ( gridPlan ) =>
+				isWpcomEnterpriseGridPlan( gridPlan.planSlug )
+					? {
+							...gridPlan,
+							planTitle: translate( 'Agencies' ),
+							tagline: translate( 'Pricing and incentives built for WordPress agencies.' ),
+					  }
+					: gridPlan
+			);
+		},
+		[ isIndiaA4A, translate ]
+	);
+
+	const gridPlansForFeaturesGridWithA4AIndiaCopy = useMemo(
+		() => applyA4AIndiaCopy( gridPlansForFeaturesGridRaw ?? null ),
+		[ gridPlansForFeaturesGridRaw, applyA4AIndiaCopy ]
+	);
+
+	const bottomGridPlanForFeaturesGrid = useMemo( () => {
+		if ( ! gridPlansForFeaturesGridWithA4AIndiaCopy ) {
+			return undefined;
+		}
+
+		let bottomGridPlan: GridPlan | undefined;
+
+		if ( showEnterpriseBottomCard ) {
+			bottomGridPlan = gridPlansForFeaturesGridWithA4AIndiaCopy.find( ( { planSlug } ) =>
+				isWpcomEnterpriseGridPlan( planSlug )
+			);
+		} else if ( showWooCommerceBottomCard ) {
+			bottomGridPlan = gridPlansForFeaturesGridWithA4AIndiaCopy.find( ( { planSlug } ) =>
+				isEcommercePlan( planSlug )
+			);
+		}
+
+		return bottomGridPlan;
+	}, [
+		gridPlansForFeaturesGridWithA4AIndiaCopy,
+		showEnterpriseBottomCard,
+		showWooCommerceBottomCard,
+	] );
+
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
-	const gridPlansForFeaturesGrid = useMemo(
-		() =>
-			gridPlansForFeaturesGridRaw?.filter( ( { planSlug } ) => {
+	const gridPlansForFeaturesGrid = useMemo( () => {
+		const bottomGridPlanSlug = bottomGridPlanForFeaturesGrid?.planSlug;
+
+		return (
+			gridPlansForFeaturesGridWithA4AIndiaCopy?.filter( ( { planSlug } ) => {
+				if ( planSlug === bottomGridPlanSlug ) {
+					return false;
+				}
+
+				if ( showWooCommerceBottomCard && isWpcomEnterpriseGridPlan( planSlug ) ) {
+					return false;
+				}
+
 				if ( deemphasizeFreePlan ) {
 					return planSlug !== PLAN_FREE;
 				}
 
 				return true;
-			} ) ?? null, // optional chaining can result in `undefined`; we don't want to introduce it here.
-		[ gridPlansForFeaturesGridRaw, deemphasizeFreePlan ]
+			} ) ?? null
+		);
+	}, [
+		bottomGridPlanForFeaturesGrid,
+		gridPlansForFeaturesGridWithA4AIndiaCopy,
+		deemphasizeFreePlan,
+		showWooCommerceBottomCard,
+	] );
+
+	const gridPlansForComparisonGridFinal = useMemo(
+		() => applyA4AIndiaCopy( gridPlansForComparisonGrid ),
+		[ gridPlansForComparisonGrid, applyA4AIndiaCopy ]
 	);
 
 	const isVisualSplitEnabled =
@@ -874,7 +1020,12 @@ const PlansFeaturesMain = ( {
 	let enableTermSavingsPriceDisplay = true;
 	// In the "purchase a plan and free domain" flow we do not want to show
 	// monthly plans because monthly plans do not come with a free domain.
-	if ( redirectToAddDomainFlow !== undefined || hidePlanTypeSelector || isVisualSplitEnabled ) {
+	if (
+		redirectToAddDomainFlow !== undefined ||
+		hidePlanTypeSelector ||
+		isVisualSplitEnabled ||
+		( usePlansGridRedesign && isInSignup )
+	) {
 		hidePlanSelector = true;
 	}
 	if ( ! isInSignup ) {
@@ -1074,7 +1225,8 @@ const PlansFeaturesMain = ( {
 	const isPlansGridReady =
 		! isLoadingGridPlans &&
 		! resolvedSubdomainName.isLoading &&
-		! isRenewalPricingExperimentLoading;
+		! isRenewalPricingExperimentLoading &&
+		! isPlansGridRedesignExperimentLoading;
 
 	useEffect( () => {
 		if ( isPlansGridReady ) {
@@ -1128,7 +1280,7 @@ const PlansFeaturesMain = ( {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
 	} else if ( intent === 'plans-wordpress-hosting' ) {
 		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
-	} else if ( useVar42NoAiFeatures ) {
+	} else if ( useVar42NoAiFeatures || usePlansGridRedesignFeatures ) {
 		// Stacked rollout variant should render a single, ordered list (no grouping),
 		// otherwise features get scattered across groups causing gaps and can be filtered out.
 		const featureGroups = getPlanFeaturesGroupedForFeaturesGrid();
@@ -1280,7 +1432,10 @@ const PlansFeaturesMain = ( {
 					renderFreePlanCtaInStepContainerV2={ renderFreePlanCtaInStepContainerV2 }
 					onFreePlanCTAClick={ onFreePlanCTAClick }
 					intent={ intent }
-					showDifferentiatorHeader={ showDifferentiatorHeader }
+					isPlansGridRedesign={ usePlansGridRedesign }
+					showDifferentiatorHeader={
+						showDifferentiatorHeader || showPlansGridRedesignDifferentiatorHeader
+					}
 				/>
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
@@ -1317,9 +1472,11 @@ const PlansFeaturesMain = ( {
 								{ gridPlansForFeaturesGrid && (
 									<FeaturesGrid
 										allFeaturesList={ getFeaturesList() }
-										className={ `plans-features-main__features-grid${
-											isExperimentVariant ? ' is-plan-differentiators-experiment' : ''
-										}` }
+										bottomGridPlan={ bottomGridPlanForFeaturesGrid }
+										className={ clsx( 'plans-features-main__features-grid', {
+											'is-plan-differentiators-experiment': isExperimentVariant,
+											'is-plans-grid-redesign-experiment': usePlansGridRedesign,
+										} ) }
 										coupon={ coupon }
 										currentSitePlanSlug={ sitePlanSlug }
 										generatedWPComSubdomain={ resolvedSubdomainName }
@@ -1346,6 +1503,7 @@ const PlansFeaturesMain = ( {
 										enableFeatureTooltips
 										featureGroupMap={ featureGroupMapForFeaturesGrid }
 										enterpriseFeaturesList={ enterpriseFeaturesList }
+										isEnterpriseA4AIndia={ isIndiaA4A }
 										enableShowAllFeaturesButton={ ! showSimplifiedFeatures }
 										enableCategorisedFeatures={ showSimplifiedFeatures }
 										enableStorageAsBadge={ ! showSimplifiedFeatures }
@@ -1358,6 +1516,7 @@ const PlansFeaturesMain = ( {
 										showSimplifiedBillingDescription={ isInSignup }
 										showBillingDescriptionForIncreasedRenewalPrice={ renewalPricingVariation }
 										isExperimentVariant={ isExperimentVariant }
+										showFeatureCheckmarks={ usePlansGridRedesign }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
@@ -1387,13 +1546,15 @@ const PlansFeaturesMain = ( {
 														coupon={ coupon }
 													/>
 												) }
-											{ gridPlansForComparisonGrid && gridPlansForPlanTypeSelector && (
+											{ gridPlansForComparisonGridFinal && gridPlansForPlanTypeSelector && (
 												<ComparisonGrid
 													allFeaturesList={ getFeaturesList() }
-													className="plans-features-main__comparison-grid"
+													className={ clsx( 'plans-features-main__comparison-grid', {
+														'is-plans-grid-redesign-experiment': usePlansGridRedesign,
+													} ) }
 													coupon={ coupon }
 													currentSitePlanSlug={ sitePlanSlug }
-													gridPlans={ gridPlansForComparisonGrid }
+													gridPlans={ gridPlansForComparisonGridFinal }
 													hideUnavailableFeatures={ hideUnavailableFeatures }
 													intent={ intent }
 													intervalType={ compatibleIntervalType }

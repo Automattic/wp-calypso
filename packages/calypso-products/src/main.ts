@@ -46,6 +46,7 @@ import {
 	TYPE_PRO,
 	TYPE_SECURITY_DAILY,
 	TYPE_SECURITY_REALTIME,
+	TYPE_SECURITY_T0,
 	TYPE_SECURITY_T1,
 	TYPE_SECURITY_T2,
 	TYPE_STARTER,
@@ -201,6 +202,10 @@ export function getPlanClass( planKey: string ): string {
 
 	if ( isSecurityRealTimePlan( planKey ) ) {
 		return 'is-realtime-security-plan';
+	}
+
+	if ( isSecurityT0Plan( planKey ) ) {
+		return 'is-security-t0';
 	}
 
 	if ( isSecurityT1Plan( planKey ) ) {
@@ -445,6 +450,10 @@ export function isSecurityRealTimePlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_SECURITY_REALTIME } );
 }
 
+export function isSecurityT0Plan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_SECURITY_T0 } );
+}
+
 export function isSecurityT1Plan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_SECURITY_T1 } );
 }
@@ -665,7 +674,7 @@ export function getBillingMonthsForTerm( term: string ): number {
 	} else if ( term === TERM_CENTENNIALLY ) {
 		return 1200;
 	}
-	throw new Error( `Unknown term: ${ term }` );
+	throw new Error( `Unknown billing term in getBillingMonthsForTerm: ${ term }` );
 }
 
 export function getBillingTermForMonths( term: number ): string {
@@ -694,7 +703,7 @@ export function getBillingTermForMonths( term: number ): string {
 	} else if ( term === 1200 ) {
 		return TERM_CENTENNIALLY;
 	}
-	throw new Error( `Unknown term: ${ term }` );
+	throw new Error( `Unknown month count in getBillingTermForMonths: ${ term }` );
 }
 
 export function plansLink(

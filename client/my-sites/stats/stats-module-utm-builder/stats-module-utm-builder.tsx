@@ -5,6 +5,9 @@ import { link } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useRef } from 'react';
+import useWPAdminTheme from 'calypso/my-sites/stats/hooks/use-wp-admin-theme';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { trackStatsAnalyticsEvent } from '../utils';
 import StatsUtmBuilderForm, { type UtmBuilderProps } from './stats-module-utm-builder-form';
 
@@ -17,6 +20,7 @@ interface Props {
 const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger, initialData } ) => {
 	const [ isOpen, setOpen ] = useState< boolean | null >( null );
 	const scrollY = useRef( { y: 0, mobile: false } );
+	const siteId = useSelector( getSelectedSiteId );
 
 	const openModal = () => {
 		const isMobile = document.body.scrollTop > 0;
@@ -45,14 +49,20 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger, initialData }
 	const translate = useTranslate();
 
 	const handleClick = () => {
-		trackStatsAnalyticsEvent( 'utm_builder_opened' );
-		trackStatsAnalyticsEvent( 'advanced_feature_interaction', { feature: 'utm_builder' } );
+		trackStatsAnalyticsEvent( 'utm_builder_opened', { blog_id: siteId } );
+		trackStatsAnalyticsEvent( 'advanced_feature_interaction', {
+			feature: 'utm_builder',
+			blog_id: siteId,
+		} );
 
 		openModal();
 	};
 
 	const triggerNode = trigger ? (
-		React.cloneElement( trigger, { onClick: handleClick } )
+		React.cloneElement(
+			trigger as React.ReactElement< { onClick?: React.MouseEventHandler< HTMLElement > } >,
+			{ onClick: handleClick }
+		)
 	) : (
 		<Button
 			icon={ link }
@@ -65,7 +75,12 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger, initialData }
 	);
 
 	const isWPAdmin = config.isEnabled( 'is_odyssey' );
-	const utmBuilderClasses = clsx( 'stats-utm-builder__overlay', { 'is-odyssey-stats': isWPAdmin } );
+	const customTheme = useWPAdminTheme();
+	const utmBuilderClasses = clsx(
+		'stats-utm-builder__overlay',
+		{ 'is-odyssey-stats': isWPAdmin },
+		customTheme && `color-scheme ${ customTheme }`
+	);
 
 	return (
 		<>
@@ -74,6 +89,7 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger, initialData }
 				<Modal
 					title={ translate( 'Generate URL' ) }
 					onRequestClose={ closeModal }
+					className="stats-utm-builder__frame"
 					overlayClassName={ utmBuilderClasses }
 					bodyOpenClassName="stats-utm-builder__body-modal-open"
 				>

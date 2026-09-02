@@ -15,6 +15,7 @@ import useGridSize from '../../hooks/use-grid-size';
 import { PlanFeaturesItem } from '../item';
 import { PlanStorage } from '../shared/storage';
 import BillingTimeframes from './billing-timeframes';
+import BottomPlanCard from './bottom-plan-card';
 import EnterpriseFeatures from './enterprise-features';
 import PlanFeaturesList from './plan-features-list';
 import PlanHeaders from './plan-headers';
@@ -251,6 +252,8 @@ type TabletViewProps = {
 	stickyRowOffset: number;
 };
 
+const getTabletTopRowPlanCount = ( planCount: number ) => ( 4 === planCount ? 4 : 3 );
+
 const TabletView = ( {
 	currentSitePlanSlug,
 	generatedWPComSubdomain,
@@ -270,7 +273,7 @@ const TabletView = ( {
 	const gridPlansWithoutSpotlight = ! gridPlanForSpotlight
 		? renderedGridPlans
 		: renderedGridPlans.filter( ( { planSlug } ) => gridPlanForSpotlight.planSlug !== planSlug );
-	const numberOfPlansToShowOnTop = 4 === gridPlansWithoutSpotlight.length ? 4 : 3;
+	const numberOfPlansToShowOnTop = getTabletTopRowPlanCount( gridPlansWithoutSpotlight.length );
 	const plansForTopRow = gridPlansWithoutSpotlight.slice( 0, numberOfPlansToShowOnTop );
 	const plansForBottomRow = gridPlansWithoutSpotlight.slice( numberOfPlansToShowOnTop );
 	const tableProps = {
@@ -307,6 +310,7 @@ const TabletView = ( {
 // Now that everything under is functional component, we can deprecate this wrapper and only keep ComparisonGrid instead.
 // More details can be found in https://github.com/Automattic/wp-calypso/issues/87047
 const FeaturesGrid = ( {
+	bottomGridPlan,
 	currentSitePlanSlug,
 	generatedWPComSubdomain,
 	gridPlanForSpotlight,
@@ -343,12 +347,28 @@ const FeaturesGrid = ( {
 		renderedGridPlans: gridPlans,
 		showRefundPeriod,
 	};
+	const gridPlansWithoutSpotlightCount = gridPlanForSpotlight
+		? gridPlans.filter( ( { planSlug } ) => gridPlanForSpotlight.planSlug !== planSlug ).length
+		: gridPlans.length;
+	const tabletTopRowPlanCount = getTabletTopRowPlanCount( gridPlansWithoutSpotlightCount );
+	const hasTabletSplitRow =
+		'medium' === gridSize && gridPlansWithoutSpotlightCount > tabletTopRowPlanCount;
 
 	return (
 		<div className="plans-grid-next-features-grid">
 			{ 'small' !== gridSize && <SpotlightPlan { ...spotlightPlanProps } /> }
 			<div className="plan-features">
-				<div className="plan-features-2023-grid__content">
+				<div
+					className={ clsx(
+						'plan-features-2023-grid__content',
+						`has-${ gridPlansWithoutSpotlightCount }-cols`,
+						hasTabletSplitRow && `has-tablet-split-row-width-${ tabletTopRowPlanCount }-cols`,
+						{
+							'has-bottom-plan-card': bottomGridPlan,
+							'has-tablet-split-row': hasTabletSplitRow,
+						}
+					) }
+				>
 					<div>
 						{ 'large' === gridSize && (
 							<div className="plan-features-2023-grid__desktop-view">
@@ -369,6 +389,14 @@ const FeaturesGrid = ( {
 							</div>
 						) }
 					</div>
+					{ bottomGridPlan && (
+						<BottomPlanCard
+							currentSitePlanSlug={ currentSitePlanSlug }
+							gridPlan={ bottomGridPlan }
+							isInSignup={ isInSignup }
+							planActionOverrides={ planActionOverrides }
+						/>
+					) }
 				</div>
 			</div>
 		</div>
@@ -379,6 +407,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 	const {
 		siteId,
 		intent,
+		bottomGridPlan,
 		gridPlans,
 		useCheckPlanAvailabilityForPurchase,
 		useAction,
@@ -396,10 +425,12 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		featureGroupMap = {},
 		hideFeatureGroupTitles,
 		enterpriseFeaturesList,
+		isEnterpriseA4AIndia,
 		enableTermSavingsPriceDisplay,
 		showSimplifiedBillingDescription,
 		showBillingDescriptionForIncreasedRenewalPrice,
 		isExperimentVariant,
+		showFeatureCheckmarks,
 	} = props;
 
 	const gridContainerRef = useRef< HTMLDivElement >( null );
@@ -437,12 +468,23 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		'is-large': 'large' === gridSize,
 	} );
 
+	const gridPlansForContext = useMemo( () => {
+		if (
+			! bottomGridPlan ||
+			gridPlans.some( ( gridPlan ) => gridPlan.planSlug === bottomGridPlan.planSlug )
+		) {
+			return gridPlans;
+		}
+
+		return [ ...gridPlans, bottomGridPlan ];
+	}, [ bottomGridPlan, gridPlans ] );
+
 	return (
 		<div ref={ gridContainerRef } className={ classNames }>
 			<PlansGridContextProvider
 				intent={ intent }
 				siteId={ siteId }
-				gridPlans={ gridPlans }
+				gridPlans={ gridPlansForContext }
 				coupon={ coupon }
 				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
 				useAction={ useAction }
@@ -456,12 +498,14 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 				hideFeatureGroupTitles={ hideFeatureGroupTitles }
 				featureGroupMap={ featureGroupMap }
 				enterpriseFeaturesList={ enterpriseFeaturesList }
+				isEnterpriseA4AIndia={ isEnterpriseA4AIndia }
 				enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 				showSimplifiedBillingDescription={ showSimplifiedBillingDescription }
 				showBillingDescriptionForIncreasedRenewalPrice={
 					showBillingDescriptionForIncreasedRenewalPrice
 				}
 				isExperimentVariant={ isExperimentVariant }
+				showFeatureCheckmarks={ showFeatureCheckmarks }
 			>
 				<FeaturesGrid { ...props } gridSize={ gridSize ?? undefined } />
 			</PlansGridContextProvider>

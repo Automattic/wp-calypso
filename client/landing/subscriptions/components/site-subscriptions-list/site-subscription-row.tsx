@@ -35,7 +35,10 @@ import { SiteSettingsPopover } from '../settings';
 import { useSubscriptionManagerContext } from '../subscription-manager-context';
 import UnsubscribePaidConfirmModal from './unsubscribe-paid-confirm-modal';
 
-const useDeliveryFrequencyLabel = ( deliveryFrequencyValue?: Reader.EmailDeliveryFrequency ) => {
+const useDeliveryFrequencyLabel = (
+	deliveryFrequencyValue?: Reader.EmailDeliveryFrequency,
+	sendPosts?: boolean
+) => {
 	const translate = useTranslate();
 
 	const deliveryFrequencyLabels = useMemo(
@@ -47,9 +50,15 @@ const useDeliveryFrequencyLabel = ( deliveryFrequencyValue?: Reader.EmailDeliver
 		[ translate ]
 	);
 
+	if ( ! sendPosts ) {
+		return translate( 'Paused' );
+	}
+
+	// An active email subscription always has a cadence; fall back to the backend's
+	// default ("instantly") when the stored value isn't available yet.
 	return (
 		deliveryFrequencyLabels[ deliveryFrequencyValue as Reader.EmailDeliveryFrequency ] ??
-		translate( 'Paused' )
+		deliveryFrequencyLabels.instantly
 	);
 };
 
@@ -140,7 +149,8 @@ const SiteSubscriptionRow = ( {
 	}, [ url ] );
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 	const deliveryFrequencyLabel = useDeliveryFrequencyLabel(
-		delivery_methods.email?.post_delivery_frequency as Reader.EmailDeliveryFrequency | undefined
+		delivery_methods.email?.post_delivery_frequency as Reader.EmailDeliveryFrequency | undefined,
+		delivery_methods.email?.send_posts
 	);
 	const sanitizedBlogId = Reader.isValidId( blogId ) ? Number( blogId ) : undefined;
 

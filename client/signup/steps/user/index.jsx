@@ -1,11 +1,10 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { omit } from '@automattic/js-utils';
+import { omit, isEmpty } from '@automattic/js-utils';
 import { isHostingSignupFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize, fixMe } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';

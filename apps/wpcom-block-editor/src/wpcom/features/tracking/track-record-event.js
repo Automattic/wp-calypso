@@ -75,7 +75,7 @@ export default ( eventName, eventProperties ) => {
 
 	// Populate custom properties. We want to remove undefined values
 	// so we populate these separately from `requiredProperties`.
-	// We also want to allow these to be overriden by given `eventProperties`.
+	// We also want to allow these to be overridden by given `eventProperties`.
 	eventProperties = { ...customProperties, ...eventProperties };
 
 	// Remove properties that have an undefined value

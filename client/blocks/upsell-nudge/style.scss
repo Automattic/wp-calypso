@@ -50,10 +50,6 @@
 		background: none;
 		padding: 0;
 	}
-
-	&:hover {
-		box-shadow: none;
-	}
 }
 .upsell-nudge.is-dismissible.is-compact .banner__content {
 	flex-direction: column;
@@ -73,9 +69,5 @@
 
 	.card__link-indicator {
 		display: none;
-	}
-
-	&:hover {
-		box-shadow: none;
 	}
 }

@@ -35,7 +35,7 @@ import {
 	userTransferredPurchasesQuery,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
-import { createRoute, createLazyRoute } from '@tanstack/react-router';
+import { createRoute, createLazyRoute, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
 import {
@@ -44,6 +44,7 @@ import {
 	isSiteAction,
 	type SiteAction,
 } from '../../me/billing-purchases/site-level-actions/constants';
+import { getAppSetupTitle, getSMSSetupTitle } from '../../me/security-two-step-auth/title';
 import { isOptInToggleVisible } from '../../utils/hosting-dashboard-enrollment';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { reauthRequiredLink } from '../../utils/link';
@@ -52,6 +53,7 @@ import {
 	getPurchaseCancellationFlowType,
 	getDisplayVariant,
 	getRenewUrlForPurchases,
+	hasQueryableSite,
 	isDotcomPlan,
 	CANCEL_FLOW_TYPE,
 	type CancelIntent,
@@ -83,13 +85,8 @@ export const meRoute = createRoute( {
 			window.location.href = reauthRequiredLink();
 		}
 	},
-} ).lazy( () =>
-	import( '../../me' ).then( ( d ) =>
-		createLazyRoute( 'me' )( {
-			component: d.default,
-		} )
-	)
-);
+	component: Outlet,
+} );
 
 export const meIndexRoute = createRoute( {
 	getParentRoute: () => meRoute,
@@ -103,7 +100,7 @@ export const accountRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: isEnabled( 'dashboard/omnibar' ) ? __( 'Account' ) : __( 'Profile' ),
+				title: __( 'Account' ),
 			},
 		],
 	} ),
@@ -192,6 +189,20 @@ export const billingHistoryIndexRoute = createRoute( {
 	path: '/',
 	loader: () => {
 		queryClient.prefetchQuery( userReceiptsQuery() );
+		queryClient.prefetchQuery( allSitesQuery() );
+	},
+	validateSearch: (
+		search
+	): {
+		page?: number;
+		search?: string;
+		site?: number;
+	} => {
+		return {
+			page: typeof search.page === 'number' ? search.page : undefined,
+			search: typeof search.search === 'string' ? search.search : undefined,
+			site: typeof search.site === 'number' ? search.site : undefined,
+		};
 	},
 } ).lazy( () =>
 	import( '../../me/billing-history' ).then( ( d ) =>
@@ -472,12 +483,14 @@ export const cancelPurchaseRoute = createRoute( {
 			return { purchase: undefined, intent };
 		}
 		await Promise.all( [
-			queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ),
+			...( hasQueryableSite( purchase )
+				? [
+						queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ),
+						queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ),
+				  ]
+				: [] ),
 			queryClient.ensureQueryData( productsQuery() ),
-			queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ),
 			queryClient.ensureQueryData( plansQuery() ),
-			// Prefetch the default (control) variant; the component refetches
-			// under the 'treatment' key when the split-cancel-remove flag is on.
 			queryClient.ensureQueryData( purchaseCancelFeaturesQuery( purchase.ID ) ),
 		] );
 		return { purchase, intent };
@@ -726,7 +739,7 @@ export const securityTwoStepAuthAppRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Set up two-step authentication' ),
+				title: getAppSetupTitle(),
 			},
 		],
 	} ),
@@ -750,7 +763,7 @@ export const securityTwoStepAuthSMSRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Set up two-step authentication' ),
+				title: getSMSSetupTitle(),
 			},
 		],
 	} ),
@@ -1015,7 +1028,11 @@ export const notificationsExtrasRoute = createRoute( {
 	} ),
 	getParentRoute: () => notificationsRoute,
 	path: '/extras',
-	loader: () => queryClient.ensureQueryData( userNotificationsSettingsQuery() ),
+	loader: () =>
+		Promise.all( [
+			queryClient.ensureQueryData( userNotificationsSettingsQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] ),
 } ).lazy( () =>
 	import( '../../me/notifications-extras' ).then( ( d ) =>
 		createLazyRoute( 'notifications-extras' )( {
@@ -1073,6 +1090,35 @@ export const hostingDashboardRoute = createRoute( {
 	)
 );
 
+export const wordpressLabsRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'WordPress Labs' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'wordpress-labs',
+	beforeLoad: async () => {
+		if ( ! isEnabled( 'wordpress-labs' ) ) {
+			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
+		}
+	},
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+			queryClient.prefetchQuery( allSitesQuery() ),
+		] );
+	},
+} ).lazy( () =>
+	import( '../../me/wordpress-labs' ).then( ( d ) =>
+		createLazyRoute( 'wordpress-labs' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const appearanceRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1083,12 +1129,20 @@ export const appearanceRoute = createRoute( {
 	} ),
 	getParentRoute: () => preferencesRoute,
 	path: 'appearance',
-	beforeLoad: ( { context } ) => {
+	beforeLoad: async ( { context } ) => {
 		if (
 			! context.config.supports.darkMode ||
 			! context.config.supports.colorScheme ||
 			isDashboardBackport()
 		) {
+			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
+		}
+
+		// Gate the page like the Appearance summary button so it can't be reached by direct URL.
+		const preferences = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+		const hasUsedColorScheme = preferences[ 'hosting-dashboard-color-scheme' ] !== undefined;
+
+		if ( ! isEnabled( 'dashboard/dark-mode-rollout' ) && ! hasUsedColorScheme ) {
 			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
 		}
 	},
@@ -1138,8 +1192,8 @@ export const wordpressDefaultsRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../me/wordpress-defaults' ).then( ( d ) =>
-		createLazyRoute( 'wordpress-defaults' )( {
+	import( '../../me/preferences-defaults' ).then( ( d ) =>
+		createLazyRoute( 'preferences-defaults' )( {
 			component: d.default,
 		} )
 	)
@@ -1195,6 +1249,44 @@ export const profileLegacyRedirectRoute = createRoute( {
 	},
 } );
 
+const validateAgentConnectionSearch = (
+	search: Record< string, unknown >
+): {
+	pair_token?: string;
+	slack?: string;
+	telegram_id?: string;
+	token?: string;
+	ts?: string;
+	bot?: string;
+} => ( {
+	...( typeof search.pair_token === 'string' ? { pair_token: search.pair_token } : {} ),
+	...( typeof search.slack === 'string' ? { slack: search.slack } : {} ),
+	...( typeof search.telegram_id === 'string' ? { telegram_id: search.telegram_id } : {} ),
+	...( typeof search.token === 'string' ? { token: search.token } : {} ),
+	...( typeof search.ts === 'string' ? { ts: search.ts } : {} ),
+	...( typeof search.bot === 'string' ? { bot: search.bot } : {} ),
+} );
+
+export const agentRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'WordPress Agent' ),
+			},
+		],
+	} ),
+	getParentRoute: () => meRoute,
+	path: 'agent',
+	validateSearch: validateAgentConnectionSearch,
+	loader: async () => queryClient.ensureQueryData( isAutomatticianQuery() ),
+} ).lazy( () =>
+	import( '../../me/agent' ).then( ( d ) =>
+		createLazyRoute( 'agent' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const mcpRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1206,7 +1298,11 @@ export const mcpRoute = createRoute( {
 	getParentRoute: () => preferencesRoute,
 	path: 'mcp',
 	loader: async () => {
-		await queryClient.ensureQueryData( userSettingsQuery() );
+		await Promise.all( [
+			queryClient.ensureQueryData( userSettingsQuery() ),
+			// The MCP Tracks audience props read Automattician status on first render (view events).
+			queryClient.ensureQueryData( isAutomatticianQuery() ),
+		] );
 	},
 } );
 
@@ -1319,6 +1415,9 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	if ( config.optIn ) {
 		preferencesChildren.push( hostingDashboardRoute );
 	}
+	if ( isEnabled( 'wordpress-labs' ) ) {
+		preferencesChildren.push( wordpressLabsRoute );
+	}
 	if ( config.supports.darkMode && config.supports.colorScheme ) {
 		preferencesChildren.push( appearanceRoute );
 	}
@@ -1410,6 +1509,10 @@ export const createMeRoutes = ( config: AppConfig ) => {
 
 	if ( config.supports.me.apps ) {
 		meRoutes.push( appsRoute );
+	}
+
+	if ( isEnabled( 'mcp-settings' ) ) {
+		meRoutes.push( agentRoute );
 	}
 
 	return [ meRoute.addChildren( meRoutes ) ];

@@ -8,6 +8,7 @@ import {
 	renderPluginsInstallPage,
 	renderThemesInstallPage,
 	redirectToHome,
+	redirectToPlugins,
 	renderMarketplaceSignupSuccess,
 } from './controller';
 
@@ -53,6 +54,10 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	// The wildcard below requires a path segment after the slash, so the bare
+	// path needs its own route or it renders nothing at all.
+	page( '/marketplace', redirectToPlugins );
 
 	page( '/marketplace/*', redirectToHome );
 }

@@ -1,5 +1,5 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
-import { defaults, set } from '@automattic/js-utils';
+import { defaults, set, isEmpty } from '@automattic/js-utils';
 import { DomainContactDetails } from '@automattic/shopping-cart';
 import {
 	DomainContactDetailsErrors,
@@ -7,7 +7,6 @@ import {
 } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { LocalizeProps, TranslateResult, localize } from 'i18n-calypso';
-import { get, isEmpty, map } from 'lodash';
 import { PureComponent } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
@@ -110,7 +109,7 @@ class RegistrantExtraInfoFrForm extends PureComponent< FormProps & LocalizeProps
 
 	render() {
 		const { ccTldDetails, translate } = this.props;
-		const registrantType = get( ccTldDetails, 'registrantType', defaultRegistrantType );
+		const registrantType = ccTldDetails?.registrantType ?? defaultRegistrantType;
 
 		return (
 			<form className="registrant-extra-info__form">
@@ -154,11 +153,8 @@ class RegistrantExtraInfoFrForm extends PureComponent< FormProps & LocalizeProps
 			ccTldDetails,
 			emptyValues
 		);
-		const validationErrors: FrDomainContactExtraDetailsErrors = get(
-			contactDetailsValidationErrors,
-			'extra.fr',
-			{}
-		);
+		const validationErrors: FrDomainContactExtraDetailsErrors =
+			contactDetailsValidationErrors?.extra?.fr ?? {};
 
 		const registrantVatIdIsNotEmpty = Boolean(
 			ccTldDetails.registrantVatId && ccTldDetails.registrantVatId !== ''
@@ -168,7 +164,7 @@ class RegistrantExtraInfoFrForm extends PureComponent< FormProps & LocalizeProps
 			if ( registrantVatIdIsNotEmpty ) {
 				return validationErrors.registrantVatId?.length === 0
 					? null
-					: map( [ ...new Set( validationErrors.registrantVatId ) ], renderValidationError );
+					: [ ...new Set( validationErrors.registrantVatId ) ].map( renderValidationError );
 			}
 
 			return null;
@@ -191,7 +187,7 @@ class RegistrantExtraInfoFrForm extends PureComponent< FormProps & LocalizeProps
 		);
 
 		const sirenSiretValidationMessage = () => {
-			return map( [ ...new Set( validationErrors.sirenSiret ) ], renderValidationError );
+			return [ ...new Set( validationErrors.sirenSiret ) ].map( renderValidationError );
 		};
 
 		const sirenSiretIsError = () => {
@@ -210,9 +206,7 @@ class RegistrantExtraInfoFrForm extends PureComponent< FormProps & LocalizeProps
 		);
 
 		const trademarkNumberValidationMessage = () => {
-			return map( [ ...new Set( validationErrors.trademarkNumber ) ], ( error: string ) =>
-				renderValidationError( error )
-			);
+			return [ ...new Set( validationErrors.trademarkNumber ) ].map( renderValidationError );
 		};
 
 		const trademarkNumberIsError = () => {

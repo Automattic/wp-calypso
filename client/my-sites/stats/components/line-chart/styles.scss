@@ -5,6 +5,15 @@
 	border: none !important;
 	box-shadow: none !important;
 
+	// @visx/tooltip's Portal appends this element as a direct child of <body>
+	// with no z-index of its own, so it stacks at "auto" and paints below any
+	// earlier-painted, DOM-unrelated sibling that establishes its own stacking
+	// context with an explicit z-index (e.g. @wordpress/admin-ui's Page root,
+	// which sets `position: relative; z-index: 1`). Match the z-index used by
+	// the other portal-based tooltip on this page (.stats-infotip__positioner)
+	// so the tooltip reliably paints on top regardless of page chrome.
+	z-index: 1000;
+
 	// visx's bare tooltip box shrink-collapses to ~150px (its floated/break-all
 	// inner content yields a tiny intrinsic width, and `max-content` resolves to
 	// 150px too), while the content below sets `min-width: 230px` and overflows
@@ -74,9 +83,13 @@
 		}
 
 		.module-content-list-item {
+			// Unlike the bar chart tooltip's date row (a `<li>` inside the same `<ul>` as the
+			// other rows, picking up `ul li`'s margin-bottom below), this one is a sibling `<div>`
+			// before the `<ul>` (see index.tsx), so it needs its own margin to match.
 			&.is-date-label {
 				font-weight: 600;
 				border-bottom: 0;
+				margin-bottom: 10px;
 			}
 
 			&.is-published {

@@ -1,5 +1,5 @@
 /**
- * Shared jsdom harness for the <VirtualList> unit tests. jsdom has no layout
+ * Shared jsdom harness for the useInfiniteList unit tests. jsdom has no layout
  * engine and no ResizeObserver, so these helpers let a test control element
  * geometry and drive resize callbacks deterministically.
  */

@@ -28,7 +28,9 @@ export const legacyContactQuery = ( legacyContactId: number ) =>
 
 export const addLegacyContactMutation = () =>
 	mutationOptions( {
-		mutationFn: ( email: string ) => addLegacyContact( email ),
+		meta: { statId: 'legacy-contact-add' },
+		mutationFn: ( { email, notes }: { email: string; notes?: string } ) =>
+			addLegacyContact( email, notes ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( legacyContactsQuery() );
 		},
@@ -36,6 +38,7 @@ export const addLegacyContactMutation = () =>
 
 export const deleteLegacyContactMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'legacy-contact-delete' },
 		mutationFn: ( legacyContactId: number ) => deleteLegacyContact( legacyContactId ),
 		onSuccess: ( _data, legacyContactId ) => {
 			// Drop the contact from the cached list right away so the UI returns to

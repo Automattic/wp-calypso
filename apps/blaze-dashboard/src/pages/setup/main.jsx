@@ -33,7 +33,7 @@ export default function BlazeSetup( { setupInfo } ) {
 	const isBlazePlugin = config.isEnabled( 'is_running_in_blaze_plugin' );
 	const translate = useTranslate();
 
-	const documentTitle = isBlazePlugin ? translate( 'Blaze Ads' ) : translate( 'Advertising' );
+	const documentTitle = isBlazePlugin ? 'Blaze Ads' : translate( 'Advertising' );
 
 	return (
 		<MainWrapper>

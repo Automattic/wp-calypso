@@ -92,12 +92,22 @@ describe( 'UserAvatar', () => {
 		expect( document.querySelector( '.user-avatar a' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'adds tabIndex and role to container when hovercard is enabled but no link wrapper', () => {
+	test( 'does not make the container focusable when there is no link wrapper', () => {
 		render( <UserAvatar user={ { ...defaultUser, wpcom_login: undefined } } /> );
 
 		const container = document.querySelector( '.user-avatar' );
-		expect( container ).toHaveAttribute( 'tabindex', '0' );
-		expect( container ).toHaveAttribute( 'role', 'button' );
+		expect( container ).not.toHaveAttribute( 'tabindex' );
+		expect( container ).not.toHaveAttribute( 'role' );
+	} );
+
+	test( 'does not show hovercard on keyboard focus', () => {
+		render( <UserAvatar user={ defaultUser } /> );
+
+		const link = document.querySelector( '.user-avatar a' ) as HTMLElement;
+		act( () => link.focus() );
+		act( () => jest.advanceTimersByTime( 200 ) );
+
+		expect( screen.queryByTestId( 'user-hovercard' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'does not add tabIndex when avatar has a link wrapper', () => {

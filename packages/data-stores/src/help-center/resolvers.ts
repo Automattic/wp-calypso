@@ -1,8 +1,40 @@
+import { addQueryArgs } from '@wordpress/url';
+import { PLANS_PRESALES_LAUNCHER_CONTEXT } from './constants';
 import { HelpCenterThunkProps } from './types';
 import { getPersistedPreference } from './utils';
 
 export function isHelpCenterShown() {
-	return async ( { dispatch }: HelpCenterThunkProps ) => {
+	return async ( { dispatch, select }: HelpCenterThunkProps ) => {
+		if ( select.hasLoggedOutOdieChat() ) {
+			// Presales reopens the saved conversation; other surfaces land on home.
+			const options = select.getHelpCenterOptions();
+			const isPresales = options?.launcherContext === PLANS_PRESALES_LAUNCHER_CONTEXT;
+			const chat =
+				isPresales && options?.loggedOutBotSlug
+					? select.getLoggedOutOdieChat( options.loggedOutBotSlug )
+					: undefined;
+			let route = '/';
+			if ( isPresales ) {
+				route = chat
+					? addQueryArgs( '/odie', {
+							chatId: chat.odieId,
+							sessionId: chat.sessionId,
+							botSlug: chat.botSlug,
+					  } )
+					: '/odie';
+			}
+			dispatch( {
+				type: 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE',
+				route,
+				coalesceParams: false,
+			} as const );
+			dispatch( {
+				type: 'HELP_CENTER_SET_SHOW',
+				show: true,
+			} as const );
+			return;
+		}
+
 		try {
 			const helpCenterOpen = await getPersistedPreference( 'help_center_open' );
 
@@ -32,7 +64,7 @@ export function getHelpCenterRouterHistory() {
 			const routerHistory = await getPersistedPreference( 'help_center_router_history' );
 
 			// We only want to auto-open, we don't want to auto-close (and potentially overrule the user's action).
-			if ( routerHistory ) {
+			if ( routerHistory && typeof select.getNavigateToRoute()?.route === 'undefined' ) {
 				dispatch( {
 					type: 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY',
 					history: routerHistory,

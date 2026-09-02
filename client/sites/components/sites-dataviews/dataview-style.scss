@@ -42,17 +42,6 @@
 	}
 }
 
-.wpcom-site .main.hosting-dashboard-layout.sites-dashboard.sites-dashboard__layout .sites-overview {
-	.sites-banner-container {
-		// dataviews-override: To align with Core's hard-coded device width.
-		// https://github.com/WordPress/gutenberg/blob/ed66cc50e3c0b6785a48c15230c090790c0b0e6c/packages/dataviews/src/components/dataviews/style.scss#L84
-		// TODO: Remove when Core changes to use one of the predefined breakpoints.
-		@media (max-width: 430px) {
-			padding-inline: 24px;
-		}
-	}
-}
-
 // Apply consistent 24px paddings to dataviews.
 .wpcom-site:has(.is-global-sidebar-visible) .dataviews-wrapper {
 	.dataviews__view-actions,

@@ -1,5 +1,3 @@
-import { filter } from 'lodash';
-
 function isUnappliedMetadataEdit( edit, savedMetadata ) {
 	const savedRecord = ( Array.isArray( savedMetadata ) ? savedMetadata : [] ).find(
 		( record ) => record.key === edit.key
@@ -24,5 +22,5 @@ function isUnappliedMetadataEdit( edit, savedMetadata ) {
  * - when deleting, the property is still present in `savedMetadata`
  */
 export function getUnappliedMetadataEdits( edits, savedMetadata ) {
-	return filter( edits, ( edit ) => isUnappliedMetadataEdit( edit, savedMetadata ) );
+	return ( edits ?? [] ).filter( ( edit ) => isUnappliedMetadataEdit( edit, savedMetadata ) );
 }

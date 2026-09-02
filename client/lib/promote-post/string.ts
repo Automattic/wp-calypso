@@ -18,7 +18,9 @@ const BlazePressStrings = () => {
 		'Learn more about the {{linkAdvertisingPolicy}}Advertising Policy{{/linkAdvertisingPolicy}}.'
 	);
 	translate( 'Creating campaign…' );
-	translate( 'Make the most of your Blaze campaign' );
+	translate( 'Make the most of your %(productName)s campaign', {
+		args: { productName: 'Blaze Ads' },
+	} );
 	translate( 'Choose an eye-catching image for your ad' );
 	translate( 'Adjust your title to make it more engaging' );
 	translate( 'Pick the right audience, budget and duration' );
@@ -38,7 +40,8 @@ const BlazePressStrings = () => {
 	translate( 'No posts found.' );
 	translate( 'Select post to promote' );
 	translate(
-		'Blaze is syncing your content as part of first-time setup – this can take up to 15 minutes or a few hours.'
+		'%(productName)s is syncing your content as part of first-time setup. This may take anywhere from 15 minutes to a few hours',
+		{ args: { productName: 'Blaze Ads' } }
 	);
 	translate( 'Post' );
 	translate( 'Type' );
@@ -220,7 +223,9 @@ const BlazePressStrings = () => {
 	translate(
 		'By clicking "Submit campaign" you agree to our {{linkTos}}Terms of Service{{/linkTos}} and {{linkAdvertisingPolicy}}Advertising Policy{{/linkAdvertisingPolicy}}, and authorize charges to your payment method at regular intervals for the specified budget and duration, until cancellation. {{linkMoreAboutAds}}Learn more{{/linkMoreAboutAds}}.'
 	);
-	translate( 'Blaze campaigns are billed in USD.' );
+	translate( '%(productName)s campaigns are billed in USD.', {
+		args: { productName: 'Blaze Ads' },
+	} );
 	translate(
 		'I agree to recurring weekly charges of up to %(maxBudgetFormatted)s per week starting %(formattedDate)s.'
 	);

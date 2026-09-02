@@ -43,6 +43,8 @@ import type { ReactNode, HTMLAttributes, PropsWithChildren, ReactElement } from 
 const debug = debugFactory( 'composite-checkout:checkout-steps' );
 
 const customPropertyForSubmitButtonHeight = '--submit-button-height';
+const submitButtonWrapperClassName = 'checkout-steps__submit-button-wrapper';
+const stepContentClassName = 'checkout-steps__step-content';
 
 interface CheckoutSingleStepDataContext {
 	stepNumber: number;
@@ -66,6 +68,8 @@ const CheckoutStepGroupContext = createContext< CheckoutStepGroupStore >( {
 		stepIdMap: {},
 		stepCompleteCallbackMap: {},
 		stepSkipValidationOnSubmitMap: {},
+		suppressNextForwardScroll: false,
+		hasUserInteractedWithSteps: false,
 	},
 	actions: {
 		makeStepActive: noop,
@@ -77,6 +81,8 @@ const CheckoutStepGroupContext = createContext< CheckoutStepGroupStore >( {
 		getStepCompleteCallback: noopPromise,
 		getStepNumberFromId: noop,
 		setTotalSteps: noop,
+		setSuppressNextForwardScroll: noop,
+		setHasUserInteractedWithSteps: noop,
 	},
 	subscription: new SubscriptionManager(),
 } );
@@ -100,6 +106,8 @@ function createCheckoutStepGroupState(): CheckoutStepGroupState {
 		stepIdMap: {},
 		stepCompleteCallbackMap: {},
 		stepSkipValidationOnSubmitMap: {},
+		suppressNextForwardScroll: false,
+		hasUserInteractedWithSteps: false,
 	};
 }
 
@@ -254,6 +262,20 @@ function createCheckoutStepGroupActions(
 		return true;
 	};
 
+	// Allows a consumer to opt the next forward step change out of the
+	// scroll-into-view behavior below (e.g. a step auto-completing on load
+	// rather than the shopper pressing "Continue"). Consumed once by the
+	// scroll effect the next time it runs.
+	const setSuppressNextForwardScroll = ( value: boolean ) => {
+		state.suppressNextForwardScroll = value;
+	};
+
+	// Records that the shopper has touched the step content at least once. Read
+	// synchronously at click time, so it deliberately does not notify subscribers.
+	const setHasUserInteractedWithSteps = ( value: boolean ) => {
+		state.hasUserInteractedWithSteps = value;
+	};
+
 	return {
 		setActiveStepNumber,
 		setStepCompleteStatus,
@@ -264,6 +286,8 @@ function createCheckoutStepGroupActions(
 		setStepComplete,
 		completeAllSteps,
 		makeStepActive,
+		setSuppressNextForwardScroll,
+		setHasUserInteractedWithSteps,
 	};
 }
 
@@ -320,6 +344,76 @@ export const CheckoutSummaryArea = ( {
 		</CheckoutSummary>
 	);
 };
+
+/**
+ * True when the shopper can actually see some part of the element right now.
+ *
+ * Overlapping the viewport is not enough on its own: a checkout step is often
+ * taller than a phone screen, so its rect nearly always overlaps, and the sticky
+ * summary pinned to the bottom of the screen can be covering every pixel of it
+ * that is on-screen. So once the rect says "on-screen", hit-test points down the
+ * element's visible height to see whether anything is painted over it.
+ *
+ * Elements that are missing or have no layout box at all (so there is nothing to
+ * scroll to) count as visible, and so does the case where the environment has no
+ * hit-testing, so that callers fall back to their normal behavior.
+ */
+function isElementVisibleInViewport( el: HTMLElement | null ): boolean {
+	if ( ! el ) {
+		return true;
+	}
+	const rect = el.getBoundingClientRect();
+	if ( rect.width === 0 && rect.height === 0 ) {
+		return true;
+	}
+	const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+	const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+	const top = Math.max( rect.top, 0 );
+	const bottom = Math.min( rect.bottom, viewportHeight );
+	const left = Math.max( rect.left, 0 );
+	const right = Math.min( rect.right, viewportWidth );
+	if ( bottom <= top || right <= left ) {
+		return false;
+	}
+	if ( typeof document.elementFromPoint !== 'function' ) {
+		return true;
+	}
+	const x = Math.min( ( left + right ) / 2, viewportWidth - 1 );
+	const sampleCount = 8;
+	for ( let sample = 0; sample <= sampleCount; sample++ ) {
+		const y = Math.min( top + ( ( bottom - top ) * sample ) / sampleCount, viewportHeight - 1 );
+		const topmostElement = document.elementFromPoint( x, y );
+		if ( topmostElement && el.contains( topmostElement ) ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/**
+ * The first form control the shopper would fill in for a step (e.g. the country
+ * dropdown on the contact step), or null when the step has none.
+ *
+ * A checkout step is often taller than a phone screen, so "part of the step is
+ * visible" can be true while the shopper sees only its heading. Where the step
+ * has fields, whether the first of them is visible is the better question.
+ * Controls with no layout box are skipped: they are hidden, so seeing them tells
+ * the shopper nothing.
+ */
+function getFirstFormFieldInStep( stepEl: HTMLElement ): HTMLElement | null {
+	// Steps render their active and complete content at the same time, so restrict
+	// this to the active content and fall back to the step for stepless layouts.
+	const activeContent = stepEl.querySelector( `.${ stepContentClassName }` ) ?? stepEl;
+	const fields = Array.from(
+		activeContent.querySelectorAll< HTMLElement >( 'input:not([type="hidden"]), select, textarea' )
+	);
+	return (
+		fields.find( ( field ) => {
+			const rect = field.getBoundingClientRect();
+			return rect.width > 0 || rect.height > 0;
+		} ) ?? null
+	);
+}
 
 function isElementAStep( el: ReactNode ): boolean {
 	const childStep = el as { type?: { isCheckoutStep?: boolean } };
@@ -451,11 +545,15 @@ function CheckoutStepGroupWrapper( {
 			// view. This corrects the viewport position on mobile after the previous
 			// step's content collapses and causes the layout to shift.
 			if ( scrollToStepOnForwardNavigation && newStep > prevStep ) {
-				const newStepId = Object.entries( store.state.stepIdMap ).find(
-					( [ , num ] ) => num === newStep
-				)?.[ 0 ];
-				if ( newStepId ) {
-					document.getElementById( newStepId )?.scrollIntoView?.( { block: 'start' } );
+				if ( store.state.suppressNextForwardScroll ) {
+					store.state.suppressNextForwardScroll = false;
+				} else {
+					const newStepId = Object.entries( store.state.stepIdMap ).find(
+						( [ , num ] ) => num === newStep
+					)?.[ 0 ];
+					if ( newStepId ) {
+						document.getElementById( newStepId )?.scrollIntoView?.( { block: 'start' } );
+					}
 				}
 			}
 		}
@@ -664,9 +762,34 @@ function CheckoutStepArea( {
 }: PropsWithChildren< {
 	className?: string;
 } > ) {
-	const { state } = useContext( CheckoutStepGroupContext );
+	const { state, actions } = useContext( CheckoutStepGroupContext );
 	const { activeStepNumber, totalSteps } = state;
+	const { setHasUserInteractedWithSteps } = actions;
 	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
+
+	// Native (not React) listeners on purpose: a submit button rendered into this
+	// group but portaled elsewhere in the DOM would still bubble its React events
+	// through here, and pressing that button is not "interacting with the steps".
+	// The submit area is excluded for the same reason when it is not portaled.
+	const stepAreaRef = useRef< HTMLDivElement >( null );
+	useEffect( () => {
+		const stepArea = stepAreaRef.current;
+		if ( ! stepArea ) {
+			return;
+		}
+		const onInteract = ( event: Event ) => {
+			const target = event.target as HTMLElement | null;
+			if ( target?.closest?.( `.${ submitButtonWrapperClassName }` ) ) {
+				return;
+			}
+			setHasUserInteractedWithSteps( true );
+		};
+		const events = [ 'pointerdown', 'keydown', 'change' ] as const;
+		events.forEach( ( event ) => stepArea.addEventListener( event, onInteract ) );
+		return () => {
+			events.forEach( ( event ) => stepArea.removeEventListener( event, onInteract ) );
+		};
+	}, [ setHasUserInteractedWithSteps ] );
 
 	const classNames = joinClasses( [
 		'checkout__step-wrapper',
@@ -674,7 +797,11 @@ function CheckoutStepArea( {
 		...( ! isThereAnotherNumberedStep ? [ 'checkout__step-wrapper--last-step' ] : [] ),
 	] );
 
-	return <CheckoutStepAreaWrapper className={ classNames }>{ children }</CheckoutStepAreaWrapper>;
+	return (
+		<CheckoutStepAreaWrapper className={ classNames } ref={ stepAreaRef }>
+			{ children }
+		</CheckoutStepAreaWrapper>
+	);
 }
 
 export function CheckoutFormSubmit( {
@@ -717,6 +844,20 @@ export function CheckoutFormSubmit( {
 		customPropertyForSubmitButtonHeight
 	);
 
+	// If validation fails below, the active step may be scrolled out of view
+	// (e.g. behind a sticky submit button), which would otherwise make the
+	// button look like it did nothing when it in fact surfaced errors.
+	const scrollActiveStepIntoView = useCallback( () => {
+		const activeStepId = Object.entries( stepIdMap ).find(
+			( [ , num ] ) => num === activeStepNumber
+		)?.[ 0 ];
+		if ( activeStepId ) {
+			document
+				.getElementById( activeStepId )
+				?.scrollIntoView?.( { behavior: 'smooth', block: 'start' } );
+		}
+	}, [ activeStepNumber, stepIdMap ] );
+
 	// Wrap validateForm to first validate any active step before submission
 	const wrappedValidateForm = useCallback( async () => {
 		// Only validate if there's an actual active step (within the range of registered steps)
@@ -735,6 +876,7 @@ export function CheckoutFormSubmit( {
 
 				if ( ! isStepComplete ) {
 					// Step validation failed, don't proceed with submission
+					scrollActiveStepIntoView();
 					return false;
 				}
 
@@ -745,18 +887,22 @@ export function CheckoutFormSubmit( {
 
 		// Now run the payment method validation if provided
 		if ( validateForm ) {
-			return await validateForm();
+			const isFormValid = await validateForm();
+			if ( ! isFormValid ) {
+				scrollActiveStepIntoView();
+			}
+			return isFormValid;
 		}
 
 		return true;
 	}, [
 		activeStepNumber,
 		totalSteps,
-		stepCompleteStatus,
 		stepSkipValidationOnSubmitMap,
 		getStepCompleteCallback,
 		setStepCompleteStatus,
 		validateForm,
+		scrollActiveStepIntoView,
 	] );
 
 	const isDisabled = ( () => {
@@ -814,22 +960,55 @@ export function CheckoutFormSubmit( {
 		if ( ! targetStepId ) {
 			return;
 		}
-		const didActivateTarget = await makeStepActive( targetStepId );
-		// If activation failed, makeStepActive stopped on an intervening step that
-		// did not validate and left it active. Scroll to whichever step actually
-		// ended up active (read from the live store) so the user lands on the step
-		// that needs attention rather than a step that stayed collapsed. Desktop
-		// does not auto-scroll on step changes, so we always scroll explicitly.
-		const stepIdToScrollTo = didActivateTarget
-			? targetStepId
-			: getStepIdFromNumber( state.activeStepNumber ) ?? targetStepId;
+		// When the step needing the shopper's attention is not visible — off-screen,
+		// or hidden behind the sticky summary — this press only reveals that step.
+		// Validating it here would flag errors on fields they have not yet seen.
+		// Once the step is on-screen the button submits as usual. Visibility is
+		// judged by the step's first form field where it has one, since a step
+		// taller than the screen can have its heading showing and every field
+		// covered.
+		//
+		// Anyone who has already touched the steps is exempt: on a step taller than
+		// the screen, working down the form scrolls that first field off the top, and
+		// they should get a real submit rather than being thrown back to the heading.
+		const targetStepEl = document.getElementById( targetStepId );
+		if (
+			targetStepEl &&
+			stepIdMap[ targetStepId ] === activeStepNumber &&
+			! state.hasUserInteractedWithSteps
+		) {
+			const elementToReveal = getFirstFormFieldInStep( targetStepEl ) ?? targetStepEl;
+			if ( ! isElementVisibleInViewport( elementToReveal ) ) {
+				targetStepEl.scrollIntoView?.( { behavior: 'smooth', block: 'start' } );
+				return;
+			}
+		}
+		if ( stepIdMap[ targetStepId ] === activeStepNumber ) {
+			// The active step is itself the step that still needs completing.
+			// makeStepActive would be a no-op here because it only runs completion
+			// callbacks for the steps *before* its target, so it would never validate
+			// the active step. Run the active step's own completion callback instead so
+			// the button always tries to complete the step: surfacing inline validation
+			// errors when invalid and advancing when valid, exactly like the step's
+			// inline "Continue" button.
+			await getStepCompleteCallback( activeStepNumber )();
+		} else {
+			// makeStepActive walks forward from the active step, completing each step
+			// until it reaches the target or stops on an intervening step that fails to
+			// validate (leaving that step active).
+			await makeStepActive( targetStepId );
+		}
+		// Scroll to whichever step ended up active (read from the live store): the step
+		// we advanced to on success, or the step that still needs attention on failure.
+		// Desktop does not auto-scroll on step changes, so we always scroll explicitly.
+		const stepIdToScrollTo = getStepIdFromNumber( state.activeStepNumber ) ?? targetStepId;
 		document
 			.getElementById( stepIdToScrollTo )
 			?.scrollIntoView?.( { behavior: 'smooth', block: 'start' } );
 	};
 
 	return (
-		<SubmitButtonWrapper className="checkout-steps__submit-button-wrapper" ref={ submitWrapperRef }>
+		<SubmitButtonWrapper className={ submitButtonWrapperClassName } ref={ submitWrapperRef }>
 			{ submitButtonHeader || null }
 			{ showContinueToNextIncompleteStep ? (
 				<Button
@@ -965,7 +1144,7 @@ export function CheckoutStepBody( {
 				<StepContentWrapper
 					data-testid={ activeStepTestId }
 					isVisible={ isStepActive }
-					className="checkout-steps__step-content"
+					className={ stepContentClassName }
 				>
 					{ activeStepContent }
 					{ goToNextStep && isStepActive && (
@@ -1069,6 +1248,17 @@ export function useSetStepComplete(): SetStepComplete {
 export function useCompleteAllSteps(): CompleteAllSteps {
 	const store = useContext( CheckoutStepGroupContext );
 	return store.actions.completeAllSteps;
+}
+
+/**
+ * Opts the next forward step change out of the scroll-into-view behavior
+ * (see `scrollToStepOnForwardNavigation`). Intended for step changes caused
+ * by something other than the shopper pressing "Continue" (e.g. a step
+ * auto-completing on load), where jumping the viewport would be surprising.
+ */
+export function useSuppressNextForwardScroll(): ( value: boolean ) => void {
+	const store = useContext( CheckoutStepGroupContext );
+	return store.actions.setSuppressNextForwardScroll;
 }
 
 export function useMakeStepActive(): MakeStepActive {

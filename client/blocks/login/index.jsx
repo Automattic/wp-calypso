@@ -1,8 +1,8 @@
 import page from '@automattic/calypso-router';
+import { isEmpty } from '@automattic/js-utils';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -47,6 +47,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import getIsUserAccountEmailUpdateRedirect from 'calypso/state/selectors/get-is-user-account-email-update-redirect';
 import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
@@ -81,6 +82,7 @@ class Login extends Component {
 		isJetpack: PropTypes.bool.isRequired,
 		isFromAkismet: PropTypes.bool,
 		isFromPassport: PropTypes.bool,
+		isUserAccountEmailUpdateRedirect: PropTypes.bool,
 		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
 		isManualRenewalImmediateLoginAttempt: PropTypes.bool,
 		linkingSocialService: PropTypes.string,
@@ -418,6 +420,7 @@ class Login extends Component {
 			redirectTo,
 			isWooJPC,
 			isWoo,
+			isUserAccountEmailUpdateRedirect,
 		} = this.props;
 
 		const signupLink = this.getSignupLinkComponent();
@@ -530,6 +533,7 @@ class Login extends Component {
 				sendMagicLoginLink={ this.sendMagicLoginLink }
 				isFromAkismet={ this.props.isFromAkismet }
 				isFromPassport={ this.props.isFromPassport }
+				isUserAccountEmailUpdateRedirect={ isUserAccountEmailUpdateRedirect }
 				isSendingEmail={ this.props.isSendingEmail }
 				isSocialFirst={ isSocialFirst } // TODO just not gravatar
 				isJetpack={ isJetpack }
@@ -628,6 +632,7 @@ export default connect(
 			new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
 		),
 		isFromPassport: isPassportRedirect( getRedirectToOriginal( state ) ),
+		isUserAccountEmailUpdateRedirect: getIsUserAccountEmailUpdateRedirect( state ),
 
 		isFromAutomatticForAgenciesPlugin:
 			'automattic-for-agencies-client' === getCurrentQueryArguments( state )?.from ||

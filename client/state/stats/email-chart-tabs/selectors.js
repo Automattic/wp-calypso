@@ -1,5 +1,4 @@
 import { sortBy } from '@automattic/js-utils';
-import { get } from 'lodash';
 
 import 'calypso/state/stats/init';
 
@@ -59,10 +58,7 @@ export function isLoadingTabs(
 		return false;
 	}
 	return state.stats.emails
-		? get(
-				state.stats.emails.requests,
-				[ siteId, postId, period, statType, date, 'requesting' ],
-				false
-		  )
+		? state.stats.emails.requests?.[ siteId ]?.[ postId ]?.[ period ]?.[ statType ]?.[ date ]
+				?.requesting ?? false
 		: false;
 }

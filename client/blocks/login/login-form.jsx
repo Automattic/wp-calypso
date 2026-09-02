@@ -16,8 +16,8 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
-import BlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import LoginSubmitButton from 'calypso/blocks/login/login-submit-button';
+import { withBlackboxProtection } from 'calypso/blocks/login/with-blackbox-protection';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/dashboard/components/notice';
@@ -76,6 +76,12 @@ import './login-form.scss';
 export class LoginForm extends Component {
 	static propTypes = {
 		accountType: PropTypes.string,
+		blackbox: PropTypes.shape( {
+			isSubmitBlocked: PropTypes.bool.isRequired,
+			challenge: PropTypes.node.isRequired,
+			getSessionId: PropTypes.func.isRequired,
+			reset: PropTypes.func.isRequired,
+		} ).isRequired,
 		disableAutoFocus: PropTypes.bool,
 		sendEmailLogin: PropTypes.func.isRequired,
 		formUpdate: PropTypes.func.isRequired,
@@ -103,6 +109,7 @@ export class LoginForm extends Component {
 		isSendingEmail: PropTypes.bool,
 		cancelSocialAccountConnectLinking: PropTypes.func,
 		isJetpack: PropTypes.bool,
+		isUserAccountEmailUpdateRedirect: PropTypes.bool,
 		loginButtonText: PropTypes.string,
 		isGravatarFixedAccountLogin: PropTypes.bool.isRequired,
 		isGravPoweredClient: PropTypes.bool,
@@ -115,12 +122,6 @@ export class LoginForm extends Component {
 		emailSuggestionError: false,
 		password: '',
 		lastUsedAuthenticationMethod: this.getLastUsedAuthenticationMethod(),
-		isBlackboxSubmitBlocked:
-			config.isEnabled( 'blackbox-login' ) && !! config( 'blackbox_api_key' ),
-	};
-
-	handleBlackboxSubmitBlockedChange = ( isBlocked ) => {
-		this.setState( { isBlackboxSubmitBlocked: isBlocked } );
 	};
 
 	componentDidMount() {
@@ -322,8 +323,12 @@ export class LoginForm extends Component {
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
 		this.props
-			.loginUser( usernameOrEmail, password, redirectTo, domain )
-			.then( () => {
+			.loginUser( usernameOrEmail, password, redirectTo, domain, this.props.blackbox )
+			.then( ( result ) => {
+				if ( result === false ) {
+					return;
+				}
+
 				this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
 				onSuccess( redirectTo );
 			} )
@@ -476,10 +481,6 @@ export class LoginForm extends Component {
 	renderUsernameorEmailLabel() {
 		if ( this.props.currentQuery?.username_only === 'true' ) {
 			return this.props.translate( 'Your username' );
-		}
-
-		if ( this.isPasswordView() ) {
-			return this.renderChangeUsername();
 		}
 
 		return (
@@ -699,6 +700,7 @@ export class LoginForm extends Component {
 			isGravPoweredClient,
 			isGravatarFixedAccountLogin,
 			isSocialFirst,
+			isUserAccountEmailUpdateRedirect,
 		} = this.props;
 
 		const isLastUsedPassword =
@@ -707,7 +709,7 @@ export class LoginForm extends Component {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 		const isEmailOrUsernameInputDisabled =
 			isFormDisabled || this.isPasswordView() || isGravatarFixedAccountLogin;
-		const isSubmitButtonDisabled = isFormDisabled || this.state.isBlackboxSubmitBlocked;
+		const isSubmitButtonDisabled = isFormDisabled || this.props.blackbox.isSubmitBlocked;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 		const signupUrl = this.getSignupUrl();
 		const shouldRenderForgotPasswordLink = ! isPasswordHidden && isWoo;
@@ -746,6 +748,16 @@ export class LoginForm extends Component {
 			);
 		};
 
+		const renderUserAccountEmailUpdateNotice = () => {
+			return (
+				<Notice variant="info">
+					{ this.props.translate(
+						'Please log in using the original email address for your account, not the updated email address you are verifying.'
+					) }
+				</Notice>
+			);
+		};
+
 		const renderSocialLinkingNotice = () => {
 			return (
 				<Notice variant="error">
@@ -770,6 +782,9 @@ export class LoginForm extends Component {
 
 				<div className="login__form-userdata">
 					{ linkingSocialUser && renderSocialLinkingNotice() }
+					{ isUserAccountEmailUpdateRedirect && renderUserAccountEmailUpdateNotice() }
+
+					{ this.isPasswordView() && this.renderChangeUsername() }
 
 					<FormLabel
 						htmlFor="usernameOrEmail"
@@ -902,7 +917,7 @@ export class LoginForm extends Component {
 
 				{ shouldRenderForgotPasswordLink && this.renderLostPasswordLink() }
 
-				<BlackboxChallenge onSubmitBlockedChange={ this.handleBlackboxSubmitBlockedChange } />
+				{ this.props.blackbox.challenge }
 
 				<div className="login__form-action">
 					<LoginSubmitButton
@@ -1066,4 +1081,4 @@ export default connect(
 		createSocialUserFailed,
 		loginSocialUser,
 	}
-)( localize( LoginForm ) );
+)( localize( withBlackboxProtection( LoginForm, { feature: 'blackbox-login' } ) ) );

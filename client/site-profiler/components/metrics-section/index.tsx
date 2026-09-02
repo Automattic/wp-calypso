@@ -79,12 +79,12 @@ const Content = styled.div`
 	margin-top: 64px;
 `;
 
-export const MetricsSection = forwardRef< HTMLObjectElement, MetricsSectionProps >(
-	( props, ref: ForwardedRef< HTMLObjectElement > ) => {
+export const MetricsSection = forwardRef< HTMLElement, MetricsSectionProps >(
+	( props, ref: ForwardedRef< HTMLElement > ) => {
 		const { name, title, subtitle, children, subtitleOnClick } = props;
 
 		return (
-			<Container ref={ ref }>
+			<Container ref={ ref as ForwardedRef< HTMLDivElement > }>
 				<NameSpan>{ name }</NameSpan>
 				<Title>{ title }</Title>
 				{ subtitle && (

@@ -30,10 +30,10 @@ boot( {
 		sites: true,
 		domains: true,
 		emails: true,
-		themes: false,
 		reader: false,
 		help: true,
 		notifications: false,
+		resurrectedWelcomeModal: false,
 		me: {
 			billing: {
 				monetizeSubscriptions: false,

@@ -11,18 +11,38 @@ import { debounce } from '@wordpress/compose';
 import { DataForm, Field, useFormValidity, FormField } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ButtonStack } from '../button-stack';
 import { Card, CardBody } from '../card';
 import InlineSupportLink from '../inline-support-link';
 import Notice from '../notice';
+import { getCaContactFormFields, getCaContactFormLayout, hasCaDomain } from './ca-contact-fields';
 import { getContactFormFields } from './contact-form-fields';
+import { mapValidationMessagesToFieldErrors } from './contact-validation-utils';
+import {
+	getFrContactFormFields,
+	getFrContactFormLayout,
+	getFrExtra,
+	hasFrDomain,
+	validateFrOrganization,
+} from './fr-contact-fields';
 import { RegionAddressFieldsLayout } from './region-address-fieldsets';
+import {
+	getUkContactFormFields,
+	getUkContactFormLayout,
+	getUkExtra,
+	hasUkDomain,
+} from './uk-contact-fields';
 import type { UseMutateAsyncFunction } from '@tanstack/react-query';
 interface ContactFormProps {
 	initialData?: DomainContactDetails;
 	beforeFormCard?: React.ReactNode;
 	beforeForm?: React.ReactNode;
+	/**
+	 * The domains being edited. Drives the ccTLD sections, which the registrar
+	 * requires on the payload for TLDs such as `.uk`.
+	 */
+	domainNames: string[];
 	isSubmitting: boolean;
 	onSubmit: ( normalizedFormData: DomainContactDetails ) => void;
 	validate: UseMutateAsyncFunction< DomainContactValidationResponse, Error, DomainContactDetails >;
@@ -30,6 +50,7 @@ interface ContactFormProps {
 
 export default function ContactForm( {
 	initialData,
+	domainNames,
 	isSubmitting,
 	beforeFormCard,
 	beforeForm,
@@ -40,6 +61,8 @@ export default function ContactForm( {
 	const [ formData, setFormData ] = useState< DomainContactDetails >(
 		initialData ?? { optOutTransferLock: false }
 	);
+	const [ lastValidationResult, setLastValidationResult ] =
+		useState< DomainContactValidationResponse | null >( null );
 	const selectedCountryCode = formData.countryCode ?? initialData?.countryCode ?? '';
 	const { data: statesList } = useQuery( statesListQuery( selectedCountryCode ) );
 
@@ -78,6 +101,7 @@ export default function ContactForm( {
 
 			validate( item )
 				.then( ( result ) => {
+					setLastValidationResult( result );
 					callbacks.forEach( ( callback ) => callback.resolve( result ) );
 				} )
 				.catch( ( error ) => {
@@ -96,15 +120,35 @@ export default function ContactForm( {
 			} );
 	}, [ validate ] );
 
+	const needsUkFields = useMemo( () => hasUkDomain( domainNames ), [ domainNames ] );
+	const ukRegistrantType = getUkExtra( normalizedFormData ).registrantType;
+	const needsFrFields = useMemo( () => hasFrDomain( domainNames ), [ domainNames ] );
+	const frRegistrantType = getFrExtra( normalizedFormData ).registrantType;
+	const needsCaFields = useMemo( () => hasCaDomain( domainNames ), [ domainNames ] );
+
 	const fields: Field< DomainContactDetails >[] = useMemo(
-		() =>
-			getContactFormFields(
+		() => [
+			...getContactFormFields(
 				countryList ?? [],
 				statesList ?? [],
 				selectedCountryCode,
 				asyncValidator
 			),
-		[ countryList, statesList, selectedCountryCode, asyncValidator ]
+			...( needsUkFields ? getUkContactFormFields( ukRegistrantType ) : [] ),
+			...( needsFrFields ? getFrContactFormFields( frRegistrantType ) : [] ),
+			...( needsCaFields ? getCaContactFormFields() : [] ),
+		],
+		[
+			countryList,
+			statesList,
+			selectedCountryCode,
+			asyncValidator,
+			needsUkFields,
+			ukRegistrantType,
+			needsFrFields,
+			frRegistrantType,
+			needsCaFields,
+		]
 	);
 
 	const form = {
@@ -127,11 +171,93 @@ export default function ContactForm( {
 				countryList,
 				countryCode: selectedCountryCode,
 			} ),
+			...( needsUkFields ? getUkContactFormLayout( ukRegistrantType ) : [] ),
+			...( needsFrFields ? getFrContactFormLayout( frRegistrantType ) : [] ),
+			...( needsCaFields ? getCaContactFormLayout() : [] ),
 			'optOutTransferLock',
 		],
 	};
 
-	const { validity, isValid: canSave } = useFormValidity( normalizedFormData, fields, form );
+	const { validity, isValid: isFormValid } = useFormValidity( normalizedFormData, fields, form );
+
+	// A whole-form validation can invalidate a field (e.g. postal code) whose own
+	// validator DataForm won't re-run after another field (e.g. country) changes.
+	// Surface every field's error from the latest response, and gate Save on them.
+	const serverFieldErrors = useMemo(
+		() =>
+			mapValidationMessagesToFieldErrors(
+				lastValidationResult && ! lastValidationResult.success
+					? lastValidationResult.messages
+					: undefined
+			),
+		[ lastValidationResult ]
+	);
+
+	// Cross-field rules go through the same path, not through a field's own
+	// validator: useFormValidity only re-runs a field's validators when that
+	// field's value changes, so an error raised against the organization would
+	// outlive the registrant type change that resolves it. Derived from the data,
+	// it clears as soon as either side changes.
+	const crossFieldErrors = useMemo( () => {
+		const frOrganizationError = needsFrFields ? validateFrOrganization( normalizedFormData ) : null;
+		return frOrganizationError ? { organization: frOrganizationError } : {};
+	}, [ needsFrFields, normalizedFormData ] );
+
+	const fieldErrors = useMemo(
+		() => ( { ...serverFieldErrors, ...crossFieldErrors } ),
+		[ serverFieldErrors, crossFieldErrors ]
+	);
+
+	const validityWithFieldErrors = useMemo( () => {
+		const errors = Object.entries( fieldErrors );
+		if ( ! isDirty || errors.length === 0 ) {
+			return validity;
+		}
+		const merged: NonNullable< typeof validity > = { ...validity };
+		for ( const [ fieldId, message ] of errors ) {
+			// Replace, not merge: a message-less `required` validity (empty required
+			// field) would otherwise take precedence over and hide this message.
+			merged[ fieldId ] = { custom: { type: 'invalid', message } };
+		}
+		return merged;
+	}, [ validity, fieldErrors, isDirty ] );
+
+	const canSave = isFormValid && Object.keys( fieldErrors ).length === 0;
+
+	// DataForm hides a field's error until it's touched. Reveal flagged fields by
+	// re-running native validation when the flagged set changes (keyed on the set,
+	// not the messages, so it doesn't re-fire or move focus while the user types).
+	const fieldsContainerRef = useRef< HTMLDivElement >( null );
+	const revealedErrorKeyRef = useRef( '' );
+	const fieldErrorKey = Object.keys( fieldErrors ).sort().join( ',' );
+	useEffect( () => {
+		if ( ! isDirty || ! fieldErrorKey ) {
+			revealedErrorKeyRef.current = '';
+			return;
+		}
+		if ( revealedErrorKeyRef.current === fieldErrorKey ) {
+			return;
+		}
+		revealedErrorKeyRef.current = fieldErrorKey;
+
+		// Defer so DataForm has applied the custom validity to the inputs first.
+		const raf = requestAnimationFrame( () => {
+			const container = fieldsContainerRef.current;
+			if ( ! container ) {
+				return;
+			}
+			const controls = Array.from(
+				container.querySelectorAll< HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement >(
+					'input, select, textarea'
+				)
+			);
+			// filter (not find) so checkValidity() runs on every control and reveals
+			// each invalid field, then focus the first invalid one.
+			const invalidControls = controls.filter( ( control ) => ! control.checkValidity() );
+			invalidControls[ 0 ]?.focus();
+		} );
+		return () => cancelAnimationFrame( raf );
+	}, [ isDirty, fieldErrorKey ] );
 
 	return (
 		<VStack spacing={ 10 }>
@@ -169,15 +295,17 @@ export default function ContactForm( {
 				<CardBody>
 					<VStack spacing={ 4 }>
 						{ beforeForm }
-						<DataForm< DomainContactDetails >
-							data={ normalizedFormData }
-							fields={ fields }
-							form={ form }
-							validity={ validity }
-							onChange={ ( edits: Partial< DomainContactDetails > ) => {
-								setFormData( ( data ) => ( { ...data, ...edits } ) );
-							} }
-						/>
+						<div ref={ fieldsContainerRef }>
+							<DataForm< DomainContactDetails >
+								data={ normalizedFormData }
+								fields={ fields }
+								form={ form }
+								validity={ validityWithFieldErrors }
+								onChange={ ( edits: Partial< DomainContactDetails > ) => {
+									setFormData( ( data ) => ( { ...data, ...edits } ) );
+								} }
+							/>
+						</div>
 						<Notice>
 							<VStack>
 								<Text as="p">

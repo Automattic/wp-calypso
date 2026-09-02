@@ -52,7 +52,17 @@ export type HelpCenterThunkProps = {
 
 export interface HelpCenterOptions {
 	hideBackButton?: boolean;
+	launcherContext?: string;
+	loggedOutBotSlug?: string;
 }
+
+export type LoggedOutOdieChat = {
+	odieId: number;
+	sessionId: string;
+	botSlug: string;
+};
+
+export type LoggedOutOdieChats = Record< string, LoggedOutOdieChat >;
 
 export interface Preferences {
 	calypso_preferences: {

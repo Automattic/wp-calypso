@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/country-states/init';
 
 /**
@@ -21,5 +19,5 @@ export function getCountryStates( state, countryCode ) {
  * @returns {boolean}             Whether a request is in progress
  */
 export function isCountryStatesFetching( state, countryCode ) {
-	return get( state.countryStates, [ 'isFetching', countryCode.toLowerCase() ], false );
+	return state.countryStates?.isFetching?.[ countryCode.toLowerCase() ] ?? false;
 }

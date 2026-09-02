@@ -1,5 +1,4 @@
 import { createSelector } from '@automattic/state-utils';
-import { some } from 'lodash';
 import { getPostsForQuery } from 'calypso/state/posts/selectors';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getFrontPageEditorUrl from 'calypso/state/selectors/get-front-page-editor-url';
@@ -12,7 +11,9 @@ function getContactPage( posts ) {
 		posts?.find(
 			( post ) =>
 				post.type === 'page' &&
-				( some( post.metadata, { key: '_headstart_post', value: '_hs_contact_page' } ) ||
+				( ( post.metadata ?? [] ).some(
+					( item ) => item.key === '_headstart_post' && item.value === '_hs_contact_page'
+				) ||
 					post.slug === 'contact' )
 		)?.ID ?? null
 	);

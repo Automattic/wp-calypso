@@ -1,13 +1,4 @@
 @import '../responsive-sidebar/variables';
-// Old layout (no sidebar): sticky header
-// For pages without sub menus, the first header is the sticky header
-// For pages with sub menus, the second header is the sticky header
-.dashboard-root__layout:not( :has( main > .dashboard-header-bar ) ) > .dashboard-header-bar,
-.dashboard-root__layout > main > .dashboard-header-bar {
-	position: sticky;
-	top: 0;
-	z-index: 3; // DataViews header seems to have z-index: 1; CalloutOverlay has z-index: 2
-}
 
 .dashboard-root__layout {
 	display: flex;
@@ -42,8 +33,6 @@
 }
 
 @media print {
-	.dashboard-root__layout > .dashboard-header-bar,
-	.dashboard-root__layout > main > .dashboard-header-bar,
 	.dashboard-responsive-sidebar,
 	.dashboard-responsive-sidebar__sidebar,
 	.dashboard-responsive-sidebar__overlay {

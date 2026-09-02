@@ -24,6 +24,17 @@ const ListActionsBar = () => {
 
 	const filterOptions = useSiteSubscriptionsFilterOptions();
 	const sortOptions = useMemo( () => getSortOptions( translate ), [ translate ] );
+	const { data, isLoading } = SubscriptionManager.useSiteSubscriptionsQuery();
+	const visibleCount = data.subscriptions.filter(
+		( subscription ) => ! subscription.isDeleted
+	).length;
+	const isSortDisabled = ! isLoading && visibleCount === 0;
+	const isFilterDisabled = ! isLoading && ! data.hasSearchMatchesWithAllFilter;
+	const disabledReasonText = translate( 'No subscribed sites match your search.', {
+		textOnly: true,
+	} );
+	const filterLabel = getOptionLabel( filterOptions, filterOption ) || '';
+	const sortLabel = getOptionLabel( sortOptions, sortTerm ) || '';
 
 	return (
 		<div className="site-subscriptions-list-actions-bar">
@@ -38,15 +49,44 @@ const ListActionsBar = () => {
 			<SelectDropdown
 				className="list-actions-bar__filter-control list-actions-bar__spacer"
 				options={ filterOptions }
+				disabled={ isFilterDisabled }
 				onSelect={ ( selectedOption: Option< Reader.SiteSubscriptionsFilterBy > ) =>
 					setFilterOption( selectedOption.value )
 				}
 				selectedText={ translate( 'View: %s', {
-					args: getOptionLabel( filterOptions, filterOption ) || '',
+					args: filterLabel,
 				} ) }
+				ariaLabel={
+					isFilterDisabled
+						? translate( 'View: %(filter)s. %(reason)s', {
+								args: {
+									filter: filterLabel,
+									reason: disabledReasonText,
+								},
+								textOnly: true,
+						  } )
+						: undefined
+				}
 			/>
 
-			<SortControls options={ sortOptions } value={ sortTerm } onChange={ setSortTerm } />
+			<SortControls
+				options={ sortOptions }
+				value={ sortTerm }
+				onChange={ setSortTerm }
+				disabled={ isSortDisabled }
+				ariaLabel={
+					isSortDisabled
+						? translate( 'Sort: %(sortingLabel)s. %(reason)s', {
+								args: {
+									sortingLabel: sortLabel,
+									reason: disabledReasonText,
+								},
+								textOnly: true,
+						  } )
+						: undefined
+				}
+				title={ isSortDisabled ? disabledReasonText : undefined }
+			/>
 		</div>
 	);
 };

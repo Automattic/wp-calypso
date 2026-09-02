@@ -17,6 +17,7 @@ const defaultList: ComponentProps< typeof ReaderListHeader >[ 'list' ] = {
 	owner: 'test_user',
 	is_owner: true,
 	is_public: true,
+	feeds: [],
 };
 
 function renderReaderListHeader(

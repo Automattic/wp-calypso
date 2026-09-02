@@ -22,7 +22,6 @@ import LayoutHeader, {
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { TAB_INVITED_MEMBERS } from '../../constants';
 
 import './style.scss';
 
@@ -70,21 +69,33 @@ export default function TeamInvite() {
 						} )
 					);
 					dispatch( recordTracksEvent( 'calypso_a4a_team_invite_success' ) );
-					isFeedbackShown
-						? page.redirect( `${ A4A_TEAM_LINK }/${ TAB_INVITED_MEMBERS }` )
-						: page.redirect(
-								addQueryArgs( A4A_FEEDBACK_LINK, {
-									args: { email: username },
-									type: FeedbackType.MemberInviteSent,
-								} )
-						  );
+					if ( isFeedbackShown ) {
+						page.redirect( A4A_TEAM_LINK );
+					} else {
+						page.redirect(
+							addQueryArgs( A4A_FEEDBACK_LINK, {
+								args: { email: username },
+								type: FeedbackType.MemberInviteSent,
+							} )
+						);
+					}
 				},
 
 				onError: ( error ) => {
-					dispatch( errorNotice( error.message ) );
+					let errorMessage: string;
+					if ( error.code === 'a4a_user_invite_automattician' ) {
+						errorMessage = translate(
+							'Automattician accounts cannot be invited as agency team members.'
+						);
+					} else {
+						errorMessage =
+							error.message ||
+							translate( 'Something went wrong sending the invite. Please try again.' );
+					}
+					dispatch( errorNotice( errorMessage ) );
 					dispatch(
 						recordTracksEvent( 'calypso_a4a_team_invite_error', {
-							error: 'api_error',
+							error: error.code || 'api_error',
 						} )
 					);
 				},

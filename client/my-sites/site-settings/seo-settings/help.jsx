@@ -1,7 +1,6 @@
 import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import { connect } from 'react-redux';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
@@ -60,7 +59,8 @@ export default connect( ( state ) => {
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const hasAdvancedSEOFeature =
 		siteHasFeature( state, siteId, FEATURE_ADVANCED_SEO ) &&
-		( ! siteIsJetpack || get( getJetpackModules( state, siteId ), 'seo-tools.available', false ) );
+		( ! siteIsJetpack ||
+			( getJetpackModules( state, siteId )?.[ 'seo-tools' ]?.available ?? false ) );
 
 	return {
 		siteId,

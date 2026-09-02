@@ -1,6 +1,5 @@
 import { Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -179,7 +178,7 @@ export default connect(
 		const originSiteName = site?.name ?? '';
 
 		return {
-			originBlogId: get( site, 'ID', -Infinity ),
+			originBlogId: site?.ID ?? -Infinity,
 			originSiteName,
 			originSiteSlug,
 		};

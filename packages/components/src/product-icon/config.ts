@@ -59,16 +59,20 @@ export type SupportedSlugs =
 	| 'personal-bundle'
 	| 'personal-bundle-2y'
 	| 'personal-bundle-monthly'
+	| 'personal-bundle-3y'
 	| 'value_bundle'
 	| 'value_bundle-2y'
 	| 'value_bundle-monthly'
 	| 'value_bundle_monthly'
+	| 'value_bundle-3y'
 	| 'ecommerce-bundle'
 	| 'ecommerce-bundle-2y'
 	| 'ecommerce-bundle-monthly'
+	| 'ecommerce-bundle-3y'
 	| 'business-bundle'
 	| 'business-bundle-2y'
 	| 'business-bundle-monthly'
+	| 'business-bundle-3y'
 	| 'pro-plan'
 	| 'starter-plan'
 	| 'wp_com_hundred_year_bundle_centennially'
@@ -167,18 +171,34 @@ export type SupportedSlugs =
 export const iconToProductSlugMap: Record< keyof typeof paths, readonly SupportedSlugs[] > = {
 	'wpcom-free': [ 'free_plan' ],
 	'wpcom-blogger': [ 'blogger-bundle', 'blogger-bundle-2y' ],
-	'wpcom-personal': [ 'personal-bundle', 'personal-bundle-2y', 'personal-bundle-monthly' ],
+	'wpcom-personal': [
+		'personal-bundle',
+		'personal-bundle-2y',
+		'personal-bundle-monthly',
+		'personal-bundle-3y',
+	],
 	'wpcom-premium': [
 		'value_bundle',
 		'value_bundle-2y',
 		'value_bundle-monthly',
 		'value_bundle_monthly',
+		'value_bundle-3y',
 		'pro-plan',
 		'starter-plan',
 	],
 	'wpcom-100-year': [ 'wp_com_hundred_year_bundle_centennially' ],
-	'wpcom-ecommerce': [ 'ecommerce-bundle', 'ecommerce-bundle-2y', 'ecommerce-bundle-monthly' ],
-	'wpcom-business': [ 'business-bundle', 'business-bundle-2y', 'business-bundle-monthly' ],
+	'wpcom-ecommerce': [
+		'ecommerce-bundle',
+		'ecommerce-bundle-2y',
+		'ecommerce-bundle-monthly',
+		'ecommerce-bundle-3y',
+	],
+	'wpcom-business': [
+		'business-bundle',
+		'business-bundle-2y',
+		'business-bundle-monthly',
+		'business-bundle-3y',
+	],
 	'jetpack-ai': [ 'jetpack_ai_monthly', 'jetpack_ai_yearly' ],
 	'jetpack-free': [ 'jetpack_free' ],
 	'jetpack-personal': [ 'jetpack_personal', 'jetpack_personal_monthly' ],

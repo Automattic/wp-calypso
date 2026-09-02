@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { saveJetpackSettings } from 'calypso/state/jetpack/settings/actions';
 import getRequest from 'calypso/state/selectors/get-request';
 
@@ -9,9 +8,8 @@ import getRequest from 'calypso/state/selectors/get-request';
  * @returns {boolean}             Whether Post by Email address is currently being updated
  */
 export default function isRegeneratingJetpackPostByEmail( state, siteId ) {
-	return get(
-		getRequest( state, saveJetpackSettings( siteId, { post_by_email_address: 'regenerate' } ) ),
-		'isLoading',
-		false
+	return (
+		getRequest( state, saveJetpackSettings( siteId, { post_by_email_address: 'regenerate' } ) )
+			?.isLoading ?? false
 	);
 }

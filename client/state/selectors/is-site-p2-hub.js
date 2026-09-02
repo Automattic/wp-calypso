@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 /**
@@ -11,5 +10,5 @@ export default function isSiteP2Hub( state, siteId ) {
 	if ( ! isSiteWPForTeams( state, siteId ) ) {
 		return false;
 	}
-	return siteId === get( state, [ 'sites', 'items', siteId, 'options', 'p2_hub_blog_id' ], false );
+	return siteId === ( state?.sites?.items?.[ siteId ]?.options?.p2_hub_blog_id ?? false );
 }

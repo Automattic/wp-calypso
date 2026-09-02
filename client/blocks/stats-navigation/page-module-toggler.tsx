@@ -2,7 +2,7 @@ import { Popover } from '@automattic/components';
 import { FormToggle } from '@wordpress/components';
 import { Icon, cog } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'calypso/state';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -12,9 +12,6 @@ import { AVAILABLE_PAGE_MODULES, ModuleToggleItem } from './constants';
 
 type PageModuleTogglerProps = {
 	moduleToggles: { [ name: string ]: boolean };
-	onToggleModule: ( module: string, isShow: boolean ) => void;
-	isTooltipShown: boolean;
-	onTooltipDismiss: () => void;
 	customToggleIcon?: React.ReactNode;
 	siteId: number;
 	selectedItem: string;
@@ -41,32 +38,27 @@ export default function PageModuleToggler( {
 	selectedItem,
 	moduleToggles,
 	siteId,
-	isTooltipShown,
-	onTooltipDismiss,
 	customToggleIcon = <Icon className="gridicon" icon={ cog } />,
 }: PageModuleTogglerProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ pageModules, setPageModules ] = useState( moduleToggles );
+	const pageModules = moduleToggles ?? {};
 	const hasVideoPress = useSelector( ( state ) => siteHasFeature( state, siteId, 'videopress' ) );
-	const availableModuleToggles = useSelector( () =>
-		getAvailablePageModules( selectedItem, hasVideoPress )
+	const availableModuleToggles = useMemo(
+		() => getAvailablePageModules( selectedItem, hasVideoPress ),
+		[ selectedItem, hasVideoPress ]
 	);
 
-	// Use state to update the ref of the setting action button to avoid null element.
-	const [ settingsActionRef, setSettingsActionRef ] = useState(
-		useRef< HTMLButtonElement >( null )
+	const [ settingsActionElement, setSettingsActionElement ] = useState< HTMLButtonElement | null >(
+		null
 	);
 	const [ isSettingsMenuVisible, setIsSettingsMenuVisible ] = useState( false );
 
-	const buttonRefCallback = useCallback( ( node: HTMLButtonElement ) => {
-		if ( settingsActionRef.current === null ) {
-			setSettingsActionRef( { current: node } );
-		}
+	const buttonRefCallback = useCallback( ( node: HTMLButtonElement | null ) => {
+		setSettingsActionElement( node );
 	}, [] );
 
 	const toggleSettingsMenu = () => {
-		onTooltipDismiss();
 		setIsSettingsMenuVisible( ( isSettingsMenuVisible ) => {
 			return ! isSettingsMenuVisible;
 		} );
@@ -75,7 +67,6 @@ export default function PageModuleToggler( {
 	const onToggleModule = ( module: string, isShow: boolean ) => {
 		const selectedPageModules = Object.assign( {}, pageModules );
 		selectedPageModules[ module ] = isShow;
-		setPageModules( selectedPageModules );
 
 		dispatch(
 			updateModuleToggles( siteId, {
@@ -94,21 +85,10 @@ export default function PageModuleToggler( {
 				{ customToggleIcon }
 			</button>
 			<Popover
-				className="tooltip tooltip--darker highlight-card-tooltip highlight-card__settings-tooltip"
-				isVisible={ isTooltipShown }
-				position="bottom left"
-				context={ settingsActionRef.current }
-			>
-				<div className="highlight-card-tooltip-content">
-					<p>{ translate( 'Here’s where you can find all your Jetpack Stats settings.' ) }</p>
-					<button onClick={ onTooltipDismiss }>{ translate( 'Got it' ) }</button>
-				</div>
-			</Popover>
-			<Popover
 				className="tooltip highlight-card-popover page-modules-settings-popover"
 				isVisible={ isSettingsMenuVisible }
 				position="bottom left"
-				context={ settingsActionRef.current }
+				context={ settingsActionElement }
 				focusOnShow={ false }
 				onClose={ () => {
 					setIsSettingsMenuVisible( false );

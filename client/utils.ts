@@ -70,6 +70,7 @@ export function setupRedirectRoutes( redirectRouteList: RedirectRouteList[] ): v
 		page( path, ( context, next ): void => {
 			if ( context.path.match( regex ) ) {
 				page.redirect( getRedirect( context.params ) + urlQueryParams );
+				return;
 			}
 
 			next();

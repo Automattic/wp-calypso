@@ -53,7 +53,7 @@ describe( 'SearchMoreOptions', () => {
 		render( <SearchMoreOptions title="No themes found" /> );
 		expect( screen.getByRole( 'link', { name: 'Build with AI' } ) ).toHaveAttribute(
 			'href',
-			'/setup/ai-site-builder'
+			'/setup/ai-site-builder-onboarding'
 		);
 		expect( screen.getByRole( 'link', { name: 'Hire an expert' } ) ).toHaveAttribute(
 			'href',

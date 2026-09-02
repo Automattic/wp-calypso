@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/ui';
 import {
 	Button,
 	__experimentalGrid as Grid,
@@ -9,12 +8,15 @@ import {
 } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useState, useMemo } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
 import { filterOptions, partnerOffers } from './constants';
 import type { PartnerOffer, RecordTracksEvent } from './types';
 import type { View, Field } from '@wordpress/dataviews';
+
+import './style.scss';
 
 const VIEW_TERMS_URL = 'https://automattic.com/for-agencies/program-incentives';
 
@@ -52,8 +54,16 @@ function PartnerOfferCard( {
 			<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
 				<VStack spacing={ 4 } style={ { flex: 1, justifyContent: 'flex-start' } }>
 					<HStack>
-						{ item.logo }
-						{ offerType?.label && <Badge>{ offerType.label }</Badge> }
+						<HStack
+							className="exclusive-offers-card-logo"
+							spacing={ 0 }
+							justify="flex-start"
+							alignment="center"
+							expanded={ false }
+						>
+							{ item.logo }
+						</HStack>
+						{ offerType?.label && <Badge intent="draft">{ offerType.label }</Badge> }
 					</HStack>
 					<VStack spacing={ 1 }>
 						<Text size={ 13 } weight={ 500 }>
@@ -87,6 +97,9 @@ function PartnerOfferCard( {
 							href={ item.termsUrl ?? VIEW_TERMS_URL }
 							target="_blank"
 							onClick={ handleViewTermsClick }
+							style={ {
+								whiteSpace: 'nowrap',
+							} }
 						>
 							{ __( 'View terms' ) }
 						</Button>

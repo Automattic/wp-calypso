@@ -21,6 +21,30 @@ export const isLoading = ( state = true, { type } ) => {
 	return state;
 };
 
+// The name of the tab whose filtered fetch is currently loading (e.g. `'unread'`),
+// or null. Only load actions tagged with a `filter` touch it, so the unfiltered
+// background poll can't clear it mid-fetch (which would flash a filtered tab's
+// empty message). Reset on SET_FILTER so a tab switch starts clean.
+export const filteredLoading = ( state = null, { type, filter } ) => {
+	if ( SET_FILTER === type ) {
+		return null;
+	}
+
+	if ( ! filter ) {
+		return state;
+	}
+
+	if ( NOTES_LOADING === type ) {
+		return filter;
+	}
+
+	if ( NOTES_LOADED === type ) {
+		return null;
+	}
+
+	return state;
+};
+
 export const isPanelOpen = ( state = false, { type, isShowing } ) =>
 	SET_IS_SHOWING === type ? isShowing : state;
 
@@ -73,6 +97,7 @@ export const shortcutsPopoverIsOpen = ( state = false, { type } ) => {
 
 export default combineReducers( {
 	isLoading,
+	filteredLoading,
 	isPanelOpen,
 	selectedNoteId,
 	lastSelectedNoteId,

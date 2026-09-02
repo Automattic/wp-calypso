@@ -6,12 +6,14 @@ import { addQueryArgs } from '@wordpress/url';
 import { useMemo, useState, type ComponentType, type ReactElement } from 'react';
 import { useSiteLaunchGatingVariant } from 'calypso/lib/use-site-launch-gating-variant';
 import { getCurrentDashboard } from '../../app/routing';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { dashboardLinkWithBackport, redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import {
 	isSitePlanLaunchable as getIsSitePlanLaunchable,
 	isSitePlanBigSkyTrial,
 	isSitePlanPaid,
 } from '../plans';
+import SiteLaunchModal from '../site-launch-modal';
 import type { Site } from '@automattic/api-core';
 
 export type A4aLaunchModalComponent = ComponentType< {
@@ -24,7 +26,11 @@ type RecordTracksEvent = ( eventName: string, properties?: Record< string, unkno
 
 export interface UseSiteLaunchOptions {
 	tracksContext: string;
+	/** Where the launch flow's Back button returns to. Defaults to the current page. */
 	backTo?: string;
+	/** Where the launch flow leaves the user once the site is live. Defaults to `backTo`. */
+	flowDestination?: string;
+	/** Where an immediate launch leaves the user. Defaults to staying on the current page. */
 	postLaunchUrl?: string;
 	a4aLaunchUrl?: string;
 	a4aLaunchModal?: A4aLaunchModalComponent;
@@ -49,6 +55,7 @@ export function useSiteLaunch(
 	{
 		tracksContext,
 		backTo,
+		flowDestination,
 		postLaunchUrl,
 		a4aLaunchUrl,
 		a4aLaunchModal: A4aLaunchModal,
@@ -62,24 +69,21 @@ export function useSiteLaunch(
 		select: ( data ) => data.filter( ( d ) => d.blog_id === site.ID ),
 	} );
 
-	const launchMutation = useMutation( {
-		...siteLaunchMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: __( 'Your site has been launched; now you can share it with the world!' ),
-				error: __( 'Failed to launch site.' ),
-			},
-		},
-	} );
+	const launchMutation = useMutation(
+		withSnackbar( siteLaunchMutation( site.ID ), {
+			success: __( 'Your site has been launched; now you can share it with the world!' ),
+			error: __( 'Failed to launch site.' ),
+		} )
+	);
 
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ isExperimentLoading, variant ] = useSiteLaunchGatingVariant();
 
 	const isSitePlanHostingTrial = site.plan?.product_slug === DotcomPlans.HOSTING_TRIAL_MONTHLY;
-	const isSitePlanPaidWithDomains = isSitePlanPaid( site ) && domains.length > 1;
+	const hasCustomDomain = domains.some( ( domain ) => domain.subscription_id !== null );
+	const isSitePlanPaidWithCustomDomain = isSitePlanPaid( site ) && hasCustomDomain;
 	const isDisabled = ! getIsSitePlanLaunchable( site );
-	const shouldImmediatelyLaunch =
-		isSitePlanPaidWithDomains || isSitePlanHostingTrial || site.is_wpcom_staging_site;
+	const shouldImmediatelyLaunch = isSitePlanHostingTrial || site.is_wpcom_staging_site;
 
 	const launchUrl = useMemo( () => {
 		if ( isSitePlanBigSkyTrial( site ) ) {
@@ -99,9 +103,10 @@ export function useSiteLaunch(
 			back_to: backTo
 				? dashboardLinkWithBackport( backTo )
 				: redirectToDashboardLink( { supportBackport: true } ),
+			...( flowDestination ? { redirect_to: dashboardLinkWithBackport( flowDestination ) } : {} ),
 			dashboard: getCurrentDashboard(),
 		} );
-	}, [ site, backTo ] );
+	}, [ site, backTo, flowDestination ] );
 
 	const track = () => {
 		recordTracksEvent( 'calypso_dashboard_site_launch_button_click', { context: tracksContext } );
@@ -123,6 +128,15 @@ export function useSiteLaunch(
 	const launchForModal = () => {
 		track();
 		launchMutation.mutate( undefined, {
+			onError: onLaunchError,
+			onSettled: () => setIsModalOpen( false ),
+		} );
+	};
+
+	const confirmPreLaunch = () => {
+		track();
+		launchMutation.mutate( undefined, {
+			onSuccess: () => redirectAfterLaunch(),
 			onError: onLaunchError,
 			onSettled: () => setIsModalOpen( false ),
 		} );
@@ -175,6 +189,24 @@ export function useSiteLaunch(
 					onError: onLaunchError,
 				} );
 			},
+		};
+	}
+
+	if ( isSitePlanPaidWithCustomDomain ) {
+		return {
+			...baseResult,
+			isHidden: false,
+			onClick: () => setIsModalOpen( true ),
+			modal: isModalOpen ? (
+				<SiteLaunchModal
+					variant="pre-launch"
+					isOpen
+					site={ site }
+					isLaunching={ launchMutation.isPending }
+					onClose={ () => setIsModalOpen( false ) }
+					onLaunch={ confirmPreLaunch }
+				/>
+			) : null,
 		};
 	}
 

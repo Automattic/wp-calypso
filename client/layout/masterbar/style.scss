@@ -231,6 +231,25 @@ body.is-mobile-app-view {
 		gap: 6px;
 	}
 
+	&.masterbar__item-my-site.has-site-icon {
+		gap: 6px;
+
+		.masterbar__item-site-icon {
+			width: 20px;
+			height: 20px;
+			border-radius: 2px;
+			background: #f0f0f1;
+		}
+
+		@media only screen and (max-width: 781px) {
+			.masterbar__item-site-icon {
+				width: 28px;
+				height: 28px;
+				border-radius: 4px;
+			}
+		}
+	}
+
 	@media only screen and (max-width: 781px) {
 		&.masterbar__item-my-site {
 			padding-left: inherit;
@@ -379,6 +398,16 @@ body.is-mobile-app-view {
 		padding: 0 0 0 6px;
 	}
 
+	&.masterbar__item-command-palette {
+		gap: 6px;
+
+		.masterbar__item-content {
+			display: flex;
+			align-items: center;
+			line-height: 1;
+		}
+	}
+
 	.dashicons-before {
 		height: 20px;
 		color: var(--color-masterbar-icon);
@@ -406,7 +435,8 @@ body.is-mobile-app-view {
 
 	// The hover colors are supposed to be the same as those in wp-admin.
 	&:hover,
-	&.is-open {
+	&.is-open,
+	&:has(+ .masterbar__item-subitems:hover) {
 		svg path,
 		.gridicon {
 			fill: var(--color-masterbar-highlight);
@@ -450,23 +480,6 @@ body.is-mobile-app-view {
 
 	&.is-active {
 		background: var(--color-masterbar-item-active-background);
-	}
-
-	&:hover .masterbar__item-bubble {
-		border-color: var(--color-masterbar-item-hover-background);
-	}
-
-	&.has-unseen .masterbar__item-bubble {
-		display: block;
-		background: var(--color-masterbar-unread-dot-background);
-	}
-
-	&.is-active .masterbar__item-bubble {
-		display: none;
-	}
-
-	&.is-initial-load .masterbar__item-bubble {
-		animation: none;
 	}
 
 	&.masterbar__close-button {
@@ -712,6 +725,56 @@ body.is-mobile-app-view {
 	}
 }
 
+// In the global sidebar the submenu group background is white (matching the panel),
+// which suits the user menu but leaves the W-icon dropdown's second group (About
+// WordPress / Get Involved) looking like a stray gap. Give just that group a light
+// grey so it reads as a distinct section.
+.is-global-sidebar-visible .masterbar__item-my-sites + .masterbar__item-subitems {
+	--color-masterbar-submenu-group-background: #{$gray-100};
+}
+
+.masterbar__item-stats-sparkline {
+	padding: 0 10px;
+
+	.masterbar__item-content {
+		display: flex;
+		align-items: center;
+		height: 100%;
+	}
+
+	.wpcom-stats-sparkline {
+		width: auto;
+		height: auto;
+	}
+
+	.wpcom-stats-sparkline-bar {
+		fill: var(--color-masterbar-icon);
+	}
+
+	.wpcom-stats-sparkline-arrow {
+		fill: var(--color-masterbar-icon);
+	}
+
+	.wpcom-stats-sparkline-label {
+		fill: var(--color-masterbar-icon);
+	}
+
+	&:hover,
+	&:focus-visible {
+		.wpcom-stats-sparkline {
+			overflow: visible;
+		}
+
+		.wpcom-stats-sparkline-peak {
+			opacity: 1;
+		}
+	}
+
+	@media only screen and (max-width: 781px) {
+		display: none;
+	}
+}
+
 .masterbar__item-launch-site {
 	gap: 6px;
 	cursor: pointer;
@@ -813,13 +876,12 @@ body.is-mobile-app-view {
 	+ .masterbar__item-subitems {
 		.gravatar {
 			border: 1px solid var(--color-masterbar-border);
-			border-radius: unset;
+			border-radius: 50%;
 			margin-left: 1px;
 
 			@media only screen and (max-width: 781px) {
-				width: 26px;
-				height: 26px;
-				margin-left: 4px;
+				width: 28px;
+				height: 28px;
 			}
 		}
 	}
@@ -993,12 +1055,6 @@ body.is-mobile-app-view {
 		margin-left: 16px;
 		min-width: 0;
 	}
-
-	// TODO: Remove this once the new Badge APIs are implemented (DS-203).
-	.masterbar__info-badge {
-		background-color: var(--color-global-masterbar-site-info-badge-background, rgba(255, 255, 255, 0.1));
-		color: var(--color-global-masterbar-site-info-badge-color, var(--color-masterbar-submenu-text)) !important; //override the link color
-	}
 }
 
 .button > .masterbar__site-info,
@@ -1013,6 +1069,17 @@ body.is-mobile-app-view {
 .masterbar__site-status {
 	background-color: var(--color-global-masterbar-site-info-background, color-mix(in srgb, var(--color-masterbar-item-hover-background), $white 15%));
 	color: var(--color-masterbar-submenu-text);
+}
+
+.masterbar__site-badge {
+	box-sizing: border-box;
+	flex-shrink: 0;
+	padding-inline: 8px;
+	border-radius: 2px;
+	background-color: var(--color-global-masterbar-site-info-badge-background, rgba(255, 255, 255, 0.1));
+	color: var(--color-global-masterbar-site-info-badge-color, var(--color-masterbar-submenu-text)) !important; // override the link color
+	font-size: 12px;
+	line-height: 24px;
 }
 
 .masterbar__item-reader-label {
@@ -1188,54 +1255,14 @@ a.masterbar__quick-language-switcher {
 }
 
 .masterbar--is-checkout-redesign-v1 {
-	padding-inline-start: 1.5em;
+	// The checkout masterbar reuses StepContainerV2's Step.TopBar as its header
+	// (see client/layout/masterbar/checkout.tsx). Step.TopBar reads these custom
+	// properties for its spacing; they are normally provided by the
+	// .step-container-v2 root, which isn't an ancestor here, so define them.
+	--step-container-v2-top-bar-padding: 1rem;
+	--step-container-v2-top-bar-content-height: 24px;
 
-	.masterbar__secure-checkout {
-		gap: 0;
-	}
-
-	.masterbar__wp-circle-logo {
-		display: block;
-		fill: currentColor;
-	}
-
-	.masterbar__redesign-divider {
-		width: 1px;
-		height: 16px;
-		background-color: currentColor;
-		opacity: 0.3;
-		margin-inline: 12px;
-	}
-
-	.masterbar__back-button {
-		display: flex;
-		align-items: center;
-		gap: 2px;
-		background: none;
-		border: none;
-		cursor: pointer;
-		font-size: 0.875rem;
-		font-weight: 500;
-		color: inherit;
-		padding: 0;
-		line-height: 1;
-
-		svg {
-			fill: currentColor;
-		}
-	}
-
-	.masterbar__need-help-button {
-		margin-left: auto;
-		background: none;
-		border: none;
-		cursor: pointer;
-		font-size: 0.875rem;
-		font-weight: 400;
-		text-decoration: underline;
-		color: inherit;
-		padding: 0;
-	}
+	padding: 0;
 }
 
 .masterbar__item-help {

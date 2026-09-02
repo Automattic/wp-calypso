@@ -1,6 +1,5 @@
 import { Component } from 'react';
 import Main from 'calypso/components/main';
-import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import { ReaderPendingActionHandler } from './pending-action-handler';
 import './style.scss';
 
@@ -25,11 +24,6 @@ const setIsReaderPage = ( add ) => {
 	}
 };
 
-function SyncSiteSubscriptionsQuery() {
-	useSiteSubscriptions();
-	return null;
-}
-
 /**
  * A specialization of `Main` that adds a class to the body of the document
  *
@@ -52,7 +46,6 @@ export default class ReaderMain extends Component {
 		return (
 			<div ref={ forwardRef }>
 				<Main { ...props }>
-					<SyncSiteSubscriptionsQuery key="syncSiteSubscriptions" />
 					<ReaderPendingActionHandler />
 					{ children }
 				</Main>

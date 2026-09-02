@@ -26,12 +26,18 @@ interface SitePlan {
 export interface SiteCapabilities {
 	manage_options: boolean;
 	update_plugins: boolean;
+	view_stats: boolean;
+}
+
+interface DifmLiteSiteOptions {
+	is_website_content_submitted?: boolean;
 }
 
 export interface SiteOptions {
 	admin_url: string;
 	apm_enabled?: boolean;
 	created_at?: string;
+	difm_lite_site_options?: DifmLiteSiteOptions;
 	is_domain_only?: boolean;
 	is_redirect?: boolean;
 	is_difm_lite_in_progress?: boolean;
@@ -52,9 +58,25 @@ export interface SiteOptions {
 	unmapped_url?: string;
 	wordads?: boolean;
 	woocommerce_is_active?: boolean;
+	wpcom_admin_interface?: string;
+	wpcom_ai_launchpad_enabled?: boolean;
+	wpcom_ai_launchpad_dismissed?: boolean;
+	wpcom_ai_launchpad_completed?: boolean;
 	wpcom_production_blog_id?: number;
 	wpcom_staging_blog_ids?: number[];
 	import_engine?: string | null;
+}
+
+/**
+ * Outgoing email block on a WordPress.com on Atomic site, as reported by the
+ * site endpoint. `null`/absent means the site can send. `status` is always
+ * `blocked` today; the field exists so an at-risk state can be added later
+ * without changing the shape.
+ */
+export interface AtomicEmailBlock {
+	status: 'blocked';
+	reason: string;
+	expires_on: string;
 }
 
 export interface Site {
@@ -104,6 +126,7 @@ export interface Site {
 	garden_is_provisioned: boolean | null;
 	/** Present when requested via SITE_FIELDS; indicates Big Sky / AI builder availability. */
 	big_sky_enabled?: boolean;
+	atomic_email_block?: AtomicEmailBlock | null;
 
 	// Injected local properties
 	__inaccessible_jetpack_error?: Error;

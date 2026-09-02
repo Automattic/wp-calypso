@@ -1,7 +1,6 @@
 import { omit } from '@automattic/js-utils';
 import { createSelector } from '@automattic/state-utils';
 import isEqual from 'fast-deep-equal/es6';
-import { some } from 'lodash';
 import {
 	getDeserializedThemesQueryDetails,
 	getNormalizedThemesQuery,
@@ -21,18 +20,20 @@ import 'calypso/state/themes/init';
 export const isRequestingThemesForQueryIgnoringPage = createSelector(
 	( state, siteId, query ) => {
 		const normalizedQueryWithoutPage = omit( getNormalizedThemesQuery( query ), 'page' );
-		return some( state.themes.queryRequests, ( isRequesting, serializedQuery ) => {
-			if ( ! isRequesting ) {
-				return false;
-			}
+		return Object.entries( state.themes.queryRequests ?? {} ).some(
+			( [ serializedQuery, isRequesting ] ) => {
+				if ( ! isRequesting ) {
+					return false;
+				}
 
-			const queryDetails = getDeserializedThemesQueryDetails( serializedQuery );
-			if ( queryDetails.siteId !== siteId ) {
-				return false;
-			}
+				const queryDetails = getDeserializedThemesQueryDetails( serializedQuery );
+				if ( queryDetails.siteId !== siteId ) {
+					return false;
+				}
 
-			return isEqual( normalizedQueryWithoutPage, omit( queryDetails.query, 'page' ) );
-		} );
+				return isEqual( normalizedQueryWithoutPage, omit( queryDetails.query, 'page' ) );
+			}
+		);
 	},
 	( state ) => state.themes.queryRequests,
 	( state, siteId, query ) => getSerializedThemesQuery( query, siteId )

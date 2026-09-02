@@ -7,6 +7,7 @@ import {
 	isValidElement,
 	ReactNode,
 	ReactElement,
+	useCallback,
 	useEffect,
 	useMemo,
 	useState,
@@ -101,10 +102,16 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 		}
 	}, [ currentSection, dispatch ] );
 
+	const handleEscClose = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_onboarding_tour_modal_dismissed', { method: 'esc' } ) );
+		onClose();
+	}, [ dispatch, onClose ] );
+
 	return (
 		<Modal
 			className="onboarding-tour-modal-wrapper"
-			onRequestClose={ onClose }
+			onRequestClose={ handleEscClose }
+			shouldCloseOnClickOutside={ false }
 			__experimentalHideHeader
 		>
 			<div className="onboarding-tour-modal">

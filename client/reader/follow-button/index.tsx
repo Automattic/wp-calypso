@@ -13,6 +13,7 @@ import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 
 interface ReaderFollowButtonProps {
 	className?: string;
+	disabled?: boolean;
 	feedId?: number;
 	followApiSource?: string;
 	followSource?: string;

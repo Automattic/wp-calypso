@@ -106,6 +106,8 @@ describe( 'Snackbars', () => {
 			action: { type: 'success' },
 			mutation: {
 				meta: {
+					// Testing the underlying snackbar behaviour, so don't use withSnackbar() here.
+					// eslint-disable-next-line no-restricted-syntax
 					snackbar: {
 						success: 'Operation completed.',
 					},
@@ -172,6 +174,7 @@ describe( 'Snackbars', () => {
 			},
 			mutation: {
 				meta: {
+					// eslint-disable-next-line no-restricted-syntax -- see above: we're testing the snackbar behaviour itself.
 					snackbar: {
 						error: { source: 'server' },
 					},
@@ -203,6 +206,7 @@ describe( 'Snackbars', () => {
 			},
 			mutation: {
 				meta: {
+					// eslint-disable-next-line no-restricted-syntax -- see above: we're testing the snackbar behaviour itself.
 					snackbar: {
 						error: 'Custom snackbar error.',
 					},

@@ -56,7 +56,9 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		const urlValue = new URLSearchParams( search ).get( 'from' ) || '';
 		if ( skipInitialChecking ) {
 			setUrlValue( urlValue );
-			validateUrl( urlValue );
+			if ( urlValue ) {
+				validateUrl( urlValue );
+			}
 			return;
 		}
 

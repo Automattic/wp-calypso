@@ -53,15 +53,22 @@
 		justify-content: space-between;
 		width: 100%;
 	}
+	// The 0 and 5 steps of --color-accent are the decorative highlight, which diverges from the
+	// controls beside this one now that they follow --wp-admin-theme-color. That colour has no such
+	// steps, so both are mixed, at the percentages the date range picker's shortcut rows already use.
+	//
+	// Reading the token here rather than through the stats-interactive-colors mixin is what reaches
+	// Odyssey: the panel is a descendant of <body>, not a child, so it falls outside every root the
+	// mixin is applied at there.
 	&:hover {
-		background-color: var(--color-primary-0);
+		background-color: color-mix(in srgb, var(--wp-admin-theme-color) 6%, transparent);
 	}
 	& + & {
 		// Prevent overlap between outline and hover.
 		margin-top: 2px;
 	}
 	&.is-selected {
-		background-color: var(--color-accent-5);
+		background-color: color-mix(in srgb, var(--wp-admin-theme-color) 12%, transparent);
 	}
 }
 

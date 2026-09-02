@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors/get-current-plan';
 
 /**
@@ -9,5 +8,5 @@ import { getCurrentPlan } from 'calypso/state/sites/plans/selectors/get-current-
  */
 export function isCurrentUserCurrentPlanOwner( state, siteId ) {
 	const currentPlan = getCurrentPlan( state, siteId );
-	return get( currentPlan, 'userIsOwner', false );
+	return currentPlan?.userIsOwner ?? false;
 }

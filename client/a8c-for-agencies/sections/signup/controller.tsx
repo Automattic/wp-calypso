@@ -1,4 +1,4 @@
-import { Callback, Context } from '@automattic/calypso-router';
+import page, { Callback, Context } from '@automattic/calypso-router';
 import debug from 'debug';
 import { useEffect, useState } from 'react';
 import store from 'store';
@@ -18,7 +18,6 @@ import { hideMasterbar } from 'calypso/state/ui/actions';
 import AgencySignUp from './primary/agency-signup';
 import AgencySignupFinish from './primary/agency-signup-finish';
 import AgencySignupV2 from './signup-v2';
-import AgencySignupWCAsia from './signup-v2/wc-asia';
 
 // A simple wrapper to ensure the PageViewTracker is only rendered, and the event fired,
 // after the agency has been fetched and we know if the user is an agency user or not.
@@ -77,15 +76,8 @@ export const signupV2Context: Callback = ( context, next ) => {
 	next();
 };
 
-export const signupWCAsiaContext: Callback = ( context, next ) => {
-	context.store.dispatch( hideMasterbar() );
-	context.primary = (
-		<>
-			<PageViewTrackerWrapper path={ context.path } />
-			<AgencySignupWCAsia />
-		</>
-	);
-	next();
+export const redirectToSignup: Callback = () => {
+	page.redirect( '/signup' );
 };
 
 export const finishSignUpContext: Callback = ( context, next ) => {

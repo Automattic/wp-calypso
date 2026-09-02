@@ -22,13 +22,14 @@
 
 ## Packages
 
+- **Agents Manager** (`packages/agents-manager`) — shared component library for WordPress.com's unified AI agent experience, running in Calypso, Simple, and Atomic sites. Also deployed via `apps/agents-manager/` to `widgets.wp.com`. See its `AGENTS.md` for architecture and conventions.
 - **Help Center** (`packages/help-center`) — shared component library for WordPress.com support. Also deployed via `apps/help-center/` to `widgets.wp.com`.
 - **Image Studio** (`packages/image-studio`) — AI-powered image editing and generation
-- **Block Notes** (`packages/block-notes`) — AI-powered block commenting system for WordPress
 - **Calypso Products** (`packages/calypso-products`) — ⚠️ **Avoid.** Deprecated/frozen: a bloated client-side duplicate of product data the backend already owns. Don't add to it; prefer backend-driven data (e.g. `@automattic/api-queries`). See `packages/calypso-products/AGENTS.md`.
 
 ## Apps
 
+- **Agents Manager** (`apps/agents-manager`) — build/deploy layer that bundles `packages/agents-manager` into webpack entry points served from `widgets.wp.com`.
 - **Help Center** (`apps/help-center`) — build/deploy layer that bundles `packages/help-center` into webpack entry points served from `widgets.wp.com`.
 
 ## Development
@@ -45,6 +46,8 @@ yarn start
 # Build and start the dev server for the Dashboard client only.
 yarn start-dashboard
 ```
+
+If `yarn start` fails with `Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`, increase the Node heap size by running `NODE_OPTIONS=--max-old-space-size=8192 yarn start`. For other errors, run `yarn calypso-doctor` to diagnose and fix common environment issues.
 
 ## Testing instructions
 
@@ -75,6 +78,10 @@ yarn reformat-files   # Fix formatting with Prettier
 yarn typecheck-client # Type-check client
 ```
 
+## Conventions
+
+- Do NOT add any verbose code comments that narrate what the change does or why it was made (e.g. `// Added this to fix X`, `// Changed from Y to Z`, restating the code in prose). Such explanation belongs in the PR description, not the source. Only keep comments that a future reader genuinely needs — non-obvious rationale, gotchas, links to context — and match the comment density and style of the surrounding code.
+
 ## Pre-PR checks
 
 Before pushing a branch or running `gh pr create`, run the type-check that CI will run. PRs touching `client/` may fail the `type_check_client` CI check after opening, so verify locally first:
@@ -88,7 +95,6 @@ If it fails, fix the type errors at the source — do not silence them with `// 
 
 ## Creating Pull Requests
 
-- Before pushing the changes, remove any verbose code comments that narrate what the change does or why it was made (e.g. `// Added this to fix X`, `// Changed from Y to Z`, restating the code in prose). Such explanation belongs in the PR description, not the source. Only keep comments that a future reader genuinely needs — non-obvious rationale, gotchas, links to context — and match the comment density and style of the surrounding code.
 - Create PRs as draft. Follow the template in .github/PULL_REQUEST_TEMPLATE.md.
 - Follow the branch naming conventions in docs/git-workflow.md.
 - In the PR description:

@@ -20,8 +20,8 @@ const KEY_DOWN = 40;
 const suggestionMatcher = /(?:^|\s)@([^\s]*)$/i;
 
 /**
- * This pattern looks for special regex characters.
- * Extracted directly from lodash@4.17.21.
+ * Matches characters that carry special meaning inside a regular expression,
+ * so they can be escaped before the query is used to build one.
  */
 const reRegExpChars = /[\\^$.*+?()[\]{}|]/g;
 const reHasRegExpChars = RegExp( reRegExpChars.source );
@@ -120,7 +120,7 @@ class Suggestions extends Component {
 
 		const [ , suggestion ] = match;
 
-		// NOTE: This test logic was extracted directly from lodash@4.17.21.
+		// Escape any regex metacharacters so the suggestion can be safely used in a pattern.
 		if ( suggestion && reHasRegExpChars.test( suggestion ) ) {
 			return suggestion.replace( reRegExpChars, '\\$&' );
 		}

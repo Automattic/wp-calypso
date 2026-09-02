@@ -18,7 +18,7 @@ export default function SwitcherContent< T >( {
 	itemClassName,
 	items,
 	searchableFields,
-	searchClassName,
+	searchClassName = 'switcher-content__search',
 	view,
 	onChangeView,
 	width = '280px',
@@ -65,7 +65,11 @@ export default function SwitcherContent< T >( {
 	}, [ searchableFields, filterField ] );
 
 	if ( ! items ) {
-		return __( 'Loading…' );
+		return (
+			<Text variant="muted" className="switcher-content__loading">
+				{ __( 'Loading…' ) }
+			</Text>
+		);
 	}
 
 	const { data: filteredData } = filterSortAndPaginate( items, view, fields );
@@ -83,16 +87,14 @@ export default function SwitcherContent< T >( {
 
 	return (
 		<NavigableMenu style={ { width } }>
-			<MenuGroup>
-				{ filter ? (
-					<HStack justify="flex-start">
-						{ search }
-						{ filter }
-					</HStack>
-				) : (
-					search
-				) }
-			</MenuGroup>
+			{ filter ? (
+				<HStack justify="flex-start">
+					{ search }
+					{ filter }
+				</HStack>
+			) : (
+				search
+			) }
 			<MenuGroup hideSeparator>
 				{ filteredData.length === 0 ? (
 					<Text variant="muted" className="switcher-content__no-results">

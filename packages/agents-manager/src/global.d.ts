@@ -3,21 +3,37 @@
  */
 
 /**
+ * Text domain placeholder, replaced at build time by webpack's DefinePlugin
+ * with `'default'`. Must be used as the bare identifier (not a quoted
+ * `__i18n_text_domain__` string) so DefinePlugin can substitute it — a quoted
+ * literal is never rewritten and resolves to a dead text domain at runtime,
+ * leaving strings untranslated. Matches the convention in other Calypso
+ * packages (help-center, odie-client, components, …).
+ */
+declare const __i18n_text_domain__: string;
+
+/**
  * `agentsManagerData` is set as a global const via wp_add_inline_script
  * in Jetpack's Agents Manager feature.
  *
  * `agentProviders` entries may be URL strings (dynamically imported as ES
- * modules), URL metadata objects, or already-loaded `LoadedProviders` objects
- * with the same shape.
+ * modules) or already-loaded `LoadedProviders` objects with the same shape.
+ * A provider's stable ID is read from the loaded module's `providerId` export.
  */
 declare const agentsManagerData:
 	| {
-			agentProviders?: import('./utils/load-external-providers').AgentProviderEntry[];
+			agentProviders?: ( string | import('./utils/load-external-providers').LoadedProviders )[];
 			useUnifiedExperience?: boolean;
 			agentId?: string;
 			helpCenterUrl?: string;
 			/** Dev/internal context (localhost, jurassic, proxied a11ns, internal Atomic). Drives `is_test`. */
 			isDevMode?: boolean;
+			/** Whether the current request is attributed to an Automattician for tracking. */
+			isA11n?: boolean;
+			/** Whether the site is WordPress.com-hosted (Simple/WoA). */
+			isWpcomPlatform?: boolean;
+			/** The site's canonical identity; injected on wp-admin only. */
+			site?: { ID?: number; domain?: string };
 			emptyViewHeading?: string;
 			emptyViewHelp?: string;
 	  }
@@ -96,6 +112,14 @@ interface AgentsManagerExternalContextCard {
 interface AgentsManagerActions {
 	getChatState: () => Promise< AgentsManagerChatState >;
 	getSessionId: () => string;
+	/**
+	 * Records a Tracks event in the `jetpack_big_sky_` family with its base
+	 * props. `eventName` includes the family prefix.
+	 */
+	recordBigSkyTracksEvent?: (
+		eventName: import('./utils/tracks').BigSkyEventName,
+		props?: Record< string, unknown >
+	) => void;
 	setChatOpen: ( isOpen: boolean ) => void;
 	setChatDocked: ( isDocked: boolean ) => void;
 	setChatEnabled: ( isEnabled: boolean ) => void;
@@ -121,6 +145,15 @@ interface AgentsManagerActions {
 	 * instead of waiting for the `agents-manager-ready` event.
 	 */
 	isReady?: boolean;
+	/**
+	 * Set to `true` by builds that broadcast the agent's activity as window
+	 * events — `agents-manager-turn-started`, `agents-manager-turn-ended` and
+	 * `agents-manager-ability-completed`; see `utils/agent-activity-events.ts`.
+	 * A host that acts on the agent's silence (Big Sky's easy mode writes over
+	 * edits it can attribute to nobody) must check this first: against a build
+	 * without it, the agent is always silent.
+	 */
+	broadcastsAgentActivity?: boolean;
 }
 
 /**

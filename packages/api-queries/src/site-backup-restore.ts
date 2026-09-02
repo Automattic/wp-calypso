@@ -28,6 +28,7 @@ export const siteBackupRestoreProgressQuery = ( siteId: number, restoreId: numbe
  */
 export const siteBackupRestoreInitiateMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-backup-restore-init' },
 		mutationFn: ( {
 			timestamp,
 			config: restoreConfig,
@@ -48,6 +49,7 @@ export const siteBackupRestoreInitiateMutation = ( siteId: number ) =>
  */
 export const siteBackupGranularRestoreMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-backup-gran-restore' },
 		mutationFn: ( {
 			timestamp,
 			config: granularConfig,

@@ -8,17 +8,17 @@ describe( 'addDayToRange', () => {
 		expect( result ).toEqual( range );
 	} );
 
-	test( 'should set "from" to null if day is the same as "from"', () => {
+	test( 'should start a new range if day is the same as "from" in a complete range', () => {
 		const range = { from: moment( '2023-01-01' ), to: moment( '2023-01-05' ) };
 		const result = addDayToRange( moment( '2023-01-01' ), range );
-		expect( result.from ).toBeNull();
-		expect( result.to ).toEqual( range.to );
+		expect( result.from ).toEqual( moment( '2023-01-01' ) );
+		expect( result.to ).toBeNull();
 	} );
 
-	test( 'should set "to" to null if day is the same as "to"', () => {
+	test( 'should start a new range if day is the same as "to" in a complete range', () => {
 		const range = { from: moment( '2023-01-01' ), to: moment( '2023-01-05' ) };
 		const result = addDayToRange( moment( '2023-01-05' ), range );
-		expect( result.from ).toEqual( range.from );
+		expect( result.from ).toEqual( moment( '2023-01-05' ) );
 		expect( result.to ).toBeNull();
 	} );
 
@@ -36,38 +36,45 @@ describe( 'addDayToRange', () => {
 		expect( result.to ).toEqual( moment( '2023-01-05' ) );
 	} );
 
-	test( 'should update "from" if day is before current "from"', () => {
+	test( 'should set a one-day range when the second selected day matches "from"', () => {
+		const range = { from: moment( '2023-01-05' ), to: null };
+		const result = addDayToRange( moment( '2023-01-05' ), range );
+		expect( result.from ).toEqual( moment( '2023-01-05' ) );
+		expect( result.to ).toEqual( moment( '2023-01-05' ) );
+	} );
+
+	test( 'should order dates when the second selected day is before "from"', () => {
+		const range = { from: moment( '2023-01-05' ), to: null };
+		const result = addDayToRange( moment( '2023-01-01' ), range );
+		expect( result.from ).toEqual( moment( '2023-01-01' ) );
+		expect( result.to ).toEqual( moment( '2023-01-05' ) );
+	} );
+
+	test( 'should reset the range with day as "from" when day is before a complete range', () => {
 		const range = { from: moment( '2023-01-05' ), to: moment( '2023-01-10' ) };
 		const result = addDayToRange( moment( '2023-01-01' ), range );
 		expect( result.from ).toEqual( moment( '2023-01-01' ) );
-		expect( result.to ).toEqual( range.to );
+		expect( result.to ).toBeNull();
 	} );
 
-	test( 'should update "to" if day is after current "to"', () => {
+	test( 'should reset the range with day as "from" when day is after a complete range', () => {
 		const range = { from: moment( '2023-01-01' ), to: moment( '2023-01-05' ) };
 		const result = addDayToRange( moment( '2023-01-10' ), range );
-		expect( result.from ).toEqual( range.from );
-		expect( result.to ).toEqual( moment( '2023-01-10' ) );
+		expect( result.from ).toEqual( moment( '2023-01-10' ) );
+		expect( result.to ).toBeNull();
 	} );
 
-	test( 'should update "from" if day is closer to "from" than "to"', () => {
+	test( 'should reset the range with day as "from" when day is inside a complete range', () => {
 		const range = { from: moment( '2023-01-01' ), to: moment( '2023-01-10' ) };
 		const result = addDayToRange( moment( '2023-01-04' ), range );
 		expect( result.from ).toEqual( moment( '2023-01-04' ) );
-		expect( result.to ).toEqual( range.to );
-	} );
-
-	test( 'should update "to" if day is closer to "to" than "from"', () => {
-		const range = { from: moment( '2023-01-01' ), to: moment( '2023-01-10' ) };
-		const result = addDayToRange( moment( '2023-01-07' ), range );
-		expect( result.from ).toEqual( range.from );
-		expect( result.to ).toEqual( moment( '2023-01-07' ) );
+		expect( result.to ).toBeNull();
 	} );
 
 	test( 'should ignore time fractions', () => {
-		const range = { from: moment( '2023-01-01 11:10' ), to: moment( '2023-01-17 12:00' ) };
+		const range = { from: moment( '2023-01-01 11:10' ), to: null };
 		const result = addDayToRange( moment( '2023-01-17 13:00' ), range );
-		expect( result.from ).toEqual( range.from );
-		expect( result.to ).toBeNull();
+		expect( result.from.format( 'YYYY-MM-DD HH:mm' ) ).toEqual( '2023-01-01 00:00' );
+		expect( result.to.format( 'YYYY-MM-DD HH:mm' ) ).toEqual( '2023-01-17 00:00' );
 	} );
 } );

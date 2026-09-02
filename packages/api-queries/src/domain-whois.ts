@@ -16,6 +16,7 @@ export const domainWhoisQuery = ( domainName: string ) =>
 
 export const domainWhoisValidateMutation = ( domainNames: string[] ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-whois-validate' },
 		mutationFn: ( domainContactDetails: DomainContactDetails ) => {
 			const contactInformation = mapRecordKeysRecursively(
 				domainContactDetails,
@@ -27,6 +28,7 @@ export const domainWhoisValidateMutation = ( domainNames: string[] ) =>
 
 export const domainWhoisMutation = ( domainName: string ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-whois-update' },
 		mutationFn: ( {
 			domainContactDetails,
 			transferLock,
@@ -45,8 +47,7 @@ function isRecord( value: unknown ): value is Record< string, unknown > {
 /**
  * Convert a camelCaseWord to a snake_case_word.
  *
- * This is designed to work nearly identically to the lodash `snakeCase`
- * function. Notably:
+ * Notably:
  *
  * - Leading and trailing spaces are removed.
  * - Leading and trailing underscores are removed.

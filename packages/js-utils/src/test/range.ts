@@ -23,7 +23,7 @@ describe( 'range', () => {
 		expect( range( 3, 3 ) ).toEqual( [] );
 	} );
 
-	it( 'should coerce numeric-string and non-finite bounds like lodash', () => {
+	it( 'should coerce numeric-string and non-finite bounds', () => {
 		// @ts-expect-error -- exercises lenient coercion for untyped callers.
 		expect( range( '1', '5' ) ).toEqual( [ 1, 2, 3, 4 ] );
 		expect( range( 0, NaN ) ).toEqual( [] );
@@ -31,8 +31,8 @@ describe( 'range', () => {
 		expect( range( 0, undefined ) ).toEqual( [] );
 	} );
 
-	it( 'should treat a symbol bound as 0, like lodash', () => {
-		// @ts-expect-error -- lodash coerces non-numeric bounds rather than throwing.
+	it( 'should treat a symbol bound as 0', () => {
+		// @ts-expect-error -- non-numeric bounds are coerced rather than throwing.
 		expect( range( Symbol( 'x' ) ) ).toEqual( [] );
 	} );
 
@@ -40,8 +40,8 @@ describe( 'range', () => {
 		expect( range( 0, 5, 0 ) ).toEqual( [ 0, 0, 0, 0, 0 ] );
 	} );
 
-	it( 'should throw on an Infinity bound, like lodash', () => {
-		// lodash coerces Infinity to MAX_INTEGER, so the resulting array length
+	it( 'should throw on an Infinity bound', () => {
+		// Infinity is coerced to MAX_INTEGER, so the resulting array length
 		// is invalid for both implementations.
 		expect( () => range( 0, Infinity ) ).toThrow( RangeError );
 	} );

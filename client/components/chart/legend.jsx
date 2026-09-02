@@ -26,7 +26,7 @@ class ChartLegend extends Component {
 	};
 
 	render() {
-		const legendColors = [ 'chart__legend-color is-dark-blue' ];
+		const legendColors = [ 'chart__legend-color is-secondary' ];
 		const activeTab = this.props.activeTab;
 
 		const legendItems = this.props.availableCharts.map( function ( legendItem, index ) {
@@ -51,7 +51,7 @@ class ChartLegend extends Component {
 				<ul className="chart__legend-options">
 					<li className="chart__legend-option" key="default-tab">
 						<span className="chart__legend-label">
-							<span className="chart__legend-color is-wordpress-blue" />
+							<span className="chart__legend-color" />
 							{ activeTab.label }
 						</span>
 					</li>

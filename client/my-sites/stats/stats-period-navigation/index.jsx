@@ -205,6 +205,7 @@ class StatsPeriodNavigation extends PureComponent {
 		recordTracksEvent( `${ event_from }_stats_date_range_navigation`, {
 			range_in_days: dateRange.daysInRange,
 			direction: previousOrNext ? 'previous' : 'next',
+			blog_id: this.props.siteId,
 		} );
 
 		const navigationStart = momentSiteZone( dateRange.chartStart );
@@ -306,7 +307,9 @@ class StatsPeriodNavigation extends PureComponent {
 			return;
 		}
 
-		events.forEach( ( event ) => recordTracksEvent( event.name, event.params ) );
+		events.forEach( ( event ) =>
+			recordTracksEvent( event.name, { blog_id: this.props.siteId, ...event.params } )
+		);
 		this.props.toggleUpsellModal( this.props.siteId, statType );
 	};
 
@@ -393,7 +396,7 @@ class StatsPeriodNavigation extends PureComponent {
 	}
 }
 
-const addIsGatedFor = ( state, siteId ) => ( shortcut ) => ( {
+export const addIsGatedFor = ( state, siteId ) => ( shortcut ) => ( {
 	...shortcut,
 	isGated: shouldGateStats( state, siteId, `${ STATS_FEATURE_DATE_CONTROL }/${ shortcut.id }` ),
 	statType: `${ STATS_FEATURE_DATE_CONTROL }/${ shortcut.id }`,

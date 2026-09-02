@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 /**
  * Retrieves Google Business Profile stats for the specified criteria.
  * @param {Object} state - Global state tree
@@ -10,9 +8,7 @@ import { get } from 'lodash';
  * @returns {number} the corresponding stats, or null if not found
  */
 export default function getGoogleMyBusinessStats( state, siteId, statType, interval, aggregation ) {
-	return get(
-		state,
-		[ 'googleMyBusiness', siteId, 'stats', statType, interval, aggregation ],
-		null
+	return (
+		state?.googleMyBusiness?.[ siteId ]?.stats?.[ statType ]?.[ interval ]?.[ aggregation ] ?? null
 	);
 }

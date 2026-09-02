@@ -8,11 +8,39 @@ const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chu
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
+function applyPostCssConfig( rules, config ) {
+	return rules.map( ( rule ) => ( {
+		...rule,
+		use: rule.use?.map( ( loader ) =>
+			loader?.loader === require.resolve( 'postcss-loader' )
+				? {
+						...loader,
+						options: {
+							...loader.options,
+							postcssOptions: {
+								...loader.options?.postcssOptions,
+								config,
+							},
+						},
+				  }
+				: loader
+		),
+	} ) );
+}
+
 function getIndividualConfig( options = {} ) {
 	const { name, env, argv, injectPolyfill = true } = options;
 
 	const outputPath = path.join( __dirname, 'dist' );
-	const webpackConfig = getBaseWebpackConfig( env, argv );
+	// Every entry emits into the shared `dist/`, so chunk files (JS and the
+	// CSS the base config derives from this name) must be entry-unique —
+	// same-named files from another entry's build would overwrite these. The
+	// content hash busts CDN caches: chunk URLs carry no `?ver` query, unlike
+	// the entries enqueued via `asset.json`.
+	const webpackConfig = getBaseWebpackConfig( env, {
+		...argv,
+		'output-chunk-filename': `${ name }.[name].[contenthash:8].min.js`,
+	} );
 
 	return {
 		...webpackConfig,
@@ -22,6 +50,10 @@ function getIndividualConfig( options = {} ) {
 			...webpackConfig.output,
 			path: outputPath,
 			filename: '[name].min.js',
+			// Entries loaded on the same page (e.g. wp-admin + image-studio)
+			// must not share a chunk-loading runtime global.
+			chunkLoadingGlobal: `webpackChunk_${ name.replace( /-/g, '_' ) }`,
+			uniqueName: name,
 			library: 'agentsManager',
 		},
 		module: {
@@ -37,16 +69,17 @@ function getIndividualConfig( options = {} ) {
 						filename: 'images/[name].[contenthash:8][ext]',
 					},
 				},
-				// Handle image assets from block-notes package
-				{
-					test: /\.(webp|png|jpg|jpeg|gif|svg)$/i,
-					include: /block-notes/,
-					type: 'asset/resource',
-					generator: {
-						filename: 'images/[name].[contenthash:8][ext]',
-					},
-				},
 			],
+		},
+		resolve: {
+			...webpackConfig.resolve,
+			alias: {
+				...( webpackConfig.resolve?.alias || {} ),
+				// Share one Smooch instance with the Help Center bundle when both load
+				// together (e.g. the Site Editor). See smooch-shim.js.
+				// TODO: Remove once Agents Manager takes over the Help Center.
+				smooch$: path.join( __dirname, '../../build-tools/webpack/smooch-shim.js' ),
+			},
 		},
 		optimization: {
 			...webpackConfig.optimization,
@@ -77,14 +110,10 @@ function getIndividualConfig( options = {} ) {
 					}
 					// TODO: Remove this override when @wordpress/abilities ships with
 					// WordPress core (expected in WP 7.0).
-					// Bundle @wordpress/abilities into image-studio so it works on
-					// self-hosted sites where the package isn't registered as a script.
-					if (
-						( name === 'image-studio' ||
-							name === 'block-notes' ||
-							name === 'jetpack-ai-sidebar' ) &&
-						request === '@wordpress/abilities'
-					) {
+					// Bundle @wordpress/abilities so bundles work on sites where the
+					// package isn't registered as a script — WP_Scripts silently skips
+					// scripts with unregistered dependencies.
+					if ( request === '@wordpress/abilities' ) {
 						return null;
 					}
 					// Bundle @wordpress/ui: neither WordPress core nor the Gutenberg
@@ -95,6 +124,18 @@ function getIndividualConfig( options = {} ) {
 					if ( request === '@wordpress/ui' ) {
 						return null;
 					}
+					// The plugin maps `react`/`react-dom` but not this deep import,
+					// so it would get bundled — a second react-dom copy (v19) that
+					// crashes against the page's external React. WordPress's
+					// `ReactDOM` global has included `createRoot` since WP 6.2.
+					if ( request === 'react-dom/client' ) {
+						return 'ReactDOM';
+					}
+				},
+				requestToHandle( request ) {
+					if ( request === 'react-dom/client' ) {
+						return 'react-dom';
+					}
 				},
 			} ),
 			new ReadableJsAssetsWebpackPlugin(),
@@ -103,11 +144,11 @@ function getIndividualConfig( options = {} ) {
 }
 
 /**
- * Reader chat config — bundles all dependencies (no WP externals).
+ * Reader chat config — bundles all dependencies and emits an asset manifest.
  *
- * Omits DependencyExtractionWebpackPlugin entirely so React, @wordpress/data,
- * and other WP packages are inlined. The resulting reader-chat.min.js is
- * self-contained and safe to load on the frontend (no WP script loader needed).
+ * DependencyExtractionWebpackPlugin is configured with useDefaults: false so React,
+ * WordPress data, and other WP packages remain inlined. The resulting reader-chat.min.js
+ * is self-contained and safe to load on the frontend.
  * @param   {Object}  options                       options
  * @param   {Object}  options.env                   environment options
  * @param   {Object}  options.argv                  webpack CLI args
@@ -116,7 +157,12 @@ function getIndividualConfig( options = {} ) {
 function getReaderConfig( options = {} ) {
 	const { env, argv } = options;
 	const outputPath = path.join( __dirname, 'dist' );
-	const webpackConfig = getBaseWebpackConfig( env, argv );
+	// Chunk files must be entry-unique and content-hashed in the shared
+	// `dist/` — see `getIndividualConfig`.
+	const webpackConfig = getBaseWebpackConfig( env, {
+		...argv,
+		'output-chunk-filename': 'reader-chat.[name].[contenthash:8].min.js',
+	} );
 
 	return {
 		...webpackConfig,
@@ -132,7 +178,10 @@ function getReaderConfig( options = {} ) {
 		module: {
 			...webpackConfig.module,
 			rules: [
-				...( webpackConfig.module?.rules || [] ),
+				...applyPostCssConfig(
+					webpackConfig.module?.rules || [],
+					path.join( __dirname, 'reader-chat-postcss.config.js' )
+				),
 				{
 					// P2/O2 expects window._ to remain Underscore.
 					resource: require.resolve( 'lodash/lodash.js' ),
@@ -144,6 +193,12 @@ function getReaderConfig( options = {} ) {
 			...webpackConfig.resolve,
 			alias: {
 				...( webpackConfig.resolve?.alias || {} ),
+				// Share one Smooch instance across bundles (see smooch-shim.js).
+				// TODO: Remove once Agents Manager takes over the Help Center.
+				smooch$: path.join( __dirname, '../../build-tools/webpack/smooch-shim.js' ),
+				// Keep libvips' inlined WASM out of the frontend bundle. See
+				// reader-chat-vips-stub.js.
+				'@wordpress/vips/worker$': path.join( __dirname, 'reader-chat-vips-stub.js' ),
 				'../agent-history': path.join( __dirname, 'reader-chat-route-stub.js' ),
 				'../support-guide': path.join( __dirname, 'reader-chat-route-stub.js' ),
 				'../support-guides': path.join( __dirname, 'reader-chat-route-stub.js' ),
@@ -166,7 +221,12 @@ function getReaderConfig( options = {} ) {
 				'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
 			} ),
 			new ReadableJsAssetsWebpackPlugin(),
-			// Intentionally NO DependencyExtractionWebpackPlugin — all WP deps are bundled.
+			// Emit the cache-busting manifest without externalizing any dependencies.
+			new DependencyExtractionWebpackPlugin( {
+				outputFilename: '[name].asset.json',
+				outputFormat: 'json',
+				useDefaults: false,
+			} ),
 		],
 	};
 }
@@ -203,7 +263,6 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		getIndividualConfig( { env, argv, name: 'jetpack-ai-sidebar' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin-disconnected' } ),
-		getIndividualConfig( { env, argv, name: 'block-notes' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-ciab' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wooai' } ),
 		getReaderConfig( { env, argv } ),

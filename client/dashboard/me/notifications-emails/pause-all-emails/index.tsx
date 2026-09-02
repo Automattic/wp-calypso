@@ -5,6 +5,7 @@ import { CheckboxControl, Button, __experimentalVStack as VStack } from '@wordpr
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useCallback } from 'react';
 import { useAnalytics } from '../../../app/analytics';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../../components/card';
 import { ConfirmationModal } from './confirmation-modal';
 
@@ -21,15 +22,12 @@ export const PauseAllEmails = () => {
 		mutate: updateSettings,
 		isPending: isSaving,
 		isSuccess: isSettingsUpdated,
-	} = useMutation( {
-		...userSettingsMutation(),
-		meta: {
-			snackbar: {
-				success: enabled ? __( 'All emails paused.' ) : __( 'All emails unpaused.' ),
-				error: __( 'Failed to pause all emails.' ),
-			},
-		},
-	} );
+	} = useMutation(
+		withSnackbar( userSettingsMutation(), {
+			success: enabled ? __( 'All emails paused.' ) : __( 'All emails unpaused.' ),
+			error: __( 'Failed to pause all emails.' ),
+		} )
+	);
 
 	const originalState = isAllWpcomEmailsDisabled( settings );
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );

@@ -1,5 +1,4 @@
 import { Gridicon, TimeSince } from '@automattic/components';
-import { get } from 'lodash';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 import type { JSX } from 'react';
 
@@ -33,7 +32,7 @@ export default function PostTrackback( props: PostTrackbackProps ): JSX.Element 
 	if ( ! comment ) {
 		return null;
 	}
-	const unescapedAuthorName = unescape( get( comment, 'author.name', '' ) );
+	const unescapedAuthorName = unescape( comment?.author?.name ?? '' );
 	const authorUrlLink = comment.author?.wpcom_login
 		? getUserProfileUrl( comment.author.wpcom_login )
 		: comment.author?.URL;

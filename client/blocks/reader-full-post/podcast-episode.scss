@@ -1,0 +1,207 @@
+// Jetpack Podcast Episode block, ported from the block's own stylesheet
+// since the Reader doesn't load it.
+
+.wp-block-jetpack-podcast-episode {
+	.jetpack-podcast-episode {
+		display: flex;
+		gap: 16px;
+		align-items: flex-start;
+		padding: 16px;
+		border: 1px solid #e0e0e0;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 6px;
+		background-color: var(--studio-white);
+
+		@media (max-width: 600px) {
+			flex-direction: column;
+		}
+	}
+
+	.jetpack-podcast-episode__poster {
+		flex: 0 0 auto;
+		margin: 0;
+		inline-size: 160px;
+		max-inline-size: 40%;
+
+		img {
+			inline-size: 100%;
+			aspect-ratio: 1;
+			object-fit: cover;
+			border-radius: 4px;
+			display: block;
+		}
+
+		@media (max-width: 600px) {
+			inline-size: 100%;
+			max-inline-size: 100%;
+		}
+	}
+
+	.jetpack-podcast-episode__body {
+		flex: 1 1 auto;
+		min-inline-size: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.jetpack-podcast-episode__meta-line {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin: 0;
+		font-size: 0.85em;
+		color: #757575;
+		text-transform: uppercase;
+		letter-spacing: 0.03em;
+	}
+
+	.jetpack-podcast-episode__badge {
+		display: inline-flex;
+		align-items: center;
+		padding-inline: 8px;
+		padding-block: 2px;
+		font-size: 0.75em;
+		font-weight: 600;
+		line-height: 1.4;
+		// Full pill shape; no fixed radius scale value produces this.
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 999px;
+		background-color: #f0f0f0;
+		color: #1e1e1e;
+	}
+
+	.jetpack-podcast-episode__badge--trailer {
+		background-color: #e7f5ff;
+		color: #0073aa;
+	}
+
+	.jetpack-podcast-episode__badge--bonus {
+		background-color: #fff4e6;
+		color: #b35900;
+	}
+
+	.jetpack-podcast-episode__badge--explicit {
+		background-color: #1e1e1e;
+		color: var(--studio-white);
+		font-family: monospace;
+	}
+
+	.jetpack-podcast-episode__title {
+		margin: 0;
+		font-size: 1.4em;
+		font-weight: 500;
+		line-height: 1.3;
+	}
+
+	.jetpack-podcast-episode__byline {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+		margin: 0;
+		font-size: 0.9em;
+		color: #757575;
+	}
+
+	.jetpack-podcast-episode__player {
+		margin-block: 4px;
+
+		audio,
+		video {
+			inline-size: 100%;
+			max-inline-size: 100%;
+			display: block;
+		}
+
+		video {
+			border-radius: 4px;
+		}
+	}
+
+	.jetpack-podcast-episode__summary {
+		margin: 0;
+		font-weight: 500;
+	}
+
+	.jetpack-podcast-episode__description {
+		margin: 0;
+
+		p:last-child {
+			margin-block-end: 0;
+		}
+	}
+
+	.jetpack-podcast-episode__people {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+	}
+
+	.jetpack-podcast-episode__person {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 0.9em;
+
+		img {
+			inline-size: 28px;
+			block-size: 28px;
+			border-radius: 50%;
+			object-fit: cover;
+		}
+	}
+
+	.jetpack-podcast-episode__person-role {
+		color: #757575;
+		font-size: 0.85em;
+	}
+
+	.jetpack-podcast-episode__soundbite {
+		display: flex;
+		gap: 12px;
+		align-items: baseline;
+	}
+
+	.jetpack-podcast-episode__soundbite-time {
+		flex: 0 0 auto;
+		font-variant-numeric: tabular-nums;
+		color: #757575;
+	}
+
+	.jetpack-podcast-episode__soundbite-button {
+		display: flex;
+		gap: 12px;
+		align-items: baseline;
+		inline-size: 100%;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: inherit;
+		font: inherit;
+		text-align: inherit;
+		cursor: pointer;
+		border-radius: 2px;
+
+		&:hover .jetpack-podcast-episode__soundbite-title {
+			text-decoration: underline;
+		}
+
+		&:focus-visible {
+			outline: 2px solid currentColor;
+			outline-offset: 2px;
+		}
+	}
+
+	.jetpack-podcast-episode__links {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+		font-size: 0.9em;
+	}
+}

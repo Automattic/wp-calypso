@@ -41,7 +41,10 @@ const SiteSwitcher = ( props: SiteSwitcherProps ) => {
 					title={ __( 'Add new site' ) }
 					onRequestClose={ () => setIsAddSiteModalOpen( false ) }
 				>
-					<AddNewSite context="sites-dashboard" aiSiteBuilderPath="/setup/ai-site-builder" />
+					<AddNewSite
+						context="sites-dashboard"
+						aiSiteBuilderPath="/setup/ai-site-builder-onboarding"
+					/>
 				</Modal>
 			) }
 		</>

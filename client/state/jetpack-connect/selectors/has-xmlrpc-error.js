@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { getAuthorizationData } from 'calypso/state/jetpack-connect/selectors/get-authorization-data';
 
 import 'calypso/state/jetpack-connect/init';
@@ -15,7 +14,7 @@ export const hasXmlrpcError = function ( state ) {
 	const authorizeData = getAuthorizationData( state );
 
 	return (
-		!! get( authorizeData, 'authorizationCode', false ) &&
-		get( authorizeData, [ 'authorizeError', 'message' ], '' ).includes( 'error' )
+		!! authorizeData?.authorizationCode &&
+		( authorizeData?.authorizeError?.message ?? '' ).includes( 'error' )
 	);
 };

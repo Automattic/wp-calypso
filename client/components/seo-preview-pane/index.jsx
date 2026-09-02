@@ -8,7 +8,6 @@ import {
 	TYPE_ARTICLE,
 } from '@automattic/social-previews';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import SeoPreviewUpgradeNudge from 'calypso/components/seo/preview-upgrade-nudge';
@@ -54,11 +53,8 @@ const getPostImage = ( post ) => {
 	}
 
 	const imgElements = parseHtml( content ).querySelectorAll( 'img' );
-	const imageUrl = get(
-		Array.from( imgElements ).find( ( { width } ) => width >= PREVIEW_IMAGE_WIDTH ),
-		'src',
-		null
-	);
+	const imageUrl =
+		Array.from( imgElements ).find( ( { width } ) => width >= PREVIEW_IMAGE_WIDTH )?.src ?? null;
 
 	return imageUrl ? `${ imageUrl }?s=${ PREVIEW_IMAGE_WIDTH }` : null;
 };
@@ -225,26 +221,20 @@ export class SeoPreviewPane extends PureComponent {
 				<div className="seo-preview-pane__preview-area">
 					<div className="seo-preview-pane__preview">
 						{ post &&
-							get(
-								{
-									wordpress: ReaderPost( site, post, frontPageMetaDescription ),
-									facebook: FacebookPost( site, post, frontPageMetaDescription ),
-									google: GooglePost( site, post, frontPageMetaDescription ),
-									x: TwitterPost( site, post, frontPageMetaDescription ),
-								},
-								selectedService,
-								ComingSoonMessage( translate )
-							) }
+							( {
+								wordpress: ReaderPost( site, post, frontPageMetaDescription ),
+								facebook: FacebookPost( site, post, frontPageMetaDescription ),
+								google: GooglePost( site, post, frontPageMetaDescription ),
+								x: TwitterPost( site, post, frontPageMetaDescription ),
+							}[ selectedService ] ??
+								ComingSoonMessage( translate ) ) }
 						{ ! post &&
-							get(
-								{
-									facebook: FacebookSite( site, frontPageMetaDescription ),
-									google: GoogleSite( site, frontPageMetaDescription ),
-									x: TwitterSite( site, frontPageMetaDescription ),
-								},
-								selectedService,
-								ComingSoonMessage( translate )
-							) }
+							( {
+								facebook: FacebookSite( site, frontPageMetaDescription ),
+								google: GoogleSite( site, frontPageMetaDescription ),
+								x: TwitterSite( site, frontPageMetaDescription ),
+							}[ selectedService ] ??
+								ComingSoonMessage( translate ) ) }
 					</div>
 				</div>
 			</div>

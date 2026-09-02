@@ -1,7 +1,8 @@
 import { makeErrorResponse, makeSuccessResponse } from '@automattic/composite-checkout';
 import { createElement } from 'react';
+import { flushSync } from 'react-dom';
 import { Root, createRoot } from 'react-dom/client';
-import { PurchaseOrderStatus, fetchPurchaseOrder } from '../hooks/use-purchase-order';
+import { RawOrder, fetchPurchaseOrder } from '../hooks/use-purchase-order';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from '../lib/get-domain-details';
 import getPostalCode from '../lib/get-postal-code';
@@ -121,12 +122,14 @@ export default async function upiProcessor(
 		'Payment failed. Please check your account and try again.'
 	);
 
-	const root = getRenderRoot( genericErrorMessage );
+	const container = createModalContainer();
+	let root: Root | null = null;
 	let rootUnmounted = false;
 	const safeDismissModal = () => {
 		if ( ! rootUnmounted ) {
 			rootUnmounted = true;
-			hideModal( root );
+			root?.unmount();
+			container.remove();
 		}
 	};
 
@@ -147,8 +150,8 @@ export default async function upiProcessor(
 
 			let isModalActive = true;
 			let explicitClosureMessage: string | undefined;
-			displayModal( {
-				root,
+			root = displayModal( {
+				container,
 				redirectUrl,
 				cancel: () => {
 					safeDismissModal();
@@ -163,14 +166,20 @@ export default async function upiProcessor(
 			} );
 
 			let orderStatus = 'processing';
+			let orderFailureMessage: string | undefined;
 			while ( isModalActive && [ 'processing', 'async-pending' ].includes( orderStatus ) ) {
-				orderStatus = await pollForOrderStatus( response.order_id, 2000, genericErrorMessage );
+				const order = await pollForOrderStatus( response.order_id, 2000, genericErrorMessage );
+				orderStatus = order.processing_status;
+				orderFailureMessage = order.error_message;
 			}
 			// `payment-confirmed` is treated as success: Stripe has accepted the payment
 			// but order finalization can still take a while. Hand off to the framework's
 			// pending page rather than keeping the user waiting in the modal.
 			if ( orderStatus !== 'success' && orderStatus !== 'payment-confirmed' ) {
-				throw new Error( explicitClosureMessage ?? genericFailureMessage );
+				// Prefer the specific, backend-translated Stripe failure message
+				// (e.g. "Your card has insufficient funds.") over the generic
+				// fallback, matching what synchronous card failures show. See SHILL-1811.
+				throw new Error( explicitClosureMessage ?? orderFailureMessage ?? genericFailureMessage );
 			}
 
 			safeDismissModal();
@@ -261,7 +270,7 @@ async function pollForOrderStatus(
 	orderId: number,
 	pollInterval: number,
 	genericErrorMessage: string
-): Promise< PurchaseOrderStatus > {
+): Promise< RawOrder > {
 	const orderData = await fetchPurchaseOrder( orderId );
 	if ( ! orderData ) {
 		// eslint-disable-next-line no-console
@@ -272,61 +281,54 @@ async function pollForOrderStatus(
 		orderData.processing_status === 'success' ||
 		orderData.processing_status === 'payment-confirmed'
 	) {
-		return orderData.processing_status;
+		return orderData;
 	}
 	await new Promise( ( resolve ) => setTimeout( resolve, pollInterval ) );
-	return orderData.processing_status;
+	return orderData;
 }
 
-function getRenderRoot( genericErrorMessage: string ) {
-	const dialogTarget = document.querySelector( '.upi-modal-target' );
-	if ( ! dialogTarget ) {
-		// eslint-disable-next-line no-console
-		console.error( 'Dialog target was not found.' );
-		throw new Error( genericErrorMessage );
-	}
-	return createRoot( dialogTarget );
-}
-
-function hideModal( root: Root ): void {
-	root.unmount();
+function createModalContainer(): HTMLElement {
+	// Render into a fresh container appended to the body rather than a node
+	// owned by the outer checkout React tree.
+	const container = document.createElement( 'div' );
+	container.className = 'upi-modal-target';
+	document.body.appendChild( container );
+	return container;
 }
 
 function displayModal( {
-	root,
+	container,
 	redirectUrl,
 	cancel,
 	error,
 }: {
-	root: Root;
+	container: HTMLElement;
 	redirectUrl: string;
 	cancel: () => void;
 	error: () => void;
-} ) {
-	root.render(
-		createElement( UpiConfirmation, {
-			redirectUrl,
-			cancel,
-		} )
-	);
-
-	// We have to activate the `<dialog>` element after a moment because we
-	// need to give React a chance to render it.
-	setTimeout( () => {
-		const dialogElement = document.querySelector( 'dialog.upi-confirmation' );
-		if ( ! dialogElement || ! ( 'showModal' in dialogElement ) ) {
-			// eslint-disable-next-line no-console
-			console.error( 'Dialog was not found or browser does not support dialogs.' );
-			error();
-			return;
-		}
-
-		// dialog elements are a new addition to HTML but should be
-		// supported by all the browsers that calypso supports.
-		// Nevertheless, TypeScript does not know about it.
-		( dialogElement.showModal as () => void )();
-		dialogElement.addEventListener( 'close', () => cancel() );
+} ): Root {
+	// Create the root and render into it in the same tick: under React 19 a
+	// root created earlier (before the async transaction) never commits its
+	// later render. flushSync forces the render to commit synchronously so the
+	// dialog element exists in the DOM before we call showModal().
+	const root = createRoot( container );
+	flushSync( () => {
+		root.render( createElement( UpiConfirmation, { redirectUrl, cancel } ) );
 	} );
+
+	const dialogElement = container.querySelector( 'dialog.upi-confirmation' );
+	if ( ! dialogElement || ! ( 'showModal' in dialogElement ) ) {
+		// eslint-disable-next-line no-console
+		console.error( 'Dialog was not found or browser does not support dialogs.' );
+		error();
+		return root;
+	}
+
+	// dialog elements are a new addition to HTML but should be
+	// supported by all the browsers that calypso supports.
+	// Nevertheless, TypeScript does not know about it.
+	( dialogElement.showModal as () => void )();
+	dialogElement.addEventListener( 'close', () => cancel() );
 	return root;
 }
 

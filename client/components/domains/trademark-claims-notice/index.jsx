@@ -1,7 +1,7 @@
 import { Button, CompactCard } from '@automattic/components';
 import { TRADE_MARK_CLAIMS_MODAL_COPY } from '@automattic/domain-search';
+import { isEmpty } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';

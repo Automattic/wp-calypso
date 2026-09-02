@@ -734,6 +734,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 							) }
 							{ hasFeature && ! featureLabel && (
 								<Gridicon
+									className="plan-comparison-grid__available-checkmark"
 									icon="checkmark"
 									color="var(--studio-wordpress-blue-50)"
 									aria-label={ translate( 'Feature available' ) }

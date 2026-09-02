@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -81,7 +80,7 @@ class RewindFormCreds extends Component {
 
 export default connect(
 	( state, ownProps ) => {
-		const siteId = parseInt( get( ownProps, [ 'initialContext', 'query', 'siteId' ], 0 ) );
+		const siteId = parseInt( ownProps?.initialContext?.query?.siteId ?? 0 );
 		const rewindState = getRewindState( state, siteId );
 		return {
 			siteId,

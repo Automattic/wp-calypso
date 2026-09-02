@@ -11,8 +11,8 @@ import {
 	FoldableCard,
 	ExternalLink,
 } from '@automattic/components';
+import { isEmpty } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';

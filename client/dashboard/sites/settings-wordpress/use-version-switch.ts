@@ -12,6 +12,7 @@ import { useQuery, useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { usePrevious } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useReducer } from 'react';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { useBackupState } from '../backups/use-backup-state';
 import type { BackupState } from '../backups/use-backup-state';
 import type { Site } from '@automattic/api-core';
@@ -110,15 +111,12 @@ export function useVersionSwitch( site: Site ): VersionSwitchState {
 		refetchInterval: hasPendingVersion && backupState.hasRecentlyCompleted ? 5000 : false,
 	} );
 
-	const mutation = useMutation( {
-		...siteWordPressVersionMutation( site.ID, { deferUntilBackupComplete } ),
-		meta: {
-			snackbar: {
-				...( ! deferUntilBackupComplete && { success: __( 'WordPress version saved.' ) } ),
-				error: __( 'Failed to save WordPress version.' ),
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( siteWordPressVersionMutation( site.ID, { deferUntilBackupComplete } ), {
+			...( ! deferUntilBackupComplete && { success: __( 'WordPress version saved.' ) } ),
+			error: __( 'Failed to save WordPress version.' ),
+		} )
+	);
 
 	const switchVersion = ( version: string ) => {
 		if ( deferUntilBackupComplete ) {

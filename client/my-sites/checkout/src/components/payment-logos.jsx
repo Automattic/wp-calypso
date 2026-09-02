@@ -1,5 +1,8 @@
 import PropTypes from 'prop-types';
 
+/**
+ * @param {{ className?: string }} props
+ */
 export function VisaLogo( { className } ) {
 	return (
 		<svg
@@ -28,6 +31,9 @@ VisaLogo.propTypes = {
 	className: PropTypes.string,
 };
 
+/**
+ * @param {{ className?: string }} props
+ */
 export function CBLogo( { className } ) {
 	// We need to provide a unique ID to any svg that uses an id prop
 	// especially if we expect multiple instances of the component to render on the page
@@ -98,6 +104,9 @@ CBLogo.propTypes = {
 	className: PropTypes.string,
 };
 
+/**
+ * @param {{ className?: string }} props
+ */
 export function MastercardLogo( { className } ) {
 	return (
 		<svg
@@ -127,6 +136,9 @@ MastercardLogo.propTypes = {
 	className: PropTypes.string,
 };
 
+/**
+ * @param {{ className?: string }} props
+ */
 export function AmexLogo( { className } ) {
 	return (
 		<svg
@@ -151,6 +163,9 @@ AmexLogo.propTypes = {
 	className: PropTypes.string,
 };
 
+/**
+ * @param {{ className?: string }} props
+ */
 export function JcbLogo( { className } ) {
 	return (
 		<svg
@@ -187,6 +202,9 @@ JcbLogo.propTypes = {
 	className: PropTypes.string,
 };
 
+/**
+ * @param {{ className?: string }} props
+ */
 export function DinersLogo( { className } ) {
 	return (
 		<svg
@@ -223,6 +241,9 @@ DinersLogo.propTypes = {
 	className: PropTypes.string,
 };
 
+/**
+ * @param {{ className?: string }} props
+ */
 export function UnionpayLogo( { className } ) {
 	return (
 		<svg
@@ -255,6 +276,9 @@ UnionpayLogo.propTypes = {
 	className: PropTypes.string,
 };
 
+/**
+ * @param {{ className?: string }} props
+ */
 export function DiscoverLogo( { className } ) {
 	return (
 		<svg

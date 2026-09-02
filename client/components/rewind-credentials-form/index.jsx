@@ -2,9 +2,9 @@
  * External dependendies
  */
 import { Button, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
+import { isEmpty } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -163,7 +163,7 @@ export class RewindCredentialsForm extends Component {
 					<FormSelect
 						name="protocol"
 						id="protocol-type"
-						value={ get( this.state.form, 'protocol', 'ssh' ) }
+						value={ this.state.form?.protocol ?? 'ssh' }
 						onChange={ this.handleFieldChange }
 						disabled={ formIsSubmitting }
 					>

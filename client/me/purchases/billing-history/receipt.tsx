@@ -79,7 +79,7 @@ interface BillingReceiptProps {
 }
 
 interface BillingReceiptConnectedProps {
-	transactionFetchError?: string;
+	transactionFetchError: boolean;
 	transaction: BillingTransaction | undefined;
 	translate: LocalizeProps[ 'translate' ];
 	previousRoute: string;
@@ -274,9 +274,39 @@ function ReceiptPaymentMethod( { transaction }: { transaction: BillingTransactio
 	);
 }
 
+interface ReceiptVatDetails {
+	country?: string | null;
+	id?: string | null;
+	name?: string | null;
+	address?: string | null;
+}
+
+/**
+ * The tax identity to print on a receipt.
+ *
+ * A receipt describes a supply that already happened, so it has to name the
+ * party it happened with. The API says who that was, taking account of any
+ * reissue that has since superseded the receipt. The user's current details are
+ * only a stand-in for receipts served by an API that predates the field, where
+ * they remain the best guess available.
+ */
+function useReceiptVatDetails( transaction: BillingTransaction ): {
+	vatDetails: ReceiptVatDetails;
+	isLoading: boolean;
+	fetchError: unknown;
+} {
+	const { vatDetails, isLoading, fetchError } = useVatDetails();
+
+	if ( transaction.tax_customer_info ) {
+		return { vatDetails: transaction.tax_customer_info, isLoading: false, fetchError: null };
+	}
+
+	return { vatDetails, isLoading, fetchError };
+}
+
 function UserVatDetails( { transaction }: { transaction: BillingTransaction } ) {
 	const translate = useTranslate();
-	const { vatDetails, isLoading, fetchError } = useVatDetails();
+	const { vatDetails, isLoading, fetchError } = useReceiptVatDetails( transaction );
 	const reduxDispatch = useDispatch();
 
 	const getEmailReceiptLinkClickHandler = ( receiptId: string ) => {
@@ -559,6 +589,24 @@ export function ReceiptItemTaxes( { transaction }: { transaction: BillingTransac
 
 	if ( ! transactionIncludesTax( transaction ) && ! hasBusinessUseTaxDetails( transaction ) ) {
 		return null;
+	}
+
+	if ( transaction.tax_breakdown && transaction.tax_breakdown.length > 0 ) {
+		return (
+			<>
+				{ transaction.tax_breakdown.map( ( entry ) => (
+					<div key={ entry.label } className="billing-history__transaction-tax-amount">
+						<span>{ `${ entry.label } ${ entry.rate_display }` }</span>
+						<span>
+							{ formatCurrency( entry.local_tax_collected_integer, transaction.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ) }
+						</span>
+					</div>
+				) ) }
+			</>
+		);
 	}
 
 	const baseTaxLabel = taxName ?? String( translate( 'Tax' ) );

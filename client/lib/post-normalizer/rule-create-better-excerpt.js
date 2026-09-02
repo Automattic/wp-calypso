@@ -1,4 +1,3 @@
-import { forEach } from 'lodash';
 import striptags from 'striptags';
 import { domForHtml } from './utils';
 
@@ -46,7 +45,7 @@ function buildStrippedDom( content ) {
 	// Ditch any photo captions, styles, scripts
 	const stripSelectors =
 		'.wp-caption, style, script, blockquote[class^="instagram-"], figure, .tiled-gallery';
-	forEach( dom.querySelectorAll( stripSelectors ), removeElement );
+	Array.from( dom.querySelectorAll( stripSelectors ) ).forEach( removeElement );
 	return dom.innerHTML;
 }
 
@@ -72,8 +71,7 @@ export function formatExcerpt( content ) {
 	stripLeadingBreaklines( dom );
 
 	// now limit it to the first three elements
-	forEach(
-		dom.querySelectorAll( '#__better_excerpt__ > p, #__better_excerpt__ > br' ),
+	Array.from( dom.querySelectorAll( '#__better_excerpt__ > p, #__better_excerpt__ > br' ) ).forEach(
 		function ( element, index ) {
 			if ( index >= 3 ) {
 				element.parentNode && element.parentNode.removeChild( element );

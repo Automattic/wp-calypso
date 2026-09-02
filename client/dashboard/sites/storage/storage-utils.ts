@@ -1,4 +1,5 @@
 import { PRODUCT_1GB_SPACE, type Product, type Purchase } from '@automattic/api-core';
+import { isRemoved } from '../../utils/purchase';
 
 /**
  * Represents a storage tier option for the dropdown.
@@ -31,8 +32,7 @@ export function getStorageAddOnProduct( products: Record< number, Product > ): P
  */
 export function getPurchasedStorageAddOn( purchases: Purchase[] ): Purchase | null {
 	const storagePurchase = purchases.find(
-		( purchase ) =>
-			purchase.product_slug === PRODUCT_1GB_SPACE && purchase.subscription_status === 'active'
+		( purchase ) => purchase.product_slug === PRODUCT_1GB_SPACE && ! isRemoved( purchase )
 	);
 
 	return storagePurchase ?? null;

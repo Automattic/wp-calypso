@@ -1,9 +1,9 @@
 import words from './words';
 
 /**
- * Converts an ASCII identifier or key to camelCase, matching lodash's
- * `camelCase` for that input — not a Unicode/deburr replacement (see `words`).
- * Unlike the simpler `snakeToCamelCase`, it fully tokenizes any casing.
+ * Converts an ASCII identifier or key to camelCase — not a Unicode/deburr
+ * replacement (see `words`). Unlike the simpler `snakeToCamelCase`, it fully
+ * tokenizes any casing.
  */
 export default function camelCase( input: string | null | undefined ): string {
 	return words( String( input ?? '' ) ).reduce( ( result, word, index ) => {

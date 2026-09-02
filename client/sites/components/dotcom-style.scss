@@ -38,9 +38,12 @@
 		box-sizing: border-box;
 		display: flex;
 		justify-content: center;
-		margin: 24px auto 8px;
-		padding-inline: 24px;
+		padding: 16px 24px;
 		width: 100%;
+
+		@media ( max-width: $break-medium ) {
+			padding: 16px;
+		}
 	}
 
 	.sites-banner {

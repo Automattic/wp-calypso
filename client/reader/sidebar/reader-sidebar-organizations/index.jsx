@@ -1,4 +1,3 @@
-import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReaderSidebarOrganizationsList from './list';
@@ -12,7 +11,7 @@ export class ReaderSidebarOrganizations extends Component {
 
 	renderItems() {
 		const { organizations, path } = this.props;
-		return map( organizations, ( organization ) => (
+		return organizations.map( ( organization ) => (
 			<li key={ organization.id }>
 				<ReaderSidebarOrganizationsList
 					key={ organization.id }

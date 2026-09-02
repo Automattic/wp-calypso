@@ -7,22 +7,38 @@ import { isEditorPage } from './is-editor-page';
  */
 const EDITOR_ENTRY_MEDIA_QUERY = '(min-width: 480px)';
 
+let adminBarInEditorSnapshot: boolean | undefined;
+
 /**
- * Whether Gutenberg's "admin bar in editor" (omnibar) experiment is active — it renders a top
- * admin bar in the fullscreen editor. Both signals below are set server-side by Gutenberg core.
+ * Whether a top admin bar is present in the editor — Gutenberg's "admin bar in editor" (omnibar)
+ * experiment, or any context that renders a visible `#wpadminbar`. When it is, the editor toolbar
+ * entry points move into the admin bar instead.
+ *
+ * Snapshotted on first read and kept for the page's lifetime: the signals change as the user
+ * toggles editor modes (fullscreen, distraction-free), and the entry points must not hop between
+ * the toolbar and the admin bar.
  */
 export function isAdminBarInEditor(): boolean {
-	const hasExperimentFlag = !! ( window as Window & { __experimentalAdminBarInEditor?: boolean } )
-		.__experimentalAdminBarInEditor;
-	const hasBodyClass = document.body.classList.contains( 'has-admin-bar-in-editor' );
+	if ( adminBarInEditorSnapshot === undefined ) {
+		const hasExperimentFlag = !! ( window as Window & { __experimentalAdminBarInEditor?: boolean } )
+			.__experimentalAdminBarInEditor;
+		const hasBodyClass = document.body.classList.contains( 'has-admin-bar-in-editor' );
+		const hasVisibleAdminBar = ( document.getElementById( 'wpadminbar' )?.offsetHeight ?? 0 ) > 0;
 
-	return hasExperimentFlag || hasBodyClass;
+		adminBarInEditorSnapshot = hasExperimentFlag || hasBodyClass || hasVisibleAdminBar;
+	}
+
+	return adminBarInEditorSnapshot;
 }
 
 /**
  * Whether an editor toolbar entry point can show at all: on a block editor page, on desktop, and
  * with the omnibar off (when it's on, the entries live in the editor admin bar instead). All
  * checks are synchronous, so it's safe to read during render — e.g. from `hasAiChatEntryButton()`.
+ *
+ * Intentionally stays `true` on the Site Editor navigation view, where the toolbar is hidden:
+ * the entry `Fill`s must stay registered so the buttons appear once the canvas toolbar mounts.
+ * `hasAiChatEntryButton()` excludes that view on its own.
  */
 function isEditorEntryVisible(): boolean {
 	return (
@@ -33,10 +49,11 @@ function isEditorEntryVisible(): boolean {
 }
 
 /**
- * Whether the editor toolbar Ask AI button should show — only in a dev/internal context.
+ * Whether the editor toolbar Ask AI button should show. The host only loads the Agents Manager
+ * bundle when the feature is enabled, so editor-entry visibility is the only gate left to check here.
  */
 export function isEditorAiEntryEnabled(): boolean {
-	return isEditorEntryVisible() && !! getAgentsManagerInlineData()?.isDevMode;
+	return isEditorEntryVisible();
 }
 
 /**

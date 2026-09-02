@@ -1,6 +1,6 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
+import { isEmpty } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';

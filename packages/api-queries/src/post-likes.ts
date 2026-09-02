@@ -139,6 +139,7 @@ export const likePostMutation = ( queryClient: QueryClient ) =>
 		PostLikeMutationParams,
 		PostLikeMutationContext
 	>( {
+		meta: { statId: 'post-like' },
 		mutationFn: likePost,
 		onMutate: ( variables ) => snapshotAndUpdate( queryClient, variables, true ),
 		onSuccess: ( data, { siteId, postId } ) => {
@@ -164,6 +165,7 @@ export const unlikePostMutation = ( queryClient: QueryClient ) =>
 		PostLikeMutationParams,
 		PostLikeMutationContext
 	>( {
+		meta: { statId: 'post-unlike' },
 		mutationFn: unlikePost,
 		onMutate: ( variables ) => snapshotAndUpdate( queryClient, variables, false ),
 		onSuccess: ( data, { siteId, postId } ) => {

@@ -63,6 +63,20 @@ animate the opening/closing of the popover. This also keeps the parent's code
 clean and readable, with a minimal amount of boilerplate code required to show
 a popover.
 
+#### `leftBoundary { number | func } - default: 0`
+
+Sets the minimum document-relative left position for the Popover, e.g. to keep
+it clear of a fixed sidebar. A function is resolved whenever the Popover
+repositions.
+
+#### `rightBoundary { number | func } - default: viewport width`
+
+Sets the maximum right position for the Popover, in the same document-relative
+coordinate space as `leftBoundary` (the default viewport-width clamp assumes no
+horizontal page scroll, matching the Popover's existing behavior). A function
+is resolved whenever the Popover repositions. When the two boundaries conflict,
+`leftBoundary` wins.
+
 #### `position { string } - default: 'top'`
 
 The `position` property can be one of the following values:

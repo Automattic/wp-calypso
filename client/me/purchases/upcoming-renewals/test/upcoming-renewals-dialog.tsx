@@ -29,25 +29,28 @@ describe( '<UpcomingRenewalsDialog>', () => {
 
 	const mockPurchases = () => [
 		{
-			id: 1,
-			currencyCode: 'USD',
-			expiryDate: moment().add( 20, 'days' ).format(),
-			expiryStatus: 'expiring',
-			renewDate: '',
-			productSlug: 'personal-bundle',
-			productName: 'Personal Plan',
+			ID: 1,
+			currency_code: 'USD',
+			expiry_date: moment().add( 20, 'days' ).format(),
+			expiry_status: 'expiring',
+			subscription_status: 'active',
+			renew_date: '',
+			product_slug: 'personal-bundle',
+			product_name: 'WordPress.com Personal',
+			is_plan: true,
 			amount: 100,
 		},
 		{
-			id: 2,
-			currencyCode: 'USD',
-			expiryDate: moment().add( 10, 'days' ).format(),
-			expiryStatus: 'expiring',
-			renewDate: '',
-			productSlug: 'dotlive_domain',
+			ID: 2,
+			currency_code: 'USD',
+			expiry_date: moment().add( 10, 'days' ).format(),
+			expiry_status: 'expiring',
+			subscription_status: 'active',
+			renew_date: '',
+			product_slug: 'dotlive_domain',
 			meta: 'personalsitetest1234.live',
-			productName: 'DotLive Domain Registration',
-			isDomainRegistration: true,
+			product_name: 'DotLive Domain Registration',
+			is_domain_registration: true,
 			amount: 200,
 		},
 	];
@@ -78,7 +81,7 @@ describe( '<UpcomingRenewalsDialog>', () => {
 		).toHaveTextContent( '$200' );
 		expect(
 			document.body.querySelectorAll( '.upcoming-renewals-dialog__name' )[ 1 ]
-		).toHaveTextContent( /Personal PlanSite Plan: expires in 20 days/ );
+		).toHaveTextContent( /WordPress.com PersonalExpires in 20 days/ );
 		expect(
 			document.body.querySelectorAll( '.upcoming-renewals-dialog__price' )[ 1 ]
 		).toHaveTextContent( '$100' );
@@ -88,15 +91,15 @@ describe( '<UpcomingRenewalsDialog>', () => {
 		const purchases = [
 			...mockPurchases(),
 			{
-				id: 3,
-				currencyCode: 'USD',
-				expiryDate: moment().add( 35, 'days' ).format(),
-				expiryStatus: 'autoRenewing',
-				renewDate: moment().add( 5, 'days' ).format(),
-				productSlug: 'dotlive_domain',
+				ID: 3,
+				currency_code: 'USD',
+				expiry_date: moment().add( 35, 'days' ).format(),
+				expiry_status: 'auto-renewing',
+				renew_date: moment().add( 5, 'days' ).format(),
+				product_slug: 'dotlive_domain',
 				meta: 'autorenewing-domain.live',
-				productName: 'DotLive Domain Registration',
-				isDomainRegistration: true,
+				product_name: 'DotLive Domain Registration',
+				is_domain_registration: true,
 				amount: 200,
 			},
 		];

@@ -12,7 +12,7 @@ export type DIFMPriceTierProduct = Pick< Product, 'price_tier_list' > & {
  * Returns the price details alongwith calculated values of extraPageCount and extraPagesPrice is noOfPages is passed.
  * @param { Product | any } product  product to get details from
  * @param { number } noOfPages  the number of pages required
- * @returns {Object} with the relevent tier details
+ * @returns {Object} with the relevant tier details
  */
 export function getDIFMTieredPriceDetails(
 	product: undefined | null | DIFMPriceTierProduct,

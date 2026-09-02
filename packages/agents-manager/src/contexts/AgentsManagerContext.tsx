@@ -1,6 +1,12 @@
-import { createContext, useCallback, useContext, useState } from '@wordpress/element';
+import {
+	createContext,
+	useCallback,
+	useContext,
+	useLayoutEffect,
+	useState,
+} from '@wordpress/element';
 import { useNavigate } from 'react-router-dom';
-import { getSessionId } from '../utils/agent-session';
+import { getSessionId, setSessionSiteKey, setSessionUserId } from '../utils/agent-session';
 import { setResolvedAgentId } from '../utils/resolved-agent-id';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 import type { AgentsManagerSite, CurrentUser } from '@automattic/data-stores';
@@ -30,14 +36,20 @@ export interface AgentsManagerContextType {
 	 * TODO: Implement with dedicated endpoint. Currently hardcoded to false.
 	 */
 	isEligibleForChat: boolean;
+	/** Zendesk conversation tags to apply when a new support conversation is created. */
+	zendeskConversationTags: string[];
+	/** Index selecting a dedicated Smooch integration for new support conversations (e.g. `woo`). */
+	zendeskSmoochIntegrationKey?: string;
+	/** Zendesk Product ticket-field value to apply to new support conversations. */
+	zendeskTicketProductFieldValue?: string;
 	/** The agent configuration created during setup. */
 	agentConfig: UseAgentChatConfig | null;
 	/** Sets the agent configuration (called from `AgentSetup` after initialization). */
 	setAgentConfig: ( config: UseAgentChatConfig | null ) => void;
-	/** Returns the active session ID from `agentConfig` or stored session. */
-	getActiveSessionId: () => string;
-	/** Reopen the chat, resuming the active conversation. */
-	resumeActiveChat: () => void;
+	/** Returns this tab's active session ID from the stored session. */
+	getTabSessionId: () => string;
+	/** Reopen the chat, resuming this tab's conversation. */
+	resumeChat: () => void;
 }
 
 const defaultContext: AgentsManagerContextType = {
@@ -48,10 +60,11 @@ const defaultContext: AgentsManagerContextType = {
 	sectionName: 'wp-admin',
 	currentRoute: undefined,
 	isEligibleForChat: false,
+	zendeskConversationTags: [],
 	agentConfig: null,
 	setAgentConfig: () => {},
-	getActiveSessionId: () => '',
-	resumeActiveChat: () => {},
+	getTabSessionId: () => '',
+	resumeChat: () => {},
 };
 
 const AgentsManagerContext = createContext< AgentsManagerContextType >( defaultContext );
@@ -59,7 +72,16 @@ const AgentsManagerContext = createContext< AgentsManagerContextType >( defaultC
 export interface AgentsManagerContextProviderProps {
 	children: React.ReactNode;
 	value: Partial<
-		Pick< AgentsManagerContextType, 'currentUser' | 'site' | 'currentRoute' | 'isEligibleForChat' >
+		Pick<
+			AgentsManagerContextType,
+			| 'currentUser'
+			| 'site'
+			| 'currentRoute'
+			| 'isEligibleForChat'
+			| 'zendeskConversationTags'
+			| 'zendeskSmoochIntegrationKey'
+			| 'zendeskTicketProductFieldValue'
+		>
 	> & { sectionName: string; siteKey: string };
 }
 
@@ -75,20 +97,24 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 
 	const navigate = useNavigate();
 
-	const getActiveSessionId = useCallback( () => {
-		return agentConfig?.sessionId || getSessionId( agentConfig?.agentId );
-	}, [ agentConfig ] );
+	const getTabSessionId = useCallback( () => {
+		return getSessionId( agentConfig?.agentId, value.siteKey, value.currentUser?.ID );
+	}, [ agentConfig?.agentId, value.siteKey, value.currentUser?.ID ] );
 
-	// Non-reader chats resume only via router `state`, so pass the active `sessionId`.
-	const resumeActiveChat = useCallback( () => {
-		navigate( '/chat', { state: { sessionId: getActiveSessionId() } } );
-	}, [ navigate, getActiveSessionId ] );
+	// `AgentSetup` resolves this tab's stored session, so navigating is all a
+	// resume needs.
+	const resumeChat = useCallback( () => {
+		navigate( '/chat' );
+	}, [ navigate ] );
 
-	// Publish the resolved agent id for non-React callers. Written in render (not a
-	// useEffect) so it lands in the same render that sets `agentConfig`, before the
-	// chat tree mounts and reads it from event handlers; a useEffect runs post-commit
-	// and could lag a synchronous child interaction. The write is idempotent, so safe in render.
-	setResolvedAgentId( agentConfig?.agentId );
+	// Publish the resolved agent id and session scope for non-React callers
+	// (e.g. tracks), which fire from event handlers after commit. React callers
+	// receive the scope explicitly, so no render-phase module writes are needed.
+	useLayoutEffect( () => {
+		setResolvedAgentId( agentConfig?.agentId );
+		setSessionSiteKey( value.siteKey );
+		setSessionUserId( value.currentUser?.ID );
+	}, [ agentConfig?.agentId, value.siteKey, value.currentUser?.ID ] );
 
 	return (
 		<AgentsManagerContext.Provider
@@ -98,8 +124,8 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 				isLoggedIn,
 				agentConfig,
 				setAgentConfig,
-				getActiveSessionId,
-				resumeActiveChat,
+				getTabSessionId,
+				resumeChat,
 			} }
 		>
 			{ children }

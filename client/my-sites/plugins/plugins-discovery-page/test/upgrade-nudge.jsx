@@ -13,8 +13,8 @@ import {
 	PLAN_BUSINESS,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
+import { merge } from '@automattic/js-utils';
 import { screen } from '@testing-library/react';
-import { merge } from 'lodash';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import UpgradeNudge from '../upgrade-nudge';

@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/stats/init';
 
 /**
@@ -12,7 +10,7 @@ import 'calypso/state/stats/init';
  * @returns {boolean}        Whether post stat is being requested
  */
 export function isRequestingPostStats( state, siteId, postId, fields = [] ) {
-	return get( state.stats.posts.requesting, [ siteId, postId, fields.join() ], false );
+	return state.stats.posts.requesting?.[ siteId ]?.[ postId ]?.[ fields.join() ] ?? false;
 }
 
 /**

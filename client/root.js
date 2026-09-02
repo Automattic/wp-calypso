@@ -1,23 +1,7 @@
 import config from '@automattic/calypso-config';
 import globalPageInstance from '@automattic/calypso-router';
-import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { getLoggedInLandingPage } from 'calypso/lib/landing-page';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
-import { fetchPreferences } from 'calypso/state/preferences/actions';
-import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import getIsSubscriptionOnly from 'calypso/state/selectors/get-is-subscription-only';
-import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import { requestSite } from 'calypso/state/sites/actions';
-import {
-	canCurrentUserUseCustomerHome,
-	getSite,
-	getSiteSlug,
-	getSiteAdminUrl,
-	isAdminInterfaceWPAdmin,
-} from 'calypso/state/sites/selectors';
-import { hasReadersAsLandingPage } from 'calypso/state/sites/selectors/has-reader-as-landing-page';
-import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
-import { getSelectedSiteId } from './state/ui/selectors';
 
 /**
  * @param clientRouter Unused. We can't use the isomorphic router because we want to do redirects.
@@ -58,97 +42,4 @@ async function handleLoggedIn( page, context ) {
 		// Case for wp-admin redirection when primary site has classic admin interface.
 		window.location.assign( redirectPath );
 	}
-}
-
-// Helper thunk that ensures that the requested site info is fetched into Redux state before we
-// continue working with it.
-// The `siteSelection` handler in `my-sites/controller` contains similar code.
-const waitForSite = ( siteId ) => async ( dispatch, getState ) => {
-	if ( getSite( getState(), siteId ) ) {
-		return;
-	}
-
-	try {
-		await dispatch( requestSite( siteId ) );
-	} catch {
-		// if the fetching of site info fails, return gracefully and proceed to redirect to Reader
-	}
-};
-
-// Helper thunk that ensures that the user preferences has been fetched into Redux state before we
-// continue working with it.
-const waitForPrefs = () => async ( dispatch, getState ) => {
-	if ( hasReceivedRemotePreferences( getState() ) ) {
-		return;
-	}
-
-	try {
-		await dispatch( fetchPreferences() );
-	} catch {
-		// if the fetching of preferences fails, return gracefully and proceed to the next landing page candidate
-	}
-};
-
-const getSitesLink = ( isDashboardOptIn ) => {
-	// In development environments, don't redirect to the Dashboard subdomain as it might not be the intent.
-	// For instance, developers might use the Calypso Live link to test something not in the Dashboard,
-	// but they get redirected to the Dashboard subdomain, and lose the Calypso Live domain in the process.
-	// As a temporary workaround, we send them to the v1 /sites instead.
-	// TODO: The workaround will need to change once we deprecate v1 /sites.
-	if ( isDashboardOptIn && ! [ 'development', 'wpcalypso' ].includes( config( 'env_id' ) ) ) {
-		return dashboardLink( '/sites' );
-	}
-
-	return '/sites';
-};
-
-async function getLoggedInLandingPage( { dispatch, getState } ) {
-	await dispatch( waitForPrefs() );
-	const useSitesAsLandingPage = hasSitesAsLandingPage( getState() );
-	const dashboardOptIn = hasDashboardOptIn( getState() );
-
-	if ( useSitesAsLandingPage ) {
-		return getSitesLink( dashboardOptIn );
-	}
-
-	const useReaderAsLandingPage = hasReadersAsLandingPage( getState() );
-
-	if ( useReaderAsLandingPage ) {
-		return '/reader';
-	}
-
-	// determine the primary site ID (it's a property of "current user" object) and then
-	// ensure that the primary site info is loaded into Redux before proceeding.
-	const primaryOrSelectedSiteId = getSelectedSiteId( getState() ) || getPrimarySiteId( getState() );
-	await dispatch( waitForSite( primaryOrSelectedSiteId ) );
-	const primarySiteSlug = getSiteSlug( getState(), primaryOrSelectedSiteId );
-
-	if ( ! primarySiteSlug ) {
-		if ( getIsSubscriptionOnly( getState() ) ) {
-			return '/reader';
-		}
-
-		// there is no primary site or the site info couldn't be fetched. Redirect to Sites Dashboard.
-		return getSitesLink( dashboardOptIn );
-	}
-
-	const isCustomerHomeEnabled = canCurrentUserUseCustomerHome(
-		getState(),
-		primaryOrSelectedSiteId
-	);
-
-	if ( isCustomerHomeEnabled ) {
-		if ( isAdminInterfaceWPAdmin( getState(), primaryOrSelectedSiteId ) ) {
-			if ( [ 'development', 'wpcalypso' ].includes( config( 'env_id' ) ) ) {
-				// On Calypso Live and dev environments, don't redirect to wp-admin
-				// as it navigates the user away from the testing environment.
-				return getSitesLink( dashboardOptIn );
-			}
-			// This URL starts with 'https://' because it's the access to wp-admin.
-			return getSiteAdminUrl( getState(), primaryOrSelectedSiteId );
-		}
-		return `/home/${ primarySiteSlug }`;
-	}
-
-	return `/stats/day/${ primarySiteSlug }`;
 }

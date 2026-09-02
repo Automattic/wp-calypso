@@ -50,6 +50,8 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+	PLAN_JETPACK_SECURITY_T0_MONTHLY,
+	PLAN_JETPACK_SECURITY_T0_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
@@ -778,6 +780,9 @@ describe( 'getMonthlyPlanByYearly', () => {
 		expect( getMonthlyPlanByYearly( PLAN_JETPACK_SECURITY_REALTIME ) ).toEqual(
 			PLAN_JETPACK_SECURITY_REALTIME_MONTHLY
 		);
+		expect( getMonthlyPlanByYearly( PLAN_JETPACK_SECURITY_T0_YEARLY ) ).toEqual(
+			PLAN_JETPACK_SECURITY_T0_MONTHLY
+		);
 		expect( getMonthlyPlanByYearly( PLAN_JETPACK_COMPLETE ) ).toEqual(
 			PLAN_JETPACK_COMPLETE_MONTHLY
 		);
@@ -805,6 +810,9 @@ describe( 'getYearlyPlanByMonthly', () => {
 		);
 		expect( getYearlyPlanByMonthly( PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ) ).toEqual(
 			PLAN_JETPACK_SECURITY_REALTIME
+		);
+		expect( getYearlyPlanByMonthly( PLAN_JETPACK_SECURITY_T0_MONTHLY ) ).toEqual(
+			PLAN_JETPACK_SECURITY_T0_YEARLY
 		);
 		expect( getYearlyPlanByMonthly( PLAN_JETPACK_COMPLETE_MONTHLY ) ).toEqual(
 			PLAN_JETPACK_COMPLETE
@@ -838,6 +846,8 @@ describe( 'getPlanClass', () => {
 		expect( getPlanClass( PLAN_ENTERPRISE_GRID_WPCOM ) ).toEqual( 'is-wpcom-enterprise-grid-plan' );
 		expect( getPlanClass( PLAN_JETPACK_BUSINESS ) ).toEqual( 'is-business-plan' );
 		expect( getPlanClass( PLAN_JETPACK_BUSINESS_MONTHLY ) ).toEqual( 'is-business-plan' );
+		expect( getPlanClass( PLAN_JETPACK_SECURITY_T0_YEARLY ) ).toEqual( 'is-security-t0' );
+		expect( getPlanClass( PLAN_JETPACK_SECURITY_T0_MONTHLY ) ).toEqual( 'is-security-t0' );
 	} );
 } );
 
@@ -1152,6 +1162,7 @@ describe( 'findPlansKeys', () => {
 				PLAN_JETPACK_PREMIUM,
 				PLAN_JETPACK_SECURITY_DAILY,
 				PLAN_JETPACK_SECURITY_REALTIME,
+				PLAN_JETPACK_SECURITY_T0_YEARLY,
 				PLAN_JETPACK_SECURITY_T1_YEARLY,
 				PLAN_JETPACK_SECURITY_T2_YEARLY,
 				PLAN_JETPACK_STARTER_YEARLY,
@@ -1184,6 +1195,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_PREMIUM_MONTHLY,
 			PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 			PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+			PLAN_JETPACK_SECURITY_T0_MONTHLY,
 			PLAN_JETPACK_SECURITY_T1_MONTHLY,
 			PLAN_JETPACK_SECURITY_T2_MONTHLY,
 			PLAN_JETPACK_STARTER_MONTHLY,
@@ -1309,6 +1321,8 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_COMPLETE_BI_YEARLY,
 			PLAN_JETPACK_COMPLETE,
 			PLAN_JETPACK_COMPLETE_MONTHLY,
+			PLAN_JETPACK_SECURITY_T0_YEARLY,
+			PLAN_JETPACK_SECURITY_T0_MONTHLY,
 			PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
 			PLAN_JETPACK_SECURITY_T1_YEARLY,
 			PLAN_JETPACK_SECURITY_T1_MONTHLY,
@@ -1531,6 +1545,12 @@ describe( 'planHasAtLeastOneFeature', () => {
 	} );
 
 	test( 'should return false when a plan has none of the provided features', () => {
+		expect(
+			planHasAtLeastOneFeature( PLAN_JETPACK_SECURITY_T0_YEARLY, [
+				FEATURE_JETPACK_BACKUP_T2_YEARLY,
+				FEATURE_VIDEO_UPLOADS,
+			] )
+		).toBe( false );
 		expect(
 			planHasAtLeastOneFeature( PLAN_JETPACK_SECURITY_T1_YEARLY, [
 				FEATURE_JETPACK_BACKUP_T2_YEARLY,

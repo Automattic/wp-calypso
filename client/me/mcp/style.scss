@@ -131,30 +131,32 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 		}
 	}
 
-	// First sub-group when a group row is expanded: full-bleed border separates
-	// from the group header, then inner padding for the tool list.
+	// First sub-group when a group row is expanded: negative margins bleed to the
+	// card edge, inner padding aligns the tool list with the group header content.
+	// No bottom padding — the CardBody's own padding provides the card-edge spacing,
+	// and the sub-divider's top margin provides the gap before any following divider.
 	.mcp-tools-subpage__group-body {
-		border-top: 1px solid var(--color-border-subtle);
 		margin-inline-start: -16px;
 		margin-inline-end: -16px;
-		padding: 16px 16px 16px;
+		padding: 20px 16px 0;
 
 		@include break-mobile {
 			margin-inline-start: -24px;
 			margin-inline-end: -24px;
-			padding: 20px 24px 20px;
+			padding: 24px 24px 0;
 		}
 	}
 
-	// Subsequent sub-groups: same horizontal padding, no top border (sub-divider provides it)
+	// Subsequent sub-groups: no bottom padding — CardBody edge handles it.
 	.mcp-tools-subpage__sub-group-body {
-		padding: 0 0 16px;
+		padding: 0;
 	}
 
-	// Divider between sub-groups within an expanded group card
+	// Divider between sub-groups within an expanded group card.
+	// Top margin provides the gap after the preceding tool list.
 	.mcp-tools-subpage__sub-divider {
 		border-top: 1px solid var(--color-border-subtle);
-		margin: 16px 0 20px;
+		margin: 16px 0 16px;
 	}
 }
 

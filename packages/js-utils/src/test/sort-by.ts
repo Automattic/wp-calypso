@@ -12,7 +12,7 @@ describe( 'sortBy', () => {
 	} );
 
 	it( 'sorts by a property name', () => {
-		// Capitalized "Bob" sorts before lowercase names, like lodash.
+		// Capitalized "Bob" sorts before lowercase names.
 		expect( sortBy( people, 'name' ).map( ( p ) => p.name ) ).toEqual( [
 			'Bob',
 			'alice',
@@ -112,7 +112,7 @@ describe( 'sortBy', () => {
 		] );
 	} );
 
-	it( 'treats a literal key containing dots as a whole key, like lodash', () => {
+	it( 'treats a literal key containing dots as a whole key', () => {
 		expect( sortBy( [ { 'key.with.dot': 2 }, { 'key.with.dot': 1 } ], 'key.with.dot' ) ).toEqual( [
 			{ 'key.with.dot': 1 },
 			{ 'key.with.dot': 2 },
@@ -123,18 +123,18 @@ describe( 'sortBy', () => {
 		expect( sortBy( [ { '': 2 }, { '': 1 } ], '' ) ).toEqual( [ { '': 1 }, { '': 2 } ] );
 	} );
 
-	it( 'treats a nullish iteratee as identity sorting, like lodash', () => {
-		// @ts-expect-error -- null iteratee sorts by identity (lodash parity).
+	it( 'treats a nullish iteratee as identity sorting', () => {
+		// @ts-expect-error -- null iteratee sorts by identity.
 		expect( sortBy( [ 2, 1, 3 ], null ) ).toEqual( [ 1, 2, 3 ] );
 		expect( sortBy( [ 2, 1, 3 ], undefined ) ).toEqual( [ 1, 2, 3 ] );
 	} );
 
-	it( 'materializes sparse-array holes as undefined, like lodash', () => {
+	it( 'materializes sparse-array holes as undefined', () => {
 		// eslint-disable-next-line no-sparse-arrays
 		expect( sortBy( [ , 1, , 0 ] ) ).toEqual( [ 0, 1, undefined, undefined ] );
 	} );
 
-	it( 'flattens iteratee arguments one level, like lodash', () => {
+	it( 'flattens iteratee arguments one level', () => {
 		const data = [
 			{ a: 1, b: 1, c: 3 },
 			{ a: 1, b: 1, c: 1 },

@@ -1,8 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+import { merge } from '@automattic/js-utils';
 import { screen } from '@testing-library/react';
-import { merge } from 'lodash';
 import { reducer as jetpackConnectionHealth } from 'calypso/state/jetpack-connection-health/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { JetpackConnectionHealthBanner } from '..';

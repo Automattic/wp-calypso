@@ -1,24 +1,21 @@
+import { purchaseQuery, sitePurchasesQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { Button, Card, FormLabel } from '@automattic/components';
+import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import HeaderCakeBack from 'calypso/components/header-cake/back';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
-import { getName, handleRenewMultiplePurchasesClick } from 'calypso/lib/purchases';
+import { handleRenewMultiplePurchasesClick } from 'calypso/lib/purchases';
 import { cancelPurchase, managePurchase } from 'calypso/me/purchases/paths';
 import PurchaseSiteHeader from 'calypso/me/purchases/purchases-site/header';
-import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
-import {
-	getByPurchaseId,
-	getSitePurchases,
-	hasLoadedUserPurchasesFromServer,
-} from 'calypso/state/purchases/selectors';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import { useDispatch as useReduxDispatch } from 'calypso/state';
+import { getName } from '../lib/raw-purchase-helpers';
+import type { Purchase } from '@automattic/api-core';
 
 import './style.scss';
 
@@ -38,11 +35,17 @@ export default function SiteActionInterstitial( {
 	const moment = useLocalizedMoment();
 	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
 
-	const purchase = useSelector( ( state ) => getByPurchaseId( state, purchaseId ) );
-	const purchases = useSelector( ( state ) =>
-		purchase ? getSitePurchases( state, purchase.siteId ) : null
-	);
-	const hasLoaded = useSelector( hasLoadedUserPurchasesFromServer );
+	const { data: purchase, isPending: isPendingPurchase } = useQuery( purchaseQuery( purchaseId ) );
+	const siteId = purchase ? Number( purchase.blog_id ) : undefined;
+	const { data: purchases, isPending: isPendingSitePurchases } = useQuery( {
+		...sitePurchasesQuery( siteId as number ),
+		enabled: Boolean( siteId ),
+	} );
+	// A disabled query stays `pending` forever, so only wait on the site
+	// purchases once there is a site to fetch them for. Otherwise a purchase
+	// that fails to load would leave this stuck on the skeleton instead of
+	// falling through to the redirect below.
+	const hasLoaded = ! isPendingPurchase && ( ! siteId || ! isPendingSitePurchases );
 
 	const [ selectedIds, setSelectedIds ] = useState< Set< number > >(
 		() => new Set( [ purchaseId ] )
@@ -85,7 +88,6 @@ export default function SiteActionInterstitial( {
 	if ( ! hasLoaded || ! purchase || ! purchases ) {
 		return (
 			<>
-				<QueryUserPurchases />
 				<div className="site-level-actions__back">
 					<HeaderCakeBack
 						icon="chevron-left"
@@ -139,7 +141,7 @@ export default function SiteActionInterstitial( {
 	};
 
 	const handleContinue = () => {
-		const selectedPurchases = purchases.filter( ( p ) => selectedIds.has( p.id ) );
+		const selectedPurchases = purchases.filter( ( p ) => selectedIds.has( Number( p.ID ) ) );
 		if ( actionType === 'renew' ) {
 			dispatch( handleRenewMultiplePurchasesClick( selectedPurchases, siteSlug ) );
 			return;
@@ -192,21 +194,49 @@ export default function SiteActionInterstitial( {
 
 	const getRenewalText = ( p: Purchase ) => {
 		if ( isRemove ) {
+			if ( p.is_past_expiry_date ) {
+				return translate( 'Expired on %(date)s', {
+					args: { date: moment( p.expiry_date ).format( 'LL' ) },
+				} );
+			}
 			return translate( 'Expires on %(date)s', {
-				args: { date: moment( p.expiryDate ).format( 'LL' ) },
+				args: { date: moment( p.expiry_date ).format( 'LL' ) },
 			} );
 		}
-		return translate( 'Renews at %(price)s on %(date)s', {
-			args: {
-				price: p.priceText,
-				date: moment( p.renewDate || p.expiryDate ).format( 'LL' ),
-			},
-		} );
+		const expiryDate = p.expiry_date ? moment( p.expiry_date ).format( 'LL' ) : null;
+		// Once the expiry date has passed, lead with the expiry status rather
+		// than any scheduled auto-renewal date. During the grace period the UI
+		// should steer toward manual renewal — a remaining auto-renewal attempt
+		// is unlikely to succeed — so show "Expired on" even if `renewDate` is
+		// still set.
+		if ( p.is_past_expiry_date && expiryDate ) {
+			return translate( 'Renews at %(price)s. Expired on %(date)s', {
+				args: { price: p.price_text, date: expiryDate },
+			} );
+		}
+		// An upcoming scheduled renewal: show its date. `renewDate` is only
+		// populated when there is an upcoming auto-renewal, so an empty value
+		// means "not renewing".
+		if ( p.renew_date ) {
+			return translate( 'Renews at %(price)s on %(date)s', {
+				args: {
+					price: p.price_text,
+					date: moment( p.renew_date ).format( 'LL' ),
+				},
+			} );
+		}
+		// Not yet expired and not renewing: show the upcoming expiry date.
+		if ( expiryDate ) {
+			return translate( 'Renews at %(price)s. Expires on %(date)s', {
+				args: { price: p.price_text, date: expiryDate },
+			} );
+		}
+		// One-time/perpetual purchase (no renewal, no expiry): no subtitle.
+		return '';
 	};
 
 	return (
 		<>
-			<QueryUserPurchases />
 			<div className="site-level-actions__back">
 				<HeaderCakeBack
 					icon="chevron-left"
@@ -226,17 +256,17 @@ export default function SiteActionInterstitial( {
 						<h3 className="site-level-actions__section-title">{ sectionLabel }</h3>
 						{ purchases.map( ( p ) => (
 							<div
-								key={ p.id }
+								key={ p.ID }
 								className={ clsx( 'site-level-actions__row', {
-									'is-selected': selectedIds.has( p.id ),
+									'is-selected': selectedIds.has( Number( p.ID ) ),
 								} ) }
 							>
 								<FormLabel className="site-level-actions__label">
 									<FormInputCheckbox
 										className="site-level-actions__checkbox"
-										checked={ selectedIds.has( p.id ) }
-										onChange={ () => handleToggle( p.id ) }
-										disabled={ p.id === purchaseId }
+										checked={ selectedIds.has( Number( p.ID ) ) }
+										onChange={ () => handleToggle( Number( p.ID ) ) }
+										disabled={ Number( p.ID ) === purchaseId }
 									/>
 									<span className="site-level-actions__name">{ getName( p ) }</span>
 								</FormLabel>
@@ -251,11 +281,7 @@ export default function SiteActionInterstitial( {
 					</Card>
 				</div>
 				<div className="site-level-actions__right">
-					<PurchaseSiteHeader
-						siteId={ purchase.siteId }
-						name={ purchase.siteName }
-						purchase={ purchase }
-					/>
+					<PurchaseSiteHeader siteId={ siteId } name={ purchase.blogname } purchase={ purchase } />
 				</div>
 			</div>
 		</>

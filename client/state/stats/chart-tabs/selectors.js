@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { QUERY_FIELDS } from 'calypso/state/stats/chart-tabs/constants';
 
 import 'calypso/state/stats/init';
@@ -17,7 +16,7 @@ const EMPTY_RESULT = [];
 export function getCountRecords( state, siteId, date, period, quantity ) {
 	const requestKey = `${ date }-${ period }-${ quantity }`;
 
-	return get( state, [ 'stats', 'chartTabs', 'counts', siteId, requestKey ], EMPTY_RESULT );
+	return state?.stats?.chartTabs?.counts?.[ siteId ]?.[ requestKey ] ?? EMPTY_RESULT;
 }
 
 /**

@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
+import { isEmpty } from '@automattic/js-utils';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';

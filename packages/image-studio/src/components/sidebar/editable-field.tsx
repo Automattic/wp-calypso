@@ -7,9 +7,9 @@ import { __ } from '@wordpress/i18n';
 import { useAgentConfig } from '../../hooks/use-agent-config';
 import { useErrorNotice } from '../../hooks/use-error-notice';
 import { store as imageStudioStore } from '../../store';
+import { ImageStudioMode, type MetadataField } from '../../types';
 import { defaultAgentConfigFactory } from '../../utils/agent-config';
 import { trackImageStudioGenAIButtonClick } from '../../utils/tracking';
-import type { MetadataField } from '../../types';
 import './editable-field.scss';
 
 interface GenAIButtonProps {
@@ -34,7 +34,8 @@ function GenAIButton( {
 		setProcessing( agentChatProps.isProcessing );
 	}, [ agentChatProps.isProcessing, setProcessing ] );
 
-	useErrorNotice( agentChatProps.error, addNotice );
+	// Metadata fields always operate on an existing attachment.
+	useErrorNotice( agentChatProps.error, addNotice, ImageStudioMode.Edit );
 
 	const handleClick = () => {
 		// Track the GenAI button click

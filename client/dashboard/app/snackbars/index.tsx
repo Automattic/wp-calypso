@@ -11,17 +11,6 @@ const statusIcon: Record< string, React.JSX.Element > = {
 	error,
 };
 
-declare module '@tanstack/react-query' {
-	interface Register {
-		mutationMeta: {
-			snackbar?: {
-				success?: string;
-				error?: string | { source: 'server' };
-			};
-		};
-	}
-}
-
 export default function Snackbars() {
 	const notices = useSelect( ( select ) => select( noticesStore ).getNotices(), [] );
 	const { removeNotice, createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );

@@ -1,5 +1,4 @@
 import { convertFromRaw, convertToRaw } from 'draft-js';
-import { get, map, matchesProperty } from 'lodash';
 import { compose } from 'redux';
 
 /*
@@ -100,7 +99,7 @@ export const fromEditor = ( content ) => {
 	return [ ...o, i < t.length && { type: 'string', value: t.slice( i ) } ].filter( Boolean );
 };
 
-const isTextPiece = matchesProperty( 'type', 'string' );
+const isTextPiece = ( piece ) => piece?.type === 'string';
 
 const emptyBlockMap = {
 	text: '',
@@ -131,7 +130,7 @@ export const mapTokenTitleForEditor = ( title ) => `\u205f\u205f${ title }\u205f
  * @param {Object} tokens available tokens, e.g. { siteName: 'Site Name', tagline: 'Tagline' }
  * @returns {string} translated chip name
  */
-const tokenTitle = ( type, tokens ) => mapTokenTitleForEditor( get( tokens, type, '' ).trim() );
+const tokenTitle = ( type, tokens ) => mapTokenTitleForEditor( ( tokens?.[ type ] ?? '' ).trim() );
 
 /**
  * Creates a new entity reference for a blockMap
@@ -198,7 +197,7 @@ export const toEditor = ( format, tokens ) => {
 	return convertFromRaw( {
 		blocks: [ blocks ],
 		entityMap: Object.fromEntries(
-			map( entityGuide, ( name, key ) => [
+			entityGuide.map( ( name, key ) => [
 				key, // entity key is position in list
 				{
 					type: 'TOKEN',

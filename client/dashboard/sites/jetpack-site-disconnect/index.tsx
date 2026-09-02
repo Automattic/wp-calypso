@@ -18,6 +18,7 @@ import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import RouterLinkButton from '../../components/router-link-button';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { isRemoved } from '../../utils/purchase';
 import type { Site } from '@automattic/api-core';
 
 interface JetpackSiteDisconnectProps {
@@ -207,10 +208,7 @@ export default function JetpackSiteDisconnect( { site, onClose }: JetpackSiteDis
 		...sitePurchasesQuery( site.ID ),
 		select: ( purchases ) =>
 			purchases
-				.filter(
-					( purchase ) =>
-						purchase.is_jetpack_plan_or_product && purchase.subscription_status === 'active'
-				)
+				.filter( ( purchase ) => purchase.is_jetpack_plan_or_product && ! isRemoved( purchase ) )
 				.map( ( purchase ) => purchase.ID ),
 	} );
 

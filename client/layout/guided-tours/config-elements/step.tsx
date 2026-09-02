@@ -105,7 +105,7 @@ export default class Step extends Component< Props, State > {
 			debug( 'Step#componentWillMount: stepSection:', this.stepSection );
 			this.skipIfInvalidContext( this.props, this.context as SectionContext );
 			this.scrollContainer = query( this.props.scrollContainer ?? 'body' )[ 0 ];
-			// Don't pass `shouldScrollTo` as argument since mounting hasn't occured at this point yet.
+			// Don't pass `shouldScrollTo` as argument since mounting hasn't occurred at this point yet.
 			this.setStepPosition( this.props );
 			this.safeSetState( { initialized: true } );
 		} );

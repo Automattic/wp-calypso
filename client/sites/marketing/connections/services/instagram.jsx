@@ -1,5 +1,4 @@
 import isEqual from 'fast-deep-equal/es6';
-import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import SocialLogo from 'calypso/components/social-logo';
 import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';
@@ -26,7 +25,9 @@ export class Instagram extends SharingService {
 	 */
 	removeConnection = ( connections ) => {
 		this.setState( { isDisconnecting: true } );
-		map( connections || this.props.keyringConnections, this.props.deleteStoredKeyringConnection );
+		( connections || this.props.keyringConnections || [] ).map(
+			this.props.deleteStoredKeyringConnection
+		);
 	};
 
 	renderLogo = () => (

@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/post-types/init';
 
 /**
@@ -11,7 +9,7 @@ import 'calypso/state/post-types/init';
  * @returns {boolean}          Whether request is in-progress
  */
 export function isRequestingPostTypeTaxonomies( state, siteId, postType ) {
-	return get( state.postTypes.taxonomies.requesting, [ siteId, postType ], false );
+	return state.postTypes.taxonomies.requesting?.[ siteId ]?.[ postType ] ?? false;
 }
 
 /**

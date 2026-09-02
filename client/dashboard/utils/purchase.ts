@@ -5,6 +5,7 @@ import {
 	GoogleWorkspaceSlugs,
 	JetpackSearchProducts,
 	PRODUCT_1GB_SPACE,
+	PRODUCT_STUDIO_CODE_AI_CREDITS,
 	SubscriptionBillPeriod,
 	TitanMailSlugs,
 	WPCOM_DIFM_LITE,
@@ -18,6 +19,7 @@ import { isAkismetPro500Plan } from './akismet';
 import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datetime';
 import { isGSuiteProductSlug } from './gsuite';
 import { redirectToDashboardLink, wpcomLink } from './link';
+import { getStudioCodeAiCreditsTitle } from './studio-code-ai-credits';
 import { encodeProductForUrl } from './wpcom-checkout';
 import type { Product, Purchase } from '@automattic/api-core';
 
@@ -31,78 +33,118 @@ export const CANCEL_FLOW_TYPE = {
 } as const;
 export type CancelFlowType = ( typeof CANCEL_FLOW_TYPE )[ keyof typeof CANCEL_FLOW_TYPE ];
 
-export function isRenewing( purchase: Purchase ): boolean {
+/**
+ * Once expiration is this close, a subscription that will not renew itself is a
+ * problem worth raising rather than a date still comfortably far off.
+ */
+export const EXPIRY_WARNING_DAYS = 60;
+
+/**
+ * Once expiration is this close, losing the subscription is the most likely
+ * outcome rather than a distant possibility.
+ */
+export const EXPIRY_ERROR_DAYS = 7;
+
+/**
+ * Returns true if the purchase is auto-renewing and not yet expired.
+ */
+export function isRenewingBeforeExpiration( purchase: Purchase ): boolean {
 	return [ 'active', 'auto-renewing' ].includes( purchase.expiry_status );
 }
 
 /**
- * Returns true if the purchase is in grace period with a failed or missing auto-renewal.
- */
-export function isFailedAutoRenewal( purchase: Purchase ): boolean {
-	return (
-		isInExpirationGracePeriod( purchase ) &&
-		( isRenewing( purchase ) || ( purchase.is_auto_renew_enabled && ! purchase.payment_type ) )
-	);
-}
-
-/**
- * Returns true if the purchase is still active but headed toward lapsing: it
- * either requires a manual renewal or is expiring soon without auto-renew.
+ * Returns true if the purchase is still active but will lapse unless renewed,
+ * because it is not set to auto-renew. Covers an `expiry_status` of either
+ * `manual-renew` (not auto-renewing, with the expiry date not yet imminent) or
+ * `expiring` (not auto-renewing and expiring soon — the "needs attention"
+ * state).
  *
- * Note this also covers purchases that are active but already PAST their expiry
- * date (in the grace period), because the backend reports those as 'expiring'
- * rather than 'expired'. It does NOT cover already-lapsed purchases — see
- * {@link isExpired}. To test specifically for past-expiry, use the
- * `is_past_expiry_date` flag on the purchase.
+ * Note this describes a purchase that has not yet passed its expiry date — once
+ * the expiry date passes without renewal the status becomes `expired` (see
+ * {@link isExpiredAndInGracePeriod} and {@link isRemoved}).
  */
 export function isExpiring( purchase: Purchase ) {
 	return [ 'manual-renew', 'expiring' ].includes( purchase.expiry_status );
 }
 
 /**
- * Returns true only if the underlying subscription is no longer active (the
- * backend `expiry_status` is 'expired').
+ * Returns true if the purchase has passed its expiration date but is still
+ * active — this covers the post-expiry grace period during which a
+ * subscription can still be renewed before being fully removed.
  *
- * Important: this is NOT the same as the purchase being past its expiry date. A
- * subscription that is still active but past its expiry date (i.e. in its grace
- * period) reports as 'expiring', not 'expired', so this returns false for it —
- * see {@link isExpiring} and {@link isInExpirationGracePeriod}. To test whether
- * the expiry date itself has passed (regardless of active/lapsed state), use the
- * `is_past_expiry_date` flag on the purchase.
+ * If you also want to know whether the purchase could still have upcoming
+ * AUTO-RENEW attempts (which can occur even during the grace period), see
+ * {@link mightStillAutoRenew} or {@link isExpiredWithNoAutoRenewAttemptsLeft}.
+ *
+ * Note that during the grace period, the `purchase.renew_date` property may be
+ * empty even for subscriptions that auto-renew (this happens once the final
+ * auto-renewal attempt has passed), but regardless of whether it's empty, the
+ * focus of the user interface during this phase should not be on showing
+ * scheduled auto-renewal dates (which aren't very likely to succeed at this
+ * point anyway) but rather on encouraging the customer to manually renew.
  */
-export function isExpired( purchase: Purchase ) {
-	return 'expired' === purchase.expiry_status;
+export function isExpiredAndInGracePeriod( purchase: Purchase ): boolean {
+	return 'expired' === purchase.expiry_status && 'active' === purchase.subscription_status;
 }
 
 /**
- * Returns true if the purchase is past its expiry date but the subscription is
- * still active — the post-expiry grace period during which it can still be
- * renewed before fully lapsing.
- *
- * This is the "active but already past expiry" case that {@link isExpired} does
- * NOT cover: such purchases report an `expiry_status` of 'expiring' (or
- * 'manual-renew'), not 'expired'. Equivalent to `is_past_expiry_date` being
- * true while {@link isExpired} is false (excluding Akismet free products).
+ * Returns true if the purchase's subscription is no longer active (removed).
  */
-export function isInExpirationGracePeriod( purchase: Purchase ): boolean {
-	if ( ! purchase.expiry_date ) {
-		return false;
-	}
+export function isRemoved( purchase: Purchase ): boolean {
+	return 'active' !== purchase.subscription_status;
+}
 
-	if ( new Date( purchase.expiry_date ) >= new Date() ) {
-		return false;
-	}
-	if ( isExpired( purchase ) ) {
-		return false;
-	}
-	if ( ! isRenewing( purchase ) && ! isExpiring( purchase ) ) {
-		return false;
-	}
-	if ( isAkismetFreeProduct( purchase ) ) {
-		return false;
-	}
+/**
+ * Returns true if the customer can refund, cancel or remove this purchase themselves.
+ *
+ * Defaults to true when the field is missing, so a server that predates it keeps
+ * today's behavior instead of locking every purchase.
+ */
+export function isManageableByUser( purchase: Purchase ): boolean {
+	return purchase.is_manageable_by_user !== false;
+}
 
-	return true;
+/**
+ * Convenience check for "expired in any way" — either still active but past the
+ * expiration date (grace period), or fully removed.
+ */
+export function isExpiredOrRemoved( purchase: Purchase ): boolean {
+	return isExpiredAndInGracePeriod( purchase ) || isRemoved( purchase );
+}
+
+/**
+ * Returns true if the purchase may still auto-renew — i.e. a charge will
+ * actually be attempted: the subscription is active, auto-renew is enabled, a
+ * rechargeable payment method is attached, and it is not past its final
+ * auto-renewal attempt date.
+ *
+ * This is the "will be billed" signal and is a superset of the renewing
+ * `expiry_status` values (`active`/`auto-renewing` already require a chargeable
+ * payment method on the backend), so it holds for both not-yet-expired
+ * auto-renewing purchases and grace-period purchases that may still recover.
+ * "Might" is intentional: the underlying dates are day-granular and a charge can
+ * still fail.
+ */
+export function mightStillAutoRenew( purchase: Purchase ): boolean {
+	return purchase.might_still_auto_renew;
+}
+
+/**
+ * Returns true if the purchase has passed its expiry date (and is still in its
+ * grace period, not removed) with no remaining auto-renewal attempts on the
+ * schedule. This is the "expired and the auto-renew schedule is exhausted"
+ * state, independent of whether auto-renew is currently enabled or a payment
+ * method is attached.
+ *
+ * If this returns false, then there is still hope -- even if the purchase has
+ * auto-renew turned off or doesn't have a chargeable payment method attached,
+ * those are things which can be fixed and still end up with a successful
+ * auto-renewal in the end. Therefore, this is useful to check when deciding
+ * whether to allow the customer to do things like add a payment method or
+ * enable auto-renew on an already-expired subscription.
+ */
+export function isExpiredWithNoAutoRenewAttemptsLeft( purchase: Purchase ): boolean {
+	return isExpiredAndInGracePeriod( purchase ) && purchase.is_past_last_auto_renew_attempt_date;
 }
 
 export function isIncludedWithPlan( purchase: Purchase ) {
@@ -164,6 +206,10 @@ export function isCloseToExpiration( purchase: Purchase ): boolean {
 
 export function creditCardExpiresBeforeSubscription( purchase: Purchase ): boolean {
 	if ( 'credit_card' !== purchase.payment_type ) {
+		return false;
+	}
+	// Some purchases have no expiry date, so there is nothing to compare against.
+	if ( ! purchase.expiry_date ) {
 		return false;
 	}
 	// For 100 years plans, the credit card will probably always expire before
@@ -257,6 +303,23 @@ export function isJetpackHoldingSitePurchase( purchase: Purchase ): boolean {
 	return purchase.is_attached_to_holding_site && purchase.product_type === 'jetpack';
 }
 
+export function isStudioCodeHoldingSitePurchase( purchase: Purchase ): boolean {
+	return purchase.is_attached_to_holding_site && purchase.product_type === 'studio_code';
+}
+
+/**
+ * Whether site-scoped endpoints can be called for this purchase's `blog_id`.
+ *
+ * Holding-site purchases (siteless Akismet/Jetpack/Marketplace/A4A) are attached
+ * to a placeholder blog the user is not a member of, so `/sites/{blog_id}/…`
+ * returns `403 authorization_required`. The dashboard's auth layer reads that as
+ * a signed-out session and redirects to `/log-in`, which bounces straight back —
+ * an infinite loop. Gate site queries and site-dependent UI on this.
+ */
+export function hasQueryableSite( purchase: Purchase ): boolean {
+	return Boolean( purchase.blog_id ) && ! purchase.is_attached_to_holding_site;
+}
+
 /**
  * Return the bill period as a sentence case string. Note that Purchae includes
  * this text already as `bill_period_label` but it is not sentence case and has
@@ -331,6 +394,16 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 	}
 
 	if (
+		PRODUCT_STUDIO_CODE_AI_CREDITS === purchase.product_slug &&
+		purchase.renewal_price_tier_usage_quantity
+	) {
+		return getStudioCodeAiCreditsTitle(
+			purchase.product_name,
+			purchase.renewal_price_tier_usage_quantity
+		);
+	}
+
+	if (
 		'wordpress_com_1gb_space_addon_yearly' === purchase.product_slug &&
 		purchase.renewal_price_tier_usage_quantity
 	) {
@@ -354,6 +427,13 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 		return sprintf( __( '%(productName)s (%(requests)d requests/month)' ), {
 			productName: purchase.product_name.replace( /\s*\(.*$/, '' ).trim(),
 			requests: 500 * purchase.renewal_price_tier_usage_quantity,
+		} );
+	}
+
+	if ( purchase.is_plan ) {
+		/* translators: %(productName)s is the product name "WordPress.com Personal" */
+		return sprintf( __( '%(productName)s Plan' ), {
+			productName: purchase.product_name.replace( /\s*\(.*$/, '' ).trim(),
 		} );
 	}
 
@@ -397,7 +477,7 @@ export function getSubtitleForDisplay( purchase: Purchase ): string | null {
 	}
 
 	if ( purchase.is_plan ) {
-		return __( 'Site plan' );
+		return null;
 	}
 
 	if ( purchase.is_domain_registration ) {
@@ -481,6 +561,14 @@ export function isDomainTransfer( purchase: Purchase | ObjectWithProductSlug ): 
 	return purchase.product_slug === DomainProductSlugs.TRANSFER_IN;
 }
 
+/**
+ * A domain connection (also known as a domain mapping): a domain registered
+ * elsewhere that points at a WordPress.com site.
+ */
+export function isDomainMapping( purchase: Purchase | ObjectWithProductSlug ): boolean {
+	return purchase.product_slug === DomainProductSlugs.DOMAIN_MAPPING;
+}
+
 export function isSiteRedirect( purchase: Purchase ): boolean {
 	return purchase.product_slug === OFFSITE_REDIRECT;
 }
@@ -551,6 +639,10 @@ export function isJetpackT1SecurityPlan( purchase: Purchase ): boolean {
 	return securityT1Slugs.includes( purchase.product_slug as ( typeof securityT1Slugs )[ number ] );
 }
 
+export function isStorageUpgradeEligible( purchase: Purchase ): boolean {
+	return purchase.is_jetpack_backup_t1 || isJetpackT1SecurityPlan( purchase );
+}
+
 export function isDotcomPlan( purchase: Purchase ): boolean {
 	return purchase.is_plan && ! purchase.is_jetpack_plan_or_product;
 }
@@ -573,8 +665,8 @@ function getCheckoutProductSlugFromPurchase( purchase: Purchase ): string {
 }
 
 function getCheckoutSiteSlugForPurchase( purchase: Purchase ): string {
-	if ( isAkismetProduct( purchase ) ) {
-		// Akismet checkout never uses a site slug.
+	// Neither Akismet nor A4A holding sites should use a site slug
+	if ( isAkismetProduct( purchase ) || isA4AHoldingSitePurchase( purchase ) ) {
 		return '';
 	}
 	return purchase.site_slug || '';
@@ -582,14 +674,21 @@ function getCheckoutSiteSlugForPurchase( purchase: Purchase ): string {
 
 export function getRenewalUrlFromPurchase(
 	purchase: Purchase,
-	checkoutSiteSlugForUrl?: string
+	checkoutSiteSlugForUrl?: string,
+	backUrl?: string
 ): string {
-	return getRenewUrlForPurchases( [ purchase ], checkoutSiteSlugForUrl );
+	return getRenewUrlForPurchases( [ purchase ], checkoutSiteSlugForUrl, backUrl );
 }
 
+/**
+ * `backUrl` is where checkout returns to, whether the renewal goes through or is
+ * abandoned. It defaults to the dashboard page the user is on, so surfaces
+ * outside the dashboard have to say where they are.
+ */
 export function getRenewUrlForPurchases(
 	purchases: Purchase[],
-	checkoutSiteSlugForUrl?: string
+	checkoutSiteSlugForUrl?: string,
+	backUrl: string = redirectToDashboardLink()
 ): string {
 	if ( purchases.length < 1 ) {
 		throw new Error( 'Could not find product slug or purchase id for renewal.' );
@@ -602,7 +701,6 @@ export function getRenewUrlForPurchases(
 		checkoutSiteSlugForUrl || getCheckoutSiteSlugForPurchase( firstPurchase );
 	const servicePath = getServicePathForCheckoutFromPurchase( firstPurchase );
 	const purchaseIds = purchases.map( ( purchase ) => purchase.ID ).join( ',' );
-	const backUrl = redirectToDashboardLink();
 	return addQueryArgs(
 		wpcomLink(
 			`/checkout/${ servicePath }${ checkoutProductSlug }/renew/${ purchaseIds }/${ checkoutSiteSlug }`
@@ -641,8 +739,8 @@ export function needsToRenewSoon( purchase: Purchase ): boolean {
 
 export function isPartnerPurchase(
 	purchase: Purchase
-): purchase is Purchase & { partnerType: string } {
-	return !! purchase?.partner_name;
+): purchase is Purchase & { partner_name: string } {
+	return !! purchase.partner_name;
 }
 
 export function isAgencyPartnerType( partnerType: string ) {
@@ -715,43 +813,56 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
 }
 
 /**
- * Returns true if the plan is eligible for an instant, self-serve downgrade: the
- * plan is still within its initial refund window (not a renewal) and has neither
- * expired nor entered its post-expiry grace period.
+ * Returns true if the plan is eligible for an instant, self-serve downgrade,
+ * performed now via the cancel endpoint rather than scheduled for renewal.
  *
- * Note: this intentionally does NOT require a refundable amount. Instant
- * downgrades are also offered for plans that were paid with credits or are
- * otherwise free, where no money would be refunded.
+ * The server answers this directly through `is_instant_downgrade_available`,
+ * which already accounts for expiry and for receipts worth nothing (a comped
+ * plan or a 100%-off coupon downgrades instantly and simply issues no refund).
+ * Do not reintroduce a `is_refundable` check here: that asks a different
+ * question and gave the wrong answer for zero-cost purchases.
  *
- * This is distinct from {@link isInExpirationGracePeriod}, which gates the
+ * This is distinct from {@link isExpiredAndInGracePeriod}, which gates the
  * downgrade-to-checkout flow for plans whose expiry date has already passed.
  */
 export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boolean {
 	return (
 		purchase.is_plan_type_downgradable &&
 		purchase.is_plan &&
-		purchase.is_within_initial_refund_window &&
-		! isExpired( purchase ) &&
-		! isInExpirationGracePeriod( purchase )
+		purchase.is_instant_downgrade_available
 	);
+}
+
+/**
+ * Whether to offer this purchase downgrade options as well as upgrades. Covers
+ * three downgrade flows: past expiry (downgrade-to-checkout), within refund
+ * window (instant downgrade), and active downgradable plan (delayed downgrade).
+ *
+ * Only ever true for WordPress.com plans.
+ */
+export function isPurchaseDowngradeEligible( purchase: Purchase ): boolean {
+	return purchase.is_plan && purchase.is_plan_type_downgradable;
 }
 
 /**
  * Returns the purchase cancellation flow.
  */
 export function getPurchaseCancellationFlowType( purchase: Purchase ): CancelFlowType {
-	// Expired or grace-period purchases use the removal flow, matching the "Remove" button on the details page.
-	if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
-		return CANCEL_FLOW_TYPE.REMOVE;
-	}
-
 	const isPlanRefundable = purchase.is_refundable;
 	const isPlanAutoRenewing = purchase.is_auto_renew_enabled;
 
 	if ( isPlanRefundable && hasAmountAvailableToRefund( purchase ) ) {
 		// If the subscription is refundable the subscription should be removed immediately.
 		return CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
-	} else if ( ! isPlanRefundable && isPlanAutoRenewing ) {
+	}
+
+	// Expired purchases (that aren't refundable) use the removal flow, matching
+	// the "Remove" button on the details page.
+	if ( isExpiredOrRemoved( purchase ) ) {
+		return CANCEL_FLOW_TYPE.REMOVE;
+	}
+
+	if ( ! isPlanRefundable && isPlanAutoRenewing ) {
 		// If the subscription is not refundable and auto-renew is on turn off auto-renew.
 		return CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
 	}
@@ -816,7 +927,11 @@ export function getMutationFlowType(
 		return getPurchaseCancellationFlowType( purchase );
 	}
 
-	if ( purchase.is_auto_renew_enabled && hasAmountAvailableToRefund( purchase ) ) {
+	// intent === 'remove': refundability alone decides the endpoint. A purchase
+	// still inside its refund window goes through cancel-and-refund rather than
+	// the bare DELETE — auto-renew is typically already off by the time Remove is
+	// offered (the user cancelled first), so it must not gate the refund.
+	if ( hasAmountAvailableToRefund( purchase ) ) {
 		return CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
 	}
 	return CANCEL_FLOW_TYPE.REMOVE;

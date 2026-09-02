@@ -1,9 +1,26 @@
 /**
  * @jest-environment jsdom
  */
+import { isEnabled } from '@automattic/calypso-config';
 import pageLibrary from '@automattic/calypso-router';
 import { waitFor } from '@testing-library/dom';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import initRootSection from '../root';
+
+const originalLocation = window.location;
+
+// Replaces `window.location` so we can assert on `assign()` for redirects to
+// the hosting dashboard (an absolute URL, so `root` uses `location.assign`
+// rather than the in-app router).
+function mockLocationAssign() {
+	const assign = jest.fn();
+	Object.defineProperty( window, 'location', { value: { assign }, configurable: true } );
+	return assign;
+}
+
+afterEach( () => {
+	Object.defineProperty( window, 'location', { value: originalLocation, configurable: true } );
+} );
 
 function initRouter( { state }: { state: any } ) {
 	const dispatch = jest.fn();
@@ -21,14 +38,17 @@ function initRouter( { state }: { state: any } ) {
 }
 
 describe( 'Logged In Landing Page', () => {
-	test( 'user with no sites goes to Sites Dashboard', async () => {
-		const state = { currentUser: { id: 1 }, sites: { items: {} }, ui: {} };
-		const { page } = initRouter( { state } );
+	if ( isEnabled( 'dashboard/enable-percentage-rollout' ) ) {
+		test( 'rollout cohort user with no sites goes to Sites Dashboard', async () => {
+			const state = { currentUser: { id: 1 }, sites: { items: {} }, ui: {} };
+			const { page } = initRouter( { state } );
+			const assign = mockLocationAssign();
 
-		page( '/' );
+			page( '/' );
 
-		await waitFor( () => expect( page.current ).toBe( '/sites' ) );
-	} );
+			await waitFor( () => expect( assign ).toHaveBeenCalledWith( dashboardLink( '/sites' ) ) );
+		} );
+	}
 
 	test( 'user with a primary site but no permissions goes to day stats', async () => {
 		const state = {
@@ -91,40 +111,43 @@ describe( 'Logged In Landing Page', () => {
 		await waitFor( () => expect( page.current ).toBe( '/stats/day/test.jurassic.ninja' ) );
 	} );
 
-	test( 'user who opts in goes to sites page', async () => {
-		const state = {
-			currentUser: {
-				id: 1,
-				capabilities: { 1: { edit_posts: true } },
-				user: { primary_blog: 1, site_count: 2 },
-			},
-			preferences: {
-				localValues: {
-					'sites-landing-page': { useSitesAsLandingPage: true, updatedAt: 1111 },
-					'reader-landing-page': { useReaderAsLandingPage: false, updatedAt: 1111 },
+	if ( isEnabled( 'dashboard/enable-percentage-rollout' ) ) {
+		test( 'rollout cohort user who opts in goes to sites page', async () => {
+			const state = {
+				currentUser: {
+					id: 1,
+					capabilities: { 1: { edit_posts: true } },
+					user: { primary_blog: 1, site_count: 2 },
 				},
-			},
-			ui: {},
-			sites: {
-				items: {
-					1: {
-						ID: 1,
-						URL: 'https://test.wordpress.com',
-					},
-					2: {
-						ID: 2,
-						URL: 'https://test.jurassic.ninja',
-						jetpack: true,
+				preferences: {
+					localValues: {
+						'sites-landing-page': { useSitesAsLandingPage: true, updatedAt: 1111 },
+						'reader-landing-page': { useReaderAsLandingPage: false, updatedAt: 1111 },
 					},
 				},
-			},
-		};
-		const { page } = initRouter( { state } );
+				ui: {},
+				sites: {
+					items: {
+						1: {
+							ID: 1,
+							URL: 'https://test.wordpress.com',
+						},
+						2: {
+							ID: 2,
+							URL: 'https://test.jurassic.ninja',
+							jetpack: true,
+						},
+					},
+				},
+			};
+			const { page } = initRouter( { state } );
+			const assign = mockLocationAssign();
 
-		page( '/' );
+			page( '/' );
 
-		await waitFor( () => expect( page.current ).toBe( '/sites' ) );
-	} );
+			await waitFor( () => expect( assign ).toHaveBeenCalledWith( dashboardLink( '/sites' ) ) );
+		} );
+	}
 
 	test( 'user who opts in goes to reader page', async () => {
 		const state = {
@@ -161,43 +184,14 @@ describe( 'Logged In Landing Page', () => {
 		await waitFor( () => expect( page.current ).toBe( '/reader' ) );
 	} );
 
-	test( 'user with a selected site goes to My Home for Default Style interface', async () => {
-		const state = {
-			currentUser: {
-				id: 1,
-				capabilities: { 1: { edit_posts: true }, 2: { edit_posts: true } },
-				user: { primary_blog: 1 },
-			},
-			ui: { selectedSiteId: 2 },
-			sites: {
-				items: {
-					1: {
-						ID: 1,
-						URL: 'https://test.wordpress.com',
-					},
-					2: {
-						ID: 2,
-						URL: 'https://selected.wordpress.com',
-						options: { wpcom_admin_interface: 'calypso' },
-					},
-				},
-			},
-		};
-		const { page } = initRouter( { state } );
-
-		page( '/' );
-
-		await waitFor( () => expect( page.current ).toBe( '/home/selected.wordpress.com' ) );
-	} );
-
-	test( 'user with a selected site goes to WP Admin Dashboard for Classic Style interface', async () => {
+	test( 'user with a primary site using the Classic interface goes to WP Admin Dashboard', async () => {
 		const state = {
 			currentUser: {
 				id: 1,
 				capabilities: { 1: { edit_posts: true } },
 				user: { primary_blog: 1 },
 			},
-			ui: { selectedSiteId: 1 },
+			ui: {},
 			sites: {
 				items: {
 					1: {

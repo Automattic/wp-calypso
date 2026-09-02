@@ -17,6 +17,7 @@ import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import ConfirmModal from '../../components/confirm-modal';
+import { sanitizePhoneNumber } from '../../components/domain-contact-details-form/contact-validation-utils';
 import Notice from '../../components/notice';
 import PhoneNumberInput from '../../components/phone-number-input';
 import { SectionHeader } from '../../components/section-header';
@@ -166,7 +167,13 @@ export default function RecoverySMS() {
 						<PhoneNumberInput
 							data={ data.smsNumber }
 							onChange={ ( edits ) => {
-								onChange( { ...data, smsNumber: edits } );
+								onChange( {
+									...data,
+									smsNumber: {
+										...edits,
+										phoneNumber: sanitizePhoneNumber( edits.phoneNumber ?? '' ),
+									},
+								} );
 							} }
 							isDisabled={ isValidateSMSPending }
 						/>

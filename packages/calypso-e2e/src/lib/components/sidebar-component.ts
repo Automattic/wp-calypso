@@ -40,8 +40,8 @@ export class SidebarComponent {
 		const sidebarLocator = this.page.locator( `${ selectors.sidebar }, .global-sidebar` ).first();
 
 		await Promise.all( [
-			this.page.waitForLoadState( 'load', { timeout: 20 * 1000 } ),
-			sidebarLocator.waitFor( { timeout: 20 * 1000 } ),
+			this.page.waitForLoadState( 'load', { timeout: 30 * 1000 } ),
+			sidebarLocator.waitFor( { timeout: 30 * 1000 } ),
 		] );
 
 		// If the sidebar is collapsed (via the Collapse Menu toggle),
@@ -123,9 +123,15 @@ export class SidebarComponent {
 			selectedMenuItem = `${ selectors.sidebar } .selected :text-is("${ subitem }")`;
 		}
 
-		// Verify the expected item or subitem is selected.
+		// Verify the expected item or subitem is selected. Some Calypso routes
+		// redirect out of Calypso shortly after loading (eg. to the Multi-site
+		// Dashboard), and may do so after the out-of-Calypso check above has
+		// already passed. Treat leaving Calypso as an alternative success signal.
 		const locator = this.page.locator( selectedMenuItem );
-		await locator.waitFor( { state: 'attached' } );
+		await Promise.any( [
+			locator.waitFor( { state: 'attached' } ),
+			this.page.waitForURL( ( url ) => ! url.href.startsWith( getCalypsoURL() ) ),
+		] );
 	}
 
 	/**

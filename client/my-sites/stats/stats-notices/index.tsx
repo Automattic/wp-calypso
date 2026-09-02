@@ -9,7 +9,9 @@ import {
 	useNoticesVisibilityQuery,
 	processConflictNotices,
 } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
-import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
+import usePlanUsageQuery, {
+	getUsageLimitStatus,
+} from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import { shouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { useSelector, useDispatch } from 'calypso/state';
 import { resetSiteState } from 'calypso/state/purchases/actions';
@@ -102,8 +104,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		siteHasPaidStatsFeature;
 	const hasFreeStats = useSelector( ( state ) => hasSiteProductJetpackStatsFree( state, siteId ) );
 
-	const { isRequestingSitePurchases, isCommercialOwned, supportCommercialUse } =
-		useStatsPurchases( siteId );
+	const { isRequestingSitePurchases, supportCommercialUse } = useStatsPurchases( siteId );
 
 	const hasPWYWPlanOnly = useSelector( ( state ) =>
 		hasSiteProductJetpackStatsPWYWOnly( state, siteId )
@@ -131,10 +132,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	const hasSignificantViews = !! ( views && views >= SIGNIFICANT_VIEWS_AMOUNT );
 
 	const { data } = usePlanUsageQuery( siteId );
-	const currentUsage = data?.current_usage?.views_count || 0;
-	const tierLimit = data?.views_limit || null;
-	const isNearLimit = tierLimit ? currentUsage / tierLimit >= 0.9 : false;
-	const isOverLimit = tierLimit ? currentUsage / tierLimit >= 1 : false;
+	const { isNearLimit, isOverLimit } = getUsageLimitStatus( data );
 
 	const noticeOptions = {
 		siteId,
@@ -149,7 +147,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		isSiteJetpack,
 		statsPurchaseSuccess,
 		isCommercial,
-		isCommercialOwned,
+		supportCommercialUse,
 		hasPWYWPlanOnly,
 		hasSignificantViews,
 		showPaywallNotice,

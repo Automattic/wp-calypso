@@ -15,6 +15,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -46,24 +47,18 @@ export default function SshKeyForm( {
 		key: '',
 	} );
 
-	const { mutate: createSshKey, isPending: isCreatingSshKey } = useMutation( {
-		...createSshKeyMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'SSH key saved.' ),
-				error: __( 'Failed to save SSH key.' ),
-			},
-		},
-	} );
-	const { mutate: updateSshKey, isPending: isUpdatingSshKey } = useMutation( {
-		...updateSshKeyMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'SSH key saved.' ),
-				error: __( 'Failed to save SSH key.' ),
-			},
-		},
-	} );
+	const { mutate: createSshKey, isPending: isCreatingSshKey } = useMutation(
+		withSnackbar( createSshKeyMutation(), {
+			success: __( 'SSH key saved.' ),
+			error: __( 'Failed to save SSH key.' ),
+		} )
+	);
+	const { mutate: updateSshKey, isPending: isUpdatingSshKey } = useMutation(
+		withSnackbar( updateSshKeyMutation(), {
+			success: __( 'SSH key saved.' ),
+			error: __( 'Failed to save SSH key.' ),
+		} )
+	);
 
 	const handleUpdateSshKey = () => {
 		recordTracksEvent( 'calypso_dashboard_security_ssh_key_update_click' );

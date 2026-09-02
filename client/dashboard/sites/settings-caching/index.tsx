@@ -22,6 +22,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useState, type JSX } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { NavigationBlocker } from '../../app/navigation-blocker';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ActionList } from '../../components/action-list';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
@@ -78,35 +79,26 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 		active: isEdgeCacheEnabled ?? false,
 	} );
 
-	const edgeCacheStatusMutation = useMutation( {
-		...siteEdgeCacheStatusMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: formData.active
-					? __( 'Global edge cache enabled.' )
-					: __( 'Global edge cache disabled.' ),
-				error: __( 'Failed to save global edge cache settings.' ),
-			},
-		},
-	} );
-	const edgeCacheClearMutation = useMutation( {
-		...siteEdgeCacheClearMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: __( 'Global edge cache cleared.' ),
-				error: __( 'Failed to clear global edge cache.' ),
-			},
-		},
-	} );
-	const objectCacheClearMutation = useMutation( {
-		...siteObjectCacheClearMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: __( 'Object cache cleared.' ),
-				error: __( 'Failed to clear object cache.' ),
-			},
-		},
-	} );
+	const edgeCacheStatusMutation = useMutation(
+		withSnackbar( siteEdgeCacheStatusMutation( site.ID ), {
+			success: formData.active
+				? __( 'Global edge cache enabled.' )
+				: __( 'Global edge cache disabled.' ),
+			error: __( 'Failed to save global edge cache settings.' ),
+		} )
+	);
+	const edgeCacheClearMutation = useMutation(
+		withSnackbar( siteEdgeCacheClearMutation( site.ID ), {
+			success: __( 'Global edge cache cleared.' ),
+			error: __( 'Failed to clear global edge cache.' ),
+		} )
+	);
+	const objectCacheClearMutation = useMutation(
+		withSnackbar( siteObjectCacheClearMutation( site.ID ), {
+			success: __( 'Object cache cleared.' ),
+			error: __( 'Failed to clear object cache.' ),
+		} )
+	);
 
 	const isDirty = isEdgeCacheEnabled !== formData.active;
 	const { isPending } = edgeCacheStatusMutation;

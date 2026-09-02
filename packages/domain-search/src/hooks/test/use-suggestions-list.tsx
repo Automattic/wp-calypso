@@ -27,10 +27,10 @@ const TEST_BUNDLE_SUGGESTION: BundleSuggestion = {
 	catalogue_version: '1',
 };
 
-const renderUseSuggestionsList = ( config?: Partial< DomainSearchConfig > ) =>
+const renderUseSuggestionsList = ( config?: Partial< DomainSearchConfig >, query = 'test' ) =>
 	renderHook( () => useSuggestionsList(), {
 		wrapper: ( { children } ) => (
-			<TestDomainSearch query="test" config={ config }>
+			<TestDomainSearch query={ query } config={ config }>
 				{ children }
 			</TestDomainSearch>
 		),
@@ -42,24 +42,35 @@ describe( 'useSuggestionsList — bundle suggestions', () => {
 		queryClient.clear();
 	} );
 
-	it( 'surfaces a bundle suggestion when showBundleSuggestions is on', async () => {
-		mockGetSuggestionsQuery( { params: { query: 'test' }, suggestions: [] } );
+	// The top bundle card is the FQDN path, so bundleSuggestion is only fetched
+	// for an FQDN query (a bare-term search shows inline bundle rows instead).
+	it( 'surfaces a bundle suggestion for an FQDN query when showBundleSuggestions is on', async () => {
+		mockGetSuggestionsQuery( { params: { query: 'test.com' }, suggestions: [] } );
 		mockGetBundleSuggestionQuery( {
-			params: { query: 'test' },
+			params: { query: 'test.com' },
 			bundleSuggestion: TEST_BUNDLE_SUGGESTION,
 		} );
 
-		const { result } = renderUseSuggestionsList( { showBundleSuggestions: true } );
+		const { result } = renderUseSuggestionsList( { showBundleSuggestions: true }, 'test.com' );
 
 		await waitFor( () => expect( result.current.bundleSuggestion ).toBeTruthy() );
 		expect( result.current.bundleSuggestion?.sld ).toBe( 'test' );
 		expect( result.current.bundleSuggestion?.domains.length ).toBeGreaterThan( 0 );
 	} );
 
-	it( 'does not surface a bundle suggestion when the flag is off', async () => {
+	it( 'does not surface a bundle suggestion for a bare-term query', async () => {
 		mockGetSuggestionsQuery( { params: { query: 'test' }, suggestions: [] } );
 
-		const { result } = renderUseSuggestionsList( { showBundleSuggestions: false } );
+		const { result } = renderUseSuggestionsList( { showBundleSuggestions: true } );
+
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+		expect( result.current.bundleSuggestion ).toBeUndefined();
+	} );
+
+	it( 'does not surface a bundle suggestion when the flag is off', async () => {
+		mockGetSuggestionsQuery( { params: { query: 'test.com' }, suggestions: [] } );
+
+		const { result } = renderUseSuggestionsList( { showBundleSuggestions: false }, 'test.com' );
 
 		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
 		expect( result.current.bundleSuggestion ).toBeUndefined();

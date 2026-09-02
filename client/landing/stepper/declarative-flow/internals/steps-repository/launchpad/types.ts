@@ -9,10 +9,6 @@ import { type NavigationControls } from '../../types';
 
 export type LaunchpadChecklist = Task[];
 
-export interface LaunchpadFlowTaskList {
-	[ string: string ]: string[];
-}
-
 export interface TranslatedLaunchpadStrings {
 	flowName: string;
 	title: string;

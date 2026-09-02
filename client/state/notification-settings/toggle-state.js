@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 const replaceAtIndex = ( array, index, newItem ) =>
 	array.map( ( item, idx ) => ( idx === index ? newItem : item ) );
 
@@ -48,7 +46,7 @@ export default {
 	blog( state, source, stream, setting ) {
 		const blogs = state?.dirty?.blogs;
 		const blog = blogs?.find( ( item ) => item.blog_id === parseInt( source, 10 ) );
-		const devices = get( blog, 'devices', [] );
+		const devices = blog?.devices ?? [];
 
 		return {
 			blogs: replaceOrAppend( blogs, blog, {

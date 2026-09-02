@@ -2,7 +2,6 @@ import './style.scss';
 import { CompactCard as Card } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { get } from 'lodash';
 import { useState } from 'react';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
@@ -19,7 +18,7 @@ const noop = () => {};
 function AuthorAndSiteFollow( { post, site, onSiteClick, followSource, onFollowToggle } ) {
 	const siteUrl = getStreamUrl( post.feed_ID, post.site_ID );
 	const siteName = ( site && site.title ) || post.site_name;
-	const authorName = get( post, 'author.name', '' );
+	const authorName = post?.author?.name ?? '';
 	const authorAndSiteAreDifferent = ! areEqualIgnoringWhitespaceAndCase( siteName, authorName );
 
 	return (

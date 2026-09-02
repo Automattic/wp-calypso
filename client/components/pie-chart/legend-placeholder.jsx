@@ -1,14 +1,9 @@
 import { maxBy } from '@automattic/js-utils';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { LegendItemPlaceholder } from 'calypso/components/legend-item';
 
 function getLongestName( dataSeriesInfo ) {
-	return get(
-		maxBy( dataSeriesInfo, ( d ) => d?.name?.length ),
-		'name',
-		''
-	);
+	return maxBy( dataSeriesInfo, ( d ) => d?.name?.length )?.name ?? '';
 }
 
 function PieChartLegendPlaceholder( { dataSeriesInfo } ) {

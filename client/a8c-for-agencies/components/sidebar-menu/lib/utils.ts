@@ -8,6 +8,7 @@ type MenuItemProps = {
 	link: string;
 	path: string;
 	title: string;
+	badge?: string;
 	withChevron?: boolean;
 	isExternalLink?: boolean;
 	isSelected?: boolean;

@@ -12,6 +12,7 @@ import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { NavigationBlocker } from '../../app/navigation-blocker';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import Notice from '../../components/notice';
@@ -51,15 +52,12 @@ const form = {
 export default function SettingsAgency( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: siteSettings } = useQuery( siteSettingsQuery( site.ID ) );
-	const mutation = useMutation( {
-		...siteSettingsMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: __( 'Agency settings saved.' ),
-				error: __( 'Failed to save agency settings.' ),
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( siteSettingsMutation( site.ID ), {
+			success: __( 'Agency settings saved.' ),
+			error: __( 'Failed to save agency settings.' ),
+		} )
+	);
 
 	const [ formData, setFormData ] = useState( {
 		is_fully_managed_agency_site: siteSettings?.is_fully_managed_agency_site,

@@ -536,15 +536,9 @@ export const DOMAIN_REGISTRATION_CANCELLATION_REASONS: CancellationReason[] = [
 			return __( 'Please tell us more' );
 		},
 	},
-	{
-		value: 'other',
-		get label() {
-			return __( 'Something not listed here' );
-		},
-		get textPlaceholder() {
-			return __( 'Please tell us more' );
-		},
-	},
+	// The generic "Another reason…" catch-all (LAST_REASON) is appended to every
+	// reason list by getCancellationReasons(), so this list intentionally omits its
+	// own "Something not listed here" option to avoid showing two redundant catch-alls.
 ];
 
 export const GSUITE_CANCELLATION_REASONS: CancellationReason[] = [

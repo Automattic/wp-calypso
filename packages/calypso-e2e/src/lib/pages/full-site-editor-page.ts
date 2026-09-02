@@ -113,7 +113,7 @@ export class FullSiteEditorPage {
 		let parsedUrl: URL;
 		try {
 			parsedUrl = new URL( siteHostWithProtocol );
-		} catch ( error ) {
+		} catch {
 			throw new Error(
 				`Invalid site host URL provided: "${ siteHostWithProtocol }". Did you remember to include the protocol?`
 			);
@@ -420,13 +420,19 @@ export class FullSiteEditorPage {
 	 */
 	async openNavSidebar(): Promise< void > {
 		const editorParent = await this.editor.parent();
-		const openButton = editorParent.locator( 'a[aria-label="Open Navigation"]' );
+		// Older Gutenberg used an <a>; current versions use a <button>.
+		const openButton = editorParent.getByRole( 'button', { name: 'Open Navigation' } );
 
 		await openButton.click();
 	}
 
 	/**
-	 * Close the navigation sidebar. To do this, you actually just click on the editor canvas! This only works on desktop.
+	 * Close the navigation sidebar and enter edit mode. In older Gutenberg a
+	 * single click on the canvas body collapsed the sidebar. In current
+	 * Gutenberg, edit mode is entered by clicking on a block in the canvas
+	 * (e.g. the rendered Site Title) — this transitions the editor from preview
+	 * to edit and the toolbar's Block Inserter button becomes available.
+	 *
 	 * On mobile, there is not standardized way to close the sidebar.
 	 */
 	async closeNavSidebar(): Promise< void > {
@@ -437,9 +443,32 @@ export class FullSiteEditorPage {
 		}
 		const editorParent = await this.editor.parent();
 		const editorCanvas = await this.editor.canvas();
-		const openButton = editorParent.locator( 'a[aria-label="Open Navigation"]' );
+		const blockInserterButton = editorParent.getByRole( 'button', {
+			name: 'Block Inserter',
+			exact: true,
+		} );
 
-		await Promise.race( [ openButton.waitFor(), editorCanvas.locator( 'body' ).click() ] );
+		// Try the canonical body click first, with a short timeout so a slow or
+		// intercepted click fails fast into the Site Title fallback below.
+		await editorCanvas
+			.locator( 'body' )
+			.click( { timeout: 2 * 1000 } )
+			.catch( () => undefined );
+
+		// In current Gutenberg, a body click alone may not transition out of
+		// preview mode. Fall back to clicking a known block in the canvas
+		// (Site Title is present in the default theme). Stop as soon as the
+		// editor toolbar's Block Inserter button is available.
+		try {
+			await blockInserterButton.waitFor( { timeout: 5 * 1000 } );
+			return;
+		} catch {
+			// Continue with fallback.
+		}
+
+		const siteTitle = editorCanvas.locator( '[aria-label="Block: Site Title"]' ).first();
+		await siteTitle.click( { force: true } ).catch( () => undefined );
+		await blockInserterButton.waitFor( { timeout: 10 * 1000 } );
 	}
 
 	/**
@@ -474,8 +503,6 @@ export class FullSiteEditorPage {
 		{ closeWelcomeGuide }: { closeWelcomeGuide: boolean } = { closeWelcomeGuide: true }
 	): Promise< void > {
 		if ( ! ( await this.editorSiteStylesComponent.siteStylesIsOpen() ) ) {
-			await this.editorToolbarComponent.openMoreOptionsMenu();
-
 			if ( closeWelcomeGuide ) {
 				// The unawaited promise and no-op catch are both intentional here!
 				// We want to close the welcome guide if it opens, but not slow down the test if it doesn't.
@@ -487,7 +514,14 @@ export class FullSiteEditorPage {
 					} );
 				safelyWatchForWelcomeGuide();
 			}
-			await this.editorPopoverMenuComponent.clickMenuButton( 'Styles' );
+			// The global styles panel is opened from the dedicated "Styles" toggle in
+			// the editor header (the More-Options menu no longer hosts this item).
+			// Match on the `aria-label="Styles"` attribute specifically: the nav
+			// sidebar also has a "Styles" item, but it carries no aria-label, so this
+			// CSS selector targets only the header toggle. Do not switch to
+			// getByRole({ name: 'Styles' }) — that matches both controls.
+			const editorParent = await this.editor.parent();
+			await editorParent.locator( 'button[aria-label="Styles"]' ).first().click();
 		}
 	}
 

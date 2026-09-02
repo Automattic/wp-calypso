@@ -1,4 +1,4 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
 import { HelpCenter } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { usePrevious } from '@wordpress/compose';
@@ -12,6 +12,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useHelpCenterSite } from 'calypso/layout/use-help-center-site';
 import { useExperiment } from 'calypso/lib/explat';
 import getIsNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { getSectionName } from 'calypso/state/ui/selectors';
@@ -24,6 +25,7 @@ const HELP_CENTER_STORE = HelpCenter.register();
 const MasterbarHelpCenter = ( { tooltip } ) => {
 	const translate = useTranslate();
 	const sectionName = useSelector( getSectionName );
+	const { site, siteContextSource } = useHelpCenterSite();
 	const isNotificationsOpen = useSelector( ( state ) => getIsNotificationsOpen( state ) );
 	const prevIsNotificationsOpen = usePrevious( isNotificationsOpen );
 	const [ helpCenterPage, setHelpCenterPage ] = useState( null );
@@ -45,22 +47,35 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 		! isLoadingExperimentAssignment && experimentAssignment?.variationName === 'menu_popover';
 
 	const trackIconInteraction = () => {
-		recordTracksEvent( `wpcom_help_center_icon_interaction`, {
-			is_help_center_visible: helpCenterVisible,
-			section: sectionName,
-			is_menu_panel_enabled: isMenuPanelExperimentEnabled,
-			is_assignment_loaded: ! isLoadingExperimentAssignment,
-		} );
+		recordTracksEvent(
+			`wpcom_help_center_icon_interaction`,
+			withSiteContext(
+				{
+					is_help_center_visible: helpCenterVisible,
+					section: sectionName,
+					is_menu_panel_enabled: isMenuPanelExperimentEnabled,
+					is_assignment_loaded: ! isLoadingExperimentAssignment,
+				},
+				siteContextSource,
+				site?.ID
+			)
+		);
 	};
 
 	const handleToggleHelpCenter = () => {
 		trackIconInteraction();
 
-		recordTracksEvent( `calypso_inlinehelp_${ helpCenterVisible ? 'close' : 'show' }`, {
-			force_site_id: true,
-			location: 'help-center',
-			section: sectionName,
-		} );
+		recordTracksEvent(
+			`calypso_inlinehelp_${ helpCenterVisible ? 'close' : 'show' }`,
+			withSiteContext(
+				{
+					location: 'help-center',
+					section: sectionName,
+				},
+				siteContextSource,
+				site?.ID
+			)
+		);
 
 		setShowHelpCenter( ! helpCenterVisible );
 	};
@@ -80,11 +95,17 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 				setNavigateToRoute( destination );
 				setHelpCenterPage( destination );
 			} else {
-				recordTracksEvent( `calypso_inlinehelp_close`, {
-					force_site_id: true,
-					location: 'help-center',
-					section: sectionName,
-				} );
+				recordTracksEvent(
+					`calypso_inlinehelp_close`,
+					withSiteContext(
+						{
+							location: 'help-center',
+							section: sectionName,
+						},
+						siteContextSource,
+						site?.ID
+					)
+				);
 				setShowHelpCenter( false );
 				setHelpCenterPage( null );
 			}
@@ -93,12 +114,18 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 			setHelpCenterPage( destination );
 			setShowHelpCenter( true );
 
-			recordTracksEvent( `calypso_inlinehelp_show`, {
-				force_site_id: true,
-				location: 'help-center',
-				section: sectionName,
-				destination,
-			} );
+			recordTracksEvent(
+				`calypso_inlinehelp_show`,
+				withSiteContext(
+					{
+						location: 'help-center',
+						section: sectionName,
+						destination,
+					},
+					siteContextSource,
+					site?.ID
+				)
+			);
 		}
 	};
 

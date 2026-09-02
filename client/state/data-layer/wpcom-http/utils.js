@@ -1,6 +1,6 @@
+import { merge } from '@automattic/js-utils';
 import warn from '@wordpress/warning';
 import deterministicStringify from 'fast-json-stable-stringify';
-import { merge } from 'lodash';
 import { keyedReducer } from 'calypso/state/utils';
 
 const noop = () => {};

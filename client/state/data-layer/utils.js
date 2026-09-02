@@ -1,6 +1,5 @@
 import { camelCase, set, snakeCase } from '@automattic/js-utils';
 import { extendAction } from '@automattic/state-utils';
-import { map } from 'lodash';
 
 const doBypassDataLayer = {
 	meta: {
@@ -20,7 +19,7 @@ export const bypassDataLayer = ( action ) => extendAction( action, doBypassDataL
  */
 export function convertKeysBy( obj, fn ) {
 	if ( Array.isArray( obj ) ) {
-		return map( obj, ( v ) => convertKeysBy( v, fn ) );
+		return obj.map( ( v ) => convertKeysBy( v, fn ) );
 	}
 
 	if ( typeof obj === 'object' && obj !== null ) {

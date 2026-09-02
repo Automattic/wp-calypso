@@ -1,6 +1,5 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { get } from 'lodash';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import {
 	SOCIAL_LOGIN_REQUEST,
@@ -49,7 +48,7 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => ( dispatch ) => {
 				} );
 			}
 
-			return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
+			return remoteLoginUser( response?.body?.data?.token_links ?? [] ).then( () => {
 				dispatch( {
 					type: SOCIAL_LOGIN_REQUEST_SUCCESS,
 					data: response?.body?.data,

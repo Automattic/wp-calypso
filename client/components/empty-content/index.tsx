@@ -17,7 +17,7 @@ interface EmptyContentProps {
 	actionCallback?: () => void;
 	actionTarget?: string;
 	actionDisabled?: boolean;
-	actionRef?: RefObject< HTMLElement > | LegacyRef< HTMLButtonElement >;
+	actionRef?: RefObject< HTMLElement | null > | LegacyRef< HTMLButtonElement >;
 	secondaryAction?: React.ReactNode;
 	secondaryActionURL?: string;
 	secondaryActionCallback?: () => void;

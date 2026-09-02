@@ -2,7 +2,6 @@
 import { Gridicon } from '@automattic/components';
 import { Icon, starEmpty } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
-import { filter, some } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -113,10 +112,9 @@ class SharingButtonsPreview extends Component {
 	};
 
 	getButtonsTrayToggleButtonElement = ( visibility ) => {
-		const enabledButtonsExist = some( this.props.buttons, {
-			visibility: visibility,
-			enabled: true,
-		} );
+		const enabledButtonsExist = ( this.props.buttons ?? [] ).some(
+			( button ) => button.visibility === visibility && button.enabled === true
+		);
 
 		return (
 			<ButtonsPreviewAction
@@ -170,7 +168,9 @@ class SharingButtonsPreview extends Component {
 	};
 
 	getPreviewButtonsElement = () => {
-		const enabledButtons = filter( this.props.buttons, { enabled: true } );
+		const enabledButtons = ( this.props.buttons ?? [] ).filter(
+			( button ) => button.enabled === true
+		);
 
 		if ( enabledButtons.length ) {
 			return (
@@ -178,7 +178,9 @@ class SharingButtonsPreview extends Component {
 					buttons={ enabledButtons }
 					visibility="visible"
 					style={ this.props.style }
-					showMore={ some( this.props.buttons, { visibility: 'hidden' } ) }
+					showMore={ ( this.props.buttons ?? [] ).some(
+						( button ) => button.visibility === 'hidden'
+					) }
 				/>
 			);
 		}
@@ -202,7 +204,9 @@ class SharingButtonsPreview extends Component {
 					value={ this.props.label }
 					onChange={ this.props.onLabelChange }
 					onClose={ this.toggleEditLabel }
-					hasEnabledButtons={ some( this.props.buttons, { enabled: true } ) }
+					hasEnabledButtons={ ( this.props.buttons ?? [] ).some(
+						( button ) => button.enabled === true
+					) }
 				/>
 
 				<h2 className="sharing-buttons-preview__heading">{ this.props.translate( 'Preview' ) }</h2>

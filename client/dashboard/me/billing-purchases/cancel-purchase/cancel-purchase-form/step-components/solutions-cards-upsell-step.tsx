@@ -164,7 +164,7 @@ function getCardTitle( cardId: string ): string {
 		case 'built-by':
 			return __( 'Let us build for you' );
 		case 'ask-ai-assistant':
-			return __( 'Ask our AI assistant' );
+			return __( 'Ask WordPress Agent' );
 		case 'upgrade-for-full-access':
 			return __( 'Pick another paid plan for access to more features' );
 		case 'get-theme-addon':
@@ -199,7 +199,7 @@ function getCardDescription( cardId: string ): string {
 		case 'built-by':
 			return __( 'Our team can build your site so you can focus on what matters.' );
 		case 'ask-ai-assistant':
-			return __( 'Use our AI assistant to quickly find solutions.' );
+			return __( 'Use WordPress Agent to quickly find solutions.' );
 		case 'upgrade-for-full-access':
 			return __( 'Get the business plan to access all available plugins and themes.' );
 		case 'get-theme-addon':

@@ -1,3 +1,4 @@
+import { snoozeAccountRecoveryInterstitial } from '../../lib/dashboard-helpers';
 import { expect, tags, test } from '../../lib/pw-base';
 
 interface PerfNavEvent {
@@ -73,13 +74,15 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 
 	test( 'Full page load to site list sends perf.nav with correct ID', async ( {
 		accountGivenByEnvironment,
+		clientRestAPI,
 		page,
 		pageDashboard,
 	} ) => {
 		const events = observeLogstash( page );
 
 		await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async function () {
-			await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
+			await snoozeAccountRecoveryInterstitial( clientRestAPI );
+			await accountGivenByEnvironment.authenticate( page );
 		} );
 
 		await test.step( 'When I navigate directly to the sites page', async function () {
@@ -102,6 +105,7 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 
 	test( 'In-app navigation sends perf.nav with fullPage false', async ( {
 		accountGivenByEnvironment,
+		clientRestAPI,
 		page,
 		pageDashboard,
 		viewportName,
@@ -109,7 +113,8 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 		const events = observeLogstash( page );
 
 		await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async function () {
-			await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
+			await snoozeAccountRecoveryInterstitial( clientRestAPI );
+			await accountGivenByEnvironment.authenticate( page );
 		} );
 
 		await test.step( 'And I am on the sites page', async function () {
@@ -131,7 +136,7 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 				// With omnibar: click Domains in the responsive sidebar.
 				// On mobile, open the sidebar first via the masterbar menu button.
 				if ( viewportName === 'mobile' ) {
-					await page.getByTitle( 'Menu', { exact: true } ).click();
+					await page.getByRole( 'button', { name: 'Menu', exact: true } ).first().click();
 				}
 				await page.locator( '#wpcom' ).getByRole( 'link', { name: 'Domains' } ).click();
 			} else if ( viewportName === 'mobile' ) {

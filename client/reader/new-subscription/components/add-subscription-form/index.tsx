@@ -130,7 +130,7 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 									<SiteSubscriptionsList layout="compact" />
 								</>
 							) }
-							{ shouldShowRelatedSitesList && <UnsubscribedFeedsSearchList /> }
+							{ shouldShowRelatedSitesList && <UnsubscribedFeedsSearchList hideTitle /> }
 						</>
 					) ) }
 			</SubscriptionManagerContextProvider>

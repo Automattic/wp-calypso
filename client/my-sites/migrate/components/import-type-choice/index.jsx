@@ -1,6 +1,5 @@
 import { Badge } from '@automattic/components';
 import clsx from 'clsx';
-import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormRadio from 'calypso/components/forms/form-radio';
@@ -96,7 +95,7 @@ export default class ImportTypeChoice extends Component {
 
 		return (
 			<div className="import-type-choice__wrapper">
-				{ map( items, ( item, key ) => this.renderOption( item, key ) ) }
+				{ Object.entries( items ?? {} ).map( ( [ key, item ] ) => this.renderOption( item, key ) ) }
 			</div>
 		);
 	}

@@ -1,6 +1,7 @@
 package _self.projects
 
 import _self.bashNodeScript
+import _self.lib.utils.allBranchesExceptMergeQueue
 import _self.lib.utils.mergeTrunk
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
@@ -41,7 +42,6 @@ object WPComPlugins : Project({
 					"happy-blocks-release-build",
 					"help-center-release-build",
 					"agents-manager-release-build",
-					"wpcom-smart-dictation-release-build",
 					"content-research-release-build",
 				)
 			}
@@ -100,6 +100,7 @@ object CalypsoApps: BuildType({
 
 	vcs {
 		root(Settings.WpCalypso)
+		branchFilter = allBranchesExceptMergeQueue()
 		cleanCheckout = true
 	}
 
@@ -113,7 +114,6 @@ object CalypsoApps: BuildType({
 		apps/happy-blocks/release-files => happy-blocks.zip
 		apps/help-center/dist => help-center.zip
 		apps/agents-manager/dist => agents-manager.zip
-		apps/wpcom-smart-dictation/dist => wpcom-smart-dictation.zip
 		apps/content-research/dist => content-research.zip
 	""".trimIndent()
 
@@ -194,6 +194,7 @@ private object GutenbergUploadSourceMapsToSentry: BuildType() {
 		// Only needed so that we can test the job in different branches.
 		vcs {
 			root(Settings.WpCalypso)
+			branchFilter = allBranchesExceptMergeQueue()
 			cleanCheckout = true
 		}
 

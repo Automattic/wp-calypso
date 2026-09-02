@@ -8,7 +8,7 @@ export default function ConcludedConversationFooter() {
 	return (
 		<div className="concluded-conversation-footer">
 			<Button variant="primary" onClick={ () => navigate( '/' ) }>
-				{ __( 'Still need help? Start a new chat', '__i18n_text_domain__' ) }
+				{ __( 'Still need help? Start a new chat', __i18n_text_domain__ ) }
 			</Button>
 		</div>
 	);

@@ -71,6 +71,17 @@
 
 .reader-feed-header__site-icon {
 	margin-right: 24px;
+
+	// Feed images sourced from an RSS channel image (or a small site icon) can be
+	// tiny. `max-width: 100%` only scales down, so a small source would otherwise
+	// float in the center of the box. Scale the image up to fill the allocated
+	// space, using `contain` so non-square sources are shown in full rather than
+	// cropped.
+	.site-icon__img {
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+	}
 }
 
 .reader-feed-header__follow-button-and-settings {

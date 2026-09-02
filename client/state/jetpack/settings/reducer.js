@@ -1,5 +1,4 @@
-import { mapValues } from '@automattic/js-utils';
-import { merge } from 'lodash';
+import { mapValues, merge } from '@automattic/js-utils';
 import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,

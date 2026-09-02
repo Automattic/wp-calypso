@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { getShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
@@ -20,6 +21,7 @@ import StatsCardUpsell from '../stats-card-upsell';
 import DatePicker from '../stats-date-label';
 import ErrorPanel from '../stats-error';
 import StatsListCard from '../stats-list/stats-list-card';
+import { buildSummaryUrl } from '../utils';
 import StatsModulePlaceholder from './placeholder';
 
 import './style.scss';
@@ -38,6 +40,7 @@ class StatsModule extends Component {
 		statType: PropTypes.string,
 		showSummaryLink: PropTypes.bool,
 		summaryLinkModifier: PropTypes.func,
+		summaryShortcutId: PropTypes.string,
 		translate: PropTypes.func,
 		metricLabel: PropTypes.string,
 		mainItemLabel: PropTypes.string,
@@ -184,22 +187,22 @@ class StatsModule extends Component {
 	}
 
 	getSummaryLink() {
-		const { summary, period, path, siteSlug, query, summaryLinkModifier } = this.props;
+		const { summary, period, path, siteSlug, query, summaryLinkModifier, summaryShortcutId } =
+			this.props;
 		if ( summary ) {
 			return;
 		}
 
-		const paramsValid = period?.period && path && siteSlug;
-		if ( ! paramsValid ) {
+		const url = buildSummaryUrl( {
+			period,
+			module: path,
+			siteSlug,
+			query,
+			shortcut: summaryShortcutId,
+		} );
+
+		if ( ! url ) {
 			return undefined;
-		}
-
-		let url = `/stats/${ period.period }/${ path }/${ siteSlug }`;
-
-		if ( query?.start_date ) {
-			url += `?startDate=${ query.start_date }&endDate=${ query.date }`;
-		} else {
-			url += `?startDate=${ period.endOf.format( 'YYYY-MM-DD' ) }`;
 		}
 
 		return summaryLinkModifier( url );
@@ -371,6 +374,11 @@ export default connect( ( state, ownProps ) => {
 	const gateStats = shouldGateStats( state, siteId, statType );
 	const gateDownloads = shouldGateStats( state, siteId, STATS_FEATURE_DOWNLOAD_CSV );
 
+	const { selectedShortcut } = getShortcuts( state, {
+		chartStart: query?.start_date,
+		chartEnd: query?.date,
+	} );
+
 	return {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),
 		data: getSiteStatsNormalizedData( state, siteId, statType, query ),
@@ -378,5 +386,6 @@ export default connect( ( state, ownProps ) => {
 		siteSlug,
 		gateStats,
 		gateDownloads,
+		summaryShortcutId: selectedShortcut?.id,
 	};
 } )( localize( StatsModule ) );

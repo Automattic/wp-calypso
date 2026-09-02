@@ -5,6 +5,7 @@
 .agents-manager-sources-display {
 	&.card {
 		width: 100%;
+		max-width: unset;
 		display: flex;
 		flex-direction: column;
 		background-color: transparent;

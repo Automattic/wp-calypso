@@ -4,6 +4,7 @@ import {
 	pullFromStagingMutation,
 } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import {
 	Button,
 	ExternalLink,
@@ -36,6 +37,7 @@ import { CardDivider } from '../../components/card';
 import Environment, { EnvironmentType } from '../../components/environment';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
+import { wpcomLink } from '../../utils/link';
 import type { FileBrowserConfig } from '../../../my-sites/backup/backup-contents-page/file-browser';
 import type { Field } from '@wordpress/dataviews';
 
@@ -403,7 +405,12 @@ function StagingSiteSyncModalInner( {
 			<VStack spacing={ 5 }>
 				<Text>
 					{ createInterpolateElement( syncConfig[ environment ].description, {
-						a: <ExternalLink href={ `/activity-log/${ targetSiteSlug }` } children={ null } />,
+						a: (
+							<ExternalLink
+								href={ wpcomLink( `/activity-log/${ targetSiteSlug }` ) }
+								children={ null }
+							/>
+						),
 					} ) }
 				</Text>
 				<HStack
@@ -511,10 +518,12 @@ function StagingSiteSyncModalInner( {
 														date: <span>{ displayBackupDate }</span>,
 													}
 												) }{ ' ' }
-												<ExternalLink
-													href={ `/backup/${ querySiteSlug as string }` }
-													children={ __( 'Create new backup' ) }
-												/>
+												<Link
+													to="/sites/$siteSlug/backups"
+													params={ { siteSlug: querySiteSlug as string } }
+												>
+													{ __( 'Create new backup' ) }
+												</Link>
 											</Text>
 										</HStack>
 									) }

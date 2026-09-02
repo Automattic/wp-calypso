@@ -1,9 +1,8 @@
 import { FEATURE_INSTALL_THEMES, PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { times } from '@automattic/js-utils';
+import { times, isEmpty } from '@automattic/js-utils';
 import { Icon, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { connect, useSelector } from 'react-redux';

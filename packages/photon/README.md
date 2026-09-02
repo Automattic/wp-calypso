@@ -5,7 +5,7 @@ JavaScript library for the [WordPress.com][] [Photon][] image manipulation servi
 ## Requirements
 
 Photon.js requires support for the standard URL and URLSearchParams APIs.
-Be sure to use a polyfill if you're targetting environments without support for them. This includes old browsers, such
+Be sure to use a polyfill if you're targeting environments without support for them. This includes old browsers, such
 as Internet Explorer 11, and old versions of Node.js (5 or older).
 
 ## How to use

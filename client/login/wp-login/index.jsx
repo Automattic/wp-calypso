@@ -39,6 +39,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getIsJetpackApp from 'calypso/state/selectors/get-is-jetpack-app';
 import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import isWooJPCFlow, {
@@ -109,6 +110,7 @@ export class Login extends Component {
 			'oauth2Client',
 			'isWooJPC',
 			'isJetpack',
+			'isJetpackApp',
 			'isWCCOM',
 			'isBlazePro',
 			'isFromAkismet',
@@ -398,6 +400,7 @@ function getInitialHeadingState( props, translate ) {
 		oauth2Client,
 		isWooJPC,
 		isJetpack,
+		isJetpackApp,
 		isWCCOM,
 		isBlazePro,
 		isFromAkismet,
@@ -423,6 +426,7 @@ function getInitialHeadingState( props, translate ) {
 		oauth2Client,
 		isWooJPC,
 		isJetpack,
+		isJetpackApp,
 		isWCCOM,
 		isBlazePro,
 		isFromAkismet,
@@ -512,6 +516,7 @@ export default connect(
 			isWCCOM: getIsWCCOM( state ),
 			isWoo: getIsWoo( state ),
 			isBlazePro: getIsBlazePro( state ),
+			isJetpackApp: getIsJetpackApp( state ),
 			// This applies to all oauth screens except for A4A, Blaze Pro, Jetpack, Woo.
 			isGenericOauth:
 				oauth2Client &&

@@ -1,6 +1,6 @@
 /**
  * Block-action helpers and module state shared by the AM provider entry
- * (`../index`) and components (e.g. ReviewMediation). Lives here to break
+ * (`../index`) and components (e.g. AiEditorialReview). Lives here to break
  * the index ↔ component import cycle.
  */
 
@@ -11,13 +11,22 @@ import { dispatch, select } from '@wordpress/data';
 import { countOccurrences } from './blocks';
 
 /**
+ * Post fields a picker checkpoint can snapshot and restore.
+ */
+export type CheckpointField = 'title' | 'excerpt';
+
+/**
  * Checkpoint API shared between the React `useCheckpoint` hook (which AM
- * calls) and the synchronous `handleShowComponent` callback.
+ * calls) and the synchronous `handleShowComponent` callback. `setCheckpoint`
+ * captures only the fields the triggering picker can write, so restoring one
+ * picker's checkpoint never clobbers another field's later edits.
  */
 export interface CheckpointApi {
-	setCheckpoint: ( id: string ) => void;
+	setCheckpoint: ( id: string, fields?: CheckpointField[] ) => void;
 	hasCheckpoint: ( id: string ) => boolean;
 	restoreCheckpoint: ( id: string ) => Promise< void >;
+	canSwapCheckpoint?: ( id: string ) => boolean | undefined;
+	swapCheckpoint?: ( id: string ) => Promise< void >;
 }
 
 // ---------- Module state ----------
@@ -123,7 +132,7 @@ function getAccessibleFrameDocuments(): Document[] {
 
 /**
  * Find a block element by clientId in the main document or editor iframe.
- * Exported so peer components (e.g. ReviewMediation) can scroll a block into
+ * Exported so peer components (e.g. AiEditorialReview) can scroll a block into
  * view on interaction.
  * @param {string} clientId - The block's clientId.
  * @returns The block element, or null.
@@ -373,15 +382,13 @@ export function applyProcessingEffect( el: HTMLElement ): void {
 }
 
 /**
- * Remove processing effect and show a brief highlight.
- * @param el - The block element.
+ * Start shimmer on a known block-edit target.
  */
-function removeProcessingEffect( el: HTMLElement ): void {
-	clearProcessingEffect( el );
-	el.classList.add( 'jetpack-ai-has-processed' );
-	setTimeout( () => {
-		el.classList.remove( 'jetpack-ai-has-processed' );
-	}, 1000 );
+export function startBlockShimmer( clientId: string ): void {
+	const blockEl = findBlockElement( clientId );
+	if ( blockEl ) {
+		applyProcessingEffect( blockEl );
+	}
 }
 
 /**
@@ -392,20 +399,15 @@ export function stopBlockShimmer(): void {
 }
 
 /**
- * Start shimmer on the currently selected block (if any).
+ * Remove processing effect and show a brief highlight.
+ * @param el - The block element.
  */
-export function startBlockShimmer(): void {
-	const wpData = ( window as any ).wp?.data;
-	if ( ! wpData ) {
-		return;
-	}
-	const block = getSelectedOrRememberedBlock();
-	if ( block?.clientId ) {
-		const blockEl = findBlockElement( block.clientId );
-		if ( blockEl ) {
-			applyProcessingEffect( blockEl );
-		}
-	}
+function removeProcessingEffect( el: HTMLElement ): void {
+	clearProcessingEffect( el );
+	el.classList.add( 'jetpack-ai-has-processed' );
+	setTimeout( () => {
+		el.classList.remove( 'jetpack-ai-has-processed' );
+	}, 1000 );
 }
 
 // ---------- Ability callbacks ----------
@@ -437,6 +439,36 @@ function getStringLikeAttributeNames( block: any ): string[] {
 	);
 }
 
+/**
+ * Treat typographic and straight quotation marks as equivalent when validating
+ * model-returned currentText. Each replacement is one UTF-16 code unit, so a
+ * match index in the normalized string still points to the same source span.
+ */
+function normaliseQuotationMarks( text: string ): string {
+	return text.replace( /[\u2018\u2019]/g, "'" ).replace( /[\u201c\u201d]/g, '"' );
+}
+
+/**
+ * Count the spans of block content currentText could replace. Exported so the
+ * review cards gate the Apply control on the same count the apply itself uses;
+ * a stricter gate disables edits that would have applied cleanly.
+ */
+export function countCurrentTextOccurrences( source: string, currentText: string ): number {
+	return countOccurrences(
+		normaliseQuotationMarks( source ),
+		normaliseQuotationMarks( currentText )
+	);
+}
+
+function replaceCurrentText( source: string, currentText: string, replacement: string ): string {
+	const matchIndex = normaliseQuotationMarks( source ).indexOf(
+		normaliseQuotationMarks( currentText )
+	);
+	return (
+		source.slice( 0, matchIndex ) + replacement + source.slice( matchIndex + currentText.length )
+	);
+}
+
 function findAttributeByCurrentText( block: any, currentText?: string ): string | undefined {
 	if ( typeof currentText !== 'string' || currentText === '' ) {
 		return undefined;
@@ -444,7 +476,7 @@ function findAttributeByCurrentText( block: any, currentText?: string ): string 
 
 	const matches = getStringLikeAttributeNames( block ).filter( ( attributeName ) => {
 		const content = getAttributeContent( block, attributeName ) ?? '';
-		return countOccurrences( content, currentText ) === 1;
+		return countCurrentTextOccurrences( content, currentText ) === 1;
 	} );
 
 	return matches.length === 1 ? matches[ 0 ] : undefined;
@@ -565,7 +597,7 @@ function findBlockSnapshotByCurrentText(
 				attributeName: candidate,
 				content,
 			};
-			const matchCount = countOccurrences( content, currentText );
+			const matchCount = countCurrentTextOccurrences( content, currentText );
 			for ( let i = 0; i < matchCount; i++ ) {
 				matches.push( snapshot );
 			}
@@ -617,23 +649,56 @@ export function handleUpdateBlockContent( input: any ): any {
 	let snapshot = getBlockSnapshot( targetClientId, editableAttribute, currentText );
 	if ( ! snapshot ) {
 		if ( hasCurrentText ) {
-			const fallback = findBlockSnapshotByCurrentText( currentText, editableAttribute );
-			if ( fallback.error ) {
-				// eslint-disable-next-line no-console
-				console.warn( '[ReviewMediation] currentText matches multiple spans in block content', {
-					clientId,
-				} );
-				return {
-					success: false,
-					error: fallback.error,
-					returnToAgent: false,
-				};
+			const selectedClientId = getBlockEditorSelect()?.getSelectedBlockClientId?.();
+			if ( selectedClientId ) {
+				const selectedSnapshot = getBlockSnapshot(
+					selectedClientId,
+					editableAttribute,
+					currentText
+				);
+				if ( selectedSnapshot?.attributeName ) {
+					const selectedMatchCount = countCurrentTextOccurrences(
+						selectedSnapshot.content,
+						currentText
+					);
+					if ( selectedMatchCount === 1 ) {
+						targetClientId = selectedClientId;
+						snapshot = selectedSnapshot;
+					} else if ( selectedMatchCount > 1 ) {
+						// eslint-disable-next-line no-console
+						console.warn( '[Jetpack AI] currentText matches multiple spans in block content', {
+							clientId,
+						} );
+						return {
+							success: false,
+							error: 'currentText matches multiple spans in block content',
+							returnToAgent: false,
+						};
+					}
+				}
 			}
-			if ( fallback.snapshot ) {
-				targetClientId = fallback.snapshot.clientId;
-				snapshot = fallback.snapshot;
+
+			if ( ! snapshot ) {
+				const fallback = findBlockSnapshotByCurrentText( currentText, editableAttribute );
+				if ( fallback.error ) {
+					// eslint-disable-next-line no-console
+					console.warn( '[Jetpack AI] currentText matches multiple spans in block content', {
+						clientId,
+					} );
+					return {
+						success: false,
+						error: fallback.error,
+						returnToAgent: false,
+					};
+				}
+				if ( fallback.snapshot ) {
+					targetClientId = fallback.snapshot.clientId;
+					snapshot = fallback.snapshot;
+				}
+			}
+			if ( snapshot ) {
 				// eslint-disable-next-line no-console
-				console.warn( '[ReviewMediation] stale clientId matched by currentText', {
+				console.warn( '[Jetpack AI] stale clientId matched by currentText', {
 					clientId,
 					targetClientId,
 				} );
@@ -651,15 +716,16 @@ export function handleUpdateBlockContent( input: any ): any {
 			returnToAgent: false,
 		};
 	}
+	const snapshotAttribute = snapshot.attributeName;
 
 	// Substring replace when currentText is a non-empty span present in the block.
 	// If that span no longer exists, fail rather than replacing the whole block
 	// with a partial suggested edit.
 	if ( hasCurrentText ) {
-		const matchCount = countOccurrences( snapshot.content, currentText );
+		const matchCount = countCurrentTextOccurrences( snapshot.content, currentText );
 		if ( matchCount === 0 ) {
 			// eslint-disable-next-line no-console
-			console.warn( '[ReviewMediation] currentText not found in block content', { clientId } );
+			console.warn( '[Jetpack AI] currentText not found in block content', { clientId } );
 			return {
 				success: false,
 				error: 'currentText not found in block content',
@@ -668,7 +734,7 @@ export function handleUpdateBlockContent( input: any ): any {
 		}
 		if ( matchCount > 1 ) {
 			// eslint-disable-next-line no-console
-			console.warn( '[ReviewMediation] currentText matches multiple spans in block content', {
+			console.warn( '[Jetpack AI] currentText matches multiple spans in block content', {
 				clientId,
 			} );
 			return {
@@ -688,11 +754,7 @@ export function handleUpdateBlockContent( input: any ): any {
 	// Short delay so the shimmer is visible before content swaps
 	return new Promise< any >( ( resolve ) => {
 		setTimeout( () => {
-			const latestSnapshot = getBlockSnapshot(
-				targetClientId,
-				snapshot?.attributeName,
-				currentText
-			);
+			let latestSnapshot = getBlockSnapshot( targetClientId, snapshotAttribute, currentText );
 			const resolveFailure = ( error: string ) => {
 				if ( blockEl ) {
 					removeProcessingEffect( blockEl );
@@ -706,6 +768,25 @@ export function handleUpdateBlockContent( input: any ): any {
 				resolveFailure( 'context changed' );
 				return;
 			}
+
+			if ( ! latestSnapshot && hasCurrentText ) {
+				const fallback = findBlockSnapshotByCurrentText( currentText, snapshotAttribute );
+				if ( fallback.error ) {
+					resolveFailure( fallback.error );
+					return;
+				}
+				if ( fallback.snapshot ) {
+					latestSnapshot = getBlockSnapshot(
+						fallback.snapshot.clientId,
+						fallback.snapshot.attributeName,
+						currentText
+					);
+					if ( latestSnapshot ) {
+						targetClientId = latestSnapshot.clientId;
+					}
+				}
+			}
+
 			if ( ! latestSnapshot ) {
 				resolveFailure( 'block not found' );
 				return;
@@ -717,10 +798,10 @@ export function handleUpdateBlockContent( input: any ): any {
 
 			let nextContent = content;
 			if ( hasCurrentText ) {
-				const matchCount = countOccurrences( latestSnapshot.content, currentText );
+				const matchCount = countCurrentTextOccurrences( latestSnapshot.content, currentText );
 				if ( matchCount === 0 ) {
 					// eslint-disable-next-line no-console
-					console.warn( '[ReviewMediation] currentText not found in block content', {
+					console.warn( '[Jetpack AI] currentText not found in block content', {
 						clientId: targetClientId,
 					} );
 					resolveFailure( 'currentText not found in block content' );
@@ -728,19 +809,36 @@ export function handleUpdateBlockContent( input: any ): any {
 				}
 				if ( matchCount > 1 ) {
 					// eslint-disable-next-line no-console
-					console.warn( '[ReviewMediation] currentText matches multiple spans in block content', {
+					console.warn( '[Jetpack AI] currentText matches multiple spans in block content', {
 						clientId: targetClientId,
 					} );
 					resolveFailure( 'currentText matches multiple spans in block content' );
 					return;
 				}
-				nextContent = latestSnapshot.content.replace( currentText, content );
+				nextContent = replaceCurrentText( latestSnapshot.content, currentText, content );
 			} else if ( latestSnapshot.content !== snapshot.content ) {
 				// eslint-disable-next-line no-console
-				console.warn( '[ReviewMediation] block content changed while applying edit', {
+				console.warn( '[Jetpack AI] block content changed while applying edit', {
 					clientId: targetClientId,
 				} );
 				resolveFailure( 'block content changed while applying edit' );
+				return;
+			}
+
+			if ( nextContent === latestSnapshot.content ) {
+				if ( blockEl ) {
+					removeProcessingEffect( blockEl );
+				}
+				notifyBlockActionComplete();
+				resolve( {
+					success: true,
+					clientId: targetClientId,
+					contentBefore: latestSnapshot.content,
+					contentAfter: nextContent,
+					editableAttribute: latestSnapshot.attributeName,
+					returnToAgent: false,
+					...( summary ? { agentMessage: summary } : {} ),
+				} );
 				return;
 			}
 
@@ -775,7 +873,7 @@ export function handleUpdateBlockContent( input: any ): any {
 }
 
 /**
- * Apply a mediation-suggested edit. When `currentText` is provided and uniquely
+ * Apply a review-suggested edit. When `currentText` is provided and uniquely
  * matches a span in the block, only that span is replaced. When it is missing or
  * ambiguous, the edit fails safely rather than replacing the whole block. Returns
  * `success: false` for unsupported edit targets so the UI can show 'failed' rather
@@ -811,7 +909,7 @@ export async function applyReviewEdit(
 }
 
 /**
- * Revert a block's content to a pre-accept snapshot. Used by ReviewMediation's
+ * Revert a block's content to a pre-accept snapshot. Used by AiEditorialReview's
  * per-card Undo to actually undo the mutation, not just flip UI state.
  * When `expectedContent` is supplied, only restore if the block still contains
  * the content this row applied. This avoids clobbering later accepted edits on
@@ -845,4 +943,13 @@ export function undoBlockEdit(
 	} catch {
 		return false;
 	}
+}
+
+export function canUndoBlockEdit(
+	clientId: string,
+	expectedContent: string,
+	editableAttribute?: string
+): boolean {
+	const snapshot = getBlockSnapshot( clientId, editableAttribute, undefined, expectedContent );
+	return !! snapshot?.attributeName && snapshot.content === expectedContent;
 }

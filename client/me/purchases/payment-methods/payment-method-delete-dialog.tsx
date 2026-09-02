@@ -4,6 +4,7 @@ import { Button } from '@wordpress/components';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { ConfirmDialog, DialogContent, DialogFooter } from 'calypso/components/confirm-dialog';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { mightStillAutoRenew } from 'calypso/lib/purchases';
 import type { StoredPaymentMethod } from '@automattic/wpcom-checkout';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import 'calypso/me/purchases/payment-methods/style.scss';
@@ -29,7 +30,8 @@ const PaymentMethodDeleteDialog = ( {
 	const translate = useTranslate();
 	const associatedSubscriptions = purchases?.filter(
 		( purchase: Purchase ) =>
-			purchase.payment?.storedDetailsId === card.stored_details_id && purchase.isAutoRenewEnabled
+			purchase.payment?.storedDetailsId === card.stored_details_id &&
+			mightStillAutoRenew( purchase )
 	);
 
 	const handleClose = () => {
@@ -86,7 +88,9 @@ const PaymentMethodDeleteDialog = ( {
 											</span>
 										</td>
 										<td className="payment-method-delete-dialog__affected-subscription-details-renew-date fixed">
-											{ moment( purchase.renewDate ).format( 'll' ) }
+											{ purchase.renewDate
+												? moment( purchase.renewDate ).format( 'll' )
+												: translate( 'Pending renewal' ) }
 										</td>
 									</tr>
 								) ) }

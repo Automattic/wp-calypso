@@ -4,10 +4,11 @@ import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import InlineHelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { useHelpCenterSearch, useGetHistoryChats } from '../hooks';
+import { useHelpCenterSearch, useGetHistoryChats, useHelpCenterCTA } from '../hooks';
 import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';
 import { useHelpSearchQuery } from '../hooks/use-help-search-query';
 import { HELP_CENTER_STORE } from '../stores';
+import { HelpCenterCTA } from './help-center-cta';
 import { HelpCenterLaunchpad } from './help-center-launchpad';
 import { HelpCenterMoreResources } from './help-center-more-resources';
 import HelpCenterRecentConversations from './help-center-recent-conversations';
@@ -40,6 +41,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 		[]
 	);
 	const { contextSearch } = useContextBasedSearchMapping( currentRoute );
+	const cta = useHelpCenterCTA( 'banner' );
 	const { isLoading: isLoadingSearchResults } = useHelpSearchQuery(
 		searchQuery || contextTerm || contextSearch,
 		locale,
@@ -61,6 +63,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 
 	return (
 		<div className="inline-help__search">
+			{ cta && <HelpCenterCTA { ...cta } /> }
 			{ featureConfig.home.recentConversations && (
 				<>
 					<HelpCenterRecentConversations />
@@ -73,6 +76,8 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 				onSearch={ setSearchQueryAndEmailSubject }
 				location="help-center"
 				isVisible
+				blogId={ site?.ID }
+				siteContextSource="help_center_context"
 				placeholder={ __( 'Search guides…', __i18n_text_domain__ ) }
 				sectionName={ sectionName }
 				useSearchControl

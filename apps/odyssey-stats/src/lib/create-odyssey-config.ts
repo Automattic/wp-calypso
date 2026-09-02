@@ -121,7 +121,7 @@ export class ConfigApi extends Function {
 
 		// Set a flag to identify if the app is running in WP Admin.
 		// `is_running_in_jetpack_site` now means whether the app calls public-api directly or use the Jetpack ones.
-		// For Simple sites running Odyssey Stats, `is_running_in_jetpack_site` is true and `is_odyssey` is false.
+		// It is false on Simple sites, so use `is_odyssey` — always true here — to detect the wp-admin app.
 		this.configData.features.is_odyssey = true;
 
 		// Sets the Blaze Dashboard path prefix.

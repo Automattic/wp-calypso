@@ -1,0 +1,116 @@
+import {
+	Button,
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+import { check, copy } from '@wordpress/icons';
+import { useCallback, useState } from 'react';
+import { CollapsibleCard } from '../../../components/collapsible-card';
+import type { RecordTracksEvent } from './types';
+
+import './style.scss';
+
+export interface StarterPrompt {
+	id: string;
+	title: string;
+	description: string;
+	prompt: string;
+}
+
+export const STARTER_PROMPTS: StarterPrompt[] = [
+	{
+		id: 'program-health-snapshot',
+		title: __( 'Program health snapshot' ),
+		description: __( 'Your tier, earnings, and billing, with what to act on first.' ),
+		prompt: __(
+			'Give me a high-level health check of my Automattic for Agencies account. Cover three areas: (1) **Agency & tier** — my current tier, influenced revenue, and the gap to the next tier plus what’s required to get there; (2) **Earnings & eligibility** — lifetime earnings across referrals, WooPayments, and migrations, upcoming payouts, and flag any unresolved or unattributed referrals I could be leaving on the table; (3) **Billing** — current and previous month charges, payment method, and any upcoming renewals at risk of lapsing. Summarize with the most important action items up top.'
+		),
+	},
+	{
+		id: 'portfolio-health-summary',
+		title: __( 'Portfolio health summary' ),
+		description: __( 'Every managed site, grouped by what needs fixing.' ),
+		prompt: __(
+			'Scan all the sites I manage in Automattic for Agencies and give me a succinct list of issues across the portfolio. Group by issue type — active threats, disconnected sites, vulnerable plugins, monitors down, and pending plugin updates — and list the affected sites under each. Start with a one-line count of healthy vs. unhealthy sites, and tell me which issues to fix first.'
+		),
+	},
+	{
+		id: 'recurring-weekly-report',
+		title: __( 'Recurring weekly report' ),
+		description: __( 'A full account rundown, delivered every Monday morning.' ),
+		prompt: __(
+			'Every Monday at 9:00 AM, generate a full weekly report on my Automattic for Agencies account and deliver it to me. Include an executive summary with top priorities, then sections for: earnings & eligibility (lifetime paid, upcoming payouts, unresolved referrals, migration incentive status), agency tier and progress, portfolio health (healthy vs. unhealthy site counts with issues grouped by type), and renewals & billing. Lead with anything urgent — active security threats or anything at risk of lapsing. Keep it skimmable with clear sections. Ask me where I’d like it delivered — Slack, email, or a saved document — before scheduling.'
+		),
+	},
+];
+
+function StarterPromptItem( {
+	prompt,
+	onCopy,
+}: {
+	prompt: StarterPrompt;
+	onCopy: ( prompt: StarterPrompt ) => void;
+} ) {
+	const [ copied, setCopied ] = useState( false );
+
+	const handleCopy = useCallback( async () => {
+		try {
+			await navigator.clipboard.writeText( prompt.prompt );
+			onCopy( prompt );
+			setCopied( true );
+			setTimeout( () => setCopied( false ), 2000 );
+		} catch {
+			// If the clipboard write fails, stay silent — the user can select the
+			// prompt manually from the text above.
+		}
+	}, [ prompt, onCopy ] );
+
+	return (
+		<CollapsibleCard
+			className="mcp-starter-prompt-card"
+			toggleLabel={ prompt.title }
+			header={
+				<VStack spacing={ 1 }>
+					<Text weight={ 600 } size={ 15 }>
+						{ prompt.title }
+					</Text>
+					<Text variant="muted">{ prompt.description }</Text>
+				</VStack>
+			}
+		>
+			<VStack spacing={ 4 }>
+				<div className="mcp-starter-prompt">
+					<Text className="mcp-starter-prompt__text">{ prompt.prompt }</Text>
+				</div>
+				<HStack justify="flex-start" expanded={ false }>
+					<Button variant="secondary" icon={ copied ? check : copy } onClick={ handleCopy }>
+						{ copied ? __( 'Copied' ) : __( 'Copy prompt' ) }
+					</Button>
+				</HStack>
+			</VStack>
+		</CollapsibleCard>
+	);
+}
+
+export default function McpStarterPrompts( {
+	recordTracksEvent = () => {},
+}: {
+	recordTracksEvent?: RecordTracksEvent;
+} ) {
+	const onCopy = useCallback(
+		( prompt: StarterPrompt ) => {
+			recordTracksEvent( 'calypso_a4a_ai_mcp_starter_prompt_copied', { prompt_id: prompt.id } );
+		},
+		[ recordTracksEvent ]
+	);
+
+	return (
+		<VStack spacing={ 4 }>
+			{ STARTER_PROMPTS.map( ( prompt ) => (
+				<StarterPromptItem key={ prompt.id } prompt={ prompt } onCopy={ onCopy } />
+			) ) }
+		</VStack>
+	);
+}

@@ -5,12 +5,17 @@ import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import {
+	isRateKnown,
+	toCount,
+} from 'calypso/my-sites/stats/features/modules/stats-emails/is-rate-known';
 import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
 import {
 	getEmailStatsNormalizedData,
 	isRequestingEmailStats,
 } from 'calypso/state/stats/emails/selectors';
 import TopCard from './top-card';
+import '../components/highlight-cards/style.scss';
 import './style.scss';
 
 export default function StatsEmailTopRow( { siteId, postId, statType, className, post } ) {
@@ -41,23 +46,34 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 							icon={ <Icon icon={ send } /> }
 							emailIsSending={ emailIsSending }
 						/>
-						{ counts?.unique_opens ? (
-							<TopCard
-								heading={ translate( 'Unique opens' ) }
-								value={ counts.unique_opens }
-								isLoading={ isRequesting && ! counts?.hasOwnProperty( 'unique_opens' ) }
-								icon={ <Icon icon={ seen } /> }
-							/>
-						) : null }
 						<TopCard
 							heading={ translate( 'Total opens' ) }
 							value={ counts?.total_opens ?? 0 }
 							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'total_opens' ) }
 							icon={ <Icon icon={ seen } /> }
 						/>
+						{ /* Three states: uniques known (> 0) show; a true zero (no opens at
+						     all) shows 0; opens recorded but none attributable means the
+						     unique count is unknown, so the card hides. */ }
+						{ isRequesting || counts?.unique_opens > 0 || counts?.total_opens === 0 ? (
+							<TopCard
+								heading={ translate( 'Unique opens' ) }
+								value={ counts?.unique_opens ?? 0 }
+								isLoading={ isRequesting && ! counts?.hasOwnProperty( 'unique_opens' ) }
+								icon={ <Icon icon={ seen } /> }
+							/>
+						) : null }
 						<TopCard
 							heading={ translate( 'Open rate' ) }
-							value={ counts?.opens_rate ? `${ Math.round( counts?.opens_rate * 100 ) }%` : null }
+							value={
+								isRateKnown( {
+									uniques: toCount( counts?.unique_opens ),
+									totals: toCount( counts?.total_opens ),
+									sends: toCount( counts?.total_sends ),
+								} )
+									? `${ Math.round( ( counts.opens_rate ?? 0 ) * 100 ) }%`
+									: null
+							}
 							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'opens_rate' ) }
 							icon={ <Gridicon icon="trending" /> }
 							emailIsSending={ emailIsSending }
@@ -68,10 +84,11 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 				return (
 					<>
 						<TopCard
-							heading={ translate( 'Total opens' ) }
-							value={ counts?.total_opens ?? 0 }
-							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'total_opens' ) }
-							icon={ <Icon icon={ seen } /> }
+							heading={ translate( 'Total emails sent' ) }
+							value={ counts?.total_sends ?? null }
+							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'total_sends' ) }
+							icon={ <Icon icon={ send } /> }
+							emailIsSending={ emailIsSending }
 						/>
 						<TopCard
 							heading={ translate( 'Total clicks' ) }
@@ -79,11 +96,28 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'total_clicks' ) }
 							icon={ <Icon icon={ link } /> }
 						/>
+						{ /* Same three states as Unique opens: known, true zero, or unknown. */ }
+						{ isRequesting || counts?.unique_clicks > 0 || counts?.total_clicks === 0 ? (
+							<TopCard
+								heading={ translate( 'Unique clicks' ) }
+								value={ counts?.unique_clicks ?? 0 }
+								isLoading={ isRequesting && ! counts?.hasOwnProperty( 'unique_clicks' ) }
+								icon={ <Icon icon={ link } /> }
+							/>
+						) : null }
 						<TopCard
 							heading={ translate( 'Click rate' ) }
-							value={ counts?.clicks_rate ? `${ Math.round( counts?.clicks_rate * 100 ) }%` : null }
+							value={
+								isRateKnown( {
+									uniques: toCount( counts?.unique_clicks ),
+									totals: toCount( counts?.total_clicks ),
+									sends: toCount( counts?.total_sends ),
+								} )
+									? `${ Math.round( ( counts.clicks_rate ?? 0 ) * 100 ) }%`
+									: null
+							}
 							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'clicks_rate' ) }
-							icon={ <Icon icon={ link } /> }
+							icon={ <Gridicon icon="trending" /> }
 						/>
 					</>
 				);

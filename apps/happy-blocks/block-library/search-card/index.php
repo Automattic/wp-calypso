@@ -20,7 +20,6 @@ if ( $is_forums ) {
 } else {
 	$show_search_card = $is_front_page || $is_404_page;
 }
-$should_show_search_navigation = ! $is_404_page;
 
 $form_class              = isset( $args['form_class'] ) ? $args['form_class'] : '';
 $input_class             = isset( $args['input_class'] ) ? $args['input_class'] : '';
@@ -43,7 +42,6 @@ $website                 = isset( $args['website'] ) ? $args['website'] : '';
 			</ul>
 
 			<!-- Search button -->
-			<?php if ( $should_show_search_navigation ) : ?>
 			<div class="happy-blocks_navigation_search">
 				<a class="jetpack-search-filter__link" href="#">
 					<svg xmlns="http://www.w3.org/2000/svg" class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="#1E1E1E">
@@ -52,7 +50,6 @@ $website                 = isset( $args['website'] ) ? $args['website'] : '';
 					<?php echo esc_html( __( 'Search', 'happy-blocks' ) ); ?>
 				</a>
 			</div>
-			<?php endif; ?>
 		</div>
 
 		<div class="mobile-nav-container">
@@ -97,7 +94,6 @@ $website                 = isset( $args['website'] ) ? $args['website'] : '';
 			</div>
 
 			<!-- Search button -->
-			<?php if ( $should_show_search_navigation ) : ?>
 			<div class="happy-blocks_navigation_search">
 				<a class="jetpack-search-filter__link" href="#">
 					<svg xmlns="http://www.w3.org/2000/svg" class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="#1E1E1E">
@@ -105,7 +101,6 @@ $website                 = isset( $args['website'] ) ? $args['website'] : '';
 					</svg>
 				</a>
 			</div>
-			<?php endif; ?>
 		</div>
 	</nav>
 	<?php if ( $show_search_card ) : ?>

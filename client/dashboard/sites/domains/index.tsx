@@ -1,6 +1,6 @@
 import { siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
-import { useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -9,21 +9,26 @@ import { useAppContext } from '../../app/context';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { siteRoute, siteDomainsRoute, siteSettingsRedirectRoute } from '../../app/router/sites';
-import { DataViews, DataViewsCard } from '../../components/dataviews';
+import {
+	DataViews,
+	DataViewsActionModal,
+	DataViewsCard,
+	useDeepLinkedDataViewsAction,
+} from '../../components/dataviews';
 import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import PendingPrimaryDomainNotice from '../../components/pending-primary-domain-notice';
 import AddDomainButton from '../../domains/add-domain-button';
 import {
 	useActions,
 	useFields,
 	DEFAULT_LAYOUTS,
 	SITE_CONTEXT_VIEW,
-	BulkActionsProgressNotice,
+	useBulkActionsProgressNotice,
 } from '../../domains/dataviews';
 import { isPendingPrimaryDomain } from '../../utils/domain';
-import PrimaryDomainSelector from './primary-domain-selector';
+import { SitesNoticeArbiter } from '../notice-arbiter';
+import PrimaryDomainSelectorNotice from './primary-domain-selector-notice';
 import type { DomainSummary } from '@automattic/api-core';
 
 function getDomainId( domain: DomainSummary ) {
@@ -31,22 +36,23 @@ function getDomainId( domain: DomainSummary ) {
 }
 
 function SiteDomains() {
-	const queryClient = useQueryClient();
 	const { queries } = useAppContext();
 	const { siteSlug } = siteRoute.useParams();
 	const { user } = useAuth();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { data: siteDomains, isLoading } = useQuery( {
+	const { data: siteDomains } = useSuspenseQuery( {
 		...queries.domainsQuery(),
 		select: ( data ) => {
 			return data.filter( ( domain ) => domain.blog_id === site.ID );
 		},
 	} );
 
-	const pendingDomain = siteDomains?.find( isPendingPrimaryDomain );
+	const pendingDomain = siteDomains.find( isPendingPrimaryDomain );
 
-	const { data: redirect, isLoading: isRedirectLoading } = useQuery( siteRedirectQuery( site.ID ) );
+	const { data: redirect } = useSuspenseQuery( siteRedirectQuery( site.ID ) );
 	const hasRedirect = redirect && Object.keys( redirect ).length > 0;
+
+	const bulkActionsNotice = useBulkActionsProgressNotice();
 
 	const fields = useFields( {
 		site,
@@ -55,6 +61,14 @@ function SiteDomains() {
 	const actions = useActions( { user, sites: [ site ] } );
 
 	const searchParams = siteDomainsRoute.useSearch();
+	const navigate = useNavigate();
+
+	const deepLinkedAction = useDeepLinkedDataViewsAction( {
+		queryParams: searchParams,
+		navigate,
+		actions,
+		items: siteDomains,
+	} );
 
 	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'site-domains',
@@ -62,53 +76,47 @@ function SiteDomains() {
 		queryParams: searchParams,
 	} );
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
-		siteDomains ?? [],
-		view,
-		fields
-	);
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate( siteDomains, view, fields );
 
 	// Hide actions column when no domain has eligible actions.
-	const hasEligibleActions = siteDomains?.some( ( item ) =>
+	const hasEligibleActions = siteDomains.some( ( item ) =>
 		actions.some( ( action ) => action.isEligible === undefined || action.isEligible( item ) )
 	);
 
 	return (
 		<PageLayout
 			header={ <PageHeader title={ __( 'Domains' ) } actions={ <AddDomainButton /> } /> }
-			notices={ <BulkActionsProgressNotice /> }
+			notices={
+				<>
+					{ /* Action feedback, not an on-load banner: rendered outside the arbiter. */ }
+					{ bulkActionsNotice }
+					<SitesNoticeArbiter>
+						{ ! hasRedirect && ! pendingDomain && (
+							<PrimaryDomainSelectorNotice domains={ siteDomains } site={ site } user={ user } />
+						) }
+						{ hasRedirect && (
+							<Notice variant="warning">
+								{ createInterpolateElement(
+									__(
+										'This site <site/> and all domains attached to it will redirect to <redirect/>. If you want to change that <link>click here</link>.'
+									),
+									{
+										site: <b>{ site.slug }</b>,
+										redirect: <b>{ redirect.location }</b>,
+										link: (
+											<Link
+												to={ siteSettingsRedirectRoute.fullPath }
+												params={ { siteSlug: site.slug } }
+											/>
+										),
+									}
+								) }
+							</Notice>
+						) }
+					</SitesNoticeArbiter>
+				</>
+			}
 		>
-			{ ! isLoading &&
-				! isRedirectLoading &&
-				siteDomains &&
-				! hasRedirect &&
-				( pendingDomain ? (
-					<PendingPrimaryDomainNotice
-						domainName={ pendingDomain.domain }
-						onComplete={ () => queryClient.invalidateQueries( queries.domainsQuery() ) }
-					/>
-				) : (
-					<PrimaryDomainSelector domains={ siteDomains } site={ site } user={ user } />
-				) ) }
-			{ hasRedirect && (
-				<Notice variant="warning">
-					{ createInterpolateElement(
-						__(
-							'This site <site/> and all domains attached to it will redirect to <redirect/>. If you want to change that <link>click here</link>.'
-						),
-						{
-							site: <b>{ site.slug }</b>,
-							redirect: <b>{ redirect.location }</b>,
-							link: (
-								<Link
-									to={ siteSettingsRedirectRoute.fullPath }
-									params={ { siteSlug: site.slug } }
-								/>
-							),
-						}
-					) }
-				</Notice>
-			) }
 			<DataViewsCard>
 				<DataViews< DomainSummary >
 					data={ filteredData || [] }
@@ -120,11 +128,11 @@ function SiteDomains() {
 					search
 					paginationInfo={ paginationInfo }
 					getItemId={ getDomainId }
-					isLoading={ isLoading }
 					defaultLayouts={ DEFAULT_LAYOUTS }
 				/>
 			</DataViewsCard>
-			{ ! isLoading && <PerformanceTrackerStop /> }
+			{ deepLinkedAction && <DataViewsActionModal { ...deepLinkedAction } /> }
+			<PerformanceTrackerStop />
 		</PageLayout>
 	);
 }

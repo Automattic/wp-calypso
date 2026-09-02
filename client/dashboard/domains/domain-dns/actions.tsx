@@ -6,20 +6,18 @@ import { __ } from '@wordpress/i18n';
 import { pencil as edit, trash } from '@wordpress/icons';
 import { useMemo } from 'react';
 import { domainRoute, domainDnsEditRoute } from '../../app/router/domains';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import type { DnsRecord } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
 
 export function useDnsActions(): Action< DnsRecord >[] {
 	const { domainName } = domainRoute.useParams();
-	const { mutate: deleteDnsRecord, isPending: isDeletingDnsRecord } = useMutation( {
-		...domainDnsMutation( domainName ),
-		meta: {
-			snackbar: {
-				success: __( 'DNS record deleted.' ),
-				error: __( 'Failed to delete DNS record.' ),
-			},
-		},
-	} );
+	const { mutate: deleteDnsRecord, isPending: isDeletingDnsRecord } = useMutation(
+		withSnackbar( domainDnsMutation( domainName ), {
+			success: __( 'DNS record deleted.' ),
+			error: __( 'Failed to delete DNS record.' ),
+		} )
+	);
 	const router = useRouter();
 
 	return useMemo( () => {

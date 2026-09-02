@@ -1,5 +1,6 @@
 import { default as apiFetchPromise } from '@wordpress/api-fetch';
 import { select } from '@wordpress/data';
+import { isCookieAuthMissing } from 'wpcom-proxy-request';
 import { isE2ETest } from '../utils';
 import { default as wpcomRequestPromise, canAccessWpcomApis } from '../wpcom-request';
 import { PREFERENCES_KEY, STORE_KEY } from './constants';
@@ -95,6 +96,11 @@ function getCalypsoPreferences(): Promise< Preferences[ 'calypso_preferences' ] 
 		} as APIFetchOptions );
 	}
 
+	// Don't cache a failed request — clear it so a later read retries.
+	cachedPreferencesPromise.catch( () => {
+		cachedPreferencesPromise = undefined;
+	} );
+
 	return cachedPreferencesPromise;
 }
 
@@ -103,7 +109,9 @@ export async function getPersistedPreference<
 >( key: T ): Promise< Preferences[ 'calypso_preferences' ][ T ] | undefined > {
 	const isLoggedIn = ( select( STORE_KEY ) as unknown as HelpCenterSelect ).getIsLoggedIn();
 
-	if ( isLoggedIn ) {
+	// When the proxy session has no auth cookie (e.g. right after in-stepper signup) the
+	// authed request 401s; fall back to localStorage instead, as for logged-out users.
+	if ( isLoggedIn && ! isCookieAuthMissing() ) {
 		const preferences = await getCalypsoPreferences();
 		return readScoped( preferences, key );
 	}

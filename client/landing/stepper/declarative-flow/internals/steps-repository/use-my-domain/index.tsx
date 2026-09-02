@@ -1,5 +1,5 @@
 import { HelpCenter } from '@automattic/data-stores';
-import { StepContainer, isStartWritingFlow, Step } from '@automattic/onboarding';
+import { StepContainer, Step, isOnboardingFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -28,7 +28,6 @@ import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { useQuery } from '../../../../hooks/use-query';
 import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
-import { useOnboardingHelpExperiment } from '../components/use-onboarding-help-experiment';
 import type { Step as StepType } from '../../types';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
@@ -86,7 +85,7 @@ const UseMyDomain: StepType< {
 		}
 		setShowHelpCenter( ! isHelpCenterShown );
 	};
-	const { showHelp: showHelpCenter } = useOnboardingHelpExperiment( flow );
+	const showHelpCenter = isOnboardingFlow( flow );
 
 	const handleGoBack = () => {
 		if ( String( getQueryArg( window.location.search, 'step' ) ?? '' ) === 'transfer-or-connect' ) {
@@ -132,7 +131,11 @@ const UseMyDomain: StepType< {
 						domain,
 						...verificationData,
 					} );
+					clearQueryParams();
 					submit( { ownershipVerificationCompleted: true, domain } );
+
+					// Early return: the default handler below would re-submit a domainCartItem.
+					return;
 				} catch ( error ) {
 					// Validation failed - call onDone to display error and stay on current step
 					if ( onDone ) {
@@ -198,8 +201,6 @@ const UseMyDomain: StepType< {
 		);
 	};
 
-	const shouldHideButtons = isStartWritingFlow( flow );
-
 	if ( shouldUseStepContainerV2( flow ) ) {
 		let columnWidth;
 		let headingText;
@@ -207,19 +208,15 @@ const UseMyDomain: StepType< {
 
 		if ( useMyDomainMode === 'domain-input' ) {
 			columnWidth = 4 as const;
-			headingText = __( 'Your domain name' );
-			subText = __( 'Enter the domain name your visitors already know.' );
+			headingText = __( 'Enter your domain' );
+			subText = __( 'Type the domain you already own, like yourdomain.com.' );
 		} else {
 			columnWidth = 6 as const;
-			headingText = __( 'Use a domain name I own' );
-			subText = __( 'Make your domain name part of something bigger.' );
+			headingText = __( 'Set up your domain' );
+			subText = __( 'Transfer your domain, or connect it from your current provider.' );
 		}
 
 		const getTopBarLeftElement = () => {
-			if ( shouldHideButtons ) {
-				return undefined;
-			}
-
 			if ( goBack ) {
 				return <Step.BackButton onClick={ handleGoBack } />;
 			}
@@ -285,7 +282,7 @@ const UseMyDomain: StepType< {
 			<QueryProductsList />
 			<StepContainer
 				stepName="useMyDomain"
-				shouldHideNavButtons={ shouldHideButtons }
+				shouldHideNavButtons={ false }
 				goBack={ handleGoBack }
 				goNext={ goNext }
 				isHorizontalLayout={ false }

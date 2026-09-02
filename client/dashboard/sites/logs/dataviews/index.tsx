@@ -2,8 +2,7 @@ import { LogType, PHPLog, ServerLog, SiteLogsParams } from '@automattic/api-core
 import { siteLogsInfiniteQuery } from '@automattic/api-queries';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { ToggleControl, Button } from '@wordpress/components';
-import { throttle } from '@wordpress/compose';
+import { ToggleControl, Button, Spinner } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { View, Filter, Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -68,14 +67,27 @@ function SiteLogsDataViews( {
 	const search = router.state.location.search;
 	const rafIdRef = useRef< number | null >( null );
 	const dataviewsRef = useRef< HTMLDivElement | null >( null );
-	const [ showScrollTop, setShowScrollTop ] = useState( false );
-
-	const { view, updateView, resetView } = usePersistentView( {
+	const {
+		view: persistedView,
+		updateView,
+		resetView,
+	} = usePersistentView( {
 		slug: `site-logs-${ logType }`,
 		defaultView: logType === LogType.PHP ? DEFAULT_PHP_LOGS_VIEW : DEFAULT_SERVER_LOGS_VIEW,
 		queryParams: search,
 		queryParamFilterFields: logType === LogType.PHP ? [ 'severity' ] : [],
 	} );
+
+	// Where DataViews' infinite scroll has advanced the window to. Deliberately
+	// not persisted, so it lives here rather than in the persisted view.
+	const [ startPosition, setStartPosition ] = useState( 1 );
+
+	// Infinite scroll is how this screen works, not a user preference, so force it
+	// on rather than inheriting it from a view persisted before it existed.
+	const view = useMemo(
+		() => ( { ...persistedView, infiniteScrollEnabled: true, startPosition } ),
+		[ persistedView, startPosition ]
+	);
 
 	// We want to parse 'from' and 'to' from the URL.
 	const parseUrlSeconds = useMemo( () => {
@@ -116,16 +128,31 @@ function SiteLogsDataViews( {
 		window.history.replaceState( null, '', url.toString() );
 	}, [ startSec, endSec, logType ] );
 
-	const filter = useMemo( () => toFilterParams( { view, logType } ), [ view, logType ] );
+	// Derived from the persisted view, not the merged one, so that advancing
+	// `startPosition` doesn't churn the query params.
+	const filter = useMemo(
+		() => toFilterParams( { view: persistedView, logType } ),
+		[ persistedView, logType ]
+	);
+	const sortOrder = persistedView.sort?.direction;
 
 	const params: SiteLogsParams = {
 		logType,
 		start: startSec,
 		end: endSec,
 		filter,
-		sortOrder: view.sort?.direction,
+		sortOrder,
 		pageSize: DEFAULT_PER_PAGE,
 	};
+
+	// The loaded pages restart whenever the query params change (a new date range,
+	// filter, or sort — including the range shifting under auto-refresh), so the
+	// window goes back to the beginning with them. Keyed by value: the view object
+	// identity changes on every render, so `filter` can't be a dependency.
+	const datasetKey = `${ startSec }|${ endSec }|${ sortOrder }|${ JSON.stringify( filter ) }`;
+	useEffect( () => {
+		setStartPosition( 1 );
+	}, [ datasetKey ] );
 
 	const {
 		data,
@@ -182,7 +209,9 @@ function SiteLogsDataViews( {
 				cancelAnimationFrame( rafIdRef.current );
 			}
 		};
-	}, [ logType, handleResize ] );
+		// Re-runs once the first page arrives: the wrapper doesn't exist while the
+		// loading placeholder shows, and bounding it is what makes the table scroll.
+	}, [ logType, handleResize, isLoadingLogQuery ] );
 
 	const phpLogs = useMemo< PhpLogWithId[] >( () => {
 		if ( logType !== LogType.PHP ) {
@@ -197,6 +226,21 @@ function SiteLogsDataViews( {
 		}
 		return buildServerLogsWithId( ( data?.pages as Array< { logs?: ServerLog[] } > ) ?? [] );
 	}, [ data?.pages, logType ] );
+
+	const logs = logType === LogType.PHP ? phpLogs : serverLogs;
+	const perPage = view.perPage ?? DEFAULT_PER_PAGE;
+
+	// With infinite scroll, DataViews expects the current window rather than
+	// everything loaded so far; it reassembles the full list itself.
+	const windowStart = startPosition - 1;
+	const visiblePhpLogs = useMemo(
+		() => phpLogs.slice( windowStart, windowStart + perPage ),
+		[ phpLogs, windowStart, perPage ]
+	);
+	const visibleServerLogs = useMemo(
+		() => serverLogs.slice( windowStart, windowStart + perPage ),
+		[ serverLogs, windowStart, perPage ]
+	);
 
 	const fields = useFields( { logType, timezoneString, gmtOffset } );
 
@@ -233,11 +277,13 @@ function SiteLogsDataViews( {
 			}
 		}
 
-		// Detect filters/sort/perPage changes
+		// Detect filters/sort/perPage changes. Normalize the filters, otherwise an
+		// unfiltered view compares `[]` against `undefined` and reports a change on
+		// every call — including each time infinite scroll advances the window.
 		const datasetChanged =
 			next.perPage !== view.perPage ||
 			next.sort?.direction !== view.sort?.direction ||
-			! fastDeepEqual( sourceFilters, view.filters );
+			! fastDeepEqual( sourceFilters, view.filters ?? [] );
 
 		const url = new URL( window.location.href );
 		// Always keep canonical time range params
@@ -251,10 +297,23 @@ function SiteLogsDataViews( {
 				queryKey: [ 'site', site.ID, 'logs', 'infinite' ],
 				exact: false,
 			} );
+			setStartPosition( 1 );
 			updateView( { ...next, page: 1 } );
-		} else {
-			updateView( next );
+			return;
 		}
+
+		// DataViews drives infinite scroll by advancing `startPosition`. Fetch the
+		// next page once the window nears the end of what has been loaded.
+		const nextStartPosition = next.startPosition ?? 1;
+		if ( nextStartPosition !== startPosition ) {
+			setStartPosition( nextStartPosition );
+
+			if ( nextStartPosition + perPage > logs.length && hasNextPage && ! isFetchingNextPage ) {
+				fetchNextPage();
+			}
+		}
+
+		updateView( next );
 	};
 
 	const handleAutoRefreshClick = ( isChecked: boolean ) => {
@@ -289,39 +348,10 @@ function SiteLogsDataViews( {
 		</>
 	);
 
-	const logs = logType === LogType.PHP ? phpLogs : serverLogs;
-
-	const infiniteScrollHandler = useCallback( () => {
-		if ( hasNextPage && ! isFetchingNextPage ) {
-			fetchNextPage();
-		}
-	}, [ hasNextPage, isFetchingNextPage, fetchNextPage ] );
-
-	useEffect( () => {
-		if ( ! dataviewsRef.current ) {
-			return;
-		}
-
-		const el = dataviewsRef.current;
-
-		const handleScroll = throttle( () => {
-			const scrollTop = el.scrollTop;
-			const scrollHeight = el.scrollHeight;
-			const clientHeight = el.clientHeight;
-
-			setShowScrollTop( scrollTop > clientHeight * 2 );
-
-			if ( scrollTop + clientHeight >= scrollHeight - 100 ) {
-				infiniteScrollHandler();
-			}
-		}, 100 );
-
-		el.addEventListener( 'scroll', handleScroll );
-		return () => el.removeEventListener( 'scroll', handleScroll );
-	}, [ infiniteScrollHandler ] );
-
+	// DataViews advances its window only while `totalItems` stays ahead of it, so
+	// report an optimistic total while more pages remain.
 	const paginationInfo = {
-		totalItems: logs.length,
+		totalItems: hasNextPage ? logs.length + perPage : logs.length,
 		totalPages: 1,
 	};
 
@@ -345,12 +375,24 @@ function SiteLogsDataViews( {
 		/>
 	);
 
+	// DataViews binds its infinite-scroll listener to the scroll container in an
+	// effect that gives up when the container isn't there yet, and never retries.
+	// The container only renders once DataViews has rows, so mounting it mid-fetch
+	// permanently loses the listener. Wait for the first page instead.
+	if ( isLoadingLogQuery ) {
+		return (
+			<div className="site-logs-loading">
+				<Spinner />
+			</div>
+		);
+	}
+
 	return (
 		<>
 			{ logType === LogType.PHP ? (
 				<DataViews< PHPLog >
-					data={ phpLogs }
-					isLoading={ isFetching }
+					data={ visiblePhpLogs }
+					isLoading={ isFetchingNextPage }
 					paginationInfo={ paginationInfo }
 					fields={ fields as Field< PHPLog >[] }
 					getItemId={ ( item ) => item.id }
@@ -365,8 +407,8 @@ function SiteLogsDataViews( {
 				/>
 			) : (
 				<DataViews< ServerLog >
-					data={ serverLogs }
-					isLoading={ isFetching }
+					data={ visibleServerLogs }
+					isLoading={ isFetchingNextPage }
 					paginationInfo={ paginationInfo }
 					fields={ fields as Field< ServerLog >[] }
 					getItemId={ ( item ) => item.id }
@@ -380,13 +422,18 @@ function SiteLogsDataViews( {
 					empty={ emptyState }
 				/>
 			) }
-			{ showScrollTop && (
+			{ startPosition > 1 && (
 				<Button
 					icon={ arrowUp }
 					iconSize={ 24 }
 					size="compact"
 					className="site-logs-scroll-to-top"
-					onClick={ () => dataviewsRef.current?.scrollTo( { top: 0, behavior: 'smooth' } ) }
+					onClick={ () => {
+						setStartPosition( 1 );
+						dataviewsRef.current
+							?.querySelector( '.dataviews-layout__container' )
+							?.scrollTo( { top: 0, behavior: 'smooth' } );
+					} }
 				/>
 			) }
 			{ ! isLoadingLogQuery && <PerformanceTrackerStop /> }

@@ -1,6 +1,5 @@
 import { pickBy } from '@automattic/js-utils';
 import { createSelector } from '@automattic/state-utils';
-import { map } from 'lodash';
 
 import 'calypso/state/reader/init';
 
@@ -10,6 +9,6 @@ import 'calypso/state/reader/init';
  * @returns {Array}        Blocked site IDs
  */
 export default createSelector(
-	( state ) => map( Object.keys( pickBy( state.reader.siteBlocks.items ) ), Number ),
+	( state ) => Object.keys( pickBy( state.reader.siteBlocks.items ) ).map( Number ),
 	( state ) => [ state.reader.siteBlocks.items ]
 );

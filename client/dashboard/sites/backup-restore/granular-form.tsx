@@ -6,22 +6,23 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, _n } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
-import { siteBackupRestoreRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
 import FileSectionPanelBody from './file-section-panel-body';
+import WooSubscriptionsNotice from './woo-subscriptions-notice';
 
 function SiteBackupGranularRestoreForm( {
 	siteId,
+	rewindId,
 	restorePointDate,
 	onRestoreInitiate,
 }: {
 	siteId: number;
+	rewindId: string;
 	restorePointDate: string;
 	onRestoreInitiate: ( restoreId: number ) => void;
 } ) {
-	const { rewindId } = siteBackupRestoreRoute.useParams();
 	const { mutate: restoreMutation, isPending: isRestoreMutationPending } = useMutation(
 		siteBackupGranularRestoreMutation( siteId )
 	);
@@ -100,6 +101,12 @@ function SiteBackupGranularRestoreForm( {
 				<Notice variant="info" title={ __( 'Important' ) }>
 					{ restoreWarning }
 				</Notice>
+
+				<WooSubscriptionsNotice
+					siteId={ siteId }
+					rewindId={ rewindId }
+					includesDatabase={ hasSelectedTables }
+				/>
 
 				<ButtonStack justify="flex-start">
 					<Button

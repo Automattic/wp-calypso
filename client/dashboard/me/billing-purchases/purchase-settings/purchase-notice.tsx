@@ -12,8 +12,9 @@ import {
 	userPreferenceQuery,
 	setDelayedDowngradeMutation,
 } from '@automattic/api-queries';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
+import { Link, useRouter } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -26,11 +27,16 @@ import { useAuth } from '../../../app/auth';
 import { useLocale } from '../../../app/locale';
 import { changePaymentMethodRoute, purchaseSettingsRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
-import { formatDate, getRelativeTimeString } from '../../../utils/datetime';
+import {
+	PlanExpiryNotice,
+	hasPlanExpiryNotice,
+	isEligibleForPlanExpiryNotice,
+} from '../../../components/plan-expiry-notice';
+import { formatDate } from '../../../utils/datetime';
 import { wpcomLink } from '../../../utils/link';
 import {
-	isExpired,
-	isFailedAutoRenewal,
+	isExpiredOrRemoved,
+	isRemoved,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isCloseToExpiration,
@@ -39,16 +45,21 @@ import {
 	creditCardExpiresBeforeSubscription,
 	creditCardHasAlreadyExpired,
 	getRenewalUrlFromPurchase,
-	isInExpirationGracePeriod,
 	isAkismetFreeProduct,
 } from '../../../utils/purchase';
-import { getSitePurchaseUpgradeUrl, getUpgradedPurchaseRedirectUrl } from '../../../utils/site-url';
+import {
+	getPlanChangeReturnUrls,
+	getSitePurchaseUpgradeUrl,
+	getUpgradedPurchaseRedirectUrl,
+	getWpcomPlanChangeUrl,
+} from '../../../utils/site-url';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import { CancellationOfferNotice } from './cancellation-offer-notice';
 import {
 	OtherRenewablePurchasesNotice,
 	shouldShowOtherRenewablePurchasesNotice,
 } from './other-renewable-purchases-notice';
+import { PartnerManagedNotice } from './partner-managed-notice';
 import { PurchaseCancelledNotice } from './purchase-cancelled-notice';
 import { PurchaseExpiringNotice, shouldShowExpiringNotice } from './purchase-expiring-notice';
 import { RenewNoticeAction, shouldShowRenewNoticeAction } from './renew-notice-action';
@@ -69,6 +80,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		intent,
 	} = purchaseSettingsRoute.useSearch();
 	const navigate = purchaseSettingsRoute.useNavigate();
+	const router = useRouter();
 	// Show the transient cancelled success notice once after a cancel redirects
 	// here. The URL search param is cleared immediately so that a refresh / back
 	// navigation falls through to the regular expiring notice.
@@ -210,10 +222,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		);
 	}
 
-	// Persistent warning notice when a delayed downgrade is pending. Left ungated
-	// by `plans/delayed-downgrade` so a scheduled downgrade (and its cancel
-	// button) always stays visible, even if the flag is turned off as a kill
-	// switch while a downgrade is pending.
+	// Persistent warning notice when a delayed downgrade is pending.
 	if ( purchase.is_delayed_downgrade_pending ) {
 		const slug = purchase.delayed_downgrade_to_product_slug;
 		const planNames = getPlanNames() as Record< string, string | undefined >;
@@ -317,8 +326,36 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		return <NonProductOwnerNotice />;
 	}
 
-	if ( purchase.product_slug === 'concierge-session' && isExpired( purchase ) ) {
+	if ( purchase.product_slug === 'concierge-session' && isExpiredOrRemoved( purchase ) ) {
 		return <ConciergeConsumedNotice />;
+	}
+
+	// Takes precedence over every notice below, including the expiry ones: those
+	// all push the customer toward a renewal or a payment method that the partner
+	// controls rather than WordPress.com.
+	if ( purchase.is_partner_managed ) {
+		return <PartnerManagedNotice purchase={ purchase } />;
+	}
+
+	// A plan that is expiring, expired, or otherwise at risk of not renewing
+	// takes precedence over everything below: it is the one thing on this page
+	// that needs the customer to act.
+	if ( hasPlanExpiryNotice( purchase ) ) {
+		return (
+			<PlanExpiryNotice
+				purchase={ purchase }
+				addPaymentMethodUrl={
+					router.buildLocation( {
+						to: changePaymentMethodRoute.fullPath,
+						params: { purchaseId: purchase.ID },
+					} ).href
+				}
+				viewOtherPlansUrl={ getWpcomPlanChangeUrl( purchase, getPlanChangeReturnUrls() ) }
+				locale={ locale }
+				surface="dashboard-purchase-settings"
+				recordTracksEvent={ recordTracksEvent }
+			/>
+		);
 	}
 
 	if (
@@ -388,11 +425,18 @@ function shouldShowExpiredRenewNotice(
 	const currentPurchase: Purchase =
 		usePlanInsteadOfIncludedPurchase && purchaseAttachedTo ? purchaseAttachedTo : purchase;
 
-	if ( ! isExpired( currentPurchase ) && ! isInExpirationGracePeriod( currentPurchase ) ) {
+	if ( ! isExpiredOrRemoved( currentPurchase ) ) {
 		return false;
 	}
 
 	if ( isAkismetFreeProduct( currentPurchase ) ) {
+		return false;
+	}
+
+	// PlanExpiryNotice owns this scenario for the plans it covers. When it
+	// stays quiet for one of them that is a decision, not a gap, so we must
+	// not fall back on this weaker message.
+	if ( isEligibleForPlanExpiryNotice( currentPurchase ) ) {
 		return false;
 	}
 
@@ -420,6 +464,8 @@ function ExpiredRenewNotice( {
 	purchaseAttachedTo: Purchase | undefined;
 	refunded?: boolean;
 } ) {
+	const hasEnTranslation = useHasEnTranslation();
+
 	// For purchases included with a plan (for example, a domain mapping
 	// bundled with the plan), the plan purchase is used on this page when
 	// there are other upcoming renewals to display, so for consistency it
@@ -434,34 +480,22 @@ function ExpiredRenewNotice( {
 
 	if ( purchase.is_renewable ) {
 		const noticeText = ( () => {
-			if ( refunded && isExpired( currentPurchase ) ) {
+			if ( refunded && isRemoved( currentPurchase ) ) {
 				return __( 'Your refund has been processed and your purchase removed.' );
 			}
-			if ( isExpired( currentPurchase ) ) {
+			if ( isRemoved( currentPurchase ) ) {
 				return __( 'This purchase has expired and is no longer in use.' );
 			}
-			if ( isFailedAutoRenewal( currentPurchase ) ) {
-				return __(
-					'There was a problem processing your renewal. Please renew now to avoid disruption to your service.'
-				);
-			}
-			// Auto-renew OFF or not in grace period
-			const purchaseName = currentPurchase.is_domain
-				? currentPurchase.meta ?? ''
-				: currentPurchase.product_name;
-			const expiry = getRelativeTimeString( new Date( currentPurchase.expiry_date ) );
-			return sprintf(
-				// translators: purchaseName is the name of the product, expiry is a string like "3 days ago"
-				__(
-					'Your %(purchaseName)s subscription expired %(expiry)s and will be removed soon unless you take action.'
-				),
-				{ purchaseName, expiry }
-			);
+			return hasEnTranslation(
+				'This purchase has expired and will be removed soon unless it is renewed.'
+			)
+				? __( 'This purchase has expired and will be removed soon unless it is renewed.' )
+				: __( 'This purchase has expired and is no longer in use.' );
 		} )();
 
 		return (
 			<Notice
-				variant={ refunded && isExpired( currentPurchase ) ? 'success' : 'error' }
+				variant={ refunded && isRemoved( currentPurchase ) ? 'success' : 'error' }
 				actions={
 					shouldShowRenewNoticeAction( purchase ) ? (
 						<RenewNoticeAction
@@ -482,23 +516,31 @@ function ExpiredRenewNotice( {
 	// included purchase (rather than the plan that it is attached to).
 	// So we have to rely on the user going to the manage purchase page
 	// for the plan to renew it there.
+	const messageText =
+		! isRemoved( currentPurchase ) &&
+		hasEnTranslation(
+			'Your <managePurchase>%(purchaseName)s plan</managePurchase> (which includes your %(includedPurchaseName)s subscription) has expired and will be removed soon unless it is renewed.'
+		)
+			? // translators: purchaseName is the name of the plan, includedPurchaseName is the name of the subscription included in the plan
+			  __(
+					'Your <managePurchase>%(purchaseName)s plan</managePurchase> (which includes your %(includedPurchaseName)s subscription) has expired and will be removed soon unless it is renewed.'
+			  )
+			: // translators: purchaseName is the name of the plan, includedPurchaseName is the name of the subscription included in the plan
+			  __(
+					'Your <managePurchase>%(purchaseName)s plan</managePurchase> (which includes your %(includedPurchaseName)s subscription) has expired and is no longer in use.'
+			  );
+
 	return (
 		<Notice variant="error">
 			{ createInterpolateElement(
-				sprintf(
-					// translators: purchaseName ist he name of the plan, includedPurchaseName is the name of the subscription included in the plan
-					__(
-						'Your <managePurchase>%(purchaseName)s plan</managePurchase> (which includes your %(includedPurchaseName)s subscription) has expired and is no longer in use.'
-					),
-					{
-						purchaseName: currentPurchase.is_domain
-							? currentPurchase.meta ?? ''
-							: currentPurchase.product_name,
-						includedPurchaseName: includedPurchase.is_domain
-							? includedPurchase.meta ?? ''
-							: includedPurchase.product_name,
-					}
-				),
+				sprintf( messageText, {
+					purchaseName: currentPurchase.is_domain
+						? currentPurchase.meta ?? ''
+						: currentPurchase.product_name,
+					includedPurchaseName: includedPurchase.is_domain
+						? includedPurchase.meta ?? ''
+						: includedPurchase.product_name,
+				} ),
 				{
 					managePurchase: (
 						<Link to={ purchaseSettingsRoute.fullPath } params={ { purchaseId: purchase.ID } } />
@@ -578,10 +620,9 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 		return;
 	};
 
-	const daysToExpiry =
-		isExpired( purchase ) || isInExpirationGracePeriod( purchase )
-			? 0
-			: differenceInCalendarDays( new Date( purchase.expiry_date ), new Date() );
+	const daysToExpiry = isExpiredOrRemoved( purchase )
+		? 0
+		: differenceInCalendarDays( new Date( purchase.expiry_date ), new Date() );
 	const productType =
 		purchase.product_slug === DotcomPlans.ECOMMERCE_TRIAL_MONTHLY ||
 		purchase.product_slug === WooHostedPlans.WOO_HOSTED_FREE_TRIAL_PLAN_MONTHLY
@@ -629,7 +670,7 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 
 function shouldShowCardExpiringNotice( purchase: Purchase ): boolean {
 	if (
-		isExpired( purchase ) ||
+		isExpiredOrRemoved( purchase ) ||
 		isOneTimePurchase( purchase ) ||
 		isIncludedWithPlan( purchase ) ||
 		! purchase.site_slug ||
@@ -657,7 +698,7 @@ export function shouldShowCardExpiringWarning( purchase: Purchase ): boolean {
 function CreditCardExpiringNotice( { purchase }: { purchase: Purchase } ) {
 	const cardDetails = {
 		cardType: purchase.payment_card_type ?? '',
-		cardNumber: Number( purchase.payment_card_id ) || 0,
+		cardNumber: Number( purchase.payment_details ) || 0,
 		cardExpiry: purchase.payment_expiry ?? '',
 	};
 

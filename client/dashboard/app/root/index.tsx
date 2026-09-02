@@ -13,20 +13,24 @@ import {
 } from 'react';
 import { LoadingLine } from '../../components/loading-line';
 import { PageViewTracker } from '../../components/page-view-tracker';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import NotFound from '../404';
 import AccountRecoveryInterstitial from '../account-recovery-interstitial';
 import { bumpStat } from '../analytics';
+import { CheckoutSuccessFlashMessage } from '../checkout-success-flash-message';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
-import Header from '../header';
+import { useTrackVisitedAreas } from '../hooks/use-visit-counter';
 import OmnibarAgentsManager from '../interim-omnibar/omnibar-agents-manager';
 import OmnibarHelpCenter from '../interim-omnibar/omnibar-help-center';
+import MutationErrorTracker from '../mutation-error-tracker';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Notifications from '../notifications';
 import { useOmnibarEvent } from '../omnibar/events';
 import OmnibarSiteSwitcher from '../omnibar/omnibar-site-switcher';
-import { useInitializeOmnibarSite } from '../omnibar/site';
+import { useSyncOmnibarSite } from '../omnibar/site';
 import ResponsiveSidebar from '../responsive-sidebar';
+import { ResurrectedWelcomeModalGate } from '../resurrected-welcome-modal';
 import Snackbars from '../snackbars';
 import './style.scss';
 
@@ -40,22 +44,42 @@ const WebpackBuildMonitor = lazy(
 const SLOW_THRESHOLD_MS = 100;
 const VERY_SLOW_THRESHOLD_MS = 6000;
 
+// E2E tests append this suffix to the browser user agent (see
+// test/e2e playwright.config.ts). Detecting it lets us suppress the welcome
+// modal so it doesn't interfere with unrelated tests.
+function isE2ETest(): boolean {
+	return typeof navigator !== 'undefined' && navigator.userAgent.includes( 'wp-e2e-tests' );
+}
+
 function Root() {
-	const isOmnibarEnabled =
-		isEnabled( 'dashboard/omnibar' ) || isEnabled( 'dashboard/omnibar-radical' );
 	const isAccountRecoveryInterstitialEnabled = isEnabled(
 		'dashboard/account-recovery-interstitial'
 	);
 	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
+	const isResurrectedWelcomeModalEnabled =
+		supports.resurrectedWelcomeModal && ! isDashboardBackport() && ! isE2ETest();
 	const isFetching = useIsFetching();
 	const isMutating = useIsMutating();
 	const router = useRouter();
 	const queryClient = useQueryClient();
 	const queryCache = queryClient.getQueryCache();
 	const [ isSidebarOpen, setIsSidebarOpen ] = useState( false );
+	const [ resurrectedModalState, setResurrectedModalState ] = useState<
+		'pending' | 'eligible' | 'ineligible'
+	>( isResurrectedWelcomeModalEnabled ? 'pending' : 'ineligible' );
 	const closeSidebar = useCallback( () => setIsSidebarOpen( false ), [ setIsSidebarOpen ] );
+	const handleResurrectedModalEligibility = useCallback( ( willDisplay: boolean ) => {
+		setResurrectedModalState( ( state ) => {
+			if ( state !== 'pending' ) {
+				return state;
+			}
 
-	useInitializeOmnibarSite();
+			return willDisplay ? 'eligible' : 'ineligible';
+		} );
+	}, [] );
+
+	useSyncOmnibarSite();
+	useTrackVisitedAreas();
 	useOmnibarEvent( 'mobileMenu', () => setIsSidebarOpen( ( v ) => ! v ) );
 	useOmnibarEvent( 'linkClick', ( { href, event } ) => {
 		const url = new URL( href, window.location.origin );
@@ -144,31 +168,9 @@ function Root() {
 			.join( ' ‹ ' );
 	}, [ routeMeta ] );
 
-	const renderHeader = () => {
-		if ( isInitialLoad ) {
-			return null;
-		}
-
-		if ( ! isOmnibarEnabled ) {
-			return <Header />;
-		}
-
-		return null;
-	};
-
 	const renderBody = () => {
 		if ( isVerySlowNavigation ) {
 			return null;
-		}
-
-		if ( ! isOmnibarEnabled ) {
-			return (
-				<main>
-					<CatchNotFound fallback={ NotFound }>
-						<Outlet />
-					</CatchNotFound>
-				</main>
-			);
 		}
 
 		return (
@@ -200,16 +202,22 @@ function Root() {
 				/>
 			) }
 			{ ( isInitialLoad || isVerySlowNavigation ) && <LoadingLogo className="wpcom-site__logo" /> }
-			{ renderHeader() }
 			{ renderBody() }
 			{ supports.commandPalette && <CommandPalette /> }
-			{ isOmnibarEnabled && supports.notifications && <Notifications anchor /> }
-			{ isOmnibarEnabled && supports.help && <OmnibarHelpCenter /> }
-			{ isOmnibarEnabled && supports.help && <OmnibarAgentsManager /> }
-			{ isOmnibarEnabled && <OmnibarSiteSwitcher /> }
+			{ supports.notifications && <Notifications anchor /> }
+			{ supports.help && <OmnibarHelpCenter /> }
+			{ supports.help && <OmnibarAgentsManager /> }
+			<OmnibarSiteSwitcher />
 			<Snackbars />
-			{ isAccountRecoveryInterstitialEnabled && <AccountRecoveryInterstitial /> }
+			<CheckoutSuccessFlashMessage />
+			{ isResurrectedWelcomeModalEnabled && (
+				<ResurrectedWelcomeModalGate onEligibilityResolved={ handleResurrectedModalEligibility } />
+			) }
+			{ resurrectedModalState === 'ineligible' && isAccountRecoveryInterstitialEnabled && (
+				<AccountRecoveryInterstitial />
+			) }
 			<PageViewTracker />
+			<MutationErrorTracker />
 			<NavigationBlockerRegistry />
 			{ 'development' === process.env.NODE_ENV && (
 				<Suspense fallback={ null }>

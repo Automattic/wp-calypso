@@ -1,4 +1,3 @@
-import { map } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import { fetchThemesList as fetchWporgThemesList } from 'calypso/lib/wporg';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -80,18 +79,19 @@ export function requestThemes( siteId, query = {}, locale ) {
 		// and use it as default value for `found`.
 		return request()
 			.then( ( { themes: rawThemes, info: { results } = {}, found = results } ) => {
+				const themesList = rawThemes ?? [];
 				let themes;
 				if ( siteId === 'wporg' ) {
 					const communityThemeTier = getThemeTier( getState(), 'community' );
-					themes = map( rawThemes, ( theme ) => normalizeWporgTheme( theme, communityThemeTier ) );
+					themes = themesList.map( ( theme ) => normalizeWporgTheme( theme, communityThemeTier ) );
 				} else if ( siteId === 'wpcom' ) {
-					themes = map( rawThemes, normalizeWpcomTheme );
+					themes = themesList.map( normalizeWpcomTheme );
 				} else if ( isAtomic || isJetpack ) {
 					// Jetpack or Atomic Site
-					themes = map( rawThemes, normalizeJetpackTheme );
+					themes = themesList.map( normalizeJetpackTheme );
 				} else {
 					// WPCOM Site
-					themes = map( rawThemes, normalizeWpcomTheme );
+					themes = themesList.map( normalizeWpcomTheme );
 				}
 
 				if ( ( query.search || query.filter ) && query.page === 1 ) {

@@ -5,6 +5,7 @@ import {
 	getPlan,
 	is100Year,
 	isFreePlanProduct,
+	isStudentPlan,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
@@ -60,6 +61,7 @@ import DomainUpsellDialog from './components/domain-upsell-dialog';
 import PlansHeader from './components/plans-header';
 import ECommerceTrialPlansPage from './ecommerce-trial';
 import ModernizedLayout from './modernized-layout';
+import StudentPlansPage from './student-plans-page';
 import BusinessTrialPlansPage from './trials/business-trial-plans-page';
 import WooExpressPlansPage from './woo-express-plans-page';
 
@@ -264,10 +266,32 @@ class PlansComponent extends Component {
 		);
 	}
 
+	renderStudentPlansPage() {
+		const { currentPlan, selectedSite, intervalType } = this.props;
+
+		if ( ! selectedSite ) {
+			return this.renderPlaceholder();
+		}
+
+		return (
+			<StudentPlansPage
+				currentPlan={ currentPlan }
+				selectedSite={ selectedSite }
+				intervalType={ intervalType }
+				isOwner={ selectedSite.plan?.user_is_owner }
+				coupon={ this.props.coupon }
+				redirectTo={ this.props.redirectTo }
+				pluginSlug={ this.props.pluginSlug }
+				discountEndDate={ this.props.discountEndDate }
+			/>
+		);
+	}
+
 	renderMainContent( {
 		isEcommerceTrial,
 		isBusinessTrial,
 		isWooExpressPlan,
+		isStudent,
 		isA4APlan,
 		is100YearPlan,
 	} ) {
@@ -279,6 +303,9 @@ class PlansComponent extends Component {
 		}
 		if ( isBusinessTrial ) {
 			return this.renderBusinessTrialPage();
+		}
+		if ( isStudent ) {
+			return this.renderStudentPlansPage();
 		}
 		if ( isA4APlan || is100YearPlan ) {
 			return null;
@@ -328,6 +355,7 @@ class PlansComponent extends Component {
 			PLAN_WOOEXPRESS_SMALL,
 			PLAN_WOOEXPRESS_SMALL_MONTHLY,
 		].includes( currentPlanSlug );
+		const isStudent = isStudentPlan( currentPlan.productSlug );
 		const wooExpressSubHeaderText = translate(
 			"Discover what's available in your Woo Express plan."
 		);
@@ -387,6 +415,7 @@ class PlansComponent extends Component {
 									isEcommerceTrial,
 									isBusinessTrial,
 									isWooExpressPlan,
+									isStudent,
 									isA4APlan,
 									is100YearPlan,
 								} ) }
