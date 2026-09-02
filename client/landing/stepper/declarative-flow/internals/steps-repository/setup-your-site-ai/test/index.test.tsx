@@ -6,6 +6,7 @@ import { useQuery as useReactQuery } from '@tanstack/react-query';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import { usePlanCartItem } from '../../../../../hooks/use-plan-cart-item';
 import { useSiteData } from '../../../../../hooks/use-site-data';
 import SetupYourSiteAIStep from '../index';
@@ -75,8 +76,12 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/signup/storageUtils', () => ( {
+	getSignupCompleteSlug: jest.fn(),
+} ) );
+
 jest.mock( 'calypso/landing/stepper/utils/build-wow-plans', () => ( {
-	planSupportsBuildWow: ( slug?: string ) => !! slug && slug !== 'personal-bundle',
+	planSupportsBuildWow: ( slug?: string ) => !! slug && slug !== 'pro-plan',
 } ) );
 
 jest.mock( '../../../../../hooks/use-plan-cart-item', () => ( {
@@ -140,6 +145,7 @@ describe( 'SetupYourSiteAIStep', () => {
 		mockUseReactQuery.mockReturnValue( { data: false } );
 		setSitePlan( 'business-bundle' );
 		setPlanCartItem( null );
+		( getSignupCompleteSlug as jest.Mock ).mockReturnValue( 'example.wordpress.com' );
 	} );
 
 	describe( 'card order', () => {
@@ -190,8 +196,8 @@ describe( 'SetupYourSiteAIStep', () => {
 			} );
 		} );
 
-		it( 'submits the build-with-ai choice from the custom design card on a Personal plan', () => {
-			setSitePlan( 'personal-bundle' );
+		it( 'submits the build-with-ai choice from the custom design card on a plan without Atomic', () => {
+			setSitePlan( 'pro-plan' );
 
 			renderStep();
 
@@ -227,7 +233,7 @@ describe( 'SetupYourSiteAIStep', () => {
 		} );
 
 		it( 'prefers the plan just bought over a stale site plan', () => {
-			setSitePlan( 'personal-bundle' );
+			setSitePlan( 'pro-plan' );
 			setPlanCartItem( 'value_bundle' );
 
 			renderStep();
@@ -237,6 +243,33 @@ describe( 'SetupYourSiteAIStep', () => {
 			expect( navigation.submit ).toHaveBeenCalledWith(
 				expect.objectContaining( { setupChoice: 'generate-theme' } )
 			);
+		} );
+
+		it( 'ignores a cart item left over from a checkout for another site', () => {
+			( getSignupCompleteSlug as jest.Mock ).mockReturnValue( 'other.wordpress.com' );
+			setSitePlan( 'pro-plan' );
+			setPlanCartItem( 'business-bundle' );
+
+			renderStep();
+
+			clickCustomDesign();
+
+			expect( navigation.submit ).toHaveBeenCalledWith(
+				expect.objectContaining( { setupChoice: 'build-with-ai' } )
+			);
+		} );
+
+		it( 're-enables the controls when the page is restored from bfcache', () => {
+			renderStep();
+
+			clickCustomDesign();
+			expect( screen.getByRole( 'button', { name: 'Start with a template' } ) ).toBeDisabled();
+
+			const pageshow = new Event( 'pageshow' ) as PageTransitionEvent;
+			Object.defineProperty( pageshow, 'persisted', { value: true } );
+			fireEvent( window, pageshow );
+
+			expect( screen.getByRole( 'button', { name: 'Start with a template' } ) ).toBeEnabled();
 		} );
 
 		it( 'submits a choice only once per visit and disables the controls', () => {
@@ -295,9 +328,9 @@ describe( 'SetupYourSiteAIStep', () => {
 			} );
 		} );
 
-		it( 'is hidden on a Personal plan, where the card already goes to the legacy builder', () => {
+		it( 'is hidden on a plan without Atomic, where the card already goes to the legacy builder', () => {
 			mockUseReactQuery.mockReturnValue( { data: true } );
-			setSitePlan( 'personal-bundle' );
+			setSitePlan( 'pro-plan' );
 
 			renderStep();
 

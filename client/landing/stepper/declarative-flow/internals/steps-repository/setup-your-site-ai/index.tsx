@@ -13,10 +13,11 @@ import {
 } from '@wordpress/components';
 import { arrowUp, layout, brush } from '@wordpress/icons';
 import i18n, { useTranslate } from 'i18n-calypso';
-import { FormEvent, useRef, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { planSupportsBuildWow } from 'calypso/landing/stepper/utils/build-wow-plans';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import { usePlanCartItem } from '../../../../hooks/use-plan-cart-item';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSiteData } from '../../../../hooks/use-site-data';
@@ -44,16 +45,32 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	const swapSiteBuilders =
 		config.isEnabled( 'calypso/ai-site-builder-build-wow' ) && config.isEnabled( 'site-spec' );
 	// Prefer the cart item (what was just bought) over site.plan, which can be
-	// stale before the plan assignment syncs.
+	// stale before the plan assignment syncs. The cart item persists across runs,
+	// so only trust it when the checkout it came from was for this site.
 	const planCartItem = usePlanCartItem();
+	const boughtPlanSlug =
+		getSignupCompleteSlug() === siteSlug ? planCartItem?.product_slug : undefined;
 	const offerBuildWow =
-		swapSiteBuilders &&
-		planSupportsBuildWow( planCartItem?.product_slug ?? site?.plan?.product_slug );
+		swapSiteBuilders && planSupportsBuildWow( boughtPlanSlug ?? site?.plan?.product_slug );
 
 	// One choice per visit: submitting navigates away, so the controls disable and
 	// later clicks are ignored. The ref covers clicks landing before the re-render.
 	const isSubmittingRef = useRef( false );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
+
+	// A submit leaves the page, so Back can restore it from bfcache with the
+	// controls still disabled; re-enable them on that restore.
+	useEffect( () => {
+		const onPageShow = ( event: PageTransitionEvent ) => {
+			if ( event.persisted ) {
+				isSubmittingRef.current = false;
+				setIsSubmitting( false );
+			}
+		};
+		window.addEventListener( 'pageshow', onPageShow );
+		return () => window.removeEventListener( 'pageshow', onPageShow );
+	}, [] );
+
 	const claimSubmit = () => {
 		if ( isSubmittingRef.current ) {
 			return false;
@@ -208,6 +225,7 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 				className="setup-your-site-ai-step__legacy-builder-link"
 				onClick={ handleBuildWithAIClick }
 				disabled={ isSubmitting }
+				accessibleWhenDisabled
 			>
 				Create a custom design with the legacy site builder
 			</Step.LinkButton>

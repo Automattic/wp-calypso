@@ -12,6 +12,7 @@ import aiSiteBuilderOnboarding from '../ai-site-builder-onboarding';
 let mockQueryParams = new URLSearchParams();
 
 jest.mock( '@automattic/calypso-products', () => ( {
+	isPersonalPlan: ( slug: string ) => slug.startsWith( 'personal-bundle' ),
 	isPremiumPlan: ( slug: string ) => slug.startsWith( 'value_bundle' ),
 	isBusinessPlan: ( slug: string ) => slug.startsWith( 'business-bundle' ),
 	isEcommercePlan: ( slug: string ) => slug.startsWith( 'ecommerce-bundle' ),
@@ -137,7 +138,7 @@ describe( 'ai-site-builder-onboarding flow', () => {
 
 		describe( 'legacy site editor destination', () => {
 			beforeEach( () => {
-				setPlan( 'personal-bundle' );
+				setPlan( 'pro-plan' );
 			} );
 
 			it( 'creates and sets a Home page when the site has none yet', async () => {
@@ -189,7 +190,7 @@ describe( 'ai-site-builder-onboarding flow', () => {
 				expect( checkoutBackUrlDomains.searchParams.get( 'prompt' ) ).toBe( 'a bakery website' );
 			} );
 
-			it( 'stays on the legacy site editor for Personal plans even with the swap enabled', async () => {
+			it( 'stays on the legacy site editor for a plan without Atomic even with the swap enabled', async () => {
 				await runProcessingSubmit();
 
 				expect( new URL( getRedirectTo() ).pathname ).toBe( '/wp-admin/site-editor.php' );
@@ -251,18 +252,20 @@ describe( 'ai-site-builder-onboarding flow', () => {
 				expect( redirectTo.searchParams.get( 'spec_id' ) ).toBe( 'spec-42' );
 			} );
 
-			it.each( [ 'value_bundle', 'business-bundle-monthly', 'ecommerce-bundle-2y' ] )(
-				'is used for the %s plan',
-				async ( productSlug ) => {
-					setPlan( productSlug );
+			it.each( [
+				'personal-bundle',
+				'value_bundle',
+				'business-bundle-monthly',
+				'ecommerce-bundle-2y',
+			] )( 'is used for the %s plan', async ( productSlug ) => {
+				setPlan( productSlug );
 
-					await runProcessingSubmit();
+				await runProcessingSubmit();
 
-					expect( new URL( getRedirectTo(), 'https://wordpress.com' ).pathname ).toBe(
-						'/setup/ai-site-builder-spec/site-spec'
-					);
-				}
-			);
+				expect( new URL( getRedirectTo(), 'https://wordpress.com' ).pathname ).toBe(
+					'/setup/ai-site-builder-spec/site-spec'
+				);
+			} );
 
 			it( 'is not used when the swap flag is off', async () => {
 				isEnabled.mockImplementation(
