@@ -1,5 +1,14 @@
 @import '@wordpress/base-styles/variables';
 
+// The modal renders through a portal onto `document.body`, so it inherits the
+// host document's font. In contexts where that font is not the WordPress admin
+// sans-serif (e.g. a site preview showing the theme's typography, or wp-admin),
+// the modal would otherwise pick up the wrong font. Set it explicitly so the
+// component stays self-contained wherever it is mounted.
+.site-launch-pre-launch-modal {
+	font-family: $default-font;
+}
+
 .site-launch-pre-launch-modal__preview-card {
 	padding: $grid-unit-20 $grid-unit-20;
 	background-color: var( --studio-blue-5 );
