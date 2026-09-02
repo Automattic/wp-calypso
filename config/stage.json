@@ -28,6 +28,7 @@
 		"blackbox-signup": true,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/ai-site-builder-flow": true,
+		"calypso/ai-site-builder-build-wow": true,
 		"calypso/all-domain-management": true,
 		"calypso/big-sky": true,
 		"calypso/domains-dataviews": true,

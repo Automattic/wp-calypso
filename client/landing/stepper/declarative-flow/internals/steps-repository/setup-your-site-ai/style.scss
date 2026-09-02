@@ -20,6 +20,20 @@
 		}
 	}
 
+	.setup-your-site-ai-step__legacy-builder {
+		align-self: flex-start;
+	}
+
+	.setup-your-site-ai-step__legacy-builder-link.components-button.is-link {
+		font-size: $font-size-medium;
+		color: var(--color-text-subtle);
+
+		&:hover:not(:disabled),
+		&:focus:not(:disabled) {
+			color: var(--color-text);
+		}
+	}
+
 	.setup-your-site-ai-step__build-with-ai {
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 7px;

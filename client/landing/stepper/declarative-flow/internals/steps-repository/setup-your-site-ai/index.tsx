@@ -1,10 +1,12 @@
 import { isAutomatticianQuery } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { BigSkyLogo, SummaryButton } from '@automattic/components';
 import { Step } from '@automattic/onboarding';
 import { useQuery as useReactQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
+	__experimentalText as Text,
 	Button,
 	Icon,
 	TextareaControl,
@@ -31,9 +33,12 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	usePurchasePlanNotification( siteId, site?.plan?.product_slug );
 	const showPromptInput = ref === WOO_HOSTING_SOLUTIONS_REF;
 	const [ prompt, setPrompt ] = useState( '' );
-	// Automattician-only "Generate Theme" entry point that provisions a WP Cloud
-	// site up front and runs the build-wow AI theme generation flow.
+	// Automatticians get an entry point into the build-wow AI theme generation
+	// flow (which provisions a WP Cloud site up front): a separate "Generate
+	// Theme" card, or, where the site builder swap is enabled, the custom design
+	// card itself with the previous Big Sky builder kept reachable via a link.
 	const { data: isAutomattician } = useReactQuery( isAutomatticianQuery() );
+	const swapSiteBuilders = config.isEnabled( 'calypso/ai-site-builder-build-wow' );
 
 	const submitBuildWithAI = ( trimmedPrompt?: string ) => {
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
@@ -79,6 +84,15 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 			siteSlug,
 			siteId,
 		} );
+	};
+
+	const handleCustomDesignClick = () => {
+		if ( swapSiteBuilders && isAutomattician ) {
+			handleGenerateTheme();
+			return;
+		}
+
+		submitBuildWithAI();
 	};
 
 	const buildWithAIPromptCard = (
@@ -137,7 +151,30 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 				oldCopy: translate( 'Describe your idea and let AI help you refine your site.' ),
 			} ) }
 			decoration={ <BigSkyLogo.CentralLogo heartless /> }
-			onClick={ handleBuildWithAIClick }
+			onClick={ handleCustomDesignClick }
+		/>
+	);
+
+	const legacySiteBuilderSection = swapSiteBuilders && isAutomattician && (
+		<VStack spacing={ 1 } alignment="left" className="setup-your-site-ai-step__legacy-builder">
+			<Step.LinkButton
+				className="setup-your-site-ai-step__legacy-builder-link"
+				onClick={ handleBuildWithAIClick }
+			>
+				Create a custom design with the legacy site builder
+			</Step.LinkButton>
+			<Text variant="muted" size={ 12 }>
+				(Note: this link is only visible to Automatticians)
+			</Text>
+		</VStack>
+	);
+
+	const generateThemeCard = ! swapSiteBuilders && isAutomattician && (
+		<SummaryButton
+			title="Generate Theme"
+			description="Automattician only: provision a WordPress.com Cloud site and generate a custom theme with AI."
+			decoration={ <Icon icon={ brush } /> }
+			onClick={ handleGenerateTheme }
 		/>
 	);
 
@@ -169,16 +206,10 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 				<>
 					{ startWithTemplateCard }
 					{ buildWithAISummary }
+					{ legacySiteBuilderSection }
 				</>
 			) }
-			{ isAutomattician && (
-				<SummaryButton
-					title="Generate Theme"
-					description="Automattician only: provision a WordPress.com Cloud site and generate a custom theme with AI."
-					decoration={ <Icon icon={ brush } /> }
-					onClick={ handleGenerateTheme }
-				/>
-			) }
+			{ generateThemeCard }
 		</VStack>
 	);
 

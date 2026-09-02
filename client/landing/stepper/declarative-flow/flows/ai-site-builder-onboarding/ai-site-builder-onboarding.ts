@@ -1,6 +1,9 @@
+import { isAutomatticianQuery } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { AI_SITE_BUILDER_ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { useQuery as useReactQuery } from '@tanstack/react-query';
 import { useDispatch, dispatch, resolveSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
@@ -21,6 +24,7 @@ import {
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
+import { getBuildWowSiteSpecUrl } from '../../../utils/build-wow';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
@@ -30,6 +34,30 @@ import type { OnboardActions } from '@automattic/data-stores';
 import type { Store } from 'redux';
 
 const SiteIntent = Onboard.SiteIntent;
+
+/**
+ * The build-wow site spec, entered straight from checkout. The build-wow
+ * endpoint provisions the Atomic site and queues the build when the spec is
+ * confirmed there, so no site preparation is needed on the way in. A spec_id
+ * carried from entry confirms that spec on arrival instead of asking again.
+ */
+function getBuildWowDestination( {
+	siteSlug,
+	siteId,
+	ref,
+	source,
+	specId,
+}: {
+	siteSlug: string;
+	siteId: number | string;
+	ref: string | null;
+	source: string | null;
+	specId: string | null;
+} ): string {
+	const specUrl = getBuildWowSiteSpecUrl( { siteSlug, siteId, ref, source } );
+
+	return specId ? addQueryArgs( specUrl, { spec_id: specId } ) : specUrl;
+}
 
 async function initialize( reduxStore: Store ) {
 	const { resetOnboardStore } = dispatch( ONBOARD_STORE ) as OnboardActions;
@@ -79,6 +107,74 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 
 		const query = useQuery();
 		const flowName = this.name;
+		// Lazy: nothing fires while the user step is still logged out. The
+		// processing handler refetches it once the answer decides the destination.
+		const { refetch: fetchIsAutomattician } = useReactQuery( {
+			...isAutomatticianQuery(),
+			enabled: false,
+		} );
+
+		/**
+		 * Prepare the freshly created site for Big Sky and return the site editor
+		 * URL that launches the Site Spec experience: publish a Home page, set it
+		 * as the static homepage, and set the AI Assembler intent so the editor
+		 * opens on a real page rather than the index template. Reuse an existing
+		 * Home page if the site was already prepared so a re-entry doesn't create
+		 * duplicates.
+		 */
+		async function prepareSiteEditorDestination( {
+			site,
+			siteId,
+			siteSlug,
+			prompt,
+			source,
+			specId,
+		}: {
+			site: { URL: string };
+			siteId: number | string;
+			siteSlug: string;
+			prompt: string;
+			source: string | null;
+			specId: string | null;
+		} ): Promise< string > {
+			try {
+				const existingPages = await wpcom.req.get(
+					{ path: '/sites/' + siteId + '/pages', apiNamespace: 'wp/v2' },
+					{ slug: 'home', status: 'publish', _fields: 'id' }
+				);
+				let homePageId = existingPages?.[ 0 ]?.id as number | undefined;
+
+				if ( ! homePageId ) {
+					const homePage = await wpcom.req.post(
+						{ path: '/sites/' + siteId + '/pages', apiNamespace: 'wp/v2' },
+						{},
+						{
+							title: 'Home',
+							status: 'publish',
+							content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
+						}
+					);
+					homePageId = homePage?.id;
+				}
+
+				await setIntentOnSite( siteSlug, SiteIntent.AIAssembler );
+				if ( homePageId ) {
+					await setStaticHomepageOnSite( siteId, homePageId );
+				}
+			} catch ( error ) {
+				// Fail silently — Big Sky can still launch without the prepared page.
+			}
+
+			return addQueryArgs( `${ site.URL }/wp-admin/site-editor.php`, {
+				canvas: 'edit',
+				'ai-step': 'spec',
+				referrer: AI_SITE_BUILDER_ONBOARDING_FLOW,
+				...( prompt && { prompt } ),
+				...( source && { source } ),
+				...( specId && { spec_id: specId } ),
+				checkout: 'success',
+			} );
+		}
 
 		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
@@ -146,56 +242,34 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 						return navigate( STEPS.ERROR.slug );
 					}
 
-					// Prepare the freshly created site for Big Sky: publish a Home page,
-					// set it as the static homepage, and set the AI Assembler intent so the
-					// editor launches the Site Spec experience on a real page rather than
-					// the index template. Reuse an existing Home page if the site was
-					// already prepared so a re-entry doesn't create duplicates.
-					try {
-						const existingPages = await wpcom.req.get(
-							{ path: '/sites/' + siteId + '/pages', apiNamespace: 'wp/v2' },
-							{ slug: 'home', status: 'publish', _fields: 'id' }
-						);
-						let homePageId = existingPages?.[ 0 ]?.id as number | undefined;
-
-						if ( ! homePageId ) {
-							const homePage = await wpcom.req.post(
-								{ path: '/sites/' + siteId + '/pages', apiNamespace: 'wp/v2' },
-								{},
-								{
-									title: 'Home',
-									status: 'publish',
-									content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
-								}
-							);
-							homePageId = homePage?.id;
-						}
-
-						await setIntentOnSite( siteSlug, SiteIntent.AIAssembler );
-						if ( homePageId ) {
-							await setStaticHomepageOnSite( siteId, homePageId );
-						}
-					} catch ( error ) {
-						// Fail silently — Big Sky can still launch without the prepared page.
-					}
+					// Where enabled, Automatticians land on the build-wow theme generation
+					// flow after checkout, the same destination the post-checkout "Create
+					// a custom design" card sends them to. The build-wow endpoint prepares
+					// the site itself, so the Big Sky editor preparation below is only for
+					// the legacy site editor destination everyone else keeps.
+					const useBuildWow =
+						config.isEnabled( 'calypso/ai-site-builder-build-wow' ) &&
+						( await fetchIsAutomattician() ).data === true;
 
 					const prompt =
 						query.get( 'prompt' ) || window.sessionStorage.getItem( 'stored_ai_prompt' ) || '';
 					const source = query.get( 'source' );
+					const ref = query.get( 'ref' );
 					const specId = query.get( 'spec_id' );
 					window.sessionStorage.removeItem( 'stored_ai_prompt' );
 
-					const specEditorUrl = `${ site.URL }/wp-admin/site-editor.php`;
-					const specUrl = addQueryArgs( specEditorUrl, {
-						canvas: 'edit',
-						'ai-step': 'spec',
-						referrer: AI_SITE_BUILDER_ONBOARDING_FLOW,
-						...( prompt && { prompt } ),
-						...( source && { source } ),
-						...( specId && { spec_id: specId } ),
-						checkout: 'success',
-					} );
-					// On checkout exit we must not drop the user into Big Sky (the
+					const destination = useBuildWow
+						? getBuildWowDestination( { siteSlug, siteId, ref, source, specId } )
+						: await prepareSiteEditorDestination( {
+								site,
+								siteId,
+								siteSlug,
+								prompt,
+								source,
+								specId,
+						  } );
+
+					// On checkout exit we must not drop the user into the AI builder (the
 					// success destination) before they've paid. Send them back into
 					// the flow instead: keeping the cart returns to the plan step,
 					// while emptying the cart returns to the domain step (handled by
@@ -219,14 +293,14 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 						)
 					);
 
-					persistSignupDestination( specUrl );
+					persistSignupDestination( destination );
 					setSignupCompleteSlug( siteSlug );
 					setSignupCompleteFlowName( flowName );
 					setSignupCompleteSiteID( siteId );
 
 					return window.location.assign(
 						addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-							redirect_to: specUrl,
+							redirect_to: destination,
 							checkoutBackUrl,
 							checkoutBackUrlDomains,
 							signup: 1,

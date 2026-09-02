@@ -1,11 +1,27 @@
 /**
  * @jest-environment jsdom
  */
+import config from '@automattic/calypso-config';
 import { resolveSelect, useDispatch } from '@wordpress/data';
 import wpcom from 'calypso/lib/wp';
+import { persistSignupDestination } from 'calypso/signup/storageUtils';
 import { STEPS } from '../../../internals/steps';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import aiSiteBuilderOnboarding from '../ai-site-builder-onboarding';
+
+let mockQueryParams = new URLSearchParams();
+const mockFetchIsAutomattician = jest.fn();
+
+jest.mock( '@automattic/api-queries', () => ( {
+	isAutomatticianQuery: () => ( {
+		queryKey: [ 'me', 'is-automattician' ],
+		queryFn: jest.fn(),
+	} ),
+} ) );
+
+jest.mock( '@tanstack/react-query', () => ( {
+	useQuery: () => ( { refetch: mockFetchIsAutomattician } ),
+} ) );
 
 jest.mock( '@automattic/onboarding', () => ( {
 	AI_SITE_BUILDER_ONBOARDING_FLOW: 'ai-site-builder-onboarding',
@@ -27,7 +43,7 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 
 jest.mock( '../../../../hooks/use-query', () => ( {
-	useQuery: () => ( { get: () => null } ),
+	useQuery: () => mockQueryParams,
 } ) );
 
 jest.mock( 'calypso/landing/stepper/stores', () => ( {
@@ -55,6 +71,8 @@ jest.mock( '../../../../utils/steps-with-required-login', () => ( {
 } ) );
 
 describe( 'ai-site-builder-onboarding flow', () => {
+	const isEnabled = jest.spyOn( config, 'isEnabled' );
+
 	it( 'initializes domain → plans → create-site → processing → error', async () => {
 		const reduxStore = { dispatch: jest.fn(), getState: jest.fn() } as never;
 		const steps = await aiSiteBuilderOnboarding.initialize( reduxStore );
@@ -92,6 +110,9 @@ describe( 'ai-site-builder-onboarding flow', () => {
 
 		beforeEach( () => {
 			jest.clearAllMocks();
+			mockQueryParams = new URLSearchParams();
+			isEnabled.mockReturnValue( true );
+			mockFetchIsAutomattician.mockResolvedValue( { data: false } );
 
 			( useDispatch as jest.Mock ).mockReturnValue( {
 				setStaticHomepageOnSite,
@@ -159,6 +180,135 @@ describe( 'ai-site-builder-onboarding flow', () => {
 			);
 			expect( checkoutBackUrlDomains.searchParams.get( 'prompt' ) ).toBe( 'a bakery website' );
 			expect( checkoutBackUrlDomains.pathname ).not.toContain( 'site-editor.php' );
+		} );
+	} );
+
+	describe( 'Automattician checkout destination', () => {
+		const setStaticHomepageOnSite = jest.fn();
+		const setIntentOnSite = jest.fn();
+
+		const runProcessingSubmit = async () => {
+			const navigate = jest.fn();
+			const { submit } = aiSiteBuilderOnboarding.useStepNavigation(
+				STEPS.PROCESSING.slug,
+				navigate
+			);
+
+			await submit?.( {
+				slug: STEPS.PROCESSING.slug,
+				providedDependencies: {
+					processingResult: ProcessingResult.SUCCESS,
+					goToCheckout: true,
+					siteId: 123,
+					siteSlug: 'example.wordpress.com',
+				},
+			} as never );
+		};
+
+		const getRedirectTo = () =>
+			new URL(
+				( window.location.assign as jest.Mock ).mock.calls[ 0 ][ 0 ],
+				'https://wordpress.com'
+			).searchParams.get( 'redirect_to' ) as string;
+
+		beforeEach( () => {
+			jest.clearAllMocks();
+			mockQueryParams = new URLSearchParams();
+			isEnabled.mockReturnValue( true );
+			( wpcom.req.get as jest.Mock ).mockResolvedValue( [ { id: 7 } ] );
+
+			( useDispatch as jest.Mock ).mockReturnValue( {
+				setStaticHomepageOnSite,
+				setIntentOnSite,
+			} );
+			( resolveSelect as jest.Mock ).mockReturnValue( {
+				getSite: jest.fn().mockResolvedValue( { URL: 'https://example.wordpress.com' } ),
+			} );
+
+			Object.defineProperty( window, 'location', {
+				value: { assign: jest.fn() },
+				writable: true,
+			} );
+		} );
+
+		it( 'sends Automatticians to the build-wow site spec after checkout', async () => {
+			mockFetchIsAutomattician.mockResolvedValue( { data: true } );
+			mockQueryParams = new URLSearchParams( {
+				source: 'sites-dashboard',
+				ref: 'new-site-popover',
+			} );
+
+			await runProcessingSubmit();
+
+			const redirectTo = new URL( getRedirectTo(), 'https://wordpress.com' );
+			expect( redirectTo.pathname ).toBe( '/setup/ai-site-builder-spec/site-spec' );
+			expect( Object.fromEntries( redirectTo.searchParams ) ).toEqual( {
+				build_wow: '1',
+				siteSlug: 'example.wordpress.com',
+				siteId: '123',
+				ref: 'new-site-popover',
+				source: 'sites-dashboard',
+			} );
+			expect( persistSignupDestination ).toHaveBeenCalledWith( getRedirectTo() );
+		} );
+
+		it( 'skips the Big Sky editor preparation for the build-wow destination', async () => {
+			mockFetchIsAutomattician.mockResolvedValue( { data: true } );
+
+			await runProcessingSubmit();
+
+			expect( wpcom.req.get ).not.toHaveBeenCalled();
+			expect( wpcom.req.post ).not.toHaveBeenCalled();
+			expect( setStaticHomepageOnSite ).not.toHaveBeenCalled();
+			expect( setIntentOnSite ).not.toHaveBeenCalled();
+		} );
+
+		it( 'confirms a spec carried from entry on the build-wow site spec', async () => {
+			mockFetchIsAutomattician.mockResolvedValue( { data: true } );
+			mockQueryParams = new URLSearchParams( { spec_id: 'spec-42' } );
+
+			await runProcessingSubmit();
+
+			const redirectTo = new URL( getRedirectTo(), 'https://wordpress.com' );
+			expect( redirectTo.searchParams.get( 'build_wow' ) ).toBe( '1' );
+			expect( redirectTo.searchParams.get( 'spec_id' ) ).toBe( 'spec-42' );
+		} );
+
+		it( 'keeps non-Automatticians in the Big Sky site editor', async () => {
+			mockFetchIsAutomattician.mockResolvedValue( { data: false } );
+
+			await runProcessingSubmit();
+
+			const redirectTo = new URL( getRedirectTo() );
+			expect( redirectTo.origin ).toBe( 'https://example.wordpress.com' );
+			expect( redirectTo.pathname ).toBe( '/wp-admin/site-editor.php' );
+			expect( redirectTo.searchParams.get( 'ai-step' ) ).toBe( 'spec' );
+			expect( setStaticHomepageOnSite ).toHaveBeenCalledWith( 123, 7 );
+		} );
+
+		it( 'falls back to the Big Sky site editor when the Automattician lookup fails', async () => {
+			mockFetchIsAutomattician.mockResolvedValue( { data: undefined, isError: true } );
+
+			await runProcessingSubmit();
+
+			const redirectTo = new URL( getRedirectTo() );
+			expect( redirectTo.pathname ).toBe( '/wp-admin/site-editor.php' );
+			expect( setStaticHomepageOnSite ).toHaveBeenCalledWith( 123, 7 );
+		} );
+
+		it( 'keeps Automatticians in the Big Sky site editor where the flag is off', async () => {
+			isEnabled.mockImplementation(
+				( flag: string ) => flag !== 'calypso/ai-site-builder-build-wow'
+			);
+			mockFetchIsAutomattician.mockResolvedValue( { data: true } );
+
+			await runProcessingSubmit();
+
+			expect( isEnabled ).toHaveBeenCalledWith( 'calypso/ai-site-builder-build-wow' );
+			expect( mockFetchIsAutomattician ).not.toHaveBeenCalled();
+			const redirectTo = new URL( getRedirectTo() );
+			expect( redirectTo.pathname ).toBe( '/wp-admin/site-editor.php' );
+			expect( setStaticHomepageOnSite ).toHaveBeenCalledWith( 123, 7 );
 		} );
 	} );
 } );
