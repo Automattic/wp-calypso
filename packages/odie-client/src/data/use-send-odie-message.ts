@@ -245,12 +245,24 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			}
 		}
 
+		const messagesToAdd = Array.isArray( message ) ? message : [ message ];
+
 		setChat( ( prevChat ) => ( {
 			...prevChat,
 			...props,
-			messages: [ ...prevChat.messages, ...( Array.isArray( message ) ? message : [ message ] ) ],
+			messages: [ ...prevChat.messages, ...messagesToAdd ],
 			status: 'loaded',
 		} ) );
+
+		// Mirror the bot reply (or error message) into other tabs showing the same
+		// support interaction, like the user's message already is on send.
+		messagesToAdd.forEach( ( messageToBroadcast ) =>
+			broadcastOdieMessage(
+				messageToBroadcast,
+				odieBroadcastClientId,
+				supportInteractionIdRef.current
+			)
+		);
 	};
 
 	return useMutation< ReturnedChat, Error, Message >( {
