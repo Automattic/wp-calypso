@@ -77,6 +77,6 @@
 		"@testing-library/react": "^16.3.2",
 		"react-dom": "^18.3.1",
 		"typescript": "^6.0.3",
-		"webpack": "^5.99.8"
+		"webpack": "^5.109.2"
 	}
 }
