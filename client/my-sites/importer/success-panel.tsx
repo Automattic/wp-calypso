@@ -4,8 +4,11 @@ import { SiteDetails } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
-import { useDispatch } from 'calypso/state';
+import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
+import { useDispatch, useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { resetImport } from 'calypso/state/imports/actions';
+import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 
 import './success-panel.scss';
 
@@ -23,6 +26,10 @@ const SuccessPanel = ( { site, importerStatus, onClose }: SuccessPanelProps ) =>
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const engine = importerStatus.type;
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const { data: activeThemeData } = useActiveThemeQuery( site.ID, isLoggedIn );
+	const isBlockTheme = activeThemeData?.[ 0 ]?.is_block_theme ?? false;
+	const siteEditorUrl = useSelector( ( state ) => getSiteEditorUrl( state, site.ID ) );
 
 	useEffect( () => {
 		dispatch( resetImport( site.ID, importerStatus.importerId ) );
@@ -35,8 +42,13 @@ const SuccessPanel = ( { site, importerStatus, onClose }: SuccessPanelProps ) =>
 			action: 'customize',
 		} );
 
-		page( '/customize/' + ( site.slug || '' ) );
-	}, [ engine, site.ID, site.slug ] );
+		if ( isBlockTheme ) {
+			// Block themes are customized in the site editor, not the legacy Customizer.
+			window.location.assign( siteEditorUrl );
+		} else {
+			page( '/customize/' + ( site.slug || '' ) );
+		}
+	}, [ engine, site.ID, site.slug, isBlockTheme, siteEditorUrl ] );
 
 	const handleImportMoreContent = useCallback( () => {
 		recordTracksEvent( 'calypso_importer_main_done_clicked', {
