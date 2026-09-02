@@ -5,7 +5,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { addQueryArgs } from 'calypso/lib/url';
 import DiscoverNavigation from 'calypso/reader/discover/components/navigation';
 import DiscoverTagsNavigation from 'calypso/reader/discover/components/tags-navigation';
-import ReaderOnboardingGate from 'calypso/reader/onboarding/gate';
+import ReaderOnboardingGate from 'calypso/reader/onboarding-rsm/gate';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {

@@ -1,21 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import { isEnabled } from '@automattic/calypso-config';
 import AsyncLoad from 'calypso/components/async-load';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderOnboardingGate from '../gate';
 import type { ReactElement } from 'react';
-
-jest.mock( '@automattic/calypso-config', () => {
-	const config = jest.fn();
-	const isEnabledMock = jest.fn();
-	return {
-		__esModule: true,
-		default: Object.assign( config, { isEnabled: isEnabledMock } ),
-		isEnabled: isEnabledMock,
-	};
-} );
 
 jest.mock( 'calypso/components/async-load', () => ( {
 	__esModule: true,
@@ -35,8 +24,7 @@ describe( 'ReaderOnboardingGate', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'loads onboarding-rsm when the feature flag is enabled', () => {
-		( isEnabled as jest.Mock ).mockReturnValue( true );
+	it( 'loads reader onboarding for a logged-in user', () => {
 		render( <ReaderOnboardingGate /> );
 
 		const [ props ] = ( AsyncLoad as jest.Mock ).mock.calls[ 0 ];
@@ -44,18 +32,7 @@ describe( 'ReaderOnboardingGate', () => {
 		expect( props.require.toString() ).toContain( 'calypso/reader/onboarding-rsm' );
 	} );
 
-	it( 'loads legacy onboarding when the feature flag is disabled', () => {
-		( isEnabled as jest.Mock ).mockReturnValue( false );
-
-		render( <ReaderOnboardingGate /> );
-
-		const [ props ] = ( AsyncLoad as jest.Mock ).mock.calls[ 0 ];
-		expect( typeof props.require ).toBe( 'function' );
-		expect( props.require.toString() ).toContain( 'calypso/reader/onboarding' );
-	} );
-
 	it( 'forwards props to AsyncLoad', () => {
-		( isEnabled as jest.Mock ).mockReturnValue( true );
 		const onRender = jest.fn();
 
 		render( <ReaderOnboardingGate onRender={ onRender } isSuppressed /> );
@@ -68,8 +45,6 @@ describe( 'ReaderOnboardingGate', () => {
 	} );
 
 	it( 'renders nothing when the user is logged out', () => {
-		( isEnabled as jest.Mock ).mockReturnValue( true );
-
 		render( <ReaderOnboardingGate />, loggedOutState );
 
 		expect( AsyncLoad as jest.Mock ).not.toHaveBeenCalled();
