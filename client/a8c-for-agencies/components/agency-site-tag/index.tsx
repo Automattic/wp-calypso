@@ -1,4 +1,4 @@
-import { Badge } from '@automattic/components';
+import { Badge } from '@wordpress/ui';
 import { Icon, closeSmall } from '@wordpress/icons';
 import './style.scss';
 
@@ -10,7 +10,7 @@ interface Props {
 
 export default function AgencySiteTag( { tag, onRemoveTag, isRemovable = true }: Props ) {
 	return (
-		<Badge className="agency-site-tag" type="info">
+		<Badge className="agency-site-tag" intent="informational">
 			<span className="agency-site-tag__text">{ tag }</span>
 			{ isRemovable && (
 				<Icon
