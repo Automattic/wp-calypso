@@ -30,8 +30,8 @@ export const premiumAnalyticsStatusRequest = ( siteId: number | null ) =>
 /**
  * Whether the new analytics dashboard is switched on for this site.
  *
- * The site answers this itself: enablement is a local option there, and a site can also be switched
- * on by the rollout sticker, which never touches that option.
+ * The site answers this itself: the opt-in is a local option there, and a sticker we set can
+ * override that option without ever touching it.
  * @param siteId Site to query.
  * @param enabled Whether to run the query at all.
  */
