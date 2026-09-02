@@ -41,6 +41,7 @@ import { existingPayPalPPCPPrefix } from '../hooks/use-create-payment-methods/us
 import useCreatePaymentSubmittedAndProcessingCallback from '../hooks/use-create-payment-submitted-and-processing-callback';
 import useDetectedCountryCode from '../hooks/use-detected-country-code';
 import useGetThankYouUrl from '../hooks/use-get-thank-you-url';
+import { useHasWrongAccountRenewalError } from '../hooks/use-has-wrong-account-renewal-error';
 import { useMobileCheckoutStickySummaryExperiment } from '../hooks/use-mobile-checkout-sticky-summary-experiment';
 import usePrepareProductsForCart from '../hooks/use-prepare-products-for-cart';
 import useRecordCartLoaded from '../hooks/use-record-cart-loaded';
@@ -390,6 +391,12 @@ export default function CheckoutMain( {
 	} );
 
 	const responseCartErrors = responseCart.messages?.errors ?? [];
+
+	// A renewal for a subscription owned by another account gets its own screen
+	// rather than the generic empty cart page, because there is something the
+	// customer can do about it.
+	const isWrongAccountRenewal = useHasWrongAccountRenewalError( responseCart );
+
 	const areThereErrors =
 		[ ...responseCartErrors, cartLoadingError, cartProductPrepError ].filter( isValueTruthy )
 			.length > 0;
@@ -914,6 +921,7 @@ export default function CheckoutMain( {
 						customizedPreviousPath={ customizedPreviousPath }
 						isRemovingProductFromCart={ isRemovingProductFromCart }
 						areThereErrors={ areThereErrors }
+						isWrongAccountRenewal={ isWrongAccountRenewal }
 						isInitialCartLoading={ isInitialCartLoading }
 						addItemToCart={ addItemAndLog }
 						changeSelection={ changeSelection }
