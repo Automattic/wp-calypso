@@ -139,6 +139,7 @@
 		"resurrected-users/90-day-eligibility": true,
 		"reader/social": true,
 		"reader/shelves": true,
+		"reader/discover-new-blogs": false,
 		"reader/full-errors": true,
 		"reader/msd-enabled": true,
 		"reader/saved-posts": true,
