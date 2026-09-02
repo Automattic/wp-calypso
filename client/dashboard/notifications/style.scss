@@ -620,8 +620,10 @@
 	}
 }
 
-.dashboard-notifications-inbox__experimental-notice {
-	margin: 0 0 16px;
+.dashboard-notifications-inbox__experiment-controls {
+	margin-block-start: auto;
+	padding: 16px 8px 8px;
+	border-top: 1px solid var(--dashboard-header__border-color, #ddd);
 }
 
 /* Slack-Inspired: the message toolbar floats at the top right. */

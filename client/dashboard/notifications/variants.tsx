@@ -4,7 +4,7 @@ import {
 	SelectControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useSyncExternalStore } from 'react';
 import ClassicDetailPane from './classic';
 import { InboxList } from './list';
 import SlackThreadView, { SlackCommentView } from './slack';
@@ -119,27 +119,55 @@ export function useInboxVariant(): InboxVariant {
 	return useContext( InboxVariantContext );
 }
 
+/* The choice is read from more than one place (the sidebar picks, the screen
+   consumes), so it lives in a tiny shared store rather than component state. */
+const variantStores = new Map<
+	string,
+	{ key: string; listeners: Set< () => void >; set: ( next: string ) => void }
+>();
+
+function getVariantStore( storageKey: string, fallback: string ) {
+	let store = variantStores.get( storageKey );
+	if ( ! store ) {
+		let initial = fallback;
+		try {
+			initial = window.localStorage.getItem( storageKey ) ?? fallback;
+		} catch {
+			// Per-tab only, then.
+		}
+		const created = {
+			key: initial,
+			listeners: new Set< () => void >(),
+			set: ( next: string ) => {
+				created.key = next;
+				try {
+					window.localStorage.setItem( storageKey, next );
+				} catch {
+					// Per-tab only, then.
+				}
+				created.listeners.forEach( ( listener ) => listener() );
+			},
+		};
+		store = created;
+		variantStores.set( storageKey, store );
+	}
+	return store;
+}
+
 function useStoredVariant< T extends { key: string } >(
 	registry: T[],
 	storageKey: string
 ): [ T, ( key: string ) => void ] {
-	const [ key, setKey ] = useState( () => {
-		try {
-			return window.localStorage.getItem( storageKey ) ?? registry[ 0 ].key;
-		} catch {
-			return registry[ 0 ].key;
-		}
-	} );
+	const store = getVariantStore( storageKey, registry[ 0 ].key );
+	const key = useSyncExternalStore(
+		( listener ) => {
+			store.listeners.add( listener );
+			return () => store.listeners.delete( listener );
+		},
+		() => store.key
+	);
 	const variant = registry.find( ( entry ) => entry.key === key ) ?? registry[ 0 ];
-	const set = ( next: string ) => {
-		setKey( next );
-		try {
-			window.localStorage.setItem( storageKey, next );
-		} catch {
-			// Per-tab only, then.
-		}
-	};
-	return [ variant, set ];
+	return [ variant, store.set ];
 }
 
 export function useInboxVariantState(): [ InboxVariant, ( key: string ) => void ] {

@@ -1,8 +1,15 @@
 import { useRouterState } from '@tanstack/react-router';
+import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { archive, comment, people, starEmpty, unseen } from '@wordpress/icons';
 import { SidebarBackButton, SidebarMenu, SidebarMenuItem } from '../components/sidebar';
 import { NotesProvider, useUnreadCount } from './engine';
+import {
+	InboxVariantPicker,
+	ListVariantPicker,
+	useInboxVariantState,
+	useListVariantState,
+} from './variants';
 
 function UnreadCount() {
 	const count = useUnreadCount();
@@ -48,11 +55,24 @@ function NotificationsSidebarMenu() {
 	);
 }
 
+function ExperimentControls() {
+	const [ variant, setVariantKey ] = useInboxVariantState();
+	const [ listVariant, setListVariantKey ] = useListVariantState();
+	return (
+		<VStack spacing={ 3 } className="dashboard-notifications-inbox__experiment-controls">
+			<Text variant="muted">{ __( 'Internal experiment — layouts will change.' ) }</Text>
+			<ListVariantPicker value={ listVariant.key } onChange={ setListVariantKey } />
+			<InboxVariantPicker value={ variant.key } onChange={ setVariantKey } />
+		</VStack>
+	);
+}
+
 export default function NotificationsSidebar() {
 	return (
 		<NotesProvider>
 			<SidebarBackButton to="/">{ __( 'Notifications' ) }</SidebarBackButton>
 			<NotificationsSidebarMenu />
+			<ExperimentControls />
 		</NotesProvider>
 	);
 }

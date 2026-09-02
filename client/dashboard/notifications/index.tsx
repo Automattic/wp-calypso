@@ -1,10 +1,5 @@
 import { useNavigate } from '@tanstack/react-router';
-import {
-	__experimentalHStack as HStack,
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
-	Notice,
-} from '@wordpress/components';
+import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useEffect, useRef } from 'react';
@@ -15,13 +10,7 @@ import PageLayout from '../components/page-layout';
 import { NotesProvider, acquireEngineVisibility, setActiveTab, useVisibleNotes } from './engine';
 import { CATEGORY_TO_TAB, InboxList } from './list';
 import NoteDetail from './note-detail';
-import {
-	InboxVariantPicker,
-	InboxVariantProvider,
-	ListVariantPicker,
-	useInboxVariantState,
-	useListVariantState,
-} from './variants';
+import { InboxVariantProvider, useInboxVariantState, useListVariantState } from './variants';
 import type { InboxCategory } from './list';
 
 export type { InboxCategory } from './list';
@@ -57,8 +46,8 @@ function NotificationsInbox( {
 
 	useEffect( () => acquireEngineVisibility(), [] );
 
-	const [ variant, setVariantKey ] = useInboxVariantState();
-	const [ listVariant, setListVariantKey ] = useListVariantState();
+	const [ variant ] = useInboxVariantState();
+	const [ listVariant ] = useListVariantState();
 
 	// The engine's filter is process-global and the bell dropdown resets it, so
 	// re-assert this screen's category on mount and on every change.
@@ -155,23 +144,6 @@ function NotificationsInbox( {
 
 	return (
 		<PageLayout header={ <PageHeader title={ __( 'Notifications' ) } /> }>
-			<Notice
-				className="dashboard-notifications-inbox__experimental-notice"
-				status="warning"
-				isDismissible={ false }
-			>
-				<HStack spacing={ 4 } justify="space-between" alignment="center" wrap>
-					<Text>
-						{ __(
-							'This page is an internal experiment. Layouts are being compared and will change without notice.'
-						) }
-					</Text>
-					<HStack spacing={ 3 } expanded={ false } justify="flex-end" wrap>
-						<ListVariantPicker value={ listVariant.key } onChange={ setListVariantKey } />
-						<InboxVariantPicker value={ variant.key } onChange={ setVariantKey } />
-					</HStack>
-				</HStack>
-			</Notice>
 			<InboxVariantProvider value={ variant }>
 				{ variant.Shell ? (
 					<variant.Shell list={ listNode } detail={ detailNode } hasSelectedNote={ !! note } />
