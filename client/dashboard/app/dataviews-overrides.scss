@@ -36,6 +36,22 @@ a.dataviews-url-field {
 	}
 }
 
+// A grid field row centers its label against the whole value, so a two-line value leaves the
+// label floating between the lines. Align it to the first line instead. Only for stacked values:
+// centering is right for a single line, or for a control taller than the row (a button, an icon).
+.dataviews-view-grid .dataviews-view-grid__fields .dataviews-view-grid__field:has( .components-v-stack ),
+.dataviews-view-grid-infinite-scroll
+	.dataviews-view-grid__fields
+	.dataviews-view-grid__field:has( .components-v-stack ) {
+	align-items: flex-start;
+
+	.dataviews-view-grid__field-name {
+		display: flex;
+		align-items: center;
+		min-height: calc(var(--wpds-dimension-base, 4px) * 6);
+	}
+}
+
 // Temporary overrides for the dataviews wrapper to match the new design system.
 @media ( max-width: 782px ) { // Matches medium breakpoint from Core.
 	.dataviews-filters__container,
