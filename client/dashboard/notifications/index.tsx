@@ -25,6 +25,7 @@ import {
 } from './engine';
 import { getFields } from './fields';
 import NoteDetail from './note-detail';
+import { InboxVariantPicker, InboxVariantProvider, useInboxVariantState } from './variants';
 import type { FilterName, Note } from './engine';
 import type { View } from '@wordpress/dataviews';
 
@@ -243,6 +244,8 @@ function NotificationsInbox( {
 
 	useEffect( () => acquireEngineVisibility(), [] );
 
+	const [ variant, setVariantKey ] = useInboxVariantState();
+
 	// The engine's filter is process-global and the bell dropdown resets it, so
 	// re-assert this screen's category on mount and on every change.
 	useEffect( () => {
@@ -308,40 +311,53 @@ function NotificationsInbox( {
 			? () => setSelectedNote( noteIds[ currentIndex + 1 ] )
 			: null;
 
+	const List = variant.List ?? InboxList;
+
 	return (
-		<PageLayout header={ <PageHeader title={ __( 'Notifications' ) } /> }>
-			<div
-				className={ `dashboard-notifications-inbox__layout ${ note ? 'has-selected-note' : '' }` }
-			>
-				<div className="dashboard-notifications-inbox__list">
-					<DataViewsCard>
-						<InboxList
-							key={ category }
-							category={ category }
-							selectedNoteId={ note }
-							onSelectNote={ setSelectedNote }
-							onFirstNoteLoaded={ handleFirstNoteLoaded }
-						/>
-					</DataViewsCard>
+		<PageLayout
+			header={
+				<PageHeader
+					title={ __( 'Notifications' ) }
+					actions={ <InboxVariantPicker value={ variant.key } onChange={ setVariantKey } /> }
+				/>
+			}
+		>
+			<InboxVariantProvider value={ variant }>
+				<div
+					className={ `dashboard-notifications-inbox__layout ${ variant.className ?? '' } ${
+						note ? 'has-selected-note' : ''
+					}` }
+				>
+					<div className="dashboard-notifications-inbox__list">
+						<DataViewsCard>
+							<List
+								key={ category }
+								category={ category }
+								selectedNoteId={ note }
+								onSelectNote={ setSelectedNote }
+								onFirstNoteLoaded={ handleFirstNoteLoaded }
+							/>
+						</DataViewsCard>
+					</div>
+					<div className="dashboard-notifications-inbox__detail-pane">
+						{ note ? (
+							<NoteDetail
+								noteId={ note }
+								onClose={ () => setSelectedNote( undefined ) }
+								onPrevious={ onPrevious }
+								onNext={ onNext }
+							/>
+						) : (
+							<VStack
+								alignment="center"
+								className="dashboard-notifications-inbox__detail-placeholder"
+							>
+								<Text variant="muted">{ __( 'Select a notification to read it.' ) }</Text>
+							</VStack>
+						) }
+					</div>
 				</div>
-				<div className="dashboard-notifications-inbox__detail-pane">
-					{ note ? (
-						<NoteDetail
-							noteId={ note }
-							onClose={ () => setSelectedNote( undefined ) }
-							onPrevious={ onPrevious }
-							onNext={ onNext }
-						/>
-					) : (
-						<VStack
-							alignment="center"
-							className="dashboard-notifications-inbox__detail-placeholder"
-						>
-							<Text variant="muted">{ __( 'Select a notification to read it.' ) }</Text>
-						</VStack>
-					) }
-				</div>
-			</div>
+			</InboxVariantProvider>
 		</PageLayout>
 	);
 }

@@ -9,8 +9,10 @@ import { __, sprintf } from '@wordpress/i18n';
 import { fetchParentComment, getParentCommentRef } from './engine';
 import NoteActions from './note-actions';
 import { BlockText, Timestamp, TitleText } from './rich-text';
+import { useInboxVariant } from './variants';
 import type { Note } from './engine';
 import type { ContextRun, NoteBlock, NoteUserRef, NoteView } from './note-model';
+import type { ComponentType } from 'react';
 
 /** The parent comment's details for a reply note; idle for anything else. */
 function useParentCommentDetails( note: Note | null ) {
@@ -357,8 +359,17 @@ function GenericView( { view }: { view: Extract< NoteView, { kind: 'generic' } >
 	);
 }
 
-/** Picks the layout for a resolved note view. */
+/** Picks the layout for a resolved note view, honouring the active variant. */
 export default function NoteViewSwitch( { view }: { view: NoteView } ) {
+	const variant = useInboxVariant();
+	// The per-kind map loses the kind correlation TS can't follow; each entry
+	// was typed against its exact kind at registration.
+	const Override = ( variant.detailViews?.[ view.kind ] ?? variant.Detail ) as
+		| ComponentType< { view: NoteView } >
+		| undefined;
+	if ( Override ) {
+		return <Override view={ view } />;
+	}
 	switch ( view.kind ) {
 		case 'thread':
 			return <ThreadView view={ view } />;
