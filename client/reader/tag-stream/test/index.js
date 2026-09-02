@@ -31,7 +31,7 @@ jest.mock( 'calypso/controller/shared', () => ( {
 } ) );
 
 jest.mock( 'calypso/reader/controller', () => ( {
-	redirectLoggedOutToDiscover: jest.fn(),
+	redirectLoggedOutToDiscoverTags: jest.fn(),
 	sidebar: jest.fn(),
 } ) );
 

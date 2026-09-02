@@ -7,7 +7,7 @@ import {
 	render as clientRender,
 } from 'calypso/controller';
 import { setLocaleMiddleware } from 'calypso/controller/shared';
-import { redirectLoggedOutToDiscover, sidebar } from 'calypso/reader/controller';
+import { redirectLoggedOutToDiscoverTags, sidebar } from 'calypso/reader/controller';
 import { readerNotFound } from 'calypso/reader/lib/reader-router';
 import { tagListing } from './controller';
 
@@ -28,7 +28,7 @@ export default function () {
 
 	page(
 		[ '/tag/:tag', `/${ langParam }/tag/:tag` ],
-		redirectLoggedOutToDiscover,
+		redirectLoggedOutToDiscoverTags,
 		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		setLocaleMiddleware(),
 		sidebar,

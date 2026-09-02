@@ -421,6 +421,22 @@ export function redirectLoggedOutToDiscover( context, next ) {
 }
 
 /**
+ * Middleware to redirect logged out users to the Discover tags tab.
+ * Intended for the tag pages, which no longer support logged out users.
+ * @param   {Object}   context Context object
+ * @param   {Function} next    Calls next middleware
+ * @returns {void}
+ */
+export function redirectLoggedOutToDiscoverTags( context, next ) {
+	const state = context.store.getState();
+	if ( isUserLoggedIn( state ) ) {
+		next();
+		return;
+	}
+	return page.redirect( '/discover/tags?selectedTag=dailyprompt' );
+}
+
+/**
  * For backward compatibility redirect all `/read` URLs to `/reader`.
  */
 export function setupReadRoutes() {
