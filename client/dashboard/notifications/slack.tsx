@@ -87,7 +87,13 @@ export function SlackCommentView( { view }: { view: Extract< NoteView, { kind: '
 					height={ 32 }
 				/>
 				<VStack spacing={ 1 } className="dashboard-notifications-inbox__column">
-					<HStack spacing={ 2 } justify="flex-start" alignment="center" expanded={ false }>
+					<HStack
+						spacing={ 2 }
+						justify="flex-start"
+						alignment="center"
+						expanded={ false }
+						className="dashboard-notifications-inbox__slack-message-head"
+					>
 						<TitleText segments={ view.author } />
 						<Timestamp timestamp={ view.timestamp } url={ view.url } />
 					</HStack>
@@ -130,7 +136,13 @@ export default function SlackThreadView( {
 			<HStack spacing={ 3 } justify="flex-start" alignment="flex-start">
 				<Avatar user={ reply.author } />
 				<VStack spacing={ 1 } className="dashboard-notifications-inbox__column">
-					<HStack spacing={ 2 } justify="flex-start" alignment="center" expanded={ false }>
+					<HStack
+						spacing={ 2 }
+						justify="flex-start"
+						alignment="center"
+						expanded={ false }
+						className="dashboard-notifications-inbox__slack-message-head"
+					>
 						{ reply.author && <UserName user={ reply.author } /> }
 						<Timestamp timestamp={ view.timestamp } url={ view.url } />
 					</HStack>
