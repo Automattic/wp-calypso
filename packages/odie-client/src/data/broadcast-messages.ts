@@ -55,7 +55,18 @@ export const useOdieBroadcastWithCallbacks = (
 				return;
 			}
 
-			callbacks.addMessage( data.message );
+			// The sending tab owns the send lifecycle. Here the message is already on
+			// its way, so render it as sent instead of stuck in the greyed "sending"
+			// state that a user message without `received` gets.
+			const message =
+				data.message.role === 'user' && ! data.message.received
+					? {
+							...data.message,
+							received: data.message.metadata?.local_timestamp ?? Date.now() / 1000,
+					  }
+					: data.message;
+
+			callbacks.addMessage( message );
 		};
 
 		return () => {

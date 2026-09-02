@@ -50,13 +50,37 @@ describe( 'odie broadcast gating', () => {
 			FakeBroadcastChannel as unknown as typeof BroadcastChannel;
 	} );
 
-	it( 'delivers a message to another tab showing the same support interaction', () => {
+	it( 'delivers a message to another tab showing the same support interaction, marked as sent', () => {
 		const addMessage = jest.fn();
 		renderHook( () => useOdieBroadcastWithCallbacks( { addMessage }, 'listener-tab' ) );
 
 		broadcastOdieMessage( message, 'sender-tab', 'interaction-1' );
 
-		expect( addMessage ).toHaveBeenCalledWith( message );
+		// The receiving tab does not own the send lifecycle, so an unsent user
+		// message is stamped with `received` to avoid the greyed "sending" state.
+		expect( addMessage ).toHaveBeenCalledWith(
+			expect.objectContaining( { content: 'hello', role: 'user', received: expect.any( Number ) } )
+		);
+	} );
+
+	it( 'passes an already-sent message through untouched', () => {
+		const addMessage = jest.fn();
+		const sentMessage = { ...message, received: 111 };
+		renderHook( () => useOdieBroadcastWithCallbacks( { addMessage }, 'listener-tab' ) );
+
+		broadcastOdieMessage( sentMessage, 'sender-tab', 'interaction-1' );
+
+		expect( addMessage ).toHaveBeenCalledWith( sentMessage );
+	} );
+
+	it( 'passes a bot message through untouched', () => {
+		const addMessage = jest.fn();
+		const botMessage = { ...message, role: 'bot' } as Message;
+		renderHook( () => useOdieBroadcastWithCallbacks( { addMessage }, 'listener-tab' ) );
+
+		broadcastOdieMessage( botMessage, 'sender-tab', 'interaction-1' );
+
+		expect( addMessage ).toHaveBeenCalledWith( botMessage );
 	} );
 
 	it( 'reads the legacy odieInteractionId param too', () => {
@@ -66,7 +90,7 @@ describe( 'odie broadcast gating', () => {
 
 		broadcastOdieMessage( message, 'sender-tab', 'interaction-1' );
 
-		expect( addMessage ).toHaveBeenCalledWith( message );
+		expect( addMessage ).toHaveBeenCalled();
 	} );
 
 	it( 'drops a message from a tab showing a different support interaction', () => {
