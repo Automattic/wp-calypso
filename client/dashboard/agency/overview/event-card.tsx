@@ -4,6 +4,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { Text } from '../../components/text';
@@ -30,6 +31,7 @@ function SingleEventCard( {
 	recordTracksEvent?: RecordTracksEvent;
 } ) {
 	const { id, logo, logoAlt, when, title, subtitle, description, ctas } = event;
+	const isMobileViewport = useViewportMatch( 'mobile', '<' );
 
 	return (
 		<Card>
@@ -62,6 +64,7 @@ function SingleEventCard( {
 								key={ cta.id }
 								size="compact"
 								variant={ cta.variant ?? 'secondary' }
+								style={ isMobileViewport ? { width: '100%', justifyContent: 'center' } : undefined }
 								href={ cta.url }
 								target={ cta.isExternal ? '_blank' : undefined }
 								rel={ cta.isExternal ? 'noreferrer' : undefined }
