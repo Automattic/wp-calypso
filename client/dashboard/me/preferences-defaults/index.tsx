@@ -27,6 +27,7 @@ type LandingPage = 'primary-site-dashboard' | 'sites' | 'reader';
 
 interface DefaultLandingFormData {
 	defaultLandingPage: LandingPage;
+	showHomepage?: boolean;
 }
 
 interface PrimarySiteFormData {
@@ -36,26 +37,29 @@ interface PrimarySiteFormData {
 function LandingPageCard() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const { data: defaultLandingPage } = useSuspenseQuery( {
+	const { data: initialFormData } = useSuspenseQuery( {
 		...rawUserPreferencesQuery(),
-		select: ( preferences ): LandingPage => {
+		select: ( preferences ): DefaultLandingFormData => {
+			let defaultLandingPage: LandingPage = 'primary-site-dashboard';
 			if ( preferences[ 'sites-landing-page' ]?.useSitesAsLandingPage ) {
-				return 'sites';
+				defaultLandingPage = 'sites';
+			} else if ( preferences[ 'reader-landing-page' ]?.useReaderAsLandingPage ) {
+				defaultLandingPage = 'reader';
 			}
-			if ( preferences[ 'reader-landing-page' ]?.useReaderAsLandingPage ) {
-				return 'reader';
-			}
-			return 'primary-site-dashboard';
+			return {
+				defaultLandingPage,
+				showHomepage: preferences[ 'logged-in-homepage' ]?.show,
+			};
 		},
 	} );
 
 	const { mutateAsync: saveUserPreferences, isPending } = useMutation( userPreferencesMutation() );
 
-	const [ formData, setFormData ] = useState< DefaultLandingFormData >( {
-		defaultLandingPage,
-	} );
+	const [ formData, setFormData ] = useState< DefaultLandingFormData >( initialFormData );
 
-	const isDirty = defaultLandingPage !== formData.defaultLandingPage;
+	const isDirty =
+		initialFormData.defaultLandingPage !== formData.defaultLandingPage ||
+		initialFormData.showHomepage !== formData.showHomepage;
 
 	const fields: Field< DefaultLandingFormData >[] = [
 		{
@@ -68,11 +72,17 @@ function LandingPageCard() {
 				{ label: __( 'View posts from sites you follow.' ), value: 'reader' },
 			] satisfies { label: string; value: LandingPage }[],
 		},
+		{
+			id: 'showHomepage',
+			label: __( 'Show the WordPress.com homepage when signed in' ),
+			Edit: 'checkbox',
+			isVisible: () => initialFormData.showHomepage !== undefined,
+		},
 	];
 
 	const form = {
 		layout: { type: 'regular' as const },
-		fields: [ 'defaultLandingPage' ],
+		fields: [ 'defaultLandingPage', 'showHomepage' ],
 	};
 
 	const handleSubmit = ( e: React.FormEvent ) => {
@@ -87,6 +97,12 @@ function LandingPageCard() {
 				useReaderAsLandingPage: formData.defaultLandingPage === 'reader',
 				updatedAt,
 			},
+			...( initialFormData.showHomepage !== undefined && {
+				'logged-in-homepage': {
+					show: !! formData.showHomepage,
+					updatedAt,
+				},
+			} ),
 		} )
 			.then( () => {
 				createSuccessNotice( __( 'Default landing page saved.' ), {
