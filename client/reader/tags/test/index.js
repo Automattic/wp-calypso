@@ -3,7 +3,7 @@
  */
 import page from '@automattic/calypso-router';
 import { readerNotFound } from 'calypso/reader/lib/reader-router';
-import initTags from '../index.web';
+import initTags from '../index';
 
 jest.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
@@ -27,6 +27,7 @@ jest.mock( 'calypso/controller/shared', () => ( {
 } ) );
 
 jest.mock( 'calypso/reader/controller', () => ( {
+	redirectLoggedOutToDiscover: jest.fn(),
 	sidebar: jest.fn(),
 } ) );
 

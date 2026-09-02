@@ -30,9 +30,8 @@ jest.mock( 'calypso/controller/shared', () => ( {
 	setLocaleMiddleware: jest.fn( () => jest.fn() ),
 } ) );
 
-jest.mock( 'calypso/lib/reader/is-reader-tag-embed-page', () => jest.fn( () => false ) );
-
 jest.mock( 'calypso/reader/controller', () => ( {
+	redirectLoggedOutToDiscover: jest.fn(),
 	sidebar: jest.fn(),
 } ) );
 
