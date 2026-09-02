@@ -215,9 +215,11 @@ function ClassicBody( { view }: { view: NoteView } ) {
 						</VStack>
 					</HStack>
 					{ view.reply.body && (
-						<Text className="dashboard-notifications-inbox__block-text">
-							<BlockText block={ view.reply.body } />
-						</Text>
+						<div className="dashboard-notifications-inbox__classic-response">
+							<Text className="dashboard-notifications-inbox__block-text">
+								<BlockText block={ view.reply.body } />
+							</Text>
+						</div>
 					) }
 				</>
 			) }
