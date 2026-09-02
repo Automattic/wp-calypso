@@ -144,15 +144,26 @@ export const useGetCombinedChat = (
 			// so interactionHasChanged is false, but we still need to reload the chat.
 			mainChatState.odieId?.toString() !== odieId?.toString();
 
+		// The interaction gained a Zendesk conversation this tab is not showing yet:
+		// it was escalated from another tab. Reload so this tab switches too,
+		// otherwise it keeps sending to Odie. Skipped while this tab is the one
+		// transferring (`status === 'transfer'`), which sets the conversation itself.
+		const conversationHasChanged =
+			!! conversationId &&
+			mainChatState.conversationId !== conversationId &&
+			chatStatus !== 'transfer';
+
+		const needsReload = interactionHasChanged || conversationHasChanged;
+
 		previousOdieIdRef.current = odieId;
 
 		if (
-			( isOdieChatLoading && ! interactionHasChanged ) ||
+			( isOdieChatLoading && ! needsReload ) ||
 			isLoadingCurrentSupportInteraction ||
 			isFetchingConversation ||
 			isUploadingUnsentMessages ||
 			isLoadingCanConnectToZendesk ||
-			( chatStatus !== 'loading' && ! interactionHasChanged )
+			( chatStatus !== 'loading' && ! needsReload )
 		) {
 			return;
 		}
@@ -199,9 +210,14 @@ export const useGetCombinedChat = (
 				?.then( ( conversation ) => {
 					if ( conversation ) {
 						setMainChatState( ( prevChat ) => {
-							const isSameConversation =
+							// Keep the user's queued messages when the tab already shows this
+							// conversation, and also while it is switching to it from the Odie
+							// chat (no conversation id yet): a message sent right after the
+							// escalation - from this tab or mirrored from another one - may
+							// not be in the server response yet and would otherwise be dropped.
+							const keepQueuedMessages =
 								prevChat.odieId?.toString() === odieId?.toString() &&
-								prevChat.conversationId === conversation.id;
+								( prevChat.conversationId === conversation.id || ! prevChat.conversationId );
 
 							return {
 								odieId: odieId ? Number( odieId ) : null,
@@ -217,7 +233,7 @@ export const useGetCombinedChat = (
 									getZendeskChatStartedMetaMessage(),
 									...( deduplicateZDMessages( [
 										// During connection recovery, the user queued messages can be deleted. This ensure they remain. And `deduplicateZDMessages` takes of duplication.
-										...( isSameConversation
+										...( keepQueuedMessages
 											? prevChat.messages.filter( isQueuedZendeskMessage )
 											: [] ),
 										...conversation.messages,
@@ -266,6 +282,7 @@ export const useGetCombinedChat = (
 		hasEnTranslation,
 		mainChatState?.messages?.length,
 		mainChatState?.odieId,
+		mainChatState?.conversationId,
 		odieChat,
 	] );
 
