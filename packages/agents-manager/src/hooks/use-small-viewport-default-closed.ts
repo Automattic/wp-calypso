@@ -36,8 +36,9 @@ function isSmallViewport(): boolean {
  * returns `true` immediately.
  */
 export function useSmallViewportDefaultClosed(): boolean {
-	const [ shouldApply ] = useState( () => isSmallViewport() && ! hasOpenChatUrlParam() );
-	const [ isHandled, setIsHandled ] = useState( false );
+	const [ isHandled, setIsHandled ] = useState(
+		() => ! isSmallViewport() || hasOpenChatUrlParam()
+	);
 	const { setIsOpen } = useDispatch( AGENTS_MANAGER_STORE );
 	const { hasLoaded, isOpen } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
@@ -45,7 +46,7 @@ export function useSmallViewportDefaultClosed(): boolean {
 	}, [] );
 
 	useEffect( () => {
-		if ( ! shouldApply || isHandled || ! hasLoaded ) {
+		if ( isHandled || ! hasLoaded ) {
 			return;
 		}
 
@@ -57,7 +58,7 @@ export function useSmallViewportDefaultClosed(): boolean {
 		}
 
 		setIsHandled( true );
-	}, [ hasLoaded, isHandled, isOpen, setIsOpen, shouldApply ] );
+	}, [ hasLoaded, isHandled, isOpen, setIsOpen ] );
 
-	return isHandled || ! shouldApply;
+	return isHandled;
 }
