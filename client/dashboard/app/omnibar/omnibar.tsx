@@ -15,7 +15,7 @@ import { AUTH_QUERY_KEY, initializeCurrentUser } from '../auth';
 import { useAppContext } from '../context';
 import { omnibarEvents } from './events';
 import { OmnibarHomeIcon } from './home';
-import { useAiChatPlugin } from './plugin-ai-chat';
+import { createAiChatNodeBuilder } from './plugin-ai-chat';
 import { addDashboardNode, useDashboardPlugin } from './plugin-dashboard';
 import { useHelpCenterPlugin } from './plugin-help-center';
 import { useLanguageSwitcherPlugin } from './plugin-language-switcher';
@@ -123,9 +123,12 @@ function ConnectedOmnibar( {
 			'my-wpcom-account': buildWpcomAccountNode,
 			'site-plan-badge': buildSiteBadgeNode,
 			'site-status-badge': buildSiteBadgeNode,
+			...( supports.help
+				? { 'agents-manager-ai-chat': createAiChatNodeBuilder( sectionName ) }
+				: {} ),
 			...( authUser ? { logout: createLogoutNodeBuilder( authUser ) } : {} ),
 		} ),
-		[ authUser ]
+		[ authUser, sectionName, supports.help ]
 	);
 
 	const adminBarNodes = useMemo(
@@ -167,7 +170,6 @@ function ConnectedOmnibar( {
 
 	const readerPluginNode = useReaderPlugin( { sectionGroup } );
 	const helpCenterPluginNode = useHelpCenterPlugin( { sectionName, adminBarNodes } );
-	const aiChatPluginNode = useAiChatPlugin( { sectionName, adminBarNodes } );
 	const notificationsPluginNode = useNotificationsPlugin( { user } );
 	const { node: languageSwitcherNode, panel: languageSwitcherPanel } = useLanguageSwitcherPlugin( {
 		user,
@@ -189,7 +191,8 @@ function ConnectedOmnibar( {
 				...( shoppingCartNode ? [ shoppingCartNode ] : [] ),
 				...( supports.reader ? [ readerPluginNode ] : [] ),
 				...( supports.help ? [ helpCenterPluginNode ] : [] ),
-				...( supports.help && aiChatPluginNode ? [ aiChatPluginNode ] : [] ),
+				// Ask AI, plus any other node a builder claimed above.
+				...( baseOmnibarNodes.plugins ?? [] ),
 				...( supports.notifications ? [ notificationsPluginNode ] : [] ),
 		  ]
 		: [];
