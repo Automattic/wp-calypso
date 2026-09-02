@@ -1,0 +1,32 @@
+name: TeamCity merge-queue nudge
+
+# Ask TeamCity to check the wp-calypso VCS root for changes immediately, so the
+# required builds for a merge-group branch get enqueued within seconds instead of
+# waiting up to a full VCS polling cycle (~60s). Uses guest auth — no token needed.
+#
+# The `pull_request` trigger is here only to validate reachability from CI; the
+# nudge is only meaningful for `merge_group`. Drop `pull_request` before relying on this.
+on:
+  merge_group:
+  pull_request:
+
+permissions: {}
+
+jobs:
+  nudge:
+    # teamcity.a8c.com must be reachable from this runner; use a self-hosted runner if it is internal-only.
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Ask TeamCity to check for changes now (guest auth, no token)
+        run: |
+          set -uo pipefail
+          code=$(curl -sS --max-time 30 -o /tmp/resp -w "%{http_code}" -X POST \
+            "https://teamcity.a8c.com/guestAuth/app/rest/vcs-root-instances/commitHookNotification?locator=vcsRoot:(id:calypso_WpCalypso)")
+          echo "HTTP $code"
+          cat /tmp/resp 2>/dev/null || true
+          echo
+          case "$code" in
+            2*) echo "Nudge OK" ;;
+            *)  echo "Nudge failed (unreachable or rejected)"; exit 1 ;;
+          esac
