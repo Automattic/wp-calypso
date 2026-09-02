@@ -342,9 +342,19 @@ const UniversalNavbarFooter = ( {
 	// Effects don't run in SSR, so the server-rendered markup must already look
 	// right: stacks render expanded and the branding shows the plain Automattic
 	// logo. On the client, small screens collapse the stacks into tap-to-expand
-	// accordions and the branding picks a random "An Automattic …" noun.
+	// accordions — tracking viewport changes so a resized window follows the
+	// breakpoint like the twin does — and the branding picks a random
+	// "An Automattic …" noun.
 	useIsomorphicEffect( () => {
-		setCollapseStacks( window.matchMedia( '(max-width: 1151px)' ).matches );
+		const mediaQuery = window.matchMedia( '(max-width: 1151px)' );
+		setCollapseStacks( mediaQuery.matches );
+
+		const onChange = ( event: MediaQueryListEvent ) => setCollapseStacks( event.matches );
+		mediaQuery.addEventListener( 'change', onChange );
+		return () => mediaQuery.removeEventListener( 'change', onChange );
+	}, [] );
+
+	useIsomorphicEffect( () => {
 		setAutomatticBranding( getAutomatticBrandingNoun( translate ) );
 	}, [ translate ] );
 
