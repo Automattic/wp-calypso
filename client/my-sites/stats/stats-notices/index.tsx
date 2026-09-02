@@ -17,6 +17,7 @@ import { shouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-st
 import { useSelector, useDispatch } from 'calypso/state';
 import { resetSiteState } from 'calypso/state/purchases/actions';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
@@ -137,19 +138,26 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 
 	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
 
+	// Switching the dashboard on is an administrator's call, and the route enforces the same thing,
+	// so anyone else is never offered it — and never spends a request finding that out.
+	// Odyssey seeds these capabilities from the site itself, so this holds in both builds.
+	const canManageOptions = useSelector(
+		( state ) => !! canCurrentUser( state as object, siteId as number, 'manage_options' )
+	);
+
 	// Only cohort sites pay for this round-trip: the server decides who is offered the preview, and
 	// everyone else never reaches the query. It has to be resolved out here rather than inside the
 	// notice, because a notice that wins its conflict group and then renders nothing takes the
 	// upsells and the JITM slot down with it — the parent only sees the element, not the null.
-	const isOfferedTrafficTabPreview = serverNoticesVisibility?.traffic_tab_preview === true;
+	const isOfferedTrafficTabPreview =
+		canManageOptions && serverNoticesVisibility?.traffic_tab_preview === true;
 	const {
 		data: hasPremiumAnalytics,
 		isLoading: isLoadingPremiumAnalyticsStatus,
 		isError: isPremiumAnalyticsStatusError,
 	} = usePremiumAnalyticsStatusQuery( siteId, isOfferedTrafficTabPreview );
 
-	// A failed read covers two cases that both mean "don't offer the switch": the route 403s for
-	// anyone who can't administer the site, and it doesn't exist on a Jetpack too old to serve it.
+	// A failed read means the site can't serve the route at all — a Jetpack too old to have it.
 	const canEnableTrafficTabPreview =
 		isOfferedTrafficTabPreview && ! isPremiumAnalyticsStatusError && ! hasPremiumAnalytics;
 
