@@ -11,7 +11,7 @@ import { DomainStatusField } from './field-domain-status';
 import { DomainExpiryField } from './field-expiry';
 import { DomainSslField } from './field-ssl';
 import { IneligibleIndicator } from './ineligible-indicator';
-import { sortNullableStrings } from './sort-nullable-strings';
+import { sortNullableDates } from './sort-nullable-strings';
 import type { DomainSummary, Site } from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';
 
@@ -139,7 +139,7 @@ export const useFields = ( {
 				label: __( 'Paid until' ),
 				enableHiding: false,
 				enableSorting: true,
-				sort: sortNullableStrings,
+				sort: ( a, b, direction ) => sortNullableDates( a.expiry, b.expiry, direction ),
 				elements: [
 					{ value: '2-next-90-days', label: __( '90 days' ) },
 					{ value: '1-expired', label: __( 'Expired' ) },
