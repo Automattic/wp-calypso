@@ -162,6 +162,147 @@ describe( '<PreferencesDefaults>', () => {
 		} );
 	} );
 
+	describe( 'homepage', () => {
+		const homepageLabel = 'Show the WordPress.com homepage when signed in';
+
+		test( 'is hidden when the user has never decided', async () => {
+			mockPreferences();
+			mockUserSettings();
+			mockSites( [ primarySite, otherSite ] );
+			mockSite( primarySite );
+
+			renderPage();
+
+			await screen.findByRole( 'form', { name: 'Landing page' } );
+			expect( screen.queryByLabelText( homepageLabel ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'reflects a saved preference to show the homepage', async () => {
+			mockPreferences( {
+				'logged-in-homepage': { show: true, updatedAt: 0 },
+			} );
+			mockUserSettings();
+			mockSites( [ primarySite, otherSite ] );
+			mockSite( primarySite );
+
+			renderPage();
+
+			await expect( screen.findByLabelText( homepageLabel ) ).resolves.toBeChecked();
+		} );
+
+		test( 'reflects a saved preference to hide the homepage', async () => {
+			mockPreferences( {
+				'logged-in-homepage': { show: false, updatedAt: 0 },
+			} );
+			mockUserSettings();
+			mockSites( [ primarySite, otherSite ] );
+			mockSite( primarySite );
+
+			renderPage();
+
+			await expect( screen.findByLabelText( homepageLabel ) ).resolves.not.toBeChecked();
+		} );
+
+		test( 'saves the checkbox state alongside the landing page', async () => {
+			const currentUser = userEvent.setup();
+			mockPreferences( {
+				'logged-in-homepage': { show: false, updatedAt: 0 },
+			} );
+			mockUserSettings();
+			mockSites( [ primarySite, otherSite ] );
+			mockSite( primarySite );
+			let savedBody: Record< string, unknown > = {};
+			const saveRequest = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/preferences', ( body ) => {
+					savedBody = body;
+					return true;
+				} )
+				.reply( 200, { calypso_preferences: {} } );
+
+			renderPage();
+
+			await currentUser.click( await screen.findByLabelText( homepageLabel ) );
+			await currentUser.click( saveButtonFor( 'Landing page' ) );
+
+			await waitFor( () => expect( saveRequest.isDone() ).toBe( true ) );
+			const savedPreferences = savedBody.calypso_preferences as Record< string, unknown >;
+			expect( savedPreferences[ 'logged-in-homepage' ] ).toMatchObject( { show: true } );
+			expect(
+				typeof ( savedPreferences[ 'logged-in-homepage' ] as { updatedAt: number } ).updatedAt
+			).toBe( 'number' );
+		} );
+
+		test( 'leaves the homepage preference untouched on a radio-only save', async () => {
+			const currentUser = userEvent.setup();
+			mockPreferences( {
+				'logged-in-homepage': { show: false, updatedAt: 0 },
+			} );
+			mockUserSettings();
+			mockSites( [ primarySite, otherSite ] );
+			mockSite( primarySite );
+			let savedBody: Record< string, unknown > = {};
+			const saveRequest = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/preferences', ( body ) => {
+					savedBody = body;
+					return true;
+				} )
+				.reply( 200, { calypso_preferences: {} } );
+
+			renderPage();
+
+			await currentUser.click( await screen.findByLabelText( 'See a list of all your sites.' ) );
+			await currentUser.click( saveButtonFor( 'Landing page' ) );
+
+			await waitFor( () => expect( saveRequest.isDone() ).toBe( true ) );
+			const savedPreferences = savedBody.calypso_preferences as Record< string, unknown >;
+			expect( savedPreferences ).not.toHaveProperty( 'logged-in-homepage' );
+		} );
+
+		test( 'records a Tracks event when the checkbox is changed', async () => {
+			const currentUser = userEvent.setup();
+			mockPreferences( {
+				'logged-in-homepage': { show: false, updatedAt: 0 },
+			} );
+			mockUserSettings();
+			mockSites( [ primarySite, otherSite ] );
+			mockSite( primarySite );
+			const saveRequest = mockPreferencesSaved();
+
+			const { recordTracksEvent } = renderPage();
+
+			await currentUser.click( await screen.findByLabelText( homepageLabel ) );
+			await currentUser.click( saveButtonFor( 'Landing page' ) );
+
+			await waitFor( () => expect( saveRequest.isDone() ).toBe( true ) );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_preferences_defaults_homepage_toggle',
+				{ show: true, source: 'account_defaults' }
+			);
+		} );
+
+		test( 'does not record a Tracks event on a radio-only save', async () => {
+			const currentUser = userEvent.setup();
+			mockPreferences( {
+				'logged-in-homepage': { show: false, updatedAt: 0 },
+			} );
+			mockUserSettings();
+			mockSites( [ primarySite, otherSite ] );
+			mockSite( primarySite );
+			const saveRequest = mockPreferencesSaved();
+
+			const { recordTracksEvent } = renderPage();
+
+			await currentUser.click( await screen.findByLabelText( 'See a list of all your sites.' ) );
+			await currentUser.click( saveButtonFor( 'Landing page' ) );
+
+			await waitFor( () => expect( saveRequest.isDone() ).toBe( true ) );
+			expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+				'calypso_dashboard_preferences_defaults_homepage_toggle',
+				expect.anything()
+			);
+		} );
+	} );
+
 	describe( 'primary site', () => {
 		test( 'shows the saved primary site even when it is absent from the site list', async () => {
 			mockPreferences();
