@@ -20,6 +20,7 @@ import {
 	getBigSkyTracksData,
 	recordAgentsManagerTracksEvent,
 	recordBigSkyTracksEvent,
+	recordJetpackAiUpgradeButtonClick,
 } from '../tracks';
 
 const mockRecordTracksEvent = recordTracksEvent as jest.MockedFunction< typeof recordTracksEvent >;
@@ -256,6 +257,28 @@ describe( 'tracks wrappers', () => {
 			setResolvedAgentId( 'reader-chat' );
 			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );
 			expect( mockRecordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		} );
+	} );
+
+	describe( 'recordJetpackAiUpgradeButtonClick', () => {
+		it( 'records the shared funnel event without site or allowance data', () => {
+			( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+				isA11n: false,
+				site: { ID: 12345 },
+			};
+
+			recordJetpackAiUpgradeButtonClick();
+
+			expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'jetpack_ai_upgrade_button', {
+				ai_session_id: 'session-xyz',
+				is_a11n: false,
+				placement: 'jetpack-ai-sidebar-quota-notice',
+				sessionid: 'session-xyz',
+				surface: 'block_editor',
+			} );
+			expect( lastEventProps() ).not.toHaveProperty( 'blog_id' );
+			expect( lastEventProps() ).not.toHaveProperty( 'credits_remaining' );
+			expect( lastEventProps() ).not.toHaveProperty( 'requests_remaining' );
 		} );
 	} );
 

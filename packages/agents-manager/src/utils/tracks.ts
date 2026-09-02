@@ -171,3 +171,22 @@ export function recordAgentsManagerTracksEvent(
 ): void {
 	recordTracksEvent( eventName, { ...getUnifiedBaseProps(), ...props } );
 }
+
+/** Records the existing Jetpack AI upgrade-funnel click without allowance or site data. */
+export function recordJetpackAiUpgradeButtonClick(): void {
+	const sessionId = getActiveSessionId();
+	const isA11n = getIsA11n();
+	let surface: string | undefined;
+	try {
+		surface = select( 'core/editor' ) ? 'block_editor' : undefined;
+	} catch {
+		surface = undefined;
+	}
+
+	recordTracksEvent( 'jetpack_ai_upgrade_button', {
+		placement: 'jetpack-ai-sidebar-quota-notice',
+		...( surface ? { surface } : {} ),
+		...( sessionId ? { sessionid: sessionId, ai_session_id: sessionId } : {} ),
+		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
+	} );
+}

@@ -185,6 +185,7 @@ describe( 'loadExternalProviders', () => {
 
 		expect( providers.toolProvider ).toBeUndefined();
 		expect( providers.contextProvider ).toBeUndefined();
+		expect( providers.useChatNotice ).toBeUndefined();
 		expect( providers.useSuggestions ).toEqual( expect.any( Function ) );
 	} );
 
@@ -768,6 +769,17 @@ describe( 'loadExternalProviders', () => {
 		const providers = await loadExternalProviders();
 
 		expect( providers.onTaskUpdate ).toBe( firstOnTaskUpdate );
+	} );
+
+	it( 'uses the first provider for useChatNotice', async () => {
+		const firstUseChatNotice = jest.fn();
+		setAgentsManagerData( {
+			agentProviders: [ { useChatNotice: firstUseChatNotice }, { useChatNotice: jest.fn() } ],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.useChatNotice ).toBe( firstUseChatNotice );
 	} );
 
 	it( 'merges empty view suggestions from multiple providers and dedupes by id', async () => {

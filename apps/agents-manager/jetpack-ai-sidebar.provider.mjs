@@ -22,6 +22,7 @@ export const getEmptyViewSuggestions = lazy( 'getEmptyViewSuggestions' );
 export const useSuggestions = lazy( 'useSuggestions' );
 export const useAbilitiesSetup = lazy( 'useAbilitiesSetup' );
 export const useCheckpoint = lazy( 'useCheckpoint' );
+export const useChatNotice = lazy( 'useChatNotice' );
 
 // toolProvider and contextProvider are objects, not functions — use getters.
 export const toolProvider = new Proxy(
