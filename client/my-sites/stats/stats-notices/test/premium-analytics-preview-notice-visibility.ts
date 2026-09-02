@@ -14,6 +14,7 @@ const premiumAnalyticsPreviewNotice = ALL_STATS_NOTICES.find(
 const eligibleSite: StatsNoticeProps = {
 	siteId: 123,
 	isOdysseyStats: false,
+	isWpcom: true,
 	canManageOptions: true,
 	hasCommercialStats: true,
 	isPremiumAnalyticsEnabled: false,
@@ -51,6 +52,16 @@ describe( 'premium_analytics_preview notice visibility', () => {
 				...eligibleSite,
 				isPremiumAnalyticsEnabled: undefined,
 			} )
+		).toBe( false );
+	} );
+
+	/**
+	 * A rollout boundary rather than eligibility: Simple and Atomic go first, and self-hosted
+	 * Jetpack sites join when the `isWpcom` clause comes out.
+	 */
+	it( 'is not offered to self-hosted Jetpack sites in this phase', () => {
+		expect(
+			premiumAnalyticsPreviewNotice?.isVisibleFunc( { ...eligibleSite, isWpcom: false } )
 		).toBe( false );
 	} );
 

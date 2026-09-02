@@ -37,11 +37,16 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 	{
 		component: PremiumAnalyticsPreviewNotice,
 		noticeId: 'premium_analytics_preview',
-		// In CONFLICT_NOTICE_ID_GROUPS above `tier_upgrade`, which is the notice it can actually
-		// turn up beside: that one wants commercial use too. The upsells are not really rivals -
-		// they need a site without paid Stats, and this one needs the tier that carries them.
-		// The invitation wins because it only runs while the dashboard is in preview and the
-		// server picks the cohort, where the near-limit warning returns on the next load.
+		// `isWpcom` - true for Simple and Atomic alike - is a rollout boundary rather than part of
+		// who the preview is for: WPCOM sites go first, and self-hosted Jetpack sites join by
+		// deleting that one clause and the matching one in the parent's query gate. It would sit
+		// better beside the flag in `disabled`, which is where the other temporary switches live,
+		// but that is resolved once at module load with no site in scope - anything that depends
+		// on the site has to be asked here.
+		// In CONFLICT_NOTICE_ID_GROUPS so only one banner ever shows, though nothing in the group
+		// is a natural rival while the invitation is WPCOM-only: the upsells need a site without
+		// paid Stats, and `tier_upgrade` needs a self-hosted one. Ranked high regardless, so a
+		// site that somehow qualifies for both gets the invitation, which is the one on a clock.
 		// Eligibility is resolved by the parent, so this notice never wins the group and then
 		// renders nothing — that would suppress the rest of the group and the JITM for an empty
 		// slot.
@@ -50,6 +55,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 		// old to register it, or a read that failed — which is not the same as the dashboard being
 		// off, and must not read as "go ahead and offer it".
 		isVisibleFunc: ( {
+			isWpcom,
 			isVip,
 			isP2,
 			canManageOptions,
@@ -57,6 +63,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			isPremiumAnalyticsEnabled,
 		}: StatsNoticeProps ) =>
 			!! (
+				isWpcom &&
 				canManageOptions &&
 				hasCommercialStats &&
 				isPremiumAnalyticsEnabled === false &&

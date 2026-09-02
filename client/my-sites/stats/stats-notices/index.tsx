@@ -160,13 +160,19 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	);
 
 	// Only sites that could actually accept the invitation pay for this round-trip, and the server
-	// decides the cohort on top. Resolved out here rather than inside the notice: a notice that
-	// wins its conflict group and then renders nothing takes the upsells and the JITM slot down
-	// with it, because the parent only ever sees the element, not the null.
+	// decides the cohort on top. `isWpcom` mirrors the registry's rollout boundary, and earns its
+	// place here twice over: the request below also holds every notice back while it is in flight,
+	// so without it a self-hosted site would sit on its own upsell waiting for an answer it has no
+	// use for.
+	//
+	// Resolved out here rather than inside the notice: a notice that wins its conflict group and
+	// then renders nothing takes the upsells and the JITM slot down with it, because the parent
+	// only ever sees the element, not the null.
 	const { data: isPremiumAnalyticsEnabled, isLoading: isLoadingPremiumAnalyticsStatus } =
 		usePremiumAnalyticsStatusQuery(
 			siteId,
-			canManageOptions &&
+			isWpcom &&
+				canManageOptions &&
 				hasCommercialStats &&
 				serverNoticesVisibility?.premium_analytics_preview === true
 		);
