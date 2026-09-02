@@ -1,14 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DropdownMenu, Fill } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { backup, comment, help, page, rss, video } from '@wordpress/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
-import { AGENTS_MANAGER_STORE } from '../../stores';
+import { useAiChatEntryState } from '../../hooks/use-ai-chat-entry-state';
 import { isEditorHelpMenuEnabled } from '../../utils/editor-entry-points';
-import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 interface Props {
 	/** Closes/hides the chat — owned by `AgentDock`. */
@@ -27,16 +25,11 @@ export default function EditorHelpCenterButton( { onClose, onOpenChat }: Props )
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
 	const { resumeChat, sectionName } = useAgentsManagerContext();
-	const { isOpen, isMinimized } = useSelect(
-		( select ) => ( select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect ).getAgentsManagerState(),
-		[]
-	);
+	const { isChatVisible } = useAiChatEntryState();
 
 	if ( ! isEditorHelpMenuEnabled() ) {
 		return null;
 	}
-
-	const isChatVisible = isOpen && ! isMinimized;
 
 	// Chat items mirror the admin-bar Help menu: re-clicking the item for the route already
 	// showing closes the chat; otherwise navigate there and open it.

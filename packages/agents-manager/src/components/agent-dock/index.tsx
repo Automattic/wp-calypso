@@ -22,6 +22,7 @@ import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inlin
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentHistory from '../agent-history';
+import AdminBarAiChatEntryLabel from '../ai-chat-entry-label/admin-bar';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import EditorAiChatButton from '../editor-ai-chat-button';
 import EditorHelpCenterButton from '../editor-help-center-button';
@@ -462,6 +463,7 @@ export default function AgentDock( {
 		<>
 			<EditorHelpCenterButton onClose={ handleClose } onOpenChat={ openChat } />
 			<EditorAiChatButton onClose={ handleClose } onOpenChat={ openChat } />
+			<AdminBarAiChatEntryLabel />
 			{ isChatVisible &&
 				createAgentPortal(
 					// NOTE: Use route state to pass data that needs to be accessed throughout the app.

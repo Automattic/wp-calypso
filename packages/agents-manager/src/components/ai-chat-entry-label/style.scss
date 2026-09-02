@@ -1,0 +1,34 @@
+@import '../../styles/variables.scss';
+
+// The label reveals by growing its grid track from nothing while fading in, so
+// neighbours slide instead of jumping; the inner span is clipped meanwhile and
+// carries the gap from the icon. Hidden on the toolbars' mobile layouts.
+.agents-manager-ai-chat-label {
+	display: grid;
+	grid-template-columns: 1fr;
+	animation: agents-manager-ai-chat-label-reveal $transition-timing;
+
+	// The admin bar's `#wpadminbar *` reset zeroes padding; the id keeps the gap there.
+	> span,
+	#wpadminbar & > span {
+		min-width: 0;
+		overflow: hidden;
+		white-space: nowrap;
+		padding-inline-start: 6px;
+	}
+
+	@media ( max-width: 782px ) {
+		display: none;
+	}
+
+	@media ( prefers-reduced-motion: reduce ) {
+		animation: none;
+	}
+}
+
+@keyframes agents-manager-ai-chat-label-reveal {
+	from {
+		grid-template-columns: 0fr;
+		opacity: 0;
+	}
+}

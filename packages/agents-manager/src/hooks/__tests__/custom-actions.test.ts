@@ -28,6 +28,7 @@ let mockSelectState: {
 	isOpen: boolean;
 	isDocked: boolean;
 	isMinimized?: boolean;
+	isChatVisible?: boolean;
 	floatingPosition: string;
 } = {
 	hasLoaded: true,
@@ -279,19 +280,23 @@ describe( 'useSetupCustomActions', () => {
 		} );
 	} );
 
-	it( '`isChatVisible` is true only when open and not minimized', () => {
+	it( '`isChatVisible` reports the chat visibility from the store', () => {
 		mockSelectState = {
 			hasLoaded: true,
 			isOpen: true,
 			isDocked: false,
 			isMinimized: false,
+			isChatVisible: true,
 			floatingPosition: '',
 		};
+
 		const { rerender } = renderHook( () => useSetupCustomActions( baseProps ) );
+
 		expect( window.__agentsManagerActions?.isChatVisible?.() ).toBe( true );
 
-		mockSelectState = { ...mockSelectState, isMinimized: true };
+		mockSelectState = { ...mockSelectState, isMinimized: true, isChatVisible: false };
 		rerender();
+
 		expect( window.__agentsManagerActions?.isChatVisible?.() ).toBe( false );
 	} );
 

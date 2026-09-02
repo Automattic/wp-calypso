@@ -88,10 +88,13 @@ export function useSetupCustomActions( {
 	setIsChatEnabled,
 	setDesktopMediaQuery,
 }: SetupProps ): void {
-	const { hasLoaded, isOpen, isDocked, isMinimized, floatingPosition } = useSelect( ( select ) => {
-		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
-		return store.getAgentsManagerState();
-	}, [] );
+	const { hasLoaded, isOpen, isDocked, isMinimized, floatingPosition, isChatVisible } = useSelect(
+		( select ) => {
+			const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
+			return store.getAgentsManagerState();
+		},
+		[]
+	);
 	const { setIsOpen, setIsDocked, setIsMinimized } = useDispatch( AGENTS_MANAGER_STORE );
 	const { agentConfig, getTabSessionId, resumeChat } = useAgentsManagerContext();
 	const navigate = useNavigate();
@@ -219,16 +222,16 @@ export function useSetupCustomActions( {
 		}
 	}, [ hasLoaded, isOpen, isDocked, floatingPosition ] );
 
-	// Whether the chat is visible (open and not minimized). Entry points outside
-	// the bundle (e.g. the Calypso masterbar) read this to toggle.
-	const isChatVisible = useCallback( () => isOpen && ! isMinimized, [ isOpen, isMinimized ] );
+	// Entry points outside the bundle (the omnibar AI button, the Help menus,
+	// Jetpack's AI sidebar) read this to decide whether a click closes or opens.
+	const getIsChatVisible = useCallback( () => isChatVisible, [ isChatVisible ] );
 
 	// The chat's current route (e.g. `/chat`), so callers can detect a same-route re-click.
 	const getCurrentRoute = useCallback( () => locationRef.current.pathname, [] );
 
 	useRegisterCustomActions( {
 		getChatState,
-		isChatVisible,
+		isChatVisible: getIsChatVisible,
 		getCurrentRoute,
 		getSessionId: getTabSessionId,
 		recordBigSkyTracksEvent: recordGuardedBigSkyTracksEvent,

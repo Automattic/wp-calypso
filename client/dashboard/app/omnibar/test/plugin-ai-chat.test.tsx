@@ -7,11 +7,12 @@ import {
 	openAgentsManagerChat,
 	recordAgentsManagerTracksEvent,
 } from '@automattic/agents-manager';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { createAiChatNodeBuilder } from '../plugin-ai-chat';
-import type { AdminBarNode } from '@automattic/omnibar';
+import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
 jest.mock( '@automattic/agents-manager', () => ( {
+	AiChatEntryLabel: () => <span aria-hidden="true">Agent</span>,
 	closeAgentsManagerChat: jest.fn(),
 	isAgentsManagerChatVisible: jest.fn( () => false ),
 	openAgentsManagerChat: jest.fn(),
@@ -24,13 +25,13 @@ const mockIsChatVisible = isAgentsManagerChatVisible as jest.MockedFunction<
 
 const AI_CHAT_NODE: AdminBarNode = {
 	id: 'agents-manager-ai-chat',
-	title: '<span>Ask AI</span>',
+	title: '<span>Agent</span>',
 	parent: 'top-secondary',
 	href: '',
 	group: false,
 	meta: {
-		menu_title: 'Ask AI',
-		icon: 'ask-ai',
+		menu_title: 'Agent',
+		icon: 'sparkle',
 	},
 };
 
@@ -47,9 +48,17 @@ describe( 'createAiChatNodeBuilder', () => {
 		const node = buildAiChatNode( 'sites' );
 		const { container } = render( node.icon as React.ReactElement );
 
-		expect( node.label ).toBe( 'Ask AI' );
-		expect( node.tooltip ).toBe( 'Ask AI' );
+		expect( node.label ).toBe( 'Agent' );
+		expect( node.tooltip ).toBe( 'Agent' );
 		expect( container.querySelector( '.omnibar__ai-chat-icon > svg' ) ).toBeVisible();
+	} );
+
+	it( 'renders the icon with the entry label beside it', () => {
+		const node = buildAiChatNode( 'sites' );
+		const { container } = render( <>{ node.render?.( node as OmnibarNode ) }</> );
+
+		expect( container.querySelector( '.omnibar__ai-chat-icon > svg' ) ).toBeVisible();
+		expect( screen.getByText( 'Agent' ) ).toBeVisible();
 	} );
 
 	it( 'drops the title so the button renders as an icon', () => {
@@ -67,7 +76,7 @@ describe( 'createAiChatNodeBuilder', () => {
 			'calypso_agents_manager_ai_chat_clicked',
 			{ surface: 'masterbar', section: 'sites', action: 'open' }
 		);
-		expect( openAgentsManagerChat ).toHaveBeenCalled();
+		expect( openAgentsManagerChat ).toHaveBeenCalledTimes( 1 );
 		expect( closeAgentsManagerChat ).not.toHaveBeenCalled();
 	} );
 
@@ -80,7 +89,7 @@ describe( 'createAiChatNodeBuilder', () => {
 			'calypso_agents_manager_ai_chat_clicked',
 			{ surface: 'masterbar', section: 'unknown', action: 'close' }
 		);
-		expect( closeAgentsManagerChat ).toHaveBeenCalled();
+		expect( closeAgentsManagerChat ).toHaveBeenCalledTimes( 1 );
 		expect( openAgentsManagerChat ).not.toHaveBeenCalled();
 	} );
 } );

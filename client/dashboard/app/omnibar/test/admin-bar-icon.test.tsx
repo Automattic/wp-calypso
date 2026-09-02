@@ -5,7 +5,7 @@ import { render } from '@testing-library/react';
 import { adminBarIcon } from '../admin-bar-icon';
 
 describe( 'adminBarIcon', () => {
-	it.each( [ 'comment', 'backup', 'page', 'video', 'rss', 'help', 'ask-ai' ] )(
+	it.each( [ 'comment', 'backup', 'page', 'video', 'rss', 'help', 'sparkle' ] )(
 		'resolves the %s glyph',
 		( name ) => {
 			const { container } = render(

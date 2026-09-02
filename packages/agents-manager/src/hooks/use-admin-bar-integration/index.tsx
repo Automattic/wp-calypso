@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
+import { useAiChatEntryState } from '../use-ai-chat-entry-state';
 import useHasAiChatEntryButton, {
 	ADMIN_BAR_AI_CHAT_BUTTON_ID,
 } from '../use-has-ai-chat-entry-button';
@@ -50,8 +51,8 @@ export default function useAdminBarIntegration( {
 	const currentSiteId = getValidBlogId( site?.ID );
 	const siteId = currentSiteId ?? getValidBlogId( currentUser?.primary_blog );
 	const siteContextSource = currentSiteId ? 'agents_manager_context' : 'primary_site';
-	const { isOpen, isMinimized } = useSelect(
-		( select ) => ( select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect ).getAgentsManagerState(),
+	const isOpen = useSelect(
+		( select ) => ( select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect ).getIsOpen(),
 		[]
 	);
 
@@ -64,11 +65,12 @@ export default function useAdminBarIntegration( {
 	resumeChatRef.current = resumeChat;
 
 	const hasAiChatEntry = useHasAiChatEntryButton();
+	const { isChatVisible } = useAiChatEntryState();
 
-	// Whether the chat is visible (open and not minimized), read inside the
-	// one-time DOM click handlers below to decide whether a click opens or closes.
+	// Read inside the one-time DOM click handlers below to decide whether a
+	// click opens or closes the chat.
 	const isChatVisibleRef = useRef( false );
-	isChatVisibleRef.current = isOpen && ! isMinimized;
+	isChatVisibleRef.current = isChatVisible;
 
 	// The chat's current route, read inside those same handlers so a Help menu item
 	// only closes the chat when it targets the route already showing.

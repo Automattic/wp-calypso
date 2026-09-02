@@ -1,13 +1,11 @@
 import { Button, Fill } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useAgentsManagerContext } from '../../contexts';
-import { AGENTS_MANAGER_STORE } from '../../stores';
+import { useAiChatEntryState } from '../../hooks/use-ai-chat-entry-state';
 import { isEditorAiEntryEnabled } from '../../utils/editor-entry-points';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import { AI } from '../icons';
-import type { AgentsManagerSelect } from '@automattic/data-stores';
 import './style.scss';
 
 interface Props {
@@ -23,16 +21,11 @@ interface Props {
  */
 export default function EditorAiChatButton( { onClose, onOpenChat }: Props ) {
 	const { resumeChat, sectionName } = useAgentsManagerContext();
-	const { isOpen, isMinimized } = useSelect(
-		( select ) => ( select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect ).getAgentsManagerState(),
-		[]
-	);
+	const { isChatVisible } = useAiChatEntryState();
 
 	if ( ! isEditorAiEntryEnabled() ) {
 		return null;
 	}
-
-	const isChatVisible = isOpen && ! isMinimized;
 
 	// Mirrors the admin-bar button: close if showing, else resume the tab's conversation and open.
 	const handleToggle = () => {
