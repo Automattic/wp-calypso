@@ -1,8 +1,6 @@
 import page from '@automattic/calypso-router';
-import { Badge } from '@wordpress/ui';
 import { Button } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
-import clsx from 'clsx';
 import { useContext } from 'react';
 import {
 	A4A_MARKETPLACE_CHECKOUT_LINK,
@@ -55,9 +53,7 @@ export default function ShoppingCart( {
 				<Icon className="shopping-cart__button-icon" icon={ <ShoppingCartIcon /> } />
 
 				{ items.length > 0 && (
-					<Badge className="shopping-cart__button-badge" intent="high">
-						{ items.length.toString() }
-					</Badge>
+					<span className="shopping-cart__button-badge">{ items.length }</span>
 				) }
 			</Button>
 

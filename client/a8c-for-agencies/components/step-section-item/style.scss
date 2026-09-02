@@ -82,12 +82,12 @@
 	.step-section-item__status-wrapper {
 		margin-left: auto;
 	}
+}
 
-	.step-section-item__status {
-		white-space: nowrap;
-		position: relative;
-		top: -1px;
-	}
+.step-section-item__status-wrapper .step-section-item__status {
+	white-space: nowrap;
+	position: relative;
+	top: -1px;
 }
 
 .step-section-item__content {

@@ -35,19 +35,16 @@ export default function StatusBadge( {
 			<Tooltip.Trigger
 				render={ ( triggerProps ) => (
 					<span
+						role="button"
+						tabIndex={ 0 }
 						{ ...triggerProps }
-						className={ clsx(
-							'step-section-item__status-wrapper',
-							triggerProps.className
-						) }
+						className={ clsx( 'step-section-item__status-wrapper', triggerProps.className ) }
 					>
 						{ badge }
 					</span>
 				) }
 			/>
-			<Tooltip.Popup positioner={ <Tooltip.Positioner side="bottom" /> }>
-				{ tooltip }
-			</Tooltip.Popup>
+			<Tooltip.Popup positioner={ <Tooltip.Positioner side="bottom" /> }>{ tooltip }</Tooltip.Popup>
 		</Tooltip.Root>
 	);
 }
