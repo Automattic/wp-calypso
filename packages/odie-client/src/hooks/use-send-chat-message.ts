@@ -1,6 +1,6 @@
 import { useCallback, useState } from '@wordpress/element';
 import { useOdieAssistantContext } from '../context';
-import { broadcastOdieMessage, useSendOdieMessage } from '../data';
+import { broadcastOdieMessage, useCurrentSupportInteractionId, useSendOdieMessage } from '../data';
 import { useSendZendeskMessage } from './use-send-zendesk-message';
 import type { Message } from '../types';
 
@@ -9,6 +9,7 @@ import type { Message } from '../types';
  */
 export const useSendChatMessage = () => {
 	const { addMessage, odieBroadcastClientId, chat } = useOdieAssistantContext();
+	const supportInteractionId = useCurrentSupportInteractionId();
 
 	const [ abortController, setAbortController ] = useState< AbortController >(
 		() => new AbortController()
@@ -24,7 +25,7 @@ export const useSendChatMessage = () => {
 			if ( ! message.payload ) {
 				// Add the user message to the chat and broadcast it to the client.
 				addMessage( message );
-				broadcastOdieMessage( message, odieBroadcastClientId );
+				broadcastOdieMessage( message, odieBroadcastClientId, supportInteractionId );
 			}
 
 			if ( chat.provider === 'zendesk' ) {
@@ -32,7 +33,14 @@ export const useSendChatMessage = () => {
 			}
 			return sendOdieMessage( message );
 		},
-		[ sendOdieMessage, sendZendeskMessage, addMessage, odieBroadcastClientId, chat?.provider ]
+		[
+			sendOdieMessage,
+			sendZendeskMessage,
+			addMessage,
+			odieBroadcastClientId,
+			supportInteractionId,
+			chat?.provider,
+		]
 	);
 
 	return { sendMessage, abort: abortController.abort.bind( abortController ) };
