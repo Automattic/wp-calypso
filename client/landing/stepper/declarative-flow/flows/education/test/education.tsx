@@ -234,9 +234,9 @@ describe( 'Education Flow', () => {
 		renderWithProvider( <StepsProps /> );
 
 		expect( stepsProps?.[ STEPS.DOMAIN_SEARCH.slug ] ).toEqual( {
-			headerText: 'Your plan includes a free domain name',
+			headerText: 'Your Student Plan includes a free domain name',
 			subHeaderText:
-				'Get a .blog or .art domain name for free, or choose a different extension at regular price.',
+				'Get a .blog or .art domain name for free, or choose a different extension at regular price. You can also connect a domain you already own.',
 			hideFreeDomainPromo: true,
 			freeForFirstYearTlds: [ 'blog', 'art' ],
 		} );

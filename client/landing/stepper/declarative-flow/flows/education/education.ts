@@ -55,9 +55,9 @@ const education: FlowV2< typeof initialize > = {
 
 		return {
 			[ STEPS.DOMAIN_SEARCH.slug ]: {
-				headerText: __( 'Your plan includes a free domain name' ),
+				headerText: __( 'Your Student Plan includes a free domain name' ),
 				subHeaderText: __(
-					'Get a .blog or .art domain name for free, or choose a different extension at regular price.'
+					'Get a .blog or .art domain name for free, or choose a different extension at regular price. You can also connect a domain you already own.'
 				),
 				hideFreeDomainPromo: true,
 				freeForFirstYearTlds: EDUCATION_BUNDLED_TLDS,
