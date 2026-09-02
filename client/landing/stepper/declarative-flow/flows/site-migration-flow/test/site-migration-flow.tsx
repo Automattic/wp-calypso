@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
+import config from '@automattic/calypso-config';
 import { PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { waitFor } from '@testing-library/react';
@@ -59,13 +60,20 @@ describe( 'Site Migration Flow', () => {
 	} );
 
 	beforeEach( () => {
-		( window.location.assign as jest.Mock ).mockClear();
+		Object.defineProperty( window, 'location', {
+			value: { ...originalLocation, assign: jest.fn(), replace: jest.fn() },
+		} );
 		( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( true );
 		( useIsSiteAdmin as jest.Mock ).mockReturnValue( {
 			isAdmin: true,
 		} );
 		( getSiteOption as jest.Mock ).mockReturnValue( 'https://example.wpcomstaging.com/wp-admin/' );
 		jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 0 );
+		jest.mocked( useFlowState ).mockReturnValue( {
+			get: jest.fn(),
+			set: jest.fn(),
+			sessionId: '123',
+		} );
 
 		const apiBaseUrl = 'https://public-api.wordpress.com';
 		const testSettingsEndpoint = '/rest/v1.4/sites/example.wordpress.com/settings';
@@ -120,6 +128,55 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( getAssertionConditionResult() ).toEqual( { state: 'success' } );
+		} );
+
+		it( 'blocks a direct static import review URL when the feature is disabled', () => {
+			Object.defineProperty( window, 'location', {
+				value: {
+					...originalLocation,
+					pathname: `/setup/site-migration/${ STEPS.SITE_MIGRATION_STATIC_SITE_IMPORT_REVIEW.slug }`,
+					search: '?ref=move-lp',
+					assign: jest.fn(),
+					replace: jest.fn(),
+				},
+			} );
+			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
+
+			runUseAssertionCondition( {
+				currentStep: STEPS.SITE_MIGRATION_STATIC_SITE_IMPORT_REVIEW.slug,
+			} );
+
+			expect( getAssertionConditionResult() ).toEqual( {
+				state: 'failure',
+				message: 'Static site import is unavailable.',
+			} );
+			expect( window.location.assign ).toHaveBeenCalledWith( '/setup/site-migration' );
+		} );
+
+		it( 'blocks a direct static import progress URL without the move-lp entry', () => {
+			jest
+				.spyOn( config, 'isEnabled' )
+				.mockImplementation( ( flag ) => flag === 'migration/static-site-import' );
+			Object.defineProperty( window, 'location', {
+				value: {
+					...originalLocation,
+					pathname: `/setup/site-migration/${ STEPS.SITE_MIGRATION_STATIC_SITE_IMPORT_PROGRESS.slug }`,
+					search: '',
+					assign: jest.fn(),
+					replace: jest.fn(),
+				},
+			} );
+			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
+
+			runUseAssertionCondition( {
+				currentStep: STEPS.SITE_MIGRATION_STATIC_SITE_IMPORT_PROGRESS.slug,
+			} );
+
+			expect( getAssertionConditionResult() ).toEqual( {
+				state: 'failure',
+				message: 'Static site import is unavailable.',
+			} );
+			expect( window.location.assign ).toHaveBeenCalledWith( '/setup/site-migration' );
 		} );
 	} );
 
@@ -319,6 +376,78 @@ describe( 'Site Migration Flow', () => {
 							from: 'https://example-to-be-migrated.com',
 						},
 					} );
+				} );
+			} );
+
+			it( 'uses the existing migration route for move-lp when static-site-import is disabled', () => {
+				jest.mocked( useFlowState ).mockReturnValue( {
+					get: jest.fn().mockReturnValue( { entryPoint: 'move-lp' } ),
+					set: jest.fn(),
+					sessionId: '123',
+				} );
+
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_IDENTIFY,
+					dependencies: { from: 'https://example-to-be-migrated.com', platform: 'wordpress' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_CREATION_STEP,
+					query: { from: 'https://example-to-be-migrated.com', platform: 'wordpress' },
+				} );
+			} );
+
+			it( 'routes a classified non-WordPress move-lp source through SSI when enabled', () => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flag === 'migration/static-site-import' );
+				jest.mocked( useFlowState ).mockReturnValue( {
+					get: jest.fn().mockReturnValue( { entryPoint: 'move-lp' } ),
+					set: jest.fn(),
+					sessionId: '123',
+				} );
+
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_IDENTIFY,
+					dependencies: { from: 'https://example-to-be-migrated.com', platform: 'wix' },
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_UPGRADE_PLAN,
+					query: {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						from: 'https://example-to-be-migrated.com',
+						staticSiteImport: 'true',
+						platform: 'wix',
+					},
+				} );
+			} );
+
+			it( 'keeps a detected WordPress source on the existing migration path', () => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flag === 'migration/static-site-import' );
+				jest.mocked( useFlowState ).mockReturnValue( {
+					get: jest.fn().mockReturnValue( { entryPoint: 'move-lp' } ),
+					set: jest.fn(),
+					sessionId: '123',
+				} );
+
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_IDENTIFY,
+					dependencies: { from: 'https://wordpress-source.test', platform: 'wordpress' },
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
+					query: {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						from: 'https://wordpress-source.test',
+					},
 				} );
 			} );
 
@@ -744,6 +873,35 @@ describe( 'Site Migration Flow', () => {
 					plan: PLAN_BUSINESS_MONTHLY,
 					historyBack: true,
 				} );
+			} );
+
+			it( 'returns from checkout to static site import review for the enabled move-lp path', () => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flag === 'migration/static-site-import' );
+				jest.mocked( useFlowState ).mockReturnValue( {
+					get: jest.fn().mockReturnValue( { entryPoint: 'move-lp' } ),
+					set: jest.fn(),
+					sessionId: '123',
+				} );
+
+				runNavigation( {
+					from: STEPS.SITE_MIGRATION_UPGRADE_PLAN,
+					dependencies: { goToCheckout: true, plan: PLAN_BUSINESS_MONTHLY },
+					query: {
+						siteSlug: 'example.wordpress.com',
+						siteId: 123,
+						from: 'https://site-to-be-migrated.com',
+						staticSiteImport: 'true',
+						platform: 'wix',
+					},
+				} );
+
+				expect( goToCheckout ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						destination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_STATIC_SITE_IMPORT_REVIEW.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com&siteId=123&staticSiteImport=true&platform=wix`,
+					} )
+				);
 			} );
 		} );
 

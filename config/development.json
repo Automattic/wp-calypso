@@ -152,6 +152,7 @@
 		"me/legacy-contact": true,
 		"migration-flow/introductory-offer": true,
 		"migration/ssh-migration": false,
+		"migration/static-site-import": false,
 		"notifications/redesign": true,
 		"oauth": false,
 		"oauth/unified-experience": true,

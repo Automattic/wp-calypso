@@ -1,0 +1,104 @@
+import { expect, tags, test } from '../../lib/pw-base';
+
+if ( process.env.STATIC_SITE_IMPORT_E2E ) {
+	test.describe(
+		'Static site import review and progress',
+		{ tag: [ tags.CALYPSO_RELEASE, tags.IMPORTS ] },
+		() => {
+			test( 'reviews, approves, and observes a mocked import session without production writes', async ( {
+				accountDefaultUser,
+				page,
+			} ) => {
+				let approved = false;
+				let previewReady = false;
+				await accountDefaultUser.authenticate( page );
+				await page
+					.context()
+					.route( '**/wpcom/v2/sites/*/static-site-import-session**', async ( route ) => {
+						const request = route.request();
+						const url = new URL( request.url() );
+						let body;
+						if ( url.pathname.endsWith( '/approve' ) ) {
+							approved = true;
+							body = {
+								session_id: 'session-1',
+								plan_hash: 'hash-1',
+								status: 'completed',
+								state: 'finished',
+							};
+						} else if ( request.method() === 'POST' ) {
+							previewReady = true;
+							body = {
+								session_id: 'session-1',
+								status: 'pending',
+								state: 'capture_queued',
+							};
+						} else {
+							let state = 'capture_queued';
+							if ( approved ) {
+								state = 'finished';
+							} else if ( previewReady ) {
+								state = 'preview_ready';
+							}
+							body = {
+								session_id: 'session-1',
+								plan_hash: 'hash-1',
+								status: approved ? 'completed' : 'pending',
+								state,
+								preview_summary: { pages: 2, posts: 4 },
+							};
+						}
+						await route.fulfill( {
+							status: 200,
+							contentType: 'application/json',
+							body: JSON.stringify( body ),
+						} );
+					} );
+
+				await test.step( 'Given a mocked static import preview', async () => {
+					const siteSlug = accountDefaultUser.getSiteURL( { protocol: false } );
+					await page.goto(
+						`/setup/site-migration/static-site-import-review?siteSlug=${ siteSlug }&from=https%3A%2F%2Fsource.example&ref=move-lp`
+					);
+					await expect( page.getByText( 'Your import preview is ready.' ) ).toBeVisible();
+				} );
+
+				await test.step( 'When the preview is approved', async () => {
+					await page.getByTestId( 'static-site-import-approve' ).click();
+				} );
+
+				await test.step( 'Then progress reaches the mocked terminal state', async () => {
+					await expect( page.getByTestId( 'static-site-import-progress' ) ).toBeVisible();
+					await expect( page.getByText( 'Your site import is complete' ) ).toBeVisible();
+				} );
+			} );
+
+			test( 'offers the classified content importer for a JavaScript-rendered source', async ( {
+				accountDefaultUser,
+				page,
+			} ) => {
+				await accountDefaultUser.authenticate( page );
+				await page.context().route( '**/wpcom/v2/sites/*/static-site-import-session**', ( route ) =>
+					route.fulfill( {
+						status: 422,
+						contentType: 'application/json',
+						body: JSON.stringify( {
+							code: 'static_site_import_content_fallback_required',
+							message: 'This source requires the content import path.',
+							data: { status: 422, reason: 'client_rendered' },
+						} ),
+					} )
+				);
+				const siteSlug = accountDefaultUser.getSiteURL( { protocol: false } );
+				await page.goto(
+					`/setup/site-migration/static-site-import-review?siteSlug=${ siteSlug }&from=https%3A%2F%2Fapp.example&platform=wix&ref=move-lp`
+				);
+				await expect(
+					page.getByText( 'This site loads its content with JavaScript' )
+				).toBeVisible();
+				await page.getByTestId( 'static-site-import-content-fallback' ).click();
+				await expect( page ).toHaveURL( /\/setup\/site-setup\/importerWix/ );
+			} );
+		}
+	);
+}

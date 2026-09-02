@@ -318,6 +318,14 @@ export const STEPS = {
 		slug: 'site-migration-ssh-in-progress',
 		asyncComponent: () => import( './steps-repository/site-migration-ssh-in-progress' ),
 	},
+	SITE_MIGRATION_STATIC_SITE_IMPORT_REVIEW: {
+		slug: 'static-site-import-review',
+		asyncComponent: () => import( './steps-repository/static-site-import-review' ),
+	},
+	SITE_MIGRATION_STATIC_SITE_IMPORT_PROGRESS: {
+		slug: 'static-site-import-progress',
+		asyncComponent: () => import( './steps-repository/static-site-import-progress' ),
+	},
 
 	PICK_SITE: {
 		slug: 'sitePicker',
