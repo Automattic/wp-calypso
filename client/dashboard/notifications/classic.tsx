@@ -10,12 +10,14 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { UndoBar, getActionIcon } from './note-actions';
+import { DetailFrame, DetailLoading, useDetailNote } from './note-detail';
 import { getTitleSegments } from './note-model';
 import { Avatar, Body, ContextBlocks, Postscript, UserName } from './note-views';
 import { BlockText, Timestamp, TitleText } from './rich-text';
 import { useNoteActions } from './use-note-actions';
 import type { Note } from './engine';
 import type { NoteView } from './note-model';
+import type { DetailPaneSlotProps } from './variants';
 
 /* The pre-P2 detail: content full width, comments quoted, and every action in
    a footer bar with an always-open reply box — the panel's shape. */
@@ -233,7 +235,7 @@ function ClassicBody( { view }: { view: NoteView } ) {
 }
 
 /** The Classic detail: header, full-width body, and a footer action bar. */
-export default function ClassicDetail( { view }: { view: NoteView } ) {
+function ClassicDetail( { view }: { view: NoteView } ) {
 	return (
 		<>
 			<ClassicHeader view={ view } />
@@ -242,5 +244,19 @@ export default function ClassicDetail( { view }: { view: NoteView } ) {
 				<ClassicActions note={ view.note } />
 			</div>
 		</>
+	);
+}
+
+/** The whole Classic pane: the card without the type-and-navigation header. */
+export default function ClassicDetailPane( { noteId, onClose }: DetailPaneSlotProps ) {
+	const { note, view, timedOut } = useDetailNote( noteId );
+	return (
+		<DetailFrame onClose={ onClose }>
+			{ ! note || ! view ? (
+				<DetailLoading timedOut={ timedOut } />
+			) : (
+				<ClassicDetail view={ view } />
+			) }
+		</DetailFrame>
 	);
 }

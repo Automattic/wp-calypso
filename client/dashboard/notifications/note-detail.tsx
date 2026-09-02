@@ -22,7 +22,13 @@ import type { NoteView, TitleSegment } from './note-model';
 // long rather than spinning forever on a deleted or invalid note.
 const NOT_FOUND_TIMEOUT_MS = 10000;
 
-function DetailFrame( { onClose, children }: { onClose: () => void; children: React.ReactNode } ) {
+export function DetailFrame( {
+	onClose,
+	children,
+}: {
+	onClose: () => void;
+	children: React.ReactNode;
+} ) {
 	return (
 		<Card className="dashboard-notifications-inbox__detail">
 			<CardBody>
@@ -123,17 +129,8 @@ function Heading( { view }: { view: NoteView } ) {
 	);
 }
 
-export default function NoteDetail( {
-	noteId,
-	onClose,
-	onPrevious,
-	onNext,
-}: {
-	noteId: string;
-	onClose: () => void;
-	onPrevious?: ( () => void ) | null;
-	onNext?: ( () => void ) | null;
-} ) {
+/** Loads and resolves the note behind a detail pane, marking it read. */
+export function useDetailNote( noteId: string ) {
 	const note = useNote( noteId );
 	const [ timedOut, setTimedOut ] = useState( false );
 	const view = useMemo( () => ( note ? getNoteView( note ) : null ), [ note ] );
@@ -151,16 +148,38 @@ export default function NoteDetail( {
 		return () => clearTimeout( timer );
 	}, [ note, noteId ] );
 
+	return { note, view, timedOut };
+}
+
+export function DetailLoading( { timedOut }: { timedOut: boolean } ) {
+	return (
+		<VStack alignment="center" style={ { padding: '40px 0' } }>
+			{ timedOut ? (
+				<Text>{ __( 'This notification is no longer available.' ) }</Text>
+			) : (
+				<Spinner />
+			) }
+		</VStack>
+	);
+}
+
+export default function NoteDetail( {
+	noteId,
+	onClose,
+	onPrevious,
+	onNext,
+}: {
+	noteId: string;
+	onClose: () => void;
+	onPrevious?: ( () => void ) | null;
+	onNext?: ( () => void ) | null;
+} ) {
+	const { note, view, timedOut } = useDetailNote( noteId );
+
 	if ( ! note || ! view ) {
 		return (
 			<DetailFrame onClose={ onClose }>
-				<VStack alignment="center" style={ { padding: '40px 0' } }>
-					{ timedOut ? (
-						<Text>{ __( 'This notification is no longer available.' ) }</Text>
-					) : (
-						<Spinner />
-					) }
-				</VStack>
+				<DetailLoading timedOut={ timedOut } />
 			</DetailFrame>
 		);
 	}

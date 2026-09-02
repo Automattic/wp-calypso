@@ -5,7 +5,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createContext, useContext, useState } from 'react';
-import ClassicDetail from './classic';
+import ClassicDetailPane from './classic';
 import { InboxList } from './list';
 import type { InboxCategory } from './list';
 import type { NoteView } from './note-model';
@@ -92,7 +92,7 @@ function ClassicInboxList( props: InboxListSlotProps ) {
 }
 
 export const INBOX_VARIANTS: InboxVariant[] = [
-	{ key: 'classic', label: __( 'Classic' ), Detail: ClassicDetail },
+	{ key: 'classic', label: __( 'Classic' ), DetailPane: ClassicDetailPane },
 	{ key: 'default', label: __( 'P2-Inspired' ) },
 ];
 
