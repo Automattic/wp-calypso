@@ -8,7 +8,7 @@ import {
 	TextareaControl,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { UndoBar, getActionIcon } from './note-actions';
 import { DetailFrame, DetailLoading, useDetailNote } from './note-detail';
 import { getTitleSegments } from './note-model';
@@ -249,10 +249,31 @@ function ClassicBody( { view }: { view: NoteView } ) {
 	);
 }
 
-/** The Classic detail: header, full-width body, and a footer action bar. */
+// The pane's title is just what the note is: Reply, Mention, 2 Likes.
+function getClassicTitle( view: NoteView ): string {
+	if ( view.kind === 'thread' ) {
+		return __( 'Reply' );
+	}
+	if ( view.kind === 'like' ) {
+		const likers = view.context.reduce(
+			( count, run ) => ( run.kind === 'users' ? count + run.users.length : count ),
+			0
+		);
+		if ( likers > 0 ) {
+			/* translators: %d: number of likes on the post or comment. */
+			return sprintf( _n( '%d Like', '%d Likes', likers ), likers );
+		}
+	}
+	return view.typeLabel;
+}
+
+/** The Classic detail: title, header, full-width body, and a footer action bar. */
 function ClassicDetail( { view }: { view: NoteView } ) {
 	return (
 		<>
+			<Text className="dashboard-notifications-inbox__classic-title" size={ 18 } weight={ 600 }>
+				{ getClassicTitle( view ) }
+			</Text>
 			<div className="dashboard-notifications-inbox__classic-header">
 				<ClassicHeader view={ view } />
 			</div>

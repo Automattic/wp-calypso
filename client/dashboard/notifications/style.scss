@@ -569,6 +569,21 @@
 		color-mix(in srgb, var(--dashboard-header__border-color, #ddd) 55%, transparent);
 }
 
+/* The pane's title row, its border running edge to edge like the footer's. */
+.dashboard-notifications-inbox__classic-title {
+	display: block;
+	margin-inline: -24px;
+	padding: 0 24px 16px;
+	border-bottom: 1px solid var(--dashboard-header__border-color, #ddd);
+}
+
+@media (max-width: 781px) {
+	.dashboard-notifications-inbox__classic-title {
+		margin-inline: -16px;
+		padding-inline: 16px;
+	}
+}
+
 /* The header is separated from the thread the way the card's title row is. */
 .dashboard-notifications-inbox__classic-header:not(:empty) {
 	padding-bottom: 16px;
