@@ -12,6 +12,14 @@ const selectors = {
 	blockSearch: 'input[placeholder="Search"]',
 };
 
+// The container is server-rendered, so it is present as soon as the response is parsed.
+const EDITOR_SHELL_TIMEOUT = 15 * 1000;
+
+// The editor boots from deferred module scripts, which hold back both `load` and
+// `domcontentloaded`. The default action timeout is far too short a budget for that,
+// and this wait, not the one above, is what absorbs a slow boot.
+const EDITOR_READY_TIMEOUT = 60 * 1000;
+
 /**
  * Component for the block-based Widget editor in Appearance > Widgets.
  */
@@ -28,15 +36,41 @@ export class BlockWidgetEditorComponent {
 	}
 
 	/**
+	 * Waits until the editor can insert the given legacy widget.
+	 *
+	 * Legacy widgets reach the inserter as block variations, registered only once the
+	 * widget types have been fetched. The inserter indexes what is registered when the
+	 * search term is entered and does not re-index, so searching too early returns
+	 * "No results found" for as long as the panel stays open.
+	 *
+	 * @param {string} legacyWidget Name of the legacy widget variation, eg. 'authors'.
+	 */
+	async waitUntilLoaded( legacyWidget: string ): Promise< void > {
+		await this.page.locator( selectors.editor ).waitFor( { timeout: EDITOR_SHELL_TIMEOUT } );
+
+		await this.page.waitForFunction(
+			( name ) => {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				const blocks = ( window as any )?.wp?.data?.select( 'core/blocks' );
+				const variations = blocks?.getBlockVariations( 'core/legacy-widget' ) ?? [];
+
+				return variations.some( ( variation: { name: string } ) => variation.name === name );
+			},
+			legacyWidget,
+			{ timeout: EDITOR_READY_TIMEOUT }
+		);
+	}
+
+	/**
 	 * Dismiss any welcome modals that appear.
+	 *
+	 * Call once `waitUntilLoaded` has resolved: neither modal renders before the editor.
 	 *
 	 * These include:
 	 * 	- Welcome modal
 	 * 	- Welcome Tour
 	 */
 	async dismissModals(): Promise< void > {
-		await this.page.waitForLoadState( 'networkidle' );
-
 		const locators = [
 			this.page.locator( selectors.welcomeModalDismissButton ),
 			this.page.locator( selectors.welcomeTourDismissButton ),
@@ -44,10 +78,10 @@ export class BlockWidgetEditorComponent {
 
 		for await ( const locator of locators ) {
 			try {
-				// Whether Welcome Tour appears is not deterministic.
-				// If it is not present, exit early.
+				// Neither modal is guaranteed to appear, and the Welcome Tour can show
+				// without the Welcome modal, so a missing one skips rather than stops.
 				if ( ( await locator.count() ) === 0 ) {
-					return;
+					continue;
 				}
 				await locator.click();
 			} catch {
