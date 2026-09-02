@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import config from '@automattic/calypso-config';
-import { resolveSelect, useDispatch } from '@wordpress/data';
+import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import wpcom from 'calypso/lib/wp';
 import { persistSignupDestination } from 'calypso/signup/storageUtils';
 import { STEPS } from '../../../internals/steps';
@@ -11,6 +11,12 @@ import aiSiteBuilderOnboarding from '../ai-site-builder-onboarding';
 
 let mockQueryParams = new URLSearchParams();
 const mockFetchIsAutomattician = jest.fn();
+
+jest.mock( '@automattic/calypso-products', () => ( {
+	isPremiumPlan: ( slug: string ) => slug.startsWith( 'value_bundle' ),
+	isBusinessPlan: ( slug: string ) => slug.startsWith( 'business-bundle' ),
+	isEcommercePlan: ( slug: string ) => slug.startsWith( 'ecommerce-bundle' ),
+} ) );
 
 jest.mock( '@automattic/api-queries', () => ( {
 	isAutomatticianQuery: () => ( {
@@ -39,6 +45,7 @@ jest.mock( 'calypso/lib/wp', () => ( {
 jest.mock( '@wordpress/data', () => ( {
 	dispatch: () => ( { resetOnboardStore: jest.fn() } ),
 	useDispatch: jest.fn(),
+	useSelect: jest.fn(),
 	resolveSelect: jest.fn(),
 } ) );
 
@@ -112,6 +119,7 @@ describe( 'ai-site-builder-onboarding flow', () => {
 			jest.clearAllMocks();
 			mockQueryParams = new URLSearchParams();
 			isEnabled.mockReturnValue( true );
+			( useSelect as jest.Mock ).mockReturnValue( { product_slug: 'business-bundle' } );
 			mockFetchIsAutomattician.mockResolvedValue( { data: false } );
 
 			( useDispatch as jest.Mock ).mockReturnValue( {
@@ -215,6 +223,7 @@ describe( 'ai-site-builder-onboarding flow', () => {
 			jest.clearAllMocks();
 			mockQueryParams = new URLSearchParams();
 			isEnabled.mockReturnValue( true );
+			( useSelect as jest.Mock ).mockReturnValue( { product_slug: 'business-bundle' } );
 			( wpcom.req.get as jest.Mock ).mockResolvedValue( [ { id: 7 } ] );
 
 			( useDispatch as jest.Mock ).mockReturnValue( {
@@ -263,6 +272,18 @@ describe( 'ai-site-builder-onboarding flow', () => {
 			expect( setIntentOnSite ).not.toHaveBeenCalled();
 		} );
 
+		it( 'forwards the entry prompt to the build-wow site spec', async () => {
+			mockFetchIsAutomattician.mockResolvedValue( { data: true } );
+			window.sessionStorage.setItem( 'stored_ai_prompt', 'a bakery website' );
+
+			await runProcessingSubmit();
+
+			const redirectTo = new URL( getRedirectTo(), 'https://wordpress.com' );
+			expect( redirectTo.pathname ).toBe( '/setup/ai-site-builder-spec/site-spec' );
+			expect( redirectTo.searchParams.get( 'prompt' ) ).toBe( 'a bakery website' );
+			expect( window.sessionStorage.getItem( 'stored_ai_prompt' ) ).toBeNull();
+		} );
+
 		it( 'confirms a spec carried from entry on the build-wow site spec', async () => {
 			mockFetchIsAutomattician.mockResolvedValue( { data: true } );
 			mockQueryParams = new URLSearchParams( { spec_id: 'spec-42' } );
@@ -287,13 +308,71 @@ describe( 'ai-site-builder-onboarding flow', () => {
 		} );
 
 		it( 'falls back to the Big Sky site editor when the Automattician lookup fails', async () => {
-			mockFetchIsAutomattician.mockResolvedValue( { data: undefined, isError: true } );
+			mockFetchIsAutomattician.mockResolvedValue( {
+				data: undefined,
+				isError: true,
+				error: new Error( 'teams unavailable' ),
+			} );
 
 			await runProcessingSubmit();
 
 			const redirectTo = new URL( getRedirectTo() );
 			expect( redirectTo.pathname ).toBe( '/wp-admin/site-editor.php' );
 			expect( setStaticHomepageOnSite ).toHaveBeenCalledWith( 123, 7 );
+			expect( wpcom.req.post ).toHaveBeenCalledWith(
+				'/logstash',
+				expect.objectContaining( { params: expect.stringContaining( 'lookup_failed' ) } )
+			);
+		} );
+
+		it( 'keeps Automatticians on a Personal plan in the Big Sky site editor', async () => {
+			( useSelect as jest.Mock ).mockReturnValue( { product_slug: 'personal-bundle' } );
+			mockFetchIsAutomattician.mockResolvedValue( { data: true } );
+
+			await runProcessingSubmit();
+
+			expect( mockFetchIsAutomattician ).not.toHaveBeenCalled();
+			expect( new URL( getRedirectTo() ).pathname ).toBe( '/wp-admin/site-editor.php' );
+		} );
+
+		it( 'routes Automatticians on a Premium plan to the build-wow site spec', async () => {
+			( useSelect as jest.Mock ).mockReturnValue( { product_slug: 'value_bundle' } );
+			mockFetchIsAutomattician.mockResolvedValue( { data: true } );
+
+			await runProcessingSubmit();
+
+			expect( new URL( getRedirectTo(), 'https://wordpress.com' ).pathname ).toBe(
+				'/setup/ai-site-builder-spec/site-spec'
+			);
+		} );
+
+		it( 'falls back to the Big Sky site editor when the Automattician lookup hangs', async () => {
+			jest.useFakeTimers();
+			try {
+				mockFetchIsAutomattician.mockReturnValue( new Promise( () => {} ) );
+
+				const run = runProcessingSubmit();
+				await jest.advanceTimersByTimeAsync( 10_000 );
+				await run;
+
+				expect( new URL( getRedirectTo() ).pathname ).toBe( '/wp-admin/site-editor.php' );
+				expect( wpcom.req.post ).toHaveBeenCalledWith(
+					'/logstash',
+					expect.objectContaining( { params: expect.stringContaining( 'timed out' ) } )
+				);
+			} finally {
+				jest.useRealTimers();
+			}
+		} );
+
+		it( 'keeps Automatticians in the Big Sky site editor when the site-spec feature is off', async () => {
+			isEnabled.mockImplementation( ( flag: string ) => flag !== 'site-spec' );
+			mockFetchIsAutomattician.mockResolvedValue( { data: true } );
+
+			await runProcessingSubmit();
+
+			expect( mockFetchIsAutomattician ).not.toHaveBeenCalled();
+			expect( new URL( getRedirectTo() ).pathname ).toBe( '/wp-admin/site-editor.php' );
 		} );
 
 		it( 'keeps Automatticians in the Big Sky site editor where the flag is off', async () => {

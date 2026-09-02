@@ -42,7 +42,8 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		isPending: isAutomatticianPending,
 		refetch: refetchIsAutomattician,
 	} = useReactQuery( isAutomatticianQuery() );
-	const swapSiteBuilders = config.isEnabled( 'calypso/ai-site-builder-build-wow' );
+	const swapSiteBuilders =
+		config.isEnabled( 'calypso/ai-site-builder-build-wow' ) && config.isEnabled( 'site-spec' );
 
 	const submitBuildWithAI = ( trimmedPrompt?: string ) => {
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
