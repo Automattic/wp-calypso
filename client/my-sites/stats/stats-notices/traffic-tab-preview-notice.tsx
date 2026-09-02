@@ -58,11 +58,6 @@ const TrafficTabPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps )
 		setFailedSiteId( null );
 
 		try {
-			// Record the dismissal first, and wait for it. Accepting the invitation retires it, and
-			// the customer may well follow the link out of this page as soon as it appears — a
-			// request still in flight when they do is a request that may never arrive.
-			await postponeNoticeAsync().catch( () => {} );
-
 			const { enabled } = await enablePreviewAsync( true );
 			if ( ! enabled ) {
 				setFailedSiteId( siteId );
@@ -73,6 +68,11 @@ const TrafficTabPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps )
 			// fresh page load, and being thrown out of the page you were reading is a poor reward
 			// for saying yes.
 			setEnabledSiteId( siteId );
+
+			// Retire the invitation, but never make anyone wait on it. It is a slow round-trip that
+			// can fail on its own, the local state above has already hidden the invitation here,
+			// and nothing navigates away from this page now, so it has time to land.
+			postponeNoticeAsync().catch( () => {} );
 		} catch {
 			setFailedSiteId( siteId );
 		}

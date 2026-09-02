@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TrafficTabPreviewNotice from '../traffic-tab-preview-notice';
 
@@ -128,11 +128,12 @@ describe( 'TrafficTabPreviewNotice', () => {
 		expect( button ).toHaveClass( 'is-busy' );
 	} );
 
-	it( 'records the dismissal before switching on, so following the link cannot lose it', async () => {
+	it( 'never makes the customer wait on the dismissal round-trip', async () => {
 		const order: string[] = [];
+		// A dismissal that never settles must not hold the button, nor the link.
 		mockPostponeNotice.mockImplementation( () => {
 			order.push( 'postpone' );
-			return Promise.resolve();
+			return new Promise( () => {} );
 		} );
 		mockEnablePreview.mockImplementation( () => {
 			order.push( 'enable' );
@@ -142,7 +143,10 @@ describe( 'TrafficTabPreviewNotice', () => {
 		renderNotice();
 		await userEvent.click( screen.getByRole( 'button', { name: 'Try it now' } ) );
 
-		await waitFor( () => expect( order ).toEqual( [ 'postpone', 'enable' ] ) );
+		expect(
+			await screen.findByRole( 'link', { name: 'Go to the new Traffic page' } )
+		).toBeVisible();
+		expect( order ).toEqual( [ 'enable', 'postpone' ] );
 	} );
 
 	it( 'stays put and explains itself when the write fails', async () => {
