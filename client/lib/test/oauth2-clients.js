@@ -4,6 +4,7 @@ import {
 	isSharedMobileAppOAuth2Client,
 	getOAuth2RedirectUri,
 	isJetpackAppRedirectUri,
+	isMobileAppRedirectUri,
 } from 'calypso/lib/oauth2-clients';
 
 describe( 'oauth2-clients mobile app helpers', () => {
@@ -88,6 +89,26 @@ describe( 'oauth2-clients mobile app helpers', () => {
 			expect( isJetpackAppRedirectUri( '' ) ).toBe( false );
 			expect( isJetpackAppRedirectUri( null ) ).toBe( false );
 			expect( isJetpackAppRedirectUri( undefined ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'isMobileAppRedirectUri', () => {
+		test( 'is true for both the jetpack:// and wordpress:// app schemes', () => {
+			expect( isMobileAppRedirectUri( 'jetpack://oauth2-callback' ) ).toBe( true );
+			expect( isMobileAppRedirectUri( 'wordpress://oauth2-callback' ) ).toBe( true );
+			expect( isMobileAppRedirectUri( 'WORDPRESS://oauth2-callback' ) ).toBe( true );
+		} );
+
+		test( 'is true even when singly or multiply percent-encoded', () => {
+			expect( isMobileAppRedirectUri( 'wordpress%3A%2F%2Foauth2-callback' ) ).toBe( true );
+			expect( isMobileAppRedirectUri( 'jetpack%253A%252F%252Foauth2-callback' ) ).toBe( true );
+		} );
+
+		test( 'is false for non-app schemes and empty values', () => {
+			expect( isMobileAppRedirectUri( 'https://wordpress.com/oauth2-callback' ) ).toBe( false );
+			expect( isMobileAppRedirectUri( '' ) ).toBe( false );
+			expect( isMobileAppRedirectUri( null ) ).toBe( false );
+			expect( isMobileAppRedirectUri( undefined ) ).toBe( false );
 		} );
 	} );
 } );
