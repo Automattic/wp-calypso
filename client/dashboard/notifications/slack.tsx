@@ -27,7 +27,7 @@ function SlackToolbar( { state }: { state: NoteActionsState } ) {
 	}
 	return (
 		<HStack
-			spacing={ 0 }
+			spacing={ 1 }
 			expanded={ false }
 			className="dashboard-notifications-inbox__slack-toolbar"
 		>
@@ -69,6 +69,45 @@ function SlackToolbar( { state }: { state: NoteActionsState } ) {
 				</DropdownMenu>
 			) }
 		</HStack>
+	);
+}
+
+/** A mention or plain comment, Slack-shaped: the message with the toolbar. */
+export function SlackCommentView( { view }: { view: Extract< NoteView, { kind: 'comment' } > } ) {
+	const actions = useNoteActions( view.note );
+	return (
+		<VStack spacing={ 3 } className="dashboard-notifications-inbox__slack-thread">
+			<SlackToolbar state={ actions } />
+			<HStack spacing={ 3 } justify="flex-start" alignment="flex-start">
+				<img
+					className="dashboard-notifications-inbox__note-avatar"
+					src={ view.avatarUrl }
+					alt=""
+					width={ 32 }
+					height={ 32 }
+				/>
+				<VStack spacing={ 1 } className="dashboard-notifications-inbox__column">
+					<HStack spacing={ 2 } justify="flex-start" alignment="center" expanded={ false }>
+						<TitleText segments={ view.author } />
+						<Timestamp timestamp={ view.timestamp } url={ view.url } />
+					</HStack>
+					<div className="dashboard-notifications-inbox__body">
+						<Text className="dashboard-notifications-inbox__block-text">
+							<BlockText block={ view.body } />
+						</Text>
+					</div>
+					<UndoBar state={ actions } />
+					{ actions.error && (
+						<Notice status="error" isDismissible onRemove={ actions.clearError }>
+							{ actions.error }
+						</Notice>
+					) }
+					{ actions.mode === 'reply' && <ReplyBox state={ actions } /> }
+					{ actions.mode === 'edit' && <EditBox state={ actions } /> }
+				</VStack>
+			</HStack>
+			<Postscript blocks={ view.postscript } />
+		</VStack>
 	);
 }
 

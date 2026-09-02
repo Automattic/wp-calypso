@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { createContext, useContext, useState } from 'react';
 import ClassicDetailPane from './classic';
 import { InboxList } from './list';
-import SlackThreadView from './slack';
+import SlackThreadView, { SlackCommentView } from './slack';
 import type { InboxCategory } from './list';
 import type { NoteView } from './note-model';
 import type { ComponentType } from 'react';
@@ -98,7 +98,7 @@ export const INBOX_VARIANTS: InboxVariant[] = [
 	{
 		key: 'slack',
 		label: __( 'Slack-Inspired' ),
-		detailViews: { thread: SlackThreadView },
+		detailViews: { thread: SlackThreadView, comment: SlackCommentView },
 	},
 ];
 
