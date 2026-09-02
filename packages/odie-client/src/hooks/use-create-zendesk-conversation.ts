@@ -14,7 +14,7 @@ import {
 	getZendeskChatStartedMetaMessage,
 } from '../constants';
 import { useOdieAssistantContext } from '../context';
-import { useManageSupportInteraction } from '../data';
+import { broadcastOdieInteractionUpdated, useManageSupportInteraction } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 import { getOpenLiveInteractions } from '../utils/get-open-live-interactions';
 import { useOpenInteractionStatusMap } from './use-open-interaction-status-map';
@@ -29,6 +29,7 @@ export const useCreateZendeskConversation = () => {
 		chat,
 		trackEvent,
 		isChatLoaded,
+		odieBroadcastClientId,
 	} = useOdieAssistantContext();
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
@@ -268,6 +269,12 @@ export const useCreateZendeskConversation = () => {
 				provider: 'zendesk',
 				status: 'loaded',
 			} ) );
+
+			// Let other tabs on this interaction know it moved to Zendesk, so they
+			// refetch it and switch too.
+			if ( activeInteractionId ) {
+				broadcastOdieInteractionUpdated( odieBroadcastClientId, activeInteractionId );
+			}
 
 			// Track success only if conversation was created
 			trackEvent( 'new_zendesk_conversation', {

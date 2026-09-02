@@ -27,6 +27,7 @@ jest.mock( '@wordpress/data', () => ( {
 
 jest.mock( '@tanstack/react-query', () => ( {
 	useIsMutating: () => 0,
+	useQueryClient: () => ( { invalidateQueries: jest.fn( () => Promise.resolve() ) } ),
 } ) );
 
 jest.mock( '@automattic/calypso-analytics', () => ( {

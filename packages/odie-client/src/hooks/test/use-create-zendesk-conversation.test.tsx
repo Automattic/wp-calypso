@@ -46,6 +46,7 @@ jest.mock( '../../context', () => ( {
 } ) );
 
 jest.mock( '../../data', () => ( {
+	broadcastOdieInteractionUpdated: jest.fn(),
 	useManageSupportInteraction: () => ( {
 		addEventToInteraction: mockAddEventToInteraction,
 		startNewInteraction: mockStartNewInteraction,

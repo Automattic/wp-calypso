@@ -1,8 +1,11 @@
+import { isTestModeEnvironment } from '@automattic/zendesk-client';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useCurrentSupportInteractionId } from './use-current-support-interaction';
 import type { Message } from '../types';
 
 const messageEventName = 'odieMessageEvent';
+const interactionUpdatedEventName = 'odieInteractionUpdatedEvent';
 
 type OdieBroadcastData = {
 	type: typeof messageEventName;
@@ -14,6 +17,17 @@ type OdieBroadcastData = {
 	 * a message never leaks into a different chat open in another tab (DOTSUP-470).
 	 */
 	supportInteractionId: string | null;
+};
+
+/**
+ * Sent when a tab changes the support interaction itself, e.g. escalates it to
+ * a Zendesk conversation. Other tabs on the same interaction refetch it so they
+ * switch too, instead of staying on the Odie chat.
+ */
+type OdieInteractionUpdatedData = {
+	type: typeof interactionUpdatedEventName;
+	odieBroadcastClientId: string;
+	supportInteractionId: string;
 };
 
 export const broadcastOdieMessage = (
@@ -30,28 +44,53 @@ export const broadcastOdieMessage = (
 	} satisfies OdieBroadcastData );
 };
 
+export const broadcastOdieInteractionUpdated = ( origin: string, supportInteractionId: string ) => {
+	const bc = new BroadcastChannel( 'odieChannel' );
+	bc.postMessage( {
+		type: interactionUpdatedEventName,
+		odieBroadcastClientId: origin,
+		supportInteractionId,
+	} satisfies OdieInteractionUpdatedData );
+};
+
 export const useOdieBroadcastWithCallbacks = (
 	callbacks: { addMessage?: ( message: Message ) => void },
 	listenerClientId: string
 ) => {
 	const supportInteractionId = useCurrentSupportInteractionId();
+	const queryClient = useQueryClient();
 
 	useEffect( () => {
 		const bc = new BroadcastChannel( 'odieChannel' );
 		bc.onmessage = ( event ) => {
-			const data = event.data as Partial< OdieBroadcastData > | undefined;
-
-			if ( data?.type !== messageEventName || ! data.message || ! callbacks.addMessage ) {
-				return;
-			}
+			const data = event.data as
+				| Partial< OdieBroadcastData >
+				| Partial< OdieInteractionUpdatedData >
+				| undefined;
 
 			// Ignore our own broadcasts.
-			if ( data.odieBroadcastClientId === listenerClientId ) {
+			if ( ! data || data.odieBroadcastClientId === listenerClientId ) {
 				return;
 			}
 
-			// Only accept messages for the support interaction this tab is showing.
+			// Only act on broadcasts for the support interaction this tab is showing.
 			if ( ! supportInteractionId || data.supportInteractionId !== supportInteractionId ) {
+				return;
+			}
+
+			if ( data.type === interactionUpdatedEventName ) {
+				queryClient.invalidateQueries( {
+					queryKey: [
+						'support-interactions',
+						'get-interaction-by-id',
+						supportInteractionId,
+						isTestModeEnvironment(),
+					],
+				} );
+				return;
+			}
+
+			if ( data.type !== messageEventName || ! data.message || ! callbacks.addMessage ) {
 				return;
 			}
 
@@ -72,5 +111,5 @@ export const useOdieBroadcastWithCallbacks = (
 		return () => {
 			bc.close();
 		};
-	}, [ callbacks, listenerClientId, supportInteractionId ] );
+	}, [ callbacks, listenerClientId, supportInteractionId, queryClient ] );
 };

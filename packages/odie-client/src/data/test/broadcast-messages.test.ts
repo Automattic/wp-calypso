@@ -2,12 +2,23 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
-import { broadcastOdieMessage, useOdieBroadcastWithCallbacks } from '../broadcast-messages';
+import {
+	broadcastOdieInteractionUpdated,
+	broadcastOdieMessage,
+	useOdieBroadcastWithCallbacks,
+} from '../broadcast-messages';
 import type { Message } from '../../types';
 
 let mockSearch = '?id=interaction-1';
 jest.mock( 'react-router-dom', () => ( {
 	useLocation: () => ( { search: mockSearch } ),
+} ) );
+const mockInvalidateQueries = jest.fn();
+jest.mock( '@tanstack/react-query', () => ( {
+	useQueryClient: () => ( { invalidateQueries: mockInvalidateQueries } ),
+} ) );
+jest.mock( '@automattic/zendesk-client', () => ( {
+	isTestModeEnvironment: () => false,
 } ) );
 // Only `useLocation` matters here; keep the zendesk client out of the import graph.
 jest.mock( '../use-get-support-interaction-by-id', () => ( {
@@ -46,6 +57,7 @@ describe( 'odie broadcast gating', () => {
 	beforeEach( () => {
 		FakeBroadcastChannel.channels = [];
 		mockSearch = '?id=interaction-1';
+		mockInvalidateQueries.mockClear();
 		( globalThis as unknown as { BroadcastChannel: typeof BroadcastChannel } ).BroadcastChannel =
 			FakeBroadcastChannel as unknown as typeof BroadcastChannel;
 	} );
@@ -119,5 +131,23 @@ describe( 'odie broadcast gating', () => {
 		broadcastOdieMessage( message, 'same-tab', 'interaction-1' );
 
 		expect( addMessage ).not.toHaveBeenCalled();
+	} );
+
+	it( 'refetches the support interaction when another tab updates it', () => {
+		renderHook( () => useOdieBroadcastWithCallbacks( { addMessage: jest.fn() }, 'listener-tab' ) );
+
+		broadcastOdieInteractionUpdated( 'sender-tab', 'interaction-1' );
+
+		expect( mockInvalidateQueries ).toHaveBeenCalledWith( {
+			queryKey: [ 'support-interactions', 'get-interaction-by-id', 'interaction-1', false ],
+		} );
+	} );
+
+	it( 'ignores an interaction update for a different support interaction', () => {
+		renderHook( () => useOdieBroadcastWithCallbacks( { addMessage: jest.fn() }, 'listener-tab' ) );
+
+		broadcastOdieInteractionUpdated( 'sender-tab', 'interaction-2' );
+
+		expect( mockInvalidateQueries ).not.toHaveBeenCalled();
 	} );
 } );
