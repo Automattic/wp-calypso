@@ -120,9 +120,9 @@ export default function EmailVerificationNotification( {
 			allowTemporaryDismissal
 			preferenceName="email-verification-notification-temporary-dismissed"
 		>
-			<div>
+			<div className="email-verification-notification__content">
 				{ translate(
-					'Check your inbox at %(email)s for the confirmation email, or click \u201cResend email\u201d to get a new one.',
+					'We sent a verification link to %(email)s. Please click the link in that email to verify your address.',
 					{ args: { email: emailToVerify as Substitution } }
 				) }
 			</div>

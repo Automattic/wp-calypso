@@ -1,5 +1,42 @@
 .email-verification-notification {
-	.components-button {
-		margin-block-start: 1rem;
+	.notice-banner__main-content {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		grid-template-areas:
+			"title action"
+			"content action";
+		align-items: center;
+		column-gap: 24px;
+	}
+
+	.notice-banner__title {
+		grid-area: title;
+	}
+
+	.email-verification-notification__content {
+		grid-area: content;
+	}
+
+	.notice-banner__action-bar {
+		grid-area: action;
+		margin-top: 0;
+
+		> * {
+			margin-right: 0;
+		}
+	}
+
+	@media (max-width: 660px) {
+		.notice-banner__main-content {
+			grid-template-columns: minmax(0, 1fr);
+			grid-template-areas:
+				"title"
+				"content"
+				"action";
+		}
+
+		.notice-banner__action-bar {
+			margin-top: 16px;
+		}
 	}
 }
