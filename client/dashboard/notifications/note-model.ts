@@ -7,7 +7,7 @@ import {
 import { getNoticonName } from '@automattic/notifications/src/common/icon-map';
 import { getBlockSegments, getTitleSegments } from '@automattic/notifications/src/common/segments';
 import { getNoteExcerpt, getNoteSender } from '@automattic/notifications/src/common/summary';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import type { Note } from './engine';
 import type { NoteBodyParts, NoteUserRef } from '@automattic/notifications/src/common/body-parts';
 import type { TitleSegment } from '@automattic/notifications/src/common/segments';
@@ -61,6 +61,25 @@ export function getNoteTypeLabel( note: Note ): string {
 }
 
 /** Whether the note is a reply to one of the given user's own comments. */
+/**
+ * The muted line under a list row's title: what the notification is, not what
+ * it says (the title already says that).
+ */
+export function getNoteListMeta( note: Note ): string {
+	if ( note.type === 'like' || note.type === 'comment_like' ) {
+		const likers = ( note.body ?? [] ).filter( ( block ) => block.type === 'user' ).length;
+		if ( likers > 0 ) {
+			/* translators: %d: number of likes on the post or comment. */
+			return sprintf( _n( '%d like', '%d likes', likers ), likers );
+		}
+		return getNoteTypeLabel( note );
+	}
+	if ( note.type === 'follow' ) {
+		return __( 'Subscribed' );
+	}
+	return getNoteTypeLabel( note );
+}
+
 export function isReplyToUser( note: Note, userId: number ): boolean {
 	if ( ! note.meta?.ids?.parent_comment ) {
 		return false;

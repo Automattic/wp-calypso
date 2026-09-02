@@ -5,6 +5,7 @@ import {
 	getBlockSegments,
 	getNoteBodyParts,
 	getNoteSender,
+	getNoteListMeta,
 	getNoteTypeLabel,
 	getNoteUserRef,
 	getNoteView,
@@ -506,5 +507,27 @@ describe( 'getNoteTypeLabel', () => {
 		expect( getNoteTypeLabel( { type: 'comment', noticon: '\uf814' } as unknown as Note ) ).toBe(
 			'Mention'
 		);
+	} );
+} );
+
+describe( 'getNoteListMeta', () => {
+	it( 'counts likers on like notes', () => {
+		const body = [
+			{ type: 'user', text: 'A' },
+			{ type: 'user', text: 'B' },
+		];
+		expect( getNoteListMeta( { type: 'like', body } as unknown as Note ) ).toBe( '2 likes' );
+		expect(
+			getNoteListMeta( { type: 'comment_like', body: [ body[ 0 ] ] } as unknown as Note )
+		).toBe( '1 like' );
+	} );
+
+	it( 'labels subscriptions and falls back to the type label', () => {
+		expect( getNoteListMeta( { type: 'follow', body: [] } as unknown as Note ) ).toBe(
+			'Subscribed'
+		);
+		expect(
+			getNoteListMeta( { type: 'comment', noticon: '\uf814', body: [] } as unknown as Note )
+		).toBe( 'Mention' );
 	} );
 } );

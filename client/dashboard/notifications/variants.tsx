@@ -1,6 +1,8 @@
 import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createContext, useContext, useState } from 'react';
+import { InboxList } from './list';
+import type { InboxCategory } from './list';
 import type { NoteView } from './note-model';
 import type { ComponentType } from 'react';
 
@@ -10,7 +12,7 @@ type DetailViewOverrides = {
 
 /** Props the list slot receives; a variant's list must accept them. */
 export type InboxListSlotProps = {
-	category: string;
+	category: InboxCategory;
 	selectedNoteId?: string;
 	onSelectNote: ( noteId?: string ) => void;
 	onFirstNoteLoaded: ( noteId: string ) => void;
@@ -64,7 +66,23 @@ export type InboxVariant = {
  * needs data the model doesn't expose, extend NoteView for everyone instead of
  * deriving it inside the variant.
  */
-export const INBOX_VARIANTS: InboxVariant[] = [ { key: 'default', label: __( 'P2-Inspired' ) } ];
+function ClassicInboxList( props: InboxListSlotProps ) {
+	return (
+		<InboxList
+			key={ props.category }
+			category={ props.category }
+			selectedNoteId={ props.selectedNoteId }
+			onSelectNote={ props.onSelectNote }
+			onFirstNoteLoaded={ props.onFirstNoteLoaded }
+			descriptionField="description"
+		/>
+	);
+}
+
+export const INBOX_VARIANTS: InboxVariant[] = [
+	{ key: 'default', label: __( 'P2-Inspired' ) },
+	{ key: 'classic', label: __( 'Classic' ), List: ClassicInboxList },
+];
 
 const STORAGE_KEY = 'dashboard-notifications-inbox-variant';
 

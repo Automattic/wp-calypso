@@ -5,6 +5,7 @@ import { getAvailableNoteActions, useIsNoteApproved } from './engine';
 import { getNoticonIcon, replyIcon } from './note-icons';
 import {
 	getNoteExcerpt,
+	getNoteListMeta,
 	getNoteTitle,
 	getTimeGroupIndex,
 	getTitleSegments,
@@ -71,6 +72,12 @@ export function getFields( { currentUserId }: { currentUserId: number } ): Field
 					) }
 				</span>
 			),
+		},
+		{
+			id: 'meta',
+			label: __( 'Type' ),
+			getValue: ( { item } ) => getNoteListMeta( item ),
+			render: ( { item } ) => getNoteListMeta( item ),
 		},
 		{
 			id: 'description',
