@@ -191,6 +191,14 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 	],
 	books: [
 		{
+			feed_ID: 66185392,
+			site_ID: 58006636,
+			site_URL: 'https://thebloggess.com/',
+			site_name: 'The Bloggess',
+			feed_URL: 'http://thebloggess.com',
+			has_icon: true,
+		},
+		{
 			feed_ID: 19068123,
 			site_ID: 64463434,
 			site_URL: 'jenniefitzkee.com',
@@ -404,6 +412,14 @@ export const creativeArtsBlogs: CuratedBlogsList = {
 		},
 	],
 	writing: [
+		{
+			feed_ID: 66185392,
+			site_ID: 58006636,
+			site_URL: 'https://thebloggess.com/',
+			site_name: 'The Bloggess',
+			feed_URL: 'http://thebloggess.com',
+			has_icon: true,
+		},
 		{
 			feed_ID: 38560661,
 			site_ID: 27803114,
