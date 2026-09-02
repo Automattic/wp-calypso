@@ -208,22 +208,37 @@ function ClassicBody( { view }: { view: NoteView } ) {
 	return (
 		<Body isCentered={ view.kind === 'achievement' }>
 			{ view.kind === 'thread' && (
-				<>
-					<HStack spacing={ 3 } justify="flex-start" alignment="center">
-						<Avatar user={ view.reply.author } />
-						<VStack spacing={ 0 }>
-							{ view.reply.author && <UserName user={ view.reply.author } /> }
-							<Timestamp timestamp={ view.timestamp } url={ view.url } />
-						</VStack>
-					</HStack>
-					{ view.reply.body && (
-						<div className="dashboard-notifications-inbox__classic-response">
+				<div className="dashboard-notifications-inbox__classic-response">
+					<VStack spacing={ 3 }>
+						<HStack spacing={ 3 } justify="flex-start" alignment="center">
+							<Avatar user={ view.reply.author } />
+							<VStack spacing={ 0 }>
+								{ view.reply.author && <UserName user={ view.reply.author } /> }
+								<Text variant="muted">
+									<Timestamp timestamp={ view.timestamp } url={ view.url } />
+									{ view.reply.author?.homeTitle && view.reply.author.homeUrl && (
+										<>
+											{ ' · ' }
+											<a
+												className="dashboard-notifications-inbox__user-row-name"
+												href={ view.reply.author.homeUrl }
+												target="_blank"
+												rel="noreferrer"
+											>
+												{ view.reply.author.homeTitle }
+											</a>
+										</>
+									) }
+								</Text>
+							</VStack>
+						</HStack>
+						{ view.reply.body && (
 							<Text className="dashboard-notifications-inbox__block-text">
 								<BlockText block={ view.reply.body } />
 							</Text>
-						</div>
-					) }
-				</>
+						) }
+					</VStack>
+				</div>
 			) }
 			{ view.kind === 'comment' && quote( view.body ) }
 			{ view.kind === 'like' && view.likedComment && quote( view.likedComment ) }
@@ -238,7 +253,9 @@ function ClassicBody( { view }: { view: NoteView } ) {
 function ClassicDetail( { view }: { view: NoteView } ) {
 	return (
 		<>
-			<ClassicHeader view={ view } />
+			<div className="dashboard-notifications-inbox__classic-header">
+				<ClassicHeader view={ view } />
+			</div>
 			<ClassicBody view={ view } />
 			<div className="dashboard-notifications-inbox__classic-footer">
 				<ClassicActions note={ view.note } />

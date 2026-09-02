@@ -561,12 +561,18 @@
 	}
 }
 
-/* A rail down the response marks it as the answer to the comment above;
-   blockquotes inside it keep their own darker border. */
+/* A rail down the whole response — author row included — marks it as the
+   answer to the comment above; blockquotes inside keep their darker border. */
 .dashboard-notifications-inbox__classic-response {
 	padding-inline-start: 16px;
 	border-inline-start: 3px solid
 		color-mix(in srgb, var(--dashboard-header__border-color, #ddd) 55%, transparent);
+}
+
+/* The header is separated from the thread the way the card's title row is. */
+.dashboard-notifications-inbox__classic-header:not(:empty) {
+	padding-bottom: 16px;
+	border-bottom: 1px solid var(--dashboard-header__border-color, #ddd);
 }
 
 /* The Classic detail's footer bar, running edge to edge like the header. */
