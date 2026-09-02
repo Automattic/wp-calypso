@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { createContext, useContext, useState } from 'react';
 import ClassicDetailPane from './classic';
 import { InboxList } from './list';
+import SlackThreadView from './slack';
 import type { InboxCategory } from './list';
 import type { NoteView } from './note-model';
 import type { ComponentType } from 'react';
@@ -94,6 +95,11 @@ function ClassicInboxList( props: InboxListSlotProps ) {
 export const INBOX_VARIANTS: InboxVariant[] = [
 	{ key: 'classic', label: __( 'Classic' ), DetailPane: ClassicDetailPane },
 	{ key: 'default', label: __( 'P2-Inspired' ) },
+	{
+		key: 'slack',
+		label: __( 'Slack-Inspired' ),
+		detailViews: { thread: SlackThreadView },
+	},
 ];
 
 /** The list pane's own experiments, chosen independently of the detail side. */

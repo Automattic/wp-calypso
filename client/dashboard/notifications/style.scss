@@ -623,3 +623,17 @@
 .dashboard-notifications-inbox__experimental-notice {
 	margin: 0 0 16px;
 }
+
+/* Slack-Inspired: the thread the reply answers, as an inset card below it. */
+.dashboard-notifications-inbox__slack-parent-card {
+	margin-block-start: 4px;
+	padding: 12px 16px;
+	border: 1px solid var(--dashboard-header__border-color, #ddd);
+	border-radius: 8px;
+
+	.dashboard-notifications-inbox__user-row-avatar {
+		width: 24px;
+		height: 24px;
+		border-radius: 50%;
+	}
+}

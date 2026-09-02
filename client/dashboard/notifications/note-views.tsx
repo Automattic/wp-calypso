@@ -15,7 +15,7 @@ import type { ContextRun, NoteBlock, NoteUserRef, NoteView } from './note-model'
 import type { ComponentType } from 'react';
 
 /** The parent comment's details for a reply note; idle for anything else. */
-function useParentCommentDetails( note: Note | null ) {
+export function useParentCommentDetails( note: Note | null ) {
 	const parentRef = note ? getParentCommentRef( note ) : null;
 	return useQuery( {
 		queryKey: [ 'notifications', 'parent-comment', parentRef ],
