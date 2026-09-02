@@ -629,15 +629,24 @@
 	position: relative;
 }
 
-/* The first line stops short of the toolbar sitting on it. */
+/* The first line stops short of the toolbar sitting on it, and is tall
+   enough for the toolbar to center against it. */
 .dashboard-notifications-inbox__slack-message-head {
+	min-height: 40px;
 	padding-inline-end: 200px;
+	line-height: 40px;
+}
+
+.dashboard-notifications-inbox__slack-message-avatar,
+.dashboard-notifications-inbox__slack-message-avatar img {
+	width: 40px;
+	height: 40px;
 }
 
 .dashboard-notifications-inbox__slack-toolbar {
-	/* Centered on the message's first line, Slack-style. */
+	/* Centered on the message's 40px first line, Slack-style. */
 	position: absolute;
-	top: -5px;
+	top: 3px;
 	inset-inline-end: 0;
 	z-index: 1;
 	width: auto;

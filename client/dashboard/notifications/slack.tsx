@@ -80,11 +80,11 @@ export function SlackCommentView( { view }: { view: Extract< NoteView, { kind: '
 			<SlackToolbar state={ actions } />
 			<HStack spacing={ 3 } justify="flex-start" alignment="flex-start">
 				<img
-					className="dashboard-notifications-inbox__note-avatar"
+					className="dashboard-notifications-inbox__note-avatar dashboard-notifications-inbox__slack-message-avatar"
 					src={ view.avatarUrl }
 					alt=""
-					width={ 32 }
-					height={ 32 }
+					width={ 40 }
+					height={ 40 }
 				/>
 				<VStack spacing={ 1 } className="dashboard-notifications-inbox__column">
 					<HStack
@@ -134,7 +134,11 @@ export default function SlackThreadView( {
 		<VStack spacing={ 3 } className="dashboard-notifications-inbox__slack-thread">
 			<SlackToolbar state={ actions } />
 			<HStack spacing={ 3 } justify="flex-start" alignment="flex-start">
-				<Avatar user={ reply.author } />
+				<Avatar
+					user={ reply.author }
+					size={ 40 }
+					className="dashboard-notifications-inbox__slack-message-avatar"
+				/>
 				<VStack spacing={ 1 } className="dashboard-notifications-inbox__column">
 					<HStack
 						spacing={ 2 }

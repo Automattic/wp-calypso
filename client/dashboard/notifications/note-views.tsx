@@ -25,9 +25,23 @@ export function useParentCommentDetails( note: Note | null ) {
 	} ).data;
 }
 
-export function Avatar( { user, size = 32 }: { user: NoteUserRef | null; size?: number } ) {
+export function Avatar( {
+	user,
+	size = 32,
+	className,
+}: {
+	user: NoteUserRef | null;
+	size?: number;
+	className?: string;
+} ) {
 	return (
-		<span className="dashboard-notifications-inbox__user-row-avatar">
+		<span
+			className={
+				className
+					? `dashboard-notifications-inbox__user-row-avatar ${ className }`
+					: 'dashboard-notifications-inbox__user-row-avatar'
+			}
+		>
 			{ user?.avatarUrl ? (
 				<img src={ user.avatarUrl } alt="" width={ size } height={ size } />
 			) : (
