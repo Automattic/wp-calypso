@@ -7,7 +7,12 @@ import { useSelector } from 'react-redux';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { getSiteAdminUrl, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import {
+	getSiteAdminUrl,
+	getSiteSlug,
+	isJetpackMinimumVersion,
+	isJetpackSite,
+} from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SUBSCRIBERS_SUPPORT_URL } from '../const';
 import useSubscribersTotalsQueries from '../hooks/use-subscribers-totals-query';
@@ -46,6 +51,13 @@ const StatModuleFollowers = ( { className } ) => {
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
 	const adminPhpUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId, 'admin.php' ) );
+	// The Newsletter > Subscribers inspector shipped in Jetpack 16.1. Below that,
+	// `admin.php?page=jetpack-newsletter` still resolves but renders the legacy settings app and
+	// ignores `p`, so those sites keep the old subscriber link. Simple sites always have it.
+	const hasNewsletterSubscriberInspector = useSelector(
+		( state ) =>
+			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '16.1' )
+	);
 
 	const { data: subTotals, isLoading, isError: hasError } = useSubscribersTotalsQueries( siteId );
 
@@ -84,7 +96,8 @@ const StatModuleFollowers = ( { className } ) => {
 	const noData = ! subTotals.subscribers.length;
 	const summaryPageSlug = siteSlug || '';
 	// `subscriberManagementUrl` is the subscribers list link used by "Manage subscribers"
-	// and as the Odyssey fallback when the site's admin URL isn't known.
+	// and as the Odyssey fallback when the site's admin URL isn't known or its Jetpack
+	// predates the Newsletter > Subscribers inspector.
 	const isOdysseyStats = config.isEnabled( 'is_odyssey' );
 	const useJetpackCloudLinks = isAtomic || isJetpack;
 	const subscriberManagementUrl = useJetpackCloudLinks
@@ -98,13 +111,13 @@ const StatModuleFollowers = ( { className } ) => {
 			data={ subTotals.subscribers.map( ( dataPoint ) => {
 				// Link the subscriber name to its individual details page. `link` is kept
 				// for the right-side icon that opens the subscriber's own site. In wp-admin
-				// (Odyssey) send them to the new Newsletter > Subscribers inspector; in
-				// Calypso navigate in-app to the subscriber details page.
+				// (Odyssey) send them to the new Newsletter > Subscribers inspector when the
+				// site has it; in Calypso navigate in-app to the subscriber details page.
 				let detailPage;
 				if ( dataPoint.subscription_id ) {
 					if ( ! isOdysseyStats ) {
 						detailPage = `/subscribers/${ summaryPageSlug }/${ dataPoint.subscription_id }`;
-					} else if ( adminPhpUrl ) {
+					} else if ( adminPhpUrl && hasNewsletterSubscriberInspector ) {
 						detailPage = getNewsletterSubscriberDetailUrl(
 							adminPhpUrl,
 							dataPoint.subscription_id,
