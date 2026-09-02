@@ -7,6 +7,7 @@ steps:
   # The desktop build is resource-intensive and this repo runs many builds,
   # so keep it scoped to the same branch families the CircleCI workflow used.
   - label: ":desktop_computer: Build desktop (mac)"
+    priority: 1
     key: desktop-build-mac
     branches: trunk release/* desktop/* desktop-v*
     notify:
@@ -34,6 +35,7 @@ steps:
       - desktop/test/e2e/results/screenshot.png
 
   - label: ":desktop_computer: Build desktop (linux, unsigned)"
+    priority: 1
     key: desktop-build-linux
     branches: release/* desktop/* desktop-v*
     notify:
@@ -59,6 +61,7 @@ steps:
       - desktop/test/e2e/results/screenshot.png
 
   - label: ":windows: Build desktop (windows store, unsigned)"
+    priority: 1
     key: desktop-build-windows-store
     branches: release/* desktop/* desktop-v*
     notify:
@@ -73,6 +76,7 @@ steps:
   # Signed NSIS direct-download installer — the auto-update path (electron-
   # updater stays enabled). Signs via Azure Artifact Signing.
   - label: ":windows: Build desktop (windows nsis, signed)"
+    priority: 1
     key: desktop-build-windows-nsis
     branches: release/* desktop/* desktop-v*
     notify:
@@ -89,6 +93,7 @@ steps:
       - desktop/release/latest.yml
 
   - label: ":desktop_computer: Desktop publish"
+    priority: 1
     branches: desktop-v*
     depends_on:
       - desktop-build-mac
