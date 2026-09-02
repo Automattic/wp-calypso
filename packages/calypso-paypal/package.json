@@ -44,7 +44,7 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-paypal#readme",
 	"dependencies": {
 		"@paypal/react-paypal-js": "^8.7.0",
-		"@wordpress/i18n": "^6.21.0"
+		"@wordpress/i18n": "^6.27.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
