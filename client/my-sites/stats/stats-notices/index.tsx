@@ -164,7 +164,9 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	const { data: isPremiumAnalyticsEnabled, isLoading: isLoadingPremiumAnalyticsStatus } =
 		usePremiumAnalyticsStatusQuery(
 			siteId,
-			canManageOptions && hasAdvancedStats && serverNoticesVisibility?.traffic_tab_preview === true
+			canManageOptions &&
+				hasAdvancedStats &&
+				serverNoticesVisibility?.premium_analytics_preview === true
 		);
 
 	const noticeOptions = {

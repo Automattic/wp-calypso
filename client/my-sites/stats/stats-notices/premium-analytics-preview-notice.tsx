@@ -13,12 +13,12 @@ const PREMIUM_ANALYTICS_PAGE_PATH = 'admin.php?page=jetpack-premium-analytics-wp
 
 const trackEvent = ( isOdysseyStats: boolean, name: string, siteId: number | null ) => {
 	const prefix = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-	recordTracksEvent( `${ prefix }_stats_traffic_tab_preview_notice_${ name }`, {
+	recordTracksEvent( `${ prefix }_stats_premium_analytics_preview_notice_${ name }`, {
 		blog_id: siteId,
 	} );
 };
 
-const TrafficTabPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
+const PremiumAnalyticsPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
 	const translate = useTranslate();
 	const dashboardUrl = useSelector( ( state ) =>
 		getSiteAdminUrl( state, siteId, PREMIUM_ANALYTICS_PAGE_PATH )
@@ -40,7 +40,7 @@ const TrafficTabPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps )
 	// later campaign can re-reach past dismissers by shipping under a fresh notice id.
 	const { mutateAsync: postponeNoticeAsync } = useNoticeVisibilityMutation(
 		siteId,
-		'traffic_tab_preview',
+		'premium_analytics_preview',
 		'postponed',
 		3650 * 24 * 3600
 	);
@@ -53,7 +53,7 @@ const TrafficTabPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps )
 		postponeNoticeAsync().catch( () => {} );
 	};
 
-	const enableTrafficTabPreview = async () => {
+	const enablePremiumAnalyticsPreview = async () => {
 		trackEvent( isOdysseyStats, 'enable_button_clicked', siteId );
 		setFailedSiteId( null );
 
@@ -121,7 +121,7 @@ const TrafficTabPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps )
 					) : (
 						<Button
 							variant="primary"
-							onClick={ enableTrafficTabPreview }
+							onClick={ enablePremiumAnalyticsPreview }
 							isBusy={ isEnabling }
 							disabled={ isEnabling }
 						>
@@ -134,4 +134,4 @@ const TrafficTabPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps )
 	);
 };
 
-export default TrafficTabPreviewNotice;
+export default PremiumAnalyticsPreviewNotice;

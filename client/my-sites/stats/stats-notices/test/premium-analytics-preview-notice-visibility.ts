@@ -5,12 +5,12 @@ import {
 import ALL_STATS_NOTICES from '../all-notice-definitions';
 import type { StatsNoticeProps } from '../types';
 
-const trafficTabPreviewNotice = ALL_STATS_NOTICES.find(
-	( notice ) => notice.noticeId === 'traffic_tab_preview'
+const premiumAnalyticsPreviewNotice = ALL_STATS_NOTICES.find(
+	( notice ) => notice.noticeId === 'premium_analytics_preview'
 );
 
 // An administrator on a cohort site that hasn't switched the dashboard on yet. The parent resolves
-// `canEnableTrafficTabPreview` — capability, cohort and current status all fold into it.
+// The parent resolves capability, cohort and current status before the registry sees them.
 const eligibleSite: StatsNoticeProps = {
 	siteId: 123,
 	isOdysseyStats: false,
@@ -21,19 +21,19 @@ const eligibleSite: StatsNoticeProps = {
 	isP2: false,
 };
 
-describe( 'traffic_tab_preview notice visibility', () => {
+describe( 'premium_analytics_preview notice visibility', () => {
 	it( 'is registered and enabled', () => {
-		expect( trafficTabPreviewNotice ).toBeDefined();
-		expect( trafficTabPreviewNotice?.disabled ).toBe( false );
+		expect( premiumAnalyticsPreviewNotice ).toBeDefined();
+		expect( premiumAnalyticsPreviewNotice?.disabled ).toBe( false );
 	} );
 
 	it( 'shows for an administrator on an eligible site', () => {
-		expect( trafficTabPreviewNotice?.isVisibleFunc( eligibleSite ) ).toBe( true );
+		expect( premiumAnalyticsPreviewNotice?.isVisibleFunc( eligibleSite ) ).toBe( true );
 	} );
 
 	it( 'does not invite a site that already has the dashboard', () => {
 		expect(
-			trafficTabPreviewNotice?.isVisibleFunc( {
+			premiumAnalyticsPreviewNotice?.isVisibleFunc( {
 				...eligibleSite,
 				isPremiumAnalyticsEnabled: true,
 			} )
@@ -47,7 +47,7 @@ describe( 'traffic_tab_preview notice visibility', () => {
 	 */
 	it( 'stays hidden when the site never reported the setting', () => {
 		expect(
-			trafficTabPreviewNotice?.isVisibleFunc( {
+			premiumAnalyticsPreviewNotice?.isVisibleFunc( {
 				...eligibleSite,
 				isPremiumAnalyticsEnabled: undefined,
 			} )
@@ -56,7 +56,7 @@ describe( 'traffic_tab_preview notice visibility', () => {
 
 	it( 'stays hidden for anyone who cannot administer the site', () => {
 		expect(
-			trafficTabPreviewNotice?.isVisibleFunc( { ...eligibleSite, canManageOptions: false } )
+			premiumAnalyticsPreviewNotice?.isVisibleFunc( { ...eligibleSite, canManageOptions: false } )
 		).toBe( false );
 	} );
 
@@ -66,18 +66,21 @@ describe( 'traffic_tab_preview notice visibility', () => {
 	 */
 	it( 'stays hidden for a site without the advanced Stats features', () => {
 		expect(
-			trafficTabPreviewNotice?.isVisibleFunc( { ...eligibleSite, hasAdvancedStats: false } )
+			premiumAnalyticsPreviewNotice?.isVisibleFunc( { ...eligibleSite, hasAdvancedStats: false } )
 		).toBe( false );
 		expect(
-			trafficTabPreviewNotice?.isVisibleFunc( { ...eligibleSite, hasAdvancedStats: undefined } )
+			premiumAnalyticsPreviewNotice?.isVisibleFunc( {
+				...eligibleSite,
+				hasAdvancedStats: undefined,
+			} )
 		).toBe( false );
 	} );
 
 	it( 'stays out of VIP and P2 sites', () => {
-		expect( trafficTabPreviewNotice?.isVisibleFunc( { ...eligibleSite, isVip: true } ) ).toBe(
+		expect( premiumAnalyticsPreviewNotice?.isVisibleFunc( { ...eligibleSite, isVip: true } ) ).toBe(
 			false
 		);
-		expect( trafficTabPreviewNotice?.isVisibleFunc( { ...eligibleSite, isP2: true } ) ).toBe(
+		expect( premiumAnalyticsPreviewNotice?.isVisibleFunc( { ...eligibleSite, isP2: true } ) ).toBe(
 			false
 		);
 	} );
@@ -93,12 +96,12 @@ describe( 'traffic_tab_preview notice visibility', () => {
 	it( 'outranks the upsell notices, so an eligible site is invited rather than upsold', () => {
 		const resolved = processConflictNotices( {
 			...noPurchaseJustHappened,
-			traffic_tab_preview: true,
+			premium_analytics_preview: true,
 			free_site_upgrade: true,
 			tier_upgrade: true,
 		} );
 
-		expect( resolved.traffic_tab_preview ).toBe( true );
+		expect( resolved.premium_analytics_preview ).toBe( true );
 		expect( resolved.free_site_upgrade ).toBe( false );
 		expect( resolved.tier_upgrade ).toBe( false );
 	} );
@@ -106,7 +109,7 @@ describe( 'traffic_tab_preview notice visibility', () => {
 	it( 'leaves the upsells alone when the site is not being invited', () => {
 		const resolved = processConflictNotices( {
 			...noPurchaseJustHappened,
-			traffic_tab_preview: false,
+			premium_analytics_preview: false,
 			free_site_upgrade: true,
 		} );
 

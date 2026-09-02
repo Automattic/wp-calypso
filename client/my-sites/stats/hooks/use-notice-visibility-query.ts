@@ -18,7 +18,7 @@ const DEFAULT_SERVER_NOTICES_VISIBILITY = {
 	pricing_grid: false,
 	// Defaults to hidden until the server includes it in the notices response,
 	// so the client can ship ahead of the WPCOM allow-list change.
-	traffic_tab_preview: false,
+	premium_analytics_preview: false,
 	// TODO: Check if the site needs to be upgraded to a higher tier on the back end.
 	tier_upgrade: true,
 	gdpr_cookie_consent: false,
@@ -51,7 +51,7 @@ const CONFLICT_NOTICE_ID_GROUPS: Record< string, Array< NoticeIdType > > = {
 		'client_free_plan_purchase_success',
 		// Above the upsells: the preview invitation is temporary and cohort-limited, and the
 		// upsells return as soon as it is dismissed or accepted.
-		'traffic_tab_preview',
+		'premium_analytics_preview',
 		// The two legacy upsell ids and `free_site_upgrade` are mutually exclusive: their
 		// registry entries are enabled on opposite sides of the commercial paywall kill switch.
 		'do_you_love_jetpack_stats',

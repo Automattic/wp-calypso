@@ -3,7 +3,7 @@
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import TrafficTabPreviewNotice from '../traffic-tab-preview-notice';
+import PremiumAnalyticsPreviewNotice from '../premium-analytics-preview-notice';
 
 const mockGetSiteAdminUrl = jest.fn();
 jest.mock( 'calypso/state/sites/selectors/get-site-admin-url', () => ( {
@@ -38,9 +38,9 @@ const DASHBOARD_URL =
 	'https://example.com/wp-admin/admin.php?page=jetpack-premium-analytics-wp-admin';
 
 const renderNotice = ( isOdysseyStats = false ) =>
-	render( <TrafficTabPreviewNotice siteId={ 123 } isOdysseyStats={ isOdysseyStats } /> );
+	render( <PremiumAnalyticsPreviewNotice siteId={ 123 } isOdysseyStats={ isOdysseyStats } /> );
 
-describe( 'TrafficTabPreviewNotice', () => {
+describe( 'PremiumAnalyticsPreviewNotice', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockGetSiteAdminUrl.mockReturnValue( DASHBOARD_URL );
@@ -82,7 +82,7 @@ describe( 'TrafficTabPreviewNotice', () => {
 
 		expect( mockUseNoticeVisibilityMutation ).toHaveBeenCalledWith(
 			123,
-			'traffic_tab_preview',
+			'premium_analytics_preview',
 			'postponed',
 			3650 * 24 * 3600
 		);
@@ -93,7 +93,7 @@ describe( 'TrafficTabPreviewNotice', () => {
 
 		expect(
 			mockRecordTracksEvent.mock.calls.filter(
-				( [ name ] ) => name === 'calypso_stats_traffic_tab_preview_notice_viewed'
+				( [ name ] ) => name === 'calypso_stats_premium_analytics_preview_notice_viewed'
 			)
 		).toHaveLength( 1 );
 	} );
@@ -104,7 +104,7 @@ describe( 'TrafficTabPreviewNotice', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Try it now' } ) );
 
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_stats_traffic_tab_preview_notice_enable_button_clicked',
+			'calypso_stats_premium_analytics_preview_notice_enable_button_clicked',
 			{ blog_id: 123 }
 		);
 		expect( mockEnablePreview ).toHaveBeenCalledWith( true );
@@ -177,7 +177,7 @@ describe( 'TrafficTabPreviewNotice', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
 
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_odyssey_stats_traffic_tab_preview_notice_dismissed',
+			'jetpack_odyssey_stats_premium_analytics_preview_notice_dismissed',
 			{ blog_id: 123 }
 		);
 		expect( mockPostponeNotice ).toHaveBeenCalled();
@@ -189,7 +189,7 @@ describe( 'TrafficTabPreviewNotice', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
 		expect( screen.queryByText( 'Try the new Traffic page' ) ).not.toBeInTheDocument();
 
-		rerender( <TrafficTabPreviewNotice siteId={ 456 } isOdysseyStats={ false } /> );
+		rerender( <PremiumAnalyticsPreviewNotice siteId={ 456 } isOdysseyStats={ false } /> );
 
 		expect( screen.getByText( 'Try the new Traffic page' ) ).toBeVisible();
 	} );

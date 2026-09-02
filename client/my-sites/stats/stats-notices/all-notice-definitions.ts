@@ -6,8 +6,8 @@ import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-succ
 import FreeSiteUpgradeNotice from './free-site-upgrade-notice';
 import GDPRCookieConsentNotice from './gdpr-cookie-consent-notice';
 import PaidPlanPurchaseSuccessJetpackStatsNotice from './paid-plan-purchase-success-notice';
+import PremiumAnalyticsPreviewNotice from './premium-analytics-preview-notice';
 import TierUpgradeNotice from './tier-upgrade-notice';
-import TrafficTabPreviewNotice from './traffic-tab-preview-notice';
 import { StatsNoticeProps } from './types';
 
 type StatsNoticeType = {
@@ -34,8 +34,8 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 		disabled: false,
 	},
 	{
-		component: TrafficTabPreviewNotice,
-		noticeId: 'traffic_tab_preview',
+		component: PremiumAnalyticsPreviewNotice,
+		noticeId: 'premium_analytics_preview',
 		// Ranked above the upsell notices in CONFLICT_NOTICE_ID_GROUPS: the invitation only runs
 		// while the new dashboard is in preview, and the server decides who is in that cohort,
 		// whereas the upsells are perpetual and come back the moment this one is dismissed or
