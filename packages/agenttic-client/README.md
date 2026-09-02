@@ -552,9 +552,35 @@ type AuthProvider = () => Promise< Record< string, string > >;
 type ContextProvider = { getClientContext: () => any };
 type ToolProvider = {
 	getAvailableTools: () => Promise< Tool[] >;
+	getDispatchableTools?: () => Promise< Tool[] >;
 	executeTool: ( toolId: string, args: any ) => Promise< any >;
 };
 ```
+
+### Advertised vs dispatchable tools
+
+`getAvailableTools()` is the advertisement list: every tool it returns is
+offered to the agent as callable, and a `running`-state echo of a
+model-chosen call is dispatched only against this list.
+
+`getDispatchableTools()` covers the other direction. Tools it returns are
+**never advertised to the agent**, but the client will still execute them
+(through the same `executeTool`) when the **backend** dispatches them in an
+`input-required` handoff. Use it for backend-driven steps the agent has no
+reason to choose for itself — a confirmation step, for example.
+
+Keeping a tool off the advertisement list is not an authorization boundary.
+`input-required` is also the path model-chosen calls take to `executeTool`,
+so a call naming a dispatchable id still runs if the backend relays one.
+Anything that must not run on the model's say-so needs the backend to reject
+unadvertised tool names, or a confirmation inside `executeTool` itself.
+
+Matching is per tool call: each call in an `input-required` message is
+dispatched only if its own id is in one of the lists (or is a registered
+ability). A call with no handler is never dispatched; it is answered with an
+error result — so the agent learns the step failed rather than waiting on a
+result that never arrives — and named in a debug log line. When no call in the
+message matches, nothing runs and the update stays final.
 
 ## Development
 
