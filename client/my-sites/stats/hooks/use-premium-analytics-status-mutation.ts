@@ -1,9 +1,6 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import {
-	premiumAnalyticsStatusQueryKey,
-	premiumAnalyticsStatusRequest,
-} from './use-premium-analytics-status-query';
+import { premiumAnalyticsStatusRequest } from './use-premium-analytics-status-query';
 
 type PremiumAnalyticsStatus = {
 	enabled: boolean;
@@ -18,19 +15,14 @@ type PremiumAnalyticsStatus = {
  * @param siteId Site to update.
  */
 export default function usePremiumAnalyticsStatusMutation( siteId: number | null ) {
-	const queryClient = useQueryClient();
-
 	return useMutation< PremiumAnalyticsStatus, unknown, boolean >( {
 		mutationFn: ( enabled: boolean ) =>
 			wpcom.req.post( premiumAnalyticsStatusRequest( siteId ), { enabled } ),
 		retry: 1,
 		retryDelay: 3 * 1000,
-		// Cache what the site reported, not what we asked for: a 200 saying `false` means the write
-		// didn't take, and treating it as success would send someone to a page that isn't there.
-		onSuccess: ( data ) => {
-			queryClient.setQueryData( premiumAnalyticsStatusQueryKey( siteId ), {
-				enabled: !! data?.enabled,
-			} );
-		},
+		// Deliberately no write back into the status query. Whoever asked for that status is very
+		// likely gating an invitation on it, and telling them mid-flow that the site is now
+		// enabled pulls the invitation off the screen before it can report what it just did.
+		// The next page load reads the real value, which is soon enough.
 	} );
 }
