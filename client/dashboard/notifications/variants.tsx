@@ -64,7 +64,7 @@ export type InboxVariant = {
  * needs data the model doesn't expose, extend NoteView for everyone instead of
  * deriving it inside the variant.
  */
-export const INBOX_VARIANTS: InboxVariant[] = [ { key: 'default', label: __( 'Default' ) } ];
+export const INBOX_VARIANTS: InboxVariant[] = [ { key: 'default', label: __( 'P2-Inspired' ) } ];
 
 const STORAGE_KEY = 'dashboard-notifications-inbox-variant';
 
