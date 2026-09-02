@@ -37,7 +37,11 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	// flow (which provisions a WP Cloud site up front): a separate "Generate
 	// Theme" card, or, where the site builder swap is enabled, the custom design
 	// card itself with the previous Big Sky builder kept reachable via a link.
-	const { data: isAutomattician } = useReactQuery( isAutomatticianQuery() );
+	const {
+		data: isAutomattician,
+		isPending: isAutomatticianPending,
+		refetch: refetchIsAutomattician,
+	} = useReactQuery( isAutomatticianQuery() );
 	const swapSiteBuilders = config.isEnabled( 'calypso/ai-site-builder-build-wow' );
 
 	const submitBuildWithAI = ( trimmedPrompt?: string ) => {
@@ -86,10 +90,18 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		} );
 	};
 
-	const handleCustomDesignClick = () => {
-		if ( swapSiteBuilders && isAutomattician ) {
-			handleGenerateTheme();
-			return;
+	const handleCustomDesignClick = async () => {
+		if ( swapSiteBuilders ) {
+			// A click before the lookup settles waits on the in-flight request rather
+			// than silently taking the legacy path; a failed lookup still falls back.
+			const automattician = isAutomatticianPending
+				? ( await refetchIsAutomattician() ).data
+				: isAutomattician;
+
+			if ( automattician ) {
+				handleGenerateTheme();
+				return;
+			}
 		}
 
 		submitBuildWithAI();

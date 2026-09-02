@@ -3,7 +3,7 @@
  */
 import config from '@automattic/calypso-config';
 import { useQuery as useReactQuery } from '@tanstack/react-query';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteData } from '../../../../../hooks/use-site-data';
@@ -208,6 +208,41 @@ describe( 'SetupYourSiteAIStep', () => {
 				siteSlug: 'example.wordpress.com',
 				siteId: 123,
 			} );
+		} );
+
+		it( 'waits for a pending Automattician lookup before routing the custom design card', async () => {
+			const refetch = jest.fn().mockResolvedValue( { data: true } );
+			mockUseReactQuery.mockReturnValue( { data: undefined, isPending: true, refetch } );
+
+			renderStep();
+
+			fireEvent.click( screen.getByRole( 'button', { name: 'Create a custom design' } ) );
+
+			await waitFor( () =>
+				expect( navigation.submit ).toHaveBeenCalledWith( {
+					setupChoice: 'generate-theme',
+					siteSlug: 'example.wordpress.com',
+					siteId: 123,
+				} )
+			);
+			expect( refetch ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'falls back to build-with-ai when the pending Automattician lookup fails', async () => {
+			const refetch = jest.fn().mockResolvedValue( { data: undefined, isError: true } );
+			mockUseReactQuery.mockReturnValue( { data: undefined, isPending: true, refetch } );
+
+			renderStep();
+
+			fireEvent.click( screen.getByRole( 'button', { name: 'Create a custom design' } ) );
+
+			await waitFor( () =>
+				expect( navigation.submit ).toHaveBeenCalledWith( {
+					setupChoice: 'build-with-ai',
+					siteSlug: 'example.wordpress.com',
+					siteId: 123,
+				} )
+			);
 		} );
 
 		it( 'submits the build-with-ai choice from the legacy site builder link', () => {
