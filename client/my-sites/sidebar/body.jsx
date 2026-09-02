@@ -6,7 +6,7 @@ import { isP2Theme } from 'calypso/lib/site/utils';
 import { getAdminMenuGroups } from 'calypso/state/admin-menu/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl, isJetpackSite, isSimpleSite } from 'calypso/state/sites/selectors';
 import {
 	getSidebarIsCollapsed,
 	getSelectedSiteId,
@@ -25,6 +25,10 @@ import {
 	isAdminSidebarDevMockActive,
 } from './utils/admin-sidebar-dev-mock';
 import groupMenuItems from './utils/group-menu-items';
+import {
+	isSiteInSubscribersWpAdminLinkBucket,
+	rewriteSubscribersMenuLink,
+} from './utils/subscribers-wp-admin-link';
 import 'calypso/state/admin-menu/init';
 import 'calypso/state/admin-sidebar/expand-state/init';
 import 'calypso/state/admin-sidebar/layout/init';
@@ -66,9 +70,28 @@ function MySitesSidebarUnifiedBodyContent( {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
 	const groups = useSelector( ( state ) => getAdminMenuGroups( state, siteId ) );
+
+	// Roll out the wp-admin Subscribers page to ~10% of simple sites: point the
+	// sidebar "Subscribers" link at the Jetpack Subscribers wp-admin screen
+	// instead of the Calypso route. Deterministic per site id, so the link is
+	// stable across loads. Jetpack/Atomic sites are untouched.
+	const subscribersWpAdminUrl = useSelector( ( state ) =>
+		getSiteAdminUrl( state, siteId, 'admin.php?page=jetpack-subscribers' )
+	);
+	const isSimpleSiteSelected = useSelector( ( state ) => isSimpleSite( state, siteId ) );
+	const shouldUseWpAdminSubscribersLink =
+		isSimpleSiteSelected &&
+		isSiteInSubscribersWpAdminLinkBucket( siteId ) &&
+		!! subscribersWpAdminUrl;
+
 	const transformBaseMenu = useCallback(
-		( baseMenu ) => applyAdminSidebarDevMock( baseMenu, groups ).menuItems,
-		[ groups ]
+		( baseMenu ) => {
+			const menuItems = applyAdminSidebarDevMock( baseMenu, groups ).menuItems;
+			return shouldUseWpAdminSubscribersLink
+				? rewriteSubscribersMenuLink( menuItems, subscribersWpAdminUrl )
+				: menuItems;
+		},
+		[ groups, shouldUseWpAdminSubscribersLink, subscribersWpAdminUrl ]
 	);
 	const menuItems = useSiteMenuItems( workingDelta, transformBaseMenu );
 	const isP2Site =
