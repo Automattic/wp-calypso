@@ -3,11 +3,19 @@
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { createRouter, RouterProvider, createRootRoute, createRoute } from '@tanstack/react-router';
+import {
+	createRouter,
+	createMemoryHistory,
+	RouterProvider,
+	createRootRoute,
+	createRoute,
+	useSearch,
+} from '@tanstack/react-router';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { Suspense } from 'react';
 import { usePersistentView } from '../use-persistent-view';
+import type { UseViewOptions } from '../use-persistent-view';
 import type { View } from '@wordpress/dataviews';
 
 const defaultView: View = {
@@ -17,7 +25,7 @@ const defaultView: View = {
 };
 const slug = 'sites';
 
-function createTestWrapper() {
+function createTestWrapper( initialPath = '/' ) {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 	let router: ReturnType< typeof createRouter > | undefined;
 
@@ -31,6 +39,7 @@ function createTestWrapper() {
 
 		router = createRouter( {
 			routeTree: rootRoute.addChildren( [ indexRoute ] ),
+			history: createMemoryHistory( { initialEntries: [ initialPath ] } ),
 		} );
 
 		return (
@@ -41,6 +50,21 @@ function createTestWrapper() {
 	};
 
 	return { Wrapper, getRouter: () => router };
+}
+
+// Renders the hook with `queryParams` fed live from the router, the way
+// production callers pass `useSearch()` output — so the hook sees params
+// change after its own navigations.
+function renderHookWithRouterSearch( options: Partial< UseViewOptions >, initialPath = '/' ) {
+	const { Wrapper, getRouter } = createTestWrapper( initialPath );
+	const utils = renderHook(
+		() => {
+			const search = useSearch( { strict: false } );
+			return usePersistentView( { slug, defaultView, queryParams: search, ...options } );
+		},
+		{ wrapper: Wrapper }
+	);
+	return { ...utils, getRouter };
 }
 
 function mockGetCalypsoPreferences( preferences: any ) {
@@ -311,6 +335,233 @@ describe( 'usePersistentView', () => {
 				expect( router?.state.location.search ).toEqual( {
 					'current-param': 'current-value',
 				} );
+			} );
+		} );
+	} );
+
+	describe( 'query param filter sync', () => {
+		it( 'should canonicalize param values case-insensitively when allowed values are provided', async () => {
+			mockGetCalypsoPreferences( {} );
+
+			const { result } = renderHookWithRouterSearch(
+				{
+					queryParamFilterFields: [
+						{ field: 'severity', values: [ 'User', 'Warning', 'Deprecated', 'Fatal error' ] },
+					],
+				},
+				'/?severity=warning,FATAL+ERROR,bogus'
+			);
+
+			await waitFor( () => {
+				expect( result.current.view.filters ).toEqual( [
+					{ field: 'severity', operator: 'isAny', value: [ 'Warning', 'Fatal error' ] },
+				] );
+			} );
+		} );
+
+		it( 'should not apply a boolean filter for a field with allowed values', async () => {
+			mockGetCalypsoPreferences( {} );
+
+			const { result } = renderHookWithRouterSearch(
+				{
+					queryParamFilterFields: [
+						{ field: 'severity', values: [ 'User', 'Warning', 'Deprecated', 'Fatal error' ] },
+					],
+				},
+				'/?severity=true'
+			);
+
+			await waitFor( () => {
+				expect( result.current.view.filters ).toEqual( [] );
+			} );
+		} );
+
+		it( 'should parse comma-separated query param values into a multi-value filter', async () => {
+			mockGetCalypsoPreferences( {} );
+
+			const { result } = renderHookWithRouterSearch(
+				{ queryParamFilterFields: [ 'severity' ] },
+				'/?severity=Warning,Fatal%20error'
+			);
+
+			await waitFor( () => {
+				expect( result.current.view.filters ).toEqual( [
+					{ field: 'severity', operator: 'isAny', value: [ 'Warning', 'Fatal error' ] },
+				] );
+			} );
+		} );
+
+		it( 'should ignore persisted filters for synced fields', async () => {
+			const persistedView = {
+				type: 'table',
+				sort: { field: 'name', direction: 'asc' },
+				filters: [
+					{ field: 'severity', operator: 'isAny', value: [ 'User' ] },
+					{ field: 'status', operator: 'isAny', value: [ 'active' ] },
+				],
+			};
+			mockGetCalypsoPreferences( {
+				'hosting-dashboard-dataviews-view-sites': persistedView,
+			} );
+
+			const { result } = renderHookWithRouterSearch( {
+				queryParamFilterFields: [ 'severity' ],
+			} );
+
+			await waitFor( () => {
+				expect( result.current.view.filters ).toEqual( [
+					{ field: 'status', operator: 'isAny', value: [ 'active' ] },
+				] );
+			} );
+		} );
+
+		it( 'should sync filter changes to the URL query params without persisting them', async () => {
+			mockGetCalypsoPreferences( {} );
+
+			const viewToPersist: View = {
+				type: 'grid',
+				layout: { previewSize: 120 },
+				sort: { field: 'name', direction: 'asc' },
+			};
+			const expectedUpdatePreferences = mockUpdateCalypsoPreferences( {
+				'hosting-dashboard-dataviews-view-sites': viewToPersist,
+			} );
+
+			const { result, getRouter } = renderHookWithRouterSearch(
+				{ queryParamFilterFields: [ 'severity' ] },
+				'/?severity=User'
+			);
+
+			await waitFor( () => {
+				expect( result.current.updateView ).toBeTruthy();
+			} );
+
+			act( () => {
+				result.current.updateView( {
+					...viewToPersist,
+					page: 1,
+					search: '',
+					filters: [
+						{ field: 'severity', operator: 'isAny', value: [ 'Warning', 'Fatal error' ] },
+					],
+				} );
+			} );
+
+			await waitFor( () => {
+				const router = getRouter();
+				expect( router?.state.location.search ).toEqual( {
+					severity: 'Warning,Fatal error',
+				} );
+			} );
+
+			await waitFor( () => {
+				expect( result.current.view.filters ).toEqual( [
+					{ field: 'severity', operator: 'isAny', value: [ 'Warning', 'Fatal error' ] },
+				] );
+			} );
+
+			await waitFor( () => {
+				expect( expectedUpdatePreferences.isDone() ).toBe( true );
+			} );
+		} );
+
+		it( 'should keep a newly added filter with no value yet in the view', async () => {
+			mockGetCalypsoPreferences( {} );
+			mockUpdateCalypsoPreferences();
+
+			const { result, getRouter } = renderHookWithRouterSearch( {
+				queryParamFilterFields: [ 'severity' ],
+			} );
+
+			await waitFor( () => {
+				expect( result.current.updateView ).toBeTruthy();
+			} );
+
+			const searchBefore = getRouter()?.state.location.search;
+
+			act( () => {
+				result.current.updateView( {
+					...defaultView,
+					page: 1,
+					search: '',
+					filters: [ { field: 'severity', operator: 'isAny', value: undefined } ],
+				} );
+			} );
+
+			await waitFor( () => {
+				expect( result.current.view.filters ).toEqual( [
+					{ field: 'severity', operator: 'isAny', value: undefined },
+				] );
+			} );
+
+			expect( getRouter()?.state.location.search ).toEqual( searchBefore );
+		} );
+
+		it( 'should keep the filter but drop the query param when its values are cleared', async () => {
+			mockGetCalypsoPreferences( {} );
+			mockUpdateCalypsoPreferences();
+
+			const { result, getRouter } = renderHookWithRouterSearch(
+				{ queryParamFilterFields: [ 'severity' ] },
+				'/?severity=Warning'
+			);
+
+			await waitFor( () => {
+				expect( result.current.updateView ).toBeTruthy();
+			} );
+
+			act( () => {
+				result.current.updateView( {
+					...defaultView,
+					page: 1,
+					search: '',
+					filters: [ { field: 'severity', operator: 'isAny', value: undefined } ],
+				} );
+			} );
+
+			await waitFor( () => {
+				const router = getRouter();
+				expect( router?.state.location.search ).toEqual( {} );
+			} );
+
+			await waitFor( () => {
+				expect( result.current.view.filters ).toEqual( [
+					{ field: 'severity', operator: 'isAny', value: undefined },
+				] );
+			} );
+		} );
+
+		it( 'should remove the query param when the filter is cleared', async () => {
+			mockGetCalypsoPreferences( {} );
+			mockUpdateCalypsoPreferences();
+
+			const { result, getRouter } = renderHookWithRouterSearch(
+				{ queryParamFilterFields: [ 'severity' ] },
+				'/?current-param=current-value&severity=Warning'
+			);
+
+			await waitFor( () => {
+				expect( result.current.updateView ).toBeTruthy();
+			} );
+
+			act( () => {
+				result.current.updateView( {
+					...defaultView,
+					page: 1,
+					search: '',
+					filters: [],
+				} );
+			} );
+
+			await waitFor( () => {
+				const router = getRouter();
+				expect( router?.state.location.search ).toEqual( {
+					'current-param': 'current-value',
+				} );
+			} );
+
+			await waitFor( () => {
+				expect( result.current.view.filters ).toEqual( [] );
 			} );
 		} );
 	} );

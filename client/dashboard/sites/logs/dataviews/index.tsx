@@ -1,7 +1,7 @@
 import { LogType, PHPLog, ServerLog, SiteLogsParams } from '@automattic/api-core';
 import { siteLogsInfiniteQuery } from '@automattic/api-queries';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
+import { useSearch } from '@tanstack/react-router';
 import { ToggleControl, Button, Spinner } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { View, Filter, Field } from '@wordpress/dataviews';
@@ -24,6 +24,7 @@ import {
 	type ServerLogWithId,
 } from '../utils';
 import { useActions } from './actions';
+import { VALUES_SEVERITY } from './constants';
 import { useFields } from './fields';
 import {
 	DEFAULT_PER_PAGE,
@@ -60,11 +61,10 @@ function SiteLogsDataViews( {
 	onAutoRefreshRequest,
 	site,
 }: SiteLogsDataViewsProps & { logType: typeof LogType.PHP | typeof LogType.SERVER } ) {
-	const router = useRouter();
 	const queryClient = useQueryClient();
 	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
-	const search = router.state.location.search;
+	const search = useSearch( { strict: false } );
 	const rafIdRef = useRef< number | null >( null );
 	const dataviewsRef = useRef< HTMLDivElement | null >( null );
 	const {
@@ -75,7 +75,8 @@ function SiteLogsDataViews( {
 		slug: `site-logs-${ logType }`,
 		defaultView: logType === LogType.PHP ? DEFAULT_PHP_LOGS_VIEW : DEFAULT_SERVER_LOGS_VIEW,
 		queryParams: search,
-		queryParamFilterFields: logType === LogType.PHP ? [ 'severity' ] : [],
+		queryParamFilterFields:
+			logType === LogType.PHP ? [ { field: 'severity', values: VALUES_SEVERITY } ] : [],
 	} );
 
 	// Where DataViews' infinite scroll has advanced the window to. Deliberately
