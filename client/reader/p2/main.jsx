@@ -2,7 +2,10 @@ import { Button } from '@automattic/components';
 import { fixMe, useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
-import { useIsSeenPostsUiEnabled, useMarkAllAsSeenMutation } from 'calypso/reader/data/seen-posts';
+import {
+	useMarkAllAsSeenMutation,
+	useSeenPostsPreferenceEnabled,
+} from 'calypso/reader/data/seen-posts';
 import { useOrganizationFeedsInfo } from 'calypso/reader/data/site-subscriptions';
 import Stream from 'calypso/reader/stream';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -15,7 +18,7 @@ export default function P2Following( props ) {
 	const dispatch = useDispatch();
 	const feedsInfo = useOrganizationFeedsInfo( P2_ORG_ID );
 	const { mutate: markAllAsSeen } = useMarkAllAsSeenMutation();
-	const isSeenPostsUiEnabled = useIsSeenPostsUiEnabled();
+	const isSeenPostsEnabled = useSeenPostsPreferenceEnabled();
 
 	const handleMarkAllAsSeen = () => {
 		const { feedIds, feedUrls } = feedsInfo;
@@ -26,7 +29,7 @@ export default function P2Following( props ) {
 	return (
 		<Stream { ...props }>
 			<SectionHeader label={ translate( 'Followed P2 Sites' ) }>
-				{ isSeenPostsUiEnabled && (
+				{ isSeenPostsEnabled && (
 					<Button compact onClick={ handleMarkAllAsSeen } disabled={ ! feedsInfo.unseenCount }>
 						{ fixMe( {
 							text: 'Mark all as read',

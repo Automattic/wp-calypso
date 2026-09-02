@@ -18,7 +18,7 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 		site: PropTypes.object,
 		path: PropTypes.string,
 		fallbackPath: PropTypes.string,
-		isSeenPostsUiEnabled: PropTypes.bool,
+		showUnseenCounts: PropTypes.bool,
 	};
 
 	handleSidebarClick = () => {
@@ -30,7 +30,7 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 	};
 
 	render() {
-		const { site, path, moment, fallbackPath, isSeenPostsUiEnabled } = this.props;
+		const { site, path, moment, fallbackPath, showUnseenCounts } = this.props;
 		const computedClassName = ReaderSidebarHelper.itemLinkClass(
 			'/reader/feeds/' + site.feed_ID,
 			path
@@ -72,7 +72,7 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 								} }
 							/>
 						) }
-						{ isSeenPostsUiEnabled && <ReaderUnreadCount count={ site.unseen_count } /> }
+						{ showUnseenCounts && <ReaderUnreadCount count={ site.unseen_count } /> }
 					</span>
 				</MenuItemLink>
 			</MenuItem>
