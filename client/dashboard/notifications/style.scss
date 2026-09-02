@@ -627,11 +627,13 @@
 /* Slack-Inspired: the message toolbar floats at the top right. */
 .dashboard-notifications-inbox__slack-thread {
 	position: relative;
+	/* Room for the floating toolbar (~34px tall) plus a clear gap before the message. */
+	padding-block-start: 46px;
 }
 
 .dashboard-notifications-inbox__slack-toolbar {
 	position: absolute;
-	top: -6px;
+	top: 0;
 	inset-inline-end: 0;
 	z-index: 1;
 	width: auto;
