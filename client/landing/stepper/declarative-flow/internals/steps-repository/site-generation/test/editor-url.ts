@@ -82,7 +82,7 @@ describe( 'getSafeEditorUrl', () => {
 
 describe( 'getLiveEditorUrl', () => {
 	const captured =
-		'https://example.wordpress.com/wp-admin/site-editor.php?easy-mode=true&spec_id=spec-1&source=dashboard';
+		'https://example.wordpress.com/wp-admin/site-editor.php?easy-mode=true&source=dashboard';
 	const live =
 		'https://example.wordpress.com/wp-admin/site-editor.php?easy-mode=true&p=%2Fpage%2F12&canvas=edit';
 
@@ -95,7 +95,6 @@ describe( 'getLiveEditorUrl', () => {
 		expect( url.searchParams.get( 'p' ) ).toBe( '/page/12' );
 		expect( url.searchParams.get( 'canvas' ) ).toBe( 'edit' );
 		expect( url.searchParams.get( 'easy-mode' ) ).toBe( 'true' );
-		expect( url.searchParams.get( 'spec_id' ) ).toBe( 'spec-1' );
 		expect( url.searchParams.get( 'source' ) ).toBe( 'dashboard' );
 		// Not duplicated: the live URL's own value wins for a shared key.
 		expect( url.searchParams.getAll( 'easy-mode' ) ).toEqual( [ 'true' ] );
