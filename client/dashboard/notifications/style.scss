@@ -624,8 +624,7 @@
 	margin: 0 0 16px;
 }
 
-/* Slack-Inspired: the message toolbar floats at the top right, appearing
-   while the thread is hovered or holds focus. */
+/* Slack-Inspired: the message toolbar floats at the top right. */
 .dashboard-notifications-inbox__slack-thread {
 	position: relative;
 }
@@ -641,20 +640,12 @@
 	border: 1px solid var(--dashboard-header__border-color, #ddd);
 	border-radius: 8px;
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-	opacity: 0;
-	transition: opacity 0.1s ease-out;
 }
 
 /* Pressed reads as an accent, not the stock filled block. */
 .dashboard-notifications-inbox__slack-toolbar .components-button.is-pressed {
 	background: var(--dashboard__background-color-secondary, #f6f7f7);
 	color: var(--wp-admin-theme-color, #3858e9);
-}
-
-.dashboard-notifications-inbox__slack-thread:hover .dashboard-notifications-inbox__slack-toolbar,
-.dashboard-notifications-inbox__slack-thread:focus-within
-	.dashboard-notifications-inbox__slack-toolbar {
-	opacity: 1;
 }
 
 /* Slack-Inspired: the thread the reply answers, as an inset card below it. */
