@@ -225,10 +225,10 @@
 	padding:0;
 }
 
-.wpcom-global-nav-footer :is(button::-moz-focus-inner),
-.wpcom-global-nav-footer :is(input::-moz-focus-inner),
-.wpcom-global-nav-footer :is(select::-moz-focus-inner),
-.wpcom-global-nav-footer :is(textarea::-moz-focus-inner) {
+.wpcom-global-nav-footer :is(button)::-moz-focus-inner,
+.wpcom-global-nav-footer :is(input)::-moz-focus-inner,
+.wpcom-global-nav-footer :is(select)::-moz-focus-inner,
+.wpcom-global-nav-footer :is(textarea)::-moz-focus-inner {
 	border:0;
 	padding:0;
 }
@@ -603,7 +603,7 @@
 	margin-bottom:0;
 }
 
-.wpcom-global-nav-footer :is(_::-webkit-full-page-media),
+.wpcom-global-nav-footer :is(_)::-webkit-full-page-media,
 .wpcom-global-nav-footer :is(_:future) {
 	animation:none!important;
 }
@@ -656,7 +656,7 @@
 	white-space:nowrap;
 }
 
-.wpcom-global-nav-footer :is(.lp-link-chevron-external.lp-link-chevron-external:after) {
+.wpcom-global-nav-footer :is(.lp-link-chevron-external.lp-link-chevron-external):after {
 	content:" ›";
 	display:inline-block;
 	font-weight:400;
@@ -665,7 +665,7 @@
 	transition:transform .15s ease-out;
 }
 
-.wpcom-global-nav-footer :is(.lp-link-chevron-external.lp-link-chevron-external:after) {
+.wpcom-global-nav-footer :is(.lp-link-chevron-external.lp-link-chevron-external):after {
 	content:" ↗";
 	font-weight:700;
 	left:.165em;
@@ -675,10 +675,10 @@
 	transform-origin:0 0;
 }
 
-.wpcom-global-nav-footer :is(.lp-link-chevron-external.lp-link-chevron-external:active:after),
-.wpcom-global-nav-footer :is(.lp-link-chevron-external.lp-link-chevron-external:hover:after),
-.wpcom-global-nav-footer :is(a:active .lp-link-chevron-external.lp-link-chevron-external:after),
-.wpcom-global-nav-footer :is(a:hover .lp-link-chevron-external.lp-link-chevron-external:after) {
+.wpcom-global-nav-footer :is(.lp-link-chevron-external.lp-link-chevron-external:active):after,
+.wpcom-global-nav-footer :is(.lp-link-chevron-external.lp-link-chevron-external:hover):after,
+.wpcom-global-nav-footer :is(a:active .lp-link-chevron-external.lp-link-chevron-external):after,
+.wpcom-global-nav-footer :is(a:hover .lp-link-chevron-external.lp-link-chevron-external):after {
 	transform:scale3d(.55,.55,1) translate3d(.15em,-.065em,0);
 }
 

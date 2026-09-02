@@ -40,7 +40,9 @@ re-diff instead:
 6. Prefix every selector with `.wpcom-global-nav-footer ` (the component wraps
    the twin's markup in a plain scope div, so descendant-only scoping via
    `:is()` suffices) and preserve the bundle's source order — the twin's
-   cascade depends on it.
+   cascade depends on it. Trailing pseudo-elements must be emitted **outside**
+   the `:is()` wrap (`:is(.foo):after`, never `:is(.foo:after)`) — pseudo-
+   elements are invalid inside `:is()` and browsers drop the whole rule.
 
 Two things the scoping cannot contain: the `@font-face` blocks register
 `inter-web` globally (font faces cannot be scoped), and font files load from
