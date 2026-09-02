@@ -35,10 +35,11 @@ export type ShellSlotProps = {
 };
 
 /**
- * One testable version of the inbox. Everything is optional: a variant can be
- * a CSS skin (className), restyle one note kind (detailViews), replace the
- * whole detail pane (Detail), or swap the list (List). Unset parts fall back
- * to the default experience.
+ * One testable version of the detail side (and the screen around it).
+ * Everything is optional: a variant can be a CSS skin (className), restyle one
+ * note kind (detailViews), replace the detail content (Detail) or the whole
+ * pane (DetailPane), or arrange the screen (Shell). Unset parts fall back to
+ * the default experience. The list has its own registry below.
  */
 export type InboxVariant = {
 	key: string;
@@ -51,10 +52,16 @@ export type InboxVariant = {
 	Detail?: ComponentType< { view: NoteView } >;
 	/** Replace the whole detail pane, frame and nav included. */
 	DetailPane?: ComponentType< DetailPaneSlotProps >;
-	/** Replace the list pane. */
-	List?: ComponentType< InboxListSlotProps >;
 	/** Arrange the screen itself (panes come in rendered; wrap or place them freely). */
 	Shell?: ComponentType< ShellSlotProps >;
+};
+
+/** One testable version of the list pane. */
+export type ListVariant = {
+	key: string;
+	label: string;
+	/** Replace the list; unset falls back to the default InboxList. */
+	List?: ComponentType< InboxListSlotProps >;
 };
 
 /**
@@ -81,11 +88,18 @@ function ClassicInboxList( props: InboxListSlotProps ) {
 }
 
 export const INBOX_VARIANTS: InboxVariant[] = [
-	{ key: 'classic', label: __( 'Classic' ), List: ClassicInboxList, Detail: ClassicDetail },
+	{ key: 'classic', label: __( 'Classic' ), Detail: ClassicDetail },
 	{ key: 'default', label: __( 'P2-Inspired' ) },
 ];
 
+/** The list pane's own experiments, chosen independently of the detail side. */
+export const LIST_VARIANTS: ListVariant[] = [
+	{ key: 'simplified', label: __( 'Simplified' ) },
+	{ key: 'classic', label: __( 'Classic' ), List: ClassicInboxList },
+];
+
 const STORAGE_KEY = 'dashboard-notifications-inbox-variant';
+const LIST_STORAGE_KEY = 'dashboard-notifications-inbox-list-variant';
 
 const InboxVariantContext = createContext< InboxVariant >( INBOX_VARIANTS[ 0 ] );
 
@@ -95,19 +109,22 @@ export function useInboxVariant(): InboxVariant {
 	return useContext( InboxVariantContext );
 }
 
-export function useInboxVariantState(): [ InboxVariant, ( key: string ) => void ] {
+function useStoredVariant< T extends { key: string } >(
+	registry: T[],
+	storageKey: string
+): [ T, ( key: string ) => void ] {
 	const [ key, setKey ] = useState( () => {
 		try {
-			return window.localStorage.getItem( STORAGE_KEY ) ?? INBOX_VARIANTS[ 0 ].key;
+			return window.localStorage.getItem( storageKey ) ?? registry[ 0 ].key;
 		} catch {
-			return INBOX_VARIANTS[ 0 ].key;
+			return registry[ 0 ].key;
 		}
 	} );
-	const variant = INBOX_VARIANTS.find( ( entry ) => entry.key === key ) ?? INBOX_VARIANTS[ 0 ];
+	const variant = registry.find( ( entry ) => entry.key === key ) ?? registry[ 0 ];
 	const set = ( next: string ) => {
 		setKey( next );
 		try {
-			window.localStorage.setItem( STORAGE_KEY, next );
+			window.localStorage.setItem( storageKey, next );
 		} catch {
 			// Per-tab only, then.
 		}
@@ -115,28 +132,45 @@ export function useInboxVariantState(): [ InboxVariant, ( key: string ) => void 
 	return [ variant, set ];
 }
 
-export function InboxVariantPicker( {
+export function useInboxVariantState(): [ InboxVariant, ( key: string ) => void ] {
+	return useStoredVariant( INBOX_VARIANTS, STORAGE_KEY );
+}
+
+export function useListVariantState(): [ ListVariant, ( key: string ) => void ] {
+	return useStoredVariant( LIST_VARIANTS, LIST_STORAGE_KEY );
+}
+
+function VariantPicker( {
+	label,
+	registry,
 	value,
 	onChange,
 }: {
+	label: string;
+	registry: Array< { key: string; label: string } >;
 	value: string;
 	onChange: ( key: string ) => void;
 } ) {
-	if ( INBOX_VARIANTS.length < 2 ) {
+	if ( registry.length < 2 ) {
 		return null;
 	}
 	return (
 		<SelectControl
 			__next40pxDefaultSize
 			__nextHasNoMarginBottom
-			label={ __( 'Layout' ) }
+			label={ label }
 			hideLabelFromVision
 			value={ value }
-			options={ INBOX_VARIANTS.map( ( entry ) => ( {
-				value: entry.key,
-				label: entry.label,
-			} ) ) }
+			options={ registry.map( ( entry ) => ( { value: entry.key, label: entry.label } ) ) }
 			onChange={ onChange }
 		/>
 	);
+}
+
+export function InboxVariantPicker( props: { value: string; onChange: ( key: string ) => void } ) {
+	return <VariantPicker label={ __( 'Detail layout' ) } registry={ INBOX_VARIANTS } { ...props } />;
+}
+
+export function ListVariantPicker( props: { value: string; onChange: ( key: string ) => void } ) {
+	return <VariantPicker label={ __( 'List layout' ) } registry={ LIST_VARIANTS } { ...props } />;
 }

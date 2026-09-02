@@ -1,5 +1,9 @@
 import { useNavigate } from '@tanstack/react-router';
-import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useEffect, useRef } from 'react';
@@ -10,7 +14,13 @@ import PageLayout from '../components/page-layout';
 import { NotesProvider, acquireEngineVisibility, setActiveTab, useVisibleNotes } from './engine';
 import { CATEGORY_TO_TAB, InboxList } from './list';
 import NoteDetail from './note-detail';
-import { InboxVariantPicker, InboxVariantProvider, useInboxVariantState } from './variants';
+import {
+	InboxVariantPicker,
+	InboxVariantProvider,
+	ListVariantPicker,
+	useInboxVariantState,
+	useListVariantState,
+} from './variants';
 import type { InboxCategory } from './list';
 
 export type { InboxCategory } from './list';
@@ -47,6 +57,7 @@ function NotificationsInbox( {
 	useEffect( () => acquireEngineVisibility(), [] );
 
 	const [ variant, setVariantKey ] = useInboxVariantState();
+	const [ listVariant, setListVariantKey ] = useListVariantState();
 
 	// The engine's filter is process-global and the bell dropdown resets it, so
 	// re-assert this screen's category on mount and on every change.
@@ -113,7 +124,7 @@ function NotificationsInbox( {
 			? () => setSelectedNote( noteIds[ currentIndex + 1 ] )
 			: null;
 
-	const List = variant.List ?? InboxList;
+	const List = listVariant.List ?? InboxList;
 	const DetailPane = variant.DetailPane ?? NoteDetail;
 
 	const listNode = (
@@ -146,7 +157,12 @@ function NotificationsInbox( {
 			header={
 				<PageHeader
 					title={ __( 'Notifications' ) }
-					actions={ <InboxVariantPicker value={ variant.key } onChange={ setVariantKey } /> }
+					actions={
+						<HStack spacing={ 2 } expanded={ false } justify="flex-end">
+							<ListVariantPicker value={ listVariant.key } onChange={ setListVariantKey } />
+							<InboxVariantPicker value={ variant.key } onChange={ setVariantKey } />
+						</HStack>
+					}
 				/>
 			}
 		>
