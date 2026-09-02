@@ -138,15 +138,16 @@ export const preferencesIndexRoute = createRoute( {
 	getParentRoute: () => preferencesRoute,
 	path: '/',
 	loader: async ( { context } ) => {
+		// The Reader preferences section is rollout-gated on teams, but it's
+		// optional. Prefetch (never require) it so a slow or failing /read/teams
+		// request can't block access to the rest of the preferences index, and
+		// skip it entirely for variants without Reader (e.g. CIAB).
+		if ( context.config.supports.reader ) {
+			queryClient.prefetchQuery( readTeamsQuery() );
+		}
 		await Promise.all( [
 			queryClient.ensureQueryData( userSettingsQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-			// Only the Reader preferences section reads teams, and it only exists
-			// when reader is supported. Avoid adding the teams fetch as an
-			// unrelated failure point for variants without Reader (e.g. CIAB).
-			...( context.config.supports.reader
-				? [ queryClient.ensureQueryData( readTeamsQuery() ) ]
-				: [] ),
 		] );
 	},
 } ).lazy( () =>
