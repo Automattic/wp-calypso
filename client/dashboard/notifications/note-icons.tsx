@@ -1,4 +1,3 @@
-import { getNoticonName } from '@automattic/notifications/src/common/icon-map';
 import {
 	chartBar,
 	caution,
@@ -12,7 +11,8 @@ import {
 	update,
 } from '@wordpress/icons';
 import { SVG, G, Path } from '@wordpress/primitives';
-import type { NoticonName } from '@automattic/notifications/src/common/icon-map';
+import { getNoticonName } from './note-model';
+import type { NoticonName } from './note-model';
 import type { JSX } from 'react';
 
 // Gridicons the wp icon set has no equivalent for (same shapes the legacy

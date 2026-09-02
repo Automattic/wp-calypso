@@ -28,6 +28,8 @@ export type {
 	NoteParentComment,
 	NoteUserRef,
 } from '@automattic/notifications/src/common/body-parts';
+export { getNoticonName } from '@automattic/notifications/src/common/icon-map';
+export type { NoticonName } from '@automattic/notifications/src/common/icon-map';
 export { getRichNodes } from '@automattic/notifications/src/common/rich-text';
 export type { RichNode } from '@automattic/notifications/src/common/rich-text';
 export {

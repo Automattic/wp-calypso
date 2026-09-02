@@ -1,6 +1,6 @@
 import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { createContext, useContext, useSyncExternalStore } from 'react';
+import { useSyncExternalStore } from 'react';
 import ClassicDetailPane from './classic';
 import { InboxList } from './list';
 import SlackThreadView, { SlackCommentView } from './slack';
@@ -104,16 +104,10 @@ export const LIST_VARIANTS: ListVariant[] = [
 	{ key: 'classic', label: __( 'Classic' ), List: ClassicInboxList },
 ];
 
+export { InboxVariantProvider, useInboxVariant } from './variant-context';
+
 const STORAGE_KEY = 'dashboard-notifications-inbox-variant';
 const LIST_STORAGE_KEY = 'dashboard-notifications-inbox-list-variant';
-
-const InboxVariantContext = createContext< InboxVariant >( INBOX_VARIANTS[ 0 ] );
-
-export const InboxVariantProvider = InboxVariantContext.Provider;
-
-export function useInboxVariant(): InboxVariant {
-	return useContext( InboxVariantContext );
-}
 
 /* The choice is read from more than one place (the sidebar picks, the screen
    consumes), so it lives in a tiny shared store rather than component state. */

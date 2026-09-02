@@ -9,7 +9,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { fetchParentComment, getParentCommentRef } from './engine';
 import NoteActions from './note-actions';
 import { BlockText, Timestamp, TitleText } from './rich-text';
-import { useInboxVariant } from './variants';
+import { useInboxVariant } from './variant-context';
 import type { Note } from './engine';
 import type { ContextRun, NoteBlock, NoteUserRef, NoteView } from './note-model';
 import type { ComponentType } from 'react';
