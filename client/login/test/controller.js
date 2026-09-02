@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
+import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
-import { redirectJetpack, login } from '../controller';
+import { redirectJetpack, login, magicLogin } from '../controller';
 
 jest.mock( 'calypso/state/oauth2-clients/actions', () => ( {
 	...jest.requireActual( 'calypso/state/oauth2-clients/actions' ),
@@ -123,5 +124,69 @@ describe( 'login', () => {
 
 		expect( getOAuth2Client ).toHaveBeenCalledWith( state, '1234' );
 		expect( next ).toHaveBeenCalled();
+	} );
+} );
+
+describe( 'magicLogin', () => {
+	let context;
+	let next;
+	let nextArguments;
+	let fetchedClientIds;
+	let dispatchedActions;
+
+	beforeEach( () => {
+		nextArguments = [];
+		fetchedClientIds = [];
+		dispatchedActions = [];
+		context = {
+			path: '/log-in/link',
+			query: {},
+			store: {
+				getState: jest.fn().mockReturnValue( { currentUser: { id: null } } ),
+				dispatch: ( action ) => {
+					dispatchedActions.push( action );
+					return action;
+				},
+			},
+		};
+		next = ( ...args ) => nextArguments.push( args );
+		fetchOAuth2ClientData.mockImplementation( ( clientId ) => {
+			fetchedClientIds.push( clientId );
+			return { type: 'FETCH_CLIENT', clientId };
+		} );
+	} );
+
+	it( 'fetches OAuth client metadata before rendering a client magic-login flow', async () => {
+		context.query = {
+			client_id: '137504',
+			redirect_to: 'https://public-api.wordpress.com/oauth2/authorize?client_id=137504',
+		};
+
+		await magicLogin( context, next );
+
+		expect( fetchedClientIds ).toEqual( [ '137504' ] );
+		expect( dispatchedActions ).toEqual( [ { type: 'FETCH_CLIENT', clientId: '137504' } ] );
+		expect( nextArguments ).toEqual( [ [] ] );
+	} );
+
+	it( 'rejects a client ID that does not match the OAuth redirect', async () => {
+		context.query = {
+			client_id: '137504',
+			redirect_to: 'https://public-api.wordpress.com/oauth2/authorize?client_id=1854',
+		};
+
+		await magicLogin( context, next );
+
+		expect( fetchedClientIds ).toEqual( [] );
+		expect( nextArguments[ 0 ][ 0 ].status ).toBe( 401 );
+	} );
+
+	it( 'does not derive a branded flow from query flags without a client ID', async () => {
+		context.query = { spacefast_flow: '1' };
+
+		await magicLogin( context, next );
+
+		expect( fetchedClientIds ).toEqual( [] );
+		expect( nextArguments ).toEqual( [ [] ] );
 	} );
 } );

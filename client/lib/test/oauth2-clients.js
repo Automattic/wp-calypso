@@ -4,6 +4,7 @@ import {
 	isSharedMobileAppOAuth2Client,
 	getOAuth2RedirectUri,
 	isJetpackAppRedirectUri,
+	isSpacefastOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 
 describe( 'oauth2-clients mobile app helpers', () => {
@@ -48,6 +49,16 @@ describe( 'oauth2-clients mobile app helpers', () => {
 			expect( isSharedMobileAppOAuth2Client( { id: 1854 } ) ).toBe( false );
 			expect( isSharedMobileAppOAuth2Client( { id: 68663 } ) ).toBe( false );
 			expect( isSharedMobileAppOAuth2Client( null ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'isSpacefastOAuth2Client', () => {
+		test( 'matches the production client ID or verified source metadata', () => {
+			expect( isSpacefastOAuth2Client( { id: 137504, source: 'spacefast' } ) ).toBe( true );
+			expect( isSpacefastOAuth2Client( { id: 137504 } ) ).toBe( true );
+			expect( isSpacefastOAuth2Client( { id: 200000, source: 'spacefast' } ) ).toBe( true );
+			expect( isSpacefastOAuth2Client( { id: 1854, source: 'gravatar' } ) ).toBe( false );
+			expect( isSpacefastOAuth2Client( null ) ).toBe( false );
 		} );
 	} );
 
