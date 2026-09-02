@@ -1,6 +1,7 @@
 import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createContext, useContext, useState } from 'react';
+import ClassicDetail from './classic';
 import { InboxList } from './list';
 import type { InboxCategory } from './list';
 import type { NoteView } from './note-model';
@@ -80,8 +81,8 @@ function ClassicInboxList( props: InboxListSlotProps ) {
 }
 
 export const INBOX_VARIANTS: InboxVariant[] = [
+	{ key: 'classic', label: __( 'Classic' ), List: ClassicInboxList, Detail: ClassicDetail },
 	{ key: 'default', label: __( 'P2-Inspired' ) },
-	{ key: 'classic', label: __( 'Classic' ), List: ClassicInboxList },
 ];
 
 const STORAGE_KEY = 'dashboard-notifications-inbox-variant';
@@ -97,9 +98,9 @@ export function useInboxVariant(): InboxVariant {
 export function useInboxVariantState(): [ InboxVariant, ( key: string ) => void ] {
 	const [ key, setKey ] = useState( () => {
 		try {
-			return window.localStorage.getItem( STORAGE_KEY ) ?? 'default';
+			return window.localStorage.getItem( STORAGE_KEY ) ?? INBOX_VARIANTS[ 0 ].key;
 		} catch {
-			return 'default';
+			return INBOX_VARIANTS[ 0 ].key;
 		}
 	} );
 	const variant = INBOX_VARIANTS.find( ( entry ) => entry.key === key ) ?? INBOX_VARIANTS[ 0 ];

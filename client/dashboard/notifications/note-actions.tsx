@@ -23,7 +23,7 @@ import { useNoteActions } from './use-note-actions';
 import type { Note } from './engine';
 import type { NoteActionItem, NoteActionsState } from './use-note-actions';
 
-function getActionIcon( item: NoteActionItem ) {
+export function getActionIcon( item: NoteActionItem ) {
 	switch ( item.key ) {
 		case 'approve':
 			return check;
@@ -40,7 +40,7 @@ function getActionIcon( item: NoteActionItem ) {
 	}
 }
 
-function UndoBar( { state }: { state: NoteActionsState } ) {
+export function UndoBar( { state }: { state: NoteActionsState } ) {
 	if ( ! state.pendingUndoable ) {
 		return null;
 	}

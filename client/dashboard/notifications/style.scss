@@ -545,3 +545,33 @@
 		width: 100%;
 	}
 }
+
+/* The Classic detail's footer bar, running edge to edge like the header. */
+.dashboard-notifications-inbox__classic-footer {
+	margin-inline: -24px;
+	padding: 16px 24px 0;
+	border-top: 1px solid var(--dashboard-header__border-color, #ddd);
+	margin-block-start: auto;
+
+	&:empty {
+		display: none;
+	}
+}
+
+.dashboard-notifications-inbox__classic-actions .components-button.is-pressed {
+	background: var(--wp-admin-theme-color, #3858e9);
+	border-color: var(--wp-admin-theme-color, #3858e9);
+	color: #fff;
+
+	&:hover:not(:disabled) {
+		background: var(--wp-admin-theme-color-darker-10, var(--wp-admin-theme-color, #3858e9));
+		color: #fff;
+	}
+}
+
+@media (max-width: 781px) {
+	.dashboard-notifications-inbox__classic-footer {
+		margin-inline: -16px;
+		padding-inline: 16px;
+	}
+}

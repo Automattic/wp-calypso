@@ -25,7 +25,7 @@ function useParentCommentDetails( note: Note | null ) {
 	} ).data;
 }
 
-function Avatar( { user, size = 32 }: { user: NoteUserRef | null; size?: number } ) {
+export function Avatar( { user, size = 32 }: { user: NoteUserRef | null; size?: number } ) {
 	return (
 		<span className="dashboard-notifications-inbox__user-row-avatar">
 			{ user?.avatarUrl ? (
@@ -37,7 +37,7 @@ function Avatar( { user, size = 32 }: { user: NoteUserRef | null; size?: number 
 	);
 }
 
-function UserName( { user }: { user: NoteUserRef } ) {
+export function UserName( { user }: { user: NoteUserRef } ) {
 	const name = <Text weight={ 600 }>{ user.name }</Text>;
 	return user.url ? (
 		<a
@@ -85,7 +85,7 @@ function UserRow( { user }: { user: NoteUserRef } ) {
 	);
 }
 
-function ContextBlocks( { runs }: { runs: ContextRun[] } ) {
+export function ContextBlocks( { runs }: { runs: ContextRun[] } ) {
 	return (
 		<>
 			{ runs.map( ( run, index ) =>
@@ -105,7 +105,7 @@ function ContextBlocks( { runs }: { runs: ContextRun[] } ) {
 	);
 }
 
-function Postscript( { blocks }: { blocks: NoteBlock[] } ) {
+export function Postscript( { blocks }: { blocks: NoteBlock[] } ) {
 	return (
 		<>
 			{ blocks.map( ( block, index ) => (
@@ -183,7 +183,13 @@ function Header( {
 	);
 }
 
-function Body( { children, isCentered }: { children: React.ReactNode; isCentered?: boolean } ) {
+export function Body( {
+	children,
+	isCentered,
+}: {
+	children: React.ReactNode;
+	isCentered?: boolean;
+} ) {
 	return (
 		<VStack
 			spacing={ 3 }
