@@ -2,11 +2,15 @@
  * @jest-environment jsdom
  */
 import { render, screen, act } from '@testing-library/react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import TransferWaitCard from '../card';
 
+jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
+
 describe( 'TransferWaitCard', () => {
 	beforeEach( () => {
+		jest.clearAllMocks();
 		jest.useFakeTimers();
 		jest.setSystemTime( new Date( '2026-08-17T10:00:00Z' ) );
 	} );
@@ -67,5 +71,80 @@ describe( 'TransferWaitCard', () => {
 		render( <TransferWaitCard transferStatus={ transferStates.ACTIVE } fallbackStep={ 1 } /> );
 		act( () => jest.advanceTimersByTime( 45_000 ) );
 		expect( screen.getByText( /taking longer than usual/ ) ).toBeVisible();
+	} );
+
+	it( 'still reassures while a finishing stage is merely slow', () => {
+		render(
+			<TransferWaitCard
+				transferStatus={ transferStates.COMPLETE }
+				fallbackStep={ 1 }
+				siteSlug="example.wordpress.com"
+			/>
+		);
+		act( () => jest.advanceTimersByTime( 45_000 ) );
+		expect( screen.getByText( /nothing is wrong/ ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: 'Go to your plugins' } ) ).not.toBeInTheDocument();
+	} );
+
+	// Past this point the promise is one we cannot keep: the plugin may never activate.
+	it( 'stops promising nothing is wrong once the finishing stage stalls', () => {
+		render(
+			<TransferWaitCard
+				transferStatus={ transferStates.COMPLETE }
+				fallbackStep={ 1 }
+				siteSlug="example.wordpress.com"
+			/>
+		);
+		act( () => jest.advanceTimersByTime( 95_000 ) );
+		expect( screen.getByText( /taking longer than it should/ ) ).toBeVisible();
+		expect( screen.queryByText( /nothing is wrong/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'offers a way out to the site plugins once stalled', () => {
+		render(
+			<TransferWaitCard
+				transferStatus={ transferStates.COMPLETE }
+				fallbackStep={ 1 }
+				siteSlug="example.wordpress.com"
+			/>
+		);
+		act( () => jest.advanceTimersByTime( 95_000 ) );
+		expect( screen.getByRole( 'link', { name: 'Go to your plugins' } ) ).toHaveAttribute(
+			'href',
+			'/plugins/example.wordpress.com'
+		);
+	} );
+
+	it( 'offers no way out while the transfer itself is unfinished', () => {
+		render(
+			<TransferWaitCard
+				transferStatus={ transferStates.ACTIVE }
+				fallbackStep={ 1 }
+				siteSlug="example.wordpress.com"
+			/>
+		);
+		act( () => jest.advanceTimersByTime( 300_000 ) );
+		expect( screen.queryByRole( 'link', { name: 'Go to your plugins' } ) ).not.toBeInTheDocument();
+		expect( screen.getByText( /nothing is wrong/ ) ).toBeVisible();
+	} );
+
+	it( 'records the stall once, not on every tick', () => {
+		render(
+			<TransferWaitCard
+				transferStatus={ transferStates.COMPLETE }
+				fallbackStep={ 1 }
+				siteSlug="example.wordpress.com"
+				productSlug="sensei-pro"
+			/>
+		);
+		act( () => jest.advanceTimersByTime( 45_000 ) );
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
+
+		act( () => jest.advanceTimersByTime( 50_000 ) );
+		act( () => jest.advanceTimersByTime( 30_000 ) );
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_marketplace_install_wait_stalled', {
+			product_slug: 'sensei-pro',
+		} );
 	} );
 } );

@@ -10,6 +10,7 @@ import { useScheduleCall } from '../tiers/use-schedule-call';
 import { PROGRAM_INCENTIVES_URL } from './constants';
 import AgencyOverviewContent from './overview-content';
 import AgencyOverviewHeader from './overview-header';
+import usePressableOfferEligibility from './use-pressable-offer-eligibility';
 
 // TODO: the MSD dashboard has no contact-support entry point yet. This matches the
 // '#contact-support' placeholder in agency/tiers/constants.ts — wire both up together.
@@ -30,6 +31,8 @@ export default function AgencyOverview() {
 			( { status } ) => status === 'approved'
 		);
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall( agency?.id );
+	const { isEligibleForPressableIntroOffer, isEligibleForPressableExpansionOffer } =
+		usePressableOfferEligibility( agency );
 
 	if ( ! agency ) {
 		return <PageLayout header={ <PageHeader title={ __( 'Overview' ) } /> } />;
@@ -58,6 +61,8 @@ export default function AgencyOverview() {
 				approvalStatus={ approvalStatus }
 				capabilities={ agency.user?.capabilities }
 				hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
+				isEligibleForPressableIntroOffer={ isEligibleForPressableIntroOffer }
+				isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 				links={ {
 					tiers: '/agency/tiers',
 					sites: '/sites',

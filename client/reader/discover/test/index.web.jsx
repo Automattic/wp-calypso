@@ -61,7 +61,9 @@ jest.mock( 'calypso/state/current-user/selectors', () => ( {
 jest.mock( 'calypso/state/selectors/get-current-query-arguments', () => jest.fn() );
 jest.mock( 'calypso/state/selectors/get-current-route', () => jest.fn() );
 
-jest.mock( '../../lib/header-section', () => jest.fn() );
+jest.mock( '../components/logged-out-hero', () => ( {
+	setDiscoverLoggedOutHero: jest.fn(),
+} ) );
 
 jest.mock( '../discover-document-head', () => ( {
 	DiscoverDocumentHead: () => null,

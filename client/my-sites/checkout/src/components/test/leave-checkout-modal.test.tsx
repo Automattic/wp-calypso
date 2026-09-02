@@ -445,11 +445,15 @@ describe( 'useCheckoutLeaveModal gift checkout', () => {
 		( leaveCheckout as jest.Mock ).mockReset();
 		( useCartKey as jest.Mock ).mockReturnValue( GIFT_CART_KEY );
 		( useValidCheckoutBackUrl as jest.Mock ).mockReturnValue( undefined );
+		// The hook reads the gift checkout route off the path, the way
+		// `getProductSlugFromContext` does.
+		window.history.replaceState( {}, '', '/checkout/personal-bundle/gift/123' );
 	} );
 
 	afterEach( () => {
 		// Remove the own property so the jsdom prototype getter is visible again.
 		delete ( document as { referrer?: string } ).referrer;
+		window.history.replaceState( {}, '', '/' );
 	} );
 
 	async function renderGiftHook( seed: Partial< ResponseCart > ) {
@@ -632,5 +636,203 @@ describe( 'useCheckoutLeaveModal gift checkout', () => {
 				expect.objectContaining( { forceCheckoutBackUrl: 'https://giftedsite.wordpress.com/' } )
 			);
 		} );
+	} );
+
+	describe( 'when the gifted plan has not reached the server yet', () => {
+		/**
+		 * Reproduce the logged-out gift checkout: a 'no-user' cart never fetches,
+		 * so its initial cart resolves locally and empty, and the gifted plan only
+		 * exists on the cart once checkout has sent it to the server. `releaseCart`
+		 * completes that round-trip.
+		 */
+		async function renderGiftHookWithPendingProducts() {
+			let releaseCart: () => void = () => {};
+			let isCartSyncing = false;
+			const cartSync = new Promise< void >( ( resolve ) => {
+				releaseCart = resolve;
+			} );
+			const client = createShoppingCartManagerClient( {
+				getCart: async () => ( {
+					...getEmptyResponseCart(),
+					cart_key: GIFT_CART_KEY,
+					products: [],
+				} ),
+				setCart: async ( cartKey ) => {
+					isCartSyncing = true;
+					await cartSync;
+					return {
+						...getEmptyResponseCart(),
+						cart_key: cartKey,
+						products: [ planProduct ],
+						gift_details: giftDetails,
+						is_gift_purchase: true,
+					};
+				},
+			} );
+			const rendered = renderHook( () => useCheckoutLeaveModal( { siteUrl: '' } ), {
+				wrapper: buildWrapper( client ),
+			} );
+			await waitFor( () =>
+				expect( client.forCartKey( GIFT_CART_KEY ).getState().isLoading ).toBe( false )
+			);
+
+			// Checkout adds the products named by the URL; the hook lives in the
+			// masterbar, which shares the cart but never adds to it itself.
+			await act( async () => {
+				client
+					.forCartKey( GIFT_CART_KEY )
+					.actions.addProductsToCart( [
+						{ product_slug: planProduct.product_slug, product_id: planProduct.product_id },
+					] )
+					.catch( () => {} );
+			} );
+
+			await waitFor( () => expect( isCartSyncing ).toBe( true ) );
+
+			return {
+				...rendered,
+				releaseCart: async () => {
+					await act( async () => {
+						releaseCart();
+						await cartSync;
+					} );
+				},
+			};
+		}
+
+		it( 'keeps "Back" disabled until the cart comes back with the gift', async () => {
+			setReferrer( '' );
+			const { result, releaseCart } = await renderGiftHookWithPendingProducts();
+
+			expect( result.current.isLeaveDisabled ).toBe( true );
+
+			await releaseCart();
+			await waitFor( () => expect( result.current.isLeaveDisabled ).toBe( false ) );
+
+			await act( async () => {
+				result.current.closeAndLeave();
+			} );
+
+			expect( leaveCheckout ).toHaveBeenCalledWith(
+				expect.objectContaining( { forceCheckoutBackUrl: 'https://giftedsite.wordpress.com/' } )
+			);
+		} );
+	} );
+
+	it( 'keeps "Back" disabled when a settled cart holds a leftover item but no gift yet', async () => {
+		// A logged-in gifter's 'no-site' cart can still hold an item from an
+		// earlier signup. It settles non-empty and looks answerable, but the
+		// gifted site's URL has not arrived, so "Back" must keep waiting.
+		setReferrer( '' );
+		const { result } = await renderGiftHook( { products: [ domainProduct ] } );
+
+		expect( result.current.isLeaveDisabled ).toBe( true );
+	} );
+
+	it( 'enables "Back" when the cart fails to load so checkout is never a dead end', async () => {
+		setReferrer( '' );
+		const client = createShoppingCartManagerClient( {
+			getCart: async () => {
+				throw new Error( 'network down' );
+			},
+			setCart: async () => {
+				throw new Error( 'network down' );
+			},
+		} );
+		const { result } = renderHook( () => useCheckoutLeaveModal( { siteUrl: '' } ), {
+			wrapper: buildWrapper( client ),
+		} );
+
+		expect( result.current.isLeaveDisabled ).toBe( true );
+
+		await waitFor( () => expect( result.current.isLeaveDisabled ).toBe( false ) );
+	} );
+} );
+
+describe( 'useCheckoutLeaveModal isLeaveDisabled outside a gift checkout', () => {
+	const CART_KEY: CartKey = 'no-site';
+
+	beforeEach( () => {
+		( useCartKey as jest.Mock ).mockReset();
+		( useValidCheckoutBackUrl as jest.Mock ).mockReset();
+		( useCartKey as jest.Mock ).mockReturnValue( CART_KEY );
+		( useValidCheckoutBackUrl as jest.Mock ).mockReturnValue( undefined );
+		window.history.replaceState( {}, '', '/checkout/mysite.wordpress.com' );
+	} );
+
+	afterEach( () => {
+		window.history.replaceState( {}, '', '/' );
+	} );
+
+	/**
+	 * Render the hook against a cart seeded with `initialProducts` whose next
+	 * update is held open, so the window while an update is in flight can be
+	 * observed. `releaseUpdate` completes that round-trip.
+	 */
+	async function renderHookWithPendingUpdate( initialProducts: ResponseCartProduct[] ) {
+		let releaseUpdate: () => void = () => {};
+		const cartSync = new Promise< void >( ( resolve ) => {
+			releaseUpdate = resolve;
+		} );
+		const client = createShoppingCartManagerClient( {
+			getCart: async () => ( {
+				...getEmptyResponseCart(),
+				cart_key: CART_KEY,
+				products: initialProducts,
+			} ),
+			setCart: async ( cartKey, newCart: RequestCart ) => {
+				await cartSync;
+				return {
+					...getEmptyResponseCart(),
+					cart_key: cartKey,
+					products: newCart.products as ResponseCartProduct[],
+				};
+			},
+		} );
+		const rendered = renderHook( () => useCheckoutLeaveModal( { siteUrl: '' } ), {
+			wrapper: buildWrapper( client ),
+		} );
+		await waitFor( () =>
+			expect( client.forCartKey( CART_KEY ).getState().isLoading ).toBe( false )
+		);
+
+		await act( async () => {
+			client
+				.forCartKey( CART_KEY )
+				.actions.addProductsToCart( [
+					{ product_slug: planProduct.product_slug, product_id: planProduct.product_id },
+				] )
+				.catch( () => {} );
+		} );
+
+		return {
+			...rendered,
+			releaseUpdate: async () => {
+				await act( async () => {
+					releaseUpdate();
+					await cartSync;
+				} );
+			},
+		};
+	}
+
+	it( 'keeps "Back" disabled while an empty cart is still receiving the products from the URL', async () => {
+		const { result, releaseUpdate } = await renderHookWithPendingUpdate( [] );
+
+		expect( result.current.isLeaveDisabled ).toBe( true );
+
+		await releaseUpdate();
+		await waitFor( () => expect( result.current.isLeaveDisabled ).toBe( false ) );
+	} );
+
+	it( 'keeps "Back" enabled while a cart that already holds products is updating', async () => {
+		// Applying a coupon or recalculating tax leaves the cart pending, but it
+		// still answers the only question "Back" asks here: it holds something,
+		// so the save-cart prompt is correct either way.
+		const { result, releaseUpdate } = await renderHookWithPendingUpdate( [ planProduct ] );
+
+		expect( result.current.isLeaveDisabled ).toBe( false );
+
+		await releaseUpdate();
 	} );
 } );

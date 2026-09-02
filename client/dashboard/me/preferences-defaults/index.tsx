@@ -6,12 +6,13 @@ import {
 	userSettingsQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, Button } from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, CheckboxControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useAppContext } from '../../app/context';
@@ -27,6 +28,7 @@ type LandingPage = 'primary-site-dashboard' | 'sites' | 'reader';
 
 interface DefaultLandingFormData {
 	defaultLandingPage: LandingPage;
+	showHomepage?: boolean;
 }
 
 interface PrimarySiteFormData {
@@ -35,27 +37,31 @@ interface PrimarySiteFormData {
 
 function LandingPageCard() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { recordTracksEvent } = useAnalytics();
 
-	const { data: defaultLandingPage } = useSuspenseQuery( {
+	const { data: initialFormData } = useSuspenseQuery( {
 		...rawUserPreferencesQuery(),
-		select: ( preferences ): LandingPage => {
+		select: ( preferences ): DefaultLandingFormData => {
+			let defaultLandingPage: LandingPage = 'primary-site-dashboard';
 			if ( preferences[ 'sites-landing-page' ]?.useSitesAsLandingPage ) {
-				return 'sites';
+				defaultLandingPage = 'sites';
+			} else if ( preferences[ 'reader-landing-page' ]?.useReaderAsLandingPage ) {
+				defaultLandingPage = 'reader';
 			}
-			if ( preferences[ 'reader-landing-page' ]?.useReaderAsLandingPage ) {
-				return 'reader';
-			}
-			return 'primary-site-dashboard';
+			return {
+				defaultLandingPage,
+				showHomepage: preferences[ 'logged-in-homepage' ]?.show,
+			};
 		},
 	} );
 
 	const { mutateAsync: saveUserPreferences, isPending } = useMutation( userPreferencesMutation() );
 
-	const [ formData, setFormData ] = useState< DefaultLandingFormData >( {
-		defaultLandingPage,
-	} );
+	const [ formData, setFormData ] = useState< DefaultLandingFormData >( initialFormData );
 
-	const isDirty = defaultLandingPage !== formData.defaultLandingPage;
+	const isDirty =
+		initialFormData.defaultLandingPage !== formData.defaultLandingPage ||
+		initialFormData.showHomepage !== formData.showHomepage;
 
 	const fields: Field< DefaultLandingFormData >[] = [
 		{
@@ -87,8 +93,21 @@ function LandingPageCard() {
 				useReaderAsLandingPage: formData.defaultLandingPage === 'reader',
 				updatedAt,
 			},
+			...( initialFormData.showHomepage !== undefined &&
+				initialFormData.showHomepage !== formData.showHomepage && {
+					'logged-in-homepage': {
+						show: !! formData.showHomepage,
+						updatedAt,
+					},
+				} ),
 		} )
 			.then( () => {
+				if ( initialFormData.showHomepage !== formData.showHomepage ) {
+					recordTracksEvent( 'calypso_dashboard_preferences_defaults_homepage_toggle', {
+						show: !! formData.showHomepage,
+						source: 'account_defaults',
+					} );
+				}
 				createSuccessNotice( __( 'Default landing page saved.' ), {
 					type: 'snackbar',
 				} );
@@ -104,21 +123,33 @@ function LandingPageCard() {
 		<Card>
 			<CardBody>
 				<form onSubmit={ handleSubmit } aria-label={ __( 'Landing page' ) }>
-					<VStack spacing={ 4 }>
-						<SectionHeader
-							level={ 3 }
-							title={ __( 'Landing page' ) }
-							description={ __( 'Choose your destination after you log in.' ) }
-						/>
-						<NavigationBlocker shouldBlock={ isDirty } />
-						<DataForm< DefaultLandingFormData >
-							data={ formData }
-							fields={ fields }
-							form={ form }
-							onChange={ ( edits: Partial< DefaultLandingFormData > ) => {
-								setFormData( ( data ) => ( { ...data, ...edits } ) );
-							} }
-						/>
+					<VStack spacing={ 6 }>
+						<VStack spacing={ 4 }>
+							<SectionHeader
+								level={ 3 }
+								title={ __( 'Landing page' ) }
+								description={ __( 'Choose your destination after you log in.' ) }
+							/>
+							<NavigationBlocker shouldBlock={ isDirty } />
+							<DataForm< DefaultLandingFormData >
+								data={ formData }
+								fields={ fields }
+								form={ form }
+								onChange={ ( edits: Partial< DefaultLandingFormData > ) => {
+									setFormData( ( data ) => ( { ...data, ...edits } ) );
+								} }
+							/>
+						</VStack>
+						{ initialFormData.showHomepage !== undefined && (
+							<CheckboxControl
+								__nextHasNoMarginBottom
+								label={ __( 'Show the WordPress.com homepage when signed in' ) }
+								checked={ !! formData.showHomepage }
+								onChange={ ( showHomepage ) => {
+									setFormData( ( data ) => ( { ...data, showHomepage } ) );
+								} }
+							/>
+						) }
 						<ButtonStack>
 							<Button
 								__next40pxDefaultSize

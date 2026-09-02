@@ -23,6 +23,33 @@ describe( 'useInstallProgress', () => {
 		advance( 3_000 );
 		expect( result.current.elapsed ).toBeCloseTo( 15, 0 );
 	} );
+
+	it( 'does not call a finishing stage stalled while it is merely slow', () => {
+		const { result } = renderHook( () =>
+			useInstallProgress( { transferStatus: transferStates.COMPLETE, fallbackStep: 1 } )
+		);
+		advance( 89_000 );
+		expect( result.current.isOverrun ).toBe( true );
+		expect( result.current.isStalled ).toBe( false );
+	} );
+
+	it( 'calls a finishing stage stalled once it runs past 90s', () => {
+		const { result } = renderHook( () =>
+			useInstallProgress( { transferStatus: transferStates.COMPLETE, fallbackStep: 1 } )
+		);
+		advance( 91_000 );
+		expect( result.current.isStalled ).toBe( true );
+	} );
+
+	// Earlier stages have nowhere to send anyone: the transfer itself is still unfinished.
+	it( 'never calls an earlier stage stalled, however long it runs', () => {
+		const { result } = renderHook( () =>
+			useInstallProgress( { transferStatus: transferStates.ACTIVE, fallbackStep: 1 } )
+		);
+		advance( 300_000 );
+		expect( result.current.isStalled ).toBe( false );
+	} );
+
 	it( 'never claims more than 92% of a stage until the server confirms it', () => {
 		const { result } = renderHook( () =>
 			useInstallProgress( { transferStatus: transferStates.ACTIVE, fallbackStep: 1 } )

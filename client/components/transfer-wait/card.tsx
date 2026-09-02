@@ -1,10 +1,18 @@
 import './style.scss';
 
 import { Step } from '@automattic/onboarding';
-import { ProgressBar } from '@wordpress/components';
+import { Button, ProgressBar } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect, useRef } from 'react';
 import ExpectationChecklist from 'calypso/components/expectation-checklist';
-import { useOverrunCopy, useStageSentences, useStageTitles } from './copy';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import {
+	useOverrunCopy,
+	useStageSentences,
+	useStageTitles,
+	useStalledActionLabel,
+	useStalledCopy,
+} from './copy';
 import { INSTALL_STAGES } from './get-install-stage';
 import { useInstallProgress } from './use-install-progress';
 
@@ -18,14 +26,18 @@ export default function TransferWaitCard( {
 	fallbackStep = 0,
 	startedAt,
 	isPluginInstall = true,
+	siteSlug,
+	productSlug,
 }: {
 	transferStatus: string | null;
 	fallbackStep?: number;
 	startedAt?: number | null;
 	isPluginInstall?: boolean;
+	siteSlug?: string | null;
+	productSlug?: string;
 } ) {
 	const translate = useTranslate();
-	const { stage, isOverrun, overallProgress } = useInstallProgress( {
+	const { stage, stageElapsed, isOverrun, isStalled, overallProgress } = useInstallProgress( {
 		transferStatus,
 		fallbackStep,
 		startedAt,
@@ -34,12 +46,28 @@ export default function TransferWaitCard( {
 	const stageTitles = useStageTitles();
 	const sentences = useStageSentences( isPluginInstall );
 	const overrunCopy = useOverrunCopy();
+	const stalledCopy = useStalledCopy();
+	const stalledActionLabel = useStalledActionLabel();
 	const heading = isPluginInstall
 		? translate( 'Setting up your plugin' )
 		: translate( 'Setting up your site' );
 	const finalChecklistText = isPluginInstall
 		? translate( 'Your plugin is installed and activated automatically once the server is ready.' )
 		: translate( 'Your site is ready to use once the transfer is complete.' );
+
+	// The bar re-renders twice a second; keep the elapsed figure out of the effect's deps.
+	const stageElapsedRef = useRef( stageElapsed );
+	stageElapsedRef.current = stageElapsed;
+	const reportedStalledRef = useRef( false );
+	useEffect( () => {
+		if ( ! isStalled || reportedStalledRef.current ) {
+			return;
+		}
+		reportedStalledRef.current = true;
+		recordTracksEvent( 'calypso_marketplace_install_wait_stalled', { product_slug: productSlug } );
+	}, [ isStalled, productSlug ] );
+
+	const showEscape = isStalled && !! siteSlug;
 
 	return (
 		<div className="transfer-wait">
@@ -48,9 +76,9 @@ export default function TransferWaitCard( {
 				<p className="transfer-wait__stage" role="status">
 					{ sentences[ stageKey ] }
 				</p>
-				{ isOverrun && (
+				{ ( isStalled || isOverrun ) && (
 					<p className="transfer-wait__overrun" role="status">
-						{ overrunCopy }
+						{ isStalled ? stalledCopy : overrunCopy }
 					</p>
 				) }
 			</div>
@@ -60,6 +88,21 @@ export default function TransferWaitCard( {
 					value={ overallProgress }
 					aria-label={ String( stageTitles[ stageKey ] ) }
 				/>
+				{ showEscape && (
+					<Button
+						className="transfer-wait__escape"
+						variant="link"
+						href={ `/plugins/${ siteSlug }` }
+						onClick={ () =>
+							recordTracksEvent( 'calypso_marketplace_install_wait_stalled_click', {
+								product_slug: productSlug,
+								stage_seconds: Math.round( stageElapsedRef.current ),
+							} )
+						}
+					>
+						{ stalledActionLabel }
+					</Button>
+				) }
 			</div>
 			<ExpectationChecklist
 				title={ translate( "Here's what to expect" ) }

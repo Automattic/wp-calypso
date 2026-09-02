@@ -297,11 +297,11 @@ const PlansFeaturesMain = ( {
 	);
 	const isPlanExpired = !! sitePlansData?.find( ( p ) => p.currentPlan )?.expired;
 
-	// Refund-window instant downgrade: when the current plan has a refundable
-	// receipt — its initial purchase or, after a renewal, the renewal's — a
-	// downgrade is performed instantly via the cancel endpoint instead of routing
-	// the user to checkout. This applies regardless of whether any money would be
-	// refunded (e.g. plans paid with credits or free).
+	// Refund-window instant downgrade: when the server reports the plan can be
+	// downgraded instantly, the downgrade is performed via the cancel endpoint
+	// instead of routing the user to checkout. This applies regardless of whether
+	// any money would be refunded (e.g. comped plans, 100%-off coupons, or plans
+	// paid entirely with credits).
 	const reduxDispatch = useReduxDispatch();
 	const queryClient = useQueryClient();
 	const cancelAndRefundMutation = useMutation( cancelAndRefundPurchaseMutation() );
@@ -319,22 +319,16 @@ const PlansFeaturesMain = ( {
 		...purchaseQuery( currentPlanPurchaseId ?? 0 ),
 		enabled: !! currentPlanPurchaseId,
 	} );
-	const isWithinRefundWindow =
-		config.isEnabled( 'plans/expired-downgrade' ) &&
-		!! currentPurchase &&
-		currentPurchase.is_refundable &&
-		! currentPurchase.is_past_expiry_date;
-	// The delayed-downgrade flow (schedule a downgrade at renewal for an active
-	// plan) is gated separately from the launched expired/refund downgrade flow.
-	const isDelayedDowngradeEnabled = config.isEnabled( 'plans/delayed-downgrade' );
+	const isInstantDowngradeAvailable =
+		!! currentPurchase && currentPurchase.is_instant_downgrade_available;
 	// Three downgrade modes:
-	//   'instant'  — within refund window: cancel+refund via the cancel endpoint
+	//   'instant'  — server allows it now: cancel+refund via the cancel endpoint
 	//   'checkout' — expired plan: route to checkout to purchase the new plan
-	//   'delayed'  — active plan, not in refund window: schedule downgrade at renewal
+	//   'delayed'  — active plan, no instant downgrade: schedule downgrade at renewal
 	let downgradeMode: 'instant' | 'checkout' | 'delayed';
-	if ( isWithinRefundWindow ) {
+	if ( isInstantDowngradeAvailable ) {
 		downgradeMode = 'instant';
-	} else if ( isDelayedDowngradeEnabled && ! isPlanExpired ) {
+	} else if ( ! isPlanExpired ) {
 		downgradeMode = 'delayed';
 	} else {
 		downgradeMode = 'checkout';
@@ -743,7 +737,6 @@ const PlansFeaturesMain = ( {
 		// For expired plans, intercept paid-plan downgrades to show a confirmation modal.
 		// Free-plan downgrades are handled separately (they route to the cancel flow).
 		if (
-			config.isEnabled( 'plans/expired-downgrade' ) &&
 			isPlanExpired &&
 			! isFreePlan( planSlug ) &&
 			sitePlansData?.find( ( p ) => p.productSlug === planSlug )?.availableForDowngrade
@@ -752,11 +745,11 @@ const PlansFeaturesMain = ( {
 			return true;
 		}
 
-		// For plans still within their refund window, intercept paid-plan downgrades
-		// to show a confirmation modal that performs the downgrade instantly (paid out
-		// of the refund) instead of routing to checkout.
+		// For plans the server will downgrade instantly, intercept paid-plan
+		// downgrades to show a confirmation modal that performs the downgrade now
+		// (paid out of the refund, if any) instead of routing to checkout.
 		if (
-			isWithinRefundWindow &&
+			isInstantDowngradeAvailable &&
 			! isFreePlan( planSlug ) &&
 			sitePlansData?.find( ( p ) => p.productSlug === planSlug )?.availableForDowngrade
 		) {
@@ -764,12 +757,11 @@ const PlansFeaturesMain = ( {
 			return true;
 		}
 
-		// For active paid plans (not expired, not in refund window), intercept
-		// paid-plan downgrades to schedule the downgrade at end-of-term instead.
+		// For active paid plans (not expired, no instant downgrade available),
+		// intercept paid-plan downgrades to schedule the downgrade at end-of-term.
 		if (
-			isDelayedDowngradeEnabled &&
 			! isPlanExpired &&
-			! isWithinRefundWindow &&
+			! isInstantDowngradeAvailable &&
 			currentPurchase?.is_plan_type_downgradable &&
 			! isFreePlan( planSlug ) &&
 			sitePlansData?.find( ( p ) => p.productSlug === planSlug )?.availableForDowngrade

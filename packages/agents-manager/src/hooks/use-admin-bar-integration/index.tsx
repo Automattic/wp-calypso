@@ -1,4 +1,4 @@
-import { recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
+import { getValidBlogId, recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -46,7 +46,10 @@ export default function useAdminBarIntegration( {
 }: UseAdminBarIntegrationOptions ): boolean {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
-	const { resumeChat, sectionName, site } = useAgentsManagerContext();
+	const { currentUser, resumeChat, sectionName, site } = useAgentsManagerContext();
+	const currentSiteId = getValidBlogId( site?.ID );
+	const siteId = currentSiteId ?? getValidBlogId( currentUser?.primary_blog );
+	const siteContextSource = currentSiteId ? 'agents_manager_context' : 'primary_site';
 	const { isOpen, isMinimized } = useSelect(
 		( select ) => ( select( AGENTS_MANAGER_STORE ) as AgentsManagerSelect ).getAgentsManagerState(),
 		[]
@@ -87,8 +90,8 @@ export default function useAdminBarIntegration( {
 						is_menu_panel_enabled: false,
 						is_assignment_loaded: true,
 					},
-					'agents_manager_context',
-					site?.ID
+					siteContextSource,
+					siteId
 				)
 			);
 
@@ -100,8 +103,8 @@ export default function useAdminBarIntegration( {
 						location: 'help-center',
 						section: sectionName || 'wp-admin',
 					},
-					'agents_manager_context',
-					site?.ID
+					siteContextSource,
+					siteId
 				)
 			);
 
@@ -112,7 +115,7 @@ export default function useAdminBarIntegration( {
 		if ( button ) {
 			button.onclick = handleMenuPanelClick;
 		}
-	}, [ isOpen, sectionName, site?.ID ] );
+	}, [ isOpen, sectionName, siteContextSource, siteId ] );
 
 	// Close submenu when clicking outside
 	useEffect( () => {

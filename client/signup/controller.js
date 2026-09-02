@@ -306,6 +306,13 @@ export default {
 			context.store.dispatch( updateDependencies( additionalDependencies ) );
 		}
 
+		if ( 'launch-site' === flowName ) {
+			// The dependency store persists between visits, and `redirect_to` is optional, so an
+			// abandoned launch would otherwise decide where the next one leaves the user. Re-read it
+			// from the query the flow was entered with.
+			context.store.dispatch( updateDependencies( { redirect_to: query?.redirect_to ?? null } ) );
+		}
+
 		context.primary = createElement( SignupComponent, {
 			store: context.store,
 			path: context.path,

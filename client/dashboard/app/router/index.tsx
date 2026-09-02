@@ -1,9 +1,10 @@
 import calypsoConfig from '@automattic/calypso-config';
+import { addBreadcrumb, setTag } from '@automattic/calypso-sentry';
 import { createRouter, createRoute } from '@tanstack/react-router';
 import NotFound from '../404';
 import UnknownError from '../500';
 import { handleOnCatch, initLogger } from '../logger';
-import { startPerformanceTracking } from '../performance-tracking';
+import { normalizeRouteId, startPerformanceTracking } from '../performance-tracking';
 import { createAgencyRoutes } from './agency';
 import { createAgencyClientRoutes } from './agency-client';
 import { createDomainsRoutes } from './domains';
@@ -132,11 +133,37 @@ export const getRouter = ( config: AppConfig ) => {
 
 	initLogger( router );
 
+	// `onResolved` is emitted from a layout effect, i.e. after React commits. A
+	// commit-phase crash aborts before that, so the route is recorded here
+	// instead — otherwise the tag names the route the user came from, or is
+	// absent entirely on a cold load of the crashing URL.
+	let previousRouteId: string | undefined;
 	router.subscribe( 'onBeforeLoad', () => {
 		const routeId = router.state.pendingMatches?.at( -1 )?.routeId;
-		if ( routeId ) {
-			startPerformanceTracking( routeId );
+		if ( ! routeId ) {
+			return;
 		}
+
+		startPerformanceTracking( routeId );
+
+		// Route patterns rather than hrefs: Sentry's own navigation breadcrumbs are
+		// dropped in favour of these (see `beforeBreadcrumb` in calypso-sentry), and
+		// hrefs would carry site slugs and query strings — `/me/agent` alone accepts
+		// `pair_token`, `token` and `telegram_id`. The specific site is already on
+		// the event as the `site_slug` tag. Normalized so the value joins against
+		// the same route id in RUM and Tracks, which both strip the trailing slash
+		// TanStack leaves on index routes.
+		const normalizedRouteId = normalizeRouteId( routeId );
+		setTag( 'route_id', normalizedRouteId );
+		addBreadcrumb( {
+			category: 'navigation',
+			data: {
+				should_capture: true,
+				from: previousRouteId,
+				to: normalizedRouteId,
+			},
+		} );
+		previousRouteId = normalizedRouteId;
 	} );
 
 	return router;

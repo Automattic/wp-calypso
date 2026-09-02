@@ -45,6 +45,22 @@ export function useStageSentences( isPluginInstall = true ): Record< InstallStag
 	};
 }
 
+/**
+ * Once the wait is long enough that reassurance stops being honest: the transfer is done and the
+ * site is usable, so say that and point at the door rather than repeat that nothing is wrong.
+ */
+export function useStalledCopy() {
+	const translate = useTranslate();
+	return translate(
+		'This is taking longer than it should. Your site is ready — your plugin may still finish installing on its own.'
+	);
+}
+
+export function useStalledActionLabel() {
+	const translate = useTranslate();
+	return translate( 'Go to your plugins' );
+}
+
 export function useOverrunCopy() {
 	const translate = useTranslate();
 	return translate(
