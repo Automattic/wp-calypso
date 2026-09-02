@@ -56,7 +56,7 @@ function SingleEventCard( {
 							</Text>
 						) ) }
 					</VStack>
-					<ButtonStack justify="flex-start">
+					<ButtonStack justify="flex-start" wrap>
 						{ ctas.map( ( cta ) => (
 							<Button
 								key={ cta.id }
