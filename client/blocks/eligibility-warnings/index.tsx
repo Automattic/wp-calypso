@@ -165,6 +165,7 @@ export const EligibilityWarnings = ( {
 	if ( context === 'plugin-details' ) {
 		filteredHolds = listHolds.filter( ( hold ) => hold !== 'NO_BUSINESS_PLAN' );
 	}
+	const hasHoldsToDisplay = isPlaceholder || filteredHolds.length > 0;
 
 	return (
 		<div className={ classes }>
@@ -181,7 +182,7 @@ export const EligibilityWarnings = ( {
 				eventProperties={ { context, path } }
 			/>
 
-			{ ! isPlaceholder && hasValidBlockingHold && (
+			{ ! isPlaceholder && validBlockingHold && (
 				<CompactCard>
 					<HardBlockingNotice
 						blockingHold={ validBlockingHold }
@@ -191,18 +192,16 @@ export const EligibilityWarnings = ( {
 				</CompactCard>
 			) }
 
-			{ ( isPlaceholder || filteredHolds.length > 0 ) &&
-				! showFreeTrial &&
-				! hasValidBlockingHold && (
-					<CompactCard>
-						<HoldList
-							context={ context }
-							holds={ filteredHolds }
-							isPlaceholder={ isPlaceholder }
-							isMarketplace={ isMarketplace }
-						/>
-					</CompactCard>
-				) }
+			{ hasHoldsToDisplay && ! showFreeTrial && ! hasValidBlockingHold && (
+				<CompactCard>
+					<HoldList
+						context={ context }
+						holds={ filteredHolds }
+						isPlaceholder={ isPlaceholder }
+						isMarketplace={ isMarketplace }
+					/>
+				</CompactCard>
+			) }
 
 			{ showThisSiteIsEligibleMessage && (
 				<CompactCard>

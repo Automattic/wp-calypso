@@ -9,6 +9,7 @@ import Notice, { NoticeStatus } from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { useSelector } from 'calypso/state';
+import { eligibilityHolds, type EligibilityHold } from 'calypso/state/automated-transfer/constants';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 
@@ -148,16 +149,28 @@ function getHoldMessages( {
 	};
 }
 
-/**
- * This function defines how we should communicate each type of blocking hold the public-api returns.
- * Blocking holds are "hard stops" - if we detect any, we know the Atomic Transfer won't be possible and so we
- * should short-circuit any eligibility checks and just communicate the problem.
- * @param {Function} translate Translate fn
- * @returns {Object} Dictionary of blocking holds and their corresponding messages
- */
+const hardBlockingHolds = [
+	eligibilityHolds.BLOCKED_ATOMIC_TRANSFER,
+	eligibilityHolds.TRANSFER_ALREADY_EXISTS,
+	eligibilityHolds.NO_JETPACK_SITES,
+	eligibilityHolds.NO_VIP_SITES,
+	eligibilityHolds.SITE_GRAYLISTED,
+	eligibilityHolds.NO_SSL_CERTIFICATE,
+] as const;
+
+export type HardBlockingHold = Extract< EligibilityHold, ( typeof hardBlockingHolds )[ number ] >;
+
+type BlockingMessage = {
+	message: string;
+	status: NoticeStatus | null;
+	contactUrl: string | null;
+};
+
+type BlockingMessages = Record< HardBlockingHold, BlockingMessage >;
+
 export function getBlockingMessages(
 	translate: LocalizeProps[ 'translate' ] | ( ( str: string ) => string )
-): Record< string, { message: string; status: NoticeStatus | null; contactUrl: string | null } > {
+): BlockingMessages {
 	return {
 		BLOCKED_ATOMIC_TRANSFER: {
 			message: String(
@@ -222,13 +235,12 @@ type Props = ExternalProps & LocalizeProps;
 	Because TRANSFER_ALREADY_EXISTS is present and 'blocking' it would show an "Upload in progress" notice even when there isn't one.
 	In this scenario we treat the blocking hold as invalid so the caller renders the upgrade prompt instead.
 */
-export function getValidBlockingHold( holds: string[] ): string | undefined {
+export function getValidBlockingHold( holds: string[] ): HardBlockingHold | undefined {
 	if ( isAtomicSiteWithoutBusinessPlan( holds ) ) {
 		return undefined;
 	}
 
-	const blockingMessages = getBlockingMessages( ( str: string ) => str );
-	return holds.find( ( hold ) => isHardBlockingHoldType( hold, blockingMessages ) );
+	return holds.find( isHardBlockingHoldType );
 }
 
 export const HardBlockingNotice = ( {
@@ -236,14 +248,10 @@ export const HardBlockingNotice = ( {
 	translate,
 	blockingMessages,
 }: {
-	blockingHold: string | undefined;
+	blockingHold: HardBlockingHold;
 	translate: LocalizeProps[ 'translate' ];
-	blockingMessages: ReturnType< typeof getBlockingMessages >;
+	blockingMessages: BlockingMessages;
 } ) => {
-	if ( ! blockingHold || ! isHardBlockingHoldType( blockingHold, blockingMessages ) ) {
-		return null;
-	}
-
 	return (
 		<Notice
 			status={ blockingMessages[ blockingHold ].status ?? 'is-info' }
@@ -342,27 +350,10 @@ function isKnownHoldType(
 	return holdMessages.hasOwnProperty( hold );
 }
 
-/**
- * This checks if hold coming from API is blocking (@see getBlockingMessages);
- * For example, if we detect BLOCKED_ATOMIC_TRANSFER, we should block the path forward and direct the user
- * to our support.
- * @param {string} hold Specific hold we want to check
- * @param {Object} blockingMessages List of all holds we consider blocking
- * @returns {boolean} Is {hold} blocking or not
- */
-function isHardBlockingHoldType(
-	hold: string,
-	blockingMessages: ReturnType< typeof getBlockingMessages >
-): hold is keyof ReturnType< typeof getBlockingMessages > {
-	return blockingMessages.hasOwnProperty( hold );
+function isHardBlockingHoldType( hold: string ): hold is HardBlockingHold {
+	return hardBlockingHolds.some( ( blockingHold ) => blockingHold === hold );
 }
 
-export const hasBlockingHold = ( holds: string[] ) =>
-	holds.some( ( hold ) =>
-		isHardBlockingHoldType(
-			hold,
-			getBlockingMessages( ( str: string ) => str )
-		)
-	);
+export const hasBlockingHold = ( holds: string[] ) => holds.some( isHardBlockingHoldType );
 
 export default localize( HoldList );

@@ -95,4 +95,6 @@ export const eligibilityHolds = {
 	EMAIL_UNVERIFIED: 'EMAIL_UNVERIFIED',
 	EXCESSIVE_DISK_SPACE: 'EXCESSIVE_DISK_SPACE',
 	IS_STAGING_SITE: 'IS_STAGING_SITE',
-};
+} as const;
+
+export type EligibilityHold = ( typeof eligibilityHolds )[ keyof typeof eligibilityHolds ];

@@ -116,6 +116,10 @@ function BlockingHoldNotice( {
 	if ( ! holds || suppressInstallNotice ) {
 		return null;
 	}
+	const blockingHold = getValidBlockingHold( holds );
+	if ( ! blockingHold ) {
+		return null;
+	}
 
 	// Get messages and override for the Jetpack product name.
 	const blockingMessages = getBlockingMessages( translate );
@@ -129,7 +133,7 @@ function BlockingHoldNotice( {
 	return (
 		<HardBlockingNotice
 			translate={ translate }
-			blockingHold={ getValidBlockingHold( holds ) }
+			blockingHold={ blockingHold }
 			blockingMessages={ blockingMessages }
 		/>
 	);
