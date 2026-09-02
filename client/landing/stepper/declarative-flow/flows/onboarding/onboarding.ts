@@ -557,10 +557,11 @@ const onboarding: FlowV2< typeof initialize > = {
 							);
 							return;
 						case 'generate-theme': {
-							// Automattician-only: provision an Atomic (WP Cloud) site up front so
-							// the custom AI-generated theme can be installed, then hand off to the
-							// build-wow site-spec step. Gated in the UI to Automatticians; the
-							// build-wow endpoint enforces the permission server-side.
+							// Provision an Atomic (WP Cloud) site up front so the custom
+							// AI-generated theme can be installed, then hand off to the build-wow
+							// site-spec step. The step offers this only behind the site builder
+							// swap flag on an Atomic-capable plan; the build-wow endpoint still
+							// enforces its own (currently Automattician-only) permission.
 							const siteIdentifier = getBuildWowSiteIdentifier( {
 								siteSlug,
 								siteId,
