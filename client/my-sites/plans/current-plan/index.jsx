@@ -209,6 +209,7 @@ class CurrentPlan extends Component {
 	render() {
 		const {
 			domains,
+			currentPlan,
 			purchases,
 			hasDomainsLoaded,
 			path,
@@ -230,11 +231,13 @@ class CurrentPlan extends Component {
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
 
 		let showExpiryNotice = false;
-		let purchase = null;
+		const isJetpackLegacy = JETPACK_LEGACY_PLANS.includes( currentPlanSlug );
+		const purchase = getPurchaseByProductSlug( purchases, currentPlanSlug );
 
-		if ( JETPACK_LEGACY_PLANS.includes( currentPlanSlug ) ) {
-			purchase = getPurchaseByProductSlug( purchases, currentPlanSlug );
+		if ( isJetpackLegacy ) {
 			showExpiryNotice = purchase && isCloseToExpiration( purchase );
+		} else {
+			showExpiryNotice = !! currentPlan?.expired;
 		}
 
 		const planDescription = isJetpackNotAtomic
@@ -291,7 +294,13 @@ class CurrentPlan extends Component {
 							) }
 
 							{ showExpiryNotice && (
-								<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
+								<Notice
+									status={ isJetpackLegacy ? 'is-info' : 'is-error' }
+									text={
+										isJetpackLegacy ? <PlanRenewalMessage /> : translate( 'Your plan has expired.' )
+									}
+									showDismiss={ false }
+								>
 									<NoticeAction href={ `/plans/${ selectedSite.slug || '' }` }>
 										{ translate( 'View plans' ) }
 									</NoticeAction>

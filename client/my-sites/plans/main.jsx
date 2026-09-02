@@ -33,11 +33,13 @@ import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
-import { isPartnerPurchase } from 'calypso/lib/purchases';
+import { isExpired, isInExpirationGracePeriod, isPartnerPurchase } from 'calypso/lib/purchases';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
@@ -315,12 +317,23 @@ class PlansComponent extends Component {
 	}
 
 	render() {
-		const { isUntangled, selectedSite, translate } = this.props;
+		const { isUntangled, selectedSite, translate, expiredPlanPurchase } = this.props;
 		return (
 			<>
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				{ isUntangled && (
 					<FeatureBreadcrumb siteId={ selectedSite.ID } title={ translate( 'Plan' ) } />
+				) }
+				{ expiredPlanPurchase && selectedSite && (
+					<Notice
+						status="is-error"
+						text={ translate( 'Your plan has expired.' ) }
+						showDismiss={ false }
+					>
+						<NoticeAction href={ `/purchases/subscriptions/${ selectedSite.slug }` }>
+							{ translate( 'Renew now' ) }
+						</NoticeAction>
+					</Notice>
 				) }
 				{ this.renderContent() }
 			</>
@@ -435,10 +448,15 @@ class PlansComponent extends Component {
 const ConnectedPlans = connect(
 	( state, props ) => {
 		const { currentPlan, selectedSiteId } = props;
+		const purchase = currentPlan ? getByPurchaseId( state, currentPlan.purchaseId ) : null;
 
 		return {
 			currentPlan,
-			purchase: currentPlan ? getByPurchaseId( state, currentPlan.purchaseId ) : null,
+			purchase,
+			expiredPlanPurchase:
+				purchase && ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) )
+					? purchase
+					: null,
 			selectedSite: getSelectedSite( state ),
 			canAccessPlans: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 			isUntangled: isPlansPageUntangled( state ),
