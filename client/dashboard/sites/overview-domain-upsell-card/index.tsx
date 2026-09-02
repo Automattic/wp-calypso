@@ -102,9 +102,7 @@ const DomainUpsellCardContent = ( {
 		getDomainAndPlanUpsellUrl( {
 			siteSlug: site.slug,
 			backUrl,
-			// The literal template rather than getDomainConnectionSetupTemplateUrl():
-			// reading the route's fullPath drags the whole dashboard router into any
-			// test that renders this card. Same path as my-sites/domains/controller.jsx.
+			// Literal template to avoid pulling the dashboard router into tests.
 			domainConnectionSetupUrl: dashboardLink( '/domains/%s/domain-connection-setup' ),
 		} )
 	);

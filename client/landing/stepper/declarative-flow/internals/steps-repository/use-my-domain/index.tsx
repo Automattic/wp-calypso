@@ -134,9 +134,7 @@ const UseMyDomain: StepType< {
 					clearQueryParams();
 					submit( { ownershipVerificationCompleted: true, domain } );
 
-					// The mapping now exists. Without this the handler falls through and
-					// submits a second time with a domainCartItem, which makes the flow
-					// re-map an already-mapped domain.
+					// Early return: the default handler below would re-submit a domainCartItem.
 					return;
 				} catch ( error ) {
 					// Validation failed - call onDone to display error and stay on current step
