@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { NoticeIdType } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { COMMERCIAL_PAYWALL_KILLED } from 'calypso/state/stats/plan-usage/constants';
 import CommercialSiteUpgradeNotice from './commercial-site-upgrade-notice';
@@ -59,7 +60,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				! isVip &&
 				! isP2
 			),
-		disabled: false,
+		disabled: ! isEnabled( 'stats/premium-analytics-preview' ),
 	},
 	{
 		component: CommercialSiteUpgradeNotice,

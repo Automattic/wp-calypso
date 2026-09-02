@@ -113,6 +113,7 @@
 		"stats/archive-breakdown": true,
 		"stats/chart-library": true,
 		"stats/empty-module-traffic": true,
+		"stats/premium-analytics-preview": true,
 		"themes/premium": true,
 		"themes/showcase-modern": true,
 		"upgrades/redirect-payments": true,
