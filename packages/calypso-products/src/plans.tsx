@@ -25,10 +25,6 @@ export const getPlanBusinessTrialTitle = () =>
 	// translators: Business Trial is a plan name
 	i18n.translate( 'Business Trial' );
 
-export const getPlanBusinessTrialTagline = () =>
-	// translators: Business is a plan name
-	i18n.translate( 'Try all the features of our Business plan.' );
-
 export const getPlanCommerceTrialTitle = () =>
 	// translators: Commerce Trial is a plan name
 	i18n.translate( 'Commerce Trial' );

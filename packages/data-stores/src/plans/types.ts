@@ -188,6 +188,11 @@ export interface PlanNext {
 	/* END: Same SitePlan/PlanNext props */
 	productNameShort: string;
 	pathSlug?: string;
+	/**
+	 * The plan's marketing tagline, sourced from the `/plans` endpoint. May be
+	 * absent for plans the server doesn't provide a tagline for.
+	 */
+	tagline?: string | null;
 }
 
 export interface PricedAPIPlanIntroductoryOffer {
@@ -254,6 +259,7 @@ export interface PricedAPIPlan extends PricedAPIPlanPricing, PricedAPIPlanIntrod
 	product_slug: StorePlanSlug;
 	product_name_short: string;
 	product_type?: string;
+	tagline?: string | null;
 
 	/**
 	 * The product price as a float.

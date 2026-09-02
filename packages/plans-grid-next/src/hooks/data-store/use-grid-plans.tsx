@@ -31,6 +31,7 @@ import {
 import { Plans } from '@automattic/data-stores';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { isSamePlan } from '../../lib/is-same-plan';
+import getFallbackPlanTagline from './fallback-plan-taglines';
 import { UseGridPlansParams, UseGridPlansType } from './types';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
@@ -440,10 +441,10 @@ const useGridPlans: UseGridPlansType = ( {
 					'For serious stores. Priority support, advanced extensions, and premium store themes.'
 				);
 			} else {
-				tagline = planConstantObj.getPlanTagline?.() ?? '';
+				tagline = planObject?.tagline ?? getFallbackPlanTagline( planSlug, translate );
 			}
 		} else {
-			tagline = planConstantObj.getPlanTagline?.() ?? '';
+			tagline = planObject?.tagline ?? getFallbackPlanTagline( planSlug, translate );
 		}
 
 		if ( useFocusedNewCopyTaglines ) {
