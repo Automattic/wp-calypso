@@ -242,7 +242,14 @@ function ClassicBody( { view }: { view: NoteView } ) {
 			) }
 			{ view.kind === 'comment' && quote( view.body ) }
 			{ view.kind === 'like' && view.likedComment && quote( view.likedComment ) }
-			{ 'excerpt' in view && view.excerpt && <Text>{ view.excerpt }</Text> }
+			{ view.kind === 'like' && ! view.likedComment && view.snippet && (
+				<blockquote>
+					<Text as="p">{ view.snippet }</Text>
+				</blockquote>
+			) }
+			{ 'excerpt' in view && view.excerpt && ! ( view.kind === 'like' && view.snippet ) && (
+				<Text>{ view.excerpt }</Text>
+			) }
 			<ContextBlocks runs={ view.context } />
 			<Postscript blocks={ view.postscript } />
 		</Body>
