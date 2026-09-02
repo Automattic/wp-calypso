@@ -13,7 +13,10 @@ import {
 	A4A_WOOPAYMENTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useScheduleCall from 'calypso/a8c-for-agencies/hooks/use-schedule-call';
-import { PROGRAM_INCENTIVES_URL } from 'calypso/dashboard/agency/overview/constants';
+import {
+	PRESSABLE_Q3_2026_OFFER_ENDS_AT,
+	PROGRAM_INCENTIVES_URL,
+} from 'calypso/dashboard/agency/overview/constants';
 import AgencyOverviewContent from 'calypso/dashboard/agency/overview/overview-content';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -108,10 +111,13 @@ function ContentWithExpansionOfferCheck() {
 
 export default function DashboardOverviewBody() {
 	const { mayBeEligibleForExpansionOffer } = usePressableOfferEligibility();
+	// Once the offer ends the card can never render, so don't pay for the
+	// license fetch either.
+	const isOfferActive = new Date() < new Date( PRESSABLE_Q3_2026_OFFER_ENDS_AT );
 
 	// Gate before rendering so the license fetch behind the expansion offer
 	// check only runs for agencies that own a Pressable plan through A4A.
-	if ( mayBeEligibleForExpansionOffer ) {
+	if ( isOfferActive && mayBeEligibleForExpansionOffer ) {
 		return <ContentWithExpansionOfferCheck />;
 	}
 
