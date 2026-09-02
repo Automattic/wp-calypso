@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { Substitution, useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
 import useGetEmailToVerify from 'calypso/components/email-verification/hooks/use-get-email-to-verify';
 import {
@@ -13,18 +13,28 @@ import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send
 import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
-import { setUnsavedUserSetting } from 'calypso/state/user-settings/actions';
+import { fetchUserSettings, setUnsavedUserSetting } from 'calypso/state/user-settings/actions';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 
 import './style.scss';
 
-export default function EmailVerificationNotification( { isFullWidth }: { isFullWidth?: boolean } ) {
+export default function EmailVerificationNotification( {
+	isFullWidth,
+}: {
+	isFullWidth?: boolean;
+} ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const emailToVerify = useGetEmailToVerify();
 	const isEmailChangePending = useSelector( isPendingEmailChange );
 	const sendVerificationEmail = useSendEmailVerification();
 	const [ isSendingEmail, setIsSendingEmail ] = useState( false );
+
+	// A4A does not mount QueryUserSettings anywhere, and useGetEmailToVerify reads
+	// user_email from the user-settings store, so fetch them here or the banner never shows.
+	useEffect( () => {
+		dispatch( fetchUserSettings() );
+	}, [ dispatch ] );
 
 	const { secondsUntilResend, hold: holdResend } = useResendCooldown();
 	// Rate limiting only applies to the dedicated resend endpoint, not the settings path used for pending email changes.

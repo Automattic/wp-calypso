@@ -98,6 +98,7 @@ jest.mock( 'calypso/state/notices/actions', () => ( {
 } ) );
 
 jest.mock( 'calypso/state/user-settings/actions', () => ( {
+	fetchUserSettings: jest.fn( () => ( { type: 'USER_SETTINGS_REQUEST' } ) ),
 	setUnsavedUserSetting: jest.fn( ( key, value ) => ( {
 		type: 'SET_UNSAVED_USER_SETTING',
 		key,
@@ -127,6 +128,14 @@ describe( 'EmailVerificationNotification', () => {
 		mockSendVerificationEmail.mockResolvedValue( { success: true, retry_after: 300 } );
 	} );
 
+	it( 'fetches user settings on mount so the email-to-verify hook has data to read', () => {
+		mockEmailToVerify = null;
+
+		render( <EmailVerificationNotification /> );
+
+		expect( mockDispatch ).toHaveBeenCalledWith( { type: 'USER_SETTINGS_REQUEST' } );
+	} );
+
 	it( 'does not render when email is already verified', () => {
 		mockEmailToVerify = null;
 
@@ -138,9 +147,7 @@ describe( 'EmailVerificationNotification', () => {
 	it( 'renders with the email address when email is unverified', () => {
 		render( <EmailVerificationNotification /> );
 
-		expect(
-			screen.getByRole( 'heading', { name: 'Verify your email address' } )
-		).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Verify your email address' } ) ).toBeVisible();
 		expect( screen.getByText( /user@example\.com/ ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Resend email' } ) ).toBeVisible();
 	} );
@@ -209,7 +216,10 @@ describe( 'EmailVerificationNotification', () => {
 			'calypso/dashboard/utils/email-verification-resend'
 		);
 		resendThrottleRetryAfter.mockReturnValue( 600 );
-		mockSendVerificationEmail.mockRejectedValue( { error: 'throttled', data: { retry_after: 600 } } );
+		mockSendVerificationEmail.mockRejectedValue( {
+			error: 'throttled',
+			data: { retry_after: 600 },
+		} );
 
 		const user = userEvent.setup();
 		render( <EmailVerificationNotification /> );
