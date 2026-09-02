@@ -39,6 +39,7 @@ export default function SlackThreadView( {
 							</Text>
 						</div>
 					) }
+					<NoteActions note={ note } />
 					<div className="dashboard-notifications-inbox__slack-parent-card">
 						<VStack spacing={ 1 }>
 							<HStack spacing={ 2 } justify="flex-start" alignment="center" expanded={ false }>
@@ -85,7 +86,6 @@ export default function SlackThreadView( {
 							</Text>
 						</VStack>
 					</div>
-					<NoteActions note={ note } />
 				</VStack>
 			</HStack>
 			<Postscript blocks={ view.postscript } />
