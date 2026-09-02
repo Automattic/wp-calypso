@@ -231,6 +231,32 @@ describe( '<PreferencesDefaults>', () => {
 				typeof ( savedPreferences[ 'logged-in-homepage' ] as { updatedAt: number } ).updatedAt
 			).toBe( 'number' );
 		} );
+
+		test( 'leaves the homepage preference untouched on a radio-only save', async () => {
+			const currentUser = userEvent.setup();
+			mockPreferences( {
+				'logged-in-homepage': { show: false, updatedAt: 0 },
+			} );
+			mockUserSettings();
+			mockSites( [ primarySite, otherSite ] );
+			mockSite( primarySite );
+			let savedBody: Record< string, unknown > = {};
+			const saveRequest = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/preferences', ( body ) => {
+					savedBody = body;
+					return true;
+				} )
+				.reply( 200, { calypso_preferences: {} } );
+
+			renderPage();
+
+			await currentUser.click( await screen.findByLabelText( 'See a list of all your sites.' ) );
+			await currentUser.click( saveButtonFor( 'Landing page' ) );
+
+			await waitFor( () => expect( saveRequest.isDone() ).toBe( true ) );
+			const savedPreferences = savedBody.calypso_preferences as Record< string, unknown >;
+			expect( savedPreferences ).not.toHaveProperty( 'logged-in-homepage' );
+		} );
 	} );
 
 	describe( 'primary site', () => {

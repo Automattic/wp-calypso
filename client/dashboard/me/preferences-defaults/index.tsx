@@ -6,7 +6,7 @@ import {
 	userSettingsQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, Button } from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, CheckboxControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -72,17 +72,11 @@ function LandingPageCard() {
 				{ label: __( 'View posts from sites you follow.' ), value: 'reader' },
 			] satisfies { label: string; value: LandingPage }[],
 		},
-		{
-			id: 'showHomepage',
-			label: __( 'Show the WordPress.com homepage when signed in' ),
-			Edit: 'checkbox',
-			isVisible: () => initialFormData.showHomepage !== undefined,
-		},
 	];
 
 	const form = {
 		layout: { type: 'regular' as const },
-		fields: [ 'defaultLandingPage', 'showHomepage' ],
+		fields: [ 'defaultLandingPage' ],
 	};
 
 	const handleSubmit = ( e: React.FormEvent ) => {
@@ -97,12 +91,13 @@ function LandingPageCard() {
 				useReaderAsLandingPage: formData.defaultLandingPage === 'reader',
 				updatedAt,
 			},
-			...( initialFormData.showHomepage !== undefined && {
-				'logged-in-homepage': {
-					show: !! formData.showHomepage,
-					updatedAt,
-				},
-			} ),
+			...( initialFormData.showHomepage !== undefined &&
+				initialFormData.showHomepage !== formData.showHomepage && {
+					'logged-in-homepage': {
+						show: !! formData.showHomepage,
+						updatedAt,
+					},
+				} ),
 		} )
 			.then( () => {
 				createSuccessNotice( __( 'Default landing page saved.' ), {
@@ -120,21 +115,33 @@ function LandingPageCard() {
 		<Card>
 			<CardBody>
 				<form onSubmit={ handleSubmit } aria-label={ __( 'Landing page' ) }>
-					<VStack spacing={ 4 }>
-						<SectionHeader
-							level={ 3 }
-							title={ __( 'Landing page' ) }
-							description={ __( 'Choose your destination after you log in.' ) }
-						/>
-						<NavigationBlocker shouldBlock={ isDirty } />
-						<DataForm< DefaultLandingFormData >
-							data={ formData }
-							fields={ fields }
-							form={ form }
-							onChange={ ( edits: Partial< DefaultLandingFormData > ) => {
-								setFormData( ( data ) => ( { ...data, ...edits } ) );
-							} }
-						/>
+					<VStack spacing={ 6 }>
+						<VStack spacing={ 4 }>
+							<SectionHeader
+								level={ 3 }
+								title={ __( 'Landing page' ) }
+								description={ __( 'Choose your destination after you log in.' ) }
+							/>
+							<NavigationBlocker shouldBlock={ isDirty } />
+							<DataForm< DefaultLandingFormData >
+								data={ formData }
+								fields={ fields }
+								form={ form }
+								onChange={ ( edits: Partial< DefaultLandingFormData > ) => {
+									setFormData( ( data ) => ( { ...data, ...edits } ) );
+								} }
+							/>
+						</VStack>
+						{ initialFormData.showHomepage !== undefined && (
+							<CheckboxControl
+								__nextHasNoMarginBottom
+								label={ __( 'Show the WordPress.com homepage when signed in' ) }
+								checked={ !! formData.showHomepage }
+								onChange={ ( showHomepage ) => {
+									setFormData( ( data ) => ( { ...data, showHomepage } ) );
+								} }
+							/>
+						) }
 						<ButtonStack>
 							<Button
 								__next40pxDefaultSize
