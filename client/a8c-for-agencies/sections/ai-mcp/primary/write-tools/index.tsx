@@ -7,7 +7,6 @@ import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderBreadcrumb as Breadcrumb,
-	LayoutHeaderSubtitle as Subtitle,
 } from 'calypso/layout/hosting-dashboard/header';
 import AiMcpWriteToolsContent from './write-tools-content';
 
@@ -30,9 +29,6 @@ export default function AiMcpWriteTools() {
 							},
 						] }
 					/>
-					<Subtitle>
-						{ __( 'Control which actions your external AI assistant can take on your behalf.' ) }
-					</Subtitle>
 					<Actions useColumnAlignment>
 						<MobileSidebarNavigation />
 					</Actions>

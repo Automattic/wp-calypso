@@ -1,6 +1,6 @@
 import fs from 'fs';
 import FormData from 'form-data';
-import { debugThrottle, recordThrottle } from './lib/throttle-flags';
+import { handleActiveThrottles, recordThrottle } from './lib/throttle-flags';
 import { SecretsManager } from './secrets';
 import {
 	BearerTokenErrorResponse,
@@ -43,6 +43,8 @@ import type {
 	CommentLikeResponse,
 	JetpackSearchResponse,
 	JetpackSearchParams,
+	SiteSettingsParams,
+	SiteSettingsResponse,
 	Subscriber,
 	SitePostState,
 	AllPurchasesResponse,
@@ -54,7 +56,7 @@ import type {
 /**
  * Specifies the version of WordPress.com REST API.
  */
-type EndpointVersions = '1' | '1.1' | '1.2' | '1.3' | '2';
+type EndpointVersions = '1' | '1.1' | '1.2' | '1.3' | '1.4' | '2';
 type EndpointNamespace = 'rest' | 'wpcom' | 'wp';
 
 /**
@@ -248,7 +250,7 @@ export class RestAPIClient {
 	 * @throws {ErrorResponse} If API responded with an error.
 	 */
 	async createSite( newSiteParams: NewSiteParams ): Promise< NewSiteResponse > {
-		debugThrottle( 'signup' );
+		handleActiveThrottles( [ 'signup' ] );
 
 		const body = {
 			client_id: SecretsManager.secrets.calypsoOauthApplication.client_id,
@@ -282,12 +284,19 @@ export class RestAPIClient {
 			// Recorded either way, and rethrown untouched. The endpoint travels
 			// alongside: neither shape names it, and a bare `throttled` code means
 			// nothing without it.
-			// Not awaited: the worker knows about the ban the moment this returns,
-			// and telling the rest of the project runs behind it.
-			void recordThrottle( error, url.href );
+			const throttle = await recordThrottle( error, url.href );
+			if ( throttle ) {
+				// `raiseFlag` writes what this reads before `recordThrottle` returns,
+				// so the ban the throw is about is applied to this test rather than to
+				// the next one that happens to check.
+				handleActiveThrottles( [ throttle ] );
+			}
 			throw error;
 		}
-		void recordThrottle( response, url.href );
+		const throttle = await recordThrottle( response, url.href );
+		if ( throttle ) {
+			handleActiveThrottles( [ throttle ] );
+		}
 
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(
@@ -1111,17 +1120,12 @@ export class RestAPIClient {
 	}
 
 	/**
-	 * Method to perform two similar operations - like and unlike a comment.
+	 * Likes a comment.
 	 *
-	 * @param {'like'|'unlike'} action Action to perform on the comment.
 	 * @param {number} siteID Target site ID.
 	 * @param {number} commentID Target comment ID.
 	 */
-	async commentAction(
-		action: 'like' | 'unlike',
-		siteID: number,
-		commentID: number
-	): Promise< CommentLikeResponse > {
+	async likeComment( siteID: number, commentID: number ): Promise< CommentLikeResponse > {
 		const params: RequestParams = {
 			method: 'post',
 			headers: {
@@ -1130,33 +1134,50 @@ export class RestAPIClient {
 			},
 		};
 
-		let endpoint: URL;
-		if ( action === 'like' ) {
-			endpoint = this.getRequestURL(
-				'1.1',
-				`/sites/${ siteID }/comments/${ commentID }/likes/new`
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/comments/${ commentID }/likes/new` ),
+			params
+		);
+
+		if ( ! response.i_like ) {
+			throw new Error(
+				`Failed to like ${ commentID } on site ${ siteID }. Response: ${ JSON.stringify(
+					response
+				) }`
 			);
-		} else {
-			endpoint = this.getRequestURL(
-				'1.1',
-				`/sites/${ siteID }/comments/${ commentID }/likes/mine/delete`
+		}
+
+		return response;
+	}
+
+	/**
+	 * Unlikes a comment.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @param {number} commentID Target comment ID.
+	 */
+	async unlikeComment( siteID: number, commentID: number ): Promise< CommentLikeResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/comments/${ commentID }/likes/mine/delete` ),
+			params
+		);
+
+		if ( response.i_like ) {
+			throw new Error(
+				`Failed to unlike ${ commentID } on site ${ siteID }. Response: ${ JSON.stringify(
+					response
+				) }`
 			);
 		}
 
-		const response = await this.sendRequest( endpoint, params );
-
-		// Tried to like the comment, but failed to do so
-		// and the user still has not liked the comment.
-		if ( action === 'like' && response.like_count !== 1 ) {
-			throw new Error( `Failed to like ${ commentID } on site ${ siteID }` );
-		}
-		// Tried to unlike the comment, but failed to do so
-		// and the user still likes the comment.
-		if ( action === 'unlike' && response.like_count !== 0 ) {
-			throw new Error( `Failed to unlike ${ commentID } on site ${ siteID }` );
-		}
-
-		// Otherwise, consider it a success.
 		return response;
 	}
 
@@ -1259,6 +1280,72 @@ export class RestAPIClient {
 			throw new Error( `Media upload failed: ${ JSON.stringify( response.errors ?? response ) }` );
 		}
 		return response.media[ 0 ];
+	}
+
+	/* Site Settings */
+
+	/**
+	 * Gets the settings of a site.
+	 *
+	 * @param {number|string} siteID Site ID or slug.
+	 * @returns {Promise<SiteSettingsResponse>} The site name and its settings.
+	 * @throws {Error} If API responded with an error.
+	 */
+	async getSiteSettings( siteID: number | string ): Promise< SiteSettingsResponse > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.4', `/sites/${ siteID }/settings` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Updates the settings of a site.
+	 *
+	 * @param {number|string} siteID Site ID or slug.
+	 * @param {SiteSettingsParams} settings Key/value attributes to be set for the site.
+	 * @returns {Promise<SiteSettingsParams>} The settings that were updated.
+	 * @throws {Error} If API responded with an error.
+	 */
+	async setSiteSettings(
+		siteID: number | string,
+		settings: SiteSettingsParams
+	): Promise< SiteSettingsParams > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( settings ),
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.4', `/sites/${ siteID }/settings` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response.updated;
 	}
 
 	/* Shopping Cart */

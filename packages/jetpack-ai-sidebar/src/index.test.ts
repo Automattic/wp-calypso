@@ -273,6 +273,9 @@ interface PostTypeMockOptions {
 	themeSupportsResolved?: boolean;
 	/** Whole getThemeSupports return value, for a store that returns something else. */
 	themeSupportsReturnValue?: unknown;
+	isPostEmpty?: boolean;
+	/** Drops the selector, as an editor predating it would. */
+	omitIsEditedPostEmpty?: boolean;
 }
 
 function installPostTypeMock(
@@ -285,6 +288,8 @@ function installPostTypeMock(
 		postTypeRecordResolved = true,
 		themeSupportsThumbnails = true,
 		themeSupportsResolved = true,
+		isPostEmpty = false,
+		omitIsEditedPostEmpty = false,
 	} = options;
 
 	// remove_post_type_support unsets the key, so an explicit undefined omits it.
@@ -311,6 +316,7 @@ function installPostTypeMock(
 					return {
 						getCurrentPostId: () => postId,
 						getCurrentPostType: () => postType,
+						...( omitIsEditedPostEmpty ? {} : { isEditedPostEmpty: () => isPostEmpty } ),
 					};
 				}
 				if ( store === 'core/block-editor' ) {
@@ -393,6 +399,19 @@ function SuggestionsProbe( {
 		onSuggestions( suggestions, replaceEmptyViewSuggestions );
 	}, [ onSuggestions, replaceEmptyViewSuggestions, suggestions ] );
 	return null;
+}
+
+function feedbackOptionIds(): string[] {
+	const options =
+		getEmptyViewSuggestions().find( ( suggestion ) => suggestion.id === 'get-feedback' )?.options ??
+		[];
+	return options.map( ( option: { id: string } ) => option.id );
+}
+
+function feedbackOptionPrompt( optionId: string ): string | undefined {
+	return getEmptyViewSuggestions()
+		.find( ( suggestion ) => suggestion.id === 'get-feedback' )
+		?.options?.find( ( option: { id: string } ) => option.id === optionId )?.value;
 }
 
 function getTracksCalls( eventName: string ) {
@@ -1864,6 +1883,100 @@ describe( 'Proofread', () => {
 	} );
 } );
 
+describe( 'empty post gating', () => {
+	// The three reviews sit inside the Get feedback dropdown, so that chip gates
+	// as a whole rather than each review separately.
+	const CONTENT_DEPENDENT_IDS = [
+		'optimize-title',
+		'generate-excerpt',
+		'get-feedback',
+		'seo-enhancer',
+	];
+
+	const ALL_FEATURES = {
+		optimizeTitleSuggestion: true,
+		excerptSuggestion: true,
+		proofreadContent: true,
+		seoSuggestions: true,
+	};
+
+	afterEach( () => {
+		delete ( globalThis as any ).agentsManagerData;
+		delete ( window as any ).wp;
+		mockImageStudioActions = null;
+	} );
+
+	function suggestionsFor( options: { isPostEmpty?: boolean; omitIsEditedPostEmpty?: boolean } ) {
+		installAiEditorialReviewData( ALL_FEATURES );
+		installPostTypeMock( 'post', 123, { supportsExcerpt: true, ...options } );
+		return getEmptyViewSuggestions();
+	}
+
+	it.each( CONTENT_DEPENDENT_IDS )( 'disables %s on an empty post', ( id ) => {
+		const suggestion = suggestionsFor( { isPostEmpty: true } ).find( ( s ) => s.id === id );
+
+		expect( suggestion ).toBeDefined();
+		expect( suggestion?.disabled ).toBe( true );
+	} );
+
+	it.each( CONTENT_DEPENDENT_IDS )( 'enables %s once the post has content', ( id ) => {
+		const suggestion = suggestionsFor( { isPostEmpty: false } ).find( ( s ) => s.id === id );
+
+		expect( suggestion ).toBeDefined();
+		expect( suggestion?.disabled ).toBeFalsy();
+	} );
+
+	it.each( CONTENT_DEPENDENT_IDS )( 'gives %s a reason for being disabled', ( id ) => {
+		const suggestion = suggestionsFor( { isPostEmpty: true } ).find( ( s ) => s.id === id );
+
+		expect( suggestion?.disabledReason ).toBe( 'This feature requires content to work.' );
+	} );
+
+	it( 'gives no reason once the suggestion is usable', () => {
+		const suggestion = suggestionsFor( { isPostEmpty: false } ).find(
+			( s ) => s.id === 'optimize-title'
+		);
+
+		expect( suggestion?.disabledReason ).toBeUndefined();
+	} );
+
+	it( 'keeps the disabled suggestions in the list so a blank post still shows them', () => {
+		const ids = suggestionsFor( { isPostEmpty: true } ).map( ( suggestion ) => suggestion.id );
+
+		CONTENT_DEPENDENT_IDS.forEach( ( id ) => expect( ids ).toContain( id ) );
+	} );
+
+	it( 'leaves generate-featured-image enabled, since the user types their own prompt', () => {
+		// The chip only appears when Image Studio is available.
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+		const suggestion = suggestionsFor( { isPostEmpty: true } ).find(
+			( s ) => s.id === 'generate-featured-image'
+		);
+
+		expect( suggestion ).toBeDefined();
+		expect( suggestion?.disabled ).toBeFalsy();
+	} );
+
+	it( 'does not mutate the shared suggestion definitions', () => {
+		// They are module constants, so marking one disabled in place would leak into
+		// every later render.
+		suggestionsFor( { isPostEmpty: true } );
+		const suggestion = suggestionsFor( { isPostEmpty: false } ).find(
+			( s ) => s.id === 'optimize-title'
+		);
+
+		expect( suggestion?.disabled ).toBeFalsy();
+	} );
+
+	it( 'enables the suggestions when the editor cannot say whether the post is empty', () => {
+		const suggestion = suggestionsFor( { omitIsEditedPostEmpty: true } ).find(
+			( s ) => s.id === 'optimize-title'
+		);
+
+		expect( suggestion?.disabled ).toBeFalsy();
+	} );
+} );
+
 describe( 'getEmptyViewSuggestions', () => {
 	beforeEach( () => {
 		mockedRecordTracksEvent.mockClear();
@@ -1878,21 +1991,24 @@ describe( 'getEmptyViewSuggestions', () => {
 	it( 'hides post suggestions without a sidebar config', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'Editorial Review' );
+		expect( feedbackOptionIds() ).not.toContain( 'ai-editorial-review' );
 	} );
 
 	it( 'returns one AI Editorial Review suggestion with the existing UX label', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
 
-		const suggestions = getEmptyViewSuggestions();
-		const aiEditorialReviewSuggestions = suggestions.filter(
-			( suggestion ) => suggestion.id === 'ai-editorial-review'
+		const feedback = getEmptyViewSuggestions().filter(
+			( suggestion ) => suggestion.id === 'get-feedback'
 		);
 
-		expect( aiEditorialReviewSuggestions ).toEqual( [
-			expect.objectContaining( { label: 'Editorial Review' } ),
-		] );
+		expect( feedback ).toEqual( [ expect.objectContaining( { label: 'Get feedback' } ) ] );
+		expect( feedback[ 0 ].options ).toContainEqual(
+			expect.objectContaining( {
+				id: 'ai-editorial-review',
+				label: 'In-depth review against guidelines',
+			} )
+		);
 	} );
 
 	it( 'shows AI Editorial Review when enabled by agentsManagerData', () => {
@@ -1900,8 +2016,8 @@ describe( 'getEmptyViewSuggestions', () => {
 		installPostTypeMock( 'post' );
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).toContain( 'Editorial Review' );
-		expect( labels ).toContain( 'Simple Review' );
+		expect( feedbackOptionIds() ).toContain( 'ai-editorial-review' );
+		expect( feedbackOptionIds() ).toContain( 'generate-feedback' );
 	} );
 
 	it( 'shows AI Editorial Review on page editors', () => {
@@ -1911,8 +2027,8 @@ describe( 'getEmptyViewSuggestions', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).toContain( 'Editorial Review' );
-		expect( labels ).toContain( 'Simple Review' );
+		expect( feedbackOptionIds() ).toContain( 'ai-editorial-review' );
+		expect( feedbackOptionIds() ).toContain( 'generate-feedback' );
 	} );
 
 	it( 'shows all enabled editor-level suggestions on page editors', () => {
@@ -1925,12 +2041,11 @@ describe( 'getEmptyViewSuggestions', () => {
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
-		expect( labels ).toEqual( [
-			'Optimize Title',
-			'Generate Excerpt',
-			'Simple Review',
-			'Proofread',
-			'Editorial Review',
+		expect( labels ).toEqual( [ 'Optimize Title', 'Generate Excerpt', 'Get feedback' ] );
+		expect( feedbackOptionIds() ).toEqual( [
+			'generate-feedback',
+			'proofread-content',
+			'ai-editorial-review',
 		] );
 	} );
 
@@ -1958,50 +2073,40 @@ describe( 'getEmptyViewSuggestions', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'Editorial Review' );
+		expect( feedbackOptionIds() ).not.toContain( 'ai-editorial-review' );
 	} );
 
 	it( 'hides Simple Review until the editor entity has a saved ID', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post', null );
 
-		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
-
-		expect( labels ).not.toContain( 'Simple Review' );
-		expect( labels ).toContain( 'Editorial Review' );
+		expect( feedbackOptionIds() ).not.toContain( 'generate-feedback' );
+		expect( feedbackOptionIds() ).toContain( 'ai-editorial-review' );
 	} );
 
 	it( 'hides Simple Review when the preview feature disables it', () => {
 		installAiEditorialReviewData( { generateFeedback: false } );
 		installPostTypeMock( 'post' );
 
-		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
-
-		expect( labels ).not.toContain( 'Simple Review' );
-		expect( labels ).toContain( 'Editorial Review' );
+		expect( feedbackOptionIds() ).not.toContain( 'generate-feedback' );
+		expect( feedbackOptionIds() ).toContain( 'ai-editorial-review' );
 	} );
 
 	it( 'hides Proofread by default and shows it when the preview feature enables it', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
-		expect( getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label ) ).not.toContain(
-			'Proofread'
-		);
+		expect( feedbackOptionIds() ).not.toContain( 'proofread-content' );
 
 		installAiEditorialReviewData( { proofreadContent: true } );
 		installPostTypeMock( 'post' );
-		expect( getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label ) ).toContain(
-			'Proofread'
-		);
+		expect( feedbackOptionIds() ).toContain( 'proofread-content' );
 	} );
 
 	it( 'hides Proofread until the editor entity has a saved ID', () => {
 		installAiEditorialReviewData( { proofreadContent: true } );
 		installPostTypeMock( 'post', null );
 
-		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
-
-		expect( labels ).not.toContain( 'Proofread' );
+		expect( feedbackOptionIds() ).not.toContain( 'proofread-content' );
 	} );
 
 	it( 'hides Optimize Title when the feature disables it', () => {
@@ -2011,7 +2116,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'Editorial Review' );
+		expect( feedbackOptionIds() ).not.toContain( 'ai-editorial-review' );
 	} );
 
 	it( 'treats missing features as disabled', () => {
@@ -2026,11 +2131,11 @@ describe( 'getEmptyViewSuggestions', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).toContain( 'Editorial Review' );
-		expect( labels ).not.toContain( 'Simple Review' );
+		expect( feedbackOptionIds() ).toContain( 'ai-editorial-review' );
+		expect( feedbackOptionIds() ).not.toContain( 'generate-feedback' );
 	} );
 
-	it( 'attaches a one-line description to every starting-screen suggestion', () => {
+	it( 'carries no descriptions, since the labels say what each one does', () => {
 		installAiEditorialReviewData( {
 			optimizeTitleSuggestion: true,
 			proofreadContent: true,
@@ -2039,23 +2144,8 @@ describe( 'getEmptyViewSuggestions', () => {
 		} );
 		installPostTypeMock( 'post' );
 
-		const suggestions = getEmptyViewSuggestions();
-		const byLabel = ( label: string ) =>
-			suggestions.find( ( suggestion ) => suggestion.label === label );
-
-		[
-			'Optimize Title',
-			'Proofread',
-			'Simple Review',
-			'Editorial Review',
-			'SEO Enhancer',
-			'Generate Excerpt',
-		].forEach( ( label ) => {
-			const suggestion = byLabel( label );
-			expect( suggestion ).toBeDefined();
-			expect( typeof suggestion?.description ).toBe( 'string' );
-			expect( suggestion?.description ).toBeTruthy();
-			expect( suggestion?.description ).not.toContain( '\n' );
+		getEmptyViewSuggestions().forEach( ( suggestion ) => {
+			expect( suggestion.description ).toBeUndefined();
 		} );
 	} );
 
@@ -2475,7 +2565,7 @@ describe( 'useSuggestions', () => {
 
 		const emptyViewLabels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 		expect( emptyViewLabels ).toContain( 'Optimize Title' );
-		expect( emptyViewLabels ).toContain( 'Editorial Review' );
+		expect( emptyViewLabels ).toContain( 'Get feedback' );
 
 		// Chip exposure is tracked by Agents Manager's jetpack_big_sky_chat_suggestions_rendered.
 		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
@@ -2591,8 +2681,9 @@ describe( 'useSuggestions', () => {
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions ).toEqual( [] );
 		expect( getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label ) ).toEqual( [
-			'Editorial Review',
+			'Get feedback',
 		] );
+		expect( feedbackOptionIds() ).toEqual( [ 'ai-editorial-review' ] );
 	} );
 
 	it( 'keeps Simple Review on the backend path without opening split-screen when clicked', () => {
@@ -2600,9 +2691,7 @@ describe( 'useSuggestions', () => {
 		installPostTypeMock( 'post' );
 		const addMessage = jest.fn();
 		const clearSuggestions = jest.fn();
-		const feedbackPrompt = getEmptyViewSuggestions().find(
-			( suggestion ) => suggestion.id === 'generate-feedback'
-		)?.prompt;
+		const feedbackPrompt = feedbackOptionPrompt( 'generate-feedback' );
 
 		expect( feedbackPrompt ).toContain( 'saved title and saved block content' );
 		expect( feedbackPrompt ).toContain( 'one-click suggestions when safe' );
@@ -2629,16 +2718,14 @@ describe( 'useSuggestions', () => {
 	it( 'does not open split-screen when the Proofread suggestion is clicked', () => {
 		installAiEditorialReviewData( { proofreadContent: true } );
 		installPostTypeMock( 'post' );
-		const proofreadPrompt = getEmptyViewSuggestions().find(
-			( suggestion ) => suggestion.id === 'proofread-content'
-		)?.prompt;
+		const proofreadPrompt = feedbackOptionPrompt( 'proofread-content' );
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
 
 		act( () => {
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: proofreadPrompt, suggestionId: 'proofread-content' },
+					detail: { value: proofreadPrompt, suggestionId: 'get-feedback' },
 				} )
 			);
 		} );
@@ -2654,7 +2741,7 @@ describe( 'useSuggestions', () => {
 		act( () => {
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { suggestionId: 'ai-editorial-review' },
+					detail: { suggestionId: 'get-feedback' },
 				} )
 			);
 		} );
@@ -2731,7 +2818,7 @@ describe( 'useSuggestions', () => {
 		act( () => {
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { suggestionId: 'ai-editorial-review' },
+					detail: { suggestionId: 'get-feedback' },
 				} )
 			);
 		} );
@@ -2803,9 +2890,7 @@ describe( 'useSuggestions', () => {
 		installAiEditorialReviewData( { proofreadContent: true } );
 		installPostTypeMock( 'post' );
 		mockSelectedBlock = { clientId: 'b-proofread', name: 'core/paragraph' };
-		const proofreadPrompt = getEmptyViewSuggestions().find(
-			( suggestion ) => suggestion.id === 'proofread-content'
-		)?.prompt;
+		const proofreadPrompt = feedbackOptionPrompt( 'proofread-content' );
 		const onSuggestions = jest.fn();
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
@@ -2813,7 +2898,7 @@ describe( 'useSuggestions', () => {
 		act( () => {
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: proofreadPrompt, suggestionId: 'proofread-content' },
+					detail: { value: proofreadPrompt, suggestionId: 'get-feedback' },
 				} )
 			);
 			useAbilitiesSetup( {
@@ -2927,16 +3012,14 @@ describe( 'contextProvider', () => {
 	it( 'suppresses full page content for the next Simple Review chip request', () => {
 		installAiEditorialReviewData();
 		installContextProviderMock();
-		const feedbackPrompt = getEmptyViewSuggestions().find(
-			( suggestion ) => suggestion.id === 'generate-feedback'
-		)?.prompt;
+		const feedbackPrompt = feedbackOptionPrompt( 'generate-feedback' );
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
 
 		act( () => {
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: feedbackPrompt, suggestionId: 'generate-feedback' },
+					detail: { value: feedbackPrompt, suggestionId: 'get-feedback' },
 				} )
 			);
 		} );
@@ -2951,16 +3034,14 @@ describe( 'contextProvider', () => {
 	it( 'suppresses full page content for the next Proofread chip request', () => {
 		installAiEditorialReviewData( { proofreadContent: true } );
 		installContextProviderMock();
-		const proofreadPrompt = getEmptyViewSuggestions().find(
-			( suggestion ) => suggestion.id === 'proofread-content'
-		)?.prompt;
+		const proofreadPrompt = feedbackOptionPrompt( 'proofread-content' );
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
 
 		act( () => {
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: proofreadPrompt, suggestionId: 'proofread-content' },
+					detail: { value: proofreadPrompt, suggestionId: 'get-feedback' },
 				} )
 			);
 		} );
@@ -3003,27 +3084,22 @@ describe( 'contextProvider', () => {
 	it( 'clears pending Simple Review content suppression when another suggestion is clicked', () => {
 		installAiEditorialReviewData();
 		installContextProviderMock();
-		const suggestions = getEmptyViewSuggestions();
-		const feedbackPrompt = suggestions.find(
-			( suggestion ) => suggestion.id === 'generate-feedback'
-		)?.prompt;
-		const aiEditorialReviewPrompt = suggestions.find(
-			( suggestion ) => suggestion.id === 'ai-editorial-review'
-		)?.prompt;
+		const feedbackPrompt = feedbackOptionPrompt( 'generate-feedback' );
+		const aiEditorialReviewPrompt = feedbackOptionPrompt( 'ai-editorial-review' );
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
 
 		act( () => {
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: feedbackPrompt, suggestionId: 'generate-feedback' },
+					detail: { value: feedbackPrompt, suggestionId: 'get-feedback' },
 				} )
 			);
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
 					detail: {
 						value: aiEditorialReviewPrompt,
-						suggestionId: 'ai-editorial-review',
+						suggestionId: 'get-feedback',
 					},
 				} )
 			);
@@ -3612,6 +3688,7 @@ describe( 'toolProvider', () => {
 						{ guideline_quote: 'Prefer active voice.' },
 					],
 					review_context: 'notes_and_guidelines',
+					cache_hit: true,
 				},
 				{
 					suggested_edit_count: 2,
@@ -3619,6 +3696,7 @@ describe( 'toolProvider', () => {
 					implication_count: 0,
 					guideline_violation_count: 2,
 					review_context: 'notes_and_guidelines',
+					cache_hit: true,
 				},
 			],
 		] )( 'adds privacy-safe response metadata for %s', async ( type, props, expected ) => {

@@ -6,10 +6,8 @@ import {
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Icon, Notice, Spinner } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
+import { Button, Notice, Spinner } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { send } from '@wordpress/icons';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
@@ -272,15 +270,7 @@ export default function WordPressAgentTelegram( {
 					<SectionHeader
 						level={ 3 }
 						title={ __( 'Telegram' ) }
-						description={
-							isConnected
-								? createInterpolateElement(
-										__( 'Your account is <connected>connected</connected>.' ),
-										{ connected: <strong /> }
-								  )
-								: __( 'Connect your WordPress.com account to use WordPress Agent in Telegram.' )
-						}
-						decoration={ <Icon icon={ send } size={ 24 } /> }
+						description={ __( 'Chat with WordPress Agent on Telegram.' ) }
 					/>
 					<div className="wordpress-agent-telegram__action">
 						{ ! isStatusReady && <Spinner /> }

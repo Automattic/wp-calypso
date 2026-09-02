@@ -43,9 +43,9 @@ export default function SourcesDisplay( { sources }: Props ) {
 			} );
 		}
 
-		recordAgentsManagerTracksEvent( 'link_click', {
+		recordAgentsManagerTracksEvent( 'calypso_agents_manager_link_click', {
 			href: url,
-			type: isSupportArticle ? 'support_article' : 'external',
+			link_type: isSupportArticle ? 'support_article' : 'external',
 			source: isFromOrchestrator ? 'orchestrator' : 'zendesk',
 		} );
 	};

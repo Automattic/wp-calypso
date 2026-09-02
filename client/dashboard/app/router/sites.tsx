@@ -6,6 +6,7 @@ import {
 	codeDeploymentQuery,
 	codeDeploymentsQuery,
 	githubInstallationsQuery,
+	hasDeletedSitesQuery,
 	isAutomatticianQuery,
 	productsQuery,
 	rawUserPreferencesQuery,
@@ -68,6 +69,7 @@ import { isSiteMigrationInProgress, getSiteMigrationState } from '../../utils/si
 import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
+import { userHasNoLiveSites } from '../../utils/user';
 import { AUTH_QUERY_KEY } from '../auth';
 import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
@@ -86,9 +88,12 @@ export const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
 	loader: async () => {
+		const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );
 		await Promise.all( [
 			queryClient.ensureQueryData( isAutomatticianQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+			// Settle the deleted-sites check before first paint.
+			userHasNoLiveSites( user ) && queryClient.ensureQueryData( hasDeletedSitesQuery() ),
 		] );
 	},
 } );
@@ -162,7 +167,11 @@ export const siteRoute = createRoute( {
 		}
 
 		const migrationUrl = `/sites/${ siteSlug }/migration-overview`;
-		if ( isSiteMigrationInProgress( site ) && ! location.pathname.includes( migrationUrl ) ) {
+		if (
+			isSiteMigrationInProgress( site ) &&
+			! isSupportSession() &&
+			! location.pathname.includes( migrationUrl )
+		) {
 			throw dashboardRedirect( { to: migrationUrl } );
 		}
 
@@ -184,11 +193,11 @@ export const siteRoute = createRoute( {
 		queryClient.prefetchQuery( siteAdminMenuQuery( site.ID ) );
 		queryClient.prefetchQuery( siteAdminBarQuery( site.ID ) );
 
-		await Promise.all( [
-			otherEnvironmentSiteId &&
-				queryClient.ensureQueryData( siteByIdQuery( otherEnvironmentSiteId ) ),
-			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-		] );
+		if ( otherEnvironmentSiteId ) {
+			queryClient.prefetchQuery( siteByIdQuery( otherEnvironmentSiteId ) );
+		}
+
+		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 
 		return { site };
 	},
@@ -564,6 +573,11 @@ export const siteDomainsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'domains',
+	// Deep link for Calypso's domain management page, which has no dashboard
+	// equivalent for the free address and redirects here instead.
+	validateSearch: ( search ): { action?: 'change-site-address' } => ( {
+		action: search.action === 'change-site-address' ? 'change-site-address' : undefined,
+	} ),
 	loader: async ( { context, params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 

@@ -3,7 +3,17 @@
  */
 import { renderHook } from '@testing-library/react';
 import { clearSiteEditorActions, getSiteEditorActions } from '../../utils/site-editor-context';
+import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import { useRegisterCustomActions, useSetupCustomActions } from '../custom-actions';
+
+jest.mock( '../../utils/tracks', () => ( {
+	BIG_SKY_EVENT_PREFIX: jest.requireActual( '../../utils/tracks' ).BIG_SKY_EVENT_PREFIX,
+	recordBigSkyTracksEvent: jest.fn(),
+} ) );
+
+const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as jest.MockedFunction<
+	typeof recordBigSkyTracksEvent
+>;
 
 const mockSetIsOpen = jest.fn();
 const mockSetIsDocked = jest.fn();
@@ -114,8 +124,39 @@ describe( 'useSetupCustomActions', () => {
 
 		expect( snapshot?.setChatOpen ).toBeInstanceOf( Function );
 		expect( snapshot?.setChatDocked ).toBeInstanceOf( Function );
+		expect( snapshot?.recordBigSkyTracksEvent ).toBeInstanceOf( Function );
 		expect( snapshot?.resumeChat ).toBe( mockContext.resumeChat );
 		expect( snapshot?.isReady ).toBe( true );
+	} );
+
+	it( 'relays full-name bridge Tracks calls unchanged', () => {
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		window.__agentsManagerActions?.recordBigSkyTracksEvent?.(
+			'jetpack_big_sky_split_screen_guide_click',
+			{
+				component_type: 'proofread',
+			}
+		);
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_split_screen_guide_click',
+			{
+				component_type: 'proofread',
+			}
+		);
+	} );
+
+	it( 'drops malformed bridge Tracks event names', () => {
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		const record = window.__agentsManagerActions?.recordBigSkyTracksEvent as unknown as (
+			eventName: unknown
+		) => void;
+		record( 'split_screen_guide_click' );
+		record( 'jetpack_big_sky_' );
+		record( '' );
+		record( 123 );
+		expect( mockRecordBigSkyTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	it( 'opens Reader Chat without persisting shared Agents Manager state', () => {

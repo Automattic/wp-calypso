@@ -59,6 +59,21 @@ describe( 'Plugins Utils', () => {
 			};
 			expect( PluginUtils.getAllowedPluginData( plugin ) ).toEqual( plugin );
 		} );
+
+		test( 'should keep is_retired so the detail page can redirect retired products', () => {
+			expect( PluginUtils.getAllowedPluginData( { is_retired: true } ) ).toEqual( {
+				is_retired: true,
+			} );
+			expect( PluginUtils.getAllowedPluginData( { is_retired: false } ) ).toEqual( {
+				is_retired: false,
+			} );
+		} );
+
+		test( 'should not add is_retired when the API omits it', () => {
+			expect( PluginUtils.getAllowedPluginData( { slug: 'developer' } ) ).toEqual( {
+				slug: 'developer',
+			} );
+		} );
 	} );
 
 	describe( 'extractAuthorName', () => {

@@ -7,9 +7,10 @@ import type { Notices } from 'calypso/my-sites/stats/hooks/use-notice-visibility
 export const PRICING_GRID_REFERRER = 'jetpack-stats-pricing-grid';
 
 /**
- * Query arg that Odyssey's pre-connection screen carries back through the connection flow to say
- * the plan question was already answered. It has to travel in the URL because the choice is made
- * before the site has a blog id to record it against.
+ * Query arg naming the plan the visitor picked on a surface that asked the Free-vs-Paid question
+ * before this grid could, so the grid must not ask again. Sent by Odyssey's pre-connection screen —
+ * which has no blog id to record an answer against, so the choice can only travel in the URL — and
+ * by My Jetpack's Add Stats interstitial.
  */
 export const PLAN_CHOSEN_QUERY_ARG = 'stats_plan_chosen';
 

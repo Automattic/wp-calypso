@@ -4,6 +4,7 @@
 
 import { fireEvent, render, screen } from '@testing-library/react';
 import SiteGeneration from '../index';
+import { useSiteGeneration } from '../use-site-generation';
 import type { SiteGenerationState } from '../use-site-generation';
 
 let mockState: SiteGenerationState;
@@ -15,7 +16,7 @@ jest.mock( 'i18n-calypso', () => ( {
 jest.mock( 'calypso/components/data/document-head', () => () => null );
 
 jest.mock( '../use-site-generation', () => ( {
-	useSiteGeneration: () => mockState,
+	useSiteGeneration: jest.fn( () => mockState ),
 } ) );
 
 jest.mock( '../view', () => ( {
@@ -27,6 +28,7 @@ jest.mock( '../view', () => ( {
 describe( 'SiteGeneration recovery', () => {
 	const originalLocation = window.location;
 	const navigation = { submit: jest.fn() };
+	const useSiteGenerationMock = useSiteGeneration as jest.Mock;
 
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -70,6 +72,20 @@ describe( 'SiteGeneration recovery', () => {
 
 		expect( window.location.reload ).toHaveBeenCalledTimes( 1 );
 		expect( window.location.assign ).not.toHaveBeenCalled();
+	} );
+
+	it( 'uses the same fallback step IDs as the server checklist', () => {
+		renderStep();
+
+		const { steps } = useSiteGenerationMock.mock.calls[ 0 ][ 0 ];
+		expect( steps.map( ( step: { id: string } ) => step.id ) ).toEqual( [
+			'prepare',
+			'design',
+			'pages',
+			'images',
+			'polish',
+			'publish',
+		] );
 	} );
 
 	it( 'reloads when checking again after a timeout', () => {

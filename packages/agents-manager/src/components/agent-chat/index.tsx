@@ -9,13 +9,12 @@ import {
 	type ChatState,
 	type UploadedImage,
 } from '@automattic/agenttic-ui';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { formatWritingSuggestionLabels } from '../../hooks/use-empty-view-suggestions';
+import useFloatingPanelProps from '../../hooks/use-floating-panel-props';
 import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
-import { AGENTS_MANAGER_STORE } from '../../stores';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
@@ -31,7 +30,6 @@ import GroupedEmptyView from './grouped-empty-view';
 import type { UseImageUploadResult } from '../../hooks/use-image-upload';
 import type { ExternalContextCard, ExternalContextCardAction } from '../../utils/external-context';
 import type { Message, NoticeConfig } from '@automattic/agenttic-ui/dist/types';
-import type { AgentsManagerSelect } from '@automattic/data-stores';
 import type { ComponentProps, RefObject } from 'react';
 
 interface Props {
@@ -141,7 +139,7 @@ function getEmptyViewHeading(): string {
 	if ( isReaderChatHost() ) {
 		return __( 'Ask me anything about this blog.', __i18n_text_domain__ );
 	}
-	return __( 'Howdy! How can I help you today?', __i18n_text_domain__ );
+	return __( 'What should we work on next?', __i18n_text_domain__ );
 }
 
 function getEmptyViewHelp(): string {
@@ -192,14 +190,9 @@ export default function AgentChat( {
 	onContextCardAction,
 	onContextCardDismiss,
 }: Props ) {
-	const { setFloatingPosition, setFreeDragPosition, setFloatingSize } =
-		useDispatch( AGENTS_MANAGER_STORE );
 	const conversationViewRef = useRef< HTMLDivElement >( null );
 	const imageUploaderRef = useRef< ImageUploaderHandle >( null );
-	const { floatingPosition, freeDragPosition, floatingSize } = useSelect( ( select ) => {
-		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
-		return store.getAgentsManagerState();
-	}, [] );
+	const floatingPanelProps = useFloatingPanelProps();
 
 	const mergedComponents = useMemo(
 		() => ( { a: CustomALink, ...markdownComponents } ),
@@ -252,7 +245,7 @@ export default function AgentChat( {
 	const handleBrowse = useCallback(
 		( files: File[] ) => {
 			if ( trackImageUpload ) {
-				recordBigSkyTracksEvent( 'file_upload_click', {
+				recordBigSkyTracksEvent( 'jetpack_big_sky_file_upload_click', {
 					count: files.length,
 				} );
 			}
@@ -263,7 +256,7 @@ export default function AgentChat( {
 	const handleDrop = useCallback(
 		( files: File[] ) => {
 			if ( trackImageUpload ) {
-				recordBigSkyTracksEvent( 'file_upload_drop', {
+				recordBigSkyTracksEvent( 'jetpack_big_sky_file_upload_drop', {
 					count: files.length,
 				} );
 			}
@@ -274,7 +267,7 @@ export default function AgentChat( {
 	const handleRemoveImage = useCallback(
 		( image: UploadedImage ) => {
 			if ( trackImageUpload ) {
-				recordBigSkyTracksEvent( 'file_upload_remove', {
+				recordBigSkyTracksEvent( 'jetpack_big_sky_file_upload_remove', {
 					image_id: image.id,
 				} );
 			}
@@ -285,24 +278,19 @@ export default function AgentChat( {
 
 	const handleImageDragStart = useCallback( () => {
 		if ( trackImageUpload ) {
-			recordBigSkyTracksEvent( 'file_upload_drag_start' );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_file_upload_drag_start' );
 		}
 	}, [ trackImageUpload ] );
 
 	const handleUploadError = useCallback( () => {
 		if ( trackImageUpload ) {
-			recordBigSkyTracksEvent( 'file_upload_invalid' );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_file_upload_invalid' );
 		}
 	}, [ trackImageUpload ] );
 
 	return (
 		<AgentUI.Container
-			initialChatPosition={ floatingPosition }
-			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
-			initialFreeDragPosition={ freeDragPosition ?? undefined }
-			onFreeDragEnd={ setFreeDragPosition }
-			defaultSize={ floatingSize ?? undefined }
-			onResizeEnd={ setFloatingSize }
+			{ ...floatingPanelProps }
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ messages }
 			isProcessing={ isProcessing }

@@ -3,11 +3,11 @@
  */
 import config from '@automattic/calypso-config';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, renderHook, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { bumpStat } from '../../analytics';
 import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../context';
-import { AuthProvider } from '../index';
+import { AuthProvider, sessionStateQuery, useSessionStateQuery } from '../index';
 import type { User } from '@automattic/api-core';
 
 jest.mock( '../../analytics', () => ( {
@@ -174,5 +174,72 @@ describe( '<AuthProvider> stats', () => {
 		await waitFor( () =>
 			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'bounce:expired' )
 		);
+	} );
+} );
+
+describe( 'useSessionStateQuery', () => {
+	function renderSessionState( queryClient = new QueryClient() ) {
+		return renderHook( () => useSessionStateQuery(), {
+			wrapper: ( { children } ) => (
+				<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+			),
+		} );
+	}
+
+	test( 'reports a session that can no longer authenticate as dead', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me' )
+			.query( true )
+			.reply( 403, { error: 'authorization_required', message: 'User cannot access this' } );
+
+		const { result } = renderSessionState();
+
+		await waitFor( () => expect( result.current.data ).toBe( 'dead' ) );
+	} );
+
+	test( 'reports an account that merely lacks a permission as alive', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me' )
+			.query( true )
+			.reply( 200, testUser );
+
+		const { result } = renderSessionState();
+
+		await waitFor( () => expect( result.current.data ).toBe( 'alive' ) );
+	} );
+
+	test( 'separates a probe that never answered from a dead session', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me' )
+			.query( true )
+			.replyWithError( 'offline' );
+
+		const { result } = renderSessionState();
+
+		await waitFor( () => expect( result.current.data ).toBe( 'unknown' ) );
+	} );
+
+	test( 'reuses an answer already in the cache', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me' )
+			.query( true )
+			.reply( 200, testUser );
+		// A refetch would consume this and flip the answer, so an extra request shows
+		// up rather than passing unnoticed.
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me' )
+			.query( true )
+			.reply( 403, { error: 'authorization_required', message: 'User cannot access this' } );
+
+		const queryClient = new QueryClient();
+		await queryClient.fetchQuery( sessionStateQuery() );
+
+		const { result } = renderSessionState( queryClient );
+
+		await waitFor( () => expect( result.current.data ).toBe( 'alive' ) );
+		await expect(
+			waitFor( () => expect( nock.isDone() ).toBe( true ), { timeout: 250 } )
+		).rejects.toThrow();
+		expect( result.current.data ).toBe( 'alive' );
 	} );
 } );

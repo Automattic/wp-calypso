@@ -5,14 +5,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import '@testing-library/jest-dom';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import React from 'react';
 import AiEditorialReview from './ai-editorial-review';
-
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
-} ) );
 
 // Mock scrollIntoView for JSDOM compatibility.
 Element.prototype.scrollIntoView = jest.fn();
@@ -28,9 +23,6 @@ const mockClearActiveBlockFocus = jest.fn();
 const mockClearActiveBlockFocusUnlessBlockReferenceClick = jest.fn();
 const mockToggleBlockReferenceFocus = jest.fn();
 const mockUndoBlockEdit = jest.fn();
-const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
-	typeof recordTracksEvent
->;
 
 jest.mock( '../utils/block-actions', () => ( {
 	applyReviewEdit: ( ...args: any[] ) => mockApplyReviewEdit( ...args ),
@@ -203,7 +195,6 @@ beforeEach( () => {
 	mockUndoBlockEdit.mockReset();
 	mockUndoBlockEdit.mockReturnValue( true );
 	mockSelectBlock.mockReset();
-	mockedRecordTracksEvent.mockClear();
 	mockBlocks = blocks;
 	mockCurrentPostId = 1;
 	( window as any ).wp = {
@@ -382,7 +373,6 @@ describe( 'AiEditorialReview — smoke render', () => {
 
 		// Nothing was applied.
 		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
-		expect( mockedRecordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	it( 'marks a review without source post context as stale', () => {
@@ -412,7 +402,6 @@ describe( 'AiEditorialReview — smoke render', () => {
 		expect( screen.getByRole( 'button', { name: 'Go to section' } ) ).toBeDisabled();
 
 		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
-		expect( mockedRecordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	it( 'renders a conflict that omits positions', () => {
@@ -1429,7 +1418,7 @@ describe( 'AiEditorialReview — conflict resolutions', () => {
 			contentAfter: 'The council voted on Tuesday on the procedural matter.',
 		} );
 
-		render( <AiEditorialReview { ...conflictPayload } /> );
+		const { container } = render( <AiEditorialReview { ...conflictPayload } /> );
 
 		await act( async () => {
 			fireEvent.click( screen.getByRole( 'button', { name: 'Apply AI change' } ) );
@@ -1438,6 +1427,9 @@ describe( 'AiEditorialReview — conflict resolutions', () => {
 		await waitFor( () => {
 			expect( screen.getByText( 'Applied' ) ).toBeInTheDocument();
 		} );
+		expect(
+			container.querySelector( '.jetpack-ai-editorial-review__resolution-icon' )
+		).toBeInTheDocument();
 		// Not collapsed to a one-liner: the subject header stays, and the row
 		// offers Undo — the shared resolved shape from GF / Proofreader.
 		expect( screen.getByText( 'Procedural framing' ) ).toBeInTheDocument();

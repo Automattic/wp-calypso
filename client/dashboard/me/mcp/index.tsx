@@ -1,11 +1,10 @@
 import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { BigSkyLogo } from '@automattic/components/src/logos/big-sky-logo';
+import { formatNumber } from '@automattic/number-formatters';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Icon, __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { seen, pencil, notAllowed, connection, globe } from '@wordpress/icons';
-import { useEffect, useState } from 'react';
 import { getOverridesToMatch, groupIntentKey } from '../../../me/mcp/group-intents';
 import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
 import {
@@ -16,7 +15,6 @@ import {
 } from '../../../me/mcp/utils';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { mcpRoute } from '../../app/router/me';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import ComponentViewTracker from '../../components/component-view-tracker';
@@ -25,11 +23,6 @@ import PageLayout from '../../components/page-layout';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { SectionHeader } from '../../components/section-header';
 import { isWriteTool } from './categories';
-import WordPressAgentEmail from './wordpress-agent-email';
-import WordPressAgentSlack from './wordpress-agent-slack';
-import WordPressAgentTelegram from './wordpress-agent-telegram';
-
-import './style.scss';
 
 interface McpAbility {
 	title: string;
@@ -45,37 +38,37 @@ interface McpAbility {
 
 function getReadBadge( tools: Array< [ string, McpAbility ] > ) {
 	if ( tools.length === 0 ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
 	if ( enabledCount === tools.length ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'None enabled' ) };
+		return { text: __( 'None enabled' ), intent: 'draft' as const };
 	}
 	return {
 		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
 		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, tools.length ),
-		intent: 'info' as const,
+		intent: 'informational' as const,
 	};
 }
 
 function getWriteBadge( tools: Array< [ string, McpAbility ] > ) {
 	if ( tools.length === 0 ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
 	if ( enabledCount === tools.length ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'Disabled' ) };
+		return { text: __( 'Disabled' ), intent: 'draft' as const };
 	}
 	return {
 		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
 		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, tools.length ),
-		intent: 'info' as const,
+		intent: 'informational' as const,
 	};
 }
 
@@ -83,52 +76,6 @@ function McpComponent() {
 	const { recordTracksEvent } = useAnalytics();
 	const tracksAudienceProps = useMcpTracksAudienceProps();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
-	const {
-		pair_token: pairTokenParam,
-		slack: slackStatusParam,
-		telegram_id: telegramIdParam,
-		token: telegramTokenParam,
-		ts: telegramTimestampParam,
-		bot: telegramBotParam,
-	} = mcpRoute.useSearch();
-	const [ connectionCallbacks ] = useState( () => ( {
-		pairToken: pairTokenParam,
-		slackStatus: slackStatusParam,
-		telegramId: telegramIdParam,
-		telegramToken: telegramTokenParam,
-		telegramTimestamp: telegramTimestampParam,
-		telegramBot: telegramBotParam,
-	} ) );
-
-	useEffect( () => {
-		if (
-			! pairTokenParam &&
-			! slackStatusParam &&
-			! telegramIdParam &&
-			! telegramTokenParam &&
-			! telegramTimestampParam &&
-			! telegramBotParam
-		) {
-			return;
-		}
-
-		const url = new URL( window.location.href );
-		url.searchParams.delete( 'pair_token' );
-		url.searchParams.delete( 'slack' );
-		url.searchParams.delete( 'telegram_id' );
-		url.searchParams.delete( 'token' );
-		url.searchParams.delete( 'ts' );
-		url.searchParams.delete( 'bot' );
-		window.history.replaceState( window.history.state, '', url.toString() );
-	}, [
-		pairTokenParam,
-		slackStatusParam,
-		telegramIdParam,
-		telegramTokenParam,
-		telegramTimestampParam,
-		telegramBotParam,
-	] );
-
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
 	const availableTools = (
 		Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] >
@@ -145,13 +92,27 @@ function McpComponent() {
 	const exceptionCount = disabledSiteIds.length;
 	const exceptionBadge =
 		exceptionCount > 0
-			? { text: `${ exceptionCount } exceptions`, intent: 'warning' as const }
-			: { text: __( 'No exceptions' ) };
+			? {
+					text: sprintf(
+						/* translators: %s is the formatted number of site exceptions */
+						_n( '%s exception', '%s exceptions', exceptionCount ),
+						formatNumber( exceptionCount )
+					),
+					intent: 'low' as const,
+			  }
+			: { text: __( 'No exceptions' ), intent: 'draft' as const };
 
 	const addSiteBadge =
 		enabledSiteIds.length > 0
-			? { text: `${ enabledSiteIds.length } sites`, intent: 'success' as const }
-			: { text: __( 'No sites added' ) };
+			? {
+					text: sprintf(
+						/* translators: %s is the formatted number of sites with MCP access */
+						_n( '%s site', '%s sites', enabledSiteIds.length ),
+						formatNumber( enabledSiteIds.length )
+					),
+					intent: 'stable' as const,
+			  }
+			: { text: __( 'No sites added' ), intent: 'draft' as const };
 
 	const readBadge = getReadBadge( readTools );
 	const writeBadge = getWriteBadge( writeTools );
@@ -290,37 +251,6 @@ function McpComponent() {
 							title={ __( 'Connect external AI assistant' ) }
 							description={ __( 'Get instructions for connecting your external AI assistant.' ) }
 							decoration={ <Icon icon={ connection } size={ 24 } /> }
-						/>
-					) }
-				</VStack>
-
-				<VStack spacing={ 4 }>
-					<SectionHeader
-						level={ 2 }
-						title={ __( 'WordPress Agent' ) }
-						description={ __(
-							'Your AI assistant for building, managing, and growing your WordPress.com sites.'
-						) }
-						decoration={ <BigSkyLogo.CentralLogo heartless size={ 32 } /> }
-					/>
-					<SectionHeader
-						level={ 3 }
-						title={ __( 'Connections' ) }
-						description={ __( 'Talk to WordPress Agent where you already are.' ) }
-					/>
-					{ config.isEnabled( 'dolly/telegram' ) && (
-						<WordPressAgentTelegram
-							telegramId={ connectionCallbacks.telegramId }
-							token={ connectionCallbacks.telegramToken }
-							timestamp={ connectionCallbacks.telegramTimestamp }
-							bot={ connectionCallbacks.telegramBot }
-						/>
-					) }
-					<WordPressAgentEmail />
-					{ config.isEnabled( 'wordpress-agent-slack' ) && (
-						<WordPressAgentSlack
-							pairToken={ connectionCallbacks.pairToken }
-							slackStatus={ connectionCallbacks.slackStatus }
 						/>
 					) }
 				</VStack>

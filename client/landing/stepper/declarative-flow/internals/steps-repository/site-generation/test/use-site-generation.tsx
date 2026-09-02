@@ -143,10 +143,46 @@ describe( 'useSiteGeneration', () => {
 
 			const { onReady } = statusPollMock.mock.calls[ 0 ][ 0 ];
 			act( () => {
-				onReady();
+				// A live response with no site_editor_url: the captured URL stands.
+				onReady( { build_status: 'live' } );
 			} );
 			expect( window.location.assign ).toHaveBeenCalledWith(
 				'https://example.wordpress.com/wp-admin/site-editor.php'
+			);
+		} finally {
+			Object.defineProperty( window, 'location', {
+				value: originalLocation,
+				configurable: true,
+			} );
+		}
+	} );
+
+	it( 'redirects to the live editor URL, keeping the args the flow added to the captured one', () => {
+		Object.defineProperty( window, 'location', {
+			value: { ...originalLocation, assign: jest.fn() },
+			configurable: true,
+		} );
+
+		try {
+			renderHook( () =>
+				useSiteGeneration( {
+					siteIdentifier: '123',
+					editorUrl:
+						'https://example.wordpress.com/wp-admin/site-editor.php?easy-mode=true&spec_id=spec-1',
+					steps: STEPS,
+				} )
+			);
+
+			const { onReady } = statusPollMock.mock.calls[ 0 ][ 0 ];
+			act( () => {
+				onReady( {
+					build_status: 'live',
+					site_editor_url:
+						'https://example.wordpress.com/wp-admin/site-editor.php?easy-mode=true&p=%2Fpage%2F12&canvas=edit',
+				} );
+			} );
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				'https://example.wordpress.com/wp-admin/site-editor.php?easy-mode=true&p=%2Fpage%2F12&canvas=edit&spec_id=spec-1'
 			);
 		} finally {
 			Object.defineProperty( window, 'location', {

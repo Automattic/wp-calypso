@@ -11,7 +11,7 @@ import Client from '../index';
 import { init } from '../wpcom';
 
 // Mirrors settings.max_limit in the client.
-const MAX_LIMIT = 200;
+const MAX_LIMIT = 500;
 
 // Every filtered test here uses the Unread tab; its id list is cached under its name.
 const UNREAD_KEY = 'unread';
@@ -264,6 +264,88 @@ describe( 'RestClient', () => {
 		} );
 	} );
 
+	describe( 'load-more tracking', () => {
+		const trackedEvents = () =>
+			( window._tkq || [] )
+				.filter( ( [ , event ] ) => event === 'calypso_notification_load_more' )
+				.map( ( [ , , properties ] ) => properties );
+
+		beforeEach( () => {
+			window._tkq = [];
+		} );
+
+		it( 'records the total after a load-more response lands on the all tab', () => {
+			seedFirstWindow(); // ids 100..91, 10 loaded
+
+			client.loadMore();
+			expect( trackedEvents() ).toEqual( [] );
+			// The inclusive `before` echoes the anchor (91) back with nine older
+			// notes, so the total grows to 19, not 20.
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 91 ), last_seen_time: 0 } );
+
+			expect( trackedEvents() ).toEqual( [ { filter: 'all', total: 19, reached_end: false } ] );
+		} );
+
+		it( 'flags reached_end when a short page exhausts the server', () => {
+			seedFirstWindow();
+
+			client.loadMore();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 5, 90 ), last_seen_time: 0 } ); // 90..86
+
+			expect( trackedEvents() ).toEqual( [ { filter: 'all', total: 15, reached_end: true } ] );
+		} );
+
+		it( 'flags reached_end when a full page adds nothing new', () => {
+			seedFirstWindow();
+
+			client.loadMore();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 100 ), last_seen_time: 0 } ); // all known
+
+			expect( trackedEvents() ).toEqual( [ { filter: 'all', total: 10, reached_end: true } ] );
+		} );
+
+		it( 'records nothing for the initial window or a poll refresh', () => {
+			seedFirstWindow();
+
+			client.getNotesList();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 100 ), last_seen_time: 0 } );
+
+			expect( trackedEvents() ).toEqual( [] );
+		} );
+
+		it( 'records nothing when a load-more fails', () => {
+			seedFirstWindow();
+
+			client.loadMore();
+			getCalls[ 0 ].callback( { status: 500 }, null );
+
+			expect( trackedEvents() ).toEqual( [] );
+		} );
+
+		it( 'records the active tab when paging a filtered tab', () => {
+			client.setFilter( 'unread' );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 209 ), last_seen_time: 0 } ); // 209..200
+			getCalls.length = 0;
+
+			client.loadMore();
+			// Echoed anchor (200) plus nine older notes.
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 200 ), last_seen_time: 0 } );
+
+			expect( trackedEvents() ).toEqual( [ { filter: 'unread', total: 19, reached_end: false } ] );
+		} );
+
+		it( 'flags reached_end when a filtered tab gets a short page', () => {
+			client.setFilter( 'unread' );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 209 ), last_seen_time: 0 } );
+			getCalls.length = 0;
+
+			client.loadMore();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 3, 200 ), last_seen_time: 0 } ); // 200..198
+
+			expect( trackedEvents() ).toEqual( [ { filter: 'unread', total: 12, reached_end: true } ] );
+		} );
+	} );
+
 	describe( 'polling window', () => {
 		// Load-more pages with `before`; the poll/refresh must keep requesting a small
 		// fixed head window instead of growing to cover everything paged in (which
@@ -470,15 +552,19 @@ describe( 'RestClient', () => {
 		// Reaching the cap with a full page must clear `filteredHasMore`, or the next
 		// load-more fires a zero-count request (number = max_limit - 100).
 		it( 'stops filtered paging at the cap without a zero-count request', () => {
+			// Ids run from TOP_ID down to 10, so a full window lands exactly on the cap.
+			const TOP_ID = MAX_LIMIT + 9;
 			client.setFilter( 'unread' );
-			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 209 ), last_seen_time: 0 } );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, TOP_ID ), last_seen_time: 0 } );
 
 			// Page in full older pages (10 at a time) until the list reaches max_limit.
-			// Starts at 10 loaded (ids 209..200); each page adds the next 10 older ids.
-			for ( let oldest = 199; oldest >= 219 - MAX_LIMIT; oldest -= 10 ) {
+			for ( let loaded = 10; loaded < MAX_LIMIT; loaded += 10 ) {
 				getCalls.length = 0;
 				client.loadMore();
-				getCalls[ 0 ].callback( null, { notes: fullPage( 10, oldest ), last_seen_time: 0 } );
+				getCalls[ 0 ].callback( null, {
+					notes: fullPage( 10, TOP_ID - loaded ),
+					last_seen_time: 0,
+				} );
 			}
 
 			expect( getFilteredNoteIds( store.getState(), UNREAD_KEY ) ).toHaveLength( MAX_LIMIT );

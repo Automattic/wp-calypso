@@ -92,6 +92,7 @@ function SiteOverviewPrimaryCards( { site, spacing }: { site: Site; spacing: num
 
 	return (
 		<>
+			<PlanCard site={ site } />
 			{ ( () => {
 				const showVisibilityCard = ! site.is_wpcom_flex;
 				return (
@@ -116,7 +117,6 @@ function SiteOverviewPrimaryCards( { site, spacing }: { site: Site; spacing: num
 				} )() }
 				<ScanCard site={ site } />
 			</Grid>
-			<PlanCard site={ site } />
 		</>
 	);
 }

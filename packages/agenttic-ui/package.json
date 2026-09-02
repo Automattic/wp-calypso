@@ -21,10 +21,11 @@
 	},
 	"files": [
 		"dist",
-		"README.md"
+		"!dist/tsconfig.tsbuildinfo"
 	],
 	"scripts": {
 		"build": "yarn run clean && yarn run i18n:download-json && vite build && tsc --project tsconfig.json --emitDeclarationOnly",
+		"prepare": "yarn run build",
 		"dev": "vite",
 		"clean": "rm -rf dist",
 		"type-check": "tsc --noEmit",
@@ -72,7 +73,6 @@
 		"@types/react": "^18.0.0 || ^19.0.0",
 		"@types/react-dom": "^18.0.0 || ^19.0.0",
 		"@vitejs/plugin-react": "^4.0.0",
-		"@wordpress/prettier-config": "^4.2.0",
 		"autoprefixer": "^10.4.0",
 		"jsdom": "^24.0.0",
 		"postcss": "^8.4.0",
@@ -89,6 +89,7 @@
 		"@radix-ui/react-popover": "^1.1.15",
 		"@radix-ui/react-scroll-area": "^1.2.9",
 		"@radix-ui/react-slot": "^1.2.3",
+		"@radix-ui/react-tooltip": "1.2.9",
 		"@wordpress/i18n": "^6.1.0",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",

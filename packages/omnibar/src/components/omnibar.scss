@@ -11,7 +11,9 @@ body:has( .omnibar ) {
 	--omnibar-submenu-text-color: #{$omnibar-submenu-text-color};
 	--omnibar-highlight-color: #{$omnibar-highlight-color};
 	--omnibar-submenu-highlight-color: #{$omnibar-highlight-color};
+	--omnibar-icon-color: var( --omnibar-text-color );
 	--omnibar-avatar-ring-color: #{$omnibar-avatar-ring-color};
+	--omnibar-avatar-background: var( --omnibar-avatar-ring-color );
 	--omnibar-secondary-group-background: #{$omnibar-secondary-group-background};
 
 	@media ( min-width: 782px ) {
@@ -26,6 +28,7 @@ body:has( .omnibar ) {
 		align-items: center;
 		justify-content: center;
 		height: 20px;
+		color: var( --omnibar-icon-color );
 
 		&::before {
 			position: relative;
@@ -110,6 +113,7 @@ body:has( .omnibar ) {
 
 		svg {
 			display: block;
+			color: var( --omnibar-icon-color );
 			fill: currentColor;
 			width: 32px;
 			height: 32px;
@@ -142,7 +146,7 @@ body:has( .omnibar ) {
 
 			svg {
 				position: relative;
-				inset-inline-start: -1px;
+				inset-inline-start: 1px;
 			}
 		}
 
@@ -155,12 +159,11 @@ body:has( .omnibar ) {
 		@media ( max-width: 480px ) {
 			.dashicons-before::before {
 				width: 46px;
-				inset-inline-start: 3px;
 			}
 
 			.omnibar__site-icon {
 				position: relative;
-				inset-inline-start: 3px;
+				inset-inline-start: 0.5px;
 			}
 		}
 

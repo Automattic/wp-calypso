@@ -1224,6 +1224,7 @@ export const normalizers = {
 			return [];
 		}
 
+		// Never-emailed posts are filtered server-side, before pagination (STATS-452).
 		const emailsData = data?.posts ?? [];
 
 		return emailsData.map(

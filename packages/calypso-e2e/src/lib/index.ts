@@ -1,4 +1,5 @@
 export { TestAccount } from './test-account';
+export { abandonPendingLoginLockWaits, clearStaleLoginLocks } from './login-lock';
 
 export * from './pages';
 export * from './flows';
@@ -9,11 +10,17 @@ export * from './utils';
 // and its own tests.
 export {
 	THROTTLE_IDS,
-	debugThrottle,
+	THROTTLED_PATH_PATTERN,
+	activeThrottleForUrl,
 	flushThrottleWrites,
 	mayBeThrottled,
 	readActiveThrottles,
-	recordThrottle,
+	recordResponseThrottle,
+	registerThrottleActionHandler,
+	throttleActionMessage,
 	throttleEnvVar,
+	throttleRefusalBody,
+	validateThrottleActions,
 } from './throttle-flags';
 export type { ThrottleId } from './throttle-flags';
+export { withDeadline } from './with-deadline';

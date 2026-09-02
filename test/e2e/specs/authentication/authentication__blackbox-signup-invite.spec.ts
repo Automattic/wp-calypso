@@ -5,7 +5,7 @@ import {
 	SecretsManager,
 	UserSignupPage,
 } from '@automattic/calypso-e2e';
-import { useBlackboxTestKeyForCollect } from '../../lib/blackbox-test-key';
+import { useBlackboxTestKeyForCollect, waitForCollectData } from '../../lib/blackbox-test-key';
 import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
 import { apiCloseAccount } from '../shared';
 import type { NewTestUserDetails, NewUserResponse } from '@automattic/calypso-e2e';
@@ -19,10 +19,12 @@ import type { Page, Request } from '@playwright/test';
  * invite secret, which is only ever embedded in the emailed link — the REST
  * API exposes just the bare invite slug, which the server rejects.
  *
- * Signup verification currently runs in shadow mode on the server
- * (blackbox_signup_enforcement_enabled() is off), so a block verdict is
- * recorded but must not prevent the signup. When enforcement is enabled,
- * the block test below needs to assert a rejected signup instead.
+ * Signup verification enforces its verdicts on the closed test loop, which
+ * these signups are on and their gmail-aliased siblings are not: the loop wants
+ * a username in the `e2eflowtesting` namespace, and the passwordless form sends
+ * none, so the server derives one from the email local part. A Mailosaur
+ * address gives it `e2eflowtestingblackbox...`; a gmail alias gives it the base
+ * address first. Production stays in shadow mode either way.
  */
 test.describe( 'Signup: Blackbox invite accept', { tag: [ tags.AUTHENTICATION ] }, () => {
 	skipIfMailosaurLimitReached();
@@ -105,14 +107,6 @@ test.describe( 'Signup: Blackbox invite accept', { tag: [ tags.AUTHENTICATION ] 
 		return DataHelper.getCalypsoURL( acceptInviteURL.pathname + acceptInviteURL.search );
 	};
 
-	const waitForCollectResponse = ( page: Page ) =>
-		page.waitForResponse(
-			( response ) =>
-				response.request().method() === 'POST' &&
-				response.url().includes( 'blackbox-api.wp.com/v1/collect' ),
-			{ timeout: 60 * 1000 }
-		);
-
 	const waitForUsersNewRequest = ( page: Page ): Promise< Request > =>
 		page.waitForRequest(
 			( request ) => request.method() === 'POST' && /\/users\/new\?/.test( request.url() ),
@@ -143,12 +137,12 @@ test.describe( 'Signup: Blackbox invite accept', { tag: [ tags.AUTHENTICATION ] 
 			await useBlackboxTestKeyForCollect( page, 'allow' );
 		} );
 
-		const collectResponse = waitForCollectResponse( page );
+		const collectData = waitForCollectData( page );
 
 		await test.step( 'When I visit the accept-invite page', async function () {
 			await page.goto( acceptInviteURL );
 
-			const collectBody = await ( await collectResponse ).json();
+			const collectBody = await collectData;
 			expect( collectBody?.data?.session_id ).toBe( 'bbtest_allow__________' );
 		} );
 
@@ -196,12 +190,12 @@ test.describe( 'Signup: Blackbox invite accept', { tag: [ tags.AUTHENTICATION ] 
 			await useBlackboxTestKeyForCollect( page, 'challenge' );
 		} );
 
-		const collectResponse = waitForCollectResponse( page );
+		const collectData = waitForCollectData( page );
 
 		await test.step( 'When I visit the accept-invite page', async function () {
 			await page.goto( acceptInviteURL );
 
-			const collectBody = await ( await collectResponse ).json();
+			const collectBody = await collectData;
 			expect( collectBody?.data?.session_id ).toBe( 'bbtest_challenge______' );
 			expect( collectBody?.data?.challenge ).toBeTruthy();
 		} );
@@ -216,7 +210,7 @@ test.describe( 'Signup: Blackbox invite accept', { tag: [ tags.AUTHENTICATION ] 
 		} );
 	} );
 
-	test( 'As an invited new user, my signup still succeeds when Blackbox returns block (shadow mode)', async ( {
+	test( 'As an invited new user, my signup is refused when Blackbox returns block', async ( {
 		page,
 		clientEmail,
 	}, workerInfo ) => {
@@ -240,12 +234,12 @@ test.describe( 'Signup: Blackbox invite accept', { tag: [ tags.AUTHENTICATION ] 
 			await useBlackboxTestKeyForCollect( page, 'block' );
 		} );
 
-		const collectResponse = waitForCollectResponse( page );
+		const collectData = waitForCollectData( page );
 
 		await test.step( 'When I visit the accept-invite page', async function () {
 			await page.goto( acceptInviteURL );
 
-			const collectBody = await ( await collectResponse ).json();
+			const collectBody = await collectData;
 			expect( collectBody?.data?.session_id ).toBe( 'bbtest_block__________' );
 		} );
 
@@ -253,19 +247,36 @@ test.describe( 'Signup: Blackbox invite accept', { tag: [ tags.AUTHENTICATION ] 
 			const usersNewRequest = waitForUsersNewRequest( page );
 
 			newUserDetails = await new UserSignupPage( page ).signupThroughInvite( testUser.email );
-			accountsToCleanup.push( {
-				user: newUserDetails.body,
-				password: testUser.password,
-				email: testUser.email,
-			} );
+			// A refused signup leaves nothing to close. Queue teardown only for an
+			// account created anyway — off the test loop the verdict is not enforced
+			// — so it never leaks and an empty identity is never reported as a leak.
+			if ( newUserDetails.body.user_id ) {
+				accountsToCleanup.push( {
+					user: newUserDetails.body,
+					password: testUser.password,
+					email: testUser.email,
+				} );
+			}
 
 			const request = await usersNewRequest;
 			expect( request.postDataJSON()?.blackbox_session_id ).toBe( 'bbtest_block__________' );
 		} );
 
-		await test.step( 'Then the account is still created (enforcement is off)', async function () {
-			expect( newUserDetails.body.user_id ).toBeTruthy();
-			expect( newUserDetails.body.bearer_token ).toBeTruthy();
+		await test.step( 'Then the signup is refused and no account is created', async function () {
+			// The refusal is dressed as the signup throttle: same `throttled` slug,
+			// no ban behind it. See blackbox_verify_signup().
+			expect( newUserDetails.code ).toBe( 403 );
+			expect( newUserDetails.body.error ).toBe( 'throttled' );
+			expect( newUserDetails.body.user_id ).toBeUndefined();
+		} );
+
+		await test.step( 'And the page tells me why', async function () {
+			// The notice carries the server's own message, so read it back from the
+			// response rather than pinning the copy here.
+			expect( newUserDetails.body.message ).toBeTruthy();
+			await expect( page.locator( '.calypso-notice.is-error .calypso-notice__text' ) ).toHaveText(
+				newUserDetails.body.message as string
+			);
 		} );
 	} );
 } );

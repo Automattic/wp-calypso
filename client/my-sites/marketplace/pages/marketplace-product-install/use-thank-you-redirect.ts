@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { useInterval } from 'calypso/lib/interval';
 import { useSelector, useDispatch } from 'calypso/state';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { transferCompleteStates } from 'calypso/state/automated-transfer/constants';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { usePostTransferPluginRecovery } from './use-post-transfer-plugin-recovery';
@@ -56,7 +56,7 @@ export function useThankYouRedirect( {
 			! halted &&
 			!! siteId &&
 			( ! atomicFlow ||
-				automatedTransferStatus === transferStates.COMPLETE ||
+				transferCompleteStates.includes( automatedTransferStatus ) ||
 				durableTransferCompleted ),
 		refetchInterval: ( query ) =>
 			query.state.data && isAtomicTransferredSite( query.state.data ) ? false : 2000,
@@ -89,7 +89,7 @@ export function useThankYouRedirect( {
 	// site was still Simple.
 	const uploadTransferSettled =
 		isTransferredUpload &&
-		automatedTransferStatus === transferStates.COMPLETE &&
+		transferCompleteStates.includes( automatedTransferStatus ) &&
 		!! isAtomicTransferReady;
 
 	usePostTransferPluginRecovery( {
@@ -113,10 +113,10 @@ export function useThankYouRedirect( {
 	// drives, that is only true once the transfer is far enough along and the site is reachable, which
 	// is also when the URL below resolves.
 	useEffect( () => {
-		if ( installedPlugin && pluginActive && pluginsUrlFinal ) {
+		if ( ! halted && installedPlugin && pluginActive && pluginsUrlFinal ) {
 			window.location.href = pluginsUrlFinal;
 		}
-	}, [ installedPlugin, pluginActive, pluginsUrlFinal, siteId, pluginSlug ] );
+	}, [ halted, installedPlugin, pluginActive, pluginsUrlFinal, siteId, pluginSlug ] );
 
 	// Validate theme is already active
 	useEffect( () => {

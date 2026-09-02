@@ -1,8 +1,11 @@
 import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector, useDispatch } from 'calypso/state';
-import { clearPluginUpload } from 'calypso/state/plugins/upload/actions';
+import { clearPluginUpload, uploadPlugin } from 'calypso/state/plugins/upload/actions';
+import getPluginUploadFile from 'calypso/state/selectors/get-plugin-upload-file';
 import { getTheme } from 'calypso/state/themes/selectors';
 import {
 	getSelectedSite,
@@ -10,17 +13,19 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import ThemeDirectInstall from './theme-direct-install';
-import type { ProductInstallError } from './use-product-install';
+import type { InstallErrorTrackingProps, ProductInstallError } from './use-product-install';
 
 export default function ProductInstallErrorView( {
 	error,
 	pluginSlug,
 	themeSlug,
+	trackingProps,
 	onActivateTheme,
 }: {
 	error: ProductInstallError;
 	pluginSlug: string;
 	themeSlug: string;
+	trackingProps: InstallErrorTrackingProps;
 	onActivateTheme: () => void;
 } ) {
 	const translate = useTranslate();
@@ -29,12 +34,17 @@ export default function ProductInstallErrorView( {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const wpOrgTheme = useSelector( ( state ) => getTheme( state, 'wporg', themeSlug ) );
+	const pluginUploadFile = useSelector( ( state ) => getPluginUploadFile( state, siteId ) );
 
 	// The abandoned attempt is still marked in progress, and the upload page clears that state only
 	// when it isn't — and hides its drop zone meanwhile. Retire it here or the retry lands on a page
 	// that cannot accept a file.
 	const onRetryUpload = () => {
 		dispatch( clearPluginUpload( siteId ) );
+	};
+
+	const recordCtaClick = ( action: string ) => {
+		recordTracksEvent( 'calypso_marketplace_install_error_click', { ...trackingProps, action } );
 	};
 
 	const uploadPageURL = `/plugins/upload/${ selectedSiteSlug }`;
@@ -59,6 +69,7 @@ export default function ProductInstallErrorView( {
 						args: { planName: businessPlanName },
 					} ) }
 					actionURL={ `/checkout/${ selectedSite?.slug }/business?redirect_to=/marketplace/plugin/${ pluginSlug }/install/${ selectedSite?.slug }#step2` }
+					actionCallback={ () => recordCtaClick( 'upgrade_plan' ) }
 				/>
 			);
 		}
@@ -71,6 +82,7 @@ export default function ProductInstallErrorView( {
 					) }
 					action={ translate( 'Go to the upload page' ) }
 					actionURL={ `/plugins/upload/${ selectedSite?.slug }` }
+					actionCallback={ () => recordCtaClick( 'go_to_upload' ) }
 				/>
 			);
 		case 'theme-direct-install':
@@ -81,6 +93,7 @@ export default function ProductInstallErrorView( {
 					siteSlug={ selectedSite?.slug }
 					theme={ wpOrgTheme }
 					onActivate={ onActivateTheme }
+					onCtaClick={ recordCtaClick }
 				/>
 			);
 		case 'rejected-upload': {
@@ -109,11 +122,102 @@ export default function ProductInstallErrorView( {
 					line={ line }
 					secondaryAction={ translate( 'Back' ) }
 					secondaryActionURL={ uploadPageURL }
+					secondaryActionCallback={ () => recordCtaClick( 'back' ) }
 					action={ translate( 'Re-upload plugin' ) }
 					actionURL={ wpAdminUploadURL }
+					actionCallback={ () => recordCtaClick( 'reupload_wp_admin' ) }
 				/>
 			);
 		}
+		case 'plugin-exists': {
+			const versionsMatch =
+				error.installedVersion &&
+				error.uploadedVersion &&
+				error.installedVersion === error.uploadedVersion;
+
+			if ( versionsMatch ) {
+				return (
+					<EmptyContent
+						title={ null }
+						line={ translate( 'This plugin version is already installed on your site.' ) }
+					>
+						<Button
+							primary
+							className="empty-content__action"
+							href={ pluginsPageURL }
+							onClick={ () => recordCtaClick( 'go_to_plugins' ) }
+						>
+							{ translate( 'Go to plugins' ) }
+						</Button>
+						<Button
+							className="empty-content__action"
+							href={ uploadPageURL }
+							onClick={ () => recordCtaClick( 'back' ) }
+						>
+							{ translate( 'Back' ) }
+						</Button>
+					</EmptyContent>
+				);
+			}
+
+			return (
+				<EmptyContent
+					title={ null }
+					line={
+						error.installedVersion && error.uploadedVersion
+							? translate(
+									'Version %(uploadedVersion)s is ready to replace installed version %(installedVersion)s.',
+									{
+										args: {
+											uploadedVersion: error.uploadedVersion,
+											installedVersion: error.installedVersion,
+										},
+									}
+							  )
+							: translate(
+									'This plugin is already installed on your site. Replace it with the uploaded version?'
+							  )
+					}
+				>
+					<Button
+						primary
+						className="empty-content__action"
+						onClick={ () => {
+							if ( ! pluginUploadFile ) {
+								return;
+							}
+							recordCtaClick( 'replace_plugin' );
+							dispatch( uploadPlugin( siteId, pluginUploadFile, error.pluginSlug ) );
+						} }
+					>
+						{ translate( 'Replace installed plugin' ) }
+					</Button>
+					<Button
+						className="empty-content__action"
+						href={ uploadPageURL }
+						onClick={ () => recordCtaClick( 'back' ) }
+					>
+						{ translate( 'Back' ) }
+					</Button>
+				</EmptyContent>
+			);
+		}
+		// Only the plugin transfer flow reaches this state, so the copy can name the plugin.
+		case 'activation-timeout':
+			return (
+				<EmptyContent
+					title={ null }
+					line={ translate(
+						'Your site is ready, but we could not confirm the plugin was installed and activated. It may still finish on its own — check your installed plugins in a few minutes.'
+					) }
+					secondaryAction={ translate( 'Contact support' ) }
+					secondaryActionURL="/help/contact"
+					secondaryActionCallback={ () => recordCtaClick( 'contact_support' ) }
+					action={ translate( 'Go to plugins' ) }
+					actionURL={ pluginsPageURL }
+					actionCallback={ () => recordCtaClick( 'go_to_plugins' ) }
+				/>
+			);
 		case 'timeout':
 		case 'transfer-failed': {
 			// This screen also serves themes and zip uploads, so plugin-worded copy and a link to
@@ -134,8 +238,10 @@ export default function ProductInstallErrorView( {
 						}
 						secondaryAction={ translate( 'Contact support' ) }
 						secondaryActionURL="/help/contact"
+						secondaryActionCallback={ () => recordCtaClick( 'contact_support' ) }
 						action={ translate( 'Go to themes' ) }
 						actionURL={ `/themes/${ selectedSiteSlug }` }
+						actionCallback={ () => recordCtaClick( 'go_to_themes' ) }
 					/>
 				);
 			}
@@ -154,11 +260,17 @@ export default function ProductInstallErrorView( {
 					}
 					secondaryAction={ translate( 'Contact support' ) }
 					secondaryActionURL="/help/contact"
+					secondaryActionCallback={ () => recordCtaClick( 'contact_support' ) }
 					action={
 						isPluginUploadFlow ? translate( 'Try uploading again' ) : translate( 'Go to plugins' )
 					}
 					actionURL={ isPluginUploadFlow ? uploadPageURL : pluginsPageURL }
-					actionCallback={ isPluginUploadFlow ? onRetryUpload : undefined }
+					actionCallback={ () => {
+						recordCtaClick( isPluginUploadFlow ? 'retry_upload' : 'go_to_plugins' );
+						if ( isPluginUploadFlow ) {
+							onRetryUpload();
+						}
+					} }
 				/>
 			);
 		}
@@ -175,8 +287,10 @@ export default function ProductInstallErrorView( {
 							? uploadPageURL
 							: `/plugins/${ pluginSlug }/${ selectedSiteSlug }`
 					}
+					secondaryActionCallback={ () => recordCtaClick( 'back' ) }
 					action={ translate( 'Upload from WP Admin' ) }
 					actionURL={ wpAdminUploadURL }
+					actionCallback={ () => recordCtaClick( 'reupload_wp_admin' ) }
 				/>
 			);
 	}

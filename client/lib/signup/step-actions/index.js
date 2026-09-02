@@ -5,6 +5,11 @@ import {
 	PRODUCT_1GB_SPACE,
 	getPlan,
 	TERM_MONTHLY,
+	PLAN_PERSONAL_TRIAL_MONTHLY,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PLAN_HOSTING_TRIAL_MONTHLY,
+	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Site, AddOns } from '@automattic/data-stores';
@@ -967,57 +972,6 @@ export function createAccount(
 	}
 }
 
-export function createSite( callback, dependencies, stepData, reduxStore ) {
-	const { site, themeSlugWithRepo } = stepData;
-	const signupDependencies = getSignupDependencyStore( reduxStore.getState() );
-	const locale = getLocaleSlug();
-
-	const theme =
-		dependencies?.themeSlugWithRepo ||
-		themeSlugWithRepo ||
-		( signupDependencies?.themeSlugWithRepo ?? false );
-
-	const data = {
-		blog_name: site,
-		blog_title: '',
-		public: Visibility.PublicNotIndexed,
-		options: {
-			theme,
-			timezone_string: guessTimezone(),
-			wpcom_public_coming_soon: 1,
-		},
-		validate: false,
-		locale,
-		lang_id: getLanguage( locale ).value,
-		client_id: config( 'wpcom_signup_id' ),
-		client_secret: config( 'wpcom_signup_key' ),
-	};
-
-	// ************************************************************************
-	// ****  Experiment skeleton left in for future BBE copy change tests  ****
-	// ************************************************************************
-	// Pre Load Experiment relevant to the post site creation goal screen
-	// loadExperimentAssignment( CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME );
-
-	wpcom.req.post( '/sites/new', data, function ( errors, response ) {
-		let providedDependencies;
-		let siteSlug;
-
-		if ( response && response.blog_details ) {
-			const parsedBlogURL = getUrlParts( response.blog_details.url );
-			siteSlug = parsedBlogURL.hostname;
-
-			providedDependencies = { siteSlug };
-		}
-
-		if ( isUserLoggedIn( reduxStore.getState() ) && isEmpty( errors ) ) {
-			fetchSitesAndUser( siteSlug, () => callback( undefined, providedDependencies ), reduxStore );
-		} else {
-			callback( isEmpty( errors ) ? undefined : [ errors ], providedDependencies );
-		}
-	} );
-}
-
 function recordExcludeStepEvent( step, value ) {
 	recordTracksEvent( 'calypso_signup_actions_exclude_step', {
 		step,
@@ -1139,10 +1093,22 @@ export function maybeAddStorageAddonToCart( stepName, defaultDependencies, nextP
 	}
 }
 
+const FREE_TRIAL_PLAN_SLUGS = [
+	PLAN_PERSONAL_TRIAL_MONTHLY,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PLAN_HOSTING_TRIAL_MONTHLY,
+	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
+];
+
 export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 	const { isPaidPlan, sitePlanSlug, submitSignupStep } = nextProps;
 	const fulfilledDependencies = [];
 	const dependenciesFromDefaults = {};
+
+	// A free trial has a non-free product ID, so it reads as a paid plan. Keep the plan
+	// step available so trial sites can still purchase the underlying plan on launch.
+	const isFreeTrialPlan = FREE_TRIAL_PLAN_SLUGS.includes( sitePlanSlug );
 
 	// Check for plan-specific default theme
 	if ( defaultDependencies && defaultDependencies.themeSlugWithRepo ) {
@@ -1150,7 +1116,7 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 		dependenciesFromDefaults.themeSlugWithRepo = defaultDependencies.themeSlugWithRepo;
 	}
 
-	if ( isPaidPlan ) {
+	if ( isPaidPlan && ! isFreeTrialPlan ) {
 		const cartItems = undefined;
 		submitSignupStep(
 			{ stepName, cartItems, wasSkipped: true },

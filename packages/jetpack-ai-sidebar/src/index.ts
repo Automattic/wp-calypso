@@ -65,6 +65,11 @@ import {
 	isOptimizeTitleSuggestionEnabled,
 	isSeoSuggestionsEnabled,
 } from './utils/preview-features';
+import {
+	getCurrentEditorPostIdFromStore as getCurrentEditorPostId,
+	normalizeEditorPostId,
+	type EditorPostId,
+} from './utils/review-post-context';
 import { SUGGESTION_ACTION_COMPLETE_EVENT } from './utils/suggestion-events';
 import {
 	UPDATE_BLOCK_CONTENT_TOOL_ID,
@@ -145,14 +150,22 @@ function canSwapBlockEditSnapshot( snapshot: BlockEditSnapshot ): boolean {
 	);
 }
 
+/**
+ * Uses the selector the legacy "Improve with AI" panel gates on. It is blocks-only
+ * and never reads the title, so a titled post with no body counts as empty. An
+ * editor that cannot answer reports "not empty", so nothing greys out on a store
+ * we cannot read.
+ */
+function isPostContentEmpty(): boolean {
+	const isEditedPostEmpty = ( window as any ).wp?.data?.select?.( 'core/editor' )
+		?.isEditedPostEmpty;
+	return typeof isEditedPostEmpty === 'function' && isEditedPostEmpty() === true;
+}
+
 /** Default suggestion shown when no block is selected. */
 const OPTIMIZE_TITLE_SUGGESTION = {
 	id: 'optimize-title',
 	label: __( 'Optimize Title', __i18n_text_domain__ ),
-	description: __(
-		'Refine the title based on your post’s content and SEO best practices.',
-		__i18n_text_domain__
-	),
 	prompt: __( 'Optimize the title of this post', __i18n_text_domain__ ),
 };
 
@@ -166,10 +179,6 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 const GENERATE_FEATURED_IMAGE_SUGGESTION = {
 	id: 'generate-featured-image',
 	label: __( 'Generate featured image', __i18n_text_domain__ ),
-	description: __(
-		'Create a new image with AI and set it as the featured image.',
-		__i18n_text_domain__
-	),
 	prompt: '',
 	action: () => ! openImageStudioForFeaturedImage(),
 };
@@ -183,7 +192,6 @@ const GENERATE_FEATURED_IMAGE_SUGGESTION = {
 const GENERATE_EXCERPT_SUGGESTION = {
 	id: 'generate-excerpt',
 	label: __( 'Generate Excerpt', __i18n_text_domain__ ),
-	description: __( 'Generate an excerpt for your post.', __i18n_text_domain__ ),
 	prompt: __( 'Generate an excerpt for this post', __i18n_text_domain__ ),
 };
 
@@ -206,10 +214,6 @@ const GENERATE_EXCERPT_SUGGESTION = {
 const SEO_ENHANCER_SUGGESTION = {
 	id: 'seo-enhancer',
 	label: __( 'SEO Enhancer', __i18n_text_domain__ ),
-	description: __(
-		'Generate metadata for the contents of the post to optimize SEO.',
-		__i18n_text_domain__
-	),
 	prompt: '',
 	options: [
 		{
@@ -233,36 +237,48 @@ const SEO_ENHANCER_SUGGESTION = {
 	],
 };
 
-/** Editor-level suggestion to run AI Editorial Review on saved content. */
-const AI_EDITORIAL_REVIEW_SUGGESTION = {
+/**
+ * The three review tools share one dropdown. Each option's `value` is the whole
+ * prompt, which the dropdown submits verbatim because the parent `prompt` is empty
+ * — the same arrangement SEO Enhancer uses.
+ */
+const GET_FEEDBACK_SUGGESTION_ID = 'get-feedback';
+
+const AI_EDITORIAL_REVIEW_OPTION = {
 	id: 'ai-editorial-review',
-	label: __( 'Editorial Review', __i18n_text_domain__ ),
-	description: __( 'In-depth review against your content guidelines.', __i18n_text_domain__ ),
-	prompt: __(
+	label: __( 'In-depth review against guidelines', __i18n_text_domain__ ),
+	value: __(
 		'Run an AI Editorial Review for this post. Check the content, reviewer notes, and site guidelines, then surface conflicts, implications, guideline issues, and suggested edits.',
 		__i18n_text_domain__
 	),
 };
 
-const POST_FEEDBACK_SUGGESTION = {
+const POST_FEEDBACK_OPTION = {
 	id: 'generate-feedback',
-	label: __( 'Simple Review', __i18n_text_domain__ ),
-	description: __( 'Quick feedback on your content’s structure.', __i18n_text_domain__ ),
-	prompt: __(
+	label: __( 'Quick feedback on structure', __i18n_text_domain__ ),
+	value: __(
 		'Generate feedback for this saved post. Review the saved title and saved block content for content structure, reader clarity, completeness, media/caption/link issues, and obvious publishability concerns. Return practical feedback with one-click suggestions when safe.',
 		__i18n_text_domain__
 	),
 };
 
-const PROOFREAD_SUGGESTION = {
+const PROOFREAD_OPTION = {
 	id: 'proofread-content',
-	label: __( 'Proofread', __i18n_text_domain__ ),
-	description: __( 'Correct spelling, grammar, and punctuation.', __i18n_text_domain__ ),
-	prompt: __(
+	label: __( 'Spelling and grammar check', __i18n_text_domain__ ),
+	value: __(
 		'Proofread this saved post for spelling, grammar, and punctuation. Review the saved title and saved block content, and return practical fixes with one-click suggestions when safe.',
 		__i18n_text_domain__
 	),
 };
+
+/**
+ * Both abilities read the saved post, so the edited page content would mislead
+ * them. Matched by prompt rather than id: a dropdown submits its parent's id.
+ */
+const SAVED_POST_PROMPTS: Set< string > = new Set( [
+	POST_FEEDBACK_OPTION.value,
+	PROOFREAD_OPTION.value,
+] );
 
 const LIMITED_BLOCK_SUGGESTION_PRIORITY = [
 	'translate',
@@ -272,27 +288,9 @@ const LIMITED_BLOCK_SUGGESTION_PRIORITY = [
 	'generate-alt-text',
 ];
 
-type EditorPostId = number | string;
-
 function getCurrentEditorPostType(): string | undefined {
 	const postType = ( window as any ).wp?.data?.select?.( 'core/editor' )?.getCurrentPostType?.();
 	return typeof postType === 'string' ? postType : undefined;
-}
-
-function normalizeEditorPostId( postId: unknown ): EditorPostId | undefined {
-	if ( typeof postId === 'number' && postId > 0 ) {
-		return postId;
-	}
-	if ( typeof postId === 'string' && postId.trim() ) {
-		return postId;
-	}
-	return undefined;
-}
-
-function getCurrentEditorPostId(): EditorPostId | undefined {
-	return normalizeEditorPostId(
-		( window as any ).wp?.data?.select?.( 'core/editor' )?.getCurrentPostId?.()
-	);
 }
 
 /**
@@ -440,11 +438,48 @@ function isProofreadAvailable(
 	);
 }
 
-function getAiEditorialReviewSuggestions( currentPostType?: string ) {
-	if ( ! isAiEditorialReviewAvailable( currentPostType ) ) {
+/**
+ * The review tools as one dropdown, carrying only the options this post qualifies
+ * for. With none available the dropdown is dropped entirely.
+ */
+function getFeedbackSuggestions( currentPostType?: string, currentPostId?: EditorPostId | null ) {
+	const options = [
+		...( isGenerateFeedbackAvailable( currentPostType, currentPostId )
+			? [ POST_FEEDBACK_OPTION ]
+			: [] ),
+		...( isProofreadAvailable( currentPostType, currentPostId ) ? [ PROOFREAD_OPTION ] : [] ),
+		...( isAiEditorialReviewAvailable( currentPostType ) ? [ AI_EDITORIAL_REVIEW_OPTION ] : [] ),
+	];
+
+	if ( options.length === 0 ) {
 		return [];
 	}
-	return [ AI_EDITORIAL_REVIEW_SUGGESTION ];
+
+	return [
+		{
+			id: GET_FEEDBACK_SUGGESTION_ID,
+			label: __( 'Get feedback', __i18n_text_domain__ ),
+			// Empty, so the dropdown submits the picked option's value verbatim.
+			prompt: '',
+			options,
+		},
+	];
+}
+
+/**
+ * `generate-featured-image` is absent on purpose: it opens Image Studio, where the
+ * user writes their own prompt.
+ */
+const CONTENT_DEPENDENT_SUGGESTION_IDS: Set< string > = new Set( [
+	OPTIMIZE_TITLE_SUGGESTION.id,
+	GENERATE_EXCERPT_SUGGESTION.id,
+	// Every review behind this chip needs content, so the chip gates as a whole.
+	GET_FEEDBACK_SUGGESTION_ID,
+	SEO_ENHANCER_SUGGESTION.id,
+] );
+
+function getContentRequiredReason(): string {
+	return __( 'This feature requires content to work.', __i18n_text_domain__ );
 }
 
 function getPostLevelSuggestions(
@@ -456,7 +491,7 @@ function getPostLevelSuggestions(
 		return [];
 	}
 
-	return [
+	const suggestions = [
 		...( isFeaturedImageSuggestionAvailable( currentPostType )
 			? [ GENERATE_FEATURED_IMAGE_SUGGESTION ]
 			: [] ),
@@ -464,18 +499,27 @@ function getPostLevelSuggestions(
 		...( isExcerptSuggestionAvailable( currentPostType, supportsExcerpt )
 			? [ GENERATE_EXCERPT_SUGGESTION ]
 			: [] ),
-		...( isGenerateFeedbackAvailable( currentPostType, currentPostId )
-			? [ POST_FEEDBACK_SUGGESTION ]
-			: [] ),
-		...( isProofreadAvailable( currentPostType, currentPostId ) ? [ PROOFREAD_SUGGESTION ] : [] ),
-		...getAiEditorialReviewSuggestions( currentPostType ),
+		...getFeedbackSuggestions( currentPostType, currentPostId ),
 		// Surface the SEO Enhancer dropdown last.
 		...( isSeoSuggestionsEnabled() ? [ SEO_ENHANCER_SUGGESTION ] : [] ),
 	];
+
+	if ( ! isPostContentEmpty() ) {
+		return suggestions;
+	}
+
+	// Greyed out rather than dropped, so a blank post still shows what is on offer.
+	const disabledReason = getContentRequiredReason();
+
+	return suggestions.map( ( suggestion ) =>
+		CONTENT_DEPENDENT_SUGGESTION_IDS.has( suggestion.id )
+			? { ...suggestion, disabled: true, disabledReason }
+			: suggestion
+	);
 }
 
 function getReservedSuggestions< T extends { id: string } >( suggestions: T[] ): T[] {
-	return [ POST_FEEDBACK_SUGGESTION.id, PROOFREAD_SUGGESTION.id, AI_EDITORIAL_REVIEW_SUGGESTION.id ]
+	return [ GET_FEEDBACK_SUGGESTION_ID ]
 		.map( ( id ) => suggestions.find( ( suggestion ) => suggestion.id === id ) )
 		.filter( Boolean ) as T[];
 }
@@ -1187,6 +1231,8 @@ export function getEmptyViewSuggestions(): Array< {
 	description?: string;
 	prompt?: string;
 	options?: SuggestionOption[];
+	disabled?: boolean;
+	disabledReason?: string;
 	action?: () => boolean | Promise< boolean >;
 } > {
 	return getPostLevelSuggestions( getCurrentEditorPostType() );
@@ -1434,10 +1480,7 @@ export function useSuggestions( maxSuggestions?: number ): {
 				? getSelectedOrRememberedBlock()?.clientId ?? null
 				: null;
 
-			if ( matchesSuggestion( POST_FEEDBACK_SUGGESTION ) ) {
-				suppressCurrentPageContentForNextContext = true;
-			}
-			if ( matchesSuggestion( PROOFREAD_SUGGESTION ) ) {
+			if ( typeof value === 'string' && SAVED_POST_PROMPTS.has( value ) ) {
 				suppressCurrentPageContentForNextContext = true;
 			}
 		};
