@@ -274,9 +274,39 @@ function ReceiptPaymentMethod( { transaction }: { transaction: BillingTransactio
 	);
 }
 
+interface ReceiptVatDetails {
+	country?: string | null;
+	id?: string | null;
+	name?: string | null;
+	address?: string | null;
+}
+
+/**
+ * The tax identity to print on a receipt.
+ *
+ * A receipt describes a supply that already happened, so it has to name the
+ * party it happened with. The API says who that was, taking account of any
+ * reissue that has since superseded the receipt. The user's current details are
+ * only a stand-in for receipts served by an API that predates the field, where
+ * they remain the best guess available.
+ */
+function useReceiptVatDetails( transaction: BillingTransaction ): {
+	vatDetails: ReceiptVatDetails;
+	isLoading: boolean;
+	fetchError: unknown;
+} {
+	const { vatDetails, isLoading, fetchError } = useVatDetails();
+
+	if ( transaction.tax_customer_info ) {
+		return { vatDetails: transaction.tax_customer_info, isLoading: false, fetchError: null };
+	}
+
+	return { vatDetails, isLoading, fetchError };
+}
+
 function UserVatDetails( { transaction }: { transaction: BillingTransaction } ) {
 	const translate = useTranslate();
-	const { vatDetails, isLoading, fetchError } = useVatDetails();
+	const { vatDetails, isLoading, fetchError } = useReceiptVatDetails( transaction );
 	const reduxDispatch = useDispatch();
 
 	const getEmailReceiptLinkClickHandler = ( receiptId: string ) => {

@@ -15,6 +15,7 @@ jest.mock( '../is-reader-chat-agent', () => {
 import { select } from '@wordpress/data';
 import { getActiveSessionId } from '../agent-session';
 import { isReaderChatHost } from '../is-reader-chat-agent';
+import { setLoadedProviderIds } from '../loaded-provider-ids';
 import { setResolvedAgentId } from '../resolved-agent-id';
 import {
 	getBigSkyTracksData,
@@ -206,6 +207,7 @@ describe( 'tracks wrappers', () => {
 			expect( props ).toMatchObject( {
 				ai_session_id: 'session-xyz',
 				agent_name: 'dolly',
+				provider_ids: 'none',
 				surface: 'editor',
 				is_test: true,
 			} );
@@ -256,6 +258,34 @@ describe( 'tracks wrappers', () => {
 			setResolvedAgentId( 'reader-chat' );
 			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );
 			expect( mockRecordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		} );
+	} );
+
+	describe( 'provider_ids', () => {
+		afterEach( () => {
+			setLoadedProviderIds( undefined );
+		} );
+
+		it( 'joins the loaded provider ids, sorted for stable grouping', () => {
+			setLoadedProviderIds( [ 'woocommerce-ai', 'jetpack-ai' ] );
+
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );
+
+			expect( lastEventProps().provider_ids ).toBe( 'jetpack-ai,woocommerce-ai' );
+		} );
+
+		it( 'sends none when the providers loaded with no external entries', () => {
+			setLoadedProviderIds( [] );
+
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );
+
+			expect( lastEventProps().provider_ids ).toBe( 'none' );
+		} );
+
+		it( 'sends none until the providers load', () => {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );
+
+			expect( lastEventProps().provider_ids ).toBe( 'none' );
 		} );
 	} );
 

@@ -65,7 +65,7 @@ test.describe(
 				await pageCartCheckout.purchase( { timeout: 75 * 1000 } );
 			} );
 
-			await test.step( 'Then I land on the post-checkout "Set up your site" screen', async function () {
+			await test.step( 'Then I land on the post-checkout "Let’s design your site" screen', async function () {
 				// Eligible paid plans now land on the post-checkout choice screen
 				// after checkout, instead of going straight to Home.
 				await pagePostCheckoutSetupSite.waitUntilLoaded();

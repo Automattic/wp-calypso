@@ -22,6 +22,11 @@ export interface ReaderLandingPage extends LandingPagePreference {
 	useReaderAsLandingPage: boolean;
 }
 
+export interface LoggedInHomepagePreference {
+	show: boolean;
+	updatedAt: number; // Result of Date.now()
+}
+
 export interface VisitCounter {
 	count: number;
 	lastUpdated: number | null; // Result of Date.now(), or null before the first visit
@@ -46,6 +51,7 @@ export interface UserPreferences {
 	'reader-landing-page'?: ReaderLandingPage;
 	'reader-seen-posts'?: boolean;
 	'sites-landing-page'?: SitesLandingPage;
+	'logged-in-homepage'?: LoggedInHomepagePreference;
 	[ key: `cancel-purchase-survey-completed-${ string | number }` ]: string | undefined;
 	[ key: `cancellation-offer-accepted-notice-dismissed-${ string | number }` ]: string | undefined;
 	'achievements-visibility'?: 'public' | 'private';

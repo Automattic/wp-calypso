@@ -25,7 +25,7 @@ const HELP_CENTER_STORE = HelpCenter.register();
 const MasterbarHelpCenter = ( { tooltip } ) => {
 	const translate = useTranslate();
 	const sectionName = useSelector( getSectionName );
-	const { site, siteContextSource } = useHelpCenterSite();
+	const { siteId, siteContextSource } = useHelpCenterSite();
 	const isNotificationsOpen = useSelector( ( state ) => getIsNotificationsOpen( state ) );
 	const prevIsNotificationsOpen = usePrevious( isNotificationsOpen );
 	const [ helpCenterPage, setHelpCenterPage ] = useState( null );
@@ -57,7 +57,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 					is_assignment_loaded: ! isLoadingExperimentAssignment,
 				},
 				siteContextSource,
-				site?.ID
+				siteId
 			)
 		);
 	};
@@ -73,7 +73,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 					section: sectionName,
 				},
 				siteContextSource,
-				site?.ID
+				siteId
 			)
 		);
 
@@ -103,7 +103,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 							section: sectionName,
 						},
 						siteContextSource,
-						site?.ID
+						siteId
 					)
 				);
 				setShowHelpCenter( false );
@@ -123,7 +123,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 						destination,
 					},
 					siteContextSource,
-					site?.ID
+					siteId
 				)
 			);
 		}
