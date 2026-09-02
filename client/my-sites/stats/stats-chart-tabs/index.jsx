@@ -200,7 +200,6 @@ class StatModuleChartTabs extends Component {
 			className,
 			{
 				'is-loading': isActiveTabLoading,
-				'has-less-than-three-bars': this.props.chartData.length < 3,
 			},
 		];
 
