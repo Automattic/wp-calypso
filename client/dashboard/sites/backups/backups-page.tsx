@@ -53,15 +53,25 @@ export function BackupsPage( {
 		defaultDays: 30,
 	} );
 
-	const { activityLog, isLoadingActivityLog, selectedBackup, isSmallViewport } =
-		useBackupsBrowserState( {
-			site,
-			rewindId,
-			dateRange,
-			timezoneString,
-			gmtOffset,
-			enabled: hasBackups,
-		} );
+	const {
+		isLoadingActivityLog,
+		selectedBackup,
+		isSmallViewport,
+		view,
+		updateView,
+		resetView,
+		fields,
+		filteredData,
+		paginationInfo,
+	} = useBackupsBrowserState( {
+		site,
+		rewindId,
+		dateRange,
+		timezoneString,
+		gmtOffset,
+		searchParams,
+		enabled: hasBackups,
+	} );
 	const isMobileDetailsView = isSmallViewport && !! selectedBackup;
 	const shouldShowActions = hasBackups && ! isMobileDetailsView;
 
@@ -118,14 +128,17 @@ export function BackupsPage( {
 			{ hasBackups ? (
 				<BackupsBrowser
 					site={ site }
-					activityLog={ activityLog }
 					isLoadingActivityLog={ isLoadingActivityLog }
 					selectedBackup={ selectedBackup }
 					isSmallViewport={ isSmallViewport }
-					dateRange={ dateRange }
 					timezoneString={ timezoneString }
 					gmtOffset={ gmtOffset }
-					searchParams={ searchParams }
+					view={ view }
+					updateView={ updateView }
+					resetView={ resetView }
+					fields={ fields }
+					filteredData={ filteredData }
+					paginationInfo={ paginationInfo }
 					onSelectBackup={ ( selected ) => navigation.selectBackup( selected?.rewind_id ?? null ) }
 					onRequestRestore={ ( selected ) => navigation.requestRestore( selected.rewind_id ) }
 					onRequestDownload={ ( selected ) => navigation.requestDownload( selected.rewind_id ) }

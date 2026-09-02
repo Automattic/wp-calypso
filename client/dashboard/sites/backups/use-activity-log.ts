@@ -16,6 +16,8 @@ export interface UseActivityLogOptions {
 export interface UseActivityLogResult {
 	activityLog: ActivityLogEntry[];
 	isLoadingActivityLog: boolean;
+	after?: string;
+	before?: string;
 }
 
 /**
@@ -67,5 +69,7 @@ export function useActivityLog( {
 	return {
 		activityLog: queryResult.data ?? [],
 		isLoadingActivityLog: queryResult.isLoading,
+		after,
+		before,
 	};
 }

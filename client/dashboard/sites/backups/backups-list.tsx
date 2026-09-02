@@ -1,16 +1,9 @@
-import { siteBackupActivityLogGroupCountsQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
-import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useMemo } from 'react';
-import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { DataViews, DataViewsCard } from '../../components/dataviews';
-import { buildTimeRangeForActivityLog } from '../../utils/site-activity-log';
-import { getFields } from './dataviews/fields';
 import type { ActivityLogEntry } from '@automattic/api-core';
-import type { View } from '@wordpress/dataviews';
+import type { Field, View } from '@wordpress/dataviews';
 
-const defaultView: View = {
+export const defaultView: View = {
 	type: 'list',
 	fields: [ 'date', 'content_text' ],
 	mediaField: 'icon',
@@ -27,61 +20,30 @@ const defaultView: View = {
 };
 
 export function BackupsList( {
-	siteId,
-	searchParams,
+	view,
+	updateView,
+	resetView,
+	fields,
+	filteredData,
+	paginationInfo,
 	selectedBackup,
 	setSelectedBackup,
-	dateRange,
-	timezoneString,
-	gmtOffset,
-	activityLog,
 	isLoadingActivityLog,
 }: {
-	siteId: number;
-	searchParams?: Record< string, unknown >;
+	view: View;
+	updateView: ( view: View ) => void;
+	resetView?: () => void;
+	fields: Field< ActivityLogEntry >[];
+	filteredData: ActivityLogEntry[];
+	paginationInfo: { totalItems: number; totalPages: number };
 	selectedBackup: ActivityLogEntry | null;
 	setSelectedBackup: ( backup: ActivityLogEntry | null ) => void;
-	dateRange?: { start: Date; end: Date };
-	timezoneString?: string;
-	gmtOffset?: number;
-	activityLog: ActivityLogEntry[];
 	isLoadingActivityLog: boolean;
 } ) {
-	const { view, updateView, resetView } = usePersistentView( {
-		slug: 'site-backups',
-		defaultView,
-		queryParams: searchParams,
-	} );
-
-	const { after, before } = useMemo( () => {
-		if ( ! dateRange ) {
-			return { after: undefined, before: undefined };
-		}
-
-		return buildTimeRangeForActivityLog(
-			dateRange.start,
-			dateRange.end,
-			timezoneString,
-			gmtOffset
-		);
-	}, [ dateRange, timezoneString, gmtOffset ] );
-
-	const { data: groupCountsData } = useQuery(
-		siteBackupActivityLogGroupCountsQuery( siteId, after, before )
-	);
-
-	const fields = getFields( groupCountsData?.groups, timezoneString, gmtOffset );
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( activityLog, view, fields );
-
-	useEffect( () => {
-		updateView( { ...view, page: 1 } );
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- reset page only when dateRange changes
-	}, [ dateRange ] );
-
 	const onChangeSelection = ( selection: string[] ) => {
 		const backup =
 			selection.length > 0
-				? activityLog.find( ( item ) => item.activity_id === selection[ 0 ] ) || null
+				? filteredData.find( ( item ) => item.activity_id === selection[ 0 ] ) || null
 				: null;
 		setSelectedBackup( backup );
 	};
