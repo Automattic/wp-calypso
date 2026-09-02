@@ -12,6 +12,7 @@ import { DataForm, Field } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useAppContext } from '../../app/context';
@@ -36,6 +37,7 @@ interface PrimarySiteFormData {
 
 function LandingPageCard() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { recordTracksEvent } = useAnalytics();
 
 	const { data: initialFormData } = useSuspenseQuery( {
 		...rawUserPreferencesQuery(),
@@ -100,6 +102,12 @@ function LandingPageCard() {
 				} ),
 		} )
 			.then( () => {
+				if ( initialFormData.showHomepage !== formData.showHomepage ) {
+					recordTracksEvent( 'calypso_dashboard_preferences_defaults_homepage_toggle', {
+						show: !! formData.showHomepage,
+						source: 'account_defaults',
+					} );
+				}
 				createSuccessNotice( __( 'Default landing page saved.' ), {
 					type: 'snackbar',
 				} );

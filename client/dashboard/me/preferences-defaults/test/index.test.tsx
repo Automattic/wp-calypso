@@ -257,6 +257,50 @@ describe( '<PreferencesDefaults>', () => {
 			const savedPreferences = savedBody.calypso_preferences as Record< string, unknown >;
 			expect( savedPreferences ).not.toHaveProperty( 'logged-in-homepage' );
 		} );
+
+		test( 'records a Tracks event when the checkbox is changed', async () => {
+			const currentUser = userEvent.setup();
+			mockPreferences( {
+				'logged-in-homepage': { show: false, updatedAt: 0 },
+			} );
+			mockUserSettings();
+			mockSites( [ primarySite, otherSite ] );
+			mockSite( primarySite );
+			const saveRequest = mockPreferencesSaved();
+
+			const { recordTracksEvent } = renderPage();
+
+			await currentUser.click( await screen.findByLabelText( homepageLabel ) );
+			await currentUser.click( saveButtonFor( 'Landing page' ) );
+
+			await waitFor( () => expect( saveRequest.isDone() ).toBe( true ) );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_preferences_defaults_homepage_toggle',
+				{ show: true, source: 'account_defaults' }
+			);
+		} );
+
+		test( 'does not record a Tracks event on a radio-only save', async () => {
+			const currentUser = userEvent.setup();
+			mockPreferences( {
+				'logged-in-homepage': { show: false, updatedAt: 0 },
+			} );
+			mockUserSettings();
+			mockSites( [ primarySite, otherSite ] );
+			mockSite( primarySite );
+			const saveRequest = mockPreferencesSaved();
+
+			const { recordTracksEvent } = renderPage();
+
+			await currentUser.click( await screen.findByLabelText( 'See a list of all your sites.' ) );
+			await currentUser.click( saveButtonFor( 'Landing page' ) );
+
+			await waitFor( () => expect( saveRequest.isDone() ).toBe( true ) );
+			expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+				'calypso_dashboard_preferences_defaults_homepage_toggle',
+				expect.anything()
+			);
+		} );
 	} );
 
 	describe( 'primary site', () => {
