@@ -17,16 +17,15 @@ describe( 'useInstallProgress', () => {
 	it( 'measures elapsed from the transfer start when known, not from mount', () => {
 		const startedAt = Date.now() - 12_000;
 		const { result } = renderHook( () =>
-			useInstallProgress( { transferStatus: transferStates.ACTIVE, currentStep: 1, startedAt } )
+			useInstallProgress( { transferStatus: transferStates.ACTIVE, fallbackStep: 1, startedAt } )
 		);
 		expect( result.current.elapsed ).toBeCloseTo( 12, 0 );
 		advance( 3_000 );
 		expect( result.current.elapsed ).toBeCloseTo( 15, 0 );
 	} );
-
 	it( 'never claims more than 92% of a stage until the server confirms it', () => {
 		const { result } = renderHook( () =>
-			useInstallProgress( { transferStatus: transferStates.ACTIVE, currentStep: 1 } )
+			useInstallProgress( { transferStatus: transferStates.ACTIVE, fallbackStep: 1 } )
 		);
 		advance( 120_000 );
 		expect( result.current.getStageProgress( 0 ) ).toBe( 92 );
@@ -36,7 +35,7 @@ describe( 'useInstallProgress', () => {
 	it( 'confirms a stage as full once the status moves on, and restarts the stage clock', () => {
 		let status: string = transferStates.ACTIVE;
 		const { result, rerender } = renderHook( () =>
-			useInstallProgress( { transferStatus: status, currentStep: 1 } )
+			useInstallProgress( { transferStatus: status, fallbackStep: 1 } )
 		);
 		advance( 20_000 );
 		status = transferStates.PROVISIONED;
@@ -50,7 +49,7 @@ describe( 'useInstallProgress', () => {
 		const startedAt = Date.now() - 60_000;
 		let status: string | null = null;
 		const { result, rerender } = renderHook( () =>
-			useInstallProgress( { transferStatus: status, currentStep: 1, startedAt } )
+			useInstallProgress( { transferStatus: status, fallbackStep: 1, startedAt } )
 		);
 		status = transferStates.RELOCATING;
 		rerender();
@@ -64,7 +63,7 @@ describe( 'useInstallProgress', () => {
 		const startedAt = Date.now() - 5_000;
 		let status: string | null = null;
 		const { result, rerender } = renderHook( () =>
-			useInstallProgress( { transferStatus: status, currentStep: 1, startedAt } )
+			useInstallProgress( { transferStatus: status, fallbackStep: 1, startedAt } )
 		);
 		status = transferStates.RELOCATING;
 		rerender();
@@ -81,7 +80,7 @@ describe( 'useInstallProgress', () => {
 		const { result, rerender } = renderHook( () =>
 			useInstallProgress( {
 				transferStatus: status,
-				currentStep: 1,
+				fallbackStep: 1,
 				startedAt: transferStartedAt,
 			} )
 		);
@@ -97,7 +96,7 @@ describe( 'useInstallProgress', () => {
 	it( 'holds the furthest stage when the status stops being recognised', () => {
 		let status: string | null = transferStates.RELOCATING;
 		const { result, rerender } = renderHook( () =>
-			useInstallProgress( { transferStatus: status, currentStep: 1 } )
+			useInstallProgress( { transferStatus: status, fallbackStep: 1 } )
 		);
 		expect( result.current.stage ).toBe( 1 );
 		// The poll loses sight of our transfer and the fallback only knows `start`.
@@ -114,7 +113,7 @@ describe( 'useInstallProgress', () => {
 		const { result } = renderHook( () =>
 			useInstallProgress( {
 				transferStatus: transferStates.ACTIVE,
-				currentStep: 1,
+				fallbackStep: 1,
 				startedAt: null,
 			} )
 		);
@@ -125,7 +124,7 @@ describe( 'useInstallProgress', () => {
 
 	it( 'flags an overrun only well past the stage’s typical duration', () => {
 		const { result } = renderHook( () =>
-			useInstallProgress( { transferStatus: transferStates.ACTIVE, currentStep: 1 } )
+			useInstallProgress( { transferStatus: transferStates.ACTIVE, fallbackStep: 1 } )
 		);
 		advance( 30_000 );
 		expect( result.current.isOverrun ).toBe( false );

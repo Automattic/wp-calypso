@@ -16,7 +16,12 @@ import type { OnboardSelect } from '@automattic/data-stores';
 const WaitForAtomic: StepType = function WaitForAtomic( { navigation, data, flow } ) {
 	const [ searchParams ] = useSearchParams();
 	const { submit } = navigation;
-	const { setPendingAction, setProgress: setProgressAction } = useDispatch( ONBOARD_STORE );
+	const {
+		setPendingAction,
+		setProgress: setProgressAction,
+		setTransferStartedAt,
+		setTransferStatus,
+	} = useDispatch( ONBOARD_STORE );
 	const site = useSite();
 
 	let siteId = site?.ID as number;
@@ -71,7 +76,12 @@ const WaitForAtomic: StepType = function WaitForAtomic( { navigation, data, flow
 			setProgress( 10 );
 			await waitForInitiateTransfer();
 			setProgress( 25 );
-			await waitForTransfer();
+			if ( isTransferringHostedSiteCreationFlow( flow ) ) {
+				setTransferStartedAt( Date.now() );
+				await waitForTransfer( { onTransferStatusChange: setTransferStatus } );
+			} else {
+				await waitForTransfer();
+			}
 			setProgress( 50 );
 			await waitForFeature();
 			setProgress( 75 );

@@ -52,10 +52,10 @@ const PREPARING_STATUSES: ReadonlyArray< string | null > = [
  */
 export function getInstallStage( {
 	transferStatus,
-	currentStep,
+	fallbackStep = 0,
 }: {
 	transferStatus: string | null;
-	currentStep: number;
+	fallbackStep?: number;
 } ): number {
 	if ( transferCompleteStates.includes( transferStatus ) ) {
 		return 2;
@@ -66,5 +66,5 @@ export function getInstallStage( {
 	if ( PREPARING_STATUSES.includes( transferStatus ) ) {
 		return 0;
 	}
-	return currentStep >= 2 ? 2 : 0;
+	return fallbackStep >= 2 ? 2 : 0;
 }

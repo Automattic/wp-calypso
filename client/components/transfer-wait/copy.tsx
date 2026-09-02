@@ -17,7 +17,7 @@ export function useStageTitles(): Record< InstallStageKey, ReactNode > {
 /**
  * One narrated sentence per stage, with the key phrase emphasized.
  */
-export function useStageSentences(): Record< InstallStageKey, ReactNode > {
+export function useStageSentences( isPluginInstall = true ): Record< InstallStageKey, ReactNode > {
 	const translate = useTranslate();
 	return {
 		preparing: translate(
@@ -32,12 +32,16 @@ export function useStageSentences(): Record< InstallStageKey, ReactNode > {
 				components: { strong: <strong /> },
 			}
 		),
-		finishing: translate(
-			'{{strong}}Finishing up{{/strong}}. We’re installing and activating your plugin.',
-			{
-				components: { strong: <strong /> },
-			}
-		),
+		finishing: isPluginInstall
+			? translate(
+					'{{strong}}Finishing up{{/strong}}. We’re installing and activating your plugin.',
+					{
+						components: { strong: <strong /> },
+					}
+			  )
+			: translate( '{{strong}}Finishing up{{/strong}}. We’re making sure your site is ready.', {
+					components: { strong: <strong /> },
+			  } ),
 	};
 }
 

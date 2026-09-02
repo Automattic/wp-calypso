@@ -64,7 +64,11 @@ export const useWaitForAtomic = ( {
 		);
 	};
 
-	const waitForTransfer = async () => {
+	const waitForTransfer = async ( {
+		onTransferStatusChange,
+	}: {
+		onTransferStatusChange?: ( status: string | null ) => void;
+	} = {} ) => {
 		const startTime = new Date().getTime();
 		const totalTimeout = 1000 * 300;
 		const maxFinishTime = startTime + totalTimeout;
@@ -74,8 +78,9 @@ export const useWaitForAtomic = ( {
 			await wait( 3000 );
 			await requestLatestAtomicTransfer( siteId );
 			const transfer = getSiteLatestAtomicTransfer( siteId );
+			const transferStatus = transfer?.status ?? null;
+			onTransferStatusChange?.( transferStatus );
 			const transferError = getSiteLatestAtomicTransferError( siteId );
-			const transferStatus = transfer?.status;
 			const isTransferringStatusFailed = transferError && transferError?.status >= 500;
 
 			if ( isTransferringStatusFailed || transferStatus === transferStates.ERROR ) {

@@ -13,42 +13,50 @@ import { useInstallProgress } from './use-install-progress';
  * single real overall bar, and the “what to expect” card. The bar is fed by confirmed stages,
  * never a timer.
  */
-export default function InstallProgressCard( {
+export default function TransferWaitCard( {
 	transferStatus,
-	currentStep,
+	fallbackStep = 0,
 	startedAt,
+	isPluginInstall = true,
 }: {
 	transferStatus: string | null;
-	currentStep: number;
+	fallbackStep?: number;
 	startedAt?: number | null;
+	isPluginInstall?: boolean;
 } ) {
 	const translate = useTranslate();
 	const { stage, isOverrun, overallProgress } = useInstallProgress( {
 		transferStatus,
-		currentStep,
+		fallbackStep,
 		startedAt,
 	} );
 	const stageKey = INSTALL_STAGES[ stage ].key;
 	const stageTitles = useStageTitles();
-	const sentences = useStageSentences();
+	const sentences = useStageSentences( isPluginInstall );
 	const overrunCopy = useOverrunCopy();
+	const heading = isPluginInstall
+		? translate( 'Setting up your plugin' )
+		: translate( 'Setting up your site' );
+	const finalChecklistText = isPluginInstall
+		? translate( 'Your plugin is installed and activated automatically once the server is ready.' )
+		: translate( 'Your site is ready to use once the transfer is complete.' );
 
 	return (
-		<div className="marketplace-install-progress">
-			<div className="marketplace-install-progress__header">
-				<Step.Heading text={ translate( 'Setting up your plugin' ) } align="center" />
-				<p className="marketplace-install-progress__stage" role="status">
+		<div className="transfer-wait">
+			<div className="transfer-wait__header">
+				<Step.Heading text={ heading } align="center" />
+				<p className="transfer-wait__stage" role="status">
 					{ sentences[ stageKey ] }
 				</p>
 				{ isOverrun && (
-					<p className="marketplace-install-progress__overrun" role="status">
+					<p className="transfer-wait__overrun" role="status">
 						{ overrunCopy }
 					</p>
 				) }
 			</div>
-			<div className="marketplace-install-progress__progress">
+			<div className="transfer-wait__progress">
 				<ProgressBar
-					className="marketplace-install-progress__progress-bar"
+					className="transfer-wait__progress-bar"
 					value={ overallProgress }
 					aria-label={ String( stageTitles[ stageKey ] ) }
 				/>
@@ -67,10 +75,8 @@ export default function InstallProgressCard( {
 						text: translate( 'Your site stays online while we work.' ),
 					},
 					{
-						icon: 'plugins',
-						text: translate(
-							'Your plugin is installed and activated automatically once the server is ready.'
-						),
+						icon: isPluginInstall ? 'plugins' : 'checkmark',
+						text: finalChecklistText,
 					},
 				] }
 			/>

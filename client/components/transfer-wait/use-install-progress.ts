@@ -43,14 +43,14 @@ const estimateStageStartedAt = (
  */
 export function useInstallProgress( {
 	transferStatus,
-	currentStep,
+	fallbackStep = 0,
 	startedAt,
 }: {
 	transferStatus: string | null;
-	currentStep: number;
+	fallbackStep?: number;
 	startedAt?: number | null;
 } ) {
-	const reportedStage = getInstallStage( { transferStatus, currentStep } );
+	const reportedStage = getInstallStage( { transferStatus, fallbackStep } );
 
 	const [ now, setNow ] = useState( () => Date.now() );
 	const mountedAt = useRef( now );

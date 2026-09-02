@@ -7,6 +7,7 @@ import {
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	isAnyHostingFlow,
 	isNewsletterFlow,
+	isTransferringHostedSiteCreationFlow,
 	Step,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -14,6 +15,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
+import TransferWaitCard from 'calypso/components/transfer-wait/card';
 import availableFlows from 'calypso/landing/stepper/declarative-flow/registered-flows';
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
@@ -96,6 +98,10 @@ const ProcessingStep: StepType< {
 	 */
 	const isSubmittedRef = useRef( false );
 
+	// Seeded once: reading Date.now() during render would slide the wait's elapsed-time base
+	// forward on every render until the store learns when the transfer started.
+	const [ mountedAt ] = useState( () => Date.now() );
+
 	const recordSignupComplete = useRecordSignupComplete( flow );
 
 	const action = useSelect(
@@ -108,6 +114,14 @@ const ProcessingStep: StepType< {
 	);
 	const progressTitle = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getProgressTitle(),
+		[]
+	);
+	const transferStatus = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getTransferStatus(),
+		[]
+	);
+	const transferStartedAt = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getTransferStartedAt(),
 		[]
 	);
 
@@ -248,7 +262,15 @@ const ProcessingStep: StepType< {
 		return (
 			<>
 				<DocumentHead title={ __( 'Processing' ) } />
-				<Step.Loading title={ getCurrentMessage() } progress={ progress } delay={ 1000 } />
+				{ isTransferringHostedSiteCreationFlow( flow ) ? (
+					<TransferWaitCard
+						transferStatus={ transferStatus }
+						startedAt={ transferStartedAt ?? mountedAt }
+						isPluginInstall={ false }
+					/>
+				) : (
+					<Step.Loading title={ getCurrentMessage() } progress={ progress } delay={ 1000 } />
+				) }
 			</>
 		);
 	}
