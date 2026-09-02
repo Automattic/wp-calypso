@@ -11,12 +11,14 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { dashboardLink, wpcomLink } from '../../utils/link';
 import { getSiteDisplayName } from '../../utils/site-name';
+import { useAnalytics } from '../analytics';
 import { AUTH_QUERY_KEY, initializeCurrentUser } from '../auth';
 import { useAppContext } from '../context';
 import { omnibarEvents } from './events';
 import { OmnibarHomeIcon } from './home';
 import { useAiChatPlugin } from './plugin-ai-chat';
 import { addDashboardNode, useDashboardPlugin } from './plugin-dashboard';
+import { createFreeDomainUpsellNodeBuilder } from './plugin-free-domain-upsell-experiment';
 import { useHelpCenterPlugin } from './plugin-help-center';
 import { useLanguageSwitcherPlugin } from './plugin-language-switcher';
 import { useLaunchSitePlugin } from './plugin-launch-site';
@@ -90,6 +92,7 @@ function ConnectedOmnibar( {
 	sectionName?: string;
 } ) {
 	const { supports } = useAppContext();
+	const { recordTracksEvent } = useAnalytics();
 	const recordNodeClick = useRecordOmnibarNodeClick();
 	const [ hydrated, setHydrated ] = useState( false );
 	useEffect( () => {
@@ -118,14 +121,19 @@ function ConnectedOmnibar( {
 		meta: { persist: false },
 	} );
 
+	// Names the app a node was seen in, for the events builders record. The two
+	// apps mount their own omnibar, so this never changes while one is mounted.
+	const source = sectionName === 'dashboard' ? 'dashboard' : 'calypso';
+
 	const nodeBuilders = useMemo< OmnibarNodeBuilders >(
 		() => ( {
 			'my-wpcom-account': buildWpcomAccountNode,
 			'site-plan-badge': buildSiteBadgeNode,
 			'site-status-badge': buildSiteBadgeNode,
+			'free-domain-upsell': createFreeDomainUpsellNodeBuilder( { source, recordTracksEvent } ),
 			...( authUser ? { logout: createLogoutNodeBuilder( authUser ) } : {} ),
 		} ),
-		[ authUser ]
+		[ authUser, source, recordTracksEvent ]
 	);
 
 	const baseOmnibarNodes = useMemo( () => {
