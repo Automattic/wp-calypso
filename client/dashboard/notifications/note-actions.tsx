@@ -113,7 +113,7 @@ function ActionRow( { state }: { state: NoteActionsState } ) {
 	);
 }
 
-function ReplyBox( { state }: { state: NoteActionsState } ) {
+export function ReplyBox( { state }: { state: NoteActionsState } ) {
 	const submitOnEnter = ( event: React.KeyboardEvent ) => {
 		if ( event.key === 'Enter' && ( event.metaKey || event.ctrlKey ) ) {
 			event.preventDefault();
@@ -150,7 +150,7 @@ function ReplyBox( { state }: { state: NoteActionsState } ) {
 	);
 }
 
-function EditBox( { state }: { state: NoteActionsState } ) {
+export function EditBox( { state }: { state: NoteActionsState } ) {
 	return (
 		<VStack spacing={ 2 }>
 			<TextareaControl

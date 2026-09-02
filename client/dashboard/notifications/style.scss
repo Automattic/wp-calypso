@@ -624,6 +624,33 @@
 	margin: 0 0 16px;
 }
 
+/* Slack-Inspired: the message toolbar floats at the top right, appearing
+   while the thread is hovered or holds focus. */
+.dashboard-notifications-inbox__slack-thread {
+	position: relative;
+}
+
+.dashboard-notifications-inbox__slack-toolbar {
+	position: absolute;
+	top: -6px;
+	inset-inline-end: 0;
+	z-index: 1;
+	width: auto;
+	padding: 2px;
+	background: var(--dashboard__background-color, #fff);
+	border: 1px solid var(--dashboard-header__border-color, #ddd);
+	border-radius: 8px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+	opacity: 0;
+	transition: opacity 0.1s ease-out;
+}
+
+.dashboard-notifications-inbox__slack-thread:hover .dashboard-notifications-inbox__slack-toolbar,
+.dashboard-notifications-inbox__slack-thread:focus-within
+	.dashboard-notifications-inbox__slack-toolbar {
+	opacity: 1;
+}
+
 /* Slack-Inspired: the thread the reply answers, as an inset card below it. */
 .dashboard-notifications-inbox__slack-parent-card {
 	margin-block-start: 4px;

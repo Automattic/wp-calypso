@@ -2,14 +2,75 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
+	Button,
+	DropdownMenu,
 	ExternalLink,
+	MenuGroup,
+	MenuItem,
+	Notice,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import NoteActions from './note-actions';
+import { moreVertical } from '@wordpress/icons';
+import { EditBox, ReplyBox, UndoBar, getActionIcon } from './note-actions';
 import { Avatar, Postscript, UserName, useParentCommentDetails } from './note-views';
 import { BlockText, Timestamp, TitleText } from './rich-text';
+import { useNoteActions } from './use-note-actions';
 import type { NoteView } from './note-model';
+import type { NoteActionsState } from './use-note-actions';
+
+/* Slack's message toolbar: icon-only, floating at the message's top right,
+   shown while the message is hovered or holds focus. */
+function SlackToolbar( { state }: { state: NoteActionsState } ) {
+	if ( state.items.length === 0 && state.menuItems.length === 0 ) {
+		return null;
+	}
+	return (
+		<HStack
+			spacing={ 0 }
+			expanded={ false }
+			className="dashboard-notifications-inbox__slack-toolbar"
+		>
+			{ state.items.map( ( item ) => (
+				<Button
+					key={ item.key }
+					size="small"
+					icon={ getActionIcon( item ) }
+					label={ item.label }
+					isPressed={ item.isPressed }
+					href={ item.href }
+					target={ item.href ? '_blank' : undefined }
+					rel={ item.href ? 'noreferrer' : undefined }
+					onClick={ item.onClick }
+				/>
+			) ) }
+			{ state.menuItems.length > 0 && (
+				<DropdownMenu
+					icon={ moreVertical }
+					label={ __( 'More actions' ) }
+					toggleProps={ { size: 'small' } }
+				>
+					{ ( { onClose } ) => (
+						<MenuGroup>
+							{ state.menuItems.map( ( item ) => (
+								<MenuItem
+									key={ item.key }
+									icon={ getActionIcon( item ) }
+									onClick={ () => {
+										onClose();
+										item.onClick?.();
+									} }
+								>
+									{ item.label }
+								</MenuItem>
+							) ) }
+						</MenuGroup>
+					) }
+				</DropdownMenu>
+			) }
+		</HStack>
+	);
+}
 
 /**
  * The Slack shape: the new message leads, and the thread it answers sits
@@ -22,9 +83,11 @@ export default function SlackThreadView( {
 } ) {
 	const { parent, reply, note } = view;
 	const parentDetails = useParentCommentDetails( note );
+	const actions = useNoteActions( note );
 
 	return (
-		<VStack spacing={ 3 }>
+		<VStack spacing={ 3 } className="dashboard-notifications-inbox__slack-thread">
+			<SlackToolbar state={ actions } />
 			<HStack spacing={ 3 } justify="flex-start" alignment="flex-start">
 				<Avatar user={ reply.author } />
 				<VStack spacing={ 1 } className="dashboard-notifications-inbox__column">
@@ -39,7 +102,14 @@ export default function SlackThreadView( {
 							</Text>
 						</div>
 					) }
-					<NoteActions note={ note } />
+					<UndoBar state={ actions } />
+					{ actions.error && (
+						<Notice status="error" isDismissible onRemove={ actions.clearError }>
+							{ actions.error }
+						</Notice>
+					) }
+					{ actions.mode === 'reply' && <ReplyBox state={ actions } /> }
+					{ actions.mode === 'edit' && <EditBox state={ actions } /> }
 					<div className="dashboard-notifications-inbox__slack-parent-card">
 						<VStack spacing={ 1 }>
 							<HStack spacing={ 2 } justify="flex-start" alignment="center" expanded={ false }>
