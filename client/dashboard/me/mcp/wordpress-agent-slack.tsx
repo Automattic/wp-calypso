@@ -15,7 +15,6 @@ import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
-import { Text } from '../../components/text';
 import type { ReactNode } from 'react';
 
 interface WordPressAgentSlackProps {
@@ -146,13 +145,7 @@ export default function WordPressAgentSlack( {
 			</div>
 		) );
 	} else {
-		connectionsContent = (
-			<CardBody>
-				<Text as="p" variant="muted">
-					{ __( 'You have not connected WordPress Agent to a Slack workspace yet.' ) }
-				</Text>
-			</CardBody>
-		);
+		connectionsContent = null;
 	}
 
 	return (
@@ -217,8 +210,12 @@ export default function WordPressAgentSlack( {
 					</Button>
 				</CardBody>
 
-				<CardDivider />
-				{ connectionsContent }
+				{ connectionsContent && (
+					<>
+						<CardDivider />
+						{ connectionsContent }
+					</>
+				) }
 			</Card>
 		</VStack>
 	);
