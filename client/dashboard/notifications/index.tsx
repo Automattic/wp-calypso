@@ -3,6 +3,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
+	Notice,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -166,6 +167,15 @@ function NotificationsInbox( {
 				/>
 			}
 		>
+			<Notice
+				className="dashboard-notifications-inbox__experimental-notice"
+				status="warning"
+				isDismissible={ false }
+			>
+				{ __(
+					'This page is an internal experiment. Layouts are being compared and will change without notice.'
+				) }
+			</Notice>
 			<InboxVariantProvider value={ variant }>
 				{ variant.Shell ? (
 					<variant.Shell list={ listNode } detail={ detailNode } hasSelectedNote={ !! note } />

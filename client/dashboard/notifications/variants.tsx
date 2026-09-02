@@ -159,7 +159,6 @@ function VariantPicker( {
 			__next40pxDefaultSize
 			__nextHasNoMarginBottom
 			label={ label }
-			hideLabelFromVision
 			value={ value }
 			options={ registry.map( ( entry ) => ( { value: entry.key, label: entry.label } ) ) }
 			onChange={ onChange }
