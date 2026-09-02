@@ -946,11 +946,10 @@ export function CheckoutFormSubmit( {
 	// actually an incomplete step to go to. The latter guard matters for returning
 	// purchasers whose steps are all auto-completed while the active step is still
 	// an earlier step: there is nothing to continue to, so show the Pay button.
+	// `disableSubmitButton` only disables Pay. Continue validates the current
+	// step rather than paying, so it stays available while a later step exists.
 	const showContinueToNextIncompleteStep =
-		!! continueToNextIncompleteStep &&
-		! disableSubmitButton &&
-		isThereAnotherNumberedStep &&
-		!! nextIncompleteStepId;
+		!! continueToNextIncompleteStep && isThereAnotherNumberedStep && !! nextIncompleteStepId;
 
 	const goToNextIncompleteStep = async () => {
 		// Prefer the next incomplete step; otherwise just advance one step so the

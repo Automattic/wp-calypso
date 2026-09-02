@@ -1,10 +1,27 @@
 import config from '@automattic/calypso-config';
 import i18n from 'i18n-calypso';
+import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import { recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wp from 'calypso/lib/wp';
 import { stringifyBody } from 'calypso/state/login/utils';
+
+function isBlackboxUserlessCheckoutEnabled() {
+	return (
+		!! config( 'blackbox_api_key' ) &&
+		config.isEnabled( 'blackbox' ) &&
+		config.isEnabled( 'blackbox-userless-checkout' )
+	);
+}
+
+function resetBlackbox() {
+	try {
+		window.Blackbox?.reset?.();
+	} catch {
+		// Blackbox must never block checkout.
+	}
+}
 
 interface CreateAccountResponse {
 	success: boolean;
@@ -81,6 +98,9 @@ export async function createAccount( {
 	}
 
 	const blogName = newSiteParams?.blog_name;
+	const blackboxSessionId = isBlackboxUserlessCheckoutEnabled()
+		? await getBlackboxSessionId()
+		: undefined;
 
 	try {
 		const response = await wp.req.post( '/users/new', {
@@ -97,6 +117,7 @@ export async function createAccount( {
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 			tos: getToSAcceptancePayload(),
+			...( blackboxSessionId && { blackbox_session_id: blackboxSessionId } ),
 		} );
 
 		if ( ! isCreateAccountResponse( response ) || ! response.success ) {
@@ -106,6 +127,9 @@ export async function createAccount( {
 		createAccountCallback( response );
 		return response;
 	} catch ( error ) {
+		if ( isBlackboxUserlessCheckoutEnabled() ) {
+			resetBlackbox();
+		}
 		const errorMessage = ( error as Error )?.message
 			? getErrorMessage( error as Error )
 			: ( error as string );
