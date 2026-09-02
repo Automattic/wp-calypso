@@ -157,7 +157,9 @@ class VerificationCodeForm extends Component {
 							isError={ requestError && requestError.field === 'twoStepCode' }
 							id="twoStepCode"
 							name="twoStepCode"
-							method={ twoFactorAuthType }
+							// An email nonce means the code was emailed, whatever the route says.
+							// Resolved the same way onSubmitForm does.
+							method={ twoFactorEmailNonce ? 'email' : twoFactorAuthType }
 							ref={ this.saveRef }
 							disabled={ this.state.isDisabled }
 							placeholder={ this.props.verificationCodeInputPlaceholder }
