@@ -67,14 +67,15 @@ const EmailVerificationBanner: React.FC< {
 
 interface Props {
 	setIsBusy: ( isBusy: boolean ) => void;
+	from?: string;
 }
 
-const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
+const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy, from } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const emailToVerify = useGetEmailToVerify();
 	const isEmailChangePending = useSelector( isPendingEmailChange );
-	const sendVerificationEmail = useSendEmailVerification();
+	const sendVerificationEmail = useSendEmailVerification( from ? { from } : undefined );
 	const [ isSendingEmail, setIsSendingEmail ] = useState( false );
 
 	// Only the dedicated endpoint is rate limited; a pending change goes through user settings,
