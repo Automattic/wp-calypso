@@ -136,7 +136,10 @@ const ReaderSuggestedFollowsDialog = ( {
 				{ ! isLoading && (
 					<>
 						<div className="reader-recommended-follows-dialog__header">
-							<h2 className="reader-recommended-follows-dialog__title">{ ! isLoading && title }</h2>
+							<h2 className="reader-recommended-follows-dialog__subscribed-confirmation">
+								{ translate( 'You’re now subscribed!' ) }
+							</h2>
+							<h3 className="reader-recommended-follows-dialog__title">{ ! isLoading && title }</h3>
 							<p className="reader-recommended-follows-dialog__description">{ description }</p>
 						</div>
 
