@@ -394,7 +394,7 @@ class DnsRecords extends Component {
 							selectedDomain={ selectedDomain }
 							selectedDomainName={ selectedDomainName }
 						/>
-						{ this.hasWpcomNameservers() && (
+						{ ( this.hasWpcomNameservers() || selectedDomain?.connectionMode ) && (
 							<EmailSetup selectedDomainName={ selectedDomainName } />
 						) }
 					</>
