@@ -375,9 +375,9 @@ export default function CheckoutMain( {
 		} );
 	} );
 
-	// Display errors. Note that we display all errors if any of them change,
-	// because errorNotice() otherwise will remove the previously displayed
-	// errors.
+	// Display errors. These notices share an ID so that a new one replaces the
+	// last rather than stacking; that means each notice must render every error
+	// currently active, not just the ones which have changed.
 	const errorsToDisplay = [
 		cartLoadingError,
 		stripeLoadingError?.message,
@@ -385,7 +385,10 @@ export default function CheckoutMain( {
 	].filter( isValueTruthy );
 	useActOnceOnStrings( errorsToDisplay, () => {
 		reduxDispatch(
-			errorNotice( errorsToDisplay.map( ( message ) => <p key={ message }>{ message }</p> ) )
+			errorNotice(
+				errorsToDisplay.map( ( message ) => <p key={ message }>{ message }</p> ),
+				{ id: 'checkout-cart-error' }
+			)
 		);
 	} );
 
