@@ -6,7 +6,7 @@ const path = require( 'path' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
-const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
+const SwcTranspileConfig = require( '@automattic/calypso-build/webpack/transpile-swc' );
 const {
 	cssNameFromFilename,
 	shouldTranspileDependency,
@@ -23,12 +23,10 @@ const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' 
 const pkgDir = require( 'pkg-dir' );
 const webpack = require( 'webpack' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
-const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
 const AssetsWriter = require( '../build-tools/webpack/assets-writer-plugin.js' );
 const GenerateChunksMapPlugin = require( '../build-tools/webpack/generate-chunks-map-plugin' );
 const RequireChunkCallbackPlugin = require( '../build-tools/webpack/require-chunk-callback-plugin' );
 const config = require( './server/config' );
-const { workerCount } = require( './webpack.common' );
 /**
  * Internal variables
  */
@@ -82,12 +80,9 @@ const webpackCacheBuildDependencies = [
 	__filename,
 	// Top-level config inputs that change compilation behavior
 	path.resolve( __dirname, '../package.json' ),
-	path.resolve( __dirname, '../babel.config.js' ),
 	// Config modules used by this webpack config
-	require.resolve( './webpack.common' ),
 	require.resolve( './server/config' ),
 	// Local build tools that influence compilation
-	require.resolve( '../build-tools/babel/babel-loader-cache-identifier' ),
 	require.resolve( '../build-tools/webpack/assets-writer-plugin.js' ),
 	require.resolve( '../build-tools/webpack/generate-chunks-map-plugin' ),
 	require.resolve( '../build-tools/webpack/require-chunk-callback-plugin' ),
@@ -98,7 +93,8 @@ const webpackCacheBuildDependencies = [
 	require.resolve( '@automattic/calypso-build/webpack/mini-css-with-rtl' ),
 	require.resolve( '@automattic/calypso-build/webpack/minify' ),
 	require.resolve( '@automattic/calypso-build/webpack/sass' ),
-	require.resolve( '@automattic/calypso-build/webpack/transpile' ),
+	require.resolve( '@automattic/calypso-build/webpack/swc-loader' ),
+	require.resolve( '@automattic/calypso-build/webpack/transpile-swc' ),
 	require.resolve( '@automattic/calypso-build/webpack/util' ),
 	// Dependency graph changes
 	path.resolve( __dirname, '../yarn.lock' ),
@@ -275,21 +271,15 @@ const webpackConfig = {
 				test: /\.m?js$/,
 				resolve: { fullySpecified: false },
 			},
-			TranspileConfig.loader( {
-				workerCount,
-				configFile: path.resolve( 'babel.config.js' ),
-				cacheDirectory: path.resolve( cachePath, 'babel-client' ),
-				cacheIdentifier,
-				cacheCompression: false,
+			SwcTranspileConfig.loader( {
+				browserslistEnv,
+				importSource: '@emotion/react',
+				refresh: shouldHotReload,
 				exclude: /node_modules\//,
-				plugins: shouldHotReload ? [ require.resolve( 'react-refresh/babel' ) ] : [],
 			} ),
-			TranspileConfig.loader( {
-				workerCount,
-				presets: [ require.resolve( '@automattic/calypso-babel-config/presets/dependencies' ) ],
-				cacheDirectory: path.resolve( cachePath, 'babel-client' ),
-				cacheIdentifier,
-				cacheCompression: false,
+			SwcTranspileConfig.loader( {
+				browserslistEnv,
+				unambiguous: true,
 				include: shouldTranspileDependency,
 			} ),
 			SassConfig.loader( {
