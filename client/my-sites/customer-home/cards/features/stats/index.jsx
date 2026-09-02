@@ -6,7 +6,6 @@ import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useEffect } from 'react';
 import { connect, useDispatch } from 'react-redux';
-import IllustrationStatsIntro from 'calypso/assets/images/stats/illustration-stats-intro.svg';
 import CardHeading from 'calypso/components/card-heading';
 import Chart from 'calypso/components/chart';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -106,9 +105,6 @@ export const StatsV2 = ( {
 				) }
 				{ ! isSiteUnlaunched && ! isLoading && views === 0 && (
 					<div className="stats__empty">
-						<div className="stats__empty-illustration">
-							<img src={ IllustrationStatsIntro } alt="" />
-						</div>
 						<div className="stats__empty-text">
 							{ translate(
 								'Stats can help you optimize for the right keywords, and feature content your readers are interested in.'
