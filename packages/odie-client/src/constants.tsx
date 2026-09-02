@@ -293,13 +293,9 @@ export const getOdieInitialMessage = (
 				__i18n_text_domain__
 		  );
 
-	// DESIGN PROTOTYPE: fold the human-handoff hint into the greeting — the
-	// topic suggestions below it are all support questions in this variant.
+	// DESIGN PROTOTYPE greeting for the topic-suggestions variant.
 	const effectiveIntroMessage = isAskAiPrototypeEnabled()
-		? __(
-				"I'm your Support Assistant. You can ask for a human at any time, just type “Human”.",
-				__i18n_text_domain__
-		  )
+		? __( "I'm your Support Assistant. What can I help you with?", __i18n_text_domain__ )
 		: introMessage;
 
 	return {
