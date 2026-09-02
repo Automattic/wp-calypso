@@ -1,4 +1,5 @@
 import { domainsQuery } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useQuery } from '@tanstack/react-query';
@@ -204,9 +205,9 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 			case 'semi_gated_site_launch':
 			case null:
 			default: {
-				const url = addQueryArgs( '/start/launch-site', {
+				const url = addQueryArgs( new URL( '/start/launch-site', config( 'wpcom_url' ) ).href, {
 					siteSlug: site?.slug,
-					back_to: window.location.pathname,
+					back_to: new URL( window.location.pathname, window.location.origin ).href,
 				} );
 
 				if ( ! canOfferPreLaunch ) {
