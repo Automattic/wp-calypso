@@ -154,27 +154,23 @@ function NotificationsInbox( {
 	);
 
 	return (
-		<PageLayout
-			header={
-				<PageHeader
-					title={ __( 'Notifications' ) }
-					actions={
-						<HStack spacing={ 2 } expanded={ false } justify="flex-end">
-							<ListVariantPicker value={ listVariant.key } onChange={ setListVariantKey } />
-							<InboxVariantPicker value={ variant.key } onChange={ setVariantKey } />
-						</HStack>
-					}
-				/>
-			}
-		>
+		<PageLayout header={ <PageHeader title={ __( 'Notifications' ) } /> }>
 			<Notice
 				className="dashboard-notifications-inbox__experimental-notice"
 				status="warning"
 				isDismissible={ false }
 			>
-				{ __(
-					'This page is an internal experiment. Layouts are being compared and will change without notice.'
-				) }
+				<HStack spacing={ 4 } justify="space-between" alignment="center" wrap>
+					<Text>
+						{ __(
+							'This page is an internal experiment. Layouts are being compared and will change without notice.'
+						) }
+					</Text>
+					<HStack spacing={ 3 } expanded={ false } justify="flex-end" wrap>
+						<ListVariantPicker value={ listVariant.key } onChange={ setListVariantKey } />
+						<InboxVariantPicker value={ variant.key } onChange={ setVariantKey } />
+					</HStack>
+				</HStack>
 			</Notice>
 			<InboxVariantProvider value={ variant }>
 				{ variant.Shell ? (

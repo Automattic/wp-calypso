@@ -1,4 +1,8 @@
-import { SelectControl } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+	SelectControl,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createContext, useContext, useState } from 'react';
 import ClassicDetail from './classic';
@@ -155,14 +159,18 @@ function VariantPicker( {
 		return null;
 	}
 	return (
-		<SelectControl
-			__next40pxDefaultSize
-			__nextHasNoMarginBottom
-			label={ label }
-			value={ value }
-			options={ registry.map( ( entry ) => ( { value: entry.key, label: entry.label } ) ) }
-			onChange={ onChange }
-		/>
+		<HStack spacing={ 2 } expanded={ false } alignment="center">
+			<Text style={ { whiteSpace: 'nowrap' } }>{ label }</Text>
+			<SelectControl
+				__next40pxDefaultSize
+				__nextHasNoMarginBottom
+				label={ label }
+				hideLabelFromVision
+				value={ value }
+				options={ registry.map( ( entry ) => ( { value: entry.key, label: entry.label } ) ) }
+				onChange={ onChange }
+			/>
+		</HStack>
 	);
 }
 
