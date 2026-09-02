@@ -30,8 +30,8 @@ import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HoldList, {
-	hasBlockingHold,
 	getValidBlockingHold,
+	hasDisplayableHold,
 	HardBlockingNotice,
 	getBlockingMessages,
 } from './hold-list';
@@ -103,7 +103,7 @@ export const EligibilityWarnings = ( {
 
 	const [ selectedGeoAffinity, setSelectedGeoAffinity ] = useState( '' );
 
-	const showWarnings = warnings.length > 0 && ! hasBlockingHold( listHolds );
+	const showWarnings = warnings.length > 0 && ! hasValidBlockingHold;
 	const classes = clsx(
 		'eligibility-warnings',
 		{
@@ -165,7 +165,7 @@ export const EligibilityWarnings = ( {
 	if ( context === 'plugin-details' ) {
 		filteredHolds = listHolds.filter( ( hold ) => hold !== 'NO_BUSINESS_PLAN' );
 	}
-	const hasHoldsToDisplay = isPlaceholder || filteredHolds.length > 0;
+	const hasHoldsToDisplay = isPlaceholder || hasDisplayableHold( filteredHolds );
 
 	return (
 		<div className={ classes }>
@@ -223,7 +223,7 @@ export const EligibilityWarnings = ( {
 				</CompactCard>
 			) }
 
-			{ showDataCenterPicker && isEligible && ! hasBlockingHold( listHolds ) && (
+			{ showDataCenterPicker && isEligible && ! hasValidBlockingHold && (
 				<CompactCard className="eligibility-warnings__data-center-picker">
 					<TrackComponentView eventName="calypso_automated_transfer_datacenter_picker_display" />
 					<DataCenterPicker

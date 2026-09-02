@@ -114,6 +114,19 @@ describe( '<EligibilityWarnings>', () => {
 		expect( queryByText( 'Continue' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'hides the hold list when no hold has a message to show', () => {
+		const state = createState( {
+			holds: [ 'AN_UNRECOGNIZED_HOLD' ],
+		} );
+
+		const { queryByTestId } = renderWithStore(
+			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+			state
+		);
+
+		expect( queryByTestId( 'HoldList-Card' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'renders only the in-progress notice when a transfer already exists', () => {
 		const state = createState( {
 			holds: [ 'TRANSFER_ALREADY_EXISTS' ],

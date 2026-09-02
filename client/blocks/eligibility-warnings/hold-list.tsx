@@ -2,7 +2,8 @@ import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_BUSINESS, PLAN_PERSONAL, getPlan } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
-import { localize, LocalizeProps } from 'i18n-calypso';
+import { localize, LocalizeProps, TranslateResult } from 'i18n-calypso';
+import { ReactNode } from 'react';
 import ExcessiveDiskSpace from 'calypso/blocks/eligibility-warnings/excessive-disk-space';
 import CardHeading from 'calypso/components/card-heading';
 import Notice, { NoticeStatus } from 'calypso/components/notice';
@@ -12,6 +13,28 @@ import { useSelector } from 'calypso/state';
 import { eligibilityHolds, type EligibilityHold } from 'calypso/state/automated-transfer/constants';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
+
+const displayableHolds = [
+	eligibilityHolds.NO_BUSINESS_PLAN,
+	eligibilityHolds.SITE_PRIVATE,
+	eligibilityHolds.SITE_UNLAUNCHED,
+	eligibilityHolds.SITE_NOT_PUBLIC,
+	eligibilityHolds.NON_ADMIN_USER,
+	eligibilityHolds.NOT_RESOLVING_TO_WPCOM,
+	eligibilityHolds.EMAIL_UNVERIFIED,
+	eligibilityHolds.EXCESSIVE_DISK_SPACE,
+	eligibilityHolds.IS_STAGING_SITE,
+] as const;
+
+export type DisplayableHold = ( typeof displayableHolds )[ number ];
+
+type HoldMessage = {
+	title: TranslateResult;
+	description: ReactNode;
+	supportUrl: string | null;
+};
+
+type HoldMessages = Record< DisplayableHold, HoldMessage >;
 
 // Mapping eligibility holds to messages that will be shown to the user
 function getHoldMessages( {
@@ -26,7 +49,7 @@ function getHoldMessages( {
 	billingPeriod?: string;
 	isMarketplace?: boolean;
 	hasEnTranslation: ( arg: string ) => boolean;
-} ) {
+} ): HoldMessages {
 	// Plugin upload is available on the Personal plan and up, so upsell the
 	// lowest eligible plan for that context instead of Business.
 	const upsellPersonalPlan =
@@ -300,7 +323,7 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 			) }
 			{ ! isPlaceholder &&
 				holds.map( ( hold ) =>
-					! isKnownHoldType( hold, holdMessages ) ? null : (
+					! isDisplayableHoldType( hold ) ? null : (
 						<div className="eligibility-warnings__hold" key={ hold }>
 							<div className="eligibility-warnings__message">
 								<div className="eligibility-warnings__message-title">
@@ -343,12 +366,11 @@ function getCardHeading( context: string | null, translate: LocalizeProps[ 'tran
 	}
 }
 
-function isKnownHoldType(
-	hold: string,
-	holdMessages: ReturnType< typeof getHoldMessages >
-): hold is keyof ReturnType< typeof getHoldMessages > {
-	return holdMessages.hasOwnProperty( hold );
+function isDisplayableHoldType( hold: string ): hold is DisplayableHold {
+	return displayableHolds.some( ( displayableHold ) => displayableHold === hold );
 }
+
+export const hasDisplayableHold = ( holds: string[] ) => holds.some( isDisplayableHoldType );
 
 function isHardBlockingHoldType( hold: string ): hold is HardBlockingHold {
 	return hardBlockingHolds.some( ( blockingHold ) => blockingHold === hold );
