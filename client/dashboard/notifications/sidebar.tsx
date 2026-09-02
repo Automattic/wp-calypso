@@ -1,5 +1,9 @@
 import { useRouterState } from '@tanstack/react-router';
-import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
+import {
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+	Notice,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { archive, comment, people, starEmpty, unseen } from '@wordpress/icons';
 import { SidebarBackButton, SidebarMenu, SidebarMenuItem } from '../components/sidebar';
@@ -59,11 +63,15 @@ function ExperimentControls() {
 	const [ variant, setVariantKey ] = useInboxVariantState();
 	const [ listVariant, setListVariantKey ] = useListVariantState();
 	return (
-		<VStack spacing={ 3 } className="dashboard-notifications-inbox__experiment-controls">
-			<Text variant="muted">{ __( 'Internal experiment — layouts will change.' ) }</Text>
-			<ListVariantPicker value={ listVariant.key } onChange={ setListVariantKey } />
-			<InboxVariantPicker value={ variant.key } onChange={ setVariantKey } />
-		</VStack>
+		<div className="dashboard-notifications-inbox__experiment-controls">
+			<Notice status="warning" isDismissible={ false }>
+				<VStack spacing={ 3 }>
+					<Text>{ __( 'Internal experiment — layouts will change.' ) }</Text>
+					<ListVariantPicker value={ listVariant.key } onChange={ setListVariantKey } />
+					<InboxVariantPicker value={ variant.key } onChange={ setVariantKey } />
+				</VStack>
+			</Notice>
+		</div>
 	);
 }
 
