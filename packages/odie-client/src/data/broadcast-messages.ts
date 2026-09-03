@@ -79,6 +79,9 @@ export const useOdieBroadcastWithCallbacks = (
 			}
 
 			if ( data.type === interactionUpdatedEventName ) {
+				// Refetch the interaction so this tab picks up the new conversation, and
+				// the Odie chat so the history it rebuilds from is not the stale copy
+				// cached before the other tab escalated.
 				queryClient.invalidateQueries( {
 					queryKey: [
 						'support-interactions',
@@ -87,6 +90,7 @@ export const useOdieBroadcastWithCallbacks = (
 						isTestModeEnvironment(),
 					],
 				} );
+				queryClient.invalidateQueries( { queryKey: [ 'odie-chat' ] } );
 				return;
 			}
 

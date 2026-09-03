@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { useIsMutating, useQueryClient } from '@tanstack/react-query';
+import { useIsMutating } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useRef, useCallback } from '@wordpress/element';
 import { getMessageUniqueIdentifier } from '../components/message/utils/get-message-unique-identifier';
@@ -90,7 +90,6 @@ export const useGetCombinedChat = (
 	const [ isFetchingConversation, setIsFetchingConversation ] = useState( false );
 
 	const { startNewInteraction } = useManageSupportInteraction();
-	const queryClient = useQueryClient();
 	const isUploadingUnsentMessages = useIsMutating( {
 		mutationKey: [ 'send-zendesk-messages' ],
 	} );
@@ -131,10 +130,6 @@ export const useGetCombinedChat = (
 		}
 	}, [ isChatLoaded, conversationId, refreshConversation ] );
 
-	// The conversation id the Odie chat was last refetched for (see below).
-	const odieChatRefetchedForRef = useRef< string | null >( null );
-	const [ isRefetchingOdieChat, setIsRefetchingOdieChat ] = useState( false );
-
 	useEffect( () => {
 		// Logged out chats don't have interactions. Only direct odie IDs.
 		const interactionHasChanged =
@@ -162,26 +157,7 @@ export const useGetCombinedChat = (
 
 		previousOdieIdRef.current = odieId;
 
-		// The Odie chat cached here is missing whatever was said in the other tab
-		// since this tab loaded it. Refetch it first and come back once that is
-		// done, so the reload rebuilds the full history. Only for a tab that was
-		// already showing this chat; a fresh load has nothing stale.
 		if (
-			conversationHasChanged &&
-			! interactionHasChanged &&
-			odieId &&
-			odieChatRefetchedForRef.current !== conversationId
-		) {
-			odieChatRefetchedForRef.current = conversationId;
-			setIsRefetchingOdieChat( true );
-			queryClient
-				.invalidateQueries( { queryKey: [ 'odie-chat' ] } )
-				.finally( () => setIsRefetchingOdieChat( false ) );
-			return;
-		}
-
-		if (
-			isRefetchingOdieChat ||
 			( isOdieChatLoading && ! interactionHasChanged ) ||
 			isLoadingCurrentSupportInteraction ||
 			isFetchingConversation ||
@@ -307,8 +283,6 @@ export const useGetCombinedChat = (
 		mainChatState?.messages?.length,
 		mainChatState?.odieId,
 		mainChatState?.conversationId,
-		isRefetchingOdieChat,
-		queryClient,
 		odieChat,
 	] );
 

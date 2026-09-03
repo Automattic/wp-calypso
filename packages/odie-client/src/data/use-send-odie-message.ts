@@ -2,7 +2,7 @@ import { HelpCenter, HelpCenterSelect } from '@automattic/data-stores';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import {
@@ -23,10 +23,7 @@ import { getBotSlug } from '../utils/get-bot-slug';
 import { getOpenLiveInteractions } from '../utils/get-open-live-interactions';
 import { getIsAgentsManagerAvailable } from '../utils/is-agents-manager-available';
 import { requestLoggedOutWpcomOdie } from './request-logged-out-wpcom-odie';
-import {
-	getSupportInteractionIdFromSearch,
-	useCurrentSupportInteraction,
-} from './use-current-support-interaction';
+import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
 import type { Chat, Message, ReturnedChat, SupportInteraction } from '../types';
 
@@ -62,12 +59,6 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const { setLoggedOutOdieChat } = useDispatch( HELP_CENTER_STORE );
 	const location = useLocation();
-
-	// The support interaction this tab is showing, read from the MemoryRouter
-	// URL. Kept in a ref because the broadcasts below run inside the mutation,
-	// after `updateInteractionContext` may have just put a fresh id in the URL.
-	const supportInteractionIdRef = useRef( getSupportInteractionIdFromSearch( location.search ) );
-	supportInteractionIdRef.current = getSupportInteractionIdFromSearch( location.search );
 
 	const {
 		isLoggedOutSession,
@@ -137,7 +128,6 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		( interaction: SupportInteraction ) => {
 			const params = new URLSearchParams( location.search );
 			params.set( 'id', interaction.uuid );
-			supportInteractionIdRef.current = interaction.uuid;
 			navigate( `${ location.pathname }?${ params.toString() }`, { replace: true } );
 		},
 		[ location.pathname, location.search, navigate ]
@@ -168,15 +158,19 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		Adds a message to the chat.
 		If the message is a request for human support, it will escalate the chat to human support, if eligible.
 		If email support is forced, it will add an email fallback message.
+		`supportInteractionId` is the interaction the message belongs to; it is
+		passed in because a brand new chat only gets its interaction mid-send.
 	*/
 	const addMessage = ( {
 		message,
 		props = {},
 		isFromError = false,
+		supportInteractionId,
 	}: {
 		message: Message | Message[];
 		props?: Partial< Chat >;
 		isFromError: boolean;
+		supportInteractionId: string | null;
 	} ) => {
 		// Compute from a fresh Smooch snapshot at call time: Smooch can mutate its
 		// conversation list outside React without triggering a re-render.
@@ -192,7 +186,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						messages: [ ...prevChat.messages, getConversationLimitReachedMessage() ],
 						status: 'loaded',
 					} ) );
-					broadcastOdieMessage( message, odieBroadcastClientId, supportInteractionIdRef.current );
+					broadcastOdieMessage( message, odieBroadcastClientId, supportInteractionId );
 					return;
 				} else if ( forceEmailSupport ) {
 					setChat( ( prevChat ) => ( {
@@ -201,7 +195,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						messages: [ ...prevChat.messages, getOdieEmailFallbackMessage() ],
 						status: 'loaded',
 					} ) );
-					broadcastOdieMessage( message, odieBroadcastClientId, supportInteractionIdRef.current );
+					broadcastOdieMessage( message, odieBroadcastClientId, supportInteractionId );
 					return;
 				} else if (
 					warnAboutExistingConversation &&
@@ -215,7 +209,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						messages: [ ...prevChat.messages, getExistingConversationMessage() ],
 						status: 'loaded',
 					} ) );
-					broadcastOdieMessage( message, odieBroadcastClientId, supportInteractionIdRef.current );
+					broadcastOdieMessage( message, odieBroadcastClientId, supportInteractionId );
 					return;
 				} else if ( ! chat.conversationId && canConnectToZendesk && isUserEligibleForPaidSupport ) {
 					setChat( ( prevChat ) => ( {
@@ -230,7 +224,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						isFromError,
 						escalationOnSecondAttempt: hasTriedToEscalateToSupport,
 					} );
-					broadcastOdieMessage( message, odieBroadcastClientId, supportInteractionIdRef.current );
+					broadcastOdieMessage( message, odieBroadcastClientId, supportInteractionId );
 					return;
 				}
 
@@ -257,11 +251,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		// Mirror the bot reply (or error message) into other tabs showing the same
 		// support interaction, like the user's message already is on send.
 		messagesToAdd.forEach( ( messageToBroadcast ) =>
-			broadcastOdieMessage(
-				messageToBroadcast,
-				odieBroadcastClientId,
-				supportInteractionIdRef.current
-			)
+			broadcastOdieMessage( messageToBroadcast, odieBroadcastClientId, supportInteractionId )
 		);
 	};
 
@@ -353,7 +343,12 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						internal_message_id
 					);
 
-					addMessage( { message: errorMessage, props: {}, isFromError: true } );
+					addMessage( {
+						message: errorMessage,
+						props: {},
+						isFromError: true,
+						supportInteractionId: currentSupportInteraction?.uuid ?? null,
+					} );
 				}
 				return;
 			}
@@ -406,6 +401,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 				message: botMessage,
 				props: { odieId: returnedChat.chat_id },
 				isFromError: false,
+				supportInteractionId: supportInteraction?.uuid ?? null,
 			} );
 		},
 		onSettled: () => {
@@ -423,10 +419,20 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			if ( isRateLimitError ) {
 				// Handle rate limit error with standard rate limit message
 				const message: Message = { ...getOdieRateLimitMessage(), internal_message_id };
-				addMessage( { message, props: {}, isFromError: true } );
+				addMessage( {
+					message,
+					props: {},
+					isFromError: true,
+					supportInteractionId: currentSupportInteraction?.uuid ?? null,
+				} );
 			} else if ( isUserEligibleForPaidSupport && canConnectToZendesk ) {
 				const errorMessage = getErrorMessageUnknownError();
-				addMessage( { message: errorMessage, props: {}, isFromError: true } );
+				addMessage( {
+					message: errorMessage,
+					props: {},
+					isFromError: true,
+					supportInteractionId: currentSupportInteraction?.uuid ?? null,
+				} );
 
 				trackEvent( 'error_sending_odie_message', {
 					error_message: error instanceof Error ? error.toString() : 'unknown_error',
@@ -438,7 +444,12 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 					internal_message_id
 				);
 
-				addMessage( { message: errorMessage, props: {}, isFromError: true } );
+				addMessage( {
+					message: errorMessage,
+					props: {},
+					isFromError: true,
+					supportInteractionId: currentSupportInteraction?.uuid ?? null,
+				} );
 			}
 		},
 	} );
