@@ -248,10 +248,9 @@ test.describe(
 			await test.step( 'Navigate to Inbox tab if needed', async () => {
 				if ( isInSpam ) {
 					await feedbackInboxPage.clickFolderTab( 'Inbox' );
-					// Leaving the single response page drops the active search. Clear
-					// first: refilling an identical value fires no request.
-					await feedbackInboxPage.clearSearch( true );
-					await feedbackInboxPage.searchResponses( formData1.email );
+					// Leaving the single response page drops the active search, and the
+					// un-spam needs a moment to reach the Inbox query.
+					await feedbackInboxPage.searchUntilResponseRow( formData1.email );
 				}
 			} );
 
@@ -298,10 +297,9 @@ test.describe(
 			await test.step( 'Navigate to Inbox tab if needed', async () => {
 				if ( isInSpam ) {
 					await feedbackInboxPage.clickFolderTab( 'Inbox' );
-					// Leaving the single response page drops the active search. Clear
-					// first: refilling an identical value fires no request.
-					await feedbackInboxPage.clearSearch( true );
-					await feedbackInboxPage.searchResponses( formData2.email );
+					// Leaving the single response page drops the active search, and the
+					// un-spam needs a moment to reach the Inbox query.
+					await feedbackInboxPage.searchUntilResponseRow( formData2.email );
 				}
 			} );
 
@@ -397,7 +395,7 @@ test.describe(
 			} );
 
 			await test.step( 'Verify first response is in Spam', async () => {
-				await feedbackInboxPage.searchResponses( formData1.email );
+				await feedbackInboxPage.searchUntilResponseRow( formData1.email );
 				await feedbackInboxPage.viewResponseRowByText( formData1.email );
 				await feedbackInboxPage.validateTextInSubmission( formData1.name );
 			} );
@@ -411,7 +409,7 @@ test.describe(
 			} );
 
 			await test.step( 'Verify first response is back in Inbox', async () => {
-				await feedbackInboxPage.searchResponses( formData1.email, true );
+				await feedbackInboxPage.searchUntilResponseRow( formData1.email );
 				await feedbackInboxPage.viewResponseRowByText( formData1.email );
 				await feedbackInboxPage.validateTextInSubmission( formData1.name );
 			} );
@@ -425,7 +423,7 @@ test.describe(
 			} );
 
 			await test.step( 'Verify first response is in Trash', async () => {
-				await feedbackInboxPage.searchResponses( formData1.email, true );
+				await feedbackInboxPage.searchUntilResponseRow( formData1.email );
 				await feedbackInboxPage.viewResponseRowByText( formData1.email );
 				await feedbackInboxPage.validateTextInSubmission( formData1.name );
 			} );
@@ -439,7 +437,7 @@ test.describe(
 			} );
 
 			await test.step( 'Verify first response is restored in Inbox', async () => {
-				await feedbackInboxPage.searchResponses( formData1.email, true );
+				await feedbackInboxPage.searchUntilResponseRow( formData1.email );
 				await feedbackInboxPage.viewResponseRowByText( formData1.email );
 				await feedbackInboxPage.validateTextInSubmission( formData1.name );
 			} );
