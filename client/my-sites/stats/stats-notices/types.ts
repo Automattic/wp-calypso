@@ -28,6 +28,7 @@ export interface StatsNoticeProps {
 	canManageOptions?: boolean;
 	hasCommercialStats?: boolean;
 	isPremiumAnalyticsEnabled?: boolean;
+	premiumAnalyticsDashboardUrl?: string | null;
 }
 
 export interface NoticeBodyProps {

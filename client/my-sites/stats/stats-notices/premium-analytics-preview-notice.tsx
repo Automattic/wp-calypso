@@ -1,25 +1,33 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { CALYPSO_CONTACT, JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import usePremiumAnalyticsStatusMutation from 'calypso/my-sites/stats/hooks/use-premium-analytics-status-mutation';
-import { useSelector } from 'calypso/state';
-import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
+import {
+	PREMIUM_ANALYTICS_ENABLED_SETTING,
+	premiumAnalyticsStatusQueryKey,
+} from 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query';
 import { StatsNoticeProps } from './types';
 
-const PREMIUM_ANALYTICS_PAGE_PATH = 'admin.php?page=jetpack-premium-analytics-wp-admin';
+export const PREMIUM_ANALYTICS_PAGE_PATH = 'admin.php?page=jetpack-premium-analytics-wp-admin';
 
 const DAY_IN_SECONDS = 24 * 3600;
 const FIRST_DISMISSAL_POSTPONEMENT = 30 * DAY_IN_SECONDS;
-const FINAL_DISMISSAL_POSTPONEMENT = 3650 * DAY_IN_SECONDS;
 
 const dismissalCountKey = ( siteId: number | null ) =>
 	`jetpack_stats_premium_analytics_preview_dismissals_${ siteId }`;
+
+// Falls back to memory where the browser store is blocked. That only lasts the session, so such a
+// browser can see the invitation once more after a reload - better than losing the count outright
+// and postponing for another month every time.
+const inMemoryDismissals = new Map< number | null, number >();
 
 /**
  * How many times this browser has been shown the door on this site.
@@ -33,7 +41,7 @@ const readDismissalCount = ( siteId: number | null ) => {
 	try {
 		return Number( localStorage.getItem( dismissalCountKey( siteId ) ) ) || 0;
 	} catch {
-		return 0;
+		return inMemoryDismissals.get( siteId ) ?? 0;
 	}
 };
 
@@ -41,17 +49,17 @@ const writeDismissalCount = ( siteId: number | null, count: number ) => {
 	try {
 		localStorage.setItem( dismissalCountKey( siteId ), String( count ) );
 	} catch {
-		// Storage can be unavailable or full; the postponement recorded on the site still stands.
+		inMemoryDismissals.set( siteId, count );
 	}
 };
 
 const trackEvent = (
-	isOdysseyStats: boolean,
+	isOdyssey: boolean,
 	name: string,
 	siteId: number | null,
 	properties: Record< string, unknown > = {}
 ) => {
-	const prefix = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+	const prefix = isOdyssey ? 'jetpack_odyssey' : 'calypso';
 	recordTracksEvent( `${ prefix }_stats_premium_analytics_preview_notice_${ name }`, {
 		blog_id: siteId,
 		...properties,
@@ -59,26 +67,30 @@ const trackEvent = (
 };
 
 const NoticeContainer = ( {
-	isOdysseyStats,
+	isOdyssey,
 	children,
 }: {
-	isOdysseyStats: boolean;
+	isOdyssey: boolean;
 	children: React.ReactNode;
 } ) => (
 	<div
-		className={ `inner-notice-container ${
-			! isOdysseyStats ? 'inner-notice-container--calypso' : ''
-		}` }
+		className={ `inner-notice-container ${ ! isOdyssey ? 'inner-notice-container--calypso' : '' }` }
 	>
 		{ children }
 	</div>
 );
 
-const PremiumAnalyticsPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
+const PremiumAnalyticsPreviewNotice = ( {
+	siteId,
+	isOdysseyStats,
+	premiumAnalyticsDashboardUrl,
+}: StatsNoticeProps ) => {
 	const translate = useTranslate();
-	const dashboardUrl = useSelector( ( state ) =>
-		getSiteAdminUrl( state, siteId, PREMIUM_ANALYTICS_PAGE_PATH )
-	);
+	const queryClient = useQueryClient();
+	// Which build we are in, as opposed to the `isOdysseyStats` prop, which is
+	// `is_running_in_jetpack_site` and false in a Simple site's wp-admin. That prop still decides
+	// where support lives, because it says which API the site answers on.
+	const isOdyssey = config.isEnabled( 'is_odyssey' );
 	// Scoped to the site rather than held as a flag: the notices host reuses this component across
 	// site switches in Calypso, so a plain boolean would carry one site's dismissal to the next.
 	const [ dismissedSiteId, setDismissedSiteId ] = useState< number | null >( null );
@@ -89,6 +101,16 @@ const PremiumAnalyticsPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeP
 	const enableFailed = failedSiteId === siteId;
 	const isSwitchedOn = enabledSiteId === siteId;
 
+	// Activating the button removes it, so focus would otherwise fall back to the document and the
+	// next Tab would start again from the top of the page.
+	const shouldRestoreFocus = useRef( false );
+	const restoreFocus = useCallback( ( node: HTMLElement | null ) => {
+		if ( node && shouldRestoreFocus.current ) {
+			shouldRestoreFocus.current = false;
+			node.focus();
+		}
+	}, [] );
+
 	const { mutateAsync: enablePreviewAsync, isPending: isEnabling } =
 		usePremiumAnalyticsStatusMutation( siteId );
 
@@ -98,24 +120,26 @@ const PremiumAnalyticsPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeP
 		'postponed',
 		FIRST_DISMISSAL_POSTPONEMENT
 	);
-	const { mutateAsync: postponeNoticeIndefinitelyAsync } = useNoticeVisibilityMutation(
+	const { mutateAsync: dismissNoticeForGoodAsync } = useNoticeVisibilityMutation(
 		siteId,
 		'premium_analytics_preview',
-		'postponed',
-		FINAL_DISMISSAL_POSTPONEMENT
+		'dismissed'
 	);
 
 	const dismissNotice = () => {
 		const dismissalCount = readDismissalCount( siteId ) + 1;
 		const isFinalDismissal = dismissalCount > 1;
 
-		trackEvent( isOdysseyStats, 'dismissed', siteId, { dismissal_count: dismissalCount } );
-		writeDismissalCount( siteId, dismissalCount );
+		trackEvent( isOdyssey, 'dismissed', siteId, { dismissal_count: dismissalCount } );
 		setDismissedSiteId( siteId );
 
-		// Best-effort: the local state above already hides the notice for this session.
-		const postpone = isFinalDismissal ? postponeNoticeIndefinitelyAsync : postponeNoticeAsync;
-		postpone().catch( () => {} );
+		// Best-effort: the local state above already hides the notice for this session. Counted only
+		// once the site has recorded it, so a lost write doesn't spend a dismissal the customer
+		// never got the benefit of.
+		const record = isFinalDismissal ? dismissNoticeForGoodAsync : postponeNoticeAsync;
+		record()
+			.then( () => writeDismissalCount( siteId, dismissalCount ) )
+			.catch( () => {} );
 	};
 
 	// Neither the confirmation nor a failed attempt is a rejection, so closing those stays out of
@@ -124,18 +148,20 @@ const PremiumAnalyticsPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeP
 	const hideNotice = () => setDismissedSiteId( siteId );
 
 	const enablePremiumAnalyticsPreview = async () => {
-		trackEvent( isOdysseyStats, 'enable_button_clicked', siteId );
+		trackEvent( isOdyssey, 'enable_button_clicked', siteId );
 		setFailedSiteId( null );
 
 		try {
 			const enabled = await enablePreviewAsync( true );
+			shouldRestoreFocus.current = true;
+
 			if ( ! enabled ) {
-				trackEvent( isOdysseyStats, 'enable_failed', siteId, { reason: 'not_enabled' } );
+				trackEvent( isOdyssey, 'enable_failed', siteId, { reason: 'not_enabled' } );
 				setFailedSiteId( siteId );
 				return;
 			}
 
-			trackEvent( isOdysseyStats, 'enabled', siteId );
+			trackEvent( isOdyssey, 'enabled', siteId );
 
 			// Hand over a link rather than navigating for them: the dashboard only exists on a
 			// fresh page load, and being thrown out of the page you were reading is a poor reward
@@ -147,28 +173,40 @@ const PremiumAnalyticsPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeP
 			// taking the link with it.
 			setEnabledSiteId( siteId );
 		} catch {
-			trackEvent( isOdysseyStats, 'enable_failed', siteId, { reason: 'request_failed' } );
+			shouldRestoreFocus.current = true;
+			trackEvent( isOdyssey, 'enable_failed', siteId, { reason: 'request_failed' } );
 			setFailedSiteId( siteId );
 		}
 	};
 
-	// `dashboardUrl` is part of the condition, not just the render: without it the banner returns
-	// null below, and an impression for a banner nobody saw is worse than none.
+	// The confirmation lives on local state, so a round trip through another Stats page would
+	// remount this component and invite the site again while the cached status still reads false.
+	// Recorded as the notice goes away rather than on success, which would pull the confirmation
+	// off the screen before it could be read.
 	useEffect( () => {
-		if ( ! noticeDismissed && dashboardUrl ) {
-			trackEvent( isOdysseyStats, 'viewed', siteId );
+		if ( ! isSwitchedOn ) {
+			return;
 		}
-	}, [ noticeDismissed, dashboardUrl, isOdysseyStats, siteId ] );
+		return () => {
+			queryClient.setQueryData( premiumAnalyticsStatusQueryKey( siteId ), {
+				[ PREMIUM_ANALYTICS_ENABLED_SETTING ]: true,
+			} );
+		};
+	}, [ isSwitchedOn, queryClient, siteId ] );
 
-	// Without somewhere to land, accepting would switch the dashboard on and drop the customer on a
-	// 404. getSiteAdminUrl() returns null when the site record carries no admin_url.
-	if ( noticeDismissed || ! dashboardUrl ) {
+	useEffect( () => {
+		if ( ! noticeDismissed ) {
+			trackEvent( isOdyssey, 'viewed', siteId );
+		}
+	}, [ noticeDismissed, isOdyssey, siteId ] );
+
+	if ( noticeDismissed ) {
 		return null;
 	}
 
 	if ( isSwitchedOn ) {
 		return (
-			<NoticeContainer isOdysseyStats={ isOdysseyStats }>
+			<NoticeContainer isOdyssey={ isOdyssey }>
 				<NoticeBanner
 					level="success"
 					title={ translate( 'The new Traffic page is on' ) }
@@ -178,7 +216,11 @@ const PremiumAnalyticsPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeP
 						{ translate( 'You’ll find it in the main menu alongside your current Stats.' ) }
 					</p>
 					<p key="cta">
-						<Button variant="primary" href={ dashboardUrl }>
+						<Button
+							variant="primary"
+							href={ premiumAnalyticsDashboardUrl ?? undefined }
+							ref={ restoreFocus }
+						>
 							{ translate( 'Go to the new Traffic page' ) }
 						</Button>
 					</p>
@@ -189,7 +231,7 @@ const PremiumAnalyticsPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeP
 
 	if ( enableFailed ) {
 		return (
-			<NoticeContainer isOdysseyStats={ isOdysseyStats }>
+			<NoticeContainer isOdyssey={ isOdyssey }>
 				<NoticeBanner
 					level="error"
 					title={ translate( 'We couldn’t switch on the new Traffic page' ) }
@@ -201,7 +243,11 @@ const PremiumAnalyticsPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeP
 						) }
 					</p>
 					<p key="cta">
-						<Button variant="primary" onClick={ enablePremiumAnalyticsPreview }>
+						<Button
+							variant="primary"
+							onClick={ enablePremiumAnalyticsPreview }
+							ref={ restoreFocus }
+						>
 							{ translate( 'Try again' ) }
 						</Button>
 						<a
@@ -220,7 +266,7 @@ const PremiumAnalyticsPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeP
 	}
 
 	return (
-		<NoticeContainer isOdysseyStats={ isOdysseyStats }>
+		<NoticeContainer isOdyssey={ isOdyssey }>
 			<NoticeBanner
 				level="info"
 				title={ translate( 'Try the new Traffic page' ) }
@@ -239,6 +285,9 @@ const PremiumAnalyticsPreviewNotice = ( { siteId, isOdysseyStats }: StatsNoticeP
 						onClick={ enablePremiumAnalyticsPreview }
 						isBusy={ isEnabling }
 						disabled={ isEnabling }
+						// Keyboard focus survives the button going busy, so the next Tab carries on
+						// from here rather than from the top of the page.
+						accessibleWhenDisabled
 					>
 						{ isEnabling ? translate( 'Switching it on…' ) : translate( 'Switch it on' ) }
 					</Button>

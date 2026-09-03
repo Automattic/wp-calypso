@@ -7,7 +7,9 @@ import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-succ
 import FreeSiteUpgradeNotice from './free-site-upgrade-notice';
 import GDPRCookieConsentNotice from './gdpr-cookie-consent-notice';
 import PaidPlanPurchaseSuccessJetpackStatsNotice from './paid-plan-purchase-success-notice';
-import isPremiumAnalyticsPreviewCohort from './premium-analytics-preview-cohort';
+import isPremiumAnalyticsPreviewCohort, {
+	PREMIUM_ANALYTICS_PREVIEW_FLAG,
+} from './premium-analytics-preview-cohort';
 import PremiumAnalyticsPreviewNotice from './premium-analytics-preview-notice';
 import TierUpgradeNotice from './tier-upgrade-notice';
 import { StatsNoticeProps } from './types';
@@ -38,25 +40,14 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 	{
 		component: PremiumAnalyticsPreviewNotice,
 		noticeId: 'premium_analytics_preview',
-		// Who the site has to be lives in `isPremiumAnalyticsPreviewCohort`, shared with the parent
-		// so the request that gates this notice is spent on exactly the sites that could accept it.
-		// It would sit better beside the flag in `disabled`, which is where the other temporary
-		// switches live, but that is resolved once at module load with no site in scope - anything
-		// depending on the site has to be asked here.
-		// In CONFLICT_NOTICE_ID_GROUPS so only one banner ever shows, though nothing in the group
-		// is a natural rival while the invitation is WPCOM-only: the upsells need a site without
-		// paid Stats, and `tier_upgrade` needs a self-hosted one. Ranked high regardless, so a
-		// site that somehow qualifies for both gets the invitation, which is the one on a clock.
-		// Eligibility is resolved by the parent, so this notice never wins the group and then
-		// renders nothing — that would suppress the rest of the group and the JITM for an empty
-		// slot.
-		// `isPremiumAnalyticsEnabled` is deliberately compared to false rather than negated. It is
-		// three-valued: undefined means the site never reported the setting at all — a Jetpack too
-		// old to register it, or a read that failed — which is not the same as the dashboard being
-		// off, and must not read as "go ahead and offer it".
+		// Eligibility lives in `isPremiumAnalyticsPreviewCohort`, shared with the notices host so
+		// it is resolved before this notice can win its conflict group - a winner that then renders
+		// nothing suppresses the rest of the group and the JITM for an empty slot.
+		// `isPremiumAnalyticsEnabled` is compared to false rather than negated: undefined means the
+		// site never reported the setting, which must not read as "go ahead and offer it".
 		isVisibleFunc: ( options: StatsNoticeProps ) =>
 			isPremiumAnalyticsPreviewCohort( options ) && options.isPremiumAnalyticsEnabled === false,
-		disabled: ! isEnabled( 'stats/premium-analytics-preview' ),
+		disabled: ! isEnabled( PREMIUM_ANALYTICS_PREVIEW_FLAG ),
 	},
 	{
 		component: CommercialSiteUpgradeNotice,

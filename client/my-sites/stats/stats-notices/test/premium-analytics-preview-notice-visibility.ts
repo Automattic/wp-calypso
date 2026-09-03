@@ -10,7 +10,7 @@ const premiumAnalyticsPreviewNotice = ALL_STATS_NOTICES.find(
 );
 
 // An administrator on a cohort site that hasn't switched the dashboard on yet. The parent resolves
-// The parent resolves capability, cohort and current status before the registry sees them.
+// capability, cohort, landing page and current status before the registry sees them.
 const eligibleSite: StatsNoticeProps = {
 	siteId: 123,
 	isOdysseyStats: false,
@@ -18,6 +18,8 @@ const eligibleSite: StatsNoticeProps = {
 	canManageOptions: true,
 	hasCommercialStats: true,
 	isPremiumAnalyticsEnabled: false,
+	premiumAnalyticsDashboardUrl:
+		'https://example.com/wp-admin/admin.php?page=jetpack-premium-analytics-wp-admin',
 	isVip: false,
 	isP2: false,
 };
@@ -83,6 +85,21 @@ describe( 'premium_analytics_preview notice visibility', () => {
 			premiumAnalyticsPreviewNotice?.isVisibleFunc( {
 				...eligibleSite,
 				hasCommercialStats: undefined,
+			} )
+		).toBe( false );
+	} );
+
+	/**
+	 * getSiteAdminUrl() returns null when the site record carries no admin_url. Accepting would then
+	 * switch the dashboard on and drop the customer on a 404, and deciding that inside the notice
+	 * would let it win the conflict group and then render nothing - suppressing the upsells and the
+	 * JITM for an empty slot.
+	 */
+	it( 'stays hidden when there is nowhere for the invitation to land', () => {
+		expect(
+			premiumAnalyticsPreviewNotice?.isVisibleFunc( {
+				...eligibleSite,
+				premiumAnalyticsDashboardUrl: null,
 			} )
 		).toBe( false );
 	} );
