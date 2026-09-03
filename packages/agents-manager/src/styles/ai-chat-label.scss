@@ -1,0 +1,39 @@
+@import './variables.scss';
+
+// The "Agent" label beside an AI chat entry button. It reveals by growing its
+// grid track from nothing while fading in, so neighbours slide instead of
+// jumping; the inner span is clipped meanwhile and carries the gap from the
+// icon. Hidden on the toolbars' mobile layouts.
+.agents-manager-ai-chat-label {
+	display: grid;
+	grid-template-columns: 1fr;
+
+	// The admin bar's `#wpadminbar *` reset zeroes padding; the id keeps the gap there.
+	> span,
+	#wpadminbar & > span {
+		min-width: 0;
+		overflow: hidden;
+		white-space: nowrap;
+		padding-inline-start: 6px;
+	}
+
+	// Only a label that appears after the page has painted animates.
+	&.is-revealed {
+		animation: agents-manager-ai-chat-label-reveal $transition-timing;
+
+		@media ( prefers-reduced-motion: reduce ) {
+			animation: none;
+		}
+	}
+
+	@media ( max-width: $break-medium ) {
+		display: none;
+	}
+}
+
+@keyframes agents-manager-ai-chat-label-reveal {
+	from {
+		grid-template-columns: 0fr;
+		opacity: 0;
+	}
+}

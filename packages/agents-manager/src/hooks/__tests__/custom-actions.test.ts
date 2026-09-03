@@ -294,7 +294,7 @@ describe( 'useSetupCustomActions', () => {
 
 		expect( window.__agentsManagerActions?.isChatVisible?.() ).toBe( true );
 
-		mockSelectState = { ...mockSelectState, isMinimized: true, isChatVisible: false };
+		mockSelectState = { ...mockSelectState, isChatVisible: false };
 		rerender();
 
 		expect( window.__agentsManagerActions?.isChatVisible?.() ).toBe( false );

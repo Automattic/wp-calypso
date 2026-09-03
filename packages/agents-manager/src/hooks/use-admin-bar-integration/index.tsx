@@ -10,6 +10,7 @@ import useHasAiChatEntryButton, {
 	ADMIN_BAR_AI_CHAT_BUTTON_ID,
 } from '../use-has-ai-chat-entry-button';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
+import '../../styles/ai-chat-label.scss';
 import './style.scss';
 
 // Admin bar element selectors
@@ -18,8 +19,10 @@ const ADMIN_BAR_CHAT_ITEM_ID = 'wp-admin-bar-agents-manager-chat-support';
 const ADMIN_BAR_HISTORY_ITEM_ID = 'wp-admin-bar-agents-manager-chat-history';
 const ADMIN_BAR_GUIDES_ITEM_ID = 'wp-admin-bar-agents-manager-support-guides';
 
-// CSS class name
+// CSS class names
 const OPEN_CLICK_CLASS = 'open-click';
+const CHAT_VISIBLE_CLASS = 'is-chat-visible';
+const LABEL_REVEALED_CLASS = 'is-revealed';
 
 // Tracking event destinations
 const DESTINATION_CHAT = 'agents-manager-chat';
@@ -38,6 +41,7 @@ interface UseAdminBarIntegrationOptions {
  * - Help menu panel toggle visibility
  * - Click outside to close the menu
  * - Menu item and AI chat button click handlers with tracking
+ * - The AI chat button's "Agent" label, shown while the chat is hidden
  *
  * Returns whether the AI chat entry button is present on the page.
  */
@@ -71,6 +75,24 @@ export default function useAdminBarIntegration( {
 	// click opens or closes the chat.
 	const isChatVisibleRef = useRef( false );
 	isChatVisibleRef.current = isChatVisible;
+
+	// PHP renders the label, pre-hidden when the persisted state says the chat
+	// will restore visible; from here on the store decides. Only a label brought
+	// back by closing the chat animates, never one painted with the page.
+	useEffect( () => {
+		const aiChatButton = document.getElementById( ADMIN_BAR_AI_CHAT_BUTTON_ID );
+		if ( ! aiChatButton ) {
+			return;
+		}
+
+		const wasChatVisible = aiChatButton.classList.contains( CHAT_VISIBLE_CLASS );
+		aiChatButton.classList.toggle( CHAT_VISIBLE_CLASS, isChatVisible );
+		if ( wasChatVisible && ! isChatVisible ) {
+			aiChatButton
+				.querySelector( '.agents-manager-ai-chat-label' )
+				?.classList.add( LABEL_REVEALED_CLASS );
+		}
+	}, [ isChatVisible ] );
 
 	// The chat's current route, read inside those same handlers so a Help menu item
 	// only closes the chat when it targets the route already showing.

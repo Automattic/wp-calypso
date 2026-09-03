@@ -14,7 +14,7 @@
 			width: 22px;
 		}
 
-		@media ( max-width: 782px ) {
+		@media ( max-width: $break-medium ) {
 			svg {
 				height: 30px !important;
 				padding: 7px 8px !important;
@@ -34,7 +34,7 @@
 		align-items: center;
 		padding: 0 11px;
 
-		@media ( max-width: 782px ) {
+		@media ( max-width: $break-medium ) {
 			padding: 0;
 		}
 
@@ -50,6 +50,10 @@
 		&:hover svg {
 			color: inherit;
 		}
+	}
+
+	#wp-admin-bar-agents-manager-ai-chat.is-chat-visible .agents-manager-ai-chat-label {
+		display: none;
 	}
 
 	#wp-admin-bar-agents-manager {
@@ -136,7 +140,7 @@
 			border-top-right-radius: $main-border-radius;
 		}
 
-		@media ( max-width: 782px ) {
+		@media ( max-width: $break-medium ) {
 			#wp-admin-bar-agents-manager,
 			#wp-admin-bar-agents-manager-ai-chat {
 				display: block !important;
@@ -174,7 +178,7 @@
 						padding: 0;
 						position: unset;
 
-						@media ( max-width: 782px ) {
+						@media ( max-width: $break-medium ) {
 							padding: 0 !important;
 						}
 					}

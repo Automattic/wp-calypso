@@ -14,7 +14,7 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import MasterbarAiChatButton from '../ai-chat-button';
 
 jest.mock( '@automattic/agents-manager', () => ( {
-	AiChatEntryLabel: () => <span>Agent</span>,
+	AiChatEntryLabel: () => <span aria-hidden="true">Agent</span>,
 	closeAgentsManagerChat: jest.fn(),
 	openAgentsManagerChat: jest.fn(),
 	recordAgentsManagerTracksEvent: jest.fn(),
@@ -33,27 +33,27 @@ const render = ( sectionName: string | null = 'test-section' ) =>
 describe( 'MasterbarAiChatButton', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockUseAiChatEntryState.mockReturnValue( { isChatVisible: false, isLabelVisible: true } );
+		mockUseAiChatEntryState.mockReturnValue( { hasLoaded: true, isChatVisible: false } );
 	} );
 
 	it( 'renders the entry label in the button and stays unlit while the chat is hidden', () => {
 		render();
 
-		const button = screen.getByRole( 'button', { name: 'Ask AI' } );
+		const button = screen.getByRole( 'button', { name: 'Agent' } );
 		expect( button ).not.toHaveClass( 'is-active' );
 		expect( button ).toContainElement( screen.getByText( 'Agent' ) );
 	} );
 
 	it( 'lights the button while the chat is visible', () => {
-		mockUseAiChatEntryState.mockReturnValue( { isChatVisible: true, isLabelVisible: false } );
+		mockUseAiChatEntryState.mockReturnValue( { hasLoaded: true, isChatVisible: true } );
 
 		render();
 
-		expect( screen.getByRole( 'button', { name: 'Ask AI' } ) ).toHaveClass( 'is-active' );
+		expect( screen.getByRole( 'button', { name: 'Agent' } ) ).toHaveClass( 'is-active' );
 	} );
 
 	it( 'closes the chat when clicked while the chat is showing', async () => {
-		mockUseAiChatEntryState.mockReturnValue( { isChatVisible: true, isLabelVisible: false } );
+		mockUseAiChatEntryState.mockReturnValue( { hasLoaded: true, isChatVisible: true } );
 
 		render();
 		await userEvent.click( screen.getByRole( 'button' ) );

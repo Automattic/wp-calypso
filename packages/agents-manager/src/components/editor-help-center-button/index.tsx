@@ -16,7 +16,7 @@ interface Props {
 }
 
 /**
- * Help Center "?" dropdown for the block editor header, shown to the left of the Ask AI button.
+ * Help Center "?" dropdown for the block editor header, shown to the left of the AI chat button.
  * Replaces the legacy Help Center button in the unified experience (which dequeues it). Items
  * and behavior mirror the `/wp-admin` admin-bar Help menu. The `PinnedItems/core` fill is inert
  * outside the editor.
@@ -103,7 +103,7 @@ export default function EditorHelpCenterButton( { onClose, onOpenChat }: Props )
 				label={ __( 'Help Center', __i18n_text_domain__ ) }
 				controls={ controls }
 				popoverProps={ { position: 'bottom left' } }
-				// Match the Ask AI button (and editor-header convention) so the icon/button size lines up.
+				// Match the AI chat button (and editor-header convention) so the icon/button size lines up.
 				toggleProps={ { size: 'compact' } }
 			/>
 		</Fill>

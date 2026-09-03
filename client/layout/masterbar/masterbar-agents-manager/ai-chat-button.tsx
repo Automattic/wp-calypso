@@ -32,17 +32,13 @@ const MasterbarAiChatButton = () => {
 		}
 	};
 
-	// The accessible name stays "Ask AI" while the visual "Agent" label comes and goes.
-	const name = translate( 'Ask AI' );
-
 	return (
 		<Item
 			className="masterbar__item-agents-manager-ai-chat"
 			onClick={ handleClick }
 			icon={ <BigSkyIcon /> }
 			isActive={ isChatVisible }
-			tooltip={ name }
-			ariaLabel={ name }
+			tooltip={ translate( 'Agent' ) }
 		>
 			<AiChatEntryLabel />
 		</Item>

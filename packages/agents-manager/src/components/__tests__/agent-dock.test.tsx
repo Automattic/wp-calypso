@@ -67,10 +67,6 @@ jest.mock( '../../hooks/use-admin-bar-integration', () => ( {
 	__esModule: true,
 	default: () => mockHasAdminBar,
 } ) );
-jest.mock( '../ai-chat-entry-label/admin-bar', () => ( {
-	__esModule: true,
-	default: () => null,
-} ) );
 jest.mock( '../../hooks/use-agent-layout-manager', () => ( options: unknown ) => {
 	mockUseAgentLayoutManager( options );
 	return {

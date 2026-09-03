@@ -9,43 +9,17 @@ import { renderHook } from '@testing-library/react';
 import { useSelect } from '@wordpress/data';
 import { useAiChatEntryState } from '../use-ai-chat-entry-state';
 
-type ChatState = { hasLoaded: boolean; isChatVisible: boolean };
-
 const mockUseSelect = useSelect as jest.Mock;
 
-// Runs the hook's selector against a store exposing `getAgentsManagerState`.
-const mockStoreState = ( state: ChatState ) =>
-	mockUseSelect.mockImplementation( ( mapSelect ) =>
-		mapSelect( () => ( { getAgentsManagerState: () => state } ) )
-	);
-
 describe( 'useAiChatEntryState', () => {
-	const cases: Array< [ string, ChatState, ReturnType< typeof useAiChatEntryState > ] > = [
-		[
-			'hidden',
-			{ hasLoaded: true, isChatVisible: false },
-			{ isChatVisible: false, isLabelVisible: true },
-		],
-		[
-			'visible',
-			{ hasLoaded: true, isChatVisible: true },
-			{ isChatVisible: true, isLabelVisible: false },
-		],
-		[
-			'hidden but the persisted state has not loaded',
-			{ hasLoaded: false, isChatVisible: false },
-			{ isChatVisible: false, isLabelVisible: false },
-		],
-	];
+	it( 'picks whether the persisted state has loaded and the chat is showing from the store', () => {
+		const storeState = { hasLoaded: true, isOpen: true, isMinimized: true, isChatVisible: false };
+		mockUseSelect.mockImplementation( ( mapSelect ) =>
+			mapSelect( () => ( { getAgentsManagerState: () => storeState } ) )
+		);
 
-	it.each( cases )(
-		'derives the entry state while the chat is %s',
-		( _state, storeState, expected ) => {
-			mockStoreState( storeState );
+		const { result } = renderHook( () => useAiChatEntryState() );
 
-			const { result } = renderHook( () => useAiChatEntryState() );
-
-			expect( result.current ).toEqual( expected );
-		}
-	);
+		expect( result.current ).toEqual( { hasLoaded: true, isChatVisible: false } );
+	} );
 } );

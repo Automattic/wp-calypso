@@ -6,7 +6,6 @@ import { useAiChatEntryState } from '../../hooks/use-ai-chat-entry-state';
 import AiChatEntryLabel from '../ai-chat-entry-label';
 
 jest.mock( '../../hooks/use-ai-chat-entry-state', () => ( { useAiChatEntryState: jest.fn() } ) );
-jest.mock( '../ai-chat-entry-label/style.scss', () => ( {} ) );
 
 const mockUseAiChatEntryState = useAiChatEntryState as jest.MockedFunction<
 	typeof useAiChatEntryState
@@ -14,15 +13,18 @@ const mockUseAiChatEntryState = useAiChatEntryState as jest.MockedFunction<
 
 describe( 'AiChatEntryLabel', () => {
 	it( 'shows the Agent label while the chat is hidden', () => {
-		mockUseAiChatEntryState.mockReturnValue( { isChatVisible: false, isLabelVisible: true } );
+		mockUseAiChatEntryState.mockReturnValue( { hasLoaded: true, isChatVisible: false } );
 
 		render( <AiChatEntryLabel /> );
 
 		expect( screen.getByText( 'Agent' ) ).toBeVisible();
 	} );
 
-	it( 'renders nothing while the chat is visible', () => {
-		mockUseAiChatEntryState.mockReturnValue( { isChatVisible: true, isLabelVisible: false } );
+	it.each( [
+		[ 'the chat is visible', { hasLoaded: true, isChatVisible: true } ],
+		[ 'the persisted state has not loaded', { hasLoaded: false, isChatVisible: false } ],
+	] )( 'renders nothing while %s', ( _case, state ) => {
+		mockUseAiChatEntryState.mockReturnValue( state );
 
 		const { container } = render( <AiChatEntryLabel /> );
 

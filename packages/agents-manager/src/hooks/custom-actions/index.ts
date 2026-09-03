@@ -222,8 +222,8 @@ export function useSetupCustomActions( {
 		}
 	}, [ hasLoaded, isOpen, isDocked, floatingPosition ] );
 
-	// Entry points outside the bundle (the omnibar AI button, the Help menus,
-	// Jetpack's AI sidebar) read this to decide whether a click closes or opens.
+	// Entry points outside the bundle (the omnibar AI and Help buttons, Jetpack's
+	// AI sidebar) read this to decide whether a click closes or opens.
 	const getIsChatVisible = useCallback( () => isChatVisible, [ isChatVisible ] );
 
 	// The chat's current route (e.g. `/chat`), so callers can detect a same-route re-click.
