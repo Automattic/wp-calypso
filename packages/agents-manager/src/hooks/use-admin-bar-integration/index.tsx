@@ -77,8 +77,9 @@ export default function useAdminBarIntegration( {
 	isChatVisibleRef.current = isChatVisible;
 
 	// PHP renders the label, pre-hidden when the persisted state says the chat
-	// will restore visible; from here on the store decides. Only a label brought
-	// back by closing the chat animates, never one painted with the page.
+	// will restore visible; from here on the store decides (this hook mounts
+	// only after that state has loaded). Only a label brought back by closing
+	// the chat animates, never one painted with the page.
 	useEffect( () => {
 		const aiChatButton = document.getElementById( ADMIN_BAR_AI_CHAT_BUTTON_ID );
 		if ( ! aiChatButton ) {
