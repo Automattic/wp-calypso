@@ -43,20 +43,6 @@ class MasterbarLoggedOut extends Component {
 		title: '',
 	};
 
-	renderTagsItem() {
-		const { translate } = this.props;
-		const tagsUrl = addLocaleToPathLocaleInFront( '/tags' );
-
-		return (
-			<Item url={ tagsUrl }>
-				{ translate( 'Popular Tags', {
-					context: 'Toolbar',
-					comment: 'Should be shorter than ~15 chars',
-				} ) }
-			</Item>
-		);
-	}
-
 	renderSearchItem() {
 		const { translate } = this.props;
 		const searchUrl = addLocaleToPathLocaleInFront( '/discover/search' );
@@ -260,7 +246,6 @@ class MasterbarLoggedOut extends Component {
 				{ sectionName === 'reader' && (
 					<div className="masterbar__login-links">
 						{ this.renderDiscoverItem() }
-						{ this.renderTagsItem() }
 						{ this.renderSearchItem() }
 						{ this.renderLoginItem() }
 						{ this.renderSignupItem() }
