@@ -8,10 +8,13 @@ import {
 import { omnibarSiteIdQuery } from '@automattic/api-queries';
 // eslint-disable-next-line no-restricted-imports -- Help Center host events need explicit site attribution.
 import { withSiteContext } from '@automattic/calypso-analytics';
+// eslint-disable-next-line no-restricted-imports -- constants-only module, keeps data-stores out of the main bundle
+import { HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT } from '@automattic/data-stores/src/help-center/constants';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { Icon, backup, comment, page, rss, video } from '@wordpress/icons';
+import { useExperiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../analytics';
 import { useHelpCenter } from '../help-center';
 import type { AnalyticsClient } from '../analytics';
@@ -176,6 +179,9 @@ export function useHelpCenterPlugin( { sectionName }: { sectionName?: string } )
 	const { isShown: isHelpCenterShown, setShowHelpCenter } = useHelpCenter();
 	const { recordTracksEvent } = useAnalytics();
 	const { data: omnibarSiteId } = useQuery( omnibarSiteIdQuery() );
+	// Load the assignment where the entry point renders, so ExPlat exposure covers
+	// everyone who sees it, not only users who open the Help Center.
+	useExperiment( HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT );
 
 	if ( shouldUseUnifiedAgent ) {
 		return {

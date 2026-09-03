@@ -2,6 +2,7 @@
 /**
  * External Dependencies
  */
+import { HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT } from '@automattic/data-stores/src/help-center/constants';
 import { HelpCenterArticle } from '@automattic/support-articles';
 import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -83,8 +84,17 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const containerRef = useRef< HTMLDivElement >( null );
 	const navigate = useNavigate();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
-	const { sectionName, site, launcherContext, newLoggedOutInteractionsBotSlug } =
-		useHelpCenterContext();
+	const {
+		sectionName,
+		site,
+		launcherContext,
+		newLoggedOutInteractionsBotSlug,
+		experimentVariations,
+	} = useHelpCenterContext();
+	// Read via a ref so a late-resolving assignment doesn't re-fire the page-open event.
+	const getHelpChatForwardVariationRef = useRef< string | null >( null );
+	getHelpChatForwardVariationRef.current =
+		experimentVariations?.[ HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT ] ?? null;
 	const recordTracksEvent = useHelpCenterTracksEvent();
 	const featureConfig = useFeatureConfig();
 	const { data, isLoading: isLoadingSupportStatus } = useSupportStatus();
@@ -116,6 +126,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 			force_site_id: true,
 			location: 'help-center',
 			is_free_user: ! isUserEligibleForPaidSupport,
+			get_help_chat_forward_variation: getHelpChatForwardVariationRef.current,
 		} );
 	}, [
 		location.pathname,

@@ -1,5 +1,6 @@
 import { recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
 import { HelpCenter } from '@automattic/data-stores';
+import { HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT } from '@automattic/data-stores/src/help-center/constants';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { usePrevious } from '@wordpress/compose';
 import {
@@ -40,6 +41,9 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
 		'calypso_help_center_menu_popover_increase_exposure'
 	);
+	const [ , getHelpChatForwardAssignment ] = useExperiment(
+		HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT
+	);
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	// Check if the new menu panel feature is enabled (both feature flag AND query param must be true)
@@ -55,6 +59,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 					section: sectionName,
 					is_menu_panel_enabled: isMenuPanelExperimentEnabled,
 					is_assignment_loaded: ! isLoadingExperimentAssignment,
+					get_help_chat_forward_variation: getHelpChatForwardAssignment?.variationName ?? null,
 				},
 				siteContextSource,
 				siteId
