@@ -131,7 +131,9 @@ const RegisteredDomainDetails = ( {
 
 		return (
 			<RenewButton
-				purchase={ purchase }
+				// Temporary bridge (SHILL-2256): this card still reads the camelCase
+				// Purchase from Redux. Remove once it reads the raw shape.
+				purchase={ purchase?.rawPurchase ?? null }
 				selectedSite={ selectedSite }
 				subscriptionId={ parseInt( domain.subscriptionId ?? '', 10 ) }
 				tracksProps={ { source: 'registered-domain-status', domain_status: 'active' } }
