@@ -399,7 +399,8 @@ export default function WPCOMBusinessAT( {
 					size="medium"
 				>
 					<EligibilityWarnings
-						currentContext="hosting-features"
+						context="hosting-features"
+						inModal
 						atomicTransferAction={ content.atomicTransferAction }
 						showDataCenterPicker
 						standaloneProceed

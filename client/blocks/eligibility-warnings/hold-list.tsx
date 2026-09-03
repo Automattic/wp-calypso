@@ -13,6 +13,7 @@ import { useSelector } from 'calypso/state';
 import { eligibilityHolds, type EligibilityHold } from 'calypso/state/automated-transfer/constants';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
+import type { EligibilityContext } from './index';
 
 const displayableHolds = [
 	eligibilityHolds.NO_BUSINESS_PLAN,
@@ -44,7 +45,7 @@ function getHoldMessages( {
 	isMarketplace,
 	hasEnTranslation,
 }: {
-	context: string | null;
+	context: EligibilityContext | null;
 	translate: LocalizeProps[ 'translate' ];
 	billingPeriod?: string;
 	isMarketplace?: boolean;
@@ -245,7 +246,7 @@ export function getBlockingMessages(
 }
 
 interface ExternalProps {
-	context: string | null;
+	context: EligibilityContext | null;
 	holds: string[];
 	isMarketplace?: boolean;
 	isPlaceholder: boolean;
@@ -351,10 +352,11 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 	);
 };
 
-function getCardHeading( context: string | null, translate: LocalizeProps[ 'translate' ] ) {
+function getCardHeading(
+	context: EligibilityContext | null,
+	translate: LocalizeProps[ 'translate' ]
+) {
 	switch ( context ) {
-		case 'plugins':
-			return translate( "To install plugins you'll need to:" );
 		case 'themes':
 			return translate( "To install themes you'll need to:" );
 		case 'hosting':

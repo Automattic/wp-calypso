@@ -77,7 +77,7 @@ describe( '<EligibilityWarnings>', () => {
 		} );
 
 		const { container } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+			<EligibilityWarnings context={ null } onProceed={ noop } />,
 			state
 		);
 
@@ -93,7 +93,7 @@ describe( '<EligibilityWarnings>', () => {
 		} );
 
 		const { container } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+			<EligibilityWarnings context={ null } onProceed={ noop } />,
 			state
 		);
 
@@ -106,7 +106,7 @@ describe( '<EligibilityWarnings>', () => {
 		} );
 
 		const { queryByTestId, queryByText } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+			<EligibilityWarnings context={ null } onProceed={ noop } />,
 			state
 		);
 
@@ -120,7 +120,7 @@ describe( '<EligibilityWarnings>', () => {
 		} );
 
 		const { queryByTestId } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+			<EligibilityWarnings context={ null } onProceed={ noop } />,
 			state
 		);
 
@@ -133,7 +133,7 @@ describe( '<EligibilityWarnings>', () => {
 		} );
 
 		const { container, queryByTestId, queryByText } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+			<EligibilityWarnings context={ null } onProceed={ noop } />,
 			state
 		);
 
@@ -150,13 +150,25 @@ describe( '<EligibilityWarnings>', () => {
 		} );
 
 		const { container, getByTestId, getByText } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+			<EligibilityWarnings context={ null } onProceed={ noop } />,
 			state
 		);
 
 		expect( container.querySelector( '.calypso-notice' ) ).not.toBeInTheDocument();
 		expect( getByTestId( 'HoldList-Card' ) ).toBeVisible();
 		expect( getByText( 'Upgrade and continue' ) ).toBeEnabled();
+	} );
+
+	it( 'explains the upgrade in the plugin details modal', () => {
+		const state = createState( { holds: [ 'NO_BUSINESS_PLAN' ] } );
+
+		const { getByTestId, getByText } = renderWithStore(
+			<EligibilityWarnings onProceed={ noop } context="plugin-details" inModal />,
+			state
+		);
+
+		expect( getByTestId( 'HoldList-Card' ) ).toBeVisible();
+		expect( getByText( 'Upgrade to a Business plan' ) ).toBeVisible();
 	} );
 
 	it( 'renders warning notices when the API returns warnings', () => {
@@ -173,7 +185,7 @@ describe( '<EligibilityWarnings>', () => {
 		} );
 
 		const { getByRole, getByText } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+			<EligibilityWarnings context={ null } onProceed={ noop } />,
 			state
 		);
 
@@ -197,7 +209,7 @@ describe( '<EligibilityWarnings>', () => {
 		} );
 
 		const { container } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+			<EligibilityWarnings context={ null } onProceed={ noop } />,
 			state
 		);
 
@@ -213,7 +225,7 @@ describe( '<EligibilityWarnings>', () => {
 		const handleProceed = jest.fn();
 
 		const { getByText } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ handleProceed } />,
+			<EligibilityWarnings context={ null } onProceed={ handleProceed } />,
 			state
 		);
 
@@ -237,7 +249,7 @@ describe( '<EligibilityWarnings>', () => {
 		} );
 
 		const { getByText } = renderWithStore(
-			<EligibilityWarnings backUrl="/plugins/example.wordpress.com" onProceed={ noop } />,
+			<EligibilityWarnings context="plugins-upload" onProceed={ noop } />,
 			state
 		);
 
@@ -256,7 +268,7 @@ describe( '<EligibilityWarnings>', () => {
 		const handleProceed = jest.fn();
 
 		const { getByText } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ handleProceed } />,
+			<EligibilityWarnings context={ null } onProceed={ handleProceed } />,
 			state
 		);
 
@@ -272,7 +284,7 @@ describe( '<EligibilityWarnings>', () => {
 		const state = createState( {} );
 
 		const { getByText } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+			<EligibilityWarnings context={ null } onProceed={ noop } />,
 			state
 		);
 
