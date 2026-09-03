@@ -24,24 +24,21 @@ const FIRST_DISMISSAL_POSTPONEMENT = 30 * DAY_IN_SECONDS;
 const dismissalCountKey = ( siteId: number | null ) =>
 	`jetpack_stats_premium_analytics_preview_dismissals_${ siteId }`;
 
-// Falls back to memory where the browser store is blocked. That only lasts the session, so such a
-// browser can see the invitation once more after a reload - better than losing the count outright
-// and postponing for another month every time.
-const inMemoryDismissals = new Map< number | null, number >();
-
 /**
  * How many times this browser has been shown the door on this site.
  *
  * The invitation returns once after the first dismissal and never after the second. The notices
  * endpoint reports current visibility rather than a history, so the count is kept locally: a
- * cleared browser store costs at most one extra invitation.
+ * cleared browser store costs at most one extra invitation. A blocked one costs more - there is
+ * nowhere to keep the count, so the invitation returns every month; only the endpoint could fix
+ * that, by escalating a repeat postponement itself.
  * @param siteId Site the dismissal belongs to.
  */
 const readDismissalCount = ( siteId: number | null ) => {
 	try {
 		return Number( localStorage.getItem( dismissalCountKey( siteId ) ) ) || 0;
 	} catch {
-		return inMemoryDismissals.get( siteId ) ?? 0;
+		return 0;
 	}
 };
 
@@ -49,7 +46,7 @@ const writeDismissalCount = ( siteId: number | null, count: number ) => {
 	try {
 		localStorage.setItem( dismissalCountKey( siteId ), String( count ) );
 	} catch {
-		inMemoryDismissals.set( siteId, count );
+		// Storage can be unavailable or full; the postponement recorded on the site still stands.
 	}
 };
 
