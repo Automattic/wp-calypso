@@ -21,7 +21,7 @@ describe( 'OnboardingProgress', () => {
 		render( <OnboardingProgress currentStep="domains" hidePlansStep /> );
 
 		expect( screen.queryByRole( 'tab', { name: /Select a plan/ } ) ).not.toBeInTheDocument();
-		expect( screen.getByRole( 'tab', { name: /Complete payment/ } ) ).toBeVisible();
+		expect( screen.getByRole( 'tab', { name: /Step 2 of 2.*Complete payment/ } ) ).toBeVisible();
 	} );
 
 	it( 'does not call onStepSelect for the current step', async () => {

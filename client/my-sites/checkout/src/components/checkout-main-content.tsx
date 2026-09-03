@@ -486,19 +486,19 @@ export default function CheckoutMainContent( {
 	// knowledge — any flow can opt in by including the params. Mobile-only.
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const stepsCurrent = Number( searchParams.get( 'steps_current' ) );
-	const stepsTotal = Number( searchParams.get( 'steps_total' ) );
+	const rawStepsTotal = Number( searchParams.get( 'steps_total' ) );
+	const stepsTotal = Number.isInteger( rawStepsTotal ) && rawStepsTotal > 0 ? rawStepsTotal : null;
 	const stepCounter =
 		isMobileViewport &&
 		Number.isInteger( stepsCurrent ) &&
 		stepsCurrent > 0 &&
-		Number.isInteger( stepsTotal ) &&
-		stepsTotal > 0 &&
+		stepsTotal &&
 		stepsCurrent <= stepsTotal
 			? { current: stepsCurrent, total: stepsTotal }
 			: null;
 	// The redirecting flow reports how many steps its visit had. Onboarding sends one fewer when
 	// the plan arrived preselected, so the grid was never among them.
-	const hidePlansStep = stepsTotal > 0 && stepsTotal < ONBOARDING_STEPPER_TOTAL;
+	const hidePlansStep = !! stepsTotal && stepsTotal < ONBOARDING_STEPPER_TOTAL;
 	const selectedSiteData = useSelector( getSelectedSite );
 	const wpcomDomain = useSelector( ( state ) =>
 		getWpComDomainBySiteId( state, selectedSiteData?.ID )
