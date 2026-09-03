@@ -15,6 +15,15 @@ export const ONBOARDING_STEPPER_GROUPS = [ 'domain', 'plans', 'checkout' ] as co
 
 export type OnboardingStepperGroup = ( typeof ONBOARDING_STEPPER_GROUPS )[ number ];
 
+/**
+ * Query arg the flow adds to the checkout URL to name a group its visit never walked.
+ * Checkout reads it rather than inferring anything from the reported step total.
+ */
+export const ONBOARDING_STEPPER_OMITTED_GROUP_PARAM = 'steps_omit';
+
+/** The only group a visit can omit today: a preselected plan never sees the grid. */
+export const ONBOARDING_OMITTED_PLANS_GROUP: OnboardingStepperGroup = 'plans';
+
 export const ONBOARDING_STEPPER_GROUP_BY_SLUG: Record< string, OnboardingStepperGroup > = {
 	domains: 'domain',
 	'use-my-domain': 'domain',

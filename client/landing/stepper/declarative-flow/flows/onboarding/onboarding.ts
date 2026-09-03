@@ -83,7 +83,11 @@ import { STEPS } from '../../internals/steps';
 import { useIsPostPlanSelectionEmailVerification } from '../../internals/steps-repository/__user/use-email-verification-gate';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
-import { getOnboardingStepperPosition } from './step-counter-config';
+import {
+	getOnboardingStepperPosition,
+	ONBOARDING_OMITTED_PLANS_GROUP,
+	ONBOARDING_STEPPER_OMITTED_GROUP_PARAM,
+} from './step-counter-config';
 import type { WowFunnelDest } from '../../../utils/wow-funnel';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { Store } from 'redux';
@@ -778,9 +782,9 @@ const onboarding: FlowV2< typeof initialize > = {
 									coupon,
 									steps_current: checkoutStepperPosition.current,
 									steps_total: checkoutStepperPosition.total,
-									// Names the group this visit never walked, so checkout can leave it
-									// out of the indicator without inferring anything from the total.
-									...( skipsPlans ? { steps_omit: 'plans' } : {} ),
+									...( skipsPlans
+										? { [ ONBOARDING_STEPPER_OMITTED_GROUP_PARAM ]: ONBOARDING_OMITTED_PLANS_GROUP }
+										: {} ),
 								} )
 							);
 						} else if ( blueprintArchiveSlug || isKnownWowFunnel( wowFunnelSlug ) ) {

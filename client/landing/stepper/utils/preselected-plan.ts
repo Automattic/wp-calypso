@@ -1,7 +1,11 @@
 import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { AddOns } from '@automattic/data-stores';
 import { getAddOn } from '@automattic/data-stores/src/add-ons/add-ons-list';
+import { useSelect } from '@wordpress/data';
 import { isPreselectablePlan, supportsStorageAddOn } from 'calypso/lib/signup/legacy-plan-flows';
+import { ONBOARD_STORE } from '../stores';
+import { getCurrentQueryParams } from './get-current-query-params';
+import type { OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { PreselectablePlan } from 'calypso/lib/signup/legacy-plan-flows';
 
@@ -72,4 +76,21 @@ export function skipsPlansStep(
 	const plan = getPreselectedPlan( query );
 
 	return !! plan && planCartItem?.product_slug === plan;
+}
+
+/**
+ * `skipsPlansStep` for a rendering step.
+ *
+ * Reads the query through `window.location` rather than a router hook on purpose:
+ * `calypso/signup/steps/plans` re-exports the plans step into the legacy `/start`
+ * framework, which is page.js-routed, and `useLocation` throws outside a `<Router>` —
+ * in production as well as development.
+ */
+export function useSkipsPlansStep(): boolean {
+	const planCartItem = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+		[]
+	);
+
+	return skipsPlansStep( getCurrentQueryParams(), planCartItem );
 }

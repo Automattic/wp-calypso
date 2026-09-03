@@ -51,6 +51,10 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import Loading from 'calypso/components/loading';
+import {
+	ONBOARDING_STEPPER_OMITTED_GROUP_PARAM,
+	ONBOARDING_OMITTED_PLANS_GROUP,
+} from 'calypso/landing/stepper/declarative-flow/flows/onboarding/step-counter-config';
 import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress';
 import { useShowOnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
@@ -497,7 +501,8 @@ export default function CheckoutMainContent( {
 			: null;
 	// The redirecting flow names any step its visit skipped; it is the flow, not checkout, that
 	// knows which ones those were.
-	const hidePlansStep = searchParams.get( 'steps_omit' ) === 'plans';
+	const hidePlansStep =
+		searchParams.get( ONBOARDING_STEPPER_OMITTED_GROUP_PARAM ) === ONBOARDING_OMITTED_PLANS_GROUP;
 	const selectedSiteData = useSelector( getSelectedSite );
 	const wpcomDomain = useSelector( ( state ) =>
 		getWpComDomainBySiteId( state, selectedSiteData?.ID )
