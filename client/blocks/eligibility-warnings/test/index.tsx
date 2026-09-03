@@ -129,7 +129,7 @@ describe( '<EligibilityWarnings>', () => {
 
 	it( 'renders only the in-progress notice when a transfer already exists', () => {
 		const state = createState( {
-			holds: [ 'TRANSFER_ALREADY_EXISTS' ],
+			holds: [ 'TRANSFER_ALREADY_EXISTS', 'SITE_PRIVATE' ],
 		} );
 
 		const { container, queryByTestId, queryByText } = renderWithStore(
