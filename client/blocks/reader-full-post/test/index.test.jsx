@@ -24,6 +24,7 @@ jest.mock( 'calypso/reader/stream/use-stream-post-key-selection', () => ( {
 // The seen gate reads React Query caches these tests don't provide.
 jest.mock( 'calypso/reader/data/seen-posts', () => ( {
 	useIsSeenEnabled: jest.fn( () => false ),
+	useSeenPostsPreferenceConfirmed: jest.fn( () => false ),
 	withSeenPostsMutations: ( WrappedComponent ) => WrappedComponent,
 } ) );
 
@@ -259,6 +260,7 @@ describe( 'FullPostView Comments API Disabled Logic', () => {
 describe( 'FullPostView automatic mark-as-seen on view', () => {
 	const baseProps = {
 		isSeenEnabled: true,
+		isSeenPreferenceConfirmed: true,
 		teams: [],
 		referralStream: '',
 		setViewingFullPostKey: jest.fn(),
@@ -345,6 +347,46 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 		// Eligibility resolves to true for the same post.
 		instance.props = { ...pendingProps, isSeenEnabled: true };
 		instance.componentDidUpdate( pendingProps );
+
+		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'does not mark the post while the preference is only a rehydrated value', () => {
+		const requestMarkAsSeen = jest.fn();
+		const requestMarkAsSeenBlog = jest.fn();
+		const instance = new FullPostView( {
+			...baseProps,
+			// `isSeenEnabled` is true off the persisted preference, but this session's
+			// /me/preferences request hasn't come back yet — it may say otherwise.
+			isSeenPreferenceConfirmed: false,
+			requestMarkAsSeen,
+			requestMarkAsSeenBlog,
+			post: { ...feedPost, is_seen: false },
+		} );
+
+		runAttemptToSendPageView( instance );
+
+		expect( requestMarkAsSeen ).not.toHaveBeenCalled();
+		expect( requestMarkAsSeenBlog ).not.toHaveBeenCalled();
+	} );
+
+	it( 'marks the post once the preference is confirmed for this session', () => {
+		const requestMarkAsSeen = jest.fn();
+		const unconfirmedProps = {
+			...baseProps,
+			isSeenPreferenceConfirmed: false,
+			requestMarkAsSeen,
+			requestMarkAsSeenBlog: jest.fn(),
+			post: { ...feedPost, is_seen: false },
+		};
+		const instance = new FullPostView( unconfirmedProps );
+
+		runAttemptToSendPageView( instance );
+		expect( requestMarkAsSeen ).not.toHaveBeenCalled();
+
+		// /me/preferences returns and agrees the feature is on.
+		instance.props = { ...unconfirmedProps, isSeenPreferenceConfirmed: true };
+		instance.componentDidUpdate( unconfirmedProps );
 
 		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
 	} );

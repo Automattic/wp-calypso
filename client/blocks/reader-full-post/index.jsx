@@ -32,7 +32,11 @@ import { usePostCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { usePost } from 'calypso/reader/data/post';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
-import { useIsSeenEnabled, withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
+import {
+	useIsSeenEnabled,
+	useSeenPostsPreferenceConfirmed,
+	withSeenPostsMutations,
+} from 'calypso/reader/data/seen-posts';
 import { withSite } from 'calypso/reader/data/site';
 import { useSiteSubscriptionForFeed } from 'calypso/reader/data/site-subscriptions';
 import { getSiteName } from 'calypso/reader/get-helpers';
@@ -75,6 +79,7 @@ export class FullPostView extends Component {
 		referralPost: PropTypes.object,
 		referralStream: PropTypes.string,
 		isSeenEnabled: PropTypes.bool,
+		isSeenPreferenceConfirmed: PropTypes.bool,
 		layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
 		currentPath: PropTypes.string,
 		commentsApiDisabled: PropTypes.bool,
@@ -171,7 +176,10 @@ export class FullPostView extends Component {
 		// reader-seen-posts preference all land after mount — so the automatic mark
 		// is often skipped on first load. Retry it when eligibility becomes true,
 		// since the post ID hasn't changed and nothing else would fire it again.
-		if ( this.props.isSeenEnabled && ! prevProps.isSeenEnabled ) {
+		if (
+			( this.props.isSeenEnabled && ! prevProps.isSeenEnabled ) ||
+			( this.props.isSeenPreferenceConfirmed && ! prevProps.isSeenPreferenceConfirmed )
+		) {
 			this.maybeMarkAsSeenOnLoad();
 		}
 
@@ -613,12 +621,18 @@ export class FullPostView extends Component {
 
 	// Tracked separately from `hasLoaded` so that loading the post doesn't consume
 	// the automatic mark while the seen gate is still resolving.
+	//
+	// `isSeenPreferenceConfirmed` is required on top of `isSeenEnabled` because
+	// the latter can be true off a rehydrated preference from a previous session.
+	// Rendering off that is harmless, but this write isn't reversible, so it waits
+	// for the current session's /me/preferences response.
 	maybeMarkAsSeenOnLoad = () => {
-		const { post, isSeenEnabled } = this.props;
+		const { post, isSeenEnabled, isSeenPreferenceConfirmed } = this.props;
 
 		if (
 			this.hasAutoMarkedAsSeen ||
 			! isSeenEnabled ||
+			! isSeenPreferenceConfirmed ||
 			! post ||
 			post._state === 'pending' ||
 			post.is_seen
@@ -1001,6 +1015,7 @@ export const withFullPostNavigation = ( WrappedComponent ) =>
 			blogId: props.blogId ?? props.feed?.blog_ID ?? post?.site_ID,
 			post,
 		} );
+		const isSeenPreferenceConfirmed = useSeenPostsPreferenceConfirmed();
 
 		// Pre-compute the navigation URL so the prev/next card's `<a href>`
 		// points at the destination the user lands on (middle-click /
@@ -1023,6 +1038,7 @@ export const withFullPostNavigation = ( WrappedComponent ) =>
 				post={ post }
 				referralPost={ referralPost }
 				isSeenEnabled={ isSeenEnabled }
+				isSeenPreferenceConfirmed={ isSeenPreferenceConfirmed }
 				commentsApiDisabled={ commentsApiDisabled }
 				previousPost={ previousPost }
 				nextPost={ nextPost }
