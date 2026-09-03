@@ -86,7 +86,7 @@ const OneLoginLayout = ( {
 	const validatedHeadingText = ensureHeadingProvided( headingText );
 	const { topBarLogo } = usePartnerBranding();
 
-	const SignUpLink = () => {
+	const renderSignUpLink = () => {
 		// use '?signup_url' if explicitly passed as URL query param
 		const signupUrl: string = signupUrlProp
 			? window.location.origin + pathWithLeadingSlash( signupUrlProp )
@@ -112,7 +112,7 @@ const OneLoginLayout = ( {
 		);
 	};
 
-	const LoginLink = () => {
+	const renderLoginLink = () => {
 		if ( ! loginUrl ) {
 			return null;
 		}
@@ -124,7 +124,7 @@ const OneLoginLayout = ( {
 		);
 	};
 
-	const NoThanksLink = () => {
+	const renderNoThanksLink = () => {
 		if ( ! noThanksRedirectUrl ) {
 			return null;
 		}
@@ -147,8 +147,8 @@ const OneLoginLayout = ( {
 	const topBar = (): JSX.Element => {
 		const rightElement = (
 			<nav className="wp-login__one-login-layout-top-right">
-				{ isSectionSignup ? <LoginLink /> : <SignUpLink /> }
-				{ noThanksRedirectUrl && <NoThanksLink /> }
+				{ isSectionSignup ? renderLoginLink() : renderSignUpLink() }
+				{ renderNoThanksLink() }
 			</nav>
 		);
 
