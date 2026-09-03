@@ -136,7 +136,7 @@ export default function StatsMain( {
 
 	return (
 		<Main { ...props } className={ clsx( 'stats-main', 'color-scheme', customTheme, className ) }>
-			{ ! isWPAdminAndNotSimpleSite && <QuerySiteFeatures siteIds={ [ siteId ] } /> }
+			<QuerySiteFeatures siteIds={ [ siteId ] } />
 			<QuerySites siteId={ siteId } />
 			<Page
 				// Restore a stable styling hook lost when @wordpress/admin-ui 2.x moved Page
