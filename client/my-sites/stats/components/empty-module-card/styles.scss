@@ -1,4 +1,4 @@
-@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .stats-empty-module-card {
 	display: flex;
@@ -21,9 +21,9 @@
 }
 
 .stats-empty-module-card__content {
-	width: 80%;
+	width: 100%;
 
-	@media (max-width: $break-mobile) {
-		width: 100%;
+	@include break-mobile {
+		width: 80%;
 	}
 }
