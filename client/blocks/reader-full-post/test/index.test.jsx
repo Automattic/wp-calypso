@@ -363,10 +363,16 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 		runAttemptToSendPageView( instance );
 		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
 
-		// Marking it unseen re-renders with is_seen false; the automatic write must
-		// not fire again for the same view.
-		instance.props = { ...enabledProps, post: { ...feedPost, is_seen: false } };
+		// The post is still unseen (the reader marked it back), and eligibility
+		// re-resolves — a refetch briefly flips the gate off and on again. That
+		// drives the retry path, so only the per-post guard stops us from
+		// silently re-marking what they just unmarked.
+		const regatingProps = { ...enabledProps, isSeenEnabled: false };
+		instance.props = regatingProps;
 		instance.componentDidUpdate( enabledProps );
+
+		instance.props = { ...enabledProps, isSeenEnabled: true };
+		instance.componentDidUpdate( regatingProps );
 
 		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
 	} );
