@@ -98,10 +98,6 @@ const ProcessingStep: StepType< {
 	 */
 	const isSubmittedRef = useRef( false );
 
-	// Seeded once: reading Date.now() during render would slide the wait's elapsed-time base
-	// forward on every render until the store learns when the transfer started.
-	const [ mountedAt ] = useState( () => Date.now() );
-
 	const recordSignupComplete = useRecordSignupComplete( flow );
 
 	const action = useSelect(
@@ -265,7 +261,7 @@ const ProcessingStep: StepType< {
 				{ isTransferringHostedSiteCreationFlow( flow ) ? (
 					<TransferWaitCard
 						transferStatus={ transferStatus }
-						startedAt={ transferStartedAt ?? mountedAt }
+						startedAt={ transferStartedAt }
 						isPluginInstall={ false }
 					/>
 				) : (

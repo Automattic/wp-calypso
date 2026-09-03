@@ -46,8 +46,8 @@ export default function TransferWaitCard( {
 	const stageTitles = useStageTitles();
 	const sentences = useStageSentences( isPluginInstall );
 	const overrunCopy = useOverrunCopy();
-	const stalledCopy = useStalledCopy();
-	const stalledActionLabel = useStalledActionLabel();
+	const stalledCopy = useStalledCopy( isPluginInstall );
+	const stalledActionLabel = useStalledActionLabel( isPluginInstall );
 	const heading = isPluginInstall
 		? translate( 'Setting up your plugin' )
 		: translate( 'Setting up your site' );
@@ -92,7 +92,7 @@ export default function TransferWaitCard( {
 					<Button
 						className="transfer-wait__escape"
 						variant="link"
-						href={ `/plugins/${ siteSlug }` }
+						href={ isPluginInstall ? `/plugins/${ siteSlug }` : `/sites/${ siteSlug }` }
 						onClick={ () =>
 							recordTracksEvent( 'calypso_marketplace_install_wait_stalled_click', {
 								product_slug: productSlug,

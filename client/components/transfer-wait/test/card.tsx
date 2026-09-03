@@ -113,6 +113,28 @@ describe( 'TransferWaitCard', () => {
 		);
 	} );
 
+	it( 'never mentions a plugin when the wait is a site transfer', () => {
+		render(
+			<TransferWaitCard
+				transferStatus={ transferStates.COMPLETE }
+				fallbackStep={ 1 }
+				siteSlug="example.wordpress.com"
+				isPluginInstall={ false }
+			/>
+		);
+		act( () => jest.advanceTimersByTime( 95_000 ) );
+		expect(
+			screen.getByText( 'This is taking longer than it should. Your site is ready to use.' )
+		).toBeVisible();
+		expect(
+			screen.queryByText( /your plugin may still finish installing/ )
+		).not.toBeInTheDocument();
+		expect( screen.getByRole( 'link', { name: 'Go to your site' } ) ).toHaveAttribute(
+			'href',
+			'/sites/example.wordpress.com'
+		);
+	} );
+
 	it( 'offers no way out while the transfer itself is unfinished', () => {
 		render(
 			<TransferWaitCard
