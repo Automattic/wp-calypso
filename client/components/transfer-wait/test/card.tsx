@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, act } from '@testing-library/react';
+import { render, screen, act, fireEvent } from '@testing-library/react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import TransferWaitCard from '../card';
@@ -166,5 +166,25 @@ describe( 'TransferWaitCard', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_marketplace_install_wait_stalled', {
 			product_slug: 'sensei-pro',
 		} );
+	} );
+
+	it( 'records a site transfer stall under its own event, with no product slug', () => {
+		render(
+			<TransferWaitCard
+				transferStatus={ transferStates.COMPLETE }
+				fallbackStep={ 1 }
+				siteSlug="example.wordpress.com"
+				isPluginInstall={ false }
+			/>
+		);
+		act( () => jest.advanceTimersByTime( 95_000 ) );
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_site_transfer_wait_stalled', {} );
+
+		fireEvent.click( screen.getByRole( 'link', { name: 'Go to your site' } ) );
+		expect( recordTracksEvent ).toHaveBeenLastCalledWith(
+			'calypso_site_transfer_wait_stalled_click',
+			{ stage_seconds: expect.any( Number ) }
+		);
 	} );
 } );

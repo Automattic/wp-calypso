@@ -59,13 +59,18 @@ export default function TransferWaitCard( {
 	const stageElapsedRef = useRef( stageElapsed );
 	stageElapsedRef.current = stageElapsed;
 	const reportedStalledRef = useRef( false );
+	const eventPrefix = isPluginInstall
+		? 'calypso_marketplace_install_wait'
+		: 'calypso_site_transfer_wait';
 	useEffect( () => {
 		if ( ! isStalled || reportedStalledRef.current ) {
 			return;
 		}
 		reportedStalledRef.current = true;
-		recordTracksEvent( 'calypso_marketplace_install_wait_stalled', { product_slug: productSlug } );
-	}, [ isStalled, productSlug ] );
+		recordTracksEvent( `${ eventPrefix }_stalled`, {
+			...( isPluginInstall ? { product_slug: productSlug } : {} ),
+		} );
+	}, [ isStalled, eventPrefix, isPluginInstall, productSlug ] );
 
 	const showEscape = isStalled && !! siteSlug;
 
@@ -94,8 +99,8 @@ export default function TransferWaitCard( {
 						variant="link"
 						href={ isPluginInstall ? `/plugins/${ siteSlug }` : `/sites/${ siteSlug }` }
 						onClick={ () =>
-							recordTracksEvent( 'calypso_marketplace_install_wait_stalled_click', {
-								product_slug: productSlug,
+							recordTracksEvent( `${ eventPrefix }_stalled_click`, {
+								...( isPluginInstall ? { product_slug: productSlug } : {} ),
 								stage_seconds: Math.round( stageElapsedRef.current ),
 							} )
 						}
