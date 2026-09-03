@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { Button, ConfettiAnimation } from '@automattic/components';
+import { Button, ConfettiAnimation, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
@@ -32,7 +32,7 @@ import {
 	hasUnsavedChanges as hasUnsavedWebsiteContentChanges,
 } from 'calypso/state/signup/steps/website-content/selectors';
 import { getSiteId } from 'calypso/state/sites/selectors';
-import { ContentGuidelinesDialog, ConfirmDialog } from './dialogs';
+import { ContentGuidelinesDialog, ConfirmDialog, ExplainerVideoDialog } from './dialogs';
 import { sectionGenerator } from './section-generator';
 import type { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import type { WebsiteContentServerState } from 'calypso/state/signup/steps/website-content/types';
@@ -43,14 +43,45 @@ import './style.scss';
 const debug = debugFactory( 'calypso:difm' );
 
 const LinkButton = styled( Button )`
-	text-decoration: underline;
-	cursor: pointer;
+	&.button {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		height: auto;
+		padding: 0;
+		overflow: visible;
+		text-decoration: none;
+		cursor: pointer;
+	}
+
+	&.button.is-borderless .gridicon {
+		position: static;
+		top: auto;
+		flex-shrink: 0;
+		width: 16px;
+		height: 16px;
+		margin: 0;
+		overflow: visible;
+		fill: currentColor;
+	}
+
+	span {
+		text-decoration: underline;
+	}
 
 	.formatted-header__subtitle
 		button&[type='button'].button.is-borderless.is-primary.is-transparent:focus {
 		border-color: transparent;
 		box-shadow: none;
 	}
+`;
+
+const SidebarLinks = styled.div`
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 4px;
+	margin-top: 16px;
 `;
 
 const LoadingContainer = styled.div`
@@ -234,32 +265,43 @@ export default function WrapperWebsiteContent(
 	const { isLoading, isError, data } = useGetWebsiteContentQuery( selectedSiteId );
 
 	const [ isContentGuidelinesDialogOpen, setIsContentGuidelinesDialogOpen ] = useState( true );
+	const [ isExplainerVideoDialogOpen, setIsExplainerVideoDialogOpen ] = useState( false );
 
 	const headerText = translate( 'Website Content' );
 
-	const subHeaderTextTranslateArgs = {
-		components: {
-			br: <br />,
-			Link: (
+	const descriptionText = data?.isStoreFlow
+		? translate(
+				'Provide content for your website build. You can add products later with the WordPress editor.'
+		  )
+		: translate(
+				'Provide content for your website build. You will be able to edit all content later using the WordPress editor.'
+		  );
+
+	const subHeaderText = (
+		<>
+			{ descriptionText }
+			<SidebarLinks>
 				<LinkButton
 					borderless
 					primary
 					transparent
 					onClick={ () => setIsContentGuidelinesDialogOpen( true ) }
-				/>
-			),
-		},
-	};
-
-	const subHeaderText = data?.isStoreFlow
-		? translate(
-				'Provide content for your website build. You can add products later with the WordPress editor.{{br}}{{/br}}{{br}}{{/br}}{{Link}}View Content Guidelines{{/Link}}',
-				subHeaderTextTranslateArgs
-		  )
-		: translate(
-				'Provide content for your website build. You will be able to edit all content later using the WordPress editor.{{br}}{{/br}}{{br}}{{/br}}{{Link}}View Content Guidelines{{/Link}}',
-				subHeaderTextTranslateArgs
-		  );
+				>
+					<Gridicon icon="pages" size={ 16 } aria-hidden="true" />
+					<span>{ translate( 'View content guidelines' ) }</span>
+				</LinkButton>
+				<LinkButton
+					borderless
+					primary
+					transparent
+					onClick={ () => setIsExplainerVideoDialogOpen( true ) }
+				>
+					<Gridicon icon="play" size={ 16 } aria-hidden="true" />
+					<span>{ translate( 'Watch how to submit your content' ) }</span>
+				</LinkButton>
+			</SidebarLinks>
+		</>
+	);
 
 	useEffect( () => {
 		if ( data?.isWebsiteContentSubmitted ) {
@@ -304,6 +346,10 @@ export default function WrapperWebsiteContent(
 			<ContentGuidelinesDialog
 				isContentGuidelinesDialogOpen={ isContentGuidelinesDialogOpen }
 				setIsContentGuidelinesDialogOpen={ setIsContentGuidelinesDialogOpen }
+			/>
+			<ExplainerVideoDialog
+				isExplainerVideoDialogOpen={ isExplainerVideoDialogOpen }
+				setIsExplainerVideoDialogOpen={ setIsExplainerVideoDialogOpen }
 			/>
 
 			<StepWrapper

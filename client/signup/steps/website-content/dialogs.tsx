@@ -29,6 +29,24 @@ const DialogButton = styled( Button )`
 	}
 `;
 
+const EXPLAINER_VIDEO_EMBED_URL = 'https://www.youtube.com/embed/Gr1c7_heEkE?autoplay=1';
+
+const VideoPlayer = styled.div`
+	position: relative;
+	width: 100%;
+	aspect-ratio: 16 / 9;
+	background: var( --color-neutral-90 );
+	overflow: hidden;
+
+	iframe {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		border: 0;
+	}
+`;
+
 export function ConfirmDialog( {
 	isConfirmDialogOpen,
 	setIsConfirmDialogOpen,
@@ -181,6 +199,43 @@ export function ContentGuidelinesDialog( {
 					</li>
 				</ul>
 			</DialogContent>
+		</Dialog>
+	);
+}
+
+export function ExplainerVideoDialog( {
+	isExplainerVideoDialogOpen,
+	setIsExplainerVideoDialogOpen,
+}: {
+	isExplainerVideoDialogOpen: boolean;
+	setIsExplainerVideoDialogOpen: ( arg0: boolean ) => void;
+} ) {
+	const translate = useTranslate();
+	const close = () => setIsExplainerVideoDialogOpen( false );
+
+	return (
+		<Dialog
+			isVisible={ isExplainerVideoDialogOpen }
+			onClose={ close }
+			additionalClassNames="website-content__explainer-video-dialog"
+			label={ translate( 'Watch how to submit your content' ) }
+			buttons={ [
+				<DialogButton key="close" primary onClick={ close }>
+					{ translate( 'Close' ) }
+				</DialogButton>,
+			] }
+		>
+			<VideoPlayer>
+				{ isExplainerVideoDialogOpen && (
+					<iframe
+						src={ EXPLAINER_VIDEO_EMBED_URL }
+						title={ translate( 'Watch how to submit your content' ) }
+						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+						sandbox="allow-scripts allow-same-origin allow-presentation"
+						allowFullScreen
+					/>
+				) }
+			</VideoPlayer>
 		</Dialog>
 	);
 }
