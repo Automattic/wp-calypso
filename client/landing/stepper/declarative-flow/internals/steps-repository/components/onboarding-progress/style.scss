@@ -1,29 +1,66 @@
 @import '@wordpress/theme/design-tokens.css';
 
-// The stepper carries its own vertical spacing, so drop the wrapper's
-// top padding to avoid doubling up the space above it.
-.step-container-v2__content-wrapper.axis-vertical:has( .onboarding-progress ) {
-	padding-top: 0;
-}
-
+// A text rail in the top bar: no indicators, no connectors, just the three
+// step names beside the WordPress logo. It costs nothing in the content
+// column, so unlike the previous treatment there is no wrapper padding to
+// compensate for here.
 .onboarding-progress {
 	display: flex;
-	justify-content: center;
-	padding: 8px 0;
-	margin-block-end: 32px;
-	// Ensure the stepper paints above the sticky checkout sidebar, which is positioned
-	// and would otherwise overlap the heading row at the same stacking level.
-	position: relative;
-	z-index: 1;
+	align-items: center;
 
 	.onboarding-progress-step {
 		display: flex;
-		justify-content: center;
+		align-items: center;
+
+		// Separator between steps. A pseudo-element on the step wrapper rather
+		// than a real node inside the tablist, so it stays out of every tab's
+		// accessible name.
+		&:not( :last-child )::after {
+			content: '\00b7';
+			color: var( --wpds-color-stroke-interactive-neutral );
+			padding-inline: var( --wpds-dimension-padding-xs );
+		}
 	}
 
 	.onboarding-progress-trigger {
 		display: flex;
 		align-items: center;
-		padding: 12px 16px;
+		padding: var( --wpds-dimension-padding-xs ) var( --wpds-dimension-padding-xs );
+		min-height: 0;
+	}
+
+	// No dot is drawn in this treatment, but the indicator still carries the
+	// "Step 2 of 3, completed" text that gives each step its accessible name.
+	// Clip it instead of removing it.
+	.onboarding-progress-indicator {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip-path: inset( 50% );
+		white-space: nowrap;
+		border: 0;
+	}
+
+	// The component's own styles set title colours from the step status, so
+	// these selectors are scoped one level deeper to win. Completed and current
+	// keep the component's neutral; only upcoming is pulled back to weak, and
+	// everything drops to 12px for the top bar.
+	.onboarding-progress-step .onboarding-progress-title {
+		font-size: var( --wpds-typography-font-size-sm );
+		line-height: var( --wpds-typography-line-height-xs );
+		white-space: nowrap;
+	}
+
+	.onboarding-progress-step:not( [data-status] ):not( [data-current] ) .onboarding-progress-title {
+		color: var( --wpds-color-foreground-content-neutral-weak );
+	}
+
+	// Completed steps are the only navigable ones, so give the pointer an extra
+	// cue beyond the component's brand hover colour.
+	.onboarding-progress-trigger:hover:not( [aria-disabled='true'] ) .onboarding-progress-title {
+		text-decoration: underline;
 	}
 }
