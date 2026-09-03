@@ -137,20 +137,22 @@ export class FullPostView extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
+		const hasPostChanged = prevProps?.post?.ID !== this.props?.post?.ID;
+		const hasFeedChanged = prevProps?.feed?.ID !== this.props?.feed?.ID;
+		const hasSiteChanged = prevProps?.site?.ID !== this.props?.site?.ID;
+
 		// Send page view if applicable
-		if (
-			prevProps?.post?.ID !== this.props?.post?.ID ||
-			prevProps?.feed?.ID !== this.props?.feed?.ID ||
-			prevProps?.site?.ID !== this.props?.site?.ID
-		) {
+		if ( hasPostChanged || hasFeedChanged || hasSiteChanged ) {
 			this.hasSentPageView = false;
 			this.hasLoaded = false;
-			this.hasAutoMarkedAsSeen = false;
+			if ( hasPostChanged ) {
+				this.hasAutoMarkedAsSeen = false;
+			}
 			this.attemptToSendPageView();
 			this.maybeDisableAppBanner();
 
 			// If the post being viewed changes, track the reading time.
-			if ( prevProps?.post?.ID !== this.props?.post?.ID ) {
+			if ( hasPostChanged ) {
 				this.trackReadingTime( prevProps.post );
 				this.trackScrollDepth( prevProps.post );
 				this.trackExitBeforeCompletion( prevProps.post );

@@ -376,4 +376,25 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 
 		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
 	} );
+
+	it( 'does not re-mark while feed metadata hydrates for the same post', () => {
+		const requestMarkAsSeen = jest.fn();
+		const initialProps = {
+			...baseProps,
+			isSeenEnabled: true,
+			requestMarkAsSeen,
+			requestMarkAsSeenBlog: jest.fn(),
+			post: { ...feedPost, is_seen: false, ID: 42 },
+			feed: { ID: 1 },
+		};
+		const instance = new FullPostView( initialProps );
+
+		runAttemptToSendPageView( instance );
+		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
+
+		instance.props = { ...initialProps, feed: { ID: 2 } };
+		instance.componentDidUpdate( initialProps );
+
+		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
+	} );
 } );
