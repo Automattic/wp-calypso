@@ -20,6 +20,7 @@ export function buildOmnibarNodesFromAdminBarNodes(
 		const omnibarNode: OmnibarNode = {
 			id: node.id,
 			title: node.meta?.menu_title || node.title || '',
+			tooltip: node.meta?.title || undefined,
 			href: node.href && resolveHref ? resolveHref( node.href ) : node.href,
 			group: node.group,
 		};
@@ -127,6 +128,12 @@ export function buildOmnibarNodesFromAdminBarNodes(
 					displayName: doc.querySelector( '.display-name' )?.textContent?.trim(),
 					username: doc.querySelector( '.username' )?.textContent?.trim(),
 				};
+				break;
+			}
+			default: {
+				if ( ! node.parent ) {
+					siteActionNodes.push( omnibarNode );
+				}
 				break;
 			}
 		}

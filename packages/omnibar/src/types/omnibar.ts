@@ -4,11 +4,13 @@ export interface OmnibarNode {
 	id: string;
 	title?: string;
 	label?: string;
+	tooltip?: string;
 	icon?: React.ReactElement;
 	group?: boolean;
 	variant?: 'secondary';
 	href?: string;
 	onClick?: ( event: React.MouseEvent ) => void;
+	onView?: () => void;
 	disabled?: boolean;
 	active?: boolean;
 	className?: string;

@@ -1,0 +1,74 @@
+.omnibar .omnibar__menu.omnibar__free-domain-upsell {
+	--free-domain-upsell-background: color-mix(
+		in srgb,
+		var( --omnibar-highlight-color ) 22%,
+		transparent
+	);
+	--free-domain-upsell-background-hover: color-mix(
+		in srgb,
+		var( --omnibar-highlight-color ) 42%,
+		transparent
+	);
+	--free-domain-upsell-ring: color-mix(
+		in srgb,
+		var( --omnibar-highlight-color ) 45%,
+		transparent
+	);
+	--free-domain-upsell-ring-hover: color-mix(
+		in srgb,
+		var( --omnibar-highlight-color ) 80%,
+		transparent
+	);
+	--free-domain-upsell-text: color-mix( in srgb, var( --omnibar-text-color ) 87%, transparent );
+	--free-domain-upsell-text-hover: var( --omnibar-text-color );
+	--free-domain-upsell-icon: var( --omnibar-highlight-color );
+	--free-domain-upsell-icon-hover: color-mix(
+		in srgb,
+		var( --omnibar-highlight-color ) 70%,
+		var( --omnibar-text-color )
+	);
+
+	padding-inline: 8px;
+
+	&:hover,
+	&:focus-visible,
+	&:active {
+		background-color: transparent;
+	}
+
+	.omnibar__site-action {
+		gap: 4px;
+		height: 24px;
+		padding-inline: 4px 8px;
+		border-radius: 4px;
+		background: var( --free-domain-upsell-background );
+		box-shadow: inset 0 0 0 1px var( --free-domain-upsell-ring );
+		color: var( --free-domain-upsell-text );
+		font-size: 12px;
+		font-weight: 500;
+		line-height: 24px;
+		transition:
+			background 0.12s linear,
+			box-shadow 0.12s linear,
+			color 0.12s linear;
+	}
+
+	svg {
+		width: 16px;
+		height: 16px;
+		color: var( --free-domain-upsell-icon );
+		transition: color 0.12s linear;
+	}
+
+	&:hover .omnibar__site-action,
+	&:focus-visible .omnibar__site-action {
+		background: var( --free-domain-upsell-background-hover );
+		box-shadow: inset 0 0 0 1px var( --free-domain-upsell-ring-hover );
+		color: var( --free-domain-upsell-text-hover );
+	}
+
+	&:hover svg,
+	&:focus-visible svg {
+		color: var( --free-domain-upsell-icon-hover );
+	}
+}
