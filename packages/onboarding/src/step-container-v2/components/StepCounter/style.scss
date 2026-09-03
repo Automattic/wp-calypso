@@ -1,3 +1,5 @@
+// Type comes from the `body-md` Text variant in StepCounter.tsx, not from here,
+// so the counter and the named step rail stay on one definition.
 .step-container-v2__step-counter {
 	color: var( --color-text-subtle );
 	white-space: nowrap;

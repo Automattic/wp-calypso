@@ -15,17 +15,24 @@
 		// Separator between steps. A pseudo-element on the step wrapper rather
 		// than a real node inside the tablist, so it stays out of every tab's
 		// accessible name.
+		// 8px on each side, measured off the spec: the names sit at x=0/74/125
+		// and the separators at x=59/110, so every gap is 8. The trigger below
+		// keeps no inline padding of its own, or it would add to this.
 		&:not( :last-child )::after {
 			content: '\00b7';
 			color: var( --wpds-color-stroke-interactive-neutral );
-			padding-inline: var( --wpds-dimension-padding-xs );
+			padding-inline: var( --wpds-dimension-padding-sm );
 		}
 	}
 
+	// Block padding only. It draws nothing, so the rail still measures the 20px
+	// of the spec, but it lifts the pointer target to 28px. Inline padding is
+	// zero on purpose: the separator owns the horizontal spacing.
 	.onboarding-progress-trigger {
 		display: flex;
 		align-items: center;
-		padding: var( --wpds-dimension-padding-xs ) var( --wpds-dimension-padding-xs );
+		padding-block: var( --wpds-dimension-padding-xs );
+		padding-inline: 0;
 		min-height: 0;
 	}
 
@@ -44,18 +51,30 @@
 		border: 0;
 	}
 
-	// The component's own styles set title colours from the step status, so
-	// these selectors are scoped one level deeper to win. Completed and current
-	// keep the component's neutral; only upcoming is pulled back to weak, and
-	// everything drops to 12px for the top bar.
-	.onboarding-progress-step .onboarding-progress-title {
-		font-size: var( --wpds-typography-font-size-sm );
-		line-height: var( --wpds-typography-line-height-xs );
-		white-space: nowrap;
-	}
+	// The component scopes its own title rules by [data-indicator-variant],
+	// which the root always renders. Qualifying with the same attribute is what
+	// lets these win without !important.
+	&[data-indicator-variant] {
+		// Type is Body MD from the spec: 13px on a 20px line, weight 400.
+		// Stepper.Title already renders @wordpress/ui Text at that variant, so
+		// there is deliberately no font-size or line-height here. What used to
+		// be here was a 12px / 16px override, which put the rail off spec.
+		.onboarding-progress-step .onboarding-progress-title {
+			color: var( --wpds-color-foreground-content-neutral );
+			white-space: nowrap;
+		}
 
-	.onboarding-progress-step:not( [data-status] ):not( [data-current] ) .onboarding-progress-title {
-		color: var( --wpds-color-foreground-content-neutral-weak );
+		// The spec runs one weight across all three steps and separates them by
+		// colour alone, so the bold the component puts on the selected step is
+		// undone here.
+		.onboarding-progress-trigger[aria-selected='true'] .onboarding-progress-title {
+			font-weight: var( --wpds-typography-font-weight-default );
+		}
+
+		// Where you have not been yet.
+		.onboarding-progress-step:not( [data-status] ):not( [data-current] ) .onboarding-progress-title {
+			color: var( --wpds-color-foreground-content-neutral-weak );
+		}
 	}
 
 	// Completed steps are the only navigable ones, so give the pointer an extra

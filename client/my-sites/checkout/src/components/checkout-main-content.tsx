@@ -52,7 +52,10 @@ import {
 import { createPortal } from 'react-dom';
 import Loading from 'calypso/components/loading';
 import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress';
-import { useShowOnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
+import {
+	ONBOARDING_PROGRESS_BREAKPOINT,
+	useShowOnboardingProgress,
+} from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
@@ -482,12 +485,16 @@ export default function CheckoutMainContent( {
 	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
 	// The flow that redirected to checkout may pass a step indicator via the
 	// `steps_current` / `steps_total` query params. Checkout has no per-flow
-	// knowledge — any flow can opt in by including the params. Mobile-only.
-	const isMobileViewport = useViewportMatch( 'small', '<' );
+	// knowledge — any flow can opt in by including the params.
+	//
+	// Gated on the same breakpoint as the named step rail above, so the counter
+	// starts exactly where the names stop. It used to be gated to mobile, which
+	// left every width between mobile and desktop with no indicator at all.
+	const hasRoomForStepNames = useViewportMatch( ONBOARDING_PROGRESS_BREAKPOINT );
 	const stepsCurrent = Number( searchParams.get( 'steps_current' ) );
 	const stepsTotal = Number( searchParams.get( 'steps_total' ) );
 	const stepCounter =
-		isMobileViewport &&
+		! hasRoomForStepNames &&
 		Number.isInteger( stepsCurrent ) &&
 		stepsCurrent > 0 &&
 		Number.isInteger( stepsTotal ) &&
