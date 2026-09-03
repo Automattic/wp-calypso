@@ -1,10 +1,14 @@
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
-import { useSkipsPlansStep } from '../../../utils/preselected-plan';
+import { useSelect } from '@wordpress/data';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
+import { skipsPlansStep } from '../../../utils/preselected-plan';
 import {
 	getOnboardingStepperPosition,
 	ONBOARDING_STEPPER_GROUP_BY_SLUG,
 } from './step-counter-config';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 /**
  * Returns `{ current, total }` for the onboarding Stepper indicator.
@@ -17,14 +21,17 @@ import {
  *
  * The shared step components (domain-search, use-my-domain, unified-plans) are
  * mounted by many flows, so this hook handles the flow gating internally to keep
- * usages a single line.
+ * call sites a single line.
  */
 export function useOnboardingStepCounter(
 	flow: string,
 	slug: string
 ): { current: number; total: number } | null {
 	const isMobileViewport = useViewportMatch( 'small', '<' );
-	const skipsPlans = useSkipsPlansStep();
+	const planCartItem = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+		[]
+	);
 
 	if ( flow !== ONBOARDING_FLOW || ! isMobileViewport ) {
 		return null;
@@ -35,5 +42,11 @@ export function useOnboardingStepCounter(
 		return null;
 	}
 
-	return getOnboardingStepperPosition( group, skipsPlans );
+	// No router hook here: `calypso/signup/steps/plans` re-exports the plans step into the
+	// legacy `/start` framework, which is page.js-routed, and `useLocation` throws outside a
+	// `<Router>` — in production too.
+	return getOnboardingStepperPosition(
+		group,
+		skipsPlansStep( getCurrentQueryParams(), planCartItem )
+	);
 }
