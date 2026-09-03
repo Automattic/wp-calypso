@@ -18,6 +18,7 @@ import Loading from 'calypso/components/loading';
 import TransferWaitCard from 'calypso/components/transfer-wait/card';
 import availableFlows from 'calypso/landing/stepper/declarative-flow/registered-flows';
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
+import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordSignupProcessingScreen } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -25,6 +26,7 @@ import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import { useFlowState } from '../../state-manager/store';
 import { ProcessingResult } from './constants';
 import { useLoadingMessageIndex } from './hooks/use-loading-message-index';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
@@ -120,6 +122,11 @@ const ProcessingStep: StepType< {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getTransferStartedAt(),
 		[]
 	);
+	// The site this flow just created, so a stalled transfer can offer a way to it. The URL param
+	// covers the flows entered with a site already in hand.
+	const createdSiteSlug = useFlowState().get( 'site' )?.siteSlug;
+	const siteSlugParam = useSiteSlugParam();
+	const transferSiteSlug = createdSiteSlug ?? siteSlugParam;
 
 	// How the wait ended is known only inside the callback that ends it, and that callback submits —
 	// navigating away in the same tick, with no render in between to carry the outcome. Mutating the
@@ -263,6 +270,7 @@ const ProcessingStep: StepType< {
 						transferStatus={ transferStatus }
 						startedAt={ transferStartedAt }
 						isPluginInstall={ false }
+						siteSlug={ transferSiteSlug }
 					/>
 				) : (
 					<Step.Loading title={ getCurrentMessage() } progress={ progress } delay={ 1000 } />

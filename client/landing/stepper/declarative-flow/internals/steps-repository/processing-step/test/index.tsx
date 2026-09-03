@@ -3,7 +3,7 @@
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { TRANSFERRING_HOSTED_SITE_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import { dispatch } from '@wordpress/data';
 import React from 'react';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -19,6 +19,9 @@ jest.mock( 'calypso/lib/analytics/signup', () => ( {
 } ) );
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
+} ) );
+jest.mock( 'calypso/landing/stepper/hooks/use-site-slug-param', () => ( {
+	useSiteSlugParam: () => 'example.wordpress.com',
 } ) );
 
 describe( 'ProcessingStep', () => {
@@ -53,6 +56,20 @@ describe( 'ProcessingStep', () => {
 		expect( screen.getByRole( 'status' ).textContent ).toContain(
 			'moving your site to the new server'
 		);
+	} );
+
+	it( 'offers a way to the site once the transfer wait stalls', () => {
+		jest.useFakeTimers();
+		dispatch( ONBOARD_STORE ).setTransferStatus( transferStates.COMPLETE );
+
+		render( { flow: TRANSFERRING_HOSTED_SITE_FLOW } );
+		act( () => jest.advanceTimersByTime( 95_000 ) );
+
+		expect( screen.getByRole( 'link', { name: 'Go to your site' } ) ).toHaveAttribute(
+			'href',
+			'/sites/example.wordpress.com'
+		);
+		jest.useRealTimers();
 	} );
 
 	it( 'keeps the generic loading screen for other flows', () => {
