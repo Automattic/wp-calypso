@@ -417,6 +417,21 @@ describe( 'creditCardExpiresBeforeSubscription', () => {
 } );
 
 describe( 'getRenewalUrlFromPurchase', () => {
+	test( 'uses the subscription-ID-only format', () => {
+		const url = getRenewalUrlFromPurchase(
+			makePurchase( {
+				ID: 12345,
+				product_slug: 'business-bundle',
+				is_attached_to_holding_site: false,
+				site_slug: 'example.wordpress.com',
+			} )
+		);
+
+		expect( url ).toContain( '/checkout/renew/12345?' );
+		expect( url ).not.toContain( 'example.wordpress.com' );
+		expect( url ).not.toContain( 'business-bundle' );
+	} );
+
 	test( 'omits the site slug for an A4A holding site purchase', () => {
 		const url = getRenewalUrlFromPurchase(
 			makePurchase( {
@@ -428,21 +443,19 @@ describe( 'getRenewalUrlFromPurchase', () => {
 			} )
 		);
 
-		expect( url ).toContain( '/checkout/pressable_build_monthly:is-a4a/renew/28259013/?' );
+		expect( url ).toContain( '/checkout/renew/28259013?' );
 		expect( url ).not.toContain( 'siteless.agencies.automattic.com' );
 	} );
 
-	test( 'keeps the site slug for a regular site purchase', () => {
+	test( 'keeps the legacy format for a siteless Akismet purchase', () => {
 		const url = getRenewalUrlFromPurchase(
 			makePurchase( {
-				ID: 12345,
-				product_slug: 'business-bundle',
-				is_attached_to_holding_site: false,
-				site_slug: 'example.wordpress.com',
+				ID: 67890,
+				product_slug: 'ak_plus_yearly_1',
 			} )
 		);
 
-		expect( url ).toContain( '/checkout/business-bundle/renew/12345/example.wordpress.com?' );
+		expect( url ).toContain( '/checkout/akismet/ak_plus_yearly_1/renew/67890/?' );
 	} );
 } );
 

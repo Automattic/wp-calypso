@@ -797,7 +797,7 @@ const PlansFeaturesMain = ( {
 	// existing plan (rather than passively reading "Your plan") so the user is
 	// reminded they can keep their plan instead of letting the downgrade apply.
 	const renewCurrentPlanWithPendingDowngrade = () => {
-		if ( ! siteSlug || ! currentPlanPurchaseId || ! currentPurchase?.product_slug ) {
+		if ( ! currentPlanPurchaseId ) {
 			return;
 		}
 		recordTracksEvent( 'calypso_plan_features_renew_pending_downgrade_click', {
@@ -814,7 +814,7 @@ const PlansFeaturesMain = ( {
 		}
 		window.location.href = addQueryArgs(
 			checkoutQuery,
-			`/checkout/${ currentPurchase.product_slug }/renew/${ currentPlanPurchaseId }/${ siteSlug }`
+			`/checkout/renew/${ currentPlanPurchaseId }`
 		);
 	};
 
