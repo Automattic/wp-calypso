@@ -30,11 +30,13 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 } ) );
 
 const mockPostponeNotice = jest.fn();
-const mockDismissForGood = jest.fn();
 const mockUseNoticeVisibilityMutation = jest.fn();
 jest.mock( 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation', () => ( {
 	__esModule: true,
-	default: ( ...args: unknown[] ) => mockUseNoticeVisibilityMutation( ...args ),
+	default: ( ...args: unknown[] ) => {
+		mockUseNoticeVisibilityMutation( ...args );
+		return { mutateAsync: mockPostponeNotice };
+	},
 } ) );
 
 const mockEnablePreview = jest.fn();
@@ -61,16 +63,8 @@ const renderNotice = ( isOdysseyStats = false, dashboardUrl: string | null = DAS
 describe( 'PremiumAnalyticsPreviewNotice', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		localStorage.clear();
 		Object.keys( mockFlags() ).forEach( ( flag ) => delete mockFlags()[ flag ] );
 		mockPostponeNotice.mockResolvedValue( undefined );
-		mockDismissForGood.mockResolvedValue( undefined );
-		// The component holds one mutation per dismissal kind; hand each its own spy.
-		mockUseNoticeVisibilityMutation.mockImplementation( ( ...args: unknown[] ) =>
-			args[ 2 ] === 'dismissed'
-				? { mutateAsync: mockDismissForGood }
-				: { mutateAsync: mockPostponeNotice }
-		);
 		mockEnablePreview.mockResolvedValue( true );
 		mockIsEnabling = false;
 		Object.defineProperty( window, 'location', { value: { href: '' }, writable: true } );
@@ -197,8 +191,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 	} );
 
 	/**
-	 * Two failed attempts to accept would otherwise read as two rejections, and the second
-	 * dismissal ends the invitation for good.
+	 * A failed attempt to accept is not a rejection, so it must not be recorded as one.
 	 */
 	it( 'does not count closing a failed attempt as a dismissal', async () => {
 		mockEnablePreview.mockRejectedValue( new Error( 'nope' ) );
@@ -211,10 +204,6 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 
 		expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument();
 		expect( mockPostponeNotice ).not.toHaveBeenCalled();
-		expect( mockDismissForGood ).not.toHaveBeenCalled();
-		expect( localStorage.getItem( 'jetpack_stats_premium_analytics_preview_dismissals_123' ) ).toBe(
-			null
-		);
 	} );
 
 	it( 'records why an enable failed, so uptake can be told from breakage', async () => {
@@ -267,7 +256,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
 			'jetpack_odyssey_stats_premium_analytics_preview_notice_dismissed',
-			{ blog_id: 123, dismissal_count: 1 }
+			{ blog_id: 123 }
 		);
 		expect( mockPostponeNotice ).toHaveBeenCalled();
 	} );
@@ -280,7 +269,11 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		expect( container.querySelector( '.inner-notice-container--calypso' ) ).toBeNull();
 	} );
 
-	it( 'holds the invitation back for a month on the first dismissal', async () => {
+	/**
+	 * The client only says how long a dismissal lasts. Whether a repeat dismissal ends the invitation
+	 * for good is the notices endpoint's call, so there is no count kept here.
+	 */
+	it( 'holds the invitation back for a month on dismissal', async () => {
 		renderNotice();
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
@@ -292,50 +285,10 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 			THIRTY_DAYS
 		);
 		expect( mockPostponeNotice ).toHaveBeenCalledTimes( 1 );
-		expect( mockDismissForGood ).not.toHaveBeenCalled();
-	} );
-
-	/**
-	 * `dismissed` is the endpoint's own permanent state - no return date at all - rather than a
-	 * postponement measured in decades.
-	 */
-	it( 'stops inviting the site once it has been turned down twice', async () => {
-		const { unmount } = renderNotice();
-		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
-		unmount();
-
-		renderNotice();
-		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
-
-		expect( mockUseNoticeVisibilityMutation ).toHaveBeenCalledWith(
-			123,
-			'premium_analytics_preview',
-			'dismissed'
-		);
-		expect( mockDismissForGood ).toHaveBeenCalledTimes( 1 );
-		expect( mockPostponeNotice ).toHaveBeenCalledTimes( 1 );
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_stats_premium_analytics_preview_notice_dismissed',
-			{ blog_id: 123, dismissal_count: 2 }
+			{ blog_id: 123 }
 		);
-	} );
-
-	/**
-	 * A count that ran ahead of the request would spend the customer's second dismissal on a
-	 * postponement the site never recorded, ending the invitation a dismissal early.
-	 */
-	it( 'counts a dismissal only once the site has recorded it', async () => {
-		mockPostponeNotice.mockRejectedValue( new Error( 'nope' ) );
-
-		const { unmount } = renderNotice();
-		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
-		unmount();
-
-		renderNotice();
-		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
-
-		expect( mockDismissForGood ).not.toHaveBeenCalled();
-		expect( mockPostponeNotice ).toHaveBeenCalledTimes( 2 );
 	} );
 
 	it( 'does not hide the notice for a different site after a dismissal', async () => {

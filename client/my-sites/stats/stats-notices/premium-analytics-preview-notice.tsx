@@ -19,36 +19,9 @@ import { StatsNoticeProps } from './types';
 export const PREMIUM_ANALYTICS_PAGE_PATH = 'admin.php?page=jetpack-premium-analytics-wp-admin';
 
 const DAY_IN_SECONDS = 24 * 3600;
-const FIRST_DISMISSAL_POSTPONEMENT = 30 * DAY_IN_SECONDS;
-
-const dismissalCountKey = ( siteId: number | null ) =>
-	`jetpack_stats_premium_analytics_preview_dismissals_${ siteId }`;
-
-/**
- * How many times this browser has been shown the door on this site.
- *
- * The invitation returns once after the first dismissal and never after the second. The notices
- * endpoint reports current visibility rather than a history, so the count is kept locally: a
- * cleared browser store costs at most one extra invitation. A blocked one costs more - there is
- * nowhere to keep the count, so the invitation returns every month; only the endpoint could fix
- * that, by escalating a repeat postponement itself.
- * @param siteId Site the dismissal belongs to.
- */
-const readDismissalCount = ( siteId: number | null ) => {
-	try {
-		return Number( localStorage.getItem( dismissalCountKey( siteId ) ) ) || 0;
-	} catch {
-		return 0;
-	}
-};
-
-const writeDismissalCount = ( siteId: number | null, count: number ) => {
-	try {
-		localStorage.setItem( dismissalCountKey( siteId ), String( count ) );
-	} catch {
-		// Storage can be unavailable or full; the postponement recorded on the site still stands.
-	}
-};
+// The notices endpoint decides when a postponed invitation stops coming back; the client only
+// says how long each one lasts.
+const DISMISSAL_POSTPONEMENT = 30 * DAY_IN_SECONDS;
 
 const trackEvent = (
 	isOdyssey: boolean,
@@ -115,33 +88,19 @@ const PremiumAnalyticsPreviewNotice = ( {
 		siteId,
 		'premium_analytics_preview',
 		'postponed',
-		FIRST_DISMISSAL_POSTPONEMENT
-	);
-	const { mutateAsync: dismissNoticeForGoodAsync } = useNoticeVisibilityMutation(
-		siteId,
-		'premium_analytics_preview',
-		'dismissed'
+		DISMISSAL_POSTPONEMENT
 	);
 
 	const dismissNotice = () => {
-		const dismissalCount = readDismissalCount( siteId ) + 1;
-		const isFinalDismissal = dismissalCount > 1;
-
-		trackEvent( isOdyssey, 'dismissed', siteId, { dismissal_count: dismissalCount } );
+		trackEvent( isOdyssey, 'dismissed', siteId );
 		setDismissedSiteId( siteId );
 
-		// Best-effort: the local state above already hides the notice for this session. Counted only
-		// once the site has recorded it, so a lost write doesn't spend a dismissal the customer
-		// never got the benefit of.
-		const record = isFinalDismissal ? dismissNoticeForGoodAsync : postponeNoticeAsync;
-		record()
-			.then( () => writeDismissalCount( siteId, dismissalCount ) )
-			.catch( () => {} );
+		// Best-effort: the local state above already hides the notice for this session.
+		postponeNoticeAsync().catch( () => {} );
 	};
 
-	// Neither the confirmation nor a failed attempt is a rejection, so closing those stays out of
-	// the dismissal count - a site whose write failed twice would otherwise be counted as having
-	// said no twice, and never asked again.
+	// Neither the confirmation nor a failed attempt is a rejection, so closing those records
+	// nothing - the site is asked again on the next load.
 	const hideNotice = () => setDismissedSiteId( siteId );
 
 	const enablePremiumAnalyticsPreview = async () => {
