@@ -214,9 +214,14 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 
 	// TODO: Integrate checking purchases and plans loaded state into `hasSiteProductJetpackStatsPaid`.
 	const hasLoadedPurchases = useSelector( hasLoadedSitePurchasesFromServer );
-	// Only check plans loaded state for supporting Stats on WPCOM.
+	// Only check plans loaded state for supporting Stats on WPCOM. The wp-admin app never puts
+	// plans in the store, so waiting for them there holds every notice back forever. Asking
+	// `is_odyssey` rather than the `isOdysseyStats` prop, which is `is_running_in_jetpack_site`:
+	// that says the app talks to Jetpack's API, and is false on a Simple site's wp-admin — the
+	// one place plans never arrive.
 	const hasLoadedPlans =
-		useSelector( ( state ) => hasLoadedSitePlansFromServer( state, siteId ) ) || isOdysseyStats;
+		useSelector( ( state ) => hasLoadedSitePlansFromServer( state, siteId ) ) ||
+		config.isEnabled( 'is_odyssey' );
 
 	if (
 		! hasLoadedPurchases ||
