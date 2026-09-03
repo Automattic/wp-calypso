@@ -145,19 +145,21 @@ export class FullPostView extends Component {
 		const hasPostChanged = prevProps?.post?.ID !== this.props?.post?.ID;
 		const hasFeedChanged = prevProps?.feed?.ID !== this.props?.feed?.ID;
 		const hasSiteChanged = prevProps?.site?.ID !== this.props?.site?.ID;
-		// Key the automatic-seen guard on the canonical post key, which is the same
-		// feed/blog identity `markAsSeen` writes with. Neither single field works
-		// alone: `post.ID` is only unique within a site, and `global_ID` is absent
-		// on cached posts (`Post` is a `Partial`), so either can read two distinct
-		// posts as the same one and swallow the second post's mark.
-		const hasViewedPostChanged =
-			keyToString( keyForPost( prevProps?.post ) ) !==
-			keyToString( keyForPost( this.props?.post ) );
 
 		// Send page view if applicable
 		if ( hasPostChanged || hasFeedChanged || hasSiteChanged ) {
 			this.hasSentPageView = false;
 			this.hasLoaded = false;
+
+			// Reset the automatic-seen guard on the canonical Reader post key — the
+			// discriminator the post cache and streams already identify posts by.
+			// Neither single field is enough on its own: `post.ID` is only unique
+			// within a site, and `global_ID` is absent on cached posts (`Post` is a
+			// `Partial`), so either can read two distinct posts as one and swallow
+			// the second post's mark.
+			const hasViewedPostChanged =
+				keyToString( keyForPost( prevProps?.post ) ) !==
+				keyToString( keyForPost( this.props?.post ) );
 			if ( hasViewedPostChanged ) {
 				this.hasAutoMarkedAsSeen = false;
 			}
