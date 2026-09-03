@@ -20,7 +20,6 @@ import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datet
 import { isGSuiteProductSlug } from './gsuite';
 import { redirectToDashboardLink, wpcomLink } from './link';
 import { getStudioCodeAiCreditsTitle } from './studio-code-ai-credits';
-import { encodeProductForUrl } from './wpcom-checkout';
 import type { Product, Purchase } from '@automattic/api-core';
 
 export const CANCEL_FLOW_TYPE = {
@@ -657,21 +656,6 @@ function getServicePathForCheckoutFromPurchase( purchase: Purchase ): string {
 	return '';
 }
 
-function getCheckoutProductSlugFromPurchase( purchase: Purchase ): string {
-	const productSlug = encodeProductForUrl( purchase.product_slug );
-	const productDomain = purchase.meta ? encodeProductForUrl( purchase.meta ) : undefined;
-	const checkoutProductSlug = productDomain ? `${ productSlug }:${ productDomain }` : productSlug;
-	return checkoutProductSlug;
-}
-
-function getCheckoutSiteSlugForPurchase( purchase: Purchase ): string {
-	// Neither Akismet nor A4A holding sites should use a site slug
-	if ( isAkismetProduct( purchase ) || isA4AHoldingSitePurchase( purchase ) ) {
-		return '';
-	}
-	return purchase.site_slug || '';
-}
-
 export function getRenewalUrlFromPurchase( purchase: Purchase, backUrl?: string ): string {
 	return getRenewUrlForPurchases( [ purchase ], backUrl );
 }
@@ -688,19 +672,13 @@ export function getRenewUrlForPurchases(
 	if ( purchases.length < 1 ) {
 		throw new Error( 'Could not find product slug or purchase id for renewal.' );
 	}
-	const firstPurchase = purchases[ 0 ];
 	const purchaseIds = purchases.map( ( purchase ) => purchase.ID ).join( ',' );
-	const servicePath = getServicePathForCheckoutFromPurchase( firstPurchase );
+	// Siteless Akismet and Marketplace renewals keep the service in the path
+	// because the route is what selects the service-specific checkout
+	// experience. Everything else renews from the subscription ID alone.
+	const servicePath = getServicePathForCheckoutFromPurchase( purchases[ 0 ] );
 
-	// Siteless Akismet and Marketplace renewals still need the legacy URL shape
-	// because their checkout routes are keyed on the service and product slug.
-	const path = servicePath
-		? `/checkout/${ servicePath }${ purchases
-				.map( ( purchase ) => getCheckoutProductSlugFromPurchase( purchase ) )
-				.join( ',' ) }/renew/${ purchaseIds }/${ getCheckoutSiteSlugForPurchase( firstPurchase ) }`
-		: `/checkout/renew/${ purchaseIds }`;
-
-	return addQueryArgs( wpcomLink( path ), {
+	return addQueryArgs( wpcomLink( `/checkout/${ servicePath }renew/${ purchaseIds }` ), {
 		cancel_to: backUrl,
 		redirect_to: backUrl,
 	} );

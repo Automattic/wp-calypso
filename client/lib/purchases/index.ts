@@ -383,14 +383,10 @@ export function handleRenewNowClick(
 				serviceSlug = 'marketplace/';
 			}
 
-			// Siteless Akismet and Marketplace renewals still need the legacy URL
-			// shape because their checkout routes are keyed on the service and
-			// product slug.
-			let renewalUrl = serviceSlug
-				? `/checkout/${ serviceSlug }${ productSlugs[ 0 ] }/renew/${ purchaseIds[ 0 ] }/${
-						siteSlug || ''
-				  }`
-				: `/checkout/renew/${ purchaseIds[ 0 ] }`;
+			// Siteless Akismet and Marketplace renewals keep the service in the path
+			// because the route is what selects the service-specific checkout
+			// experience. Everything else renews from the subscription ID alone.
+			let renewalUrl = `/checkout/${ serviceSlug }renew/${ purchaseIds[ 0 ] }`;
 
 			renewalUrl = addQueryArgs(
 				{ redirect_to: options.redirectTo, cancel_to: options.cancelTo },

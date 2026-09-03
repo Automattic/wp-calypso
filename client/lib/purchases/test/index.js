@@ -366,10 +366,10 @@ describe( 'index', () => {
 		// No site
 		const siteSlug = '';
 
-		test( 'should redirect to the purchase management page with service slug URL', () => {
+		test( 'should keep the service in the URL but drop the product slug', () => {
 			const dispatch = jest.fn();
 			handleRenewNowClick( purchase, siteSlug )( dispatch );
-			expect( page ).toHaveBeenCalledWith( '/checkout/akismet/ak_plus_yearly_1/renew/1/' );
+			expect( page ).toHaveBeenCalledWith( '/checkout/akismet/renew/1' );
 		} );
 	} );
 
