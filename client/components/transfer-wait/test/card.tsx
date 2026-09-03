@@ -23,9 +23,7 @@ describe( 'TransferWaitCard', () => {
 		);
 	} );
 	it( 'narrates the moving stage', () => {
-		render(
-			<TransferWaitCard transferStatus={ transferStates.RELOCATING } fallbackStep={ 1 } />
-		);
+		render( <TransferWaitCard transferStatus={ transferStates.RELOCATING } fallbackStep={ 1 } /> );
 		expect( screen.getByRole( 'status' ).textContent ).toContain(
 			'moving your site to the new server'
 		);

@@ -39,7 +39,10 @@ describe( 'ProcessingStep', () => {
 		expect( screen.getByRole( 'status' ).textContent ).toContain(
 			'preparing a dedicated server for your site'
 		);
-		expect( screen.getByRole( 'progressbar' ) ).toBeVisible();
+		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute(
+			'aria-label',
+			'Preparing a dedicated server for your site'
+		);
 	} );
 
 	it( 'narrates the stage the transfer is actually in', () => {
