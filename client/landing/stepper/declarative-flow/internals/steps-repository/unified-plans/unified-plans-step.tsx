@@ -718,19 +718,14 @@ function UnifiedPlansStep( {
 	);
 
 	if ( useStepContainerV2 && wrapperProps ) {
-		const goBack = wrapperProps.hideBack || showProgress ? undefined : wrapperProps.goBack;
+		// The rail used to take this slot, so the back button was suppressed
+		// while it showed. It sits on the right now, beside where the counter
+		// goes, so the left slot behaves as it does everywhere else.
+		const goBack = wrapperProps.hideBack ? undefined : wrapperProps.goBack;
 
-		// The progress rail lives in the top bar beside the logo. It and the back
-		// button share the left slot; `goBack` is already undefined whenever the
-		// rail is showing, so the two can never collide.
-		let topBarLeftElement;
-		if ( showProgress ) {
-			topBarLeftElement = (
-				<OnboardingProgress currentStep="plans" onStepSelect={ () => wrapperProps.goBack?.() } />
-			);
-		} else if ( goBack ) {
-			topBarLeftElement = <Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>;
-		}
+		const topBarLeftElement = goBack ? (
+			<Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>
+		) : undefined;
 
 		return (
 			<>
@@ -758,6 +753,15 @@ function UnifiedPlansStep( {
 								rightElement={
 									isOnboardingFlow( flowName ) ? (
 										<>
+											{ /* The rail and the counter are the same indicator at
+											     two widths, so they share this slot and never
+											     overlap. */ }
+											{ showProgress && (
+												<OnboardingProgress
+													currentStep="plans"
+													onStepSelect={ () => wrapperProps.goBack?.() }
+												/>
+											) }
 											{ stepCounter && (
 												<Step.StepCounter
 													current={ stepCounter.current }

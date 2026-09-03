@@ -1143,31 +1143,34 @@ export default function CheckoutMainContent( {
 						const topBar = (
 							<Step.TopBar
 								leftElement={
-									// The progress rail takes the left slot beside the logo,
-									// standing in for the back button while it is showing.
-									showProgress ? (
-										<OnboardingProgress
-											currentStep="checkout"
-											isStepSelectDisabled={ leaveModalProps.isLeaveDisabled }
-											onStepSelect={ ( step ) =>
-												handleProgressStepSelect( step, {
-													forceCheckoutBackUrlDomains,
-													forceCheckoutBackUrl,
-													clickStepBack: leaveModalProps.clickStepBack,
-													clickClose: leaveModalProps.clickClose,
-												} )
-											}
-										/>
-									) : (
-										<Step.BackButton
-											onClick={ leaveModalProps.clickClose }
-											disabled={ leaveModalProps.isLeaveDisabled }
-											accessibleWhenDisabled
-										/>
-									)
+									// The rail used to stand in for the back button here. It
+									// sits on the right now, beside where the counter goes, so
+									// this slot behaves as it does everywhere else.
+									<Step.BackButton
+										onClick={ leaveModalProps.clickClose }
+										disabled={ leaveModalProps.isLeaveDisabled }
+										accessibleWhenDisabled
+									/>
 								}
 								rightElement={
 									<>
+										{ /* The rail and the counter are the same indicator at
+										     two widths, so they share this slot and never
+										     overlap. */ }
+										{ showProgress && (
+											<OnboardingProgress
+												currentStep="checkout"
+												isStepSelectDisabled={ leaveModalProps.isLeaveDisabled }
+												onStepSelect={ ( step ) =>
+													handleProgressStepSelect( step, {
+														forceCheckoutBackUrlDomains,
+														forceCheckoutBackUrl,
+														clickStepBack: leaveModalProps.clickStepBack,
+														clickClose: leaveModalProps.clickClose,
+													} )
+												}
+											/>
+										) }
 										{ stepCounter && (
 											<Step.StepCounter
 												current={ stepCounter.current }
