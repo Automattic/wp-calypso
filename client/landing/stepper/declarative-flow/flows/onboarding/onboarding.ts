@@ -54,7 +54,7 @@ import { getStepFromURL } from '../../../utils/get-flow-from-url';
 import {
 	getPreselectedPlan,
 	getPreselectedStorageAddOn,
-	skipsPlansStep,
+	shouldSkipPlansStep,
 } from '../../../utils/preselected-plan';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import {
@@ -337,7 +337,7 @@ const onboarding: FlowV2< typeof initialize > = {
 			[]
 		);
 		const queryParams = useQuery();
-		const skipsPlans = skipsPlansStep( queryParams, planCartItem );
+		const skipsPlans = shouldSkipPlansStep( queryParams, planCartItem );
 		const coupon = queryParams.get( 'coupon' );
 		const refParameter = queryParams.get( 'ref' );
 		const diyLaunchpad = queryParams.get( 'diy-launchpad' );

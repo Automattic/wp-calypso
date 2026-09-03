@@ -3,7 +3,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
-import { skipsPlansStep } from '../../../utils/preselected-plan';
+import { shouldSkipPlansStep } from '../../../utils/preselected-plan';
 import {
 	getOnboardingStepperPosition,
 	ONBOARDING_STEPPER_GROUP_BY_SLUG,
@@ -47,6 +47,6 @@ export function useOnboardingStepCounter(
 	// `<Router>` — in production too.
 	return getOnboardingStepperPosition(
 		group,
-		skipsPlansStep( getCurrentQueryParams(), planCartItem )
+		shouldSkipPlansStep( getCurrentQueryParams(), planCartItem )
 	);
 }
