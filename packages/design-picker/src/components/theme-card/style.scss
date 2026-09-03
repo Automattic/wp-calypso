@@ -45,6 +45,14 @@ $theme-card-info-margin-top: 16px;
 			margin-top: 1px;
 		}
 	}
+
+	.theme-card__info-badge-retired {
+		display: flex;
+		background-color: var( --color-warning-20 );
+		color: var( --color-warning-80 );
+		font-weight: 400;
+		text-decoration: none;
+	}
 }
 
 .theme-card__content {
