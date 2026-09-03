@@ -36,11 +36,12 @@ All exports live in `src/index.ts`. This is intentionally a single-file provider
 
 ## Tools
 
-| Tool ID                      | Handler                     | UI Component           | Description                                              |
-| ---------------------------- | --------------------------- | ---------------------- | -------------------------------------------------------- |
-| `jetpack_ai__show_component` | `handleShowComponent`       | via `getChatComponent` | Renders Jetpack AI chat components                       |
-| `big_sky__show_component`    | `handleLegacyShowComponent` | Jetpack or Big Sky     | Temporary migration support; delegates non-Jetpack types |
-| `wpcom/update-block-content` | `handleUpdateBlockContent`  | _(chat text)_          | Updates block content with shimmer effect                |
+| Tool ID                           | Handler                     | UI Component           | Description                                                                                             |
+| --------------------------------- | --------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------- |
+| `jetpack_ai__show_component`      | `handleShowComponent`       | via `getChatComponent` | Renders Jetpack AI chat components                                                                      |
+| `big_sky__show_component`         | `handleLegacyShowComponent` | Jetpack or Big Sky     | Temporary migration support; delegates non-Jetpack types                                                |
+| `wpcom/update-block-content`      | `handleUpdateBlockContent`  | _(chat text)_          | Updates block content with shimmer effect                                                               |
+| `jetpack_ai__apply_draft_content` | `handleApplyDraftContent`   | _(chat text)_          | Writes a first draft into an empty post or page (`draftAssist` flag only); never over an existing title |
 
 ### Show-component pattern
 
@@ -84,6 +85,10 @@ For tools that perform an editor action (like `update-block-content`):
 4. Register the ability in `toolProvider.getAbilities()` with a callback
 5. Add a fallback case in `toolProvider.executeAbility()`
 
+## Draft assist
+
+`draftAssist` flag, posts and pages only. One entry point: the `draft-post` suggestion in `getEmptyViewSuggestions()` (`src/index.ts`). There is deliberately no block-editor entry point — a `/draft` autocompleter and a `bodyPlaceholder` swap both existed and were removed. The suggestion and `handleApplyDraftContent` share one emptiness check (`utils/draft-assist.ts`) and must never disagree: offering a draft the handler then refuses reads as a broken button. The handler's other guards are commented where they live.
+
 ## Context Provider
 
 `contextProvider.getClientContext()` builds the context object sent to the orchestrator with each message. It includes:
@@ -92,8 +97,11 @@ For tools that perform an editor action (like `update-block-content`):
 - Serialized block tree (`currentPageContent`)
 - Selected block's `clientId` and resolved text content
 - Environment identifier (`'gutenberg'`)
+- Host feature verdicts the orchestrator gates server abilities on: `jetpackSEOSuggestionsEnabled`, `jetpackAiDraftAssistEnabled`
 
 Changes here affect AI response quality. The orchestrator uses `selectedBlockClientId` to target block operations and `currentPageContent` for whole-page understanding.
+
+**The feature-verdict keys are pinned cross-repo contracts — don't rename them, and always send `false` rather than omitting the key.** wpcom grants those abilities by ability category on every editor surface and has no view of this client's preview flags; its exclusions read these keys to decide whether the ability is usable here. Drop `jetpackAiDraftAssistEnabled` and production clients that never registered `handleApplyDraftContent` get the tool routed to them and answer "No handler found for tool". It is a capability claim, not just a flag: send it only when the flag is on AND the post type is one the handler accepts — sending it on a template made the server generate a whole draft and upload an image before the client refused.
 
 ## Checkpoint / Undo
 
@@ -141,4 +149,4 @@ Test files go alongside source: `foo.ts` → `foo.test.ts`.
 - Before/after screenshots for UI changes (especially TitlePicker or shimmer effects)
 - Test with both block selected and no block selected states
 
-**Last updated**: 2026-04-10
+**Last updated**: 2026-08-31

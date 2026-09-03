@@ -32,6 +32,12 @@ import './components/base-suggestion-picker.scss';
 import TitlePicker from './components/title-picker';
 import './auto-scroll-fix.scss';
 import {
+	APPLY_DRAFT_CONTENT_ABILITY,
+	APPLY_DRAFT_CONTENT_ABILITY_NAME,
+	handleApplyDraftContent,
+	isApplyDraftContentTool,
+} from './utils/apply-draft-content';
+import {
 	type CheckpointApi,
 	type CheckpointField,
 	applyReviewEdit,
@@ -51,6 +57,7 @@ import {
 	BLOCK_ACTION_COMPLETE_EVENT,
 	SELECTED_BLOCK_CLEAR_EVENT,
 } from './utils/block-actions';
+import { isDraftAssistPostType, isPostEffectivelyEmpty } from './utils/draft-assist';
 import {
 	isImageStudioAvailable,
 	openImageStudioForBlock,
@@ -59,6 +66,7 @@ import {
 import {
 	isAiEditorialReviewEnabled,
 	isBlockTransformationsEnabled,
+	isDraftAssistEnabled,
 	isExcerptSuggestionEnabled,
 	isGenerateFeedbackEnabled,
 	isProofreadEnabled,
@@ -168,6 +176,27 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 	label: __( 'Optimize Title', __i18n_text_domain__ ),
 	prompt: __( 'Optimize the title of this post', __i18n_text_domain__ ),
 };
+
+/**
+ * Suggestion to write a first draft into the open post.
+ *
+ * Draft assist's only entry point — deliberately not offered from the canvas.
+ */
+function getDraftSuggestion( contentType: 'post' | 'page' ) {
+	return {
+		id: 'draft-post',
+		label:
+			'page' === contentType
+				? __( 'Draft a new page', __i18n_text_domain__ )
+				: __( 'Draft a new post', __i18n_text_domain__ ),
+		// Name the entity: asking for "this post" on a page contradicts the
+		// contentType the ability is given, which shapes the output.
+		prompt:
+			'page' === contentType
+				? __( 'Help me draft this page', __i18n_text_domain__ )
+				: __( 'Help me draft this post', __i18n_text_domain__ ),
+	};
+}
 
 /**
  * Post-level suggestion that opens Image Studio directly instead of routing
@@ -374,6 +403,20 @@ function currentPostTypeSupportsFeaturedImage(
 	);
 }
 
+/**
+ * Whether to offer writing a draft: the flag, a post type the handler accepts,
+ * and an empty post — the handler's own checks, so the two cannot disagree.
+ * @param currentPostType - The post type currently open in the editor.
+ * @returns Whether the suggestion should be shown.
+ */
+function isDraftSuggestionAvailable( currentPostType?: string ): boolean {
+	if ( ! isDraftAssistEnabled() || ! isDraftAssistPostType( currentPostType ) ) {
+		return false;
+	}
+
+	return isPostEffectivelyEmpty();
+}
+
 function isFeaturedImageSuggestionAvailable(
 	currentPostType: string | undefined = getCurrentEditorPostType()
 ): boolean {
@@ -492,6 +535,10 @@ function getPostLevelSuggestions(
 	}
 
 	const suggestions = [
+		// First: on an empty post this is the only one of these that can do anything.
+		...( isDraftSuggestionAvailable( currentPostType )
+			? [ getDraftSuggestion( currentPostType === 'page' ? 'page' : 'post' ) ]
+			: [] ),
 		...( isFeaturedImageSuggestionAvailable( currentPostType )
 			? [ GENERATE_FEATURED_IMAGE_SUGGESTION ]
 			: [] ),
@@ -901,8 +948,9 @@ async function handleUpdateBlockContentForChat( input: any ): Promise< any > {
 export const toolProvider = {
 	/**
 	 * Client-side abilities this provider handles: `wpcom/update-block-content`
-	 * (block edits + summary) and Jetpack show-component tools (interactive
-	 * pickers, registered here so self-hosted Jetpack sees the tool_id).
+	 * (block edits + summary), `jetpack-ai/apply-draft-content` (first draft into
+	 * an empty post) and Jetpack show-component tools (interactive pickers,
+	 * registered here so self-hosted Jetpack sees the tool_id).
 	 * @returns {Promise<any[]>} Array of ability descriptors.
 	 */
 	async getAbilities(): Promise< any[] > {
@@ -922,6 +970,7 @@ export const toolProvider = {
 		}
 
 		abilities = filterAbility( abilities, UPDATE_BLOCK_CONTENT_TOOL_ID );
+		abilities = filterAbility( abilities, APPLY_DRAFT_CONTENT_ABILITY_NAME );
 		for ( const toolId of SHOW_COMPONENT_TOOL_IDS ) {
 			abilities = filterAbility( abilities, toolId );
 		}
@@ -931,6 +980,14 @@ export const toolProvider = {
 						{
 							...UPDATE_BLOCK_CONTENT_ABILITY,
 							callback: handleUpdateBlockContentForChat,
+						},
+				  ]
+				: [] ),
+			...( isDraftAssistEnabled()
+				? [
+						{
+							...APPLY_DRAFT_CONTENT_ABILITY,
+							callback: handleApplyDraftContent,
 						},
 				  ]
 				: [] ),
@@ -961,6 +1018,13 @@ export const toolProvider = {
 				returnToAgent: false,
 				...( result.agentMessage && { agentMessage: result.agentMessage } ),
 			};
+		}
+
+		if ( isDraftAssistEnabled() && isApplyDraftContentTool( name ) ) {
+			const result = handleApplyDraftContent( args );
+			// A refusal (post not empty, unparseable markup) goes back to the
+			// agent so it can explain it; a successful write ends the turn.
+			return { result, returnToAgent: result.returnToAgent };
 		}
 
 		if ( isLegacyShowComponentTool( name ) && shouldDelegateLegacyShowComponent( args ) ) {
@@ -1068,6 +1132,13 @@ export const contextProvider = {
 			// suggestion abilities when they aren't usable on this site — e.g. a
 			// free-text query on a self-hosted site with the SEO module disabled.
 			jetpackSEOSuggestionsEnabled: isSeoSuggestionsEnabled(),
+			// Pinned cross-repo contract — do not rename, and send `false` rather
+			// than omitting it. wpcom drops the draft ability unless this says the
+			// client can handle the tool call. Post type is part of the claim: on a
+			// template, saying "yes" cost a whole generated draft and an uploaded
+			// image before the client refused.
+			jetpackAiDraftAssistEnabled:
+				isDraftAssistEnabled() && isDraftAssistPostType( getCurrentEditorPostType() ),
 			contextEntries: [
 				{
 					id: 'selected-block-content',

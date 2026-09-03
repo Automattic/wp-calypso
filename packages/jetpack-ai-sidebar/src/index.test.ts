@@ -65,6 +65,7 @@ const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
 const UPDATE_BLOCK_CONTENT_TOOL_ID = 'wpcom__update_block_content';
 const SHOW_COMPONENT_ABILITY_NAME = 'jetpack-ai/show-component';
 const LEGACY_SHOW_COMPONENT_ABILITY_NAME = 'big-sky/show-component';
+const APPLY_DRAFT_CONTENT_ABILITY_NAME = 'jetpack-ai/apply-draft-content';
 
 function appendRootBlockListLayout( doc: Document = document ): HTMLElement {
 	const layout = doc.createElement( 'div' );
@@ -273,7 +274,10 @@ interface PostTypeMockOptions {
 	themeSupportsResolved?: boolean;
 	/** Whole getThemeSupports return value, for a store that returns something else. */
 	themeSupportsReturnValue?: unknown;
+	/** Whether `core/editor` reports the post as empty; drives the draft suggestion. */
 	isPostEmpty?: boolean;
+	/** Canvas contents, for the draft suggestion's blank-paragraph fallback. */
+	blocks?: unknown[];
 	/** Drops the selector, as an editor predating it would. */
 	omitIsEditedPostEmpty?: boolean;
 }
@@ -290,6 +294,7 @@ function installPostTypeMock(
 		themeSupportsResolved = true,
 		isPostEmpty = false,
 		omitIsEditedPostEmpty = false,
+		blocks = [],
 	} = options;
 
 	// remove_post_type_support unsets the key, so an explicit undefined omits it.
@@ -323,7 +328,7 @@ function installPostTypeMock(
 					return {
 						getSelectedBlock: () => mockSelectedBlock,
 						getBlock: ( clientId: string ) => mockBlocksByClientId[ clientId ],
-						getBlocks: () => [],
+						getBlocks: () => blocks,
 					};
 				}
 				if ( store === 'core' ) {
@@ -355,6 +360,7 @@ function installContextProviderMock( postType = 'post', postId: EditorPostId | n
 					return {
 						getCurrentPostId: () => postId,
 						getCurrentPostType: () => postType,
+						isEditedPostEmpty: () => false,
 					};
 				}
 				if ( store === 'core/block-editor' ) {
@@ -466,6 +472,49 @@ describe( 'contextProvider.getClientContext', () => {
 
 	it( 'defaults jetpackSEOSuggestionsEnabled to false when no sidebar config is present', () => {
 		expect( contextProvider.getClientContext().jetpackSEOSuggestionsEnabled ).toBe( false );
+	} );
+
+	// Pinned cross-repo contract: wpcom drops the draft ability unless the client
+	// says draft assist is live here, because the server grants it by ability
+	// category on every editor surface and cannot see this client's flag.
+	it( 'forwards jetpackAiDraftAssistEnabled = true when the host enables draft assist', () => {
+		installAiEditorialReviewData( { draftAssist: true } );
+		installPostTypeMock( 'post' );
+		expect( contextProvider.getClientContext().jetpackAiDraftAssistEnabled ).toBe( true );
+	} );
+
+	it( 'does not claim draft support on an editor surface the applier refuses', () => {
+		installAiEditorialReviewData( { draftAssist: true } );
+		installPostTypeMock( 'wp_template' );
+
+		// The server reads this as "the client can handle the tool call". On a template
+		// it cannot, and saying true meant a whole draft was generated and an image
+		// uploaded before the client refused.
+		expect( contextProvider.getClientContext().jetpackAiDraftAssistEnabled ).toBe( false );
+	} );
+
+	it( 'does not claim draft support before the post type resolves', () => {
+		installAiEditorialReviewData( { draftAssist: true } );
+		installPostTypeMock( undefined );
+
+		expect( contextProvider.getClientContext().jetpackAiDraftAssistEnabled ).toBe( false );
+	} );
+
+	it( 'forwards jetpackAiDraftAssistEnabled = false when the host disables draft assist', () => {
+		installAiEditorialReviewData( { draftAssist: false } );
+		expect( contextProvider.getClientContext().jetpackAiDraftAssistEnabled ).toBe( false );
+	} );
+
+	it( 'sends jetpackAiDraftAssistEnabled = false rather than omitting it when the flag is off', () => {
+		installAiEditorialReviewData();
+		const context = contextProvider.getClientContext();
+
+		expect( context ).toHaveProperty( 'jetpackAiDraftAssistEnabled' );
+		expect( context.jetpackAiDraftAssistEnabled ).toBe( false );
+	} );
+
+	it( 'defaults jetpackAiDraftAssistEnabled to false when no sidebar config is present', () => {
+		expect( contextProvider.getClientContext().jetpackAiDraftAssistEnabled ).toBe( false );
 	} );
 } );
 
@@ -1986,6 +2035,74 @@ describe( 'getEmptyViewSuggestions', () => {
 		delete ( globalThis as any ).agentsManagerData;
 		delete ( window as any ).wp;
 		mockImageStudioActions = null;
+	} );
+
+	it( 'offers a draft only on an empty post, and offers it first', () => {
+		installAiEditorialReviewData( { draftAssist: true } );
+		installPostTypeMock( 'post', 123, { isPostEmpty: true } );
+
+		const suggestions = getEmptyViewSuggestions();
+		const draft = suggestions.find( ( suggestion ) => suggestion.id === 'draft-post' );
+
+		expect( draft ).toEqual(
+			expect.objectContaining( {
+				label: 'Draft a new post',
+				prompt: 'Help me draft this post',
+			} )
+		);
+		// On an empty post nothing else here has anything to work on.
+		expect( suggestions[ 0 ].id ).toBe( 'draft-post' );
+	} );
+
+	it( 'asks for a page, not a post, when the editor is showing a page', () => {
+		installAiEditorialReviewData( { draftAssist: true } );
+		installPostTypeMock( 'page', 123, { isPostEmpty: true } );
+
+		const draft = getEmptyViewSuggestions().find( ( s ) => s.id === 'draft-post' );
+
+		// The ability is told contentType 'page', which shapes the output. Asking for
+		// "this post" in the same breath contradicts it.
+		expect( draft?.prompt ).toBe( 'Help me draft this page' );
+	} );
+
+	it( 'still offers a draft on a canvas of empty paragraphs', () => {
+		installAiEditorialReviewData( { draftAssist: true } );
+		// isEditedPostEmpty() allows only one empty block, so two taps of Enter
+		// make a visibly blank post report as content. The handler writes into
+		// this post, so the suggestion has to offer it.
+		installPostTypeMock( 'post', 123, {
+			isPostEmpty: false,
+			blocks: [
+				{ name: 'core/paragraph', attributes: { content: '' } },
+				{ name: 'core/paragraph', attributes: { content: '' } },
+			],
+		} );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'draft-post' );
+	} );
+
+	it( 'does not offer a draft once the post has content', () => {
+		installAiEditorialReviewData( { draftAssist: true } );
+		installPostTypeMock( 'post', 123, {
+			isPostEmpty: false,
+			blocks: [ { name: 'core/paragraph', attributes: { content: 'Words worth keeping.' } } ],
+		} );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		// Offering it would promise something the ability then refuses.
+		expect( ids ).not.toContain( 'draft-post' );
+	} );
+
+	it( 'does not offer a draft when the feature is off', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post', 123, { isPostEmpty: true } );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'draft-post' );
 	} );
 
 	it( 'hides post suggestions without a sidebar config', () => {
@@ -3986,6 +4103,114 @@ describe( 'toolProvider', () => {
 			const parsed = JSON.parse( result.agentMessage );
 			expect( typeof parsed.data.calypsoCheckpointId ).toBe( 'string' );
 			expect( parsed.data.calypsoCheckpointId.length ).toBeGreaterThan( 0 );
+		} );
+	} );
+
+	describe( 'apply-draft-content', () => {
+		it( 'is not offered by default', async () => {
+			const abilities = await toolProvider.getAbilities();
+			const names = abilities.map( ( a: any ) => a.name );
+
+			expect( names ).not.toContain( APPLY_DRAFT_CONTENT_ABILITY_NAME );
+		} );
+
+		it( 'is offered with a callback when the draft assist feature is enabled', async () => {
+			installAiEditorialReviewData( { draftAssist: true } );
+
+			const abilities = await toolProvider.getAbilities();
+			const draftAbility = abilities.find(
+				( a: any ) => a.name === APPLY_DRAFT_CONTENT_ABILITY_NAME
+			);
+
+			expect( draftAbility ).toBeDefined();
+			expect( draftAbility.id ).toBe( 'jetpack_ai__apply_draft_content' );
+			expect( typeof draftAbility.callback ).toBe( 'function' );
+		} );
+
+		it( 'replaces any server-provided copy of the ability', async () => {
+			installAiEditorialReviewData( { draftAssist: true } );
+			( window as any ).wp.abilities = {
+				getAbilities: jest
+					.fn()
+					.mockResolvedValue( [ { name: APPLY_DRAFT_CONTENT_ABILITY_NAME, id: 'server-copy' } ] ),
+			};
+
+			const abilities = await toolProvider.getAbilities();
+			const matches = abilities.filter( ( a: any ) => a.name === APPLY_DRAFT_CONTENT_ABILITY_NAME );
+
+			expect( matches ).toHaveLength( 1 );
+			expect( matches[ 0 ].id ).toBe( 'jetpack_ai__apply_draft_content' );
+		} );
+
+		it( 'refuses to write into a post that is not empty', async () => {
+			installAiEditorialReviewData( { draftAssist: true } );
+			const resetBlocks = jest.fn();
+			( window as any ).wp.data = {
+				select: ( store: string ) =>
+					store === 'core/editor'
+						? {
+								isEditedPostEmpty: () => false,
+								getCurrentPostType: () => 'post',
+								getEditedPostAttribute: () => '',
+						  }
+						: undefined,
+				dispatch: ( store: string ) =>
+					store === 'core/block-editor' ? { resetBlocks } : undefined,
+			};
+
+			const { result, returnToAgent } = ( await toolProvider.executeAbility(
+				'jetpack_ai__apply_draft_content',
+				{ markup: '<!-- wp:paragraph --><p>x</p><!-- /wp:paragraph -->', contentType: 'post' }
+			) ) as any;
+
+			expect( resetBlocks ).not.toHaveBeenCalled();
+			expect( result ).toMatchObject( { success: false, error: expect.any( String ) } );
+			expect( result.error ).toMatch( /already has content/ );
+			expect( returnToAgent ).toBe( true );
+		} );
+
+		it( 'refuses to write into a template served by core/editor in the site editor', async () => {
+			installAiEditorialReviewData( { draftAssist: true } );
+			const resetBlocks = jest.fn();
+			( window as any ).wp.data = {
+				select: ( store: string ) =>
+					store === 'core/editor'
+						? {
+								// An unedited template reads as empty, which is exactly why the
+								// emptiness guard alone is not enough here.
+								isEditedPostEmpty: () => true,
+								getCurrentPostType: () => 'wp_template',
+								getEditedPostAttribute: () => '',
+						  }
+						: undefined,
+				dispatch: ( store: string ) =>
+					store === 'core/block-editor' ? { resetBlocks } : undefined,
+			};
+
+			const { result, returnToAgent } = ( await toolProvider.executeAbility(
+				'jetpack_ai__apply_draft_content',
+				{ markup: '<!-- wp:paragraph --><p>x</p><!-- /wp:paragraph -->', contentType: 'post' }
+			) ) as any;
+
+			expect( resetBlocks ).not.toHaveBeenCalled();
+			expect( result ).toMatchObject( { success: false } );
+			expect( result.error ).toMatch( /only writes into posts and pages/ );
+			expect( returnToAgent ).toBe( true );
+		} );
+
+		it( 'is not dispatched when the feature is disabled', async () => {
+			const executeAbility = jest.fn().mockResolvedValue( { result: 'delegated' } );
+			( window as any ).wp.abilities = { executeAbility };
+
+			await toolProvider.executeAbility( 'jetpack_ai__apply_draft_content', {
+				markup: '<!-- wp:paragraph --><p>x</p><!-- /wp:paragraph -->',
+				contentType: 'post',
+			} );
+
+			expect( executeAbility ).toHaveBeenCalledWith( 'jetpack_ai__apply_draft_content', {
+				markup: '<!-- wp:paragraph --><p>x</p><!-- /wp:paragraph -->',
+				contentType: 'post',
+			} );
 		} );
 	} );
 } );

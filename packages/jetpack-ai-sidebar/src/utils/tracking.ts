@@ -157,3 +157,58 @@ export function trackSplitScreenGuideClick( options: TrackSplitScreenGuideOption
 		getSplitScreenGuideProperties( options )
 	);
 }
+
+/** Editor entity draft assist targets. Mirrors the ability's `contentType`. */
+export type DraftAssistContentType = 'post' | 'page';
+
+/** Why a draft could not be written into the editor. */
+export type DraftAssistRejectionReason =
+	| 'post_not_empty'
+	| 'invalid_markup'
+	| 'editor_unavailable'
+	| 'unsupported_post_type';
+
+/**
+ * Tracks a generated draft being written into the editor canvas.
+ * @param options             - Tracking options
+ * @param options.contentType - Editor entity the draft was applied to.
+ * @param options.blockCount  - Number of top-level blocks the markup parsed into.
+ * @param options.hasTitle    - Whether the draft also set the post title.
+ * @returns Whether the event reached the family recorder.
+ */
+export function trackDraftAssistDraftApplied( {
+	contentType,
+	blockCount,
+	hasTitle,
+}: {
+	contentType: DraftAssistContentType;
+	blockCount: number;
+	hasTitle: boolean;
+} ): boolean {
+	return recordBigSkyFamilyTracksEvent( 'jetpack_big_sky_draft_assist_draft_applied', {
+		content_type: contentType,
+		block_count: blockCount,
+		has_title: hasTitle,
+	} );
+}
+
+/**
+ * Tracks a generated draft being refused before anything was written — most
+ * importantly when the post already had content the draft would have replaced.
+ * @param options             - Tracking options
+ * @param options.contentType - Editor entity the draft was meant for.
+ * @param options.reason      - Why the draft was refused.
+ * @returns Whether the event reached the family recorder.
+ */
+export function trackDraftAssistDraftRejected( {
+	contentType,
+	reason,
+}: {
+	contentType: DraftAssistContentType;
+	reason: DraftAssistRejectionReason;
+} ): boolean {
+	return recordBigSkyFamilyTracksEvent( 'jetpack_big_sky_draft_assist_draft_rejected', {
+		content_type: contentType,
+		reason,
+	} );
+}
