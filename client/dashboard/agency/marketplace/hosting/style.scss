@@ -170,8 +170,15 @@
 	gap: 8px 24px;
 	border-block-end: 1px solid var( --dashboard-overview__divider-color );
 
+	/* Tabs stretches each tab to fill the list; keep the tier tabs hug-width and
+	   left-anchored like the TabPanel they replace. */
 	.marketplace-hosting__tabs {
 		flex: 1 1 auto;
+		justify-content: flex-start;
+
+		[role='tab'] {
+			flex: 0 0 auto;
+		}
 	}
 }
 
@@ -607,10 +614,24 @@
 	align-self: flex-end;
 }
 
-/* The platform bar (tabs + concierge affordance) owns the baseline so it spans
-   the full row; the tab list itself draws none (see stats-navigation). */
-.marketplace-hosting__platform-bar .components-tab-panel__tabs {
-	border-block-end: none;
+/* Two-line tab (?tabline): the subtitle hangs from the NAME's left edge, not
+   the badge's, so the badge reads as a bullet for both lines; tight leading so
+   the pair reads as one label. */
+.marketplace-hosting__tab-line {
+	font-weight: 400;
+	margin-block-start: 2px;
+	line-height: 16px;
+	letter-spacing: 0;
+}
+
+/* Round brand badge inside the tier tab: same descriptor crop as the card
+   header, sized to the tab's text line. */
+.marketplace-hosting__tab-mark {
+	inline-size: 20px;
+	block-size: 20px;
+	object-fit: cover;
+	object-position: left;
+	flex-shrink: 0;
 }
 
 /* The round brand badge is the left cap of the descriptor lockups (the same
@@ -631,4 +652,9 @@
 	font-size: 24px;
 	font-weight: 600;
 	color: var( --dashboard__foreground-color-success );
+}
+
+/* Billing term switch in the rail: hug-width under the price. */
+.marketplace-hosting__term-switch {
+	margin-block-start: 4px;
 }

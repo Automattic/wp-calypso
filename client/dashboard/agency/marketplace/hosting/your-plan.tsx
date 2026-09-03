@@ -4,6 +4,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
+	ToggleControl,
 } from '@wordpress/components';
 import { sprintf, _n, __ } from '@wordpress/i18n';
 import { check } from '@wordpress/icons';
@@ -21,6 +22,8 @@ type YourPlanProps = {
 	ownedSites?: number;
 	currentPlan?: PressablePlan;
 	isReferralMode?: boolean;
+	/** When given, the rail owns the billing-term switch (under the price). */
+	onTermChange?: ( term: 'monthly' | 'yearly' ) => void;
 	onAddToCart: () => void;
 };
 
@@ -33,6 +36,7 @@ export default function YourPlan( {
 	ownedSites = 0,
 	currentPlan,
 	isReferralMode = false,
+	onTermChange,
 	onAddToCart,
 }: YourPlanProps ) {
 	const price = brand === 'wpcom' ? getTieredPrice( product, quantity, term, ownedSites ) : null;
@@ -101,7 +105,7 @@ export default function YourPlan( {
 	return (
 		<Card>
 			<CardHeader>
-				<SectionHeader level={ 3 } title={ __( 'Your plan' ) } />
+				<SectionHeader level={ 3 } title={ __( 'Currently selected' ) } />
 			</CardHeader>
 			<CardBody>
 				<VStack spacing={ 3 } justify="flex-start">
@@ -156,9 +160,19 @@ export default function YourPlan( {
 										__( 'Save %s' ),
 										formatUSD( price.actualCost - price.discountedCost )
 									) }
-									{ ' · ' }
-									{ term === 'yearly' ? __( 'billed yearly' ) : __( 'billed monthly' ) }
+									{ ! onTermChange && ' · ' }
+									{ ! onTermChange &&
+										( term === 'yearly' ? __( 'billed annually' ) : __( 'billed monthly' ) ) }
 								</Text>
+							) }
+							{ onTermChange && (
+								<ToggleControl
+									__nextHasNoMarginBottom
+									checked={ term === 'yearly' }
+									label={ __( 'Billed annually' ) }
+									onChange={ ( checked ) => onTermChange( checked ? 'yearly' : 'monthly' ) }
+									className="marketplace-hosting__term-switch"
+								/>
 							) }
 							{ brand === 'wpcom' && price && ownedSites > 0 && (
 								<Text variant="muted">
@@ -204,7 +218,7 @@ export default function YourPlan( {
 								<Icon icon={ check } className="marketplace-hosting__check" />
 								<Text variant="muted">
 									{ isReferralMode
-										? __( 'You earn commission when your client pays.' )
+										? __( 'Commission on every payment your client makes, paid out quarterly.' )
 										: __( 'Cancel anytime.' ) }
 								</Text>
 							</HStack>

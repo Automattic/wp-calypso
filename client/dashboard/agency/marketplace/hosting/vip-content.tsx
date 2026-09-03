@@ -19,7 +19,7 @@ import { Card, CardBody, CardDivider, CardHeader } from '../../../components/car
 import { SectionHeader } from '../../../components/section-header';
 import vipLogo from '../exclusive-offers/images/vip-descriptor.svg';
 import { CheckGrid, CheckList, Testimonials } from './content-sections';
-import { hostingBrands, VIP_CAPABILITIES, VIP_PITCH_CAPABILITIES } from './mock-data';
+import { brandBlurb, tabLineMark, VIP_CAPABILITIES, VIP_PITCH_CAPABILITIES } from './mock-data';
 
 const CLIENT_BRANDS = [
 	{ name: 'Salesforce', logo: salesforceLogo },
@@ -39,9 +39,9 @@ function VipPitchCard() {
 					title={ __(
 						'Deliver unmatched performance with the highest security standards on our enterprise platform'
 					) }
-					description={ hostingBrands.find( ( brand ) => brand.key === 'vip' )?.description }
+					description={ brandBlurb( 'vip' ) }
+					decoration={ tabLineMark( vipLogo ) }
 					level={ 3 }
-					decoration={ <img src={ vipLogo } alt="" className="marketplace-hosting__brand-mark" /> }
 				/>
 			</CardHeader>
 			<CardBody>

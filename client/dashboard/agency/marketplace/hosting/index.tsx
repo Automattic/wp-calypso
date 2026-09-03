@@ -3,13 +3,14 @@ import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
 	Dropdown,
+	ExternalLink,
 	Icon,
 	Modal,
-	TabPanel,
 	ToggleControl,
 	__experimentalDivider as Divider,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	privateApis,
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
@@ -29,6 +30,7 @@ import {
 	tool,
 } from '@wordpress/icons';
 import { SVG, Path } from '@wordpress/primitives';
+import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { useState } from 'react';
 import referralStep1 from 'calypso/assets/images/a8c-for-agencies/referral-step-1.jpg';
 import referralStep2 from 'calypso/assets/images/a8c-for-agencies/referral-step-2.jpg';
@@ -37,6 +39,7 @@ import referralStep4 from 'calypso/assets/images/a8c-for-agencies/referral-step-
 import referralStep5 from 'calypso/assets/images/a8c-for-agencies/referral-step-5.jpg';
 import { Callout } from '../../../components/callout';
 import { Card, CardBody } from '../../../components/card';
+import { Notice } from '../../../components/notice';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { DomainUpsellIllustraction } from '../../../sites/overview-domain-upsell-card/upsell-illustration';
@@ -56,6 +59,7 @@ import HostingConcierge from './hosting-concierge';
 import {
 	hostingBrands,
 	formatUSD,
+	HOSTING_REFERRAL_COMMISSION_RATE,
 	getTieredPrice,
 	mockOwnership,
 	pressablePlans,
@@ -70,6 +74,21 @@ import type { AgencyProduct } from '@automattic/api-core';
 import type { JSX } from 'react';
 
 import './style.scss';
+
+const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
+	'@wordpress/components'
+);
+
+// Same private Tabs the Performance and Plugins screens use; unlike TabPanel it
+// renders arbitrary tab content, so the tier label can carry the brand mark.
+const { Tabs } = unlock( privateApis );
+
+const TAB_MARKS: Record< HostingBrand[ 'key' ], string > = {
+	wpcom: wpcomDescriptor,
+	pressable: pressableDescriptor,
+	vip: vipDescriptor,
+};
 
 // Hidden while the design is iterated on.
 const SHOW_MIGRATION_OFFER = false;
@@ -139,6 +158,8 @@ interface CartItem {
 	family: 'wpcom-hosting' | 'pressable-hosting';
 	label: string;
 	total: number | null;
+	/** Estimated referral commission; only set when the item was added in referral mode. */
+	commission?: number;
 }
 
 type GuideChoice = {
@@ -329,7 +350,7 @@ function BrandCTA( {
 		<Button variant={ variant } __next40pxDefaultSize onClick={ () => onConfigure( brandKey ) }>
 			{ sprintf(
 				/* translators: %s: hosting brand name */
-				__( 'Configure %s' ),
+				__( 'Purchase %s' ),
 				name
 			) }
 		</Button>
@@ -691,16 +712,19 @@ function ScheduleDemoBanner() {
 
 function CartDropdown( {
 	items,
+	term,
 	onRemove,
 	open,
 	onToggle,
 }: {
 	items: CartItem[];
+	term: 'monthly' | 'yearly';
 	onRemove: ( id: string ) => void;
 	open: boolean;
 	onToggle: ( willOpen: boolean ) => void;
 } ) {
 	const total = items.reduce( ( sum, item ) => sum + ( item.total ?? 0 ), 0 );
+	const totalCommission = items.reduce( ( sum, item ) => sum + ( item.commission ?? 0 ), 0 );
 
 	return (
 		<Dropdown
@@ -736,9 +760,23 @@ function CartDropdown( {
 					{ items.length > 0 && (
 						<>
 							<HStack justify="space-between">
-								<Text weight={ 600 }>{ __( 'Total per year' ) }</Text>
+								<Text weight={ 600 }>
+									{ term === 'yearly' ? __( 'Total per year' ) : __( 'Total per month' ) }
+								</Text>
 								<Text weight={ 600 }>{ formatUSD( total ) }</Text>
 							</HStack>
+							{ totalCommission > 0 && (
+								<HStack justify="space-between" className="marketplace-hosting__cart-commission">
+									<Text variant="muted">{ __( 'Your estimated commission:' ) }</Text>
+									<Text variant="muted">
+										{ sprintf(
+											/* translators: %s: formatted commission amount, e.g. US$60 */
+											__( '%s/yr' ),
+											formatUSD( totalCommission )
+										) }
+									</Text>
+								</HStack>
+							) }
 							<Button variant="primary" __next40pxDefaultSize>
 								{ __( 'Proceed to checkout' ) }
 							</Button>
@@ -757,12 +795,22 @@ export default function MarketplaceHosting() {
 		return tab === 'pressable' || tab === 'vip' ? tab : 'wpcom';
 	} );
 	const [ term, setTerm ] = useState< 'monthly' | 'yearly' >( 'yearly' );
-	const [ isReferralMode, setIsReferralMode ] = useState( false );
+	// Prototype-only: `?refer` opens the page in referral mode with the tour
+	// already seen, so screenshots can show the mode without the modal.
+	const startInReferral = new URLSearchParams( window.location.search ).has( 'refer' );
+	const [ isReferralMode, setIsReferralMode ] = useState( startInReferral );
 	const [ isGuideOpen, setIsGuideOpen ] = useState( false );
-	const [ hasSeenGuide, setHasSeenGuide ] = useState( false );
+	// Proposal for Jeff's "visual treatment for referral mode": a persistent
+	// info notice while the toggle is on (Main has nothing). `?referralnotice`.
+	const showReferralNotice = new URLSearchParams( window.location.search ).has( 'referralnotice' );
+	// Dismissable for the current stint in referral mode only: turning the mode
+	// back on brings the notice back, so the cue can't be lost for good.
+	const [ isNoticeDismissed, setIsNoticeDismissed ] = useState( false );
+	const [ hasSeenGuide, setHasSeenGuide ] = useState( startInReferral );
 
 	const handleReferralToggle = ( checked: boolean ) => {
 		setIsReferralMode( checked );
+		setIsNoticeDismissed( false );
 		if ( checked && ! hasSeenGuide ) {
 			setHasSeenGuide( true );
 			setIsGuideOpen( true );
@@ -784,6 +832,26 @@ export default function MarketplaceHosting() {
 		new URLSearchParams( window.location.search ).has( 'guide' )
 	);
 	const [ isConciergeOpen, setIsConciergeOpen ] = useState( false );
+	// Main's layout, 1:1 (Simon, Sep 3): tier + subtitle on the tabs, the brand
+	// mark on the purchase card. `?nolines` shows the one-line tabs for comparison.
+	const showTabLines = ! new URLSearchParams( window.location.search ).has( 'nolines' );
+	// Out of v1 scope (Jeff, i2) but kept for a later exploration: `?assistant`
+	// brings the concierge entry point back.
+	const showAssistant = new URLSearchParams( window.location.search ).has( 'assistant' );
+	// Billing term placement (Sep 3): default = the tab row's right end, where
+	// the concierge pill sat (same row-above-the-grid rule as Products);
+	// `?termrail` = under the price in the rail; `?termtop` = the page header.
+	const termParams = new URLSearchParams( window.location.search );
+	// The catalog has no annual discount, so this is a cadence switch and is
+	// labelled as one. Default = the tab row's right end; `?termrail` /
+	// `?termtop` keep the other placements for comparison.
+	let termPlacement: 'tabs' | 'rail' | 'header' = 'tabs';
+	if ( termParams.has( 'termtop' ) ) {
+		termPlacement = 'header';
+	} else if ( termParams.has( 'termrail' ) ) {
+		termPlacement = 'rail';
+	}
+	const termInRail = termPlacement === 'rail';
 
 	// Prototype-only: `?existing` simulates returning-customer data that will
 	// come from license and usage queries ( see mockOwnership ).
@@ -829,10 +897,14 @@ export default function MarketplaceHosting() {
 	const [ cartItems, setCartItems ] = useState< CartItem[] >( [] );
 	const [ isCartOpen, setIsCartOpen ] = useState( false );
 
+	// Referral items carry the estimated commission Main shows in its mini cart.
 	const addToCart = ( item: CartItem ) => {
+		const withCommission: CartItem = isReferralMode
+			? { ...item, commission: ( item.total ?? 0 ) * HOSTING_REFERRAL_COMMISSION_RATE }
+			: item;
 		setCartItems( ( current ) => [
 			...current.filter( ( existing ) => existing.family !== item.family ),
-			item,
+			withCommission,
 		] );
 		setIsCartOpen( true );
 	};
@@ -851,18 +923,16 @@ export default function MarketplaceHosting() {
 					) }
 					actions={
 						<div className="marketplace-hosting__header-actions">
-							<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
-								<Text variant="muted">{ __( 'Billed:' ) }</Text>
-								<Text variant={ term === 'monthly' ? undefined : 'muted' }>
-									{ __( 'Monthly' ) }
-								</Text>
+							{ termPlacement === 'header' && (
 								<ToggleControl
 									__nextHasNoMarginBottom
 									checked={ term === 'yearly' }
-									label={ __( 'Yearly' ) }
+									/* The saving goes in the parentheses the day pricing has one: today every
+	   yearly price is exactly twelve months, so the label stays honest. */
+									label={ __( 'Billed annually' ) }
 									onChange={ ( checked ) => setTerm( checked ? 'yearly' : 'monthly' ) }
 								/>
-							</HStack>
+							) }
 							<HStack spacing={ 1 } justify="flex-start" expanded={ false }>
 								<ToggleControl
 									__nextHasNoMarginBottom
@@ -879,6 +949,7 @@ export default function MarketplaceHosting() {
 							</HStack>
 							<CartDropdown
 								items={ cartItems }
+								term={ term }
 								onRemove={ removeFromCart }
 								open={ isCartOpen }
 								onToggle={ setIsCartOpen }
@@ -889,6 +960,22 @@ export default function MarketplaceHosting() {
 			}
 		>
 			{ isGuideOpen && <ReferralGuide onClose={ () => setIsGuideOpen( false ) } /> }
+			{ isReferralMode && showReferralNotice && ! isNoticeDismissed && (
+				<Notice
+					variant="info"
+					title={ __( 'Referral mode is on' ) }
+					onClose={ () => setIsNoticeDismissed( true ) }
+					actions={
+						<ExternalLink href="https://agencieshelp.automattic.com/knowledge-base/referring-products-to-clients/">
+							{ __( 'How referrals work' ) }
+						</ExternalLink>
+					}
+				>
+					{ __(
+						'Your client is billed directly at the retail price. You earn commission on every payment they make, paid out quarterly.'
+					) }
+				</Notice>
+			) }
 			{ SHOW_MIGRATION_OFFER && <MigrationOffer /> }
 			{ isChooserOpen && (
 				<HostingGuide
@@ -942,25 +1029,58 @@ export default function MarketplaceHosting() {
 				/>
 			) }
 			<div className="marketplace-hosting__platform-bar">
-				<TabPanel
-					key={ selectedBrand }
-					className="marketplace-hosting__tabs"
-					tabs={ hostingBrands.map( ( brand ) => ( { name: brand.key, title: brand.name } ) ) }
-					initialTabName={ selectedBrand }
-					onSelect={ ( tabName ) => setSelectedBrand( tabName as HostingBrand[ 'key' ] ) }
+				<Tabs
+					selectedTabId={ selectedBrand }
+					onSelect={ ( tabId: string | null | undefined ) =>
+						tabId && setSelectedBrand( tabId as HostingBrand[ 'key' ] )
+					}
 				>
-					{ () => null }
-				</TabPanel>
-				<Button
-					variant="tertiary"
-					size="compact"
-					icon={ bigSkyIcon }
-					className="marketplace-hosting__choose-pill"
-					onClick={ () => setIsConciergeOpen( true ) }
-					aria-expanded={ isConciergeOpen }
-				>
-					{ __( 'Not sure? Help me choose' ) }
-				</Button>
+					<Tabs.TabList className="marketplace-hosting__tabs">
+						{ hostingBrands.map( ( brand ) => (
+							<Tabs.Tab key={ brand.key } tabId={ brand.key }>
+								<VStack spacing={ 0 } alignment="flex-start">
+									<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
+										{ ! showTabLines && (
+											<img
+												src={ TAB_MARKS[ brand.key ] }
+												alt=""
+												className="marketplace-hosting__tab-mark"
+											/>
+										) }
+										<span>{ brand.tier }</span>
+									</HStack>
+									{ showTabLines && (
+										<Text variant="muted" size={ 12 } className="marketplace-hosting__tab-line">
+											{ brand.tabSubtitle }
+										</Text>
+									) }
+								</VStack>
+							</Tabs.Tab>
+						) ) }
+					</Tabs.TabList>
+				</Tabs>
+				{ showAssistant && (
+					<Button
+						variant="tertiary"
+						size="compact"
+						icon={ bigSkyIcon }
+						className="marketplace-hosting__choose-pill"
+						onClick={ () => setIsConciergeOpen( true ) }
+						aria-expanded={ isConciergeOpen }
+					>
+						{ __( 'Not sure? Help me choose' ) }
+					</Button>
+				) }
+				{ termPlacement === 'tabs' && (
+					<ToggleControl
+						__nextHasNoMarginBottom
+						checked={ term === 'yearly' }
+						/* The saving goes in the parentheses the day pricing has one: today every
+	   yearly price is exactly twelve months, so the label stays honest. */
+						label={ __( 'Billed annually' ) }
+						onChange={ ( checked ) => setTerm( checked ? 'yearly' : 'monthly' ) }
+					/>
+				) }
 			</div>
 			{ selectedBrand === 'wpcom' && (
 				<div className="marketplace-hosting__layout">
@@ -991,6 +1111,7 @@ export default function MarketplaceHosting() {
 								quantity={ effectiveQuantity }
 								ownedSites={ effectiveOwnedSites }
 								isReferralMode={ isReferralMode }
+								onTermChange={ termInRail ? setTerm : undefined }
 								onAddToCart={ () =>
 									addToCart( {
 										id: 'wpcom-hosting',
@@ -1042,6 +1163,7 @@ export default function MarketplaceHosting() {
 								plan={ pressablePlan }
 								currentPlan={ effectivePressableCurrentPlan }
 								isReferralMode={ isReferralMode }
+								onTermChange={ termInRail ? setTerm : undefined }
 								onAddToCart={ () =>
 									addToCart( {
 										id: 'pressable-hosting',

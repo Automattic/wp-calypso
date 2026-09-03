@@ -44,3 +44,9 @@
 	// Overview
 	--dashboard-overview__divider-color: #{$gray-100};
 }
+
+/* TEMP — local only, do not commit: hide the dev environment badge for
+   screenshots. Undo with: git checkout -- client/dashboard/app-a4a/style.scss */
+.environment-badge {
+	display: none;
+}

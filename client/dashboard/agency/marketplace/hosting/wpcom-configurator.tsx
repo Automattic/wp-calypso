@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/ui';
 import {
 	__experimentalNumberControl as NumberControl,
 	__experimentalHStack as HStack,
@@ -7,6 +6,7 @@ import {
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import { sprintf, _n, __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useState } from 'react';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
@@ -17,7 +17,8 @@ import {
 	getNextDiscountNudge,
 	getTieredPrice,
 	getVolumeTiers,
-	hostingBrands,
+	brandBlurb,
+	tabLineMark,
 	wpcomHosting,
 } from './mock-data';
 import type { HostingProduct } from './mock-data';
@@ -59,11 +60,9 @@ export default function WpcomConfigurator( {
 				<SectionHeader
 					className="marketplace-hosting__card-header"
 					level={ 3 }
-					title={ __( 'Configure WordPress.com' ) }
-					description={ hostingBrands.find( ( brand ) => brand.key === 'wpcom' )?.description }
-					decoration={
-						<img src={ wpcomDescriptor } alt="" className="marketplace-hosting__brand-mark" />
-					}
+					title={ __( 'Purchase WordPress.com' ) }
+					description={ brandBlurb( 'wpcom' ) }
+					decoration={ tabLineMark( wpcomDescriptor ) }
 				/>
 			</CardHeader>
 			<CardBody>
@@ -90,7 +89,7 @@ export default function WpcomConfigurator( {
 						{ isReferralMode && (
 							<Text variant="muted">
 								{ __(
-									'Refer a single site to your client. They’re billed directly at the standard rate, and you earn commission when they pay.'
+									'Refer a single site to your client. They’re billed directly at the standard rate, and you earn commission on every payment, paid out quarterly.'
 								) }
 							</Text>
 						) }
@@ -138,7 +137,7 @@ export default function WpcomConfigurator( {
 											<Text variant="muted" className="marketplace-hosting__price-strikethrough">
 												{ formatUSD( price.basePerUnit ) }
 											</Text>
-											<Badge intent="success">
+											<Badge intent="stable">
 												{ sprintf(
 													/* translators: %d: discount percentage */ __( '%d%% off' ),
 													Math.round( Math.max( currentDiscount, 0 ) * 100 )

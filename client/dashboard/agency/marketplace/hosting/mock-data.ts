@@ -1,3 +1,4 @@
+import { createElement } from 'react';
 /**
  * Prototype fallbacks and plan specs. Real prices (WordPress.com tiers and
  * Pressable term prices) come from the live `/agency/products` endpoint via
@@ -25,6 +26,12 @@ export interface HostingProduct {
 export interface HostingBrand {
 	key: 'wpcom' | 'pressable' | 'vip';
 	name: string;
+	/** Guidance label used on the selector tabs (mirrors Main's hero tabs). */
+	tier: string;
+	/** Main's hero-tab subtitle, for the two-line tab variant (?tabline). */
+	tabSubtitle: string;
+	/** Main's hero-tab subtitle, verbatim, plus one concrete sentence; shown beside the logo in the purchase card. */
+	tierDescription: string;
 	description: string;
 	priceNote: string;
 	product?: HostingProduct;
@@ -261,6 +268,10 @@ export const hostingBrands: HostingBrand[] = [
 	{
 		key: 'wpcom',
 		name: 'WordPress.com',
+		tier: 'Standard Agency Hosting',
+		tabSubtitle: 'Optimized and hassle-free hosting',
+		tierDescription:
+			'Optimized and hassle-free hosting. Managed WordPress priced per site, with volume discounts, staging, backups, and 24/7 expert support.',
 		description: 'Per-site managed WordPress with staging, backups, and 24/7 expert support.',
 		priceNote: 'From US$300 per site, per year',
 		product: wpcomHosting,
@@ -268,16 +279,50 @@ export const hostingBrands: HostingBrand[] = [
 	{
 		key: 'pressable',
 		name: 'Pressable',
+		tier: 'Premier Agency Hosting',
+		tabSubtitle: 'Best for large-scale businesses',
+		tierDescription:
+			'Best for large-scale businesses. One pooled plan shares installs, traffic, and storage across your whole portfolio.',
 		description: 'Pooled plans that share traffic and storage across your client portfolio.',
 		priceNote: 'From US$250 per year',
 	},
 	{
 		key: 'vip',
 		name: 'WordPress VIP',
+		tier: 'Enterprise',
+		tabSubtitle: 'WordPress for enterprise-level demands',
+		tierDescription:
+			'WordPress for enterprise-level demands. Media, government, and mission-critical sites, with guided onboarding and dedicated support.',
 		description: 'Enterprise-grade security, scale, and guided onboarding for high-stakes clients.',
 		priceNote: 'Custom pricing',
 	},
 ];
+
+/**
+ * The purchase-card blurb for a brand. With `?tabline` (Main's subtitle shown
+ * under each tab) the blurb drops that sentence so it isn't said twice.
+ */
+export function brandBlurb( key: HostingBrand[ 'key' ] ): string {
+	const brand = hostingBrands.find( ( b ) => b.key === key );
+	if ( ! brand ) {
+		return '';
+	}
+	const tabline = ! new URLSearchParams( window.location.search ).has( 'nolines' );
+	return tabline
+		? brand.tierDescription.replace( brand.tabSubtitle + '. ', '' )
+		: brand.tierDescription;
+}
+
+/**
+ * `?tabline` variant (Main's layout): the tabs carry the tier + subtitle and the
+ * brand mark moves back down to the purchase-card header.
+ */
+export function tabLineMark( src: string ) {
+	if ( new URLSearchParams( window.location.search ).has( 'nolines' ) ) {
+		return undefined;
+	}
+	return createElement( 'img', { src, alt: '', className: 'marketplace-hosting__brand-mark' } );
+}
 
 export interface Testimonial {
 	quote: string;
@@ -457,6 +502,9 @@ export function getNextDiscountNudge(
 		discountPercent: ( current.basePerUnit - next.price ) / current.basePerUnit,
 	};
 }
+
+/** Referral commission on hosting, matching getProductCommissionPercentage. */
+export const HOSTING_REFERRAL_COMMISSION_RATE = 0.2;
 
 export function formatUSD( amount: number ): string {
 	return `US$${ amount.toLocaleString( 'en-US', {

@@ -13,7 +13,8 @@ import { Stat } from '../../../components/stat';
 import pressableDescriptor from '../exclusive-offers/images/pressable-descriptor.svg';
 import { CheckGrid } from './content-sections';
 import {
-	hostingBrands,
+	brandBlurb,
+	tabLineMark,
 	pressablePlans,
 	PRESSABLE_OVERAGES,
 	formatUSD,
@@ -251,13 +252,9 @@ export default function PressableContent( {
 					<SectionHeader
 						className="marketplace-hosting__card-header"
 						level={ 3 }
-						title={ currentPlan ? __( 'Upgrade your plan' ) : __( 'Configure Pressable' ) }
-						description={
-							hostingBrands.find( ( brand ) => brand.key === 'pressable' )?.description
-						}
-						decoration={
-							<img src={ pressableDescriptor } alt="" className="marketplace-hosting__brand-mark" />
-						}
+						title={ currentPlan ? __( 'Upgrade your plan' ) : __( 'Purchase Pressable' ) }
+						description={ brandBlurb( 'pressable' ) }
+						decoration={ tabLineMark( pressableDescriptor ) }
 					/>
 				</CardHeader>
 				<CardBody>

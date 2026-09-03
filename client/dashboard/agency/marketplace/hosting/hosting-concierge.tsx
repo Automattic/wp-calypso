@@ -188,7 +188,7 @@ function RecommendationCard( {
 							>
 								{ billing === 'refer'
 									? __( 'Add to referral cart' )
-									: __( 'Configure and add to cart' ) }
+									: __( 'Purchase and add to cart' ) }
 							</Button>
 							<Text variant="muted" size={ 12 }>
 								{ billing === 'refer'
