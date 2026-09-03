@@ -195,15 +195,18 @@ function ReceiptDetails( { receipt }: { receipt: Receipt } ) {
 
 export function BillingDetailsField( { receipt }: { receipt: Receipt } ) {
 	const [ billingDetailsText, setBillingDetailsText ] = useState(
-		receipt.cc_num !== 'XXXX' ? `${ receipt.cc_name }\n${ receipt.cc_email }` : ''
+		receipt.cc_num !== 'XXXX'
+			? [ receipt.cc_name, receipt.cc_email ].filter( Boolean ).join( '\n' )
+			: ''
 	);
-
-	if ( receipt.cc_num === 'XXXX' || ( ! receipt.cc_name && ! receipt.cc_email ) ) {
-		return null;
-	}
+	const isEmpty = billingDetailsText.trim().length === 0;
 
 	return (
-		<VStack spacing={ 1 } alignment="flex-start" className="receipt-billing-details">
+		<VStack
+			spacing={ 1 }
+			alignment="flex-start"
+			className={ clsx( 'receipt-billing-details', { 'is-empty': isEmpty } ) }
+		>
 			<Text upperCase variant="muted" size={ 11 }>
 				{ __( 'Billing details' ) }
 			</Text>
@@ -216,13 +219,7 @@ export function BillingDetailsField( { receipt }: { receipt: Receipt } ) {
 				__nextHasNoMarginBottom
 			/>
 			{ /* A printed textarea clips its overflow, so mirror the text into a print-only element. */ }
-			<div
-				className={ clsx( 'receipt-billing-details-printable', {
-					'is-empty': billingDetailsText.trim().length === 0,
-				} ) }
-			>
-				{ billingDetailsText }
-			</div>
+			<div className="receipt-billing-details-printable">{ billingDetailsText }</div>
 			<Text variant="muted" size={ 11 } className="receipt-billing-details-description">
 				{ __(
 					'Use this field to add your billing information (eg. business address) before printing.'
