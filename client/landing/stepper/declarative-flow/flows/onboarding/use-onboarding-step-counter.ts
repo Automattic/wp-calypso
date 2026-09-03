@@ -2,7 +2,7 @@ import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
+import { useQuery } from '../../../hooks/use-query';
 import { skipsPlansStep } from '../../../utils/preselected-plan';
 import {
 	getOnboardingStepperPosition,
@@ -28,6 +28,7 @@ export function useOnboardingStepCounter(
 	slug: string
 ): { current: number; total: number } | null {
 	const isMobileViewport = useViewportMatch( 'small', '<' );
+	const query = useQuery();
 	const planCartItem = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 		[]
@@ -42,8 +43,5 @@ export function useOnboardingStepCounter(
 		return null;
 	}
 
-	return getOnboardingStepperPosition(
-		group,
-		skipsPlansStep( getCurrentQueryParams(), planCartItem )
-	);
+	return getOnboardingStepperPosition( group, skipsPlansStep( query, planCartItem ) );
 }
