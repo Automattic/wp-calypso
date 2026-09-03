@@ -349,6 +349,33 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'marks a different post that happens to share the same post ID', () => {
+		const requestMarkAsSeen = jest.fn();
+		const first = {
+			...baseProps,
+			isSeenEnabled: true,
+			requestMarkAsSeen,
+			requestMarkAsSeenBlog: jest.fn(),
+			post: { ...feedPost, is_seen: false, ID: 42, global_ID: 'post-a' },
+			feed: { ID: 1 },
+		};
+		const instance = new FullPostView( first );
+
+		runAttemptToSendPageView( instance );
+		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
+
+		// A different post that reuses ID 42 — post IDs are only unique per site.
+		// The guard has to notice this is a new post and mark it too.
+		instance.props = {
+			...first,
+			post: { ...feedPost, is_seen: false, ID: 42, global_ID: 'post-b' },
+			feed: { ID: 2 },
+		};
+		instance.componentDidUpdate( first );
+
+		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 2 );
+	} );
+
 	it( 'does not re-mark a post the reader explicitly marked as unseen', () => {
 		const requestMarkAsSeen = jest.fn();
 		const enabledProps = {

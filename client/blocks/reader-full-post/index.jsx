@@ -140,12 +140,17 @@ export class FullPostView extends Component {
 		const hasPostChanged = prevProps?.post?.ID !== this.props?.post?.ID;
 		const hasFeedChanged = prevProps?.feed?.ID !== this.props?.feed?.ID;
 		const hasSiteChanged = prevProps?.site?.ID !== this.props?.site?.ID;
+		// `post.ID` is only unique within a site, so consecutive posts from
+		// different sites can share one. Key the automatic-seen guard on `global_ID`
+		// instead — the identity the seen mutation itself sends — so a genuinely
+		// different post still gets its own write.
+		const hasViewedPostChanged = prevProps?.post?.global_ID !== this.props?.post?.global_ID;
 
 		// Send page view if applicable
 		if ( hasPostChanged || hasFeedChanged || hasSiteChanged ) {
 			this.hasSentPageView = false;
 			this.hasLoaded = false;
-			if ( hasPostChanged ) {
+			if ( hasViewedPostChanged ) {
 				this.hasAutoMarkedAsSeen = false;
 			}
 			this.attemptToSendPageView();
