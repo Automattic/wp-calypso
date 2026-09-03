@@ -247,7 +247,7 @@ export function getBlockingMessages(
 
 interface ExternalProps {
 	context: EligibilityContext | null;
-	holds: string[];
+	holds: EligibilityHold[];
 	isMarketplace?: boolean;
 	isPlaceholder: boolean;
 }
@@ -259,7 +259,7 @@ type Props = ExternalProps & LocalizeProps;
 	Because TRANSFER_ALREADY_EXISTS is present and 'blocking' it would show an "Upload in progress" notice even when there isn't one.
 	In this scenario we treat the blocking hold as invalid so the caller renders the upgrade prompt instead.
 */
-export function getValidBlockingHold( holds: string[] ): HardBlockingHold | undefined {
+export function getValidBlockingHold( holds: EligibilityHold[] ): HardBlockingHold | undefined {
 	if ( isAtomicSiteWithoutBusinessPlan( holds ) ) {
 		return undefined;
 	}
@@ -368,16 +368,17 @@ function getCardHeading(
 	}
 }
 
-function isDisplayableHoldType( hold: string ): hold is DisplayableHold {
+function isDisplayableHoldType( hold: EligibilityHold ): hold is DisplayableHold {
 	return displayableHolds.some( ( displayableHold ) => displayableHold === hold );
 }
 
-export const hasDisplayableHold = ( holds: string[] ) => holds.some( isDisplayableHoldType );
+export const hasDisplayableHold = ( holds: EligibilityHold[] ) =>
+	holds.some( isDisplayableHoldType );
 
-function isHardBlockingHoldType( hold: string ): hold is HardBlockingHold {
+function isHardBlockingHoldType( hold: EligibilityHold ): hold is HardBlockingHold {
 	return hardBlockingHolds.some( ( blockingHold ) => blockingHold === hold );
 }
 
-export const hasBlockingHold = ( holds: string[] ) => holds.some( isHardBlockingHoldType );
+export const hasBlockingHold = ( holds: EligibilityHold[] ) => holds.some( isHardBlockingHoldType );
 
 export default localize( HoldList );

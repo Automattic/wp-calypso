@@ -303,11 +303,11 @@ export const EligibilityWarnings = ( {
 };
 
 function getSiteIsEligibleMessage(
-	context: string | null,
+	context: EligibilityContext | null,
 	translate: LocalizeProps[ 'translate' ]
 ) {
 	switch ( context ) {
-		case 'plugins':
+		case 'plugins-upload':
 		case 'themes':
 			return translate( 'This site is eligible to install plugins and upload themes.' );
 		case 'hosting':
