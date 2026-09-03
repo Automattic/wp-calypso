@@ -44,15 +44,25 @@
 		}
 	}
 
-	// Block padding only. It draws nothing, so the rail still measures the 20px
-	// of the spec, but it lifts the pointer target to 28px. Inline padding is
-	// zero on purpose: the separator owns the horizontal spacing.
+	// The trigger renders a @wordpress/ui Button, which is sized for a button
+	// and not for a word in a top bar. Everything it brings that adds width has
+	// to go, or short names get padded out to nothing: `min-width` is
+	// `4ch + 2 * padding-inline`, which left "Plan" carrying about 22px of dead
+	// space to its right. `width: 100%` and the 8px `gap` between indicator and
+	// title come from the stepper's own trigger and go for the same reason.
+	//
+	// Block padding is the one thing kept. It draws nothing, so the rail still
+	// measures the 20px of the spec, but it is what makes the 20px line a 28px
+	// pointer target.
 	.onboarding-progress-trigger {
 		display: flex;
 		align-items: center;
+		gap: 0;
+		width: auto;
+		min-width: 0;
+		min-height: 0;
 		padding-block: var( --wpds-dimension-padding-xs );
 		padding-inline: 0;
-		min-height: 0;
 	}
 
 	// No dot is drawn in this treatment, but the indicator still carries the
