@@ -165,15 +165,14 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	// move together through it, and it is the same answer Stats itself gives when deciding
 	// whether to show them.
 	//
-	// The gate answers from purchases for a self-hosted Jetpack site, which the host already waits
-	// for below, and from the site's features for Simple and Atomic. Those have to be in before
-	// its answer means anything: it reports "not gated" while they are still loading, which is the
-	// safe default for an upsell and the wrong one for an invitation. Nothing loads them in a
-	// Jetpack site's wp-admin (`stats-main` skips `QuerySiteFeatures` there), so an Atomic site
-	// is never invited from wp-admin - it fails closed, and spends no request finding out.
+	// The features have to be in before that answer means anything: `shouldGateStats` reports
+	// "not gated" while they are still loading, which is the safe default for an upsell and the
+	// wrong one for an invitation. Nothing loads them in a Jetpack site's wp-admin
+	// (`stats-main` skips `QuerySiteFeatures` there), so an Atomic site is never invited from
+	// wp-admin - it fails closed, and spends no request finding out.
 	const hasCommercialStats = useSelector(
 		( state ) =>
-			( isSiteJetpackNotAtomic || !! getSiteFeatures( state, siteId ) ) &&
+			!! getSiteFeatures( state, siteId ) &&
 			! shouldGateStats( state, siteId, STATS_FEATURE_UTM_STATS )
 	);
 

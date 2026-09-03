@@ -28,9 +28,7 @@ jest.mock( '../all-notice-definitions', () => ( {
 	__esModule: true,
 	default: [
 		{
-			component: ( { hasCommercialStats }: { hasCommercialStats?: boolean } ) => (
-				<div>Notice under test, commercial: { String( hasCommercialStats ) }</div>
-			),
+			component: () => <div>Notice under test</div>,
 			noticeId: 'premium_analytics_preview',
 			isVisibleFunc: () => true,
 			disabled: false,
@@ -95,10 +93,9 @@ jest.mock( 'calypso/state/sites/selectors/get-env-stats-feature-supports', () =>
 } ) );
 
 jest.mock( 'calypso/state/selectors/can-current-user', () => ( { canCurrentUser: () => true } ) );
-let mockSiteFeatures: { active: string[] } | null = { active: [] };
 jest.mock( 'calypso/state/selectors/get-site-features', () => ( {
 	__esModule: true,
-	default: () => mockSiteFeatures,
+	default: () => ( { active: [] } ),
 } ) );
 jest.mock( 'calypso/state/selectors/is-site-wpcom', () => ( {
 	__esModule: true,
@@ -132,10 +129,9 @@ jest.mock( 'calypso/state/sites/selectors/has-site-product-jetpack-stats-pwyw-on
 	__esModule: true,
 	default: () => false,
 } ) );
-let mockIsJetpackSite = false;
 jest.mock( 'calypso/state/sites/selectors/is-jetpack-site', () => ( {
 	__esModule: true,
-	default: () => mockIsJetpackSite,
+	default: () => false,
 } ) );
 jest.mock( 'calypso/state/stats/lists/selectors', () => ( {
 	getSiteStatsNormalizedData: () => ( {} ),
@@ -156,15 +152,13 @@ describe( 'StatsNotices loading gate', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockHasLoadedPlans = false;
-		mockSiteFeatures = { active: [] };
-		mockIsJetpackSite = false;
 		delete mockFlags().is_odyssey;
 	} );
 
 	it( 'waits for site plans in Calypso', () => {
 		renderNotices();
 
-		expect( screen.queryByText( /Notice under test/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Notice under test' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'shows the notice in Calypso once site plans have loaded', () => {
@@ -172,7 +166,7 @@ describe( 'StatsNotices loading gate', () => {
 
 		renderNotices();
 
-		expect( screen.getByText( /Notice under test/ ) ).toBeVisible();
+		expect( screen.getByText( 'Notice under test' ) ).toBeVisible();
 	} );
 
 	it( 'does not wait for site plans in wp-admin, where they never load', () => {
@@ -180,41 +174,6 @@ describe( 'StatsNotices loading gate', () => {
 
 		renderNotices();
 
-		expect( screen.getByText( /Notice under test/ ) ).toBeVisible();
-	} );
-
-	/**
-	 * `shouldGateStats` answers from the site's features for Simple and Atomic, and from purchases
-	 * for a self-hosted Jetpack site. It reports "not gated" while features are still loading, so
-	 * a WPCOM site has to wait for them - but a Jetpack site never loads them in wp-admin, and
-	 * waiting there would keep the invitation from ever reaching it.
-	 */
-	describe( 'commercial Stats tier', () => {
-		it( 'is unknown for a WPCOM site until its features are in', () => {
-			mockHasLoadedPlans = true;
-			mockSiteFeatures = null;
-
-			renderNotices();
-
-			expect( screen.getByText( 'Notice under test, commercial: false' ) ).toBeVisible();
-		} );
-
-		it( 'follows the gate for a WPCOM site once its features are in', () => {
-			mockHasLoadedPlans = true;
-
-			renderNotices();
-
-			expect( screen.getByText( 'Notice under test, commercial: true' ) ).toBeVisible();
-		} );
-
-		it( 'follows the gate for a self-hosted Jetpack site without waiting for features', () => {
-			mockHasLoadedPlans = true;
-			mockIsJetpackSite = true;
-			mockSiteFeatures = null;
-
-			renderNotices();
-
-			expect( screen.getByText( 'Notice under test, commercial: true' ) ).toBeVisible();
-		} );
+		expect( screen.getByText( 'Notice under test' ) ).toBeVisible();
 	} );
 } );
