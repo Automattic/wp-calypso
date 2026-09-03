@@ -5,22 +5,11 @@ import { envVariables } from '../..';
  * How long to wait for a response action to settle on the single response page.
  *
  * Jetpack caps the save at 30 seconds and keeps the "Actions" toggle disabled
- * until it resolves, so this matches that cap. It deliberately stops short of
- * the further 10 seconds Jetpack may spend refreshing the record cache: a save
- * that slow is already a failure, and a tighter bound keeps a wedged run failing
- * here — where the error names the toggle — instead of as a bare test timeout.
+ * until it resolves, so this matches that cap.
  *
  * @see https://github.com/Automattic/jetpack/blob/trunk/projects/packages/forms/routes/responses/actions.tsx
  */
 const RESPONSE_ACTION_TIMEOUT = 30 * 1000;
-
-/**
- * How long to wait for the actions dropdown itself to open or close.
- *
- * The menu opens and closes in a single render, so this only has to absorb
- * scheduling jitter — it must not soak up a whole request's worth of time.
- */
-const RESPONSE_MENU_TIMEOUT = 10 * 1000;
 
 /**
  * Page repsresenting the Feedback page, Inbox view variant. Accessed under Sidebar > Feedback.
@@ -71,9 +60,7 @@ export class FeedbackInboxPage {
 		// `isVisible()` returns immediately rather than waiting. Every caller is
 		// reached after an explicit wait on the response view, so by this point the
 		// DOM has already settled on one UI or the other.
-		return this.getSingleResponsePage()
-			.isVisible()
-			.catch( () => false );
+		return this.getSingleResponsePage().isVisible();
 	}
 
 	/**
@@ -84,47 +71,25 @@ export class FeedbackInboxPage {
 	 * panels do. Callers check `isOnSingleResponsePage` before reaching for this.
 	 *
 	 * @param {string} menuItemName The action's label within the dropdown.
-	 * @param {string} expectedFollowUpAction The action the menu should offer once the
-	 * change has been accepted, so a rejected request fails here rather than several
-	 * steps later. Read/unread qualifies too: it edits the record optimistically and
-	 * reverts on failure, and the toggle has settled by the time this is checked.
 	 */
-	private async clickSingleResponseMenuAction(
-		menuItemName: string,
-		expectedFollowUpAction?: string
-	): Promise< void > {
+	private async clickSingleResponseMenuAction( menuItemName: string ): Promise< void > {
 		const actionsMenu = this.page.locator( '.jp-forms__single-response-actions' );
 		await actionsMenu.getByRole( 'button', { name: 'Actions' } ).click();
 
-		const menuItem = this.page.getByRole( 'menuitem', { name: menuItemName, exact: true } );
+		// Not an exact name match: an item carrying a keyboard shortcut renders it as a
+		// visible span inside the button, so "Trash" is named "Trash #".
+		const menuItem = this.page.getByRole( 'menuitem', { name: menuItemName } );
 		await menuItem.click();
 
 		// The page stays put after an action, so there's no panel closing or
 		// notification to wait on. The dropdown closes and disables its toggle in the
 		// same render, so once the item is gone a re-enabled toggle means the request
-		// settled.
-		await menuItem.waitFor( { state: 'detached', timeout: RESPONSE_MENU_TIMEOUT } );
+		// settled. Whether the server accepted it is the caller's to assert — the spec
+		// already checks each folder for the response afterwards.
+		await menuItem.waitFor( { state: 'detached', timeout: 10 * 1000 } );
 		await actionsMenu
 			.getByRole( 'button', { name: 'Actions', disabled: false } )
 			.waitFor( { timeout: RESPONSE_ACTION_TIMEOUT } );
-
-		if ( ! expectedFollowUpAction ) {
-			return;
-		}
-
-		// Settled only means the request came back — the toggle re-enables whether it
-		// succeeded or failed, and this route renders no notice to tell the two apart.
-		// Jetpack rewrites the record (and so this menu) only for a change the server
-		// accepted, so the menu it now offers is what confirms the new status.
-		await actionsMenu.getByRole( 'button', { name: 'Actions' } ).click();
-		const followUpItem = this.page.getByRole( 'menuitem', {
-			name: expectedFollowUpAction,
-			exact: true,
-		} );
-		await followUpItem.waitFor( { state: 'visible', timeout: RESPONSE_MENU_TIMEOUT } );
-		// Same close-and-confirm dance as verifyActionExistsInMenu.
-		await this.page.keyboard.press( 'Escape' );
-		await followUpItem.waitFor( { state: 'detached', timeout: RESPONSE_MENU_TIMEOUT } );
 	}
 
 	/**
@@ -132,42 +97,26 @@ export class FeedbackInboxPage {
 	 *
 	 * Status actions leave the user on the page (the header badge changes instead),
 	 * so anything that needs the list has to navigate back first. There's no Close
-	 * button on this page — the "Forms" breadcrumb is the way back.
+	 * button on this page — the "Forms" breadcrumb is the way back, and it lands on
+	 * the folder the response was opened from, not necessarily the Inbox.
 	 */
 	private async leaveSingleResponsePage(): Promise< void > {
 		if ( ! ( await this.isOnSingleResponsePage() ) ) {
 			return;
 		}
 
-		// The breadcrumb always lands on the inbox. Arm the list wait before clicking:
-		// callers that then ask for the Inbox take `clickFolderTab`'s already-on-it
-		// early return, so this is the only chance to let the list settle before a
-		// search runs against it.
-		const listResponse = this.page.waitForResponse(
-			( response ) =>
-				( response.url().includes( '/wp-json/wp/v2/feedback' ) ||
-					!! response.url().match( /\/wp\/v2\/sites\/[0-9]+\/feedback/ ) ) &&
-				// The counts request shares the path and would resolve this early.
-				! response.url().includes( '/counts' ) &&
-				response.url().includes( `status=${ encodeURIComponent( 'draft,publish' ) }` ),
-			{ timeout: 15 * 1000 }
-		);
-
 		await this.page
 			.locator( '.jp-forms__single-response-breadcrumbs' )
-			// Exact, so a form title containing "Forms" in the trailing crumb can't
-			// be picked up instead.
+			// Exact, so a form title containing "Forms" in the trailing crumb can't be
+			// picked up instead.
 			.getByRole( 'link', { name: 'Forms', exact: true } )
 			.click();
 		await this.getSingleResponsePage().waitFor( { state: 'hidden', timeout: 10 * 1000 } );
+		// The folder chip is the list view's own render signal.
 		await this.page
 			.locator( '.dataviews-filters__summary-chip' )
 			.filter( { hasText: /Folder is:/i } )
 			.waitFor( { state: 'visible', timeout: 10 * 1000 } );
-
-		// Tolerate the miss: the route's loader reads through the core-data cache, so
-		// a warm cache renders the list without issuing a request at all.
-		await listResponse.catch( () => undefined );
 	}
 
 	/**
@@ -453,7 +402,7 @@ export class FeedbackInboxPage {
 	 */
 	async clickNotSpamAction(): Promise< void > {
 		if ( await this.isOnSingleResponsePage() ) {
-			await this.clickSingleResponseMenuAction( 'Not spam', 'Mark as spam' );
+			await this.clickSingleResponseMenuAction( 'Not spam' );
 			return;
 		}
 		// Use .last() to get the button in the side panel, not in the table row
@@ -479,8 +428,7 @@ export class FeedbackInboxPage {
 	 */
 	async clickMarkAsSpamAction(): Promise< void > {
 		if ( await this.isOnSingleResponsePage() ) {
-			// The single response page spells this one out in full.
-			await this.clickSingleResponseMenuAction( 'Mark as spam', 'Not spam' );
+			await this.clickSingleResponseMenuAction( 'Mark as spam' );
 			return;
 		}
 		// Use .last() to get the button in the side panel, not in the table row
@@ -502,7 +450,7 @@ export class FeedbackInboxPage {
 	 */
 	async clickMarkAsReadAction(): Promise< void > {
 		if ( await this.isOnSingleResponsePage() ) {
-			await this.clickSingleResponseMenuAction( 'Mark as read', 'Mark as unread' );
+			await this.clickSingleResponseMenuAction( 'Mark as read' );
 			return;
 		}
 		// Use .last() to get the button in the side panel, not in the table row
@@ -524,7 +472,7 @@ export class FeedbackInboxPage {
 	 */
 	async clickMarkAsUnreadAction(): Promise< void > {
 		if ( await this.isOnSingleResponsePage() ) {
-			await this.clickSingleResponseMenuAction( 'Mark as unread', 'Mark as read' );
+			await this.clickSingleResponseMenuAction( 'Mark as unread' );
 			return;
 		}
 		// Use .last() to get the button in the side panel, not in the table row
@@ -553,7 +501,7 @@ export class FeedbackInboxPage {
 	 */
 	async clickMoveToTrashAction(): Promise< void > {
 		if ( await this.isOnSingleResponsePage() ) {
-			await this.clickSingleResponseMenuAction( 'Trash', 'Restore' );
+			await this.clickSingleResponseMenuAction( 'Trash' );
 			return;
 		}
 		// Use .last() to get the button in the side panel, not in the table row
@@ -575,7 +523,7 @@ export class FeedbackInboxPage {
 	 */
 	async clickRestoreAction(): Promise< void > {
 		if ( await this.isOnSingleResponsePage() ) {
-			await this.clickSingleResponseMenuAction( 'Restore', 'Mark as spam' );
+			await this.clickSingleResponseMenuAction( 'Restore' );
 			return;
 		}
 		// Use .last() to get the button in the side panel, not in the table row
@@ -675,12 +623,7 @@ export class FeedbackInboxPage {
 		}
 		// Detect by checking for the CFM-specific URL pattern or Forms tab
 		const url = this.page.url();
-		if (
-			url.includes( 'jetpack-forms-responses-wp-admin' ) ||
-			url.includes( '/responses/' ) ||
-			// The standalone single response page, which is CFM-only.
-			url.includes( '/response/' )
-		) {
+		if ( url.includes( 'jetpack-forms-responses-wp-admin' ) || url.includes( '/responses/' ) ) {
 			this.isCFM = true;
 			return true;
 		}
