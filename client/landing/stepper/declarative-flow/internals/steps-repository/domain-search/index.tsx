@@ -617,7 +617,7 @@ const DomainSearchStep: StepType< {
 						{ showProgress && (
 							<OnboardingProgress
 								currentStep="domains"
-								hidePlansStep={ shouldSkipPlansStep( queryParams, planCartItem ) }
+								shouldHidePlansStep={ shouldSkipPlansStep( queryParams, planCartItem ) }
 							/>
 						) }
 						{ ! ( isMobileViewport && query ) && (

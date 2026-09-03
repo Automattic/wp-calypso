@@ -501,7 +501,7 @@ export default function CheckoutMainContent( {
 			: null;
 	// The redirecting flow names any step its visit skipped; it is the flow, not checkout, that
 	// knows which ones those were.
-	const hidePlansStep =
+	const shouldHidePlansStep =
 		searchParams.get( ONBOARDING_STEPPER_OMITTED_GROUP_PARAM ) === ONBOARDING_OMITTED_PLANS_GROUP;
 	const selectedSiteData = useSelector( getSelectedSite );
 	const wpcomDomain = useSelector( ( state ) =>
@@ -1144,7 +1144,7 @@ export default function CheckoutMainContent( {
 						showProgress ? (
 							<OnboardingProgress
 								currentStep="checkout"
-								hidePlansStep={ hidePlansStep }
+								shouldHidePlansStep={ shouldHidePlansStep }
 								isStepSelectDisabled={ leaveModalProps.isLeaveDisabled }
 								onStepSelect={ ( step ) =>
 									handleProgressStepSelect( step, {

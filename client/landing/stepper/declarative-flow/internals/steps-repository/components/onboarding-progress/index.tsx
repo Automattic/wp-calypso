@@ -12,14 +12,14 @@ type Props = {
 	 */
 	isStepSelectDisabled?: boolean;
 	/** A plan chosen before the flow started leaves the grid nothing to ask. */
-	hidePlansStep?: boolean;
+	shouldHidePlansStep?: boolean;
 };
 
 export function OnboardingProgress( {
 	currentStep,
 	onStepSelect,
 	isStepSelectDisabled,
-	hidePlansStep,
+	shouldHidePlansStep,
 }: Props ) {
 	const { __ } = useI18n();
 
@@ -52,7 +52,7 @@ export function OnboardingProgress( {
 						<UIStepper.Title>{ __( 'Select a domain' ) }</UIStepper.Title>
 					</UIStepper.Trigger>
 				</UIStepper.Step>
-				{ ! hidePlansStep && (
+				{ ! shouldHidePlansStep && (
 					<UIStepper.Step
 						value="plans"
 						status={ plansStepStatus }

@@ -18,7 +18,7 @@ describe( 'OnboardingProgress', () => {
 	} );
 
 	it( 'leaves the plans step out when the plan was chosen before the flow', () => {
-		render( <OnboardingProgress currentStep="domains" hidePlansStep /> );
+		render( <OnboardingProgress currentStep="domains" shouldHidePlansStep /> );
 
 		expect( screen.queryByRole( 'tab', { name: /Select a plan/ } ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'tab', { name: /Step 2 of 2.*Complete payment/ } ) ).toBeVisible();
