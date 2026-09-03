@@ -39,6 +39,12 @@
 	// HStacks are width 100% and will try to grow as wide as the card body.
 	// We need to ensure this new padding is included as part of that 100%.
 	box-sizing: border-box;
+
+	// Cards sit in grid tracks sized from their content, so an unbreakable
+	// string — a long site name, domain or email address — would otherwise widen
+	// the track and push the whole grid past the page. `anywhere` only breaks
+	// when there is no other opportunity, so ordinary prose is unaffected.
+	overflow-wrap: anywhere;
 }
 
 .dashboard-overview-card--has-bottom {

@@ -6,7 +6,6 @@ import { __ } from '@wordpress/i18n';
 import { layout } from '@wordpress/icons';
 import OverviewCard from '../../components/overview-card';
 import SiteIcon from '../../components/site-icon';
-import { Truncate } from '../../components/truncate';
 
 interface Props {
 	domain: Domain;
@@ -28,15 +27,7 @@ export default function FeaturedCardSite( { domain }: Props ) {
 	return (
 		<OverviewCard
 			title={ shouldShowAddAttachSite ? __( 'Attach to a site' ) : __( 'Site' ) }
-			heading={
-				shouldShowAddAttachSite ? (
-					__( 'No site attached' )
-				) : (
-					<Truncate tooltip={ site.name } numberOfLines={ 1 }>
-						{ site.name }
-					</Truncate>
-				)
-			}
+			heading={ shouldShowAddAttachSite ? __( 'No site attached' ) : site.name }
 			link={
 				shouldShowAddAttachSite
 					? `/domains/${ domain.domain }/transfer/other-site`
@@ -44,13 +35,9 @@ export default function FeaturedCardSite( { domain }: Props ) {
 			}
 			icon={ shouldShowAddAttachSite ? <Icon icon={ layout } /> : <SiteIcon site={ site } /> }
 			description={
-				shouldShowAddAttachSite ? (
-					__( 'Attach this domain name to a new or existing site.' )
-				) : (
-					<Truncate tooltip={ domain.site_slug } numberOfLines={ 1 }>
-						{ domain.site_slug }
-					</Truncate>
-				)
+				shouldShowAddAttachSite
+					? __( 'Attach this domain name to a new or existing site.' )
+					: domain.site_slug
 			}
 			intent={ shouldShowAddAttachSite ? 'upsell' : 'success' }
 		/>
