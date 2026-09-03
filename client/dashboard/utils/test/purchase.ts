@@ -447,7 +447,7 @@ describe( 'getRenewalUrlFromPurchase', () => {
 		expect( url ).not.toContain( 'siteless.agencies.automattic.com' );
 	} );
 
-	test( 'keeps the legacy format for a siteless Akismet purchase', () => {
+	test( 'keeps the service in the URL but drops the product slug for siteless Akismet', () => {
 		const url = getRenewalUrlFromPurchase(
 			makePurchase( {
 				ID: 67890,
@@ -455,7 +455,22 @@ describe( 'getRenewalUrlFromPurchase', () => {
 			} )
 		);
 
-		expect( url ).toContain( '/checkout/akismet/ak_plus_yearly_1/renew/67890/?' );
+		expect( url ).toContain( '/checkout/akismet/renew/67890?' );
+		expect( url ).not.toContain( 'ak_plus_yearly_1' );
+	} );
+
+	test( 'keeps the service in the URL but drops the product slug for siteless Marketplace', () => {
+		const url = getRenewalUrlFromPurchase(
+			makePurchase( {
+				ID: 54321,
+				product_slug: 'wpcom_dotcompatch_yearly',
+				product_type: 'saas_plugin',
+				is_attached_to_holding_site: true,
+			} )
+		);
+
+		expect( url ).toContain( '/checkout/marketplace/renew/54321?' );
+		expect( url ).not.toContain( 'wpcom_dotcompatch_yearly' );
 	} );
 } );
 
