@@ -98,6 +98,6 @@
 		"postcss": "^8.5.15",
 		"sass": "1.77.8",
 		"typescript": "^6.0.3",
-		"webpack": "^5.99.8"
+		"webpack": "^5.109.2"
 	}
 }

@@ -43,9 +43,9 @@
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
-		"@wordpress/dependency-extraction-webpack-plugin": "^6.24.0",
-		"@wordpress/readable-js-assets-webpack-plugin": "^3.24.0",
-		"webpack": "^5.99.8"
+		"@wordpress/dependency-extraction-webpack-plugin": "^6.54.0",
+		"@wordpress/readable-js-assets-webpack-plugin": "^3.54.0",
+		"webpack": "^5.109.2"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.48.0",

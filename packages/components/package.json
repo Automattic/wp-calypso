@@ -106,7 +106,7 @@
 		"postcss": "^8.5.15",
 		"storybook": "^9.1.20",
 		"typescript": "^6.0.3",
-		"webpack": "^5.99.8"
+		"webpack": "^5.109.2"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
