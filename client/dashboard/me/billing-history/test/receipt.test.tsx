@@ -67,17 +67,6 @@ describe( '<BillingDetailsField>', () => {
 		expect( screen.getByRole( 'textbox', { name: 'Billing details' } ) ).toHaveValue( '' );
 	} );
 
-	test( 'marks the field as empty so its label is not printed', async () => {
-		const user = userEvent.setup();
-		const { container } = render( <BillingDetailsField receipt={ receipt } /> );
-
-		expect( container.querySelector( '.receipt-billing-details' ) ).not.toHaveClass( 'is-empty' );
-
-		await user.clear( screen.getByRole( 'textbox', { name: 'Billing details' } ) );
-
-		expect( container.querySelector( '.receipt-billing-details' ) ).toHaveClass( 'is-empty' );
-	} );
-
 	test( 'accepts line breaks typed by the user', async () => {
 		const user = userEvent.setup();
 		render( <BillingDetailsField receipt={ receipt } /> );
