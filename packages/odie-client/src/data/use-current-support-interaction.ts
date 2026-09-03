@@ -8,7 +8,8 @@ import { useGetSupportInteractionById } from './use-get-support-interaction-by-i
  */
 export const getSupportInteractionIdFromSearch = ( search: string ): string | null => {
 	const params = new URLSearchParams( search );
-	// Adopt a new less generic ID with backwards compatibility.
+	// `id` is the param every navigation writes. `odieInteractionId` is only read,
+	// for Help Center history persisted before the rename.
 	return params.get( 'id' ) || params.get( 'odieInteractionId' ) || null;
 };
 

@@ -2,6 +2,7 @@ import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useCurrentSupportInteractionId } from './use-current-support-interaction';
+import { getSupportInteractionQueryKey } from './use-get-support-interaction-by-id';
 import type { Message } from '../types';
 
 const messageEventName = 'odieMessageEvent';
@@ -9,6 +10,11 @@ const interactionUpdatedEventName = 'odieInteractionUpdatedEvent';
 
 type OdieBroadcastData = {
 	type: typeof messageEventName;
+	/**
+	 * Crosses tabs through structured clone, so `content` has to be plain text:
+	 * a React element makes `postMessage` throw a `DataCloneError`. Every sender
+	 * passes plain text today (user input, Odie replies, the built-in notices).
+	 */
 	message: Message;
 	odieBroadcastClientId: string;
 	/**
@@ -30,27 +36,32 @@ type OdieInteractionUpdatedData = {
 	supportInteractionId: string;
 };
 
+const postToOdieChannel = ( data: OdieBroadcastData | OdieInteractionUpdatedData ) => {
+	const bc = new BroadcastChannel( 'odieChannel' );
+	bc.postMessage( data );
+	// The message is already queued for the other tabs; nothing else goes out on this channel.
+	bc.close();
+};
+
 export const broadcastOdieMessage = (
 	message: Message,
 	origin: string,
 	supportInteractionId: string | null
 ) => {
-	const bc = new BroadcastChannel( 'odieChannel' );
-	bc.postMessage( {
+	postToOdieChannel( {
 		type: messageEventName,
 		message,
 		odieBroadcastClientId: origin,
 		supportInteractionId,
-	} satisfies OdieBroadcastData );
+	} );
 };
 
 export const broadcastOdieInteractionUpdated = ( origin: string, supportInteractionId: string ) => {
-	const bc = new BroadcastChannel( 'odieChannel' );
-	bc.postMessage( {
+	postToOdieChannel( {
 		type: interactionUpdatedEventName,
 		odieBroadcastClientId: origin,
 		supportInteractionId,
-	} satisfies OdieInteractionUpdatedData );
+	} );
 };
 
 export const useOdieBroadcastWithCallbacks = (
@@ -83,12 +94,7 @@ export const useOdieBroadcastWithCallbacks = (
 				// the Odie chat so the history it rebuilds from is not the stale copy
 				// cached before the other tab escalated.
 				queryClient.invalidateQueries( {
-					queryKey: [
-						'support-interactions',
-						'get-interaction-by-id',
-						supportInteractionId,
-						isTestModeEnvironment(),
-					],
+					queryKey: getSupportInteractionQueryKey( supportInteractionId, isTestModeEnvironment() ),
 				} );
 				queryClient.invalidateQueries( { queryKey: [ 'odie-chat' ] } );
 				return;
@@ -98,14 +104,17 @@ export const useOdieBroadcastWithCallbacks = (
 				return;
 			}
 
-			// The sending tab owns the send lifecycle. Here the message is already on
-			// its way, so render it as sent instead of stuck in the greyed "sending"
-			// state that a user message without `received` gets.
+			// The sending tab owns the send lifecycle. A Zendesk user message (the only
+			// kind carrying `temporary_id`) renders greyed as "sending" until `received`
+			// is set, and only the sending tab ever sets it. The message is already on
+			// its way here, so stamp it and render it as sent.
 			const message =
-				data.message.role === 'user' && ! data.message.received
+				data.message.role === 'user' &&
+				data.message.metadata?.temporary_id &&
+				! data.message.received
 					? {
 							...data.message,
-							received: data.message.metadata?.local_timestamp ?? Date.now() / 1000,
+							received: data.message.metadata.local_timestamp ?? Date.now() / 1000,
 					  }
 					: data.message;
 

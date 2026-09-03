@@ -76,6 +76,7 @@ export const useGetCombinedChat = (
 	}, [] );
 	const previousUuidRef = useRef< string | undefined >( undefined );
 	const previousOdieIdRef = useRef< string | null | undefined >( undefined );
+	const attemptedConversationIdRef = useRef< string | undefined >( undefined );
 	const wasChatLoadedRef = useRef( isChatLoaded );
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
 	const conversationId = getConversationIdFromInteraction( currentSupportInteraction );
@@ -147,11 +148,16 @@ export const useGetCombinedChat = (
 		// The interaction gained a Zendesk conversation this tab is not showing yet:
 		// it was escalated from another tab. Reload so this tab switches too,
 		// otherwise it keeps sending to Odie. Skipped while this tab is the one
-		// transferring (`status === 'transfer'`), which sets the conversation itself.
+		// transferring (`status === 'transfer'`), which sets the conversation itself,
+		// and once that conversation was already fetched: a failed fetch lands in the
+		// `catch` below and starts a new interaction, so re-triggering on every state
+		// change would keep creating them. A reconnect still retries the fetch through
+		// `refreshConversation`.
 		const conversationHasChanged =
 			!! conversationId &&
 			mainChatState.conversationId !== conversationId &&
-			chatStatus !== 'transfer';
+			chatStatus !== 'transfer' &&
+			attemptedConversationIdRef.current !== conversationId;
 
 		const needsReload = interactionHasChanged || conversationHasChanged;
 
@@ -205,6 +211,7 @@ export const useGetCombinedChat = (
 		}
 
 		if ( conversationId && ( isChatLoaded || refreshingAfterReconnect ) ) {
+			attemptedConversationIdRef.current = conversationId;
 			setIsFetchingConversation( true );
 			getZendeskConversation( conversationId )
 				?.then( ( conversation ) => {

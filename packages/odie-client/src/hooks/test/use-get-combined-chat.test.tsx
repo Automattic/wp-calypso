@@ -311,3 +311,97 @@ describe( 'useGetCombinedChat — message recovery on Smooch re-init', () => {
 		expect( mockGetZendeskConversation ).not.toHaveBeenCalled();
 	} );
 } );
+
+describe( 'useGetCombinedChat — the interaction is escalated from another tab', () => {
+	const odieOnlyInteraction = () => ( {
+		uuid: 'int-1',
+		conversationId: undefined,
+		odieId: 42,
+		status: 'open',
+	} );
+	const escalatedInteraction = () => ( {
+		uuid: 'int-1',
+		conversationId: 'conv-1',
+		odieId: 42,
+		status: 'open',
+	} );
+
+	beforeEach( () => {
+		mockCurrentSupportInteraction = odieOnlyInteraction();
+		mockOdieChat = { odieId: 42, wpcomUserId: 99, messages: [ agentMessage( 10, 'odie reply' ) ] };
+		mockConversation = { id: 'conv-1', messages: [ agentMessage( 1, 'Happiness Engineer here' ) ] };
+	} );
+
+	it( 'switches to the Zendesk conversation once the interaction gains one', async () => {
+		const { result, rerender } = renderCombinedChat();
+
+		await waitFor( () => {
+			expect( result.current.mainChatState.provider ).toBe( 'odie' );
+		} );
+		expect( mockGetZendeskConversation ).not.toHaveBeenCalled();
+
+		// Another tab escalated: the refetched interaction now carries the conversation.
+		mockCurrentSupportInteraction = escalatedInteraction();
+		rerender();
+
+		await waitFor( () => {
+			expect( result.current.mainChatState.provider ).toBe( 'zendesk' );
+			expect( result.current.mainChatState.conversationId ).toBe( 'conv-1' );
+		} );
+		expect( result.current.mainChatState.messages.some( ( m ) => m.message_id === 1 ) ).toBe(
+			true
+		);
+	} );
+
+	it( 'leaves the chat alone while this tab is the one transferring', async () => {
+		const { result, rerender } = renderCombinedChat();
+
+		await waitFor( () => {
+			expect( result.current.mainChatState.provider ).toBe( 'odie' );
+		} );
+
+		// This tab started the escalation itself; it sets the conversation when done.
+		act( () => {
+			result.current.setMainChatState( ( chat ) => ( { ...chat, status: 'transfer' } ) );
+		} );
+		mockCurrentSupportInteraction = escalatedInteraction();
+		rerender();
+		await act( async () => {
+			await Promise.resolve();
+		} );
+
+		expect( mockGetZendeskConversation ).not.toHaveBeenCalled();
+		expect( result.current.mainChatState.status ).toBe( 'transfer' );
+	} );
+
+	it( 'fetches a conversation it cannot load only once', async () => {
+		mockGetZendeskConversation.mockImplementation( () =>
+			Promise.reject( new Error( 'conversation not found' ) )
+		);
+		const { result, rerender } = renderCombinedChat();
+
+		await waitFor( () => {
+			expect( result.current.mainChatState.provider ).toBe( 'odie' );
+		} );
+
+		mockCurrentSupportInteraction = escalatedInteraction();
+		rerender();
+
+		await waitFor( () => {
+			expect( mockStartNewInteraction ).toHaveBeenCalledTimes( 1 );
+		} );
+		// The failed fetch flips `isFetchingConversation` back, which re-runs the
+		// effect. Give those re-runs room to fire before counting.
+		await act( async () => {
+			await Promise.resolve();
+			await Promise.resolve();
+		} );
+		rerender();
+		await act( async () => {
+			await Promise.resolve();
+		} );
+
+		expect( mockGetZendeskConversation ).toHaveBeenCalledTimes( 1 );
+		expect( mockStartNewInteraction ).toHaveBeenCalledTimes( 1 );
+	} );
+} );

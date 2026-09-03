@@ -4,6 +4,18 @@ import { SupportInteraction } from '../types';
 import { handleSupportInteractionsFetch } from './handle-support-interactions-fetch';
 
 /**
+ * Query key of one support interaction. Shared with the code that writes to or
+ * invalidates this cache entry, so none of it can drift from the query.
+ * @param interactionId - The uuid of the Support Interaction.
+ * @param isTestMode - Whether the interaction lives in the staging environment.
+ * @returns The query key.
+ */
+export const getSupportInteractionQueryKey = (
+	interactionId: string | null,
+	isTestMode: boolean
+) => [ 'support-interactions', 'get-interaction-by-id', interactionId, isTestMode ] as const;
+
+/**
  * Get the support interaction.
  * @param interactionId - The uuid of the Support Interaction.
  * @returns The support interaction.
@@ -11,7 +23,7 @@ import { handleSupportInteractionsFetch } from './handle-support-interactions-fe
 export const useGetSupportInteractionById = ( interactionId: string | null ) => {
 	const isTestMode = isTestModeEnvironment();
 	const query = useQuery< SupportInteraction >( {
-		queryKey: [ 'support-interactions', 'get-interaction-by-id', interactionId, isTestMode ],
+		queryKey: getSupportInteractionQueryKey( interactionId, isTestMode ),
 		queryFn: () =>
 			handleSupportInteractionsFetch(
 				'GET',

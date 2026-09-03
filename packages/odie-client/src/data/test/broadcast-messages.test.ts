@@ -20,10 +20,6 @@ jest.mock( '@tanstack/react-query', () => ( {
 jest.mock( '@automattic/zendesk-client', () => ( {
 	isTestModeEnvironment: () => false,
 } ) );
-// Only `useLocation` matters here; keep the zendesk client out of the import graph.
-jest.mock( '../use-get-support-interaction-by-id', () => ( {
-	useGetSupportInteractionById: jest.fn(),
-} ) );
 
 // jsdom does not implement BroadcastChannel. Provide a minimal same-realm
 // implementation so a "broadcast" is delivered synchronously to every other
@@ -51,7 +47,14 @@ class FakeBroadcastChannel {
 	}
 }
 
-const message = { type: 'message', content: 'hello', role: 'user' } as unknown as Message;
+// A user message sent to Odie: the composer attaches no metadata to those.
+const odieUserMessage = { type: 'message', content: 'hello', role: 'user' } as unknown as Message;
+
+// A user message sent to Zendesk: the composer attaches the ids it is tracked by.
+const zendeskUserMessage = {
+	...odieUserMessage,
+	metadata: { temporary_id: 'temp-1', local_timestamp: 1700000000 },
+} as unknown as Message;
 
 describe( 'odie broadcast gating', () => {
 	beforeEach( () => {
@@ -62,22 +65,29 @@ describe( 'odie broadcast gating', () => {
 			FakeBroadcastChannel as unknown as typeof BroadcastChannel;
 	} );
 
-	it( 'delivers a message to another tab showing the same support interaction, marked as sent', () => {
+	it( 'delivers a message to another tab showing the same support interaction', () => {
 		const addMessage = jest.fn();
 		renderHook( () => useOdieBroadcastWithCallbacks( { addMessage }, 'listener-tab' ) );
 
-		broadcastOdieMessage( message, 'sender-tab', 'interaction-1' );
+		broadcastOdieMessage( odieUserMessage, 'sender-tab', 'interaction-1' );
 
-		// The receiving tab does not own the send lifecycle, so an unsent user
-		// message is stamped with `received` to avoid the greyed "sending" state.
-		expect( addMessage ).toHaveBeenCalledWith(
-			expect.objectContaining( { content: 'hello', role: 'user', received: expect.any( Number ) } )
-		);
+		expect( addMessage ).toHaveBeenCalledWith( odieUserMessage );
 	} );
 
-	it( 'passes an already-sent message through untouched', () => {
+	it( 'marks a mirrored Zendesk user message as sent, using its local timestamp', () => {
 		const addMessage = jest.fn();
-		const sentMessage = { ...message, received: 111 };
+		renderHook( () => useOdieBroadcastWithCallbacks( { addMessage }, 'listener-tab' ) );
+
+		broadcastOdieMessage( zendeskUserMessage, 'sender-tab', 'interaction-1' );
+
+		// The receiving tab does not own the send lifecycle, so it would otherwise
+		// render the message greyed as "sending" forever.
+		expect( addMessage ).toHaveBeenCalledWith( { ...zendeskUserMessage, received: 1700000000 } );
+	} );
+
+	it( 'passes an already-sent Zendesk message through untouched', () => {
+		const addMessage = jest.fn();
+		const sentMessage = { ...zendeskUserMessage, received: 111 };
 		renderHook( () => useOdieBroadcastWithCallbacks( { addMessage }, 'listener-tab' ) );
 
 		broadcastOdieMessage( sentMessage, 'sender-tab', 'interaction-1' );
@@ -87,7 +97,7 @@ describe( 'odie broadcast gating', () => {
 
 	it( 'passes a bot message through untouched', () => {
 		const addMessage = jest.fn();
-		const botMessage = { ...message, role: 'bot' } as Message;
+		const botMessage = { ...odieUserMessage, role: 'bot' } as Message;
 		renderHook( () => useOdieBroadcastWithCallbacks( { addMessage }, 'listener-tab' ) );
 
 		broadcastOdieMessage( botMessage, 'sender-tab', 'interaction-1' );
@@ -100,7 +110,7 @@ describe( 'odie broadcast gating', () => {
 		mockSearch = '?odieInteractionId=interaction-1';
 		renderHook( () => useOdieBroadcastWithCallbacks( { addMessage }, 'listener-tab' ) );
 
-		broadcastOdieMessage( message, 'sender-tab', 'interaction-1' );
+		broadcastOdieMessage( odieUserMessage, 'sender-tab', 'interaction-1' );
 
 		expect( addMessage ).toHaveBeenCalled();
 	} );
@@ -109,7 +119,7 @@ describe( 'odie broadcast gating', () => {
 		const addMessage = jest.fn();
 		renderHook( () => useOdieBroadcastWithCallbacks( { addMessage }, 'listener-tab' ) );
 
-		broadcastOdieMessage( message, 'sender-tab', 'interaction-2' );
+		broadcastOdieMessage( odieUserMessage, 'sender-tab', 'interaction-2' );
 
 		expect( addMessage ).not.toHaveBeenCalled();
 	} );
@@ -119,7 +129,7 @@ describe( 'odie broadcast gating', () => {
 		mockSearch = '';
 		renderHook( () => useOdieBroadcastWithCallbacks( { addMessage }, 'listener-tab' ) );
 
-		broadcastOdieMessage( message, 'sender-tab', null );
+		broadcastOdieMessage( odieUserMessage, 'sender-tab', null );
 
 		expect( addMessage ).not.toHaveBeenCalled();
 	} );
@@ -128,12 +138,22 @@ describe( 'odie broadcast gating', () => {
 		const addMessage = jest.fn();
 		renderHook( () => useOdieBroadcastWithCallbacks( { addMessage }, 'same-tab' ) );
 
-		broadcastOdieMessage( message, 'same-tab', 'interaction-1' );
+		broadcastOdieMessage( odieUserMessage, 'same-tab', 'interaction-1' );
 
 		expect( addMessage ).not.toHaveBeenCalled();
 	} );
 
-	it( 'refetches the support interaction when another tab updates it', () => {
+	it( 'closes the channel it posted on', () => {
+		renderHook( () => useOdieBroadcastWithCallbacks( { addMessage: jest.fn() }, 'listener-tab' ) );
+
+		broadcastOdieMessage( odieUserMessage, 'sender-tab', 'interaction-1' );
+		broadcastOdieInteractionUpdated( 'sender-tab', 'interaction-1' );
+
+		// Only the listener's channel is left open.
+		expect( FakeBroadcastChannel.channels ).toHaveLength( 1 );
+	} );
+
+	it( 'refetches the support interaction and the Odie chat when another tab updates it', () => {
 		renderHook( () => useOdieBroadcastWithCallbacks( { addMessage: jest.fn() }, 'listener-tab' ) );
 
 		broadcastOdieInteractionUpdated( 'sender-tab', 'interaction-1' );
@@ -141,6 +161,7 @@ describe( 'odie broadcast gating', () => {
 		expect( mockInvalidateQueries ).toHaveBeenCalledWith( {
 			queryKey: [ 'support-interactions', 'get-interaction-by-id', 'interaction-1', false ],
 		} );
+		expect( mockInvalidateQueries ).toHaveBeenCalledWith( { queryKey: [ 'odie-chat' ] } );
 	} );
 
 	it( 'ignores an interaction update for a different support interaction', () => {
