@@ -55,6 +55,7 @@ import { useStreamPostKeySelection } from './use-stream-post-key-selection';
 import {
 	getDistanceBetweenPrompts,
 	getDistanceBetweenRecs,
+	injectCustomBlock,
 	injectPrompts,
 	injectRecommendations,
 } from './utils';
@@ -137,6 +138,9 @@ class ReaderStream extends Component {
 		restoreScroll: PropTypes.bool,
 		hideDefaultEmptyContentIfMissing: PropTypes.bool,
 		showFollowButton: PropTypes.bool,
+		// A caller-rendered block inserted once into the list, after `inStreamBlockPosition` posts.
+		inStreamBlock: PropTypes.node,
+		inStreamBlockPosition: PropTypes.number,
 		showFollowInHeader: PropTypes.bool,
 		sidebarTabTitle: PropTypes.string,
 		streamHeader: PropTypes.func,
@@ -657,6 +661,7 @@ class ReaderStream extends Component {
 					siteId={ primarySiteId }
 					showFollowButton={ this.props.showFollowButton }
 					fixedHeaderHeight={ this.props.fixedHeaderHeight }
+					inStreamBlock={ this.props.inStreamBlock }
 				/>
 				{ index === 0 && <ReaderPerformanceTrackerStop /> }
 			</Fragment>
@@ -901,8 +906,22 @@ const withStreamPosts = ( WrappedComponent ) =>
 					  )
 					: streamPostsQuery.items;
 
-			return injectPrompts( withRecommendations, getDistanceBetweenPrompts( followsCount ) );
-		}, [ followsCount, props.recsStreamKey, recsStreamPostsQuery.items, streamPostsQuery.items ] );
+			const withPrompts = injectPrompts(
+				withRecommendations,
+				getDistanceBetweenPrompts( followsCount )
+			);
+
+			return props.inStreamBlock
+				? injectCustomBlock( withPrompts, props.inStreamBlockPosition ?? 3 )
+				: withPrompts;
+		}, [
+			followsCount,
+			props.inStreamBlock,
+			props.inStreamBlockPosition,
+			props.recsStreamKey,
+			recsStreamPostsQuery.items,
+			streamPostsQuery.items,
+		] );
 
 		const streamType = getStreamType( props.streamKey ?? '' );
 		const shouldPoll =
