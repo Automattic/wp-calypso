@@ -1,0 +1,225 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+
+// Sits at the top of the Discover stream, between the navigation and the
+// compact post cards. Spacing and type scale follow the project design:
+// ~32px above the heading, 14px heading -> cards, 12px between cards,
+// 12px to "More like this", ~32px before the feed resumes.
+.reader-discover-new-blogs {
+	// padding, not margin: a top margin would collapse through the stream's
+	// list wrapper and not show up.
+	padding-top: 16px;
+	margin: 0 0 28px;
+
+	&__header {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		margin: 0 0 14px;
+	}
+
+	&__heading {
+		font-size: $font-body-small;
+		font-weight: 600;
+		line-height: 1.4;
+		margin: 0;
+	}
+
+	&__hide.components-button.is-link {
+		font-size: $font-body-small;
+		color: var(--color-text-subtle);
+		text-decoration: underline;
+	}
+
+	&__more.components-button.is-link {
+		margin-top: 12px;
+		font-size: $font-body-small;
+		color: var(--color-text);
+		text-decoration: underline;
+	}
+
+	&__list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	&__card {
+		margin: 0 0 12px;
+		padding: 20px;
+		border: 1px solid var(--color-border-subtle);
+		border-radius: 8px;
+		background: var(--color-surface);
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	&__card-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		margin-bottom: 16px;
+	}
+
+	&__site {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		min-width: 0;
+		color: var(--color-text);
+		text-decoration: none;
+
+		.site-icon {
+			flex-shrink: 0;
+		}
+	}
+
+	&__site-name {
+		font-size: $font-body-small;
+		font-weight: 600;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	&__card-actions {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		flex-shrink: 0;
+
+		// Design: outlined blue "Subscribe" pill, no feed icon, label always
+		// shown. Overrides the base .follow-button look.
+		.follow-button.reader-discover-new-blogs__subscribe {
+			box-sizing: border-box;
+			padding: 4px 12px;
+			border: 1px solid var(--color-primary);
+			border-radius: 4px;
+			background: var(--color-surface);
+			font-size: $font-body-small;
+			font-weight: 500;
+			line-height: 1.4;
+
+			svg.reader-follow-feed,
+			svg.reader-following-feed {
+				display: none;
+			}
+
+			.follow-button__label {
+				display: inline;
+				margin: 0;
+				color: var(--color-primary);
+			}
+
+			&:hover,
+			&:focus {
+				background: var(--color-primary-0);
+
+				.follow-button__label {
+					color: var(--color-primary-dark);
+				}
+			}
+
+			&.is-following,
+			&.is-following:hover {
+				border-color: var(--color-neutral-10);
+				background: var(--color-surface);
+
+				.follow-button__label {
+					color: var(--color-text-subtle);
+				}
+			}
+		}
+
+		.reader-discover-new-blogs__dismiss {
+			color: var(--color-text-subtle);
+			min-width: 0;
+			padding: 0;
+			height: auto;
+		}
+	}
+
+	&__title {
+		margin: 0 0 10px;
+		font-size: $font-body-large;
+		font-weight: 600;
+		line-height: 1.3;
+
+		a {
+			color: var(--color-text);
+			text-decoration: none;
+
+			&:hover,
+			&:focus {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	&__excerpt {
+		font-size: $font-body-small;
+		line-height: 1.45;
+		color: var(--color-text-subtle);
+
+		.reader-excerpt {
+			margin: 0;
+		}
+
+		.reader-excerpt__content {
+			display: -webkit-box;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 2;
+			overflow: hidden;
+		}
+	}
+
+	// Loading state: same layout, pulsing blocks in place of text.
+	&__card.is-placeholder {
+		.reader-discover-new-blogs__site-icon.is-placeholder {
+			display: inline-block;
+			width: 24px;
+			height: 24px;
+			border-radius: 50%;
+			@include placeholder();
+		}
+
+		.reader-discover-new-blogs__site-name.is-placeholder {
+			width: 120px;
+			@include placeholder();
+		}
+
+		.reader-discover-new-blogs__subscribe.is-placeholder {
+			display: inline-block;
+			width: 93px;
+			height: 30px;
+			border-radius: 4px;
+			@include placeholder();
+		}
+
+		.reader-discover-new-blogs__dismiss.is-placeholder {
+			display: inline-block;
+			width: 14px;
+			height: 14px;
+			@include placeholder();
+		}
+
+		.reader-discover-new-blogs__title.is-placeholder {
+			width: 70%;
+			@include placeholder();
+		}
+
+		.reader-discover-new-blogs__excerpt.is-placeholder p {
+			margin: 0 0 4px;
+			width: 95%;
+			@include placeholder();
+
+			&:last-child {
+				width: 60%;
+				margin: 0;
+			}
+		}
+	}
+}
