@@ -66,12 +66,12 @@ These routes are served by the module:
 
 ### Tags and conversations
 
-| Route                       | Description          |
-| --------------------------- | -------------------- |
-| `/tag/:tag`                 | Tag stream (requires login; logged-out visitors are redirected to `/discover/tags`) |
+| Route                       | Description                                                                           |
+| --------------------------- | ------------------------------------------------------------------------------------- |
+| `/tag/:tag`                 | Tag stream (requires login; logged-out visitors are redirected to `/discover/tags`)   |
 | `/tags`                     | Tags listing (requires login; logged-out visitors are redirected to `/discover/tags`) |
-| `/reader/conversations`     | Conversations stream |
-| `/reader/conversations/a8c` | A8C conversations    |
+| `/reader/conversations`     | Conversations stream                                                                  |
+| `/reader/conversations/a8c` | A8C conversations                                                                     |
 
 ### User profile
 
