@@ -163,12 +163,13 @@ describe( 'TransferWaitCard', () => {
 		act( () => jest.advanceTimersByTime( 50_000 ) );
 		act( () => jest.advanceTimersByTime( 30_000 ) );
 		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
-		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_marketplace_install_wait_stalled', {
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_transfer_wait_stalled', {
+			wait_type: 'plugin_install',
 			product_slug: 'sensei-pro',
 		} );
 	} );
 
-	it( 'records a site transfer stall under its own event, with no product slug', () => {
+	it( 'marks a site transfer stall as such, with no product slug', () => {
 		render(
 			<TransferWaitCard
 				transferStatus={ transferStates.COMPLETE }
@@ -179,12 +180,14 @@ describe( 'TransferWaitCard', () => {
 		);
 		act( () => jest.advanceTimersByTime( 95_000 ) );
 		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
-		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_site_transfer_wait_stalled', {} );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_transfer_wait_stalled', {
+			wait_type: 'site_transfer',
+		} );
 
 		fireEvent.click( screen.getByRole( 'link', { name: 'Go to your site' } ) );
-		expect( recordTracksEvent ).toHaveBeenLastCalledWith(
-			'calypso_site_transfer_wait_stalled_click',
-			{ stage_seconds: expect.any( Number ) }
-		);
+		expect( recordTracksEvent ).toHaveBeenLastCalledWith( 'calypso_transfer_wait_stalled_click', {
+			wait_type: 'site_transfer',
+			stage_seconds: expect.any( Number ),
+		} );
 	} );
 } );
