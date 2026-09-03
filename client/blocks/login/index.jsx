@@ -58,6 +58,7 @@ import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
+import PasswordResetSuccessNotice from './password-reset-success-notice';
 import { shouldUseMagicCode } from './utils/should-use-magic-code';
 
 import './style.scss';
@@ -597,6 +598,8 @@ class Login extends Component {
 						twoFactorAuthType={ twoFactorAuthType }
 					/>
 				) }
+
+				<PasswordResetSuccessNotice />
 
 				{ isSignupExistingAccount && this.renderLoginFormSignupNotice() }
 
