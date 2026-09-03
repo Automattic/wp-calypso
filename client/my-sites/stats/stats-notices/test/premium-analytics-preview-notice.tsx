@@ -79,7 +79,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 	it( 'invites the site to switch the new dashboard on', () => {
 		renderNotice();
 
-		expect( screen.getByText( 'Try the new Traffic page' ) ).toBeVisible();
+		expect( screen.getByText( 'Try the new Traffic tab' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Switch it on' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'close' } ) ).toBeVisible();
 	} );
@@ -111,9 +111,9 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		);
 		expect( mockEnablePreview ).toHaveBeenCalledWith( true );
 
-		const link = await screen.findByRole( 'link', { name: 'Go to the new Traffic page' } );
+		const link = await screen.findByRole( 'link', { name: 'Go to the new Traffic tab' } );
 		expect( link ).toHaveAttribute( 'href', DASHBOARD_URL );
-		expect( screen.getByText( 'The new Traffic page is on' ) ).toBeVisible();
+		expect( screen.getByText( 'The new Traffic tab is on' ) ).toBeVisible();
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_stats_premium_analytics_preview_notice_enabled',
 			{ blog_id: 123 }
@@ -152,13 +152,13 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
 
 		expect(
-			await screen.findByRole( 'link', { name: 'Go to the new Traffic page' } )
+			await screen.findByRole( 'link', { name: 'Go to the new Traffic tab' } )
 		).toBeVisible();
 		expect( mockPostponeNotice ).not.toHaveBeenCalled();
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
 
-		expect( screen.queryByText( 'The new Traffic page is on' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'The new Traffic tab is on' ) ).not.toBeInTheDocument();
 		expect( mockPostponeNotice ).not.toHaveBeenCalled();
 	} );
 
@@ -169,7 +169,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
 
 		expect( await screen.findByRole( 'alert' ) ).toBeVisible();
-		expect( screen.getByText( 'We couldn’t switch on the new Traffic page' ) ).toBeVisible();
+		expect( screen.getByText( 'We couldn’t switch on the new Traffic tab' ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: /Contact support/ } ) ).toHaveAttribute(
 			'href',
 			'/help/contact'
@@ -180,7 +180,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
 
 		expect(
-			await screen.findByRole( 'link', { name: 'Go to the new Traffic page' } )
+			await screen.findByRole( 'link', { name: 'Go to the new Traffic tab' } )
 		).toBeVisible();
 	} );
 
@@ -249,7 +249,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 
 		expect( await screen.findByRole( 'alert' ) ).toBeVisible();
 		expect(
-			screen.queryByRole( 'link', { name: 'Go to the new Traffic page' } )
+			screen.queryByRole( 'link', { name: 'Go to the new Traffic tab' } )
 		).not.toBeInTheDocument();
 	} );
 
@@ -342,7 +342,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		const { rerender } = renderNotice();
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
-		expect( screen.queryByText( 'Try the new Traffic page' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Try the new Traffic tab' ) ).not.toBeInTheDocument();
 
 		rerender(
 			<PremiumAnalyticsPreviewNotice
@@ -352,7 +352,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 			/>
 		);
 
-		expect( screen.getByText( 'Try the new Traffic page' ) ).toBeVisible();
+		expect( screen.getByText( 'Try the new Traffic tab' ) ).toBeVisible();
 	} );
 
 	/**
@@ -364,7 +364,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		const { unmount } = renderNotice();
 		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
 		expect(
-			await screen.findByRole( 'link', { name: 'Go to the new Traffic page' } )
+			await screen.findByRole( 'link', { name: 'Go to the new Traffic tab' } )
 		).toBeVisible();
 
 		// Not while the confirmation is still on screen: that would pull it away mid-sentence.
@@ -396,7 +396,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
 
 		expect(
-			await screen.findByRole( 'link', { name: 'Go to the new Traffic page' } )
+			await screen.findByRole( 'link', { name: 'Go to the new Traffic tab' } )
 		).toHaveFocus();
 	} );
 

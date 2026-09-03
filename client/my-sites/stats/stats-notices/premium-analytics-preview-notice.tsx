@@ -206,11 +206,13 @@ const PremiumAnalyticsPreviewNotice = ( {
 			<NoticeContainer isOdyssey={ isOdyssey }>
 				<NoticeBanner
 					level="success"
-					title={ translate( 'The new Traffic page is on' ) }
+					title={ translate( 'The new Traffic tab is on' ) }
 					onClose={ hideNotice }
 				>
 					<p key="desc" role="status">
-						{ translate( 'You’ll find it in the main menu alongside your current Stats.' ) }
+						{ translate(
+							'You’ll find it in the menu alongside your current Stats. You can switch it off again from the settings in the new Traffic tab.'
+						) }
 					</p>
 					<p key="cta">
 						<Button
@@ -218,7 +220,7 @@ const PremiumAnalyticsPreviewNotice = ( {
 							href={ premiumAnalyticsDashboardUrl ?? undefined }
 							ref={ restoreFocus }
 						>
-							{ translate( 'Go to the new Traffic page' ) }
+							{ translate( 'Go to the new Traffic tab' ) }
 						</Button>
 					</p>
 				</NoticeBanner>
@@ -231,7 +233,7 @@ const PremiumAnalyticsPreviewNotice = ( {
 			<NoticeContainer isOdyssey={ isOdyssey }>
 				<NoticeBanner
 					level="error"
-					title={ translate( 'We couldn’t switch on the new Traffic page' ) }
+					title={ translate( 'We couldn’t switch on the new Traffic tab' ) }
 					onClose={ hideNotice }
 				>
 					<p key="desc" role="alert">
@@ -266,14 +268,14 @@ const PremiumAnalyticsPreviewNotice = ( {
 		<NoticeContainer isOdyssey={ isOdyssey }>
 			<NoticeBanner
 				level="info"
-				title={ translate( 'Try the new Traffic page' ) }
+				title={ translate( 'Try the new Traffic tab' ) }
 				// Nothing to dismiss halfway through a write that is about to change the answer.
 				hideCloseButton={ isEnabling }
 				onClose={ dismissNotice }
 			>
 				<p key="desc">
 					{ translate(
-						'Clearer charts, and widgets you can move and resize to suit how you read your site. It’s an early version — your current Stats stay where they are.'
+						'Clearer charts, and widgets you can move and resize to suit how you read your site. It’s an early version, and you can switch it off again at any time.'
 					) }
 				</p>
 				<p key="cta">
