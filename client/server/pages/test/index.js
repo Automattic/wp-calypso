@@ -1105,6 +1105,31 @@ describe( 'main app', () => {
 		} );
 	} );
 
+	describe( 'Route /tags and /tag', () => {
+		it( 'permanently redirects logged-out visitors to the Discover tags tab', async () => {
+			const { response } = await app.run( { request: { url: '/tags' } } );
+			expect( response.redirect ).toHaveBeenCalledWith(
+				301,
+				'/discover/tags?selectedTag=dailyprompt'
+			);
+		} );
+
+		it( 'carries the tag and locale prefix through the redirect', async () => {
+			const { response } = await app.run( { request: { url: '/fr/tag/travel' } } );
+			expect( response.redirect ).toHaveBeenCalledWith(
+				301,
+				'/fr/discover/tags?selectedTag=travel'
+			);
+		} );
+
+		it( 'does not redirect logged-in users', async () => {
+			const { response } = await app.run( {
+				request: { url: '/tags', cookies: { wordpress_logged_in: true } },
+			} );
+			expect( response.redirect ).not.toHaveBeenCalled();
+		} );
+	} );
+
 	describe( 'Route /menus', () => {
 		it( 'redirects to menus when there is a site', async () => {
 			const { response } = await app.run( { request: { url: '/menus/my-site' } } );
