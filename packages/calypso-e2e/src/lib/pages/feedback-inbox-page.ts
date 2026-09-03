@@ -579,14 +579,18 @@ export class FeedbackInboxPage {
 			return;
 		}
 
-		await this.page.getByRole( 'button', { name: 'Close' } ).last().click();
-		// Wait for whichever panel was open (CFM inspector, legacy desktop side
-		// panel, or mobile dialog) to actually close.
-		await this.page
+		// Whichever panel is open: CFM inspector, legacy desktop side panel, or
+		// mobile dialog.
+		const panel = this.page
 			.locator( '.jp-forms-response-header' )
 			.or( this.page.locator( '.jp-forms__inbox-response' ) )
-			.or( this.page.getByRole( 'dialog', { name: 'Response' } ) )
-			.waitFor( { state: 'hidden', timeout: 5000 } );
+			.or( this.page.getByRole( 'dialog', { name: 'Response' } ) );
+
+		// Scoped to the panel: wp-admin intermittently renders a survey whose own
+		// "Close the survey" button is later in the DOM, and an unscoped .last()
+		// clicks that instead, leaving the response open.
+		await panel.getByRole( 'button', { name: 'Close' } ).last().click();
+		await panel.waitFor( { state: 'hidden', timeout: 5000 } );
 	}
 
 	/**
