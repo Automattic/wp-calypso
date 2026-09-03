@@ -20,8 +20,8 @@ jest.mock( 'calypso/lib/analytics/signup', () => ( {
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
-jest.mock( 'calypso/landing/stepper/hooks/use-site-slug-param', () => ( {
-	useSiteSlugParam: () => 'example.wordpress.com',
+jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
+	useSiteData: () => ( { siteSlug: 'example.wordpress.com' } ),
 } ) );
 
 describe( 'ProcessingStep', () => {

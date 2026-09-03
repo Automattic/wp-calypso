@@ -4,6 +4,7 @@ import { isTransferringHostedSiteCreationFlow, Step } from '@automattic/onboardi
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { parseTransferCreatedAt } from 'calypso/components/transfer-wait/transfer-created-at';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
@@ -77,8 +78,19 @@ const WaitForAtomic: StepType = function WaitForAtomic( { navigation, data, flow
 			await waitForInitiateTransfer();
 			setProgress( 25 );
 			if ( isTransferringHostedSiteCreationFlow( flow ) ) {
-				setTransferStartedAt( Date.now() );
-				await waitForTransfer( { onTransferStatusChange: setTransferStatus } );
+				setTransferStatus( null );
+				setTransferStartedAt( null );
+				await waitForTransfer( {
+					// Anchoring on the transfer's own start keeps the elapsed time honest across a
+					// reload, where a client-side clock would restart a wait already minutes old.
+					onTransferStatusChange: ( status, createdAt ) => {
+						setTransferStatus( status );
+						if ( createdAt ) {
+							const startedAt = parseTransferCreatedAt( createdAt );
+							setTransferStartedAt( Number.isNaN( startedAt ) ? null : startedAt );
+						}
+					},
+				} );
 			} else {
 				await waitForTransfer();
 			}

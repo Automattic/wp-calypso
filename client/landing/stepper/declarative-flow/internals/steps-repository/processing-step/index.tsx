@@ -18,7 +18,7 @@ import Loading from 'calypso/components/loading';
 import TransferWaitCard from 'calypso/components/transfer-wait/card';
 import availableFlows from 'calypso/landing/stepper/declarative-flow/registered-flows';
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
-import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordSignupProcessingScreen } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -36,6 +36,31 @@ import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { SiteIntent } from '@automattic/data-stores/src/onboard';
 import './style.scss';
+
+/**
+ * Mounted only for transfer flows, so the site request behind `useSiteData` stays out of every
+ * other flow's processing screen. The slug is what lets a stalled wait offer a way to the site;
+ * the created-site fallback covers a flow that made the site itself and carries no slug in the URL.
+ */
+function SiteTransferWait( {
+	transferStatus,
+	startedAt,
+}: {
+	transferStatus: string | null;
+	startedAt: number | null;
+} ) {
+	const { siteSlug } = useSiteData();
+	const createdSiteSlug = useFlowState().get( 'site' )?.siteSlug;
+
+	return (
+		<TransferWaitCard
+			transferStatus={ transferStatus }
+			startedAt={ startedAt }
+			isPluginInstall={ false }
+			siteSlug={ siteSlug || createdSiteSlug }
+		/>
+	);
+}
 
 const ProcessingStep: StepType< {
 	submits:
@@ -122,11 +147,6 @@ const ProcessingStep: StepType< {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getTransferStartedAt(),
 		[]
 	);
-	// The site this flow just created, so a stalled transfer can offer a way to it. The URL param
-	// covers the flows entered with a site already in hand.
-	const createdSiteSlug = useFlowState().get( 'site' )?.siteSlug;
-	const siteSlugParam = useSiteSlugParam();
-	const transferSiteSlug = createdSiteSlug ?? siteSlugParam;
 
 	// How the wait ended is known only inside the callback that ends it, and that callback submits —
 	// navigating away in the same tick, with no render in between to carry the outcome. Mutating the
@@ -266,12 +286,7 @@ const ProcessingStep: StepType< {
 			<>
 				<DocumentHead title={ __( 'Processing' ) } />
 				{ isTransferringHostedSiteCreationFlow( flow ) ? (
-					<TransferWaitCard
-						transferStatus={ transferStatus }
-						startedAt={ transferStartedAt }
-						isPluginInstall={ false }
-						siteSlug={ transferSiteSlug }
-					/>
+					<SiteTransferWait transferStatus={ transferStatus } startedAt={ transferStartedAt } />
 				) : (
 					<Step.Loading title={ getCurrentMessage() } progress={ progress } delay={ 1000 } />
 				) }

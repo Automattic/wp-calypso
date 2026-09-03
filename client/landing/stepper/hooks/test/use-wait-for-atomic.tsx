@@ -62,10 +62,18 @@ describe( 'useWaitForAtomic', () => {
 	} );
 
 	describe( 'waitForTransfer', () => {
-		it( 'reports each polled transfer status', async () => {
+		it( 'reports each polled transfer status, with the transfer’s own start', async () => {
 			mockGetSiteLatestAtomicTransfer
-				.mockReturnValueOnce( { atomic_transfer_id: 1, status: 'active' } )
-				.mockReturnValueOnce( { atomic_transfer_id: 1, status: 'completed' } );
+				.mockReturnValueOnce( {
+					atomic_transfer_id: 1,
+					status: 'active',
+					created_at: '2026-08-12 13:11:10',
+				} )
+				.mockReturnValueOnce( {
+					atomic_transfer_id: 1,
+					status: 'completed',
+					created_at: '2026-08-12 13:11:10',
+				} );
 			const onTransferStatusChange = jest.fn();
 
 			const { result } = renderWaitForAtomic();
@@ -73,8 +81,16 @@ describe( 'useWaitForAtomic', () => {
 			await jest.advanceTimersByTimeAsync( 6000 );
 
 			await expect( promise ).resolves.toBeUndefined();
-			expect( onTransferStatusChange ).toHaveBeenNthCalledWith( 1, 'active' );
-			expect( onTransferStatusChange ).toHaveBeenNthCalledWith( 2, 'completed' );
+			expect( onTransferStatusChange ).toHaveBeenNthCalledWith(
+				1,
+				'active',
+				'2026-08-12 13:11:10'
+			);
+			expect( onTransferStatusChange ).toHaveBeenNthCalledWith(
+				2,
+				'completed',
+				'2026-08-12 13:11:10'
+			);
 		} );
 	} );
 
