@@ -1,8 +1,12 @@
 import page from '@automattic/calypso-router';
+import { useQueryClient } from '@tanstack/react-query';
 import { TabPanel } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useMemo } from 'react';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { seedPostEmailStatsAvailability } from '../hooks/use-post-email-stats-availability-query';
 
 interface StatsDetailsNavigationProps {
 	postId: number;
@@ -18,6 +22,8 @@ function StatsDetailsNavigationImproved( {
 	givenSiteId,
 }: StatsDetailsNavigationProps ) {
 	const translate = useTranslate();
+	const queryClient = useQueryClient();
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const tabs = useMemo(
 		() => ( {
 			highlights: translate( 'Post traffic' ),
@@ -55,6 +61,12 @@ function StatsDetailsNavigationImproved( {
 				if ( tabName !== selectedTab ) {
 					const tab = tabPanelTabs.find( ( tab ) => tab.name === tabName );
 					if ( tab?.path ) {
+						if ( tabName === 'highlights' && [ 'opens', 'clicks' ].includes( selectedTab ) ) {
+							// Being on an email tab proves this post has email stats; seed the
+							// availability cache so the post detail page shows the tabs
+							// without waiting for the /rate request.
+							seedPostEmailStatsAvailability( queryClient, selectedSiteId, postId );
+						}
 						page( tab.path );
 					}
 				}
