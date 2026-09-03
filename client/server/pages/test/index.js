@@ -1106,10 +1106,10 @@ describe( 'main app', () => {
 	} );
 
 	describe( 'Route /tags and /tag', () => {
-		it( 'permanently redirects logged-out visitors to the Discover tags tab', async () => {
+		it( 'redirects logged-out visitors to the Discover tags tab', async () => {
 			const { response } = await app.run( { request: { url: '/tags' } } );
 			expect( response.redirect ).toHaveBeenCalledWith(
-				301,
+				302,
 				'/discover/tags?selectedTag=dailyprompt'
 			);
 		} );
@@ -1117,7 +1117,7 @@ describe( 'main app', () => {
 		it( 'carries the tag and locale prefix through the redirect', async () => {
 			const { response } = await app.run( { request: { url: '/fr/tag/travel' } } );
 			expect( response.redirect ).toHaveBeenCalledWith(
-				301,
+				302,
 				'/fr/discover/tags?selectedTag=travel'
 			);
 		} );

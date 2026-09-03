@@ -1058,9 +1058,10 @@ function wpcomPages( app ) {
 		}
 	} );
 
-	// The tag pages no longer render logged out; 301 old links (and search
-	// engines) to the Discover tags tab. Logged-in users fall through to the
-	// client-side routes.
+	// The tag pages no longer render logged out; redirect old links (and search
+	// engines) to the Discover tags tab. A 302 rather than a 301 because the
+	// response depends on login state and browsers cache 301s unconditionally.
+	// Logged-in users fall through to the client-side routes.
 	app.get(
 		[
 			'/:locale([a-z]{2,3}|[a-z]{2}-[a-z]{2})?/tags',
@@ -1073,7 +1074,7 @@ function wpcomPages( app ) {
 			}
 			const localePrefix = req.params.locale ? '/' + req.params.locale : '';
 			const selectedTag = req.params.tag ? encodeURIComponent( req.params.tag ) : 'dailyprompt';
-			res.redirect( 301, `${ localePrefix }/discover/tags?selectedTag=${ selectedTag }` );
+			res.redirect( 302, `${ localePrefix }/discover/tags?selectedTag=${ selectedTag }` );
 		}
 	);
 
