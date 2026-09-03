@@ -15,11 +15,9 @@
 	flex-direction: column;
 	flex: 1;
 	min-width: 0;
-}
-
-// Reserving the sidebar gutter, clipping the off-canvas sidebar and sliding it
-// in are all screen-only concerns. They are scoped to `screen` rather than
-// undone under `print` because the selectors below use `:has()`, which outranks
+// Scoped to `screen` rather than undone under `print` because the `:has()`
+// selectors below outrank the bare `.dashboard-root__body` a print override
+// would use — the override would silently lose.
 // the bare `.dashboard-root__body` a print override would use — the override
 // would silently lose and leave an empty 272px gutter on the page.
 @media screen {
