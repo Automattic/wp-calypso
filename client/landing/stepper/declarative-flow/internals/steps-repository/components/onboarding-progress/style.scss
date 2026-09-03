@@ -1,5 +1,16 @@
 @import '@wordpress/theme/design-tokens.css';
 
+// The top bar's right slot spaces its children 1rem apart. The names sit
+// further clear of whatever follows them than that, so the rail makes up the
+// difference itself rather than widening the slot for every other flow that
+// uses it. 1rem + 24px lands on the 40px the spec shows.
+//
+// Measured off a screenshot, not the node: the Figma connection was down when
+// this went in, so treat the 40 as provisional.
+.step-container-v2__top-bar-right-element > .onboarding-progress:not( :last-child ) {
+	margin-inline-end: var( --wpds-dimension-gap-xl );
+}
+
 // A text rail in the top bar: no indicators, no connectors, just the three
 // step names beside the WordPress logo. It costs nothing in the content
 // column, so unlike the previous treatment there is no wrapper padding to
@@ -26,7 +37,7 @@
 		// sits between.
 		&:not( :last-child )::after {
 			content: '\00b7';
-			color: var( --wpds-color-stroke-interactive-neutral );
+			color: var( --wpds-color-foreground-content-neutral-weak );
 			font-size: var( --wpds-typography-font-size-md );
 			line-height: var( --wpds-typography-line-height-sm );
 			padding-inline: var( --wpds-dimension-padding-sm );
