@@ -155,6 +155,7 @@ const DomainSearchStep: StepType< {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 		[]
 	);
+	const shouldHidePlansStep = shouldSkipPlansStep( queryParams, planCartItem );
 
 	// For CIAB sites, prefer the site title over the slug for domain suggestions
 	// since the slug is often randomly generated.
@@ -617,7 +618,7 @@ const DomainSearchStep: StepType< {
 						{ showProgress && (
 							<OnboardingProgress
 								currentStep="domains"
-								shouldHidePlansStep={ shouldSkipPlansStep( queryParams, planCartItem ) }
+								shouldHidePlansStep={ shouldHidePlansStep }
 							/>
 						) }
 						{ ! ( isMobileViewport && query ) && (
