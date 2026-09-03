@@ -38,6 +38,20 @@ interface ImageAltTextPickerProps {
 
 const EMPTY_ALT_TEXT_SUGGESTIONS: AltTextSuggestion[] = [];
 
+function isAltTextSuggestion( image: unknown ): image is AltTextSuggestion {
+	if ( ! image || typeof image !== 'object' || Array.isArray( image ) ) {
+		return false;
+	}
+
+	const candidate = image as Record< string, unknown >;
+	return (
+		typeof candidate.clientId === 'string' &&
+		candidate.clientId.trim() !== '' &&
+		typeof candidate.alt === 'string' &&
+		candidate.alt.trim() !== ''
+	);
+}
+
 /** Renders image alt-text suggestions and applies them in one action. */
 export default function ImageAltTextPicker( {
 	images,
@@ -48,7 +62,9 @@ export default function ImageAltTextPicker( {
 	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
 	// The props arrive from an orchestrator tool payload, so guard the shape
 	// instead of trusting the TypeScript type.
-	const rows = Array.isArray( images ) ? images : EMPTY_ALT_TEXT_SUGGESTIONS;
+	const rows = Array.isArray( images )
+		? images.filter( isAltTextSuggestion )
+		: EMPTY_ALT_TEXT_SUGGESTIONS;
 
 	const handleApplyAll = useCallback( () => {
 		let completedCount = 0;

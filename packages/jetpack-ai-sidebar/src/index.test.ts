@@ -3759,6 +3759,7 @@ describe( 'toolProvider', () => {
 			expect( result.returnToAgent ).toBe( true );
 			expect( result.result ).toEqual( {
 				success: true,
+				message: 'Choose from the options I provided.',
 				details: { type: 'title-picker' },
 			} );
 		} );
@@ -3778,16 +3779,14 @@ describe( 'toolProvider', () => {
 		it.each( [
 			[ 'no summary', undefined ],
 			[ 'a whitespace-only summary', '   ' ],
-		] )( 'omits the result message given %s', async ( _label, summary ) => {
+		] )( 'defaults the result message given %s', async ( _label, summary ) => {
 			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
 				type: 'title-picker',
 				props: { titles: [ { title: 'Title' } ] },
 				summary,
 			} ) ) as any;
 
-			// Omitted rather than defaulted, so the backend falls back to its
-			// own translated per-tool wording.
-			expect( result.result ).not.toHaveProperty( 'message' );
+			expect( result.result.message ).toBe( 'Choose from the options I provided.' );
 		} );
 
 		it.each( [

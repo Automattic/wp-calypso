@@ -802,6 +802,7 @@ function handleShowComponent( input: any ): any {
 	} );
 
 	const summary = typeof input?.summary === 'string' ? input.summary.trim() : '';
+	const message = summary || __( 'Choose from the options I provided.', __i18n_text_domain__ );
 
 	// The picker renders from the structured `agentMessage`, while the tool
 	// result tells the agent the picker was shown. Always return to the agent:
@@ -809,11 +810,11 @@ function handleShowComponent( input: any ): any {
 	// whereas a withheld result leaves the tool call unanswered and the model
 	// re-plans the whole request. Mirrors `big-sky/show-component`.
 	return {
-		// `message` is omitted rather than defaulted when a caller sends no
-		// summary, so the backend falls back to its own per-tool wording.
+		// Keep the standard ability-result contract complete even when an older
+		// caller omits the model-written summary.
 		result: {
 			success: true,
-			...( summary && { message: summary } ),
+			message,
 			details: { type },
 		},
 		returnToAgent: true,

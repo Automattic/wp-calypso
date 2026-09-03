@@ -131,6 +131,32 @@ describe( 'ImageAltTextPicker', () => {
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
+	it( 'filters invalid image suggestions before rendering and applying', () => {
+		const mixedImages = [
+			images[ 0 ],
+			null,
+			{},
+			{ clientId: '', alt: 'Missing a block id' },
+			{ clientId: 'block-c', alt: '   ' },
+		] as any;
+
+		render( <ImageAltTextPicker images={ mixedImages } /> );
+
+		expect( screen.getByText( 'A cat on a sofa' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Missing a block id' ) ).not.toBeInTheDocument();
+		fireEvent.click( screen.getByRole( 'button', { name: 'Apply to 1 image' } ) );
+		expect( mockUpdateBlockAttributes ).toHaveBeenCalledTimes( 1 );
+		expect( mockUpdateBlockAttributes ).toHaveBeenCalledWith( 'block-a', {
+			alt: 'A cat on a sofa',
+		} );
+	} );
+
+	it( 'renders nothing when every image suggestion is invalid', () => {
+		const invalidImages = [ null, {}, { clientId: 'block-a', alt: '' } ] as any;
+		const { container } = render( <ImageAltTextPicker images={ invalidImages } /> );
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
 	it.each( [
 		[ 'omitted', undefined ],
 		[ 'not an array', 'text' as any ],
