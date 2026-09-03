@@ -41,7 +41,7 @@ export default function ProductDetails( {
 	const { price, interval, note } = priceFor( product, term );
 	const isWooPayments = product.slug === WOOPAYMENTS_CARD.slug;
 	const mark = product.family.startsWith( 'jetpack' ) ? jetpackLogo : wooLogo;
-	let cta = inCart ? __( 'Remove from cart' ) : __( 'Add to cart' );
+	let cta: string = inCart ? __( 'Remove from cart' ) : __( 'Add to cart' );
 	if ( isReferralMode ) {
 		cta = inCart ? __( 'Remove from referral' ) : __( 'Add to referral' );
 	}

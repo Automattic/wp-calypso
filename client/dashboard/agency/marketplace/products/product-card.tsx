@@ -51,7 +51,7 @@ export default function ProductCard( {
 	// One badge: the category when there is one, else the kind. "Extension" on
 	// every Woo card said nothing; "Payments" does.
 	const badge = product.categories[ 0 ] ?? KIND_LABEL[ product.kind ];
-	let cta = inCart ? __( 'Added to cart' ) : __( 'Add to cart' );
+	let cta: string = inCart ? __( 'Added to cart' ) : __( 'Add to cart' );
 	if ( isReferralMode ) {
 		cta = inCart ? __( 'Added to referral' ) : __( 'Add to referral' );
 	}
