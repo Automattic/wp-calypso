@@ -257,6 +257,32 @@ export class FeedbackInboxPage {
 	}
 
 	/**
+	 * Searches for a response and waits for its row, re-searching until it appears.
+	 *
+	 * A status change reaches the list query a beat after the request that made it
+	 * returns, and the view does not re-fetch on its own: a search issued in that
+	 * window comes back without the row, and the table then sits on that result for
+	 * as long as anything waits on it. Only another search can resolve it.
+	 *
+	 * @param {string} text     Text identifying the response row, e.g. the email address.
+	 * @param {number} attempts How many searches to make before giving up.
+	 * @throws If the row never appears.
+	 */
+	async searchUntilResponseRow( text: string, attempts = 3 ): Promise< void > {
+		for ( let attempt = 1; attempt <= attempts; attempt++ ) {
+			// Clear first: re-filling an identical value fires no request.
+			await this.clearSearch( true );
+			await this.searchResponses( text );
+
+			if ( await this.hasResponseRow( text ) ) {
+				return;
+			}
+		}
+
+		throw new Error( `No response matching "${ text }" found after ${ attempts } searches.` );
+	}
+
+	/**
 	 * Clicks on a folder tab (Inbox, Spam, or Trash).
 	 *
 	 * Handles both the old dashboard (role="tab" within a tablist) and the
