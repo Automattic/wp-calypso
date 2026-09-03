@@ -778,6 +778,9 @@ const onboarding: FlowV2< typeof initialize > = {
 									coupon,
 									steps_current: checkoutStepperPosition.current,
 									steps_total: checkoutStepperPosition.total,
+									// Names the group this visit never walked, so checkout can leave it
+									// out of the indicator without inferring anything from the total.
+									...( skipsPlans ? { steps_omit: 'plans' } : {} ),
 								} )
 							);
 						} else if ( blueprintArchiveSlug || isKnownWowFunnel( wowFunnelSlug ) ) {

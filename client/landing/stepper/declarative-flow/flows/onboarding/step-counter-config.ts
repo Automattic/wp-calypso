@@ -21,15 +21,6 @@ export const ONBOARDING_STEPPER_GROUP_BY_SLUG: Record< string, OnboardingStepper
 	plans: 'plans',
 };
 
-export const ONBOARDING_STEPPER_TOTAL = ONBOARDING_STEPPER_GROUPS.length;
-
-/** The groups this visit actually walks through. A preselected plan never sees the grid. */
-function getOnboardingStepperGroups( skipsPlans: boolean ): readonly OnboardingStepperGroup[] {
-	return skipsPlans
-		? ONBOARDING_STEPPER_GROUPS.filter( ( group ) => group !== 'plans' )
-		: ONBOARDING_STEPPER_GROUPS;
-}
-
 export function getOnboardingStepperPosition(
 	group: OnboardingStepperGroup,
 	skipsPlans = false
@@ -37,10 +28,14 @@ export function getOnboardingStepperPosition(
 	current: number;
 	total: number;
 } {
-	// Skipping the grid does not make it unreachable: a deep link to `/setup/onboarding/plans`
-	// lands on it without passing the flow root that seeds the cart. Numbering a group the list
-	// left out would read "0 of 2", so a visit standing on one keeps it.
-	const groups = getOnboardingStepperGroups( skipsPlans && group !== 'plans' );
+	// A preselected plan never sees the grid — but skipping it does not make it unreachable: a
+	// deep link to `/setup/onboarding/plans` lands on it without passing the flow root that
+	// seeds the cart. Numbering a group the list left out would read "0 of 2", so a visit
+	// standing on one keeps it.
+	const groups =
+		skipsPlans && group !== 'plans'
+			? ONBOARDING_STEPPER_GROUPS.filter( ( g ) => g !== 'plans' )
+			: ONBOARDING_STEPPER_GROUPS;
 
 	return {
 		current: groups.indexOf( group ) + 1,

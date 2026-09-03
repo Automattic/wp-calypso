@@ -51,7 +51,6 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import Loading from 'calypso/components/loading';
-import { ONBOARDING_STEPPER_TOTAL } from 'calypso/landing/stepper/declarative-flow/flows/onboarding/step-counter-config';
 import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress';
 import { useShowOnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
@@ -486,19 +485,19 @@ export default function CheckoutMainContent( {
 	// knowledge — any flow can opt in by including the params. Mobile-only.
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const stepsCurrent = Number( searchParams.get( 'steps_current' ) );
-	const rawStepsTotal = Number( searchParams.get( 'steps_total' ) );
-	const stepsTotal = Number.isInteger( rawStepsTotal ) && rawStepsTotal > 0 ? rawStepsTotal : null;
+	const stepsTotal = Number( searchParams.get( 'steps_total' ) );
 	const stepCounter =
 		isMobileViewport &&
 		Number.isInteger( stepsCurrent ) &&
 		stepsCurrent > 0 &&
-		stepsTotal &&
+		Number.isInteger( stepsTotal ) &&
+		stepsTotal > 0 &&
 		stepsCurrent <= stepsTotal
 			? { current: stepsCurrent, total: stepsTotal }
 			: null;
-	// The redirecting flow reports how many steps its visit had. Onboarding sends one fewer when
-	// the plan arrived preselected, so the grid was never among them.
-	const hidePlansStep = !! stepsTotal && stepsTotal < ONBOARDING_STEPPER_TOTAL;
+	// The redirecting flow names any step its visit skipped; it is the flow, not checkout, that
+	// knows which ones those were.
+	const hidePlansStep = searchParams.get( 'steps_omit' ) === 'plans';
 	const selectedSiteData = useSelector( getSelectedSite );
 	const wpcomDomain = useSelector( ( state ) =>
 		getWpComDomainBySiteId( state, selectedSiteData?.ID )
