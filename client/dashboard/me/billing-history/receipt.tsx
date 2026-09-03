@@ -232,8 +232,8 @@ export function BillingDetailsField( { receipt }: { receipt: Receipt } ) {
 	);
 }
 
-function ReceiptTaxDetails( { receipt }: { receipt: Receipt } ) {
-	const hasReceiptTaxDetails = Boolean( receipt.tax_state ) || receipt.tax_is_for_business === true;
+export function ReceiptTaxDetails( { receipt }: { receipt: Receipt } ) {
+	const hasReceiptTaxDetails = Boolean( receipt.tax_state );
 	const { data: countryList } = useSuspenseQuery( countryListQuery() );
 	const countryName =
 		countryList.find( ( country ) => country.code === receipt.tax_country_code )?.name ??
@@ -261,7 +261,7 @@ function ReceiptTaxDetails( { receipt }: { receipt: Receipt } ) {
 		} );
 	}
 
-	if ( typeof receipt.tax_is_for_business === 'boolean' ) {
+	if ( isBusinessUseTaxRegion( receipt ) && typeof receipt.tax_is_for_business === 'boolean' ) {
 		taxDetails.push( {
 			key: 'business-use',
 			label: __( 'Business use' ),
@@ -441,13 +441,21 @@ function getPaymentMethodText( receipt: Receipt ): string | null {
 	return null;
 }
 
-function getBusinessTaxStateName( state: string ): string {
-	const businessUseTaxStates: Record< string, string > = {
-		CT: 'Connecticut',
-		OH: 'Ohio',
-	};
+const BUSINESS_USE_TAX_STATES: Record< string, string > = {
+	CT: 'Connecticut',
+	OH: 'Ohio',
+};
 
-	return businessUseTaxStates[ state.toUpperCase() ] ?? state;
+function getBusinessTaxStateName( state: string ): string {
+	return BUSINESS_USE_TAX_STATES[ state.toUpperCase() ] ?? state;
+}
+
+function isBusinessUseTaxRegion( receipt: Receipt ): receipt is Receipt & { tax_state: string } {
+	if ( receipt.tax_country_code?.toUpperCase() !== 'US' || ! receipt.tax_state ) {
+		return false;
+	}
+
+	return Boolean( BUSINESS_USE_TAX_STATES[ receipt.tax_state.toUpperCase() ] );
 }
 
 function mergeTaxIsForBusiness(
@@ -462,7 +470,7 @@ function mergeTaxIsForBusiness(
 }
 
 function getBusinessTaxSuffixLabel( receipt: Receipt ): string {
-	if ( ! receipt.tax_is_for_business || ! receipt.tax_state ) {
+	if ( ! receipt.tax_is_for_business || ! isBusinessUseTaxRegion( receipt ) ) {
 		return '';
 	}
 
@@ -474,7 +482,7 @@ function getBusinessTaxSuffixLabel( receipt: Receipt ): string {
 }
 
 function hasBusinessUseTaxDetails( receipt: Receipt ): boolean {
-	return receipt.tax_is_for_business === true && Boolean( receipt.tax_state );
+	return receipt.tax_is_for_business === true && isBusinessUseTaxRegion( receipt );
 }
 
 function ReceiptLineItems( { receipt }: { receipt: Receipt } ) {

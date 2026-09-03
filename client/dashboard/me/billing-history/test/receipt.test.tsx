@@ -5,7 +5,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
-import { BillingDetailsField, UserVatDetails } from '../receipt';
+import { BillingDetailsField, ReceiptTaxDetails, UserVatDetails } from '../receipt';
 import type { Receipt } from '@automattic/api-core';
 
 const receipt = {
@@ -28,6 +28,17 @@ function makeReceipt( overrides: Partial< Receipt > = {} ): Receipt {
 		id: 1,
 		...overrides,
 	} as Receipt;
+}
+
+function mockCountryList() {
+	nock( 'https://public-api.wordpress.com' )
+		.persist()
+		.get( '/rest/v1.1/domains/supported-countries' )
+		.query( true )
+		.reply( 200, [
+			{ code: 'US', name: 'United States' },
+			{ code: 'CA', name: 'Canada' },
+		] );
 }
 
 function mockCurrentTaxDetails() {
@@ -120,5 +131,54 @@ describe( '<UserVatDetails>', () => {
 		await waitFor( () => {
 			expect( screen.queryByText( 'VAT Details' ) ).not.toBeInTheDocument();
 		} );
+	} );
+} );
+
+describe( '<ReceiptTaxDetails>', () => {
+	test( 'shows business use for a receipt taxed in a state that has a business use rate', async () => {
+		mockCountryList();
+		render(
+			<ReceiptTaxDetails
+				receipt={ makeReceipt( {
+					tax_country_code: 'US',
+					tax_state: 'OH',
+					tax_is_for_business: false,
+				} ) }
+			/>
+		);
+
+		expect( await screen.findByText( 'Business use' ) ).toBeVisible();
+	} );
+
+	test( 'hides business use for a US state that has no business use rate', async () => {
+		mockCountryList();
+		render(
+			<ReceiptTaxDetails
+				receipt={ makeReceipt( {
+					tax_country_code: 'US',
+					tax_state: 'CA',
+					tax_is_for_business: false,
+				} ) }
+			/>
+		);
+
+		expect( await screen.findByText( 'State/Province' ) ).toBeVisible();
+		expect( screen.queryByText( 'Business use' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'hides business use outside the US', async () => {
+		mockCountryList();
+		render(
+			<ReceiptTaxDetails
+				receipt={ makeReceipt( {
+					tax_country_code: 'CA',
+					tax_state: 'ON',
+					tax_is_for_business: false,
+				} ) }
+			/>
+		);
+
+		expect( await screen.findByText( 'State/Province' ) ).toBeVisible();
+		expect( screen.queryByText( 'Business use' ) ).not.toBeInTheDocument();
 	} );
 } );
