@@ -145,7 +145,7 @@ const DomainSearchStep: StepType< {
 	// option to offer — show only a "Set up a domain later" skip control.
 	const isWowFunnel = !! queryParams.get( 'wow_funnel' );
 	const stepCounter = useOnboardingStepCounter( flow, 'domains' );
-	const skipsPlansStep = useSkipsPlansStep();
+	const skipsPlans = useSkipsPlansStep();
 
 	const storedSiteTitle = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
@@ -616,7 +616,7 @@ const DomainSearchStep: StepType< {
 					// The empty/initial state keeps the heading on mobile.
 					<>
 						{ showProgress && (
-							<OnboardingProgress currentStep="domains" hidePlansStep={ skipsPlansStep } />
+							<OnboardingProgress currentStep="domains" hidePlansStep={ skipsPlans } />
 						) }
 						{ ! ( isMobileViewport && query ) && (
 							<Step.Heading text={ headerText } subText={ subHeaderText } />
