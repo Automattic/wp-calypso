@@ -226,12 +226,15 @@ function chooseAddHandler( {
 	isNoSiteCart?: boolean;
 	isGiftPurchase?: boolean;
 } ): AddHandler {
-	// Akismet and some Marketplace products can be renewed in a "siteless" context
+	// Akismet and some Marketplace products can be renewed in a "siteless" context.
+	// Without a product slug in the URL there is nothing for `addRenewalItems` to
+	// build a cart product from, so fall back to the subscription ID and let the
+	// backend derive the product from the subscription record.
 	if (
 		( sitelessCheckoutType === 'akismet' || sitelessCheckoutType === 'marketplace' ) &&
 		originalPurchaseId
 	) {
-		return 'addRenewalItems';
+		return productAliasFromUrl ? 'addRenewalItems' : 'addRenewalBySubscriptionId';
 	}
 
 	if (

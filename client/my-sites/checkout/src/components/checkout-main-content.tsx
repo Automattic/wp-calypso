@@ -50,6 +50,7 @@ import {
 	type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Loading from 'calypso/components/loading';
 import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress';
 import { useShowOnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
@@ -125,6 +126,7 @@ import {
 } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
+import { LogInToCorrectAccountButton, WrongAccountRenewal } from './wrong-account-renewal';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type {
 	CheckoutPageErrorCallback,
@@ -245,11 +247,19 @@ const ContactFormTitle = () => {
 		if ( isMobileCheckoutStickySummary ) {
 			return <>{ String( translate( 'Contact information' ) ) }</>;
 		}
+
+		const titleText =
+			! isActive && isComplete
+				? translate( 'Contact information' )
+				: translate( 'Enter your contact information' );
+
 		return (
 			<>
-				{ ! isActive && isComplete
-					? String( translate( 'Contact information' ) )
-					: String( translate( 'Enter your contact information' ) ) }
+				{ titleText }{ ' ' }
+				<InlineSupportLink
+					supportContext="domain-contact-information-requirements"
+					showIcon={ false }
+				/>
 			</>
 		);
 	}
@@ -416,6 +426,7 @@ export default function CheckoutMainContent( {
 	siteUrl,
 	isRemovingProductFromCart,
 	areThereErrors,
+	isWrongAccountRenewal,
 	isInitialCartLoading,
 	customizedPreviousPath,
 	loadingHeader,
@@ -439,6 +450,7 @@ export default function CheckoutMainContent( {
 	siteUrl: string | undefined;
 	isRemovingProductFromCart: boolean;
 	areThereErrors: boolean;
+	isWrongAccountRenewal: boolean;
 	isInitialCartLoading: boolean;
 	customizedPreviousPath?: string;
 	loadingHeader?: ReactNode;
@@ -666,6 +678,26 @@ export default function CheckoutMainContent( {
 					<Loading className="checkout__pending-content" title={ headingText } />
 				</WPCheckoutCompletedMainContent>
 			</WPCheckoutCompletedWrapper>
+		);
+	}
+
+	// This must be checked before the empty cart page below: the renewal was
+	// rejected by the cart, so the cart is also empty, but "you have no items in
+	// your cart" tells the customer nothing they can act on.
+	if ( isWrongAccountRenewal ) {
+		debug( 'rendering wrong account renewal page' );
+		return (
+			<WPCheckoutWrapper>
+				<WPCheckoutSidebarContent></WPCheckoutSidebarContent>
+				<WPCheckoutMainContent isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }>
+					<PerformanceTrackerStop />
+					<WPCheckoutTitle className="checkout__main-title">
+						{ translate( 'Checkout' ) }
+					</WPCheckoutTitle>
+					<WrongAccountRenewal />
+					<CheckoutFormSubmit submitButton={ <LogInToCorrectAccountButton /> } />
+				</WPCheckoutMainContent>
+			</WPCheckoutWrapper>
 		);
 	}
 

@@ -383,9 +383,10 @@ export function handleRenewNowClick(
 				serviceSlug = 'marketplace/';
 			}
 
-			let renewalUrl = `/checkout/${ serviceSlug }${ productSlugs[ 0 ] }/renew/${
-				purchaseIds[ 0 ]
-			}/${ siteSlug || '' }`;
+			// Siteless Akismet and Marketplace renewals keep the service in the path
+			// because the route is what selects the service-specific checkout
+			// experience. Everything else renews from the subscription ID alone.
+			let renewalUrl = `/checkout/${ serviceSlug }renew/${ purchaseIds[ 0 ] }`;
 
 			renewalUrl = addQueryArgs(
 				{ redirect_to: options.redirectTo, cancel_to: options.cancelTo },
@@ -435,15 +436,13 @@ export function handleRenewMultiplePurchasesClick(
 					{ domain: otherPurchase.meta }
 				)
 			);
-			const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( renewItems );
+			const { purchaseIds } = getProductSlugsAndPurchaseIds( renewItems );
 
 			if ( purchaseIds.length === 0 ) {
 				throw new Error( 'Could not find product slug or purchase id for renewal.' );
 			}
 
-			let renewalUrl = `/checkout/${ productSlugs.join( ',' ) }/renew/${ purchaseIds.join(
-				','
-			) }/${ siteSlug || '' }`;
+			let renewalUrl = `/checkout/renew/${ purchaseIds.join( ',' ) }`;
 			if ( options.redirectTo ) {
 				renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
 			}

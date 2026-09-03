@@ -2,8 +2,9 @@
  * @jest-environment jsdom
  */
 import page from '@automattic/calypso-router';
+import { redirectLoggedOutToDiscoverTags } from 'calypso/reader/controller';
 import { readerNotFound } from 'calypso/reader/lib/reader-router';
-import initTags from '../index.web';
+import initTags from '../index';
 
 jest.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
@@ -27,6 +28,7 @@ jest.mock( 'calypso/controller/shared', () => ( {
 } ) );
 
 jest.mock( 'calypso/reader/controller', () => ( {
+	redirectLoggedOutToDiscoverTags: jest.fn(),
 	sidebar: jest.fn(),
 } ) );
 
@@ -46,7 +48,11 @@ describe( 'reader tags routes', () => {
 
 		initTags( router );
 
-		expect( router ).toHaveBeenCalledWith( '/tags/*', readerNotFound );
-		expect( page ).not.toHaveBeenCalledWith( '/tags/*', readerNotFound );
+		expect( router ).toHaveBeenCalledWith(
+			'/tags/*',
+			redirectLoggedOutToDiscoverTags,
+			readerNotFound
+		);
+		expect( page ).not.toHaveBeenCalled();
 	} );
 } );

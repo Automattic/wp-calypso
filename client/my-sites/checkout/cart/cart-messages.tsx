@@ -4,6 +4,7 @@ import { JETPACK_CONTACT_SUPPORT, JETPACK_SUPPORT } from '@automattic/urls';
 import { useDisplayCartMessages } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
+import { WRONG_ACCOUNT_RENEWAL_ERROR_CODE } from 'calypso/my-sites/checkout/src/hooks/use-has-wrong-account-renewal-error';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
@@ -41,7 +42,7 @@ export default function CartMessages( {
 
 	const showErrorMessages = useCallback(
 		( messages: ResponseCartMessage[] ) => {
-			showMessages( messages, reduxDispatch, 'error' );
+			showMessages( messages.filter( hasNoScreenOfItsOwn ), reduxDispatch, 'error' );
 		},
 		[ reduxDispatch ]
 	);
@@ -62,6 +63,17 @@ export default function CartMessages( {
 	} );
 
 	return null;
+}
+
+/**
+ * Errors that checkout renders as a dedicated screen with its own explanation
+ * and a way out. A notice for those would only repeat, in one line and with no
+ * action attached, what the screen already says better.
+ */
+const CART_ERROR_CODES_WITH_THEIR_OWN_SCREEN = [ WRONG_ACCOUNT_RENEWAL_ERROR_CODE ];
+
+function hasNoScreenOfItsOwn( message: ResponseCartMessage ): boolean {
+	return ! CART_ERROR_CODES_WITH_THEIR_OWN_SCREEN.includes( message.code );
 }
 
 function getChargebackErrorMessage( {
