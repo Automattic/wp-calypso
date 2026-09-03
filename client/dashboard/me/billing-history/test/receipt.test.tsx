@@ -58,6 +58,26 @@ describe( '<BillingDetailsField>', () => {
 		expect( field ).toHaveValue( 'Jane Doe\njane@example.com' );
 	} );
 
+	test( 'renders an empty field for a receipt that was not paid by card', () => {
+		render(
+			<BillingDetailsField
+				receipt={ makeReceipt( { cc_num: 'XXXX', cc_name: '', cc_email: '' } ) }
+			/>
+		);
+
+		expect( screen.getByRole( 'textbox', { name: 'Billing details' } ) ).toHaveValue( '' );
+	} );
+
+	test( 'renders an empty field for a card receipt served without a name or email', () => {
+		render(
+			<BillingDetailsField
+				receipt={ makeReceipt( { cc_num: '1234', cc_name: '', cc_email: '' } ) }
+			/>
+		);
+
+		expect( screen.getByRole( 'textbox', { name: 'Billing details' } ) ).toHaveValue( '' );
+	} );
+
 	test( 'accepts line breaks typed by the user', async () => {
 		const user = userEvent.setup();
 		render( <BillingDetailsField receipt={ receipt } /> );
