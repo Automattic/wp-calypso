@@ -1,5 +1,12 @@
 @import 'calypso/lib/color-scheme/dark-theme';
 
+/* Links */
+@mixin dashboard-dark-theme-links {
+	@at-root :where( & ) a {
+		color: var( --wp-admin-theme-color-darker-20 );
+	}
+}
+
 /* Callout */
 @mixin dashboard-dark-theme-callout {
 	.dashboard-callout__content > :first-child {
@@ -12,11 +19,84 @@
 	}
 }
 
+/* Command Palette */
+@mixin dashboard-dark-theme-command-palette {
+	.commands-command-menu__header-search-icon {
+		fill: var( --dashboard__text-color );
+	}
+
+	.commands-command-menu__header .components-button {
+		border-color: var( --dashboard-field__border-color );
+	}
+
+	.commands-command-menu__container {
+		[cmdk-input] {
+			background: transparent;
+			color: var( --dashboard__text-color );
+
+			&::placeholder {
+				color: var( --dashboard__text-muted-color );
+			}
+		}
+
+		[cmdk-item] {
+			color: var( --dashboard__text-color );
+
+			&[aria-disabled='true'] {
+				color: var( --dashboard__text-muted-color );
+			}
+
+			svg {
+				fill: currentColor;
+			}
+
+			&[aria-selected='true'] > div,
+			&:active > div {
+				color: var( --wp-components-color-foreground-inverted );
+			}
+		}
+
+		[cmdk-root] > [cmdk-list] {
+			&:has( [cmdk-group-items]:not( :empty ) ),
+			&:has( [cmdk-empty] ) {
+				border-top-color: var( --dashboard-surface__border-color );
+			}
+
+			[cmdk-group-heading] {
+				color: var( --dashboard__text-color );
+			}
+		}
+
+		[cmdk-empty] {
+			color: var( --dashboard__text-color );
+		}
+	}
+
+	.commands-command-menu__item-category {
+		color: var( --dashboard__text-muted-color );
+	}
+
+	.commands-command-menu__container
+		[cmdk-item][aria-selected='true']
+		.commands-command-menu__item-category,
+	.commands-command-menu__container [cmdk-item]:active .commands-command-menu__item-category {
+		color: var( --wp-components-color-foreground-inverted );
+	}
+}
+
 /* Card */
 @mixin dashboard-dark-theme-card {
 	@include color-scheme-dark-theme-card;
 
 	.components-surface.components-card.dashboard-notice {
+		// White would be wrong here. Use a grey slightly lighter than the notice,
+		// so the button still stands out from it.
+		--dashboard-notice-action__background-color: color-mix(
+			in srgb,
+			var( --dashboard-surface__background-color ) 90%,
+			var( --dashboard__text-color )
+		);
+
 		&.is-info {
 			background-color: color-mix(
 				in srgb,
@@ -178,25 +258,6 @@
 	}
 }
 
-/* Action List */
-@mixin dashboard-dark-theme-action-list {
-	.action-list .action-item {
-		border-bottom-color: var( --dashboard-surface__border-color );
-	}
-
-	.icon-list-item__decoration svg {
-		fill: var( --dashboard-subtle__color );
-	}
-
-	.action-item .components-v-stack > .components-text:first-child {
-		color: var( --dashboard__text-color );
-	}
-
-	.action-item .components-v-stack > .components-text:last-child {
-		color: var( --dashboard-subtle__color );
-	}
-}
-
 /* Item Group */
 @mixin dashboard-dark-theme-item-group {
 	.components-item-group {
@@ -225,6 +286,10 @@
 /* Data Views */
 @mixin dashboard-dark-theme-dataviews {
 	@include color-scheme-dark-theme-dataviews;
+
+	.dataviews-no-results .dashboard-empty-state__wrapper {
+		box-shadow: none;
+	}
 
 	.dataviews-view-list__media-wrapper:has( .dashboard-backups__list-icon ) {
 		background-color: var( --wp-components-color-gray-200 );
@@ -356,10 +421,6 @@
 		}
 	}
 
-	.plugin-switcher-item-name {
-		color: var( --dashboard__text-color );
-	}
-
 	.plugin-icon-wrapper.is-fallback {
 		background: var( --wp-components-color-gray-200 );
 		border-color: var( --wp-components-color-gray-300 );
@@ -379,40 +440,6 @@
 	}
 }
 
-/* Site Logs Badges */
-@mixin dashboard-dark-theme-site-logs-badges {
-	// Data table badges in the logs views don't declare a Badge intent, and
-	// override the colors locally, so we have to target them directly here.
-	:is( .site-logs-card, .site-logs-details-modal )
-		:is(
-			.badge--POST,
-			.badge--deprecated,
-			.badge--GET,
-			.badge--DELETE,
-			.badge--error,
-			.badge--fatal,
-			.badge--warning,
-			.badge--user
-		) {
-		background-color: color-mix(
-			in srgb,
-			var( --wp-components-color-background ) 90%,
-			var( --base-color )
-		);
-		color: color-mix( in srgb, var( --wp-components-color-foreground ) 50%, var( --base-color ) );
-
-		// `<Badge intent="default">` adds `.is-default`, which the Badge
-		// component pairs with an inset box-shadow in dark mode to stay
-		// visible against the card surface. The colored variants above
-		// already make the chip visible, so clear the shadow — except for
-		// `.badge--user`, whose gray-tinted bg is too close to the surface
-		// to stand on its own.
-		&:not( .badge--user ) {
-			box-shadow: none;
-		}
-	}
-}
-
 /* Modal */
 @mixin dashboard-dark-theme-modal {
 	.components-modal__frame {
@@ -426,21 +453,40 @@
 	}
 }
 
+@mixin dashboard-dark-theme-site-launch-modal {
+	.celebration-modal--content,
+	.site-launch-pre-launch-modal__preview-card {
+		background-color: var( --wp-components-color-gray-200 );
+		color: var( --dashboard__text-color );
+	}
+
+	.site-launch-pre-launch-modal__thumbnail,
+	.site-launch-pre-launch-modal__thumbnail::before {
+		background-color: var( --wp-components-color-gray-300 );
+	}
+
+	.site-launch-pre-launch-modal__meta svg {
+		fill: var( --dashboard__text-color );
+	}
+}
+
 // :root variables overridden for dark theme
 @mixin dashboard-dark-theme {
 	@include color-scheme-dark-theme-tokens;
 	@include color-scheme-dark-theme-calypso-properties;
 	@include color-scheme-dark-theme-color-scheme;
-	@include dashboard-dark-theme-action-list;
+	@include color-scheme-dark-theme-action-list;
 	@include color-scheme-dark-theme-agenttic;
 	@include dashboard-dark-theme-breadcrumbs;
 	@include dashboard-dark-theme-callout;
 	@include dashboard-dark-theme-card;
+	@include dashboard-dark-theme-command-palette;
 	@include dashboard-dark-theme-dataviews;
 	@include dashboard-dark-theme-destructive-secondary-button;
 	@include dashboard-dark-theme-emails;
 	@include dashboard-dark-theme-form-controls;
 	@include dashboard-dark-theme-item-group;
+	@include dashboard-dark-theme-links;
 	@include color-scheme-dark-theme-modal;
 	@include dashboard-dark-theme-modal;
 	@include color-scheme-dark-theme-palettes;
@@ -451,6 +497,6 @@
 	@include dashboard-dark-theme-scan;
 	@include dashboard-dark-theme-section-header;
 	@include color-scheme-dark-theme-site-icon;
-	@include dashboard-dark-theme-site-logs-badges;
+	@include dashboard-dark-theme-site-launch-modal;
 	@include color-scheme-dark-theme-summary-button;
 }

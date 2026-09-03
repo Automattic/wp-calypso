@@ -76,6 +76,7 @@ const allowedExternalSites = [
 	'my.localhost',
 	'my.woo.ai',
 	'my.woo.localhost',
+	'my.a4a.localhost',
 	'cloud.jetpack.com',
 	'jetpack.cloud.localhost',
 	'jetpack.com',
@@ -368,6 +369,14 @@ export default function getThankYouPageUrl( {
 		// using the blogId from the receipt, and preserve the checkout_type param
 		debug( 'unified checkout fallback, letting pending page construct URL' );
 		return addQueryArgs( { checkout_type: 'unified' }, '/' );
+	}
+
+	// WordPress.com siteless checkout
+	if ( sitelessCheckoutType === 'wpcom' ) {
+		debug( 'redirecting to siteless WordPress.com thank you' );
+		return receiptIdOrPlaceholder
+			? `/checkout/thank-you/no-site/${ receiptIdOrPlaceholder }`
+			: '/checkout/thank-you/no-site';
 	}
 
 	// If there is no purchase, then send the user to a generic page (not

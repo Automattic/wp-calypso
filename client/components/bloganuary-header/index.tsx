@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import BloganuaryIcon from 'calypso/components/blogging-prompt-card/bloganuary-icon';
 import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
-import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
+import { useFollowedTags } from 'calypso/reader/data/tags';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { toggleReaderSidebarTags } from 'calypso/state/reader-ui/sidebar/actions';
@@ -19,7 +19,7 @@ const BloganuaryHeader = () => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
-	const { data: followedTags, isSuccess } = useFollowedReaderTags();
+	const { data: followedTags, isSuccess } = useFollowedTags();
 	// While the query is still loading we don't know yet — keep the follow
 	// button disabled by returning `undefined` instead of `false`.
 	const isFollowingBloganuary = isSuccess

@@ -8,6 +8,15 @@ type GenericMenuItems = 'Trash';
 type MenuItems = TrashedMenuItems | GenericMenuItems;
 type PostsPageTabs = 'Published' | 'Drafts' | 'Scheduled' | 'Trash';
 
+// wp-admin pluralizes the status filter labels ("Draft (1)" vs "Drafts (2)") and
+// translates them, so the tabs are located by the status they link to instead.
+const tabPostStatus: Record< PostsPageTabs, string > = {
+	Published: 'publish',
+	Drafts: 'draft',
+	Scheduled: 'future',
+	Trash: 'trash',
+};
+
 const selectors = {
 	// General
 	addNewPostButton: 'a.page-title-action, span.split-page-title-action>a',
@@ -18,7 +27,7 @@ const selectors = {
 		`a.row-title:has-text("${ title }"), strong>span:has-text("${ title }")`,
 
 	// Status Filter
-	statusItem: ( item: string ) => `ul.subsubsub a:has-text("${ item }")`,
+	statusItem: ( postStatus: string ) => `ul.subsubsub a[href*="post_status=${ postStatus }"]`,
 
 	// Actions
 	actionItem: ( item: string ) => `.row-actions a:has-text("${ item }")`,
@@ -83,7 +92,7 @@ export class PostsPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( name: PostsPageTabs ): Promise< void > {
-		const locator = this.page.locator( selectors.statusItem( name ) );
+		const locator = this.page.locator( selectors.statusItem( tabPostStatus[ name ] ) );
 		await locator.click();
 	}
 
@@ -161,8 +170,17 @@ export class PostsPage {
 	async clickPost( title: string ): Promise< void > {
 		await this.ensurePostShown( title );
 
-		const locator = this.page.locator( `${ selectors.postRow } ${ selectors.postItem( title ) }` );
-		await locator.click();
+		const locator = this.page.locator(
+			`${ selectors.postRow } a.row-title:has-text("${ title }")`
+		);
+		// Navigate via href instead of click(): some wp-admin column widgets (e.g. jetpack_seo_schema)
+		// overlay the row and intercept pointer events, causing click() to time out.
+		await locator.waitFor( { state: 'visible' } );
+		const href = await locator.getAttribute( 'href' );
+		if ( ! href ) {
+			throw new Error( `No href found on row-title for post "${ title }"` );
+		}
+		await this.page.goto( href, { waitUntil: 'domcontentloaded', timeout: 30 * 1000 } );
 	}
 
 	/**

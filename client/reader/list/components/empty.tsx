@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import { ReaderList } from 'calypso/reader/list-manage/types';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import type { JSX } from 'react';
 
 interface ListEmptyProps {
 	list?: ReaderList;

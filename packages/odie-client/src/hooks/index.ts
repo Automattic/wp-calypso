@@ -6,3 +6,4 @@ export { useGetCombinedChat } from './use-get-combined-chat';
 export { useOdieUserTracking } from './use-odie-user-tracking';
 export { useSendZendeskMessage, useSendZendeskMessageOnce } from './use-send-zendesk-message';
 export { useUpdateDocumentTitle } from './use-update-document-title';
+export { useSurveyResponseRating } from './use-survey-response-rating';

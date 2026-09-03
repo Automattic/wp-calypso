@@ -27,6 +27,7 @@ export enum SiteGoal {
 
 export enum SiteIntent {
 	Write = 'write',
+	/** @deprecated The start-writing flow has been removed; retained for existing sites that persisted this intent. */
 	StartWriting = 'start-writing',
 	Sell = 'sell',
 	Build = 'build',

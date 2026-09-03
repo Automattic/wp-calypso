@@ -1,15 +1,14 @@
 import clsx from 'clsx';
 import { useRtl } from 'i18n-calypso';
-import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, useState, useEffect, Component } from 'react';
-import ReactDom from 'react-dom';
 import RootChild from '../root-child';
 import {
 	bindWindowListeners,
 	unbindWindowListeners,
 	onViewportChange,
 	suggested as suggestPosition,
+	arrowLeftOffset,
 	constrainLeft,
 	offset,
 } from './util';
@@ -17,6 +16,33 @@ import {
 import './style.scss';
 
 const noop = () => {};
+const DOMElement = typeof window !== 'undefined' ? window.Element : Object;
+
+function isDOMElement( value ) {
+	return Boolean( value && value.nodeType === 1 );
+}
+
+function getDOMNode( context ) {
+	if ( isDOMElement( context ) ) {
+		return context;
+	}
+
+	if ( typeof context?.getDOMNode === 'function' ) {
+		const node = context.getDOMNode();
+		return isDOMElement( node ) ? node : null;
+	}
+
+	if ( isDOMElement( context?.current ) ) {
+		return context.current;
+	}
+
+	if ( typeof context?.current?.getDOMNode === 'function' ) {
+		const node = context.current.getDOMNode();
+		return isDOMElement( node ) ? node : null;
+	}
+
+	return null;
+}
 
 class PopoverInner extends Component {
 	static defaultProps = {
@@ -56,6 +82,7 @@ class PopoverInner extends Component {
 		left: -99999,
 		top: -99999,
 		positionClass: this.getPositionClass( this.props.position ),
+		arrowLeft: null,
 	};
 
 	/**
@@ -80,10 +107,10 @@ class PopoverInner extends Component {
 		// setting and checking `this.scheduledPositionUpdate`.
 		// See https://github.com/Automattic/wp-calypso/commit/38e779cfebf6dd42bb30d8be7127951b0c531ae2
 		if ( this.scheduledPositionUpdate == null ) {
-			this.scheduledPositionUpdate = defer( () => {
+			this.scheduledPositionUpdate = setTimeout( () => {
 				this.setPosition();
 				this.scheduledPositionUpdate = null;
-			} );
+			}, 0 );
 		}
 	}
 
@@ -133,7 +160,7 @@ class PopoverInner extends Component {
 
 	onKeydown = ( event ) => {
 		if ( event.keyCode === 27 ) {
-			const domContext = ReactDom.findDOMNode( this.props.context );
+			const domContext = getDOMNode( this.props.context );
 			if ( domContext ) {
 				domContext.focus();
 			}
@@ -173,12 +200,12 @@ class PopoverInner extends Component {
 		let shouldClose = popoverContext && ! popoverContext.contains( event.target );
 
 		if ( shouldClose && this.props.context ) {
-			const domContext = ReactDom.findDOMNode( this.props.context );
+			const domContext = getDOMNode( this.props.context );
 			shouldClose = domContext && ! domContext.contains( event.target );
 		}
 
 		if ( shouldClose && this.props.ignoreContext ) {
-			const ignoreContext = ReactDom.findDOMNode( this.props.ignoreContext );
+			const ignoreContext = getDOMNode( this.props.ignoreContext );
 			shouldClose = ignoreContext && ! ignoreContext.contains( event.target );
 		}
 
@@ -208,12 +235,12 @@ class PopoverInner extends Component {
 		// { top: -9999, left: -9999 } where it already has dimensions. These dimensions are measured
 		// and used to calculate the final position.
 		// Focusing the element while it's off the screen would cause unwanted scrolling.
-		this.scheduledFocus = defer( () => {
+		this.scheduledFocus = setTimeout( () => {
 			if ( this.popoverNodeRef.current ) {
 				this.popoverNodeRef.current.focus();
 			}
 			this.scheduledFocus = null;
-		} );
+		}, 0 );
 	}
 
 	getPositionClass( position ) {
@@ -263,7 +290,7 @@ class PopoverInner extends Component {
 	computePosition() {
 		const { position, relativePosition } = this.props;
 		const domContainer = this.popoverInnerNodeRef.current;
-		const domContext = ReactDom.findDOMNode( this.props.context );
+		const domContext = getDOMNode( this.props.context );
 
 		if ( ! domContext ) {
 			return null;
@@ -279,17 +306,22 @@ class PopoverInner extends Component {
 			suggestedPosition = suggestPosition( suggestedPosition, domContainer, domContext );
 		}
 
-		const reposition = Object.assign(
-			{},
-			constrainLeft(
-				offset( suggestedPosition, domContainer, domContext, relativePosition ),
-				domContainer,
-				this.props.ignoreViewportSize
-			),
-			{ positionClass: this.getPositionClass( suggestedPosition ) }
+		const constrainedOffset = constrainLeft(
+			offset( suggestedPosition, domContainer, domContext, relativePosition ),
+			domContainer,
+			this.props.ignoreViewportSize,
+			this.props.leftBoundary,
+			this.props.rightBoundary
 		);
 
-		return reposition;
+		return {
+			...constrainedOffset,
+			positionClass: this.getPositionClass( suggestedPosition ),
+			arrowLeft:
+				suggestedPosition === 'top' || suggestedPosition === 'bottom'
+					? arrowLeftOffset( constrainedOffset, domContainer, domContext )
+					: null,
+		};
 	}
 
 	setPosition = () => {
@@ -304,6 +336,7 @@ class PopoverInner extends Component {
 				},
 				this.props.customPosition
 			);
+			position.arrowLeft = null;
 		} else {
 			position = this.computePosition();
 		}
@@ -373,6 +406,19 @@ class PopoverInner extends Component {
 		onMouseLeave?.();
 	};
 
+	// Keeps the internal ref used for positioning/focus while also forwarding the node to an
+	// optional `nodeRef` (e.g. from `react-transition-group`, which needs it under React 19).
+	setPopoverNode = ( node ) => {
+		this.popoverNodeRef.current = node;
+
+		const { nodeRef } = this.props;
+		if ( typeof nodeRef === 'function' ) {
+			nodeRef( node );
+		} else if ( nodeRef ) {
+			nodeRef.current = node;
+		}
+	};
+
 	render() {
 		if ( ! this.props.context ) {
 			return null;
@@ -382,7 +428,7 @@ class PopoverInner extends Component {
 
 		return (
 			<div
-				ref={ this.popoverNodeRef }
+				ref={ this.setPopoverNode }
 				aria-label={ this.props[ 'aria-label' ] }
 				id={ this.props.id }
 				role="tooltip"
@@ -392,7 +438,12 @@ class PopoverInner extends Component {
 				onMouseEnter={ this.handleOnMouseEnter }
 				onMouseLeave={ this.handleOnMouseLeave }
 			>
-				{ ! this.props.hideArrow ? <div className="popover__arrow" /> : null }
+				{ ! this.props.hideArrow ? (
+					<div
+						className="popover__arrow"
+						style={ this.state.arrowLeft != null ? { left: this.state.arrowLeft } : undefined }
+					/>
+				) : null }
 				<div ref={ this.popoverInnerNodeRef } className="popover__inner">
 					{ this.props.children }
 				</div>
@@ -446,15 +497,25 @@ function Popover( { isVisible = false, showDelay = 0, hideArrow = false, ...prop
 	);
 }
 
-// We accept DOM elements and React component instances as the `context` prop.
-// In case of a React component instance, we'll find the DOM element with `findDOMNode`.
+// We accept DOM elements, React refs, and explicit getDOMNode accessors as the `context` prop.
 const PropTypeElement = PropTypes.oneOfType( [
-	PropTypes.instanceOf( Component ),
-	PropTypes.instanceOf( typeof window !== 'undefined' ? window.Element : Object ),
+	PropTypes.instanceOf( DOMElement ),
+	PropTypes.shape( {
+		current: PropTypes.instanceOf( DOMElement ),
+	} ),
+	PropTypes.shape( {
+		getDOMNode: PropTypes.func,
+	} ),
+	PropTypes.shape( {
+		current: PropTypes.shape( {
+			getDOMNode: PropTypes.func,
+		} ),
+	} ),
 ] );
 
 Popover.propTypes = {
 	hideArrow: PropTypes.bool,
+	nodeRef: PropTypes.oneOfType( [ PropTypes.func, PropTypes.object ] ),
 	autoPosition: PropTypes.bool,
 	autoRtl: PropTypes.bool,
 	className: PropTypes.string,
@@ -462,6 +523,8 @@ Popover.propTypes = {
 	id: PropTypes.string,
 	context: PropTypeElement,
 	ignoreContext: PropTypeElement,
+	leftBoundary: PropTypes.oneOfType( [ PropTypes.number, PropTypes.func ] ),
+	rightBoundary: PropTypes.oneOfType( [ PropTypes.number, PropTypes.func ] ),
 	isVisible: PropTypes.bool,
 	focusOnShow: PropTypes.bool,
 	position: PropTypes.oneOf( [

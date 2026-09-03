@@ -23,6 +23,14 @@ $tab-background-selected: var(--color-surface);
 		}
 	}
 
+	.a4a-pressable-offer {
+		display: none;
+
+		@include break-large {
+			display: inherit;
+		}
+	}
+
 	.hosting-hero-section__content {
 		height: auto;
 	}

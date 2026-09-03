@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/i18n/init';
 
 /**
@@ -8,5 +6,5 @@ import 'calypso/state/i18n/init';
  * @returns {Object | null} an object of localized language names or null if no names are found
  */
 export default function getLocalizedLanguageNames( state ) {
-	return get( state, 'i18n.languageNames.items', null );
+	return state?.i18n?.languageNames?.items ?? null;
 }

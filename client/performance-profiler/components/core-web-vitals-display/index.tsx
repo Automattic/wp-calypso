@@ -10,7 +10,7 @@ import './style.scss';
 type CoreWebVitalsDisplayProps = Record< Metrics, number > & {
 	history: PerformanceMetricsHistory;
 	audits: Record< string, PerformanceMetricAudit >;
-	recommendationsRef: React.RefObject< HTMLDivElement > | null;
+	recommendationsRef: React.RefObject< HTMLDivElement | null > | null;
 	overallScoreIsTab?: boolean;
 	onRecommendationsFilterChange?: ( filter: string ) => void;
 };

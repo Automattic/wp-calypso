@@ -10,12 +10,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSiteSettings } from 'calypso/blocks/plugins-scheduled-updates/hooks/use-site-settings';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
+import PreLaunchSiteModal from 'calypso/components/pre-launch-site-modal';
 import {
 	DeviceTabProvider,
 	useDeviceTab,
 } from 'calypso/hosting/performance/contexts/device-tab-context';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useExperiment } from 'calypso/lib/explat';
+import { useSiteLaunchGatingVariant } from 'calypso/lib/use-site-launch-gating-variant';
 import { TabType } from 'calypso/performance-profiler/components/header';
 import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import { trackReportCompletedEvent } from 'calypso/performance-profiler/utils/track-report-events';
@@ -157,10 +158,15 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 		select: ( data ) => data.filter( ( domain ) => domain.blog_id === site?.ID ),
 	} );
 
-	const [ isExperimentLoading, experimentData ] = useExperiment(
-		'calypso_standardized_site_launch_gating_202603_v1'
-	);
-	const experimentVariant = experimentData?.variationName;
+	const [ isExperimentLoading, experimentVariant ] = useSiteLaunchGatingVariant();
+
+	// A free, already-public, or A4A dev site never qualifies, so skip the bridge
+	// and let the CTA redirect instantly.
+	const isFreePlan = site?.plan?.is_free ?? false;
+	const canOfferPreLaunch = ! isSitePublic && ! site?.is_a4a_dev_site && ! isFreePlan;
+	const [ isLaunchModalOpen, setIsLaunchModalOpen ] = useState( false );
+	const [ launchUrl, setLaunchUrl ] = useState( '' );
+
 	const retestPage = () => {
 		recordTracksEvent( 'calypso_performance_profiler_test_again_click' );
 		performance.mark( 'test-started' );
@@ -191,27 +197,28 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 			path,
 		} );
 
-		if ( experimentVariant === 'semi_gated_site_launch' ) {
-			window.location.assign(
-				addQueryArgs( '/start/launch-site', {
+		// Gating: 'semi_gated_site_launch' is the shipped default, routing to
+		// `/start/launch-site` via the pre-launch bridge. Other branches are
+		// scaffolding for future experiments; see useSiteLaunchGatingVariant().
+		switch ( experimentVariant ) {
+			case 'semi_gated_site_launch':
+			case null:
+			default: {
+				const url = addQueryArgs( '/start/launch-site', {
 					siteSlug: site?.slug,
 					back_to: window.location.pathname,
-				} )
-			);
-			return;
-		}
+				} );
 
-		if ( experimentVariant === 'ungated_site_launch' ) {
-			// Add celebrateLaunch param immediately so it's ready when site status updates
-			const url = new URL( window.location.href );
-			url.searchParams.set( 'celebrateLaunch', 'true' );
-			window.history.replaceState( {}, '', url.toString() );
-			dispatch( launchSite( siteId! ) );
-			return;
-		}
+				if ( ! canOfferPreLaunch ) {
+					window.location.assign( url );
+					return;
+				}
 
-		// default / control variant
-		dispatch( launchSite( siteId! ) );
+				setLaunchUrl( url );
+				setIsLaunchModalOpen( true );
+				return;
+			}
+		}
 	};
 
 	const isMobile = useMobileBreakpoint();
@@ -359,7 +366,7 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 				<>
 					{ ! isSitePublic ? (
 						<ReportUnavailable
-							isLaunching={ siteIsLaunching || isExperimentLoading }
+							isLaunching={ siteIsLaunching || isExperimentLoading || isLaunchModalOpen }
 							onLaunchSiteClick={ onLaunchSiteClick }
 							ctaText={
 								site?.is_a4a_dev_site
@@ -383,6 +390,14 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 						</>
 					) }
 				</>
+			) }
+			{ canOfferPreLaunch && (
+				<PreLaunchSiteModal
+					siteId={ siteId ?? 0 }
+					isOpen={ isLaunchModalOpen }
+					onClose={ () => setIsLaunchModalOpen( false ) }
+					launchUrl={ launchUrl }
+				/>
 			) }
 		</div>
 	);

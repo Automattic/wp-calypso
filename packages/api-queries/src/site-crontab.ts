@@ -11,6 +11,7 @@ export const siteCrontabsQuery = ( siteId: number ) =>
 
 export const siteCrontabCreateMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-crontab-create' },
 		mutationFn: ( params: CrontabFormData ) => createCrontab( siteId, params ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( siteCrontabsQuery( siteId ) );
@@ -19,6 +20,7 @@ export const siteCrontabCreateMutation = ( siteId: number ) =>
 
 export const siteCrontabUpdateMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-crontab-update' },
 		mutationFn: ( { cronId, params }: { cronId: number; params: CrontabFormData } ) =>
 			updateCrontab( siteId, cronId, params ),
 		onSuccess: () => {
@@ -28,6 +30,7 @@ export const siteCrontabUpdateMutation = ( siteId: number ) =>
 
 export const siteCrontabDeleteMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-crontab-delete' },
 		mutationFn: ( cronId: number ) => deleteCrontab( siteId, cronId ),
 		onSuccess: ( _, cronId ) => {
 			queryClient.setQueryData( siteCrontabsQuery( siteId ).queryKey, ( currentCrontabs ) => {

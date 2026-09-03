@@ -11,19 +11,25 @@ import { getISOWeek, getISOWeekYear } from 'date-fns';
 import deepmerge from 'deepmerge';
 import { useState, useEffect } from 'react';
 import { Experiment } from 'calypso/lib/explat';
+import AccountEmailBouncingNotice, {
+	useShouldShowAccountEmailBouncingNotice,
+} from '../app/account-email-bouncing-notice';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
+import RecoveryEmailMatchesAccountEmailNotice, {
+	useShouldShowRecoveryEmailMatchesAccountEmailNotice,
+} from '../app/recovery-email-matches-account-email-notice';
 import { sitesRoute } from '../app/router/sites';
-import { DarkModeAnnouncement } from '../components/dark-mode-announcement';
+import SecurityKeyReregisterNotice, {
+	useShouldShowSecurityKeyReregisterNotice,
+} from '../app/security-key-reregister-notice';
 import { DataViewsEmptyStateLayout } from '../components/dataviews';
-import OptInSurvey, { useShouldShowOptInSurvey } from '../components/opt-in-survey';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
 import AddNewSite from './add-new-site';
-import { AI_SITE_BUILDER_SPEC_FLOW } from './ai-site-builder-spec-flow';
 import {
 	SitesDataViews,
 	useActions,
@@ -31,11 +37,16 @@ import {
 	getDefaultView,
 	recordViewChanges,
 	sanitizeFields,
+	STAGING_FILTER_FIELD,
 } from './dataviews';
-import { EmptySitesStateContent, EmptySitesSearchStateContent } from './empty-sites-state';
+import { useHasOnlyDeletedSites } from './deleted-sites';
+import {
+	EmptyDeletedSitesStateContent,
+	EmptySitesStateContent,
+	EmptySitesSearchStateContent,
+} from './empty-sites-state';
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
-import { SitesNotices } from './notices';
-import { OptInWelcomeModal } from './welcome-modal';
+import { SitesNoticeArbiter } from './notice-arbiter';
 import type { FetchPaginatedSitesOptions, Site, DashboardFilters } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 
@@ -45,6 +56,15 @@ type SiteListQueryOptions = {
 	isAutomattician: boolean;
 };
 
+function isDeletedFilterActive( filters: Filter[] ): boolean {
+	return filters.some( ( filter ) => filter.field === 'is_deleted' && filter.value === true );
+}
+
+function getIncludeStaging( filters: Filter[] ): boolean {
+	const stagingFilter = filters.find( ( filter ) => filter.field === STAGING_FILTER_FIELD );
+	return stagingFilter ? stagingFilter.value === true : false;
+}
+
 const getFetchPaginatedSitesOptions = (
 	view: View,
 	{ isDefaultView, isRestoringAccount, isAutomattician }: SiteListQueryOptions,
@@ -52,18 +72,27 @@ const getFetchPaginatedSitesOptions = (
 ): FetchPaginatedSitesOptions => {
 	const filters = view.filters ?? [];
 
-	// Include A8C sites unless explicitly excluded from the filter.
-	const shouldIncludeA8COwned =
-		isAutomattician &&
-		! filters.some( ( item: Filter ) => item.field === 'is_a8c' && item.value === false );
+	const isA8COwnedIncludedByFilter = ! filters.some(
+		( item: Filter ) => item.field === 'is_a8c' && item.value === false
+	);
+
+	// Non-Automatticians can be members of a8c-owned sites but have no filter to
+	// control their visibility, so always include them.
+	const shouldIncludeA8COwned = ! isAutomattician || isA8COwnedIncludedByFilter;
+
+	// Hidden sites are only returned under 'all', which we opt into when the user
+	// searches, is restoring their account, or is an Automattician who wants a8c-owned
+	// sites — some P2s are not retrievable otherwise.
+	// See: https://github.com/Automattic/wp-calypso/pull/104220.
+	const shouldRequestAllVisibility =
+		!! view.search || isRestoringAccount || ( isAutomattician && isA8COwnedIncludedByFilter );
 
 	const options: FetchPaginatedSitesOptions = {
 		source: isDashboardBackport() && isDefaultView ? 'dashboard-site-list-default' : undefined,
 
-		// Some P2 sites are not retrievable unless site_visibility is set to 'all'.
-		// See: https://github.com/Automattic/wp-calypso/pull/104220.
-		site_visibility: view.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
+		site_visibility: shouldRequestAllVisibility ? 'all' : 'visible',
 		include_a8c_owned: shouldIncludeA8COwned,
+		include_staging: getIncludeStaging( filters ),
 		search: view.search,
 		sort_field: view.sort?.field,
 		sort_direction: view.sort?.direction,
@@ -71,8 +100,8 @@ const getFetchPaginatedSitesOptions = (
 		per_page: view.perPage,
 	};
 
-	if ( filters.find( ( item: Filter ) => item.field === 'is_deleted' && item.value === true ) ) {
-		options.site_visibility = 'deleted';
+	if ( isDeletedFilterActive( filters ) ) {
+		options.site_visibility = 'all';
 	}
 
 	view.filters?.forEach( ( filter ) => {
@@ -152,7 +181,19 @@ export default function Sites() {
 	const isRestoringAccount = !! currentSearchParams.restored;
 
 	const { user } = useAuth();
+	const { supports } = useAppContext();
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
+
+	const isSecurityKeyReregisterRequired = useShouldShowSecurityKeyReregisterNotice();
+	const showSecurityKeyReregisterNotice = supports.me && isSecurityKeyReregisterRequired;
+	const hasOnlyDeletedSites = useHasOnlyDeletedSites();
+
+	const isAccountEmailBouncing = useShouldShowAccountEmailBouncingNotice();
+	const showAccountEmailBouncingNotice = supports.me && isAccountEmailBouncing;
+
+	const isRecoveryEmailMatchingAccountEmail = useShouldShowRecoveryEmailMatchesAccountEmailNotice();
+	const showRecoveryEmailMatchesAccountEmailNotice =
+		supports.me && isRecoveryEmailMatchingAccountEmail;
 
 	const defaultView = getDefaultView( {
 		siteCount: user.site_count,
@@ -164,6 +205,7 @@ export default function Sites() {
 		slug: 'sites',
 		defaultView,
 		queryParams: currentSearchParams,
+		queryParamFilterFields: [ 'is_deleted' ],
 		sanitizeFields,
 	} );
 
@@ -187,7 +229,6 @@ export default function Sites() {
 	};
 
 	const userHasSites = user.site_count > 0;
-	const shouldShowOptInSurvey = useShouldShowOptInSurvey();
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginateSites(
 		sites ?? [],
@@ -195,15 +236,41 @@ export default function Sites() {
 		totalItems ?? 0
 	);
 
+	let emptySitesState = null;
+	if ( hasOnlyDeletedSites === true ) {
+		emptySitesState = (
+			<DataViewsEmptyStateLayout
+				title={ __( 'You don’t have any active sites' ) }
+				description={ __( 'Restore a deleted site, or start a new one.' ) }
+			>
+				<EmptyDeletedSitesStateContent />
+			</DataViewsEmptyStateLayout>
+		);
+	} else if ( hasOnlyDeletedSites === false ) {
+		emptySitesState = (
+			<DataViewsEmptyStateLayout
+				title={ __( 'You don’t have any sites yet' ) }
+				description={ __(
+					'Start a site and begin creating, coding, or exploring what WordPress can do.'
+				) }
+			>
+				<EmptySitesStateContent />
+			</DataViewsEmptyStateLayout>
+		);
+	}
+
+	const filters = view.filters ?? [];
+	const hasActiveSearch = !! view.search;
+	const hasActiveQuery = hasActiveSearch || filters.length > 0;
+
 	return (
 		<>
-			{ ! isDashboardBackport() && <OptInWelcomeModal /> }
 			<InviteAcceptedFlashMessage />
 			{ isModalOpen && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
 					<AddNewSite
 						context="sites-dashboard"
-						aiSiteBuilderPath={ `/setup/${ AI_SITE_BUILDER_SPEC_FLOW }` }
+						aiSiteBuilderPath="/setup/ai-site-builder-onboarding"
 					/>
 				</Modal>
 			) }
@@ -215,7 +282,10 @@ export default function Sites() {
 							userHasSites && (
 								<Button
 									variant="primary"
-									onClick={ () => setIsModalOpen( true ) }
+									onClick={ () => {
+										recordTracksEvent( 'calypso_dashboard_sites_add_new_site_clicked' );
+										setIsModalOpen( true );
+									} }
 									__next40pxDefaultSize
 								>
 									{ __( 'Add new site' ) }
@@ -225,18 +295,16 @@ export default function Sites() {
 					/>
 				}
 				notices={
-					<>
-						<SitesNotices />
-						{ ! isDashboardBackport() &&
-							( shouldShowOptInSurvey ? (
-								<OptInSurvey />
-							) : (
-								<DarkModeAnnouncement tracksContext="sites" />
-							) ) }
-					</>
+					<SitesNoticeArbiter>
+						{ showSecurityKeyReregisterNotice && <SecurityKeyReregisterNotice /> }
+						{ showAccountEmailBouncingNotice && <AccountEmailBouncingNotice /> }
+						{ showRecoveryEmailMatchesAccountEmailNotice && (
+							<RecoveryEmailMatchesAccountEmailNotice />
+						) }
+					</SitesNoticeArbiter>
 				}
 			>
-				{ userHasSites ? (
+				{ userHasSites || hasActiveQuery ? (
 					<SitesDataViews
 						view={ view }
 						sites={ filteredData }
@@ -258,14 +326,7 @@ export default function Sites() {
 						onReset={ resetView }
 					/>
 				) : (
-					<DataViewsEmptyStateLayout
-						title={ __( 'You don’t have any sites yet' ) }
-						description={ __(
-							'Start a site and begin creating, coding, or exploring what WordPress can do.'
-						) }
-					>
-						<EmptySitesStateContent />
-					</DataViewsEmptyStateLayout>
+					emptySitesState
 				) }
 			</PageLayout>
 			{ /* ExPlat's Evergreen A/A Test Experiment:

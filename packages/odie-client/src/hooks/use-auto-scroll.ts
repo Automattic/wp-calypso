@@ -2,7 +2,7 @@ import { RefObject, useEffect, useRef, useState } from 'react';
 import { useOdieAssistantContext } from '../context';
 
 export const useAutoScroll = (
-	messagesContainerRef: RefObject< HTMLDivElement >,
+	messagesContainerRef: RefObject< HTMLDivElement | null >,
 	isEnabled: boolean
 ): boolean => {
 	const { chat } = useOdieAssistantContext();

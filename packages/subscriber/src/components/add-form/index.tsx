@@ -115,7 +115,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	];
 	const inProgress = useInProgressState();
 	const prevInProgress = useRef( inProgress );
-	const prevSubmitAttemptCount = useRef< number >();
+	const prevSubmitAttemptCount = useRef< number >( undefined );
 	const [ selectedFile, setSelectedFile ] = useState< File >();
 	const [ isSelectedFileValid, setIsSelectedFileValid ] = useState( true );
 	const [ emails, setEmails ] = useState< string[] >( [] );

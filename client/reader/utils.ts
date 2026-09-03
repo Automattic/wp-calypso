@@ -1,8 +1,8 @@
 import page from '@automattic/calypso-router';
 import { safeImageUrl, getUrlParts } from '@automattic/calypso-url';
 import { removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
+import { truncate } from '@automattic/js-utils';
 import { addQueryArgs, getQueryArgs, removeQueryArgs } from '@wordpress/url';
-import { truncate } from 'lodash';
 import { stripHTML } from 'calypso/lib/formatting/strip-html';
 import { getCachedPost } from 'calypso/reader/data/post/cache';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';

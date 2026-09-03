@@ -34,6 +34,8 @@ import {
 	PLAN_FREE,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 	PLAN_PERSONAL,
+	PLAN_PERSONAL_MONTHLY,
+	PLAN_PREMIUM_MONTHLY,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { renderHook } from '@testing-library/react';
@@ -435,13 +437,103 @@ describe( 'useGenerateActionHook', () => {
 	} );
 
 	it( 'should handle downgrade actions', () => {
+		( useSelector as jest.Mock ).mockImplementation( ( selector ) =>
+			selector( {
+				ui: {},
+				sites: {
+					items: [],
+					plans: {
+						[ mockSiteId ]: {
+							data: [
+								{
+									productSlug: PLAN_PERSONAL,
+									availableForDowngrade: true,
+								},
+							],
+						},
+					},
+				},
+				route: {
+					query: {
+						current: {
+							get_domain: null,
+						},
+					},
+				},
+			} )
+		);
+
 		const { result } = renderHook( () =>
-			useGenerateActionHook( { isInSignup: false, isLaunchPage: false } )
+			useGenerateActionHook( { siteId: mockSiteId, isInSignup: false, isLaunchPage: false } )
 		);
 
 		const action = result.current( { planSlug: PLAN_PERSONAL, availableForPurchase: false } );
 
 		expect( action.primary.text ).toBe( 'Downgrade' );
 		expect( action.primary.variant ).toBe( 'secondary' );
+	} );
+	it( 'should offer a term upgrade on the current plan tier in the plans-upgrade intent', () => {
+		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
+			planSlug: PLAN_PERSONAL_MONTHLY,
+		} );
+
+		const { result } = renderHook( () =>
+			useGenerateActionHook( {
+				isInSignup: false,
+				isLaunchPage: false,
+				plansIntent: 'plans-upgrade',
+			} )
+		);
+
+		const action = result.current( {
+			planSlug: PLAN_PERSONAL,
+			availableForPurchase: true,
+		} );
+
+		expect( action.primary.text ).toBe( 'Upgrade to Yearly' );
+		expect( action.primary.status ).toBe( 'enabled' );
+	} );
+
+	it( 'should show the current plan as owned in the plans-upgrade intent when the term matches', () => {
+		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
+			planSlug: PLAN_PERSONAL_MONTHLY,
+		} );
+
+		const { result } = renderHook( () =>
+			useGenerateActionHook( {
+				isInSignup: false,
+				isLaunchPage: false,
+				plansIntent: 'plans-upgrade',
+			} )
+		);
+
+		const action = result.current( { planSlug: PLAN_PERSONAL_MONTHLY } );
+
+		expect( action.primary.text ).toBe( 'Your plan' );
+		expect( action.primary.status ).toBe( 'disabled' );
+	} );
+
+	it( 'should offer a higher tier at the same term in the plans-upgrade intent', () => {
+		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
+			planSlug: PLAN_PERSONAL_MONTHLY,
+		} );
+		( useSelector as jest.Mock ).mockImplementation( currentPlanIsOwnerMockSelector );
+
+		const { result } = renderHook( () =>
+			useGenerateActionHook( {
+				isInSignup: false,
+				isLaunchPage: false,
+				siteId: mockSiteId,
+				plansIntent: 'plans-upgrade',
+			} )
+		);
+
+		const action = result.current( {
+			planSlug: PLAN_PREMIUM_MONTHLY,
+			availableForPurchase: true,
+		} );
+
+		expect( action.primary.text ).toBe( 'Upgrade' );
+		expect( action.primary.status ).toBe( 'enabled' );
 	} );
 } );

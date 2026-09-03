@@ -1,5 +1,7 @@
 /**
- * See https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_keyBy
+ * Builds an object keyed by running each value of a collection through an
+ * iteratee (a function, or a property name read from each object value). On a
+ * key collision the later value wins.
  */
 type Collection< T > = T[] | { [ key in PropertyKey ]: T };
 

@@ -7,24 +7,17 @@ import { useRef } from 'react';
 import { loadBlackboxSdk } from '../blackbox-sdk';
 import { useBlackbox } from '../use-blackbox';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const config = jest.fn( ( key ) => {
-		if ( key === 'blackbox_api_key' ) {
-			return 'test-api-key';
-		}
-		return undefined;
-	} );
-	config.isEnabled = jest.fn( ( flag ) => flag === 'blackbox-login' );
-	return config;
-} );
-
 jest.mock( '../blackbox-sdk', () => ( {
+	getBlackboxApiKey: jest.fn( () => 'test-api-key' ),
 	loadBlackboxSdk: jest.fn( () => Promise.resolve() ),
 } ) );
 
-function TestComponent() {
+function TestComponent( { enabled = true } ) {
 	const containerRef = useRef( null );
-	const { hasChallengeContent, isChallengeActive, isLoading } = useBlackbox( { containerRef } );
+	const { hasChallengeContent, isChallengeActive, isLoading } = useBlackbox( {
+		containerRef,
+		enabled,
+	} );
 
 	return (
 		<>
@@ -124,6 +117,50 @@ describe( 'useBlackbox', () => {
 		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/inactive/content' );
 
 		act( () => callbacks.onChallengeComplete() );
+
+		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/inactive/empty' );
+	} );
+
+	test( 'does not load the SDK while disabled', async () => {
+		render( <TestComponent enabled={ false } /> );
+
+		await act( async () => {} );
+
+		expect( loadBlackboxSdk ).not.toHaveBeenCalled();
+		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/inactive/empty' );
+	} );
+
+	test( 'starts loading and configures when enabled after mount', async () => {
+		const { rerender } = render( <TestComponent enabled={ false } /> );
+
+		await act( async () => {} );
+		rerender( <TestComponent enabled /> );
+
+		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'loading/inactive/empty' );
+
+		await act( async () => {} );
+
+		expect( window.Blackbox.configure ).toHaveBeenCalled();
+
+		act( () => jest.advanceTimersByTime( 500 ) );
+
+		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/inactive/empty' );
+	} );
+
+	test( 'clears blocking state when disabled mid-challenge', async () => {
+		let callbacks;
+		window.Blackbox.configure.mockImplementationOnce( ( config ) => {
+			callbacks = config;
+		} );
+
+		const { rerender } = render( <TestComponent /> );
+
+		await act( async () => {} );
+		act( () => callbacks.onChallengeStart() );
+
+		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/active/empty' );
+
+		rerender( <TestComponent enabled={ false } /> );
 
 		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/inactive/empty' );
 	} );

@@ -1,6 +1,5 @@
-import config from '@automattic/calypso-config';
 import { useEffect, useState } from 'react';
-import { loadBlackboxSdk } from 'calypso/blocks/login/utils/blackbox-sdk';
+import { getBlackboxApiKey, loadBlackboxSdk } from 'calypso/blocks/login/utils/blackbox-sdk';
 
 // Give the SDK a short window to synchronously or near-synchronously start a challenge
 // after configure(), avoiding a brief enabled submit button while the widget initializes.
@@ -17,10 +16,11 @@ let hasConfiguredOnce = false;
  * ref and challenge callbacks, and tracks whether a challenge is active.
  * @param {Object}  options
  * @param {import('react').RefObject<HTMLDivElement>} options.containerRef Ref to the challenge container element.
+ * @param {boolean} options.enabled Whether Blackbox is active for this surface.
  * @returns {{ isChallengeActive: boolean, isLoading: boolean, hasChallengeContent: boolean }}
  */
-export function useBlackbox( { containerRef } ) {
-	const isEnabled = config.isEnabled( 'blackbox-login' ) && !! config( 'blackbox_api_key' );
+export function useBlackbox( { containerRef, enabled } ) {
+	const isEnabled = enabled;
 	const [ isChallengeActive, setIsChallengeActive ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( isEnabled );
 	const [ hasChallengeContent, setHasChallengeContent ] = useState( false );
@@ -47,8 +47,17 @@ export function useBlackbox( { containerRef } ) {
 
 	useEffect( () => {
 		if ( ! isEnabled ) {
+			// Covers the surface being suspended after a challenge appeared: drop
+			// all blocking state so the form isn't wedged when it re-enables.
+			setIsLoading( false );
+			setIsChallengeActive( false );
+			setHasChallengeContent( false );
 			return;
 		}
+
+		// The initial state only covers enabled-at-mount; this covers a surface
+		// that enables later (e.g. a hidden signup step becoming active).
+		setIsLoading( true );
 
 		let cancelled = false;
 		let hasStartedChallenge = false;
@@ -83,8 +92,11 @@ export function useBlackbox( { containerRef } ) {
 
 			try {
 				window.Blackbox.configure( {
-					apiKey: config( 'blackbox_api_key' ),
+					apiKey: getBlackboxApiKey(),
 					challengeContainer: containerRef.current,
+					// Fill the login form column so the challenge lines up with the
+					// input above and the full-width Continue button below.
+					challengeMaxWidth: '100%',
 					onChallengeStart: () => {
 						if ( ! cancelled ) {
 							hasStartedChallenge = true;

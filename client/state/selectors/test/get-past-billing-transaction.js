@@ -1,4 +1,3 @@
-import { clone } from 'lodash';
 import getPastBillingTransaction from 'calypso/state/selectors/get-past-billing-transaction';
 
 describe( 'getPastBillingTransaction()', () => {
@@ -52,7 +51,7 @@ describe( 'getPastBillingTransaction()', () => {
 			date: '2017-01-01T11:22:33+0000',
 		};
 
-		const testState = clone( state );
+		const testState = { ...state };
 		testState.billingTransactions.individualTransactions = {
 			999999: { data: individualTransaction },
 		};
@@ -61,8 +60,70 @@ describe( 'getPastBillingTransaction()', () => {
 		expect( output ).toBe( individualTransaction );
 	} );
 
+	test( 'should merge individually fetched transaction data with past transaction data', () => {
+		const individualTransaction = {
+			id: '12345678',
+			amount: '$1.23',
+			tax_state: 'OH',
+		};
+
+		const testState = { ...state };
+		testState.billingTransactions.individualTransactions = {
+			12345678: { data: individualTransaction },
+		};
+
+		const output = getPastBillingTransaction( testState, 12345678 );
+		expect( output ).toEqual( {
+			...state.billingTransactions.items.past[ 0 ],
+			...individualTransaction,
+		} );
+	} );
+
+	test( 'should keep tax metadata from past transaction when individually fetched transaction omits it', () => {
+		const testState = { ...state };
+		testState.billingTransactions.items.past[ 0 ] = {
+			...testState.billingTransactions.items.past[ 0 ],
+			tax_is_for_business: true,
+			tax_state: 'OH',
+		};
+		testState.billingTransactions.individualTransactions = {
+			12345678: {
+				data: {
+					id: '12345678',
+					amount: '$1.23',
+				},
+			},
+		};
+
+		const output = getPastBillingTransaction( testState, 12345678 );
+		expect( output.tax_is_for_business ).toBe( true );
+		expect( output.tax_state ).toBe( 'OH' );
+	} );
+
+	test( 'should keep business tax flag from past transaction when individually fetched transaction defaults it to false', () => {
+		const testState = { ...state };
+		testState.billingTransactions.items.past[ 0 ] = {
+			...testState.billingTransactions.items.past[ 0 ],
+			tax_is_for_business: true,
+			tax_state: 'OH',
+		};
+		testState.billingTransactions.individualTransactions = {
+			12345678: {
+				data: {
+					id: '12345678',
+					amount: '$1.23',
+					tax_is_for_business: false,
+				},
+			},
+		};
+
+		const output = getPastBillingTransaction( testState, 12345678 );
+		expect( output.tax_is_for_business ).toBe( true );
+		expect( output.tax_state ).toBe( 'OH' );
+	} );
+
 	test( 'should return null for individual transaction that is being fetched', () => {
-		const testState = clone( state );
+		const testState = { ...state };
 		testState.billingTransactions.individualTransactions = {
 			999999: { requesting: true },
 		};
@@ -72,7 +133,7 @@ describe( 'getPastBillingTransaction()', () => {
 	} );
 
 	test( 'should return null for individual transaction that failed to fetch', () => {
-		const testState = clone( state );
+		const testState = { ...state };
 		testState.billingTransactions.individualTransactions = {
 			999999: { error: true },
 		};

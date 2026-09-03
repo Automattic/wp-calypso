@@ -2,9 +2,9 @@ import config from '@automattic/calypso-config';
 import { Button, Card, Dialog, Gridicon } from '@automattic/components';
 import debugModule from 'debug';
 import { localize, fixMe } from 'i18n-calypso';
-import { flowRight, get, map } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import Site from 'calypso/blocks/site';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
@@ -76,7 +76,7 @@ class JetpackSsoForm extends Component {
 		recordTracksEvent( 'calypso_jetpack_sso_log_in_button_click' );
 
 		const { siteId, ssoNonce } = this.props;
-		const siteUrl = get( this.props, 'blogDetails.URL' );
+		const siteUrl = this.props?.blogDetails?.URL;
 
 		persistSsoApproved( siteId );
 
@@ -196,12 +196,12 @@ class JetpackSsoForm extends Component {
 		if ( blogDetails ) {
 			const siteObject = {
 				ID: null,
-				url: get( this.props, 'blogDetails.URL', '' ),
-				admin_url: get( this.props, 'blogDetails.admin_url', '' ),
-				domain: get( this.props, 'blogDetails.domain', '' ),
-				icon: get( this.props, 'blogDetails.icon', { img: '', ico: '' } ),
+				url: this.props?.blogDetails?.URL ?? '',
+				admin_url: this.props?.blogDetails?.admin_url ?? '',
+				domain: this.props?.blogDetails?.domain ?? '',
+				icon: this.props?.blogDetails?.icon ?? { img: '', ico: '' },
 				is_vip: false,
-				title: decodeEntities( get( this.props, 'blogDetails.title', '' ) ),
+				title: decodeEntities( this.props?.blogDetails?.title ?? '' ),
 			};
 			site = <Site site={ siteObject } />;
 		}
@@ -263,7 +263,7 @@ class JetpackSsoForm extends Component {
 				<Gridicon icon="arrow-left" size={ 18 } />
 				{ translate( 'Return to %(siteName)s', {
 					args: {
-						siteName: get( this.props, 'blogDetails.title' ),
+						siteName: this.props?.blogDetails?.title,
 					},
 				} ) }
 			</span>
@@ -291,7 +291,7 @@ class JetpackSsoForm extends Component {
 					),
 				},
 				args: {
-					siteName: get( this.props, 'blogDetails.title' ),
+					siteName: this.props?.blogDetails?.title,
 				},
 			}
 		);
@@ -306,7 +306,7 @@ class JetpackSsoForm extends Component {
 			'To use Single Sign-On, WordPress.com needs to be able to connect to your account on %(siteName)s.',
 			{
 				args: {
-					siteName: get( this.props, 'blogDetails.title' ),
+					siteName: this.props?.blogDetails?.title,
 				},
 			}
 		);
@@ -314,7 +314,7 @@ class JetpackSsoForm extends Component {
 	}
 
 	maybeWrapWithPlaceholder( input ) {
-		const title = get( this.props, 'blogDetails.title' );
+		const title = this.props?.blogDetails?.title;
 		if ( title ) {
 			return input;
 		}
@@ -340,7 +340,7 @@ class JetpackSsoForm extends Component {
 		return (
 			<table className="jetpack-connect__sso-shared-details-table">
 				<tbody>
-					{ map( sharedDetails, ( value, key ) => {
+					{ Object.entries( sharedDetails ).map( ( [ key, value ] ) => {
 						return (
 							<tr key={ key } className="jetpack-connect__sso-shared-detail-row">
 								<td className="jetpack-connect__sso-shared-detail-label">
@@ -537,18 +537,18 @@ class JetpackSsoForm extends Component {
 const connectComponent = connect(
 	( state ) => {
 		const jetpackSSO = getSSO( state );
-		const sitePartnerConfig = getPartnerConfigFromSiteDetails( get( jetpackSSO, 'blogDetails' ), {
+		const sitePartnerConfig = getPartnerConfigFromSiteDetails( jetpackSSO?.blogDetails, {
 			persistToSession: true,
 		} );
 		return {
-			ssoUrl: get( jetpackSSO, 'ssoUrl' ),
-			isAuthorizing: get( jetpackSSO, 'isAuthorizing' ),
-			isValidating: get( jetpackSSO, 'isValidating' ),
-			nonceValid: get( jetpackSSO, 'nonceValid' ),
-			authorizationError: get( jetpackSSO, 'authorizationError' ),
-			validationError: get( jetpackSSO, 'validationError' ),
-			blogDetails: get( jetpackSSO, 'blogDetails' ),
-			sharedDetails: get( jetpackSSO, 'sharedDetails' ),
+			ssoUrl: jetpackSSO?.ssoUrl,
+			isAuthorizing: jetpackSSO?.isAuthorizing,
+			isValidating: jetpackSSO?.isValidating,
+			nonceValid: jetpackSSO?.nonceValid,
+			authorizationError: jetpackSSO?.authorizationError,
+			validationError: jetpackSSO?.validationError,
+			blogDetails: jetpackSSO?.blogDetails,
+			sharedDetails: jetpackSSO?.sharedDetails,
 			currentUser: getCurrentUser( state ),
 			partnerConfig: sitePartnerConfig,
 		};
@@ -559,4 +559,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight( connectComponent, localize )( JetpackSsoForm );
+export default compose( connectComponent, localize )( JetpackSsoForm );

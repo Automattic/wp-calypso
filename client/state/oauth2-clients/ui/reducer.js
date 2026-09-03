@@ -1,4 +1,3 @@
-import { startsWith } from 'lodash';
 import { ROUTE_SET } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 
@@ -7,16 +6,16 @@ export const currentClientId = ( state = null, action ) => {
 		case ROUTE_SET: {
 			const { path, query } = action;
 			if (
-				( startsWith( path, '/log-in' ) || startsWith( path, '/oauth2/authorize' ) ) &&
+				( path.startsWith( '/log-in' ) || path.startsWith( '/oauth2/authorize' ) ) &&
 				query.client_id
 			) {
 				return Number( query.client_id );
 			}
 
 			if (
-				startsWith( path, '/log-in/apple/callback' ) ||
-				startsWith( path, '/start/wpcc' ) ||
-				startsWith( path, '/start/crowdsignal' )
+				path.startsWith( '/log-in/apple/callback' ) ||
+				path.startsWith( '/start/wpcc' ) ||
+				path.startsWith( '/start/crowdsignal' )
 			) {
 				return query.oauth2_client_id ? Number( query.oauth2_client_id ) : state;
 			}

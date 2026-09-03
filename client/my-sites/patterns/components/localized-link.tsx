@@ -1,5 +1,5 @@
 import { addLocaleToPathLocaleInFront, useLocale } from '@automattic/i18n-utils';
-import { forwardRef } from 'react';
+import { forwardRef, type JSX } from 'react';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
@@ -19,3 +19,5 @@ export const LocalizedLink = forwardRef< HTMLAnchorElement, JSX.IntrinsicElement
 		);
 	}
 );
+
+LocalizedLink.displayName = 'LocalizedLink';

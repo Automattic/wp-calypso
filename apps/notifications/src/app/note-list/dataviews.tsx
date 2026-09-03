@@ -1,4 +1,4 @@
-import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
+import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import {
 	chartBar,
@@ -47,7 +47,8 @@ const groupTitles = [
 	__( 'Older than a month' ),
 ];
 
-const RelativeDate = ( { timestamp }: { timestamp: string } ) => {
+// Map a note's timestamp to its time-group index (0 = Today … 4 = Older than a month).
+const getTimeGroupKey = ( timestamp: string ): number => {
 	const now = new Date().setHours( 0, 0, 0, 0 );
 	const timeBoundaries = [
 		Infinity,
@@ -63,9 +64,7 @@ const RelativeDate = ( { timestamp }: { timestamp: string } ) => {
 		.map( ( val, index ) => [ val, timeBoundaries[ index + 1 ] ] );
 
 	const time = new Date( timestamp );
-	const groupKey = timeGroups.findIndex( ( [ after, before ] ) => before < time && time <= after );
-
-	return <span>{ groupTitles[ groupKey ] }</span>;
+	return timeGroups.findIndex( ( [ after, before ] ) => before < time && time <= after );
 };
 
 export function getFields(): Field< Note >[] {
@@ -79,7 +78,7 @@ export function getFields(): Field< Note >[] {
 					size={ 32 }
 					badge={
 						<span className={ clsx( 'wpnc__gridicon', { 'is-unread': ! item.read } ) }>
-							<Icon icon={ iconMap[ item.noticon ] ?? info } size={ 10 } />
+							<Icon icon={ iconMap[ item.noticon ] ?? info } size={ 14 } />
 						</span>
 					}
 				/>
@@ -93,30 +92,33 @@ export function getFields(): Field< Note >[] {
 					links: false,
 				} ),
 			render: ( { field, item } ) => (
-				<div className={ clsx( 'wpnc__note-list-item', { 'is-unread': ! item.read } ) }>
-					<div
-						className="wpnc__subject"
-						/* eslint-disable-next-line react/no-danger */
-						dangerouslySetInnerHTML={ { __html: field.getValue( { item } ) } }
-					/>
-					{ item.subject.length > 1 && (
-						<div className="wpnc__excerpt">{ item.subject[ 1 ].text }</div>
-					) }
-				</div>
+				<div
+					className={ clsx( 'wpnc__subject', {
+						// Marks the open note's row for the active highlight (see CSS).
+						'is-active': ( item as Note & { isActive?: boolean } ).isActive,
+					} ) }
+					/* eslint-disable-next-line react/no-danger */
+					dangerouslySetInnerHTML={ { __html: field.getValue( { item } ) } }
+				/>
 			),
 		},
 		{
-			id: 'info',
-			label: __( 'Info' ),
-			render: ( { item } ) => {
-				return (
-					<HStack spacing={ 1 }>
-						<RelativeDate timestamp={ item.timestamp } />
-						<span>•</span>
-						<span>{ item.title }</span>
-					</HStack>
-				);
-			},
+			id: 'description',
+			label: __( 'Description' ),
+			render: ( { item } ) =>
+				item.subject.length > 1 ? (
+					<div className="wpnc__excerpt">{ item.subject[ 1 ].text }</div>
+				) : null,
+		},
+		{
+			// Group-only field for the time-section headers; never added to the
+			// view's `fields`, so it only renders as a header. `enableSorting: false`
+			// keeps notes in their newest-first arrival order rather than sorting by
+			// this label, which would order the groups alphabetically.
+			id: 'timeGroup',
+			label: __( 'Date' ),
+			enableSorting: false,
+			getValue: ( { item } ) => groupTitles[ getTimeGroupKey( item.timestamp ) ],
 		},
 	];
 }

@@ -6,8 +6,13 @@ export const createSitePlanObject = ( plan ) => {
 	return {
 		autoRenew: Boolean( plan.auto_renew ), // Always true for plans paid with credits.
 		autoRenewDate: plan.auto_renew_date,
+		// Server-determined upgrade/downgrade targets and expiry status.
+		// Left un-coerced so `undefined` (field absent) stays distinct from `false`.
+		availableForDowngrade: plan.available_for_downgrade,
+		availableForUpgrade: plan.available_for_upgrade,
 		currentPlan: Boolean( plan.current_plan ),
 		currencyCode: plan.currency_code,
+		expired: plan.is_expired,
 		expiry: plan.expiry,
 		expiryDate: plan.expiry,
 		freeTrial: Boolean( plan.free_trial ),

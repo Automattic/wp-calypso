@@ -78,9 +78,7 @@ describe( 'Checkout contact step', () => {
 	it( 'does not complete the contact step when the contact step button has not been clicked and there are no cached details', async () => {
 		mockCachedContactDetailsEndpoint( {} );
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		// Wait for the cart to load
 		await screen.findByText( 'Country' );
 		expect( screen.queryByTestId( 'payment-method-step--visible' ) ).not.toBeInTheDocument();
@@ -93,9 +91,7 @@ describe( 'Checkout contact step', () => {
 		} );
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		// Wait for the cart to load
 		await screen.findByLabelText( 'Continue with the entered contact details' );
 		const countryField = await screen.findByLabelText( 'Country' );
@@ -116,9 +112,7 @@ describe( 'Checkout contact step', () => {
 		} );
 		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		// Wait for the cart to load
 		await screen.findByText( 'Country' );
 		await expect( screen.findByTestId( 'payment-method-step--visible' ) ).toNeverAppear();
@@ -134,9 +128,7 @@ describe( 'Checkout contact step', () => {
 			messages: { postal_code: [ 'Postal code error message' ] },
 		} );
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
-			legacyRoot: true,
-		} );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		// Wait for the cart to load
 		await screen.findByText( 'Country' );
 		await expect( screen.findByText( 'Postal code error message' ) ).toNeverAppear();
@@ -260,8 +252,7 @@ describe( 'Checkout contact step', () => {
 					{ ...defaultPropsForMockCheckout }
 					cartChanges={ { products: [ product ] } }
 					additionalProps={ { isLoggedOutCart: logged === 'out' } }
-				/>,
-				{ legacyRoot: true }
+				/>
 			);
 
 			// Wait for the cart to load

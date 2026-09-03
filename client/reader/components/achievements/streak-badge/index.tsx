@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import type { JSX } from 'react';
 
 import './style.scss';
 

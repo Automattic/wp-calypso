@@ -12,7 +12,7 @@ import { BrandHeader } from '../brand-header';
 import { ConsentText } from '../consent-text';
 import { LoadingScreen } from '../loading-screen';
 import { ScreenLayout } from '../screen-layout';
-import type { ChangeEvent, MouseEvent, ReactNode } from 'react';
+import type { ChangeEvent, MouseEvent, ReactNode, JSX } from 'react';
 
 import './style.scss';
 

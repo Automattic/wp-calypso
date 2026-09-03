@@ -1,3 +1,7 @@
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "../mixins";

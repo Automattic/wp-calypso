@@ -1,8 +1,12 @@
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useCallback } from 'react';
 import Smooch from 'smooch';
 import type { ZendeskConversation } from './types';
+
+// Help Center @wordpress/data store key, hardcoded to avoid depending on
+// @automattic/help-center (which depends back on this package). Mirrors the
+// STORE_KEY registered by @automattic/data-stores' help-center store.
+const HELP_CENTER_STORE = 'automattic/help-center';
 
 export const calculateUnread = (
 	conversations: Conversation[] | ZendeskConversation[] | undefined | null

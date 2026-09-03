@@ -1,5 +1,4 @@
 import { translate } from 'i18n-calypso';
-import { trim } from 'lodash';
 import titlecase from 'to-title-case';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -14,7 +13,6 @@ import { recordTrack } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import renderHeaderSection from '../lib/header-section';
 
 const loadMain = () =>
 	import(
@@ -23,15 +21,37 @@ const loadMain = () =>
 
 const analyticsPageTitle = 'Reader';
 
+const TagStreamHeaderSection = () => {
+	return (
+		<div className="reader-hero">
+			<h2>
+				{
+					// translators: The title of the reader tag page
+					translate( 'WordPress Reader' )
+				}
+			</h2>
+			<h1>{ translate( 'Enjoy millions of blogs at your fingertips.' ) }</h1>
+		</div>
+	);
+};
+
+function renderHeaderSection() {
+	return <TagStreamHeaderSection />;
+}
+
 export const tagListing = ( context, next ) => {
 	const basePath = '/tag/:slug';
 	const fullAnalyticsPageTitle = analyticsPageTitle + ' > Tag > ' + context.params.tag;
 	const tagSlug = decodeURIComponent(
-		trim( context.params.tag ).toLowerCase().replace( /\s+/g, '-' ).replace( /-{2,}/g, '-' )
+		( context.params.tag ?? '' )
+			.trim()
+			.toLowerCase()
+			.replace( /\s+/g, '-' )
+			.replace( /-{2,}/g, '-' )
 	);
 	const state = context.store.getState();
 	const tagTitle = capitalPDangit(
-		titlecase( trim( context.params.tag ) ).replace( /[-_]/g, ' ' )
+		titlecase( ( context.params.tag ?? '' ).trim() ).replace( /[-_]/g, ' ' )
 	);
 
 	const encodedTag = encodeURIComponent( tagSlug ).toLowerCase();
@@ -84,6 +104,7 @@ export const tagListing = ( context, next ) => {
 				) }
 				startDate={ startDate }
 				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) } // eslint-disable-line
+				placeholder={ null }
 			/>
 		</>
 	);

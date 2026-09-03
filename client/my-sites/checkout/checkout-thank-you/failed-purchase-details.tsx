@@ -7,7 +7,7 @@ export default function FailedPurchaseDetails( {
 	failedPurchases,
 	purchases,
 }: {
-	purchases?: ReceiptPurchase[];
+	purchases?: Pick< ReceiptPurchase, 'productId' | 'productName' | 'meta' >[];
 	failedPurchases?: FailedReceiptPurchase[];
 } ) {
 	const translate = useTranslate();

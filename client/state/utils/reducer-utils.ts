@@ -1,4 +1,4 @@
-import { get, mapValues, reduce } from 'lodash';
+import { mapValues } from '@automattic/js-utils';
 import { combineReducers as combine } from 'redux'; // eslint-disable-line no-restricted-imports
 import { APPLY_STORED_STATE } from 'calypso/state/action-types';
 import { SerializationResult } from 'calypso/state/serialization-result';
@@ -174,7 +174,7 @@ function applyStoredState< TState, TAction extends AnyAction = Action >(
 		}
 
 		// Descend into nested state levels, possibly the storageKey will be found there?
-		const prevStateForKey = get( state, key );
+		const prevStateForKey = ( state as Record< string, unknown > )?.[ key ];
 		const nextStateForKey = reducer( prevStateForKey, action );
 		hasChanged = hasChanged || nextStateForKey !== prevStateForKey;
 		return nextStateForKey;
@@ -218,9 +218,8 @@ function serializeState< TState = any >(
 		return undefined;
 	}
 
-	return reduce(
-		reducers,
-		( result, reducer, reducerKey ) => {
+	return Object.entries( reducers ).reduce(
+		( result, [ reducerKey, reducer ] ) => {
 			const serialized = serialize( reducer, state[ reducerKey ] );
 			if ( serialized !== undefined ) {
 				if ( ! result ) {

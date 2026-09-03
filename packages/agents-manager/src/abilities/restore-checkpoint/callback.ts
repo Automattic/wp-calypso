@@ -1,0 +1,242 @@
+import { __ } from '@wordpress/i18n';
+import {
+	RESTORE_CHECKPOINT_TOOL_ID,
+	clearCheckpoint,
+	getCheckpoint,
+	getCheckpoints,
+	hasCheckpoint,
+	restoreCheckpoint,
+	setCheckpoint,
+} from '../../utils/checkpoints';
+import { isEditorPage } from '../../utils/is-editor-page';
+import {
+	getProviderCheckpoint,
+	getProviderCheckpointRecords,
+	getProviderCheckpoints,
+} from '../../utils/provider-checkpoints';
+import { getToolCallIdFromConversationHistory } from '../../utils/tool-call-history';
+import { errorResult, successResult } from '../ability-result';
+import type { CheckpointMetadata } from '../../utils/checkpoints';
+import type { UseCheckpointReturn } from '../../utils/load-external-providers';
+import type { AbilityResult } from '../types';
+
+export interface RestoreCheckpointInput {
+	checkpointId: string;
+	summary: string;
+	requestIntentType?: CheckpointMetadata[ 'requestIntentType' ];
+}
+
+// A restore's reciprocal checkpoint steps back over the restore itself, so an
+// undo's reciprocal serves redo requests and vice versa.
+function getReciprocalRequestIntentType(
+	requestIntentType: RestoreCheckpointInput[ 'requestIntentType' ]
+): RestoreCheckpointInput[ 'requestIntentType' ] {
+	if ( requestIntentType === 'undo' ) {
+		return 'redo';
+	}
+	if ( requestIntentType === 'redo' ) {
+		return 'undo';
+	}
+	return requestIntentType;
+}
+
+function restoreFailedResult( error: unknown, checkpointId: string ): AbilityResult {
+	// eslint-disable-next-line no-console
+	console.error( `[AgentsManager] Error restoring checkpoint ${ checkpointId }:`, error );
+
+	return errorResult(
+		error instanceof Error ? error.message : String( error ),
+		__( 'I could not restore that checkpoint.', __i18n_text_domain__ ),
+		{ checkpointId }
+	);
+}
+
+// Only the newest reciprocal stays valid — a stale one would redo over newer
+// changes.
+function clearStaleReciprocals(
+	restoreToolCallId: string,
+	reciprocalRequestIntentType: RestoreCheckpointInput[ 'requestIntentType' ],
+	providerCheckpoints: UseCheckpointReturn | undefined
+): void {
+	const isStaleReciprocal = ( checkpoint: {
+		id: string;
+		toolId?: string;
+		requestIntentType?: string;
+	} ) =>
+		checkpoint.toolId === RESTORE_CHECKPOINT_TOOL_ID &&
+		checkpoint.id !== restoreToolCallId &&
+		( checkpoint.requestIntentType === reciprocalRequestIntentType ||
+			! checkpoint.requestIntentType );
+
+	getCheckpoints()
+		.filter( isStaleReciprocal )
+		.forEach( ( { id } ) => clearCheckpoint( id ) );
+
+	// TODO (ability-migration): Delete this provider-store sweep with the
+	// bridge. Until then, reciprocals live in whichever store held their
+	// restore's target, so both stores are swept.
+	if ( providerCheckpoints ) {
+		getProviderCheckpointRecords()
+			.filter( isStaleReciprocal )
+			.forEach( ( { id } ) => providerCheckpoints.clearCheckpoint( id ) );
+	}
+}
+
+// Restores a checkpoint Big Sky still holds — its tools write to its own store
+// until they migrate. The reciprocal is recorded there too, scoped to the
+// target's keys: a keyless record would redo through Big Sky's legacy
+// full-snapshot path, which re-applies its (stale) variation titles over
+// AM-applied styles. Unreadable or keyless targets get no reciprocal — no
+// redo beats a wrong redo. The page-rename flip and navigation snapshots are
+// copied like Big Sky's own tool does, so a redo re-applies them.
+async function restoreProviderCheckpoint(
+	providerCheckpoints: UseCheckpointReturn,
+	{ checkpointId, summary, requestIntentType = 'restore' }: RestoreCheckpointInput
+): Promise< AbilityResult > {
+	const targetCheckpoint = getProviderCheckpoint( checkpointId );
+	const restoreToolCallId = getToolCallIdFromConversationHistory( RESTORE_CHECKPOINT_TOOL_ID );
+	const reciprocalRequestIntentType = getReciprocalRequestIntentType( requestIntentType );
+	const reciprocalId =
+		targetCheckpoint &&
+		restoreToolCallId &&
+		! hasCheckpoint( restoreToolCallId ) &&
+		! providerCheckpoints.hasCheckpoint( restoreToolCallId )
+			? restoreToolCallId
+			: null;
+
+	if ( reciprocalId && targetCheckpoint ) {
+		try {
+			const { pageRename } = targetCheckpoint;
+			// `toolCallId` matches Big Sky's own record shape in its store.
+			providerCheckpoints.setCheckpoint( reciprocalId, targetCheckpoint.checkpointKeys, {
+				toolCallId: reciprocalId,
+				toolId: RESTORE_CHECKPOINT_TOOL_ID,
+				summary,
+				restoresCheckpointId: checkpointId,
+				requestIntentType: reciprocalRequestIntentType,
+				createdByRequestIntentType: requestIntentType,
+				...( pageRename && {
+					pageRename: {
+						pageId: pageRename.pageId,
+						oldTitle: pageRename.newTitle,
+						newTitle: pageRename.oldTitle,
+					},
+				} ),
+			} );
+
+			// Capture the navigation snapshots before the restore mutates them.
+			Object.keys( targetCheckpoint.navigationRecords ?? {} ).forEach(
+				( navigationId ) =>
+					providerCheckpoints.addNavigationToCheckpoint?.( reciprocalId, navigationId )
+			);
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.error(
+				`[AgentsManager] Failed to record a redo checkpoint for ${ checkpointId }:`,
+				error
+			);
+
+			// Redo bookkeeping must not block the restore — drop the partial
+			// record and proceed without one; no redo beats a wrong one.
+			providerCheckpoints.clearCheckpoint( reciprocalId );
+		}
+	}
+
+	try {
+		await providerCheckpoints.restoreCheckpoint( checkpointId );
+	} catch ( error ) {
+		if ( reciprocalId ) {
+			providerCheckpoints.clearCheckpoint( reciprocalId );
+		}
+		return restoreFailedResult( error, checkpointId );
+	}
+
+	if ( restoreToolCallId ) {
+		clearStaleReciprocals( restoreToolCallId, reciprocalRequestIntentType, providerCheckpoints );
+	}
+
+	return successResult( summary, { checkpointId } );
+}
+
+/**
+ * The `restore-checkpoint` ability callback.
+ */
+export async function restoreCheckpointCallback(
+	input: RestoreCheckpointInput
+): Promise< AbilityResult > {
+	const { checkpointId, summary, requestIntentType = 'restore' } = input;
+
+	if ( ! isEditorPage() ) {
+		return errorResult(
+			'Not an editor page.',
+			__( 'I can only restore checkpoints from the editor.', __i18n_text_domain__ )
+		);
+	}
+
+	if ( ! checkpointId ) {
+		return errorResult(
+			'Missing checkpointId.',
+			__(
+				'I could not restore the checkpoint because no checkpoint ID was provided.',
+				__i18n_text_domain__
+			)
+		);
+	}
+
+	const targetCheckpoint = getCheckpoint( checkpointId );
+	if ( ! targetCheckpoint ) {
+		// TODO (ability-migration): Delete the delegation once the last
+		// checkpoint-writing Big Sky ability migrates — every checkpoint then
+		// lives in AM's own store.
+		const providerCheckpoints = getProviderCheckpoints();
+		if ( providerCheckpoints?.hasCheckpoint( checkpointId ) ) {
+			return restoreProviderCheckpoint( providerCheckpoints, input );
+		}
+
+		return errorResult(
+			`Checkpoint not found: ${ checkpointId }`,
+			__( 'I could not find a checkpoint for that ID.', __i18n_text_domain__ ),
+			{ checkpointId }
+		);
+	}
+
+	const restoreToolCallId = getToolCallIdFromConversationHistory( RESTORE_CHECKPOINT_TOOL_ID );
+	const reciprocalRequestIntentType = getReciprocalRequestIntentType( requestIntentType );
+
+	const reciprocalId =
+		restoreToolCallId && ! hasCheckpoint( restoreToolCallId ) ? restoreToolCallId : null;
+
+	// Record the pre-restore state under this call's own id, so an explicit
+	// redo can step back over this restore.
+	if ( reciprocalId ) {
+		setCheckpoint( reciprocalId, targetCheckpoint.checkpointKeys, {
+			toolId: RESTORE_CHECKPOINT_TOOL_ID,
+			summary,
+			restoresCheckpointId: checkpointId,
+			restoredCheckpointToolId: targetCheckpoint.toolId,
+			requestIntentType: reciprocalRequestIntentType,
+			createdByRequestIntentType: requestIntentType,
+		} );
+	}
+
+	try {
+		await restoreCheckpoint( checkpointId );
+	} catch ( error ) {
+		// A failed restore leaves the editor unchanged — drop the reciprocal
+		// so it does not advertise a redo for a restore that never happened.
+		if ( reciprocalId ) {
+			clearCheckpoint( reciprocalId );
+		}
+		return restoreFailedResult( error, checkpointId );
+	}
+
+	if ( restoreToolCallId ) {
+		clearStaleReciprocals(
+			restoreToolCallId,
+			reciprocalRequestIntentType,
+			getProviderCheckpoints()
+		);
+	}
+
+	return successResult( summary, { checkpointId } );
+}

@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 
 import './style.scss';
 
@@ -91,7 +91,11 @@ export default function A4ACarousel( { children, className }: Props ) {
 		setTouchStart( null );
 	}, [] );
 
-	useEffect( () => {
+	// Measure the carousel widths before the browser paints (rather than after, as
+	// useEffect would) so that `requiresNavigation` is correct on the very first
+	// painted frame. Otherwise the navigation buttons render absent on first paint
+	// and pop in a frame later, flickering the category menu on initial load.
+	useLayoutEffect( () => {
 		setContainerWidth( containerRef.current?.clientWidth ?? 0 );
 		setContentWidth( contentRef.current?.clientWidth ?? 0 );
 	}, [ containerRef, contentRef ] );

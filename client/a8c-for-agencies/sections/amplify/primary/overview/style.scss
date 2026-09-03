@@ -1,0 +1,16 @@
+// Let the overview sections span the full page width. The shared hosting
+// dashboard body caps its wrapper at 1500px and centers it with inline
+// padding; removing that lets each PageSectionColumns paint edge to edge while
+// its own interior keeps the centered, padded content column.
+.amplify-overview {
+	.hosting-dashboard-layout__body {
+		padding-block-start: 0;
+		padding-block-end: 0;
+	}
+
+	.hosting-dashboard-layout__body-wrapper {
+		max-width: unset;
+		padding-inline: 0;
+		margin: 0;
+	}
+}

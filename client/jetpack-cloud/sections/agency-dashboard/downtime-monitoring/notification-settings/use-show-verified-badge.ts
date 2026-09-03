@@ -5,7 +5,7 @@ const TIMEOUT_DURATION = 10000;
 const useShowVerifiedBadge = () => {
 	const [ verifiedItem, setVerifiedItem ] = useState< { [ key: string ]: string } | undefined >();
 
-	const timeoutIdRef = useRef< ReturnType< typeof setTimeout > | undefined >();
+	const timeoutIdRef = useRef< ReturnType< typeof setTimeout > | undefined >( undefined );
 
 	const handleSetVerifiedItem = useCallback(
 		( type: string, item: string ) => {

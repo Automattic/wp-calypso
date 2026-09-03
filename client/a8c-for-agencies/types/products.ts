@@ -31,6 +31,7 @@ export interface APIProductFamilyProduct {
 	yearly_introductory_price?: number;
 	tier_monthly_prices?: APIProductTierPrice[];
 	tier_yearly_prices?: APIProductTierPrice[];
+	site_domain?: string;
 }
 
 export interface APIProductFamily {

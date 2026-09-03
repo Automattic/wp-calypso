@@ -1,3 +1,4 @@
+import { snoozeAccountRecoveryInterstitial } from '../../lib/dashboard-helpers';
 import { expect, tags, test } from '../../lib/pw-base';
 
 test.describe(
@@ -6,12 +7,13 @@ test.describe(
 	() => {
 		test( 'As a WordPress.com user, I can see the new Multi-site Dashboard page as a list of my sites', async ( {
 			accountGivenByEnvironment,
+			clientRestAPI,
 			page,
 			pageDashboard,
 		} ) => {
 			await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async function () {
-				// Skip waiting for Calypso sidebar — we navigate to the dashboard immediately after.
-				await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
+				await snoozeAccountRecoveryInterstitial( clientRestAPI );
+				await accountGivenByEnvironment.authenticate( page );
 			} );
 
 			await test.step( 'When I visit the dashboard page', async function () {
@@ -26,12 +28,13 @@ test.describe(
 
 		test( 'As a WordPress.com user, I can see a 404 page for a non-existent dashboard page', async ( {
 			accountGivenByEnvironment,
+			clientRestAPI,
 			page,
 			pageDashboard,
 		} ) => {
 			await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async function () {
-				// Skip waiting for Calypso sidebar — we navigate to the dashboard immediately after.
-				await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
+				await snoozeAccountRecoveryInterstitial( clientRestAPI );
+				await accountGivenByEnvironment.authenticate( page );
 			} );
 
 			await test.step( 'When I visit the dashboard page', async function () {

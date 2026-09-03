@@ -30,8 +30,8 @@ export default function ConfirmModal( {
 	onCancel,
 	onConfirm,
 }: Props ) {
-	const cancelButtonRef = useRef();
-	const confirmButtonRef = useRef();
+	const cancelButtonRef = useRef( undefined );
+	const confirmButtonRef = useRef( undefined );
 
 	const handleOnConfirm = () => {
 		onConfirm?.();

@@ -130,7 +130,7 @@ const StatsCard = ( props: StatsCardProps ) => {
 		>
 			<div
 				className={ `${ BASE_CLASS_NAME }__content` }
-				{ ...( overlay && { 'aria-hidden': true, inert: '' } ) }
+				{ ...( overlay && { 'aria-hidden': true, inert: true } ) }
 			>
 				{ !! heroElement && (
 					<div className={ `${ BASE_CLASS_NAME }--hero` }>

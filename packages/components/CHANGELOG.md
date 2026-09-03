@@ -1,3 +1,18 @@
+## 4.0.0
+
+### Breaking Changes
+
+- `Icon`: Remove component. Use `Icon` from `@wordpress/ui` instead.
+- Use an npm-installable `@wordpress/compose` dependency range for package consumers.
+
+## 3.0.5
+
+- Fix popover positioning for contexts that expose DOM nodes through `getDOMNode()` (#111903).
+
+## 3.0.4
+
+- Declare React 19 compatibility for package consumers (#111721).
+
 ## 3.0.3
 
 - Fix `@wordpress/base-styles/colors` usage ([#107019](https://github.com/Automattic/wp-calypso/pull/107019)).

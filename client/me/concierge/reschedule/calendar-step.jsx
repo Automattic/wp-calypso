@@ -1,6 +1,5 @@
 import { CompactCard, FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { without } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -56,7 +55,7 @@ class CalendarStep extends Component {
 	getFilteredTimeSlots = () => {
 		// filter out current timeslot
 		const { appointmentDetails, availableTimes } = this.props;
-		return without( availableTimes, appointmentDetails.beginTimestamp );
+		return availableTimes.filter( ( time ) => time !== appointmentDetails.beginTimestamp );
 	};
 
 	componentDidMount() {

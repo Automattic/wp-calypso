@@ -139,10 +139,6 @@
 		color: var( --wp-admin-theme-color-darker-20 );
 	}
 
-	.theme-download-card__external-icon {
-		fill: currentColor;
-	}
-
 	.theme-card__image-container {
 		background-color: color-mix( in srgb, var( --dashboard__text-color ) 12%, transparent );
 		border-color: color-mix( in srgb, var( --dashboard__text-color ) 12%, transparent );
@@ -159,7 +155,6 @@
 	}
 
 	.themes-list__option-button.button:not( .is-primary ),
-	.theme-download-card .button,
 	.theme__sheet-demo-button {
 		background-color: transparent;
 		border-color: var( --dashboard-field__border-color );
@@ -193,15 +188,6 @@
 		}
 	}
 
-	.card.theme__sheet-card-support .components-button {
-		--wp-components-color-accent: var( --wp-admin-theme-color );
-		--wp-components-color-accent-darker-20: var( --color-accent-80 );
-		background-color: transparent;
-
-		&:hover {
-			background-color: transparent;
-		}
-	}
 	.components-card-footer.help-center__container-footer .button.help-center-contact-page__button {
 		--wp-components-color-accent: var( --wp-admin-theme-color );
 	}

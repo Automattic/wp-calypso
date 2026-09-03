@@ -138,7 +138,9 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		}
 
 		function fetchImporters() {
-			siteId && dispatch( fetchImporterState( siteId ) );
+			if ( siteId ) {
+				dispatch( fetchImporterState( siteId ) );
+			}
 		}
 
 		function getImportJob( importer: Importer ): ImportJob | undefined {
@@ -203,12 +205,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 			}
 
 			if ( ! hasPermission() ) {
-				return (
-					<NotAuthorized
-						onStartBuilding={ stepNavigator?.goToIntentPage }
-						onBackToStart={ stepNavigator?.goToImportCapturePage }
-					/>
-				);
+				return <NotAuthorized onBackToStart={ stepNavigator?.goToImportCapturePage } />;
 			}
 
 			return (

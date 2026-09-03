@@ -52,6 +52,20 @@ jest.mock( '../store', () => ( {
 	store: 'image-studio',
 } ) );
 
+// Tracking mocks (referenced lazily so module-init order does not matter)
+const mockTrackCloseWarningShown = jest.fn();
+const mockTrackCloseWarningKeptGenerating = jest.fn();
+const mockTrackCloseWarningStopped = jest.fn();
+
+jest.mock( '../utils/tracking', () => ( {
+	trackImageStudioFeatureClipCloseWarningShown: ( ...args ) =>
+		mockTrackCloseWarningShown( ...args ),
+	trackImageStudioFeatureClipCloseWarningKeptGenerating: ( ...args ) =>
+		mockTrackCloseWarningKeptGenerating( ...args ),
+	trackImageStudioFeatureClipCloseWarningStopped: ( ...args ) =>
+		mockTrackCloseWarningStopped( ...args ),
+} ) );
+
 describe( 'useUnsavedChangesConfirmation', () => {
 	let mockOnSave;
 	let mockOnDiscard;
@@ -398,6 +412,167 @@ describe( 'useUnsavedChangesConfirmation', () => {
 
 			addEventListenerSpy.mockRestore();
 			removeEventListenerSpy.mockRestore();
+		} );
+	} );
+
+	describe( 'generation in progress (Feature Clip)', () => {
+		it( 'opens the close dialog in the generation variant and does not exit', () => {
+			mockGetHasUnsavedChanges.mockReturnValue( false );
+
+			const { result } = renderHook( () =>
+				useUnsavedChangesConfirmation( {
+					onSave: mockOnSave,
+					onDiscard: mockOnDiscard,
+					onExit: mockOnExit,
+					isGenerationInProgress: true,
+				} )
+			);
+
+			act( () => {
+				result.current.handleRequestClose();
+			} );
+
+			expect( result.current.isConfirmDialogOpen ).toBe( true );
+			expect( result.current.closeDialogVariant ).toBe( 'generation' );
+			expect( mockOnExit ).not.toHaveBeenCalled();
+			expect( mockTrackCloseWarningShown ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'uses the generation variant even when there are also unsaved changes', () => {
+			mockGetHasUnsavedChanges.mockReturnValue( true );
+
+			const { result } = renderHook( () =>
+				useUnsavedChangesConfirmation( {
+					onSave: mockOnSave,
+					onDiscard: mockOnDiscard,
+					onExit: mockOnExit,
+					isGenerationInProgress: true,
+				} )
+			);
+
+			act( () => {
+				result.current.handleRequestClose();
+			} );
+
+			expect( result.current.isConfirmDialogOpen ).toBe( true );
+			expect( result.current.closeDialogVariant ).toBe( 'generation' );
+			expect( mockOnExit ).not.toHaveBeenCalled();
+		} );
+
+		it( 'handleConfirmKeepGenerating closes the dialog without exiting', () => {
+			const { result } = renderHook( () =>
+				useUnsavedChangesConfirmation( {
+					onSave: mockOnSave,
+					onDiscard: mockOnDiscard,
+					onExit: mockOnExit,
+					isGenerationInProgress: true,
+				} )
+			);
+
+			act( () => {
+				result.current.handleRequestClose();
+			} );
+			expect( result.current.isConfirmDialogOpen ).toBe( true );
+
+			act( () => {
+				result.current.handleConfirmKeepGenerating();
+			} );
+
+			expect( result.current.isConfirmDialogOpen ).toBe( false );
+			expect( mockOnExit ).not.toHaveBeenCalled();
+			expect( mockTrackCloseWarningKeptGenerating ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'handleConfirmStopAndClose exits and toggles isExiting', async () => {
+			let exitResolve;
+			const exitPromise = new Promise( ( resolve ) => {
+				exitResolve = resolve;
+			} );
+			mockOnExit.mockReturnValue( exitPromise );
+
+			const { result } = renderHook( () =>
+				useUnsavedChangesConfirmation( {
+					onSave: mockOnSave,
+					onDiscard: mockOnDiscard,
+					onExit: mockOnExit,
+					isGenerationInProgress: true,
+				} )
+			);
+
+			act( () => {
+				result.current.handleRequestClose();
+			} );
+			expect( result.current.isConfirmDialogOpen ).toBe( true );
+
+			let stopPromise;
+			act( () => {
+				stopPromise = result.current.handleConfirmStopAndClose();
+			} );
+
+			await act( async () => {
+				await Promise.resolve();
+			} );
+
+			expect( result.current.isConfirmDialogOpen ).toBe( false );
+			expect( result.current.isExiting ).toBe( true );
+			expect( mockOnExit ).toHaveBeenCalledWith( false );
+			expect( mockTrackCloseWarningStopped ).toHaveBeenCalledTimes( 1 );
+
+			await act( async () => {
+				exitResolve();
+				await stopPromise;
+			} );
+
+			expect( result.current.isExiting ).toBe( false );
+		} );
+
+		it( 'intercepts ESC and opens the generation variant when no unsaved changes', () => {
+			mockGetHasUnsavedChanges.mockReturnValue( false );
+
+			const { result } = renderHook( () =>
+				useUnsavedChangesConfirmation( {
+					onSave: mockOnSave,
+					onDiscard: mockOnDiscard,
+					onExit: mockOnExit,
+					isGenerationInProgress: true,
+				} )
+			);
+
+			const escapeEvent = new window.KeyboardEvent( 'keydown', {
+				key: 'Escape',
+				bubbles: true,
+				cancelable: true,
+			} );
+
+			act( () => {
+				document.dispatchEvent( escapeEvent );
+			} );
+
+			expect( result.current.isConfirmDialogOpen ).toBe( true );
+			expect( result.current.closeDialogVariant ).toBe( 'generation' );
+			expect( escapeEvent.defaultPrevented ).toBe( true );
+		} );
+
+		it( 'does not warn or change behavior when generation is not in progress', async () => {
+			mockGetHasUnsavedChanges.mockReturnValue( false );
+			mockGetHasUpdatedMetadata.mockReturnValue( false );
+
+			const { result } = renderHook( () =>
+				useUnsavedChangesConfirmation( {
+					onSave: mockOnSave,
+					onDiscard: mockOnDiscard,
+					onExit: mockOnExit,
+					isGenerationInProgress: false,
+				} )
+			);
+
+			await act( async () => {
+				await result.current.handleRequestClose();
+			} );
+
+			expect( result.current.isConfirmDialogOpen ).toBe( false );
+			expect( mockOnExit ).toHaveBeenCalledWith( false );
+			expect( mockTrackCloseWarningShown ).not.toHaveBeenCalled();
 		} );
 	} );
 

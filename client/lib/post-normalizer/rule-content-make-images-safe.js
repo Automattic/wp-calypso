@@ -1,5 +1,4 @@
 import { getUrlParts, getUrlFromParts, safeImageUrl } from '@automattic/calypso-url';
-import { forEach, startsWith, some, includes, filter } from 'lodash';
 import { resolveRelativePath } from 'calypso/lib/url';
 import { maxWidthPhotonishURL } from './utils';
 
@@ -14,8 +13,8 @@ const removeUnwantedAttributes = ( node ) => {
 		return;
 	}
 
-	const inlineEventHandlerAttributes = filter( node.attributes, ( attr ) =>
-		startsWith( attr.name, 'on' )
+	const inlineEventHandlerAttributes = Array.from( node.attributes ).filter( ( attr ) =>
+		attr.name.startsWith( 'on' )
 	);
 	inlineEventHandlerAttributes.forEach( ( a ) => node.removeAttribute( a.name ) );
 
@@ -44,7 +43,7 @@ const imageShouldBeRemovedFromContent = ( imageUrl ) => {
 		'pixel.wp.com',
 	];
 
-	return some( bannedUrlParts, ( part ) => includes( imageUrl.toLowerCase(), part ) );
+	return bannedUrlParts.some( ( part ) => imageUrl.toLowerCase().includes( part ) );
 };
 
 function provideProtocol( post, url ) {
@@ -84,7 +83,7 @@ function makeImageSafe( post, image, maxWidth ) {
 
 	// allow https sources through even if we can't make them 'safe'
 	// helps images that use querystring params and are from secure sources
-	if ( ! safeSource && startsWith( imgSource, 'https://' ) ) {
+	if ( ! safeSource && ( imgSource ?? '' ).startsWith( 'https://' ) ) {
 		safeSource = imgSource;
 	}
 
@@ -109,7 +108,7 @@ const makeImagesSafe = ( maxWidth ) => ( post, dom ) => {
 	}
 
 	const images = dom.querySelectorAll( 'img[src]' );
-	forEach( images, ( image ) => makeImageSafe( post, image, maxWidth ) );
+	Array.from( images ).forEach( ( image ) => makeImageSafe( post, image, maxWidth ) );
 
 	return post;
 };

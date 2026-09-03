@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import getJetpackUserConnection from 'calypso/state/selectors/get-jetpack-user-connection';
 
 /**
@@ -9,5 +8,5 @@ import getJetpackUserConnection from 'calypso/state/selectors/get-jetpack-user-c
  * @returns {?boolean}          Whether the current site user owns the connection.
  */
 export default function isJetpackUserConnectionOwner( state, siteId ) {
-	return get( getJetpackUserConnection( state, siteId ), 'currentUser.isMaster', null );
+	return getJetpackUserConnection( state, siteId )?.currentUser?.isMaster ?? null;
 }

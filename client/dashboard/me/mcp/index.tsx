@@ -1,16 +1,21 @@
 import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+import { formatNumber } from '@automattic/number-formatters';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Icon, __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { seen, pencil, notAllowed, connection, globe } from '@wordpress/icons';
+import { getOverridesToMatch, groupIntentKey } from '../../../me/mcp/group-intents';
+import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
 import {
 	getAccountMcpAbilities,
 	getDisabledSiteIds,
 	getEnabledSiteIds,
+	getGroupDescriptors,
 } from '../../../me/mcp/utils';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { PageHeader } from '../../components/page-header';
@@ -33,44 +38,44 @@ interface McpAbility {
 
 function getReadBadge( tools: Array< [ string, McpAbility ] > ) {
 	if ( tools.length === 0 ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
 	if ( enabledCount === tools.length ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'None enabled' ) };
+		return { text: __( 'None enabled' ), intent: 'draft' as const };
 	}
 	return {
 		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
 		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, tools.length ),
-		intent: 'info' as const,
+		intent: 'informational' as const,
 	};
 }
 
 function getWriteBadge( tools: Array< [ string, McpAbility ] > ) {
 	if ( tools.length === 0 ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
 	if ( enabledCount === tools.length ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'Disabled' ) };
+		return { text: __( 'Disabled' ), intent: 'draft' as const };
 	}
 	return {
 		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
 		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, tools.length ),
-		intent: 'info' as const,
+		intent: 'informational' as const,
 	};
 }
 
 function McpComponent() {
 	const { recordTracksEvent } = useAnalytics();
+	const tracksAudienceProps = useMcpTracksAudienceProps();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
-
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
 	const availableTools = (
 		Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] >
@@ -87,55 +92,64 @@ function McpComponent() {
 	const exceptionCount = disabledSiteIds.length;
 	const exceptionBadge =
 		exceptionCount > 0
-			? { text: `${ exceptionCount } exceptions`, intent: 'warning' as const }
-			: { text: __( 'No exceptions' ) };
+			? {
+					text: sprintf(
+						/* translators: %s is the formatted number of site exceptions */
+						_n( '%s exception', '%s exceptions', exceptionCount ),
+						formatNumber( exceptionCount )
+					),
+					intent: 'low' as const,
+			  }
+			: { text: __( 'No exceptions' ), intent: 'draft' as const };
 
 	const addSiteBadge =
 		enabledSiteIds.length > 0
-			? { text: `${ enabledSiteIds.length } sites`, intent: 'success' as const }
-			: { text: __( 'No sites added' ) };
+			? {
+					text: sprintf(
+						/* translators: %s is the formatted number of sites with MCP access */
+						_n( '%s site', '%s sites', enabledSiteIds.length ),
+						formatNumber( enabledSiteIds.length )
+					),
+					intent: 'stable' as const,
+			  }
+			: { text: __( 'No sites added' ), intent: 'draft' as const };
 
 	const readBadge = getReadBadge( readTools );
 	const writeBadge = getWriteBadge( writeTools );
 
-	const mutation = useMutation( {
-		...userSettingsMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'Settings saved.' ),
-				error: __( 'Failed to save settings.' ),
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( userSettingsMutation(), {
+			success: __( 'Settings saved.' ),
+			error: __( 'Failed to save settings.' ),
+		} )
+	);
 
 	const handleMcpToggle = ( enabled: boolean ) => {
-		const accountAbilities: Record< string, boolean > = {};
-		Object.keys( mcpAbilities ).forEach( ( toolId ) => {
-			const tool = mcpAbilities[ toolId ] as McpAbility;
-			if ( enabled ) {
-				// Only enable read tools by default; write tools start disabled
-				accountAbilities[ toolId ] = ! isWriteTool( toolId, tool );
-			} else {
-				accountAbilities[ toolId ] = false;
-			}
-		} );
+		const overrides = getOverridesToMatch( Object.entries( mcpAbilities ), enabled ) as
+			| Record< string, boolean >
+			| undefined;
 
-		// Clear site-level overrides when toggling on or off
-		const sitesToReset = [
-			...disabledSiteIds.map( ( id ) => ( { blog_id: id, account_tools_enabled: true } ) ),
-			...enabledSiteIds.map( ( id ) => ( { blog_id: id, site_level_enabled: false } ) ),
-		];
+		const groupIntents: Record< string, boolean > = { read: enabled, write: enabled };
+		if ( ! enabled ) {
+			getGroupDescriptors( userSettings || {} ).forEach( ( group ) => {
+				groupIntents[ groupIntentKey( 'read', group.name ) ] = false;
+				groupIntents[ groupIntentKey( 'write', group.name ) ] = false;
+			} );
+		}
 
 		mutation.mutate(
 			{
 				mcp_abilities: {
-					account: accountAbilities,
-					...( sitesToReset.length > 0 && { sites: sitesToReset } ),
+					...( overrides && { account: overrides } ),
+					group_intents: groupIntents,
 				},
 			} as any,
 			{
 				onSuccess: () => {
-					recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', { enabled } );
+					recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', {
+						...tracksAudienceProps,
+						enabled,
+					} );
 				},
 			}
 		);
@@ -158,76 +172,88 @@ function McpComponent() {
 				/>
 			}
 		>
-			<ComponentViewTracker eventName="calypso_dashboard_mcp_view" />
-			<VStack spacing={ 4 }>
-				<Card>
-					<CardBody>
-						<VStack spacing={ 4 }>
-							<SectionHeader
-								level={ 3 }
-								title={ __( 'External AI agent access' ) }
-								description={ __(
-									'Allow external AI agents to access your WordPress.com account and sites via MCP.'
-								) }
-							/>
-							<ToggleControl
-								__nextHasNoMarginBottom
-								checked={ mcpEnabled }
-								disabled={ mutation.isPending }
-								label={ __( 'Enable MCP access' ) }
-								onChange={ handleMcpToggle }
-							/>
-						</VStack>
-					</CardBody>
+			<ComponentViewTracker
+				eventName="calypso_dashboard_mcp_view"
+				properties={ tracksAudienceProps }
+			/>
+			<VStack spacing={ 8 }>
+				<VStack spacing={ 4 }>
+					<SectionHeader
+						level={ 2 }
+						title={ __( 'MCP' ) }
+						description={ __(
+							'Control how external AI agents access your WordPress.com account and sites.'
+						) }
+					/>
+					<Card>
+						<CardBody>
+							<VStack spacing={ 4 }>
+								<SectionHeader
+									level={ 3 }
+									title={ __( 'External AI agent access' ) }
+									description={ __(
+										'Allow external AI agents to access your WordPress.com account and sites via MCP.'
+									) }
+								/>
+								<ToggleControl
+									__nextHasNoMarginBottom
+									checked={ mcpEnabled }
+									disabled={ mutation.isPending }
+									label={ __( 'Enable MCP access' ) }
+									onChange={ handleMcpToggle }
+								/>
+							</VStack>
+						</CardBody>
+
+						{ mcpEnabled && (
+							<>
+								<CardDivider />
+								<RouterLinkSummaryButton
+									to="/me/preferences/mcp/read"
+									density="medium"
+									title={ __( 'Read' ) }
+									decoration={ <Icon icon={ seen } size={ 24 } /> }
+									badges={ [ readBadge ] }
+								/>
+								<RouterLinkSummaryButton
+									to="/me/preferences/mcp/write"
+									density="medium"
+									title={ __( 'Write' ) }
+									decoration={ <Icon icon={ pencil } size={ 24 } /> }
+									badges={ [ writeBadge ] }
+								/>
+								<RouterLinkSummaryButton
+									to="/me/preferences/mcp/mcp-sites"
+									density="medium"
+									title={ __( 'Site exceptions' ) }
+									decoration={ <Icon icon={ notAllowed } size={ 24 } /> }
+									badges={ [ exceptionBadge ] }
+								/>
+							</>
+						) }
+						{ ! mcpEnabled && (
+							<>
+								<CardDivider />
+								<RouterLinkSummaryButton
+									to="/me/preferences/mcp/mcp-sites"
+									density="medium"
+									title={ __( 'Add to specific sites' ) }
+									decoration={ <Icon icon={ globe } size={ 24 } /> }
+									badges={ [ addSiteBadge ] }
+								/>
+							</>
+						) }
+					</Card>
 
 					{ mcpEnabled && (
-						<>
-							<CardDivider />
-							<RouterLinkSummaryButton
-								to="/me/preferences/mcp/read"
-								density="medium"
-								title={ __( 'Read' ) }
-								decoration={ <Icon icon={ seen } size={ 24 } /> }
-								badges={ [ readBadge ] }
-							/>
-							<RouterLinkSummaryButton
-								to="/me/preferences/mcp/write"
-								density="medium"
-								title={ __( 'Write' ) }
-								decoration={ <Icon icon={ pencil } size={ 24 } /> }
-								badges={ [ writeBadge ] }
-							/>
-							<RouterLinkSummaryButton
-								to="/me/preferences/mcp/mcp-sites"
-								density="medium"
-								title={ __( 'Site exceptions' ) }
-								decoration={ <Icon icon={ notAllowed } size={ 24 } /> }
-								badges={ [ exceptionBadge ] }
-							/>
-						</>
+						<RouterLinkSummaryButton
+							to="/me/preferences/mcp/setup"
+							title={ __( 'Connect external AI assistant' ) }
+							description={ __( 'Get instructions for connecting your external AI assistant.' ) }
+							decoration={ <Icon icon={ connection } size={ 24 } /> }
+						/>
 					) }
-					{ ! mcpEnabled && (
-						<>
-							<CardDivider />
-							<RouterLinkSummaryButton
-								to="/me/preferences/mcp/mcp-sites"
-								density="medium"
-								title={ __( 'Add to specific sites' ) }
-								decoration={ <Icon icon={ globe } size={ 24 } /> }
-								badges={ [ addSiteBadge ] }
-							/>
-						</>
-					) }
-				</Card>
-
-				{ mcpEnabled && (
-					<RouterLinkSummaryButton
-						to="/me/preferences/mcp/setup"
-						title={ __( 'Connect external AI assistant' ) }
-						description={ __( 'Get instructions for connecting your external AI assistant.' ) }
-						decoration={ <Icon icon={ connection } size={ 24 } /> }
-					/>
-				) }
+				</VStack>
 			</VStack>
 		</PageLayout>
 	);

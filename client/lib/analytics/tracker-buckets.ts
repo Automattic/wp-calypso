@@ -9,6 +9,7 @@ import {
 } from 'calypso/lib/analytics/utils';
 import { isE2ETest } from 'calypso/lib/e2e';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const allAdTrackers = [
 	'bing',
 	'floodlight',
@@ -26,7 +27,6 @@ const allAdTrackers = [
 	'experian',
 	'iconMedia',
 	'linkedin',
-	'logrocket',
 	'criteo',
 	'pandora',
 	'quora',
@@ -35,9 +35,10 @@ const allAdTrackers = [
 	'clarity',
 	'reddit',
 	'tiktok',
+	'openai',
 ] as const;
 
-const sessionAdTrackers = [ 'hotjar', 'logrocket' ];
+const sessionAdTrackers = [ 'hotjar' ];
 
 export type AdTracker = ( typeof allAdTrackers )[ number ];
 
@@ -59,12 +60,12 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	floodlight: Bucket.ADVERTISING,
 	googleAds: Bucket.ADVERTISING,
 	googleTagManager: Bucket.ADVERTISING,
-	logrocket: Bucket.ADVERTISING,
 	twitter: Bucket.ADVERTISING,
 	facebook: Bucket.ADVERTISING,
 	reddit: Bucket.ADVERTISING,
 	linkedin: Bucket.ADVERTISING,
 	tiktok: Bucket.ADVERTISING,
+	openai: Bucket.ADVERTISING,
 	quora: Bucket.ADVERTISING,
 
 	// Disabled trackers:
@@ -104,6 +105,7 @@ export const AdTrackersInitGuards: Partial< { [ key in AdTracker ]: () => boolea
 	clarity: () => 'clarity' in window,
 	reddit: () => 'rdt' in window,
 	tiktok: () => 'ttq' in window,
+	openai: () => 'oaiq' in window,
 };
 
 const isTrackerIntialized = ( tracker: AdTracker ): boolean => {

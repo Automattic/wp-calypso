@@ -14,7 +14,9 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { MarketplaceTypeContext, ShoppingCartContext } from '../../context';
 import { useProductTermAvailabilityTooltip } from '../../hooks/use-marketplace';
-import usePressableAddonVisibility from '../../hooks/use-pressable-addon-visibility';
+import usePressableAddonVisibility, {
+	canShowPressableAddonsInMarketplace,
+} from '../../hooks/use-pressable-addon-visibility';
 import { SelectedFilters } from '../../lib/product-filter';
 import useProductAndPlansWithPressableVisibility from '../hooks/use-product-and-plans-with-pressable-visibility';
 import { getSupportedBundleSizes } from '../hooks/use-product-bundle-size';
@@ -62,11 +64,11 @@ export default function ProductListing( {
 		() => ( isReferralMode ? 1 : selectedBundleSize ),
 		[ isReferralMode, selectedBundleSize ]
 	);
-	const { hasActiveAgencyPressablePlanLicense, hasActiveReferralPressablePlanLicense } =
-		usePressableAddonVisibility();
-	const canShowPressableAddonsByMode = isReferralMode
-		? hasActiveReferralPressablePlanLicense
-		: hasActiveAgencyPressablePlanLicense;
+	const { hasActiveAgencyPressablePlanLicense } = usePressableAddonVisibility();
+	const canShowPressableAddonsByMode = canShowPressableAddonsInMarketplace( {
+		isReferralMode,
+		hasActiveAgencyPressablePlanLicense,
+	} );
 
 	const {
 		filteredProductsAndBundles,

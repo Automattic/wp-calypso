@@ -1,7 +1,5 @@
 /* eslint-disable quote-props*/
 
-import { cloneDeep } from 'lodash';
-
 export const discoverSiteId = 53424024;
 
 export const nonDiscoverPost = {
@@ -69,6 +67,6 @@ export const discoverPost = {
 	},
 };
 
-const externalPost = cloneDeep( discoverPost );
+const externalPost = structuredClone( discoverPost );
 externalPost.discover_metadata.featured_post_wpcom_data = null;
 export const externalDiscoverPost = externalPost;

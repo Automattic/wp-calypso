@@ -1,8 +1,10 @@
 import type { BrandPack } from './types';
 
-const SYSTEM_STACK =
-	"Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif";
-
+// Inter is loaded as a real webfont (not a system stack) so the browser
+// fits the tile against the exact same face Browserless rasterises the
+// PNG with — see `googleFonts.ts`. A system stack resolved to whatever
+// the OS had (San Francisco on macOS, a generic on the Linux renderer),
+// and the per-environment glyph-width gap clipped baked-size stat numbers.
 const A4A_BLUE = '#3858E9';
 
 export const DEFAULT_SOCIAL_BRAND_PACK: BrandPack = {
@@ -30,7 +32,7 @@ export const DEFAULT_SOCIAL_BRAND_PACK: BrandPack = {
 		{
 			role: 'h1',
 			family: 'Inter',
-			systemFamily: SYSTEM_STACK,
+			googleFamily: 'Inter',
 			weight: 600,
 			case: 'as-typed',
 			tracking: '-0.025em',
@@ -38,7 +40,7 @@ export const DEFAULT_SOCIAL_BRAND_PACK: BrandPack = {
 		{
 			role: 'h2',
 			family: 'Inter',
-			systemFamily: SYSTEM_STACK,
+			googleFamily: 'Inter',
 			weight: 600,
 			case: 'as-typed',
 			tracking: '-0.02em',
@@ -46,7 +48,7 @@ export const DEFAULT_SOCIAL_BRAND_PACK: BrandPack = {
 		{
 			role: 'h3',
 			family: 'Inter',
-			systemFamily: SYSTEM_STACK,
+			googleFamily: 'Inter',
 			weight: 600,
 			case: 'as-typed',
 			tracking: '-0.01em',
@@ -54,7 +56,7 @@ export const DEFAULT_SOCIAL_BRAND_PACK: BrandPack = {
 		{
 			role: 'eyebrow',
 			family: 'Inter',
-			systemFamily: SYSTEM_STACK,
+			googleFamily: 'Inter',
 			weight: 600,
 			case: 'uppercase',
 			tracking: '0.08em',
@@ -62,7 +64,7 @@ export const DEFAULT_SOCIAL_BRAND_PACK: BrandPack = {
 		{
 			role: 'body',
 			family: 'Inter',
-			systemFamily: SYSTEM_STACK,
+			googleFamily: 'Inter',
 			weight: 400,
 			case: 'as-typed',
 			tracking: '0',

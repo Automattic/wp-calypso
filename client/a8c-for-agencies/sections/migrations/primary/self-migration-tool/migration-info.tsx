@@ -1,7 +1,9 @@
+import { ExternalLink } from '@wordpress/components';
 import { external, download } from '@wordpress/icons';
 import { CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import {
-	A4A_MARKETPLACE_LINK,
+	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
+	A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
 	A4A_MIGRATIONS_COMMISSIONS_LINK,
 	A4A_MIGRATIONS_PAYMENT_SETTINGS,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
@@ -20,14 +22,14 @@ const pressableSteps = (
 		buttonProps: {
 			variant: 'primary',
 			label: translate( 'Go to Marketplace' ),
-			href: A4A_MARKETPLACE_LINK,
+			href: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 			eventName: 'calypso_a4a_migrate_to_pressable_go_to_marketplace_click',
 		},
 	},
 	{
 		stepId: 'create-site',
 		count: 2,
-		title: translate( 'Create a "Migration placeholder" site in Pressable' ),
+		title: translate( 'Create a “Migration placeholder” site in Pressable' ),
 		description: translate(
 			'In Pressable, click “Add site” and set “Migration placeholder” to yes.'
 		),
@@ -45,14 +47,13 @@ const pressableSteps = (
 		count: 3,
 		title: translate( 'Install the Pressable Migration plugin' ),
 		description: translate(
-			'Login to the site that you will be moving to the Pressable platform (the source site) and navigate to Plugins > Add New. In the plugin search box, search for {{a}}“Pressable Automated Migration”{{/a}} (or upload the plugin if you downloaded it instead). When the plugin listing comes up, click on Install Now and then Activate',
+			'Log in to the site that you will be moving to the Pressable platform (the source site) and navigate to Plugins > Add New. In the plugin search box, search for {{a}}“Pressable Automated Migration”{{/a}} (or upload the plugin if you downloaded it instead). When the plugin listing comes up, click on Install Now and then Activate.',
 			{
 				components: {
 					a: (
-						<a
+						<ExternalLink
 							href="https://wordpress.org/plugins/pressable-automated-migration/"
-							target="_blank"
-							rel="noopener noreferrer"
+							children={ null }
 						/>
 					),
 				},
@@ -72,10 +73,10 @@ const pressableSteps = (
 		count: 4,
 		title: translate( 'Use the SFTP credentials provided in Pressable to migrate the site' ),
 		description: translate(
-			'Login to the {{a}}My.Pressable.com Dashboard{{/a}} and open up the settings page for the site you would like to migrate to. In the left menu, you will see a Site Actions tab. From that, navigate to the Migrate Site section. This section will show the details you will need for the Pressable Automated Migration plugin.',
+			'Log in to the {{a}}My.Pressable.com Dashboard{{/a}} and open up the settings page for the site you would like to migrate to. In the left menu, you will see a Site Actions tab. From that, navigate to the Migrate Site section. This section will show the details you will need for the Pressable Automated Migration plugin.',
 			{
 				components: {
-					a: <a href="https://my.pressable.com" target="_blank" rel="noopener noreferrer" />,
+					a: <ExternalLink href="https://my.pressable.com" children={ null } />,
 				},
 			}
 		),
@@ -115,10 +116,9 @@ const pressableSteps = (
 			{
 				components: {
 					a: (
-						<a
+						<ExternalLink
 							href="https://automattic.com/for-agencies/program-incentives/"
-							target="_blank"
-							rel="noopener noreferrer"
+							children={ null }
 						/>
 					),
 				},
@@ -136,11 +136,11 @@ const pressableSteps = (
 		count: 7,
 		title: translate( 'Fill in your payment information to receive commissions' ),
 		description: translate(
-			'Add you bank and business information so that we can send you commission payments.'
+			'Add your bank and business information so that we can send you commission payments.'
 		),
 		buttonProps: {
 			variant: 'primary',
-			label: translate( 'Add my bank infomation' ),
+			label: translate( 'Add my bank information' ),
 			href: A4A_MIGRATIONS_PAYMENT_SETTINGS,
 			eventName: 'calypso_a4a_migrate_to_pressable_add_bank_info_click',
 		},
@@ -162,7 +162,7 @@ const wpcomSteps = (
 		buttonProps: {
 			variant: 'primary',
 			label: translate( 'Go to Marketplace' ),
-			href: A4A_MARKETPLACE_LINK,
+			href: A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
 			eventName: 'calypso_a4a_migrate_to_wpcom_go_to_marketplace_click',
 		},
 	},
@@ -191,11 +191,7 @@ const wpcomSteps = (
 			{
 				components: {
 					a: (
-						<a
-							href="https://wordpress.com/plugins/wpcom-migration"
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
+						<ExternalLink href="https://wordpress.com/plugins/wpcom-migration" children={ null } />
 					),
 				},
 			}
@@ -218,10 +214,9 @@ const wpcomSteps = (
 			{
 				components: {
 					a: (
-						<a
+						<ExternalLink
 							href="https://automattic.com/for-agencies/program-incentives/"
-							target="_blank"
-							rel="noopener noreferrer"
+							children={ null }
 						/>
 					),
 				},
@@ -239,11 +234,11 @@ const wpcomSteps = (
 		count: 6,
 		title: translate( 'Fill in your payment information to receive commissions' ),
 		description: translate(
-			'Add you bank and business information so that we can send you commission payments.'
+			'Add your bank and business information so that we can send you commission payments.'
 		),
 		buttonProps: {
 			variant: 'primary',
-			label: translate( 'Add my bank infomation' ),
+			label: translate( 'Add my bank information' ),
 			href: A4A_MIGRATIONS_PAYMENT_SETTINGS,
 			eventName: 'calypso_a4a_migration_to_wpcom_add_bank_info_click',
 		},

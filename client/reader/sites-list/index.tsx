@@ -1,6 +1,6 @@
 import './style.scss';
 import clsx from 'clsx';
-import { ComponentProps } from 'react';
+import { ComponentProps, type JSX } from 'react';
 import { ReaderSite, ReaderSiteItem } from './site-item';
 
 interface ReaderSitesListProps

@@ -1,81 +1,59 @@
+/**
+ * @jest-environment jsdom
+ */
 import { isEditorPage } from '../is-editor-page';
 
 describe( 'isEditorPage', () => {
-	const originalWindow = globalThis.window;
-
-	const mockLocation = ( path: string ) => {
-		const url = new URL( `https://wordpress.com${ path }` );
-
-		globalThis.window = {
-			location: { href: url.href, search: url.search },
-		} as Window & typeof globalThis;
+	const setBodyClasses = ( classes: string ) => {
+		document.body.className = classes;
 	};
 
-	beforeEach( () => {
-		// @ts-expect-error - Mocking window
-		delete globalThis.window;
-	} );
-
 	afterEach( () => {
-		globalThis.window = originalWindow;
+		document.body.className = '';
 	} );
 
-	it( 'returns `false` when `window` is undefined (SSR)', () => {
-		expect( isEditorPage() ).toBe( false );
-	} );
-
-	it( 'returns `true` for site editor URL', () => {
-		mockLocation( '/wp-admin/site-editor.php?canvas=edit' );
-		expect( isEditorPage() ).toBe( true );
-	} );
-
-	it( 'returns `true` for site editor URL without query params', () => {
-		mockLocation( '/wp-admin/site-editor.php' );
+	it( 'returns `true` for the site editor', () => {
+		setBodyClasses( 'wp-admin site-editor-php' );
 		expect( isEditorPage() ).toBe( true );
 	} );
 
 	it( 'returns `true` for editing a post', () => {
-		mockLocation( '/wp-admin/post.php?post=4&action=edit' );
+		setBodyClasses( 'wp-admin post-php post-type-post' );
 		expect( isEditorPage() ).toBe( true );
 	} );
 
 	it( 'returns `true` for creating a new post', () => {
-		mockLocation( '/wp-admin/post-new.php' );
-		expect( isEditorPage() ).toBe( true );
-	} );
-
-	it( 'returns `true` for creating a new post with explicit post_type', () => {
-		mockLocation( '/wp-admin/post-new.php?post_type=post' );
-		expect( isEditorPage() ).toBe( true );
-	} );
-
-	it( 'returns `true` for creating a new page', () => {
-		mockLocation( '/wp-admin/post-new.php?post_type=page' );
+		setBodyClasses( 'wp-admin post-new-php post-type-post' );
 		expect( isEditorPage() ).toBe( true );
 	} );
 
 	it( 'returns `true` for editing a page', () => {
-		mockLocation( '/wp-admin/post.php?post=10&action=edit&post_type=page' );
+		setBodyClasses( 'wp-admin post-php post-type-page' );
 		expect( isEditorPage() ).toBe( true );
 	} );
 
-	it( 'returns `false` for custom post type', () => {
-		mockLocation( '/wp-admin/post-new.php?post_type=product' );
+	it( 'returns `true` for creating a new page', () => {
+		setBodyClasses( 'wp-admin post-new-php post-type-page' );
+		expect( isEditorPage() ).toBe( true );
+	} );
+
+	it( 'returns `false` when editing a custom post type', () => {
+		setBodyClasses( 'wp-admin post-php post-type-product' );
 		expect( isEditorPage() ).toBe( false );
 	} );
 
-	it( 'returns `false` for editing a custom post type', () => {
-		mockLocation( '/wp-admin/post.php?post=5&action=edit&post_type=product' );
+	it( 'returns `false` when creating a custom post type', () => {
+		setBodyClasses( 'wp-admin post-new-php post-type-product' );
 		expect( isEditorPage() ).toBe( false );
 	} );
 
-	it( 'returns `false` for non-editor admin pages', () => {
-		mockLocation( '/wp-admin/index.php' );
+	it( 'returns `false` for the post list screen (editor screen class absent)', () => {
+		setBodyClasses( 'wp-admin edit-php post-type-post' );
 		expect( isEditorPage() ).toBe( false );
 	} );
 
-	it( 'returns `false` for frontend pages', () => {
-		mockLocation( '/my-blog-post' );
+	it( 'returns `false` for other admin pages', () => {
+		setBodyClasses( 'wp-admin index-php' );
 		expect( isEditorPage() ).toBe( false );
 	} );
 } );

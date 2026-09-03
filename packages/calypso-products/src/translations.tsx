@@ -1,6 +1,6 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { translate, useTranslate, getLocaleSlug } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { type JSX, useCallback, useMemo } from 'react';
 import {
 	PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
@@ -27,6 +27,8 @@ import {
 	PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY,
 	PRODUCT_JETPACK_VIDEOPRESS,
 	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
+	PLAN_JETPACK_SECURITY_T0_YEARLY,
+	PLAN_JETPACK_SECURITY_T0_MONTHLY,
 	PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
@@ -256,11 +258,11 @@ export const getJetpackProductsShortNames = (): Record< string, React.ReactEleme
 		[ PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY ]: 'Social',
 		[ PRODUCT_JETPACK_SOCIAL_V1_YEARLY ]: 'Social',
 		[ PRODUCT_JETPACK_SOCIAL_V1_MONTHLY ]: 'Social',
-		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: 'Stats',
-		[ PRODUCT_JETPACK_STATS_YEARLY ]: 'Stats',
-		[ PRODUCT_JETPACK_STATS_MONTHLY ]: 'Stats',
-		[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: 'Stats (Non-commercial license)',
-		[ PRODUCT_JETPACK_STATS_FREE ]: 'Stats (Non-commercial license)',
+		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: 'Stats (Paid)',
+		[ PRODUCT_JETPACK_STATS_YEARLY ]: 'Stats (Paid)',
+		[ PRODUCT_JETPACK_STATS_MONTHLY ]: 'Stats (Paid)',
+		[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: 'Stats (Name your price)',
+		[ PRODUCT_JETPACK_STATS_FREE ]: 'Stats (Free)',
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: 'AI',
 		[ PRODUCT_JETPACK_AI_YEARLY ]: 'AI',
 		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: 'AI',
@@ -652,6 +654,8 @@ export const getJetpackProductDisclaimers = (
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupDisclaimer,
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupDisclaimer,
 		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupDisclaimer,
+		[ PLAN_JETPACK_SECURITY_T0_YEARLY ]: backupDisclaimer,
+		[ PLAN_JETPACK_SECURITY_T0_MONTHLY ]: backupDisclaimer,
 		[ PLAN_JETPACK_SECURITY_T1_BI_YEARLY ]: backupDisclaimer,
 		[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: backupDisclaimer,
 		[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: backupDisclaimer,
@@ -2816,6 +2820,8 @@ export const getJetpackProductsFAQs = (
 	];
 
 	return {
+		[ PLAN_JETPACK_SECURITY_T0_MONTHLY ]: backupFAQs,
+		[ PLAN_JETPACK_SECURITY_T0_YEARLY ]: backupFAQs,
 		[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: backupFAQs,
 		[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: backupFAQs,
 		[ PLAN_JETPACK_SECURITY_T1_BI_YEARLY ]: backupFAQs,
@@ -2863,6 +2869,16 @@ export const getJetpackPlansAlsoIncludedFeatures = (): Record<
 	];
 
 	return {
+		[ PLAN_JETPACK_SECURITY_T0_MONTHLY ]: [
+			...socialFree,
+			...videoPressFree,
+			...freeBundleFeatures,
+		],
+		[ PLAN_JETPACK_SECURITY_T0_YEARLY ]: [
+			...socialFree,
+			...videoPressFree,
+			...freeBundleFeatures,
+		],
 		[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: [
 			...socialFree,
 			...videoPressFree,
@@ -3012,6 +3028,8 @@ export const useJetpackStorageAmountTextByProductSlug = (): ( (
 				[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_MONTHLY ]: THREE_TERABYTE,
 				[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_MONTHLY ]: FIVE_TERABYTE,
 
+				[ PLAN_JETPACK_SECURITY_T0_MONTHLY ]: ONE_GIGABYTE,
+				[ PLAN_JETPACK_SECURITY_T0_YEARLY ]: ONE_GIGABYTE,
 				[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: TEN_GIGABYTES,
 				[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: TEN_GIGABYTES,
 				[ PLAN_JETPACK_SECURITY_T1_BI_YEARLY ]: TEN_GIGABYTES,

@@ -1,4 +1,3 @@
-import { keys } from 'lodash';
 import { PureComponent } from 'react';
 import ShareButton from '../';
 import services from '../services';
@@ -10,7 +9,7 @@ export default class ShareButtonExample extends PureComponent {
 		return (
 			<div>
 				<div>
-					{ keys( services ).map( ( service ) => (
+					{ Object.keys( services ).map( ( service ) => (
 						<ShareButton
 							key={ service }
 							size={ 48 }
@@ -21,7 +20,7 @@ export default class ShareButtonExample extends PureComponent {
 					) ) }
 				</div>
 				<div>
-					{ keys( services ).map( ( service ) => (
+					{ Object.keys( services ).map( ( service ) => (
 						<ShareButton
 							key={ service }
 							size={ 48 }

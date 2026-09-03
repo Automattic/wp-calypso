@@ -10,6 +10,7 @@ export const userTaxDetailsQuery = () =>
 
 export const userTaxDetailsMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'user-tax-details-update' },
 		mutationFn: updateUserTaxDetails,
 		onSuccess: ( newData ) => {
 			queryClient.setQueryData(

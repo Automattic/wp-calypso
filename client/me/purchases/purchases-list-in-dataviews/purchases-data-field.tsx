@@ -1,14 +1,19 @@
-import { Purchases, SiteDetails } from '@automattic/data-stores';
+import { getPurchasePayment } from '@automattic/api-core';
+import { SiteDetails } from '@automattic/data-stores';
 import { StoredPaymentMethod } from '@automattic/wpcom-checkout';
 import { Fields } from '@wordpress/dataviews';
 import { fixMe, LocalizeProps } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { isTransferredOwnership } from 'calypso/dashboard/utils/purchase';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { getDisplayName, isExpired, isRenewing, purchaseType } from 'calypso/lib/purchases';
 import { GetManagePurchaseUrlFor, MembershipSubscription } from 'calypso/lib/purchases/types';
+import {
+	getDisplayName,
+	mightStillAutoRenew,
+	purchaseType,
+} from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
-import { isTransferredOwnership } from '../hooks/use-is-transferred-ownership';
 import { Icon, MembershipType, MembershipTerms } from '../membership-item';
 import {
 	PurchaseItemSiteIcon,
@@ -18,13 +23,14 @@ import {
 	BackupPaymentMethodNotice,
 } from '../purchase-item';
 import OwnerInfo from '../purchase-item/owner-info';
+import type { Purchase } from '@automattic/api-core';
 
 function PurchaseItemRowProduct( props: {
-	purchase: Purchases.Purchase;
+	purchase: Purchase;
 	translate: LocalizeProps[ 'translate' ];
 } ) {
 	const { purchase, translate } = props;
-	const site = useSelector( ( state ) => getSite( state, purchase.siteId ?? 0 ) );
+	const site = useSelector( ( state ) => getSite( state, purchase.blog_id ?? 0 ) );
 	const slug = site?.domain ?? undefined;
 	return (
 		<PurchaseItemProduct
@@ -39,7 +45,7 @@ function PurchaseItemRowProduct( props: {
 }
 
 function PurchaseItemRowStatus( props: {
-	purchase: Purchases.Purchase;
+	purchase: Purchase;
 	translate: LocalizeProps[ 'translate' ];
 	moment: ReturnType< typeof useLocalizedMoment >;
 	isDisconnectedSite?: boolean;
@@ -66,6 +72,7 @@ export function getPurchasesFieldDefinitions( {
 	getManagePurchaseUrlFor,
 	fieldIds,
 	transferredOwnershipPurchases = [],
+	visibleFields,
 }: {
 	translate: LocalizeProps[ 'translate' ];
 	moment: ReturnType< typeof useLocalizedMoment >;
@@ -73,11 +80,12 @@ export function getPurchasesFieldDefinitions( {
 	sites: SiteDetails[];
 	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
 	fieldIds?: string[];
-	transferredOwnershipPurchases?: Purchases.Purchase[];
-} ): Fields< Purchases.Purchase > {
-	const getListTitle = ( item: Purchases.Purchase ) => {
-		if ( item.isDomainRegistration && item.meta ) {
-			if ( item.isHundredYearDomain ) {
+	transferredOwnershipPurchases?: Purchase[];
+	visibleFields?: string[];
+} ): Fields< Purchase > {
+	const getListTitle = ( item: Purchase ) => {
+		if ( item.is_domain_registration && item.meta ) {
+			if ( item.is_hundred_year_domain ) {
 				// translators: %(domain)s is the domain name, e.g. "100-Year Domain Registration: example.com"
 				return translate( '100-Year Domain Registration: %(domain)s', {
 					args: { domain: item.meta },
@@ -95,9 +103,9 @@ export function getPurchasesFieldDefinitions( {
 		( paymentMethod ) => paymentMethod.is_backup === true
 	);
 
-	const getPurchaseUrl = ( item: Purchases.Purchase ) => {
-		const siteUrl = item.siteSlug || item.domain;
-		const subscriptionId = item.id;
+	const getPurchaseUrl = ( item: Purchase ) => {
+		const siteUrl = item.site_slug || item.domain;
+		const subscriptionId = item.ID;
 		if ( ! siteUrl ) {
 			// eslint-disable-next-line no-console
 			console.error( 'Cannot display manage purchase page for subscription without site' );
@@ -113,7 +121,7 @@ export function getPurchasesFieldDefinitions( {
 
 	// No point in having a filter if there's only one site.
 	const shouldAllowSiteFiltering = sites.length > 1;
-	const fields: Fields< Purchases.Purchase > = [
+	const fields: Fields< Purchase > = [
 		{
 			id: 'site',
 			label: translate( 'Site' ),
@@ -128,13 +136,13 @@ export function getPurchasesFieldDefinitions( {
 				  } ) )
 				: undefined,
 			filterBy: shouldAllowSiteFiltering ? { operators: [ 'isAny' ] } : false,
-			getValue: ( { item }: { item: Purchases.Purchase } ) => {
+			getValue: ( { item }: { item: Purchase } ) => {
 				// getValue must return a string because the DataViews search feature calls `trim()` on it.
-				return String( item.siteId );
+				return String( item.blog_id );
 			},
 			// Render the site icon
-			render: ( { item }: { item: Purchases.Purchase } ) => {
-				const site = { ID: item.siteId };
+			render: ( { item }: { item: Purchase } ) => {
+				const site = { ID: item.blog_id };
 				return (
 					<a
 						title={ translate( 'Manage purchase', { textOnly: true } ) }
@@ -153,24 +161,24 @@ export function getPurchasesFieldDefinitions( {
 			enableSorting: true,
 			enableHiding: false,
 			filterBy: false,
-			getValue: ( { item }: { item: Purchases.Purchase } ) => {
+			getValue: ( { item }: { item: Purchase } ) => {
 				// Render a bunch of things to make this easily searchable.
-				const site = sites.find( ( site ) => site.ID === item.siteId );
+				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				return (
 					getListTitle( item ) +
 					' ' +
 					( purchaseType( item ) || '' ) +
 					' ' +
-					item.siteName +
+					item.blogname +
 					' ' +
-					( item.siteSlug || item.domain ) +
+					( item.site_slug || item.domain ) +
 					' ' +
 					( site?.URL ?? '' )
 				);
 			},
-			render: ( { item }: { item: Purchases.Purchase } ) => {
+			render: ( { item }: { item: Purchase } ) => {
 				const hasTransferredOwnership = isTransferredOwnership(
-					item.id,
+					item.ID,
 					transferredOwnershipPurchases
 				);
 				return (
@@ -207,17 +215,28 @@ export function getPurchasesFieldDefinitions( {
 			enableSorting: true,
 			enableHiding: false,
 			filterBy: false,
-			getValue: ( { item }: { item: Purchases.Purchase } ) => {
+			getValue: ( { item }: { item: Purchase } ) => {
 				// Render a bunch of things to make this easily searchable.
-				const site = sites.find( ( site ) => site.ID === item.siteId );
-				return item.siteName + ' ' + ( item.siteSlug || item.domain ) + ' ' + ( site?.URL ?? '' );
+				const site = sites.find( ( site ) => site.ID === item.blog_id );
+				return item.blogname + ' ' + ( item.site_slug || item.domain ) + ' ' + ( site?.URL ?? '' );
 			},
-			render: ( { item }: { item: Purchases.Purchase } ) => {
+			render: ( { item }: { item: Purchase } ) => {
+				const site = sites.find( ( s ) => s.ID === item.blog_id );
 				return (
 					<div className="purchase-item__information">
 						<div className="purchase-item__purchase-type">
 							<PurchaseItemRowProduct purchase={ item } translate={ translate } />
 						</div>
+						{ ! visibleFields?.includes( 'status' ) && (
+							<div className="purchase-item__status purchase-item__inline-status">
+								<PurchaseItemStatus
+									purchase={ item }
+									translate={ translate }
+									moment={ moment }
+									isDisconnectedSite={ ! site }
+								/>
+							</div>
+						) }
 					</div>
 				);
 			},
@@ -235,10 +254,10 @@ export function getPurchasesFieldDefinitions( {
 			],
 			filterBy: { operators: [ 'is' ] },
 			getValue: ( { item } ) => {
-				if ( item.isDomain || item.isDomainRegistration ) {
+				if ( item.is_domain || item.is_domain_registration ) {
 					return 'domain';
 				}
-				if ( item.productType === 'bundle' ) {
+				if ( item.product_type === 'bundle' ) {
 					return 'plan';
 				}
 				return 'other';
@@ -275,8 +294,8 @@ export function getPurchasesFieldDefinitions( {
 			filterBy: { operators: [ 'is' ] },
 			getValue: ( { item } ) => {
 				const now = Date.now();
-				const expiryDate = Date.parse( item.expiryDate );
-				if ( ! item.isRenewable || ! expiryDate || expiryDate < now ) {
+				const expiryDate = Date.parse( item.expiry_date );
+				if ( ! item.is_renewable || ! expiryDate || expiryDate < now ) {
 					return 'not-expiring-soon';
 				}
 				const msPerDay = 86_400_000;
@@ -307,16 +326,12 @@ export function getPurchasesFieldDefinitions( {
 			enableSorting: true,
 			enableHiding: false,
 			filterBy: false,
-			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				if ( isExpired( item ) ) {
-					// Prefix expired items with a z so they sort to the end of the list.
-					return 'zzz ' + item.expiryStatus + ' ' + item.expiryDate;
-				}
+			getValue: ( { item }: { item: Purchase } ) => {
 				// Include date in value to sort similar expiries together.
-				return item.expiryDate + ' ' + item.expiryStatus;
+				return item.expiry_date + ' ' + item.expiry_status;
 			},
-			render: ( { item }: { item: Purchases.Purchase } ) => {
-				const site = sites.find( ( site ) => site.ID === item.siteId );
+			render: ( { item }: { item: Purchase } ) => {
+				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				return (
 					<PurchaseItemRowStatus
 						purchase={ item }
@@ -335,10 +350,11 @@ export function getPurchasesFieldDefinitions( {
 			enableSorting: true,
 			enableHiding: false,
 			filterBy: false,
-			getValue: ( { item }: { item: Purchases.Purchase } ) => {
+			getValue: ( { item }: { item: Purchase } ) => {
+				const payment = getPurchasePayment( item );
 				// This should not be possible. Investigating a bug:
 				// https://linear.app/a8c/issue/SHILL-901/
-				if ( ! item?.payment ) {
+				if ( ! payment.type ) {
 					logToLogstash( {
 						feature: 'calypso_client',
 						message: 'Purchase payment method data field getValue got unexpected data',
@@ -350,20 +366,21 @@ export function getPurchasesFieldDefinitions( {
 					return 'no-payment-method';
 				}
 				// Allows sorting by card number or payment partner (eg: `type === 'paypal'`).
-				return isExpired( item )
-					? // Do not return card number for expired purchases because it
-					  // will not be displayed so it will look wierd if we sort
-					  // expired purchases with active ones that have the same card.
+				return ! mightStillAutoRenew( item )
+					? // Do not return the card number when the payment method isn't in
+					  // use, since it won't be displayed; sorting it alongside active
+					  // purchases that have the same card would look wrong.
 					  'expired'
-					: item.payment.creditCard?.number ?? item.payment.type ?? 'no-payment-method';
+					: payment.creditCard?.number ?? payment.type ?? 'no-payment-method';
 			},
-			render: ( { item }: { item: Purchases.Purchase } ) => {
+			render: ( { item }: { item: Purchase } ) => {
 				let isBackupMethodAvailable = false;
 
 				if ( backupPaymentMethods ) {
+					const payment = getPurchasePayment( item );
 					const backupPaymentMethodsWithoutCurrentPurchase = backupPaymentMethods.filter(
 						// A payment method is only a back up if it isn't already assigned to the current purchase
-						( paymentMethod ) => item.payment.storedDetailsId !== paymentMethod.stored_details_id
+						( paymentMethod ) => payment.storedDetailsId !== paymentMethod.stored_details_id
 					);
 
 					isBackupMethodAvailable = backupPaymentMethodsWithoutCurrentPurchase.length >= 1;
@@ -372,7 +389,9 @@ export function getPurchasesFieldDefinitions( {
 				return (
 					<div className="purchase-item__payment-method">
 						<PurchaseItemPaymentMethod purchase={ item } translate={ translate } />
-						{ isBackupMethodAvailable && isRenewing( item ) && <BackupPaymentMethodNotice /> }
+						{ isBackupMethodAvailable && mightStillAutoRenew( item ) && (
+							<BackupPaymentMethodNotice />
+						) }
 					</div>
 				);
 			},

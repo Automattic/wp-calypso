@@ -35,7 +35,6 @@
 const { existsSync, mkdirSync, writeFileSync } = require( 'fs' );
 const { relative, sep } = require( 'path' );
 const { po } = require( 'gettext-parser' );
-const { merge, isEmpty, forEach } = require( 'lodash' );
 
 /**
  * Default output headers if none specified in plugin options.
@@ -87,14 +86,14 @@ function getExtractedComment( path, _originalNodeLine ) {
 	}
 
 	let comment;
-	forEach( node.leadingComments, ( commentNode ) => {
+	for ( const commentNode of node.leadingComments ?? [] ) {
 		if ( ! commentNode.loc ) {
-			return;
+			continue;
 		}
 
 		const { line } = commentNode.loc.end;
 		if ( line < _originalNodeLine - 1 || line > _originalNodeLine ) {
-			return;
+			continue;
 		}
 
 		const match = commentNode.value.match( REGEXP_TRANSLATOR_COMMENT );
@@ -105,10 +104,10 @@ function getExtractedComment( path, _originalNodeLine ) {
 				.map( ( text ) => text.trim() )
 				.join( ' ' );
 
-			// False return indicates to Lodash to break iteration
-			return false;
+			// Keep the first matching translator comment.
+			break;
 		}
-	} );
+	}
 
 	if ( comment ) {
 		return comment;
@@ -127,7 +126,7 @@ function getExtractedComment( path, _originalNodeLine ) {
 
 /**
  * Given an argument node (or recursed node), attempts to return a string
- * represenation of that node's value.
+ * representation of that node's value.
  * @param {Object} node AST node.
  * @returns {string} String value.
  */
@@ -154,7 +153,7 @@ function getNodeAsString( node ) {
 }
 
 /**
- * Returns true if the specified funciton name is valid translate function name
+ * Returns true if the specified function name is valid translate function name
  * @param {string} name Function name to test.
  * @returns {boolean} Whether function name is valid translate function name.
  */
@@ -199,6 +198,24 @@ function mergeStrings( source, target ) {
 		source.msgid_plural = target.msgid_plural;
 		source.msgstr = target.msgstr;
 	}
+}
+
+/**
+ * Builds the POT data for output by combining the extracted `strings` into a
+ * copy of `baseData`. Translations are merged per context so the base header
+ * entry (the empty context / empty msgid that carries the PO headers) is
+ * preserved rather than replaced by same-context extracted strings. `baseData`
+ * is not mutated.
+ * @param   {Object} baseData the base POT data (headers plus the header translation entry)
+ * @param   {Object} strings  extracted translations keyed by context, then by msgid
+ * @returns {Object} a new POT data object ready for `po.compile`
+ */
+function buildPotData( baseData, strings ) {
+	const translations = { ...baseData.translations };
+	for ( const context of Object.keys( strings ) ) {
+		translations[ context ] = { ...translations[ context ], ...strings[ context ] };
+	}
+	return { ...baseData, translations };
 }
 
 module.exports = function () {
@@ -339,11 +356,11 @@ module.exports = function () {
 					functions = { ...DEFAULT_FUNCTIONS_ARGUMENTS_ORDER };
 				},
 				exit( path, state ) {
-					if ( isEmpty( strings ) ) {
+					if ( Object.keys( strings ).length === 0 ) {
 						return;
 					}
 
-					const data = merge( {}, baseData, { translations: strings } );
+					const data = buildPotData( baseData, strings );
 
 					const compiled = po.compile( data );
 
@@ -359,3 +376,8 @@ module.exports = function () {
 		},
 	};
 };
+
+// Exported for unit testing of the translator-comment extraction logic.
+module.exports.getExtractedComment = getExtractedComment;
+// Exported for unit testing of the POT-data assembly.
+module.exports.buildPotData = buildPotData;

@@ -23,7 +23,7 @@ import {
 	getProductType,
 	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
-import { handleRenewNowClick, isExpired } from 'calypso/lib/purchases';
+import { handleRenewNowClick, isExpiredOrRemoved } from 'calypso/lib/purchases';
 import {
 	getTitanProductName,
 	getTitanSubscriptionId,
@@ -144,7 +144,9 @@ function EmailPlan( {
 		event.preventDefault();
 
 		dispatch(
-			handleRenewNowClick( purchase, selectedSite.slug, {
+			// Temporary bridge (SHILL-2256): this page still reads the camelCase
+			// Purchase from Redux. Remove once it reads the raw shape.
+			handleRenewNowClick( purchase.rawPurchase, selectedSite.slug, {
 				tracksProps: { source: 'email-plan-view' },
 			} )
 		);
@@ -333,7 +335,7 @@ function EmailPlan( {
 
 	function renderAddNewMailboxesOrRenewNavItem( mailboxes ) {
 		if ( hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain ) ) {
-			if ( purchase && isExpired( purchase ) ) {
+			if ( purchase && isExpiredOrRemoved( purchase ) ) {
 				return (
 					<VerticalNavItem onClick={ handleRenew } path="#">
 						{ translate( 'Renew to add new mailboxes' ) }

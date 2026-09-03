@@ -1,7 +1,15 @@
 import clsx from 'clsx';
-import { createElement, forwardRef, memo } from 'react';
+import {
+	type JSX,
+	createElement,
+	forwardRef,
+	memo,
+	ElementType,
+	ComponentProps,
+	ReactNode,
+	Ref,
+} from 'react';
 import Gridicon from '../gridicon';
-import type { ElementType, ComponentProps, ReactNode, Ref } from 'react';
 
 import './style.scss';
 

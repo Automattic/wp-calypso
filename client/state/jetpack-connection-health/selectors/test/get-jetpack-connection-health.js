@@ -24,7 +24,7 @@ describe( 'getJetpackConnectionHealth()', () => {
 		expect( output ).toEqual( null );
 	} );
 
-	test( 'should return null if no connection health object exists in case of not existant siteId', () => {
+	test( 'should return null if no connection health object exists in case of non-existent siteId', () => {
 		const stateIn = {
 			jetpackConnectionHealth: {
 				123456: {},

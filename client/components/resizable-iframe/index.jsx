@@ -1,5 +1,5 @@
+import { omit } from '@automattic/js-utils';
 import debugFactory from 'debug';
-import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 

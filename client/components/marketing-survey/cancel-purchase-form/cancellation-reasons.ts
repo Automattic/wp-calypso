@@ -244,6 +244,12 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 				},
 			},
 			{
+				value: 'pluginOrThemeConflicts',
+				get label() {
+					return translate( 'Plugin or theme conflicts' );
+				},
+			},
+			{
 				value: 'otherTechnicalIssues',
 				get label() {
 					return translate( 'Something else related to technical problems' );

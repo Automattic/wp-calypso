@@ -4,7 +4,7 @@ import { useCallback, useState, useEffect, RefObject } from 'react';
 const DESKTOP_BREAKPOINT = '>1280px';
 
 const useDashboardShowLargeScreen = (
-	siteTableRef: RefObject< HTMLTableElement >,
+	siteTableRef: RefObject< HTMLTableElement | null >,
 	containerRef: { current: { clientWidth: number } }
 ) => {
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );

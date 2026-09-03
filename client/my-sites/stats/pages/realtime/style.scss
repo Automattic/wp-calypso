@@ -18,11 +18,11 @@
 
 	/* Style the line chart svg using the user admin color scheme */
 	path.visx-line {
-		stroke: var(--color-primary);
+		stroke: var(--color-accent);
 	}
 
 	#area-gradient-1 > stop:first-child {
-		stop-color: var(--color-primary);
+		stop-color: var(--color-accent);
 	}
 	/* Style the line chart svg using the user admin color scheme */
 }

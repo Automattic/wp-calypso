@@ -13,7 +13,7 @@ interface PerformanceSectionProps {
 	url?: string;
 	hash?: string;
 	hostingProvider?: HostingProvider;
-	performanceMetricsRef: React.RefObject< HTMLObjectElement >;
+	performanceMetricsRef: React.RefObject< HTMLElement | null >;
 	setIsGetReportFormOpen?: ( isOpen: boolean ) => void;
 }
 

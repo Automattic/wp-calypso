@@ -1,9 +1,50 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .a4a-agent-studio-output-detail__content {
 	width: 100%;
 }
 
+.a4a-agent-studio-output-detail__main {
+	width: 100%;
+}
+
+// With the refine dock open, the content and dock sit side by side: the dock
+// is inset within the page layout and the preview reflows to make room for it,
+// rather than the dock floating over the layout as an overlay.
+.a4a-agent-studio-output-detail__content.is-refine-open {
+	@include break-medium {
+		display: flex;
+		flex-direction: row;
+		align-items: flex-start;
+		gap: 24px;
+	}
+
+	.a4a-agent-studio-output-detail__main {
+		min-width: 0;
+
+		@include break-medium {
+			flex: 1 1 auto;
+		}
+	}
+}
+
+// Keep the actions bar (Annotate / Download PDF) pinned to the top of the
+// scrolling layout body so it stays reachable as the user scrolls the preview.
+// The layout body has a 16px block-start padding; offsetting the sticky stop by
+// that amount pins the bar flush to the body's edge so the preview can't peek
+// through above it, and the matching block-start padding keeps the buttons in
+// place.
 .a4a-agent-studio-output-detail__actions {
 	width: 100%;
+	position: sticky;
+	inset-block-start: -16px;
+	z-index: 2;
+	padding-block: 16px 12px;
+	background: var( --color-surface );
+	// Lift the bar with a soft shadow so the preview reads as scrolling beneath
+	// a floating toolbar rather than being clipped by a hard line.
+	box-shadow: 0 6px 8px -6px rgba( 0, 0, 0, 0.16 );
 }
 
 .a4a-agent-studio-output-detail__state {

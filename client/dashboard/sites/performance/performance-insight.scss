@@ -1,8 +1,13 @@
 @import "@wordpress/base-styles/variables";
 
 .performance-insight__markdown {
+	code {
+		font-size: inherit;
+	}
+
 	pre:has(code) {
 		max-width: 100%;
+		font-size: inherit;
 		padding: $grid-unit-20;
 		border-radius: $radius-small;
 		background-color: var( --dashboard-inline-code__background-color, #f0f0f1 );

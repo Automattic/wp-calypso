@@ -1,8 +1,7 @@
 /**
  * Convert a camelCaseWord to a snake_case_word.
  *
- * This is designed to work nearly identically to the lodash `snakeCase`
- * function. Notably:
+ * Notable behaviors:
  *
  * - Leading and trailing spaces are removed.
  * - Leading and trailing underscores are removed.

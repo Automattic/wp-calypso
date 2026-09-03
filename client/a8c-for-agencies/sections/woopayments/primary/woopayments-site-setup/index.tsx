@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-import { SiteDetails } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -10,53 +9,28 @@ import { A4A_WOOPAYMENTS_DASHBOARD_LINK } from 'calypso/a8c-for-agencies/compone
 import StepSection from 'calypso/a8c-for-agencies/components/step-section';
 import StepSectionItem from 'calypso/a8c-for-agencies/components/step-section-item';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
-import useFetchSitePlugins from 'calypso/a8c-for-agencies/data/sites/use-fetch-site-plugins';
-import useActivatePluginToSiteMutation from 'calypso/a8c-for-agencies/hooks/use-activate-plugin-to-site';
-import useInstallPluginToSiteMutation from 'calypso/a8c-for-agencies/hooks/use-install-plugin-to-site';
+import { useWooPaymentsSiteSetup } from 'calypso/dashboard/agency/earn/woopayments/hooks/use-woopayments-site-setup';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
-import { useDispatch, useSelector } from 'calypso/state';
+import { withoutHttp } from 'calypso/lib/url';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getSites from 'calypso/state/selectors/get-sites';
 
 import './style.scss';
-
-const WOOCOMMERCE_PLUGIN_SLUG = 'woocommerce/woocommerce';
-const WOOCOMMERCE_PAYMENTS_PLUGIN_SLUG = 'woocommerce-payments/woocommerce-payments';
 
 const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const sites = useSelector( getSites );
 
-	const { mutateAsync: installPluginToSite, isPending: isPendingInstall } =
-		useInstallPluginToSiteMutation();
-	const { mutateAsync: activatePluginToSite, isPending: isPendingActivate } =
-		useActivatePluginToSiteMutation();
+	const { site, isLoading, status, setupUrl, installAndActivate, isInstalling } =
+		useWooPaymentsSiteSetup( parseInt( siteId ) );
+	const { woocommerceStatus, woocommercePaymentsStatus, isWooPaymentsActive } = status;
+
 	const [ error, setError ] = useState( false );
 	const [ isInstalled, setIsInstalled ] = useState( false );
-
-	const [ selectedSite, setSelectedSite ] = useState< SiteDetails | null | undefined >( null );
-
-	const { data: plugins, isLoading: isLoadingPlugins } = useFetchSitePlugins( parseInt( siteId ) );
-
-	const woocommercePlugin = plugins?.find(
-		( { plugin }: { plugin: string } ) => plugin === 'woocommerce/woocommerce'
-	);
-
-	const woocommerceStatus = woocommercePlugin?.status;
-	const isWooCommerceInactive = woocommerceStatus === 'inactive';
-
-	const woocommercePaymentsPlugin = plugins?.find(
-		( { plugin }: { plugin: string } ) => plugin === 'woocommerce-payments/woocommerce-payments'
-	);
-
-	const woocommercePaymentsStatus = woocommercePaymentsPlugin?.status;
-	const isWooPaymentsActive = woocommercePaymentsStatus === 'active';
-	const isWooPaymentsInactive = woocommercePaymentsStatus === 'inactive';
 
 	const title = translate( 'WooPayments site setup' );
 
@@ -69,47 +43,18 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 			} )
 		);
 
-		const wooSetupUrl = `${ selectedSite?.URL }/wp-admin/admin.php?page=wc-admin&path=/payments/connect`;
-
 		if ( isInstalled || isWooPaymentsActive ) {
-			window.open( wooSetupUrl, '_blank' );
+			if ( setupUrl ) {
+				window.open( setupUrl, '_blank' );
+			}
 			return;
 		}
 
 		try {
-			// Install WooCommerce if not installed
-			if ( ! woocommercePlugin ) {
-				await installPluginToSite( {
-					siteId: parseInt( siteId ),
-					pluginSlug: 'woocommerce',
-				} );
+			await installAndActivate();
+			if ( setupUrl ) {
+				window.open( setupUrl, '_blank' );
 			}
-
-			// Activate WooCommerce if it is installed but inactive
-			if ( isWooCommerceInactive ) {
-				await activatePluginToSite( {
-					siteId: parseInt( siteId ),
-					pluginSlug: WOOCOMMERCE_PLUGIN_SLUG,
-				} );
-			}
-
-			// Install WooPayments if not installed
-			if ( ! woocommercePaymentsPlugin ) {
-				await installPluginToSite( {
-					siteId: parseInt( siteId ),
-					pluginSlug: 'woocommerce-payments',
-				} );
-			}
-
-			// Activate WooPayments if it is installed but inactive
-			if ( isWooPaymentsInactive ) {
-				await activatePluginToSite( {
-					siteId: parseInt( siteId ),
-					pluginSlug: WOOCOMMERCE_PAYMENTS_PLUGIN_SLUG,
-				} );
-			}
-			// Open WooPayments setup page
-			window.open( wooSetupUrl, '_blank' );
 			setIsInstalled( true );
 		} catch {
 			setError( true );
@@ -120,20 +65,8 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 		// Redirect to dashboard if no siteId
 		if ( ! siteId ) {
 			page.redirect( A4A_WOOPAYMENTS_DASHBOARD_LINK );
-			return;
 		}
-
-		// Find matching site
-		const site = sites.find( ( site ) => site?.ID === parseInt( siteId ) );
-
-		if ( site ) {
-			// Set selected site and remove site_id param
-			setSelectedSite( site );
-			return;
-		}
-	}, [ siteId, sites ] );
-
-	const isPending = isPendingInstall || isPendingActivate;
+	}, [ siteId ] );
 
 	return (
 		<Layout className="woopayments-site-setup" title={ title } wide>
@@ -158,7 +91,7 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 			</LayoutTop>
 
 			<LayoutBody>
-				{ ! selectedSite || isLoadingPlugins ? (
+				{ ! site || isLoading ? (
 					<>
 						<TextPlaceholder />
 						<TextPlaceholder />
@@ -168,7 +101,7 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 					<>
 						<h2 className="woopayments-site-setup__page-title">
 							{ translate( 'WooPayments is now ready to be configured on %s', {
-								args: selectedSite?.domain,
+								args: withoutHttp( site.URL ),
 							} ) }
 						</h2>
 						<div className="woopayments-site-setup__page-description">
@@ -178,6 +111,7 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 						</div>
 						<StepSection heading={ translate( 'Next steps' ) }>
 							<StepSectionItem
+								stepNumber={ 1 }
 								heading={ translate( 'Install and activate the plugin on WP-Admin' ) }
 								description={
 									<>
@@ -195,7 +129,7 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 												</div>
 												<Button
 													variant="primary"
-													href={ `${ selectedSite.URL }/wp-admin/plugin-install.php?s=woopayments&tab=search&type=term` }
+													href={ `${ site.URL }/wp-admin/plugin-install.php?s=woopayments&tab=search&type=term` }
 													target="_blank"
 													rel="noopener noreferrer"
 													onClick={ () => {
@@ -211,8 +145,8 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 											</>
 										) : (
 											<Button
-												disabled={ isPending }
-												isBusy={ isPending }
+												disabled={ isInstalling }
+												isBusy={ isInstalling }
 												variant="primary"
 												onClick={ onInstallPluginClick }
 											>
@@ -225,12 +159,13 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 								}
 							/>
 							<StepSectionItem
+								stepNumber={ 2 }
 								heading={ translate( 'Earn commissions' ) }
 								description={
 									<>
 										<div>
 											{ translate(
-												"Once the plugin is installed and configured, each time a transaction occurs, you'll earn commisions!"
+												"Once the plugin is installed and configured, each time a transaction occurs, you'll earn commissions!"
 											) }
 										</div>
 										<Button

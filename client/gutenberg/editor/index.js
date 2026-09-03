@@ -9,7 +9,8 @@ import {
 } from './controller';
 
 export default function () {
-	page( '/site-editor/:site?', redirectLoggedOut, siteSelection, redirectSiteEditor );
+	page( '/site-editor/:site', redirectLoggedOut, siteSelection, redirectSiteEditor );
+	page( '/site-editor', redirectLoggedOut, siteSelection, sites, makeLayout, clientRender );
 	page( '/post', redirectLoggedOut, siteSelection, sites, makeLayout, clientRender );
 	page( '/post/new', '/post' ); // redirect from beep-beep-boop
 	page( '/post/:site/:post?', redirectToPermalinkIfLoggedOut, siteSelection, redirect );

@@ -45,22 +45,23 @@ import {
 	PRODUCT_VENDOR_WOOCOMMERCE,
 } from '../../../constants';
 import { MarketplaceTypeContext } from '../../../context';
-import usePressableAddonVisibility from '../../../hooks/use-pressable-addon-visibility';
+import usePressableAddonVisibility, {
+	canShowPressableAddonsInMarketplace,
+} from '../../../hooks/use-pressable-addon-visibility';
 import { isPressableAddonProduct } from '../../../lib/hosting';
 
 export default function useProductFilterOptions() {
 	const translate = useTranslate();
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
 	const { data: productsAndPlans = [] } = useProductsQuery();
-	const { hasActiveAgencyPressablePlanLicense, hasActiveReferralPressablePlanLicense } =
-		usePressableAddonVisibility();
+	const { hasActiveAgencyPressablePlanLicense } = usePressableAddonVisibility();
 	const hasPressableAddonsAvailable = productsAndPlans.some( ( { family_slug } ) =>
 		isPressableAddonProduct( family_slug )
 	);
-	const canShowPressableAddonsByMode =
-		marketplaceType === 'referral'
-			? hasActiveReferralPressablePlanLicense
-			: hasActiveAgencyPressablePlanLicense;
+	const canShowPressableAddonsByMode = canShowPressableAddonsInMarketplace( {
+		isReferralMode: marketplaceType === 'referral',
+		hasActiveAgencyPressablePlanLicense,
+	} );
 
 	return {
 		[ PRODUCT_FILTER_KEY_CATEGORIES ]: [

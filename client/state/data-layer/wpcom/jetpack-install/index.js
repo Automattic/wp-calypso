@@ -1,4 +1,3 @@
-import { includes } from 'lodash';
 import { JETPACK_REMOTE_INSTALL } from 'calypso/state/action-types';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
@@ -52,7 +51,7 @@ export const handleError = ( action, error ) => {
 		} )
 	);
 
-	if ( includes( error.message, 'timed out' ) ) {
+	if ( ( error.message ?? '' ).includes( 'timed out' ) ) {
 		if ( retryCount < JETPACK_REMOTE_INSTALL_RETRIES ) {
 			return {
 				type: JETPACK_REMOTE_INSTALL,

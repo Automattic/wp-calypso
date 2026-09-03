@@ -1,4 +1,4 @@
-import { set } from 'lodash';
+import { set } from '@automattic/js-utils';
 import { ANALYTICS_EVENT_RECORD } from 'calypso/state/action-types';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import type { AppState } from 'calypso/types';

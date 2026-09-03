@@ -1,7 +1,7 @@
 const { promisify } = require( 'util' );
 const { ipcMain: ipc, Notification } = require( 'electron' );
-const { debounce } = require( 'lodash' );
 const Config = require( '../../lib/config' );
+const debounce = require( '../../lib/debounce' );
 const isCalypso = require( '../../lib/is-calypso' );
 const log = require( '../../lib/logger' )( 'desktop:notifications' );
 const ViewModel = require( '../../lib/notifications/viewmodel' );

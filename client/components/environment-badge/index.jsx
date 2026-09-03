@@ -28,6 +28,10 @@ export function StoreSandboxHelper() {
 	return <div className="environment is-store-sandbox" />;
 }
 
+export function BlackboxHelper() {
+	return <div className="environment is-blackbox" />;
+}
+
 export function Branch( { branchName, commitChecksum } ) {
 	return branchName === 'trunk' ? null : (
 		<span className="environment branch-name" title={ 'Commit ' + commitChecksum }>
@@ -61,5 +65,16 @@ EnvironmentBadge.propTypes = {
 	feedbackURL: string.isRequired,
 	children: node,
 };
+
+export function RtlCssDisabledHelper() {
+	return (
+		<span
+			className="environment is-rtl-css-disabled"
+			title="RTL CSS is disabled. Set BUILD_RTL_CSS=true before starting Calypso to build RTL CSS."
+		>
+			RTLCSS off: set BUILD_RTL_CSS=true
+		</span>
+	);
+}
 
 export default EnvironmentBadge;

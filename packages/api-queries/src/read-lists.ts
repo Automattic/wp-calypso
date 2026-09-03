@@ -7,6 +7,7 @@ import {
 	followReadList,
 	unfollowReadList,
 	updateReadList,
+	type ReadSubscribedListsResponse,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions, type QueryClient } from '@tanstack/react-query';
 
@@ -32,6 +33,53 @@ export const readUserListsQuery = ( userLogin: string ) =>
 		staleTime: 1000 * 60 * 5,
 	} );
 
+/**
+ * Patch the unseen_count of every feed matching `feedIds` inside the subscribed
+ * lists query data — the source for the sidebar Lists dropdown counts. Mirrors
+ * `patchSubscriptionSeenCount` so marking posts seen/unseen anywhere keeps the
+ * Lists dropdown counts in sync optimistically.
+ */
+export const patchListsSeenCount = (
+	queryClient: QueryClient,
+	feedIds: number[],
+	update: ( currentCount: number ) => number
+) => {
+	if ( ! feedIds.length ) {
+		return;
+	}
+
+	const feedIdSet = new Set( feedIds.map( Number ) );
+
+	queryClient.setQueryData< ReadSubscribedListsResponse >(
+		readSubscribedListsQuery().queryKey,
+		( data ) => {
+			if ( ! data ) {
+				return data;
+			}
+
+			return {
+				...data,
+				lists: data.lists.map( ( list ) => {
+					if ( ! list.feeds?.length ) {
+						return list;
+					}
+
+					return {
+						...list,
+						feeds: list.feeds.map( ( feed ) => {
+							if ( ! feedIdSet.has( feed.feed_id ) ) {
+								return feed;
+							}
+
+							return { ...feed, unseen_count: update( feed.unseen_count ) };
+						} ),
+					};
+				} ),
+			};
+		}
+	);
+};
+
 function invalidateSubscribedLists( queryClient: QueryClient ): Promise< void > {
 	return queryClient.invalidateQueries( {
 		queryKey: readSubscribedListsQuery().queryKey,
@@ -45,12 +93,14 @@ function invalidateSubscribedLists( queryClient: QueryClient ): Promise< void > 
 
 export const createReadListMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
+		meta: { statId: 'read-list-create' },
 		mutationFn: createReadList,
 		onSuccess: () => invalidateSubscribedLists( queryClient ),
 	} );
 
 export const updateReadListMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
+		meta: { statId: 'read-list-update' },
 		mutationFn: updateReadList,
 		onSuccess: ( data ) => {
 			queryClient.setQueryData( readListQuery( data.list.owner, data.list.slug ).queryKey, data );
@@ -60,6 +110,7 @@ export const updateReadListMutation = ( queryClient: QueryClient ) =>
 
 export const followReadListMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
+		meta: { statId: 'read-list-follow' },
 		mutationFn: ( { owner, slug }: { owner: string; slug: string } ) =>
 			followReadList( owner, slug ),
 		onSuccess: () => invalidateSubscribedLists( queryClient ),
@@ -67,6 +118,7 @@ export const followReadListMutation = ( queryClient: QueryClient ) =>
 
 export const unfollowReadListMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
+		meta: { statId: 'read-list-unfollow' },
 		mutationFn: ( { owner, slug }: { owner: string; slug: string } ) =>
 			unfollowReadList( owner, slug ),
 		onSuccess: () => invalidateSubscribedLists( queryClient ),
@@ -74,6 +126,7 @@ export const unfollowReadListMutation = ( queryClient: QueryClient ) =>
 
 export const deleteReadListMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
+		meta: { statId: 'read-list-delete' },
 		mutationFn: ( { owner, slug }: { owner: string; slug: string } ) =>
 			deleteReadList( owner, slug ),
 		onSuccess: ( _data, { owner, slug } ) => {

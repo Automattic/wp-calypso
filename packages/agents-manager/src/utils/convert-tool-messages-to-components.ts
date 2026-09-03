@@ -1,16 +1,256 @@
+import { __ } from '@wordpress/i18n';
+import ChatResponseRenderedTracker, {
+	createChatResponseActionCallback,
+} from '../components/chat-response-tracking';
 import { EscalationButton } from '../components/escalation-button';
-import NextStepButton from '../components/next-step-button';
-import UnavailableToolMessage from '../components/unavailable-tool-message';
-import { isEditorPage } from './is-editor-page';
+import isAmAbilitiesDisabled from './is-am-abilities-disabled';
+import lazyComponent from './lazy-component';
 import { isShowComponentTool } from './show-component-tools';
+import {
+	APPLY_BLOCK_EDITS_TOOL_ID,
+	getApplyBlockEditsOutcome,
+	getDisplayMessageFromToolData,
+	isBlockEditToolId,
+	isDisplayableToolMessageTool,
+	isVisualCheckPending,
+} from './tool-message-utils';
 import type { GetChatComponent } from './load-external-providers';
-import type { UIMessage, UseAgentChatReturn } from '@automattic/agenttic-client';
+import type { ShowComponentType } from '../abilities/show-component';
+import type { UIMessage } from '@automattic/agenttic-client';
+
+export interface AgentsManagerUIMessage extends UIMessage {
+	disabled?: boolean;
+	traceId?: string;
+	/** Suppress Agenttic's transient thinking indicator while this message is the latest one. */
+	suppressThinking?: boolean;
+}
+
+// AM-owned components by `ShowComponentType`. These take precedence over
+// provider components — AM is the single source of truth for each migrated type.
+//
+// The pickers carry the block-editor preview stack, so they load on demand:
+// a picker row fetches its chunk when it first renders, and other chats never
+// download it.
+const AM_COMPONENTS: Record< ShowComponentType, React.ComponentType > = {
+	'button-picker': lazyComponent(
+		() => import( /* webpackChunkName: "am-button-picker" */ '../components/button-picker' )
+	),
+	'color-picker': lazyComponent(
+		() => import( /* webpackChunkName: "am-color-picker" */ '../components/color-picker' )
+	),
+	'font-picker': lazyComponent(
+		() => import( /* webpackChunkName: "am-font-picker" */ '../components/font-picker' )
+	),
+};
+
+function getAmComponent( type: string ): React.ComponentType | null {
+	// Own-property check so degenerate types (e.g. `toString`) can't resolve
+	// to `Object.prototype` members.
+	return Object.hasOwn( AM_COMPONENTS, type ) ? AM_COMPONENTS[ type as ShowComponentType ] : null;
+}
 
 interface Options {
 	messages: UIMessage[];
 	getChatComponent?: GetChatComponent;
-	currentPostId?: number;
-	onSubmit: UseAgentChatReturn[ 'onSubmit' ];
+	currentPostId?: number | string;
+	/** Whether the agent's turn is still running, so a promised check may still land. */
+	isProcessing?: boolean;
+}
+
+interface MessageWithContextFlags extends UIMessage {
+	context?: {
+		flags?: {
+			context_only?: boolean;
+		};
+	};
+}
+
+export function isContextOnlyMessage( message: UIMessage ): boolean {
+	return (
+		( message as MessageWithContextFlags ).context?.flags?.context_only === true ||
+		message.content?.some( ( content ) => {
+			if ( content.type === 'context' ) {
+				return true;
+			}
+
+			const flags =
+				content.type === 'data' ? ( content.data?.flags as { context_only?: boolean } ) : undefined;
+			return flags?.context_only === true;
+		} )
+	);
+}
+
+function getShowComponentSummary( message: UIMessage ): string | undefined {
+	const firstText = message.content?.[ 0 ]?.text;
+	if ( ! firstText ) {
+		return undefined;
+	}
+
+	try {
+		const parsed = JSON.parse( firstText );
+		if ( ! isShowComponentTool( parsed?.tool_id ) ) {
+			return undefined;
+		}
+
+		const summary = parsed?.data?.summary;
+		return typeof summary === 'string' ? summary.trim() || undefined : undefined;
+	} catch ( _error ) {
+		return undefined;
+	}
+}
+
+function hasAgentRole( message: UIMessage ): boolean {
+	const role = message.role as string;
+	return role === 'agent' || role === 'assistant';
+}
+
+function isUnsuccessfulToolData( data: unknown ): boolean {
+	return (
+		typeof data === 'object' && data !== null && ( data as { success?: unknown } ).success === false
+	);
+}
+
+function isDuplicateAdjacentShowComponentSummary(
+	message: UIMessage,
+	messages: UIMessage[],
+	index: number
+): boolean {
+	const text = message.content?.[ 0 ]?.text?.trim();
+	if ( ! text ) {
+		return false;
+	}
+
+	const adjacentMessages = [ messages[ index - 1 ], messages[ index + 1 ] ].filter( Boolean );
+	return adjacentMessages.some(
+		( adjacentMessage ) => getShowComponentSummary( adjacentMessage ) === text
+	);
+}
+
+function hasLaterAgentToolMessageInSameTurn(
+	messages: UIMessage[],
+	currentIndex: number
+): boolean {
+	for ( const laterMessage of messages.slice( currentIndex + 1 ) ) {
+		if ( laterMessage.role === 'user' ) {
+			return false;
+		}
+
+		if ( ! hasAgentRole( laterMessage ) ) {
+			continue;
+		}
+
+		const laterText = laterMessage.content?.[ 0 ]?.text;
+		if ( ! laterText ) {
+			continue;
+		}
+
+		try {
+			const laterData = JSON.parse( laterText );
+			if ( typeof laterData?.tool_id === 'string' ) {
+				return true;
+			}
+		} catch ( _error ) {}
+	}
+
+	return false;
+}
+
+function hasLaterApplyBlockEditsOutcome(
+	messages: UIMessage[],
+	currentIndex: number,
+	toolCallId: string
+): boolean {
+	for ( const laterMessage of messages.slice( currentIndex + 1 ) ) {
+		if ( laterMessage.role === 'user' ) {
+			return false;
+		}
+
+		const laterText = laterMessage.content?.[ 0 ]?.text;
+		if ( ! hasAgentRole( laterMessage ) || ! laterText ) {
+			continue;
+		}
+
+		try {
+			const laterData = JSON.parse( laterText );
+			if (
+				laterData?.tool_call_id === toolCallId &&
+				getApplyBlockEditsOutcome( laterData.tool_id, laterData.data )
+			) {
+				return true;
+			}
+		} catch ( _error ) {}
+	}
+
+	return false;
+}
+
+/**
+ * Whether the deferred reply for a promised visual check is still outstanding.
+ *
+ * The reply is plain agent prose following the tool result, so the wait lasts
+ * only while nothing follows this message. It ends two ways: the prose arrives,
+ * or the turn ends without it. Either way the summary comes back, which is what
+ * a flag that over-promises — the per-turn look budget the ability cannot see —
+ * falls back to, with no timer and no stale state in rehydrated history.
+ */
+function isAwaitingVisualCheckReply( messages: UIMessage[], currentIndex: number ): boolean {
+	for ( const laterMessage of messages.slice( currentIndex + 1 ) ) {
+		if ( laterMessage.role === 'user' ) {
+			return false;
+		}
+
+		const laterText = laterMessage.content?.[ 0 ]?.text?.trim();
+		if ( ! hasAgentRole( laterMessage ) || ! laterText || isContextOnlyMessage( laterMessage ) ) {
+			continue;
+		}
+
+		try {
+			if ( typeof JSON.parse( laterText )?.tool_id === 'string' ) {
+				continue;
+			}
+		} catch ( _error ) {}
+
+		return false;
+	}
+
+	return true;
+}
+
+function followsTerminalApplyBlockEditsOutcome(
+	messages: UIMessage[],
+	currentIndex: number
+): boolean {
+	for ( let index = currentIndex - 1; index >= 0; index-- ) {
+		const earlierMessage = messages[ index ];
+		if ( earlierMessage.role === 'user' ) {
+			return false;
+		}
+
+		const earlierText = earlierMessage.content?.[ 0 ]?.text;
+		if ( ! hasAgentRole( earlierMessage ) || ! earlierText ) {
+			continue;
+		}
+
+		try {
+			const earlierData = JSON.parse( earlierText );
+			if ( typeof earlierData?.tool_id !== 'string' ) {
+				continue;
+			}
+
+			// A promised visual check makes the following prose the deferred reply
+			// rather than redundant narration, so it has to survive. Suppressing it
+			// alongside the withheld summary would leave the turn with nothing.
+			return (
+				!! getApplyBlockEditsOutcome( earlierData.tool_id, earlierData.data ) &&
+				earlierData.data?.followUpTasks !== true &&
+				! isVisualCheckPending( earlierData.tool_id, earlierData.data )
+			);
+		} catch ( _error ) {
+			return false;
+		}
+	}
+
+	return false;
 }
 
 /**
@@ -20,14 +260,21 @@ export default function convertToolMessagesToComponents( {
 	messages,
 	getChatComponent,
 	currentPostId,
-	onSubmit,
-}: Options ): UIMessage[] {
+	isProcessing,
+}: Options ): AgentsManagerUIMessage[] {
 	return messages.flatMap( ( message, index, array ) => {
+		if ( isContextOnlyMessage( message ) ) {
+			return [];
+		}
+
 		const firstContentText = message.content?.[ 0 ]?.text;
 
-		// @ts-expect-error -- `assistant` comes from Big Sky messages
-		if ( ( message.role !== 'agent' && message.role !== 'assistant' ) || ! firstContentText ) {
+		if ( ! hasAgentRole( message ) || ! firstContentText ) {
 			return [ message ];
+		}
+
+		if ( isDuplicateAdjacentShowComponentSummary( message, array, index ) ) {
+			return [];
 		}
 
 		// The user asked for human support
@@ -45,7 +292,10 @@ export default function convertToolMessagesToComponents( {
 				content: [
 					{
 						type: 'component',
-						component: EscalationButton,
+						component: EscalationButton as React.ComponentType,
+						componentProps: {
+							messageId: message.id,
+						},
 					},
 				],
 			};
@@ -56,94 +306,208 @@ export default function convertToolMessagesToComponents( {
 		try {
 			textData = JSON.parse( firstContentText );
 		} catch ( _error ) {
-			return [ message ];
+			return followsTerminalApplyBlockEditsOutcome( array, index ) ? [] : [ message ];
+		}
+
+		if (
+			typeof textData !== 'object' ||
+			textData === null ||
+			typeof textData.tool_id !== 'string'
+		) {
+			return followsTerminalApplyBlockEditsOutcome( array, index ) ? [] : [ message ];
 		}
 
 		// Handle `show-component` tool message
 		if ( isShowComponentTool( textData.tool_id ) ) {
-			// If not on an editor page, show an unavailable tool message instead of the component
-			if ( ! isEditorPage() ) {
+			const toolData = textData.data ?? {};
+			const {
+				type: contentType,
+				props,
+				followUpTasks,
+				isCurrent,
+				postId,
+				summary,
+				responseTrackingProperties,
+			} = toolData;
+			const toolCallId =
+				typeof textData.tool_call_id === 'string' && textData.tool_call_id
+					? textData.tool_call_id
+					: undefined;
+			// The testing switch flips rendering to the provider components too,
+			// so the comparison covers the whole flow.
+			const amComponent = isAmAbilitiesDisabled() ? null : getAmComponent( contentType );
+			// AM components take precedence; other types resolve through the external
+			// providers (e.g. jetpack-ai-sidebar's title pickers) via `getChatComponent`.
+			const Component = amComponent ?? getChatComponent?.( contentType );
+			// Provider components resolve by `contentType`; AM components are pre-resolved.
+			const ownerProps = amComponent ? {} : { contentType };
+
+			const summaryText = typeof summary === 'string' ? summary.trim() || undefined : undefined;
+
+			// No matching component on either side (e.g. a deprecated type in
+			// restored history) — show the stored summary or a short notice
+			// instead of raw JSON.
+			if ( ! Component ) {
 				return [
 					{
 						...message,
 						content: [
 							{
-								type: 'component' as const,
-								component: UnavailableToolMessage as React.ComponentType,
-								componentProps: { type: 'picker' },
+								type: 'text' as const,
+								text:
+									summaryText ?? __( 'This option is no longer available.', __i18n_text_domain__ ),
 							},
 						],
+						suppressThinking: true,
 					},
 				];
 			}
 
-			const { type: contentType, props, followUpTasks, isCurrent, postId } = textData.data ?? {};
-			const Component = getChatComponent?.( contentType );
-
-			// No matching component found for this content type — drop the message to avoid showing raw JSON.
-			if ( ! Component ) {
-				return [];
-			}
-
-			// Whether this is the last message in the array.
-			const isLastMessage = index === array.length - 1;
+			// A picker only stays interactive until the user replies past it — after
+			// that it documents a previous step. Hidden context messages (e.g.
+			// navigation continuations) are not real replies.
+			const hasUserReplied = array
+				.slice( index + 1 )
+				.some(
+					( laterMessage ) => laterMessage.role === 'user' && ! isContextOnlyMessage( laterMessage )
+				);
 
 			// In the site editor, React-Query caching keeps past conversations alive when the
 			// user navigates to a different page. Compare the picker's `postId` with the
 			// current editor page to disable pickers that no longer belong to this page.
-			const isPageChanged = !! postId && !! currentPostId && postId !== currentPostId;
-			const isStale = ! isLastMessage || ! isCurrent || isPageChanged;
+			const isPageChanged =
+				!! postId && !! currentPostId && String( postId ) !== String( currentPostId );
+			const isStale = hasUserReplied || ! isCurrent || isPageChanged;
+			const shouldTrackResponse = ! isStale;
+			let responseActionProps = {};
+			if ( ! amComponent ) {
+				responseActionProps = {
+					onResponseAction: shouldTrackResponse
+						? createChatResponseActionCallback( {
+								componentType: contentType,
+								toolId: textData.tool_id,
+								...( toolCallId ? { toolCallId } : {} ),
+						  } )
+						: undefined,
+				};
+			}
 
-			const componentMessage = {
+			const componentMessage: AgentsManagerUIMessage = {
 				...message,
 				content: [
+					...( summaryText
+						? [
+								{
+									type: 'text' as const,
+									text: summaryText,
+								},
+						  ]
+						: [] ),
 					{
 						type: 'component' as const,
 						component: Component,
-						componentProps: { ...props, contentType },
+						componentProps: {
+							...props,
+							...( summaryText && { summary: summaryText } ),
+							...ownerProps,
+							...( toolCallId ? { toolCallId } : {} ),
+							...responseActionProps,
+							...( isStale && { isMessageStale: true } ),
+						},
 					},
+					...( shouldTrackResponse
+						? [
+								{
+									type: 'component' as const,
+									component: ChatResponseRenderedTracker as React.ComponentType,
+									componentProps: {
+										componentType: contentType,
+										toolId: textData.tool_id,
+										...( toolCallId ? { toolCallId } : {} ),
+										...( responseTrackingProperties ? { responseTrackingProperties } : {} ),
+									},
+								},
+						  ]
+						: [] ),
 				],
 				disabled: isStale,
+				suppressThinking: followUpTasks !== true,
 			};
 
-			// Only show `next-step-button` when the component is active and has follow-up tasks.
-			if ( isStale || ! followUpTasks ) {
-				return [ componentMessage ];
-			}
-
-			// Omit `actions` so the parent message's actions don't leak into the next-step message.
-			const { actions, content, ...baseMessage } = message;
-
-			return [
-				componentMessage,
-				{
-					...baseMessage,
-					id: `${ message.id }-next-step`,
-					content: [
-						{
-							type: 'component' as const,
-							component: NextStepButton as React.ComponentType,
-							componentProps: { onMoveToNextStep: onSubmit },
-						},
-					],
-				},
-			];
+			return [ componentMessage ];
 		}
 
-		// Handle `apply-block-edits` tool message
-		if (
-			textData.tool_id === 'big_sky__apply_block_edits' &&
-			typeof textData.data?.summary === 'string'
-		) {
+		// Handle agent-facing Big Sky tool result summaries.
+		if ( isDisplayableToolMessageTool( textData.tool_id ) ) {
+			if ( isUnsuccessfulToolData( textData.data ) ) {
+				return [];
+			}
+
+			const blockEditOutcome = getApplyBlockEditsOutcome( textData.tool_id, textData.data );
+			const isLegacySuccessfulApplyBlockEditsResult =
+				textData.tool_id === APPLY_BLOCK_EDITS_TOOL_ID && textData.data?.result?.success === true;
+			if (
+				isBlockEditToolId( textData.tool_id ) &&
+				! blockEditOutcome &&
+				! isLegacySuccessfulApplyBlockEditsResult
+			) {
+				return [];
+			}
+			const summary = getDisplayMessageFromToolData( textData.data );
+			if ( ! summary && blockEditOutcome !== 'no-changes' ) {
+				return [];
+			}
+			if (
+				typeof textData.tool_call_id === 'string' &&
+				hasLaterApplyBlockEditsOutcome( array, index, textData.tool_call_id )
+			) {
+				return [];
+			}
+			// While a promised check is still running, the transient thinking indicator
+			// already reads as the agent working, so the summary is withheld rather than
+			// replaced by a second, static one. `no-changes` is excluded: nothing was
+			// written, so there is nothing to look at. The summary returns as soon as any
+			// of the three ends the wait — the reply lands, the turn ends, or the stream
+			// stops — so a flag that over-promises cannot swallow the edit.
+			if (
+				isProcessing &&
+				blockEditOutcome !== 'no-changes' &&
+				isVisualCheckPending( textData.tool_id, textData.data ) &&
+				isAwaitingVisualCheckReply( array, index )
+			) {
+				return [];
+			}
+			const content =
+				blockEditOutcome === 'no-changes'
+					? [
+							{
+								type: 'text' as const,
+								text: __( '✓ No changes needed', __i18n_text_domain__ ),
+							},
+					  ]
+					: [
+							{
+								type: 'text' as const,
+								text: summary as string,
+							},
+					  ];
+
+			// Tool summaries with follow-up tasks are intermediate status updates. When
+			// rehydrating history, a later tool message in the same user turn (for example,
+			// a color picker) should be the visible response instead of replaying this
+			// intermediate confirmation.
+			if (
+				( textData.data as { followUpTasks?: unknown } )?.followUpTasks === true &&
+				hasLaterAgentToolMessageInSameTurn( array, index )
+			) {
+				return [];
+			}
+
 			return [
 				{
 					...message,
-					content: [
-						{
-							type: 'text' as const,
-							text: textData.data.summary.trim(),
-						},
-					],
+					suppressThinking: true,
+					content,
 				},
 			];
 		}
@@ -167,6 +531,9 @@ export default function convertToolMessagesToComponents( {
 		}
 
 		// Handle start over tool message
+		// TODO (ability-migration): Double-check whether this branch is still needed when the
+		// `client-assistants` ability migrates. No agent offers that tool
+		// today — only old conversation history still contains it.
 		if (
 			textData.tool_id === 'big_sky__client_assistants' &&
 			textData.data?.assistantId === 'big-sky-site-admin'
@@ -176,11 +543,11 @@ export default function convertToolMessagesToComponents( {
 					...message,
 					content: [
 						{
-							type: 'component' as const,
-							component: UnavailableToolMessage as React.ComponentType,
-							componentProps: { type: 'start-over' },
+							type: 'text' as const,
+							text: __( 'To start over, please send your request again.', __i18n_text_domain__ ),
 						},
 					],
+					suppressThinking: true,
 				},
 			];
 		}

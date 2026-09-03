@@ -11,16 +11,8 @@ module.exports = {
 		},
 	],
 	rules: {
-		'no-restricted-imports': [
-			0,
-			{
-				paths: [
-					{
-						name: 'redux',
-						importNames: [ 'combineReducers' ],
-					},
-				],
-			},
-		],
+		// This app imports `combineReducers` from redux directly, so the root
+		// `no-restricted-imports` rule (which forbids it) is turned off here.
+		'no-restricted-imports': 'off',
 	},
 };

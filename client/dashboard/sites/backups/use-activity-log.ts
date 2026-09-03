@@ -10,6 +10,7 @@ export interface UseActivityLogOptions {
 	dateRange?: { start: Date; end: Date };
 	timezoneString?: string;
 	gmtOffset?: number;
+	enabled?: boolean;
 }
 
 export interface UseActivityLogResult {
@@ -25,6 +26,7 @@ export function useActivityLog( {
 	timezoneString,
 	gmtOffset,
 	dateRange,
+	enabled = true,
 }: UseActivityLogOptions ): UseActivityLogResult {
 	const { backup, hasRecentlyCompleted } = useBackupState( siteId );
 
@@ -43,6 +45,7 @@ export function useActivityLog( {
 
 	const queryResult = useQuery( {
 		...siteBackupActivityLogEntriesQuery( siteId, undefined, true, after, before ),
+		enabled,
 		refetchInterval: ( query ) => {
 			if ( ! backup || ! hasRecentlyCompleted ) {
 				return false;

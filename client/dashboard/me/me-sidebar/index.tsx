@@ -9,9 +9,9 @@ import { __ } from '@wordpress/i18n';
 import {
 	bell,
 	buttons,
+	comment,
 	commentAuthorAvatar,
 	lock,
-	notAllowed,
 	payment,
 	settings,
 } from '@wordpress/icons';
@@ -41,11 +41,11 @@ export default function MeSidebar() {
 					</div>
 				</div>
 				<VStack spacing={ 0 } style={ { minWidth: 0 } }>
-					<Text weight={ 500 } size="13px" truncate>
+					<Text weight={ 500 } size="13px" truncate numberOfLines={ 1 }>
 						{ userSettings.display_name }
 					</Text>
-					<Text variant="muted" size="12px" truncate>
-						@{ userSettings.user_login }
+					<Text variant="muted" size="12px" truncate numberOfLines={ 1 }>
+						{ `@${ userSettings.user_login }` }
 					</Text>
 				</VStack>
 			</HStack>
@@ -76,11 +76,9 @@ function MeMenuSidebar() {
 					{ __( 'Notifications' ) }
 				</SidebarMenuItem>
 			) }
-			{ supports.reader && (
-				<SidebarMenuItem icon={ notAllowed } to="/me/blocked-sites">
-					{ __( 'Blocked sites' ) }
-				</SidebarMenuItem>
-			) }
+			<SidebarMenuItem icon={ comment } to="/me/agent">
+				{ __( 'WordPress Agent' ) }
+			</SidebarMenuItem>
 			{ hasAppSupport( supports, 'apps' ) && (
 				<SidebarMenuItem icon={ buttons } to="/me/apps">
 					{ __( 'Apps' ) }

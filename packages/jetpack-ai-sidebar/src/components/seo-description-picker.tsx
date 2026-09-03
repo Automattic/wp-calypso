@@ -1,0 +1,79 @@
+/**
+ * SeoDescriptionPicker — renders SEO meta-description suggestions in the chat sidebar.
+ *
+ * Displayed when the orchestrator renders a show-component response with
+ * data.type set to 'seo-description-picker' (from the jetpack-ai/generate-seo-description
+ * ability). Clicking a card applies it to the post's SEO meta description
+ * (Jetpack post meta `advanced_seo_description`). Thin wrapper over the shared
+ * BaseSuggestionPicker.
+ */
+
+/**
+ * External dependencies
+ */
+import { useDispatch, useSelect } from '@wordpress/data';
+import { useCallback } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+/**
+ * Internal dependencies
+ */
+import { revealSidebarField } from '../utils/reveal-sidebar-field';
+import BaseSuggestionPicker from './base-suggestion-picker';
+import type { OnResponseAction } from '../utils/response-action';
+
+/**
+ * Jetpack SEO post meta key for the custom HTML <meta> description.
+ * @see Jetpack_SEO_Posts::DESCRIPTION_META_KEY
+ */
+const SEO_DESCRIPTION_META_KEY = 'advanced_seo_description';
+
+/**
+ * Props for the SeoDescriptionPicker component.
+ */
+interface SeoDescriptionOption {
+	description: string;
+	explanation?: string;
+}
+
+interface SeoDescriptionPickerProps {
+	descriptions: SeoDescriptionOption[];
+	onComplete?: () => void;
+	onResponseAction?: OnResponseAction;
+}
+
+/** Renders SEO description suggestions and applies the selection to post meta. */
+export default function SeoDescriptionPicker( {
+	descriptions,
+	onComplete,
+	onResponseAction,
+}: SeoDescriptionPickerProps ) {
+	const { editPost } = useDispatch( 'core/editor' );
+	const currentDescription = useSelect( ( select ) => {
+		const meta = (
+			select( 'core/editor' ) as {
+				getEditedPostAttribute?: ( attr: string ) => Record< string, unknown > | undefined;
+			}
+		 )?.getEditedPostAttribute?.( 'meta' );
+		return meta?.[ SEO_DESCRIPTION_META_KEY ];
+	}, [] );
+
+	const handleApply = useCallback(
+		( description: string ) => {
+			editPost( { meta: { [ SEO_DESCRIPTION_META_KEY ]: description } } );
+			revealSidebarField( 'seo' );
+		},
+		[ editPost ]
+	);
+
+	return (
+		<BaseSuggestionPicker
+			intro={ __( 'Choose an SEO description for your post:', 'jetpack' ) }
+			options={ descriptions.map( ( option ) => option.description ) }
+			onApply={ handleApply }
+			onComplete={ onComplete }
+			appliedMessage={ __( 'SEO description updated.', 'jetpack' ) }
+			currentValue={ typeof currentDescription === 'string' ? currentDescription : undefined }
+			onResponseAction={ onResponseAction }
+		/>
+	);
+}

@@ -3,7 +3,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
-const JetpackConnectExampleActivate = ( { isInstall, url, translate, onClick } ) => {
+const JetpackConnectExampleActivate = ( { isInstall, url, translate, onClick = () => {} } ) => {
 	return (
 		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
 		<div className="example-components__main" onClick={ onClick }>
@@ -59,10 +59,6 @@ const JetpackConnectExampleActivate = ( { isInstall, url, translate, onClick } )
 
 JetpackConnectExampleActivate.propTypes = {
 	onClick: PropTypes.func,
-};
-
-JetpackConnectExampleActivate.defaultProps = {
-	onClick: () => {},
 };
 
 export default localize( JetpackConnectExampleActivate );

@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
+import type { JSX } from 'react';
 
 import './style.scss';
 

@@ -1,11 +1,8 @@
 import { Button } from '@wordpress/components';
-import { layout } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ONBOARDING_TOUR_HASH } from 'calypso/a8c-for-agencies/components/hoc/with-onboarding-tour/hooks/use-onboarding-tour';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-
-import './style.scss';
 
 export default function OverviewSidebarRelaunchWelcomeTour() {
 	const translate = useTranslate();
@@ -18,10 +15,13 @@ export default function OverviewSidebarRelaunchWelcomeTour() {
 
 	return (
 		<Button
-			className="overview__relaunch-welcome-tour"
+			className="overview__sidebar-button"
+			__next40pxDefaultSize
 			variant="secondary"
-			icon={ layout }
 			onClick={ handleRelaunchWelcomeTour }
+			style={ {
+				justifyContent: 'center',
+			} }
 		>
 			{ translate( 'Relaunch welcome tour' ) }
 		</Button>

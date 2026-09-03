@@ -12,7 +12,7 @@ const AddNewSite = () => {
 	const [ isMenuVisible, setMenuVisible ] = useState( false );
 	const [ visibleModalType, setVisibleModalType ] = useState( '' );
 
-	const popoverMenuContext = useRef( null );
+	const popoverMenuContext = useRef< HTMLButtonElement >( null );
 
 	const toggleMenu = useCallback( () => {
 		setMenuVisible( ( isVisible ) => ! isVisible );

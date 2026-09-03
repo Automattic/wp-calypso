@@ -18,47 +18,53 @@ import useSubmitContactSupport from './use-submit-contact-support';
 
 import './style.scss';
 
+type AnonymousAtSignupData = {
+	name: string;
+	email: string;
+	agencyName: string;
+	agencyUrl: string;
+};
+
 type Props = {
-	show: boolean;
 	onClose?: () => void;
 	defaultMessage?: string;
 	defaultProduct?: string;
+	anonymousAtSignup?: AnonymousAtSignupData;
 };
 
 const DEFAULT_MESSAGE_VALUE = '';
 const DEFAULT_PRODUCT_VALUE = 'a4a';
 
 export default function UserContactSupportModalForm( {
-	show,
 	onClose,
 	defaultMessage = DEFAULT_MESSAGE_VALUE,
 	defaultProduct = DEFAULT_PRODUCT_VALUE,
+	anonymousAtSignup,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	useMinimizeHelpCenterOnMount();
 
+	const isAnonymousMode = !! anonymousAtSignup;
+
 	const user = useSelector( getCurrentUser );
 	const agency = useSelector( getActiveAgency );
 
-	const [ name, setName ] = useState( user?.display_name );
-	const [ email, setEmail ] = useState( user?.email );
+	const [ name, setName ] = useState( anonymousAtSignup?.name ?? user?.display_name );
+	const [ email, setEmail ] = useState( anonymousAtSignup?.email ?? user?.email );
 	const [ product, setProduct ] = useState( defaultProduct );
 	const [ pressableContactType, setPressableContactType ] = useState( 'sales' );
-	const [ site, setSite ] = useState( '' );
+	const [ site, setSite ] = useState( anonymousAtSignup?.agencyUrl ?? '' );
 	const [ message, setMessage ] = useState( defaultMessage );
 
 	const isPressableSelected = product === 'pressable';
 	const isClient = isClientView();
 	const hasCompletedForm =
-		!! message && !! name && !! email && !! product && ( !! agency || isClient );
+		!! message && !! name && !! email && !! product && ( !! agency || isClient || isAnonymousMode );
 
-	const { isSubmitting, submit, isSubmissionSuccessful } = useSubmitContactSupport();
-
-	const resetForm = useCallback( () => {
-		setMessage( defaultMessage );
-		setProduct( defaultProduct );
-	}, [ defaultMessage, defaultProduct ] );
+	const { isSubmitting, submit, isSubmissionSuccessful } = useSubmitContactSupport( {
+		isSignup: isAnonymousMode,
+	} );
 
 	const onModalClose = useCallback( () => {
 		onClose?.();
@@ -77,12 +83,6 @@ export default function UserContactSupportModalForm( {
 			onModalClose();
 		}
 	}, [ dispatch, isSubmissionSuccessful, onModalClose, translate ] );
-
-	useEffect( () => {
-		if ( show ) {
-			resetForm();
-		}
-	}, [ defaultMessage, resetForm, show ] );
 
 	const onNameChange = useCallback( ( event: ChangeEvent< HTMLInputElement > ) => {
 		setName( event.currentTarget.value );
@@ -132,10 +132,11 @@ export default function UserContactSupportModalForm( {
 			name,
 			email,
 			product,
-			agency_id: agency?.id,
+			agency_id: isAnonymousMode ? undefined : agency?.id,
 			...( site && { site } ),
-			...( pressableContactType && { contact_type: pressableContactType } ),
+			...( isPressableSelected && pressableContactType && { contact_type: pressableContactType } ),
 			...( pressable_id && { pressable_id } ),
+			...( isAnonymousMode && { tags: [ 'a4a_duplicate_signup_blocked' ] } ),
 		};
 
 		submit( formData );
@@ -150,17 +151,12 @@ export default function UserContactSupportModalForm( {
 		site,
 		pressableContactType,
 		agency,
+		isAnonymousMode,
 	] );
 
 	useEffect( () => {
-		if ( show ) {
-			dispatch( recordTracksEvent( 'calypso_a4a_user_contact_support_form_open' ) );
-		}
-	}, [ dispatch, show ] );
-
-	if ( ! show ) {
-		return null;
-	}
+		dispatch( recordTracksEvent( 'calypso_a4a_user_contact_support_form_open' ) );
+	}, [ dispatch ] );
 
 	return (
 		<Modal
@@ -224,18 +220,20 @@ export default function UserContactSupportModalForm( {
 					/>
 				</FormFieldset>
 
-				<FormFieldset>
-					<FormLabel htmlFor="product">
-						{ translate( 'What Automattic product would you like help with?' ) }
-					</FormLabel>
-					<FormSelect name="product" id="product" value={ product } onChange={ onProductChange }>
-						<option value="a4a">{ translate( 'Automattic for Agencies' ) }</option>
-						<option value="woo">{ translate( 'Woo' ) }</option>
-						<option value="wpcom">{ translate( 'WordPress.com' ) }</option>
-						<option value="jetpack">{ translate( 'Jetpack' ) }</option>
-						<option value="pressable">{ translate( 'Pressable' ) }</option>
-					</FormSelect>
-				</FormFieldset>
+				{ ! isAnonymousMode && (
+					<FormFieldset>
+						<FormLabel htmlFor="product">
+							{ translate( 'What Automattic product would you like help with?' ) }
+						</FormLabel>
+						<FormSelect name="product" id="product" value={ product } onChange={ onProductChange }>
+							<option value="a4a">{ translate( 'Automattic for Agencies' ) }</option>
+							<option value="woo">{ translate( 'Woo' ) }</option>
+							<option value="wpcom">{ translate( 'WordPress.com' ) }</option>
+							<option value="jetpack">{ translate( 'Jetpack' ) }</option>
+							<option value="pressable">{ translate( 'Pressable' ) }</option>
+						</FormSelect>
+					</FormFieldset>
+				) }
 
 				{ isPressableSelected && (
 					<>

@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { contextTypes } from '../context-types';
+import { TourContext } from '../context';
 
 export default class LinkQuit extends Component {
 	static displayName = 'LinkQuit';
@@ -15,11 +15,7 @@ export default class LinkQuit extends Component {
 		target: PropTypes.string,
 	};
 
-	static contextTypes = contextTypes;
-
-	constructor( props, context ) {
-		super( props, context );
-	}
+	static contextType = TourContext;
 
 	onClick = ( event ) => {
 		this.props.onClick && this.props.onClick( event );

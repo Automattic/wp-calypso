@@ -50,7 +50,11 @@ export default function SitesHeaderActions( { onWPCOMImport }: Props ) {
 					onCreateSiteSuccess={ onCreateSiteSuccess }
 				/>
 			) }
-			<div ref={ ( ref ) => setTourStepRef( ref ) }>
+			<div
+				ref={ ( ref ) => {
+					setTourStepRef( ref );
+				} }
+			>
 				{ isEnabled( 'a4a-updated-add-new-site' ) ? (
 					<AddNewSite />
 				) : (

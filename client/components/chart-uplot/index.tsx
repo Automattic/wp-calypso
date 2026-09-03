@@ -22,7 +22,7 @@ interface UplotChartProps {
 	fillColorFrom?: string;
 	fillColorTo?: string;
 	options?: Partial< uPlot.Options >;
-	legendContainer?: React.RefObject< HTMLDivElement >;
+	legendContainer?: React.RefObject< HTMLDivElement | null >;
 	solidFill?: boolean;
 	period?: string;
 	yAxisFilter?: uPlot.Axis.Filter | undefined;

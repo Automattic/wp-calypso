@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/el
 import { __ } from '@wordpress/i18n';
 import { ImageStudioMode } from '../../../types';
 import { trackImageStudioImageFeedback } from '../../../utils/tracking';
+import type { JSX } from 'react';
 import './style.scss';
 
 interface VideoFeedbackButtonsProps {

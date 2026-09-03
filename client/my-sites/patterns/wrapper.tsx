@@ -1,6 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { UniversalNavbarFooter, UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
+import { UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import Main from 'calypso/components/main';
+import { Nav2026UniversalHeader } from 'calypso/layout/nav-2026-universal-header';
 import { getOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -19,7 +20,7 @@ export const PatternsWrapper = ( {
 	return (
 		<>
 			{ isLoggedIn && (
-				<UniversalNavbarHeader
+				<Nav2026UniversalHeader
 					hideGetStartedCta={ hideGetStartedCta }
 					isLoggedIn
 					startUrl={ getOnboardingUrl( locale, isLoggedIn ) }

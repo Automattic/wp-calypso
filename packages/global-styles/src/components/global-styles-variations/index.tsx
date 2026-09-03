@@ -1,4 +1,4 @@
-import { PLAN_PREMIUM, getPlan, PLAN_PERSONAL } from '@automattic/calypso-products';
+import { getPlan, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useState } from '@wordpress/element';
@@ -18,12 +18,6 @@ import GlobalStylesVariationPreview from './preview';
 import type { GlobalStylesObject } from '../../types';
 import './style.scss';
 
-declare global {
-	interface Window {
-		isGlobalStylesOnPersonal?: boolean;
-	}
-}
-
 interface GlobalStylesVariationProps {
 	globalStylesVariation: GlobalStylesObject;
 	isActive: boolean;
@@ -38,7 +32,6 @@ interface GlobalStylesVariationsProps {
 	showOnlyHoverViewDefaultVariation?: boolean;
 	splitDefaultVariation?: boolean;
 	needsUpgrade?: boolean;
-	isGlobalStylesOnPersonal?: boolean;
 	onSelect: ( globalStylesVariation: GlobalStylesObject ) => void;
 }
 
@@ -106,12 +99,11 @@ const GlobalStylesVariations = ( {
 	showOnlyHoverViewDefaultVariation,
 	splitDefaultVariation = true,
 	needsUpgrade = true,
-	isGlobalStylesOnPersonal = window.isGlobalStylesOnPersonal ?? false,
 	onSelect,
 }: GlobalStylesVariationsProps ) => {
 	const hasEnTranslation = useHasEnTranslation();
 	const isRegisteredCoreBlocks = useRegisterCoreBlocks();
-	const upgradeToPlan = isGlobalStylesOnPersonal ? PLAN_PERSONAL : PLAN_PREMIUM;
+	const upgradeToPlan = PLAN_PERSONAL;
 
 	const variationDescription = needsUpgrade
 		? translate(

@@ -1,8 +1,8 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isThisASupportArticleLink } from '@automattic/urls';
 import { useMemo } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAgentsManagerContext } from '../../contexts';
+import { FROM_CHAT } from '../../constants';
+import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import { uriTransformer } from '../../utils/uri-transformer';
 
 export default function CustomALink( {
@@ -12,7 +12,6 @@ export default function CustomALink( {
 }: React.AnchorHTMLAttributes< HTMLAnchorElement > ) {
 	const navigate = useNavigate();
 	const { pathname, state } = useLocation();
-	const { getActiveSessionId } = useAgentsManagerContext();
 	const transformedHref = useMemo( () => uriTransformer( href ?? '' ), [ href ] );
 
 	// Unsafe URL: render as plain text.
@@ -32,15 +31,16 @@ export default function CustomALink( {
 				// Open support article links in the post view.
 				if ( isSupportArticle ) {
 					e.preventDefault();
-					// Forward route `state` (`sessionId`/`conversationId`) to preserve chat context.
+					// Mark the chat origin (or forward the existing `state`) so the
+					// post view's back button returns to the right place.
 					navigate( `/post?link=${ encodeURIComponent( transformedHref ) }`, {
-						state: isFromOrchestrator ? { ...state, sessionId: getActiveSessionId() } : state,
+						state: isFromOrchestrator ? { from: FROM_CHAT } : state,
 					} );
 				}
 
-				recordTracksEvent( 'calypso_agents_manager_link_click', {
+				recordAgentsManagerTracksEvent( 'calypso_agents_manager_link_click', {
 					href: transformedHref,
-					type: isSupportArticle ? 'support_article' : 'external',
+					link_type: isSupportArticle ? 'support_article' : 'external',
 					source: isFromOrchestrator ? 'orchestrator' : 'zendesk',
 				} );
 			} }

@@ -2,12 +2,13 @@ import fs from 'fs';
 import path from 'path';
 import config from '@automattic/calypso-config';
 import { isDefaultLocale, isTranslatedIncompletely } from '@automattic/i18n-utils';
+import { pick } from '@automattic/js-utils';
 import debugFactory from 'debug';
-import { get, pick } from 'lodash';
 import Lru from 'lru';
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
+import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
 import { logServerEvent } from 'calypso/lib/analytics/statsd-utils';
 import {
 	getLanguageFileUrl,
@@ -28,6 +29,26 @@ import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-
 import { serialize } from 'calypso/state/utils';
 
 const debug = debugFactory( 'calypso:server-render' );
+
+const IMAGE_REF_PATTERN = /^registry\.a8c\.com\/calypso\/app:build-\d+$/;
+
+// The A4A Dashboard shares the dotcom Dashboard's env id, and is told apart
+// only by the `-a4a` suffix calypso.live gives its container.
+const A4A_HOSTNAME_SUFFIX = '-a4a.calypso.live';
+
+function isCalypsoLiveDotcomHostname( hostname ) {
+	return !! hostname?.endsWith( '.calypso.live' ) && ! hostname.endsWith( A4A_HOSTNAME_SUFFIX );
+}
+
+/**
+ * The CALYPSO_LIVE_IMAGE envvar is injected into the Docker container
+ * by TeamCity. This allows the client to use the calypso.live redirector
+ * to generate links for other dashboard variants.
+ */
+function getLiveImageRef() {
+	const imageRef = process.env.CALYPSO_LIVE_IMAGE;
+	return imageRef && IMAGE_REF_PATTERN.test( imageRef ) ? imageRef : null;
+}
 
 /**
  * Returns per-request clientData customized for the request hostname.
@@ -58,6 +79,19 @@ export function customizeClientDataForRequest( req, baseClientData ) {
 		};
 	}
 
+	const liveImageRef = getLiveImageRef();
+	if (
+		liveImageRef &&
+		isCalypsoLiveDotcomHostname( reqHostname ) &&
+		// Flavours without a dotcom sibling (e.g. Jetpack Cloud) keep static values.
+		( config( 'env_id' ) === 'wpcalypso' || isDashboardEnv() )
+	) {
+		clientData = {
+			...clientData,
+			calypso_live_image: liveImageRef,
+		};
+	}
+
 	return clientData;
 }
 
@@ -67,7 +101,7 @@ export const markupCache = new Lru( {
 	maxAge: HOUR_IN_MS,
 } );
 
-function bumpStat( group, name ) {
+export function bumpStat( group, name ) {
 	const statUrl = `http://pixel.wp.com/g.gif?v=wpcom-no-pv&x_${ group }=${ name }&t=${ Math.random() }`;
 
 	if ( process.env.NODE_ENV === 'production' ) {
@@ -129,7 +163,7 @@ function render( element, key, req ) {
 					extra: {
 						key,
 						'existing-keys': markupCache.keys,
-						'user-agent': get( req.headers, 'user-agent', '' ),
+						'user-agent': req.headers?.[ 'user-agent' ] ?? '',
 						path: req.context.path,
 					},
 				} );

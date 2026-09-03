@@ -7,15 +7,24 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useMemo, useState } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { useAppContext } from '../../app/context';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
-import { purchasesIndexRoute, purchasesRoute } from '../../app/router/me';
+import {
+	billingHistoryRoute,
+	monetizeSubscriptionsRoute,
+	purchasesIndexRoute,
+	purchasesRoute,
+} from '../../app/router/me';
 import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import RouterLinkButton from '../../components/router-link-button';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
 import { useIsSplitCancelRemoveEnabled } from './cancel-purchase/use-is-split-cancel-remove-enabled';
 import {
@@ -30,6 +39,10 @@ import {
 import { PurchaseRemovedNotice } from './purchase-removed-notice';
 
 export default function PurchasesList() {
+	const { supports } = useAppContext();
+	const supportsMonetizeSubscriptions = Boolean(
+		supports.me && supports.me.billing && supports.me.billing.monetizeSubscriptions
+	);
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const currentSearchParams = purchasesRoute.useSearch();
 	const { removed, removedDomain, removedId } = purchasesIndexRoute.useSearch();
@@ -102,6 +115,7 @@ export default function PurchasesList() {
 		paymentMethods,
 		transferredPurchases,
 		siteFilter: currentSearchParams.site,
+		visibleFields: view.fields,
 	} );
 
 	const allSubscriptions = useMemo( () => {
@@ -116,6 +130,13 @@ export default function PurchasesList() {
 		transferredPurchases,
 	} );
 
+	const { recordTracksEvent } = useAnalytics();
+	const siteFilterValue = view.filters?.find( ( filter ) => filter.field === 'site' )?.value;
+	const activeSiteId =
+		Array.isArray( siteFilterValue ) && siteFilterValue.length === 1
+			? Number( siteFilterValue[ 0 ] )
+			: undefined;
+
 	return (
 		<PageLayout
 			size="large"
@@ -123,7 +144,34 @@ export default function PurchasesList() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Active upgrades' ) }
-					description={ __( 'View and manage your active plans and purchases.' ) }
+					description={
+						supportsMonetizeSubscriptions
+							? createInterpolateElement(
+									__(
+										'View and manage your active plans and purchases. Purchases from other WordPress.com sites are in <link>Memberships & donations</link>.'
+									),
+									{
+										link: <RouterLinkButton variant="link" to={ monetizeSubscriptionsRoute.to } />,
+									}
+							  )
+							: __( 'View and manage your active plans and purchases.' )
+					}
+					actions={
+						activeSiteId !== undefined && (
+							<RouterLinkButton
+								variant="secondary"
+								to={ billingHistoryRoute.fullPath }
+								search={ { site: activeSiteId } }
+								onClick={ () =>
+									recordTracksEvent(
+										'calypso_dashboard_purchases_see_billing_history_for_site_click'
+									)
+								}
+							>
+								{ __( 'View billing history for this site' ) }
+							</RouterLinkButton>
+						)
+					}
 				/>
 			}
 		>

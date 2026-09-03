@@ -1,3 +1,5 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 /* Defaults to 2 col grid on larger viewports
  * Collapses to 1 col grid on smaller viewports
  * Use .vat-form__row--full-width class to force a 1 col grid

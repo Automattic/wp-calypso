@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/ui';
 import { Link } from '@tanstack/react-router';
 import {
 	__experimentalText as Text,
@@ -8,6 +7,7 @@ import {
 	Tooltip,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useMemo } from 'react';
 import { useLocale } from '../../../app/locale';
 import { siteRoute, siteSettingsRepositoriesManageRoute } from '../../../app/router/sites';
@@ -51,7 +51,6 @@ export function useFields( {
 						<Link
 							to={ siteSettingsRepositoriesManageRoute.fullPath }
 							params={ { siteSlug, deploymentId: item.code_deployment_id } }
-							search={ { back_to: 'site-deployments' } }
 						>
 							{ repo }
 						</Link>
@@ -77,7 +76,14 @@ export function useFields( {
 
 					return (
 						<VStack spacing={ 1 }>
-							<Text title={ commit_message }>{ commit_message }</Text>
+							<Text
+								title={ commit_message }
+								truncate
+								numberOfLines={ 3 }
+								style={ { whiteSpace: 'normal' } }
+							>
+								{ commit_message }
+							</Text>
 							<HStack spacing={ 3 } alignment="left" style={ { width: 'max-content' } }>
 								<ExternalLink
 									href={ `https://github.com/${ installation }/${ repo }/commit/${ commit_sha }` }

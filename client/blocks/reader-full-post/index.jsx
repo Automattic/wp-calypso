@@ -1,10 +1,11 @@
+import './style.scss';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon, EmbedContainer } from '@automattic/components';
 import { isDefaultLocale } from '@automattic/i18n-utils';
+import { pickBy } from '@automattic/js-utils';
 import clsx from 'clsx';
-import { translate } from 'i18n-calypso';
-import { get, startsWith, pickBy } from 'lodash';
+import { fixMe, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component, useMemo } from 'react';
 import { connect } from 'react-redux';
@@ -31,8 +32,10 @@ import { usePostCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { usePost } from 'calypso/reader/data/post';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
+import { useIsSeenEnabled, withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
 import { withSite } from 'calypso/reader/data/site';
-import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import { useSiteSubscriptionForFeed } from 'calypso/reader/data/site-subscriptions';
+import { getSiteName } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';
 import { isCommentsOpen, isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
@@ -46,16 +49,6 @@ import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { useSelector } from 'calypso/state';
 import {
-	getReaderFollowForFeed,
-	hasReaderFollowOrganization,
-} from 'calypso/state/reader/follows/selectors';
-import {
-	requestMarkAsSeen,
-	requestMarkAsUnseen,
-	requestMarkAsSeenBlog,
-	requestMarkAsUnseenBlog,
-} from 'calypso/state/reader/seen-posts/actions';
-import {
 	setViewingFullPostKey,
 	unsetViewingFullPostKey,
 } from 'calypso/state/reader/viewing/actions';
@@ -64,7 +57,6 @@ import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { disableAppBanner, enableAppBanner } from 'calypso/state/ui/actions';
 import ReaderFullPostActionBar from './action-bar';
 import ContentProcessor from './content-processor';
@@ -73,7 +65,6 @@ import ReaderFullPostContentPlaceholder from './placeholders/content';
 import ReaderFullPostNavigation from './post-navigation';
 import ScrollTracker from './scroll-tracker';
 import ReaderFullPostUnavailable from './unavailable';
-import './style.scss';
 
 const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
 
@@ -83,11 +74,9 @@ export class FullPostView extends Component {
 		onClose: PropTypes.func,
 		referralPost: PropTypes.object,
 		referralStream: PropTypes.string,
-		isWPForTeamsItem: PropTypes.bool,
-		hasOrganization: PropTypes.bool,
+		isSeenEnabled: PropTypes.bool,
 		layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
 		currentPath: PropTypes.string,
-		isAutomattician: PropTypes.bool,
 		commentsApiDisabled: PropTypes.bool,
 	};
 
@@ -148,9 +137,9 @@ export class FullPostView extends Component {
 	componentDidUpdate( prevProps ) {
 		// Send page view if applicable
 		if (
-			get( prevProps, 'post.ID' ) !== get( this.props, 'post.ID' ) ||
-			get( prevProps, 'feed.ID' ) !== get( this.props, 'feed.ID' ) ||
-			get( prevProps, 'site.ID' ) !== get( this.props, 'site.ID' )
+			prevProps?.post?.ID !== this.props?.post?.ID ||
+			prevProps?.feed?.ID !== this.props?.feed?.ID ||
+			prevProps?.site?.ID !== this.props?.site?.ID
 		) {
 			this.hasSentPageView = false;
 			this.hasLoaded = false;
@@ -158,7 +147,7 @@ export class FullPostView extends Component {
 			this.maybeDisableAppBanner();
 
 			// If the post being viewed changes, track the reading time.
-			if ( get( prevProps, 'post.ID' ) !== get( this.props, 'post.ID' ) ) {
+			if ( prevProps?.post?.ID !== this.props?.post?.ID ) {
 				this.trackReadingTime( prevProps.post );
 				this.trackScrollDepth( prevProps.post );
 				this.trackExitBeforeCompletion( prevProps.post );
@@ -502,7 +491,7 @@ export class FullPostView extends Component {
 	 * @returns {number} - the commentId in the url of the form #comment-${id}
 	 */
 	getCommentIdFromUrl = () =>
-		startsWith( window.location.hash, '#comment-' )
+		window.location.hash.startsWith( '#comment-' )
 			? +window.location.hash.split( '-' )[ 1 ]
 			: undefined;
 
@@ -526,7 +515,7 @@ export class FullPostView extends Component {
 	};
 
 	attemptToSendPageView = () => {
-		const { post, site, isWPForTeamsItem, hasOrganization } = this.props;
+		const { post, site } = this.props;
 
 		if (
 			post &&
@@ -544,10 +533,7 @@ export class FullPostView extends Component {
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
-			if (
-				isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) &&
-				canBeMarkedAsSeen( { post } )
-			) {
+			if ( this.props.isSeenEnabled && ! post.is_seen ) {
 				this.markAsSeen();
 			}
 
@@ -654,33 +640,35 @@ export class FullPostView extends Component {
 		}
 	};
 
-	renderMarkAsSenButton = () => {
+	renderMarkAsSeenButton = () => {
 		const { post } = this.props;
+		const label = post.is_seen
+			? fixMe( {
+					text: 'Mark post as unread',
+					newCopy: translate( 'Mark post as unread' ),
+					oldCopy: translate( 'Mark post as unseen' ),
+			  } )
+			: fixMe( {
+					text: 'Mark post as read',
+					newCopy: translate( 'Mark post as read' ),
+					oldCopy: translate( 'Mark post as seen' ),
+			  } );
+
 		return (
-			<div
+			<button
+				type="button"
 				className="reader-full-post__seen-button"
-				title={ post.is_seen ? 'Mark post as unseen' : 'Mark post as seen' }
+				title={ label }
+				aria-label={ label }
+				onClick={ post.is_seen ? this.markAsUnseen : this.markAsSeen }
 			>
-				<Gridicon
-					icon={ post.is_seen ? 'not-visible' : 'visible' }
-					size={ 18 }
-					onClick={ post.is_seen ? this.markAsUnseen : this.markAsSeen }
-					ref={ this.seenTooltipContextRef }
-				/>
-			</div>
+				<Gridicon icon={ post.is_seen ? 'not-visible' : 'visible' } size={ 18 } />
+			</button>
 		);
 	};
 
 	render() {
-		const {
-			post,
-			site,
-			feed,
-			referralPost,
-			hasOrganization,
-			isWPForTeamsItem,
-			commentsApiDisabled,
-		} = this.props;
+		const { post, site, feed, referralPost, commentsApiDisabled } = this.props;
 
 		if ( post.is_error ) {
 			return (
@@ -719,17 +707,15 @@ export class FullPostView extends Component {
 
 		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
 		const startingCommentId = this.getCommentIdFromUrl();
-		const commentCount = get( post, 'discussion.comment_count' );
+		const commentCount = post?.discussion?.comment_count;
 		const contentWidth = readerContentWidth();
-		const feedUrl = get( post, 'feed_URL' );
-		const shouldShowMarkAsSeen =
-			isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) && canBeMarkedAsSeen( { post } );
+		const feedUrl = post?.feed_URL;
 
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
 		return (
 			// add extra div wrapper for consistent content frame layout/styling for reader.
-			<div style={ { position: 'relative' } }>
+			<div>
 				<ReaderMain className={ clsx( classes ) } forwardRef={ this.readerMainWrapper }>
 					{ ! post || post._state === 'pending' ? (
 						<DocumentHead title={ translate( 'Loading' ) } />
@@ -775,7 +761,7 @@ export class FullPostView extends Component {
 										post.discussion?.comment_count > 0
 									}
 									renderMarkAsSeenButton={
-										shouldShowMarkAsSeen ? this.renderMarkAsSenButton : null
+										this.props.isSeenEnabled ? this.renderMarkAsSeenButton : null
 									}
 									feedUrl={ feedUrl }
 									siteUrl={ post.site_URL }
@@ -912,11 +898,7 @@ export const mapStateToFullPostProps = ( state, ownProps ) => {
 
 	const props = {
 		siteId,
-		isWPForTeamsItem:
-			isSiteWPForTeams( state, blogId ) ||
-			( feed?.blog_ID ? isSiteWPForTeams( state, feed.blog_ID ) : false ),
 		notificationsOpen: isNotificationsOpen( state ),
-		hasOrganization: hasReaderFollowOrganization( state, feedId, blogId ),
 		post,
 		postKey,
 		currentPath,
@@ -925,9 +907,7 @@ export const mapStateToFullPostProps = ( state, ownProps ) => {
 	};
 
 	if ( feedId && feed ) {
-		// Add site icon to feed object so have icon for external feeds
-		const follow = getReaderFollowForFeed( state, parseInt( feedId ) );
-		props.feed = { ...feed, site_icon: follow?.site_icon };
+		props.feed = feed;
 	}
 	if ( ownProps.referral ) {
 		props.referralPost = ownProps.referralPost;
@@ -944,12 +924,13 @@ const ConnectedFullPostView = connect( mapStateToFullPostProps, {
 	enableAppBanner,
 	setViewingFullPostKey,
 	unsetViewingFullPostKey,
-	requestMarkAsSeen,
-	requestMarkAsUnseen,
-	requestMarkAsSeenBlog,
-	requestMarkAsUnseenBlog,
 	showSelectedPost,
-} )( withSite( withPostLikes( withPostLikeActions( FullPostView ) ), getPostSiteId ) );
+} )(
+	withSite(
+		withPostLikes( withPostLikeActions( withSeenPostsMutations( FullPostView ) ) ),
+		getPostSiteId
+	)
+);
 
 export const withFullPostNavigation = ( WrappedComponent ) =>
 	function FullPostNavigationContainer( props ) {
@@ -980,6 +961,11 @@ export const withFullPostNavigation = ( WrappedComponent ) =>
 
 		const { data: previousPost } = usePost( previousPostKey );
 		const { data: nextPost } = usePost( nextPostKey );
+		const isSeenEnabled = useIsSeenEnabled( {
+			feedId: props.feedId,
+			blogId: props.blogId ?? props.feed?.blog_ID ?? post?.site_ID,
+			post,
+		} );
 
 		// Pre-compute the navigation URL so the prev/next card's `<a href>`
 		// points at the destination the user lands on (middle-click /
@@ -1001,6 +987,7 @@ export const withFullPostNavigation = ( WrappedComponent ) =>
 				nextPostKey={ nextPostKey }
 				post={ post }
 				referralPost={ referralPost }
+				isSeenEnabled={ isSeenEnabled }
 				commentsApiDisabled={ commentsApiDisabled }
 				previousPost={ previousPost }
 				nextPost={ nextPost }
@@ -1044,5 +1031,8 @@ const FullPostWithNavigation = withFullPostNavigation( ConnectedFullPostView );
 
 export default function FullPostContainer( props ) {
 	const { data: feed } = useFeedQuery( props.feedId );
-	return <FullPostWithNavigation { ...props } feed={ feed } />;
+	const follow = useSiteSubscriptionForFeed( props.feedId );
+	const feedWithIcon = feed ? { ...feed, site_icon: follow?.site_icon } : feed;
+
+	return <FullPostWithNavigation { ...props } feed={ feedWithIcon } />;
 }

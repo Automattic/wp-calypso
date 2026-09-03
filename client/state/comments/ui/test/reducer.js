@@ -109,6 +109,29 @@ describe( 'reducer', () => {
 			expect( query ).toEqual( { site: { 'all?order=DESC': { 1: [ 1, 2, 3, 4 ] } } } );
 		} );
 
+		test( 'should not throw when deleting a comment on an uncached page', () => {
+			const state = deepFreeze( {} );
+			const query = queries( state, {
+				type: COMMENTS_DELETE,
+				siteId,
+				commentId: 5,
+				refreshCommentListQuery: { page: 1, status: 'all' },
+			} );
+			expect( query ).toEqual( { site: { 'all?order=DESC': { 1: [] } } } );
+		} );
+
+		test( 'should not throw when changing comment status on an uncached page', () => {
+			const state = deepFreeze( {} );
+			const query = queries( state, {
+				type: COMMENTS_CHANGE_STATUS,
+				siteId,
+				commentId: 5,
+				status: 'approved',
+				refreshCommentListQuery: { page: 1, status: 'spam' },
+			} );
+			expect( query ).toEqual( { site: { 'spam?order=DESC': { 1: [] } } } );
+		} );
+
 		test( 'should remove a comment from a page when the comment status is changed', () => {
 			const state = deepFreeze( {
 				site: { 'spam?order=DESC': { 1: [ 1, 2, 3, 4, 5 ] } },

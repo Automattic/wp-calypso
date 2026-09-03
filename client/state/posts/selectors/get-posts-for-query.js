@@ -1,5 +1,4 @@
 import { createSelector } from '@automattic/state-utils';
-import { includes } from 'lodash';
 import { getQueryManager } from 'calypso/state/posts/selectors/get-query-manager';
 import { getSerializedPostsQuery, normalizePostForDisplay } from 'calypso/state/posts/utils';
 
@@ -35,7 +34,7 @@ export const getPostsForQuery = createSelector(
 		// the WP.com API skips unreadable posts entirely instead of including
 		// them in the results.  See the 'handles items missing from the first
 		// and last pages' test case for PaginatedQueryManager.
-		if ( includes( posts, undefined ) ) {
+		if ( posts.includes( undefined ) ) {
 			return null;
 		}
 

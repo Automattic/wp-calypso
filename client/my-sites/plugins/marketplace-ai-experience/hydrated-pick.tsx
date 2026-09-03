@@ -7,6 +7,7 @@
 import PluginsBrowserListElement from 'calypso/my-sites/plugins/plugins-browser-item';
 import { PluginsBrowserElementVariant } from 'calypso/my-sites/plugins/plugins-browser-item/types';
 import type { Pick } from './agent-provider';
+import type { JSX } from 'react';
 
 interface HydratedPickProps {
 	pick: Pick;

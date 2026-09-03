@@ -1,8 +1,10 @@
 import { domainSuggestionsQuery, siteCurrentPlanQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalText as Text } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 // eslint-disable-next-line no-restricted-imports
@@ -11,7 +13,7 @@ import { getCurrentDashboard } from '../../app/routing';
 import { Callout } from '../../components/callout';
 import { TextBlur } from '../../components/text-blur';
 import UpsellCTAButton from '../../components/upsell-cta-button';
-import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { dashboardLink, redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { DomainUpsellIllustraction } from './upsell-illustration';
 import type { Site } from '@automattic/api-core';
 
@@ -52,21 +54,31 @@ const DomainUpsellCardContent = ( {
 } ) => {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const { search, suggestedDomain } = useDomainSuggestion( site );
+	const { createErrorNotice } = useDispatch( noticesStore );
 
 	const backUrl = redirectToDashboardLink( { supportBackport: true } );
 	const handleUpsell = async () => {
 		if ( suggestedDomain ) {
 			setIsSubmitting( true );
 
-			const { shoppingCartManagerClient } = await import(
-				/* webpackChunkName: "async-load-shopping-cart" */ '../../app/shopping-cart'
-			);
-			await shoppingCartManagerClient.forCartKey( site.ID ).actions.replaceProductsInCart( [
-				{
-					product_slug: suggestedDomain?.product_slug ?? '',
-					meta: suggestedDomain?.domain_name,
-				},
-			] );
+			try {
+				const { shoppingCartManagerClient } = await import(
+					/* webpackChunkName: "async-load-shopping-cart" */ '../../app/shopping-cart'
+				);
+				await shoppingCartManagerClient.forCartKey( site.ID ).actions.replaceProductsInCart( [
+					{
+						product_slug: suggestedDomain?.product_slug ?? '',
+						meta: suggestedDomain?.domain_name,
+					},
+				] );
+			} catch ( error ) {
+				createErrorNotice(
+					( error as Error ).message || __( 'Failed to claim domain. Please try again.' ),
+					{ type: 'snackbar' }
+				);
+				setIsSubmitting( false );
+				return;
+			}
 		}
 
 		if ( requiresPlanUpgrade( site ) ) {
@@ -90,6 +102,8 @@ const DomainUpsellCardContent = ( {
 		getDomainAndPlanUpsellUrl( {
 			siteSlug: site.slug,
 			backUrl,
+			// Literal template to avoid pulling the dashboard router into tests.
+			domainConnectionSetupUrl: dashboardLink( '/domains/%s/domain-connection-setup' ),
 		} )
 	);
 
@@ -100,10 +114,12 @@ const DomainUpsellCardContent = ( {
 			description={
 				<Text variant="muted">
 					{ createInterpolateElement( description, {
-						domain: suggestedDomain ? (
-							<span>{ suggestedDomain.domain_name }</span>
-						) : (
-							<TextBlur>{ search }</TextBlur>
+						// Keep this span's identity stable so that Google Translate doesn't crash the page.
+						// A known React issue: react/react#11538
+						domain: (
+							<span translate="no">
+								{ suggestedDomain ? suggestedDomain.domain_name : <TextBlur>{ search }</TextBlur> }
+							</span>
 						),
 						link: (
 							<UpsellCTAButton

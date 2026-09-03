@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 
 /**
  * Shared top-of-page chrome for `/me/mcp*` routes (Figma: AI & MCP settings — primary nav header).
@@ -12,7 +13,12 @@ export function useMcpPageChrome() {
 			navigationItems: [],
 			title: translate( 'AI and MCP' ),
 			subtitle: translate(
-				'Control how AI assistants interact with your WordPress.com account and sites.'
+				'Control how AI assistants interact with your WordPress.com account and sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+				{
+					components: {
+						learnMoreLink: <InlineSupportLink supportContext="mcp" showIcon={ false } />,
+					},
+				}
 			),
 		},
 	};

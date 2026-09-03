@@ -1,4 +1,3 @@
-import { find } from 'lodash';
 import { getTheme } from 'calypso/state/themes/selectors/get-theme';
 import { Theme } from 'calypso/types';
 import 'calypso/state/themes/init';
@@ -46,6 +45,6 @@ export function getCanonicalTheme( state, siteId, themeId ) {
 		searchOrder = [ siteId, 'wpcom', 'wporg' ];
 	}
 
-	const source = find( searchOrder, ( s ) => getTheme( state, s, themeId ) );
+	const source = searchOrder.find( ( s ) => getTheme( state, s, themeId ) );
 	return getTheme( state, source, themeId );
 }

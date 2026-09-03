@@ -14,6 +14,7 @@ import {
 	ADD_SUBSCRIPTION_CONFIGS,
 	SubscriptionType,
 } from './components/add-subscription-form/consts';
+import type { JSX } from 'react';
 
 const { SiteSubscriptionsQueryPropsProvider } = SubscriptionManager;
 interface Tab {

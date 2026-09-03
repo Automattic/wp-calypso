@@ -1,6 +1,5 @@
 import { Gridicon } from '@automattic/components';
 import clsx from 'clsx';
-import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Children, cloneElement, Component } from 'react';
 import Search from 'calypso/components/search';
@@ -178,7 +177,7 @@ class SectionNav extends Component {
 
 		Children.forEach( children, ( child, index ) => {
 			// Checking for at least 2 controls groups that are not null or ignored siblings
-			if ( index && child && ! includes( ignoreSiblings, child.type ) ) {
+			if ( index && child && ! ignoreSiblings.includes( child.type ) ) {
 				this.hasSiblingControls = true;
 			}
 		} );

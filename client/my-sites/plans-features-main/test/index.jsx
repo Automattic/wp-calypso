@@ -24,6 +24,17 @@ jest.mock( '../hooks/use-suggested-free-domain-from-paid-domain', () => () => ( 
 jest.mock( '../hooks/use-renewal-price-experiment', () => ( {
 	useRenewalPricingExperiment: jest.fn( () => [ false, null ] ),
 } ) );
+jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment', () =>
+	jest.fn( () => ( {
+		isLoading: false,
+		variant: 'control',
+		usePlansGridRedesign: false,
+		showDifferentiatorHeader: false,
+		showEnterpriseBottomCard: false,
+		showWooCommerceBottomCard: false,
+		isExperimentEligible: false,
+	} ) )
+);
 jest.mock( 'calypso/state/purchases/selectors', () => ( {
 	getByPurchaseId: jest.fn(),
 } ) );
@@ -39,6 +50,7 @@ jest.mock( '@automattic/data-stores', () => ( {
 		...jest.requireActual( '@automattic/data-stores' ).Plans,
 		usePlans: jest.fn(),
 		usePricingMetaForGridPlans: jest.fn(),
+		useCurrentPlan: jest.fn(),
 	},
 	AddOns: {
 		...jest.requireActual( '@automattic/data-stores' ).AddOns,
@@ -67,6 +79,7 @@ import {
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { screen } from '@testing-library/react';
+import usePlansGridRedesignExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import useIntentFromSiteMeta from '../hooks/use-plan-intent-from-site-meta';
@@ -101,6 +114,15 @@ describe( 'PlansFeaturesMain', () => {
 			data: emptyPlansIndexForMockedFeatures,
 		} ) );
 		Plans.usePricingMetaForGridPlans.mockImplementation( () => emptyPlansIndexForMockedFeatures );
+		usePlansGridRedesignExperiment.mockImplementation( () => ( {
+			isLoading: false,
+			variant: 'control',
+			usePlansGridRedesign: false,
+			showDifferentiatorHeader: false,
+			showEnterpriseBottomCard: false,
+			showWooCommerceBottomCard: false,
+			isExperimentEligible: false,
+		} ) );
 	} );
 
 	describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
@@ -199,6 +221,40 @@ describe( 'PlansFeaturesMain', () => {
 		} );
 	} );
 
+	describe( 'PlansFeaturesMain. Downgrade flow (plans-upgrade-or-downgrade intent)', () => {
+		// The dashboard "Change plan" button sends owners to the plan-upgrade
+		// stepper flow with allow_downgrade=true, which resolves to the
+		// 'plans-upgrade-or-downgrade' intent. Unlike 'plans-upgrade', that intent
+		// must keep lower-tier plans visible so the user can downgrade. These tests
+		// guard that behavior against Plans page UX changes.
+		beforeEach( () => {
+			Plans.useCurrentPlan.mockImplementation( () => ( { planSlug: PLAN_BUSINESS } ) );
+		} );
+
+		test( 'shows lower-tier plans (below the current plan) for the downgrade intent', () => {
+			renderWithProvider( <PlansFeaturesMain { ...props } intent="plans-upgrade-or-downgrade" /> );
+
+			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+				JSON.stringify( [
+					PLAN_FREE,
+					PLAN_PERSONAL,
+					PLAN_PREMIUM,
+					PLAN_BUSINESS,
+					PLAN_ECOMMERCE,
+					PLAN_ENTERPRISE_GRID_WPCOM,
+				] )
+			);
+		} );
+
+		test( 'hides lower-tier plans for the upgrade-only intent (contrast)', () => {
+			renderWithProvider( <PlansFeaturesMain { ...props } intent="plans-upgrade" /> );
+
+			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+				JSON.stringify( [ PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_ENTERPRISE_GRID_WPCOM ] )
+			);
+		} );
+	} );
+
 	describe( 'PlansFeaturesMain. Plan exclusion props', () => {
 		test( 'Should render <PlanFeatures /> removing the free plan when hideFreePlan prop is present, regardless of its position', () => {
 			renderWithProvider( <PlansFeaturesMain { ...props } hideFreePlan /> );
@@ -275,6 +331,38 @@ describe( 'PlansFeaturesMain', () => {
 		} );
 
 		test( 'Should render <PlanFeatures /> with tab picker when requested', () => {
+			renderWithProvider( <PlansFeaturesMain { ...myProps } /> );
+
+			expect( screen.getByText( 'PlanTypeSelector' ) ).toBeVisible();
+		} );
+
+		test( 'Should hide the plan type selector for redesign variants in signup', () => {
+			usePlansGridRedesignExperiment.mockImplementation( () => ( {
+				isLoading: false,
+				variant: 'six_plan_new_design',
+				usePlansGridRedesign: true,
+				showDifferentiatorHeader: false,
+				showEnterpriseBottomCard: false,
+				showWooCommerceBottomCard: false,
+				isExperimentEligible: true,
+			} ) );
+
+			renderWithProvider( <PlansFeaturesMain { ...myProps } flowName="onboarding" isInSignup /> );
+
+			expect( screen.queryByText( 'PlanTypeSelector' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'Should keep the plan type selector visible for redesign variants outside signup', () => {
+			usePlansGridRedesignExperiment.mockImplementation( () => ( {
+				isLoading: false,
+				variant: 'six_plan_new_design',
+				usePlansGridRedesign: true,
+				showDifferentiatorHeader: false,
+				showEnterpriseBottomCard: false,
+				showWooCommerceBottomCard: false,
+				isExperimentEligible: true,
+			} ) );
+
 			renderWithProvider( <PlansFeaturesMain { ...myProps } /> );
 
 			expect( screen.getByText( 'PlanTypeSelector' ) ).toBeVisible();

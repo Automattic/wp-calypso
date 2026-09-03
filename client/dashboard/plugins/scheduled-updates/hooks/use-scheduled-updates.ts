@@ -11,11 +11,13 @@ export function useScheduledUpdates() {
 	);
 	const { data: sites, isLoading: isLoadingSites } = useQuery( queries.sitesQuery() );
 	const siteIds = Object.keys( scheduledUpdates?.sites ?? [] );
-	const pluginQueries = useQueries( {
+	const { pluginsData, isLoadingPlugins } = useQueries( {
 		queries: siteIds.map( ( id ) => siteCorePluginsQuery( Number( id ) ) ),
+		combine: ( results ) => ( {
+			pluginsData: results.map( ( result ) => result.data ),
+			isLoadingPlugins: results.some( ( result ) => result.isLoading ),
+		} ),
 	} );
-
-	const isLoadingPlugins = pluginQueries.some( ( query ) => query.isLoading );
 
 	return useMemo( () => {
 		if ( ! scheduledUpdates || ! sites ) {
@@ -33,14 +35,12 @@ export function useScheduledUpdates() {
 
 		// Build plugin slug to name map
 		const pluginMap = new Map< string, string >();
-		pluginQueries.forEach( ( query ) => {
-			if ( query.data ) {
-				query.data.forEach( ( plugin ) => {
-					if ( plugin.plugin && plugin.name ) {
-						pluginMap.set( plugin.plugin, plugin.name );
-					}
-				} );
-			}
+		pluginsData.forEach( ( plugins ) => {
+			plugins?.forEach( ( plugin ) => {
+				if ( plugin.plugin && plugin.name ) {
+					pluginMap.set( plugin.plugin, plugin.name );
+				}
+			} );
 		} );
 
 		const updates = scheduledUpdates.sites;
@@ -88,7 +88,7 @@ export function useScheduledUpdates() {
 		sites,
 		isLoadingSchedules,
 		isLoadingSites,
-		pluginQueries,
+		pluginsData,
 		isLoadingPlugins,
 	] );
 }

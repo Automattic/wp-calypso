@@ -1,9 +1,7 @@
-import { defer } from 'lodash';
-
 function fakeLoader( url, callback ) {
 	fakeLoader.urlsLoaded.push( url );
 	if ( callback ) {
-		defer( callback );
+		setTimeout( callback, 0 );
 	}
 }
 

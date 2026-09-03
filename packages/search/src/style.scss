@@ -1,12 +1,14 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/long-content-fade";
 @import '@wordpress/base-styles/colors';
+
 /**
 * @component Search
 */
 
-@import "@automattic/typography/styles/variables";
-@import "@wordpress/base-styles/variables";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/breakpoints";
 
 $input-z-index: 20;
 

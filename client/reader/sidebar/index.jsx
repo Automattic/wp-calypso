@@ -4,11 +4,11 @@ import { readSubscribedListsQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useQuery } from '@tanstack/react-query';
-import { Icon, commentAuthorAvatar, plus } from '@wordpress/icons';
+import { Button } from '@wordpress/components';
+import { Icon, commentAuthorAvatar, plus, search } from '@wordpress/icons';
 import clsx from 'clsx';
 import closest from 'component-closest';
 import i18n, { localize } from 'i18n-calypso';
-import { defer, startsWith } from 'lodash';
 import { Component, useMemo } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { withReaderOrganizations } from 'calypso/components/data/with-reader-organizations';
@@ -25,13 +25,12 @@ import ReaderDiscoverIcon from 'calypso/reader/components/icons/discover-icon';
 import ReaderLikesIcon from 'calypso/reader/components/icons/likes-icon';
 import ReaderManageSubscriptionsIcon from 'calypso/reader/components/icons/manage-subscriptions-icon';
 import ReaderSavedIcon from 'calypso/reader/components/icons/saved-icon';
-import ReaderSearchIcon from 'calypso/reader/components/icons/search-icon';
+import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getTagStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { isReaderMSDEnabled } from 'calypso/state/reader-ui/selectors';
 import {
 	toggleReaderSidebarLists,
 	toggleReaderSidebarFollowing,
@@ -51,6 +50,7 @@ import ReaderSidebarNudges from './reader-sidebar-nudges';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
 import ReaderSidebarRecent from './reader-sidebar-recent';
 import ReaderSidebarTags from './reader-sidebar-tags';
+import { ReaderSidebarShelves } from './shelves';
 
 const TrackingKeys = {
 	conversations: {
@@ -68,11 +68,6 @@ const TrackingKeys = {
 		gaEvent: 'Clicked Reader Sidebar Discover',
 		tracksEvent: 'calypso_reader_sidebar_discover_clicked',
 	},
-	search: {
-		action: 'clicked_reader_sidebar_search',
-		gaEvent: 'Clicked Reader Sidebar Search',
-		tracksEvent: 'calypso_reader_sidebar_search_clicked',
-	},
 	likeActivity: {
 		action: 'clicked_reader_sidebar_like_activity',
 		gaEvent: 'Clicked Reader Sidebar Like Activity',
@@ -88,7 +83,25 @@ const TrackingKeys = {
 		gaEvent: 'Clicked Reader Sidebar Saved',
 		tracksEvent: 'calypso_reader_sidebar_saved_clicked',
 	},
+	addNew: {
+		action: 'clicked_reader_sidebar_add_new',
+		gaEvent: 'Clicked Reader Sidebar Add New',
+		tracksEvent: 'calypso_reader_sidebar_add_new_clicked',
+	},
+	search: {
+		action: 'clicked_reader_sidebar_search',
+		gaEvent: 'Clicked Reader Sidebar Search',
+		tracksEvent: 'calypso_reader_sidebar_search_clicked',
+	},
 };
+
+/**
+ * Loads every page of the shared site-subscriptions query once for the whole sidebar.
+ */
+function SyncAllSiteSubscriptions() {
+	useSiteSubscriptions( { fetchAllPages: true } );
+	return null;
+}
 
 export class ReaderSidebar extends Component {
 	state = {};
@@ -107,17 +120,17 @@ export class ReaderSidebar extends Component {
 	highlightNewTag( tagSlug ) {
 		const tagStreamUrl = getTagStreamUrl( tagSlug );
 		if ( tagStreamUrl !== page.current ) {
-			defer( function () {
+			setTimeout( function () {
 				page( tagStreamUrl );
 				window.scrollTo( 0, 0 );
-			} );
+			}, 0 );
 		}
 	}
 
 	openExpandableMenuForCurrentTagOrList = () => {
 		const pathParts = this.props.path.split( '/' );
 
-		if ( startsWith( this.props.path, '/tag/' ) ) {
+		if ( this.props.path.startsWith( '/tag/' ) ) {
 			const tagSlug = pathParts[ 2 ];
 			if ( tagSlug ) {
 				// Open the sidebar
@@ -128,7 +141,7 @@ export class ReaderSidebar extends Component {
 			}
 		}
 
-		if ( startsWith( this.props.path, '/reader/list/' ) ) {
+		if ( this.props.path.startsWith( '/reader/list/' ) ) {
 			const listOwner = pathParts[ 3 ];
 			const listSlug = pathParts[ 4 ];
 			if ( listOwner && listSlug ) {
@@ -162,25 +175,44 @@ export class ReaderSidebar extends Component {
 
 		return (
 			<div className="sidebar-menu-container">
-				<AppTitle />
-				<SidebarMenu>
-					<li className="sidebar-streams__following">
-						<ReaderSidebarRecent
-							onClick={ this.props.toggleFollowingVisibility }
-							isOpen={ this.props.isFollowingOpen }
-							path={ path }
+				<div className="reader-sidebar__title-row">
+					<AppTitle />
+					<div className="reader-sidebar__title-actions">
+						<Button
+							className={ clsx( 'reader-sidebar__title-action', {
+								'is-selected': path.startsWith( '/reader/new' ),
+							} ) }
+							href="/reader/new"
+							icon={ plus }
+							iconSize={ 24 }
+							label={ translate( 'New subscription' ) }
+							showTooltip
+							onClick={ ( event ) =>
+								this.handleSidebarMenuClick( TrackingKeys.addNew )( event, '/reader/new' )
+							}
 						/>
+						<Button
+							className={ clsx( 'reader-sidebar__title-action', {
+								'is-selected': path.startsWith( '/discover/search' ),
+							} ) }
+							href="/discover/search"
+							icon={ search }
+							iconSize={ 24 }
+							label={ translate( 'Search' ) }
+							showTooltip
+							onClick={ ( event ) =>
+								this.handleSidebarMenuClick( TrackingKeys.search )( event, '/discover/search' )
+							}
+						/>
+					</div>
+				</div>
+				<SidebarMenu>
+					<li className="reader-sidebar__section-header" role="presentation">
+						<span role="heading" aria-level="3">
+							{ translate( 'Explore' ) }
+						</span>
 					</li>
 
-					<SidebarItem
-						className={ clsx( 'sidebar-streams__search', {
-							selected: path.startsWith( '/reader/search' ),
-						} ) }
-						label={ translate( 'Search' ) }
-						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.search ) }
-						customIcon={ <ReaderSearchIcon /> }
-						link="/reader/search"
-					/>
 					<SidebarItem
 						className={ clsx( 'sidebar-streams__discover', {
 							selected: path.startsWith( '/discover' ),
@@ -191,39 +223,27 @@ export class ReaderSidebar extends Component {
 						link="/discover"
 					/>
 
-					{ isEnabled( 'reader/social' ) && <ReaderSidebarConnections path={ path } /> }
+					<li className="reader-sidebar__section-header" role="presentation">
+						<span role="heading" aria-level="3">
+							{ translate( 'Feeds' ) }
+						</span>
+					</li>
 
-					<SidebarItem
-						label={ translate( 'Likes' ) }
-						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.likeActivity ) }
-						customIcon={ <ReaderLikesIcon viewBox="0 0 24 24" /> }
-						link="/activities/likes"
-						className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
-							'sidebar-activity__likes': true,
-						} ) }
-					/>
-
-					{ isEnabled( 'reader/saved-posts' ) && (
-						<SidebarItem
-							label={ translate( 'Saved' ) }
-							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.saved ) }
-							customIcon={ <ReaderSavedIcon viewBox="0 0 24 24" /> }
-							link="/read/saved"
-							className={ ReaderSidebarHelper.itemLinkClass( '/read/saved', path, {
-								'sidebar-streams__saved': true,
-							} ) }
+					<li className="sidebar-streams__following">
+						<ReaderSidebarRecent
+							onClick={ this.props.toggleFollowingVisibility }
+							isOpen={ this.props.isFollowingOpen }
+							path={ path }
 						/>
+					</li>
+
+					{ isEnabled( 'reader/shelves' ) && <ReaderSidebarShelves path={ path } /> }
+
+					{ this.props.organizations && (
+						<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
 					) }
 
-					<SidebarItem
-						className={ ReaderSidebarHelper.itemLinkClass( '/reader/conversations', path, {
-							'sidebar-streams__conversations': true,
-						} ) }
-						label={ translate( 'Conversations' ) }
-						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.conversations ) }
-						customIcon={ <ReaderConversationsIcon iconSize={ 24 } viewBox="0 0 24 24" /> }
-						link="/reader/conversations"
-					/>
+					{ isEnabled( 'reader/social' ) && <ReaderSidebarConnections path={ path } /> }
 
 					<ReaderSidebarLists
 						lists={ this.props.subscribedLists }
@@ -243,32 +263,64 @@ export class ReaderSidebar extends Component {
 						currentTag={ this.state.currentTag }
 					/>
 
-					{ this.props.organizations && (
-						<>
-							<SidebarSeparator />
-							<ReaderSidebarOrganizations
-								organizations={ this.props.organizations }
-								path={ path }
-							/>
-						</>
+					<li className="reader-sidebar__section-header" role="presentation">
+						<span role="heading" aria-level="3">
+							{ translate( 'Library' ) }
+						</span>
+					</li>
+
+					{ isEnabled( 'reader/saved-posts' ) && (
+						<SidebarItem
+							label={ translate( 'Saved' ) }
+							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.saved ) }
+							customIcon={ <ReaderSavedIcon viewBox="0 0 24 24" /> }
+							link="/read/saved"
+							className={ ReaderSidebarHelper.itemLinkClass( '/read/saved', path, {
+								'sidebar-streams__saved': true,
+							} ) }
+						/>
 					) }
+
+					<SidebarItem
+						label={ translate( 'Likes' ) }
+						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.likeActivity ) }
+						customIcon={ <ReaderLikesIcon viewBox="0 0 24 24" /> }
+						link="/activities/likes"
+						className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
+							'sidebar-activity__likes': true,
+						} ) }
+					/>
+
+					<SidebarItem
+						className={ ReaderSidebarHelper.itemLinkClass( '/reader/conversations', path, {
+							'sidebar-streams__conversations': true,
+						} ) }
+						label={ translate( 'Conversations' ) }
+						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.conversations ) }
+						customIcon={ <ReaderConversationsIcon iconSize={ 24 } viewBox="0 0 24 24" /> }
+						link="/reader/conversations"
+					/>
 
 					{ isAutomatticTeamMember( teams ) && (
 						<SidebarItem
 							className={ ReaderSidebarHelper.itemLinkClass( '/reader/conversations/a8c', path, {
 								'sidebar-streams__conversations': true,
 							} ) }
-							label="A8C Conversations"
+							label={ translate( 'A8C conversations' ) }
 							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.a8cConversations ) }
 							link="/reader/conversations/a8c"
 							customIcon={ <ReaderA8cConversationsIcon size={ 24 } viewBox="-2 -2 24 24" /> }
 						/>
 					) }
 
-					<SidebarSeparator />
+					<li className="reader-sidebar__section-header" role="presentation">
+						<span role="heading" aria-level="3">
+							{ translate( 'Account' ) }
+						</span>
+					</li>
 
 					<SidebarItem
-						label={ translate( 'New Subscription' ) }
+						label={ translate( 'New subscription' ) }
 						onNavigate={ () => recordReaderTracksEvent( 'calypso_reader_sidebar_add_new_clicked' ) }
 						customIcon={ <Icon className="sidebar__menu-icon" icon={ plus } viewBox="2 0 24 24" /> }
 						link="/reader/new"
@@ -278,14 +330,14 @@ export class ReaderSidebar extends Component {
 						className={ ReaderSidebarHelper.itemLinkClass( '/reader/subscriptions', path, {
 							'sidebar-streams__manage-subscriptions': true,
 						} ) }
-						label={ translate( 'Manage Subscriptions' ) }
+						label={ translate( 'Manage subscriptions' ) }
 						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.manageSubscriptions ) }
 						customIcon={ <ReaderManageSubscriptionsIcon size={ 24 } viewBox="0 0 24 24" /> }
 						link="/reader/subscriptions"
 					/>
 
 					<SidebarItem
-						label={ translate( 'Reader Profile' ) }
+						label={ translate( 'Reader profile' ) }
 						onNavigate={ () => recordReaderTracksEvent( 'calypso_reader_sidebar_profile_clicked' ) }
 						customIcon={
 							<Icon
@@ -316,6 +368,7 @@ export class ReaderSidebar extends Component {
 				onClick={ this.handleClick }
 				siteTitle={ i18n.translate( 'Reader' ) }
 			>
+				<SyncAllSiteSubscriptions />
 				{ this.renderSidebarMenu() }
 				<ReaderSidebarNudges />
 			</GlobalSidebar>
@@ -347,7 +400,6 @@ export default withSubscribedLists(
 							isListsOpen: isListsOpen( state ),
 							isFollowingOpen: isFollowingOpen( state ),
 							isTagsOpen: isTagsOpen( state ),
-							isMSDEnabled: isReaderMSDEnabled( state ),
 						};
 					},
 					{

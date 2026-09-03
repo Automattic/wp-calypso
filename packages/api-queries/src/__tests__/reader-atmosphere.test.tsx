@@ -203,7 +203,7 @@ describe( 'reader-atmosphere hooks', () => {
 			await act( async () => {
 				await result.current.fetchNextPage();
 			} );
-			expect( result.current.data?.pages.length ).toBe( 2 );
+			await waitFor( () => expect( result.current.data?.pages.length ).toBe( 2 ) );
 			expect( result.current.hasNextPage ).toBe( false );
 		} );
 
@@ -220,7 +220,7 @@ describe( 'reader-atmosphere hooks', () => {
 			await act( async () => {
 				await result.current.refetch();
 			} );
-			expect( result.current.isSuccess ).toBe( true );
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 		} );
 	} );
 
@@ -292,7 +292,7 @@ describe( 'reader-atmosphere hooks', () => {
 			await act( async () => {
 				await result.current.fetchNextPage();
 			} );
-			expect( result.current.data?.pages.length ).toBe( 2 );
+			await waitFor( () => expect( result.current.data?.pages.length ).toBe( 2 ) );
 			expect( result.current.hasNextPage ).toBe( false );
 		} );
 	} );
@@ -405,9 +405,19 @@ describe( 'reader-atmosphere hooks', () => {
 			const client = new QueryClient( {
 				defaultOptions: { queries: { retry: false, retryDelay: 0 } },
 			} );
-			const { result } = renderHook( () => useThreadQuery( { uri: FIXTURE_URI } ), {
-				wrapper: makeWrapper( client ),
-			} );
+			const { result } = renderHook(
+				() => {
+					const q = useThreadQuery( { uri: FIXTURE_URI } );
+					// Track the fields the test asserts on so the React Query observer
+					// re-renders the hook when they change (e.g. after refetch).
+					void q.isError;
+					void q.error;
+					void q.isSuccess;
+					void q.data;
+					return q;
+				},
+				{ wrapper: makeWrapper( client ) }
+			);
 
 			await waitFor( () => expect( result.current.isError ).toBe( true ) );
 			expect( result.current.error ).toMatchObject( { kind: 'upstream_unavailable' } );
@@ -2011,7 +2021,9 @@ describe( 'reader-atmosphere hooks', () => {
 				} );
 			} );
 
-			expect( result.current.data ).toEqual( { uri: 'at://new', cid: 'newcid', rkey: 'abc' } );
+			await waitFor( () =>
+				expect( result.current.data ).toEqual( { uri: 'at://new', cid: 'newcid', rkey: 'abc' } )
+			);
 		} );
 
 		it( 'optimistically inserts a placeholder reply under the parent in the thread query', async () => {

@@ -12,14 +12,13 @@ import { Button, Card, Gridicon, PlanPrice } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import clsx from 'clsx';
 import DOMPurify from 'dompurify';
-import { size } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, isValidElement } from 'react';
 import { connect } from 'react-redux';
 import DismissibleCard from 'calypso/blocks/dismissible-card';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs, toCalypsoHref } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -79,6 +78,7 @@ export class Banner extends Component {
 		showLinkIcon: PropTypes.bool,
 		extraContent: PropTypes.node,
 		isBusy: PropTypes.bool,
+		isCallToActionDisabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -101,28 +101,33 @@ export class Banner extends Component {
 		tracksDismissName: 'calypso_banner_dismiss',
 		isSiteWPForTeams: false,
 		isBusy: false,
+		isCallToActionDisabled: false,
 	};
 
 	getHref() {
 		const { canUserUpgrade, feature, href, plan, siteSlug, customerType } = this.props;
 
+		let computedHref = href;
+
 		if ( ! href && siteSlug && canUserUpgrade ) {
-			if ( customerType ) {
-				return `/plans/${ siteSlug }?customerType=${ customerType }`;
-			}
 			const baseUrl = `/plans/${ siteSlug }`;
-			if ( feature || plan ) {
-				return addQueryArgs(
+
+			if ( customerType ) {
+				computedHref = `${ baseUrl }?customerType=${ customerType }`;
+			} else if ( feature || plan ) {
+				computedHref = addQueryArgs(
 					{
 						feature,
 						plan,
 					},
 					baseUrl
 				);
+			} else {
+				computedHref = baseUrl;
 			}
-			return baseUrl;
 		}
-		return href;
+
+		return toCalypsoHref( computedHref );
 	}
 
 	handleClick = ( e ) => {
@@ -255,6 +260,7 @@ export class Banner extends Component {
 			tracksImpressionProperties,
 			extraContent,
 			isBusy,
+			isCallToActionDisabled,
 		} = this.props;
 
 		const prices = Array.isArray( price ) ? price : [ price ];
@@ -275,7 +281,7 @@ export class Banner extends Component {
 				<div className="banner__info">
 					<h3 className="banner__title">{ title }</h3>
 					{ this.renderDescription( description ) }
-					{ size( list ) > 0 && (
+					{ ( list || [] ).length > 0 && (
 						<ul className="banner__list">
 							{ list.map( ( item, key ) => (
 								<li key={ key }>
@@ -293,8 +299,8 @@ export class Banner extends Component {
 				</div>
 				{ ( callToAction || price ) && (
 					<div className="banner__action">
-						{ size( prices ) === 1 && <PlanPrice rawPrice={ prices[ 0 ] } /> }
-						{ size( prices ) === 2 && (
+						{ prices.length === 1 && <PlanPrice rawPrice={ prices[ 0 ] } /> }
+						{ prices.length === 2 && (
 							<div className="banner__prices">
 								<PlanPrice rawPrice={ prices[ 0 ] } original />
 								<PlanPrice rawPrice={ prices[ 1 ] } discounted />
@@ -303,7 +309,7 @@ export class Banner extends Component {
 						{ secondaryCallToAction && (
 							<Button
 								compact={ compactButton }
-								href={ secondaryHref }
+								href={ toCalypsoHref( secondaryHref ) }
 								onClick={ this.handleSecondaryClick }
 								primary={ false }
 							>
@@ -328,6 +334,7 @@ export class Banner extends Component {
 									primary={ primaryButton }
 									target={ target }
 									busy={ isBusy }
+									disabled={ isCallToActionDisabled }
 								>
 									{ callToAction }
 								</Button>

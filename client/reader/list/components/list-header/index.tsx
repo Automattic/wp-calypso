@@ -23,6 +23,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import type { AppState } from 'calypso/types';
+import type { JSX } from 'react';
 
 interface ReaderListHeaderProps {
 	list?: ReaderList;

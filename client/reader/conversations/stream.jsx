@@ -1,5 +1,4 @@
 import { useTranslate, fixMe } from 'i18n-calypso';
-import { get } from 'lodash';
 import ConversationsEmptyContent from 'calypso/blocks/conversations/empty';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -10,7 +9,7 @@ import './stream.scss';
 const emptyContent = () => <ConversationsEmptyContent />;
 
 export default function ConversationsStream( props ) {
-	const isInternal = get( props, 'store.id' ) === 'conversations-a8c';
+	const isInternal = props?.store?.id === 'conversations-a8c';
 	const intro = () => <ConversationsIntro isInternal={ isInternal } />;
 	const translate = useTranslate();
 

@@ -5,7 +5,7 @@ import React, { Component, Fragment, forwardRef } from 'react';
 import { navigate } from 'calypso/lib/navigate';
 import type {
 	ComponentPropsWithoutRef,
-	ElementRef,
+	ComponentRef,
 	ElementType,
 	ForwardedRef,
 	LegacyRef,
@@ -33,7 +33,6 @@ type MasterbarItemOwnProps = {
 	wrapperClassName?: string;
 	isActive?: boolean;
 	preloadSection?: () => void;
-	hasUnseen?: boolean;
 	children?: ReactNode;
 	alwaysShowContent?: boolean;
 	disabled?: boolean;
@@ -41,6 +40,7 @@ type MasterbarItemOwnProps = {
 	hasGlobalBorderStyle?: boolean;
 	ariaLabel?: string;
 	openSubMenuOnClick?: boolean;
+	closeSubMenuOnItemClick?: boolean;
 };
 
 /** Props accepted by the default `<button>` / `<a>` implementation (no custom `as`). */
@@ -66,20 +66,19 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 		className: PropTypes.string,
 		isActive: PropTypes.bool,
 		preloadSection: PropTypes.func,
-		hasUnseen: PropTypes.bool,
 		alwaysShowContent: PropTypes.bool,
 		subItems: PropTypes.array,
 		hasGlobalBorderStyle: PropTypes.bool,
 		as: PropTypes.elementType,
 		ariaLabel: PropTypes.string,
 		openSubMenuOnClick: PropTypes.bool,
+		closeSubMenuOnItemClick: PropTypes.bool,
 		asProps: PropTypes.object,
 	};
 
 	static defaultProps = {
 		icon: '',
 		onClick: noop,
-		hasUnseen: false,
 		url: '',
 		asProps: {},
 	};
@@ -111,13 +110,10 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 	};
 
 	renderChildren() {
-		const { children, hasUnseen, icon } = this.props;
+		const { children, icon } = this.props;
 
 		return (
 			<Fragment>
-				{ hasUnseen && (
-					<span className="masterbar__item-bubble" aria-label="You have unseen content" />
-				) }
 				{ !! icon && ( typeof icon !== 'string' ? icon : <Gridicon icon={ icon } size={ 24 } /> ) }
 				{ children && <span className="masterbar__item-content">{ children }</span> }
 			</Fragment>
@@ -142,10 +138,20 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 							'masterbar__item-subitems-item--odd': groupIndex % 2 === 1,
 						} ) }
 					>
-						{ item.onClick && (
+						{ item.url && (
+							<a
+								href={ item.url }
+								onClick={ item.onClick }
+								onTouchEnd={ ( ev ) => this.navigateSubAnchorTouch( ev, item.onClick ) }
+								onKeyDown={ ( ev ) => this.navigateSubAnchorByKey( ev, item.onClick ) }
+							>
+								{ item.label }
+							</a>
+						) }
+						{ ! item.url && item.onClick && (
 							<Button
 								className="is-link"
-								onClick={ item.onClick }
+								onClick={ () => this.submenuButtonClick( item.onClick ) }
 								onTouchEnd={ ( ev: React.TouchEvent ) =>
 									this.submenuButtonTouch( ev, item.onClick )
 								}
@@ -156,16 +162,7 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 								{ item.label }
 							</Button>
 						) }
-						{ ! item.onClick && item.url && (
-							<a
-								href={ item.url }
-								onTouchEnd={ this.navigateSubAnchorTouch }
-								onKeyDown={ this.navigateSubAnchorByKey }
-							>
-								{ item.label }
-							</a>
-						) }
-						{ ! item.onClick && ! item.url && <div>{ item.label }</div> }
+						{ ! item.url && ! item.onClick && <div>{ item.label }</div> }
 					</li>
 				) )
 			)
@@ -198,22 +195,35 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 		}
 	};
 
-	navigateSubAnchorTouch = ( event: React.TouchEvent | React.KeyboardEvent ) => {
+	navigateSubAnchorTouch = (
+		event: React.TouchEvent | React.KeyboardEvent,
+		onClick?: () => void
+	) => {
 		// We must prevent the default anchor behavior and navigate manually. Otherwise there is a
 		// race condition between the click on the anchor firing and the menu closing before that
-		// can happen.
+		// can happen. Because we preventDefault here, the anchor's `onClick` won't fire on the
+		// touch/keyboard paths. Invoke it explicitly to keep side effects (e.g. tracking).
 		event.preventDefault();
 		const url = event.currentTarget.getAttribute( 'href' );
+		onClick?.();
 		if ( url ) {
 			navigate( url );
 		}
 		this.setState( { isOpenForNonMouseFlow: false } );
 	};
 
-	navigateSubAnchorByKey = ( event: React.KeyboardEvent ) => {
+	navigateSubAnchorByKey = ( event: React.KeyboardEvent, onClick?: () => void ) => {
 		if ( event.key === 'Enter' || event.key === ' ' ) {
-			this.navigateSubAnchorTouch( event );
+			this.navigateSubAnchorTouch( event, onClick );
 		}
+	};
+
+	submenuButtonClick = ( onClick: ( () => void ) | undefined ) => {
+		// Opt-in: close the menu after a mouse click, matching the touch/keyboard flows.
+		if ( this.props.closeSubMenuOnItemClick ) {
+			this.setState( { isOpenForNonMouseFlow: false } );
+		}
+		onClick?.();
 	};
 
 	submenuButtonTouch = (
@@ -222,7 +232,7 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 	) => {
 		event.preventDefault();
 		this.setState( { isOpenForNonMouseFlow: false } );
-		onClick && onClick();
+		onClick?.();
 	};
 
 	submenuButtonByKey = ( event: React.KeyboardEvent, onClick: ( () => void ) | undefined ) => {
@@ -247,7 +257,6 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 	render() {
 		const itemClasses = clsx( 'masterbar__item', this.props.className, {
 			'is-active': this.props.isActive,
-			'has-unseen': this.props.hasUnseen,
 			'masterbar__item--always-show-content': this.props.alwaysShowContent,
 			'has-subitems': this.props.subItems,
 			'is-open': this.state.isOpenForNonMouseFlow,
@@ -292,7 +301,7 @@ class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
 
 interface MasterbarItemComponent {
 	< C extends ElementType >(
-		props: MasterbarItemProps< C > & { ref?: ForwardedRef< ElementRef< C > > }
+		props: MasterbarItemProps< C > & { ref?: ForwardedRef< ComponentRef< C > > }
 	): ReactElement | null;
 	(
 		props: MasterbarItemProps< undefined > & {

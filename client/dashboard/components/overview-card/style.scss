@@ -65,13 +65,11 @@
 	}
 
 	.dashboard-overview-card--error & {
-		background-color: color-mix(in srgb, var(--dashboard__background-color-error) 8%, transparent);
-		color: var(--dashboard__background-color-error );
-		fill: var(--dashboard__background-color-error );
+		color: var(--dashboard__background-color-error);
+		fill: var(--dashboard__background-color-error);
 	}
 
 	.dashboard-overview-card--warning & {
-		background-color: color-mix(in srgb, var(--dashboard__background-color-warning) 8%, transparent);
 		color: var(--dashboard__background-color-warning);
 		fill: var(--dashboard__background-color-warning);
 	}

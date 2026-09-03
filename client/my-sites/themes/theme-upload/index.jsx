@@ -7,13 +7,14 @@ import {
 	getPlan,
 	isFreePlan,
 } from '@automattic/calypso-products';
-import { Card, ProgressBar, Button } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
+import { isEmpty } from '@automattic/js-utils';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import { includes, find, isEmpty, flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import AsyncLoad from 'calypso/components/async-load';
@@ -69,6 +70,7 @@ import {
 	getSelectedSite,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import ThemeUploadProgress from './upload-progress';
 
 import './style.scss';
 
@@ -95,6 +97,8 @@ class Upload extends Component {
 		isJetpack: PropTypes.bool,
 		backPath: PropTypes.string,
 		showEligibility: PropTypes.bool,
+		siteSlug: PropTypes.string,
+		themeId: PropTypes.string,
 	};
 
 	state = {
@@ -160,34 +164,40 @@ class Upload extends Component {
 		};
 
 		const errorString = JSON.stringify( error ).toLowerCase();
-		const cause = find( errorCauses, ( v, key ) => {
-			return includes( errorString, key );
-		} );
+		const cause = Object.entries( errorCauses ).find( ( [ key ] ) =>
+			errorString.includes( key )
+		)?.[ 1 ];
 
 		const unknownCause = error.error ? `: ${ error.error }` : '';
 		this.props.errorNotice( cause || translate( 'Problem installing theme' ) + unknownCause );
 	}
 
 	renderProgressBar() {
-		const { translate, progressTotal, progressLoaded, installing } = this.props;
-
-		const uploadingMessage = translate( 'Uploading your theme…' );
-		const installingMessage = this.props.isJetpack
-			? translate( 'Installing your theme…' )
-			: translate( 'Configuring your site…' );
+		const {
+			siteId,
+			siteSlug,
+			selectedSite,
+			themeId,
+			progressTotal,
+			progressLoaded,
+			installing,
+			isJetpack,
+		} = this.props;
 
 		return (
-			<div>
-				<span className="theme-upload__title">
-					{ installing ? installingMessage : uploadingMessage }
-				</span>
-				<ProgressBar
-					value={ progressLoaded || 0 }
-					total={ progressTotal || 100 }
-					title={ translate( 'Uploading progress' ) }
-					isPulsing={ installing }
-				/>
-			</div>
+			// Keyed by site: the wait's clock, its verdict and its heartbeat belong to one site's
+			// upload, and switching sites mid-upload would otherwise inherit all three.
+			<ThemeUploadProgress
+				key={ siteId }
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+				siteUrl={ selectedSite?.URL }
+				themeId={ themeId }
+				installing={ installing }
+				isJetpack={ isJetpack }
+				progressLoaded={ progressLoaded }
+				progressTotal={ progressTotal }
+			/>
 		);
 	}
 
@@ -366,7 +376,11 @@ class Upload extends Component {
 				{ showUpgradeBanner && this.renderUpgradeBanner() }
 
 				{ showEligibility && (
-					<EligibilityWarnings backUrl={ backPath } onProceed={ this.onProceedClick } />
+					<EligibilityWarnings
+						backUrl={ backPath }
+						atomicTransferAction="themes"
+						onProceed={ this.onProceedClick }
+					/>
 				) }
 
 				{ this.renderUploadCard() }
@@ -453,4 +467,4 @@ const flowRightArgs = [
 	localize,
 ];
 
-export default flowRight( ...flowRightArgs )( UploadWithOptions );
+export default compose( ...flowRightArgs )( UploadWithOptions );

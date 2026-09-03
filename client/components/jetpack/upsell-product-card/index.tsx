@@ -6,7 +6,6 @@ import {
 	isJetpackSearchSlug,
 	isJetpackSocialSlug,
 } from '@automattic/calypso-products';
-import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
@@ -97,8 +96,11 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 
 	const { data: products, isFetching: isFetchingManagePrices } = useProductsQuery();
 
-	if ( hasJetpackPartnerAccess ) {
-		const manageProductSlug = nonManageProductSlug.replace( '_yearly', '' ).replace( /_/g, '-' );
+	const manageProductSlug = nonManageProductSlug.replace( '_yearly', '' ).replace( /_/g, '-' );
+
+	if ( isA4AEnabled ) {
+		ctaButtonURL = `${ A4A_MARKETPLACE_CHECKOUT_LINK }?product_slug=${ manageProductSlug }&source=sitesdashboard&site_id=${ siteId }`;
+	} else if ( hasJetpackPartnerAccess ) {
 		manageProduct = products?.find( ( product ) => product.slug === manageProductSlug );
 		isFetchingPrices = isFetchingManagePrices || !! isFetchingNonManagePrices;
 		if ( manageProduct ) {
@@ -127,12 +129,6 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 			}
 			onCtaButtonClickInternal = () => {
 				onCtaButtonClick();
-				if ( isA4AEnabled ) {
-					page.redirect(
-						`${ A4A_MARKETPLACE_CHECKOUT_LINK }?product_slug=${ manageProductSlug }&source=sitesdashboard&site_id=${ siteId }`
-					);
-					return;
-				}
 				setShowLightbox( true );
 			};
 		}
@@ -223,30 +219,30 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 							</li>
 						) ) }
 				</ul>
-				{ hasJetpackPartnerAccess && (
-					<b>
-						{ isA4AEnabled
-							? translate( 'Price per license:' )
-							: translate( 'Price per Jetpack Manage license:' ) }
-					</b>
+				{ ! isA4AEnabled && (
+					<>
+						{ hasJetpackPartnerAccess && (
+							<b>{ translate( 'Price per Jetpack Manage license:' ) }</b>
+						) }
+						<div className="upsell-product-card__price-container">
+							<DisplayPrice
+								isFree={ ! isFetchingPrices && originalPrice === 0 }
+								discountedPrice={ discountedPrice }
+								currencyCode={ currencyCode }
+								originalPrice={ originalPrice ?? 0 }
+								pricesAreFetching={ isFetchingPrices }
+								belowPriceText={ item.belowPriceText }
+								tooltipText={ tooltipText }
+								billingTerm={ billingTerm }
+								productName={ displayName }
+								hideSavingLabel={ false }
+							/>
+							{ discountText && ! isFetchingPrices && (
+								<div className="upsell-product-card__discount-label">{ discountText }</div>
+							) }
+						</div>
+					</>
 				) }
-				<div className="upsell-product-card__price-container">
-					<DisplayPrice
-						isFree={ ! isFetchingPrices && originalPrice === 0 }
-						discountedPrice={ discountedPrice }
-						currencyCode={ currencyCode }
-						originalPrice={ originalPrice ?? 0 }
-						pricesAreFetching={ isFetchingPrices }
-						belowPriceText={ item.belowPriceText }
-						tooltipText={ tooltipText }
-						billingTerm={ billingTerm }
-						productName={ displayName }
-						hideSavingLabel={ false }
-					/>
-					{ discountText && ! isFetchingPrices && (
-						<div className="upsell-product-card__discount-label">{ discountText }</div>
-					) }
-				</div>
 				{ aboveButtonText && (
 					<p className="upsell-product-card__above-button">{ aboveButtonText }</p>
 				) }
@@ -307,13 +303,15 @@ export const UpsellProductCardPlaceholder: React.FC = () => {
 				</li>
 			</ul>
 
-			<div className="upsell-product-card__price-container">
-				<DisplayPrice
-					pricesAreFetching
-					billingTerm={ TERM_ANNUALLY }
-					productName="Placeholder product"
-				/>
-			</div>
+			{ ! isA8CForAgencies() && (
+				<div className="upsell-product-card__price-container">
+					<DisplayPrice
+						pricesAreFetching
+						billingTerm={ TERM_ANNUALLY }
+						productName="Placeholder product"
+					/>
+				</div>
+			) }
 		</JetpackRnaActionCard>
 	);
 };

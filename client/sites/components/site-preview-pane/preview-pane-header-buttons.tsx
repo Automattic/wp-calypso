@@ -23,7 +23,7 @@ import type { ItemData } from 'calypso/layout/hosting-dashboard/item-view/types'
 import './preview-pane-header-buttons.scss';
 
 type Props = {
-	focusRef: React.RefObject< HTMLButtonElement >;
+	focusRef: React.RefObject< HTMLButtonElement | null >;
 	itemData: ItemData;
 };
 

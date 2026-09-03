@@ -2,13 +2,13 @@ import { BigSkyLogo } from '@automattic/components/src/logos/big-sky-logo';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Icon, reusableBlock, wordpress } from '@wordpress/icons';
+import { backup, Icon, reusableBlock, wordpress } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../../app/analytics';
 import EmptyState from '../../components/empty-state';
 import OfferCard from '../../components/offer-card';
+import RouterLinkButton from '../../components/router-link-button';
 import { wpcomLink } from '../../utils/link';
-import { AI_SITE_BUILDER_SPEC_FLOW } from '../ai-site-builder-spec-flow';
 
 const CONTEXT = 'dashboard-sites';
 const EMPTY_STATE_REF = 'dashboard-sites-empty-state';
@@ -57,7 +57,7 @@ function CreateAndBuildActions() {
 				actions={
 					<Button
 						variant="secondary"
-						href={ addQueryArgs( wpcomLink( `/setup/${ AI_SITE_BUILDER_SPEC_FLOW }` ), {
+						href={ addQueryArgs( wpcomLink( '/setup/ai-site-builder-onboarding' ), {
 							source: CONTEXT,
 							ref: EMPTY_STATE_REF,
 						} ) }
@@ -83,6 +83,39 @@ function EmptySitesStateUpsell() {
 	};
 
 	return <OfferCard onClick={ handleOfferClick } />;
+}
+
+export function EmptyDeletedSitesStateContent() {
+	const { recordTracksEvent } = useAnalytics();
+
+	const handleViewDeletedSitesClick = () => {
+		recordTracksEvent( 'calypso_sites_dashboard_empty_state_action_click', {
+			action: 'view-deleted-sites',
+		} );
+	};
+
+	return (
+		<EmptyState.ActionList>
+			<EmptyState.ActionItem
+				title={ __( 'Restore a deleted site' ) }
+				description={ __( 'Deleted sites can be restored within 30 days of deletion.' ) }
+				decoration={ <Icon icon={ backup } size={ 24 } /> }
+				actions={
+					<RouterLinkButton
+						to="/sites"
+						search={ { is_deleted: true } }
+						variant="primary"
+						onClick={ handleViewDeletedSitesClick }
+						size="compact"
+						__next40pxDefaultSize
+					>
+						{ __( 'Show deleted sites' ) }
+					</RouterLinkButton>
+				}
+			/>
+			<CreateAndBuildActions />
+		</EmptyState.ActionList>
+	);
 }
 
 export function EmptySitesSearchStateContent() {

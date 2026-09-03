@@ -7,20 +7,18 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import Notice from '../../components/notice';
 
 export default function IcannSuspensionNotice( { domainName }: { domainName: string } ) {
-	const resendIcannVerificationEmail = useMutation( {
-		...resendIcannVerificationEmailMutation( domainName ),
-		meta: {
-			snackbar: {
-				success: __(
-					'Verification email sent! It should arrive within a few minutes. Please check your inbox and follow the instructions to verify your domain name.'
-				),
-				error: { source: 'server' },
-			},
-		},
-	} );
+	const resendIcannVerificationEmail = useMutation(
+		withSnackbar( resendIcannVerificationEmailMutation( domainName ), {
+			success: __(
+				'Verification email sent! It should arrive within a few minutes. Please check your inbox and follow the instructions to verify your domain name.'
+			),
+			error: { source: 'server' },
+		} )
+	);
 	const { recordTracksEvent } = useAnalytics();
 
 	const onClick = () => {

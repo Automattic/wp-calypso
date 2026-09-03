@@ -8,7 +8,7 @@ import type { Note } from '../types';
 
 import './style.scss';
 
-function focusToNote( noteListRef: React.RefObject< HTMLObjectElement >, note?: Note ) {
+function focusToNote( noteListRef: React.RefObject< HTMLObjectElement | null >, note?: Note ) {
 	const noteEl = noteListRef.current?.querySelector(
 		`.dataviews-view-list__item[id$="-${ note?.id }-item-wrapper"]`
 	) as HTMLElement;
@@ -22,7 +22,7 @@ export function useNoteListFocusToLastSelectedNote( {
 	noteListRef,
 	notes,
 }: {
-	noteListRef: React.RefObject< HTMLObjectElement >;
+	noteListRef: React.RefObject< HTMLObjectElement | null >;
 	notes: Note[];
 } ) {
 	const lastSelectedNoteId = useSelector( getLastSelectedNoteId );
@@ -78,7 +78,7 @@ export function useNoteListNavigationKeyboardShortcuts( {
 	noteListRef,
 	visibleNotes,
 }: {
-	noteListRef: React.RefObject< HTMLObjectElement >;
+	noteListRef: React.RefObject< HTMLObjectElement | null >;
 	visibleNotes: Note[];
 } ) {
 	const areKeyboardShortcutsEnabled = useSelector( getKeyboardShortcutsEnabled );

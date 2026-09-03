@@ -82,6 +82,7 @@ export function useMastodonConnectionsQuery( { enabled }: { enabled?: boolean } 
 export function useAuthorizeMastodonConnectionMutation() {
 	return useMutation< MastodonAuthorizeResponse, MastodonError, AuthorizeMastodonConnectionParams >(
 		{
+			meta: { statId: 'mastodon-conn-authorize' },
 			mutationFn: authorizeMastodonConnection,
 		}
 	);
@@ -94,6 +95,7 @@ export function useCompleteMastodonConnectionMutation() {
 		MastodonError,
 		CompleteMastodonConnectionParams
 	>( {
+		meta: { statId: 'mastodon-conn-complete' },
 		mutationFn: completeMastodonConnection,
 		onSuccess: ( { connection } ) => {
 			// Seed the list cache synchronously so the route we `page.replace`
@@ -833,6 +835,7 @@ function restoreMastodonPostSnapshots(
 export function useCreateMastodonLikeMutation( connectionId: number ) {
 	const queryClient = useQueryClient();
 	return useMutation< void, MastodonError, { statusId: string }, OptimisticContext >( {
+		meta: { statId: 'mastodon-like-create' },
 		mutationFn: ( { statusId } ) => createMastodonLike( { connectionId, statusId } ),
 		onMutate: async ( { statusId } ) => {
 			// cancelQueries is best-effort — TanStack docs flag it as such.
@@ -862,6 +865,7 @@ export function useCreateMastodonLikeMutation( connectionId: number ) {
 export function useDeleteMastodonLikeMutation( connectionId: number ) {
 	const queryClient = useQueryClient();
 	return useMutation< void, MastodonError, { statusId: string }, OptimisticContext >( {
+		meta: { statId: 'mastodon-like-delete' },
 		mutationFn: ( { statusId } ) => deleteMastodonLike( { connectionId, statusId } ),
 		onMutate: async ( { statusId } ) => {
 			try {
@@ -888,6 +892,7 @@ export function useDeleteMastodonLikeMutation( connectionId: number ) {
 export function useCreateMastodonRepostMutation( connectionId: number ) {
 	const queryClient = useQueryClient();
 	return useMutation< void, MastodonError, { statusId: string }, OptimisticContext >( {
+		meta: { statId: 'mastodon-repost-create' },
 		mutationFn: ( { statusId } ) => createMastodonRepost( { connectionId, statusId } ),
 		onMutate: async ( { statusId } ) => {
 			try {
@@ -912,6 +917,7 @@ export function useCreateMastodonRepostMutation( connectionId: number ) {
 export function useDeleteMastodonRepostMutation( connectionId: number ) {
 	const queryClient = useQueryClient();
 	return useMutation< void, MastodonError, { statusId: string }, OptimisticContext >( {
+		meta: { statId: 'mastodon-repost-delete' },
 		mutationFn: ( { statusId } ) => deleteMastodonRepost( { connectionId, statusId } ),
 		onMutate: async ( { statusId } ) => {
 			try {
@@ -1073,6 +1079,7 @@ export const createMastodonPostMutation = (
 		MastodonCreatePostMutationParams,
 		CreatePostContext
 	>( {
+		meta: { statId: 'mastodon-post-create' },
 		mutationFn: ( vars ) => createMastodonPostWithQuoteFallback( vars, hooks ),
 		onMutate: async ( vars ) => {
 			// cancelQueries is best-effort — TanStack docs flag it as such.
@@ -1142,6 +1149,7 @@ export const createMastodonPostMutation = (
  */
 export const uploadMastodonMediaMutation = () =>
 	mutationOptions< MastodonMediaUploadResult, MastodonError, MastodonMediaUploadParams >( {
+		meta: { statId: 'mastodon-media-upload' },
 		mutationFn: uploadMastodonMedia,
 	} );
 
@@ -1197,6 +1205,7 @@ export const followMastodonActorMutation = ( queryClient: QueryClient ) =>
 		FollowMastodonActorVars,
 		FollowMastodonMutationContext
 	>( {
+		meta: { statId: 'mastodon-actor-follow' },
 		mutationFn: ( vars ) =>
 			createMastodonFollow( { connectionId: vars.connectionId, accountId: vars.accountId } ),
 		onMutate: async ( vars ) => {
@@ -1275,6 +1284,7 @@ export const unfollowMastodonActorMutation = ( queryClient: QueryClient ) =>
 		FollowMastodonActorVars,
 		FollowMastodonMutationContext
 	>( {
+		meta: { statId: 'mastodon-actor-unfollow' },
 		mutationFn: ( vars ) =>
 			deleteMastodonFollow( { connectionId: vars.connectionId, accountId: vars.accountId } ),
 		onMutate: async ( vars ) => {

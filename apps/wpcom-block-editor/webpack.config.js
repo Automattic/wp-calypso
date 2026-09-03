@@ -71,12 +71,14 @@ function getWebpackConfig(
 					if ( request === 'tinymce/tinymce' ) {
 						return 'tinymce';
 					}
-					// Force bundling the React JSX runtime packages so that we don't have a missing `react-jsx-runtime`
-					// dependency on older WordPress versions that don't ship it yet.
+					// Externalize `react/jsx-runtime` (and its dev variant) to WordPress's `react-jsx-runtime`
+					// script handle so the runtime matches the React that WordPress provides. Bundling our own
+					// copy makes the editor create elements from an older React, which React 19 rejects
+					// ("A React Element from an older version of React was rendered"), throwing in every
+					// plugin's render during editor mount. WP ships `react-jsx-runtime` since 6.6.
 					if ( request === 'react/jsx-runtime' || request === 'react/jsx-dev-runtime' ) {
-						// returning null means don't externalize;
-						// returning undefined means call the default `requestToExternal`, which _would_ externalize `react-jsx-runtime`.
-						return null;
+						// returning undefined falls through to the default `requestToExternal`, which externalizes it.
+						return undefined;
 					}
 				},
 				requestToHandle( request ) {

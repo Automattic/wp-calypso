@@ -10,7 +10,7 @@ interface UseSendMessageHandlerProps {
 	isChatBusy: boolean;
 	chat: Chat;
 	sendAttachments: () => void;
-	textareaRef: React.RefObject< HTMLTextAreaElement >;
+	textareaRef: React.RefObject< HTMLTextAreaElement | null >;
 	trackEvent: ( event: string, props?: Record< string, unknown > ) => void;
 	sendMessage: ( message: Message ) => Promise< unknown >;
 }

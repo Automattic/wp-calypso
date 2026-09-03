@@ -1,4 +1,3 @@
-import { some } from 'lodash';
 import PropTypes from 'prop-types';
 import PostCommentForm from './form';
 
@@ -18,7 +17,7 @@ const PostCommentFormRoot = ( {
 	// Are we displaying the comment form elsewhere? If so, don't render the root form.
 	if (
 		activeReplyCommentId ||
-		some( commentsTree, ( comment ) => {
+		Object.values( commentsTree ?? {} ).some( ( comment ) => {
 			return comment.data && comment.data.isPlaceholder && ! comment.data.parent;
 		} )
 	) {

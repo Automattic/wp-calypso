@@ -117,7 +117,6 @@ function HostingOverview( { section }: SectionProps ) {
 			wide
 		>
 			<GuidedTour defaultTourId="marketplaceWalkthrough" />
-
 			<LayoutTop>
 				<PressableUsageLimitNotice />
 				<A4AAgencyApprovalNotice />
@@ -142,7 +141,11 @@ function HostingOverview( { section }: SectionProps ) {
 						) }
 						<div className="a4a-marketplace__header-actions">
 							<MobileSidebarNavigation />
-							<div ref={ ( ref ) => setReferralToggleRef( ref as HTMLElement | null ) }>
+							<div
+								ref={ ( ref ) => {
+									setReferralToggleRef( ref as HTMLElement | null );
+								} }
+							>
 								<ReferralToggle />
 							</div>
 							<ShoppingCart
@@ -179,7 +182,6 @@ function HostingOverview( { section }: SectionProps ) {
 					ref={ heroSectionRef }
 				/>
 			</LayoutTop>
-
 			<LayoutBody className="hosting-overview__body">
 				<QueryProductsList currency="USD" />
 

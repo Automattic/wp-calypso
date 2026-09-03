@@ -13,6 +13,7 @@ import { type ConnectionProtocol } from 'calypso/reader/sidebar/reader-sidebar-c
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import getSites from 'calypso/state/selectors/get-sites';
+import type { JSX } from 'react';
 
 const FEDIVERSE_SUPPORT_POST_ID = 294460;
 const SOCIAL_SUPPORT_POST_ID = 439167;

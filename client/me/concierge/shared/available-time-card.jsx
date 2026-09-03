@@ -9,8 +9,8 @@ import 'moment-timezone'; // monkey patches the existing moment.js
 import config from '@automattic/calypso-config';
 import { Button, Gridicon, FoldableCard, FormLabel } from '@automattic/components';
 import { getLanguage } from '@automattic/i18n-utils';
+import { isEmpty } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import day from 'calypso/assets/images/quick-start/day.svg';

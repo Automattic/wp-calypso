@@ -81,7 +81,7 @@ const DOMAIN_PERMISSION_CHECKS = {
 			check: checkCurrentUserIsOwner,
 			getErrorMessage: ( domain: Domain ) =>
 				sprintf(
-					/* translators: domain is the domain name, owner is the owner of the domain */
+					/* translators: %(domain)s: the domain name, %(owner)s: the owner of the domain */
 					__( '%(domain)s transfers can be managed only by the user %(owner)s.' ),
 					{ domain: domain.domain, owner: domain.owner }
 				),
@@ -99,7 +99,7 @@ const DOMAIN_PERMISSION_CHECKS = {
 			check: checkCurrentUserIsOwner,
 			getErrorMessage: ( domain: Domain ) =>
 				sprintf(
-					/* translators: domain is the domain name, owner is the owner of the domain */
+					/* translators: %(domain)s: the domain name, %(owner)s: the owner of the domain */
 					__( '%(domain)s can be transferred only by the user {{strong}}%(owner)s{{/strong}}.' ),
 					{ domain: domain.domain, owner: domain.owner }
 				),
@@ -108,7 +108,7 @@ const DOMAIN_PERMISSION_CHECKS = {
 			check: checkNotRedeemable,
 			getErrorMessage: ( domain: Domain ) =>
 				sprintf(
-					/* translators: domain is the domain name */
+					/* translators: %(domain)s: the domain name */
 					__( '%(domain)s is in redemption so it is not possible to transfer it.' ),
 					{ domain: domain.domain }
 				),
@@ -117,7 +117,7 @@ const DOMAIN_PERMISSION_CHECKS = {
 			check: checkNotHundredYearDomain,
 			getErrorMessage: ( domain: Domain ) =>
 				sprintf(
-					/* translators: domain is the domain name */
+					/* translators: %(domain)s: the domain name */
 					__( '%(domain)s is a 100-year domain and cannot be transferred.' ),
 					{ domain: domain.domain }
 				),
@@ -130,7 +130,7 @@ const DOMAIN_PERMISSION_CHECKS = {
 			check: checkNotAftermarketAuction,
 			getErrorMessage: ( domain: Domain ) =>
 				sprintf(
-					/* translators: domain is the domain name */
+					/* translators: %(domain)s: the domain name */
 					__(
 						'%(domain)s expired over 30 days ago and has been offered for sale at auction. Currently it is not possible to renew it.'
 					),
@@ -182,7 +182,7 @@ const DOMAIN_PERMISSION_CHECKS = {
 			check: checkCurrentUserIsOwner,
 			getErrorMessage: ( domain: Domain ) =>
 				sprintf(
-					/* translators: domain is the domain name, owner is the owner of the domain */
+					/* translators: %(domain)s: the domain name, %(owner)s: the owner of the domain */
 					__( '%(domain)s contact info can be managed only by the user %(owner)s.' ),
 					{ domain: domain.domain, owner: domain.owner }
 				),
@@ -207,7 +207,7 @@ const DOMAIN_PERMISSION_CHECKS = {
 			check: checkCurrentUserIsOwner,
 			getErrorMessage: ( domain: Domain ) =>
 				sprintf(
-					/* translators: domain is the domain name, owner is the owner of the domain */
+					/* translators: %(domain)s: the domain name, %(owner)s: the owner of the domain */
 					__( '%(domain)s contact verification can be managed only by the user %(owner)s.' ),
 					{ domain: domain.domain, owner: domain.owner }
 				),

@@ -16,6 +16,7 @@ export const siteObjectCacheLastClearedTimestampQuery = ( siteId: number ) =>
 
 export const siteObjectCacheClearMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-object-cache-clear' },
 		mutationFn: ( reason: string ) => clearObjectCache( siteId, reason ),
 		onSuccess: () => {
 			queryClient.setQueryData(
@@ -34,6 +35,7 @@ export const siteEdgeCacheLastClearedTimestampQuery = ( siteId: number ) =>
 
 export const siteEdgeCacheClearMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-edge-cache-clear' },
 		mutationFn: () => clearEdgeCache( siteId ),
 		onSuccess: () => {
 			queryClient.setQueryData(
@@ -51,6 +53,7 @@ export const siteEdgeCacheStatusQuery = ( siteId: number ) =>
 
 export const siteEdgeCacheStatusMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-edge-cache-toggle' },
 		mutationFn: ( active: boolean ) => updateEdgeCacheStatus( siteId, active ),
 		onSuccess: ( active ) => {
 			queryClient.setQueryData( siteEdgeCacheStatusQuery( siteId ).queryKey, active );

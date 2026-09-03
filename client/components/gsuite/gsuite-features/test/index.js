@@ -1,37 +1,38 @@
+/**
+ * @jest-environment jsdom
+ */
 import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from '@automattic/calypso-products';
-import renderer from 'react-test-renderer';
+import { render } from '@testing-library/react';
 import GSuiteFeatures from '../';
 
 describe( 'GSuiteFeatures', () => {
 	test( 'it renders GSuiteFeatures with basic plan', () => {
-		const tree = renderer
-			.create( <GSuiteFeatures domainName="testing123.com" productSlug={ GSUITE_BASIC_SLUG } /> )
-			.toJSON();
+		const { container } = render(
+			<GSuiteFeatures domainName="testing123.com" productSlug={ GSUITE_BASIC_SLUG } />
+		);
 
-		expect( tree ).toMatchSnapshot();
+		expect( container.firstChild ).toMatchSnapshot();
 	} );
 
 	test( 'it renders GSuiteFeatures with business plan', () => {
-		const tree = renderer
-			.create( <GSuiteFeatures domainName="testing123.com" productSlug={ GSUITE_BUSINESS_SLUG } /> )
-			.toJSON();
+		const { container } = render(
+			<GSuiteFeatures domainName="testing123.com" productSlug={ GSUITE_BUSINESS_SLUG } />
+		);
 
-		expect( tree ).toMatchSnapshot();
+		expect( container.firstChild ).toMatchSnapshot();
 	} );
 
 	test( 'it renders GSuiteFeatures without a productSlug', () => {
-		const tree = renderer.create( <GSuiteFeatures domainName="testing123.com" /> ).toJSON();
+		const { container } = render( <GSuiteFeatures domainName="testing123.com" /> );
 
-		expect( tree ).toMatchSnapshot();
+		expect( container.firstChild ).toMatchSnapshot();
 	} );
 
 	test( 'it renders GSuiteFeatures in a list', () => {
-		const tree = renderer
-			.create(
-				<GSuiteFeatures domainName="testing123.com" productSlug={ GSUITE_BASIC_SLUG } type="list" />
-			)
-			.toJSON();
+		const { container } = render(
+			<GSuiteFeatures domainName="testing123.com" productSlug={ GSUITE_BASIC_SLUG } type="list" />
+		);
 
-		expect( tree ).toMatchSnapshot();
+		expect( container.firstChild ).toMatchSnapshot();
 	} );
 } );

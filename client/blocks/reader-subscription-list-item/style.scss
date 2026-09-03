@@ -1,3 +1,8 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/long-content-fade";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+
 .reader-subscription-list-item__byline {
 	color: var(--color-text);
 	margin: 0 12px;

@@ -1,4 +1,4 @@
-import { debounce } from 'lodash';
+import { debounce } from '@wordpress/compose';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import afterLayoutFlush from 'calypso/lib/after-layout-flush';

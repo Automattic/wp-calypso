@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { contextTypes } from '../context-types';
+import { TourContext } from '../context';
 
 export default class Next extends Component {
 	static displayName = 'Next';
@@ -11,11 +11,7 @@ export default class Next extends Component {
 		step: PropTypes.string.isRequired,
 	};
 
-	static contextTypes = contextTypes;
-
-	constructor( props, context ) {
-		super( props, context );
-	}
+	static contextType = TourContext;
 
 	onClick = () => {
 		const { next, tour, tourVersion, step } = this.context;

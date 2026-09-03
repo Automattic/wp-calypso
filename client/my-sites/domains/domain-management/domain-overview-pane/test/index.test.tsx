@@ -31,7 +31,7 @@ window.IntersectionObserver = jest.fn( () => ( {
 	thresholds: [],
 	takeRecords: jest.fn(),
 	unobserve: jest.fn(),
-} ) );
+} ) ) as unknown as typeof IntersectionObserver;
 
 function createState( siteId = 1 ) {
 	return {

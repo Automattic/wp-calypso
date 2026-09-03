@@ -2,7 +2,7 @@ import './styles.scss';
 import { Reader } from '@automattic/data-stores';
 import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, type JSX } from 'react';
 import { useDebounce } from 'use-debounce';
 import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
 import wpcom from 'calypso/lib/wp';

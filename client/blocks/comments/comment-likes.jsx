@@ -1,8 +1,9 @@
+import { pick } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { flowRight, get, pick } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import LikeButton from 'calypso/blocks/like-button/button';
 import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
 import { useCommentLikeMutations } from 'calypso/reader/data/comments';
@@ -70,8 +71,8 @@ class CommentLikeButtonContainer extends Component {
 
 	render() {
 		const props = pick( this.props, [ 'showZeroCount', 'tagName' ] );
-		const likeCount = get( this.props.comment, 'like_count' );
-		const iLike = get( this.props.comment, 'i_like' );
+		const likeCount = this.props.comment?.like_count;
+		const iLike = this.props.comment?.i_like;
 		const likedLabel = translate( 'Liked' );
 
 		const likeIcon = ReaderLikeIcon( {
@@ -125,7 +126,7 @@ const withCommentLikeMutations = ( WrappedComponent ) => {
 	return WithCommentLikeMutations;
 };
 
-export default flowRight(
+export default compose(
 	connect(
 		( state ) => ( {
 			isLoggedIn: isUserLoggedIn( state ),

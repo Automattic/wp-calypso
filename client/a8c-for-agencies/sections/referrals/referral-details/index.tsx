@@ -1,8 +1,9 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
+import SubscriptionStatus from 'calypso/dashboard/agency/earn/referrals/subscription-status';
 import ItemView, { createFeaturePreview } from 'calypso/layout/hosting-dashboard/item-view';
-import SubscriptionStatus from '../referrals-list/subscription-status';
 import ReferralCommissions from './commissions';
 import ReferralPurchasesMobile from './mobile/purchases-mobile';
 import ReferralPurchases from './purchases';
@@ -34,17 +35,16 @@ export default function ReferralDetails( {
 	const itemData: ItemData = {
 		title: referral.client.email,
 		subtitle: (
-			<div className="referral-details__subtitle">
-				{ translate( 'Payment status {{badge}}%(status)s{{/badge}}', {
-					args: {
-						status: referral.purchaseStatuses[ 0 ],
-					},
-					comment: '%(status) is subscription status',
-					components: {
-						badge: <SubscriptionStatus item={ referral } />,
-					},
-				} ) }
-			</div>
+			<HStack
+				className="referral-details__subtitle"
+				spacing={ 2 }
+				justify="flex-start"
+				alignment="center"
+				expanded={ false }
+			>
+				<span>{ translate( 'Payment status' ) }</span>
+				<SubscriptionStatus item={ referral } />
+			</HStack>
 		),
 		withIcon: false,
 		hideEnvDataInHeader: true,

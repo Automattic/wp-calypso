@@ -63,7 +63,15 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 			{ title && <div className="plan-type-selector__title">{ title }</div> }
 			<div
 				className="plan-type-selector__interval-type"
-				ref={ intervalType === 'monthly' ? ( ref ) => ref && ! spanRef && setSpanRef( ref ) : null }
+				ref={
+					intervalType === 'monthly'
+						? ( ref ) => {
+								if ( ref && ! spanRef ) {
+									setSpanRef( ref );
+								}
+						  }
+						: null
+				}
 			>
 				<SegmentedControl compact className={ segmentClasses } primary>
 					{ intervalTabs.map( ( interval ) => (

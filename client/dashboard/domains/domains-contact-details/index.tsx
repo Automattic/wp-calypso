@@ -1,5 +1,7 @@
 import {
 	type DomainContactDetails,
+	type DomainContactDetailsExtra,
+	type WhoisContactExtra,
 	type WhoisDataEntry,
 	WhoisType,
 	type Domain,
@@ -13,13 +15,24 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainsContactInfoRoute, domainsIndexRoute } from '../../app/router/domains';
+import {
+	isCaDomain,
+	mapWhoisExtraToCaContactExtra,
+} from '../../components/domain-contact-details-form/ca-contact-fields';
 import ContactForm from '../../components/domain-contact-details-form/contact-form';
+import {
+	isFrDomain,
+	mapWhoisExtraToFrContactExtra,
+} from '../../components/domain-contact-details-form/fr-contact-fields';
+import {
+	isUkDomain,
+	mapWhoisExtraToUkContactExtra,
+} from '../../components/domain-contact-details-form/uk-contact-fields';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
 import { mostCommonValueInArray } from '../../utils/collection';
-import { omit } from '../../utils/object';
 
 const aggregateWhoisDataWithMostCommonValues = (
 	whoisData: WhoisDataEntry[]
@@ -79,12 +92,64 @@ export default function DomainsContactInfo() {
 			return { initialData, key: JSON.stringify( initialData ) };
 		}
 
-		const initialData = aggregateWhoisDataWithMostCommonValues(
-			whoisData.flat().filter( ( whois ) => whois.type === WhoisType.REGISTRANT )
-		);
+		const registrantWhois = whoisData
+			.flat()
+			.filter( ( whois ) => whois.type === WhoisType.REGISTRANT );
+
+		const initialData = aggregateWhoisDataWithMostCommonValues( registrantWhois );
+
+		// Only the matching TLD's domains carry these registrant details, so they
+		// vote alone. The loader keeps `whoisData` in `selectedDomains` order,
+		// which is what makes the index check work. Counting the rest in would let
+		// their empty values win the majority and drop a prefill the matching
+		// domains agreed on.
+		const aggregateExtraForTld = (
+			matchesTld: ( domainName: string ) => boolean
+		): WhoisContactExtra | undefined => {
+			const registrantWhois = whoisData
+				.filter( ( _, index ) => matchesTld( selectedDomains[ index ] ) )
+				.flat()
+				.filter( ( whois ) => whois.type === WhoisType.REGISTRANT );
+
+			if ( ! registrantWhois.length ) {
+				return undefined;
+			}
+
+			// Follow the same most-common-value rule as every other field: when the
+			// selected domains disagree on a value there is no single right answer,
+			// so the majority one is offered and the registrant can correct it.
+			const fieldNames = new Set(
+				registrantWhois.flatMap( ( whois ) => Object.keys( whois.extra ?? {} ) )
+			);
+			const aggregated: WhoisContactExtra = {};
+			for ( const fieldName of fieldNames ) {
+				aggregated[ fieldName ] =
+					mostCommonValueInArray(
+						registrantWhois.map( ( whois ) => whois.extra?.[ fieldName ] ?? '' )
+					) ?? '';
+			}
+			return aggregated;
+		};
+
+		const extra: DomainContactDetailsExtra = {};
+		const ukExtra = mapWhoisExtraToUkContactExtra( aggregateExtraForTld( isUkDomain ) );
+		if ( ukExtra ) {
+			extra.uk = ukExtra;
+		}
+		const frExtra = mapWhoisExtraToFrContactExtra( aggregateExtraForTld( isFrDomain ) );
+		if ( frExtra ) {
+			extra.fr = frExtra;
+		}
+		const caExtra = mapWhoisExtraToCaContactExtra( aggregateExtraForTld( isCaDomain ) );
+		if ( caExtra ) {
+			extra.ca = caExtra;
+		}
+		if ( Object.keys( extra ).length > 0 ) {
+			initialData.extra = extra;
+		}
 
 		return { initialData, key: JSON.stringify( initialData ) };
-	}, [ whoisData ] );
+	}, [ whoisData, selectedDomains ] );
 
 	const domainsWithUnmodifiableContactInfo = useMemo( () => {
 		return domainDetails
@@ -116,7 +181,7 @@ export default function DomainsContactInfo() {
 							type: 'update-contact-info',
 							domains: selectedDomains,
 							transfer_lock: optOutTransferLock === false,
-							whois: omit( whois, [ 'extra' ] as const ),
+							whois,
 						},
 						{
 							onSuccess: () => {
@@ -145,7 +210,7 @@ export default function DomainsContactInfo() {
 	};
 
 	const editingMessage =
-		/* translators: %(domainCount) is the number of domains */
+		/* translators: %(domainCount)d: the number of domains */
 		_n(
 			'Editing contact details for %(domainCount)d domain:',
 			'Editing contact details for %(domainCount)d domains:',
@@ -164,6 +229,7 @@ export default function DomainsContactInfo() {
 		>
 			<ContactForm
 				key={ key }
+				domainNames={ selectedDomains }
 				initialData={ initialData }
 				beforeForm={
 					<Notice

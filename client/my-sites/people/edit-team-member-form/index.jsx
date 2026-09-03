@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
@@ -36,17 +35,15 @@ export const EditTeamMemberForm = ( {
 	const goBack = () => {
 		recordGoogleEvent( 'People', 'Clicked Back Button on User Edit' );
 
-		const teamRoute = isEnabled( 'user-management-revamp' ) ? 'team-members' : 'team';
-
 		if ( previousRoute ) {
 			page.back( previousRoute );
 			return;
 		}
 		if ( siteSlug ) {
-			page( `/people/${ teamRoute }/${ siteSlug }` );
+			page( `/people/team/${ siteSlug }` );
 			return;
 		}
-		page( `/people/${ teamRoute }` );
+		page( '/people/team' );
 	};
 
 	const { markChanged, markSaved } = useProtectForm();
@@ -67,8 +64,6 @@ export const EditTeamMemberForm = ( {
 						user={ user }
 						disabled={ false } // @TODO added when added mutation to remove user
 						siteId={ siteId }
-						autoSave={ isEnabled( 'user-management-revamp' ) }
-						roleSelectControlType={ isEnabled( 'user-management-revamp' ) ? 'select' : 'radio' }
 						isJetpack={ isJetpack }
 						markChanged={ markChanged }
 						markSaved={ markSaved }

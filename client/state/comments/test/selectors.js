@@ -1,12 +1,12 @@
 import {
 	getPostOldestCommentDate,
 	getPostNewestCommentDate,
+	getCommentById,
 	getCommentLike,
 	getPostCommentsTree,
 	getPostCommentsCountAtDate,
 	getInlineCommentsExpandedState,
 } from '../selectors';
-import { isCommentsApiDisabled } from '../selectors/get-comments-api-disabled';
 
 const state = {
 	comments: {
@@ -163,6 +163,19 @@ describe( 'selectors', () => {
 		test( 'should reverse children', () => {
 			expect( getPostCommentsTree( stateWithDeeperChildren, 1, 1, 'all' ) ).toMatchSnapshot();
 		} );
+
+		test( 'handles placeholder comments that have no parent', () => {
+			const stateWithPlaceholder = {
+				comments: {
+					items: {
+						'1-1': [ { ID: 'placeholder-123', isPlaceholder: true, status: 'unapproved' } ],
+					},
+				},
+			};
+			const tree = getPostCommentsTree( stateWithPlaceholder, 1, 1, 'all' );
+			expect( tree[ 'placeholder-123' ].data.ID ).toBe( 'placeholder-123' );
+			expect( tree.children ).toEqual( [] );
+		} );
 	} );
 
 	describe( '#getPostCommentsCountAtDate()', () => {
@@ -253,39 +266,38 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#isCommentsApiDisabled()', () => {
-		test( 'should return true when API is disabled for a site', () => {
-			const testState = {
-				comments: {
-					apiDisabled: {
-						123: true,
-					},
+	describe( '#getCommentById()', () => {
+		const commentsState = {
+			comments: {
+				errors: {},
+				items: {
+					'1-10': [ { ID: 1 }, { ID: 2 } ],
+					'1-20': [ { ID: 3 } ],
+					'2-10': [ { ID: 4 } ],
 				},
-			};
+			},
+		};
 
-			expect( isCommentsApiDisabled( testState, 123 ) ).toBe( true );
+		test( 'finds a comment across the flattened posts of a site', () => {
+			expect( getCommentById( { state: commentsState, commentId: 3, siteId: 1 } ) ).toEqual( {
+				ID: 3,
+			} );
 		} );
 
-		test( 'should return false when API is not disabled for a site', () => {
-			const testState = {
-				comments: {
-					apiDisabled: {
-						123: true,
-					},
-				},
-			};
-
-			expect( isCommentsApiDisabled( testState, 456 ) ).toBe( false );
+		test( 'ignores comments belonging to other sites', () => {
+			expect( getCommentById( { state: commentsState, commentId: 4, siteId: 1 } ) ).toBeUndefined();
 		} );
 
-		test( 'should return false when apiDisabled state is empty', () => {
-			const testState = {
+		test( 'returns a stored error before looking up items', () => {
+			const errorState = {
 				comments: {
-					apiDisabled: {},
+					errors: { '1-99': { error: true } },
+					items: {},
 				},
 			};
-
-			expect( isCommentsApiDisabled( testState, 123 ) ).toBe( false );
+			expect( getCommentById( { state: errorState, commentId: 99, siteId: 1 } ) ).toEqual( {
+				error: true,
+			} );
 		} );
 	} );
 } );

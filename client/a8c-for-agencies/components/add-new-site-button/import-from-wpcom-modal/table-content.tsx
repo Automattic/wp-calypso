@@ -15,6 +15,8 @@ export default function WPCOMSitesTableContent( { items, fields }: Props ) {
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
 		fields: [ 'site', 'date', 'type' ],
+		// Prevents DataViews from wrapping headers in a padded menu button that misaligns the select-all checkbox.
+		layout: { enableMoving: false },
 	} );
 
 	const { data, paginationInfo } = useMemo( () => {

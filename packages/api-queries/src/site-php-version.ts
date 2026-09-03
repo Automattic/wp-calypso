@@ -10,6 +10,7 @@ export const sitePHPVersionQuery = ( siteId: number ) =>
 
 export const sitePHPVersionMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-php-version-update' },
 		mutationFn: ( version: string ) => updatePHPVersion( siteId, version ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( sitePHPVersionQuery( siteId ) );

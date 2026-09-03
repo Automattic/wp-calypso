@@ -1,0 +1,39 @@
+.is-section-reader {
+
+	.sidebar__more-menu .components-dropdown-menu__toggle {
+		min-width: auto;
+		width: 20px;
+		height: 20px;
+		padding: 0;
+		color: inherit;
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.1s;
+	}
+
+	.sidebar__more-menu-dropdown-content {
+		.components-popover__content {
+			position: relative;
+			top: -10px;
+			padding: 5px;
+			box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04);
+		}
+	}
+
+	.sidebar__more-menu-dropdown button.is-opened,
+	.sidebar__heading:hover .sidebar__more-menu .components-dropdown-menu__toggle,
+	.sidebar__heading:has(:focus-visible) .sidebar__more-menu .components-dropdown-menu__toggle,
+	.sidebar__menu-link:hover .sidebar__more-menu .components-dropdown-menu__toggle,
+	.sidebar__menu-link:has(:focus-visible) .sidebar__more-menu .components-dropdown-menu__toggle {
+		opacity: 1;
+		pointer-events: auto;
+	}
+
+	// Touch pointers can't hover — surface the ellipsis and drop the count.
+	@media (hover: none) {
+		.sidebar__more-menu {
+			opacity: 1;
+			pointer-events: auto;
+		}
+	}
+}

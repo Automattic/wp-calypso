@@ -9,7 +9,14 @@ import {
 	updatePluginUploadProgress,
 	uploadPlugin,
 } from '../actions';
-import { inProgress, progressPercent, uploadedPluginId, uploadError } from '../reducer';
+import {
+	inProgress,
+	progressPercent,
+	uploadFile,
+	uploadedPluginId,
+	uploadError,
+	uploadMethod,
+} from '../reducer';
 
 const siteId = 2916284;
 const pluginId = 'hello-dolly';
@@ -45,6 +52,48 @@ describe( 'uploadedPluginId', () => {
 	test( 'should be empty after failed upload', () => {
 		const state = uploadedPluginId( { [ siteId ]: pluginId }, pluginUploadError( siteId, error ) );
 		expect( state[ siteId ] ).toBeNull();
+	} );
+
+	// The plugin list is watched under this slug, so a leftover would confirm the wrong install.
+	test( 'should be empty after a zip transfer starts', () => {
+		const state = uploadedPluginId(
+			{ [ siteId ]: pluginId },
+			initiateAutomatedTransferWithPluginZip( siteId )
+		);
+		expect( state[ siteId ] ).toBeNull();
+	} );
+} );
+
+describe( 'uploadMethod', () => {
+	test( 'should record which path the upload took', () => {
+		expect( uploadMethod( {}, uploadPlugin( siteId ) )[ siteId ] ).toBe( 'direct' );
+		expect( uploadMethod( {}, initiateAutomatedTransferWithPluginZip( siteId ) )[ siteId ] ).toBe(
+			'transfer'
+		);
+	} );
+} );
+
+describe( 'uploadFile', () => {
+	const file = { name: 'plugin.zip' };
+
+	test( 'should contain the file after upload starts', () => {
+		const state = uploadFile( {}, uploadPlugin( siteId, file ) );
+		expect( state[ siteId ] ).toBe( file );
+	} );
+
+	test( 'should retain the file after a failed upload', () => {
+		const state = uploadFile( { [ siteId ]: file }, pluginUploadError( siteId, error ) );
+		expect( state[ siteId ] ).toBe( file );
+	} );
+
+	test( 'should clear the file after a successful upload', () => {
+		const state = uploadFile( { [ siteId ]: file }, completePluginUpload( siteId, pluginId ) );
+		expect( state[ siteId ] ).toBeUndefined();
+	} );
+
+	test( 'should clear the file when the upload is cleared', () => {
+		const state = uploadFile( { [ siteId ]: file }, clearPluginUpload( siteId ) );
+		expect( state[ siteId ] ).toBeUndefined();
 	} );
 } );
 

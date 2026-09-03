@@ -22,7 +22,11 @@ import type { SitePreviewPane } from '../types';
 import type { Site } from '@automattic/api-core';
 import type { Action, View } from '@wordpress/dataviews';
 
-const listView: Pick< View, 'type' | 'fields' > = { type: 'list', fields: [] };
+const listView: Pick< View, 'type' | 'fields' | 'mediaField' > = {
+	type: 'list',
+	fields: [],
+	mediaField: 'icon.ico',
+};
 
 const navigate = ( { search, replace }: { search: any; replace?: boolean } ) => {
 	const params = new URLSearchParams( search );
@@ -75,7 +79,12 @@ export default function DefaultSitesDataViews( {
 
 	const handleViewChange = ( nextView: View ) => {
 		recordViewChanges( view, nextView, recordTracksEvent );
-		updateView( { ...nextView, type: view.type, fields: view.fields } as View );
+		updateView( {
+			...nextView,
+			type: view.type,
+			fields: view.fields,
+			mediaField: view.mediaField,
+		} as View );
 	};
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginateSites(

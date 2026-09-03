@@ -1,4 +1,3 @@
-import { find } from 'lodash';
 import AsyncLoad from 'calypso/components/async-load';
 import { getMomentSiteZone } from '../../hooks/use-moment-site-zone';
 import { getSiteFilters, rangeOfPeriod, type SiteFilterType } from '../shared/helpers';
@@ -13,7 +12,7 @@ setTimeout( loadSubscribers, 3000 );
 function subscribers( context: Context, next: () => void ) {
 	const givenSiteId = context.params.site;
 	const filters = getSiteFilters( givenSiteId );
-	const activeFilter = find( filters, ( filter: SiteFilterType ) => {
+	const activeFilter = filters.find( ( filter: SiteFilterType ) => {
 		return (
 			context.path.indexOf( filter.path ) >= 0 ||
 			( filter.altPaths && context.path.indexOf( filter.altPaths ) >= 0 )

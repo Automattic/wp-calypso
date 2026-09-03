@@ -206,30 +206,30 @@ export function prepareScheduleName( locale: string, schedule: ScheduledUpdateRo
 	const dayNumber = new Date( schedule.nextUpdate * 1000 ).getDay();
 
 	if ( schedule.schedule === 'daily' ) {
-		/* translators: Daily at 10 am. */
+		/* translators: %s: a time of day, e.g. 10 am. */
 		return sprintf( __( 'Daily at %s' ), time );
 	} else if ( schedule.schedule === 'weekly' ) {
 		switch ( dayNumber ) {
 			case 0:
-				/* translators: Sundays at 10 am. */
+				/* translators: %s: a time of day, e.g. 10 am. */
 				return sprintf( __( 'Sundays at %s' ), time );
 			case 1:
-				/* translators: Mondays at 10 am. */
+				/* translators: %s: a time of day, e.g. 10 am. */
 				return sprintf( __( 'Mondays at %s' ), time );
 			case 2:
-				/* translators: Tuesdays at 10 am. */
+				/* translators: %s: a time of day, e.g. 10 am. */
 				return sprintf( __( 'Tuesdays at %s' ), time );
 			case 3:
-				/* translators: Wednesdays at 10 am. */
+				/* translators: %s: a time of day, e.g. 10 am. */
 				return sprintf( __( 'Wednesdays at %s' ), time );
 			case 4:
-				/* translators: Thursdays at 10 am. */
+				/* translators: %s: a time of day, e.g. 10 am. */
 				return sprintf( __( 'Thursdays at %s' ), time );
 			case 5:
-				/* translators: Fridays at 10 am. */
+				/* translators: %s: a time of day, e.g. 10 am. */
 				return sprintf( __( 'Fridays at %s' ), time );
 			case 6:
-				/* translators: Saturdays at 10 am. */
+				/* translators: %s: a time of day, e.g. 10 am. */
 				return sprintf( __( 'Saturdays at %s' ), time );
 		}
 	}

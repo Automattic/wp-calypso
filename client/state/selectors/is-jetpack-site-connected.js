@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import getJetpackConnectionStatus from 'calypso/state/selectors/get-jetpack-connection-status';
 
 /**
@@ -9,5 +8,5 @@ import getJetpackConnectionStatus from 'calypso/state/selectors/get-jetpack-conn
  * @returns {?boolean}          Whether the site is connected.
  */
 export default function isJetpackSiteConnected( state, siteId ) {
-	return get( getJetpackConnectionStatus( state, siteId ), [ 'isActive' ], null );
+	return getJetpackConnectionStatus( state, siteId )?.isActive ?? null;
 }

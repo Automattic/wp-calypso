@@ -18,7 +18,6 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 			renderHeaderSection,
 			showGdprBanner,
 			cachedMarkup,
-			beforePrimary,
 		} = context;
 		// Markup exists in the cache; no need to do extra work which won't be used.
 		if ( cachedMarkup ) {
@@ -40,7 +39,6 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 					renderHeaderSection={ renderHeaderSection }
 					redirectUri={ context.originalUrl }
 					showGdprBanner={ showGdprBanner }
-					beforePrimary={ beforePrimary }
 				/>
 			);
 		}

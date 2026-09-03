@@ -36,7 +36,13 @@ export default function CampaignsFilter( props: Props ) {
 					selected={ campaignsFilter === option.value }
 					onClick={ () => handleChange( option.value as CampaignsFilterType ) }
 				>
-					<span ref={ ( el ) => ( tabsRef.current[ option.value ] = el ) }>{ option.label }</span>
+					<span
+						ref={ ( el ) => {
+							tabsRef.current[ option.value ] = el;
+						} }
+					>
+						{ option.label }
+					</span>
 				</SegmentedControl.Item>
 			) ) }
 		</SegmentedControl>

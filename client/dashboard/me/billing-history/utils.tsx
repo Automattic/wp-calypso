@@ -1,3 +1,4 @@
+import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { isAkismetPro500Plan } from '../../utils/akismet';
@@ -187,6 +188,22 @@ function renderSpaceAddOnquantitySummary( licensedQuantity: number, isRenewal: b
 	);
 }
 
+function renderStudioCodeAiCreditsQuantitySummary( licensedQuantity: number, isRenewal: boolean ) {
+	if ( isRenewal ) {
+		return sprintf(
+			/* translators: %s: formatted number of AI credits */
+			_n( 'Renewal for %s AI credit', 'Renewal for %s AI credits', licensedQuantity ),
+			formatNumber( licensedQuantity )
+		);
+	}
+
+	return sprintf(
+		/* translators: %s: formatted number of AI credits */
+		_n( 'Purchase of %s AI credit', 'Purchase of %s AI credits', licensedQuantity ),
+		formatNumber( licensedQuantity )
+	);
+}
+
 function renderAkismetTransactionQuantitySummary( licensedQuantity: number, isRenewal: boolean ) {
 	if ( isRenewal ) {
 		return sprintf(
@@ -291,6 +308,10 @@ export function renderTransactionQuantitySummary( {
 		return renderAkismetTransactionQuantitySummary( licensedQuantity, isRenewal );
 	}
 
+	if ( PRODUCT_STUDIO_CODE_AI_CREDITS === wpcom_product_slug ) {
+		return renderStudioCodeAiCreditsQuantitySummary( licensedQuantity, isRenewal );
+	}
+
 	if ( isRenewal ) {
 		return sprintf(
 			/* translators: %d: number of items */
@@ -392,9 +413,9 @@ export function doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
 	monthsPerBillPeriodForProduct: number | undefined | null
 ): boolean {
 	if (
-		costOverrides?.some( ( costOverride ) => {
-			! isOverrideCodeIntroductoryOffer( costOverride.override_code );
-		} )
+		costOverrides?.some(
+			( costOverride ) => ! isOverrideCodeIntroductoryOffer( costOverride.override_code )
+		)
 	) {
 		return false;
 	}

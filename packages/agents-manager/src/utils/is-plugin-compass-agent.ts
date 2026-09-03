@@ -1,3 +1,5 @@
+import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
+
 /**
  * Plugin Compass agent identification helper.
  *
@@ -10,15 +12,13 @@ const PLUGIN_COMPASS_AGENT_ID = 'wpcom-workflow-plugin_compass';
 
 /**
  * True if the current host is running under the Plugin Compass agent.
- * Reads from `window.agentsManagerData.agentId` (set by the Plugin Compass
- * loader before AgentsManager mounts).
+ * Reads from `agentsManagerData.agentId` (set by the Plugin Compass loader
+ * before AgentsManager mounts).
  */
 export function isPluginCompassHost(): boolean {
 	if ( typeof window === 'undefined' ) {
 		return false;
 	}
 
-	const agentId = ( window as unknown as { agentsManagerData?: { agentId?: string } } )
-		.agentsManagerData?.agentId;
-	return agentId === PLUGIN_COMPASS_AGENT_ID;
+	return getAgentsManagerInlineData()?.agentId === PLUGIN_COMPASS_AGENT_ID;
 }

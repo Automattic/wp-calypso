@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+import type { JSX } from 'react';
 
 export default function SitePhpVersion( {
 	phpVersion,

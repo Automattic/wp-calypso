@@ -6,11 +6,14 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React, { useState } from 'react';
+import { READER_ONBOARDING_FOLLOW_SOURCE } from 'calypso/reader/onboarding-rsm/constants';
 import { recordFollow } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import InterestsModal from '../index';
 import { getTopicGroups } from '../topic-groups';
+
+const mockFollowMutate = jest.fn();
 
 // The parent owns `hasFollowed` and `relaxedPackCriteria` so they persist
 // across remounts of this modal. Most tests don't care about those flags and
@@ -46,8 +49,8 @@ jest.mock( 'calypso/data/reader/use-reader-interest-tags', () => ( {
 	useReaderInterestTags: () => [],
 } ) );
 
-jest.mock( 'calypso/data/reader/use-reader-tags', () => ( {
-	useFollowedReaderTags: () => ( { data: [] } ),
+jest.mock( 'calypso/reader/data/tags', () => ( {
+	useFollowedTags: () => ( { data: [] } ),
 } ) );
 
 // ── Internal helpers / child components ─────────────────────────────────────
@@ -57,7 +60,7 @@ jest.mock( '../topic-groups', () => ( {
 } ) );
 
 jest.mock( '../topic-group-card', () => {
-	const React = require( 'react' );
+	const React = jest.requireActual( 'react' );
 	return {
 		__esModule: true,
 		default: ( {
@@ -89,14 +92,18 @@ jest.mock( '../verificationNudge', () => ( {
 	default: () => <div data-testid="interests-verification-nudge" />,
 } ) );
 
-// ── Redux / state ────────────────────────────────────────────────────────────
+// ── State hooks ──────────────────────────────────────────────────────────────
 
-jest.mock( 'calypso/state/reader/follows/selectors', () => ( {
-	getReaderFollows: jest.fn().mockReturnValue( [] ),
-} ) );
-
-jest.mock( 'calypso/state/reader/follows/actions', () => ( {
-	follow: jest.fn( () => ( { type: 'READER_FOLLOW' } ) ),
+jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
+	getFollowingSource: jest.fn( () => 'test-source' ),
+	useFollowSite: jest.fn( () => ( {
+		mutate: mockFollowMutate,
+		mutateAsync: mockFollowMutate,
+		isPending: false,
+	} ) ),
+	useUnfollowSite: jest.fn(),
+	useIsSubscribed: jest.fn( () => false ),
+	useSiteSubscriptions: jest.fn( () => ( { subscriptions: [], refetch: jest.fn() } ) ),
 } ) );
 
 jest.mock( 'calypso/state/notices/actions', () => ( {
@@ -110,8 +117,8 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 } ) );
 
 // Mock as a thunk action creator so `dispatch( recordReaderTracksEvent(...) )`
-// still works against the real Redux store inside `renderWithProvider`, while
-// letting tests assert on the call arguments.
+// still works inside `renderWithProvider`, while letting tests assert on the
+// call arguments.
 jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
 	recordReaderTracksEvent: jest.fn(
 		( name: string, properties: Record< string, unknown > ) => () => ( {
@@ -145,7 +152,7 @@ jest.mock( '@automattic/api-queries', () => ( {
 
 // ── Shared step indicator (not under test here) ──────────────────────────────
 
-jest.mock( 'calypso/reader/onboarding-rsm/step-indicator', () => ( {
+jest.mock( 'calypso/reader/components/step-indicator', () => ( {
 	StepIndicator: () => null,
 } ) );
 
@@ -319,6 +326,7 @@ describe( 'InterestsModal – analytics for pack subscribe', () => {
 		jest.mocked( recordTracksEvent ).mockClear();
 		jest.mocked( recordFollow ).mockClear();
 		jest.mocked( recordReaderTracksEvent ).mockClear();
+		mockFollowMutate.mockClear();
 	} );
 
 	afterEach( () => {
@@ -382,7 +390,12 @@ describe( 'InterestsModal – analytics for pack subscribe', () => {
 		await user.click( screen.getByTestId( 'topic-pack-card' ) );
 
 		expect( recordFollow ).toHaveBeenCalledTimes( packBlogs.length );
+		expect( mockFollowMutate ).toHaveBeenCalledTimes( packBlogs.length );
 		for ( const blog of packBlogs ) {
+			expect( mockFollowMutate ).toHaveBeenCalledWith( {
+				feedUrl: blog.feed_URL,
+				source: READER_ONBOARDING_FOLLOW_SOURCE,
+			} );
 			expect( recordFollow ).toHaveBeenCalledWith( blog.feed_URL, undefined, {
 				follow_source: 'reader-onboarding-modal',
 			} );

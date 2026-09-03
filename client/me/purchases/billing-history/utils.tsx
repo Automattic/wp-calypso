@@ -1,3 +1,4 @@
+import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
 import {
 	getPlanTermLabel,
 	isDIFMProduct,
@@ -10,7 +11,7 @@ import {
 } from '@automattic/calypso-products';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { LocalizeProps, useTranslate } from 'i18n-calypso';
-import { Fragment } from 'react';
+import { Fragment, type JSX } from 'react';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import {
 	BillingTransaction,
@@ -118,6 +119,9 @@ export function TransactionAmount( {
 } ): JSX.Element {
 	const translate = useTranslate();
 	const taxName = useTaxName( transaction.tax_country_code );
+	const effectiveTaxName = transaction.tax_breakdown?.length
+		? transaction.tax_breakdown.map( ( e ) => e.label ).join( ' + ' )
+		: taxName;
 
 	if ( ! transactionIncludesTax( transaction ) ) {
 		return (
@@ -130,14 +134,14 @@ export function TransactionAmount( {
 		);
 	}
 
-	const includesTaxString = taxName
+	const includesTaxString = effectiveTaxName
 		? translate( '(includes %(taxAmount)s %(taxName)s)', {
 				args: {
 					taxAmount: formatCurrency( transaction.tax_integer, transaction.currency, {
 						isSmallestUnit: true,
 						stripZeros: true,
 					} ),
-					taxName,
+					taxName: effectiveTaxName,
 				},
 				comment:
 					'taxAmount is a localized price, like $12.34 | taxName is a localized tax, like VAT or GST',
@@ -313,6 +317,26 @@ export function DomainTransactionVolumeSummary( { item }: { item: BillingTransac
 	);
 }
 
+function renderStudioCodeAiCreditsQuantitySummary(
+	licensed_quantity: number,
+	isRenewal: boolean,
+	translate: LocalizeProps[ 'translate' ]
+) {
+	if ( isRenewal ) {
+		return translate( 'Renewal for %(quantity)s AI credit', 'Renewal for %(quantity)s AI credits', {
+			args: { quantity: formatNumber( licensed_quantity ) },
+			count: licensed_quantity,
+			comment: '%(quantity)s is the number of AI credits',
+		} );
+	}
+
+	return translate( 'Purchase of %(quantity)s AI credit', 'Purchase of %(quantity)s AI credits', {
+		args: { quantity: formatNumber( licensed_quantity ) },
+		count: licensed_quantity,
+		comment: '%(quantity)s is the number of AI credits',
+	} );
+}
+
 function renderAkismetTransactionQuantitySummary(
 	licensed_quantity: number,
 	isRenewal: boolean,
@@ -381,6 +405,10 @@ export function renderTransactionQuantitySummary(
 
 	if ( isAkismetPro500( product ) ) {
 		return renderAkismetTransactionQuantitySummary( licensed_quantity, isRenewal, translate );
+	}
+
+	if ( PRODUCT_STUDIO_CODE_AI_CREDITS === wpcom_product_slug ) {
+		return renderStudioCodeAiCreditsQuantitySummary( licensed_quantity, isRenewal, translate );
 	}
 
 	if ( isRenewal ) {

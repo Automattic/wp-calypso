@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import { omit } from '@automattic/js-utils';
 import { getSerializedPostsQuery } from 'calypso/state/posts/utils/get-serialized-posts-query';
 
 /**

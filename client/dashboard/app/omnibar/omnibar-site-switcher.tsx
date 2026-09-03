@@ -13,7 +13,6 @@ import { useState } from 'react';
 import SiteIcon from '../../components/site-icon';
 import Switcher from '../../components/switcher';
 import SwitcherContent from '../../components/switcher/switcher-content';
-import { Text } from '../../components/text';
 import AddNewSite from '../../sites/add-new-site';
 import { canManageSite } from '../../sites/features';
 import { getSiteDisplayName } from '../../utils/site-name';
@@ -64,7 +63,14 @@ export default function OmnibarSiteSwitcher() {
 	} );
 	useOmnibarEvent( 'siteSwitcherAnchor', setAnchor );
 
-	const { data: sites } = useQuery( { ...queries.sitesQuery(), enabled: isOpen } );
+	const { data: sites } = useQuery( {
+		...queries.sitesQuery( {
+			site_visibility: 'visible',
+			include_a8c_owned: false,
+			include_staging: false,
+		} ),
+		enabled: isOpen,
+	} );
 
 	return (
 		<>
@@ -104,16 +110,8 @@ export default function OmnibarSiteSwitcher() {
 						renderItem={ ( { item } ) => (
 							<Switcher.Item
 								media={ <SiteIcon site={ item } size={ 32 } /> }
-								title={
-									<Text weight={ 500 } truncate numberOfLines={ 1 } style={ { color: 'inherit' } }>
-										{ getSiteDisplayName( item ) }
-									</Text>
-								}
-								description={
-									<Text variant="muted" truncate numberOfLines={ 1 }>
-										{ getSiteDisplayUrl( item ) }
-									</Text>
-								}
+								title={ getSiteDisplayName( item ) }
+								description={ getSiteDisplayUrl( item ) }
 							/>
 						) }
 						onClose={ onClose }

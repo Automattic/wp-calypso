@@ -1,8 +1,7 @@
 import { translate } from 'i18n-calypso';
-import { trim } from 'lodash';
 
 export const parseUrl = function ( value = '' ) {
-	const rawUrl = trim( value );
+	const rawUrl = value.trim();
 	const hasProtocol = value.startsWith( 'https://' ) || value.startsWith( 'http://' );
 
 	return new URL( hasProtocol ? rawUrl : 'https://' + rawUrl );

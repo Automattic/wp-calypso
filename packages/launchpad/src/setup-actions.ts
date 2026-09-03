@@ -1,7 +1,6 @@
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
-import { addQueryArgs } from '@wordpress/url';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { LaunchpadTaskActionsProps, Task } from './types';
 
@@ -38,8 +37,14 @@ export const setUpActionsForTasks = ( {
 		const hasCalypsoPath = task.calypso_path !== undefined;
 
 		if ( uiContext === 'calypso' && hasCalypsoPath ) {
-			if ( task.id === 'drive_traffic' && ! isMobile() && hasCalypsoPath ) {
-				task.calypso_path = addQueryArgs( task.calypso_path, { tour: 'marketingConnectionsTour' } );
+			const { calypso_path } = task;
+			if ( task.id === 'drive_traffic' && ! isMobile() && calypso_path !== undefined ) {
+				// Merge the query via a throwaway base, but keep the original string as the base so
+				// absolute origins survive, then re-append any fragment.
+				const params = new URL( calypso_path, 'http://example.com' ).searchParams;
+				params.set( 'tour', 'marketingConnectionsTour' );
+				const [ baseAndQuery, fragment = '' ] = calypso_path.split( /(#.*)/s );
+				task.calypso_path = `${ baseAndQuery.split( '?' )[ 0 ] }?${ params }${ fragment }`;
 			}
 
 			// Enable task in 'calypso' context

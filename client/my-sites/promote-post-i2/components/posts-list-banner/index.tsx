@@ -10,7 +10,9 @@ export default function PostsListBanner() {
 				<section className="posts-list-banner__text-section">
 					<div className="posts-list-banner__header">
 						<BlazeLogo size={ 16 } className="blaze" colorStart="#E65054" colorEnd="#E65054" />
-						{ translate( 'Powered by Blaze' ) }
+						{ translate( 'Powered by %(productName)s', {
+							args: { productName: 'Blaze Ads' },
+						} ) }
 					</div>
 					<div className="posts-list-banner__title wp-brand-font">
 						{ translate( 'Transform content to an ad with a click.' ) }

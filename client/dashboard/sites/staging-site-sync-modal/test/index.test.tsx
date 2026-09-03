@@ -5,6 +5,7 @@
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import useRewindableActivityLogQuery from '../../../../data/activity-log/use-rewindable-activity-log-query';
 import { render } from '../../../test-utils';
 import StagingSiteSyncModal from '../index';
 import type { Site } from '@automattic/api-core';
@@ -33,7 +34,7 @@ jest.mock( '../../../components/inline-support-link', () => {
 jest.mock(
 	'../../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context',
 	() => {
-		const { createContext, useContext, createElement, useState } = require( 'react' );
+		const { createContext, useContext, createElement, useState } = jest.requireActual( 'react' );
 
 		const FileBrowserContext = createContext( null );
 
@@ -283,8 +284,10 @@ describe( 'Form Submission', () => {
 	} );
 
 	test( 'submit button is enabled when domain confirmation matches', async () => {
-		const useRewindableActivityLogQuery = require( '../../../../data/activity-log/use-rewindable-activity-log-query' );
-		useRewindableActivityLogQuery.mockReturnValue( { data: undefined, isLoading: false } );
+		( useRewindableActivityLogQuery as jest.Mock ).mockReturnValue( {
+			data: undefined,
+			isLoading: false,
+		} );
 
 		mockSite( createMockSite() );
 		mockSite( createMockStagingSite() );
@@ -322,8 +325,10 @@ describe( 'Form Submission', () => {
 	} );
 
 	test( 'submits with expected options on push to production', async () => {
-		const useRewindableActivityLogQuery = require( '../../../../data/activity-log/use-rewindable-activity-log-query' );
-		useRewindableActivityLogQuery.mockReturnValue( { data: undefined, isLoading: false } );
+		( useRewindableActivityLogQuery as jest.Mock ).mockReturnValue( {
+			data: undefined,
+			isLoading: false,
+		} );
 		const prod = createMockSite( { slug: 'test-site' } );
 		const stag = createMockStagingSite();
 

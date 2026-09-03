@@ -1,6 +1,8 @@
 import { EmailDeliveryFrequency } from '../constants';
 import type { Railcar } from '@automattic/calypso-analytics';
 
+export type { SiteSubscriptionItem } from '@automattic/api-core';
+
 export type EmailFormatType = 'html' | 'text';
 
 export type DeliveryWindowDayType = 0 | 1 | 2 | 3 | 4 | 5 | 6;
@@ -28,13 +30,6 @@ export type EmailSettingsAPIResponse = {
 	};
 };
 
-type SiteSubscriptionMeta = {
-	links: {
-		site: string;
-		feed: string;
-	};
-};
-
 export type SiteSubscriptionDeliveryMethods = {
 	email?: {
 		send_posts: boolean;
@@ -46,46 +41,6 @@ export type SiteSubscriptionDeliveryMethods = {
 		send_posts: boolean;
 		send_comments?: boolean;
 	};
-};
-
-export type PagedQueryResult< TDataType, TKey extends string > = {
-	pages: {
-		[ K in TKey ]: TDataType[];
-	}[];
-	pageParams: number;
-};
-
-export type SiteSubscriptionsResponseItem = {
-	ID: string;
-	blog_ID: string;
-	feed_ID: string;
-	URL: string;
-	date_subscribed: Date;
-	delivery_methods: SiteSubscriptionDeliveryMethods;
-	name: string;
-	organization_id: number;
-	unseen_count: number;
-	last_updated: Date;
-	site_icon: string;
-	is_owner: boolean;
-	meta: SiteSubscriptionMeta;
-	is_wpforteams_site: boolean;
-	is_paid_subscription: boolean;
-	is_comp: boolean;
-	comp_id?: number;
-	is_rss: boolean;
-	isDeleted: boolean;
-	resubscribed: boolean;
-};
-
-export type SiteSubscriptionPage = {
-	subscriptions: SiteSubscriptionsResponseItem[];
-	total_subscriptions: number;
-};
-
-export type SiteSubscriptionsPages = {
-	pageParams: [];
-	pages: SiteSubscriptionPage[];
 };
 
 export type PostSubscription = {

@@ -14,6 +14,8 @@ export enum PlatformType {
 	WindowsX64 = 'WindowsX64',
 	Linux = 'Linux',
 	LinuxDeb = 'LinuxDeb',
+	LinuxX64 = 'LinuxX64',
+	LinuxARM64 = 'LinuxARM64',
 }
 
 export interface BasePlatformConfig {
@@ -84,6 +86,20 @@ const basePlatformConfigs: Record<
 		icon: Linux,
 		iconName: 'linux-logo',
 		buttonText: translate( 'Download for Linux' ),
+		group: 'linux',
+	} ),
+	[ PlatformType.LinuxX64 ]: ( translate ) => ( {
+		name: 'Linux (x64)',
+		icon: Linux,
+		iconName: 'linux-logo',
+		buttonText: translate( 'Download for Linux (x64)' ),
+		group: 'linux',
+	} ),
+	[ PlatformType.LinuxARM64 ]: ( translate ) => ( {
+		name: 'Linux (ARM)',
+		icon: Linux,
+		iconName: 'linux-logo',
+		buttonText: translate( 'Download for Linux (ARM)' ),
 		group: 'linux',
 	} ),
 };
@@ -191,6 +207,16 @@ export const createWordPressStudioConfig = (
 				...platformConfigs[ PlatformType.WindowsARM64 ],
 				onClick: () => recordTracksEvent( 'calypso_studio_download_windows_arm64_click' ),
 				link: 'https://appscdn.wordpress.com/downloads/wordpress-com-studio/windows-arm64/latest',
+			},
+			[ PlatformType.LinuxX64 ]: {
+				...platformConfigs[ PlatformType.LinuxX64 ],
+				onClick: () => recordTracksEvent( 'calypso_studio_download_linux_x64_click' ),
+				link: 'https://appscdn.wordpress.com/downloads/wordpress-com-studio/linux-x64/latest/update',
+			},
+			[ PlatformType.LinuxARM64 ]: {
+				...platformConfigs[ PlatformType.LinuxARM64 ],
+				onClick: () => recordTracksEvent( 'calypso_studio_download_linux_arm64_click' ),
+				link: 'https://appscdn.wordpress.com/downloads/wordpress-com-studio/linux-arm64/latest/update',
 			},
 		},
 	};

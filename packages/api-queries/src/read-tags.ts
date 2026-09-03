@@ -78,8 +78,43 @@ function slugify( tag: string ): string {
 // caller's QueryClient and uses it for cache invalidation. Pass
 // `useQueryClient()` from the consuming component.
 
+// Optimistically patch the followed-tags cache so the follow/unfollow button
+// flips on click instead of waiting for the POST + refetch round-trip. The cache
+// holds the raw response ({ tags: ReadTag[] }); `select` normalizes on read, so
+// we patch the raw shape here. `onSettled` invalidation reconciles with the
+// server afterwards.
+async function cancelFollowedTags( queryClient: QueryClient ) {
+	try {
+		await queryClient.cancelQueries( { queryKey: [ 'read', 'tags', 'followed' ] } );
+	} catch {
+		// cancelQueries is best-effort; the optimistic patch below must still run.
+	}
+}
+
+function patchFollowedTags( queryClient: QueryClient, updater: ( tags: ReadTag[] ) => ReadTag[] ) {
+	queryClient.setQueriesData< ReadTagsResponse >(
+		{ queryKey: [ 'read', 'tags', 'followed' ] },
+		( old ) => ( old?.tags ? { ...old, tags: updater( old.tags ) } : old )
+	);
+}
+
+// Source a full ReadTag for the optimistic follow from the single-tag cache when
+// available; the reconciling refetch replaces the minimal fallback with real data.
+function findCachedReadTag( queryClient: QueryClient, slug: string ): ReadTag | undefined {
+	const matches = queryClient.getQueriesData< ReadSingleTagResponse >( {
+		queryKey: [ 'read', 'tags', slug ],
+	} );
+	for ( const [ , data ] of matches ) {
+		if ( data?.tag ) {
+			return data.tag;
+		}
+	}
+	return undefined;
+}
+
 export const followReadTagMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
+		meta: { statId: 'read-tag-follow' },
 		mutationFn: async ( tag: string ) => {
 			const slug = slugify( tag );
 			try {
@@ -93,11 +128,66 @@ export const followReadTagMutation = ( queryClient: QueryClient ) =>
 				throw error;
 			}
 		},
-		onSuccess: () => invalidateFollowedTags( queryClient ),
+		onMutate: async ( tag: string ) => {
+			const slug = slugify( tag );
+			await cancelFollowedTags( queryClient );
+			const optimisticTag: ReadTag = findCachedReadTag( queryClient, slug ) ?? {
+				ID: slug,
+				slug,
+				title: tag,
+				display_name: tag,
+				URL: `/tag/${ slug }`,
+			};
+			let didAdd = false;
+			patchFollowedTags( queryClient, ( tags ) => {
+				if ( tags.some( ( t ) => t.slug.toLowerCase() === slug ) ) {
+					return tags;
+				}
+				didAdd = true;
+				return [ ...tags, optimisticTag ];
+			} );
+			// Roll back only this tag on error so a failure here doesn't clobber
+			// optimistic changes from other in-flight follow/unfollow mutations.
+			return { slug, didAdd };
+		},
+		onError: ( _error, _tag, context ) => {
+			if ( context?.didAdd ) {
+				patchFollowedTags( queryClient, ( tags ) =>
+					tags.filter( ( t ) => t.slug.toLowerCase() !== context.slug )
+				);
+			}
+		},
+		onSettled: () => invalidateFollowedTags( queryClient ),
 	} );
 
 export const unfollowReadTagMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
+		meta: { statId: 'read-tag-unfollow' },
 		mutationFn: ( tag: string ) => unfollowReadTag( slugify( tag ) ),
-		onSuccess: () => invalidateFollowedTags( queryClient ),
+		onMutate: async ( tag: string ) => {
+			const slug = slugify( tag );
+			await cancelFollowedTags( queryClient );
+			let removedTag: ReadTag | undefined;
+			patchFollowedTags( queryClient, ( tags ) => {
+				const found = tags.find( ( t ) => t.slug.toLowerCase() === slug );
+				if ( found ) {
+					removedTag = found;
+				}
+				return tags.filter( ( t ) => t.slug.toLowerCase() !== slug );
+			} );
+			// Roll back only this tag on error so a failure here doesn't clobber
+			// optimistic changes from other in-flight follow/unfollow mutations.
+			return { slug, removedTag };
+		},
+		onError: ( _error, _tag, context ) => {
+			if ( context?.removedTag ) {
+				const removedTag = context.removedTag;
+				patchFollowedTags( queryClient, ( tags ) =>
+					tags.some( ( t ) => t.slug.toLowerCase() === context.slug )
+						? tags
+						: [ ...tags, removedTag ]
+				);
+			}
+		},
+		onSettled: () => invalidateFollowedTags( queryClient ),
 	} );

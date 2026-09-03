@@ -12,7 +12,6 @@ import {
 } from '@automattic/urls';
 import _debug from 'debug';
 import { localize } from 'i18n-calypso';
-import { intersection, map, find, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -133,7 +132,7 @@ export class DomainWarnings extends PureComponent {
 			this.pendingConsent,
 		];
 		const validRules = this.props.allowedRules.map( ( ruleName ) => this[ ruleName ] );
-		return intersection( allRules, validRules );
+		return allRules.filter( ( rule ) => validRules.includes( rule ) );
 	}
 
 	getDomains() {
@@ -160,8 +159,8 @@ export class DomainWarnings extends PureComponent {
 		debug( 'Rendering wrongNSMappedDomains' );
 
 		if (
-			get( this.props, 'selectedSite.jetpack' ) &&
-			! get( this.props, 'selectedSite.options.is_automated_transfer' )
+			this.props?.selectedSite?.jetpack &&
+			! this.props?.selectedSite?.options?.is_automated_transfer
 		) {
 			return null;
 		}
@@ -210,7 +209,7 @@ export class DomainWarnings extends PureComponent {
 					) ) }
 				</ul>
 			);
-			if ( map( wrongMappedDomains, 'name' ).every( isSubdomain ) ) {
+			if ( wrongMappedDomains.map( ( domain ) => domain?.name ).every( isSubdomain ) ) {
 				text = translate( "Some of your domains' DNS records need to be configured.", {
 					context: 'Notice for mapped subdomain that has DNS records need to set up',
 				} );
@@ -581,7 +580,7 @@ export class DomainWarnings extends PureComponent {
 	};
 
 	newDomains = () => {
-		if ( get( this.props, 'selectedSite.options.is_domain_only' ) ) {
+		if ( this.props?.selectedSite?.options?.is_domain_only ) {
 			return null;
 		}
 
@@ -894,7 +893,7 @@ export class DomainWarnings extends PureComponent {
 	};
 
 	pendingTransfer = () => {
-		const domain = find( this.getDomains(), 'pendingTransfer' );
+		const domain = this.getDomains().find( ( domainItem ) => domainItem.pendingTransfer );
 		if ( ! domain ) {
 			return null;
 		}
@@ -928,8 +927,7 @@ export class DomainWarnings extends PureComponent {
 	};
 
 	transferStatus = () => {
-		const domainInTransfer = find(
-			this.getDomains(),
+		const domainInTransfer = this.getDomains().find(
 			( domain ) => domain.type === domainTypes.TRANSFER
 		);
 

@@ -6,7 +6,6 @@ import './features/fix-coblocks-fonts';
 import './features/reorder-block-categories';
 import './features/tracking';
 import { OnboardingNextStepAfterPublishingPost } from './features/onboarding-next-step-after-publishing-post';
-import { RedirectOnboardingUserAfterPublishingPost } from './features/redirect-onboarding-user-after-publishing-post';
 import InserterMenuTrackingEvent from './features/tracking/wpcom-inserter-menu-search-term';
 import './features/site-editor-env-consistency';
 import './editor.scss';
@@ -15,12 +14,6 @@ import './features/tracking/site-editor-load';
 registerPlugin( 'track-inserter-menu-events', {
 	render() {
 		return <InserterMenuTrackingEvent />;
-	},
-} );
-
-registerPlugin( 'start-writing-flow', {
-	render() {
-		return <RedirectOnboardingUserAfterPublishingPost />;
 	},
 } );
 

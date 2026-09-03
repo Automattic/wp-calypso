@@ -227,6 +227,30 @@ describe( 'isNextDomainFree()', () => {
 			)
 		).toBe( true );
 	} );
+	test( 'should return true when condition is "blog,art" and requested domain is .blog', () => {
+		expect(
+			isNextDomainFree(
+				{ next_domain_is_free: true, next_domain_condition: 'blog,art' },
+				'domain.blog'
+			)
+		).toBe( true );
+	} );
+	test( 'should return true when condition is "blog,art" and requested domain is .art', () => {
+		expect(
+			isNextDomainFree(
+				{ next_domain_is_free: true, next_domain_condition: 'blog,art' },
+				'domain.art'
+			)
+		).toBe( true );
+	} );
+	test( 'should return false when condition is "blog,art" and requested domain is .com', () => {
+		expect(
+			isNextDomainFree(
+				{ next_domain_is_free: true, next_domain_condition: 'blog,art' },
+				'domain.com'
+			)
+		).toBe( false );
+	} );
 	test( 'should return false when cart.next_domain_is_free is false', () => {
 		expect( isNextDomainFree( { next_domain_is_free: false } ) ).toBe( false );
 	} );

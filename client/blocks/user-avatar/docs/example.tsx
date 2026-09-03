@@ -1,4 +1,4 @@
-import { ComponentProps } from 'react';
+import { ComponentProps, type JSX } from 'react';
 import UserAvatar from 'calypso/blocks/user-avatar';
 
 const UserAvatarExample = (): JSX.Element => {

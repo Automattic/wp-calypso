@@ -28,7 +28,7 @@ function getScanURL( site: Site ) {
 		: `/sites/${ site.slug }/scan/active`;
 }
 
-function ScanCardWithThreats( { site, scan }: { site: Site; scan: SiteScan } ) {
+function ScanCardWithThreats( { scanUrl, scan }: { scanUrl: string; scan: SiteScan } ) {
 	const threatCount = scan.threats?.length ?? 0;
 	const heading = sprintf(
 		/* translators: %d: number of risks */
@@ -46,13 +46,13 @@ function ScanCardWithThreats( { site, scan }: { site: Site; scan: SiteScan } ) {
 			{ ...CARD_PROPS }
 			heading={ heading }
 			description={ description }
-			link={ getScanURL( site ) }
+			link={ scanUrl }
 			intent="error"
 		/>
 	);
 }
 
-function ScanCardNoThreats( { site, scan }: { site: Site; scan: SiteScan } ) {
+function ScanCardNoThreats( { scanUrl, scan }: { scanUrl: string; scan: SiteScan } ) {
 	const lastScanDate = useTimeSince( scan.most_recent?.timestamp );
 	let description = '\u00A0';
 
@@ -69,14 +69,14 @@ function ScanCardNoThreats( { site, scan }: { site: Site; scan: SiteScan } ) {
 			{ ...CARD_PROPS }
 			heading={ __( 'No risks found' ) }
 			description={ description }
-			link={ getScanURL( site ) }
+			link={ scanUrl }
 			intent="success"
 		/>
 	);
 }
 
-function ScanCardContent( { site }: { site: Site } ) {
-	const { data: scan } = useQuery( siteScanQuery( site.ID ) );
+export function ScanCardContent( { siteId, scanUrl }: { siteId: number; scanUrl: string } ) {
+	const { data: scan } = useQuery( siteScanQuery( siteId ) );
 
 	if ( scan === undefined ) {
 		return <OverviewCard { ...CARD_PROPS } isLoading />;
@@ -87,10 +87,10 @@ function ScanCardContent( { site }: { site: Site } ) {
 	}
 
 	if ( scan.threats.length > 0 ) {
-		return <ScanCardWithThreats site={ site } scan={ scan } />;
+		return <ScanCardWithThreats scanUrl={ scanUrl } scan={ scan } />;
 	}
 
-	return <ScanCardNoThreats site={ site } scan={ scan } />;
+	return <ScanCardNoThreats scanUrl={ scanUrl } scan={ scan } />;
 }
 
 export default function ScanCard( { site }: { site: Site } ) {
@@ -119,7 +119,7 @@ export default function ScanCard( { site }: { site: Site } ) {
 			upsellDescription={ __( 'We guard your site. You run your business.' ) }
 			upsellLink={ getScanURL( site ) }
 		>
-			<ScanCardContent site={ site } />
+			<ScanCardContent siteId={ site.ID } scanUrl={ getScanURL( site ) } />
 		</HostingFeatureGatedWithOverviewCard>
 	);
 }

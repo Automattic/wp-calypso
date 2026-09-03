@@ -127,3 +127,11 @@ form {
 		margin-top: 12px;
 	}
 }
+
+// The challenge container is always present while the bot check is enabled but
+// only occupies space once a challenge is actually visible, so scope the spacing
+// to `.has-visible-challenge` to avoid a gap when nothing renders. Kept small
+// since the form already separates the challenge from the Continue button.
+.login__form-blackbox-challenge.has-visible-challenge {
+	margin-block-end: 8px;
+}

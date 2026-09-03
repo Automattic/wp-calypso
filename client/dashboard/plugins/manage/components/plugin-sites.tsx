@@ -1,14 +1,14 @@
-import { ExternalLink } from '@wordpress/components';
+import { __experimentalVStack as VStack, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { decodeEntities } from '@wordpress/html-entities';
 import { __, sprintf } from '@wordpress/i18n';
-import { Card, CardBody } from '../../../components/card';
+import { Card, CardBody, CardHeader } from '../../../components/card';
+import { Notice } from '../../../components/notice';
 import { SectionHeader } from '../../../components/section-header';
 import { Text } from '../../../components/text';
 import { TextBlur } from '../../../components/text-blur';
-import { isWebUrl } from '../../../utils/is-web-url';
 import { PluginTabs } from '../../plugin';
 import { usePlugin } from '../../plugin/use-plugin';
+import { getAllowedPluginActions } from '../../plugin/utils/get-allowed-plugin-actions';
 import { PluginIcon } from './plugin-icon';
 
 import './plugin-sites.scss';
@@ -22,6 +22,12 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 		sitesWithThisPlugin,
 		sitesWithoutThisPlugin,
 	} = usePlugin( selectedPluginSlug );
+
+	// Core plugins WordPress.com manages (Jetpack/VaultPress/Akismet) can't be
+	// deleted; surface a notice explaining why instead of leaving the user guessing.
+	const isCoreManagedPlugin = sitesWithThisPlugin.some(
+		( site ) => getAllowedPluginActions( site, selectedPluginSlug ).isAutoManagedPlugin
+	);
 
 	const decoration = () => {
 		if ( icon ) {
@@ -51,38 +57,53 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 			return null;
 		}
 
-		const authorUrl =
-			'author_url' in plugin && isWebUrl( plugin.author_url ) ? plugin.author_url : null;
-
-		return authorUrl
+		return plugin.authorUrl
 			? createInterpolateElement(
 					sprintf(
 						// translators: author is the plugin author.
 						__( 'By <link>%(author)s</link>' ),
-						{ author: decodeEntities( plugin.author ) }
+						{ author: plugin.author }
 					),
 					{
-						link: <ExternalLink href={ authorUrl } children={ null } />,
+						link: <ExternalLink href={ plugin.authorUrl } children={ null } />,
 					}
 			  )
 			: sprintf(
 					// translators: author is the plugin author.
 					__( 'By %(author)s' ),
-					{ author: decodeEntities( plugin.author ) }
+					{ author: plugin.author }
 			  );
 	};
 
 	return (
 		<Card className="plugin-sites-card">
-			<CardBody className="plugin-sites-card-body">
-				<SectionHeader
-					className="plugin-sites-card-header"
-					decoration={ decoration() }
-					level={ 2 }
-					title={ title() }
-					description={ description() }
-				/>
-
+			<CardHeader
+				className="plugin-sites-card-header"
+				isBorderless
+				size={ {
+					blockStart: 'medium',
+					blockEnd: 'none',
+					inlineStart: 'medium',
+					inlineEnd: 'medium',
+				} }
+			>
+				<VStack spacing={ 4 }>
+					<SectionHeader
+						decoration={ decoration() }
+						level={ 2 }
+						title={ title() }
+						description={ description() }
+					/>
+					{ isCoreManagedPlugin && (
+						<Notice variant="info">
+							{ __(
+								'This plugin is managed by WordPress.com and is required for your site to work properly, so it can’t be removed.'
+							) }
+						</Notice>
+					) }
+				</VStack>
+			</CardHeader>
+			<CardBody className="plugin-sites-card-body" size="none">
 				<PluginTabs
 					pluginSlug={ selectedPluginSlug }
 					isLoading={ isLoadingPlugin }

@@ -6,6 +6,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute, domainGlueRecordsRoute } from '../../app/router/domains';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import DomainGlueRecordsForm from './form';
@@ -13,16 +14,13 @@ import DomainGlueRecordsForm from './form';
 export default function AddDomainGlueRecords() {
 	const navigate = useNavigate();
 	const { domainName } = domainRoute.useParams();
-	const createMutation = useMutation( {
-		...domainGlueRecordCreateMutation( domainName ),
-		meta: {
-			snackbar: {
-				/* translators: %s is the domain name */
-				success: sprintf( __( 'Glue record for %s saved.' ), domainName ),
-				error: { source: 'server' },
-			},
-		},
-	} );
+	const createMutation = useMutation(
+		withSnackbar( domainGlueRecordCreateMutation( domainName ), {
+			/* translators: %s is the domain name */
+			success: sprintf( __( 'Glue record for %s saved.' ), domainName ),
+			error: { source: 'server' },
+		} )
+	);
 	const { recordTracksEvent } = useAnalytics();
 
 	const handleSubmit = ( glueRecord: DomainGlueRecord ) => {

@@ -126,16 +126,15 @@ describe( '<PluginSites> – author link XSS regression', () => {
 	} );
 
 	/**
-	 * When author_url is absent the component must not render any author
-	 * link at all – just the plain author name as text.
+	 * When neither author_url nor plugin_url is available the component must
+	 * not render any author link at all – just the plain author name as text.
 	 */
-	test( 'renders plain author text when author_url is missing', async () => {
-		// Remove the author_url property entirely so the 'author_url' in plugin
-		// check in the component evaluates to false.
+	test( 'renders plain author text when no author URL is available', async () => {
+		// Remove author_url and blank out plugin_url so there is nothing to link to.
 		const { author_url: _removed, ...pluginWithoutUrl } = makePluginsResponse().sites[ '1' ][ 0 ];
 		mockApiEndpoints( {
 			sites: {
-				'1': [ pluginWithoutUrl as PluginEntry ],
+				'1': [ { ...pluginWithoutUrl, plugin_url: '' } as PluginEntry ],
 			},
 		} );
 
@@ -143,6 +142,30 @@ describe( '<PluginSites> – author link XSS regression', () => {
 
 		await waitFor( () => expect( screen.getByText( /Malicious Author/i ) ).toBeVisible() );
 		expect( screen.queryByRole( 'link', { name: /Malicious Author/i } ) ).not.toBeInTheDocument();
+	} );
+
+	/**
+	 * Some installed plugins leave author_url empty but expose the plugin's own
+	 * site in plugin_url; the author link should fall back to that.
+	 */
+	test( 'falls back to plugin_url when author_url is missing', async () => {
+		const { author_url: _removed, ...pluginWithoutAuthorUrl } =
+			makePluginsResponse().sites[ '1' ][ 0 ];
+		mockApiEndpoints( {
+			sites: {
+				'1': [
+					{
+						...pluginWithoutAuthorUrl,
+						plugin_url: 'https://plugin-home.example.com',
+					} as PluginEntry,
+				],
+			},
+		} );
+
+		render( <PluginSites selectedPluginSlug="test-plugin" /> );
+
+		const authorLink = await screen.findByRole( 'link', { name: /Malicious Author/i } );
+		expect( ( authorLink as HTMLAnchorElement ).href ).toBe( 'https://plugin-home.example.com/' );
 	} );
 
 	/**
@@ -164,5 +187,94 @@ describe( '<PluginSites> – author link XSS regression', () => {
 		} );
 
 		expect( unsafeLinks ).toHaveLength( 0 );
+	} );
+} );
+
+// ---------------------------------------------------------------------------
+// Author normalization across data sources
+// ---------------------------------------------------------------------------
+
+describe( '<PluginSites> – author normalization across sources', () => {
+	afterEach( () => nock.cleanAll() );
+
+	/**
+	 * No installed plugins, so usePlugin resolves the plugin from the catalog
+	 * (marketplace or wp.org) instead of the WordPress.com installed data.
+	 */
+	function mockCatalogEndpoints( {
+		marketplace = { results: {} },
+		wpOrg = {},
+	}: {
+		marketplace?: { results: Record< string, unknown > };
+		wpOrg?: Record< string, unknown >;
+	} ) {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/sites/plugins' )
+			.query( true )
+			.reply( 200, { sites: {} } );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/sites' )
+			.query( true )
+			.reply( 200, { sites: [] } );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/marketplace/products' )
+			.query( true )
+			.reply( 200, marketplace );
+		nock( 'https://api.wordpress.org' )
+			.get( '/plugins/info/1.2/' )
+			.query( true )
+			.reply( 200, wpOrg );
+	}
+
+	/**
+	 * Catalog sources ship `author` as an HTML anchor and the URL in
+	 * `author_profile`. The panel must show the plain name with a link to the
+	 * profile, never raw markup.
+	 */
+	test( 'strips the HTML anchor from a catalog author and links to author_profile', async () => {
+		mockCatalogEndpoints( {
+			marketplace: {
+				results: {
+					'test-plugin': {
+						name: 'Test Plugin',
+						slug: 'test-plugin',
+						author: '<a href="https://acme.example.com/team/">Acme</a>',
+						author_profile: 'https://acme.example.com/team/',
+						icons: '',
+					},
+				},
+			},
+		} );
+
+		render( <PluginSites selectedPluginSlug="test-plugin" /> );
+
+		const authorLink = await screen.findByRole( 'link', { name: /Acme/ } );
+		expect( ( authorLink as HTMLAnchorElement ).href ).toBe( 'https://acme.example.com/team/' );
+	} );
+
+	/**
+	 * Marketplace also ships `author` as an HTML anchor, but `author_profile` is
+	 * frequently null — the panel must then show the plain name with no link
+	 * (and never the placeholder `href="#"`).
+	 */
+	test( 'strips the HTML anchor from a marketplace author and renders plain text when author_profile is null', async () => {
+		mockCatalogEndpoints( {
+			marketplace: {
+				results: {
+					'test-plugin': {
+						name: 'Test Plugin',
+						slug: 'test-plugin',
+						author: '<a href="#">Acme</a>',
+						author_profile: null,
+						icons: '',
+					},
+				},
+			},
+		} );
+
+		render( <PluginSites selectedPluginSlug="test-plugin" /> );
+
+		await waitFor( () => expect( screen.getByText( 'By Acme' ) ).toBeVisible() );
+		expect( screen.queryByRole( 'link', { name: /Acme/ } ) ).not.toBeInTheDocument();
 	} );
 } );

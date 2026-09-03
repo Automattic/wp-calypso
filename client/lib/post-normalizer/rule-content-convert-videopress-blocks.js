@@ -1,4 +1,3 @@
-import { forEach } from 'lodash';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 
 export default function convertVideoPressBlocks( post, dom ) {
@@ -9,7 +8,7 @@ export default function convertVideoPressBlocks( post, dom ) {
 	const videoAspectRatio = 0.5625; // 16:9 aspect ratio
 
 	//Loop through each VideoPress block and replace it with an iframe
-	forEach( videoPresses, ( videoPress ) => {
+	Array.from( videoPresses ).forEach( ( videoPress ) => {
 		const src = videoPress.querySelector( '.wp-block-embed__wrapper' )?.textContent?.trim();
 		// Check URL to video is valid before creating iframe
 		if ( ! src || ! src.startsWith( 'https://videopress.com/v/' ) ) {

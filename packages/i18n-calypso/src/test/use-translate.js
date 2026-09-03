@@ -2,9 +2,11 @@
  * @jest-environment jsdom
  */
 
-import ReactDOM from 'react-dom';
-import { act } from 'react-dom/test-utils';
+import { act } from 'react';
+import { createRoot } from 'react-dom/client';
 import i18n, { useTranslate } from '..';
+
+globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 function Label() {
 	const translate = useTranslate();
@@ -13,6 +15,7 @@ function Label() {
 
 describe( 'useTranslate()', () => {
 	let container;
+	let root;
 
 	beforeEach( () => {
 		// reset to default locale
@@ -23,12 +26,16 @@ describe( 'useTranslate()', () => {
 		// create container
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
+		root = createRoot( container );
 	} );
 
 	afterEach( () => {
 		// tear down the container
-		ReactDOM.unmountComponentAtNode( container );
+		act( () => {
+			root.unmount();
+		} );
 		document.body.removeChild( container );
+		root = null;
 		container = null;
 	} );
 
@@ -41,7 +48,7 @@ describe( 'useTranslate()', () => {
 
 		// render the Label component
 		act( () => {
-			ReactDOM.render( <Label />, container );
+			root.render( <Label /> );
 		} );
 
 		// check that it's translated
@@ -51,7 +58,7 @@ describe( 'useTranslate()', () => {
 	test( 'rerenders after locale change', () => {
 		// render with the default locale
 		act( () => {
-			ReactDOM.render( <Label />, container );
+			root.render( <Label /> );
 		} );
 
 		expect( container.textContent ).toBe( 'hook (en)' );
@@ -78,7 +85,7 @@ describe( 'useTranslate()', () => {
 
 		// render the Label component
 		act( () => {
-			ReactDOM.render( <Label />, container );
+			root.render( <Label /> );
 		} );
 
 		// check that it's translated

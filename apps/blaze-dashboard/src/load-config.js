@@ -30,6 +30,11 @@ productionConfig.features.is_running_in_woo_site = isWooStore;
 
 productionConfig.features.blaze_setup_mode = !! needSetup;
 
+// Overrides the dsp stripe key (used for testing environments)
+if ( window.configData?.dsp_stripe_pub_key ) {
+	productionConfig.dsp_stripe_pub_key = window.configData.dsp_stripe_pub_key;
+}
+
 // The option enables loading of the whole translation file, and could be optimized by setting it to `true`, which needs the translation chunks in place.
 // @see https://github.com/Automattic/wp-calypso/blob/trunk/docs/translation-chunks.md
 productionConfig.features[ 'use-translation-chunks' ] = false;

@@ -1,9 +1,8 @@
 import '../style.scss';
-import { Count } from '@automattic/components';
-import { get } from 'lodash';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { useSite } from 'calypso/reader/data/site';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
@@ -21,8 +20,8 @@ const ReaderListFollowingItem = ( props ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const { site } = useSite( siteId );
 	const { data: feed } = useFeedQuery( follow?.feed_ID );
-	const siteIcon = site ? site.site_icon ?? get( site, 'icon.img' ) : null;
-	let feedIcon = get( follow, 'site_icon' );
+	const siteIcon = site ? site.site_icon ?? site?.icon?.img : null;
+	let feedIcon = follow?.site_icon;
 
 	if ( ! follow ) {
 		return null;
@@ -30,7 +29,7 @@ const ReaderListFollowingItem = ( props ) => {
 
 	// If feed available, check feed for feed icon
 	if ( feed && feed.image ) {
-		feedIcon = get( feed, 'image' );
+		feedIcon = feed?.image;
 	}
 
 	const handleSidebarClick = ( event, streamLink ) => {
@@ -83,7 +82,7 @@ const ReaderListFollowingItem = ( props ) => {
 						<span className="reader-sidebar-site_url">{ urlForDisplay }</span>
 					) }
 				</span>
-				{ isUnseen && follow.unseen_count > 0 && <Count count={ follow.unseen_count } compact /> }
+				{ isUnseen && <ReaderUnreadCount count={ follow.unseen_count } /> }
 			</a>
 		</li>
 	);
@@ -92,7 +91,7 @@ const ReaderListFollowingItem = ( props ) => {
 
 export default connect(
 	( _state, ownProps ) => {
-		const siteId = get( ownProps.follow, 'blog_ID' );
+		const siteId = ownProps.follow?.blog_ID;
 
 		return {
 			siteId: siteId,

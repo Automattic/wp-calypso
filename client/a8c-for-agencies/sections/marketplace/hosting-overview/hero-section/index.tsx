@@ -2,6 +2,8 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { forwardRef, useMemo } from 'react';
+import PressableExpansionOffer from 'calypso/a8c-for-agencies/components/a4a-pressable-offer/expansion-offer';
+import PressableIntroductoryOffer from 'calypso/a8c-for-agencies/components/a4a-pressable-offer/introductory-offer';
 import NavItem from 'calypso/components/section-nav/item';
 import { preventWidows } from 'calypso/lib/formatting';
 import { SectionProps } from '..';
@@ -85,6 +87,8 @@ export function HeroSection(
 						)
 					) }
 				</div>
+				<PressableIntroductoryOffer />
+				<PressableExpansionOffer />
 			</div>
 
 			<ul className="hosting-hero-section__tabs">{ navItems }</ul>

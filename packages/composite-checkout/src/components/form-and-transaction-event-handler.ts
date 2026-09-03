@@ -2,7 +2,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useEffect, useRef, useCallback } from 'react';
 import { useTransactionStatus } from '../lib/transaction-status';
-import { usePaymentMethodId } from '../public-api';
+import { usePaymentMethod, usePaymentMethodId } from '../public-api';
 import { TransactionStatus } from '../types';
 import type {
 	PaymentEventCallback,
@@ -57,6 +57,7 @@ export function useTransactionStatusHandler( {
 
 	const { __ } = useI18n();
 	const [ paymentMethodId ] = usePaymentMethodId();
+	const paymentProcessorId = usePaymentMethod()?.paymentProcessorId;
 	const {
 		previousTransactionStatus,
 		transactionLastResponse,
@@ -75,6 +76,7 @@ export function useTransactionStatusHandler( {
 		transactionError,
 		transactionStatus,
 		paymentMethodId,
+		paymentProcessorId,
 		transactionLastResponse,
 	} );
 
@@ -112,6 +114,7 @@ function useCallStatusChangeCallbacks( {
 	transactionError,
 	transactionStatus,
 	paymentMethodId,
+	paymentProcessorId,
 	transactionLastResponse,
 }: {
 	onPaymentComplete?: PaymentEventCallback;
@@ -120,6 +123,7 @@ function useCallStatusChangeCallbacks( {
 	transactionError: string | null;
 	transactionStatus: TransactionStatus;
 	paymentMethodId: string | null | undefined;
+	paymentProcessorId: string | undefined;
 	transactionLastResponse: PaymentProcessorResponseData;
 } ): void {
 	// Store the callbacks as refs so we do not call them more than once if they
@@ -132,7 +136,7 @@ function useCallStatusChangeCallbacks( {
 	const paymentErrorRef = useRef( onPaymentError );
 	paymentErrorRef.current = onPaymentError;
 
-	const prevTransactionStatus = useRef< TransactionStatus >();
+	const prevTransactionStatus = useRef< TransactionStatus >( undefined );
 
 	useEffect( () => {
 		if ( transactionStatus === prevTransactionStatus.current ) {
@@ -140,16 +144,30 @@ function useCallStatusChangeCallbacks( {
 		}
 		if ( paymentCompleteRef.current && transactionStatus === TransactionStatus.COMPLETE ) {
 			debug( "transactionStatus status changed to complete so I'm calling onPaymentComplete" );
-			paymentCompleteRef.current( { transactionLastResponse } );
+			paymentCompleteRef.current( {
+				transactionLastResponse,
+				paymentMethodId,
+				paymentProcessorId,
+			} );
 		}
 		if ( paymentRedirectRef.current && transactionStatus === TransactionStatus.REDIRECTING ) {
 			debug( "transaction status changed to redirecting so I'm calling onPaymentRedirect" );
-			paymentRedirectRef.current( { transactionLastResponse } );
+			paymentRedirectRef.current( {
+				transactionLastResponse,
+				paymentMethodId,
+				paymentProcessorId,
+			} );
 		}
 		if ( paymentErrorRef.current && transactionStatus === TransactionStatus.ERROR ) {
 			debug( "transaction status changed to error so I'm calling onPaymentError" );
-			paymentErrorRef.current( { paymentMethodId, transactionError } );
+			paymentErrorRef.current( { paymentMethodId, paymentProcessorId, transactionError } );
 		}
 		prevTransactionStatus.current = transactionStatus;
-	}, [ transactionStatus, paymentMethodId, transactionLastResponse, transactionError ] );
+	}, [
+		transactionStatus,
+		paymentMethodId,
+		paymentProcessorId,
+		transactionLastResponse,
+		transactionError,
+	] );
 }

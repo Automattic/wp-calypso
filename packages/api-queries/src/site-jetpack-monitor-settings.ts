@@ -9,6 +9,7 @@ type CreateVars = { siteId: number; body: Partial< JetpackMonitorSettings > };
 
 export const siteJetpackMonitorSettingsCreateMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'site-jp-mon-create' },
 		mutationFn: async ( vars: CreateVars ) => {
 			const { siteId, body } = vars;
 			// Activate monitor module before creating settings, mirroring legacy flow

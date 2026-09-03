@@ -1,9 +1,8 @@
 import { Link } from '@tanstack/react-router';
-import { __, sprintf } from '@wordpress/i18n';
 import { cancelPurchaseRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
 import { hasAmountAvailableToRefund } from '../../../utils/purchase';
-import { getRefundNoticeCopy } from './get-confirmation-copy';
+import { getRefundEligibilityPromoCopy, getRefundNoticeCopy } from './get-confirmation-copy';
 import RefundAmountString from './refund-amount-string';
 import type { Purchase } from '@automattic/api-core';
 
@@ -24,6 +23,7 @@ export default function RefundEligibilityNotice( props: RefundEligibilityNoticeP
 	}
 
 	if ( props.mode === 'refund-eligibility' ) {
+		const { prompt, linkLabel } = getRefundEligibilityPromoCopy( { refundAmount } );
 		return (
 			<Notice
 				variant="info"
@@ -33,17 +33,11 @@ export default function RefundEligibilityNotice( props: RefundEligibilityNoticeP
 						params={ { purchaseId: String( purchase.ID ) } }
 						search={ { intent: 'remove' as const } }
 					>
-						{ __( 'Remove plan and claim refund.' ) }
+						{ linkLabel }
 					</Link>
 				}
 			>
-				{ sprintf(
-					/* translators: %(refundAmount)s is a monetary amount, e.g. "$96.00" */
-					__(
-						'You’re eligible for a %(refundAmount)s refund if you remove your plan now. Your features will be unavailable right away.'
-					),
-					{ refundAmount }
-				) }
+				{ prompt }
 			</Notice>
 		);
 	}

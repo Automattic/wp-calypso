@@ -4,10 +4,11 @@
 @import "../../style";
 
 body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
-	margin: 0 64px;
+	// The bottom margin keeps the last content block clear of the sticky footer.
+	margin: 0 64px 32px;
 
 	@media (max-width: $break-medium) {
-		margin: 0;
+		margin: 0 0 32px;
 	}
 }
 
@@ -23,6 +24,20 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 
 .campaign-item__container {
 	width: 100%;
+
+	// Back link rendered in the admin-ui Page header breadcrumbs slot.
+	.campaign-item-details__go-back-button.components-button.is-link {
+		align-items: center;
+		color: $studio-gray-100;
+		display: flex;
+		font-size: 0.875rem;
+		font-weight: 500;
+		text-decoration: none;
+
+		> svg {
+			margin-right: 4px;
+		}
+	}
 
 	.campaign-item-breadcrumb {
 		margin-bottom: 16px;
@@ -67,7 +82,9 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		justify-content: space-between;
 
 		@media (max-width: $break-medium) {
-			margin: 0 64px;
+			// Keep breathing room above the title — with no top margin it sits
+			// squished against the Page header bar.
+			margin: 24px 64px 0;
 			padding-bottom: 24px;
 		}
 
@@ -96,7 +113,10 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 	}
 
 	.campaign-item-details-header-line {
-		margin: 0 -64px 48px;
+		// As a flex item of the admin-ui <Page> column the divider already
+		// spans the full page width — negative side margins (which used to
+		// cancel the old container's insets) would overflow the viewport.
+		margin: 0 0 48px;
 		padding: 0;
 		background: #eee;
 
@@ -1022,25 +1042,6 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		font-weight: 500;
 	}
 
-	.campaign-item-details__powered-by {
-		align-items: center;
-		color: var(--color-neutral-50);
-		display: flex;
-		font-size: 0.75rem;
-	}
-	.campaign-item-details__powered-by.mobile {
-		margin: 16px 16px;
-	}
-	@media (max-width: $break-wide) {
-		.campaign-item-details__powered-by.desktop {
-			display: none;
-		}
-	}
-	@media (min-width: $break-wide + 1) {
-		.campaign-item-details__powered-by.mobile {
-			display: none;
-		}
-	}
 	.campaign-item-details__flexible-skeleton {
 		border-radius: 4px;
 		display: inline-block;
@@ -1146,10 +1147,6 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 	}
 }
 
-.campaign-item-details__powered-by {
-	margin-top: 16px;
-}
-
 .is-mobile-app-view {
 	.campaign-item__container .campaign-item-header {
 		padding-bottom: 0;
@@ -1164,7 +1161,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 
 		.campaign-item-header {
 			@media (max-width: $break-medium) {
-				margin: 0 12px;
+				margin: 24px 12px 0;
 			}
 		}
 
@@ -1327,6 +1324,11 @@ $break-medium-expanded-menu: $break-medium + 272px;
 @mixin blazepress-huge {
 	.campaign-item-header,
 	.campaign-item-details {
+		// These are flex items of the admin-ui <Page> column, where auto
+		// margins shrink each box to its content width and center it
+		// independently — the title drifted off the content column. Force
+		// full width so both share the same centered 1040px column.
+		width: 100%;
 		max-width: 1040px;
 		margin-left: auto;
 		margin-right: auto;

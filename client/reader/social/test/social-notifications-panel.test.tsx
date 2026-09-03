@@ -11,7 +11,7 @@ import type {
 } from '../social-notifications-panel';
 
 // `recordReaderTracksEvent` is mocked so the test asserts on its call site
-// without dispatching against state.reader.follows. The shared panel owns
+// without dispatching against the follows query cache. The shared panel owns
 // the per-`source` event-name interpolation; the test exists to pin that
 // contract — a future rename would surface here rather than only on the
 // per-protocol smoke tests.

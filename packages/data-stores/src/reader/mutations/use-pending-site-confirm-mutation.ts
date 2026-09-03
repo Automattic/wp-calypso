@@ -1,7 +1,7 @@
+import { getSiteSubscriptionsQueryKey } from '@automattic/api-queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn } from '../hooks';
-import { siteSubscriptionsQueryKeyPrefix } from '../queries';
 import { subscriptionsCountQueryKeyPrefix } from '../queries/use-subscriptions-count-query';
 import { PendingSiteSubscriptionsResult, SubscriptionManagerSubscriptionsCount } from '../types';
 
@@ -17,7 +17,7 @@ type PendingSiteConfirmResponse = {
 const usePendingSiteConfirmMutation = () => {
 	const { isLoggedIn } = useIsLoggedIn();
 	const queryClient = useQueryClient();
-	const subscriptionsCacheKey = useCacheKey( siteSubscriptionsQueryKeyPrefix );
+	const subscriptionsCacheKey = getSiteSubscriptionsQueryKey();
 	const countCacheKey = useCacheKey( subscriptionsCountQueryKeyPrefix );
 
 	return useMutation( {

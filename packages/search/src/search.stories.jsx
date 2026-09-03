@@ -1,6 +1,6 @@
 import './search.stories.scss';
-import { action } from '@storybook/addon-actions';
 import { Icon } from '@wordpress/components';
+import { action } from 'storybook/actions';
 import Search from './search';
 
 export default { title: 'Search', component: Search };

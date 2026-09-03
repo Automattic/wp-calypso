@@ -10,6 +10,7 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import ClientCheckoutV2Error from '../../checkout-v2-error';
 import ClientCheckoutV2Placeholder from '../../checkout-v2-placeholder';
 import useClientCheckout from '../../hooks/use-client-checkout';
+import getClientCheckoutRedirectUrl from '../../lib/get-client-checkout-redirect-url';
 
 import './style.scss';
 
@@ -19,9 +20,13 @@ import './style.scss';
 function ClientCheckoutContent() {
 	const translate = useTranslate();
 
-	const { isReady, error, emailMismatchWithReferralClient, referral } = useClientCheckout( {
-		expressMode: false,
-	} );
+	const { isReady, error, emailMismatchWithReferralClient, referral, wpcomHostingProductSlug } =
+		useClientCheckout( {
+			expressMode: false,
+		} );
+
+	const subscriptionsUrl = window.location.origin + '/client/subscriptions';
+	const redirectTo = getClientCheckoutRedirectUrl( subscriptionsUrl, wpcomHostingProductSlug );
 
 	if ( ! isReady ) {
 		return <ClientCheckoutV2Placeholder />;
@@ -60,7 +65,7 @@ function ClientCheckoutContent() {
 			</div>
 			<CheckoutMain
 				sitelessCheckoutType="a4a"
-				redirectTo={ window.location.origin + '/client/subscriptions' }
+				redirectTo={ redirectTo }
 				customizedPreviousPath="/client/subscriptions"
 				siteSlug=""
 				siteId={ 0 }

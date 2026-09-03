@@ -4,18 +4,6 @@ This module contains functions to validate and mask checkout form fields such as
 
 ## API
 
-### `validatePaymentDetails( paymentDetails, paymentType )`
-
-Returns an object containing the errors for each field. For example the returned object might look like this:
-
-```js
-const error = {
-	number: [ 'Invalid credit card' ],
-};
-```
-
-If there are any missing fields, there are no errors for that field.
-
 ### `getCreditCardType( number )`
 
 Returns credit card brand for a given card number

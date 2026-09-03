@@ -145,7 +145,7 @@ test.describe(
 		} );
 
 		test( 'Three: As a New WordPress.com free plan user with a simple site, I can use the Calypso "Import Content" page to import my content from my Substack account', async ( {
-			sitePublic,
+			sitePublicShared: sitePublic,
 			pageImportContent,
 			pageImportContentFromSubstack,
 		} ) => {

@@ -1,11 +1,16 @@
-import { ODIE_NEW_INTERACTIONS_BOT_SLUG } from '@automattic/odie-client/src/constants';
+import {
+	ODIE_NEW_INTERACTIONS_BOT_SLUG,
+	ODIE_NEW_LOGGED_OUT_INTERACTIONS_BOT_SLUG,
+} from '@automattic/odie-client/src/constants';
 import { useContext, createContext, useMemo } from '@wordpress/element';
 import { PRODUCT_PRESETS } from '../feature-config';
 import type { HelpCenterFeatureConfig, HelpCenterProduct } from '../feature-config';
 import type { CurrentUser, HelpCenterSite } from '@automattic/data-stores';
+import type { JSX } from 'react';
 
 export type HelpCenterRequiredInformation = {
 	newInteractionsBotSlug: string;
+	newLoggedOutInteractionsBotSlug: string;
 	newInteractionsBotVersion?: string;
 	locale: string;
 	sectionName: string;
@@ -25,10 +30,15 @@ export type HelpCenterRequiredInformation = {
 	 * Product identifier. Defaults to 'wpcom' when omitted.
 	 */
 	product?: HelpCenterProduct;
+	/**
+	 * Page the launcher was opened from, when the host page sets one. Tailors the greeting and title.
+	 */
+	launcherContext?: string;
 };
 
 const defaultContext: HelpCenterRequiredInformation = {
 	newInteractionsBotSlug: ODIE_NEW_INTERACTIONS_BOT_SLUG,
+	newLoggedOutInteractionsBotSlug: ODIE_NEW_LOGGED_OUT_INTERACTIONS_BOT_SLUG,
 	locale: '',
 	sectionName: '',
 	currentUser: {
@@ -87,6 +97,7 @@ export const HelpCenterRequiredContextProvider: React.FC< {
 		<HelpCenterRequiredContext.Provider
 			value={ {
 				...Object.assign( {}, defaultContext, value ),
+				primarySiteId: value.primarySiteId || value.currentUser?.primary_blog || 0,
 			} }
 		>
 			{ children }

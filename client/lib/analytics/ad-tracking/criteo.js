@@ -1,5 +1,4 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
-import { clone, cloneDeep } from 'lodash';
 import { mayWeTrackByTracker } from '../tracker-buckets';
 import { debug, TRACKING_IDS } from './constants';
 import { loadTrackingScripts } from './load-tracking-scripts';
@@ -31,13 +30,13 @@ export async function recordInCriteo( eventName, eventProps ) {
 		events.push( { event: 'setEmail', email: [ currentUser.hashedPii.email ] } );
 	}
 
-	const conversionEvent = clone( eventProps );
+	const conversionEvent = { ...eventProps };
 	conversionEvent.event = eventName;
 	events.push( conversionEvent );
 
 	// The deep clone is necessary because the Criteo script modifies the objects in the
 	// array which causes the console to display different data than is originally added
-	debug( 'recordInCriteo: ' + eventName, cloneDeep( events ) );
+	debug( 'recordInCriteo: ' + eventName, structuredClone( events ) );
 	window.criteo_q.push( ...events );
 }
 

@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
+import { once } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { once } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';

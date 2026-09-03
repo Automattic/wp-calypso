@@ -1,53 +1,81 @@
-import { useNavigator } from '@wordpress/components';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
+import getAllNotes from '../../panel/state/selectors/get-all-notes';
+import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
+import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
-import type { Note } from '../types';
+import type { FilterName, Note } from '../types';
 
-export function useNoteNavigationViaKeyboardShortcuts( {
-	visibleNotes,
-	note,
+export type NoteNavigation = {
+	goToPreviousNote: () => void;
+	goToNextNote: () => void;
+	hasPreviousNote: boolean;
+	hasNextNote: boolean;
+};
+
+export function useNoteNavigation( {
+	filterName,
+	selectedNoteId,
+	setSelectedNoteId,
 }: {
-	visibleNotes: Note[];
-	note?: Note;
-} ) {
-	const { params, goTo } = useNavigator();
-	const { filterName } = params;
-
+	filterName: FilterName;
+	selectedNoteId: string | undefined;
+	setSelectedNoteId: ( noteId: string | undefined ) => void;
+} ): NoteNavigation {
 	const areKeyboardShortcutsEnabled = useSelector( getKeyboardShortcutsEnabled );
-
-	const isLoading = useSelector( ( state ) => getIsLoading( state ) );
+	const isLoading = useSelector( getIsLoading );
+	const notes = useSelector( ( state ) => ( getAllNotes( state ) || [] ) as Note[] );
+	const hiddenNoteIds = useSelector( getHiddenNoteIds );
 	const { client } = useAppContext();
+
+	const filter = getFilters()[ filterName ];
+	// Keep the selected note in the navigation list at its natural position even
+	// if it no longer matches the active filter. Opening a note marks it read,
+	// so on the "Unread" tab the selected note would otherwise drop out of the
+	// list — losing its index and disabling prev/next navigation.
+	const visibleNotes = notes.filter(
+		( note ) =>
+			hiddenNoteIds[ note.id ] !== true &&
+			( filter.filter( note ) || String( note.id ) === selectedNoteId )
+	);
+	const selectedNote =
+		selectedNoteId !== undefined
+			? notes.find( ( note ) => String( note.id ) === selectedNoteId )
+			: undefined;
 
 	useEffect( () => {
 		if (
 			! isLoading &&
 			visibleNotes.length &&
-			visibleNotes[ visibleNotes.length - 1 ].id === note?.id
+			visibleNotes[ visibleNotes.length - 1 ].id === selectedNote?.id
 		) {
 			client?.loadMore();
 		}
-	}, [ isLoading, visibleNotes, note, client ] );
+	}, [ isLoading, visibleNotes, selectedNote, client ] );
 
-	const goToNoteById = ( noteId: number ) => {
-		goTo( `/${ filterName }/notes/${ noteId }`, {
-			replace: true,
-		} );
-	};
+	const selectedIndex = selectedNote
+		? visibleNotes.findIndex( ( note ) => note.id === selectedNote.id )
+		: -1;
+	const hasPreviousNote = selectedIndex > 0;
+	const hasNextNote = selectedIndex >= 0 && selectedIndex < visibleNotes.length - 1;
 
 	const goToNoteByDirection = ( direction: number ) => {
-		const isValidIndex = ( index: number ) => index >= 0 && index < visibleNotes.length;
+		if ( selectedIndex < 0 ) {
+			return;
+		}
 
-		const noteIndex = visibleNotes.findIndex( ( currentNote ) => currentNote.id === note?.id );
-		const newIndex = noteIndex + direction;
+		const newIndex = selectedIndex + direction;
 
-		if ( isValidIndex( newIndex ) ) {
-			goToNoteById( visibleNotes[ newIndex ].id );
+		if ( newIndex >= 0 && newIndex < visibleNotes.length ) {
+			setSelectedNoteId( String( visibleNotes[ newIndex ].id ) );
 		}
 	};
+
+	const goToPreviousNote = () => goToNoteByDirection( -1 );
+	const goToNextNote = () => goToNoteByDirection( 1 );
 
 	useEffect( () => {
 		const stopEvent = ( event: KeyboardEvent ) => {
@@ -66,12 +94,12 @@ export function useNoteNavigationViaKeyboardShortcuts( {
 				case 'j':
 				case 'ArrowDown':
 					stopEvent( event );
-					goToNoteByDirection( 1 );
+					goToNextNote();
 					break;
 				case 'k':
 				case 'ArrowUp':
 					stopEvent( event );
-					goToNoteByDirection( -1 );
+					goToPreviousNote();
 					break;
 			}
 		};
@@ -80,5 +108,7 @@ export function useNoteNavigationViaKeyboardShortcuts( {
 		return () => {
 			window.removeEventListener( 'keydown', handleKeyDown, false );
 		};
-	}, [ areKeyboardShortcutsEnabled, note ] ); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [ areKeyboardShortcutsEnabled, selectedNote ] ); // eslint-disable-line react-hooks/exhaustive-deps
+
+	return { goToPreviousNote, goToNextNote, hasPreviousNote, hasNextNote };
 }

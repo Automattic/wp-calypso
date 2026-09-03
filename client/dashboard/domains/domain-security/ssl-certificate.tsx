@@ -1,5 +1,4 @@
 import { provisionSslCertificateMutation } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
 import { CONTACT } from '@automattic/urls';
 import { useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
@@ -11,9 +10,11 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { ReactElement } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { domainSecurityRoute } from '../../app/router/domains';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -28,16 +29,13 @@ interface SslCertificateProps {
 
 export default function SslCertificate( { domainName, domain, sslDetails }: SslCertificateProps ) {
 	const { recordTracksEvent } = useAnalytics();
-	const mutation = useMutation( {
-		...provisionSslCertificateMutation( domainName ),
-		meta: {
-			snackbar: {
-				/* translators: %s is the domain name */
-				success: sprintf( __( 'New SSL certificate requested for %s.' ), domainName ),
-				error: { source: 'server' },
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( provisionSslCertificateMutation( domainName ), {
+			/* translators: %s is the domain name */
+			success: sprintf( __( 'New SSL certificate requested for %s.' ), domainName ),
+			error: { source: 'server' },
+		} )
+	);
 
 	const getSslStatusMessage = ( sslDetails: SslDetails ) => {
 		const hasFailureReasons =
@@ -193,12 +191,12 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 
 	const renderBadge = () => {
 		if ( sslDetails.certificate_provisioned || domain.wpcom_domain ) {
-			return <Badge intent="success">{ __( 'SSL active' ) }</Badge>;
+			return <Badge intent="stable">{ __( 'SSL active' ) }</Badge>;
 		}
 		if ( domain.ssl_status === 'newly_registered' || domain.ssl_status === 'pending' ) {
-			return <Badge intent="warning">{ __( 'SSL Pending' ) }</Badge>;
+			return <Badge intent="low">{ __( 'SSL Pending' ) }</Badge>;
 		}
-		return <Badge intent="error">{ __( 'SSL Disabled' ) }</Badge>;
+		return <Badge intent="high">{ __( 'SSL Disabled' ) }</Badge>;
 	};
 
 	return (

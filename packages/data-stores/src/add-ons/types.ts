@@ -1,6 +1,7 @@
 import { TranslateResult } from 'i18n-calypso';
 import { STORAGE_ADD_ONS, ADD_ONS } from './constants';
 import type { StoreProductSlug } from '../products-list';
+import type { JSX } from 'react';
 
 export interface AddOnMeta {
 	addOnSlug: AddOnSlug;

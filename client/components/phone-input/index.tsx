@@ -173,7 +173,7 @@ function getLastCursorPosition( recentPositions: number[] ) {
 function useSharedRef(
 	inputRef: MutableRefObject< HTMLInputElement | undefined > | RefFunction | undefined
 ) {
-	const numberInputRef = useRef< HTMLInputElement | undefined >();
+	const numberInputRef = useRef< HTMLInputElement | undefined >( undefined );
 	useEffect( () => {
 		if ( ! inputRef ) {
 			return;

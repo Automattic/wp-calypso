@@ -1,6 +1,6 @@
 import { Railcar } from '@automattic/calypso-analytics';
+import { pick } from '@automattic/js-utils';
 import debugFactory from 'debug';
-import { pick } from 'lodash';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat, bumpStatWithPageView } from 'calypso/lib/analytics/mc';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -50,7 +50,6 @@ const exactMatch = ( path: string | string[] ) => ( value: string ) =>
 
 const isEmpty = ( value: string | undefined ) => value === '' || value === undefined;
 
-const SearchRoute = matches( /^(\/[^/]+)?\/reader\/search/ );
 const SinglePostRoute = matches( /^\/reader\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i );
 const BlogPageRoute = matches( /^\/reader\/(blogs|feeds)\/([0-9]+)$/i );
 
@@ -82,11 +81,9 @@ const Routes: RoutesMapping[] = [
 	// Likes
 	{ route: startsWith( '/activities/likes' ), tracking: 'postlike' },
 
-	{
-		route: exactMatch( '/discover' ),
-		tracking: 'freshly-pressed',
-	},
 	// Discover
+	{ route: exactMatch( '/discover' ), tracking: 'discover_recommended' },
+	{ route: startsWith( '/discover/freshly-pressed' ), tracking: 'freshly-pressed' },
 	{ route: startsWith( '/discover/add-new' ), tracking: 'discover_addnew' },
 	{ route: startsWith( '/discover/reddit' ), tracking: 'discover_reddit' },
 	{ route: startsWith( '/discover/latest' ), tracking: 'discover_latest' },
@@ -98,6 +95,7 @@ const Routes: RoutesMapping[] = [
 			return `discover_tag:${ selectedTag }`;
 		},
 	},
+	{ route: startsWith( '/discover/search' ), tracking: 'search' },
 	{ route: matches( /discover\/.*/ ), tracking: 'discover_unknown' },
 
 	// Conversations
@@ -123,7 +121,6 @@ const Routes: RoutesMapping[] = [
 
 	{ route: SinglePostRoute, tracking: 'single_post' },
 	{ route: BlogPageRoute, tracking: 'blog_page' },
-	{ route: SearchRoute, tracking: 'search' },
 
 	{ route: exactMatch( '/home' ), tracking: 'home' },
 	{ route: exactMatch( '/reader' ), tracking: 'following' },

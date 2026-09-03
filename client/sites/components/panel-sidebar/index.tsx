@@ -40,8 +40,10 @@ export function SidebarItem( {
 export function Sidebar( { children }: { children: ReactNode } ) {
 	const isDesktop = useViewportMatch( 'small', '>=' );
 	const activeElement = Children.toArray( children ).find(
-		( child ) => isValidElement( child ) && window.location.pathname.startsWith( child.props.href )
-	) as ReactElement;
+		( child ) =>
+			isValidElement< { href: string } >( child ) &&
+			window.location.pathname.startsWith( child.props.href )
+	) as ReactElement< { href: string; children?: ReactNode } >;
 
 	if ( isDesktop ) {
 		return <ul className="panel-sidebar">{ children }</ul>;
@@ -55,7 +57,9 @@ export function Sidebar( { children }: { children: ReactNode } ) {
 			{ Children.toArray( children )
 				.filter( ( child ) => child && isValidElement( child ) )
 				.map( ( child, index ) => {
-					const { href, ...childProps } = ( child as ReactElement ).props;
+					const { href, ...childProps } = (
+						child as ReactElement< { href: string; children?: ReactNode } >
+					 ).props;
 					return (
 						<SelectDropdown.Item
 							{ ...childProps }

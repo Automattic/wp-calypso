@@ -1,5 +1,4 @@
 import { createSelector } from '@automattic/state-utils';
-import { get } from 'lodash';
 import { mergePostEdits, normalizePostForEditing } from 'calypso/state/posts/utils';
 
 import 'calypso/state/posts/init';
@@ -13,7 +12,7 @@ import 'calypso/state/posts/init';
  */
 export const getPostEdits = createSelector(
 	( state, siteId, postId ) => {
-		const postEditsLog = get( state.posts.edits, [ siteId, postId || '' ] );
+		const postEditsLog = state.posts.edits?.[ siteId ]?.[ postId || '' ];
 		if ( ! postEditsLog ) {
 			return null;
 		}

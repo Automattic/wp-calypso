@@ -1,3 +1,9 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/hide-content-accessibly";
+@import "calypso/assets/stylesheets/shared/mixins/long-content-fade";
+@import "calypso/assets/stylesheets/shared/mixins/tooltip";
+
 .reader-share__button.button {
 	display: flex;
 	align-items: center;

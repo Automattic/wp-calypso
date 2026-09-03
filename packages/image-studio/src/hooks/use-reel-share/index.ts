@@ -97,12 +97,22 @@ export function useReelShare(
 	const { editPost } = useDispatch( EDITOR_STORE ) as {
 		editPost: ( edits: { meta: Record< string, unknown > } ) => void;
 	};
-	const { shareCurrentPost } = useDispatch( SOCIAL_STORE ) as {
+	// `jetpack-social-plugin` is registered by the Jetpack Social editor bundle,
+	// which isn't always present (e.g. Atomic sites without Jetpack Social
+	// active). `useDispatch` returns null for an unregistered store, so read the
+	// action off the result instead of destructuring it — destructuring null
+	// throws at render and takes down the whole editor. Mirrors the `?.`-guarded
+	// `useSelect( SOCIAL_STORE )` above.
+	const socialActions = useDispatch( SOCIAL_STORE ) as {
 		shareCurrentPost: (
 			params: { message: string; skipped_connections: string[] },
 			config: { apiPath: string; savePost?: boolean }
 		) => Promise< boolean >;
-	};
+	} | null;
+	// `socialActions` is null when the store isn't registered; optional chaining
+	// yields `undefined` for `shareCurrentPost` in that case. The action itself
+	// is required on a registered store, so it stays non-optional above.
+	const shareCurrentPost = socialActions?.shareCurrentPost;
 	const { addNotice: addModalNotice } = useDispatch( imageStudioStore ) as ImageStudioActions;
 	const { createNotice: createCoreNotice } = useDispatch( 'core/notices' ) as {
 		createNotice?: (
@@ -292,10 +302,11 @@ export function useReelShare(
 			return;
 		}
 
-		if ( ! currentVideoUrl || ! currentAttachmentId || ! sharePath ) {
+		if ( ! currentVideoUrl || ! currentAttachmentId || ! sharePath || ! shareCurrentPost ) {
 			// requestShare gated these already; if we somehow lost state between
-			// open and confirm, fall back to closing the dialog rather than
-			// dispatching a half-formed share.
+			// open and confirm — or the social store never registered, leaving
+			// `shareCurrentPost` undefined — fall back to closing the dialog
+			// rather than dispatching a half-formed share.
 			setPendingShare( null );
 			return;
 		}

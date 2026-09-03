@@ -1,5 +1,4 @@
 import { Card } from '@automattic/components';
-import { size } from 'lodash';
 import { ConversationCaterpillar } from 'calypso/blocks/conversation-caterpillar';
 import { comments, commentsTree } from 'calypso/blocks/conversation-caterpillar/docs/fixtures';
 
@@ -12,7 +11,7 @@ const ConversationCaterpillarExample = () => {
 					blogId={ 123 }
 					postId={ 12 }
 					commentsTree={ commentsTree }
-					commentCount={ size( comments ) }
+					commentCount={ comments.length }
 					commentsToShow={ {} }
 					expandComments={ () => {} }
 				/>

@@ -7,6 +7,7 @@ import {
 	A4A_CLIENT_PAYMENT_METHODS_ADD_LINK,
 	A4A_CLIENT_SUBSCRIPTIONS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import getClientCheckoutRedirectUrl from 'calypso/a8c-for-agencies/sections/client/lib/get-client-checkout-redirect-url';
 import usePaymentMethod from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/hooks/use-payment-method';
 import A4AFullLogo from 'calypso/assets/images/a8c-for-agencies/a4a-full-logo.svg';
 import { useDispatch } from 'calypso/state';
@@ -66,15 +67,7 @@ export default function SubmitPaymentInfo( { disableButton }: { disableButton?: 
 	useEffect( () => {
 		if ( status === 'success' ) {
 			dispatch( recordTracksEvent( 'calypso_a4a_client_checkout_submit_payment_info_success' ) );
-			dispatch(
-				successNotice(
-					translate( 'Thank you for your purchase! Your agency can now set up your product.' ),
-					{
-						displayOnNextPage: true,
-					}
-				)
-			);
-			page.redirect( A4A_CLIENT_SUBSCRIPTIONS_LINK );
+			page.redirect( getClientCheckoutRedirectUrl( A4A_CLIENT_SUBSCRIPTIONS_LINK ) );
 		}
 		if ( status === 'error' ) {
 			const alreadySubmittedError = error?.code === 'referral_is_not_pending';

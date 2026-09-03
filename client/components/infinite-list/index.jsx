@@ -1,11 +1,7 @@
-/* eslint-disable react/no-string-refs */
-// TODO: remove string ref usage.
-
 import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
-import ReactDom from 'react-dom';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import smartSetState from 'calypso/lib/react-smart-set-state';
 import scrollTo from 'calypso/lib/scroll-to';
@@ -48,6 +44,16 @@ export default class InfiniteList extends Component {
 	smartSetState = smartSetState;
 	topPlaceholderRef = createRef();
 	bottomPlaceholderRef = createRef();
+	containerRef = createRef();
+	// Maps an item key (from `getItemRef`) to its rendered DOM node. Populated via
+	// callback refs passed to `renderItem`, replacing the removed string refs.
+	itemRefs = new Map();
+	// Caches the callback ref per item key so its identity stays stable across
+	// renders. An unstable ref would re-run on every render and, when forwarded as
+	// a prop, would defeat consumers' own-props memoization (e.g. the Reader stream).
+	itemRefCallbacks = new Map();
+	// Item keys rendered in the latest render, used to prune the maps above.
+	renderedItemKeys = new Set();
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
@@ -155,6 +161,15 @@ export default class InfiniteList extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
+		// Prune cached refs for items no longer rendered; consumers that ignore the ref arg
+		// never fire the callback's own cleanup.
+		for ( const key of this.itemRefCallbacks.keys() ) {
+			if ( ! this.renderedItemKeys.has( key ) ) {
+				this.itemRefCallbacks.delete( key );
+				this.itemRefs.delete( key );
+			}
+		}
+
 		if ( ! this._contextLoaded() ) {
 			return;
 		}
@@ -333,9 +348,34 @@ export default class InfiniteList extends Component {
 		this.scrollRAFHandle = window.requestAnimationFrame( this.scrollChecks );
 	}
 
+	// Returns the root DOM node of the list. Used by parent components that need
+	// to read layout/scroll information (replaces the removed `findDOMNode`).
+	getDOMNode = () => this.containerRef.current;
+
+	// Returns a stable callback ref (one per item key) that records the DOM node
+	// for that key. Passed to `renderItem` so consumers can attach it to their
+	// item's root element. The identity is cached so it doesn't change between
+	// renders (see `itemRefCallbacks`).
+	setItemRef = ( itemKey ) => {
+		let callback = this.itemRefCallbacks.get( itemKey );
+		if ( ! callback ) {
+			callback = ( node ) => {
+				if ( node ) {
+					this.itemRefs.set( itemKey, node );
+				} else {
+					this.itemRefs.delete( itemKey );
+					this.itemRefCallbacks.delete( itemKey );
+				}
+			};
+			this.itemRefCallbacks.set( itemKey, callback );
+		}
+		return callback;
+	};
+
 	boundsForRef = ( ref ) => {
-		if ( ref in this.refs && ReactDom.findDOMNode( this.refs[ ref ] ) ) {
-			return ReactDom.findDOMNode( this.refs[ ref ] ).getBoundingClientRect();
+		const node = this.itemRefs.get( ref );
+		if ( node ) {
+			return node.getBoundingClientRect();
 		}
 		return null;
 	};
@@ -357,8 +397,13 @@ export default class InfiniteList extends Component {
 	 * @returns {Array} This list of indexes
 	 */
 	getVisibleItemIndexes( options ) {
-		const container = ReactDom.findDOMNode( this );
+		const container = this.containerRef.current;
 		const visibleItemIndexes = [];
+
+		if ( ! container ) {
+			return visibleItemIndexes;
+		}
+
 		const firstIndex = this.state.firstRenderedIndex;
 		const lastIndex = this.state.lastRenderedIndex;
 		const offsetTop = options && options.offsetTop ? options.offsetTop : 0;
@@ -414,8 +459,12 @@ export default class InfiniteList extends Component {
 
 		debug( 'rendering %d to %d', this.state.firstRenderedIndex, lastRenderedIndex );
 
+		this.renderedItemKeys.clear();
 		for ( i = this.state.firstRenderedIndex; i <= lastRenderedIndex; i++ ) {
-			itemsToRender.push( renderItem( items[ i ], i ) );
+			const item = items[ i ];
+			const itemKey = this.props.getItemRef( item );
+			this.renderedItemKeys.add( itemKey );
+			itemsToRender.push( renderItem( item, i, this.setItemRef( itemKey ) ) );
 		}
 
 		if ( fetchingNextPage ) {
@@ -423,7 +472,7 @@ export default class InfiniteList extends Component {
 		}
 
 		return (
-			<div className={ this.props.className }>
+			<div className={ this.props.className } ref={ this.containerRef }>
 				<div
 					ref={ this.topPlaceholderRef }
 					className={ spacerClassName }

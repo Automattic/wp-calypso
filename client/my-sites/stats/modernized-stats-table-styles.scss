@@ -78,8 +78,8 @@ $common-border-radius: 4px;
 
 			&.is-selected {
 				.segmented-control__link {
-					background-color: var(--color-primary);
-					border-color: var(--color-primary);
+					background-color: var(--color-accent);
+					border-color: var(--color-accent);
 					color: var(--studio-white);
 					position: relative;
 					z-index: 1;
@@ -138,25 +138,25 @@ $common-border-radius: 4px;
 			}
 
 			&.level-1 {
-				background-color: var(--color-primary-5);
+				background-color: var(--color-accent-5);
 			}
 
 			&.level-2 {
-				background-color: var(--color-primary-10);
+				background-color: var(--color-accent-10);
 			}
 
 			&.level-3 {
-				background-color: var(--color-primary-light);
+				background-color: var(--color-accent-light);
 				color: var(--studio-white);
 			}
 
 			&.level-4 {
-				background-color: var(--color-primary);
+				background-color: var(--color-accent);
 				color: var(--studio-white);
 			}
 
 			&.level-5 {
-				background-color: var(--color-primary-dark);
+				background-color: var(--color-accent-dark);
 				color: var(--studio-white);
 			}
 		}

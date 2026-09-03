@@ -24,7 +24,6 @@ import {
 	createCreditCardMethod,
 } from '../../payment-methods/credit-card';
 import { createFreePaymentMethod } from '../../payment-methods/free-purchase';
-import { createNetBankingMethod } from '../../payment-methods/netbanking';
 import { createPayPalMethod } from '../../payment-methods/paypal';
 import { createPayPal } from '../../payment-methods/paypal-js';
 import {
@@ -293,16 +292,6 @@ function useCreateEps( {
 	);
 }
 
-function useCreateNetbanking(): PaymentMethod {
-	return useMemo(
-		() =>
-			createNetBankingMethod( {
-				submitButtonContent: <CheckoutSubmitButtonContent />,
-			} ),
-		[]
-	);
-}
-
 function useCreateFree() {
 	return useMemo( createFreePaymentMethod, [] );
 }
@@ -345,12 +334,7 @@ function useCreateGooglePay( {
 	stripe: Stripe | null;
 	cartKey: CartKey | undefined;
 } ): PaymentMethod | null {
-	const isStripeReady =
-		! isStripeLoading &&
-		! stripeLoadingError &&
-		stripe &&
-		stripeConfiguration &&
-		isEnabled( 'checkout/google-pay' );
+	const isStripeReady = ! isStripeLoading && ! stripeLoadingError && stripe && stripeConfiguration;
 
 	return useMemo( () => {
 		return isStripeReady && stripe && stripeConfiguration && cartKey
@@ -445,8 +429,6 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 	} );
 
-	const netbankingMethod = useCreateNetbanking();
-
 	const sofortMethod = useCreateSofort( {
 		isStripeLoading,
 		stripeLoadingError,
@@ -461,7 +443,7 @@ export default function useCreatePaymentMethods( {
 		isStripeLoading,
 		stripeLoadingError,
 		storedCards,
-		submitButtonContent: <CheckoutSubmitButtonContent />,
+		submitButtonContent: ( card ) => <CheckoutSubmitButtonContent last4={ card.card_last_4 } />,
 	} );
 
 	const existingPayPalPPCPMethods = useCreateExistingPayPalPPCP( {
@@ -518,24 +500,29 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 	} );
 
+	// In Germany, PayPal is the preferred option, so we display it before
+	// credit cards. See https://wp.me/pxLjZ-9aA
+	const shouldPreferPayPal = currentTaxCountryCode?.toUpperCase() === 'DE';
+	const payPalMethods = [ paypalExpressMethod, paypalPPCPMethod ];
+	const cardAndPayPalMethods = shouldPreferPayPal
+		? [ ...payPalMethods, stripeMethod, freePaymentMethod ]
+		: [ stripeMethod, freePaymentMethod, ...payPalMethods ];
+
 	// The order of this array is the order that Payment Methods will be
 	// displayed in Checkout, although not all payment methods here will be
 	// listed; the list of allowed payment methods is returned by the shopping
 	// cart which will be used to filter this list in
 	// `filterAppropriatePaymentMethods()`.
-	let paymentMethods = [
+	return [
 		...existingCardMethods,
 		...existingPayPalPPCPMethods,
 		applePayMethod,
 		googlePayMethod,
-		stripeMethod,
-		freePaymentMethod,
-		paypalExpressMethod,
-		paypalPPCPMethod,
+		stripeUpiMethod,
+		...cardAndPayPalMethods,
 		idealMethod,
 		blikMethod,
 		sofortMethod,
-		netbankingMethod,
 		pixMethod,
 		pixAutomaticoMethod,
 		alipayMethod,
@@ -543,34 +530,5 @@ export default function useCreatePaymentMethods( {
 		epsMethod,
 		wechatMethod,
 		bancontactMethod,
-		stripeUpiMethod,
 	].filter( isValueTruthy );
-
-	// In Germany, PayPal is the preferred option, so we display it before
-	// credit cards. See https://wp.me/pxLjZ-9aA
-	if ( currentTaxCountryCode?.toUpperCase() === 'DE' ) {
-		paymentMethods = [
-			...existingCardMethods,
-			...existingPayPalPPCPMethods,
-			applePayMethod,
-			googlePayMethod,
-			paypalExpressMethod,
-			paypalPPCPMethod,
-			stripeMethod,
-			freePaymentMethod,
-			idealMethod,
-			sofortMethod,
-			netbankingMethod,
-			pixMethod,
-			pixAutomaticoMethod,
-			alipayMethod,
-			p24Method,
-			epsMethod,
-			wechatMethod,
-			bancontactMethod,
-			stripeUpiMethod,
-		].filter( isValueTruthy );
-	}
-
-	return paymentMethods;
 }

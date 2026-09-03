@@ -1636,6 +1636,33 @@ describe( 'utils', () => {
 				expect( normalizers.statsVideo() ).toBeNull();
 			} );
 
+			test( 'should return empty data when the endpoint reports an empty window', () => {
+				// With no rows in the requested window, the endpoint returns a
+				// single object instead of the usual [ date, value ] tuples.
+				expect(
+					normalizers.statsVideo( {
+						data: { date: '7-10', p: '0' },
+						pages: [],
+					} )
+				).toEqual( { pages: [], data: [], post: null, metrics: null, rows: null, total: null } );
+			} );
+
+			test( 'should skip non-tuple entries in the data array', () => {
+				expect(
+					normalizers.statsVideo( {
+						data: [ [ '2016-11-12', 1 ], { date: '7-10', p: '0' } ],
+						pages: [],
+					} )
+				).toEqual( {
+					pages: [],
+					data: [ { period: '2016-11-12', value: 1 } ],
+					post: null,
+					metrics: null,
+					rows: null,
+					total: null,
+				} );
+			} );
+
 			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsVideo( {
@@ -1675,6 +1702,76 @@ describe( 'utils', () => {
 							link: 'http://www.themepremium.com/blog-with-the-speed-of-your-thought-with-the-p2-theme/',
 						},
 					],
+					post: null,
+					metrics: null,
+					rows: null,
+					total: null,
+				} );
+			} );
+
+			test( 'should pass through the attachment post', () => {
+				const post = {
+					ID: 43948,
+					post_title: 'blank-canvas-split-screen',
+					post_date: '2021-02-08 13:53:37',
+				};
+				expect( normalizers.statsVideo( { data: [], pages: [], post } ) ).toEqual( {
+					pages: [],
+					data: [],
+					post,
+					metrics: null,
+					rows: null,
+					total: null,
+				} );
+			} );
+
+			test( 'should key range-mode rows by the metric names in fields', () => {
+				expect(
+					normalizers.statsVideo( {
+						fields: [ 'period', 'plays', 'impressions', 'watch_time', 'retention_rate' ],
+						data: [
+							[ '2026-07-01', 3, 10, 0.5, 25.5 ],
+							[ '2026-07-02', '0', 4, 0, 0 ],
+						],
+						pages: [],
+						total: { plays: 3, impressions: 14, watch_time: 0.5, retention_rate: 25.5 },
+					} )
+				).toEqual( {
+					pages: [],
+					data: [
+						{ period: '2026-07-01', value: 3 },
+						{ period: '2026-07-02', value: '0' },
+					],
+					post: null,
+					metrics: [ 'plays', 'impressions', 'watch_time', 'retention_rate' ],
+					rows: [
+						{
+							period: '2026-07-01',
+							plays: 3,
+							impressions: 10,
+							watch_time: 0.5,
+							retention_rate: 25.5,
+						},
+						{ period: '2026-07-02', plays: 0, impressions: 4, watch_time: 0, retention_rate: 0 },
+					],
+					total: { plays: 3, impressions: 14, watch_time: 0.5, retention_rate: 25.5 },
+				} );
+			} );
+
+			test( 'should build single-metric rows from a two-column fields list', () => {
+				expect(
+					normalizers.statsVideo( {
+						fields: [ 'period', 'impressions' ],
+						data: [ [ '2026-07-01', 7 ] ],
+						pages: [],
+					} )
+				).toEqual( {
+					pages: [],
+					data: [ { period: '2026-07-01', value: 7 } ],
+					post: null,
+					metrics: [ 'impressions' ],
+					rows: [ { period: '2026-07-01', impressions: 7 } ],
+					total: null,
 				} );
 			} );
 		} );
@@ -2437,6 +2534,106 @@ describe( 'utils', () => {
 						label: '/2019/01/awesome.mov',
 						shortLabel: 'awesome.mov',
 						labelIcon: 'external',
+					},
+				] );
+			} );
+		} );
+
+		describe( 'statsEmailsSummary()', () => {
+			const site = { slug: 'en.blog.wordpress.com' };
+
+			test( 'should return an empty array if data is null', () => {
+				expect( normalizers.statsEmailsSummary() ).toEqual( [] );
+			} );
+
+			test( 'should render every row the API returns, including all-zero rows', () => {
+				// Filtering never-emailed posts is a server-side concern (STATS-452):
+				// dropping rows after pagination would leave the card short-handed
+				// and out of sync with the CSV export.
+				expect(
+					normalizers.statsEmailsSummary(
+						{
+							posts: [
+								{
+									id: 1,
+									title: 'Never emailed',
+									date: '2020-01-01 00:00:00',
+									total_sends: 0,
+									opens: 0,
+									clicks: 0,
+								},
+								{
+									id: 3,
+									title: 'Legacy send with engagement',
+									date: '2020-01-01 00:00:00',
+									total_sends: 0,
+									opens: 5,
+									clicks: 2,
+								},
+							],
+						},
+						{},
+						10,
+						site
+					)
+				).toMatchObject( [ { id: 1 }, { id: 3, opens: 5, clicks: 2 } ] );
+			} );
+
+			test( 'should map fields and default missing counts to zero strings', () => {
+				expect(
+					normalizers.statsEmailsSummary(
+						{
+							posts: [
+								{
+									id: 4,
+									title: 'Tracked send',
+									date: '2024-01-01 00:00:00',
+									total_sends: 100,
+									opens: 26,
+									clicks: 5,
+									opens_rate: 0.11,
+									clicks_rate: 0.03,
+									unique_opens: 11,
+									unique_clicks: 3,
+								},
+							],
+						},
+						{},
+						10,
+						site
+					)
+				).toMatchObject( [
+					{
+						id: 4,
+						label: 'Tracked send',
+						value: 0.03,
+						opens: 26,
+						clicks: 5,
+						opens_rate: 0.11,
+						clicks_rate: 0.03,
+						unique_opens: 11,
+						unique_clicks: 3,
+						total_sends: 100,
+						page: '/stats/email/opens/day/4/en.blog.wordpress.com',
+					},
+				] );
+
+				expect(
+					normalizers.statsEmailsSummary(
+						{ posts: [ { id: 5, title: 'Untracked send', date: '2024-01-01', total_sends: 100 } ] },
+						{},
+						10,
+						site
+					)
+				).toMatchObject( [
+					{
+						id: 5,
+						value: '0',
+						opens: '0',
+						clicks: '0',
+						unique_opens: '0',
+						unique_clicks: '0',
+						total_sends: 100,
 					},
 				] );
 			} );

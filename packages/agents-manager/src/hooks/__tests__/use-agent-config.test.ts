@@ -13,7 +13,7 @@ jest.mock( '../use-unified-ai-chat', () => ( {
 
 import { renderHook } from '@testing-library/react';
 import { useUnifiedAiChat } from '../use-unified-ai-chat';
-import { ORCHESTRATOR_AGENT_ID, UNIFIED_CHAT_AGENT_ID } from '../../constants';
+import { DOLLY_AGENT_ID, ORCHESTRATOR_AGENT_ID, UNIFIED_CHAT_AGENT_ID } from '../../constants';
 import { useAgentConfig } from '../use-agent-config';
 
 const mockUseUnifiedAiChat = useUnifiedAiChat as jest.Mock;
@@ -95,6 +95,14 @@ describe( 'useAgentConfig', () => {
 		const { result } = renderHook( () => useAgentConfig() );
 		expect( result.current.agentId ).toBe( 'woo-workflow-unified_chat' );
 		delete ( globalThis as Record< string, unknown > ).agentsManagerData;
+	} );
+
+	it( 'uses a Dolly host override from `agentsManagerData.agentId`', () => {
+		( globalThis as Record< string, unknown > ).agentsManagerData = {
+			agentId: DOLLY_AGENT_ID,
+		};
+		const { result } = renderHook( () => useAgentConfig() );
+		expect( result.current.agentId ).toBe( 'dolly' );
 	} );
 
 	it( 'URL `?agent=` param overrides `agentsManagerData.agentId`', () => {

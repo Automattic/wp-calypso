@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { startsWith } from 'lodash';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
@@ -83,16 +82,23 @@ export class AppsBadge extends PureComponent< AppsBadgeProps, AppsBadgeState > {
 		super( props );
 
 		const localeSlug = APP_STORE_BADGE_URLS[ props.storeName ].getLocaleSlug().toLowerCase();
-		const shouldLoadExternalImage = ! startsWith( localeSlug, 'en' );
+		const shouldLoadExternalImage = ! localeSlug.startsWith( 'en' );
 
 		this.state = {
 			imageSrc: shouldLoadExternalImage
 				? APP_STORE_BADGE_URLS[ props.storeName ].src.replace( '{localeSlug}', localeSlug )
 				: APP_STORE_BADGE_URLS[ props.storeName ].defaultSrc,
 		};
+	}
 
+	componentDidMount(): void {
+		const localeSlug = APP_STORE_BADGE_URLS[ this.props.storeName ].getLocaleSlug().toLowerCase();
+		const shouldLoadExternalImage = ! localeSlug.startsWith( 'en' );
+
+		// Kick off the external image load in the commit phase rather than the
+		// constructor, which React can run multiple times (or discard) before a
+		// mount commits under concurrent rendering.
 		if ( shouldLoadExternalImage ) {
-			this.image = null;
 			this.loadImage();
 		}
 	}

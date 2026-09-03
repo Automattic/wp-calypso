@@ -7,11 +7,10 @@ const MiniCSSWithRTLPlugin = require( './mini-css-with-rtl' );
  * Return a webpack loader object containing our styling (Sass -> CSS) stack.
  * @param  {Object}    _                              Options
  * @param  {string[]}  _.includePaths                 Sass files lookup paths
- * @param  {string}    _.prelude                      String to prepend to each Sass file
  * @param  {Object}    _.postCssOptions               PostCSS options
  * @returns {Object}                                  webpack loader object
  */
-module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
+module.exports.loader = ( { includePaths, postCssOptions } ) => ( {
 	test: /\.(sc|sa|c)ss$/,
 	use: [
 		MiniCssExtractPlugin.loader,
@@ -37,8 +36,8 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
 		{
 			loader: require.resolve( 'sass-loader' ),
 			options: {
-				additionalData: prelude,
-				api: 'modern',
+				api: 'modern-compiler',
+				implementation: require.resolve( 'sass-embedded' ),
 				sassOptions: ( loaderContext ) => ( {
 					loadPaths: includePaths,
 					quietDeps: true,
@@ -55,24 +54,21 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
  * @param  {Object}   _                Options
  * @param  {string}   _.chunkFilename  filename pattern to use for CSS files
  * @param  {string}   _.filename       filename pattern to use for CSS chunk files
+ * @param  {boolean}  _.rtl            Whether to generate RTL CSS assets
  * @returns {Object[]}                 styling relevant webpack plugin objects
  */
-module.exports.plugins = ( { chunkFilename, filename } ) => [
-	new MiniCssExtractPlugin( {
-		chunkFilename,
-		filename,
-		ignoreOrder: true, // suppress conflicting order warnings from mini-css-extract-plugin
-		attributes: {
-			'data-webpack': true,
-		},
-		// v2 auto-enables importModule on webpack 5.33.2+, but CSS extraction
-		// fails with "window is not defined" because DefinePlugin replaces
-		// `global` with `window` which doesn't exist in the Node.js execution
-		// context used by importModule. Falling back to the child compiler
-		// approach used by v1.
-		experimentalUseImportModule: false,
-	} ),
-	new MiniCSSRuntimeFullHashPlugin(),
-	new MiniCSSWithRTLPlugin(),
-	new WebpackRTLPlugin(),
-];
+module.exports.plugins = ( { chunkFilename, filename, rtl = true } ) =>
+	[
+		new MiniCssExtractPlugin( {
+			chunkFilename,
+			filename,
+			ignoreOrder: true, // suppress conflicting order warnings from mini-css-extract-plugin
+			attributes: {
+				'data-webpack': true,
+			},
+			experimentalUseImportModule: true,
+		} ),
+		new MiniCSSRuntimeFullHashPlugin(),
+		rtl && new MiniCSSWithRTLPlugin(),
+		rtl && new WebpackRTLPlugin(),
+	].filter( Boolean );

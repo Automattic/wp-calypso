@@ -5,9 +5,9 @@ import page from '@automattic/calypso-router';
 import { Button, Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
@@ -383,4 +383,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight( connectComponent, localize )( OrgCredentialsForm );
+export default compose( connectComponent, localize )( OrgCredentialsForm );

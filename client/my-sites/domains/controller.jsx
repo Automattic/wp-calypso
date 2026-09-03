@@ -1,7 +1,6 @@
 import page from '@automattic/calypso-router';
-import { removeQueryArgs } from '@wordpress/url';
+import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
-import { get, includes, map } from 'lodash';
 import DocumentHead from 'calypso/components/data/document-head';
 import ConnectDomainStep from 'calypso/components/domains/connect-domain-step';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
@@ -11,6 +10,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { sectionify } from 'calypso/lib/route';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -25,7 +25,7 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import TransferDomain from 'calypso/my-sites/domains/transfer-domain';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
+import { hasDashboardForcedOptIn, hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -229,7 +229,7 @@ const useMyDomain = ( context, next ) => {
 const transferDomainPrecheck = ( context, next ) => {
 	const state = context.store.getState();
 	const siteSlug = getSelectedSiteSlug( state ) || '';
-	const domain = get( context, 'params.domain', '' );
+	const domain = context?.params?.domain ?? '';
 
 	const handleGoBack = () => {
 		if ( context.query.goBack === 'use-my-domain' ) {
@@ -282,11 +282,11 @@ const redirectIfNoSite = ( redirectTo ) => {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
 		const sites = getSites( state );
-		const siteIds = map( sites, 'ID' );
+		const siteIds = sites.map( ( site ) => site?.ID );
 
-		if ( ! includes( siteIds, siteId ) ) {
+		if ( ! siteIds.includes( siteId ) ) {
 			const user = getCurrentUser( state );
-			const visibleSiteCount = get( user, 'visible_site_count', 0 );
+			const visibleSiteCount = user?.visible_site_count ?? 0;
 			//if only one site navigate to stats to avoid redirect loop
 			const redirect = visibleSiteCount > 1 ? redirectTo : '/stats';
 			return page.redirect( redirect );
@@ -303,7 +303,7 @@ const redirectToUseYourDomainIfVipSite = () => {
 		if ( selectedSite && selectedSite.is_vip ) {
 			return page.redirect(
 				domainUseMyDomain( selectedSite.slug, {
-					domain: get( context, 'params.suggestion', '' ),
+					domain: context?.params?.suggestion ?? '',
 				} )
 			);
 		}
@@ -377,12 +377,31 @@ const maybeRedirectToDashboard = ( context, next ) => {
 
 	dispatch( waitForPrefs() ).finally( () => {
 		if ( hasDashboardOptIn( getState() ) ) {
+			bumpStat( 'dashboard-redirect', 'domain-list' );
 			window.location.replace( dashboardLink( '/domains' ) );
 			return;
 		}
 		context.page.replace( removeQueryArgs( context.canonicalPath, 'origin_admin_bar' ) );
 		next();
 	} );
+};
+
+// Forced-opt-in (multi-site dashboard) users who land on the classic
+// `/domains/add/use-my-domain/:site` screen are sent to the stepper flow that the
+// dashboard's own "Use a domain name I own" button links to.
+const maybeRedirectUseMyDomainToDashboardSetup = ( context, next ) => {
+	if ( ! hasDashboardForcedOptIn( context.store.getState() ) ) {
+		return next();
+	}
+
+	bumpStat( 'dashboard-redirect', 'use-my-domain-flow' );
+	window.location.replace(
+		addQueryArgs( '/setup/domain/use-my-domain', {
+			siteSlug: context.params.site,
+			domainConnectionSetupUrl: dashboardLink( '/domains/%s/domain-connection-setup' ),
+			dashboard: 'dotcom',
+		} )
+	);
 };
 
 export default {
@@ -402,4 +421,5 @@ export default {
 	useMyDomain,
 	redirectDomainToSite,
 	maybeRedirectToDashboard,
+	maybeRedirectUseMyDomainToDashboardSetup,
 };

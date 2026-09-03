@@ -20,6 +20,7 @@ export function normalizePurchase( rawPurchase: RawPurchase ): Purchase {
 		user_id: parseInt( String( rawPurchase.user_id ), 10 ),
 		is_domain: Boolean( rawPurchase.is_domain ),
 		is_domain_registration: Boolean( rawPurchase.is_domain_registration ),
+		renew_date: rawPurchase.renew_date || undefined,
 	};
 }
 
@@ -62,15 +63,32 @@ export async function hasExtendedPurchase( purchaseId: number ): Promise< boolea
 	} );
 }
 
+/**
+ * Fetches features that would be lost for a given purchase.
+ *
+ * GET /wpcom/v2/upgrades/{purchaseId}/cancel-features
+ *
+ * When `targetProductSlug` is provided, the response contains only the features
+ * that exist on the current plan but not on the target plan — i.e. the delta
+ * lost by downgrading. When omitted, all cancellation features for the current
+ * plan are returned.
+ *
+ * `variant` is an A/B experiment parameter; omit it (or pass `'control'`) in
+ * most contexts.
+ */
 export async function fetchCancellationFeatures(
 	purchaseId: number,
-	variant?: 'control' | 'treatment'
+	variant?: 'control' | 'treatment',
+	targetProductSlug?: string
 ): Promise< UpgradesCancelFeaturesResponse > {
 	return await wpcom.req.get(
 		{
 			path: `/upgrades/${ purchaseId }/cancel-features`,
 			apiNamespace: 'wpcom/v2',
 		},
-		variant ? { variant } : {}
+		{
+			...( variant && { variant } ),
+			...( targetProductSlug && { target_product_slug: targetProductSlug } ),
+		}
 	);
 }

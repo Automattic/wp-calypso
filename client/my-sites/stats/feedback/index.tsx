@@ -11,7 +11,6 @@ import {
 } from '../hooks/use-notice-visibility-query';
 import useSiteTypes from '../hooks/use-site-types';
 import useStatsPurchases from '../hooks/use-stats-purchases';
-import FeedbackModal from './modal';
 import useHighlightsQuery from './use-highlights-query';
 import useOnScreen from './use-on-screen';
 
@@ -35,6 +34,7 @@ const TRACKS_EVENT_VIEW_FLOATING_PANEL = 'stats_feedback_action_view_floating_pa
 
 const FEEDBACK_PANEL_PRESENTATION_DELAY = 3000;
 const FEEDBACK_LEAVE_REVIEW_URL = 'https://wordpress.org/support/plugin/jetpack/reviews/';
+const FEEDBACK_SEND_FEEDBACK_URL = 'https://jetpack.com/submit-feedback/';
 
 const FEEDBACK_SHOULD_SHOW_PANEL_API_KEY = NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL;
 const FEEDBACK_SHOULD_SHOW_PANEL_API_HIBERNATION_DELAY = 3600 * 24 * 30 * 6; // 6 months
@@ -84,7 +84,7 @@ function FeedbackContent( { onLeaveReview, onSendFeedback }: FeedbackContentProp
 
 	const ctaText = translate( 'How would you rate your overall experience with Jetpack?' );
 	const primaryButtonText = translate( 'Love it? Leave a review ↗' );
-	const secondaryButtonText = translate( 'Not a fan? Help us improve' );
+	const secondaryButtonText = translate( 'Not a fan? Help us improve ↗' );
 
 	return (
 		<div className="stats-feedback-content">
@@ -108,6 +108,7 @@ interface FeedbackPanelProps {
 	onDismissPanel: () => void;
 	onLeaveReview: () => void;
 	onSendFeedback: () => void;
+	siteId: number;
 }
 
 function FeedbackPanel( {
@@ -115,6 +116,7 @@ function FeedbackPanel( {
 	onDismissPanel,
 	onLeaveReview,
 	onSendFeedback,
+	siteId,
 }: FeedbackPanelProps ) {
 	const translate = useTranslate();
 	const [ animationClassName, setAnimationClassName ] = useState(
@@ -122,18 +124,18 @@ function FeedbackPanel( {
 	);
 
 	const handleDismissPanel = () => {
-		trackStatsAnalyticsEvent( TRACKS_EVENT_DISMISS_FLOATING_PANEL );
+		trackStatsAnalyticsEvent( TRACKS_EVENT_DISMISS_FLOATING_PANEL, { blog_id: siteId } );
 		setAnimationClassName( FEEDBACK_PANEL_ANIMATION_NAME_EXIT );
 		onDismissPanel();
 	};
 
 	const handleLeaveReviewFromPanel = () => {
-		trackStatsAnalyticsEvent( TRACKS_EVENT_LEAVE_REVIEW_FROM_PANEL );
+		trackStatsAnalyticsEvent( TRACKS_EVENT_LEAVE_REVIEW_FROM_PANEL, { blog_id: siteId } );
 		onLeaveReview();
 	};
 
 	const handleSendFeedbackFromPanel = () => {
-		trackStatsAnalyticsEvent( TRACKS_EVENT_SEND_FEEDBACK_FROM_PANEL );
+		trackStatsAnalyticsEvent( TRACKS_EVENT_SEND_FEEDBACK_FROM_PANEL, { blog_id: siteId } );
 		onSendFeedback();
 	};
 
@@ -167,30 +169,31 @@ function FeedbackPanel( {
 interface FeedbackCardProps {
 	onLeaveReview: () => void;
 	onSendFeedback: () => void;
+	siteId: number;
 }
 
-function FeedbackCard( { onLeaveReview, onSendFeedback }: FeedbackCardProps ) {
+function FeedbackCard( { onLeaveReview, onSendFeedback, siteId }: FeedbackCardProps ) {
 	const [ hasFiredViewEvent, setHasFiredViewEvent ] = useState( false );
 	const inlineFeedbackCardRef = useRef( null );
 	const isVisible = useOnScreen( inlineFeedbackCardRef );
 
 	useEffect( () => {
-		trackStatsAnalyticsEvent( TRACKS_EVENT_DID_PRESENT_FEEDBACK_CARD );
-	}, [] );
+		trackStatsAnalyticsEvent( TRACKS_EVENT_DID_PRESENT_FEEDBACK_CARD, { blog_id: siteId } );
+	}, [ siteId ] );
 
 	useEffect( () => {
 		if ( isVisible && ! hasFiredViewEvent ) {
-			trackStatsAnalyticsEvent( TRACKS_EVENT_DID_VIEW_FEEDBACK_CARD );
+			trackStatsAnalyticsEvent( TRACKS_EVENT_DID_VIEW_FEEDBACK_CARD, { blog_id: siteId } );
 			setHasFiredViewEvent( true );
 		}
-	}, [ isVisible, hasFiredViewEvent ] );
+	}, [ isVisible, hasFiredViewEvent, siteId ] );
 
 	const handleLeaveReviewFromCard = () => {
-		trackStatsAnalyticsEvent( TRACKS_EVENT_LEAVE_REVIEW_FROM_CARD );
+		trackStatsAnalyticsEvent( TRACKS_EVENT_LEAVE_REVIEW_FROM_CARD, { blog_id: siteId } );
 		onLeaveReview();
 	};
 	const handleSendFeedbackFromCard = () => {
-		trackStatsAnalyticsEvent( TRACKS_EVENT_SEND_FEEDBACK_FROM_CARD );
+		trackStatsAnalyticsEvent( TRACKS_EVENT_SEND_FEEDBACK_FROM_CARD, { blog_id: siteId } );
 		onSendFeedback();
 	};
 
@@ -205,7 +208,6 @@ function FeedbackCard( { onLeaveReview, onSendFeedback }: FeedbackCardProps ) {
 }
 
 function StatsFeedbackController( { siteId }: FeedbackProps ) {
-	const [ isFeedbackModalOpen, setIsFeedbackModalOpen ] = useState( false );
 	const [ isFloatingPanelOpen, setIsFloatingPanelOpen ] = useState( false );
 
 	const { isPending, isError, shouldShowFeedbackPanel, updateFeedbackPanelHibernationDelay } =
@@ -215,10 +217,10 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 		if ( ! isPending && ! isError && shouldShowFeedbackPanel ) {
 			setTimeout( () => {
 				setIsFloatingPanelOpen( true );
-				trackStatsAnalyticsEvent( TRACKS_EVENT_VIEW_FLOATING_PANEL );
+				trackStatsAnalyticsEvent( TRACKS_EVENT_VIEW_FLOATING_PANEL, { blog_id: siteId } );
 			}, FEEDBACK_PANEL_PRESENTATION_DELAY );
 		}
-	}, [ isPending, isError, shouldShowFeedbackPanel ] );
+	}, [ isPending, isError, shouldShowFeedbackPanel, siteId ] );
 
 	const dismissPanelWithDelay = () => {
 		// Allows the animation to run first.
@@ -239,25 +241,23 @@ function StatsFeedbackController( { siteId }: FeedbackProps ) {
 
 	const handleSendFeedback = () => {
 		setIsFloatingPanelOpen( false );
-		setIsFeedbackModalOpen( true );
-	};
-
-	const handleCloseModalDialog = () => {
-		setIsFeedbackModalOpen( false );
+		window.open( FEEDBACK_SEND_FEEDBACK_URL );
 	};
 
 	return (
 		<div className="stats-feedback-container">
-			<FeedbackCard onLeaveReview={ handleLeaveReview } onSendFeedback={ handleSendFeedback } />
+			<FeedbackCard
+				onLeaveReview={ handleLeaveReview }
+				onSendFeedback={ handleSendFeedback }
+				siteId={ siteId }
+			/>
 			<FeedbackPanel
 				isOpen={ isFloatingPanelOpen }
 				onDismissPanel={ handleDismissPanel }
 				onLeaveReview={ handleLeaveReview }
 				onSendFeedback={ handleSendFeedback }
+				siteId={ siteId }
 			/>
-			{ isFeedbackModalOpen && (
-				<FeedbackModal siteId={ siteId } onClose={ handleCloseModalDialog } />
-			) }
 		</div>
 	);
 }

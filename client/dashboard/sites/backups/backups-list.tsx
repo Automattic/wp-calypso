@@ -1,10 +1,9 @@
-import { siteBackupActivityLogGroupCountsQuery, siteBySlugQuery } from '@automattic/api-queries';
-import { useSuspenseQuery, useQuery } from '@tanstack/react-query';
+import { siteBackupActivityLogGroupCountsQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useMemo } from 'react';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
-import { siteRoute, siteBackupsRoute } from '../../app/router/sites';
 import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { buildTimeRangeForActivityLog } from '../../utils/site-activity-log';
 import { getFields } from './dataviews/fields';
@@ -28,6 +27,8 @@ const defaultView: View = {
 };
 
 export function BackupsList( {
+	siteId,
+	searchParams,
 	selectedBackup,
 	setSelectedBackup,
 	dateRange,
@@ -36,6 +37,8 @@ export function BackupsList( {
 	activityLog,
 	isLoadingActivityLog,
 }: {
+	siteId: number;
+	searchParams?: Record< string, unknown >;
 	selectedBackup: ActivityLogEntry | null;
 	setSelectedBackup: ( backup: ActivityLogEntry | null ) => void;
 	dateRange?: { start: Date; end: Date };
@@ -44,10 +47,6 @@ export function BackupsList( {
 	activityLog: ActivityLogEntry[];
 	isLoadingActivityLog: boolean;
 } ) {
-	const { siteSlug } = siteRoute.useParams();
-	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-
-	const searchParams = siteBackupsRoute.useSearch();
 	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'site-backups',
 		defaultView,
@@ -68,7 +67,7 @@ export function BackupsList( {
 	}, [ dateRange, timezoneString, gmtOffset ] );
 
 	const { data: groupCountsData } = useQuery(
-		siteBackupActivityLogGroupCountsQuery( site.ID, after, before )
+		siteBackupActivityLogGroupCountsQuery( siteId, after, before )
 	);
 
 	const fields = getFields( groupCountsData?.groups, timezoneString, gmtOffset );

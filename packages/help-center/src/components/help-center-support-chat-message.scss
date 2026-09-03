@@ -1,11 +1,23 @@
 @import 'variables';
 
 .help-center-support-chat__conversation-sub-information {
-	color: var( --studio-gray-50, #646970 );
+	color: var( --studio-gray-50 );
 	display: flex;
 	font-size: $font-body-extra-small;
 	align-items: center;
 	gap: 4px;
+
+	@media screen {
+		:root[data-theme='dark'] & {
+			color: var( --dashboard__text-muted-color, var( --studio-gray-50 ) );
+		}
+	}
+
+	@media screen and ( prefers-color-scheme: dark ) {
+		:root[data-theme='system'] & {
+			color: var( --dashboard__text-muted-color, var( --studio-gray-50 ) );
+		}
+	}
 
 	.help-center-support-chat__conversation-information-name {
 		text-overflow: ellipsis;

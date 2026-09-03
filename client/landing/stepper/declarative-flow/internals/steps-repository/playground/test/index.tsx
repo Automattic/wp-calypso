@@ -30,6 +30,7 @@ const renderPlaygroundStep = (
 };
 
 const getLaunchButton = () => screen.getByRole( 'button', { name: 'Launch on WordPress.com' } );
+const getFreeTrialButton = () => screen.getByRole( 'button', { name: 'Launch free trial' } );
 
 describe( 'Playground', () => {
 	beforeEach( () => {
@@ -76,6 +77,20 @@ describe( 'Playground', () => {
 			} );
 
 			expect( getLaunchButton() ).toBeDisabled();
+		} );
+
+		it( 'should show free trial button when intent is woocommerce', async () => {
+			await act( async () => {
+				renderPlaygroundStep(
+					{},
+					{
+						initialEntry:
+							'/setup/onboarding/playground?blueprint=woocommerce&playground=1&intent=woocommerce',
+					}
+				);
+			} );
+
+			expect( getFreeTrialButton() ).toBeVisible();
 		} );
 	} );
 

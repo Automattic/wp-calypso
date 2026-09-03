@@ -1,4 +1,6 @@
-import { useExperiment } from 'calypso/lib/explat';
+import { addQueryArgs } from '@wordpress/url';
+import { useState } from 'react';
+import PreLaunchSiteModal from 'calypso/components/pre-launch-site-modal';
 import { useCelebrateLaunchModalSideEffects } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal/use-side-effects';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -6,6 +8,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CustomerHomeLaunchpad from '.';
 import type { Task } from '@automattic/launchpad';
 import type { AppState } from 'calypso/types';
+import type { JSX } from 'react';
 
 type LaunchpadPreLaunchProps = {
 	checklistSlug?: string;
@@ -18,34 +21,45 @@ const LaunchpadPreLaunch = ( props: LaunchpadPreLaunchProps ): JSX.Element => {
 
 	const { onSiteLaunched } = useCelebrateLaunchModalSideEffects( siteId );
 
-	const [ , experimentData ] = useExperiment( 'calypso_standardized_site_launch_gating_202603_v1' );
-	const experimentAssignment = experimentData?.variationName;
+	const [ isLaunchModalOpen, setIsLaunchModalOpen ] = useState( false );
+
+	const launchUrl = addQueryArgs( '/start/launch-site', { siteSlug: site?.slug } );
+
+	// A free site can never qualify (needs a paid plan), so skip the bridge and
+	// redirect instantly. Unknown plans fall through and settle in the bridge.
+	const isFreePlan = site?.plan?.is_free ?? false;
 
 	const handleTaskClick = ( task: Task ) => {
-		// No experiment assignment (i.e., control) or not the site launch task
-		if ( task.id !== 'site_launched' || ! experimentAssignment ) {
+		if ( task.id !== 'site_launched' ) {
 			return;
 		}
 
-		// Ungated site launch. When the action is completed, handleSiteLaunched will be called.
-		if ( experimentAssignment === 'ungated_site_launch' ) {
-			return;
-		}
-
-		if ( experimentAssignment === 'semi_gated_site_launch' ) {
-			window.location.assign( `/start/launch-site?siteSlug=${ site?.slug }` );
+		// Hand off to the pre-launch bridge, which confirms for qualifying sites.
+		if ( isFreePlan ) {
+			window.location.assign( launchUrl );
 			return false;
 		}
 
-		throw new Error( 'Invalid experiment assignment' );
+		setIsLaunchModalOpen( true );
+		return false;
 	};
 
 	return (
-		<CustomerHomeLaunchpad
-			checklistSlug={ props.checklistSlug ?? checklistSlug }
-			onTaskClick={ handleTaskClick }
-			onSiteLaunched={ () => onSiteLaunched( !! site?.is_wpcom_atomic ) }
-		/>
+		<>
+			<CustomerHomeLaunchpad
+				checklistSlug={ props.checklistSlug ?? checklistSlug }
+				onTaskClick={ handleTaskClick }
+				onSiteLaunched={ () => onSiteLaunched( !! site?.is_wpcom_atomic ) }
+			/>
+			{ ! isFreePlan && (
+				<PreLaunchSiteModal
+					siteId={ siteId }
+					isOpen={ isLaunchModalOpen }
+					onClose={ () => setIsLaunchModalOpen( false ) }
+					launchUrl={ launchUrl }
+				/>
+			) }
+		</>
 	);
 };
 

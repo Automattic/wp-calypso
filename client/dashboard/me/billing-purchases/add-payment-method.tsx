@@ -32,7 +32,7 @@ function AddPaymentMethod() {
 				size="small"
 				header={
 					<PageHeader
-						prefix={ <Breadcrumbs length={ 4 } /> }
+						prefix={ <Breadcrumbs length={ 3 } /> }
 						title={ __( 'Add payment method' ) }
 					/>
 				}
@@ -52,7 +52,7 @@ function AddPaymentMethod() {
 				size="small"
 				header={
 					<PageHeader
-						prefix={ <Breadcrumbs length={ 4 } /> }
+						prefix={ <Breadcrumbs length={ 3 } /> }
 						title={ __( 'Add payment method' ) }
 					/>
 				}
@@ -70,7 +70,7 @@ function AddPaymentMethod() {
 		<PageLayout
 			size="small"
 			header={
-				<PageHeader prefix={ <Breadcrumbs length={ 4 } /> } title={ __( 'Add payment method' ) } />
+				<PageHeader prefix={ <Breadcrumbs length={ 3 } /> } title={ __( 'Add payment method' ) } />
 			}
 		>
 			<VStack spacing={ 6 }>

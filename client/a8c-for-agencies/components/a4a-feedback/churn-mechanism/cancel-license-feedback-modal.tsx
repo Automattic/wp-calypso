@@ -142,13 +142,9 @@ const CancelLicenseFeedbackModal = ( {
 				cta: 'cancel',
 			} )
 		);
-		if ( isAtomicSite ) {
-			window.open( `https://wordpress.com/purchases/subscriptions/${ siteSlug }`, '_blank' );
-		} else {
-			revokeLicense( {
-				licenseKey,
-			} );
-		}
+		revokeLicense( {
+			licenseKey,
+		} );
 		handleSubmitFeedback();
 	};
 
@@ -175,16 +171,12 @@ const CancelLicenseFeedbackModal = ( {
 		if ( revokeLicenseStatus === 'success' ) {
 			handleLicenseRevocationSuccess();
 		}
-		if (
-			( revokeLicenseStatus === 'success' || isAtomicSite ) &&
-			saveFeedbackStatus === 'success'
-		) {
+		if ( revokeLicenseStatus === 'success' && saveFeedbackStatus === 'success' ) {
 			handleCloseAndRefreshLicences();
 		}
 	}, [
 		handleCloseAndRefreshLicences,
 		handleLicenseRevocationSuccess,
-		isAtomicSite,
 		revokeLicenseStatus,
 		saveFeedbackStatus,
 	] );
@@ -212,6 +204,17 @@ const CancelLicenseFeedbackModal = ( {
 				<>
 					{ translate(
 						'A revoked license cannot be reused, and the associated site will no longer have access to the provisioned product. You will stop being billed for this license immediately.'
+					) }
+					{ isAtomicSite && (
+						<>
+							<br />
+							<br />
+							<strong>
+								{ translate(
+									'This will cancel the WordPress.com hosting plan for this site. The site will lose its plan features and hosting access.'
+								) }
+							</strong>
+						</>
 					) }
 					{ isChildLicense && (
 						<>
@@ -243,7 +246,7 @@ const CancelLicenseFeedbackModal = ( {
 						disabled={ isLoading || ( suggestion && ! suggestions.length ) }
 						isBusy={ isLoading }
 					>
-						{ isAtomicSite ? translate( 'Cancel license ↗' ) : translate( 'Cancel license' ) }
+						{ translate( 'Cancel license' ) }
 					</Button>
 				</>
 			}

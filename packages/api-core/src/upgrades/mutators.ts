@@ -97,6 +97,26 @@ export async function cancelAndRefundPurchase(
 	} );
 }
 
+export interface DelayedDowngradeState {
+	is_pending: boolean;
+	to_product_id: number | null;
+	requested_at: number | null;
+}
+
+export async function setDelayedDowngrade(
+	purchaseId: number,
+	params: { enabled: true; to_product_id: number } | { enabled: false }
+): Promise< { success: boolean; delayed_downgrade: DelayedDowngradeState } > {
+	// The endpoint resolves with `{ success: true, delayed_downgrade: … }` on
+	// success and rejects (throws) on any failure, so `success` is always true
+	// here; the resulting downgrade state is carried in `delayed_downgrade`.
+	return wpcom.req.post( {
+		path: `/upgrades/${ purchaseId }/delayed-downgrade`,
+		apiVersion: '1.1',
+		body: params,
+	} );
+}
+
 export async function extendPurchaseWithFreeMonth(
 	purchaseId: number
 ): Promise< { status: string; message: string } > {

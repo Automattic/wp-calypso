@@ -1,6 +1,6 @@
+import { omit } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
 import debugFactory from 'debug';
-import { omit } from 'lodash';
 import {
 	PUSH_NOTIFICATIONS_API_READY,
 	PUSH_NOTIFICATIONS_AUTHORIZE,

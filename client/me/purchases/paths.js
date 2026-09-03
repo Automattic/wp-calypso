@@ -56,15 +56,6 @@ export function siteActionInterstitial( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/site-level-actions';
 }
 
-export function downgradePurchase( siteName, purchaseId ) {
-	if ( process.env.NODE_ENV !== 'production' ) {
-		if ( 'undefined' === typeof siteName || 'undefined' === typeof purchaseId ) {
-			throw new Error( 'siteName and purchaseId must be provided' );
-		}
-	}
-	return managePurchase( siteName, purchaseId ) + '/downgrade';
-}
-
 export function confirmCancelDomain( siteName, purchaseId ) {
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if ( 'undefined' === typeof siteName || 'undefined' === typeof purchaseId ) {

@@ -1,7 +1,7 @@
-import { map, sampleSize, times } from 'lodash';
+import { shuffle, times } from '@automattic/js-utils';
 import { Component } from 'react';
-import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { useFollowedTags } from 'calypso/reader/data/tags';
 import { suggestions } from 'calypso/reader/search-stream/suggestions';
 
 function createRandomId( randomBytesLength = 9 ) {
@@ -30,11 +30,13 @@ function suggestionsFromTags( count, tags ) {
 		if ( tags.length <= count ) {
 			return [];
 		}
-		return map( sampleSize( tags, count ), ( tag, i ) => {
-			const text = ( tag.displayName || tag.slug ).replace( /-/g, ' ' );
-			const ui_algo = 'read:search-suggestions:tags/1';
-			return suggestionWithRailcar( text, ui_algo, i );
-		} );
+		return shuffle( tags )
+			.slice( 0, count )
+			.map( ( tag, i ) => {
+				const text = ( tag.displayName || tag.slug ).replace( /-/g, ' ' );
+				const ui_algo = 'read:search-suggestions:tags/1';
+				return suggestionWithRailcar( text, ui_algo, i );
+			} );
 	}
 	return null;
 }
@@ -45,7 +47,7 @@ function suggestionsFromTags( count, tags ) {
  * @returns {Array} An array of tag objects
  */
 function trendingTagsToTags( trendingTags ) {
-	return map( trendingTags, ( tag ) => ( {
+	return ( trendingTags ?? [] ).map( ( tag ) => ( {
 		displayName: tag.tag.display_name,
 		slug: tag.tag.slug,
 	} ) );
@@ -54,10 +56,12 @@ function trendingTagsToTags( trendingTags ) {
 function suggestionsFromPicks( count ) {
 	const lang = getLocaleSlug().split( '-' )[ 0 ];
 	if ( suggestions[ lang ] ) {
-		return map( sampleSize( suggestions[ lang ], count ), ( tag, i ) => {
-			const ui_algo = 'read:search-suggestions:picks/1';
-			return suggestionWithRailcar( tag, ui_algo, i );
-		} );
+		return shuffle( suggestions[ lang ] )
+			.slice( 0, count )
+			.map( ( tag, i ) => {
+				const ui_algo = 'read:search-suggestions:picks/1';
+				return suggestionWithRailcar( tag, ui_algo, i );
+			} );
 	}
 	return null;
 }
@@ -114,7 +118,7 @@ const SuggestionsProvider = ( Element, count = 3 ) => {
 	}
 
 	return function SuggestionsProviderWrapper( props ) {
-		const { data: followedTags } = useFollowedReaderTags();
+		const { data: followedTags } = useFollowedTags();
 		return <SuggestionsClass { ...props } followedTags={ followedTags } />;
 	};
 };

@@ -1,5 +1,4 @@
 import inherits from 'inherits';
-import { includes } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 
 function ValidationError( code ) {
@@ -19,7 +18,7 @@ export function canRedirect( siteId, domainName, onComplete ) {
 		domainName = 'http://' + domainName;
 	}
 
-	if ( includes( domainName, '@' ) ) {
+	if ( domainName.includes( '@' ) ) {
 		onComplete( new ValidationError( 'invalid_domain' ) );
 		return;
 	}

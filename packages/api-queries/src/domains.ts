@@ -6,9 +6,12 @@ import {
 	DomainUpdateStatus,
 	fetchAvailableTlds,
 	fetchBulkDomainUpdateStatus,
+	fetchBundleForDomain,
+	fetchBundleMetadata,
 	fetchDomains,
 	fetchDomainSuggestions,
 	fetchFreeDomainSuggestion,
+	type BundleMetadata,
 	type FetchDomainsOptions,
 	type JobStatus,
 	type DomainSuggestionQuery,
@@ -39,6 +42,41 @@ export const freeSuggestionQuery = (
 	queryOptions( {
 		queryKey: [ 'free-suggestion', query, params ],
 		queryFn: () => fetchFreeDomainSuggestion( query, params ),
+		meta: { persist: false },
+	} );
+
+// One request, two typed views. `bundle_suggestion` (top BundleCard) and
+// `bundle_triggers` (inline-bundle catalogue) both come from the same
+// `with_bundles=1` `/domains/suggestions` call, so they share a query key and
+// React Query dedupes them to a single network request even when both consumers
+// are enabled on the same query. The two exports below spread this query and add
+// a `select` picking their half of the response.
+export const bundleMetadataQuery = ( query: string ) =>
+	queryOptions( {
+		queryKey: [ 'domain-bundle-metadata', query ],
+		queryFn: () => fetchBundleMetadata( query ),
+		meta: { persist: false },
+	} );
+
+// Module-level selectors so React Query sees a stable `select` reference across
+// renders instead of a fresh closure per call.
+const selectBundleSuggestion = ( data: BundleMetadata ) => data.bundle_suggestion;
+const selectBundleTriggers = ( data: BundleMetadata ) => data.bundle_triggers;
+
+export const bundleSuggestionQuery = ( query: string ) => ( {
+	...bundleMetadataQuery( query ),
+	select: selectBundleSuggestion,
+} );
+
+export const bundleTriggersQuery = ( query: string ) => ( {
+	...bundleMetadataQuery( query ),
+	select: selectBundleTriggers,
+} );
+
+export const bundleForDomainQuery = ( fqdn: string ) =>
+	queryOptions( {
+		queryKey: [ 'bundle-for-domain', fqdn ],
+		queryFn: () => fetchBundleForDomain( fqdn ),
 		meta: { persist: false },
 	} );
 
@@ -110,6 +148,7 @@ export const bulkDomainUpdateStatusQuery = () =>
 
 export const bulkDomainsActionMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'domains-bulk-apply' },
 		mutationFn: ( action: BulkDomainsAction ) => bulkDomainsAction( action ),
 		onSuccess: () => {
 			queryClient.refetchQueries( bulkDomainUpdateStatusQuery() );

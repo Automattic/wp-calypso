@@ -11,7 +11,6 @@ import {
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import { Component } from 'react';
 import titlecase from 'to-title-case';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -52,7 +51,7 @@ class StatsListItem extends Component {
 	}
 
 	getSiteIdForFollow = () => {
-		return get( this.props, 'data.actions[0].data.blog_id' );
+		return this.props?.data?.actions?.[ 0 ]?.data?.blog_id;
 	};
 
 	closeMenu = () => {

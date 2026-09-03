@@ -25,13 +25,15 @@ boot( {
 	Logo: null,
 	LoadingLogo: CiabDashboardStepperLogo,
 	supports: {
+		agency: false,
+		agencyClient: false,
 		sites: true,
 		domains: true,
 		emails: true,
-		themes: false,
 		reader: false,
 		help: true,
 		notifications: false,
+		resurrectedWelcomeModal: false,
 		me: {
 			billing: {
 				monetizeSubscriptions: false,

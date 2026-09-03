@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Popover } from '@automattic/components';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { MiniCart } from '@automattic/mini-cart';
@@ -116,9 +117,18 @@ export function MasterbarCartButton( {
 						goToCheckout={ goToCheckout }
 						closeCart={ onClose }
 						onRemoveProduct={ onRemoveProduct }
+						onRemoveBundle={ ( groupId, memberCount ) => {
+							reduxDispatch(
+								recordTracksEvent( 'calypso_domain_bundle_removed_from_cart', {
+									domain_bundle_group_id: groupId,
+									domain_count: memberCount,
+								} )
+							);
+						} }
 						onRemoveCoupon={ onRemoveCoupon }
 						checkoutLabel={ checkoutLabel }
 						emptyCart={ emptyCart }
+						showBundleGrouping={ config.isEnabled( 'domain-bundling' ) }
 					/>
 				</CheckoutErrorBoundary>
 			</Popover>

@@ -3,5 +3,6 @@ import { mutationOptions } from '@tanstack/react-query';
 
 export const requestDpaMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'dpa-request' },
 		mutationFn: requestDpa,
 	} );

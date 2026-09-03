@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
 
-const LikeIcons = ( { size } ) => (
+const LikeIcons = ( { size = 24 } ) => (
 	<span className="like-button__like-icons">
 		<Gridicon icon="star" size={ size } />
 		<Gridicon icon="star-outline" size={ size } />
@@ -10,10 +10,6 @@ const LikeIcons = ( { size } ) => (
 
 LikeIcons.propTypes = {
 	size: PropTypes.number,
-};
-
-LikeIcons.defaultProps = {
-	size: 24,
 };
 
 export default LikeIcons;

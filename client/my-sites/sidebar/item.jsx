@@ -37,6 +37,29 @@ export function canCustomizeSidebarItem( isCustomizing, itemId, reassignable ) {
 	return !! isCustomizing && !! itemId && reassignable === true;
 }
 
+/**
+ * @param {{
+ *   badge?: string;
+ *   count?: number;
+ *   icon?: string | import('react').ReactElement;
+ *   inlineIcon?: import('react').ReactNode;
+ *   isSubItem?: boolean;
+ *   selected?: boolean;
+ *   slug?: string;
+ *   title?: string;
+ *   url?: string;
+ *   className?: string;
+ *   shouldOpenExternalLinksInCurrentTab: boolean;
+ *   showTooltip?: boolean;
+ *   forceExternalLink?: boolean;
+ *   forceShowExternalIcon?: boolean;
+ *   forceChevronIcon?: boolean;
+ *   trackClickEvent?: ( url?: string ) => void;
+ *   signal?: import('calypso/state/admin-menu/types').AdminMenuSignal | null;
+ *   itemId?: string;
+ *   reassignable?: boolean;
+ * }} props
+ */
 export const MySitesSidebarUnifiedItem = ( {
 	badge,
 	count,
@@ -78,9 +101,19 @@ export const MySitesSidebarUnifiedItem = ( {
 	const handleMoreClick = useCallback( ( ev ) => {
 		ev.preventDefault();
 		ev.stopPropagation();
-		setMoveMenuOpen( ( open ) => ! open );
+		setMoveMenuOpen( ( open ) => {
+			if ( open && typeof moreRef.current?.blur === 'function' ) {
+				moreRef.current.blur();
+			}
+			return ! open;
+		} );
 	}, [] );
-	const handleMoveMenuClose = useCallback( () => setMoveMenuOpen( false ), [] );
+	const handleMoveMenuClose = useCallback( ( options = {} ) => {
+		setMoveMenuOpen( false );
+		if ( options.blurTrigger && typeof moreRef.current?.blur === 'function' ) {
+			moreRef.current.blur();
+		}
+	}, [] );
 
 	const onNavigate = () => {
 		if ( typeof trackClickEvent === 'function' ) {
@@ -157,7 +190,7 @@ export const MySitesSidebarUnifiedItem = ( {
 						}
 					} }
 				>
-					⋯
+					⋮
 				</span>
 			) }
 			{ showCustomizeDecorations && moveMenuOpen && (

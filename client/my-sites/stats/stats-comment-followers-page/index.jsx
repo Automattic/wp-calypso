@@ -2,9 +2,9 @@ import { Card } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get, flowRight } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import Pagination from 'calypso/components/pagination';
 import SectionHeader from 'calypso/components/section-header';
@@ -32,7 +32,7 @@ class StatModuleFollowersPage extends Component {
 			siteId,
 			translate,
 		} = this.props;
-		const noData = ! get( data, 'posts' );
+		const noData = ! data?.posts;
 		const isLoading = requestingFollowers && noData;
 		const classes = [
 			'stats-module',
@@ -45,7 +45,7 @@ class StatModuleFollowersPage extends Component {
 			},
 		];
 
-		const total = get( data, 'total' );
+		const total = data?.total;
 
 		let paginationSummary;
 		if ( total ) {
@@ -146,4 +146,4 @@ const connectComponent = connect( ( state, { page, perPage } ) => {
 	};
 } );
 
-export default flowRight( connectComponent, localize )( StatModuleFollowersPage );
+export default compose( connectComponent, localize )( StatModuleFollowersPage );

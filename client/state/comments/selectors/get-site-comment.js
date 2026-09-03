@@ -1,4 +1,3 @@
-import { find } from 'lodash';
 import { getSiteComments } from 'calypso/state/comments/selectors';
 
 import 'calypso/state/comments/init';
@@ -12,5 +11,5 @@ import 'calypso/state/comments/init';
  */
 export function getSiteComment( state, siteId, commentId ) {
 	const comments = getSiteComments( state, siteId );
-	return find( comments, { ID: commentId } );
+	return comments.find( ( comment ) => comment.ID === commentId );
 }

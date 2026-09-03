@@ -11,6 +11,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainOverviewRoute, domainRoute } from '../../app/router/domains';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
@@ -24,25 +25,19 @@ export default function DomainDiagnostics() {
 
 	const { data: domainDiagnostics } = useSuspenseQuery( domainDiagnosticsQuery( domainName ) );
 
-	const { mutate: fixDnsIssues, isPending: isFixing } = useMutation( {
-		...domainDnsEmailMutation( domainName ),
-		meta: {
-			snackbar: {
-				success: __( 'Default email DNS records restored.' ),
-				error: { source: 'server' },
-			},
-		},
-	} );
+	const { mutate: fixDnsIssues, isPending: isFixing } = useMutation(
+		withSnackbar( domainDnsEmailMutation( domainName ), {
+			success: __( 'Default email DNS records restored.' ),
+			error: { source: 'server' },
+		} )
+	);
 
-	const { mutate: dismissNotice, isPending: isDismissing } = useMutation( {
-		...domainNoticeMutation( domainName, 'email-dns-records-diagnostics' ),
-		meta: {
-			snackbar: {
-				success: __( 'Domain diagnostics notice dismissed.' ),
-				error: { source: 'server' },
-			},
-		},
-	} );
+	const { mutate: dismissNotice, isPending: isDismissing } = useMutation(
+		withSnackbar( domainNoticeMutation( domainName, 'email-dns-records-diagnostics' ), {
+			success: __( 'Domain diagnostics notice dismissed.' ),
+			error: { source: 'server' },
+		} )
+	);
 
 	const emailDnsDiagnostics = domainDiagnostics?.email_dns_records;
 
@@ -60,7 +55,7 @@ export default function DomainDiagnostics() {
 			message = record.error_message;
 		} else if ( record.status === 'incorrect' ) {
 			message = sprintf(
-				/* translators: dnsRecordType is a DNS record type, e.g. SPF, DKIM or DMARC */
+				/* translators: %(dnsRecordType)s: a DNS record type, e.g. SPF, DKIM or DMARC */
 				__( 'Your %(dnsRecordType)s record is incorrect. The correct record should be:' ),
 				{
 					dnsRecordType: uppercaseRecord,
@@ -68,7 +63,7 @@ export default function DomainDiagnostics() {
 			);
 		} else if ( record.status === 'not_found' ) {
 			message = sprintf(
-				/* translators: dnsRecordType is a DNS record type, e.g. SPF, DKIM or DMARC */
+				/* translators: %(dnsRecordType)s: a DNS record type, e.g. SPF, DKIM or DMARC */
 				__( 'There is no %(dnsRecordType)s record. The correct record should be:' ),
 				{
 					dnsRecordType: uppercaseRecord,

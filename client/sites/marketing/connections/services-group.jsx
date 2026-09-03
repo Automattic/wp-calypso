@@ -1,4 +1,4 @@
-import { times } from 'lodash';
+import { times } from '@automattic/js-utils';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect } from 'react';
 import { connect } from 'react-redux';
@@ -34,10 +34,10 @@ const serviceWarningLevelToNoticeStatus = ( level ) => {
 };
 
 const SharingServicesGroup = ( {
-	isFetching,
-	services,
+	isFetching = false,
+	services = [],
 	title,
-	expandedService,
+	expandedService = '',
 	numberOfPlaceholders = NUMBER_OF_PLACEHOLDERS,
 } ) => {
 	useEffect( () => {
@@ -113,12 +113,6 @@ SharingServicesGroup.propTypes = {
 	title: PropTypes.node.isRequired,
 	type: PropTypes.string.isRequired,
 	expandedService: PropTypes.string,
-};
-
-SharingServicesGroup.defaultProps = {
-	isFetching: false,
-	services: [],
-	expandedService: '',
 };
 
 const mapStateToProps = ( state, { type } ) => {

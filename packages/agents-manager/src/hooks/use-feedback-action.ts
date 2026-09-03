@@ -1,22 +1,31 @@
 import { createFeedbackActions, ThumbsUpIcon, ThumbsDownIcon } from '@automattic/agenttic-ui';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { createElement, useCallback, useEffect, useRef, useState } from '@wordpress/element';
+import {
+	createElement,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from '@wordpress/element';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
+import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../utils/tracks';
 import type { AuthProvider, UseAgentChatReturn } from '@automattic/agenttic-client';
-import type { Message } from '@automattic/agenttic-ui/dist/types';
+import type { Message, MessageAction } from '@automattic/agenttic-ui/dist/types';
 
 const FEEDBACK_API_BASE = 'https://public-api.wordpress.com/wpcom/v2/ai/feedback';
 
 export interface UseFeedbackActionConfig {
 	registerMessageActions: UseAgentChatReturn[ 'registerMessageActions' ];
 	messages: Message[];
+	getTraceIdForMessage?: ( messageId: string ) => string | undefined;
 }
 
 export interface UseFeedbackActionReturn {
 	showFeedbackInput: boolean;
 	submitFeedbackText: ( feedbackText: string ) => Promise< void >;
 	resetFeedback: () => void;
+	getFeedbackActionsForMessage: ( message: Message ) => MessageAction[];
 }
 
 export async function rateMessage(
@@ -25,7 +34,8 @@ export async function rateMessage(
 	messageId: string,
 	rating: 'up' | 'down',
 	messageText?: string,
-	metadata?: Record< string, string >
+	metadata?: Record< string, string >,
+	traceId?: string
 ): Promise< void > {
 	const headers = await authProvider();
 	const url = `${ FEEDBACK_API_BASE }/${ encodeURIComponent( sessionId ) }/rate`;
@@ -35,6 +45,7 @@ export async function rateMessage(
 		rating: 'up' | 'down';
 		message_text?: string;
 		metadata?: Record< string, string >;
+		trace_id?: string;
 	} = { message_id: messageId, rating };
 
 	if ( messageText ) {
@@ -43,6 +54,10 @@ export async function rateMessage(
 
 	if ( metadata ) {
 		body.metadata = metadata;
+	}
+
+	if ( traceId ) {
+		body.trace_id = traceId;
 	}
 
 	fetch( url, {
@@ -62,7 +77,8 @@ export async function submitFeedback(
 	sessionId: string,
 	messageId: string,
 	feedback: string,
-	previousMessages?: PreviousMessage[]
+	previousMessages?: PreviousMessage[],
+	traceId?: string
 ): Promise< void > {
 	const headers = await authProvider();
 	const url = `${ FEEDBACK_API_BASE }/${ encodeURIComponent( sessionId ) }/text`;
@@ -71,6 +87,9 @@ export async function submitFeedback(
 		message_id: messageId,
 		feedback,
 	};
+	if ( traceId ) {
+		data.trace_id = traceId;
+	}
 	if ( previousMessages && previousMessages.length > 0 ) {
 		data.previous_messages = previousMessages;
 	}
@@ -159,10 +178,10 @@ function getPreviousMessages( messages: Message[], targetMessageId: string ): Pr
 }
 
 export default function useFeedbackAction( {
-	registerMessageActions,
 	messages,
+	getTraceIdForMessage,
 }: UseFeedbackActionConfig ): UseFeedbackActionReturn {
-	const { agentConfig, isLoggedIn, getActiveSessionId } = useAgentsManagerContext();
+	const { agentConfig, isLoggedIn, getTabSessionId } = useAgentsManagerContext();
 	const { sessionId, authProvider } = agentConfig!;
 	const [ showFeedbackInput, setShowFeedbackInput ] = useState( false );
 	const [ feedbackMessageId, setFeedbackMessageId ] = useState< string | null >( null );
@@ -170,32 +189,39 @@ export default function useFeedbackAction( {
 	// Keep refs to avoid recreating the feedback manager on every render
 	const messagesRef = useRef( messages );
 	const authProviderRef = useRef( authProvider );
+	const getTraceIdForMessageRef = useRef( getTraceIdForMessage );
 	messagesRef.current = messages;
 	authProviderRef.current = authProvider;
+	getTraceIdForMessageRef.current = getTraceIdForMessage;
 
 	const handleFeedback = useCallback(
 		( messageId: string, feedback: 'up' | 'down' ) => {
 			const currentAuthProvider = authProviderRef.current;
-			const currentSessionId = getActiveSessionId();
+			const currentSessionId = getTabSessionId();
 
 			if ( ! currentSessionId || ! currentAuthProvider ) {
 				return;
 			}
 
-			recordTracksEvent( 'calypso_agents_manager_response_feedback_action', {
-				type: feedback === 'up' ? 'thumb_up' : 'thumb_down',
-				message_id: messageId,
-			} );
+			recordBigSkyTracksEvent(
+				feedback === 'up'
+					? 'jetpack_big_sky_response_action_thumbs_up'
+					: 'jetpack_big_sky_response_action_thumbs_down',
+				{ message_id: messageId }
+			);
 
 			const message = messagesRef.current.find( ( m ) => m.id === messageId );
 			const messageText = message ? getMessageText( message ) : undefined;
+			const traceId = getTraceIdForMessageRef.current?.( messageId );
 
 			rateMessage(
 				currentAuthProvider,
 				currentSessionId,
 				messageId,
 				feedback,
-				messageText ?? undefined
+				messageText ?? undefined,
+				undefined,
+				traceId
 			);
 
 			if ( feedback === 'down' ) {
@@ -206,16 +232,16 @@ export default function useFeedbackAction( {
 				setFeedbackMessageId( null );
 			}
 		},
-		[ getActiveSessionId ]
+		[ getTabSessionId ]
 	);
 
-	useEffect( () => {
-		// Only register feedback actions for logged-in users.
+	const feedbackManager = useMemo( () => {
+		// Only provide feedback actions for logged-in users.
 		if ( ! isLoggedIn ) {
-			return;
+			return null;
 		}
 
-		const feedbackManager = createFeedbackActions( {
+		return createFeedbackActions( {
 			onFeedback: handleFeedback,
 			condition: ( message: Message ) => message.role === 'agent',
 			icons: {
@@ -223,27 +249,38 @@ export default function useFeedbackAction( {
 				down: createElement( ThumbsDownIcon, { className: 'agents-manager-message-action-icon' } ),
 			},
 		} );
+	}, [ handleFeedback, isLoggedIn ] );
 
-		const feedbackRegistration = {
-			id: 'agents-manager-feedback',
-			actions: ( message: Message ) =>
-				feedbackManager.getActionsForMessage( message ).map( ( action, index ) => ( {
-					...action,
-					order: 2 + index,
-				} ) ),
-		};
+	const [ feedbackActionsVersion, setFeedbackActionsVersion ] = useState( 0 );
 
-		registerMessageActions( feedbackRegistration );
+	useEffect( () => {
+		if ( ! feedbackManager ) {
+			return;
+		}
 
 		const handleFeedbackChange = () => {
-			registerMessageActions( { ...feedbackRegistration } );
+			setFeedbackActionsVersion( ( version ) => version + 1 );
 		};
 		feedbackManager.onChange( handleFeedbackChange );
 
 		return () => {
 			feedbackManager.offChange( handleFeedbackChange );
 		};
-	}, [ registerMessageActions, handleFeedback, isLoggedIn ] );
+	}, [ feedbackManager ] );
+
+	const getFeedbackActionsForMessage = useCallback(
+		( message: Message ) => {
+			void feedbackActionsVersion;
+
+			return (
+				feedbackManager?.getActionsForMessage( message ).map( ( action, index ) => ( {
+					...action,
+					order: 2 + index,
+				} ) ) ?? []
+			);
+		},
+		[ feedbackActionsVersion, feedbackManager ]
+	);
 
 	const resetFeedback = useCallback( () => {
 		setShowFeedbackInput( false );
@@ -258,7 +295,7 @@ export default function useFeedbackAction( {
 	const handleSubmitFeedbackText = useCallback(
 		async ( feedbackText: string ) => {
 			const currentAuthProvider = authProviderRef.current;
-			const currentSessionId = getActiveSessionId();
+			const currentSessionId = getTabSessionId();
 			const currentMessageId = feedbackMessageId;
 
 			if (
@@ -271,25 +308,28 @@ export default function useFeedbackAction( {
 			}
 
 			const previousMessages = getPreviousMessages( messagesRef.current, currentMessageId );
+			const traceId = getTraceIdForMessageRef.current?.( currentMessageId );
 
 			await submitFeedback(
 				currentAuthProvider,
 				currentSessionId,
 				currentMessageId,
 				feedbackText.trim(),
-				previousMessages
+				previousMessages,
+				traceId
 			);
 
-			recordTracksEvent( 'calypso_agents_manager_response_feedback_submitted', {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_response_feedback_submitted', {
 				message_id: currentMessageId,
 			} );
 		},
-		[ feedbackMessageId, getActiveSessionId ]
+		[ feedbackMessageId, getTabSessionId ]
 	);
 
 	return {
 		showFeedbackInput,
 		submitFeedbackText: handleSubmitFeedbackText,
 		resetFeedback,
+		getFeedbackActionsForMessage,
 	};
 }

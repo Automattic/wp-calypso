@@ -1,8 +1,8 @@
 import { FEATURE_INSTALL_THEMES, PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { times, isEmpty } from '@automattic/js-utils';
 import { Icon, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
-import { isEmpty, times } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
@@ -454,7 +454,7 @@ function Empty( props ) {
 }
 
 function LoadingPlaceholders( { placeholderCount } ) {
-	return times( placeholderCount, function ( i ) {
+	return times( placeholderCount, ( i ) => {
 		return (
 			<Theme
 				key={ 'placeholder-' + i }

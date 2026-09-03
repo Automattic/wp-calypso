@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { size } from 'lodash';
 import { createStore, applyMiddleware } from 'redux';
 import { thunk } from 'redux-thunk';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -185,7 +184,7 @@ describe( 'flow-controller', () => {
 						stepName: 'delayedStep',
 						stepCallback: function () {
 							const progress = getSignupProgress( store.getState() );
-							expect( size( progress ) ).toBe( 2 );
+							expect( Object.keys( progress ).length ).toBe( 2 );
 						},
 					} )
 				);

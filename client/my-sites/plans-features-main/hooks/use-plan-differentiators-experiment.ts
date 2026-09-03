@@ -27,13 +27,11 @@ type PlanDifferentiatorsResult = {
 };
 
 interface UsePlanDifferentiatorsParams {
-	flowName?: string | null;
 	isInSignup: boolean;
 	siteId?: number | null;
 }
 
 function usePlanDifferentiatorsExperiment( {
-	flowName,
 	isInSignup,
 	siteId,
 }: UsePlanDifferentiatorsParams ): PlanDifferentiatorsResult {
@@ -41,10 +39,9 @@ function usePlanDifferentiatorsExperiment( {
 
 	const hasGatingFlag = !! site?.options?.is_gating_business_q1;
 
-	const isEligibleSignupFlow = isInSignup && flowName === 'onboarding';
-	const isEligibleAdminIntent = ! isInSignup && hasGatingFlag;
-	const isEligible =
-		process.env.NODE_ENV !== 'test' && ( isEligibleSignupFlow || isEligibleAdminIntent );
+	// New-site signups (no siteId yet) are always eligible.
+	// Flows operating on an existing site are eligible only when the gating flag is set.
+	const isEligible = ( isInSignup && ! siteId ) || hasGatingFlag;
 
 	return {
 		showDifferentiatorHeader: false,

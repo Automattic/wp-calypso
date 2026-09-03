@@ -11,7 +11,7 @@
  * @module state/data-layer/wpcom-http/pipeline/retry-on-failure/delays
  */
 
-import { random } from 'lodash';
+import { random } from '@automattic/js-utils';
 
 /**
  * Computes "decorrelated jitter" delay

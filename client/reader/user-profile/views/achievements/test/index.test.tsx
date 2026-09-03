@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { useAchievementsQuery } from 'calypso/data/reader/use-achievements-query';
+import useAchievementsVisibility from 'calypso/reader/components/achievements/use-achievements-visibility';
 import UserAchievements from '../index';
 import type { ReaderUser } from '@automattic/api-core';
 
@@ -23,11 +25,12 @@ jest.mock( '../achievements-settings', () => ( {
 	default: () => <button data-testid="achievements-settings">Settings</button>,
 } ) );
 
-jest.mock( '../achievements-privacy-notice', () => ( {
+jest.mock( 'calypso/reader/user-profile/components/private-tab-notice', () => ( {
 	__esModule: true,
-	default: () => <div data-testid="achievements-privacy-notice" />,
+	default: ( { title }: { title: string } ) => (
+		<div data-testid="private-tab-notice">{ title }</div>
+	),
 } ) );
-
 const mockActivityStreakProps = jest.fn();
 jest.mock( '../activity-streak', () => ( {
 	__esModule: true,
@@ -37,14 +40,35 @@ jest.mock( '../activity-streak', () => ( {
 	},
 } ) );
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const useAchievementsVisibility =
-	require( 'calypso/reader/components/achievements/use-achievements-visibility' )
-		.default as jest.Mock;
+const mockUseAchievementsVisibility = jest.mocked( useAchievementsVisibility );
+const mockUseAchievementsQuery = jest.mocked( useAchievementsQuery );
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const useAchievementsQuery = require( 'calypso/data/reader/use-achievements-query' )
-	.useAchievementsQuery as jest.Mock;
+const getAchievementsVisibility = (
+	overrides: Partial< ReturnType< typeof useAchievementsVisibility > > = {}
+): ReturnType< typeof useAchievementsVisibility > => ( {
+	isOwnProfile: false,
+	isPublic: false,
+	isVisible: false,
+	isLoading: false,
+	...overrides,
+} );
+
+const getAchievementsQuery = (
+	overrides: Partial< ReturnType< typeof useAchievementsQuery > > = {}
+): ReturnType< typeof useAchievementsQuery > => ( {
+	achievements: [],
+	lockedAchievements: [],
+	yearsOfService: undefined,
+	engagementStreak: undefined,
+	dailyPostStreaks: [],
+	found: 0,
+	isLoading: false,
+	isError: false,
+	hasNextPage: false,
+	isFetchingNextPage: false,
+	fetchNextPage: jest.fn(),
+	...overrides,
+} );
 
 describe( 'UserAchievements', () => {
 	const defaultUser: ReaderUser = {
@@ -63,18 +87,22 @@ describe( 'UserAchievements', () => {
 		jest.clearAllMocks();
 		mockAchievementsGridProps.mockClear();
 		mockActivityStreakProps.mockClear();
-		useAchievementsQuery.mockReturnValue( {
-			lockedAchievements: [],
-			isLoading: false,
-		} );
+		mockUseAchievementsQuery.mockReturnValue(
+			getAchievementsQuery( {
+				lockedAchievements: [],
+				isLoading: false,
+			} )
+		);
 	} );
 
 	test( 'should render nothing when achievements are not visible', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: false,
-			isVisible: false,
-			isLoading: false,
-		} );
+		mockUseAchievementsVisibility.mockReturnValue(
+			getAchievementsVisibility( {
+				isOwnProfile: false,
+				isVisible: false,
+				isLoading: false,
+			} )
+		);
 
 		const { container } = render( <UserAchievements user={ defaultUser } /> );
 
@@ -82,11 +110,13 @@ describe( 'UserAchievements', () => {
 	} );
 
 	test( 'should render achievements grid when visible', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: true,
-			isVisible: true,
-			isLoading: false,
-		} );
+		mockUseAchievementsVisibility.mockReturnValue(
+			getAchievementsVisibility( {
+				isOwnProfile: true,
+				isVisible: true,
+				isLoading: false,
+			} )
+		);
 
 		render( <UserAchievements user={ defaultUser } /> );
 
@@ -94,11 +124,13 @@ describe( 'UserAchievements', () => {
 	} );
 
 	test( 'should show settings button on own profile', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: true,
-			isVisible: true,
-			isLoading: false,
-		} );
+		mockUseAchievementsVisibility.mockReturnValue(
+			getAchievementsVisibility( {
+				isOwnProfile: true,
+				isVisible: true,
+				isLoading: false,
+			} )
+		);
 
 		render( <UserAchievements user={ defaultUser } /> );
 
@@ -106,11 +138,13 @@ describe( 'UserAchievements', () => {
 	} );
 
 	test( 'should show spinner while loading visibility', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: false,
-			isVisible: false,
-			isLoading: true,
-		} );
+		mockUseAchievementsVisibility.mockReturnValue(
+			getAchievementsVisibility( {
+				isOwnProfile: false,
+				isVisible: false,
+				isLoading: true,
+			} )
+		);
 
 		render( <UserAchievements user={ defaultUser } /> );
 
@@ -119,11 +153,13 @@ describe( 'UserAchievements', () => {
 	} );
 
 	test( 'should not show settings button on other user profile', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: false,
-			isVisible: true,
-			isLoading: false,
-		} );
+		mockUseAchievementsVisibility.mockReturnValue(
+			getAchievementsVisibility( {
+				isOwnProfile: false,
+				isVisible: true,
+				isLoading: false,
+			} )
+		);
 
 		render( <UserAchievements user={ defaultUser } /> );
 
@@ -132,11 +168,13 @@ describe( 'UserAchievements', () => {
 	} );
 
 	test( 'forwards isOwnProfile=true to AchievementsGrid on own profile', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: true,
-			isVisible: true,
-			isLoading: false,
-		} );
+		mockUseAchievementsVisibility.mockReturnValue(
+			getAchievementsVisibility( {
+				isOwnProfile: true,
+				isVisible: true,
+				isLoading: false,
+			} )
+		);
 
 		render( <UserAchievements user={ defaultUser } /> );
 
@@ -146,11 +184,13 @@ describe( 'UserAchievements', () => {
 	} );
 
 	test( 'forwards isOwnProfile=false to AchievementsGrid on someone else’s profile', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: false,
-			isVisible: true,
-			isLoading: false,
-		} );
+		mockUseAchievementsVisibility.mockReturnValue(
+			getAchievementsVisibility( {
+				isOwnProfile: false,
+				isVisible: true,
+				isLoading: false,
+			} )
+		);
 
 		render( <UserAchievements user={ defaultUser } /> );
 
@@ -160,22 +200,27 @@ describe( 'UserAchievements', () => {
 	} );
 
 	test( 'renders ActivityStreak with the engagement streak slice', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: true,
-			isVisible: true,
-			isLoading: false,
-		} );
-		useAchievementsQuery.mockReturnValue( {
-			lockedAchievements: [],
-			engagementStreak: {
-				current_streak: 7,
-				longest_streak: 12,
-				freezes_available: 1,
-				freeze_used_date: null,
-				next_freeze_in_days: 0,
-			},
-			isLoading: false,
-		} );
+		mockUseAchievementsVisibility.mockReturnValue(
+			getAchievementsVisibility( {
+				isOwnProfile: true,
+				isVisible: true,
+				isLoading: false,
+			} )
+		);
+		mockUseAchievementsQuery.mockReturnValue(
+			getAchievementsQuery( {
+				lockedAchievements: [],
+				engagementStreak: {
+					current_streak: 7,
+					longest_streak: 12,
+					last_streak_date: '2026-06-18',
+					freezes_available: 1,
+					freeze_used_date: null,
+					next_freeze_in_days: 0,
+				},
+				isLoading: false,
+			} )
+		);
 
 		render( <UserAchievements user={ defaultUser } /> );
 
@@ -188,16 +233,20 @@ describe( 'UserAchievements', () => {
 	} );
 
 	test( 'still mounts ActivityStreak when engagement streak is undefined (component self-handles)', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: false,
-			isVisible: true,
-			isLoading: false,
-		} );
-		useAchievementsQuery.mockReturnValue( {
-			lockedAchievements: [],
-			engagementStreak: undefined,
-			isLoading: false,
-		} );
+		mockUseAchievementsVisibility.mockReturnValue(
+			getAchievementsVisibility( {
+				isOwnProfile: false,
+				isVisible: true,
+				isLoading: false,
+			} )
+		);
+		mockUseAchievementsQuery.mockReturnValue(
+			getAchievementsQuery( {
+				lockedAchievements: [],
+				engagementStreak: undefined,
+				isLoading: false,
+			} )
+		);
 
 		render( <UserAchievements user={ defaultUser } /> );
 

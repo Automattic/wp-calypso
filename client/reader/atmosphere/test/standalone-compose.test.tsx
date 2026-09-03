@@ -98,7 +98,7 @@ describe( 'Standalone compose end-to-end', () => {
 	} );
 
 	beforeEach( () => {
-		// recordReaderTracksEvent is a thunk that reads state.reader.follows;
+		// recordReaderTracksEvent is a thunk that reads the follows query cache;
 		// the test store doesn't provide that slice. Replace it with a no-op
 		// action creator so dispatch() doesn't throw, while still letting
 		// spies observe call-site arguments.

@@ -1,7 +1,6 @@
 import { PlanPrice } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
 import { TranslateResult } from 'i18n-calypso';
-import { isNumber } from 'lodash';
 import InfoPopover from 'calypso/components/info-popover';
 import PriceAriaLabel from './price-aria-label';
 import TimeFrame from './time-frame';
@@ -34,7 +33,7 @@ const Placeholder: React.FC< OwnProps > = ( { billingTerm, expiryDate, discounte
 				rawPrice={ 0.01 }
 				currencyCode="USD"
 			/>
-			{ isNumber( discountedPrice ) && (
+			{ typeof discountedPrice === 'number' && (
 				<PlanPrice discounted rawPrice={ 0.01 } currencyCode="USD" />
 			) }
 			<TimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
@@ -105,8 +104,14 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 		customTimeFrameSavings,
 		customTimeFrameBillingTerms,
 	} = props;
-	const finalPrice = ( isNumber( discountedPrice ) ? discountedPrice : originalPrice ) as number;
-	const isDiscounted = !! ( isNumber( finalPrice ) && originalPrice && finalPrice < originalPrice );
+	const finalPrice = (
+		typeof discountedPrice === 'number' ? discountedPrice : originalPrice
+	) as number;
+	const isDiscounted = !! (
+		typeof finalPrice === 'number' &&
+		originalPrice &&
+		finalPrice < originalPrice
+	);
 	const discountPercentage = isDiscounted
 		? Math.floor( ( ( originalPrice - finalPrice ) / originalPrice ) * 100 )
 		: 0;

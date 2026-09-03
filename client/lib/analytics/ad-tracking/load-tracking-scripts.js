@@ -22,6 +22,7 @@ import {
 	REDDIT_TRACKING_SCRIPT_URL,
 	TIKTOK_SCRIPT_URL,
 	WPCOM_REDDIT_PIXEL_ID,
+	OPENAI_SCRIPT_URL,
 } from './constants';
 import { circularReferenceSafeJSONStringify } from './debug';
 import { setup } from './setup';
@@ -129,6 +130,10 @@ function getTrackingScriptsToLoad() {
 		scripts.push( TIKTOK_SCRIPT_URL + TRACKING_IDS.tiktokPixelId );
 	}
 
+	if ( mayWeTrackByTracker( 'openai' ) ) {
+		scripts.push( OPENAI_SCRIPT_URL );
+	}
+
 	return scripts;
 }
 
@@ -177,6 +182,11 @@ function initLoadedTrackingScripts() {
 	}
 	if ( mayWeTrackByTracker( 'tiktok' ) ) {
 		initTikTok();
+	}
+	if ( mayWeTrackByTracker( 'openai' ) ) {
+		window.oaiq( 'init', {
+			pixelId: TRACKING_IDS.openAIPixelId,
+		} );
 	}
 	if ( mayWeTrackByTracker( 'quora' ) ) {
 		// We've initialized the pixel in setupQuoraGlobal, it's safe to track the page view now.

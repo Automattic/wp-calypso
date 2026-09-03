@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, type JSX } from 'react';
 import ActionPanelCta from 'calypso/components/action-panel/cta';
 import { URL } from 'calypso/types';
 

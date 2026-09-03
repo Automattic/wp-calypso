@@ -8,7 +8,6 @@ import {
 import { CompactCard, ProductIcon, Gridicon, PlanPrice } from '@automattic/components';
 import { Plans } from '@automattic/data-stores';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import CardHeading from 'calypso/components/card-heading';
@@ -63,8 +62,8 @@ class StepUpgrade extends Component {
 			translate,
 			isEcommerceTrial,
 		} = this.props;
-		const sourceSiteDomain = get( sourceSite, 'domain' );
-		const targetSiteDomain = get( targetSite, 'domain' );
+		const sourceSiteDomain = sourceSite?.domain;
+		const targetSiteDomain = targetSite?.domain;
 		const backHref = `/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }`;
 		const upsellPlanName = isEcommerceTrial
 			? getPlan( PLAN_WOOEXPRESS_SMALL )?.getTitle()
@@ -159,7 +158,7 @@ class StepUpgrade extends Component {
 
 const WrappedStepUpgrade = ( props ) => {
 	const { targetSite } = props;
-	const currentPlanSlug = get( targetSite, 'plan.product_slug' );
+	const currentPlanSlug = targetSite?.plan?.product_slug;
 	const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 	const plan = isEcommerceTrial ? getPlan( PLAN_WOOEXPRESS_SMALL ) : getPlan( PLAN_BUSINESS );
 	const planSlug = plan.getStoreSlug();

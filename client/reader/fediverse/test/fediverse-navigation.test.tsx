@@ -22,7 +22,7 @@ describe( 'FediverseNavigation', () => {
 	} );
 
 	beforeEach( () => {
-		// recordReaderTracksEvent is a thunk reading state.reader.follows.
+		// recordReaderTracksEvent is a thunk reading the follows query cache.
 		jest
 			.spyOn( analytics, 'recordReaderTracksEvent' )
 			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );

@@ -11,6 +11,11 @@ import {
 	handleRenewNowClick,
 	handleRenewMultiplePurchasesClick,
 	shouldRenderMonthlyRenewalOption,
+	isRemoved,
+	isExpiredAndInGracePeriod,
+	isExpiredOrRemoved,
+	mightStillAutoRenew,
+	isExpiredWithNoAutoRenewAttemptsLeft,
 } from '../index';
 import data from './data';
 const {
@@ -80,6 +85,92 @@ describe( 'index', () => {
 
 		test( 'should not be cancelable if domain is pending transfer', () => {
 			expect( isCancelable( DOMAIN_PURCHASE_PENDING_TRANSFER ) ).toEqual( false );
+		} );
+	} );
+	describe( '#isRemoved', () => {
+		test( 'should be true when the subscription is no longer active', () => {
+			expect( isRemoved( { subscriptionStatus: 'inactive' } ) ).toEqual( true );
+		} );
+		test( 'should be false when the subscription is still active (including grace period)', () => {
+			expect( isRemoved( { subscriptionStatus: 'active' } ) ).toEqual( false );
+		} );
+	} );
+	describe( '#isExpiredAndInGracePeriod', () => {
+		test( 'should be true when expired but the subscription is still active', () => {
+			expect(
+				isExpiredAndInGracePeriod( { expiryStatus: 'expired', subscriptionStatus: 'active' } )
+			).toEqual( true );
+		} );
+		test( 'should be false when expired and the subscription has been removed', () => {
+			expect(
+				isExpiredAndInGracePeriod( { expiryStatus: 'expired', subscriptionStatus: 'inactive' } )
+			).toEqual( false );
+		} );
+		test( 'should be false when not expired', () => {
+			expect(
+				isExpiredAndInGracePeriod( { expiryStatus: 'active', subscriptionStatus: 'active' } )
+			).toEqual( false );
+		} );
+	} );
+	describe( '#isExpiredOrRemoved', () => {
+		test( 'should be true for a purchase in its grace period', () => {
+			expect(
+				isExpiredOrRemoved( { expiryStatus: 'expired', subscriptionStatus: 'active' } )
+			).toEqual( true );
+		} );
+		test( 'should be true for a removed purchase', () => {
+			expect(
+				isExpiredOrRemoved( { expiryStatus: 'expired', subscriptionStatus: 'inactive' } )
+			).toEqual( true );
+		} );
+		test( 'should be false for an active purchase', () => {
+			expect(
+				isExpiredOrRemoved( { expiryStatus: 'active', subscriptionStatus: 'active' } )
+			).toEqual( false );
+		} );
+	} );
+	describe( '#mightStillAutoRenew', () => {
+		test( 'should reflect the server-provided mightStillAutoRenew flag', () => {
+			expect( mightStillAutoRenew( { mightStillAutoRenew: true } ) ).toEqual( true );
+			expect( mightStillAutoRenew( { mightStillAutoRenew: false } ) ).toEqual( false );
+		} );
+	} );
+	describe( '#isExpiredWithNoAutoRenewAttemptsLeft', () => {
+		test( 'should be true when expired in grace period and past the last attempt date', () => {
+			expect(
+				isExpiredWithNoAutoRenewAttemptsLeft( {
+					expiryStatus: 'expired',
+					subscriptionStatus: 'active',
+					isPastLastAutoRenewAttemptDate: true,
+				} )
+			).toEqual( true );
+		} );
+		test( 'should be false when attempts may still remain', () => {
+			expect(
+				isExpiredWithNoAutoRenewAttemptsLeft( {
+					expiryStatus: 'expired',
+					subscriptionStatus: 'active',
+					isPastLastAutoRenewAttemptDate: false,
+				} )
+			).toEqual( false );
+		} );
+		test( 'should be false when the subscription has been removed', () => {
+			expect(
+				isExpiredWithNoAutoRenewAttemptsLeft( {
+					expiryStatus: 'expired',
+					subscriptionStatus: 'inactive',
+					isPastLastAutoRenewAttemptDate: true,
+				} )
+			).toEqual( false );
+		} );
+		test( 'should be false when not expired', () => {
+			expect(
+				isExpiredWithNoAutoRenewAttemptsLeft( {
+					expiryStatus: 'active',
+					subscriptionStatus: 'active',
+					isPastLastAutoRenewAttemptDate: true,
+				} )
+			).toEqual( false );
 		} );
 	} );
 	describe( '#isPaidWithCredits', () => {
@@ -200,11 +291,11 @@ describe( 'index', () => {
 
 	describe( '#handleRenewNowClick', () => {
 		const purchase = {
-			id: 1,
-			currencyCode: 'USD',
-			expiryDate: '2020-05-20T00:00:00+00:00',
-			productSlug: 'personal-bundle',
-			productName: 'Personal Plan',
+			ID: 1,
+			currency_code: 'USD',
+			expiry_date: '2020-05-20T00:00:00+00:00',
+			product_slug: 'personal-bundle',
+			product_name: 'Personal Plan',
 			amount: 100,
 		};
 		const siteSlug = 'my-site.wordpress.com';
@@ -238,7 +329,7 @@ describe( 'index', () => {
 		describe( 'when the purchase id does not exist', () => {
 			test( 'should report error', () => {
 				const dispatch = jest.fn();
-				handleRenewNowClick( { ...purchase, id: null }, siteSlug )( dispatch );
+				handleRenewNowClick( { ...purchase, ID: null }, siteSlug )( dispatch );
 				expect( dispatch ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						notice: expect.objectContaining( {
@@ -253,7 +344,7 @@ describe( 'index', () => {
 		describe( 'when the product slug does not exist', () => {
 			test( 'should report error', () => {
 				const dispatch = jest.fn();
-				handleRenewNowClick( { ...purchase, productSlug: '' }, siteSlug )( dispatch );
+				handleRenewNowClick( { ...purchase, product_slug: '' }, siteSlug )( dispatch );
 				expect( dispatch ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						notice: expect.objectContaining( {
@@ -268,11 +359,11 @@ describe( 'index', () => {
 
 	describe( '#handleRenewNowClickSiteless', () => {
 		const purchase = {
-			id: 1,
-			currencyCode: 'USD',
-			expiryDate: '2020-05-20T00:00:00+00:00',
-			productSlug: 'ak_plus_yearly_1',
-			productName: 'Akismet Plus',
+			ID: 1,
+			currency_code: 'USD',
+			expiry_date: '2020-05-20T00:00:00+00:00',
+			product_slug: 'ak_plus_yearly_1',
+			product_name: 'Akismet Plus',
 			amount: 100,
 		};
 
@@ -289,21 +380,21 @@ describe( 'index', () => {
 	describe( '#handleRenewMultiplePurchasesClick', () => {
 		const purchases = [
 			{
-				id: 1,
-				currencyCode: 'USD',
-				expiryDate: '2020-05-20T00:00:00+00:00',
-				productSlug: 'personal-bundle',
-				productName: 'Personal Plan',
+				ID: 1,
+				currency_code: 'USD',
+				expiry_date: '2020-05-20T00:00:00+00:00',
+				product_slug: 'personal-bundle',
+				product_name: 'Personal Plan',
 				amount: 100,
 			},
 			{
-				id: 2,
-				currencyCode: 'USD',
-				expiryDate: '2020-05-15T00:00:00+00:00',
-				productSlug: 'dotlive_domain',
+				ID: 2,
+				currency_code: 'USD',
+				expiry_date: '2020-05-15T00:00:00+00:00',
+				product_slug: 'dotlive_domain',
 				meta: 'personalsitetest1234.live',
-				productName: 'DotLive Domain Registration',
-				isDomainRegistration: true,
+				product_name: 'DotLive Domain Registration',
+				is_domain_registration: true,
 				amount: 200,
 			},
 		];
@@ -318,7 +409,7 @@ describe( 'index', () => {
 		describe( 'when the none of the purchase ids exist', () => {
 			test( 'should report error', () => {
 				const dispatch = jest.fn();
-				const purchasesWithoutId = purchases.map( ( purchase ) => ( { ...purchase, id: null } ) );
+				const purchasesWithoutId = purchases.map( ( purchase ) => ( { ...purchase, ID: null } ) );
 				handleRenewMultiplePurchasesClick( purchasesWithoutId, siteSlug )( dispatch );
 				expect( dispatch ).toHaveBeenCalledWith(
 					expect.objectContaining( {
@@ -334,7 +425,7 @@ describe( 'index', () => {
 		describe( 'when at least one purchase can be renewed', () => {
 			test( 'should redirect to checkout with only the valid purchases to renew', () => {
 				const dispatch = jest.fn();
-				const purchasesPartiallyValid = [ purchases[ 1 ], { ...purchases[ 0 ], id: null } ];
+				const purchasesPartiallyValid = [ purchases[ 1 ], { ...purchases[ 0 ], ID: null } ];
 				handleRenewMultiplePurchasesClick( purchasesPartiallyValid, siteSlug )( dispatch );
 				expect( page ).toHaveBeenCalledWith(
 					'/checkout/dotlive_domain:personalsitetest1234.live/renew/2/my-site.wordpress.com'

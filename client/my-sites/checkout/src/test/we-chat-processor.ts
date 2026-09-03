@@ -20,6 +20,22 @@ import {
 } from './util';
 
 describe( 'weChatProcessor', () => {
+	// jsdom does not implement the native <dialog> showModal/close API, so
+	// polyfill them to mirror a browser that supports dialogs.
+	beforeAll( () => {
+		if ( ! HTMLDialogElement.prototype.showModal ) {
+			HTMLDialogElement.prototype.showModal = function showModal() {
+				this.open = true;
+			};
+		}
+		if ( ! HTMLDialogElement.prototype.close ) {
+			HTMLDialogElement.prototype.close = function close() {
+				this.open = false;
+				this.dispatchEvent( new Event( 'close' ) );
+			};
+		}
+	} );
+
 	const product = getEmptyResponseCartProduct();
 	const domainProduct = {
 		...getEmptyResponseCartProduct(),
@@ -86,7 +102,7 @@ describe( 'weChatProcessor', () => {
 			name: 'test name',
 		};
 		const expected = {
-			payload: "Sorry, we couldn't process your payment. Please try again later.",
+			payload: 'Payment failed. Please check your account and try again.',
 			type: 'ERROR',
 		};
 
@@ -168,7 +184,7 @@ describe( 'weChatProcessor', () => {
 			name: 'test name',
 		};
 		const expected = {
-			payload: "Sorry, we couldn't process your payment. Please try again later.",
+			payload: 'Payment failed. Please check your account and try again.',
 			type: 'ERROR',
 		};
 
@@ -228,7 +244,7 @@ describe( 'weChatProcessor', () => {
 			name: 'test name',
 		};
 		const expected = {
-			payload: "Sorry, we couldn't process your payment. Please try again later.",
+			payload: 'Payment failed. Please check your account and try again.',
 			type: 'ERROR',
 		};
 
@@ -299,7 +315,7 @@ describe( 'weChatProcessor', () => {
 			name: 'test name',
 		};
 		const expected = {
-			payload: "Sorry, we couldn't process your payment. Please try again later.",
+			payload: 'Payment failed. Please check your account and try again.',
 			type: 'ERROR',
 		};
 

@@ -1,6 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
+import { capitalize } from '@automattic/js-utils';
 import { hexToRgb } from '@automattic/onboarding';
-import _, { debounce } from 'lodash';
+import { debounce } from '@wordpress/compose';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
@@ -167,7 +168,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 					},
 				},
 				{
-					label: _.capitalize( source ),
+					label: capitalize( source ),
 					stroke: accentColor,
 					width: 3,
 					fill: ( self: uPlot ) => {

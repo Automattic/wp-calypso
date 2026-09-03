@@ -21,20 +21,4 @@ export const PAYMENT_PROCESSOR_COUNTRIES_FIELDS: Record<
 	MX: {
 		fields: [ 'phone-number', 'postal-code' ],
 	},
-	IN: {
-		fields: [
-			'name',
-			'pan',
-			'gstin',
-			'street-number',
-			'address-1',
-			'address-2',
-			'state',
-			'city',
-			'postal-code',
-		],
-	},
-	ID: {
-		fields: [ 'name', 'nik', 'phone-number' ],
-	},
 };

@@ -13,8 +13,8 @@ import { RefObject, useEffect, useRef, useState } from 'react';
 const useDetectWindowBoundary = (
 	offsetY = 0
 ): [ RefObject< HTMLDivElement | undefined >, boolean | undefined ] => {
-	const elementRef = useRef< HTMLDivElement >();
-	const observerRef = useRef< IntersectionObserver >();
+	const elementRef = useRef< HTMLDivElement >( undefined );
+	const observerRef = useRef< IntersectionObserver >( undefined );
 
 	const [ borderCrossed, setBorderCrossed ] = useState< boolean | undefined >( undefined );
 

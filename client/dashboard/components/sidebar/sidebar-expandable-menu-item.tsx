@@ -38,13 +38,17 @@ export function SidebarExpandableMenuItem( {
 	}, [ isActive ] );
 
 	return (
-		<VStack className="dashboard-sidebar__expandable" spacing={ 1 }>
+		<VStack className="dashboard-sidebar__expandable" spacing={ isOpen ? 1 : 0 }>
 			<Button
 				className="dashboard-sidebar__menu-item"
 				variant="tertiary"
 				onClick={ () => {
-					setIsOpen( ( prev ) => ! prev );
-					recordTracksEvent( 'calypso_dashboard_menu_item_click', { to } );
+					const nextOpen = ! isOpen;
+					setIsOpen( nextOpen );
+					recordTracksEvent( 'calypso_dashboard_menu_item_toggled', {
+						item: to,
+						expanded: nextOpen,
+					} );
 				} }
 				aria-expanded={ isOpen }
 				aria-controls={ panelId }

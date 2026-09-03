@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.2.2
+
+- Publish against `i18n-calypso@^8.0.0`, resolving a duplicate/mismatched `i18n-calypso` version in the installed dependency tree (previously published `3.2.1` pinned `i18n-calypso@^7.4.1`).
+
+## 3.2.1
+
+- Declare React 19 compatibility for package consumers (#111721).
+
 ## 3.2.0
 
 - Update dependencies (#106861).

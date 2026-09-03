@@ -1,3 +1,4 @@
+import { ReadFeedSearchSort } from '@automattic/api-core';
 import {
 	QueryClient,
 	QueryClientProvider,
@@ -83,13 +84,19 @@ describe( 'read feed queries', () => {
 	} );
 
 	it( 'uses an infinite query only for paginated feed search', async () => {
+		// Relevance handle carries the next offset (`from + size`); the endpoint
+		// steps the ES window by 10, and omits `next_page` once exhausted.
 		nock( BASE )
 			.get( '/rest/v1.1/read/feed' )
 			.query( { q: 'wordpress', offset: '0' } )
-			.reply( 200, { feeds: [ { feed_ID: '1' }, { feed_ID: '2' } ], total: 3 } );
+			.reply( 200, {
+				feeds: [ { feed_ID: '1' }, { feed_ID: '2' } ],
+				total: 3,
+				next_page: 'offset=10&algorithm=reader/manage/search:0',
+			} );
 		nock( BASE )
 			.get( '/rest/v1.1/read/feed' )
-			.query( { q: 'wordpress', offset: '2' } )
+			.query( { q: 'wordpress', offset: '10' } )
 			.reply( 200, { feeds: [ { feed_ID: '3' } ], total: 3 } );
 		const client = newClient();
 		const { result } = renderHook(
@@ -113,5 +120,59 @@ describe( 'read feed queries', () => {
 			undefined,
 		] );
 		expect( result.current.data?.pages.flatMap( ( page ) => page.feeds ) ).toHaveLength( 3 );
+	} );
+
+	it( 'stops paginating when the endpoint drops `next_page`, even if the ES total is higher', async () => {
+		// The endpoint reports an inflated raw ES `total` (it counts hits it then
+		// filters out) but omits `next_page` because no further ES results remain.
+		// Pagination must stop on the missing handle, not chase the total (READ-601).
+		nock( BASE )
+			.get( '/rest/v1.1/read/feed' )
+			.query( { q: 'wordpress', offset: '0' } )
+			.reply( 200, { feeds: [ { feed_ID: '1' }, { feed_ID: '2' } ], total: 50 } );
+		const client = newClient();
+		const { result } = renderHook(
+			() => useInfiniteQuery( readFeedSearchInfiniteQuery( { query: 'wordpress' } ) ),
+			{ wrapper: makeWrapper( client ) }
+		);
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( result.current.hasNextPage ).toBe( false );
+		expect( result.current.data?.pages.flatMap( ( page ) => page.feeds ) ).toHaveLength( 2 );
+	} );
+
+	it( 'steps the offset by the page size for the date sort (opaque `next_page` handle)', async () => {
+		// The date sort's handle is an opaque page handle with no `offset`, so the
+		// client falls back to advancing by the fixed ES page size (10).
+		nock( BASE )
+			.get( '/rest/v1.1/read/feed' )
+			.query( { q: 'wordpress', sort: 'last_updated', offset: '0' } )
+			.reply( 200, {
+				feeds: [ { feed_ID: '1' } ],
+				total: 30,
+				next_page: 'last=1700000000&algorithm=reader/manage/search:0&blog=5&feed=0',
+			} );
+		nock( BASE )
+			.get( '/rest/v1.1/read/feed' )
+			.query( { q: 'wordpress', sort: 'last_updated', offset: '10' } )
+			.reply( 200, { feeds: [ { feed_ID: '2' } ], total: 30 } );
+		const client = newClient();
+		const { result } = renderHook(
+			() =>
+				useInfiniteQuery(
+					readFeedSearchInfiniteQuery( {
+						query: 'wordpress',
+						sort: ReadFeedSearchSort.LastUpdated,
+					} )
+				),
+			{ wrapper: makeWrapper( client ) }
+		);
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( result.current.hasNextPage ).toBe( true );
+
+		await result.current.fetchNextPage();
+		await waitFor( () => expect( result.current.hasNextPage ).toBe( false ) );
+		expect( result.current.data?.pages.flatMap( ( page ) => page.feeds ) ).toHaveLength( 2 );
 	} );
 } );

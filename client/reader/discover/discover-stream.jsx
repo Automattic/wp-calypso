@@ -1,26 +1,21 @@
 import { SiteSubscriptionsQueryPropsProvider } from '@automattic/data-stores/src/reader/contexts';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { useFollowedTags } from 'calypso/reader/data/tags';
 import DiscoverHeaderAndNavigation from 'calypso/reader/discover/components/header-and-navigation';
 import AddSubscriptionForm from 'calypso/reader/new-subscription/components/add-subscription-form';
 import { ADD_SUBSCRIPTION_CONFIGS } from 'calypso/reader/new-subscription/components/add-subscription-form/consts';
 import Stream from 'calypso/reader/stream';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import {
-	getDiscoverStreamTags,
-	RECOMMENDED_TAB,
-	buildDiscoverStreamKey,
-	FRESHLY_PRESSED_TAB,
-} from './helper';
+import { getDiscoverStreamTags, RECOMMENDED_TAB, buildDiscoverStreamKey } from './helper';
 
 const DiscoverStream = ( props ) => {
 	const translate = useTranslate();
-	const { data: followedTags } = useFollowedReaderTags();
+	const { data: followedTags } = useFollowedTags();
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const selectedTab = props.selectedTab || FRESHLY_PRESSED_TAB;
+	const selectedTab = props.selectedTab || RECOMMENDED_TAB;
 	const selectedTag = props.query?.selectedTag ?? 'dailyprompt';
 
 	const effectiveTabSelection = 'tags' === selectedTab ? selectedTag : selectedTab;

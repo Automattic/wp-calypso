@@ -4,6 +4,7 @@ import {
 	UrlFriendlyTermType,
 	isDomainTransfer,
 	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
+	PlanSlug,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { HelpCenter, HelpCenterSelect, Plans } from '@automattic/data-stores';
@@ -23,7 +24,7 @@ import { isDesktop as isDesktopViewport, subscribeIsDesktop } from '@automattic/
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
 import { parse as parseQs } from 'qs';
 import AsyncLoad from 'calypso/components/async-load';
@@ -47,10 +48,11 @@ import {
 	saveSignupStep as saveSignupStepAction,
 	submitSignupStep as submitSignupStepAction,
 } from 'calypso/state/signup/progress/actions';
-import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
+import { OnboardingProgress } from '../components/onboarding-progress';
+import { useShowOnboardingProgress } from '../components/onboarding-progress/use-show-onboarding-progress';
 import { getIntervalType } from './util';
 import type { OnboardSelect, SiteDetails } from '@automattic/data-stores';
 import type { StepState } from 'calypso/state/signup/progress/schema';
@@ -71,6 +73,7 @@ export interface UnifiedPlansStepProps {
 	hidePremiumPlan?: boolean;
 	hideEnterprisePlan?: boolean;
 	hideEcommercePlan?: boolean;
+	hidePlanTypeSelector?: boolean;
 
 	flowName: string;
 	stepName: string;
@@ -122,6 +125,10 @@ export interface UnifiedPlansStepProps {
 		Extract< UrlFriendlyTermType, 'monthly' | 'yearly' | '2yearly' | '3yearly' >
 	>;
 	headerText?: string;
+	subHeaderText?: string;
+	highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+	titleBadgeOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+	taglineOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	fallbackHeaderText?: string;
 	deemphasizeFreePlan?: boolean;
 	useStepperWrapper?: boolean;
@@ -219,6 +226,7 @@ function UnifiedPlansStep( {
 	hidePersonalPlan,
 	hidePremiumPlan,
 	hideEnterprisePlan,
+	hidePlanTypeSelector,
 	saveSignupStep: saveSignupStepFromProps,
 	submitSignupStep: submitSignupStepFromProps,
 	customerType: customerTypeFromProps,
@@ -239,6 +247,10 @@ function UnifiedPlansStep( {
 	signupDependencies,
 	displayedIntervals,
 	headerText,
+	subHeaderText,
+	highlightLabelOverrides,
+	titleBadgeOverrides,
+	taglineOverrides,
 	useEmailOnboardingSubheader,
 	onPlanIntervalUpdate,
 	positionInFlow,
@@ -269,8 +281,17 @@ function UnifiedPlansStep( {
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
 		[]
 	);
-	const toggleHelpCenter = () => setShowHelpCenter( ! isHelpCenterShown );
+	const toggleHelpCenter = () => {
+		if ( ! isHelpCenterShown ) {
+			recordTracksEvent( 'calypso_onboarding_help_center_click', {
+				flow: flowName,
+				step: 'plans',
+			} );
+		}
+		setShowHelpCenter( ! isHelpCenterShown );
+	};
 	const stepCounter = useOnboardingStepCounter( flowName, 'plans' );
+	const showProgress = useShowOnboardingProgress( isOnboardingFlow( flowName ) );
 	const initializedSitesBackUrl = useSelector( ( state ) => {
 		if ( getCurrentUserSiteCount( state ) ) {
 			return null;
@@ -278,8 +299,6 @@ function UnifiedPlansStep( {
 
 		return dashboardOptIn ? dashboardLink( '/sites' ) : '/sites/';
 	} );
-
-	useSiteGlobalStylesOnPersonal();
 
 	const customerType =
 		customerTypeFromProps ??
@@ -450,6 +469,10 @@ function UnifiedPlansStep( {
 			return translate( 'Pick a plan for your store' );
 		}
 
+		if ( intent === 'plans-upgrade-or-downgrade' ) {
+			return translate( 'Find your best fit' );
+		}
+
 		return translate( 'There’s a plan for you' );
 	};
 
@@ -468,6 +491,10 @@ function UnifiedPlansStep( {
 		useStepContainerV2 && deemphasizeFreePlan && ( paidDomainName != null || isPaidTheme );
 
 	const getSubheaderText = () => {
+		if ( subHeaderText ) {
+			return subHeaderText;
+		}
+
 		const freePlanButton = (
 			<Button
 				onClick={ () =>
@@ -569,6 +596,12 @@ function UnifiedPlansStep( {
 			return null;
 		}
 
+		if ( intent === 'plans-upgrade-or-downgrade' ) {
+			return translate(
+				'Compare plans and pick the one that works for where your site is headed.'
+			);
+		}
+
 		if ( isOnboardingFlow( flowName ) || intent === 'plans-upgrade' ) {
 			return translate( 'Whatever site you’re building, there’s a plan to make it happen sooner.' );
 		}
@@ -661,6 +694,10 @@ function UnifiedPlansStep( {
 				hidePremiumPlan={ hidePremiumPlan }
 				hideEcommercePlan={ shouldHideEcommercePlan() }
 				hideEnterprisePlan={ hideEnterprisePlan }
+				hidePlanTypeSelector={ hidePlanTypeSelector }
+				highlightLabelOverrides={ highlightLabelOverrides }
+				titleBadgeOverrides={ titleBadgeOverrides }
+				taglineOverrides={ taglineOverrides }
 				removePaidDomain={ handleRemovePaidDomain }
 				setSiteUrlAsFreeDomainSuggestion={ handleSetSiteUrlAsFreeDomainSuggestion }
 				coupon={ coupon ?? undefined }
@@ -681,7 +718,7 @@ function UnifiedPlansStep( {
 	);
 
 	if ( useStepContainerV2 && wrapperProps ) {
-		const goBack = wrapperProps.hideBack ? undefined : wrapperProps.goBack;
+		const goBack = wrapperProps.hideBack || showProgress ? undefined : wrapperProps.goBack;
 
 		return (
 			<>
@@ -729,6 +766,12 @@ function UnifiedPlansStep( {
 						}
 						heading={
 							<>
+								{ showProgress && (
+									<OnboardingProgress
+										currentStep="plans"
+										onStepSelect={ () => wrapperProps.goBack?.() }
+									/>
+								) }
 								{ ( intent === 'plans-website-builder' ||
 									intent === 'plans-wordpress-hosting' ) && (
 									<IntentToggle

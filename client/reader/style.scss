@@ -1,3 +1,8 @@
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/hide-content-accessibly";
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
@@ -104,15 +109,6 @@ body.is-section-reader {
 			}
 		}
 
-		// For reader/search
-		main.search-stream {
-			.navigation-header {
-				&::after {
-					margin: 24px 0 0;
-				}
-			}
-		}
-
 		// For reader/a8c
 		.section-header {
 			@media ( max-width: 1300px ) {
@@ -120,6 +116,7 @@ body.is-section-reader {
 			}
 		}
 
+		.layout__primary:not( :has( > * ) ),
 		.layout__primary > div:not( :has( .recent-feed ) ) {
 			background: var( --color-surface );
 			border-radius: 8px;
@@ -134,7 +131,7 @@ body.is-section-reader {
 				border: 1px solid $gray-200;
 			}
 		}
-		.layout__primary > div > div:not(.tags__header):not(.reader-notifications__3pc-notice):not(.freshly-pressed-suggestion) {
+		.layout__primary > div > div:not(.tags__header):not(.reader-notifications__3pc-notice) {
 			height: 100%;
 			overflow-y: auto;
 			overflow-x: hidden;
@@ -482,94 +479,68 @@ body.is-section-reader {
 	margin-top: 135px;
 }
 
-.is-reader-page .search-stream__single-column-results .empty-content {
-	margin-top: 0;
-}
-
-.search-stream__single-column-results .reader-tag-sidebar-recommended-sites {
-	@include breakpoint-deprecated( '<660px' ) {
-		margin: 36px 16px 0;
-	}
-}
-
 .layout.has-header-section.is-section-reader {
 	.layout__header-section {
-		color: var( --studio-white );
-		background-color: #021827;
-		background-image: url( calypso/assets/images/reader/tags-bg.webp );
-		background-repeat: none;
-		background-size: cover;
+		background-color: var( --color-surface );
 	}
 
 	.layout__header-section-content {
-		padding: 0 24px 36px;
+		box-sizing: border-box;
+		max-width: 848px;
+		margin: 0 auto;
+		padding: 24px 24px 36px;
+
 		@include break-medium {
-			padding: 24px 108px 36px;
+			padding-inline: 108px;
+		}
+		@include break-wide {
+			padding-inline: 0;
 		}
 	}
 
-	.masterbar {
-		border-bottom: none;
-		background: transparent;
-		color: var( --studio-white );
-		position: static;
-		@include breakpoint-deprecated( '<480px' ) {
-			.masterbar__item {
-				padding: 0 4px;
-				width: auto;
+	// The 2026 global nav is fixed, so the hero's top padding must clear its
+	// height (plus breathing room: 24px on small screens, 48px from medium up).
+	// Uses --nav-2026-height, not --nav-2026-sticky-offset, because this band
+	// is logged-out-only and never sits under the admin masterbar.
+	&:has( .x-nav--2026-redesign ) .layout__header-section-content {
+		padding-top: calc( 24px + var( --nav-2026-height ) );
+
+		@include break-medium {
+			padding-top: calc( 48px + var( --nav-2026-height ) );
+		}
+	}
+
+	// Shared type for the logged-out reader heroes (Discover, /tags, /tag/:slug)
+	// so the three pages stay in lockstep.
+	.reader-hero {
+		h1 {
+			font-family: $brand-serif;
+			font-size: $font-headline-small;
+			line-height: 40px;
+			font-weight: 400;
+			color: var( --color-text );
+			margin-bottom: 19px;
+
+			@include break-medium {
+				font-size: 56px;
+				line-height: 66px;
 			}
 		}
-	}
 
-	// logged out master bar
-	.masterbar-menu .masterbar {
-		height: 78px;
-		.x-nav-link__logo svg path {
-			fill: var( --studio-white );
+		h2 {
+			font-size: $font-body;
+			font-weight: 500;
+			color: var( --color-text-subtle );
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+			margin-bottom: 8px;
 		}
-		.x-nav {
-			padding-top: 10px;
-			padding-left: 16px;
-			padding-right: 16px;
-			.x-nav-item {
-				color: var( --studio-white );
-				&:hover {
-					color: var( --studio-white );
-				}
-				.cta-btn-nav {
-					margin-top: 9px;
-				}
-				.x-nav-link-chevron {
-					opacity: 1;
-					&::after,
-					&::before {
-						color: var( --studio-white );
-					}
-				}
-			}
 
-			.x-nav-link__primary {
-				border: 2px solid var( --studio-white );
-				background: transparent !important;
-			}
+		p {
+			font-size: $font-body-large;
+			font-weight: 400;
+			color: var( --color-text-subtle );
+			max-width: 640px;
 		}
-	}
-}
-
-// specific rule to override existing rules
-.layout.has-header-section.is-section-reader
-	.layout__header-section-content
-	.logged-out-reader-header {
-	text-align: center;
-
-	h2 {
-		font-size: 18px;
-		font-weight: 500;
-		margin-bottom: 10px;
-	}
-
-	h1 {
-		font-size: 40px;
-		font-weight: 500;
 	}
 }

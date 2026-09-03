@@ -1,4 +1,4 @@
-import { range } from 'lodash';
+import { range } from '@automattic/js-utils';
 import ScrollHelper from '../scroll-helper';
 
 function getItemRef( item ) {

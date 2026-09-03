@@ -26,7 +26,7 @@ export const isValidLink = ( url: string ) => {
 };
 
 export const closeOnFocusOut = (
-	ref: RefObject< HTMLDivElement >,
+	ref: RefObject< HTMLDivElement | null >,
 	isOpen: boolean,
 	toggle: () => void
 ) => {

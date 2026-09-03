@@ -1,5 +1,13 @@
-import { createContext, useCallback, useContext, useState } from '@wordpress/element';
-import { getSessionId } from '../utils/agent-session';
+import {
+	createContext,
+	useCallback,
+	useContext,
+	useLayoutEffect,
+	useState,
+} from '@wordpress/element';
+import { useNavigate } from 'react-router-dom';
+import { getSessionId, setSessionSiteKey, setSessionUserId } from '../utils/agent-session';
+import { setResolvedAgentId } from '../utils/resolved-agent-id';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 import type { AgentsManagerSite, CurrentUser } from '@automattic/data-stores';
 
@@ -28,12 +36,20 @@ export interface AgentsManagerContextType {
 	 * TODO: Implement with dedicated endpoint. Currently hardcoded to false.
 	 */
 	isEligibleForChat: boolean;
+	/** Zendesk conversation tags to apply when a new support conversation is created. */
+	zendeskConversationTags: string[];
+	/** Index selecting a dedicated Smooch integration for new support conversations (e.g. `woo`). */
+	zendeskSmoochIntegrationKey?: string;
+	/** Zendesk Product ticket-field value to apply to new support conversations. */
+	zendeskTicketProductFieldValue?: string;
 	/** The agent configuration created during setup. */
 	agentConfig: UseAgentChatConfig | null;
 	/** Sets the agent configuration (called from `AgentSetup` after initialization). */
 	setAgentConfig: ( config: UseAgentChatConfig | null ) => void;
-	/** Returns the active session ID from `agentConfig` or stored session. */
-	getActiveSessionId: () => string;
+	/** Returns this tab's active session ID from the stored session. */
+	getTabSessionId: () => string;
+	/** Reopen the chat, resuming this tab's conversation. */
+	resumeChat: () => void;
 }
 
 const defaultContext: AgentsManagerContextType = {
@@ -44,9 +60,11 @@ const defaultContext: AgentsManagerContextType = {
 	sectionName: 'wp-admin',
 	currentRoute: undefined,
 	isEligibleForChat: false,
+	zendeskConversationTags: [],
 	agentConfig: null,
 	setAgentConfig: () => {},
-	getActiveSessionId: () => '',
+	getTabSessionId: () => '',
+	resumeChat: () => {},
 };
 
 const AgentsManagerContext = createContext< AgentsManagerContextType >( defaultContext );
@@ -54,7 +72,16 @@ const AgentsManagerContext = createContext< AgentsManagerContextType >( defaultC
 export interface AgentsManagerContextProviderProps {
 	children: React.ReactNode;
 	value: Partial<
-		Pick< AgentsManagerContextType, 'currentUser' | 'site' | 'currentRoute' | 'isEligibleForChat' >
+		Pick<
+			AgentsManagerContextType,
+			| 'currentUser'
+			| 'site'
+			| 'currentRoute'
+			| 'isEligibleForChat'
+			| 'zendeskConversationTags'
+			| 'zendeskSmoochIntegrationKey'
+			| 'zendeskTicketProductFieldValue'
+		>
 	> & { sectionName: string; siteKey: string };
 }
 
@@ -68,9 +95,26 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 	const [ agentConfig, setAgentConfig ] = useState< UseAgentChatConfig | null >( null );
 	const isLoggedIn = value.currentUser?.ID !== undefined;
 
-	const getActiveSessionId = useCallback( () => {
-		return agentConfig?.sessionId || getSessionId( agentConfig?.agentId );
-	}, [ agentConfig ] );
+	const navigate = useNavigate();
+
+	const getTabSessionId = useCallback( () => {
+		return getSessionId( agentConfig?.agentId, value.siteKey, value.currentUser?.ID );
+	}, [ agentConfig?.agentId, value.siteKey, value.currentUser?.ID ] );
+
+	// `AgentSetup` resolves this tab's stored session, so navigating is all a
+	// resume needs.
+	const resumeChat = useCallback( () => {
+		navigate( '/chat' );
+	}, [ navigate ] );
+
+	// Publish the resolved agent id and session scope for non-React callers
+	// (e.g. tracks), which fire from event handlers after commit. React callers
+	// receive the scope explicitly, so no render-phase module writes are needed.
+	useLayoutEffect( () => {
+		setResolvedAgentId( agentConfig?.agentId );
+		setSessionSiteKey( value.siteKey );
+		setSessionUserId( value.currentUser?.ID );
+	}, [ agentConfig?.agentId, value.siteKey, value.currentUser?.ID ] );
 
 	return (
 		<AgentsManagerContext.Provider
@@ -80,7 +124,8 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 				isLoggedIn,
 				agentConfig,
 				setAgentConfig,
-				getActiveSessionId,
+				getTabSessionId,
+				resumeChat,
 			} }
 		>
 			{ children }

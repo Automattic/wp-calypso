@@ -6,6 +6,7 @@ import {
 import clsx from 'clsx';
 import { ButtonStack } from '../button-stack';
 import type { SectionHeaderProps } from './types';
+import type { JSX } from 'react';
 import './style.scss';
 
 /**

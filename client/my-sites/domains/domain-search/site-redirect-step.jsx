@@ -2,7 +2,6 @@ import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -37,7 +36,7 @@ class SiteRedirectStep extends Component {
 	}
 
 	render() {
-		const price = get( this.props, 'products.offsite_redirect.cost_display', null );
+		const price = this.props?.products?.offsite_redirect?.cost_display ?? null;
 		const { translate } = this.props;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */

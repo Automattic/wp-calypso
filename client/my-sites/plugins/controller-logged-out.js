@@ -7,11 +7,14 @@ import {
 } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { getSiteFragment } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { setDocumentHeadMeta } from 'calypso/state/document-head/actions';
+import { getDocumentHeadMeta } from 'calypso/state/document-head/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin as getWporgPluginSelector } from 'calypso/state/plugins/wporg/selectors';
 import { receiveProductsList } from 'calypso/state/products-list/actions';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
-import { getCategories } from './categories/use-categories';
+import { ALLOWED_CATEGORIES, getCategories } from './categories/use-categories';
 import { UNLISTED_PLUGINS } from './constants';
 import { getCategoryForPluginsBrowser } from './controller';
 
@@ -90,6 +93,22 @@ const prefetchPlugin = async ( queryClient, store, { locale, pluginSlug } ) => {
 
 	return data;
 };
+
+/**
+ * Read the marketplace product that `prefetchPlugin` just cached.
+ *
+ * `prefetchPlugin` cannot hand the product back directly: it caches through
+ * `queryClient.prefetchQuery`, which resolves to `undefined` by design. The
+ * cache is the only place the prefetched product is readable.
+ *
+ * `pluginSlug` must be the same value that was passed to `prefetchPlugin`,
+ * because that value builds the query key.
+ * @param {Object} queryClient The react-query client holding the prefetched data
+ * @param {string} pluginSlug The plugin slug used for the prefetch
+ * @returns {Object|undefined} The normalized product, or undefined for a non-marketplace plugin
+ */
+const getPrefetchedMarketplaceProduct = ( queryClient, pluginSlug ) =>
+	queryClient.getQueryData( getWPCOMPluginQueryParams( pluginSlug ).queryKey );
 
 const prefetchTimebox = ( prefetchPromises, context ) => {
 	const racingPromises = [ Promise.all( prefetchPromises ) ];
@@ -177,6 +196,40 @@ export async function fetchCategoryPlugins( context, next ) {
 	next();
 }
 
+/**
+ * Mark uncurated `/plugins/browse/<term>` pages as `noindex`.
+ *
+ * Only the curated `ALLOWED_CATEGORIES` are intentional landing pages meant to be
+ * indexed. Every other term is a tag fallthrough: each plugin links all of its
+ * WordPress.org tags as `/plugins/browse/<tag>` (see plugin-details-header), which
+ * generates a long tail of ~49k thin tag pages. Google crawls these and declines to
+ * index them, so they pile up in Search Console's "Crawled - currently not indexed"
+ * bucket. Emitting `noindex` reclassifies them into the intentional "Excluded by
+ * 'noindex' tag" bucket. We deliberately keep them crawlable (no robots.txt block)
+ * so Googlebot can recrawl and observe the directive.
+ */
+export function setBrowsePluginsNoindex( context, next ) {
+	if ( ! context.isServerSide || isUserLoggedIn( context.store.getState() ) ) {
+		return next();
+	}
+
+	const category = getCategoryForPluginsBrowser( context );
+	const isCurated =
+		!! category &&
+		ALLOWED_CATEGORIES.some( ( allowed ) => allowed.toLowerCase() === category.toLowerCase() );
+
+	if ( ! isCurated ) {
+		const meta = getDocumentHeadMeta( context.store.getState() )
+			// Drop any existing robots meta to avoid duplicate tags.
+			.filter( ( { name } ) => name !== 'robots' )
+			.concat( { name: 'robots', content: 'noindex' } );
+
+		context.store.dispatch( setDocumentHeadMeta( meta ) );
+	}
+
+	next();
+}
+
 export async function fetchPlugin( context, next ) {
 	const { queryClient, store } = context;
 
@@ -208,6 +261,16 @@ export async function fetchPlugin( context, next ) {
 		if ( dataOrError.message !== PREFETCH_TIMEOUT_ERROR ) {
 			return next( 'route' );
 		}
+	}
+
+	// A retired marketplace product cannot be bought any more, so its detail page
+	// is a dead end. Send the request to the plugin browser instead. The redirect
+	// is temporary because a product can stop being retired.
+	if ( getPrefetchedMarketplaceProduct( queryClient, options.pluginSlug )?.is_retired ) {
+		// `ssrSetupLocale` has already redirected any locale that is not a
+		// magnificent one, so a `lang` param here is safe to keep in the path.
+		const { lang } = context.params;
+		return context.res.redirect( 302, lang ? `/${ lang }/plugins` : '/plugins' );
 	}
 
 	next();

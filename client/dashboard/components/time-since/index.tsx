@@ -32,7 +32,7 @@ function useRelativeTime( date: Date, locale: string, formatOptions?: Intl.DateT
 		// Minutes ago (less than 60 minutes)
 		if ( minutesAgo < 60 ) {
 			return sprintf(
-				/* translators: %s is the number of minutes. Example for a resulting string: 2m ago */
+				/* translators: %(minutes)d: the number of minutes. Example for a resulting string: 2m ago */
 				__( '%(minutes)dm ago' ),
 				{
 					minutes: minutesAgo,
@@ -43,7 +43,7 @@ function useRelativeTime( date: Date, locale: string, formatOptions?: Intl.DateT
 		// Hours ago (less than 24 hours)
 		if ( hoursAgo < 24 ) {
 			return sprintf(
-				/* translators: %s is the number of hours. Example for a resulting string: 5h ago */
+				/* translators: %(hours)d: the number of hours. Example for a resulting string: 5h ago */
 				__( '%(hours)dh ago' ),
 				{
 					hours: hoursAgo,
@@ -54,7 +54,7 @@ function useRelativeTime( date: Date, locale: string, formatOptions?: Intl.DateT
 		// Days ago (less than 7 days)
 		if ( daysAgo < 7 ) {
 			return sprintf(
-				/* translators: %s is the number of days. Example for a resulting string: 4d ago */
+				/* translators: %(days)d: the number of days. Example for a resulting string: 4d ago */
 				__( '%(days)dd ago' ),
 				{
 					days: daysAgo,

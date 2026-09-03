@@ -1,10 +1,10 @@
 import { FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-import { filter, flowRight, get, some, values, xor } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import QueryPostTypes from 'calypso/components/data/query-post-types';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -20,6 +20,8 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+
+const isPublicPostType = ( postType ) => postType?.public;
 
 class SharingButtonsOptions extends Component {
 	static propTypes = {
@@ -56,7 +58,14 @@ class SharingButtonsOptions extends Component {
 
 	handleMultiCheckboxChange = ( name, event ) => {
 		const { path } = this.props;
-		const delta = xor( this.props.settings.sharing_show, event.value );
+		const previous = Array.isArray( this.props.settings.sharing_show )
+			? this.props.settings.sharing_show
+			: [];
+		const next = Array.isArray( event.value ) ? event.value : [];
+		// Symmetric difference: the services toggled on or off by this change.
+		const delta = [ ...previous, ...next ].filter(
+			( service ) => previous.includes( service ) !== next.includes( service )
+		);
 		this.props.onChange( name, event.value );
 		if ( delta.length ) {
 			const checked = -1 !== event.value.indexOf( delta[ 0 ] ) ? 1 : 0;
@@ -146,11 +155,15 @@ class SharingButtonsOptions extends Component {
 	}
 
 	isTwitterButtonEnabled() {
-		return some( this.props.buttons, { ID: 'twitter', enabled: true } );
+		return ( this.props.buttons ?? [] ).some(
+			( button ) => button.ID === 'twitter' && button.enabled === true
+		);
 	}
 
 	isXButtonEnabled() {
-		return some( this.props.buttons, { ID: 'x', enabled: true } );
+		return ( this.props.buttons ?? [] ).some(
+			( button ) => button.ID === 'x' && button.enabled === true
+		);
 	}
 
 	getTwitterViaOptionElement() {
@@ -199,7 +212,7 @@ class SharingButtonsOptions extends Component {
 			return;
 		}
 
-		const checked = get( settings, 'jetpack_comment_likes_enabled', false );
+		const checked = settings?.jetpack_comment_likes_enabled ?? false;
 
 		return (
 			<FormFieldset className="sharing-buttons__fieldset">
@@ -287,7 +300,9 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 		const path = getCurrentRouteParameterized( state, siteId );
 
-		const postTypes = filter( values( getPostTypes( state, siteId ) ), 'public' );
+		const postTypes = Object.values( getPostTypes( state, siteId ) || {} ).filter(
+			isPublicPostType
+		);
 
 		return {
 			initialized: !! postTypes || !! getSiteSettings( state, siteId ),
@@ -300,4 +315,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent, recordTracksEvent }
 );
 
-export default flowRight( connectComponent, localize )( SharingButtonsOptions );
+export default compose( connectComponent, localize )( SharingButtonsOptions );

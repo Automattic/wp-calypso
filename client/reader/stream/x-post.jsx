@@ -1,20 +1,15 @@
 import { getUrlParts } from '@automattic/calypso-url';
 import { Card } from '@automattic/components';
+import { uniqBy } from '@automattic/js-utils';
 import clsx from 'clsx';
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
-import { forEach, uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
-import { PureComponent } from 'react';
-import ReactDom from 'react-dom';
-import { connect } from 'react-redux';
+import { createRef, PureComponent } from 'react';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import { useFeedQuery } from 'calypso/reader/data/feed';
+import { useIsSeenEnabled } from 'calypso/reader/data/seen-posts';
 import { useSite } from 'calypso/reader/data/site';
-import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
-import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 class CrossPost extends PureComponent {
@@ -28,13 +23,25 @@ class CrossPost extends PureComponent {
 		postKey: PropTypes.object,
 		site: PropTypes.object,
 		feed: PropTypes.object,
-		isWPForTeamsItem: PropTypes.bool,
-		currentRoute: PropTypes.string,
-		hasOrganization: PropTypes.bool,
+		isSeenEnabled: PropTypes.bool,
+	};
+
+	cardRef = createRef();
+
+	// Merge the internal card ref with an optional `itemRef` from InfiniteList so the
+	// parent list can measure this item's DOM node without `findDOMNode`.
+	setCardRef = ( node ) => {
+		this.cardRef.current = node;
+		const { itemRef } = this.props;
+		if ( typeof itemRef === 'function' ) {
+			itemRef( node );
+		} else if ( itemRef ) {
+			itemRef.current = node;
+		}
 	};
 
 	handleCardClick = ( event ) => {
-		const rootNode = ReactDom.findDOMNode( this );
+		const rootNode = this.cardRef.current;
 
 		if ( closest( event.target, '.should-scroll', rootNode ) ) {
 			setTimeout( function () {
@@ -121,7 +128,7 @@ class CrossPost extends PureComponent {
 
 		// Add any other x-post URLs we know about
 		if ( postKey.xPostUrls ) {
-			forEach( postKey.xPostUrls, ( xPostUrl ) => {
+			postKey.xPostUrls.forEach( ( xPostUrl ) => {
 				xPostedToList.push( {
 					siteURL: xPostUrl,
 					siteName: this.getSiteNameFromURL( xPostUrl ),
@@ -149,17 +156,12 @@ class CrossPost extends PureComponent {
 	};
 
 	render() {
-		const { post, translate, currentRoute, hasOrganization, isWPForTeamsItem } = this.props;
-
-		let isSeen = false;
-		if ( isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) ) {
-			isSeen = post?.is_seen;
-		}
+		const { post, translate } = this.props;
 		const articleClasses = clsx( {
 			reader__card: true,
 			'is-x-post': true,
 			'is-selected': this.props.isSelected,
-			'is-seen': isSeen,
+			'is-seen': this.props.isSeenEnabled && post?.is_seen,
 		} );
 
 		// Remove the x-post text from the title.
@@ -172,7 +174,12 @@ class CrossPost extends PureComponent {
 		}
 
 		return (
-			<Card tagName="article" onClick={ this.handleCardClick } className={ articleClasses }>
+			<Card
+				ref={ this.setCardRef }
+				tagName="article"
+				onClick={ this.handleCardClick }
+				className={ articleClasses }
+			>
 				<UserAvatar user={ post.author } size={ 40 } />
 
 				<div className="reader__x-post">
@@ -197,19 +204,7 @@ class CrossPost extends PureComponent {
 }
 /* eslint-enable wpcalypso/jsx-classname-namespace */
 
-const ConnectedCrossPost = connect( ( state, ownProps ) => {
-	const { feedId, blogId } = ownProps.postKey;
-	const feed = ownProps.feed;
-	const site = ownProps.site;
-	return {
-		currentRoute: getCurrentRoute( state ),
-		isWPForTeamsItem:
-			isSiteWPForTeams( state, blogId ) ||
-			( feed?.blog_ID ? isSiteWPForTeams( state, feed.blog_ID ) : false ) ||
-			( site?.ID ? isSiteWPForTeams( state, site.ID ) : false ),
-		hasOrganization: hasReaderFollowOrganization( state, feedId, blogId ),
-	};
-} )( localize( CrossPost ) );
+const LocalizedCrossPost = localize( CrossPost );
 
 export default function CrossPostContainer( props ) {
 	const { feedId, blogId } = props.postKey || {};
@@ -218,5 +213,18 @@ export default function CrossPostContainer( props ) {
 	const { site } = useSite( siteId );
 	const resolvedFeedId = feedId || site?.feed_ID;
 	const { data: feedFromSite } = useFeedQuery( feedFromKey ? undefined : resolvedFeedId );
-	return <ConnectedCrossPost { ...props } site={ site } feed={ feedFromKey || feedFromSite } />;
+	const isSeenEnabled = useIsSeenEnabled( {
+		feedId: resolvedFeedId,
+		blogId: siteId,
+		post: props.post,
+	} );
+
+	return (
+		<LocalizedCrossPost
+			{ ...props }
+			site={ site }
+			feed={ feedFromKey || feedFromSite }
+			isSeenEnabled={ isSeenEnabled }
+		/>
+	);
 }

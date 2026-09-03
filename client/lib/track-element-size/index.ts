@@ -1,4 +1,4 @@
-import { throttle } from 'lodash';
+import { throttle } from '@wordpress/compose';
 import { useRef, useEffect, useState } from 'react';
 import * as React from 'react';
 

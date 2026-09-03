@@ -1,6 +1,5 @@
 import { Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -30,7 +29,7 @@ class RewindWereBacking extends Component {
 				</h3>
 				<img src="/calypso/images/illustrations/thankYou.svg" alt="" />
 				<p className="rewind-were-backing__description rewind-switch__description">
-					{ get( dependencyStore, 'rewindconfig', false ) &&
+					{ ( dependencyStore?.rewindconfig ?? false ) &&
 						translate(
 							'Your site is being backed up because it is set up with ' +
 								'Jetpack Premium at no additional cost to you.'
@@ -64,7 +63,7 @@ class RewindWereBacking extends Component {
 
 export default connect(
 	( state, ownProps ) => ( {
-		siteSlug: get( ownProps, [ 'initialContext', 'query', 'siteSlug' ], 0 ),
+		siteSlug: ownProps?.initialContext?.query?.siteSlug ?? 0,
 		dependencyStore: getSignupDependencyStore( state ),
 	} ),
 	null

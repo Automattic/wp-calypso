@@ -10,7 +10,7 @@ import GlobalSidebar from 'calypso/layout/global-sidebar';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import HostingDashboardOptInBanner from 'calypso/my-sites/hosting-dashboard-opt-in-banner';
-import { hasDashboardOptIn, isDashboardToggleEnabled } from 'calypso/state/dashboard/selectors';
+import { hasDashboardOptIn, isAdvancedNoticeVisible } from 'calypso/state/dashboard/selectors';
 import { getShouldShowCollapsedGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
 import { AppState } from 'calypso/types';
 import { SidebarIconPlugins } from '../../sidebar/static-data/global-sidebar-menu';
@@ -21,11 +21,11 @@ interface Props {
 	path: string;
 	isCollapsed: boolean;
 	hasOptIn: boolean;
-	showOptInBanner: boolean;
+	showAdvancedNotice: boolean;
 }
 const managePluginsPattern = /^\/plugins\/(manage|active|inactive|updates)/;
 
-const PluginsSidebar = ( { path, isCollapsed, hasOptIn, showOptInBanner }: Props ) => {
+const PluginsSidebar = ( { path, isCollapsed, hasOptIn, showAdvancedNotice }: Props ) => {
 	const translate = useTranslate();
 
 	const [ previousPath, setPreviousPath ] = useState( path );
@@ -47,7 +47,7 @@ const PluginsSidebar = ( { path, isCollapsed, hasOptIn, showOptInBanner }: Props
 					"Enhance your site's features with plugins, or schedule updates to fit your needs."
 				)
 			}
-			footer={ showOptInBanner && ! isCollapsed && <HostingDashboardOptInBanner /> }
+			footer={ showAdvancedNotice && ! isCollapsed && <HostingDashboardOptInBanner /> }
 		>
 			<SidebarMenu>
 				{ ! ( isEnabled( 'plugins/universal-header' ) && hasOptIn ) && (
@@ -120,7 +120,7 @@ export default withCurrentRoute(
 		return {
 			isCollapsed: shouldShowCollapsedGlobalSidebar,
 			hasOptIn: hasDashboardOptIn( state ),
-			showOptInBanner: isEnabled( 'dashboard/opt-in-banners' ) && isDashboardToggleEnabled( state ),
+			showAdvancedNotice: isAdvancedNoticeVisible( state ),
 		};
 	} )( PluginsSidebar )
 );

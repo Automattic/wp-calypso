@@ -10,18 +10,21 @@ import type { SiteOwnerTransferContext } from '@automattic/api-core';
 
 export const siteOwnerTransferMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-owner-xfer' },
 		mutationFn: ( data: { new_site_owner: string; context?: SiteOwnerTransferContext } ) =>
 			startSiteOwnerTransfer( siteId, data ),
 	} );
 
 export const siteOwnerTransferEligibilityCheckMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-owner-xfer-check' },
 		mutationFn: ( data: { new_site_owner: string } ) =>
 			checkSiteOwnerTransferEligibility( siteId, data ),
 	} );
 
 export const siteOwnerTransferConfirmMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-owner-xfer-confirm' },
 		mutationFn: ( data: { hash: string } ) => confirmSiteOwnerTransfer( siteId, data ),
 		onSuccess: ( { transfer } ) => {
 			if ( transfer ) {

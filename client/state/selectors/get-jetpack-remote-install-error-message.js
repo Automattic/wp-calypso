@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/jetpack-remote-install/init';
 
 /**
@@ -11,5 +9,5 @@ import 'calypso/state/jetpack-remote-install/init';
  * @returns {?string} Error message, if any
  */
 export default function getJetpackRemoteInstallErrorMessage( state, url ) {
-	return get( state.jetpackRemoteInstall.errorMessage, url, null );
+	return state.jetpackRemoteInstall.errorMessage?.[ url ] ?? null;
 }

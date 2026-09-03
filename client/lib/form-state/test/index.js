@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { mapValues } from 'lodash';
+import { mapValues } from '@automattic/js-utils';
 import formState from '../';
 
 function checkNthState( n, callback ) {

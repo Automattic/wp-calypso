@@ -1,11 +1,10 @@
 import { Component } from 'react';
-import { useSelector } from 'react-redux';
 import ReaderPostCard from 'calypso/blocks/reader-post-card';
 import { useCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { withSite } from 'calypso/reader/data/site';
+import { useSiteSubscriptionForFeed } from 'calypso/reader/data/site-subscriptions';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
-import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
 
 class ReaderPostCardAdapter extends Component {
 	static displayName = 'ReaderPostCardAdapter';
@@ -51,6 +50,7 @@ class ReaderPostCardAdapter extends Component {
 				streamKey={ this.props.streamKey }
 				commentsApiDisabled={ this.props.commentsApiDisabled }
 				showBylineSecondarySiteLink={ this.props.showBylineSecondarySiteLink }
+				itemRef={ this.props.itemRef }
 			>
 				<div ref={ this.props.postRef } />
 			</ReaderPostCard>
@@ -67,9 +67,7 @@ export default function ReaderPostCardAdapterContainer( props ) {
 	const { feed_ID: feedId, is_external: isExternal, site_ID: siteId } = props.post ?? {};
 	const commentsApiDisabled = useCommentsApiDisabled( siteId );
 	const { data: feed } = useFeedQuery( feedId );
-	const follow = useSelector( ( state ) =>
-		feedId ? getReaderFollowForFeed( state, parseInt( feedId ) ) : null
-	);
+	const follow = useSiteSubscriptionForFeed( feedId );
 	const feedWithIcon = feed ? { ...feed, site_icon: follow?.site_icon } : feed;
 
 	return (

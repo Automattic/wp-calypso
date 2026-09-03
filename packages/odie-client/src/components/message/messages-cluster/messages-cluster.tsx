@@ -1,3 +1,4 @@
+import { translationExists } from '@automattic/i18n-utils';
 import { __ } from '@wordpress/i18n';
 import cx from 'clsx';
 import { Fragment } from 'react';
@@ -6,8 +7,10 @@ import { isCSATMessage } from '../../../utils';
 import {
 	hasFeedbackForm,
 	isAttachment,
+	isHappinessEngineerMessage,
 	isZendeskChatStartedMessage,
 	isZendeskIntroMessage,
+	isZendeskSurveyMessage,
 } from '../../../utils/csat';
 import ChatWithSupportLabel from '../../chat-with-support';
 import { getMessageUniqueIdentifier } from '../utils/get-message-unique-identifier';
@@ -23,7 +26,7 @@ const EXCLUDED_MESSAGE_ROLES = [ 'zendesk-intro' ] as const;
  * @returns The presented role of the message.
  */
 function getPresentedRole( message: Message ) {
-	if ( isCSATMessage( message ) ) {
+	if ( isCSATMessage( message ) || isZendeskSurveyMessage( message ) ) {
 		return 'csat';
 	} else if ( isAttachment( message ) ) {
 		return 'attachment';
@@ -31,6 +34,10 @@ function getPresentedRole( message: Message ) {
 		return 'feedback';
 	} else if ( isZendeskIntroMessage( message ) ) {
 		return 'zendesk-intro';
+	} else if ( message.role === 'business' && ! isHappinessEngineerMessage( message ) ) {
+		// Automated/system business messages (messaging triggers, etc.) keep their Zendesk-configured
+		// name and must cluster separately from real Happiness Engineer messages.
+		return 'business-automated';
 	}
 	return message.role;
 }
@@ -74,30 +81,71 @@ function clusterMessagesBySender( messages: Message[] ) {
 		return [];
 	}
 
+	const shouldStartNewGroup = (
+		message: Message,
+		currentGroup: {
+			role:
+				| MessageRole
+				| 'csat'
+				| 'attachment'
+				| 'feedback'
+				| 'zendesk-intro'
+				| 'business-automated';
+			messages: Message[];
+		}
+	) => {
+		const presentedRole = getPresentedRole( message );
+
+		if ( presentedRole !== currentGroup.role ) {
+			return true;
+		}
+
+		return (
+			presentedRole === 'business-automated' &&
+			currentGroup.messages.length > 0 &&
+			message.displayName !== currentGroup.messages[ 0 ]?.displayName
+		);
+	};
+
 	let currentGroup: {
 		id: string;
-		role: MessageRole | 'csat' | 'attachment' | 'feedback' | 'zendesk-intro';
+		role: MessageRole | 'csat' | 'attachment' | 'feedback' | 'zendesk-intro' | 'business-automated';
 		messages: Message[];
 	} = {
-		id: crypto.randomUUID(),
+		// A deterministic id, not crypto.randomUUID(): that was regenerated on every render (this
+		// function isn't memoized), so the Fragment keyed on it below force-remounted the entire
+		// cluster -- including any in-progress CSATForm state -- on every unrelated re-render.
+		id: String( getMessageUniqueIdentifier( messages[ 0 ], 'group-0' ) ),
 		role: getPresentedRole( messages[ 0 ] ),
 		messages: [],
 	};
 
 	const groups = [ currentGroup ];
+	let groupIndex = 1;
 
-	for ( const message of sortMessagesByTimestamp( messages ) ) {
+	const sortedMessages = sortMessagesByTimestamp( messages );
+	const lastCSATMessage = sortedMessages.filter( isCSATMessage ).at( -1 );
+
+	for ( const message of sortedMessages ) {
 		if ( EXCLUDED_MESSAGE_ROLES.includes( getPresentedRole( message ) as any ) ) {
 			continue;
 		}
 
-		if ( getPresentedRole( message ) !== currentGroup.role ) {
+		// Zendesk can emit more than one CSAT prompt for the same conversation. They are all rendered
+		// with the same copy, so every extra one reads as a duplicate and lets the user submit
+		// conflicting ratings for a single ticket. Only the most recent prompt is kept.
+		if ( isCSATMessage( message ) && message !== lastCSATMessage ) {
+			continue;
+		}
+
+		if ( shouldStartNewGroup( message, currentGroup ) ) {
 			currentGroup = {
-				id: crypto.randomUUID(),
+				id: String( getMessageUniqueIdentifier( message, `group-${ groupIndex }` ) ),
 				role: getPresentedRole( message ),
 				messages: [],
 			};
 			groups.push( currentGroup );
+			groupIndex++;
 		}
 
 		currentGroup.messages.push( message );
@@ -111,16 +159,24 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 
 	return groups.map( ( group ) => {
 		const startingHumanSupport = group.messages.some( isZendeskChatStartedMessage );
-		const endingHumanSupport = group.messages.some( isCSATMessage );
+		const endingHumanSupport = group.messages.some(
+			( message ) => isCSATMessage( message ) || isZendeskSurveyMessage( message )
+		);
 
 		const messageHeader = () => {
-			// Only business messages have a header.
+			// Real Happiness Engineer messages always show the "Happiness Engineer" override so that
+			// silent transfers between HEs don't leak individual agent names.
 			if ( group.role === 'business' ) {
 				return (
 					<div className="message-header business">
 						{ __( 'Happiness Engineer', __i18n_text_domain__ ) }
 					</div>
 				);
+			}
+			// Automated/system messages keep whatever name is configured for them in Zendesk.
+			if ( group.role === 'business-automated' ) {
+				const displayName = group.messages[ 0 ]?.displayName;
+				return displayName ? <div className="message-header business">{ displayName }</div> : null;
 			}
 			return null;
 		};
@@ -143,7 +199,11 @@ export function MessagesClusterizer( { messages }: { messages: Message[] } ) {
 				</div>
 				{ startingHumanSupport && (
 					<ChatWithSupportLabel
-						labelText={ __( 'Chat with support team started', __i18n_text_domain__ ) }
+						labelText={
+							translationExists( 'Support request started' )
+								? __( 'Support request started', __i18n_text_domain__ )
+								: __( 'Chat with support team started', __i18n_text_domain__ )
+						}
 					/>
 				) }
 			</Fragment>

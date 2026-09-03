@@ -4,14 +4,16 @@ import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import InlineHelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { useHelpCenterSearch, useGetHistoryChats } from '../hooks';
+import { useHelpCenterSearch, useGetHistoryChats, useHelpCenterCTA } from '../hooks';
 import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';
 import { useHelpSearchQuery } from '../hooks/use-help-search-query';
 import { HELP_CENTER_STORE } from '../stores';
+import { HelpCenterCTA } from './help-center-cta';
 import { HelpCenterLaunchpad } from './help-center-launchpad';
 import { HelpCenterMoreResources } from './help-center-more-resources';
 import HelpCenterRecentConversations from './help-center-recent-conversations';
 import HelpCenterSearchResults from './help-center-search-results';
+import { getHelpCenterSiteContext } from './help-center-site-context';
 import { BlockedZendeskNotice } from './notices';
 import PlaceholderLines from './placeholder-lines';
 import './help-center-search.scss';
@@ -24,13 +26,14 @@ type HelpCenterSearchProps = {
 };
 
 export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSearchProps ) => {
-	const { sectionName, site, currentUser, product } = useHelpCenterContext();
+	const { sectionName, site, currentUser, primarySiteId, product } = useHelpCenterContext();
 	const featureConfig = useFeatureConfig();
 	const { searchQuery, setSearchQueryAndEmailSubject, redirectToArticle } =
 		useHelpCenterSearch( onSearchChange );
 
 	const isSiteOwner = site?.site_owner === currentUser?.ID;
 	const launchpadEnabled = site?.options?.launchpad_screen === 'full' && isSiteOwner;
+	const { blogId, siteContextSource } = getHelpCenterSiteContext( site?.ID, primarySiteId );
 
 	// Track loading states to coordinate rendering and avoid content popping in at different times.
 	const { isLoadingInteractions } = useGetHistoryChats();
@@ -40,6 +43,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 		[]
 	);
 	const { contextSearch } = useContextBasedSearchMapping( currentRoute );
+	const cta = useHelpCenterCTA( 'banner' );
 	const { isLoading: isLoadingSearchResults } = useHelpSearchQuery(
 		searchQuery || contextTerm || contextSearch,
 		locale,
@@ -61,6 +65,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 
 	return (
 		<div className="inline-help__search">
+			{ cta && <HelpCenterCTA { ...cta } /> }
 			{ featureConfig.home.recentConversations && (
 				<>
 					<HelpCenterRecentConversations />
@@ -73,6 +78,8 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 				onSearch={ setSearchQueryAndEmailSubject }
 				location="help-center"
 				isVisible
+				blogId={ blogId }
+				siteContextSource={ siteContextSource }
 				placeholder={ __( 'Search guides…', __i18n_text_domain__ ) }
 				sectionName={ sectionName }
 				useSearchControl

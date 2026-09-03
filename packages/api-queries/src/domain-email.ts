@@ -32,6 +32,7 @@ type Variables = {
 
 export const addEmailForwarderMutation = () =>
 	mutationOptions< unknown, ResponseError, Variables >( {
+		meta: { statId: 'email-fwd-add' },
 		mutationFn: ( {
 			domain,
 			mailbox,

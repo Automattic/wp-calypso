@@ -391,6 +391,7 @@ function PlanCardCTA( {
 	tierRank,
 	currentTierRank,
 	redirectAfterPurchase,
+	canPurchasePlan,
 }: {
 	site: Site;
 	sitePlan: SiteContextualPlan;
@@ -398,6 +399,7 @@ function PlanCardCTA( {
 	tierRank: number;
 	currentTierRank: number;
 	redirectAfterPurchase: string;
+	canPurchasePlan: boolean;
 } ) {
 	const { setNewMessagingChat } = useHelpCenter();
 	const isCurrentPlan =
@@ -409,6 +411,10 @@ function PlanCardCTA( {
 				{ __( 'Your plan' ) }
 			</Button>
 		);
+	}
+
+	if ( ! canPurchasePlan ) {
+		return null;
 	}
 
 	if ( tierRank > currentTierRank ) {
@@ -459,6 +465,7 @@ function PlanCard( {
 	currentTierRank,
 	redirectAfterPurchase,
 	totalPlanCount,
+	canPurchasePlan,
 }: {
 	site: Site;
 	sitePlan: SiteContextualPlan;
@@ -468,6 +475,7 @@ function PlanCard( {
 	currentTierRank: number;
 	redirectAfterPurchase: string;
 	totalPlanCount: number;
+	canPurchasePlan: boolean;
 } ) {
 	const isCurrentPlan =
 		sitePlan.current_plan === true || ( currentTierRank >= 0 && tierRank === currentTierRank );
@@ -532,6 +540,7 @@ function PlanCard( {
 						tierRank={ tierRank }
 						currentTierRank={ currentTierRank }
 						redirectAfterPurchase={ redirectAfterPurchase }
+						canPurchasePlan={ canPurchasePlan }
 					/>
 
 					{ sitePlan.plan_card_features && sitePlan.plan_card_features.length > 0 && (
@@ -718,6 +727,12 @@ export default function SitePlans() {
 		enabled: !! site.ID,
 	} );
 	const sitePlans = sitePlansData?.plans;
+
+	// A paid plan can only be changed by the account that owns it; a free or plan-less
+	// site can be upgraded by anyone with access.
+	const currentPlan = sitePlans?.find( ( p ) => p.current_plan );
+	const isPaidPlan = !! site.plan && ! site.plan.is_free;
+	const canPurchasePlan = ! isPaidPlan || !! currentPlan?.user_is_owner;
 	const pageContext = sitePlansData?.pageContext;
 	// Index sitePlans by product_id for O(1) sibling lookups
 	const plansByProductId = new Map< number, SiteContextualPlan >(
@@ -837,6 +852,7 @@ export default function SitePlans() {
 						currentTierRank={ currentTierRank }
 						redirectAfterPurchase={ redirectAfterPurchase }
 						totalPlanCount={ shownPlans.length }
+						canPurchasePlan={ canPurchasePlan }
 					/>
 				) ) }
 			</div>

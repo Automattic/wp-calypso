@@ -1,6 +1,6 @@
 import { useSelect } from '@wordpress/data';
 import clsx from 'clsx';
-import { useEffect } from 'react';
+import { useEffect, type JSX } from 'react';
 import { useLoginUrlForFlow } from 'calypso/landing/stepper/hooks/use-login-url-for-flow';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import kebabCase from 'calypso/landing/stepper/utils/kebabCase';
@@ -9,7 +9,6 @@ import SignupHeader from 'calypso/signup/signup-header';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { PRIVATE_STEPS } from '../../steps';
-import SurveyManager from '../survey-manager';
 import { useStepRouteTracking } from './hooks/use-step-route-tracking';
 import type { Flow, FlowV2, Navigate, StepperStep } from '../../types';
 import type { StepperInternalSelect } from '@automattic/data-stores';
@@ -77,7 +76,6 @@ const StepRoute = ( { step, flow, renderStep, navigate }: StepRouteProps ) => {
 				<>
 					<SignupHeader pageTitle={ flow.title } />
 					{ stepContent }
-					<SurveyManager flow={ flow } />
 					<StepperPerformanceTrackerStop flow={ flow.name } step={ step.slug } />
 				</>
 			) }

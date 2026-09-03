@@ -1,4 +1,5 @@
 import CustomerHomeLaunchpad from '.';
+import type { JSX } from 'react';
 
 const checklistSlug = 'intent-build';
 

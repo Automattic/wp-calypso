@@ -36,6 +36,7 @@ const endStates: TransferStates[] = [
 	transferStates.FAILURE,
 	transferStates.ERROR,
 	transferStates.REVERTED,
+	transferStates.CLIENT_TIMEOUT,
 	transferStates.NULL,
 ];
 
@@ -82,7 +83,10 @@ const HostingActivateStatus = ( {
 		}
 	};
 
-	if ( transferStatus === transferStates.ERROR ) {
+	if (
+		transferStatus === transferStates.ERROR ||
+		transferStatus === transferStates.CLIENT_TIMEOUT
+	) {
 		return <HostingErrorStatus context={ context } />;
 	}
 

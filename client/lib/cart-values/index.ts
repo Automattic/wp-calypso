@@ -12,7 +12,6 @@ export function paymentMethodName( method: string ): string {
 		card: translate( 'Credit or debit card' ),
 		eps: 'EPS',
 		ideal: 'iDEAL',
-		netbanking: 'Net Banking',
 		paypal: 'PayPal',
 		p24: 'Przelewy24',
 		'apple-pay': 'Apple Pay',
