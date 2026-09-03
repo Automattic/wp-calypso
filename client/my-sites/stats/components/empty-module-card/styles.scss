@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .stats-empty-module-card {
 	display: flex;
 	flex-direction: column;
@@ -20,4 +22,8 @@
 
 .stats-empty-module-card__content {
 	width: 80%;
+
+	@media (max-width: $break-mobile) {
+		width: 100%;
+	}
 }

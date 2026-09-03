@@ -6,7 +6,8 @@
 .stats-empty-action__cta {
 	// this needs an extra class because it' sometimes overwritten by build CSS file order
 	&.stats-empty-action__cta-parent {
-		height: 52px;
+		// No fixed height: the label wraps on narrow viewports, and a fixed
+		// height squeezes the second line against the border.
 		margin-bottom: 12px;
 		border: 1px solid $studio-gray-5;
 		border-radius: 4px;
