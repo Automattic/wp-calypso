@@ -7,6 +7,36 @@ interface RateSignals {
 	sends: number;
 }
 
+interface ClickRateSignals {
+	uniqueClicks: unknown;
+	totalClicks: unknown;
+	sends: unknown;
+}
+
+/**
+ * Calculate a click rate from the underlying counts.
+ *
+ * Unique clicks are preferred when available. Older data without unique
+ * attribution falls back to total clicks so it can still produce a useful
+ * rate.
+ */
+export function calculateClickRate( {
+	uniqueClicks,
+	totalClicks,
+	sends,
+}: ClickRateSignals ): number | null {
+	const sendCount = toCount( sends );
+
+	if ( sendCount <= 0 ) {
+		return null;
+	}
+
+	const uniqueClickCount = toCount( uniqueClicks );
+	const clickCount = uniqueClickCount > 0 ? uniqueClickCount : toCount( totalClicks );
+
+	return ( clickCount / sendCount ) * 100;
+}
+
 /**
  * Whether a unique-based email rate is a known value.
  *
