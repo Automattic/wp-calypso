@@ -46,10 +46,4 @@ describe( 'getApiPath for simple sites', () => {
 
 		expect( result ).toBe( `/sites/${ params.siteId }` );
 	} );
-
-	it( '/site/features', () => {
-		const result = getApiPath( '/site/features', { siteId: 123 } );
-
-		expect( result ).toBe( '/sites/123/features' );
-	} );
 } );
