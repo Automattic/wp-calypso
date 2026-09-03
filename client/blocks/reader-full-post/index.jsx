@@ -44,7 +44,7 @@ import readerContentWidth from 'calypso/reader/lib/content-width';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';
 import { isCommentsOpen, isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
-import { keyForPost } from 'calypso/reader/post-key';
+import { keyForPost, keyToString } from 'calypso/reader/post-key';
 import { ReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
 import { getStreamUrlFromPost } from 'calypso/reader/route';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
@@ -145,11 +145,14 @@ export class FullPostView extends Component {
 		const hasPostChanged = prevProps?.post?.ID !== this.props?.post?.ID;
 		const hasFeedChanged = prevProps?.feed?.ID !== this.props?.feed?.ID;
 		const hasSiteChanged = prevProps?.site?.ID !== this.props?.site?.ID;
-		// `post.ID` is only unique within a site, so consecutive posts from
-		// different sites can share one. Key the automatic-seen guard on `global_ID`
-		// instead — the identity the seen mutation itself sends — so a genuinely
-		// different post still gets its own write.
-		const hasViewedPostChanged = prevProps?.post?.global_ID !== this.props?.post?.global_ID;
+		// Key the automatic-seen guard on the canonical post key, which is the same
+		// feed/blog identity `markAsSeen` writes with. Neither single field works
+		// alone: `post.ID` is only unique within a site, and `global_ID` is absent
+		// on cached posts (`Post` is a `Partial`), so either can read two distinct
+		// posts as the same one and swallow the second post's mark.
+		const hasViewedPostChanged =
+			keyToString( keyForPost( prevProps?.post ) ) !==
+			keyToString( keyForPost( this.props?.post ) );
 
 		// Send page view if applicable
 		if ( hasPostChanged || hasFeedChanged || hasSiteChanged ) {

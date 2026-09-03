@@ -398,7 +398,7 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 			isSeenEnabled: true,
 			requestMarkAsSeen,
 			requestMarkAsSeenBlog: jest.fn(),
-			post: { ...feedPost, is_seen: false, ID: 42, global_ID: 'post-a' },
+			post: { ...feedPost, is_seen: false, ID: 42, feed_item_ID: 10, global_ID: 'post-a' },
 			feed: { ID: 1 },
 		};
 		const instance = new FullPostView( first );
@@ -410,7 +410,33 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 		// The guard has to notice this is a new post and mark it too.
 		instance.props = {
 			...first,
-			post: { ...feedPost, is_seen: false, ID: 42, global_ID: 'post-b' },
+			post: { ...feedPost, is_seen: false, ID: 42, feed_item_ID: 20, global_ID: 'post-b' },
+			feed: { ID: 2 },
+		};
+		instance.componentDidUpdate( first );
+
+		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'marks a second post when neither post carries a global_ID', () => {
+		const requestMarkAsSeen = jest.fn();
+		// The Reader post cache types every field as optional, so cached posts can
+		// reach us without a `global_ID` — two of them must still be told apart.
+		const first = {
+			...baseProps,
+			requestMarkAsSeen,
+			requestMarkAsSeenBlog: jest.fn(),
+			post: { ...feedPost, is_seen: false, feed_item_ID: 10, global_ID: undefined },
+			feed: { ID: 1 },
+		};
+		const instance = new FullPostView( first );
+
+		runAttemptToSendPageView( instance );
+		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
+
+		instance.props = {
+			...first,
+			post: { ...feedPost, is_seen: false, feed_item_ID: 20, global_ID: undefined },
 			feed: { ID: 2 },
 		};
 		instance.componentDidUpdate( first );
