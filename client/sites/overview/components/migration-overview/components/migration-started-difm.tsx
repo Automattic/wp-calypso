@@ -47,6 +47,11 @@ export const MigrationStartedDIFM = ( { site }: { site: SiteDetails } ) => {
 				<div className="migration-started-difm__checklist">
 					<ChecklistCard title={ translate( 'What to expect' ) } items={ checklistItems } />
 				</div>
+				<p className="migration-started-difm__credentials-reminder">
+					{ translate(
+						'Heads up: if it has been more than 3 business days since you started this migration, please check your email — we may have asked for admin credentials for your source site to begin the migration. Reply to that email or contact support if you need help.'
+					) }
+				</p>
 				<CancelDifmMigrationForm siteId={ site.ID } />
 			</div>
 		</Container>

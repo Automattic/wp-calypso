@@ -84,6 +84,15 @@
 			justify-content: center;
 			margin-bottom: 1rem;
 		}
+
+		.migration-started-difm__credentials-reminder {
+			font-size: 0.875rem;
+			line-height: 1.5;
+			color: var(--studio-gray-70);
+			text-align: center;
+			margin: 0 auto 1rem;
+			max-width: 480px;
+		}
 	}
 
 	.migration-ssh-failed {

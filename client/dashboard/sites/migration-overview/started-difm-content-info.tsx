@@ -148,6 +148,11 @@ export function StartedDIFMContentInfo( { site }: { site: Site } ) {
 						</Fragment>
 					) ) }
 				</Card>
+				<Text as="p" variant="muted">
+					{ __(
+						'Heads up: if it has been more than 3 business days since you started this migration, please check your email — we may have asked for admin credentials for your source site to begin the migration. Reply to that email or contact support if you need help.'
+					) }
+				</Text>
 				{ ticketId && (
 					<ButtonStack justify="flex-start">
 						<Button
