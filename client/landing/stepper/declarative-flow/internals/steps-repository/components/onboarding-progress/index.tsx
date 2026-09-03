@@ -1,5 +1,6 @@
 import { Stepper as UIStepper } from '@automattic/ui';
 import { useI18n } from '@wordpress/react-i18n';
+import { VisuallyHidden } from '@wordpress/ui';
 
 import './style.scss';
 
@@ -13,8 +14,21 @@ type Props = {
 	isStepSelectDisabled?: boolean;
 };
 
+/**
+ * The onboarding purchase progress rail, as a segmented bar in the top bar.
+ *
+ * Renders beside the WordPress logo rather than above the page content, so it
+ * costs no vertical space in the content column. Nothing is drawn but three
+ * pills: the steps reached so far are filled, the rest are not.
+ *
+ * Both the indicator and the title are still rendered even though neither is
+ * drawn as such. `Stepper.Indicator` becomes the pill and carries the
+ * "Step 2 of 3, completed" text; `Stepper.Title` supplies the step name. Both
+ * are what give each segment an accessible name, so the title is clipped in
+ * style.scss rather than dropped from the tree.
+ */
 export function OnboardingProgress( { currentStep, onStepSelect, isStepSelectDisabled }: Props ) {
-	const { __ } = useI18n();
+	const { __, _x } = useI18n();
 
 	const domainsStepStatus = currentStep !== 'domains' ? ( 'completed' as const ) : undefined;
 	const plansStepStatus = currentStep === 'checkout' ? ( 'completed' as const ) : undefined;
@@ -29,11 +43,11 @@ export function OnboardingProgress( { currentStep, onStepSelect, isStepSelectDis
 				}
 			} }
 			aria-label={ __( 'Purchase steps' ) }
-			indicatorVariant="number"
+			indicatorVariant="bullet"
 			linear
 			className="onboarding-progress"
 		>
-			<UIStepper.List>
+			<UIStepper.List className="onboarding-progress-list">
 				<UIStepper.Step
 					value="domains"
 					status={ domainsStepStatus }
@@ -41,8 +55,10 @@ export function OnboardingProgress( { currentStep, onStepSelect, isStepSelectDis
 					className="onboarding-progress-step"
 				>
 					<UIStepper.Trigger className="onboarding-progress-trigger">
-						<UIStepper.Indicator />
-						<UIStepper.Title>{ __( 'Select a domain' ) }</UIStepper.Title>
+						<UIStepper.Indicator className="onboarding-progress-indicator" />
+						<VisuallyHidden render={ <UIStepper.Title /> }>
+							{ _x( 'Domain', 'onboarding purchase step' ) }
+						</VisuallyHidden>
 					</UIStepper.Trigger>
 				</UIStepper.Step>
 				<UIStepper.Step
@@ -52,14 +68,18 @@ export function OnboardingProgress( { currentStep, onStepSelect, isStepSelectDis
 					className="onboarding-progress-step"
 				>
 					<UIStepper.Trigger className="onboarding-progress-trigger">
-						<UIStepper.Indicator />
-						<UIStepper.Title>{ __( 'Select a plan' ) }</UIStepper.Title>
+						<UIStepper.Indicator className="onboarding-progress-indicator" />
+						<VisuallyHidden render={ <UIStepper.Title /> }>
+							{ _x( 'Plan', 'onboarding purchase step' ) }
+						</VisuallyHidden>
 					</UIStepper.Trigger>
 				</UIStepper.Step>
 				<UIStepper.Step value="checkout" className="onboarding-progress-step">
 					<UIStepper.Trigger className="onboarding-progress-trigger">
-						<UIStepper.Indicator />
-						<UIStepper.Title>{ __( 'Complete payment' ) }</UIStepper.Title>
+						<UIStepper.Indicator className="onboarding-progress-indicator" />
+						<VisuallyHidden render={ <UIStepper.Title /> }>
+							{ _x( 'Payment', 'onboarding purchase step' ) }
+						</VisuallyHidden>
 					</UIStepper.Trigger>
 				</UIStepper.Step>
 			</UIStepper.List>

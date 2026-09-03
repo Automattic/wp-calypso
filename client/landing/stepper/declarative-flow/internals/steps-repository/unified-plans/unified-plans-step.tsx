@@ -720,6 +720,18 @@ function UnifiedPlansStep( {
 	if ( useStepContainerV2 && wrapperProps ) {
 		const goBack = wrapperProps.hideBack || showProgress ? undefined : wrapperProps.goBack;
 
+		// The progress rail lives in the top bar beside the logo. It and the back
+		// button share the left slot; `goBack` is already undefined whenever the
+		// rail is showing, so the two can never collide.
+		let topBarLeftElement;
+		if ( showProgress ) {
+			topBarLeftElement = (
+				<OnboardingProgress currentStep="plans" onStepSelect={ () => wrapperProps.goBack?.() } />
+			);
+		} else if ( goBack ) {
+			topBarLeftElement = <Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>;
+		}
+
 		return (
 			<>
 				{ /*
@@ -742,11 +754,7 @@ function UnifiedPlansStep( {
 						} ) }
 						topBar={
 							<Step.TopBar
-								leftElement={
-									goBack ? (
-										<Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>
-									) : undefined
-								}
+								leftElement={ topBarLeftElement }
 								rightElement={
 									isOnboardingFlow( flowName ) ? (
 										<>
@@ -766,12 +774,6 @@ function UnifiedPlansStep( {
 						}
 						heading={
 							<>
-								{ showProgress && (
-									<OnboardingProgress
-										currentStep="plans"
-										onStepSelect={ () => wrapperProps.goBack?.() }
-									/>
-								) }
 								{ ( intent === 'plans-website-builder' ||
 									intent === 'plans-wordpress-hosting' ) && (
 									<IntentToggle

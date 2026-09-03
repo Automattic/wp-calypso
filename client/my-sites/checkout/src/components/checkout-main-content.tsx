@@ -1164,27 +1164,26 @@ export default function CheckoutMainContent( {
 				<Step.TwoColumnLayout
 					firstColumnWidth={ 8 }
 					secondColumnWidth={ 4 }
-					heading={
-						showProgress ? (
-							<OnboardingProgress
-								currentStep="checkout"
-								isStepSelectDisabled={ leaveModalProps.isLeaveDisabled }
-								onStepSelect={ ( step ) =>
-									handleProgressStepSelect( step, {
-										forceCheckoutBackUrlDomains,
-										forceCheckoutBackUrl,
-										clickStepBack: leaveModalProps.clickStepBack,
-										clickClose: leaveModalProps.clickClose,
-									} )
-								}
-							/>
-						) : undefined
-					}
 					topBar={ ( { isLargeViewport } ) => {
 						const topBar = (
 							<Step.TopBar
 								leftElement={
-									showProgress ? undefined : (
+									// The progress rail takes the left slot beside the logo,
+									// standing in for the back button while it is showing.
+									showProgress ? (
+										<OnboardingProgress
+											currentStep="checkout"
+											isStepSelectDisabled={ leaveModalProps.isLeaveDisabled }
+											onStepSelect={ ( step ) =>
+												handleProgressStepSelect( step, {
+													forceCheckoutBackUrlDomains,
+													forceCheckoutBackUrl,
+													clickStepBack: leaveModalProps.clickStepBack,
+													clickClose: leaveModalProps.clickClose,
+												} )
+											}
+										/>
+									) : (
 										<Step.BackButton
 											onClick={ leaveModalProps.clickClose }
 											disabled={ leaveModalProps.isLeaveDisabled }
