@@ -326,4 +326,48 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 		expect( requestMarkAsSeen ).not.toHaveBeenCalled();
 		expect( requestMarkAsSeenBlog ).not.toHaveBeenCalled();
 	} );
+
+	it( 'marks the post once seen eligibility resolves after the post already loaded', () => {
+		const requestMarkAsSeen = jest.fn();
+		const pendingProps = {
+			...baseProps,
+			isSeenEnabled: false,
+			requestMarkAsSeen,
+			requestMarkAsSeenBlog: jest.fn(),
+			post: { ...feedPost, is_seen: false },
+		};
+		const instance = new FullPostView( pendingProps );
+
+		// The post loads while the seen gate is still resolving, so no write yet.
+		runAttemptToSendPageView( instance );
+		expect( requestMarkAsSeen ).not.toHaveBeenCalled();
+
+		// Eligibility resolves to true for the same post.
+		instance.props = { ...pendingProps, isSeenEnabled: true };
+		instance.componentDidUpdate( pendingProps );
+
+		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'does not re-mark a post the reader explicitly marked as unseen', () => {
+		const requestMarkAsSeen = jest.fn();
+		const enabledProps = {
+			...baseProps,
+			isSeenEnabled: true,
+			requestMarkAsSeen,
+			requestMarkAsSeenBlog: jest.fn(),
+			post: { ...feedPost, is_seen: false },
+		};
+		const instance = new FullPostView( enabledProps );
+
+		runAttemptToSendPageView( instance );
+		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
+
+		// Marking it unseen re-renders with is_seen false; the automatic write must
+		// not fire again for the same view.
+		instance.props = { ...enabledProps, post: { ...feedPost, is_seen: false } };
+		instance.componentDidUpdate( enabledProps );
+
+		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
+	} );
 } );

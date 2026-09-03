@@ -81,6 +81,7 @@ export class FullPostView extends Component {
 	};
 
 	hasScrolledToCommentAnchor = false;
+	hasAutoMarkedAsSeen = false;
 	readerMainWrapper = createRef();
 	commentsWrapper = createRef();
 	postContentWrapper = createRef();
@@ -102,6 +103,7 @@ export class FullPostView extends Component {
 		// Send page view
 		this.hasSentPageView = false;
 		this.hasLoaded = false;
+		this.hasAutoMarkedAsSeen = false;
 		this.setReadingStartTime();
 		this.attemptToSendPageView();
 		this.maybeDisableAppBanner();
@@ -143,6 +145,7 @@ export class FullPostView extends Component {
 		) {
 			this.hasSentPageView = false;
 			this.hasLoaded = false;
+			this.hasAutoMarkedAsSeen = false;
 			this.attemptToSendPageView();
 			this.maybeDisableAppBanner();
 
@@ -155,6 +158,14 @@ export class FullPostView extends Component {
 				this.resetScroll();
 				this.focusPostTitle();
 			}
+		}
+
+		// Seen eligibility resolves asynchronously — subscriptions, teams, and the
+		// reader-seen-posts preference all land after mount — so the automatic mark
+		// is often skipped on first load. Retry it when eligibility becomes true,
+		// since the post ID hasn't changed and nothing else would fire it again.
+		if ( this.props.isSeenEnabled && ! prevProps.isSeenEnabled ) {
+			this.maybeMarkAsSeenOnLoad();
 		}
 
 		if ( this.props.shouldShowComments && ! prevProps.shouldShowComments ) {
@@ -533,9 +544,7 @@ export class FullPostView extends Component {
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
-			if ( this.props.isSeenEnabled && ! post.is_seen ) {
-				this.markAsSeen();
-			}
+			this.maybeMarkAsSeenOnLoad();
 
 			recordTrackForPost(
 				'calypso_reader_article_opened',
@@ -593,6 +602,25 @@ export class FullPostView extends Component {
 
 			focusTarget?.focus();
 		}, 100 );
+	};
+
+	// Tracked separately from `hasLoaded` so that loading the post doesn't consume
+	// the automatic mark while the seen gate is still resolving.
+	maybeMarkAsSeenOnLoad = () => {
+		const { post, isSeenEnabled } = this.props;
+
+		if (
+			this.hasAutoMarkedAsSeen ||
+			! isSeenEnabled ||
+			! post ||
+			post._state === 'pending' ||
+			post.is_seen
+		) {
+			return;
+		}
+
+		this.hasAutoMarkedAsSeen = true;
+		this.markAsSeen();
 	};
 
 	markAsSeen = () => {
