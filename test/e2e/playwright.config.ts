@@ -2,7 +2,12 @@
 // @automattic/calypso-e2e's env-variables module is evaluated.
 import './load-env';
 import { envVariables, validateThrottleActions } from '@automattic/calypso-e2e';
-import { defineConfig, devices, type ReporterDescription } from 'playwright/test';
+import {
+	defineConfig,
+	devices,
+	type PlaywrightTestProject,
+	type ReporterDescription,
+} from 'playwright/test';
 import { tags, type CustomOptions } from './lib/pw-base';
 
 // Reads every supported variable so an unsupported value fails here, before the suite starts,
@@ -10,13 +15,7 @@ import { tags, type CustomOptions } from './lib/pw-base';
 envVariables.validate();
 validateThrottleActions();
 
-/**
- * Creates a use config object with custom options.
- * This helper exists to provide type safety for our custom Playwright options.
- */
-function withCustomOptions< T extends object >( config: T & Partial< CustomOptions > ): T {
-	return config as T;
-}
+type Project = PlaywrightTestProject< CustomOptions >;
 
 const outputPath = './output';
 const reporter: ReporterDescription[] = [
@@ -47,6 +46,18 @@ const E2E_USER_AGENT_SUFFIX = 'wp-e2e-tests';
 
 const appendE2EUserAgent = ( userAgent: string ) => `${ userAgent } ${ E2E_USER_AGENT_SUFFIX }`;
 
+const desktopUse: NonNullable< Project[ 'use' ] > = {
+	...devices[ 'Desktop Chrome HiDPI' ],
+	userAgent: appendE2EUserAgent( devices[ 'Desktop Chrome HiDPI' ].userAgent ),
+	viewportName: 'desktop',
+};
+
+const mobileUse: NonNullable< Project[ 'use' ] > = {
+	...devices[ 'Pixel 7' ],
+	userAgent: appendE2EUserAgent( devices[ 'Pixel 7' ].userAgent ),
+	viewportName: 'mobile',
+};
+
 const loginBrowserUse = {
 	...devices[ 'Desktop Chrome HiDPI' ],
 	bypassCSP: true,
@@ -74,7 +85,7 @@ function getWorkers(): number | string {
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-export default defineConfig( {
+export default defineConfig< CustomOptions >( {
 	testDir: './specs',
 	/* Run tests in files in parallel */
 	fullyParallel: true,
@@ -122,23 +133,27 @@ export default defineConfig( {
 			testDir: './setup',
 		},
 		{
-			name: 'chrome',
+			name: 'desktop',
 			dependencies: [ 'mailosaur-usage-check', 'throttle-check' ],
-			use: withCustomOptions( {
-				...devices[ 'Desktop Chrome HiDPI' ],
-				userAgent: appendE2EUserAgent( devices[ 'Desktop Chrome HiDPI' ].userAgent ),
-				viewportName: 'desktop',
-			} ),
+			use: desktopUse,
 		},
 		{
 			name: 'mobile',
 			dependencies: [ 'mailosaur-usage-check', 'throttle-check' ],
-			use: withCustomOptions( {
-				...devices[ 'Pixel 7' ],
-				userAgent: appendE2EUserAgent( devices[ 'Pixel 7' ].userAgent ),
-				viewportName: 'mobile',
-			} ),
+			use: mobileUse,
 			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
+		},
+		{
+			name: 'p2',
+			dependencies: [ 'throttle-check' ],
+			testDir: './specs/p2',
+			use: desktopUse,
+		},
+		{
+			name: 'i18n',
+			dependencies: [ 'throttle-check' ],
+			testDir: './specs/i18n',
+			use: desktopUse,
 		},
 		{
 			name: 'authentication',

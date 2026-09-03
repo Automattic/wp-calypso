@@ -31,16 +31,22 @@ The following tags are used by a build configuration as of this time:
 | `@calypso-release`           | Run for every PR merged into `trunk` in this repository.            |
 | `@dashboard-pr`              | Dashboard-focused specs run for every commit to any feature branch. |
 | `@a8c-for-agencies`          | Specs for the A8C for Agencies client.                              |
-| `@authentication`            | Login, 2FA and security key specs.                                  |
+| `@authentication`            | Login, 2FA and security key specs. Selected by directory.           |
 | `@gutenberg`                 | Editor-focused specs run on regular cadence.                        |
-| `@i18n`                      | Specs verifying internationalized strings.                          |
-| `@p2`                        | Specs for the internal P2 system.                                   |
+| `@i18n`                      | Specs verifying internationalized strings. Selected by directory.   |
+| `@p2`                        | Specs for the internal P2 system. Selected by directory.            |
 | `@legal`                     | Specs for the marketing and legal team.                             |
 | `@jetpack-wpcom-integration` | Specs for testing Jetpack's deployment on WPCOM.                    |
 
 The remaining tags in `lib/pw-base.ts` group specs without selecting a build of their own.
 That includes `@jetpack-remote-site`: no build greps it, so a spec carrying only that
 tag never runs on CI.
+
+A build can also select its specs with a Playwright project rather than a tag, taking every
+spec under a directory. `i18n`, `p2` and `authentication` work that way: a spec added to
+`specs/i18n`, `specs/p2` or `specs/authentication` runs whether or not it carries the tag,
+and one carrying the tag from anywhere else does not. See `projects` in
+[`playwright.config.ts`](../playwright.config.ts).
 
 ## Feature branch
 

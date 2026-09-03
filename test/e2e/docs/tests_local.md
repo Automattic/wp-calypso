@@ -117,7 +117,7 @@ Authentication cookies are cached per account under `COOKIES_PATH`. The first wo
 
 By default, tests run against the `desktop` viewport size, approximately 1920x1080. Two projects run specs:
 
-- `chrome`: Desktop Chrome HiDPI, the `desktop` viewport.
+- `desktop`: Desktop Chrome HiDPI, the `desktop` viewport.
 - `mobile`: Pixel 7, the `mobile` viewport. Specs tagged `@desktop-only` are skipped.
 
 To launch a spec with mobile viewport:
