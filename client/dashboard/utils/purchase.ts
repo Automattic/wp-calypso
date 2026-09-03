@@ -672,12 +672,8 @@ function getCheckoutSiteSlugForPurchase( purchase: Purchase ): string {
 	return purchase.site_slug || '';
 }
 
-export function getRenewalUrlFromPurchase(
-	purchase: Purchase,
-	checkoutSiteSlugForUrl?: string,
-	backUrl?: string
-): string {
-	return getRenewUrlForPurchases( [ purchase ], checkoutSiteSlugForUrl, backUrl );
+export function getRenewalUrlFromPurchase( purchase: Purchase, backUrl?: string ): string {
+	return getRenewUrlForPurchases( [ purchase ], backUrl );
 }
 
 /**
@@ -687,29 +683,27 @@ export function getRenewalUrlFromPurchase(
  */
 export function getRenewUrlForPurchases(
 	purchases: Purchase[],
-	checkoutSiteSlugForUrl?: string,
 	backUrl: string = redirectToDashboardLink()
 ): string {
 	if ( purchases.length < 1 ) {
 		throw new Error( 'Could not find product slug or purchase id for renewal.' );
 	}
 	const firstPurchase = purchases[ 0 ];
-	const checkoutProductSlug = purchases
-		.map( ( purchase ) => getCheckoutProductSlugFromPurchase( purchase ) )
-		.join( ',' );
-	const checkoutSiteSlug =
-		checkoutSiteSlugForUrl || getCheckoutSiteSlugForPurchase( firstPurchase );
-	const servicePath = getServicePathForCheckoutFromPurchase( firstPurchase );
 	const purchaseIds = purchases.map( ( purchase ) => purchase.ID ).join( ',' );
-	return addQueryArgs(
-		wpcomLink(
-			`/checkout/${ servicePath }${ checkoutProductSlug }/renew/${ purchaseIds }/${ checkoutSiteSlug }`
-		),
-		{
-			cancel_to: backUrl,
-			redirect_to: backUrl,
-		}
-	);
+	const servicePath = getServicePathForCheckoutFromPurchase( firstPurchase );
+
+	// Siteless Akismet and Marketplace renewals still need the legacy URL shape
+	// because their checkout routes are keyed on the service and product slug.
+	const path = servicePath
+		? `/checkout/${ servicePath }${ purchases
+				.map( ( purchase ) => getCheckoutProductSlugFromPurchase( purchase ) )
+				.join( ',' ) }/renew/${ purchaseIds }/${ getCheckoutSiteSlugForPurchase( firstPurchase ) }`
+		: `/checkout/renew/${ purchaseIds }`;
+
+	return addQueryArgs( wpcomLink( path ), {
+		cancel_to: backUrl,
+		redirect_to: backUrl,
+	} );
 }
 
 /**
