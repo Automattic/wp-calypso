@@ -17,12 +17,12 @@ import useWebMcpTools from '../hooks/use-webmcp-tools';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import { clearSessionId, getOrCreateSessionId, getSessionId } from '../utils/agent-session';
 import { createAgentConfig } from '../utils/create-agent-config';
+import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 import {
 	loadExternalProviders,
 	type AbilitiesSetupHook,
 	type LoadedProviders,
 } from '../utils/load-external-providers';
-import { usesLocalStatePersistence } from '../utils/uses-local-state-persistence';
 import { canExposeWebMcpTools } from '../webmcp/eligibility';
 import AgentDock from './agent-dock';
 import { PersistentRouter } from './persistent-router';
@@ -150,7 +150,7 @@ function resolveTabSessionId(
 	if ( isNewChat ) {
 		return '';
 	}
-	if ( usesLocalStatePersistence( agentId ) ) {
+	if ( isReaderChatAgent( agentId ) ) {
 		return getOrCreateSessionId( agentId, siteKey, userId );
 	}
 	return getSessionId( agentId, siteKey, userId );

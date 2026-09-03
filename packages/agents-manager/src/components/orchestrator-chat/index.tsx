@@ -69,7 +69,6 @@ import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message
 import { isShowComponentTool } from '../../utils/show-component-tools';
 import { isBlockEditToolId } from '../../utils/tool-message-utils';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
-import { usesLocalStatePersistence } from '../../utils/uses-local-state-persistence';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import type { BigSkyMessage } from '../../types';
@@ -1312,12 +1311,6 @@ export default function OrchestratorChat( {
 			startNewUserRequest();
 
 			submitDispatchedRef.current = true;
-
-			// Cleared at commit, not after the round trip: an aborted first reply still leaves a stored conversation.
-			if ( usesLocalStatePersistence( agentConfig?.agentId ) ) {
-				markSessionUsed( agentConfig?.agentId, siteKey, currentUser?.ID );
-			}
-
 			try {
 				// Answer a still-parked `wp-admin-navigate` call before this
 				// message goes out, so it meets an already-truthful conversation.
@@ -1338,9 +1331,6 @@ export default function OrchestratorChat( {
 			consumeNextMessageExternalContextEntries();
 		},
 		[
-			agentConfig?.agentId,
-			currentUser?.ID,
-			siteKey,
 			flushPendingNavigation,
 			inputValue,
 			isUploadingImages,
