@@ -62,7 +62,7 @@ export default function ReportLoading( {
 		}
 		return (
 			<Icon
-				style={ { fill: 'var(--dashboard-overview__divider-color)' } }
+				style={ { fill: 'var(--dashboard__text-muted-color)' } }
 				icon={ border }
 				size={ iconSize }
 			/>
