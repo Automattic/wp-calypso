@@ -23,7 +23,7 @@ jest.mock( '@automattic/zendesk-client', () => ( {
 
 jest.mock( '../../hooks/use-rate-article', () => ( {
 	useRateArticle: () => ( { mutate: mockRateArticle } ),
-	getSessionRating: ( postId: number ) => mockSessionRatings[ postId ],
+	getSessionRating: ( _blogId: number, postId: number ) => mockSessionRatings[ postId ],
 } ) );
 
 function renderForm( userRating?: 1 | 2 | null ) {

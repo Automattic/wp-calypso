@@ -20,13 +20,15 @@ type RateArticleResponse = {
 };
 
 /**
- * Ratings given during this page session, so reopening an article shows the answer
- * instead of the buttons even before the article is fetched again.
+ * Ratings given during this page session, keyed by blog and post, so reopening an article
+ * shows the answer instead of the buttons even before the article is fetched again.
  */
-const sessionRatings = new Map< number, ArticleRating >();
+const sessionRatings = new Map< string, ArticleRating >();
 
-export function getSessionRating( postId: number ): ArticleRating | undefined {
-	return sessionRatings.get( postId );
+const sessionKey = ( blogId: number, postId: number ) => `${ blogId }:${ postId }`;
+
+export function getSessionRating( blogId: number, postId: number ): ArticleRating | undefined {
+	return sessionRatings.get( sessionKey( blogId, postId ) );
 }
 
 /** Stores the user's "Was this helpful?" answer for a support article. */
@@ -57,11 +59,23 @@ export function useRateArticle() {
 						data: body,
 				  } );
 		},
-		onMutate: ( { postId, rating } ) => {
-			sessionRatings.set( postId, rating );
+		onMutate: ( { blogId, postId, rating } ) => {
+			const key = sessionKey( blogId, postId );
+			const previous = sessionRatings.get( key );
+			sessionRatings.set( key, rating );
+			return { previous };
 		},
-		onSuccess: ( { user_rating }, { postId } ) => {
-			sessionRatings.set( postId, user_rating );
+		onSuccess: ( { user_rating }, { blogId, postId } ) => {
+			sessionRatings.set( sessionKey( blogId, postId ), user_rating );
+		},
+		onError: ( _error, { blogId, postId }, context ) => {
+			// Forget the optimistic rating so reopening the article offers the buttons again.
+			const key = sessionKey( blogId, postId );
+			if ( context?.previous === undefined ) {
+				sessionRatings.delete( key );
+			} else {
+				sessionRatings.set( key, context.previous );
+			}
 		},
 	} );
 }
