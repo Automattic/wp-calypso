@@ -552,22 +552,94 @@ type AuthProvider = () => Promise< Record< string, string > >;
 type ContextProvider = { getClientContext: () => any };
 type ToolProvider = {
 	getAvailableTools: () => Promise< Tool[] >;
+	getDispatchableTools?: () => Promise< Tool[] >;
 	executeTool: ( toolId: string, args: any ) => Promise< any >;
 };
 ```
 
+### Advertised vs dispatchable tools
+
+`getAvailableTools()` is the advertisement list: every tool it returns is
+offered to the agent as callable, and a `running`-state echo of a
+model-chosen call is dispatched only against this list.
+
+`getDispatchableTools()` covers the other direction. Tools it returns are
+**never advertised to the agent**, but the client will still execute them
+(through the same `executeTool`) when the **backend** dispatches them in an
+`input-required` handoff. Use it for backend-driven steps the agent has no
+reason to choose for itself — a confirmation step, for example.
+
+Keeping a tool off the advertisement list is not an authorization boundary.
+`input-required` is also the path model-chosen calls take to `executeTool`,
+so a call naming a dispatchable id still runs if the backend relays one.
+Anything that must not run on the model's say-so needs the backend to reject
+unadvertised tool names, or a confirmation inside `executeTool` itself.
+
+Matching is per tool call: each call in an `input-required` message is
+dispatched only if its own id is in one of the lists (or is a registered
+ability). A call with no handler is never dispatched; it is answered with an
+error result — so the agent learns the step failed rather than waiting on a
+result that never arrives — and named in a debug log line. When no call in the
+message matches, nothing runs and the update stays final.
+
 ## Development
 
+This package lives in the wp-calypso monorepo but still carries its
+pre-migration build setup: it is built by vite into a flat, ESM-only `dist/`
+(not the usual `dist/esm` + `dist/cjs` tsc layout), and it is consumed from
+`dist/` even inside the repo — there is no `calypso:src` entry, because the
+source relies on vite-only features such as `import.meta.glob`. Converging on
+the standard Calypso package layout is a goal, but it cannot happen casually:
+the published artifact shape is a contract with npm consumers outside this
+repository, so restructuring needs a coordinated release.
+
 ```bash
-# Build the package
-pnpm build
-
-# Run tests
-pnpm test
-
-# Type checking
-pnpm type-check
-
-# Lint
-pnpm lint
+# From the wp-calypso root
+yarn workspace @automattic/agenttic-client run build
+yarn workspace @automattic/agenttic-client run test        # vitest — not part of CI yet
+yarn workspace @automattic/agenttic-client run type-check
 ```
+
+For live rebuilds while developing against an in-repo consumer (e.g.
+`apps/agents-manager` with `yarn dev --sync`), run
+`yarn workspace @automattic/agenttic-client run dev` (`vite build --watch`) —
+webpack watches the workspace `dist/` and rebuilds the consumer automatically.
+
+## Releasing
+
+`@automattic/agenttic-client` and `@automattic/agenttic-ui` are published to npm
+for consumers outside this repository; in-repo consumers use `workspace:^` and
+never need a release. The two packages are versioned in lockstep and released
+together. See [the monorepo guide](../../docs/guide/monorepo.md) for npm
+permissions and the general publishing rules.
+
+1. Bump the version of **both** packages in one PR and merge it to trunk.
+2. From the latest trunk, build both packages explicitly:
+
+   ```bash
+   yarn workspace @automattic/agenttic-client run build
+   yarn workspace @automattic/agenttic-ui run build
+   ```
+
+   This step is **required**: `yarn npm publish` packs whatever `dist/` contains
+   and runs no build lifecycle (`prepare` and `prepublishOnly` are ignored), so
+   a stale or missing `dist/` publishes a broken package silently. The
+   agenttic-ui build downloads translation files and needs network access.
+
+3. `yarn npm login --scope automattic`, then publish each package:
+
+   ```bash
+   cd packages/agenttic-client && yarn npm publish
+   cd ../agenttic-ui && yarn npm publish
+   ```
+
+4. Tag both packages on the release commit and push the tags:
+
+   ```bash
+   git tag "@automattic/agenttic-client@<version>"
+   git tag "@automattic/agenttic-ui@<version>"
+   git push origin "@automattic/agenttic-client@<version>" "@automattic/agenttic-ui@<version>"
+   ```
+
+   If git asks to confirm pushing to trunk, that is fine here — you are pushing
+   tags, not commits, and branch protection guards against the rest.

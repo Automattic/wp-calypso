@@ -17,14 +17,12 @@ import {
 } from 'calypso/reader/controller-helper';
 import { readerNotFound } from 'calypso/reader/lib/reader-router';
 import { recordTrack } from 'calypso/reader/stats';
-import { getCurrentTabFromURL } from 'calypso/reader/utils';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import renderHeaderSection from '../lib/header-section';
+import { setDiscoverLoggedOutHero } from './components/logged-out-hero';
 import { DiscoverDocumentHead } from './discover-document-head';
-import { FRESHLY_PRESSED_TAB } from './helper';
-import { getPrivateRoutes, getDiscoverRoutes, DISCOVER_PREFIX } from './routes';
+import { getPrivateRoutes, getDiscoverRoutes, getSearchRoutes, getSelectedTab } from './routes';
+import { fetchTrendingTagsIfLoggedOut, search } from './search-controller';
 
 const loadDiscoverStream = () =>
 	import(
@@ -34,6 +32,7 @@ const loadDiscoverStream = () =>
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
 const discover = ( context, next ) => {
+	const selectedTab = getSelectedTab( context.path );
 	const basePath = sectionify( context.path );
 	const fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Discover';
 	const streamKey = 'discover:recommended';
@@ -41,7 +40,6 @@ const discover = ( context, next ) => {
 	const state = context.store.getState();
 	const currentRoute = getCurrentRoute( state );
 	const currentQueryArgs = new URLSearchParams( getCurrentQueryArguments( state ) ).toString();
-	const selectedTab = getCurrentTabFromURL( context.path, DISCOVER_PREFIX, FRESHLY_PRESSED_TAB );
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 	recordTrack(
@@ -50,9 +48,7 @@ const discover = ( context, next ) => {
 		{ pathnameOverride: `${ currentRoute }?${ currentQueryArgs }` }
 	);
 
-	if ( ! isUserLoggedIn( state ) ) {
-		context.renderHeaderSection = renderHeaderSection;
-	}
+	setDiscoverLoggedOutHero( context );
 
 	context.primary = (
 		<>
@@ -86,21 +82,39 @@ const discover = ( context, next ) => {
 export default function ( router ) {
 	const anyLangParam = getAnyLanguageRouteParam();
 
-	const commonMiddleware = [
+	const localeMiddleware = [
 		redirectInvalidLanguage,
 		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		setLocaleMiddleware(),
-		sidebar,
-		discover,
-		makeLayout,
-		clientRender,
 	];
+	const renderMiddleware = [ makeLayout, clientRender ];
 
 	// Must be logged in to access.
-	router( getPrivateRoutes( anyLangParam ), redirectLoggedOutToSignup, ...commonMiddleware );
+	router(
+		getPrivateRoutes( anyLangParam ),
+		redirectLoggedOutToSignup,
+		...localeMiddleware,
+		sidebar,
+		discover,
+		...renderMiddleware
+	);
 
-	//
-	router( getDiscoverRoutes( anyLangParam ), ...commonMiddleware );
+	router(
+		getSearchRoutes( anyLangParam ),
+		...localeMiddleware,
+		fetchTrendingTagsIfLoggedOut,
+		sidebar,
+		search,
+		...renderMiddleware
+	);
+
+	router(
+		getDiscoverRoutes( anyLangParam ),
+		...localeMiddleware,
+		sidebar,
+		discover,
+		...renderMiddleware
+	);
 
 	router( '/discover/*', readerNotFound );
 }

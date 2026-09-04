@@ -1,12 +1,16 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
+import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { clearStepPersistedState, ONBOARDING_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
-import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
+import {
+	STEPPER_TRACKS_EVENT_SIGNUP_START,
+	WOO_HOSTING_SOLUTIONS_REF,
+} from 'calypso/landing/stepper/constants';
 import {
 	getLaunchpadPersonalizationDestination,
 	resolveLaunchpadPersonalizationVariation,
@@ -27,6 +31,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { State } from '../../../../../../packages/data-stores/src/plans/reducer';
 import { isPlanProductFree } from '../../../../../../packages/data-stores/src/plans/selectors';
@@ -43,15 +48,34 @@ import {
 	logBuildWowEvent,
 	requestBuildWowSite,
 } from '../../../utils/build-wow';
+import { goToCheckout } from '../../../utils/checkout';
+import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
+import { getStepFromURL } from '../../../utils/get-flow-from-url';
+import {
+	getPreselectedPlan,
+	getPreselectedStorageAddOn,
+	shouldSkipPlansStep,
+} from '../../../utils/preselected-plan';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import {
-	getWowFunnelDest,
-	getWowFunnelArgs,
-	getWowFunnelSlug,
+	clearWowFunnelSite,
 	getRememberedWowFunnelSite,
-	startWowFunnelSite,
+	getWowFunnelArgs,
+	getWowFunnelConfig,
+	getWowFunnelDest,
+	getWowFunnelFromWfm,
+	getWowFunnelSlug,
+	isKnownWowFunnel,
 	logWowFunnelEvent,
+	wowFunnelSiteIsPaid,
 } from '../../../utils/wow-funnel';
+import {
+	adoptWowFunnelSite,
+	fetchPendingWowFunnelSite,
+	forgetWowFunnelRun,
+	startWowFunnelSite,
+	wowFunnelSiteHasCartItems,
+} from '../../../utils/wow-funnel-site';
 import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboarding-post-checkout-destination';
 import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
@@ -60,9 +84,183 @@ import { useIsPostPlanSelectionEmailVerification } from '../../internals/steps-r
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import { getOnboardingStepperPosition } from './step-counter-config';
+import type { WowFunnelDest } from '../../../utils/wow-funnel';
 import type { DomainSuggestion } from '@automattic/api-core';
+import type { Store } from 'redux';
 
-function initialize() {
+/**
+ * Where a funnel run lands once it is paid for.
+ *
+ * Shared by the ordinary run — where it becomes checkout's `redirect_to` — and by a resumed one,
+ * which hands the same URL to checkout itself. The two must not drift: a resumed purchase that
+ * lost this would end up on My Home rather than on the site the funnel just built.
+ * @param options               Options.
+ * @param options.funnelSlug    The funnel being run.
+ * @param options.dest          Where the CTA asked to land.
+ * @param options.siteSlug      The funnel site's slug.
+ * @param options.siteId        The funnel site's blog ID.
+ * @param options.blueprintSlug Blueprint being built, for the site-spec hand-off.
+ * @param options.ref           Referrer to carry through.
+ * @param options.locale        Flow locale.
+ * @returns The URL to land on after checkout.
+ */
+function getWowFunnelPostCheckoutDestination( {
+	funnelSlug,
+	dest,
+	siteSlug,
+	siteId,
+	blueprintSlug,
+	ref,
+	locale,
+}: {
+	funnelSlug: string;
+	dest: WowFunnelDest;
+	siteSlug: string;
+	siteId: number;
+	blueprintSlug?: string | null;
+	ref?: string | null;
+	locale: string;
+} ): string {
+	const { interstitials } = getWowFunnelConfig( funnelSlug );
+
+	// site-spec: the funnel's follow-up (e.g. the blueprint import) is already running
+	// server-side, so site-spec only waits on it and hands over. It must not start one — see the
+	// funnel guard on its kickoff effect.
+	if ( interstitials.includes( 'site-spec' ) ) {
+		return getBlueprintArchiveSiteSpecUrl( {
+			siteSlug,
+			siteId,
+			blueprintSlug: blueprintSlug ?? '',
+			ref,
+			wowFunnel: funnelSlug,
+		} );
+	}
+
+	// Hand off through the funnel's own post-checkout page rather than pointing checkout straight
+	// at the built site: the readiness wait has to be on a page the customer reaches after paying.
+	return addQueryArgs(
+		withLocale( `/setup/${ ONBOARDING_FLOW }/${ STEPS.WOW_FUNNEL_HANDOFF.slug }`, locale ),
+		{
+			wow_funnel: funnelSlug,
+			dest,
+			siteSlug,
+			// Skip siteId when it's 0/falsy: "0" in the URL poisons the site lookup.
+			...( siteId ? { siteId } : {} ),
+		}
+	);
+}
+
+/**
+ * Put a customer who already has an unpaid funnel site back where they stopped.
+ *
+ * Runs in initialize, which is awaited before the flow renders anything, so a resumed customer
+ * never sees a step flash past on the way to their cart. Returning true means a redirect is under
+ * way and the flow must not start.
+ *
+ * Only the bare flow URL is a resume: a CTA click arrives with no step in the path, while working
+ * through the run — or refreshing inside it — always carries one, and bouncing those would throw
+ * the customer out of the step they are on.
+ * @param reduxStore The Calypso store, for the logged-in check and the locale.
+ * @returns True when the customer is being redirected and the flow should not render.
+ */
+async function resumeWowFunnelRun( reduxStore: Store ): Promise< boolean > {
+	if ( getStepFromURL() ) {
+		return false;
+	}
+
+	const queryParams = new URLSearchParams( window.location.search );
+	const funnelSlug = getWowFunnelSlug( queryParams );
+	if ( ! isKnownWowFunnel( funnelSlug ) || ! isUserLoggedIn( reduxStore.getState() ) ) {
+		return false;
+	}
+
+	const funnelArgs = getWowFunnelArgs( queryParams );
+
+	// Ask the server, not this browser. sessionStorage remembers the run only in the tab that
+	// started it, and it is the customer coming back that this exists to catch. The server drops
+	// its pointer as it reads it, so a site since paid for or reverted answers "none" here and a
+	// fresh run begins.
+	const pending = await fetchPendingWowFunnelSite();
+	if ( ! pending ) {
+		return false;
+	}
+
+	// Adopt before redirecting, so create-site consumes this site rather than asking for one the
+	// server will refuse. When the adoption cannot be stored there is nowhere to record that the
+	// resume happened, and every entry would resume all over again — so let the flow start and let
+	// create-site's own throttle fallback reach the same site.
+	if ( ! adoptWowFunnelSite( pending, funnelSlug, funnelArgs ) ) {
+		logWowFunnelEvent( 'resume_not_remembered', {
+			funnel: funnelSlug,
+			blog_id: pending.blogId,
+		} );
+		return false;
+	}
+
+	if ( pending.funnelSlug !== funnelSlug ) {
+		// A different CTA. The throttle holds regardless of which one, so the unpaid site still
+		// wins — worth seeing, since what gets resumed is not what this CTA asked to build.
+		logWowFunnelEvent( 'resumed_across_funnels', {
+			funnel: funnelSlug,
+			pending_funnel: pending.funnelSlug,
+			blog_id: pending.blogId,
+		} );
+	}
+
+	const locale = getCurrentLocaleSlug( reduxStore.getState() ) || '';
+	const [ , plansUrl ] = getOnboardingPostCheckoutDestination( {
+		flowName: ONBOARDING_FLOW,
+		locale,
+		siteSlug: pending.siteSlug,
+	} );
+
+	// Something in the cart means they reached checkout and did not pay, so show them exactly
+	// that. An empty one means they never picked a plan.
+	if ( await wowFunnelSiteHasCartItems( pending.blogId ) ) {
+		logWowFunnelEvent( 'resumed_at_checkout', {
+			funnel: funnelSlug,
+			blog_id: pending.blogId,
+		} );
+
+		// goToCheckout persists the post-checkout destination, which flow entry clears on its way
+		// in — without it a resumed purchase would land on My Home instead of the site the funnel
+		// built.
+		goToCheckout( {
+			flowName: ONBOARDING_FLOW,
+			stepName: 'plans',
+			siteSlug: pending.siteSlug,
+			destination: getWowFunnelPostCheckoutDestination( {
+				funnelSlug,
+				dest: getWowFunnelDest( queryParams, funnelSlug ),
+				siteSlug: pending.siteSlug,
+				siteId: pending.blogId,
+				blueprintSlug: queryParams.get( 'blueprint' ),
+				ref: queryParams.get( 'ref' ),
+				locale,
+			} ),
+		} );
+		return true;
+	}
+
+	logWowFunnelEvent( 'resumed_at_plans', {
+		funnel: funnelSlug,
+		blog_id: pending.blogId,
+	} );
+
+	// Carry the entry URL's own params, so the resumed run stays a funnel run: wow_funnel, dest
+	// and the funnel args all still have work to do downstream.
+	window.location.assign( addQueryArgs( plansUrl, getQueryArgs( window.location.href ) ) );
+
+	return true;
+}
+
+async function initialize( reduxStore: Store ) {
+	// Before anything renders: a customer with an unpaid funnel site is sent back to it, and the
+	// flow is killed rather than started behind the redirect.
+	if ( await resumeWowFunnelRun( reduxStore ) ) {
+		return false as const;
+	}
+
 	const steps = [
 		STEPS.DOMAIN_SEARCH,
 		STEPS.USE_MY_DOMAIN,
@@ -71,6 +269,7 @@ function initialize() {
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
 		STEPS.POST_CHECKOUT_ONBOARDING,
+		STEPS.WOW_FUNNEL_HANDOFF,
 		STEPS.SETUP_YOUR_SITE_AI,
 	];
 
@@ -82,6 +281,32 @@ const onboarding: FlowV2< typeof initialize > = {
 	isSignupFlow: true,
 	__experimentalUseBuiltinAuth: true,
 	initialize,
+	useTracksEventProps() {
+		const query = useQuery();
+		const preselectedPlan = getPreselectedPlan( query );
+		// Reported raw, as the legacy flows reported their declared query dependencies.
+		const couponParam = preselectedPlan ? query.get( 'coupon' ) : null;
+		const storageParam = preselectedPlan ? query.get( 'storage' ) : null;
+
+		// A new object each render would record a new signup start, so this has to be memoised.
+		return useMemo(
+			() => ( {
+				isLoading: false,
+				// The redirect collapses the plan flows' `flow` values into `onboarding`. This
+				// is how that traffic stays separable.
+				eventsProperties: preselectedPlan
+					? {
+							[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: {
+								preselected_plan: preselectedPlan,
+								...( couponParam ? { coupon: couponParam } : {} ),
+								...( storageParam ? { storage: storageParam } : {} ),
+							},
+					  }
+					: {},
+			} ),
+			[ preselectedPlan, couponParam, storageParam ]
+		);
+	},
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
 		// Variant B: the account step doesn't gate; the verification step is met after the free plan
@@ -108,6 +333,7 @@ const onboarding: FlowV2< typeof initialize > = {
 			[]
 		);
 		const queryParams = useQuery();
+		const shouldSkipPlans = shouldSkipPlansStep( queryParams, planCartItem );
 		const coupon = queryParams.get( 'coupon' );
 		const refParameter = queryParams.get( 'ref' );
 		const diyLaunchpad = queryParams.get( 'diy-launchpad' );
@@ -123,7 +349,7 @@ const onboarding: FlowV2< typeof initialize > = {
 			buildDest
 		);
 		const wowFunnelSlug = getWowFunnelSlug( queryParams );
-		const wowFunnelDest = getWowFunnelDest( queryParams );
+		const wowFunnelDest = getWowFunnelDest( queryParams, wowFunnelSlug );
 
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
@@ -133,41 +359,38 @@ const onboarding: FlowV2< typeof initialize > = {
 			planCartItem: MinimalRequestCartProduct | null,
 			launchpadPersonalizationVariation: LaunchpadPersonalizationVariation
 		): Promise< [ string, string | null, string | null ] > => {
-			// A funnel CTA can ask for a specific post-checkout destination; today that means the
-			// Site Editor on the built Atomic site. The build ran during domain selection and
-			// checkout, so the transfer is normally complete; the URL goes through the site's own
-			// domain, which follows the Simple->Atomic switch (same shape as the ai-site-builder
-			// hand-off). With no dest, the ordinary destinations below apply.
-			if ( wowFunnelSlug && wowFunnelDest ) {
+			// Every funnel ends on the built site. A funnel with Calypso-side work hops to that
+			// interstitial first; the interstitial owns the readiness wait and the hand-off, via
+			// the same helpers used below, so a funnel's terminal behaviour is identical either
+			// way. A funnel with no interstitials waits and hands over right here.
+			if ( isKnownWowFunnel( wowFunnelSlug ) ) {
 				const siteSlug = providedDependencies.siteSlug as string;
 				const siteId = providedDependencies.siteId as number;
 
-				// dest=site-spec: the funnel's follow-up (e.g. the blueprint import) is already
-				// running server-side, so site-spec only waits on it and hands over. It must not
-				// start one — see the funnel guard on its kickoff effect.
-				if ( 'site-spec' === wowFunnelDest ) {
-					const blueprintSlug = queryParams.get( 'blueprint' ) ?? '';
-					logWowFunnelEvent( 'post_checkout_site_spec', {
-						funnel: wowFunnelSlug,
-						blog_id: siteId,
-					} );
-					return [
-						getBlueprintArchiveSiteSpecUrl( {
-							siteSlug,
-							siteId,
-							blueprintSlug,
-							ref: refParameter,
-							wowFunnel: wowFunnelSlug,
-						} ),
-						null,
-						null,
-					];
-				}
+				// The run is over. Without this the remembered site outlives it for the whole
+				// browser session, and the next CTA click resumes this site instead of building
+				// a new one — offering a renewal of the plan just bought for it.
+				clearWowFunnelSite();
 
-				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
-				const siteUrl = site?.URL ?? `https://${ siteSlug }`;
-				logWowFunnelEvent( 'post_checkout_editor', { funnel: wowFunnelSlug, blog_id: siteId } );
-				return [ `${ siteUrl }/wp-admin/site-editor.php?canvas=edit&p=%2F`, null, null ];
+				logWowFunnelEvent( 'post_checkout_handoff', {
+					funnel: wowFunnelSlug,
+					blog_id: siteId,
+					dest: wowFunnelDest,
+				} );
+
+				return [
+					getWowFunnelPostCheckoutDestination( {
+						funnelSlug: wowFunnelSlug,
+						dest: wowFunnelDest,
+						siteSlug,
+						siteId,
+						blueprintSlug: queryParams.get( 'blueprint' ),
+						ref: refParameter,
+						locale,
+					} ),
+					null,
+					null,
+				];
 			}
 
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
@@ -252,6 +475,21 @@ const onboarding: FlowV2< typeof initialize > = {
 			} );
 		};
 
+		/**
+		 * With a plan already in the cart the plans step has nothing left to ask, so the flow
+		 * goes straight to site creation. The free-plan and email-verification branches in the
+		 * plans handler below only apply when no plan was picked, so nothing is skipped here.
+		 */
+		const navigateAfterDomain = () => {
+			if ( ! shouldSkipPlans ) {
+				return navigate( 'plans' );
+			}
+
+			setSignupCompleteFlowName( flowName );
+
+			return navigate( 'create-site', undefined, false );
+		};
+
 		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
 			switch ( slug ) {
@@ -277,7 +515,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
-					return navigate( 'plans' );
+					return navigateAfterDomain();
 				case 'use-my-domain': {
 					if (
 						providedDependencies &&
@@ -299,7 +537,7 @@ const onboarding: FlowV2< typeof initialize > = {
 						setDomainCartItem( providedDependencies.domainCartItem );
 					}
 
-					return navigate( 'plans' );
+					return navigateAfterDomain();
 				}
 				case 'plans': {
 					const cartItems = providedDependencies.cartItems;
@@ -342,6 +580,10 @@ const onboarding: FlowV2< typeof initialize > = {
 				}
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
+				case 'wow-funnel-handoff':
+					// Success replaces location with the built site itself, so the only thing
+					// that reaches navigation here is a failed or timed-out wait.
+					return navigate( STEPS.ERROR.slug );
 				case 'post-checkout-onboarding': {
 					setShouldShowNotification( providedDependencies?.siteId as number );
 					return navigate( 'processing' );
@@ -368,10 +610,11 @@ const onboarding: FlowV2< typeof initialize > = {
 							);
 							return;
 						case 'generate-theme': {
-							// Automattician-only: provision an Atomic (WP Cloud) site up front so
-							// the custom AI-generated theme can be installed, then hand off to the
-							// build-wow site-spec step. Gated in the UI to Automatticians; the
-							// build-wow endpoint enforces the permission server-side.
+							// Provision an Atomic (WP Cloud) site up front so the custom
+							// AI-generated theme can be installed, then hand off to the build-wow
+							// site-spec step. The step offers this only behind the site builder
+							// swap flag on an Atomic-capable plan; the build-wow endpoint still
+							// enforces its own (currently Automattician-only) permission.
 							const siteIdentifier = getBuildWowSiteIdentifier( {
 								siteSlug,
 								siteId,
@@ -511,7 +754,10 @@ const onboarding: FlowV2< typeof initialize > = {
 								);
 							}
 
-							const checkoutStepperPosition = getOnboardingStepperPosition( 'checkout' );
+							const checkoutStepperPosition = getOnboardingStepperPosition(
+								'checkout',
+								shouldSkipPlans
+							);
 
 							// replace the location to delete processing step from history.
 							window.location.replace(
@@ -520,12 +766,16 @@ const onboarding: FlowV2< typeof initialize > = {
 									// straight from checkout to their destination — no
 									// post-checkout-onboarding hop, no chooser.
 									redirect_to:
-										blueprintArchiveSlug || ( wowFunnelSlug && wowFunnelDest )
+										blueprintArchiveSlug || isKnownWowFunnel( wowFunnelSlug )
 											? destination
 											: redirectTo,
 									signup: 1,
 									flow: ONBOARDING_FLOW,
-									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
+									// A skipping visit's last screen was the domain step, so that is where
+									// leaving checkout belongs.
+									checkoutBackUrl: pathToUrl(
+										( shouldSkipPlans ? backDestinationDomains : backDestination ) ?? ''
+									),
 									...( backDestinationDomains
 										? { checkoutBackUrlDomains: pathToUrl( backDestinationDomains ) }
 										: {} ),
@@ -534,7 +784,7 @@ const onboarding: FlowV2< typeof initialize > = {
 									steps_total: checkoutStepperPosition.total,
 								} )
 							);
-						} else if ( blueprintArchiveSlug || ( wowFunnelSlug && wowFunnelDest ) ) {
+						} else if ( blueprintArchiveSlug || isKnownWowFunnel( wowFunnelSlug ) ) {
 							// build_dest=wow and the WoW funnel never show the
 							// setup-your-site-ai chooser; go straight to their destination.
 							window.location.replace( destination );
@@ -589,7 +839,9 @@ const onboarding: FlowV2< typeof initialize > = {
 	},
 	useSideEffect( currentStepSlug ) {
 		const reduxDispatch = useReduxDispatch();
-		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
+		const { resetOnboardStore, setPlanCartItem, setProductCartItems } = useDispatch(
+			ONBOARD_STORE
+		) as OnboardActions;
 		const isLoggedIn = useSelector( isUserLoggedIn );
 		const user = useSelector( getCurrentUser );
 
@@ -599,7 +851,10 @@ const onboarding: FlowV2< typeof initialize > = {
 		 * starts on a clean slate.
 		 */
 		useEffect( () => {
-			if ( ! currentStepSlug ) {
+			// The route match is the unconstrained `/:flow/:step?/:lang?`, so
+			// `/setup/onboarding/es` arrives with the locale in place of a step. Reading it as
+			// a step would skip the reset.
+			if ( ! currentStepSlug || getLanguageSlugs().includes( currentStepSlug ) ) {
 				resetOnboardStore();
 				reduxDispatch( setSelectedSiteId( null ) );
 				clearStepPersistedState( this.name );
@@ -608,8 +863,27 @@ const onboarding: FlowV2< typeof initialize > = {
 				clearSignupCompleteFlowName();
 				clearSignupCompleteSlug();
 				clearSignupCompleteSiteID();
+
+				// Must follow the reset above, not precede it.
+				const query = getCurrentQueryParams();
+				const preselectedPlan = getPreselectedPlan( query );
+				const storageAddOn = getPreselectedStorageAddOn( query );
+
+				if ( preselectedPlan ) {
+					setPlanCartItem( { product_slug: preselectedPlan } );
+				}
+
+				if ( storageAddOn ) {
+					setProductCartItems( [ storageAddOn ] );
+				}
 			}
-		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
+		}, [
+			currentStepSlug,
+			reduxDispatch,
+			resetOnboardStore,
+			setPlanCartItem,
+			setProductCartItems,
+		] );
 
 		/**
 		 * Load Survicate and set visitor traits on each step navigation.
@@ -625,8 +899,13 @@ const onboarding: FlowV2< typeof initialize > = {
 			}
 		}, [ isLoggedIn, currentStepSlug, user?.email, user?.date, user?.ID ] );
 
-		// Preload the visual split experiment
+		// Skip the preload when this visit skips the plans step: enrolling someone in a
+		// plans-page test they never see only dilutes it.
 		useEffect( () => {
+			if ( getPreselectedPlan( getCurrentQueryParams() ) ) {
+				return;
+			}
+
 			loadExperimentAssignment( 'calypso_plans_page_visual_separation_2025_09_v2' );
 		}, [] );
 
@@ -646,15 +925,37 @@ const onboarding: FlowV2< typeof initialize > = {
 			}
 			const queryParams = new URLSearchParams( window.location.search );
 			const funnelSlug = getWowFunnelSlug( queryParams );
-			if ( ! funnelSlug || getRememberedWowFunnelSite( funnelSlug ) ) {
+			const funnelArgs = getWowFunnelArgs( queryParams );
+			const fromWfm = getWowFunnelFromWfm( queryParams );
+			if ( ! funnelSlug ) {
 				return;
 			}
-			void startWowFunnelSite( {
-				funnelSlug,
-				funnelArgs: getWowFunnelArgs( queryParams ),
-			} ).catch( () => {
-				// Errors are logged in the util; the create-site step retries as a fallback.
-			} );
+
+			void ( async () => {
+				const remembered = getRememberedWowFunnelSite( funnelSlug, funnelArgs );
+				if ( remembered ) {
+					// A funnel run sells a plan for the site it builds, so a site that already has
+					// one must never be resumed: checkout would offer a second plan for a site
+					// that does not need one. Resume only while it is still unpaid.
+					const site = await resolveSelect( SITE_STORE )
+						.getSite( remembered.siteSlug )
+						.catch( () => null );
+
+					if ( ! wowFunnelSiteIsPaid( site ) ) {
+						return;
+					}
+
+					logWowFunnelEvent( 'remembered_site_already_paid', {
+						funnel: funnelSlug,
+						blog_id: remembered.blogId,
+					} );
+					forgetWowFunnelRun( funnelSlug, funnelArgs );
+				}
+
+				await startWowFunnelSite( { funnelSlug, funnelArgs, fromWfm } ).catch( () => {
+					// Errors are logged in the util; the create-site step retries as a fallback.
+				} );
+			} )();
 		}, [ currentStepSlug, isLoggedIn ] );
 	},
 };

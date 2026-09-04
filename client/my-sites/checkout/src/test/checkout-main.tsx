@@ -841,4 +841,22 @@ describe( 'CheckoutMain', () => {
 			expect( emailField ).toBeDisabled();
 		}, [] );
 	} );
+
+	it( 'displays cart errors in a notice with a stable ID so repeats replace rather than stack', async () => {
+		const cartChanges = { products: [] };
+		const additionalProps = { productAliasFromUrl: 'personal-bundle' };
+		render(
+			<MockCheckout
+				initialCart={ initialCart }
+				cartChanges={ cartChanges }
+				additionalProps={ additionalProps }
+				setCart={ () => Promise.reject( new Error( 'The cart could not be updated' ) ) }
+			/>
+		);
+		await waitFor( () => {
+			expect( errorNotice ).toHaveBeenCalledWith( expect.anything(), {
+				id: 'checkout-cart-error',
+			} );
+		} );
+	} );
 } );

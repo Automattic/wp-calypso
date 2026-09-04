@@ -16,6 +16,7 @@ import { DOLLY_AGENT_ID } from '../constants';
 import { getActiveSessionId } from './agent-session';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent, isReaderChatHost } from './is-reader-chat-agent';
+import { getLoadedProviderIds } from './loaded-provider-ids';
 import { getResolvedAgentId } from './resolved-agent-id';
 
 type TracksProps = Record< string, unknown >;
@@ -148,12 +149,35 @@ export function recordBigSkyTracksEvent(
 	recordTracksEvent( eventName, mergedProps );
 }
 
+/**
+ * The running build's version: the Jetpack-injected `{variant}:{version}` on
+ * wp-admin surfaces, or Calypso's own commit on Calypso-rendered pages.
+ */
+function getAgentManagerVersion(): string {
+	const injected = getAgentsManagerInlineData()?.version;
+	if ( typeof injected === 'string' && injected !== '' ) {
+		return injected;
+	}
+
+	const commitSha = typeof window !== 'undefined' ? window.COMMIT_SHA : undefined;
+	if ( typeof commitSha === 'string' && commitSha !== '' ) {
+		// Local dev servers render the document with COMMIT_SHA set to '(unknown)'.
+		return 'calypso:' + ( commitSha === '(unknown)' ? 'dev' : commitSha );
+	}
+
+	return 'none';
+}
+
 function getUnifiedBaseProps(): TracksProps {
 	const isA11n = getIsA11n();
 	const blogId = getBlogId();
 	return {
 		ai_session_id: getActiveSessionId(),
 		agent_name: getResolvedAgentId() ?? DOLLY_AGENT_ID,
+		agent_manager_version: getAgentManagerVersion(),
+		// Sorted so the same provider set always yields the same value; 'none'
+		// until the providers load (events can fire before the chat mounts).
+		provider_ids: getLoadedProviderIds()?.slice().sort().join( ',' ) || 'none',
 		surface: isReaderChatHost() ? 'reader-chat' : 'editor',
 		path: typeof window !== 'undefined' ? window.location.pathname : '',
 		is_test: getIsTest(),

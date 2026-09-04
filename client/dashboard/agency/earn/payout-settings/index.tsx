@@ -3,10 +3,10 @@ import {
 	tipaltiIFrameUrlQuery,
 	tipaltiPayeeQuery,
 } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalHStack as HStack, Tooltip } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { Text } from '../../../components/text';
@@ -21,7 +21,7 @@ function PaymentStatusBadge( { agencyId }: { agencyId: number } ) {
 		return null;
 	}
 
-	const badge = <Badge intent={ accountStatus.statusType }>{ accountStatus.status }</Badge>;
+	const badge = <Badge intent={ accountStatus.badgeIntent }>{ accountStatus.status }</Badge>;
 
 	return (
 		<HStack spacing={ 2 } justify="flex-start" expanded={ false }>

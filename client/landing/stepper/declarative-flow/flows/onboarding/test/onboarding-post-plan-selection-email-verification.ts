@@ -16,6 +16,13 @@ jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', (
 	clearSessionStorageQuery: jest.fn(),
 } ) );
 
+// The product catalog's feature list pulls @wordpress/components in through this, and that
+// chain needs a real @wordpress/data, which this file mocks. Only JSX uses these.
+jest.mock( '@automattic/components', () => ( {
+	MaterialIcon: () => null,
+	ExternalLink: () => null,
+} ) );
+
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		resetOnboardStore: jest.fn(),
@@ -96,10 +103,6 @@ jest.mock( '../../../helpers/get-onboarding-post-checkout-destination', () => ( 
 		null,
 		null,
 	] ),
-} ) );
-
-jest.mock( '../step-counter-config', () => ( {
-	getOnboardingStepperPosition: () => ( { current: 3, total: 3 } ),
 } ) );
 
 // Runs the `processing` case for a successful, paid order (goToCheckout) with a mocked

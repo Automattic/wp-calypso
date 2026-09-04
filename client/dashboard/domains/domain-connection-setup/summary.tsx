@@ -22,11 +22,11 @@ export default function DomainConnectionSetupSummary( {
 		isMappingVerificationSuccess( domainMappingStatus.mode ?? null, domainMappingStatus );
 
 	if ( isConnected ) {
-		badges.push( { text: __( 'Connected' ), intent: 'success' } );
+		badges.push( { text: __( 'Connected' ), intent: 'stable' } );
 	} else if ( domainMappingStatus?.mode === DomainConnectionSetupMode.ADVANCED ) {
-		badges.push( { text: __( 'Verifying DNS' ), intent: 'warning' } );
+		badges.push( { text: __( 'Verifying DNS' ), intent: 'low' } );
 	} else if ( domainMappingStatus?.mode === DomainConnectionSetupMode.SUGGESTED ) {
-		badges.push( { text: __( 'Verifying name servers' ), intent: 'warning' } );
+		badges.push( { text: __( 'Verifying name servers' ), intent: 'low' } );
 	}
 
 	return (

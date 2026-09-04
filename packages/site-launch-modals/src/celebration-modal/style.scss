@@ -1,6 +1,16 @@
 @import '@wordpress/base-styles/variables';
 
 .celebration-modal {
+	// Set the font explicitly so the modal doesn't inherit the host page's font
+	// (e.g. a site theme's typography when shown over a site preview).
+	font-family: $default-font;
+
+	// The header title is styled by a rule that targets this element directly,
+	// which beats the inherited font above, so declare it here as well.
+	.components-modal__header-heading-container {
+		font-family: $default-font;
+	}
+
 	.flex-shrink-safe {
 		flex: 1;
 		min-width: 0;

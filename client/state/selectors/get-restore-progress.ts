@@ -1,6 +1,8 @@
 import { AppState } from 'calypso/types';
 import type { RestoreProgress } from 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status/type';
 
+import 'calypso/state/activity-log/init';
+
 /**
  * Get the progress details of a restore for a specified site
  * @param {AppState} state Global state tree

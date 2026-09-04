@@ -181,7 +181,11 @@ function sitelessCheckout( context, next, extraProps ) {
 
 	const state = context.store.getState();
 	const isLoggedOut = ! isUserLoggedIn( state );
-	const { productSlug: product, purchaseId } = context.params;
+	// Siteless renewals come in two shapes: the legacy
+	// /checkout/:service/:productSlug/renew/:purchaseId, and the newer
+	// /checkout/:service/renew/:subscriptionId, which leaves the product for the
+	// backend to derive from the subscription record.
+	const { productSlug: product, purchaseId, subscriptionId } = context.params;
 	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';
 
 	setSectionMiddleware( { name: 'checkout' } )( context );
@@ -199,7 +203,7 @@ function sitelessCheckout( context, next, extraProps ) {
 			<CheckoutSitelessDocumentTitle />
 
 			<CheckoutMainWrapper
-				purchaseId={ purchaseId }
+				purchaseId={ purchaseId ?? subscriptionId }
 				productAliasFromUrl={ product }
 				productSourceFromUrl={ context.query.source }
 				couponCode={ couponCode }

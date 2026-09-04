@@ -1251,7 +1251,7 @@ describe( 'main app', () => {
 				} );
 
 				expect( response.redirect ).toHaveBeenCalledWith(
-					'https://wordpress.com/reader/search?q=my%20search'
+					'https://wordpress.com/discover/search?q=my%20search'
 				);
 			} );
 
@@ -1266,7 +1266,7 @@ describe( 'main app', () => {
 				} );
 
 				expect( response.redirect ).toHaveBeenCalledWith(
-					'https://wordpress.com/reader/search?q=my%20search'
+					'https://wordpress.com/discover/search?q=my%20search'
 				);
 			} );
 
@@ -1608,5 +1608,14 @@ describe( 'dashboard app', () => {
 		expect( request.context.sectionName ).toBe( 'dashboard-dotcom' );
 		expect( response.statusCode ).not.toBe( 404 );
 		expect( app.getMocks().serverRender ).toHaveBeenCalled();
+	} );
+
+	it( 'serves robots.txt that disallows all paths', async () => {
+		const { response } = await app.run( {
+			request: { url: '/robots.txt', hostname: 'my.wordpress.com' },
+		} );
+
+		expect( response.setHeader ).toHaveBeenCalledWith( 'Content-Type', 'text/plain' );
+		expect( response.send ).toHaveBeenCalledWith( 'User-agent: *\nDisallow: /\n' );
 	} );
 } );

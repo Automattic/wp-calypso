@@ -383,9 +383,10 @@ export function handleRenewNowClick(
 				serviceSlug = 'marketplace/';
 			}
 
-			let renewalUrl = `/checkout/${ serviceSlug }${ productSlugs[ 0 ] }/renew/${
-				purchaseIds[ 0 ]
-			}/${ siteSlug || '' }`;
+			// Siteless Akismet and Marketplace renewals keep the service in the path
+			// because the route is what selects the service-specific checkout
+			// experience. Everything else renews from the subscription ID alone.
+			let renewalUrl = `/checkout/${ serviceSlug }renew/${ purchaseIds[ 0 ] }`;
 
 			renewalUrl = addQueryArgs(
 				{ redirect_to: options.redirectTo, cancel_to: options.cancelTo },
@@ -435,15 +436,13 @@ export function handleRenewMultiplePurchasesClick(
 					{ domain: otherPurchase.meta }
 				)
 			);
-			const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( renewItems );
+			const { purchaseIds } = getProductSlugsAndPurchaseIds( renewItems );
 
 			if ( purchaseIds.length === 0 ) {
 				throw new Error( 'Could not find product slug or purchase id for renewal.' );
 			}
 
-			let renewalUrl = `/checkout/${ productSlugs.join( ',' ) }/renew/${ purchaseIds.join(
-				','
-			) }/${ siteSlug || '' }`;
+			let renewalUrl = `/checkout/renew/${ purchaseIds.join( ',' ) }`;
 			if ( options.redirectTo ) {
 				renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
 			}
@@ -822,29 +821,6 @@ export function isRefundable( purchase: Purchase ): boolean {
  */
 export function hasAmountAvailableToRefund( purchase: Purchase ): boolean {
 	return isRefundable( purchase ) && purchase.refundAmount > 0;
-}
-
-/**
- * Returns true if the plan is eligible for an instant, self-serve downgrade: the
- * plan has a refundable receipt and has neither expired nor entered its
- * post-expiry grace period.
- *
- * `isRefundable` covers any refundable receipt, so it holds both for an initial
- * purchase and for a renewal that is still within its own refund window — both
- * cases where an instant downgrade costs neither side money.
- *
- * Note: this intentionally does NOT require a refundable amount. A refundable
- * receipt worth nothing generally means the purchase was free (or fully paid
- * with credits), which is still a valid instant downgrade — it just issues no
- * refund, and the confirmation modal drops its refund line accordingly.
- *
- * The caller is responsible for confirming the purchase is a plan (see `isPlan`
- * from `@automattic/calypso-products`). This is distinct from
- * `isExpiredAndInGracePeriod`, which gates the downgrade-to-checkout flow for
- * plans whose expiry date has already passed.
- */
-export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boolean {
-	return purchase.isRefundable && ! isExpiredOrRemoved( purchase );
 }
 
 /**

@@ -80,6 +80,34 @@ describe( 'ReaderSidebar', () => {
 		} );
 	} );
 
+	describe( 'title actions', () => {
+		it( 'links to the new subscription page and to search', () => {
+			const instance = new ReaderSidebar( defaultProps );
+
+			render( instance.renderSidebarMenu() );
+
+			expect( screen.getByRole( 'link', { name: 'New subscription' } ) ).toHaveAttribute(
+				'href',
+				'/reader/new'
+			);
+			expect( screen.getByRole( 'link', { name: 'Search' } ) ).toHaveAttribute(
+				'href',
+				'/discover/search'
+			);
+		} );
+
+		it( 'marks the search action as selected on the search page', () => {
+			const instance = new ReaderSidebar( { ...defaultProps, path: '/discover/search' } );
+
+			render( instance.renderSidebarMenu() );
+
+			expect( screen.getByRole( 'link', { name: 'Search' } ) ).toHaveClass( 'is-selected' );
+			expect( screen.getByRole( 'link', { name: 'New subscription' } ) ).not.toHaveClass(
+				'is-selected'
+			);
+		} );
+	} );
+
 	describe( 'handleSidebarMenuClick', () => {
 		let instance: ReaderSidebar;
 
@@ -133,24 +161,6 @@ describe( 'ReaderSidebar', () => {
 			expect( recordGaEvent ).not.toHaveBeenCalled();
 			expect( mockRecordReaderTracksEvent ).not.toHaveBeenCalled();
 			expect( mockRecordTracksEvent ).not.toHaveBeenCalled();
-		} );
-
-		it( 'should handle search menu click with correct tracking keys', () => {
-			const handler = {
-				action: 'clicked_reader_sidebar_search',
-				gaEvent: 'Clicked Reader Sidebar Search',
-				tracksEvent: 'calypso_reader_sidebar_search_clicked',
-			};
-			const path = '/reader/search';
-
-			const clickHandler = instance.handleSidebarMenuClick( handler );
-			clickHandler( {}, path );
-
-			expect( recordAction ).toHaveBeenCalledWith( 'clicked_reader_sidebar_search' );
-			expect( recordGaEvent ).toHaveBeenCalledWith( 'Clicked Reader Sidebar Search' );
-			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
-				'calypso_reader_sidebar_search_clicked'
-			);
 		} );
 
 		it( 'should handle likes menu click with correct tracking keys', () => {

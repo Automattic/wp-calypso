@@ -20,7 +20,7 @@ These routes are served by the module:
 | `/reader/blogs/:blog_id/posts/:post` | Full post (via blog)                                    |
 | `/reader/a8c`                        | Automattic employee posts                               |
 | `/reader/p2`                         | P2 posts                                                |
-| `/reader/search`                     | Reader search                                           |
+| `/reader/search`                     | Redirects to `/discover/search`                         |
 | `/reader/notifications`              | Reader notifications                                    |
 | `/reader/feeds/lookup/*`             | Feed URL lookup (redirects to `/reader/feeds/:feed_id`) |
 | `/activities/likes`                  | Liked posts                                             |
@@ -53,23 +53,25 @@ These routes are served by the module:
 
 ### Discover
 
-| Route                   | Description                     |
-| ----------------------- | ------------------------------- |
-| `/discover`             | Discover (recommended content)  |
-| `/discover/recommended` | Recommended content             |
-| `/discover/tags`        | Featured tags                   |
-| `/discover/latest`      | Latest posts                    |
-| `/discover/reddit`      | Reddit content (requires login) |
-| `/discover/add-new`     | Add new source (requires login) |
+| Route                       | Description                     |
+| --------------------------- | ------------------------------- |
+| `/discover`                 | Discover (recommended content)  |
+| `/discover/recommended`     | Recommended content             |
+| `/discover/search`          | Search                          |
+| `/discover/freshly-pressed` | Freshly Pressed                 |
+| `/discover/tags`            | Featured tags                   |
+| `/discover/latest`          | Latest posts                    |
+| `/discover/reddit`          | Reddit content (requires login) |
+| `/discover/add-new`         | Add new source (requires login) |
 
 ### Tags and conversations
 
-| Route                       | Description          |
-| --------------------------- | -------------------- |
-| `/tag/:tag`                 | Tag stream           |
-| `/tags`                     | Tags listing         |
-| `/reader/conversations`     | Conversations stream |
-| `/reader/conversations/a8c` | A8C conversations    |
+| Route                       | Description                                                                           |
+| --------------------------- | ------------------------------------------------------------------------------------- |
+| `/tag/:tag`                 | Tag stream (requires login; logged-out visitors are redirected to `/discover/tags`)   |
+| `/tags`                     | Tags listing (requires login; logged-out visitors are redirected to `/discover/tags`) |
+| `/reader/conversations`     | Conversations stream                                                                  |
+| `/reader/conversations/a8c` | A8C conversations                                                                     |
 
 ### User profile
 
@@ -81,7 +83,7 @@ These routes are served by the module:
 
 ### Legacy redirects
 
-Many legacy `/read/*` routes redirect to Reader routes, often under `/reader/*`, but there are exceptions such as `/read/tag/:tag_name`, which redirects to `/tag/:tag_name`. Routes like `/following`, `/following/manage`, and `/recommendations` are also redirected. Locale prefixes (`/:lang/`) are supported on: `/reader`, `/reader/search`, `/tag/:tag`, `/tags`, and `/discover/*`.
+Many legacy `/read/*` routes redirect to Reader routes, often under `/reader/*`, but there are exceptions such as `/read/tag/:tag_name`, which redirects to `/tag/:tag_name`. Routes like `/following`, `/following/manage`, `/recommendations`, and `/reader/search` are also redirected. Locale prefixes (`/:lang/`) are supported on: `/reader` and `/discover/*`. The `/tag/:tag` and `/tags` variants still route, but only so old localized URLs redirect (logged-out to `/discover/tags`, logged-in to the unprefixed path).
 
 ## Block Rendering Development
 

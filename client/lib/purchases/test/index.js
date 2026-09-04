@@ -303,17 +303,13 @@ describe( 'index', () => {
 		test( 'should redirect to the checkout page', () => {
 			const dispatch = jest.fn();
 			handleRenewNowClick( purchase, siteSlug )( dispatch );
-			expect( page ).toHaveBeenCalledWith(
-				'/checkout/personal-bundle/renew/1/my-site.wordpress.com'
-			);
+			expect( page ).toHaveBeenCalledWith( '/checkout/renew/1' );
 		} );
 
 		test( 'should redirect to the checkout page with ?redirect_to', () => {
 			const dispatch = jest.fn();
 			handleRenewNowClick( purchase, siteSlug, { redirectTo: '/me/purchases' } )( dispatch );
-			expect( page ).toHaveBeenCalledWith(
-				'/checkout/personal-bundle/renew/1/my-site.wordpress.com?redirect_to=%2Fme%2Fpurchases'
-			);
+			expect( page ).toHaveBeenCalledWith( '/checkout/renew/1?redirect_to=%2Fme%2Fpurchases' );
 		} );
 
 		test( 'should send the tracks events', () => {
@@ -370,10 +366,10 @@ describe( 'index', () => {
 		// No site
 		const siteSlug = '';
 
-		test( 'should redirect to the purchase management page with service slug URL', () => {
+		test( 'should keep the service in the URL but drop the product slug', () => {
 			const dispatch = jest.fn();
 			handleRenewNowClick( purchase, siteSlug )( dispatch );
-			expect( page ).toHaveBeenCalledWith( '/checkout/akismet/ak_plus_yearly_1/renew/1/' );
+			expect( page ).toHaveBeenCalledWith( '/checkout/akismet/renew/1' );
 		} );
 	} );
 
@@ -402,9 +398,7 @@ describe( 'index', () => {
 		test( 'should redirect to the checkout page', () => {
 			const dispatch = jest.fn();
 			handleRenewMultiplePurchasesClick( purchases, siteSlug )( dispatch );
-			expect( page ).toHaveBeenCalledWith(
-				'/checkout/personal-bundle,dotlive_domain:personalsitetest1234.live/renew/1,2/my-site.wordpress.com'
-			);
+			expect( page ).toHaveBeenCalledWith( '/checkout/renew/1,2' );
 		} );
 		describe( 'when the none of the purchase ids exist', () => {
 			test( 'should report error', () => {
@@ -427,9 +421,7 @@ describe( 'index', () => {
 				const dispatch = jest.fn();
 				const purchasesPartiallyValid = [ purchases[ 1 ], { ...purchases[ 0 ], ID: null } ];
 				handleRenewMultiplePurchasesClick( purchasesPartiallyValid, siteSlug )( dispatch );
-				expect( page ).toHaveBeenCalledWith(
-					'/checkout/dotlive_domain:personalsitetest1234.live/renew/2/my-site.wordpress.com'
-				);
+				expect( page ).toHaveBeenCalledWith( '/checkout/renew/2' );
 			} );
 		} );
 	} );
