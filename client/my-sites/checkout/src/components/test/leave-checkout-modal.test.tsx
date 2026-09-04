@@ -313,39 +313,6 @@ describe( 'useCheckoutLeaveModal.clickStepBack', () => {
 		);
 	} );
 
-	// A visit that arrived with a plan chosen never saw the grid, so the plan-step back URL
-	// names a screen it was deliberately routed past.
-	it( 'leaves to the domain step rather than the plan step when the plan step was skipped', async () => {
-		( useValidCheckoutBackUrl as jest.Mock ).mockImplementation(
-			( _siteSlug: string, _siteId: number | undefined, queryArgName = 'checkoutBackUrl' ) =>
-				queryArgName === 'checkoutBackUrlDomains'
-					? 'https://mynewsite.wordpress.com/setup/onboarding/domains'
-					: 'https://mynewsite.wordpress.com/setup/onboarding/plans'
-		);
-
-		const { getCart, setCart } = createFakeCartBackend( { [ NEW_SITE_CART_KEY ]: [] } );
-		const client = createShoppingCartManagerClient( { getCart, setCart } );
-		const Wrapper = buildWrapper( client );
-
-		const { result } = renderHook(
-			() => useCheckoutLeaveModal( { siteUrl: NEW_SITE_SLUG, preferDomainsBackUrl: true } ),
-			{ wrapper: Wrapper }
-		);
-		await waitFor( () =>
-			expect( client.forCartKey( NEW_SITE_CART_KEY ).getState().isLoading ).toBe( false )
-		);
-
-		await act( async () => {
-			result.current.clickClose();
-		} );
-
-		expect( leaveCheckout ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				forceCheckoutBackUrl: 'https://mynewsite.wordpress.com/setup/onboarding/domains',
-			} )
-		);
-	} );
-
 	it( 'leaves directly to the step destination when the cart is empty', async () => {
 		const { getCart, setCart } = createFakeCartBackend( { [ NEW_SITE_CART_KEY ]: [] } );
 		const client = createShoppingCartManagerClient( { getCart, setCart } );

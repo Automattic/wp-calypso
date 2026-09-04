@@ -10,18 +10,7 @@ import useValidCheckoutBackUrl from '../hooks/use-valid-checkout-back-url';
 import { getGiftCheckoutBackUrl } from '../lib/get-gift-checkout-back-url';
 import { leaveCheckout } from '../lib/leave-checkout';
 
-export const useCheckoutLeaveModal = ( {
-	siteUrl,
-	preferDomainsBackUrl = false,
-}: {
-	siteUrl: string;
-	/**
-	 * Set when the visit never walked the plan step, so the plan-step back URL names a
-	 * screen the flow decided this customer does not need. The domain step is then the
-	 * last one they actually saw.
-	 */
-	preferDomainsBackUrl?: boolean;
-} ) => {
+export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const [ stepBackUrl, setStepBackUrl ] = useState< string | undefined >( undefined );
 	const forceCheckoutBackUrl = useValidCheckoutBackUrl( siteUrl );
@@ -73,12 +62,10 @@ export const useCheckoutLeaveModal = ( {
 				user_has_cleared_cart: userHasClearedCart,
 			} );
 		}
-		const defaultBackUrl =
-			( preferDomainsBackUrl && forceCheckoutBackUrlDomains ) || forceCheckoutBackUrl;
-
 		leaveCheckout( {
 			siteSlug: siteUrl,
-			forceCheckoutBackUrl: options?.forceBackUrl ?? stepBackUrl ?? defaultBackUrl ?? giftBackUrl,
+			forceCheckoutBackUrl:
+				options?.forceBackUrl ?? stepBackUrl ?? forceCheckoutBackUrl ?? giftBackUrl,
 			previousPath,
 			tracksEvent: 'calypso_masterbar_close_clicked',
 			userHasClearedCart: userHasClearedCart,

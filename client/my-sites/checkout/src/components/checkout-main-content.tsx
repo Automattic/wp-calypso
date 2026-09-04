@@ -463,10 +463,7 @@ export default function CheckoutMainContent( {
 	// The redirecting flow names any step its visit skipped; it is the flow, not checkout, that
 	// knows which ones those were. A skipped step is not a place to send anyone back to.
 	const shouldHidePlansStep = isOnboardingFlowCheckout && omitsPlansStep( searchParams );
-	const leaveModalProps = useCheckoutLeaveModal( {
-		siteUrl: siteUrl ?? '',
-		preferDomainsBackUrl: shouldHidePlansStep,
-	} );
+	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteUrl ?? '' } );
 
 	// Shared sidebar slot for the active payment-method submit button. We render
 	// <CheckoutFormSubmit> inside <CheckoutStepGroup> so it keeps full step-state
