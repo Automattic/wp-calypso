@@ -4,10 +4,7 @@ import Notice from 'calypso/components/notice';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 
 /**
- * Confirms a finished password reset.
- *
- * The WordPress.com reset-password screen no longer renders its own confirmation
- * page: it redirects to the login page with `password_reset=success` instead.
+ * Show a password reset confirmation notice when the `password_reset` query argument is set to `success`
  */
 export default function PasswordResetSuccessNotice() {
 	const translate = useTranslate();
