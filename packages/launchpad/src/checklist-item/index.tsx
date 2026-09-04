@@ -1,10 +1,10 @@
 import { Button, Icon } from '@wordpress/components';
 import { __, isRTL, sprintf } from '@wordpress/i18n';
-import { check, chevronLeft, chevronRight } from '@wordpress/icons';
+import { check, chevronLeft, chevronRight, video } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import type { Task, Expandable } from '../types';
-import type { FC, Key } from 'react';
+import type { FC, Key, MouseEvent } from 'react';
 
 import './style.scss';
 
@@ -15,6 +15,8 @@ interface Props {
 	isHighlighted?: boolean;
 	expandable?: Expandable;
 	onClick?: () => void;
+	courseLessonUrl?: string | null;
+	onCourseLessonClick?: ( lessonUrl: string ) => void;
 }
 
 const ChecklistItem: FC< Props > = ( {
@@ -23,6 +25,8 @@ const ChecklistItem: FC< Props > = ( {
 	isHighlighted,
 	expandable,
 	onClick,
+	courseLessonUrl,
+	onCourseLessonClick,
 } ) => {
 	const { id, completed, disabled = false, title, subtitle, actionDispatch } = task;
 
@@ -40,6 +44,18 @@ const ChecklistItem: FC< Props > = ( {
 
 	const onClickHandler = onClick || actionDispatch;
 	const isClickable = !! ( buttonProps.href || onClickHandler );
+
+	// The task row itself is a button, so the course video lesson link has to be
+	// rendered as a sibling rather than nested inside it.
+	const shouldDisplayCourseLesson =
+		!! courseLessonUrl && ! completed && ! disabled && ! isPrimaryAction;
+
+	const handleCourseLessonClick = ( event: MouseEvent ) => {
+		if ( onCourseLessonClick && courseLessonUrl ) {
+			event.preventDefault();
+			onCourseLessonClick( courseLessonUrl );
+		}
+	};
 
 	// Display chevron if task is incomplete.
 	// Don't display chevron and badge at the same time.
@@ -103,6 +119,7 @@ const ChecklistItem: FC< Props > = ( {
 				disabled: disabled,
 				expanded: expandable && expandable.isOpen,
 				highlighted: isHighlighted,
+				'has-course-lesson': shouldDisplayCourseLesson,
 			} ) }
 			aria-current={ isHighlighted ? 'step' : undefined }
 		>
@@ -157,6 +174,21 @@ const ChecklistItem: FC< Props > = ( {
 					) }
 					{ subtitle && <p className="checklist-item__subtext">{ subtitle }</p> }
 				</ButtonElement>
+			) }
+			{ shouldDisplayCourseLesson && courseLessonUrl && (
+				<Button
+					className="checklist-item__course-lesson"
+					href={ courseLessonUrl }
+					onClick={ handleCourseLessonClick }
+					icon={ video }
+					iconSize={ 24 }
+					label={ sprintf(
+						/* translators: %s: Task title */
+						__( 'Watch video lesson: %s', 'launchpad' ),
+						typeof title === 'string' ? title : String( title )
+					) }
+					showTooltip
+				/>
 			) }
 			{ expandable && expandable.isOpen && (
 				<div className="checklist-item__expanded-content">{ expandable.content }</div>

@@ -210,4 +210,60 @@ describe( 'ChecklistItem', () => {
 			} );
 		} );
 	} );
+
+	describe( 'when the task has a course video lesson', () => {
+		const courseLessonUrl =
+			'https://wordpress.com/support/courses/create-your-website/choose-a-theme/';
+
+		it( 'displays the video lesson link', () => {
+			renderComponent( {
+				task: buildTask( { title: 'Choose a theme', completed: false, disabled: false } ),
+				courseLessonUrl,
+			} );
+
+			const lessonLink = screen.getByRole( 'link', {
+				name: 'Watch video lesson: Choose a theme',
+			} );
+
+			expect( lessonLink ).toBeVisible();
+			expect( lessonLink ).toHaveAttribute( 'href', courseLessonUrl );
+		} );
+
+		it( 'calls onCourseLessonClick with the lesson url when clicked', async () => {
+			const onCourseLessonClick = jest.fn();
+			renderComponent( {
+				task: buildTask( { title: 'Choose a theme', completed: false, disabled: false } ),
+				courseLessonUrl,
+				onCourseLessonClick,
+			} );
+
+			await userEvent.click(
+				screen.getByRole( 'link', { name: 'Watch video lesson: Choose a theme' } )
+			);
+
+			expect( onCourseLessonClick ).toHaveBeenCalledWith( courseLessonUrl );
+		} );
+
+		it( 'hides the video lesson link when the task is completed', () => {
+			renderComponent( {
+				task: buildTask( { title: 'Choose a theme', completed: true, disabled: false } ),
+				courseLessonUrl,
+			} );
+
+			expect(
+				screen.queryByRole( 'link', { name: 'Watch video lesson: Choose a theme' } )
+			).not.toBeInTheDocument();
+		} );
+
+		it( 'hides the video lesson link when the task is disabled', () => {
+			renderComponent( {
+				task: buildTask( { title: 'Choose a theme', completed: false, disabled: true } ),
+				courseLessonUrl,
+			} );
+
+			expect(
+				screen.queryByRole( 'link', { name: 'Watch video lesson: Choose a theme' } )
+			).not.toBeInTheDocument();
+		} );
+	} );
 } );
