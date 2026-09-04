@@ -18,6 +18,7 @@ import { isOnboardingUrl, isRelativeUrl } from '../../utils/url';
 import ComponentViewTracker from '../component-view-tracker';
 import { Text } from '../text';
 import { TextSkeleton } from '../text-skeleton';
+import { Truncate } from '../truncate';
 import type { ComponentProps, ReactElement, ReactNode } from 'react';
 import './style.scss';
 
@@ -82,10 +83,19 @@ export default function OverviewCard( {
 		if ( isLoading ) {
 			return <TextSkeleton length={ 10 } />;
 		}
-		if ( heading ) {
-			return heading;
+		if ( ! heading ) {
+			return <>&nbsp;</>;
 		}
-		return <>&nbsp;</>;
+		// Headings are usually a single line, but the can carry arbitrarily long
+		// user data — site names, domains, email addresses. Clamp to one line.
+		if ( typeof heading === 'string' ) {
+			return (
+				<Truncate tooltip={ heading } numberOfLines={ 1 }>
+					{ heading }
+				</Truncate>
+			);
+		}
+		return heading;
 	};
 
 	const renderDescription = () => {
