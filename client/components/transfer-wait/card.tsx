@@ -18,8 +18,8 @@ import { useInstallProgress } from './use-install-progress';
 
 /**
  * The transfer wait: a heading, one sentence naming the stage the transfer is actually in, a
- * single real overall bar, and the “what to expect” card. The bar is fed by confirmed stages,
- * never a timer.
+ * single real overall bar, and the “what to expect” card. The bar creeps inside the stage the
+ * server last confirmed and never past it.
  */
 export default function TransferWaitCard( {
 	transferStatus,

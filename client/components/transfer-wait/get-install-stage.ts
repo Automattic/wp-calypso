@@ -40,15 +40,15 @@ const PREPARING_STATUSES: ReadonlyArray< string | null > = [
 // this wait's transfer is a failure, reported by useInstallDeadline rather than shown as a stage.
 
 /**
- * Which stage the install is in.
+ * Which stage the wait is in.
  *
- * Once the transfer reports complete, the plugin install/activation this page dispatches is
- * still running, so completion of the *transfer* maps to the "finishing" stage — the page
- * redirects away when the product is active, which is this screen's real end.
+ * Work remains after the transfer reports complete — the plugin install and activation on the
+ * marketplace path, the rest of setup on the hosted-site path — so completion of the *transfer*
+ * maps to the "finishing" stage, and the caller redirects away once that work is done.
  *
- * While the transfer is known to be in flight its status is authoritative: reaching the
- * activation step (a plugin row that already exists on the site) does not make the move done.
- * Only when no transfer status is known does the page's own step decide.
+ * While the transfer is known to be in flight its status is authoritative: a later fallbackStep
+ * (on the marketplace path, a plugin row that already exists on the site) does not make the move
+ * done. Only when no transfer status is known does the caller's own step decide.
  */
 export function getInstallStage( {
 	transferStatus,
