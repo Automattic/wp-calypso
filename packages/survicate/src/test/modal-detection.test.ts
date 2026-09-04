@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { isModalOpen, observeModals } from '../modal-detection';
+import { isModalOpen, isSurveyVisible, observeModals } from '../modal-detection';
 
 function makeRendered< T extends HTMLElement >( el: T ): T {
 	( el as HTMLElement & { checkVisibility?: () => boolean } ).checkVisibility = () => true;
@@ -72,6 +72,48 @@ describe( 'isModalOpen', () => {
 		document.body.appendChild( modal );
 
 		expect( isModalOpen() ).toBe( false );
+	} );
+} );
+
+describe( 'isSurveyVisible', () => {
+	afterEach( () => {
+		document.body.innerHTML = '';
+	} );
+
+	test( 'should return false when no Survicate survey is on screen', () => {
+		expect( isSurveyVisible() ).toBe( false );
+	} );
+
+	test( 'should detect a rendered survey dialog inside the Survicate box', () => {
+		const box = document.createElement( 'div' );
+		box.id = 'survicate-box';
+		const survey = makeRendered( document.createElement( 'div' ) );
+		survey.setAttribute( 'role', 'dialog' );
+		box.appendChild( survey );
+		document.body.appendChild( box );
+
+		expect( isSurveyVisible() ).toBe( true );
+	} );
+
+	test( 'should ignore a survey dialog that is not rendered', () => {
+		const box = document.createElement( 'div' );
+		box.className = 'survicate-box-survey';
+		const survey = document.createElement( 'div' );
+		survey.setAttribute( 'role', 'dialog' );
+		( survey as HTMLElement & { checkVisibility?: () => boolean } ).checkVisibility = () => false;
+		box.appendChild( survey );
+		document.body.appendChild( box );
+
+		expect( isSurveyVisible() ).toBe( false );
+	} );
+
+	test( 'should ignore a modal dialog outside the Survicate box', () => {
+		const modal = makeRendered( document.createElement( 'div' ) );
+		modal.setAttribute( 'role', 'dialog' );
+		modal.setAttribute( 'aria-modal', 'true' );
+		document.body.appendChild( modal );
+
+		expect( isSurveyVisible() ).toBe( false );
 	} );
 } );
 

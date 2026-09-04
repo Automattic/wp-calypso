@@ -6,10 +6,16 @@ jest.mock( '@wordpress/data', () => ( {
 	select: jest.fn(),
 } ) );
 
+jest.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: jest.fn(),
+} ) );
+
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
 import { invokeSurvicateEvent } from '../invoke-event';
 
 const mockSelect = select as jest.Mock;
+const mockRecordTracksEvent = recordTracksEvent as jest.Mock;
 
 function setHelpCenterOpen( open: boolean ) {
 	mockSelect.mockReturnValue( { isHelpCenterShown: () => open } );
@@ -24,6 +30,7 @@ describe( 'invokeSurvicateEvent', () => {
 	afterEach( () => {
 		window._sva = undefined;
 		mockSelect.mockReset();
+		mockRecordTracksEvent.mockReset();
 	} );
 
 	test( 'should call invokeEvent immediately when SDK is ready', () => {
@@ -111,6 +118,10 @@ describe( 'invokeSurvicateEvent', () => {
 
 		expect( invokeEvent ).not.toHaveBeenCalled();
 		expect( closeSurvey ).toHaveBeenCalledTimes( 1 );
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_survicate_survey_suppressed',
+			{ reason: 'modal', trigger: 'invoke_event', event_name: 'testEvent' }
+		);
 
 		modal.remove();
 	} );

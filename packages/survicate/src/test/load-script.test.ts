@@ -10,11 +10,17 @@ jest.mock( '@wordpress/data', () => ( {
 	select: jest.fn(),
 } ) );
 
+jest.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: jest.fn(),
+} ) );
+
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { loadScript } from '@automattic/load-script';
 import { select } from '@wordpress/data';
 import { loadSurvicateScript } from '../load-script';
 
 const mockSelect = select as jest.Mock;
+const mockRecordTracksEvent = recordTracksEvent as jest.Mock;
 
 function setHelpCenterOpen( open: boolean ) {
 	mockSelect.mockReturnValue( { isHelpCenterShown: () => open } );
@@ -35,6 +41,7 @@ describe( 'loadSurvicateScript', () => {
 		controller.abort();
 		window._sva = undefined;
 		mockSelect.mockReset();
+		mockRecordTracksEvent.mockReset();
 		document.body.innerHTML = '';
 	} );
 
@@ -107,6 +114,10 @@ describe( 'loadSurvicateScript', () => {
 		onSurveyDisplayed();
 
 		expect( closeSurvey ).toHaveBeenCalledTimes( 1 );
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_survicate_survey_suppressed',
+			{ reason: 'modal', trigger: 'survey_displayed' }
+		);
 	} );
 
 	test( 'should close a visible survey when a modal opens', async () => {
@@ -123,6 +134,51 @@ describe( 'loadSurvicateScript', () => {
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
 		expect( closeSurvey ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'should record a suppression when a modal opens over a visible survey', async () => {
+		const closeSurvey = jest.fn();
+		window._sva = { closeSurvey, addEventListener: jest.fn() };
+
+		loadSurvicateScript( 'test-workspace-id', controller.signal );
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+		// A Survicate survey is on screen (its dialog lives inside #survicate-box).
+		const box = document.createElement( 'div' );
+		box.id = 'survicate-box';
+		const survey = document.createElement( 'div' );
+		survey.setAttribute( 'role', 'dialog' );
+		( survey as HTMLElement & { checkVisibility?: () => boolean } ).checkVisibility = () => true;
+		box.appendChild( survey );
+		document.body.appendChild( box );
+
+		const modal = document.createElement( 'div' );
+		modal.setAttribute( 'role', 'dialog' );
+		modal.setAttribute( 'aria-modal', 'true' );
+		document.body.appendChild( modal );
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+		expect( closeSurvey ).toHaveBeenCalledTimes( 1 );
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_survicate_survey_suppressed',
+			{ reason: 'modal', trigger: 'modal_opened' }
+		);
+	} );
+
+	test( 'should not record a suppression when a modal opens with no survey visible', async () => {
+		const closeSurvey = jest.fn();
+		window._sva = { closeSurvey, addEventListener: jest.fn() };
+
+		loadSurvicateScript( 'test-workspace-id', controller.signal );
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+		const modal = document.createElement( 'div' );
+		modal.setAttribute( 'role', 'dialog' );
+		modal.setAttribute( 'aria-modal', 'true' );
+		document.body.appendChild( modal );
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+		expect( mockRecordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	test( 'should re-establish modal suppression when reloaded after the SDK is ready', async () => {

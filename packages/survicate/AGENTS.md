@@ -108,7 +108,8 @@ draw over any other open modal dialog (onboarding modals, WP `Modal`, native
    `survey_displayed` and closes it. This is the comprehensive net that also catches
    auto-campaigns (path 2 above).
 4. **A modal opens while a survey is showing** → `load-script.ts` starts
-   `observeModals( closeSurvicateSurvey )`. Both this observer and the
+   `observeModals()`, which closes the survey (and records the suppression when a
+   survey was actually visible). Both this observer and the
    `survey_displayed` listener are torn down via the optional `AbortSignal`
    passed to `loadSurvicateScript` — `useSurvicate` passes its effect's signal,
    so repeated loads don't accumulate observers. Because `SurvicateReady` fires
@@ -150,6 +151,26 @@ separate from DOM detection on purpose: the Help Center is a side panel without
 - Everything fails **open**: any error in detection means "no modal", so surveys
   behave as they did before this module existed.
 
+### Measuring suppression (`track-suppression.ts`)
+
+Every suppression records a `calypso_survicate_survey_suppressed` Tracks event
+(`recordSurveySuppressed`), so we can measure how often surveys are suppressed —
+and in particular how many the modal rule catches versus the older Help Center
+rule. Properties:
+
+- `reason` — `modal` or `help_center`. `getSuppressionReason()` checks the Help
+  Center first, so `reason: 'modal'` fires only when a modal is the **sole**
+  reason; filtering on it measures the incremental effect of the modal rule.
+- `trigger` — `survey_displayed` (a survey rendered and was closed — the
+  auto-campaign case), `modal_opened` (a modal opened over a survey already on
+  screen; gated on `isSurveyVisible()` so it doesn't fire on every modal open),
+  or `invoke_event` (an explicit `invokeSurvicateEvent()` was skipped, plus an
+  `event_name` property).
+
+Recording is best-effort and wrapped in `try/catch` — a failing analytics call
+never interferes with suppression. The wp-admin loader (PHP) uses its own
+analytics path and does not emit this event yet.
+
 The wp-admin loader (`jetpack-mu-wpcom/src/features/survicate/class-survicate.php`,
 Jetpack monorepo) inlines the same logic in its emitted script; keep the two in sync
 when changing selectors or behavior.
@@ -167,9 +188,12 @@ requires dashboard coordination. Don't build that pre-emptively.
   only) and `SURVICATE_WORKSPACE_ID`.
 - `load-script.ts` — `loadSurvicateScript()` injects the SDK and wires the
   `survey_displayed` safety net; `isSurvicateScriptLoaded()`.
-- `invoke-event.ts` — `invokeSurvicateEvent()`, `isHelpCenterOpen()`, and
-  `shouldSuppressSurvey()`.
-- `modal-detection.ts` — `isModalOpen()`, `observeModals()`, `MODAL_SELECTOR`.
+- `invoke-event.ts` — `invokeSurvicateEvent()`, `isHelpCenterOpen()`,
+  `getSuppressionReason()`, and `shouldSuppressSurvey()`.
+- `modal-detection.ts` — `isModalOpen()`, `isSurveyVisible()`, `observeModals()`,
+  `MODAL_SELECTOR`.
+- `track-suppression.ts` — `recordSurveySuppressed()`: the
+  `calypso_survicate_survey_suppressed` Tracks event.
 - `close-survey.ts` — `closeSurvicateSurvey()`: the single, guarded `_sva.closeSurvey()`
   helper reused by the suppression call sites.
 - `visitor-traits.ts` — `setSurvicateVisitorTraits()`, `getAccountAgeInDays()`, and the

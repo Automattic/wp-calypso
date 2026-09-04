@@ -1,8 +1,9 @@
 import { loadScript } from '@automattic/load-script';
 import { closeSurvicateSurvey } from './close-survey';
 import debug from './debug';
-import { shouldSuppressSurvey } from './invoke-event';
-import { observeModals } from './modal-detection';
+import { getSuppressionReason } from './invoke-event';
+import { isSurveyVisible, observeModals } from './modal-detection';
+import { recordSurveySuppressed } from './track-suppression';
 
 /**
  * Checks whether the Survicate script is already loaded on the page.
@@ -26,10 +27,22 @@ export function loadSurvicateScript( workspaceId: string, signal?: AbortSignal )
 	const onSurveyDisplayed = () => {
 		debug( 'Survicate survey displayed' );
 
-		if ( shouldSuppressSurvey() ) {
+		const reason = getSuppressionReason();
+		if ( reason ) {
 			debug( 'Survicate survey suppressed (Help Center or a modal is open)' );
+			recordSurveySuppressed( reason, 'survey_displayed' );
 			closeSurvicateSurvey();
 		}
+	};
+
+	// Close a survey that is already on screen when a modal opens on top of it.
+	// The observer fires on every modal insertion, so only count it as a
+	// suppression when a survey was actually visible to be closed.
+	const onModalOpened = () => {
+		if ( isSurveyVisible() ) {
+			recordSurveySuppressed( 'modal', 'modal_opened' );
+		}
+		closeSurvicateSurvey();
 	};
 
 	const wireSuppression = () => {
@@ -39,9 +52,7 @@ export function loadSurvicateScript( workspaceId: string, signal?: AbortSignal )
 
 		window._sva?.addEventListener?.( 'survey_displayed', onSurveyDisplayed );
 
-		// Close a survey that is already on screen when a modal opens on top of
-		// it. closeSurvicateSurvey() is a no-op without a visible survey.
-		const disconnectModalObserver = observeModals( closeSurvicateSurvey );
+		const disconnectModalObserver = observeModals( onModalOpened );
 
 		signal?.addEventListener(
 			'abort',

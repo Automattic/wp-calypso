@@ -52,6 +52,27 @@ export function isModalOpen(): boolean {
 	return false;
 }
 
+/**
+ * Whether a Survicate survey is currently rendered on screen. Used to attribute
+ * the "modal opened over a survey" suppression: the modal observer fires on every
+ * modal insertion, but only counts as a suppression when a survey was actually
+ * visible to be closed. Fails open to `false` (no survey → nothing suppressed).
+ */
+export function isSurveyVisible(): boolean {
+	if ( typeof document === 'undefined' ) {
+		return false;
+	}
+
+	try {
+		const survey = document.querySelector(
+			'#survicate-box [role="dialog"], [class*="survicate-box"] [role="dialog"]'
+		);
+		return !! survey && isElementRendered( survey );
+	} catch {
+		return false;
+	}
+}
+
 function nodeContainsModal( node: Node ): boolean {
 	if ( ! ( node instanceof Element ) ) {
 		return false;

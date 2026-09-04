@@ -2,6 +2,7 @@ import { select } from '@wordpress/data';
 import { closeSurvicateSurvey } from './close-survey';
 import debug from './debug';
 import { isModalOpen } from './modal-detection';
+import { recordSurveySuppressed, type SuppressionReason } from './track-suppression';
 
 const HELP_CENTER_STORE = 'automattic/help-center';
 
@@ -20,12 +21,28 @@ export function isHelpCenterOpen(): boolean {
 }
 
 /**
+ * Why surveys should currently be suppressed, or `null` if they shouldn't.
+ * The Help Center (store-based check — more reliable than DOM for a
+ * non-`aria-modal` panel) takes precedence over a generic modal, so `modal`
+ * is reported only when it is the sole reason — which is exactly what measures
+ * the incremental effect of the modal rule.
+ */
+export function getSuppressionReason(): SuppressionReason | null {
+	if ( isHelpCenterOpen() ) {
+		return 'help_center';
+	}
+	if ( isModalOpen() ) {
+		return 'modal';
+	}
+	return null;
+}
+
+/**
  * Whether surveys should currently be suppressed: the Help Center is open
- * (store-based check — more reliable than DOM for a non-`aria-modal` panel)
  * or some other modal dialog is on screen.
  */
 export function shouldSuppressSurvey(): boolean {
-	return isHelpCenterOpen() || isModalOpen();
+	return getSuppressionReason() !== null;
 }
 
 /**
@@ -38,8 +55,10 @@ export function shouldSuppressSurvey(): boolean {
  * @returns A cleanup function that removes the event listener.
  */
 export function invokeSurvicateEvent( eventName: string ): () => void {
-	if ( shouldSuppressSurvey() ) {
+	const suppressionReason = getSuppressionReason();
+	if ( suppressionReason ) {
 		debug( 'Survicate event "%s" suppressed (Help Center or a modal is open)', eventName );
+		recordSurveySuppressed( suppressionReason, 'invoke_event', { event_name: eventName } );
 		closeSurvicateSurvey();
 		return () => {};
 	}
@@ -50,8 +69,10 @@ export function invokeSurvicateEvent( eventName: string ): () => void {
 	}
 
 	const handler = () => {
-		if ( shouldSuppressSurvey() ) {
+		const deferredReason = getSuppressionReason();
+		if ( deferredReason ) {
 			debug( 'Deferred Survicate event "%s" suppressed at SurvicateReady time', eventName );
+			recordSurveySuppressed( deferredReason, 'invoke_event', { event_name: eventName } );
 			return;
 		}
 		if ( typeof window._sva !== 'undefined' && window._sva.invokeEvent ) {
