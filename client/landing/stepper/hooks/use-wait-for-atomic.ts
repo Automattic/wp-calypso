@@ -64,7 +64,13 @@ export const useWaitForAtomic = ( {
 		);
 	};
 
-	const waitForTransfer = async () => {
+	const waitForTransfer = async ( {
+		onTransferStatusChange,
+	}: {
+		// The transfer's own `created_at` comes along so callers can time the wait from when the
+		// transfer actually began rather than from when this UI mounted.
+		onTransferStatusChange?: ( status: string | null, createdAt?: string ) => void;
+	} = {} ) => {
 		const startTime = new Date().getTime();
 		const totalTimeout = 1000 * 300;
 		const maxFinishTime = startTime + totalTimeout;
@@ -74,8 +80,9 @@ export const useWaitForAtomic = ( {
 			await wait( 3000 );
 			await requestLatestAtomicTransfer( siteId );
 			const transfer = getSiteLatestAtomicTransfer( siteId );
+			const transferStatus = transfer?.status ?? null;
+			onTransferStatusChange?.( transferStatus, transfer?.created_at );
 			const transferError = getSiteLatestAtomicTransferError( siteId );
-			const transferStatus = transfer?.status;
 			const isTransferringStatusFailed = transferError && transferError?.status >= 500;
 
 			if ( isTransferringStatusFailed || transferStatus === transferStates.ERROR ) {
