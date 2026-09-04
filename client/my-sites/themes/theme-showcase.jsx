@@ -55,6 +55,7 @@ import {
 	constructThemeShowcaseUrl,
 	shouldEnableThemesColorScheme,
 } from './helpers';
+import PlanUpgradeNudge from './plan-upgrade-nudge';
 import SearchResultsModern from './search-results-modern';
 import RecommendedSections from './sections-modern/recommended-sections';
 import ThemeErrors from './theme-errors';
@@ -866,6 +867,9 @@ class ThemeShowcase extends Component {
 					<div className="themes__showcase">
 						{ showThemeErrors && <ThemeErrors siteId={ siteId } /> }
 						{ ! isSiteWooExpressOrEcomFreeTrial && this.renderBanner() }
+						{ isLoggedIn && siteId && ! isSiteWooExpressOrEcomFreeTrial && (
+							<PlanUpgradeNudge siteId={ siteId } siteSlug={ this.props.siteSlug } />
+						) }
 						{ this.renderThemes( themeProps ) }
 					</div>
 					{ this.isThemeShowcaseModern() && <ThemesFAQ /> }

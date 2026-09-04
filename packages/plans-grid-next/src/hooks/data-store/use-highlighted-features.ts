@@ -5,6 +5,8 @@ import {
 	FEATURE_PAYMENT_TRANSACTION_FEES_10,
 	FEATURE_PAYMENT_TRANSACTION_FEES_8,
 	FEATURE_PAYMENT_TRANSACTION_FEES_4,
+	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 } from '@automattic/calypso-products';
 import { useMemo } from '@wordpress/element';
 import type { PlansIntent } from '../../types';
@@ -42,6 +44,10 @@ const useHighlightedFeatures: UseHighlightedFeatures = ( { intent, isInSignup } 
 				FEATURE_PAYMENT_TRANSACTION_FEES_8,
 				FEATURE_PAYMENT_TRANSACTION_FEES_4,
 			];
+		}
+
+		if ( 'plans-themes' === intent ) {
+			return [ WPCOM_FEATURES_PREMIUM_THEMES_LIMITED, WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ];
 		}
 
 		return null;
