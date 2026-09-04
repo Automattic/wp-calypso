@@ -302,23 +302,27 @@ describe( 'useCheckoutLeaveModal.clearCartAndLeave', () => {
 	} );
 } );
 
-describe( 'useCheckoutLeaveModal.clickClose with preferDomainsBackUrl', () => {
+describe( 'useCheckoutLeaveModal.clickStepBack', () => {
 	beforeEach( () => {
 		( useCartKey as jest.Mock ).mockReset();
 		( useValidCheckoutBackUrl as jest.Mock ).mockReset();
 		( leaveCheckout as jest.Mock ).mockReset();
 		( useCartKey as jest.Mock ).mockReturnValue( NEW_SITE_CART_KEY );
+		( useValidCheckoutBackUrl as jest.Mock ).mockReturnValue(
+			'https://mynewsite.wordpress.com/setup/onboarding/plans'
+		);
+	} );
+
+	// A visit that arrived with a plan chosen never saw the grid, so the plan-step back URL
+	// names a screen it was deliberately routed past.
+	it( 'leaves to the domain step rather than the plan step when the plan step was skipped', async () => {
 		( useValidCheckoutBackUrl as jest.Mock ).mockImplementation(
 			( _siteSlug: string, _siteId: number | undefined, queryArgName = 'checkoutBackUrl' ) =>
 				queryArgName === 'checkoutBackUrlDomains'
 					? 'https://mynewsite.wordpress.com/setup/onboarding/domains'
 					: 'https://mynewsite.wordpress.com/setup/onboarding/plans'
 		);
-	} );
 
-	// A visit that arrived with a plan chosen never saw the grid, so the plan-step back URL
-	// names a screen it was deliberately routed past.
-	it( 'leaves to the domain step rather than the plan step', async () => {
 		const { getCart, setCart } = createFakeCartBackend( { [ NEW_SITE_CART_KEY ]: [] } );
 		const client = createShoppingCartManagerClient( { getCart, setCart } );
 		const Wrapper = buildWrapper( client );
@@ -339,18 +343,6 @@ describe( 'useCheckoutLeaveModal.clickClose with preferDomainsBackUrl', () => {
 			expect.objectContaining( {
 				forceCheckoutBackUrl: 'https://mynewsite.wordpress.com/setup/onboarding/domains',
 			} )
-		);
-	} );
-} );
-
-describe( 'useCheckoutLeaveModal.clickStepBack', () => {
-	beforeEach( () => {
-		( useCartKey as jest.Mock ).mockReset();
-		( useValidCheckoutBackUrl as jest.Mock ).mockReset();
-		( leaveCheckout as jest.Mock ).mockReset();
-		( useCartKey as jest.Mock ).mockReturnValue( NEW_SITE_CART_KEY );
-		( useValidCheckoutBackUrl as jest.Mock ).mockReturnValue(
-			'https://mynewsite.wordpress.com/setup/onboarding/plans'
 		);
 	} );
 

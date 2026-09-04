@@ -74,7 +74,7 @@ export const useCheckoutLeaveModal = ( {
 			} );
 		}
 		const defaultBackUrl =
-			( preferDomainsBackUrl ? forceCheckoutBackUrlDomains : undefined ) ?? forceCheckoutBackUrl;
+			( preferDomainsBackUrl && forceCheckoutBackUrlDomains ) || forceCheckoutBackUrl;
 
 		leaveCheckout( {
 			siteSlug: siteUrl,

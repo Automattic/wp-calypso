@@ -51,10 +51,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import Loading from 'calypso/components/loading';
-import {
-	ONBOARDING_STEPPER_OMITTED_GROUP_PARAM,
-	ONBOARDING_OMITTED_PLANS_GROUP,
-} from 'calypso/landing/stepper/declarative-flow/flows/onboarding/step-counter-config';
+import { omitsPlansStep } from 'calypso/landing/stepper/declarative-flow/flows/onboarding/step-counter-config';
 import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress';
 import { useShowOnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
@@ -465,9 +462,7 @@ export default function CheckoutMainContent( {
 	const isOnboardingFlowCheckout = searchParams.get( 'flow' ) === ONBOARDING_FLOW;
 	// The redirecting flow names any step its visit skipped; it is the flow, not checkout, that
 	// knows which ones those were. A skipped step is not a place to send anyone back to.
-	const shouldHidePlansStep =
-		isOnboardingFlowCheckout &&
-		searchParams.get( ONBOARDING_STEPPER_OMITTED_GROUP_PARAM ) === ONBOARDING_OMITTED_PLANS_GROUP;
+	const shouldHidePlansStep = isOnboardingFlowCheckout && omitsPlansStep( searchParams );
 	const leaveModalProps = useCheckoutLeaveModal( {
 		siteUrl: siteUrl ?? '',
 		preferDomainsBackUrl: shouldHidePlansStep,
