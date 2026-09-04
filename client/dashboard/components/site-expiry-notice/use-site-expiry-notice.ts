@@ -69,13 +69,19 @@ export function useSiteExpiryNotice(
 		!! purchase &&
 		getPlanExpiryNotice( purchase, { scope: 'sitewide', locale } )?.stage === 'post-grace';
 
-	const { data: latestTransfer } = useQuery( {
+	const { data: latestTransfer, isPending: isTransferPending } = useQuery( {
 		...siteLatestAtomicTransferQuery( siteId ),
 		enabled: isPastGrace,
 	} );
 	const isReverted = latestTransfer?.status === 'reverted';
 
 	if ( ! purchase ) {
+		return null;
+	}
+
+	// Until the transfer status is known, a reverted site would be offered
+	// "Restore site" and then have it swapped for "Contact support".
+	if ( isPastGrace && isTransferPending ) {
 		return null;
 	}
 

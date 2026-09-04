@@ -43,10 +43,12 @@ function mockApi( {
 	purchases,
 	meta = {},
 	transferStatus,
+	transferDelay = 0,
 }: {
 	purchases: Purchase[];
 	meta?: Record< string, number >;
 	transferStatus?: string;
+	transferDelay?: number;
 } ) {
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
@@ -58,6 +60,7 @@ function mockApi( {
 		.reply( 200, { id: 1, name: 'me', slug: 'me', meta } )
 		.get( `/wpcom/v2/sites/${ SITE_ID }/atomic/transfers/latest` )
 		.query( true )
+		.delay( transferDelay )
 		.reply( 200, transferStatus ? { status: transferStatus, created_at: NOW } : {} );
 }
 
@@ -130,6 +133,24 @@ describe( 'useSiteExpiryNotice', () => {
 		expect( result.current?.stage ).toBe( 'post-grace' );
 		expect( result.current?.isDismissible ).toBe( true );
 		expect( result.current?.notice.primaryAction?.type ).toBe( 'contact-support' );
+	} );
+
+	test( 'stays null in post-grace until the transfer status resolves', async () => {
+		mockApi( {
+			purchases: [
+				makePurchase( {
+					expiry_date: expiryInDays( -40 ),
+					expiry_status: 'expired',
+					subscription_status: 'inactive',
+				} ),
+			],
+			transferStatus: 'reverted',
+			transferDelay: 50,
+		} );
+		const { result, waitForCurrentUser } = renderNotice();
+		await waitForCurrentUser();
+		expect( result.current ).toBeNull();
+		await waitFor( () => expect( result.current?.isReverted ).toBe( true ) );
 	} );
 
 	test( 'a dismissal newer than the expiry date hides post-grace', async () => {
