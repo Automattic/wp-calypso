@@ -163,6 +163,8 @@ export * from './site-staging-sync';
 export * from './site-stats';
 export * from './site-themes';
 export * from './site-update-schedules';
+export * from './static-site-import-session';
+export * from './switch-runs';
 export * from './site-users';
 export * from './sites-comments';
 export * from './sites-comments-likes';

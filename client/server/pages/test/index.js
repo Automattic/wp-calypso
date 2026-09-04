@@ -1625,9 +1625,9 @@ describe( 'dashboard app', () => {
 		expect( app.getMocks().serverRender ).toHaveBeenCalled();
 	} );
 
-	it( 'serves known dashboard routes without a 404', async () => {
+	it.each( [ '/sites', '/switch' ] )( 'serves the known dashboard route %s', async ( url ) => {
 		const { request, response } = await app.run( {
-			request: { url: '/sites', hostname: 'my.wordpress.com' },
+			request: { url, hostname: 'my.wordpress.com' },
 		} );
 
 		expect( request.context.sectionName ).toBe( 'dashboard-dotcom' );

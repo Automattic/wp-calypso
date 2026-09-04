@@ -1,0 +1,133 @@
+.switch {
+	--switch-border: #dcdcde;
+
+	.switch__screen {
+		width: min( 100%, 800px );
+		min-height: 420px;
+		margin: 32px auto;
+		border: 1px solid var( --switch-border );
+		box-shadow: none;
+	}
+
+	.switch__step {
+		margin: 0;
+		color: #646970;
+		font-size: 0.75rem;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+	}
+
+	.switch__form {
+		width: 100%;
+	}
+
+	.switch__source {
+		margin: 0;
+		padding: 12px 16px;
+		border-radius: 4px;
+		background: #f6f7f7;
+		font-family: monospace;
+		word-break: break-all;
+	}
+
+	.switch__strategies {
+		display: grid;
+		grid-template-columns: minmax( 0, 1fr );
+		gap: 12px;
+		width: 100%;
+
+		@media ( min-width: 700px ) {
+			grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+		}
+	}
+
+	.switch__strategy {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		height: auto;
+		min-height: 140px;
+		align-items: flex-start;
+		justify-content: flex-start;
+		padding: 20px;
+		border: 1px solid var( --switch-border );
+		text-align: start;
+		white-space: normal;
+	}
+
+	.switch__metrics {
+		display: grid;
+		grid-template-columns: repeat( auto-fit, minmax( 120px, 1fr ) );
+		gap: 12px;
+		width: 100%;
+		margin: 0;
+
+		div {
+			padding: 12px;
+			border: 1px solid var( --switch-border );
+			border-radius: 4px;
+		}
+
+		dt {
+			color: #50575e;
+			font-size: 0.75rem;
+			text-transform: uppercase;
+		}
+
+		dd {
+			margin: 4px 0 0;
+			font-size: 1.25rem;
+			font-weight: 600;
+		}
+	}
+
+	.switch__screenshots {
+		display: grid;
+		grid-template-columns: minmax( 0, 1fr );
+		gap: 16px;
+		width: 100%;
+
+		@media ( min-width: 700px ) {
+			grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+		}
+
+		figure {
+			margin: 0;
+		}
+
+		img {
+			display: block;
+			width: 100%;
+			aspect-ratio: 3 / 2;
+			border: 1px solid var( --switch-border );
+			border-radius: 4px;
+			background: #f6f7f7;
+			object-fit: cover;
+			object-position: top;
+		}
+
+		figcaption {
+			margin-top: 8px;
+			font-weight: 500;
+		}
+	}
+
+	.switch__actions {
+		width: 100%;
+		flex-wrap: wrap;
+	}
+
+	.switch__prompt {
+		width: 100%;
+		max-height: 420px;
+		overflow: auto;
+		box-sizing: border-box;
+		margin: 0;
+		padding: 16px;
+		border: 1px solid var( --switch-border );
+		border-radius: 4px;
+		background: #f6f7f7;
+		white-space: pre-wrap;
+	}
+}
