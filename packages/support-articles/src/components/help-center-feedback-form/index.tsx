@@ -3,7 +3,7 @@ import { GetSupport } from '@automattic/odie-client';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import { useRateArticle } from '../../hooks/use-rate-article';
+import { getSessionRating, useRateArticle } from '../../hooks/use-rate-article';
 import { ThumbsDownIcon, ThumbsUpIcon } from '../../icons/thumbs';
 import type { ArticleRating } from '../../types';
 
@@ -22,14 +22,16 @@ const HelpCenterFeedbackForm = ( {
 	blogId: number;
 	/**
 	 * Rating the user already gave this article. `undefined` means the server did not
-	 * send one (logged-out user), so the rating is only kept for this session.
+	 * send one (logged-out user), so the rating is only remembered for this page session.
 	 */
 	userRating?: ArticleRating | null;
 	isEligibleForChat: boolean;
 	forceEmailSupport: boolean;
 } ) => {
 	const { __ } = useI18n();
-	const [ rating, setRating ] = useState< ArticleRating | null >( userRating ?? null );
+	const [ rating, setRating ] = useState< ArticleRating | null >(
+		userRating ?? getSessionRating( postId ) ?? null
+	);
 	const { mutate: rateArticle } = useRateArticle();
 
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
@@ -42,9 +44,13 @@ const HelpCenterFeedbackForm = ( {
 			post_id: postId,
 		} );
 
-		if ( userRating !== undefined ) {
-			rateArticle( { blogId, postId, rating: value } );
-		}
+		rateArticle(
+			{ blogId, postId, rating: value, persist: userRating !== undefined },
+			{
+				// The server keeps the first rating, so show that one if this click lost the race.
+				onSuccess: ( { user_rating } ) => setRating( user_rating ),
+			}
+		);
 	};
 
 	const FeedbackButtons = () => {

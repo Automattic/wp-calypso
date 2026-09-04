@@ -1,12 +1,17 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import type { ArticleRating, PostObject } from '../types';
+import type { ArticleRating } from '../types';
 
 type RateArticleVariables = {
 	blogId: number;
 	postId: number;
 	rating: ArticleRating;
+	/**
+	 * Whether the server can store the rating. False for logged-out users, who have no
+	 * server identity: their rating is then only remembered for this page session.
+	 */
+	persist: boolean;
 };
 
 type RateArticleResponse = {
@@ -15,18 +20,28 @@ type RateArticleResponse = {
 };
 
 /**
- * Stores the user's "Was this helpful?" answer for a support article on the server,
- * and updates the cached article so reopening it shows the answer instead of the buttons.
+ * Ratings given during this page session, so reopening an article shows the answer
+ * instead of the buttons even before the article is fetched again.
  */
-export function useRateArticle() {
-	const queryClient = useQueryClient();
+const sessionRatings = new Map< number, ArticleRating >();
 
+export function getSessionRating( postId: number ): ArticleRating | undefined {
+	return sessionRatings.get( postId );
+}
+
+/** Stores the user's "Was this helpful?" answer for a support article. */
+export function useRateArticle() {
 	return useMutation( {
 		mutationFn: ( {
 			blogId,
 			postId,
 			rating,
+			persist,
 		}: RateArticleVariables ): Promise< RateArticleResponse > => {
+			if ( ! persist ) {
+				return Promise.resolve( { user_rating: rating } );
+			}
+
 			const body = { blog_id: blogId, post_id: postId, rating };
 
 			return canAccessWpcomApis()
@@ -42,10 +57,11 @@ export function useRateArticle() {
 						data: body,
 				  } );
 		},
+		onMutate: ( { postId, rating } ) => {
+			sessionRatings.set( postId, rating );
+		},
 		onSuccess: ( { user_rating }, { postId } ) => {
-			queryClient.setQueriesData< PostObject >( { queryKey: [ 'support-status' ] }, ( post ) =>
-				post?.ID === postId ? { ...post, user_rating } : post
-			);
+			sessionRatings.set( postId, user_rating );
 		},
 	} );
 }
