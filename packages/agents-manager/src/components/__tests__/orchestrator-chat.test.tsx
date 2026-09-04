@@ -10,6 +10,7 @@ import type { ComponentProps } from 'react';
 const mockUseAgentChat = jest.fn();
 const mockUpdateSessionId = jest.fn();
 let mockManagerHasAgent = true;
+let mockManagerTurnInFlight = false;
 let mockAgentChatConfig: { onTaskUpdate?: ( update: TaskUpdate ) => Promise< void > } | undefined;
 let mockConversationConfig:
 	| {
@@ -292,6 +293,7 @@ jest.mock(
 		getAgentManager: () => ( {
 			updateSessionId: mockUpdateSessionId,
 			hasAgent: () => mockManagerHasAgent,
+			isTurnInFlight: () => mockManagerTurnInFlight,
 		} ),
 		useAgentChat: ( config: typeof mockAgentChatConfig ) => {
 			mockAgentChatConfig = config;
@@ -649,6 +651,7 @@ describe( 'OrchestratorChat', () => {
 		mockBlockEditorStoreThrows = false;
 		sessionStorage.clear();
 		mockManagerHasAgent = true;
+		mockManagerTurnInFlight = false;
 		mockHasEditorRedo = false;
 		mockOpenPost = null;
 		mockEditorBlocks = [];
@@ -701,11 +704,14 @@ describe( 'OrchestratorChat', () => {
 			autoSubmit: false,
 			suggestionId: 'simplify-text',
 		} );
-		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestion_click', {
-			suggestion_text: 'Simplify this text to make it easier to read',
-			suggestion_id: 'simplify-text',
-			available_suggestions: '|simplify-text|',
-		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestion_click',
+			{
+				suggestion_text: 'Simplify this text to make it easier to read',
+				suggestion_id: 'simplify-text',
+				available_suggestions: '|simplify-text|',
+			}
+		);
 
 		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
 	} );
@@ -731,11 +737,14 @@ describe( 'OrchestratorChat', () => {
 			suggestionId: 'ai-editorial-review',
 		} );
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
-		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestion_click', {
-			suggestion_text: 'Run an AI Editorial Review',
-			suggestion_id: 'ai-editorial-review',
-			available_suggestions: '|ai-editorial-review|',
-		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestion_click',
+			{
+				suggestion_text: 'Run an AI Editorial Review',
+				suggestion_id: 'ai-editorial-review',
+				available_suggestions: '|ai-editorial-review|',
+			}
+		);
 
 		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
 	} );
@@ -775,7 +784,7 @@ describe( 'OrchestratorChat', () => {
 			suggestionId: 'weekly-brief',
 		} );
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
-			'chat_suggestion_click',
+			'jetpack_big_sky_chat_suggestion_click',
 			expect.objectContaining( { suggestion_id: 'weekly-brief' } )
 		);
 
@@ -806,12 +815,15 @@ describe( 'OrchestratorChat', () => {
 		fireEvent.click( screen.getByText( 'Click block suggestion' ) );
 
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
-		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestion_click', {
-			suggestion_text: 'Check the grammar and spelling of this text',
-			suggestion_id: 'check-grammar',
-			available_suggestions: '|check-grammar|',
-			block_type: 'core/paragraph',
-		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestion_click',
+			{
+				suggestion_text: 'Check the grammar and spelling of this text',
+				suggestion_id: 'check-grammar',
+				available_suggestions: '|check-grammar|',
+				block_type: 'core/paragraph',
+			}
+		);
 		expect( ( listener.mock.calls[ 0 ][ 0 ] as CustomEvent ).detail ).toEqual( {
 			value: 'Check the grammar and spelling of this text',
 			autoSubmit: false,
@@ -828,7 +840,7 @@ describe( 'OrchestratorChat', () => {
 		fireEvent.click( screen.getByText( 'Click suggestion' ) );
 
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
-			'chat_suggestion_click',
+			'jetpack_big_sky_chat_suggestion_click',
 			expect.objectContaining( { suggestion_id: 'simplify-text' } )
 		);
 	} );
@@ -864,13 +876,16 @@ describe( 'OrchestratorChat', () => {
 		fireEvent.click( screen.getByText( 'Click block dropdown suggestion' ) );
 
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
-		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestion_click', {
-			suggestion_text: 'Change the tone of this text to be more formal',
-			suggestion_id: 'change-tone',
-			available_suggestions: '|change-tone|',
-			option_id: 'formal',
-			block_type: 'core/paragraph',
-		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestion_click',
+			{
+				suggestion_text: 'Change the tone of this text to be more formal',
+				suggestion_id: 'change-tone',
+				available_suggestions: '|change-tone|',
+				option_id: 'formal',
+				block_type: 'core/paragraph',
+			}
+		);
 		expect( ( listener.mock.calls[ 0 ][ 0 ] as CustomEvent ).detail ).toEqual( {
 			value: 'Change the tone of this text to be more formal',
 			autoSubmit: false,
@@ -887,12 +902,15 @@ describe( 'OrchestratorChat', () => {
 		fireEvent.click( screen.getByText( 'Click post dropdown suggestion' ) );
 
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
-		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestion_click', {
-			suggestion_text: 'Generate an SEO title for this post',
-			suggestion_id: 'seo-enhancer',
-			available_suggestions: '|seo-enhancer|',
-			option_id: 'seo-title',
-		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestion_click',
+			{
+				suggestion_text: 'Generate an SEO title for this post',
+				suggestion_id: 'seo-enhancer',
+				available_suggestions: '|seo-enhancer|',
+				option_id: 'seo-title',
+			}
+		);
 	} );
 
 	it( 'records the option when the click carries no available suggestions', () => {
@@ -912,12 +930,15 @@ describe( 'OrchestratorChat', () => {
 
 		fireEvent.click( screen.getByText( 'Click feedback dropdown without context' ) );
 
-		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestion_click', {
-			suggestion_text: 'Proofread this saved post',
-			suggestion_id: 'get-feedback',
-			available_suggestions: '|get-feedback|',
-			option_id: 'proofread-content',
-		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestion_click',
+			{
+				suggestion_text: 'Proofread this saved post',
+				suggestion_id: 'get-feedback',
+				available_suggestions: '|get-feedback|',
+				option_id: 'proofread-content',
+			}
+		);
 	} );
 
 	it( 'passes the floating suggestion limit to external providers', () => {
@@ -954,12 +975,15 @@ describe( 'OrchestratorChat', () => {
 		rerender( chat( { useSuggestions } ) );
 		fireEvent.click( screen.getByText( 'Click block suggestion' ) );
 
-		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith( 'chat_suggestion_click', {
-			suggestion_text: 'Check the grammar and spelling of this text',
-			suggestion_id: 'check-grammar',
-			available_suggestions: '|check-grammar|',
-			block_type: 'core/heading',
-		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith(
+			'jetpack_big_sky_chat_suggestion_click',
+			{
+				suggestion_text: 'Check the grammar and spelling of this text',
+				suggestion_id: 'check-grammar',
+				available_suggestions: '|check-grammar|',
+				block_type: 'core/heading',
+			}
+		);
 	} );
 
 	it( 'keeps showing the provider suggestions in the empty view after the store is cleared', () => {
@@ -1084,10 +1108,13 @@ describe( 'OrchestratorChat', () => {
 		expect( screen.queryByText( 'Proofread' ) ).toBeNull();
 		expect( screen.getByText( 'Change tone' ) ).toBeTruthy();
 		expect( screen.getByText( 'Check grammar' ) ).toBeTruthy();
-		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestions_rendered', {
-			suggestions: '|change-tone|check-grammar|',
-			block_type: 'core/paragraph',
-		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestions_rendered',
+			{
+				suggestions: '|change-tone|check-grammar|',
+				block_type: 'core/paragraph',
+			}
+		);
 	} );
 
 	it( 'tracks the same contextual suggestions again when the selected block type changes', () => {
@@ -1104,20 +1131,26 @@ describe( 'OrchestratorChat', () => {
 
 		const { rerender } = render( chat( { useSuggestions } ) );
 
-		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith( 'chat_suggestions_rendered', {
-			suggestions: '|change-tone|check-grammar|',
-			block_type: 'core/paragraph',
-		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith(
+			'jetpack_big_sky_chat_suggestions_rendered',
+			{
+				suggestions: '|change-tone|check-grammar|',
+				block_type: 'core/paragraph',
+			}
+		);
 		rerender( chat( { useSuggestions } ) );
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
 
 		mockSelectedBlockType = 'core/heading';
 		rerender( chat( { useSuggestions } ) );
 
-		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith( 'chat_suggestions_rendered', {
-			suggestions: '|change-tone|check-grammar|',
-			block_type: 'core/heading',
-		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith(
+			'jetpack_big_sky_chat_suggestions_rendered',
+			{
+				suggestions: '|change-tone|check-grammar|',
+				block_type: 'core/heading',
+			}
+		);
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 2 );
 	} );
 
@@ -1163,9 +1196,12 @@ describe( 'OrchestratorChat', () => {
 
 		render( chat( { emptyViewSuggestions: staticDefaults } ) );
 
-		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestions_rendered', {
-			suggestions: '|getting-started|',
-		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestions_rendered',
+			{
+				suggestions: '|getting-started|',
+			}
+		);
 	} );
 
 	it( 'tracks suggestions without block context when the block editor store is unavailable', () => {
@@ -1181,9 +1217,12 @@ describe( 'OrchestratorChat', () => {
 
 		render( chat( { useSuggestions } ) );
 
-		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestions_rendered', {
-			suggestions: '|check-grammar|',
-		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestions_rendered',
+			{
+				suggestions: '|check-grammar|',
+			}
+		);
 	} );
 
 	it( 'does not track chat_suggestions_rendered while the conversation is loading', () => {
@@ -1196,7 +1235,7 @@ describe( 'OrchestratorChat', () => {
 
 		expect( screen.queryByText( 'Getting started with WordPress' ) ).toBeNull();
 		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
-			'chat_suggestions_rendered',
+			'jetpack_big_sky_chat_suggestions_rendered',
 			expect.anything()
 		);
 	} );
@@ -1212,7 +1251,7 @@ describe( 'OrchestratorChat', () => {
 
 		expect( screen.queryByText( 'Getting started with WordPress' ) ).toBeNull();
 		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
-			'chat_suggestions_rendered',
+			'jetpack_big_sky_chat_suggestions_rendered',
 			expect.anything()
 		);
 	} );
@@ -1246,9 +1285,12 @@ describe( 'OrchestratorChat', () => {
 
 		await waitFor( () => {
 			expect( uploadImagesToWordPress ).toHaveBeenCalled();
-			expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'file_upload_success', {
-				count: 2,
-			} );
+			expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+				'jetpack_big_sky_file_upload_success',
+				{
+					count: 2,
+				}
+			);
 		} );
 	} );
 
@@ -1302,9 +1344,12 @@ describe( 'OrchestratorChat', () => {
 		fireEvent.click( screen.getByText( 'Submit message' ) );
 
 		await waitFor( () => {
-			expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'file_upload_cancel', {
-				count: 1,
-			} );
+			expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+				'jetpack_big_sky_file_upload_cancel',
+				{
+					count: 1,
+				}
+			);
 		} );
 		expect( onSubmit ).not.toHaveBeenCalled();
 	} );
@@ -1326,7 +1371,7 @@ describe( 'OrchestratorChat', () => {
 				'Failed to upload images. Please try again.'
 			);
 		} );
-		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'file_upload_error', {
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'jetpack_big_sky_file_upload_error', {
 			count: 1,
 		} );
 		expect( onSubmit ).not.toHaveBeenCalled();
@@ -1425,7 +1470,7 @@ describe( 'OrchestratorChat', () => {
 			expect( uploadImagesToWordPress ).toHaveBeenCalledTimes( 1 );
 		} );
 		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
-			'file_upload_error',
+			'jetpack_big_sky_file_upload_error',
 			expect.anything()
 		);
 	} );
@@ -1445,7 +1490,7 @@ describe( 'OrchestratorChat', () => {
 
 		expect( uploadImagesToWordPress ).not.toHaveBeenCalled();
 		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
-			'chat_input_send_message',
+			'jetpack_big_sky_chat_input_send_message',
 			expect.anything()
 		);
 	} );
@@ -2219,7 +2264,7 @@ describe( 'OrchestratorChat', () => {
 		expect( actionAfterDrift?.componentProps ).not.toHaveProperty( 'onRedo' );
 		expect( checkpoint.swapCheckpoint ).not.toHaveBeenCalled();
 		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
-			'restore_checkpoint_action',
+			'jetpack_big_sky_restore_checkpoint_action',
 			expect.objectContaining( { id: 'editor-drift-checkpoint', outcome: 'failed' } )
 		);
 

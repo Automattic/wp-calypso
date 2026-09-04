@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { logBuildWowEvent, requestBuildWowSite } from 'calypso/landing/stepper/utils/build-wow';
 import { pollForBuildWowStatus } from './build-status-poller';
+import { getLiveEditorUrl } from './editor-url';
 import type { BuildWowUi } from './build-status-poller';
 import type { BuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
 
@@ -89,7 +90,8 @@ export function useSiteGeneration( {
 		);
 		const stopStatusPolling = pollForBuildWowStatus( {
 			siteIdentifier,
-			onReady: () => window.location.assign( editorUrl ),
+			onReady: ( response ) =>
+				window.location.assign( getLiveEditorUrl( editorUrl, response.site_editor_url ) ),
 			onFailed: ( status, ui ) => {
 				logBuildWowEvent( 'site_generation_failed', {
 					status,

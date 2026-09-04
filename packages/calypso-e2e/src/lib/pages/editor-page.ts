@@ -134,6 +134,46 @@ function getResponseDiagnostic( response: Response | null, action: string ): Res
 	return diagnostic;
 }
 
+const ENTITIES_PANEL_SAVE_TIMEOUT = 30 * 1000;
+// Publishing through the multi-entity save panel takes ~16s: a 5s wait on the publish panel that
+// never opens, the entity save, then the publish itself. The 10s `actionTimeout` from
+// playwright.config.ts, which is what an omitted timeout falls back to, cuts that short.
+const PUBLISH_TIMEOUT = 30 * 1000;
+
+// The first pattern matches Atomic requests, the second Simple ones.
+const atomicPublishURL = /v2\/(posts|pages)\/[\d]+/;
+const simplePublishURL = /v2\/sites\/[\d]+\/(posts|pages)\/[\d]+/;
+const draftStatuses = [ 'draft', 'auto-draft' ];
+
+/**
+ * Whether a response is the one that published the article.
+ *
+ * Saving a draft hits the same endpoint with the same verb as publishing, so the status in the
+ * body is what tells them apart. Without that check a multi-entity save resolves the publish
+ * wait and the test goes on to validate an unpublished article.
+ */
+async function isPublishResponse( response: Response ): Promise< boolean > {
+	const url = response.url();
+	const method = response.request().method();
+	const isPublishRequest =
+		( atomicPublishURL.test( url ) && method === 'POST' ) ||
+		( simplePublishURL.test( url ) && method === 'PUT' );
+
+	if ( ! isPublishRequest || /\/autosaves/.test( url ) ) {
+		return false;
+	}
+
+	try {
+		const json = ( await response.json() ) as PublishResponseBody;
+		const status = ( json.body ?? json ).status;
+
+		return ! status || ! draftStatuses.includes( status );
+	} catch {
+		// A body that cannot be read tells nothing either way; keep the URL/verb match.
+		return true;
+	}
+}
+
 /**
  * Extracts the publish response fields needed to debug public 404s after publish.
  */
@@ -1100,10 +1140,22 @@ export class EditorPage {
 	 */
 	async publish( {
 		visit = false,
-		timeout,
+		timeout = PUBLISH_TIMEOUT,
 	}: { visit?: boolean; timeout?: number } = {} ): Promise< URL > {
 		const actionsArray = [];
 		await this.editorToolbarComponent.waitForPublishButton();
+
+		let publishedAtMs: number | undefined;
+		let published = false;
+		const publishResponsePromise = this.page
+			.waitForResponse( isPublishResponse, { timeout: timeout } )
+			.then( ( publishResponse ) => {
+				// Captured the moment the publish response arrives, before the remaining
+				// publish-panel actions settle, so the probe measures the full window.
+				publishedAtMs = Date.now();
+				published = true;
+				return publishResponse;
+			} );
 
 		// Every publish action requires at least one click on the EditorToolbarComponent.
 		actionsArray.push( this.editorToolbarComponent.clickPublish() );
@@ -1122,39 +1174,29 @@ export class EditorPage {
 				const saveButton = editorParent.locator(
 					'.entities-saved-states__panel button:has-text("Save")'
 				);
-				if ( await saveButton.isVisible( { timeout: 2000 } ).catch( () => false ) ) {
-					await saveButton.click();
+				if ( ! ( await saveButton.isVisible( { timeout: 2000 } ).catch( () => false ) ) ) {
+					return;
 				}
+
+				await saveButton.click();
+				await saveButton.waitFor( { state: 'hidden', timeout: ENTITIES_PANEL_SAVE_TIMEOUT } );
+
+				// That panel only saves; it leaves the post a draft. Whether it lists the post at
+				// all depends on an autosave having flushed the post's edits first, so neither the
+				// draft save nor its absence means the article got published: run the publish now.
+				if ( published ) {
+					return;
+				}
+
+				if ( ! ( await this.editorPublishPanelComponent.panelIsOpen() ) ) {
+					await this.editorToolbarComponent.clickPublish();
+				}
+				await this.editorPublishPanelComponent.publish();
 			} )()
 		);
 
 		// Resolve the promises.
-		let publishedAtMs: number | undefined;
-		const [ response ] = await Promise.all( [
-			// First URL matches Atomic requests while the second matches Simple requests.
-			Promise.race( [
-				this.page.waitForResponse(
-					async ( response ) =>
-						/v2\/(posts|pages)\/[\d]+/.test( response.url() ) &&
-						! /v2\/(posts|pages)\/[\d]+\/autosaves/.test( response.url() ) &&
-						response.request().method() === 'POST',
-					{ timeout: timeout }
-				),
-				this.page.waitForResponse(
-					async ( response ) =>
-						/v2\/sites\/[\d]+\/(posts|pages)\/[\d]+/.test( response.url() ) &&
-						! /v2\/sites\/[\d]+\/(posts|pages)\/[\d]+\/autosaves/.test( response.url() ) &&
-						response.request().method() === 'PUT',
-					{ timeout: timeout }
-				),
-			] ).then( ( publishResponse ) => {
-				// Captured the moment the publish response arrives, before the remaining
-				// publish-panel actions settle, so the probe measures the full window.
-				publishedAtMs = Date.now();
-				return publishResponse;
-			} ),
-			...actionsArray,
-		] );
+		const [ response ] = await Promise.all( [ publishResponsePromise, ...actionsArray ] );
 
 		const json = ( await response.json() ) as PublishResponseBody;
 		// AT and Simple sites have slightly differing response from the API.

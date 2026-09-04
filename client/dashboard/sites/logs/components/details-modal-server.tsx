@@ -1,10 +1,10 @@
-import { Badge } from '@automattic/ui';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useLocale } from '../../../app/locale';
 import { getUtcOffsetDisplay } from '../../../utils/datetime';
-import { formatLogDateTimeForDisplay } from '../utils';
+import { formatLogDateTimeForDisplay, toRequestTypeIntent } from '../utils';
 import type { ServerLog, ServerData } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 import './style.scss';
@@ -60,9 +60,7 @@ export default function DetailsModalServer( {
 			label: __( 'Request Type' ),
 			type: 'text',
 			render: ( { item }: { item: ServerData } ) => (
-				<Badge intent="default" className={ `badge--${ item.request_type }` }>
-					{ item.request_type }
-				</Badge>
+				<Badge intent={ toRequestTypeIntent( item.request_type ) }>{ item.request_type }</Badge>
 			),
 			readOnly: true,
 		},

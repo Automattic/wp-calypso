@@ -32,6 +32,8 @@ declare const agentsManagerData:
 			isA11n?: boolean;
 			/** Whether the site is WordPress.com-hosted (Simple/WoA). */
 			isWpcomPlatform?: boolean;
+			/** The deployed bundle build, as `{variant}:{version}`. */
+			version?: string;
 			/** The site's canonical identity; injected on wp-admin only. */
 			site?: { ID?: number; domain?: string };
 			emptyViewHeading?: string;
@@ -112,6 +114,14 @@ interface AgentsManagerExternalContextCard {
 interface AgentsManagerActions {
 	getChatState: () => Promise< AgentsManagerChatState >;
 	getSessionId: () => string;
+	/**
+	 * Records a Tracks event in the `jetpack_big_sky_` family with its base
+	 * props. `eventName` includes the family prefix.
+	 */
+	recordBigSkyTracksEvent?: (
+		eventName: import('./utils/tracks').BigSkyEventName,
+		props?: Record< string, unknown >
+	) => void;
 	setChatOpen: ( isOpen: boolean ) => void;
 	setChatDocked: ( isDocked: boolean ) => void;
 	setChatEnabled: ( isEnabled: boolean ) => void;
@@ -137,6 +147,15 @@ interface AgentsManagerActions {
 	 * instead of waiting for the `agents-manager-ready` event.
 	 */
 	isReady?: boolean;
+	/**
+	 * Set to `true` by builds that broadcast the agent's activity as window
+	 * events — `agents-manager-turn-started`, `agents-manager-turn-ended` and
+	 * `agents-manager-ability-completed`; see `utils/agent-activity-events.ts`.
+	 * A host that acts on the agent's silence (Big Sky's easy mode writes over
+	 * edits it can attribute to nobody) must check this first: against a build
+	 * without it, the agent is always silent.
+	 */
+	broadcastsAgentActivity?: boolean;
 }
 
 /**
@@ -144,6 +163,8 @@ interface AgentsManagerActions {
  */
 interface Window {
 	__agentsManagerActions?: AgentsManagerActions;
+	/** Build commit injected by Calypso's server-rendered document; absent on widgets.wp.com bundles. */
+	COMMIT_SHA?: string;
 	/** Big Sky injects this on editor surfaces. Narrowed to the fields AM consumes. */
 	bigSkyInitialState?: {
 		bigSkyVersion?: string;

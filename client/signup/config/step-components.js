@@ -27,7 +27,6 @@ const stepNameToModuleName = {
 	'plans-site-selected': 'plans',
 	'plans-site-selected-legacy': 'plans',
 	'plans-affiliate': 'plans',
-	site: 'site',
 	'rewind-were-backing': 'rewind-were-backing',
 	'rewind-form-creds': 'rewind-form-creds',
 	'site-or-domain': 'site-or-domain',

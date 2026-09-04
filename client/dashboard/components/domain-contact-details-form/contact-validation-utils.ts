@@ -1,3 +1,5 @@
+import { CA_FIELD_TO_API_KEY_MAP } from './ca-contact-fields';
+import { FR_FIELD_TO_API_KEY_MAP } from './fr-contact-fields';
 import { UK_FIELD_TO_API_KEY_MAP } from './uk-contact-fields';
 import type {
 	ContactValidationResponseMessages,
@@ -124,10 +126,16 @@ export const mapValidationMessagesToFieldErrors = (
 	// ccTLD errors are keyed by their dotted path (`extra.uk.registrant_type`)
 	// rather than nested under `extra`, so they need a separate lookup.
 	const rawMessages = messages as RawContactValidationResponseMessages;
-	for ( const [ fieldId, apiKey ] of Object.entries( UK_FIELD_TO_API_KEY_MAP ) ) {
-		const messagesForField = rawMessages[ apiKey ];
-		if ( Array.isArray( messagesForField ) && messagesForField.length > 0 ) {
-			fieldErrors[ fieldId ] = messagesForField[ 0 ];
+	for ( const map of [
+		UK_FIELD_TO_API_KEY_MAP,
+		FR_FIELD_TO_API_KEY_MAP,
+		CA_FIELD_TO_API_KEY_MAP,
+	] ) {
+		for ( const [ fieldId, apiKey ] of Object.entries( map ) ) {
+			const messagesForField = rawMessages[ apiKey ];
+			if ( Array.isArray( messagesForField ) && messagesForField.length > 0 ) {
+				fieldErrors[ fieldId ] = messagesForField[ 0 ];
+			}
 		}
 	}
 

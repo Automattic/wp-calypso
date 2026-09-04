@@ -13,7 +13,7 @@ import { getCurrentDashboard } from '../../app/routing';
 import { Callout } from '../../components/callout';
 import { TextBlur } from '../../components/text-blur';
 import UpsellCTAButton from '../../components/upsell-cta-button';
-import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { dashboardLink, redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { DomainUpsellIllustraction } from './upsell-illustration';
 import type { Site } from '@automattic/api-core';
 
@@ -102,6 +102,8 @@ const DomainUpsellCardContent = ( {
 		getDomainAndPlanUpsellUrl( {
 			siteSlug: site.slug,
 			backUrl,
+			// Literal template to avoid pulling the dashboard router into tests.
+			domainConnectionSetupUrl: dashboardLink( '/domains/%s/domain-connection-setup' ),
 		} )
 	);
 

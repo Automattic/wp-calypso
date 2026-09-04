@@ -113,7 +113,7 @@ export function ActivityActor( { actor }: { actor?: ActivityActorDetails } ) {
 	const mcpIndicator = getMcpIndicator( actor );
 
 	return (
-		<HStack spacing="2" alignment="left" className="site-activity-logs__actor">
+		<HStack spacing="2" alignment="topLeft" className="site-activity-logs__actor">
 			{ icon }
 			<span>
 				{ label }

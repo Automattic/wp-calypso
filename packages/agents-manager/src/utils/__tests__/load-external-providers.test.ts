@@ -2,8 +2,12 @@
  * @jest-environment jsdom
  */
 import { amToolProvider } from '../../abilities';
+import { getBlockTreeAbility } from '../../abilities/get-block-tree';
 import { restoreCheckpointAbility } from '../../abilities/restore-checkpoint';
+import { setSiteLogoAbility } from '../../abilities/set-site-logo';
 import { showComponentAbility } from '../../abilities/show-component';
+import { showTemplateAbility } from '../../abilities/show-template';
+import { wpAdminNavigateAbility } from '../../abilities/wp-admin-navigate';
 import * as canvasBinding from '../canvas-binding';
 import { getAvailableCheckpoints } from '../checkpoints';
 import {
@@ -11,6 +15,7 @@ import {
 	mergeCapabilitiesInto,
 	mergeUseSuggestionsHooks,
 } from '../load-external-providers';
+import { getLoadedProviderIds, setLoadedProviderIds } from '../loaded-provider-ids';
 import {
 	getProviderCheckpointObservedAt,
 	getProviderCheckpointRecords,
@@ -168,6 +173,7 @@ describe( 'loadExternalProviders', () => {
 		window.history.replaceState( {}, '', '/' );
 		delete ( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData;
 		delete ( window as typeof window & { agentsManagerData?: unknown } ).agentsManagerData;
+		setLoadedProviderIds( undefined );
 	} );
 
 	it( 'does not merge external editor providers into Reader Chat', async () => {
@@ -193,6 +199,28 @@ describe( 'loadExternalProviders', () => {
 		setAgentsManagerData( { agentProviders } );
 
 		await expect( loadExternalProviders() ).resolves.toEqual( {} );
+		expect( getLoadedProviderIds() ).toEqual( [] );
+	} );
+
+	it( 'publishes the loaded provider ids for the Tracks wrappers', async () => {
+		setAgentsManagerData( {
+			agentProviders: [ { providerId: 'jetpack-ai' }, { providerId: 'woocommerce-ai' } ],
+		} );
+
+		await loadExternalProviders();
+
+		expect( getLoadedProviderIds() ).toEqual( [ 'jetpack-ai', 'woocommerce-ai' ] );
+	} );
+
+	it( 'publishes an empty provider list for Reader Chat', async () => {
+		setAgentsManagerData( {
+			agentId: 'reader-chat',
+			agentProviders: [ { providerId: 'jetpack-ai' } ],
+		} );
+
+		await loadExternalProviders();
+
+		expect( getLoadedProviderIds() ).toEqual( [] );
 	} );
 
 	it( 'merges abilities from multiple tool providers and dispatches execution to the owner', async () => {
@@ -214,8 +242,12 @@ describe( 'loadExternalProviders', () => {
 
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
+				wpAdminNavigateAbility,
+				getBlockTreeAbility,
 				restoreCheckpointAbility,
+				setSiteLogoAbility,
 				showComponentAbility,
+				showTemplateAbility,
 				createAbility( 'host/navigate' ),
 				createAbility( 'woocommerce/get-products' ),
 			] )
@@ -246,8 +278,12 @@ describe( 'loadExternalProviders', () => {
 
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
+				wpAdminNavigateAbility,
+				getBlockTreeAbility,
 				restoreCheckpointAbility,
+				setSiteLogoAbility,
 				showComponentAbility,
+				showTemplateAbility,
 				createAbility( 'shared/action' ),
 			] )
 		);
@@ -305,9 +341,11 @@ describe( 'loadExternalProviders', () => {
 
 		const providers = await loadExternalProviders();
 
-		await expect( providers.toolProvider?.getAbilities() ).resolves.toEqual( [
-			createAbility( 'big-sky/show-component' ),
-		] );
+		// Editor abilities flip to the provider copy; the fully migrated
+		// all-surface abilities stay AM's.
+		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
+			abilityShapes( [ wpAdminNavigateAbility, createAbility( 'big-sky/show-component' ) ] )
+		);
 		await expect(
 			providers.toolProvider?.executeAbility( 'big_sky__show_component', {} )
 		).resolves.toEqual( { handledBy: 'big-sky' } );
@@ -332,8 +370,12 @@ describe( 'loadExternalProviders', () => {
 
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
+				wpAdminNavigateAbility,
+				getBlockTreeAbility,
 				restoreCheckpointAbility,
+				setSiteLogoAbility,
 				showComponentAbility,
+				showTemplateAbility,
 				createAbility( 'host/navigate' ),
 			] )
 		);
@@ -805,8 +847,12 @@ describe( 'loadExternalProviders', () => {
 
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
+				wpAdminNavigateAbility,
+				getBlockTreeAbility,
 				restoreCheckpointAbility,
+				setSiteLogoAbility,
 				showComponentAbility,
+				showTemplateAbility,
 				createAbility( 'big-sky/apply-block-edits' ),
 				createAbility( 'wpcom/manage-site' ),
 			] )

@@ -13,8 +13,10 @@
 		display: inline-block;
 	}
 
-	a,
-	a:visited {
+	// Inline links only. A `Button` given an `href` renders as an anchor and brings its own
+	// colours, so leaving it in here paints the primary button's label dark on its accent fill.
+	a:not(.components-button),
+	a:not(.components-button):visited {
 		color: var(--studio-gray-80);
 	}
 

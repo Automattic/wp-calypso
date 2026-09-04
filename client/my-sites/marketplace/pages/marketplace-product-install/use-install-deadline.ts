@@ -1,13 +1,13 @@
 import { siteLatestAtomicTransferQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
+import { parseTransferCreatedAt } from 'calypso/components/transfer-wait/transfer-created-at';
 import {
 	createRevertedTransferWatcher,
 	isRevertedTransferStatus,
 	transferStates,
 } from 'calypso/landing/stepper/utils/atomic-transfer-outcome';
 import { useInterval } from 'calypso/lib/interval';
-import { parseTransferCreatedAt } from './transfer-created-at';
 import type { AtomicTransfer } from '@automattic/api-core';
 
 // Matches the wait in Stepper's useWaitForAtomic (1000 * 300), so both places give up on a transfer

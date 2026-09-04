@@ -1,10 +1,10 @@
-import { Badge } from '@automattic/ui';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useLocale } from '../../../app/locale';
 import { getUtcOffsetDisplay } from '../../../utils/datetime';
-import { formatLogDateTimeForDisplay, toSeverityClass } from '../utils';
+import { formatLogDateTimeForDisplay, toSeverityIntent } from '../utils';
 import type { PHPLog, PHPData } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 import './style.scss';
@@ -65,9 +65,7 @@ export default function DetailsModalPHP( {
 			label: __( 'Severity' ),
 			type: 'text',
 			render: ( { item }: { item: PHPData } ) => (
-				<Badge intent="default" className={ `badge--${ toSeverityClass( item.severity ) }` }>
-					{ item.severity }
-				</Badge>
+				<Badge intent={ toSeverityIntent( item.severity ) }>{ item.severity }</Badge>
 			),
 			readOnly: true,
 		},

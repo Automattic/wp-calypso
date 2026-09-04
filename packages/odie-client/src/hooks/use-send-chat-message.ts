@@ -11,7 +11,7 @@ export const useSendChatMessage = () => {
 	const { addMessage, odieBroadcastClientId, chat } = useOdieAssistantContext();
 
 	const [ abortController, setAbortController ] = useState< AbortController >(
-		new AbortController()
+		() => new AbortController()
 	);
 	const { mutateAsync: sendOdieMessage } = useSendOdieMessage( abortController.signal );
 	const { mutateAsync: sendZendeskMessage } = useSendZendeskMessage( abortController.signal );

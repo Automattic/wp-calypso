@@ -7,6 +7,7 @@ import {
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	isAnyHostingFlow,
 	isNewsletterFlow,
+	isTransferringHostedSiteCreationFlow,
 	Step,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -14,8 +15,10 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
+import TransferWaitCard from 'calypso/components/transfer-wait/card';
 import availableFlows from 'calypso/landing/stepper/declarative-flow/registered-flows';
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
+import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordSignupProcessingScreen } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -32,6 +35,29 @@ import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { SiteIntent } from '@automattic/data-stores/src/onboard';
 import './style.scss';
+
+/**
+ * Mounted only for transfer flows, so the site request behind `useSiteData` stays out of every
+ * other flow's processing screen. The slug is what lets a stalled wait offer a way to the site.
+ */
+function SiteTransferWait( {
+	transferStatus,
+	startedAt,
+}: {
+	transferStatus: string | null;
+	startedAt: number | null;
+} ) {
+	const { siteSlug } = useSiteData();
+
+	return (
+		<TransferWaitCard
+			transferStatus={ transferStatus }
+			startedAt={ startedAt }
+			isPluginInstall={ false }
+			siteSlug={ siteSlug }
+		/>
+	);
+}
 
 const ProcessingStep: StepType< {
 	submits:
@@ -108,6 +134,14 @@ const ProcessingStep: StepType< {
 	);
 	const progressTitle = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getProgressTitle(),
+		[]
+	);
+	const transferStatus = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getTransferStatus(),
+		[]
+	);
+	const transferStartedAt = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getTransferStartedAt(),
 		[]
 	);
 
@@ -248,7 +282,11 @@ const ProcessingStep: StepType< {
 		return (
 			<>
 				<DocumentHead title={ __( 'Processing' ) } />
-				<Step.Loading title={ getCurrentMessage() } progress={ progress } delay={ 1000 } />
+				{ isTransferringHostedSiteCreationFlow( flow ) ? (
+					<SiteTransferWait transferStatus={ transferStatus } startedAt={ transferStartedAt } />
+				) : (
+					<Step.Loading title={ getCurrentMessage() } progress={ progress } delay={ 1000 } />
+				) }
 			</>
 		);
 	}

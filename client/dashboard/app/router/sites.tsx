@@ -167,7 +167,11 @@ export const siteRoute = createRoute( {
 		}
 
 		const migrationUrl = `/sites/${ siteSlug }/migration-overview`;
-		if ( isSiteMigrationInProgress( site ) && ! location.pathname.includes( migrationUrl ) ) {
+		if (
+			isSiteMigrationInProgress( site ) &&
+			! isSupportSession() &&
+			! location.pathname.includes( migrationUrl )
+		) {
 			throw dashboardRedirect( { to: migrationUrl } );
 		}
 
@@ -569,6 +573,11 @@ export const siteDomainsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'domains',
+	// Deep link for Calypso's domain management page, which has no dashboard
+	// equivalent for the free address and redirects here instead.
+	validateSearch: ( search ): { action?: 'change-site-address' } => ( {
+		action: search.action === 'change-site-address' ? 'change-site-address' : undefined,
+	} ),
 	loader: async ( { context, params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 

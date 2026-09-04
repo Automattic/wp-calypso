@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import chalk from 'chalk';
-import { BrowserContext, Page } from 'playwright';
+import { BrowserContext, Cookie, Page } from 'playwright';
 import { TestAccountName } from '..';
 import { getAccountSiteURL, getCalypsoURL } from '../data-helper';
 import { EmailClient } from '../email-client';
@@ -9,8 +9,14 @@ import envVariables from '../env-variables';
 import { RestAPIClient } from '../rest-api-client';
 import { SecretsManager } from '../secrets';
 import { TOTPClient } from '../totp-client';
+import { withLoginLock } from './login-lock';
 import { LoginPage } from './pages/login-page';
 import type { TestAccountCredentials } from '../secrets';
+
+// How many times a worker may adopt the cookies another worker saved before logging in
+// for itself: an adopted file can be dead on arrival, and each retry costs a lock hold
+// and a page load.
+const MAX_ADOPTIONS = 2;
 
 /**
  * Represents the WPCOM test account.
@@ -55,39 +61,106 @@ export class TestAccount {
 		const browserContext = page.context();
 		await browserContext.clearCookies();
 
-		const hasFreshCookies = await this.hasFreshAuthCookies();
+		const saved = await this.readFreshAuthCookies();
 
-		if ( hasFreshCookies ) {
+		if ( saved ) {
 			this.log( 'Found fresh cookies, skipping log in' );
-			await browserContext.addCookies( await this.getAuthCookies() );
-			await page.goto( getCalypsoURL( '/' ) );
+			await browserContext.addCookies( saved );
+			await page.goto( getCalypsoURL( '/home' ) );
 		}
 
 		// Freshness is read off the cookie file's age, but the session behind it can be gone
-		// well inside that window, having expired or been invalidated by another run logging
-		// in as the same account. WordPress.com answers a rejected session by redirecting to
-		// the login page, which otherwise surfaces much later as a missing app shell.
-		const cookiesRejected = hasFreshCookies && TestAccount.isLoginPage( page.url() );
+		// well inside that window, having expired. WordPress.com answers a rejected session
+		// by redirecting to the login page, which otherwise surfaces much later as a missing
+		// app shell.
+		const rejected = saved && TestAccount.isLoginPage( page.url() ) ? saved : undefined;
 
-		if ( cookiesRejected ) {
-			this.log( 'Saved cookies were rejected, discarding them' );
-			await browserContext.clearCookies();
-		}
-
-		if ( ! hasFreshCookies || cookiesRejected ) {
-			this.log( 'Logging in via Login Page' );
-			await this.logInViaLoginPage( page );
-		}
-
-		if ( cookiesRejected ) {
-			// Replace the file the rejected cookies came from, so the workers still to
-			// start reuse this session instead of tripping over the same dead one.
-			await this.saveAuthCookies( browserContext );
+		if ( ! saved || rejected ) {
+			if ( rejected ) {
+				this.log( 'Saved cookies were rejected' );
+				await browserContext.clearCookies();
+			}
+			await this.ensureFreshAuthCookies( page, rejected );
 		}
 
 		if ( url ) {
 			await page.waitForURL( url, { timeout: 20 * 1000 } );
 		}
+	}
+
+	/**
+	 * Creates fresh authentication cookies under the account login lock, or adopts cookies
+	 * another worker wrote while this one waited.
+	 *
+	 * @param {Page} page Page object.
+	 * @param {Cookie[]} [rejected] Cookies already known to name a dead session.
+	 */
+	async ensureFreshAuthCookies( page: Page, rejected?: Cookie[] ): Promise< void > {
+		// Each pass adopts a file it has not already rejected, up to the cap. Rejecting the
+		// adopted file before looping is what stops the same dead session being picked twice.
+		for ( let adoptions = 0; ; adoptions++ ) {
+			const adopted = await withLoginLock( this.accountName, async () => {
+				const cookies = await this.readFreshAuthCookies();
+				const isRejected = !! cookies && JSON.stringify( cookies ) === JSON.stringify( rejected );
+
+				if ( cookies && ! isRejected && adoptions < MAX_ADOPTIONS ) {
+					console.log( `Login lock: ${ this.accountName } adopted cookies from another worker.` );
+					await page.context().addCookies( cookies );
+					return cookies;
+				}
+
+				if ( isRejected ) {
+					// Only the file naming the session this worker proved dead. At the cap the
+					// file can hold a live session another worker has just saved.
+					await this.discardAuthCookies();
+				}
+
+				console.log( `Login lock: logging in as ${ this.accountName }.` );
+				await this.logInViaLoginPage( page );
+				await this.confirmLoggedIn( page );
+				await this.saveAuthCookies( page.context() );
+				return undefined;
+			} );
+
+			if ( ! adopted ) {
+				return;
+			}
+
+			await page.goto( getCalypsoURL( '/home' ) );
+			if ( ! TestAccount.isLoginPage( page.url() ) ) {
+				return;
+			}
+
+			await page.context().clearCookies();
+			rejected = adopted;
+		}
+	}
+
+	/**
+	 * Waits out the redirect off the login page.
+	 *
+	 * logInViaLoginPage only waits for a navigation, and a rejected credential navigates too,
+	 * so without this a failed login is saved as a session: the file then looks fresh and
+	 * every other worker adopts a logged-out state. The budget matches the one the blackbox
+	 * spec documents, since the redirect waits on remoteLoginUser's token-link iframes.
+	 */
+	private async confirmLoggedIn( page: Page ): Promise< void > {
+		await page.waitForURL( ( url ) => ! TestAccount.isLoginPage( url.toString() ), {
+			waitUntil: 'commit',
+			timeout: 60 * 1000,
+		} );
+	}
+
+	/**
+	 * Holds the account's login lock while a spec drives a login of its own.
+	 *
+	 * Serialising is all it does: the shared cookie file is left alone, and the session
+	 * this creates does not invalidate the ones already in use.
+	 */
+	async logInExclusively( fn: () => Promise< void > ): Promise< void > {
+		await withLoginLock( this.accountName, async () => {
+			await fn();
+		} );
 	}
 
 	/**
@@ -208,7 +281,7 @@ export class TestAccount {
 	/**
 	 * Checks whether the current account has fresh auth cookies file available or
 	 * not. Authentication cookies are considered to be fresh when they have less
-	 * than 3 days.
+	 * than 2 days.
 	 */
 	async hasFreshAuthCookies(): Promise< boolean > {
 		try {
@@ -231,7 +304,7 @@ export class TestAccount {
 		const cookiesPath = this.getAuthCookiesPath();
 
 		// Parallel workers share one cookie file per account. Writing in place
-		// lets a concurrent reader (getAuthCookies) observe a half-written file
+		// lets a concurrent reader observe a half-written file
 		// and throw a JSON parse error. Write to a per-process temp file and
 		// rename it into place: rename is atomic, so a reader always sees a
 		// complete file (old or new), never a torn one. The renamed file also
@@ -244,14 +317,29 @@ export class TestAccount {
 	}
 
 	/**
-	 * Retrieves previously saved authentication cookies for the current account.
+	 * Removes the account's saved cookie file.
 	 */
-	async getAuthCookies(): Promise< [ { name: string; value: string } ] > {
-		const cookiesPath = this.getAuthCookiesPath();
-		const storageStateFile = await fs.readFile( cookiesPath, { encoding: 'utf8' } );
-		const { cookies } = JSON.parse( storageStateFile );
+	async discardAuthCookies(): Promise< void > {
+		await fs.rm( this.getAuthCookiesPath(), { force: true } );
+	}
 
-		return cookies;
+	/**
+	 * Saved cookies worth reusing, and undefined when the file is missing, stale, empty or
+	 * unreadable.
+	 */
+	private async readFreshAuthCookies(): Promise< Cookie[] | undefined > {
+		if ( ! ( await this.hasFreshAuthCookies() ) ) {
+			return undefined;
+		}
+
+		try {
+			const { cookies } = JSON.parse(
+				await fs.readFile( this.getAuthCookiesPath(), { encoding: 'utf8' } )
+			);
+			return Array.isArray( cookies ) && cookies.length > 0 ? cookies : undefined;
+		} catch {
+			return undefined;
+		}
 	}
 
 	/**

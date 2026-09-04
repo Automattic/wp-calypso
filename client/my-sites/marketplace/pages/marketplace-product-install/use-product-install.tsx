@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useMemo, useRef } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
+import { parseTransferCreatedAt } from 'calypso/components/transfer-wait/transfer-created-at';
 import {
 	isRevertedTransferStatus,
 	transferStates as atomicTransferStates,
@@ -34,6 +35,7 @@ import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/w
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
+import getPluginUploadFile from 'calypso/state/selectors/get-plugin-upload-file';
 import getPluginUploadMethod from 'calypso/state/selectors/get-plugin-upload-method';
 import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-progress';
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
@@ -52,7 +54,6 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import { chooseInstallStrategy } from './install-strategy';
-import { parseTransferCreatedAt } from './transfer-created-at';
 import { useDelayedCondition } from './use-delayed-condition';
 import { INSTALL_DEADLINE_MS, isSettled, useInstallDeadline } from './use-install-deadline';
 import useMarketplaceAdditionalSteps from './use-marketplace-additional-steps';
@@ -145,9 +146,16 @@ export type ProductInstallError =
 	| { type: 'non-installable-plan' }
 	| { type: 'no-direct-access-upload' }
 	| { type: 'theme-direct-install' }
+	| {
+			type: 'plugin-exists';
+			pluginSlug: string;
+			installedVersion?: string;
+			uploadedVersion?: string;
+	  }
 	| { type: 'rejected-upload'; reason: 'exists' | 'malicious' | 'too-big' }
 	| { type: 'transfer-failed' }
 	| { type: 'timeout' }
+	| { type: 'activation-timeout' }
 	| { type: 'generic' };
 
 export type InstallErrorTrackingProps = {
@@ -193,6 +201,8 @@ export function useProductInstall( {
 	const uploadedPluginSlug = useSelector( ( state ) =>
 		getUploadedPluginId( state, siteId )
 	) as string;
+	const uploadErrorPluginSlug = pluginUploadError?.plugin_slug;
+	const pluginUploadFile = useSelector( ( state ) => getPluginUploadFile( state, siteId ) );
 	const pluginUploadComplete = useSelector( ( state ) => isPluginUploadComplete( state, siteId ) );
 	// A zip upload that brought the site to Atomic. Its plugin arrives with the transfer rather than
 	// through an install this page dispatched, so the recovery poll is what watches for it — and
@@ -213,6 +223,9 @@ export function useProductInstall( {
 		: marketplacePlugin?.software_slug || marketplacePlugin?.org_slug || pluginSlug;
 	const installedPlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, siteId, installedPluginSlug )
+	);
+	const existingPlugin = useSelector( ( state ) =>
+		uploadErrorPluginSlug ? getPluginOnSite( state, siteId, uploadErrorPluginSlug ) : undefined
 	);
 	const pluginActive = useSelector( ( state ) =>
 		isPluginActive( state, siteId, installedPluginSlug )
@@ -288,11 +301,13 @@ export function useProductInstall( {
 	// product's current status the baseline.
 	const [ installFailureSeen, setInstallFailureSeen ] = useState( false );
 	const previousInstallStatusRef = useRef< string | undefined >( undefined );
+	const hasSucceededRef = useRef( false );
 	const installIdentity = `${ siteId }:${ pluginSlug }:${ themeSlug }`;
 	const installIdentityRef = useRef( installIdentity );
 	const observedInstallStatus = pluginInstallStatus?.status;
 	if ( installIdentityRef.current !== installIdentity ) {
 		installIdentityRef.current = installIdentity;
+		hasSucceededRef.current = false;
 		if ( installFailureSeen ) {
 			setInstallFailureSeen( false );
 		}
@@ -374,6 +389,14 @@ export function useProductInstall( {
 		if ( themeSlug && noDirectAccessError && ! directInstallationAllowed ) {
 			return { type: 'theme-direct-install' };
 		}
+		if ( isPluginUploadFlow && pluginExists && uploadErrorPluginSlug && pluginUploadFile ) {
+			return {
+				type: 'plugin-exists',
+				pluginSlug: uploadErrorPluginSlug,
+				installedVersion: existingPlugin?.version,
+				uploadedVersion: pluginUploadError?.plugin_version,
+			};
+		}
 		if ( pluginExists ) {
 			return { type: 'rejected-upload', reason: 'exists' };
 		}
@@ -436,6 +459,20 @@ export function useProductInstall( {
 	const durableTransferFailed = durableTransferFailedRef.current;
 	const transferHasFailed = hasTransferFailed || durableTransferFailed;
 	const transferTimedOut = ! durableTransferCompleted && ( hasTimedOut || hasTransferTimedOut );
+
+	// The product is on the site and switched on: the wait is over. Latched, because an install does
+	// not un-succeed (the plugin list briefly reads empty while the redirect resolves); reset by the
+	// identity block above so the next product's wait arms from scratch.
+	hasSucceededRef.current =
+		hasSucceededRef.current || ( themeSlug ? isThemeActive : !! installedPlugin && pluginActive );
+	const hasSucceeded = hasSucceededRef.current;
+
+	// A completed transfer ends the transfer deadline, not the wait: activation still has to land.
+	// Restart the deadline for that phase so every wait ends in a verdict.
+	const activationTimedOut = useDelayedCondition(
+		durableTransferCompleted && ! preflightError && ! transferHasFailed && ! hasSucceeded,
+		INSTALL_DEADLINE_MS
+	);
 	const transferLookupGraceElapsed = useDelayedCondition(
 		installStrategy === 'atomic-transfer' &&
 			!! pluginSlug &&
@@ -639,18 +676,10 @@ export function useProductInstall( {
 	if ( ! error && transferTimedOut ) {
 		error = { type: 'timeout' };
 	}
+	if ( ! error && activationTimedOut ) {
+		error = { type: 'activation-timeout' };
+	}
 
-	// The product is on the site and switched on: the wait is over, whatever the redirect below does
-	// next. Retiring it here rather than on unmount is what separates a finished install from a
-	// closed tab — the plugin flow leaves by full-page navigation, which React never sees.
-	//
-	// Latched, because an install does not un-succeed. The plugin list refetches while the redirect
-	// resolves, and the gap where it reads empty would otherwise close this wait and open a second
-	// one that lives for a second.
-	const hasSucceededRef = useRef( false );
-	hasSucceededRef.current =
-		hasSucceededRef.current || ( themeSlug ? isThemeActive : !! installedPlugin && pluginActive );
-	const hasSucceeded = hasSucceededRef.current;
 	const transferAttemptEnded =
 		hasSucceeded || ( !! error && error.type !== 'non-installable-plan' );
 	useEffect( () => {
@@ -689,6 +718,8 @@ export function useProductInstall( {
 			outcome = 'transfer_failed';
 		} else if ( transferTimedOut ) {
 			outcome = 'timeout';
+		} else if ( activationTimedOut ) {
+			outcome = 'activation_timeout';
 		}
 		if ( ! outcome || reportedOutcomeRef.current === outcome ) {
 			return;
@@ -710,6 +741,7 @@ export function useProductInstall( {
 		hasTimedOut,
 		hasTransferTimedOut,
 		transferTimedOut,
+		activationTimedOut,
 		transferHasFailed,
 		themeSlug,
 		installStrategy,
@@ -786,6 +818,7 @@ export function useProductInstall( {
 
 	return {
 		siteId,
+		selectedSiteSlug,
 		currentStep,
 		steps,
 		additionalSteps,

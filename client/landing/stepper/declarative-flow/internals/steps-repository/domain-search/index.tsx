@@ -1,3 +1,4 @@
+import { isMonthly } from '@automattic/calypso-products';
 import { HelpCenter } from '@automattic/data-stores';
 import {
 	isAIBuilderFlow,
@@ -29,6 +30,7 @@ import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { shouldSkipPlansStep } from 'calypso/landing/stepper/utils/preselected-plan';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
@@ -139,12 +141,21 @@ const DomainSearchStep: StepType< {
 	const isCiab = dashboard === 'ciab';
 	const isWooHostingSolutions = queryParams.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
 	const showProgress = useShowOnboardingProgress( isOnboardingFlow( flow ) );
+	// WoW funnel: the site is always transferred to Atomic, so there is no free-subdomain
+	// option to offer — show only a "Set up a domain later" skip control.
+	const isWowFunnel = !! queryParams.get( 'wow_funnel' );
 	const stepCounter = useOnboardingStepCounter( flow, 'domains' );
 
 	const storedSiteTitle = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
 		[]
 	);
+
+	const planCartItem = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+		[]
+	);
+	const shouldHidePlansStep = shouldSkipPlansStep( queryParams, planCartItem );
 
 	// For CIAB sites, prefer the site title over the slug for domain suggestions
 	// since the slug is often randomly generated.
@@ -199,7 +210,12 @@ const DomainSearchStep: StepType< {
 				! isDomainAndPlanFlow( flow ),
 			// AI Website Builder onboarding requires a paid plan, so skipping the
 			// domain doesn't start a free site — drop the "start free" framing.
-			skipSuggestionCopy: getSkipSuggestionCopy( flow, __ ),
+			skipSuggestionCopy: isWowFunnel
+				? { title: __( 'Set up a domain later' ), buttonText: __( 'Set up a domain later' ) }
+				: getSkipSuggestionCopy( flow, __ ),
+			// WoW funnel: hide the free *.wordpress.com subdomain card entirely and offer only
+			// the skip control.
+			hideFreeSubdomainSuggestion: isWowFunnel,
 			includeDotBlogSubdomain:
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&
@@ -214,7 +230,7 @@ const DomainSearchStep: StepType< {
 				! isHundredYearPlanFlow( flow ) &&
 				( isHundredYearDomainFlow( flow ) ? !! query : true ),
 		};
-	}, [ __, flow, isCiab, isWooHostingSolutions, tldQuery, query, allowedTldsProp ] );
+	}, [ __, flow, isCiab, isWooHostingSolutions, isWowFunnel, tldQuery, query, allowedTldsProp ] );
 
 	const { submit } = navigation;
 
@@ -331,12 +347,18 @@ const DomainSearchStep: StepType< {
 			return ! site || ! siteHasPaidPlan( site );
 		}
 
+		// A plan chosen before this step never reaches the shopping cart, so the cart's own
+		// monthly check cannot see it. Monthly plans do not carry the free first year.
+		if ( planCartItem?.product_slug && isMonthly( planCartItem.product_slug ) ) {
+			return false;
+		}
+
 		if ( site || sourceSlug || isHundredYearPlanFlow( flow ) || isHundredYearDomainFlow( flow ) ) {
 			return false;
 		}
 
 		return true;
-	}, [ flow, isCiab, site, sourceSlug ] );
+	}, [ flow, isCiab, site, sourceSlug, planCartItem ] );
 
 	const slots = useMemo( () => {
 		return {
@@ -593,7 +615,12 @@ const DomainSearchStep: StepType< {
 					// high-quality results can fill the limited vertical space.
 					// The empty/initial state keeps the heading on mobile.
 					<>
-						{ showProgress && <OnboardingProgress currentStep="domains" /> }
+						{ showProgress && (
+							<OnboardingProgress
+								currentStep="domains"
+								shouldHidePlansStep={ shouldHidePlansStep }
+							/>
+						) }
 						{ ! ( isMobileViewport && query ) && (
 							<Step.Heading text={ headerText } subText={ subHeaderText } />
 						) }

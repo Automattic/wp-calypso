@@ -1,5 +1,7 @@
 module.exports = {
 	rules: {
+		'wpcalypso/no-conditional-text-nodes-with-siblings': 'error',
+		'wpcalypso/no-return-text-nodes': 'error',
 		'no-restricted-imports': [
 			'error',
 			{
@@ -89,6 +91,7 @@ module.exports = {
 							'!@automattic/browser-data-collector',
 							'!@automattic/omnibar',
 							'!@automattic/posthog',
+							'!@automattic/site-launch-modals',
 							// Please do not add exceptions which pull in Calypso code/concepts.
 							// See docs/package-imports.md for policy.
 						],

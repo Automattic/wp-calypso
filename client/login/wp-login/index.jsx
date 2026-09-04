@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import LoginBlock from 'calypso/blocks/login';
+import PasswordResetSuccessNotice from 'calypso/blocks/login/password-reset-success-notice';
 import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
@@ -380,6 +381,7 @@ export class Login extends Component {
 						isLostPasswordView={ isLostPasswordView }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
 						subHeadingProminent={ this.props.isFromJetpackConnector && ! isLostPasswordView }
+						notice={ <PasswordResetSuccessNotice /> }
 					>
 						{ mainContent }
 					</OneLoginLayout>

@@ -92,6 +92,38 @@ export interface AgencyProfile {
 }
 
 /**
+ * Body of PUT /wpcom/v2/agency/$agencyId/profile.
+ */
+export interface AgencyProfileUpdate {
+	profile_company_name: string;
+	profile_company_email: string;
+	profile_company_website: string;
+	profile_company_bio_description: string;
+	profile_company_logo_url: string;
+	profile_company_landing_page_url: string;
+	profile_company_country: string;
+	profile_listing_is_global: boolean;
+	profile_listing_is_available: boolean;
+	profile_listing_industries: string[];
+	profile_listing_languages_spoken: string[];
+	profile_listing_services: string[];
+	profile_listing_products: string[];
+	profile_budget_budget_lower_range: string;
+}
+
+/**
+ * Response from POST /wpcom/v2/agency/$agencyId/media.
+ */
+export interface AgencyMediaUpload {
+	asset_type: string;
+	attachment_id: number;
+	url: string;
+	mime: string;
+	width: number;
+	height: number;
+}
+
+/**
  * Body of PUT /wpcom/v2/agency/$agencyId/profile/application.
  */
 export interface AgencyPartnerDirectoryApplicationUpdate {
@@ -132,6 +164,9 @@ export interface Agency {
 	};
 	third_party?: null | {
 		pressable?: null | {
+			pressable_id?: number;
+			/** Null for a regular Pressable plan not bought through the A4A marketplace. */
+			a4a_id?: string | null;
 			usage?: null | {
 				start_date?: string;
 				end_date?: string;

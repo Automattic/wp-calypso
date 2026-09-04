@@ -120,6 +120,11 @@ export interface SiteSpecConfig {
 		// `true` shows the site brief dialog in place of the basic spec preview;
 		// `'next'` also shows its socials/attachments sections.
 		siteBrief?: boolean | 'next';
+		// Which link types the brief offers. `'social'` (the widget's default)
+		// is social networks only; `'all'` adds a website link, its preview
+		// card and remove button. Sub-feature of `siteBrief: 'next'` — the
+		// widget ignores it otherwise.
+		links?: 'social' | 'all';
 	};
 	tosConfig?: ToSConfig;
 	placeholder?: string | string[];
@@ -398,6 +403,10 @@ export function getBuildWowSiteSpecConfig( {
 		features: {
 			...defaultConfig.features,
 			siteBrief: 'next',
+			// Social networks only. `'social'` is the widget's default, but pin
+			// it so this flow keeps offering social links and nothing else if
+			// that default ever moves.
+			links: 'social',
 		},
 	};
 }

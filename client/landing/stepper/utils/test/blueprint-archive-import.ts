@@ -4,13 +4,15 @@
 import wpcom from 'calypso/lib/wp';
 import {
 	applyBlueprintSpec,
+	getBlueprintArchiveSiteSpecUrl,
 	getSiteEditorUrl,
 	getStandaloneBlueprintArchiveSlug,
+	waitForAtomicTransferComplete,
 } from '../blueprint-archive-import';
 
 jest.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
-	default: { req: { post: jest.fn() } },
+	default: { req: { post: jest.fn(), get: jest.fn() } },
 } ) );
 
 jest.mock( 'calypso/lib/logstash', () => ( {
@@ -18,6 +20,7 @@ jest.mock( 'calypso/lib/logstash', () => ( {
 } ) );
 
 const mockPost = wpcom.req.post as jest.Mock;
+const mockGet = wpcom.req.get as jest.Mock;
 
 describe( 'getStandaloneBlueprintArchiveSlug', () => {
 	it( 'returns the Blueprint archive slug for a standalone build_dest=wow flow', () => {
@@ -127,37 +130,127 @@ describe( 'getSiteEditorUrl', () => {
 	 */
 	it( 'keeps the redirect relative', () => {
 		const url = getSiteEditorUrl( 'https://example.com/wp-admin/', {
-			startWalkthrough: true,
+			canvasEdit: true,
 		} );
 		const redirect = new URL( url ).searchParams.get( 'redirect_to' );
 
-		expect( redirect ).toBe( '/wp-admin/site-editor.php?blueprint-walkthrough=go&canvas=edit' );
-	} );
-
-	/**
-	 * The flag is how Big Sky knows to open the copy walkthrough instead of
-	 * waiting for the customer to speak first.
-	 */
-	it( 'flags the walkthrough when the spec was applied', () => {
-		expect(
-			getSiteEditorUrl( 'https://example.com/wp-admin/', { startWalkthrough: true } )
-		).toContain( encodeURIComponent( 'blueprint-walkthrough=go' ) );
+		expect( redirect ).toBe( '/wp-admin/site-editor.php?canvas=edit' );
 	} );
 
 	/**
 	 * Big Sky's assembler only mounts on the editing canvas; a plain
-	 * site-editor.php load stays in view mode and the walkthrough silently
-	 * never starts. The hand-off must force edit mode.
+	 * site-editor.php load stays in view mode and the assistant never appears.
+	 * The hand-off must force edit mode.
 	 */
 	it( 'forces the editing canvas so Big Sky mounts', () => {
-		expect(
-			getSiteEditorUrl( 'https://example.com/wp-admin/', { startWalkthrough: true } )
-		).toContain( encodeURIComponent( 'canvas=edit' ) );
+		expect( getSiteEditorUrl( 'https://example.com/wp-admin/', { canvasEdit: true } ) ).toContain(
+			encodeURIComponent( 'canvas=edit' )
+		);
 	} );
 
-	it( 'leaves the flag off when the spec did not apply', () => {
+	it( 'leaves the canvas alone when the spec did not apply', () => {
 		expect(
-			getSiteEditorUrl( 'https://example.com/wp-admin/', { startWalkthrough: false } )
+			getSiteEditorUrl( 'https://example.com/wp-admin/', { canvasEdit: false } )
+		).not.toContain( 'canvas' );
+	} );
+
+	/**
+	 * The copy walkthrough is rolled back: the editor opens quietly and the
+	 * customer speaks first. Nothing on the hand-off may start it.
+	 */
+	it( 'never asks Big Sky to start the copy walkthrough', () => {
+		expect(
+			getSiteEditorUrl( 'https://example.com/wp-admin/', { canvasEdit: true, path: '/' } )
 		).not.toContain( 'blueprint-walkthrough' );
+	} );
+} );
+
+describe( 'getBlueprintArchiveSiteSpecUrl', () => {
+	/**
+	 * site-spec decides whether to start a blueprint import by looking for wow_funnel in its
+	 * own query string. A funnel run's import already ran server-side before checkout, so
+	 * dropping the param here makes the page import a second time over the finished site.
+	 */
+	it( 'carries the funnel through so site-spec can skip its own import', () => {
+		const url = getBlueprintArchiveSiteSpecUrl( {
+			siteSlug: 'example.wordpress.com',
+			siteId: 123,
+			blueprintSlug: 'coachava',
+			wowFunnel: 'blueprint',
+		} );
+
+		expect( url ).toContain( 'wow_funnel=blueprint' );
+		expect( url ).toContain( 'blueprint_archive_import=1' );
+		expect( url ).toContain( 'blueprint_slug=coachava' );
+	} );
+
+	it( 'omits the funnel for a standalone run', () => {
+		const url = getBlueprintArchiveSiteSpecUrl( {
+			siteSlug: 'example.wordpress.com',
+			siteId: 123,
+			blueprintSlug: 'coachava',
+		} );
+
+		expect( url ).not.toContain( 'wow_funnel' );
+	} );
+} );
+
+describe( 'waitForAtomicTransferComplete first-poll timing', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
+	afterEach( () => {
+		jest.useRealTimers();
+	} );
+
+	it( 'waits a full interval before its first request by default', async () => {
+		jest.useFakeTimers();
+		mockGet.mockResolvedValue( { status: 'completed' } );
+
+		const pending = waitForAtomicTransferComplete( 'site.example.com', { pollIntervalMs: 5000 } );
+
+		// A caller that just started the work must not read the previous run's terminal state,
+		// so nothing may be asked until an interval has passed.
+		await Promise.resolve();
+		expect( mockGet ).not.toHaveBeenCalled();
+
+		await jest.advanceTimersByTimeAsync( 5000 );
+		await pending;
+		expect( mockGet ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'asks immediately when initialDelayMs is 0, so an already-finished build hands over at once', async () => {
+		jest.useFakeTimers();
+		mockGet.mockResolvedValue( { status: 'completed' } );
+
+		// The funnel's build starts before checkout; making the customer sit through a poll
+		// interval to learn something already true is the whole bug this guards.
+		await waitForAtomicTransferComplete( 'site.example.com', {
+			pollIntervalMs: 5000,
+			initialDelayMs: 0,
+		} );
+
+		expect( mockGet ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'still spaces out later polls when the first says not-yet', async () => {
+		jest.useFakeTimers();
+		mockGet
+			.mockResolvedValueOnce( { status: 'relocating_switcheroo' } )
+			.mockResolvedValue( { status: 'completed' } );
+
+		const pending = waitForAtomicTransferComplete( 'site.example.com', {
+			pollIntervalMs: 5000,
+			initialDelayMs: 0,
+		} );
+
+		await Promise.resolve();
+		await Promise.resolve();
+		expect( mockGet ).toHaveBeenCalledTimes( 1 );
+
+		await jest.advanceTimersByTimeAsync( 5000 );
+		await pending;
+		expect( mockGet ).toHaveBeenCalledTimes( 2 );
 	} );
 } );

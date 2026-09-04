@@ -16,7 +16,8 @@ export function hasPlanFeature(
 		return false;
 	}
 
-	return site.plan.features.active.includes( feature );
+	// `features` is required by the type but can be absent in real API responses.
+	return site.plan.features?.active?.includes( feature ) ?? false;
 }
 
 // Returns whether the plan supports a specific "hosting feature",

@@ -26,11 +26,12 @@ const setIsMinimized = jest.fn();
 const mockStoreState = (
 	state: { hasLoaded?: boolean; isOpen?: boolean; isMinimized?: boolean } = {}
 ) => {
+	const { hasLoaded = true, isOpen = false, isMinimized = false } = state;
 	mockUseSelect.mockImplementation( () => ( {
-		hasLoaded: true,
-		isOpen: false,
-		isMinimized: false,
-		...state,
+		hasLoaded,
+		isOpen,
+		isMinimized,
+		isChatVisible: isOpen && ! isMinimized,
 	} ) );
 };
 
@@ -76,7 +77,9 @@ describe( 'useOpenChatUrlParam', () => {
 
 			expect( setIsOpen.mock.calls ).toEqual( openCalls );
 			expect( setIsMinimized.mock.calls ).toEqual( minimizeCalls );
-			expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'ai_editor_menu_opened' );
+			expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+				'jetpack_big_sky_ai_editor_menu_opened'
+			);
 			expect( window.location.search ).toBe( '' );
 			expect( result.current ).toBe( handled );
 		}

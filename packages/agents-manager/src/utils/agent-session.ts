@@ -11,6 +11,7 @@
  */
 import { ORCHESTRATOR_AGENT_ID } from '../constants';
 import { generateUUID } from './generate-uuid';
+import { getResolvedAgentId } from './resolved-agent-id';
 
 /** Base storage key; `getTabSessionKey` scopes it per agent, site and user. */
 const SESSION_STORAGE_KEY = 'agents-manager-session-id';
@@ -67,6 +68,15 @@ export function getSessionId(
 		console.error( '[agent-session] Error loading session ID:', error );
 		return '';
 	}
+}
+
+/**
+ * The active session ID for non-React callers (ability callbacks, the Tracks
+ * wrapper) — read under the agent scope the Provider publishes, so the answer
+ * matches the mounted chat's on every surface, Dolly included.
+ */
+export function getActiveSessionId(): string {
+	return getSessionId( getResolvedAgentId() );
 }
 
 /**

@@ -30,6 +30,10 @@ export type HelpCenterRequiredInformation = {
 	 * Product identifier. Defaults to 'wpcom' when omitted.
 	 */
 	product?: HelpCenterProduct;
+	/**
+	 * Page the launcher was opened from, when the host page sets one. Tailors the greeting and title.
+	 */
+	launcherContext?: string;
 };
 
 const defaultContext: HelpCenterRequiredInformation = {
@@ -93,6 +97,7 @@ export const HelpCenterRequiredContextProvider: React.FC< {
 		<HelpCenterRequiredContext.Provider
 			value={ {
 				...Object.assign( {}, defaultContext, value ),
+				primarySiteId: value.primarySiteId || value.currentUser?.primary_blog || 0,
 			} }
 		>
 			{ children }

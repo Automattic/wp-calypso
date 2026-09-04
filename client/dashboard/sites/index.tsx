@@ -1,5 +1,4 @@
 import { isAutomatticianQuery, siteBySlugQuery, siteByIdQuery } from '@automattic/api-queries';
-import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	useQuery,
 	useQueryClient,
@@ -7,7 +6,6 @@ import {
 	keepPreviousData,
 } from '@tanstack/react-query';
 import { Button, Modal } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { getISOWeek, getISOWeekYear } from 'date-fns';
 import deepmerge from 'deepmerge';
@@ -20,12 +18,14 @@ import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
+import RecoveryEmailMatchesAccountEmailNotice, {
+	useShouldShowRecoveryEmailMatchesAccountEmailNotice,
+} from '../app/recovery-email-matches-account-email-notice';
 import { sitesRoute } from '../app/router/sites';
 import SecurityKeyReregisterNotice, {
 	useShouldShowSecurityKeyReregisterNotice,
 } from '../app/security-key-reregister-notice';
 import { DataViewsEmptyStateLayout } from '../components/dataviews';
-import InlineSupportLink from '../components/inline-support-link';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
@@ -37,6 +37,7 @@ import {
 	getDefaultView,
 	recordViewChanges,
 	sanitizeFields,
+	STAGING_FILTER_FIELD,
 } from './dataviews';
 import { useHasOnlyDeletedSites } from './deleted-sites';
 import {
@@ -59,6 +60,11 @@ function isDeletedFilterActive( filters: Filter[] ): boolean {
 	return filters.some( ( filter ) => filter.field === 'is_deleted' && filter.value === true );
 }
 
+function getIncludeStaging( filters: Filter[] ): boolean {
+	const stagingFilter = filters.find( ( filter ) => filter.field === STAGING_FILTER_FIELD );
+	return stagingFilter ? stagingFilter.value === true : false;
+}
+
 const getFetchPaginatedSitesOptions = (
 	view: View,
 	{ isDefaultView, isRestoringAccount, isAutomattician }: SiteListQueryOptions,
@@ -66,21 +72,27 @@ const getFetchPaginatedSitesOptions = (
 ): FetchPaginatedSitesOptions => {
 	const filters = view.filters ?? [];
 
-	// Include A8C sites unless explicitly excluded from the filter.
-	const shouldIncludeA8COwned =
-		isAutomattician &&
-		! filters.some( ( item: Filter ) => item.field === 'is_a8c' && item.value === false );
+	const isA8COwnedIncludedByFilter = ! filters.some(
+		( item: Filter ) => item.field === 'is_a8c' && item.value === false
+	);
+
+	// Non-Automatticians can be members of a8c-owned sites but have no filter to
+	// control their visibility, so always include them.
+	const shouldIncludeA8COwned = ! isAutomattician || isA8COwnedIncludedByFilter;
+
+	// Hidden sites are only returned under 'all', which we opt into when the user
+	// searches, is restoring their account, or is an Automattician who wants a8c-owned
+	// sites — some P2s are not retrievable otherwise.
+	// See: https://github.com/Automattic/wp-calypso/pull/104220.
+	const shouldRequestAllVisibility =
+		!! view.search || isRestoringAccount || ( isAutomattician && isA8COwnedIncludedByFilter );
 
 	const options: FetchPaginatedSitesOptions = {
 		source: isDashboardBackport() && isDefaultView ? 'dashboard-site-list-default' : undefined,
 
-		// Some P2 sites are not retrievable unless site_visibility is set to 'all'.
-		// See: https://github.com/Automattic/wp-calypso/pull/104220.
-		site_visibility: view.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
+		site_visibility: shouldRequestAllVisibility ? 'all' : 'visible',
 		include_a8c_owned: shouldIncludeA8COwned,
-		// Exclude staging sites from the standalone dashboard list; the classic
-		// Calypso backport keeps them (the API includes them by default).
-		...( ! isDashboardBackport() && { include_staging: false } ),
+		include_staging: getIncludeStaging( filters ),
 		search: view.search,
 		sort_field: view.sort?.field,
 		sort_direction: view.sort?.direction,
@@ -89,7 +101,7 @@ const getFetchPaginatedSitesOptions = (
 	};
 
 	if ( isDeletedFilterActive( filters ) ) {
-		options.site_visibility = 'deleted';
+		options.site_visibility = 'all';
 	}
 
 	view.filters?.forEach( ( filter ) => {
@@ -179,6 +191,10 @@ export default function Sites() {
 	const isAccountEmailBouncing = useShouldShowAccountEmailBouncingNotice();
 	const showAccountEmailBouncingNotice = supports.me && isAccountEmailBouncing;
 
+	const isRecoveryEmailMatchingAccountEmail = useShouldShowRecoveryEmailMatchesAccountEmailNotice();
+	const showRecoveryEmailMatchesAccountEmailNotice =
+		supports.me && isRecoveryEmailMatchingAccountEmail;
+
 	const defaultView = getDefaultView( {
 		siteCount: user.site_count,
 		isAutomattician,
@@ -246,10 +262,6 @@ export default function Sites() {
 	const filters = view.filters ?? [];
 	const hasActiveSearch = !! view.search;
 	const hasActiveQuery = hasActiveSearch || filters.length > 0;
-	const isFilteringOnlyDeletedSites =
-		isDeletedFilterActive( filters ) &&
-		! hasActiveSearch &&
-		filters.every( ( filter ) => filter.field === 'is_deleted' );
 
 	return (
 		<>
@@ -286,6 +298,9 @@ export default function Sites() {
 					<SitesNoticeArbiter>
 						{ showSecurityKeyReregisterNotice && <SecurityKeyReregisterNotice /> }
 						{ showAccountEmailBouncingNotice && <AccountEmailBouncingNotice /> }
+						{ showRecoveryEmailMatchesAccountEmailNotice && (
+							<RecoveryEmailMatchesAccountEmailNotice />
+						) }
 					</SitesNoticeArbiter>
 				}
 			>
@@ -298,35 +313,13 @@ export default function Sites() {
 						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
 						isPlaceholderData={ isPlaceholderData }
 						empty={
-							isFilteringOnlyDeletedSites ? (
-								<DataViewsEmptyStateLayout
-									title={ __( 'You have no deleted sites' ) }
-									description={ createInterpolateElement(
-										__(
-											'Sites that are deleted can be restored within the first 30 days of deletion. <learnLink>Learn how to restore a deleted site</learnLink>.'
-										),
-										{
-											learnLink: (
-												<InlineSupportLink
-													supportLink={ localizeUrl(
-														'https://wordpress.com/support/delete-site/#restore-a-deleted-site'
-													) }
-													supportPostId={ 14411 }
-												/>
-											),
-										}
-									) }
-									isBorderless
-								/>
-							) : (
-								<DataViewsEmptyStateLayout
-									title={ __( 'No sites match your search' ) }
-									description={ __( 'Try again, or start a new site with the options below.' ) }
-									isBorderless
-								>
-									<EmptySitesSearchStateContent />
-								</DataViewsEmptyStateLayout>
-							)
+							<DataViewsEmptyStateLayout
+								title={ __( 'No sites match your search' ) }
+								description={ __( 'Try again, or start a new site with the options below.' ) }
+								isBorderless
+							>
+								<EmptySitesSearchStateContent />
+							</DataViewsEmptyStateLayout>
 						}
 						paginationInfo={ paginationInfo }
 						onChangeView={ handleViewChange }

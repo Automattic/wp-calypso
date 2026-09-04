@@ -12,6 +12,7 @@ import {
 	getDisplayMessageFromToolData,
 	isBlockEditToolId,
 	isDisplayableToolMessageTool,
+	isVisualCheckPending,
 } from './tool-message-utils';
 import type { GetChatComponent } from './load-external-providers';
 import type { ShowComponentType } from '../abilities/show-component';
@@ -52,6 +53,8 @@ interface Options {
 	messages: UIMessage[];
 	getChatComponent?: GetChatComponent;
 	currentPostId?: number | string;
+	/** Whether the agent's turn is still running, so a promised check may still land. */
+	isProcessing?: boolean;
 }
 
 interface MessageWithContextFlags extends UIMessage {
@@ -181,6 +184,38 @@ function hasLaterApplyBlockEditsOutcome(
 	return false;
 }
 
+/**
+ * Whether the deferred reply for a promised visual check is still outstanding.
+ *
+ * The reply is plain agent prose following the tool result, so the wait lasts
+ * only while nothing follows this message. It ends two ways: the prose arrives,
+ * or the turn ends without it. Either way the summary comes back, which is what
+ * a flag that over-promises — the per-turn look budget the ability cannot see —
+ * falls back to, with no timer and no stale state in rehydrated history.
+ */
+function isAwaitingVisualCheckReply( messages: UIMessage[], currentIndex: number ): boolean {
+	for ( const laterMessage of messages.slice( currentIndex + 1 ) ) {
+		if ( laterMessage.role === 'user' ) {
+			return false;
+		}
+
+		const laterText = laterMessage.content?.[ 0 ]?.text?.trim();
+		if ( ! hasAgentRole( laterMessage ) || ! laterText || isContextOnlyMessage( laterMessage ) ) {
+			continue;
+		}
+
+		try {
+			if ( typeof JSON.parse( laterText )?.tool_id === 'string' ) {
+				continue;
+			}
+		} catch ( _error ) {}
+
+		return false;
+	}
+
+	return true;
+}
+
 function followsTerminalApplyBlockEditsOutcome(
 	messages: UIMessage[],
 	currentIndex: number
@@ -202,9 +237,13 @@ function followsTerminalApplyBlockEditsOutcome(
 				continue;
 			}
 
+			// A promised visual check makes the following prose the deferred reply
+			// rather than redundant narration, so it has to survive. Suppressing it
+			// alongside the withheld summary would leave the turn with nothing.
 			return (
 				!! getApplyBlockEditsOutcome( earlierData.tool_id, earlierData.data ) &&
-				earlierData.data?.followUpTasks !== true
+				earlierData.data?.followUpTasks !== true &&
+				! isVisualCheckPending( earlierData.tool_id, earlierData.data )
 			);
 		} catch ( _error ) {
 			return false;
@@ -221,6 +260,7 @@ export default function convertToolMessagesToComponents( {
 	messages,
 	getChatComponent,
 	currentPostId,
+	isProcessing,
 }: Options ): AgentsManagerUIMessage[] {
 	return messages.flatMap( ( message, index, array ) => {
 		if ( isContextOnlyMessage( message ) ) {
@@ -370,6 +410,7 @@ export default function convertToolMessagesToComponents( {
 							...props,
 							...( summaryText && { summary: summaryText } ),
 							...ownerProps,
+							...( toolCallId ? { toolCallId } : {} ),
 							...responseActionProps,
 							...( isStale && { isMessageStale: true } ),
 						},
@@ -419,6 +460,20 @@ export default function convertToolMessagesToComponents( {
 			if (
 				typeof textData.tool_call_id === 'string' &&
 				hasLaterApplyBlockEditsOutcome( array, index, textData.tool_call_id )
+			) {
+				return [];
+			}
+			// While a promised check is still running, the transient thinking indicator
+			// already reads as the agent working, so the summary is withheld rather than
+			// replaced by a second, static one. `no-changes` is excluded: nothing was
+			// written, so there is nothing to look at. The summary returns as soon as any
+			// of the three ends the wait — the reply lands, the turn ends, or the stream
+			// stops — so a flag that over-promises cannot swallow the edit.
+			if (
+				isProcessing &&
+				blockEditOutcome !== 'no-changes' &&
+				isVisualCheckPending( textData.tool_id, textData.data ) &&
+				isAwaitingVisualCheckReply( array, index )
 			) {
 				return [];
 			}

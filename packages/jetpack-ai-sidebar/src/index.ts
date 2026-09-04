@@ -65,6 +65,11 @@ import {
 	isOptimizeTitleSuggestionEnabled,
 	isSeoSuggestionsEnabled,
 } from './utils/preview-features';
+import {
+	getCurrentEditorPostIdFromStore as getCurrentEditorPostId,
+	normalizeEditorPostId,
+	type EditorPostId,
+} from './utils/review-post-context';
 import { SUGGESTION_ACTION_COMPLETE_EVENT } from './utils/suggestion-events';
 import {
 	UPDATE_BLOCK_CONTENT_TOOL_ID,
@@ -143,6 +148,18 @@ function canSwapBlockEditSnapshot( snapshot: BlockEditSnapshot ): boolean {
 		currentEditorBlocks !== undefined &&
 		getEditorBlocksSignature( currentEditorBlocks ) === snapshot.editorBlocksSignatureAfter
 	);
+}
+
+/**
+ * Uses the selector the legacy "Improve with AI" panel gates on. It is blocks-only
+ * and never reads the title, so a titled post with no body counts as empty. An
+ * editor that cannot answer reports "not empty", so nothing greys out on a store
+ * we cannot read.
+ */
+function isPostContentEmpty(): boolean {
+	const isEditedPostEmpty = ( window as any ).wp?.data?.select?.( 'core/editor' )
+		?.isEditedPostEmpty;
+	return typeof isEditedPostEmpty === 'function' && isEditedPostEmpty() === true;
 }
 
 /** Default suggestion shown when no block is selected. */
@@ -271,27 +288,9 @@ const LIMITED_BLOCK_SUGGESTION_PRIORITY = [
 	'generate-alt-text',
 ];
 
-type EditorPostId = number | string;
-
 function getCurrentEditorPostType(): string | undefined {
 	const postType = ( window as any ).wp?.data?.select?.( 'core/editor' )?.getCurrentPostType?.();
 	return typeof postType === 'string' ? postType : undefined;
-}
-
-function normalizeEditorPostId( postId: unknown ): EditorPostId | undefined {
-	if ( typeof postId === 'number' && postId > 0 ) {
-		return postId;
-	}
-	if ( typeof postId === 'string' && postId.trim() ) {
-		return postId;
-	}
-	return undefined;
-}
-
-function getCurrentEditorPostId(): EditorPostId | undefined {
-	return normalizeEditorPostId(
-		( window as any ).wp?.data?.select?.( 'core/editor' )?.getCurrentPostId?.()
-	);
 }
 
 /**
@@ -467,6 +466,22 @@ function getFeedbackSuggestions( currentPostType?: string, currentPostId?: Edito
 	];
 }
 
+/**
+ * `generate-featured-image` is absent on purpose: it opens Image Studio, where the
+ * user writes their own prompt.
+ */
+const CONTENT_DEPENDENT_SUGGESTION_IDS: Set< string > = new Set( [
+	OPTIMIZE_TITLE_SUGGESTION.id,
+	GENERATE_EXCERPT_SUGGESTION.id,
+	// Every review behind this chip needs content, so the chip gates as a whole.
+	GET_FEEDBACK_SUGGESTION_ID,
+	SEO_ENHANCER_SUGGESTION.id,
+] );
+
+function getContentRequiredReason(): string {
+	return __( 'This feature requires content to work.', __i18n_text_domain__ );
+}
+
 function getPostLevelSuggestions(
 	currentPostType?: string,
 	currentPostId?: EditorPostId | null,
@@ -476,7 +491,7 @@ function getPostLevelSuggestions(
 		return [];
 	}
 
-	return [
+	const suggestions = [
 		...( isFeaturedImageSuggestionAvailable( currentPostType )
 			? [ GENERATE_FEATURED_IMAGE_SUGGESTION ]
 			: [] ),
@@ -488,6 +503,19 @@ function getPostLevelSuggestions(
 		// Surface the SEO Enhancer dropdown last.
 		...( isSeoSuggestionsEnabled() ? [ SEO_ENHANCER_SUGGESTION ] : [] ),
 	];
+
+	if ( ! isPostContentEmpty() ) {
+		return suggestions;
+	}
+
+	// Greyed out rather than dropped, so a blank post still shows what is on offer.
+	const disabledReason = getContentRequiredReason();
+
+	return suggestions.map( ( suggestion ) =>
+		CONTENT_DEPENDENT_SUGGESTION_IDS.has( suggestion.id )
+			? { ...suggestion, disabled: true, disabledReason }
+			: suggestion
+	);
 }
 
 function getReservedSuggestions< T extends { id: string } >( suggestions: T[] ): T[] {
@@ -1203,6 +1231,8 @@ export function getEmptyViewSuggestions(): Array< {
 	description?: string;
 	prompt?: string;
 	options?: SuggestionOption[];
+	disabled?: boolean;
+	disabledReason?: string;
 	action?: () => boolean | Promise< boolean >;
 } > {
 	return getPostLevelSuggestions( getCurrentEditorPostType() );

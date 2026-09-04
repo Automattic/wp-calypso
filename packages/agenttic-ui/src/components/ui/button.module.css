@@ -24,6 +24,14 @@
 	color: var( --color-muted-foreground );
 }
 
+/* Matches the disabled look but keeps pointer events, so a tooltip explaining
+   the state can still open on hover. */
+.button[aria-disabled='true'] {
+	background-color: var( --color-muted );
+	color: var( --color-muted-foreground );
+	cursor: default;
+}
+
 .button:focus-visible {
 	outline: 2px solid var( --color-ring );
 	outline-offset: 1.5px;
@@ -88,7 +96,7 @@
 	background-color: var( --color-background );
 }
 
-.outline:hover:not( :disabled ) {
+.outline:hover:not( :disabled ):not( [aria-disabled='true'] ) {
 	box-shadow: var( --shadow-outline-strong );
 }
 
@@ -96,7 +104,8 @@
 	outline-offset: 0;
 }
 
-.outline:disabled {
+.outline:disabled,
+.outline[aria-disabled='true'] {
 	background-color: var( --color-background );
 }
 

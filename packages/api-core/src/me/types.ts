@@ -48,6 +48,7 @@ export interface User {
 	primary_blog_is_jetpack: boolean;
 	primary_blog_url: string;
 	profile_URL: string;
+	recovery_email_matches_account_email?: boolean;
 	site_count: number;
 	social_login_connections: SocialLoginConnection[];
 	use_fallback_for_incomplete_languages: boolean;

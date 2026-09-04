@@ -204,6 +204,7 @@ describe( 'convertToolMessagesToComponents', () => {
 				name: 'test',
 				summary: 'Choose one of these options.',
 				contentType: 'my-component',
+				toolCallId: 'tool-call-1',
 				onResponseAction: mockResponseAction,
 			},
 		} );
@@ -622,6 +623,122 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ].content ).toEqual( [
 			{ type: 'text', text: 'Corrected one misspelling.' },
 		] );
+	} );
+
+	describe( 'pending visual check', () => {
+		const pendingCheckOutcome = ( overrides?: Partial< UIMessage > ) =>
+			createApplyBlockEditsMessage(
+				'tool-call-1',
+				{
+					result: {
+						success: true,
+						message: 'Corrected one misspelling.',
+						outcome: 'updated',
+					},
+					followUpTasks: false,
+					visualCheckPending: true,
+				},
+				{ id: 'applied-outcome', ...overrides }
+			);
+
+		it( 'withholds the summary while the reply is outstanding', () => {
+			const result = convertToolMessagesToComponents( {
+				messages: [ pendingCheckOutcome() ],
+				isProcessing: true,
+			} );
+
+			expect( result ).toEqual( [] );
+		} );
+
+		it( 'restores the summary and keeps the deferred reply once it arrives', () => {
+			const prose = createMessage( {
+				id: 'prose',
+				content: [
+					{ type: 'text', text: 'I looked at the result and the heading is aligned now.' },
+				],
+			} );
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ pendingCheckOutcome(), prose ],
+				isProcessing: true,
+			} );
+
+			expect( result ).toHaveLength( 2 );
+			expect( result[ 0 ].content ).toEqual( [
+				{ type: 'text', text: 'Corrected one misspelling.' },
+			] );
+			expect( result[ 1 ].id ).toBe( 'prose' );
+		} );
+
+		it( 'restores the summary when the turn ends without a reply', () => {
+			const nextTurn = createMessage( {
+				id: 'next-turn',
+				role: 'user',
+				content: [ { type: 'text', text: 'Now change the footer.' } ],
+			} );
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ pendingCheckOutcome(), nextTurn ],
+				isProcessing: true,
+			} );
+
+			expect( result ).toHaveLength( 2 );
+			expect( result[ 0 ].content ).toEqual( [
+				{ type: 'text', text: 'Corrected one misspelling.' },
+			] );
+		} );
+
+		// The flag can promise a check the ability will not run — the per-turn look
+		// budget is invisible to it — so a stopped stream must not swallow the edit.
+		it( 'restores the summary once the stream stops', () => {
+			const result = convertToolMessagesToComponents( {
+				messages: [ pendingCheckOutcome() ],
+				isProcessing: false,
+			} );
+
+			expect( result ).toHaveLength( 1 );
+			expect( result[ 0 ].content ).toEqual( [
+				{ type: 'text', text: 'Corrected one misspelling.' },
+			] );
+		} );
+
+		it( 'keeps waiting across an intervening tool message', () => {
+			const laterTool = createToolMessage(
+				'big_sky__editor_navigate',
+				{ summary: 'Opened the homepage.' },
+				{ id: 'later-tool' }
+			);
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ pendingCheckOutcome(), laterTool ],
+				isProcessing: true,
+			} );
+
+			expect( result ).toHaveLength( 1 );
+			expect( result[ 0 ].id ).toBe( 'later-tool' );
+		} );
+
+		it( 'ignores the flag for a no-change outcome', () => {
+			const noChangeOutcome = createApplyBlockEditsMessage(
+				'tool-call-1',
+				{
+					result: {
+						success: true,
+						message: 'The requested changes were already applied.',
+						outcome: 'no-changes',
+					},
+					visualCheckPending: true,
+				},
+				{ id: 'no-change-outcome' }
+			);
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ noChangeOutcome ],
+				isProcessing: true,
+			} );
+
+			expect( result[ 0 ].content ).toEqual( [ { type: 'text', text: '✓ No changes needed' } ] );
+		} );
 	} );
 
 	it( 'filters out unsuccessful apply-block-edits tool summaries', () => {

@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/agenttic-ui",
-	"version": "0.1.89",
+	"version": "0.1.90",
 	"type": "module",
 	"description": "UI components for the Agenttic framework.",
 	"main": "dist/index.js",
@@ -89,6 +89,7 @@
 		"@radix-ui/react-popover": "^1.1.15",
 		"@radix-ui/react-scroll-area": "^1.2.9",
 		"@radix-ui/react-slot": "^1.2.3",
+		"@radix-ui/react-tooltip": "1.2.9",
 		"@wordpress/i18n": "^6.1.0",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",

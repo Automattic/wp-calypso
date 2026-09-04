@@ -33,6 +33,9 @@ interface GetNewSiteParams {
 	sourceSlug?: string;
 	siteIntent?: string;
 	provisionTarget?: string | null;
+	wowFunnel?: string;
+	wowFunnelArgs?: Record< string, string >;
+	wowFunnelFromWfm?: boolean;
 }
 
 type NewSiteParams = {
@@ -55,6 +58,9 @@ type NewSiteParams = {
 		site_accent_color?: string;
 		site_intent?: string;
 		early_provision_target?: string;
+		wow_funnel?: string;
+		wow_funnel_args?: Record< string, string >;
+		from_wfm?: 1;
 	};
 	validate: boolean;
 };
@@ -108,6 +114,9 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 		siteIntent,
 		partnerBundle,
 		provisionTarget,
+		wowFunnel,
+		wowFunnelArgs,
+		wowFunnelFromWfm,
 	} = params;
 
 	// We will use the default annotation instead of theme annotation as fallback,
@@ -133,6 +142,15 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 			...( siteIntent && { site_intent: siteIntent } ),
 			...( partnerBundle && { site_partner_bundle: partnerBundle } ),
 			...( provisionTarget && { early_provision_target: provisionTarget } ),
+			// WoW funnel: build the site's Atomic host before checkout. The slug names a
+			// registered funnel server-side (see wp-content/lib/atomic/funnels.php).
+			...( wowFunnel && { wow_funnel: wowFunnel } ),
+			// Input for the funnel's server-side follow-up (e.g. the blueprint archive to import).
+			...( wowFunnelArgs &&
+				Object.keys( wowFunnelArgs ).length > 0 && { wow_funnel_args: wowFunnelArgs } ),
+			// CTA opt-in to claim a pre-provisioned site from the WoW fleet. The server falls
+			// back to the ordinary funnel build when no fleet site can be claimed.
+			...( wowFunnel && wowFunnelFromWfm && { from_wfm: 1 as const } ),
 		},
 		validate: false,
 	};
@@ -159,7 +177,10 @@ export const createSite = async (
 	specId?: string | null,
 	ref?: string,
 	provisionTarget?: string | null,
-	aiLaunchpadEnabled?: boolean
+	aiLaunchpadEnabled?: boolean,
+	wowFunnel?: string,
+	wowFunnelArgs?: Record< string, string >,
+	wowFunnelFromWfm?: boolean
 ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
 
@@ -176,6 +197,9 @@ export const createSite = async (
 		siteIntent,
 		partnerBundle,
 		provisionTarget,
+		wowFunnel,
+		wowFunnelArgs,
+		wowFunnelFromWfm,
 	} );
 
 	// if ( isEmpty( bearerToken ) && 'onboarding-registrationless' === flowToCheck ) {

@@ -1,23 +1,28 @@
 /**
  * Central Tracks wrappers for the Agents Manager.
  *
- * Three record functions over two base-prop sets:
+ * Two record functions, one per base-prop set:
  * - `recordBigSkyTracksEvent` keeps Big Sky's exact event names and props so its
  *   live Looker dashboard keeps working. Removable once that parity is dropped.
  * - `recordAgentsManagerTracksEvent` uses the unified property schema shared across the new
- *   AI products, under the `calypso_agents_manager_` prefix.
- * - `recordFullNameAgentsManagerTracksEvent` sends the same unified props under a
- *   caller-supplied full event name, for entry points whose events carry a host prefix.
+ *   AI products.
+ *
+ * Callers pass event names in full — the template-literal parameter types enforce
+ * the namespace — so every event is findable by searching the code for its name.
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
 import { DOLLY_AGENT_ID } from '../constants';
-import { getSessionId } from './agent-session';
+import { getActiveSessionId } from './agent-session';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent, isReaderChatHost } from './is-reader-chat-agent';
+import { getLoadedProviderIds } from './loaded-provider-ids';
 import { getResolvedAgentId } from './resolved-agent-id';
 
 type TracksProps = Record< string, unknown >;
+
+export const BIG_SKY_EVENT_PREFIX = 'jetpack_big_sky_';
+export type BigSkyEventName = `${ typeof BIG_SKY_EVENT_PREFIX }${ string }`;
 
 type EditorSelectStore =
 	| {
@@ -29,9 +34,6 @@ type EditorSelectStore =
 type CoreSelectStore =
 	| { getEntityRecord?: ( kind: string, name: string, key?: number ) => unknown }
 	| undefined;
-
-const BIG_SKY_EVENT_PREFIX = 'jetpack_big_sky_';
-const AM_UNIFIED_EVENT_PREFIX = 'calypso_agents_manager_';
 
 /** Reads the optional server-provided Automattician tracking signal. */
 function getIsA11n(): boolean | undefined {
@@ -109,7 +111,10 @@ function getBigSkyPageProps(): TracksProps {
  * Records an event under Big Sky's exact name and props so the existing Big Sky
  * dashboards keep working.
  */
-export function recordBigSkyTracksEvent( eventName: string, props: TracksProps = {} ): void {
+export function recordBigSkyTracksEvent(
+	eventName: BigSkyEventName,
+	props: TracksProps = {}
+): void {
 	if ( isReaderChatAgent( getResolvedAgentId() ) ) {
 		return; // Big Sky parity events are editor-only; never on reader-chat.
 	}
@@ -121,7 +126,7 @@ export function recordBigSkyTracksEvent( eventName: string, props: TracksProps =
 		is_test: getIsTest(),
 		...( isA11n !== undefined ? { is_a11n: isA11n } : {} ),
 		...( blogId !== undefined ? { blog_id: blogId } : {} ),
-		sessionid: getSessionId(),
+		sessionid: getActiveSessionId(),
 		session_type: bigSky.sessionType,
 		// AM has no onboarding flow, so the phase is always the editor.
 		phase: 'editor',
@@ -141,15 +146,38 @@ export function recordBigSkyTracksEvent( eventName: string, props: TracksProps =
 		}
 	}
 
-	recordTracksEvent( `${ BIG_SKY_EVENT_PREFIX }${ eventName }`, mergedProps );
+	recordTracksEvent( eventName, mergedProps );
+}
+
+/**
+ * The running build's version: the Jetpack-injected `{variant}:{version}` on
+ * wp-admin surfaces, or Calypso's own commit on Calypso-rendered pages.
+ */
+function getAgentManagerVersion(): string {
+	const injected = getAgentsManagerInlineData()?.version;
+	if ( typeof injected === 'string' && injected !== '' ) {
+		return injected;
+	}
+
+	const commitSha = typeof window !== 'undefined' ? window.COMMIT_SHA : undefined;
+	if ( typeof commitSha === 'string' && commitSha !== '' ) {
+		// Local dev servers render the document with COMMIT_SHA set to '(unknown)'.
+		return 'calypso:' + ( commitSha === '(unknown)' ? 'dev' : commitSha );
+	}
+
+	return 'none';
 }
 
 function getUnifiedBaseProps(): TracksProps {
 	const isA11n = getIsA11n();
 	const blogId = getBlogId();
 	return {
-		ai_session_id: getSessionId(),
+		ai_session_id: getActiveSessionId(),
 		agent_name: getResolvedAgentId() ?? DOLLY_AGENT_ID,
+		agent_manager_version: getAgentManagerVersion(),
+		// Sorted so the same provider set always yields the same value; 'none'
+		// until the providers load (events can fire before the chat mounts).
+		provider_ids: getLoadedProviderIds()?.slice().sort().join( ',' ) || 'none',
 		surface: isReaderChatHost() ? 'reader-chat' : 'editor',
 		path: typeof window !== 'undefined' ? window.location.pathname : '',
 		is_test: getIsTest(),
@@ -160,19 +188,9 @@ function getUnifiedBaseProps(): TracksProps {
 
 /**
  * Records an Agents Manager event using the shared unified property names.
- * `eventName` is a suffix appended to the `calypso_agents_manager_` prefix.
  */
-export function recordAgentsManagerTracksEvent( eventName: string, props: TracksProps = {} ): void {
-	recordFullNameAgentsManagerTracksEvent( `${ AM_UNIFIED_EVENT_PREFIX }${ eventName }`, props );
-}
-
-/**
- * Records an event under its full name with the same unified base props as
- * `recordAgentsManagerTracksEvent` — for the entry-point events that carry
- * their own host prefix (e.g. `calypso_editor_agents_manager_ai_chat_clicked`).
- */
-export function recordFullNameAgentsManagerTracksEvent(
-	eventName: string,
+export function recordAgentsManagerTracksEvent(
+	eventName: `calypso_agents_manager_${ string }`,
 	props: TracksProps = {}
 ): void {
 	recordTracksEvent( eventName, { ...getUnifiedBaseProps(), ...props } );

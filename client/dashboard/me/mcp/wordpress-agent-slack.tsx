@@ -4,11 +4,11 @@ import {
 	wordpressAgentSlackOauthMutation,
 	wordpressAgentSlackPairMutation,
 } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Notice, Spinner, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useState } from 'react';
 import SlackMark from 'calypso/assets/images/logos/slack-mark.svg';
 import { useAnalytics } from '../../app/analytics';
@@ -51,12 +51,10 @@ export default function WordPressAgentSlack( {
 				username
 		  )
 		: __( 'Connect your WordPress.com account to this Slack workspace?' );
-	const installTitle = pairToken
-		? __( 'Install WordPress Agent in another Slack workspace' )
-		: __( 'Install WordPress Agent in Slack' );
+	const installTitle = __( 'Slack' );
 	const installDescription = pairToken
 		? __( 'This is a separate step for adding WordPress Agent to a different Slack workspace.' )
-		: __( 'Add WordPress Agent to a Slack workspace, then connect your WordPress.com account.' );
+		: __( 'Add WordPress Agent to your Slack workspaces.' );
 	const isActionPending =
 		oauthMutation.isPending || pairMutation.isPending || disconnectMutation.isPending;
 	const error =
@@ -119,7 +117,7 @@ export default function WordPressAgentSlack( {
 						title={ connection.team_name }
 						actions={
 							connection.installed && connection.is_owner ? (
-								<Badge intent="info">{ __( 'Integration owner' ) }</Badge>
+								<Badge intent="informational">{ __( 'Integration owner' ) }</Badge>
 							) : undefined
 						}
 						description={
@@ -200,21 +198,16 @@ export default function WordPressAgentSlack( {
 
 			<Card>
 				<CardBody className="wordpress-agent-connection__row">
-					<SectionHeader
-						level={ 3 }
-						title={ installTitle }
-						description={ installDescription }
-						decoration={ <img src={ SlackMark } alt="" width={ 24 } height={ 24 } /> }
-					/>
+					<SectionHeader level={ 3 } title={ installTitle } description={ installDescription } />
 					<Button
 						variant="primary"
+						className="wordpress-agent-slack__install-button"
 						onClick={ install }
 						isBusy={ oauthMutation.isPending }
 						disabled={ isActionPending }
 					>
-						{ pairToken
-							? __( 'Install in another workspace' )
-							: __( 'Install to a new Slack instance' ) }
+						<img src={ SlackMark } alt="" width={ 20 } height={ 20 } />
+						{ pairToken ? __( 'Add to another workspace' ) : __( 'Add to Slack' ) }
 					</Button>
 				</CardBody>
 

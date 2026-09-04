@@ -419,7 +419,7 @@ describe( 'useProductInstall progression', () => {
 		expect( initiatePluginTransfer ).not.toHaveBeenCalled();
 	} );
 
-	it( 'keeps a completed recovery latched after its marker expires', async () => {
+	it( 'gives activation its own deadline after a completed recovery', async () => {
 		await beginAtomicPluginTransfer();
 		mockFetchLatestAtomicTransfer.mockResolvedValue( latestTransfer( 'completed' ) );
 
@@ -433,10 +433,75 @@ describe( 'useProductInstall progression', () => {
 		);
 		await waitFor( () => expect( result.current.currentStep ).toBe( 2 ) );
 
-		await advance( INSTALL_DEADLINE_MS + 10000 );
-
+		await advance( INSTALL_DEADLINE_MS - 10000 );
 		expect( result.current.currentStep ).toBe( 2 );
 		expect( result.current.error ).toBeNull();
+
+		await advance( 20000 );
+		expect( result.current.error ).toEqual( { type: 'activation-timeout' } );
+	} );
+
+	it( 'reaches no activation verdict once the plugin is active', async () => {
+		await beginAtomicPluginTransfer();
+		mockFetchLatestAtomicTransfer.mockResolvedValue( latestTransfer( 'completed' ) );
+
+		const { result, store } = renderProgress(
+			{ pluginSlug: 'give' },
+			{
+				...directInstallAuthorization,
+				...simpleAtomicEligibleSite,
+				plugins: { wporg: { items: wporgItems } },
+			}
+		);
+		await waitFor( () => expect( result.current.currentStep ).toBe( 2 ) );
+
+		await act( async () => {
+			store.dispatch(
+				receiveSitePlugins( SITE_ID, [ { slug: 'give', id: 'give/give', active: true } ] )
+			);
+		} );
+		await advance( INSTALL_DEADLINE_MS + 10000 );
+
+		expect( result.current.error ).toBeNull();
+	} );
+
+	// The component survives SPA navigation between installs; one success must not disarm the next.
+	it( 'arms the activation deadline again for the next product after a success', async () => {
+		await beginAtomicPluginTransfer();
+		mockFetchLatestAtomicTransfer.mockResolvedValue( latestTransfer( 'completed' ) );
+
+		const { result, store, rerender } = renderHookWithProvider(
+			( { pluginSlug }: { pluginSlug: string } ) => useProductInstall( { pluginSlug } ),
+			{
+				reducers,
+				initialState: {
+					...directInstallAuthorization,
+					...simpleAtomicEligibleSite,
+					plugins: { wporg: { items: wporgItems } },
+				},
+				initialProps: { pluginSlug: 'give' },
+			}
+		);
+		await waitFor( () => expect( result.current.currentStep ).toBe( 2 ) );
+		await act( async () => {
+			store.dispatch(
+				receiveSitePlugins( SITE_ID, [ { slug: 'give', id: 'give/give', active: true } ] )
+			);
+		} );
+
+		window.sessionStorage.setItem(
+			`marketplace-product-install-transfer:${ SITE_ID }:akismet`,
+			JSON.stringify( {
+				initiatedAt: Date.now() - 5000,
+				previousTransferId: null,
+				lookupSettled: true,
+			} )
+		);
+		rerender( { pluginSlug: 'akismet' } );
+
+		await advance( INSTALL_DEADLINE_MS + 10000 );
+
+		expect( result.current.error ).toEqual( { type: 'activation-timeout' } );
 	} );
 
 	it( 'does not carry a completed transfer latch across products', async () => {

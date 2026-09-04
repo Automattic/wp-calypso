@@ -574,7 +574,7 @@ export class JetpackAuthorize extends Component {
 					const { redirect_to: redirectTo } = await this.props.logoutUser( targetLoginURL );
 					disablePersistence();
 					await clearStore();
-					window.location.href = redirectTo || '/';
+					window.location.href = redirectTo || '/log-in';
 				} catch ( error ) {
 					// The logout endpoint might fail if the nonce has expired.
 					// In this case, redirect to wp-login.php?action=logout to get a new nonce generated

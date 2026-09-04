@@ -7,6 +7,7 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { sprintf, _n, __ } from '@wordpress/i18n';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import ActionList from '../../components/action-list';
@@ -17,9 +18,11 @@ import { getBrandMeta } from './get-brand-meta';
 import {
 	DIRECTORY_NAMES,
 	getDirectoryStatusBadge,
+	hasApprovedDirectory,
 	isAgencyProfileComplete,
 	isApplicationCompleted,
 } from './lib';
+import LinkButton from './link-button';
 import StatusBadge from './status-badge';
 import type { DirectoryStatusBadge } from './lib';
 import type { Agency, AgencyPartnerDirectorySlug, AgencyProfile } from '@automattic/api-core';
@@ -53,6 +56,11 @@ interface Props {
 	onPublishSuccess?: ( agency: Agency ) => void;
 	onPublishError?: () => void;
 	openSupportGuide?: ( url: string ) => void;
+	/**
+	 * Set to false in apps without the dashboard's TanStack Router, so link
+	 * buttons render plain anchors for the host app's own router to pick up.
+	 */
+	shouldUseRouterLink?: boolean;
 }
 
 /*
@@ -60,7 +68,7 @@ interface Props {
  * hosts can't drift apart.
  */
 export const getProfilePublishedMessage = () => __( 'Profile published.' );
-export const getProfilePublishFailedMessage = () => __( 'Failed to publish your profile.' );
+export const getProfilePublishFailedMessage = () => __( 'Failed to publish profile.' );
 
 export default function PartnerDirectoryDashboardContent( {
 	agency,
@@ -70,9 +78,12 @@ export default function PartnerDirectoryDashboardContent( {
 	onPublishSuccess,
 	onPublishError,
 	openSupportGuide,
+	shouldUseRouterLink,
 }: Props ) {
 	const profile = agency.profile;
 	const application = profile?.partner_directory_application;
+	const isMobile = useViewportMatch( 'mobile', '<' );
+	const itemLayout = isMobile ? 'stacked' : 'inline';
 
 	const { mutate: publishProfile, isPending: isPublishingProfile } = useMutation(
 		withSnackbar( agencyPartnerDirectoryApplicationMutation( agency.id ), {
@@ -92,7 +103,7 @@ export default function PartnerDirectoryDashboardContent( {
 		badge: getDirectoryStatusBadge( status ),
 	} ) );
 
-	const hasDirectoryApproval = directories.some( ( { status } ) => status === 'approved' );
+	const hasDirectoryApproval = hasApprovedDirectory( application );
 	// The "not approved" popover only auto-opens for a single, unambiguous rejection.
 	const showPopoverOnLoad =
 		directories.filter( ( { status } ) => status === 'rejected' ).length === 1;
@@ -167,6 +178,7 @@ export default function PartnerDirectoryDashboardContent( {
 						showPopoverOnLoad={ showPopoverOnLoad }
 						expertiseUrl={ expertiseUrl }
 						recordTracksEvent={ recordTracksEvent }
+						shouldUseRouterLink={ shouldUseRouterLink }
 					/>
 					<Text>{ DIRECTORY_NAMES[ directory ] }</Text>
 				</HStack>
@@ -222,6 +234,7 @@ export default function PartnerDirectoryDashboardContent( {
 														showPopoverOnLoad={ false }
 														expertiseUrl={ expertiseUrl }
 														recordTracksEvent={ recordTracksEvent }
+														shouldUseRouterLink={ shouldUseRouterLink }
 													/>
 													{ badge.key === 'approved' && ! brandMeta.isAvailable && (
 														<Text>{ __( 'This Partner Directory is launching soon.' ) }</Text>
@@ -243,12 +256,22 @@ export default function PartnerDirectoryDashboardContent( {
 					) }
 					actions={
 						<>
-							<Button variant="secondary" href={ expertiseUrl } onClick={ onEditExpertiseClick }>
+							<LinkButton
+								variant="secondary"
+								href={ expertiseUrl }
+								onClick={ onEditExpertiseClick }
+								shouldUseRouterLink={ shouldUseRouterLink }
+							>
 								{ __( 'Edit expertise' ) }
-							</Button>
-							<Button variant="secondary" href={ profileUrl } onClick={ onEditProfileClick }>
+							</LinkButton>
+							<LinkButton
+								variant="secondary"
+								href={ profileUrl }
+								onClick={ onEditProfileClick }
+								shouldUseRouterLink={ shouldUseRouterLink }
+							>
 								{ __( 'Edit profile' ) }
-							</Button>
+							</LinkButton>
 						</>
 					}
 				/>
@@ -269,6 +292,10 @@ export default function PartnerDirectoryDashboardContent( {
 				<SectionHeader level={ 3 } title={ __( 'How do I start?' ) } />
 				<ActionList>
 					<ActionList.ActionItem
+						layout={ itemLayout }
+						suffixAlignment={
+							applicationWasSubmitted && directoryStatuses.length > 0 ? 'top' : undefined
+						}
 						title={ __( 'Share your expertise' ) }
 						description={
 							applicationWasSubmitted && directoryStatuses.length > 0
@@ -278,24 +305,26 @@ export default function PartnerDirectoryDashboardContent( {
 								  )
 						}
 						actions={
-							<Button
+							<LinkButton
 								variant={ applicationWasSubmitted ? 'secondary' : 'primary' }
 								href={ expertiseUrl }
 								onClick={ applicationWasSubmitted ? onEditExpertiseClick : onApplyNowClick }
+								shouldUseRouterLink={ shouldUseRouterLink }
 							>
 								{ applicationWasSubmitted ? __( 'Edit expertise' ) : __( 'Apply now' ) }
-							</Button>
+							</LinkButton>
 						}
 					/>
 				</ActionList>
 				<ActionList>
 					<ActionList.ActionItem
+						layout={ itemLayout }
 						title={ __( 'Finish adding details to your public profile' ) }
 						description={ __(
 							'When approved, add details to your agency’s public profile for clients to see.'
 						) }
 						actions={
-							<Button
+							<LinkButton
 								variant={
 									applicationWasSubmitted && hasDirectoryApproval && ! isProfileComplete
 										? 'primary'
@@ -304,25 +333,20 @@ export default function PartnerDirectoryDashboardContent( {
 								href={ profileUrl }
 								onClick={ onFinishProfileClick }
 								disabled={ ! applicationWasSubmitted || ! hasDirectoryApproval }
+								shouldUseRouterLink={ shouldUseRouterLink }
 							>
 								{ isProfileComplete ? __( 'Edit profile' ) : __( 'Finish profile' ) }
-							</Button>
+							</LinkButton>
 						}
 					/>
 				</ActionList>
 				<ActionList>
 					<ActionList.ActionItem
+						layout={ itemLayout }
 						title={ __( 'New clients will find you' ) }
-						description={
-							<VStack spacing={ 1 } as="span">
-								<Text>
-									{ __(
-										'Your agency will appear in the Partner Directories you select and get approved for, including WordPress.com, Woo.com, Pressable.com, and Jetpack.com.'
-									) }
-								</Text>
-								<Text>{ __( 'These Partner Directories are launching soon.' ) }</Text>
-							</VStack>
-						}
+						description={ __(
+							'Your agency will appear in the Partner Directories you select and get approved for, including WordPress.com, Woo.com, Pressable.com, and Jetpack.com.'
+						) }
 						actions={
 							<Button
 								variant={ applicationWasSubmitted ? 'primary' : 'secondary' }

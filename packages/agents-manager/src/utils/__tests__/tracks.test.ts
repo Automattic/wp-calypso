@@ -4,31 +4,31 @@
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
-jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ), {
-	virtual: true,
-} );
+jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ) );
 jest.mock( '@wordpress/data', () => ( { select: jest.fn( () => ( {} ) ) } ) );
-jest.mock( '../agent-session', () => ( { getSessionId: jest.fn( () => 'session-xyz' ) } ) );
+jest.mock( '../agent-session', () => ( { getActiveSessionId: jest.fn( () => 'session-xyz' ) } ) );
 jest.mock( '../is-reader-chat-agent', () => {
 	const actual = jest.requireActual( '../is-reader-chat-agent' );
 	return { ...actual, isReaderChatHost: jest.fn( () => false ) };
 } );
 
 import { select } from '@wordpress/data';
-import { getSessionId } from '../agent-session';
+import { getActiveSessionId } from '../agent-session';
 import { isReaderChatHost } from '../is-reader-chat-agent';
+import { setLoadedProviderIds } from '../loaded-provider-ids';
 import { setResolvedAgentId } from '../resolved-agent-id';
 import {
 	getBigSkyTracksData,
 	recordAgentsManagerTracksEvent,
 	recordBigSkyTracksEvent,
-	recordFullNameAgentsManagerTracksEvent,
 } from '../tracks';
 
 const mockRecordTracksEvent = recordTracksEvent as jest.MockedFunction< typeof recordTracksEvent >;
 const mockIsReaderChatHost = isReaderChatHost as jest.MockedFunction< typeof isReaderChatHost >;
 const mockSelect = select as jest.MockedFunction< typeof select >;
-const mockGetSessionId = getSessionId as jest.MockedFunction< typeof getSessionId >;
+const mockGetActiveSessionId = getActiveSessionId as jest.MockedFunction<
+	typeof getActiveSessionId
+>;
 
 function lastEventProps(): Record< string, unknown > {
 	const call = mockRecordTracksEvent.mock.calls.at( -1 );
@@ -53,7 +53,7 @@ describe( 'tracks wrappers', () => {
 
 	describe( 'recordBigSkyTracksEvent', () => {
 		it( 'falls back to honest defaults when bigSkyInitialState is absent', () => {
-			recordBigSkyTracksEvent( 'chat_input_send_message', {
+			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message', {
 				message_length: 5,
 			} );
 
@@ -81,7 +81,7 @@ describe( 'tracks wrappers', () => {
 				currentScreen: { screen: 'dashboard' },
 			};
 
-			recordBigSkyTracksEvent( 'chat_input_send_message' );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
 
 			expect( lastEventProps() ).toMatchObject( {
 				session_type: 'paid-user-session',
@@ -91,25 +91,25 @@ describe( 'tracks wrappers', () => {
 		} );
 
 		it( 'lets caller props win on collision', () => {
-			recordBigSkyTracksEvent( 'x', { sessionid: 'override' } );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_x', { sessionid: 'override' } );
 			expect( lastEventProps().sessionid ).toBe( 'override' );
 		} );
 
 		it( 'no-ops when the resolved agent id is a reader-chat agent', () => {
 			setResolvedAgentId( 'reader-chat' );
-			recordBigSkyTracksEvent( 'chat_input_send_message' );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
 			expect( mockRecordTracksEvent ).not.toHaveBeenCalled();
 		} );
 
 		it( 'fires when the resolved agent id is a non-reader agent', () => {
 			setResolvedAgentId( 'big-sky' );
-			recordBigSkyTracksEvent( 'chat_input_send_message' );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
 			expect( mockRecordTracksEvent ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		it( 'fires when the resolved agent id is unset', () => {
 			setResolvedAgentId( undefined );
-			recordBigSkyTracksEvent( 'chat_input_send_message' );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
 			expect( mockRecordTracksEvent ).toHaveBeenCalledTimes( 1 );
 		} );
 
@@ -119,13 +119,13 @@ describe( 'tracks wrappers', () => {
 				site: { ID: 12345 },
 			};
 
-			recordBigSkyTracksEvent( 'chat_input_send_message' );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
 
 			expect( lastEventProps().blog_id ).toBe( 12345 );
 		} );
 
 		it( 'duplicates the session ID into the standard ai_session_id', () => {
-			recordBigSkyTracksEvent( 'chat_input_send_message' );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
 
 			expect( lastEventProps() ).toMatchObject( {
 				sessionid: 'session-xyz',
@@ -134,9 +134,9 @@ describe( 'tracks wrappers', () => {
 		} );
 
 		it( 'omits ai_session_id while no session exists yet', () => {
-			mockGetSessionId.mockReturnValueOnce( '' );
+			mockGetActiveSessionId.mockReturnValueOnce( '' );
 
-			recordBigSkyTracksEvent( 'chat_input_send_message' );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
 
 			const props = lastEventProps();
 			expect( props.sessionid ).toBe( '' );
@@ -144,7 +144,7 @@ describe( 'tracks wrappers', () => {
 		} );
 
 		it( 'mirrors a caller-overridden sessionid into ai_session_id', () => {
-			recordBigSkyTracksEvent( 'x', { sessionid: 'override' } );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_x', { sessionid: 'override' } );
 
 			expect( lastEventProps() ).toMatchObject( {
 				sessionid: 'override',
@@ -153,13 +153,13 @@ describe( 'tracks wrappers', () => {
 		} );
 
 		it( 'omits ai_session_id when a caller overrides sessionid to empty', () => {
-			recordBigSkyTracksEvent( 'x', { sessionid: '' } );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_x', { sessionid: '' } );
 
 			expect( lastEventProps() ).not.toHaveProperty( 'ai_session_id' );
 		} );
 
 		it( 'lets a caller-supplied ai_session_id win over the mirror', () => {
-			recordBigSkyTracksEvent( 'x', { ai_session_id: 'custom' } );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_x', { ai_session_id: 'custom' } );
 
 			expect( lastEventProps() ).toMatchObject( {
 				sessionid: 'session-xyz',
@@ -168,7 +168,7 @@ describe( 'tracks wrappers', () => {
 		} );
 
 		it( 'labels editor-hosted parity events with the block_editor surface', () => {
-			recordBigSkyTracksEvent( 'chat_input_send_message' );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
 
 			expect( lastEventProps().surface ).toBe( 'block_editor' );
 		} );
@@ -179,7 +179,7 @@ describe( 'tracks wrappers', () => {
 					( store === 'core/editor' ? undefined : {} ) as unknown as ReturnType< typeof select >
 			);
 
-			recordBigSkyTracksEvent( 'chat_input_send_message' );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
 
 			expect( lastEventProps() ).not.toHaveProperty( 'surface' );
 		} );
@@ -190,7 +190,7 @@ describe( 'tracks wrappers', () => {
 				site: { ID: 0 },
 			};
 
-			recordBigSkyTracksEvent( 'chat_input_send_message' );
+			recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' );
 
 			expect( lastEventProps() ).not.toHaveProperty( 'blog_id' );
 		} );
@@ -198,7 +198,7 @@ describe( 'tracks wrappers', () => {
 
 	describe( 'recordAgentsManagerTracksEvent', () => {
 		it( 'injects the unified base-prop set', () => {
-			recordAgentsManagerTracksEvent( 'chat_minimize' );
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );
 
 			const [ eventName ] = mockRecordTracksEvent.mock.calls[ 0 ];
 			expect( eventName ).toBe( 'calypso_agents_manager_chat_minimize' );
@@ -207,6 +207,8 @@ describe( 'tracks wrappers', () => {
 			expect( props ).toMatchObject( {
 				ai_session_id: 'session-xyz',
 				agent_name: 'dolly',
+				agent_manager_version: 'none',
+				provider_ids: 'none',
 				surface: 'editor',
 				is_test: true,
 			} );
@@ -215,19 +217,19 @@ describe( 'tracks wrappers', () => {
 
 		it( 'sends the resolved agent id as agent_name when one is set', () => {
 			setResolvedAgentId( 'plugin-compass' );
-			recordAgentsManagerTracksEvent( 'chat_minimize' );
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );
 			expect( lastEventProps().agent_name ).toBe( 'plugin-compass' );
 		} );
 
 		it( 'falls back to the Dolly agent id while no agent is resolved', () => {
 			setResolvedAgentId( undefined );
-			recordAgentsManagerTracksEvent( 'chat_minimize' );
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );
 			expect( lastEventProps().agent_name ).toBe( 'dolly' );
 		} );
 
 		it( 'uses the reader-chat surface token off the editor', () => {
 			mockIsReaderChatHost.mockReturnValue( true );
-			recordAgentsManagerTracksEvent( 'x' );
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' );
 			expect( lastEventProps().surface ).toBe( 'reader-chat' );
 		} );
 
@@ -237,7 +239,7 @@ describe( 'tracks wrappers', () => {
 				site: { ID: 12345 },
 			};
 
-			recordAgentsManagerTracksEvent( 'chat_minimize' );
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );
 
 			expect( lastEventProps().blog_id ).toBe( 12345 );
 		} );
@@ -248,34 +250,114 @@ describe( 'tracks wrappers', () => {
 				site: { ID: 0 },
 			};
 
-			recordAgentsManagerTracksEvent( 'chat_minimize' );
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );
 
 			expect( lastEventProps() ).not.toHaveProperty( 'blog_id' );
 		} );
 
 		it( 'fires even when the resolved agent id is a reader-chat agent', () => {
 			setResolvedAgentId( 'reader-chat' );
-			recordAgentsManagerTracksEvent( 'chat_minimize' );
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );
 			expect( mockRecordTracksEvent ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 
-	describe( 'recordFullNameAgentsManagerTracksEvent', () => {
-		it( 'records under the given name with the unified base-prop set', () => {
-			recordFullNameAgentsManagerTracksEvent( 'calypso_editor_agents_manager_ai_chat_clicked', {
+	describe( 'provider_ids', () => {
+		afterEach( () => {
+			setLoadedProviderIds( undefined );
+		} );
+
+		it( 'joins the loaded provider ids, sorted for stable grouping', () => {
+			setLoadedProviderIds( [ 'woocommerce-ai', 'jetpack-ai' ] );
+
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );
+
+			expect( lastEventProps().provider_ids ).toBe( 'jetpack-ai,woocommerce-ai' );
+		} );
+
+		it( 'sends none when the providers loaded with no external entries', () => {
+			setLoadedProviderIds( [] );
+
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );
+
+			expect( lastEventProps().provider_ids ).toBe( 'none' );
+		} );
+
+		it( 'sends none until the providers load', () => {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );
+
+			expect( lastEventProps().provider_ids ).toBe( 'none' );
+		} );
+	} );
+
+	describe( 'agent_manager_version', () => {
+		afterEach( () => {
+			delete window.COMMIT_SHA;
+		} );
+
+		it( 'sends the Jetpack-injected build version when present', () => {
+			( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+				isDevMode: true,
+				version: 'gutenberg:abc123',
+			};
+
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' );
+
+			expect( lastEventProps().agent_manager_version ).toBe( 'gutenberg:abc123' );
+		} );
+
+		it( 'falls back to the Calypso commit on Calypso-rendered pages', () => {
+			window.COMMIT_SHA = 'deadbeef';
+
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' );
+
+			expect( lastEventProps().agent_manager_version ).toBe( 'calypso:deadbeef' );
+		} );
+
+		it( 'prefers the injected version over the Calypso commit', () => {
+			( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+				isDevMode: true,
+				version: 'wp-admin:abc123',
+			};
+			window.COMMIT_SHA = 'deadbeef';
+
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' );
+
+			expect( lastEventProps().agent_manager_version ).toBe( 'wp-admin:abc123' );
+		} );
+
+		it( "normalizes the dev server's '(unknown)' commit to calypso:dev", () => {
+			window.COMMIT_SHA = '(unknown)';
+
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' );
+
+			expect( lastEventProps().agent_manager_version ).toBe( 'calypso:dev' );
+		} );
+
+		it( 'sends none when neither source is available', () => {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' );
+
+			expect( lastEventProps().agent_manager_version ).toBe( 'none' );
+		} );
+	} );
+
+	describe( 'entry-point events', () => {
+		it( 'lets a caller-supplied surface override the base value', () => {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_ai_chat_clicked', {
+				surface: 'editor_toolbar',
 				section: 'gutenberg',
 				action: 'open',
 			} );
 
 			const [ eventName ] = mockRecordTracksEvent.mock.calls[ 0 ];
-			expect( eventName ).toBe( 'calypso_editor_agents_manager_ai_chat_clicked' );
+			expect( eventName ).toBe( 'calypso_agents_manager_ai_chat_clicked' );
 
 			expect( lastEventProps() ).toMatchObject( {
 				section: 'gutenberg',
 				action: 'open',
 				ai_session_id: 'session-xyz',
 				agent_name: 'dolly',
-				surface: 'editor',
+				surface: 'editor_toolbar',
 				is_test: true,
 			} );
 		} );
@@ -283,8 +365,8 @@ describe( 'tracks wrappers', () => {
 
 	describe( 'is_a11n', () => {
 		const recorders = [
-			[ 'Big Sky', recordBigSkyTracksEvent ],
-			[ 'Agents Manager', recordAgentsManagerTracksEvent ],
+			[ 'Big Sky', () => recordBigSkyTracksEvent( 'jetpack_big_sky_x' ) ],
+			[ 'Agents Manager', () => recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' ) ],
 		] as const;
 
 		it.each( recorders )(
@@ -295,7 +377,7 @@ describe( 'tracks wrappers', () => {
 					isA11n: true,
 				};
 
-				recordEvent( 'x' );
+				recordEvent();
 
 				expect( lastEventProps().is_a11n ).toBe( true );
 			}
@@ -309,7 +391,7 @@ describe( 'tracks wrappers', () => {
 					isA11n: false,
 				};
 
-				recordEvent( 'x' );
+				recordEvent();
 
 				expect( lastEventProps().is_a11n ).toBe( false );
 			}
@@ -322,7 +404,7 @@ describe( 'tracks wrappers', () => {
 					isDevMode: false,
 				};
 
-				recordEvent( 'x' );
+				recordEvent();
 
 				expect( lastEventProps() ).not.toHaveProperty( 'is_a11n' );
 			}
@@ -332,20 +414,20 @@ describe( 'tracks wrappers', () => {
 	describe( 'is_test (getIsTest)', () => {
 		it( 'is true when agentsManagerData asserts dev mode', () => {
 			( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = { isDevMode: true };
-			recordAgentsManagerTracksEvent( 'x' );
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' );
 			expect( lastEventProps().is_test ).toBe( true );
 		} );
 
 		it( 'falls through to bigSkyInitialState when agentsManagerData omits isDevMode', () => {
 			( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {};
 			( window as Window ).bigSkyInitialState = { isDevMode: '1' };
-			recordAgentsManagerTracksEvent( 'x' );
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' );
 			expect( lastEventProps().is_test ).toBe( true );
 		} );
 
 		it( 'is false when neither source asserts dev mode', () => {
 			( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {};
-			recordAgentsManagerTracksEvent( 'x' );
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' );
 			expect( lastEventProps().is_test ).toBe( false );
 		} );
 	} );
@@ -356,7 +438,9 @@ describe( 'tracks wrappers', () => {
 				throw new Error( 'store not registered' );
 			} );
 
-			expect( () => recordBigSkyTracksEvent( 'chat_input_send_message' ) ).not.toThrow();
+			expect( () =>
+				recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' )
+			).not.toThrow();
 			expect( mockRecordTracksEvent ).toHaveBeenCalledTimes( 1 );
 			expect( lastEventProps() ).toMatchObject( { post_type: '', is_home_page: false } );
 			expect( lastEventProps() ).not.toHaveProperty( 'surface' );
@@ -372,7 +456,9 @@ describe( 'tracks wrappers', () => {
 				throw new Error( 'core-data selector failed' );
 			} );
 
-			expect( () => recordBigSkyTracksEvent( 'chat_input_send_message' ) ).not.toThrow();
+			expect( () =>
+				recordBigSkyTracksEvent( 'jetpack_big_sky_chat_input_send_message' )
+			).not.toThrow();
 			expect( lastEventProps() ).toMatchObject( {
 				surface: 'block_editor',
 				post_type: '',

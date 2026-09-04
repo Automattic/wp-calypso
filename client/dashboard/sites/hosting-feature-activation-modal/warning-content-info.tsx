@@ -1,11 +1,10 @@
-import { Badge } from '@automattic/ui';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import clsx from 'clsx';
+import { Badge } from '@wordpress/ui';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Text } from '../../components/text';
 import type {
@@ -25,12 +24,12 @@ function DomainNames( { names }: { names: AutomatedTransferEligibilityWarningDom
 		{
 			label: splitDomainName( names.current ),
 			badgeLabel: __( 'current' ),
-			isNew: false,
+			intent: 'none' as const,
 		},
 		{
 			label: splitDomainName( names.new ),
 			badgeLabel: __( 'new' ),
-			isNew: true,
+			intent: 'stable' as const,
 		},
 	];
 
@@ -53,14 +52,7 @@ function DomainNames( { names }: { names: AutomatedTransferEligibilityWarningDom
 							{ item.label.rest }
 						</Text>
 					</HStack>
-					<Badge
-						className={ clsx( 'hosting-feature-activation-modal__domain-badge', {
-							'hosting-feature-activation-modal__domain-badge-new': item.isNew,
-							'hosting-feature-activation-modal__domain-badge-current': ! item.isNew,
-						} ) }
-						intent="default"
-						style={ { flexShrink: 0 } }
-					>
+					<Badge intent={ item.intent } style={ { flexShrink: 0 } }>
 						{ item.badgeLabel }
 					</Badge>
 				</HStack>
@@ -85,13 +77,16 @@ export function WarningContentInfo( {
 				return warningsByType.map( ( warning ) => (
 					<VStack key={ warning.id } spacing={ 6 }>
 						<Text>
+							{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
 							{ warning.domain_names ? (
-								createInterpolateElement(
-									__(
-										'<strong>Your site’s address will change</strong> to the one below. Links to your old address will redirect automatically.'
-									),
-									{ strong: <strong /> }
-								)
+								<span>
+									{ createInterpolateElement(
+										__(
+											'<strong>Your site’s address will change</strong> to the one below. Links to your old address will redirect automatically.'
+										),
+										{ strong: <strong /> }
+									) }
+								</span>
 							) : (
 								<span
 									// eslint-disable-next-line react/no-danger
