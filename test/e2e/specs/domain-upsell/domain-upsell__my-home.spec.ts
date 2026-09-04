@@ -1,4 +1,4 @@
-import { expect, skipIfMailosaurLimitReached, skipIfNotTrunk, tags, test } from '../../lib/pw-base';
+import { skipIfMailosaurLimitReached, skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 
 test.describe(
 	'Domain: Upsell (Home)',
@@ -23,10 +23,7 @@ test.describe(
 			} );
 
 			await test.step( 'And domain upsell card has a suggested domain', async function () {
-				// The suggestion API can be slow on CI, hence the raised timeout.
-				await expect( pageMyHome.suggestedUpsellDomainName ).toHaveText( /\S+\.\S+/, {
-					timeout: 60_000,
-				} );
+				await pageMyHome.waitForSuggestedUpsellDomain();
 			} );
 
 			await test.step( 'When I click to begin searching for a domain', async function () {
