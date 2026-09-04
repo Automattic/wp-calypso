@@ -214,22 +214,63 @@ const myFlow: FlowV2< typeof initialize > = {
 
 ### Steps that accept customization props today
 
-Most steps expose **no** flow-level props. Only `STEPS.UNIFIED_PLANS` has an `accepts:`
-type defined. Every other step listed here has none — changes require Engineering.
+A growing set of Signup steps expose an `accepts:` type, so a flow can customize them from
+`useStepsProps()` with **no Engineering PR needed**. The canonical, always-current list (with
+exact per-prop semantics and render-branch notes) is the **"Adding `accepts:` props to an existing
+step" → Worked example** section of [`README.md`](README.md); the tables below mirror it. Steps
+**not** listed here have no `accepts:` surface yet — see "What requires an Engineering PR".
 
 #### `STEPS.UNIFIED_PLANS` (slug: `'plans'`)
 
-| Prop                    | Type                                            | What it does                                                         |
-| ----------------------- | ----------------------------------------------- | -------------------------------------------------------------------- |
-| `isInSignup`            | `boolean`                                       | `true` = signup pricing (free plan shown); `false` = upgrade pricing |
-| `isStepperUpgradeFlow`  | `boolean`                                       | Enables upgrade-specific behavior in PlansFeaturesMain               |
-| `selectedFeature`       | `string`                                        | Highlights a plan that includes this feature slug                    |
-| `displayedIntervals`    | `('monthly'\|'yearly'\|'2yearly'\|'3yearly')[]` | Restricts which billing cycles are shown                             |
-| `wrapperProps.hideBack` | `boolean`                                       | Hides the back button                                                |
-| `wrapperProps.goBack`   | `() => void`                                    | Custom back button handler                                           |
+| Prop                                                                                                                     | Type                                            | What it does                                                                               |
+| ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `isInSignup`                                                                                                             | `boolean`                                       | `true` = signup pricing (free plan shown); `false` = upgrade pricing                       |
+| `isStepperUpgradeFlow`                                                                                                   | `boolean`                                       | Enables upgrade-specific behavior in PlansFeaturesMain                                     |
+| `selectedFeature`                                                                                                        | `string`                                        | Highlights a plan that includes this feature slug                                          |
+| `displayedIntervals`                                                                                                     | `('monthly'\|'yearly'\|'2yearly'\|'3yearly')[]` | Restricts which billing cycles are shown                                                   |
+| `headerText` / `subHeaderText`                                                                                           | `string`                                        | Override the per-intent header / sub-header copy                                           |
+| `hideFreePlan`, `hideEnterprisePlan`, `hidePersonalPlan`, `hidePremiumPlan`, `hideEcommercePlan`, `hidePlanTypeSelector` | `boolean`                                       | Hide a specific plan / the plan-type selector (each OR-ed over the computed default)       |
+| `defaultInterval`                                                                                                        | `'monthly'\|'yearly'\|'2yearly'\|'3yearly'`     | Seeds the billing term (the URL still wins once the user switches)                         |
+| `highlightLabelOverrides`                                                                                                | `{ [PlanSlug]?: TranslateResult }`              | Re-labels a plan's highlight tag (top pill)                                                |
+| `titleBadgeOverrides`                                                                                                    | `{ [PlanSlug]?: TranslateResult }`              | Re-labels the badge next to a plan's title (features grid only)                            |
+| `taglineOverrides`                                                                                                       | `{ [PlanSlug]?: TranslateResult }`              | Overrides a plan's tagline, winning over computed and experiment copy (features grid only) |
+| `wrapperProps.hideBack`                                                                                                  | `boolean`                                       | Hides the back button                                                                      |
+| `wrapperProps.goBack`                                                                                                    | `() => void`                                    | Custom back button handler                                                                 |
 
-Note: `hideFreePlan` and `headerText` exist on the underlying component but are **not**
-exposed via `accepts` — they cannot be set from the flow without an Engineering PR.
+#### `STEPS.DOMAIN_SEARCH` (slug: `'domains'`)
+
+| Prop                                               | Type       | What it does                                                        |
+| -------------------------------------------------- | ---------- | ------------------------------------------------------------------- |
+| `headerText` / `subHeaderText`                     | `string`   | Override the step heading / sub-heading                             |
+| `hideUseMyDomainLink`                              | `boolean`  | Suppress the "Use a domain I own" CTA (V2 top bar + V1 skip button) |
+| `hideFreeDomainPromo`                              | `boolean`  | Hide the free-domain-for-a-year banner                              |
+| `freeDomainPromoTitle` / `freeDomainPromoSubtitle` | `string`   | Copy overrides for that banner                                      |
+| `allowedTlds`                                      | `string[]` | Per-flow TLD filter (the URL `?tld=` param can override)            |
+
+#### The register / user step (slug: `'user'`, auto-injected)
+
+Auto-injected by `stepsWithRequiredLogin()` — it is **not** in the flow's `initialize()` array,
+so its props are passed under a reserved `user` key of `useStepsProps()` (the return type is
+widened via `MapStepsToTheirAcceptedProps<[ typeof PRIVATE_STEPS.USER ]>`).
+
+| Prop                           | Type       | What it does                                                   |
+| ------------------------------ | ---------- | -------------------------------------------------------------- |
+| `headerText` / `subHeaderText` | `string`   | Override the "Create your account" heading / add a sub-heading |
+| `hideLoginLink`                | `boolean`  | Hide the top-level "Log in" link (V2 top bar / V1 footer)      |
+| `allowedSocialServices`        | `string[]` | Restrict which social sign-in providers are offered            |
+
+```ts
+const myFlow: FlowV2< typeof initialize > = {
+	// ...
+	useStepsProps() {
+		return {
+			domains: { hideUseMyDomainLink: true },
+			plans: { hideFreePlan: true, defaultInterval: 'yearly' },
+			user: { hideLoginLink: true }, // reserved `user` key for the auto-injected step
+		};
+	},
+};
+```
 
 ### Store-based customizations (set in `initialize()`)
 
