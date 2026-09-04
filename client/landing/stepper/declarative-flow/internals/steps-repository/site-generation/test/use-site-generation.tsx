@@ -24,22 +24,22 @@ const originalLocation = window.location;
 
 const STEPS = [
 	{ id: 'preparing', label: 'Preparing your site' },
-	{ id: 'designing', label: 'Choosing your design' },
+	{ id: 'designing', label: 'Creating your design' },
 	{ id: 'building', label: 'Building your pages' },
 	{ id: 'images', label: 'Adding your images' },
 	{ id: 'polishing', label: 'Polishing your site' },
-	{ id: 'publishing', label: 'Publishing your site' },
+	{ id: 'publishing', label: 'Doing final checks' },
 ];
 
 // A server checklist in the shape big_sky_build_wow_status_ui_steps() emits.
 const SERVER_STEPS = ( activeIndex: number ) =>
 	[
 		{ id: 'prepare', label: 'Preparing your site' },
-		{ id: 'design', label: 'Choosing your design' },
+		{ id: 'design', label: 'Creating your design' },
 		{ id: 'pages', label: 'Building your pages' },
 		{ id: 'images', label: 'Adding your images' },
 		{ id: 'polish', label: 'Polishing your site' },
-		{ id: 'publish', label: 'Publishing your site' },
+		{ id: 'publish', label: 'Doing final checks' },
 	].map( ( step, index ) => {
 		let state = 'pending';
 		if ( index < activeIndex ) {

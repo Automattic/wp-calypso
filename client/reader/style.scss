@@ -510,8 +510,7 @@ body.is-section-reader {
 		}
 	}
 
-	// Shared type for the logged-out reader heroes (Discover, /tags, /tag/:slug)
-	// so the three pages stay in lockstep.
+	// Type for the logged-out Discover hero.
 	.reader-hero {
 		h1 {
 			font-family: $brand-serif;

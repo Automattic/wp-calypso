@@ -106,7 +106,9 @@ class Security extends Component {
 					{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 					<RenewButton
 						primary
-						purchase={ purchase }
+						// Temporary bridge (SHILL-2256): this page still reads the camelCase
+						// Purchase from Redux. Remove once it reads the raw shape.
+						purchase={ purchase?.rawPurchase ?? null }
 						selectedSite={ selectedSite }
 						subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
 						redemptionProduct={ domain.isRedeemable ? this.props.redemptionProduct : null }

@@ -810,6 +810,15 @@ This mixin generates alias variables for a color palette. For example, the
 	}
 }
 
+@mixin color-scheme-dark-theme-spinner {
+	// The Spinner track strokes with `@wordpress/components`' deprecated literal
+	// gray palette, so it stays `#ddd` on dark surfaces no matter which tokens
+	// are set.
+	.components-spinner circle {
+		stroke: var( --wp-components-color-gray-300 );
+	}
+}
+
 @mixin color-scheme-dark-theme-agenttic {
 	// @automattic/agenttic-ui declares its own default light tokens on `.agenttic`.
 	.agenttic {
