@@ -206,13 +206,11 @@ describe( 'onboarding flow domains navigation', () => {
 		jest.clearAllMocks();
 	} );
 
-	// Without this, redirected traffic is asked to pick a plan it already chose. The marker
-	// records the skip now, so a later cart change cannot make a visit that walked the grid
-	// look like one that never saw it.
+	// Without this, redirected traffic is asked to pick a plan it already chose.
 	it( 'skips the plans step when the URL names a plan already in the cart', () => {
 		const navigate = submitDomains( 'plan=personal-bundle', 'personal-bundle' );
 
-		expect( navigate ).toHaveBeenCalledWith( 'create-site?steps_omit=plans', undefined, false );
+		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, false );
 	} );
 
 	// A cold step URL never ran the seeding; skipping would hand over a free site.

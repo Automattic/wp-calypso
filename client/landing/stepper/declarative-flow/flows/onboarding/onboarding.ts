@@ -83,11 +83,7 @@ import { STEPS } from '../../internals/steps';
 import { useIsPostPlanSelectionEmailVerification } from '../../internals/steps-repository/__user/use-email-verification-gate';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
-import {
-	getOnboardingStepperPosition,
-	omitsPlansStep,
-	ONBOARDING_OMITS_PLANS_QUERY,
-} from './step-counter-config';
+import { getOnboardingStepperPosition } from './step-counter-config';
 import type { WowFunnelDest } from '../../../utils/wow-funnel';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { Store } from 'redux';
@@ -491,14 +487,7 @@ const onboarding: FlowV2< typeof initialize > = {
 
 			setSignupCompleteFlowName( flowName );
 
-			// The cart is what makes this visit look preselected, and the plans step is what
-			// changes it. Recording the skip here keeps a visit that did walk the grid from
-			// looking like one that never saw it by the time checkout asks.
-			return navigate(
-				addQueryArgs( 'create-site', ONBOARDING_OMITS_PLANS_QUERY ) as 'create-site',
-				undefined,
-				false
-			);
+			return navigate( 'create-site', undefined, false );
 		};
 
 		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
@@ -765,10 +754,9 @@ const onboarding: FlowV2< typeof initialize > = {
 								);
 							}
 
-							const omitsPlans = omitsPlansStep( queryParams );
 							const checkoutStepperPosition = getOnboardingStepperPosition(
 								'checkout',
-								omitsPlans
+								skipsPlans
 							);
 
 							// replace the location to delete processing step from history.
@@ -790,7 +778,6 @@ const onboarding: FlowV2< typeof initialize > = {
 									coupon,
 									steps_current: checkoutStepperPosition.current,
 									steps_total: checkoutStepperPosition.total,
-									...( omitsPlans ? ONBOARDING_OMITS_PLANS_QUERY : {} ),
 								} )
 							);
 						} else if ( blueprintArchiveSlug || isKnownWowFunnel( wowFunnelSlug ) ) {

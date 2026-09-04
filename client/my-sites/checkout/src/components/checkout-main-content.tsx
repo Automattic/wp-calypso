@@ -51,7 +51,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import Loading from 'calypso/components/loading';
-import { omitsPlansStep } from 'calypso/landing/stepper/declarative-flow/flows/onboarding/step-counter-config';
+import { ONBOARDING_STEPPER_TOTAL } from 'calypso/landing/stepper/declarative-flow/flows/onboarding/step-counter-config';
 import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress';
 import { useShowOnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
@@ -458,11 +458,6 @@ export default function CheckoutMainContent( {
 		couponStatus,
 	} = useShoppingCart( cartKey );
 
-	const searchParams = new URLSearchParams( window.location.search );
-	const isOnboardingFlowCheckout = searchParams.get( 'flow' ) === ONBOARDING_FLOW;
-	// The redirecting flow names any step its visit skipped; it is the flow, not checkout, that
-	// knows which ones those were. A skipped step is not a place to send anyone back to.
-	const shouldHidePlansStep = isOnboardingFlowCheckout && omitsPlansStep( searchParams );
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteUrl ?? '' } );
 
 	// Shared sidebar slot for the active payment-method submit button. We render
@@ -476,6 +471,8 @@ export default function CheckoutMainContent( {
 		[ submitButtonSlotEl ]
 	);
 
+	const searchParams = new URLSearchParams( window.location.search );
+	const isOnboardingFlowCheckout = searchParams.get( 'flow' ) === ONBOARDING_FLOW;
 	const showProgress = useShowOnboardingProgress( isOnboardingFlowCheckout );
 	const forceCheckoutBackUrlDomains = useValidCheckoutBackUrl(
 		siteUrl ?? '',
@@ -499,6 +496,10 @@ export default function CheckoutMainContent( {
 		stepsCurrent <= stepsTotal
 			? { current: stepsCurrent, total: stepsTotal }
 			: null;
+	// The flow reports how many steps its visit had. Onboarding sends one fewer when the plan
+	// arrived preselected, so the grid was never among them.
+	const shouldHidePlansStep =
+		isOnboardingFlowCheckout && stepsTotal > 0 && stepsTotal < ONBOARDING_STEPPER_TOTAL;
 	const selectedSiteData = useSelector( getSelectedSite );
 	const wpcomDomain = useSelector( ( state ) =>
 		getWpComDomainBySiteId( state, selectedSiteData?.ID )

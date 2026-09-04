@@ -15,20 +15,7 @@ export const ONBOARDING_STEPPER_GROUPS = [ 'domain', 'plans', 'checkout' ] as co
 
 export type OnboardingStepperGroup = ( typeof ONBOARDING_STEPPER_GROUPS )[ number ];
 
-const OMITTED_GROUP_PARAM = 'steps_omit';
-const OMITTED_PLANS_GROUP: OnboardingStepperGroup = 'plans';
-
-/**
- * Query args naming a group the visit never walked. The flow adds them the moment it
- * decides to skip, so the decision travels with the URL instead of being derived again
- * later from a cart that has moved on.
- */
-export const ONBOARDING_OMITS_PLANS_QUERY = { [ OMITTED_GROUP_PARAM ]: OMITTED_PLANS_GROUP };
-
-/** Whether a URL says its visit passed the plans grid by. */
-export function omitsPlansStep( search: URLSearchParams ): boolean {
-	return search.get( OMITTED_GROUP_PARAM ) === OMITTED_PLANS_GROUP;
-}
+export const ONBOARDING_STEPPER_TOTAL = ONBOARDING_STEPPER_GROUPS.length;
 
 export const ONBOARDING_STEPPER_GROUP_BY_SLUG: Record< string, OnboardingStepperGroup > = {
 	domains: 'domain',
@@ -48,7 +35,7 @@ export function getOnboardingStepperPosition(
 	// seeds the cart. Numbering a group the list left out would read "0 of 2", so a visit
 	// standing on one keeps it.
 	const groups = ONBOARDING_STEPPER_GROUPS.filter(
-		( g ) => g === group || ! ( skipsPlans && g === OMITTED_PLANS_GROUP )
+		( g ) => g === group || ! ( skipsPlans && g === 'plans' )
 	);
 
 	return {
