@@ -156,7 +156,7 @@ describe( 'useCreateZendeskConversation — Smooch-not-ready retry loop', () => 
 		const success = lastTrackedProps( 'new_zendesk_conversation' );
 		expect( success ).toMatchObject( { smooch_attempts: 1, smooch_waited_ms: 0 } );
 		// Other tabs on this interaction are told to follow the escalation.
-		expect( broadcastOdieInteractionUpdated ).toHaveBeenCalledWith( 'this-tab', 'int-1' );
+		expect( broadcastOdieInteractionUpdated ).toHaveBeenCalledWith( 'this-tab', 'int-1', 'int-1' );
 	} );
 
 	it( 'broadcasts the interaction that ends up owning the conversation', async () => {
@@ -173,8 +173,9 @@ describe( 'useCreateZendeskConversation — Smooch-not-ready retry loop', () => 
 		expect( Smooch.updateConversation ).toHaveBeenCalledWith( 'conv-1', {
 			metadata: expect.objectContaining( { supportInteractionId: 'int-2' } ),
 		} );
+		// Other tabs show int-1, so that is what they match on; they then follow to int-2.
 		expect( broadcastOdieInteractionUpdated ).toHaveBeenCalledTimes( 1 );
-		expect( broadcastOdieInteractionUpdated ).toHaveBeenCalledWith( 'this-tab', 'int-2' );
+		expect( broadcastOdieInteractionUpdated ).toHaveBeenCalledWith( 'this-tab', 'int-1', 'int-2' );
 	} );
 
 	it( 'surfaces the error after the 10s deadline if the SDK never becomes ready', async () => {

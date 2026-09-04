@@ -271,9 +271,17 @@ export const useCreateZendeskConversation = () => {
 			} ) );
 
 			// Let other tabs on this interaction know it moved to Zendesk, so they
-			// refetch it and switch too.
-			if ( activeInteractionId ) {
-				broadcastOdieInteractionUpdated( odieBroadcastClientId, activeInteractionId );
+			// refetch it and switch too. They show the interaction this tab started
+			// from, so that is what they match on; `activeInteractionId` is where the
+			// conversation ended up, which can differ when the service moved the event.
+			// A chat that had no interaction yet cannot be open elsewhere.
+			const sourceInteractionId = currentSupportInteraction?.uuid;
+			if ( sourceInteractionId && activeInteractionId ) {
+				broadcastOdieInteractionUpdated(
+					odieBroadcastClientId,
+					sourceInteractionId,
+					activeInteractionId
+				);
 			}
 
 			// Track success only if conversation was created

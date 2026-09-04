@@ -10,8 +10,10 @@ import {
 import type { Message } from '../../types';
 
 let mockSearch = '?id=interaction-1';
+const mockNavigate = jest.fn();
 jest.mock( 'react-router-dom', () => ( {
-	useLocation: () => ( { search: mockSearch } ),
+	useLocation: () => ( { search: mockSearch, pathname: '/odie' } ),
+	useNavigate: () => mockNavigate,
 } ) );
 const mockInvalidateQueries = jest.fn();
 jest.mock( '@tanstack/react-query', () => ( {
@@ -61,6 +63,7 @@ describe( 'odie broadcast gating', () => {
 		FakeBroadcastChannel.channels = [];
 		mockSearch = '?id=interaction-1';
 		mockInvalidateQueries.mockClear();
+		mockNavigate.mockClear();
 		( globalThis as unknown as { BroadcastChannel: typeof BroadcastChannel } ).BroadcastChannel =
 			FakeBroadcastChannel as unknown as typeof BroadcastChannel;
 	} );
@@ -162,6 +165,32 @@ describe( 'odie broadcast gating', () => {
 			queryKey: [ 'support-interactions', 'get-interaction-by-id', 'interaction-1', false ],
 		} );
 		expect( mockInvalidateQueries ).toHaveBeenCalledWith( { queryKey: [ 'odie-chat' ] } );
+		expect( mockNavigate ).not.toHaveBeenCalled();
+	} );
+
+	it( 'follows the interaction that now owns the conversation when it moved', () => {
+		renderHook( () => useOdieBroadcastWithCallbacks( { addMessage: jest.fn() }, 'listener-tab' ) );
+
+		// The sending tab started from interaction-1, which this tab shows, but the
+		// service put the conversation on interaction-2.
+		broadcastOdieInteractionUpdated( 'sender-tab', 'interaction-1', 'interaction-2' );
+
+		expect( mockInvalidateQueries ).toHaveBeenCalledWith( {
+			queryKey: [ 'support-interactions', 'get-interaction-by-id', 'interaction-1', false ],
+		} );
+		expect( mockInvalidateQueries ).toHaveBeenCalledWith( {
+			queryKey: [ 'support-interactions', 'get-interaction-by-id', 'interaction-2', false ],
+		} );
+		expect( mockNavigate ).toHaveBeenCalledWith( '/odie?id=interaction-2', { replace: true } );
+	} );
+
+	it( 'ignores a move announced for an interaction this tab does not show', () => {
+		renderHook( () => useOdieBroadcastWithCallbacks( { addMessage: jest.fn() }, 'listener-tab' ) );
+
+		broadcastOdieInteractionUpdated( 'sender-tab', 'interaction-3', 'interaction-1' );
+
+		expect( mockInvalidateQueries ).not.toHaveBeenCalled();
+		expect( mockNavigate ).not.toHaveBeenCalled();
 	} );
 
 	it( 'ignores an interaction update for a different support interaction', () => {

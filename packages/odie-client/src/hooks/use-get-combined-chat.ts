@@ -23,6 +23,28 @@ import { useLoggedOutSession } from './use-logged-out-session';
 import type { Chat, Message } from '../types';
 
 /**
+ * Whether a failed conversation fetch says the conversation is gone for good (deleted, or
+ * no longer visible to this user) rather than temporarily unreachable. Smooch forwards
+ * its HTTP failures as-is, so both the status code and the message are checked.
+ * @param error - The fetch rejection.
+ * @returns True when the conversation should be treated as gone.
+ */
+const isConversationGoneError = ( error: unknown ) => {
+	const failure = error as {
+		status?: number;
+		statusCode?: number;
+		response?: { status?: number };
+	} | null;
+	const status = failure?.status ?? failure?.statusCode ?? failure?.response?.status;
+	if ( status === 403 || status === 404 ) {
+		return true;
+	}
+
+	const message = error instanceof Error ? error.message : String( error );
+	return /not found|does not exist|\b40[34]\b/i.test( message );
+};
+
+/**
  * This combines the ODIE chat with the ZENDESK conversation.
  * @returns The combined chat.
  */
@@ -229,17 +251,25 @@ export const useGetCombinedChat = (
 						error: error instanceof Error ? error.message : String( error ),
 					} );
 
-					if ( isSwitchingLoadedChat || refreshingAfterReconnect ) {
-						// The conversation exists: another tab just created it, or this chat
-						// was already showing it. The failure is most likely transient, so
-						// keep what we have rather than start over. Live messages still
-						// arrive through the Zendesk listener, and the next reconnect or
-						// Smooch re-init re-downloads the history.
+					if (
+						isSwitchingLoadedChat ||
+						refreshingAfterReconnect ||
+						! isConversationGoneError( error )
+					) {
+						// The conversation exists: another tab just created it, this chat
+						// was already showing it, or the failure does not say it is gone. So
+						// treat it as transient and keep what we have rather than start
+						// over. Live messages still arrive through the Zendesk listener, and
+						// the next reconnect or Smooch re-init re-downloads the history.
 						setMainChatState( ( prevChat ) =>
 							prevChat.conversationId === conversationId
 								? { ...prevChat, status: 'loaded' }
 								: {
 										...prevChat,
+										// Same identity the success path sets: a chat whose odieId does not
+										// match the interaction reads as "changed" and would be fetched again.
+										odieId: odieId ? Number( odieId ) : null,
+										wpcomUserId: odieChat?.wpcomUserId || prevChat.wpcomUserId,
 										conversationId,
 										messages: buildZendeskMessages(
 											prevChat.messages.filter( isQueuedZendeskMessage ),

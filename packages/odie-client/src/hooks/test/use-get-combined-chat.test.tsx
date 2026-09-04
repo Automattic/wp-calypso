@@ -444,9 +444,31 @@ describe( 'useGetCombinedChat — the interaction is escalated from another tab'
 		expect( mockNavigate ).not.toHaveBeenCalled();
 	} );
 
+	it( 'keeps the interaction when the initial load fails for a transient reason', async () => {
+		mockGetZendeskConversation.mockImplementation( () =>
+			Promise.reject( new Error( 'Failed to fetch' ) )
+		);
+		mockCurrentSupportInteraction = escalatedInteraction();
+
+		const { result } = renderCombinedChat();
+
+		// The conversation may well exist: show it with the history we have and let
+		// the next reconnect retry, instead of dropping the interaction.
+		await waitFor( () => {
+			expect( result.current.mainChatState.status ).toBe( 'loaded' );
+		} );
+		expect( result.current.mainChatState.provider ).toBe( 'zendesk' );
+		expect( result.current.mainChatState.conversationId ).toBe( 'conv-1' );
+		expect( result.current.mainChatState.messages.some( ( m ) => m.message_id === 10 ) ).toBe(
+			true
+		);
+		expect( mockNavigate ).not.toHaveBeenCalled();
+		expect( mockGetZendeskConversation ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'starts over with a fresh chat when the initial load cannot find the conversation', async () => {
 		mockGetZendeskConversation.mockImplementation( () =>
-			Promise.reject( new Error( 'conversation not found' ) )
+			Promise.reject( Object.assign( new Error( 'Not Found' ), { status: 404 } ) )
 		);
 		mockCurrentSupportInteraction = escalatedInteraction();
 
