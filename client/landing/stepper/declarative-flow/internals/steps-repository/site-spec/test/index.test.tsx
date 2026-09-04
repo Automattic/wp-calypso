@@ -5,6 +5,8 @@ import { useQuery as useReactQuery } from '@tanstack/react-query';
 import { act, render } from '@testing-library/react';
 import {
 	applyBlueprintSpec,
+	getSiteAdminUrl,
+	isAtomicTransferComplete,
 	startBlueprintArchiveImport,
 	waitForAtomicTransferComplete,
 	waitForBlueprintImportComplete,
@@ -93,6 +95,7 @@ jest.mock( 'calypso/landing/stepper/utils/blueprint-archive-import', () => ( {
 			siteSlug || ( siteId && String( siteId ) !== '0' ? String( siteId ) : null )
 	),
 	getSiteAdminUrl: jest.fn( () => Promise.resolve( 'https://example.wordpress.com/wp-admin/' ) ),
+	isAtomicTransferComplete: jest.fn( () => Promise.resolve( true ) ),
 	getSiteEditorUrl: jest.fn( () => 'https://example.wordpress.com/wp-admin/site-editor.php' ),
 	logBlueprintArchiveEvent: jest.fn(),
 	startBlueprintArchiveImport: jest.fn( () => Promise.resolve() ),
@@ -284,6 +287,53 @@ describe( 'SiteSpec blueprint archive import', () => {
 		// The poll belongs to the processing step now, so nothing has been asked for yet.
 		expect( waitForAtomicTransferComplete ).not.toHaveBeenCalled();
 		expect( waitForBlueprintImportComplete ).not.toHaveBeenCalled();
+	} );
+
+	it( 'prefetches the hand-off URL while the customer is still answering', async () => {
+		renderSiteSpec();
+		// Let the mount effect settle.
+		await act( async () => {} );
+
+		// One status check, never the poll — waiting belongs to the processing step.
+		expect( isAtomicTransferComplete ).toHaveBeenCalledWith( 'example.wordpress.com' );
+		expect( waitForAtomicTransferComplete ).not.toHaveBeenCalled();
+		expect( getSiteAdminUrl ).toHaveBeenCalledTimes( 1 );
+
+		const siteSpecOptions = mockUseSiteSpec.mock.calls[ 0 ][ 0 ];
+		await act( async () => {
+			await siteSpecOptions.onSpecConfirm( { spec_id: 'spec-789' } );
+		} );
+
+		const pendingAction = mockSetPendingAction.mock.calls[ 0 ][ 0 ];
+		await expect( pendingAction() ).resolves.toEqual( {
+			redirectTo: 'https://example.wordpress.com/wp-admin/site-editor.php',
+		} );
+
+		// Still one: confirm spent the prefetched URL instead of paying for it again.
+		expect( getSiteAdminUrl ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'skips the prefetch while the site is still transferring', async () => {
+		// admin_url changes when a site goes Atomic, so a URL read now would name the old site.
+		( isAtomicTransferComplete as jest.Mock ).mockResolvedValueOnce( false );
+
+		renderSiteSpec();
+		await act( async () => {} );
+
+		expect( getSiteAdminUrl ).not.toHaveBeenCalled();
+
+		const siteSpecOptions = mockUseSiteSpec.mock.calls[ 0 ][ 0 ];
+		await act( async () => {
+			await siteSpecOptions.onSpecConfirm( { spec_id: 'spec-789' } );
+		} );
+
+		const pendingAction = mockSetPendingAction.mock.calls[ 0 ][ 0 ];
+		await expect( pendingAction() ).resolves.toEqual( {
+			redirectTo: 'https://example.wordpress.com/wp-admin/site-editor.php',
+		} );
+
+		// Fetched at confirm, once, now that the transfer is known to be done.
+		expect( getSiteAdminUrl ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'polls the import from the waiting screen and hands back the site editor URL', async () => {
