@@ -194,6 +194,31 @@ export async function waitForBlueprintImportComplete(
 }
 
 /**
+ * One-shot check of whether a site's Atomic transfer has already completed.
+ *
+ * Distinct from waitForAtomicTransferComplete(): a caller that must not block — a prefetch
+ * speculating on work it may not need — wants an answer now, not a poll that can run for minutes.
+ *
+ * A missing transfer, an in-flight one, or a transient error all read as `false`. This is an
+ * optimisation hint only: `false` never means the transfer failed, so callers must fall back to
+ * doing the work properly rather than treating it as a verdict.
+ */
+export async function isAtomicTransferComplete( siteIdentifier: string ): Promise< boolean > {
+	try {
+		const transfer = ( await wpcom.req.get( {
+			path: `/sites/${ siteIdentifier }/atomic/transfers/latest`,
+			apiNamespace: 'wpcom/v2',
+		} ) ) as AtomicTransferResponse;
+
+		return Boolean(
+			transfer?.status && ATOMIC_TRANSFER_COMPLETE_STATES.includes( transfer.status )
+		);
+	} catch {
+		return false;
+	}
+}
+
+/**
  * Poll the canonical Atomic transfer status endpoint until the site's transfer
  * to Atomic completes. Resolves on a complete state; throws on a terminal
  * failure or timeout. A missing transfer (404 before the backup_import job
