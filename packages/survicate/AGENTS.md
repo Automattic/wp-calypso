@@ -108,11 +108,15 @@ draw over any other open modal dialog (onboarding modals, WP `Modal`, native
    `survey_displayed` and closes it. This is the comprehensive net that also catches
    auto-campaigns (path 2 above).
 4. **A modal opens while a survey is showing** → `load-script.ts` starts
-   `observeModals( closeSurvicateSurvey )` at `SurvicateReady` time. Both this
-   observer and the `survey_displayed` listener are torn down via the optional
-   `AbortSignal` passed to `loadSurvicateScript` — `useSurvicate` passes its
-   effect's signal, so repeated loads don't accumulate observers. Without a
-   signal they live for the page lifetime.
+   `observeModals( closeSurvicateSurvey )`. Both this observer and the
+   `survey_displayed` listener are torn down via the optional `AbortSignal`
+   passed to `loadSurvicateScript` — `useSurvicate` passes its effect's signal,
+   so repeated loads don't accumulate observers. Because `SurvicateReady` fires
+   only once per page, the wiring runs immediately when the SDK is already
+   loaded (a consumer effect re-running after an earlier abort) and otherwise
+   waits for `SurvicateReady`; this re-establishes suppression on re-mount
+   instead of dropping it permanently. Without a signal it lives for the page
+   lifetime.
 
 `isHelpCenterOpen()` (exported from `invoke-event.ts`) reads the `automattic/help-center`
 `@wordpress/data` store by string and returns `false` if the store isn't registered, so

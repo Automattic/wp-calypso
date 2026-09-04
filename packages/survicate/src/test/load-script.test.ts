@@ -124,4 +124,31 @@ describe( 'loadSurvicateScript', () => {
 
 		expect( closeSurvey ).toHaveBeenCalledTimes( 1 );
 	} );
+
+	test( 'should re-establish modal suppression when reloaded after the SDK is ready', async () => {
+		const closeSurvey = jest.fn();
+		const firstController = new AbortController();
+
+		// First load waits for SurvicateReady (SDK not yet present), then the SDK
+		// becomes ready and wires the observer.
+		loadSurvicateScript( 'test-workspace-id', firstController.signal );
+		window._sva = { closeSurvey, addEventListener: jest.fn() };
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+		// The consumer effect re-runs: its cleanup aborts, tearing the first
+		// observer down.
+		firstController.abort();
+
+		// Reload with a fresh signal. SurvicateReady won't fire again this page
+		// load, so suppression must be wired immediately from the ready SDK.
+		loadSurvicateScript( 'test-workspace-id', controller.signal );
+
+		const modal = document.createElement( 'div' );
+		modal.setAttribute( 'role', 'dialog' );
+		modal.setAttribute( 'aria-modal', 'true' );
+		document.body.appendChild( modal );
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+		expect( closeSurvey ).toHaveBeenCalledTimes( 1 );
+	} );
 } );

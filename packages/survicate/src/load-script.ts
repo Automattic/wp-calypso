@@ -32,7 +32,7 @@ export function loadSurvicateScript( workspaceId: string, signal?: AbortSignal )
 		}
 	};
 
-	const onSurvicateReady = () => {
+	const wireSuppression = () => {
 		if ( signal?.aborted ) {
 			return;
 		}
@@ -53,12 +53,20 @@ export function loadSurvicateScript( workspaceId: string, signal?: AbortSignal )
 		);
 	};
 
-	window.addEventListener( 'SurvicateReady', onSurvicateReady, { once: true } );
-	signal?.addEventListener(
-		'abort',
-		() => window.removeEventListener( 'SurvicateReady', onSurvicateReady ),
-		{ once: true }
-	);
+	// `SurvicateReady` fires only once per page load. A call made after the SDK
+	// has already loaded (e.g. the consumer effect re-running on a dependency
+	// change) must wire suppression immediately, or it would never be
+	// re-established after an earlier abort tore it down.
+	if ( isSurvicateScriptLoaded() ) {
+		wireSuppression();
+	} else {
+		window.addEventListener( 'SurvicateReady', wireSuppression, { once: true } );
+		signal?.addEventListener(
+			'abort',
+			() => window.removeEventListener( 'SurvicateReady', wireSuppression ),
+			{ once: true }
+		);
+	}
 
 	return loadScript(
 		`https://survey.survicate.com/workspaces/${ workspaceId }/web_surveys.js`
