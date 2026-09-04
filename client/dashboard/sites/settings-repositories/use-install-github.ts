@@ -65,8 +65,6 @@ export const useInstallGithub = () => {
 	const { createInfoNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { mutate: saveGithubCredentials } = useMutation( saveGithubCredentialsMutation() );
 
-	recordTracksEvent( 'calypso_hosting_github_app_open_auth_popup_requested' );
-
 	const authorizeApp = async ( { code, state }: { code: string; state: string } ) => {
 		const response = await postLoginRequest( 'exchange-social-auth-code', {
 			service: 'github',
@@ -82,6 +80,8 @@ export const useInstallGithub = () => {
 	};
 
 	const installGithub = ( { onSuccess }: { onSuccess: ( installationId: number ) => void } ) => {
+		recordTracksEvent( 'calypso_hosting_github_app_open_auth_popup_requested' );
+
 		const openedPopup = openPopup( {
 			url:
 				githubInstallationsError?.name === 'UnauthorizedError'
