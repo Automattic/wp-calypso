@@ -275,7 +275,7 @@ export default function WordPressAgentTelegram( {
 					<SectionHeader
 						level={ 3 }
 						title={ __( 'Telegram' ) }
-						description={ __( 'Chat with WordPress Agent on Telegram.' ) }
+						description={ __( 'Message your agent from Telegram for quick updates on the go.' ) }
 					/>
 					<div className="wordpress-agent-telegram__action">
 						{ ! isStatusReady && <Spinner /> }

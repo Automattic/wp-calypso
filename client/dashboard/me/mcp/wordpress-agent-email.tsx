@@ -103,10 +103,7 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 			<CardBody className="wordpress-agent-connection__row">
 				<SectionHeader
 					level={ 3 }
-					title={ __( 'Email isn’t available for this site' ) }
-					description={ __(
-						'Upgrade this site’s plan to enable a WordPress Agent email address.'
-					) }
+					title={ __( 'Agent email isn’t available on this site’s current plan.' ) }
 				/>
 				<ViewPlansButton site={ site } />
 			</CardBody>
@@ -118,8 +115,7 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 			<CardBody className="wordpress-agent-connection__row">
 				<SectionHeader
 					level={ 3 }
-					title={ __( 'Not connected on this site' ) }
-					description={ __( 'Enable a private address for emailing this site’s WordPress Agent.' ) }
+					title={ __( 'Turn on the email address for this site’s AI agent.' ) }
 				/>
 				<Button
 					__next40pxDefaultSize
@@ -139,7 +135,7 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 			<VStack spacing={ 4 }>
 				<div className="wordpress-agent-email__address-row">
 					<ClipboardInputControl
-						label={ __( 'AI agent email address' ) }
+						label={ __( 'Agent email' ) }
 						value={ agentEmailAddress }
 						readOnly
 						onCopy={ () => {
@@ -163,7 +159,7 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 					</Button>
 				</div>
 				<Text as="p" variant="muted" className="wordpress-agent-email__sender">
-					{ createInterpolateElement( __( 'Only responds to email from <email />.' ), {
+					{ createInterpolateElement( __( 'Your agent only replies to <email />.' ), {
 						email: <strong>{ user.email }</strong>,
 					} ) }
 				</Text>
@@ -205,7 +201,7 @@ export default function WordPressAgentEmail() {
 						level={ 3 }
 						title={ __( 'Email' ) }
 						description={ __(
-							'Email WordPress Agent through a private address unique to each site.'
+							'Send your agent instructions, questions, or content to publish. Each site’s agent has a unique, private email address.'
 						) }
 					/>
 					<PreferencesLoginSiteDropdown
