@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { isDomainMapping } from '@automattic/calypso-products';
+import { isDomainMapping, isDomainTransfer } from '@automattic/calypso-products';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { clearStepPersistedState, ONBOARDING_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
@@ -790,16 +790,20 @@ const onboarding: FlowV2< typeof initialize > = {
 						} else if ( blueprintArchiveSlug || isKnownWowFunnel( wowFunnelSlug ) ) {
 							// build_dest=wow and the WoW funnel never show the
 							// setup-your-site-ai chooser; go straight to their destination.
+							// This can stay ahead of the domain branches below: a connected or
+							// transferred domain forces a paid plan (use-my-domain hides the free
+							// plan), and a paid funnel order's checkout redirect_to is the funnel
+							// destination itself, so it never comes back through here.
 							window.location.replace( destination );
-						} else if (
-							domainCartItem &&
-							isDomainMapping( domainCartItem ) &&
-							domainCartItem.meta
-						) {
+						} else if ( domainCartItem?.meta && isDomainMapping( domainCartItem ) ) {
 							// A connected domain still has to be pointed at the site once it is paid
 							// for, so finish on the setup instructions rather than the chooser or My Home.
 							window.location.replace(
 								dashboardLink( `/domains/${ domainCartItem.meta }/domain-connection-setup` )
+							);
+						} else if ( domainCartItem?.meta && isDomainTransfer( domainCartItem ) ) {
+							window.location.replace(
+								dashboardLink( `/domains/${ domainCartItem.meta }/domain-transfer-setup` )
 							);
 						} else if (
 							refParameter === WOO_HOSTING_SOLUTIONS_REF &&

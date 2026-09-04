@@ -29,7 +29,16 @@ jest.mock( '@wordpress/data', () => ( {
 		setSignupDomainOrigin: jest.fn(),
 		setHideFreePlan: jest.fn(),
 	} ),
-	useSelect: jest.fn( () => ( { domainCartItem: mockDomainCartItem } ) ),
+	// Run the real selector callback against a stubbed store so the flow's own
+	// `getDomainCartItem` call is what feeds the test, not a hand-built result.
+	useSelect: jest.fn( ( selector: ( select: ( store: string ) => unknown ) => unknown ) =>
+		selector( () => ( {
+			getSignupDomainOrigin: () => undefined,
+			getPlanCartItem: () => null,
+			getDomainCartItem: () => mockDomainCartItem,
+			getBlueprint: () => undefined,
+		} ) )
+	),
 	resolveSelect: jest.fn(),
 } ) );
 
@@ -172,6 +181,29 @@ describe( 'onboarding post-checkout destination for a connected domain', () => {
 
 		expect( replacedWith ).toBe(
 			'https://my.wordpress.com/domains/example.com/domain-connection-setup'
+		);
+	} );
+
+	it( 'sends a transferred domain to the domain transfer setup instead of the setup chooser', async () => {
+		mockDomainCartItem = { product_slug: 'domain_transfer', meta: 'example.com' };
+
+		const { navigate, replacedWith } = await submitPostCheckoutProcessing( {
+			postCheckoutBigSky: true,
+		} );
+
+		expect( replacedWith ).toBe(
+			'https://my.wordpress.com/domains/example.com/domain-transfer-setup'
+		);
+		expect( navigate ).not.toHaveBeenCalled();
+	} );
+
+	it( 'sends a transferred domain to the domain transfer setup instead of My Home', async () => {
+		mockDomainCartItem = { product_slug: 'domain_transfer', meta: 'example.com' };
+
+		const { replacedWith } = await submitPostCheckoutProcessing( {} );
+
+		expect( replacedWith ).toBe(
+			'https://my.wordpress.com/domains/example.com/domain-transfer-setup'
 		);
 	} );
 
