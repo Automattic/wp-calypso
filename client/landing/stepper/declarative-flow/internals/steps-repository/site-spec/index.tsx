@@ -425,6 +425,9 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 						await waitForWowFunnelReady( {
 							funnelSlug: wowFunnelSlug,
 							siteIdentifier: blueprintArchiveSiteIdentifier,
+							// Lets the readiness wait restart a restore that failed, rather than
+							// leaving the site permanently stuck on its stored failure.
+							blueprintSlug: blueprintArchiveSlug,
 						} );
 					} else {
 						await waitForAtomicTransferComplete( blueprintArchiveSiteIdentifier );
