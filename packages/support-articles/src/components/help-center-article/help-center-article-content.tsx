@@ -35,6 +35,8 @@ const ArticleContent = ( {
 						/>
 						<HelpCenterFeedbackForm
 							postId={ post.ID }
+							blogId={ post.site_ID }
+							userRating={ post.user_rating }
 							isEligibleForChat={ isEligibleForChat }
 							forceEmailSupport={ forceEmailSupport }
 						/>
