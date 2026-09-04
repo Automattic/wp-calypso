@@ -14,6 +14,7 @@ export {
 	getPlanExpiryUrgency,
 	hasPlanExpiryNotice,
 	isEligibleForPlanExpiryNotice,
+	pickSitewideExpiryPurchase,
 } from './get-plan-expiry-notice';
 export type {
 	PlanExpiryNoticeContent,

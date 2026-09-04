@@ -146,6 +146,23 @@ export function isEligibleForPlanExpiryNotice(
 }
 
 /**
+ * The plan purchase a site's expiry notice is about: the eligible WordPress.com
+ * plan with the latest expiry date, so that a renewed plan hides the record of
+ * the one it replaced. Mirrors `Expiry_Data::pick_primary_plan_purchase()`.
+ */
+export function pickSitewideExpiryPurchase( purchases: Purchase[] ): Purchase | null {
+	return purchases
+		.filter( ( purchase ) => isEligibleForPlanExpiryNotice( purchase, 'sitewide' ) )
+		.reduce< Purchase | null >(
+			( latest, purchase ) =>
+				! latest || new Date( purchase.expiry_date ) > new Date( latest.expiry_date )
+					? purchase
+					: latest,
+			null
+		);
+}
+
+/**
  * Whether the notice will actually be displayed for this purchase right now.
  * Narrower than {@link isEligibleForPlanExpiryNotice}, which stays true for an
  * eligible plan even while there is nothing to say about it.

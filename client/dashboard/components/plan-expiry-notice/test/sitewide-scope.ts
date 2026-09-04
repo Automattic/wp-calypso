@@ -4,7 +4,11 @@
 
 import { DotcomPlans, SubscriptionBillPeriod } from '@automattic/api-core';
 import MockDate from 'mockdate';
-import { getPlanExpiryNotice, isEligibleForPlanExpiryNotice } from '../get-plan-expiry-notice';
+import {
+	getPlanExpiryNotice,
+	isEligibleForPlanExpiryNotice,
+	pickSitewideExpiryPurchase,
+} from '../get-plan-expiry-notice';
 import type { Purchase } from '@automattic/api-core';
 
 const NOW = '2026-02-24T12:00:00Z';
@@ -279,5 +283,31 @@ describe( 'sitewide scope: eligibility and fallbacks', () => {
 		expect(
 			getPlanExpiryNotice( makePurchase( { expiry_date: expiryInDays( 7 ) } ) )?.stage
 		).toBeUndefined();
+	} );
+} );
+
+describe( 'pickSitewideExpiryPurchase', () => {
+	test( 'returns null with no eligible plan', () => {
+		expect( pickSitewideExpiryPurchase( [] ) ).toBeNull();
+		expect(
+			pickSitewideExpiryPurchase( [
+				makePurchase( { product_slug: 'domain_reg', is_plan: false } ),
+			] )
+		).toBeNull();
+	} );
+
+	test( 'picks the plan with the latest expiry date', () => {
+		const older = makePurchase( { ID: 1, expiry_date: expiryInDays( -40 ) } );
+		const newer = makePurchase( { ID: 2, expiry_date: expiryInDays( 10 ) } );
+		expect( pickSitewideExpiryPurchase( [ older, newer ] ) ).toBe( newer );
+	} );
+
+	test( 'includes removed subscriptions', () => {
+		const gone = removed( 35 );
+		expect( pickSitewideExpiryPurchase( [ gone ] ) ).toBe( gone );
+	} );
+
+	test( 'skips partner-managed plans', () => {
+		expect( pickSitewideExpiryPurchase( [ makePurchase( { partner_type: 'a4a' } ) ] ) ).toBeNull();
 	} );
 } );
