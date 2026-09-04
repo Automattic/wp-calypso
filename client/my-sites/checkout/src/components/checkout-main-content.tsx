@@ -461,7 +461,15 @@ export default function CheckoutMainContent( {
 		couponStatus,
 	} = useShoppingCart( cartKey );
 
-	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteUrl ?? '' } );
+	// The redirecting flow names any step its visit skipped; it is the flow, not checkout, that
+	// knows which ones those were. A skipped step is not a place to send anyone back to.
+	const shouldHidePlansStep =
+		new URLSearchParams( window.location.search ).get( ONBOARDING_STEPPER_OMITTED_GROUP_PARAM ) ===
+		ONBOARDING_OMITTED_PLANS_GROUP;
+	const leaveModalProps = useCheckoutLeaveModal( {
+		siteUrl: siteUrl ?? '',
+		preferDomainsBackUrl: shouldHidePlansStep,
+	} );
 
 	// Shared sidebar slot for the active payment-method submit button. We render
 	// <CheckoutFormSubmit> inside <CheckoutStepGroup> so it keeps full step-state
@@ -499,10 +507,6 @@ export default function CheckoutMainContent( {
 		stepsCurrent <= stepsTotal
 			? { current: stepsCurrent, total: stepsTotal }
 			: null;
-	// The redirecting flow names any step its visit skipped; it is the flow, not checkout, that
-	// knows which ones those were.
-	const shouldHidePlansStep =
-		searchParams.get( ONBOARDING_STEPPER_OMITTED_GROUP_PARAM ) === ONBOARDING_OMITTED_PLANS_GROUP;
 	const selectedSiteData = useSelector( getSelectedSite );
 	const wpcomDomain = useSelector( ( state ) =>
 		getWpComDomainBySiteId( state, selectedSiteData?.ID )
