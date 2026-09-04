@@ -1,6 +1,6 @@
 import { __experimentalHStack as HStack, ProgressBar } from '@wordpress/components';
 import clsx from 'clsx';
-import { TextSkeleton } from '../text-skeleton';
+import { TextBlur } from '../text-blur';
 import './style.scss';
 
 interface StatProps {
@@ -71,12 +71,12 @@ export function Stat( {
 				justify={ progressValue === undefined ? 'start' : 'space-between' }
 			>
 				<div className="dashboard-stat__metric">
-					{ isLoading ? <TextSkeleton length={ 5 } /> : metric }
+					<TextBlur isBlurred={ isLoading } length={ 5 }>
+						{ metric }
+					</TextBlur>
 				</div>
 				{ description && ! isLoading && (
-					<div className="dashboard-stat__description">
-						{ isLoading ? <TextSkeleton length={ 8 } /> : description }
-					</div>
+					<div className="dashboard-stat__description">{ description }</div>
 				) }
 			</HStack>
 			{ progressValue !== undefined && (
