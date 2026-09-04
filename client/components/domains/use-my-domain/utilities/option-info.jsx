@@ -29,8 +29,10 @@ const transferSupported = {
 					{ __( 'We become your provider and you can manage everything from one place.' ) }
 				</span>
 				<span>
-					{ /* translators: how long a domain transfer takes to complete */ }
-					{ __( 'Takes 5–7 days.' ) }
+					{
+						/* translators: how long a domain transfer takes to complete */
+						__( 'Takes 5–7 days.' )
+					}
 				</span>
 			</VStack>
 		);
@@ -73,8 +75,10 @@ export function getConnectSupportedTopText( losingRegistrar ) {
 					  ) }
 			</span>
 			<span>
-				{ /* translators: how long connecting a domain takes to complete */ }
-				{ __( 'Takes a few hours.' ) }
+				{
+					/* translators: how long connecting a domain takes to complete */
+					__( 'Takes a few hours.' )
+				}
 			</span>
 		</VStack>
 	);
