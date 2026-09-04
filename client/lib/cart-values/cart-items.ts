@@ -826,16 +826,7 @@ export function isPaidDomain( domainPriceRule: string ): boolean {
 }
 
 export const isMonthlyOrFreeFlow = ( flowName: string | undefined ): boolean => {
-	return Boolean(
-		flowName &&
-			[
-				'free',
-				'personal-monthly',
-				'premium-monthly',
-				'business-monthly',
-				'ecommerce-monthly',
-			].includes( flowName )
-	);
+	return Boolean( flowName && [ 'free', 'ecommerce-monthly' ].includes( flowName ) );
 };
 
 export function getDomainPriceRule(

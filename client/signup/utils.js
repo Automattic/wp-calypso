@@ -172,7 +172,12 @@ export function getCompletedSteps( flowName, progress, options = {}, isUserLogge
 }
 
 export function canResumeFlow( flowName, progress, isUserLoggedIn ) {
+	// Persisted signup state can name a flow that no longer exists.
 	const flow = flows.getFlow( flowName, isUserLoggedIn );
+	if ( ! flow ) {
+		return false;
+	}
+
 	const flowStepsInProgressStore = getCompletedSteps(
 		flowName,
 		progress,
