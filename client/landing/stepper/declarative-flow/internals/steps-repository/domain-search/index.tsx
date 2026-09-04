@@ -11,7 +11,6 @@ import {
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
 	isOnboardingFlow,
-	EDUCATION_FLOW,
 	Step,
 	StepContainer,
 } from '@automattic/onboarding';
@@ -61,7 +60,6 @@ import type { HelpCenterSelect, OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const HUNDRED_YEAR_DOMAIN_TLDS = [ 'com', 'net', 'org', 'blog' ];
-const EDUCATION_BUNDLED_TLDS = [ 'blog', 'art' ];
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
@@ -97,6 +95,7 @@ const DomainSearchStep: StepType< {
 		freeDomainPromoTitle?: string;
 		freeDomainPromoSubtitle?: string;
 		allowedTlds?: string[];
+		freeForFirstYearTlds?: string[];
 	};
 } > = function DomainSearchStep( {
 	navigation,
@@ -108,6 +107,7 @@ const DomainSearchStep: StepType< {
 	freeDomainPromoTitle,
 	freeDomainPromoSubtitle,
 	allowedTlds: allowedTldsProp,
+	freeForFirstYearTlds: freeForFirstYearTldsProp,
 } ) {
 	const userSiteCount = useSelector( getCurrentUserSiteCount );
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -201,7 +201,7 @@ const DomainSearchStep: StepType< {
 			priceRules: {
 				hidePrice: isHundredYearPlanFlow( flow ),
 				oneTimePrice: isHundredYearDomainFlow( flow ),
-				freeForFirstYearTlds: flow === EDUCATION_FLOW ? EDUCATION_BUNDLED_TLDS : undefined,
+				freeForFirstYearTlds: freeForFirstYearTldsProp,
 			},
 			skippable:
 				! isHundredYearPlanFlow( flow ) &&
@@ -230,7 +230,17 @@ const DomainSearchStep: StepType< {
 				! isHundredYearPlanFlow( flow ) &&
 				( isHundredYearDomainFlow( flow ) ? !! query : true ),
 		};
-	}, [ __, flow, isCiab, isWooHostingSolutions, isWowFunnel, tldQuery, query, allowedTldsProp ] );
+	}, [
+		__,
+		flow,
+		isCiab,
+		isWooHostingSolutions,
+		isWowFunnel,
+		tldQuery,
+		query,
+		allowedTldsProp,
+		freeForFirstYearTldsProp,
+	] );
 
 	const { submit } = navigation;
 
