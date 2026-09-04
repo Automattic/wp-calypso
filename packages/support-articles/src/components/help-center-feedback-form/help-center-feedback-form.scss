@@ -5,6 +5,15 @@
 		font-style: italic;
 		margin-bottom: 0.5rem;
 	}
+	.help-center-feedback-form__rated {
+		display: flex;
+		align-items: center;
+		gap: 5px;
+
+		svg {
+			fill: currentColor;
+		}
+	}
 	.help-center-feedback-form__buttons {
 		display: flex;
 		flex-direction: row;

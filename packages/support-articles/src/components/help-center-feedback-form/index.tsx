@@ -3,7 +3,9 @@ import { GetSupport } from '@automattic/odie-client';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
+import { useRateArticle } from '../../hooks/use-rate-article';
 import { ThumbsDownIcon, ThumbsUpIcon } from '../../icons/thumbs';
+import type { ArticleRating } from '../../types';
 
 declare const __i18n_text_domain__: string;
 
@@ -11,27 +13,38 @@ import './help-center-feedback-form.scss';
 
 const HelpCenterFeedbackForm = ( {
 	postId,
+	blogId,
+	userRating,
 	isEligibleForChat,
 	forceEmailSupport,
 }: {
 	postId: number;
+	blogId: number;
+	/**
+	 * Rating the user already gave this article. `undefined` means the server did not
+	 * send one (logged-out user), so the rating is only kept for this session.
+	 */
+	userRating?: ArticleRating | null;
 	isEligibleForChat: boolean;
 	forceEmailSupport: boolean;
 } ) => {
 	const { __ } = useI18n();
-	const [ startedFeedback, setStartedFeedback ] = useState< boolean | null >( null );
-	const [ answerValue, setAnswerValue ] = useState< number | null >( null );
+	const [ rating, setRating ] = useState< ArticleRating | null >( userRating ?? null );
+	const { mutate: rateArticle } = useRateArticle();
 
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 
-	const handleFeedbackClick = ( value: number ) => {
-		setStartedFeedback( true );
-		setAnswerValue( value );
+	const handleFeedbackClick = ( value: ArticleRating ) => {
+		setRating( value );
 
 		recordTracksEvent( 'calypso_inlinehelp_article_feedback_click', {
 			did_the_article_help: value === 1 ? 'yes' : 'no',
 			post_id: postId,
 		} );
+
+		if ( userRating !== undefined ) {
+			rateArticle( { blogId, postId, rating: value } );
+		}
 	};
 
 	const FeedbackButtons = () => {
@@ -66,11 +79,14 @@ const HelpCenterFeedbackForm = ( {
 
 	return (
 		<div className="help-center-feedback__form">
-			{ startedFeedback === null && <FeedbackButtons /> }
-			{ startedFeedback !== null && answerValue === 1 && (
-				<p>{ __( 'Great! Thanks.', __i18n_text_domain__ ) }</p>
+			{ rating === null && <FeedbackButtons /> }
+			{ rating === 1 && (
+				<p className="help-center-feedback-form__rated">
+					<ThumbsUpIcon />
+					{ __( 'You found this article helpful.', __i18n_text_domain__ ) }
+				</p>
 			) }
-			{ startedFeedback !== null && answerValue === 2 && (
+			{ rating === 2 && (
 				<>
 					<div className="odie-chatbox-dislike-feedback-message">
 						<p>
