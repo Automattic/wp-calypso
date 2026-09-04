@@ -25,7 +25,7 @@ export const ONBOARDING_STEPPER_GROUP_BY_SLUG: Record< string, OnboardingStepper
 
 export function getOnboardingStepperPosition(
 	group: OnboardingStepperGroup,
-	skipsPlans: boolean
+	shouldSkipPlans: boolean
 ): {
 	current: number;
 	total: number;
@@ -35,7 +35,7 @@ export function getOnboardingStepperPosition(
 	// seeds the cart. Numbering a group the list left out would read "0 of 2", so a visit
 	// standing on one keeps it.
 	const groups = ONBOARDING_STEPPER_GROUPS.filter(
-		( g ) => g === group || ! ( skipsPlans && g === 'plans' )
+		( g ) => g === group || ! ( shouldSkipPlans && g === 'plans' )
 	);
 
 	return {

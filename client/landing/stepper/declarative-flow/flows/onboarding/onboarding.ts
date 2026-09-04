@@ -333,7 +333,7 @@ const onboarding: FlowV2< typeof initialize > = {
 			[]
 		);
 		const queryParams = useQuery();
-		const skipsPlans = shouldSkipPlansStep( queryParams, planCartItem );
+		const shouldSkipPlans = shouldSkipPlansStep( queryParams, planCartItem );
 		const coupon = queryParams.get( 'coupon' );
 		const refParameter = queryParams.get( 'ref' );
 		const diyLaunchpad = queryParams.get( 'diy-launchpad' );
@@ -481,7 +481,7 @@ const onboarding: FlowV2< typeof initialize > = {
 		 * plans handler below only apply when no plan was picked, so nothing is skipped here.
 		 */
 		const navigateAfterDomain = () => {
-			if ( ! skipsPlans ) {
+			if ( ! shouldSkipPlans ) {
 				return navigate( 'plans' );
 			}
 
@@ -756,7 +756,7 @@ const onboarding: FlowV2< typeof initialize > = {
 
 							const checkoutStepperPosition = getOnboardingStepperPosition(
 								'checkout',
-								skipsPlans
+								shouldSkipPlans
 							);
 
 							// replace the location to delete processing step from history.
