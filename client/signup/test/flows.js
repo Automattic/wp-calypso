@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import flows from 'calypso/signup/config/flows';
+import flows, { getWpAdminLaunchReturnUrl } from 'calypso/signup/config/flows';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
 import mockedFlows from './fixtures/flows';
 
@@ -91,6 +91,76 @@ describe( 'Signup Flows Configuration', () => {
 					redirect_to: null,
 				} )
 			).toBe( '/sites/test-site/settings/site-visibility?celebrateLaunch=true' );
+		} );
+
+		test( 'returns the user to the wp-admin page the launch started from', () => {
+			expect(
+				getDestination( {
+					siteSlug: 'test-site.wordpress.com',
+					refParameter: 'wp-admin/admin.php?page=stats',
+				} )
+			).toBe(
+				'https://test-site.wordpress.com/wp-admin/admin.php?page=stats&celebrate-launch=true'
+			);
+		} );
+	} );
+
+	describe( 'getWpAdminLaunchReturnUrl', () => {
+		test( 'resolves a bare wp-admin ref', () => {
+			expect(
+				getWpAdminLaunchReturnUrl( {
+					siteSlug: 'test-site.wordpress.com',
+					refParameter: 'wp-admin',
+				} )
+			).toBe( 'https://test-site.wordpress.com/wp-admin' );
+		} );
+
+		test( 'resolves a ref pointing at a specific wp-admin page', () => {
+			expect(
+				getWpAdminLaunchReturnUrl( {
+					siteSlug: 'test-site.wordpress.com',
+					refParameter: 'wp-admin/admin.php?page=stats',
+				} )
+			).toBe( 'https://test-site.wordpress.com/wp-admin/admin.php?page=stats' );
+		} );
+
+		test( 'returns null for launches that did not start in wp-admin', () => {
+			expect(
+				getWpAdminLaunchReturnUrl( {
+					siteSlug: 'test-site.wordpress.com',
+					refParameter: 'calypso',
+				} )
+			).toBeNull();
+			expect( getWpAdminLaunchReturnUrl( { siteSlug: 'test-site.wordpress.com' } ) ).toBeNull();
+		} );
+
+		test( 'returns null for a ref that only looks like a wp-admin path', () => {
+			expect(
+				getWpAdminLaunchReturnUrl( {
+					siteSlug: 'test-site.wordpress.com',
+					refParameter: 'wp-admin.evil.com',
+				} )
+			).toBeNull();
+		} );
+
+		test( 'returns null for a slug that would move the URL off the site host', () => {
+			expect(
+				getWpAdminLaunchReturnUrl( {
+					siteSlug: 'test-site.wordpress.com@evil.com',
+					refParameter: 'wp-admin',
+				} )
+			).toBeNull();
+			expect(
+				getWpAdminLaunchReturnUrl( {
+					siteSlug: 'test-site.wordpress.com/../..',
+					refParameter: 'wp-admin',
+				} )
+			).toBeNull();
+		} );
+
+		test( 'returns null when there is no site to return to', () => {
+			expect( getWpAdminLaunchReturnUrl( { refParameter: 'wp-admin' } ) ).toBeNull();
+			expect( getWpAdminLaunchReturnUrl( { siteSlug: '', refParameter: 'wp-admin' } ) ).toBeNull();
 		} );
 	} );
 

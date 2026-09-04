@@ -27,6 +27,7 @@ import {
 	domainManagementTransferIn,
 	domainManagementTransferToOtherSite,
 } from 'calypso/my-sites/domains/paths';
+import { getWpAdminLaunchReturnUrl } from 'calypso/signup/config/flows';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getNextStepName, getStepUrl } from 'calypso/signup/utils';
 import { useSelector } from 'calypso/state';
@@ -391,8 +392,23 @@ const DomainSearchUI = (
 				isRelativeUrl( backTo ) ||
 				dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
 
+			// A launch started from wp-admin has no `back_to`; `ref` carries the page it started
+			// from, so Back returns there instead of leaving the user in the sites list. The host
+			// comes from the site the flow loaded rather than from `siteSlug`, which is raw query
+			// input and would otherwise point Back at any host an attacker cared to name.
+			const wpAdminBackUrl =
+				'launch-site' === flowName
+					? getWpAdminLaunchReturnUrl( {
+							siteSlug: site?.slug,
+							refParameter: queryObject.ref,
+					  } )
+					: null;
+
 			if ( isSafeBackTo ) {
 				backUrl = backTo;
+				backLabelText = __( 'Back' );
+			} else if ( wpAdminBackUrl ) {
+				backUrl = wpAdminBackUrl;
 				backLabelText = __( 'Back' );
 			}
 		}
@@ -402,7 +418,16 @@ const DomainSearchUI = (
 			backUrl,
 			backLabelText,
 		};
-	}, [ dashboardOptIn, flowName, previousStepName, goBack, userSiteCount, __ ] );
+	}, [
+		dashboardOptIn,
+		flowName,
+		previousStepName,
+		goBack,
+		userSiteCount,
+		site?.slug,
+		queryObject.ref,
+		__,
+	] );
 
 	const getUseDomainIOwnLink = () => {
 		if ( ! query || ! config.allowsUsingOwnDomain ) {
