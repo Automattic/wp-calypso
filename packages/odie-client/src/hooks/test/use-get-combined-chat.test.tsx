@@ -15,7 +15,11 @@ let mockCurrentSupportInteraction: Record< string, unknown > | undefined;
 let mockConversation: { id: string; messages: Message[] } | null;
 let mockOdieChat: Record< string, unknown > | undefined;
 const mockGetZendeskConversation = jest.fn();
-const mockStartNewInteraction = jest.fn();
+const mockNavigate = jest.fn();
+
+jest.mock( 'react-router-dom', () => ( {
+	useNavigate: () => mockNavigate,
+} ) );
 
 jest.mock( '@wordpress/data', () => ( {
 	// The hook's only useSelect call returns { isChatLoaded, connectionStatus }.
@@ -43,7 +47,6 @@ jest.mock( '../use-logged-out-session', () => ( {
 
 jest.mock( '../../data', () => ( {
 	useGetZendeskConversation: () => mockGetZendeskConversation,
-	useManageSupportInteraction: () => ( { startNewInteraction: mockStartNewInteraction } ),
 	useOdieChat: () => ( { data: mockOdieChat, isFetching: false } ),
 } ) );
 
@@ -374,7 +377,7 @@ describe( 'useGetCombinedChat — the interaction is escalated from another tab'
 		expect( result.current.mainChatState.status ).toBe( 'transfer' );
 	} );
 
-	it( 'fetches a conversation it cannot load only once', async () => {
+	it( 'switches to the conversation with the history it has when the fetch fails', async () => {
 		mockGetZendeskConversation.mockImplementation( () =>
 			Promise.reject( new Error( 'conversation not found' ) )
 		);
@@ -387,9 +390,18 @@ describe( 'useGetCombinedChat — the interaction is escalated from another tab'
 		mockCurrentSupportInteraction = escalatedInteraction();
 		rerender();
 
+		// The conversation exists (another tab just created it), so the tab moves to
+		// it anyway: live messages arrive through the listener and the next reconnect
+		// re-downloads the history. The chat is not thrown away.
 		await waitFor( () => {
-			expect( mockStartNewInteraction ).toHaveBeenCalledTimes( 1 );
+			expect( result.current.mainChatState.provider ).toBe( 'zendesk' );
+			expect( result.current.mainChatState.conversationId ).toBe( 'conv-1' );
 		} );
+		expect( result.current.mainChatState.messages.some( ( m ) => m.message_id === 10 ) ).toBe(
+			true
+		);
+		expect( mockNavigate ).not.toHaveBeenCalled();
+
 		// The failed fetch flips `isFetchingConversation` back, which re-runs the
 		// effect. Give those re-runs room to fire before counting.
 		await act( async () => {
@@ -402,6 +414,56 @@ describe( 'useGetCombinedChat — the interaction is escalated from another tab'
 		} );
 
 		expect( mockGetZendeskConversation ).toHaveBeenCalledTimes( 1 );
-		expect( mockStartNewInteraction ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'keeps the conversation it already shows when a refresh fails', async () => {
+		mockCurrentSupportInteraction = escalatedInteraction();
+		const { result, rerender } = renderCombinedChat();
+
+		await waitFor( () => {
+			expect( result.current.mainChatState.messages.some( ( m ) => m.message_id === 1 ) ).toBe(
+				true
+			);
+		} );
+
+		// The reconnect refresh cannot reach the server this time.
+		mockGetZendeskConversation.mockImplementation( () => Promise.reject( new Error( 'network' ) ) );
+		act( () => {
+			mockConnectionStatus = 'connected';
+		} );
+		rerender();
+
+		await waitFor( () => {
+			expect( mockGetZendeskConversation ).toHaveBeenCalledTimes( 2 );
+			expect( result.current.mainChatState.status ).toBe( 'loaded' );
+		} );
+		expect( result.current.mainChatState.provider ).toBe( 'zendesk' );
+		expect( result.current.mainChatState.messages.some( ( m ) => m.message_id === 1 ) ).toBe(
+			true
+		);
+		expect( mockNavigate ).not.toHaveBeenCalled();
+	} );
+
+	it( 'starts over with a fresh chat when the initial load cannot find the conversation', async () => {
+		mockGetZendeskConversation.mockImplementation( () =>
+			Promise.reject( new Error( 'conversation not found' ) )
+		);
+		mockCurrentSupportInteraction = escalatedInteraction();
+
+		const { result, rerender } = renderCombinedChat();
+
+		await waitFor( () => {
+			expect( mockNavigate ).toHaveBeenCalledWith( '/odie' );
+		} );
+
+		// The navigation drops the interaction from the URL.
+		mockCurrentSupportInteraction = undefined;
+		rerender();
+
+		await waitFor( () => {
+			expect( result.current.mainChatState.status ).toBe( 'loaded' );
+		} );
+		expect( result.current.mainChatState.provider ).toBe( 'odie' );
+		expect( result.current.mainChatState.conversationId ).toBeNull();
 	} );
 } );

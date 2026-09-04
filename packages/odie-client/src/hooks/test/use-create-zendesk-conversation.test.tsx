@@ -4,6 +4,7 @@
 import { renderHook } from '@testing-library/react';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../../context';
+import { broadcastOdieInteractionUpdated } from '../../data';
 import { useCreateZendeskConversation } from '../use-create-zendesk-conversation';
 
 /**
@@ -110,6 +111,7 @@ beforeEach( () => {
 		},
 		trackEvent: mockTrackEvent,
 		isChatLoaded: true,
+		odieBroadcastClientId: 'this-tab',
 	} );
 } );
 
@@ -153,6 +155,26 @@ describe( 'useCreateZendeskConversation — Smooch-not-ready retry loop', () => 
 		expect( smoochCreateConversation ).toHaveBeenCalledTimes( 1 );
 		const success = lastTrackedProps( 'new_zendesk_conversation' );
 		expect( success ).toMatchObject( { smooch_attempts: 1, smooch_waited_ms: 0 } );
+		// Other tabs on this interaction are told to follow the escalation.
+		expect( broadcastOdieInteractionUpdated ).toHaveBeenCalledWith( 'this-tab', 'int-1' );
+	} );
+
+	it( 'broadcasts the interaction that ends up owning the conversation', async () => {
+		smoochCreateConversation.mockResolvedValueOnce( { id: 'conv-1', metadata: {} } );
+		// The support interaction service moved the event onto another interaction.
+		mockAddEventToInteraction.mockResolvedValueOnce( { uuid: 'int-2' } );
+
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+
+		await expect( result.current( { createdFrom: 'automatic_escalation' } ) ).resolves.toBe(
+			'conv-1'
+		);
+
+		expect( Smooch.updateConversation ).toHaveBeenCalledWith( 'conv-1', {
+			metadata: expect.objectContaining( { supportInteractionId: 'int-2' } ),
+		} );
+		expect( broadcastOdieInteractionUpdated ).toHaveBeenCalledTimes( 1 );
+		expect( broadcastOdieInteractionUpdated ).toHaveBeenCalledWith( 'this-tab', 'int-2' );
 	} );
 
 	it( 'surfaces the error after the 10s deadline if the SDK never becomes ready', async () => {
@@ -174,6 +196,8 @@ describe( 'useCreateZendeskConversation — Smooch-not-ready retry loop', () => 
 		expect( error.smooch_waited_ms ).toBeLessThanOrEqual( 10_000 );
 		// The user is shown the try-again message.
 		expect( mockSetChat ).toHaveBeenCalled();
+		// Nothing to follow: no other tab is told the interaction changed.
+		expect( broadcastOdieInteractionUpdated ).not.toHaveBeenCalled();
 	} );
 
 	it( 'duplicates the critical user fields as ticket-field metadata on the conversation', async () => {

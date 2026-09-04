@@ -5,7 +5,7 @@ import { useCallback, useEffect } from '@wordpress/element';
 import Smooch from 'smooch';
 import { HELP_CENTER_STORE } from '../constants';
 import { useOdieAssistantContext } from '../context';
-import { deduplicateZDMessages } from './use-get-combined-chat';
+import { deduplicateZDMessages } from '../utils/deduplicate-zd-messages';
 import type { ZendeskMessage } from '@automattic/zendesk-client';
 
 /**

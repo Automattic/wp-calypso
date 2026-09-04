@@ -4,52 +4,23 @@ import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useIsMutating } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useRef, useCallback } from '@wordpress/element';
-import { getMessageUniqueIdentifier } from '../components/message/utils/get-message-unique-identifier';
+import { useNavigate } from 'react-router-dom';
 import {
 	HELP_CENTER_STORE,
 	getOdieTransferMessages,
 	getZendeskChatStartedMetaMessage,
 } from '../constants';
 import { emptyChat } from '../context';
-import { useGetZendeskConversation, useManageSupportInteraction, useOdieChat } from '../data';
+import { useGetZendeskConversation, useOdieChat } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 import {
 	getConversationIdFromInteraction,
 	getOdieIdFromInteraction,
 	getIsRequestingHumanSupport,
 } from '../utils';
+import { deduplicateZDMessages, isQueuedZendeskMessage } from '../utils/deduplicate-zd-messages';
 import { useLoggedOutSession } from './use-logged-out-session';
 import type { Chat, Message } from '../types';
-
-function isEqual( message1: Message, message2: Message ) {
-	const message1Id = getMessageUniqueIdentifier( message1 );
-	const message2Id = getMessageUniqueIdentifier( message2 );
-	return message1Id && message1Id === message2Id;
-}
-
-/**
- * A user message sent through Zendesk: only those carry a `temporary_id`, so Odie messages don't match.
- * @param message - The message to check.
- * @returns Whether the message is a Zendesk message sent by the user.
- */
-function isQueuedZendeskMessage( message: Message ) {
-	return message.role === 'user' && !! message.metadata?.temporary_id;
-}
-
-/**
- * Deduplicate Zendesk messages by their temporary id. During connection recovery, some duplication can occur.
- * @param messages - The messages to deduplicate.
- * @returns The deduplicated messages.
- */
-export function deduplicateZDMessages( messages: Message[] ) {
-	const distinctMessages: Message[] = [];
-	for ( const message of messages ) {
-		if ( ! distinctMessages.some( ( otherMessage ) => isEqual( message, otherMessage ) ) ) {
-			distinctMessages.push( message );
-		}
-	}
-	return distinctMessages;
-}
 
 /**
  * This combines the ODIE chat with the ZENDESK conversation.
@@ -76,7 +47,6 @@ export const useGetCombinedChat = (
 	}, [] );
 	const previousUuidRef = useRef< string | undefined >( undefined );
 	const previousOdieIdRef = useRef< string | null | undefined >( undefined );
-	const attemptedConversationIdRef = useRef< string | undefined >( undefined );
 	const wasChatLoadedRef = useRef( isChatLoaded );
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
 	const conversationId = getConversationIdFromInteraction( currentSupportInteraction );
@@ -89,8 +59,8 @@ export const useGetCombinedChat = (
 		botSlug
 	);
 	const [ isFetchingConversation, setIsFetchingConversation ] = useState( false );
+	const navigate = useNavigate();
 
-	const { startNewInteraction } = useManageSupportInteraction();
 	const isUploadingUnsentMessages = useIsMutating( {
 		mutationKey: [ 'send-zendesk-messages' ],
 	} );
@@ -148,16 +118,15 @@ export const useGetCombinedChat = (
 		// The interaction gained a Zendesk conversation this tab is not showing yet:
 		// it was escalated from another tab. Reload so this tab switches too,
 		// otherwise it keeps sending to Odie. Skipped while this tab is the one
-		// transferring (`status === 'transfer'`), which sets the conversation itself,
-		// and once that conversation was already fetched: a failed fetch lands in the
-		// `catch` below and starts a new interaction, so re-triggering on every state
-		// change would keep creating them. A reconnect still retries the fetch through
-		// `refreshConversation`.
+		// transferring (`status === 'transfer'`), which sets the conversation itself.
 		const conversationHasChanged =
 			!! conversationId &&
 			mainChatState.conversationId !== conversationId &&
-			chatStatus !== 'transfer' &&
-			attemptedConversationIdRef.current !== conversationId;
+			chatStatus !== 'transfer';
+
+		// A loaded chat picking up a conversation, as opposed to the initial load or a
+		// refresh of a conversation the chat already shows.
+		const isSwitchingLoadedChat = conversationHasChanged && chatStatus !== 'loading';
 
 		const needsReload = interactionHasChanged || conversationHasChanged;
 
@@ -175,8 +144,6 @@ export const useGetCombinedChat = (
 		}
 
 		previousUuidRef.current = currentSupportInteraction?.uuid;
-
-		const supportInteractionId = currentSupportInteraction?.uuid ?? null;
 
 		// We don't have a conversation id, so our chat is simply the odie chat
 		if ( ! conversationId ) {
@@ -211,46 +178,49 @@ export const useGetCombinedChat = (
 		}
 
 		if ( conversationId && ( isChatLoaded || refreshingAfterReconnect ) ) {
-			attemptedConversationIdRef.current = conversationId;
+			// The conversation's part of the chat: the Odie history, the hand-over
+			// notices, then the Zendesk messages. `queuedMessages` are the user's
+			// messages not in `conversationMessages` yet; `deduplicateZDMessages` drops
+			// the ones that are, keeping the server's copy.
+			const buildZendeskMessages = (
+				queuedMessages: Message[],
+				conversationMessages: Message[]
+			) => [
+				...( odieChat ? filteredOdieMessages : [] ),
+				...getOdieTransferMessages( currentSupportInteraction?.bot_slug, hasEnTranslation ),
+				getZendeskChatStartedMetaMessage(),
+				...deduplicateZDMessages( [ ...queuedMessages, ...conversationMessages ] ),
+			];
+
 			setIsFetchingConversation( true );
 			getZendeskConversation( conversationId )
 				?.then( ( conversation ) => {
-					if ( conversation ) {
-						setMainChatState( ( prevChat ) => {
-							// Keep the user's queued messages when the tab already shows this
-							// conversation, and also while it is switching to it from the Odie
-							// chat (no conversation id yet): a message sent right after the
-							// escalation - from this tab or mirrored from another one - may
-							// not be in the server response yet and would otherwise be dropped.
-							const keepQueuedMessages =
-								prevChat.odieId?.toString() === odieId?.toString() &&
-								( prevChat.conversationId === conversation.id || ! prevChat.conversationId );
-
-							return {
-								odieId: odieId ? Number( odieId ) : null,
-								wpcomUserId: odieChat?.wpcomUserId || prevChat.wpcomUserId,
-								supportInteractionId,
-								conversationId: conversation.id,
-								messages: [
-									...( odieChat ? filteredOdieMessages : [] ),
-									...getOdieTransferMessages(
-										currentSupportInteraction?.bot_slug,
-										hasEnTranslation
-									),
-									getZendeskChatStartedMetaMessage(),
-									...( deduplicateZDMessages( [
-										// During connection recovery, the user queued messages can be deleted. This ensure they remain. And `deduplicateZDMessages` takes of duplication.
-										...( keepQueuedMessages
-											? prevChat.messages.filter( isQueuedZendeskMessage )
-											: [] ),
-										...conversation.messages,
-									] ) as Message[] ),
-								],
-								provider: 'zendesk',
-								status: currentSupportInteraction?.status === 'closed' ? 'closed' : 'loaded',
-							};
-						} );
+					if ( ! conversation ) {
+						throw new Error( 'Conversation not found' );
 					}
+
+					setMainChatState( ( prevChat ) => {
+						// Keep the user's queued messages when the tab already shows this
+						// conversation, and also while it is switching to it from the Odie
+						// chat (no conversation id yet): a message sent right after the
+						// escalation - from this tab or mirrored from another one - may
+						// not be in the server response yet and would otherwise be dropped.
+						const keepQueuedMessages =
+							prevChat.odieId?.toString() === odieId?.toString() &&
+							( prevChat.conversationId === conversation.id || ! prevChat.conversationId );
+
+						return {
+							odieId: odieId ? Number( odieId ) : null,
+							wpcomUserId: odieChat?.wpcomUserId || prevChat.wpcomUserId,
+							conversationId: conversation.id,
+							messages: buildZendeskMessages(
+								keepQueuedMessages ? prevChat.messages.filter( isQueuedZendeskMessage ) : [],
+								conversation.messages as Message[]
+							),
+							provider: 'zendesk',
+							status: currentSupportInteraction?.status === 'closed' ? 'closed' : 'loaded',
+						};
+					} );
 				} )
 				.catch( ( error ) => {
 					recordTracksEvent( 'calypso_odie_zendesk_conversation_not_found', {
@@ -259,10 +229,34 @@ export const useGetCombinedChat = (
 						error: error instanceof Error ? error.message : String( error ),
 					} );
 
-					startNewInteraction( {
-						event_source: 'odie',
-						event_external_id: crypto.randomUUID(),
-					} );
+					if ( isSwitchingLoadedChat || refreshingAfterReconnect ) {
+						// The conversation exists: another tab just created it, or this chat
+						// was already showing it. The failure is most likely transient, so
+						// keep what we have rather than start over. Live messages still
+						// arrive through the Zendesk listener, and the next reconnect or
+						// Smooch re-init re-downloads the history.
+						setMainChatState( ( prevChat ) =>
+							prevChat.conversationId === conversationId
+								? { ...prevChat, status: 'loaded' }
+								: {
+										...prevChat,
+										conversationId,
+										messages: buildZendeskMessages(
+											prevChat.messages.filter( isQueuedZendeskMessage ),
+											[]
+										),
+										provider: 'zendesk',
+										status: 'loaded',
+								  }
+						);
+						return;
+					}
+
+					// Initial load: the conversation is gone for good, e.g. the Zendesk user
+					// was deleted. Start over with a fresh chat, the way a not-found
+					// interaction is handled; the fresh chat creates its own interaction on
+					// the first message.
+					navigate( '/odie' );
 				} )
 				.finally( () => {
 					setRefreshingAfterReconnect( false );
@@ -281,7 +275,7 @@ export const useGetCombinedChat = (
 		currentSupportInteraction,
 		canConnectToZendesk,
 		getZendeskConversation,
-		startNewInteraction,
+		navigate,
 		isLoadingCanConnectToZendesk,
 		sessionId,
 		botSlug,
