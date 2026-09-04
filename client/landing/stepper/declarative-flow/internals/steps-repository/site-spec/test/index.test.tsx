@@ -31,6 +31,10 @@ jest.mock( '@automattic/calypso-config', () => {
 	};
 } );
 
+jest.mock( '@automattic/onboarding', () => ( {
+	Step: { Loading: () => null },
+} ) );
+
 jest.mock( '@automattic/posthog', () => ( {
 	getSessionId: jest.fn( () => 'ph-session' ),
 } ) );
@@ -75,13 +79,18 @@ jest.mock( 'calypso/lib/site-spec/utils', () => ( {
 } ) );
 
 const mockSetPendingAction = jest.fn();
+const mockSetSiteSetupError = jest.fn();
 
 jest.mock( '@wordpress/data', () => ( {
-	useDispatch: () => ( { setPendingAction: mockSetPendingAction } ),
+	useDispatch: () => ( {
+		setPendingAction: mockSetPendingAction,
+		setSiteSetupError: mockSetSiteSetupError,
+	} ),
 } ) );
 
 jest.mock( 'calypso/landing/stepper/stores', () => ( {
 	ONBOARD_STORE: 'automattic/onboard',
+	SITE_STORE: 'automattic/site',
 } ) );
 
 // The wow-funnel helpers stay real so the funnel's readiness rules are exercised; only the
@@ -248,6 +257,61 @@ describe( 'SiteSpec early provisioning step', () => {
 		expect( siteSpecOptions.siteSpecConfig ).toBeUndefined();
 		expect( siteSpecOptions.onSpecConfirm ).toBeUndefined();
 		expect( wpcomPostMock ).not.toHaveBeenCalled();
+	} );
+
+	it( 'confirms a spec carried from entry without loading the interview widget', async () => {
+		mockQueryParams = new URLSearchParams(
+			'build_wow=1&siteSlug=example.wordpress.com&spec_id=spec-entry'
+		);
+		wpcomPostMock.mockResolvedValue( {
+			blog_id: 123,
+			site_editor_url: 'https://example.wordpress.com/wp-admin/site-editor.php',
+		} );
+
+		await act( async () => {
+			renderSiteSpec();
+		} );
+
+		expect( mockUseSiteSpec ).not.toHaveBeenCalled();
+		expect( wpcomPostMock ).toHaveBeenCalledWith(
+			expect.objectContaining( { path: '/sites/example.wordpress.com/big-sky/build-wow' } ),
+			{ spec_id: 'spec-entry' }
+		);
+		const redirect = new URL( window.location.href, 'https://wordpress.com' );
+		expect( redirect.pathname ).toBe( '/setup/ai-site-builder-spec/site-generation' );
+		expect( redirect.searchParams.get( 'specId' ) ).toBe( 'spec-entry' );
+	} );
+
+	it( 'sends a failed build request to the error step', async () => {
+		mockQueryParams = new URLSearchParams( 'build_wow=1&siteSlug=example.wordpress.com' );
+		wpcomPostMock.mockRejectedValue( new Error( 'Forbidden' ) );
+
+		renderSiteSpec();
+
+		const siteSpecOptions = mockUseSiteSpec.mock.calls[ 0 ][ 0 ];
+		await act( async () => {
+			await siteSpecOptions.onSpecConfirm( { spec_id: 'spec-456' } );
+		} );
+
+		expect( mockSetSiteSetupError ).toHaveBeenCalledWith( 'build_wow_request_failed', 'Forbidden' );
+		expect( navigation.submit ).toHaveBeenCalledWith( {
+			buildWowError: 'build_wow_request_failed',
+		} );
+		expect( window.location.href ).toBe( '' );
+	} );
+
+	it( 'goes straight to the error step when build_wow has no target site', () => {
+		mockQueryParams = new URLSearchParams( 'build_wow=1' );
+
+		renderSiteSpec();
+
+		expect( mockUseSiteSpec ).not.toHaveBeenCalled();
+		expect( wpcomPostMock ).not.toHaveBeenCalled();
+		expect( mockSetSiteSetupError ).toHaveBeenCalledWith(
+			'build_wow_missing_site',
+			expect.any( String )
+		);
+		expect( navigation.submit ).toHaveBeenCalledWith( { buildWowError: 'build_wow_missing_site' } );
 	} );
 } );
 
