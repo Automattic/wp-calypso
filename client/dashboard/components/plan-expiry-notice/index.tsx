@@ -90,6 +90,12 @@ function PlanExpiryNoticeButton( {
 } ) {
 	const { mutate: setAutoRenew, isPending } = useMutation( userPurchaseSetAutoRenewQuery() );
 
+	// The sitewide scope's support action has no destination to link to; the
+	// surface that shows it opens the Help Center itself.
+	if ( action.type === 'contact-support' ) {
+		return null;
+	}
+
 	if ( action.type === 'enable-auto-renew' ) {
 		return (
 			<Button
