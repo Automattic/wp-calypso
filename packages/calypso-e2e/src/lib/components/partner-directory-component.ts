@@ -25,6 +25,11 @@ export class PartnerDirectoryComponent {
 	async applyDropdownFilter( dropdownName: string, filterName: string ): Promise< void > {
 		// On mobile, we need to click the filters toggle button first to open the filters panel.
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			// The Help Center launcher is a fixed button in the same corner as the filters toggle
+			// on mobile and intercepts the click, so hide it for this page.
+			await this.page.addStyleTag( {
+				content: '.wpcom-help-center-fab { display: none !important; }',
+			} );
 			// TODO: This button has no accessible name, so we have to use a CSS selector.
 			const filtersToggle = this.page.locator( '.a4a-partner-directory-filters-toggle' );
 			await filtersToggle.waitFor( { state: 'visible' } );
