@@ -1,6 +1,7 @@
 import { select } from '@wordpress/data';
 import { closeSurvicateSurvey } from './close-survey';
 import debug from './debug';
+import { isModalOpen } from './modal-detection';
 
 const HELP_CENTER_STORE = 'automattic/help-center';
 
@@ -19,17 +20,26 @@ export function isHelpCenterOpen(): boolean {
 }
 
 /**
+ * Whether surveys should currently be suppressed: the Help Center is open
+ * (store-based check — more reliable than DOM for a non-`aria-modal` panel)
+ * or some other modal dialog is on screen.
+ */
+export function shouldSuppressSurvey(): boolean {
+	return isHelpCenterOpen() || isModalOpen();
+}
+
+/**
  * Invokes a Survicate event by name.
  * If the SDK is already loaded, fires immediately. Otherwise waits for the
  * `SurvicateReady` window event before invoking.
  *
- * Events are suppressed while the Help Center is open.
+ * Events are suppressed while the Help Center or another modal is open.
  *
  * @returns A cleanup function that removes the event listener.
  */
 export function invokeSurvicateEvent( eventName: string ): () => void {
-	if ( isHelpCenterOpen() ) {
-		debug( 'Survicate event "%s" suppressed (Help Center is open)', eventName );
+	if ( shouldSuppressSurvey() ) {
+		debug( 'Survicate event "%s" suppressed (Help Center or a modal is open)', eventName );
 		closeSurvicateSurvey();
 		return () => {};
 	}
@@ -40,7 +50,7 @@ export function invokeSurvicateEvent( eventName: string ): () => void {
 	}
 
 	const handler = () => {
-		if ( isHelpCenterOpen() ) {
+		if ( shouldSuppressSurvey() ) {
 			debug( 'Deferred Survicate event "%s" suppressed at SurvicateReady time', eventName );
 			return;
 		}

@@ -96,6 +96,44 @@ describe( 'invokeSurvicateEvent', () => {
 		expect( invokeEvent ).not.toHaveBeenCalled();
 	} );
 
+	test( 'should suppress the event and close the survey when a modal is open', () => {
+		const invokeEvent = jest.fn();
+		const closeSurvey = jest.fn();
+		window._sva = { invokeEvent, closeSurvey };
+
+		const modal = document.createElement( 'div' );
+		modal.setAttribute( 'role', 'dialog' );
+		modal.setAttribute( 'aria-modal', 'true' );
+		( modal as HTMLElement & { checkVisibility?: () => boolean } ).checkVisibility = () => true;
+		document.body.appendChild( modal );
+
+		invokeSurvicateEvent( 'testEvent' );
+
+		expect( invokeEvent ).not.toHaveBeenCalled();
+		expect( closeSurvey ).toHaveBeenCalledTimes( 1 );
+
+		modal.remove();
+	} );
+
+	test( 'should suppress a deferred event when a modal is open at SurvicateReady time', () => {
+		const invokeEvent = jest.fn();
+
+		invokeSurvicateEvent( 'testEvent' );
+
+		const modal = document.createElement( 'div' );
+		modal.setAttribute( 'role', 'dialog' );
+		modal.setAttribute( 'aria-modal', 'true' );
+		( modal as HTMLElement & { checkVisibility?: () => boolean } ).checkVisibility = () => true;
+		document.body.appendChild( modal );
+
+		window._sva = { invokeEvent };
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+		expect( invokeEvent ).not.toHaveBeenCalled();
+
+		modal.remove();
+	} );
+
 	test( 'should fall back gracefully when Help Center store is unavailable', () => {
 		const invokeEvent = jest.fn();
 		window._sva = { invokeEvent };
