@@ -13,6 +13,7 @@ interface Props {
 	href?: string;
 	isLoading?: boolean;
 	hasError?: boolean;
+	className?: string;
 }
 
 export default function ExpandedCard( {
@@ -24,6 +25,7 @@ export default function ExpandedCard( {
 	href,
 	isLoading,
 	hasError,
+	className,
 }: Props ) {
 	// Trigger click event when pressing Enter or Space
 	const handleOnKeyDown = ( event: React.KeyboardEvent< HTMLDivElement > ) => {
@@ -38,7 +40,7 @@ export default function ExpandedCard( {
 		href,
 		compact: true,
 		showLinkIcon: false,
-		className: clsx( 'expanded-card', {
+		className: clsx( 'expanded-card', className, {
 			'expanded-card__not-enabled': ! isEnabled,
 			'expanded-card__clickable': isClickable,
 			'expanded-card__loading': isLoading,
