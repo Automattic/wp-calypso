@@ -1,7 +1,5 @@
 import './style.scss';
-import { isAutomatticianQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
-import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
@@ -11,6 +9,7 @@ import AutoDirection from 'calypso/components/auto-direction';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
+import { useIsSeenPostsUiEnabled } from 'calypso/reader/data/seen-posts';
 import { useSubscribedFeedsInfo, useSubscribedSites } from 'calypso/reader/data/site-subscriptions';
 import { getReaderSidebarSiteName } from 'calypso/reader/get-helpers';
 import MoreMenuActions from 'calypso/reader/sidebar/more-menu-actions';
@@ -35,8 +34,7 @@ const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): Rea
 	const [ showAllSites, setShowAllSites ] = useState( false );
 	const sites = useSubscribedSites();
 	const feedsInfo = useSubscribedFeedsInfo();
-	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
-	const isSeenEnabled = isAutomattician;
+	const isSeenEnabled = useIsSeenPostsUiEnabled();
 	const selectedSiteFeedId = useSelector< AppState, number | null >( getSelectedRecentFeedId );
 	const moment = useLocalizedMoment();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();

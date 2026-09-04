@@ -32,7 +32,11 @@ import { usePostCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { usePost } from 'calypso/reader/data/post';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
-import { useIsSeenEnabled, withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
+import {
+	useIsSeenEnabled,
+	useSeenPostsPreferenceConfirmed,
+	withSeenPostsMutations,
+} from 'calypso/reader/data/seen-posts';
 import { withSite } from 'calypso/reader/data/site';
 import { useSiteSubscriptionForFeed } from 'calypso/reader/data/site-subscriptions';
 import { getSiteName } from 'calypso/reader/get-helpers';
@@ -40,7 +44,7 @@ import readerContentWidth from 'calypso/reader/lib/content-width';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';
 import { isCommentsOpen, isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
-import { keyForPost } from 'calypso/reader/post-key';
+import { keyForPost, keyToString } from 'calypso/reader/post-key';
 import { ReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
 import { getStreamUrlFromPost } from 'calypso/reader/route';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
@@ -75,12 +79,14 @@ export class FullPostView extends Component {
 		referralPost: PropTypes.object,
 		referralStream: PropTypes.string,
 		isSeenEnabled: PropTypes.bool,
+		isSeenPreferenceConfirmed: PropTypes.bool,
 		layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
 		currentPath: PropTypes.string,
 		commentsApiDisabled: PropTypes.bool,
 	};
 
 	hasScrolledToCommentAnchor = false;
+	hasAutoMarkedAsSeen = false;
 	readerMainWrapper = createRef();
 	commentsWrapper = createRef();
 	postContentWrapper = createRef();
@@ -102,6 +108,7 @@ export class FullPostView extends Component {
 		// Send page view
 		this.hasSentPageView = false;
 		this.hasLoaded = false;
+		this.hasAutoMarkedAsSeen = false;
 		this.setReadingStartTime();
 		this.attemptToSendPageView();
 		this.maybeDisableAppBanner();
@@ -135,19 +142,32 @@ export class FullPostView extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
+		const hasPostChanged = prevProps?.post?.ID !== this.props?.post?.ID;
+		const hasFeedChanged = prevProps?.feed?.ID !== this.props?.feed?.ID;
+		const hasSiteChanged = prevProps?.site?.ID !== this.props?.site?.ID;
+
 		// Send page view if applicable
-		if (
-			prevProps?.post?.ID !== this.props?.post?.ID ||
-			prevProps?.feed?.ID !== this.props?.feed?.ID ||
-			prevProps?.site?.ID !== this.props?.site?.ID
-		) {
+		if ( hasPostChanged || hasFeedChanged || hasSiteChanged ) {
 			this.hasSentPageView = false;
 			this.hasLoaded = false;
+
+			// Reset the automatic-seen guard on the canonical Reader post key — the
+			// discriminator the post cache and streams already identify posts by.
+			// Neither single field is enough on its own: `post.ID` is only unique
+			// within a site, and `global_ID` is absent on cached posts (`Post` is a
+			// `Partial`), so either can read two distinct posts as one and swallow
+			// the second post's mark.
+			const hasViewedPostChanged =
+				keyToString( keyForPost( prevProps?.post ) ) !==
+				keyToString( keyForPost( this.props?.post ) );
+			if ( hasViewedPostChanged ) {
+				this.hasAutoMarkedAsSeen = false;
+			}
 			this.attemptToSendPageView();
 			this.maybeDisableAppBanner();
 
 			// If the post being viewed changes, track the reading time.
-			if ( prevProps?.post?.ID !== this.props?.post?.ID ) {
+			if ( hasPostChanged ) {
 				this.trackReadingTime( prevProps.post );
 				this.trackScrollDepth( prevProps.post );
 				this.trackExitBeforeCompletion( prevProps.post );
@@ -155,6 +175,17 @@ export class FullPostView extends Component {
 				this.resetScroll();
 				this.focusPostTitle();
 			}
+		}
+
+		// Seen eligibility resolves asynchronously — subscriptions, teams, and the
+		// reader-seen-posts preference all land after mount — so the automatic mark
+		// is often skipped on first load. Retry it when eligibility becomes true,
+		// since the post ID hasn't changed and nothing else would fire it again.
+		if (
+			( this.props.isSeenEnabled && ! prevProps.isSeenEnabled ) ||
+			( this.props.isSeenPreferenceConfirmed && ! prevProps.isSeenPreferenceConfirmed )
+		) {
+			this.maybeMarkAsSeenOnLoad();
 		}
 
 		if ( this.props.shouldShowComments && ! prevProps.shouldShowComments ) {
@@ -533,9 +564,7 @@ export class FullPostView extends Component {
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
-			if ( this.props.isSeenEnabled && ! post.is_seen ) {
-				this.markAsSeen();
-			}
+			this.maybeMarkAsSeenOnLoad();
 
 			recordTrackForPost(
 				'calypso_reader_article_opened',
@@ -593,6 +622,31 @@ export class FullPostView extends Component {
 
 			focusTarget?.focus();
 		}, 100 );
+	};
+
+	// Tracked separately from `hasLoaded` so that loading the post doesn't consume
+	// the automatic mark while the seen gate is still resolving.
+	//
+	// `isSeenPreferenceConfirmed` is required on top of `isSeenEnabled` because
+	// the latter can be true off a rehydrated preference from a previous session.
+	// Rendering off that is harmless, but this write isn't reversible, so it waits
+	// for the current session's /me/preferences response.
+	maybeMarkAsSeenOnLoad = () => {
+		const { post, isSeenEnabled, isSeenPreferenceConfirmed } = this.props;
+
+		if (
+			this.hasAutoMarkedAsSeen ||
+			! isSeenEnabled ||
+			! isSeenPreferenceConfirmed ||
+			! post ||
+			post._state === 'pending' ||
+			post.is_seen
+		) {
+			return;
+		}
+
+		this.hasAutoMarkedAsSeen = true;
+		this.markAsSeen();
 	};
 
 	markAsSeen = () => {
@@ -966,6 +1020,7 @@ export const withFullPostNavigation = ( WrappedComponent ) =>
 			blogId: props.blogId ?? props.feed?.blog_ID ?? post?.site_ID,
 			post,
 		} );
+		const isSeenPreferenceConfirmed = useSeenPostsPreferenceConfirmed();
 
 		// Pre-compute the navigation URL so the prev/next card's `<a href>`
 		// points at the destination the user lands on (middle-click /
@@ -988,6 +1043,7 @@ export const withFullPostNavigation = ( WrappedComponent ) =>
 				post={ post }
 				referralPost={ referralPost }
 				isSeenEnabled={ isSeenEnabled }
+				isSeenPreferenceConfirmed={ isSeenPreferenceConfirmed }
 				commentsApiDisabled={ commentsApiDisabled }
 				previousPost={ previousPost }
 				nextPost={ nextPost }

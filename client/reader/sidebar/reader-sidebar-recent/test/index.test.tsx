@@ -17,13 +17,10 @@ jest.mock( 'calypso/reader/stats', () => ( {
 	recordGaEvent: jest.fn(),
 } ) );
 
-jest.mock( '@automattic/api-queries', () => ( {
-	...jest.requireActual( '@automattic/api-queries' ),
-	isAutomatticianQuery: () => ( {
-		queryKey: [ 'test', 'is-automattician' ],
-		queryFn: () => true,
-		initialData: true,
-	} ),
+let mockSeenPostsUiEnabled = true;
+jest.mock( 'calypso/reader/data/seen-posts', () => ( {
+	useIsSeenPostsUiEnabled: () => mockSeenPostsUiEnabled,
+	useMarkAllAsSeenMutation: () => ( { mutate: jest.fn() } ),
 } ) );
 
 let mockSubscribedSites: Partial< SiteSubscriptionItem >[] = [];
@@ -64,6 +61,7 @@ describe( 'ReaderSidebarRecent unseen counts', () => {
 	afterEach( () => {
 		mockSubscribedSites = [];
 		mockSubscribedFeedsInfo = { unseenCount: 0, feedIds: [], feedUrls: [] };
+		mockSeenPostsUiEnabled = true;
 	} );
 
 	test( 'shows the total unseen count for the section, summed across all followed sites', () => {
@@ -98,5 +96,18 @@ describe( 'ReaderSidebarRecent unseen counts', () => {
 		expect( alphaRow?.querySelector( '.a8c-count' ) ).toHaveTextContent( '4' );
 		expect( alphaRow?.querySelector( '.a8c-count' ) ).toHaveAccessibleName( '4 unread (30 days)' );
 		expect( betaRow?.querySelector( '.a8c-count' ) ).toBeNull();
+	} );
+
+	test( 'hides unseen counts when seen posts UI is disabled', () => {
+		mockSeenPostsUiEnabled = false;
+		mockSubscribedFeedsInfo = { unseenCount: 8, feedIds: [], feedUrls: [] };
+
+		const { container } = renderRecentDropdown( [
+			createSubscriptionItem( { ID: 1, name: 'Alpha', unseen_count: 4 } ),
+			createSubscriptionItem( { ID: 2, name: 'Beta', unseen_count: 4 } ),
+		] );
+
+		expect( getUnseenCount( container ) ).toBeNull();
+		expect( container.querySelector( '.a8c-count' ) ).toBeNull();
 	} );
 } );
