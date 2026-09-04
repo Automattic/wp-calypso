@@ -88,9 +88,15 @@ export class FeedbackInboxPage {
 		const actionsMenu = this.page.locator( '.jp-forms__single-response-actions' );
 		await actionsMenu.getByRole( 'button', { name: 'Actions' } ).click();
 
-		// Not an exact name match: an item carrying a keyboard shortcut renders it as a
-		// visible span inside the button, so "Trash" is named "Trash #".
-		const menuItem = this.page.getByRole( 'menuitem', { name: menuItemName } );
+		// Anchored rather than exact: an item carrying a keyboard shortcut renders it
+		// as a visible span inside the button, so "Trash" is named "Trash #". Matching
+		// the prefix keeps that working while still rejecting a longer item that merely
+		// contains the label, which a bare substring match would not — "Empty Trash"
+		// for "Trash". Left strict on purpose: should two items ever both match, the
+		// run should fail loudly rather than quietly pick one.
+		const menuItem = this.page.getByRole( 'menuitem', {
+			name: new RegExp( `^${ menuItemName }\\b` ),
+		} );
 		await menuItem.click();
 
 		// The page stays put after an action, so there's no panel closing or
