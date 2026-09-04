@@ -118,10 +118,11 @@ describe( 'invokeSurvicateEvent', () => {
 
 		expect( invokeEvent ).not.toHaveBeenCalled();
 		expect( closeSurvey ).toHaveBeenCalledTimes( 1 );
-		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_survicate_survey_suppressed',
-			{ reason: 'modal', trigger: 'invoke_event', event_name: 'testEvent' }
-		);
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_survicate_survey_suppressed', {
+			reason: 'modal',
+			trigger: 'invoke_event',
+			event_name: 'testEvent',
+		} );
 
 		modal.remove();
 	} );
