@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { layout } from '@wordpress/icons';
 import OverviewCard from '../../components/overview-card';
 import SiteIcon from '../../components/site-icon';
+import { Truncate } from '../../components/truncate';
 
 interface Props {
 	domain: Domain;
@@ -35,9 +36,13 @@ export default function FeaturedCardSite( { domain }: Props ) {
 			}
 			icon={ shouldShowAddAttachSite ? <Icon icon={ layout } /> : <SiteIcon site={ site } /> }
 			description={
-				shouldShowAddAttachSite
-					? __( 'Attach this domain name to a new or existing site.' )
-					: domain.site_slug
+				shouldShowAddAttachSite ? (
+					__( 'Attach this domain name to a new or existing site.' )
+				) : (
+					<Truncate tooltip={ domain.site_slug } numberOfLines={ 1 }>
+						{ domain.site_slug }
+					</Truncate>
+				)
 			}
 			intent={ shouldShowAddAttachSite ? 'upsell' : 'success' }
 		/>
