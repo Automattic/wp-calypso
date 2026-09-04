@@ -158,40 +158,53 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		Adds a message to the chat.
 		If the message is a request for human support, it will escalate the chat to human support, if eligible.
 		If email support is forced, it will add an email fallback message.
+		`supportInteractionId` is the interaction the message belongs to; it is
+		passed in because a brand new chat only gets its interaction mid-send.
 	*/
 	const addMessage = ( {
 		message,
 		props = {},
 		isFromError = false,
+		supportInteractionId,
 	}: {
 		message: Message | Message[];
 		props?: Partial< Chat >;
 		isFromError: boolean;
+		supportInteractionId: string | null;
 	} ) => {
 		// Compute from a fresh Smooch snapshot at call time: Smooch can mutate its
 		// conversation list outside React without triggering a re-render.
 		const { mostRecentSupportInteractionId: warnAboutExistingConversation, hasReachedLimit } =
 			getOpenLiveInteractions( interactionStatusByUuid );
 
+		// Append to this tab's chat and mirror into other tabs showing the same
+		// support interaction, like the user's message already is on send. A send
+		// failure is not mirrored: it belongs to the tab that sent the message, and
+		// a reload would not show it either.
+		const appendMessages = ( messagesToAdd: Message[] ) => {
+			setChat( ( prevChat ) => ( {
+				...prevChat,
+				...props,
+				messages: [ ...prevChat.messages, ...messagesToAdd ],
+				status: 'loaded',
+			} ) );
+
+			if ( ! isFromError ) {
+				messagesToAdd.forEach( ( messageToBroadcast ) =>
+					broadcastOdieMessage( messageToBroadcast, odieBroadcastClientId, supportInteractionId )
+				);
+			}
+		};
+
 		if ( ! Array.isArray( message ) ) {
 			if ( getIsRequestingHumanSupport( message ) ) {
+				// Each branch shows a notice in place of the bot's reply, so the notice is
+				// what other tabs get too: they have to render the same thing as this tab.
 				if ( hasReachedLimit ) {
-					setChat( ( prevChat ) => ( {
-						...prevChat,
-						...props,
-						messages: [ ...prevChat.messages, getConversationLimitReachedMessage() ],
-						status: 'loaded',
-					} ) );
-					broadcastOdieMessage( message, odieBroadcastClientId );
+					appendMessages( [ getConversationLimitReachedMessage() ] );
 					return;
 				} else if ( forceEmailSupport ) {
-					setChat( ( prevChat ) => ( {
-						...prevChat,
-						...props,
-						messages: [ ...prevChat.messages, getOdieEmailFallbackMessage() ],
-						status: 'loaded',
-					} ) );
-					broadcastOdieMessage( message, odieBroadcastClientId );
+					appendMessages( [ getOdieEmailFallbackMessage() ] );
 					return;
 				} else if (
 					warnAboutExistingConversation &&
@@ -199,13 +212,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 					! hasTriedToEscalateToSupport
 				) {
 					trackEvent( 'chat_existing_conversation_prompt' );
-					setChat( ( prevChat ) => ( {
-						...prevChat,
-						...props,
-						messages: [ ...prevChat.messages, getExistingConversationMessage() ],
-						status: 'loaded',
-					} ) );
-					broadcastOdieMessage( message, odieBroadcastClientId );
+					appendMessages( [ getExistingConversationMessage() ] );
 					return;
 				} else if ( ! chat.conversationId && canConnectToZendesk && isUserEligibleForPaidSupport ) {
 					setChat( ( prevChat ) => ( {
@@ -220,7 +227,10 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						isFromError,
 						escalationOnSecondAttempt: hasTriedToEscalateToSupport,
 					} );
-					broadcastOdieMessage( message, odieBroadcastClientId );
+					// Deliberately not mirrored: this tab never shows the bot's reply, it moves
+					// to Zendesk instead, and other tabs follow through the interaction-updated
+					// broadcast once the conversation exists. Mirroring the reply would give
+					// them a live "get support" button that opens a second conversation.
 					return;
 				}
 
@@ -235,12 +245,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			}
 		}
 
-		setChat( ( prevChat ) => ( {
-			...prevChat,
-			...props,
-			messages: [ ...prevChat.messages, ...( Array.isArray( message ) ? message : [ message ] ) ],
-			status: 'loaded',
-		} ) );
+		appendMessages( Array.isArray( message ) ? message : [ message ] );
 	};
 
 	return useMutation< ReturnedChat, Error, Message >( {
@@ -331,7 +336,12 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						internal_message_id
 					);
 
-					addMessage( { message: errorMessage, props: {}, isFromError: true } );
+					addMessage( {
+						message: errorMessage,
+						props: {},
+						isFromError: true,
+						supportInteractionId: currentSupportInteraction?.uuid ?? null,
+					} );
 				}
 				return;
 			}
@@ -384,6 +394,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 				message: botMessage,
 				props: { odieId: returnedChat.chat_id },
 				isFromError: false,
+				supportInteractionId: supportInteraction?.uuid ?? null,
 			} );
 		},
 		onSettled: () => {
@@ -401,10 +412,20 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			if ( isRateLimitError ) {
 				// Handle rate limit error with standard rate limit message
 				const message: Message = { ...getOdieRateLimitMessage(), internal_message_id };
-				addMessage( { message, props: {}, isFromError: true } );
+				addMessage( {
+					message,
+					props: {},
+					isFromError: true,
+					supportInteractionId: currentSupportInteraction?.uuid ?? null,
+				} );
 			} else if ( isUserEligibleForPaidSupport && canConnectToZendesk ) {
 				const errorMessage = getErrorMessageUnknownError();
-				addMessage( { message: errorMessage, props: {}, isFromError: true } );
+				addMessage( {
+					message: errorMessage,
+					props: {},
+					isFromError: true,
+					supportInteractionId: currentSupportInteraction?.uuid ?? null,
+				} );
 
 				trackEvent( 'error_sending_odie_message', {
 					error_message: error instanceof Error ? error.toString() : 'unknown_error',
@@ -416,7 +437,12 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 					internal_message_id
 				);
 
-				addMessage( { message: errorMessage, props: {}, isFromError: true } );
+				addMessage( {
+					message: errorMessage,
+					props: {},
+					isFromError: true,
+					supportInteractionId: currentSupportInteraction?.uuid ?? null,
+				} );
 			}
 		},
 	} );

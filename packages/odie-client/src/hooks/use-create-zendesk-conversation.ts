@@ -14,7 +14,7 @@ import {
 	getZendeskChatStartedMetaMessage,
 } from '../constants';
 import { useOdieAssistantContext } from '../context';
-import { useManageSupportInteraction } from '../data';
+import { broadcastOdieInteractionUpdated, useManageSupportInteraction } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 import { getOpenLiveInteractions } from '../utils/get-open-live-interactions';
 import { useOpenInteractionStatusMap } from './use-open-interaction-status-map';
@@ -29,6 +29,7 @@ export const useCreateZendeskConversation = () => {
 		chat,
 		trackEvent,
 		isChatLoaded,
+		odieBroadcastClientId,
 	} = useOdieAssistantContext();
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
@@ -268,6 +269,20 @@ export const useCreateZendeskConversation = () => {
 				provider: 'zendesk',
 				status: 'loaded',
 			} ) );
+
+			// Let other tabs on this interaction know it moved to Zendesk, so they
+			// refetch it and switch too. They show the interaction this tab started
+			// from, so that is what they match on; `activeInteractionId` is where the
+			// conversation ended up, which can differ when the service moved the event.
+			// A chat that had no interaction yet cannot be open elsewhere.
+			const sourceInteractionId = currentSupportInteraction?.uuid;
+			if ( sourceInteractionId && activeInteractionId ) {
+				broadcastOdieInteractionUpdated(
+					odieBroadcastClientId,
+					sourceInteractionId,
+					activeInteractionId
+				);
+			}
 
 			// Track success only if conversation was created
 			trackEvent( 'new_zendesk_conversation', {
