@@ -32,7 +32,7 @@ export const ONBOARDING_STEPPER_GROUP_BY_SLUG: Record< string, OnboardingStepper
 
 export function getOnboardingStepperPosition(
 	group: OnboardingStepperGroup,
-	skipsPlans = false
+	skipsPlans: boolean
 ): {
 	current: number;
 	total: number;
