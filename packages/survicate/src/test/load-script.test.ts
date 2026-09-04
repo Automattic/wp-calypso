@@ -29,6 +29,7 @@ describe( 'loadSurvicateScript', () => {
 	afterEach( () => {
 		window._sva = undefined;
 		mockSelect.mockReset();
+		document.body.innerHTML = '';
 	} );
 
 	test( 'should call loadScript with the correct Survicate URL', async () => {
@@ -78,5 +79,43 @@ describe( 'loadSurvicateScript', () => {
 		onSurveyDisplayed();
 
 		expect( closeSurvey ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should close the survey when it is displayed while a modal is open', () => {
+		const closeSurvey = jest.fn();
+		const addEventListener = jest.fn();
+		window._sva = { closeSurvey, addEventListener };
+
+		loadSurvicateScript( 'test-workspace-id' );
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+		const modal = document.createElement( 'div' );
+		modal.setAttribute( 'role', 'dialog' );
+		modal.setAttribute( 'aria-modal', 'true' );
+		( modal as HTMLElement & { checkVisibility?: () => boolean } ).checkVisibility = () => true;
+		document.body.appendChild( modal );
+
+		const onSurveyDisplayed = addEventListener.mock.calls[ 0 ][ 1 ];
+		onSurveyDisplayed();
+
+		expect( closeSurvey ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'should close a visible survey when a modal opens', async () => {
+		const closeSurvey = jest.fn();
+		window._sva = { closeSurvey, addEventListener: jest.fn() };
+
+		loadSurvicateScript( 'test-workspace-id' );
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+		const modal = document.createElement( 'div' );
+		modal.setAttribute( 'role', 'dialog' );
+		modal.setAttribute( 'aria-modal', 'true' );
+		document.body.appendChild( modal );
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+		// Observers registered by earlier tests in this file are page-lifetime
+		// and also fire, so assert on "called" rather than an exact count.
+		expect( closeSurvey ).toHaveBeenCalled();
 	} );
 } );

@@ -1,7 +1,8 @@
 import { loadScript } from '@automattic/load-script';
 import { closeSurvicateSurvey } from './close-survey';
 import debug from './debug';
-import { isHelpCenterOpen } from './invoke-event';
+import { shouldSuppressSurvey } from './invoke-event';
+import { observeModals } from './modal-detection';
 
 /**
  * Checks whether the Survicate script is already loaded on the page.
@@ -23,11 +24,16 @@ export function loadSurvicateScript( workspaceId: string ): Promise< void > {
 			window._sva?.addEventListener?.( 'survey_displayed', () => {
 				debug( 'Survicate survey displayed' );
 
-				if ( isHelpCenterOpen() ) {
-					debug( 'Survicate survey suppressed (Help Center is open)' );
+				if ( shouldSuppressSurvey() ) {
+					debug( 'Survicate survey suppressed (Help Center or a modal is open)' );
 					closeSurvicateSurvey();
 				}
 			} );
+
+			// Close a survey that is already on screen when a modal opens on
+			// top of it. Page-lifetime, like the survey_displayed listener
+			// above; closeSurvicateSurvey() is a no-op without a visible survey.
+			observeModals( closeSurvicateSurvey );
 		},
 		{ once: true }
 	);
