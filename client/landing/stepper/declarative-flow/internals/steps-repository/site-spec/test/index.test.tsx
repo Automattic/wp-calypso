@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { useQuery as useReactQuery } from '@tanstack/react-query';
 import { act, render } from '@testing-library/react';
 import {
 	applyBlueprintSpec,
@@ -33,20 +32,6 @@ jest.mock( '@automattic/calypso-config', () => {
 
 jest.mock( '@automattic/posthog', () => ( {
 	getSessionId: jest.fn( () => 'ph-session' ),
-} ) );
-
-jest.mock( '@automattic/api-queries', () => ( {
-	isAutomatticianQuery: jest.fn( () => ( {
-		queryKey: [ 'me', 'is-automattician' ],
-		queryFn: jest.fn(),
-	} ) ),
-} ) );
-
-jest.mock( '@tanstack/react-query', () => ( {
-	useQuery: jest.fn( () => ( {
-		data: true,
-		isLoading: false,
-	} ) ),
 } ) );
 
 jest.mock( 'i18n-calypso', () => ( {
@@ -115,7 +100,6 @@ describe( 'SiteSpec early provisioning step', () => {
 	const mockUseSiteSpec = useSiteSpec as jest.Mock;
 	const wpcomPostMock = wpcom.req.post as jest.Mock;
 	const logToLogstashMock = logToLogstash as jest.Mock;
-	const mockUseReactQuery = useReactQuery as jest.Mock;
 	const navigation = {
 		submit: jest.fn(),
 	};
@@ -129,10 +113,6 @@ describe( 'SiteSpec early provisioning step', () => {
 		jest.clearAllMocks();
 		window.sessionStorage.clear();
 		mockQueryParams = new URLSearchParams( 'early_provision_site=1&source=vega' );
-		mockUseReactQuery.mockReturnValue( {
-			data: true,
-			isLoading: false,
-		} );
 		Object.defineProperty( window, 'location', {
 			value: { href: '' },
 			writable: true,
@@ -235,12 +215,8 @@ describe( 'SiteSpec early provisioning step', () => {
 		);
 	} );
 
-	it( 'ignores build-wow Site Spec routing for non-Automatticians', () => {
-		mockQueryParams = new URLSearchParams( 'build_wow=1&siteSlug=example.wordpress.com' );
-		mockUseReactQuery.mockReturnValue( {
-			data: false,
-			isLoading: false,
-		} );
+	it( 'leaves build-wow routing alone when build_wow is not requested', () => {
+		mockQueryParams = new URLSearchParams( 'siteSlug=example.wordpress.com' );
 
 		renderSiteSpec();
 
