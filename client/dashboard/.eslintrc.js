@@ -1,5 +1,7 @@
 module.exports = {
 	rules: {
+		'wpcalypso/no-conditional-text-nodes-with-siblings': 'error',
+		'wpcalypso/no-return-text-nodes': 'error',
 		'no-restricted-imports': [
 			'error',
 			{

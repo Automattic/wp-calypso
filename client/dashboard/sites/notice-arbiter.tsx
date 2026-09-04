@@ -47,12 +47,12 @@ export function SitesNoticeArbiter( { children }: { children?: ReactNode } ) {
 	const [ hadPageCandidateOnMount ] = useState( pageCandidates.length > 0 );
 
 	if ( pageCandidates.length > 0 ) {
-		return <>{ pageCandidates[ 0 ] }</>;
+		return pageCandidates[ 0 ];
 	}
 
 	if ( hadPageCandidateOnMount ) {
 		return null;
 	}
 
-	return <>{ sharedCandidate }</>;
+	return sharedCandidate;
 }

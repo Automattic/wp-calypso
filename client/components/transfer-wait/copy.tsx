@@ -17,7 +17,7 @@ export function useStageTitles(): Record< InstallStageKey, ReactNode > {
 /**
  * One narrated sentence per stage, with the key phrase emphasized.
  */
-export function useStageSentences(): Record< InstallStageKey, ReactNode > {
+export function useStageSentences( isPluginInstall = true ): Record< InstallStageKey, ReactNode > {
 	const translate = useTranslate();
 	return {
 		preparing: translate(
@@ -32,12 +32,16 @@ export function useStageSentences(): Record< InstallStageKey, ReactNode > {
 				components: { strong: <strong /> },
 			}
 		),
-		finishing: translate(
-			'{{strong}}Finishing up{{/strong}}. We’re installing and activating your plugin.',
-			{
-				components: { strong: <strong /> },
-			}
-		),
+		finishing: isPluginInstall
+			? translate(
+					'{{strong}}Finishing up{{/strong}}. We’re installing and activating your plugin.',
+					{
+						components: { strong: <strong /> },
+					}
+			  )
+			: translate( '{{strong}}Finishing up{{/strong}}. We’re making sure your site is ready.', {
+					components: { strong: <strong /> },
+			  } ),
 	};
 }
 
@@ -45,16 +49,18 @@ export function useStageSentences(): Record< InstallStageKey, ReactNode > {
  * Once the wait is long enough that reassurance stops being honest: the transfer is done and the
  * site is usable, so say that and point at the door rather than repeat that nothing is wrong.
  */
-export function useStalledCopy() {
+export function useStalledCopy( isPluginInstall = true ) {
 	const translate = useTranslate();
-	return translate(
-		'This is taking longer than it should. Your site is ready — your plugin may still finish installing on its own.'
-	);
+	return isPluginInstall
+		? translate(
+				'This is taking longer than it should. Your site is ready — your plugin may still finish installing on its own.'
+		  )
+		: translate( 'This is taking longer than it should. Your site is ready to use.' );
 }
 
-export function useStalledActionLabel() {
+export function useStalledActionLabel( isPluginInstall = true ) {
 	const translate = useTranslate();
-	return translate( 'Go to your plugins' );
+	return isPluginInstall ? translate( 'Go to your plugins' ) : translate( 'Go to your site' );
 }
 
 export function useOverrunCopy() {

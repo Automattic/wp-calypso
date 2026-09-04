@@ -16,6 +16,9 @@ const DEFAULT_SERVER_NOTICES_VISIBILITY = {
 	// default only covers request failures: the grid stays hidden rather than
 	// rendering without a working dismissal round-trip.
 	pricing_grid: false,
+	// Defaults to hidden until the server includes it in the notices response,
+	// so the client can ship ahead of the WPCOM allow-list change.
+	premium_analytics_preview: false,
 	// TODO: Check if the site needs to be upgraded to a higher tier on the back end.
 	tier_upgrade: true,
 	gdpr_cookie_consent: false,
@@ -46,6 +49,10 @@ const CONFLICT_NOTICE_ID_GROUPS: Record< string, Array< NoticeIdType > > = {
 		'gdpr_cookie_consent',
 		'client_paid_plan_purchase_success',
 		'client_free_plan_purchase_success',
+		// Above `tier_upgrade`, the one id below whose audience it genuinely shares: both want a
+		// site with commercial use. The upsells in between need an unpaid site, so they and the
+		// invitation hardly ever come up together.
+		'premium_analytics_preview',
 		// The two legacy upsell ids and `free_site_upgrade` are mutually exclusive: their
 		// registry entries are enabled on opposite sides of the commercial paywall kill switch.
 		'do_you_love_jetpack_stats',

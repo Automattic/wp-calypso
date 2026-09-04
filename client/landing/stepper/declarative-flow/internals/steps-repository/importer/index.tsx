@@ -65,6 +65,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const dispatch = useDispatch();
 		const { importer, navigation, flow } = props;
 		const currentSearchParams = useQuery();
+		const isPlaygroundImport = currentSearchParams.has( 'playground' );
 		/**
 	 	↓ Fields
 		 */
@@ -85,8 +86,17 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		);
 
 		const isLoading = useMemo( () => {
-			return ! isImporterStatusHydrated || ! hasAllSitesFetched || isRequestingCurrentSite;
-		}, [ isImporterStatusHydrated, hasAllSitesFetched, isRequestingCurrentSite ] );
+			return (
+				! isImporterStatusHydrated ||
+				( ! isPlaygroundImport && ! hasAllSitesFetched ) ||
+				isRequestingCurrentSite
+			);
+		}, [
+			isImporterStatusHydrated,
+			isPlaygroundImport,
+			hasAllSitesFetched,
+			isRequestingCurrentSite,
+		] );
 
 		const skipToDashboardAction = useCallback( () => {
 			recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
@@ -101,8 +111,10 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 	 	↓ Effects
 		 */
 		useEffect( () => {
-			dispatch( requestSites() );
-		}, [ dispatch ] );
+			if ( ! isPlaygroundImport ) {
+				dispatch( requestSites() );
+			}
+		}, [ dispatch, isPlaygroundImport ] );
 
 		useAtomicTransferQueryParamUpdate( siteId );
 		useEffect( fetchImporters, [ siteId ] );

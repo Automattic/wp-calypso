@@ -5,7 +5,7 @@ import {
 	render as clientRender,
 } from 'calypso/controller';
 import { setLocaleMiddleware } from 'calypso/controller/shared';
-import { sidebar } from 'calypso/reader/controller';
+import { redirectLoggedOutToDiscoverTags, sidebar } from 'calypso/reader/controller';
 import { readerNotFound } from 'calypso/reader/lib/reader-router';
 import { tagsListing, fetchTrendingTags, fetchAlphabeticTags } from './controller';
 
@@ -14,6 +14,7 @@ export default function ( router ) {
 
 	router(
 		[ '/tags', `/${ langParam }/tags` ],
+		redirectLoggedOutToDiscoverTags,
 		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		setLocaleMiddleware(),
 		fetchTrendingTags,
@@ -24,5 +25,5 @@ export default function ( router ) {
 		clientRender
 	);
 
-	router( '/tags/*', readerNotFound );
+	router( '/tags/*', redirectLoggedOutToDiscoverTags, readerNotFound );
 }

@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { isDomainMapping, isDomainTransfer } from '@automattic/calypso-products';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { clearStepPersistedState, ONBOARDING_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
@@ -7,6 +8,7 @@ import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect, useMemo } from 'react';
 import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import {
 	STEPPER_TRACKS_EVENT_SIGNUP_START,
 	WOO_HOSTING_SOLUTIONS_REF,
@@ -54,7 +56,7 @@ import { getStepFromURL } from '../../../utils/get-flow-from-url';
 import {
 	getPreselectedPlan,
 	getPreselectedStorageAddOn,
-	skipsPlansStep,
+	shouldSkipPlansStep,
 } from '../../../utils/preselected-plan';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import {
@@ -324,16 +326,17 @@ const onboarding: FlowV2< typeof initialize > = {
 			setHideFreePlan,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
-		const { signupDomainOrigin, planCartItem, blueprint } = useSelect(
+		const { signupDomainOrigin, planCartItem, domainCartItem, blueprint } = useSelect(
 			( select ) => ( {
 				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
 				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
 				blueprint: ( select( ONBOARD_STORE ) as OnboardSelect ).getBlueprint(),
 			} ),
 			[]
 		);
 		const queryParams = useQuery();
-		const skipsPlans = skipsPlansStep( queryParams, planCartItem );
+		const shouldSkipPlans = shouldSkipPlansStep( queryParams, planCartItem );
 		const coupon = queryParams.get( 'coupon' );
 		const refParameter = queryParams.get( 'ref' );
 		const diyLaunchpad = queryParams.get( 'diy-launchpad' );
@@ -481,7 +484,7 @@ const onboarding: FlowV2< typeof initialize > = {
 		 * plans handler below only apply when no plan was picked, so nothing is skipped here.
 		 */
 		const navigateAfterDomain = () => {
-			if ( ! skipsPlans ) {
+			if ( ! shouldSkipPlans ) {
 				return navigate( 'plans' );
 			}
 
@@ -702,7 +705,9 @@ const onboarding: FlowV2< typeof initialize > = {
 					}
 
 					const launchpadPersonalizationVariation =
-						await resolveLaunchpadPersonalizationVariation( diyLaunchpad );
+						playgroundId || blueprint
+							? 'control'
+							: await resolveLaunchpadPersonalizationVariation( diyLaunchpad );
 					const [ destination, backDestination, backDestinationDomains ] =
 						await getPostCheckoutDestination(
 							providedDependencies,
@@ -754,7 +759,10 @@ const onboarding: FlowV2< typeof initialize > = {
 								);
 							}
 
-							const checkoutStepperPosition = getOnboardingStepperPosition( 'checkout' );
+							const checkoutStepperPosition = getOnboardingStepperPosition(
+								'checkout',
+								shouldSkipPlans
+							);
 
 							// replace the location to delete processing step from history.
 							window.location.replace(
@@ -768,7 +776,11 @@ const onboarding: FlowV2< typeof initialize > = {
 											: redirectTo,
 									signup: 1,
 									flow: ONBOARDING_FLOW,
-									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
+									// A skipping visit's last screen was the domain step, so that is where
+									// leaving checkout belongs.
+									checkoutBackUrl: pathToUrl(
+										( shouldSkipPlans ? backDestinationDomains : backDestination ) ?? ''
+									),
 									...( backDestinationDomains
 										? { checkoutBackUrlDomains: pathToUrl( backDestinationDomains ) }
 										: {} ),
@@ -780,7 +792,21 @@ const onboarding: FlowV2< typeof initialize > = {
 						} else if ( blueprintArchiveSlug || isKnownWowFunnel( wowFunnelSlug ) ) {
 							// build_dest=wow and the WoW funnel never show the
 							// setup-your-site-ai chooser; go straight to their destination.
+							// This can stay ahead of the domain branches below: a connected or
+							// transferred domain forces a paid plan (use-my-domain hides the free
+							// plan), and a paid funnel order's checkout redirect_to is the funnel
+							// destination itself, so it never comes back through here.
 							window.location.replace( destination );
+						} else if ( domainCartItem?.meta && isDomainMapping( domainCartItem ) ) {
+							// A connected domain still has to be pointed at the site once it is paid
+							// for, so finish on the setup instructions rather than the chooser or My Home.
+							window.location.replace(
+								dashboardLink( `/domains/${ domainCartItem.meta }/domain-connection-setup` )
+							);
+						} else if ( domainCartItem?.meta && isDomainTransfer( domainCartItem ) ) {
+							window.location.replace(
+								dashboardLink( `/domains/${ domainCartItem.meta }/domain-transfer-setup` )
+							);
 						} else if (
 							refParameter === WOO_HOSTING_SOLUTIONS_REF &&
 							isEnabled( 'onboarding/woo-hosting-post-purchase-setup-choice' )
