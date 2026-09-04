@@ -8,6 +8,11 @@
 	gap: 2em;
 }
 
+// The content wrapper's gap already spaces the notice from the heading.
+.wp-login__one-login-layout-content-wrapper > .calypso-notice {
+	margin-bottom: 0;
+}
+
 .wp-login__one-login-layout-heading {
 	color: var( --color-neutral-100 );
 	font-size: $font-body;
