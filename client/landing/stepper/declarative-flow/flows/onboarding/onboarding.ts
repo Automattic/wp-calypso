@@ -771,7 +771,11 @@ const onboarding: FlowV2< typeof initialize > = {
 											: redirectTo,
 									signup: 1,
 									flow: ONBOARDING_FLOW,
-									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
+									// A skipping visit's last screen was the domain step, so that is where
+									// leaving checkout belongs.
+									checkoutBackUrl: pathToUrl(
+										( shouldSkipPlans ? backDestinationDomains : backDestination ) ?? ''
+									),
 									...( backDestinationDomains
 										? { checkoutBackUrlDomains: pathToUrl( backDestinationDomains ) }
 										: {} ),
