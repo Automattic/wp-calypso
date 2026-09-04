@@ -127,7 +127,7 @@ jobs:
       - name: Run review (dashboard)
         id: review_dashboard
         if: inputs.area == 'dashboard' && steps.trusted_files.outputs.skip == 'false'
-        uses: anthropics/claude-code-action@567fe954a4527e81f132d87d1bdbcc94f7737434 # v1.0.107
+        uses: anthropics/claude-code-action@1f291e1cfe0f5fc21db2aef19af844591600ade7 # v1.0.206
         with:
           anthropic_api_key: ${{ secrets.anthropic_api_key }}
           display_report: true
@@ -198,7 +198,7 @@ jobs:
       - name: Run review (a4a)
         id: review_a4a
         if: inputs.area == 'a4a' && steps.trusted_files.outputs.skip == 'false'
-        uses: anthropics/claude-code-action@567fe954a4527e81f132d87d1bdbcc94f7737434 # v1.0.107
+        uses: anthropics/claude-code-action@1f291e1cfe0f5fc21db2aef19af844591600ade7 # v1.0.206
         with:
           anthropic_api_key: ${{ secrets.anthropic_api_key }}
           display_report: true
@@ -267,7 +267,7 @@ jobs:
       - name: Run review (general)
         id: review_general
         if: inputs.area == 'general' && steps.trusted_files.outputs.skip == 'false'
-        uses: anthropics/claude-code-action@567fe954a4527e81f132d87d1bdbcc94f7737434 # v1.0.107
+        uses: anthropics/claude-code-action@1f291e1cfe0f5fc21db2aef19af844591600ade7 # v1.0.206
         with:
           anthropic_api_key: ${{ secrets.anthropic_api_key }}
           display_report: true
