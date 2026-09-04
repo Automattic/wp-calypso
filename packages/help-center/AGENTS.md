@@ -121,6 +121,7 @@ Data-fetching hooks use a dual-endpoint pattern controlled by `canAccessWpcomApi
 | `/wpcom/v2/imports/analyze-url`                     | GET    | `use-is-wporg-site`             | Detect WP.org vs WP.com site                   |
 | `/wpcom/v2/sites/{siteId}/jetpack-search/ai/search` | GET    | `use-jetpack-search-ai`         | AI-powered help article search                 |
 | `/wpcom/v2/help/search`                             | GET    | `use-help-search-query`         | Search help articles                           |
+| `/wpcom/v2/help/article/rating`                    | POST   | `use-rate-article`              | Rate a help article                            |
 | `/wpcom/v2/agency/help/zendesk/create-ticket`       | POST   | `use-submit-a4a-support-ticket` | A4A agency ticket                              |
 | `/wpcom/v2/agency/help/pressable/support`           | POST   | `use-submit-a4a-support-ticket` | Pressable agency support                       |
 
@@ -135,6 +136,7 @@ When `canAccessWpcomApis()` is `false` (Atomic sites), these hooks fall back to 
 | `/help-center/support-status`           | `/wpcom/v2/help/support-status`                     |
 | `/help-center/jetpack-search/ai/search` | `/wpcom/v2/sites/{siteId}/jetpack-search/ai/search` |
 | `/help-center/search`                   | `/wpcom/v2/help/search`                             |
+| `/help-center/article-rating`            | `/wpcom/v2/help/article/rating`                    |
 
 ### External service integrations
 
