@@ -4,6 +4,8 @@ import {
 	getSiteAdminUrl,
 	getSiteEditorUrl,
 	waitForAtomicTransferComplete,
+	isBlueprintImportFailure,
+	startBlueprintArchiveImport,
 	waitForBlueprintImportComplete,
 } from './blueprint-archive-import';
 
@@ -286,9 +288,11 @@ const WAIT_TIMED_OUT = Symbol( 'wow-funnel-wait-timed-out' );
 export async function waitForWowFunnelReady( {
 	funnelSlug,
 	siteIdentifier,
+	blueprintSlug,
 }: {
 	funnelSlug: string;
 	siteIdentifier: string;
+	blueprintSlug?: string | null;
 } ): Promise< void > {
 	const { readiness, waitTimeoutSeconds } = getWowFunnelConfig( funnelSlug );
 
@@ -304,7 +308,26 @@ export async function waitForWowFunnelReady( {
 		// Atomic — and `import` simply waits for one more thing behind it.
 		await waitForAtomicTransferComplete( siteIdentifier, pollNow );
 		if ( 'import' === readiness ) {
-			await waitForBlueprintImportComplete( siteIdentifier, pollNow );
+			try {
+				await waitForBlueprintImportComplete( siteIdentifier, pollNow );
+			} catch ( error ) {
+				// A failed import record is terminal for that attempt, not for the site — but it is
+				// stored, so without this every later visit reads the same record and throws again,
+				// and the customer can never get out of the error screen however many times they
+				// re-enter. That is worth avoiding on its own, and the restore's most likely
+				// failure is one that has since resolved: fetching the archive needs the customer's
+				// Jetpack connection, which does not exist yet when the claim starts the import.
+				//
+				// So restart once and wait again. A second failure is genuinely terminal and
+				// propagates. Only a real import failure is retried; a request that blew up is not
+				// evidence the import is broken.
+				if ( ! blueprintSlug || ! isBlueprintImportFailure( error ) ) {
+					throw error;
+				}
+
+				await startBlueprintArchiveImport( siteIdentifier, blueprintSlug );
+				await waitForBlueprintImportComplete( siteIdentifier, pollNow );
+			}
 		}
 	} )();
 

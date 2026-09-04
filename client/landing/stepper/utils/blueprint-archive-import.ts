@@ -137,6 +137,21 @@ export async function startBlueprintArchiveImport(
 }
 
 /**
+ * Marker for the one error waitForBlueprintImportComplete() raises itself.
+ *
+ * Distinguishing it from a transient request error is load-bearing in two places: the poll keeps
+ * going on the latter, and callers may retry only the former.
+ */
+const IMPORT_FAILED_PREFIX = 'Blueprint import failed with status: ';
+
+/**
+ * Whether an error is the import reporting a terminal failure, rather than a request that blew up.
+ */
+export function isBlueprintImportFailure( error: unknown ): boolean {
+	return error instanceof Error && error.message.startsWith( IMPORT_FAILED_PREFIX );
+}
+
+/**
  * Poll the site's import status until the backup import finishes.
  * Resolves on success; throws on a terminal failure or timeout.
  *
@@ -176,12 +191,12 @@ export async function waitForBlueprintImportComplete(
 			}
 
 			if ( lastStatus && IMPORT_FAILURE_STATUSES.includes( lastStatus ) ) {
-				throw new Error( `Blueprint import failed with status: ${ lastStatus }` );
+				throw new Error( `${ IMPORT_FAILED_PREFIX }${ lastStatus }` );
 			}
 		} catch ( error ) {
 			// A terminal failure we raised ourselves should propagate; transient
 			// request errors (e.g. mid-transfer blips) should keep polling.
-			if ( error instanceof Error && error.message.startsWith( 'Blueprint import failed' ) ) {
+			if ( isBlueprintImportFailure( error ) ) {
 				throw error;
 			}
 			continue;
