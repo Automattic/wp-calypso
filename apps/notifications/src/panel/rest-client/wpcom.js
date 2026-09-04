@@ -76,5 +76,8 @@ export const sendLastSeenTime = ( time ) =>
 		{ time }
 	);
 
-export const subscribeToNoteStream = ( callback ) =>
-	wpcom().pinghub.connect( '/wpcom/me/newest-note-data', callback );
+export const subscribeToNoteStream = () => {
+	// TEMPORARY FIX. Disable Pinghub for now. It's failing and DDOSing the REST endpoint.
+	// return wpcom().pinghub.connect( '/wpcom/me/newest-note-data', callback );
+	return null;
+};
