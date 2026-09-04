@@ -38,6 +38,7 @@ import { usePageOrSiteEditorSurface } from '../../hooks/use-empty-view-suggestio
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import { useImageUpload } from '../../hooks/use-image-upload';
 import { useNavigationContinuation } from '../../hooks/use-navigation-continuation';
+import useOrphanedTurnRecovery from '../../hooks/use-orphaned-turn-recovery';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSourcesAction from '../../hooks/use-sources-action';
 import {
@@ -69,6 +70,7 @@ import { isBlockEditToolId } from '../../utils/tool-message-utils';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
+import insertRetryAffordances from './recovered-turn-messages';
 import type { BigSkyMessage } from '../../types';
 import type {
 	AbilitiesSetupHook,
@@ -1223,8 +1225,11 @@ export default function OrchestratorChat( {
 	// programmatic submit) lands before the `isUploadingImages` state does.
 	const isUploadingRef = useRef( false );
 
-	const onSubmitWithImages = useCallback(
-		async ( message: string ) => {
+	const dispatchChatMessage = useCallback(
+		async (
+			message: string,
+			{ restoreComposerOnFailure = true }: { restoreComposerOnFailure?: boolean } = {}
+		) => {
 			submitDispatchedRef.current = false;
 
 			// The composer is committed while a batch uploads — drop re-entrant
@@ -1329,8 +1334,12 @@ export default function OrchestratorChat( {
 			} catch {
 				// A rejected dispatch already surfaces via agenttic's error state;
 				// put the message back (unless a newer draft replaced it) for a retry.
+				// A caller that owns its own retry affordance opts out, so the same
+				// prompt is not offered twice.
 				submitDispatchedRef.current = false;
-				setInputValue( ( currentValue ) => ( currentValue === '' ? message : currentValue ) );
+				if ( restoreComposerOnFailure ) {
+					setInputValue( ( currentValue ) => ( currentValue === '' ? message : currentValue ) );
+				}
 				return;
 			}
 
@@ -1346,6 +1355,19 @@ export default function OrchestratorChat( {
 			uploadImagesToWordPress,
 		]
 	);
+
+	// `AgentUI`'s `onSubmit` contract: `( message, files? )`. Options stay off it,
+	// so a programmatic caller reaches for `dispatchChatMessage` directly.
+	const onSubmitWithImages = useCallback(
+		( message: string ) => dispatchChatMessage( message ),
+		[ dispatchChatMessage ]
+	);
+
+	// The dispatch path closes over the composer draft, so it changes identity on
+	// every keystroke. Callbacks that ride in the transcript read it through this
+	// ref instead, or the whole message list rebuilds as the merchant types.
+	const dispatchChatMessageRef = useRef( dispatchChatMessage );
+	dispatchChatMessageRef.current = dispatchChatMessage;
 
 	const handleAbort = useCallback( () => {
 		// `abortUpload` reports whether it stopped an in-flight batch, so a stop
@@ -1364,7 +1386,7 @@ export default function OrchestratorChat( {
 				return;
 			}
 
-			await onSubmitWithImages( submittedMessage );
+			await dispatchChatMessage( submittedMessage );
 			// Clear only a dispatched message — an aborted or failed send keeps
 			// the composer intact, and the user may have typed a new draft.
 			if ( submitDispatchedRef.current ) {
@@ -1373,10 +1395,30 @@ export default function OrchestratorChat( {
 				);
 			}
 		},
-		[ inputValue, onSubmitWithImages ]
+		[ dispatchChatMessage, inputValue ]
 	);
 
 	useRegisterCustomActions( { setChatInput, submitChatMessage } );
+
+	// Retry a failed turn: drop its affordance and the failed bubble, then re-send
+	// the original prompt as a fresh turn. Deliberately does not repopulate the
+	// composer. If the send never dispatches, put both back so the question is
+	// not lost a second time.
+	// Recover a first-message turn orphaned by a page change before the server
+	// assigned a session (WOOAI-872 / WOOAI-847): show it as `failed` with a
+	// retry instead of losing it.
+	//
+	// Not `submitChatMessage`: this send owns the composer neither on the way in
+	// (the recovered prompt was never typed) nor on the way out, where putting it
+	// back would leave two ways to retry the same question.
+	const sendRetry = useCallback( async ( text: string ) => {
+		submitDispatchedRef.current = false;
+		await dispatchChatMessageRef.current( text, { restoreComposerOnFailure: false } );
+		return submitDispatchedRef.current;
+	}, [] );
+	const { failedRetries, handleRetryFailed, dismissRecovery } = useOrphanedTurnRecovery( {
+		sendRetry,
+	} );
 
 	const handleContextCardAction = useCallback(
 		( card: ExternalContextCard, action: ExternalContextCardAction ) => {
@@ -1500,7 +1542,10 @@ export default function OrchestratorChat( {
 			// Transform Big Sky message format to `UIMessage` format and add to chat.
 			addMessage( convertBigSkyMessageToUIMessage( message ) );
 		},
-		clearMessages: () => loadMessages( [] ),
+		clearMessages: () => {
+			dismissRecovery();
+			loadMessages( [] );
+		},
 		clearSuggestions,
 		getAgentManager,
 		isProcessing,
@@ -1691,12 +1736,15 @@ export default function OrchestratorChat( {
 			};
 		} );
 
+		currentMessages = insertRetryAffordances( currentMessages, failedRetries, handleRetryFailed );
+
 		return currentMessages;
 	}, [
 		checkpointActionRevision,
 		checkpointSessionIdentity,
 		currentPostId,
 		deletedMessageIds,
+		failedRetries,
 		getChatComponent,
 		getCopyActionsForMessage,
 		getCheckpointActionsForMessage,
@@ -1704,6 +1752,7 @@ export default function OrchestratorChat( {
 		getFeedbackActionsForMessage,
 		getTraceIdForMessage,
 		getRegenerateActionsForMessage,
+		handleRetryFailed,
 		hasEditorRedo,
 		isBuildingSite,
 		isProcessing,
