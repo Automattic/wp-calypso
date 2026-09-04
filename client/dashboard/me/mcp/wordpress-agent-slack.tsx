@@ -54,7 +54,7 @@ export default function WordPressAgentSlack( {
 	const installTitle = __( 'Slack' );
 	const installDescription = pairToken
 		? __( 'This is a separate step for adding WordPress Agent to a different Slack workspace.' )
-		: __( 'Add your agent to Slack and manage your site from there.' );
+		: __( 'Add your agent to Slack and manage your sites from there.' );
 	const isActionPending =
 		oauthMutation.isPending || pairMutation.isPending || disconnectMutation.isPending;
 	const error =
