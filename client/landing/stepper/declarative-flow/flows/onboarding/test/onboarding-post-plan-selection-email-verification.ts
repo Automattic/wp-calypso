@@ -106,6 +106,7 @@ jest.mock( '../../../helpers/get-onboarding-post-checkout-destination', () => ( 
 } ) );
 
 jest.mock( '../step-counter-config', () => ( {
+	...jest.requireActual( '../step-counter-config' ),
 	getOnboardingStepperPosition: () => ( { current: 3, total: 3 } ),
 } ) );
 

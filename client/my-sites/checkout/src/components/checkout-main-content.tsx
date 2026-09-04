@@ -461,11 +461,13 @@ export default function CheckoutMainContent( {
 		couponStatus,
 	} = useShoppingCart( cartKey );
 
+	const searchParams = new URLSearchParams( window.location.search );
+	const isOnboardingFlowCheckout = searchParams.get( 'flow' ) === ONBOARDING_FLOW;
 	// The redirecting flow names any step its visit skipped; it is the flow, not checkout, that
 	// knows which ones those were. A skipped step is not a place to send anyone back to.
 	const shouldHidePlansStep =
-		new URLSearchParams( window.location.search ).get( ONBOARDING_STEPPER_OMITTED_GROUP_PARAM ) ===
-		ONBOARDING_OMITTED_PLANS_GROUP;
+		isOnboardingFlowCheckout &&
+		searchParams.get( ONBOARDING_STEPPER_OMITTED_GROUP_PARAM ) === ONBOARDING_OMITTED_PLANS_GROUP;
 	const leaveModalProps = useCheckoutLeaveModal( {
 		siteUrl: siteUrl ?? '',
 		preferDomainsBackUrl: shouldHidePlansStep,
@@ -482,8 +484,6 @@ export default function CheckoutMainContent( {
 		[ submitButtonSlotEl ]
 	);
 
-	const searchParams = new URLSearchParams( window.location.search );
-	const isOnboardingFlowCheckout = searchParams.get( 'flow' ) === ONBOARDING_FLOW;
 	const showProgress = useShowOnboardingProgress( isOnboardingFlowCheckout );
 	const forceCheckoutBackUrlDomains = useValidCheckoutBackUrl(
 		siteUrl ?? '',
