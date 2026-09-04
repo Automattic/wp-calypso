@@ -90,24 +90,58 @@ because `_sva.setVisitorTraits` **merges** traits across calls (upsert), rather
 than replacing the whole set — so the visit-count push does not clobber the
 email/account-age traits, and vice versa.
 
-## Help Center coordination (defense-in-depth)
+## Modal & Help Center coordination (defense-in-depth)
 
-Surveys must not cover the Help Center while a user is actively seeking support. Three
-complementary touch points enforce this — keep all three:
+Surveys must not cover the Help Center while a user is actively seeking support, nor
+draw over any other open modal dialog (onboarding modals, WP `Modal`, native
+`<dialog>`). The umbrella check is `shouldSuppressSurvey()` (`invoke-event.ts`):
+`isHelpCenterOpen() || isModalOpen()`. The touch points — keep all of them:
 
 1. **Open HC while a survey is showing** → `packages/data-stores/src/help-center/actions.ts`
    (`setShowHelpCenter`) calls `window._sva?.closeSurvey?.()` on open. (Note: that file
    intentionally inlines the call rather than importing this package — data-stores is a
    lower-level shared package and must not depend on `@automattic/survicate`.)
-2. **Invoke an event while HC is open** → `invoke-event.ts` checks `isHelpCenterOpen()`
-   and skips the trigger (both immediately and deferred at `SurvicateReady` time).
-3. **Any survey displays while HC is open** → `load-script.ts` subscribes to
+2. **Invoke an event while HC/a modal is open** → `invoke-event.ts` checks
+   `shouldSuppressSurvey()` and skips the trigger (both immediately and deferred at
+   `SurvicateReady` time).
+3. **Any survey displays while HC/a modal is open** → `load-script.ts` subscribes to
    `survey_displayed` and closes it. This is the comprehensive net that also catches
    auto-campaigns (path 2 above).
+4. **A modal opens while a survey is showing** → `load-script.ts` starts
+   `observeModals( closeSurvicateSurvey )` at `SurvicateReady` time (page-lifetime,
+   like the `survey_displayed` listener).
 
 `isHelpCenterOpen()` (exported from `invoke-event.ts`) reads the `automattic/help-center`
 `@wordpress/data` store by string and returns `false` if the store isn't registered, so
-it's safe to call even when the Help Center isn't loaded on the surface.
+it's safe to call even when the Help Center isn't loaded on the surface. It is kept
+separate from DOM detection on purpose: the Help Center is a side panel without
+`aria-modal`, so the store is the reliable signal for it.
+
+### Modal detection (`modal-detection.ts`)
+
+- `MODAL_SELECTOR` matches `[role="dialog"][aria-modal="true"]` (requiring
+  `aria-modal` excludes popovers/tooltips that only set `role="dialog"`), native
+  `dialog[open]`, and `.components-modal__screen-overlay` (older WP `Modal` versions).
+- **Self-exclusion is load-bearing**: the Survicate widget itself renders
+  `role="dialog"`/`aria-modal="true"` elements inside
+  `<div id="survicate-box" class="survicate-box-<type>">` (verified in
+  `widget_core-28.33.0.js`). Candidates inside
+  `#survicate-box, [class*="survicate-box"]` are skipped — otherwise every survey
+  would close itself on display.
+- `isModalOpen()` also requires the candidate to be rendered, preferring
+  `Element.checkVisibility()` with a `getClientRects()` fallback, so a
+  hidden-but-mounted dialog can't suppress surveys forever. jsdom implements no
+  layout (`getClientRects()` is always empty), so tests stub `checkVisibility`
+  per element.
+- `observeModals( onOpen )` watches `document.body` for **added nodes only** (no
+  attribute observation — a native `<dialog>` toggled via `open` in place is missed,
+  but the `survey_displayed` net still covers it). Returns a disconnect function.
+- Everything fails **open**: any error in detection means "no modal", so surveys
+  behave as they did before this module existed.
+
+The wp-admin loader (`jetpack-mu-wpcom/src/features/survicate/class-survicate.php`,
+Jetpack monorepo) inlines the same logic in its emitted script; keep the two in sync
+when changing selectors or behavior.
 
 **Known caveat — the display flash**: `survey_displayed` fires *after* the survey
 renders, so closing it produces a brief show-then-hide flicker for auto-campaigns. The
@@ -122,7 +156,9 @@ requires dashboard coordination. Don't build that pre-emptively.
   only) and `SURVICATE_WORKSPACE_ID`.
 - `load-script.ts` — `loadSurvicateScript()` injects the SDK and wires the
   `survey_displayed` safety net; `isSurvicateScriptLoaded()`.
-- `invoke-event.ts` — `invokeSurvicateEvent()` and `isHelpCenterOpen()`.
+- `invoke-event.ts` — `invokeSurvicateEvent()`, `isHelpCenterOpen()`, and
+  `shouldSuppressSurvey()`.
+- `modal-detection.ts` — `isModalOpen()`, `observeModals()`, `MODAL_SELECTOR`.
 - `close-survey.ts` — `closeSurvicateSurvey()`: the single, guarded `_sva.closeSurvey()`
   helper reused by the suppression call sites.
 - `visitor-traits.ts` — `setSurvicateVisitorTraits()`, `getAccountAgeInDays()`, and the
