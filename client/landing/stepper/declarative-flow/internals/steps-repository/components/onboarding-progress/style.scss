@@ -1,29 +1,111 @@
 @import '@wordpress/theme/design-tokens.css';
 
-// The stepper carries its own vertical spacing, so drop the wrapper's
-// top padding to avoid doubling up the space above it.
-.step-container-v2__content-wrapper.axis-vertical:has( .onboarding-progress ) {
-	padding-top: 0;
-}
-
+// A text rail in the top bar: no indicators, no connectors, just the three
+// step names. It sits in the right slot, in the position the "1 of 3" counter
+// takes at narrower widths, so the indicator stays put across the breakpoint
+// instead of moving across the bar.
+//
+// Nothing here adds outer spacing. The slot's own 1rem gap is what separates
+// the rail from whatever follows it, which is the same gap the counter gets,
+// which is what keeps the two right edges aligned.
+//
+// It costs nothing in the content column either, so unlike the previous
+// treatment there is no wrapper padding to compensate for here.
 .onboarding-progress {
 	display: flex;
-	justify-content: center;
-	padding: 8px 0;
-	margin-block-end: 32px;
-	// Ensure the stepper paints above the sticky checkout sidebar, which is positioned
-	// and would otherwise overlap the heading row at the same stacking level.
-	position: relative;
-	z-index: 1;
+	align-items: center;
 
 	.onboarding-progress-step {
 		display: flex;
-		justify-content: center;
+		align-items: center;
+
+		// Separator between steps. A pseudo-element on the step wrapper rather
+		// than a real node inside the tablist, so it stays out of every tab's
+		// accessible name.
+		// 8px on each side, measured off the spec: the names sit at x=0/74/125
+		// and the separators at x=59/110, so every gap is 8. The trigger below
+		// keeps no inline padding of its own, or it would add to this.
+		//
+		// Type is set rather than inherited. The names carry their own through
+		// Text, but this is a pseudo-element with nothing of its own, and the
+		// top bar's right slot sets 0.875rem on a unitless line-height. Left
+		// alone the separator would come out a size larger than the names it
+		// sits between.
+		&:not( :last-child )::after {
+			content: '\00b7';
+			color: var( --wpds-color-foreground-content-neutral-weak );
+			font-size: var( --wpds-typography-font-size-md );
+			line-height: var( --wpds-typography-line-height-sm );
+			padding-inline: var( --wpds-dimension-padding-sm );
+		}
 	}
 
+	// The trigger renders a @wordpress/ui Button, which is sized for a button
+	// and not for a word in a top bar. Everything it brings that adds width has
+	// to go, or short names get padded out to nothing: `min-width` is
+	// `4ch + 2 * padding-inline`, which left "Plan" carrying about 22px of dead
+	// space to its right. `width: 100%` and the 8px `gap` between indicator and
+	// title come from the stepper's own trigger and go for the same reason.
+	//
+	// Block padding is the one thing kept. It draws nothing, so the rail still
+	// measures the 20px of the spec, but it is what makes the 20px line a 28px
+	// pointer target.
 	.onboarding-progress-trigger {
 		display: flex;
 		align-items: center;
-		padding: 12px 16px;
+		gap: 0;
+		width: auto;
+		min-width: 0;
+		min-height: 0;
+		padding-block: var( --wpds-dimension-padding-xs );
+		padding-inline: 0;
+	}
+
+	// No dot is drawn in this treatment, but the indicator still carries the
+	// "Step 2 of 3, completed" text that gives each step its accessible name.
+	// Clip it instead of removing it.
+	.onboarding-progress-indicator {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip-path: inset( 50% );
+		white-space: nowrap;
+		border: 0;
+	}
+
+	// The component scopes its own title rules by [data-indicator-variant],
+	// which the root always renders. Qualifying with the same attribute is what
+	// lets these win without !important.
+	&[data-indicator-variant] {
+		// Type is Body MD from the spec: 13px on a 20px line, weight 400. Size
+		// and line-height are left alone on purpose, because Stepper.Title
+		// already renders @wordpress/ui Text at that variant and gets them
+		// right.
+		//
+		// Weight is the one thing that needs saying. The trigger renders a
+		// @wordpress/ui Button, which sets font-weight to the emphasis token
+		// (600), and Stepper.Title inherits it. That is what put the names a
+		// weight above the counter beside them. The spec runs one weight across
+		// all three steps and lets colour carry the state, so it is pinned back
+		// to the default here for every step, not just the current one.
+		.onboarding-progress-step .onboarding-progress-title {
+			font-weight: var( --wpds-typography-font-weight-default );
+			color: var( --wpds-color-foreground-content-neutral );
+			white-space: nowrap;
+		}
+
+		// Where you have not been yet.
+		.onboarding-progress-step:not( [data-status] ):not( [data-current] ) .onboarding-progress-title {
+			color: var( --wpds-color-foreground-content-neutral-weak );
+		}
+	}
+
+	// Completed steps are the only navigable ones, so give the pointer an extra
+	// cue beyond the component's brand hover colour.
+	.onboarding-progress-trigger:hover:not( [aria-disabled='true'] ) .onboarding-progress-title {
+		text-decoration: underline;
 	}
 }

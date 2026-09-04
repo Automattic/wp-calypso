@@ -492,10 +492,6 @@ const DomainSearchStep: StepType< {
 
 	if ( shouldUseStepContainerV2( flow ) ) {
 		const getTopBarLeftElement = () => {
-			if ( showProgress ) {
-				return;
-			}
-
 			if ( isNewHostedSiteCreationFlow( flow ) ) {
 				return;
 			}
@@ -553,12 +549,15 @@ const DomainSearchStep: StepType< {
 			const showUseMyDomain =
 				! hideUseMyDomainLink && ( !! query || isMobileViewport ) && config.allowsUsingOwnDomain;
 
-			if ( ! stepCounter && ! showUseMyDomain && ! showHelpCenter ) {
+			if ( ! showProgress && ! stepCounter && ! showUseMyDomain && ! showHelpCenter ) {
 				return;
 			}
 
 			return (
 				<>
+					{ /* The rail and the counter are the same indicator at two
+					     widths, so they share this slot and never overlap. */ }
+					{ showProgress && <OnboardingProgress currentStep="domains" /> }
 					{ stepCounter && (
 						<Step.StepCounter current={ stepCounter.current } total={ stepCounter.total } />
 					) }
@@ -613,7 +612,6 @@ const DomainSearchStep: StepType< {
 					// high-quality results can fill the limited vertical space.
 					// The empty/initial state keeps the heading on mobile.
 					<>
-						{ showProgress && <OnboardingProgress currentStep="domains" /> }
 						{ ! ( isMobileViewport && query ) && (
 							<Step.Heading text={ headerText } subText={ subHeaderText } />
 						) }
