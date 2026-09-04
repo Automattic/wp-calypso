@@ -4,6 +4,7 @@
 
 jest.mock( '@wordpress/data', () => ( {
 	select: jest.fn(),
+	subscribe: jest.fn( () => jest.fn() ),
 } ) );
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
@@ -11,10 +12,11 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 } ) );
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { select } from '@wordpress/data';
-import { invokeSurvicateEvent } from '../invoke-event';
+import { select, subscribe } from '@wordpress/data';
+import { invokeSurvicateEvent, observeHelpCenter } from '../invoke-event';
 
 const mockSelect = select as jest.Mock;
+const mockSubscribe = subscribe as unknown as jest.Mock;
 const mockRecordTracksEvent = recordTracksEvent as jest.Mock;
 
 function setHelpCenterOpen( open: boolean ) {
@@ -155,5 +157,71 @@ describe( 'invokeSurvicateEvent', () => {
 		} );
 		invokeSurvicateEvent( 'testEvent' );
 		expect( invokeEvent ).toHaveBeenCalledWith( 'testEvent' );
+	} );
+} );
+
+describe( 'observeHelpCenter', () => {
+	afterEach( () => {
+		mockSelect.mockReset();
+		mockSubscribe.mockClear();
+	} );
+
+	function setHelpCenterShown( open: boolean ) {
+		mockSelect.mockReturnValue( { isHelpCenterShown: () => open } );
+	}
+
+	function notifyStore() {
+		mockSubscribe.mock.calls.at( -1 )?.[ 0 ]?.();
+	}
+
+	test( 'should fire onOpen when the Help Center opens', () => {
+		setHelpCenterShown( false );
+		const onOpen = jest.fn();
+		const onClose = jest.fn();
+		observeHelpCenter( onOpen, onClose );
+
+		setHelpCenterShown( true );
+		notifyStore();
+
+		expect( onOpen ).toHaveBeenCalledTimes( 1 );
+		expect( onClose ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should fire onClose when the Help Center closes', () => {
+		setHelpCenterShown( true );
+		const onOpen = jest.fn();
+		const onClose = jest.fn();
+		observeHelpCenter( onOpen, onClose );
+
+		setHelpCenterShown( false );
+		notifyStore();
+
+		expect( onClose ).toHaveBeenCalledTimes( 1 );
+		expect( onOpen ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should not fire when the state has not changed', () => {
+		setHelpCenterShown( false );
+		const onOpen = jest.fn();
+		const onClose = jest.fn();
+		observeHelpCenter( onOpen, onClose );
+
+		notifyStore();
+		notifyStore();
+
+		expect( onOpen ).not.toHaveBeenCalled();
+		expect( onClose ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should fire each transition only once until the state flips again', () => {
+		setHelpCenterShown( false );
+		const onOpen = jest.fn();
+		observeHelpCenter( onOpen, jest.fn() );
+
+		setHelpCenterShown( true );
+		notifyStore();
+		notifyStore();
+
+		expect( onOpen ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

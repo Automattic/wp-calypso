@@ -12,9 +12,14 @@ export type SuppressionReason = 'modal' | 'help_center';
  * Which suppression path fired:
  * - `survey_displayed` — a survey rendered and was closed (auto-campaigns).
  * - `modal_opened` — a modal opened on top of an already-visible survey.
+ * - `help_center_opened` — the Help Center opened over an already-visible survey.
  * - `invoke_event` — an explicit `invokeSurvicateEvent()` was skipped.
  */
-export type SuppressionTrigger = 'survey_displayed' | 'modal_opened' | 'invoke_event';
+export type SuppressionTrigger =
+	| 'survey_displayed'
+	| 'modal_opened'
+	| 'help_center_opened'
+	| 'invoke_event';
 
 /**
  * Records that a survey was suppressed, so we can measure how often (and why)

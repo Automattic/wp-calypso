@@ -1,4 +1,4 @@
-import { select } from '@wordpress/data';
+import { select, subscribe } from '@wordpress/data';
 import { closeSurvicateSurvey } from './close-survey';
 import debug from './debug';
 import { isModalOpen } from './modal-detection';
@@ -17,6 +17,36 @@ export function isHelpCenterOpen(): boolean {
 		return !! store?.isHelpCenterShown?.();
 	} catch {
 		return false;
+	}
+}
+
+/**
+ * Observes Help Center open/close transitions via its `@wordpress/data` store,
+ * invoking `onOpen`/`onClose` on each change of state (not on every dispatch).
+ * The subscription is scoped to the Help Center store where the installed
+ * `@wordpress/data` supports it; registration order doesn't matter — the store
+ * check is guarded and re-evaluated on each notification.
+ * @returns A cleanup function that unsubscribes.
+ */
+export function observeHelpCenter( onOpen: () => void, onClose: () => void ): () => void {
+	try {
+		let wasShown = isHelpCenterOpen();
+		return subscribe( () => {
+			const shown = isHelpCenterOpen();
+			if ( shown === wasShown ) {
+				return;
+			}
+			wasShown = shown;
+			if ( shown ) {
+				debug( 'Help Center opened while observing' );
+				onOpen();
+			} else {
+				debug( 'Help Center closed while observing' );
+				onClose();
+			}
+		}, HELP_CENTER_STORE );
+	} catch {
+		return () => {};
 	}
 }
 

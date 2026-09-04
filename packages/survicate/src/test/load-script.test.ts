@@ -8,6 +8,7 @@ jest.mock( '@automattic/load-script', () => ( {
 
 jest.mock( '@wordpress/data', () => ( {
 	select: jest.fn(),
+	subscribe: jest.fn( () => jest.fn() ),
 } ) );
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
@@ -16,14 +17,22 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { loadScript } from '@automattic/load-script';
-import { select } from '@wordpress/data';
+import { select, subscribe } from '@wordpress/data';
 import { loadSurvicateScript } from '../load-script';
 
 const mockSelect = select as jest.Mock;
+const mockSubscribe = subscribe as unknown as jest.Mock;
 const mockRecordTracksEvent = recordTracksEvent as jest.Mock;
 
 function setHelpCenterOpen( open: boolean ) {
 	mockSelect.mockReturnValue( { isHelpCenterShown: () => open } );
+}
+
+// The Help Center observer registers a store-change listener via the mocked
+// `subscribe`; grab the latest one to simulate a Help Center state change.
+function notifyHelpCenterStore() {
+	const listener = mockSubscribe.mock.calls.at( -1 )?.[ 0 ];
+	listener?.();
 }
 
 describe( 'loadSurvicateScript', () => {
@@ -201,7 +210,7 @@ describe( 'loadSurvicateScript', () => {
 		expect( window._sva.disableTargeting ).toBe( true );
 	} );
 
-	test( 'should not pause targeting for a Help Center suppression', () => {
+	test( 'should pause targeting for a Help Center suppression', () => {
 		const closeSurvey = jest.fn();
 		const addEventListener = jest.fn();
 		window._sva = { closeSurvey, addEventListener };
@@ -214,7 +223,96 @@ describe( 'loadSurvicateScript', () => {
 		onSurveyDisplayed();
 
 		expect( closeSurvey ).toHaveBeenCalledTimes( 1 );
-		expect( window._sva.disableTargeting ).toBeFalsy();
+		expect( window._sva.disableTargeting ).toBe( true );
+	} );
+
+	test( 'should pause targeting and close the survey when the Help Center opens', () => {
+		const closeSurvey = jest.fn();
+		window._sva = { closeSurvey, addEventListener: jest.fn() };
+
+		loadSurvicateScript( 'test-workspace-id', controller.signal );
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+		setHelpCenterOpen( true );
+		notifyHelpCenterStore();
+
+		expect( closeSurvey ).toHaveBeenCalledTimes( 1 );
+		expect( window._sva.disableTargeting ).toBe( true );
+	} );
+
+	test( 'should resume targeting when the Help Center closes', () => {
+		const retarget = jest.fn();
+		window._sva = { closeSurvey: jest.fn(), addEventListener: jest.fn(), retarget };
+
+		loadSurvicateScript( 'test-workspace-id', controller.signal );
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+		setHelpCenterOpen( true );
+		notifyHelpCenterStore();
+		expect( window._sva.disableTargeting ).toBe( true );
+
+		setHelpCenterOpen( false );
+		notifyHelpCenterStore();
+
+		expect( window._sva.disableTargeting ).toBe( false );
+		expect( retarget ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'should not resume targeting when the Help Center closes while a modal is open', () => {
+		const retarget = jest.fn();
+		window._sva = { closeSurvey: jest.fn(), addEventListener: jest.fn(), retarget };
+
+		loadSurvicateScript( 'test-workspace-id', controller.signal );
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+		setHelpCenterOpen( true );
+		notifyHelpCenterStore();
+		expect( window._sva.disableTargeting ).toBe( true );
+
+		const modal = document.createElement( 'div' );
+		modal.setAttribute( 'role', 'dialog' );
+		modal.setAttribute( 'aria-modal', 'true' );
+		( modal as HTMLElement & { checkVisibility?: () => boolean } ).checkVisibility = () => true;
+		document.body.appendChild( modal );
+
+		setHelpCenterOpen( false );
+		notifyHelpCenterStore();
+
+		expect( window._sva.disableTargeting ).toBe( true );
+		expect( retarget ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should pause targeting up front when the Help Center is already open at SDK-ready time', () => {
+		setHelpCenterOpen( true );
+		window._sva = { addEventListener: jest.fn() };
+
+		loadSurvicateScript( 'test-workspace-id', controller.signal );
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+		expect( window._sva.disableTargeting ).toBe( true );
+	} );
+
+	test( 'should record a suppression when the Help Center opens over a visible survey', () => {
+		window._sva = { closeSurvey: jest.fn(), addEventListener: jest.fn() };
+
+		loadSurvicateScript( 'test-workspace-id', controller.signal );
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+		const box = document.createElement( 'div' );
+		box.id = 'survicate-box';
+		const survey = document.createElement( 'div' );
+		survey.setAttribute( 'role', 'dialog' );
+		( survey as HTMLElement & { checkVisibility?: () => boolean } ).checkVisibility = () => true;
+		box.appendChild( survey );
+		document.body.appendChild( box );
+
+		setHelpCenterOpen( true );
+		notifyHelpCenterStore();
+
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_survicate_survey_suppressed', {
+			reason: 'help_center',
+			trigger: 'help_center_opened',
+		} );
 	} );
 
 	test( 'should pause targeting up front when a modal is already open at SDK-ready time', () => {

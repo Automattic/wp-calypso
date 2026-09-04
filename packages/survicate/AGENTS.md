@@ -118,6 +118,10 @@ draw over any other open modal dialog (onboarding modals, WP `Modal`, native
    waits for `SurvicateReady`; this re-establishes suppression on re-mount
    instead of dropping it permanently. Without a signal it lives for the page
    lifetime.
+5. **The Help Center opens/closes** → `load-script.ts` starts
+   `observeHelpCenter()` (`invoke-event.ts`), a store-change subscription that
+   pauses targeting and closes any visible survey on open, and resumes (via the
+   shared `resumeIfClear()`) on close. Torn down by the same `AbortSignal`.
 
 `isHelpCenterOpen()` (exported from `invoke-event.ts`) reads the `automattic/help-center`
 `@wordpress/data` store by string and returns `false` if the store isn't registered, so
@@ -170,13 +174,16 @@ affordances verified in `widget_core-28.33.0.js`:
 
 `pauseSurvicateTargeting()` sets the flag; `resumeSurvicateTargeting()` clears it
 and calls `retarget()` (no-op unless paused). `load-script.ts` pauses when a
-modal opens (`observeModals` `onOpen`), when a survey displays with a modal open
-(`reason === 'modal'`), and up front at wire time if a modal is already open —
-that last one means a modal shown before the SDK loads produces **no flash at
-all**. It resumes via `observeModals` `onAllClosed` and on consumer abort (so a
-torn-down consumer never leaves the SDK paused). The Help Center reason
-deliberately does **not** pause: it has no close hook here to resume from, and
-keeps its long-standing close-on-display behavior.
+modal opens (`observeModals` `onOpen`), when the Help Center opens
+(`observeHelpCenter` `onOpen`), when a survey displays with either open, and up
+front at wire time if either is already open — that last one means a modal or
+Help Center shown before the SDK loads produces **no flash at all**. Resume goes
+through one shared `resumeIfClear()` — it only resumes when
+`shouldSuppressSurvey()` is false, because one suppressor going away is not
+enough (the last modal can close while the Help Center is still open, and vice
+versa) — reached from `observeModals` `onAllClosed` and `observeHelpCenter`
+`onClose`. Consumer abort resumes unconditionally so a torn-down consumer never
+leaves the SDK paused.
 
 ### Measuring suppression (`track-suppression.ts`)
 
@@ -189,10 +196,10 @@ rule. Properties:
   Center first, so `reason: 'modal'` fires only when a modal is the **sole**
   reason; filtering on it measures the incremental effect of the modal rule.
 - `trigger` — `survey_displayed` (a survey rendered and was closed — the
-  auto-campaign case), `modal_opened` (a modal opened over a survey already on
-  screen; gated on `isSurveyVisible()` so it doesn't fire on every modal open),
-  or `invoke_event` (an explicit `invokeSurvicateEvent()` was skipped, plus an
-  `event_name` property).
+  auto-campaign case), `modal_opened` / `help_center_opened` (a modal or the
+  Help Center opened over a survey already on screen; gated on
+  `isSurveyVisible()` so it doesn't fire on every open), or `invoke_event` (an
+  explicit `invokeSurvicateEvent()` was skipped, plus an `event_name` property).
 
 Recording is best-effort and wrapped in `try/catch` — a failing analytics call
 never interferes with suppression. The wp-admin loader (PHP) uses its own
@@ -204,11 +211,10 @@ when changing selectors or behavior.
 
 **Known caveat — the display flash**: `survey_displayed` fires _after_ the survey
 renders, so closing it produces a brief show-then-hide flicker. The SDK exposes no
-pre-display veto. For modals this is largely mitigated by the targeting pause
-(`targeting.ts`): a modal open before the SDK is ready, or opened while it is
-paused, prevents display entirely; the flash remains only for the race where a
-survey is already mid-display as a modal appears, and for the Help Center rule,
-which doesn't pause.
+pre-display veto. This is largely mitigated by the targeting pause
+(`targeting.ts`): a modal or Help Center open before the SDK is ready, or opened
+while it is paused, prevents display entirely; the flash remains only for the
+race where a survey is already mid-display as a modal or the Help Center appears.
 
 ## File map
 
@@ -217,7 +223,7 @@ which doesn't pause.
 - `load-script.ts` — `loadSurvicateScript()` injects the SDK and wires the
   `survey_displayed` safety net; `isSurvicateScriptLoaded()`.
 - `invoke-event.ts` — `invokeSurvicateEvent()`, `isHelpCenterOpen()`,
-  `getSuppressionReason()`, and `shouldSuppressSurvey()`.
+  `observeHelpCenter()`, `getSuppressionReason()`, and `shouldSuppressSurvey()`.
 - `modal-detection.ts` — `isModalOpen()`, `isSurveyVisible()`, `observeModals()`,
   `MODAL_SELECTOR`.
 - `targeting.ts` — `pauseSurvicateTargeting()` / `resumeSurvicateTargeting()`:
