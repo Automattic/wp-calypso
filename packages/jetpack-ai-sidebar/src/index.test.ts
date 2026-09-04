@@ -3128,8 +3128,14 @@ describe( 'toolProvider', () => {
 		it( 'includes update-block-content and show-component abilities', async () => {
 			const abilities = await toolProvider.getAbilities();
 			const names = abilities.map( ( a: any ) => a.name );
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
 
 			expect( names ).toContain( 'wpcom/update-block-content' );
+			expect( updateBlock?.description ).toContain(
+				'Do not use this tool to add, move, remove, or reorder blocks, sections, or template parts.'
+			);
 			expect( names ).toContain( SHOW_COMPONENT_ABILITY_NAME );
 			expect( names ).toContain( LEGACY_SHOW_COMPONENT_ABILITY_NAME );
 			expect( names ).not.toContain( SHOW_COMPONENT_TOOL_ID );
@@ -4738,7 +4744,7 @@ describe( 'applyReviewEdit', () => {
 		}
 	);
 
-	it( 'fails safely when the block has no editable string-like attribute', async () => {
+	it( 'returns a visible limitation without continuing for an unsupported edit target', async () => {
 		const { blockUpdates } = installWpDataMockWithBlockEditor( {
 			'550e8400-e29b-41d4-a716-446655440000': {
 				name: 'core/query',
@@ -4751,7 +4757,13 @@ describe( 'applyReviewEdit', () => {
 		jest.advanceTimersByTime( 1000 );
 		const result = await promise;
 
-		expect( result ).toMatchObject( { success: false } );
+		expect( result ).toEqual( {
+			success: false,
+			error: 'unsupported edit target: core/query',
+			agentMessage:
+				'I can edit text inside supported blocks, but I can’t add, move, remove, or reorder blocks.',
+			returnToAgent: false,
+		} );
 		expect( blockUpdates ).toEqual( [] );
 	} );
 
