@@ -49,6 +49,12 @@ jest.mock( '../../hooks/use-agent-config', () => ( {
 jest.mock( '../../hooks/use-open-chat-url-param', () => ( {
 	useOpenChatUrlParam: () => true,
 } ) );
+// The WebMCP runtime loads the abilities registry, which needs the real data
+// package; the setup tests only care that the hook is mounted.
+jest.mock( '../../hooks/use-webmcp-tools', () => ( {
+	__esModule: true,
+	default: jest.fn(),
+} ) );
 jest.mock( '../../utils/load-external-providers', () => ( {
 	loadExternalProviders: async () => ( {
 		providerIds: [],

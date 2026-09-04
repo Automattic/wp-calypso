@@ -1,9 +1,15 @@
-import { useEffect } from '@wordpress/element';
+import { useEffect, useRef } from '@wordpress/element';
 import { canExposeWebMcpTools, getWebMcpModelContext } from '../webmcp/eligibility';
 import type { ToolProvider } from '../extension-types';
+import type { WebMcpAdapter } from '../webmcp/types';
 
-const RECONCILIATION_INTERVAL_MS = 2000;
-
+/**
+ * Exposes the page's abilities as WebMCP tools while the experiment is
+ * eligible. The runtime loads as its own chunk and follows the abilities
+ * store. The provider chain arrives after the first render and lives outside
+ * that store, so a provider change triggers one re-sync rather than a remount
+ * that would drop and re-register every tool.
+ */
 export default function useWebMcpTools( {
 	toolProvider,
 	scope,
@@ -11,8 +17,12 @@ export default function useWebMcpTools( {
 	toolProvider?: ToolProvider;
 	scope: string;
 } ): void {
+	const toolProviderRef = useRef( toolProvider );
+	toolProviderRef.current = toolProvider;
+	const runtimeRef = useRef< WebMcpAdapter | undefined >( undefined );
+
 	useEffect( () => {
-		if ( ! toolProvider || ! canExposeWebMcpTools() ) {
+		if ( ! canExposeWebMcpTools() ) {
 			return;
 		}
 
@@ -22,30 +32,21 @@ export default function useWebMcpTools( {
 		}
 
 		let disposed = false;
-		let interval: ReturnType< typeof setInterval > | undefined;
-		let adapter: import('../webmcp/types').WebMcpAdapter | undefined;
 
-		import( /* webpackChunkName: "am-webmcp" */ '../webmcp/adapter' )
-			.then( ( { createWebMcpAdapter, createWebMcpToolProvider } ) => {
+		import( /* webpackChunkName: "am-webmcp" */ '../webmcp/mount' )
+			.then( ( { mountWebMcpTools } ) => {
 				if ( disposed ) {
 					return;
 				}
 
-				adapter = createWebMcpAdapter( {
-					toolProvider: createWebMcpToolProvider( toolProvider ),
+				runtimeRef.current = mountWebMcpTools( {
+					getToolProvider: () => toolProviderRef.current,
 					modelContext,
-				} );
-				adapter.sync().catch( ( error ) => {
-					// eslint-disable-next-line no-console
-					console.warn( '[AgentsManager] Failed to synchronize WebMCP tools:', error );
-				} );
-
-				interval = setInterval( () => {
-					adapter?.sync().catch( ( error ) => {
+					onSyncError: ( error ) => {
 						// eslint-disable-next-line no-console
 						console.warn( '[AgentsManager] Failed to synchronize WebMCP tools:', error );
-					} );
-				}, RECONCILIATION_INTERVAL_MS );
+					},
+				} );
 			} )
 			.catch( ( error ) => {
 				// eslint-disable-next-line no-console
@@ -54,10 +55,12 @@ export default function useWebMcpTools( {
 
 		return () => {
 			disposed = true;
-			if ( interval ) {
-				clearInterval( interval );
-			}
-			adapter?.dispose();
+			runtimeRef.current?.dispose();
+			runtimeRef.current = undefined;
 		};
-	}, [ scope, toolProvider ] );
+	}, [ scope ] );
+
+	useEffect( () => {
+		void runtimeRef.current?.sync();
+	}, [ toolProvider ] );
 }

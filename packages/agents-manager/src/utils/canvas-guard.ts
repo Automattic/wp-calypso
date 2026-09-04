@@ -282,6 +282,8 @@ function guardAbilityCallback( ability: Ability ): Ability {
  * @param toolProvider The merged tool provider, if any.
  * @returns The wrapped provider, or undefined when there is nothing to wrap.
  */
+export function withCanvasGuard( toolProvider: ToolProvider ): ToolProvider;
+export function withCanvasGuard( toolProvider: ToolProvider | undefined ): ToolProvider | undefined;
 export function withCanvasGuard(
 	toolProvider: ToolProvider | undefined
 ): ToolProvider | undefined {
