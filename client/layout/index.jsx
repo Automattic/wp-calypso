@@ -105,6 +105,10 @@ const loadA8cForAgenciesStyle = () =>
 	);
 const loadJitm = () =>
 	import( /* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm' );
+const loadSiteExpiryNotice = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-site-expiry-notice" */ 'calypso/layout/site-expiry-notice'
+	);
 const loadGlobalNotices = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
@@ -480,6 +484,13 @@ class Layout extends Component {
 								{ this.props.secondary }
 							</div>
 							<div id="primary" className="layout__primary">
+								{ !! this.props.siteId && ! isJetpackCloud() && ! isA8CForAgencies() && (
+									<AsyncLoad
+										require={ loadSiteExpiryNotice }
+										placeholder={ null }
+										isDashboardScreen={ this.props.sectionName === 'home' }
+									/>
+								) }
 								{ this.props.primary }
 							</div>
 						</>

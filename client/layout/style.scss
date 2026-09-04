@@ -612,3 +612,11 @@ body.is-mobile-app-view {
 .layout.is-section-plugins:not( .is-logged-in ):has( .plugins-browser ):has( .x-nav--2026-redesign ) .layout__header-section {
 	min-height: 0;
 }
+
+.layout__site-expiry-notice {
+	margin-bottom: 32px;
+
+	@include breakpoint-deprecated( '<960px' ) {
+		margin-bottom: 24px;
+	}
+}
