@@ -1,10 +1,12 @@
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
-import { WEBMCP_SERVER_ABILITY_NAMES } from './contracts';
+import { shouldExposeWebMcpAbility } from './exposure';
 import type { Ability } from '../abilities/types';
 import type { ToolProvider } from '../extension-types';
 
-const SERVER_ABILITY_NAMES = new Set< string >( WEBMCP_SERVER_ABILITY_NAMES );
+type CreateWebMcpToolProviderOptions = {
+	shouldExposeAbility?: ( ability: Ability ) => boolean;
+};
 
 function markServerRegistered( ability: Ability ): Ability {
 	return {
@@ -19,11 +21,23 @@ function markServerRegistered( ability: Ability ): Ability {
 	};
 }
 
-export function createWebMcpToolProvider( toolProvider: ToolProvider ): ToolProvider {
+/**
+ * Bridges the site's REST abilities into the WebMCP provider chain.
+ *
+ * The response goes through the same exposure policy as client abilities, so
+ * a `meta.public` read or a `meta.webmcp.public` write surfaces without a
+ * client-side allowlist entry. A REST definition replaces any same-named copy
+ * the chain advertises, and its execution stays on the REST route: GET for
+ * read-only abilities, POST with a JSON body for mutating ones.
+ */
+export function createWebMcpToolProvider(
+	toolProvider: ToolProvider,
+	{ shouldExposeAbility = shouldExposeWebMcpAbility }: CreateWebMcpToolProviderOptions = {}
+): ToolProvider {
 	let serverAbilitiesPromise: Promise< Ability[] > | undefined;
 	let didWarnAboutServerAbilities = false;
 
-	const getServerAbilities = (): Promise< Ability[] > => {
+	const fetchServerAbilities = (): Promise< Ability[] > => {
 		if ( ! serverAbilitiesPromise ) {
 			serverAbilitiesPromise = apiFetch< Ability[] >( {
 				path: addQueryArgs( '/wp-abilities/v1/abilities', {
@@ -33,9 +47,7 @@ export function createWebMcpToolProvider( toolProvider: ToolProvider ): ToolProv
 				} ),
 			} )
 				.then( ( abilities ) =>
-					abilities
-						.filter( ( ability ) => SERVER_ABILITY_NAMES.has( ability.name ) )
-						.map( markServerRegistered )
+					abilities.map( markServerRegistered ).filter( shouldExposeAbility )
 				)
 				.catch( ( error ) => {
 					serverAbilitiesPromise = undefined;
@@ -46,22 +58,25 @@ export function createWebMcpToolProvider( toolProvider: ToolProvider ): ToolProv
 		return serverAbilitiesPromise;
 	};
 
+	const getServerAbilities = async (): Promise< Ability[] > => {
+		try {
+			const abilities = await fetchServerAbilities();
+			didWarnAboutServerAbilities = false;
+			return abilities;
+		} catch ( error ) {
+			if ( ! didWarnAboutServerAbilities ) {
+				// eslint-disable-next-line no-console
+				console.warn( '[AgentsManager] Failed to load WebMCP server abilities:', error );
+				didWarnAboutServerAbilities = true;
+			}
+			return [];
+		}
+	};
+
 	return {
 		getAbilities: async () => {
 			const abilities = await toolProvider.getAbilities();
-			let serverAbilities: Ability[] = [];
-
-			try {
-				serverAbilities = await getServerAbilities();
-				didWarnAboutServerAbilities = false;
-			} catch ( error ) {
-				if ( ! didWarnAboutServerAbilities ) {
-					// eslint-disable-next-line no-console
-					console.warn( '[AgentsManager] Failed to load WebMCP server abilities:', error );
-					didWarnAboutServerAbilities = true;
-				}
-			}
-
+			const serverAbilities = await getServerAbilities();
 			const serverNames = new Set( serverAbilities.map( ( ability ) => ability.name ) );
 
 			return [
@@ -70,13 +85,9 @@ export function createWebMcpToolProvider( toolProvider: ToolProvider ): ToolProv
 			];
 		},
 		executeAbility: async ( name, input ) => {
-			if ( ! SERVER_ABILITY_NAMES.has( name ) ) {
-				return toolProvider.executeAbility( name, input );
-			}
-
 			const ability = ( await getServerAbilities() ).find( ( item ) => item.name === name );
 			if ( ! ability ) {
-				throw new Error( `WebMCP server ability is unavailable: ${ name }` );
+				return toolProvider.executeAbility( name, input );
 			}
 
 			if ( ability.meta?.annotations?.readonly !== true ) {

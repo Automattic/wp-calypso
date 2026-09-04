@@ -32,12 +32,39 @@ const mutatingServerAbility: Ability = {
 	meta: { annotations: { readonly: false, destructive: false, idempotent: false } },
 };
 
+const publicReadAbility: Ability = {
+	name: 'other-plugin/get-site-health',
+	label: 'Get site health',
+	description: 'Read the site health summary.',
+	category: 'other-plugin',
+	input_schema: { type: 'object', properties: {} },
+	meta: { public: true, annotations: { readonly: true, idempotent: true } },
+};
+
+const publicWriteAbility: Ability = {
+	name: 'other-plugin/publish-post',
+	label: 'Publish post',
+	description: 'Publish a post.',
+	category: 'other-plugin',
+	input_schema: { type: 'object', properties: {} },
+	meta: { public: true, annotations: { readonly: false } },
+};
+
+const channelWriteAbility: Ability = {
+	name: 'other-plugin/create-note',
+	label: 'Create note',
+	description: 'Create a private note.',
+	category: 'other-plugin',
+	input_schema: { type: 'object', properties: {} },
+	meta: { webmcp: { public: true }, annotations: { readonly: false } },
+};
+
 describe( 'WebMCP server ability provider', () => {
 	beforeEach( () => {
 		jest.mocked( apiFetch ).mockReset();
 	} );
 
-	it( 'adds only allowlisted REST abilities and marks their provenance', async () => {
+	it( 'adds REST abilities that pass the exposure policy and marks their provenance', async () => {
 		jest
 			.mocked( apiFetch )
 			.mockResolvedValueOnce( [ serverAbility, { ...serverAbility, name: 'wpcom/delete-site' } ] );
@@ -63,6 +90,31 @@ describe( 'WebMCP server ability provider', () => {
 		expect( apiFetch ).toHaveBeenCalledWith( {
 			path: expect.stringContaining( 'webmcp=1' ),
 		} );
+	} );
+
+	it( 'lets flagged REST abilities through without an allowlist entry', async () => {
+		jest
+			.mocked( apiFetch )
+			.mockResolvedValueOnce( [ publicReadAbility, publicWriteAbility, channelWriteAbility ] )
+			.mockResolvedValueOnce( { created: true } );
+		const toolProvider: ToolProvider = {
+			getAbilities: jest.fn( async () => [] ),
+			executeAbility: jest.fn(),
+		};
+		const provider = createWebMcpToolProvider( toolProvider );
+
+		const names = ( await provider.getAbilities() ).map( ( ability ) => ability.name );
+		expect( names ).toEqual( [ publicReadAbility.name, channelWriteAbility.name ] );
+
+		await expect(
+			provider.executeAbility( channelWriteAbility.name, { title: 'Hello' } )
+		).resolves.toEqual( { created: true } );
+		expect( apiFetch ).toHaveBeenLastCalledWith( {
+			method: 'POST',
+			path: expect.stringMatching( /other-plugin\/create-note\/run/ ),
+			data: { input: { title: 'Hello' } },
+		} );
+		expect( toolProvider.executeAbility ).not.toHaveBeenCalled();
 	} );
 
 	it( 'prefers the REST definition when the provider already advertises the ability', async () => {
