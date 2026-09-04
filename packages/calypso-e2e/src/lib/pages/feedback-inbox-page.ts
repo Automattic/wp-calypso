@@ -12,6 +12,18 @@ import { envVariables } from '../..';
 const RESPONSE_ACTION_TIMEOUT = 30 * 1000;
 
 /**
+ * Accessible name of the unread dot on a response row, in both the legacy
+ * inbox and the DataViews list.
+ */
+const UNREAD_ROW_LABEL = '(Unread form response)';
+
+/**
+ * The mark-as-read request, on Simple (`/wp/v2/sites/<id>/feedback/<id>/read`)
+ * and Atomic (`/wp-json/wp/v2/feedback/<id>/read`) sites alike.
+ */
+const MARK_AS_READ_REQUEST = /\/wp\/v2\/(sites\/\d+\/)?feedback\/\d+\/read\b/;
+
+/**
  * Page repsresenting the Feedback page, Inbox view variant. Accessed under Sidebar > Feedback.
  */
 export class FeedbackInboxPage {
@@ -158,6 +170,16 @@ export class FeedbackInboxPage {
 	async viewResponseRowByText( text: string ): Promise< void > {
 		const responseRowLocator = this.getResponseRow( text );
 		await responseRowLocator.waitFor( { state: 'visible' } );
+
+		// Opening an unread response fires a mark-as-read request. Server side that
+		// is a full-row post update, so a status change sent while it is still in
+		// flight gets overwritten by it: the un-spam lands, then the read write puts
+		// "spam" back. Arm the wait here and hold the caller until it has settled.
+		const isUnread = ( await responseRowLocator.getByLabel( UNREAD_ROW_LABEL ).count() ) > 0;
+		const markedAsRead = isUnread
+			? this.page.waitForResponse( ( response ) => MARK_AS_READ_REQUEST.test( response.url() ) )
+			: null;
+
 		await responseRowLocator.getByRole( 'button', { name: 'Actions' } ).click();
 		// The menu item is on a popover portal, so outside of the response row locator
 		const viewMenuItem = this.page.getByRole( 'menuitem', { name: 'View' } ).first();
@@ -178,6 +200,8 @@ export class FeedbackInboxPage {
 				.filter( { has: this.page.getByRole( 'heading', { name: 'Response' } ) } )
 				.waitFor();
 		}
+
+		await markedAsRead;
 	}
 
 	/**
