@@ -65,7 +65,7 @@ export function getPreselectedStorageAddOn(
  * send an ordinary visitor past the grid; the cart then has to agree, because a plan is seeded
  * on entry alone and a deep link to a later step still has one to ask for.
  */
-export function skipsPlansStep(
+export function shouldSkipPlansStep(
 	query: URLSearchParams,
 	planCartItem: MinimalRequestCartProduct | null | undefined
 ): boolean {

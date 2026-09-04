@@ -54,7 +54,7 @@ import { getStepFromURL } from '../../../utils/get-flow-from-url';
 import {
 	getPreselectedPlan,
 	getPreselectedStorageAddOn,
-	skipsPlansStep,
+	shouldSkipPlansStep,
 } from '../../../utils/preselected-plan';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import {
@@ -333,7 +333,7 @@ const onboarding: FlowV2< typeof initialize > = {
 			[]
 		);
 		const queryParams = useQuery();
-		const skipsPlans = skipsPlansStep( queryParams, planCartItem );
+		const shouldSkipPlans = shouldSkipPlansStep( queryParams, planCartItem );
 		const coupon = queryParams.get( 'coupon' );
 		const refParameter = queryParams.get( 'ref' );
 		const diyLaunchpad = queryParams.get( 'diy-launchpad' );
@@ -481,7 +481,7 @@ const onboarding: FlowV2< typeof initialize > = {
 		 * plans handler below only apply when no plan was picked, so nothing is skipped here.
 		 */
 		const navigateAfterDomain = () => {
-			if ( ! skipsPlans ) {
+			if ( ! shouldSkipPlans ) {
 				return navigate( 'plans' );
 			}
 
@@ -754,7 +754,10 @@ const onboarding: FlowV2< typeof initialize > = {
 								);
 							}
 
-							const checkoutStepperPosition = getOnboardingStepperPosition( 'checkout' );
+							const checkoutStepperPosition = getOnboardingStepperPosition(
+								'checkout',
+								shouldSkipPlans
+							);
 
 							// replace the location to delete processing step from history.
 							window.location.replace(

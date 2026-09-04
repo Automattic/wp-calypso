@@ -52,6 +52,7 @@ import {
 import { createPortal } from 'react-dom';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Loading from 'calypso/components/loading';
+import { ONBOARDING_STEPPER_TOTAL } from 'calypso/landing/stepper/declarative-flow/flows/onboarding/step-counter-config';
 import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress';
 import { useShowOnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
@@ -498,15 +499,18 @@ export default function CheckoutMainContent( {
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const stepsCurrent = Number( searchParams.get( 'steps_current' ) );
 	const stepsTotal = Number( searchParams.get( 'steps_total' ) );
-	const stepCounter =
-		isMobileViewport &&
+	const hasStepCount =
 		Number.isInteger( stepsCurrent ) &&
 		stepsCurrent > 0 &&
 		Number.isInteger( stepsTotal ) &&
 		stepsTotal > 0 &&
-		stepsCurrent <= stepsTotal
-			? { current: stepsCurrent, total: stepsTotal }
-			: null;
+		stepsCurrent <= stepsTotal;
+	const stepCounter =
+		isMobileViewport && hasStepCount ? { current: stepsCurrent, total: stepsTotal } : null;
+	// The flow reports how many steps its visit had. Onboarding sends one fewer when the plan
+	// arrived preselected, so the grid was never among them.
+	const shouldHidePlansStep =
+		isOnboardingFlowCheckout && hasStepCount && stepsTotal < ONBOARDING_STEPPER_TOTAL;
 	const selectedSiteData = useSelector( getSelectedSite );
 	const wpcomDomain = useSelector( ( state ) =>
 		getWpComDomainBySiteId( state, selectedSiteData?.ID )
@@ -1168,6 +1172,7 @@ export default function CheckoutMainContent( {
 						showProgress ? (
 							<OnboardingProgress
 								currentStep="checkout"
+								shouldHidePlansStep={ shouldHidePlansStep }
 								isStepSelectDisabled={ leaveModalProps.isLeaveDisabled }
 								onStepSelect={ ( step ) =>
 									handleProgressStepSelect( step, {
