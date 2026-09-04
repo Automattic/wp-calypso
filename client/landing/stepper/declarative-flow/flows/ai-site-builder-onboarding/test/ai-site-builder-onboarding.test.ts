@@ -267,24 +267,14 @@ describe( 'ai-site-builder-onboarding flow', () => {
 				);
 			} );
 
-			it( 'is not used when the swap flag is off', async () => {
-				isEnabled.mockImplementation(
-					( flag: string ) => flag !== 'calypso/ai-site-builder-build-wow'
-				);
-
-				await runProcessingSubmit();
-
-				expect( isEnabled ).toHaveBeenCalledWith( 'calypso/ai-site-builder-build-wow' );
-				expect( new URL( getRedirectTo() ).pathname ).toBe( '/wp-admin/site-editor.php' );
-				expect( setStaticHomepageOnSite ).toHaveBeenCalledWith( 123, 7 );
-			} );
-
 			it( 'is not used when the site-spec feature is off', async () => {
 				isEnabled.mockImplementation( ( flag: string ) => flag !== 'site-spec' );
 
 				await runProcessingSubmit();
 
+				expect( isEnabled ).toHaveBeenCalledWith( 'site-spec' );
 				expect( new URL( getRedirectTo() ).pathname ).toBe( '/wp-admin/site-editor.php' );
+				expect( setStaticHomepageOnSite ).toHaveBeenCalledWith( 123, 7 );
 			} );
 		} );
 	} );

@@ -24,9 +24,9 @@ jest.mock( 'calypso/lib/wp', () => ( {
 
 describe( 'build-wow utilities', () => {
 	it( 'detects the build_wow query parameter', () => {
-		expect( isBuildWowEnabled( new URLSearchParams( 'build_wow=1' ), true ) ).toBe( true );
-		expect( isBuildWowEnabled( new URLSearchParams( 'build_wow=1' ), false ) ).toBe( false );
-		expect( isBuildWowEnabled( new URLSearchParams( 'build_wow=0' ), true ) ).toBe( false );
+		expect( isBuildWowEnabled( new URLSearchParams( 'build_wow=1' ) ) ).toBe( true );
+		expect( isBuildWowEnabled( new URLSearchParams( 'build_wow=0' ) ) ).toBe( false );
+		expect( isBuildWowEnabled( new URLSearchParams( '' ) ) ).toBe( false );
 	} );
 
 	it( 'prefers the site slug as the site identifier', () => {

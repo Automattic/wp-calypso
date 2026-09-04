@@ -240,17 +240,14 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 						return navigate( STEPS.ERROR.slug );
 					}
 
-					// Where the site builder swap is enabled, checkout lands on the build-wow
-					// theme generation flow, the same destination the post-checkout "Create a
-					// custom design" card uses. The build-wow endpoint prepares the site
-					// itself, so the Big Sky editor preparation is only for the legacy site
-					// editor destination. That destination lives in the ai-site-builder-spec
-					// flow, which bounces to plain onboarding without the site-spec feature,
-					// and needs an Atomic-capable plan.
+					// Checkout lands on the build-wow theme generation flow, the same
+					// destination the post-checkout "Create a custom design" card uses. The
+					// build-wow endpoint prepares the site itself, so the Big Sky editor
+					// preparation is only for the legacy site editor destination. The build-wow
+					// destination lives in the ai-site-builder-spec flow, which bounces to plain
+					// onboarding without the site-spec feature, and needs an Atomic-capable plan.
 					const useBuildWow =
-						config.isEnabled( 'calypso/ai-site-builder-build-wow' ) &&
-						config.isEnabled( 'site-spec' ) &&
-						planSupportsBuildWow( planCartItem?.product_slug );
+						config.isEnabled( 'site-spec' ) && planSupportsBuildWow( planCartItem?.product_slug );
 
 					const prompt =
 						query.get( 'prompt' ) || window.sessionStorage.getItem( 'stored_ai_prompt' ) || '';
