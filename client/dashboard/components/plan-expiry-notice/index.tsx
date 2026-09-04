@@ -6,7 +6,7 @@ import { getCalendarDaysUntil } from '../../utils/datetime';
 import { isExpiredOrRemoved, mightStillAutoRenew } from '../../utils/purchase';
 import Notice from '../notice';
 import { getPlanExpiryNotice } from './get-plan-expiry-notice';
-import type { PlanExpiryNoticeAction } from './get-plan-expiry-notice';
+import type { PlanExpiryNoticeAction, PlanExpiryNoticeScope } from './get-plan-expiry-notice';
 import type { Purchase } from '@automattic/api-core';
 
 export {
@@ -75,6 +75,28 @@ interface PlanExpiryNoticeProps {
 	 * to refresh the purchase themselves or the page will not update.
 	 */
 	onAutoRenewEnabled?: () => void;
+
+	/**
+	 * See `PlanExpiryNoticeOptions.scope`. Defaults to the purchase-management
+	 * behaviour.
+	 */
+	scope?: PlanExpiryNoticeScope;
+
+	/** See `PlanExpiryNoticeOptions.isReverted`. */
+	isReverted?: boolean;
+
+	/**
+	 * Renders a close button and is called when it is clicked. The caller owns
+	 * the dismissal; the notice keeps rendering until it is unmounted.
+	 */
+	onClose?: () => void;
+
+	/**
+	 * Called with the prefilled support message when the "Contact support"
+	 * action is clicked. Hosts open their Help Center with it. Without it the
+	 * action is not offered.
+	 */
+	onContactSupport?: ( message: string ) => void;
 }
 
 function PlanExpiryNoticeButton( {
@@ -84,6 +106,7 @@ function PlanExpiryNoticeButton( {
 	addPaymentMethodUrl,
 	onClick,
 	onAutoRenewEnabled,
+	onContactSupport,
 }: {
 	action: PlanExpiryNoticeAction;
 	variant: 'primary' | 'secondary';
@@ -91,13 +114,22 @@ function PlanExpiryNoticeButton( {
 	addPaymentMethodUrl?: string;
 	onClick: () => void;
 	onAutoRenewEnabled?: () => void;
+	onContactSupport?: ( message: string ) => void;
 } ) {
 	const { mutate: setAutoRenew, isPending } = useMutation( userPurchaseSetAutoRenewQuery() );
 
-	// The sitewide scope's support action has no destination to link to; the
-	// surface that shows it opens the Help Center itself.
 	if ( action.type === 'contact-support' ) {
-		return null;
+		return (
+			<Button
+				variant={ variant }
+				onClick={ () => {
+					onClick();
+					onContactSupport?.( action.message );
+				} }
+			>
+				{ action.label }
+			</Button>
+		);
 	}
 
 	if ( action.type === 'enable-auto-renew' ) {
@@ -119,12 +151,10 @@ function PlanExpiryNoticeButton( {
 		);
 	}
 
+	const href = action.type === 'add-payment-method' ? addPaymentMethodUrl : action.href;
+
 	return (
-		<Button
-			variant={ variant }
-			href={ action.type === 'add-payment-method' ? addPaymentMethodUrl : action.href }
-			onClick={ onClick }
-		>
+		<Button variant={ variant } href={ href } onClick={ onClick }>
 			{ action.label }
 		</Button>
 	);
@@ -148,11 +178,17 @@ export function PlanExpiryNotice( {
 	surface,
 	recordTracksEvent,
 	onAutoRenewEnabled,
+	scope,
+	isReverted,
+	onClose,
+	onContactSupport,
 }: PlanExpiryNoticeProps ) {
 	const notice = getPlanExpiryNotice( purchase, {
 		viewOtherPlansUrl,
 		locale,
 		renewReturnUrl,
+		scope,
+		isReverted,
 	} );
 
 	// Pulled out as primitives so that they, and the memo below, stay stable
@@ -163,6 +199,7 @@ export function PlanExpiryNotice( {
 	const daysUntilExpiry = getCalendarDaysUntil( new Date( purchase.expiry_date ) );
 	const canStillAutoRenew = mightStillAutoRenew( purchase );
 	const variant = notice?.variant;
+	const stage = notice?.stage;
 
 	const eventProperties = useMemo(
 		() => ( {
@@ -173,8 +210,9 @@ export function PlanExpiryNotice( {
 			days_until_expiry: daysUntilExpiry,
 			might_still_auto_renew: canStillAutoRenew,
 			variant,
+			stage,
 		} ),
-		[ surface, purchaseId, productSlug, status, daysUntilExpiry, canStillAutoRenew, variant ]
+		[ surface, purchaseId, productSlug, status, daysUntilExpiry, canStillAutoRenew, variant, stage ]
 	);
 
 	// Records again whenever any of the above changes, since that means the
@@ -192,8 +230,18 @@ export function PlanExpiryNotice( {
 
 	// Kept out of the buttons themselves: the notice has to know whether it has
 	// any action at all, or it renders an empty, padded action row.
-	const shown = ( action?: PlanExpiryNoticeAction ) =>
-		action && ( action.type !== 'add-payment-method' || addPaymentMethodUrl ) ? action : undefined;
+	const shown = ( action?: PlanExpiryNoticeAction ) => {
+		if ( ! action ) {
+			return undefined;
+		}
+		if ( action.type === 'add-payment-method' && ! addPaymentMethodUrl ) {
+			return undefined;
+		}
+		if ( action.type === 'contact-support' && ! onContactSupport ) {
+			return undefined;
+		}
+		return action;
+	};
 	const primaryAction = shown( notice.primaryAction );
 	const secondaryAction = shown( notice.secondaryAction );
 
@@ -207,6 +255,7 @@ export function PlanExpiryNotice( {
 		<Notice
 			variant={ notice.variant }
 			title={ notice.title }
+			onClose={ onClose }
 			actions={
 				( primaryAction || secondaryAction ) && (
 					<>
@@ -218,6 +267,7 @@ export function PlanExpiryNotice( {
 								addPaymentMethodUrl={ addPaymentMethodUrl }
 								onClick={ () => recordClick( primaryAction ) }
 								onAutoRenewEnabled={ onAutoRenewEnabled }
+								onContactSupport={ onContactSupport }
 							/>
 						) }
 						{ secondaryAction && (
@@ -228,6 +278,7 @@ export function PlanExpiryNotice( {
 								addPaymentMethodUrl={ addPaymentMethodUrl }
 								onClick={ () => recordClick( secondaryAction ) }
 								onAutoRenewEnabled={ onAutoRenewEnabled }
+								onContactSupport={ onContactSupport }
 							/>
 						) }
 					</>
