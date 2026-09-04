@@ -162,6 +162,7 @@
 		"stats/locations": true,
 		"stats/paid-wpcom-v2": true,
 		"stats/paid-wpcom-v3": true,
+		"stats/premium-analytics-preview": false,
 		"stats/real-time-tab": false,
 		"subscriber-importer": true,
 		"themes/block-theme-previews-premium-and-woo": true,

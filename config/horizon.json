@@ -129,6 +129,7 @@
 		"stats/chart-library": true,
 		"stats/empty-module-traffic": true,
 		"stats/paid-wpcom-v2": true,
+		"stats/premium-analytics-preview": false,
 		"stats/real-time-tab": false,
 		"subscriber-importer": true,
 		"themes/block-theme-previews-premium-and-woo": true,
