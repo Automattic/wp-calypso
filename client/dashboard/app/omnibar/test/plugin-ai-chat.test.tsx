@@ -12,7 +12,9 @@ import { createAiChatNodeBuilder } from '../plugin-ai-chat';
 import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
 jest.mock( '@automattic/agents-manager', () => ( {
-	AiChatEntryLabel: () => <span aria-hidden="true">Agent</span>,
+	AiChatEntryLabel: ( { children }: { children: React.ReactNode } ) => (
+		<span aria-hidden="true">{ children }</span>
+	),
 	closeAgentsManagerChat: jest.fn(),
 	isAgentsManagerChatVisible: jest.fn( () => false ),
 	openAgentsManagerChat: jest.fn(),

@@ -1,9 +1,9 @@
 @import './variables.scss';
 
-// The "Agent" label beside an AI chat entry button. It reveals by growing its
-// grid track from nothing while fading in, so neighbours slide instead of
-// jumping; the inner span is clipped meanwhile and carries the gap from the
-// icon. Hidden on the toolbars' mobile layouts.
+// The label beside an AI chat entry button. It reveals by growing its grid
+// track from nothing while fading in, so neighbours slide rather than jump;
+// the inner span clips the text meanwhile and carries the gap from the icon.
+// Hidden on mobile.
 .agents-manager-ai-chat-label {
 	display: grid;
 	grid-template-columns: 1fr;

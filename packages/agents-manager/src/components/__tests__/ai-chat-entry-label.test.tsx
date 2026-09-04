@@ -15,18 +15,19 @@ describe( 'AiChatEntryLabel', () => {
 	it( 'shows the Agent label while the chat is hidden', () => {
 		mockUseAiChatEntryState.mockReturnValue( { hasLoaded: true, isChatVisible: false } );
 
-		render( <AiChatEntryLabel /> );
+		render( <AiChatEntryLabel>Agent</AiChatEntryLabel> );
 
 		expect( screen.getByText( 'Agent' ) ).toBeVisible();
 	} );
 
 	it.each( [
-		[ 'the chat is visible', { hasLoaded: true, isChatVisible: true } ],
-		[ 'the persisted state has not loaded', { hasLoaded: false, isChatVisible: false } ],
-	] )( 'renders nothing while %s', ( _case, state ) => {
+		[ 'the chat is visible', { hasLoaded: true, isChatVisible: true }, 'Agent' ],
+		[ 'the persisted state has not loaded', { hasLoaded: false, isChatVisible: false }, 'Agent' ],
+		[ 'there is no text', { hasLoaded: true, isChatVisible: false }, undefined ],
+	] )( 'renders nothing while %s', ( _case, state, text ) => {
 		mockUseAiChatEntryState.mockReturnValue( state );
 
-		const { container } = render( <AiChatEntryLabel /> );
+		const { container } = render( <AiChatEntryLabel>{ text }</AiChatEntryLabel> );
 
 		expect( container ).toBeEmptyDOMElement();
 	} );

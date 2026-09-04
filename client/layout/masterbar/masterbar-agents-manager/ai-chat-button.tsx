@@ -16,6 +16,7 @@ const MasterbarAiChatButton = () => {
 	const translate = useTranslate();
 	const sectionName = useSelector( getSectionName );
 	const { isChatVisible } = useAiChatEntryState();
+	const label = translate( 'Agent' );
 
 	// Toggle: close the chat if it's already showing, otherwise resume the active
 	// conversation and open it.
@@ -38,9 +39,9 @@ const MasterbarAiChatButton = () => {
 			onClick={ handleClick }
 			icon={ <BigSkyIcon /> }
 			isActive={ isChatVisible }
-			tooltip={ translate( 'Agent' ) }
+			tooltip={ label }
 		>
-			<AiChatEntryLabel />
+			<AiChatEntryLabel>{ label }</AiChatEntryLabel>
 		</Item>
 	);
 };

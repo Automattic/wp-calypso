@@ -17,10 +17,10 @@ export function createAiChatNodeBuilder( sectionName?: string ) {
 		icon: adminBarIcon( adminBarNode.meta?.icon, 'omnibar__ai-chat-icon' ),
 		tooltip: adminBarNode.meta?.menu_title,
 		className: 'masterbar__item-agents-manager-ai-chat',
-		render: ( { icon } ) => (
+		render: ( { icon, label } ) => (
 			<>
 				{ icon }
-				<AiChatEntryLabel />
+				<AiChatEntryLabel>{ label }</AiChatEntryLabel>
 			</>
 		),
 		onClick: () => {

@@ -14,7 +14,9 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import MasterbarAiChatButton from '../ai-chat-button';
 
 jest.mock( '@automattic/agents-manager', () => ( {
-	AiChatEntryLabel: () => <span aria-hidden="true">Agent</span>,
+	AiChatEntryLabel: ( { children }: { children: React.ReactNode } ) => (
+		<span aria-hidden="true">{ children }</span>
+	),
 	closeAgentsManagerChat: jest.fn(),
 	openAgentsManagerChat: jest.fn(),
 	recordAgentsManagerTracksEvent: jest.fn(),
