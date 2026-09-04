@@ -2,7 +2,8 @@ import { loadScript } from '@automattic/load-script';
 import { closeSurvicateSurvey } from './close-survey';
 import debug from './debug';
 import { getSuppressionReason } from './invoke-event';
-import { isSurveyVisible, observeModals } from './modal-detection';
+import { isModalOpen, isSurveyVisible, observeModals } from './modal-detection';
+import { pauseSurvicateTargeting, resumeSurvicateTargeting } from './targeting';
 import { recordSurveySuppressed } from './track-suppression';
 
 /**
@@ -31,18 +32,32 @@ export function loadSurvicateScript( workspaceId: string, signal?: AbortSignal )
 		if ( reason ) {
 			debug( 'Survicate survey suppressed (Help Center or a modal is open)' );
 			recordSurveySuppressed( reason, 'survey_displayed' );
+			// Closing alone is not enough for auto-campaigns: the SDK's targeting
+			// engine re-evaluates every few seconds and re-displays a closed
+			// survey, so pause targeting until the last modal closes. The Help
+			// Center reason deliberately doesn't pause — it has no close hook
+			// here to resume from, and keeps its long-standing behavior.
+			if ( reason === 'modal' ) {
+				pauseSurvicateTargeting();
+			}
 			closeSurvicateSurvey();
 		}
 	};
 
 	// Close a survey that is already on screen when a modal opens on top of it.
 	// The observer fires on every modal insertion, so only count it as a
-	// suppression when a survey was actually visible to be closed.
+	// suppression when a survey was actually visible to be closed. Targeting is
+	// paused either way so the SDK doesn't display a survey under the modal.
 	const onModalOpened = () => {
 		if ( isSurveyVisible() ) {
 			recordSurveySuppressed( 'modal', 'modal_opened' );
 		}
+		pauseSurvicateTargeting();
 		closeSurvicateSurvey();
+	};
+
+	const onAllModalsClosed = () => {
+		resumeSurvicateTargeting();
 	};
 
 	const wireSuppression = () => {
@@ -52,13 +67,22 @@ export function loadSurvicateScript( workspaceId: string, signal?: AbortSignal )
 
 		window._sva?.addEventListener?.( 'survey_displayed', onSurveyDisplayed );
 
-		const disconnectModalObserver = observeModals( onModalOpened );
+		const disconnectModalObserver = observeModals( onModalOpened, onAllModalsClosed );
+
+		// A modal already open when the SDK becomes ready (e.g. an onboarding
+		// modal shown at page load) pauses targeting up front, so the survey
+		// never displays at all — no show-then-hide flash.
+		if ( isModalOpen() ) {
+			pauseSurvicateTargeting();
+		}
 
 		signal?.addEventListener(
 			'abort',
 			() => {
 				window._sva?.removeEventListener?.( 'survey_displayed', onSurveyDisplayed );
 				disconnectModalObserver();
+				// Don't leave the SDK paused with nothing left to resume it.
+				resumeSurvicateTargeting();
 			},
 			{ once: true }
 		);

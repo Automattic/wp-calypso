@@ -43,6 +43,22 @@ describe( 'isModalOpen', () => {
 		expect( isModalOpen() ).toBe( true );
 	} );
 
+	test( 'should detect a WordPress popover', () => {
+		const popover = makeRendered( document.createElement( 'div' ) );
+		popover.className = 'components-popover';
+		document.body.appendChild( popover );
+
+		expect( isModalOpen() ).toBe( true );
+	} );
+
+	test( 'should ignore a WordPress tooltip', () => {
+		const tooltip = makeRendered( document.createElement( 'div' ) );
+		tooltip.className = 'components-popover components-tooltip';
+		document.body.appendChild( tooltip );
+
+		expect( isModalOpen() ).toBe( false );
+	} );
+
 	test( 'should ignore a dialog role without aria-modal', () => {
 		const popover = makeRendered( document.createElement( 'div' ) );
 		popover.setAttribute( 'role', 'dialog' );
@@ -195,5 +211,72 @@ describe( 'observeModals', () => {
 		await flushMutations();
 
 		expect( onOpen ).not.toHaveBeenCalled();
+	} );
+
+	function appendModal() {
+		const modal = document.createElement( 'div' );
+		modal.setAttribute( 'role', 'dialog' );
+		modal.setAttribute( 'aria-modal', 'true' );
+		( modal as HTMLElement & { checkVisibility?: () => boolean } ).checkVisibility = () => true;
+		document.body.appendChild( modal );
+		return modal;
+	}
+
+	test( 'should fire onAllClosed when the last modal is removed', async () => {
+		const modal = appendModal();
+		const onOpen = jest.fn();
+		const onAllClosed = jest.fn();
+		const disconnect = observeModals( onOpen, onAllClosed );
+
+		modal.remove();
+		await flushMutations();
+
+		expect( onAllClosed ).toHaveBeenCalledTimes( 1 );
+		disconnect();
+	} );
+
+	test( 'should not fire onAllClosed while another modal remains open', async () => {
+		const first = appendModal();
+		appendModal();
+		const onAllClosed = jest.fn();
+		const disconnect = observeModals( jest.fn(), onAllClosed );
+
+		first.remove();
+		await flushMutations();
+
+		expect( onAllClosed ).not.toHaveBeenCalled();
+		disconnect();
+	} );
+
+	test( 'should not fire onAllClosed when the Survicate widget is removed', async () => {
+		const box = document.createElement( 'div' );
+		box.id = 'survicate-box';
+		const survey = document.createElement( 'div' );
+		survey.setAttribute( 'role', 'dialog' );
+		survey.setAttribute( 'aria-modal', 'true' );
+		box.appendChild( survey );
+		document.body.appendChild( box );
+
+		const onAllClosed = jest.fn();
+		const disconnect = observeModals( jest.fn(), onAllClosed );
+
+		box.remove();
+		await flushMutations();
+
+		expect( onAllClosed ).not.toHaveBeenCalled();
+		disconnect();
+	} );
+
+	test( 'should not fire onAllClosed for non-modal removals', async () => {
+		const div = document.createElement( 'div' );
+		document.body.appendChild( div );
+		const onAllClosed = jest.fn();
+		const disconnect = observeModals( jest.fn(), onAllClosed );
+
+		div.remove();
+		await flushMutations();
+
+		expect( onAllClosed ).not.toHaveBeenCalled();
+		disconnect();
 	} );
 } );

@@ -1,13 +1,15 @@
 import debug from './debug';
 
 /**
- * Selects open modal dialogs: a11y-correct modals (requiring `aria-modal`
- * excludes popovers/tooltips that only set `role="dialog"`), native
- * `<dialog open>`, and older `@wordpress/components` Modal versions whose
- * `aria-modal` attribute sat on an inner node.
+ * Selects open modal dialogs and popovers: a11y-correct modals (requiring
+ * `aria-modal` excludes generic `role="dialog"` widgets), native
+ * `<dialog open>`, older `@wordpress/components` Modal versions whose
+ * `aria-modal` attribute sat on an inner node, and `@wordpress/components`
+ * Popover — excluding Tooltip, which reuses the popover class and would
+ * otherwise suppress surveys on every hover.
  */
 export const MODAL_SELECTOR =
-	'[role="dialog"][aria-modal="true"], dialog[open], .components-modal__screen-overlay';
+	'[role="dialog"][aria-modal="true"], dialog[open], .components-modal__screen-overlay, .components-popover:not(.components-tooltip)';
 
 /**
  * The Survicate widget renders `role="dialog"`/`aria-modal` elements inside
@@ -89,20 +91,23 @@ function nodeContainsModal( node: Node ): boolean {
 }
 
 /**
- * Watches for modal dialogs being inserted into the document and invokes
- * `onOpen` for each mutation batch that contains one. Only added nodes are
- * inspected, so the observer is cheap on ordinary DOM churn. Attribute
- * changes are not observed (a native `<dialog>` toggled via `open` in place
- * is the one miss; the `survey_displayed` check still covers it on the next
- * display).
+ * Watches for modal dialogs being inserted into or removed from the document.
+ * Invokes `onOpen` for each mutation batch that inserts a modal, and
+ * `onAllClosed` when a batch removes a modal and no modal remains open. Only
+ * added/removed nodes are inspected, so the observer is cheap on ordinary DOM
+ * churn. Attribute changes are not observed (a native `<dialog>` toggled via
+ * `open` in place is the one miss; the `survey_displayed` check still covers
+ * it on the next display).
  * @returns A cleanup function that disconnects the observer.
  */
-export function observeModals( onOpen: () => void ): () => void {
+export function observeModals( onOpen: () => void, onAllClosed?: () => void ): () => void {
 	if ( typeof document === 'undefined' || typeof MutationObserver === 'undefined' ) {
 		return () => {};
 	}
 
 	const observer = new MutationObserver( ( mutations ) => {
+		let sawRemovedModal = false;
+
 		for ( const mutation of mutations ) {
 			for ( const node of mutation.addedNodes ) {
 				if ( nodeContainsModal( node ) ) {
@@ -111,6 +116,19 @@ export function observeModals( onOpen: () => void ): () => void {
 					return;
 				}
 			}
+			if ( onAllClosed && ! sawRemovedModal ) {
+				for ( const node of mutation.removedNodes ) {
+					if ( nodeContainsModal( node ) ) {
+						sawRemovedModal = true;
+						break;
+					}
+				}
+			}
+		}
+
+		if ( sawRemovedModal && onAllClosed && ! isModalOpen() ) {
+			debug( 'Last modal removed while observing' );
+			onAllClosed();
 		}
 	} );
 

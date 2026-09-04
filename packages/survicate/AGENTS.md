@@ -128,8 +128,10 @@ separate from DOM detection on purpose: the Help Center is a side panel without
 ### Modal detection (`modal-detection.ts`)
 
 - `MODAL_SELECTOR` matches `[role="dialog"][aria-modal="true"]` (requiring
-  `aria-modal` excludes popovers/tooltips that only set `role="dialog"`), native
-  `dialog[open]`, and `.components-modal__screen-overlay` (older WP `Modal` versions).
+  `aria-modal` excludes generic `role="dialog"` widgets), native `dialog[open]`,
+  `.components-modal__screen-overlay` (older WP `Modal` versions), and
+  `.components-popover:not(.components-tooltip)` (WP `Popover`; `Tooltip` reuses
+  the popover class and must not suppress surveys on every hover).
 - **Self-exclusion is load-bearing**: the Survicate widget itself renders
   `role="dialog"`/`aria-modal="true"` elements inside
   `<div id="survicate-box" class="survicate-box-<type>">` (verified in
@@ -145,11 +147,36 @@ separate from DOM detection on purpose: the Help Center is a side panel without
   fully unmount on close, so the residual cases don't arise. jsdom implements no
   layout (`getClientRects()` is always empty), so tests stub `checkVisibility`
   per element.
-- `observeModals( onOpen )` watches `document.body` for **added nodes only** (no
-  attribute observation — a native `<dialog>` toggled via `open` in place is missed,
-  but the `survey_displayed` net still covers it). Returns a disconnect function.
+- `observeModals( onOpen, onAllClosed? )` watches `document.body` for **added and
+  removed nodes only** (no attribute observation — a native `<dialog>` toggled via
+  `open` in place is missed, but the `survey_displayed` net still covers it).
+  `onAllClosed` fires when a batch removes a modal and `isModalOpen()` is then
+  false. Returns a disconnect function.
 - Everything fails **open**: any error in detection means "no modal", so surveys
   behave as they did before this module existed.
+
+### Targeting pause/resume (`targeting.ts`)
+
+**Closing a suppressed auto-campaign survey is not enough.** The SDK's targeting
+engine re-evaluates every few seconds and re-displays a closed survey while its
+campaign still matches, producing an endless display→close loop (and a stream of
+`targeting`/`seen.json`/`survey_interactions` requests). The fix uses two SDK
+affordances verified in `widget_core-28.33.0.js`:
+
+- `window._sva.disableTargeting` is read **live** by the targeting engine: while
+  truthy, only API-triggered surveys stay eligible; auto-campaigns are not
+  scheduled at all.
+- `window._sva.retarget()` (public) re-runs the targeting evaluation.
+
+`pauseSurvicateTargeting()` sets the flag; `resumeSurvicateTargeting()` clears it
+and calls `retarget()` (no-op unless paused). `load-script.ts` pauses when a
+modal opens (`observeModals` `onOpen`), when a survey displays with a modal open
+(`reason === 'modal'`), and up front at wire time if a modal is already open —
+that last one means a modal shown before the SDK loads produces **no flash at
+all**. It resumes via `observeModals` `onAllClosed` and on consumer abort (so a
+torn-down consumer never leaves the SDK paused). The Help Center reason
+deliberately does **not** pause: it has no close hook here to resume from, and
+keeps its long-standing close-on-display behavior.
 
 ### Measuring suppression (`track-suppression.ts`)
 
@@ -175,12 +202,13 @@ The wp-admin loader (`jetpack-mu-wpcom/src/features/survicate/class-survicate.ph
 Jetpack monorepo) inlines the same logic in its emitted script; keep the two in sync
 when changing selectors or behavior.
 
-**Known caveat — the display flash**: `survey_displayed` fires *after* the survey
-renders, so closing it produces a brief show-then-hide flicker for auto-campaigns. The
-SDK exposes no pre-display veto. If the flash ever becomes a real problem, the
-alternative is Survicate-side targeting (set a `help_center_open` visitor trait via
-`setSurvicateVisitorTraits` and exclude it in campaign config) — more reliable but
-requires dashboard coordination. Don't build that pre-emptively.
+**Known caveat — the display flash**: `survey_displayed` fires _after_ the survey
+renders, so closing it produces a brief show-then-hide flicker. The SDK exposes no
+pre-display veto. For modals this is largely mitigated by the targeting pause
+(`targeting.ts`): a modal open before the SDK is ready, or opened while it is
+paused, prevents display entirely; the flash remains only for the race where a
+survey is already mid-display as a modal appears, and for the Help Center rule,
+which doesn't pause.
 
 ## File map
 
@@ -192,6 +220,8 @@ requires dashboard coordination. Don't build that pre-emptively.
   `getSuppressionReason()`, and `shouldSuppressSurvey()`.
 - `modal-detection.ts` — `isModalOpen()`, `isSurveyVisible()`, `observeModals()`,
   `MODAL_SELECTOR`.
+- `targeting.ts` — `pauseSurvicateTargeting()` / `resumeSurvicateTargeting()`:
+  gate the SDK's auto-campaign targeting via the `disableTargeting` flag.
 - `track-suppression.ts` — `recordSurveySuppressed()`: the
   `calypso_survicate_survey_suppressed` Tracks event.
 - `close-survey.ts` — `closeSurvicateSurvey()`: the single, guarded `_sva.closeSurvey()`
@@ -213,7 +243,7 @@ called from classic Calypso purchase/cancel and checkout flows.
   inside this package.
 - **Listeners that wait for `SurvicateReady`** should use `{ once: true }`. Note the
   event fires only once per page load — code that registers a `SurvicateReady` listener
-  *after* the SDK already loaded will never run, so register at load time.
+  _after_ the SDK already loaded will never run, so register at load time.
 - Each `src/*.ts` file has a matching `src/test/*.test.ts`. Tests use
   `@jest-environment jsdom`, mock `@wordpress/data`'s `select`, and stub `window._sva`.
 - Tab indentation, tabs for alignment (match existing files).

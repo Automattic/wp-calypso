@@ -114,10 +114,10 @@ describe( 'loadSurvicateScript', () => {
 		onSurveyDisplayed();
 
 		expect( closeSurvey ).toHaveBeenCalledTimes( 1 );
-		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_survicate_survey_suppressed',
-			{ reason: 'modal', trigger: 'survey_displayed' }
-		);
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_survicate_survey_suppressed', {
+			reason: 'modal',
+			trigger: 'survey_displayed',
+		} );
 	} );
 
 	test( 'should close a visible survey when a modal opens', async () => {
@@ -159,10 +159,10 @@ describe( 'loadSurvicateScript', () => {
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
 		expect( closeSurvey ).toHaveBeenCalledTimes( 1 );
-		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_survicate_survey_suppressed',
-			{ reason: 'modal', trigger: 'modal_opened' }
-		);
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_survicate_survey_suppressed', {
+			reason: 'modal',
+			trigger: 'modal_opened',
+		} );
 	} );
 
 	test( 'should not record a suppression when a modal opens with no survey visible', async () => {
@@ -179,6 +179,99 @@ describe( 'loadSurvicateScript', () => {
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
 		expect( mockRecordTracksEvent ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should pause targeting when a survey displays while a modal is open', () => {
+		const closeSurvey = jest.fn();
+		const addEventListener = jest.fn();
+		window._sva = { closeSurvey, addEventListener };
+
+		loadSurvicateScript( 'test-workspace-id', controller.signal );
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+		const modal = document.createElement( 'div' );
+		modal.setAttribute( 'role', 'dialog' );
+		modal.setAttribute( 'aria-modal', 'true' );
+		( modal as HTMLElement & { checkVisibility?: () => boolean } ).checkVisibility = () => true;
+		document.body.appendChild( modal );
+
+		const onSurveyDisplayed = addEventListener.mock.calls[ 0 ][ 1 ];
+		onSurveyDisplayed();
+
+		expect( window._sva.disableTargeting ).toBe( true );
+	} );
+
+	test( 'should not pause targeting for a Help Center suppression', () => {
+		const closeSurvey = jest.fn();
+		const addEventListener = jest.fn();
+		window._sva = { closeSurvey, addEventListener };
+
+		loadSurvicateScript( 'test-workspace-id', controller.signal );
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+		setHelpCenterOpen( true );
+		const onSurveyDisplayed = addEventListener.mock.calls[ 0 ][ 1 ];
+		onSurveyDisplayed();
+
+		expect( closeSurvey ).toHaveBeenCalledTimes( 1 );
+		expect( window._sva.disableTargeting ).toBeFalsy();
+	} );
+
+	test( 'should pause targeting up front when a modal is already open at SDK-ready time', () => {
+		const modal = document.createElement( 'div' );
+		modal.setAttribute( 'role', 'dialog' );
+		modal.setAttribute( 'aria-modal', 'true' );
+		( modal as HTMLElement & { checkVisibility?: () => boolean } ).checkVisibility = () => true;
+		document.body.appendChild( modal );
+
+		window._sva = { addEventListener: jest.fn() };
+		loadSurvicateScript( 'test-workspace-id', controller.signal );
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+		expect( window._sva.disableTargeting ).toBe( true );
+	} );
+
+	test( 'should resume targeting when the last modal closes', async () => {
+		const retarget = jest.fn();
+		window._sva = { closeSurvey: jest.fn(), addEventListener: jest.fn(), retarget };
+
+		loadSurvicateScript( 'test-workspace-id', controller.signal );
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+		const modal = document.createElement( 'div' );
+		modal.setAttribute( 'role', 'dialog' );
+		modal.setAttribute( 'aria-modal', 'true' );
+		( modal as HTMLElement & { checkVisibility?: () => boolean } ).checkVisibility = () => true;
+		document.body.appendChild( modal );
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+		expect( window._sva.disableTargeting ).toBe( true );
+
+		modal.remove();
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+		expect( window._sva.disableTargeting ).toBe( false );
+		expect( retarget ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'should resume targeting when the consumer aborts while paused', async () => {
+		const retarget = jest.fn();
+		window._sva = { closeSurvey: jest.fn(), addEventListener: jest.fn(), retarget };
+
+		loadSurvicateScript( 'test-workspace-id', controller.signal );
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+		const modal = document.createElement( 'div' );
+		modal.setAttribute( 'role', 'dialog' );
+		modal.setAttribute( 'aria-modal', 'true' );
+		( modal as HTMLElement & { checkVisibility?: () => boolean } ).checkVisibility = () => true;
+		document.body.appendChild( modal );
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+		expect( window._sva.disableTargeting ).toBe( true );
+
+		controller.abort();
+
+		expect( window._sva.disableTargeting ).toBe( false );
+		modal.remove();
 	} );
 
 	test( 'should re-establish modal suppression when reloaded after the SDK is ready', async () => {
