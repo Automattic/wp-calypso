@@ -1,5 +1,6 @@
 import { isAutomatticianQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+import { Step } from '@automattic/onboarding';
 import { getSessionId as getPostHogSessionId } from '@automattic/posthog';
 import { useQuery as useReactQuery } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
@@ -8,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import {
 	applyBlueprintSpec,
 	getBlueprintArchiveSiteIdentifier,
@@ -169,11 +170,22 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 	const isSubmittingRef = useRef( false );
 	const blueprintImportStartedRef = useRef( false );
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setSiteSetupError } = useDispatch( SITE_STORE );
 	// Held in a ref so the spec-confirm callback stays referentially stable: the flow hands
 	// down a fresh submit() on every render, and useSiteSpec re-initialises the widget
 	// whenever its handlers change identity.
 	const submitRef = useRef( navigation.submit );
 	submitRef.current = navigation.submit;
+
+	// A build-wow run that cannot continue hands the customer to the error step rather than
+	// leaving them on a spec page whose confirm button silently does nothing.
+	const failBuildWow = useCallback(
+		( error: string, message: string ) => {
+			setSiteSetupError( error, message );
+			submitRef.current?.( { buildWowError: error } );
+		},
+		[ setSiteSetupError ]
+	);
 
 	const handleCiabMessage = useCallback( () => {
 		messageCountRef.current += 1;
@@ -281,16 +293,16 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 
 			const specId = getSpecId( specData );
 			if ( ! specId ) {
-				// eslint-disable-next-line no-console
-				console.error( 'Failed to continue build-wow provisioning: missing site spec session ID.' );
-				isSubmittingRef.current = false;
+				logBuildWowEvent( 'spec_confirm_missing_spec', {
+					site_identifier: buildWowSiteIdentifier,
+				} );
+				failBuildWow( 'build_wow_missing_spec', 'The site spec session ID is missing.' );
 				return;
 			}
 
 			if ( ! buildWowSiteIdentifier ) {
-				// eslint-disable-next-line no-console
-				console.error( 'Failed to continue build-wow provisioning: missing target site.' );
-				isSubmittingRef.current = false;
+				logBuildWowEvent( 'spec_confirm_missing_site', { spec_id: specId } );
+				failBuildWow( 'build_wow_missing_site', 'No target site was given for the build.' );
 				return;
 			}
 
@@ -356,26 +368,36 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					...( source ? { source } : {} ),
 				} );
 			} catch ( error ) {
+				const message = error instanceof Error ? error.message : String( error );
 				logBuildWowEvent(
 					'spec_confirm_error',
 					{
 						spec_id: specId,
 						site_identifier: buildWowSiteIdentifier,
 						elapsed_ms: elapsedMs(),
-						error: error instanceof Error ? error.message : String( error ),
+						error: message,
 					},
 					responseBlogId
 				);
-				// eslint-disable-next-line no-console
-				console.error( 'Failed to continue build-wow provisioning:', error );
-				isSubmittingRef.current = false;
+				failBuildWow( 'build_wow_request_failed', message );
 			}
 		},
-		[ buildWowSiteIdentifier, queryParams ]
+		[ buildWowSiteIdentifier, failBuildWow, queryParams ]
 	);
 
+	// Without a target site nothing can be built, so there is no point loading the widget
+	// and letting the customer finish an interview that cannot be confirmed.
+	const isBuildWowMissingSite = activeFlow === 'build-wow' && ! buildWowSiteIdentifier;
+
 	useEffect( () => {
-		if ( activeFlow === 'build-wow' && buildWowSpecId ) {
+		if ( isBuildWowMissingSite ) {
+			logBuildWowEvent( 'spec_page_missing_site' );
+			failBuildWow( 'build_wow_missing_site', 'No target site was given for the build.' );
+		}
+	}, [ isBuildWowMissingSite, failBuildWow ] );
+
+	useEffect( () => {
+		if ( activeFlow === 'build-wow' && buildWowSpecId && buildWowSiteIdentifier ) {
 			handleBuildWowSpecConfirm( { spec_id: buildWowSpecId } );
 		} else if ( activeFlow === 'early-provision' && atomicProvisionSpecId ) {
 			handleEarlyProvisionSpecConfirm( { spec_id: atomicProvisionSpecId } );
@@ -383,6 +405,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 	}, [
 		activeFlow,
 		buildWowSpecId,
+		buildWowSiteIdentifier,
 		atomicProvisionSpecId,
 		handleBuildWowSpecConfirm,
 		handleEarlyProvisionSpecConfirm,
@@ -531,7 +554,12 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 	}
 
 	let siteSpecStep = <SiteSpecContainer />;
-	if ( activeFlow === 'build-wow' ) {
+	if ( activeFlow === 'build-wow' && ( buildWowSpecId || isBuildWowMissingSite ) ) {
+		// A spec carried from entry is confirmed on arrival and leaves this page on its own,
+		// so the interview widget would only flash (and open a fresh spec session) before
+		// the redirect.
+		siteSpecStep = <Step.Loading />;
+	} else if ( activeFlow === 'build-wow' ) {
 		siteSpecStep = (
 			<SiteSpecContainer
 				siteSpecConfig={ getBuildWowSiteSpecConfig( {
