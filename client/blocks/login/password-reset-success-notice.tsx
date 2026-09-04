@@ -19,7 +19,7 @@ export default function PasswordResetSuccessNotice() {
 
 	return (
 		<Notice status="is-success" showDismiss={ false }>
-			{ translate( 'Your password has been reset.' ) }
+			{ translate( 'Your password has been reset successfully.' ) }
 		</Notice>
 	);
 }

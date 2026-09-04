@@ -12,7 +12,7 @@ describe( 'PasswordResetSuccessNotice', () => {
 	test( 'shows the confirmation when password_reset is success', () => {
 		renderAtPath( '/log-in?password_reset=success' );
 
-		expect( screen.getByText( 'Your password has been reset.' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Your password has been reset successfully.' ) ).toBeInTheDocument();
 	} );
 
 	test( 'shows nothing when password_reset is absent', () => {
