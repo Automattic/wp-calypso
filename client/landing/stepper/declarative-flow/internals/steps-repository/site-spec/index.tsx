@@ -1,7 +1,5 @@
-import { isAutomatticianQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { getSessionId as getPostHogSessionId } from '@automattic/posthog';
-import { useQuery as useReactQuery } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -135,12 +133,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 	const shouldEarlyProvisionSite = queryParams.get( 'early_provision_site' ) === '1';
 	const shouldProvisionAtomicSite =
 		shouldEarlyProvisionSite || queryParams.get( 'provision_target' ) === 'wpcom-atomic';
-	const buildWowRequested = queryParams.get( 'build_wow' ) === '1';
-	const { data: isAutomattician, isLoading: isLoadingAutomattician } = useReactQuery( {
-		...isAutomatticianQuery(),
-		enabled: buildWowRequested,
-	} );
-	const shouldBuildWow = isBuildWowEnabled( queryParams, isAutomattician === true );
+	const shouldBuildWow = isBuildWowEnabled( queryParams );
 	const activeFlow = getActiveFlow( { shouldBuildWow, shouldProvisionAtomicSite, isCiab } );
 	const atomicProvisionSpecId = shouldProvisionAtomicSite ? queryParams.get( 'spec_id' ) ?? '' : '';
 	const buildWowSpecId = shouldBuildWow ? queryParams.get( 'spec_id' ) ?? '' : '';
@@ -525,10 +518,6 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 		blueprintArchiveSlug,
 		blueprintArchiveSiteIdentifier,
 	] );
-
-	if ( buildWowRequested && isLoadingAutomattician ) {
-		return <DocumentHead title={ translate( 'Build Your Site with AI' ) } />;
-	}
 
 	let siteSpecStep = <SiteSpecContainer />;
 	if ( activeFlow === 'build-wow' ) {
