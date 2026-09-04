@@ -7,6 +7,7 @@ import React from 'react';
 import HelpCenterFeedbackForm from '../help-center-feedback-form';
 
 const mockRateArticle = jest.fn();
+const mockSessionRatings: Record< number, 1 | 2 | undefined > = {};
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
@@ -22,6 +23,7 @@ jest.mock( '@automattic/zendesk-client', () => ( {
 
 jest.mock( '../../hooks/use-rate-article', () => ( {
 	useRateArticle: () => ( { mutate: mockRateArticle } ),
+	getSessionRating: ( postId: number ) => mockSessionRatings[ postId ],
 } ) );
 
 function renderForm( userRating?: 1 | 2 | null ) {
@@ -37,7 +39,10 @@ function renderForm( userRating?: 1 | 2 | null ) {
 }
 
 describe( 'HelpCenterFeedbackForm', () => {
-	beforeEach( () => jest.clearAllMocks() );
+	beforeEach( () => {
+		jest.clearAllMocks();
+		delete mockSessionRatings[ 185130 ];
+	} );
 
 	it( 'asks for a rating when the article has not been rated', () => {
 		renderForm( null );
@@ -65,11 +70,10 @@ describe( 'HelpCenterFeedbackForm', () => {
 
 		fireEvent.click( screen.getByRole( 'button', { name: /Yes/ } ) );
 
-		expect( mockRateArticle ).toHaveBeenCalledWith( {
-			blogId: 9619154,
-			postId: 185130,
-			rating: 1,
-		} );
+		expect( mockRateArticle ).toHaveBeenCalledWith(
+			{ blogId: 9619154, postId: 185130, rating: 1, persist: true },
+			expect.objectContaining( { onSuccess: expect.any( Function ) } )
+		);
 		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_inlinehelp_article_feedback_click', {
 			did_the_article_help: 'yes',
@@ -79,13 +83,38 @@ describe( 'HelpCenterFeedbackForm', () => {
 		expect( screen.queryByRole( 'button', { name: /Yes/ } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'keeps the rating for the session only when the server sent no rating field', () => {
+	it( 'does not persist the rating when the server sent no rating field', () => {
 		renderForm( undefined );
 
 		fireEvent.click( screen.getByRole( 'button', { name: /No/ } ) );
 
-		expect( mockRateArticle ).not.toHaveBeenCalled();
+		expect( mockRateArticle ).toHaveBeenCalledWith(
+			expect.objectContaining( { rating: 2, persist: false } ),
+			expect.anything()
+		);
 		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
 		expect( screen.getByText( 'support options' ) ).toBeInTheDocument();
+	} );
+
+	it( 'shows the rating remembered for this session when the article is reopened', () => {
+		mockSessionRatings[ 185130 ] = 2;
+
+		renderForm( undefined );
+
+		expect( screen.getByText( 'support options' ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: /No/ } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'shows the rating on record when the server kept an earlier one', () => {
+		mockRateArticle.mockImplementation( ( _variables, { onSuccess } ) =>
+			onSuccess( { user_rating: 2 } )
+		);
+
+		renderForm( null );
+
+		fireEvent.click( screen.getByRole( 'button', { name: /Yes/ } ) );
+
+		expect( screen.getByText( 'support options' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'You found this article helpful.' ) ).not.toBeInTheDocument();
 	} );
 } );
