@@ -18,6 +18,9 @@ export {
 export type {
 	PlanExpiryNoticeContent,
 	PlanExpiryNoticeOptions,
+	PlanExpiryNoticeScope,
+	PlanExpiryNoticeStage,
+	PlanExpiryNoticeAction,
 	PlanExpiryUrgency,
 } from './get-plan-expiry-notice';
 

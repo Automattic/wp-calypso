@@ -1,7 +1,9 @@
 import { SubscriptionBillPeriod, getPlanNames } from '@automattic/api-core';
 import { translationExists } from '@automattic/i18n-utils';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { formatDate, getCalendarDaysUntil, getRelativeDayString } from '../../utils/datetime';
+import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import {
 	EXPIRY_ERROR_DAYS,
 	EXPIRY_WARNING_DAYS,
@@ -451,7 +453,10 @@ function resolveSitewideNotice(
 		// Inside the grace period the shared resolver already has the copy, but
 		// it keys off the subscription status; a subscription removed early
 		// still reads as grace here, going by the date like wp-admin does.
-		const resolved = resolveNotice( { ...purchase, subscription_status: 'active' }, options );
+		const resolved = resolveNotice(
+			{ ...purchase, expiry_status: 'expired', subscription_status: 'active' },
+			options
+		);
 		return resolved ? withStage( resolved, 'grace' ) : null;
 	}
 
@@ -537,8 +542,11 @@ function postGraceNotice(
  * purchase of the same plan. Matches the wp-admin banner's checkout link.
  */
 function getRestoreUrl( purchase: Purchase, renewReturnUrl?: string ): string {
-	const url = `/checkout/${ purchase.site_slug }/${ purchase.product_slug }`;
-	return renewReturnUrl ? `${ url }?redirect_to=${ encodeURIComponent( renewReturnUrl ) }` : url;
+	const backUrl = renewReturnUrl ?? redirectToDashboardLink();
+	return addQueryArgs(
+		wpcomLink( `/checkout/${ purchase.site_slug }/${ purchase.product_slug }` ),
+		{ cancel_to: backUrl, redirect_to: backUrl }
+	);
 }
 
 function getPlanName( purchase: Purchase ): string | undefined {

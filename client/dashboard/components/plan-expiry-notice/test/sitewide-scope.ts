@@ -197,6 +197,18 @@ describe( 'sitewide scope: grace period', () => {
 	test( 'a removed subscription 29 days past expiry is still grace', () => {
 		expect( sitewide( removed( 29 ) )?.stage ).toBe( 'grace' );
 	} );
+
+	test( 'classification is date-only: a stale manual-renew status is still grace', () => {
+		const notice = sitewide(
+			makePurchase( {
+				expiry_date: expiryInDays( -20 ),
+				expiry_status: 'manual-renew',
+				subscription_status: 'active',
+			} )
+		);
+		expect( notice?.stage ).toBe( 'grace' );
+		expect( notice?.title ).toBe( 'Your Business plan has expired' );
+	} );
 } );
 
 describe( 'sitewide scope: post-grace', () => {
@@ -208,12 +220,20 @@ describe( 'sitewide scope: post-grace', () => {
 		expect( notice?.body ).toBe(
 			'Your site has been moved to the Free plan. You no longer have access to plugins, custom themes, or 50 GB of storage. Upgrade your plan to restore your site.'
 		);
-		expect( notice?.primaryAction ).toMatchObject( {
-			type: 'restore-site',
-			label: 'Restore site',
-			href: '/checkout/example.wordpress.com/business-bundle',
-		} );
+		expect( notice?.primaryAction?.type ).toBe( 'restore-site' );
+		expect( notice?.primaryAction ).toMatchObject( { label: 'Restore site' } );
+		const href =
+			notice?.primaryAction && 'href' in notice.primaryAction && notice.primaryAction.href;
+		expect( href ).toContain( '/checkout/example.wordpress.com/business-bundle' );
 		expect( notice?.secondaryAction ).toBeUndefined();
+	} );
+
+	test( '30 days past, not reverted: restore link carries the return URL both ways', () => {
+		const notice = sitewide( removed( 30 ), { renewReturnUrl: '/home/example' } );
+		const href =
+			notice?.primaryAction && 'href' in notice.primaryAction && notice.primaryAction.href;
+		expect( href ).toContain( `redirect_to=${ encodeURIComponent( '/home/example' ) }` );
+		expect( href ).toContain( `cancel_to=${ encodeURIComponent( '/home/example' ) }` );
 	} );
 
 	test( '30 days past, reverted: contact-support action with prefilled message', () => {
