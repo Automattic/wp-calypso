@@ -19,6 +19,23 @@
 		fill: inherit;
 	}
 
+	// WPDS icons carry no fill of their own, so `inherit` above resolves to the
+	// initial black and they render heavier than the label beside them. Opt them
+	// onto `currentColor` so they track the label, including when the button
+	// disables. Scoped by class rather than applied to every `> svg`: the brand
+	// marks inherit deliberately, their fills being their own.
+	//
+	// The scale corrects for WPDS drawing its glyphs inset in a 24x24 canvas: the
+	// envelope inks only 18x14 of it, so at a 20px box it reads about a quarter
+	// smaller than the brand marks beside it. 1.3 brings the ink to roughly 19px
+	// wide, in line with Google and GitHub. Done as a transform rather than a
+	// bigger box because the label's negative margin is tuned to a 20px icon, so
+	// growing the box would push the text out of line with the buttons above.
+	> svg.social-icons__envelope {
+		fill: currentColor;
+		transform: scale(1.3);
+	}
+
 	> span {
 		font-feature-settings: "clig" off, "liga" off;
 		margin-inline: -20px auto;

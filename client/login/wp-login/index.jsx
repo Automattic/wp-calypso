@@ -72,6 +72,7 @@ export class Login extends Component {
 		twoFactorAuthType: PropTypes.string,
 		action: PropTypes.string,
 		isGravPoweredClient: PropTypes.bool,
+		isWoo: PropTypes.bool,
 	};
 
 	static defaultProps = { isJetpack: false, isLoginView: true };
@@ -167,32 +168,47 @@ export class Login extends Component {
 		return <LocaleSuggestions locale={ locale } path={ path } />;
 	}
 
+	handleLostPasswordClick = ( event ) => {
+		event.preventDefault();
+		this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
+		page(
+			login( {
+				redirectTo: this.props.redirectTo,
+				locale: this.props.locale,
+				action:
+					this.props.isWooJPC || this.props.isJetpack ? 'jetpack/lostpassword' : 'lostpassword',
+				oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
+				from: this.props.currentQuery?.from,
+			} )
+		);
+	};
+
+	/**
+	 * The footer's copy, which is where this link lives below 960px.
+	 */
 	getLostPasswordLink() {
 		if ( this.props.twoFactorAuthType ) {
 			return null;
 		}
 
 		return (
-			<a
-				className="one-login__footer-link"
-				href="/"
-				onClick={ ( event ) => {
-					event.preventDefault();
-					this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
-					page(
-						login( {
-							redirectTo: this.props.redirectTo,
-							locale: this.props.locale,
-							action:
-								this.props.isWooJPC || this.props.isJetpack
-									? 'jetpack/lostpassword'
-									: 'lostpassword',
-							oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
-							from: this.props.currentQuery?.from,
-						} )
-					);
-				} }
-			>
+			<a className="one-login__footer-link" href="/" onClick={ this.handleLostPasswordClick }>
+				{ this.props.translate( 'Lost your password?' ) }
+			</a>
+		);
+	}
+
+	/**
+	 * The same link for desktop, where it sits on the password field's label row, beside the
+	 * field it resets. Only one of the two is ever visible: see login-form.scss.
+	 */
+	getLostPasswordFormLink() {
+		if ( this.props.twoFactorAuthType ) {
+			return null;
+		}
+
+		return (
+			<a className="login__form-lost-password" href="/" onClick={ this.handleLostPasswordClick }>
 				{ this.props.translate( 'Lost your password?' ) }
 			</a>
 		);
@@ -276,12 +292,22 @@ export class Login extends Component {
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
 				fromSite={ fromSite }
+				// Desktop only, and only on the main login view: the one that pairs with signup.
+				// Gravatar-powered clients carry their own link in their footer, and Woo renders
+				// its own "Forgot password?" inside the form, so neither gets a second one. Already
+				// null under 2FA, and never reaches the form while the password is hidden.
+				lostPasswordLink={
+					isLoginView && ! isGravPoweredClient && ! this.props.isWoo
+						? this.getLostPasswordFormLink()
+						: undefined
+				}
 				footer={
 					isGravPoweredLoginPage ? (
 						<GravPoweredLoginBlockFooter />
 					) : (
 						<OneLoginFooter
 							isLoginView={ isLoginView }
+							signupUrl={ signupUrl }
 							lostPasswordLink={ this.getLostPasswordLink() }
 							loginLink={ this.getLoginLink() }
 							supportLink={ this.getSupportLink() }
@@ -326,6 +352,7 @@ export class Login extends Component {
 			isGenericOauth,
 			isGravPoweredClient,
 			isJetpack,
+			isLoginView,
 			action,
 			partnerConfig,
 		} = this.props;
@@ -379,6 +406,10 @@ export class Login extends Component {
 						connectorPlugins={ this.props.connectorPlugins }
 						signupUrl={ this.props.signupUrl }
 						isLostPasswordView={ isLostPasswordView }
+						// Only the main login view empties its top-right slot, and only on desktop: it is
+						// the one that pairs with signup, and the one whose footer carries the route
+						// to signup there. 2FA and the other mid-flow views keep the top bar.
+						signupLinkMobileOnly={ isLoginView }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
 						subHeadingProminent={ this.props.isFromJetpackConnector && ! isLostPasswordView }
 						notice={ <PasswordResetSuccessNotice /> }

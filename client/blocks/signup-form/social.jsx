@@ -153,6 +153,7 @@ class SocialSignupForm extends Component {
 					<UsernameOrEmailButton
 						key="social-signup-button-email"
 						onClick={ () => setCurrentStep( 'email' ) }
+						showWordPressLogo={ false }
 					/>
 				),
 			},
