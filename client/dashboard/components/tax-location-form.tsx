@@ -1,10 +1,9 @@
 import { countryListQuery, statesListQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { CheckboxControl } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import InlineSupportLink from './inline-support-link';
+import { CheckboxWithSupportLink } from './checkbox-with-support-link';
 import type {
 	CountryListItem,
 	StatesListItem,
@@ -73,14 +72,12 @@ function getFields( {
 			Edit: ( { field, data, onChange, hideLabelFromVision } ) => {
 				const { id, getValue } = field;
 				return (
-					<CheckboxControl
-						__nextHasNoMarginBottom
-						label={ hideLabelFromVision ? '' : field.label }
-						help={
-							<InlineSupportLink supportContext="business-tax-rates-in-ohio-and-connecticut" />
-						}
+					<CheckboxWithSupportLink
+						label={ __( 'Is this purchase for business? <link>Learn more.</link>' ) }
+						supportContext="business-tax-rates-in-ohio-and-connecticut"
 						checked={ Boolean( getValue( { item: data } ) ) }
 						onChange={ ( newValue ) => onChange( { [ id ]: newValue } ) }
+						hideLabelFromVision={ hideLabelFromVision }
 					/>
 				);
 			},
