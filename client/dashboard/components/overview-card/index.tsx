@@ -86,10 +86,8 @@ export default function OverviewCard( {
 		if ( ! heading ) {
 			return <>&nbsp;</>;
 		}
-		// Headings are usually a single line already, but the ones carrying user
-		// data — site names, domains, email addresses — can be arbitrarily long
-		// and unbreakable. Clamp to one line and put the full value in a tooltip.
-		// Callers passing their own markup are left to handle it themselves.
+		// Headings are usually a single line, but the can carry arbitrarily long
+		// user data — site names, domains, email addresses. Clamp to one line.
 		if ( typeof heading === 'string' ) {
 			return (
 				<Truncate tooltip={ heading } numberOfLines={ 1 }>
