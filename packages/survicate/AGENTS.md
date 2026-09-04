@@ -108,8 +108,11 @@ draw over any other open modal dialog (onboarding modals, WP `Modal`, native
    `survey_displayed` and closes it. This is the comprehensive net that also catches
    auto-campaigns (path 2 above).
 4. **A modal opens while a survey is showing** → `load-script.ts` starts
-   `observeModals( closeSurvicateSurvey )` at `SurvicateReady` time (page-lifetime,
-   like the `survey_displayed` listener).
+   `observeModals( closeSurvicateSurvey )` at `SurvicateReady` time. Both this
+   observer and the `survey_displayed` listener are torn down via the optional
+   `AbortSignal` passed to `loadSurvicateScript` — `useSurvicate` passes its
+   effect's signal, so repeated loads don't accumulate observers. Without a
+   signal they live for the page lifetime.
 
 `isHelpCenterOpen()` (exported from `invoke-event.ts`) reads the `automattic/help-center`
 `@wordpress/data` store by string and returns `false` if the store isn't registered, so
@@ -129,8 +132,12 @@ separate from DOM detection on purpose: the Help Center is a side panel without
   `#survicate-box, [class*="survicate-box"]` are skipped — otherwise every survey
   would close itself on display.
 - `isModalOpen()` also requires the candidate to be rendered, preferring
-  `Element.checkVisibility()` with a `getClientRects()` fallback, so a
-  hidden-but-mounted dialog can't suppress surveys forever. jsdom implements no
+  `Element.checkVisibility()` with a `getClientRects()` fallback. Called with no
+  options, `checkVisibility()` only treats `display: none`, `content-visibility`,
+  and detached nodes as not-rendered — **not** `visibility: hidden` or
+  `opacity: 0` — so this guards the common "mounted but `display: none`" dialog,
+  not every hidden-but-mounted one. In practice WP `Modal` / native `dialog`
+  fully unmount on close, so the residual cases don't arise. jsdom implements no
   layout (`getClientRects()` is always empty), so tests stub `checkVisibility`
   per element.
 - `observeModals( onOpen )` watches `document.body` for **added nodes only** (no

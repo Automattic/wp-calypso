@@ -21,19 +21,25 @@ function setHelpCenterOpen( open: boolean ) {
 }
 
 describe( 'loadSurvicateScript', () => {
+	let controller: AbortController;
+
 	beforeEach( () => {
 		window._sva = undefined;
 		setHelpCenterOpen( false );
+		controller = new AbortController();
 	} );
 
 	afterEach( () => {
+		// Disconnect the modal observer and survey_displayed listener wired by
+		// this test so they don't fire during later tests on the shared DOM.
+		controller.abort();
 		window._sva = undefined;
 		mockSelect.mockReset();
 		document.body.innerHTML = '';
 	} );
 
 	test( 'should call loadScript with the correct Survicate URL', async () => {
-		await loadSurvicateScript( 'test-workspace-id' );
+		await loadSurvicateScript( 'test-workspace-id', controller.signal );
 
 		expect( loadScript ).toHaveBeenCalledWith(
 			'https://survey.survicate.com/workspaces/test-workspace-id/web_surveys.js'
@@ -43,7 +49,9 @@ describe( 'loadSurvicateScript', () => {
 	test( 'should propagate errors from loadScript', async () => {
 		( loadScript as jest.Mock ).mockRejectedValueOnce( new Error( 'load failed' ) );
 
-		await expect( loadSurvicateScript( 'test-id' ) ).rejects.toThrow( 'load failed' );
+		await expect( loadSurvicateScript( 'test-id', controller.signal ) ).rejects.toThrow(
+			'load failed'
+		);
 	} );
 
 	test( 'should close the survey when it is displayed while the Help Center is open', () => {
@@ -51,7 +59,7 @@ describe( 'loadSurvicateScript', () => {
 		const addEventListener = jest.fn();
 		window._sva = { closeSurvey, addEventListener };
 
-		loadSurvicateScript( 'test-workspace-id' );
+		loadSurvicateScript( 'test-workspace-id', controller.signal );
 
 		// Survicate signals readiness, which registers the survey_displayed listener.
 		window.dispatchEvent( new Event( 'SurvicateReady' ) );
@@ -70,7 +78,7 @@ describe( 'loadSurvicateScript', () => {
 		const addEventListener = jest.fn();
 		window._sva = { closeSurvey, addEventListener };
 
-		loadSurvicateScript( 'test-workspace-id' );
+		loadSurvicateScript( 'test-workspace-id', controller.signal );
 
 		window.dispatchEvent( new Event( 'SurvicateReady' ) );
 
@@ -86,7 +94,7 @@ describe( 'loadSurvicateScript', () => {
 		const addEventListener = jest.fn();
 		window._sva = { closeSurvey, addEventListener };
 
-		loadSurvicateScript( 'test-workspace-id' );
+		loadSurvicateScript( 'test-workspace-id', controller.signal );
 		window.dispatchEvent( new Event( 'SurvicateReady' ) );
 
 		const modal = document.createElement( 'div' );
@@ -105,7 +113,7 @@ describe( 'loadSurvicateScript', () => {
 		const closeSurvey = jest.fn();
 		window._sva = { closeSurvey, addEventListener: jest.fn() };
 
-		loadSurvicateScript( 'test-workspace-id' );
+		loadSurvicateScript( 'test-workspace-id', controller.signal );
 		window.dispatchEvent( new Event( 'SurvicateReady' ) );
 
 		const modal = document.createElement( 'div' );
@@ -114,8 +122,6 @@ describe( 'loadSurvicateScript', () => {
 		document.body.appendChild( modal );
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
-		// Observers registered by earlier tests in this file are page-lifetime
-		// and also fire, so assert on "called" rather than an exact count.
-		expect( closeSurvey ).toHaveBeenCalled();
+		expect( closeSurvey ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
