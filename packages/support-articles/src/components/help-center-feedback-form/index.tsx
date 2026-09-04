@@ -30,7 +30,7 @@ const HelpCenterFeedbackForm = ( {
 } ) => {
 	const { __ } = useI18n();
 	const [ rating, setRating ] = useState< ArticleRating | null >(
-		userRating ?? getSessionRating( postId ) ?? null
+		userRating ?? getSessionRating( blogId, postId ) ?? null
 	);
 	const { mutate: rateArticle } = useRateArticle();
 
