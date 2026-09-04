@@ -74,7 +74,7 @@ export function BillingPurchaseInfoPopover( { children }: { children: ReactNode 
 }
 
 function ProductIcon( { icon, label }: { icon: ReactElement; label: string } ) {
-	const containerSize = 36;
+	const containerSize = 48;
 	const iconSize = 20;
 	return (
 		<span
@@ -97,7 +97,7 @@ function ProductIcon( { icon, label }: { icon: ReactElement; label: string } ) {
 }
 
 function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purchase } ) {
-	const size = 36;
+	const size = 48;
 
 	if ( purchase.is_jetpack_plan_or_product ) {
 		return (
@@ -309,7 +309,7 @@ export function getFields( {
 				return (
 					<HStack justify="flex-start" spacing={ 1 }>
 						<PurchaseSettingLink purchase={ item } disabled={ isTransferred }>
-							{ getTitleForListDisplay( item ) }
+							{ getTitleForListDisplay( item, false ) }
 						</PurchaseSettingLink>
 						<OwnerInfo purchase={ item } isTransferredOwnership={ isTransferred } />
 					</HStack>
