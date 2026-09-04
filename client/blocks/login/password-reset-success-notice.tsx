@@ -4,7 +4,7 @@ import Notice from 'calypso/components/notice';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 
 /**
- * Show a password reset confirmation notice when the `password_reset` query argument is set to `success`
+ * Show a password reset confirmation notice
  */
 export default function PasswordResetSuccessNotice() {
 	const translate = useTranslate();
