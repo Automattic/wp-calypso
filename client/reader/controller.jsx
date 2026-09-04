@@ -422,7 +422,7 @@ export function redirectLoggedOutToDiscover( context, next ) {
 
 /**
  * Middleware to redirect logged out users to the Discover tags tab, selecting
- * the requested tag when the route has one and preserving any locale prefix.
+ * the requested tag when the route has one.
  * Intended for the tag pages, which no longer support logged out users.
  * @param   {Object}   context Context object
  * @param   {Function} next    Calls next middleware
@@ -434,9 +434,8 @@ export function redirectLoggedOutToDiscoverTags( context, next ) {
 		next();
 		return;
 	}
-	const localePrefix = context.params.lang ? '/' + context.params.lang : '';
 	const tag = context.params.tag ? encodeURIComponent( context.params.tag ) : 'dailyprompt';
-	return page.redirect( `${ localePrefix }/discover/tags?selectedTag=${ tag }` );
+	return page.redirect( `/discover/tags?selectedTag=${ tag }` );
 }
 
 /**

@@ -1058,26 +1058,6 @@ function wpcomPages( app ) {
 		}
 	} );
 
-	// The tag pages no longer render logged out; redirect old links (and search
-	// engines) to the Discover tags tab. A 302 rather than a 301 because the
-	// response depends on login state and browsers cache 301s unconditionally.
-	// Logged-in users fall through to the client-side routes.
-	app.get(
-		[
-			'/:locale([a-z]{2,3}|[a-z]{2}-[a-z]{2})?/tags',
-			'/:locale([a-z]{2,3}|[a-z]{2}-[a-z]{2})?/tag/:tag?',
-		],
-		( req, res, next ) => {
-			if ( req.context.isLoggedIn ) {
-				next();
-				return;
-			}
-			const localePrefix = req.params.locale ? '/' + req.params.locale : '';
-			const selectedTag = req.params.tag ? encodeURIComponent( req.params.tag ) : 'dailyprompt';
-			res.redirect( 302, `${ localePrefix }/discover/tags?selectedTag=${ selectedTag }` );
-		}
-	);
-
 	// Redirect legacy `/menus` routes to the corresponding Customizer panel
 	// TODO: Move to `my-sites/customize` route defs once that section is isomorphic
 	app.get( [ '/menus', '/menus/:site?' ], ( req, res ) => {
