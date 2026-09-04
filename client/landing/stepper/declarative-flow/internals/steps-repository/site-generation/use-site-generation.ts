@@ -25,18 +25,45 @@ export type SiteGenerationState = {
 };
 
 const GENERATION_TIMEOUT_MS = 30 * 60 * 1000;
+const STEP_TIMER_STORAGE_PREFIX = 'site-generation-step-timer-v1';
 
 type GenerationFailure = { reason: 'timed-out' } | { reason: 'build-failed'; ui: BuildWowUi };
 
+function getStoredObservedAt(
+	siteIdentifier: string,
+	stepId: string,
+	firstObservedAt: number,
+	now: number
+): number {
+	const storageKey = `${ STEP_TIMER_STORAGE_PREFIX }:${ siteIdentifier }`;
+	const storedStepId = window.sessionStorage.getItem( `${ storageKey }:step` );
+	const storedObservedAt = Number( window.sessionStorage.getItem( `${ storageKey }:observed-at` ) );
+	if ( storedStepId === stepId && storedObservedAt > 0 && storedObservedAt <= now ) {
+		return storedObservedAt;
+	}
+
+	const observedAt = storedStepId === null ? firstObservedAt : now;
+	window.sessionStorage.setItem( `${ storageKey }:step`, stepId );
+	window.sessionStorage.setItem( `${ storageKey }:observed-at`, String( observedAt ) );
+	return observedAt;
+}
+
+function clearStoredStepTimer( siteIdentifier: string ): void {
+	const storageKey = `${ STEP_TIMER_STORAGE_PREFIX }:${ siteIdentifier }`;
+	window.sessionStorage.removeItem( `${ storageKey }:step` );
+	window.sessionStorage.removeItem( `${ storageKey }:observed-at` );
+}
+
 function getStepsFromServer(
 	ui: BuildWowUi,
-	previousSteps: SiteGenerationStep[] | null
+	previousSteps: SiteGenerationStep[] | null,
+	siteIdentifier: string,
+	fallbackStartedAt: number,
+	now: number
 ): SiteGenerationStep[] {
-	const now = Date.now();
-
 	return ( ui.steps ?? [] )
 		.filter( ( step ) => step.id && step.label )
-		.map( ( step ) => {
+		.map( ( step, index ) => {
 			let status: SiteGenerationStep[ 'status' ] = 'idle';
 			if ( step.state === 'done' ) {
 				status = 'done';
@@ -44,15 +71,21 @@ function getStepsFromServer(
 				status = 'active';
 			}
 
-			const previousStartedAt = previousSteps?.find(
-				( previousStep ) => previousStep.id === step.id && previousStep.status === 'active'
-			)?.startedAt;
+			let startedAt: number | undefined;
+			if ( status === 'active' ) {
+				const previousStartedAt = previousSteps?.find(
+					( previousStep ) => previousStep.id === step.id && previousStep.status === 'active'
+				)?.startedAt;
+				const firstObservedAt =
+					previousStartedAt ?? ( previousSteps === null && index === 0 ? fallbackStartedAt : now );
+				startedAt = getStoredObservedAt( siteIdentifier, step.id as string, firstObservedAt, now );
+			}
 
 			return {
 				id: step.id as string,
 				label: step.label as string,
 				status,
-				startedAt: status === 'active' ? previousStartedAt ?? now : undefined,
+				startedAt,
 			};
 		} );
 }
@@ -90,9 +123,12 @@ export function useSiteGeneration( {
 		);
 		const stopStatusPolling = pollForBuildWowStatus( {
 			siteIdentifier,
-			onReady: ( response ) =>
-				window.location.assign( getLiveEditorUrl( editorUrl, response.site_editor_url ) ),
+			onReady: ( response ) => {
+				clearStoredStepTimer( siteIdentifier );
+				window.location.assign( getLiveEditorUrl( editorUrl, response.site_editor_url ) );
+			},
 			onFailed: ( status, ui ) => {
+				clearStoredStepTimer( siteIdentifier );
 				logBuildWowEvent( 'site_generation_failed', {
 					status,
 					site_identifier: siteIdentifier,
@@ -100,8 +136,15 @@ export function useSiteGeneration( {
 				setFailure( ui ? { reason: 'build-failed', ui } : { reason: 'timed-out' } );
 			},
 			onUpdate: ( ui ) => {
+				const now = Date.now();
 				setServerSteps( ( previousSteps ) => {
-					const nextSteps = getStepsFromServer( ui, previousSteps );
+					const nextSteps = getStepsFromServer(
+						ui,
+						previousSteps,
+						siteIdentifier,
+						fallbackStartedAt,
+						now
+					);
 					return nextSteps.length > 0 ? nextSteps : previousSteps;
 				} );
 			},
@@ -116,7 +159,7 @@ export function useSiteGeneration( {
 			window.clearTimeout( generationTimeout );
 			stopStatusPolling();
 		};
-	}, [ buildAttempt, editorUrl, failure, siteIdentifier ] );
+	}, [ buildAttempt, editorUrl, failure, fallbackStartedAt, siteIdentifier ] );
 
 	const retryBuild = useCallback( async () => {
 		if ( ! siteIdentifier || ! specId || isRetryingRef.current ) {
@@ -130,6 +173,7 @@ export function useSiteGeneration( {
 		} );
 		try {
 			await requestBuildWowSite( siteIdentifier, specId, graph );
+			clearStoredStepTimer( siteIdentifier );
 			setFallbackStartedAt( Date.now() );
 			setServerSteps( null );
 			setFailure( null );
