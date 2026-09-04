@@ -41,12 +41,9 @@ export function getOnboardingStepperPosition(
 	// deep link to `/setup/onboarding/plans` lands on it without passing the flow root that
 	// seeds the cart. Numbering a group the list left out would read "0 of 2", so a visit
 	// standing on one keeps it.
-	// Annotated: the filter's inferred type predicate would otherwise narrow the list to the
-	// groups it kept, and `group` may still be the one it dropped.
-	const groups: readonly OnboardingStepperGroup[] =
-		skipsPlans && group !== 'plans'
-			? ONBOARDING_STEPPER_GROUPS.filter( ( g ) => g !== 'plans' )
-			: ONBOARDING_STEPPER_GROUPS;
+	const groups = ONBOARDING_STEPPER_GROUPS.filter(
+		( g ) => g === group || ! ( skipsPlans && g === ONBOARDING_OMITTED_PLANS_GROUP )
+	);
 
 	return {
 		current: groups.indexOf( group ) + 1,
