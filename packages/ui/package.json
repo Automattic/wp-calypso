@@ -41,12 +41,12 @@
 	"types": "dist",
 	"dependencies": {
 		"@base-ui/react": "^1.5.0",
-		"@wordpress/base-styles": "9.1.0",
-		"@wordpress/element": "^8.0.0",
-		"@wordpress/i18n": "^6.21.0",
-		"@wordpress/icons": "^13.3.0",
-		"@wordpress/primitives": "^4.48.0",
-		"@wordpress/ui": "^0.18.0",
+		"@wordpress/base-styles": "13.0.0",
+		"@wordpress/element": "^8.6.0",
+		"@wordpress/i18n": "^6.27.0",
+		"@wordpress/icons": "^15.5.0",
+		"@wordpress/primitives": "^4.54.0",
+		"@wordpress/ui": "^0.21.0",
 		"clsx": "^2.1.1",
 		"date-fns": "^4.1.0",
 		"react-day-picker": "^9.7.0"

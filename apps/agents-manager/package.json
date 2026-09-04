@@ -36,10 +36,10 @@
 		"@automattic/jetpack-ai-sidebar": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/components": "^28.23.0",
-		"@wordpress/compose": "^8.2.0",
-		"@wordpress/data": "^10.48.0",
-		"@wordpress/i18n": "^6.21.0",
-		"@wordpress/plugins": "^7.48.0"
+		"@wordpress/compose": "^8.7.0",
+		"@wordpress/data": "^10.54.0",
+		"@wordpress/i18n": "^6.27.0",
+		"@wordpress/plugins": "^7.54.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
@@ -54,8 +54,8 @@
 	},
 	"peerDependencies": {
 		"@automattic/calypso-router": "workspace:^",
-		"@wordpress/data": "^10.48.0",
-		"@wordpress/element": "^8.0.0",
+		"@wordpress/data": "^10.54.0",
+		"@wordpress/element": "^8.6.0",
 		"postcss": "^8.5.15",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",

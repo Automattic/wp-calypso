@@ -32,7 +32,7 @@
 		"@types/chroma-js": "^2.4.5",
 		"@types/jest": "^29.5.14",
 		"@types/node": "^24.12.2",
-		"@wordpress/base-styles": "^9.1.0",
+		"@wordpress/base-styles": "^13.0.0",
 		"chroma-js": "^2.6.0",
 		"postcss": "^8.5.15",
 		"postcss-custom-properties": "^12.1.11",

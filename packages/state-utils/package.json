@@ -39,8 +39,8 @@
 	},
 	"dependencies": {
 		"@automattic/js-utils": "workspace:^",
-		"@wordpress/is-shallow-equal": "^5.48.0",
-		"@wordpress/warning": "^3.48.0",
+		"@wordpress/is-shallow-equal": "^5.54.0",
+		"@wordpress/warning": "^3.54.0",
 		"redux": "^5.0.1",
 		"redux-thunk": "^3.1.0",
 		"tslib": "^2.8.1"
