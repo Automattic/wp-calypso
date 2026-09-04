@@ -59,6 +59,6 @@ jobs:
 
       - name: Run Claude
         if: steps.pr-origin.outputs.is_internal == 'true'
-        uses: anthropics/claude-code-action@fbda2eb1bdc90d319b8d853f5deb53bca199a7c1 # v1.0.140
+        uses: anthropics/claude-code-action@1f291e1cfe0f5fc21db2aef19af844591600ade7 # v1.0.206
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
