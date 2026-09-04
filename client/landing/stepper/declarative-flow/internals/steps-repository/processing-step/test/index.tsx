@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-// @ts-nocheck - TODO: Fix TypeScript issues
 import { TRANSFERRING_HOSTED_SITE_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
 import { act, screen } from '@testing-library/react';
 import { dispatch } from '@wordpress/data';
@@ -10,6 +9,7 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import ProcessingStep from '../';
 import { mockStepProps, renderStep } from '../../test/helpers/index';
+import type { OnboardActions } from '@automattic/data-stores';
 
 jest.mock( 'calypso/landing/stepper/hooks/use-record-signup-complete', () => ( {
 	useRecordSignupComplete: () => jest.fn(),
@@ -24,17 +24,21 @@ jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 	useSiteData: () => ( { siteSlug: 'example.wordpress.com' } ),
 } ) );
 
+type ProcessingStepProps = React.ComponentProps< typeof ProcessingStep >;
+
 describe( 'ProcessingStep', () => {
-	const render = ( props ) => renderStep( <ProcessingStep { ...mockStepProps( props ) } /> );
+	const onboardActions = () => dispatch( ONBOARD_STORE ) as OnboardActions;
+	const render = ( props: Partial< ProcessingStepProps > ) =>
+		renderStep( <ProcessingStep { ...( mockStepProps( props ) as ProcessingStepProps ) } /> );
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-		dispatch( ONBOARD_STORE ).setTransferStatus( null );
-		dispatch( ONBOARD_STORE ).setTransferStartedAt( null );
+		onboardActions().setTransferStatus( null );
+		onboardActions().setTransferStartedAt( null );
 	} );
 
 	it( 'shows the transfer wait for a transferring hosted site creation flow', () => {
-		dispatch( ONBOARD_STORE ).setTransferStatus( transferStates.ACTIVE );
+		onboardActions().setTransferStatus( transferStates.ACTIVE );
 
 		render( { flow: TRANSFERRING_HOSTED_SITE_FLOW } );
 
@@ -49,7 +53,7 @@ describe( 'ProcessingStep', () => {
 	} );
 
 	it( 'narrates the stage the transfer is actually in', () => {
-		dispatch( ONBOARD_STORE ).setTransferStatus( transferStates.RELOCATING );
+		onboardActions().setTransferStatus( transferStates.RELOCATING );
 
 		render( { flow: TRANSFERRING_HOSTED_SITE_FLOW } );
 
@@ -60,7 +64,7 @@ describe( 'ProcessingStep', () => {
 
 	it( 'offers a way to the site once the transfer wait stalls', () => {
 		jest.useFakeTimers();
-		dispatch( ONBOARD_STORE ).setTransferStatus( transferStates.COMPLETE );
+		onboardActions().setTransferStatus( transferStates.COMPLETE );
 
 		render( { flow: TRANSFERRING_HOSTED_SITE_FLOW } );
 		act( () => jest.advanceTimersByTime( 95_000 ) );
