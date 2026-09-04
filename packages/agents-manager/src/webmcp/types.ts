@@ -7,6 +7,7 @@ export type WebMcpTool = {
 		readOnlyHint: boolean;
 		destructiveHint?: boolean;
 		idempotentHint?: boolean;
+		untrustedContentHint?: boolean;
 	};
 	execute: (
 		input: Record< string, unknown >,
