@@ -26,7 +26,6 @@ import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
-import { useFlowState } from '../../state-manager/store';
 import { ProcessingResult } from './constants';
 import { useLoadingMessageIndex } from './hooks/use-loading-message-index';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
@@ -39,8 +38,7 @@ import './style.scss';
 
 /**
  * Mounted only for transfer flows, so the site request behind `useSiteData` stays out of every
- * other flow's processing screen. The slug is what lets a stalled wait offer a way to the site;
- * the created-site fallback covers a flow that made the site itself and carries no slug in the URL.
+ * other flow's processing screen. The slug is what lets a stalled wait offer a way to the site.
  */
 function SiteTransferWait( {
 	transferStatus,
@@ -50,14 +48,13 @@ function SiteTransferWait( {
 	startedAt: number | null;
 } ) {
 	const { siteSlug } = useSiteData();
-	const createdSiteSlug = useFlowState().get( 'site' )?.siteSlug;
 
 	return (
 		<TransferWaitCard
 			transferStatus={ transferStatus }
 			startedAt={ startedAt }
 			isPluginInstall={ false }
-			siteSlug={ siteSlug || createdSiteSlug }
+			siteSlug={ siteSlug }
 		/>
 	);
 }
