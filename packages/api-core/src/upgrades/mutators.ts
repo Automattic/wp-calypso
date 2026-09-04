@@ -14,6 +14,7 @@ export interface UpdateCreditCardParams {
 	taxCity?: string;
 	taxOrganization?: string;
 	taxAddress?: string;
+	taxIsForBusiness?: boolean;
 	setupKey?: string;
 }
 
@@ -54,6 +55,7 @@ export async function updateCreditCard(
 			tax_city: params.taxCity,
 			tax_organization: params.taxOrganization,
 			tax_address: params.taxAddress,
+			tax_is_for_business: params.taxIsForBusiness ?? '',
 			setup_key: params.setupKey,
 		},
 	} );

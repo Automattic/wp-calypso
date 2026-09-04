@@ -13,7 +13,11 @@ import { store as noticesStore } from '@wordpress/notices';
 import { Fragment, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import InlineSupportLink from '../../../components/inline-support-link';
-import { TaxLocationForm, defaultTaxLocation } from '../../../components/tax-location-form';
+import {
+	TaxLocationForm,
+	defaultTaxLocation,
+	isBusinessUseTaxLocation,
+} from '../../../components/tax-location-form';
 import { PaymentMethodImage } from '../payment-method-image';
 import { CreditCardFields } from './credit-card-fields';
 import type { StoredPaymentMethodTaxLocation } from '@automattic/api-core';
@@ -166,6 +170,7 @@ function CreditCardFieldsWrapper( {
 			/>
 			<TaxLocationForm
 				data={ formData.taxLocation }
+				allowIsForBusinessCheckbox
 				onChange={ ( updated ) =>
 					handleFieldChange( { taxLocation: { ...formData.taxLocation, ...updated } } )
 				}
@@ -231,6 +236,9 @@ function CreditCardSubmitButton( {
 			organization: formData.taxLocation.organization,
 			address: formData.taxLocation.address,
 			useForAllSubscriptions: formData.useForAllSubscriptions,
+			useForBusiness: isBusinessUseTaxLocation( formData.taxLocation )
+				? Boolean( formData.taxLocation.is_for_business )
+				: undefined,
 			cardElement,
 		} );
 	};
