@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
+import { login } from 'calypso/lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	formUpdate,
@@ -36,6 +37,10 @@ class VerificationCodeForm extends Component {
 	state = {
 		twoStepCode: '',
 		isDisabled: true,
+		// Set when the server rejects the nonce. The form cannot recover from that,
+		// so it stays disabled and offers a way back to /log-in instead.
+		nonceExpired: false,
+		nonceExpiredMessage: null,
 	};
 
 	componentDidMount() {
@@ -83,7 +88,16 @@ class VerificationCodeForm extends Component {
 				onSuccess();
 			} )
 			.catch( ( error ) => {
-				this.setState( { isDisabled: false } );
+				// The two-step endpoint sends no fresh nonce with this error, so another
+				// submit would reuse the stale one and fail the same way. Leave the form
+				// disabled and give the user an exit instead of a retry that cannot work.
+				const nonceExpired = error.code === 'invalid_two_step_nonce';
+
+				this.setState( {
+					isDisabled: nonceExpired,
+					nonceExpired,
+					nonceExpiredMessage: nonceExpired ? error.message : null,
+				} );
 
 				this.props.recordTracksEvent( 'calypso_login_two_factor_verification_code_failure', {
 					error_code: error.code,
@@ -166,6 +180,16 @@ class VerificationCodeForm extends Component {
 						/>
 						{ requestError && requestError.field === 'twoStepCode' && (
 							<FormInputValidation isError text={ requestError.message } />
+						) }
+
+						{ this.state.nonceExpired && (
+							<div className="verification-code-form__nonce-expired">
+								<FormInputValidation isError text={ this.state.nonceExpiredMessage } />
+
+								<Button variant="link" href={ login() }>
+									{ translate( 'Back to login' ) }
+								</Button>
+							</div>
 						) }
 
 						{ smallPrint }

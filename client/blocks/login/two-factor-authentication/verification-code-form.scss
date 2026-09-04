@@ -29,6 +29,16 @@
 		margin-top: 16px;
 		min-height: 50px;
 	}
+
+	.verification-code-form__nonce-expired {
+		margin-top: 8px;
+
+		// The card stretches every button to full width; this one is inline text.
+		button {
+			width: auto;
+			padding: 0;
+		}
+	}
 }
 
 .woo .two-factor-authentication__verification-code-form-wrapper {
