@@ -196,7 +196,22 @@ describe( 'utils', () => {
 					label: 'Chicken and "Ribs"',
 					value: 10,
 				} )
-			).toEqual( [ [ '"Chicken and ""Ribs""', 10, 'https://example.com/chicken' ] ] );
+			).toEqual( [ [ '"Chicken and ""Ribs"""', 10, 'https://example.com/chicken' ] ] );
+		} );
+
+		test( 'should escape every quote in a label', () => {
+			expect(
+				buildExportArray( {
+					actions: [
+						{
+							type: 'link',
+							data: 'https://example.com/chicken',
+						},
+					],
+					label: 'Chicken "and" "Ribs"',
+					value: 10,
+				} )
+			).toEqual( [ [ '"Chicken ""and"" ""Ribs"""', 10, 'https://example.com/chicken' ] ] );
 		} );
 
 		test( 'should modify each row in csv by a modifier function', () => {
