@@ -1,4 +1,3 @@
-import { omit } from '@automattic/js-utils';
 import isEqual from 'fast-deep-equal/es6';
 import QueryKey from './key';
 
@@ -251,24 +250,18 @@ export default class QueryManager {
 			const item = this.getItem( receivedItemKey );
 			const mergedItem = this.constructor.mergeItem( item, receivedItem, options.patch );
 
-			if ( undefined === mergedItem ) {
-				if ( item ) {
-					// `undefined` item is an intended omission from set
-					return omit( memo, receivedItemKey );
-				}
-
-				// Item never existed in set in the first place, skip and
-				// return same memo
+			if ( undefined === mergedItem && ! item ) {
 				return memo;
 			}
-
-			if ( ! item || ! isEqual( mergedItem, item ) ) {
-				// Did not exist previously or has changed
-				if ( memo === this.data.items ) {
-					// Create a copy of memo, as we don't want to mutate the original items set
-					memo = { ...memo };
-				}
-
+			if ( undefined !== mergedItem && item && isEqual( mergedItem, item ) ) {
+				return memo;
+			}
+			if ( memo === this.data.items ) {
+				memo = { ...memo };
+			}
+			if ( undefined === mergedItem ) {
+				delete memo[ receivedItemKey ];
+			} else {
 				memo[ receivedItemKey ] = mergedItem;
 			}
 
