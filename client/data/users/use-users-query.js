@@ -12,10 +12,8 @@ const extractPages = ( pages = [] ) => pages.flatMap( ( page ) => page.users );
 const compareUnique = ( a, b ) => a.ID === b.ID;
 
 const useUsersQuery = ( siteId, fetchOptions = {}, queryOptions = {} ) => {
-	const { search } = fetchOptions;
-
 	return useInfiniteQuery( {
-		queryKey: [ 'users', siteId, search ],
+		queryKey: [ 'users', siteId, fetchOptions ],
 		queryFn: ( { pageParam } ) =>
 			wpcom.req.get( `/sites/${ siteId }/users`, {
 				...defaults,
@@ -39,8 +37,8 @@ const useUsersQuery = ( siteId, fetchOptions = {}, queryOptions = {} ) => {
 			 */
 			const users = uniqueBy( extractPages( data.pages ), compareUnique );
 			return {
-				users: uniqueBy( extractPages( data.pages ), compareUnique ),
-				total: users?.length ?? data.pages[ 0 ].found,
+				users,
+				total: users.length,
 				...data,
 			};
 		},
