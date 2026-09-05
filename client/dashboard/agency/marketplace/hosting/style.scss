@@ -1,0 +1,660 @@
+@import "@wordpress/base-styles/colors";
+
+.marketplace-hosting__selector {
+	display: grid;
+	grid-template-columns: repeat( 3, 1fr );
+	gap: 24px;
+
+	@media ( max-width: 782px ) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.marketplace-hosting__option-grid {
+	display: grid;
+	grid-template-columns: repeat( 2, 1fr );
+	gap: 16px;
+	align-items: stretch;
+
+	@media ( max-width: 660px ) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.marketplace-hosting__header-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 8px 16px;
+
+	@media ( max-width: 660px ) {
+		justify-content: space-between;
+		inline-size: 100%;
+	}
+}
+
+.marketplace-hosting__guide-option {
+	cursor: pointer;
+	transition: box-shadow 0.1s ease-in-out;
+
+	&:hover,
+	&:focus-visible {
+		box-shadow: inset 0 0 0 1.5px var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+	}
+}
+
+.marketplace-hosting__guide-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: 40px;
+	block-size: 40px;
+	border-radius: 8px;
+	box-shadow: inset 0 0 0 1px var( --dashboard-overview__divider-color );
+	flex-shrink: 0;
+
+	&.is-accent {
+		box-shadow: inset 0 0 0 1px var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+
+		svg {
+			fill: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+		}
+	}
+}
+
+.marketplace-hosting__guide-chevron {
+	margin-inline-start: auto;
+	flex-shrink: 0;
+	opacity: 0.4;
+}
+
+.marketplace-hosting__guide-result {
+	box-shadow: inset 0 0 0 1.5px var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+}
+
+// Docked concierge shrinks the dashboard content so it reflows beside the
+// chat instead of being covered.
+.has-docked-concierge .dashboard-root__content {
+	padding-inline-end: 380px;
+}
+
+.marketplace-hosting__concierge {
+	position: fixed;
+	inset-block: 0;
+	inset-inline-end: 0;
+	z-index: 1000;
+	inline-size: 380px;
+	max-inline-size: 100%;
+	display: flex;
+	flex-direction: column;
+
+	// --color-background comes from the .agenttic.dark palette on this element.
+	background-color: var( --color-background, var( --color-surface ) );
+}
+
+.marketplace-hosting__concierge-agent {
+	flex: 1;
+	min-block-size: 0;
+	padding-inline: 8px;
+}
+
+.marketplace-hosting__concierge-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 16px;
+	font-weight: 600;
+	color: var( --color-foreground );
+	border-block-end: 1px solid var( --color-input-border );
+
+	.components-button {
+		color: var( --color-foreground );
+	}
+}
+
+.marketplace-hosting__concierge-logo {
+	block-size: 24px;
+	inline-size: auto;
+	object-fit: contain;
+	object-position: left;
+}
+
+// The brand descriptor is a lockup with a dark wordmark that vanishes on the
+// dark card; crop to just the badge and render the name as (white) text.
+.marketplace-hosting__concierge-mark {
+	inline-size: 24px;
+	block-size: 24px;
+	object-fit: cover;
+	object-position: left center;
+	flex-shrink: 0;
+}
+
+// The recommendation card lives inside the dark .agenttic chat, so give it a
+// dark surface too — the inherited light text stays readable and it reads as
+// part of the agent rather than a jarring white block.
+.agenttic .marketplace-hosting__concierge-rec {
+	inline-size: 100%;
+	box-shadow: inset 0 0 0 1px var( --color-input-border );
+
+	&,
+	.components-card__body {
+		background-color: var( --color-popover-muted, var( --color-surface ) );
+	}
+
+	// Brighten the proof checkmarks; the default gray is too dark on this surface.
+	.marketplace-hosting__check {
+		fill: var( --color-foreground );
+	}
+}
+
+.marketplace-hosting__concierge-rec-badge {
+	display: inline-flex;
+	align-items: center;
+	flex-shrink: 0;
+	padding-block: 3px;
+	padding-inline: 10px;
+	border-radius: 16px;
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+	background: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+	color: var( --color-foreground );
+}
+
+.marketplace-hosting__platform-bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 8px 24px;
+	border-block-end: 1px solid var( --dashboard-overview__divider-color );
+
+	/* Tabs stretches each tab to fill the list; keep the tier tabs hug-width and
+	   left-anchored like the TabPanel they replace. */
+	.marketplace-hosting__tabs {
+		flex: 1 1 auto;
+		justify-content: flex-start;
+
+		[role='tab'] {
+			flex: 0 0 auto;
+		}
+	}
+}
+
+.marketplace-hosting__choose-pill.components-button {
+	flex-shrink: 0;
+
+	svg {
+		fill: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+	}
+}
+
+.marketplace-hosting__guide-compare {
+	display: grid;
+	grid-template-columns: repeat( 3, 1fr );
+	gap: 16px;
+	align-items: stretch;
+
+	@media ( max-width: 782px ) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.marketplace-hosting__guide-compare-col {
+	block-size: 100%;
+}
+
+.marketplace-hosting__guide-steps {
+	display: flex;
+	gap: 6px;
+	inline-size: 100%;
+}
+
+.marketplace-hosting__guide-step {
+	flex: 1;
+	block-size: 4px;
+	border-radius: 2px;
+	background: var( --dashboard-overview__divider-color );
+
+	&.is-active {
+		background: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+	}
+}
+
+.marketplace-hosting__guide-logo {
+	block-size: 24px;
+	inline-size: auto;
+	object-fit: contain;
+	object-position: left;
+}
+
+.marketplace-hosting__guide-recap {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.marketplace-hosting__guide-chip {
+	display: inline-flex;
+	align-items: center;
+	padding-block: 3px;
+	padding-inline: 10px;
+	border-radius: 16px;
+	font-size: 12px;
+	box-shadow: inset 0 0 0 1px var( --dashboard-overview__divider-color );
+}
+
+.marketplace-hosting__selector-card {
+	cursor: pointer;
+
+	&.is-selected {
+		box-shadow: inset 0 0 0 1.5px var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+	}
+}
+
+.marketplace-hosting__selector-check {
+	fill: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+	flex-shrink: 0;
+
+	&.is-hidden {
+		visibility: hidden;
+	}
+}
+
+.marketplace-hosting__avatar {
+	inline-size: 40px;
+	block-size: 40px;
+	border-radius: 50%;
+	object-fit: cover;
+	flex-shrink: 0;
+}
+
+.marketplace-hosting__layout {
+	display: grid;
+	grid-template-columns: 2fr 1fr;
+	gap: 24px;
+	align-items: start;
+
+	@media ( max-width: 1080px ) {
+		grid-template-columns: 1fr;
+	}
+}
+
+
+.marketplace-hosting__includes {
+	display: grid;
+	grid-template-columns: repeat( 2, minmax( 0, max-content ) );
+	gap: 8px 48px;
+
+	@media ( max-width: 660px ) {
+		grid-template-columns: 1fr;
+	}
+}
+
+// Three even columns that fill the card width (used where there are 6 items).
+.marketplace-hosting__includes-3col {
+	grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
+
+	@media ( max-width: 782px ) {
+		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+	}
+
+	@media ( max-width: 660px ) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.marketplace-hosting__grid-4 {
+	display: grid;
+	grid-template-columns: repeat( 4, 1fr );
+	gap: 24px;
+	align-items: stretch;
+
+	@media ( max-width: 1080px ) {
+		grid-template-columns: repeat( 2, 1fr );
+	}
+
+	@media ( max-width: 660px ) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.marketplace-hosting__grid-3 {
+	display: grid;
+	grid-template-columns: repeat( 3, 1fr );
+	gap: 24px;
+	align-items: stretch;
+
+	@media ( max-width: 1080px ) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.marketplace-hosting__grid-2 {
+	display: grid;
+	grid-template-columns: repeat( 2, 1fr );
+	gap: 24px;
+	align-items: stretch;
+
+	@media ( max-width: 782px ) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.marketplace-hosting__brand-logo {
+	block-size: 24px;
+	inline-size: auto;
+	align-self: start;
+}
+
+.marketplace-hosting__selector-logo {
+	block-size: 24px;
+	inline-size: auto;
+}
+
+.marketplace-hosting__brand-strip {
+	display: grid;
+	grid-template-columns: repeat( 6, 1fr );
+	gap: 12px;
+
+	@media ( max-width: 960px ) {
+		grid-template-columns: repeat( 3, 1fr );
+	}
+
+	@media ( max-width: 660px ) {
+		grid-template-columns: repeat( 2, 1fr );
+	}
+}
+
+.marketplace-hosting__brand-cell {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	block-size: 72px;
+	padding: 12px;
+	border-radius: 8px;
+	box-shadow: inset 0 0 0 1px var( --dashboard-overview__divider-color );
+
+	img {
+		max-block-size: 22px;
+		max-inline-size: 100%;
+		inline-size: auto;
+		block-size: auto;
+		opacity: 0.6;
+	}
+}
+
+.marketplace-hosting__feature-icon {
+	color: var( --wp-admin-theme-color );
+	fill: var( --wp-admin-theme-color );
+}
+
+.marketplace-hosting__check {
+	fill: $gray-700;
+	flex-shrink: 0;
+	align-self: flex-start;
+}
+
+.marketplace-hosting__price-strikethrough {
+	text-decoration: line-through;
+}
+
+// Keep the discount line's height reserved so stepping quantity never shifts
+// the row; just hide it when there's no discount.
+.marketplace-hosting__price-secondary.is-hidden {
+	visibility: hidden;
+}
+
+.marketplace-hosting__stepper {
+	inline-size: 150px;
+
+	.components-input-control__container {
+		border-radius: 4px;
+	}
+}
+
+.marketplace-hosting__volume-grid {
+	display: grid;
+	grid-template-columns: repeat( 4, 1fr );
+	gap: 8px;
+
+	@media ( max-width: 660px ) {
+		grid-template-columns: repeat( 2, 1fr );
+	}
+}
+
+.marketplace-hosting__volume-cell {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 10px 12px;
+	border: 0;
+	border-radius: 8px;
+	background: none;
+	color: inherit;
+	font: inherit;
+	text-align: start;
+	cursor: pointer;
+	box-shadow: inset 0 0 0 1px var( --dashboard-overview__divider-color );
+	transition: box-shadow 0.1s ease-in-out;
+
+	&:hover,
+	&:focus-visible {
+		box-shadow: inset 0 0 0 1.5px var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+	}
+
+	&.is-active {
+		box-shadow: inset 0 0 0 1.5px var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+		background: color-mix(
+			in srgb,
+			var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) 6%,
+			var( --color-surface )
+		);
+	}
+}
+
+.marketplace-hosting__volume-cell-sites {
+	font-weight: 600;
+	font-size: 13px;
+}
+
+.marketplace-hosting__volume-cell-price {
+	font-size: 13px;
+	color: var( --dashboard-color-text-subtle, var( --color-text-subtle ) );
+}
+
+.marketplace-hosting__volume-cell-save {
+	font-size: 12px;
+	color: var( --dashboard__foreground-color-success, var( --wp-components-color-accent ) );
+}
+
+.marketplace-hosting__compare {
+	inline-size: 100%;
+	border-collapse: collapse;
+
+	th,
+	td {
+		padding: 12px 16px;
+		text-align: start;
+		vertical-align: top;
+		border-block-end: 1px solid var( --color-border-subtle );
+	}
+
+	thead th img {
+		block-size: 20px;
+		inline-size: auto;
+	}
+
+	tbody th {
+		font-weight: 500;
+		inline-size: 180px;
+	}
+
+	tbody tr:last-child th,
+	tbody tr:last-child td {
+		border-block-end: none;
+	}
+}
+
+
+.marketplace-hosting__cart {
+	inline-size: 320px;
+	padding: 16px;
+
+	.components-button.is-primary {
+		justify-content: center;
+	}
+}
+
+
+
+
+
+
+/* Ported from a8c-for-agencies' guide-modal so referral onboarding matches
+   production (physical properties converted to logical; the hover gradient
+   overlay is dropped as it relied on a hardcoded rgba). */
+.guide-modal__wrapper {
+	inline-size: 400px;
+	align-self: start;
+
+	.components-modal__content {
+		margin: 0;
+		padding: 0;
+	}
+}
+
+.guide-modal__content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	min-block-size: 500px;
+}
+
+.guide-modal__header {
+	inline-size: 100%;
+	text-align: center;
+	margin-block-end: 20px;
+	block-size: 240px;
+	overflow: hidden;
+
+	img,
+	video {
+		z-index: -1;
+	}
+}
+
+.guide-modal__dismiss-button.components-button {
+	position: absolute;
+	inset-block-start: 16px;
+	inset-inline-end: 16px;
+	z-index: 10;
+
+	svg {
+		fill: var( --color-text-inverted );
+	}
+
+	&:focus-visible {
+		outline: 1px solid var( --color-text-inverted );
+	}
+}
+
+.guide-modal__main {
+	inline-size: 100%;
+	padding: 1rem;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	flex: 1 0 auto;
+}
+
+.guide-modal__body {
+	display: flex;
+	flex-direction: column;
+
+	.guide-modal__pagination-dots {
+		display: flex;
+		gap: 9px;
+		align-self: center;
+		margin-block-end: 1rem;
+	}
+
+	.guide-modal__pagination-dot {
+		block-size: 7px;
+		inline-size: 7px;
+		background-color: var( --color-neutral-20 );
+		border-radius: 50%;
+		display: inline-block;
+
+		&.active {
+			background-color: var( --color-primary-50 );
+		}
+	}
+
+	h3 {
+		margin: 0;
+		font-size: 1.25rem;
+		font-weight: 500;
+		line-height: 1.3;
+		color: var( --color-neutral-100 );
+	}
+
+	p {
+		margin-block-start: 8px;
+		font-size: 0.875rem;
+		line-height: 1.5;
+		color: var( --color-neutral-80 );
+	}
+}
+
+.guide-modal__footer {
+	display: flex;
+	gap: 1rem;
+	align-self: flex-end;
+}
+
+/* Two-line tab (?tabline): the subtitle hangs from the NAME's left edge, not
+   the badge's, so the badge reads as a bullet for both lines; tight leading so
+   the pair reads as one label. */
+.marketplace-hosting__tab-line {
+	font-weight: 400;
+	margin-block-start: 2px;
+	line-height: 16px;
+	letter-spacing: 0;
+}
+
+/* Round brand badge inside the tier tab: same descriptor crop as the card
+   header, sized to the tab's text line. */
+.marketplace-hosting__tab-mark {
+	inline-size: 20px;
+	block-size: 20px;
+	object-fit: cover;
+	object-position: left;
+	flex-shrink: 0;
+}
+
+/* The round brand badge is the left cap of the descriptor lockups (the same
+   assets the Learn page uses); the decoration slot's object-fit: cover plus
+   a left anchor crops the lockup to just the badge. */
+.marketplace-hosting__brand-mark {
+	object-position: left;
+}
+
+/* SectionHeader has no alignment prop; when a description makes the header
+   two lines tall, center-aligned decoration floats between them. Top-align
+   the icon with the title via the consumer className. */
+.marketplace-hosting__card-header .dashboard-section-header__heading-row {
+	align-items: flex-start;
+}
+
+.marketplace-hosting__plan-price {
+	font-size: 24px;
+	font-weight: 600;
+	color: var( --dashboard__foreground-color-success );
+}
+
+/* Billing term switch in the rail: hug-width under the price. */
+.marketplace-hosting__term-switch {
+	margin-block-start: 4px;
+}

@@ -1,0 +1,25 @@
+.marketplace-purchases__product-name {
+	font-weight: 500;
+}
+
+.marketplace-purchases__quantity {
+	color: var( --dashboard-color-text-subtle, var( --color-text-subtle ) );
+	font-variant-numeric: tabular-nums;
+}
+
+.marketplace-purchases__muted {
+	color: var( --dashboard-color-text-subtle, var( --color-text-subtle ) );
+	margin-inline-start: 2px;
+}
+
+.marketplace-purchases__revoke-details {
+	padding: 12px 16px;
+	border-radius: 4px;
+	background: var( --dashboard-color-surface-secondary, var( --color-surface-secondary ) );
+}
+
+.marketplace-purchases__revoke-key {
+	font-family: var( --dashboard-font-family-monospace, monospace );
+	word-break: break-all;
+}
+

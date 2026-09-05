@@ -9,6 +9,12 @@
 	// TODO: Add A4A theme variables
 
 	// Layout
+	// This variant has no masterbar yet; the base styles reserve space for
+	// one, which offsets the sidebar but not the content column. Remove when
+	// the omnibar lands for A4A. The unit is required: consumers subtract
+	// this inside calc(), where a unitless 0 is invalid.
+	// stylelint-disable-next-line length-zero-no-unit
+	--masterbar-height: 0px;
 	--dashboard__background-color: #fcfcfc;
 	--dashboard__background-color-success: #3ca758;
 	--dashboard__background-color-warning: #d47608;
@@ -37,4 +43,10 @@
 
 	// Overview
 	--dashboard-overview__divider-color: #{$gray-100};
+}
+
+/* TEMP — local only, do not commit: hide the dev environment badge for
+   screenshots. Undo with: git checkout -- client/dashboard/app-a4a/style.scss */
+.environment-badge {
+	display: none;
 }
