@@ -12,6 +12,7 @@ import {
 	unregisterAbility,
 } from '@wordpress/abilities';
 import { BIG_SKY_ABILITY_CATEGORY } from './constants';
+import { editorNavigateAbility } from './editor-navigate';
 import { getBlockTreeAbility } from './get-block-tree';
 import { restoreCheckpointAbility } from './restore-checkpoint';
 import { setSiteLogoAbility } from './set-site-logo';
@@ -22,6 +23,7 @@ import type { Ability } from './types';
 // Editor abilities. Migrating an editor ability from Big Sky = add its folder
 // under `abilities/` and list it here.
 const EDITOR_ABILITIES: Ability[] = [
+	editorNavigateAbility,
 	getBlockTreeAbility,
 	restoreCheckpointAbility,
 	setSiteLogoAbility,

@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { amToolProvider } from '../../abilities';
+import { editorNavigateAbility } from '../../abilities/editor-navigate';
 import { getBlockTreeAbility } from '../../abilities/get-block-tree';
 import { restoreCheckpointAbility } from '../../abilities/restore-checkpoint';
 import { setSiteLogoAbility } from '../../abilities/set-site-logo';
@@ -243,6 +244,7 @@ describe( 'loadExternalProviders', () => {
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
 				wpAdminNavigateAbility,
+				editorNavigateAbility,
 				getBlockTreeAbility,
 				restoreCheckpointAbility,
 				setSiteLogoAbility,
@@ -279,6 +281,7 @@ describe( 'loadExternalProviders', () => {
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
 				wpAdminNavigateAbility,
+				editorNavigateAbility,
 				getBlockTreeAbility,
 				restoreCheckpointAbility,
 				setSiteLogoAbility,
@@ -371,6 +374,7 @@ describe( 'loadExternalProviders', () => {
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
 				wpAdminNavigateAbility,
+				editorNavigateAbility,
 				getBlockTreeAbility,
 				restoreCheckpointAbility,
 				setSiteLogoAbility,
@@ -848,6 +852,7 @@ describe( 'loadExternalProviders', () => {
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
 				wpAdminNavigateAbility,
+				editorNavigateAbility,
 				getBlockTreeAbility,
 				restoreCheckpointAbility,
 				setSiteLogoAbility,

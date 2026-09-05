@@ -325,6 +325,8 @@ __metadata:
     "@wordpress/icons": "npm:^13.3.0"
     "@wordpress/media-utils": "npm:^5.48.0"
     "@wordpress/primitives": "npm:^4.48.0"
+    "@wordpress/private-apis": "npm:^1.51.0"
+    "@wordpress/router": "npm:^1.51.0"
     "@wordpress/url": "npm:^4.48.0"
     clsx: "npm:^2.1.1"
     deepmerge: "npm:^4.3.1"
