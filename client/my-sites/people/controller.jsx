@@ -20,7 +20,7 @@ export default {
 	redirectToTeam,
 
 	enforceSiteEnding( context, next ) {
-		const siteId = getSiteFragment( context.path );
+		const siteId = context.params.site || getSiteFragment( context.path );
 
 		if ( ! siteId ) {
 			redirectToTeam( context );
@@ -202,7 +202,10 @@ function renderSingleTeamMember( context, next ) {
 	context.primary = (
 		<>
 			<SingleTeamMemberTitle />
-			<EditTeamMember userLogin={ context.params.user_login } />
+			<EditTeamMember
+				userId={ context.params.user_id ? Number( context.params.user_id ) : undefined }
+				userLogin={ context.params.user_login }
+			/>
 		</>
 	);
 	next();
