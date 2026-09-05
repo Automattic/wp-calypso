@@ -36,6 +36,21 @@ function blogPost( id: number, overrides: Record< string, unknown > = {} ) {
 }
 
 describe( 'reader post cache', () => {
+	it.each( [
+		{ name: 'empty', posts: [] },
+		{ name: 'null-only', posts: [ null, undefined ] },
+	] )( 'preserves cached data for a $name post batch', ( { posts } ) => {
+		const queryClient = makeQueryClient();
+		const queryKey = [ 'read', 'post', 'cache', 'blog-1-100' ];
+		const cachedData = { base: blogPost( 1 ), overlay: { i_like: true } };
+		queryClient.setQueryData( queryKey, cachedData );
+
+		upsertPostCache( queryClient, posts );
+
+		expect( queryClient.getQueryData( queryKey ) ).toBe( cachedData );
+		expect( queryClient.getQueryDefaults( queryKey ).meta ).toEqual( { persist: false } );
+	} );
+
 	it( 'upserts stream posts into a canonical post cache', () => {
 		const queryClient = makeQueryClient();
 

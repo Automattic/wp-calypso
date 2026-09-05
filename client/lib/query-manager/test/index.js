@@ -184,6 +184,49 @@ describe( 'QueryManager', () => {
 	} );
 
 	describe( '#removeItems()', () => {
+		test( 'retains a prototype-named item when removing other items', () => {
+			const prototypeItem = { ID: '__proto__' };
+			manager = new QueryManager( {
+				items: { [ '__proto__' ]: prototypeItem, first: { ID: 'first' }, last: { ID: 'last' } },
+			} );
+			const next = manager.removeItems( [ 'first', 'last' ] );
+
+			expect( next.getItems() ).toEqual( [ prototypeItem ] );
+			expect( Object.getPrototypeOf( next.data.items ) ).toBe( Object.prototype );
+			expect( Object.hasOwn( next.data.items, '__proto__' ) ).toBe( true );
+			expect( manager.getItems() ).toHaveLength( 3 );
+		} );
+
+		test( 'preserves prior items and query counts when deleting duplicate and missing keys', () => {
+			manager = manager.receive( [ { ID: 144 }, { ID: 152 }, { ID: 160 } ], {
+				query: {},
+				found: 3,
+			} );
+			Object.freeze( manager.data.items );
+			Object.freeze( manager.data.queries[ '[]' ].itemKeys );
+			const remaining = manager.getItem( 160 );
+			const next = manager.removeItems( [ 144, 144, 152, 999 ] );
+
+			expect( manager.getItems( {} ) ).toEqual( [ { ID: 144 }, { ID: 152 }, { ID: 160 } ] );
+			expect( manager.getFound( {} ) ).toBe( 3 );
+			expect( next.getItems( {} ) ).toEqual( [ remaining ] );
+			expect( next.getFound( {} ) ).toBe( 1 );
+			expect( next.getItem( 160 ) ).toBe( remaining );
+		} );
+
+		test( 'keeps mixed deletions, updates, and insertions in one immutable batch', () => {
+			manager = manager.receive( [ { ID: 1 }, { ID: 2, title: 'Before' }, { ID: 3 } ] );
+			Object.freeze( manager.data.items );
+			const next = manager.receive(
+				[ { ID: 1, [ DELETE_PATCH_KEY ]: true }, { ID: 2, title: 'After' }, { ID: 4 } ],
+				{ patch: true }
+			);
+
+			expect( manager.getItems() ).toEqual( [ { ID: 1 }, { ID: 2, title: 'Before' }, { ID: 3 } ] );
+			expect( next.getItems() ).toEqual( [ { ID: 2, title: 'After' }, { ID: 3 }, { ID: 4 } ] );
+			expect( next.getItem( 3 ) ).toBe( manager.getItem( 3 ) );
+		} );
+
 		test( 'should remove an array of items by their item keys', () => {
 			manager = manager.receive( [ { ID: 144 }, { ID: 152 } ] );
 			const newManager = manager.removeItems( [ 144, 152 ] );
