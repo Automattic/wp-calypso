@@ -58,6 +58,7 @@ describe( 'useSiteGeneration', () => {
 		logMock.mockClear();
 		requestBuildWowSiteMock.mockReset();
 		requestBuildWowSiteMock.mockResolvedValue( {} );
+		window.sessionStorage.clear();
 	} );
 
 	afterEach( () => {
@@ -266,6 +267,73 @@ describe( 'useSiteGeneration', () => {
 
 		act( () => onUpdate( { state: 'generating', steps: SERVER_STEPS( 3 ) } ) );
 		expect( result.current.steps[ 3 ].startedAt ).toBe( 1723032230000 );
+	} );
+
+	it( 'restores the active step timer after a reload', () => {
+		jest.setSystemTime( 1723032220000 );
+		const firstRender = renderHook( () =>
+			useSiteGeneration( {
+				siteIdentifier: '123',
+				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
+				steps: STEPS,
+			} )
+		);
+
+		act( () => {
+			statusPollMock.mock.calls[ 0 ][ 0 ].onUpdate( {
+				state: 'generating',
+				steps: SERVER_STEPS( 2 ),
+			} );
+		} );
+		expect( firstRender.result.current.steps[ 2 ].startedAt ).toBe( 1723032220000 );
+
+		firstRender.unmount();
+		jest.advanceTimersByTime( 12000 );
+
+		const secondRender = renderHook( () =>
+			useSiteGeneration( {
+				siteIdentifier: '123',
+				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
+				steps: STEPS,
+			} )
+		);
+		act( () => {
+			statusPollMock.mock.calls[ 1 ][ 0 ].onUpdate( {
+				state: 'generating',
+				steps: SERVER_STEPS( 2 ),
+			} );
+		} );
+
+		expect( secondRender.result.current.steps[ 2 ].startedAt ).toBe( 1723032220000 );
+	} );
+
+	it( 'starts the next observed step at zero', () => {
+		jest.setSystemTime( 1723032220000 );
+		const { result } = renderHook( () =>
+			useSiteGeneration( {
+				siteIdentifier: '123',
+				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
+				steps: STEPS,
+			} )
+		);
+
+		const { onUpdate } = statusPollMock.mock.calls[ 0 ][ 0 ];
+		act( () => {
+			onUpdate( {
+				state: 'generating',
+				steps: SERVER_STEPS( 2 ),
+			} );
+		} );
+
+		jest.advanceTimersByTime( 12000 );
+		act( () => {
+			onUpdate( {
+				state: 'generating',
+				steps: SERVER_STEPS( 3 ),
+			} );
+		} );
+
+		expect( result.current.steps[ 3 ].startedAt ).toBe( 1723032232000 );
 	} );
 
 	it( 'keeps the fallback checklist when a response carries no usable steps', () => {
