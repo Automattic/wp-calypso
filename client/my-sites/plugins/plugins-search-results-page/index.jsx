@@ -29,6 +29,7 @@ const PluginsSearchResultPage = ( {
 	sites,
 	categoryName,
 	setIsFetchingPluginsBySearchTerm,
+	isLoggedOut,
 } ) => {
 	const {
 		plugins: pluginsBySearchTerm = [],
@@ -139,13 +140,17 @@ const PluginsSearchResultPage = ( {
 					site={ siteSlug }
 					showPlaceholders={ isFetchingPluginsBySearchTerm }
 					currentSites={ sites }
-					variant={ PluginsBrowserListVariant.Paginated }
+					variant={
+						isLoggedOut
+							? PluginsBrowserListVariant.Paginated
+							: PluginsBrowserListVariant.InfiniteScroll
+					}
 					extended
 					search={ searchTerm }
 					injectAfterIndex={ isMarketplaceRedesign ? 12 : undefined }
 					injectElement={ isMarketplaceRedesign ? <BusinessPlanBanner /> : undefined }
 				/>
-				<InfiniteScroll nextPageMethod={ fetchNextPage } />
+				{ ! isLoggedOut && <InfiniteScroll nextPageMethod={ fetchNextPage } /> }
 			</FullWidthSection>
 		);
 	}
