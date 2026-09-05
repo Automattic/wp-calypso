@@ -27,7 +27,7 @@ class GenerateChunksMapPlugin {
 					continue;
 				}
 				const modules = [ ...compilation.chunkGraph.getChunkModulesIterable( chunk ) ]
-					.reduce( ( acc, item ) => acc.concat( item.modules || item ), [] )
+					.flatMap( ( item ) => item.modules || item )
 					.map( ( { userRequest } ) => userRequest && path.relative( this.base_dir, userRequest ) )
 					.filter( ( module ) => !! module );
 
