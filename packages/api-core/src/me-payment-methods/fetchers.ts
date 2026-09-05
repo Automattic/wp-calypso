@@ -33,6 +33,7 @@ interface TaxInfoForServer {
 	tax_city?: string;
 	tax_organization?: string;
 	tax_address?: string;
+	tax_is_for_business?: boolean;
 }
 
 function transformPaymentMethodTaxInfoForEndpoint(
@@ -45,6 +46,9 @@ function transformPaymentMethodTaxInfoForEndpoint(
 		tax_city: paymentMethodTaxInfo?.city,
 		tax_organization: paymentMethodTaxInfo?.organization,
 		tax_address: paymentMethodTaxInfo?.address,
+		// Left undefined when no declaration has been made, which the endpoint
+		// reads as "leave any stored declaration alone" rather than "clear it".
+		tax_is_for_business: paymentMethodTaxInfo?.is_for_business,
 	};
 }
 
