@@ -2,16 +2,40 @@ import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_BUSINESS, PLAN_PERSONAL, getPlan } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
-import clsx from 'clsx';
-import { localize, LocalizeProps } from 'i18n-calypso';
+import { localize, LocalizeProps, TranslateResult } from 'i18n-calypso';
+import { ReactNode } from 'react';
 import ExcessiveDiskSpace from 'calypso/blocks/eligibility-warnings/excessive-disk-space';
 import CardHeading from 'calypso/components/card-heading';
 import Notice, { NoticeStatus } from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { useSelector } from 'calypso/state';
+import { eligibilityHolds, type EligibilityHold } from 'calypso/state/automated-transfer/constants';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
+import type { EligibilityContext } from './index';
+
+const displayableHolds = [
+	eligibilityHolds.NO_BUSINESS_PLAN,
+	eligibilityHolds.SITE_PRIVATE,
+	eligibilityHolds.SITE_UNLAUNCHED,
+	eligibilityHolds.SITE_NOT_PUBLIC,
+	eligibilityHolds.NON_ADMIN_USER,
+	eligibilityHolds.NOT_RESOLVING_TO_WPCOM,
+	eligibilityHolds.EMAIL_UNVERIFIED,
+	eligibilityHolds.EXCESSIVE_DISK_SPACE,
+	eligibilityHolds.IS_STAGING_SITE,
+] as const;
+
+export type DisplayableHold = ( typeof displayableHolds )[ number ];
+
+type HoldMessage = {
+	title: TranslateResult;
+	description: ReactNode;
+	supportUrl: string | null;
+};
+
+type HoldMessages = Record< DisplayableHold, HoldMessage >;
 
 // Mapping eligibility holds to messages that will be shown to the user
 function getHoldMessages( {
@@ -21,12 +45,12 @@ function getHoldMessages( {
 	isMarketplace,
 	hasEnTranslation,
 }: {
-	context: string | null;
+	context: EligibilityContext | null;
 	translate: LocalizeProps[ 'translate' ];
 	billingPeriod?: string;
 	isMarketplace?: boolean;
 	hasEnTranslation: ( arg: string ) => boolean;
-} ) {
+} ): HoldMessages {
 	// Plugin upload is available on the Personal plan and up, so upsell the
 	// lowest eligible plan for that context instead of Business.
 	const upsellPersonalPlan =
@@ -149,16 +173,28 @@ function getHoldMessages( {
 	};
 }
 
-/**
- * This function defines how we should communicate each type of blocking hold the public-api returns.
- * Blocking holds are "hard stops" - if we detect any, we know the Atomic Transfer won't be possible and so we
- * should short-circuit any eligibility checks and just communicate the problem.
- * @param {Function} translate Translate fn
- * @returns {Object} Dictionary of blocking holds and their corresponding messages
- */
+const hardBlockingHolds = [
+	eligibilityHolds.BLOCKED_ATOMIC_TRANSFER,
+	eligibilityHolds.TRANSFER_ALREADY_EXISTS,
+	eligibilityHolds.NO_JETPACK_SITES,
+	eligibilityHolds.NO_VIP_SITES,
+	eligibilityHolds.SITE_GRAYLISTED,
+	eligibilityHolds.NO_SSL_CERTIFICATE,
+] as const;
+
+export type HardBlockingHold = Extract< EligibilityHold, ( typeof hardBlockingHolds )[ number ] >;
+
+type BlockingMessage = {
+	message: string;
+	status: NoticeStatus | null;
+	contactUrl: string | null;
+};
+
+type BlockingMessages = Record< HardBlockingHold, BlockingMessage >;
+
 export function getBlockingMessages(
 	translate: LocalizeProps[ 'translate' ] | ( ( str: string ) => string )
-): Record< string, { message: string; status: NoticeStatus | null; contactUrl: string | null } > {
+): BlockingMessages {
 	return {
 		BLOCKED_ATOMIC_TRANSFER: {
 			message: String(
@@ -210,37 +246,36 @@ export function getBlockingMessages(
 }
 
 interface ExternalProps {
-	context: string | null;
-	holds: string[];
+	context: EligibilityContext | null;
+	holds: EligibilityHold[];
 	isMarketplace?: boolean;
 	isPlaceholder: boolean;
 }
 
 type Props = ExternalProps & LocalizeProps;
 
+/*
+	For Atomic sites on plans below Business the API returns the holds TRANSFER_ALREADY_EXISTS and NO_BUSINESS_PLAN.
+	Because TRANSFER_ALREADY_EXISTS is present and 'blocking' it would show an "Upload in progress" notice even when there isn't one.
+	In this scenario we treat the blocking hold as invalid so the caller renders the upgrade prompt instead.
+*/
+export function getValidBlockingHold( holds: EligibilityHold[] ): HardBlockingHold | undefined {
+	if ( isAtomicSiteWithoutBusinessPlan( holds ) ) {
+		return undefined;
+	}
+
+	return holds.find( isHardBlockingHoldType );
+}
+
 export const HardBlockingNotice = ( {
-	holds,
+	blockingHold,
 	translate,
 	blockingMessages,
 }: {
-	holds: string[];
+	blockingHold: HardBlockingHold;
 	translate: LocalizeProps[ 'translate' ];
-	blockingMessages: ReturnType< typeof getBlockingMessages >;
+	blockingMessages: BlockingMessages;
 } ) => {
-	const blockingHold = holds.find( ( h ): h is keyof ReturnType< typeof getBlockingMessages > =>
-		isHardBlockingHoldType( h, blockingMessages )
-	);
-
-	/*
-		For Atomic sites on plans below Business it will return the holds TRANSFER_ALREADY_EXISTS and NO_BUSINESS_PLAN.
-		Because TRANSFER_ALREADY_EXISTS is present and 'blocking' it will show an "Upload in progress" notice even when there isn't one.
-		In this scenario we need to check if it's an Atomic ste (TRANSFER_ALREADY_EXISTS) on a plan below Business (NO_BUSINESS_PLAN)
-		so we can stop the render of "Upload in progress" and prompt them to upgrade instead.
-	*/
-	if ( ! blockingHold || isAtomicSiteWithoutBusinessPlan( holds ) ) {
-		return null;
-	}
-
 	return (
 		<Notice
 			status={ blockingMessages[ blockingHold ].status ?? 'is-info' }
@@ -267,79 +302,61 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 		isMarketplace,
 		hasEnTranslation,
 	} );
-	const blockingMessages = getBlockingMessages( translate );
-
-	const blockingHold = holds.find( ( h ) => isHardBlockingHoldType( h, blockingMessages ) );
-	const hasValidBlockingHold = blockingHold && ! isAtomicSiteWithoutBusinessPlan( holds );
 
 	return (
-		<>
-			{ ! isPlaceholder && context !== 'plugin-details' && (
-				<HardBlockingNotice
-					holds={ holds }
-					translate={ translate }
-					blockingMessages={ blockingMessages }
-				/>
-			) }
-			<div
-				className={ clsx( 'eligibility-warnings__hold-list', {
-					'eligibility-warnings__hold-list-dim': hasValidBlockingHold,
-				} ) }
-				data-testid="HoldList-Card"
-			>
-				<CardHeading>
-					<span className="eligibility-warnings__hold-heading">
-						{ getCardHeading( context, translate ) }
-					</span>
-				</CardHeading>
-				{ isPlaceholder && (
-					<div>
-						<div className="eligibility-warnings__hold">
-							<Gridicon icon="notice-outline" size={ 24 } />
-							<div className="eligibility-warnings__message" />
-						</div>
-						<div className="eligibility-warnings__hold">
-							<Gridicon icon="notice-outline" size={ 24 } />
-							<div className="eligibility-warnings__message" />
-						</div>
+		<div className="eligibility-warnings__hold-list" data-testid="HoldList-Card">
+			<CardHeading>
+				<span className="eligibility-warnings__hold-heading">
+					{ getCardHeading( context, translate ) }
+				</span>
+			</CardHeading>
+			{ isPlaceholder && (
+				<div>
+					<div className="eligibility-warnings__hold">
+						<Gridicon icon="notice-outline" size={ 24 } />
+						<div className="eligibility-warnings__message" />
 					</div>
-				) }
-				{ ! isPlaceholder &&
-					holds.map( ( hold ) =>
-						! isKnownHoldType( hold, holdMessages ) ? null : (
-							<div className="eligibility-warnings__hold" key={ hold }>
-								<div className="eligibility-warnings__message">
-									<div className="eligibility-warnings__message-title">
-										{ holdMessages[ hold ].title }
-									</div>
-									<p className="eligibility-warnings__message-description">
-										{ holdMessages[ hold ].description }
-									</p>
+					<div className="eligibility-warnings__hold">
+						<Gridicon icon="notice-outline" size={ 24 } />
+						<div className="eligibility-warnings__message" />
+					</div>
+				</div>
+			) }
+			{ ! isPlaceholder &&
+				holds.map( ( hold ) =>
+					! isDisplayableHoldType( hold ) ? null : (
+						<div className="eligibility-warnings__hold" key={ hold }>
+							<div className="eligibility-warnings__message">
+								<div className="eligibility-warnings__message-title">
+									{ holdMessages[ hold ].title }
 								</div>
-								{ holdMessages[ hold ].supportUrl && (
-									<div className="eligibility-warnings__hold-action">
-										<Button
-											compact
-											disabled={ !! hasValidBlockingHold }
-											href={ holdMessages[ hold ].supportUrl ?? '' }
-											rel="noopener noreferrer"
-										>
-											{ translate( 'Help' ) }
-										</Button>
-									</div>
-								) }
+								<p className="eligibility-warnings__message-description">
+									{ holdMessages[ hold ].description }
+								</p>
 							</div>
-						)
-					) }
-			</div>
-		</>
+							{ holdMessages[ hold ].supportUrl && (
+								<div className="eligibility-warnings__hold-action">
+									<Button
+										compact
+										href={ holdMessages[ hold ].supportUrl ?? '' }
+										rel="noopener noreferrer"
+									>
+										{ translate( 'Help' ) }
+									</Button>
+								</div>
+							) }
+						</div>
+					)
+				) }
+		</div>
 	);
 };
 
-function getCardHeading( context: string | null, translate: LocalizeProps[ 'translate' ] ) {
+function getCardHeading(
+	context: EligibilityContext | null,
+	translate: LocalizeProps[ 'translate' ]
+) {
 	switch ( context ) {
-		case 'plugins':
-			return translate( "To install plugins you'll need to:" );
 		case 'themes':
 			return translate( "To install themes you'll need to:" );
 		case 'hosting':
@@ -351,34 +368,17 @@ function getCardHeading( context: string | null, translate: LocalizeProps[ 'tran
 	}
 }
 
-function isKnownHoldType(
-	hold: string,
-	holdMessages: ReturnType< typeof getHoldMessages >
-): hold is keyof ReturnType< typeof getHoldMessages > {
-	return holdMessages.hasOwnProperty( hold );
+function isDisplayableHoldType( hold: EligibilityHold ): hold is DisplayableHold {
+	return displayableHolds.some( ( displayableHold ) => displayableHold === hold );
 }
 
-/**
- * This checks if hold coming from API is blocking (@see getBlockingMessages);
- * For example, if we detect BLOCKED_ATOMIC_TRANSFER, we should block the path forward and direct the user
- * to our support.
- * @param {string} hold Specific hold we want to check
- * @param {Object} blockingMessages List of all holds we consider blocking
- * @returns {boolean} Is {hold} blocking or not
- */
-function isHardBlockingHoldType(
-	hold: string,
-	blockingMessages: ReturnType< typeof getBlockingMessages >
-): hold is keyof ReturnType< typeof getBlockingMessages > {
-	return blockingMessages.hasOwnProperty( hold );
+export const hasDisplayableHold = ( holds: EligibilityHold[] ) =>
+	holds.some( isDisplayableHoldType );
+
+function isHardBlockingHoldType( hold: EligibilityHold ): hold is HardBlockingHold {
+	return hardBlockingHolds.some( ( blockingHold ) => blockingHold === hold );
 }
 
-export const hasBlockingHold = ( holds: string[] ) =>
-	holds.some( ( hold ) =>
-		isHardBlockingHoldType(
-			hold,
-			getBlockingMessages( ( str: string ) => str )
-		)
-	);
+export const hasBlockingHold = ( holds: EligibilityHold[] ) => holds.some( isHardBlockingHoldType );
 
 export default localize( HoldList );

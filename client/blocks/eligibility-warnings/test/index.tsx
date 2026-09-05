@@ -77,7 +77,7 @@ describe( '<EligibilityWarnings>', () => {
 		} );
 
 		const { container } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+			<EligibilityWarnings context={ null } onProceed={ noop } />,
 			state
 		);
 
@@ -93,26 +93,82 @@ describe( '<EligibilityWarnings>', () => {
 		} );
 
 		const { container } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+			<EligibilityWarnings context={ null } onProceed={ noop } />,
 			state
 		);
 
 		expect( container.querySelectorAll( '.calypso-notice' ) ).toHaveLength( 1 );
 	} );
 
-	it( 'dimly renders the hold card when AT has been blocked by a sticker', () => {
+	it( 'hides the hold list and Continue button when AT has been blocked by a sticker', () => {
 		const state = createState( {
 			holds: [ 'BLOCKED_ATOMIC_TRANSFER', 'SITE_PRIVATE' ],
 		} );
 
-		const { getByTestId, getByText } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+		const { queryByTestId, queryByText } = renderWithStore(
+			<EligibilityWarnings context={ null } onProceed={ noop } />,
 			state
 		);
 
-		expect( getByTestId( 'HoldList-Card' ) ).toHaveClass( 'eligibility-warnings__hold-list-dim' );
-		expect( getByText( 'Help' ) ).toHaveAttribute( 'disabled' );
-		expect( getByText( 'Continue' ) ).toBeDisabled();
+		expect( queryByTestId( 'HoldList-Card' ) ).not.toBeInTheDocument();
+		expect( queryByText( 'Continue' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'hides the hold list when no hold has a message to show', () => {
+		const state = createState( {
+			holds: [ 'AN_UNRECOGNIZED_HOLD' ],
+		} );
+
+		const { queryByTestId } = renderWithStore(
+			<EligibilityWarnings context={ null } onProceed={ noop } />,
+			state
+		);
+
+		expect( queryByTestId( 'HoldList-Card' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders only the in-progress notice when a transfer already exists', () => {
+		const state = createState( {
+			holds: [ 'TRANSFER_ALREADY_EXISTS', 'SITE_PRIVATE' ],
+		} );
+
+		const { container, queryByTestId, queryByText } = renderWithStore(
+			<EligibilityWarnings context={ null } onProceed={ noop } />,
+			state
+		);
+
+		const notice = container.querySelector( '.calypso-notice' );
+		expect( notice ).toBeVisible();
+		expect( notice ).toHaveTextContent( /Installation in progress/ );
+		expect( queryByTestId( 'HoldList-Card' ) ).not.toBeInTheDocument();
+		expect( queryByText( 'Continue' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'shows the upgrade path, not the blocking notice, for an Atomic site below Business', () => {
+		const state = createState( {
+			holds: [ 'TRANSFER_ALREADY_EXISTS', 'NO_BUSINESS_PLAN' ],
+		} );
+
+		const { container, getByTestId, getByText } = renderWithStore(
+			<EligibilityWarnings context={ null } onProceed={ noop } />,
+			state
+		);
+
+		expect( container.querySelector( '.calypso-notice' ) ).not.toBeInTheDocument();
+		expect( getByTestId( 'HoldList-Card' ) ).toBeVisible();
+		expect( getByText( 'Upgrade and continue' ) ).toBeEnabled();
+	} );
+
+	it( 'explains the upgrade in the plugin details modal', () => {
+		const state = createState( { holds: [ 'NO_BUSINESS_PLAN' ] } );
+
+		const { getByTestId, getByText } = renderWithStore(
+			<EligibilityWarnings onProceed={ noop } context="plugin-details" inModal />,
+			state
+		);
+
+		expect( getByTestId( 'HoldList-Card' ) ).toBeVisible();
+		expect( getByText( 'Upgrade to a Business plan' ) ).toBeVisible();
 	} );
 
 	it( 'renders warning notices when the API returns warnings', () => {
@@ -129,7 +185,7 @@ describe( '<EligibilityWarnings>', () => {
 		} );
 
 		const { getByRole, getByText } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+			<EligibilityWarnings context={ null } onProceed={ noop } />,
 			state
 		);
 
@@ -153,7 +209,7 @@ describe( '<EligibilityWarnings>', () => {
 		} );
 
 		const { container } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+			<EligibilityWarnings context={ null } onProceed={ noop } />,
 			state
 		);
 
@@ -169,7 +225,7 @@ describe( '<EligibilityWarnings>', () => {
 		const handleProceed = jest.fn();
 
 		const { getByText } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ handleProceed } />,
+			<EligibilityWarnings context={ null } onProceed={ handleProceed } />,
 			state
 		);
 
@@ -193,7 +249,7 @@ describe( '<EligibilityWarnings>', () => {
 		} );
 
 		const { getByText } = renderWithStore(
-			<EligibilityWarnings backUrl="/plugins/example.wordpress.com" onProceed={ noop } />,
+			<EligibilityWarnings context="plugins-upload" onProceed={ noop } />,
 			state
 		);
 
@@ -212,7 +268,7 @@ describe( '<EligibilityWarnings>', () => {
 		const handleProceed = jest.fn();
 
 		const { getByText } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ handleProceed } />,
+			<EligibilityWarnings context={ null } onProceed={ handleProceed } />,
 			state
 		);
 
@@ -228,7 +284,7 @@ describe( '<EligibilityWarnings>', () => {
 		const state = createState( {} );
 
 		const { getByText } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+			<EligibilityWarnings context={ null } onProceed={ noop } />,
 			state
 		);
 
