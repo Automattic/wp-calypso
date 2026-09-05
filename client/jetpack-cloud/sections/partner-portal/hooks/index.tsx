@@ -161,6 +161,10 @@ export function useProductDescription(
 				  );
 		}
 
+		if ( productSlug === 'pressable-addon-titan-inbox' ) {
+			description = translate( 'Add one Titan inbox to a selected Pressable domain.' );
+		}
+
 		switch ( productSlug ) {
 			case 'jetpack-complete':
 				description = translate(
