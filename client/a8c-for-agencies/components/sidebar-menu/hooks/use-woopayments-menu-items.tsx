@@ -59,8 +59,8 @@ const useWooPaymentsMenuItems = ( path: string ) => {
 						extraContent: (
 							<StatusBadge
 								statusProps={ {
-									children: 1,
-									type: accountStatus.statusType,
+									children: '1',
+									intent: accountStatus.badgeIntent,
 									isRounded: true,
 									tooltip: accountStatus.statusReason,
 								} }
