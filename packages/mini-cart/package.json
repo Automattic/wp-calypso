@@ -66,6 +66,6 @@
 		"@testing-library/jest-dom": "^6.9.1",
 		"@testing-library/react": "^16.3.2",
 		"react-dom": "^18.3.1",
-		"typescript": "^6.0.3"
+		"typescript": "^7.0.2"
 	}
 }
