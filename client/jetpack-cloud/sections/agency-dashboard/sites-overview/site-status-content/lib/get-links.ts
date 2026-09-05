@@ -65,15 +65,9 @@ const getLinks = (
 			break;
 		}
 		case 'plugin': {
-			link = `${ siteUrlWithScheme }/wp-admin/plugins.php`;
-			isExternalLink = true;
-			if ( ! isAtomicSite ) {
-				link =
-					status === 'warning'
-						? `/plugins/updates/${ siteUrlWithMultiSiteSupport }`
-						: `/plugins/manage/${ siteUrlWithMultiSiteSupport }`;
-				isExternalLink = false;
-			}
+			link = `/plugins/manage/${ siteUrlWithMultiSiteSupport }${
+				status === 'warning' ? '?updates=1' : ''
+			}`;
 			break;
 		}
 	}

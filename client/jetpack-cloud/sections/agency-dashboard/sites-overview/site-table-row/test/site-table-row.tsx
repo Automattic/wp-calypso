@@ -106,7 +106,7 @@ describe( '<SiteTableRow>', () => {
 		plugin: {
 			updates: pluginUpdates.length,
 			type: 'plugin',
-			value: `${ pluginUpdates.length } ${ translate( 'Available' ) }`,
+			value: `${ pluginUpdates.length } ${ translate( 'Updates' ) }`,
 			status: 'warning',
 		},
 	};

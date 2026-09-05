@@ -30,6 +30,7 @@ export default function (): void {
 	page(
 		'/plugins/manage/:site',
 		scrollTopIfNoHash,
+		siteSelection,
 		navigation,
 		pluginManagementContext,
 		renderPluginsDashboard,
