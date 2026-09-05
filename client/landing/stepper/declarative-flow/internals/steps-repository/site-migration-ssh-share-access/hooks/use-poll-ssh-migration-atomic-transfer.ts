@@ -50,12 +50,18 @@ export const usePollSSHMigrationAtomicTransfer = (
 		retry: false,
 	} );
 
-	const isTransferring =
-		query.data && ! endStates.includes( query.data.transfer_status ) ? true : false;
+	const transferStatus = query.data?.transfer_status;
+	const isTransferFailed =
+		query.isError ||
+		( !! transferStatus && transferStatus !== 'completed' && endStates.includes( transferStatus ) );
+	const isTransferReady = ! isTransferFailed && transferStatus === 'completed';
+	const isTransferring = ! isTransferReady && ! isTransferFailed;
 
 	return {
 		...query,
 		isTransferring,
-		transferStatus: query.data?.transfer_status,
+		isTransferReady,
+		isTransferFailed,
+		transferStatus,
 	};
 };

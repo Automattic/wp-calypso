@@ -42,6 +42,7 @@ interface StepsDataOptions {
 	host?: string;
 	onNoSSHAccess: () => void;
 	isTransferring: boolean;
+	isTransferFailed: boolean;
 	shouldGenerateKey: boolean;
 	isInputDisabled: boolean;
 	isProcessingNoSSH: boolean;
@@ -83,6 +84,8 @@ interface UseStepsOptions {
 	onAskForHelp: () => void;
 	migrationStatus?: 'queued' | 'in-progress' | 'migrating' | 'completed' | 'failed';
 	isTransferring: boolean;
+	isTransferReady: boolean;
+	isTransferFailed: boolean;
 	isInputDisabled: boolean;
 	isProcessingNoSSH?: boolean;
 	isProcessingAssistedMigration?: boolean;
@@ -177,6 +180,7 @@ const useStepsData = ( options: StepsDataOptions ): StepsData => {
 						/>
 					}
 					isTransferring={ options.isTransferring }
+					isTransferFailed={ options.isTransferFailed }
 					shouldGenerateKey={ options.shouldGenerateKey }
 					isInputDisabled={ options.isInputDisabled }
 					isProcessingAssistedMigration={ options.isProcessingAssistedMigration }
@@ -197,6 +201,8 @@ export const useSteps = ( {
 	host,
 	migrationStatus,
 	isTransferring,
+	isTransferReady,
+	isTransferFailed,
 	isInputDisabled,
 	isProcessingNoSSH = false,
 	isProcessingAssistedMigration = false,
@@ -310,7 +316,10 @@ export const useSteps = ( {
 	] );
 
 	const handleGenerateSSHKey = () => {
-		if ( isTransferring ) {
+		if ( isTransferFailed ) {
+			return;
+		}
+		if ( ! isTransferReady ) {
 			setShouldGenerateKey( true );
 			return;
 		}
@@ -320,11 +329,13 @@ export const useSteps = ( {
 
 	// Auto-generate SSH key when transfer completes
 	useEffect( () => {
-		if ( ! isTransferring && shouldGenerateKey ) {
+		if ( isTransferFailed ) {
+			setShouldGenerateKey( false );
+		} else if ( isTransferReady && shouldGenerateKey ) {
 			setShouldGenerateKey( false );
 			triggerGenerateSSHKey();
 		}
-	}, [ isTransferring, shouldGenerateKey, triggerGenerateSSHKey ] );
+	}, [ isTransferReady, isTransferFailed, shouldGenerateKey, triggerGenerateSSHKey ] );
 
 	const handleEditUsername = () => {
 		setFormState( ( prev ) => ( { ...prev, sshPublicKey: '' } ) );
@@ -361,8 +372,9 @@ export const useSteps = ( {
 		onNoSSHAccess,
 		host,
 		isTransferring,
+		isTransferFailed,
 		shouldGenerateKey,
-		isInputDisabled,
+		isInputDisabled: isInputDisabled || isGeneratingKey,
 		isProcessingNoSSH,
 		isProcessingAssistedMigration,
 	} );
