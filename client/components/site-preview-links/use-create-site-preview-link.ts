@@ -18,6 +18,7 @@ export const useCreateSitePreviewLink = ( options: UseCreateSitePreviewLinkOptio
 	const queryKey = [ SITE_PREVIEW_LINKS_QUERY_KEY, siteId ];
 	const queryClient = useQueryClient();
 	const createLinkMutation = useMutation( {
+		mutationKey: queryKey,
 		mutationFn: () =>
 			wpcom.req.post( {
 				path: `/sites/${ siteId }/preview-links`,
@@ -25,10 +26,6 @@ export const useCreateSitePreviewLink = ( options: UseCreateSitePreviewLinkOptio
 			} ),
 		onSuccess: () => {
 			onSuccess?.();
-		},
-		onError: ( err, code, context ) => {
-			queryClient.setQueryData( queryKey, context );
-			onError?.();
 		},
 		onMutate: async () => {
 			await queryClient.cancelQueries( {
@@ -44,6 +41,10 @@ export const useCreateSitePreviewLink = ( options: UseCreateSitePreviewLinkOptio
 				},
 			] );
 			return cachedData;
+		},
+		onError: ( err, code, context ) => {
+			queryClient.setQueryData( queryKey, context );
+			onError?.();
 		},
 		onSettled: ( data: PreviewLink | undefined ) => {
 			if ( data?.code ) {
