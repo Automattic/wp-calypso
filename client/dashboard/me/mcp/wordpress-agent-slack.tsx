@@ -54,7 +54,7 @@ export default function WordPressAgentSlack( {
 	const installTitle = __( 'Slack' );
 	const installDescription = pairToken
 		? __( 'This is a separate step for adding WordPress Agent to a different Slack workspace.' )
-		: __( 'Add WordPress Agent to your Slack workspaces.' );
+		: __( 'Add your agent to Slack and manage your sites from there.' );
 	const isActionPending =
 		oauthMutation.isPending || pairMutation.isPending || disconnectMutation.isPending;
 	const error =
@@ -130,6 +130,7 @@ export default function WordPressAgentSlack( {
 						}
 					/>
 					<Button
+						__next40pxDefaultSize
 						variant="secondary"
 						isDestructive
 						onClick={ () => disconnect( connection.team_id ) }
@@ -144,11 +145,7 @@ export default function WordPressAgentSlack( {
 			</div>
 		) );
 	} else {
-		connectionsContent = (
-			<CardBody>
-				{ __( 'You have not connected WordPress Agent to a Slack workspace yet.' ) }
-			</CardBody>
-		);
+		connectionsContent = null;
 	}
 
 	return (
@@ -185,6 +182,7 @@ export default function WordPressAgentSlack( {
 							) }
 						/>
 						<Button
+							__next40pxDefaultSize
 							variant="primary"
 							onClick={ pair }
 							isBusy={ pairMutation.isPending }
@@ -200,6 +198,7 @@ export default function WordPressAgentSlack( {
 				<CardBody className="wordpress-agent-connection__row">
 					<SectionHeader level={ 3 } title={ installTitle } description={ installDescription } />
 					<Button
+						__next40pxDefaultSize
 						variant="primary"
 						className="wordpress-agent-slack__install-button"
 						onClick={ install }
@@ -211,8 +210,12 @@ export default function WordPressAgentSlack( {
 					</Button>
 				</CardBody>
 
-				<CardDivider />
-				{ connectionsContent }
+				{ connectionsContent && (
+					<>
+						<CardDivider />
+						{ connectionsContent }
+					</>
+				) }
 			</Card>
 		</VStack>
 	);
