@@ -80,7 +80,7 @@ const useSiteSubscriptionsQuery = () => {
 		refetch,
 	} = query;
 
-	const nextPage = hasNextPage && ! isFetching && data ? data.pages.length + 1 : null;
+	const nextPage = enabled && hasNextPage && ! isFetching && data ? data.pages.length + 1 : null;
 
 	useEffect( () => {
 		if ( nextPage ) {
