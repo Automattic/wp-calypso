@@ -38,8 +38,6 @@ import {
 	TASK_REACTIVATE_ATOMIC_TRANSFER,
 	TASK_REACTIVATE_EXPIRED_PLAN,
 	TASK_REACTIVATE_RESTORE_BACKUP,
-	TASK_RENEW_EXPIRED_PLAN,
-	TASK_RENEW_EXPIRING_PLAN,
 	TASK_SITE_RESUME_COPY,
 	TASK_SITE_SETUP_CHECKLIST,
 	TASK_UPSELL_TITAN,
@@ -82,7 +80,6 @@ import JanuaryBump from 'calypso/my-sites/customer-home/cards/tasks/january-bump
 import Marketplace from 'calypso/my-sites/customer-home/cards/tasks/marketplace';
 import NoticeHomeLimitedTimeOfferCoupon from 'calypso/my-sites/customer-home/cards/tasks/notice-home-limited-time-offer-coupon';
 import PromotePost from 'calypso/my-sites/customer-home/cards/tasks/promote-post';
-import Renew from 'calypso/my-sites/customer-home/cards/tasks/renew';
 import { ReviveAutoRevertedAtomic } from 'calypso/my-sites/customer-home/cards/tasks/revive-auto-reverted-atomic';
 import SiteResumeCopy from 'calypso/my-sites/customer-home/cards/tasks/site-resume-copy';
 import { ConnectedSiteSetupListWrapper } from 'calypso/my-sites/customer-home/cards/tasks/site-setup-list';
@@ -120,8 +117,6 @@ const PRIMARY_CARD_COMPONENTS: CardComponentMap = {
 	[ TASK_GO_MOBILE_IOS ]: GoMobile,
 	[ TASK_MARKETPLACE ]: Marketplace,
 	[ TASK_PROMOTE_POST ]: PromotePost,
-	[ TASK_RENEW_EXPIRED_PLAN ]: Renew,
-	[ TASK_RENEW_EXPIRING_PLAN ]: Renew,
 	[ TASK_REACTIVATE_ATOMIC_TRANSFER ]: ReviveAutoRevertedAtomic,
 	[ TASK_REACTIVATE_EXPIRED_PLAN ]: ReviveAutoRevertedAtomic,
 	[ TASK_REACTIVATE_RESTORE_BACKUP ]: ReviveAutoRevertedAtomic,
@@ -155,7 +150,6 @@ const CARD_COMPONENTS: CardComponentMap = {
 };
 
 const urgentTasks = [
-	TASK_RENEW_EXPIRED_PLAN,
 	TASK_REACTIVATE_EXPIRED_PLAN,
 	TASK_REACTIVATE_ATOMIC_TRANSFER,
 	TASK_REACTIVATE_RESTORE_BACKUP,
