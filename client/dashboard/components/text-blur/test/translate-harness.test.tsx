@@ -15,7 +15,8 @@
  * keep a single element mounted and change only its text and attributes — not
  * to relax the assertion.
  */
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React, { useState } from 'react';
 import OverviewCard from '../../overview-card';
 import { Stat } from '../../stat';
@@ -46,13 +47,11 @@ function Harness( {
 }
 
 function resolve() {
-	act( () => {
-		screen.getByText( 'resolve' ).click();
-	} );
+	return userEvent.click( screen.getByRole( 'button', { name: 'resolve' } ) );
 }
 
 describe( 'TextBlur survives page translation', () => {
-	it( 'updates text in place when the blurred span was reparented', () => {
+	it( 'updates text in place when the blurred span was reparented', async () => {
 		render(
 			<Harness
 				render={ ( isLoading ) => (
@@ -66,12 +65,12 @@ describe( 'TextBlur survives page translation', () => {
 		);
 
 		reparentLikeATranslator( screen.getByText( 'XXXXXX' ) );
-		resolve();
+		await resolve();
 
 		expect( screen.getByText( '$1,234' ) ).toBeVisible();
 	} );
 
-	it( 'survives translation inside OverviewCard', () => {
+	it( 'survives translation inside OverviewCard', async () => {
 		render(
 			<Harness
 				render={ ( isLoading ) => (
@@ -87,17 +86,17 @@ describe( 'TextBlur survives page translation', () => {
 
 		reparentLikeATranslator( screen.getByText( 'XXXXXXXXXX' ) );
 		reparentLikeATranslator( screen.getByText( 'XXXXXXXXXXXXXXXXXXXX' ) );
-		resolve();
+		await resolve();
 
 		expect( screen.getByText( 'Business' ) ).toBeVisible();
 		expect( screen.getByText( 'Renews next year' ) ).toBeVisible();
 	} );
 
-	it( 'survives translation inside Stat', () => {
+	it( 'survives translation inside Stat', async () => {
 		render( <Harness render={ ( isLoading ) => <Stat metric="99%" isLoading={ isLoading } /> } /> );
 
 		reparentLikeATranslator( screen.getByText( 'XXXXX' ) );
-		resolve();
+		await resolve();
 
 		expect( screen.getByText( '99%' ) ).toBeVisible();
 	} );

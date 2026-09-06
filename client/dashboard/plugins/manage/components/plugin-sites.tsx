@@ -41,13 +41,17 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 	};
 
 	const title = () => {
-		if ( ! isLoadingPlugin && ! plugin ) {
-			return __( 'Plugin not found' );
-		}
+		const text = () => {
+			if ( plugin ) {
+				return decodeEntities( plugin.name );
+			}
+
+			return isLoadingPlugin ? selectedPluginSlug : __( 'Plugin not found' );
+		};
 
 		return (
-			<TextBlur isBlurred={ ! plugin }>
-				<Text>{ plugin ? decodeEntities( plugin.name ) : selectedPluginSlug }</Text>
+			<TextBlur isBlurred={ ! plugin && isLoadingPlugin }>
+				<Text>{ text() }</Text>
 			</TextBlur>
 		);
 	};
