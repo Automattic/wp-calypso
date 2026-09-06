@@ -49,10 +49,6 @@ type BigSkyPluginStatus = {
 	remote_option_ready?: boolean;
 };
 
-export function isBuildWowEnabled( queryParams: URLSearchParams ): boolean {
-	return queryParams.get( 'build_wow' ) === BUILD_WOW_QUERY_VALUE;
-}
-
 export function getBuildWowSiteIdentifier( {
 	siteSlug,
 	siteId,
