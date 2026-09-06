@@ -18,7 +18,7 @@ export const siteCurrentUserQuery = ( siteId: number ) =>
 
 export const siteCurrentUserMetaMutation = ( siteId: number ) =>
 	mutationOptions( {
-		meta: { statId: 'site-current-user-meta-update' },
+		meta: { statId: 'site-user-meta-update' },
 		mutationFn: ( meta: Partial< SiteUserMeta > ) => updateCurrentSiteUserMeta( siteId, meta ),
 		onSuccess: ( user ) => {
 			queryClient.setQueryData( siteCurrentUserQuery( siteId ).queryKey, user );
