@@ -44,11 +44,13 @@ function mockApi( {
 	meta = {},
 	transferStatus,
 	transferDelay = 0,
+	transferStatusCode = 200,
 }: {
 	purchases: Purchase[];
 	meta?: Record< string, number >;
 	transferStatus?: string;
 	transferDelay?: number;
+	transferStatusCode?: number;
 } ) {
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
@@ -61,11 +63,16 @@ function mockApi( {
 		.get( `/wpcom/v2/sites/${ SITE_ID }/atomic/transfers/latest` )
 		.query( true )
 		.delay( transferDelay )
-		.reply( 200, transferStatus ? { status: transferStatus, created_at: NOW } : {} );
+		.reply( transferStatusCode, transferStatus ? { status: transferStatus, created_at: NOW } : {} );
 }
 
-function renderNotice( options = { isDashboardScreen: false, locale: 'en' } ) {
-	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+function renderNotice(
+	options = { isDashboardScreen: false, locale: 'en' },
+	// Off by default so that a mocked failure fails a test fast. The transfer
+	// query has to opt out of retries on its own; one test checks that it does.
+	{ retry = false }: { retry?: boolean } = {}
+) {
+	const queryClient = new QueryClient( { defaultOptions: { queries: { retry } } } );
 	const rendered = renderHook( () => useSiteExpiryNotice( SITE_ID, options ), {
 		wrapper: ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
@@ -132,7 +139,22 @@ describe( 'useSiteExpiryNotice', () => {
 		await waitFor( () => expect( result.current?.isReverted ).toBe( true ) );
 		expect( result.current?.stage ).toBe( 'post-grace' );
 		expect( result.current?.isDismissible ).toBe( true );
-		expect( result.current?.notice.primaryAction?.type ).toBe( 'contact-support' );
+	} );
+
+	test( 'post-grace shows promptly when the site has no transfer record', async () => {
+		mockApi( {
+			purchases: [
+				makePurchase( {
+					expiry_date: expiryInDays( -40 ),
+					expiry_status: 'expired',
+					subscription_status: 'inactive',
+				} ),
+			],
+			transferStatusCode: 404,
+		} );
+		const { result } = renderNotice( { isDashboardScreen: false, locale: 'en' }, { retry: true } );
+		await waitFor( () => expect( result.current?.stage ).toBe( 'post-grace' ), { timeout: 1000 } );
+		expect( result.current?.isReverted ).toBe( false );
 	} );
 
 	test( 'stays null in post-grace until the transfer status resolves', async () => {

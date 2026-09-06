@@ -6,7 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { getPlanExpiryNotice, pickSitewideExpiryPurchase } from '../plan-expiry-notice';
-import type { PlanExpiryNoticeContent, PlanExpiryNoticeStage } from '../plan-expiry-notice';
+import type { PlanExpiryNoticeStage } from '../plan-expiry-notice';
 import type { Purchase } from '@automattic/api-core';
 
 export interface SiteExpiryNoticeOptions {
@@ -24,7 +24,6 @@ export interface SiteExpiryNoticeOptions {
 
 export interface SiteExpiryNoticeState {
 	purchase: Purchase;
-	notice: PlanExpiryNoticeContent;
 	stage: PlanExpiryNoticeStage;
 	isDismissible: boolean;
 	isReverted: boolean;
@@ -72,6 +71,9 @@ export function useSiteExpiryNotice(
 	const { data: latestTransfer, isPending: isTransferPending } = useQuery( {
 		...siteLatestAtomicTransferQuery( siteId ),
 		enabled: isPastGrace,
+		// A site that was never transferred answers 404, and the notice waits
+		// on this query: retrying would hold the banner back for seconds.
+		retry: false,
 	} );
 	const isReverted = latestTransfer?.status === 'reverted';
 
@@ -111,7 +113,7 @@ export function useSiteExpiryNotice(
 		return null;
 	}
 
-	return { purchase, notice, stage: notice.stage, isDismissible, isReverted };
+	return { purchase, stage: notice.stage, isDismissible, isReverted };
 }
 
 export function useShouldShowSiteExpiryNotice(

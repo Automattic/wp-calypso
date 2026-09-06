@@ -50,7 +50,6 @@ function makeState( purchase: Purchase, isReverted = false ): SiteExpiryNoticeSt
 	}
 	return {
 		purchase,
-		notice,
 		stage: notice.stage,
 		isDismissible: notice.stage === 'post-grace',
 		isReverted,

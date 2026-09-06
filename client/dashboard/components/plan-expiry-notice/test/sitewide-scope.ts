@@ -3,6 +3,7 @@
  */
 
 import { DotcomPlans, SubscriptionBillPeriod } from '@automattic/api-core';
+import { translationExists } from '@automattic/i18n-utils';
 import MockDate from 'mockdate';
 import {
 	getPlanExpiryNotice,
@@ -10,6 +11,11 @@ import {
 	pickSitewideExpiryPurchase,
 } from '../get-plan-expiry-notice';
 import type { Purchase } from '@automattic/api-core';
+
+jest.mock( '@automattic/i18n-utils', () => ( {
+	...jest.requireActual( '@automattic/i18n-utils' ),
+	translationExists: jest.fn( () => true ),
+} ) );
 
 const NOW = '2026-02-24T12:00:00Z';
 
@@ -64,7 +70,10 @@ const removed = ( daysAgo: number, overrides: Partial< Purchase > = {} ) =>
 		...overrides,
 	} );
 
-beforeEach( () => MockDate.set( NOW ) );
+beforeEach( () => {
+	MockDate.set( NOW );
+	jest.mocked( translationExists ).mockReturnValue( true );
+} );
 afterEach( () => MockDate.reset() );
 
 describe( 'sitewide scope: annual plan, auto-renew off', () => {
@@ -187,6 +196,14 @@ describe( 'sitewide scope: grace period', () => {
 		expect( notice?.title ).toBe( 'Your Business plan has expired' );
 		expect( notice?.primaryAction ).toMatchObject( { type: 'renew', label: 'Renew now' } );
 		expect( notice?.secondaryAction ).toMatchObject( {
+			type: 'view-other-plans',
+			href: '/plans/x',
+		} );
+	} );
+
+	test( 'still offers "View other plans" when its label is untranslated', () => {
+		jest.mocked( translationExists ).mockReturnValue( false );
+		expect( sitewide( grace() )?.secondaryAction ).toMatchObject( {
 			type: 'view-other-plans',
 			href: '/plans/x',
 		} );

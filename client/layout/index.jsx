@@ -156,6 +156,8 @@ const Omnibar = ( props ) => (
 
 const READER_DARK_MODE_BODY_CLASS = 'is-reader-dark-mode';
 
+const CHECKOUT_SECTION_NAMES = [ 'checkout', 'checkout-pending' ];
+
 function SidebarScrollSynchronizer() {
 	const isNarrow = useBreakpoint( '<660px' );
 	const active = ! isNarrow && ! config.isEnabled( 'jetpack-cloud' ); // Jetpack cloud hasn't yet aligned with WPCOM.
@@ -320,8 +322,7 @@ class Layout extends Component {
 			MasterbarComponent = JetpackCloudMasterbar;
 		} else if (
 			config.isEnabled( 'dashboard/omnibar-radical' ) &&
-			this.props.sectionName !== 'checkout' &&
-			this.props.sectionName !== 'checkout-pending'
+			! CHECKOUT_SECTION_NAMES.includes( this.props.sectionName )
 		) {
 			MasterbarComponent = Omnibar;
 		}
@@ -363,6 +364,31 @@ class Layout extends Component {
 				require={ loadCelebrateSiteLaunchModal }
 				placeholder={ null }
 				siteId={ this.props.siteIdForLaunch }
+			/>
+		);
+	}
+
+	renderSiteExpiryNotice() {
+		// The selected site sticks around after leaving the site sections, so
+		// the group has to be checked as well: `/me` and the Reader would
+		// otherwise inherit the last site's banner. Checkout is a site section
+		// but must stay free of anything competing with the purchase.
+		const shouldShow =
+			!! this.props.siteId &&
+			this.props.sectionGroup === 'sites' &&
+			! CHECKOUT_SECTION_NAMES.includes( this.props.sectionName ) &&
+			! isJetpackCloud() &&
+			! isA8CForAgencies();
+
+		if ( ! shouldShow ) {
+			return null;
+		}
+
+		return (
+			<AsyncLoad
+				require={ loadSiteExpiryNotice }
+				placeholder={ null }
+				isDashboardScreen={ this.props.sectionName === 'home' }
 			/>
 		);
 	}
@@ -484,13 +510,7 @@ class Layout extends Component {
 								{ this.props.secondary }
 							</div>
 							<div id="primary" className="layout__primary">
-								{ !! this.props.siteId && ! isJetpackCloud() && ! isA8CForAgencies() && (
-									<AsyncLoad
-										require={ loadSiteExpiryNotice }
-										placeholder={ null }
-										isDashboardScreen={ this.props.sectionName === 'home' }
-									/>
-								) }
+								{ this.renderSiteExpiryNotice() }
 								{ this.props.primary }
 							</div>
 						</>

@@ -237,7 +237,7 @@ export function getPlanExpiryNotice(
 
 function resolveNotice(
 	purchase: Purchase,
-	{ viewOtherPlansUrl, locale, renewReturnUrl }: PlanExpiryNoticeOptions
+	{ viewOtherPlansUrl, locale, renewReturnUrl, scope }: PlanExpiryNoticeOptions
 ): ResolvedNotice | null {
 	const planName = getPlanName( purchase ) as string;
 	const storageGb = getPlanStorageInGb( purchase.product_slug ) as number;
@@ -283,11 +283,12 @@ function resolveNotice(
 						{ storageGb }
 				  ),
 			primaryAction: renewAction,
-			// This label is new, so it may not be translated yet. Drop the action
-			// rather than show one English button among translated copy; the primary
-			// action is always there to fall back on.
+			// This label is new, so it may not be translated yet. On the purchase
+			// pages, drop the action rather than show one English button among
+			// translated copy; the primary action is always there to fall back on.
+			// The sitewide notice shows English instead, as wp-admin does.
 			secondaryAction:
-				viewOtherPlansUrl && translationExists( 'View other plans' )
+				viewOtherPlansUrl && ( scope === 'sitewide' || translationExists( 'View other plans' ) )
 					? { type: 'view-other-plans', label: __( 'View other plans' ), href: viewOtherPlansUrl }
 					: undefined,
 		};
