@@ -1,5 +1,11 @@
 import { envVariables } from '../..';
-import type { Page } from 'playwright';
+import type { Locator, Page } from 'playwright';
+
+const selectors = {
+	// TODO: This button has no accessible name, so we have to use a CSS selector.
+	filtersToggle: '.a4a-partner-directory-filters-toggle',
+	helpCenterButton: 'button.wpcom-help-center-fab',
+};
 
 /**
  * Component representing the a partner directory block.
@@ -23,15 +29,22 @@ export class PartnerDirectoryComponent {
 	 * @param {string} filterName The name of the filter to apply.
 	 */
 	async applyDropdownFilter( dropdownName: string, filterName: string ): Promise< void > {
+		await this.deactivateHelpCenterButton();
+
 		// On mobile, we need to click the filters toggle button first to open the filters panel.
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			// TODO: This button has no accessible name, so we have to use a CSS selector.
-			const filtersToggle = this.page.locator( '.a4a-partner-directory-filters-toggle' );
-			await filtersToggle.waitFor( { state: 'visible' } );
+			const filtersToggle = this.page.locator( selectors.filtersToggle );
+			await this.scrollToCenterOfViewport( filtersToggle );
 			await filtersToggle.click();
 		}
-		await this.page.getByRole( 'button', { name: dropdownName } ).click();
-		await this.page.getByRole( 'checkbox', { name: filterName } ).click();
+
+		const dropdown = this.page.getByRole( 'button', { name: dropdownName } );
+		await this.scrollToCenterOfViewport( dropdown );
+		await dropdown.click();
+
+		const filter = this.page.getByRole( 'checkbox', { name: filterName } );
+		await this.scrollToCenterOfViewport( filter );
+		await filter.click();
 	}
 
 	/**
@@ -49,6 +62,62 @@ export class PartnerDirectoryComponent {
 	async clickFirstPartner(): Promise< void > {
 		const partner = this.page.getByRole( 'link', { name: 'Accepting new clients' } ).first();
 
+		await this.scrollToCenterOfViewport( partner );
 		await partner.click();
+	}
+
+	/**
+	 * Stops the floating Help Center button from swallowing clicks aimed at the
+	 * directory. The button is injected asynchronously and hovers over the page
+	 * content, so it can cover the directory controls on narrow viewports.
+	 */
+	private async deactivateHelpCenterButton(): Promise< void > {
+		await this.page.addStyleTag( {
+			content: `${ selectors.helpCenterButton } { pointer-events: none !important; }`,
+		} );
+	}
+
+	/**
+	 * Scrolls the target to the middle of the viewport, then waits for its
+	 * position to settle.
+	 *
+	 * The directory is embedded in a marketing page topped by a sticky global
+	 * navigation. Playwright only scrolls a target just far enough to be in view,
+	 * which on narrow viewports leaves it beneath that navigation, and the
+	 * scroll-linked reflow of the navigation keeps moving the target from under
+	 * the pointer.
+	 *
+	 * @param {Locator} locator The target to bring into view.
+	 */
+	private async scrollToCenterOfViewport( locator: Locator ): Promise< void > {
+		await locator.waitFor( { state: 'visible' } );
+
+		await locator.evaluate( ( element ) => {
+			element.scrollIntoView( { block: 'center', behavior: 'instant' } );
+
+			return new Promise< void >( ( resolve ) => {
+				const maxFrames = 100;
+				const requiredStableFrames = 3;
+				let previousTop: number | undefined;
+				let stableFrames = 0;
+				let frames = 0;
+
+				const measure = () => {
+					const { top } = element.getBoundingClientRect();
+					stableFrames = top === previousTop ? stableFrames + 1 : 0;
+					previousTop = top;
+					frames += 1;
+
+					if ( stableFrames >= requiredStableFrames || frames >= maxFrames ) {
+						resolve();
+						return;
+					}
+
+					requestAnimationFrame( measure );
+				};
+
+				requestAnimationFrame( measure );
+			} );
+		} );
 	}
 }
