@@ -11,7 +11,7 @@ import { DomainStatusField } from './field-domain-status';
 import { DomainExpiryField } from './field-expiry';
 import { DomainSslField } from './field-ssl';
 import { IneligibleIndicator } from './ineligible-indicator';
-import { sortNullableDates } from './sort-nullable-strings';
+import { fieldSort, sortNullableDates } from './sort';
 import type { DomainSummary, Site } from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';
 
@@ -67,14 +67,14 @@ export const useFields = ( {
 				id: 'is_primary_domain',
 				label: __( 'Primary' ),
 				getValue: ( { item }: { item: DomainSummary } ) => item.primary_domain,
-				sort: ( a, b, direction ) => {
-					if ( a.primary_domain === b.primary_domain ) {
+				sort: fieldSort< boolean >( ( a, b, direction ) => {
+					if ( a === b ) {
 						return 0;
 					}
 
 					const factor = direction === 'asc' ? 1 : -1;
-					return a.primary_domain ? -1 * factor : 1 * factor;
-				},
+					return a ? -1 * factor : 1 * factor;
+				} ),
 				render: ( { field, item } ) =>
 					field.getValue( { item } ) ? <Text>{ __( 'Primary' ) }</Text> : <IneligibleIndicator />,
 			},
@@ -139,7 +139,25 @@ export const useFields = ( {
 				label: __( 'Paid until' ),
 				enableHiding: false,
 				enableSorting: true,
-				sort: ( a, b, direction ) => sortNullableDates( a.expiry, b.expiry, direction ),
+				getValue: ( { item }: { item: DomainSummary } ) => item.expiry,
+				sort: fieldSort( sortNullableDates ),
+				render: ( { item } ) => {
+					return (
+						<DomainExpiryField
+							inOverview={ inOverview ?? false }
+							domain={ item }
+							value={ item.expiry ? dateI18n( 'F j, Y', item.expiry ) : '' }
+						/>
+					);
+				},
+			},
+			{
+				// Filter-only companion to `expiry`: DataViews derives both sorting and
+				// filtering from a single getValue, and those need different shapes here.
+				id: 'expiry_status',
+				label: __( 'Paid until' ),
+				enableHiding: false,
+				enableSorting: false,
 				elements: [
 					{ value: '2-next-90-days', label: __( '90 days' ) },
 					{ value: '1-expired', label: __( 'Expired' ) },
@@ -163,15 +181,6 @@ export const useFields = ( {
 						return '2-next-90-days';
 					}
 					return '3-more-than-90-days';
-				},
-				render: ( { item } ) => {
-					return (
-						<DomainExpiryField
-							inOverview={ inOverview ?? false }
-							domain={ item }
-							value={ item.expiry ? dateI18n( 'F j, Y', item.expiry ) : '' }
-						/>
-					);
 				},
 			},
 			{
