@@ -1,5 +1,6 @@
 import { INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from '@automattic/urls';
 import { Icon, __experimentalVStack as VStack } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { backup, envelope, globe, shield, wordpress } from '@wordpress/icons';
 import ConnectIcon from '../transfer-or-connect/icons/connect';
@@ -65,10 +66,15 @@ export function getConnectSupportedTopText( losingRegistrar ) {
 		<VStack as="span" spacing={ 2 }>
 			<span>
 				{ losingRegistrar
-					? sprintf(
-							/* translators: %s - the domain registrar the user is currently with (ex.: GoDaddy, Namecheap) */
-							__( 'Your domain name stays with %s and will just point to your new site.' ),
-							losingRegistrar
+					? createInterpolateElement(
+							sprintf(
+								/* translators: %s - the domain registrar the user is currently with (ex.: GoDaddy, Namecheap) */
+								__(
+									'Your domain name stays with <strong>%s</strong> and will just point to your new site.'
+								),
+								losingRegistrar
+							),
+							{ strong: <strong /> }
 					  )
 					: __(
 							'Your domain name stays with your current registrar and will just point to your new site.'
