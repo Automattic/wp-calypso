@@ -80,10 +80,13 @@ describe( 'waitForEditedGlobalStyles', () => {
 	beforeEach( () => jest.useFakeTimers() );
 	afterEach( () => jest.useRealTimers() );
 
-	it( 'resolves at once when the record is loaded', async () => {
+	it( 'resolves with the record at once when it is loaded', async () => {
 		mockCore();
 
-		await expect( waitForEditedGlobalStyles() ).resolves.toBe( true );
+		await expect( waitForEditedGlobalStyles() ).resolves.toEqual( {
+			id: 'global-styles-1',
+			record: RECORD,
+		} );
 	} );
 
 	it( 'gives up after the timeout', async () => {
@@ -92,6 +95,6 @@ describe( 'waitForEditedGlobalStyles', () => {
 		const waiting = waitForEditedGlobalStyles();
 		jest.advanceTimersByTime( 10000 );
 
-		await expect( waiting ).resolves.toBe( false );
+		await expect( waiting ).resolves.toBeUndefined();
 	} );
 } );

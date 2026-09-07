@@ -1,9 +1,6 @@
-jest.mock( '../global-styles', () => ( {
-	editGlobalStyles: jest.fn(),
-	getEditedGlobalStyles: jest.fn(),
-} ) );
+jest.mock( '../global-styles', () => ( { editGlobalStyles: jest.fn() } ) );
 
-import { editGlobalStyles, getEditedGlobalStyles } from '../global-styles';
+import { editGlobalStyles } from '../global-styles';
 import { applyThemeUpdate, normalizeThemeUpdate } from '../update-theme';
 
 const BASE = { slug: 'base', name: 'Base', color: '#ffffff' };
@@ -14,18 +11,19 @@ const CURRENT = {
 	settings: {
 		color: { palette: { theme: [ BASE ], custom: [ ACCENT ] } },
 		typography: { fontFamilies: { custom: [ SERIF ] } },
+		spacing: { units: [ 'px', 'em' ] },
 	},
 	styles: { elements: { heading: { color: { text: '#000000' } } } },
 };
+const GLOBAL_STYLES = { id: 'global-styles-1', record: CURRENT };
 
-function mockGlobalStyles( record: unknown = CURRENT ) {
-	( getEditedGlobalStyles as jest.Mock ).mockReturnValue( { id: 'global-styles-1', record } );
-}
-
-// Applies the update over `CURRENT` and returns the record written.
-function applyOverCurrent( update: Parameters< typeof applyThemeUpdate >[ 0 ] ) {
-	mockGlobalStyles();
-	applyThemeUpdate( update );
+// Normalizes against `CURRENT`, applies, and returns the record written.
+function applyOverCurrent( input: Parameters< typeof normalizeThemeUpdate >[ 0 ] ) {
+	const update = normalizeThemeUpdate( input, CURRENT );
+	if ( ! update ) {
+		throw new Error( 'Nothing to apply.' );
+	}
+	applyThemeUpdate( GLOBAL_STYLES, update );
 
 	return ( editGlobalStyles as jest.Mock ).mock.calls[ 0 ][ 1 ];
 }
@@ -33,10 +31,18 @@ function applyOverCurrent( update: Parameters< typeof applyThemeUpdate >[ 0 ] ) 
 beforeEach( () => jest.clearAllMocks() );
 
 describe( 'normalizeThemeUpdate', () => {
-	it( 'keeps the subtrees that carry data', () => {
+	it( 'keeps the subtrees that carry a change', () => {
 		const settings = { spacing: { blockGap: '2rem' } };
 
-		expect( normalizeThemeUpdate( { settings, styles: [] } ) ).toEqual( { settings } );
+		expect( normalizeThemeUpdate( { settings, styles: [] }, CURRENT ) ).toEqual( { settings } );
+	} );
+
+	it( 'nests flat preset lists under custom', () => {
+		const sans = { slug: 'sans', name: 'Sans', fontFamily: 'Arial, sans-serif' };
+
+		expect(
+			normalizeThemeUpdate( { settings: { typography: { fontFamilies: [ sans ] } } }, CURRENT )
+		).toEqual( { settings: { typography: { fontFamilies: { custom: [ sans ] } } } } );
 	} );
 
 	it.each( [
@@ -44,16 +50,22 @@ describe( 'normalizeThemeUpdate', () => {
 		[ 'empty objects', { settings: {}, styles: {} } ],
 		[ 'non-objects', { settings: 'dark', styles: 12 } ],
 		[ 'nothing', {} ],
-	] )( 'reads %s as no update', ( _case, input ) => {
-		expect( normalizeThemeUpdate( input ) ).toBeUndefined();
+		[ "the backend's [] for an empty nested object", { settings: { color: [] } } ],
+		[ 'an empty array over a missing list', { settings: { color: { gradients: [] } } } ],
+	] )( 'reads %s as no change', ( _case, input ) => {
+		expect( normalizeThemeUpdate( input, CURRENT ) ).toBeUndefined();
+	} );
+
+	it( 'keeps an empty array that clears a list', () => {
+		expect( normalizeThemeUpdate( { settings: { color: { palette: [] } } }, CURRENT ) ).toEqual( {
+			settings: { color: { palette: { custom: [] } } },
+		} );
 	} );
 } );
 
 describe( 'applyThemeUpdate', () => {
 	it( 'writes the merged record', () => {
-		mockGlobalStyles();
-
-		applyThemeUpdate( { styles: { color: { background: '#ff0000' } } } );
+		applyThemeUpdate( GLOBAL_STYLES, { styles: { color: { background: '#ff0000' } } } );
 
 		expect( editGlobalStyles ).toHaveBeenCalledWith( 'global-styles-1', {
 			settings: CURRENT.settings,
@@ -61,38 +73,46 @@ describe( 'applyThemeUpdate', () => {
 		} );
 	} );
 
-	it( 'nests a flat palette under custom and merges it by slug', () => {
+	it( 'merges a flat palette into custom by slug', () => {
 		const accentGreen = { ...ACCENT, color: '#00ff00' };
 		const sky = { slug: 'sky', name: 'Sky', color: '#0000ff' };
 
-		const written = applyOverCurrent( {
-			settings: { color: { palette: [ accentGreen, sky ] } },
-		} );
+		const written = applyOverCurrent( { settings: { color: { palette: [ accentGreen, sky ] } } } );
 
 		expect( written.settings.color ).toEqual( {
 			palette: { theme: [ BASE ], custom: [ accentGreen, sky ] },
 		} );
 	} );
 
-	it( 'still merges a palette by slug when one entry is malformed', () => {
-		const accentGreen = { ...ACCENT, color: '#00ff00' };
-		const untitled = { slug: 'sky', name: 'Sky' };
-
-		const written = applyOverCurrent( {
-			settings: { color: { palette: [ accentGreen, untitled ] } },
-		} );
-
-		expect( written.settings.color.palette.custom ).toEqual( [ accentGreen, untitled ] );
-	} );
-
-	it( 'replaces arrays other than palettes wholesale', () => {
+	it( 'merges other preset lists by slug too', () => {
 		const sans = { slug: 'sans', name: 'Sans', fontFamily: 'Arial, sans-serif' };
 
+		const written = applyOverCurrent( { settings: { typography: { fontFamilies: [ sans ] } } } );
+
+		expect( written.settings.typography ).toEqual( { fontFamilies: { custom: [ SERIF, sans ] } } );
+	} );
+
+	it( 'still merges by slug when one entry has none', () => {
+		const accentGreen = { ...ACCENT, color: '#00ff00' };
+		const unslugged = { name: 'Sky', color: '#0000ff' };
+
 		const written = applyOverCurrent( {
-			settings: { typography: { fontFamilies: { custom: [ sans ] } } },
+			settings: { color: { palette: [ accentGreen, unslugged ] } },
 		} );
 
-		expect( written.settings.typography ).toEqual( { fontFamilies: { custom: [ sans ] } } );
+		expect( written.settings.color.palette.custom ).toEqual( [ accentGreen, unslugged ] );
+	} );
+
+	it( 'clears a list with an empty array', () => {
+		const written = applyOverCurrent( { settings: { color: { palette: [] } } } );
+
+		expect( written.settings.color.palette ).toEqual( { theme: [ BASE ], custom: [] } );
+	} );
+
+	it( 'replaces arrays without slugs wholesale', () => {
+		const written = applyOverCurrent( { settings: { spacing: { units: [ 'rem' ] } } } );
+
+		expect( written.settings.spacing ).toEqual( { units: [ 'rem' ] } );
 	} );
 
 	it( 'key-merges nested styles', () => {
@@ -108,41 +128,20 @@ describe( 'applyThemeUpdate', () => {
 		} );
 	} );
 
-	it( 'clears a list with an empty array', () => {
-		const written = applyOverCurrent( { settings: { color: { palette: { custom: [] } } } } );
-
-		expect( written.settings.color.palette ).toEqual( { theme: [ BASE ], custom: [] } );
-	} );
-
-	it( 'keeps a subtree the backend encoded as an empty array', () => {
-		const written = applyOverCurrent( {
-			settings: { color: [], spacing: { blockGap: '2rem' } },
-		} );
-
-		expect( written.settings ).toEqual( { ...CURRENT.settings, spacing: { blockGap: '2rem' } } );
-	} );
-
 	it( 'shares untouched subtrees instead of re-merging them', () => {
 		const written = applyOverCurrent( { styles: { color: { text: '#222222' } } } );
 
 		expect( written.settings ).toBe( CURRENT.settings );
 	} );
 
-	it( 'does not mutate the edited record it builds on', () => {
+	it( 'does not mutate the record it builds on', () => {
 		const record = JSON.parse( JSON.stringify( CURRENT ) );
-		mockGlobalStyles( record );
 
-		applyThemeUpdate( { settings: { color: { palette: [ { ...ACCENT, color: '#00ff00' } ] } } } );
+		applyThemeUpdate(
+			{ id: 'global-styles-1', record },
+			{ settings: { color: { palette: { custom: [ { ...ACCENT, color: '#00ff00' } ] } } } }
+		);
 
 		expect( record ).toEqual( CURRENT );
-	} );
-
-	it( 'throws without writing when the global styles are unavailable', () => {
-		( getEditedGlobalStyles as jest.Mock ).mockReturnValue( undefined );
-
-		expect( () => applyThemeUpdate( { styles: { color: { text: '#222222' } } } ) ).toThrow(
-			'Global styles are unavailable to edit.'
-		);
-		expect( editGlobalStyles ).not.toHaveBeenCalled();
 	} );
 } );

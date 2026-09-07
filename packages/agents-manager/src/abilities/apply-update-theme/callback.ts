@@ -28,14 +28,6 @@ export async function applyUpdateThemeCallback(
 		__i18n_text_domain__
 	);
 
-	const update = normalizeThemeUpdate( input );
-	if ( ! update ) {
-		return errorResult(
-			'Invalid arguments. Provide either settings or styles to update the theme.',
-			failureMessage
-		);
-	}
-
 	// Global styles live in the editor's core-data store — elsewhere the edit
 	// would never be saved.
 	if ( ! isEditorPage() ) {
@@ -44,8 +36,14 @@ export async function applyUpdateThemeCallback(
 
 	// The post editor does not load the record at boot; reading it starts the
 	// fetch, so wait for it rather than fail the first request.
-	if ( ! ( await waitForEditedGlobalStyles() ) ) {
+	const globalStyles = await waitForEditedGlobalStyles();
+	if ( ! globalStyles ) {
 		return errorResult( 'Global styles are unavailable to edit.', failureMessage );
+	}
+
+	const update = normalizeThemeUpdate( input, globalStyles.record );
+	if ( ! update ) {
+		return errorResult( 'Provide settings or styles with a change to apply.', failureMessage );
 	}
 
 	const { summary, toolCallId } = input;
@@ -61,7 +59,7 @@ export async function applyUpdateThemeCallback(
 				keys: THEME_CHECKPOINT_KEYS,
 				summary: successMessage,
 			},
-			() => applyThemeUpdate( update )
+			() => applyThemeUpdate( globalStyles, update )
 		);
 
 		return successResult( successMessage, {

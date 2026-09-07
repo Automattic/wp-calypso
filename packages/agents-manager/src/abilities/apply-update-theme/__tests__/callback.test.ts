@@ -2,7 +2,9 @@
  * @jest-environment jsdom
  */
 jest.mock( '../../../utils/global-styles', () => ( {
-	waitForEditedGlobalStyles: jest.fn( () => Promise.resolve( true ) ),
+	waitForEditedGlobalStyles: jest.fn( () =>
+		Promise.resolve( { id: 'global-styles-1', record: { settings: {}, styles: {} } } )
+	),
 } ) );
 jest.mock( '../../../utils/update-theme', () => ( {
 	...jest.requireActual( '../../../utils/update-theme' ),
@@ -36,7 +38,10 @@ describe( 'applyUpdateThemeCallback', () => {
 	it( 'applies the subtrees that carry data and reports them', async () => {
 		const result = await applyUpdateThemeCallback( { settings: SETTINGS, styles: [] } );
 
-		expect( applyThemeUpdate ).toHaveBeenCalledWith( { settings: SETTINGS } );
+		expect( applyThemeUpdate ).toHaveBeenCalledWith(
+			expect.objectContaining( { id: 'global-styles-1' } ),
+			{ settings: { color: { palette: { custom: SETTINGS.color.palette } } } }
+		);
 		expect( result ).toEqual( {
 			result: {
 				success: true,
@@ -75,13 +80,13 @@ describe( 'applyUpdateThemeCallback', () => {
 		expect( callOrder( waitForEditedGlobalStyles ) ).toBeLessThan( callOrder( withCheckpoint ) );
 	} );
 
-	it( 'refuses and edits nothing when there is no update', async () => {
-		const result = await applyUpdateThemeCallback( { settings: [], styles: {} } );
+	it( 'refuses and edits nothing when there is no change to apply', async () => {
+		const result = await applyUpdateThemeCallback( { settings: { color: [] }, styles: {} } );
 
 		expect( result.result ).toMatchObject( {
 			success: false,
 			message: 'Failed to make the theme update. Please try again.',
-			error: expect.stringContaining( 'Provide either settings or styles' ),
+			error: expect.stringContaining( 'Provide settings or styles' ),
 		} );
 		expect( applyThemeUpdate ).not.toHaveBeenCalled();
 		expect( withCheckpoint ).not.toHaveBeenCalled();
@@ -98,7 +103,7 @@ describe( 'applyUpdateThemeCallback', () => {
 	} );
 
 	it( 'refuses when the global styles never load', async () => {
-		( waitForEditedGlobalStyles as jest.Mock ).mockResolvedValueOnce( false );
+		( waitForEditedGlobalStyles as jest.Mock ).mockResolvedValueOnce( undefined );
 
 		const result = await applyUpdateThemeCallback( { settings: SETTINGS } );
 

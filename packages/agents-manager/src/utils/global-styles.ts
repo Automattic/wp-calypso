@@ -34,13 +34,16 @@ interface CoreDispatch {
 
 const LOAD_TIMEOUT_MS = 10000;
 
+export interface EditedGlobalStyles {
+	id: string;
+	record: Required< GlobalStylesRecord >;
+}
+
 /**
  * The editor's global styles with the session's unsaved edits, or `undefined`
  * until the record is loaded.
  */
-export function getEditedGlobalStyles():
-	| { id: string; record: Required< GlobalStylesRecord > }
-	| undefined {
+export function getEditedGlobalStyles(): EditedGlobalStyles | undefined {
 	const core = select( coreStore ) as CoreSelect | undefined;
 	const id = core?.__experimentalGetCurrentGlobalStylesId?.();
 	const record = id ? core?.getEditedEntityRecord( 'root', 'globalStyles', id ) : undefined;
@@ -53,12 +56,14 @@ export function getEditedGlobalStyles():
 }
 
 /**
- * Whether the global-styles record is loaded, waiting for it when not: reading
- * it starts the fetch on editors that do not load it at boot, like the post
- * editor. Resolves `false` after the timeout.
+ * The edited global styles once the record is loaded: reading it starts the
+ * fetch on editors that do not load it at boot, like the post editor.
+ * Resolves `undefined` after the timeout.
  */
-export function waitForEditedGlobalStyles(): Promise< boolean > {
-	return waitForStore( 'core', () => !! getEditedGlobalStyles(), LOAD_TIMEOUT_MS );
+export async function waitForEditedGlobalStyles(): Promise< EditedGlobalStyles | undefined > {
+	const loaded = await waitForStore( 'core', () => !! getEditedGlobalStyles(), LOAD_TIMEOUT_MS );
+
+	return loaded ? getEditedGlobalStyles() : undefined;
 }
 
 /**

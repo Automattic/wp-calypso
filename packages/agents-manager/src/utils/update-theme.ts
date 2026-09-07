@@ -1,73 +1,99 @@
 import deepmerge from 'deepmerge';
 import {
 	editGlobalStyles,
-	getEditedGlobalStyles,
+	type EditedGlobalStyles,
 	type GlobalStylesRecord,
 	type ThemeJson,
 } from './global-styles';
 import { isRecord } from './is-record';
 
-interface PaletteColor {
-	slug: string;
-	color: string;
+// Preset lists the record keys by origin (`{ theme, custom }`) but the agent
+// sends flat; its entries belong to `custom`.
+const PRESET_LISTS = [
+	[ 'color', 'palette' ],
+	[ 'color', 'duotone' ],
+	[ 'color', 'gradients' ],
+	[ 'typography', 'fontFamilies' ],
+	[ 'typography', 'fontSizes' ],
+];
+
+const hasSlug = ( value: unknown ): value is { slug: string } =>
+	isRecord( value ) && typeof value.slug === 'string';
+
+function nestPresets( settings: ThemeJson ): ThemeJson {
+	return PRESET_LISTS.reduce( ( nested, [ group, list ] ) => {
+		const presets = nested[ group ];
+		if ( ! isRecord( presets ) || ! Array.isArray( presets[ list ] ) ) {
+			return nested;
+		}
+		return { ...nested, [ group ]: { ...presets, [ list ]: { custom: presets[ list ] } } };
+	}, settings );
 }
 
-const isPaletteColor = ( value: unknown ): value is PaletteColor =>
-	isRecord( value ) && typeof value.slug === 'string' && typeof value.color === 'string';
+// PHP encodes an empty object as `[]`, so an empty array carries a change only
+// where it clears a non-empty list; an object carries one only if a key does.
+function prune( value: unknown, current: unknown ): ThemeJson | undefined {
+	if ( ! isRecord( value ) ) {
+		return undefined;
+	}
+
+	const kept: ThemeJson = {};
+	for ( const [ key, child ] of Object.entries( value ) ) {
+		const currentChild = isRecord( current ) ? current[ key ] : undefined;
+		if ( isRecord( child ) ) {
+			const keptChild = prune( child, currentChild );
+			if ( keptChild ) {
+				kept[ key ] = keptChild;
+			}
+		} else if (
+			! Array.isArray( child ) ||
+			child.length ||
+			( Array.isArray( currentChild ) && currentChild.length )
+		) {
+			kept[ key ] = child;
+		}
+	}
+
+	return Object.keys( kept ).length ? kept : undefined;
+}
 
 /**
- * Reads the agent's `settings`/`styles` into the subtrees that carry data, or
- * `undefined` when neither does. The backend sends an empty PHP array for a
- * subtree the model left out, which arrives as `[]` — merging that would
- * replace the subtree — so anything but a plain object with keys is empty.
+ * Reads the agent's `settings`/`styles` against the current record into the
+ * subtrees that carry a change, or `undefined` when neither does.
  */
-export function normalizeThemeUpdate( {
-	settings,
-	styles,
-}: {
-	settings?: unknown;
-	styles?: unknown;
-} ): GlobalStylesRecord | undefined {
-	const hasData = ( value: unknown ): value is ThemeJson =>
-		isRecord( value ) && Object.keys( value ).length > 0;
-	const update = {
-		...( hasData( settings ) && { settings } ),
-		...( hasData( styles ) && { styles } ),
-	};
-
-	return Object.keys( update ).length ? update : undefined;
-}
-
-// A flat palette (`settings.color.palette: [ … ]`) lands in the `custom`
-// palette, where WordPress keeps user-added colors, instead of replacing the
-// theme's own.
-function nestFlatPalette( settings: ThemeJson ): ThemeJson {
-	const color = settings.color;
-	if ( ! isRecord( color ) || ! Array.isArray( color.palette ) ) {
-		return settings;
+export function normalizeThemeUpdate(
+	{ settings, styles }: { settings?: unknown; styles?: unknown },
+	current: GlobalStylesRecord
+): GlobalStylesRecord | undefined {
+	const keptSettings = prune( isRecord( settings ) && nestPresets( settings ), current.settings );
+	const keptStyles = prune( styles, current.styles );
+	if ( ! keptSettings && ! keptStyles ) {
+		return undefined;
 	}
-	return { ...settings, color: { ...color, palette: { custom: color.palette } } };
+
+	return {
+		...( keptSettings && { settings: keptSettings } ),
+		...( keptStyles && { styles: keptStyles } ),
+	};
 }
 
-// Palette entries merge by slug — an updated color keeps its place, a new one
-// appends — so repeating an update never duplicates a slug. Every other array
-// (font lists, sizes, duotones, gradients) replaces wholesale.
+// Entries with a slug (colors, fonts, sizes, duotones, gradients) merge by it
+// — an updated entry keeps its place, a new one appends — so repeating an
+// update never duplicates one. Every other array replaces wholesale.
 function mergeThemeArrays( target: unknown[], source: unknown[] ): unknown[] {
-	if ( ! source.some( isPaletteColor ) ) {
+	if ( ! source.some( hasSlug ) ) {
 		return source;
 	}
 
 	const merged = [ ...target ];
-	for ( const color of source ) {
-		const index = isPaletteColor( color )
-			? merged.findIndex(
-					( existing ) => isPaletteColor( existing ) && existing.slug === color.slug
-			  )
+	for ( const entry of source ) {
+		const index = hasSlug( entry )
+			? merged.findIndex( ( existing ) => hasSlug( existing ) && existing.slug === entry.slug )
 			: -1;
 		if ( index >= 0 ) {
-			merged[ index ] = color;
+			merged[ index ] = entry;
 		} else {
-			merged.push( color );
+			merged.push( entry );
 		}
 	}
 	return merged;
@@ -78,34 +104,10 @@ function mergeThemeArrays( target: unknown[], source: unknown[] ): unknown[] {
 // than cloned, so deepmerge never routes them through `mergeThemeArrays`.
 const MERGE_OPTIONS: deepmerge.Options = { arrayMerge: mergeThemeArrays, clone: false };
 
-// PHP encodes an empty object as `[]`, so an array arriving over an object
-// subtree is an empty update for it, not a replacement.
-MERGE_OPTIONS.customMerge = () => ( target: unknown, source: unknown ) =>
-	Array.isArray( source ) && isRecord( target )
-		? target
-		: deepmerge( target as object, source as object, MERGE_OPTIONS );
-
-function mergeThemeUpdate(
-	current: Required< GlobalStylesRecord >,
+/** Applies a normalized update over the edited global styles. */
+export function applyThemeUpdate(
+	{ id, record }: EditedGlobalStyles,
 	update: GlobalStylesRecord
-): Required< GlobalStylesRecord > {
-	const overlay = update.settings
-		? { ...update, settings: nestFlatPalette( update.settings ) }
-		: update;
-
-	return deepmerge( current, overlay, MERGE_OPTIONS );
-}
-
-/**
- * Applies a normalized update to the editor's global styles, building on the
- * session's unsaved edits. Throws until the global-styles record is loaded, so
- * an edit never lands on an empty record.
- */
-export function applyThemeUpdate( update: GlobalStylesRecord ): void {
-	const globalStyles = getEditedGlobalStyles();
-	if ( ! globalStyles ) {
-		throw new Error( 'Global styles are unavailable to edit.' );
-	}
-
-	editGlobalStyles( globalStyles.id, mergeThemeUpdate( globalStyles.record, update ) );
+): void {
+	editGlobalStyles( id, deepmerge( record, update, MERGE_OPTIONS ) );
 }
