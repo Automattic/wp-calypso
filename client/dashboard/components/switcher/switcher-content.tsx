@@ -123,7 +123,6 @@ export default function SwitcherContent< T >( {
 							className="switcher-content__loading-item"
 							key={ index }
 							style={ { height: 'fit-content', minHeight: '40px' } }
-							tabIndex={ -1 }
 							aria-hidden="true"
 						>
 							{ renderLoadingItem( { index } ) }
