@@ -236,6 +236,23 @@ export const useGetCombinedChat = (
 						error: error instanceof Error ? error.message : String( error ),
 					} );
 
+					// Leave the loading state, or this effect re-runs, fetches again and starts
+					// another interaction, forever. Keep the conversation the chat already shows;
+					// otherwise show it with the Odie history only, like when Zendesk can't be
+					// reached above, so live messages still arrive and the next refresh retries.
+					setMainChatState( ( prevChat ) =>
+						prevChat.conversationId === conversationId
+							? { ...prevChat, status: 'loaded' }
+							: {
+									...prevChat,
+									odieId: odieId ? Number( odieId ) : null,
+									messages: [ ...( odieChat ? filteredOdieMessages : [] ) ],
+									conversationId,
+									status: 'loaded',
+									provider: 'zendesk',
+							  }
+					);
+
 					startNewInteraction( {
 						event_source: 'odie',
 						event_external_id: crypto.randomUUID(),

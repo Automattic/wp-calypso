@@ -311,3 +311,45 @@ describe( 'useGetCombinedChat — message recovery on Smooch re-init', () => {
 		expect( mockGetZendeskConversation ).not.toHaveBeenCalled();
 	} );
 } );
+
+describe( 'useGetCombinedChat — when the conversation cannot be fetched', () => {
+	it( 'leaves the loading state instead of fetching and starting interactions forever', async () => {
+		mockGetZendeskConversation.mockImplementation( () =>
+			Promise.reject( new Error( 'conversation not found' ) )
+		);
+		mockCurrentSupportInteraction = {
+			uuid: 'int-1',
+			conversationId: 'conv-1',
+			odieId: 42,
+			status: 'open',
+		};
+		mockOdieChat = { odieId: 42, wpcomUserId: 99, messages: [ agentMessage( 10, 'odie reply' ) ] };
+
+		const { result, rerender } = renderCombinedChat();
+
+		// The chat settles on the conversation with the Odie history it has, the
+		// same shape used when Zendesk cannot be reached.
+		await waitFor( () => {
+			expect( result.current.mainChatState.status ).toBe( 'loaded' );
+		} );
+		expect( result.current.mainChatState.provider ).toBe( 'zendesk' );
+		expect( result.current.mainChatState.conversationId ).toBe( 'conv-1' );
+		expect( result.current.mainChatState.messages.some( ( m ) => m.message_id === 10 ) ).toBe(
+			true
+		);
+
+		// The failed fetch flips `isFetchingConversation` back, which re-runs the
+		// effect. Give those re-runs room to fire before counting.
+		await act( async () => {
+			await Promise.resolve();
+			await Promise.resolve();
+		} );
+		rerender();
+		await act( async () => {
+			await Promise.resolve();
+		} );
+
+		expect( mockGetZendeskConversation ).toHaveBeenCalledTimes( 1 );
+		expect( mockStartNewInteraction ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
