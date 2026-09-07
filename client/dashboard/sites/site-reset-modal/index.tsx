@@ -61,12 +61,16 @@ function SiteResetContent( {
 	isBusy,
 	onSubmit,
 	onClose,
+	isClassicView,
+	siteAdminUrl,
 }: {
 	siteContent: SiteResetContentSummary;
 	siteDomain: string;
 	isBusy: boolean;
 	onSubmit: () => void;
 	onClose: () => void;
+	isClassicView?: boolean;
+	siteAdminUrl?: string;
 } ) {
 	const [ formData, setFormData ] = useState< SiteResetFormData >( {
 		domain: '',
@@ -100,7 +104,15 @@ function SiteResetContent( {
 						),
 						{
 							// @ts-expect-error children prop is injected by createInterpolateElement
-							link: <ExternalLink href={ wpcomLink( `/export/${ siteDomain }` ) } />,
+							link: (
+								<ExternalLink
+									href={
+										isClassicView && siteAdminUrl
+											? `${ siteAdminUrl }export.php`
+											: wpcomLink( `/export/${ siteDomain }` )
+									}
+								/>
+							),
 						}
 					) }
 				</Text>
@@ -116,7 +128,12 @@ function SiteResetContent( {
 					}
 				) }
 			</Text>
-			<ContentInfo siteContent={ siteContent } siteDomain={ siteDomain } />
+			<ContentInfo
+				siteContent={ siteContent }
+				siteDomain={ siteDomain }
+				isClassicView={ isClassicView }
+				siteAdminUrl={ siteAdminUrl }
+			/>
 
 			<form onSubmit={ handleSubmit }>
 				<VStack spacing={ 4 }>
@@ -204,6 +221,11 @@ export default function SiteResetModal( { site, onClose }: { site: Site; onClose
 		return null;
 	}
 
+	const isClassicView =
+		( site.jetpack && ! site.is_wpcom_atomic ) ||
+		site.options?.wpcom_admin_interface === 'wp-admin';
+	const siteAdminUrl = site.options?.admin_url;
+
 	const handleReset = () => {
 		if ( isMutationPending ) {
 			return;
@@ -251,6 +273,8 @@ export default function SiteResetModal( { site, onClose }: { site: Site; onClose
 					isBusy={ isMutationPending }
 					onSubmit={ handleReset }
 					onClose={ onClose }
+					isClassicView={ isClassicView }
+					siteAdminUrl={ siteAdminUrl }
 				/>
 			),
 		};
