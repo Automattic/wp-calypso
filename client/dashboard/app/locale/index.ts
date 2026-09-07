@@ -31,3 +31,8 @@ export function useLocale() {
 export function useIntlLocale() {
 	return getIntlLocale( useLocale() );
 }
+
+// A collator for sorting user-visible strings.
+export function useIntlCollator() {
+	return new Intl.Collator( [ useIntlLocale(), 'en' ] );
+}
