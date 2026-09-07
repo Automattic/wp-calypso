@@ -1,14 +1,14 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, act } from '@testing-library/react';
+import { render, screen, act, fireEvent } from '@testing-library/react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
-import InstallProgressCard from '../card';
+import TransferWaitCard from '../card';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
 
-describe( 'InstallProgressCard', () => {
+describe( 'TransferWaitCard', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		jest.useFakeTimers();
@@ -17,28 +17,42 @@ describe( 'InstallProgressCard', () => {
 	afterEach( () => jest.useRealTimers() );
 
 	it( 'narrates the preparing stage', () => {
-		render( <InstallProgressCard transferStatus={ transferStates.ACTIVE } currentStep={ 1 } /> );
+		render( <TransferWaitCard transferStatus={ transferStates.ACTIVE } fallbackStep={ 1 } /> );
 		expect( screen.getByRole( 'status' ).textContent ).toContain(
 			'preparing a dedicated server for your site'
 		);
 	} );
-
 	it( 'narrates the moving stage', () => {
-		render(
-			<InstallProgressCard transferStatus={ transferStates.RELOCATING } currentStep={ 1 } />
-		);
+		render( <TransferWaitCard transferStatus={ transferStates.RELOCATING } fallbackStep={ 1 } /> );
 		expect( screen.getByRole( 'status' ).textContent ).toContain(
 			'moving your site to the new server'
 		);
 	} );
 
 	it( 'narrates the finishing stage', () => {
-		render( <InstallProgressCard transferStatus={ transferStates.COMPLETE } currentStep={ 1 } /> );
+		render( <TransferWaitCard transferStatus={ transferStates.COMPLETE } fallbackStep={ 1 } /> );
 		expect( screen.getByRole( 'status' ).textContent ).toContain( 'Finishing up' );
 	} );
 
+	it( 'uses site copy for a hosting transfer', () => {
+		render(
+			<TransferWaitCard
+				transferStatus={ transferStates.COMPLETE }
+				fallbackStep={ 1 }
+				isPluginInstall={ false }
+			/>
+		);
+		expect( screen.getByText( 'Setting up your site' ) ).toBeVisible();
+		expect( screen.getByRole( 'status' ).textContent ).toContain(
+			'making sure your site is ready'
+		);
+		expect(
+			screen.getByText( 'Your site is ready to use once the transfer is complete.' )
+		).toBeVisible();
+	} );
+
 	it( 'renders a determinate progress bar labeled with the current stage', () => {
-		render( <InstallProgressCard transferStatus={ transferStates.ACTIVE } currentStep={ 1 } /> );
+		render( <TransferWaitCard transferStatus={ transferStates.ACTIVE } fallbackStep={ 1 } /> );
 		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute(
 			'aria-label',
 			'Preparing a dedicated server for your site'
@@ -46,22 +60,22 @@ describe( 'InstallProgressCard', () => {
 	} );
 
 	it( 'does not show the overrun line before a stage runs long', () => {
-		render( <InstallProgressCard transferStatus={ transferStates.ACTIVE } currentStep={ 1 } /> );
+		render( <TransferWaitCard transferStatus={ transferStates.ACTIVE } fallbackStep={ 1 } /> );
 		act( () => jest.advanceTimersByTime( 30_000 ) );
 		expect( screen.queryByText( /taking longer than usual/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'shows the overrun line once a stage runs well past its typical duration', () => {
-		render( <InstallProgressCard transferStatus={ transferStates.ACTIVE } currentStep={ 1 } /> );
+		render( <TransferWaitCard transferStatus={ transferStates.ACTIVE } fallbackStep={ 1 } /> );
 		act( () => jest.advanceTimersByTime( 45_000 ) );
 		expect( screen.getByText( /taking longer than usual/ ) ).toBeVisible();
 	} );
 
 	it( 'still reassures while a finishing stage is merely slow', () => {
 		render(
-			<InstallProgressCard
+			<TransferWaitCard
 				transferStatus={ transferStates.COMPLETE }
-				currentStep={ 1 }
+				fallbackStep={ 1 }
 				siteSlug="example.wordpress.com"
 			/>
 		);
@@ -73,9 +87,9 @@ describe( 'InstallProgressCard', () => {
 	// Past this point the promise is one we cannot keep: the plugin may never activate.
 	it( 'stops promising nothing is wrong once the finishing stage stalls', () => {
 		render(
-			<InstallProgressCard
+			<TransferWaitCard
 				transferStatus={ transferStates.COMPLETE }
-				currentStep={ 1 }
+				fallbackStep={ 1 }
 				siteSlug="example.wordpress.com"
 			/>
 		);
@@ -86,9 +100,9 @@ describe( 'InstallProgressCard', () => {
 
 	it( 'offers a way out to the site plugins once stalled', () => {
 		render(
-			<InstallProgressCard
+			<TransferWaitCard
 				transferStatus={ transferStates.COMPLETE }
-				currentStep={ 1 }
+				fallbackStep={ 1 }
 				siteSlug="example.wordpress.com"
 			/>
 		);
@@ -99,11 +113,33 @@ describe( 'InstallProgressCard', () => {
 		);
 	} );
 
+	it( 'never mentions a plugin when the wait is a site transfer', () => {
+		render(
+			<TransferWaitCard
+				transferStatus={ transferStates.COMPLETE }
+				fallbackStep={ 1 }
+				siteSlug="example.wordpress.com"
+				isPluginInstall={ false }
+			/>
+		);
+		act( () => jest.advanceTimersByTime( 95_000 ) );
+		expect(
+			screen.getByText( 'This is taking longer than it should. Your site is ready to use.' )
+		).toBeVisible();
+		expect(
+			screen.queryByText( /your plugin may still finish installing/ )
+		).not.toBeInTheDocument();
+		expect( screen.getByRole( 'link', { name: 'Go to your site' } ) ).toHaveAttribute(
+			'href',
+			'/sites/example.wordpress.com'
+		);
+	} );
+
 	it( 'offers no way out while the transfer itself is unfinished', () => {
 		render(
-			<InstallProgressCard
+			<TransferWaitCard
 				transferStatus={ transferStates.ACTIVE }
-				currentStep={ 1 }
+				fallbackStep={ 1 }
 				siteSlug="example.wordpress.com"
 			/>
 		);
@@ -114,9 +150,9 @@ describe( 'InstallProgressCard', () => {
 
 	it( 'records the stall once, not on every tick', () => {
 		render(
-			<InstallProgressCard
+			<TransferWaitCard
 				transferStatus={ transferStates.COMPLETE }
-				currentStep={ 1 }
+				fallbackStep={ 1 }
 				siteSlug="example.wordpress.com"
 				productSlug="sensei-pro"
 			/>
@@ -127,8 +163,31 @@ describe( 'InstallProgressCard', () => {
 		act( () => jest.advanceTimersByTime( 50_000 ) );
 		act( () => jest.advanceTimersByTime( 30_000 ) );
 		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
-		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_marketplace_install_wait_stalled', {
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_transfer_wait_stalled', {
+			wait_type: 'plugin_install',
 			product_slug: 'sensei-pro',
+		} );
+	} );
+
+	it( 'marks a site transfer stall as such, with no product slug', () => {
+		render(
+			<TransferWaitCard
+				transferStatus={ transferStates.COMPLETE }
+				fallbackStep={ 1 }
+				siteSlug="example.wordpress.com"
+				isPluginInstall={ false }
+			/>
+		);
+		act( () => jest.advanceTimersByTime( 95_000 ) );
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_transfer_wait_stalled', {
+			wait_type: 'site_transfer',
+		} );
+
+		fireEvent.click( screen.getByRole( 'link', { name: 'Go to your site' } ) );
+		expect( recordTracksEvent ).toHaveBeenLastCalledWith( 'calypso_transfer_wait_stalled_click', {
+			wait_type: 'site_transfer',
+			stage_seconds: expect.any( Number ),
 		} );
 	} );
 } );

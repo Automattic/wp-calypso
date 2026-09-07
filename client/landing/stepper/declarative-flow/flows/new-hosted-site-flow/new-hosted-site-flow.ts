@@ -201,6 +201,7 @@ const hosting: FlowV2< typeof initialize > = {
 						const siteSlug = providedDependencies.siteSlug || getSignupCompleteSlug();
 						const destinationParams: Record< string, string > = {
 							siteId,
+							...( siteSlug ? { siteSlug } : {} ),
 						};
 						if ( studioSiteId ) {
 							destinationParams[ 'redirect_to' ] = addQueryArgs( `/home/${ siteId }`, {

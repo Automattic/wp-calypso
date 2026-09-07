@@ -1,4 +1,4 @@
-.marketplace-install-progress {
+.transfer-wait {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -9,7 +9,7 @@
 	gap: 40px;
 }
 
-.marketplace-install-progress__header {
+.transfer-wait__header {
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
@@ -17,7 +17,7 @@
 	text-align: center;
 }
 
-.marketplace-install-progress__stage {
+.transfer-wait__stage {
 	margin: 0;
 	font-size: 1rem;
 	line-height: 1.5;
@@ -30,19 +30,19 @@
 	}
 }
 
-.marketplace-install-progress__overrun {
+.transfer-wait__overrun {
 	margin: 0;
 	font-size: 0.75rem;
 	color: var( --color-warning-60 );
 }
 
-.marketplace-install-progress__progress {
+.transfer-wait__progress {
 	width: 100%;
 	max-width: 440px;
 	line-height: 0;
 }
 
-.marketplace-install-progress__progress-bar {
+.transfer-wait__progress-bar {
 	width: 100% !important;
 	background: var( --color-neutral-5 );
 
@@ -51,7 +51,7 @@
 	}
 }
 
-.marketplace-install-progress__escape {
+.transfer-wait__escape {
 	display: flex;
 	margin-block-start: 16px;
 	margin-inline: auto;
