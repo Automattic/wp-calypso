@@ -10,6 +10,10 @@
 		align-items: center;
 		gap: 5px;
 
+		span {
+			display: flex;
+		}
+
 		svg {
 			fill: currentColor;
 		}

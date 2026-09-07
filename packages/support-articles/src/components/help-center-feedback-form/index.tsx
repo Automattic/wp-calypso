@@ -88,7 +88,9 @@ const HelpCenterFeedbackForm = ( {
 			{ rating === null && <FeedbackButtons /> }
 			{ rating === 1 && (
 				<p className="help-center-feedback-form__rated">
-					<ThumbsUpIcon />
+					<span aria-hidden="true">
+						<ThumbsUpIcon />
+					</span>
 					{ __( 'You found this article helpful.', __i18n_text_domain__ ) }
 				</p>
 			) }
