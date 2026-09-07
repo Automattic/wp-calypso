@@ -42,12 +42,14 @@ function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
 function mockApi( {
 	purchases,
 	meta = {},
+	metaDelay = 0,
 	transferStatus,
 	transferDelay = 0,
 	transferStatusCode = 200,
 }: {
 	purchases: Purchase[];
 	meta?: Record< string, number >;
+	metaDelay?: number;
 	transferStatus?: string;
 	transferDelay?: number;
 	transferStatusCode?: number;
@@ -59,6 +61,7 @@ function mockApi( {
 		.reply( 200, purchases )
 		.get( `/wp/v2/sites/${ SITE_ID }/users/me` )
 		.query( true )
+		.delay( metaDelay )
 		.reply( 200, { id: 1, name: 'me', slug: 'me', meta } )
 		.get( `/wpcom/v2/sites/${ SITE_ID }/atomic/transfers/latest` )
 		.query( true )
@@ -72,7 +75,11 @@ function renderNotice(
 	// query has to opt out of retries on its own; one test checks that it does.
 	{ retry = false }: { retry?: boolean } = {}
 ) {
-	const queryClient = new QueryClient( { defaultOptions: { queries: { retry } } } );
+	// `retryDelay: 0` keeps the transfer query's own retries from adding
+	// TanStack's exponential backoff to a test's runtime.
+	const queryClient = new QueryClient( {
+		defaultOptions: { queries: { retry, retryDelay: 0 } },
+	} );
 	const rendered = renderHook( () => useSiteExpiryNotice( SITE_ID, options ), {
 		wrapper: ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
@@ -86,7 +93,13 @@ function renderNotice(
 		waitFor( () =>
 			expect( queryClient.getQueryData( [ 'site', SITE_ID, 'users', 'current' ] ) ).toBeDefined()
 		);
-	return { ...rendered, waitForPurchases, waitForCurrentUser };
+	const waitForTransferError = () =>
+		waitFor( () =>
+			expect(
+				queryClient.getQueryState( [ 'site', SITE_ID, 'atomic', 'transfers', 'latest' ] )?.status
+			).toBe( 'error' )
+		);
+	return { ...rendered, waitForPurchases, waitForCurrentUser, waitForTransferError };
 }
 
 beforeEach( () => MockDate.set( NOW ) );
@@ -173,6 +186,46 @@ describe( 'useSiteExpiryNotice', () => {
 		await waitForCurrentUser();
 		expect( result.current ).toBeNull();
 		await waitFor( () => expect( result.current?.isReverted ).toBe( true ) );
+	} );
+
+	test( 'stays null in post-grace until the dismissal meta is known', async () => {
+		const expiry = expiryInDays( -40 );
+		mockApi( {
+			purchases: [
+				makePurchase( {
+					expiry_date: expiry,
+					expiry_status: 'expired',
+					subscription_status: 'inactive',
+				} ),
+			],
+			meta: {
+				wpcom_plan_expiry_notice_dismiss_wp_admin:
+					Math.floor( new Date( expiry ).getTime() / 1000 ) + 86400,
+			},
+			metaDelay: 50,
+		} );
+		const { result, waitForPurchases, waitForCurrentUser } = renderNotice();
+		await waitForPurchases();
+		expect( result.current ).toBeNull();
+		await waitForCurrentUser();
+		expect( result.current ).toBeNull();
+	} );
+
+	test( 'stays null in post-grace when the transfer lookup fails', async () => {
+		mockApi( {
+			purchases: [
+				makePurchase( {
+					expiry_date: expiryInDays( -40 ),
+					expiry_status: 'expired',
+					subscription_status: 'inactive',
+				} ),
+			],
+			transferStatusCode: 500,
+		} );
+		const { result, waitForCurrentUser, waitForTransferError } = renderNotice();
+		await waitForCurrentUser();
+		await waitForTransferError();
+		expect( result.current ).toBeNull();
 	} );
 
 	test( 'a dismissal newer than the expiry date hides post-grace', async () => {

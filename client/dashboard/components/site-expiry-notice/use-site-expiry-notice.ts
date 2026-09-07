@@ -1,4 +1,4 @@
-import { PLAN_EXPIRY_NOTICE_DISMISS_META_KEY } from '@automattic/api-core';
+import { isWpError, PLAN_EXPIRY_NOTICE_DISMISS_META_KEY } from '@automattic/api-core';
 import {
 	siteCurrentUserQuery,
 	siteLatestAtomicTransferQuery,
@@ -46,6 +46,15 @@ export function isPlanExpiryNoticeDismissed(
 }
 
 /**
+ * A 4xx is the server's definitive answer — the transfer endpoint replies 404
+ * (`no_transfer_record`) for a site that was never transferred. Anything else
+ * may be transient.
+ */
+function isClientError( error: unknown ): boolean {
+	return isWpError( error ) && error.status >= 400 && error.status < 500;
+}
+
+/**
  * Everything the sitewide expiry banner needs to know about one site, or null
  * when nothing should show. Kept apart from the banner so that a host can
  * settle eligibility before rendering anything (the dashboard's notice arbiter
@@ -59,7 +68,7 @@ export function useSiteExpiryNotice(
 	const { data: purchases } = useQuery( { ...sitePurchasesQuery( siteId ), enabled: siteId > 0 } );
 	const purchase = purchases ? pickSitewideExpiryPurchase( purchases ) : null;
 
-	const { data: currentUser } = useQuery( {
+	const { data: currentUser, isFetchedAfterMount: isCurrentUserFetched } = useQuery( {
 		...siteCurrentUserQuery( siteId ),
 		enabled: !! purchase,
 	} );
@@ -68,12 +77,17 @@ export function useSiteExpiryNotice(
 		!! purchase &&
 		getPlanExpiryNotice( purchase, { scope: 'sitewide', locale } )?.stage === 'post-grace';
 
-	const { data: latestTransfer, isPending: isTransferPending } = useQuery( {
+	const {
+		data: latestTransfer,
+		isPending: isTransferPending,
+		error: transferError,
+	} = useQuery( {
 		...siteLatestAtomicTransferQuery( siteId ),
 		enabled: isPastGrace,
-		// A site that was never transferred answers 404, and the notice waits
-		// on this query: retrying would hold the banner back for seconds.
-		retry: false,
+		// The 404 for a site that was never transferred is an answer, not a
+		// failure: take it at once instead of holding the banner back for
+		// seconds. Anything else gets the client's usual retries.
+		retry: ( failureCount, error ) => ! isClientError( error ) && failureCount < 3,
 	} );
 	const isReverted = latestTransfer?.status === 'reverted';
 
@@ -84,6 +98,12 @@ export function useSiteExpiryNotice(
 	// Until the transfer status is known, a reverted site would be offered
 	// "Restore site" and then have it swapped for "Contact support".
 	if ( isPastGrace && isTransferPending ) {
+		return null;
+	}
+
+	// A 5xx or a network failure leaves the revert state unknown, and the wrong
+	// guess offers "Restore site" to a site that is already reverted.
+	if ( isPastGrace && transferError && ! isClientError( transferError ) ) {
 		return null;
 	}
 
@@ -103,6 +123,13 @@ export function useSiteExpiryNotice(
 	}
 
 	const isDismissible = notice.stage === 'post-grace';
+
+	// A dismissal made on another surface only arrives with this fetch, so a
+	// cached copy from before it would flash the notice back up.
+	if ( isDismissible && ! isCurrentUserFetched ) {
+		return null;
+	}
+
 	if (
 		isDismissible &&
 		isPlanExpiryNoticeDismissed(
