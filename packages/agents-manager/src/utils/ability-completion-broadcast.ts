@@ -75,16 +75,10 @@ function announceAbilityCallback( ability: Ability ): Ability {
 
 /**
  * Announce every ability's completion, whichever path dispatches it.
- * @param toolProvider The merged tool provider, if any.
- * @returns The wrapped provider, or undefined when there is nothing to wrap.
+ * @param toolProvider The tool provider to wrap.
+ * @returns The wrapped provider.
  */
-export function withAbilityCompletionBroadcast(
-	toolProvider: ToolProvider | undefined
-): ToolProvider | undefined {
-	if ( ! toolProvider ) {
-		return undefined;
-	}
-
+export function withAbilityCompletionBroadcast( toolProvider: ToolProvider ): ToolProvider {
 	return {
 		getAbilities: async () => ( await toolProvider.getAbilities() ).map( announceAbilityCallback ),
 		executeAbility: ( name: string, args: unknown ) =>
