@@ -18,6 +18,8 @@ if ( ! response.ok ) {
 const body = await response.text();
 const lines = body.split( '\n' ).map( ( line ) => line.trim() );
 const header = lines.find( ( line ) => line.startsWith( '#' ) ) ?? '';
+// Punycode entries (xn--…) are kept even though email-validator currently rejects the
+// double hyphen before the TLD check runs: the list should stay a faithful copy of the source.
 const tlds = lines
 	.filter( ( line ) => line && ! line.startsWith( '#' ) )
 	.map( ( line ) => line.toLowerCase() )

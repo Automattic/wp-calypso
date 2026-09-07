@@ -1,9 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-import { fireEvent, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { useSelector } from 'calypso/state';
 import accountRecoveryReducer from 'calypso/state/account-recovery/reducer';
+import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import userSettingsReducer from 'calypso/state/user-settings/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import AccountEmailField from '../account-email-field';
@@ -139,21 +142,34 @@ describe( 'AccountEmailField — custom domain warning', () => {
 } );
 
 describe( 'AccountEmailField TLD validation', () => {
+	// Mirrors the parent screen, which hands the store's unsaved settings back down as props.
+	function EditableAccountEmailField( {
+		emailValidationHandler,
+	}: {
+		emailValidationHandler: ( isEmailValid: boolean ) => void;
+	} ) {
+		const unsavedUserSettings = useSelector( getUnsavedUserSettings ) ?? undefined;
+		return (
+			<AccountEmailField
+				userSettings={ { user_email: 'user@gmail.com' } }
+				unsavedUserSettings={ unsavedUserSettings }
+				emailValidationHandler={ emailValidationHandler }
+			/>
+		);
+	}
+
 	const renderAndType = async ( email: string ) => {
 		const emailValidationHandler = jest.fn();
 		renderWithProvider(
-			<AccountEmailField
-				userSettings={ { user_email: 'user@gmail.com' } }
-				unsavedUserSettings={ { user_email: 'user@gmail.com' } }
-				emailValidationHandler={ emailValidationHandler }
-			/>,
+			<EditableAccountEmailField emailValidationHandler={ emailValidationHandler } />,
 			{
 				initialState: buildInitialState(),
 				reducers: { userSettings: userSettingsReducer, accountRecovery: accountRecoveryReducer },
 			}
 		);
 		const input = screen.getByRole( 'textbox', { name: /email/i } );
-		fireEvent.change( input, { target: { value: email } } );
+		await userEvent.clear( input );
+		await userEvent.type( input, email );
 		return emailValidationHandler;
 	};
 

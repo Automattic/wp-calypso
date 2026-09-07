@@ -4,6 +4,7 @@
 
 import config from '@automattic/calypso-config';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -407,43 +408,58 @@ describe( 'Blackbox integration', () => {
 describe( 'email domain validation', () => {
 	const mockStore = configureStore( [ thunk ] );
 
-	const renderAndSubmit = ( email ) => {
+	afterEach( () => nock.cleanAll() );
+
+	const recordRequests = () => {
+		const sent = [];
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/users/new', ( body ) => {
+				sent.push( body );
+				return true;
+			} )
+			.reply( 200, {} )
+			.persist();
+		return sent;
+	};
+
+	const renderAndSubmit = async ( email, props = {} ) => {
 		const store = mockStore( {} );
 		render(
 			<Provider store={ store }>
-				<PasswordlessSignupForm />
+				<PasswordlessSignupForm { ...props } />
 			</Provider>
 		);
-		fireEvent.change( screen.getByRole( 'textbox', { name: /email/i } ), {
-			target: { value: email },
-		} );
-		fireEvent.click( screen.getByRole( 'button', { name: /create your account/i } ) );
+		await userEvent.type( screen.getByRole( 'textbox', { name: /email/i } ), email );
+		await userEvent.click( screen.getByRole( 'button', { name: /create your account/i } ) );
+		return store;
 	};
 
-	it( 'names the domain and does not submit when the TLD is not real', () => {
-		const scope = nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/users/new' )
-			.reply( 200, {} );
+	it( 'names the domain and sends no request when the TLD is not real', async () => {
+		const sent = recordRequests();
 
-		renderAndSubmit( 'user@gmail.commmm' );
+		await renderAndSubmit( 'user@gmail.commmm' );
 
-		expect( screen.getByText( /gmail\.commmm/ ) ).toBeInTheDocument();
-		expect( screen.getByText( /real domain/i ) ).toBeInTheDocument();
-		expect( scope.isDone() ).toBe( false );
-		nock.cleanAll();
+		expect( screen.getByText( /gmail\.commmm/ ) ).toBeVisible();
+		expect( screen.getByText( /real domain/i ) ).toBeVisible();
+		await waitFor( () => expect( sent ).toHaveLength( 0 ) );
 	} );
 
-	it( 'tells the user to check the address when the server refuses the email', async () => {
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/users/new' ).reply( 400, {
-			error: 'email_cant_be_used_to_signup',
-			message: 'Invalid email input',
-		} );
+	// A prefilled address can carry whitespace that the email input would strip if typed.
+	it( 'submits the trimmed address when the prefilled email has surrounding whitespace', async () => {
+		const submitForm = jest.fn();
+		render(
+			<Provider store={ mockStore( {} ) }>
+				<PasswordlessSignupForm
+					userEmail="  user@example.com  "
+					flowName=""
+					submitForm={ submitForm }
+				/>
+			</Provider>
+		);
 
-		renderAndSubmit( 'user@example.com' );
+		await userEvent.click( screen.getByRole( 'button', { name: /create your account/i } ) );
 
-		await waitFor( () => {
-			expect( screen.getByText( /can.t be used to sign up/i ) ).toBeInTheDocument();
-		} );
-		expect( screen.queryByText( /couldn.t create your account/i ) ).not.toBeInTheDocument();
+		await waitFor( () => expect( submitForm ).toHaveBeenCalled() );
+		expect( submitForm.mock.calls[ 0 ][ 0 ].email ).toBe( 'user@example.com' );
 	} );
 } );

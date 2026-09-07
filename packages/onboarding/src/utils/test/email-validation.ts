@@ -1,4 +1,4 @@
-import { getEmailAddressError, isValidEmailAddress } from '../email-validation';
+import { getEmailAddressError, getEmailDomain, isValidEmailAddress } from '../email-validation';
 
 describe( 'getEmailAddressError', () => {
 	test( 'returns null for a well-formed address on a known TLD', () => {
@@ -49,5 +49,15 @@ describe( 'isValidEmailAddress', () => {
 
 	test( 'returns false for a malformed address', () => {
 		expect( isValidEmailAddress( 'user@' ) ).toBe( false );
+	} );
+} );
+
+describe( 'getEmailDomain', () => {
+	test( 'returns everything after the @', () => {
+		expect( getEmailDomain( 'user@mail.example.co.uk' ) ).toBe( 'mail.example.co.uk' );
+	} );
+
+	test( 'returns the whole string when there is no @', () => {
+		expect( getEmailDomain( 'not-an-email' ) ).toBe( 'not-an-email' );
 	} );
 } );

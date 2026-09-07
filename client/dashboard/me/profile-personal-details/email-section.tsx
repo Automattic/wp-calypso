@@ -1,5 +1,9 @@
 import { accountRecoveryQuery, cancelPendingEmailChangeMutation } from '@automattic/api-queries';
-import { getEmailAddressError } from '@automattic/onboarding/src/utils/email-validation';
+import {
+	getEmailAddressError,
+	getEmailDomain,
+	isValidEmailAddress,
+} from '@automattic/onboarding/src/utils/email-validation';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	__experimentalInputControl as InputControl,
@@ -9,7 +13,6 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
-import emailValidator from 'email-validator';
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../app/auth';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
@@ -125,7 +128,7 @@ export default function EmailSection( {
 	const showCustomDomainWarning =
 		! isEmailPending &&
 		!! value &&
-		emailValidator.validate( value ) &&
+		isValidEmailAddress( value ) &&
 		isCustomDomainEmail( value ) &&
 		isAccountRecoveryReady &&
 		! hasRecoveryMethod;
@@ -201,7 +204,7 @@ export default function EmailSection( {
 						{ sprintf(
 							/* translators: %s: the domain part of the email address the user typed */
 							__( '“%s” doesn’t look like a real domain. Check the address for typos.' ),
-							value.slice( value.indexOf( '@' ) + 1 )
+							getEmailDomain( value )
 						) }
 					</>
 				);

@@ -61,16 +61,26 @@ const getUserSetting = ( {
 	return unsavedUserSettings?.[ settingName ] ?? userSettings?.[ settingName ] ?? '';
 };
 
+/**
+ * Extracts the domain part of an email address (lowercased). Returns null
+ * if the value does not look like an email with a domain.
+ */
+const getEmailDomain = ( email: string ): string | null => {
+	const atIndex = email.lastIndexOf( '@' );
+	if ( atIndex < 0 || atIndex === email.length - 1 ) {
+		return null;
+	}
+	return email.slice( atIndex + 1 ).toLowerCase();
+};
+
 const AccountEmailValidationNotice = ( {
 	emailInvalidReason,
 	unsavedUserSettings,
 	userSettings,
-	validatedEmail,
 }: {
 	emailInvalidReason: AccountEmailValidationReason;
 	unsavedUserSettings: UserSettingsType;
 	userSettings: UserSettingsType;
-	validatedEmail: string;
 } ) => {
 	const translate = useTranslate();
 
@@ -82,24 +92,22 @@ const AccountEmailValidationNotice = ( {
 		return null;
 	}
 
+	const email = getUserSetting( {
+		settingName: 'user_email',
+		unsavedUserSettings,
+		userSettings,
+	} ) as string;
+
 	let noticeText;
 
 	if ( emailInvalidReason === EMAIL_VALIDATION_REASON_EMPTY ) {
 		noticeText = translate( 'Email address can not be empty.' );
 	} else if ( emailInvalidReason === EMAIL_VALIDATION_REASON_INVALID ) {
-		noticeText = translate( '%(email)s is not a valid email address.', {
-			args: {
-				email: getUserSetting( {
-					settingName: 'user_email',
-					unsavedUserSettings,
-					userSettings,
-				} ) as string,
-			},
-		} );
+		noticeText = translate( '%(email)s is not a valid email address.', { args: { email } } );
 	} else if ( emailInvalidReason === EMAIL_VALIDATION_REASON_UNKNOWN_TLD ) {
 		noticeText = translate(
 			'“%(domain)s” doesn’t look like a real domain. Check the address for typos.',
-			{ args: { domain: validatedEmail.slice( validatedEmail.indexOf( '@' ) + 1 ) } }
+			{ args: { domain: getEmailDomain( email ) ?? email } }
 		);
 	}
 
@@ -156,18 +164,6 @@ const FREE_EMAIL_PROVIDERS = new Set( [
 	'web.de',
 	'wp.pl',
 ] );
-
-/**
- * Extracts the domain part of an email address (lowercased). Returns null
- * if the value does not look like an email with a domain.
- */
-const getEmailDomain = ( email: string ): string | null => {
-	const atIndex = email.lastIndexOf( '@' );
-	if ( atIndex < 0 || atIndex === email.length - 1 ) {
-		return null;
-	}
-	return email.slice( atIndex + 1 ).toLowerCase();
-};
 
 /**
  * Returns true if the email domain is a custom domain (i.e. not a well-known
@@ -275,7 +271,6 @@ const AccountEmailField = ( {
 	const [ emailInvalidReason, setEmailInvalidReason ] = useState< AccountEmailValidationReason >(
 		EMAIL_VALIDATION_REASON_IS_VALID
 	);
-	const [ validatedEmail, setValidatedEmail ] = useState( '' );
 
 	useEffect( () => {
 		// Ensure that we remove any unsaved changes to the email address when we unmount
@@ -295,15 +290,16 @@ const AccountEmailField = ( {
 
 		let emailValidationReason: AccountEmailValidationReason = EMAIL_VALIDATION_REASON_IS_VALID;
 
+		const emailError = getEmailAddressError( value );
+
 		if ( value === '' ) {
 			emailValidationReason = EMAIL_VALIDATION_REASON_EMPTY;
-		} else if ( getEmailAddressError( value ) === 'unknown_tld' ) {
+		} else if ( emailError === 'unknown_tld' ) {
 			emailValidationReason = EMAIL_VALIDATION_REASON_UNKNOWN_TLD;
-		} else if ( getEmailAddressError( value ) === 'invalid_format' ) {
+		} else if ( emailError ) {
 			emailValidationReason = EMAIL_VALIDATION_REASON_INVALID;
 		}
 
-		setValidatedEmail( value );
 		setEmailInvalidReason( emailValidationReason );
 		emailValidationHandler?.( emailValidationReason === EMAIL_VALIDATION_REASON_IS_VALID );
 
@@ -363,7 +359,6 @@ const AccountEmailField = ( {
 
 				<AccountEmailValidationNotice
 					emailInvalidReason={ emailInvalidReason }
-					validatedEmail={ validatedEmail }
 					unsavedUserSettings={ unsavedUserSettings }
 					userSettings={ userSettings }
 				/>

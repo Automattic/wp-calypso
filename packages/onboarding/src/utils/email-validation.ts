@@ -3,6 +3,10 @@ import { TLDS } from './tlds';
 
 export type EmailAddressError = 'invalid_format' | 'unknown_tld';
 
+export function getEmailDomain( email: string ): string {
+	return email.slice( email.indexOf( '@' ) + 1 );
+}
+
 /**
  * Returns why an email address is unusable, or null when it looks deliverable.
  *
@@ -14,7 +18,8 @@ export function getEmailAddressError( email: string ): EmailAddressError | null 
 		return 'invalid_format';
 	}
 
-	const tld = email.slice( email.lastIndexOf( '.' ) + 1 ).toLowerCase();
+	const domain = getEmailDomain( email );
+	const tld = domain.slice( domain.lastIndexOf( '.' ) + 1 ).toLowerCase();
 	if ( ! TLDS.has( tld ) ) {
 		return 'unknown_tld';
 	}

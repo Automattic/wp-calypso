@@ -1,7 +1,11 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Button, FormLabel } from '@automattic/components';
-import { getEmailAddressError, suggestEmailCorrection } from '@automattic/onboarding';
+import {
+	getEmailAddressError,
+	getEmailDomain,
+	suggestEmailCorrection,
+} from '@automattic/onboarding';
 import { debounce } from '@wordpress/compose';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
@@ -23,9 +27,6 @@ import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import SignupSubmitButton from './signup-submit-button';
-
-const REJECTED_EMAIL_ERRORS = [ 'email_cant_be_used_to_signup', 'email_invalid' ];
-const isRejectedEmailError = ( errorCode ) => REJECTED_EMAIL_ERRORS.includes( errorCode );
 
 class PasswordlessSignupForm extends Component {
 	static propTypes = {
@@ -86,7 +87,7 @@ class PasswordlessSignupForm extends Component {
 			return;
 		}
 
-		const email = typeof this.state.email === 'string' ? this.state.email.trim() : '';
+		const email = this.getTrimmedEmail();
 		const emailError = getEmailAddressError( email );
 		if ( emailError ) {
 			this.setState( {
@@ -107,7 +108,7 @@ class PasswordlessSignupForm extends Component {
 		if ( this.props.onUpdateEmail ) {
 			this.setState( { isSubmitting: true } );
 			try {
-				await this.props.onUpdateEmail( this.state.email.trim() );
+				await this.props.onUpdateEmail( email );
 			} catch {
 				// The caller reports its own failures. This only keeps one it didn't from leaving
 				// the screen disabled with nothing to press.
@@ -121,7 +122,7 @@ class PasswordlessSignupForm extends Component {
 		const form = {
 			firstName: '',
 			lastName: '',
-			email: this.state.email,
+			email,
 			username: '',
 			password: '',
 		};
@@ -137,7 +138,7 @@ class PasswordlessSignupForm extends Component {
 			// The parent spreads this payload into its /users/new request body.
 			this.props.submitForm(
 				{
-					email: this.state.email,
+					email,
 					is_passwordless: true,
 					is_dev_account: isDevAccount,
 					...( blackboxSessionId && { blackbox_session_id: blackboxSessionId } ),
@@ -172,7 +173,7 @@ class PasswordlessSignupForm extends Component {
 			const blackboxSessionId = await this.props.blackbox.getSessionId();
 
 			const body = {
-				email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
+				email: this.getTrimmedEmail(),
 				is_passwordless: true,
 				signup_flow_name: signup_flow_name,
 				validate: false,
@@ -219,14 +220,6 @@ class PasswordlessSignupForm extends Component {
 				this.setState( {
 					errorMessages: [ getThrottledErrorMessage( this.props.translate ) ],
 				} );
-			} else if ( isRejectedEmailError( error.error ) ) {
-				this.setState( {
-					errorMessages: [
-						this.props.translate(
-							'This email address can’t be used to sign up. Check it for typos, or try a different one.'
-						),
-					],
-				} );
 			} else {
 				this.setState( {
 					errorMessages: [
@@ -253,7 +246,7 @@ class PasswordlessSignupForm extends Component {
 			isSubmitting: false,
 		} );
 
-		this.props.onCreateAccountError?.( error, this.state.email );
+		this.props.onCreateAccountError?.( error, this.getTrimmedEmail() );
 	};
 
 	createAccountCallback = ( response ) => {
@@ -270,7 +263,7 @@ class PasswordlessSignupForm extends Component {
 		const userData = {
 			ID: userId,
 			username: username,
-			email: this.state.email,
+			email: this.getTrimmedEmail(),
 		};
 
 		const marketing_price_group = response?.marketing_price_group ?? '';
@@ -320,11 +313,13 @@ class PasswordlessSignupForm extends Component {
 		}
 	};
 
+	getTrimmedEmail = () => ( typeof this.state.email === 'string' ? this.state.email.trim() : '' );
+
 	getEmailErrorMessage = ( emailError, email ) => {
 		if ( emailError === 'unknown_tld' ) {
 			return this.props.translate(
 				'“%(domain)s” doesn’t look like a real domain. Check the address for typos.',
-				{ args: { domain: email.slice( email.indexOf( '@' ) + 1 ) } }
+				{ args: { domain: getEmailDomain( email ) } }
 			);
 		}
 		return this.props.translate( 'Please provide a valid email address.' );
