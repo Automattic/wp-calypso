@@ -12,7 +12,7 @@
 import { Button } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, type MouseEvent } from 'react';
+import { useCallback, useRef, useState, type MouseEvent } from 'react';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useFeedQuery } from 'calypso/reader/data/feed';
@@ -24,17 +24,65 @@ import { getSiteName } from 'calypso/reader/get-helpers';
 import { getStreamUrl } from 'calypso/reader/route';
 import { showSelectedPost } from 'calypso/reader/utils';
 import OonRecCardPlaceholder from './placeholder';
+import { recordOonRender } from './tracks';
 import type { OonRec } from './types';
 
 interface Props {
 	rec: OonRec;
+	/** 0-based slot within the module, for TrainTracks `ui_position`. */
+	uiPosition: number;
 	onDismiss: () => void;
 	onOpen: () => void;
 	onFollowToggle: ( isFollowing: boolean ) => void;
+	/** Called once, when the card is first actually on screen. */
+	onImpression: () => void;
 }
 
-export default function OonRecCard( { rec, onDismiss, onOpen, onFollowToggle }: Props ) {
+/**
+ * Callback ref that records one TrainTracks render when the card becomes
+ * (60%) visible, once per railcar. Same approach as the stream's post view
+ * tracking (reader/stream/post-lifecycle `useTrackPostView`).
+ */
+function useTrackImpression( rec: OonRec, uiPosition: number, onImpression: () => void ) {
+	const observerRef = useRef< IntersectionObserver | null >( null );
+	const trackedRailcarRef = useRef< string | null >( null );
+
+	return useCallback(
+		( element: HTMLElement | null ) => {
+			observerRef.current?.disconnect();
+			observerRef.current = null;
+			if ( ! element || typeof IntersectionObserver === 'undefined' ) {
+				return;
+			}
+			observerRef.current = new IntersectionObserver(
+				( [ entry ] ) => {
+					const railcarId = rec.railcar?.railcar ?? null;
+					if ( ! entry.isIntersecting || trackedRailcarRef.current === railcarId ) {
+						return;
+					}
+					trackedRailcarRef.current = railcarId;
+					recordOonRender( rec, uiPosition );
+					onImpression();
+					observerRef.current?.disconnect();
+				},
+				{ threshold: [ 0.6 ] }
+			);
+			observerRef.current.observe( element );
+		},
+		[ rec, uiPosition, onImpression ]
+	);
+}
+
+export default function OonRecCard( {
+	rec,
+	uiPosition,
+	onDismiss,
+	onOpen,
+	onFollowToggle,
+	onImpression,
+}: Props ) {
 	const translate = useTranslate();
+	const impressionRef = useTrackImpression( rec, uiPosition, onImpression );
 	const postKey = { blogId: rec.blogId, postId: rec.postId };
 	const { data: post, isLoading } = usePost( postKey );
 	const siteId = post?.site_ID ? Number( post.site_ID ) : undefined;
@@ -66,7 +114,7 @@ export default function OonRecCard( { rec, onDismiss, onOpen, onFollowToggle }: 
 	};
 
 	return (
-		<li className="reader-discover-new-blogs__card">
+		<li className="reader-discover-new-blogs__card" ref={ impressionRef }>
 			<div className="reader-discover-new-blogs__card-head">
 				<a className="reader-discover-new-blogs__site" href={ streamUrl }>
 					<SiteIcon iconUrl={ siteIcon } size={ 24 } />
