@@ -34,6 +34,8 @@ const ArticleContent = ( {
 							ref={ articleContentRef }
 						/>
 						<HelpCenterFeedbackForm
+							// Remount when the article changes so the form re-seeds from that article's rating.
+							key={ `${ post.site_ID }-${ post.ID }` }
 							postId={ post.ID }
 							blogId={ post.site_ID }
 							userRating={ post.user_rating }
