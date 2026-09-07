@@ -15,7 +15,6 @@ let mockCurrentSupportInteraction: Record< string, unknown > | undefined;
 let mockConversation: { id: string; messages: Message[] } | null;
 let mockOdieChat: Record< string, unknown > | undefined;
 const mockGetZendeskConversation = jest.fn();
-const mockStartNewInteraction = jest.fn();
 
 jest.mock( '@wordpress/data', () => ( {
 	// The hook's only useSelect call returns { isChatLoaded, connectionStatus }.
@@ -43,7 +42,6 @@ jest.mock( '../use-logged-out-session', () => ( {
 
 jest.mock( '../../data', () => ( {
 	useGetZendeskConversation: () => mockGetZendeskConversation,
-	useManageSupportInteraction: () => ( { startNewInteraction: mockStartNewInteraction } ),
 	useOdieChat: () => ( { data: mockOdieChat, isFetching: false } ),
 } ) );
 
@@ -313,7 +311,7 @@ describe( 'useGetCombinedChat — message recovery on Smooch re-init', () => {
 } );
 
 describe( 'useGetCombinedChat — when the conversation cannot be fetched', () => {
-	it( 'leaves the loading state instead of fetching and starting interactions forever', async () => {
+	it( 'leaves the loading state instead of fetching forever', async () => {
 		mockGetZendeskConversation.mockImplementation( () =>
 			Promise.reject( new Error( 'conversation not found' ) )
 		);
@@ -350,6 +348,5 @@ describe( 'useGetCombinedChat — when the conversation cannot be fetched', () =
 		} );
 
 		expect( mockGetZendeskConversation ).toHaveBeenCalledTimes( 1 );
-		expect( mockStartNewInteraction ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
