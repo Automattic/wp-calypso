@@ -1,7 +1,6 @@
 import {
 	__experimentalHStack as HStack,
 	MenuGroup,
-	MenuItem,
 	NavigableMenu,
 	SearchControl,
 	VisuallyHidden,
@@ -120,7 +119,7 @@ export default function SwitcherContent< T >( {
 					{ Array.from( { length: count }, ( _, index ) => (
 						// Placeholders reuse the real row's chrome so they share its padding,
 						// height and truncation, and the popover doesn't resize once loaded.
-						<MenuItem
+						<div
 							className="switcher-content__loading-item"
 							key={ index }
 							style={ { height: 'fit-content', minHeight: '40px' } }
@@ -128,7 +127,7 @@ export default function SwitcherContent< T >( {
 							aria-hidden="true"
 						>
 							{ renderLoadingItem( { index } ) }
-						</MenuItem>
+						</div>
 					) ) }
 				</div>
 			);
