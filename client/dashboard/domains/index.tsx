@@ -19,6 +19,7 @@ import {
 	DEFAULT_VIEW,
 	DEFAULT_LAYOUTS,
 	recordDomainViewChanges,
+	sanitizeFields,
 } from './dataviews';
 import EmptyDomainsStateActions from './empty-domains-state/actions';
 import { EmptyDomainsStateUpsell } from './empty-domains-state/upsell';
@@ -52,6 +53,7 @@ function Domains() {
 		slug: 'domains',
 		defaultView,
 		queryParams: searchParams,
+		sanitizeFields,
 	} );
 
 	const { data: domains } = useSuspenseQuery( {

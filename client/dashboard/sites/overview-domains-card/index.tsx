@@ -24,7 +24,7 @@ const getDomainId = ( domain: DomainSummary ): string => {
 const view = {
 	...DEFAULT_VIEW,
 	layout: { ...DEFAULT_VIEW.layout, enableMoving: false },
-	fields: [ 'expiry', 'domain_status' ],
+	fields: [ 'expiry_date', 'domain_status' ],
 };
 
 const onChangeView = () => {};

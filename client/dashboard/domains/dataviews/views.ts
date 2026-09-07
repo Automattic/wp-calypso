@@ -19,7 +19,7 @@ const BASE_VIEW_PROPS: View = {
 		// 'owner',
 		'blog_name',
 		'ssl_status',
-		'expiry',
+		'expiry_date',
 		'domain_status',
 	],
 };
@@ -28,7 +28,7 @@ export const DEFAULT_VIEW = BASE_VIEW_PROPS;
 
 export const SITE_CONTEXT_VIEW = {
 	...BASE_VIEW_PROPS,
-	fields: [ 'ssl_status', 'expiry', 'domain_status' ],
+	fields: [ 'ssl_status', 'expiry_date', 'domain_status' ],
 };
 
 // Default layouts
