@@ -399,8 +399,16 @@ const userExistsErrorHandler = ( state, { error, authInfo } ) => {
 	return state;
 };
 
+// Linking can only complete through the password (or 2FA) path. Requesting a
+// magic link or a password reset ends in a full page load, so the pending
+// social auth info would be lost anyway.
+const isAbandoningSocialAccountLinkPath = ( path ) =>
+	/^\/log-in(?:\/jetpack|\/new)?\/(?:link|lostpassword)(?:\/|$)/.test( path );
+
 export const socialAccountLink = ( state = { isLinking: false }, action ) => {
 	switch ( action.type ) {
+		case ROUTE_SET:
+			return isAbandoningSocialAccountLinkPath( action.path ) ? { isLinking: false } : state;
 		case SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE:
 			return userExistsErrorHandler( state, action );
 		case SOCIAL_HANDOFF_CONNECT_ACCOUNT:

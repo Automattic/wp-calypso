@@ -588,5 +588,39 @@ describe( 'reducer', () => {
 
 			expect( newState ).toEqual( { isLinking: false } );
 		} );
+
+		describe( 'on route change', () => {
+			const linkingState = {
+				isLinking: true,
+				email: 'hello@test.com',
+				authInfo: { id_token: '123', access_token: '123', service: 'google' },
+			};
+
+			test.each( [
+				'/log-in/link',
+				'/log-in/link/fr',
+				'/log-in/jetpack/link',
+				'/log-in/new/link',
+				'/log-in/lostpassword',
+				'/log-in/jetpack/lostpassword',
+			] )( 'should reset linking mode when navigating to %s', ( path ) => {
+				const newState = socialAccountLink( linkingState, { type: ROUTE_SET, path, query: {} } );
+
+				expect( newState ).toEqual( { isLinking: false } );
+			} );
+
+			test.each( [
+				'/log-in',
+				'/log-in/fr',
+				'/log-in/authenticator',
+				'/log-in/sms',
+				'/log-in/social-connect',
+				'/log-in/linkedin',
+			] )( 'should keep linking mode when navigating to %s', ( path ) => {
+				const newState = socialAccountLink( linkingState, { type: ROUTE_SET, path, query: {} } );
+
+				expect( newState ).toBe( linkingState );
+			} );
+		} );
 	} );
 } );
