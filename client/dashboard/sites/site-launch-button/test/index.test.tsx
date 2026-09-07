@@ -173,6 +173,87 @@ describe( '<SiteLaunchButton>', () => {
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'points Back at the page the launch started from, and post-launch elsewhere', async () => {
+		mockDomainsApi( [ createMockDomain( 'kaonashi.wordpress.com', false ) ] );
+		window.history.pushState( {}, '', '/sites/kaonashi.wordpress.com/settings/site-visibility' );
+
+		render(
+			<SiteLaunchButton
+				site={ createMockSite( {
+					plan: {
+						product_slug: 'free_plan',
+						product_name: 'Free',
+						is_free: true,
+					},
+				} as Partial< Site > ) }
+				tracksContext="test"
+				flowDestination="/sites/kaonashi.wordpress.com"
+			/>
+		);
+
+		const launchLink = await screen.findByRole( 'link', { name: 'Launch your site' } );
+		const query = new URL( launchLink.getAttribute( 'href' ) ?? '', window.location.origin )
+			.searchParams;
+
+		expect( query.get( 'back_to' ) ).toContain(
+			'/sites/kaonashi.wordpress.com/settings/site-visibility'
+		);
+		expect( query.get( 'redirect_to' ) ).toContain( '/sites/kaonashi.wordpress.com' );
+		expect( query.get( 'redirect_to' ) ).not.toContain( 'site-visibility' );
+
+		window.history.pushState( {}, '', '/' );
+	} );
+
+	test( 'an immediate launch stays on the page even when a flow destination is set', async () => {
+		const user = userEvent.setup();
+		mockDomainsApi( [ createMockDomain( 'kaonashi.wordpress.com', false ) ] );
+		const launchScope = mockLaunchApi();
+
+		const originalLocation = window.location;
+		const assign = jest.fn();
+		Object.defineProperty( window, 'location', {
+			writable: true,
+			value: {
+				href: 'http://localhost/sites/kaonashi.wordpress.com/settings/site-visibility',
+				origin: 'http://localhost',
+				pathname: '/sites/kaonashi.wordpress.com/settings/site-visibility',
+				search: '',
+				assign,
+			},
+		} );
+		const replaceState = jest
+			.spyOn( window.history, 'replaceState' )
+			.mockImplementation( () => {} );
+
+		try {
+			render(
+				<SiteLaunchButton
+					site={ createMockSite( {
+						plan: {
+							product_slug: 'wp_bundle_hosting_trial_monthly',
+							product_name: 'Hosting Trial',
+							is_free: false,
+						},
+					} as Partial< Site > ) }
+					tracksContext="test"
+					flowDestination="/sites/kaonashi.wordpress.com"
+				/>
+			);
+
+			const launchButton = await screen.findByRole( 'button', { name: 'Launch your site' } );
+			replaceState.mockClear();
+
+			await user.click( launchButton );
+
+			await waitFor( () => expect( launchScope.isDone() ).toBe( true ) );
+			await waitFor( () => expect( replaceState ).toHaveBeenCalled() );
+			expect( assign ).not.toHaveBeenCalled();
+		} finally {
+			replaceState.mockRestore();
+			Object.defineProperty( window, 'location', { writable: true, value: originalLocation } );
+		}
+	} );
+
 	test( 'renders a link to the launch flow for a free site without an immediate launch', async () => {
 		mockDomainsApi( [ createMockDomain( 'kaonashi.wordpress.com', false ) ] );
 

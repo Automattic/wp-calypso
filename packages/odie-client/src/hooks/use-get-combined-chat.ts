@@ -11,7 +11,7 @@ import {
 	getZendeskChatStartedMetaMessage,
 } from '../constants';
 import { emptyChat } from '../context';
-import { useGetZendeskConversation, useManageSupportInteraction, useOdieChat } from '../data';
+import { useGetZendeskConversation, useOdieChat } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 import {
 	getConversationIdFromInteraction,
@@ -25,6 +25,15 @@ function isEqual( message1: Message, message2: Message ) {
 	const message1Id = getMessageUniqueIdentifier( message1 );
 	const message2Id = getMessageUniqueIdentifier( message2 );
 	return message1Id && message1Id === message2Id;
+}
+
+/**
+ * A user message sent through Zendesk: only those carry a `temporary_id`, so Odie messages don't match.
+ * @param message - The message to check.
+ * @returns Whether the message is a Zendesk message sent by the user.
+ */
+function isQueuedZendeskMessage( message: Message ) {
+	return message.role === 'user' && !! message.metadata?.temporary_id;
 }
 
 /**
@@ -80,7 +89,6 @@ export const useGetCombinedChat = (
 	);
 	const [ isFetchingConversation, setIsFetchingConversation ] = useState( false );
 
-	const { startNewInteraction } = useManageSupportInteraction();
 	const isUploadingUnsentMessages = useIsMutating( {
 		mutationKey: [ 'send-zendesk-messages' ],
 	} );
@@ -209,7 +217,7 @@ export const useGetCombinedChat = (
 									...( deduplicateZDMessages( [
 										// During connection recovery, the user queued messages can be deleted. This ensure they remain. And `deduplicateZDMessages` takes of duplication.
 										...( isSameConversation
-											? prevChat.messages.filter( ( message ) => message.role === 'user' )
+											? prevChat.messages.filter( isQueuedZendeskMessage )
 											: [] ),
 										...conversation.messages,
 									] ) as Message[] ),
@@ -227,10 +235,22 @@ export const useGetCombinedChat = (
 						error: error instanceof Error ? error.message : String( error ),
 					} );
 
-					startNewInteraction( {
-						event_source: 'odie',
-						event_external_id: crypto.randomUUID(),
-					} );
+					// Leave the loading state, or this effect re-runs and fetches again, forever.
+					// Keep the conversation the chat already shows; otherwise show it with the
+					// Odie history only, like when Zendesk can't be reached above, so live
+					// messages still arrive and the next refresh retries.
+					setMainChatState( ( prevChat ) =>
+						prevChat.conversationId === conversationId
+							? { ...prevChat, status: 'loaded' }
+							: {
+									...prevChat,
+									odieId: odieId ? Number( odieId ) : null,
+									messages: [ ...( odieChat ? filteredOdieMessages : [] ) ],
+									conversationId,
+									status: 'loaded',
+									provider: 'zendesk',
+							  }
+					);
 				} )
 				.finally( () => {
 					setRefreshingAfterReconnect( false );
@@ -249,7 +269,6 @@ export const useGetCombinedChat = (
 		currentSupportInteraction,
 		canConnectToZendesk,
 		getZendeskConversation,
-		startNewInteraction,
 		isLoadingCanConnectToZendesk,
 		sessionId,
 		botSlug,

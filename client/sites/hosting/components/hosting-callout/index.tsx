@@ -15,6 +15,7 @@ import {
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
+import { useActivationDeadline } from '../activation-wait';
 import HostingActivationButton from '../hosting-activation-button';
 import illustrationUrl from './hosting-callout-illustration.svg';
 
@@ -28,40 +29,36 @@ export function HostingActivationCallout( {
 	redirectUrl?: string;
 } ) {
 	const dispatch = useDispatch();
+
 	const { data: latestAtomicTransfer } = useQuery( {
 		...siteLatestAtomicTransferQuery( site.ID ),
-		refetchInterval: ( query ) => {
-			if ( ! query.state.data ) {
-				return 0;
-			}
-
-			return isAtomicTransferInProgress( query.state.data.status ) ? 5000 : false;
-		},
+		refetchInterval: ( query ) =>
+			query.state.data && isAtomicTransferInProgress( query.state.data.status ) ? 5000 : false,
 		refetchIntervalInBackground: true,
 	} );
 
+	const isTransferCompleted = latestAtomicTransfer?.status === 'completed';
+
+	// The transfer says `completed` before the site answers as Atomic, so this is the wait that
+	// needs the deadline — without one it polls for the life of the tab.
+	const deadlinePassed = useActivationDeadline( site.ID, isTransferCompleted );
+
 	const { data: atomicSite } = useQuery( {
 		...siteByIdQuery( site.ID ),
-		refetchInterval: ( query ) => {
-			if ( ! query.state.data ) {
-				return 0;
-			}
-
-			return ! isAtomicTransferredSite( query.state.data ) ? 2000 : false;
-		},
-		enabled: latestAtomicTransfer?.status === 'completed',
+		refetchInterval: ( query ) =>
+			query.state.data && isAtomicTransferredSite( query.state.data ) ? false : 2000,
+		enabled: isTransferCompleted && ! deadlinePassed,
 	} );
 
-	const isActivating =
-		latestAtomicTransfer &&
-		( isAtomicTransferInProgress( latestAtomicTransfer.status ) ||
-			// Keep displaying “Activating…” until the page redirects.
-			latestAtomicTransfer?.status === 'completed' );
+	const isActivated = isTransferCompleted && atomicSite && isAtomicTransferredSite( atomicSite );
 
-	const isActivated =
-		latestAtomicTransfer?.status === 'completed' &&
-		atomicSite &&
-		isAtomicTransferredSite( atomicSite );
+	const activationStalled = deadlinePassed && ! isActivated;
+
+	const isActivating =
+		! activationStalled &&
+		latestAtomicTransfer &&
+		// Keep displaying “Activating…” until the page redirects.
+		( isAtomicTransferInProgress( latestAtomicTransfer.status ) || isTransferCompleted );
 
 	useEffect( () => {
 		const handleActivated = async () => {

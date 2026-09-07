@@ -171,6 +171,19 @@ export function getWowFunnelArgs( queryParams: URLSearchParams ): Record< string
 }
 
 /**
+ * Whether the CTA opted into the WoW fleet.
+ *
+ * `from_wfm` present and truthy asks /sites/new to hand out a pre-provisioned Atomic site from
+ * the fleet manager instead of building one. It is only ever an opt-in hint: the server falls
+ * back to the ordinary funnel build when the fleet is disabled, empty, or contended, so the flow
+ * on this side is identical either way.
+ */
+export function getWowFunnelFromWfm( queryParams: URLSearchParams ): boolean {
+	const raw = queryParams.get( 'from_wfm' );
+	return null !== raw && '' !== raw && '0' !== raw && 'false' !== raw;
+}
+
+/**
  * The funnel's destination. `dest` in the URL is an OVERRIDE for a CTA that wants somewhere other
  * than the funnel's default; absent or unrecognized, the configured default applies.
  *
@@ -225,12 +238,14 @@ export function getRememberedWowFunnelSite(
 	return remembered && remembered.funnelKey === key ? remembered : null;
 }
 
-export function rememberWowFunnelSite( site: RememberedWowFunnelSite ): void {
+export function rememberWowFunnelSite( site: RememberedWowFunnelSite ): boolean {
 	try {
 		window.sessionStorage.setItem( SESSION_KEY, JSON.stringify( site ) );
+		return true;
 	} catch {
 		// sessionStorage unavailable — the module-level in-flight cache still de-dupes within the
 		// session, and create-site falls back to creating the site itself.
+		return false;
 	}
 }
 

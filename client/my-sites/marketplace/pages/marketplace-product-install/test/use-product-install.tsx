@@ -143,6 +143,27 @@ const withUploadError = ( uploadError: object ) => ( {
 	plugins: { upload: { uploadError: { [ SITE_ID ]: uploadError } } },
 } );
 
+const withReplaceCandidate = ( uploadError: object ) => ( {
+	ui: { selectedSiteId: SITE_ID },
+	plugins: {
+		upload: {
+			uploadError: { [ SITE_ID ]: uploadError },
+			uploadFile: { [ SITE_ID ]: { name: 'plugin.zip' } },
+		},
+		installed: {
+			plugins: {
+				[ SITE_ID ]: [
+					{
+						slug: 'hello-dolly',
+						version: '1.6',
+						active: false,
+					},
+				],
+			},
+		},
+	},
+} );
+
 describe( 'useProductInstall', () => {
 	describe( 'who activates an uploaded plugin', () => {
 		// The upload step advances on a timer before activation is reached.
@@ -241,6 +262,46 @@ describe( 'useProductInstall', () => {
 				expect( result.current.error ).toEqual( { type: 'rejected-upload', reason } );
 			}
 		);
+
+		it( 'reports a replace candidate when backend slug and file are available', () => {
+			const { result } = renderProductInstall(
+				{},
+				withReplaceCandidate( {
+					error: 'folder_exists',
+					plugin_slug: 'hello-dolly',
+					plugin_version: '2.0',
+				} )
+			);
+
+			expect( result.current.error ).toEqual( {
+				type: 'plugin-exists',
+				pluginSlug: 'hello-dolly',
+				installedVersion: '1.6',
+				uploadedVersion: '2.0',
+			} );
+		} );
+
+		it( 'keeps the existing rejection when the backend slug is missing', () => {
+			const { result } = renderProductInstall(
+				{},
+				withReplaceCandidate( { error: 'folder_exists', plugin_version: '2.0' } )
+			);
+
+			expect( result.current.error ).toEqual( { type: 'rejected-upload', reason: 'exists' } );
+		} );
+
+		it( 'keeps the existing rejection when the retained file is missing', () => {
+			const { result } = renderProductInstall(
+				{},
+				withUploadError( {
+					error: 'folder_exists',
+					plugin_slug: 'hello-dolly',
+					plugin_version: '2.0',
+				} )
+			);
+
+			expect( result.current.error ).toEqual( { type: 'rejected-upload', reason: 'exists' } );
+		} );
 
 		// Upload flow has no route slug; statuses live under the dispatched plugin id.
 		it( 'surfaces a failed activation instead of waiting out the deadline', () => {

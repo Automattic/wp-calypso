@@ -15,6 +15,7 @@ jest.mock( '../is-reader-chat-agent', () => {
 import { select } from '@wordpress/data';
 import { getActiveSessionId } from '../agent-session';
 import { isReaderChatHost } from '../is-reader-chat-agent';
+import { setLoadedProviderIds } from '../loaded-provider-ids';
 import { setResolvedAgentId } from '../resolved-agent-id';
 import {
 	getBigSkyTracksData,
@@ -206,6 +207,8 @@ describe( 'tracks wrappers', () => {
 			expect( props ).toMatchObject( {
 				ai_session_id: 'session-xyz',
 				agent_name: 'dolly',
+				agent_manager_version: 'none',
+				provider_ids: 'none',
 				surface: 'editor',
 				is_test: true,
 			} );
@@ -256,6 +259,85 @@ describe( 'tracks wrappers', () => {
 			setResolvedAgentId( 'reader-chat' );
 			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );
 			expect( mockRecordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		} );
+	} );
+
+	describe( 'provider_ids', () => {
+		afterEach( () => {
+			setLoadedProviderIds( undefined );
+		} );
+
+		it( 'joins the loaded provider ids, sorted for stable grouping', () => {
+			setLoadedProviderIds( [ 'woocommerce-ai', 'jetpack-ai' ] );
+
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );
+
+			expect( lastEventProps().provider_ids ).toBe( 'jetpack-ai,woocommerce-ai' );
+		} );
+
+		it( 'sends none when the providers loaded with no external entries', () => {
+			setLoadedProviderIds( [] );
+
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );
+
+			expect( lastEventProps().provider_ids ).toBe( 'none' );
+		} );
+
+		it( 'sends none until the providers load', () => {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );
+
+			expect( lastEventProps().provider_ids ).toBe( 'none' );
+		} );
+	} );
+
+	describe( 'agent_manager_version', () => {
+		afterEach( () => {
+			delete window.COMMIT_SHA;
+		} );
+
+		it( 'sends the Jetpack-injected build version when present', () => {
+			( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+				isDevMode: true,
+				version: 'gutenberg:abc123',
+			};
+
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' );
+
+			expect( lastEventProps().agent_manager_version ).toBe( 'gutenberg:abc123' );
+		} );
+
+		it( 'falls back to the Calypso commit on Calypso-rendered pages', () => {
+			window.COMMIT_SHA = 'deadbeef';
+
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' );
+
+			expect( lastEventProps().agent_manager_version ).toBe( 'calypso:deadbeef' );
+		} );
+
+		it( 'prefers the injected version over the Calypso commit', () => {
+			( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
+				isDevMode: true,
+				version: 'wp-admin:abc123',
+			};
+			window.COMMIT_SHA = 'deadbeef';
+
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' );
+
+			expect( lastEventProps().agent_manager_version ).toBe( 'wp-admin:abc123' );
+		} );
+
+		it( "normalizes the dev server's '(unknown)' commit to calypso:dev", () => {
+			window.COMMIT_SHA = '(unknown)';
+
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' );
+
+			expect( lastEventProps().agent_manager_version ).toBe( 'calypso:dev' );
+		} );
+
+		it( 'sends none when neither source is available', () => {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_x' );
+
+			expect( lastEventProps().agent_manager_version ).toBe( 'none' );
 		} );
 	} );
 

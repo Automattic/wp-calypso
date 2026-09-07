@@ -71,6 +71,9 @@ export const uploadExportFile = ( siteId, params ) =>
 		if ( params.url ) {
 			formData.push( [ 'url', params.url ] );
 		}
+		if ( params.autoStart ) {
+			formData.push( [ 'autoStart', '1' ] );
+		}
 
 		const req = wp.req.post(
 			{

@@ -7,9 +7,9 @@ import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import welcomeAtavistImage from 'calypso/assets/images/reader/onboarding/welcome-atavist.webp';
 import welcomeHughImage from 'calypso/assets/images/reader/onboarding/welcome-hugh.webp';
+import welcomeJennyImage from 'calypso/assets/images/reader/onboarding/welcome-jenny.webp';
 import welcomeLongreadsImage from 'calypso/assets/images/reader/onboarding/welcome-longreads.webp';
 import welcomeMattImage from 'calypso/assets/images/reader/onboarding/welcome-matt.webp';
-import welcomeOmImage from 'calypso/assets/images/reader/onboarding/welcome-om.webp';
 import welcomeRollingStoneImage from 'calypso/assets/images/reader/onboarding/welcome-rolling-stone.webp';
 import welcomeSethImage from 'calypso/assets/images/reader/onboarding/welcome-seth.webp';
 import welcomeTimImage from 'calypso/assets/images/reader/onboarding/welcome-tim.webp';
@@ -23,7 +23,6 @@ import './style.scss';
 interface WelcomeModalProps {
 	onClose: () => void;
 	onContinue: () => void;
-	totalSteps?: number;
 }
 
 type WelcomeTileItem = {
@@ -83,10 +82,10 @@ const bloggers: WelcomeTileItem[] = [
 		imageClass: 'reader-welcome-modal__tim-image',
 	},
 	{
-		name: 'Om Malik',
-		imageUrl: welcomeOmImage,
+		name: 'Jenny Lawson',
+		imageUrl: welcomeJennyImage,
 		porthole: true,
-		imageClass: 'reader-welcome-modal__om-image',
+		imageClass: 'reader-welcome-modal__jenny-image',
 	},
 	{
 		name: 'Hugh Howey',
@@ -122,7 +121,7 @@ const renderTileImage = ( item: WelcomeTileItem ) => {
 // Renders the body of the "welcome" step. The shared <Modal> wrapper is
 // provided by the parent (`ReaderOnboardingRsm`) so transitions between
 // steps don't unmount/remount the modal frame.
-const WelcomeModal: React.FC< WelcomeModalProps > = ( { onClose, onContinue, totalSteps = 3 } ) => {
+const WelcomeModal: React.FC< WelcomeModalProps > = ( { onClose, onContinue } ) => {
 	return (
 		<>
 			<VStack spacing={ 8 } className="reader-welcome-modal__content">
@@ -162,7 +161,7 @@ const WelcomeModal: React.FC< WelcomeModalProps > = ( { onClose, onContinue, tot
 
 			<div className="reader-onboarding-modal__footer">
 				<HStack justify="space-between" className="reader-onboarding-modal__footer-actions">
-					<StepIndicator totalSteps={ totalSteps } currentStep={ 1 } />
+					<StepIndicator totalSteps={ 3 } currentStep={ 1 } />
 					<HStack
 						spacing={ 2 }
 						justify="right"

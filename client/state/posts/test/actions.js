@@ -3,7 +3,6 @@ import {
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
 	POST_DELETE_FAILURE,
-	POST_EDIT,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
@@ -24,7 +23,6 @@ import {
 	requestSitePosts,
 	requestSitePost,
 	requestAllSitesPosts,
-	editPost,
 	savePost,
 	trashPost,
 	deletePost,
@@ -267,39 +265,6 @@ describe( 'actions', () => {
 					postId: 420,
 					error: expect.objectContaining( { message: 'Unknown post' } ),
 				} );
-			} );
-		} );
-	} );
-
-	describe( '#editPost()', () => {
-		test( 'should return an action object for a new post', () => {
-			const action = editPost(
-				2916284,
-				null,
-				{
-					title: 'Hello World',
-				},
-				2916284
-			);
-
-			expect( action ).toEqual( {
-				type: POST_EDIT,
-				siteId: 2916284,
-				postId: null,
-				post: { title: 'Hello World' },
-			} );
-		} );
-
-		test( 'should return an action object for an existing post', () => {
-			const action = editPost( 2916284, 413, {
-				title: 'Hello World',
-			} );
-
-			expect( action ).toEqual( {
-				type: POST_EDIT,
-				siteId: 2916284,
-				postId: 413,
-				post: { title: 'Hello World' },
 			} );
 		} );
 	} );

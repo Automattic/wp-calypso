@@ -9,15 +9,12 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Modal, Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { useId, useRef, useState } from 'react';
+import { useId, useState } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { Text } from '../../components/text';
 import { recoveryEmailMatchesAccountEmail } from '../../me/security-account-recovery/utils';
-import { isWelcomeModalEligible } from '../../utils/hosting-dashboard-enrollment';
-import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { useAnalytics } from '../analytics';
-import { useAuth } from '../auth';
 import { getInterstitialCopy } from './copy';
 import heroIllustration from './hero-illustration.png';
 import type { InterstitialCta, SecurityLevel } from './copy';
@@ -82,7 +79,6 @@ function getSecurityLevel(
 export default function AccountRecoveryInterstitial() {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
-	const { user } = useAuth();
 	const titleId = useId();
 
 	const { data: accountRecovery, isSuccess: isAccountRecoveryLoaded } = useQuery(
@@ -95,13 +91,6 @@ export default function AccountRecoveryInterstitial() {
 	const { data: dismissCount, isSuccess: isDismissCountLoaded } = useQuery(
 		userPreferenceQuery( 'account-recovery-interstitial-dismiss-count' )
 	);
-	const { data: dashboardOptIn, isSuccess: isDashboardOptInLoaded } = useQuery(
-		userPreferenceQuery( 'hosting-dashboard-opt-in' )
-	);
-	const { data: welcomeModalDismissed, isSuccess: isWelcomeModalDismissedLoaded } = useQuery(
-		userPreferenceQuery( 'hosting-dashboard-opt-in-welcome-modal-dismissed' )
-	);
-
 	const dismissMutation = useMutation( userPreferencesMutation() );
 
 	const [ isDismissed, setIsDismissed ] = useState( false );
@@ -128,20 +117,6 @@ export default function AccountRecoveryInterstitial() {
 	const isSnoozed = !! snoozeUntilPersisted && now < snoozeUntilPersisted;
 	const hasReachedDismissCap = ( dismissCount ?? 0 ) >= MAX_INTERSTITIAL_DISMISSALS;
 
-	// Suppress the interstitial while the dashboard welcome modal is still pending, so the two
-	// full-page modals don't stack on the first dashboard load. The welcome-modal state is latched
-	// at first load: once the user dismisses the welcome modal, the account recovery modal keeps
-	// waiting until their next page load instead of popping up right behind it.
-	const isWelcomeDataLoaded = isDashboardOptInLoaded && isWelcomeModalDismissedLoaded;
-	const welcomeModalPendingAtLoadRef = useRef< boolean | undefined >( undefined );
-	if ( welcomeModalPendingAtLoadRef.current === undefined && isWelcomeDataLoaded ) {
-		welcomeModalPendingAtLoadRef.current =
-			! isDashboardBackport() &&
-			isWelcomeModalEligible( dashboardOptIn, user.ID ) &&
-			! welcomeModalDismissed;
-	}
-	const isWelcomeModalPending = welcomeModalPendingAtLoadRef.current ?? true;
-
 	// Eligible once the data has loaded and the snooze (if any) has elapsed. Support sessions are
 	// skipped.
 	const isEligible =
@@ -149,8 +124,6 @@ export default function AccountRecoveryInterstitial() {
 		isUserSettingsLoaded &&
 		isSnoozeLoaded &&
 		isDismissCountLoaded &&
-		isWelcomeDataLoaded &&
-		! isWelcomeModalPending &&
 		! isSnoozed &&
 		! hasReachedDismissCap &&
 		! isSupportSession() &&

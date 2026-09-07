@@ -1,4 +1,3 @@
-export { Badge } from './badge';
 export { DateCalendar, DateRangeCalendar, TZDate } from './calendar';
 export { HorizontalStepper } from './horizontal-stepper';
 export { Stepper } from './stepper';

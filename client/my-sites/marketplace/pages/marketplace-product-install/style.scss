@@ -4,9 +4,11 @@ body.is-section-marketplace.theme-default.color-scheme {
 
 // The layout mounts its own masterbar behind this page's. An opaque fill on the one below used to
 // hide it; with the header transparent it would show through, so retire it while this page is up.
-body.is-section-marketplace:has( .marketplace-plugin-install__masterbar )
-	.masterbar:not( .marketplace-plugin-install__masterbar ) {
-	display: none;
+body.is-section-marketplace:has( .marketplace-plugin-install__masterbar ) {
+	.masterbar:not( .marketplace-plugin-install__masterbar ),
+	#wpcom-omnibar {
+		display: none;
+	}
 }
 
 .marketplace-plugin-install__masterbar {

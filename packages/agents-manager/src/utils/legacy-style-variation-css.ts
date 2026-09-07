@@ -9,7 +9,7 @@
 // carry it, and its `!important` typography permanently overrides any font the
 // user later picks (ESE-20). Detection subset of Big Sky's
 // `shared/legacy-style-variation-css` — the consent dialog and removal flow are
-// Big Sky's and port together with `set-styles`.
+// still Big Sky's, tracked in AM-27.
 
 export const LEGACY_CSS_START = '/* easy-site-editor-style-variation:start */';
 export const LEGACY_CSS_END = '/* easy-site-editor-style-variation:end */';

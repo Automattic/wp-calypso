@@ -2,7 +2,10 @@ import config from '@automattic/calypso-config';
 import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
 import { useState, useEffect } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import { STATS_FEATURE_PAGE_TRAFFIC } from 'calypso/my-sites/stats/constants';
+import {
+	STATS_FEATURE_PAGE_TRAFFIC,
+	STATS_FEATURE_UTM_STATS,
+} from 'calypso/my-sites/stats/constants';
 import {
 	DEFAULT_NOTICES_VISIBILITY,
 	Notices,
@@ -12,16 +15,20 @@ import {
 import usePlanUsageQuery, {
 	getUsageLimitStatus,
 } from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
+import usePremiumAnalyticsStatusQuery from 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query';
 import { shouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { useSelector, useDispatch } from 'calypso/state';
 import { resetSiteState } from 'calypso/state/purchases/actions';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getSiteFeatures from 'calypso/state/selectors/get-site-features';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { hasLoadedSitePlansFromServer } from 'calypso/state/sites/plans/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
+import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import hasSiteProductJetpackStatsFree from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-free';
 import hasSiteProductJetpackStatsPaid from 'calypso/state/sites/selectors/has-site-product-jetpack-stats-paid';
@@ -33,6 +40,10 @@ import useStatsPurchases, { shouldShowPaywallNotice } from '../hooks/use-stats-p
 import { AllTimeData } from '../sections/all-time-highlights-section';
 import ALL_STATS_NOTICES from './all-notice-definitions';
 import JITMWrapper from './jitm-wrapper';
+import isPremiumAnalyticsPreviewCohort, {
+	PREMIUM_ANALYTICS_PREVIEW_FLAG,
+} from './premium-analytics-preview-cohort';
+import { PREMIUM_ANALYTICS_PAGE_PATH } from './premium-analytics-preview-notice';
 import { StatsNoticeProps, StatsNoticesProps } from './types';
 import './style.scss';
 
@@ -134,9 +145,63 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	const { data } = usePlanUsageQuery( siteId );
 	const { isNearLimit, isOverLimit } = getUsageLimitStatus( data );
 
+	// Where accepting would land. Null when the site record carries no `admin_url`, which is
+	// part of eligibility rather than the render - see the cohort helper.
+	const premiumAnalyticsDashboardUrl = useSelector( ( state ) =>
+		getSiteAdminUrl( state, siteId, PREMIUM_ANALYTICS_PAGE_PATH )
+	);
+
+	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
+
+	// Switching the dashboard on is an administrator's call, and the route enforces the same thing,
+	// so anyone else is never offered it — and never spends a request finding that out.
+	// Odyssey seeds these capabilities from the site itself, so this holds in both builds.
+	const canManageOptions = useSelector(
+		( state ) => !! canCurrentUser( state as object, siteId as number, 'manage_options' )
+	);
+
+	// The preview is for sites on the commercial Stats tier - the one carrying UTM, device and
+	// region/city views. Asking the gate rather than a plan or product flag: those four always
+	// move together through it, and it is the same answer Stats itself gives when deciding
+	// whether to show them.
+	//
+	// The features have to be in before that answer means anything: `shouldGateStats` reports
+	// "not gated" while they are still loading, which is the safe default for an upsell and the
+	// wrong one for an invitation. Nothing loads them in a Jetpack site's wp-admin
+	// (`stats-main` skips `QuerySiteFeatures` there), so an Atomic site is never invited from
+	// wp-admin - it fails closed, and spends no request finding out.
+	const hasCommercialStats = useSelector(
+		( state ) =>
+			!! getSiteFeatures( state, siteId ) &&
+			! shouldGateStats( state, siteId, STATS_FEATURE_UTM_STATS )
+	);
+
+	// Only sites that could actually accept the invitation pay for this round-trip, and the server
+	// decides the cohort on top. The same rule the registry uses, flag included: the request holds
+	// every notice back while it is in flight, so a site that asks it needlessly sits on its own
+	// upsell waiting for an answer nothing will use.
+	const { data: isPremiumAnalyticsEnabled, isLoading: isLoadingPremiumAnalyticsStatus } =
+		usePremiumAnalyticsStatusQuery(
+			siteId,
+			config.isEnabled( PREMIUM_ANALYTICS_PREVIEW_FLAG ) &&
+				isPremiumAnalyticsPreviewCohort( {
+					isWpcom,
+					isVip,
+					isP2,
+					canManageOptions,
+					hasCommercialStats,
+					premiumAnalyticsDashboardUrl,
+				} ) &&
+				serverNoticesVisibility?.premium_analytics_preview === true
+		);
+
 	const noticeOptions = {
 		siteId,
 		isOdysseyStats,
+		canManageOptions,
+		hasCommercialStats,
+		isPremiumAnalyticsEnabled,
+		premiumAnalyticsDashboardUrl,
 		isWpcom,
 		isVip,
 		isP2,
@@ -156,20 +221,24 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		hasWpcomUpsell,
 	};
 
-	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
-
 	// TODO: Integrate checking purchases and plans loaded state into `hasSiteProductJetpackStatsPaid`.
 	const hasLoadedPurchases = useSelector( hasLoadedSitePurchasesFromServer );
-	// Only check plans loaded state for supporting Stats on WPCOM.
+	// Nothing loads site plans in wp-admin, so waiting for them there holds every notice back
+	// forever. Asking `is_odyssey` rather than the `isOdysseyStats` prop, which is
+	// `is_running_in_jetpack_site` and false on a Simple site's wp-admin.
 	const hasLoadedPlans =
-		useSelector( ( state ) => hasLoadedSitePlansFromServer( state, siteId ) ) || isOdysseyStats;
+		useSelector( ( state ) => hasLoadedSitePlansFromServer( state, siteId ) ) ||
+		config.isEnabled( 'is_odyssey' );
 
 	if (
 		! hasLoadedPurchases ||
 		! hasLoadedPlans ||
 		isLoading ||
 		isError ||
-		isRequestingSitePurchases
+		isRequestingSitePurchases ||
+		// Waiting here rather than rendering an upsell and swapping it for the preview a moment
+		// later. Only sites the server offered the preview to ever wait.
+		isLoadingPremiumAnalyticsStatus
 	) {
 		return null;
 	}

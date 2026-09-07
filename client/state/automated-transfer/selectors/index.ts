@@ -1,4 +1,5 @@
 import { getAutomatedTransfer } from 'calypso/state/automated-transfer/selectors/get-automated-transfer';
+import type { EligibilityHold } from 'calypso/state/automated-transfer/constants';
 import type { AppState } from 'calypso/types';
 
 import 'calypso/state/automated-transfer/init';
@@ -28,7 +29,7 @@ export interface EligibilityWarning {
 
 export interface EligibilityData {
 	lastUpdate: number;
-	eligibilityHolds?: string[];
+	eligibilityHolds?: EligibilityHold[];
 	eligibilityWarnings?: EligibilityWarning[];
 }
 

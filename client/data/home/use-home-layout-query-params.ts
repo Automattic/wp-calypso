@@ -7,11 +7,17 @@ export interface HomeLayoutQueryParams {
 	view?: string;
 }
 
-export function useHomeLayoutQueryParams(): HomeLayoutQueryParams {
-	const { dev, view } = useSelector( getCurrentQueryArguments ) ?? {};
+type QueryArguments = Record< string, string | string[] > | null | undefined;
+
+export function getHomeLayoutQueryParams( queryArguments: QueryArguments ): HomeLayoutQueryParams {
+	const { dev, view } = queryArguments ?? {};
 
 	return {
 		dev: dev === 'true' || ( ! dev && config.isEnabled( 'home/layout-dev' ) ) || undefined,
 		view: view?.toString(),
 	};
+}
+
+export function useHomeLayoutQueryParams(): HomeLayoutQueryParams {
+	return getHomeLayoutQueryParams( useSelector( getCurrentQueryArguments ) );
 }

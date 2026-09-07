@@ -29,7 +29,6 @@ import './style.scss';
 interface SubscribeModalProps {
 	promptVerification: boolean;
 	onFinish: () => void;
-	totalSteps?: number;
 }
 
 interface StreamProps {
@@ -57,11 +56,7 @@ const SITES_PER_PAGE = 6;
 // mounted while the step is active. X-out / escape are handled by the
 // wrapper's `onRequestClose`, which also runs the same close-side-effects
 // (data refresh, analytics) that `handleClose` previously did inline.
-const SubscribeModal: React.FC< SubscribeModalProps > = ( {
-	promptVerification,
-	onFinish,
-	totalSteps = 3,
-} ) => {
+const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, onFinish } ) => {
 	const {
 		recommendations,
 		isLoading,
@@ -191,8 +186,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( {
 		onFinish();
 	}, [ onFinish ] );
 
-	const isLastStep = totalSteps <= 3;
-
 	return (
 		<>
 			{ promptVerification && <SubscribeVerificationNudge /> }
@@ -318,7 +311,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( {
 			</div>
 			<div className="reader-onboarding-modal__footer">
 				<HStack justify="space-between" className="reader-onboarding-modal__footer-actions">
-					<StepIndicator totalSteps={ totalSteps } currentStep={ 3 } />
+					<StepIndicator totalSteps={ 3 } currentStep={ 3 } />
 					<HStack spacing={ 2 } justify="right" className="reader-onboarding-modal__footer-buttons">
 						<Button
 							__next40pxDefaultSize
@@ -327,7 +320,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( {
 							disabled={ promptVerification }
 							accessibleWhenDisabled
 						>
-							{ isLastStep ? __( 'Finish' ) : __( 'Continue' ) }
+							{ __( 'Finish' ) }
 						</Button>
 					</HStack>
 				</HStack>

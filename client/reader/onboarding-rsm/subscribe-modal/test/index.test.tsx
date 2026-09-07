@@ -169,15 +169,6 @@ describe( 'SubscribeModal – verification nudge', () => {
 		expect( button ).not.toHaveAttribute( 'aria-disabled', 'true' );
 		expect( button ).not.toBeDisabled();
 	} );
-
-	it( 'labels the action Continue when a fourth step follows', () => {
-		renderWithProvider(
-			<SubscribeModal onFinish={ jest.fn() } promptVerification={ false } totalSteps={ 4 } />
-		);
-
-		expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'Finish' } ) ).not.toBeInTheDocument();
-	} );
 } );
 
 describe( 'SubscribeModal – site preview analytics', () => {

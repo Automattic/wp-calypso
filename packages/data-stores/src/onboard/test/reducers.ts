@@ -1,4 +1,4 @@
-import { profilerData } from '../reducer';
+import reducer, { profilerData } from '../reducer';
 import { ProfilerData } from '../types';
 
 describe( 'reducer', () => {
@@ -22,5 +22,18 @@ describe( 'reducer', () => {
 		} );
 
 		expect( state ).toEqual( expectedProfilerData );
+	} );
+
+	it( 'resets transfer wait state', () => {
+		const state = reducer(
+			{
+				transferStatus: 'active',
+				transferStartedAt: 123,
+			},
+			{ type: 'RESET_ONBOARD_STORE', skipFlags: [] }
+		);
+
+		expect( state.transferStatus ).toBeNull();
+		expect( state.transferStartedAt ).toBeNull();
 	} );
 } );

@@ -11,7 +11,6 @@ import {
 	WPCOM_DIFM_LITE,
 	OFFSITE_REDIRECT,
 } from '@automattic/api-core';
-import config from '@automattic/calypso-config';
 import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -21,7 +20,6 @@ import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datet
 import { isGSuiteProductSlug } from './gsuite';
 import { redirectToDashboardLink, wpcomLink } from './link';
 import { getStudioCodeAiCreditsTitle } from './studio-code-ai-credits';
-import { encodeProductForUrl } from './wpcom-checkout';
 import type { Product, Purchase } from '@automattic/api-core';
 
 export const CANCEL_FLOW_TYPE = {
@@ -658,27 +656,8 @@ function getServicePathForCheckoutFromPurchase( purchase: Purchase ): string {
 	return '';
 }
 
-function getCheckoutProductSlugFromPurchase( purchase: Purchase ): string {
-	const productSlug = encodeProductForUrl( purchase.product_slug );
-	const productDomain = purchase.meta ? encodeProductForUrl( purchase.meta ) : undefined;
-	const checkoutProductSlug = productDomain ? `${ productSlug }:${ productDomain }` : productSlug;
-	return checkoutProductSlug;
-}
-
-function getCheckoutSiteSlugForPurchase( purchase: Purchase ): string {
-	// Neither Akismet nor A4A holding sites should use a site slug
-	if ( isAkismetProduct( purchase ) || isA4AHoldingSitePurchase( purchase ) ) {
-		return '';
-	}
-	return purchase.site_slug || '';
-}
-
-export function getRenewalUrlFromPurchase(
-	purchase: Purchase,
-	checkoutSiteSlugForUrl?: string,
-	backUrl?: string
-): string {
-	return getRenewUrlForPurchases( [ purchase ], checkoutSiteSlugForUrl, backUrl );
+export function getRenewalUrlFromPurchase( purchase: Purchase, backUrl?: string ): string {
+	return getRenewUrlForPurchases( [ purchase ], backUrl );
 }
 
 /**
@@ -688,29 +667,21 @@ export function getRenewalUrlFromPurchase(
  */
 export function getRenewUrlForPurchases(
 	purchases: Purchase[],
-	checkoutSiteSlugForUrl?: string,
 	backUrl: string = redirectToDashboardLink()
 ): string {
 	if ( purchases.length < 1 ) {
 		throw new Error( 'Could not find product slug or purchase id for renewal.' );
 	}
-	const firstPurchase = purchases[ 0 ];
-	const checkoutProductSlug = purchases
-		.map( ( purchase ) => getCheckoutProductSlugFromPurchase( purchase ) )
-		.join( ',' );
-	const checkoutSiteSlug =
-		checkoutSiteSlugForUrl || getCheckoutSiteSlugForPurchase( firstPurchase );
-	const servicePath = getServicePathForCheckoutFromPurchase( firstPurchase );
 	const purchaseIds = purchases.map( ( purchase ) => purchase.ID ).join( ',' );
-	return addQueryArgs(
-		wpcomLink(
-			`/checkout/${ servicePath }${ checkoutProductSlug }/renew/${ purchaseIds }/${ checkoutSiteSlug }`
-		),
-		{
-			cancel_to: backUrl,
-			redirect_to: backUrl,
-		}
-	);
+	// Siteless Akismet and Marketplace renewals keep the service in the path
+	// because the route is what selects the service-specific checkout
+	// experience. Everything else renews from the subscription ID alone.
+	const servicePath = getServicePathForCheckoutFromPurchase( purchases[ 0 ] );
+
+	return addQueryArgs( wpcomLink( `/checkout/${ servicePath }renew/${ purchaseIds }` ), {
+		cancel_to: backUrl,
+		redirect_to: backUrl,
+	} );
 }
 
 /**
@@ -814,18 +785,14 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
 }
 
 /**
- * Returns true if the plan is eligible for an instant, self-serve downgrade: the
- * plan has a refundable receipt and has neither expired nor entered its
- * post-expiry grace period.
+ * Returns true if the plan is eligible for an instant, self-serve downgrade,
+ * performed now via the cancel endpoint rather than scheduled for renewal.
  *
- * `is_refundable` covers any refundable receipt, so it holds both for an initial
- * purchase and for a renewal that is still within its own refund window — both
- * cases where an instant downgrade costs neither side money.
- *
- * Note: this intentionally does NOT require a refundable amount. A refundable
- * receipt worth nothing generally means the purchase was free (or fully paid
- * with credits), which is still a valid instant downgrade — it just issues no
- * refund, and the confirmation modal drops its refund line accordingly.
+ * The server answers this directly through `is_instant_downgrade_available`,
+ * which already accounts for expiry and for receipts worth nothing (a comped
+ * plan or a 100%-off coupon downgrades instantly and simply issues no refund).
+ * Do not reintroduce a `is_refundable` check here: that asks a different
+ * question and gave the wrong answer for zero-cost purchases.
  *
  * This is distinct from {@link isExpiredAndInGracePeriod}, which gates the
  * downgrade-to-checkout flow for plans whose expiry date has already passed.
@@ -834,29 +801,19 @@ export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boo
 	return (
 		purchase.is_plan_type_downgradable &&
 		purchase.is_plan &&
-		purchase.is_refundable &&
-		! isExpiredOrRemoved( purchase )
+		purchase.is_instant_downgrade_available
 	);
 }
 
 /**
  * Whether to offer this purchase downgrade options as well as upgrades. Covers
- * three downgrade flows, each gated by its own flag:
- *   - past expiry (downgrade-to-checkout) — `plans/expired-downgrade`
- *   - within refund window (instant downgrade) — `plans/expired-downgrade`
- *   - active downgradable plan (delayed downgrade) — `plans/delayed-downgrade`
+ * three downgrade flows: past expiry (downgrade-to-checkout), within refund
+ * window (instant downgrade), and active downgradable plan (delayed downgrade).
  *
  * Only ever true for WordPress.com plans.
  */
 export function isPurchaseDowngradeEligible( purchase: Purchase ): boolean {
-	if ( ! purchase.is_plan || ! purchase.is_plan_type_downgradable ) {
-		return false;
-	}
-	const expiredOrRefundDowngrade =
-		config.isEnabled( 'plans/expired-downgrade' ) &&
-		( purchase.is_past_expiry_date || isWithinRefundWindowDowngradeEligible( purchase ) );
-	const delayedDowngrade = config.isEnabled( 'plans/delayed-downgrade' );
-	return expiredOrRefundDowngrade || delayedDowngrade;
+	return purchase.is_plan && purchase.is_plan_type_downgradable;
 }
 
 /**
