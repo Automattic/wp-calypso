@@ -45,8 +45,8 @@ export default function SwitcherItem( { media, title, description, spacing }: Sw
 }
 
 interface SwitcherItemSkeletonProps {
-	hasMedia?: boolean;
-	hasDescription?: boolean;
+	hasMedia: boolean;
+	hasDescription: boolean;
 	mediaSize?: number;
 	titleLength: number;
 	descriptionLength?: number;
@@ -54,8 +54,8 @@ interface SwitcherItemSkeletonProps {
 }
 
 export function SwitcherItemSkeleton( {
-	hasMedia = true,
-	hasDescription = true,
+	hasMedia,
+	hasDescription,
 	mediaSize = 32,
 	titleLength,
 	descriptionLength = titleLength + 2,

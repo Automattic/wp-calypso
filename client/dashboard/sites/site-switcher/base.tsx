@@ -54,7 +54,7 @@ export const SiteSwitcherBase = (
 				/>
 			) }
 			items={ sites }
-			itemCountHint={ user.visible_site_count }
+			loading={ { itemCount: user.visible_site_count, hasMedia: true, hasDescription: true } }
 			value={ site }
 			searchableFields={ searchableFields }
 			headerTitle={ __( 'Switch site' ) }

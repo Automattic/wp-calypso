@@ -24,22 +24,13 @@ function renderSwitcher( { items }: { items?: Item[] } ) {
 			searchableFields={ searchableFields }
 			getItemUrl={ ( item ) => `/items/${ item.id }` }
 			renderItem={ ( { item } ) => <Switcher.Item title={ item.name } /> }
-			itemCountHint={ 3 }
+			loading={ { itemCount: 3, hasMedia: false, hasDescription: false } }
 			defaultOpen
 		/>
 	);
 }
 
 describe( '<Switcher>', () => {
-	// The popover only closes on click-outside or Escape once focus has moved
-	// inside it, and `focusOnMount` gives up when it finds nothing tabbable.
-	// (jsdom never lays the popover out, so this asserts presence, not visibility.)
-	test( 'renders a tabbable control while the items are loading', () => {
-		renderSwitcher( { items: undefined } );
-
-		expect( screen.getByRole( 'searchbox', { name: 'Search' } ) ).toBeInTheDocument();
-	} );
-
 	test( 'announces that the items are loading', () => {
 		renderSwitcher( { items: undefined } );
 

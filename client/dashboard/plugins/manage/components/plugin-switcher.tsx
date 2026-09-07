@@ -131,7 +131,13 @@ export const PluginSwitcher = ( {
 					view={ view }
 					onChangeView={ onChangeView }
 					items={ pluginsWithIcon }
-					itemCountHint={ paginationInfo.totalItems }
+					loading={ {
+						itemCount: paginationInfo.totalItems,
+						hasMedia: true,
+						hasDescription: true,
+						mediaSize: 48,
+						spacing: 3,
+					} }
 					resetScroll={ false }
 					getItemUrl={ ( item ) => pluginRoute.to.replace( '$pluginId', item.slug ) }
 					renderItem={ renderItem }

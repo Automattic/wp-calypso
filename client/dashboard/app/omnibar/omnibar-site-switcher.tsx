@@ -100,7 +100,11 @@ export default function OmnibarSiteSwitcher() {
 				renderContent={ ( { onClose } ) => (
 					<SwitcherContent< Site >
 						items={ sites }
-						itemCountHint={ user.visible_site_count }
+						loading={ {
+							itemCount: user.visible_site_count,
+							hasMedia: true,
+							hasDescription: true,
+						} }
 						searchableFields={ searchableFields }
 						view={ view }
 						onChangeView={ setView }

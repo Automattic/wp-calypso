@@ -11,13 +11,13 @@ import { useMemo, type JSX, type PropsWithChildren } from 'react';
 import RouterLinkMenuItem from '../router-link-menu-item';
 import { Text } from '../text';
 import { SwitcherItemSkeleton } from './switcher-item';
-import { RenderItem, RenderLoadingItem } from './types';
+import { RenderItem, SwitcherLoadingState } from './types';
 import type { View, Field } from '@wordpress/dataviews';
 
 import './switcher-content.scss';
 
 // Only used when the view doesn't paginate.
-const FALLBACK_MAX_ITEM_COUNT_HINT = 10;
+const FALLBACK_MAX_ITEM_COUNT = 10;
 // Cycling the widths keeps the placeholder rows from reading as repeated
 // content. They stay short enough to fit, so the rows differ from each other
 // rather than all ending at the same truncation point.
@@ -27,15 +27,9 @@ const LOADING_TITLE_LENGTHS = [ 16, 11, 14, 12, 15, 10 ];
  * How many placeholder rows to show while the items load. The page size is the
  * cap so the placeholder list is as tall as the list that replaces it.
  */
-export function getPlaceholderCount( itemCountHint: number, perPage?: number ) {
-	return Math.min( Math.max( itemCountHint, 1 ), perPage ?? FALLBACK_MAX_ITEM_COUNT_HINT );
+export function getPlaceholderCount( itemCount: number, perPage?: number ) {
+	return Math.min( Math.max( itemCount, 1 ), perPage ?? FALLBACK_MAX_ITEM_COUNT );
 }
-
-const defaultRenderLoadingItem: RenderLoadingItem = ( { index } ) => (
-	<SwitcherItemSkeleton
-		titleLength={ LOADING_TITLE_LENGTHS[ index % LOADING_TITLE_LENGTHS.length ] }
-	/>
-);
 
 export default function SwitcherContent< T >( {
 	itemClassName,
@@ -47,8 +41,7 @@ export default function SwitcherContent< T >( {
 	width = '280px',
 	getItemUrl,
 	renderItem,
-	renderLoadingItem = defaultRenderLoadingItem,
-	itemCountHint,
+	loading,
 	resetScroll = true,
 	children,
 	onClose,
@@ -66,8 +59,7 @@ export default function SwitcherContent< T >( {
 	width?: string;
 	getItemUrl: ( item: T ) => string;
 	renderItem: RenderItem< T >;
-	renderLoadingItem?: RenderLoadingItem;
-	itemCountHint: number;
+	loading: SwitcherLoadingState;
 	resetScroll?: boolean;
 	onClose: () => void;
 	onItemClick?: () => void;
@@ -91,10 +83,7 @@ export default function SwitcherContent< T >( {
 		return allFields;
 	}, [ searchableFields, filterField ] );
 
-	const isLoading = ! items;
-	const { data: filteredData } = items
-		? filterSortAndPaginate( items, view, fields )
-		: { data: [] as T[] };
+	const { data: filteredData } = filterSortAndPaginate( items ?? [], view, fields );
 
 	// The search field is rendered even while loading: `Popover`'s focus-on-mount
 	// only moves focus into the popover if it finds something tabbable there, and
@@ -111,8 +100,8 @@ export default function SwitcherContent< T >( {
 	);
 
 	const renderMenuItems = () => {
-		if ( isLoading ) {
-			const count = getPlaceholderCount( itemCountHint, view.perPage );
+		if ( ! items ) {
+			const count = getPlaceholderCount( loading.itemCount, view.perPage );
 			return (
 				<div className="switcher-content__loading">
 					<VisuallyHidden role="status">{ __( 'Loading…' ) }</VisuallyHidden>
@@ -125,7 +114,13 @@ export default function SwitcherContent< T >( {
 							style={ { height: 'fit-content', minHeight: '40px' } }
 							aria-hidden="true"
 						>
-							{ renderLoadingItem( { index } ) }
+							<SwitcherItemSkeleton
+								hasMedia={ loading.hasMedia }
+								hasDescription={ loading.hasDescription }
+								mediaSize={ loading.mediaSize }
+								spacing={ loading.spacing }
+								titleLength={ LOADING_TITLE_LENGTHS[ index % LOADING_TITLE_LENGTHS.length ] }
+							/>
 						</div>
 					) ) }
 				</div>
