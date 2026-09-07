@@ -762,9 +762,8 @@ export class LoginForm extends Component {
 			return (
 				<Notice variant="info">
 					{ this.props.translate(
-						'We found a WordPress.com account registered to "%(email)s". ' +
-							'Log in to link it with your %(service)s account, ' +
-							'or choose a different %(service)s account.',
+						'We found a WordPress.com account registered to "%(email)s" which uses our standard email login. ' +
+							'Please click the log in button to link it with your %(service)s account.',
 						{
 							args: {
 								email: this.props.socialAccountLinkEmail,
