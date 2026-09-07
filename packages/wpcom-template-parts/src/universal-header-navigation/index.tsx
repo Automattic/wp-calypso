@@ -370,7 +370,7 @@ const UniversalNavbarHeader = ( {
 														} }
 														onFocus={ () => {
 															recordNavItemHover( isScrolled, menu.name, true );
-															setActiveDropdown( menu.name );
+															showDropdown( 0, menu.name );
 														} }
 													>
 														<NonClickableItem
