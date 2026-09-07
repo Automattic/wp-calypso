@@ -17,6 +17,14 @@ export interface SiteExpiryNoticeOptions {
 	 * the same way.
 	 */
 	isDashboardScreen: boolean;
+
+	/**
+	 * The current WordPress.com user's ID: the notice is for the owner of the
+	 * plan's subscription and nobody else. Hosts supply it — Calypso from Redux,
+	 * the dashboard from its auth context — so the hook stays free of host
+	 * context.
+	 */
+	currentUserId: number;
 	locale: string;
 	renewReturnUrl?: string;
 	viewOtherPlansUrl?: string;
@@ -62,11 +70,17 @@ function isClientError( error: unknown ): boolean {
  */
 export function useSiteExpiryNotice(
 	siteId: number,
-	{ isDashboardScreen, locale, renewReturnUrl, viewOtherPlansUrl }: SiteExpiryNoticeOptions
+	{
+		isDashboardScreen,
+		currentUserId,
+		locale,
+		renewReturnUrl,
+		viewOtherPlansUrl,
+	}: SiteExpiryNoticeOptions
 ): SiteExpiryNoticeState | null {
 	// Hosts may render before a site is selected; `0` must never hit the API.
 	const { data: purchases } = useQuery( { ...sitePurchasesQuery( siteId ), enabled: siteId > 0 } );
-	const purchase = purchases ? pickSitewideExpiryPurchase( purchases ) : null;
+	const purchase = purchases ? pickSitewideExpiryPurchase( purchases, currentUserId ) : null;
 
 	const { data: currentUser, isFetchedAfterMount: isCurrentUserFetched } = useQuery( {
 		...siteCurrentUserQuery( siteId ),

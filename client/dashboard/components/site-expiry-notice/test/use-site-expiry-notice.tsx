@@ -8,10 +8,12 @@ import { renderHook, waitFor } from '@testing-library/react';
 import MockDate from 'mockdate';
 import nock from 'nock';
 import { isPlanExpiryNoticeDismissed, useSiteExpiryNotice } from '../use-site-expiry-notice';
+import type { SiteExpiryNoticeOptions } from '../use-site-expiry-notice';
 import type { Purchase } from '@automattic/api-core';
 
 const NOW = '2026-02-24T12:00:00Z';
 const SITE_ID = 99;
+const OWNER_ID = 7;
 
 function expiryInDays( days: number ): string {
 	return new Date( Date.UTC( 2026, 1, 24 + days, 12 ) ).toISOString();
@@ -21,6 +23,7 @@ function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
 	return {
 		ID: 1234,
 		blog_id: SITE_ID,
+		user_id: OWNER_ID,
 		product_slug: DotcomPlans.BUSINESS,
 		product_name: 'WordPress.com Business',
 		site_slug: 'example.wordpress.com',
@@ -70,7 +73,11 @@ function mockApi( {
 }
 
 function renderNotice(
-	options = { isDashboardScreen: false, locale: 'en' },
+	options: SiteExpiryNoticeOptions = {
+		isDashboardScreen: false,
+		currentUserId: OWNER_ID,
+		locale: 'en',
+	},
 	// Off by default so that a mocked failure fails a test fast. The transfer
 	// query has to opt out of retries on its own; one test checks that it does.
 	{ retry = false }: { retry?: boolean } = {}
@@ -117,16 +124,35 @@ describe( 'useSiteExpiryNotice', () => {
 		expect( result.current ).toBeNull();
 	} );
 
+	test( 'is null when the plan belongs to another user', async () => {
+		mockApi( { purchases: [ makePurchase( { user_id: OWNER_ID + 1 } ) ] } );
+		const { result, waitForPurchases } = renderNotice( {
+			isDashboardScreen: true,
+			currentUserId: OWNER_ID,
+			locale: 'en',
+		} );
+		await waitForPurchases();
+		expect( result.current ).toBeNull();
+	} );
+
 	test( 'hides the early warning off dashboard screens', async () => {
 		mockApi( { purchases: [ makePurchase() ] } );
-		const { result, waitForPurchases } = renderNotice( { isDashboardScreen: false, locale: 'en' } );
+		const { result, waitForPurchases } = renderNotice( {
+			isDashboardScreen: false,
+			currentUserId: OWNER_ID,
+			locale: 'en',
+		} );
 		await waitForPurchases();
 		expect( result.current ).toBeNull();
 	} );
 
 	test( 'shows the early warning on dashboard screens', async () => {
 		mockApi( { purchases: [ makePurchase() ] } );
-		const { result } = renderNotice( { isDashboardScreen: true, locale: 'en' } );
+		const { result } = renderNotice( {
+			isDashboardScreen: true,
+			currentUserId: OWNER_ID,
+			locale: 'en',
+		} );
 		await waitFor( () => expect( result.current?.stage ).toBe( 'early-warning' ) );
 		expect( result.current?.isDismissible ).toBe( false );
 	} );
@@ -165,7 +191,10 @@ describe( 'useSiteExpiryNotice', () => {
 			],
 			transferStatusCode: 404,
 		} );
-		const { result } = renderNotice( { isDashboardScreen: false, locale: 'en' }, { retry: true } );
+		const { result } = renderNotice(
+			{ isDashboardScreen: false, currentUserId: OWNER_ID, locale: 'en' },
+			{ retry: true }
+		);
 		await waitFor( () => expect( result.current?.stage ).toBe( 'post-grace' ), { timeout: 1000 } );
 		expect( result.current?.isReverted ).toBe( false );
 	} );

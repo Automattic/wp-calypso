@@ -9,6 +9,7 @@ import {
 } from 'calypso/dashboard/components/site-expiry-notice';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const HELP_CENTER_STORE = HelpCenter.register();
@@ -21,6 +22,7 @@ const HELP_CENTER_STORE = HelpCenter.register();
 export default function SiteExpiryNotice() {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const currentUserId = useSelector( getCurrentUserId );
 	const dispatch = useDispatch();
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 
@@ -30,6 +32,8 @@ export default function SiteExpiryNotice() {
 
 	const state = useSiteExpiryNotice( siteId ?? 0, {
 		isDashboardScreen: true,
+		// `0` matches no purchase, so an unknown user is shown nothing.
+		currentUserId: currentUserId ?? 0,
 		locale,
 		renewReturnUrl,
 		viewOtherPlansUrl,
