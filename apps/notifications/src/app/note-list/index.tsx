@@ -52,7 +52,11 @@ type NoteListProps = {
 const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListProps ) => {
 	const renderStartedAt = useRef( 0 );
 	renderStartedAt.current = performance.now();
-	const trackListRender = useMemo( () => createListRenderTracker( 'app' ), [] );
+	const trackListRenderRef = useRef< ReturnType< typeof createListRenderTracker > | null >( null );
+	if ( ! trackListRenderRef.current ) {
+		trackListRenderRef.current = createListRenderTracker( 'app' );
+	}
+	const trackListRender = trackListRenderRef.current;
 
 	const filter = getFilters()[ filterName ];
 	const isAllTab = filterName === 'all';
