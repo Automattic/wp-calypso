@@ -1,12 +1,9 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { SiteSubscriptionsQueryPropsProvider } from '@automattic/data-stores/src/reader/contexts';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useFollowedTags } from 'calypso/reader/data/tags';
 import DiscoverHeaderAndNavigation from 'calypso/reader/discover/components/header-and-navigation';
-import DiscoverNewBlogs from 'calypso/reader/discover/new-blogs';
-import { useOonRecs } from 'calypso/reader/discover/new-blogs/use-oon-recs';
 import AddSubscriptionForm from 'calypso/reader/new-subscription/components/add-subscription-form';
 import { ADD_SUBSCRIPTION_CONFIGS } from 'calypso/reader/new-subscription/components/add-subscription-form/consts';
 import Stream from 'calypso/reader/stream';
@@ -18,7 +15,6 @@ const DiscoverStream = ( props ) => {
 	const translate = useTranslate();
 	const { data: followedTags } = useFollowedTags();
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const oonRecs = useOonRecs();
 	const selectedTab = props.selectedTab || RECOMMENDED_TAB;
 	const selectedTag = props.query?.selectedTag ?? 'dailyprompt';
 
@@ -47,17 +43,6 @@ const DiscoverStream = ( props ) => {
 	);
 
 	const streamKey = buildDiscoverStreamKey( effectiveTabSelection, recommendedStreamTags );
-
-	// "Discover new blogs" (READ-542): one bounded block at the top of the
-	// Recommended stream, right under the Discover navigation. Not mounted at
-	// all for cold-start users or once the user hides it.
-	const showOonModule =
-		selectedTab === RECOMMENDED_TAB &&
-		isEnabled( 'reader/discover-new-blogs' ) &&
-		! oonRecs.isColdStart &&
-		! oonRecs.isHidden &&
-		oonRecs.recs.length > 0;
-
 	return (
 		<Stream
 			{ ...props }
@@ -67,16 +52,6 @@ const DiscoverStream = ( props ) => {
 			}
 			selectedStreamName={ selectedTab }
 			useCompactCards
-			inStreamBlock={
-				showOonModule ? (
-					<DiscoverNewBlogs
-						recs={ oonRecs.recs }
-						dismissBlog={ oonRecs.dismissBlog }
-						hide={ oonRecs.hide }
-					/>
-				) : null
-			}
-			inStreamBlockPosition={ 0 }
 		>
 			<DiscoverHeaderAndNavigation { ...headerAndNavigationProps } />
 		</Stream>
