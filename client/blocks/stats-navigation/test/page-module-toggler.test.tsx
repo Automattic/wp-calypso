@@ -120,4 +120,44 @@ describe( 'PageModuleToggler', () => {
 			},
 		} );
 	} );
+
+	it( 'renders no extra section without menu items', async () => {
+		const user = userEvent.setup();
+
+		renderToggler( {} );
+
+		await user.click( screen.getByRole( 'button', { name: 'Settings' } ) );
+
+		expect( document.querySelector( '.page-modules-settings-menu' ) ).toBeNull();
+	} );
+
+	it( 'lists menu items in their own section and closes the menu on select', async () => {
+		const user = userEvent.setup();
+		const onSelect = jest.fn();
+
+		render(
+			<PageModuleToggler
+				{ ...defaultProps }
+				moduleToggles={ {} }
+				menuItems={ [
+					{ key: 'preview', label: 'Try the new Traffic tab', icon: <svg />, onSelect },
+				] }
+			/>
+		);
+
+		await user.click( screen.getByRole( 'button', { name: 'Settings' } ) );
+
+		const item = screen.getByRole( 'button', { name: 'Try the new Traffic tab' } );
+		expect( item.closest( '.page-modules-settings-menu' ) ).not.toBeNull();
+		expect( getToggle( 'Authors' ) ).toBeChecked();
+
+		await user.click( item );
+
+		expect( onSelect ).toHaveBeenCalledTimes( 1 );
+		expect(
+			screen.queryByRole( 'button', { name: 'Try the new Traffic tab' } )
+		).not.toBeInTheDocument();
+		// Whatever the action opens returns focus here once it closes.
+		expect( screen.getByRole( 'button', { name: 'Settings' } ) ).toHaveFocus();
+	} );
 } );

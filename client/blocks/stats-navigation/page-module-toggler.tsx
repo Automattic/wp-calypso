@@ -9,12 +9,22 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { updateModuleToggles } from 'calypso/state/stats/module-toggles/actions';
 import './page-module-toggler.scss';
 import { AVAILABLE_PAGE_MODULES, ModuleToggleItem } from './constants';
+import type { JSX } from 'react';
+
+export type PageModulesMenuItem = {
+	key: string;
+	label: string;
+	icon: JSX.Element;
+	onSelect: () => void;
+};
 
 type PageModuleTogglerProps = {
 	moduleToggles: { [ name: string ]: boolean };
 	customToggleIcon?: React.ReactNode;
 	siteId: number;
 	selectedItem: string;
+	// Actions listed under the toggles in a section of their own. Selecting one closes the menu.
+	menuItems?: PageModulesMenuItem[];
 };
 
 // Helper to expose logic for default module listing.
@@ -39,6 +49,7 @@ export default function PageModuleToggler( {
 	moduleToggles,
 	siteId,
 	customToggleIcon = <Icon className="gridicon" icon={ cog } />,
+	menuItems = [],
 }: PageModuleTogglerProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -62,6 +73,14 @@ export default function PageModuleToggler( {
 		setIsSettingsMenuVisible( ( isSettingsMenuVisible ) => {
 			return ! isSettingsMenuVisible;
 		} );
+	};
+
+	const selectMenuItem = ( item: PageModulesMenuItem ) => {
+		// Hand focus back to the trigger before the menu unmounts, so whatever the action opens
+		// finds it as the element to return to.
+		settingsActionElement?.focus();
+		setIsSettingsMenuVisible( false );
+		item.onSelect();
 	};
 
 	const onToggleModule = ( module: string, isShow: boolean ) => {
@@ -112,6 +131,21 @@ export default function PageModuleToggler( {
 						);
 					} ) }
 				</div>
+				{ menuItems.length > 0 && (
+					<div className="page-modules-settings-menu">
+						{ menuItems.map( ( item ) => (
+							<button
+								key={ item.key }
+								type="button"
+								className="page-modules-settings-menu-item"
+								onClick={ () => selectMenuItem( item ) }
+							>
+								<Icon className="gridicon" icon={ item.icon } />
+								<span>{ item.label }</span>
+							</button>
+						) ) }
+					</div>
+				) }
 			</Popover>
 		</div>
 	);
