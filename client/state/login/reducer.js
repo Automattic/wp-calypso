@@ -403,7 +403,7 @@ const userExistsErrorHandler = ( state, { error, authInfo } ) => {
 // magic link or a password reset ends in a full page load, so the pending
 // social auth info would be lost anyway.
 const isAbandoningSocialAccountLinkPath = ( path ) =>
-	/^\/log-in(?:\/jetpack|\/new)?\/(?:link|lostpassword)(?:\/|$)/.test( path );
+	/^\/log-in\/(?:jetpack\/|new\/)?(?:link|lostpassword)\b/.test( path );
 
 export const socialAccountLink = ( state = { isLinking: false }, action ) => {
 	switch ( action.type ) {
