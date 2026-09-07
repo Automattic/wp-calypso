@@ -17,14 +17,14 @@ const ConversationsIntro = ( { isInternal = false } ) => {
 	const hasUsedConversations = useSelector( ( state ) => getPreference( state, preferenceName ) );
 	useEffect( () => {
 		if ( ! hasUsedConversations ) {
-			recordReaderTracksEvent( 'calypso_reader_conversations_intro_render' );
+			dispatch( recordReaderTracksEvent( 'calypso_reader_conversations_intro_render' ) );
 		}
-	}, [ hasUsedConversations ] );
+	}, [ dispatch, hasUsedConversations ] );
 	if ( hasUsedConversations ) {
 		return null;
 	}
 	const onClose = () => {
-		recordReaderTracksEvent( 'calypso_reader_conversations_intro_dismiss' );
+		dispatch( recordReaderTracksEvent( 'calypso_reader_conversations_intro_dismiss' ) );
 		dispatch( savePreference( preferenceName, true ) );
 	};
 	return (

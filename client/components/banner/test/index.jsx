@@ -180,4 +180,57 @@ describe( 'Banner basic tests', () => {
 		expect( btn ).not.toHaveAttribute( 'href' );
 		expect( btn ).toHaveTextContent( 'Go WordPress!' );
 	} );
+
+	test( 'should record click and call onClick when a dismissible banner with forceHref is clicked', async () => {
+		const user = userEvent.setup();
+		const handleClick = jest.fn();
+		const recordClick = jest.fn();
+		const { container } = renderWithRedux(
+			<Banner
+				{ ...props }
+				href="/"
+				callToAction="Go WordPress!"
+				forceHref
+				event="test-event"
+				dismissPreferenceName="banner-test"
+				onClick={ handleClick }
+				recordTracksEvent={ recordClick }
+			/>
+		);
+
+		await user.click( container.firstChild );
+
+		expect( handleClick ).toHaveBeenCalledTimes( 1 );
+		expect( recordClick ).toHaveBeenCalledWith(
+			'calypso_banner_cta_click',
+			expect.objectContaining( { cta_name: 'test-event' } )
+		);
+	} );
+
+	test( 'should not record click when a dismissible banner is dismissed', async () => {
+		const user = userEvent.setup();
+		const handleClick = jest.fn();
+		const recordEvent = jest.fn();
+		renderWithRedux(
+			<Banner
+				{ ...props }
+				href="/"
+				callToAction="Go WordPress!"
+				forceHref
+				event="test-event"
+				dismissPreferenceName="banner-test"
+				onClick={ handleClick }
+				recordTracksEvent={ recordEvent }
+			/>
+		);
+
+		await user.click( screen.getByLabelText( 'Dismiss' ) );
+
+		expect( handleClick ).not.toHaveBeenCalled();
+		expect( recordEvent ).toHaveBeenCalledWith(
+			'calypso_banner_dismiss',
+			expect.objectContaining( { cta_name: 'test-event' } )
+		);
+		expect( recordEvent ).not.toHaveBeenCalledWith( 'calypso_banner_cta_click', expect.anything() );
+	} );
 } );
