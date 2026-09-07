@@ -13,7 +13,7 @@ import { DomainSslField } from './field-ssl';
 import { IneligibleIndicator } from './ineligible-indicator';
 import { fieldSort, sortNullableDates } from './sort';
 import type { DomainSummary, Site } from '@automattic/api-core';
-import type { Field, Operator, View } from '@wordpress/dataviews';
+import type { Field, Operator } from '@wordpress/dataviews';
 
 export const useFields = ( {
 	site,
@@ -135,9 +135,9 @@ export const useFields = ( {
 				render: ( { item } ) => <DomainSslField domain={ item } />,
 			},
 			{
-				// DataViews derives sorting and filtering from a single getValue, so the
-				// filter buckets live here and `expiry_date` below sorts by the raw date.
-				id: 'expiry',
+				// DataViews feeds one getValue to both filtering and sorting, so the filter
+				// buckets need a field of their own; `expiry` below sorts by the raw date.
+				id: 'expiry_status',
 				label: __( 'Paid until' ),
 				enableHiding: false,
 				enableSorting: false,
@@ -167,7 +167,7 @@ export const useFields = ( {
 				},
 			},
 			{
-				id: 'expiry_date',
+				id: 'expiry',
 				label: __( 'Paid until' ),
 				enableHiding: false,
 				enableSorting: true,
@@ -216,7 +216,3 @@ export const useFields = ( {
 
 	return fields;
 };
-
-export function sanitizeFields( fields: View[ 'fields' ] ) {
-	return fields?.map( ( field ) => ( field === 'expiry' ? 'expiry_date' : field ) );
-}

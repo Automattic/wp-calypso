@@ -6,8 +6,8 @@ import { waitFor } from '@testing-library/react';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
 import { render } from '../../../test-utils';
-import { sanitizeFields, useFields } from '../fields';
-import { DEFAULT_VIEW } from '../views';
+import { useFields } from '../fields';
+import { DEFAULT_VIEW, migrateExpiryFilter } from '../views';
 import type { DomainSummary } from '@automattic/api-core';
 import type { Field, View } from '@wordpress/dataviews';
 
@@ -79,7 +79,7 @@ const sortedNames = (
 	direction: 'asc' | 'desc',
 	items: DomainSummary[] = DOMAINS
 ) => {
-	const view: View = { ...DEFAULT_VIEW, perPage: 100, sort: { field: 'expiry_date', direction } };
+	const view: View = { ...DEFAULT_VIEW, perPage: 100, sort: { field: 'expiry', direction } };
 	const { data } = filterSortAndPaginate( items, view, fields );
 	return data.map( ( item ) => item.domain );
 };
@@ -88,7 +88,7 @@ const filteredNames = ( fields: Field< DomainSummary >[], value: string ) => {
 	const view: View = {
 		...DEFAULT_VIEW,
 		perPage: 100,
-		filters: [ { field: 'expiry', operator: 'isAny', value: [ value ] } ],
+		filters: [ { field: 'expiry_status', operator: 'isAny', value: [ value ] } ],
 	};
 	const { data } = filterSortAndPaginate( FILTERABLE, view, fields );
 	return data.map( ( item ) => item.domain );
@@ -133,12 +133,24 @@ describe( 'domains "Paid until" field', () => {
 	} );
 } );
 
-describe( 'sanitizeFields', () => {
-	it( 'migrates a persisted expiry column to the date column', () => {
-		expect( sanitizeFields( [ 'blog_name', 'expiry', 'domain_status' ] ) ).toEqual( [
-			'blog_name',
-			'expiry_date',
-			'domain_status',
+describe( 'migrateExpiryFilter', () => {
+	it( 'points a persisted expiry filter at the status field', () => {
+		const view: View = {
+			...DEFAULT_VIEW,
+			filters: [ { field: 'expiry', operator: 'isAny', value: [ '1-expired' ] } ],
+		};
+
+		expect( migrateExpiryFilter( view ).filters ).toEqual( [
+			{ field: 'expiry_status', operator: 'isAny', value: [ '1-expired' ] },
 		] );
+	} );
+
+	it( 'leaves other views untouched', () => {
+		const view: View = {
+			...DEFAULT_VIEW,
+			filters: [ { field: 'owner', operator: 'isAny', value: [ 'owned-by-me' ] } ],
+		};
+
+		expect( migrateExpiryFilter( view ) ).toBe( view );
 	} );
 } );

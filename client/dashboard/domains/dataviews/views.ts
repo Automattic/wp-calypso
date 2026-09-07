@@ -19,7 +19,7 @@ const BASE_VIEW_PROPS: View = {
 		// 'owner',
 		'blog_name',
 		'ssl_status',
-		'expiry_date',
+		'expiry',
 		'domain_status',
 	],
 };
@@ -28,7 +28,7 @@ export const DEFAULT_VIEW = BASE_VIEW_PROPS;
 
 export const SITE_CONTEXT_VIEW = {
 	...BASE_VIEW_PROPS,
-	fields: [ 'ssl_status', 'expiry_date', 'domain_status' ],
+	fields: [ 'ssl_status', 'expiry', 'domain_status' ],
 };
 
 // Default layouts
@@ -95,4 +95,18 @@ function setDifference< T >( a: Set< T >, b: Set< T > ): Set< T > {
 		difference.delete( item );
 	}
 	return difference;
+}
+
+// Views persisted before the expiry field split still filter on `expiry`, which now holds dates.
+export function migrateExpiryFilter( view: View ): View {
+	if ( ! view.filters?.some( ( { field } ) => field === 'expiry' ) ) {
+		return view;
+	}
+
+	return {
+		...view,
+		filters: view.filters.map( ( filter ) =>
+			filter.field === 'expiry' ? { ...filter, field: 'expiry_status' } : filter
+		),
+	};
 }
