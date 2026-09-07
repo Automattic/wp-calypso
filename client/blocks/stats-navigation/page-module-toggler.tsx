@@ -2,7 +2,7 @@ import { Popover } from '@automattic/components';
 import { FormToggle } from '@wordpress/components';
 import { Icon, cog } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback, useMemo } from 'react';
+import { useId, useState, useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'calypso/state';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -15,6 +15,8 @@ export type PageModulesMenuItem = {
 	key: string;
 	label: string;
 	icon: JSX.Element;
+	// Shown under the label, and announced as the button's description rather than its name.
+	description?: string;
 	onSelect: () => void;
 };
 
@@ -26,6 +28,38 @@ type PageModuleTogglerProps = {
 	// Actions listed under the toggles in a section of their own. Selecting one closes the menu.
 	menuItems?: PageModulesMenuItem[];
 };
+
+function MenuItemButton( {
+	item,
+	onSelect,
+}: {
+	item: PageModulesMenuItem;
+	onSelect: ( item: PageModulesMenuItem ) => void;
+} ) {
+	const id = useId();
+	const labelId = `${ id }-label`;
+	const descriptionId = `${ id }-description`;
+
+	return (
+		<button
+			type="button"
+			className="page-modules-settings-menu-item"
+			aria-labelledby={ labelId }
+			aria-describedby={ item.description ? descriptionId : undefined }
+			onClick={ () => onSelect( item ) }
+		>
+			<Icon className="gridicon" icon={ item.icon } />
+			<span className="page-modules-settings-menu-item__text">
+				<span id={ labelId }>{ item.label }</span>
+				{ item.description && (
+					<span id={ descriptionId } className="page-modules-settings-menu-item__description">
+						{ item.description }
+					</span>
+				) }
+			</span>
+		</button>
+	);
+}
 
 // Helper to expose logic for default module listing.
 export function getAvailablePageModules( selectedItem: string, hasVideoPress: boolean ) {
@@ -134,15 +168,7 @@ export default function PageModuleToggler( {
 				{ menuItems.length > 0 && (
 					<div className="page-modules-settings-menu">
 						{ menuItems.map( ( item ) => (
-							<button
-								key={ item.key }
-								type="button"
-								className="page-modules-settings-menu-item"
-								onClick={ () => selectMenuItem( item ) }
-							>
-								<Icon className="gridicon" icon={ item.icon } />
-								<span>{ item.label }</span>
-							</button>
+							<MenuItemButton key={ item.key } item={ item } onSelect={ selectMenuItem } />
 						) ) }
 					</div>
 				) }

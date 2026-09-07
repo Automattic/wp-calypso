@@ -160,4 +160,32 @@ describe( 'PageModuleToggler', () => {
 		// Whatever the action opens returns focus here once it closes.
 		expect( screen.getByRole( 'button', { name: 'Settings' } ) ).toHaveFocus();
 	} );
+
+	it( 'shows a menu item description without folding it into the name', async () => {
+		const user = userEvent.setup();
+
+		render(
+			<PageModuleToggler
+				{ ...defaultProps }
+				moduleToggles={ {} }
+				menuItems={ [
+					{
+						key: 'preview',
+						label: 'Try the new Traffic tab',
+						description: 'Clearer charts, and widgets you can move and resize.',
+						icon: <svg />,
+						onSelect: jest.fn(),
+					},
+				] }
+			/>
+		);
+
+		await user.click( screen.getByRole( 'button', { name: 'Settings' } ) );
+
+		const item = screen.getByRole( 'button', { name: 'Try the new Traffic tab' } );
+		expect( item ).toHaveAccessibleDescription(
+			'Clearer charts, and widgets you can move and resize.'
+		);
+		expect( item ).toHaveTextContent( 'Clearer charts, and widgets you can move and resize.' );
+	} );
 } );

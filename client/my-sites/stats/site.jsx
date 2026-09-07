@@ -226,6 +226,9 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 						{
 							key: 'premium-analytics-preview',
 							label: translate( 'Try the new Traffic tab' ),
+							description: translate(
+								'Clearer charts and movable widgets. Switch it off at any time.'
+							),
 							icon: chartBar,
 							onSelect: () => setIsPreviewDialogOpen( true ),
 						},
