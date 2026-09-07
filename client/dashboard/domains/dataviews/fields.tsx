@@ -135,25 +135,8 @@ export const useFields = ( {
 				render: ( { item } ) => <DomainSslField domain={ item } />,
 			},
 			{
-				id: 'expiry',
-				label: __( 'Paid until' ),
-				enableHiding: false,
-				enableSorting: true,
-				getValue: ( { item }: { item: DomainSummary } ) => item.expiry,
-				sort: fieldSort( sortNullableDates ),
-				render: ( { item } ) => {
-					return (
-						<DomainExpiryField
-							inOverview={ inOverview ?? false }
-							domain={ item }
-							value={ item.expiry ? dateI18n( 'F j, Y', item.expiry ) : '' }
-						/>
-					);
-				},
-			},
-			{
-				// Filter-only companion to `expiry`: DataViews derives both sorting and
-				// filtering from a single getValue, and those need different shapes here.
+				// DataViews derives sorting and filtering from a single getValue, so the
+				// filter buckets live here and `expiry` below sorts by the raw date.
 				id: 'expiry_status',
 				label: __( 'Paid until' ),
 				enableHiding: false,
@@ -181,6 +164,23 @@ export const useFields = ( {
 						return '2-next-90-days';
 					}
 					return '3-more-than-90-days';
+				},
+			},
+			{
+				id: 'expiry',
+				label: __( 'Paid until' ),
+				enableHiding: false,
+				enableSorting: true,
+				getValue: ( { item }: { item: DomainSummary } ) => item.expiry,
+				sort: fieldSort( sortNullableDates ),
+				render: ( { item } ) => {
+					return (
+						<DomainExpiryField
+							inOverview={ inOverview ?? false }
+							domain={ item }
+							value={ item.expiry ? dateI18n( 'F j, Y', item.expiry ) : '' }
+						/>
+					);
 				},
 			},
 			{
