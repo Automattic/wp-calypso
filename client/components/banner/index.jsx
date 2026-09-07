@@ -396,7 +396,7 @@ export class Banner extends Component {
 					preferenceName={ dismissPreferenceName }
 					temporary={ dismissTemporary }
 					onClick={ this.handleDismiss }
-					onCardClick={ onCardClick }
+					onCardClick={ href ? onCardClick : null }
 					href={ href }
 				>
 					{ this.getIcon() }

@@ -53,4 +53,11 @@ describe( 'ConversationsIntro', () => {
 		expect( screen.queryByText( 'Welcome to Conversations.' ) ).not.toBeInTheDocument();
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
+
+	test( 'does not render or record anything until remote preferences are received', () => {
+		renderIntro( { remoteValues: null } );
+
+		expect( screen.queryByText( 'Welcome to Conversations.' ) ).not.toBeInTheDocument();
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
+	} );
 } );

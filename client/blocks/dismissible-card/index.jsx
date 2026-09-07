@@ -35,7 +35,13 @@ function DismissibleCard( {
 		onClick?.( event );
 		dispatch( dismissCard( preferenceName, temporary ) );
 		event.preventDefault();
-		event.stopPropagation();
+	}
+
+	function handleCardClick( event ) {
+		// The dismiss button prevents default, so its click bubbling up here must not count as a card click.
+		if ( ! event.defaultPrevented ) {
+			onCardClick?.( event );
+		}
 	}
 
 	return (
@@ -43,7 +49,7 @@ function DismissibleCard( {
 			className={ className }
 			highlight={ highlight }
 			href={ href }
-			onClick={ onCardClick }
+			onClick={ onCardClick ? handleCardClick : undefined }
 			showLinkIcon={ false }
 		>
 			<QueryPreferences />

@@ -233,4 +233,23 @@ describe( 'Banner basic tests', () => {
 		);
 		expect( recordEvent ).not.toHaveBeenCalledWith( 'calypso_banner_cta_click', expect.anything() );
 	} );
+
+	test( 'should not make a dismissible banner clickable or record clicks when it has no href', async () => {
+		const user = userEvent.setup();
+		const recordEvent = jest.fn();
+		const { container } = renderWithRedux(
+			<Banner
+				{ ...props }
+				event="test-event"
+				dismissPreferenceName="banner-test"
+				disableHref
+				recordTracksEvent={ recordEvent }
+			/>
+		);
+
+		await user.click( container.firstChild );
+
+		expect( container.firstChild ).not.toHaveClass( 'is-clickable' );
+		expect( recordEvent ).not.toHaveBeenCalledWith( 'calypso_banner_cta_click', expect.anything() );
+	} );
 } );

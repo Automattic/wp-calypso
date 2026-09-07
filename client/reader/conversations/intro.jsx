@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import { useDispatch, useSelector } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
-import { getPreference } from 'calypso/state/preferences/selectors';
+import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 const ConversationsIntro = ( { isInternal = false } ) => {
@@ -15,12 +15,14 @@ const ConversationsIntro = ( { isInternal = false } ) => {
 		? 'has_used_reader_conversations_a8c'
 		: 'has_used_reader_conversations';
 	const hasUsedConversations = useSelector( ( state ) => getPreference( state, preferenceName ) );
+	const hasReceivedPreferences = useSelector( hasReceivedRemotePreferences );
+	const shouldShowIntro = hasReceivedPreferences && ! hasUsedConversations;
 	useEffect( () => {
-		if ( ! hasUsedConversations ) {
+		if ( shouldShowIntro ) {
 			dispatch( recordReaderTracksEvent( 'calypso_reader_conversations_intro_render' ) );
 		}
-	}, [ dispatch, hasUsedConversations ] );
-	if ( hasUsedConversations ) {
+	}, [ dispatch, shouldShowIntro ] );
+	if ( ! shouldShowIntro ) {
 		return null;
 	}
 	const onClose = () => {
