@@ -25,6 +25,7 @@ const EXCLUDED_DEPENDENCIES = [
 	'domainCart',
 	'domainForm',
 	'suggestion',
+	'site',
 ];
 
 export function recordStepNavigation( {

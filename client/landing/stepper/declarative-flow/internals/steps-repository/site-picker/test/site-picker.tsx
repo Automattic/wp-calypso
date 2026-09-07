@@ -6,7 +6,7 @@ import {
 	GroupableSiteLaunchStatuses,
 } from '@automattic/sites';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -16,7 +16,7 @@ import type { JSX } from 'react';
 const renderComponent = ( component: JSX.Element, initialState = {} ) => {
 	const mockStore = configureStore();
 	const store = mockStore( initialState );
-	const queryClient = new QueryClient();
+	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
 	return render(
 		<Provider store={ store }>
@@ -34,6 +34,7 @@ describe( 'SitePicker', () => {
 		perPage: 96,
 		search: '',
 		status: DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE as GroupableSiteLaunchStatuses,
+		hasSourceSite: true,
 		onCreateSite: noop,
 		onSelectSite: noop,
 		onQueryParamChange: noop,
@@ -116,11 +117,31 @@ describe( 'SitePicker', () => {
 			initialState
 		);
 
-		expect( getByText( 'Pick your destination' ) ).toBeInTheDocument();
+		expect( getByText( 'Choose a destination site' ) ).toBeInTheDocument();
 
-		const allLinks = container.getElementsByClassName( 'components-external-link' );
-		expect( allLinks.length ).toBeGreaterThan( 0 );
-		expect( allLinks[ 0 ] ).toHaveAttribute( 'href', initialState.sites.items[ 1 ].URL );
+		expect( screen.getByRole( 'list' ) ).toBeVisible();
+		expect( screen.getAllByRole( 'listitem' ) ).toHaveLength( 2 );
+		expect( screen.getByRole( 'button', { name: 'Choose A Test Site' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Choose Another test Site' } ) ).toBeVisible();
+		expect(
+			[ ...container.querySelectorAll( '.site-picker--site-icon' ) ].map(
+				( element ) => element.textContent
+			)
+		).toEqual( [ 'A', 'A' ] );
+		expect( container.querySelector( '.site-picker--controls' ) ).not.toBeInTheDocument();
+		expect(
+			[ ...container.querySelectorAll( '.site-picker--site-details strong' ) ].map(
+				( element ) => element.textContent
+			)
+		).toEqual( [ 'A Test Site', 'Another test Site' ] );
+	} );
+
+	test( 'renders import-specific copy when there is no source site', () => {
+		renderComponent( <SitePicker { ...defaultProps } hasSourceSite={ false } />, initialState );
+
+		expect( screen.getByText( 'Choose a destination site' ) ).toBeVisible();
+		expect( screen.getByText( /This is where we’ll add the content you import/ ) ).toBeVisible();
+		expect( screen.getByText( 'create a new site' ) ).toBeVisible();
 	} );
 
 	test( 'renders with correctly sorted list of sites', () => {
@@ -135,9 +156,11 @@ describe( 'SitePicker', () => {
 
 		const { container } = renderComponent( <SitePicker { ...defaultProps } />, state );
 
-		const allLinks = container.getElementsByClassName( 'components-external-link' );
-		expect( allLinks.length ).toBeGreaterThan( 0 );
-		expect( allLinks[ 0 ] ).toHaveAttribute( 'href', initialState.sites.items[ 1 ].URL );
+		expect(
+			[ ...container.querySelectorAll( '.site-picker--site-details strong' ) ].map(
+				( element ) => element.textContent
+			)
+		).toEqual( [ 'A Test Site', 'Another test Site' ] );
 	} );
 
 	test( 'renders without sites when not valid search term', () => {
@@ -160,5 +183,27 @@ describe( 'SitePicker', () => {
 		renderComponent( <SitePicker { ...props } />, initialState );
 
 		expect( screen.getByText( 'You have no private sites' ) ).toBeVisible();
+	} );
+
+	test( 'recovers when loading sites fails', async () => {
+		nock.cleanAll();
+		let requestCount = 0;
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( ( uri ) => uri.startsWith( '/rest/v1.2/me/sites' ) )
+			.reply( () =>
+				requestCount++ === 0
+					? [ 500, { error: 'fixture_site_fetch_failed' } ]
+					: [ 200, { sites: Object.values( initialState.sites.items ) } ]
+			);
+
+		renderComponent( <SitePicker { ...defaultProps } />, initialState );
+
+		expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
+			'We couldn’t load your sites. Please try again.'
+		);
+		fireEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+
+		expect( await screen.findByText( 'A Test Site' ) ).toBeVisible();
 	} );
 } );
