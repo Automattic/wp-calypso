@@ -1,3 +1,9 @@
+.omnibar .omnibar__secondary .omnibar__menu.masterbar__item-agents-manager-ai-chat {
+	@media ( min-width: 782px ) {
+		padding-inline: 10px 12px;
+	}
+}
+
 .omnibar .omnibar__menu .omnibar__ai-chat-icon {
 	display: flex;
 
@@ -8,8 +14,6 @@
 		@media ( min-width: 782px ) {
 			width: 22px;
 			height: 22px;
-			margin-inline-start: 2px;
-			margin-inline-end: 3px;
 		}
 	}
 }
