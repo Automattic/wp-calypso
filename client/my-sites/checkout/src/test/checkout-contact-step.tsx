@@ -190,6 +190,19 @@ describe( 'Checkout contact step', () => {
 		expect( screen.getByText( 'ZIP code' ) ).toBeInTheDocument();
 	} );
 
+	it( 'autodetects the phone country from a dialing code typed into the phone field', async () => {
+		const user = userEvent.setup();
+		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
+		const { container } = render(
+			<MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />
+		);
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
+		await user.type( screen.getByPlaceholderText( 'Phone' ), '+447911123456' );
+
+		expect( container.querySelector( '.phone-input__country-select' ) ).toHaveValue( 'GB' );
+		expect( screen.getByPlaceholderText( 'Phone' ) ).toHaveValue( '+44 7911 123456' );
+	} );
+
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a domain is in the cart', async () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
