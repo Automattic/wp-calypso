@@ -16,10 +16,9 @@ const HELP_CENTER_STORE = HelpCenter.register();
 /**
  * Calypso's mount for the sitewide plan-expiry banner: the selected site, the
  * Redux analytics action, and the Help Center for the post-grace support
- * route. Rendered by the layout at the top of the primary column on every
- * section that has a selected site.
+ * route. Rendered by My Home in its notice zone.
  */
-export default function SiteExpiryNotice( { isDashboardScreen }: { isDashboardScreen: boolean } ) {
+export default function SiteExpiryNotice() {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const dispatch = useDispatch();
@@ -30,7 +29,7 @@ export default function SiteExpiryNotice( { isDashboardScreen }: { isDashboardSc
 	const viewOtherPlansUrl = siteSlug ? `/plans/${ siteSlug }` : undefined;
 
 	const state = useSiteExpiryNotice( siteId ?? 0, {
-		isDashboardScreen,
+		isDashboardScreen: true,
 		locale,
 		renewReturnUrl,
 		viewOtherPlansUrl,
@@ -60,12 +59,12 @@ export default function SiteExpiryNotice( { isDashboardScreen }: { isDashboardSc
 	}
 
 	return (
-		<div className="layout__site-expiry-notice">
+		<div className="customer-home__site-expiry-notice">
 			<SiteExpiryNoticeBanner
 				siteId={ siteId }
 				state={ state }
 				locale={ locale }
-				surface="calypso-layout"
+				surface="calypso-home"
 				recordTracksEvent={ record }
 				renewReturnUrl={ renewReturnUrl }
 				viewOtherPlansUrl={ viewOtherPlansUrl }

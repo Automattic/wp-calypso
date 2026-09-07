@@ -105,10 +105,6 @@ const loadA8cForAgenciesStyle = () =>
 	);
 const loadJitm = () =>
 	import( /* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm' );
-const loadSiteExpiryNotice = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-layout-site-expiry-notice" */ 'calypso/layout/site-expiry-notice'
-	);
 const loadGlobalNotices = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
@@ -368,31 +364,6 @@ class Layout extends Component {
 		);
 	}
 
-	renderSiteExpiryNotice() {
-		// The selected site sticks around after leaving the site sections, so
-		// the group has to be checked as well: `/me` and the Reader would
-		// otherwise inherit the last site's banner. Checkout is a site section
-		// but must stay free of anything competing with the purchase.
-		const shouldShow =
-			!! this.props.siteId &&
-			this.props.sectionGroup === 'sites' &&
-			! CHECKOUT_SECTION_NAMES.includes( this.props.sectionName ) &&
-			! isJetpackCloud() &&
-			! isA8CForAgencies();
-
-		if ( ! shouldShow ) {
-			return null;
-		}
-
-		return (
-			<AsyncLoad
-				require={ loadSiteExpiryNotice }
-				placeholder={ null }
-				isDashboardScreen={ this.props.sectionName === 'home' }
-			/>
-		);
-	}
-
 	render() {
 		const sectionClass = clsx( 'layout', `focus-${ this.props.currentLayoutFocus }`, {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
@@ -510,7 +481,6 @@ class Layout extends Component {
 								{ this.props.secondary }
 							</div>
 							<div id="primary" className="layout__primary">
-								{ this.renderSiteExpiryNotice() }
 								{ this.props.primary }
 							</div>
 						</>

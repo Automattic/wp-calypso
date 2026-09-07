@@ -4,6 +4,7 @@
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 @import "calypso/assets/stylesheets/shared/mixins/grid-mixins";
 @import "calypso/assets/stylesheets/shared/mixins/placeholder";
+@import "calypso/dashboard/app-dotcom/style.scss";
 
 body.is-section-home.theme-default.color-scheme {
 	--color-surface-backdrop: var(--studio-white);
@@ -390,4 +391,8 @@ body.is-section-home.theme-default.color-scheme {
 			color: var( --color-neutral-20 );
 		}
 	}
+}
+
+.customer-home__site-expiry-notice {
+	margin-bottom: 24px;
 }

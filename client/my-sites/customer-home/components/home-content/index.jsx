@@ -23,6 +23,7 @@ import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { FEATURE_SUPPORT } from 'calypso/my-sites/customer-home/cards/constants';
+import SiteExpiryNotice from 'calypso/my-sites/customer-home/components/site-expiry-notice';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
@@ -346,6 +347,7 @@ const HomeContent = ( {
 				/>
 			) : null }
 
+			<SiteExpiryNotice />
 			{ renderStudioSyncNotice() }
 			{ renderUnverifiedEmailNotice() }
 			{ renderDnsSettingsDiagnosticNotice() }
