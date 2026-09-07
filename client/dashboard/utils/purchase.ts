@@ -203,6 +203,33 @@ export function isCloseToExpiration( purchase: Purchase ): boolean {
 	return isWithinNext( new Date( purchase.expiry_date ), threshold, 'days' );
 }
 
+/**
+ * Returns true if the purchase is a free trial that runs all the way to its
+ * expiration date — i.e. the trial is the only thing keeping the subscription
+ * alive, and nothing has been paid for beyond it.
+ *
+ * A trial can be renewed early, which pushes the expiration date out by a full
+ * billing period while leaving the trial's own end date alone (the backend
+ * derives that from the original subscribed date, so a renewal never moves it).
+ * Such a subscription is still technically inside its trial period, but it is
+ * already paid up past the end of it, so describing it as a free trial ending
+ * on the expiration date is wrong twice over: that date is not when the trial
+ * ends, and the customer has stopped being a trialist.
+ *
+ * Both dates are day-granular UTC values from the same source, so they compare
+ * exactly for a trial that has not been renewed.
+ */
+export function isFreeTrialEndingOnExpiryDate( purchase: Purchase ): boolean {
+	const offer = purchase.introductory_offer;
+	if ( ! offer?.is_within_period || offer.cost_per_interval !== 0 ) {
+		return false;
+	}
+	if ( ! purchase.expiry_date || ! offer.end_date ) {
+		return false;
+	}
+	return ! isAfter( parseISO( purchase.expiry_date ), parseISO( offer.end_date ) );
+}
+
 export function creditCardExpiresBeforeSubscription( purchase: Purchase ): boolean {
 	if ( 'credit_card' !== purchase.payment_type ) {
 		return false;
