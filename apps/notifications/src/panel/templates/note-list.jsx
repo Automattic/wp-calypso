@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
+import { createListRenderTracker } from '../helpers/track-list-render';
 import actions from '../state/actions';
 import getFilterName from '../state/selectors/get-filter-name';
 import getIsLoading from '../state/selectors/get-is-loading';
@@ -37,6 +38,8 @@ export class NoteList extends Component {
 
 	noteElements = {};
 
+	trackListRender = createListRenderTracker( 'panel' );
+
 	listElementInternalRef = createRef();
 
 	constructor( props ) {
@@ -53,6 +56,8 @@ export class NoteList extends Component {
 	}
 
 	componentDidMount() {
+		this.reportListRender();
+
 		this.scrollableContainer.addEventListener( 'scroll', this.onScroll );
 
 		// Prevent wheel events from propagating to the parent container, since they would
@@ -109,7 +114,19 @@ export class NoteList extends Component {
 		if ( prevProps.selectedNoteId !== this.props.selectedNoteId ) {
 			this.ensureSelectedNoteVisibility();
 		}
+
+		if ( prevProps.notes.length !== this.props.notes.length ) {
+			this.reportListRender();
+		}
 	}
+
+	reportListRender = () => {
+		this.trackListRender( {
+			filterName: this.props.filterName,
+			noteCount: this.props.notes.length,
+			startedAt: this.renderStartedAt,
+		} );
+	};
 
 	mergeListElementRefs = ( node ) => {
 		// Set the internal ref.
@@ -259,6 +276,8 @@ export class NoteList extends Component {
 	};
 
 	render() {
+		this.renderStartedAt = performance.now();
+
 		const { translate } = this.props;
 
 		const groupTitles = [

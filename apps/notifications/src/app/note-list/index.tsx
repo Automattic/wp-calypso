@@ -5,8 +5,9 @@ import {
 	Spinner,
 } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useCallback, useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
+import { createListRenderTracker } from '../../panel/helpers/track-list-render';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getFilteredLoading from '../../panel/state/selectors/get-filtered-loading';
 import getFilteredNoteIds from '../../panel/state/selectors/get-filtered-note-ids';
@@ -49,6 +50,10 @@ type NoteListProps = {
 };
 
 const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListProps ) => {
+	const renderStartedAt = useRef( 0 );
+	renderStartedAt.current = performance.now();
+	const trackListRender = useMemo( () => createListRenderTracker( 'app' ), [] );
+
 	const filter = getFilters()[ filterName ];
 	const isAllTab = filterName === 'all';
 	const allNotes = useSelector( ( state ) => getAllNotes( state ) || [] ) as Note[];
@@ -154,6 +159,15 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		}
 		return { ...note, read: isRead ? 1 : 0, isActive };
 	} );
+
+	const renderedCount = data.length;
+	useLayoutEffect( () => {
+		trackListRender( {
+			filterName,
+			noteCount: renderedCount,
+			startedAt: renderStartedAt.current,
+		} );
+	}, [ trackListRender, filterName, renderedCount ] );
 
 	// `filterSortAndPaginate` reports `totalItems` as the count of notes loaded
 	// so far. DataViews advances its infinite-scroll window only while
