@@ -1,3 +1,8 @@
+export interface AgencyProductTierPrice {
+	units: number;
+	price: number;
+}
+
 export interface AgencyProduct {
 	name: string;
 	slug: string;
@@ -10,6 +15,13 @@ export interface AgencyProduct {
 	currency: string;
 	amount: string;
 	price_interval: string;
+	/** Term pricing, returned by the Billing Dragon `/agency/products` endpoint. */
+	monthly_price?: number;
+	yearly_price?: number;
+	monthly_introductory_price?: number;
+	yearly_introductory_price?: number;
+	tier_monthly_prices?: AgencyProductTierPrice[];
+	tier_yearly_prices?: AgencyProductTierPrice[];
 	/** Not in the API response — added client-side from the parent family. */
 	family_slug: string;
 }

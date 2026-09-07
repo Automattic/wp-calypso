@@ -1,0 +1,190 @@
+.marketplace-products__header-actions {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
+.marketplace-products__toolbar {
+	padding-block: 16px;
+}
+
+.marketplace-products__cart {
+	min-width: 360px;
+	padding: 8px;
+}
+
+/* Section marks: the round badge is the left cap of the descriptor lockups,
+   cropped by the decoration slot (same trick as the Hosting cards), and
+   top-aligned with the title like the Hosting card headers. */
+.marketplace-products__mark {
+	object-position: left;
+}
+
+.marketplace-products__section-header .dashboard-section-header__heading-row {
+	align-items: flex-start;
+}
+
+/* Category tiles — the Tiers page's horizontal card row: scrolls, hides its
+   scrollbar, fades at the end to hint there's more. */
+.marketplace-products__tiles-wrap {
+	position: relative;
+	margin-inline-start: -4px;
+
+	&::after {
+		content: '';
+		position: absolute;
+		inset-block-start: 0;
+		inset-inline-end: 0;
+		width: 80px;
+		height: 100%;
+		background: linear-gradient( to right, transparent, var( --color-surface, #f9f9f9 ) );
+		pointer-events: none;
+		z-index: 1;
+	}
+}
+
+.marketplace-products__tiles {
+	display: flex;
+	gap: 16px;
+	overflow-x: auto;
+	scroll-behavior: smooth;
+	padding-block: 4px;
+	padding-inline: 4px 0;
+	scrollbar-width: none;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
+	&::after {
+		content: '';
+		flex: 0 0 64px;
+	}
+}
+
+.marketplace-products__tile {
+	flex: 0 0 200px;
+	cursor: pointer;
+
+	&:hover {
+		box-shadow: 0 0 0 1px var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) inset;
+	}
+
+	&.is-selected {
+		box-shadow: 0 0 0 2px var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) inset;
+	}
+}
+
+.marketplace-products__tile-body {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	block-size: 100px;
+	box-sizing: border-box;
+}
+
+.marketplace-products__tile-logo {
+	block-size: 28px;
+	inline-size: auto;
+}
+
+.marketplace-products__tile-label {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+/* Card brand mark: the round badge from the descriptor lockup, 24px. */
+.marketplace-products__card-mark {
+	inline-size: 24px;
+	block-size: 24px;
+	object-fit: cover;
+	object-position: left;
+	flex-shrink: 0;
+}
+
+.marketplace-products__card-logo {
+	block-size: 24px;
+	inline-size: auto;
+	max-inline-size: 160px;
+	object-fit: contain;
+}
+
+
+/* DataViews paints its own white surface; on the gray page it read as a
+   slab, so the search/filter chrome sits directly on the page. */
+.marketplace-products__dataviews .dataviews-wrapper {
+	background: transparent;
+}
+
+/* Product details modal: content left, price rail right (Main's lightbox), so
+   the price and CTA stay put while the benefits list runs long. The rail's
+   tint separates it without a border. */
+.marketplace-products__modal .components-modal__content {
+	padding: 0;
+}
+
+.marketplace-products__modal-layout {
+	position: relative;
+	display: grid;
+	grid-template-columns: 1fr;
+	align-items: stretch;
+}
+
+@media ( min-width: 782px ) {
+	.marketplace-products__modal-layout {
+		grid-template-columns: minmax( 0, 1fr ) 300px;
+	}
+}
+
+.marketplace-products__modal-main {
+	padding: 32px;
+}
+
+/* The close control sits in the rail's own top-right, and the rail's extra
+   top padding keeps the price card clear of it (Main's proportion). */
+.marketplace-products__modal-close.components-button {
+	position: absolute;
+	inset-block-start: 16px;
+	inset-inline-end: 16px;
+	z-index: 1;
+}
+
+.marketplace-products__modal-rail {
+	padding: 72px 32px 32px;
+	background: #f6f7f7;
+	align-content: start;
+}
+
+/* The Woo link closes its column: a rule turns it from a floating button into
+   a footer belonging to the content above it. */
+.marketplace-products__modal-footer {
+	margin-block-start: auto;
+	padding-block-start: 16px;
+	border-block-start: 1px solid #e0e0e0;
+}
+
+.marketplace-products__modal-mark {
+	inline-size: 40px;
+	block-size: 40px;
+	object-fit: cover;
+	object-position: left;
+	border-radius: 4px;
+	flex-shrink: 0;
+}
+
+.marketplace-products__benefits {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.marketplace-products__benefit-check {
+	fill: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+	flex-shrink: 0;
+	margin-block-start: 2px;
+}
+
+.marketplace-products__modal-vendor {
+	font-size: 12px;
+}
