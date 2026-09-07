@@ -2,7 +2,6 @@ import { DomainSubtype } from '@automattic/api-core';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useMemo } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
@@ -20,7 +19,6 @@ import {
 	DEFAULT_VIEW,
 	DEFAULT_LAYOUTS,
 	recordDomainViewChanges,
-	migrateExpiryFilter,
 } from './dataviews';
 import EmptyDomainsStateActions from './empty-domains-state/actions';
 import { EmptyDomainsStateUpsell } from './empty-domains-state/upsell';
@@ -50,16 +48,11 @@ function Domains() {
 	const actions = useActions( { user, sites } );
 	const searchParams = domainsIndexRoute.useSearch();
 
-	const {
-		view: persistedView,
-		updateView,
-		resetView,
-	} = usePersistentView( {
+	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'domains',
 		defaultView,
 		queryParams: searchParams,
 	} );
-	const view = useMemo( () => migrateExpiryFilter( persistedView ), [ persistedView ] );
 
 	const { data: domains } = useSuspenseQuery( {
 		...queries.domainsQuery(),

@@ -7,7 +7,7 @@ import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
 import { render } from '../../../test-utils';
 import { useFields } from '../fields';
-import { DEFAULT_VIEW, migrateExpiryFilter } from '../views';
+import { DEFAULT_VIEW } from '../views';
 import type { DomainSummary } from '@automattic/api-core';
 import type { Field, View } from '@wordpress/dataviews';
 
@@ -133,24 +133,20 @@ describe( 'domains "Paid until" field', () => {
 	} );
 } );
 
-describe( 'migrateExpiryFilter', () => {
-	it( 'points a persisted expiry filter at the status field', () => {
-		const view: View = {
+describe( 'a filter saved against the old expiry field', () => {
+	it( 'is ignored rather than emptying the list', async () => {
+		const getFields = renderFields();
+		await waitFor( () => expect( getFields().length ).toBeGreaterThan( 0 ) );
+
+		const staleView: View = {
 			...DEFAULT_VIEW,
+			perPage: 100,
 			filters: [ { field: 'expiry', operator: 'isAny', value: [ '1-expired' ] } ],
 		};
+		const { data } = filterSortAndPaginate( FILTERABLE, staleView, getFields() );
 
-		expect( migrateExpiryFilter( view ).filters ).toEqual( [
-			{ field: 'expiry_status', operator: 'isAny', value: [ '1-expired' ] },
-		] );
-	} );
-
-	it( 'leaves other views untouched', () => {
-		const view: View = {
-			...DEFAULT_VIEW,
-			filters: [ { field: 'owner', operator: 'isAny', value: [ 'owned-by-me' ] } ],
-		};
-
-		expect( migrateExpiryFilter( view ) ).toBe( view );
+		expect( data.map( ( item ) => item.domain ).sort() ).toEqual(
+			FILTERABLE.map( ( item ) => item.domain ).sort()
+		);
 	} );
 } );

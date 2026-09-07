@@ -96,17 +96,3 @@ function setDifference< T >( a: Set< T >, b: Set< T > ): Set< T > {
 	}
 	return difference;
 }
-
-// Views persisted before the expiry field split still filter on `expiry`, which now holds dates.
-export function migrateExpiryFilter( view: View ): View {
-	if ( ! view.filters?.some( ( { field } ) => field === 'expiry' ) ) {
-		return view;
-	}
-
-	return {
-		...view,
-		filters: view.filters.map( ( filter ) =>
-			filter.field === 'expiry' ? { ...filter, field: 'expiry_status' } : filter
-		),
-	};
-}

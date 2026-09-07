@@ -167,7 +167,10 @@ export const useFields = ( {
 				},
 			},
 			{
+				// `type` is what makes a filter saved against the old string field inert:
+				// a date field rejects the bucket operator instead of matching nothing.
 				id: 'expiry',
+				type: 'date' as const,
 				label: __( 'Paid until' ),
 				enableHiding: false,
 				enableSorting: true,
