@@ -1,11 +1,11 @@
 /**
- * "Discover new blogs" — bounded in-feed module on Discover > Recommended
+ * "Discover new blogs" — bounded in-feed module in the Reader's Recent feed
  * (READ-542), following the design on the Reader Content Discovery
- * Experiment project.
+ * Experiment project and the placement agreed in the issue thread.
  *
  * PRD constraints enforced here / by the caller:
- *   - Bounded + clearly labelled; a single block in the Recommended stream
- *     (via Stream's `inStreamBlock`), never in the chronological follow feed.
+ *   - Bounded + clearly labelled; a single block in the Recent stream (via
+ *     Stream's `inStreamBlock`) in the third spot, after two recent posts.
  *   - Fixed at 3 posts (no selector — keeps the data comparable).
  *   - One lightweight control per item: the X = "not interested", which hides
  *     the card immediately and keeps that blog's posts from coming back.

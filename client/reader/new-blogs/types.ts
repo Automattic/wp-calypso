@@ -1,10 +1,10 @@
 /**
- * "From blogs you don't follow yet" — Discover module (READ-542).
+ * "Discover new blogs" — Reader Recent-feed module (READ-542).
  *
  * Renders the per-user snapshot of out-of-network post recommendations exported
- * by READ-541 into a bounded, clearly labelled block above the Discover feed.
+ * by READ-541 into a bounded, clearly labelled block in the Recent feed.
  *
- * See client/reader/discover/new-blogs/README.md.
+ * See client/reader/new-blogs/README.md.
  */
 
 /**
@@ -17,8 +17,8 @@
  *   rec_rank (1..200)    -> array order (score desc), truncated to ~50
  *
  * This is all the module needs: each ( blogId, postId ) is hydrated on the
- * client through the Reader post store (`usePost`) and rendered with the shared
- * Reader post card, exactly like a Discover stream item.
+ * client through the Reader post store (`usePost`) and rendered by the
+ * module's own card (see card.tsx).
  */
 export interface OonRec {
 	blogId: number;

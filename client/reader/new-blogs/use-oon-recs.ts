@@ -20,7 +20,7 @@
  *                   call is skipped while USE_MOCK is on.
  *   - hide()        hides the module, persisted locally.
  *
- * Demoing states without code edits — append to the Discover URL:
+ * Demoing states without code edits — append to the Recent (/read) URL:
  *   ?oon_mock=111       render user 111's short list
  *   ?oon_mock=222       one deleted post id -> exercises the serve-time guard
  *   ?oon_mock=23314024  render the healthy list

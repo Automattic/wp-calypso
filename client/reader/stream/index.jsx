@@ -492,8 +492,9 @@ class ReaderStream extends Component {
 			// walk down the list of "visible" items, looking for the first item whose top extent is on screen
 			for ( let i = 0; i < visibleIndexes.length; i++ ) {
 				const visibleIndex = visibleIndexes[ i ];
-				// skip items whose top are off screen or are recommendation blocks
-				if ( visibleIndex.bounds.top > 0 && ! items[ visibleIndex.index ].isRecommendationBlock ) {
+				// skip items whose top are off screen, or synthetic blocks that aren't posts
+				const item = items[ visibleIndex.index ];
+				if ( visibleIndex.bounds.top > 0 && ! item.isRecommendationBlock && ! item.isCustomBlock ) {
 					index = visibleIndex.index;
 					break;
 				}
@@ -661,7 +662,7 @@ class ReaderStream extends Component {
 					siteId={ primarySiteId }
 					showFollowButton={ this.props.showFollowButton }
 					fixedHeaderHeight={ this.props.fixedHeaderHeight }
-					inStreamBlock={ this.props.inStreamBlock }
+					inStreamBlock={ postKey.isCustomBlock ? this.props.inStreamBlock : undefined }
 				/>
 				{ index === 0 && <ReaderPerformanceTrackerStop /> }
 			</Fragment>
@@ -896,6 +897,9 @@ const withStreamPosts = ( WrappedComponent ) =>
 		useStreamRenderAnalytics( recsStreamPostsQuery.pages, props.recsStreamKey );
 		useStreamErrorReporting( streamPostsQuery.error, props.streamKey );
 
+		// Depend on presence, not identity: the block is a JSX element and would
+		// otherwise rebuild the item list on every parent render.
+		const hasInStreamBlock = !! props.inStreamBlock;
 		const items = React.useMemo( () => {
 			const withRecommendations =
 				props.recsStreamKey && recsStreamPostsQuery.items.length > 0
@@ -911,12 +915,12 @@ const withStreamPosts = ( WrappedComponent ) =>
 				getDistanceBetweenPrompts( followsCount )
 			);
 
-			return props.inStreamBlock
+			return hasInStreamBlock
 				? injectCustomBlock( withPrompts, props.inStreamBlockPosition ?? 3 )
 				: withPrompts;
 		}, [
 			followsCount,
-			props.inStreamBlock,
+			hasInStreamBlock,
 			props.inStreamBlockPosition,
 			props.recsStreamKey,
 			recsStreamPostsQuery.items,

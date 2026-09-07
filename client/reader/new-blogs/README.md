@@ -1,6 +1,6 @@
-# "Discover new blogs" — Discover module (READ-542)
+# "Discover new blogs" — Reader Recent-feed module (READ-542)
 
-A bounded, feature-flagged module on the Reader **Discover → Recommended** tab
+A bounded, feature-flagged module in the Reader's **Recent** feed (`/read`)
 that surfaces the per-user snapshot of out-of-network post recommendations
 exported by READ-541.
 
@@ -20,11 +20,15 @@ flag, the layout, cold-start handling, per-item dismiss, Tracks events — is re
 | development (`yarn start`, localhost) | `true`  |
 | wpcalypso, horizon, stage, production | `false` |
 
-Mount point: `client/reader/discover/discover-stream.jsx` calls `useOonRecs()`
-and, when the flag is on, the tab is `recommended`, the user has recs and has
-not hidden the module, passes `<DiscoverNewBlogs />` to `<Stream>` as
-`inStreamBlock` at `inStreamBlockPosition` 0, i.e. first thing under the Discover navigation. It is
-never injected into the follow feed.
+Mount point: `client/reader/following/main.tsx` calls `useOonRecs()` and, when
+the flag is on, the view is the "all subscriptions" Recent stream (no `feedId`),
+the user has recs and has not hidden the module, passes `<DiscoverNewBlogs />`
+to `<ReaderStream>` as `inStreamBlock` at `inStreamBlockPosition` 2, i.e. the
+third spot after two recent posts.
+
+Placement note: the PRD said "never in the chronological follow feed", but the
+READ-542 thread (rob.pugh, Dave Martin, 2026-09-03) moved it to Recent so the
+A/B isn't measuring one recommendation design against another on Discover.
 
 ## Behaviour (from the READ-542 answers + project design)
 
@@ -43,7 +47,7 @@ never injected into the follow feed.
 
 ## Demoing the states (no code edits)
 
-Append to the Discover URL:
+Append to the Recent URL (`/read`):
 
 | query                | result                                                    |
 | -------------------- | --------------------------------------------------------- |
