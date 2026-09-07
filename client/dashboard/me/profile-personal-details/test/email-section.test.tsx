@@ -115,3 +115,42 @@ describe( '<EmailSection>', () => {
 		} );
 	} );
 } );
+
+describe( '<EmailSection> TLD validation', () => {
+	test( 'reports the field invalid and names the domain when the TLD is not real', async () => {
+		mockAccountRecovery( { email: 'recovery@othersite.com', email_validated: true } );
+		const onValidationChange = jest.fn();
+
+		render(
+			<EmailSection
+				value="user@gmail.commmm"
+				onChange={ noop }
+				userSettings={ userSettings }
+				isEmailVerified
+				onValidationChange={ onValidationChange }
+			/>
+		);
+
+		expect( await screen.findByText( /gmail\.commmm/ ) ).toBeVisible();
+		expect( screen.getByText( /real domain/i ) ).toBeVisible();
+		expect( onValidationChange ).toHaveBeenLastCalledWith( false );
+	} );
+
+	test( 'reports the field valid for a known TLD', async () => {
+		mockAccountRecovery( { email: 'recovery@othersite.com', email_validated: true } );
+		const onValidationChange = jest.fn();
+
+		render(
+			<EmailSection
+				value="user@example.zip"
+				onChange={ noop }
+				userSettings={ userSettings }
+				isEmailVerified
+				onValidationChange={ onValidationChange }
+			/>
+		);
+
+		expect( await screen.findByText( /looks good/i ) ).toBeVisible();
+		expect( onValidationChange ).toHaveBeenLastCalledWith( true );
+	} );
+} );

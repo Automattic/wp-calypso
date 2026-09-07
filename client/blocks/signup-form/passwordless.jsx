@@ -1,7 +1,7 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Button, FormLabel } from '@automattic/components';
-import { suggestEmailCorrection } from '@automattic/onboarding';
+import { getEmailAddressError, suggestEmailCorrection } from '@automattic/onboarding';
 import { debounce } from '@wordpress/compose';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
@@ -23,6 +23,9 @@ import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import SignupSubmitButton from './signup-submit-button';
+
+const REJECTED_EMAIL_ERRORS = [ 'email_cant_be_used_to_signup', 'email_invalid' ];
+const isRejectedEmailError = ( errorCode ) => REJECTED_EMAIL_ERRORS.includes( errorCode );
 
 class PasswordlessSignupForm extends Component {
 	static propTypes = {
@@ -83,14 +86,19 @@ class PasswordlessSignupForm extends Component {
 			return;
 		}
 
-		if ( ! this.state.email || ! emailValidator.validate( this.state.email ) ) {
+		const email = typeof this.state.email === 'string' ? this.state.email.trim() : '';
+		const emailError = getEmailAddressError( email );
+		if ( emailError ) {
 			this.setState( {
-				errorMessages: [ this.props.translate( 'Please provide a valid email address.' ) ],
+				errorMessages: [ this.getEmailErrorMessage( emailError, email ) ],
 				isSubmitting: false,
 			} );
 			if ( ! this.props.onUpdateEmail ) {
 				this.submitTracksEvent( false, {
-					action_message: 'Please provide a valid email address.',
+					action_message:
+						emailError === 'unknown_tld'
+							? 'Email domain does not end in a valid TLD.'
+							: 'Please provide a valid email address.',
 				} );
 			}
 			return;
@@ -211,6 +219,14 @@ class PasswordlessSignupForm extends Component {
 				this.setState( {
 					errorMessages: [ getThrottledErrorMessage( this.props.translate ) ],
 				} );
+			} else if ( isRejectedEmailError( error.error ) ) {
+				this.setState( {
+					errorMessages: [
+						this.props.translate(
+							'This email address can’t be used to sign up. Check it for typos, or try a different one.'
+						),
+					],
+				} );
 			} else {
 				this.setState( {
 					errorMessages: [
@@ -302,6 +318,16 @@ class PasswordlessSignupForm extends Component {
 		} else {
 			goToNextStep();
 		}
+	};
+
+	getEmailErrorMessage = ( emailError, email ) => {
+		if ( emailError === 'unknown_tld' ) {
+			return this.props.translate(
+				'“%(domain)s” doesn’t look like a real domain. Check the address for typos.',
+				{ args: { domain: email.slice( email.indexOf( '@' ) + 1 ) } }
+			);
+		}
+		return this.props.translate( 'Please provide a valid email address.' );
 	};
 
 	handleAcceptDomainSuggestion = ( newEmail, newDomain, oldDomain ) => {

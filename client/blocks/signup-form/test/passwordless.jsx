@@ -403,3 +403,47 @@ describe( 'Blackbox integration', () => {
 		} );
 	} );
 } );
+
+describe( 'email domain validation', () => {
+	const mockStore = configureStore( [ thunk ] );
+
+	const renderAndSubmit = ( email ) => {
+		const store = mockStore( {} );
+		render(
+			<Provider store={ store }>
+				<PasswordlessSignupForm />
+			</Provider>
+		);
+		fireEvent.change( screen.getByRole( 'textbox', { name: /email/i } ), {
+			target: { value: email },
+		} );
+		fireEvent.click( screen.getByRole( 'button', { name: /create your account/i } ) );
+	};
+
+	it( 'names the domain and does not submit when the TLD is not real', () => {
+		const scope = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/users/new' )
+			.reply( 200, {} );
+
+		renderAndSubmit( 'user@gmail.commmm' );
+
+		expect( screen.getByText( /gmail\.commmm/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /real domain/i ) ).toBeInTheDocument();
+		expect( scope.isDone() ).toBe( false );
+		nock.cleanAll();
+	} );
+
+	it( 'tells the user to check the address when the server refuses the email', async () => {
+		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/users/new' ).reply( 400, {
+			error: 'email_cant_be_used_to_signup',
+			message: 'Invalid email input',
+		} );
+
+		renderAndSubmit( 'user@example.com' );
+
+		await waitFor( () => {
+			expect( screen.getByText( /can.t be used to sign up/i ) ).toBeInTheDocument();
+		} );
+		expect( screen.queryByText( /couldn.t create your account/i ) ).not.toBeInTheDocument();
+	} );
+} );

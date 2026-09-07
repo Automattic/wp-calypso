@@ -1,7 +1,7 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
+import { getEmailAddressError } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { removeQueryArgs } from '@wordpress/url';
-import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import QueryAccountRecoverySettings from 'calypso/components/data/query-account-recovery-settings';
@@ -40,11 +40,13 @@ export type AccountEmailFieldProps = {
 
 const EMAIL_VALIDATION_REASON_EMPTY = 'empty';
 const EMAIL_VALIDATION_REASON_INVALID = 'invalid';
+const EMAIL_VALIDATION_REASON_UNKNOWN_TLD = 'unknown_tld';
 const EMAIL_VALIDATION_REASON_IS_VALID = null;
 
 type AccountEmailValidationReason =
 	| typeof EMAIL_VALIDATION_REASON_EMPTY
 	| typeof EMAIL_VALIDATION_REASON_INVALID
+	| typeof EMAIL_VALIDATION_REASON_UNKNOWN_TLD
 	| typeof EMAIL_VALIDATION_REASON_IS_VALID;
 
 const getUserSetting = ( {
@@ -63,10 +65,12 @@ const AccountEmailValidationNotice = ( {
 	emailInvalidReason,
 	unsavedUserSettings,
 	userSettings,
+	validatedEmail,
 }: {
 	emailInvalidReason: AccountEmailValidationReason;
 	unsavedUserSettings: UserSettingsType;
 	userSettings: UserSettingsType;
+	validatedEmail: string;
 } ) => {
 	const translate = useTranslate();
 
@@ -92,6 +96,11 @@ const AccountEmailValidationNotice = ( {
 				} ) as string,
 			},
 		} );
+	} else if ( emailInvalidReason === EMAIL_VALIDATION_REASON_UNKNOWN_TLD ) {
+		noticeText = translate(
+			'“%(domain)s” doesn’t look like a real domain. Check the address for typos.',
+			{ args: { domain: validatedEmail.slice( validatedEmail.indexOf( '@' ) + 1 ) } }
+		);
 	}
 
 	return <FormInputValidation isError text={ noticeText } />;
@@ -266,6 +275,7 @@ const AccountEmailField = ( {
 	const [ emailInvalidReason, setEmailInvalidReason ] = useState< AccountEmailValidationReason >(
 		EMAIL_VALIDATION_REASON_IS_VALID
 	);
+	const [ validatedEmail, setValidatedEmail ] = useState( '' );
 
 	useEffect( () => {
 		// Ensure that we remove any unsaved changes to the email address when we unmount
@@ -287,10 +297,13 @@ const AccountEmailField = ( {
 
 		if ( value === '' ) {
 			emailValidationReason = EMAIL_VALIDATION_REASON_EMPTY;
-		} else if ( ! emailValidator.validate( value ) ) {
+		} else if ( getEmailAddressError( value ) === 'unknown_tld' ) {
+			emailValidationReason = EMAIL_VALIDATION_REASON_UNKNOWN_TLD;
+		} else if ( getEmailAddressError( value ) === 'invalid_format' ) {
 			emailValidationReason = EMAIL_VALIDATION_REASON_INVALID;
 		}
 
+		setValidatedEmail( value );
 		setEmailInvalidReason( emailValidationReason );
 		emailValidationHandler?.( emailValidationReason === EMAIL_VALIDATION_REASON_IS_VALID );
 
@@ -350,6 +363,7 @@ const AccountEmailField = ( {
 
 				<AccountEmailValidationNotice
 					emailInvalidReason={ emailInvalidReason }
+					validatedEmail={ validatedEmail }
 					unsavedUserSettings={ unsavedUserSettings }
 					userSettings={ userSettings }
 				/>
