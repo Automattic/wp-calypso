@@ -7,27 +7,26 @@ import {
 } from './global-styles';
 import { isRecord } from './is-record';
 
-// Preset lists the record keys by origin (`{ theme, custom }`) but the agent
-// sends flat; its entries belong to `custom`.
-const PRESET_LISTS = [
-	[ 'color', 'palette' ],
-	[ 'color', 'duotone' ],
-	[ 'color', 'gradients' ],
-	[ 'typography', 'fontFamilies' ],
-	[ 'typography', 'fontSizes' ],
-];
-
 const hasSlug = ( value: unknown ): value is { slug: string } =>
 	isRecord( value ) && typeof value.slug === 'string';
 
-function nestPresets( settings: ThemeJson ): ThemeJson {
-	return PRESET_LISTS.reduce( ( nested, [ group, list ] ) => {
-		const presets = nested[ group ];
-		if ( ! isRecord( presets ) || ! Array.isArray( presets[ list ] ) ) {
-			return nested;
+// Preset entries carry slugs, and WordPress keys each preset list by origin
+// (`{ default, theme, custom }`), so a flat list of them belongs under
+// `custom` — as does an empty list, which can only clear one the record holds.
+function nestPresets( value: ThemeJson, current: unknown ): ThemeJson {
+	const nested: ThemeJson = {};
+	for ( const [ key, child ] of Object.entries( value ) ) {
+		const currentChild = isRecord( current ) ? current[ key ] : undefined;
+		if ( Array.isArray( child ) && ( child.every( hasSlug ) || isRecord( currentChild ) ) ) {
+			nested[ key ] = { custom: child };
+		} else if ( isRecord( child ) ) {
+			nested[ key ] = nestPresets( child, currentChild );
+		} else {
+			nested[ key ] = child;
 		}
-		return { ...nested, [ group ]: { ...presets, [ list ]: { custom: presets[ list ] } } };
-	}, settings );
+	}
+
+	return nested;
 }
 
 // PHP encodes an empty object as `[]`, so an empty array carries a change only
@@ -65,7 +64,10 @@ export function normalizeThemeUpdate(
 	{ settings, styles }: { settings?: unknown; styles?: unknown },
 	current: GlobalStylesRecord
 ): GlobalStylesRecord | undefined {
-	const keptSettings = prune( isRecord( settings ) && nestPresets( settings ), current.settings );
+	const keptSettings = prune(
+		isRecord( settings ) && nestPresets( settings, current.settings ),
+		current.settings
+	);
 	const keptStyles = prune( styles, current.styles );
 	if ( ! keptSettings && ! keptStyles ) {
 		return undefined;

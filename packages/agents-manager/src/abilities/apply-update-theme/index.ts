@@ -3,6 +3,12 @@ import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
 import { applyUpdateThemeCallback } from './callback';
 import type { Ability } from '../types';
 
+// A CSS value, or one per side (`{ top, right, bottom, left }`).
+const spacingValueSchema = {
+	type: [ 'string', 'object' ],
+	additionalProperties: { type: 'string' },
+};
+
 const namedEntrySchema = ( valueKey: string ) => ( {
 	type: 'object',
 	properties: {
@@ -124,8 +130,8 @@ export const applyUpdateThemeAbility: Ability = {
 						type: 'object',
 						description: 'Global spacing styles',
 						properties: {
-							padding: { type: 'string' },
-							margin: { type: 'string' },
+							padding: spacingValueSchema,
+							margin: spacingValueSchema,
 						},
 						additionalProperties: true,
 					},

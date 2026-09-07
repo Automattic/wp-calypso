@@ -61,9 +61,7 @@ describe( 'editGlobalStyles', () => {
 			'globalStyles',
 			'global-styles-1',
 			RECORD,
-			{
-				undoIgnore: true,
-			}
+			{ undoIgnore: true }
 		);
 	} );
 

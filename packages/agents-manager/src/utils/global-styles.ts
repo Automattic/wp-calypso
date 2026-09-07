@@ -61,7 +61,11 @@ export function getEditedGlobalStyles(): EditedGlobalStyles | undefined {
  * Resolves `undefined` after the timeout.
  */
 export async function waitForEditedGlobalStyles(): Promise< EditedGlobalStyles | undefined > {
-	const loaded = await waitForStore( 'core', () => !! getEditedGlobalStyles(), LOAD_TIMEOUT_MS );
+	const loaded = await waitForStore(
+		coreStore.name,
+		() => !! getEditedGlobalStyles(),
+		LOAD_TIMEOUT_MS
+	);
 
 	return loaded ? getEditedGlobalStyles() : undefined;
 }

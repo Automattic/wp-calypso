@@ -3,23 +3,22 @@ jest.mock( '../global-styles', () => ( { editGlobalStyles: jest.fn() } ) );
 import { editGlobalStyles } from '../global-styles';
 import { applyThemeUpdate, normalizeThemeUpdate } from '../update-theme';
 
-const BASE = { slug: 'base', name: 'Base', color: '#ffffff' };
 const ACCENT = { slug: 'accent', name: 'Accent', color: '#ff0000' };
 const SERIF = { slug: 'serif', name: 'Serif', fontFamily: 'Georgia, serif' };
 
-const CURRENT = {
+const RECORD = {
 	settings: {
-		color: { palette: { theme: [ BASE ], custom: [ ACCENT ] } },
+		color: { palette: { custom: [ ACCENT ] } },
 		typography: { fontFamilies: { custom: [ SERIF ] } },
 		spacing: { units: [ 'px', 'em' ] },
 	},
 	styles: { elements: { heading: { color: { text: '#000000' } } } },
 };
-const GLOBAL_STYLES = { id: 'global-styles-1', record: CURRENT };
+const GLOBAL_STYLES = { id: 'global-styles-1', record: RECORD };
 
-// Normalizes against `CURRENT`, applies, and returns the record written.
+// Normalizes against the record, applies, and returns the record written.
 function applyOverCurrent( input: Parameters< typeof normalizeThemeUpdate >[ 0 ] ) {
-	const update = normalizeThemeUpdate( input, CURRENT );
+	const update = normalizeThemeUpdate( input, RECORD );
 	if ( ! update ) {
 		throw new Error( 'Nothing to apply.' );
 	}
@@ -34,15 +33,31 @@ describe( 'normalizeThemeUpdate', () => {
 	it( 'keeps the subtrees that carry a change', () => {
 		const settings = { spacing: { blockGap: '2rem' } };
 
-		expect( normalizeThemeUpdate( { settings, styles: [] }, CURRENT ) ).toEqual( { settings } );
+		expect( normalizeThemeUpdate( { settings, styles: [] }, RECORD ) ).toEqual( { settings } );
 	} );
 
-	it( 'nests flat preset lists under custom', () => {
-		const sans = { slug: 'sans', name: 'Sans', fontFamily: 'Arial, sans-serif' };
+	it( 'nests a flat list of preset entries under custom, even a first one', () => {
+		const entry = { slug: 'sky', name: 'Sky' };
 
 		expect(
-			normalizeThemeUpdate( { settings: { typography: { fontFamilies: [ sans ] } } }, CURRENT )
-		).toEqual( { settings: { typography: { fontFamilies: { custom: [ sans ] } } } } );
+			normalizeThemeUpdate( { settings: { color: { gradients: [ entry ] } } }, RECORD )
+		).toEqual( { settings: { color: { gradients: { custom: [ entry ] } } } } );
+	} );
+
+	it( 'nests a list the record keys by origin even when an entry has no slug', () => {
+		const entries = [ ACCENT, { name: 'Sky', color: '#0000ff' } ];
+
+		expect( normalizeThemeUpdate( { settings: { color: { palette: entries } } }, RECORD ) ).toEqual(
+			{ settings: { color: { palette: { custom: entries } } } }
+		);
+	} );
+
+	it( 'leaves a list without slugs flat', () => {
+		const units = [ 'rem' ];
+
+		expect( normalizeThemeUpdate( { settings: { spacing: { units } } }, RECORD ) ).toEqual( {
+			settings: { spacing: { units } },
+		} );
 	} );
 
 	it.each( [
@@ -51,13 +66,13 @@ describe( 'normalizeThemeUpdate', () => {
 		[ 'non-objects', { settings: 'dark', styles: 12 } ],
 		[ 'nothing', {} ],
 		[ "the backend's [] for an empty nested object", { settings: { color: [] } } ],
-		[ 'an empty array over a missing list', { settings: { color: { gradients: [] } } } ],
+		[ 'an empty array over a list the record lacks', { settings: { color: { gradients: [] } } } ],
 	] )( 'reads %s as no change', ( _case, input ) => {
-		expect( normalizeThemeUpdate( input, CURRENT ) ).toBeUndefined();
+		expect( normalizeThemeUpdate( input, RECORD ) ).toBeUndefined();
 	} );
 
 	it( 'keeps an empty array that clears a list', () => {
-		expect( normalizeThemeUpdate( { settings: { color: { palette: [] } } }, CURRENT ) ).toEqual( {
+		expect( normalizeThemeUpdate( { settings: { color: { palette: [] } } }, RECORD ) ).toEqual( {
 			settings: { color: { palette: { custom: [] } } },
 		} );
 	} );
@@ -68,8 +83,8 @@ describe( 'applyThemeUpdate', () => {
 		applyThemeUpdate( GLOBAL_STYLES, { styles: { color: { background: '#ff0000' } } } );
 
 		expect( editGlobalStyles ).toHaveBeenCalledWith( 'global-styles-1', {
-			settings: CURRENT.settings,
-			styles: { ...CURRENT.styles, color: { background: '#ff0000' } },
+			settings: RECORD.settings,
+			styles: { ...RECORD.styles, color: { background: '#ff0000' } },
 		} );
 	} );
 
@@ -79,9 +94,7 @@ describe( 'applyThemeUpdate', () => {
 
 		const written = applyOverCurrent( { settings: { color: { palette: [ accentGreen, sky ] } } } );
 
-		expect( written.settings.color ).toEqual( {
-			palette: { theme: [ BASE ], custom: [ accentGreen, sky ] },
-		} );
+		expect( written.settings.color ).toEqual( { palette: { custom: [ accentGreen, sky ] } } );
 	} );
 
 	it( 'merges other preset lists by slug too', () => {
@@ -106,7 +119,7 @@ describe( 'applyThemeUpdate', () => {
 	it( 'clears a list with an empty array', () => {
 		const written = applyOverCurrent( { settings: { color: { palette: [] } } } );
 
-		expect( written.settings.color.palette ).toEqual( { theme: [ BASE ], custom: [] } );
+		expect( written.settings.color.palette ).toEqual( { custom: [] } );
 	} );
 
 	it( 'replaces arrays without slugs wholesale', () => {
@@ -131,17 +144,17 @@ describe( 'applyThemeUpdate', () => {
 	it( 'shares untouched subtrees instead of re-merging them', () => {
 		const written = applyOverCurrent( { styles: { color: { text: '#222222' } } } );
 
-		expect( written.settings ).toBe( CURRENT.settings );
+		expect( written.settings ).toBe( RECORD.settings );
 	} );
 
 	it( 'does not mutate the record it builds on', () => {
-		const record = JSON.parse( JSON.stringify( CURRENT ) );
+		const record = JSON.parse( JSON.stringify( RECORD ) );
 
 		applyThemeUpdate(
 			{ id: 'global-styles-1', record },
 			{ settings: { color: { palette: { custom: [ { ...ACCENT, color: '#00ff00' } ] } } } }
 		);
 
-		expect( record ).toEqual( CURRENT );
+		expect( record ).toEqual( RECORD );
 	} );
 } );
