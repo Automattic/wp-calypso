@@ -39,11 +39,15 @@ export default function DomainSwitcher( {
 	return (
 		<Switcher
 			items={ domains }
+			itemCountHint={ 3 }
 			value={ domain }
 			searchableFields={ searchableFields }
 			headerTitle={ __( 'Switch domain' ) }
 			getItemUrl={ ( d ) => buildCurrentRouteLink( { params: { domainName: d.domain } } ) }
 			renderToggle={ renderToggle }
+			renderLoadingItem={ () => (
+				<Switcher.ItemSkeleton hasMedia={ false } hasDescription={ false } titleLength={ 20 } />
+			) }
 			renderItem={ ( { item, context } ) => (
 				<Switcher.Item
 					media={

@@ -3,6 +3,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { Text } from '../text';
+import { TextSkeleton } from '../text-skeleton';
 
 interface SwitcherItemProps {
 	media?: React.ReactNode;
@@ -40,5 +41,39 @@ export default function SwitcherItem( { media, title, description, spacing }: Sw
 				) }
 			</VStack>
 		</HStack>
+	);
+}
+
+interface SwitcherItemSkeletonProps {
+	hasMedia?: boolean;
+	hasDescription?: boolean;
+	mediaSize?: number;
+	titleLength: number;
+	descriptionLength?: number;
+	spacing?: number;
+}
+
+export function SwitcherItemSkeleton( {
+	hasMedia = true,
+	hasDescription = true,
+	mediaSize = 32,
+	titleLength,
+	descriptionLength = titleLength + 2,
+	spacing,
+}: SwitcherItemSkeletonProps ) {
+	return (
+		<SwitcherItem
+			spacing={ spacing }
+			media={
+				hasMedia ? (
+					<div
+						className="switcher-item__media-skeleton"
+						style={ { width: mediaSize, height: mediaSize } }
+					/>
+				) : undefined
+			}
+			title={ <TextSkeleton length={ titleLength } /> }
+			description={ hasDescription ? <TextSkeleton length={ descriptionLength } /> : undefined }
+		/>
 	);
 }

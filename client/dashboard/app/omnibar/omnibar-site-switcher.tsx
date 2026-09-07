@@ -18,6 +18,7 @@ import { canManageSite } from '../../sites/features';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import { useAnalytics } from '../analytics';
+import { useAuth } from '../auth';
 import { useAppContext } from '../context';
 import useBuildCurrentRouteLink from '../hooks/use-build-current-route-link';
 import { useOmnibarEvent } from './events';
@@ -44,6 +45,7 @@ const searchableFields = [
 
 export default function OmnibarSiteSwitcher() {
 	const { recordTracksEvent } = useAnalytics();
+	const { user } = useAuth();
 	const { queries } = useAppContext();
 	const buildCurrentRouteLink = useBuildCurrentRouteLink();
 
@@ -98,6 +100,7 @@ export default function OmnibarSiteSwitcher() {
 				renderContent={ ( { onClose } ) => (
 					<SwitcherContent< Site >
 						items={ sites }
+						itemCountHint={ user.visible_site_count }
 						searchableFields={ searchableFields }
 						view={ view }
 						onChangeView={ setView }

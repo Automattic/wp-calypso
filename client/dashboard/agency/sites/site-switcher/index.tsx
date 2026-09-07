@@ -41,6 +41,7 @@ export default function AgencySiteSwitcher( props: AgencySiteSwitcherProps ) {
 				/>
 			) }
 			items={ sites }
+			itemCountHint={ 3 }
 			value={ site }
 			searchableFields={ searchableFields }
 			getItemUrl={ ( item ) => `/sites/${ item.url }` }

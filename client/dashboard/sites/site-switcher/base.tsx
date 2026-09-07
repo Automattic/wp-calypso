@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
 import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-link';
 import SiteIcon from '../../components/site-icon';
@@ -29,6 +30,7 @@ export const SiteSwitcherBase = (
 ) => {
 	const { site, ...switcherProps } = props;
 	const { recordTracksEvent } = useAnalytics();
+	const { user } = useAuth();
 	const { queries } = useAppContext();
 	const [ isSwitcherOpen, setIsSwitcherOpen ] = useState( false );
 	const { data: sites } = useQuery( {
@@ -52,6 +54,7 @@ export const SiteSwitcherBase = (
 				/>
 			) }
 			items={ sites }
+			itemCountHint={ user.visible_site_count }
 			value={ site }
 			searchableFields={ searchableFields }
 			headerTitle={ __( 'Switch site' ) }

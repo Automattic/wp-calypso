@@ -32,6 +32,7 @@ export default function ReferralSwitcher( {
 	return (
 		<Switcher< Referral >
 			items={ referrals }
+			itemCountHint={ 3 }
 			value={ referral }
 			searchableFields={ searchableFields }
 			headerTitle={ __( 'Switch referral' ) }
@@ -40,6 +41,9 @@ export default function ReferralSwitcher( {
 			}
 			renderToggle={ renderToggle }
 			renderItem={ ( { item } ) => <Switcher.Item title={ item.client.email } /> }
+			renderLoadingItem={ () => (
+				<Switcher.ItemSkeleton hasMedia={ false } hasDescription={ false } titleLength={ 20 } />
+			) }
 			open={ isOpen }
 			onToggle={ setIsOpen }
 		/>

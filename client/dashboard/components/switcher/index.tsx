@@ -3,8 +3,8 @@ import { useViewportMatch } from '@wordpress/compose';
 import { chevronDownSmall } from '@wordpress/icons';
 import { useState, type ComponentProps } from 'react';
 import SwitcherContent from './switcher-content';
-import SwitcherItem from './switcher-item';
-import { RenderItem } from './types';
+import SwitcherItem, { SwitcherItemSkeleton } from './switcher-item';
+import { RenderItem, RenderLoadingItem } from './types';
 import type { Field, View } from '@wordpress/dataviews';
 
 interface RenderCallbackProps {
@@ -20,6 +20,8 @@ export type SwitcherProps< T > = {
 	children?: ( props: RenderCallbackProps ) => React.ReactNode;
 	getItemUrl: ( item: T ) => string;
 	renderItem: RenderItem< T >;
+	renderLoadingItem?: RenderLoadingItem;
+	itemCountHint: number;
 	icon?: React.JSX.Element;
 	onItemClick?: () => void;
 	renderToggle?: RenderToggle;
@@ -46,6 +48,8 @@ function Switcher< T >( {
 	children,
 	getItemUrl,
 	renderItem,
+	renderLoadingItem,
+	itemCountHint,
 	icon = chevronDownSmall,
 	onItemClick,
 	open,
@@ -104,6 +108,8 @@ function Switcher< T >( {
 					searchableFields={ searchableFields }
 					getItemUrl={ getItemUrl }
 					renderItem={ renderItem }
+					renderLoadingItem={ renderLoadingItem }
+					itemCountHint={ itemCountHint }
 					view={ view }
 					onChangeView={ setView }
 					width={ isMobile ? '100%' : '280px' }
@@ -118,5 +124,6 @@ function Switcher< T >( {
 }
 
 Switcher.Item = SwitcherItem;
+Switcher.ItemSkeleton = SwitcherItemSkeleton;
 
 export default Switcher;

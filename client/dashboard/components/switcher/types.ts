@@ -6,3 +6,5 @@ export type RenderItemProps< T > = {
 };
 
 export type RenderItem< T > = ( props: RenderItemProps< T > ) => ReactNode;
+
+export type RenderLoadingItem = ( props: { index: number } ) => ReactNode;
