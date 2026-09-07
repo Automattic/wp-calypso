@@ -168,6 +168,17 @@ export function acceptedNotice(
 	}
 }
 
+/**
+ * Email addresses are case-insensitive in practice, and the invite's `sent_to`
+ * comes back lowercased while the user's stored email keeps its original casing.
+ */
+export function isSameEmail( a?: string | null, b?: string | null ): boolean {
+	const normalize = ( email?: string | null ) => email?.trim().toLowerCase() ?? '';
+	const normalizedA = normalize( a );
+
+	return normalizedA !== '' && normalizedA === normalize( b );
+}
+
 export function getRedirectAfterAccept( invite: InviteType, hasDashboardOptIn: boolean ) {
 	if ( invite.site.is_wpforteams_site ) {
 		return `https://${ invite.site.domain }`;
