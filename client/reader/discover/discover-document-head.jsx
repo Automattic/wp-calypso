@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 
-export const DiscoverDocumentHead = ( { noindex = false } ) => {
+export const DiscoverDocumentHead = () => {
 	const translate = useTranslate();
 
 	const title = translate( 'Browse popular blogs & read articles ‹ Reader' );
@@ -14,10 +14,6 @@ export const DiscoverDocumentHead = ( { noindex = false } ) => {
 			),
 		},
 	];
-
-	if ( noindex ) {
-		meta.push( { name: 'robots', content: 'noindex' } );
-	}
 
 	const link = [
 		{
