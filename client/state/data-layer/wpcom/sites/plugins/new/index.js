@@ -14,16 +14,21 @@ import {
 } from 'calypso/state/plugins/upload/actions';
 
 export const uploadPlugin = ( action ) => {
-	const { siteId, file } = action;
+	const { siteId, file, replaceSlug } = action;
 
 	return [
-		recordTracksEvent( 'calypso_plugin_upload' ),
+		recordTracksEvent( 'calypso_plugin_upload', { is_replace: !! replaceSlug } ),
 		http(
 			{
 				method: 'POST',
-				path: `/sites/${ siteId }/plugins/new`,
+				path: replaceSlug ? `/sites/${ siteId }/plugins/replace` : `/sites/${ siteId }/plugins/new`,
 				apiVersion: '1',
-				formData: [ [ 'zip[]', file ] ],
+				formData: replaceSlug
+					? [
+							[ 'zip[]', file ],
+							[ 'slug', replaceSlug ],
+					  ]
+					: [ [ 'zip[]', file ] ],
 			},
 			action
 		),

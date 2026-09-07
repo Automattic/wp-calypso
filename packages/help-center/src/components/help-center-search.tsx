@@ -13,6 +13,7 @@ import { HelpCenterLaunchpad } from './help-center-launchpad';
 import { HelpCenterMoreResources } from './help-center-more-resources';
 import HelpCenterRecentConversations from './help-center-recent-conversations';
 import HelpCenterSearchResults from './help-center-search-results';
+import { getHelpCenterSiteContext } from './help-center-site-context';
 import { BlockedZendeskNotice } from './notices';
 import PlaceholderLines from './placeholder-lines';
 import './help-center-search.scss';
@@ -25,13 +26,14 @@ type HelpCenterSearchProps = {
 };
 
 export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSearchProps ) => {
-	const { sectionName, site, currentUser, product } = useHelpCenterContext();
+	const { sectionName, site, currentUser, primarySiteId, product } = useHelpCenterContext();
 	const featureConfig = useFeatureConfig();
 	const { searchQuery, setSearchQueryAndEmailSubject, redirectToArticle } =
 		useHelpCenterSearch( onSearchChange );
 
 	const isSiteOwner = site?.site_owner === currentUser?.ID;
 	const launchpadEnabled = site?.options?.launchpad_screen === 'full' && isSiteOwner;
+	const { blogId, siteContextSource } = getHelpCenterSiteContext( site?.ID, primarySiteId );
 
 	// Track loading states to coordinate rendering and avoid content popping in at different times.
 	const { isLoadingInteractions } = useGetHistoryChats();
@@ -76,8 +78,8 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 				onSearch={ setSearchQueryAndEmailSubject }
 				location="help-center"
 				isVisible
-				blogId={ site?.ID }
-				siteContextSource="help_center_context"
+				blogId={ blogId }
+				siteContextSource={ siteContextSource }
 				placeholder={ __( 'Search guides…', __i18n_text_domain__ ) }
 				sectionName={ sectionName }
 				useSearchControl

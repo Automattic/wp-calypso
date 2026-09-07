@@ -131,7 +131,11 @@ const UseMyDomain: StepType< {
 						domain,
 						...verificationData,
 					} );
+					clearQueryParams();
 					submit( { ownershipVerificationCompleted: true, domain } );
+
+					// Early return: the default handler below would re-submit a domainCartItem.
+					return;
 				} catch ( error ) {
 					// Validation failed - call onDone to display error and stay on current step
 					if ( onDone ) {

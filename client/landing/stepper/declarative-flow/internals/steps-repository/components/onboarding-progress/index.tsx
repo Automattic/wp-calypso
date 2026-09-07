@@ -11,21 +11,29 @@ type Props = {
 	 * ready to act on a selection.
 	 */
 	isStepSelectDisabled?: boolean;
+	/** A plan chosen before the flow started leaves the grid nothing to ask. */
+	shouldHidePlansStep?: boolean;
 };
 
 /**
  * The onboarding purchase progress rail, as a text rail in the top bar.
  *
- * Renders beside the WordPress logo rather than above the page content, so it
+ * Sits in the top bar's right slot, in the position the "1 of 3" counter takes
+ * at narrower widths, so the indicator stays put across the breakpoint. It
  * costs no vertical space in the content column at all. There are no
- * indicators: the steps are one word each, separated by a middot, and status
- * is carried by weight and colour.
+ * indicators drawn: the steps are one word each, separated by a middot, and
+ * status is carried by colour.
  *
  * `Stepper.Indicator` is still rendered even though no dot is drawn. It is
  * what supplies the "Step 2 of 3, completed" text for screen readers, so it is
  * visually clipped in style.scss rather than dropped from the tree.
  */
-export function OnboardingProgress( { currentStep, onStepSelect, isStepSelectDisabled }: Props ) {
+export function OnboardingProgress( {
+	currentStep,
+	onStepSelect,
+	isStepSelectDisabled,
+	shouldHidePlansStep,
+}: Props ) {
 	const { __, _x } = useI18n();
 
 	const domainsStepStatus = currentStep !== 'domains' ? ( 'completed' as const ) : undefined;
@@ -59,19 +67,21 @@ export function OnboardingProgress( { currentStep, onStepSelect, isStepSelectDis
 						</UIStepper.Title>
 					</UIStepper.Trigger>
 				</UIStepper.Step>
-				<UIStepper.Step
-					value="plans"
-					status={ plansStepStatus }
-					disabled={ isStepSelectDisabled }
-					className="onboarding-progress-step"
-				>
-					<UIStepper.Trigger className="onboarding-progress-trigger">
-						<UIStepper.Indicator className="onboarding-progress-indicator" />
-						<UIStepper.Title className="onboarding-progress-title">
-							{ _x( 'Plan', 'onboarding purchase step' ) }
-						</UIStepper.Title>
-					</UIStepper.Trigger>
-				</UIStepper.Step>
+				{ ! shouldHidePlansStep && (
+					<UIStepper.Step
+						value="plans"
+						status={ plansStepStatus }
+						disabled={ isStepSelectDisabled }
+						className="onboarding-progress-step"
+					>
+						<UIStepper.Trigger className="onboarding-progress-trigger">
+							<UIStepper.Indicator className="onboarding-progress-indicator" />
+							<UIStepper.Title className="onboarding-progress-title">
+								{ _x( 'Plan', 'onboarding purchase step' ) }
+							</UIStepper.Title>
+						</UIStepper.Trigger>
+					</UIStepper.Step>
+				) }
 				<UIStepper.Step value="checkout" className="onboarding-progress-step">
 					<UIStepper.Trigger className="onboarding-progress-trigger">
 						<UIStepper.Indicator className="onboarding-progress-indicator" />

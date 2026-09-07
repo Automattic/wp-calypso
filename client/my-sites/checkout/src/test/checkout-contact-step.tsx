@@ -124,6 +124,17 @@ describe( 'Checkout contact step', () => {
 		expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
 	} );
 
+	it( 'renders a help link in the contact step title when a domain is in the cart', async () => {
+		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
+
+		expect( await screen.findByText( 'Enter your contact information' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'link', { name: 'Learn more' } ) ).toHaveAttribute(
+			'href',
+			'https://wordpress.com/support/domains/private-domain-registration/#information-we-collect-and-why'
+		);
+	} );
+
 	it( 'does not render country-specific domain fields when no country has been chosen and a domain is in the cart', async () => {
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );

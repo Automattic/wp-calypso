@@ -15,6 +15,7 @@ import {
 	mergeCapabilitiesInto,
 	mergeUseSuggestionsHooks,
 } from '../load-external-providers';
+import { getLoadedProviderIds, setLoadedProviderIds } from '../loaded-provider-ids';
 import {
 	getProviderCheckpointObservedAt,
 	getProviderCheckpointRecords,
@@ -172,6 +173,7 @@ describe( 'loadExternalProviders', () => {
 		window.history.replaceState( {}, '', '/' );
 		delete ( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData;
 		delete ( window as typeof window & { agentsManagerData?: unknown } ).agentsManagerData;
+		setLoadedProviderIds( undefined );
 	} );
 
 	it( 'does not merge external editor providers into Reader Chat', async () => {
@@ -197,6 +199,28 @@ describe( 'loadExternalProviders', () => {
 		setAgentsManagerData( { agentProviders } );
 
 		await expect( loadExternalProviders() ).resolves.toEqual( {} );
+		expect( getLoadedProviderIds() ).toEqual( [] );
+	} );
+
+	it( 'publishes the loaded provider ids for the Tracks wrappers', async () => {
+		setAgentsManagerData( {
+			agentProviders: [ { providerId: 'jetpack-ai' }, { providerId: 'woocommerce-ai' } ],
+		} );
+
+		await loadExternalProviders();
+
+		expect( getLoadedProviderIds() ).toEqual( [ 'jetpack-ai', 'woocommerce-ai' ] );
+	} );
+
+	it( 'publishes an empty provider list for Reader Chat', async () => {
+		setAgentsManagerData( {
+			agentId: 'reader-chat',
+			agentProviders: [ { providerId: 'jetpack-ai' } ],
+		} );
+
+		await loadExternalProviders();
+
+		expect( getLoadedProviderIds() ).toEqual( [] );
 	} );
 
 	it( 'merges abilities from multiple tool providers and dispatches execution to the owner', async () => {

@@ -44,6 +44,16 @@ describe( 'useOnboardingStepCounter', () => {
 		expect( result.current ).toBeNull();
 	} );
 
+	// From #113963. `calypso/signup/steps/plans` re-exports the plans step into the
+	// legacy `/start` framework, which is page.js-routed, so a router hook in here
+	// throws for every flow that still has a plans step, in production too.
+	it( 'renders outside a Router', () => {
+		mockViewport.mockReturnValue( false );
+		expect( () =>
+			renderHook( () => useOnboardingStepCounter( 'onboarding-pm', 'plans' ) )
+		).not.toThrow();
+	} );
+
 	it( 'stays out of other flows', () => {
 		mockViewport.mockReturnValue( false );
 		const { result } = renderHook( () => useOnboardingStepCounter( 'newsletter', 'plans' ) );

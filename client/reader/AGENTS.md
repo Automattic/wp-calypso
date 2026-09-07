@@ -271,7 +271,7 @@ contract.
 
 ### SSR file variants
 
-Some routes have both `.node.js` (server) and `.web.js` (client) file variants for isomorphic rendering. Examples: `discover/index.node.js` / `discover/index.web.js`, `tags/index.node.js` / `tags/index.web.js`. The `.node.js` variant renders placeholder components for SSR, while `.web.js` uses `AsyncLoad` and full interactivity. When adding new routes that need SSR support, both variants are required.
+Some routes have both `.node` (server) and `.web` (client) file variants for isomorphic rendering. Example: `discover/index.node.jsx` / `discover/index.web.jsx`. The `.node` variant renders placeholder components for SSR, while `.web` uses `AsyncLoad` and full interactivity. When adding new routes that need SSR support, both variants are required, along with a `package.json` shim mapping `main` to the node variant and `browser` to the web variant.
 
 ### Analytics
 

@@ -1,6 +1,6 @@
-import { Badge } from '@automattic/ui';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Tooltip } from '@wordpress/components';
+import { Badge } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
@@ -19,6 +19,7 @@ import LayoutHeader, {
 } from 'calypso/layout/hosting-dashboard/header';
 import useGetTipaltiIFrameURL from '../../hooks/use-get-tipalti-iframe-url';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
+import type { ComponentProps } from 'react';
 
 import './style.scss';
 
@@ -68,7 +69,7 @@ function PaymentStatusBadge( {
 	tooltip,
 	children,
 }: {
-	intent: 'success' | 'warning' | 'error';
+	intent: NonNullable< ComponentProps< typeof Badge >[ 'intent' ] >;
 	tooltip?: string;
 	children?: string;
 } ) {
@@ -114,7 +115,7 @@ export default function ReferralsBankDetails( { type }: { type?: 'migrations' | 
 									components: {
 										badge: (
 											<PaymentStatusBadge
-												intent={ accountStatus.statusType }
+												intent={ accountStatus.badgeIntent }
 												tooltip={ accountStatus.statusReason }
 											/>
 										),

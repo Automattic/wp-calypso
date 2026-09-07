@@ -27,6 +27,7 @@ function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
 	return {
 		is_auto_renew_enabled: true,
 		is_refundable: false,
+		is_instant_downgrade_available: false,
 		refund_amount: 0,
 		expiry_status: 'auto-renewing',
 		subscription_status: 'active',
@@ -416,6 +417,21 @@ describe( 'creditCardExpiresBeforeSubscription', () => {
 } );
 
 describe( 'getRenewalUrlFromPurchase', () => {
+	test( 'uses the subscription-ID-only format', () => {
+		const url = getRenewalUrlFromPurchase(
+			makePurchase( {
+				ID: 12345,
+				product_slug: 'business-bundle',
+				is_attached_to_holding_site: false,
+				site_slug: 'example.wordpress.com',
+			} )
+		);
+
+		expect( url ).toContain( '/checkout/renew/12345?' );
+		expect( url ).not.toContain( 'example.wordpress.com' );
+		expect( url ).not.toContain( 'business-bundle' );
+	} );
+
 	test( 'omits the site slug for an A4A holding site purchase', () => {
 		const url = getRenewalUrlFromPurchase(
 			makePurchase( {
@@ -427,27 +443,38 @@ describe( 'getRenewalUrlFromPurchase', () => {
 			} )
 		);
 
-		expect( url ).toContain( '/checkout/pressable_build_monthly:is-a4a/renew/28259013/?' );
+		expect( url ).toContain( '/checkout/renew/28259013?' );
 		expect( url ).not.toContain( 'siteless.agencies.automattic.com' );
 	} );
 
-	test( 'keeps the site slug for a regular site purchase', () => {
+	test( 'keeps the service in the URL but drops the product slug for siteless Akismet', () => {
 		const url = getRenewalUrlFromPurchase(
 			makePurchase( {
-				ID: 12345,
-				product_slug: 'business-bundle',
-				is_attached_to_holding_site: false,
-				site_slug: 'example.wordpress.com',
+				ID: 67890,
+				product_slug: 'ak_plus_yearly_1',
 			} )
 		);
 
-		expect( url ).toContain( '/checkout/business-bundle/renew/12345/example.wordpress.com?' );
+		expect( url ).toContain( '/checkout/akismet/renew/67890?' );
+		expect( url ).not.toContain( 'ak_plus_yearly_1' );
+	} );
+
+	test( 'keeps the service in the URL but drops the product slug for siteless Marketplace', () => {
+		const url = getRenewalUrlFromPurchase(
+			makePurchase( {
+				ID: 54321,
+				product_slug: 'wpcom_dotcompatch_yearly',
+				product_type: 'saas_plugin',
+				is_attached_to_holding_site: true,
+			} )
+		);
+
+		expect( url ).toContain( '/checkout/marketplace/renew/54321?' );
+		expect( url ).not.toContain( 'wpcom_dotcompatch_yearly' );
 	} );
 } );
 
 describe( 'isPurchaseDowngradeEligible', () => {
-	// Both `plans/expired-downgrade` and `plans/delayed-downgrade` are enabled in
-	// every config, so these exercise the shipping behaviour.
 	test( 'is true for a downgradable plan', () => {
 		expect(
 			isPurchaseDowngradeEligible(
@@ -486,13 +513,13 @@ describe( 'isPurchaseDowngradeEligible', () => {
 		).toBe( true );
 	} );
 
-	test( 'is true for a downgradable plan inside its refund window', () => {
+	test( 'is true for a downgradable plan the server will downgrade instantly', () => {
 		expect(
 			isPurchaseDowngradeEligible(
 				makePurchase( {
 					is_plan: true,
 					is_plan_type_downgradable: true,
-					is_refundable: true,
+					is_instant_downgrade_available: true,
 				} )
 			)
 		).toBe( true );
@@ -503,35 +530,41 @@ describe( 'isWithinRefundWindowDowngradeEligible', () => {
 	const downgradablePlan = ( overrides: Partial< Purchase > = {} ) =>
 		makePurchase( { is_plan: true, is_plan_type_downgradable: true, ...overrides } );
 
-	test( 'is true for a refundable plan', () => {
-		expect(
-			isWithinRefundWindowDowngradeEligible( downgradablePlan( { is_refundable: true } ) )
-		).toBe( true );
-	} );
-
-	test( 'is true for a refundable renewal outside the initial refund window', () => {
+	test( 'is true when the server reports an instant downgrade is available', () => {
 		expect(
 			isWithinRefundWindowDowngradeEligible(
-				downgradablePlan( { is_within_initial_refund_window: false, is_refundable: true } )
+				downgradablePlan( { is_instant_downgrade_available: true } )
 			)
 		).toBe( true );
 	} );
 
-	test( 'is false once no receipt is refundable, even inside the initial refund window', () => {
+	test( 'is true for a zero-cost purchase, which has no refundable receipt', () => {
 		expect(
 			isWithinRefundWindowDowngradeEligible(
-				downgradablePlan( { is_within_initial_refund_window: true, is_refundable: false } )
+				downgradablePlan( {
+					is_instant_downgrade_available: true,
+					is_refundable: false,
+					refund_amount: 0,
+				} )
+			)
+		).toBe( true );
+	} );
+
+	test( 'is false when the server says so, even for a refundable plan', () => {
+		expect(
+			isWithinRefundWindowDowngradeEligible(
+				downgradablePlan( { is_instant_downgrade_available: false, is_refundable: true } )
 			)
 		).toBe( false );
 	} );
 
-	test( 'is false for a plan in its post-expiry grace period even when refundable', () => {
+	test( 'is false for a plan with nothing below it', () => {
 		expect(
 			isWithinRefundWindowDowngradeEligible(
-				downgradablePlan( {
-					is_refundable: true,
-					expiry_status: 'expired',
-					subscription_status: 'active',
+				makePurchase( {
+					is_plan: true,
+					is_plan_type_downgradable: false,
+					is_instant_downgrade_available: true,
 				} )
 			)
 		).toBe( false );
@@ -540,7 +573,11 @@ describe( 'isWithinRefundWindowDowngradeEligible', () => {
 	test( 'is false for a non-plan product', () => {
 		expect(
 			isWithinRefundWindowDowngradeEligible(
-				makePurchase( { is_plan: false, is_plan_type_downgradable: true, is_refundable: true } )
+				makePurchase( {
+					is_plan: false,
+					is_plan_type_downgradable: true,
+					is_instant_downgrade_available: true,
+				} )
 			)
 		).toBe( false );
 	} );

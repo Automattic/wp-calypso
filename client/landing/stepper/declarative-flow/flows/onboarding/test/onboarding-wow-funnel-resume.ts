@@ -49,6 +49,12 @@ jest.mock( 'calypso/state/selectors/get-current-locale-slug', () => ( {
 jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => ( {
 	clearSessionStorageQuery: jest.fn(),
 } ) );
+// The product catalog's feature list pulls @wordpress/components in through this, and that
+// chain needs a real @wordpress/data, which this file mocks. Only JSX uses these.
+jest.mock( '@automattic/components', () => ( {
+	MaterialIcon: () => null,
+	ExternalLink: () => null,
+} ) );
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {} ),
 	useSelect: jest.fn( () => ( {} ) ),

@@ -37,6 +37,13 @@ async function openGiftCheckoutFromSite( page: Page, siteUrl: string ): Promise<
 	await expect( page ).toHaveURL( /\/checkout\/[^/]+\/gift\// );
 }
 
+function backButton( page: Page ) {
+	return page
+		.getByRole( 'button', { name: 'Back', exact: true } )
+		.filter( { visible: true } )
+		.first();
+}
+
 async function goBackFromCheckout( page: Page, choice: BackChoice ): Promise< void > {
 	// The gifted site is read from the cart's gift_details, so Back must not be
 	// clicked until the cart has loaded. Building a gift cart takes the store
@@ -44,11 +51,7 @@ async function goBackFromCheckout( page: Page, choice: BackChoice ): Promise< vo
 	await expect( page.locator( '.checkout-line-item[data-e2e-product-slug]' ).first() ).toBeVisible(
 		{ timeout: 30_000 }
 	);
-	await page
-		.getByRole( 'button', { name: 'Back', exact: true } )
-		.filter( { visible: true } )
-		.first()
-		.click();
+	await backButton( page ).click();
 	await page.getByRole( 'button', { name: choice, exact: true } ).click();
 }
 
@@ -108,6 +111,32 @@ test.describe( 'Plans: Gift checkout Back navigation', { tag: [ tags.CALYPSO_REL
 	} );
 
 	test.describe( 'Logged-out visitor', () => {
+		test( 'As a logged-out visitor, I can go back from gift checkout as soon as Back is available', async ( {
+			pageIncognito,
+		} ) => {
+			const page = pageIncognito.getPage();
+
+			await test.step( 'When I click Gift in the banner on the site', async function () {
+				await openGiftCheckoutFromSite( page, siteUrl );
+			} );
+
+			await test.step( 'And I click Back the moment it becomes available', async function () {
+				// Back stays disabled until the cart has been round-tripped to the
+				// server, because the gifted site's URL only arrives with it. The
+				// earliest a visitor can act on the control is therefore the earliest
+				// it is safe to, no matter how fast they click.
+				await expect( backButton( page ) ).toBeEnabled( { timeout: 30_000 } );
+				await backButton( page ).click();
+				await page.getByRole( 'button', { name: 'Save cart', exact: true } ).click();
+			} );
+
+			await test.step( 'Then I land on the gifted site', async function () {
+				await expect( page ).toHaveURL(
+					( url ) => url.origin === siteOrigin && url.pathname === '/'
+				);
+			} );
+		} );
+
 		for ( const choice of BACK_CHOICES ) {
 			test( `As a logged-out visitor, I can go back from gift checkout to the gifted site after choosing "${ choice }"`, async ( {
 				pageIncognito,
