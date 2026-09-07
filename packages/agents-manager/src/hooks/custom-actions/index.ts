@@ -9,13 +9,13 @@ import {
 	setExternalContextCard,
 	setExternalContextEntry,
 } from '../../utils/external-context';
-import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { setSiteEditorAction } from '../../utils/site-editor-context';
 import {
 	BIG_SKY_EVENT_PREFIX,
 	recordBigSkyTracksEvent,
 	type BigSkyEventName,
 } from '../../utils/tracks';
+import { usesLocalStatePersistence } from '../../utils/uses-local-state-persistence';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 /** Bridge-facing recorder: drops malformed calls instead of emitting `jetpack_big_sky_undefined`. */
@@ -101,7 +101,7 @@ export function useSetupCustomActions( {
 	const locationRef = useRef( location );
 	locationRef.current = location;
 	const resolveRef = useRef< ( ( state: AgentsManagerChatState ) => void ) | null >( null );
-	const shouldPersistOpenState = ! isReaderChatAgent( agentConfig?.agentId );
+	const shouldPersistOpenState = ! usesLocalStatePersistence( agentConfig?.agentId );
 
 	const setChatOpen = useCallback(
 		( shouldOpen: boolean ) => {

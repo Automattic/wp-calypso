@@ -1,8 +1,9 @@
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { AGENTS_MANAGER_STORE } from '../stores';
-import { isReaderChatHost } from '../utils/is-reader-chat-agent';
+import { getAgentsManagerInlineData } from '../utils/get-agents-manager-inline-data';
 import { recordBigSkyTracksEvent } from '../utils/tracks';
+import { usesLocalStatePersistence } from '../utils/uses-local-state-persistence';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 const OPEN_CHAT_URL_PARAM = 'ai-open';
@@ -36,21 +37,21 @@ export function useOpenChatUrlParam(): boolean {
 		if ( ! hasOpenedRef.current ) {
 			hasOpenedRef.current = true;
 
-			// Reader chat runs on public blog frontends: Big Sky parity events
-			// don't apply there, and open state must not persist to the
-			// logged-in REST endpoint.
-			const isReaderChat = isReaderChatHost();
+			// Client-persisted hosts (reader chat, the anonymous storefront) run on
+			// public frontends: Big Sky parity events don't apply, and open state
+			// must not persist to the logged-in REST endpoint.
+			const persistsLocally = usesLocalStatePersistence( getAgentsManagerInlineData()?.agentId );
 
-			if ( ! isReaderChat ) {
+			if ( ! persistsLocally ) {
 				recordBigSkyTracksEvent( 'jetpack_big_sky_ai_editor_menu_opened' );
 			}
 
 			if ( ! isOpen ) {
-				setIsOpen( true, ! isReaderChat );
+				setIsOpen( true, ! persistsLocally );
 			}
 
 			if ( isMinimized ) {
-				setIsMinimized( false, ! isReaderChat );
+				setIsMinimized( false, ! persistsLocally );
 			}
 
 			const url = new URL( window.location.href );
