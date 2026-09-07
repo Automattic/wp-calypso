@@ -408,20 +408,6 @@ describe( 'Blackbox integration', () => {
 describe( 'email domain validation', () => {
 	const mockStore = configureStore( [ thunk ] );
 
-	afterEach( () => nock.cleanAll() );
-
-	const recordRequests = () => {
-		const sent = [];
-		nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/users/new', ( body ) => {
-				sent.push( body );
-				return true;
-			} )
-			.reply( 200, {} )
-			.persist();
-		return sent;
-	};
-
 	const renderAndSubmit = async ( email, props = {} ) => {
 		const store = mockStore( {} );
 		render(
@@ -434,14 +420,19 @@ describe( 'email domain validation', () => {
 		return store;
 	};
 
-	it( 'names the domain and sends no request when the TLD is not real', async () => {
-		const sent = recordRequests();
-
-		await renderAndSubmit( 'user@gmail.commmm' );
+	// A request in flight would flip the button to its disabled "Creating your account" state
+	// before anything is awaited, so an enabled button means the guard stopped the submit.
+	it( 'names the domain, records the failure, and stays submittable when the TLD is not real', async () => {
+		const store = await renderAndSubmit( 'user@gmail.commmm' );
 
 		expect( screen.getByText( /gmail\.commmm/ ) ).toBeVisible();
 		expect( screen.getByText( /real domain/i ) ).toBeVisible();
-		await waitFor( () => expect( sent ).toHaveLength( 0 ) );
+		expect( screen.getByRole( 'button', { name: /create your account/i } ) ).toBeEnabled();
+		expect( store.getActions() ).toHaveLength( 1 );
+		expect( store.getActions()[ 0 ].meta.analytics[ 0 ].payload ).toMatchObject( {
+			name: 'calypso_signup_actions_onboarding_passwordless_login_error',
+			properties: { action_message: 'Email domain does not end in a valid TLD.' },
+		} );
 	} );
 
 	// A prefilled address can carry whitespace that the email input would strip if typed.
