@@ -22,10 +22,12 @@
  */
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import OonRecCard from './card';
+import { OON_ACTIONS, recordOonInteract } from './tracks';
+import type { OonRec } from './types';
 import type { UseOonRecsResult } from './use-oon-recs';
 import './style.scss';
 
@@ -46,37 +48,69 @@ export default function DiscoverNewBlogs( { recs, dismissBlog, hide }: Props ) {
 	const visible = recs.slice( start, start + DISPLAY_LIMIT );
 	const hasMore = recs.length > start + DISPLAY_LIMIT;
 
-	// One impression event per mount.
-	const trackedRef = useRef( false );
-	useEffect( () => {
-		if ( visible.length > 0 && ! trackedRef.current ) {
-			trackedRef.current = true;
-			dispatch(
-				recordReaderTracksEvent( 'calypso_reader_discover_new_blogs_render', {
-					count: visible.length,
-				} )
-			);
+	// One module impression per mount, fired when the FIRST card is actually on
+	// screen (not on mount — the block sits below the fold), so this count and
+	// the per-card TrainTracks renders measure the same thing.
+	const impressionTrackedRef = useRef( false );
+	const visibleCountRef = useRef( visible.length );
+	visibleCountRef.current = visible.length;
+	const handleImpression = useCallback( () => {
+		if ( impressionTrackedRef.current ) {
+			return;
 		}
-	}, [ dispatch, visible.length ] );
+		impressionTrackedRef.current = true;
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_discover_new_blogs_render', {
+				count: visibleCountRef.current,
+			} )
+		);
+	}, [ dispatch ] );
 
 	if ( visible.length === 0 ) {
 		return null;
 	}
 
-	const handleDismiss = ( blogId: number, postId: number ) => {
+	const handleDismiss = ( rec: OonRec ) => {
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_discover_new_blogs_dismiss', {
-				blog_id: blogId,
-				post_id: postId,
+				blog_id: rec.blogId,
+				post_id: rec.postId,
 			} )
 		);
-		dismissBlog( blogId );
+		recordOonInteract( rec, OON_ACTIONS.SITE_DISMISSED );
+		dismissBlog( rec.blogId );
+	};
+
+	const handleOpen = ( rec: OonRec ) => {
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_discover_new_blogs_post_click', {
+				blog_id: rec.blogId,
+				post_id: rec.postId,
+			} )
+		);
+		recordOonInteract( rec, OON_ACTIONS.POST_CLICKED );
+	};
+
+	const handleFollowToggle = ( rec: OonRec, isFollowing: boolean ) => {
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_discover_new_blogs_follow_toggle', {
+				blog_id: rec.blogId,
+				post_id: rec.postId,
+				following: isFollowing,
+			} )
+		);
+		recordOonInteract(
+			rec,
+			isFollowing ? OON_ACTIONS.SITE_SUBSCRIBED : OON_ACTIONS.SITE_UNSUBSCRIBED
+		);
 	};
 
 	const handleMore = () => {
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_discover_new_blogs_more_click', { page: page + 1 } )
 		);
+		// "More like this" is a reaction to the cards on screen: log it against each.
+		visible.forEach( ( rec ) => recordOonInteract( rec, OON_ACTIONS.MORE_CLICKED ) );
 		setPage( page + 1 );
 	};
 
@@ -84,6 +118,8 @@ export default function DiscoverNewBlogs( { recs, dismissBlog, hide }: Props ) {
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_discover_new_blogs_hide', { count: visible.length } )
 		);
+		// Hide applies to every card on screen: log the annoyance against each.
+		visible.forEach( ( rec ) => recordOonInteract( rec, OON_ACTIONS.MODULE_HIDDEN ) );
 		hide();
 	};
 
@@ -99,28 +135,15 @@ export default function DiscoverNewBlogs( { recs, dismissBlog, hide }: Props ) {
 			</div>
 
 			<ul className="reader-discover-new-blogs__list">
-				{ visible.map( ( rec ) => (
+				{ visible.map( ( rec, uiPosition ) => (
 					<OonRecCard
 						key={ `${ rec.blogId }-${ rec.postId }` }
 						rec={ rec }
-						onDismiss={ () => handleDismiss( rec.blogId, rec.postId ) }
-						onOpen={ () =>
-							dispatch(
-								recordReaderTracksEvent( 'calypso_reader_discover_new_blogs_post_click', {
-									blog_id: rec.blogId,
-									post_id: rec.postId,
-								} )
-							)
-						}
-						onFollowToggle={ ( isFollowing ) =>
-							dispatch(
-								recordReaderTracksEvent( 'calypso_reader_discover_new_blogs_follow_toggle', {
-									blog_id: rec.blogId,
-									post_id: rec.postId,
-									following: isFollowing,
-								} )
-							)
-						}
+						uiPosition={ uiPosition }
+						onDismiss={ () => handleDismiss( rec ) }
+						onOpen={ () => handleOpen( rec ) }
+						onFollowToggle={ ( isFollowing ) => handleFollowToggle( rec, isFollowing ) }
+						onImpression={ handleImpression }
 					/>
 				) ) }
 			</ul>

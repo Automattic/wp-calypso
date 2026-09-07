@@ -33,6 +33,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { MOCK_OON_RECS, MOCK_DEFAULT_USER_ID } from './mock-data';
+import { buildRailcar } from './tracks';
 import type { OonRec, OonRecsSnapshot } from './types';
 
 const USE_MOCK = true; // TODO(READ-542): false once the endpoint exists.
@@ -170,11 +171,22 @@ export function useOonRecs(): UseOonRecsResult {
 		);
 	}, [ currentUserId ] );
 
-	// --- apply local dismissals -------------------------------------------
-	const recs = useMemo( () => {
+	// --- railcars (READ-543) ------------------------------------------------
+	// One railcar per rec per snapshot, minted once so every render / interact
+	// for the same card shares an id. `fetch_position` is the snapshot rank.
+	// The endpoint should send these; minting here is the mock-mode fallback.
+	const recsWithRailcars = useMemo( () => {
 		const all = snapshot?.recs ?? [];
-		return all.filter( ( r ) => ! dismissedBlogs.has( r.blogId ) );
-	}, [ snapshot, dismissedBlogs ] );
+		return all.map( ( rec, index ) =>
+			rec.railcar ? rec : { ...rec, railcar: buildRailcar( rec, index + 1 ) }
+		);
+	}, [ snapshot ] );
+
+	// --- apply local dismissals -------------------------------------------
+	const recs = useMemo(
+		() => recsWithRailcars.filter( ( r ) => ! dismissedBlogs.has( r.blogId ) ),
+		[ recsWithRailcars, dismissedBlogs ]
+	);
 
 	return {
 		recs,

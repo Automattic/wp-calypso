@@ -73,6 +73,25 @@ like the Discover feed around it. The mock therefore points at real, public
 WordPress.com posts. An error post (deleted / private / 404) renders nothing,
 which doubles as the client half of the serve-time guard.
 
+## TrainTracks (READ-543)
+
+Every rec carries a railcar (`{ railcar, fetch_algo: 'cluster_rec_v0', fetch_position,
+rec_blog_id, rec_post_id }`). The endpoint should mint these; until it exists the hook
+mints one per rec per snapshot (`buildRailcar`) so all events for a card share an id.
+
+| event                          | when                                | `action`                                                               |
+| ------------------------------ | ----------------------------------- | ---------------------------------------------------------------------- |
+| `calypso_traintracks_render`   | card 60% visible, once per railcar  | — (`ui_algo` `reader_recent_discover_new_blogs`, `ui_position` = slot) |
+| `calypso_traintracks_interact` | title click                         | `recommended_post_clicked`                                             |
+|                                | Subscribe / Unsubscribe             | `recommended_site_subscribed` / `recommended_site_unsubscribed`        |
+|                                | X                                   | `recommended_site_dismissed`                                           |
+|                                | More like this (per card on screen) | `recommended_more_clicked`                                             |
+|                                | Hide (per card on screen)           | `recommended_module_hidden`                                            |
+
+The `calypso_reader_discover_new_blogs_*` Tracks events from READ-542 fire alongside.
+`_render` now fires on the first card impression (not on mount), so it counts the same
+thing as the TrainTracks renders. Helpers live in `tracks.ts`.
+
 ## Files
 
 | file                  | role                                                                                           |
@@ -81,6 +100,7 @@ which doubles as the client half of the serve-time guard.
 | `use-oon-recs.ts`     | data hook — recs, dismissBlog (local + recommended-site dismiss), hide; mock behind `USE_MOCK` |
 | `mock-data.ts`        | fixtures keyed by user id; mirrors `wp-content/lib/reader-oon-recs/fixtures/oon-recs.json`     |
 | `placeholder.tsx`     | card-shaped loading state so the block keeps its height while posts hydrate                    |
+| `tracks.ts`           | TrainTracks helpers: railcar minting, render + interact (READ-543)                             |
 | `card.tsx`            | `usePost` hydration + site icon/name, Subscribe, X, title, excerpt (per the design)            |
 | `types.ts`            | `OonRec` / `OonRecsSnapshot` — the endpoint shape                                              |
 | `style.scss`          | module + card styles                                                                           |
@@ -91,4 +111,4 @@ which doubles as the client half of the serve-time guard.
 1. Flip `USE_MOCK` to `false` and point the hook at the endpoint once it ships.
 2. Send dismiss to the server (`POST …/blogs-you-dont-follow/dismiss`) instead of
    `localStorage` (READ-542 layer 3).
-3. A/B assignment + fuller Tracks per READ-543.
+3. ExPlat assignment for the A/B (READ-543) — needs the experiment name.
