@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@wordpress/components';
-import { Icon, check } from '@wordpress/icons';
+import { Icon, check, plus, lineSolid } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -9,17 +9,28 @@ import {
 	useGetProductPricingInfo,
 	useTermPricingText,
 } from '../../hooks/use-marketplace';
+import { getMaxCartItemCount } from '../../lib/cart-items';
 import type { ShoppingCartItem, TermPricingType } from '../../types';
 
 import './style.scss';
 
 type ItemProps = {
 	item: ShoppingCartItem;
+	count?: number;
 	onRemoveItem?: ( item: ShoppingCartItem ) => void;
+	onIncrementItem?: ( item: ShoppingCartItem ) => void;
+	onDecrementItem?: ( item: ShoppingCartItem ) => void;
 	termPricing?: TermPricingType;
 };
 
-export default function ShoppingCartMenuItem( { item, onRemoveItem, termPricing }: ItemProps ) {
+export default function ShoppingCartMenuItem( {
+	item,
+	count = 1,
+	onRemoveItem,
+	onIncrementItem,
+	onDecrementItem,
+	termPricing,
+}: ItemProps ) {
 	const translate = useTranslate();
 	const userProducts = useSelector( getProductsList );
 
@@ -44,6 +55,12 @@ export default function ShoppingCartMenuItem( { item, onRemoveItem, termPricing 
 		item,
 		termPricing
 	);
+
+	// Pressable RAM addons are purchased once per site, so their max is 1 and the
+	// stepper is hidden entirely.
+	const maxQuantity = getMaxCartItemCount( item );
+	const showQuantityStepper = !! ( onIncrementItem && onDecrementItem ) && maxQuantity > 1;
+	const isAtMaxQuantity = count >= maxQuantity;
 
 	return (
 		<li className="shopping-cart__menu-list-item">
@@ -75,15 +92,37 @@ export default function ShoppingCartMenuItem( { item, onRemoveItem, termPricing 
 					) }
 				</div>
 			</div>
-			{ onRemoveItem && (
-				<Button
-					className="shopping-cart__menu-item-remove-button"
-					variant="link"
-					onClick={ () => onRemoveItem( item ) }
-				>
-					{ translate( 'Remove' ) }
-				</Button>
-			) }
+			<div className="shopping-cart__menu-list-item-actions">
+				{ showQuantityStepper && (
+					<div className="shopping-cart__menu-item-quantity">
+						<Button
+							className="shopping-cart__menu-item-quantity-button"
+							icon={ lineSolid }
+							label={ translate( 'Remove one' ) }
+							onClick={ () => onDecrementItem?.( item ) }
+							size="small"
+						/>
+						<span className="shopping-cart__menu-item-quantity-count">{ count }</span>
+						<Button
+							className="shopping-cart__menu-item-quantity-button"
+							icon={ plus }
+							label={ translate( 'Add one' ) }
+							onClick={ () => onIncrementItem?.( item ) }
+							disabled={ isAtMaxQuantity }
+							size="small"
+						/>
+					</div>
+				) }
+				{ onRemoveItem && (
+					<Button
+						className="shopping-cart__menu-item-remove-button"
+						variant="link"
+						onClick={ () => onRemoveItem( item ) }
+					>
+						{ translate( 'Remove' ) }
+					</Button>
+				) }
+			</div>
 		</li>
 	);
 }

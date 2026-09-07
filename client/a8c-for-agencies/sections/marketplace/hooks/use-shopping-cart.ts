@@ -5,6 +5,7 @@ import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-prod
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { MarketplaceTypeContext, TermPricingContext } from '../context';
+import { addCartItem, decrementCartItem, removeCartItemGroup } from '../lib/cart-items';
 import { getPressableMemoryTarget, isPressablePhpMemoryAddon } from '../lib/pressable-memory-addon';
 import { getSelectedItemsStorageKey } from '../lib/shopping-cart-storage';
 import { CART_URL_HASH_FRAGMENT } from '../shopping-cart';
@@ -153,11 +154,27 @@ export default function useShoppingCart() {
 		} );
 	}, [ isTermPricingEnabled, selectedCartItems, termPricing ] );
 
+	// Removing an item from the cart clears every copy of it, since the cart
+	// groups identical items into a single row.
 	const onRemoveCartItem = useCallback(
 		( item: ShoppingCartItem ) => {
-			setAndCacheSelectedItems(
-				updatedSelectedCartItems.filter( ( selectedCartItem ) => selectedCartItem !== item )
-			);
+			setAndCacheSelectedItems( removeCartItemGroup( updatedSelectedCartItems, item ) );
+		},
+		[ updatedSelectedCartItems, setAndCacheSelectedItems ]
+	);
+
+	// Adds one more copy of an item already in the cart.
+	const onIncrementCartItem = useCallback(
+		( item: ShoppingCartItem ) => {
+			setAndCacheSelectedItems( addCartItem( updatedSelectedCartItems, item ) );
+		},
+		[ updatedSelectedCartItems, setAndCacheSelectedItems ]
+	);
+
+	// Removes a single copy of an item, leaving any remaining copies in place.
+	const onDecrementCartItem = useCallback(
+		( item: ShoppingCartItem ) => {
+			setAndCacheSelectedItems( decrementCartItem( updatedSelectedCartItems, item ) );
 		},
 		[ updatedSelectedCartItems, setAndCacheSelectedItems ]
 	);
@@ -170,6 +187,8 @@ export default function useShoppingCart() {
 		selectedCartItems: updatedSelectedCartItems,
 		setSelectedCartItems: setAndCacheSelectedItems,
 		onRemoveCartItem,
+		onIncrementCartItem,
+		onDecrementCartItem,
 		onClearCart,
 		showCart,
 		setShowCart,
