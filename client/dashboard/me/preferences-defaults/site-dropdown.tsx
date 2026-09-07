@@ -53,8 +53,8 @@ export default function PreferencesLoginSiteDropdown( {
 						name === url
 							? name
 							: sprintf(
-									/* translators: 1: site title, 2: site URL, e.g. "My Site — example.com" */
-									__( '%1$s — %2$s' ),
+									/* translators: 1: site title, 2: site URL, e.g. "My Site (example.com)" */
+									__( '%1$s (%2$s)' ),
 									name,
 									url
 							  ),

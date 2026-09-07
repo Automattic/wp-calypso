@@ -313,7 +313,7 @@ describe( '<PreferencesDefaults>', () => {
 			renderPage();
 
 			await expect(
-				screen.findByDisplayValue( 'Primary Site — primary.example.com' )
+				screen.findByDisplayValue( 'Primary Site (primary.example.com)' )
 			).resolves.toBeVisible();
 		} );
 
@@ -328,7 +328,7 @@ describe( '<PreferencesDefaults>', () => {
 			renderPage();
 
 			await currentUser.click(
-				await screen.findByDisplayValue( 'Primary Site — primary.example.com' )
+				await screen.findByDisplayValue( 'Primary Site (primary.example.com)' )
 			);
 			await currentUser.click( await screen.findByRole( 'option', { name: /Other Site/ } ) );
 			await currentUser.click( saveButtonFor( 'Primary site' ) );
