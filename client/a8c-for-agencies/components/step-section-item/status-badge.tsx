@@ -14,11 +14,19 @@ export default function StatusBadge( {
 } ) {
 	const { tooltip, isRounded, intent, children, className, ...restProps } = statusProps || {};
 
-	const badge = (
+	const badge = isRounded ? (
+		<span
+			className={ clsx(
+				'step-section-item__status-indicator',
+				className,
+				intent && `step-section-item__status-indicator--${ intent }`
+			) }
+		>
+			{ children ?? '' }
+		</span>
+	) : (
 		<Badge
-			className={ clsx( 'step-section-item__status', className, {
-				'step-section-item__status--rounded': isRounded,
-			} ) }
+			className={ clsx( 'step-section-item__status', className ) }
 			intent={ intent }
 			{ ...restProps }
 		>

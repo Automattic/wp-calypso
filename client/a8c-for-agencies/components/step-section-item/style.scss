@@ -70,15 +70,6 @@
 		}
 	}
 
-	&.step-section-item__status--rounded {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		width: 24px;
-		height: 24px;
-		padding: 0;
-	}
-
 	.step-section-item__status-wrapper {
 		margin-left: auto;
 	}
@@ -115,4 +106,24 @@
 
 .sidebar__menu-icon {
 	fill: currentColor;
+}
+
+.step-section-item__status-indicator {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	@include heading-small;
+
+	&.step-section-item__status-indicator--high {
+		background-color: var(--color-error-5);
+		color: var(--color-error-80);
+	}
+
+	&.step-section-item__status-indicator--medium {
+		background-color: var(--color-warning-5);
+		color: var(--color-warning-80);
+	}
 }
