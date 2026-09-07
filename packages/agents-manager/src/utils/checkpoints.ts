@@ -1,6 +1,6 @@
-import { store as coreStore } from '@wordpress/core-data';
-import { dispatch, select } from '@wordpress/data';
+import { editGlobalStyles, getEditedGlobalStyles, type GlobalStylesRecord } from './global-styles';
 import { getSiteLogo, setSiteLogo, type SiteLogo } from './site-logo';
+import { getToolCallIdFromConversationHistory } from './tool-call-history';
 
 /**
  * AM-owned checkpoint store: in-memory, per page load, keyed by tool call id.
@@ -27,7 +27,11 @@ export const checkpointKeys = {
 	LOGO: 'logo',
 } as const;
 
-const THEME_KEYS: string[] = [ checkpointKeys.COLOR, checkpointKeys.FONT, checkpointKeys.BUTTON ];
+export const THEME_CHECKPOINT_KEYS: string[] = [
+	checkpointKeys.COLOR,
+	checkpointKeys.FONT,
+	checkpointKeys.BUTTON,
+];
 
 export const RESTORE_CHECKPOINT_TOOL_ID = 'big_sky__restore_checkpoint';
 
@@ -40,18 +44,11 @@ export interface CheckpointMetadata {
 	restoredCheckpointToolId?: string;
 }
 
-// A type alias, not an interface: interfaces have no implicit index
-// signature, so they do not satisfy the `Record< string, unknown >` below.
-type GlobalStylesSnapshot = {
-	settings: Record< string, unknown >;
-	styles: Record< string, unknown >;
-};
-
 export interface CheckpointRecord extends CheckpointMetadata {
 	id: string;
 	checkpointKeys: string[];
 	createdAt: number;
-	themeBeforeUpdate?: GlobalStylesSnapshot;
+	themeBeforeUpdate?: Required< GlobalStylesRecord >;
 	logoBeforeUpdate?: SiteLogo;
 }
 
@@ -61,58 +58,18 @@ const records = new Map< string, CheckpointRecord >();
 // live edited record, and non-serializable values must not survive into them.
 const deepClone = < T >( value: T ): T => JSON.parse( JSON.stringify( value ) );
 
-interface CoreSelect {
-	__experimentalGetCurrentGlobalStylesId?: () => string | undefined;
-	getEditedEntityRecord: (
-		kind: string,
-		name: string,
-		id: string
-	) =>
-		| { settings?: Record< string, unknown >; styles?: Record< string, unknown > }
-		| false
-		| undefined;
-}
+function captureThemeSnapshot(): Required< GlobalStylesRecord > | undefined {
+	const globalStyles = getEditedGlobalStyles();
 
-interface CoreDispatch {
-	editEntityRecord: (
-		kind: string,
-		name: string,
-		id: string,
-		edits: Record< string, unknown >,
-		options: { undoIgnore: boolean }
-	) => void;
-}
-
-// `select`/`dispatch` return `undefined` on surfaces where the `core-data`
-// store is not registered — every access stays optional.
-const getGlobalStylesId = () =>
-	( select( coreStore ) as CoreSelect | undefined )?.__experimentalGetCurrentGlobalStylesId?.();
-
-function captureThemeSnapshot(): GlobalStylesSnapshot | undefined {
-	const globalStylesId = getGlobalStylesId();
-	if ( ! globalStylesId ) {
-		return undefined;
-	}
-
-	const globalStyles = ( select( coreStore ) as CoreSelect | undefined )?.getEditedEntityRecord(
-		'root',
-		'globalStyles',
-		globalStylesId
-	);
-	if ( ! globalStyles ) {
-		return undefined;
-	}
-
-	return deepClone( {
-		settings: globalStyles.settings || {},
-		styles: globalStyles.styles || {},
-	} );
+	return globalStyles && deepClone( globalStyles.record );
 }
 
 // Throws instead of no-opping when the snapshot or target is missing — a
 // silent skip would let the agent report an undo that never happened.
 function restoreThemeSnapshot( checkpoint: CheckpointRecord ): void {
-	const restoresTheme = checkpoint.checkpointKeys.some( ( key ) => THEME_KEYS.includes( key ) );
+	const restoresTheme = checkpoint.checkpointKeys.some( ( key ) =>
+		THEME_CHECKPOINT_KEYS.includes( key )
+	);
 	if ( ! restoresTheme ) {
 		return;
 	}
@@ -121,23 +78,12 @@ function restoreThemeSnapshot( checkpoint: CheckpointRecord ): void {
 		throw new Error( 'Checkpoint has no global-styles snapshot to restore.' );
 	}
 
-	const globalStylesId = getGlobalStylesId();
-	if ( ! globalStylesId ) {
+	const globalStyles = getEditedGlobalStyles();
+	if ( ! globalStyles ) {
 		throw new Error( 'Global styles are unavailable to restore into.' );
 	}
 
-	const coreDispatch = dispatch( coreStore ) as CoreDispatch | undefined;
-	if ( ! coreDispatch ) {
-		throw new Error( 'Global styles are unavailable to restore into.' );
-	}
-
-	coreDispatch.editEntityRecord(
-		'root',
-		'globalStyles',
-		globalStylesId,
-		checkpoint.themeBeforeUpdate,
-		{ undoIgnore: true }
-	);
+	editGlobalStyles( globalStyles.id, checkpoint.themeBeforeUpdate );
 }
 
 function restoreLogoSnapshot( checkpoint: CheckpointRecord ): void {
@@ -188,6 +134,45 @@ export function getCheckpoint( id: string ): CheckpointRecord | undefined {
 
 export function clearCheckpoint( id: string ): void {
 	records.delete( id );
+}
+
+/**
+ * Runs an ability's write under a checkpoint keyed by its tool call, so
+ * `restore-checkpoint` can undo it. The first snapshot for a call wins — a
+ * repeat must not overwrite the pre-change state — and a write that throws or
+ * rejects drops its checkpoint, so no undo is offered for a change that never
+ * happened. Without a call id the write runs uncheckpointed.
+ */
+export async function withCheckpoint< T >(
+	{
+		toolId,
+		toolCallId,
+		keys,
+		summary,
+	}: {
+		toolId: string;
+		/** The client's id for this call; read from the conversation history when absent. */
+		toolCallId?: string;
+		keys: string[];
+		summary: string;
+	},
+	write: () => T | Promise< T >
+): Promise< T > {
+	const callId = toolCallId ?? getToolCallIdFromConversationHistory( toolId );
+	const checkpointId = callId && ! hasCheckpoint( callId ) ? callId : null;
+
+	if ( checkpointId ) {
+		setCheckpoint( checkpointId, keys, { toolId, summary } );
+	}
+
+	try {
+		return await write();
+	} catch ( error ) {
+		if ( checkpointId ) {
+			clearCheckpoint( checkpointId );
+		}
+		throw error;
+	}
 }
 
 /** Returns all checkpoints, oldest first. */
