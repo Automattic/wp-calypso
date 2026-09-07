@@ -76,6 +76,14 @@ describe( 'normalizeThemeUpdate', () => {
 			settings: { color: { palette: { custom: [] } } },
 		} );
 	} );
+
+	it( 'clears a plain list without nesting it under custom', () => {
+		// An empty list has no slugs to infer from, so only the record can tell
+		// a preset list from a flat one like `spacing.units`.
+		expect( normalizeThemeUpdate( { settings: { spacing: { units: [] } } }, RECORD ) ).toEqual( {
+			settings: { spacing: { units: [] } },
+		} );
+	} );
 } );
 
 describe( 'applyThemeUpdate', () => {

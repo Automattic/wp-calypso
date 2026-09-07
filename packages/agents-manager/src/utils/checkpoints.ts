@@ -70,6 +70,7 @@ function restoreThemeSnapshot( checkpoint: CheckpointRecord ): void {
 	const restoresTheme = checkpoint.checkpointKeys.some( ( key ) =>
 		THEME_CHECKPOINT_KEYS.includes( key )
 	);
+
 	if ( ! restoresTheme ) {
 		return;
 	}
@@ -79,6 +80,7 @@ function restoreThemeSnapshot( checkpoint: CheckpointRecord ): void {
 	}
 
 	const globalStyles = getEditedGlobalStyles();
+
 	if ( ! globalStyles ) {
 		throw new Error( 'Global styles are unavailable to restore into.' );
 	}
@@ -171,6 +173,7 @@ export async function withCheckpoint< T >(
 		if ( checkpointId ) {
 			clearCheckpoint( checkpointId );
 		}
+
 		throw error;
 	}
 }

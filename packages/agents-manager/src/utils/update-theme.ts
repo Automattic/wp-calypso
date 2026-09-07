@@ -12,12 +12,18 @@ const hasSlug = ( value: unknown ): value is { slug: string } =>
 
 // Preset entries carry slugs, and WordPress keys each preset list by origin
 // (`{ default, theme, custom }`), so a flat list of them belongs under
-// `custom` — as does an empty list, which can only clear one the record holds.
+// `custom`. An empty list has no slugs to go on, so only the record decides:
+// nested where it holds a preset object, left flat where it holds a plain
+// list like `spacing.units` — which is what clearing one looks like.
 function nestPresets( value: ThemeJson, current: unknown ): ThemeJson {
 	const nested: ThemeJson = {};
 	for ( const [ key, child ] of Object.entries( value ) ) {
 		const currentChild = isRecord( current ) ? current[ key ] : undefined;
-		if ( Array.isArray( child ) && ( child.every( hasSlug ) || isRecord( currentChild ) ) ) {
+
+		if (
+			Array.isArray( child ) &&
+			( ( child.length > 0 && child.every( hasSlug ) ) || isRecord( currentChild ) )
+		) {
 			nested[ key ] = { custom: child };
 		} else if ( isRecord( child ) ) {
 			nested[ key ] = nestPresets( child, currentChild );
@@ -39,6 +45,7 @@ function prune( value: unknown, current: unknown ): ThemeJson | undefined {
 	const kept: ThemeJson = {};
 	for ( const [ key, child ] of Object.entries( value ) ) {
 		const currentChild = isRecord( current ) ? current[ key ] : undefined;
+
 		if ( isRecord( child ) ) {
 			const keptChild = prune( child, currentChild );
 			if ( keptChild ) {

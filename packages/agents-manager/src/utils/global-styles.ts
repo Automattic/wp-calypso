@@ -76,6 +76,7 @@ export async function waitForEditedGlobalStyles(): Promise< EditedGlobalStyles |
  */
 export function editGlobalStyles( id: string, edits: GlobalStylesRecord ): void {
 	const coreDispatch = dispatch( coreStore ) as CoreDispatch | undefined;
+
 	if ( ! coreDispatch ) {
 		throw new Error( 'Global styles are unavailable to edit.' );
 	}

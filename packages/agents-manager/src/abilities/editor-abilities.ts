@@ -26,8 +26,9 @@ import type { Ability } from './types';
 // list before then must drop the converter's rendering gate with it, or the
 // switch would run AM's copy but render the provider's picker.
 
-// Editor abilities Big Sky still ships a copy of. Migrating one from Big Sky =
-// add its folder under `abilities/` and list it here.
+// Editor abilities a provider still ships a copy of, so the switch below has
+// something to fall back to. Migrating one = add its folder under `abilities/`
+// and list it here.
 const MIGRATED_EDITOR_ABILITIES: Ability[] = [
 	applyUpdateThemeAbility,
 	restoreCheckpointAbility,

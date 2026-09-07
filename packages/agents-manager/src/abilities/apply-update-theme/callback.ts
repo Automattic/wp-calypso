@@ -37,11 +37,13 @@ export async function applyUpdateThemeCallback(
 	// The post editor does not load the record at boot; reading it starts the
 	// fetch, so wait for it rather than fail the first request.
 	const globalStyles = await waitForEditedGlobalStyles();
+
 	if ( ! globalStyles ) {
 		return errorResult( 'Global styles are unavailable to edit.', failureMessage );
 	}
 
 	const update = normalizeThemeUpdate( input, globalStyles.record );
+
 	if ( ! update ) {
 		return errorResult( 'Provide settings or styles with a change to apply.', failureMessage );
 	}
