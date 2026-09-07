@@ -24,22 +24,22 @@ const originalLocation = window.location;
 
 const STEPS = [
 	{ id: 'preparing', label: 'Preparing your site' },
-	{ id: 'designing', label: 'Choosing your design' },
+	{ id: 'designing', label: 'Creating your design' },
 	{ id: 'building', label: 'Building your pages' },
 	{ id: 'images', label: 'Adding your images' },
 	{ id: 'polishing', label: 'Polishing your site' },
-	{ id: 'publishing', label: 'Publishing your site' },
+	{ id: 'publishing', label: 'Doing final checks' },
 ];
 
 // A server checklist in the shape big_sky_build_wow_status_ui_steps() emits.
 const SERVER_STEPS = ( activeIndex: number ) =>
 	[
 		{ id: 'prepare', label: 'Preparing your site' },
-		{ id: 'design', label: 'Choosing your design' },
+		{ id: 'design', label: 'Creating your design' },
 		{ id: 'pages', label: 'Building your pages' },
 		{ id: 'images', label: 'Adding your images' },
 		{ id: 'polish', label: 'Polishing your site' },
-		{ id: 'publish', label: 'Publishing your site' },
+		{ id: 'publish', label: 'Doing final checks' },
 	].map( ( step, index ) => {
 		let state = 'pending';
 		if ( index < activeIndex ) {
@@ -143,10 +143,46 @@ describe( 'useSiteGeneration', () => {
 
 			const { onReady } = statusPollMock.mock.calls[ 0 ][ 0 ];
 			act( () => {
-				onReady();
+				// A live response with no site_editor_url: the captured URL stands.
+				onReady( { build_status: 'live' } );
 			} );
 			expect( window.location.assign ).toHaveBeenCalledWith(
 				'https://example.wordpress.com/wp-admin/site-editor.php'
+			);
+		} finally {
+			Object.defineProperty( window, 'location', {
+				value: originalLocation,
+				configurable: true,
+			} );
+		}
+	} );
+
+	it( 'redirects to the live editor URL, keeping the args the flow added to the captured one', () => {
+		Object.defineProperty( window, 'location', {
+			value: { ...originalLocation, assign: jest.fn() },
+			configurable: true,
+		} );
+
+		try {
+			renderHook( () =>
+				useSiteGeneration( {
+					siteIdentifier: '123',
+					editorUrl:
+						'https://example.wordpress.com/wp-admin/site-editor.php?easy-mode=true&source=dashboard',
+					steps: STEPS,
+				} )
+			);
+
+			const { onReady } = statusPollMock.mock.calls[ 0 ][ 0 ];
+			act( () => {
+				onReady( {
+					build_status: 'live',
+					site_editor_url:
+						'https://example.wordpress.com/wp-admin/site-editor.php?easy-mode=true&p=%2Fpage%2F12&canvas=edit',
+				} );
+			} );
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				'https://example.wordpress.com/wp-admin/site-editor.php?easy-mode=true&p=%2Fpage%2F12&canvas=edit&source=dashboard'
 			);
 		} finally {
 			Object.defineProperty( window, 'location', {

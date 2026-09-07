@@ -13,6 +13,7 @@ let mockIsChatLoaded = true;
 let mockConnectionStatus: string | undefined;
 let mockCurrentSupportInteraction: Record< string, unknown > | undefined;
 let mockConversation: { id: string; messages: Message[] } | null;
+let mockOdieChat: Record< string, unknown > | undefined;
 const mockGetZendeskConversation = jest.fn();
 const mockStartNewInteraction = jest.fn();
 
@@ -43,7 +44,7 @@ jest.mock( '../use-logged-out-session', () => ( {
 jest.mock( '../../data', () => ( {
 	useGetZendeskConversation: () => mockGetZendeskConversation,
 	useManageSupportInteraction: () => ( { startNewInteraction: mockStartNewInteraction } ),
-	useOdieChat: () => ( { data: undefined, isFetching: false } ),
+	useOdieChat: () => ( { data: mockOdieChat, isFetching: false } ),
 } ) );
 
 jest.mock( '../../data/use-current-support-interaction', () => ( {
@@ -100,7 +101,130 @@ beforeEach( () => {
 	mockConnectionStatus = undefined;
 	mockCurrentSupportInteraction = undefined;
 	mockConversation = null;
+	mockOdieChat = undefined;
 	mockGetZendeskConversation.mockImplementation( () => Promise.resolve( mockConversation ) );
+} );
+
+describe( 'useGetCombinedChat — merging the Odie and Zendesk halves', () => {
+	const userMessage = ( id: number, content: string ): Message =>
+		( {
+			content,
+			role: 'user',
+			type: 'message',
+			message_id: id,
+			metadata: {},
+		} ) as unknown as Message;
+
+	const countMessages = ( messages: Message[], content: string ) =>
+		messages.filter( ( message ) => message.content === content ).length;
+
+	it( 'keeps a pre-escalation user message single after the conversation is re-fetched', async () => {
+		mockCurrentSupportInteraction = {
+			uuid: 'int-1',
+			conversationId: 'conv-1',
+			odieId: 42,
+			status: 'open',
+		};
+		mockOdieChat = {
+			odieId: 42,
+			wpcomUserId: 99,
+			conversationId: null,
+			provider: 'odie',
+			status: 'loaded',
+			messages: [ userMessage( 10, 'How do I backup my site?' ) ],
+		};
+		mockConversation = { id: 'conv-1', messages: [ agentMessage( 1, 'Happiness Engineer here' ) ] };
+
+		const { result, rerender } = renderCombinedChat();
+
+		await waitFor( () => {
+			expect( mockGetZendeskConversation ).toHaveBeenCalledWith( 'conv-1' );
+			expect(
+				countMessages( result.current.mainChatState.messages, 'How do I backup my site?' )
+			).toBe( 1 );
+		} );
+
+		// Any reconnect re-runs the merge against the previous chat state. The second agent
+		// message marks when that re-merge has landed.
+		mockConversation = {
+			id: 'conv-1',
+			messages: [ agentMessage( 1, 'Happiness Engineer here' ), agentMessage( 2, 'still here' ) ],
+		};
+		act( () => {
+			mockConnectionStatus = 'connected';
+		} );
+		rerender();
+
+		await waitFor( () => {
+			expect( result.current.mainChatState.messages.some( ( m ) => m.message_id === 2 ) ).toBe(
+				true
+			);
+		} );
+
+		expect(
+			countMessages( result.current.mainChatState.messages, 'How do I backup my site?' )
+		).toBe( 1 );
+	} );
+
+	it( 'keeps a queued Zendesk message that the re-fetched conversation does not have yet', async () => {
+		mockCurrentSupportInteraction = {
+			uuid: 'int-1',
+			conversationId: 'conv-1',
+			odieId: 42,
+			status: 'open',
+		};
+		mockOdieChat = {
+			odieId: 42,
+			wpcomUserId: 99,
+			conversationId: null,
+			provider: 'odie',
+			status: 'loaded',
+			messages: [],
+		};
+		mockConversation = { id: 'conv-1', messages: [ agentMessage( 1, 'Happiness Engineer here' ) ] };
+
+		const { result, rerender } = renderCombinedChat();
+
+		await waitFor( () => {
+			expect( result.current.mainChatState.messages.some( ( m ) => m.message_id === 1 ) ).toBe(
+				true
+			);
+		} );
+
+		// The user sends a message that has not reached the server yet: it lives only in the
+		// chat state, carrying the temporary id the composer attaches for Zendesk sends.
+		act( () => {
+			result.current.setMainChatState( ( chat ) => ( {
+				...chat,
+				messages: [
+					...chat.messages,
+					{
+						content: 'my site is down',
+						role: 'user',
+						type: 'message',
+						metadata: { temporary_id: 'temp-1' },
+					} as unknown as Message,
+				],
+			} ) );
+		} );
+
+		mockConversation = {
+			id: 'conv-1',
+			messages: [ agentMessage( 1, 'Happiness Engineer here' ), agentMessage( 2, 'still here' ) ],
+		};
+		act( () => {
+			mockConnectionStatus = 'connected';
+		} );
+		rerender();
+
+		await waitFor( () => {
+			expect( result.current.mainChatState.messages.some( ( m ) => m.message_id === 2 ) ).toBe(
+				true
+			);
+		} );
+
+		expect( countMessages( result.current.mainChatState.messages, 'my site is down' ) ).toBe( 1 );
+	} );
 } );
 
 describe( 'useGetCombinedChat — message recovery on Smooch re-init', () => {

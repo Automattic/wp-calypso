@@ -3,6 +3,12 @@
  */
 import { useQuery as useReactQuery } from '@tanstack/react-query';
 import { act, render } from '@testing-library/react';
+import {
+	applyBlueprintSpec,
+	startBlueprintArchiveImport,
+	waitForAtomicTransferComplete,
+	waitForBlueprintImportComplete,
+} from 'calypso/landing/stepper/utils/blueprint-archive-import';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useSiteSpec } from 'calypso/lib/site-spec';
 import wpcom from 'calypso/lib/wp';
@@ -62,9 +68,36 @@ jest.mock( 'calypso/lib/logstash', () => ( {
 } ) );
 
 jest.mock( 'calypso/lib/site-spec/utils', () => ( {
+	getBlueprintSiteSpecConfig: jest.fn( () => ( { agentId: 'blueprint-site-spec' } ) ),
 	getBuildWowSiteSpecConfig: jest.fn( () => ( { agentId: 'build-wow-site-spec' } ) ),
 	getCiabSiteSpecConfig: jest.fn( () => ( { agentId: 'ciab-site-spec' } ) ),
 	getEarlyProvisionSiteSpecConfig: jest.fn( () => ( { agentId: 'early-provision-site-spec' } ) ),
+} ) );
+
+const mockSetPendingAction = jest.fn();
+
+jest.mock( '@wordpress/data', () => ( {
+	useDispatch: () => ( { setPendingAction: mockSetPendingAction } ),
+} ) );
+
+jest.mock( 'calypso/landing/stepper/stores', () => ( {
+	ONBOARD_STORE: 'automattic/onboard',
+} ) );
+
+// The wow-funnel helpers stay real so the funnel's readiness rules are exercised; only the
+// requests they make are stubbed.
+jest.mock( 'calypso/landing/stepper/utils/blueprint-archive-import', () => ( {
+	applyBlueprintSpec: jest.fn( () => Promise.resolve( true ) ),
+	getBlueprintArchiveSiteIdentifier: jest.fn(
+		( { siteSlug, siteId }: { siteSlug?: string | null; siteId?: string | null } ) =>
+			siteSlug || ( siteId && String( siteId ) !== '0' ? String( siteId ) : null )
+	),
+	getSiteAdminUrl: jest.fn( () => Promise.resolve( 'https://example.wordpress.com/wp-admin/' ) ),
+	getSiteEditorUrl: jest.fn( () => 'https://example.wordpress.com/wp-admin/site-editor.php' ),
+	logBlueprintArchiveEvent: jest.fn(),
+	startBlueprintArchiveImport: jest.fn( () => Promise.resolve() ),
+	waitForAtomicTransferComplete: jest.fn( () => Promise.resolve() ),
+	waitForBlueprintImportComplete: jest.fn( () => Promise.resolve() ),
 } ) );
 
 jest.mock( 'calypso/lib/wp', () => ( {
@@ -184,7 +217,7 @@ describe( 'SiteSpec early provisioning step', () => {
 		expect( redirect.searchParams.get( 'ref' ) ).toBe( 'site-card' );
 		expect( redirect.searchParams.get( 'source' ) ).toBe( 'site-overview' );
 		expect( redirect.searchParams.get( 'editorUrl' ) ).toBe(
-			'https://example.wordpress.com/wp-admin/site-editor.php?spec_id=spec-456&source=site-overview'
+			'https://example.wordpress.com/wp-admin/site-editor.php?source=site-overview'
 		);
 
 		expect( logToLogstashMock ).toHaveBeenCalledWith(
@@ -215,5 +248,78 @@ describe( 'SiteSpec early provisioning step', () => {
 		expect( siteSpecOptions.siteSpecConfig ).toBeUndefined();
 		expect( siteSpecOptions.onSpecConfirm ).toBeUndefined();
 		expect( wpcomPostMock ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'SiteSpec blueprint archive import', () => {
+	const mockUseSiteSpec = useSiteSpec as jest.Mock;
+	const navigation = { submit: jest.fn() };
+
+	const renderSiteSpec = () =>
+		render(
+			<SiteSpec navigation={ navigation } stepName="site-spec" flow="ai-site-builder-spec" />
+		);
+
+	const confirmSpec = async () => {
+		renderSiteSpec();
+
+		const siteSpecOptions = mockUseSiteSpec.mock.calls[ 0 ][ 0 ];
+		await act( async () => {
+			await siteSpecOptions.onSpecConfirm( { spec_id: 'spec-789' } );
+		} );
+	};
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockQueryParams = new URLSearchParams(
+			'blueprint_archive_import=1&blueprint_slug=961&siteSlug=example.wordpress.com&wow_funnel=blueprint'
+		);
+	} );
+
+	it( 'leaves the spec page for the waiting screen without waiting on the import first', async () => {
+		await confirmSpec();
+
+		expect( navigation.submit ).toHaveBeenCalled();
+		expect( mockSetPendingAction ).toHaveBeenCalledTimes( 1 );
+		// The poll belongs to the processing step now, so nothing has been asked for yet.
+		expect( waitForAtomicTransferComplete ).not.toHaveBeenCalled();
+		expect( waitForBlueprintImportComplete ).not.toHaveBeenCalled();
+	} );
+
+	it( 'polls the import from the waiting screen and hands back the site editor URL', async () => {
+		await confirmSpec();
+
+		const pendingAction = mockSetPendingAction.mock.calls[ 0 ][ 0 ];
+
+		await expect( pendingAction() ).resolves.toEqual( {
+			redirectTo: 'https://example.wordpress.com/wp-admin/site-editor.php',
+		} );
+
+		expect( waitForAtomicTransferComplete ).toHaveBeenCalledWith( 'example.wordpress.com', {
+			initialDelayMs: 0,
+		} );
+		expect( waitForBlueprintImportComplete ).toHaveBeenCalledWith( 'example.wordpress.com', {
+			initialDelayMs: 0,
+		} );
+		// Applied only after the restore, which replaces the site's options wholesale.
+		expect( applyBlueprintSpec ).toHaveBeenCalledWith( 'example.wordpress.com', 'spec-789', '961' );
+	} );
+
+	it( 'reports a failed import to the waiting screen rather than swallowing it', async () => {
+		( waitForBlueprintImportComplete as jest.Mock ).mockRejectedValueOnce(
+			new Error( 'Import failed' )
+		);
+
+		await confirmSpec();
+
+		const pendingAction = mockSetPendingAction.mock.calls[ 0 ][ 0 ];
+
+		await expect( pendingAction() ).rejects.toThrow();
+	} );
+
+	it( 'never starts a second import for a funnel run', async () => {
+		await confirmSpec();
+
+		expect( startBlueprintArchiveImport ).not.toHaveBeenCalled();
 	} );
 } );

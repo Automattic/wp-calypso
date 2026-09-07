@@ -156,51 +156,49 @@ const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
 	}, [ offer, percentDiscount, purchase ] );
 
 	return (
-		<>
-			<div className="jetpack-cancellation-offer__card">
-				{ isAkismet ? (
-					<AkismetLogo className="jetpack-cancellation-offer__logo" size={ { height: 36 } } />
-				) : (
-					<JetpackLogo className="jetpack-cancellation-offer__logo" full size={ 36 } />
-				) }
-				<h1 className="jetpack-cancellation-offer__headline">{ offerHeadline }</h1>
-				<p>
-					{ createInterpolateElement(
-						sprintf(
-							/* Translators: %(percentDiscount)d%% is a discount percentage like 15% or 20% */
-							__(
-								'A <strong>%(percentDiscount)d%%</strong> discount will be applied next time you are billed.'
-							),
-							{
-								percentDiscount,
-							}
-						),
-						{
-							strong: <strong />,
-						}
-					) }{ ' ' }
-					{ renewalCopy }
-				</p>
-				<p className="jetpack-cancellation-offer__tos">
-					{ createInterpolateElement(
+		<div className="jetpack-cancellation-offer__card">
+			{ isAkismet ? (
+				<AkismetLogo className="jetpack-cancellation-offer__logo" size={ { height: 36 } } />
+			) : (
+				<JetpackLogo className="jetpack-cancellation-offer__logo" full size={ 36 } />
+			) }
+			<h1 className="jetpack-cancellation-offer__headline">{ offerHeadline }</h1>
+			<p>
+				{ createInterpolateElement(
+					sprintf(
+						/* Translators: %(percentDiscount)d%% is a discount percentage like 15% or 20% */
 						__(
-							'Getting this discount means you agree to our <tosLink>Terms of Service</tosLink>. If you currently have automatic renewal enabled, you authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time. You understand <autoRenewalSupportPage>how your subscription works</autoRenewalSupportPage> and <faqCancellingSupportPage>how to cancel</faqCancellingSupportPage>.'
+							'A <strong>%(percentDiscount)d%%</strong> discount will be applied next time you are billed.'
 						),
 						{
-							tosLink: (
-								<a
-									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-							autoRenewalSupportPage: <InlineSupportLink supportContext="autorenewal" />,
-							faqCancellingSupportPage: <InlineSupportLink supportContext="cancel_purchase" />,
+							percentDiscount,
 						}
-					) }
-				</p>
-			</div>
-		</>
+					),
+					{
+						strong: <strong />,
+					}
+				) }{ ' ' }
+				{ renewalCopy }
+			</p>
+			<p className="jetpack-cancellation-offer__tos">
+				{ createInterpolateElement(
+					__(
+						'Getting this discount means you agree to our <tosLink>Terms of Service</tosLink>. If you currently have automatic renewal enabled, you authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time. You understand <autoRenewalSupportPage>how your subscription works</autoRenewalSupportPage> and <faqCancellingSupportPage>how to cancel</faqCancellingSupportPage>.'
+					),
+					{
+						tosLink: (
+							<a
+								href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+						autoRenewalSupportPage: <InlineSupportLink supportContext="autorenewal" />,
+						faqCancellingSupportPage: <InlineSupportLink supportContext="cancel_purchase" />,
+					}
+				) }
+			</p>
+		</div>
 	);
 };
 

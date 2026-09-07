@@ -13,7 +13,6 @@ import checkout from './checkout/reducer';
 import language from './language/reducer';
 import layoutFocus from './layout-focus/reducer';
 import masterbarVisibility from './masterbar-visibility/reducer';
-import preview from './preview/reducer';
 import section from './section/reducer';
 
 /**
@@ -94,7 +93,6 @@ const reducer = combineReducers( {
 	language,
 	layoutFocus,
 	masterbarVisibility,
-	preview,
 	mostRecentlySelectedSiteId,
 	section,
 	selectedSiteId,

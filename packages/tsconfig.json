@@ -63,7 +63,6 @@
 		{ "path": "./viewport" },
 		{ "path": "./viewport-react" },
 		{ "path": "./wpcom-checkout" },
-		{ "path": "./wpcom-smart-dictation" },
 		{ "path": "./verbum-block-editor" },
 		{ "path": "./wpcom-template-parts" },
 		{ "path": "./zendesk-client" }

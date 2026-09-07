@@ -139,7 +139,7 @@ function getEmptyViewHeading(): string {
 	if ( isReaderChatHost() ) {
 		return __( 'Ask me anything about this blog.', __i18n_text_domain__ );
 	}
-	return __( 'Howdy! How can I help you today?', __i18n_text_domain__ );
+	return __( 'What should we work on next?', __i18n_text_domain__ );
 }
 
 function getEmptyViewHelp(): string {

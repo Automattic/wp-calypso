@@ -21,6 +21,10 @@ const defaultValues: Required< UserPreferences > = {
 		useSitesAsLandingPage: false,
 		updatedAt: 0,
 	},
+	'logged-in-homepage': {
+		show: true,
+		updatedAt: 0,
+	},
 	'achievements-visibility': 'private',
 	'achievements-global-notifications': 'enabled',
 	'reader-profile-posts-visibility': 'public',
@@ -42,6 +46,7 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'account-recovery-interstitial-dismiss-count': 'acrdis',
 	'reader-landing-page': 'rdland',
 	'sites-landing-page': 'stland',
+	'logged-in-homepage': 'lohp',
 	'achievements-visibility': 'achvis',
 	'achievements-global-notifications': 'achnot',
 	'reader-profile-posts-visibility': 'postvis',

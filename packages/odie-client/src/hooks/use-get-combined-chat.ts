@@ -28,6 +28,15 @@ function isEqual( message1: Message, message2: Message ) {
 }
 
 /**
+ * A user message sent through Zendesk: only those carry a `temporary_id`, so Odie messages don't match.
+ * @param message - The message to check.
+ * @returns Whether the message is a Zendesk message sent by the user.
+ */
+function isQueuedZendeskMessage( message: Message ) {
+	return message.role === 'user' && !! message.metadata?.temporary_id;
+}
+
+/**
  * Deduplicate Zendesk messages by their temporary id. During connection recovery, some duplication can occur.
  * @param messages - The messages to deduplicate.
  * @returns The deduplicated messages.
@@ -209,7 +218,7 @@ export const useGetCombinedChat = (
 									...( deduplicateZDMessages( [
 										// During connection recovery, the user queued messages can be deleted. This ensure they remain. And `deduplicateZDMessages` takes of duplication.
 										...( isSameConversation
-											? prevChat.messages.filter( ( message ) => message.role === 'user' )
+											? prevChat.messages.filter( isQueuedZendeskMessage )
 											: [] ),
 										...conversation.messages,
 									] ) as Message[] ),

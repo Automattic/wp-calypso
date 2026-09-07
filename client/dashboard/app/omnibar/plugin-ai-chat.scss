@@ -1,11 +1,15 @@
-.omnibar .omnibar__menu svg.omnibar__ai-chat-icon {
-	width: 30px;
-	height: 30px;
+.omnibar .omnibar__menu .omnibar__ai-chat-icon {
+	display: flex;
 
-	@media ( min-width: 782px ) {
-		width: 22px;
-		height: 22px;
-		margin-inline-start: 2px;
-		margin-inline-end: 3px;
+	svg {
+		width: 30px;
+		height: 30px;
+
+		@media ( min-width: 782px ) {
+			width: 22px;
+			height: 22px;
+			margin-inline-start: 2px;
+			margin-inline-end: 3px;
+		}
 	}
 }

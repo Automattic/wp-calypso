@@ -45,6 +45,11 @@ import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { shouldSeeCookieBanner } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { login } from 'calypso/lib/paths';
+import {
+	REDIRECTED_PLAN_FLOWS,
+	getLegacyPlanFlowRedirect,
+	shouldRedirectLegacyPlanFlow,
+} from 'calypso/lib/signup/legacy-plan-flows';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
@@ -728,6 +733,8 @@ function setUpCSP( req, res, next ) {
 			'https://*.google.sm', // Google Ads remarketing pixels (San Marino)
 			'https://*.google.com.ng', // Google Ads remarketing pixels (Nigeria)
 			'https://*.google.co.ma', // Google Ads remarketing pixels (Morocco)
+			'https://*.google.ro', // Google Ads remarketing pixels (Morocco)
+			'https://*.googletagmanager.com', // Google Tag Manager
 			'https://gravatar.com', // Gravatar assets (root domain)
 			'https://linkmaker.itunes.apple.com', // Apple App Store badges
 			'https://cdn.smooch.io', // Smooch/Sunshine Conversations images
@@ -797,12 +804,13 @@ function setUpCSP( req, res, next ) {
 			'https://www.facebook.com', // Facebook Pixel tracking endpoint
 			'https://bat.bing.com', // Bing Ads API
 			'https://px.ads.linkedin.com', // LinkedIn ads pixel
-			'https://survey.survicate.com', // Survicate API
+			'https://*.survicate.com', // Survicate API
 			'*.sentry.io',
 			'*.reddit.com',
 			'https://video.bsky.app', // Bluesky video manifests (hls.js fetches the HLS playlist for Reader ATmosphere thread view)
 			'https://video.cdn.bsky.app', // Bluesky video CDN (segment URLs 302-redirect here)
 			'https://analytics.tiktok.com', // TikTok tracking pixel
+			'https://analytics-ipv6.tiktokw.us', // TikTok tracking pixel
 			'https://a.quora.com', //Quora tracking pixel
 			// Payment provider APIs (for tokenization and payment processing)
 			'*.stripe.com', // Stripe API calls
@@ -814,7 +822,9 @@ function setUpCSP( req, res, next ) {
 			'wss://*.zendesk.com', // Zendesk WebSocket connections
 			'https://ekr.zdassets.com', // Zendesk composer
 			'https://*.config.smooch.io', // Smooch/Sunshine Conversations config
-			'https://bzr.openai.com', // OpenAI Ads tracking pixel
+			'https://*.openai.com', // OpenAI Ads tracking pixel
+			'https://t.co', // Twitter tracking pixel
+			'https://analytics.twitter.com', // Twitter/X analytics tracking pixels
 		],
 		'report-uri': [ '/cspreport' ],
 	};
@@ -1047,6 +1057,26 @@ function wpcomPages( app ) {
 			next();
 		}
 	} );
+
+	// The tag pages no longer render logged out; redirect old links (and search
+	// engines) to the Discover tags tab. A 302 rather than a 301 because the
+	// response depends on login state and browsers cache 301s unconditionally.
+	// Logged-in users fall through to the client-side routes.
+	app.get(
+		[
+			'/:locale([a-z]{2,3}|[a-z]{2}-[a-z]{2})?/tags',
+			'/:locale([a-z]{2,3}|[a-z]{2}-[a-z]{2})?/tag/:tag?',
+		],
+		( req, res, next ) => {
+			if ( req.context.isLoggedIn ) {
+				next();
+				return;
+			}
+			const localePrefix = req.params.locale ? '/' + req.params.locale : '';
+			const selectedTag = req.params.tag ? encodeURIComponent( req.params.tag ) : 'dailyprompt';
+			res.redirect( 302, `${ localePrefix }/discover/tags?selectedTag=${ selectedTag }` );
+		}
+	);
 
 	// Redirect legacy `/menus` routes to the corresponding Customizer panel
 	// TODO: Move to `my-sites/customize` route defs once that section is isomorphic
@@ -1330,6 +1360,26 @@ export default function pages() {
 				variant.extraMiddleware
 			)
 		);
+	} );
+
+	// Legacy `/start/<plan>` flows are now served by Stepper's onboarding flow with the plan
+	// preselected. This has to be registered ahead of the section loop below, which binds
+	// `/start` for the signup section and would otherwise match first. The `/*` variant covers
+	// step segments — `/start/personal/domains` is a shape real `redirect_to` values use.
+	const legacyPlanFlowRoute = `/start/:flow(${ Object.keys( REDIRECTED_PLAN_FLOWS ).join( '|' ) })`;
+	app.get( [ legacyPlanFlowRoute, `${ legacyPlanFlowRoute }/*` ], ( req, res, next ) => {
+		if ( ! shouldRedirectLegacyPlanFlow( req.params.flow ) ) {
+			return next( 'route' );
+		}
+
+		// Last non-empty segment, so a trailing slash doesn't hide the locale.
+		const lastPathSegment = req.path.split( '/' ).filter( Boolean ).pop() ?? '';
+		const locale =
+			getLanguageSlugs().includes( lastPathSegment ) && ! isDefaultLocale( lastPathSegment )
+				? lastPathSegment
+				: '';
+
+		res.redirect( 302, getLegacyPlanFlowRedirect( req.params.flow, req.query, locale ) );
 	} );
 
 	sections

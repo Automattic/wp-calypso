@@ -21,9 +21,10 @@ import {
 import { getCurrentDashboard } from '../../app/routing';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import ComponentViewTracker from '../../components/component-view-tracker';
-import { isDomainRenewable, canSetAsPrimary, getDomainRenewalUrl } from '../../utils/domain';
+import { isDomainRenewable, canSetAsPrimary } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { getRenewalUrlFromPurchase } from '../../utils/purchase';
 import { AutoRenewModal } from './auto-renew-modal';
 import type { DomainSummary, Site, User } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
@@ -83,7 +84,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 						return;
 					}
 
-					window.location.href = getDomainRenewalUrl( domain, purchase );
+					window.location.href = getRenewalUrlFromPurchase( purchase );
 				},
 				isEligible: ( item: DomainSummary ) => isDomainRenewable( item ),
 			},

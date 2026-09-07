@@ -4,13 +4,15 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useResizeObserver } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate, type View } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { monetizeSubscriptionRoute } from '../../app/router/me';
+import { monetizeSubscriptionRoute, purchasesRoute } from '../../app/router/me';
 import { DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import RouterLinkButton from '../../components/router-link-button';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
 import { useMonetizeFieldDefinitions } from './dataviews';
 import { getMonetizeSubscriptionsPageTitle } from './title';
@@ -97,7 +99,14 @@ function MonetizeSubscriptions() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ getMonetizeSubscriptionsPageTitle() }
-					description={ __( 'Manage your Monetize subscriptions.' ) }
+					description={ createInterpolateElement(
+						__(
+							'Manage memberships and donations from other WordPress.com sites. Your own plans and purchases are in <link>Active upgrades</link>.'
+						),
+						{
+							link: <RouterLinkButton variant="link" to={ purchasesRoute.to } />,
+						}
+					) }
 				/>
 			}
 		>

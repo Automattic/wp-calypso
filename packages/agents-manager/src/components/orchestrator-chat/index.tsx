@@ -1634,6 +1634,7 @@ export default function OrchestratorChat( {
 			messages: currentMessages,
 			getChatComponent,
 			currentPostId,
+			isProcessing,
 		} );
 
 		const latestAgentMessageId = getLatestAgentMessageId( currentMessages );

@@ -167,7 +167,11 @@ export const siteRoute = createRoute( {
 		}
 
 		const migrationUrl = `/sites/${ siteSlug }/migration-overview`;
-		if ( isSiteMigrationInProgress( site ) && ! location.pathname.includes( migrationUrl ) ) {
+		if (
+			isSiteMigrationInProgress( site ) &&
+			! isSupportSession() &&
+			! location.pathname.includes( migrationUrl )
+		) {
 			throw dashboardRedirect( { to: migrationUrl } );
 		}
 
