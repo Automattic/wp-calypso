@@ -34,9 +34,12 @@ import type { ContextProvider, ToolProvider } from '../types';
 // Normalized, because the agent invokes `big-sky/apply-block-edits` as
 // `big_sky__apply_block_edits` — the registered form would never match.
 const CANVAS_BOUND_ABILITIES = new Set(
-	[ 'big-sky/apply-block-edits', 'big-sky/stream-page-design', 'big-sky/restore-checkpoint' ].map(
-		normalizeAbilityName
-	)
+	[
+		'big-sky/apply-block-edits',
+		'big-sky/stream-page-design',
+		'big-sky/restore-checkpoint',
+		'big-sky/save-changes',
+	].map( normalizeAbilityName )
 );
 
 // Abilities whose whole job is to move the canvas, so the move they cause must not
