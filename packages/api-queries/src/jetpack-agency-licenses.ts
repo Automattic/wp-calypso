@@ -3,13 +3,18 @@ import {
 	fetchJetpackLicenseCounts,
 	fetchJetpackLicenseDownloadUrl,
 	fetchJetpackLicenses,
+	fetchJetpackLicensesPage,
 	issueJetpackLicenses,
 	revokeJetpackLicense,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { agencySitesQueryKey } from './jetpack-agency-sites';
 import { queryClient } from './query-client';
-import type { FetchJetpackLicensesOptions, IssueJetpackLicensesInput } from '@automattic/api-core';
+import type {
+	FetchJetpackLicensesOptions,
+	FetchJetpackLicensesPageOptions,
+	IssueJetpackLicensesInput,
+} from '@automattic/api-core';
 
 export const jetpackAgencyLicensesQuery = (
 	agencyId: number,
@@ -18,6 +23,16 @@ export const jetpackAgencyLicensesQuery = (
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'jetpack-agency-licenses', options ],
 		queryFn: () => fetchJetpackLicenses( agencyId, options ),
+	} );
+
+// One page of licenses, with the totals the caller needs to paginate.
+export const paginatedJetpackAgencyLicensesQuery = (
+	agencyId: number,
+	options: FetchJetpackLicensesPageOptions
+) =>
+	queryOptions( {
+		queryKey: [ 'agency', agencyId, 'jetpack-agency-licenses', 'paginated', options ],
+		queryFn: () => fetchJetpackLicensesPage( agencyId, options ),
 	} );
 
 export const jetpackAgencyLicenseCountsQuery = ( agencyId: number ) =>

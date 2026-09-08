@@ -66,6 +66,18 @@ export interface FetchJetpackLicensesOptions {
 	sortDirection: JetpackLicenseSortDirection;
 }
 
+export interface FetchJetpackLicensesPageOptions extends FetchJetpackLicensesOptions {
+	page?: number;
+	perPage?: number;
+}
+
+export interface JetpackLicensesPage {
+	items: JetpackLicense[];
+	total_items: number;
+	items_per_page: number;
+	total_pages: number;
+}
+
 export interface JetpackLicenseCounts {
 	attached: number;
 	detached: number;
