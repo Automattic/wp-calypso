@@ -52,6 +52,16 @@ export function getWebMcpChannelExposure( ability: Ability ): WebMcpExposure {
 }
 
 /**
+ * Reads the channel-specific `meta.webmcp.consequential` hint. Only an explicit
+ * `true` counts; anything else, including malformed meta, leaves it unset.
+ */
+export function isWebMcpConsequential( ability: Ability ): boolean {
+	const channel: unknown = ability.meta?.webmcp;
+
+	return isRecord( channel ) && channel.consequential === true;
+}
+
+/**
  * Server provenance wins over a client marker, so a REST-backed ability that
  * also carries a client annotation keeps its server execution path.
  */

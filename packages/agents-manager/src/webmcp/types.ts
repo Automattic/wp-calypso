@@ -1,3 +1,7 @@
+/**
+ * The tool descriptor from the WebMCP draft: `ModelContextTool` with the three
+ * `ToolAnnotations` members it defines.
+ */
 export type WebMcpTool = {
 	name: string;
 	title?: string;
@@ -5,9 +9,8 @@ export type WebMcpTool = {
 	inputSchema: Record< string, unknown >;
 	annotations: {
 		readOnlyHint: boolean;
-		destructiveHint?: boolean;
-		idempotentHint?: boolean;
 		untrustedContentHint?: boolean;
+		consequentialHint?: boolean;
 	};
 	execute: (
 		input: Record< string, unknown >,
@@ -39,7 +42,7 @@ export type WebMcpExecutionContext = {
 export type WebMcpAbilityContract = {
 	description?: string;
 	inputSchema?: Record< string, unknown >;
-	destructive?: boolean;
+	consequential?: boolean;
 	prepareInput?: (
 		input: Record< string, unknown >,
 		context: WebMcpExecutionContext
