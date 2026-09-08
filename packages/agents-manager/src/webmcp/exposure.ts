@@ -6,7 +6,7 @@ import {
 	SHOW_TEMPLATE_ABILITY_NAME,
 	isWebMcpMutatingServerAbilityName,
 	isWebMcpServerAbilityName,
-} from './contracts';
+} from './ability-names';
 import type { Ability } from '../abilities/types';
 
 /**

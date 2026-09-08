@@ -1,9 +1,10 @@
+import { getAbilities, executeAbility } from '@wordpress/abilities';
 import apiFetch from '@wordpress/api-fetch';
 import { subscribe } from '@wordpress/data';
 import { mountWebMcpTools } from '../mount';
 import type { Ability } from '../../abilities/types';
 import type { ToolProvider } from '../../extension-types';
-import type { WebMcpModelContext, WebMcpTool } from '../types';
+import type { WebMcpAdapter, WebMcpModelContext, WebMcpTool } from '../types';
 
 jest.mock( '@wordpress/api-fetch' );
 jest.mock( '@wordpress/blocks', () => ( { parse: jest.fn() } ) );
@@ -28,9 +29,13 @@ const ability: Ability = {
 
 describe( 'mountWebMcpTools', () => {
 	const unsubscribe = jest.fn();
+	const runtimes: WebMcpAdapter[] = [];
 	let listener: ( () => unknown ) | undefined;
 
 	beforeEach( () => {
+		jest.useFakeTimers();
+		jest.mocked( getAbilities ).mockReset().mockReturnValue( [] );
+		jest.mocked( executeAbility ).mockReset().mockResolvedValue( {} );
 		jest.mocked( apiFetch ).mockReset().mockResolvedValue( [] );
 		unsubscribe.mockReset();
 		listener = undefined;
@@ -43,7 +48,13 @@ describe( 'mountWebMcpTools', () => {
 			} );
 	} );
 
+	afterEach( () => {
+		runtimes.splice( 0 ).forEach( ( runtime ) => runtime.dispose() );
+		jest.useRealTimers();
+	} );
+
 	function createHarness( toolProvider?: ToolProvider ) {
+		let currentProvider = toolProvider;
 		const registrations: Array< { signal?: AbortSignal; tool: WebMcpTool } > = [];
 		const modelContext: WebMcpModelContext = {
 			registerTool: jest.fn( async ( tool, options ) => {
@@ -52,12 +63,21 @@ describe( 'mountWebMcpTools', () => {
 		};
 		const onSyncError = jest.fn();
 		const runtime = mountWebMcpTools( {
-			getToolProvider: () => toolProvider,
+			getToolProvider: () => currentProvider,
 			modelContext,
 			onSyncError,
 		} );
 
-		return { modelContext, onSyncError, registrations, runtime };
+		runtimes.push( runtime );
+		return {
+			modelContext,
+			onSyncError,
+			registrations,
+			runtime,
+			setProvider: ( provider: ToolProvider ) => {
+				currentProvider = provider;
+			},
+		};
 	}
 
 	it( 'syncs on mount and on every abilities store change', async () => {
@@ -93,7 +113,7 @@ describe( 'mountWebMcpTools', () => {
 
 		// A sync requested in the same tick joins the initial one, so let that
 		// one settle before asking again.
-		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+		await jest.advanceTimersByTimeAsync( 0 );
 		expect( harness.onSyncError ).toHaveBeenCalledWith( expect.any( Error ) );
 		expect( harness.registrations ).toHaveLength( 0 );
 
@@ -115,5 +135,120 @@ describe( 'mountWebMcpTools', () => {
 
 		expect( unsubscribe ).toHaveBeenCalledTimes( 1 );
 		expect( registration.signal?.aborted ).toBe( true );
+	} );
+	it( 'preserves a REST opt-out ahead of a public registry copy', async () => {
+		jest.mocked( apiFetch ).mockResolvedValue( [
+			{
+				...ability,
+				meta: { webmcp: { public: false }, annotations: { readonly: true } },
+			},
+		] );
+		jest.mocked( getAbilities ).mockReturnValue( [ ability ] );
+		const harness = createHarness();
+		await harness.runtime.sync();
+
+		expect( harness.registrations ).toHaveLength( 0 );
+	} );
+
+	it( 'preserves a provider opt-out ahead of a public registry copy', async () => {
+		jest.mocked( getAbilities ).mockReturnValue( [ ability ] );
+		const harness = createHarness( {
+			getAbilities: async () => [ { ...ability, meta: { webmcp: { public: false } } } ],
+			executeAbility: jest.fn(),
+		} );
+		await harness.runtime.sync();
+
+		expect( harness.registrations ).toHaveLength( 0 );
+	} );
+
+	it( 'keeps a read on its registered owner until recovered REST tools are reconciled', async () => {
+		const readAbility: Ability = {
+			...ability,
+			name: 'demo/read-note',
+			meta: { public: true, annotations: { clientRegistered: true, readonly: true } },
+		};
+		jest.mocked( getAbilities ).mockReturnValue( [ readAbility ] );
+		jest
+			.mocked( apiFetch )
+			.mockRejectedValueOnce( new Error( 'Temporary failure' ) )
+			.mockResolvedValueOnce( [
+				{
+					...readAbility,
+					meta: { webmcp: { public: true, consequential: true }, annotations: { readonly: false } },
+				},
+			] )
+			.mockResolvedValue( {} );
+		const harness = createHarness();
+		await jest.advanceTimersByTimeAsync( 0 );
+		const original = harness.registrations[ 0 ];
+		expect( original.tool.annotations.readOnlyHint ).toBe( true );
+
+		await original.tool.execute( {} );
+		expect( executeAbility ).toHaveBeenCalledWith( 'demo/read-note', {} );
+		expect( apiFetch ).toHaveBeenCalledTimes( 1 );
+
+		await jest.advanceTimersByTimeAsync( 1000 );
+		expect( harness.registrations ).toHaveLength( 2 );
+		expect( original.signal?.aborted ).toBe( true );
+		await expect( original.tool.execute( {} ) ).rejects.toMatchObject( { name: 'AbortError' } );
+		const replacement = harness.registrations[ 1 ].tool;
+		expect( replacement.annotations ).toMatchObject( {
+			readOnlyHint: false,
+			consequentialHint: true,
+		} );
+		await replacement.execute( {} );
+		expect( apiFetch ).toHaveBeenLastCalledWith( expect.objectContaining( { method: 'POST' } ) );
+	} );
+
+	it( 'replaces registrations when the provider changes even with identical metadata', async () => {
+		const first: ToolProvider = {
+			getAbilities: async () => [ ability ],
+			executeAbility: jest.fn(),
+		};
+		const second: ToolProvider = {
+			getAbilities: async () => [ ability ],
+			executeAbility: jest.fn(),
+		};
+		const harness = createHarness( first );
+		await harness.runtime.sync();
+		const original = harness.registrations[ 0 ];
+		harness.setProvider( second );
+		await harness.runtime.sync();
+
+		expect( original.signal?.aborted ).toBe( true );
+		await expect( original.tool.execute( {} ) ).rejects.toMatchObject( { name: 'AbortError' } );
+		await harness.registrations[ 1 ].tool.execute( {} );
+		expect( second.executeAbility ).toHaveBeenCalledTimes( 1 );
+		expect( first.executeAbility ).not.toHaveBeenCalled();
+	} );
+
+	it( 'bounds failed discovery retries and cancels them after disposal', async () => {
+		jest.mocked( apiFetch ).mockRejectedValue( new Error( 'Offline' ) );
+		const harness = createHarness();
+		await jest.advanceTimersByTimeAsync( 30000 );
+		expect( apiFetch ).toHaveBeenCalledTimes( 4 );
+		expect( jest.getTimerCount() ).toBe( 0 );
+
+		harness.runtime.dispose();
+		const next = createHarness();
+		await jest.advanceTimersByTimeAsync( 0 );
+		expect( jest.getTimerCount() ).toBe( 1 );
+		next.runtime.dispose();
+		await jest.advanceTimersByTimeAsync( 30000 );
+		expect( apiFetch ).toHaveBeenCalledTimes( 5 );
+		expect( jest.getTimerCount() ).toBe( 0 );
+	} );
+
+	it( 'retries failed registration without stripping annotations', async () => {
+		jest.mocked( getAbilities ).mockReturnValue( [ ability ] );
+		const harness = createHarness();
+		jest
+			.mocked( harness.modelContext.registerTool )
+			.mockRejectedValueOnce( new TypeError( 'Temporarily unavailable' ) );
+		await jest.advanceTimersByTimeAsync( 1000 );
+
+		expect( harness.modelContext.registerTool ).toHaveBeenCalledTimes( 2 );
+		expect( harness.registrations[ 0 ].tool.annotations.untrustedContentHint ).toBe( true );
+		expect( jest.getTimerCount() ).toBe( 0 );
 	} );
 } );

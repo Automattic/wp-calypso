@@ -1,4 +1,4 @@
-import { WEBMCP_SERVER_ABILITY_NAMES } from '../contracts';
+import { WEBMCP_SERVER_ABILITY_NAMES } from '../ability-names';
 import {
 	getAbilityProvenance,
 	getWebMcpChannelExposure,
@@ -6,8 +6,6 @@ import {
 	shouldExposeWebMcpAbility,
 } from '../exposure';
 import type { Ability } from '../../abilities/types';
-
-jest.mock( '@wordpress/blocks', () => ( { parse: jest.fn() } ) );
 
 const createClientAbility = ( overrides: Partial< Ability > = {} ): Ability => ( {
 	name: 'big-sky/apply-block-edits',

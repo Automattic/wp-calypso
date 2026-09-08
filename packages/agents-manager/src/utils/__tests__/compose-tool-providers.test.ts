@@ -1,4 +1,4 @@
-import { deferToolProvider, mergeToolProviders } from '../compose-tool-providers';
+import { collectToolProviderAbilities, mergeToolProviders } from '../compose-tool-providers';
 import type { Ability } from '../../abilities/types';
 import type { ToolProvider } from '../../extension-types';
 
@@ -54,18 +54,45 @@ describe( 'mergeToolProviders', () => {
 	} );
 } );
 
-describe( 'deferToolProvider', () => {
-	it( 'serves nothing until the provider arrives, then reads it live', async () => {
-		const holder: { current?: ToolProvider } = {};
-		const deferred = deferToolProvider( () => holder.current );
-
-		expect( await deferred.getAbilities() ).toEqual( [] );
-		await expect( deferred.executeAbility( 'demo/read', {} ) ).rejects.toThrow( 'demo/read' );
-
-		holder.current = createProvider( [ createAbility( 'demo/read' ) ] );
-		expect( ( await deferred.getAbilities() ).map( ( ability ) => ability.name ) ).toEqual( [
-			'demo/read',
+describe( 'collectToolProviderAbilities', () => {
+	it( 'retains the winning owner and definition without changing callbacks', async () => {
+		const ability = { ...createAbility( 'demo/read' ), callback: jest.fn() };
+		const first = createProvider( [ ability ] );
+		const second = createProvider( [
+			createAbility( 'demo/read' ),
+			createAbility( 'demo/write' ),
 		] );
-		await expect( deferred.executeAbility( 'demo/read', {} ) ).resolves.toEqual( { ok: true } );
+		const collected = await collectToolProviderAbilities( [ first, second ] );
+
+		expect( collected.get( 'demo/read' ) ).toEqual( { ability, provider: first } );
+		expect( collected.get( 'demo/read' )?.ability ).toBe( ability );
+		expect( collected.get( 'demo/write' )?.provider ).toBe( second );
+		expect( first.getAbilities ).toHaveBeenCalledTimes( 1 );
+		expect( second.getAbilities ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'reports failed sources while preserving successful ones', async () => {
+		const first = createProvider( [] );
+		const error = new Error( 'Unavailable' );
+		jest.mocked( first.getAbilities ).mockRejectedValue( error );
+		const second = createProvider( [ createAbility( 'demo/read' ) ] );
+		const onError = jest.fn();
+		const collected = await collectToolProviderAbilities( [ first, second ], onError );
+
+		expect( [ ...collected.keys() ] ).toEqual( [ 'demo/read' ] );
+		expect( onError ).toHaveBeenCalledWith( error );
+		await expect( collectToolProviderAbilities( [ first ] ) ).rejects.toBe( error );
+	} );
+
+	it( 'resolves chat ownership again when provider abilities change', async () => {
+		const first = createProvider( [] );
+		const second = createProvider( [ createAbility( 'demo/read' ) ] );
+		const merged = mergeToolProviders( [ first, second ] );
+		await merged.getAbilities();
+		jest.mocked( first.getAbilities ).mockResolvedValue( [ createAbility( 'demo/read' ) ] );
+		await merged.executeAbility( 'demo/read', {} );
+
+		expect( first.executeAbility ).toHaveBeenCalledTimes( 1 );
+		expect( second.executeAbility ).not.toHaveBeenCalled();
 	} );
 } );

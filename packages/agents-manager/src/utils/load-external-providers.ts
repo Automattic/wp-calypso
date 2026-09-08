@@ -29,6 +29,7 @@ import { filterInteractiveUiCatalogs } from '../interactive-ui/catalogs';
 import { withAbilityCompletionBroadcast } from './ability-completion-broadcast';
 import { bigSkyPageContextProvider, isBigSkyEnabled } from './big-sky-page-context';
 import { withCanvasBinding, withCanvasGuard } from './canvas-guard';
+import { mergeToolProviders } from './compose-tool-providers';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isEditorPage } from './is-editor-page';
 import { isReaderChatAgent } from './is-reader-chat-agent';
