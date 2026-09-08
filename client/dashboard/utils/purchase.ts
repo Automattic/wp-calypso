@@ -203,6 +203,21 @@ export function isCloseToExpiration( purchase: Purchase ): boolean {
 	return isWithinNext( new Date( purchase.expiry_date ), threshold, 'days' );
 }
 
+// An early renewal pushes expiry_date past the trial's end_date while
+// is_within_period remains true; comparing the two dates catches that.
+// Both are day-granular UTC from the same backend arithmetic, so they
+// compare exactly for an un-renewed trial.
+export function isFreeTrialEndingOnExpiryDate( purchase: Purchase ): boolean {
+	const offer = purchase.introductory_offer;
+	if ( ! offer?.is_within_period || offer.cost_per_interval !== 0 ) {
+		return false;
+	}
+	if ( ! purchase.expiry_date || ! offer.end_date ) {
+		return false;
+	}
+	return ! isAfter( parseISO( purchase.expiry_date ), parseISO( offer.end_date ) );
+}
+
 export function creditCardExpiresBeforeSubscription( purchase: Purchase ): boolean {
 	if ( 'credit_card' !== purchase.payment_type ) {
 		return false;

@@ -2,6 +2,9 @@ import { StatsNoticeProps } from './types';
 
 export const PREMIUM_ANALYTICS_PREVIEW_FLAG = 'stats/premium-analytics-preview';
 
+/** The dashboard page, relative to the site's wp-admin. Where accepting the invitation lands. */
+export const PREMIUM_ANALYTICS_PAGE_PATH = 'admin.php?page=jetpack-premium-analytics-wp-admin';
+
 type PreviewCohortSignals = Pick<
 	StatsNoticeProps,
 	| 'isWpcom'

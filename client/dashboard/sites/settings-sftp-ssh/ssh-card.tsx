@@ -27,6 +27,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { Badge } from '@wordpress/ui';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
+import { useIntlLocale } from '../../app/locale';
 import { securitySshKeyRoute } from '../../app/router/me';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
@@ -129,7 +130,7 @@ export default function SshCard( {
 	const attachSshKeyMutation = useMutation( siteSshKeysAttachMutation( siteId ) );
 	const detachSshKeyMutation = useMutation( siteSshKeysDetachMutation( siteId ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const userLocale = user.locale_variant || user.language || 'en';
+	const userLocale = useIntlLocale();
 	const hasUserSshKeys = userSshKeys && userSshKeys.length > 0;
 	const [ formData, setFormData ] = useState< SshCardFormData >( {
 		connection_command: `ssh ${ sftpUsers[ 0 ]?.username }@ssh.wp.com`,

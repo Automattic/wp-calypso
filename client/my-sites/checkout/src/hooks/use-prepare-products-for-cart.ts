@@ -134,6 +134,7 @@ export default function usePrepareProductsForCart( {
 	} );
 	useAddRenewalBySubscriptionId( {
 		originalPurchaseId,
+		sitelessCheckoutType,
 		dispatch,
 		addHandler,
 	} );
@@ -465,10 +466,12 @@ function useAddRenewalItems( {
  */
 function useAddRenewalBySubscriptionId( {
 	originalPurchaseId,
+	sitelessCheckoutType,
 	dispatch,
 	addHandler,
 }: {
 	originalPurchaseId: string | number | null | undefined;
+	sitelessCheckoutType: SitelessCheckoutType;
 	dispatch: ( action: PreparedProductsAction ) => void;
 	addHandler: AddHandler;
 } ) {
@@ -510,12 +513,16 @@ function useAddRenewalBySubscriptionId( {
 				extra: {
 					purchaseId: subscriptionId,
 					purchaseType: 'renewal',
+					// The backend decides whether the cart is a siteless one from these
+					// flags alone, and rejects Akismet plans in a cart without them.
+					isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
+					isMarketplaceSitelessCheckout: sitelessCheckoutType === 'marketplace',
 				},
 			} )
 		);
 		debug( 'preparing renewals from subscription IDs', originalPurchaseId );
 		dispatch( { type: 'RENEWALS_ADD', products: cartItems } );
-	}, [ addHandler, dispatch, originalPurchaseId, translate ] );
+	}, [ addHandler, dispatch, originalPurchaseId, sitelessCheckoutType, translate ] );
 }
 
 function useAddProductFromSlug( {

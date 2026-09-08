@@ -15,6 +15,7 @@ import {
 	mightStillAutoRenew,
 	isExpiredWithNoAutoRenewAttemptsLeft,
 	creditCardExpiresBeforeSubscription,
+	isFreeTrialEndingOnExpiryDate,
 	getRenewalUrlFromPurchase,
 	getTitleForDisplay,
 	isPurchaseDowngradeEligible,
@@ -412,6 +413,71 @@ describe( 'creditCardExpiresBeforeSubscription', () => {
 					expiry_date: null as unknown as string,
 				} )
 			)
+		).toBe( false );
+	} );
+} );
+
+describe( 'isFreeTrialEndingOnExpiryDate', () => {
+	const freeTrial = ( overrides: Partial< Purchase > = {} ) =>
+		makePurchase( {
+			expiry_date: '2026-05-24T00:00:00+00:00',
+			introductory_offer: {
+				cost_per_interval: 0,
+				end_date: '2026-05-24T00:00:00+00:00',
+				is_within_period: true,
+			},
+			...overrides,
+		} as Partial< Purchase > );
+
+	test( 'is true while the trial is what the expiry date represents', () => {
+		expect( isFreeTrialEndingOnExpiryDate( freeTrial() ) ).toBe( true );
+	} );
+
+	test( 'is false once an early renewal has pushed the expiry past the trial', () => {
+		expect(
+			isFreeTrialEndingOnExpiryDate( freeTrial( { expiry_date: '2027-05-24T00:00:00+00:00' } ) )
+		).toBe( false );
+	} );
+
+	test( 'is false for a discounted introductory offer that is not free', () => {
+		expect(
+			isFreeTrialEndingOnExpiryDate(
+				freeTrial( {
+					introductory_offer: {
+						cost_per_interval: 12,
+						end_date: '2026-05-24T00:00:00+00:00',
+						is_within_period: true,
+					},
+				} as Partial< Purchase > )
+			)
+		).toBe( false );
+	} );
+
+	test( 'is false once the trial period is over', () => {
+		expect(
+			isFreeTrialEndingOnExpiryDate(
+				freeTrial( {
+					introductory_offer: {
+						cost_per_interval: 0,
+						end_date: '2026-05-24T00:00:00+00:00',
+						is_within_period: false,
+					},
+				} as Partial< Purchase > )
+			)
+		).toBe( false );
+	} );
+
+	test( 'is false for a purchase with no introductory offer', () => {
+		expect( isFreeTrialEndingOnExpiryDate( makePurchase( { introductory_offer: null } ) ) ).toBe(
+			false
+		);
+	} );
+
+	// The API returns no expiry date for some purchases even though the type
+	// says otherwise, and parsing it as a date throws.
+	test( 'is false when the purchase has no expiry date', () => {
+		expect(
+			isFreeTrialEndingOnExpiryDate( freeTrial( { expiry_date: null as unknown as string } ) )
 		).toBe( false );
 	} );
 } );

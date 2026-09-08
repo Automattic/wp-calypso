@@ -25,9 +25,9 @@ export function getPreselectedPlan( query: URLSearchParams ): PreselectablePlan 
 /**
  * The storage add-on named by `?storage=`, as a cart product.
  *
- * `feature_slug` is pinned to the 50GB add-on for every size, which is what the legacy
- * storage-addon step sent — the quantity is what distinguishes the tiers. Kept as-is so
- * carts built here match the ones built before; worth a separate look, not a silent change.
+ * `feature_slug` is pinned to the 50GB add-on for every size — the quantity is what
+ * distinguishes the tiers. Kept as-is so carts built here match the ones the legacy
+ * `/start/business` flow built; worth a separate look, not a silent change.
  */
 export function getPreselectedStorageAddOn(
 	query: URLSearchParams
