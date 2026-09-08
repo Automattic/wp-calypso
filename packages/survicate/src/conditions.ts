@@ -1,5 +1,5 @@
+import { isSupportSession } from '@automattic/calypso-support-session';
 import debug from './debug';
-import { isInSupportSession } from './support-session';
 
 export const SURVICATE_WORKSPACE_ID = 'e4794374cce15378101b63de24117572';
 
@@ -17,7 +17,7 @@ export function shouldLoadSurvicate( {
 	locale: string;
 	isMobile: boolean;
 } ): boolean {
-	if ( isInSupportSession() ) {
+	if ( isSupportSession() ) {
 		debug( 'shouldLoadSurvicate: skipping, support session' );
 		return false;
 	}

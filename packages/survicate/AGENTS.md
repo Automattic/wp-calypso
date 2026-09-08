@@ -92,49 +92,36 @@ because `_sva.setVisitorTraits` **merges** traits across calls (upsert), rather
 than replacing the whole set — so the visit-count push does not clobber the
 email/account-age traits, and vice versa.
 
-## Support sessions (`support-session.ts`)
+## Support sessions
 
 Surveys must never appear while a Happiness Engineer is working inside the user's
 account: they interrupt the session, and any answer is recorded against the account
-holder who never gave it. `isInSupportSession()` ORs two signals from
-`@automattic/calypso-support-session`:
+holder who never gave it.
 
-- `isSupportSession()` — support-user impersonation (`sessionStorage.boot_support_user`,
-  frozen at module load) or a "support next" session (the `isSupportSession` global).
-- `isSupportSessionProxy()` — a proxied view, from the `isSSP` global.
-
-Both globals come from the SSR'd document (`client/document/index.jsx`), which covers
-every surface this package runs on (Calypso and the Dashboard). `isSupportSessionProxy()`
-is deliberately **not** folded into `isSupportSession()` upstream — that helper's dozen
-other callers gate on the stronger token-backed condition — so check `isInSupportSession()`
-here rather than either one alone.
-
-Support sessions are guarded at **both** layers:
+Detection is `isSupportSession()` from `@automattic/calypso-support-session` — the same
+helper the rest of the codebase uses (see `client/dashboard/utils/domain-permissions.ts`).
+It covers both the `isSupportSession` global and support-user impersonation, so prefer it
+over reading `window.isSupportSession` directly. Guarded at two layers:
 
 1. **Load gate** — `shouldLoadSurvicate()` returns `false`, so the SDK script is never
    injected. This is the real fix: no script, no auto-campaigns, no events. Both
    consumers (`useSurvicate`, `addSurvicate`) already funnel through it.
-2. **Suppression** — `getSuppressionReason()` returns `'support_session'` first, so any
-   path that still reaches a loaded SDK is closed and pauses targeting.
+2. **Suppression** — `getSuppressionReason()` returns `'support_session'` first, covering
+   the `invokeSurvicateEvent()` call sites that fire without consulting the load gate.
 
-A support session neither begins nor ends within a page lifetime — the globals are
-SSR'd and `isSupportUserSession()` is frozen at module load — so there is no
-transition to handle and **nothing resumes**. In practice layer 1 means the SDK is
-never loaded in the first place, which makes layer 2 unreachable from our own
-consumers; it stays as the net for the `invokeSurvicateEvent()` call sites that fire
-without consulting the load gate. Should the net ever pause targeting, it simply stays
-paused: `resumeIfClear()` goes through `shouldSuppressSurvey()`, which never clears.
+A support session neither begins nor ends within a page lifetime, so there is no
+transition to handle and nothing to resume — `load-script.ts` needs no support-session
+handling of its own.
 
 **The wp-admin Survicate loader is a separate integration** (`class-survicate.php` in the
-Jetpack monorepo) and is not covered by anything here — it needs its own support-session
-guard.
+Jetpack monorepo) and is not covered here — it needs its own guard.
 
 ## Modal & Help Center coordination (defense-in-depth)
 
 Surveys must not cover the Help Center while a user is actively seeking support, nor
 draw over any other open modal dialog (onboarding modals, WP `Modal`, native
 `<dialog>`). The umbrella check is `shouldSuppressSurvey()` (`invoke-event.ts`):
-`isInSupportSession() || isHelpCenterOpen() || isModalOpen()`. The touch points — keep all of them:
+`isSupportSession() || isHelpCenterOpen() || isModalOpen()`. The touch points — keep all of them:
 
 1. **Open HC while a survey is showing** → `packages/data-stores/src/help-center/actions.ts`
    (`setShowHelpCenter`) calls `window._sva?.closeSurvey?.()` on open. (Note: that file

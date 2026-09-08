@@ -11,19 +11,19 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
-jest.mock( '../support-session', () => ( {
-	isInSupportSession: jest.fn( () => false ),
+jest.mock( '@automattic/calypso-support-session', () => ( {
+	isSupportSession: jest.fn( () => false ),
 } ) );
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isSupportSession } from '@automattic/calypso-support-session';
 import { select, subscribe } from '@wordpress/data';
 import { invokeSurvicateEvent, observeHelpCenter } from '../invoke-event';
-import { isInSupportSession } from '../support-session';
 
 const mockSelect = select as jest.Mock;
 const mockSubscribe = subscribe as unknown as jest.Mock;
 const mockRecordTracksEvent = recordTracksEvent as jest.Mock;
-const mockIsInSupportSession = isInSupportSession as jest.Mock;
+const mockIsSupportSession = isSupportSession as jest.Mock;
 
 function setHelpCenterOpen( open: boolean ) {
 	mockSelect.mockReturnValue( { isHelpCenterShown: () => open } );
@@ -33,7 +33,7 @@ describe( 'invokeSurvicateEvent', () => {
 	beforeEach( () => {
 		window._sva = undefined;
 		setHelpCenterOpen( false );
-		mockIsInSupportSession.mockReturnValue( false );
+		mockIsSupportSession.mockReturnValue( false );
 	} );
 
 	afterEach( () => {
@@ -160,7 +160,7 @@ describe( 'invokeSurvicateEvent', () => {
 		const closeSurvey = jest.fn();
 		window._sva = { invokeEvent, closeSurvey };
 
-		mockIsInSupportSession.mockReturnValue( true );
+		mockIsSupportSession.mockReturnValue( true );
 		invokeSurvicateEvent( 'testEvent' );
 
 		expect( invokeEvent ).not.toHaveBeenCalled();
@@ -176,7 +176,7 @@ describe( 'invokeSurvicateEvent', () => {
 		const invokeEvent = jest.fn();
 
 		invokeSurvicateEvent( 'testEvent' );
-		mockIsInSupportSession.mockReturnValue( true );
+		mockIsSupportSession.mockReturnValue( true );
 
 		window._sva = { invokeEvent };
 		window.dispatchEvent( new Event( 'SurvicateReady' ) );
@@ -189,7 +189,7 @@ describe( 'invokeSurvicateEvent', () => {
 		const closeSurvey = jest.fn();
 		window._sva = { invokeEvent, closeSurvey };
 
-		mockIsInSupportSession.mockReturnValue( true );
+		mockIsSupportSession.mockReturnValue( true );
 		setHelpCenterOpen( true );
 		invokeSurvicateEvent( 'testEvent' );
 

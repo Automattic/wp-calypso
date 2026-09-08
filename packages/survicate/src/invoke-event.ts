@@ -1,8 +1,8 @@
+import { isSupportSession } from '@automattic/calypso-support-session';
 import { select, subscribe } from '@wordpress/data';
 import { closeSurvicateSurvey } from './close-survey';
 import debug from './debug';
 import { isModalOpen } from './modal-detection';
-import { isInSupportSession } from './support-session';
 import { recordSurveySuppressed, type SuppressionReason } from './track-suppression';
 
 const HELP_CENTER_STORE = 'automattic/help-center';
@@ -60,7 +60,7 @@ export function observeHelpCenter( onOpen: () => void, onClose: () => void ): ()
  * measures the incremental effect of the modal rule.
  */
 export function getSuppressionReason(): SuppressionReason | null {
-	if ( isInSupportSession() ) {
+	if ( isSupportSession() ) {
 		return 'support_session';
 	}
 	if ( isHelpCenterOpen() ) {

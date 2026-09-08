@@ -1,14 +1,14 @@
-jest.mock( '../support-session', () => ( {
-	isInSupportSession: jest.fn( () => false ),
+jest.mock( '@automattic/calypso-support-session', () => ( {
+	isSupportSession: jest.fn( () => false ),
 } ) );
 
+import { isSupportSession } from '@automattic/calypso-support-session';
 import { shouldLoadSurvicate, SURVICATE_WORKSPACE_ID } from '../conditions';
-import { isInSupportSession } from '../support-session';
 
-const mockIsInSupportSession = isInSupportSession as jest.Mock;
+const mockIsSupportSession = isSupportSession as jest.Mock;
 
 beforeEach( () => {
-	mockIsInSupportSession.mockReturnValue( false );
+	mockIsSupportSession.mockReturnValue( false );
 } );
 
 describe( 'SURVICATE_WORKSPACE_ID', () => {
@@ -42,7 +42,7 @@ describe( 'shouldLoadSurvicate', () => {
 	} );
 
 	test( 'should return false during a support session', () => {
-		mockIsInSupportSession.mockReturnValue( true );
+		mockIsSupportSession.mockReturnValue( true );
 		expect( shouldLoadSurvicate( { locale: 'en', isMobile: false } ) ).toBe( false );
 	} );
 } );

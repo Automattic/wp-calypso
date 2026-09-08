@@ -15,20 +15,20 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
-jest.mock( '../support-session', () => ( {
-	isInSupportSession: jest.fn( () => false ),
+jest.mock( '@automattic/calypso-support-session', () => ( {
+	isSupportSession: jest.fn( () => false ),
 } ) );
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isSupportSession } from '@automattic/calypso-support-session';
 import { loadScript } from '@automattic/load-script';
 import { select, subscribe } from '@wordpress/data';
 import { loadSurvicateScript } from '../load-script';
-import { isInSupportSession } from '../support-session';
 
 const mockSelect = select as jest.Mock;
 const mockSubscribe = subscribe as unknown as jest.Mock;
 const mockRecordTracksEvent = recordTracksEvent as jest.Mock;
-const mockIsInSupportSession = isInSupportSession as jest.Mock;
+const mockIsSupportSession = isSupportSession as jest.Mock;
 
 function setHelpCenterOpen( open: boolean ) {
 	mockSelect.mockReturnValue( { isHelpCenterShown: () => open } );
@@ -47,7 +47,7 @@ describe( 'loadSurvicateScript', () => {
 	beforeEach( () => {
 		window._sva = undefined;
 		setHelpCenterOpen( false );
-		mockIsInSupportSession.mockReturnValue( false );
+		mockIsSupportSession.mockReturnValue( false );
 		controller = new AbortController();
 	} );
 
@@ -381,7 +381,7 @@ describe( 'loadSurvicateScript', () => {
 
 	test( 'should pause targeting up front when the SDK becomes ready in a support session', () => {
 		window._sva = { closeSurvey: jest.fn(), addEventListener: jest.fn() };
-		mockIsInSupportSession.mockReturnValue( true );
+		mockIsSupportSession.mockReturnValue( true );
 
 		loadSurvicateScript( 'test-workspace-id', controller.signal );
 		window.dispatchEvent( new Event( 'SurvicateReady' ) );
@@ -393,7 +393,7 @@ describe( 'loadSurvicateScript', () => {
 		const closeSurvey = jest.fn();
 		const addEventListener = jest.fn();
 		window._sva = { closeSurvey, addEventListener };
-		mockIsInSupportSession.mockReturnValue( true );
+		mockIsSupportSession.mockReturnValue( true );
 
 		loadSurvicateScript( 'test-workspace-id', controller.signal );
 		window.dispatchEvent( new Event( 'SurvicateReady' ) );

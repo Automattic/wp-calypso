@@ -8,6 +8,5 @@ export {
 	observeHelpCenter,
 } from './invoke-event';
 export { isModalOpen, isSurveyVisible, observeModals, MODAL_SELECTOR } from './modal-detection';
-export { isInSupportSession } from './support-session';
 export { pauseSurvicateTargeting, resumeSurvicateTargeting } from './targeting';
 export { getAccountAgeInDays, setSurvicateVisitorTraits } from './visitor-traits';
