@@ -109,6 +109,27 @@
 		max-width: unset;
 	}
 
+	// Same studio tokens the shared chart styles resolve the bar colours to.
+	.site-preview-pane__monitor-legend-swatch {
+		flex-shrink: 0;
+		width: 12px;
+		height: 12px;
+		border-radius: 2px;
+
+		&.is-uptime {
+			background-color: var(--studio-jetpack-green-40);
+		}
+
+		&.is-downtime {
+			background-color: var(--studio-red-50);
+		}
+
+		&.is-no-data {
+			background-color: var(--studio-gray-0);
+			border: 1px solid var(--studio-gray-5);
+		}
+	}
+
 	.chart__bars {
 		overflow: hidden;
 		gap: 3px;
