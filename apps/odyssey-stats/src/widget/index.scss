@@ -15,7 +15,19 @@ $segmentedControlItemBorderRadius: 4px;
 .stats-widget-content {
 	font-family: $font-sf-pro-text;
 
-	// For both MiniChart and Highlights.
+	// Holds the range control that drives both the chart and the highlights.
+	// Picks up the padding the chart head used to carry.
+	.stats-widget-header {
+		display: flex;
+		flex-flow: row wrap;
+		justify-content: flex-end;
+		align-items: center;
+		width: 100%;
+		padding: 16px 24px;
+		box-sizing: border-box;
+	}
+
+	// Used by the Highlights tabs.
 	.segmented-control {
 		height: 36px;
 		min-width: 259px;

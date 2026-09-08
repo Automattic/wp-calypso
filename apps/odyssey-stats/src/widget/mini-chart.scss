@@ -21,16 +21,6 @@ $barDarkColor: var(--color-primary-60);
 		}
 	}
 
-	.stats-widget-minichart__chart-head {
-		display: flex;
-		flex-flow: row wrap;
-		justify-content: space-between;
-		align-items: center;
-		width: 100%;
-		padding: 16px 24px;
-		box-sizing: border-box;
-	}
-
 	.chart__legend {
 		margin: 16px 0;
 		padding: 0;

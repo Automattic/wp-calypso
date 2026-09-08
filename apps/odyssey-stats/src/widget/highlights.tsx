@@ -7,6 +7,13 @@ import moment from 'moment';
 import { useState, FunctionComponent } from 'react';
 import useReferrersQuery from '../hooks/use-referrers-query';
 import useTopPostsQuery from '../hooks/use-top-posts-query';
+import {
+	DATE_RANGE_LAST_7_DAYS,
+	DATE_RANGE_LAST_30_DAYS,
+	DATE_RANGE_LAST_12_MONTHS,
+	DateRange,
+	DateRangeId,
+} from '../lib/date-ranges';
 import { HighLightItem } from '../typings';
 
 import './highlights.scss';
@@ -36,6 +43,7 @@ interface HighlightsProps {
 	siteId: number;
 	gmtOffset: number;
 	statsBaseUrl: string;
+	range: DateRange;
 }
 
 const HIGHLIGHT_ITEMS_LIMIT = 5;
@@ -140,10 +148,19 @@ const TopColumn: FunctionComponent< TopColumnProps > = ( {
 	);
 };
 
-export default function Highlights( { siteId, gmtOffset, statsBaseUrl }: HighlightsProps ) {
+export default function Highlights( { siteId, gmtOffset, statsBaseUrl, range }: HighlightsProps ) {
 	const translate = useTranslate();
+	const { unit, quantity } = range;
 
-	const headingTitle = translate( '7 Day Highlights' );
+	// Worded per range rather than interpolated, so translators get a whole,
+	// naturally-pluralised phrase instead of a number in a sentence fragment.
+	const headingTitles: Record< DateRangeId, string > = {
+		[ DATE_RANGE_LAST_7_DAYS ]: translate( '7 Day Highlights' ),
+		[ DATE_RANGE_LAST_30_DAYS ]: translate( '30 Day Highlights' ),
+		[ DATE_RANGE_LAST_12_MONTHS ]: translate( '12 Month Highlights' ),
+	};
+
+	const headingTitle = headingTitles[ range.id ];
 	const topPostsAndPagesTitle = translate( 'Top Posts & Pages' );
 	const topReferrersTitle = translate( 'Top Referrers' );
 
@@ -164,20 +181,22 @@ export default function Highlights( { siteId, gmtOffset, statsBaseUrl }: Highlig
 	const queryDate = moment()
 		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
 		.format( 'YYYY-MM-DD' );
-	const viewAllPostsStatsUrl = `${ statsBaseUrl }/stats/day/posts/${ siteId }?startDate=${ queryDate }&summarize=1&num=7`;
-	const viewAllReferrerStatsUrl = `${ statsBaseUrl }/stats/day/referrers/${ siteId }?startDate=${ queryDate }&summarize=1&num=7`;
+	// The period segment and `num` both track the range, so the deep link opens the
+	// same window the widget is showing.
+	const viewAllPostsStatsUrl = `${ statsBaseUrl }/stats/${ unit }/posts/${ siteId }?startDate=${ queryDate }&summarize=1&num=${ quantity }`;
+	const viewAllReferrerStatsUrl = `${ statsBaseUrl }/stats/${ unit }/referrers/${ siteId }?startDate=${ queryDate }&summarize=1&num=${ quantity }`;
 
 	const { data: topPostsAndPages = [], isFetching: isFetchingPostsAndPages } = useTopPostsQuery(
 		siteId,
-		'day',
-		7,
+		unit,
+		quantity,
 		queryDate
 	);
 
 	const { data: topReferrers = [], isFetching: isFetchingReferrers } = useReferrersQuery(
 		siteId,
-		'day',
-		7,
+		unit,
+		quantity,
 		queryDate
 	);
 
