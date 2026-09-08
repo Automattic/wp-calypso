@@ -161,7 +161,7 @@ describe( 'mountWebMcpTools', () => {
 		expect( harness.registrations ).toHaveLength( 0 );
 	} );
 
-	it( 'keeps a read on its registered owner until recovered REST tools are reconciled', async () => {
+	it( 'rejects a stale definition at dispatch once a recovered REST source wins', async () => {
 		const readAbility: Ability = {
 			...ability,
 			name: 'demo/read-note',
@@ -180,17 +180,13 @@ describe( 'mountWebMcpTools', () => {
 			.mockResolvedValue( {} );
 		const harness = createHarness();
 		await jest.advanceTimersByTimeAsync( 0 );
+		expect( harness.onSyncError ).toHaveBeenCalledTimes( 1 );
 		const original = harness.registrations[ 0 ];
 		expect( original.tool.annotations.readOnlyHint ).toBe( true );
 
-		await original.tool.execute( {} );
-		expect( executeAbility ).toHaveBeenCalledWith( 'demo/read-note', {} );
-		expect( apiFetch ).toHaveBeenCalledTimes( 1 );
-
-		await jest.advanceTimersByTimeAsync( 1000 );
-		expect( harness.registrations ).toHaveLength( 2 );
+		await expect( original.tool.execute( {} ) ).rejects.toThrow( 'WebMCP tool changed' );
+		expect( executeAbility ).not.toHaveBeenCalled();
 		expect( original.signal?.aborted ).toBe( true );
-		await expect( original.tool.execute( {} ) ).rejects.toMatchObject( { name: 'AbortError' } );
 		const replacement = harness.registrations[ 1 ].tool;
 		expect( replacement.annotations ).toMatchObject( {
 			readOnlyHint: false,
@@ -200,7 +196,7 @@ describe( 'mountWebMcpTools', () => {
 		expect( apiFetch ).toHaveBeenLastCalledWith( expect.objectContaining( { method: 'POST' } ) );
 	} );
 
-	it( 'replaces registrations when the provider changes even with identical metadata', async () => {
+	it( 'dispatches to the live owner when the provider changes with identical metadata', async () => {
 		const first: ToolProvider = {
 			getAbilities: async () => [ ability ],
 			executeAbility: jest.fn(),
@@ -211,44 +207,30 @@ describe( 'mountWebMcpTools', () => {
 		};
 		const harness = createHarness( first );
 		await harness.runtime.sync();
-		const original = harness.registrations[ 0 ];
 		harness.setProvider( second );
 		await harness.runtime.sync();
 
-		expect( original.signal?.aborted ).toBe( true );
-		await expect( original.tool.execute( {} ) ).rejects.toMatchObject( { name: 'AbortError' } );
-		await harness.registrations[ 1 ].tool.execute( {} );
+		expect( harness.registrations ).toHaveLength( 1 );
+		expect( harness.registrations[ 0 ].signal?.aborted ).toBe( false );
+		await harness.registrations[ 0 ].tool.execute( {} );
 		expect( second.executeAbility ).toHaveBeenCalledTimes( 1 );
 		expect( first.executeAbility ).not.toHaveBeenCalled();
 	} );
 
-	it( 'bounds failed discovery retries and cancels them after disposal', async () => {
-		jest.mocked( apiFetch ).mockRejectedValue( new Error( 'Offline' ) );
-		const harness = createHarness();
-		await jest.advanceTimersByTimeAsync( 30000 );
-		expect( apiFetch ).toHaveBeenCalledTimes( 4 );
-		expect( jest.getTimerCount() ).toBe( 0 );
-
-		harness.runtime.dispose();
-		const next = createHarness();
-		await jest.advanceTimersByTimeAsync( 0 );
-		expect( jest.getTimerCount() ).toBe( 1 );
-		next.runtime.dispose();
-		await jest.advanceTimersByTimeAsync( 30000 );
-		expect( apiFetch ).toHaveBeenCalledTimes( 5 );
-		expect( jest.getTimerCount() ).toBe( 0 );
-	} );
-
-	it( 'retries failed registration without stripping annotations', async () => {
+	it( 'reports a failed REST discovery, keeps the other sources, and fetches again on the next sync', async () => {
 		jest.mocked( getAbilities ).mockReturnValue( [ ability ] );
+		jest.mocked( apiFetch ).mockRejectedValueOnce( new Error( 'Offline' ) ).mockResolvedValue( [] );
 		const harness = createHarness();
-		jest
-			.mocked( harness.modelContext.registerTool )
-			.mockRejectedValueOnce( new TypeError( 'Temporarily unavailable' ) );
-		await jest.advanceTimersByTimeAsync( 1000 );
+		await jest.advanceTimersByTimeAsync( 0 );
 
-		expect( harness.modelContext.registerTool ).toHaveBeenCalledTimes( 2 );
-		expect( harness.registrations[ 0 ].tool.annotations.untrustedContentHint ).toBe( true );
+		expect( harness.onSyncError ).toHaveBeenCalledWith( expect.any( Error ) );
+		expect( harness.registrations ).toHaveLength( 1 );
+		expect( apiFetch ).toHaveBeenCalledTimes( 1 );
 		expect( jest.getTimerCount() ).toBe( 0 );
+
+		await listener?.();
+		expect( apiFetch ).toHaveBeenCalledTimes( 2 );
+		expect( harness.onSyncError ).toHaveBeenCalledTimes( 1 );
+		expect( harness.registrations ).toHaveLength( 1 );
 	} );
 } );

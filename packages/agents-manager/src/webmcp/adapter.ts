@@ -1,5 +1,4 @@
 import { findAbilityByName, normalizeAbilityName } from '../abilities/ability-name';
-import { collectToolProviderAbilities } from '../utils/compose-tool-providers';
 import {
 	getWebMcpContract,
 	getWebMcpDescription,
@@ -23,12 +22,11 @@ import type {
 type Registration = {
 	abortController: AbortController;
 	fingerprint: string;
-	provider: ToolProvider;
 	toolName: string;
 };
 
 type CreateWebMcpAdapterOptions = {
-	getToolProviders: () => ToolProvider[];
+	toolProvider: ToolProvider;
 	modelContext: WebMcpModelContext;
 };
 
@@ -63,7 +61,7 @@ function getToolDescriptor( ability: Ability ): Omit< WebMcpTool, 'execute' > {
 }
 
 export function createWebMcpAdapter( {
-	getToolProviders,
+	toolProvider,
 	modelContext,
 }: CreateWebMcpAdapterOptions ): WebMcpAdapter {
 	const registrations = new Map< string, Registration >();
@@ -109,22 +107,26 @@ export function createWebMcpAdapter( {
 		}
 	};
 
+	// The browser agent picked the tool from the descriptor it was shown. The
+	// live winner for that ability name is read again before dispatch, so a
+	// definition that changed, opted out, or went away since the last reconcile
+	// is rejected, and the tools are reconciled for a fresh discovery.
 	const createExecution =
 		( ability: Ability, registration: Registration ): WebMcpTool[ 'execute' ] =>
 		async ( input, options ) => {
-			const { provider, fingerprint, abortController, toolName } = registration;
+			const { abortController, fingerprint, toolName } = registration;
 			const isAborted = () => abortController.signal.aborted || options?.signal?.aborted;
 			if ( isAborted() ) {
 				throw createAbortError();
 			}
-			const liveAbility = findAbilityByName( await provider.getAbilities(), ability.name );
+
+			const liveAbility = findAbilityByName( await toolProvider.getAbilities(), ability.name );
 			if (
-				! getToolProviders().includes( provider ) ||
 				! liveAbility ||
 				! shouldExposeWebMcpAbility( liveAbility ) ||
 				JSON.stringify( getToolDescriptor( liveAbility ) ) !== fingerprint
 			) {
-				await sync();
+				await sync().catch( () => {} );
 				throw new Error(
 					`WebMCP tool changed: ${ toolName }. Discover tools again before retrying.`
 				);
@@ -132,22 +134,20 @@ export function createWebMcpAdapter( {
 			if ( isAborted() ) {
 				throw createAbortError();
 			}
+
 			const contract = getWebMcpContract( ability );
 			const rawInput = input ?? {};
 			const preparedInput = contract.prepareInput
 				? contract.prepareInput( rawInput, context )
 				: rawInput;
-			const result = await provider.executeAbility( ability.name, preparedInput );
+			const result = await toolProvider.executeAbility( ability.name, preparedInput );
 			contract.afterExecute?.( result, context );
+
 			return contract.adaptResult ? contract.adaptResult( result ) : result;
 		};
 
 	const reconcile = async () => {
-		let failure: { error: unknown } | undefined;
-		const candidates = await collectToolProviderAbilities( getToolProviders(), ( error ) => {
-			failure ??= { error };
-		} );
-		const abilities = [ ...candidates.values() ].map( ( { ability } ) => ability );
+		const abilities = await toolProvider.getAbilities();
 		if ( disposed ) {
 			return;
 		}
@@ -165,16 +165,18 @@ export function createWebMcpAdapter( {
 		// One rejected registration must not block the tools after it. The
 		// first failure is rethrown once every candidate has been attempted;
 		// the failed ones stay unregistered, so the next sync retries them.
+		let failure: { error: unknown } | undefined;
+
 		for ( const [ abilityName, ability ] of exposed ) {
 			if ( disposed ) {
 				break;
 			}
-			const { provider } = candidates.get( abilityName )!;
+
 			const descriptor = getToolDescriptor( ability );
 			const fingerprint = JSON.stringify( descriptor );
 			const current = registrations.get( abilityName );
 
-			if ( current?.fingerprint === fingerprint && current.provider === provider ) {
+			if ( current?.fingerprint === fingerprint ) {
 				continue;
 			}
 
@@ -187,15 +189,16 @@ export function createWebMcpAdapter( {
 			}
 
 			const abortController = new AbortController();
-			const registration = { abortController, fingerprint, provider, toolName: descriptor.name };
+			const registration: Registration = {
+				abortController,
+				fingerprint,
+				toolName: descriptor.name,
+			};
 			pendingControllers.add( abortController );
 
 			try {
 				await modelContext.registerTool(
-					{
-						...descriptor,
-						execute: createExecution( ability, registration ),
-					},
+					{ ...descriptor, execute: createExecution( ability, registration ) },
 					{ signal: abortController.signal }
 				);
 			} catch ( error ) {

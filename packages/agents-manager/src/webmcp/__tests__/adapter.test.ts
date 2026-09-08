@@ -78,7 +78,7 @@ function createHarness( initialAbilities: Ability[] = [ createAbility() ] ) {
 			signals.set( tool.name, options?.signal );
 		} ),
 	};
-	const adapter = createWebMcpAdapter( { getToolProviders: () => [ toolProvider ], modelContext } );
+	const adapter = createWebMcpAdapter( { toolProvider, modelContext } );
 
 	return {
 		adapter,
