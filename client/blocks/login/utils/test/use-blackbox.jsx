@@ -120,6 +120,39 @@ describe( 'useBlackbox', () => {
 		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/inactive/empty' );
 	} );
 
+	test( 'stops blocking when the SDK cannot present a challenge it announced', async () => {
+		let callbacks;
+		window.Blackbox.configure.mockImplementationOnce( ( config ) => {
+			callbacks = config;
+		} );
+
+		render( <TestComponent /> );
+
+		await act( async () => {} );
+		act( () => callbacks.onChallengeStart() );
+
+		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/active/empty' );
+
+		act( () => callbacks.onError( { method: 'challenge' } ) );
+
+		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/inactive/empty' );
+	} );
+
+	test( 'keeps blocking on errors unrelated to presenting the challenge', async () => {
+		let callbacks;
+		window.Blackbox.configure.mockImplementationOnce( ( config ) => {
+			callbacks = config;
+		} );
+
+		render( <TestComponent /> );
+
+		await act( async () => {} );
+		act( () => callbacks.onChallengeStart() );
+		act( () => callbacks.onError( { method: 'collect' } ) );
+
+		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/active/empty' );
+	} );
+
 	test( 'tracks the rendered challenge widget by measuring the container', async () => {
 		render( <TestComponent /> );
 

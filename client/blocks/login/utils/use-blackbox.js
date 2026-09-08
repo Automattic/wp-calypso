@@ -97,6 +97,17 @@ export function useBlackbox( { containerRef, enabled } ) {
 					// Fill the login form column so the challenge lines up with the
 					// input above and the full-width Continue button below.
 					challengeMaxWidth: '100%',
+					// The SDK reports a challenge it cannot present (bundle blocked
+					// or failed to load) through onError rather than
+					// onChallengeFailure, and only after onChallengeStart has already
+					// blocked the form. Without this the form stays blocked forever
+					// with no widget to solve.
+					onError: ( error ) => {
+						if ( ! cancelled && error?.method === 'challenge' ) {
+							stopLoading();
+							setIsChallengeActive( false );
+						}
+					},
 					onChallengeStart: () => {
 						if ( ! cancelled ) {
 							hasStartedChallenge = true;
