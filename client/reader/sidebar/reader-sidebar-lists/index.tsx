@@ -1,12 +1,11 @@
 import './style.scss';
 
 import { ReadList } from '@automattic/api-core';
-import { isAutomatticianQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
+import { useIsSeenPostsUiEnabled } from 'calypso/reader/data/seen-posts';
 import MoreMenuActions from '../more-menu-actions';
 import ReaderSidebarListsList from './list';
 
@@ -27,12 +26,11 @@ const ReaderSidebarLists = ( {
 	...passedProps
 }: ReaderSidebarListsProps ): JSX.Element => {
 	const translate = useTranslate();
-	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
+	const isSeenEnabled = useIsSeenPostsUiEnabled();
 	const isChildSelected = lists?.some( ( list ) =>
 		path.startsWith( `/reader/list/${ list.owner }/${ list.slug }` )
 	);
 	// Calculate the total unseen count across all lists and their feeds.
-	const isSeenEnabled = isAutomattician;
 	const totalUnseenCount: number =
 		lists?.reduce(
 			( total, list ) =>

@@ -58,6 +58,9 @@ export const remoteValuesSchema = {
 			type: 'string',
 			enum: [ 'collapsed', 'expanded' ],
 		},
+		'reader-seen-posts': {
+			type: 'boolean',
+		},
 		'persistent-counter': {
 			type: 'object',
 			properties: {
