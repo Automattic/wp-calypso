@@ -23,7 +23,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { type ReactNode, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { useLocale } from '../../app/locale';
+import { useIntlLocale } from '../../app/locale';
 import { receiptRoute, taxDetailsRoute } from '../../app/router/me';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../components/card';
@@ -84,7 +84,7 @@ export default function Receipt() {
 		tax_state: receipt.tax_state || historyReceipt?.tax_state,
 	};
 
-	const locale = useLocale();
+	const locale = useIntlLocale();
 
 	const handlePrint = () => {
 		window.print();

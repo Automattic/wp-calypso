@@ -25,6 +25,7 @@ jest.mock(
 			children,
 			emptyView,
 			floatingChatState,
+			triggerTitle,
 			suggestions = [],
 			onSuggestionClick,
 			onSuggestionsRendered,
@@ -32,6 +33,7 @@ jest.mock(
 			children: ReactNode;
 			emptyView: ReactNode;
 			floatingChatState?: string;
+			triggerTitle?: string;
 			suggestions?: Suggestion[];
 			onSuggestionClick?: (
 				selectedSuggestion: Suggestion,
@@ -39,7 +41,7 @@ jest.mock(
 			) => void;
 			onSuggestionsRendered?: ( shown: Suggestion[] ) => void;
 		} ) {
-			mockContainerProps( { floatingChatState } );
+			mockContainerProps( { floatingChatState, triggerTitle } );
 			mockContainerCallbacks( { onSuggestionsRendered } );
 			return (
 				<div>
@@ -442,7 +444,10 @@ describe( 'AgentChat', () => {
 	it( 'expands when open', () => {
 		renderAgentChat( { isOpen: true } );
 
-		expect( mockContainerProps ).toHaveBeenLastCalledWith( { floatingChatState: 'expanded' } );
+		expect( mockContainerProps ).toHaveBeenLastCalledWith( {
+			floatingChatState: 'expanded',
+			triggerTitle: 'Agent',
+		} );
 	} );
 
 	it( 'groups only writing suggestions while keeping design suggestions top level', async () => {
@@ -620,7 +625,10 @@ describe( 'AgentChat', () => {
 	it( 'collapses to a button when closed without the AI chat entry button', () => {
 		renderAgentChat( { isOpen: false } );
 
-		expect( mockContainerProps ).toHaveBeenLastCalledWith( { floatingChatState: 'collapsed' } );
+		expect( mockContainerProps ).toHaveBeenLastCalledWith( {
+			floatingChatState: 'collapsed',
+			triggerTitle: 'Agent',
+		} );
 	} );
 
 	it( 'minimizes to the bar when closed with the AI chat entry button present', () => {
@@ -628,7 +636,10 @@ describe( 'AgentChat', () => {
 
 		renderAgentChat( { isOpen: false } );
 
-		expect( mockContainerProps ).toHaveBeenLastCalledWith( { floatingChatState: 'minimized' } );
+		expect( mockContainerProps ).toHaveBeenLastCalledWith( {
+			floatingChatState: 'minimized',
+			triggerTitle: 'Agent',
+		} );
 	} );
 
 	it( 'forwards the rendered-suggestions callback to the Agenttic container', () => {

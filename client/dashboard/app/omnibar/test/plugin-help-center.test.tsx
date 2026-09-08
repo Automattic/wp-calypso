@@ -8,6 +8,7 @@ import {
 	openAgentsManagerChat,
 } from '@automattic/agents-manager';
 import { render, renderHook } from '@testing-library/react';
+import { useAnalytics } from '../../analytics';
 import { useHelpCenter } from '../../help-center';
 import { useHelpCenterPlugin } from '../plugin-help-center';
 import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
@@ -41,6 +42,7 @@ const mockGetChatRoute = getAgentsManagerChatRoute as jest.MockedFunction<
 >;
 const mockUseHelpCenter = useHelpCenter as jest.MockedFunction< typeof useHelpCenter >;
 const setShowHelpCenter = jest.fn();
+const recordTracksEvent = jest.fn();
 
 const ICON = 'help';
 
@@ -90,12 +92,42 @@ const childrenOf = ( n: OmnibarNode | undefined, id: string ) =>
 describe( 'useHelpCenterPlugin', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		jest.mocked( useAnalytics ).mockReturnValue( {
+			recordTracksEvent,
+			recordPageView: jest.fn(),
+		} );
 		mockIsChatVisible.mockReturnValue( false );
 		mockGetChatRoute.mockReturnValue( undefined );
 		mockUseHelpCenter.mockReturnValue( {
 			isShown: false,
 			setShowHelpCenter,
 		} as unknown as ReturnType< typeof useHelpCenter > );
+	} );
+
+	it.each( [
+		[ 'agents manager', HELP_NODES ],
+		[ 'legacy help', [] ],
+	] )( 'does not track an unrendered %s node', ( _, nodes ) => {
+		renderPlugin( nodes );
+
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
+	} );
+
+	it.each( [
+		[ 'agents manager', HELP_NODES ],
+		[ 'legacy help', [] ],
+	] )( 'tracks an impression only when the %s icon renders', ( _, nodes ) => {
+		const result = renderPlugin( nodes );
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
+
+		render( result.icon as React.ReactElement );
+
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_inlinehelp_impression', {
+			location: 'help-center',
+			entry_point: 'omnibar',
+			section: 'sites',
+		} );
 	} );
 
 	it( 'takes its id, label and tooltip from the admin bar node', () => {

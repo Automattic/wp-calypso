@@ -47,6 +47,7 @@
 		{ "path": "./launchpad" },
 		{ "path": "./mini-cart" },
 		{ "path": "./odie-client" },
+		{ "path": "./omnibar" },
 		{ "path": "./onboarding" },
 		{ "path": "./photon" },
 		{ "path": "./plans-grid-next" },
