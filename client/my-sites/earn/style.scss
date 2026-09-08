@@ -245,10 +245,11 @@ See https://dequeuniversity.com/rules/axe/4.6/link-in-text-block?application=Axe
 	text-decoration: none;
 }
 
-/* Standalone upsell cards sit alone on a tab rather than in the promo grid,
-   so they need a measure of their own instead of the full content width. */
+/* Alone on a tab rather than in the promo grid: cap the measure, and undo the
+   centering that Card's `margin: 0 auto` applies once the width is capped. */
 .earn__upsell-card.promo-card {
 	max-width: 660px;
+	margin-inline: 0 auto;
 }
 
 .earn__upsell-card-benefits {
