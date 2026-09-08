@@ -20,7 +20,7 @@ export type SwitcherProps< T > = {
 	children?: ( props: RenderCallbackProps ) => React.ReactNode;
 	getItemUrl: ( item: T ) => string;
 	renderItem: RenderItem< T >;
-	loading: SwitcherLoadingState;
+	loading?: SwitcherLoadingState;
 	icon?: React.JSX.Element;
 	onItemClick?: () => void;
 	renderToggle?: RenderToggle;

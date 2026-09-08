@@ -39,7 +39,6 @@ export default function DomainSwitcher( {
 	return (
 		<Switcher
 			items={ domains }
-			loading={ { itemCount: 3, hasMedia: false, hasDescription: false } }
 			value={ domain }
 			searchableFields={ searchableFields }
 			headerTitle={ __( 'Switch domain' ) }

@@ -23,6 +23,13 @@ const FALLBACK_MAX_ITEM_COUNT = 10;
 // rather than all ending at the same truncation point.
 const LOADING_TITLE_LENGTHS = [ 16, 11, 14, 12, 15, 10 ];
 
+// Without a hint of what the items look like, fill the page with plain rows.
+const DEFAULT_LOADING_STATE: SwitcherLoadingState = {
+	itemCount: FALLBACK_MAX_ITEM_COUNT,
+	hasMedia: false,
+	hasDescription: false,
+};
+
 /**
  * How many placeholder rows to show while the items load. The page size is the
  * cap so the placeholder list is as tall as the list that replaces it.
@@ -41,7 +48,7 @@ export default function SwitcherContent< T >( {
 	width = '280px',
 	getItemUrl,
 	renderItem,
-	loading,
+	loading = DEFAULT_LOADING_STATE,
 	resetScroll = true,
 	children,
 	onClose,
@@ -59,7 +66,7 @@ export default function SwitcherContent< T >( {
 	width?: string;
 	getItemUrl: ( item: T ) => string;
 	renderItem: RenderItem< T >;
-	loading: SwitcherLoadingState;
+	loading?: SwitcherLoadingState;
 	resetScroll?: boolean;
 	onClose: () => void;
 	onItemClick?: () => void;
