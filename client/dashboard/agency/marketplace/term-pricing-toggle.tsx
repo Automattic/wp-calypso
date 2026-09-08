@@ -1,8 +1,4 @@
-import {
-	__experimentalHStack as HStack,
-	__experimentalText as Text,
-	ToggleControl,
-} from '@wordpress/components';
+import { ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
 import { useMarketplaceType } from './use-marketplace-type';
@@ -24,16 +20,11 @@ export default function TermPricingToggle() {
 	};
 
 	return (
-		<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
-			<Text variant="muted">{ __( 'Billed:' ) }</Text>
-			<Text variant={ termPricing === 'monthly' ? undefined : 'muted' }>{ __( 'Monthly' ) }</Text>
-			<ToggleControl
-				__nextHasNoMarginBottom
-				aria-label={ __( 'Yearly billing' ) }
-				checked={ termPricing === 'yearly' }
-				onChange={ handleToggle }
-			/>
-			<Text variant={ termPricing === 'yearly' ? undefined : 'muted' }>{ __( 'Yearly' ) }</Text>
-		</HStack>
+		<ToggleControl
+			__nextHasNoMarginBottom
+			checked={ termPricing === 'yearly' }
+			label={ __( 'Billed annually' ) }
+			onChange={ handleToggle }
+		/>
 	);
 }
