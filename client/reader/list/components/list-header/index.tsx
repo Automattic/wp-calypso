@@ -54,17 +54,7 @@ const ReaderListHeader = ( props: ReaderListHeaderProps ) => {
 		readListItemsQuery( list?.owner ?? '', list?.slug ?? '' )
 	);
 	const totalItems = listItemsData?.total_items;
-	const isOwnedByCurrentUser = Boolean(
-		currentUser && list && list.owner === currentUser.username
-	);
-
-	const formattedTitle = (
-		<AutoDirection>
-			<span>{ list?.title }</span>
-		</AutoDirection>
-	);
-
-	const createdBy = list && ! isOwnedByCurrentUser && (
+	const createdBy = list && ! list.is_owner && (
 		<span className="list-stream__header-created-by">
 			{ translate( 'Created by {{ownerLink}}%(owner)s{{/ownerLink}}', {
 				args: { owner: list.owner },
@@ -81,16 +71,18 @@ const ReaderListHeader = ( props: ReaderListHeaderProps ) => {
 		createdBy || description ? (
 			<AutoDirection>
 				<span>
-					{ description }
-					{ description && createdBy && (
-						<span className="list-stream__header-separator" aria-hidden="true">
-							{ ' – ' }
-						</span>
-					) }
+					{ description && <span>{ description }</span> }
+					{ description && createdBy && ' – ' }
 					{ createdBy }
 				</span>
 			</AutoDirection>
 		) : undefined;
+
+	const formattedTitle = (
+		<AutoDirection>
+			<span>{ list?.title }</span>
+		</AutoDirection>
+	);
 
 	const listBaseUrl =
 		list?.owner && list?.slug ? `/reader/list/${ list.owner }/${ list.slug }` : '';

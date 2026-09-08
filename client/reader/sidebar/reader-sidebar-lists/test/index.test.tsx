@@ -33,7 +33,7 @@ jest.mock( '@automattic/api-queries', () => ( {
 
 function makeList(
 	ID: number,
-	feeds: { feed_id: number; unseen_count: number }[],
+	feeds: ReadList[ 'feeds' ],
 	overrides: Partial< ReadList > = {}
 ): ReadList {
 	return {
@@ -50,7 +50,7 @@ function makeList(
 }
 
 function makeRecommendedBlogsList(
-	feeds: { feed_id: number; unseen_count: number }[],
+	feeds: ReadList[ 'feeds' ],
 	overrides: Partial< ReadList > = {}
 ): ReadList {
 	return makeList( 99, feeds, {

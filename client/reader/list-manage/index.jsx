@@ -141,16 +141,22 @@ function ReaderListCreate() {
 		<ReaderMain>
 			<NavigationHeader
 				title={ translate( 'Create List' ) }
-				subtitle={
-					<>
-						{ translate( 'Lists let you organize multiple sites into custom feeds.' ) }{ ' ' }
-						<InlineSupportLink
-							supportPostId={ 92023 }
-							supportLink={ localizeUrl( 'https://wordpress.com/support/reader/reader-lists/' ) }
-							showIcon={ false }
-						/>
-					</>
-				}
+				subtitle={ translate(
+					'Lists let you organize multiple sites into custom feeds. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
+					{
+						components: {
+							learnMoreLink: (
+								<InlineSupportLink
+									supportPostId={ 92023 }
+									supportLink={ localizeUrl(
+										'https://wordpress.com/support/reader/reader-lists/'
+									) }
+									showIcon={ false }
+								/>
+							),
+						},
+					}
+				) }
 			/>
 			<ListForm isCreateForm isSubmissionDisabled={ isCreatingList } onSubmit={ handleSubmit } />
 		</ReaderMain>

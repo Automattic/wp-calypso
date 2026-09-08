@@ -97,21 +97,18 @@ describe( 'reader routes', () => {
 		expect( page ).toHaveBeenCalledWith( '/read/*', readerNotFound );
 	} );
 
-	it( 'requires a logged-in user for list management routes', async () => {
+	it.each( [
+		'/reader/list/new',
+		'/reader/list/:user/:list/edit',
+		'/reader/list/:user/:list/edit/items',
+		'/reader/list/:user/:list/export',
+		'/reader/list/:user/:list/delete',
+	] )( 'requires a logged-in user for %s', async ( path ) => {
 		await initReader();
 
-		const managementPaths = [
-			'/reader/list/new',
-			'/reader/list/:user/:list/edit',
-			'/reader/list/:user/:list/edit/items',
-			'/reader/list/:user/:list/export',
-			'/reader/list/:user/:list/delete',
-		];
-		for ( const path of managementPaths ) {
-			const call = jest.mocked( page ).mock.calls.find( ( [ route ] ) => route === path );
-			expect( call ).toBeDefined();
-			expect( call?.slice( 1 ) ).toContain( redirectLoggedOutToSignup );
-		}
+		const call = jest.mocked( page ).mock.calls.find( ( [ route ] ) => route === path );
+		expect( call ).toBeDefined();
+		expect( call?.slice( 1 ) ).toContain( redirectLoggedOutToSignup );
 	} );
 
 	it( 'keeps list viewing available to logged-out users', async () => {
