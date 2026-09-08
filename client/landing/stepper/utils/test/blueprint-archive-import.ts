@@ -234,6 +234,55 @@ describe( 'waitForAtomicTransferComplete first-poll timing', () => {
 		expect( mockGet ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'retries quickly after the first check, rather than waiting a full interval', async () => {
+		jest.useFakeTimers();
+		mockGet
+			.mockResolvedValueOnce( { status: 'relocating_switcheroo' } )
+			.mockResolvedValue( { status: 'completed' } );
+
+		// No explicit interval: the backoff applies. The work is usually finished moments after
+		// the first check, and making the customer sit out 5s to discover that is the cost this
+		// removes.
+		const pending = waitForAtomicTransferComplete( 'site.example.com', { initialDelayMs: 0 } );
+
+		await Promise.resolve();
+		await Promise.resolve();
+		expect( mockGet ).toHaveBeenCalledTimes( 1 );
+
+		// Nothing yet just before the first backoff step elapses...
+		await jest.advanceTimersByTimeAsync( 200 );
+		expect( mockGet ).toHaveBeenCalledTimes( 1 );
+
+		// ...and a second look once it has, far sooner than a flat interval would allow.
+		await jest.advanceTimersByTimeAsync( 100 );
+		await pending;
+		expect( mockGet ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'honours an explicit interval, keeping it flat instead of backing off', async () => {
+		jest.useFakeTimers();
+		mockGet
+			.mockResolvedValueOnce( { status: 'relocating_switcheroo' } )
+			.mockResolvedValue( { status: 'completed' } );
+
+		const pending = waitForAtomicTransferComplete( 'site.example.com', {
+			pollIntervalMs: 5000,
+			initialDelayMs: 0,
+		} );
+
+		await Promise.resolve();
+		await Promise.resolve();
+		expect( mockGet ).toHaveBeenCalledTimes( 1 );
+
+		// The backoff must not shorten an interval a caller asked for explicitly.
+		await jest.advanceTimersByTimeAsync( 4000 );
+		expect( mockGet ).toHaveBeenCalledTimes( 1 );
+
+		await jest.advanceTimersByTimeAsync( 1000 );
+		await pending;
+		expect( mockGet ).toHaveBeenCalledTimes( 2 );
+	} );
+
 	it( 'still spaces out later polls when the first says not-yet', async () => {
 		jest.useFakeTimers();
 		mockGet
