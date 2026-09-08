@@ -171,6 +171,7 @@ const mockAgentChat = jest.fn(
 		onInputChange?: ( value: string ) => void;
 		emptyViewSuggestions?: Suggestion[];
 		onSuggestionsRendered?: ( shown: Suggestion[] ) => void;
+		isLoadingConversation?: boolean;
 	} ) => (
 		<>
 			<button
@@ -418,17 +419,21 @@ jest.mock( '../../utils/is-reader-chat-agent', () => ( {
 	isReaderChatAgent: () => mockIsReaderChatAgent(),
 } ) );
 jest.mock( '../agent-chat', () => {
-	const { useEffect } = jest.requireActual< typeof import('react') >( 'react' );
-	// Report the empty-view chips the way Agenttic does: once per distinct id set,
-	// truncated when a test simulates the floating limit.
+	const { useEffect, useRef } = jest.requireActual< typeof import('react') >( 'react' );
+	// Report the empty-view chips the way Agenttic does: nothing behind the loading
+	// skeleton, once per distinct id set, truncated when a test simulates the
+	// floating limit.
 	const MockAgentChat = ( props: Parameters< typeof mockAgentChat >[ 0 ] ) => {
-		const { emptyViewSuggestions = [], onSuggestionsRendered } = props;
+		const { emptyViewSuggestions = [], isLoadingConversation, onSuggestionsRendered } = props;
+		const shown = isLoadingConversation ? [] : emptyViewSuggestions;
 		const rendered = mockRenderedSuggestionsLimit
-			? emptyViewSuggestions.slice( 0, mockRenderedSuggestionsLimit )
-			: emptyViewSuggestions;
+			? shown.slice( 0, mockRenderedSuggestionsLimit )
+			: shown;
 		const renderedKey = rendered.map( ( suggestion ) => suggestion.id ).join( '|' );
+		const lastReportedKeyRef = useRef( '' );
 		useEffect( () => {
-			if ( renderedKey ) {
+			if ( renderedKey && renderedKey !== lastReportedKeyRef.current ) {
+				lastReportedKeyRef.current = renderedKey;
 				onSuggestionsRendered?.( rendered );
 			}
 			// Keyed on ids alone, like Agenttic's container dedupe.
@@ -1275,6 +1280,27 @@ describe( 'OrchestratorChat', () => {
 			'jetpack_big_sky_chat_suggestions_rendered',
 			expect.anything()
 		);
+	} );
+
+	it( 'does not re-track cached suggestions when the block type changes while loading', () => {
+		mockSelectedBlockType = 'core/paragraph';
+		const blockSuggestions: Suggestion[] = [
+			{ id: 'check-grammar', label: 'Check grammar', prompt: 'Check the grammar' },
+		];
+		const useSuggestions = jest.fn( () => ( {
+			suggestions: blockSuggestions,
+			replaceEmptyViewSuggestions: true,
+		} ) );
+		mockUseAgentChat.mockReturnValue( agentChatReturn( { suggestions: blockSuggestions } ) );
+
+		const { rerender } = render( chat( { useSuggestions } ) );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
+
+		mockUseConversation.mockReturnValue( { isLoading: true } );
+		mockSelectedBlockType = 'core/heading';
+		rerender( chat( { useSuggestions } ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'tracks the suggestions Agenttic reports as rendered rather than the full list', () => {

@@ -1710,7 +1710,7 @@ export default function OrchestratorChat( {
 		useSuggestionsRenderedTracking( {
 			selectedBlockType,
 			contextualSuggestionIds,
-			hasSuggestionsToRender: displayedEmptyViewSuggestions.length > 0,
+			hasSuggestionsToRender: ! isLoadingConversation && displayedEmptyViewSuggestions.length > 0,
 		} );
 
 	const handleSuggestionClick = useCallback(
