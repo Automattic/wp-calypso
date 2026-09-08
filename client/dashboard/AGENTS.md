@@ -39,7 +39,9 @@ useMutation( {
 
 ### Internationalization
 
-- When calling locale-aware formatting functions (`toLocaleDateString`, `toLocaleString`, `Intl.*`, etc.), prefer passing the user's locale from `useLocale()` (`app/locale`) rather than `undefined`. Passing `undefined` falls back to the browser/OS locale, so output silently drifts from the user's WordPress.com language setting.
+- When calling locale-aware formatting functions (`toLocaleDateString`, `toLocaleString`, `Intl.*`, etc.), pass the user's locale from `useIntlLocale()` (`app/locale`) rather than `undefined`. Passing `undefined` falls back to the browser/OS locale, so output silently drifts from the user's WordPress.com language setting.
+- Do **not** pass `useLocale()` to `Intl` constructors or locale-sensitive `Date` methods. It returns the WordPress.com locale slug, which prefers the locale variant, and some variants are not valid BCP 47 — they append the variant with an underscore (`sr_latin`, `de_formal`). `Intl` throws a `RangeError` on those and takes the page down. `useIntlLocale()` normalises it; in non-hook contexts use `getIntlLocale()` from `utils/locale`.
+- `useLocale()` is still the right value everywhere the WordPress.com slug is expected: translations, `localizeUrl()`, and API `locale` parameters.
 
 ### Google Translate crash safety
 
