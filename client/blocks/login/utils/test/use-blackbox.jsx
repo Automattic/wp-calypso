@@ -32,17 +32,40 @@ function TestComponent( { enabled = true } ) {
 }
 
 describe( 'useBlackbox', () => {
+	let resizeCallbacks;
+
+	// jsdom has no layout and no ResizeObserver, so fake both.
+	function setContainerHeight( height ) {
+		Object.defineProperty( screen.getByTestId( 'blackbox-container' ), 'offsetHeight', {
+			configurable: true,
+			value: height,
+		} );
+		resizeCallbacks.forEach( ( callback ) => callback() );
+	}
+
 	beforeEach( () => {
 		jest.useFakeTimers();
 		jest.clearAllMocks();
 		window.Blackbox = {
 			configure: jest.fn(),
 		};
+		resizeCallbacks = new Set();
+		window.ResizeObserver = class {
+			constructor( callback ) {
+				this.callback = callback;
+				resizeCallbacks.add( callback );
+			}
+			observe() {}
+			disconnect() {
+				resizeCallbacks.delete( this.callback );
+			}
+		};
 	} );
 
 	afterEach( () => {
 		jest.useRealTimers();
 		delete window.Blackbox;
+		delete window.ResizeObserver;
 	} );
 
 	test( 'keeps Blackbox loading until configure has had time to settle', async () => {
@@ -97,7 +120,24 @@ describe( 'useBlackbox', () => {
 		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/inactive/empty' );
 	} );
 
-	test( 'tracks challenge container content as a blocking signal', async () => {
+	test( 'tracks the rendered challenge widget by measuring the container', async () => {
+		render( <TestComponent /> );
+
+		await act( async () => {} );
+		act( () => jest.advanceTimersByTime( 500 ) );
+
+		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/inactive/empty' );
+
+		act( () => setContainerHeight( 46 ) );
+
+		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/inactive/content' );
+
+		act( () => setContainerHeight( 0 ) );
+
+		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/inactive/empty' );
+	} );
+
+	test( 'keeps tracking the widget after a solve, since the SDK leaves it mounted', async () => {
 		let callbacks;
 		window.Blackbox.configure.mockImplementationOnce( ( config ) => {
 			callbacks = config;
@@ -106,19 +146,14 @@ describe( 'useBlackbox', () => {
 		render( <TestComponent /> );
 
 		await act( async () => {} );
-		act( () => jest.advanceTimersByTime( 500 ) );
+		act( () => callbacks.onChallengeStart() );
+		act( () => setContainerHeight( 46 ) );
 
-		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/inactive/empty' );
-
-		await act( async () => {
-			screen.getByTestId( 'blackbox-container' ).appendChild( document.createElement( 'iframe' ) );
-		} );
-
-		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/inactive/content' );
+		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/active/content' );
 
 		act( () => callbacks.onChallengeComplete() );
 
-		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/inactive/empty' );
+		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/inactive/content' );
 	} );
 
 	test( 'does not load the SDK while disabled', async () => {
