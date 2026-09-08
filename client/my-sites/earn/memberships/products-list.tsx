@@ -9,14 +9,16 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { PromoSectionCard } from 'calypso/components/promo-section';
+import { PromoCardVariation } from 'calypso/components/promo-section/promo-card';
 import SectionHeader from 'calypso/components/section-header';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useDispatch, useSelector } from 'calypso/state';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
@@ -91,8 +93,10 @@ function ProductsList() {
 		window.location.hash === ADD_TIER_PLAN_HASH;
 	const default_product_type = defaultToTierPanel ? TYPE_TIER : null;
 
-	const trackUpgrade = () =>
+	const trackUpgrade = () => {
+		dispatch( recordTracksEvent( 'calypso_earn_page_payment_plans_upgrade_button_click' ) );
 		dispatch( bumpStat( 'calypso_earn_page', 'payment-plans-upgrade-button' ) );
+	};
 
 	function renderEllipsisMenu( productId: number ) {
 		return (
@@ -183,28 +187,28 @@ function ProductsList() {
 			     request on donation-only / non-newsletter sites. */ }
 			{ hasNewsletterTier && site?.ID && <QuerySiteSettings siteId={ site.ID } /> }
 			{ hasLoadedFeatures && ! hasStripeFeature && (
-				// Purposefully isn't a dismissible nudge as without this nudge, the page would appear to be
-				// broken as it only does listing and deleting of plans and it wouldn't be clear how to change that.
-				<UpsellNudge
-					callToAction={ translate( 'Upgrade' ) }
-					title={ translate( 'Upgrade to modify payment plans or add new plans' ) }
-					description={ translate(
-						'Payment plans let you charge for memberships, subscriptions, and one-time offers.'
-					) }
-					list={ [
-						translate( 'Create as many payment plans as you need.' ),
-						translate( 'Charge one-time, monthly, or yearly.' ),
-					] }
-					href={ '/plans/' + site?.slug }
-					showIcon
-					onClick={ () => trackUpgrade() }
-					// This could be any stripe payment features (see `hasStripeFeature`) but UpsellNudge only
-					// supports 1. They're all available on the same plans anyway, so practically it's ok to pick 1.
-					feature={ FEATURE_RECURRING_PAYMENTS }
-					event="calypso_earn_page_payment_plans_upgrade_nudge"
-					tracksClickName="calypso_earn_page_payment_plans_upgrade_button_click"
-					tracksImpressionName="calypso_earn_page_payment_plans_upgrade_button_view"
-				/>
+				<>
+					<TrackComponentView eventName="calypso_earn_page_payment_plans_upgrade_button_view" />
+					<PromoSectionCard
+						variation={ PromoCardVariation.Compact }
+						icon="credit-card"
+						title={ translate( 'Upgrade to modify payment plans or add new plans' ) }
+						body={ translate(
+							'Payment plans let you charge for memberships, subscriptions, and one-time offers.'
+						) }
+						actions={ {
+							cta: {
+								text: translate( 'Upgrade' ),
+								isPrimary: true,
+								action: {
+									url: `/plans/${ site?.slug }`,
+									onClick: trackUpgrade,
+									selfTarget: true,
+								},
+							},
+						} }
+					/>
+				</>
 			) }
 			{ hasLoadedFeatures && hasStripeFeature && (
 				<SectionHeader label={ translate( 'Manage plans' ) }>
