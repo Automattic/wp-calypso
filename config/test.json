@@ -29,6 +29,7 @@
 		"blackbox-login": true,
 		"blackbox-lost-password": true,
 		"blackbox-signup": true,
+		"blackbox-userless-checkout": true,
 		"calypso/all-domain-management": true,
 		"calypso/domains-dataviews": true,
 		"catch-js-errors": false,

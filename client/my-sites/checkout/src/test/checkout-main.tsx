@@ -42,6 +42,13 @@ jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 jest.mock( 'calypso/lib/navigate' );
 jest.mock( 'calypso/state/notices/actions' );
+jest.mock( 'calypso/blocks/login/blackbox-challenge', () => {
+	const { useEffect } = jest.requireActual( 'react' );
+	return ( { onSubmitBlockedChange } ) => {
+		useEffect( () => onSubmitBlockedChange?.( false ), [ onSubmitBlockedChange ] );
+		return null;
+	};
+} );
 
 describe( 'CheckoutMain', () => {
 	const initialCart = getBasicCart();

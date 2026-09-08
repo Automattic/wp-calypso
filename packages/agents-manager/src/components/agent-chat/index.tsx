@@ -304,6 +304,7 @@ export default function AgentChat( {
 			clearSuggestions={ clearSuggestions }
 			onSuggestionClick={ onSuggestionClick ? handleDisplayedSuggestionClick : undefined }
 			floatingChatState={ floatingChatState }
+			triggerTitle={ __( 'Agent', __i18n_text_domain__ ) }
 			onClose={ onClose }
 			onExpand={ onExpand }
 			onStop={ onAbort }

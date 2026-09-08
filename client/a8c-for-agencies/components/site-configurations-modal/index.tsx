@@ -45,7 +45,7 @@ export default function SiteConfigurationsModal( {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const translate = useTranslate();
 	const dataCenterOptions = getDataCenterOptions();
-	const { phpVersions, recommendedValue } = getPHPVersions( siteId );
+	const { phpVersions, recommendedValue } = getPHPVersions();
 	const siteName = useSiteName( randomSiteName, isRandomSiteNameLoading );
 	const { mutate: createWPCOMSite } = useCreateWPCOMSiteMutation();
 	const { mutate: createWPCOMDevSite } = useCreateWPCOMDevSiteMutation();

@@ -17,7 +17,7 @@ import { Card, CardBody } from '../../components/card';
 import { isOnboardingUrl, isRelativeUrl } from '../../utils/url';
 import ComponentViewTracker from '../component-view-tracker';
 import { Text } from '../text';
-import { TextSkeleton } from '../text-skeleton';
+import { TextBlur } from '../text-blur';
 import { Truncate } from '../truncate';
 import type { ComponentProps, ReactElement, ReactNode } from 'react';
 import './style.scss';
@@ -80,9 +80,6 @@ export default function OverviewCard( {
 	const descriptionId = useId();
 
 	const renderHeading = () => {
-		if ( isLoading ) {
-			return <TextSkeleton length={ 10 } />;
-		}
 		if ( ! heading ) {
 			return <>&nbsp;</>;
 		}
@@ -96,13 +93,6 @@ export default function OverviewCard( {
 			);
 		}
 		return heading;
-	};
-
-	const renderDescription = () => {
-		if ( isLoading ) {
-			return <TextSkeleton length={ 20 } />;
-		}
-		return description ?? null;
 	};
 
 	// Stepper/onboarding flows are not considered relative links because they can't be loaded by TanStack Router.
@@ -174,7 +164,9 @@ export default function OverviewCard( {
 							variant={ disabled ? 'muted' : undefined }
 							weight={ 500 }
 						>
-							{ renderHeading() }
+							<TextBlur isBlurred={ !! isLoading } length={ 10 }>
+								{ renderHeading() }
+							</TextBlur>
 						</Heading>
 						<Text
 							id={ descriptionId }
@@ -183,7 +175,9 @@ export default function OverviewCard( {
 							lineHeight="16px"
 							size={ 12 }
 						>
-							{ renderDescription() }
+							<TextBlur isBlurred={ !! isLoading } length={ 20 }>
+								{ description }
+							</TextBlur>
 						</Text>
 					</VStack>
 				</HStack>

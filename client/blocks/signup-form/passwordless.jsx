@@ -388,7 +388,7 @@ class PasswordlessSignupForm extends Component {
 			!! this.props.isSubmitBlocked ||
 			this.props.blackbox.isSubmitBlocked;
 		const submitButtonText = isSubmitting
-			? this.props.submitButtonLoadingLabel || this.props.translate( 'Creating Your Account…' )
+			? this.props.submitButtonLoadingLabel || this.props.translate( 'Creating your account…' )
 			: this.props.submitButtonLabel || this.props.translate( 'Create your account' );
 
 		if ( this.props.useConnectScreenActions ) {
