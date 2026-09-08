@@ -303,6 +303,24 @@ describe( 'SiteSpec early provisioning step', () => {
 		expect( window.location.href ).toBe( '' );
 	} );
 
+	it( 'keeps the widget config stable across re-renders', () => {
+		mockQueryParams = new URLSearchParams( 'build_wow=1&siteSlug=example.wordpress.com' );
+
+		const { rerender } = render(
+			<SiteSpec navigation={ navigation } stepName="site-spec" flow="ai-site-builder-spec" />
+		);
+		rerender(
+			<SiteSpec navigation={ navigation } stepName="site-spec" flow="ai-site-builder-spec" />
+		);
+
+		// useSiteSpec tears down and reloads the widget whenever the config identity changes,
+		// so a config rebuilt on every render restarts the whole load.
+		expect( mockUseSiteSpec.mock.calls.length ).toBeGreaterThan( 1 );
+		expect( mockUseSiteSpec.mock.calls[ 1 ][ 0 ].siteSpecConfig ).toBe(
+			mockUseSiteSpec.mock.calls[ 0 ][ 0 ].siteSpecConfig
+		);
+	} );
+
 	it( 'goes straight to the error step when build_wow has no target site', () => {
 		mockQueryParams = new URLSearchParams( 'build_wow=1' );
 

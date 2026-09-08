@@ -6,7 +6,7 @@ import { useQuery as useReactQuery } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
@@ -594,6 +594,30 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 		blueprintArchiveSiteIdentifier,
 	] );
 
+	// useSiteSpec re-initialises the widget whenever this object's identity changes, the same
+	// way it does for the handlers above. Built inline in the JSX it was a fresh object on
+	// every render, so the widget tore down and reloaded each time.
+	const siteSpecConfig = useMemo( () => {
+		if ( activeFlow === 'build-wow' ) {
+			return getBuildWowSiteSpecConfig( {
+				siteSlug: queryParams.get( 'siteSlug' ),
+				siteId: queryParams.get( 'siteId' ),
+				ref: queryParams.get( 'ref' ),
+				source: querySource,
+			} );
+		}
+		if ( activeFlow === 'early-provision' ) {
+			return getEarlyProvisionSiteSpecConfig();
+		}
+		if ( activeFlow === 'ciab' ) {
+			return getCiabSiteSpecConfig();
+		}
+		if ( shouldImportBlueprint ) {
+			return getBlueprintSiteSpecConfig( { blueprintId: blueprintArchiveSlug } );
+		}
+		return undefined;
+	}, [ activeFlow, shouldImportBlueprint, blueprintArchiveSlug, querySource, queryParams ] );
+
 	if ( buildWowRequested && isLoadingAutomattician ) {
 		return <DocumentHead title={ translate( 'Build Your Site with AI' ) } />;
 	}
@@ -607,35 +631,28 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 	} else if ( activeFlow === 'build-wow' ) {
 		siteSpecStep = (
 			<SiteSpecContainer
-				siteSpecConfig={ getBuildWowSiteSpecConfig( {
-					siteSlug: queryParams.get( 'siteSlug' ),
-					siteId: queryParams.get( 'siteId' ),
-					ref: queryParams.get( 'ref' ),
-					source: querySource,
-				} ) }
+				siteSpecConfig={ siteSpecConfig }
 				onSpecConfirm={ handleBuildWowSpecConfirm }
 			/>
 		);
 	} else if ( activeFlow === 'early-provision' ) {
 		siteSpecStep = (
 			<SiteSpecContainer
-				siteSpecConfig={ getEarlyProvisionSiteSpecConfig() }
+				siteSpecConfig={ siteSpecConfig }
 				onSpecConfirm={ handleEarlyProvisionSpecConfirm }
 			/>
 		);
 	} else if ( shouldImportBlueprint ) {
 		siteSpecStep = (
 			<SiteSpecContainer
-				siteSpecConfig={ getBlueprintSiteSpecConfig( {
-					blueprintId: blueprintArchiveSlug,
-				} ) }
+				siteSpecConfig={ siteSpecConfig }
 				onSpecConfirm={ handleBlueprintArchiveSpecConfirm }
 			/>
 		);
 	} else if ( activeFlow === 'ciab' ) {
 		siteSpecStep = (
 			<SiteSpecContainer
-				siteSpecConfig={ getCiabSiteSpecConfig() }
+				siteSpecConfig={ siteSpecConfig }
 				onMessage={ handleCiabMessage }
 				onSpecConfirm={ handleCiabSpecConfirm }
 			/>
