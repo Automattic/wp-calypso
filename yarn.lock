@@ -1046,7 +1046,7 @@ __metadata:
     "@wordpress/warning": "npm:3.48.0"
     canvas-confetti: "npm:^1.6.0"
     clsx: "npm:^2.1.1"
-    colord: "npm:2.9.3"
+    colord: "npm:2.9.4"
     debug: "npm:^4.4.1"
     fast-deep-equal: "npm:^3.1.3"
     gridicons: "npm:^3.4.2"
@@ -16139,10 +16139,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"colord@npm:2.9.3, colord@npm:^2.7.0, colord@npm:^2.9.1, colord@npm:^2.9.2, colord@npm:^2.9.3":
+"colord@npm:2.9.3":
   version: 2.9.3
   resolution: "colord@npm:2.9.3"
   checksum: 9699e956894d8996b28c686afe8988720785f476f59335c80ce852ded76ab3ebe252703aec53d9bef54f6219aea6b960fb3d9a8300058a1d0c0d4026460cd110
+  languageName: node
+  linkType: hard
+
+"colord@npm:2.9.4, colord@npm:^2.7.0, colord@npm:^2.9.1, colord@npm:^2.9.2, colord@npm:^2.9.3":
+  version: 2.9.4
+  resolution: "colord@npm:2.9.4"
+  checksum: c8fb0d7ca4b3488c05d75c5e7b42b0ac84ca4b0a9f5538e74f063c083c1f57c319bcf02bee1b8ff691991c9610e875bafd2eafd5d050e383ad71910afadbf098
   languageName: node
   linkType: hard
 
