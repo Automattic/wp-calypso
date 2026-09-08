@@ -97,7 +97,13 @@ const UniversalNavbarHeader = ( {
 			setActiveDropdown( name );
 			return;
 		}
-		dropdownTimerRef.current = setTimeout( () => setActiveDropdown( name ), delay );
+		dropdownTimerRef.current = setTimeout( () => {
+			// The bar and dropdown share one pointer area while a menu is open.
+			if ( name === null && legacyNavRef.current?.matches( ':hover' ) ) {
+				return;
+			}
+			setActiveDropdown( name );
+		}, delay );
 	}, [] );
 	useEffect( () => () => clearTimeout( dropdownTimerRef.current ?? undefined ), [] );
 
@@ -321,6 +327,9 @@ const UniversalNavbarHeader = ( {
 								ref={ legacyNavRef }
 								className={ clsx( 'x-nav', { 'x-nav--2026-redesign': nav2026 } ) }
 								aria-label="WordPress.com"
+								onMouseLeave={
+									nav2026 ? () => showDropdown( DROPDOWN_CLOSE_DELAY, null ) : undefined
+								}
 							>
 								<ul className="x-nav-list x-nav-list__left" role="menu">
 									<li
@@ -330,12 +339,11 @@ const UniversalNavbarHeader = ( {
 											nav2026
 												? () => {
 														recordNavItemHover( isScrolled, 'logo', false );
-														// Hovering a non-dropdown item closes the open dropdown.
 														showDropdown( DROPDOWN_CLOSE_DELAY, null );
 												  }
 												: undefined
 										}
-										// Keyboard parity: focusing into the logo also closes the open dropdown.
+										// Keyboard focus on the logo closes the dropdown.
 										onFocusCapture={ nav2026 ? () => setActiveDropdown( null ) : undefined }
 									>
 										<a
@@ -391,10 +399,9 @@ const UniversalNavbarHeader = ( {
 														target="_self"
 														onItemMouseEnter={ () => {
 															recordNavItemHover( isScrolled, menu.name, false );
-															// Hovering a non-dropdown item closes the open dropdown.
 															showDropdown( DROPDOWN_CLOSE_DELAY, null );
 														} }
-														// Keyboard parity: focusing the item also closes the open dropdown.
+														// Keyboard focus on a non-dropdown item closes the dropdown.
 														onItemFocus={ () => setActiveDropdown( null ) }
 													/>
 												)
