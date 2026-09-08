@@ -1,0 +1,20 @@
+.dashboard-marketplace-hosting__platform-bar {
+	border-block-end: 1px solid var( --dashboard-overview__divider-color );
+
+	// Tabs stretches each tab to fill the list; keep the tier tabs hug-width
+	// and left-anchored so the billing toggle can sit at the row's end.
+	.dashboard-marketplace-hosting__tabs {
+		flex: 1 1 auto;
+		justify-content: flex-start;
+
+		[role='tab'] {
+			flex: 0 0 auto;
+		}
+	}
+}
+
+.dashboard-marketplace-hosting__tab-line {
+	font-weight: 400;
+	margin-block-start: 2px;
+	line-height: 16px;
+}
