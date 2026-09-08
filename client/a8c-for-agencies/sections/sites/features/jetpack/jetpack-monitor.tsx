@@ -3,8 +3,10 @@ import {
 	Card,
 	CardBody,
 	CardFooter,
+	ExternalLink,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
+	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { bell } from '@wordpress/icons';
@@ -77,21 +79,33 @@ export function JetpackMonitorPreview( { site, trackEvent, hasError = false }: P
 						</Button>
 					</A4AEmptyState>
 				) : (
-					<Card>
-						<CardBody>
-							<MonitorActivity
-								hasMonitor={ hasMonitor }
-								site={ site }
-								trackEvent={ trackEvent }
-								hasError={ hasError }
-							/>
-						</CardBody>
+					<VStack spacing={ 4 }>
+						<Card>
+							<CardBody>
+								<MonitorActivity
+									hasMonitor={ hasMonitor }
+									site={ site }
+									trackEvent={ trackEvent }
+									hasError={ hasError }
+								/>
+							</CardBody>
+							{ hasMonitor && (
+								<CardFooter justify="flex-start">
+									<MonitorLegend />
+								</CardFooter>
+							) }
+						</Card>
 						{ hasMonitor && (
-							<CardFooter justify="flex-start">
-								<MonitorLegend />
-							</CardFooter>
+							<Text variant="muted">
+								{ __(
+									'Jetpack will continuously monitor your site, and alert you the moment downtime is detected.'
+								) }{ ' ' }
+								<ExternalLink href="https://jetpack.com/support/monitor/">
+									{ __( 'Learn more' ) }
+								</ExternalLink>
+							</Text>
 						) }
-					</Card>
+					</VStack>
 				) }
 			</div>
 		</>
