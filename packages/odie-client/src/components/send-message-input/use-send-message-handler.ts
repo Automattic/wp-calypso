@@ -1,6 +1,7 @@
 import { useCallback } from '@wordpress/element';
 import Smooch from 'smooch';
 import { Message, Chat } from '../../types';
+import { trackConversationStart } from '../../utils/track-conversation-start';
 import { MAX_MESSAGE_LENGTH } from '../notices/use-message-size-error-notice';
 
 interface UseSendMessageHandlerProps {
@@ -48,17 +49,7 @@ export function useSendMessageHandler( {
 		}
 
 		try {
-			// The user's message is appended by `sendMessage` below, so an empty user
-			// history here means this send opens the conversation.
-			const isConversationStart =
-				chat?.provider === 'odie' && ! chat.messages?.some( ( { role } ) => role === 'user' );
-
-			if ( isConversationStart ) {
-				trackEvent( 'chat_conversation_start', {
-					message_length: inputValue.length,
-					provider: chat?.provider,
-				} );
-			}
+			trackConversationStart( chat, inputValue, trackEvent );
 
 			trackEvent( 'chat_message_action_send', {
 				message_length: inputValue.length,

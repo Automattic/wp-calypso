@@ -118,14 +118,7 @@ function buildAgentsManagerMenuNodes(
 		);
 }
 
-export function useHelpCenterPlugin( {
-	sectionName,
-	adminBarNodes,
-}: {
-	sectionName?: string;
-	adminBarNodes: AdminBarNode[];
-} ): OmnibarNode {
-	const { isShown: isHelpCenterShown, setShowHelpCenter } = useHelpCenter();
+function HelpCenterIcon( { name, sectionName }: { name?: string; sectionName?: string } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: omnibarSiteId } = useQuery( omnibarSiteIdQuery() );
 
@@ -147,6 +140,20 @@ export function useHelpCenterPlugin( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ sectionName ] );
 
+	return adminBarIcon( name, 'omnibar__help-icon' );
+}
+
+export function useHelpCenterPlugin( {
+	sectionName,
+	adminBarNodes,
+}: {
+	sectionName?: string;
+	adminBarNodes: AdminBarNode[];
+} ): OmnibarNode {
+	const { isShown: isHelpCenterShown, setShowHelpCenter } = useHelpCenter();
+	const { recordTracksEvent } = useAnalytics();
+	const { data: omnibarSiteId } = useQuery( omnibarSiteIdQuery() );
+
 	const helpNode = adminBarNodes.find( ( node ) => node.id === AGENTS_MANAGER_NODE_ID );
 
 	// The backend only sends these nodes to eligible users, so their presence is the gate.
@@ -161,7 +168,7 @@ export function useHelpCenterPlugin( {
 		return {
 			id: helpNode.id,
 			label: helpNode.meta?.menu_title,
-			icon: adminBarIcon( helpNode.meta?.icon, 'omnibar__help-icon' ),
+			icon: <HelpCenterIcon name={ helpNode.meta?.icon } sectionName={ sectionName } />,
 			tooltip: helpNode.meta?.menu_title,
 			// Disconnected sites get a link instead of a dropdown, opened in a new tab as in wp-admin.
 			...( children.length
@@ -173,7 +180,7 @@ export function useHelpCenterPlugin( {
 	return {
 		id: 'help-center',
 		label: __( 'Help' ),
-		icon: adminBarIcon( 'help', 'omnibar__help-icon' ),
+		icon: <HelpCenterIcon name="help" sectionName={ sectionName } />,
 		onClick: () => setShowHelpCenter( ! isHelpCenterShown ),
 	};
 }
