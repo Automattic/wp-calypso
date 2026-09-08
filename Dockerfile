@@ -5,7 +5,7 @@ ARG node_version=24.15.0
 ARG cache_seed_image=registry.a8c.com/calypso/cache-seed:latest
 
 ###################
-FROM node:${node_version}-bullseye-slim AS builder-cache-none
+FROM node:${node_version}-trixie-slim AS builder-cache-none
 
 WORKDIR /calypso
 ENV HOME=/calypso
@@ -18,7 +18,7 @@ RUN mkdir -p /calypso/.cache /calypso/.yarn
 FROM ${cache_seed_image} AS cache-seed-source
 
 ###################
-FROM node:${node_version}-bullseye-slim AS builder-cache-seed
+FROM node:${node_version}-trixie-slim AS builder-cache-seed
 
 WORKDIR /calypso
 ENV HOME=/calypso
@@ -42,19 +42,6 @@ ENV SKIP_CALYPSO_POSTINSTALL=true
 ENV SKIP_CALYPSO_PACKAGE_BUILDS=true
 ENV CONTAINER=docker
 ENV IS_CI=true
-
-# Debian 11 (bullseye) reached end-of-LTS on 2026-08-31: its Release files have
-# expired and the pool on deb.debian.org is already returning 404s. Repoint at the
-# pinned snapshot mirror the base image ships (commented out) so package versions
-# still match the image. Remove this whole block once we move to bookworm.
-RUN set -eux; \
-	sed -i \
-		-e 's|^deb http|# deb http|' \
-		-e 's|^# deb http://snapshot.debian.org|deb http://snapshot.debian.org|' \
-		/etc/apt/sources.list; \
-	grep -q '^deb http://snapshot.debian.org' /etc/apt/sources.list; \
-	echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/80-retries; \
-	echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/80-no-valid-until
 
 # For Sentry uploads
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
