@@ -98,7 +98,7 @@ export function JetpackMonitorPreview( { site, trackEvent, hasError = false }: P
 						{ hasMonitor && (
 							<Text variant="muted">
 								{ __(
-									'Jetpack will continuously monitor your site, and alert you the moment downtime is detected.'
+									'We will continuously monitor your site and alert you the moment downtime is detected.'
 								) }{ ' ' }
 								<ExternalLink href="https://jetpack.com/support/monitor/">
 									{ __( 'Learn more' ) }
