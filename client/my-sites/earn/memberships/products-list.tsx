@@ -186,7 +186,15 @@ function ProductsList() {
 				// Purposefully isn't a dismissible nudge as without this nudge, the page would appear to be
 				// broken as it only does listing and deleting of plans and it wouldn't be clear how to change that.
 				<UpsellNudge
+					callToAction={ translate( 'Upgrade' ) }
 					title={ translate( 'Upgrade to modify payment plans or add new plans' ) }
+					description={ translate(
+						'Payment plans let you charge for memberships, subscriptions, and one-time offers.'
+					) }
+					list={ [
+						translate( 'Create as many payment plans as you need.' ),
+						translate( 'Charge one-time, monthly, or yearly.' ),
+					] }
 					href={ '/plans/' + site?.slug }
 					showIcon
 					onClick={ () => trackUpgrade() }
