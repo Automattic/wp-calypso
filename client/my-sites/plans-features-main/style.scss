@@ -4,6 +4,7 @@
 @import "@automattic/typography/styles/variables";
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 @import "@automattic/plans-grid-next/src/media-queries";
+@import "@automattic/plans-grid-next/src/variables";
 @import "./media-queries";
 
 $plan-features-header-banner-height: 20px;
@@ -205,12 +206,30 @@ body.is-section-plans .layout__content .main {
 		.is-2023-pricing-grid .plans-wrapper {
 			margin: 0;
 		}
+
+		.plans-features-main > * > .plans-features-main__plan-type-selector-layout .plan-type-selector {
+			width: 100%;
+			max-width: $mobile-card-max-width;
+		}
+
+		// Once stuck, the selector spans the viewport instead.
+		.plans-features-main > .is-sticky-plan-type-selector > .plans-features-main__plan-type-selector-layout .plan-type-selector {
+			max-width: none;
+		}
 	}
 }
 body.is-section-plans .layout__content #plans .main {
 	@include plan-type-selector-custom-mobile-breakpoint {
 		.is-2023-pricing-grid .plans-wrapper {
 			padding: 17px;
+		}
+
+		.plans-features-main > * > .plans-features-main__plan-type-selector-layout {
+			padding-inline: 17px;
+		}
+
+		.plans-features-main > .is-sticky-plan-type-selector > .plans-features-main__plan-type-selector-layout {
+			padding-inline: 0;
 		}
 	}
 }
