@@ -3,7 +3,6 @@ import { closeSurvicateSurvey } from './close-survey';
 import debug from './debug';
 import { getSuppressionReason, observeHelpCenter, shouldSuppressSurvey } from './invoke-event';
 import { isSurveyVisible, observeModals } from './modal-detection';
-import { isInSupportSession } from './support-session';
 import { pauseSurvicateTargeting, resumeSurvicateTargeting } from './targeting';
 import { recordSurveySuppressed } from './track-suppression';
 
@@ -93,12 +92,8 @@ export function loadSurvicateScript( workspaceId: string, signal?: AbortSignal )
 				window._sva?.removeEventListener?.( 'survey_displayed', onSurveyDisplayed );
 				disconnectModalObserver();
 				unsubscribeHelpCenter();
-				// Don't leave the SDK paused with nothing left to resume it —
-				// except in a support session, where staying paused for the rest
-				// of the page lifetime is the point.
-				if ( ! isInSupportSession() ) {
-					resumeSurvicateTargeting();
-				}
+				// Don't leave the SDK paused with nothing left to resume it.
+				resumeSurvicateTargeting();
 			},
 			{ once: true }
 		);

@@ -117,10 +117,13 @@ Support sessions are guarded at **both** layers:
 2. **Suppression** — `getSuppressionReason()` returns `'support_session'` first, so any
    path that still reaches a loaded SDK is closed and pauses targeting.
 
-Unlike a modal or the Help Center, a support session never clears within a page
-lifetime, so the pause is permanent by design: `resumeIfClear()` never resumes (it goes
-through `shouldSuppressSurvey()`), and consumer abort in `load-script.ts` skips its
-otherwise-unconditional resume.
+A support session neither begins nor ends within a page lifetime — the globals are
+SSR'd and `isSupportUserSession()` is frozen at module load — so there is no
+transition to handle and **nothing resumes**. In practice layer 1 means the SDK is
+never loaded in the first place, which makes layer 2 unreachable from our own
+consumers; it stays as the net for the `invokeSurvicateEvent()` call sites that fire
+without consulting the load gate. Should the net ever pause targeting, it simply stays
+paused: `resumeIfClear()` goes through `shouldSuppressSurvey()`, which never clears.
 
 **The wp-admin Survicate loader is a separate integration** (`class-survicate.php` in the
 Jetpack monorepo) and is not covered by anything here — it needs its own support-session

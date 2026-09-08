@@ -410,21 +410,6 @@ describe( 'loadSurvicateScript', () => {
 		} );
 	} );
 
-	test( 'should leave targeting paused on abort during a support session', () => {
-		const retarget = jest.fn();
-		window._sva = { closeSurvey: jest.fn(), addEventListener: jest.fn(), retarget };
-		mockIsInSupportSession.mockReturnValue( true );
-
-		loadSurvicateScript( 'test-workspace-id', controller.signal );
-		window.dispatchEvent( new Event( 'SurvicateReady' ) );
-		expect( window._sva.disableTargeting ).toBe( true );
-
-		controller.abort();
-
-		expect( window._sva.disableTargeting ).toBe( true );
-		expect( retarget ).not.toHaveBeenCalled();
-	} );
-
 	test( 'should re-establish modal suppression when reloaded after the SDK is ready', async () => {
 		const closeSurvey = jest.fn();
 		const firstController = new AbortController();
