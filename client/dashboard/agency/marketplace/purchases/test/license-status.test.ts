@@ -3,9 +3,14 @@ import {
 	getLicenseProductName,
 	getLicenseStatus,
 	getLicenseTags,
+	isAutoRenewDisabled,
 	isBundleParent,
+	isChildLicense,
+	isJetpackCrmLicense,
+	isPartnerLicense,
 	isPressableAddonLicense,
 	isPressableLicense,
+	isWpcomHostingLicense,
 } from '../license-status';
 import type { JetpackLicense } from '@automattic/api-core';
 
@@ -81,6 +86,19 @@ describe( 'license key helpers', () => {
 		expect( isBundleParent( license() ) ).toBe( false );
 	} );
 
+	it( 'treats user-owned licenses as standard rather than partner licenses', () => {
+		expect( isPartnerLicense( license() ) ).toBe( true );
+		expect( isPartnerLicense( license( { owner_type: null } ) ) ).toBe( true );
+		expect( isPartnerLicense( license( { owner_type: 'user' } ) ) ).toBe( false );
+	} );
+
+	it( 'detects WordPress.com hosting licenses', () => {
+		expect( isWpcomHostingLicense( license( { license_key: 'wpcom-hosting-business_x' } ) ) ).toBe(
+			true
+		);
+		expect( isWpcomHostingLicense( license() ) ).toBe( false );
+	} );
+
 	it( 'detects Pressable licenses and add-ons', () => {
 		expect( isPressableLicense( license( { license_key: 'pressable-wp-1_x' } ) ) ).toBe( true );
 		expect( isPressableLicense( license( { license_key: 'jetpack-pressable_x' } ) ) ).toBe( true );
@@ -114,6 +132,43 @@ describe( 'getLicenseProductName', () => {
 
 	it( 'leaves other products alone', () => {
 		expect( getLicenseProductName( license() ) ).toBe( 'Jetpack VaultPress Backup' );
+	} );
+} );
+
+describe( 'subscription and bundle helpers', () => {
+	it( 'detects Jetpack CRM products, including Complete', () => {
+		expect( isJetpackCrmLicense( license( { license_key: 'jetpack-crm_x' } ) ) ).toBe( true );
+		expect( isJetpackCrmLicense( license( { license_key: 'jetpack-complete_x' } ) ) ).toBe( true );
+		expect( isJetpackCrmLicense( license() ) ).toBe( false );
+	} );
+
+	it( 'flags an active subscription with auto-renew turned off', () => {
+		const subscription = {
+			id: 'sub_1',
+			product_name: 'Hosting',
+			purchase_price: 10,
+			purchase_currency: 'USD',
+			billing_interval_unit: 'month',
+			status: 'active',
+			expiry: null,
+			is_auto_renew_enabled: false,
+			is_refundable: false,
+		};
+		expect( isAutoRenewDisabled( license( { subscription } ) ) ).toBe( true );
+		expect(
+			isAutoRenewDisabled(
+				license( { subscription: { ...subscription, is_auto_renew_enabled: true } } )
+			)
+		).toBe( false );
+		expect(
+			isAutoRenewDisabled( license( { subscription: { ...subscription, status: 'cancelled' } } ) )
+		).toBe( false );
+		expect( isAutoRenewDisabled( license() ) ).toBe( false );
+	} );
+
+	it( 'detects child licenses of a bundle', () => {
+		expect( isChildLicense( license( { parent_license_id: 7 } ) ) ).toBe( true );
+		expect( isChildLicense( license() ) ).toBe( false );
 	} );
 } );
 
