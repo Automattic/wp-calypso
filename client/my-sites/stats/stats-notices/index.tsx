@@ -167,9 +167,8 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	//
 	// The features have to be in before that answer means anything: `shouldGateStats` reports
 	// "not gated" while they are still loading, which is the safe default for an upsell and the
-	// wrong one for an invitation. Nothing loads them in a Jetpack site's wp-admin
-	// (`stats-main` skips `QuerySiteFeatures` there), so an Atomic site is never invited from
-	// wp-admin - it fails closed, and spends no request finding out.
+	// wrong one for an invitation. In wp-admin they arrive with the page, seeded from the site's
+	// plan into Odyssey's initial state, which is why `stats-main` skips `QuerySiteFeatures` there.
 	const hasCommercialStats = useSelector(
 		( state ) =>
 			!! getSiteFeatures( state, siteId ) &&
