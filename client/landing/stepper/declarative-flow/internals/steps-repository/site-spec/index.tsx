@@ -15,7 +15,6 @@ import {
 	getSiteEditorUrl,
 	logBlueprintArchiveEvent,
 	startBlueprintArchiveImport,
-	isAtomicTransferComplete,
 	waitForAtomicTransferComplete,
 	waitForBlueprintImportComplete,
 } from 'calypso/landing/stepper/utils/blueprint-archive-import';
@@ -162,7 +161,6 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 	const messageCountRef = useRef( 0 );
 	const isSubmittingRef = useRef( false );
 	const blueprintImportStartedRef = useRef( false );
-	const handoffUrlRef = useRef< string | null >( null );
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { setSiteSetupError } = useDispatch( SITE_STORE );
 	// Held in a ref so the spec-confirm callback stays referentially stable: the flow hands
@@ -451,7 +449,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					// Only once the restore is done: it replaces the site's options
 					// wholesale, so a spec applied earlier would be overwritten.
 					// Never blocks the hand-off — applyBlueprintSpec() resolves either way.
-					const applied = await applyBlueprintSpec(
+					const { applied, adminUrl } = await applyBlueprintSpec(
 						blueprintArchiveSiteIdentifier,
 						specId,
 						blueprintArchiveSlug
@@ -463,18 +461,20 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					} );
 
 					// Resolved after the wait either way, so the URL names the site that now exists.
-					// The funnel branch prefers the URL prefetched while the customer was answering
-					// the spec: reading the ref rather than awaiting a promise means a prefetch that
-					// never settled costs nothing here, it just falls through to fetching now.
+					// The apply response already carries the site's admin base, so handing it over
+					// saves a /sites/<id> round trip here — on the one path where the customer is
+					// watching a spinner. Null on an older wpcom, or when the apply failed, in which
+					// case the helper fetches it as before.
 					const siteEditorUrl = wowFunnelSlug
-						? handoffUrlRef.current ??
-						  ( await getWowFunnelHandoffUrl( {
+						? await getWowFunnelHandoffUrl( {
 								dest: wowFunnelDest,
 								siteIdentifier: blueprintArchiveSiteIdentifier,
-						  } ) )
-						: getSiteEditorUrl( await getSiteAdminUrl( blueprintArchiveSiteIdentifier ), {
-								canvasEdit: applied,
-						  } );
+								adminUrl,
+						  } )
+						: getSiteEditorUrl(
+								adminUrl ?? ( await getSiteAdminUrl( blueprintArchiveSiteIdentifier ) ),
+								{ canvasEdit: applied }
+						  );
 
 					logBlueprintArchiveEvent( 'redirect_site_editor', {
 						site_identifier: blueprintArchiveSiteIdentifier,
@@ -506,45 +506,6 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 			setPendingAction,
 		]
 	);
-
-	// Resolve the hand-off URL while the customer is still answering, so confirm does not spend a
-	// round trip on it. The URL depends only on the site, never on the spec, so there is nothing to
-	// wait for it on.
-	//
-	// Gated on the transfer rather than fetched outright: admin_url is read from the site record
-	// and changes when a site goes Atomic, so a URL read mid-transfer would point at the site as it
-	// was before. The gate is a single status check rather than a wait — a fleet claim has already
-	// transferred long before this page renders, and a run that has not is simply left to fetch at
-	// confirm. Failures are swallowed: this is an optimisation, not a step.
-	useEffect( () => {
-		if ( ! wowFunnelSlug || ! blueprintArchiveSiteIdentifier || handoffUrlRef.current ) {
-			return;
-		}
-
-		let cancelled = false;
-
-		( async () => {
-			// One check, never a poll: waiting here is the processing step's job, and a funnel run
-			// that has not transferred yet simply does not get the optimisation.
-			if ( ! ( await isAtomicTransferComplete( blueprintArchiveSiteIdentifier ) ) ) {
-				return;
-			}
-
-			const url = await getWowFunnelHandoffUrl( {
-				dest: wowFunnelDest,
-				siteIdentifier: blueprintArchiveSiteIdentifier,
-			} );
-			if ( ! cancelled ) {
-				handoffUrlRef.current = url;
-			}
-		} )().catch( () => {
-			// Confirm falls back to fetching it.
-		} );
-
-		return () => {
-			cancelled = true;
-		};
-	}, [ wowFunnelSlug, wowFunnelDest, blueprintArchiveSiteIdentifier ] );
 
 	// Kick off the background transfer + blueprint-archive import as soon as the
 	// spec page mounts, so it runs while the user reviews the spec. A funnel run skips this:
