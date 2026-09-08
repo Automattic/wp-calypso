@@ -219,6 +219,9 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const { isInvited: isInvitedToPreview, dashboardUrl: previewDashboardUrl } =
 		usePremiumAnalyticsPreviewInvitation( siteId );
 	const [ isPreviewDialogOpen, setIsPreviewDialogOpen ] = useState( false );
+	useEffect( () => {
+		setIsPreviewDialogOpen( false );
+	}, [ siteId ] );
 	const pageModulesMenuItems = useMemo(
 		() =>
 			isInvitedToPreview && previewDashboardUrl

@@ -1,10 +1,15 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { CALYPSO_CONTACT, JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button, Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import usePremiumAnalyticsStatusMutation from 'calypso/my-sites/stats/hooks/use-premium-analytics-status-mutation';
+import {
+	PREMIUM_ANALYTICS_ENABLED_SETTING,
+	premiumAnalyticsStatusQueryKey,
+} from 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query';
 import { trackPremiumAnalyticsPreviewEvent } from './track-event';
 
 import './style.scss';
@@ -27,8 +32,12 @@ type SwitchOnDialogProps = {
  * @param props.dashboardUrl Where to go once it is on.
  * @param props.onClose Called when the reader leaves without switching on.
  */
+// Long enough for the Tracks beacon to leave before the page does; the Stats notices use the same.
+const NAVIGATION_DELAY = 250;
+
 export default function SwitchOnDialog( { siteId, dashboardUrl, onClose }: SwitchOnDialogProps ) {
 	const translate = useTranslate();
+	const queryClient = useQueryClient();
 	// Which API the site answers on decides where support lives, same as the banner.
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const [ hasFailed, setHasFailed ] = useState( false );
@@ -42,6 +51,18 @@ export default function SwitchOnDialog( { siteId, dashboardUrl, onClose }: Switc
 	useEffect( () => {
 		trackPremiumAnalyticsPreviewEvent( 'menu', 'item_clicked', siteId );
 	}, [ siteId ] );
+
+	// The browser's Back button can restore this page from the back/forward cache with the dialog
+	// still open and locked in its leaving state, so a restored page closes it.
+	useEffect( () => {
+		const closeOnRestore = ( event: PageTransitionEvent ) => {
+			if ( event.persisted ) {
+				onClose();
+			}
+		};
+		window.addEventListener( 'pageshow', closeOnRestore );
+		return () => window.removeEventListener( 'pageshow', closeOnRestore );
+	}, [ onClose ] );
 
 	const cancel = () => {
 		trackPremiumAnalyticsPreviewEvent( 'menu', 'cancelled', siteId );
@@ -72,7 +93,13 @@ export default function SwitchOnDialog( { siteId, dashboardUrl, onClose }: Switc
 		// After the write so a retry counts once, before the navigation so it is not cut short.
 		trackPremiumAnalyticsPreviewEvent( 'menu', 'enabled', siteId );
 		setIsLeaving( true );
-		window.location.href = dashboardUrl;
+		// The site is on now, so neither the menu entry nor the banner should offer it again.
+		queryClient.setQueryData( premiumAnalyticsStatusQueryKey( siteId ), {
+			[ PREMIUM_ANALYTICS_ENABLED_SETTING ]: true,
+		} );
+		setTimeout( () => {
+			window.location.href = dashboardUrl;
+		}, NAVIGATION_DELAY );
 	};
 
 	return (

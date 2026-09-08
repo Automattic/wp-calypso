@@ -142,11 +142,10 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	// decides the cohort on top. The same rule the registry uses, flag included: the request holds
 	// every notice back while it is in flight, so a site that asks it needlessly sits on its own
 	// upsell waiting for an answer nothing will use.
+	const shouldAskStatus =
+		canBeInvited && serverNoticesVisibility?.premium_analytics_preview === true;
 	const { data: isPremiumAnalyticsEnabled, isLoading: isLoadingPremiumAnalyticsStatus } =
-		usePremiumAnalyticsStatusQuery(
-			siteId,
-			canBeInvited && serverNoticesVisibility?.premium_analytics_preview === true
-		);
+		usePremiumAnalyticsStatusQuery( siteId, shouldAskStatus );
 
 	const noticeOptions = {
 		siteId,
@@ -190,8 +189,9 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		isError ||
 		isRequestingSitePurchases ||
 		// Waiting here rather than rendering an upsell and swapping it for the preview a moment
-		// later. Only sites the server offered the preview to ever wait.
-		isLoadingPremiumAnalyticsStatus
+		// later. Only sites the server offered the preview to ever wait: the query is shared with
+		// the modules menu and reports its fetch status to every observer, disabled ones included.
+		( shouldAskStatus && isLoadingPremiumAnalyticsStatus )
 	) {
 		return null;
 	}

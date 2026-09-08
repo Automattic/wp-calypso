@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SwitchOnDialog from '../switch-on-dialog';
 
@@ -19,6 +19,11 @@ const mockFlags = () =>
 		string,
 		boolean
 	>;
+
+const mockSetQueryData = jest.fn();
+jest.mock( '@tanstack/react-query', () => ( {
+	useQueryClient: () => ( { setQueryData: mockSetQueryData } ),
+} ) );
 
 const mockRecordTracksEvent = jest.fn();
 jest.mock( '@automattic/calypso-analytics', () => ( {
@@ -74,12 +79,35 @@ describe( 'SwitchOnDialog', () => {
 			'calypso_stats_premium_analytics_preview_menu_enabled',
 			{ blog_id: 123 }
 		);
-		expect( window.location.href ).toBe( DASHBOARD_URL );
+		// The site is on: nothing should offer it again, on this page or the next SPA one.
+		expect( mockSetQueryData ).toHaveBeenCalledWith( [ 'stats', 'premium-analytics-status', 123 ], {
+			jetpack_premium_analytics_enabled: true,
+		} );
 		// Still on its way out: nothing to press again while the page unloads.
 		expect( screen.getByRole( 'button', { name: 'Switching it on…' } ) ).toHaveAttribute(
 			'aria-disabled',
 			'true'
 		);
+		// The beacon gets a head start on the navigation.
+		expect( window.location.href ).toBe( '' );
+		await waitFor( () => expect( window.location.href ).toBe( DASHBOARD_URL ) );
+	} );
+
+	/**
+	 * Back from the new Traffic tab, the browser can restore this page from its cache with the
+	 * dialog still open and every way out disabled.
+	 */
+	it( 'closes itself when the page is restored from the back/forward cache', () => {
+		const onClose = renderDialog();
+
+		const restored = new Event( 'pageshow' );
+		Object.defineProperty( restored, 'persisted', { value: true } );
+		window.dispatchEvent( restored );
+
+		expect( onClose ).toHaveBeenCalledTimes( 1 );
+		// A plain load is not a restore.
+		window.dispatchEvent( new Event( 'pageshow' ) );
+		expect( onClose ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'keeps the reader here with a way to retry when the write fails', async () => {
