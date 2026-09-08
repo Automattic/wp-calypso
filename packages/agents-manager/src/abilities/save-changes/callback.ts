@@ -1,6 +1,5 @@
 import { store as coreStore } from '@wordpress/core-data';
 import { dispatch, select } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { errorResult, successResult } from '../ability-result';
 import type { AbilityResult } from '../types';
@@ -48,7 +47,7 @@ export async function saveChanges( io: SaveChangesIO ): Promise< AbilityResult >
 	const dirtyEntityRecords = io.getDirtyEntityRecords();
 
 	if ( dirtyEntityRecords.length === 0 ) {
-		return successResult( __( 'There are no unsaved changes.', __i18n_text_domain__ ), {
+		return successResult( 'There are no unsaved changes.', {
 			savedEntityCount: 0,
 		} );
 	}
@@ -58,7 +57,7 @@ export async function saveChanges( io: SaveChangesIO ): Promise< AbilityResult >
 	) {
 		return errorResult(
 			'The editor is already saving these changes.',
-			__( 'The editor is already saving. Please try again when it finishes.', __i18n_text_domain__ )
+			'The editor is already saving. Try again when it finishes.'
 		);
 	}
 
@@ -98,20 +97,12 @@ export async function saveChanges( io: SaveChangesIO ): Promise< AbilityResult >
 
 		return errorResult(
 			reason,
-			savedEntityCount > 0
-				? __(
-						'Some changes could not be saved. Your work is still here — try saving again.',
-						__i18n_text_domain__
-				  )
-				: __(
-						'Your changes could not be saved. Your work is still here — try saving again.',
-						__i18n_text_domain__
-				  ),
+			'One or more changes could not be saved. The unsaved changes remain staged in the editor.',
 			{ savedEntityCount, failedEntityCount: failed.length }
 		);
 	}
 
-	return successResult( __( 'Your changes have been saved.', __i18n_text_domain__ ), {
+	return successResult( 'Your changes have been saved.', {
 		savedEntityCount,
 	} );
 }
@@ -135,7 +126,10 @@ type CoreActions = {
 /** Runs the save ability against the stores registered by the editor. */
 export async function saveChangesCallback(): Promise< AbilityResult > {
 	if ( ! isEditorPage() ) {
-		return errorResult( 'Changes can only be saved from the editor.' );
+		return errorResult(
+			'Changes can only be saved from the editor.',
+			'Changes can only be saved while an editor is open.'
+		);
 	}
 
 	try {
@@ -153,7 +147,10 @@ export async function saveChangesCallback(): Promise< AbilityResult > {
 			! coreActions?.editEntityRecord ||
 			! coreActions.saveEditedEntityRecord
 		) {
-			return errorResult( 'The editor save actions are unavailable.' );
+			return errorResult(
+				'The editor save actions are unavailable.',
+				'The editor cannot save changes right now.'
+			);
 		}
 
 		return await saveChanges( {
@@ -168,6 +165,9 @@ export async function saveChangesCallback(): Promise< AbilityResult > {
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
 		console.error( '[AgentsManager] Error saving editor changes:', error );
-		return errorResult( error instanceof Error ? error.message : String( error ) );
+		return errorResult(
+			error instanceof Error ? error.message : String( error ),
+			'The editor could not complete the save.'
+		);
 	}
 }
