@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/ui';
 import { Link } from '@tanstack/react-router';
 import {
 	__experimentalText as Text,
@@ -8,6 +7,7 @@ import {
 	Tooltip,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useMemo } from 'react';
 import { useLocale } from '../../../app/locale';
 import { siteRoute, siteSettingsRepositoriesManageRoute } from '../../../app/router/sites';

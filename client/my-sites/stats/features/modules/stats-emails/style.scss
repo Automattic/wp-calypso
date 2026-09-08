@@ -1,0 +1,100 @@
+@import '@automattic/components/src/horizontal-bar-list/stats-variables';
+
+/* Keep the tooltip note from stretching the popover across the card. */
+.stats-email__tooltip-note {
+	max-width: 220px;
+	white-space: normal;
+	overflow-wrap: break-word;
+}
+
+.stats-emails--four-columns {
+	$metric-column-width: 88px;
+
+	/* At narrow widths the table keeps a minimum width and scrolls inside the card. */
+	.stats-card__content {
+		overflow-x: auto;
+	}
+
+	/* fit-content is required: an auto-width block fills the header and the sticky
+	   title gets dragged off-screen. The inset matches the card padding so the
+	   stuck and resting positions coincide. */
+	.stats-card-header--main {
+		position: sticky;
+		inset-inline-start: $padding-outside;
+		width: fit-content;
+		max-width: 100%;
+	}
+
+	.stats-card--footer {
+		position: sticky;
+		inset-inline-start: $padding-outside;
+	}
+
+	.stats-card-header,
+	.horizontal-bar-list-item {
+		min-width: 620px;
+	}
+
+	.stats-card-header {
+		box-sizing: border-box;
+	}
+
+	/* The metric header sits outside the additional-columns wrapper; bottom-align so
+	   it wraps like its siblings. */
+	.stats-card--column-header {
+		align-items: flex-end;
+	}
+
+	.stats-card--column-header__left {
+		width: auto;
+		flex: 1 1 auto;
+		min-width: 0;
+		justify-content: flex-start;
+		align-items: flex-end;
+	}
+
+	.stats-card--column-header__right {
+		flex: 0 0 $metric-column-width;
+		width: $metric-column-width;
+		white-space: normal;
+		overflow-wrap: break-word;
+		hyphens: auto;
+		text-align: end;
+	}
+
+	.stats-card-header__additional {
+		margin-inline-start: auto;
+	}
+
+	/* The shared bar assumes a single value column; with four it overflows in Firefox
+	   unless it can shrink. */
+	.horizontal-bar-list-item-bar {
+		width: auto;
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
+	.value {
+		flex-basis: $metric-column-width;
+	}
+
+	.stats-card-header__additional,
+	.horizontal-bar-list-item--additional {
+		display: flex;
+		flex: 0 0 auto;
+		justify-content: flex-end;
+		align-items: flex-end;
+		gap: 0 8px;
+
+		/* Fixed tracks so long translated headers (sv "Öppningsfrekvens") wrap instead
+		   of widening the column. */
+		> span {
+			flex: 0 0 $metric-column-width;
+			min-width: 0;
+			text-align: end;
+			white-space: normal;
+			overflow-wrap: break-word;
+			hyphens: auto;
+		}
+	}
+}

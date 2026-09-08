@@ -6,6 +6,7 @@ import {
 	getResponseRenderedTrackingProperties,
 	trackSplitScreenGuideClick,
 	trackSplitScreenGuideRendered,
+	type BigSkyEventName,
 } from './tracking';
 
 // Guards the props this package hands to the family recorder; the recorder
@@ -35,7 +36,10 @@ const expectPrivacySafePayload = ( properties: Record< string, unknown > ) => {
 
 type WindowWithAgentsManagerActions = Window & {
 	__agentsManagerActions?: {
-		recordBigSkyTracksEvent?: ( eventName: string, props?: Record< string, unknown > ) => void;
+		recordBigSkyTracksEvent?: (
+			eventName: BigSkyEventName,
+			props?: Record< string, unknown >
+		) => void;
 	};
 };
 
@@ -56,26 +60,32 @@ describe( 'Jetpack AI sidebar tracking', () => {
 	it( 'records split-screen guide clicks through the family recorder', () => {
 		expect( trackSplitScreenGuideClick( { componentType: 'post-feedback' } ) ).toBe( true );
 
-		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'split_screen_guide_click', {
-			component_type: 'post-feedback',
-			guide_variant: 'inline_action_card',
-		} );
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_split_screen_guide_click',
+			{
+				component_type: 'post-feedback',
+				guide_variant: 'inline_action_card',
+			}
+		);
 		expectPrivacySafePayload( mockRecordBigSkyTracksEvent.mock.calls[ 0 ][ 1 ] );
 	} );
 
 	it( 'records a split-screen guide impression through the family recorder', () => {
 		trackSplitScreenGuideRendered( { componentType: 'ai-editorial-review' } );
 
-		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'split_screen_guide_rendered', {
-			component_type: 'ai-editorial-review',
-			guide_variant: 'inline_action_card',
-		} );
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_split_screen_guide_rendered',
+			{
+				component_type: 'ai-editorial-review',
+				guide_variant: 'inline_action_card',
+			}
+		);
 		expectPrivacySafePayload( mockRecordBigSkyTracksEvent.mock.calls[ 0 ][ 1 ] );
 	} );
 
 	it.each( [
-		[ 'impression', trackSplitScreenGuideRendered, 'split_screen_guide_rendered' ],
-		[ 'click', trackSplitScreenGuideClick, 'split_screen_guide_click' ],
+		[ 'impression', trackSplitScreenGuideRendered, 'jetpack_big_sky_split_screen_guide_rendered' ],
+		[ 'click', trackSplitScreenGuideClick, 'jetpack_big_sky_split_screen_guide_click' ],
 	] )( 'attaches the tool call to a guide %s when known', ( _name, track, eventName ) => {
 		track( { componentType: 'proofread', toolCallId: 'tool-call-1' } );
 

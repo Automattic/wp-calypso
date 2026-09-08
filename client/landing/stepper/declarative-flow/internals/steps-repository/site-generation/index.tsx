@@ -23,11 +23,11 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	const steps = useMemo(
 		() => [
 			{ id: 'prepare', label: translate( 'Preparing your site' ) },
-			{ id: 'design', label: translate( 'Choosing your design' ) },
+			{ id: 'design', label: translate( 'Creating your design' ) },
 			{ id: 'pages', label: translate( 'Building your pages' ) },
 			{ id: 'images', label: translate( 'Adding your images' ) },
 			{ id: 'polish', label: translate( 'Polishing your site' ) },
-			{ id: 'publish', label: translate( 'Publishing your site' ) },
+			{ id: 'publish', label: translate( 'Doing final checks' ) },
 		],
 		[ translate ]
 	);

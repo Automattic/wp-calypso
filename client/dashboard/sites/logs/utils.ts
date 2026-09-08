@@ -2,7 +2,12 @@ import { dateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
 import { startOfDay, endOfDay, fromUnixTime, isValid as isValidDate } from 'date-fns';
 import { formatDateWithOffset, getUtcOffsetDisplay } from '../../utils/datetime';
+import { getIntlLocale } from '../../utils/locale';
 import type { PHPLog, ServerLog } from '@automattic/api-core';
+import type { Badge } from '@wordpress/ui';
+import type { ComponentProps } from 'react';
+
+type BadgeIntent = NonNullable< ComponentProps< typeof Badge >[ 'intent' ] >;
 
 type DateRange = { start: Date; end: Date };
 
@@ -55,11 +60,32 @@ export function buildTimeRangeInSeconds(
 	return { startSec, endSec };
 }
 
-/**
- * Convert a PHP log severity string to lowercase (to be used in a CSS class name).
- */
-export const toSeverityClass = ( severity: PHPLog[ 'severity' ] ) =>
-	severity.split( ' ' )[ 0 ].toLowerCase();
+export const toSeverityIntent = ( severity: PHPLog[ 'severity' ] ): BadgeIntent => {
+	switch ( severity ) {
+		case 'Fatal error':
+			return 'high';
+		case 'Warning':
+			return 'medium';
+		case 'Deprecated':
+			return 'informational';
+		case 'User':
+		default:
+			return 'none';
+	}
+};
+
+export const toRequestTypeIntent = ( requestType: ServerLog[ 'request_type' ] ): BadgeIntent => {
+	switch ( requestType ) {
+		case 'DELETE':
+			return 'high';
+		case 'GET':
+			return 'stable';
+		case 'POST':
+			return 'informational';
+		default:
+			return 'none';
+	}
+};
 
 /**
  * Format a log date/time string for display.
@@ -73,7 +99,7 @@ export function formatLogDateTimeForDisplay(
 	if ( timezoneString ) {
 		const date = new Date( dateTime );
 
-		return new Intl.DateTimeFormat( locale, {
+		return new Intl.DateTimeFormat( getIntlLocale( locale ), {
 			dateStyle: 'long',
 			timeStyle: 'short',
 			timeZone: timezoneString,

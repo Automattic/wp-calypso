@@ -23,6 +23,7 @@
 	"stats/archive-breakdown",
 	"stats/chart-library",
 	"stats/empty-module-traffic",
+	"stats/premium-analytics-preview",
 	"stats/real-time-tab",
 	"wpcom_concierge_schedule_id",
 	"wpcom_signup_id",

@@ -20,7 +20,8 @@ function mockDomainQuery( domainName: string, overrides = {} ) {
 		} );
 }
 
-describe( '<PendingPrimaryDomainNotice>', () => {
+// Skipped while the notice is hidden. See DOMENG-1081.
+describe.skip( '<PendingPrimaryDomainNotice>', () => {
 	afterEach( () => {
 		nock.cleanAll();
 	} );

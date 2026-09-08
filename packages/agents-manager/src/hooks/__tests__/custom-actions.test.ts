@@ -28,6 +28,7 @@ let mockSelectState: {
 	isOpen: boolean;
 	isDocked: boolean;
 	isMinimized?: boolean;
+	isChatVisible?: boolean;
 	floatingPosition: string;
 } = {
 	hasLoaded: true,
@@ -129,24 +130,33 @@ describe( 'useSetupCustomActions', () => {
 		expect( snapshot?.isReady ).toBe( true );
 	} );
 
-	it( 'relays bridge Tracks calls and drops malformed event names', () => {
+	it( 'relays full-name bridge Tracks calls unchanged', () => {
 		renderHook( () => useSetupCustomActions( baseProps ) );
 
-		window.__agentsManagerActions?.recordBigSkyTracksEvent?.( 'split_screen_guide_click', {
-			component_type: 'proofread',
-		} );
+		window.__agentsManagerActions?.recordBigSkyTracksEvent?.(
+			'jetpack_big_sky_split_screen_guide_click',
+			{
+				component_type: 'proofread',
+			}
+		);
 		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith(
 			'jetpack_big_sky_split_screen_guide_click',
 			{
 				component_type: 'proofread',
 			}
 		);
+	} );
 
-		mockRecordBigSkyTracksEvent.mockClear();
-		window.__agentsManagerActions?.recordBigSkyTracksEvent?.( '' );
-		( window.__agentsManagerActions?.recordBigSkyTracksEvent as unknown as ( n: unknown ) => void )(
-			123
-		);
+	it( 'drops malformed bridge Tracks event names', () => {
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		const record = window.__agentsManagerActions?.recordBigSkyTracksEvent as unknown as (
+			eventName: unknown
+		) => void;
+		record( 'split_screen_guide_click' );
+		record( 'jetpack_big_sky_' );
+		record( '' );
+		record( 123 );
 		expect( mockRecordBigSkyTracksEvent ).not.toHaveBeenCalled();
 	} );
 
@@ -270,19 +280,23 @@ describe( 'useSetupCustomActions', () => {
 		} );
 	} );
 
-	it( '`isChatVisible` is true only when open and not minimized', () => {
+	it( '`isChatVisible` reports the chat visibility from the store', () => {
 		mockSelectState = {
 			hasLoaded: true,
 			isOpen: true,
 			isDocked: false,
 			isMinimized: false,
+			isChatVisible: true,
 			floatingPosition: '',
 		};
+
 		const { rerender } = renderHook( () => useSetupCustomActions( baseProps ) );
+
 		expect( window.__agentsManagerActions?.isChatVisible?.() ).toBe( true );
 
-		mockSelectState = { ...mockSelectState, isMinimized: true };
+		mockSelectState = { ...mockSelectState, isChatVisible: false };
 		rerender();
+
 		expect( window.__agentsManagerActions?.isChatVisible?.() ).toBe( false );
 	} );
 

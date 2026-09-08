@@ -61,5 +61,12 @@ export const showTemplateAbility: Ability = {
 		},
 		required: [ 'result', 'returnToAgent' ],
 	},
+	meta: {
+		annotations: {
+			clientRegistered: true,
+			readonly: false,
+			idempotent: true,
+		},
+	},
 	callback: showTemplateCallback,
 };

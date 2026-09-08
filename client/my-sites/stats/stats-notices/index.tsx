@@ -12,13 +12,13 @@ import {
 import usePlanUsageQuery, {
 	getUsageLimitStatus,
 } from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
+import usePremiumAnalyticsPreviewCohort from 'calypso/my-sites/stats/hooks/use-premium-analytics-preview-cohort';
+import usePremiumAnalyticsStatusQuery from 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query';
 import { shouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { useSelector, useDispatch } from 'calypso/state';
 import { resetSiteState } from 'calypso/state/purchases/actions';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
-import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
+import hasLoadedSiteFeatures from 'calypso/state/selectors/has-loaded-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { hasLoadedSitePlansFromServer } from 'calypso/state/sites/plans/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
@@ -33,6 +33,7 @@ import useStatsPurchases, { shouldShowPaywallNotice } from '../hooks/use-stats-p
 import { AllTimeData } from '../sections/all-time-highlights-section';
 import ALL_STATS_NOTICES from './all-notice-definitions';
 import JITMWrapper from './jitm-wrapper';
+import usePremiumAnalyticsPreviewNotShownEvent from './premium-analytics-preview-not-shown-event';
 import { StatsNoticeProps, StatsNoticesProps } from './types';
 import './style.scss';
 
@@ -77,20 +78,24 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		}
 	}, [ siteId, currentSiteId, setCurrentSiteId, dispatch ] );
 
-	// `is_vip` is not correctly placed in Odyssey, so we need to check `options.is_vip` as well.
-	const isVip = useSelector(
-		( state ) =>
-			!! isVipSite( state as object, siteId as number ) ||
-			!! getSiteOption( state, siteId, 'is_vip' )
-	);
+	// The invitation's own signals, shared with the modules menu so both surfaces agree; the ones
+	// other notices read too come from the same place.
+	const {
+		isWpcom,
+		isVip,
+		isP2,
+		canManageOptions,
+		hasSiteFeatures,
+		hasCommercialStats,
+		premiumAnalyticsDashboardUrl,
+		canBeInvited,
+	} = usePremiumAnalyticsPreviewCohort( siteId );
 	const isSiteJetpackNotAtomic = useSelector(
 		( state ) => !! isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
 	const isSiteJetpack = useSelector(
 		( state ) => !! isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: true } )
 	);
-	const isWpcom = useSelector( ( state ) => !! isSiteWpcom( state, siteId ) );
-	const isP2 = useSelector( ( state ) => !! isSiteWPForTeams( state as object, siteId as number ) );
 	const isOwnedByTeam51 = useSelector(
 		( state ) => getSelectedSite( state )?.site_owner === TEAM51_OWNER_ID
 	);
@@ -134,9 +139,34 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	const { data } = usePlanUsageQuery( siteId );
 	const { isNearLimit, isOverLimit } = getUsageLimitStatus( data );
 
+	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
+
+	// Waiting matters in Calypso, where a site with no features looks identical to one still
+	// fetching. In wp-admin the seeded entry carries `data` alone, so this selector answers false
+	// however long we wait - nothing re-fetches it there to set `hasLoadedFromServer`.
+	const hasLoadedFeatures =
+		useSelector( ( state ) => hasLoadedSiteFeatures( state, siteId ) ) ||
+		config.isEnabled( 'is_odyssey' );
+
+	// Only sites that could actually accept the invitation pay for this round-trip, and the server
+	// decides the cohort on top. The same rule the registry uses, flag included: the request holds
+	// every notice back while it is in flight, so a site that asks it needlessly sits on its own
+	// upsell waiting for an answer nothing will use.
+	const shouldAskStatus =
+		canBeInvited && serverNoticesVisibility?.premium_analytics_preview === true;
+	const {
+		data: isPremiumAnalyticsEnabled,
+		isLoading: isLoadingPremiumAnalyticsStatus,
+		isError: isPremiumAnalyticsStatusError,
+	} = usePremiumAnalyticsStatusQuery( siteId, shouldAskStatus );
+
 	const noticeOptions = {
 		siteId,
 		isOdysseyStats,
+		canManageOptions,
+		hasCommercialStats,
+		isPremiumAnalyticsEnabled,
+		premiumAnalyticsDashboardUrl,
 		isWpcom,
 		isVip,
 		isP2,
@@ -156,21 +186,43 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		hasWpcomUpsell,
 	};
 
-	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
-
 	// TODO: Integrate checking purchases and plans loaded state into `hasSiteProductJetpackStatsPaid`.
 	const hasLoadedPurchases = useSelector( hasLoadedSitePurchasesFromServer );
-	// Only check plans loaded state for supporting Stats on WPCOM.
+	// Nothing loads site plans in wp-admin, so waiting for them there holds every notice back
+	// forever. Asking `is_odyssey` rather than the `isOdysseyStats` prop, which is
+	// `is_running_in_jetpack_site` and false on a Simple site's wp-admin.
 	const hasLoadedPlans =
-		useSelector( ( state ) => hasLoadedSitePlansFromServer( state, siteId ) ) || isOdysseyStats;
+		useSelector( ( state ) => hasLoadedSitePlansFromServer( state, siteId ) ) ||
+		config.isEnabled( 'is_odyssey' );
 
-	if (
+	const isWaitingForNoticeInputs =
 		! hasLoadedPurchases ||
 		! hasLoadedPlans ||
 		isLoading ||
-		isError ||
-		isRequestingSitePurchases
-	) {
+		isRequestingSitePurchases ||
+		// Waiting here rather than rendering an upsell and swapping it for the preview a moment
+		// later. Only sites the server offered the preview to ever wait: the query is shared with
+		// the modules menu and reports its fetch status to every observer, disabled ones included.
+		( shouldAskStatus && isLoadingPremiumAnalyticsStatus );
+
+	usePremiumAnalyticsPreviewNotShownEvent( {
+		siteId,
+		isWpcom,
+		// The features are not among the notices' own inputs, so they are waited on here alone:
+		// reading the tier before they land answers "no" for every site.
+		isSettled: ! isWaitingForNoticeInputs && hasLoadedFeatures,
+		isServerVisible: serverNoticesVisibility?.premium_analytics_preview === true,
+		canManageOptions,
+		hasSiteFeatures,
+		hasCommercialStats,
+		premiumAnalyticsDashboardUrl,
+		isVip,
+		isP2,
+		isPremiumAnalyticsEnabled,
+		isStatusError: isPremiumAnalyticsStatusError,
+	} );
+
+	if ( isWaitingForNoticeInputs || isError ) {
 		return null;
 	}
 

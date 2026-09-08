@@ -56,6 +56,11 @@ interface OneLoginLayoutProps {
 	 * default quiet ToS treatment.
 	 */
 	subHeadingProminent?: boolean;
+	/**
+	 * Rendered above the heading. Pass a component that returns `null` when it
+	 * has nothing to show, so the layout keeps its spacing.
+	 */
+	notice?: React.ReactNode;
 }
 
 const OneLoginLayout = ( {
@@ -71,6 +76,7 @@ const OneLoginLayout = ( {
 	columnWidth,
 	showLogo = true,
 	subHeadingProminent = false,
+	notice,
 }: OneLoginLayoutProps ) => {
 	const translate = useTranslate();
 	const urlLocale = useLocale();
@@ -164,6 +170,7 @@ const OneLoginLayout = ( {
 			verticalAlign="center"
 		>
 			<div className="wp-login__one-login-layout-content-wrapper">
+				{ notice }
 				<div className="wp-login__one-login-layout-heading">
 					{ showLogo && (
 						<HeadingLogo

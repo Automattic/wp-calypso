@@ -7,9 +7,9 @@ import { TASK_RENEW_EXPIRED_PLAN } from 'calypso/my-sites/customer-home/cards/co
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
 import { getSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-const Renew = ( { card, purchases, site, siteSlug } ) => {
+const Renew = ( { card, purchases, site } ) => {
 	const translate = useTranslate();
 	const hasExpired = card === TASK_RENEW_EXPIRED_PLAN;
 
@@ -18,7 +18,6 @@ const Renew = ( { card, purchases, site, siteSlug } ) => {
 	);
 
 	const planName = site?.plan.product_name_short;
-	const planSlug = planPurchase?.productSlug;
 	const expiryText = planPurchase?.expiryDate
 		? getRelativeDayString( new Date( planPurchase.expiryDate ), hasExpired ? 'past' : 'upcoming' )
 		: '';
@@ -80,9 +79,7 @@ const Renew = ( { card, purchases, site, siteSlug } ) => {
 		);
 		actionText = translate( 'Got it' );
 	}
-	const actionUrl = isOwner
-		? `/checkout/${ planSlug }/renew/${ planPurchase?.id }/${ siteSlug }`
-		: null;
+	const actionUrl = isOwner ? `/checkout/renew/${ planPurchase?.id }` : null;
 	const illustration = hasExpired ? expiredIllustration : expiringIllustration;
 
 	return (
@@ -107,7 +104,6 @@ const mapStateToProps = ( state ) => {
 	return {
 		purchases: getSitePurchases( state, siteId ),
 		site: getSite( state, siteId ),
-		siteSlug: getSelectedSiteSlug( state ),
 	};
 };
 

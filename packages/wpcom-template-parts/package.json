@@ -42,8 +42,7 @@
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@wordpress/url": "^4.48.0",
-		"i18n-calypso": "workspace:^",
-		"social-logos": "^3.1.18"
+		"i18n-calypso": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",

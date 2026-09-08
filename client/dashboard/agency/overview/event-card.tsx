@@ -4,23 +4,34 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { Text } from '../../components/text';
-import { FEATURED_EVENT } from './events';
+import {
+	FEATURED_EVENT,
+	PRESSABLE_EXPANSION_OFFER_EVENT,
+	PRESSABLE_INTRO_OFFER_EVENT,
+} from './events';
 import NewTabLabel from './new-tab-label';
+import type { FeaturedEvent } from './events';
 import type { RecordTracksEvent } from '../tiers/types';
 
 interface EventCardProps {
+	isEligibleForPressableIntroOffer?: boolean;
+	isEligibleForPressableExpansionOffer?: boolean;
 	recordTracksEvent?: RecordTracksEvent;
 }
 
-export default function EventCard( { recordTracksEvent }: EventCardProps ) {
-	if ( ! FEATURED_EVENT || new Date() >= new Date( FEATURED_EVENT.endsAt ) ) {
-		return null;
-	}
-
-	const { id, logo, logoAlt, when, title, subtitle, description, ctaLabel, url } = FEATURED_EVENT;
+function SingleEventCard( {
+	event,
+	recordTracksEvent,
+}: {
+	event: FeaturedEvent;
+	recordTracksEvent?: RecordTracksEvent;
+} ) {
+	const { id, logo, logoAlt, when, title, subtitle, description, ctas } = event;
+	const isMobileViewport = useViewportMatch( 'mobile', '<' );
 
 	return (
 		<Card>
@@ -47,24 +58,57 @@ export default function EventCard( { recordTracksEvent }: EventCardProps ) {
 							</Text>
 						) ) }
 					</VStack>
-					<ButtonStack justify="flex-start">
-						<Button
-							size="compact"
-							variant="secondary"
-							href={ url }
-							target="_blank"
-							rel="noreferrer"
-							onClick={ () =>
-								recordTracksEvent?.( 'calypso_a4a_overview_event_register_click', {
-									event_id: id,
-								} )
-							}
-						>
-							<NewTabLabel>{ ctaLabel }</NewTabLabel>
-						</Button>
+					<ButtonStack justify="flex-start" wrap>
+						{ ctas.map( ( cta ) => (
+							<Button
+								key={ cta.id }
+								size="compact"
+								variant={ cta.variant ?? 'secondary' }
+								style={ isMobileViewport ? { width: '100%', justifyContent: 'center' } : undefined }
+								href={ cta.url }
+								target={ cta.isExternal ? '_blank' : undefined }
+								rel={ cta.isExternal ? 'noreferrer' : undefined }
+								onClick={ () => {
+									recordTracksEvent?.( 'calypso_a4a_overview_event_cta_click', {
+										event_id: id,
+										cta_id: cta.id,
+									} );
+									if ( cta.legacyTrackEventName ) {
+										recordTracksEvent?.( cta.legacyTrackEventName );
+									}
+								} }
+							>
+								{ cta.isExternal ? <NewTabLabel>{ cta.label }</NewTabLabel> : cta.label }
+							</Button>
+						) ) }
 					</ButtonStack>
 				</VStack>
 			</CardBody>
 		</Card>
+	);
+}
+
+export default function EventCard( {
+	isEligibleForPressableIntroOffer,
+	isEligibleForPressableExpansionOffer,
+	recordTracksEvent,
+}: EventCardProps ) {
+	const now = new Date();
+	const events = [
+		FEATURED_EVENT,
+		isEligibleForPressableIntroOffer ? PRESSABLE_INTRO_OFFER_EVENT : null,
+		isEligibleForPressableExpansionOffer ? PRESSABLE_EXPANSION_OFFER_EVENT : null,
+	].filter( ( event ): event is FeaturedEvent => !! event && now < new Date( event.endsAt ) );
+
+	if ( ! events.length ) {
+		return null;
+	}
+
+	return (
+		<>
+			{ events.map( ( event ) => (
+				<SingleEventCard key={ event.id } event={ event } recordTracksEvent={ recordTracksEvent } />
+			) ) }
+		</>
 	);
 }

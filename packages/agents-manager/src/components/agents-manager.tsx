@@ -13,11 +13,17 @@ import { useAgentConfig } from '../hooks/use-agent-config';
 import { useEmptyViewSuggestions } from '../hooks/use-empty-view-suggestions';
 import useHasAiChatEntryButton from '../hooks/use-has-ai-chat-entry-button';
 import { useOpenChatUrlParam } from '../hooks/use-open-chat-url-param';
+import useWebMcpTools from '../hooks/use-webmcp-tools';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import { clearSessionId, getOrCreateSessionId, getSessionId } from '../utils/agent-session';
 import { createAgentConfig } from '../utils/create-agent-config';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
-import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
+import {
+	loadExternalProviders,
+	type AbilitiesSetupHook,
+	type LoadedProviders,
+} from '../utils/load-external-providers';
+import { canExposeWebMcpTools } from '../webmcp/eligibility';
 import AgentDock from './agent-dock';
 import { PersistentRouter } from './persistent-router';
 import type { JSX } from 'react';
@@ -53,6 +59,30 @@ const EMPTY_ARRAY: string[] = [];
 // manager itself, so a host that unmounts and remounts this tree (Calypso does
 // on some routes) still discards when the remount lands on a different scope.
 let lastInitializedScope: string | undefined;
+
+// External editor abilities currently register from a chat-owned hook. These
+// inert chat actions let that hook mount for WebMCP without starting a chat run.
+const WEBMCP_PROVIDER_SETUP_ACTIONS = {
+	addMessage: () => {},
+	clearMessages: () => {},
+	clearSuggestions: () => {},
+	getAgentManager,
+	isProcessing: false,
+	setIsThinking: () => {},
+	deleteMarkedMessages: () => {},
+	getSessionId: () => undefined,
+	setIsBuildingSite: () => {},
+	setThinkingMessage: () => {},
+} satisfies Parameters< AbilitiesSetupHook >[ 0 ];
+
+function WebMcpProviderAbilitiesSetup( {
+	useProviderAbilitiesSetup,
+}: {
+	useProviderAbilitiesSetup: AbilitiesSetupHook;
+} ): null {
+	useProviderAbilitiesSetup( WEBMCP_PROVIDER_SETUP_ACTIONS );
+	return null;
+}
 
 export default function AgentsManager( {
 	sectionName,
@@ -159,6 +189,13 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 	const { agentId, version, isLoading: isAgentConfigLoading } = useAgentConfig( hostAgentId );
 
 	const sessionId = resolveTabSessionId( isNewChat, agentId, siteKey, userId );
+
+	useWebMcpTools( {
+		toolProvider: loadedProvidersRef.current?.toolProvider,
+		scope: `${ siteKey }:${ currentRoute ?? '' }:${ window.location.pathname }${
+			window.location.search
+		}`,
+	} );
 
 	useEffect( () => {
 		// Wait for the agent config to stabilize before initializing.
@@ -302,17 +339,24 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 	}
 
 	return (
-		<AgentDock
-			emptyViewSuggestions={ emptyViewSuggestions }
-			markdownComponents={ loadedProviders.markdownComponents || {} }
-			markdownExtensions={ loadedProviders.markdownExtensions || {} }
-			useProviderAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
-			useSuggestions={ loadedProviders.useSuggestions }
-			getChatComponent={ loadedProviders.getChatComponent }
-			siteBuildUtils={ loadedProviders.siteBuildUtils }
-			transformMessages={ loadedProviders.transformMessages }
-			useCheckpoint={ loadedProviders.useCheckpoint }
-			capabilities={ loadedProviders.capabilities }
-		/>
+		<>
+			{ loadedProviders.useAbilitiesSetup && canExposeWebMcpTools() && (
+				<WebMcpProviderAbilitiesSetup
+					useProviderAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
+				/>
+			) }
+			<AgentDock
+				emptyViewSuggestions={ emptyViewSuggestions }
+				markdownComponents={ loadedProviders.markdownComponents || {} }
+				markdownExtensions={ loadedProviders.markdownExtensions || {} }
+				useProviderAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
+				useSuggestions={ loadedProviders.useSuggestions }
+				getChatComponent={ loadedProviders.getChatComponent }
+				siteBuildUtils={ loadedProviders.siteBuildUtils }
+				transformMessages={ loadedProviders.transformMessages }
+				useCheckpoint={ loadedProviders.useCheckpoint }
+				capabilities={ loadedProviders.capabilities }
+			/>
+		</>
 	);
 }

@@ -411,6 +411,7 @@ const sections = [
 			// Legacy paths that we need to support for backwards compatibility.
 			'/read(/?.*)',
 			'/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/read', // For locale-specific reader.
+			'/recommendations',
 		],
 		module: 'calypso/reader',
 		group: 'reader',
@@ -462,14 +463,15 @@ const sections = [
 		module: 'calypso/reader/tags',
 		group: 'reader',
 		trackLoadPerformance: true,
+		// Kept so the section module can redirect logged-out visitors to /discover/tags.
 		enableLoggedOut: true,
-		isomorphic: true,
 	},
 	{
 		name: 'reader',
 		paths: [ '/tag', '/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/tag' ],
 		module: 'calypso/reader/tag-stream',
 		group: 'reader',
+		// Kept so the section module can redirect logged-out visitors to /discover/tags.
 		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},
@@ -485,18 +487,6 @@ const sections = [
 		paths: [ '/read/saved' ],
 		module: 'calypso/reader/saved-stream',
 		group: 'reader',
-		trackLoadPerformance: true,
-	},
-	{
-		name: 'reader',
-		paths: [
-			'/reader/search',
-			'/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/reader/search',
-			'/recommendations',
-		],
-		module: 'calypso/reader/search',
-		group: 'reader',
-		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},
 	{

@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, ExternalLink } from '@automattic/components';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { forwardRef, useMemo } from 'react';
@@ -16,6 +16,7 @@ interface ThemeCardProps {
 	badge?: React.ReactNode;
 	optionsMenu?: React.ReactNode;
 	isActive?: boolean;
+	isThemeRetired?: boolean;
 	isLoading?: boolean;
 	isSoftLaunched?: boolean;
 	onClick?: () => void;
@@ -24,23 +25,35 @@ interface ThemeCardProps {
 
 const ActiveBadge = () => {
 	return (
-		<div className="theme-card__info-badge-container">
-			<div className="theme-card__info-badge theme-card__info-badge-active">
-				<svg fill="none" height="14" width="14" viewBox="0 0 14 14">
-					<clipPath id="a">
-						<path d="m0 .5h14v14h-14z" />
-					</clipPath>
-					<g>
-						<path d="m11.6992 3.1001-6.29998 8.5-3.3-2.5-.9 1.2 4.5 3.4 7.19998-9.7z" fill="#fff" />
-					</g>
-				</svg>
-				<span>
-					{ translate( 'Active', {
-						context: 'singular noun, the currently active theme',
-					} ) }
-				</span>
-			</div>
+		<div className="theme-card__info-badge theme-card__info-badge-active">
+			<svg fill="none" height="14" width="14" viewBox="0 0 14 14">
+				<clipPath id="a">
+					<path d="m0 .5h14v14h-14z" />
+				</clipPath>
+				<g>
+					<path d="m11.6992 3.1001-6.29998 8.5-3.3-2.5-.9 1.2 4.5 3.4 7.19998-9.7z" fill="#fff" />
+				</g>
+			</svg>
+			<span>
+				{ translate( 'Active', {
+					context: 'singular noun, the currently active theme',
+				} ) }
+			</span>
 		</div>
+	);
+};
+
+const RetiredBadge = () => {
+	return (
+		<ExternalLink
+			className="theme-card__info-badge theme-card__info-badge-retired"
+			// eslint-disable-next-line wpcalypso/i18n-unlocalized-url -- ExternalLink localizes this internally
+			href="https://wordpress.com/support/themes/retired-themes/"
+			icon={ false }
+			target="_blank"
+		>
+			{ translate( 'Retired' ) }
+		</ExternalLink>
 	);
 };
 
@@ -57,6 +70,7 @@ const ThemeCard = forwardRef(
 			badge,
 			optionsMenu,
 			isActive,
+			isThemeRetired,
 			isLoading,
 			isSoftLaunched,
 			onClick,
@@ -120,7 +134,12 @@ const ThemeCard = forwardRef(
 						{ ! isActive && badge && (
 							<div className="theme-card__info-badge-container">{ badge }</div>
 						) }
-						{ isActive && <ActiveBadge /> }
+						{ isActive && (
+							<div className="theme-card__info-badge-container">
+								<ActiveBadge />
+								{ isThemeRetired && <RetiredBadge /> }
+							</div>
+						) }
 						{ optionsMenu && <div className="theme-card__info-options">{ optionsMenu }</div> }
 					</div>
 				</div>

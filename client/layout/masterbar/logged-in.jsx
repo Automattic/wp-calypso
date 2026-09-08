@@ -2,7 +2,6 @@ import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { Badge } from '@automattic/ui';
 // @ts-expect-error The commands package is not yet typed.
 import { store as commandsStore } from '@wordpress/commands';
 import { dispatch } from '@wordpress/data';
@@ -306,6 +305,16 @@ class MasterbarLoggedIn extends Component {
 							url: dashboardOptIn ? dashboardLink( '/domains' ) : '/domains/manage',
 							onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_domains_clicked' ),
 						},
+						{
+							label: translate( 'Emails' ),
+							url: dashboardLink( '/emails' ),
+							onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_emails_clicked' ),
+						},
+						{
+							label: translate( 'Plugins' ),
+							url: dashboardLink( '/plugins/manage' ),
+							onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_plugins_clicked' ),
+						},
 					],
 					...( this.props.isSimpleSite
 						? []
@@ -511,9 +520,9 @@ class MasterbarLoggedIn extends Component {
 
 		return badges.length > 0
 			? badges.map( ( badge ) => (
-					<Badge className="masterbar__info-badge" key={ badge }>
+					<span className="masterbar__site-badge" key={ badge }>
 						{ badge }
-					</Badge>
+					</span>
 			  ) )
 			: null;
 	}
@@ -587,7 +596,7 @@ class MasterbarLoggedIn extends Component {
 					<div className="masterbar__site-info masterbar__site-plan">
 						<span className="masterbar__site-info-label">{ translate( 'Plan' ) }</span>
 						<div className="masterbar__info-badges">
-							<Badge className="masterbar__info-badge">{ sitePlanName }</Badge>
+							<span className="masterbar__site-badge">{ sitePlanName }</span>
 						</div>
 					</div>
 				),

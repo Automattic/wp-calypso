@@ -419,16 +419,6 @@ export const mcpRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'AI and MCP' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'resources/ai-mcp',
-	beforeLoad: async ( { cause } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-
-		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
-		if ( ! agency?.mcp?.allowed ) {
-			throw redirectAsNotAllowed( { to: '/overview' } );
-		}
-	},
 } );
 
 const mcpOverviewRoute = createRoute( {

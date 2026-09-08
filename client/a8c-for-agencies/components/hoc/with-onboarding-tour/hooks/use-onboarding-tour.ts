@@ -27,8 +27,8 @@ export default function useOnboardingTour() {
 
 	const onClose = useCallback( () => {
 		setIsOpen( false );
-		// Remove the hash from the URL
-		window.history.replaceState( '', '', window.location.pathname );
+		// Remove the hash from the URL while preserving the query string.
+		window.history.replaceState( '', '', window.location.pathname + window.location.search );
 	}, [] );
 
 	return {

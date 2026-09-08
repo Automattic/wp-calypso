@@ -1,3 +1,4 @@
+import { isMonthly } from '@automattic/calypso-products';
 import { HelpCenter } from '@automattic/data-stores';
 import {
 	isAIBuilderFlow,
@@ -10,7 +11,6 @@ import {
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
 	isOnboardingFlow,
-	EDUCATION_FLOW,
 	Step,
 	StepContainer,
 } from '@automattic/onboarding';
@@ -29,6 +29,7 @@ import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { shouldSkipPlansStep } from 'calypso/landing/stepper/utils/preselected-plan';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
@@ -59,7 +60,6 @@ import type { HelpCenterSelect, OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const HUNDRED_YEAR_DOMAIN_TLDS = [ 'com', 'net', 'org', 'blog' ];
-const EDUCATION_BUNDLED_TLDS = [ 'blog', 'art' ];
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
@@ -95,6 +95,7 @@ const DomainSearchStep: StepType< {
 		freeDomainPromoTitle?: string;
 		freeDomainPromoSubtitle?: string;
 		allowedTlds?: string[];
+		freeForFirstYearTlds?: string[];
 	};
 } > = function DomainSearchStep( {
 	navigation,
@@ -106,6 +107,7 @@ const DomainSearchStep: StepType< {
 	freeDomainPromoTitle,
 	freeDomainPromoSubtitle,
 	allowedTlds: allowedTldsProp,
+	freeForFirstYearTlds: freeForFirstYearTldsProp,
 } ) {
 	const userSiteCount = useSelector( getCurrentUserSiteCount );
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -148,6 +150,12 @@ const DomainSearchStep: StepType< {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
 		[]
 	);
+
+	const planCartItem = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+		[]
+	);
+	const shouldHidePlansStep = shouldSkipPlansStep( queryParams, planCartItem );
 
 	// For CIAB sites, prefer the site title over the slug for domain suggestions
 	// since the slug is often randomly generated.
@@ -193,7 +201,7 @@ const DomainSearchStep: StepType< {
 			priceRules: {
 				hidePrice: isHundredYearPlanFlow( flow ),
 				oneTimePrice: isHundredYearDomainFlow( flow ),
-				freeForFirstYearTlds: flow === EDUCATION_FLOW ? EDUCATION_BUNDLED_TLDS : undefined,
+				freeForFirstYearTlds: freeForFirstYearTldsProp,
 			},
 			skippable:
 				! isHundredYearPlanFlow( flow ) &&
@@ -222,7 +230,17 @@ const DomainSearchStep: StepType< {
 				! isHundredYearPlanFlow( flow ) &&
 				( isHundredYearDomainFlow( flow ) ? !! query : true ),
 		};
-	}, [ __, flow, isCiab, isWooHostingSolutions, isWowFunnel, tldQuery, query, allowedTldsProp ] );
+	}, [
+		__,
+		flow,
+		isCiab,
+		isWooHostingSolutions,
+		isWowFunnel,
+		tldQuery,
+		query,
+		allowedTldsProp,
+		freeForFirstYearTldsProp,
+	] );
 
 	const { submit } = navigation;
 
@@ -339,12 +357,18 @@ const DomainSearchStep: StepType< {
 			return ! site || ! siteHasPaidPlan( site );
 		}
 
+		// A plan chosen before this step never reaches the shopping cart, so the cart's own
+		// monthly check cannot see it. Monthly plans do not carry the free first year.
+		if ( planCartItem?.product_slug && isMonthly( planCartItem.product_slug ) ) {
+			return false;
+		}
+
 		if ( site || sourceSlug || isHundredYearPlanFlow( flow ) || isHundredYearDomainFlow( flow ) ) {
 			return false;
 		}
 
 		return true;
-	}, [ flow, isCiab, site, sourceSlug ] );
+	}, [ flow, isCiab, site, sourceSlug, planCartItem ] );
 
 	const slots = useMemo( () => {
 		return {
@@ -601,7 +625,12 @@ const DomainSearchStep: StepType< {
 					// high-quality results can fill the limited vertical space.
 					// The empty/initial state keeps the heading on mobile.
 					<>
-						{ showProgress && <OnboardingProgress currentStep="domains" /> }
+						{ showProgress && (
+							<OnboardingProgress
+								currentStep="domains"
+								shouldHidePlansStep={ shouldHidePlansStep }
+							/>
+						) }
 						{ ! ( isMobileViewport && query ) && (
 							<Step.Heading text={ headerText } subText={ subHeaderText } />
 						) }

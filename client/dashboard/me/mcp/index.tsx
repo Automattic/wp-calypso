@@ -1,8 +1,9 @@
 import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+import { formatNumber } from '@automattic/number-formatters';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Icon, __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { seen, pencil, notAllowed, connection, globe } from '@wordpress/icons';
 import { getOverridesToMatch, groupIntentKey } from '../../../me/mcp/group-intents';
 import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
@@ -37,37 +38,37 @@ interface McpAbility {
 
 function getReadBadge( tools: Array< [ string, McpAbility ] > ) {
 	if ( tools.length === 0 ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
 	if ( enabledCount === tools.length ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'None enabled' ) };
+		return { text: __( 'None enabled' ), intent: 'draft' as const };
 	}
 	return {
 		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
 		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, tools.length ),
-		intent: 'info' as const,
+		intent: 'informational' as const,
 	};
 }
 
 function getWriteBadge( tools: Array< [ string, McpAbility ] > ) {
 	if ( tools.length === 0 ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
 	if ( enabledCount === tools.length ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'Disabled' ) };
+		return { text: __( 'Disabled' ), intent: 'draft' as const };
 	}
 	return {
 		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
 		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, tools.length ),
-		intent: 'info' as const,
+		intent: 'informational' as const,
 	};
 }
 
@@ -91,13 +92,27 @@ function McpComponent() {
 	const exceptionCount = disabledSiteIds.length;
 	const exceptionBadge =
 		exceptionCount > 0
-			? { text: `${ exceptionCount } exceptions`, intent: 'warning' as const }
-			: { text: __( 'No exceptions' ) };
+			? {
+					text: sprintf(
+						/* translators: %s is the formatted number of site exceptions */
+						_n( '%s exception', '%s exceptions', exceptionCount ),
+						formatNumber( exceptionCount )
+					),
+					intent: 'low' as const,
+			  }
+			: { text: __( 'No exceptions' ), intent: 'draft' as const };
 
 	const addSiteBadge =
 		enabledSiteIds.length > 0
-			? { text: `${ enabledSiteIds.length } sites`, intent: 'success' as const }
-			: { text: __( 'No sites added' ) };
+			? {
+					text: sprintf(
+						/* translators: %s is the formatted number of sites with MCP access */
+						_n( '%s site', '%s sites', enabledSiteIds.length ),
+						formatNumber( enabledSiteIds.length )
+					),
+					intent: 'stable' as const,
+			  }
+			: { text: __( 'No sites added' ), intent: 'draft' as const };
 
 	const readBadge = getReadBadge( readTools );
 	const writeBadge = getWriteBadge( writeTools );

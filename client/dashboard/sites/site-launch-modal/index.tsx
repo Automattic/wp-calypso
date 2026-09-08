@@ -1,6 +1,7 @@
 import { PreLaunchModal, CelebrationModal } from '@automattic/site-launch-modals';
 import { useQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
+import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAppContext } from '../../app/context';
 import { getAddSiteDomainUrl } from '../../utils/domain-url';
@@ -46,6 +47,7 @@ export default function SiteLaunchModal( props: SiteLaunchModalProps ) {
 	} );
 	const [ previewResizeListener, { width: previewWidth, height: previewHeight } ] =
 		useResizeObserver();
+	const [ isPreviewLoaded, setIsPreviewLoaded ] = useState( false );
 
 	if ( ! isOpen ) {
 		return null;
@@ -76,13 +78,17 @@ export default function SiteLaunchModal( props: SiteLaunchModalProps ) {
 				onClose={ onClose }
 				preview={
 					site.URL ? (
-						<div className="site-launch-pre-launch-modal__thumbnail">
+						<div
+							className="site-launch-pre-launch-modal__thumbnail"
+							data-preview-loaded={ isPreviewLoaded }
+						>
 							{ previewResizeListener }
 							{ !! previewWidth && !! previewHeight && (
 								<SitePreview
 									url={ site.URL }
 									scale={ previewWidth / PREVIEW_BASE_WIDTH }
 									height={ previewHeight / ( previewWidth / PREVIEW_BASE_WIDTH ) }
+									onLoad={ () => setIsPreviewLoaded( true ) }
 								/>
 							) }
 						</div>

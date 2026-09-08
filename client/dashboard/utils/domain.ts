@@ -6,11 +6,9 @@ import {
 	DomainTypes,
 } from '@automattic/api-core';
 import { isAfter, subMinutes, subDays } from 'date-fns';
-import { getRenewalUrlFromPurchase } from './purchase';
 import { hasPlanFeature } from './site-features';
 import { userHasFlag } from './user';
 import type {
-	Purchase,
 	Domain,
 	DomainSummary,
 	Site,
@@ -22,10 +20,6 @@ import type {
 
 export function getDomainSiteSlug( domain: DomainSummary ) {
 	return domain.primary_domain ? domain.domain : domain.site_slug;
-}
-
-export function getDomainRenewalUrl( domain: DomainSummary, purchase: Purchase ) {
-	return getRenewalUrlFromPurchase( purchase, getDomainSiteSlug( domain ) );
 }
 
 export function isRegisteredDomain( domain: DomainSummary ) {

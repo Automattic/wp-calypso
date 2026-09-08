@@ -1,121 +1,84 @@
 /**
  * @jest-environment jsdom
  */
-
-jest.mock( 'calypso/components/data/document-head', () => ( {
-	__esModule: true,
-	default: () => null,
-} ) );
-
-jest.mock( 'calypso/components/loading', () => ( {
-	__esModule: true,
-	default: ( { title, subtitle }: { title?: string; subtitle?: ReactNode } ) => (
-		<div>
-			{ title }
-			{ subtitle }
-		</div>
-	),
-} ) );
-
-jest.mock( '@automattic/onboarding', () => ( {
-	StepContainer: ( { stepContent }: { stepContent?: ReactNode } ) => <div>{ stepContent }</div>,
-	Step: { Loading: ( { title }: { title?: string } ) => <div>{ title }</div> },
-	isNewSiteMigrationFlow: () => false,
-	isUpdateDesignFlow: () => false,
-	isAnyHostingFlow: () => false,
-	isNewsletterFlow: () => false,
-	isAIBuilderOnboardingFlow: () => false,
-	isNewHostedSiteCreationFlow: () => false,
-	isTransferringHostedSiteCreationFlow: () => false,
-	HUNDRED_YEAR_DOMAIN_FLOW: 'hundred-year-domain-flow',
-	HUNDRED_YEAR_PLAN_FLOW: 'hundred-year-plan-flow',
-	HUNDRED_YEAR_DOMAIN_TRANSFER: 'hundred-year-domain-transfer',
-} ) );
-
-jest.mock( '../../../../helpers/should-use-step-container-v2', () => ( {
-	shouldUseStepContainerV2: () => false,
-} ) );
-
-jest.mock( '../hooks/use-processing-loading-messages', () => ( {
-	useProcessingLoadingMessages: () => [
-		{ title: 'Default first step', duration: 2000 },
-		{ title: 'Default second step', duration: 3000 },
-	],
-} ) );
-
-jest.mock( '@wordpress/data', () => ( {
-	useSelect: ( mapSelect: ( select: () => Record< string, () => undefined > ) => unknown ) =>
-		mapSelect( () => ( {
-			getPendingAction: () => undefined,
-			getProgress: () => undefined,
-			getProgressTitle: () => undefined,
-			getStepData: () => undefined,
-		} ) ),
-	useDispatch: () => ( { setSiteSetupError: jest.fn(), clearSiteSetupError: jest.fn() } ),
-} ) );
-
-jest.mock( 'calypso/lib/interval', () => ( { useInterval: () => undefined } ) );
+import { TRANSFERRING_HOSTED_SITE_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
+import { act, screen } from '@testing-library/react';
+import { dispatch } from '@wordpress/data';
+import React from 'react';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
+import ProcessingStep from '../';
+import { mockStepProps, renderStep } from '../../test/helpers/index';
+import type { OnboardActions } from '@automattic/data-stores';
 
 jest.mock( 'calypso/landing/stepper/hooks/use-record-signup-complete', () => ( {
 	useRecordSignupComplete: () => jest.fn(),
 } ) );
-
-jest.mock( '../../../../../hooks/use-capture-flow-exception', () => ( {
-	__esModule: true,
-	default: () => jest.fn(),
+jest.mock( 'calypso/lib/analytics/signup', () => ( {
+	recordSignupProcessingScreen: jest.fn(),
+} ) );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
+} ) );
+jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
+	useSiteData: () => ( { siteSlug: 'example.wordpress.com' } ),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/declarative-flow/registered-flows', () => ( {
-	__esModule: true,
-	default: {},
-} ) );
+type ProcessingStepProps = React.ComponentProps< typeof ProcessingStep >;
 
-jest.mock( 'calypso/landing/stepper/stores', () => ( {
-	ONBOARD_STORE: 'ONBOARD_STORE',
-	SITE_STORE: 'SITE_STORE',
-	STEPPER_INTERNAL_STORE: 'STEPPER_INTERNAL_STORE',
-} ) );
+describe( 'ProcessingStep', () => {
+	const onboardActions = () => dispatch( ONBOARD_STORE ) as OnboardActions;
+	const render = ( props: Partial< ProcessingStepProps > ) =>
+		renderStep( <ProcessingStep { ...( mockStepProps( props ) as ProcessingStepProps ) } /> );
 
-jest.mock( 'calypso/lib/analytics/signup', () => ( { recordSignupProcessingScreen: jest.fn() } ) );
-jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
-jest.mock( 'calypso/state/selectors/get-wccom-from', () => ( {
-	__esModule: true,
-	default: () => undefined,
-} ) );
-
-import { render, screen } from '@testing-library/react';
-import ProcessingStep from '..';
-import type { ReactNode } from 'react';
-
-// `build` is a V1 flow (not in the StepContainer V2 list) and none of the
-// tailored / hundred-year short-circuits apply, so it renders the generic
-// loading carousel.
-const renderProcessingStep = ( props = {} ) =>
-	render(
-		<ProcessingStep
-			flow="build"
-			stepName="processing-step"
-			navigation={ { submit: jest.fn() } }
-			{ ...props }
-		/>
-	);
-
-describe( 'ProcessingStep loading-carousel accepts-props', () => {
-	it( 'renders the default per-flow carousel when no loadingMessages prop is passed', async () => {
-		renderProcessingStep();
-
-		expect( await screen.findByText( 'Default first step' ) ).toBeVisible();
+	beforeEach( () => {
+		jest.clearAllMocks();
+		onboardActions().setTransferStatus( null );
+		onboardActions().setTransferStartedAt( null );
 	} );
 
-	it( 'renders the flow-provided loadingMessages override instead of the default', async () => {
-		renderProcessingStep( {
-			loadingMessages: [
-				{ title: 'Custom first step', duration: 1000 },
-				{ title: 'Custom second step' },
-			],
-		} );
+	it( 'shows the transfer wait for a transferring hosted site creation flow', () => {
+		onboardActions().setTransferStatus( transferStates.ACTIVE );
 
-		expect( await screen.findByText( 'Custom first step' ) ).toBeVisible();
-		expect( screen.queryByText( 'Default first step' ) ).not.toBeInTheDocument();
+		render( { flow: TRANSFERRING_HOSTED_SITE_FLOW } );
+
+		expect( screen.getByText( 'Setting up your site' ) ).toBeVisible();
+		expect( screen.getByRole( 'status' ).textContent ).toContain(
+			'preparing a dedicated server for your site'
+		);
+		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute(
+			'aria-label',
+			'Preparing a dedicated server for your site'
+		);
+	} );
+
+	it( 'narrates the stage the transfer is actually in', () => {
+		onboardActions().setTransferStatus( transferStates.RELOCATING );
+
+		render( { flow: TRANSFERRING_HOSTED_SITE_FLOW } );
+
+		expect( screen.getByRole( 'status' ).textContent ).toContain(
+			'moving your site to the new server'
+		);
+	} );
+
+	it( 'offers a way to the site once the transfer wait stalls', () => {
+		jest.useFakeTimers();
+		onboardActions().setTransferStatus( transferStates.COMPLETE );
+
+		render( { flow: TRANSFERRING_HOSTED_SITE_FLOW } );
+		act( () => jest.advanceTimersByTime( 95_000 ) );
+
+		expect( screen.getByRole( 'link', { name: 'Go to your site' } ) ).toHaveAttribute(
+			'href',
+			'/sites/example.wordpress.com'
+		);
+		jest.useRealTimers();
+	} );
+
+	it( 'keeps the generic loading screen for other flows', () => {
+		render( { flow: ONBOARDING_FLOW, title: 'Building your site' } );
+
+		expect( screen.queryByText( 'Setting up your site' ) ).not.toBeInTheDocument();
 	} );
 } );

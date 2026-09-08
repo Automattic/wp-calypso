@@ -124,6 +124,17 @@ describe( 'Checkout contact step', () => {
 		expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
 	} );
 
+	it( 'renders a help link in the contact step title when a domain is in the cart', async () => {
+		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
+
+		expect( await screen.findByText( 'Enter your contact information' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'link', { name: 'Learn more' } ) ).toHaveAttribute(
+			'href',
+			'https://wordpress.com/support/domains/private-domain-registration/#information-we-collect-and-why'
+		);
+	} );
+
 	it( 'does not render country-specific domain fields when no country has been chosen and a domain is in the cart', async () => {
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
@@ -177,6 +188,19 @@ describe( 'Checkout contact step', () => {
 		expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'ZIP code' ) ).toBeInTheDocument();
+	} );
+
+	it( 'autodetects the phone country from a dialing code typed into the phone field', async () => {
+		const user = userEvent.setup();
+		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
+		const { container } = render(
+			<MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />
+		);
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
+		await user.type( screen.getByPlaceholderText( 'Phone' ), '+447911123456' );
+
+		expect( container.querySelector( '.phone-input__country-select' ) ).toHaveValue( 'GB' );
+		expect( screen.getByPlaceholderText( 'Phone' ) ).toHaveValue( '+44 7911 123456' );
 	} );
 
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a domain is in the cart', async () => {

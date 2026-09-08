@@ -2,19 +2,18 @@ import { getAnyLanguageRouteParam } from '@automattic/i18n-utils';
 import { makeLayout, ssrSetupLocale } from 'calypso/controller';
 import DiscoverHeaderAndNavigation from 'calypso/reader/discover/components/header-and-navigation';
 import PostPlaceholder from 'calypso/reader/stream/post-placeholder';
-import { getCurrentTabFromURL } from 'calypso/reader/utils';
-import renderHeaderSection from '../lib/header-section';
+import { setDiscoverLoggedOutHero } from './components/logged-out-hero';
 import { DiscoverDocumentHead } from './discover-document-head';
-import { FRESHLY_PRESSED_TAB } from './helper';
-import { getLocalizedRoutes, DISCOVER_PREFIX } from './routes';
+import { getLocalizedRoutes, getSelectedTab } from './routes';
+import { setDiscoverTagNoindex } from './set-discover-tag-noindex';
 
 const discoverSsr = ( context, next ) => {
-	context.renderHeaderSection = renderHeaderSection;
-	const selectedTab = getCurrentTabFromURL( context.path, DISCOVER_PREFIX, FRESHLY_PRESSED_TAB );
+	setDiscoverLoggedOutHero( context );
+	const selectedTab = getSelectedTab( context.path );
 
 	context.primary = (
 		<>
-			<DiscoverDocumentHead />
+			<DiscoverDocumentHead noindex={ !! context.query?.selectedTag } />
 			<DiscoverHeaderAndNavigation selectedTab={ selectedTab } />
 			<PostPlaceholder />
 		</>
@@ -25,5 +24,11 @@ const discoverSsr = ( context, next ) => {
 export default function ( router ) {
 	const anyLangParam = getAnyLanguageRouteParam();
 
-	router( getLocalizedRoutes( anyLangParam ), ssrSetupLocale, discoverSsr, makeLayout );
+	router(
+		getLocalizedRoutes( anyLangParam ),
+		ssrSetupLocale,
+		setDiscoverTagNoindex,
+		discoverSsr,
+		makeLayout
+	);
 }
