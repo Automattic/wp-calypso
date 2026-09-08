@@ -52,6 +52,8 @@ const mockSetCheckpointActionReverted = jest.fn(
 );
 let mockSelectedBlockType: string | undefined;
 let mockBlockEditorStoreThrows = false;
+// Simulates Agenttic's floating truncation in the `AgentChat` mock.
+let mockRenderedSuggestionsLimit: number | undefined;
 let mockOpenPost: { id?: number | string; type?: string; title?: string } | null = null;
 
 let mockHasEditorRedo = false;
@@ -168,6 +170,7 @@ const mockAgentChat = jest.fn(
 		inputValue?: string;
 		onInputChange?: ( value: string ) => void;
 		emptyViewSuggestions?: Suggestion[];
+		onSuggestionsRendered?: ( shown: Suggestion[] ) => void;
 	} ) => (
 		<>
 			<button
@@ -414,10 +417,27 @@ jest.mock( '../../utils/external-context', () => ( {
 jest.mock( '../../utils/is-reader-chat-agent', () => ( {
 	isReaderChatAgent: () => mockIsReaderChatAgent(),
 } ) );
-jest.mock( '../agent-chat', () => ( {
-	__esModule: true,
-	default: ( props: unknown ) => mockAgentChat( props as Parameters< typeof mockAgentChat >[ 0 ] ),
-} ) );
+jest.mock( '../agent-chat', () => {
+	const { useEffect } = jest.requireActual< typeof import('react') >( 'react' );
+	// Report the empty-view chips the way Agenttic does: once per distinct id set,
+	// truncated when a test simulates the floating limit.
+	const MockAgentChat = ( props: Parameters< typeof mockAgentChat >[ 0 ] ) => {
+		const { emptyViewSuggestions = [], onSuggestionsRendered } = props;
+		const rendered = mockRenderedSuggestionsLimit
+			? emptyViewSuggestions.slice( 0, mockRenderedSuggestionsLimit )
+			: emptyViewSuggestions;
+		const renderedKey = rendered.map( ( suggestion ) => suggestion.id ).join( '|' );
+		useEffect( () => {
+			if ( renderedKey ) {
+				onSuggestionsRendered?.( rendered );
+			}
+			// Keyed on ids alone, like Agenttic's container dedupe.
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+		}, [ renderedKey ] );
+		return mockAgentChat( props );
+	};
+	return { __esModule: true, default: MockAgentChat };
+} );
 
 import { getSessionId } from '../../utils/agent-session';
 import {
@@ -649,6 +669,7 @@ describe( 'OrchestratorChat', () => {
 		mockCurrentUserId = 1;
 		mockSelectedBlockType = undefined;
 		mockBlockEditorStoreThrows = false;
+		mockRenderedSuggestionsLimit = undefined;
 		sessionStorage.clear();
 		mockManagerHasAgent = true;
 		mockManagerTurnInFlight = false;
@@ -1253,6 +1274,45 @@ describe( 'OrchestratorChat', () => {
 		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
 			'jetpack_big_sky_chat_suggestions_rendered',
 			expect.anything()
+		);
+	} );
+
+	it( 'tracks the suggestions Agenttic reports as rendered rather than the full list', () => {
+		// Floating mode: Agenttic renders the first three chips only.
+		mockRenderedSuggestionsLimit = 3;
+		const staticDefaults: Suggestion[] = [ 'one', 'two', 'three', 'four', 'five' ].map(
+			( id ) => ( { id, label: id, prompt: id } )
+		);
+
+		render( chat( { emptyViewSuggestions: staticDefaults } ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestions_rendered',
+			{ suggestions: '|one|two|three|' }
+		);
+	} );
+
+	it( 'reports the rendered set as the available suggestions for clicks without context', () => {
+		mockRenderedSuggestionsLimit = 1;
+		const feedback: Suggestion = {
+			id: 'get-feedback',
+			label: 'Get feedback',
+			prompt: '',
+			options: [
+				{ id: 'proofread-content', label: 'Proofread', value: 'Proofread this saved post' },
+			],
+		};
+		const truncated: Suggestion = { id: 'seo-enhancer', label: 'SEO Enhancer', prompt: 'SEO' };
+
+		render( chat( { emptyViewSuggestions: [ feedback, truncated ] } ) );
+		jest.mocked( recordBigSkyTracksEvent ).mockClear();
+
+		fireEvent.click( screen.getByText( 'Click feedback dropdown without context' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestion_click',
+			expect.objectContaining( { available_suggestions: '|get-feedback|' } )
 		);
 	} );
 

@@ -70,6 +70,8 @@ interface Props {
 		selectedSuggestion: Suggestion | string,
 		availableSuggestions?: Suggestion[]
 	) => void;
+	/** Called with the suggestions Agenttic actually renders (after truncation, only while visible). */
+	onSuggestionsRendered?: ( shown: Suggestion[] ) => void;
 	/** Called when the typing status changes. */
 	onTypingStatusChange?: ( isTyping: boolean ) => void;
 	/** Custom components for rendering markdown. */
@@ -171,6 +173,7 @@ export default function AgentChat( {
 	onExpand,
 	clearSuggestions,
 	onSuggestionClick,
+	onSuggestionsRendered,
 	notice,
 	markdownComponents = {},
 	markdownExtensions = {},
@@ -303,6 +306,7 @@ export default function AgentChat( {
 			suggestions={ displayedSuggestions }
 			clearSuggestions={ clearSuggestions }
 			onSuggestionClick={ onSuggestionClick ? handleDisplayedSuggestionClick : undefined }
+			onSuggestionsRendered={ onSuggestionsRendered }
 			floatingChatState={ floatingChatState }
 			onClose={ onClose }
 			onExpand={ onExpand }

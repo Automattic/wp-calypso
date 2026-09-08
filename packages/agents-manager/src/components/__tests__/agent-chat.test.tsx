@@ -10,6 +10,8 @@ import type { ComponentProps, ReactNode, Ref } from 'react';
 
 const mockSetFloatingPosition = jest.fn();
 const mockContainerProps = jest.fn();
+const mockContainerCallbacks = jest.fn();
+const mockSuggestionsProps = jest.fn();
 const mockInputProps = jest.fn();
 const mockImageUploaderProps = jest.fn();
 const mockHasAiChatEntry = jest.fn();
@@ -25,6 +27,7 @@ jest.mock(
 			floatingChatState,
 			suggestions = [],
 			onSuggestionClick,
+			onSuggestionsRendered,
 		}: {
 			children: ReactNode;
 			emptyView: ReactNode;
@@ -34,8 +37,10 @@ jest.mock(
 				selectedSuggestion: Suggestion,
 				availableSuggestions: Suggestion[]
 			) => void;
+			onSuggestionsRendered?: ( shown: Suggestion[] ) => void;
 		} ) {
 			mockContainerProps( { floatingChatState } );
+			mockContainerCallbacks( { onSuggestionsRendered } );
 			return (
 				<div>
 					{ emptyView }
@@ -128,12 +133,20 @@ jest.mock(
 		}
 
 		function MockSuggestions( {
+			className,
 			suggestions = [],
+			visible,
 			onSubmit,
 		}: {
+			className?: string;
 			suggestions?: Suggestion[];
+			visible?: boolean;
 			onSubmit?: ( selectedSuggestion: Suggestion, availableSuggestions: Suggestion[] ) => void;
 		} ) {
+			mockSuggestionsProps( { className, visible } );
+			if ( visible === false ) {
+				return null;
+			}
 			return <MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSubmit } />;
 		}
 
@@ -616,5 +629,38 @@ describe( 'AgentChat', () => {
 		renderAgentChat( { isOpen: false } );
 
 		expect( mockContainerProps ).toHaveBeenLastCalledWith( { floatingChatState: 'minimized' } );
+	} );
+
+	it( 'forwards the rendered-suggestions callback to the Agenttic container', () => {
+		const onSuggestionsRendered = jest.fn();
+
+		renderAgentChat( { onSuggestionsRendered } );
+
+		expect( mockContainerCallbacks ).toHaveBeenLastCalledWith( { onSuggestionsRendered } );
+	} );
+
+	it( 'keeps collapsed writing suggestions out of what Agenttic renders', async () => {
+		const user = userEvent.setup();
+
+		renderAgentChat( {
+			isOpen: true,
+			groupWritingSuggestions: true,
+			emptyViewSuggestions: [
+				{ id: 'customize-colors', label: 'Customize colors', prompt: 'Customize colors' },
+				{ id: 'optimize-title', label: 'Optimize Title', prompt: 'Optimize the title' },
+			],
+		} );
+
+		expect( mockSuggestionsProps ).toHaveBeenLastCalledWith( {
+			className: 'agents-manager-writing-suggestions__list',
+			visible: false,
+		} );
+
+		await user.click( screen.getByRole( 'button', { name: /Writing/ } ) );
+
+		expect( mockSuggestionsProps ).toHaveBeenLastCalledWith( {
+			className: 'agents-manager-writing-suggestions__list',
+			visible: true,
+		} );
 	} );
 } );
