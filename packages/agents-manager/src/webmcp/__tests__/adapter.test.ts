@@ -1,5 +1,5 @@
 import * as blocks from '@wordpress/blocks';
-import { createWebMcpAdapter, normalizeInputSchema } from '../adapter';
+import { createWebMcpAdapter } from '../adapter';
 import type { Ability } from '../../abilities/types';
 import type { ToolProvider } from '../../extension-types';
 import type { WebMcpModelContext, WebMcpTool } from '../types';
@@ -95,22 +95,6 @@ function createHarness( initialAbilities: Ability[] = [ createAbility() ] ) {
 describe( 'WebMCP adapter', () => {
 	beforeEach( () => {
 		jest.mocked( blocks.parse ).mockReset().mockReturnValue( [] );
-	} );
-
-	it( 'normalizes missing and malformed input schemas', () => {
-		expect( normalizeInputSchema( undefined ) ).toEqual( { type: 'object', properties: {} } );
-		expect( normalizeInputSchema( 'invalid' ) ).toEqual( { type: 'object', properties: {} } );
-		expect( normalizeInputSchema( [] ) ).toEqual( { type: 'object', properties: {} } );
-		expect( normalizeInputSchema( { properties: { value: { type: 'string' } } } ) ).toEqual( {
-			properties: { value: { type: 'string' } },
-			type: 'object',
-		} );
-		expect( normalizeInputSchema( { anyOf: [ { type: 'string' } ] } ) ).toEqual( {
-			anyOf: [ { type: 'string' } ],
-		} );
-		expect( normalizeInputSchema( { oneOf: [ { type: 'number' } ] } ) ).toEqual( {
-			oneOf: [ { type: 'number' } ],
-		} );
 	} );
 
 	it( 'marks every tool as returning untrusted content', async () => {

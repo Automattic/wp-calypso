@@ -11,6 +11,8 @@
 // `shared/legacy-style-variation-css` — the consent dialog and removal flow are
 // Big Sky's and port together with `set-styles`.
 
+import { isRecord } from './is-record';
+
 export const LEGACY_CSS_START = '/* easy-site-editor-style-variation:start */';
 export const LEGACY_CSS_END = '/* easy-site-editor-style-variation:end */';
 
@@ -21,10 +23,6 @@ export interface LegacyBlock {
 	end: number;
 	/** The block as shown to the user, without leading blank lines. */
 	text: string;
-}
-
-function isRecord( value: unknown ): value is Record< string, unknown > {
-	return !! value && typeof value === 'object' && ! Array.isArray( value );
 }
 
 /**

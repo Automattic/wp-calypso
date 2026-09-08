@@ -11,23 +11,28 @@ supported post, page, or site editor URL in a browser that implements
 
 ## Sources and execution
 
-Three sources feed one adapter, and each keeps its own execution path:
+Three sources feed one adapter. They are merged first-wins by ability name, in this order, and
+each keeps its own execution path:
 
-- The merged `ToolProvider` returned by `loadExternalProviders()`. It combines Agents
-  Manager-owned abilities with external fallback providers, resolves duplicate names using the
-  established precedence, and applies the existing canvas guard. Its definitions come first and
-  win by name, and the abilities it lists execute through `toolProvider.executeAbility()` with the
-  original slash-based name. While the experiment is eligible, the external provider's
-  ability-setup hook also mounts at the stable Agents Manager lifecycle so hook-dependent
-  abilities can register without opening the chat route.
-- The `core/abilities` client registry from `@wordpress/abilities`. Everything the page registered
-  that the merged provider does not list is a candidate, whichever plugin registered it. These
-  execute through the registry's `executeAbility()`, which runs the ability's permission callback
-  and schema validation, under the same canvas guard.
-- The site's Abilities REST API, fetched once per page with `webmcp=1`. A REST definition replaces a
-  same-named copy from the other sources and executes on the REST route: GET for read-only
-  abilities, POST with a JSON body for mutating ones. The adapter includes each ability's
-  server-provided instructions in the WebMCP description when present.
+1. The site's Abilities REST API, fetched once per page with `webmcp=1`. A REST definition replaces
+   a same-named copy from the other sources and executes on the REST route: GET for read-only
+   abilities, POST with a JSON body for mutating ones. The adapter includes each ability's
+   server-provided instructions in the WebMCP description when present.
+2. The merged `ToolProvider` returned by `loadExternalProviders()`. It combines Agents
+   Manager-owned abilities with external fallback providers, resolves duplicate names using the
+   established precedence, and applies the existing canvas guard. The abilities it lists execute
+   through `toolProvider.executeAbility()` with the original slash-based name. While the
+   experiment is eligible, the external provider's ability-setup hook also mounts at the stable
+   Agents Manager lifecycle so hook-dependent abilities can register without opening the chat
+   route.
+3. The `core/abilities` client registry from `@wordpress/abilities`: everything the page
+   registered, whichever plugin did it. These execute through the registry's `executeAbility()`,
+   which runs the ability's permission callback and schema validation, under the same canvas
+   guard.
+
+The adapter itself is generic. The few abilities whose projection differs from the ability, such
+as the edit tool's WebMCP-only schema and input shaping, are described in one contract table in
+`src/webmcp/contracts.ts`.
 
 ## Exposure
 

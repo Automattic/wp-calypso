@@ -1,14 +1,16 @@
+import { normalizeAbilityName } from '../abilities/ability-name';
+import { isRecord } from '../utils/is-record';
 import {
 	APPLY_BLOCK_EDITS_ABILITY_NAME,
 	GET_BLOCK_TREE_ABILITY_NAME,
 	SHOW_TEMPLATE_ABILITY_NAME,
-	WEBMCP_SERVER_ABILITY_NAMES,
 	isWebMcpMutatingServerAbilityName,
+	isWebMcpServerAbilityName,
 } from './contracts';
 import type { Ability } from '../abilities/types';
 
 /**
- * Transitional allowlists for abilities that carry no exposure flag yet.
+ * Transitional allowlist for client abilities that carry no exposure flag yet.
  * Execution remains behind the merged provider's permission checks and canvas
  * guard.
  */
@@ -18,15 +20,9 @@ export const WEBMCP_EDITOR_ABILITY_ALLOWLIST = new Set( [
 	SHOW_TEMPLATE_ABILITY_NAME,
 ] );
 
-export const WEBMCP_SERVER_ABILITY_ALLOWLIST = new Set< string >( WEBMCP_SERVER_ABILITY_NAMES );
-
 export type WebMcpExposure = 'public' | 'private' | 'unset';
 
 export type AbilityProvenance = 'client' | 'server';
-
-function isRecord( value: unknown ): value is Record< string, unknown > {
-	return !! value && typeof value === 'object' && ! Array.isArray( value );
-}
 
 /**
  * Reads the channel-specific `meta.webmcp.public` flag, mirroring how the MCP
@@ -80,7 +76,7 @@ function isReadonly( ability: Ability ): boolean {
 function isAllowlisted( ability: Ability, provenance: AbilityProvenance ): boolean {
 	if ( provenance === 'server' ) {
 		return (
-			WEBMCP_SERVER_ABILITY_ALLOWLIST.has( ability.name ) &&
+			isWebMcpServerAbilityName( ability.name ) &&
 			( isReadonly( ability ) || isWebMcpMutatingServerAbilityName( ability.name ) )
 		);
 	}
@@ -119,4 +115,44 @@ export function shouldExposeWebMcpAbility( ability: Ability ): boolean {
 	}
 
 	return isAllowlisted( ability, provenance );
+}
+
+export type ExposedAbilities = {
+	/** Keyed by ability name, in candidate order. */
+	exposed: Map< string, Ability >;
+	/** Keyed by the tool name that several exposable abilities would share. */
+	collisions: Map< string, Ability[] >;
+};
+
+/**
+ * Applies the exposure policy and resolves tool-name collisions. The `/` to
+ * `__` and `-` to `_` mapping is not injective: a doubled dash and a segment
+ * boundary both land on `__`. Two abilities on one tool name would silently
+ * overwrite each other, so neither is exposed.
+ */
+export function selectExposedAbilities( abilities: Ability[] ): ExposedAbilities {
+	const candidatesByToolName = new Map< string, Ability[] >();
+	for ( const ability of abilities ) {
+		if ( ! shouldExposeWebMcpAbility( ability ) ) {
+			continue;
+		}
+
+		const toolName = normalizeAbilityName( ability.name );
+		candidatesByToolName.set( toolName, [
+			...( candidatesByToolName.get( toolName ) ?? [] ),
+			ability,
+		] );
+	}
+
+	const exposed = new Map< string, Ability >();
+	const collisions = new Map< string, Ability[] >();
+	for ( const [ toolName, candidates ] of candidatesByToolName ) {
+		if ( candidates.length === 1 ) {
+			exposed.set( candidates[ 0 ].name, candidates[ 0 ] );
+		} else {
+			collisions.set( toolName, candidates );
+		}
+	}
+
+	return { exposed, collisions };
 }
