@@ -139,6 +139,8 @@ describe( 'saveChanges', () => {
 			result: {
 				success: false,
 				error: 'Template save failed.',
+				message:
+					'One or more changes could not be saved. The unsaved changes remain staged in the editor.',
 				details: { savedEntityCount: 1, failedEntityCount: 1 },
 			},
 		} );

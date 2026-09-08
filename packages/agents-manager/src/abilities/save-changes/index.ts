@@ -1,4 +1,3 @@
-import { __ } from '@wordpress/i18n';
 import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
 import { saveChangesCallback } from './callback';
 import type { Ability } from '../types';
@@ -9,12 +8,10 @@ import type { Ability } from '../types';
  */
 export const saveChangesAbility: Ability = {
 	name: 'big-sky/save-changes',
-	label: __( 'Save changes', __i18n_text_domain__ ),
+	label: 'Save changes',
 	category: BIG_SKY_ABILITY_CATEGORY,
-	description: __(
+	description:
 		'Save all changes currently staged in the editor. Use this when the user explicitly asks to save, publish, or commit the changes they are reviewing. Do not call it automatically after making edits.',
-		__i18n_text_domain__
-	),
 	input_schema: {
 		type: 'object',
 		properties: {},
