@@ -85,6 +85,7 @@ function PartnerOfferCard( {
 					>
 						{ /* TODO: non-external URLs are classic A4A marketplace paths that 404 until the dashboard Marketplace exists. */ }
 						<Button
+							size="compact"
 							variant="secondary"
 							href={ item.cta.url }
 							target={ item.cta.external ? '_blank' : undefined }
@@ -93,6 +94,7 @@ function PartnerOfferCard( {
 							{ item.cta.label }
 						</Button>
 						<Button
+							size="compact"
 							variant="link"
 							href={ item.termsUrl ?? VIEW_TERMS_URL }
 							target="_blank"
