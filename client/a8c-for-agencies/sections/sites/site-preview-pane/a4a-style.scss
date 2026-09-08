@@ -109,7 +109,7 @@
 		max-width: unset;
 	}
 
-	// Same studio tokens the shared chart styles resolve the bar colours to.
+	// A4A aliases of the studio tokens the shared chart styles paint the bars with.
 	.site-preview-pane__monitor-legend-swatch {
 		flex-shrink: 0;
 		width: 12px;
@@ -117,16 +117,16 @@
 		border-radius: 2px;
 
 		&.is-uptime {
-			background-color: var(--studio-jetpack-green-40);
+			background-color: var(--color-jetpack-40);
 		}
 
 		&.is-downtime {
-			background-color: var(--studio-red-50);
+			background-color: var(--color-scary-50);
 		}
 
 		&.is-no-data {
-			background-color: var(--studio-gray-0);
-			border: 1px solid var(--studio-gray-5);
+			background-color: var(--color-accent-0);
+			border: 1px solid var(--color-accent-5);
 		}
 	}
 
