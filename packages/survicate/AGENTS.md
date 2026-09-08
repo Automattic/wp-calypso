@@ -100,8 +100,11 @@ holder who never gave it.
 
 Detection is `isSupportSession()` from `@automattic/calypso-support-session` — the same
 helper the rest of the codebase uses (see `client/dashboard/utils/domain-permissions.ts`).
-It covers both the `isSupportSession` global and support-user impersonation, so prefer it
-over reading `window.isSupportSession` directly. Guarded at two layers:
+It covers all three mechanisms — support-user impersonation, the `isSupportSession`
+global, and the support session proxy's `isSSP` global — so prefer it over reading any of
+them directly. The server tracks `isSupportSession` and `isSSP` as independent flags
+(`client/server/pages/index.js`), so checking only the former misses proxied views
+entirely. Guarded at two layers:
 
 1. **Load gate** — `shouldLoadSurvicate()` returns `false`, so the SDK script is never
    injected. This is the real fix: no script, no auto-campaigns, no events. Both
@@ -110,8 +113,10 @@ over reading `window.isSupportSession` directly. Guarded at two layers:
    the `invokeSurvicateEvent()` call sites that fire without consulting the load gate.
 
 A support session neither begins nor ends within a page lifetime, so there is no
-transition to handle and nothing to resume — `load-script.ts` needs no support-session
-handling of its own.
+transition to handle and nothing to resume. `load-script.ts` therefore needs no
+support-session handling of its own: it only ever runs once the load gate has passed,
+which means there is no support session. Its tests mock `isSupportSession()` to a
+constant `false` to keep that invariant explicit — don't add support-session cases there.
 
 **The wp-admin Survicate loader is a separate integration** (`class-survicate.php` in the
 Jetpack monorepo) and is not covered here — it needs its own guard.
