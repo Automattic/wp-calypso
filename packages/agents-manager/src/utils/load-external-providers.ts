@@ -13,9 +13,9 @@
 
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
 import { amToolProvider, getAmCheckpointContext } from '../abilities';
+import { findAbilityByName } from '../abilities/ability-name';
 import { withAbilityCompletionBroadcast } from './ability-completion-broadcast';
 import { withCanvasBinding, withCanvasGuard } from './canvas-guard';
-import { mergeToolProviders } from './compose-tool-providers';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import { setLoadedProviderIds } from './loaded-provider-ids';
@@ -716,20 +716,59 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	if ( allToolProviders.length === 1 ) {
 		mergedToolProvider = allToolProviders[ 0 ];
 	} else {
-		const provider = mergeToolProviders( allToolProviders, ( error ) => {
-			// eslint-disable-next-line no-console
-			console.warn( '[AgentsManager] Failed to load abilities from provider:', error );
-		} );
+		// Query providers live on each call rather than snapshotting at load.
+		// agenttic-client calls getAbilities()/executeAbility() fresh every turn,
+		// so abilities registered later stay visible. Big Sky, for one, registers
+		// its editor abilities (big-sky/apply-block-edits and friends) from a
+		// React effect that runs after loadExternalProviders(); a captured list
+		// would freeze those out and the agent's calls would silently not dispatch.
+		const collectAbilityResults = async () =>
+			Promise.all(
+				allToolProviders.map( async ( tp ) => {
+					try {
+						return await tp.getAbilities();
+					} catch ( error ) {
+						// eslint-disable-next-line no-console
+						console.warn( '[AgentsManager] Failed to load abilities from provider:', error );
+						return [];
+					}
+				} )
+			);
+
 		mergedToolProvider = {
-			...provider,
-			executeAbility: async ( name, args ) => {
-				const result = await provider.executeAbility( name, args );
-				// TODO (ability-migration): Keep provider checkpoints ordered with AM's
-				// until the remaining checkpoint writers migrate.
-				stampProviderCheckpointObservations(
-					getProviderCheckpointRecords().map( ( { id } ) => id )
-				);
-				return result;
+			getAbilities: async () => {
+				const results = await collectAbilityResults();
+				// Dedupe by ability name; earlier providers win on collisions.
+				const seenAbilities = new Map< string, ( typeof results )[ number ][ number ] >();
+				for ( const abilities of results ) {
+					for ( const ability of abilities ) {
+						if ( ! seenAbilities.has( ability.name ) ) {
+							seenAbilities.set( ability.name, ability );
+						}
+					}
+				}
+				return [ ...seenAbilities.values() ];
+			},
+			executeAbility: async ( name: string, args: unknown ) => {
+				// Resolve the owning provider live, in registration order, so the
+				// earliest provider that currently exposes the ability handles it.
+				const results = await collectAbilityResults();
+				for ( let i = 0; i < allToolProviders.length; i++ ) {
+					if ( findAbilityByName( results[ i ], name ) ) {
+						const result = await allToolProviders[ i ].executeAbility( name, args );
+
+						// TODO (ability-migration): Delete with the provider-checkpoints
+						// bridge. Stamping right after execution times a Big Sky record
+						// within the turn that created it — the context-build stamp
+						// alone would time it one message late.
+						stampProviderCheckpointObservations(
+							getProviderCheckpointRecords().map( ( { id } ) => id )
+						);
+
+						return result;
+					}
+				}
+				throw new Error( `No provider handled ability: ${ name }` );
 			},
 		};
 	}

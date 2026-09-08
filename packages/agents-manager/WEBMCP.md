@@ -11,9 +11,10 @@ supported post, page, or site editor URL in a browser that implements
 
 ## Sources and execution
 
-Three sources feed one adapter. Discovery merges definitions and their owners first-wins by
-ability name, in this order, before applying exposure policy. A private winning definition
-therefore suppresses same-named fallbacks. Each registration retains its selected source:
+Three sources feed one adapter. They are merged first-wins by ability name, in this order, and
+the exposure policy runs on the winner, so a private winning definition also hides its same-named
+fallbacks. The owner is resolved live at discovery and again at dispatch, as the chat provider
+chain does:
 
 1. The site's Abilities REST API, fetched once per adapter mount with `webmcp=1`. A REST definition replaces
    a same-named copy from the other sources and executes on the REST route: GET for read-only
@@ -38,12 +39,12 @@ not infer protection for arbitrary plugin writes. Every ability remains responsi
 permissions, target scoping, and validation. Exposure flags and browser annotations do not grant
 authorization.
 
-The shared collection helper lives in `src/utils/compose-tool-providers.ts`. Chat uses it to
-resolve ownership live on each turn; WebMCP retains the owner with each advertised descriptor.
-WebMCP calls recheck that source's exposure and descriptor before dispatch. A removed source,
-changed schema or annotations, or explicit opt-out rejects the old invocation and reconciles the
-tools. Reconciliation also replaces registrations when their source changes, even when the
-descriptor is identical. Retained callbacks from replaced or disposed registrations reject.
+The merge lives in `src/webmcp/compose-tool-providers.ts` and mirrors the first-wins rule of the
+chat provider chain without sharing code with it. Before dispatch, a tool reads the live winner for
+its ability name again and rejects the call when that winner is gone, opted out, or carries a
+different descriptor, then reconciles the tools so the browser can discover them afresh. A winner
+that changed source but kept an identical descriptor keeps its registration and executes through
+the new source. Callbacks from replaced or disposed registrations reject.
 
 The adapter itself is generic. The few abilities whose projection differs from the ability, such
 as the edit tool's WebMCP-only schema and input shaping, are described in one contract table in
@@ -118,19 +119,18 @@ Tools carry only the three annotations the WebMCP draft defines:
   `destructive` annotation.
 
 The MCP-style `destructiveHint` and `idempotentHint` are not part of WebMCP and are not emitted.
-Registration errors are reported without dropping annotations; a retry uses the complete descriptor.
-The experiment requires a browser that accepts the current draft's descriptor.
+A rejected registration is reported and retried with the complete descriptor on the next
+reconcile. The experiment requires a browser that accepts the current draft's descriptor.
 
 ## Lifecycle
 
 The adapter subscribes to the `core/abilities` store and reconciles on every change, so abilities
 registered by later React effects or by other plugins appear without polling. The merged provider
 lives outside that store, so the hook re-syncs once when it arrives. Changing scope or unmounting
-Agents Manager aborts all registrations and cancels pending retries. A failed source or rejected
-registration does not block the remaining tools. Failed synchronization schedules at most three
-retries, after 1, 2, and 4 seconds, without waiting for another store change. Success cancels any
-pending retry and resets the retry budget. After exhaustion, a later store or provider change can
-still trigger synchronization. Only discovery and registration are retried; executions are never
+Agents Manager aborts all registrations. A source that fails to load or a registration the browser
+rejects is reported and does not block the remaining tools. A failed REST discovery is not cached,
+so the next reconcile fetches it again, whether a store change, a provider change, or a dispatch
+that found a stale definition triggered it. There are no timed retries, and executions are never
 retried automatically.
 
 An execution aborted before dispatch is rejected, including cancellation while checking the live
@@ -158,17 +158,7 @@ NODE_OPTIONS=--max-old-space-size=8192 yarn typecheck-client
 ```
 
 The regression suites cover source precedence and opt-outs, stale registrations, GET/POST/DELETE
-routing, partial discovery failures, retry exhaustion, and disposal during retries.
-
-### Calypso
-
-1. Run `yarn start` from the repository root. Use the port configured by `PORT` in the existing
-   `.env`, or port 3000 if unset.
-2. Sign in and open Agents Manager on a Calypso hosting screen. Confirm ordinary chat still
-   discovers and executes its provider abilities, including after closing and reopening the chat.
-3. In a WebMCP-capable browser, confirm this non-editor surface registers no WebMCP tools and does
-   not fetch the `am-webmcp` chunk. Repeat with the experiment disabled. Editor execution is tested
-   separately on Simple and Atomic sites below.
+routing, partial discovery failures, and disposal during registration.
 
 ### Codex built-in browser
 
@@ -224,9 +214,9 @@ routing, partial discovery failures, retry exhaustion, and disposal during retri
    `meta.webmcp.public: true` by unregistering and re-registering the ability, and confirm it
    appears. Re-register an allowlisted ability with `meta.webmcp.public: false` and confirm it
    disappears. Mutating a definition object in place does not notify the abilities store.
-3. Temporarily fail the REST discovery request. Confirm registry tools remain usable and the
-   request retries without another registration. Restore the request and confirm REST ownership
-   takes effect with refreshed descriptors; retained callbacks from old registrations must reject.
+3. Temporarily fail the REST discovery request. Confirm the registry tools remain usable. Restore
+   the request and register the demo ability again to trigger a store change. Confirm the REST
+   tools appear with their server descriptors.
 4. Exercise an opted-in server ability with `readonly: false`, `destructive: true`, and
    `idempotent: true` against disposable test data. Confirm the Network panel shows DELETE with
    input in the query. Test both Simple and Atomic sites.
