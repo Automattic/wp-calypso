@@ -19,6 +19,8 @@ export type PremiumAnalyticsPreviewCohort = {
 	isVip: boolean;
 	isP2: boolean;
 	canManageOptions: boolean;
+	/** Whether the site's features are in - `hasCommercialStats` says nothing until they are. */
+	hasSiteFeatures: boolean;
 	hasCommercialStats: boolean;
 	premiumAnalyticsDashboardUrl: string | null;
 	/** The cohort rule and the feature flag together, before anyone asks the site for its status. */
@@ -60,10 +62,9 @@ export default function usePremiumAnalyticsPreviewCohort(
 	// "not gated" while they are still loading, which is the safe default for an upsell and the
 	// wrong one for an invitation. In wp-admin they arrive with the page, seeded from the site's
 	// plan into Odyssey's initial state, which is why `stats-main` skips `QuerySiteFeatures` there.
+	const hasSiteFeatures = useSelector( ( state ) => !! getSiteFeatures( state, siteId ) );
 	const hasCommercialStats = useSelector(
-		( state ) =>
-			!! getSiteFeatures( state, siteId ) &&
-			! shouldGateStats( state, siteId, STATS_FEATURE_UTM_STATS )
+		( state ) => hasSiteFeatures && ! shouldGateStats( state, siteId, STATS_FEATURE_UTM_STATS )
 	);
 
 	// Where accepting would land. Null when the site record carries no `admin_url`, which is
@@ -77,6 +78,7 @@ export default function usePremiumAnalyticsPreviewCohort(
 		isVip,
 		isP2,
 		canManageOptions,
+		hasSiteFeatures,
 		hasCommercialStats,
 		premiumAnalyticsDashboardUrl,
 		canBeInvited:
