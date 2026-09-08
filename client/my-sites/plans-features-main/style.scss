@@ -238,12 +238,21 @@ body.is-section-plans .layout__content #plans .main {
 /**
  * Adjust card sizes for 3/4 columns to align with the container
  */
-body.is-section-plans .plan-features-2023-grid__table {
+body.is-section-plans .plan-features-2023-grid__content {
        &.has-3-cols,
        &.has-4-cols {
-               max-width: none;
-        }
- }
+               .plan-features-2023-grid__table {
+                       max-width: none;
+               }
+
+               .plan-features-2023-grid__desktop-view,
+               .plan-features-2023-grid__tablet-view {
+                       .plan-features-2023-grid__table-item {
+                               max-width: none;
+                       }
+               }
+       }
+}
 
 body.is-section-stepper,
 body.is-section-signup {
