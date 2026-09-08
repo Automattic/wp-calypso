@@ -1,7 +1,6 @@
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import { findAbilityByName } from '../abilities/ability-name';
-import { shouldExposeWebMcpAbility } from './exposure';
 import type { Ability } from '../abilities/types';
 import type { ToolProvider } from '../extension-types';
 
@@ -20,25 +19,27 @@ function markServerRegistered( ability: Ability ): Ability {
 	};
 }
 
+function getAbilityRequestMethod( ability: Ability ): 'GET' | 'POST' | 'DELETE' {
+	const annotations = ability.meta?.annotations;
+	if ( annotations?.readonly === true ) {
+		return 'GET';
+	}
+	return annotations?.destructive === true && annotations?.idempotent === true ? 'DELETE' : 'POST';
+}
+
 /**
- * Serves the site's REST abilities that pass the exposure policy, so a
- * `meta.public` read or a `meta.webmcp.public` write surfaces without a
- * client-side allowlist entry. Execution stays on the REST route: GET for
- * read-only abilities, POST with a JSON body for mutating ones. The list is
- * fetched once per page, and a failed request is retried on the next read.
+ * Fetches REST definitions once per mount, preserving opt-outs for precedence
+ * resolution. Failed discovery is left uncached so the mount can retry it.
  */
 export function createServerAbilityProvider(): ToolProvider {
 	let abilitiesPromise: Promise< Ability[] > | undefined;
-	let didWarn = false;
 
-	const fetchAbilities = (): Promise< Ability[] > => {
+	const getAbilities = (): Promise< Ability[] > => {
 		if ( ! abilitiesPromise ) {
 			abilitiesPromise = apiFetch< Ability[] >( {
 				path: addQueryArgs( ABILITIES_ENDPOINT, { context: 'edit', per_page: -1, webmcp: 1 } ),
 			} )
-				.then( ( abilities ) =>
-					abilities.map( markServerRegistered ).filter( shouldExposeWebMcpAbility )
-				)
+				.then( ( abilities ) => abilities.map( markServerRegistered ) )
 				.catch( ( error ) => {
 					abilitiesPromise = undefined;
 					throw error;
@@ -46,21 +47,6 @@ export function createServerAbilityProvider(): ToolProvider {
 		}
 
 		return abilitiesPromise;
-	};
-
-	const getAbilities = async (): Promise< Ability[] > => {
-		try {
-			const abilities = await fetchAbilities();
-			didWarn = false;
-			return abilities;
-		} catch ( error ) {
-			if ( ! didWarn ) {
-				// eslint-disable-next-line no-console
-				console.warn( '[AgentsManager] Failed to load WebMCP server abilities:', error );
-				didWarn = true;
-			}
-			return [];
-		}
 	};
 
 	return {
@@ -72,7 +58,8 @@ export function createServerAbilityProvider(): ToolProvider {
 			}
 
 			const path = `${ ABILITIES_ENDPOINT }/${ ability.name }/run`;
-			if ( ability.meta?.annotations?.readonly !== true ) {
+			const method = getAbilityRequestMethod( ability );
+			if ( method === 'POST' ) {
 				return apiFetch( {
 					method: 'POST',
 					path: addQueryArgs( path, { webmcp: 1 } ),
@@ -80,7 +67,7 @@ export function createServerAbilityProvider(): ToolProvider {
 				} );
 			}
 
-			return apiFetch( { method: 'GET', path: addQueryArgs( path, { input, webmcp: 1 } ) } );
+			return apiFetch( { method, path: addQueryArgs( path, { input, webmcp: 1 } ) } );
 		},
 	};
 }

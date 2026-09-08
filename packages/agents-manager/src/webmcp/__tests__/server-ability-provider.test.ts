@@ -3,7 +3,6 @@ import { createServerAbilityProvider } from '../server-ability-provider';
 import type { Ability } from '../../abilities/types';
 
 jest.mock( '@wordpress/api-fetch' );
-jest.mock( '@wordpress/blocks', () => ( { parse: jest.fn() } ) );
 
 const serverAbility: Ability = {
 	name: 'wpcom/get-posts',
@@ -55,7 +54,7 @@ describe( 'createServerAbilityProvider', () => {
 		jest.mocked( apiFetch ).mockReset();
 	} );
 
-	it( 'serves REST abilities that pass the exposure policy, marked as server-registered', async () => {
+	it( 'preserves REST definitions for exposure after merging, marked as server-registered', async () => {
 		jest
 			.mocked( apiFetch )
 			.mockResolvedValueOnce( [
@@ -70,7 +69,9 @@ describe( 'createServerAbilityProvider', () => {
 
 		expect( abilities.map( ( ability ) => ability.name ) ).toEqual( [
 			'wpcom/get-posts',
+			'wpcom/delete-site',
 			'other-plugin/get-site-health',
+			'other-plugin/publish-post',
 			'other-plugin/create-note',
 		] );
 		expect( abilities[ 0 ] ).toEqual( {
@@ -143,26 +144,47 @@ describe( 'createServerAbilityProvider', () => {
 		).rejects.toThrow( 'wpcom/delete-site' );
 	} );
 
-	it( 'serves nothing and warns once while the request fails, then retries', async () => {
+	it( 'propagates failed discovery and retries on the next read', async () => {
 		jest
 			.mocked( apiFetch )
 			.mockRejectedValueOnce( new Error( 'Request failed' ) )
-			.mockRejectedValueOnce( new Error( 'Request failed' ) )
 			.mockResolvedValueOnce( [ serverAbility ] );
-		// eslint-disable-next-line no-console
-		const warn = jest.spyOn( console, 'warn' ).mockImplementation();
 		const provider = createServerAbilityProvider();
 
-		expect( await provider.getAbilities() ).toEqual( [] );
-		expect( await provider.getAbilities() ).toEqual( [] );
-		expect( warn ).toHaveBeenCalledTimes( 1 );
-		expect( warn ).toHaveBeenCalledWith(
-			'[AgentsManager] Failed to load WebMCP server abilities:',
-			expect.any( Error )
-		);
+		await expect( provider.getAbilities() ).rejects.toThrow( 'Request failed' );
 		expect( ( await provider.getAbilities() ).map( ( ability ) => ability.name ) ).toEqual( [
 			'wpcom/get-posts',
 		] );
-		warn.mockRestore();
 	} );
+
+	it.each( [
+		[ true, true, true, 'GET' ],
+		[ true, false, false, 'GET' ],
+		[ false, true, true, 'DELETE' ],
+		[ false, true, false, 'POST' ],
+		[ false, false, true, 'POST' ],
+		[ false, false, false, 'POST' ],
+		[ undefined, undefined, undefined, 'POST' ],
+	] )(
+		'routes readonly=%s destructive=%s idempotent=%s through %s',
+		async ( readonly, destructive, idempotent, method ) => {
+			jest
+				.mocked( apiFetch )
+				.mockResolvedValueOnce( [
+					{
+						...channelWriteAbility,
+						meta: { webmcp: { public: true }, annotations: { readonly, destructive, idempotent } },
+					},
+				] )
+				.mockResolvedValue( {} );
+			await createServerAbilityProvider().executeAbility( channelWriteAbility.name, { id: 123 } );
+
+			const request = jest.mocked( apiFetch ).mock.calls[ 1 ][ 0 ];
+			expect( request.method ).toBe( method );
+			expect( request.data ).toEqual( method === 'POST' ? { input: { id: 123 } } : undefined );
+			expect(
+				new URL( request.path!, 'https://example.com' ).searchParams.get( 'input[id]' )
+			).toBe( method === 'POST' ? null : '123' );
+		}
+	);
 } );

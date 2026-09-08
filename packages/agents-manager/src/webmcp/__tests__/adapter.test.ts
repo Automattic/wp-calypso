@@ -78,7 +78,7 @@ function createHarness( initialAbilities: Ability[] = [ createAbility() ] ) {
 			signals.set( tool.name, options?.signal );
 		} ),
 	};
-	const adapter = createWebMcpAdapter( { toolProvider, modelContext } );
+	const adapter = createWebMcpAdapter( { getToolProviders: () => [ toolProvider ], modelContext } );
 
 	return {
 		adapter,
@@ -193,18 +193,18 @@ describe( 'WebMCP adapter', () => {
 		expect( harness.modelContext.registerTool ).toHaveBeenCalledTimes( 3 );
 	} );
 
-	it( 'retries registration without optional descriptor members on a TypeError', async () => {
+	it( 'preserves annotations when registration rejects with a TypeError', async () => {
 		const harness = createHarness();
-		const registerTool = harness.modelContext.registerTool as jest.Mock;
-		registerTool.mockRejectedValueOnce( new TypeError( 'Unknown dictionary member' ) );
+		const registerTool = jest.mocked( harness.modelContext.registerTool );
+		registerTool.mockRejectedValueOnce( new TypeError( 'Invalid descriptor' ) );
 
-		await expect( harness.adapter.sync() ).resolves.toBeUndefined();
-		expect( registerTool ).toHaveBeenCalledTimes( 2 );
-		const [ fallbackTool ] = registerTool.mock.calls[ 1 ];
-		expect( fallbackTool.name ).toBe( 'big_sky__apply_block_edits' );
-		expect( fallbackTool.title ).toBeUndefined();
-		expect( fallbackTool.annotations ).toEqual( { readOnlyHint: false } );
-		expect( harness.tools.get( 'big_sky__apply_block_edits' ) ).toBe( fallbackTool );
+		await expect( harness.adapter.sync() ).rejects.toThrow( 'Invalid descriptor' );
+		expect( registerTool ).toHaveBeenCalledTimes( 1 );
+		expect( harness.tools.size ).toBe( 0 );
+		await harness.adapter.sync();
+		expect( registerTool.mock.calls[ 1 ][ 0 ].annotations ).toEqual(
+			registerTool.mock.calls[ 0 ][ 0 ].annotations
+		);
 	} );
 
 	it( 'registers a server ability with its schema and executes through the provider', async () => {
@@ -536,5 +536,86 @@ describe( 'WebMCP adapter', () => {
 		await expect( harness.adapter.sync() ).rejects.toThrow( 'Invalid WebMCP schema' );
 		await expect( harness.adapter.sync() ).resolves.toBeUndefined();
 		expect( harness.modelContext.registerTool ).toHaveBeenCalledTimes( 2 );
+	} );
+	it.each( [
+		{ label: 'Changed label' },
+		{ input_schema: { type: 'object', properties: { count: { type: 'integer' } } } },
+		{ meta: { webmcp: { public: false }, annotations: { clientRegistered: true } } },
+		{ meta: { public: true, annotations: { clientRegistered: true, readonly: false } } },
+	] )( 'rejects a changed definition before dispatch: %j', async ( change ) => {
+		const initial = createBlockTreeAbility();
+		const harness = createHarness( [ initial ] );
+		await harness.adapter.sync();
+		const original = harness.tools.get( 'agents_manager__get_block_tree' )!;
+		harness.setAbilities( [ { ...initial, ...change } ] );
+
+		await expect( original.execute( {} ) ).rejects.toThrow( 'WebMCP tool changed' );
+		expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
+	} );
+
+	it( 'rejects an ability removed before reconciliation', async () => {
+		const harness = createHarness();
+		await harness.adapter.sync();
+		const tool = harness.tools.get( 'big_sky__apply_block_edits' )!;
+		harness.setAbilities( [] );
+
+		await expect( tool.execute( {} ) ).rejects.toThrow( 'WebMCP tool changed' );
+		expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
+	} );
+
+	it( 'rejects cancellation while validating the registered definition', async () => {
+		const harness = createHarness();
+		await harness.adapter.sync();
+		let finishRead: ( abilities: Ability[] ) => void = () => {};
+		jest.mocked( harness.toolProvider.getAbilities ).mockImplementationOnce(
+			() =>
+				new Promise( ( resolve ) => {
+					finishRead = resolve;
+				} )
+		);
+		const controller = new AbortController();
+		const execution = harness.tools
+			.get( 'big_sky__apply_block_edits' )!
+			.execute( {}, { signal: controller.signal } );
+		controller.abort();
+		finishRead( [ createAbility() ] );
+
+		await expect( execution ).rejects.toMatchObject( { name: 'AbortError' } );
+		expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
+	} );
+	it( 'stops registration after disposal while a browser registration is pending', async () => {
+		const harness = createHarness( [ createBlockTreeAbility(), createAbility() ] );
+		let finishRegistration: () => void = () => {};
+		let startedRegistration: () => void = () => {};
+		const started = new Promise< void >( ( resolve ) => {
+			startedRegistration = resolve;
+		} );
+		jest.mocked( harness.modelContext.registerTool ).mockImplementationOnce( () => {
+			startedRegistration();
+			return new Promise< void >( ( resolve ) => {
+				finishRegistration = resolve;
+			} );
+		} );
+		const pending = harness.adapter.sync();
+		await started;
+		const signal = jest.mocked( harness.modelContext.registerTool ).mock.calls[ 0 ][ 1 ]?.signal;
+		harness.adapter.dispose();
+		finishRegistration();
+		await pending;
+
+		expect( signal?.aborted ).toBe( true );
+		expect( harness.modelContext.registerTool ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'does not register a replacement if disposal happens during unregistration', async () => {
+		const harness = createHarness();
+		await harness.adapter.sync();
+		harness.setAbilities( [ createAbility( { label: 'Changed label' } ) ] );
+		harness.modelContext.unregisterTool = jest
+			.fn()
+			.mockImplementationOnce( () => harness.adapter.dispose() );
+		await harness.adapter.sync();
+
+		expect( harness.modelContext.registerTool ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
