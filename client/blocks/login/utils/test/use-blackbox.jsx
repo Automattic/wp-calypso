@@ -153,6 +153,7 @@ describe( 'useBlackbox', () => {
 		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/active/empty' );
 	} );
 
+	test( 'tracks the rendered challenge widget by measuring the container', async () => {
 		render( <TestComponent /> );
 
 		await act( async () => {} );
