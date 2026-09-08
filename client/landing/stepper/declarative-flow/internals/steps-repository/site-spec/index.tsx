@@ -20,7 +20,6 @@ import {
 	waitForBlueprintImportComplete,
 } from 'calypso/landing/stepper/utils/blueprint-archive-import';
 import {
-	BUILD_WOW_QUERY_VALUE,
 	getBuildWowGraph,
 	getBuildWowSiteIdentifier,
 	logBuildWowEvent,
@@ -135,7 +134,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 	const shouldEarlyProvisionSite = queryParams.get( 'early_provision_site' ) === '1';
 	const shouldProvisionAtomicSite =
 		shouldEarlyProvisionSite || queryParams.get( 'provision_target' ) === 'wpcom-atomic';
-	const shouldBuildWow = queryParams.get( 'build_wow' ) === BUILD_WOW_QUERY_VALUE;
+	const shouldBuildWow = queryParams.get( 'build_wow' ) === '1';
 	const activeFlow = getActiveFlow( { shouldBuildWow, shouldProvisionAtomicSite, isCiab } );
 	const atomicProvisionSpecId = shouldProvisionAtomicSite ? queryParams.get( 'spec_id' ) ?? '' : '';
 	const buildWowSpecId = shouldBuildWow ? queryParams.get( 'spec_id' ) ?? '' : '';

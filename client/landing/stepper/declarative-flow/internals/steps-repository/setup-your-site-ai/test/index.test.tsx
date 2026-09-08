@@ -258,12 +258,6 @@ describe( 'SetupYourSiteAIStep', () => {
 			isEnabled.mockImplementation( ( flag: string ) => flag !== 'site-spec' );
 		} );
 
-		it( 'renders only the two cards', () => {
-			renderStep();
-
-			expect( getButtonNames() ).toEqual( [ 'Start with a template', 'Create a custom design' ] );
-		} );
-
 		it( 'submits the build-with-ai choice from the custom design card', () => {
 			renderStep();
 

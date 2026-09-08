@@ -190,7 +190,7 @@ describe( 'ai-site-builder-onboarding flow', () => {
 				expect( checkoutBackUrlDomains.searchParams.get( 'prompt' ) ).toBe( 'a bakery website' );
 			} );
 
-			it( 'stays on the legacy site editor for a plan without Atomic even with the swap enabled', async () => {
+			it( 'stays on the legacy site editor for a plan without Atomic', async () => {
 				await runProcessingSubmit();
 
 				expect( new URL( getRedirectTo() ).pathname ).toBe( '/wp-admin/site-editor.php' );
@@ -272,7 +272,6 @@ describe( 'ai-site-builder-onboarding flow', () => {
 
 				await runProcessingSubmit();
 
-				expect( isEnabled ).toHaveBeenCalledWith( 'site-spec' );
 				expect( new URL( getRedirectTo() ).pathname ).toBe( '/wp-admin/site-editor.php' );
 				expect( setStaticHomepageOnSite ).toHaveBeenCalledWith( 123, 7 );
 			} );

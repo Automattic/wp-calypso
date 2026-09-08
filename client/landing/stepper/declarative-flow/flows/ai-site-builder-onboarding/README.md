@@ -15,9 +15,11 @@ Paid-only onboarding for the AI Site Builder (Big Sky). Replaces the free-trial
    post-checkout "Create a custom design" card.
 6. Confirm `source`, `ref`, and a `?prompt=` query param passed at entry are carried over to the
    build-wow site spec.
-7. With the `site-spec` feature disabled (append `?flags=-site-spec` on a development, staging, or
-   calypso.live build), confirm checkout lands in the legacy Big Sky Site Spec editor
-   (`site-editor.php?canvas=edit&ai-step=spec`) instead.
+7. With the `site-spec` feature disabled, confirm checkout lands in the legacy Big Sky Site Spec
+   editor (`site-editor.php?canvas=edit&ai-step=spec`) instead. On a development, staging, or
+   calypso.live build, set a `flags=-site-spec` cookie rather than the `?flags=` query argument:
+   the destination is chosen when you submit checkout, and flags only apply per full page load, so
+   a query argument set at step 1 is gone by then and the run silently passes through build-wow.
 
 ## Owned by
 

@@ -615,9 +615,7 @@ const onboarding: FlowV2< typeof initialize > = {
 						case 'generate-theme': {
 							// Provision an Atomic (WP Cloud) site up front so the custom
 							// AI-generated theme can be installed, then hand off to the build-wow
-							// site-spec step. The step offers this only on an Atomic-capable plan
-							// with the site-spec feature enabled; the build-wow endpoint enforces
-							// its own permission checks.
+							// site-spec step.
 							const siteIdentifier = getBuildWowSiteIdentifier( {
 								siteSlug,
 								siteId,

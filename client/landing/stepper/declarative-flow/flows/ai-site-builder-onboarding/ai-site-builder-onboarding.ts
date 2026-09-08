@@ -240,12 +240,10 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 						return navigate( STEPS.ERROR.slug );
 					}
 
-					// Checkout lands on the build-wow theme generation flow, the same
-					// destination the post-checkout "Create a custom design" card uses. The
-					// build-wow endpoint prepares the site itself, so the Big Sky editor
+					// The build-wow endpoint prepares the site itself, so the Big Sky editor
 					// preparation is only for the legacy site editor destination. The build-wow
 					// destination lives in the ai-site-builder-spec flow, which bounces to plain
-					// onboarding without the site-spec feature, and needs an Atomic-capable plan.
+					// onboarding without the site-spec feature.
 					const useBuildWow =
 						config.isEnabled( 'site-spec' ) && planSupportsBuildWow( planCartItem?.product_slug );
 

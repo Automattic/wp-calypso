@@ -33,16 +33,15 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	usePurchasePlanNotification( siteId, site?.plan?.product_slug );
 	const showPromptInput = ref === WOO_HOSTING_SOLUTIONS_REF;
 	const [ prompt, setPrompt ] = useState( '' );
-	// The custom design card goes to the build-wow AI theme generation flow (which
-	// provisions a WP Cloud site up front) on any Atomic-capable plan. That flow
-	// lives behind the site-spec feature, so without it the card falls back to the
-	// legacy builder.
 	// Prefer the cart item (what was just bought) over site.plan, which can be
 	// stale before the plan assignment syncs. The cart item persists across runs,
 	// so only trust it when the checkout it came from was for this site.
 	const planCartItem = usePlanCartItem();
 	const boughtPlanSlug =
 		getSignupCompleteSlug() === siteSlug ? planCartItem?.product_slug : undefined;
+	// The build-wow destination lives in the ai-site-builder-spec flow, which bounces
+	// to plain onboarding without the site-spec feature; the card falls back to the
+	// legacy builder there.
 	const offerBuildWow =
 		config.isEnabled( 'site-spec' ) &&
 		planSupportsBuildWow( boughtPlanSlug ?? site?.plan?.product_slug );
