@@ -1,0 +1,17 @@
+// Bounds the site list so it scrolls inside the modal with its pagination
+// pinned at the bottom, instead of the footer floating over the rows.
+.dashboard-marketplace-purchases__site-picker {
+	block-size: 320px;
+}
+
+.dashboard-marketplace-purchases__revoke-details {
+	padding-block: 12px;
+	padding-inline: 16px;
+	border-radius: 4px;
+	background: var( --wp-components-color-gray-100 );
+}
+
+.dashboard-marketplace-purchases__revoke-key {
+	font-family: ui-monospace, monospace;
+	word-break: break-all;
+}
