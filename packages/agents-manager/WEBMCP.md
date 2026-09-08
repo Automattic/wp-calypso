@@ -34,6 +34,17 @@ chain does:
    which runs the ability's permission callback and schema validation, under the same canvas
    guard.
 
+The REST source is a local stand-in for `@wordpress/core-abilities`, the upstream loader that
+fetches the same list on import and registers each ability into the `core/abilities` store with the
+same request method rules. WordPress 7.0 and later register that loader as a script module, but
+nothing loads it on editor pages, it keeps only the `annotations` part of an ability's `meta`, so
+the `public`, `webmcp`, and `instructions` values never reach the store, and it cannot send the
+`webmcp` query argument. Once the loader preserves `meta`, the wpcom abilities carry the WordPress
+7.1 flags instead of the query argument, and the module is loaded on eligible editor pages, the
+REST source and its tests can be deleted. The registry provider then splits into a
+server-registered view ahead of the provider chain and a client-registered view behind it, which
+keeps today's precedence.
+
 The canvas guard covers specific known abilities, including `big-sky/apply-block-edits`; it does
 not infer protection for arbitrary plugin writes. Every ability remains responsible for its own
 permissions, target scoping, and validation. Exposure flags and browser annotations do not grant
