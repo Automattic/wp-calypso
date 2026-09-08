@@ -14,7 +14,17 @@ import {
 	type ResponseCartProduct,
 	useShoppingCart,
 } from '@automattic/shopping-cart';
+import { __ } from '@wordpress/i18n';
 import { ComponentProps, useMemo } from 'react';
+
+export const DOMAIN_NOT_ADDED_ERROR_CODE = 'domain_not_added_to_cart';
+
+/**
+ * A domain the user chose to continue with. Usually a cart item as returned by
+ * the shopping cart endpoint, but an internal domain move selected in a
+ * siteless flow never reaches the cart, so only the request shape is guaranteed.
+ */
+export type ContinuedDomainProduct = MinimalRequestCartProduct & { meta: string };
 
 const wpcomCartToDomainSearchCart = (
 	domain: ResponseCartProduct,
@@ -57,7 +67,7 @@ interface UseWPCOMDomainSearchCartOptions {
 	flowAllowsMultipleDomainsInCart: boolean;
 	isFirstDomainFreeForFirstYear: boolean;
 	freeForFirstYearTlds?: string[];
-	onContinue( cartItems: ResponseCartProduct[] ): void;
+	onContinue( cartItems: ContinuedDomainProduct[] ): void;
 	beforeAddDomainToCart?: ( domain: MinimalRequestCartProduct ) => MinimalRequestCartProduct;
 }
 
@@ -185,20 +195,37 @@ export const useWPCOMDomainSearchCart = ( {
 			total,
 			hasItem: ( domain ) => !! domainItems.find( ( item ) => item.meta === domain ),
 			onAddItem: async ( { domain_name, product_slug, supports_privacy } ) => {
-				const cartItems = await replaceProductsInCart( [
-					beforeAddDomainToCart( {
-						product_slug,
-						meta: domain_name,
-						extra: {
-							...( supports_privacy && {
-								privacy_available: supports_privacy,
-								privacy: supports_privacy,
-							} ),
-							...( flowName && { flow_name: flowName } ),
-						},
-					} ),
-					...responseCart.products,
-				] );
+				const product = beforeAddDomainToCart( {
+					product_slug,
+					meta: domain_name,
+					extra: {
+						...( supports_privacy && {
+							privacy_available: supports_privacy,
+							privacy: supports_privacy,
+						} ),
+						...( flowName && { flow_name: flowName } ),
+					},
+				} );
+
+				// Moving a domain the user already owns needs a destination site. A
+				// siteless (signup) cart has none, so the backend drops the product
+				// without reporting an error and the click appears to do nothing.
+				// Hand the product straight to the flow instead; it adds it to the
+				// new site's cart once that site exists.
+				if ( isDomainMoveInternal( product ) && typeof cartKey !== 'number' ) {
+					return onContinue( [ { ...product, meta: product.meta ?? domain_name } ] );
+				}
+
+				const cartItems = await replaceProductsInCart( [ product, ...responseCart.products ] );
+
+				// The backend can silently strip a product it will not sell in this
+				// cart. Surface that as an error so the CTA does not quietly reset.
+				if ( ! cartItems.products.some( ( item ) => item.meta === domain_name ) ) {
+					throw new CartActionError(
+						__( 'This domain could not be added to your cart. Please try again.' ),
+						DOMAIN_NOT_ADDED_ERROR_CODE
+					);
+				}
 
 				if ( ! flowAllowsMultipleDomainsInCart ) {
 					return onContinue( cartItems.products.filter( ( item ) => item.meta === domain_name ) );
@@ -295,6 +322,7 @@ export const useWPCOMDomainSearchCart = ( {
 			onContinue: () => onContinue( domainItems ),
 		};
 	}, [
+		cartKey,
 		responseCart,
 		removeProductFromCart,
 		replaceProductsInCart,

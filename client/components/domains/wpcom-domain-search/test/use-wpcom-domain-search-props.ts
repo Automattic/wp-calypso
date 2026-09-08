@@ -833,10 +833,13 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		expect( result.current.cart.items ).toEqual( [] );
 	} );
 
-	it( 'calls beforeAddDomainToCart so it is possible to modify the domain before it is added to the cart', () => {
+	it( 'calls beforeAddDomainToCart so it is possible to modify the domain before it is added to the cart', async () => {
 		const beforeAddDomainToCart = jest.fn().mockImplementation( ( domain ) => domain );
+		const replaceProductsInCart = jest.fn().mockResolvedValue( {
+			products: [ { meta: 'my-domain.com', product_slug: 'domain' } ],
+		} );
 
-		mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
+		mockUseShoppingCart.mockReturnValue( buildShoppingCart( { replaceProductsInCart } ) );
 
 		const { result } = renderHookWithProvider( () =>
 			useWPCOMDomainSearchProps( {
@@ -848,7 +851,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			} )
 		);
 
-		result.current.cart.onAddItem( {
+		await result.current.cart.onAddItem( {
 			domain_name: 'my-domain.com',
 			product_slug: 'domain',
 			supports_privacy: true,
@@ -863,6 +866,80 @@ describe( 'useWPCOMDomainSearchProps', () => {
 				privacy_available: true,
 			},
 		} );
+	} );
+
+	describe( 'internal domain moves', () => {
+		const ownedDomain = {
+			domain_name: 'owned-domain.com',
+			product_slug: 'domain_move_internal',
+			supports_privacy: false,
+		};
+
+		it( 'continues with the domain without touching a siteless cart', async () => {
+			const replaceProductsInCart = jest.fn();
+			const onContinue = jest.fn();
+			mockUseShoppingCart.mockReturnValue( buildShoppingCart( { replaceProductsInCart } ) );
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( {
+					...defaultProps,
+					events: { ...defaultProps.events, onContinue },
+				} )
+			);
+
+			await result.current.cart.onAddItem( ownedDomain );
+
+			expect( replaceProductsInCart ).not.toHaveBeenCalled();
+			expect( onContinue ).toHaveBeenCalledWith( [
+				{
+					product_slug: 'domain_move_internal',
+					meta: 'owned-domain.com',
+					extra: { flow_name: 'flow-name' },
+				},
+			] );
+		} );
+
+		it( 'adds the domain to a site cart like any other domain', async () => {
+			const replaceProductsInCart = jest.fn().mockResolvedValue( {
+				products: [ { meta: 'owned-domain.com', product_slug: 'domain_move_internal' } ],
+			} );
+			const onContinue = jest.fn();
+			mockUseShoppingCart.mockReturnValue( buildShoppingCart( { replaceProductsInCart } ) );
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( {
+					...defaultProps,
+					currentSiteId: 123,
+					events: { ...defaultProps.events, onContinue },
+				} )
+			);
+
+			await result.current.cart.onAddItem( ownedDomain );
+
+			expect( replaceProductsInCart ).toHaveBeenCalledWith( [
+				{
+					product_slug: 'domain_move_internal',
+					meta: 'owned-domain.com',
+					extra: { flow_name: 'flow-name' },
+				},
+			] );
+			expect( onContinue ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	it( 'rejects when the backend drops the domain from the cart', async () => {
+		const replaceProductsInCart = jest.fn().mockResolvedValue( { products: [] } );
+		mockUseShoppingCart.mockReturnValue( buildShoppingCart( { replaceProductsInCart } ) );
+
+		const { result } = renderHookWithProvider( () => useWPCOMDomainSearchProps( defaultProps ) );
+
+		await expect(
+			result.current.cart.onAddItem( {
+				domain_name: 'my-domain.com',
+				product_slug: 'domain',
+				supports_privacy: false,
+			} )
+		).rejects.toThrow( 'This domain could not be added to your cart.' );
 	} );
 
 	describe( 'cart key', () => {
@@ -1373,7 +1450,9 @@ describe( 'useWPCOMDomainSearchProps', () => {
 	} );
 
 	it( 'prepends products in the cart when adding a new domain', async () => {
-		const replaceProductsInCart = jest.fn();
+		const replaceProductsInCart = jest.fn().mockResolvedValue( {
+			products: [ { meta: 'my-domain.com', product_slug: 'domain' } ],
+		} );
 
 		mockUseShoppingCart.mockReturnValue(
 			buildShoppingCart( {
