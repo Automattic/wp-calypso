@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import page from '@automattic/calypso-router';
+import { redirectLoggedOutToSignup } from 'calypso/controller';
 import initReader from '../index';
 import { readerNotFound } from '../lib/reader-router';
 
@@ -94,5 +95,34 @@ describe( 'reader routes', () => {
 
 		expect( page ).toHaveBeenCalledWith( '/reader/*', readerNotFound );
 		expect( page ).toHaveBeenCalledWith( '/read/*', readerNotFound );
+	} );
+
+	it( 'requires a logged-in user for list management routes', async () => {
+		await initReader();
+
+		const managementPaths = [
+			'/reader/list/new',
+			'/reader/list/:user/:list/edit',
+			'/reader/list/:user/:list/edit/items',
+			'/reader/list/:user/:list/export',
+			'/reader/list/:user/:list/delete',
+		];
+		for ( const path of managementPaths ) {
+			const call = jest.mocked( page ).mock.calls.find( ( [ route ] ) => route === path );
+			expect( call ).toBeDefined();
+			expect( call?.slice( 1 ) ).toContain( redirectLoggedOutToSignup );
+		}
+	} );
+
+	it( 'keeps list viewing available to logged-out users', async () => {
+		await initReader();
+
+		const call = jest
+			.mocked( page )
+			.mock.calls.find(
+				( [ route ] ) => Array.isArray( route ) && route.includes( '/reader/list/:user/:list' )
+			);
+		expect( call ).toBeDefined();
+		expect( call?.slice( 1 ) ).not.toContain( redirectLoggedOutToSignup );
 	} );
 } );
