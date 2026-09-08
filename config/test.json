@@ -43,6 +43,7 @@
 		"dashboard/rollout-advance-notice": false,
 		"dashboard/simulate-full-rollout": false,
 		"emails/titan-tiers": false,
+		"footer-redesign/2026": false,
 		"google-my-business": false,
 		"help": true,
 		"hosting-server-settings-enhancements": true,
