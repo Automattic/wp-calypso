@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { addQueryArgs } from '@wordpress/url';
 import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
@@ -52,12 +51,9 @@ type BigSkyPluginStatus = {
 
 export function isBuildWowEnabled(
 	queryParams: URLSearchParams,
-	isAutomattician = false
+	hasBuildWowAccess: boolean
 ): boolean {
-	return (
-		( isAutomattician || config.isEnabled( 'calypso/ai-site-builder-build-wow' ) ) &&
-		queryParams.get( 'build_wow' ) === BUILD_WOW_QUERY_VALUE
-	);
+	return hasBuildWowAccess && queryParams.get( 'build_wow' ) === BUILD_WOW_QUERY_VALUE;
 }
 
 export function getBuildWowSiteIdentifier( {

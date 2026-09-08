@@ -254,23 +254,17 @@ describe( 'SiteSpec early provisioning step', () => {
 		);
 	} );
 
-	it( 'loads build-wow for non-Automatticians without waiting for staff status when the feature is enabled', () => {
+	it( 'loads build-wow for non-Automatticians without asking for staff status when the feature is enabled', () => {
 		mockBuildWowEnabled = true;
 		mockQueryParams = new URLSearchParams( 'build_wow=1&siteSlug=example.wordpress.com' );
-		mockUseReactQuery.mockReturnValue( { data: undefined, isLoading: true } );
+		mockUseReactQuery.mockReturnValue( { data: undefined, isLoading: false } );
 
-		const { rerender } = renderSiteSpec();
+		renderSiteSpec();
 
-		expect( mockUseSiteSpec.mock.calls[ 0 ][ 0 ].siteSpecConfig ).toEqual( {
-			agentId: 'build-wow-site-spec',
-		} );
-
-		mockUseReactQuery.mockReturnValue( { data: false, isLoading: false } );
-		rerender(
-			<SiteSpec navigation={ navigation } stepName="site-spec" flow="ai-site-builder-spec" />
+		expect( mockUseReactQuery ).toHaveBeenCalledWith(
+			expect.objectContaining( { enabled: false } )
 		);
-
-		expect( mockUseSiteSpec.mock.calls.at( -1 )[ 0 ].siteSpecConfig ).toEqual( {
+		expect( mockUseSiteSpec.mock.calls[ 0 ][ 0 ].siteSpecConfig ).toEqual( {
 			agentId: 'build-wow-site-spec',
 		} );
 	} );
@@ -284,6 +278,9 @@ describe( 'SiteSpec early provisioning step', () => {
 
 		renderSiteSpec();
 
+		expect( mockUseReactQuery ).toHaveBeenCalledWith(
+			expect.objectContaining( { enabled: true } )
+		);
 		const siteSpecOptions = mockUseSiteSpec.mock.calls[ 0 ][ 0 ];
 		expect( siteSpecOptions.siteSpecConfig ).toBeUndefined();
 		expect( siteSpecOptions.onSpecConfirm ).toBeUndefined();

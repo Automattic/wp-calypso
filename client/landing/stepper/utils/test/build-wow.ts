@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import wpcom from 'calypso/lib/wp';
 import {
 	getBuildWowGraph,
@@ -8,10 +7,6 @@ import {
 	isBuildWowSiteEditorReady,
 	requestBuildWowSite,
 } from '../build-wow';
-
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: jest.fn(),
-} ) );
 
 jest.mock( 'calypso/lib/logstash', () => ( {
 	logToLogstash: jest.fn( () => Promise.resolve() ),
@@ -28,20 +23,7 @@ jest.mock( 'calypso/lib/wp', () => ( {
 } ) );
 
 describe( 'build-wow utilities', () => {
-	beforeEach( () => {
-		jest.mocked( config.isEnabled ).mockReturnValue( false );
-	} );
-
-	it( 'allows non-Automatticians when the build-wow feature is enabled', () => {
-		jest
-			.mocked( config.isEnabled )
-			.mockImplementation( ( flag ) => flag === 'calypso/ai-site-builder-build-wow' );
-		expect( isBuildWowEnabled( new URLSearchParams( 'build_wow=1' ) ) ).toBe( true );
-		expect( isBuildWowEnabled( new URLSearchParams( 'build_wow=0' ) ) ).toBe( false );
-		expect( isBuildWowEnabled( new URLSearchParams() ) ).toBe( false );
-	} );
-
-	it( 'requires staff status and the build_wow query parameter when the feature is disabled', () => {
+	it( 'detects the build_wow query parameter', () => {
 		expect( isBuildWowEnabled( new URLSearchParams( 'build_wow=1' ), true ) ).toBe( true );
 		expect( isBuildWowEnabled( new URLSearchParams( 'build_wow=1' ), false ) ).toBe( false );
 		expect( isBuildWowEnabled( new URLSearchParams( 'build_wow=0' ), true ) ).toBe( false );
