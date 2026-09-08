@@ -8,7 +8,10 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
 import TrackPurchasePageView from '..';
 
-const mockRecordTracksEvent = jest.fn( () => ( { type: 'TEST_TRACKS_EVENT' } ) );
+const mockRecordTracksEvent = jest.fn( ( ...args: unknown[] ) => ( {
+	type: 'TEST_TRACKS_EVENT',
+	args,
+} ) );
 
 jest.mock( 'calypso/state/analytics/actions', () => ( {
 	recordTracksEvent: ( ...args: unknown[] ) => mockRecordTracksEvent( ...args ),
@@ -45,7 +48,7 @@ function renderTracker( { purchaseId = PURCHASE_ID, eventName: name = eventName 
 	};
 }
 
-function mockPurchase( purchaseId: number, purchase: Record< string, unknown > | null ) {
+function mockPurchase( purchaseId: number, purchase: Record< string, unknown > ) {
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
 		.get( `/rest/v1.2/upgrades/${ purchaseId }` )
