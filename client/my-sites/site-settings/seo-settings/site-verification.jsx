@@ -1,4 +1,4 @@
-import { Button, FormInputValidation, ExternalLink } from '@automattic/components';
+import { Button, FormInputValidation, ExternalLink, FormLabel } from '@automattic/components';
 import { omit } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInput from 'calypso/components/forms/form-text-input-with-affixes';
+import FormTextarea from 'calypso/components/forms/form-textarea';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SupportInfo from 'calypso/components/support-info';
@@ -328,8 +328,10 @@ class SiteVerification extends Component {
 					<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
 						{ supportedServices.map( ( service ) => (
 							<FormFieldset key={ service.slug }>
-								<FormInput
-									prefix={ service.name }
+								<FormLabel htmlFor={ `verification_code_${ service.slug }` }>
+									{ service.name }
+								</FormLabel>
+								<FormTextarea
 									name={ `verification_code_${ service.slug }` }
 									value={ service.code }
 									id={ `verification_code_${ service.slug }` }
