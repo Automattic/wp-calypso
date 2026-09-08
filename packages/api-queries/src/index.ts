@@ -133,6 +133,7 @@ export * from './site-marketplace';
 export * from './site-media-storage';
 export * from './site-metrics';
 export * from './site-migration-status';
+export * from './site-migration-switch';
 export * from './site-owner-transfer';
 export * from './site-php-version';
 export * from './site-plans';

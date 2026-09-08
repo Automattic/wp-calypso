@@ -110,6 +110,7 @@
 		"me/account/color-scheme-picker": true,
 		"me/legacy-contact": true,
 		"migration-flow/introductory-offer": true,
+		"migration/non-wordpress-source": true,
 		"migration/ssh-migration": false,
 		"notifications/redesign": true,
 		"oauth/unified-experience": true,
