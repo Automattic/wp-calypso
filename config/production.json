@@ -54,6 +54,7 @@
 		"domain-bundling": true,
 		"domain-transfer-redesign": true,
 		"emails/titan-tiers": false,
+		"footer-redesign/2026": false,
 		"google-my-business": true,
 		"help": true,
 		"help-center/logged-out-fab": true,

@@ -21,6 +21,8 @@ export interface HeaderProps {
 export interface FooterProps {
 	isLoggedIn?: boolean;
 	currentRoute?: string;
+	/** Enables the 2026 footer preview in the requested colorway. */
+	colorway?: 'dark' | 'white';
 	/**
 	 * Fills the Company column's `x-nav-footer--ccpa-dnsd` slot — on WPCOM the
 	 * twin's do-not-sell script injects its link there. Pass a single anchor
