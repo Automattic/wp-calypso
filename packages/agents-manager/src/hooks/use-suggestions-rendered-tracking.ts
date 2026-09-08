@@ -13,14 +13,16 @@ interface Options {
  * Tracks `jetpack_big_sky_chat_suggestions_rendered` from the set Agenttic reports
  * through `onSuggestionsRendered` ( truncated in floating mode, hidden while
  * collapsed ), deduped on rendered ids + block context. Agenttic stays silent for
- * an unchanged set, so a block-context change re-evaluates the last set here.
+ * an unchanged set, so a block-context change re-evaluates the last set here
+ * while the chat is feeding it suggestions.
  */
 export default function useSuggestionsRenderedTracking( {
 	selectedBlockType,
 	contextualSuggestionIds,
 	hasSuggestionsToRender,
 }: Options ) {
-	// Last set Agenttic reported as rendered; also the click-tracking fallback.
+	// Last set Agenttic reported as rendered; also the click-tracking fallback. Kept
+	// across hides: Agenttic does not re-report an identical set that remounts.
 	const renderedSuggestionsRef = useRef< Suggestion[] >( [] );
 	const lastTrackedRef = useRef< { ids: string; blockType?: string } | null >( null );
 
@@ -65,16 +67,13 @@ export default function useSuggestionsRenderedTracking( {
 		trackRenderedSuggestionsRef.current( rendered );
 	}, [] );
 
+	// The same rendered set is a distinct exposure once the block context changes;
+	// while nothing is fed, nothing is on screen to re-track.
 	useEffect( () => {
-		if ( ! hasSuggestionsToRender ) {
-			renderedSuggestionsRef.current = [];
+		if ( hasSuggestionsToRender ) {
+			trackRenderedSuggestions( renderedSuggestionsRef.current );
 		}
-	}, [ hasSuggestionsToRender ] );
-
-	// The same rendered set is a distinct exposure once the block context changes.
-	useEffect( () => {
-		trackRenderedSuggestions( renderedSuggestionsRef.current );
-	}, [ trackRenderedSuggestions ] );
+	}, [ hasSuggestionsToRender, trackRenderedSuggestions ] );
 
 	return { onSuggestionsRendered, renderedSuggestionsRef };
 }

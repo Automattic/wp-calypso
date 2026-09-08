@@ -93,14 +93,19 @@ describe( 'useSuggestionsRenderedTracking', () => {
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'forgets the rendered set once the chat feeds no suggestions', () => {
+	it( 'holds a block-context re-track while nothing is fed, then applies it when chips return', () => {
 		const { result, rerender } = renderTracking( blockOptions( 'core/paragraph' ) );
 		act( () => result.current.onSuggestionsRendered( contextual ) );
 
-		rerender( blockOptions( 'core/paragraph', false ) );
-		expect( result.current.renderedSuggestionsRef.current ).toEqual( [] );
-
 		rerender( blockOptions( 'core/heading', false ) );
+		expect( result.current.renderedSuggestionsRef.current ).toBe( contextual );
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
+
+		rerender( blockOptions( 'core/heading', true ) );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 2 );
+		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith(
+			'jetpack_big_sky_chat_suggestions_rendered',
+			{ suggestions: '|change-tone|check-grammar|', block_type: 'core/heading' }
+		);
 	} );
 } );

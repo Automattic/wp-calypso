@@ -1722,9 +1722,10 @@ export default function OrchestratorChat( {
 			const suggestionId = typeof suggestion !== 'string' ? suggestion.id : undefined;
 			// A click routed through Agenttic's own container reports the footer list,
 			// which is empty while the chips live in the empty view.
+			const renderedSuggestions = renderedSuggestionsRef.current;
 			const knownSuggestions = availableSuggestions?.length
 				? availableSuggestions
-				: renderedSuggestionsRef.current;
+				: renderedSuggestions;
 			const originalSuggestion =
 				typeof suggestion !== 'string'
 					? knownSuggestions.find( ( available ) => available.id === suggestion.id )
@@ -1739,10 +1740,17 @@ export default function OrchestratorChat( {
 					: undefined;
 
 			if ( typeof suggestion !== 'string' ) {
+				// The empty view hands over its untruncated list; what Agenttic reported as
+				// rendered is what was on screen, so it wins whenever it holds the chip.
+				const shownSuggestions = renderedSuggestions.some(
+					( rendered ) => rendered.id === suggestion.id
+				)
+					? renderedSuggestions
+					: knownSuggestions;
 				recordBigSkyTracksEvent( 'jetpack_big_sky_chat_suggestion_click', {
 					suggestion_text: suggestion.prompt || '',
 					suggestion_id: suggestion.id || '',
-					available_suggestions: formatSuggestionIds( knownSuggestions ),
+					available_suggestions: formatSuggestionIds( shownSuggestions ),
 					...( optionId ? { option_id: optionId } : {} ),
 					...( blockType ? { block_type: blockType } : {} ),
 				} );

@@ -1316,6 +1316,30 @@ describe( 'OrchestratorChat', () => {
 		);
 	} );
 
+	it( 'records the rendered subset when an empty-view click hands over the full list', () => {
+		mockRenderedSuggestionsLimit = 1;
+		const shown: Suggestion = {
+			id: 'getting-started',
+			label: 'Getting started',
+			prompt: 'getting-started',
+		};
+		const truncated: Suggestion = { id: 'seo-enhancer', label: 'SEO Enhancer', prompt: 'SEO' };
+
+		render( chat( { emptyViewSuggestions: [ shown, truncated ] } ) );
+		jest.mocked( recordBigSkyTracksEvent ).mockClear();
+
+		// The mock's empty view passes its whole list, like GroupedEmptyView does.
+		fireEvent.click( screen.getByText( 'Getting started' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_suggestion_click',
+			expect.objectContaining( {
+				suggestion_id: 'getting-started',
+				available_suggestions: '|getting-started|',
+			} )
+		);
+	} );
+
 	it( 'sends the message directly when no images are pending', async () => {
 		const { onSubmit } = mockUseAgentChat();
 
