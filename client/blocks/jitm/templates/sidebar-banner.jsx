@@ -28,6 +28,7 @@ export default function SidebarBannerTemplate( {
 				forceDisplay
 				dismissPreferenceName={ dismissPreferenceName }
 				dismissTemporary
+				event={ id }
 				href={ CTA.link }
 				onClick={ onClick }
 				onDismissClick={ onDismiss }
