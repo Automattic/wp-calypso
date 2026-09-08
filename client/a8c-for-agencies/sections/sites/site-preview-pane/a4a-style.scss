@@ -101,8 +101,33 @@
 	padding-block-start: 16px;
 	text-align: unset !important;
 
+	.expanded-card {
+		min-height: unset;
+	}
+
 	.site-expanded-content__card-content-column {
 		max-width: unset;
+	}
+
+	// A4A aliases of the studio tokens the shared chart styles paint the bars with.
+	.site-preview-pane__monitor-legend-swatch {
+		flex-shrink: 0;
+		width: 12px;
+		height: 12px;
+		border-radius: 2px;
+
+		&.is-uptime {
+			background-color: var(--color-jetpack-40);
+		}
+
+		&.is-downtime {
+			background-color: var(--color-scary-50);
+		}
+
+		&.is-no-data {
+			background-color: var(--color-accent-0);
+			border: 1px solid var(--color-accent-5);
+		}
 	}
 
 	.chart__bars {
