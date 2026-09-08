@@ -79,15 +79,24 @@ describe( 'VerificationCodeForm', () => {
 			);
 		} );
 
-		test( 'shows the server message with a way back to the login page', async () => {
+		test( 'does not repeat the server message', async () => {
 			renderForm();
 
 			await submitCode();
 
-			expect( screen.getByText( NONCE_MESSAGE ) ).toBeInTheDocument();
+			// The error carries the `global` field, so ErrorNotice already shows this
+			// message above the card. A second copy under the input read as two
+			// notices with the whole card between them.
+			expect( screen.queryByText( NONCE_MESSAGE ) ).not.toBeInTheDocument();
+		} );
 
-			const exit = screen.getByRole( 'link', { name: 'Back to login' } );
-			expect( exit ).toHaveAttribute( 'href', '/log-in' );
+		test( 'adds no second back-to-login link', async () => {
+			renderForm();
+
+			await submitCode();
+
+			// The login footer already links back to /log-in on every two-factor step.
+			expect( screen.queryByRole( 'link', { name: /back to login/i } ) ).not.toBeInTheDocument();
 		} );
 
 		test( 'still records the failure event with the code and message', async () => {
@@ -121,14 +130,6 @@ describe( 'VerificationCodeForm', () => {
 				'aria-disabled',
 				'true'
 			);
-		} );
-
-		test( 'offers no way back to the login page', async () => {
-			renderForm();
-
-			await submitCode();
-
-			expect( screen.queryByRole( 'link', { name: 'Back to login' } ) ).not.toBeInTheDocument();
 		} );
 
 		test( 'still records the failure event with the code and message', async () => {
