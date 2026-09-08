@@ -14,6 +14,7 @@ import {
 import { BIG_SKY_ABILITY_CATEGORY } from './constants';
 import { getBlockTreeAbility } from './get-block-tree';
 import { restoreCheckpointAbility } from './restore-checkpoint';
+import { saveChangesAbility } from './save-changes';
 import { setSiteLogoAbility } from './set-site-logo';
 import { showComponentAbility } from './show-component';
 import { showTemplateAbility } from './show-template';
@@ -24,6 +25,7 @@ import type { Ability } from './types';
 const EDITOR_ABILITIES: Ability[] = [
 	getBlockTreeAbility,
 	restoreCheckpointAbility,
+	saveChangesAbility,
 	setSiteLogoAbility,
 	showComponentAbility,
 	showTemplateAbility,

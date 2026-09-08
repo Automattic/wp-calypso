@@ -4,6 +4,7 @@
 import { amToolProvider } from '../../abilities';
 import { getBlockTreeAbility } from '../../abilities/get-block-tree';
 import { restoreCheckpointAbility } from '../../abilities/restore-checkpoint';
+import { saveChangesAbility } from '../../abilities/save-changes';
 import { setSiteLogoAbility } from '../../abilities/set-site-logo';
 import { showComponentAbility } from '../../abilities/show-component';
 import { showTemplateAbility } from '../../abilities/show-template';
@@ -245,6 +246,7 @@ describe( 'loadExternalProviders', () => {
 				wpAdminNavigateAbility,
 				getBlockTreeAbility,
 				restoreCheckpointAbility,
+				saveChangesAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
 				showTemplateAbility,
@@ -281,6 +283,7 @@ describe( 'loadExternalProviders', () => {
 				wpAdminNavigateAbility,
 				getBlockTreeAbility,
 				restoreCheckpointAbility,
+				saveChangesAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
 				showTemplateAbility,
@@ -373,6 +376,7 @@ describe( 'loadExternalProviders', () => {
 				wpAdminNavigateAbility,
 				getBlockTreeAbility,
 				restoreCheckpointAbility,
+				saveChangesAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
 				showTemplateAbility,
@@ -850,6 +854,7 @@ describe( 'loadExternalProviders', () => {
 				wpAdminNavigateAbility,
 				getBlockTreeAbility,
 				restoreCheckpointAbility,
+				saveChangesAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
 				showTemplateAbility,

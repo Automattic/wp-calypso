@@ -145,6 +145,19 @@ describe( 'withCanvasGuard', () => {
 		expect( executeAbility ).not.toHaveBeenCalled();
 	} );
 
+	it( 'guards saving the staged changes too', async () => {
+		setOpenPost( ABOUT_PAGE );
+		bindToOpenCanvas();
+		setOpenPost( CONTACT_PAGE );
+
+		const executeAbility = jest.fn();
+		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
+
+		await guarded!.executeAbility( 'big_sky__save_changes', {} );
+
+		expect( executeAbility ).not.toHaveBeenCalled();
+	} );
+
 	it( 'keeps refusing for the rest of the request once blocked', async () => {
 		setOpenPost( ABOUT_PAGE );
 		bindToOpenCanvas();
