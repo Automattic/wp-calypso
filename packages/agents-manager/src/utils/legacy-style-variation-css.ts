@@ -12,6 +12,8 @@ import { isRecord } from './is-record';
 // `shared/legacy-style-variation-css`; the consent dialog and removal flow are
 // Big Sky's (see `use-styles`).
 
+import { isRecord } from './is-record';
+
 export const LEGACY_CSS_START = '/* easy-site-editor-style-variation:start */';
 export const LEGACY_CSS_END = '/* easy-site-editor-style-variation:end */';
 

@@ -29,6 +29,8 @@ import { createAgentConfig } from '../utils/create-agent-config';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
 import { isHandoffAgent, type SessionHandoff } from '../utils/session-handoff';
+import { canExposeWebMcpTools } from '../webmcp/eligibility';
+import { WebMcpProviderAbilitiesSetup } from '../webmcp/provider-abilities-setup';
 import AgentDock from './agent-dock';
 import { PersistentRouter } from './persistent-router';
 import type { JSX } from 'react';

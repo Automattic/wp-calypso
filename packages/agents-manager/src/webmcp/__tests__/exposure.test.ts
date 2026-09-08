@@ -2,9 +2,12 @@ import { WEBMCP_SERVER_ABILITY_NAMES } from '../contracts';
 import {
 	getAbilityProvenance,
 	getWebMcpChannelExposure,
+	selectExposedAbilities,
 	shouldExposeWebMcpAbility,
 } from '../exposure';
 import type { Ability } from '../../abilities/types';
+
+jest.mock( '@wordpress/blocks', () => ( { parse: jest.fn() } ) );
 
 const createClientAbility = ( overrides: Partial< Ability > = {} ): Ability => ( {
 	name: 'big-sky/apply-block-edits',
@@ -236,6 +239,32 @@ describe( 'WebMCP exposure', () => {
 					createClientAbility( { meta: { annotations: {} }, callback: undefined } )
 				)
 			).toBe( false );
+		} );
+	} );
+
+	describe( 'selectExposedAbilities', () => {
+		it( 'keeps exposable abilities and sets aside tool-name collisions', () => {
+			const createReadAbility = ( name: string ): Ability =>
+				createClientAbility( {
+					name,
+					meta: {
+						webmcp: { public: true },
+						annotations: { clientRegistered: true, readonly: true },
+					},
+				} );
+
+			const { exposed, collisions } = selectExposedAbilities( [
+				createReadAbility( 'demo--plugin/read' ),
+				createReadAbility( 'demo/plugin/read' ),
+				createReadAbility( 'demo/other' ),
+				createClientAbility( { name: 'big-sky/save-post' } ),
+			] );
+
+			expect( [ ...exposed.keys() ] ).toEqual( [ 'demo/other' ] );
+			expect( [ ...collisions.keys() ] ).toEqual( [ 'demo__plugin__read' ] );
+			expect( collisions.get( 'demo__plugin__read' )?.map( ( ability ) => ability.name ) ).toEqual(
+				[ 'demo--plugin/read', 'demo/plugin/read' ]
+			);
 		} );
 	} );
 } );
