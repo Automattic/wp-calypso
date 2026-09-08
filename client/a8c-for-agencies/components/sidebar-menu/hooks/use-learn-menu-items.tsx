@@ -55,7 +55,6 @@ const useLearnMenuItems = ( path: string ) => {
 				path: A4A_AI_MCP_LINK,
 				link: A4A_AI_MCP_LINK,
 				title: translate( 'AI and MCP' ),
-				badge: translate( 'Beta' ),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Resources and tools / AI and MCP',
 				},
