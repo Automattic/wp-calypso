@@ -103,7 +103,8 @@ export default function ActivationCallout( {
 							onProceed={ handleConfirm }
 							showDataCenterPicker
 							standaloneProceed
-							currentContext="hosting-features"
+							context="hosting-features"
+							inModal
 							atomicTransferAction="hosting-features"
 						/>
 					</Modal>

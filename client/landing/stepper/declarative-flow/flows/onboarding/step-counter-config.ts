@@ -15,20 +15,31 @@ export const ONBOARDING_STEPPER_GROUPS = [ 'domain', 'plans', 'checkout' ] as co
 
 export type OnboardingStepperGroup = ( typeof ONBOARDING_STEPPER_GROUPS )[ number ];
 
+export const ONBOARDING_STEPPER_TOTAL = ONBOARDING_STEPPER_GROUPS.length;
+
 export const ONBOARDING_STEPPER_GROUP_BY_SLUG: Record< string, OnboardingStepperGroup > = {
 	domains: 'domain',
 	'use-my-domain': 'domain',
 	plans: 'plans',
 };
 
-export const ONBOARDING_STEPPER_TOTAL = ONBOARDING_STEPPER_GROUPS.length;
-
-export function getOnboardingStepperPosition( group: OnboardingStepperGroup ): {
+export function getOnboardingStepperPosition(
+	group: OnboardingStepperGroup,
+	shouldSkipPlans: boolean
+): {
 	current: number;
 	total: number;
 } {
+	// A preselected plan never sees the grid — but skipping it does not make it unreachable: a
+	// deep link to `/setup/onboarding/plans` lands on it without passing the flow root that
+	// seeds the cart. Numbering a group the list left out would read "0 of 2", so a visit
+	// standing on one keeps it.
+	const groups = ONBOARDING_STEPPER_GROUPS.filter(
+		( g ) => g === group || ! ( shouldSkipPlans && g === 'plans' )
+	);
+
 	return {
-		current: ONBOARDING_STEPPER_GROUPS.indexOf( group ) + 1,
-		total: ONBOARDING_STEPPER_TOTAL,
+		current: groups.indexOf( group ) + 1,
+		total: groups.length,
 	};
 }

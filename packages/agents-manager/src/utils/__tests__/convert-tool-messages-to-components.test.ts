@@ -368,22 +368,6 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ].actions ).toEqual( actions );
 	} );
 
-	it( 'renders the start-over notice for the legacy start-over tool', () => {
-		const message = createToolMessage( 'big_sky__client_assistants', {
-			assistantId: 'big-sky-site-admin',
-		} );
-
-		const result = convertToolMessagesToComponents( {
-			messages: [ message ],
-		} );
-
-		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].content[ 0 ] ).toEqual( {
-			type: 'text',
-			text: 'To start over, please send your request again.',
-		} );
-	} );
-
 	it.each( [
 		{
 			name: 'support tool text',

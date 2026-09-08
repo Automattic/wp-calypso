@@ -1,4 +1,5 @@
 import {
+	AiChatEntryLabel,
 	closeAgentsManagerChat,
 	isAgentsManagerChatVisible,
 	openAgentsManagerChat,
@@ -16,6 +17,12 @@ export function createAiChatNodeBuilder( sectionName?: string ) {
 		icon: adminBarIcon( adminBarNode.meta?.icon, 'omnibar__ai-chat-icon' ),
 		tooltip: adminBarNode.meta?.menu_title,
 		className: 'masterbar__item-agents-manager-ai-chat',
+		render: ( { icon, label } ) => (
+			<>
+				{ icon }
+				<AiChatEntryLabel>{ label }</AiChatEntryLabel>
+			</>
+		),
 		onClick: () => {
 			const isChatVisible = isAgentsManagerChatVisible();
 

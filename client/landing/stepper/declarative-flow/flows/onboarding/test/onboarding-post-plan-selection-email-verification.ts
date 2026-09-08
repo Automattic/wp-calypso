@@ -105,10 +105,6 @@ jest.mock( '../../../helpers/get-onboarding-post-checkout-destination', () => ( 
 	] ),
 } ) );
 
-jest.mock( '../step-counter-config', () => ( {
-	getOnboardingStepperPosition: () => ( { current: 3, total: 3 } ),
-} ) );
-
 // Runs the `processing` case for a successful, paid order (goToCheckout) with a mocked
 // `window.location`, and returns the URL passed to `window.location.replace`.
 const submitPaidProcessing = async () => {

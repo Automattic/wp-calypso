@@ -24,7 +24,7 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import { detectPartnerConfig, getPartnerFormattedWindowTitle } from 'calypso/lib/partner-branding';
 import isPassportRedirect from 'calypso/lib/passport/is-passport-redirect';
-import { login } from 'calypso/lib/paths';
+import { login, lostPassword } from 'calypso/lib/paths';
 import { getHeaderText } from 'calypso/login/wp-login/hooks/get-header-text';
 import {
 	recordPageViewWithClientId as recordPageView,
@@ -170,6 +170,28 @@ export class Login extends Component {
 	getLostPasswordLink() {
 		if ( this.props.twoFactorAuthType ) {
 			return null;
+		}
+
+		// Jetpack, Woo and OAuth2 sign-ins stay on the Calypso screen: it carries the
+		// passwordless magic-link branch and the client context, and wp-login.php has neither.
+		const keepCalypsoForm =
+			this.props.isWooJPC || this.props.isJetpack || !! this.props.oauth2Client;
+
+		if ( ! keepCalypsoForm ) {
+			return (
+				<a
+					className="one-login__footer-link"
+					// No redirect_to. wp-login.php honours it in place of checkemail=confirm, and
+					// the recovery-email and SMS steps hang off checkemail=confirm.
+					href={ lostPassword( { locale: this.props.locale } ) }
+					rel="external"
+					onClick={ () =>
+						this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' )
+					}
+				>
+					{ this.props.translate( 'Lost your password?' ) }
+				</a>
+			);
 		}
 
 		return (

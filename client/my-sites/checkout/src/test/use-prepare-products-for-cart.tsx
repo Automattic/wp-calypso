@@ -121,6 +121,21 @@ describe( 'usePrepareProductsForCart for siteless renewals', () => {
 		expect( result.current.productsForCart[ 0 ].extra.purchaseId ).toBe( '12345' );
 	} );
 
+	it.each( [
+		[ 'akismet', 'isAkismetSitelessCheckout' ],
+		[ 'marketplace', 'isMarketplaceSitelessCheckout' ],
+	] as const )(
+		'flags a %s renewal as siteless so the backend keeps it in the cart',
+		( sitelessCheckoutType, extraKey ) => {
+			const { result } = renderPrepareProducts( {
+				purchaseId: '12345',
+				sitelessCheckoutType,
+			} );
+
+			expect( result.current.productsForCart[ 0 ].extra[ extraKey ] ).toBe( true );
+		}
+	);
+
 	it( 'renews several subscriptions from a comma-separated list of IDs', () => {
 		const { result } = renderPrepareProducts( {
 			purchaseId: '12345,67890',

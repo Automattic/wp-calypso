@@ -42,6 +42,7 @@ jest.mock( '@wordpress/i18n', () => ( {
 
 jest.mock( '../../../app/locale', () => ( {
 	useLocale: () => 'en',
+	useIntlLocale: () => 'en',
 } ) );
 
 describe( 'ScanCard', () => {

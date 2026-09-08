@@ -191,7 +191,7 @@ function ConnectedOmnibar( {
 				...( shoppingCartNode ? [ shoppingCartNode ] : [] ),
 				...( supports.reader ? [ readerPluginNode ] : [] ),
 				...( supports.help ? [ helpCenterPluginNode ] : [] ),
-				// Ask AI, plus any other node a builder claimed above.
+				// The AI chat button, plus any other node a builder claimed above.
 				...( baseOmnibarNodes.plugins ?? [] ),
 				...( supports.notifications ? [ notificationsPluginNode ] : [] ),
 		  ]
