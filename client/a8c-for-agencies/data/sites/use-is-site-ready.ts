@@ -1,4 +1,6 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
+import { DASHBOARD_SITES_QUERY_KEY } from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchActiveSites from './use-fetch-active-sites';
 
 type Props = {
@@ -17,6 +19,7 @@ type Site = {
 };
 
 export default function useIsSiteReady( { siteId }: Props ) {
+	const queryClient = useQueryClient();
 	const [ site, setSite ] = useState< Site | null >( null );
 	const { data } = useFetchActiveSites( { autoRefresh: ! site } );
 
@@ -30,6 +33,12 @@ export default function useIsSiteReady( { siteId }: Props ) {
 
 		setSite( match ?? null );
 	}, [ data, site, siteId ] );
+
+	useEffect( () => {
+		if ( site ) {
+			queryClient.invalidateQueries( { queryKey: [ DASHBOARD_SITES_QUERY_KEY ] } );
+		}
+	}, [ queryClient, site ] );
 
 	return {
 		isReady: !! site,
