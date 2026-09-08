@@ -8,11 +8,11 @@ import PropTypes from 'prop-types';
 import { createRef, PureComponent } from 'react';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import { useFeedQuery } from 'calypso/reader/data/feed';
-import { useIsSeenEnabled } from 'calypso/reader/data/seen-posts';
+import { useIsSeenEnabled, useMarkAsSeenMutation } from 'calypso/reader/data/seen-posts';
 import { useSite } from 'calypso/reader/data/site';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-class CrossPost extends PureComponent {
+export class CrossPost extends PureComponent {
 	static propTypes = {
 		post: PropTypes.object.isRequired,
 		isSelected: PropTypes.bool.isRequired,
@@ -24,6 +24,7 @@ class CrossPost extends PureComponent {
 		site: PropTypes.object,
 		feed: PropTypes.object,
 		isSeenEnabled: PropTypes.bool,
+		requestMarkAsSeen: PropTypes.func.isRequired,
 	};
 
 	cardRef = createRef();
@@ -70,8 +71,23 @@ class CrossPost extends PureComponent {
 		if ( ! event.defaultPrevented ) {
 			// some child handled it
 			event.preventDefault();
+			this.markAsSeen();
 			this.props.handleClick( this.props.xMetadata );
 		}
+	};
+
+	markAsSeen = () => {
+		const { isSeenEnabled, post, postKey, requestMarkAsSeen } = this.props;
+		const feedId = postKey?.feedId || post.feed_ID;
+		if ( ! isSeenEnabled || post.is_seen || ! feedId || ! post.feed_item_ID ) {
+			return;
+		}
+
+		requestMarkAsSeen( {
+			feedId,
+			feedItemIds: [ post.feed_item_ID ],
+			globalIds: post.global_ID ? [ post.global_ID ] : [],
+		} );
 	};
 
 	getSiteNameFromURL = ( siteURL ) => {
@@ -213,6 +229,7 @@ export default function CrossPostContainer( props ) {
 	const { site } = useSite( siteId );
 	const resolvedFeedId = feedId || site?.feed_ID;
 	const { data: feedFromSite } = useFeedQuery( feedFromKey ? undefined : resolvedFeedId );
+	const { mutate: requestMarkAsSeen } = useMarkAsSeenMutation();
 	const isSeenEnabled = useIsSeenEnabled( {
 		feedId: resolvedFeedId,
 		blogId: siteId,
@@ -225,6 +242,7 @@ export default function CrossPostContainer( props ) {
 			site={ site }
 			feed={ feedFromKey || feedFromSite }
 			isSeenEnabled={ isSeenEnabled }
+			requestMarkAsSeen={ requestMarkAsSeen }
 		/>
 	);
 }

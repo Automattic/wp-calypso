@@ -18,6 +18,7 @@ import { shouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-st
 import { useSelector, useDispatch } from 'calypso/state';
 import { resetSiteState } from 'calypso/state/purchases/actions';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
+import hasLoadedSiteFeatures from 'calypso/state/selectors/has-loaded-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { hasLoadedSitePlansFromServer } from 'calypso/state/sites/plans/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
@@ -32,6 +33,7 @@ import useStatsPurchases, { shouldShowPaywallNotice } from '../hooks/use-stats-p
 import { AllTimeData } from '../sections/all-time-highlights-section';
 import ALL_STATS_NOTICES from './all-notice-definitions';
 import JITMWrapper from './jitm-wrapper';
+import usePremiumAnalyticsPreviewNotShownEvent from './premium-analytics-preview-not-shown-event';
 import { StatsNoticeProps, StatsNoticesProps } from './types';
 import './style.scss';
 
@@ -83,6 +85,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		isVip,
 		isP2,
 		canManageOptions,
+		hasSiteFeatures,
 		hasCommercialStats,
 		premiumAnalyticsDashboardUrl,
 		canBeInvited,
@@ -138,14 +141,24 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 
 	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
 
+	// Waiting matters in Calypso, where a site with no features looks identical to one still
+	// fetching. In wp-admin the seeded entry carries `data` alone, so this selector answers false
+	// however long we wait - nothing re-fetches it there to set `hasLoadedFromServer`.
+	const hasLoadedFeatures =
+		useSelector( ( state ) => hasLoadedSiteFeatures( state, siteId ) ) ||
+		config.isEnabled( 'is_odyssey' );
+
 	// Only sites that could actually accept the invitation pay for this round-trip, and the server
 	// decides the cohort on top. The same rule the registry uses, flag included: the request holds
 	// every notice back while it is in flight, so a site that asks it needlessly sits on its own
 	// upsell waiting for an answer nothing will use.
 	const shouldAskStatus =
 		canBeInvited && serverNoticesVisibility?.premium_analytics_preview === true;
-	const { data: isPremiumAnalyticsEnabled, isLoading: isLoadingPremiumAnalyticsStatus } =
-		usePremiumAnalyticsStatusQuery( siteId, shouldAskStatus );
+	const {
+		data: isPremiumAnalyticsEnabled,
+		isLoading: isLoadingPremiumAnalyticsStatus,
+		isError: isPremiumAnalyticsStatusError,
+	} = usePremiumAnalyticsStatusQuery( siteId, shouldAskStatus );
 
 	const noticeOptions = {
 		siteId,
@@ -182,17 +195,34 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		useSelector( ( state ) => hasLoadedSitePlansFromServer( state, siteId ) ) ||
 		config.isEnabled( 'is_odyssey' );
 
-	if (
+	const isWaitingForNoticeInputs =
 		! hasLoadedPurchases ||
 		! hasLoadedPlans ||
 		isLoading ||
-		isError ||
 		isRequestingSitePurchases ||
 		// Waiting here rather than rendering an upsell and swapping it for the preview a moment
 		// later. Only sites the server offered the preview to ever wait: the query is shared with
 		// the modules menu and reports its fetch status to every observer, disabled ones included.
-		( shouldAskStatus && isLoadingPremiumAnalyticsStatus )
-	) {
+		( shouldAskStatus && isLoadingPremiumAnalyticsStatus );
+
+	usePremiumAnalyticsPreviewNotShownEvent( {
+		siteId,
+		isWpcom,
+		// The features are not among the notices' own inputs, so they are waited on here alone:
+		// reading the tier before they land answers "no" for every site.
+		isSettled: ! isWaitingForNoticeInputs && hasLoadedFeatures,
+		isServerVisible: serverNoticesVisibility?.premium_analytics_preview === true,
+		canManageOptions,
+		hasSiteFeatures,
+		hasCommercialStats,
+		premiumAnalyticsDashboardUrl,
+		isVip,
+		isP2,
+		isPremiumAnalyticsEnabled,
+		isStatusError: isPremiumAnalyticsStatusError,
+	} );
+
+	if ( isWaitingForNoticeInputs || isError ) {
 		return null;
 	}
 
