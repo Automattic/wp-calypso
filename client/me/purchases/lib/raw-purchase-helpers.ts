@@ -351,6 +351,16 @@ export function creditCardHasAlreadyExpired( purchase: Purchase ): boolean {
 	return moment( creditCard.expiryDate, 'MM/YY' ).isBefore( moment(), 'months' );
 }
 
+export function shouldRenderExpiringCreditCard( purchase: Purchase ): boolean {
+	return (
+		! isExpiredOrRemoved( purchase ) &&
+		! isExpiring( purchase ) &&
+		! isPurchaseOneTimePurchase( purchase ) &&
+		! isIncludedWithPlan( purchase ) &&
+		creditCardExpiresBeforeSubscription( purchase )
+	);
+}
+
 export function showCreditCardExpiringWarning( purchase: Purchase ): boolean {
 	return (
 		! isIncludedWithPlan( purchase ) &&
@@ -362,6 +372,33 @@ export function showCreditCardExpiringWarning( purchase: Purchase ): boolean {
 
 export function getRenewalPriceInSmallestUnit( purchase: Purchase ): number {
 	return purchase.sale_amount_integer || purchase.price_integer;
+}
+
+/**
+ * Whether to offer the user a cancellation flow for this purchase.
+ *
+ * This is the client-side derivation the legacy pages have always used; it is
+ * deliberately not the server's `is_cancelable` flag, which answers a narrower
+ * question.
+ */
+export function isCancelable( purchase: Purchase ): boolean {
+	if ( isIncludedWithPlan( purchase ) ) {
+		return false;
+	}
+
+	if ( purchase.pending_transfer ) {
+		return false;
+	}
+
+	if ( isExpiredOrRemoved( purchase ) ) {
+		return false;
+	}
+
+	if ( hasAmountAvailableToRefund( purchase ) ) {
+		return true;
+	}
+
+	return purchase.can_disable_auto_renew;
 }
 
 export function canAutoRenewBeTurnedOff( purchase: Purchase ): boolean {
