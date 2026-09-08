@@ -1355,6 +1355,15 @@ $x-menu-2026-admin-bar-mobile: 46px;
 }
 
 @media ( min-width: 1025px ) {
+	// Keep diagonal pointer travel below the nav labels inside the open dropdown.
+	.x-dropdown.x-dropdown--2026.is-dropdown-open::before {
+		content: '';
+		position: absolute;
+		inset-inline: 0;
+		top: -16px;
+		height: 16px;
+	}
+
 	// Close: wipe the content at the rising edge so nothing trails below the roll.
 	.x-dropdown.x-dropdown--2026:not( .is-dropdown-open ) .x-dropdown-content {
 		opacity: 0;
