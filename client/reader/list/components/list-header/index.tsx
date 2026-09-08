@@ -84,7 +84,7 @@ const ReaderListHeader = ( props: ReaderListHeaderProps ) => {
 					{ description }
 					{ description && createdBy && (
 						<span className="list-stream__header-separator" aria-hidden="true">
-							{ ' · ' }
+							{ ' – ' }
 						</span>
 					) }
 					{ createdBy }

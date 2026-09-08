@@ -89,7 +89,7 @@ describe( 'ReaderListHeader', () => {
 		expect( screen.getByText( /Created by/ ) ).toBeVisible();
 		expect( screen.getByText( 'otheruser' ) ).toBeVisible();
 		expect( screen.getByText( 'A test list' ).closest( 'p' ) ).toHaveTextContent(
-			'A test list · Created by otheruser'
+			'A test list – Created by otheruser'
 		);
 	} );
 
