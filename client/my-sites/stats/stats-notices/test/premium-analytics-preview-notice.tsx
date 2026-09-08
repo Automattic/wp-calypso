@@ -3,9 +3,8 @@
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import PremiumAnalyticsPreviewNotice, {
-	PREMIUM_ANALYTICS_PAGE_PATH,
-} from '../premium-analytics-preview-notice';
+import { PREMIUM_ANALYTICS_PAGE_PATH } from '../premium-analytics-preview-cohort';
+import PremiumAnalyticsPreviewNotice from '../premium-analytics-preview-notice';
 
 // The flag store is created inside the factory and parked on `globalThis`: modules read config
 // while they are being imported, before any module-scope `const` here exists.

@@ -32,7 +32,7 @@ export function useSurvicate() {
 
 		const controller = new AbortController();
 
-		loadSurvicateScript( SURVICATE_WORKSPACE_ID )
+		loadSurvicateScript( SURVICATE_WORKSPACE_ID, controller.signal )
 			.then( () => {
 				if ( controller.signal.aborted ) {
 					return;

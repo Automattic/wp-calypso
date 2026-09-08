@@ -388,6 +388,7 @@ export class Banner extends Component {
 			{ 'is-atomic': isAtomic }
 		);
 		const href = ( disableHref || callToAction ) && ! forceHref ? null : this.getHref();
+		const onCardClick = callToAction && ! forceHref ? null : this.handleClick;
 		if ( dismissPreferenceName ) {
 			return (
 				<DismissibleCard
@@ -395,6 +396,7 @@ export class Banner extends Component {
 					preferenceName={ dismissPreferenceName }
 					temporary={ dismissTemporary }
 					onClick={ this.handleDismiss }
+					onCardClick={ href ? onCardClick : null }
 					href={ href }
 				>
 					{ this.getIcon() }
@@ -407,7 +409,7 @@ export class Banner extends Component {
 			<Card
 				className={ classes }
 				href={ href }
-				onClick={ callToAction && ! forceHref ? null : this.handleClick }
+				onClick={ onCardClick }
 				displayAsLink={ displayAsLink }
 				showLinkIcon={ showLinkIcon }
 			>
