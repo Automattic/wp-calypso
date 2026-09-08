@@ -18,6 +18,7 @@ import { shouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-st
 import { useSelector, useDispatch } from 'calypso/state';
 import { resetSiteState } from 'calypso/state/purchases/actions';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
+import hasLoadedSiteFeatures from 'calypso/state/selectors/has-loaded-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { hasLoadedSitePlansFromServer } from 'calypso/state/sites/plans/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
@@ -84,6 +85,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		isVip,
 		isP2,
 		canManageOptions,
+		hasSiteFeatures,
 		hasCommercialStats,
 		premiumAnalyticsDashboardUrl,
 		canBeInvited,
@@ -138,6 +140,13 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	const { isNearLimit, isOverLimit } = getUsageLimitStatus( data );
 
 	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
+
+	// Same shape as the plans check below: waiting on the features is right in Calypso, where they
+	// arrive on their own schedule and a site that has them looks identical to one still fetching,
+	// and wrong in wp-admin, where nothing requests them and waiting would never end.
+	const hasLoadedFeatures =
+		useSelector( ( state ) => hasLoadedSiteFeatures( state, siteId ) ) ||
+		config.isEnabled( 'is_odyssey' );
 
 	// Only sites that could actually accept the invitation pay for this round-trip, and the server
 	// decides the cohort on top. The same rule the registry uses, flag included: the request holds
@@ -199,9 +208,12 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	usePremiumAnalyticsPreviewNotShownEvent( {
 		siteId,
 		isWpcom,
-		isSettled: ! isWaitingForNoticeInputs && ! isError,
+		// The features are not among the notices' own inputs, so they are waited on here alone:
+		// reading the tier before they land answers "no" for every site.
+		isSettled: ! isWaitingForNoticeInputs && hasLoadedFeatures,
 		isServerVisible: serverNoticesVisibility?.premium_analytics_preview === true,
 		canManageOptions,
+		hasSiteFeatures,
 		hasCommercialStats,
 		premiumAnalyticsDashboardUrl,
 		isVip,

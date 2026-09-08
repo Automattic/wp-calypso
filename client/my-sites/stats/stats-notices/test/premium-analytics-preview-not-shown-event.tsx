@@ -3,6 +3,7 @@
  */
 import { render } from '@testing-library/react';
 import StatsNotices from '../index';
+import { recordedSiteIds } from '../premium-analytics-preview-not-shown-event';
 import type { Notices } from '../../hooks/use-notice-visibility-query';
 
 // The flag store is created inside the factory and parked on `globalThis`: `calypso-products`
@@ -61,8 +62,9 @@ jest.mock( 'calypso/my-sites/stats/hooks/use-plan-usage-query', () => ( {
 	getUsageLimitStatus: () => ( { isNearLimit: false, isOverLimit: false } ),
 } ) );
 
+let mockIsStatsGated = false;
 jest.mock( 'calypso/my-sites/stats/hooks/use-should-gate-stats', () => ( {
-	shouldGateStats: () => false,
+	shouldGateStats: () => mockIsStatsGated,
 } ) );
 
 jest.mock( '../../hooks/use-stats-purchases', () => ( {
@@ -95,6 +97,12 @@ let mockSiteFeatures: unknown = { active: [] };
 jest.mock( 'calypso/state/selectors/get-site-features', () => ( {
 	__esModule: true,
 	default: () => mockSiteFeatures,
+} ) );
+
+let mockHasLoadedSiteFeatures = true;
+jest.mock( 'calypso/state/selectors/has-loaded-site-features', () => ( {
+	__esModule: true,
+	default: () => mockHasLoadedSiteFeatures,
 } ) );
 
 let mockIsWpcom = true;
@@ -178,87 +186,147 @@ describe( 'premium analytics preview "not shown" event', () => {
 		mockIsP2 = false;
 		mockIsVip = false;
 		mockAdminUrl = 'https://example.com/wp-admin/admin.php?page=jetpack-premium-analytics-wp-admin';
+		mockHasLoadedSiteFeatures = true;
+		mockIsStatsGated = false;
+		recordedSiteIds.clear();
 	} );
 
-	it( 'records the flag being off', () => {
-		delete mockFlags()[ 'stats/premium-analytics-preview' ];
+	const reasonCases: Array< [ string, () => void ] > = [
+		[
+			'server_hidden',
+			() => {
+				mockNoticesVisibility.data = { premium_analytics_preview: false } as unknown as Notices;
+			},
+		],
+		[
+			'not_admin',
+			() => {
+				mockCanManageOptions = false;
+			},
+		],
+		// Nothing loads the features in a Jetpack site's wp-admin, which is the cohort this event
+		// exists to size. Kept apart from the tier answer below.
+		[
+			'features_unavailable',
+			() => {
+				mockSiteFeatures = null;
+			},
+		],
+		[
+			'no_commercial_stats',
+			() => {
+				mockIsStatsGated = true;
+			},
+		],
+		[
+			'no_admin_url',
+			() => {
+				mockAdminUrl = null;
+			},
+		],
+		[
+			'is_vip',
+			() => {
+				mockIsVip = true;
+			},
+		],
+		[
+			'is_p2',
+			() => {
+				mockIsP2 = true;
+			},
+		],
+		[
+			'already_enabled',
+			() => {
+				mockPremiumAnalyticsStatus.data = true;
+			},
+		],
+		[
+			'status_request_failed',
+			() => {
+				mockPremiumAnalyticsStatus.isError = true;
+			},
+		],
+		[
+			'setting_unavailable',
+			() => {
+				mockPremiumAnalyticsStatus.data = undefined;
+			},
+		],
+	];
+
+	it.each( reasonCases )( 'records %s', ( reason, setUp ) => {
+		setUp();
 
 		renderNotices();
 
-		expect( notShownEvents() ).toEqual( [
-			[ EVENT_NAME, { blog_id: 123, reason: 'flag_disabled' } ],
-		] );
+		expect( notShownEvents() ).toEqual( [ [ EVENT_NAME, { blog_id: 123, reason } ] ] );
 	} );
 
-	it( 'records a site whose Jetpack never registered the setting', () => {
-		mockPremiumAnalyticsStatus = { data: undefined, isLoading: false, isError: false };
+	const quietCases: Array< [ string, () => void ] > = [
+		[ 'the invitation is shown', () => {} ],
+		// The two rows that would otherwise pass every gate, so a missing guard would leave them
+		// silent for the wrong reason. Failing one gate gives each a reason to record.
+		[
+			'the flag is off',
+			() => {
+				mockCanManageOptions = false;
+				delete mockFlags()[ 'stats/premium-analytics-preview' ];
+			},
+		],
+		[
+			'the notices are still loading',
+			() => {
+				mockNoticesVisibility = { isLoading: true, isError: false, data: undefined as never };
+				mockPremiumAnalyticsStatus = { data: undefined, isLoading: true, isError: false };
+			},
+		],
+		[
+			'the site features are still loading',
+			() => {
+				mockSiteFeatures = null;
+				mockHasLoadedSiteFeatures = false;
+			},
+		],
+		[
+			'the site is self-hosted Jetpack',
+			() => {
+				mockCanManageOptions = false;
+				mockIsWpcom = false;
+			},
+		],
+	];
+
+	it.each( quietCases )( 'stays quiet while %s', ( _label, setUp ) => {
+		setUp();
 
 		renderNotices();
 
-		expect( notShownEvents() ).toEqual( [
-			[ EVENT_NAME, { blog_id: 123, reason: 'setting_unavailable' } ],
-		] );
+		expect( notShownEvents() ).toEqual( [] );
 	} );
 
-	it( 'records a site that already switched the dashboard on', () => {
-		mockPremiumAnalyticsStatus = { data: true, isLoading: false, isError: false };
+	it( 'stays quiet for a site that was offered the invitation and then dismissed it', () => {
+		const { rerender } = renderNotices();
 
-		renderNotices();
-
-		expect( notShownEvents() ).toEqual( [
-			[ EVENT_NAME, { blog_id: 123, reason: 'already_enabled' } ],
-		] );
-	} );
-
-	it( 'records the server holding the invitation back', () => {
+		// What a dismissal does: the mutation invalidates the notices query and the refetch answers
+		// that the invitation is no longer on offer.
 		mockNoticesVisibility = {
 			isLoading: false,
 			isError: false,
 			data: { premium_analytics_preview: false } as unknown as Notices,
 		};
-
-		renderNotices();
-
-		expect( notShownEvents() ).toEqual( [
-			[ EVENT_NAME, { blog_id: 123, reason: 'server_hidden' } ],
-		] );
-	} );
-
-	it( 'records only once across re-renders', () => {
-		mockPremiumAnalyticsStatus = { data: true, isLoading: false, isError: false };
-
-		const { rerender } = renderNotices();
 		rerender( <StatsNotices siteId={ 123 } isOdysseyStats={ false } /> );
 
-		expect( notShownEvents() ).toHaveLength( 1 );
-	} );
-
-	it( 'stays quiet when the invitation is shown', () => {
-		renderNotices();
-
 		expect( notShownEvents() ).toEqual( [] );
 	} );
 
-	it( 'stays quiet while the notices are still loading', () => {
-		mockNoticesVisibility = { isLoading: true, isError: false, data: undefined as never };
-		mockPremiumAnalyticsStatus = { data: undefined, isLoading: true, isError: false };
-
+	it( 'stays quiet for a site that accepted the invitation and came back', () => {
 		renderNotices();
 
-		expect( notShownEvents() ).toEqual( [] );
-	} );
-
-	it( 'stays quiet when the notices request failed', () => {
-		mockNoticesVisibility = { isLoading: false, isError: true, data: undefined as never };
-
-		renderNotices();
-
-		expect( notShownEvents() ).toEqual( [] );
-	} );
-
-	it( 'stays quiet for a self-hosted Jetpack site', () => {
-		mockIsWpcom = false;
-
+		// Accepting writes the status cache without recording a dismissal, so the next Traffic mount
+		// still sees the invitation on offer and the dashboard already on.
+		mockPremiumAnalyticsStatus = { data: true, isLoading: false, isError: false };
 		renderNotices();
 
 		expect( notShownEvents() ).toEqual( [] );
