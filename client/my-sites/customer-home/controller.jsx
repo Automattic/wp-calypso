@@ -2,6 +2,8 @@ import { getAiLaunchpadStatus } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
 import { captureException } from '@automattic/calypso-sentry';
 import { fetchLaunchpad } from '@automattic/data-stores';
+import { prefetchHomeLayout } from 'calypso/data/home/use-home-layout-query';
+import { getHomeLayoutQueryParams } from 'calypso/data/home/use-home-layout-query-params';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
 import { isRemovedFlow } from 'calypso/landing/stepper/utils/flow-redirect-handler';
 import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT, normalizeVariation } from 'calypso/lib/ai-launchpad';
@@ -25,8 +27,8 @@ import {
 import { redirectToLaunchpad } from 'calypso/utils';
 import CustomerHome from './main';
 
-export default async function renderHome( context, next ) {
-	const state = await context.store.getState();
+export default function renderHome( context, next ) {
+	const state = context.store.getState();
 	const site = getSelectedSite( state );
 
 	// Scroll to the top
@@ -120,6 +122,20 @@ export async function maybeRedirect( context, next ) {
 		}
 	}
 
+	// Started before the assignment below is awaited, not after it: nothing renders until
+	// this middleware calls `next()`, and the two requests are independent, so awaiting them
+	// in sequence adds a whole round trip to the time the boot placeholder stays on screen.
+	const launchpadPromise = fetchLaunchpad( slug ).catch( () => null );
+
+	// My Home renders a placeholder until the card layout arrives. Asking for it here puts
+	// it in flight during the rest of this middleware and the section's chunk load, rather
+	// than only once the cards mount. Deliberately not awaited — nothing here needs it.
+	prefetchHomeLayout(
+		context.queryClient,
+		siteId,
+		getHomeLayoutQueryParams( context.query )
+	).catch( () => {} );
+
 	// The no_guidance launchpad-personalization variation gets no guidance surface at all:
 	// keep these sites off My Home, landing them on the plain wp-admin dashboard.
 	const personalizationAssignment = await loadExperimentAssignment(
@@ -140,7 +156,7 @@ export async function maybeRedirect( context, next ) {
 			launchpad_screen: launchpadScreenOption,
 			site_intent: siteIntentOption,
 			checklist: launchpadChecklist,
-		} = await fetchLaunchpad( slug );
+		} = ( await launchpadPromise ) ?? {};
 
 		const shouldShowLaunchpad = ! isRemovedFlow( siteIntentOption );
 

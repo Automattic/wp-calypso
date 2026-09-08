@@ -1,10 +1,7 @@
 import { DataHelper, RestAPIClient, SecretsManager } from '@automattic/calypso-e2e';
 import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
 
-// .fixme: muted project-wide since 2026-02-02 and failing every run — the invites endpoint
-// throttles in CI (`unauthorized: API calls to this endpoint have been disabled`). The mute
-// keeps builds green, so running it only wastes CI time. Underlying throttle tracked in TESTOPS-232.
-test.describe.fixme(
+test.describe(
 	DataHelper.createSuiteTitle( 'Invite: Revoke' ),
 	{ tag: [ tags.CALYPSO_PR, tags.CALYPSO_RELEASE, tags.DESKTOP_ONLY ] },
 	() => {
@@ -84,7 +81,6 @@ test.describe.fixme(
 
 		test( 'As a site owner, I can revoke a pending invite so that the invitation link becomes invalid', async ( {
 			page,
-			componentSidebar,
 			clientEmail,
 			pageIncognito,
 			pagePeople,
@@ -120,8 +116,15 @@ test.describe.fixme(
 				await accountDefaultUser.authenticate( page );
 			} );
 
-			await test.step( 'When I navigate to Users > All Users', async function () {
-				await componentSidebar.navigate( 'Users', 'All Users' );
+			// Navigate by URL, not through the sidebar: the sidebar follows the
+			// account's selected site, which has drifted from testSites.primary, so
+			// the invite created above would not be listed. Same fix as TESTOPS-193.
+			await test.step( 'When I navigate to the pending invites', async function () {
+				await page.goto(
+					DataHelper.getCalypsoURL(
+						`/people/pending-invites/${ credentials.testSites?.primary?.url }`
+					)
+				);
 			} );
 
 			await test.step( 'Then I can see the invite is pending', async function () {

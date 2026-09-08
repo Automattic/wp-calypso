@@ -3,6 +3,7 @@
  */
 
 type TrackProperties = Record< string, string | number | boolean >;
+export type BigSkyEventName = `jetpack_big_sky_${ string }`;
 
 type ReviewContext =
 	| 'notes_and_guidelines'
@@ -30,7 +31,10 @@ const REVIEW_CONTEXTS: ReadonlySet< string > = new Set< ReviewContext >( [
 
 type WindowWithAgentsManagerActions = Window & {
 	__agentsManagerActions?: {
-		recordBigSkyTracksEvent?: ( eventName: string, props?: Record< string, unknown > ) => void;
+		recordBigSkyTracksEvent?: (
+			eventName: BigSkyEventName,
+			props?: Record< string, unknown >
+		) => void;
 	};
 };
 
@@ -88,11 +92,14 @@ export function getResponseRenderedTrackingProperties(
 
 /**
  * Sends a `jetpack_big_sky_*` event through the Agents Manager family
- * recorder, which attaches the family's base props. `eventName` is the
- * suffix after that prefix. A no-op until Agents Manager has published
- * its actions bridge; returns whether the event was handed over.
+ * recorder, which attaches the family's base props. A no-op until Agents
+ * Manager has published its actions bridge; returns whether the event was
+ * handed over.
  */
-function recordBigSkyFamilyTracksEvent( eventName: string, properties: TrackProperties ): boolean {
+function recordBigSkyFamilyTracksEvent(
+	eventName: BigSkyEventName,
+	properties: TrackProperties
+): boolean {
 	if ( typeof window === 'undefined' ) {
 		return false;
 	}
@@ -132,7 +139,7 @@ function getSplitScreenGuideProperties( {
  */
 export function trackSplitScreenGuideRendered( options: TrackSplitScreenGuideOptions ): boolean {
 	return recordBigSkyFamilyTracksEvent(
-		'split_screen_guide_rendered',
+		'jetpack_big_sky_split_screen_guide_rendered',
 		getSplitScreenGuideProperties( options )
 	);
 }
@@ -146,7 +153,7 @@ export function trackSplitScreenGuideRendered( options: TrackSplitScreenGuideOpt
  */
 export function trackSplitScreenGuideClick( options: TrackSplitScreenGuideOptions ): boolean {
 	return recordBigSkyFamilyTracksEvent(
-		'split_screen_guide_click',
+		'jetpack_big_sky_split_screen_guide_click',
 		getSplitScreenGuideProperties( options )
 	);
 }

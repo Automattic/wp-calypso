@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import page from '@automattic/calypso-router';
+import { redirectLoggedOutToDiscoverTags } from 'calypso/reader/controller';
 import { readerNotFound } from 'calypso/reader/lib/reader-router';
 import initTagStream from '../index';
 
@@ -30,9 +31,8 @@ jest.mock( 'calypso/controller/shared', () => ( {
 	setLocaleMiddleware: jest.fn( () => jest.fn() ),
 } ) );
 
-jest.mock( 'calypso/lib/reader/is-reader-tag-embed-page', () => jest.fn( () => false ) );
-
 jest.mock( 'calypso/reader/controller', () => ( {
+	redirectLoggedOutToDiscoverTags: jest.fn(),
 	sidebar: jest.fn(),
 } ) );
 
@@ -52,6 +52,10 @@ describe( 'reader tag stream routes', () => {
 	it( 'registers the tag catch-all', () => {
 		initTagStream();
 
-		expect( page ).toHaveBeenCalledWith( '/tag/*', readerNotFound );
+		expect( page ).toHaveBeenCalledWith(
+			'/tag/*',
+			redirectLoggedOutToDiscoverTags,
+			readerNotFound
+		);
 	} );
 } );

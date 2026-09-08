@@ -15,6 +15,10 @@ The dashboard follows a component-based architecture with a strong focus on leve
 
 Use placeholder components such as `TextBlur`, `TextSkeleton`, or `CalloutSkeleton` instead of spinners.
 
+For inline text, keep a single `TextBlur` mounted and flip its `isBlurred` prop rather than swapping a placeholder element for the resolved value. Page translators (Edge, Chrome, extensions) reparent inline nodes behind React's back, so inserting or removing an element next to translated text throws a `NotFoundError`. Pass `length` when the final text isn't known while loading.
+
+`TextSkeleton` is appropriate for static placeholders that will always show blurred text and never switch to showing unblurred text.
+
 Placeholders for asynchronous data fetching should be used judiciously. Some dashboard pages are "heavy" and asynchronous fetching may be needed to prevent multi-second load times. On the other hand, layout shifts or flashes of default or fallback content should be avoided as much as possible. A good strategy is to use a router's `loader` function to fetch just enough data to allow a component's layout to be rendered definitively. Asynchronous fetching can then fill in the details without causing layout shifts. Note: when `loader` functions are slow, their loading state is handled by the `Root` component (`client/dashboard/app/root`).
 
 See this post on loaders: p58i-kIo-p2

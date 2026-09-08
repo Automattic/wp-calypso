@@ -253,11 +253,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-instructions' ),
 	},
 
-	SITE_MIGRATION_STARTED: {
-		slug: 'site-migration-started',
-		asyncComponent: () => import( './steps-repository/site-migration-started' ),
-	},
-
 	SITE_MIGRATION_CREDENTIALS: {
 		slug: 'site-migration-credentials',
 		asyncComponent: () => import( './steps-repository/site-migration-credentials' ),
@@ -334,6 +329,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/post-checkout/post-checkout-onboarding' ),
 	},
 
+	WOW_FUNNEL_HANDOFF: {
+		slug: 'wow-funnel-handoff',
+		asyncComponent: () => import( './steps-repository/wow-funnel-handoff' ),
+	},
+
 	SETUP_YOUR_SITE_AI: {
 		slug: 'setup-your-site-ai',
 		asyncComponent: () => import( './steps-repository/setup-your-site-ai' ),
@@ -342,10 +342,6 @@ export const STEPS = {
 	SEGMENTATION_SURVEY: {
 		slug: 'segmentation-survey',
 		asyncComponent: () => import( './steps-repository/segmentation-survey' ),
-	},
-	PLATFORM_IDENTIFICATION: {
-		slug: 'platform-identification',
-		asyncComponent: () => import( './steps-repository/platform-identification' ),
 	},
 	UNIFIED_PLANS: {
 		slug: 'plans',
@@ -391,11 +387,6 @@ export const STEPS = {
 	HUNDRED_YEAR_PLAN_SETUP: {
 		slug: 'setup',
 		asyncComponent: () => import( './steps-repository/hundred-year-plan-setup' ),
-	},
-
-	SETUP_BLOG: {
-		slug: 'setup-blog',
-		asyncComponent: () => import( './steps-repository/setup-blog' ),
 	},
 
 	PLAYGROUND: {

@@ -1,6 +1,7 @@
 import { StatsCard } from '@automattic/components';
 import { mail } from '@automattic/components/src/icons';
 import { formatNumber } from '@automattic/number-formatters';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -18,15 +19,15 @@ import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import { StatsEmptyActionEmail } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
+import { isRateKnown, toCount } from './is-rate-known';
 import {
 	TooltipWrapper,
 	OpensTooltipContent,
 	ClicksTooltipContent,
-	hasUniqueMetrics,
-	getClicksDisplayValue,
 	EmailStatsItem,
 } from './tooltips';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
+import './style.scss';
 
 const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 	period,
@@ -87,25 +88,40 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 						</StatsInfoArea>
 					}
 					additionalColumns={ {
-						header: <span>{ translate( 'Opens' ) }</span>,
+						header: (
+							<>
+								<span>{ translate( 'Opens' ) }</span>
+								<span>{ translate( 'Open rate' ) }</span>
+								<span>{ translate( 'Clicks' ) }</span>
+							</>
+						),
 						body: ( item: EmailStatsItem ) => {
-							const opensUnique = parseInt( String( item.unique_opens ), 10 );
-							const opens = parseInt( String( item.opens ), 10 );
-							const hasUniques = hasUniqueMetrics( opensUnique, opens );
+							const opens = toCount( item.opens );
+							const rateKnown = isRateKnown( {
+								uniques: toCount( item.unique_opens ),
+								totals: opens,
+								sends: toCount( item.total_sends ),
+							} );
 							return (
-								<TooltipWrapper
-									value={
-										hasUniques
-											? `${ formatNumber( item.opens_rate, {
-													numberFormatOptions: {
-														maximumFractionDigits: 2,
-													},
-											  } ) }%`
-											: '—'
-									}
-									item={ item }
-									TooltipContent={ OpensTooltipContent }
-								/>
+								<>
+									<span>{ formatNumber( opens ) }</span>
+									<span>
+										<TooltipWrapper
+											value={
+												rateKnown
+													? `${ formatNumber( item.opens_rate ?? 0, {
+															numberFormatOptions: {
+																maximumFractionDigits: 2,
+															},
+													  } ) }%`
+													: '—'
+											}
+											item={ item }
+											TooltipContent={ OpensTooltipContent }
+										/>
+									</span>
+									<span>{ formatNumber( toCount( item.clicks ) ) }</span>
+								</>
 							);
 						},
 					} }
@@ -114,21 +130,34 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 					query={ query }
 					statType={ statType }
 					mainItemLabel={ translate( 'Latest emails' ) }
-					metricLabel={ translate( 'Clicks' ) }
+					metricLabel={ translate( 'Click rate' ) }
 					valueField="clicks_rate"
 					formatValue={ ( value: number, item: EmailStatsItem ) => {
 						if ( ! item ) {
 							return value;
 						}
+						const rateKnown = isRateKnown( {
+							uniques: toCount( item.unique_clicks ),
+							totals: toCount( item.clicks ),
+							sends: toCount( item.total_sends ),
+						} );
 						return (
 							<TooltipWrapper
-								value={ getClicksDisplayValue( item ) }
+								value={
+									rateKnown
+										? `${ formatNumber( item.clicks_rate ?? 0, {
+												numberFormatOptions: {
+													maximumFractionDigits: 2,
+												},
+										  } ) }%`
+										: '—'
+								}
 								item={ item }
 								TooltipContent={ ClicksTooltipContent }
 							/>
 						);
 					} }
-					className={ className }
+					className={ clsx( className, 'stats-emails--four-columns' ) }
 					hasNoBackground
 					skipQuery
 				/>

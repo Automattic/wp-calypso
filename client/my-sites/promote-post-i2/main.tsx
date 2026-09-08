@@ -8,7 +8,6 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
 import {
 	BlazablePost,
@@ -42,7 +41,6 @@ import {
 	getPagedBlazeSearchData,
 } from 'calypso/my-sites/promote-post-i2/utils';
 import { useSelector } from 'calypso/state';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import BlazePage from './components/blaze-page';
 import BlazePageViewTracker from './components/blaze-page-view-tracker';
@@ -100,9 +98,6 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 		keyValue: 'post-0', // post 0 means to open post selector in widget
 		entrypoint: 'promoted_posts-header',
 	} );
-	const isSelfHosted = useSelector( ( state ) =>
-		isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } )
-	);
 
 	/* query for campaigns */
 	const [ campaignsSearchOptions, setCampaignsSearchOptions ] = useState< SearchOptions >( {} );
@@ -270,20 +265,13 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 
 			<BlazePage
 				actions={
-					<>
-						<InlineSupportLink
-							supportContext="advertising"
-							showIcon={ false }
-							showSupportModal={ ! isSelfHosted }
-						/>
-						<Button
-							variant="primary"
-							onClick={ onClickPromote }
-							disabled={ isLoadingBillingSummary || paymentBlocked }
-						>
-							{ translate( 'Promote' ) }
-						</Button>
-					</>
+					<Button
+						variant="primary"
+						onClick={ onClickPromote }
+						disabled={ isLoadingBillingSummary || paymentBlocked }
+					>
+						{ translate( 'Promote' ) }
+					</Button>
 				}
 			>
 				<div className="promote-post-i2__page-body">

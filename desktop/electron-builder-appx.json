@@ -7,6 +7,12 @@
 		"output": "./release"
 	},
 	"files": [ "dist", "package.json", "config/*.json" ],
+	"protocols": [
+		{
+			"name": "WordPress.com Desktop",
+			"schemes": [ "wpdesktop" ]
+		}
+	],
 	"win": {
 		"icon": "./resource/icon.ico",
 		"target": [

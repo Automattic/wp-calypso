@@ -2,10 +2,11 @@ import { receiptQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
+import { SUPPORT_STATUS_QUERY_KEY } from '@automattic/help-center/src/data/use-support-status';
 import { Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { invokeSurvicateEvent } from '@automattic/survicate';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
@@ -214,6 +215,7 @@ function useRedirectOnTransactionSuccess( {
 		orderId ? getOrderTransactionError( state, orderId ) : null
 	);
 	const reduxDispatch = useDispatch();
+	const queryClient = useQueryClient();
 	const cartKey = useCartKey();
 	const { reloadFromServer: reloadCart } = useShoppingCart( cartKey );
 
@@ -364,6 +366,8 @@ function useRedirectOnTransactionSuccess( {
 			reduxDispatch( requestSite( blogId ) );
 		}
 
+		queryClient.invalidateQueries( { queryKey: SUPPORT_STATUS_QUERY_KEY } );
+
 		// For plan + domain purchases the `domain-and-plan` flow sends the user to
 		// `/home/<site>` instead of the thank-you page. Tag the destination URL with
 		// a `notice` query param so the destination can dispatch a success toast on
@@ -402,6 +406,7 @@ function useRedirectOnTransactionSuccess( {
 		receipt,
 		receiptId,
 		redirectTo,
+		queryClient,
 		reduxDispatch,
 		reloadCart,
 		siteSlug,

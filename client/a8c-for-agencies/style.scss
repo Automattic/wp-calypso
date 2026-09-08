@@ -9,6 +9,9 @@
 	--a4a-corners-sharp: 0;
 	--a4a-corners-soft: 4px;
 
+	// Match the classic .tooltip.popover layer so wp-ui tooltips render above the sidebar.
+	--wp-ui-tooltip-z-index: 100000;
+
 	--color-surface-backdrop: #021a23;
 	--color-overview-header-background: #05374a;
 	--color-light-backdrop: var(--studio-white);

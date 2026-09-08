@@ -5,16 +5,13 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import titleCase from 'to-title-case';
-import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useFollowedTags, useTagBySlug } from 'calypso/reader/data/tags';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import Stream from 'calypso/reader/stream';
 import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import EmptyContent from './empty';
 import TagStreamHeader from './header';
 import './style.scss';
@@ -57,13 +54,6 @@ class TagStream extends Component {
 		const { decodedTagSlug, unfollowTag, followTag } = this.props;
 		const isFollowing = this.isSubscribed(); // this is the current state, not the new state
 		const toggleAction = isFollowing ? unfollowTag : followTag;
-
-		if ( ! this.props.isLoggedIn ) {
-			return this.props.registerLastActionRequiresLogin( {
-				type: 'follow-tag',
-				tag: decodedTagSlug,
-			} );
-		}
 
 		toggleAction( decodedTagSlug );
 		recordAction( isFollowing ? 'unfollowed_topic' : 'followed_topic' );
@@ -129,7 +119,7 @@ class TagStream extends Component {
 				sort={ this.props.sort }
 			/>
 		);
-		const sidebarProps = ! isReaderTagEmbedPage( window.location ) && {
+		const sidebarProps = {
 			streamSidebar: () => <ReaderTagSidebar tag={ this.props.decodedTagSlug } />,
 			sidebarTabTitle: this.props.translate( 'Related' ),
 		};
@@ -226,11 +216,9 @@ function withTagFollowMutations( Inner ) {
 
 export default connect(
 	( state, { sort } ) => ( {
-		isLoggedIn: isUserLoggedIn( state ),
 		sort,
 	} ),
 	{
 		recordReaderTracksEvent,
-		registerLastActionRequiresLogin,
 	}
 )( withReaderTags( withTagFollowMutations( localize( TagStream ) ) ) );

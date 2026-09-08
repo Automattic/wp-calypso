@@ -7,9 +7,9 @@ import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import welcomeAtavistImage from 'calypso/assets/images/reader/onboarding/welcome-atavist.webp';
 import welcomeHughImage from 'calypso/assets/images/reader/onboarding/welcome-hugh.webp';
+import welcomeJennyImage from 'calypso/assets/images/reader/onboarding/welcome-jenny.webp';
 import welcomeLongreadsImage from 'calypso/assets/images/reader/onboarding/welcome-longreads.webp';
 import welcomeMattImage from 'calypso/assets/images/reader/onboarding/welcome-matt.webp';
-import welcomeOmImage from 'calypso/assets/images/reader/onboarding/welcome-om.webp';
 import welcomeRollingStoneImage from 'calypso/assets/images/reader/onboarding/welcome-rolling-stone.webp';
 import welcomeSethImage from 'calypso/assets/images/reader/onboarding/welcome-seth.webp';
 import welcomeTimImage from 'calypso/assets/images/reader/onboarding/welcome-tim.webp';
@@ -82,10 +82,10 @@ const bloggers: WelcomeTileItem[] = [
 		imageClass: 'reader-welcome-modal__tim-image',
 	},
 	{
-		name: 'Om Malik',
-		imageUrl: welcomeOmImage,
+		name: 'Jenny Lawson',
+		imageUrl: welcomeJennyImage,
 		porthole: true,
-		imageClass: 'reader-welcome-modal__om-image',
+		imageClass: 'reader-welcome-modal__jenny-image',
 	},
 	{
 		name: 'Hugh Howey',

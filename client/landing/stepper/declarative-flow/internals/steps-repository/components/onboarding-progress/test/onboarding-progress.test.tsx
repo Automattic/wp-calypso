@@ -17,11 +17,36 @@ describe( 'OnboardingProgress', () => {
 		expect( onStepSelect ).toHaveBeenCalledWith( 'plans' );
 	} );
 
+	it( 'leaves the plans step out when the plan was chosen before the flow', () => {
+		render( <OnboardingProgress currentStep="domains" shouldHidePlansStep /> );
+
+		expect( screen.queryByRole( 'tab', { name: /Select a plan/ } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'tab', { name: /Step 2 of 2.*Complete payment/ } ) ).toBeVisible();
+	} );
+
 	it( 'does not call onStepSelect for the current step', async () => {
 		const onStepSelect = jest.fn();
 		render( <OnboardingProgress currentStep="checkout" onStepSelect={ onStepSelect } /> );
 
 		await userEvent.click( screen.getByRole( 'tab', { name: /Complete payment/ } ) );
+		expect( onStepSelect ).not.toHaveBeenCalled();
+	} );
+
+	it( 'ignores clicks on the previous steps while step selection is disabled', async () => {
+		const onStepSelect = jest.fn();
+		render(
+			<OnboardingProgress
+				currentStep="checkout"
+				onStepSelect={ onStepSelect }
+				isStepSelectDisabled
+			/>
+		);
+
+		const domainsStep = screen.getByRole( 'tab', { name: /Select a domain/ } );
+		expect( domainsStep ).toHaveAttribute( 'aria-disabled', 'true' );
+
+		await userEvent.click( domainsStep );
+		await userEvent.click( screen.getByRole( 'tab', { name: /Select a plan/ } ) );
 		expect( onStepSelect ).not.toHaveBeenCalled();
 	} );
 } );

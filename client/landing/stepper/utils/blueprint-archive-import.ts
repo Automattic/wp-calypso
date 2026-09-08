@@ -139,16 +139,30 @@ export async function startBlueprintArchiveImport(
 /**
  * Poll the site's import status until the backup import finishes.
  * Resolves on success; throws on a terminal failure or timeout.
+ *
+ * `initialDelayMs` defaults to a full poll interval, because a caller that has just *started* the
+ * work must not read the previous run's terminal state: `/atomic/transfers/latest` returns the
+ * site's latest transfer, not the one you asked about (see createRevertedTransferWatcher). Pass 0
+ * only when the work was started before this page existed, where an immediate check is both safe
+ * and the difference between handing over at once and sitting on a loading screen for nothing.
  */
 export async function waitForBlueprintImportComplete(
 	siteIdentifier: string,
-	{ totalTimeoutSeconds = 900, pollIntervalMs = 5000 } = {}
+	{
+		totalTimeoutSeconds = 900,
+		pollIntervalMs = 5000,
+		initialDelayMs = pollIntervalMs,
+	}: { totalTimeoutSeconds?: number; pollIntervalMs?: number; initialDelayMs?: number } = {}
 ): Promise< void > {
 	const maxFinishTime = Date.now() + totalTimeoutSeconds * 1000;
 	let lastStatus: string | null | undefined;
+	let delayMs = initialDelayMs;
 
 	while ( Date.now() < maxFinishTime ) {
-		await wait( pollIntervalMs );
+		if ( delayMs > 0 ) {
+			await wait( delayMs );
+		}
+		delayMs = pollIntervalMs;
 
 		try {
 			const status = ( await wpcom.req.get( {
@@ -189,16 +203,30 @@ export async function waitForBlueprintImportComplete(
  * archive restore afterwards, so transfer-complete happens before the content
  * is restored. Pair this with waitForBlueprintImportComplete() for full
  * readiness.
+ *
+ * `initialDelayMs` defaults to a full poll interval, because a caller that has just *started* the
+ * work must not read the previous run's terminal state: `/atomic/transfers/latest` returns the
+ * site's latest transfer, not the one you asked about (see createRevertedTransferWatcher). Pass 0
+ * only when the work was started before this page existed, where an immediate check is both safe
+ * and the difference between handing over at once and sitting on a loading screen for nothing.
  */
 export async function waitForAtomicTransferComplete(
 	siteIdentifier: string,
-	{ totalTimeoutSeconds = 900, pollIntervalMs = 5000 } = {}
+	{
+		totalTimeoutSeconds = 900,
+		pollIntervalMs = 5000,
+		initialDelayMs = pollIntervalMs,
+	}: { totalTimeoutSeconds?: number; pollIntervalMs?: number; initialDelayMs?: number } = {}
 ): Promise< void > {
 	const maxFinishTime = Date.now() + totalTimeoutSeconds * 1000;
 	let lastStatus: TransferStates | undefined;
+	let delayMs = initialDelayMs;
 
 	while ( Date.now() < maxFinishTime ) {
-		await wait( pollIntervalMs );
+		if ( delayMs > 0 ) {
+			await wait( delayMs );
+		}
+		delayMs = pollIntervalMs;
 
 		try {
 			const transfer = ( await wpcom.req.get( {
@@ -290,29 +318,32 @@ export async function getSiteAdminUrl( siteIdentifier: string ): Promise< string
  */
 export function getSiteEditorUrl(
 	adminUrl: string,
-	{ startWalkthrough = false }: { startWalkthrough?: boolean } = {}
+	{ canvasEdit = false, path }: { canvasEdit?: boolean; path?: string } = {}
 ): string {
 	const base = adminUrl.endsWith( '/' ) ? adminUrl : `${ adminUrl }/`;
 	const url = `${ base }site-editor.php`;
 
-	// `go` tells Big Sky this arrival came from onboarding, so it personalizes the
-	// copy instead of waiting to be spoken to. It never re-runs: the flag stays in
-	// the editor URL, so a site that has already been personalized has to see it
-	// and do nothing. `reset` is the way to run it again.
+	// The hand-off used to carry `blueprint-walkthrough=go`, which told Big Sky to
+	// open the conversation itself and rewrite the page's copy while the customer
+	// watched. That walkthrough is rolled back for now, so nothing here starts it
+	// and the editor opens quietly. The wpcom side still understands the
+	// parameter, so bringing it back is a small change here.
 	//
-	// `canvas=edit` is load-bearing: Big Sky's assembler only mounts on the
-	// editing canvas (useShouldLoadBigSky requires canvasMode === 'edit'), and a
-	// plain site-editor.php load stays in view mode — the kickoff, the copy mask,
-	// and the walkthrough all silently never run without it. The welcome-guide
-	// overlay this parameter was once blamed for came from sites where Big Sky
-	// had not been enabled by hand-off time (the enable race fixed on the wpcom
-	// side); when Big Sky mounts, it suppresses the guide itself.
-	//
-	// Only set when the spec applied; there is nothing to personalize from
-	// otherwise.
-	const editorUrl = startWalkthrough
-		? addQueryArgs( url, { 'blueprint-walkthrough': 'go', canvas: 'edit' } )
-		: url;
+	// `canvas=edit` stays, and is load-bearing for reasons of its own: Big Sky's
+	// assembler only mounts on the editing canvas (useShouldLoadBigSky requires
+	// canvasMode === 'edit'), and a plain site-editor.php load stays in view mode,
+	// so the assistant never appears at all. The welcome-guide overlay this
+	// parameter was once blamed for came from sites where Big Sky had not been
+	// enabled by hand-off time (the enable race fixed on the wpcom side); when Big
+	// Sky mounts, it suppresses the guide itself.
+	const args: Record< string, string > = {};
+	if ( canvasEdit ) {
+		args.canvas = 'edit';
+	}
+	if ( path ) {
+		args.p = path;
+	}
+	const editorUrl = Object.keys( args ).length > 0 ? addQueryArgs( url, args ) : url;
 
 	return withJetpackSso( editorUrl );
 }

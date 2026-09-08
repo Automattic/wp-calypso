@@ -458,7 +458,7 @@ export const test = base.extend<
 		 */
 		pagePlans: PlansPage;
 		/**
-		 * Page object representing the post-checkout "Set up your site" choice screen.
+		 * Page object representing the post-checkout "Let’s design your site" choice screen.
 		 */
 		pagePostCheckoutSetupSite: PostCheckoutSetupSitePage;
 		/**

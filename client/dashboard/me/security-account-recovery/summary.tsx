@@ -23,29 +23,29 @@ export default function SecurityAccountRecoverySummary( { density }: { density?:
 	if ( email && emailIsAccountEmail ) {
 		badges.push( {
 			text: __( 'Recovery email matches account email' ),
-			intent: 'warning',
+			intent: 'medium',
 		} );
 	} else if ( email ) {
 		badges.push( {
 			text: email_validated ? __( 'Email added' ) : __( 'Email not validated' ),
-			intent: email_validated ? 'success' : 'warning',
+			intent: email_validated ? 'stable' : 'low',
 		} );
 	} else {
 		badges.push( {
 			text: __( 'No recovery email' ),
-			intent: 'warning',
+			intent: 'medium',
 		} );
 	}
 
 	if ( phone ) {
 		badges.push( {
 			text: phone_validated ? __( 'SMS number added' ) : __( 'SMS number not validated' ),
-			intent: phone_validated ? 'success' : 'warning',
+			intent: phone_validated ? 'stable' : 'low',
 		} );
 	} else {
 		badges.push( {
 			text: __( 'No recovery SMS number' ),
-			intent: 'warning',
+			intent: 'medium',
 		} );
 	}
 

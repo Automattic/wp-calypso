@@ -381,8 +381,9 @@ flows keep working unchanged:
   `freeSubdomainButtonLabel` (copy overrides for the "Start free with %(domain)s" free-subdomain
   skip card and its "Start Free" button — the title may keep the `%(domain)s` placeholder, which
   the `@automattic/domain-search` package interpolates; these win over the per-flow default in
-  `getSkipSuggestionCopy`), and `allowedTlds` (per-flow TLD filter that the URL `?tld=` query param
-  can override). All optional and default-safe; each is applied across all three render paths
+  `getSkipSuggestionCopy`), `allowedTlds` (per-flow TLD filter that the URL `?tld=` query param
+  can override), and `freeForFirstYearTlds` (TLDs priced as free for the first year in suggestions
+  and the cart). All optional and default-safe; each is applied across all three render paths
   (HundredYearPlanStepWrapper, V2 `Step.CenteredColumnLayout`, V1 `StepContainer`) — the
   subdomain-copy props travel via the shared `config` object, which all three branches render. See
   [`steps-repository/domain-search/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/domain-search/index.tsx).

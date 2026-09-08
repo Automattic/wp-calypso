@@ -120,9 +120,10 @@ export async function fetchBundleMetadata( search: string ): Promise< BundleMeta
  *
  * Calls the per-FQDN `GET /wpcom/v2/domains/bundle` endpoint (DOMAINS-2207),
  * used lazily by the inline-bundle frontend once the user adds a trigger domain
- * (e.g. `flowers.com`) to the cart. The endpoint is logged-in only (401 when
- * anonymous), flag-gated (404 when off) and query-guarded (400 on empty query);
- * it returns `{ bundle_suggestion: BundleSuggestion | null }`, where the added
+ * (e.g. `flowers.com`) to the cart. The endpoint serves anonymous callers too
+ * (DOMAINS-2239: the group id is not bound to a user), is flag-gated (404 when
+ * off) and query-guarded (400 on empty query); it returns
+ * `{ bundle_suggestion: BundleSuggestion | null }`, where the added
  * domain is the `primary` member and the rest are `companion`s.
  * @param fqdn The fully-qualified trigger domain (e.g. "flowers.com").
  * @returns A bundle suggestion, or null when no bundle applies.

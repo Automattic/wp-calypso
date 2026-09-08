@@ -96,16 +96,6 @@
 	// Scope the print rules to this page (the key block only exists here) so the
 	// shared layout/card components print normally on other pages.
 	body:has( .legacy-contact-print__key ) {
-		// The shared print reset for the body gutter/overflow loses to the
-		// higher-specificity `:has()` selectors that set them, so re-apply with
-		// enough specificity here. Also drop the viewport-height floor, which
-		// otherwise overflows the document onto a blank second page.
-		.dashboard-root__body {
-			padding-inline-start: 0;
-			overflow-x: visible;
-			min-height: 0;
-		}
-
 		// Hide the dev/staging environment badge (position: fixed, so it leaks
 		// into the printed output).
 		.environment-badge {

@@ -119,6 +119,53 @@ describe( '<PurchaseExpiryStatus>', () => {
 		} );
 	} );
 
+	describe( 'a free trial', () => {
+		const freeTrial = ( overrides: Partial< Purchase > = {} ) =>
+			createPurchase( {
+				expiry_status: 'manual-renew',
+				expiry_date: daysFromNow( 30 ),
+				introductory_offer: {
+					cost_per_interval: 0,
+					end_date: daysFromNow( 30 ),
+					is_within_period: true,
+				},
+				...overrides,
+			} as Partial< Purchase > );
+
+		test( 'is described by when the trial runs out', () => {
+			render( <PurchaseExpiryStatus purchase={ freeTrial() } /> );
+
+			expect( screen.getByText( /free trial ends on march 26, 2026/i ) ).toBeVisible();
+		} );
+
+		test( 'is described by its expiry once an early renewal has paid past the trial', () => {
+			render(
+				<PurchaseExpiryStatus purchase={ freeTrial( { expiry_date: daysFromNow( 395 ) } ) } />
+			);
+
+			expect( screen.queryByText( /free trial/i ) ).toBeNull();
+			expect( screen.getByText( /expires on/i ) ).toBeVisible();
+			expect( screen.getByText( 'March 26, 2027' ) ).toBeVisible();
+		} );
+
+		test( 'is described by its renewal once an early renewal has paid past the trial', () => {
+			render(
+				<PurchaseExpiryStatus
+					purchase={ freeTrial( {
+						expiry_status: 'active',
+						expiry_date: daysFromNow( 395 ),
+						renew_date: daysFromNow( 395 ),
+						price_integer: 3500,
+						currency_code: 'USD',
+					} ) }
+				/>
+			);
+
+			expect( screen.queryByText( /free trial/i ) ).toBeNull();
+			expect( screen.getByText( /renews yearly at \$35/i ) ).toBeVisible();
+		} );
+	} );
+
 	describe( 'a purchase the viewer cannot renew', () => {
 		test.each( [
 			[ 'is not theirs', { user_id: OWNER_ID + 1 } ],

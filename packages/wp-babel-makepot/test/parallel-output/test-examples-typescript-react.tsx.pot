@@ -1,0 +1,6 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+#: test/examples/typescript-react.tsx:8
+msgid "Typescript react component string"
+msgstr ""

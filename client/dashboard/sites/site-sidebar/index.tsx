@@ -73,7 +73,7 @@ function SiteMenuSidebar( { site }: { site: Site } ) {
 	const siteTypeSupports = getSiteTypeFeatureSupports( site );
 	const isApmEnabled = isEnabled( 'performance/apm' );
 
-	if ( isSiteMigrationInProgress( site ) ) {
+	if ( isSiteMigrationInProgress( site ) && ! isSupportSession() ) {
 		return null;
 	}
 

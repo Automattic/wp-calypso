@@ -14,7 +14,6 @@ import UserAvatar from 'calypso/blocks/user-avatar';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl } from 'calypso/lib/paths';
-import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import withDimensions from 'calypso/lib/with-dimensions';
 import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'calypso/reader/comments/constants';
 import { getStreamUrl } from 'calypso/reader/route';
@@ -115,12 +114,6 @@ class PostComment extends PureComponent {
 		if ( ! this.props.isLoggedIn ) {
 			// Redirect to create account page when not logged in and the login window component is not enabled
 			const { pathname } = getUrlParts( window.location.href );
-			if ( isReaderTagEmbedPage( window.location ) ) {
-				return window.open(
-					createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ),
-					'_blank'
-				);
-			}
 			// Do not redirect to create account page when not logged in and the login window component is enabled
 			if ( ! config.isEnabled( 'reader/login-window' ) ) {
 				return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );

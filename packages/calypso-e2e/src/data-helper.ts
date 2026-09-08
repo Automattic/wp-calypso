@@ -11,6 +11,34 @@ import type {
 	AccountCredentials,
 } from './types/data-helper.types';
 
+// How much of an email address wpcom reads when it derives the username of a
+// passwordless signup: the local part, sanitized to alphanumerics and cut here
+// (`Passwordless_Helpers::generate_username`). Two users whose addresses match
+// over these characters are handed the same username, and whichever signup
+// arrives second fails with `username_reserved_but_may_be_available` or
+// `user_already_exists`.
+const MAX_DERIVED_USERNAME_LENGTH = 40;
+
+// Random characters at the end of a username, base 36. Long enough that two
+// users made in the same millisecond still differ.
+const RANDOM_SUFFIX_LENGTH = 4;
+
+// The namespace wpcom gates test accounts on: teardown refuses to close an
+// account whose username does not carry it (`RestAPIClient.closeAccount`), and
+// signup verification only enforces its verdicts on names inside it. It is
+// never what gives way to the budget below.
+const TEST_ACCOUNT_NAMESPACE = 'e2eflowtesting';
+
+/**
+ * Strips everything wpcom drops before it derives a username from an address.
+ *
+ * @param {string} value Text to sanitize.
+ * @returns {string} The alphanumeric characters of the text.
+ */
+function toAlphanumeric( value: string ): string {
+	return value.replace( /[^a-z0-9]/gi, '' );
+}
+
 /**
  * Returns a set of data required to sign up
  * as a new user and create a new site.
@@ -85,17 +113,39 @@ export function getTimestamp(): string {
  * and the timestamp.
  *
  * Example:
- * 	e2eflowtesting-1654124900-728
- * 	e2eflowtestingfree-1654124900-129
+ * 	e2eflowtestingtn0h9wzr7f4b
+ * 	e2eflowtestingfreetn0h9x1a02pk
+ *
+ * The name is kept short enough that a Gmail-aliased address built from it
+ * still fits in the part wpcom derives a username from, base address included.
+ * The prefix only names the suite that made the user, so it is what gives way
+ * when that leaves no room; the timestamp and random suffix are what keep the
+ * user unique, and they are written in base 36 to spend as few characters as
+ * possible saying it.
  *
  * @param param0 Object parameter.
  * @param {string} param0.prefix Prefix for the username.
  * @returns {string} Generated username.
  */
 export function getUsername( { prefix = '' }: { prefix?: string } = {} ): string {
-	const timestamp = getTimestamp();
-	const randomNumber = getRandomInteger( 0, 999 );
-	return `e2eflowtesting${ prefix }${ timestamp }${ randomNumber }`;
+	const timestamp = Number( getTimestamp() ).toString( 36 );
+	const randomSuffix = getRandomInteger( 0, 36 ** RANDOM_SUFFIX_LENGTH )
+		.toString( 36 )
+		.padStart( RANDOM_SUFFIX_LENGTH, '0' );
+	const unique = `${ timestamp }${ randomSuffix }`;
+
+	const gmailBase = toAlphanumeric( SecretsManager.secrets.gmailTestEmail.split( '@' )[ 0 ] );
+	const nameBudget = MAX_DERIVED_USERNAME_LENGTH - gmailBase.length - unique.length;
+
+	// Only the prefix gives way. A budget short enough to cut into the namespace
+	// leaves an account teardown will not close, and a negative one makes `slice`
+	// trim from the end instead of clamping, so the cut stops happening at all.
+	const name = `${ TEST_ACCOUNT_NAMESPACE }${ prefix }`.slice(
+		0,
+		Math.max( TEST_ACCOUNT_NAMESPACE.length, nameBudget )
+	);
+
+	return name + unique;
 }
 
 /**

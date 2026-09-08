@@ -11,20 +11,27 @@ import {
 } from '../../utils/external-context';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { setSiteEditorAction } from '../../utils/site-editor-context';
-import { BIG_SKY_EVENT_PREFIX, recordBigSkyTracksEvent } from '../../utils/tracks';
+import {
+	BIG_SKY_EVENT_PREFIX,
+	recordBigSkyTracksEvent,
+	type BigSkyEventName,
+} from '../../utils/tracks';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 /** Bridge-facing recorder: drops malformed calls instead of emitting `jetpack_big_sky_undefined`. */
 function recordGuardedBigSkyTracksEvent(
-	eventName: string,
+	eventName: BigSkyEventName,
 	props?: Record< string, unknown >
 ): void {
-	if ( typeof eventName !== 'string' || eventName === '' ) {
+	if (
+		typeof eventName !== 'string' ||
+		! eventName.startsWith( BIG_SKY_EVENT_PREFIX ) ||
+		eventName === BIG_SKY_EVENT_PREFIX
+	) {
 		return;
 	}
 
-	// Bridge callers pass the suffix only — see `recordBigSkyTracksEvent` in `global.d.ts`.
-	recordBigSkyTracksEvent( `${ BIG_SKY_EVENT_PREFIX }${ eventName }`, props );
+	recordBigSkyTracksEvent( eventName, props );
 }
 
 /**
@@ -81,10 +88,13 @@ export function useSetupCustomActions( {
 	setIsChatEnabled,
 	setDesktopMediaQuery,
 }: SetupProps ): void {
-	const { hasLoaded, isOpen, isDocked, isMinimized, floatingPosition } = useSelect( ( select ) => {
-		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
-		return store.getAgentsManagerState();
-	}, [] );
+	const { hasLoaded, isOpen, isDocked, isMinimized, floatingPosition, isChatVisible } = useSelect(
+		( select ) => {
+			const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
+			return store.getAgentsManagerState();
+		},
+		[]
+	);
 	const { setIsOpen, setIsDocked, setIsMinimized } = useDispatch( AGENTS_MANAGER_STORE );
 	const { agentConfig, getTabSessionId, resumeChat } = useAgentsManagerContext();
 	const navigate = useNavigate();
@@ -212,16 +222,16 @@ export function useSetupCustomActions( {
 		}
 	}, [ hasLoaded, isOpen, isDocked, floatingPosition ] );
 
-	// Whether the chat is visible (open and not minimized). Entry points outside
-	// the bundle (e.g. the Calypso masterbar) read this to toggle.
-	const isChatVisible = useCallback( () => isOpen && ! isMinimized, [ isOpen, isMinimized ] );
+	// Entry points outside the bundle (the omnibar AI and Help buttons, Jetpack's
+	// AI sidebar) read this to decide whether a click closes or opens.
+	const getIsChatVisible = useCallback( () => isChatVisible, [ isChatVisible ] );
 
 	// The chat's current route (e.g. `/chat`), so callers can detect a same-route re-click.
 	const getCurrentRoute = useCallback( () => locationRef.current.pathname, [] );
 
 	useRegisterCustomActions( {
 		getChatState,
-		isChatVisible,
+		isChatVisible: getIsChatVisible,
 		getCurrentRoute,
 		getSessionId: getTabSessionId,
 		recordBigSkyTracksEvent: recordGuardedBigSkyTracksEvent,

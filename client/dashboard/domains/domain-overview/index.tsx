@@ -7,10 +7,10 @@ import {
 	siteByIdQuery,
 } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
-import { Badge } from '@automattic/ui';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useMemo } from 'react';
 import { useLocale } from '../../app/locale';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
@@ -18,9 +18,9 @@ import { domainRoute } from '../../app/router/domains';
 import SnackbarBackButton from '../../app/snackbar-back-button';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import PendingPrimaryDomainNotice from '../../components/pending-primary-domain-notice';
 import { formatDate } from '../../utils/datetime';
-import { getDomainRenewalUrl, isTldInMaintenance } from '../../utils/domain';
+import { isTldInMaintenance } from '../../utils/domain';
+import { getRenewalUrlFromPurchase } from '../../utils/purchase';
 import { TLDMaintenanceNotice } from '../maintenance-notice';
 import Actions from './actions';
 import FeaturedCards from './featured-cards';
@@ -105,7 +105,7 @@ export default function DomainOverview() {
 									variant="primary"
 									__next40pxDefaultSize
 									disabled={ isTldInMaintenance( domain ) }
-									href={ getDomainRenewalUrl( domain, purchase ) }
+									href={ getRenewalUrlFromPurchase( purchase ) }
 								>
 									{
 										// translators: price is the price of the domain renewal.
@@ -132,7 +132,6 @@ export default function DomainOverview() {
 				{ domain.is_pending_icann_verification && (
 					<IcannSuspensionNotice domainName={ domain.domain } />
 				) }
-				<PendingPrimaryDomainNotice domainName={ domain.domain } />
 				{ domain.subtype.id !== DomainSubtype.DOMAIN_TRANSFER && (
 					<>
 						<FeaturedCards isDisabled={ isTldInMaintenance( domain ) } />

@@ -22,12 +22,15 @@
 
 ## Packages
 
+- **Agents Manager** (`packages/agents-manager`) — shared component library for WordPress.com's unified AI agent experience, running in Calypso, Simple, and Atomic sites. Also deployed via `apps/agents-manager/` to `widgets.wp.com`. See its `AGENTS.md` for architecture and conventions.
+- **Agenttic** (`packages/agenttic-client`, `packages/agenttic-ui`) — AI agent chat client library and UI components. Also published to npm for consumers outside this repo. ⚠️ Still on its pre-migration package layout (vite-built, ESM-only, flat `dist/`, no `calypso:src`); normalizing it is a future goal, but the published artifact shape is a contract with external consumers — read the Development and Releasing sections in `packages/agenttic-client/README.md` before restructuring or publishing.
 - **Help Center** (`packages/help-center`) — shared component library for WordPress.com support. Also deployed via `apps/help-center/` to `widgets.wp.com`.
 - **Image Studio** (`packages/image-studio`) — AI-powered image editing and generation
 - **Calypso Products** (`packages/calypso-products`) — ⚠️ **Avoid.** Deprecated/frozen: a bloated client-side duplicate of product data the backend already owns. Don't add to it; prefer backend-driven data (e.g. `@automattic/api-queries`). See `packages/calypso-products/AGENTS.md`.
 
 ## Apps
 
+- **Agents Manager** (`apps/agents-manager`) — build/deploy layer that bundles `packages/agents-manager` into webpack entry points served from `widgets.wp.com`.
 - **Help Center** (`apps/help-center`) — build/deploy layer that bundles `packages/help-center` into webpack entry points served from `widgets.wp.com`.
 
 ## Development

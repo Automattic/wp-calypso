@@ -7,7 +7,6 @@ import {
 	siteSshKeysDetachMutation,
 	sshKeysQuery,
 } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -25,8 +24,10 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { trash } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import { Badge } from '@wordpress/ui';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
+import { useIntlLocale } from '../../app/locale';
 import { securitySshKeyRoute } from '../../app/router/me';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
@@ -64,7 +65,7 @@ const SshKeyCard = ( {
 							<Text>{ `${ siteSshKey.user_login }-${ siteSshKey.name }` }</Text>
 							<Text variant="muted">{ siteSshKey.sha256 }</Text>
 						</VStack>
-						<Badge intent="info" style={ { height: '24px' } }>
+						<Badge intent="informational" style={ { height: '24px' } }>
 							{ sprintf(
 								/* translators: %s is when the SSH key was attached. */
 								__( 'Attached on %s' ),
@@ -129,7 +130,7 @@ export default function SshCard( {
 	const attachSshKeyMutation = useMutation( siteSshKeysAttachMutation( siteId ) );
 	const detachSshKeyMutation = useMutation( siteSshKeysDetachMutation( siteId ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const userLocale = user.locale_variant || user.language || 'en';
+	const userLocale = useIntlLocale();
 	const hasUserSshKeys = userSshKeys && userSshKeys.length > 0;
 	const [ formData, setFormData ] = useState< SshCardFormData >( {
 		connection_command: `ssh ${ sftpUsers[ 0 ]?.username }@ssh.wp.com`,
