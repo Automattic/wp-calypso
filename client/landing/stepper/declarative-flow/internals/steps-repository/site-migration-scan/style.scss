@@ -1,0 +1,85 @@
+@import '@wordpress/base-styles/breakpoints';
+
+.step-container-v2--site-migration-scan {
+	.site-migration-scan__card {
+		width: 100%;
+	}
+
+	.site-migration-scan__site-title {
+		color: var( --color-text );
+		font-size: 1rem;
+		font-weight: 600;
+	}
+
+	.site-migration-scan__site-host {
+		color: var( --color-text-subtle );
+		font-size: 0.875rem;
+	}
+
+	.site-migration-scan__favicon {
+		width: 32px;
+		height: 32px;
+		border-radius: 4px;
+		object-fit: contain;
+	}
+
+	.site-migration-scan__findings {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.site-migration-scan__finding {
+		display: flex;
+		gap: 8px;
+		align-items: flex-start;
+		margin: 0;
+		color: var( --color-text );
+		font-size: 0.875rem;
+		line-height: 1.5;
+	}
+
+	.site-migration-scan__finding-status {
+		display: flex;
+		flex-shrink: 0;
+		align-items: center;
+		height: 1.5em;
+		color: var( --color-success );
+
+		.site-migration-scan__finding.is-missing & {
+			color: var( --color-warning );
+		}
+	}
+
+	.site-migration-scan__finding-label {
+		font-weight: 600;
+	}
+
+	.site-migration-scan__finding-detail {
+		color: var( --color-text-subtle );
+	}
+
+	.site-migration-scan__verdict {
+		margin: 0;
+		color: var( --color-text );
+		font-size: 0.875rem;
+		font-weight: 600;
+
+		&.is-partial {
+			color: var( --color-warning-dark );
+		}
+	}
+
+	.site-migration-scan__status {
+		margin: 0;
+		color: var( --color-text-subtle );
+		font-size: 0.875rem;
+	}
+
+	.site-migration-scan__progress {
+		width: 100%;
+	}
+}
