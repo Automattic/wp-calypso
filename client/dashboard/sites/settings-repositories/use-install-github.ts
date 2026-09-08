@@ -37,6 +37,11 @@ const openPopup = ( { url, onMessage }: OpenPopupOptions ) => {
 		return false;
 	}
 
+	// A blocked popup returns null rather than throwing.
+	if ( ! popup ) {
+		return false;
+	}
+
 	const handleMessage = ( event: MessageEvent ) => {
 		const { data } = event;
 
