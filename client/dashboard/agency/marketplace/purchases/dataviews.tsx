@@ -13,6 +13,8 @@ import { __, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import { DEFAULT_PER_PAGE } from '../../../sites/dataviews/views';
 import { formatDate } from '../../../utils/datetime';
+import { a4aLink } from '../../../utils/link';
+import AssignLicenseModal from './assign-license-modal';
 import {
 	LICENSE_STATUS_FILTERS,
 	getLicenseDisplayStatus,
@@ -21,13 +23,20 @@ import {
 	getLicenseStatusLabels,
 	getLicenseTags,
 	getSiteHostname,
+	isAutoRenewDisabled,
 	isBundleParent,
+	isChildLicense,
+	isJetpackCrmLicense,
+	isPartnerLicense,
+	isPressableAddonLicense,
 	isPressableLicense,
+	isWpcomHostingLicense,
 } from './license-status';
+import RevokeLicenseModal from './revoke-license-modal';
 import LicenseStatusBadge from './status-badge';
 import type { LicenseStatus } from './license-status';
 import type { FetchJetpackLicensesPageOptions, JetpackLicense } from '@automattic/api-core';
-import type { Field, View } from '@wordpress/dataviews';
+import type { Action, Field, View } from '@wordpress/dataviews';
 
 export const DEFAULT_VIEW: View = {
 	type: 'table',
@@ -205,6 +214,192 @@ export function getLicenseFields( {
 			enableSorting: false,
 			getValue: ( { item } ) => String( item.subscription?.purchase_price ?? '' ),
 			render: ( { item } ) => <CostCell license={ item } />,
+		},
+	];
+}
+
+export function getLicenseActions( {
+	canRevoke,
+	isAgencyOwner,
+	onCopyKey,
+	onDownload,
+	onOpenSites,
+	onOpenHosting,
+	recordTracksEvent,
+}: {
+	canRevoke: boolean;
+	isAgencyOwner: boolean;
+	onCopyKey: ( license: JetpackLicense ) => void;
+	onDownload: ( license: JetpackLicense ) => void;
+	onOpenSites: () => void;
+	onOpenHosting: ( license: JetpackLicense ) => void;
+	recordTracksEvent: ( eventName: string ) => void;
+} ): Action< JetpackLicense >[] {
+	// Only the agency owner can act on Pressable licenses.
+	const canAct = ( item: JetpackLicense ) => isAgencyOwner || ! isPressableLicense( item );
+	const isAssignable = ( item: JetpackLicense ) =>
+		canAct( item ) &&
+		isPartnerLicense( item ) &&
+		getLicenseStatus( item ) === 'unassigned' &&
+		! isBundleParent( item ) &&
+		! isPressableAddonLicense( item );
+	const isAssigned = ( item: JetpackLicense ) =>
+		canAct( item ) && getLicenseStatus( item ) === 'assigned' && !! item.siteurl;
+	// Site management actions only apply to sites created from a WordPress.com hosting license.
+	const isAssignedWpcomSite = ( item: JetpackLicense ) =>
+		isAssigned( item ) && isWpcomHostingLicense( item );
+	const isDevSite = ( item: JetpackLicense ) => item.meta?.a4a_is_dev_site === '1';
+	const openExternal = ( url: string ) => window.open( url, '_blank', 'noopener,noreferrer' );
+
+	// The site actions mirror the classic license row. Set up site, Change domain,
+	// Hosting configuration, and Prepare for launch go to the Sites list for now.
+	// TODO: point each at its own screen once site details and settings land in
+	// MSD (A4A-3021).
+	return [
+		{
+			id: 'set-up-site',
+			label: __( 'Set up site' ),
+			isEligible: isAssignedWpcomSite,
+			callback: () => {
+				recordTracksEvent( 'calypso_a4a_licenses_site_set_up_click' );
+				onOpenSites();
+			},
+		},
+		{
+			id: 'change-domain',
+			label: __( 'Change domain' ),
+			isEligible: ( item ) => isAssignedWpcomSite( item ) && ! isDevSite( item ),
+			callback: () => {
+				recordTracksEvent( 'calypso_a4a_licenses_change_domain_click' );
+				onOpenSites();
+			},
+		},
+		{
+			id: 'hosting-configuration',
+			label: __( 'Hosting configuration' ),
+			isEligible: isAssignedWpcomSite,
+			callback: () => {
+				recordTracksEvent( 'calypso_a4a_licenses_hosting_configuration_click' );
+				onOpenSites();
+			},
+		},
+		{
+			id: 'edit-site-in-wp-admin',
+			label: __( 'Edit site in WP Admin' ),
+			isEligible: isAssignedWpcomSite,
+			callback: ( items ) => {
+				recordTracksEvent( 'calypso_a4a_licenses_edit_site_click' );
+				openExternal( `${ items[ 0 ].siteurl }/wp-admin/admin.php?page=jetpack#/dashboard` );
+			},
+		},
+		{
+			id: 'debug-site',
+			label: __( 'Debug site' ),
+			isEligible: ( item ) => isAssigned( item ) && ! isPressableLicense( item ),
+			callback: ( items ) => {
+				recordTracksEvent( 'calypso_a4a_licenses_debug_site_click' );
+				openExternal( `https://jptools.wordpress.com/debug/?url=${ items[ 0 ].siteurl }` );
+			},
+		},
+		{
+			id: 'upgrade',
+			label: __( 'Upgrade' ),
+			isEligible: ( item ) =>
+				canAct( item ) &&
+				( isWpcomHostingLicense( item ) || isPressableLicense( item ) ) &&
+				! isPressableAddonLicense( item ) &&
+				getLicenseStatus( item ) !== 'revoked' &&
+				! isDevSite( item ) &&
+				! item.referral &&
+				! isAutoRenewDisabled( item ),
+			callback: ( items ) => {
+				recordTracksEvent( 'calypso_a4a_licenses_upgrade_click' );
+				onOpenHosting( items[ 0 ] );
+			},
+		},
+		{
+			id: 'prepare-for-launch',
+			label: __( 'Prepare for launch' ),
+			// TODO: classic checks WP Admin access first and shows a permission modal
+			// when the user cannot launch the site.
+			isEligible: ( item ) => isAssignedWpcomSite( item ) && isDevSite( item ),
+			callback: () => {
+				recordTracksEvent( 'calypso_a4a_licenses_prepare_for_launch_click' );
+				onOpenSites();
+			},
+		},
+		{
+			id: 'create-site',
+			label: __( 'Create site' ),
+			isEligible: ( item ) => isAssignable( item ) && isWpcomHostingLicense( item ),
+			// The site setup flow still lives in the classic dashboard.
+			callback: () => window.location.assign( a4aLink( '/sites/need-setup' ) ),
+		},
+		{
+			id: 'assign-license',
+			label: __( 'Assign to site' ),
+			isEligible: ( item ) => isAssignable( item ) && ! isWpcomHostingLicense( item ),
+			modalHeader: __( 'Which site would you like to assign this license to?' ),
+			modalSize: 'medium',
+			RenderModal: ( { items, closeModal } ) => (
+				<AssignLicenseModal license={ items[ 0 ] } closeModal={ closeModal } />
+			),
+		},
+		{
+			id: 'copy-license-key',
+			label: __( 'Copy license key' ),
+			// Classic never exposes the key of a Pressable license.
+			isEligible: ( item ) => canAct( item ) && ! isPressableLicense( item ),
+			callback: ( items ) => onCopyKey( items[ 0 ] ),
+		},
+		{
+			id: 'download-license-product',
+			label: __( 'Download product' ),
+			isEligible: ( item ) =>
+				canAct( item ) &&
+				isPartnerLicense( item ) &&
+				item.has_downloads &&
+				getLicenseStatus( item ) !== 'revoked',
+			callback: ( items ) => onDownload( items[ 0 ] ),
+		},
+		{
+			id: 'download-crm-extensions',
+			label: __( 'Download Jetpack CRM Extensions' ),
+			isEligible: ( item ) =>
+				canAct( item ) && isJetpackCrmLicense( item ) && getLicenseStatus( item ) === 'assigned',
+			// The CRM downloads page still lives in the classic dashboard.
+			callback: ( items ) =>
+				window.location.assign( a4aLink( `/purchases/crm-downloads/${ items[ 0 ].license_key }` ) ),
+		},
+		{
+			id: 'revoke-license',
+			label: __( 'Revoke license' ),
+			// Referral licenses are paid for by the client, so the agency cannot revoke them.
+			isEligible: ( item ) =>
+				canAct( item ) &&
+				canRevoke &&
+				isPartnerLicense( item ) &&
+				! item.referral &&
+				! isAutoRenewDisabled( item ) &&
+				( isChildLicense( item )
+					? getLicenseStatus( item ) === 'assigned'
+					: getLicenseStatus( item ) !== 'revoked' ),
+			modalHeader: ( items ) =>
+				isBundleParent( items[ 0 ] )
+					? sprintf(
+							/* translators: %1$d is the number of licenses in the bundle, %2$s is the product name. */
+							__( 'Revoke bundle of %1$d %2$s licenses?' ),
+							items[ 0 ].quantity ?? 0,
+							getLicenseProductName( items[ 0 ] )
+					  )
+					: sprintf(
+							/* translators: %s is the product name. */
+							__( 'Revoke %s license?' ),
+							getLicenseProductName( items[ 0 ] )
+					  ),
+			RenderModal: ( { items, closeModal } ) => (
+				<RevokeLicenseModal license={ items[ 0 ] } closeModal={ closeModal } />
+			),
 		},
 	];
 }
