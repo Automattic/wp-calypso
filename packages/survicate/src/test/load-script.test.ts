@@ -15,14 +15,20 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
+jest.mock( '../support-session', () => ( {
+	isInSupportSession: jest.fn( () => false ),
+} ) );
+
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { loadScript } from '@automattic/load-script';
 import { select, subscribe } from '@wordpress/data';
 import { loadSurvicateScript } from '../load-script';
+import { isInSupportSession } from '../support-session';
 
 const mockSelect = select as jest.Mock;
 const mockSubscribe = subscribe as unknown as jest.Mock;
 const mockRecordTracksEvent = recordTracksEvent as jest.Mock;
+const mockIsInSupportSession = isInSupportSession as jest.Mock;
 
 function setHelpCenterOpen( open: boolean ) {
 	mockSelect.mockReturnValue( { isHelpCenterShown: () => open } );
@@ -41,6 +47,7 @@ describe( 'loadSurvicateScript', () => {
 	beforeEach( () => {
 		window._sva = undefined;
 		setHelpCenterOpen( false );
+		mockIsInSupportSession.mockReturnValue( false );
 		controller = new AbortController();
 	} );
 
@@ -370,6 +377,52 @@ describe( 'loadSurvicateScript', () => {
 
 		expect( window._sva.disableTargeting ).toBe( false );
 		modal.remove();
+	} );
+
+	test( 'should pause targeting up front when the SDK becomes ready in a support session', () => {
+		window._sva = { closeSurvey: jest.fn(), addEventListener: jest.fn() };
+		mockIsInSupportSession.mockReturnValue( true );
+
+		loadSurvicateScript( 'test-workspace-id', controller.signal );
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+		expect( window._sva.disableTargeting ).toBe( true );
+	} );
+
+	test( 'should close a displayed survey and record the reason in a support session', () => {
+		const closeSurvey = jest.fn();
+		const addEventListener = jest.fn();
+		window._sva = { closeSurvey, addEventListener };
+		mockIsInSupportSession.mockReturnValue( true );
+
+		loadSurvicateScript( 'test-workspace-id', controller.signal );
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+		const onSurveyDisplayed = addEventListener.mock.calls.find(
+			( [ event ] ) => event === 'survey_displayed'
+		)?.[ 1 ];
+		onSurveyDisplayed?.();
+
+		expect( closeSurvey ).toHaveBeenCalled();
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_survicate_survey_suppressed', {
+			reason: 'support_session',
+			trigger: 'survey_displayed',
+		} );
+	} );
+
+	test( 'should leave targeting paused on abort during a support session', () => {
+		const retarget = jest.fn();
+		window._sva = { closeSurvey: jest.fn(), addEventListener: jest.fn(), retarget };
+		mockIsInSupportSession.mockReturnValue( true );
+
+		loadSurvicateScript( 'test-workspace-id', controller.signal );
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+		expect( window._sva.disableTargeting ).toBe( true );
+
+		controller.abort();
+
+		expect( window._sva.disableTargeting ).toBe( true );
+		expect( retarget ).not.toHaveBeenCalled();
 	} );
 
 	test( 'should re-establish modal suppression when reloaded after the SDK is ready', async () => {

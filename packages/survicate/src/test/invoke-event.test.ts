@@ -11,13 +11,19 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
+jest.mock( '../support-session', () => ( {
+	isInSupportSession: jest.fn( () => false ),
+} ) );
+
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { select, subscribe } from '@wordpress/data';
 import { invokeSurvicateEvent, observeHelpCenter } from '../invoke-event';
+import { isInSupportSession } from '../support-session';
 
 const mockSelect = select as jest.Mock;
 const mockSubscribe = subscribe as unknown as jest.Mock;
 const mockRecordTracksEvent = recordTracksEvent as jest.Mock;
+const mockIsInSupportSession = isInSupportSession as jest.Mock;
 
 function setHelpCenterOpen( open: boolean ) {
 	mockSelect.mockReturnValue( { isHelpCenterShown: () => open } );
@@ -27,6 +33,7 @@ describe( 'invokeSurvicateEvent', () => {
 	beforeEach( () => {
 		window._sva = undefined;
 		setHelpCenterOpen( false );
+		mockIsInSupportSession.mockReturnValue( false );
 	} );
 
 	afterEach( () => {
@@ -146,6 +153,50 @@ describe( 'invokeSurvicateEvent', () => {
 		expect( invokeEvent ).not.toHaveBeenCalled();
 
 		modal.remove();
+	} );
+
+	test( 'should suppress the event and close the survey during a support session', () => {
+		const invokeEvent = jest.fn();
+		const closeSurvey = jest.fn();
+		window._sva = { invokeEvent, closeSurvey };
+
+		mockIsInSupportSession.mockReturnValue( true );
+		invokeSurvicateEvent( 'testEvent' );
+
+		expect( invokeEvent ).not.toHaveBeenCalled();
+		expect( closeSurvey ).toHaveBeenCalledTimes( 1 );
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_survicate_survey_suppressed', {
+			reason: 'support_session',
+			trigger: 'invoke_event',
+			event_name: 'testEvent',
+		} );
+	} );
+
+	test( 'should suppress a deferred event when in a support session at SurvicateReady time', () => {
+		const invokeEvent = jest.fn();
+
+		invokeSurvicateEvent( 'testEvent' );
+		mockIsInSupportSession.mockReturnValue( true );
+
+		window._sva = { invokeEvent };
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+
+		expect( invokeEvent ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should report support_session ahead of the Help Center and modals', () => {
+		const invokeEvent = jest.fn();
+		const closeSurvey = jest.fn();
+		window._sva = { invokeEvent, closeSurvey };
+
+		mockIsInSupportSession.mockReturnValue( true );
+		setHelpCenterOpen( true );
+		invokeSurvicateEvent( 'testEvent' );
+
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_survicate_survey_suppressed',
+			expect.objectContaining( { reason: 'support_session' } )
+		);
 	} );
 
 	test( 'should fall back gracefully when Help Center store is unavailable', () => {

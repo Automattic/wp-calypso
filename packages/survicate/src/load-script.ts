@@ -3,6 +3,7 @@ import { closeSurvicateSurvey } from './close-survey';
 import debug from './debug';
 import { getSuppressionReason, observeHelpCenter, shouldSuppressSurvey } from './invoke-event';
 import { isSurveyVisible, observeModals } from './modal-detection';
+import { isInSupportSession } from './support-session';
 import { pauseSurvicateTargeting, resumeSurvicateTargeting } from './targeting';
 import { recordSurveySuppressed } from './track-suppression';
 
@@ -30,7 +31,7 @@ export function loadSurvicateScript( workspaceId: string, signal?: AbortSignal )
 
 		const reason = getSuppressionReason();
 		if ( reason ) {
-			debug( 'Survicate survey suppressed (Help Center or a modal is open)' );
+			debug( 'Survicate survey suppressed (reason: %s)', reason );
 			recordSurveySuppressed( reason, 'survey_displayed' );
 			// Closing alone is not enough for auto-campaigns: the SDK's targeting
 			// engine re-evaluates every few seconds and re-displays a closed
@@ -78,9 +79,10 @@ export function loadSurvicateScript( workspaceId: string, signal?: AbortSignal )
 		const disconnectModalObserver = observeModals( onModalOpened, resumeIfClear );
 		const unsubscribeHelpCenter = observeHelpCenter( onHelpCenterOpened, resumeIfClear );
 
-		// A modal or the Help Center already open when the SDK becomes ready
-		// (e.g. an onboarding modal shown at page load) pauses targeting up
-		// front, so the survey never displays at all — no show-then-hide flash.
+		// A suppressor already in place when the SDK becomes ready (a support
+		// session, or an onboarding modal shown at page load) pauses targeting
+		// up front, so the survey never displays at all — no show-then-hide
+		// flash.
 		if ( shouldSuppressSurvey() ) {
 			pauseSurvicateTargeting();
 		}
@@ -91,8 +93,12 @@ export function loadSurvicateScript( workspaceId: string, signal?: AbortSignal )
 				window._sva?.removeEventListener?.( 'survey_displayed', onSurveyDisplayed );
 				disconnectModalObserver();
 				unsubscribeHelpCenter();
-				// Don't leave the SDK paused with nothing left to resume it.
-				resumeSurvicateTargeting();
+				// Don't leave the SDK paused with nothing left to resume it —
+				// except in a support session, where staying paused for the rest
+				// of the page lifetime is the point.
+				if ( ! isInSupportSession() ) {
+					resumeSurvicateTargeting();
+				}
 			},
 			{ once: true }
 		);

@@ -1,4 +1,15 @@
+jest.mock( '../support-session', () => ( {
+	isInSupportSession: jest.fn( () => false ),
+} ) );
+
 import { shouldLoadSurvicate, SURVICATE_WORKSPACE_ID } from '../conditions';
+import { isInSupportSession } from '../support-session';
+
+const mockIsInSupportSession = isInSupportSession as jest.Mock;
+
+beforeEach( () => {
+	mockIsInSupportSession.mockReturnValue( false );
+} );
 
 describe( 'SURVICATE_WORKSPACE_ID', () => {
 	test( 'should be the expected workspace ID', () => {
@@ -28,5 +39,10 @@ describe( 'shouldLoadSurvicate', () => {
 
 	test( 'should return false for non-English on mobile', () => {
 		expect( shouldLoadSurvicate( { locale: 'fr', isMobile: true } ) ).toBe( false );
+	} );
+
+	test( 'should return false during a support session', () => {
+		mockIsInSupportSession.mockReturnValue( true );
+		expect( shouldLoadSurvicate( { locale: 'en', isMobile: false } ) ).toBe( false );
 	} );
 } );
