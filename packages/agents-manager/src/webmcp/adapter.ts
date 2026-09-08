@@ -5,7 +5,7 @@ import {
 	getWebMcpInputSchema,
 	normalizeInputSchema,
 } from './contracts';
-import { selectExposedAbilities } from './exposure';
+import { isWebMcpConsequential, selectExposedAbilities } from './exposure';
 import type { Ability } from '../abilities/types';
 import type { ToolProvider } from '../extension-types';
 import type {
@@ -45,12 +45,17 @@ function createTool(
 		title: ability.label || ability.name,
 		description: getWebMcpDescription( ability ),
 		inputSchema: normalizeInputSchema( getWebMcpInputSchema( ability ) ),
+		// Only the three hints the WebMCP draft defines. The MCP-style
+		// `destructiveHint` and `idempotentHint` are not part of it.
 		annotations: {
 			readOnlyHint: annotations?.readonly === true,
-			destructiveHint: contract.destructive === true || annotations?.destructive === true,
-			idempotentHint: annotations?.idempotent === true,
 			// Site content, labels, and third-party abilities are user-authored.
 			untrustedContentHint: true,
+			// Lets a browser agent insist on user confirmation before running it.
+			consequentialHint:
+				contract.consequential === true ||
+				isWebMcpConsequential( ability ) ||
+				annotations?.destructive === true,
 		},
 		execute: async ( input, options ) => {
 			if ( options?.signal?.aborted ) {

@@ -18,7 +18,8 @@ export const WEBMCP_SERVER_ABILITY_NAMES = [
 	'core/get-site-info',
 ] as const;
 
-export const WEBMCP_MUTATING_SERVER_ABILITY_NAMES = [ 'wpcom/media-create' ] as const;
+export const MEDIA_CREATE_ABILITY_NAME = 'wpcom/media-create';
+export const WEBMCP_MUTATING_SERVER_ABILITY_NAMES = [ MEDIA_CREATE_ABILITY_NAME ] as const;
 
 export type WebMcpServerAbilityName = ( typeof WEBMCP_SERVER_ABILITY_NAMES )[ number ];
 
@@ -205,8 +206,10 @@ function adaptShowTemplateResult( value: unknown ): unknown {
 /**
  * The abilities whose WebMCP projection differs from the ability itself. The
  * block-tree read feeds the edit tool its client IDs, the edit tool takes a
- * WebMCP-only schema and shapes its input for the Big Sky callback, and the
- * template toggle points its next-step guidance at the WebMCP block reader.
+ * WebMCP-only schema and shapes its input for the Big Sky callback, the
+ * template toggle points its next-step guidance at the WebMCP block reader,
+ * and the media upload is flagged consequential because it persists a file
+ * while the editor edits stay unsaved and reversible.
  */
 const WEBMCP_ABILITY_CONTRACTS: Record< string, WebMcpAbilityContract > = {
 	[ GET_BLOCK_TREE_ABILITY_NAME ]: {
@@ -216,8 +219,10 @@ const WEBMCP_ABILITY_CONTRACTS: Record< string, WebMcpAbilityContract > = {
 		description:
 			'Applies deterministic edits to the current block-editor canvas. Call agents_manager__get_block_tree immediately before every edit and use the returned clientId values unchanged. To insert a block pattern, call wpcom__patterns_list, fetch one with wpcom__patterns_get, then pass its content as an insert blockMarkup value. The change remains unsaved and reviewable in the editor.',
 		inputSchema: APPLY_BLOCK_EDITS_WEBMCP_INPUT_SCHEMA,
-		destructive: true,
 		prepareInput: prepareApplyBlockEditsInput,
+	},
+	[ MEDIA_CREATE_ABILITY_NAME ]: {
+		consequential: true,
 	},
 	[ SHOW_TEMPLATE_ABILITY_NAME ]: {
 		description:

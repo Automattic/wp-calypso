@@ -97,22 +97,57 @@ describe( 'WebMCP adapter', () => {
 		jest.mocked( blocks.parse ).mockReset().mockReturnValue( [] );
 	} );
 
-	it( 'marks every tool as returning untrusted content', async () => {
+	it( 'emits only the annotations the WebMCP draft defines', async () => {
 		const harness = createHarness( [ createBlockTreeAbility(), createAbility() ] );
 		await harness.adapter.sync();
 
 		expect( harness.tools.get( 'agents_manager__get_block_tree' )?.annotations ).toEqual( {
 			readOnlyHint: true,
-			destructiveHint: false,
-			idempotentHint: true,
 			untrustedContentHint: true,
+			consequentialHint: false,
 		} );
 		expect( harness.tools.get( 'big_sky__apply_block_edits' )?.annotations ).toEqual( {
 			readOnlyHint: false,
-			destructiveHint: true,
-			idempotentHint: false,
 			untrustedContentHint: true,
+			consequentialHint: false,
 		} );
+	} );
+
+	it( 'flags consequential tools from the contract, the channel meta, or the destructive annotation', async () => {
+		const harness = createHarness( [
+			createServerAbility( 'wpcom/media-create', {
+				meta: { annotations: { serverRegistered: true, readonly: false } },
+			} ),
+			createAbility( {
+				name: 'other-plugin/publish-post',
+				meta: {
+					webmcp: { public: true, consequential: true },
+					annotations: { clientRegistered: true },
+				},
+			} ),
+			createAbility( {
+				name: 'other-plugin/delete-post',
+				meta: {
+					webmcp: { public: true },
+					annotations: { clientRegistered: true, destructive: true },
+				},
+			} ),
+			createAbility( {
+				name: 'other-plugin/set-panel-tone',
+				meta: {
+					webmcp: { public: true, consequential: 'yes' },
+					annotations: { clientRegistered: true, destructive: false },
+				},
+			} ),
+		] );
+		await harness.adapter.sync();
+
+		const consequential = ( toolName: string ) =>
+			harness.tools.get( toolName )?.annotations.consequentialHint;
+		expect( consequential( 'wpcom__media_create' ) ).toBe( true );
+		expect( consequential( 'other_plugin__publish_post' ) ).toBe( true );
+		expect( consequential( 'other_plugin__delete_post' ) ).toBe( true );
+		expect( consequential( 'other_plugin__set_panel_tone' ) ).toBe( false );
 	} );
 
 	it( 'skips abilities whose tool names collide and warns once', async () => {
@@ -186,7 +221,7 @@ describe( 'WebMCP adapter', () => {
 		expect( tool ).toMatchObject( {
 			description: expect.stringContaining( 'Instructions for wpcom/get-posts' ),
 			inputSchema: ability.input_schema,
-			annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true },
+			annotations: { readOnlyHint: true, untrustedContentHint: true, consequentialHint: false },
 		} );
 		await tool?.execute( { fields: 'summary' } );
 		expect( harness.toolProvider.executeAbility ).toHaveBeenCalledWith( 'wpcom/get-posts', {
@@ -212,7 +247,7 @@ describe( 'WebMCP adapter', () => {
 		expect( tool ).toMatchObject( {
 			description: expect.stringContaining( 'agents_manager__get_block_tree' ),
 			inputSchema: { type: 'object', properties: {}, additionalProperties: false },
-			annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true },
+			annotations: { readOnlyHint: false, untrustedContentHint: true, consequentialHint: false },
 		} );
 		await expect( tool?.execute( {} ) ).resolves.toEqual( {
 			result: {
@@ -252,7 +287,7 @@ describe( 'WebMCP adapter', () => {
 				},
 				additionalProperties: false,
 			},
-			annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false },
+			annotations: { readOnlyHint: false, untrustedContentHint: true, consequentialHint: false },
 		} );
 
 		const input = {
@@ -304,7 +339,7 @@ describe( 'WebMCP adapter', () => {
 
 		const readTool = harness.tools.get( 'agents_manager__get_block_tree' );
 		expect( readTool ).toMatchObject( {
-			annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true },
+			annotations: { readOnlyHint: true, untrustedContentHint: true, consequentialHint: false },
 		} );
 		await readTool?.execute( {} );
 

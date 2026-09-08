@@ -84,16 +84,26 @@ The allowlisted tools are:
   files to the site's media library after user confirmation. WebMCP sends its input as a JSON POST
   body and preserves its existing authentication, site capability, MIME validation, and size checks.
 
-## Tool names
+## Tool names and annotations
 
 WebMCP tool names use the agent's form: `/` becomes `__` and `-` becomes `_`, so
 `agents-manager/get-block-tree` is exposed as `agents_manager__get_block_tree`. That mapping is not
 injective. When two eligible abilities land on the same tool name, neither is exposed and a warning
 names them once.
 
-Every tool carries `untrustedContentHint: true`, because site content and third-party abilities are
-user-authored. If a browser rejects the descriptor with a `TypeError`, registration is retried once
-with only the members every version knows.
+Tools carry only the three annotations the WebMCP draft defines:
+
+- `readOnlyHint` mirrors the ability's `readonly` annotation.
+- `untrustedContentHint` is always true, because site content and third-party abilities are
+  user-authored.
+- `consequentialHint` marks actions a browser agent should confirm with the user before running.
+  It is set by the contract table (`wpcom/media-create` persists an upload, while the editor edits
+  stay unsaved and reversible), by `meta.webmcp.consequential: true`, or by the ability's
+  `destructive` annotation.
+
+The MCP-style `destructiveHint` and `idempotentHint` are not part of WebMCP and are not emitted. If
+a browser rejects the descriptor with a `TypeError`, registration is retried once with only
+`readOnlyHint`.
 
 ## Lifecycle
 
