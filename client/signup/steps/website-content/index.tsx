@@ -76,7 +76,7 @@ const LinkButton = styled( Button )`
 	}
 `;
 
-const SidebarLinks = styled.div`
+const SidebarLinks = styled.span`
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;

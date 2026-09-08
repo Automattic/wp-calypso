@@ -29,7 +29,7 @@ const DialogButton = styled( Button )`
 	}
 `;
 
-const EXPLAINER_VIDEO_EMBED_URL = 'https://www.youtube.com/embed/Gr1c7_heEkE?autoplay=1';
+const EXPLAINER_VIDEO_EMBED_URL = 'https://www.youtube.com/embed/Gr1c7_heEkE?autoplay=1&mute=1';
 
 const VideoPlayer = styled.div`
 	position: relative;
