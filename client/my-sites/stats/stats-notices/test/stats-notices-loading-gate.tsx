@@ -60,9 +60,10 @@ jest.mock( 'calypso/my-sites/stats/hooks/use-plan-usage-query', () => ( {
 	getUsageLimitStatus: () => ( { isNearLimit: false, isOverLimit: false } ),
 } ) );
 
+let mockStatusLoading = false;
 jest.mock( 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query', () => ( {
 	__esModule: true,
-	default: () => ( { data: false, isLoading: false } ),
+	default: () => ( { data: false, isLoading: mockStatusLoading } ),
 } ) );
 
 jest.mock( 'calypso/my-sites/stats/hooks/use-should-gate-stats', () => ( {
@@ -97,9 +98,14 @@ jest.mock( 'calypso/state/selectors/get-site-features', () => ( {
 	__esModule: true,
 	default: () => ( { active: [] } ),
 } ) );
+let mockIsWpcom = true;
 jest.mock( 'calypso/state/selectors/is-site-wpcom', () => ( {
 	__esModule: true,
-	default: () => true,
+	default: () => mockIsWpcom,
+} ) );
+jest.mock( 'calypso/state/sites/selectors/get-site-admin-url', () => ( {
+	__esModule: true,
+	default: () => 'https://example.com/wp-admin/admin.php?page=jetpack-premium-analytics-wp-admin',
 } ) );
 jest.mock( 'calypso/state/selectors/is-site-wpforteams', () => ( {
 	__esModule: true,
@@ -152,7 +158,10 @@ describe( 'StatsNotices loading gate', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockHasLoadedPlans = false;
+		mockStatusLoading = false;
+		mockIsWpcom = true;
 		delete mockFlags().is_odyssey;
+		delete mockFlags()[ 'stats/premium-analytics-preview' ];
 	} );
 
 	it( 'waits for site plans in Calypso', () => {
@@ -166,6 +175,25 @@ describe( 'StatsNotices loading gate', () => {
 
 		renderNotices();
 
+		expect( screen.getByText( 'Notice under test' ) ).toBeVisible();
+	} );
+
+	/**
+	 * The status query is shared with the modules menu, and TanStack reports the query's fetch
+	 * status to every observer, so this host sees "loading" while that consumer fetches even when
+	 * it never asked. Only a site whose answer this host uses should wait on it.
+	 */
+	it( 'waits for the status read only when it asked for it', () => {
+		mockHasLoadedPlans = true;
+		mockStatusLoading = true;
+		mockFlags()[ 'stats/premium-analytics-preview' ] = true;
+
+		const { unmount } = renderNotices();
+		expect( screen.queryByText( 'Notice under test' ) ).not.toBeInTheDocument();
+		unmount();
+
+		mockIsWpcom = false;
+		renderNotices();
 		expect( screen.getByText( 'Notice under test' ) ).toBeVisible();
 	} );
 
