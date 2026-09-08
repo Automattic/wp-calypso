@@ -204,8 +204,6 @@ describe( 'premium analytics preview "not shown" event', () => {
 				mockCanManageOptions = false;
 			},
 		],
-		// Nothing loads the features in a Jetpack site's wp-admin, which is the cohort this event
-		// exists to size. Kept apart from the tier answer below.
 		[
 			'features_unavailable',
 			() => {

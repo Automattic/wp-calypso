@@ -141,9 +141,9 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 
 	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
 
-	// Same shape as the plans check below: waiting on the features is right in Calypso, where they
-	// arrive on their own schedule and a site that has them looks identical to one still fetching,
-	// and wrong in wp-admin, where nothing requests them and waiting would never end.
+	// Waiting matters in Calypso, where a site with no features looks identical to one still
+	// fetching. In wp-admin the seeded entry carries `data` alone, so this selector answers false
+	// however long we wait - nothing re-fetches it there to set `hasLoadedFromServer`.
 	const hasLoadedFeatures =
 		useSelector( ( state ) => hasLoadedSiteFeatures( state, siteId ) ) ||
 		config.isEnabled( 'is_odyssey' );

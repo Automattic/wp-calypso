@@ -55,10 +55,8 @@ const notShownReason = ( {
 	if ( ! canManageOptions ) {
 		return 'not_admin';
 	}
-	// Nothing loads the features in a Jetpack site's wp-admin, so an Atomic site arrives here with
-	// none. Kept apart from the tier answer below: that cohort is the one this event exists to
-	// size, and folding it into `no_commercial_stats` would hide it among sites that really are on
-	// the wrong tier.
+	// Kept apart from the tier answer below: with no features `shouldGateStats` cannot tell us
+	// anything, and filing that as `no_commercial_stats` would read as a site on the wrong tier.
 	if ( ! hasSiteFeatures ) {
 		return 'features_unavailable';
 	}
