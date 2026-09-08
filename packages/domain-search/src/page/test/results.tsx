@@ -7,6 +7,7 @@ import { buildFreeSuggestion, buildSuggestion } from '../../test-helpers/factori
 import { mockGetAvailabilityQuery } from '../../test-helpers/queries/availability';
 import {
 	mockGetBundleForDomainQuery,
+	mockGetBundleMetadataQuery,
 	mockGetBundleSuggestionQuery,
 	mockGetBundleTriggersQuery,
 	mockGetFreeSuggestionQuery,
@@ -1574,6 +1575,185 @@ describe( 'ResultsPage', () => {
 			// The top BundleCard is the single offer...
 			expect( await findBundleMember( 'flowers.net' ) ).toBeInTheDocument();
 			// ...with no inline row duplicating the flowers.com primary.
+			expect( container.querySelector( '.inline-bundle-row' ) ).toBeNull();
+			expect(
+				container.querySelector( '.domain-search--results__featured-inline-bundles' )
+			).toBeNull();
+		} );
+	} );
+
+	describe( 'bundle card on a bare-term search', () => {
+		// DOMAINS-2238: the backend anchors a bare-term bundle on the first
+		// trigger-TLD suggestion in its list. The card renders beside the
+		// Recommended card, in the slot best-alternative used to occupy.
+		const flowersBundle: BundleSuggestion = {
+			sld: 'flowers',
+			domains: [
+				{
+					domain: 'flowers.com',
+					cost: '$22.00',
+					raw_price: 22,
+					product_slug: 'domain_reg',
+					role: 'primary',
+				},
+				{
+					domain: 'flowers.net',
+					cost: '$18.00',
+					raw_price: 18,
+					product_slug: 'domain_reg',
+					role: 'companion',
+				},
+			],
+			bundle_price: 36,
+			original_price: 44,
+			discount_percent: 18,
+			category: 'business',
+			bundle_id: 'flowers-bundle',
+			bundle_group_id: 'v1.flowers.deadbeef',
+			catalogue_version: '1',
+		};
+
+		const flowersSuggestions = [
+			buildSuggestion( { domain_name: 'flowers.com' } ),
+			buildSuggestion( { domain_name: 'flowers.net' } ),
+			buildSuggestion( { domain_name: 'flowers.org' } ),
+		];
+
+		it( 'renders the bundle card beside the recommended suggestion and drops best-alternative', async () => {
+			const onBundleShown = jest.fn();
+			mockGetSuggestionsQuery( { params: { query: 'flowers' }, suggestions: flowersSuggestions } );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'flowers' },
+				bundleSuggestion: flowersBundle,
+			} );
+
+			render(
+				<TestDomainSearch
+					config={ { showBundleSuggestions: true } }
+					events={ { onBundleShown } }
+					query="flowers"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await findBundleCta() ).toBeInTheDocument();
+			expect( await screen.findByTitle( 'flowers.com' ) ).toHaveTextContent( 'Recommended' );
+			expect( screen.queryByText( 'Best alternative' ) ).not.toBeInTheDocument();
+			// The regular list is untouched.
+			expect( await screen.findByTitle( 'flowers.org' ) ).toBeInTheDocument();
+
+			await waitFor( () => {
+				expect( onBundleShown ).toHaveBeenCalledTimes( 1 );
+			} );
+			expect( onBundleShown ).toHaveBeenCalledWith(
+				expect.objectContaining( { sld: 'flowers' } ),
+				'card'
+			);
+		} );
+
+		it( 'keeps best-alternative when the bundle primary is not the recommended suggestion', async () => {
+			mockGetSuggestionsQuery( { params: { query: 'flowers' }, suggestions: flowersSuggestions } );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'flowers' },
+				bundleSuggestion: {
+					...flowersBundle,
+					sld: 'getflowers',
+					domains: [
+						{ ...flowersBundle.domains[ 0 ], domain: 'getflowers.com' },
+						{ ...flowersBundle.domains[ 1 ], domain: 'getflowers.net' },
+					],
+				},
+			} );
+
+			render(
+				<TestDomainSearch config={ { showBundleSuggestions: true } } query="flowers">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByText( 'Best alternative' ) ).toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'keeps best-alternative when the backend returns no bundle', async () => {
+			mockGetSuggestionsQuery( { params: { query: 'flowers' }, suggestions: flowersSuggestions } );
+			mockGetBundleSuggestionQuery( { params: { query: 'flowers' }, bundleSuggestion: null } );
+
+			render(
+				<TestDomainSearch config={ { showBundleSuggestions: true } } query="flowers">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByText( 'Best alternative' ) ).toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'shows a placeholder in the right slot while the bundle request is in flight', async () => {
+			mockGetSuggestionsQuery( { params: { query: 'flowers' }, suggestions: flowersSuggestions } );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'flowers' },
+				bundleSuggestion: flowersBundle,
+				delayMs: 300,
+			} );
+
+			render(
+				<TestDomainSearch config={ { showBundleSuggestions: true } } query="flowers">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			// Suggestions have landed; the bundle has not.
+			expect( await screen.findByTitle( 'flowers.com' ) ).toHaveTextContent( 'Recommended' );
+			expect( screen.getAllByLabelText( 'Loading featured domain suggestion' ) ).toHaveLength( 1 );
+			expect( screen.queryByText( 'Best alternative' ) ).not.toBeInTheDocument();
+
+			// The bundle lands: the placeholder becomes the card.
+			expect( await findBundleCta() ).toBeInTheDocument();
+			expect(
+				screen.queryByLabelText( 'Loading featured domain suggestion' )
+			).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Best alternative' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'does not render a placeholder or drop best-alternative when bundles are disabled', async () => {
+			mockGetSuggestionsQuery( { params: { query: 'flowers' }, suggestions: flowersSuggestions } );
+
+			render(
+				<TestDomainSearch config={ { showBundleSuggestions: false } } query="flowers">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByText( 'Best alternative' ) ).toBeInTheDocument();
+			expect(
+				screen.queryByLabelText( 'Loading featured domain suggestion' )
+			).not.toBeInTheDocument();
+		} );
+
+		it( 'shows only the card and no inline row when the trigger is already in the cart', async () => {
+			mockGetSuggestionsQuery( { params: { query: 'flowers' }, suggestions: flowersSuggestions } );
+			mockGetBundleMetadataQuery( {
+				params: { query: 'flowers' },
+				bundleSuggestion: flowersBundle,
+				bundleTriggers: [ 'com' ],
+			} );
+			mockGetBundleForDomainQuery( { fqdn: 'flowers.com', bundleSuggestion: flowersBundle } );
+
+			const { container } = render(
+				<TestDomainSearch
+					cart={ buildCart( {
+						items: [ buildCartItem( { domain: 'flowers', tld: 'com' } ) ],
+					} ) }
+					config={ { showBundleSuggestions: true } }
+					query="flowers"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await findBundleMember( 'flowers.net' ) ).toBeInTheDocument();
 			expect( container.querySelector( '.inline-bundle-row' ) ).toBeNull();
 			expect(
 				container.querySelector( '.domain-search--results__featured-inline-bundles' )

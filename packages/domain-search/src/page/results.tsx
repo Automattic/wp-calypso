@@ -2,7 +2,7 @@ import { useIsMutating, useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { chevronDown, chevronUp, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { BundleCard } from '../components/bundle-card';
 import { Cart } from '../components/cart';
 import { FeaturedSearchResults } from '../components/featured-search-results';
@@ -17,6 +17,7 @@ import { useInlineBundles } from '../hooks/use-inline-bundles';
 import { useIsCurrentMutation } from '../hooks/use-is-current-mutation';
 import { useRequestTracking } from '../hooks/use-request-tracking';
 import { useSuggestionsList } from '../hooks/use-suggestions-list';
+import { DomainSuggestion } from '../ui';
 import { DOMAIN_BUNDLE_UNAVAILABLE_ERROR_CODE } from './constants';
 import { useDomainSearch } from './context';
 import type { InlineBundleEntry } from '../hooks/use-inline-bundles';
@@ -146,18 +147,51 @@ export const ResultsPage = () => {
 		featuredSuggestions,
 		regularSuggestions,
 		bundleSuggestion,
+		isLoadingBundleSuggestion,
 	} = useSuggestionsList();
 	// Hoisted here (rather than called inside SearchResults) so the featured-trigger
 	// inline rows and the regular-list inline rows share a single hook instance,
 	// and thus one set of bundle requests.
 	const { getInlineBundle } = useInlineBundles();
-	// The top BundleCard is the FQDN path only; a bare-term search shows inline
-	// bundle rows beneath trigger suggestions instead (see useInlineBundles).
 	const isFqdn = isFqdnQuery( query );
+
+	// On an FQDN query the top BundleCard is keyed on the typed domain, as
+	// before. On a bare-term query it is keyed on the featured Recommended
+	// suggestion (DOMAINS-2238): the backend anchors the bundle on the first
+	// trigger-TLD suggestion in its list, and the card renders only when that
+	// primary is the Recommended card, so an anchor the client filtered out or
+	// reordered is ignored.
+	const recommendedFqdn = featuredSuggestions
+		.find( ( { reason } ) => reason === 'recommended' )
+		?.suggestion.toLowerCase();
+	const bundlePrimaryFqdn =
+		bundleSuggestion && bundleSuggestion.domains.length > 0
+			? getBundlePrimaryDomain( bundleSuggestion ).domain.toLowerCase()
+			: undefined;
+	const bundleMatchesRecommended =
+		bundlePrimaryFqdn !== undefined && bundlePrimaryFqdn === recommendedFqdn;
 	// A failed add keeps the card mounted (with an error notice) rather than
 	// hiding it, so the user sees the failure instead of the offer silently
 	// vanishing. See bundleErrorMessage above.
-	const visibleBundleSuggestion = isFqdn ? bundleSuggestion : undefined;
+	const visibleBundleSuggestion = isFqdn || bundleMatchesRecommended ? bundleSuggestion : undefined;
+
+	// While the wrapped request is in flight on a bare-term search, the right
+	// slot shows a placeholder instead of best-alternative, so the row does not
+	// render best-alternative and then swap it for the bundle card.
+	const showBundleSlotPlaceholder =
+		! isFqdn &&
+		config.showBundleSuggestions &&
+		isLoadingBundleSuggestion &&
+		recommendedFqdn !== undefined;
+
+	// The bundle card (or its placeholder) takes the best-alternative slot on a
+	// bare-term search. An FQDN search has one featured card, so nothing is dropped.
+	const bundleTakesRightSlot =
+		! isFqdn && ( !! visibleBundleSuggestion || showBundleSlotPlaceholder );
+	const renderedFeaturedSuggestions = bundleTakesRightSlot
+		? featuredSuggestions.filter( ( { reason } ) => reason !== 'best-alternative' )
+		: featuredSuggestions;
+
 	const numberOfInitialVisibleSuggestions =
 		config.numberOfDomainsResultsPerPage - featuredSuggestions.length;
 
@@ -166,10 +200,7 @@ export const ResultsPage = () => {
 	// inline bundle offer, which the regular list would otherwise own. Derive one
 	// row per featured trigger that has (or is fetching) a bundle, rendered below
 	// the featured section.
-	const visibleBundlePrimaryFqdn =
-		visibleBundleSuggestion && visibleBundleSuggestion.domains.length > 0
-			? getBundlePrimaryDomain( visibleBundleSuggestion ).domain.toLowerCase()
-			: undefined;
+	const visibleBundlePrimaryFqdn = visibleBundleSuggestion ? bundlePrimaryFqdn : undefined;
 
 	const featuredInlineBundles = featuredSuggestions
 		.map( ( { suggestion } ) => {
@@ -229,6 +260,29 @@ export const ResultsPage = () => {
 
 	const showCompactBanner = !! slots?.BeforeResults;
 
+	// One child expression, never an array: FeaturedSearchResults treats a null
+	// child as "no trailing card" when deciding the single-card layout.
+	let bundleSlot: ReactNode = null;
+	if ( visibleBundleSuggestion ) {
+		bundleSlot = (
+			<BundleCard
+				suggestion={ visibleBundleSuggestion }
+				onAddToCart={ ( bundle ) => {
+					addBundleToCart( { bundle, query } );
+				} }
+				isAddedToCart={ visibleBundleSuggestion.domains.every( ( { domain } ) =>
+					cart.hasItem( domain )
+				) }
+				onContinue={ events.onContinue }
+				isBusy={ isAddingBundle }
+				disabled={ isMutating }
+				errorMessage={ bundleErrorMessage }
+			/>
+		);
+	} else if ( showBundleSlotPlaceholder ) {
+		bundleSlot = <DomainSuggestion.Featured.Placeholder />;
+	}
+
 	return (
 		<VStack spacing={ 8 } className="domain-search--results">
 			{ /* Desktop in-flow SearchBar. CSS-hidden on mobile (the persistent
@@ -265,22 +319,8 @@ export const ResultsPage = () => {
 				{ isLoadingSuggestions ? (
 					<FeaturedSearchResults.Placeholder />
 				) : (
-					<FeaturedSearchResults suggestions={ featuredSuggestions }>
-						{ visibleBundleSuggestion && (
-							<BundleCard
-								suggestion={ visibleBundleSuggestion }
-								onAddToCart={ ( bundle ) => {
-									addBundleToCart( { bundle, query } );
-								} }
-								isAddedToCart={ visibleBundleSuggestion.domains.every( ( { domain } ) =>
-									cart.hasItem( domain )
-								) }
-								onContinue={ events.onContinue }
-								isBusy={ isAddingBundle }
-								disabled={ isMutating }
-								errorMessage={ bundleErrorMessage }
-							/>
-						) }
+					<FeaturedSearchResults suggestions={ renderedFeaturedSuggestions }>
+						{ bundleSlot }
 					</FeaturedSearchResults>
 				) }
 				{ /* Inline bundle offers for triggers promoted into the featured section.
