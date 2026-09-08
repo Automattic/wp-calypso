@@ -139,7 +139,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 	const buildWowRequested = queryParams.get( 'build_wow' ) === '1';
 	const { data: isAutomattician, isLoading: isLoadingAutomattician } = useReactQuery( {
 		...isAutomatticianQuery(),
-		enabled: buildWowRequested,
+		enabled: buildWowRequested && ! isBuildWowEnabled( queryParams ),
 	} );
 	const shouldBuildWow = isBuildWowEnabled( queryParams, isAutomattician === true );
 	const activeFlow = getActiveFlow( { shouldBuildWow, shouldProvisionAtomicSite, isCiab } );
@@ -555,7 +555,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 		blueprintArchiveSiteIdentifier,
 	] );
 
-	if ( buildWowRequested && isLoadingAutomattician ) {
+	if ( buildWowRequested && ! shouldBuildWow && isLoadingAutomattician ) {
 		return <DocumentHead title={ translate( 'Build Your Site with AI' ) } />;
 	}
 
