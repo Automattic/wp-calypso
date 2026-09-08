@@ -58,6 +58,15 @@
 	}
 }
 
+.step-container-v2__top-bar-center-element {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	justify-content: center;
+	min-width: 0;
+	margin-inline: auto;
+}
+
 .step-container-v2__top-bar-right-element {
 	display: flex;
 	align-items: center;

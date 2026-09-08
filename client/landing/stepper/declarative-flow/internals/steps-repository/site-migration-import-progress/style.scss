@@ -1,0 +1,11 @@
+.site-migration-import-progress {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	align-items: flex-start;
+	width: 100%;
+
+	.components-progress-bar {
+		width: 100%;
+	}
+}
