@@ -32,6 +32,7 @@ import useStatsPurchases, { shouldShowPaywallNotice } from '../hooks/use-stats-p
 import { AllTimeData } from '../sections/all-time-highlights-section';
 import ALL_STATS_NOTICES from './all-notice-definitions';
 import JITMWrapper from './jitm-wrapper';
+import usePremiumAnalyticsPreviewNotShownEvent from './premium-analytics-preview-not-shown-event';
 import { StatsNoticeProps, StatsNoticesProps } from './types';
 import './style.scss';
 
@@ -144,8 +145,11 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	// upsell waiting for an answer nothing will use.
 	const shouldAskStatus =
 		canBeInvited && serverNoticesVisibility?.premium_analytics_preview === true;
-	const { data: isPremiumAnalyticsEnabled, isLoading: isLoadingPremiumAnalyticsStatus } =
-		usePremiumAnalyticsStatusQuery( siteId, shouldAskStatus );
+	const {
+		data: isPremiumAnalyticsEnabled,
+		isLoading: isLoadingPremiumAnalyticsStatus,
+		isError: isPremiumAnalyticsStatusError,
+	} = usePremiumAnalyticsStatusQuery( siteId, shouldAskStatus );
 
 	const noticeOptions = {
 		siteId,
@@ -182,17 +186,31 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		useSelector( ( state ) => hasLoadedSitePlansFromServer( state, siteId ) ) ||
 		config.isEnabled( 'is_odyssey' );
 
-	if (
+	const isWaitingForNoticeInputs =
 		! hasLoadedPurchases ||
 		! hasLoadedPlans ||
 		isLoading ||
-		isError ||
 		isRequestingSitePurchases ||
 		// Waiting here rather than rendering an upsell and swapping it for the preview a moment
 		// later. Only sites the server offered the preview to ever wait: the query is shared with
 		// the modules menu and reports its fetch status to every observer, disabled ones included.
-		( shouldAskStatus && isLoadingPremiumAnalyticsStatus )
-	) {
+		( shouldAskStatus && isLoadingPremiumAnalyticsStatus );
+
+	usePremiumAnalyticsPreviewNotShownEvent( {
+		siteId,
+		isWpcom,
+		isSettled: ! isWaitingForNoticeInputs && ! isError,
+		isServerVisible: serverNoticesVisibility?.premium_analytics_preview === true,
+		canManageOptions,
+		hasCommercialStats,
+		premiumAnalyticsDashboardUrl,
+		isVip,
+		isP2,
+		isPremiumAnalyticsEnabled,
+		isStatusError: isPremiumAnalyticsStatusError,
+	} );
+
+	if ( isWaitingForNoticeInputs || isError ) {
 		return null;
 	}
 
