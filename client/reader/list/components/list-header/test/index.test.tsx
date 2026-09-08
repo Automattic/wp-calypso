@@ -82,16 +82,27 @@ describe( 'ReaderListHeader', () => {
 		expect( screen.getByText( 'A test list' ) ).toBeVisible();
 	} );
 
-	test( 'shows owner name when list is not owned by current user', () => {
+	test( 'shows a Created by line when list is not owned by current user', () => {
 		renderReaderListHeader( { list: { ...defaultList, owner: 'otheruser', is_owner: false } } );
 
+		expect( screen.getByRole( 'heading', { name: 'My List' } ) ).toBeVisible();
+		expect( screen.getByText( /Created by/ ) ).toBeVisible();
 		expect( screen.getByText( 'otheruser' ) ).toBeVisible();
 	} );
 
-	test( 'does not show owner name when list is owned by current user', () => {
+	test( 'does not show a Created by line when list is owned by current user', () => {
 		renderReaderListHeader();
 
-		expect( screen.queryByText( /\(/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /Created by/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'test_user' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not render a subtitle when there is nothing to show', () => {
+		const { container } = renderReaderListHeader( {
+			list: { ...defaultList, description: '' },
+		} );
+
+		expect( container.querySelector( '.formatted-header__subtitle' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'shows lock icon for private lists', () => {

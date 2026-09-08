@@ -23,7 +23,6 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import type { AppState } from 'calypso/types';
-import type { JSX } from 'react';
 
 interface ReaderListHeaderProps {
 	list?: ReaderList;
@@ -55,30 +54,40 @@ const ReaderListHeader = ( props: ReaderListHeaderProps ) => {
 		readListItemsQuery( list?.owner ?? '', list?.slug ?? '' )
 	);
 	const totalItems = listItemsData?.total_items;
-	let title: string | JSX.Element | undefined = list?.title;
-	if ( list ) {
-		// Show author name in parentheses if the list is owned by someone other than the current user
-		const isOwnedByCurrentUser = currentUser && list.owner === currentUser.username;
-		title = isOwnedByCurrentUser ? (
-			title
-		) : (
-			<>
-				{ title } (<a href={ `/reader/users/${ list.owner }` }>{ list.owner }</a>)
-			</>
-		);
-	}
+	const isOwnedByCurrentUser = Boolean(
+		currentUser && list && list.owner === currentUser.username
+	);
 
 	const formattedTitle = (
 		<AutoDirection>
-			<span>{ title }</span>
+			<span>{ list?.title }</span>
 		</AutoDirection>
 	);
 
-	const formattedDescription = (
+	const createdBy = list && ! isOwnedByCurrentUser && (
+		<span className="list-stream__header-created-by">
+			{ translate( 'Created by {{ownerLink}}%(owner)s{{/ownerLink}}', {
+				args: { owner: list.owner },
+				components: {
+					ownerLink: <a href={ `/reader/users/${ list.owner }` } />,
+				},
+			} ) }
+		</span>
+	);
+
+	const description = list?.description && (
 		<AutoDirection>
-			<span>{ list?.description }</span>
+			<span className="list-stream__header-description">{ list.description }</span>
 		</AutoDirection>
 	);
+
+	const formattedSubtitle =
+		createdBy || description ? (
+			<>
+				{ createdBy }
+				{ description }
+			</>
+		) : undefined;
 
 	const listBaseUrl =
 		list?.owner && list?.slug ? `/reader/list/${ list.owner }/${ list.slug }` : '';
@@ -140,7 +149,7 @@ const ReaderListHeader = ( props: ReaderListHeaderProps ) => {
 	return (
 		<>
 			<AutoDirection>
-				<NavigationHeader title={ formattedTitle } subtitle={ formattedDescription }>
+				<NavigationHeader title={ formattedTitle } subtitle={ formattedSubtitle }>
 					{ list?.is_public === false && (
 						<div
 							className="list-stream__header-title-privacy"
