@@ -277,6 +277,7 @@ export class ManagedContactDetailsFormFields extends Component<
 					<FormPhoneMediaInput
 						label={ this.props.translate( 'Phone' ) }
 						name="phone"
+						enableStickyCountry={ false }
 						value={ {
 							phoneNumber: this.props.contactDetails.phone ?? '',
 							countryCode:

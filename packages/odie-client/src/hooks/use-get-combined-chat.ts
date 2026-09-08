@@ -11,7 +11,7 @@ import {
 	getZendeskChatStartedMetaMessage,
 } from '../constants';
 import { emptyChat } from '../context';
-import { useGetZendeskConversation, useManageSupportInteraction, useOdieChat } from '../data';
+import { useGetZendeskConversation, useOdieChat } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 import {
 	getConversationIdFromInteraction,
@@ -89,7 +89,6 @@ export const useGetCombinedChat = (
 	);
 	const [ isFetchingConversation, setIsFetchingConversation ] = useState( false );
 
-	const { startNewInteraction } = useManageSupportInteraction();
 	const isUploadingUnsentMessages = useIsMutating( {
 		mutationKey: [ 'send-zendesk-messages' ],
 	} );
@@ -236,10 +235,22 @@ export const useGetCombinedChat = (
 						error: error instanceof Error ? error.message : String( error ),
 					} );
 
-					startNewInteraction( {
-						event_source: 'odie',
-						event_external_id: crypto.randomUUID(),
-					} );
+					// Leave the loading state, or this effect re-runs and fetches again, forever.
+					// Keep the conversation the chat already shows; otherwise show it with the
+					// Odie history only, like when Zendesk can't be reached above, so live
+					// messages still arrive and the next refresh retries.
+					setMainChatState( ( prevChat ) =>
+						prevChat.conversationId === conversationId
+							? { ...prevChat, status: 'loaded' }
+							: {
+									...prevChat,
+									odieId: odieId ? Number( odieId ) : null,
+									messages: [ ...( odieChat ? filteredOdieMessages : [] ) ],
+									conversationId,
+									status: 'loaded',
+									provider: 'zendesk',
+							  }
+					);
 				} )
 				.finally( () => {
 					setRefreshingAfterReconnect( false );
@@ -258,7 +269,6 @@ export const useGetCombinedChat = (
 		currentSupportInteraction,
 		canConnectToZendesk,
 		getZendeskConversation,
-		startNewInteraction,
 		isLoadingCanConnectToZendesk,
 		sessionId,
 		botSlug,

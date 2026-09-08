@@ -15,7 +15,6 @@ let mockCurrentSupportInteraction: Record< string, unknown > | undefined;
 let mockConversation: { id: string; messages: Message[] } | null;
 let mockOdieChat: Record< string, unknown > | undefined;
 const mockGetZendeskConversation = jest.fn();
-const mockStartNewInteraction = jest.fn();
 
 jest.mock( '@wordpress/data', () => ( {
 	// The hook's only useSelect call returns { isChatLoaded, connectionStatus }.
@@ -43,7 +42,6 @@ jest.mock( '../use-logged-out-session', () => ( {
 
 jest.mock( '../../data', () => ( {
 	useGetZendeskConversation: () => mockGetZendeskConversation,
-	useManageSupportInteraction: () => ( { startNewInteraction: mockStartNewInteraction } ),
 	useOdieChat: () => ( { data: mockOdieChat, isFetching: false } ),
 } ) );
 
@@ -309,5 +307,46 @@ describe( 'useGetCombinedChat — message recovery on Smooch re-init', () => {
 
 		// Pure-Odie chat: nothing to recover, so no conversation fetch is forced.
 		expect( mockGetZendeskConversation ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'useGetCombinedChat — when the conversation cannot be fetched', () => {
+	it( 'leaves the loading state instead of fetching forever', async () => {
+		mockGetZendeskConversation.mockImplementation( () =>
+			Promise.reject( new Error( 'conversation not found' ) )
+		);
+		mockCurrentSupportInteraction = {
+			uuid: 'int-1',
+			conversationId: 'conv-1',
+			odieId: 42,
+			status: 'open',
+		};
+		mockOdieChat = { odieId: 42, wpcomUserId: 99, messages: [ agentMessage( 10, 'odie reply' ) ] };
+
+		const { result, rerender } = renderCombinedChat();
+
+		// The chat settles on the conversation with the Odie history it has, the
+		// same shape used when Zendesk cannot be reached.
+		await waitFor( () => {
+			expect( result.current.mainChatState.status ).toBe( 'loaded' );
+		} );
+		expect( result.current.mainChatState.provider ).toBe( 'zendesk' );
+		expect( result.current.mainChatState.conversationId ).toBe( 'conv-1' );
+		expect( result.current.mainChatState.messages.some( ( m ) => m.message_id === 10 ) ).toBe(
+			true
+		);
+
+		// The failed fetch flips `isFetchingConversation` back, which re-runs the
+		// effect. Give those re-runs room to fire before counting.
+		await act( async () => {
+			await Promise.resolve();
+			await Promise.resolve();
+		} );
+		rerender();
+		await act( async () => {
+			await Promise.resolve();
+		} );
+
+		expect( mockGetZendeskConversation ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

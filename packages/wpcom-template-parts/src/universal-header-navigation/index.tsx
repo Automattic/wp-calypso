@@ -33,6 +33,9 @@ import {
 } from './nav-2026/tracks';
 import './style.scss';
 
+// Matches the Landpack nav's mouseleave grace period.
+const DROPDOWN_CLOSE_DELAY = 150;
+
 const UniversalNavbarHeader = ( {
 	className,
 	hideGetStartedCta = false,
@@ -82,6 +85,21 @@ const UniversalNavbarHeader = ( {
 		footerRef: mobileFooterRef,
 	} );
 	const dropdownRef = useDropdownFlip( { nav2026, activeDropdown } );
+	// One timer for pointer-driven open/close, so a newer call replaces a pending
+	// close and a diagonal move into the panel can cross Support/Pricing first.
+	const dropdownTimerRef = useRef< ReturnType< typeof setTimeout > | null >( null );
+	const showDropdown = useCallback( ( delay: number, name: string | null ) => {
+		if ( dropdownTimerRef.current ) {
+			clearTimeout( dropdownTimerRef.current );
+			dropdownTimerRef.current = null;
+		}
+		if ( ! delay ) {
+			setActiveDropdown( name );
+			return;
+		}
+		dropdownTimerRef.current = setTimeout( () => setActiveDropdown( name ), delay );
+	}, [] );
+	useEffect( () => () => clearTimeout( dropdownTimerRef.current ?? undefined ), [] );
 
 	const nav2026Menus = useMemo(
 		() =>
@@ -284,7 +302,7 @@ const UniversalNavbarHeader = ( {
 					className={ clsx( 'lpc-header-nav-container', {
 						'is-scrolled': nav2026 && isScrolled,
 					} ) }
-					onMouseLeave={ nav2026 ? () => setActiveDropdown( null ) : undefined }
+					onMouseLeave={ nav2026 ? () => showDropdown( DROPDOWN_CLOSE_DELAY, null ) : undefined }
 					onBlur={
 						nav2026
 							? ( event ) => {
@@ -313,7 +331,7 @@ const UniversalNavbarHeader = ( {
 												? () => {
 														recordNavItemHover( isScrolled, 'logo', false );
 														// Hovering a non-dropdown item closes the open dropdown.
-														setActiveDropdown( null );
+														showDropdown( DROPDOWN_CLOSE_DELAY, null );
 												  }
 												: undefined
 										}
@@ -348,11 +366,11 @@ const UniversalNavbarHeader = ( {
 														key={ menu.name }
 														onMouseEnter={ () => {
 															recordNavItemHover( isScrolled, menu.name, true );
-															setActiveDropdown( menu.name );
+															showDropdown( 0, menu.name );
 														} }
 														onFocus={ () => {
 															recordNavItemHover( isScrolled, menu.name, true );
-															setActiveDropdown( menu.name );
+															showDropdown( 0, menu.name );
 														} }
 													>
 														<NonClickableItem
@@ -374,7 +392,7 @@ const UniversalNavbarHeader = ( {
 														onItemMouseEnter={ () => {
 															recordNavItemHover( isScrolled, menu.name, false );
 															// Hovering a non-dropdown item closes the open dropdown.
-															setActiveDropdown( null );
+															showDropdown( DROPDOWN_CLOSE_DELAY, null );
 														} }
 														// Keyboard parity: focusing the item also closes the open dropdown.
 														onItemFocus={ () => setActiveDropdown( null ) }
@@ -399,7 +417,9 @@ const UniversalNavbarHeader = ( {
 												localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn, true )
 											}
 											type="nav"
-											onItemMouseEnter={ nav2026 ? () => setActiveDropdown( null ) : undefined }
+											onItemMouseEnter={
+												nav2026 ? () => showDropdown( DROPDOWN_CLOSE_DELAY, null ) : undefined
+											}
 											onItemFocus={ nav2026 ? () => setActiveDropdown( null ) : undefined }
 										/>
 									) }
@@ -415,7 +435,9 @@ const UniversalNavbarHeader = ( {
 											urlValue={ startUrl }
 											type="nav"
 											typeClassName="x-nav-link x-nav-link__primary x-link cta-btn-nav"
-											onItemMouseEnter={ nav2026 ? () => setActiveDropdown( null ) : undefined }
+											onItemMouseEnter={
+												nav2026 ? () => showDropdown( DROPDOWN_CLOSE_DELAY, null ) : undefined
+											}
 											onItemFocus={ nav2026 ? () => setActiveDropdown( null ) : undefined }
 										/>
 									) }
@@ -460,7 +482,8 @@ const UniversalNavbarHeader = ( {
 							dropdownRef={ dropdownRef }
 							activeDropdown={ activeDropdown }
 							nav2026Menus={ nav2026Menus }
-							onMouseLeave={ () => setActiveDropdown( null ) }
+							onMouseEnter={ () => showDropdown( 0, activeDropdown ) }
+							onMouseLeave={ () => showDropdown( DROPDOWN_CLOSE_DELAY, null ) }
 						/>
 					) }
 					{ /*<!-- Nav bar ends here. -->*/ }

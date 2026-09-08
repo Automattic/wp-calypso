@@ -9,7 +9,7 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { useLocale } from '../../app/locale';
+import { useIntlLocale } from '../../app/locale';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { siteRoute } from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
@@ -100,7 +100,7 @@ function SiteMonitoringBody( {
 
 export function SiteMonitoringContent( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
-	const locale = useLocale();
+	const locale = useIntlLocale();
 
 	const [ timeRange, setTimeRange ] = useState( '24-hours' );
 
