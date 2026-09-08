@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
-import { OpensTooltipContent, ClicksTooltipContent, type EmailStatsItem } from '../tooltips';
+import { OpensTooltipContent, type EmailStatsItem } from '../tooltips';
 
 const baseItem: EmailStatsItem = {
 	unique_opens: 0,
@@ -40,28 +40,5 @@ describe( 'OpensTooltipContent', () => {
 		render( <OpensTooltipContent item={ { ...baseItem, opens: 5, unique_opens: 2 } } /> );
 		expect( screen.getByText( 'No delivery data for this email.' ) ).toBeInTheDocument();
 		expect( screen.queryByText( /Unique opens/ ) ).not.toBeInTheDocument();
-	} );
-} );
-
-describe( 'ClicksTooltipContent', () => {
-	it( 'shows the unique line with the rate when uniques are tracked', () => {
-		render(
-			<ClicksTooltipContent
-				item={ { ...baseItem, total_sends: 100, clicks: 5, unique_clicks: 3, clicks_rate: 3 } }
-			/>
-		);
-		expect( screen.getByText( 'Unique clicks: 3 (3%)' ) ).toBeInTheDocument();
-	} );
-
-	it( 'explains the unknown state and omits the unique line', () => {
-		render( <ClicksTooltipContent item={ { ...baseItem, total_sends: 100, clicks: 107 } } /> );
-		expect( screen.getByText( "Clicks weren't linked to recipients." ) ).toBeInTheDocument();
-		expect( screen.queryByText( /Unique clicks/ ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'explains missing delivery data when there are no recorded sends', () => {
-		render( <ClicksTooltipContent item={ { ...baseItem, clicks: 1 } } /> );
-		expect( screen.getByText( 'No delivery data for this email.' ) ).toBeInTheDocument();
-		expect( screen.queryByText( /Unique clicks/ ) ).not.toBeInTheDocument();
 	} );
 } );

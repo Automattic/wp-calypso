@@ -13,11 +13,7 @@ import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
 import { isRateKnown, toCount } from '../features/modules/stats-emails/is-rate-known';
-import {
-	TooltipWrapper,
-	OpensTooltipContent,
-	ClicksTooltipContent,
-} from '../features/modules/stats-emails/tooltips';
+import { TooltipWrapper, OpensTooltipContent } from '../features/modules/stats-emails/tooltips';
 import useStatsStrings from '../hooks/use-stats-strings';
 import StatsModule from '../stats-module';
 import PageViewTracker from '../stats-page-view-tracker';
@@ -122,7 +118,6 @@ const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) =
 								<>
 									<span>{ translate( 'Opens' ) }</span>
 									<span>{ translate( 'Open rate' ) }</span>
-									<span>{ translate( 'Clicks' ) }</span>
 								</>
 							),
 							body: ( item ) => {
@@ -150,7 +145,6 @@ const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) =
 												TooltipContent={ OpensTooltipContent }
 											/>
 										</span>
-										<span>{ formatNumber( toCount( item.clicks ) ) }</span>
 									</>
 								);
 							},
@@ -162,35 +156,11 @@ const StatsEmailSummaryInner = ( { period, query, context, breadcrumbTrail } ) =
 						statType="statsEmailsSummary"
 						mainItemLabel={ translate( 'Latest Emails' ) }
 						hideSummaryLink
-						metricLabel={ translate( 'Click rate' ) }
-						valueField="clicks_rate"
-						formatValue={ ( value, item ) => {
-							if ( item?.clicks !== undefined ) {
-								const rateKnown = isRateKnown( {
-									uniques: toCount( item.unique_clicks ),
-									totals: toCount( item.clicks ),
-									sends: toCount( item.total_sends ),
-								} );
-								return (
-									<TooltipWrapper
-										value={
-											rateKnown
-												? `${ formatNumber( item.clicks_rate ?? 0, {
-														numberFormatOptions: {
-															maximumFractionDigits: 2,
-														},
-												  } ) }%`
-												: '—'
-										}
-										item={ item }
-										TooltipContent={ ClicksTooltipContent }
-									/>
-								);
-							}
-							return <span>{ value }</span>;
-						} }
+						metricLabel={ translate( 'Clicks' ) }
+						valueField="clicks"
+						formatValue={ ( value ) => formatNumber( toCount( value ) ) }
 						listItemClassName="stats__summary--narrow-mobile"
-						className="stats-emails--four-columns"
+						className="stats-emails--fixed-columns"
 					/>
 				</div>
 			</div>
