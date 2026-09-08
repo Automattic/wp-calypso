@@ -1,18 +1,13 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { type JSX } from 'react';
-import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { useLoginContext } from 'calypso/login/login-context';
-import { useDispatch, useSelector } from 'calypso/state';
-import { redirectToLogout } from 'calypso/state/current-user/actions';
-import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
-import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
+import { useSelector } from 'calypso/state';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import useSignupLink from '../hooks/use-signup-link';
 import HeadingLogo from './heading-logo';
 import './one-login-layout.scss';
 
@@ -40,6 +35,13 @@ interface OneLoginLayoutProps {
 	isSectionSignup?: boolean;
 	loginUrl?: string;
 	isLostPasswordView?: boolean;
+	/**
+	 * Keeps the "Create an account" link in the top bar below 960px only. The main login view
+	 * passes this: on desktop its footer carries the route to signup instead, matching signup,
+	 * and the top bar's right side is left empty, also matching signup. Mid-flow screens like
+	 * 2FA keep the link up there at every width.
+	 */
+	signupLinkMobileOnly?: boolean;
 	noThanksRedirectUrl?: string;
 	/**
 	 * Optional override for the content column width passed to `Step.CenteredColumnLayout`. Defaults to 6.
@@ -72,6 +74,7 @@ const OneLoginLayout = ( {
 	isSectionSignup,
 	loginUrl,
 	isLostPasswordView,
+	signupLinkMobileOnly,
 	noThanksRedirectUrl,
 	columnWidth,
 	showLogo = true,
@@ -79,40 +82,24 @@ const OneLoginLayout = ( {
 	notice,
 }: OneLoginLayoutProps ) => {
 	const translate = useTranslate();
-	const urlLocale = useLocale();
-	const isLoggedIn = useSelector( isUserLoggedIn );
-	const userLocale = useSelector( getCurrentUserLocale );
-	// For logged-in users, use their user locale setting. For logged-out users, use URL locale.
-	const locale = isLoggedIn && userLocale ? userLocale : urlLocale;
 	const currentRoute = useSelector( getCurrentRoute );
-	const currentQuery = useSelector( getCurrentQueryArguments );
-	const oauth2Client = useSelector( getCurrentOAuth2Client );
-	const dispatch = useDispatch();
 	const { headingText, subHeadingText, subHeadingTextSecondary } = useLoginContext();
 	const validatedHeadingText = ensureHeadingProvided( headingText );
 	const { topBarLogo } = usePartnerBranding();
+	const signupLink = useSignupLink( { signupUrl: signupUrlProp, origin: 'login-layout' } );
 
 	const SignUpLink = () => {
-		// use '?signup_url' if explicitly passed as URL query param
-		const signupUrl: string = signupUrlProp
-			? window.location.origin + pathWithLeadingSlash( signupUrlProp )
-			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale );
-
-		const handleClick = ( event: React.MouseEvent< HTMLElement > ) => {
-			recordTracksEvent( 'calypso_login_sign_up_link_click', { origin: 'login-layout' } );
-
-			if ( isLoggedIn ) {
-				event.preventDefault();
-				dispatch( redirectToLogout( signupUrl ) );
-			}
-		};
-
 		if ( isLostPasswordView ) {
 			return null;
 		}
 
 		return (
-			<Step.LinkButton href={ signupUrl } key="sign-up-link" onClick={ handleClick } rel="external">
+			<Step.LinkButton
+				href={ signupLink.href }
+				key="sign-up-link"
+				onClick={ signupLink.onClick }
+				rel="external"
+			>
 				{ translate( 'Create an account' ) }
 			</Step.LinkButton>
 		);
@@ -151,9 +138,26 @@ const OneLoginLayout = ( {
 	};
 
 	const topBar = (): JSX.Element => {
+		const signupOrLoginLink = isSectionSignup ? <LoginLink /> : <SignUpLink />;
+
+		// On the main login view, desktop moves the route to signup down to the footer, matching
+		// where signup puts its route to login, and leaves this slot empty, also matching signup.
+		// Below 960px nothing moves: both screens keep the top-right link they have today.
+		//
+		// Hidden in CSS rather than by a viewport hook, because this page is server-rendered: a
+		// hook has no viewport on the server, so it would render the mobile arrangement and then
+		// visibly jump on hydration for every desktop visitor. `display: none`, so the hidden
+		// link stays out of the accessibility tree rather than lingering as a second route.
+		//
+		// Everywhere else (2FA, magic login, the OAuth2 screen) the flag is not passed and this
+		// collapses to exactly what it rendered before.
 		const rightElement = (
 			<nav className="wp-login__one-login-layout-top-right">
-				{ isSectionSignup ? <LoginLink /> : <SignUpLink /> }
+				{ signupLinkMobileOnly ? (
+					<span className="wp-login__top-right-mobile">{ signupOrLoginLink }</span>
+				) : (
+					signupOrLoginLink
+				) }
 				{ noThanksRedirectUrl && <NoThanksLink /> }
 			</nav>
 		);

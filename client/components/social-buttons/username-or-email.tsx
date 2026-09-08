@@ -1,5 +1,6 @@
 import { WordPressLogo } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { Icon, envelope } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useSelector } from 'calypso/state';
@@ -10,9 +11,19 @@ import './style.scss';
 
 type UsernameOrEmailButtonProps = {
 	onClick: () => void;
+	/**
+	 * Marks email out as the WordPress.com option, which is what the login page wants: its
+	 * other buttons are all third parties. Signup opts out, because there the logo reads as
+	 * branding on one button of three rather than as a provider, so email looks like the
+	 * house pick instead of a peer of Google and Apple.
+	 */
+	showWordPressLogo?: boolean;
 };
 
-export const UsernameOrEmailButton = ( { onClick }: UsernameOrEmailButtonProps ) => {
+export const UsernameOrEmailButton = ( {
+	onClick,
+	showWordPressLogo = true,
+}: UsernameOrEmailButtonProps ) => {
 	const { __ } = useI18n();
 	const isDisabled = useSelector( isFormDisabled );
 
@@ -24,13 +35,27 @@ export const UsernameOrEmailButton = ( { onClick }: UsernameOrEmailButtonProps )
 			variant="secondary"
 			__next40pxDefaultSize
 		>
-			<WordPressLogo
-				className={ clsx(
-					'social-icons',
-					isDisabled ? 'social-icons--disabled' : 'social-icons--enabled'
-				) }
-				size={ 20 }
-			/>
+			{ showWordPressLogo ? (
+				<WordPressLogo
+					className={ clsx(
+						'social-icons',
+						isDisabled ? 'social-icons--disabled' : 'social-icons--enabled'
+					) }
+					size={ 20 }
+				/>
+			) : (
+				// 20 to match the other icons' box. The glyph is scaled up in CSS rather than by
+				// raising this number, because the label's negative margin is tuned to a 20px box:
+				// a bigger box shifts the text out of line with the buttons above it.
+				<Icon
+					icon={ envelope }
+					size={ 20 }
+					className={ clsx( 'social-icons', 'social-icons__envelope', {
+						'social-icons--disabled': isDisabled,
+						'social-icons--enabled': ! isDisabled,
+					} ) }
+				/>
+			) }
 			<span className="social-buttons__service-name">{ __( 'Continue with email' ) }</span>
 		</Button>
 	);

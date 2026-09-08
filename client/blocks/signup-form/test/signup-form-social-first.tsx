@@ -110,6 +110,67 @@ describe( 'SignupFormSocialFirst', () => {
 		} );
 	} );
 
+	describe( 'email button icon', () => {
+		test( 'uses the envelope icon, not the WordPress logo, so email reads as a peer of the social options', () => {
+			render( <SignupFormSocialFirst { ...defaultProps } /> );
+
+			const emailButton = screen.getByText( /Continue with email/i ).closest( 'button' );
+			expect( emailButton ).toBeInTheDocument();
+			expect( emailButton?.querySelector( '.social-icons__envelope' ) ).toBeInTheDocument();
+			// The logo renders with the bare `social-icons` class, so count the icons to catch a
+			// regression that leaves both in the button.
+			expect( emailButton?.querySelectorAll( 'svg' ) ).toHaveLength( 1 );
+		} );
+
+		test( 'carries the enabled-state class the disabled styling keys off', () => {
+			render( <SignupFormSocialFirst { ...defaultProps } /> );
+
+			const icon = screen
+				.getByText( /Continue with email/i )
+				.closest( 'button' )
+				?.querySelector( '.social-icons__envelope' );
+			expect( icon ).toHaveClass( 'social-icons', 'social-icons--enabled' );
+			expect( icon ).not.toHaveClass( 'social-icons--disabled' );
+		} );
+	} );
+
+	describe( 'showLoginLink', () => {
+		const loginLinkSelector = '.signup-form-social-first__login-link';
+
+		test( 'renders the "Have an account? Log in" paragraph when set', () => {
+			const { container } = render( <SignupFormSocialFirst { ...defaultProps } showLoginLink /> );
+
+			const loginLink = container.querySelector( loginLinkSelector );
+			expect( loginLink ).toBeInTheDocument();
+			expect( within( loginLink as HTMLElement ).getByRole( 'link' ) ).toHaveAttribute(
+				'href',
+				'/log-in'
+			);
+		} );
+
+		test( 'omits the paragraph when unset', () => {
+			const { container } = render( <SignupFormSocialFirst { ...defaultProps } /> );
+
+			expect( container.querySelector( loginLinkSelector ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'email-first variants keep their own paragraph without it', () => {
+			const { container } = render(
+				<SignupFormSocialFirst { ...defaultProps } isEmailFirstVariant />
+			);
+
+			expect( container.querySelector( loginLinkSelector ) ).toBeInTheDocument();
+		} );
+
+		test( 'renders one paragraph, not two, when both conditions hold', () => {
+			const { container } = render(
+				<SignupFormSocialFirst { ...defaultProps } isEmailFirstVariant showLoginLink />
+			);
+
+			expect( container.querySelectorAll( loginLinkSelector ) ).toHaveLength( 1 );
+		} );
+	} );
+
 	describe( 'isMobileCompactVariant', () => {
 		test( 'renders the mobile-compact wrapper class', () => {
 			const { container } = render(

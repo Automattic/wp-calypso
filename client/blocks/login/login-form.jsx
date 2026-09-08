@@ -111,6 +111,7 @@ export class LoginForm extends Component {
 		isJetpack: PropTypes.bool,
 		isUserAccountEmailUpdateRedirect: PropTypes.bool,
 		loginButtonText: PropTypes.string,
+		lostPasswordLink: PropTypes.node,
 		isGravatarFixedAccountLogin: PropTypes.bool.isRequired,
 		isGravPoweredClient: PropTypes.bool,
 	};
@@ -701,6 +702,7 @@ export class LoginForm extends Component {
 			isGravatarFixedAccountLogin,
 			isSocialFirst,
 			isUserAccountEmailUpdateRedirect,
+			lostPasswordLink,
 		} = this.props;
 
 		const isLastUsedPassword =
@@ -886,9 +888,24 @@ export class LoginForm extends Component {
 						} ) }
 						aria-hidden={ isPasswordHidden }
 					>
-						<FormLabel htmlFor="password" hasCoreStylesNoCaps>
-							{ this.props.translate( 'Password' ) }
-						</FormLabel>
+						{ /*
+						 * The lost-password link shares the label row, so it reads as belonging to the
+						 * field it resets. Only while the field is shown: `is-hidden` keeps the block in
+						 * the DOM off-screen for password managers, and a link there would still take
+						 * focus. Desktop only, see login-form.scss; below 960px the footer has it.
+						 */ }
+						{ lostPasswordLink && ! isPasswordHidden ? (
+							<div className="login__form-password-label-row">
+								<FormLabel htmlFor="password" hasCoreStylesNoCaps>
+									{ this.props.translate( 'Password' ) }
+								</FormLabel>
+								{ lostPasswordLink }
+							</div>
+						) : (
+							<FormLabel htmlFor="password" hasCoreStylesNoCaps>
+								{ this.props.translate( 'Password' ) }
+							</FormLabel>
+						) }
 
 						<FormPasswordInput
 							autoCapitalize="off"

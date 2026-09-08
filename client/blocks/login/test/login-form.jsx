@@ -190,6 +190,42 @@ describe( 'LoginForm', () => {
 		expect( passwordContainer ).toHaveClass( 'is-hidden' );
 	} );
 
+	test( 'puts the lost-password link on the password label row once the field is shown', async () => {
+		const { container } = render(
+			<LoginForm isSocialFirst lostPasswordLink={ <a href="/">Lost your password?</a> } />,
+			{ initialState: { login: { authAccountType: 'regular' } } }
+		);
+
+		const row = container.getElementsByClassName( 'login__form-password-label-row' )[ 0 ];
+		expect( row ).toContainElement( screen.getByText( 'Password' ) );
+		expect( row ).toContainElement( screen.getByRole( 'link', { name: 'Lost your password?' } ) );
+	} );
+
+	test( 'does not render the lost-password link while the password field is hidden', async () => {
+		const { container } = render(
+			<LoginForm isSocialFirst lostPasswordLink={ <a href="/">Lost your password?</a> } />
+		);
+
+		expect( container.getElementsByClassName( 'login__form-password' )[ 0 ] ).toHaveClass(
+			'is-hidden'
+		);
+		expect( screen.queryByRole( 'link', { name: 'Lost your password?' } ) ).not.toBeInTheDocument();
+		expect( container.getElementsByClassName( 'login__form-password-label-row' ) ).toHaveLength(
+			0
+		);
+	} );
+
+	test( 'renders a plain password label when no lost-password link is passed', async () => {
+		const { container } = render( <LoginForm isSocialFirst />, {
+			initialState: { login: { authAccountType: 'regular' } },
+		} );
+
+		expect( screen.getByLabelText( /^password$/i ) ).toBeInTheDocument();
+		expect( container.getElementsByClassName( 'login__form-password-label-row' ) ).toHaveLength(
+			0
+		);
+	} );
+
 	test( 'shows "Continue" button text for passwordless accounts', async () => {
 		render( <LoginForm isSocialFirst />, {
 			initialState: {
