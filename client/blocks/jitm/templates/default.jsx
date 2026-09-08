@@ -1,3 +1,4 @@
+import useIsCardVisible from 'calypso/blocks/dismissible-card/use-is-card-visible';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 
 export default function DefaultTemplate( {
@@ -11,9 +12,11 @@ export default function DefaultTemplate( {
 	onClick,
 	onDismiss,
 } ) {
+	const isBannerVisible = useIsCardVisible( featureClass );
+
 	return (
 		<>
-			{ trackImpression && trackImpression() }
+			{ isBannerVisible && trackImpression && trackImpression() }
 			<UpsellNudge
 				callToAction={ CTA.message }
 				title={ message }

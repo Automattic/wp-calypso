@@ -1,3 +1,4 @@
+import useIsCardVisible from 'calypso/blocks/dismissible-card/use-is-card-visible';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 
 import './sidebar-banner.scss';
@@ -19,6 +20,8 @@ export default function SidebarBannerTemplate( {
 		dismissPreferenceName = id;
 	}
 
+	const isBannerVisible = useIsCardVisible( dismissPreferenceName );
+
 	return (
 		<>
 			<UpsellNudge
@@ -33,7 +36,7 @@ export default function SidebarBannerTemplate( {
 				onDismissClick={ onDismiss }
 				title={ message }
 			/>
-			{ trackImpression && trackImpression() }
+			{ isBannerVisible && trackImpression && trackImpression() }
 		</>
 	);
 }

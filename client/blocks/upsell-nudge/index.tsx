@@ -17,6 +17,7 @@ import clsx from 'clsx';
 import debugFactory from 'debug';
 import { useState } from 'react';
 import { connect } from 'react-redux';
+import useIsCardVisible from 'calypso/blocks/dismissible-card/use-is-card-visible';
 import AsyncLoad from 'calypso/components/async-load';
 import Banner from 'calypso/components/banner';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -161,6 +162,7 @@ export const UpsellNudge = ( {
 	isOneClickCheckoutEnabled = true,
 }: Props ) => {
 	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
+	const isBannerVisible = useIsCardVisible( dismissPreferenceName );
 	const shouldNotDisplay =
 		isVip ||
 		! canManageSite ||
@@ -246,7 +248,7 @@ export const UpsellNudge = ( {
 					setShowPurchaseModal={ setShowPurchaseModal }
 				/>
 			) }
-			{ ! isEligibleForOneClickCheckout?.isLoading && (
+			{ isBannerVisible && ! isEligibleForOneClickCheckout?.isLoading && (
 				<TrackComponentView
 					eventName="calypso_upsell_nudge_impression"
 					eventProperties={ {

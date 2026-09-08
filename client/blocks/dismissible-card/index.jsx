@@ -1,11 +1,10 @@
 import { Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import QueryPreferences from 'calypso/components/data/query-preferences';
-import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { dismissCard } from './actions';
-import { isCardDismissed } from './selectors';
+import useIsCardVisible from './use-is-card-visible';
 
 import './style.scss';
 
@@ -22,12 +21,11 @@ function DismissibleCard( {
 	href,
 	children,
 } ) {
-	const isDismissed = useSelector( isCardDismissed( preferenceName ) );
-	const hasReceivedPreferences = useSelector( hasReceivedRemotePreferences );
+	const isVisible = useIsCardVisible( preferenceName );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	if ( isDismissed || ! hasReceivedPreferences ) {
+	if ( ! isVisible ) {
 		return null;
 	}
 
