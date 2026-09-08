@@ -1,0 +1,55 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
+.seo-settings__verification-code-field {
+	display: flex;
+
+	@include breakpoint-deprecated( "<480px" ) {
+		flex-direction: column;
+	}
+
+	label.seo-settings__verification-code-label {
+		box-sizing: border-box;
+		min-width: 80px;
+		margin: 0;
+		padding: 7px 14px;
+		background: var(--color-neutral-0);
+		border: 1px solid var(--color-neutral-10);
+		border-right: 0;
+		border-radius: 2px 0 0 2px;
+		color: var(--color-neutral-50);
+		font-size: $font-body;
+		font-weight: 400;
+		line-height: 1.5;
+		text-align: center;
+		white-space: nowrap;
+
+		@include breakpoint-deprecated( "<480px" ) {
+			border-right: 1px solid var(--color-neutral-10);
+			border-bottom: 0;
+			border-radius: 2px 2px 0 0;
+		}
+	}
+
+	textarea.seo-settings__verification-code-input {
+		flex: 1;
+		min-width: 0;
+		height: 40px;
+		min-height: 40px;
+		overflow-x: auto;
+		overflow-y: hidden;
+		border-radius: 0 2px 2px 0;
+		resize: none;
+		white-space: pre;
+
+		@include breakpoint-deprecated( "<480px" ) {
+			height: auto;
+			min-height: 92px;
+			overflow-x: hidden;
+			overflow-y: auto;
+			border-radius: 0 0 2px 2px;
+			resize: vertical;
+			white-space: pre-wrap;
+		}
+	}
+}

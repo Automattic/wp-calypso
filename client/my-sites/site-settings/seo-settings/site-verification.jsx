@@ -27,6 +27,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getSupportedServices from './services';
+import './site-verification.scss';
 
 class SiteVerification extends Component {
 	state = {
@@ -328,19 +329,26 @@ class SiteVerification extends Component {
 					<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
 						{ supportedServices.map( ( service ) => (
 							<FormFieldset key={ service.slug }>
-								<FormLabel htmlFor={ `verification_code_${ service.slug }` }>
-									{ service.name }
-								</FormLabel>
-								<FormTextarea
-									name={ `verification_code_${ service.slug }` }
-									value={ service.code }
-									id={ `verification_code_${ service.slug }` }
-									spellCheck="false"
-									disabled={ isVerificationDisabled }
-									isError={ this.hasError( service.slug ) }
-									placeholder={ this.getMetaTag( service.slug, '1234' ) }
-									onChange={ this.handleVerificationCodeChange( service.slug ) }
-								/>
+								<div className="seo-settings__verification-code-field">
+									<FormLabel
+										className="seo-settings__verification-code-label"
+										htmlFor={ `verification_code_${ service.slug }` }
+									>
+										{ service.name }
+									</FormLabel>
+									<FormTextarea
+										className="seo-settings__verification-code-input"
+										rows={ 1 }
+										name={ `verification_code_${ service.slug }` }
+										value={ service.code }
+										id={ `verification_code_${ service.slug }` }
+										spellCheck="false"
+										disabled={ isVerificationDisabled }
+										isError={ this.hasError( service.slug ) }
+										placeholder={ this.getMetaTag( service.slug, '1234' ) }
+										onChange={ this.handleVerificationCodeChange( service.slug ) }
+									/>
+								</div>
 								{ this.hasError( service.slug ) && this.getVerificationError( showPasteError ) }
 							</FormFieldset>
 						) ) }
