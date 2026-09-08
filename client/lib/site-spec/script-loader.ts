@@ -163,15 +163,17 @@ async function loadResource( type: ResourceType ): Promise< void > {
 }
 
 /**
- * Loads both SiteSpec CSS and JavaScript resources in the correct order.
+ * Loads both SiteSpec CSS and JavaScript resources.
+ *
+ * Requested together: the script is by far the larger download and the stylesheet is
+ * not needed until the widget renders, so waiting for the CSS first only delays the
+ * script by a round trip.
  * @async
  * @returns Promise that resolves when both resources are loaded
  * @throws {Error} When resource URLs are not configured or loading fails
  */
 export async function loadSiteSpecScriptAndCSS(): Promise< void > {
-	await loadResource( 'css' );
-	await loadResource( 'script' );
-	return;
+	await Promise.all( [ loadResource( 'css' ), loadResource( 'script' ) ] );
 }
 
 /**
