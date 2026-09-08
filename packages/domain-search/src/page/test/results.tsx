@@ -1655,6 +1655,35 @@ describe( 'ResultsPage', () => {
 			);
 		} );
 
+		// The page size counts the featured cards that actually render, so the card
+		// the bundle displaces frees a slot in the list below.
+		it( 'counts only the rendered featured cards against the page size', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'flowers' },
+				suggestions: [ ...flowersSuggestions, buildSuggestion( { domain_name: 'flowers.info' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'flowers' },
+				bundleSuggestion: flowersBundle,
+			} );
+
+			render(
+				<TestDomainSearch
+					config={ { showBundleSuggestions: true, numberOfDomainsResultsPerPage: 3 } }
+					query="flowers"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			// One featured card renders, so the list shows 3 - 1 = 2 rows: the
+			// displaced flowers.net and flowers.org. flowers.info waits behind
+			// "Show more results".
+			expect( await screen.findByTitle( 'flowers.net' ) ).toBeInTheDocument();
+			expect( screen.getByTitle( 'flowers.org' ) ).toBeInTheDocument();
+			expect( screen.queryByTitle( 'flowers.info' ) ).not.toBeInTheDocument();
+		} );
+
 		it( 'keeps best-alternative when the bundle primary is not a featured suggestion', async () => {
 			mockGetSuggestionsQuery( { params: { query: 'flowers' }, suggestions: flowersSuggestions } );
 			mockGetBundleSuggestionQuery( {

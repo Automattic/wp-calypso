@@ -124,4 +124,57 @@ describe( 'bundle metadata shared request', () => {
 		await waitFor( () => expect( result.current.bundleTriggers ).toEqual( [ 'com' ] ) );
 		expect( scope.isDone() ).toBe( true );
 	} );
+
+	// DOMAINS-2238: because the wrapped request carries the plain params, those
+	// params are part of the `domain-bundle-metadata` key. Two TLD filters on one
+	// term are two different backend lists, so they must not share a cache entry.
+	// Both trees stay mounted for the whole test: `staleTime: Infinity` means a
+	// shared key would serve the second tree from the first tree's entry and leave
+	// the second interceptor unconsumed.
+	it( 'keeps separate cache entries for one query under two param sets', async () => {
+		mockGetSuggestionsQuery( { params: { query: 'flowers', tlds: [ 'com' ] }, suggestions: [] } );
+		mockGetSuggestionsQuery( {
+			params: { query: 'flowers', tlds: [ 'com', 'net' ] },
+			suggestions: [],
+		} );
+
+		const comScope = mockGetBundleMetadataQuery( {
+			params: { query: 'flowers', tlds: [ 'com' ] },
+			bundleTriggers: [ 'com' ],
+		} );
+		const comNetScope = mockGetBundleMetadataQuery( {
+			params: { query: 'flowers', tlds: [ 'com', 'net' ] },
+			bundleTriggers: [ 'com', 'net' ],
+		} );
+
+		const com = renderHook( () => useInlineBundles(), {
+			wrapper: ( { children } ) => (
+				<TestDomainSearch
+					query="flowers"
+					config={ { showBundleSuggestions: true, allowedTlds: [ 'com' ] } }
+				>
+					{ children }
+				</TestDomainSearch>
+			),
+		} );
+
+		const comNet = renderHook( () => useInlineBundles(), {
+			wrapper: ( { children } ) => (
+				<TestDomainSearch
+					query="flowers"
+					config={ { showBundleSuggestions: true, allowedTlds: [ 'com', 'net' ] } }
+				>
+					{ children }
+				</TestDomainSearch>
+			),
+		} );
+
+		await waitFor( () => {
+			expect( com.result.current.bundleTriggers ).toEqual( [ 'com' ] );
+			expect( comNet.result.current.bundleTriggers ).toEqual( [ 'com', 'net' ] );
+		} );
+
+		expect( comScope.isDone() ).toBe( true );
+		expect( comNetScope.isDone() ).toBe( true );
+	} );
 } );
