@@ -152,7 +152,7 @@ object BuildBaseImages : BuildType({
 
 	params {
 		param("build.prefix", "1.0")
-		param("image_tag", "latest")
+		param("image_tag", "trixie-preview")
 		checkbox(
 			name = "PROFILE",
 			value = "false",
@@ -252,7 +252,7 @@ object BuildBaseImages : BuildType({
 				hour = 3
 			}
 			branchFilter = """
-				+:trunk
+				+:fix/docker-bullseye-eol-bookworm
 			""".trimIndent()
 			triggerBuild = always()
 			withPendingChangesOnly = false
@@ -299,7 +299,7 @@ object BuildToolchainPreviewImages : BuildType({
 
 	params {
 		param("build.prefix", "2.0")
-		param("image_tag", "latest")
+		param("image_tag", "trixie-preview")
 	}
 
 	vcs {
@@ -427,12 +427,13 @@ object BuildToolchainPreviewImages : BuildType({
 	triggers {
 		vcs {
 			branchFilter = """
-				+:trunk
+				+:fix/docker-bullseye-eol-bookworm
 			""".trimIndent()
 			triggerRules = """
 				+:.nvmrc
 				+:.dockerignore
 				+:Dockerfile.toolchain
+				+:.teamcity/settings.kts
 				+:composer.json
 				+:composer.lock
 			""".trimIndent()
@@ -443,7 +444,7 @@ object BuildToolchainPreviewImages : BuildType({
 				dayOfWeek = "Sun"
 			}
 			branchFilter = """
-				+:trunk
+				+:fix/docker-bullseye-eol-bookworm
 			""".trimIndent()
 			triggerBuild = always()
 			withPendingChangesOnly = false
@@ -472,7 +473,7 @@ object BuildCacheSeedImages : BuildType({
 
 	params {
 		param("build.prefix", "1.0")
-		param("image_tag", "latest")
+		param("image_tag", "trixie-preview")
 		checkbox(
 			name = "PROFILE",
 			value = "false",
@@ -559,9 +560,10 @@ object BuildCacheSeedImages : BuildType({
 
 	triggers {
 		vcs {
-			branchFilter = "+:trunk"
+			branchFilter = "+:fix/docker-bullseye-eol-bookworm"
 			triggerRules = """
 				+:yarn.lock
+				+:.teamcity/settings.kts
 				+:package.json
 				+:composer.lock
 				+:.nvmrc
@@ -574,7 +576,7 @@ object BuildCacheSeedImages : BuildType({
 				hours = "3,9,15,21"
 			}
 			branchFilter = """
-				+:trunk
+				+:fix/docker-bullseye-eol-bookworm
 			""".trimIndent()
 			triggerBuild = always()
 			withPendingChangesOnly = false
@@ -719,7 +721,7 @@ object CheckCodeStyle : BuildType({
 				hour = 5
 			}
 			branchFilter = """
-				+:trunk
+				+:fix/docker-bullseye-eol-bookworm
 			""".trimIndent()
 			triggerBuild = always()
 			withPendingChangesOnly = false
