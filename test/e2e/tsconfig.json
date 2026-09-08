@@ -5,5 +5,5 @@
 		"noEmit": true, // just type checking; Playwright Test transpiles the specs itself.
 		"types": [ "node" ]
 	},
-	"include": [ "specs", "lib", "setup" ]
+	"include": [ "specs", "lib", "setup", "playwright.config.ts", "load-env.ts" ]
 }
