@@ -88,6 +88,9 @@ describe( 'ReaderListHeader', () => {
 		expect( screen.getByRole( 'heading', { name: 'My List' } ) ).toBeVisible();
 		expect( screen.getByText( /Created by/ ) ).toBeVisible();
 		expect( screen.getByText( 'otheruser' ) ).toBeVisible();
+		expect( screen.getByText( 'A test list' ).closest( 'p' ) ).toHaveTextContent(
+			'A test list · Created by otheruser'
+		);
 	} );
 
 	test( 'does not show a Created by line when list is owned by current user', () => {

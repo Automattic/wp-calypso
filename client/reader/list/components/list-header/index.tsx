@@ -75,18 +75,21 @@ const ReaderListHeader = ( props: ReaderListHeaderProps ) => {
 		</span>
 	);
 
-	const description = list?.description && (
-		<AutoDirection>
-			<span className="list-stream__header-description">{ list.description }</span>
-		</AutoDirection>
-	);
+	const description = list?.description;
 
 	const formattedSubtitle =
 		createdBy || description ? (
-			<>
-				{ createdBy }
-				{ description }
-			</>
+			<AutoDirection>
+				<span>
+					{ description }
+					{ description && createdBy && (
+						<span className="list-stream__header-separator" aria-hidden="true">
+							{ ' · ' }
+						</span>
+					) }
+					{ createdBy }
+				</span>
+			</AutoDirection>
 		) : undefined;
 
 	const listBaseUrl =
