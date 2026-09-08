@@ -85,6 +85,13 @@ jest.mock( '../user-profile/controller', () => ( {
 	userProfile: jest.fn(),
 } ) );
 
+type RouteCall = [ string | string[], ...unknown[] ];
+
+// `page` is a bare jest.fn(), so its recorded calls are typed as an empty tuple.
+function registeredRoutes(): RouteCall[] {
+	return jest.mocked( page ).mock.calls as unknown as RouteCall[];
+}
+
 describe( 'reader routes', () => {
 	beforeEach( () => {
 		jest.mocked( page ).mockClear();
@@ -106,7 +113,7 @@ describe( 'reader routes', () => {
 	] )( 'requires a logged-in user for %s', async ( path ) => {
 		await initReader();
 
-		const call = jest.mocked( page ).mock.calls.find( ( [ route ] ) => route === path );
+		const call = registeredRoutes().find( ( [ route ] ) => route === path );
 		expect( call ).toBeDefined();
 		expect( call?.slice( 1 ) ).toContain( redirectLoggedOutToSignup );
 	} );
@@ -114,11 +121,9 @@ describe( 'reader routes', () => {
 	it( 'keeps list viewing available to logged-out users', async () => {
 		await initReader();
 
-		const call = jest
-			.mocked( page )
-			.mock.calls.find(
-				( [ route ] ) => Array.isArray( route ) && route.includes( '/reader/list/:user/:list' )
-			);
+		const call = registeredRoutes().find(
+			( [ route ] ) => Array.isArray( route ) && route.includes( '/reader/list/:user/:list' )
+		);
 		expect( call ).toBeDefined();
 		expect( call?.slice( 1 ) ).not.toContain( redirectLoggedOutToSignup );
 	} );
