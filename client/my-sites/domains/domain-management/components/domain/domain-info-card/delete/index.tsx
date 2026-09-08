@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { transferStatus, type as domainType } from 'calypso/lib/domains/constants';
-import { isCancelable } from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import { cancelPurchase } from 'calypso/me/purchases/paths';
 import RemovePurchase from 'calypso/me/purchases/remove-purchase';
 import { getCancelPurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
@@ -71,7 +70,7 @@ const DomainDeleteInfoCard = ( {
 		);
 	}
 
-	if ( ! isCancelable( purchase ) ) {
+	if ( ! purchase.is_cancelable ) {
 		return null;
 	}
 
