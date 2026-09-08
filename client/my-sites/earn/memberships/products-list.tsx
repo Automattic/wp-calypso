@@ -15,8 +15,8 @@ import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import { PromoSectionCard } from 'calypso/components/promo-section';
-import { PromoCardVariation } from 'calypso/components/promo-section/promo-card';
+import PromoCard, { PromoCardVariation } from 'calypso/components/promo-section/promo-card';
+import PromoCardCta from 'calypso/components/promo-section/promo-card/cta';
 import SectionHeader from 'calypso/components/section-header';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -189,15 +189,19 @@ function ProductsList() {
 			{ hasLoadedFeatures && ! hasStripeFeature && (
 				<>
 					<TrackComponentView eventName="calypso_earn_page_payment_plans_upgrade_button_view" />
-					<PromoSectionCard
+					<PromoCard
+						className="earn__upsell-card"
 						variation={ PromoCardVariation.Compact }
 						icon="credit-card"
 						title={ translate( 'Upgrade to modify payment plans or add new plans' ) }
-						body={ translate(
-							'Payment plans let you charge for memberships, subscriptions, and one-time offers.'
-						) }
-						actions={ {
-							cta: {
+					>
+						<p>
+							{ translate(
+								'Payment plans let you charge for memberships, subscriptions, and one-time offers.'
+							) }
+						</p>
+						<PromoCardCta
+							cta={ {
 								text: translate( 'Upgrade' ),
 								isPrimary: true,
 								action: {
@@ -205,9 +209,9 @@ function ProductsList() {
 									onClick: trackUpgrade,
 									selfTarget: true,
 								},
-							},
-						} }
-					/>
+							} }
+						/>
+					</PromoCard>
 				</>
 			) }
 			{ hasLoadedFeatures && hasStripeFeature && (

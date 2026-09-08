@@ -18,8 +18,8 @@ import FeatureExample from 'calypso/components/feature-example';
 import FormButton from 'calypso/components/forms/form-button';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { PromoSectionCard } from 'calypso/components/promo-section';
-import { PromoCardVariation } from 'calypso/components/promo-section/promo-card';
+import PromoCard, { PromoCardVariation } from 'calypso/components/promo-section/promo-card';
+import PromoCardCta from 'calypso/components/promo-section/promo-card/cta';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { WordAdsStatus } from 'calypso/my-sites/earn/ads/types';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
@@ -208,12 +208,14 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 	const renderUpsellCard = ( {
 		title,
 		body,
+		benefits,
 		href,
 		tracksClickName,
 		learnMoreUrl,
 	}: {
 		title: TranslateResult;
 		body: TranslateResult;
+		benefits?: TranslateResult[];
 		href: string;
 		tracksClickName: string;
 		learnMoreUrl?: string;
@@ -227,13 +229,22 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 					eventName="calypso_upgrade_nudge_impression"
 					eventProperties={ { cta_feature: WPCOM_FEATURES_WORDADS } }
 				/>
-				<PromoSectionCard
+				<PromoCard
+					className="earn__upsell-card"
 					variation={ PromoCardVariation.Compact }
 					icon="speaker"
 					title={ title }
-					body={ body }
-					actions={ {
-						cta: {
+				>
+					<p>{ body }</p>
+					{ benefits && (
+						<ul className="earn__upsell-card-benefits">
+							{ benefits.map( ( benefit, index ) => (
+								<li key={ index }>{ benefit }</li>
+							) ) }
+						</ul>
+					) }
+					<PromoCardCta
+						cta={ {
 							text: translate( 'Upgrade' ),
 							isPrimary: true,
 							action: {
@@ -241,15 +252,17 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 								selfTarget: true,
 								onClick: () => trackNudge( tracksClickName ),
 							},
-						},
-						learnMoreLink: learnMoreUrl
-							? {
-									url: learnMoreUrl,
-									onClick: () => trackNudge( 'calypso_upgrade_nudge_learn_more_click' ),
-							  }
-							: null,
-					} }
-				/>
+						} }
+						learnMoreLink={
+							learnMoreUrl
+								? {
+										url: learnMoreUrl,
+										onClick: () => trackNudge( 'calypso_upgrade_nudge_learn_more_click' ),
+								  }
+								: null
+						}
+					/>
+				</PromoCard>
 			</>
 		);
 	};
@@ -260,8 +273,13 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 				args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() || '' },
 			} ),
 			body: translate(
-				'Make money each time someone visits your site by displaying ads on your posts and pages.'
+				"By upgrading to the %(premiumPlanName)s plan, you'll be able to monetize your site through the WordAds program.",
+				{ args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() || '' } }
 			),
+			benefits: [
+				translate( 'Instantly enroll into the WordAds network.' ),
+				translate( 'Earn money from your content and traffic.' ),
+			],
 			href: buildCheckoutURL( siteSlug as string, PLAN_PREMIUM ),
 			tracksClickName: 'calypso_upgrade_nudge_cta_click',
 			learnMoreUrl: 'https://wordads.co/',

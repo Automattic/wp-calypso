@@ -17,7 +17,7 @@ export interface Props {
 
 import './style.scss';
 
-export const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
+const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 	isPrimary,
 	title,
 	image,
