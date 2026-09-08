@@ -26,6 +26,7 @@ import {
 import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { getMarketplaceHostingSectionRoute } from '../../agency/marketplace/paths';
 import { hasApprovedDirectory } from '../../agency/partner-directory/lib';
 import {
 	PARTNER_DIRECTORY_DETAILS_SEGMENT,
@@ -35,6 +36,7 @@ import {
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
+import type { HostingSection } from '../../agency/marketplace/paths';
 import type { AgencySupports } from '../context';
 import type { AgencyCapability } from '@automattic/api-core';
 import type { AnyRoute, StaticDataRouteOption } from '@tanstack/react-router';
@@ -201,7 +203,8 @@ export const agencyPartnerDirectoryExpertiseRoute = createRoute( {
 	)
 );
 
-// `/marketplace/hosting` – hosting plans an agency can buy or refer
+// `/marketplace/hosting` – hosting plans an agency can buy or refer. Each host
+// has its own URL, as in the classic dashboard, so the section survives a refresh.
 export const marketplaceHostingRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_marketplace' },
 	head: () => ( {
@@ -213,13 +216,34 @@ export const marketplaceHostingRoute = createRoute( {
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'marketplace/hosting',
-} ).lazy( () =>
-	import( '../../agency/marketplace/hosting' ).then( ( d ) =>
-		createLazyRoute( 'marketplace-hosting' )( {
-			component: d.default,
-		} )
-	)
-);
+} );
+
+const createMarketplaceHostingSectionRoute = ( section: HostingSection ) =>
+	createRoute( {
+		getParentRoute: () => marketplaceHostingRoute,
+		path: section,
+	} ).lazy( () =>
+		import( '../../agency/marketplace/hosting' ).then( ( d ) =>
+			createLazyRoute( `marketplace-hosting-${ section }` )( {
+				component: () => <d.default section={ section } />,
+			} )
+		)
+	);
+
+// `/marketplace/hosting` has no screen of its own; it opens the Pressable section.
+export const marketplaceHostingIndexRoute = createRoute( {
+	getParentRoute: () => marketplaceHostingRoute,
+	path: '/',
+	beforeLoad: ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+		throw dashboardRedirect( { to: getMarketplaceHostingSectionRoute( 'pressable' ) } );
+	},
+} );
+export const marketplaceHostingWpcomRoute = createMarketplaceHostingSectionRoute( 'wpcom' );
+export const marketplaceHostingPressableRoute = createMarketplaceHostingSectionRoute( 'pressable' );
+export const marketplaceHostingVipRoute = createMarketplaceHostingSectionRoute( 'vip' );
 
 // `/agency/partner-directory/details` – the agency's public profile details
 export const agencyPartnerDirectoryDetailsRoute = createRoute( {
@@ -1056,7 +1080,12 @@ export const createAgencyRoutes = () => [
 			agencyPartnerDirectoryDetailsRoute,
 		] ),
 		marketplaceRoute,
-		marketplaceHostingRoute,
+		marketplaceHostingRoute.addChildren( [
+			marketplaceHostingIndexRoute,
+			marketplaceHostingWpcomRoute,
+			marketplaceHostingPressableRoute,
+			marketplaceHostingVipRoute,
+		] ),
 		marketplaceProductsRoute,
 		marketplacePurchasesRoute,
 		exclusiveOffersRoute,
