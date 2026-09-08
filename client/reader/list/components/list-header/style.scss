@@ -82,19 +82,23 @@
 	}
 }
 
-.is-reader-page {
-	.formatted-header__title {
-		a {
-			text-decoration-color: transparent;
-			color: var(--color-text);
-			transition: 0.25s;
+.list-stream__header-created-by a {
+	color: inherit;
+	text-decoration: none;
 
-			&:hover {
-				text-decoration-color: initial;
-			}
-		}
+	&:hover {
+		color: var(--color-text-subtle);
+		text-decoration: underline;
 	}
 
+	@include ui-mixins.when-dark-theme {
+		&:hover {
+			color: var(--color-link);
+		}
+	}
+}
+
+.is-reader-page {
 	.list-stream__nav {
 		.section-nav-tab__link {
 			padding-top: 0; // Removing padding from top of tabs to make the view more compact.
