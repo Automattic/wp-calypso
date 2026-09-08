@@ -13,18 +13,18 @@ export default function NameServersSettingsSummary( {
 } ) {
 	const badges: SummaryButtonBadgeProps[] = [];
 	if ( domain.ssl_status === 'active' ) {
-		badges.push( { text: __( 'SSL active' ), intent: 'success' as const } );
+		badges.push( { text: __( 'SSL active' ), intent: 'stable' as const } );
 	} else if ( domain.ssl_status === 'newly_registered' || domain.ssl_status === 'pending' ) {
-		badges.push( { text: __( 'SSL Pending' ), intent: 'warning' as const } );
+		badges.push( { text: __( 'SSL Pending' ), intent: 'low' as const } );
 	} else {
-		badges.push( { text: __( 'SSL Disabled' ), intent: 'error' as const } );
+		badges.push( { text: __( 'SSL Disabled' ), intent: 'high' as const } );
 	}
 
 	if ( DomainSubtype.DOMAIN_REGISTRATION === domain.subtype.id ) {
 		if ( domain.is_dnssec_enabled ) {
-			badges.push( { text: __( 'DNSSEC enabled' ), intent: 'success' as const } );
+			badges.push( { text: __( 'DNSSEC enabled' ), intent: 'stable' as const } );
 		} else {
-			badges.push( { text: __( 'DNSSEC disabled' ), intent: undefined } );
+			badges.push( { text: __( 'DNSSEC disabled' ), intent: 'draft' as const } );
 		}
 	}
 

@@ -3,14 +3,62 @@
  */
 
 import page from '@automattic/calypso-router';
+import { fetchLaunchpad } from '@automattic/data-stores';
+import { QueryClient } from '@tanstack/react-query';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { prefetchHomeLayout } from 'calypso/data/home/use-home-layout-query';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getLoggedInLandingPage } from 'calypso/lib/landing-page';
-import { redirectToLandingPage } from '../controller';
+import { canCurrentUserUseCustomerHome } from 'calypso/state/sites/selectors';
+import { maybeRedirect, redirectToLandingPage } from '../controller';
 
 jest.mock( 'calypso/lib/landing-page', () => ( {
 	...jest.requireActual( 'calypso/lib/landing-page' ),
 	getLoggedInLandingPage: jest.fn(),
+} ) );
+
+jest.mock( '@automattic/data-stores', () => ( {
+	...jest.requireActual( '@automattic/data-stores' ),
+	fetchLaunchpad: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/lib/explat', () => ( {
+	loadExperimentAssignment: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/data/home/use-home-layout-query', () => ( {
+	...jest.requireActual( 'calypso/data/home/use-home-layout-query' ),
+	prefetchHomeLayout: jest.fn( () => Promise.resolve( { primary: [] } ) ),
+} ) );
+
+jest.mock( '@automattic/api-core', () => ( {
+	...jest.requireActual( '@automattic/api-core' ),
+	getAiLaunchpadStatus: jest.fn( () => null ),
+} ) );
+
+jest.mock( 'calypso/state/sites/actions', () => ( {
+	requestSite: jest.fn( () => ( { type: 'SITE_REQUEST' } ) ),
+} ) );
+
+jest.mock( 'calypso/state/sites/plans/selectors/is-site-big-sky-trial', () =>
+	jest.fn( () => false )
+);
+
+jest.mock( 'calypso/state/sites/selectors', () => ( {
+	canCurrentUserUseCustomerHome: jest.fn( () => true ),
+	getSiteAdminUrl: jest.fn( () => 'https://example.wordpress.com/wp-admin/index.php' ),
+	getSiteUrl: jest.fn( () => 'https://example.wordpress.com' ),
+} ) );
+
+jest.mock( 'calypso/state/ui/selectors', () => ( {
+	getSelectedSite: jest.fn( () => ( { ID: 1, launch_status: 'launched' } ) ),
+	getSelectedSiteId: jest.fn( () => 1 ),
+	getSelectedSiteSlug: jest.fn( () => 'test.wordpress.com' ),
+} ) );
+
+jest.mock( 'calypso/utils', () => ( {
+	redirectToLaunchpad: jest.fn(),
 } ) );
 
 const mockStore = configureStore( [ thunk ] );
@@ -140,5 +188,100 @@ describe( 'redirectToLandingPage', () => {
 
 		expect( next ).toHaveBeenCalled();
 		expect( redirect ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'maybeRedirect', () => {
+	const buildSiteContext = () => ( {
+		...buildContext(),
+		path: '/home/test.wordpress.com',
+		pathname: '/home/test.wordpress.com',
+		params: { site: 'test.wordpress.com' },
+		queryClient: new QueryClient(),
+	} );
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		canCurrentUserUseCustomerHome.mockReturnValue( true );
+		jest.spyOn( page, 'redirect' ).mockImplementation( () => {} );
+		jest.spyOn( page, 'replace' ).mockImplementation( () => {} );
+	} );
+
+	afterEach( () => {
+		jest.restoreAllMocks();
+	} );
+
+	it( 'has the launchpad request in flight while the experiment assignment is still pending', async () => {
+		let resolveAssignment;
+		loadExperimentAssignment.mockReturnValue(
+			new Promise( ( resolve ) => {
+				resolveAssignment = resolve;
+			} )
+		);
+		fetchLaunchpad.mockResolvedValue( { launchpad_screen: 'off' } );
+		const next = jest.fn();
+
+		maybeRedirect( buildSiteContext(), next );
+		await flushPromises();
+
+		// The assignment has not resolved yet, so a serial implementation could not
+		// have issued this request.
+		expect( fetchLaunchpad ).toHaveBeenCalledWith( 'test.wordpress.com' );
+		expect( next ).not.toHaveBeenCalled();
+
+		resolveAssignment( { variationName: null } );
+		await flushPromises();
+
+		expect( next ).toHaveBeenCalled();
+	} );
+
+	it( 'renders the page when the launchpad request fails', async () => {
+		loadExperimentAssignment.mockResolvedValue( { variationName: null } );
+		fetchLaunchpad.mockRejectedValue( new Error( 'network' ) );
+		const next = jest.fn();
+
+		await maybeRedirect( buildSiteContext(), next );
+		await flushPromises();
+
+		expect( next ).toHaveBeenCalled();
+	} );
+
+	it( 'requests the card layout from the route rather than leaving it to the cards', async () => {
+		loadExperimentAssignment.mockResolvedValue( { variationName: null } );
+		fetchLaunchpad.mockResolvedValue( { launchpad_screen: 'off' } );
+		const next = jest.fn();
+
+		await maybeRedirect( buildSiteContext(), next );
+		await flushPromises();
+
+		expect( prefetchHomeLayout ).toHaveBeenCalledWith( expect.anything(), 1, expect.any( Object ) );
+		expect( next ).toHaveBeenCalled();
+	} );
+
+	it( 'still renders the page when the card layout request fails', async () => {
+		loadExperimentAssignment.mockResolvedValue( { variationName: null } );
+		fetchLaunchpad.mockResolvedValue( { launchpad_screen: 'off' } );
+		prefetchHomeLayout.mockRejectedValueOnce( new Error( 'network' ) );
+		const next = jest.fn();
+
+		await maybeRedirect( buildSiteContext(), next );
+		await flushPromises();
+
+		expect( next ).toHaveBeenCalled();
+	} );
+
+	it( 'redirects to the launchpad when the checklist is unfinished', async () => {
+		loadExperimentAssignment.mockResolvedValue( { variationName: null } );
+		fetchLaunchpad.mockResolvedValue( {
+			launchpad_screen: 'full',
+			site_intent: 'build',
+			checklist: [ { id: 'a', completed: false } ],
+		} );
+		const next = jest.fn();
+
+		await maybeRedirect( buildSiteContext(), next );
+		await flushPromises();
+
+		expect( next ).not.toHaveBeenCalled();
 	} );
 } );

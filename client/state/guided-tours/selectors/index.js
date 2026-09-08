@@ -177,7 +177,6 @@ export const getGuidedTourState = createSelector(
 		const tour = findEligibleTour( state );
 		const isGutenberg = getSectionGroup( state ) === 'gutenberg';
 		const shouldShow = !! tour && ! isGutenberg;
-		const isPaused = !! tourState.isPaused;
 
 		debug(
 			'tours: reached',
@@ -196,7 +195,6 @@ export const getGuidedTourState = createSelector(
 			...tourState,
 			tour,
 			shouldShow,
-			isPaused,
 		};
 	},
 	[ getRawGuidedTourState, getActionLog, preferencesLastFetchedTimestamp ]

@@ -18,6 +18,9 @@ import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
+import RecoveryEmailMatchesAccountEmailNotice, {
+	useShouldShowRecoveryEmailMatchesAccountEmailNotice,
+} from '../app/recovery-email-matches-account-email-notice';
 import { sitesRoute } from '../app/router/sites';
 import SecurityKeyReregisterNotice, {
 	useShouldShowSecurityKeyReregisterNotice,
@@ -69,17 +72,25 @@ const getFetchPaginatedSitesOptions = (
 ): FetchPaginatedSitesOptions => {
 	const filters = view.filters ?? [];
 
-	// Include A8C sites unless explicitly excluded from the filter.
-	const shouldIncludeA8COwned =
-		isAutomattician &&
-		! filters.some( ( item: Filter ) => item.field === 'is_a8c' && item.value === false );
+	const isA8COwnedIncludedByFilter = ! filters.some(
+		( item: Filter ) => item.field === 'is_a8c' && item.value === false
+	);
+
+	// Non-Automatticians can be members of a8c-owned sites but have no filter to
+	// control their visibility, so always include them.
+	const shouldIncludeA8COwned = ! isAutomattician || isA8COwnedIncludedByFilter;
+
+	// Hidden sites are only returned under 'all', which we opt into when the user
+	// searches, is restoring their account, or is an Automattician who wants a8c-owned
+	// sites — some P2s are not retrievable otherwise.
+	// See: https://github.com/Automattic/wp-calypso/pull/104220.
+	const shouldRequestAllVisibility =
+		!! view.search || isRestoringAccount || ( isAutomattician && isA8COwnedIncludedByFilter );
 
 	const options: FetchPaginatedSitesOptions = {
 		source: isDashboardBackport() && isDefaultView ? 'dashboard-site-list-default' : undefined,
 
-		// Some P2 sites are not retrievable unless site_visibility is set to 'all'.
-		// See: https://github.com/Automattic/wp-calypso/pull/104220.
-		site_visibility: view.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
+		site_visibility: shouldRequestAllVisibility ? 'all' : 'visible',
 		include_a8c_owned: shouldIncludeA8COwned,
 		include_staging: getIncludeStaging( filters ),
 		search: view.search,
@@ -179,6 +190,10 @@ export default function Sites() {
 
 	const isAccountEmailBouncing = useShouldShowAccountEmailBouncingNotice();
 	const showAccountEmailBouncingNotice = supports.me && isAccountEmailBouncing;
+
+	const isRecoveryEmailMatchingAccountEmail = useShouldShowRecoveryEmailMatchesAccountEmailNotice();
+	const showRecoveryEmailMatchesAccountEmailNotice =
+		supports.me && isRecoveryEmailMatchingAccountEmail;
 
 	const defaultView = getDefaultView( {
 		siteCount: user.site_count,
@@ -283,6 +298,9 @@ export default function Sites() {
 					<SitesNoticeArbiter>
 						{ showSecurityKeyReregisterNotice && <SecurityKeyReregisterNotice /> }
 						{ showAccountEmailBouncingNotice && <AccountEmailBouncingNotice /> }
+						{ showRecoveryEmailMatchesAccountEmailNotice && (
+							<RecoveryEmailMatchesAccountEmailNotice />
+						) }
 					</SitesNoticeArbiter>
 				}
 			>

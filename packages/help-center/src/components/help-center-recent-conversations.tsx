@@ -30,7 +30,9 @@ const HelpCenterRecentConversations: React.FC = () => {
 	if ( ! lastMessage ) {
 		return null;
 	}
-	const messageDisplayName = lastMessage
+	// Zendesk conversations carry `lastUpdatedAt`; Odie ones don't.
+	const isHappinessChat = 'lastUpdatedAt' in recentConversation;
+	const messageDisplayName = isHappinessChat
 		? __( 'Happiness chat', __i18n_text_domain__ )
 		: __( 'Support assistant chat', __i18n_text_domain__ );
 

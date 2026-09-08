@@ -21,8 +21,6 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 	// For preventing double click on launch button
 	const [ isLaunching, setIsLaunching ] = useState( false );
 
-	const [ pgIntent, setPgIntent ] = useState< string >( DEFAULT_PLAN_INTENT );
-
 	useEffect( () => {
 		if ( query.get( 'intent' ) === 'woocommerce' ) {
 			sessionStorage.setItem( SESSION_KEY_PLAYGROUND_WOO_INTENT, '1' );
@@ -37,16 +35,6 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 		playgroundClientRef.current = client;
 	};
 
-	const fetchIntent = () => {
-		setPgIntent( DEFAULT_PLAN_INTENT ); // hardcode
-		const playgroundId = query.get( 'playground' );
-		if ( playgroundId ) {
-			const keyName = 'playground-plans-intent-' + playgroundId;
-			window.localStorage.setItem( keyName, DEFAULT_PLAN_INTENT );
-			window.localStorage.setItem( keyName + '-ts', String( Math.floor( Date.now() / 1000 ) ) );
-		}
-	};
-
 	const launchSite = async () => {
 		if ( ! submit || isLaunching ) {
 			return;
@@ -59,7 +47,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 				flow,
 				step: 'playground',
 				blueprint: getBlueprintLabelForTracking( query ),
-				intent: pgIntent,
+				intent: DEFAULT_PLAN_INTENT,
 			} );
 
 			submit();
@@ -78,7 +66,6 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 						rightElement={
 							<Step.PrimaryButton
 								onClick={ launchSite }
-								onMouseEnter={ fetchIntent }
 								disabled={ isLaunching || ! readyForLaunch }
 							>
 								{ isWooCommerceIntent

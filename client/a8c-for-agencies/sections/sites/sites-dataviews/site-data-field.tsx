@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { Badge } from '@automattic/ui';
+import { Badge } from '@wordpress/ui';
 import { translate } from 'i18n-calypso';
 import SiteFavicon from 'calypso/blocks/site-favicon';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
@@ -44,10 +44,10 @@ const SiteDataField = ( {
 				<div>{ site.blogname }</div>
 				{ ! migrationInProgress && <div className="sites-dataviews__site-url">{ site.url }</div> }
 				{ migrationInProgress && (
-					<Badge intent="info">{ translate( 'Migration in progress' ) }</Badge>
+					<Badge intent="informational">{ translate( 'Migration in progress' ) }</Badge>
 				) }
 				{ isDevSite && (
-					<Badge className="sites-dataviews__site-development-badge">
+					<Badge className="sites-dataviews__site-development-badge" intent="draft">
 						{ translate( 'Development' ) }
 					</Badge>
 				) }

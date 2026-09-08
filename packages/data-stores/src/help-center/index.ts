@@ -42,4 +42,5 @@ export function register(): typeof STORE_KEY {
 }
 
 export { setHelpCenterAppId } from './utils';
+export { PLANS_PRESALES_LAUNCHER_CONTEXT } from './constants';
 export type { HelpCenterSite } from './types';

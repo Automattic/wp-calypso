@@ -28,15 +28,7 @@ export default function FeaturedCardSite( { domain }: Props ) {
 	return (
 		<OverviewCard
 			title={ shouldShowAddAttachSite ? __( 'Attach to a site' ) : __( 'Site' ) }
-			heading={
-				shouldShowAddAttachSite ? (
-					__( 'No site attached' )
-				) : (
-					<Truncate tooltip={ site.name } numberOfLines={ 1 }>
-						{ site.name }
-					</Truncate>
-				)
-			}
+			heading={ shouldShowAddAttachSite ? __( 'No site attached' ) : site.name }
 			link={
 				shouldShowAddAttachSite
 					? `/domains/${ domain.domain }/transfer/other-site`

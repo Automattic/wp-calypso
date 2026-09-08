@@ -29,7 +29,7 @@ export default function AISiteToolsSettingsSummary( {
 			return [
 				{
 					text: __( 'Enabled' ),
-					intent: 'success' as const,
+					intent: 'stable' as const,
 				},
 			];
 		}

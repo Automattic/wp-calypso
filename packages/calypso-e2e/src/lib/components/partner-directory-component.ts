@@ -28,6 +28,15 @@ export class PartnerDirectoryComponent {
 			// TODO: This button has no accessible name, so we have to use a CSS selector.
 			const filtersToggle = this.page.locator( '.a4a-partner-directory-filters-toggle' );
 			await filtersToggle.waitFor( { state: 'visible' } );
+
+			// Clear fixed overlays without shifting the mobile visual viewport with scrollIntoView.
+			await filtersToggle.evaluate( ( element ) => {
+				window.scrollTo( {
+					top: window.scrollY + element.getBoundingClientRect().top - window.innerHeight / 2,
+					behavior: 'instant',
+				} );
+			} );
+
 			await filtersToggle.click();
 		}
 		await this.page.getByRole( 'button', { name: dropdownName } ).click();

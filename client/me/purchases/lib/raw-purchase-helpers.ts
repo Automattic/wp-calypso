@@ -205,10 +205,6 @@ export function isWithinIntroductoryOfferPeriod( purchase: Purchase ): boolean {
 	return purchase.introductory_offer?.is_within_period ?? false;
 }
 
-export function isIntroductoryOfferFreeTrial( purchase: Purchase ): boolean {
-	return purchase.introductory_offer?.cost_per_interval === 0;
-}
-
 export function mightStillAutoRenew( purchase: Purchase ): boolean {
 	return purchase.might_still_auto_renew;
 }
@@ -400,7 +396,7 @@ export function getDowngradePlanFromPurchase( purchase: Purchase ) {
 }
 
 export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boolean {
-	return purchase.is_refundable && ! isExpiredOrRemoved( purchase );
+	return purchase.is_instant_downgrade_available;
 }
 
 export function getDisplayName( purchase: Purchase ): TranslateResult {

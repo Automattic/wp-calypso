@@ -1,8 +1,8 @@
 import { DomainSubtype, DomainSummary } from '@automattic/api-core';
 import { sslDetailsQuery } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 
 export const DomainSslField = ( { domain }: { domain: DomainSummary } ) => {
 	const { data: sslDetails } = useQuery( {
@@ -22,8 +22,8 @@ export const DomainSslField = ( { domain }: { domain: DomainSummary } ) => {
 		domain.subtype.id === DomainSubtype.DEFAULT_ADDRESS ||
 		sslDetails?.certificate_provisioned
 	) {
-		return <Badge intent="success">{ __( 'SSL active' ) }</Badge>;
+		return <Badge intent="stable">{ __( 'SSL active' ) }</Badge>;
 	}
 
-	return <Badge intent="warning">{ __( 'SSL pending' ) }</Badge>;
+	return <Badge intent="low">{ __( 'SSL pending' ) }</Badge>;
 };

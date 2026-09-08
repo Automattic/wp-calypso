@@ -75,6 +75,7 @@ function emailStatsAlltimeTransform( stats ) {
 			unique_opens: stats.unique_opens,
 			total_sends: stats.total_sends,
 			total_clicks: stats.total_clicks,
+			unique_clicks: stats.unique_clicks,
 			clicks_rate: stats.clicks_rate,
 		},
 	};

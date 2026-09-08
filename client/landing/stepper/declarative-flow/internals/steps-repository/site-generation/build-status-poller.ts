@@ -33,6 +33,10 @@ export type BuildWowUi = {
 export type BuildWowStatusResponse = {
 	build_status?: string;
 	build_phase?: string;
+	// Where a finished build lands. Once the build is live this names the
+	// generated front page on the edit canvas; before that it is the bare
+	// easy-mode URL the site-spec step already captured.
+	site_editor_url?: string;
 	ui?: BuildWowUi;
 };
 
@@ -59,7 +63,7 @@ export function pollForBuildWowStatus( {
 	fetchStatus = fetchBuildWowStatus,
 }: {
 	siteIdentifier: string;
-	onReady: () => void;
+	onReady: ( response: BuildWowStatusResponse ) => void;
 	onFailed: ( status: string, ui?: BuildWowUi ) => void;
 	onUpdate?: ( ui: BuildWowUi ) => void;
 	onRequestError?: ( reason: string ) => void;
@@ -83,7 +87,7 @@ export function pollForBuildWowStatus( {
 			// does not send the ui block yet.
 			const status = typeof response.build_status === 'string' ? response.build_status : undefined;
 			if ( ui?.state === 'ready' || status === BUILD_WOW_LIVE_STATUS ) {
-				onReady();
+				onReady( response );
 				return 'stop';
 			}
 			if ( ui?.state === 'failed' || ( status && isBuildWowFailedStatus( status ) ) ) {

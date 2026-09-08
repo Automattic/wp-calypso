@@ -97,7 +97,13 @@ const CheckoutMasterbar = ( {
 		>
 			<Step.TopBar
 				leftElement={
-					showCloseButton ? <Step.BackButton onClick={ leaveModalProps.clickClose } /> : undefined
+					showCloseButton ? (
+						<Step.BackButton
+							onClick={ leaveModalProps.clickClose }
+							disabled={ leaveModalProps.isLeaveDisabled }
+							accessibleWhenDisabled
+						/>
+					) : undefined
 				}
 				rightElement={
 					<>

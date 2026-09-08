@@ -219,7 +219,7 @@ export default function ReferHostingForm( {
 			title={ formTitle }
 			autocomplete="off"
 			description={ translate(
-				'Once submitted, our team will take it from there. We will keep you informed of our progress along the way. All fields are required unless marked as optional.'
+				'Use this form to refer a client. Please fill in your client’s details below — not your own agency’s information. Once submitted, our team will follow up with you directly. All fields are required unless marked as optional.'
 			) }
 		>
 			<FormSection title={ companyTitle }>

@@ -1,0 +1,10 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+#: test/examples/private-fields.js:2
+msgid "Private property"
+msgstr ""
+
+#: test/examples/private-fields.js:4
+msgid "Private method"
+msgstr ""

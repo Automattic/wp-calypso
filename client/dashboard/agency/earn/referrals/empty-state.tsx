@@ -1,11 +1,11 @@
 import { tipaltiPayeeQuery } from '@automattic/api-queries';
 import { formatNumber } from '@automattic/number-formatters';
-import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalHStack as HStack, ExternalLink, Icon } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { reusableBlock } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import EmptyState from '../../../components/empty-state';
 import InlineSupportLink from '../../../components/inline-support-link';
 import RouterLinkButton from '../../../components/router-link-button';
@@ -73,7 +73,7 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 								<HStack as="span" spacing={ 2 } justify="flex-start" expanded={ false }>
 									<span>{ __( 'Prepare to get paid' ) }</span>
 									{ accountStatus && (
-										<Badge intent={ accountStatus.statusType }>{ accountStatus.status }</Badge>
+										<Badge intent={ accountStatus.badgeIntent }>{ accountStatus.status }</Badge>
 									) }
 								</HStack>
 							}

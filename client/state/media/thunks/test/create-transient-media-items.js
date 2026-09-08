@@ -52,11 +52,10 @@ describe( 'media - thunks - createTransientMediaItems', () => {
 	} );
 
 	describe( 'validation', () => {
-		it( 'should set media item errors and throw if validation returns errors', () => {
-			const errors = [ 'an error' ];
-			validateMediaItem.mockReturnValueOnce( errors );
+		it( 'should skip the file if validation returns errors', () => {
+			validateMediaItem.mockReturnValueOnce( [ 'an error' ] );
 
-			const setMediaItemErrors = jest.spyOn( syncActions, 'setMediaItemErrors' );
+			const createMediaItem = jest.spyOn( syncActions, 'createMediaItem' );
 
 			// upon failure we return undefined for that file rather than throwing
 			expect( createTransientMediaItems( [ file ], site ) ).toEqual( [ undefined ] );
@@ -67,15 +66,15 @@ describe( 'media - thunks - createTransientMediaItems', () => {
 					...file,
 				} )
 			);
-			expect( setMediaItemErrors ).toHaveBeenCalledWith( siteId, transientId, errors );
+			expect( createMediaItem ).not.toHaveBeenCalled();
 		} );
 
 		it.each( [ [], undefined, null ] )(
-			'should not set media item errors or throw if validation returns %s',
+			'should create the media item if validation returns %s',
 			( nonError ) => {
 				validateMediaItem.mockReturnValueOnce( nonError );
 
-				const setMediaItemErrors = jest.spyOn( syncActions, 'setMediaItemErrors' );
+				const createMediaItem = jest.spyOn( syncActions, 'createMediaItem' );
 
 				createTransientMediaItems( [ file ], site );
 
@@ -85,7 +84,7 @@ describe( 'media - thunks - createTransientMediaItems', () => {
 						...file,
 					} )
 				);
-				expect( setMediaItemErrors ).not.toHaveBeenCalled();
+				expect( createMediaItem ).toHaveBeenCalled();
 			}
 		);
 	} );

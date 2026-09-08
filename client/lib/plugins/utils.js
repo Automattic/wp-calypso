@@ -100,6 +100,7 @@ export function getAllowedPluginData( plugin ) {
 		'homepage',
 		'icons',
 		'id',
+		'is_retired',
 		'last_updated',
 		'name',
 		'network',

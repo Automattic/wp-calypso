@@ -328,6 +328,9 @@ describe( 'registerEditorAbilities', () => {
 
 		expect( registerAbility ).toHaveBeenCalledTimes( editorAbilities.getEditorAbilities().length );
 		expect( registerAbility ).toHaveBeenCalledWith(
+			expect.objectContaining( { name: 'agents-manager/get-block-tree' } )
+		);
+		expect( registerAbility ).toHaveBeenCalledWith(
 			expect.objectContaining( { name: 'big-sky/restore-checkpoint' } )
 		);
 		expect( registerAbility ).toHaveBeenCalledWith(
@@ -348,13 +351,13 @@ describe( 'registerEditorAbilities', () => {
 	it( 'replaces a provider copy when the name is already registered', async () => {
 		const { editorAbilities, getAbility, registerAbility, unregisterAbility } = await load();
 		registerAbility.mockRejectedValueOnce(
-			new Error( 'Ability "big-sky/restore-checkpoint" is already registered' )
+			new Error( 'Ability "agents-manager/get-block-tree" is already registered' )
 		);
-		getAbility.mockReturnValue( { name: 'big-sky/restore-checkpoint' } );
+		getAbility.mockReturnValue( { name: 'agents-manager/get-block-tree' } );
 
 		await editorAbilities.registerEditorAbilities();
 
-		expect( unregisterAbility ).toHaveBeenCalledWith( 'big-sky/restore-checkpoint' );
+		expect( unregisterAbility ).toHaveBeenCalledWith( 'agents-manager/get-block-tree' );
 		// One extra call: the collision is retried after unregistering.
 		expect( registerAbility ).toHaveBeenCalledTimes(
 			editorAbilities.getEditorAbilities().length + 1
