@@ -98,6 +98,10 @@ jest.mock( 'calypso/state/selectors/get-site-features', () => ( {
 	__esModule: true,
 	default: () => ( { active: [] } ),
 } ) );
+jest.mock( 'calypso/state/selectors/has-loaded-site-features', () => ( {
+	__esModule: true,
+	default: () => true,
+} ) );
 let mockIsWpcom = true;
 jest.mock( 'calypso/state/selectors/is-site-wpcom', () => ( {
 	__esModule: true,
