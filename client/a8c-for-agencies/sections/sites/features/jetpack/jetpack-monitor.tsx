@@ -1,4 +1,4 @@
-import { Button } from '@wordpress/components';
+import { Button, Card, CardBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { bell } from '@wordpress/icons';
 import A4AEmptyState from 'calypso/a8c-for-agencies/components/a4a-empty-state';
@@ -48,12 +48,16 @@ export function JetpackMonitorPreview( { site, trackEvent, hasError = false }: P
 						</Button>
 					</A4AEmptyState>
 				) : (
-					<MonitorActivity
-						hasMonitor={ hasMonitor }
-						site={ site }
-						trackEvent={ trackEvent }
-						hasError={ hasError }
-					/>
+					<Card>
+						<CardBody>
+							<MonitorActivity
+								hasMonitor={ hasMonitor }
+								site={ site }
+								trackEvent={ trackEvent }
+								hasError={ hasError }
+							/>
+						</CardBody>
+					</Card>
 				) }
 			</div>
 		</>

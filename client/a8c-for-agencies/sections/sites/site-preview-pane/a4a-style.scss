@@ -101,6 +101,10 @@
 	padding-block-start: 16px;
 	text-align: unset !important;
 
+	.expanded-card {
+		min-height: unset;
+	}
+
 	.site-expanded-content__card-content-column {
 		max-width: unset;
 	}
