@@ -156,44 +156,57 @@ export const ResultsPage = () => {
 	const isFqdn = isFqdnQuery( query );
 
 	// On an FQDN query the top BundleCard is keyed on the typed domain, as
-	// before. On a bare-term query it is keyed on the featured Recommended
-	// suggestion (DOMAINS-2238): the backend anchors the bundle on the first
-	// trigger-TLD suggestion in its list, and the card renders only when that
-	// primary is the Recommended card, so an anchor the client filtered out or
-	// reordered is ignored.
+	// before. On a bare-term query it is keyed on the featured row
+	// (DOMAINS-2238): the backend anchors the bundle on the first trigger-TLD
+	// suggestion in its list, and the card renders only when that primary is
+	// the Recommended or Best alternative card, so an anchor the client
+	// filtered out or reordered is ignored. The .com is not always Recommended:
+	// a .blog often leads a bare-term list with the .com as Best alternative.
 	const recommendedFqdn = featuredSuggestions
 		.find( ( { reason } ) => reason === 'recommended' )
 		?.suggestion.toLowerCase();
+	const featuredFqdns = featuredSuggestions.map( ( { suggestion } ) => suggestion.toLowerCase() );
 	const bundlePrimaryFqdn =
 		bundleSuggestion && bundleSuggestion.domains.length > 0
 			? getBundlePrimaryDomain( bundleSuggestion ).domain.toLowerCase()
 			: undefined;
-	const bundleMatchesRecommended =
-		bundlePrimaryFqdn !== undefined && bundlePrimaryFqdn === recommendedFqdn;
+	const bundleMatchesFeatured =
+		bundlePrimaryFqdn !== undefined && featuredFqdns.includes( bundlePrimaryFqdn );
 	// A failed add keeps the card mounted (with an error notice) rather than
 	// hiding it, so the user sees the failure instead of the offer silently
 	// vanishing. See bundleErrorMessage above.
-	const visibleBundleSuggestion = isFqdn || bundleMatchesRecommended ? bundleSuggestion : undefined;
+	const visibleBundleSuggestion = isFqdn || bundleMatchesFeatured ? bundleSuggestion : undefined;
 
 	// While the wrapped request is in flight on a bare-term search, the right
-	// slot shows a placeholder instead of best-alternative, so the row does not
-	// render best-alternative and then swap it for the bundle card.
+	// slot shows a placeholder instead of Best alternative, so the row does not
+	// render Best alternative and then swap it for the bundle card.
 	const showBundleSlotPlaceholder =
 		! isFqdn &&
 		config.showBundleSuggestions &&
 		isLoadingBundleSuggestion &&
 		recommendedFqdn !== undefined;
 
-	// The bundle card (or its placeholder) takes the best-alternative slot on a
-	// bare-term search. An FQDN search has one featured card, so nothing is dropped.
+	// The bundle card (or its placeholder) takes the Best alternative slot on a
+	// bare-term search. The displaced suggestion is still purchasable on its
+	// own, so once the card is visible it leads the regular list instead of
+	// leaving the page — when a .blog is Recommended, the displaced card is the
+	// .com itself. While the placeholder shows it is withheld, so it does not
+	// jump from the list back into the featured row if no bundle arrives.
 	const bundleTakesRightSlot =
 		! isFqdn && ( !! visibleBundleSuggestion || showBundleSlotPlaceholder );
-	const renderedFeaturedSuggestions = bundleTakesRightSlot
-		? featuredSuggestions.filter( ( { reason } ) => reason !== 'best-alternative' )
+	const displacedSuggestion = bundleTakesRightSlot
+		? featuredSuggestions.find( ( { reason } ) => reason === 'best-alternative' )?.suggestion
+		: undefined;
+	const renderedFeaturedSuggestions = displacedSuggestion
+		? featuredSuggestions.filter( ( { suggestion } ) => suggestion !== displacedSuggestion )
 		: featuredSuggestions;
+	const renderedRegularSuggestions =
+		displacedSuggestion && visibleBundleSuggestion
+			? [ displacedSuggestion, ...regularSuggestions ]
+			: regularSuggestions;
 
 	const numberOfInitialVisibleSuggestions =
-		config.numberOfDomainsResultsPerPage - featuredSuggestions.length;
+		config.numberOfDomainsResultsPerPage - renderedFeaturedSuggestions.length;
 
 	// A trigger domain promoted into the featured section (e.g. the bare-term
 	// search `example` surfaces `example.com` as a featured card) still needs its
@@ -338,9 +351,11 @@ export const ResultsPage = () => {
 					<SearchResults.Placeholder />
 				) : (
 					<SearchResults
-						suggestions={ regularSuggestions }
+						suggestions={ renderedRegularSuggestions }
 						numberOfInitialVisibleSuggestions={ numberOfInitialVisibleSuggestions }
-						getInlineBundle={ getInlineBundle }
+						getInlineBundle={ ( fqdn ) =>
+							fqdn.toLowerCase() === visibleBundlePrimaryFqdn ? undefined : getInlineBundle( fqdn )
+						}
 					/>
 				) }
 			</VStack>

@@ -1640,7 +1640,10 @@ describe( 'ResultsPage', () => {
 			expect( await findBundleCta() ).toBeInTheDocument();
 			expect( await screen.findByTitle( 'flowers.com' ) ).toHaveTextContent( 'Recommended' );
 			expect( screen.queryByText( 'Best alternative' ) ).not.toBeInTheDocument();
-			// The regular list is untouched.
+			// The displaced best-alternative leads the regular list instead of leaving the page.
+			expect( await screen.findByTitle( 'flowers.net' ) ).not.toHaveTextContent(
+				'Best alternative'
+			);
 			expect( await screen.findByTitle( 'flowers.org' ) ).toBeInTheDocument();
 
 			await waitFor( () => {
@@ -1652,7 +1655,7 @@ describe( 'ResultsPage', () => {
 			);
 		} );
 
-		it( 'keeps best-alternative when the bundle primary is not the recommended suggestion', async () => {
+		it( 'keeps best-alternative when the bundle primary is not a featured suggestion', async () => {
 			mockGetSuggestionsQuery( { params: { query: 'flowers' }, suggestions: flowersSuggestions } );
 			mockGetBundleSuggestionQuery( {
 				params: { query: 'flowers' },
@@ -1708,6 +1711,7 @@ describe( 'ResultsPage', () => {
 			expect( await screen.findByTitle( 'flowers.com' ) ).toHaveTextContent( 'Recommended' );
 			expect( screen.getAllByLabelText( 'Loading featured domain suggestion' ) ).toHaveLength( 1 );
 			expect( screen.queryByText( 'Best alternative' ) ).not.toBeInTheDocument();
+			expect( screen.queryByTitle( 'flowers.net' ) ).not.toBeInTheDocument();
 
 			// The bundle lands: the placeholder becomes the card.
 			expect( await findBundleCta() ).toBeInTheDocument();
@@ -1734,6 +1738,74 @@ describe( 'ResultsPage', () => {
 
 		it( 'shows only the card and no inline row when the trigger is already in the cart', async () => {
 			mockGetSuggestionsQuery( { params: { query: 'flowers' }, suggestions: flowersSuggestions } );
+			mockGetBundleMetadataQuery( {
+				params: { query: 'flowers' },
+				bundleSuggestion: flowersBundle,
+				bundleTriggers: [ 'com' ],
+			} );
+			mockGetBundleForDomainQuery( { fqdn: 'flowers.com', bundleSuggestion: flowersBundle } );
+
+			const { container } = render(
+				<TestDomainSearch
+					cart={ buildCart( {
+						items: [ buildCartItem( { domain: 'flowers', tld: 'com' } ) ],
+					} ) }
+					config={ { showBundleSuggestions: true } }
+					query="flowers"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await findBundleMember( 'flowers.net' ) ).toBeInTheDocument();
+			expect( container.querySelector( '.inline-bundle-row' ) ).toBeNull();
+			expect(
+				container.querySelector( '.domain-search--results__featured-inline-bundles' )
+			).toBeNull();
+		} );
+
+		it( 'renders the bundle card when the primary is the best-alternative suggestion and moves it to the top of the regular list', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'flowers' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'flowers.blog' } ),
+					buildSuggestion( { domain_name: 'flowers.com' } ),
+					buildSuggestion( { domain_name: 'flowers.org' } ),
+				],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'flowers' },
+				bundleSuggestion: flowersBundle,
+			} );
+
+			render(
+				<TestDomainSearch config={ { showBundleSuggestions: true } } query="flowers">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await findBundleCta() ).toBeInTheDocument();
+			expect( screen.getByTitle( 'flowers.blog' ) ).toHaveTextContent( 'Recommended' );
+			expect( screen.queryByText( 'Best alternative' ) ).not.toBeInTheDocument();
+
+			// flowers.org is regular-only, so its role="list" ancestor is the regular list.
+			const regularList = screen.getByTitle( 'flowers.org' ).closest( '[role="list"]' );
+			const regularTitles = Array.from(
+				regularList?.querySelectorAll( '[role="listitem"][title]' ) ?? []
+			).map( ( element ) => element.getAttribute( 'title' ) );
+			expect( regularTitles[ 0 ] ).toBe( 'flowers.com' );
+			expect( regularTitles ).toContain( 'flowers.org' );
+		} );
+
+		it( 'does not offer an inline row for the displaced primary that the card already shows', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'flowers' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'flowers.blog' } ),
+					buildSuggestion( { domain_name: 'flowers.com' } ),
+					buildSuggestion( { domain_name: 'flowers.org' } ),
+				],
+			} );
 			mockGetBundleMetadataQuery( {
 				params: { query: 'flowers' },
 				bundleSuggestion: flowersBundle,
