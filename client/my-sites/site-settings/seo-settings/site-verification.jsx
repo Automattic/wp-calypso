@@ -98,8 +98,8 @@ export class SiteVerification extends Component {
 		const stateItems = {};
 
 		supportedServices.forEach( ( service ) => {
-			// Fall back to the site object while settings load and for older Jetpack versions
-			// that do not return verification codes from the site settings endpoint.
+			// Prefer the value from the live site-settings REST API. Older Jetpack versions
+			// do not expose verification codes there, so fall back to the site object's options.
 			stateItems[ service.slug ] =
 				siteSettings?.verification_services_codes?.[ service.slug ] ??
 				site?.options?.verification_services_codes?.[ service.slug ] ??
