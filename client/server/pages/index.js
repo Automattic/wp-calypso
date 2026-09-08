@@ -796,6 +796,7 @@ function setUpCSP( req, res, next ) {
 			'https://wordpress.com',
 			'*.doubleclick.net', // Google DoubleClick tracking pixels (ad.doubleclick.net, *.fls.doubleclick.net, etc.)
 			'https://api.wordpress.org', // WordPress.org API (plugin/theme info)
+			'https://wordpress.org', // WordPress.org plugin directory REST API (plugin icons)
 			'https://pixel.wp.com', // WordPress.com stats pixel
 			'https://*.google.com',
 			'www.google-analytics.com',
