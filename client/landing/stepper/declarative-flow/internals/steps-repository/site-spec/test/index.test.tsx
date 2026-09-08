@@ -6,7 +6,6 @@ import { act, render } from '@testing-library/react';
 import {
 	applyBlueprintSpec,
 	getSiteAdminUrl,
-	isAtomicTransferComplete,
 	startBlueprintArchiveImport,
 	waitForAtomicTransferComplete,
 	waitForBlueprintImportComplete,
@@ -18,18 +17,26 @@ import { EARLY_PROVISION_TARGET_WPCOM_ATOMIC } from '../early-provisioning';
 import SiteSpec from '../index';
 
 let mockQueryParams = new URLSearchParams();
+let mockBuildWowEnabled = false;
 
 jest.mock( '@automattic/calypso-config', () => {
 	return {
 		__esModule: true,
-		default: jest.fn( ( key: string ) => {
-			const values: Record< string, string > = {
-				wpcom_signup_id: 'signup-id',
-				wpcom_signup_key: 'signup-key',
-			};
+		default: Object.assign(
+			jest.fn( ( key: string ) => {
+				const values: Record< string, string > = {
+					wpcom_signup_id: 'signup-id',
+					wpcom_signup_key: 'signup-key',
+				};
 
-			return values[ key ];
-		} ),
+				return values[ key ];
+			} ),
+			{
+				isEnabled: jest.fn(
+					( flag: string ) => flag === 'calypso/ai-site-builder-build-wow' && mockBuildWowEnabled
+				),
+			}
+		),
 	};
 } );
 
@@ -98,13 +105,12 @@ jest.mock( 'calypso/landing/stepper/stores', () => ( {
 // The wow-funnel helpers stay real so the funnel's readiness rules are exercised; only the
 // requests they make are stubbed.
 jest.mock( 'calypso/landing/stepper/utils/blueprint-archive-import', () => ( {
-	applyBlueprintSpec: jest.fn( () => Promise.resolve( true ) ),
+	applyBlueprintSpec: jest.fn( () => Promise.resolve( { applied: true, adminUrl: null } ) ),
 	getBlueprintArchiveSiteIdentifier: jest.fn(
 		( { siteSlug, siteId }: { siteSlug?: string | null; siteId?: string | null } ) =>
 			siteSlug || ( siteId && String( siteId ) !== '0' ? String( siteId ) : null )
 	),
 	getSiteAdminUrl: jest.fn( () => Promise.resolve( 'https://example.wordpress.com/wp-admin/' ) ),
-	isAtomicTransferComplete: jest.fn( () => Promise.resolve( true ) ),
 	getSiteEditorUrl: jest.fn( () => 'https://example.wordpress.com/wp-admin/site-editor.php' ),
 	logBlueprintArchiveEvent: jest.fn(),
 	startBlueprintArchiveImport: jest.fn( () => Promise.resolve() ),
@@ -139,6 +145,7 @@ describe( 'SiteSpec early provisioning step', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockBuildWowEnabled = false;
 		window.sessionStorage.clear();
 		mockQueryParams = new URLSearchParams( 'early_provision_site=1&source=vega' );
 		mockUseReactQuery.mockReturnValue( {
@@ -247,7 +254,22 @@ describe( 'SiteSpec early provisioning step', () => {
 		);
 	} );
 
-	it( 'ignores build-wow Site Spec routing for non-Automatticians', () => {
+	it( 'loads build-wow for non-Automatticians without asking for staff status when the feature is enabled', () => {
+		mockBuildWowEnabled = true;
+		mockQueryParams = new URLSearchParams( 'build_wow=1&siteSlug=example.wordpress.com' );
+		mockUseReactQuery.mockReturnValue( { data: undefined, isLoading: false } );
+
+		renderSiteSpec();
+
+		expect( mockUseReactQuery ).toHaveBeenCalledWith(
+			expect.objectContaining( { enabled: false } )
+		);
+		expect( mockUseSiteSpec.mock.calls[ 0 ][ 0 ].siteSpecConfig ).toEqual( {
+			agentId: 'build-wow-site-spec',
+		} );
+	} );
+
+	it( 'ignores build-wow Site Spec routing for non-Automatticians when the feature is disabled', () => {
 		mockQueryParams = new URLSearchParams( 'build_wow=1&siteSlug=example.wordpress.com' );
 		mockUseReactQuery.mockReturnValue( {
 			data: false,
@@ -256,6 +278,9 @@ describe( 'SiteSpec early provisioning step', () => {
 
 		renderSiteSpec();
 
+		expect( mockUseReactQuery ).toHaveBeenCalledWith(
+			expect.objectContaining( { enabled: true } )
+		);
 		const siteSpecOptions = mockUseSiteSpec.mock.calls[ 0 ][ 0 ];
 		expect( siteSpecOptions.siteSpecConfig ).toBeUndefined();
 		expect( siteSpecOptions.onSpecConfirm ).toBeUndefined();
@@ -353,50 +378,35 @@ describe( 'SiteSpec blueprint archive import', () => {
 		expect( waitForBlueprintImportComplete ).not.toHaveBeenCalled();
 	} );
 
-	it( 'prefetches the hand-off URL while the customer is still answering', async () => {
-		renderSiteSpec();
-		// Let the mount effect settle.
-		await act( async () => {} );
-
-		// One status check, never the poll — waiting belongs to the processing step.
-		expect( isAtomicTransferComplete ).toHaveBeenCalledWith( 'example.wordpress.com' );
-		expect( waitForAtomicTransferComplete ).not.toHaveBeenCalled();
-		expect( getSiteAdminUrl ).toHaveBeenCalledTimes( 1 );
-
-		const siteSpecOptions = mockUseSiteSpec.mock.calls[ 0 ][ 0 ];
-		await act( async () => {
-			await siteSpecOptions.onSpecConfirm( { spec_id: 'spec-789' } );
+	it( 'uses the admin URL from the apply response, so confirm does not fetch it', async () => {
+		( applyBlueprintSpec as jest.Mock ).mockResolvedValueOnce( {
+			applied: true,
+			adminUrl: 'https://example.wpcomstaging.com/wp-admin/',
 		} );
+
+		await confirmSpec();
 
 		const pendingAction = mockSetPendingAction.mock.calls[ 0 ][ 0 ];
 		await expect( pendingAction() ).resolves.toEqual( {
 			redirectTo: 'https://example.wordpress.com/wp-admin/site-editor.php',
 		} );
 
-		// Still one: confirm spent the prefetched URL instead of paying for it again.
-		expect( getSiteAdminUrl ).toHaveBeenCalledTimes( 1 );
+		// The response already knew the admin base, so the extra /sites/<id> round trip is skipped
+		// — that request is the one this change exists to remove from the hand-off.
+		expect( getSiteAdminUrl ).not.toHaveBeenCalled();
 	} );
 
-	it( 'skips the prefetch while the site is still transferring', async () => {
-		// admin_url changes when a site goes Atomic, so a URL read now would name the old site.
-		( isAtomicTransferComplete as jest.Mock ).mockResolvedValueOnce( false );
+	it( 'falls back to fetching the admin URL when the response has none', async () => {
+		// A wpcom that predates the field. The hand-off must still work, just a round trip slower.
+		( applyBlueprintSpec as jest.Mock ).mockResolvedValueOnce( { applied: true, adminUrl: null } );
 
-		renderSiteSpec();
-		await act( async () => {} );
-
-		expect( getSiteAdminUrl ).not.toHaveBeenCalled();
-
-		const siteSpecOptions = mockUseSiteSpec.mock.calls[ 0 ][ 0 ];
-		await act( async () => {
-			await siteSpecOptions.onSpecConfirm( { spec_id: 'spec-789' } );
-		} );
+		await confirmSpec();
 
 		const pendingAction = mockSetPendingAction.mock.calls[ 0 ][ 0 ];
 		await expect( pendingAction() ).resolves.toEqual( {
 			redirectTo: 'https://example.wordpress.com/wp-admin/site-editor.php',
 		} );
 
-		// Fetched at confirm, once, now that the transfer is known to be done.
 		expect( getSiteAdminUrl ).toHaveBeenCalledTimes( 1 );
 	} );
 

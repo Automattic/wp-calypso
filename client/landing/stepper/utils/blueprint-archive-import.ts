@@ -239,31 +239,6 @@ export async function waitForBlueprintImportComplete(
 }
 
 /**
- * One-shot check of whether a site's Atomic transfer has already completed.
- *
- * Distinct from waitForAtomicTransferComplete(): a caller that must not block — a prefetch
- * speculating on work it may not need — wants an answer now, not a poll that can run for minutes.
- *
- * A missing transfer, an in-flight one, or a transient error all read as `false`. This is an
- * optimisation hint only: `false` never means the transfer failed, so callers must fall back to
- * doing the work properly rather than treating it as a verdict.
- */
-export async function isAtomicTransferComplete( siteIdentifier: string ): Promise< boolean > {
-	try {
-		const transfer = ( await wpcom.req.get( {
-			path: `/sites/${ siteIdentifier }/atomic/transfers/latest`,
-			apiNamespace: 'wpcom/v2',
-		} ) ) as AtomicTransferResponse;
-
-		return Boolean(
-			transfer?.status && ATOMIC_TRANSFER_COMPLETE_STATES.includes( transfer.status )
-		);
-	} catch {
-		return false;
-	}
-}
-
-/**
  * Poll the canonical Atomic transfer status endpoint until the site's transfer
  * to Atomic completes. Resolves on a complete state; throws on a terminal
  * failure or timeout. A missing transfer (404 before the backup_import job
@@ -347,17 +322,37 @@ export async function waitForAtomicTransferComplete(
  * Resolves either way — a failure here costs the user personalization, not
  * their site, so it must never block the hand-off to the editor.
  */
+/**
+ * Result of applying a confirmed spec.
+ *
+ * `adminUrl` is the site's wp-admin base as the server resolved it at apply time. Null when the
+ * apply failed, or when wpcom has not yet deployed the field — callers must fall back rather than
+ * assume it is present.
+ */
+export interface ApplyBlueprintSpecResult {
+	applied: boolean;
+	adminUrl: string | null;
+}
+
+/**
+ * Apply a confirmed site spec, and hand back the admin URL the response already knows.
+ *
+ * The endpoint resolves the site's admin URL as part of its reply, so reading it here saves the
+ * caller a `/sites/<id>` round trip on the hand-off path — the one place the customer is watching a
+ * spinner. It is also necessarily current: admin_url changes when a site goes Atomic, and by the
+ * time a spec is applied the transfer has landed.
+ */
 export async function applyBlueprintSpec(
 	siteIdentifier: string,
 	specId: string,
 	blueprintSlug?: string | null
-): Promise< boolean > {
+): Promise< ApplyBlueprintSpecResult > {
 	if ( ! specId ) {
-		return false;
+		return { applied: false, adminUrl: null };
 	}
 
 	try {
-		await wpcom.req.post(
+		const response = ( await wpcom.req.post(
 			{
 				path: `/sites/${ siteIdentifier }/big-sky/apply-blueprint-spec`,
 				apiNamespace: 'wpcom/v2',
@@ -366,14 +361,19 @@ export async function applyBlueprintSpec(
 				spec_id: specId,
 				...( blueprintSlug ? { blueprint_id: blueprintSlug } : {} ),
 			}
-		);
-		return true;
+		) ) as { admin_url?: string };
+
+		return {
+			applied: true,
+			// Absent on a wpcom that predates the field; the caller fetches it the old way.
+			adminUrl: typeof response?.admin_url === 'string' ? response.admin_url : null,
+		};
 	} catch ( error ) {
 		logBlueprintArchiveEvent( 'apply_spec_error', {
 			site_identifier: siteIdentifier,
 			error: error instanceof Error ? error.message : String( error ),
 		} );
-		return false;
+		return { applied: false, adminUrl: null };
 	}
 }
 

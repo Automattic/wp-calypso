@@ -42,12 +42,34 @@ describe( 'applyBlueprintSpec', () => {
 		mockPost.mockReset();
 	} );
 
+	it( 'surfaces the admin URL the response carries, so the caller need not fetch it', async () => {
+		mockPost.mockResolvedValue( {
+			success: true,
+			admin_url: 'https://example.wpcomstaging.com/wp-admin/',
+		} );
+
+		await expect( applyBlueprintSpec( 'example.wordpress.com', 'spec-123' ) ).resolves.toEqual( {
+			applied: true,
+			adminUrl: 'https://example.wpcomstaging.com/wp-admin/',
+		} );
+	} );
+
+	it( 'reports a null admin URL when the field is absent, rather than inventing one', async () => {
+		// A wpcom that predates the field. The caller has to fall back, so this must not guess.
+		mockPost.mockResolvedValue( { success: true } );
+
+		await expect( applyBlueprintSpec( 'example.wordpress.com', 'spec-123' ) ).resolves.toEqual( {
+			applied: true,
+			adminUrl: null,
+		} );
+	} );
+
 	it( 'posts the spec and blueprint to the apply endpoint', async () => {
 		mockPost.mockResolvedValue( { success: true } );
 
 		await expect(
 			applyBlueprintSpec( 'example.wordpress.com', 'spec-123', 'coachava' )
-		).resolves.toBe( true );
+		).resolves.toEqual( { applied: true, adminUrl: null } );
 
 		expect( mockPost ).toHaveBeenCalledWith(
 			{
@@ -67,7 +89,10 @@ describe( 'applyBlueprintSpec', () => {
 	} );
 
 	it( 'skips the request without a spec id', async () => {
-		await expect( applyBlueprintSpec( '12345', '' ) ).resolves.toBe( false );
+		await expect( applyBlueprintSpec( '12345', '' ) ).resolves.toEqual( {
+			applied: false,
+			adminUrl: null,
+		} );
 
 		expect( mockPost ).not.toHaveBeenCalled();
 	} );
@@ -79,7 +104,10 @@ describe( 'applyBlueprintSpec', () => {
 	it( 'resolves false instead of throwing when the request fails', async () => {
 		mockPost.mockRejectedValue( new Error( 'nope' ) );
 
-		await expect( applyBlueprintSpec( '12345', 'spec-123', 'coachava' ) ).resolves.toBe( false );
+		await expect( applyBlueprintSpec( '12345', 'spec-123', 'coachava' ) ).resolves.toEqual( {
+			applied: false,
+			adminUrl: null,
+		} );
 	} );
 } );
 
