@@ -10,6 +10,7 @@ import { withSiteContext } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
+import { useExperiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../analytics';
 import { useHelpCenter } from '../help-center';
 import { adminBarIcon } from './admin-bar-icon';
@@ -127,6 +128,13 @@ export function useHelpCenterPlugin( {
 	const { isShown: isHelpCenterShown, setShowHelpCenter } = useHelpCenter();
 	const { recordTracksEvent } = useAnalytics();
 	const { data: omnibarSiteId } = useQuery( omnibarSiteIdQuery() );
+	// Load the assignment where the entry point renders, so ExPlat exposure covers
+	// everyone who sees it, not only users who open the Help Center.
+	const [ isLoadingGetHelpAssignment, getHelpChatForwardAssignment ] = useExperiment(
+		'calypso_help_center_get_help_chat_forward'
+	);
+	const showGetHelpLabel =
+		! isLoadingGetHelpAssignment && getHelpChatForwardAssignment?.variationName === 'treatment';
 
 	const helpNode = adminBarNodes.find( ( node ) => node.id === AGENTS_MANAGER_NODE_ID );
 
@@ -142,6 +150,7 @@ export function useHelpCenterPlugin( {
 		return {
 			id: helpNode.id,
 			label: helpNode.meta?.menu_title,
+			title: showGetHelpLabel ? __( 'Get Help' ) : undefined,
 			icon: adminBarIcon( helpNode.meta?.icon, 'omnibar__help-icon' ),
 			tooltip: helpNode.meta?.menu_title,
 			// Disconnected sites get a link instead of a dropdown, opened in a new tab as in wp-admin.
@@ -154,6 +163,7 @@ export function useHelpCenterPlugin( {
 	return {
 		id: 'help-center',
 		label: __( 'Help' ),
+		title: showGetHelpLabel ? __( 'Get Help' ) : undefined,
 		icon: adminBarIcon( 'help', 'omnibar__help-icon' ),
 		onClick: () => setShowHelpCenter( ! isHelpCenterShown ),
 	};
