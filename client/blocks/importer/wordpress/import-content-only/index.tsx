@@ -156,14 +156,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 							},
 						} ) as string
 					}
-					subTitleText={
-						// translators: %(plan)s is the plan name - e.g. Business or Creator
-						translate( 'Importing a backup file requires a %(planName)s plan', {
-							args: {
-								planName,
-							},
-						} ) as string
-					}
+					hideTitleAndSubTitle={ ! renderHeading }
 					isBusy={ false }
 					onCtaClick={ () => {
 						stepNavigator?.goToCheckoutPage?.();

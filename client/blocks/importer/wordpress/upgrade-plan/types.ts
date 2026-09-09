@@ -26,7 +26,6 @@ export type UpgradePlanProps = {
 	site: SiteDetails;
 	isBusy: boolean;
 	ctaText: string;
-	subTitleText?: string;
 	hideTitleAndSubTitle?: boolean;
 	onFreeTrialClick?: () => void;
 	navigateToVerifyEmailStep: () => void;

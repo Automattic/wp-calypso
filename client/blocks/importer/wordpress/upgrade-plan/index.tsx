@@ -34,7 +34,6 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 		site,
 		navigateToVerifyEmailStep,
 		ctaText,
-		subTitleText,
 		hideTitleAndSubTitle = false,
 		onCtaClick,
 		onFreeTrialClick: handleFreeTrialClick,
@@ -189,7 +188,7 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 							: translate( 'Upgrade your plan' ) }
 					</Title>
 					<SubTitle className="onboarding-subtitle--full-width">
-						{ subTitleText || isEnglishLocale
+						{ isEnglishLocale
 							? upgradeCtaCopy
 							: translate(
 									'Migrating themes, plugins, users, and settings requires a %(plan)s plan.',
