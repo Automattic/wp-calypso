@@ -132,7 +132,7 @@ const readMenu = async ( id: unknown ): Promise< NavigationRecord | null > => {
 	return record || null;
 };
 
-export const writeMenu = async ( id: unknown, items: NavigationBlock[] ): Promise< void > => {
+export const writeMenuItems = async ( id: unknown, items: NavigationBlock[] ): Promise< void > => {
 	const coreDispatch = dispatch( coreStore ) as unknown as CoreDispatch | undefined;
 
 	if ( ! coreDispatch ) {
@@ -255,7 +255,7 @@ export async function addNavigationItem( item: NavigationItem ): Promise< void >
 		return;
 	}
 
-	await writeMenu( menuId, [
+	await writeMenuItems( menuId, [
 		...getItems( menu ),
 		createBlock( NAVIGATION_LINK_BLOCK, {
 			label: item.label,
@@ -297,7 +297,7 @@ async function rewriteMenusHolding(
 			continue;
 		}
 
-		await writeMenu( menuId, rewritten );
+		await writeMenuItems( menuId, rewritten );
 
 		if ( save ) {
 			await saveMenu( menuId );
