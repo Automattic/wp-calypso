@@ -125,7 +125,7 @@ export default function DomainDiagnostics() {
 		const recordsToCheck = [ 'spf', 'dkim1', 'dkim2', 'dmarc' ];
 
 		return (
-			<VStack>
+			<VStack spacing={ 6 }>
 				<VStack as="ul" spacing={ 2 }>
 					{ recordsToCheck.map( renderDiagnosticForRecord ) }
 				</VStack>

@@ -39,11 +39,19 @@ useMutation( {
 
 ### Internationalization
 
-- When calling locale-aware formatting functions (`toLocaleDateString`, `toLocaleString`, `Intl.*`, etc.), prefer passing the user's locale from `useLocale()` (`app/locale`) rather than `undefined`. Passing `undefined` falls back to the browser/OS locale, so output silently drifts from the user's WordPress.com language setting.
+- When calling locale-aware formatting functions (`toLocaleDateString`, `toLocaleString`, `Intl.*`, etc.), pass the user's locale from `useIntlLocale()` (`app/locale`) rather than `undefined`. Passing `undefined` falls back to the browser/OS locale, so output silently drifts from the user's WordPress.com language setting.
+- Do **not** pass `useLocale()` to `Intl` constructors or locale-sensitive `Date` methods. It returns the WordPress.com locale slug, which prefers the locale variant, and some variants are not valid BCP 47 — they append the variant with an underscore (`sr_latin`, `de_formal`). `Intl` throws a `RangeError` on those and takes the page down. `useIntlLocale()` normalises it; in non-hook contexts use `getIntlLocale()` from `utils/locale`.
+- `useLocale()` is still the right value everywhere the WordPress.com slug is expected: translations, `localizeUrl()`, and API `locale` parameters.
 
 ### Google Translate crash safety
 
 When fixing a `react-google-translate` ESLint warning, leave a one-line comment noting the otherwise-pointless-looking change (an "unnecessary" `<span>`, a dropped `?.`) dodges a Google Translate DOM crash (react/react#11538) — else the next editor reverts it.
+
+Translators wrap translated text in `<font>` elements, reparenting nodes React thinks it owns. React then calls `removeChild`/`insertBefore` on a parent that no longer holds the node and the whole page crashes. The lint rules don't catch every shape, so when writing or reviewing a component that renders differently while data loads:
+
+- **Never swap one element for another across a loading boundary.** `isLoading ? <TextSkeleton length={ 6 } /> : <Text>{ value }</Text>` mounts a different element in each branch. Keep a single `<TextBlur isBlurred={ isLoading }>` mounted and change only its text.
+- **This includes branches that return a bare string.** A `return 'Not found';` next to a `return <Foo />;` is the same element/text swap. Route every branch through the same mounted element and vary only the string inside it.
+- **Prefer flipping a prop over adding or removing a node.** `{ ! isLoading && <div>{ description }</div> }` inserts and removes a sibling; where the design allows, mount it unconditionally and blur it instead.
 
 ### Testing
 
