@@ -41,39 +41,20 @@
 		text-wrap: pretty;
 	}
 
-	.edit-gravatar__explanation {
-		color: var( --color-text-subtle );
-		font-size: $font-body-small;
-		font-style: italic;
-		margin: 0;
-	}
-
 	.edit-gravatar__avatar-placeholder,
 	.edit-gravatar__action-button-placeholder {
 		@include placeholder();
 	}
 
-	.edit-gravatar__avatar-placeholder,
-	.edit-gravatar__hidden-avatar {
+	.edit-gravatar__avatar-placeholder {
 		width: 150px;
 		height: 150px;
 		border-radius: 50%;
 	}
 
-	.edit-gravatar__hidden-avatar {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		background-color: var( --studio-gray-5 );
-	}
-
 	.edit-gravatar__action-button-placeholder {
 		height: 24px;
 		width: 160px;
-	}
-
-	.edit-gravatar__pop-over svg {
-		margin-top: 2px;
 	}
 
 	&.edit-gravatar--is-unverified {
@@ -83,20 +64,8 @@
 	}
 
 	@media ( min-width: $break-large ) {
-		.edit-gravatar__action-button,
-		.edit-gravatar__explanation {
+		.edit-gravatar__action-button {
 			max-width: 260px;
 		}
-	}
-}
-
-/* Override the default popover styles. */
-.popover__inner {
-	.gridicons-external {
-		margin-left: 1px;
-	}
-
-	p:last-of-type {
-		margin-bottom: 0;
 	}
 }
