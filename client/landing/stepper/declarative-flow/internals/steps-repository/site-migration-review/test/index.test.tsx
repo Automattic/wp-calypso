@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React from 'react';
@@ -22,26 +22,12 @@ jest.mock( '../../../state-manager/store', () => ( {
 	} ),
 } ) );
 
-const RUN_ID = 'run-123';
-
-const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
-
 const analysis = {
 	site: { title: 'Terra & Twine', host: 'terraandtwine.com' },
 	findings: [],
 	verdict: { level: 'complete', text: 'We found everything.' },
 	counts: { pages: 12, posts: 8, images: 42 },
 };
-
-const mockSwitchRun = () =>
-	mockApi().get( `/wpcom/v2/switch-runs/${ RUN_ID }` ).reply( 200, {
-		run_id: RUN_ID,
-		state: 'analysis_ready',
-		created_at: '2026-01-01',
-		updated_at: '2026-01-01',
-		expires_at: '2026-01-06',
-		analysis,
-	} );
 
 const render = ( props?: Partial< StepProps > ) => {
 	const queryClient = new QueryClient( {
@@ -67,7 +53,7 @@ describe( 'SiteMigrationReview', () => {
 
 	beforeEach( () => {
 		Object.keys( flowState ).forEach( ( key ) => delete flowState[ key ] );
-		flowState[ 'site-migration-scan' ] = { action: 'continue', runId: RUN_ID };
+		flowState[ 'site-migration-scan' ] = { action: 'continue', analysis };
 		flowState[ 'site-migration-destination' ] = { destination: 'wpcom' };
 		flowState[ 'site-migration-domain' ] = { choice: 'keep' };
 		flowState.plans = { stepName: 'plans', cartItems: [ { product_slug: 'business-bundle' } ] };
@@ -80,14 +66,11 @@ describe( 'SiteMigrationReview', () => {
 
 	afterAll( () => nock.enableNetConnect() );
 
-	it( 'summarises the choices made earlier in the flow', async () => {
-		mockSwitchRun();
+	it( 'summarises the choices made earlier in the flow', () => {
 		render();
 
 		expect( screen.getByRole( 'heading', { name: 'Review your migration' } ) ).toBeVisible();
-
-		await waitFor( () => expect( screen.getByText( 'Terra & Twine' ) ).toBeVisible() );
-
+		expect( screen.getByText( 'Terra & Twine' ) ).toBeVisible();
 		expect( screen.getByText( 'WordPress.com' ) ).toBeVisible();
 		expect( screen.getByText( 'Keep terraandtwine.com' ) ).toBeVisible();
 		expect( screen.getByText( 'Business' ) ).toBeVisible();
@@ -96,17 +79,17 @@ describe( 'SiteMigrationReview', () => {
 		expect( screen.getByText( '42 images' ) ).toBeVisible();
 	} );
 
-	it( 'uses the analysis the scan step left in flow state without re-reading the run', () => {
-		flowState[ 'site-migration-scan' ] = { action: 'continue', runId: RUN_ID, analysis };
+	it( 'falls back to the source URL while the scan step is parked', () => {
+		delete flowState[ 'site-migration-scan' ];
 		render();
 
-		expect( screen.getByText( 'Terra & Twine' ) ).toBeVisible();
-		expect( screen.getByText( '12 pages' ) ).toBeVisible();
-		expect( nock.pendingMocks() ).toHaveLength( 0 );
+		// No analysis to read, and nothing asked for one.
+		expect( screen.getByText( 'https://terraandtwine.com' ) ).toBeVisible();
+		expect( screen.getByText( 'We’ll confirm this once your site has been read.' ) ).toBeVisible();
+		expect( screen.getByText( 'Keep your current address' ) ).toBeVisible();
 	} );
 
 	it( 'submits the migrate action when the primary button is pressed', async () => {
-		mockSwitchRun();
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 

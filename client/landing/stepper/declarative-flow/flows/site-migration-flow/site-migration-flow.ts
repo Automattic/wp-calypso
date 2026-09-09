@@ -58,9 +58,10 @@ const BASE_STEPS = [
 	STEPS.SITE_MIGRATION_SSH_VERIFICATION,
 	STEPS.SITE_MIGRATION_SSH_SHARE_ACCESS,
 	STEPS.SITE_MIGRATION_SSH_IN_PROGRESS,
-	STEPS.SITE_MIGRATION_SCAN,
+	// The scan and preview screens are parked until the API can report an
+	// analysis and a rendered preview. Their step definitions and components are
+	// still in the repository, just not reachable from this flow.
 	STEPS.SITE_MIGRATION_DESTINATION,
-	STEPS.SITE_MIGRATION_PREVIEW,
 	STEPS.SITE_MIGRATION_DOMAIN,
 	STEPS.DOMAIN_SEARCH,
 	STEPS.USE_MY_DOMAIN,
@@ -158,7 +159,9 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const platformQueryParam = ( urlQueryParams.get( 'platform' ) ||
 			'unknown' ) as ImporterPlatform;
 		const hostQueryParam = urlQueryParams.get( 'host' ) || undefined;
-		const switchRunIdQueryParam = urlQueryParams.get( 'switchRunId' );
+		// Set when the site was created off the back of the wizard, so the step
+		// after site creation is the import rather than the start of the wizard.
+		const isWizardComplete = urlQueryParams.get( 'wizardComplete' ) === 'true';
 		const { get, set, sessionId } = useFlowState();
 		const {
 			setDomain,
@@ -223,7 +226,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const wizardQueryParams = {
 			from: fromQueryParam,
 			platform: platformQueryParam,
-			switchRunId: switchRunIdQueryParam,
 		};
 
 		const afterDomainPath = () =>
@@ -232,18 +234,15 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const goToMigrationCheckout = ( {
 			siteId: destinationSiteId,
 			siteSlug: destinationSiteSlug,
-			switchRunId,
 		}: {
 			siteId?: number | string;
 			siteSlug: string;
-			switchRunId?: string | null;
 		} ) => {
 			const destination = addQueryArgs(
 				{
 					siteSlug: destinationSiteSlug,
 					siteId: destinationSiteId,
 					from: fromQueryParam,
-					switchRunId,
 				},
 				`/setup/${ flowPath }/${ STEPS.SITE_MIGRATION_IMPORT_PROGRESS.slug }`
 			);
@@ -323,7 +322,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 						action !== 'skip_platform_identification'
 					) {
 						set( STEPS.SITE_MIGRATION_IDENTIFY.slug, providedDependencies );
-						return navigate( paths.scanPath( { from, platform } ) );
+						return navigate( paths.destinationPath( { from, platform } ) );
 					}
 
 					if ( hasDestinationSite ) {
@@ -425,7 +424,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 							if ( canUseNonWordPressMigration( platformQueryParam, fromQueryParam ) ) {
 								return navigate(
-									paths.scanPath( {
+									paths.destinationPath( {
 										from: fromQueryParam,
 										platform: platformQueryParam,
 										siteId,
@@ -491,6 +490,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 							platform: platformQueryParam,
 							action: actionQueryParam,
 							host: hostQueryParam,
+							...( isWizardComplete ? { wizardComplete: 'true' } : {} ),
 						} )
 					);
 				}
@@ -543,26 +543,22 @@ const siteMigration: FlowV2< typeof initialize > = {
 						// The site was created off the back of the Review step, so the plan picked in the
 						// wizard is already in the cart and checkout is the next stop.
 						if ( ( providedDependencies as { goToCheckout?: boolean } ).goToCheckout ) {
-							return goToMigrationCheckout( {
-								siteId,
-								siteSlug,
-								switchRunId: switchRunIdQueryParam,
-							} );
+							return goToMigrationCheckout( { siteId, siteSlug } );
 						}
 
-						if ( switchRunIdQueryParam ) {
+						if ( isWizardComplete ) {
 							return replace(
 								paths.importProgressPath( {
 									siteId,
 									siteSlug,
 									from: fromQueryParam,
-									switchRunId: switchRunIdQueryParam,
 								} )
 							);
 						}
 
+						// The site was created before the wizard ran, so start the wizard now.
 						return replace(
-							paths.scanPath( {
+							paths.destinationPath( {
 								siteId,
 								siteSlug,
 								from: fromQueryParam,
@@ -588,28 +584,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 					return replace( paths.importOrMigratePath( { from: fromQueryParam, siteSlug, siteId } ) );
 				}
 
-				case STEPS.SITE_MIGRATION_SCAN.slug: {
-					set( STEPS.SITE_MIGRATION_SCAN.slug, providedDependencies );
-
-					if ( providedDependencies.action === 'failed' ) {
-						return exitToContentImporter( {
-							platform: platformQueryParam,
-							from: fromQueryParam,
-							siteSlug,
-							siteId,
-							origin: STEPS.SITE_MIGRATION_SCAN.slug,
-							backToStep: STEPS.SITE_MIGRATION_SCAN.slug,
-						} );
-					}
-
-					return navigate(
-						paths.destinationPath( {
-							...wizardQueryParams,
-							switchRunId: providedDependencies.runId ?? switchRunIdQueryParam,
-						} )
-					);
-				}
-
 				case STEPS.SITE_MIGRATION_DESTINATION.slug: {
 					set( STEPS.SITE_MIGRATION_DESTINATION.slug, providedDependencies );
 
@@ -619,23 +593,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 						return navigate( STEPS.ERROR.slug, {
 							message: 'Space Fast is not available yet',
 						} );
-					}
-
-					return navigate( paths.previewPath( wizardQueryParams ) );
-				}
-
-				case STEPS.SITE_MIGRATION_PREVIEW.slug: {
-					set( STEPS.SITE_MIGRATION_PREVIEW.slug, providedDependencies );
-
-					if ( providedDependencies.action === 'white-glove' ) {
-						return navigate(
-							paths.credentialsPath( {
-								siteId,
-								siteSlug,
-								from: fromQueryParam,
-								how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
-							} )
-						);
 					}
 
 					return navigate( paths.domainPath( wizardQueryParams ) );
@@ -718,25 +675,23 @@ const siteMigration: FlowV2< typeof initialize > = {
 				case STEPS.SITE_MIGRATION_REVIEW.slug: {
 					set( STEPS.SITE_MIGRATION_REVIEW.slug, providedDependencies );
 
-					const switchRunId = get( STEPS.SITE_MIGRATION_SCAN.slug )?.runId ?? switchRunIdQueryParam;
-
 					if ( ! hasSite( siteId, siteSlug ) ) {
 						return navigate(
 							paths.siteCreationPath( {
 								from: fromQueryParam,
 								platform: platformQueryParam,
-								switchRunId,
+								wizardComplete: 'true',
 							} )
 						);
 					}
 
 					if ( isSiteOnPaidPlan ) {
 						return navigate(
-							paths.importProgressPath( { siteId, siteSlug, from: fromQueryParam, switchRunId } )
+							paths.importProgressPath( { siteId, siteSlug, from: fromQueryParam } )
 						);
 					}
 
-					return goToMigrationCheckout( { siteId, siteSlug, switchRunId } );
+					return goToMigrationCheckout( { siteId, siteSlug } );
 				}
 
 				case STEPS.SITE_MIGRATION_IMPORT_PROGRESS.slug: {

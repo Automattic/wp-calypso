@@ -1113,8 +1113,7 @@ describe( 'Site Migration Flow', () => {
 
 	describe( 'non-WordPress migration wizard', () => {
 		const FROM = 'https://terraandtwine.com';
-		const RUN_ID = 'run-123';
-		const WIZARD_QUERY = { from: FROM, platform: 'wix', switchRunId: RUN_ID };
+		const WIZARD_QUERY = { from: FROM, platform: 'wix' };
 		const SITE_QUERY = { siteId: 123, siteSlug: 'example.wordpress.com' };
 
 		let setFlowState: jest.Mock;
@@ -1180,7 +1179,7 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'SITE_MIGRATION_IDENTIFY', () => {
-			it( 'sends a non-WordPress source into the scan step', () => {
+			it( 'sends a non-WordPress source into the destination step', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_IDENTIFY,
 					dependencies: { platform: 'wix', from: FROM },
@@ -1188,7 +1187,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 
 				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_MIGRATION_SCAN,
+					step: STEPS.SITE_MIGRATION_DESTINATION,
 					query: { from: FROM, platform: 'wix' },
 				} );
 				expect( setFlowState ).toHaveBeenCalledWith( STEPS.SITE_MIGRATION_IDENTIFY.slug, {
@@ -1260,46 +1259,44 @@ describe( 'Site Migration Flow', () => {
 					expect.objectContaining( {
 						destination: `/setup/site-migration/${
 							STEPS.SITE_MIGRATION_IMPORT_PROGRESS.slug
-						}?siteSlug=example.wordpress.com&siteId=123&from=${ encodeURIComponent(
-							FROM
-						) }&switchRunId=${ RUN_ID }`,
+						}?siteSlug=example.wordpress.com&siteId=123&from=${ encodeURIComponent( FROM ) }`,
 						plan: PLAN_BUSINESS_MONTHLY,
 					} )
 				);
 			} );
-		} );
 
-		describe( 'the wizard chain', () => {
-			it( 'goes from scan to destination, carrying the run it created', () => {
+			it( 'goes to the import step when the site was created at the end of the wizard', () => {
 				const destination = runNavigation( {
-					from: STEPS.SITE_MIGRATION_SCAN,
-					dependencies: { action: 'continue', runId: RUN_ID },
-					query: { from: FROM, platform: 'wix' },
+					from: STEPS.PROCESSING,
+					dependencies: { siteCreated: true, siteId: 123, siteSlug: 'example.wordpress.com' },
+					query: { ...WIZARD_QUERY, wizardComplete: 'true' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_IMPORT_PROGRESS,
+					query: { ...SITE_QUERY, from: FROM },
+				} );
+			} );
+
+			it( 'starts the wizard when the site was created before it ran', () => {
+				const destination = runNavigation( {
+					from: STEPS.PROCESSING,
+					dependencies: { siteCreated: true, siteId: 123, siteSlug: 'example.wordpress.com' },
+					query: WIZARD_QUERY,
 				} );
 
 				expect( destination ).toMatchDestination( {
 					step: STEPS.SITE_MIGRATION_DESTINATION,
-					query: WIZARD_QUERY,
+					query: { ...SITE_QUERY, ...WIZARD_QUERY },
 				} );
 			} );
+		} );
 
-			it( 'goes from destination to preview', () => {
+		describe( 'the wizard chain', () => {
+			it( 'goes from destination to domain', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_DESTINATION,
 					dependencies: { destination: 'wpcom' },
-					query: WIZARD_QUERY,
-				} );
-
-				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_MIGRATION_PREVIEW,
-					query: WIZARD_QUERY,
-				} );
-			} );
-
-			it( 'goes from preview to domain', () => {
-				const destination = runNavigation( {
-					from: STEPS.SITE_MIGRATION_PREVIEW,
-					dependencies: { action: 'continue' },
 					query: WIZARD_QUERY,
 				} );
 
@@ -1389,19 +1386,6 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'the exits', () => {
-			it( 'falls back to the content importer when the scan fails', () => {
-				runNavigation( {
-					from: STEPS.SITE_MIGRATION_SCAN,
-					dependencies: { action: 'failed' },
-					query: { ...WIZARD_QUERY, ...SITE_QUERY },
-				} );
-
-				expect( window.location.assign ).toMatchURL( {
-					path: '/setup/site-setup/importerWix',
-					query: { siteSlug: 'example.wordpress.com', from: FROM },
-				} );
-			} );
-
 			it( 'dead-ends Space Fast at a placeholder', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_DESTINATION,
@@ -1414,27 +1398,11 @@ describe( 'Site Migration Flow', () => {
 					message: 'Space Fast is not available yet',
 				} );
 			} );
-
-			it( 'hands the white-glove option to the DIFM credentials step', () => {
-				const destination = runNavigation( {
-					from: STEPS.SITE_MIGRATION_PREVIEW,
-					dependencies: { action: 'white-glove' },
-					query: { ...WIZARD_QUERY, ...SITE_QUERY },
-				} );
-
-				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_MIGRATION_CREDENTIALS,
-					query: { ...SITE_QUERY, from: FROM, how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME },
-				} );
-			} );
 		} );
 
 		describe( 'SITE_MIGRATION_REVIEW', () => {
 			it( 'starts checkout with a destination that lands on the import progress step', () => {
-				mockFlowState( {
-					[ STEPS.SITE_MIGRATION_SCAN.slug ]: { runId: RUN_ID },
-					plans: { cartItems: [ { product_slug: PLAN_BUSINESS_MONTHLY } ] },
-				} );
+				mockFlowState( { plans: { cartItems: [ { product_slug: PLAN_BUSINESS_MONTHLY } ] } } );
 
 				runNavigation( {
 					from: STEPS.SITE_MIGRATION_REVIEW,
@@ -1448,9 +1416,7 @@ describe( 'Site Migration Flow', () => {
 					siteSlug: 'example.wordpress.com',
 					destination: `/setup/site-migration/${
 						STEPS.SITE_MIGRATION_IMPORT_PROGRESS.slug
-					}?siteSlug=example.wordpress.com&siteId=123&from=${ encodeURIComponent(
-						FROM
-					) }&switchRunId=${ RUN_ID }`,
+					}?siteSlug=example.wordpress.com&siteId=123&from=${ encodeURIComponent( FROM ) }`,
 					from: FROM,
 					plan: PLAN_BUSINESS_MONTHLY,
 					historyBack: true,
@@ -1466,7 +1432,7 @@ describe( 'Site Migration Flow', () => {
 
 				expect( destination ).toMatchDestination( {
 					step: STEPS.SITE_CREATION_STEP,
-					query: WIZARD_QUERY,
+					query: { ...WIZARD_QUERY, wizardComplete: 'true' },
 				} );
 				expect( goToCheckout ).not.toHaveBeenCalled();
 			} );
@@ -1499,7 +1465,7 @@ describe( 'Site Migration Flow', () => {
 
 				expect( destination ).toMatchDestination( {
 					step: STEPS.SITE_MIGRATION_IMPORT_PROGRESS,
-					query: { ...SITE_QUERY, from: FROM, switchRunId: RUN_ID },
+					query: { ...SITE_QUERY, from: FROM },
 				} );
 				expect( goToCheckout ).not.toHaveBeenCalled();
 			} );

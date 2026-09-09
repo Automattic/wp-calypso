@@ -47,7 +47,7 @@ export const siteCreationPath = buildPathHelper<
 			platform: ImporterPlatform;
 			ssh?: string;
 			host?: string;
-			switchRunId?: string | null;
+			wizardComplete?: string;
 		};
 	},
 	typeof STEPS.SITE_CREATION_STEP.slug
@@ -60,7 +60,6 @@ export const sitePickerPath = buildPathHelper<
 			platform: ImporterPlatform;
 			ssh?: string;
 			host?: string;
-			switchRunId?: string | null;
 		};
 	},
 	typeof STEPS.PICK_SITE.slug
@@ -95,7 +94,7 @@ export const processingPath = buildPathHelper<
 			platform: ImporterPlatform;
 			action: string | null;
 			host?: string | null;
-			switchRunId?: string | null;
+			wizardComplete?: string;
 		};
 	},
 	typeof STEPS.PROCESSING.slug
@@ -259,7 +258,6 @@ export const destinationPath = buildPathHelper<
 			platform?: ImporterPlatform;
 			siteId?: number | string;
 			siteSlug?: string;
-			switchRunId?: string | null;
 		};
 	},
 	typeof STEPS.SITE_MIGRATION_DESTINATION.slug
@@ -285,7 +283,6 @@ export const domainPath = buildPathHelper<
 			platform?: ImporterPlatform;
 			siteId?: number | string;
 			siteSlug?: string;
-			switchRunId?: string | null;
 		};
 	},
 	typeof STEPS.SITE_MIGRATION_DOMAIN.slug
@@ -298,7 +295,6 @@ export const plansPath = buildPathHelper<
 			platform?: ImporterPlatform;
 			siteId?: number | string;
 			siteSlug?: string;
-			switchRunId?: string | null;
 		};
 	},
 	typeof STEPS.UNIFIED_PLANS.slug
@@ -311,7 +307,6 @@ export const seoPath = buildPathHelper<
 			platform?: ImporterPlatform;
 			siteId?: number | string;
 			siteSlug?: string;
-			switchRunId?: string | null;
 		};
 	},
 	typeof STEPS.SITE_MIGRATION_SEO.slug
@@ -324,7 +319,6 @@ export const reviewPath = buildPathHelper<
 			platform?: ImporterPlatform;
 			siteId?: number | string;
 			siteSlug?: string;
-			switchRunId?: string | null;
 		};
 	},
 	typeof STEPS.SITE_MIGRATION_REVIEW.slug
@@ -336,7 +330,6 @@ export const importProgressPath = buildPathHelper<
 			from?: string | null;
 			siteId?: number | string;
 			siteSlug?: string;
-			switchRunId?: string | null;
 			sessionId?: string | null;
 		};
 	},

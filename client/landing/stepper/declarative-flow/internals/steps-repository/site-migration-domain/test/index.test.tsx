@@ -92,7 +92,7 @@ describe( 'SiteMigrationDomain', () => {
 
 		expect( screen.getByRole( 'progressbar', { name: 'Migration progress' } ) ).toHaveAttribute(
 			'aria-valuetext',
-			'Step 5 of 7: Domain'
+			'Step 3 of 5: Domain'
 		);
 	} );
 } );

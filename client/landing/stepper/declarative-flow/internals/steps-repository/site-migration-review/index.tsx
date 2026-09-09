@@ -1,7 +1,5 @@
-import { switchRunQuery } from '@automattic/api-queries';
 import { getPlan } from '@automattic/calypso-products';
 import { Step } from '@automattic/onboarding';
-import { useQuery as useReactQuery } from '@tanstack/react-query';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -21,17 +19,9 @@ const SiteMigrationReview: StepType< { submits: { action: 'migrate' } } > = ( { 
 	const { get } = useFlowState();
 	const urlQueryParams = useQuery();
 
-	const scan = get( 'site-migration-scan' );
-	const runId = scan?.runId ?? urlQueryParams.get( 'switchRunId' ) ?? '';
-
-	// The scan step hands the analysis over in flow state; the run is only re-read
-	// when someone lands here without it, e.g. after a refresh on a fresh session.
-	const { data: run } = useReactQuery( {
-		...switchRunQuery( runId ),
-		enabled: Boolean( runId ) && ! scan?.analysis,
-	} );
-
-	const analysis = scan?.analysis ?? run?.analysis;
+	// The scan step is parked, so there is no analysis to read yet and every row
+	// below falls back. It hands the analysis over in flow state when it returns.
+	const analysis = get( 'site-migration-scan' )?.analysis;
 	const counts = analysis?.counts;
 	const from = urlQueryParams.get( 'from' );
 

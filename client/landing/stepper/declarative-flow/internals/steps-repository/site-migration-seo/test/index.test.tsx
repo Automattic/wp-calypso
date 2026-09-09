@@ -49,7 +49,7 @@ describe( 'SiteMigrationSeo', () => {
 
 		expect( screen.getByRole( 'progressbar', { name: 'Migration progress' } ) ).toHaveAttribute(
 			'aria-valuetext',
-			'Step 6 of 7: SEO'
+			'Step 4 of 5: SEO'
 		);
 	} );
 

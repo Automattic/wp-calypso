@@ -108,15 +108,28 @@ export interface SwitchRunPreview {
 	match?: SwitchRunPreviewMatch;
 }
 
-export type StaticSiteImportStatus = 'new' | 'queued' | 'running' | 'finished' | 'failed';
+/** The underlying import record's status, which is coarser than `state`. */
+export type StaticSiteImportStatus =
+	| 'new'
+	| 'processing'
+	| 'queued'
+	| 'running'
+	| 'finished'
+	| 'failed'
+	| 'stopped'
+	| 'expired';
 
+/**
+ * A session runs `capture_queued` → `capturing` → `building` → `preview_ready`,
+ * then `queued` → `finished` once the user approves. `failed` is terminal from
+ * anywhere.
+ */
 export type StaticSiteImportState =
 	| 'capture_queued'
 	| 'capturing'
-	| 'compiling'
+	| 'building'
 	| 'preview_ready'
 	| 'queued'
-	| 'applying'
 	| 'finished'
 	| 'failed';
 
@@ -126,12 +139,39 @@ export const STATIC_SITE_IMPORT_TERMINAL_STATES: readonly StaticSiteImportState[
 	'failed',
 ];
 
+/**
+ * What the build found, for the approval screen.
+ *
+ * Every field is optional. The API keeps a fixed set of counts from the build
+ * report and drops anything it did not recognise, so a summary can arrive with
+ * any subset of these — or empty.
+ */
 export interface StaticSiteImportPreviewSummary {
-	posts: number;
-	pages: number;
-	media: number;
-	assets: number;
-	blocks: number;
+	pages?: number;
+	documents?: number;
+	blocks?: number;
+	fallback_blocks?: number;
+	content_loss?: number;
+	invalid_blocks?: number;
+	unsafe_svgs?: number;
+	semantic_parity_failures?: number;
+	diagnostics?: {
+		total?: number;
+		error?: number;
+		warning?: number;
+		notice?: number;
+		info?: number;
+	};
+	theme?: string;
+	quality_pass?: boolean;
+	fail_import?: boolean;
+}
+
+/** How a session ended. Present once it reaches `finished` or `failed`. */
+export interface StaticSiteImportReceipt {
+	success: boolean;
+	/** The failure's code. Absent on success. */
+	code?: string;
 }
 
 export interface StaticSiteImportSession {
@@ -140,12 +180,34 @@ export interface StaticSiteImportSession {
 	state: StaticSiteImportState;
 	source_digest: string;
 	preview_summary?: StaticSiteImportPreviewSummary;
+	/** Only meaningful once the import has been delivered to a site. */
 	site_url: string;
-	/** Present at `state: 'preview_ready'`; must be echoed back to `/approve`. */
-	plan_hash?: string;
-	/** Present at `state: 'finished'`. */
-	receipt?: Record< string, unknown >;
+	/** Present from `preview_ready` onwards; must be echoed back to `/approve`. */
+	archive_hash?: string;
+	/** Present at `state: 'finished'` and `state: 'failed'`. */
+	receipt?: StaticSiteImportReceipt;
 }
+
+/**
+ * The error codes the session API returns that the UI has to tell apart.
+ *
+ * Four of these share a 409, so the status code on its own says nothing useful
+ * and the message has to be chosen from the code.
+ */
+export const STATIC_SITE_IMPORT_ERROR_CODES = {
+	/** This user already has an import running. */
+	IMPORT_EXISTS: 'import_exists',
+	/** The destination cannot become an Atomic site, so there is nowhere to deliver to. */
+	ATOMIC_UNAVAILABLE: 'static_site_import_atomic_unavailable',
+	/** The session is not at a point where it can be approved. */
+	NOT_APPROVABLE: 'static_site_import_not_approvable',
+	/** The built archive changed since the summary the user approved was read. */
+	ARCHIVE_MISMATCH: 'static_site_import_archive_mismatch',
+	/** No such session, or it belongs to somebody else. */
+	SESSION_NOT_FOUND: 'static_site_import_session_not_found',
+	/** The source URL is not a public HTTPS address we can read. */
+	INVALID_SOURCE_URL: 'invalid_static_site_source_url',
+} as const;
 
 export interface AttachSwitchRunParams {
 	runId: string;
@@ -153,7 +215,11 @@ export interface AttachSwitchRunParams {
 }
 
 export interface ApproveStaticSiteImportSessionParams {
-	siteId: number;
 	sessionId: string;
-	planHash: string;
+	archiveHash: string;
+	/**
+	 * The session is user-scoped up to this point; approval is what picks the site
+	 * the build gets delivered to.
+	 */
+	destinationBlogId: number;
 }

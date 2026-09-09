@@ -66,7 +66,7 @@ describe( 'SiteMigrationDestination', () => {
 
 		expect( screen.getByRole( 'progressbar', { name: 'Migration progress' } ) ).toHaveAttribute(
 			'aria-valuetext',
-			'Step 3 of 7: Choose'
+			'Step 2 of 5: Choose'
 		);
 	} );
 } );
