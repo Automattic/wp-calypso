@@ -154,7 +154,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 			if ( isDeniedNonUniqueDomain( agencyUrl, nonUniqueDomains ) ) {
 				dispatch(
 					recordTracksEvent( 'calypso_a4a_agency_signup_form_non_unique_domain_skipped', {
-						agencyUrl,
+						agency_url: agencyUrl,
 					} )
 				);
 				setIsProceeding( false );
@@ -173,7 +173,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 						recordTracksEvent(
 							'calypso_a4a_agency_signup_form_duplicate_agency_warning_dialog_view',
 							{
-								agencyUrl,
+								agency_url: agencyUrl,
 							}
 						)
 					);
