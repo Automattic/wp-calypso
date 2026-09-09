@@ -104,7 +104,9 @@ export function getCheckpointKeys( { editEntities }: EditEntityRecordInput ): st
 		// Title only. A restore rewrites a page's title and the menu item that
 		// follows it — never its content, excerpt or status — so a page edit
 		// that touches none of the title claims nothing.
-		if ( entity?.entityName === PAGE && entity.record?.title !== undefined ) {
+		// The same test the write uses, so the claimed domain cannot drift from
+		// what is recorded.
+		if ( entity?.entityName === PAGE && !! entity.record && 'title' in entity.record ) {
 			keys.add( checkpointKeys.PAGE );
 			keys.add( checkpointKeys.NAVIGATION );
 		}
