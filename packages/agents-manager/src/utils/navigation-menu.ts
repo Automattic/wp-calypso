@@ -9,9 +9,10 @@ import type { Block } from '@wordpress/blocks';
  * page added to the site gets a menu item, a renamed page renames its item,
  * and a deleted page loses it.
  *
- * The menu is a `wp_navigation` entity whose blocks are the items. Edits go
- * through `editEntityRecord`, so they join the same unsaved-changes set as the
- * page edit that triggered them and save together.
+ * The menu is a `wp_navigation` entity whose blocks are the items. A rename's
+ * write joins the same unsaved-changes set as the page edit that triggered it;
+ * one following a creation or deletion is saved here instead, since that page
+ * change has already persisted — see `saveMenu()`.
  */
 
 /** A menu item: `core/navigation-link`, or a submenu holding more of them. */
@@ -86,12 +87,12 @@ const getItems = ( record: NavigationRecord ): NavigationBlock[] => {
 	return serialized ? ( parse( serialized ) as NavigationBlock[] ) : [];
 };
 
+// TODO (ability-migration): `editor-navigate` reads the same refs for its menu
+// refresh. Whichever of the two lands second should call this instead.
 /**
  * The menus rendered by the open view. Preferred over the one site metadata
  * names: what the user is looking at is what they mean.
  */
-// TODO (ability-migration): `editor-navigate` reads the same refs for its menu
-// refresh. Whichever of the two lands second should call this instead.
 function getRenderedMenuIds(): MenuId[] {
 	const blockEditor = select( BLOCK_EDITOR_STORE ) as unknown as BlockEditorSelect | undefined;
 
@@ -240,6 +241,16 @@ const matchesPage =
 	};
 
 /**
+ * Whether an item's label still follows the page rather than the user.
+ *
+ * A page rename may overwrite a label that tracked the page's title; one the
+ * user has since chosen is theirs to keep. Applied whether or not the item
+ * carries an id, so the same label is treated the same way either way.
+ */
+const followsPage = ( item: NavigationBlock, previousLabel?: string ) =>
+	! previousLabel || normalizeLabel( item.attributes?.label ) === normalizeLabel( previousLabel );
+
+/**
  * Persists a menu's pending edits, putting `previous` back if the save fails.
  *
  * A menu write following a page *edit* is left unsaved on purpose: the two join
@@ -265,16 +276,6 @@ const saveMenu = async ( id: MenuId, previous: NavigationBlock[] ): Promise< voi
 		throw error;
 	}
 };
-
-/**
- * Whether an item's label still follows the page rather than the user.
- *
- * A page rename may overwrite a label that tracked the page's title; one the
- * user has since chosen is theirs to keep. Applied whether or not the item
- * carries an id, so the same label is treated the same way either way.
- */
-const followsPage = ( item: NavigationBlock, previousLabel?: string ) =>
-	! previousLabel || normalizeLabel( item.attributes?.label ) === normalizeLabel( previousLabel );
 
 /** Appends an item for a newly created page to the site's menu. */
 export async function addNavigationItem( item: NavigationItem ): Promise< void > {

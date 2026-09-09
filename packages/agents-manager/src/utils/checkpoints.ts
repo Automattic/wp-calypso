@@ -300,7 +300,11 @@ export function clearCheckpoint( id: string ): void {
  * so callers never branch on whether one exists.
  */
 export interface CheckpointRecorder {
-	/** Snapshots a menu before this write edits it, if not already snapshotted. */
+	/**
+	 * Snapshots a menu before this write edits it, keeping the first snapshot
+	 * per menu. Reports whether this call is the one that took it, so a caller
+	 * discards only its own.
+	 */
 	captureMenu: ( menuId: MenuId ) => Promise< boolean >;
 	/** Records a rename so a restore can put the old title back. */
 	capturePageRename: ( rename: PageRename ) => void;
