@@ -286,6 +286,10 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		 * The pricing-differentiation lists are the default presentation, not an override: an intent
 		 * that curates its own list keeps it. Checked here rather than by reordering the branches
 		 * below, so the relative order of the intent branches themselves is untouched.
+		 *
+		 * This also governs the presentation that belongs with those lists -- the feature pills and
+		 * the trailing margin of the stacked layout -- so a curated list is not left half-dressed in
+		 * differentiation styling.
 		 */
 		const useDifferentiationFeatures = ! hasTailoredFeatureList( intent );
 
@@ -484,11 +488,12 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 
 						const featureSlug = feature.getSlug();
 
-						const badgeText = showPricingDifferentiationFeaturePills
-							? getPricingDifferentiationFeatureBadgeText( planSlug, featureSlug, translate, {
-									suppressAiPills: useVar42NoAiFeatures,
-							  } )
-							: undefined;
+						const badgeText =
+							showPricingDifferentiationFeaturePills && useDifferentiationFeatures
+								? getPricingDifferentiationFeatureBadgeText( planSlug, featureSlug, translate, {
+										suppressAiPills: useVar42NoAiFeatures,
+								  } )
+								: undefined;
 
 						wpcomFeaturesTransformed.push( {
 							...feature,
@@ -500,6 +505,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 
 					if (
 						wpcomFeaturesTransformed.length > 0 &&
+						useDifferentiationFeatures &&
 						( isExperimentVariant || usePlansGridRedesignFeatures )
 					) {
 						const lastIndex = wpcomFeaturesTransformed.length - 1;
