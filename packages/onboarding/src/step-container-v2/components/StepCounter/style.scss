@@ -1,6 +1,12 @@
 // Type comes from the `body-md` Text variant in StepCounter.tsx, not from here,
 // so the counter and the named step rail stay on one definition.
+//
+// Colour is pinned to the same WPDS scale the rail uses. It used to be
+// `--color-text-subtle` (Color Studio grey 60, #50575e), which put the two
+// treatments on different colour systems: swapping between them at the
+// breakpoint changed the grey as well as the text. `neutral-weak` (#707070) is
+// the nearest role on the WPDS scale and keeps the counter quiet.
 .step-container-v2__step-counter {
-	color: var( --color-text-subtle );
+	color: var( --wpds-color-foreground-content-neutral-weak );
 	white-space: nowrap;
 }
