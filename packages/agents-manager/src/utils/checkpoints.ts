@@ -351,6 +351,42 @@ function createRecorder( checkpointId: string ): CheckpointRecorder {
 }
 
 /**
+ * Drops domains the write claimed but never recorded, and the checkpoint with
+ * them when nothing is left.
+ *
+ * Page and navigation are claimed from the request alone, so a rename to the
+ * title a page already has claims both and records neither — an undo that
+ * restores nothing, and looks like it should where the same request changed
+ * content too.
+ */
+function dropUnrecordedDomains( id: string ): void {
+	const checkpoint = records.get( id );
+
+	if ( ! checkpoint ) {
+		return;
+	}
+
+	const renamed = !! checkpoint.pageRenames?.length;
+	const restorable: Record< string, boolean > = {
+		[ checkpointKeys.PAGE ]: renamed,
+		// A restored rename relabels the menu item too, so it keeps the domain.
+		[ checkpointKeys.NAVIGATION ]: renamed || !! checkpoint.menusBeforeUpdate?.length,
+	};
+
+	const checkpointKeysLeft = checkpoint.checkpointKeys.filter(
+		( key ) => restorable[ key ] ?? true
+	);
+
+	if ( ! checkpointKeysLeft.length ) {
+		records.delete( id );
+
+		return;
+	}
+
+	records.set( id, { ...checkpoint, checkpointKeys: checkpointKeysLeft } );
+}
+
+/**
  * Runs an ability's write under a checkpoint keyed by its tool call, so
  * `restore-checkpoint` can undo it. The first snapshot for a call wins — a
  * repeat must not overwrite the pre-change state — and a write that throws or
@@ -383,7 +419,13 @@ export async function withCheckpoint< T >(
 	}
 
 	try {
-		return await write( checkpointId ? createRecorder( checkpointId ) : NO_RECORDER );
+		const result = await write( checkpointId ? createRecorder( checkpointId ) : NO_RECORDER );
+
+		if ( checkpointId ) {
+			dropUnrecordedDomains( checkpointId );
+		}
+
+		return result;
 	} catch ( error ) {
 		if ( checkpointId ) {
 			clearCheckpoint( checkpointId );

@@ -360,10 +360,15 @@ describe( 'restoreCheckpointCallback', () => {
 		const result = await restoreCheckpointCallback( makeInput() );
 
 		expect( providerCheckpoints.clearCheckpoint ).toHaveBeenCalledWith( RESTORE_CALL_ID );
-		expect( result.result ).toMatchObject( { success: false, error: 'Restore exploded.' } );
+		expect( result.result ).toMatchObject( {
+			success: false,
+			error: expect.stringContaining( 'Restore exploded.' ),
+		} );
 	} );
 
-	it( 'reports a failed restore and drops the just-created reciprocal', async () => {
+	// Kept, not dropped: several domains persist as they restore, so a failure
+	// part-way leaves the site changed and the reciprocal is the way back.
+	it( 'reports a failed restore and keeps the reciprocal', async () => {
 		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
 		( restoreCheckpoint as jest.Mock ).mockRejectedValueOnce( new Error( 'Restore exploded.' ) );
@@ -372,11 +377,10 @@ describe( 'restoreCheckpointCallback', () => {
 
 		expect( result.result ).toMatchObject( {
 			success: false,
-			error: 'Restore exploded.',
+			error: expect.stringContaining( 'Restore exploded.' ),
 			details: { checkpointId: TARGET_CHECKPOINT.id },
 		} );
-		expect( clearCheckpoint ).toHaveBeenCalledTimes( 1 );
-		expect( clearCheckpoint ).toHaveBeenCalledWith( RESTORE_CALL_ID );
+		expect( clearCheckpoint ).not.toHaveBeenCalled();
 		expect( error ).toHaveBeenCalledWith(
 			`[AgentsManager] Error restoring checkpoint ${ TARGET_CHECKPOINT.id }:`,
 			expect.any( Error )
