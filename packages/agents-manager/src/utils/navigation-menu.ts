@@ -163,6 +163,13 @@ export async function readMenuItems( id: unknown ): Promise< NavigationBlock[] |
 	return menu ? getItems( menu ) : null;
 }
 
+/** Whether any item matches, however deeply nested. */
+const someItem = (
+	items: NavigationBlock[],
+	matches: ( item: NavigationBlock ) => boolean
+): boolean =>
+	items.some( ( item ) => matches( item ) || someItem( item.innerBlocks ?? [], matches ) );
+
 /** Maps every item in the menu, however deeply nested. */
 const mapItems = (
 	items: NavigationBlock[],
@@ -316,6 +323,31 @@ async function rewriteMenusHolding(
 			await saveMenu( menuId, previous );
 		}
 	}
+}
+
+/**
+ * The menus currently holding an item for this page.
+ *
+ * A rename overwrites that item's label, which may be one the user chose, so a
+ * caller about to rename can snapshot these menus first and have the undo put
+ * the exact label back rather than the page's old title.
+ */
+export async function getMenuIdsHolding(
+	pageId: number | string,
+	previousLabel?: string
+): Promise< ( number | string )[] > {
+	const matches = matchesPage( pageId, previousLabel );
+	const holding: ( number | string )[] = [];
+
+	for ( const menuId of getMenuIds() ) {
+		const menu = await readMenu( menuId );
+
+		if ( menu && someItem( getItems( menu ), matches ) ) {
+			holding.push( menuId as number | string );
+		}
+	}
+
+	return holding;
 }
 
 /** Relabels a page's menu item. */
