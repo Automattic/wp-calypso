@@ -10,9 +10,9 @@ const createAbility = ( name: string, label = name ): Ability => ( {
 	input_schema: { type: 'object', properties: {} },
 } );
 
-const createProvider = ( abilities: Ability[], result: unknown = { ok: true } ): ToolProvider => ( {
+const createProvider = ( abilities: Ability[] ): ToolProvider => ( {
 	getAbilities: jest.fn( async () => abilities ),
-	executeAbility: jest.fn( async () => result ),
+	executeAbility: jest.fn(),
 } );
 
 describe( 'mergeToolProviders', () => {
@@ -31,20 +31,21 @@ describe( 'mergeToolProviders', () => {
 		] );
 	} );
 
-	it( 'executes through the first provider that lists the ability, by either name form', async () => {
-		const first = createProvider( [ createAbility( 'demo/read' ) ], { from: 'first' } );
-		const second = createProvider(
-			[ createAbility( 'demo/read' ), createAbility( 'demo/write' ) ],
-			{ from: 'second' }
-		);
+	it( 'resolves the winning definition and provider by either name form', async () => {
+		const read = createAbility( 'demo/read', 'First copy' );
+		const write = createAbility( 'demo/write' );
+		const first = createProvider( [ read ] );
+		const second = createProvider( [ createAbility( 'demo/read', 'Second copy' ), write ] );
 		const merged = mergeToolProviders( () => [ first, second ], jest.fn() );
 
-		await expect( merged.executeAbility( 'demo/read', {} ) ).resolves.toEqual( { from: 'first' } );
-		await expect( merged.executeAbility( 'demo__write', { a: 1 } ) ).resolves.toEqual( {
-			from: 'second',
+		await expect( merged.resolveAbility( 'demo/read' ) ).resolves.toEqual( {
+			ability: read,
+			provider: first,
 		} );
-		expect( first.executeAbility ).toHaveBeenCalledTimes( 1 );
-		expect( second.executeAbility ).toHaveBeenCalledWith( 'demo__write', { a: 1 } );
+		await expect( merged.resolveAbility( 'demo__write' ) ).resolves.toEqual( {
+			ability: write,
+			provider: second,
+		} );
 	} );
 
 	it( 'resolves the providers and the owner live on every call', async () => {
@@ -53,14 +54,14 @@ describe( 'mergeToolProviders', () => {
 		let providers = [ second ];
 		const merged = mergeToolProviders( () => providers, jest.fn() );
 
-		await merged.executeAbility( 'demo/read', {} );
-		expect( second.executeAbility ).toHaveBeenCalledTimes( 1 );
+		const original = await merged.resolveAbility( 'demo/read' );
+		expect( original?.provider ).toBe( second );
 
 		providers = [ first, second ];
 		jest.mocked( first.getAbilities ).mockResolvedValue( [ createAbility( 'demo/read' ) ] );
-		await merged.executeAbility( 'demo/read', {} );
-		expect( first.executeAbility ).toHaveBeenCalledTimes( 1 );
-		expect( second.executeAbility ).toHaveBeenCalledTimes( 1 );
+		const current = await merged.resolveAbility( 'demo/read' );
+		expect( current?.provider ).toBe( first );
+		expect( original?.provider ).toBe( second );
 	} );
 
 	it( 'reports a failed source and keeps serving the others', async () => {
@@ -74,13 +75,16 @@ describe( 'mergeToolProviders', () => {
 		const abilities = await merged.getAbilities();
 		expect( abilities.map( ( ability ) => ability.name ) ).toEqual( [ 'demo/read' ] );
 		expect( onError ).toHaveBeenCalledWith( error );
-		await expect( merged.executeAbility( 'demo/read', {} ) ).resolves.toEqual( { ok: true } );
+		await expect( merged.resolveAbility( 'demo/read' ) ).resolves.toEqual( {
+			ability: createAbility( 'demo/read' ),
+			provider: second,
+		} );
 		expect( onError ).toHaveBeenCalledTimes( 2 );
 	} );
 
-	it( 'rejects an ability no provider lists', async () => {
+	it( 'returns no owner for an ability no provider lists', async () => {
 		const merged = mergeToolProviders( () => [ createProvider( [] ) ], jest.fn() );
 
-		await expect( merged.executeAbility( 'demo/missing', {} ) ).rejects.toThrow( 'demo/missing' );
+		await expect( merged.resolveAbility( 'demo/missing' ) ).resolves.toBeUndefined();
 	} );
 } );

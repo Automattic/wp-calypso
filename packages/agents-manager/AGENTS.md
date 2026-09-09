@@ -109,6 +109,8 @@ One source ships to every surface, so weight one surface needs is weight they al
 
 ## Abilities
 
+- **The WebMCP experiment is a separate execution surface** — on eligible editor pages, it can expose registry abilities directly through its metadata gate. REST definitions win over the provider chain, which wins over the registry; exposure is evaluated after precedence. The definition and owning source are resolved together once per dispatch; stale definitions are rejected, and execution uses the validated source. The backend chat allowlists do not govern this path, and each ability still owns its permissions and target scoping. See [webmcp/README.md](src/webmcp/README.md).
+
 The editor abilities (`abilities/editor-abilities.ts`) load as an async chunk on editor pages only, behind the facade in `abilities/index.ts`.
 
 - **The backend route settings decide scope** (`wpcom` repo, `wp-content/lib/ai/agents/route-settings/wp-orchestrator/`). Client-side registration never makes an ability callable: a new one also needs a paired wpcom PR that allows it in these route settings or has a server ability emit it. Link that PR in the description.
