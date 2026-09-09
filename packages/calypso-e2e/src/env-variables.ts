@@ -2,9 +2,7 @@
 import crypto from 'crypto';
 import path from 'path';
 import { getViewports } from './data-helper';
-import { TEST_ACCOUNT_NAMES } from './secrets';
 import { SupportedEnvVariables, JetpackTarget, AtomicVariation } from './types/env-variables.types';
-import { TestAccountName } from '.';
 
 // The concrete variations a mixed run picks from. `mixed` is not one of them: it is the request
 // to pick one.
@@ -22,7 +20,6 @@ class EnvVariables implements SupportedEnvVariables {
 	private _defaultEnvVariables: SupportedEnvVariables = {
 		A8C_FOR_AGENCIES_URL: 'https://agencies.automattic.com',
 		ATOMIC_VARIATION: 'default',
-		AUTHENTICATE_ACCOUNTS: [],
 		CALYPSO_BASE_URL: `http://calypso.localhost:${ process.env.PORT || 3000 }`,
 		COBLOCKS_EDGE: false,
 		COOKIES_PATH: path.join( process.cwd(), 'cookies' ),
@@ -86,22 +83,6 @@ class EnvVariables implements SupportedEnvVariables {
 		return value
 			? castAsBoolean( 'COBLOCKS_EDGE', value )
 			: this._defaultEnvVariables.COBLOCKS_EDGE;
-	}
-
-	get AUTHENTICATE_ACCOUNTS(): TestAccountName[] {
-		const value = process.env.AUTHENTICATE_ACCOUNTS;
-		if ( ! value ) {
-			return this._defaultEnvVariables.AUTHENTICATE_ACCOUNTS;
-		}
-
-		const parsedAccounts: TestAccountName[] = value.split( ',' ) as TestAccountName[];
-		const supportedValues = new Set< TestAccountName >( TEST_ACCOUNT_NAMES );
-		if ( ! parsedAccounts.every( ( account ) => supportedValues.has( account ) ) ) {
-			throw new Error(
-				`Unknown AUTHENTICATE_ACCOUNTS value: ${ value }.\nSupported values: ${ TEST_ACCOUNT_NAMES }`
-			);
-		}
-		return parsedAccounts;
 	}
 
 	get COOKIES_PATH(): string {
@@ -233,11 +214,6 @@ class EnvVariables implements SupportedEnvVariables {
 	validate() {
 		for ( const property in this._defaultEnvVariables ) {
 			const envVarName = property as keyof SupportedEnvVariables;
-			// An unknown account name only costs the run its pre-suite logins, and
-			// `getAccountNamesToPrime` degrades on purpose rather than failing the suite.
-			if ( envVarName === 'AUTHENTICATE_ACCOUNTS' ) {
-				continue;
-			}
 			// Access each property
 			// Any validation errors within the getter will throw an exception here.
 			void this[ envVarName ];

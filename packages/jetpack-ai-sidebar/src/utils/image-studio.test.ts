@@ -1,7 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { dispatch } from '@wordpress/data';
-import { isImageStudioAvailable, openImageStudioForBlock } from './image-studio';
+import {
+	isImageStudioAvailable,
+	openImageStudioForBlock,
+	openImageStudioForFeaturedImage,
+} from './image-studio';
+import { revealSidebarField } from './reveal-sidebar-field';
 
 jest.mock( '@wordpress/data', () => ( {
 	dispatch: jest.fn(),
@@ -11,20 +16,30 @@ jest.mock( '@wordpress/block-editor', () => ( {
 	store: 'core/block-editor',
 } ) );
 
+jest.mock( './reveal-sidebar-field', () => ( {
+	revealSidebarField: jest.fn().mockResolvedValue( true ),
+} ) );
+
 const mockDispatch = dispatch as unknown as jest.Mock;
 
 const openImageStudio = jest.fn();
 const updateBlockAttributes = jest.fn();
+const editPost = jest.fn();
 
-// Routes the two stores this module dispatches to. An Image Studio bundle that
+// Routes the stores this module dispatches to. An Image Studio bundle that
 // is not loaded leaves the store registered but without openImageStudio.
-function stubStores( { imageStudioRegistered = true } = {} ) {
+// wp.data returns undefined for a store that was never registered, which is
+// what happens to core/editor outside the post editor.
+function stubStores( { imageStudioRegistered = true, editorRegistered = true } = {} ) {
 	mockDispatch.mockImplementation( ( storeRef: string ) => {
 		if ( storeRef === 'image-studio' ) {
 			return imageStudioRegistered ? { openImageStudio } : {};
 		}
 		if ( storeRef === 'core/block-editor' ) {
 			return { updateBlockAttributes };
+		}
+		if ( storeRef === 'core/editor' ) {
+			return editorRegistered ? { editPost } : undefined;
 		}
 		return undefined;
 	} );
@@ -122,5 +137,76 @@ describe( 'openImageStudioForBlock', () => {
 		onClose( undefined );
 
 		expect( updateBlockAttributes ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'openImageStudioForFeaturedImage', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		stubStores();
+	} );
+
+	it( 'opens in generate mode with the featured-image entry point', () => {
+		expect( openImageStudioForFeaturedImage() ).toBe( true );
+		expect( openImageStudio ).toHaveBeenCalledWith(
+			undefined,
+			expect.any( Function ),
+			'jetpack_ai_featured_image'
+		);
+	} );
+
+	it( 'does not open when the Image Studio bundle is not loaded', () => {
+		stubStores( { imageStudioRegistered: false } );
+		expect( openImageStudioForFeaturedImage() ).toBe( false );
+		expect( openImageStudio ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not open when the editor store is not registered', () => {
+		stubStores( { editorRegistered: false } );
+		expect( openImageStudioForFeaturedImage() ).toBe( false );
+		expect( openImageStudio ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does nothing on close when the editor store has gone away', () => {
+		openImageStudioForFeaturedImage();
+		const onClose = openImageStudio.mock.calls[ 0 ][ 1 ];
+
+		stubStores( { editorRegistered: false } );
+
+		expect( () =>
+			onClose( { id: 99, url: 'https://example.com/new.jpg', alt: 'A cat' } )
+		).not.toThrow();
+		expect( () => onClose( null ) ).not.toThrow();
+		expect( editPost ).not.toHaveBeenCalled();
+	} );
+
+	it( 'sets the featured image on close and reveals where it landed', () => {
+		openImageStudioForFeaturedImage();
+		const onClose = openImageStudio.mock.calls[ 0 ][ 1 ];
+
+		onClose( { id: 99, url: 'https://example.com/new.jpg', alt: 'A cat' } );
+
+		expect( editPost ).toHaveBeenCalledWith( { featured_media: 99 } );
+		expect( revealSidebarField ).toHaveBeenCalledWith( 'featuredImage' );
+	} );
+
+	it( 'clears the featured image when closed with a removed image', () => {
+		openImageStudioForFeaturedImage();
+		const onClose = openImageStudio.mock.calls[ 0 ][ 1 ];
+
+		onClose( null );
+
+		expect( editPost ).toHaveBeenCalledWith( { featured_media: 0 } );
+		expect( revealSidebarField ).not.toHaveBeenCalled();
+	} );
+
+	it( 'leaves the featured image untouched when closed without an image', () => {
+		openImageStudioForFeaturedImage();
+		const onClose = openImageStudio.mock.calls[ 0 ][ 1 ];
+
+		onClose( undefined );
+
+		expect( editPost ).not.toHaveBeenCalled();
+		expect( revealSidebarField ).not.toHaveBeenCalled();
 	} );
 } );

@@ -52,7 +52,7 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 						className="agents-manager-chat-header__minimize-btn"
 						icon={ <Minimize /> }
 						onClick={ () => {
-							recordAgentsManagerTracksEvent( 'chat_minimize' );
+							recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_minimize' );
 							setIsMinimized( true );
 						} }
 						label={ __( 'Minimize', __i18n_text_domain__ ) }

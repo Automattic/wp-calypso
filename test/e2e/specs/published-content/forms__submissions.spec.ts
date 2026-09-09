@@ -46,6 +46,11 @@ test.describe(
 		let postID: number | undefined;
 
 		test.afterAll( async () => {
+			// The test skips itself on a private site, so it created nothing to remove.
+			if ( envVariables.ATOMIC_VARIATION === 'private' ) {
+				return;
+			}
+
 			// Remove only what this run created — the two responses, matched by the
 			// addresses generated above, and the post carrying the form. These sites
 			// are shared, so deleting every response would break any run working
@@ -76,6 +81,11 @@ test.describe(
 		test( 'As a user, I can submit forms and validate responses in the feedback inbox', async ( {
 			page,
 		} ) => {
+			test.skip(
+				envVariables.ATOMIC_VARIATION === 'private',
+				'Form submissions not supported on private sites'
+			);
+
 			let publishedFormLocator: Locator;
 			let restAPIClient: RestAPIClient;
 			let newPostDetails: PostResponse;
@@ -238,6 +248,9 @@ test.describe(
 			await test.step( 'Navigate to Inbox tab if needed', async () => {
 				if ( isInSpam ) {
 					await feedbackInboxPage.clickFolderTab( 'Inbox' );
+					// Leaving the single response page drops the active search, and the
+					// un-spam needs a moment to reach the Inbox query.
+					await feedbackInboxPage.searchUntilResponseRow( formData1.email );
 				}
 			} );
 
@@ -284,6 +297,9 @@ test.describe(
 			await test.step( 'Navigate to Inbox tab if needed', async () => {
 				if ( isInSpam ) {
 					await feedbackInboxPage.clickFolderTab( 'Inbox' );
+					// Leaving the single response page drops the active search, and the
+					// un-spam needs a moment to reach the Inbox query.
+					await feedbackInboxPage.searchUntilResponseRow( formData2.email );
 				}
 			} );
 
@@ -340,10 +356,10 @@ test.describe(
 				}
 			} );
 
-			await test.step( 'Close response modal (mobile only)', async () => {
-				if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-					await feedbackInboxPage.clickCloseResponse();
-				}
+			// The response opens on a standalone page on every viewport, so the list
+			// has to be restored before the next step reaches for a response row.
+			await test.step( 'Return to the responses list', async () => {
+				await feedbackInboxPage.clickCloseResponse();
 			} );
 
 			// --- Test response actions ---
@@ -379,7 +395,7 @@ test.describe(
 			} );
 
 			await test.step( 'Verify first response is in Spam', async () => {
-				await feedbackInboxPage.searchResponses( formData1.email );
+				await feedbackInboxPage.searchUntilResponseRow( formData1.email );
 				await feedbackInboxPage.viewResponseRowByText( formData1.email );
 				await feedbackInboxPage.validateTextInSubmission( formData1.name );
 			} );
@@ -393,7 +409,7 @@ test.describe(
 			} );
 
 			await test.step( 'Verify first response is back in Inbox', async () => {
-				await feedbackInboxPage.searchResponses( formData1.email, true );
+				await feedbackInboxPage.searchUntilResponseRow( formData1.email );
 				await feedbackInboxPage.viewResponseRowByText( formData1.email );
 				await feedbackInboxPage.validateTextInSubmission( formData1.name );
 			} );
@@ -407,7 +423,7 @@ test.describe(
 			} );
 
 			await test.step( 'Verify first response is in Trash', async () => {
-				await feedbackInboxPage.searchResponses( formData1.email, true );
+				await feedbackInboxPage.searchUntilResponseRow( formData1.email );
 				await feedbackInboxPage.viewResponseRowByText( formData1.email );
 				await feedbackInboxPage.validateTextInSubmission( formData1.name );
 			} );
@@ -421,7 +437,7 @@ test.describe(
 			} );
 
 			await test.step( 'Verify first response is restored in Inbox', async () => {
-				await feedbackInboxPage.searchResponses( formData1.email, true );
+				await feedbackInboxPage.searchUntilResponseRow( formData1.email );
 				await feedbackInboxPage.viewResponseRowByText( formData1.email );
 				await feedbackInboxPage.validateTextInSubmission( formData1.name );
 			} );

@@ -21,12 +21,14 @@ export default function ThemeDirectInstall( {
 	siteSlug,
 	theme,
 	onActivate,
+	onCtaClick,
 }: {
 	themeSlug: string;
 	pluginSlug: string;
 	siteSlug?: string | null;
 	theme?: { name?: string; screenshot?: string };
 	onActivate: () => void;
+	onCtaClick?: ( action: string ) => void;
 } ) {
 	const translate = useTranslate();
 	const productsList = useSelector( getProductsList );
@@ -57,20 +59,30 @@ export default function ThemeDirectInstall( {
 			>
 				{ isProductListFetched && (
 					<div className="marketplace-plugin-install__direct-install-actions">
-						<Button href={ `/themes/${ themeSlug }/${ siteSlug }` }>
+						<Button
+							href={ `/themes/${ themeSlug }/${ siteSlug }` }
+							onClick={ () => onCtaClick?.( 'go_to_theme' ) }
+						>
 							{ translate( 'Go to the theme page' ) }
 						</Button>
 
 						{ ! isMarketplaceProduct ? (
-							<Button primary onClick={ onActivate }>
+							<Button
+								primary
+								onClick={ () => {
+									onCtaClick?.( 'activate_theme' );
+									onActivate();
+								} }
+							>
 								{ translate( 'Activate theme' ) }
 							</Button>
 						) : (
 							<Button
 								primary
-								onClick={ () =>
-									page( `/checkout/${ siteSlug || '' }/${ marketplaceProductSlug }?#step2` )
-								}
+								onClick={ () => {
+									onCtaClick?.( 'purchase_and_activate' );
+									page( `/checkout/${ siteSlug || '' }/${ marketplaceProductSlug }?#step2` );
+								} }
 							>
 								{ translate( 'Purchase and activate plugin' ) }
 							</Button>

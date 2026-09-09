@@ -87,7 +87,7 @@ test.describe( 'Notifications: General Interactions', { tag: [ tags.CALYPSO_PR ]
 				commentToTrash
 			);
 
-			await notificationsUser.authenticate( page, { waitUntilStable: true } );
+			await notificationsUser.authenticate( page );
 		} );
 
 		await test.step( 'Open Notifications panel', async () => {

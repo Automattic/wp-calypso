@@ -43,9 +43,9 @@ Primary+Accent is studio blue.
 	--theme-base-color: #e5e5e5; /* $base-color */
 	--theme-submenu-text-color: #686868; /* $menu-submenu-text */
 	--theme-submenu-background-color: #fff; /* $menu-submenu-background */
-	--theme-icon-color: #999; /* $icon-color */
-	--theme-highlight-color: #04a4cc; /* $highlight-color */
-	--theme-notification-color: #d64e07; /* Direct from wp-admin */
+	--theme-icon-color: #6a6a6a; /* $icon-color */
+	--theme-highlight-color: #007cba; /* $highlight-color */
+	--theme-notification-color: #c64606; /* Direct from wp-admin */
 
 	/* Primary */
 	--color-primary: var(--theme-highlight-color);
@@ -107,8 +107,8 @@ Primary+Accent is studio blue.
 
 	/* Sidebar Selected */
 	--color-sidebar-menu-selected-text: #fff;
-	--color-sidebar-menu-selected-background: #888;
-	--color-sidebar-menu-hover-background: #888;
+	--color-sidebar-menu-selected-background: #6e6e6e;
+	--color-sidebar-menu-hover-background: #6e6e6e;
 	--color-sidebar-menu-hover-text: #fff;
 
 	/* Sidebar Hover - Nav unification */

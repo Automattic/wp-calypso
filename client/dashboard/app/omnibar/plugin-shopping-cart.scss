@@ -1,0 +1,30 @@
+.omnibar .omnibar__secondary .omnibar__menu.omnibar__cart {
+	@media ( max-width: 480px ) {
+		min-width: 52px;
+	}
+
+	@media ( min-width: 782px ) {
+		padding-inline: 6px;
+	}
+}
+
+.omnibar__cart-icon {
+	display: flex;
+}
+
+.omnibar .omnibar__cart-dot {
+	fill: #adbaf3;
+	stroke: var( --omnibar-background );
+	stroke-width: 6%;
+}
+
+.omnibar .omnibar__menu:hover .omnibar__cart-dot,
+.omnibar .omnibar__menu:focus-visible .omnibar__cart-dot,
+.omnibar .omnibar__menu:active .omnibar__cart-dot {
+	stroke: var( --omnibar-menu-active-background );
+}
+
+.omnibar__cart-popover .components-popover__content {
+	width: max-content;
+	max-width: calc( 100vw - 32px );
+}

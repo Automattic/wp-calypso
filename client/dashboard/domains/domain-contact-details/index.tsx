@@ -15,15 +15,23 @@ import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainRoute } from '../../app/router/domains';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../components/card';
+import {
+	isCaDomain,
+	mapWhoisExtraToCaContactExtra,
+} from '../../components/domain-contact-details-form/ca-contact-fields';
 import ContactForm from '../../components/domain-contact-details-form/contact-form';
 import ContactFormPrivacy from '../../components/domain-contact-details-form/contact-form-privacy';
+import {
+	isFrDomain,
+	mapWhoisExtraToFrContactExtra,
+} from '../../components/domain-contact-details-form/fr-contact-fields';
 import {
 	isUkDomain,
 	mapWhoisExtraToUkContactExtra,
 } from '../../components/domain-contact-details-form/uk-contact-fields';
 import { findRegistrantWhois } from '../../utils/domain';
 import { DomainContactDetailsLayout } from './layout';
-import type { DomainContactDetails } from '@automattic/api-core';
+import type { DomainContactDetails, DomainContactDetailsExtra } from '@automattic/api-core';
 
 export default function DomainContactInfo() {
 	const { createErrorNotice } = useDispatch( noticesStore );
@@ -34,9 +42,25 @@ export default function DomainContactInfo() {
 	const registrantWhoisData = findRegistrantWhois( whoisData );
 
 	const { initialData, key } = useMemo( () => {
+		const extra: DomainContactDetailsExtra = {};
 		const ukExtra = isUkDomain( domainName )
 			? mapWhoisExtraToUkContactExtra( registrantWhoisData?.extra )
 			: undefined;
+		if ( ukExtra ) {
+			extra.uk = ukExtra;
+		}
+		const frExtra = isFrDomain( domainName )
+			? mapWhoisExtraToFrContactExtra( registrantWhoisData?.extra )
+			: undefined;
+		if ( frExtra ) {
+			extra.fr = frExtra;
+		}
+		const caExtra = isCaDomain( domainName )
+			? mapWhoisExtraToCaContactExtra( registrantWhoisData?.extra )
+			: undefined;
+		if ( caExtra ) {
+			extra.ca = caExtra;
+		}
 
 		const initialData: DomainContactDetails = {
 			firstName: registrantWhoisData?.fname ?? '',
@@ -52,7 +76,7 @@ export default function DomainContactInfo() {
 			postalCode: registrantWhoisData?.pc ?? '',
 			fax: registrantWhoisData?.fax ?? '',
 			optOutTransferLock: false,
-			...( ukExtra ? { extra: { uk: ukExtra } } : {} ),
+			...( Object.keys( extra ).length > 0 ? { extra } : {} ),
 		};
 
 		return { initialData, key: JSON.stringify( initialData ) };

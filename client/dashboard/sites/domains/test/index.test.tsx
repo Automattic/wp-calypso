@@ -8,6 +8,8 @@ import { render } from '../../../test-utils';
 import SiteDomains from '../index';
 import type { Site, User } from '@automattic/api-core';
 
+let mockSearchParams: { action?: string } = {};
+
 jest.mock( '../../../app/router/sites', () => {
 	const actual = jest.requireActual( '../../../app/router/sites' );
 	return {
@@ -15,6 +17,11 @@ jest.mock( '../../../app/router/sites', () => {
 		siteRoute: {
 			useParams: () => ( { siteSlug: 'test-site.wordpress.com' } ),
 			fullPath: '/sites/$siteSlug',
+		},
+		siteDomainsRoute: {
+			...actual.siteDomainsRoute,
+			useSearch: () => mockSearchParams,
+			fullPath: '/sites/$siteSlug/domains',
 		},
 	};
 } );
@@ -31,6 +38,24 @@ const site = {
 	site_owner: OWNER_USER_ID,
 } as unknown as Site;
 
+const defaultAddressDomain = {
+	domain: 'test-site.wordpress.com',
+	blog_id: SITE_ID,
+	blog_name: 'Test Site',
+	site_slug: 'test-site.wordpress.com',
+	subtype: { id: 'default_address', label: 'Default Address' },
+	domain_status: { id: 'active', label: 'Active', type: 'success' },
+	auto_renewing: false,
+	current_user_is_owner: true,
+	is_domain_only_site: false,
+	expiry: null,
+	expired: false,
+	primary_domain: false,
+	can_set_as_primary: false,
+	subscription_id: null,
+	tags: [],
+};
+
 const domain = {
 	domain: 'test-site.com',
 	blog_id: SITE_ID,
@@ -46,6 +71,7 @@ const domain = {
 	primary_domain: true,
 	can_set_as_primary: false,
 	subscription_id: null,
+	tags: [],
 };
 
 const ownerUser = {
@@ -73,7 +99,7 @@ function mockApis() {
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.2/all-domains' )
 		.query( true )
-		.reply( 200, { domains: [ domain ] } );
+		.reply( 200, { domains: [ domain, defaultAddressDomain ] } );
 
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/rest/v1.1/sites/${ SITE_ID }/domains/redirect` )
@@ -88,6 +114,7 @@ function mockApis() {
 
 describe( '<SiteDomains>', () => {
 	beforeEach( () => {
+		mockSearchParams = {};
 		mockApis();
 	} );
 
@@ -109,5 +136,21 @@ describe( '<SiteDomains>', () => {
 		await screen.findByRole( 'heading', { name: 'Domains' } );
 
 		expect( screen.getByRole( 'button', { name: 'Add domain name' } ) ).toBeVisible();
+	} );
+
+	test( 'opens the change site address modal when deep linked', async () => {
+		mockSearchParams = { action: 'change-site-address' };
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		expect( await screen.findByRole( 'dialog', { name: 'Change site address' } ) ).toBeVisible();
+	} );
+
+	test( 'does not open a modal without the deep link', async () => {
+		render( <SiteDomains />, { user: ownerUser } );
+
+		await screen.findByRole( 'heading', { name: 'Domains' } );
+
+		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 	} );
 } );

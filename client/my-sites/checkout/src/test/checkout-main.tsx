@@ -42,6 +42,13 @@ jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 jest.mock( 'calypso/lib/navigate' );
 jest.mock( 'calypso/state/notices/actions' );
+jest.mock( 'calypso/blocks/login/blackbox-challenge', () => {
+	const { useEffect } = jest.requireActual( 'react' );
+	return ( { onSubmitBlockedChange } ) => {
+		useEffect( () => onSubmitBlockedChange?.( false ), [ onSubmitBlockedChange ] );
+		return null;
+	};
+} );
 
 describe( 'CheckoutMain', () => {
 	const initialCart = getBasicCart();
@@ -840,5 +847,23 @@ describe( 'CheckoutMain', () => {
 			const emailField = screen.getByLabelText( 'Email' );
 			expect( emailField ).toBeDisabled();
 		}, [] );
+	} );
+
+	it( 'displays cart errors in a notice with a stable ID so repeats replace rather than stack', async () => {
+		const cartChanges = { products: [] };
+		const additionalProps = { productAliasFromUrl: 'personal-bundle' };
+		render(
+			<MockCheckout
+				initialCart={ initialCart }
+				cartChanges={ cartChanges }
+				additionalProps={ additionalProps }
+				setCart={ () => Promise.reject( new Error( 'The cart could not be updated' ) ) }
+			/>
+		);
+		await waitFor( () => {
+			expect( errorNotice ).toHaveBeenCalledWith( expect.anything(), {
+				id: 'checkout-cart-error',
+			} );
+		} );
 	} );
 } );

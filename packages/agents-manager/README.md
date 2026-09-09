@@ -29,20 +29,6 @@ function MyApp() {
 }
 ```
 
-### Headless Agent Initialization
-
-Use `HeadlessAgentInitializer` when you need to create the agent without rendering the chat UI (e.g., for Image Studio in the Media Library):
-
-```tsx
-import { HeadlessAgentInitializer } from '@automattic/agents-manager';
-
-function MyApp() {
-	const site = { ID: 456, URL: 'https://example.com' };
-
-	return <HeadlessAgentInitializer site={ site } currentRoute="/media" />;
-}
-```
-
 ### External Provider Extensions
 
 Custom tools, context providers, suggestions, and markdown extensions are loaded automatically from external plugins via the `loadExternalProviders()` utility. Plugins can register their providers by implementing the extension API.
@@ -119,14 +105,13 @@ function MyComponent() {
 }
 ```
 
-Feedback utilities are also exported: `useFeedbackAction`, `submitFeedback`, `rateMessage`, and the `FeedbackInput` component.
+Feedback utilities are also exported: `useFeedbackAction`, `submitFeedback`, `rateMessage`, and the `FeedbackInput` component. Chat UI actions (`openAgentsManagerChat`, `closeAgentsManagerChat`, `isAgentsManagerChatVisible`, `getAgentsManagerChatRoute`) and `recordAgentsManagerTracksEvent` are exported as well. A host rendering its own AI chat entry button reads `useAiChatEntryState()` for `isChatVisible` and wraps its label text in `<AiChatEntryLabel>`, which shows it only while the chat is hidden.
 
 ### Exported Types
 
 ```tsx
 import type {
 	AgentsManagerProps,
-	HeadlessAgentInitializerProps,
 	Ability,
 	ToolProvider,
 	ContextProvider,
@@ -150,27 +135,10 @@ interface ToolProvider {
 
 ### Ability Interface
 
-Based on the WordPress Abilities API:
+`Ability` is re-exported from `@wordpress/abilities`, which owns the authoritative shape (`name`, `label`, `description`, `category`, schemas, callbacks, and `meta`):
 
 ```tsx
-interface Ability {
-	name: string;
-	label: string;
-	description: string;
-	category: string;
-	input_schema?: Record< string, any >;
-	output_schema?: Record< string, any >;
-	callback?: ( input: any ) => any | Promise< any >;
-	permissionCallback?: ( input?: any ) => boolean | Promise< boolean >;
-	meta?: {
-		annotations?: {
-			readonly?: boolean | null;
-			destructive?: boolean | null;
-			idempotent?: boolean | null;
-		};
-		[ key: string ]: any;
-	};
-}
+import type { Ability } from '@automattic/agents-manager';
 ```
 
 ### ContextProvider Interface
@@ -184,7 +152,7 @@ interface ClientContextType {
 	url: string;
 	pathname: string;
 	search: string;
-	environment: 'wp-admin' | 'ciab-admin' | 'calypso' | string;
+	environment: 'wp-admin' | 'calypso' | string; // full union in `src/extension-types.ts`
 	contextEntries?: ContextEntry[];
 	[ key: string ]: any;
 }

@@ -48,6 +48,8 @@ export const getStoreType = ( state: State ) => state.storeType;
 export const getPendingAction = ( state: State ) => state.pendingAction;
 export const getProgress = ( state: State ) => state.progress;
 export const getProgressTitle = ( state: State ) => state.progressTitle;
+export const getTransferStatus = ( state: State ) => state.transferStatus;
+export const getTransferStartedAt = ( state: State ) => state.transferStartedAt;
 export const getGoals = ( state: State ) => state.goals;
 export const getEcommerceFlowRecurType = ( state: State ) => state.ecommerceFlowRecurType;
 export const getCouponCode = ( state: State ) => state.couponCode;

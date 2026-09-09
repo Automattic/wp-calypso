@@ -44,6 +44,11 @@ function withUnitTestInfo( cmd ) {
 	};
 }
 
+// The agenttic playground deliberately stays out of the shared type check: it
+// type-checks the agenttic package sources, which carry pre-existing errors
+// from their source repo (cleanup tracked as a migration follow-up).
+const PACKAGES_EXCLUDED_FROM_TYPE_CHECK = [ 'agenttic-demo' ];
+
 const [ packagesTsconfigs, appsTsconfigs ] = await Promise.all(
 	[ 'packages', 'apps' ].map( ( path ) => globPromise( `${ path }/*/tsconfig.json` ) )
 );
@@ -51,8 +56,11 @@ const [ packagesTsconfigs, appsTsconfigs ] = await Promise.all(
 const isTypeCheckedApp = ( path ) =>
 	! APPS_EXCLUDED_FROM_TYPE_CHECK.includes( basename( dirname( path ) ) );
 
+const isTypeCheckedPackage = ( path ) =>
+	! PACKAGES_EXCLUDED_FROM_TYPE_CHECK.includes( basename( dirname( path ) ) );
+
 const tscPackages = withTscInfo( {
-	cmd: `tsc --build ${ packagesTsconfigs.join( ' ' ) }`,
+	cmd: `tsc --build ${ packagesTsconfigs.filter( isTypeCheckedPackage ).join( ' ' ) }`,
 	id: 'type_check_packages',
 } );
 

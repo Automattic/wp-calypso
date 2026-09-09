@@ -23,19 +23,21 @@ jest.mock(
 			children,
 			emptyView,
 			floatingChatState,
+			triggerTitle,
 			suggestions = [],
 			onSuggestionClick,
 		}: {
 			children: ReactNode;
 			emptyView: ReactNode;
 			floatingChatState?: string;
+			triggerTitle?: string;
 			suggestions?: Suggestion[];
 			onSuggestionClick?: (
 				selectedSuggestion: Suggestion,
 				availableSuggestions: Suggestion[]
 			) => void;
 		} ) {
-			mockContainerProps( { floatingChatState } );
+			mockContainerProps( { floatingChatState, triggerTitle } );
 			return (
 				<div>
 					{ emptyView }
@@ -108,16 +110,23 @@ jest.mock(
 		}
 
 		function MockEmptyView( {
+			help,
 			suggestions = [],
 			onSuggestionClick,
 		}: {
+			help?: string;
 			suggestions?: Suggestion[];
 			onSuggestionClick?: (
 				selectedSuggestion: Suggestion,
 				availableSuggestions: Suggestion[]
 			) => void;
 		} ) {
-			return <MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSuggestionClick } />;
+			return (
+				<>
+					{ help && <p>{ help }</p> }
+					<MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSuggestionClick } />
+				</>
+			);
 		}
 
 		function MockSuggestions( {
@@ -172,7 +181,10 @@ jest.mock( '@wordpress/data', () => ( {
 		} ) ),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text, isRTL: () => false } ) );
+jest.mock( '@wordpress/i18n', () => ( {
+	__: ( text: string ) => text,
+	isRTL: () => false,
+} ) );
 jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: jest.fn(),
 	recordAgentsManagerTracksEvent: jest.fn(),
@@ -325,6 +337,28 @@ describe( 'AgentChat', () => {
 		);
 	} );
 
+	// The chip carries its own reason, so the help line stays the same whether or
+	// not anything is disabled.
+	it( 'keeps the plain help line when a suggestion is disabled', () => {
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: [
+				{
+					id: 'optimize-title',
+					label: 'Optimize title',
+					prompt: 'Optimize.',
+					disabled: true,
+					disabledReason: 'This feature will be available once content is added to the page.',
+				},
+			],
+		} );
+
+		expect( screen.getByText( 'Got a different request? Ask away.' ) ).toBeInTheDocument();
+		expect(
+			screen.queryByText( /This feature will be available once content is added/ )
+		).toBeNull();
+	} );
+
 	it( 'forwards empty view suggestion clicks to the shared suggestion handler', async () => {
 		const user = userEvent.setup();
 		const suggestion = {
@@ -397,7 +431,10 @@ describe( 'AgentChat', () => {
 	it( 'expands when open', () => {
 		renderAgentChat( { isOpen: true } );
 
-		expect( mockContainerProps ).toHaveBeenLastCalledWith( { floatingChatState: 'expanded' } );
+		expect( mockContainerProps ).toHaveBeenLastCalledWith( {
+			floatingChatState: 'expanded',
+			triggerTitle: 'Agent',
+		} );
 	} );
 
 	it( 'groups only writing suggestions while keeping design suggestions top level', async () => {
@@ -429,19 +466,10 @@ describe( 'AgentChat', () => {
 				prompt: 'Optimize this content for search engines',
 			},
 			{
-				id: 'generate-feedback',
-				label: 'Simple Review',
-				prompt: 'Review this saved content',
-			},
-			{
-				id: 'proofread-content',
-				label: 'Proofread',
-				prompt: 'Proofread this saved content',
-			},
-			{
-				id: 'ai-editorial-review',
-				label: 'Editorial Review',
-				prompt: 'Run an AI Editorial Review',
+				id: 'get-feedback',
+				label: 'Get feedback',
+				prompt: '',
+				options: [ { id: 'proofread-content', label: 'Proofread', value: 'Proofread this.' } ],
 			},
 		];
 		const suggestions = [ designSuggestion, whatElseSuggestion, ...writingSuggestions ];
@@ -471,14 +499,35 @@ describe( 'AgentChat', () => {
 		expect( screen.getByRole( 'button', { name: 'Optimize title' } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Generate excerpt' } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Optimize SEO' } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Simple review' } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Editorial review' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Get feedback: Proofread' } ) ).toBeInTheDocument();
 
 		await user.click( screen.getByRole( 'button', { name: 'Optimize title' } ) );
 		expect( onSuggestionClick ).toHaveBeenCalledWith( writingSuggestions[ 0 ], suggestions );
 
 		await user.click( writingToggle );
-		expect( screen.queryByRole( 'button', { name: 'Proofread' } ) ).toBeNull();
+		expect( screen.queryByRole( 'button', { name: 'Get feedback: Proofread' } ) ).toBeNull();
+	} );
+
+	it( 'keeps the featured image suggestion out of the writing group', () => {
+		const suggestions = [
+			{ id: 'customize-colors', label: 'Customize colors', prompt: 'Customize colors' },
+			{
+				id: 'generate-featured-image',
+				label: 'Generate featured image',
+				description: 'Create a new image with AI and set it as the featured image.',
+				prompt: '',
+			},
+			{ id: 'optimize-title', label: 'Optimize Title', prompt: 'Optimize the title' },
+		];
+
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: suggestions,
+			groupWritingSuggestions: true,
+		} );
+
+		const button = screen.getByRole( 'button', { name: 'Generate featured image' } );
+		expect( button.closest( '.agents-manager-writing-suggestions' ) ).toBeNull();
 	} );
 
 	it( 'keeps the flat empty view when there are no writing suggestions', () => {
@@ -563,7 +612,10 @@ describe( 'AgentChat', () => {
 	it( 'collapses to a button when closed without the AI chat entry button', () => {
 		renderAgentChat( { isOpen: false } );
 
-		expect( mockContainerProps ).toHaveBeenLastCalledWith( { floatingChatState: 'collapsed' } );
+		expect( mockContainerProps ).toHaveBeenLastCalledWith( {
+			floatingChatState: 'collapsed',
+			triggerTitle: 'Agent',
+		} );
 	} );
 
 	it( 'minimizes to the bar when closed with the AI chat entry button present', () => {
@@ -571,6 +623,9 @@ describe( 'AgentChat', () => {
 
 		renderAgentChat( { isOpen: false } );
 
-		expect( mockContainerProps ).toHaveBeenLastCalledWith( { floatingChatState: 'minimized' } );
+		expect( mockContainerProps ).toHaveBeenLastCalledWith( {
+			floatingChatState: 'minimized',
+			triggerTitle: 'Agent',
+		} );
 	} );
 } );

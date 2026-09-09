@@ -11,8 +11,11 @@ import './notices.scss';
 import { HELP_CENTER_STORE } from '../stores';
 
 export const BlockedZendeskNotice: React.FC = () => {
-	const { currentUser, sectionName } = useHelpCenterContext();
-	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( !! currentUser?.ID );
+	const { currentUser, sectionName, site } = useHelpCenterContext();
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging(
+		!! currentUser?.ID,
+		site?.ID
+	);
 	const { isEligibleForChat } = useChatStatus();
 	const featureConfig = useFeatureConfig();
 	const { setShowSupportDoc } = useDispatch( HELP_CENTER_STORE );

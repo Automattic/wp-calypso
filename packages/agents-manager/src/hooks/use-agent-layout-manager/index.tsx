@@ -13,6 +13,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { AI } from '../../components/icons';
 import observeEditorCanvasPointerDown from '../../utils/observe-editor-canvas-pointerdown';
+import { ResponsiveUndockContext } from './responsive-undock-context';
 
 // On Gutenberg editor screens, only dock when fullscreen mode is on —
 // otherwise wp-admin's chrome leaves too little room for the editor.
@@ -56,7 +57,7 @@ const useCanDock = ( { desktopMediaQuery }: { desktopMediaQuery: string } ) => {
 		getIsFullscreenGateOpen
 	);
 
-	return isDesktop && isFullscreenGateOpen;
+	return { canDock: isDesktop && isFullscreenGateOpen, isDesktop };
 };
 
 interface Options {
@@ -99,9 +100,13 @@ export default function useAgentLayoutManager( {
 	const portalRef = useRef< HTMLDivElement | undefined >( undefined );
 	const [ isPortalReady, setIsPortalReady ] = useState( false );
 	const [ isDocked, setIsDocked ] = useState< boolean | null >( null );
-	const canDock = useCanDock( { desktopMediaQuery } );
+	const { canDock, isDesktop } = useCanDock( { desktopMediaQuery } );
 	const shouldRenderSidebar = canDock && isDocked;
 	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > | undefined >( undefined );
+
+	// Floating because the viewport is narrow, with the docked preference still on.
+	const isResponsiveUndocked = !! isDocked && ! isDesktop;
+	const [ responsiveUndockCount, setResponsiveUndockCount ] = useState( 0 );
 
 	// Store default state refs to avoid stale closures and prevent unnecessary re-renders
 	const defaultDockedRef = useRef( defaultDocked );
@@ -184,6 +189,19 @@ export default function useAgentLayoutManager( {
 			onUndockRef.current();
 		}
 	}, [ container, isDocked, isReady, shouldRenderSidebar ] );
+
+	// Losing the desktop viewport takes the docked sidebar away. The count
+	// triggers the floating panel's layout command, moving it to the right
+	// corner — where the sidebar just was.
+	const wasDesktopRef = useRef( isDesktop );
+	useEffect( () => {
+		const wasDesktop = wasDesktopRef.current;
+		wasDesktopRef.current = isDesktop;
+
+		if ( wasDesktop && ! isDesktop && isDocked ) {
+			setResponsiveUndockCount( ( count ) => count + 1 );
+		}
+	}, [ isDesktop, isDocked ] );
 
 	useLayoutEffect( () => {
 		container?.classList.toggle( SIDEBAR_OPEN_CLASS, !! shouldRenderSidebar && isSidebarOpen );
@@ -305,6 +323,11 @@ export default function useAgentLayoutManager( {
 		setIsDocked( false );
 	}, [ container, isReady ] );
 
+	const responsiveUndock = useMemo(
+		() => ( { isResponsiveUndocked, undockCount: responsiveUndockCount } ),
+		[ isResponsiveUndocked, responsiveUndockCount ]
+	);
+
 	const createAgentPortal = useCallback(
 		( children: React.ReactNode ) => {
 			if ( ! isPortalReady || ! portalRef.current ) {
@@ -312,23 +335,25 @@ export default function useAgentLayoutManager( {
 			}
 
 			return createPortal(
-				shouldRenderSidebar ? (
-					<>
-						{ children }
-						<Button
-							className="agents-manager-sidebar-fab"
-							icon={ AI }
-							onClick={ handleOpenSidebar }
-							label={ __( 'Open Chat', __i18n_text_domain__ ) }
-						/>
-					</>
-				) : (
-					children
-				),
+				<ResponsiveUndockContext.Provider value={ responsiveUndock }>
+					{ shouldRenderSidebar ? (
+						<>
+							{ children }
+							<Button
+								className="agents-manager-sidebar-fab"
+								icon={ AI }
+								onClick={ handleOpenSidebar }
+								label={ __( 'Open Chat', __i18n_text_domain__ ) }
+							/>
+						</>
+					) : (
+						children
+					) }
+				</ResponsiveUndockContext.Provider>,
 				portalRef.current
 			);
 		},
-		[ handleOpenSidebar, isPortalReady, shouldRenderSidebar ]
+		[ handleOpenSidebar, isPortalReady, responsiveUndock, shouldRenderSidebar ]
 	);
 
 	return {

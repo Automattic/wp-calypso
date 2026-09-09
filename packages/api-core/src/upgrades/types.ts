@@ -265,6 +265,14 @@ export interface Purchase {
 	is_removable: boolean;
 
 	/**
+	 * True if the customer can refund, cancel or remove this purchase themselves.
+	 *
+	 * Set per product, not per user. Support can still act on the purchase.
+	 * Optional in the response, so read it through `isManageableByUser()`.
+	 */
+	is_manageable_by_user?: boolean;
+
+	/**
 	 * True if this subscription has refundable receipts.
 	 *
 	 * If this is true, it means that it's possible the subscription could
@@ -323,6 +331,25 @@ export interface Purchase {
 	 * The Ownership number.
 	 */
 	ownership_id: number;
+
+	/**
+	 * True when a Jetpack Start partner provisioned this subscription and bills
+	 * the customer for it, so WordPress.com is not the merchant and self-serve
+	 * subscription management does not apply. Shown as a "Host Managed Plan" or
+	 * an "Agency Managed Plan" depending on `partner_type`.
+	 *
+	 * A4A subscriptions bought through the store carry partner details (see
+	 * `partner_name`) but are billed here, so this is false for them.
+	 */
+	is_partner_managed: boolean;
+
+	/**
+	 * True for the `is_partner_managed` subscriptions a hosting partner rather
+	 * than an agency provisioned. `is_cancelable` and `is_removable` are false
+	 * for these, since cancelling has to happen at the host; agency-provisioned
+	 * plans are bought through WordPress.com and can still be cancelled here.
+	 */
+	is_host_managed: boolean;
 
 	partner_name: string | undefined;
 	partner_slug: string | undefined;
@@ -576,6 +603,26 @@ export interface Purchase {
 	 * Gated by the same eligibility rules as `is_plan_type_downgradable`.
 	 */
 	is_plan_term_downgradable: boolean;
+
+	/**
+	 * True if this subscription's plan can be downgraded instantly, right now,
+	 * rather than having the change scheduled for its next renewal.
+	 *
+	 * When this is true, `POST /wpcom/v2/upgrades/$purchase_id/cancel` with
+	 * `{ type: 'downgrade', to_product_id }` will be accepted and will provision
+	 * the lower plan immediately.
+	 *
+	 * This is not the same question as `is_refundable`, and must not be derived
+	 * from it. In particular it is true for a refundable receipt worth nothing
+	 * (a comped plan, a 100%-off coupon, or a purchase paid entirely with
+	 * credits) — the instant downgrade is still valid, it just issues no refund.
+	 * For whether any money would come back, check `total_refund_amount`.
+	 *
+	 * It is also true for a renewal that is still within its own refund window,
+	 * not only for an initial purchase, so it is unrelated to
+	 * `is_within_initial_refund_window`.
+	 */
+	is_instant_downgrade_available: boolean;
 
 	/**
 	 * True if deactivating this subscription will cause the site to be reverted

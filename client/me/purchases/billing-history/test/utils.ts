@@ -1,6 +1,7 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 import deepFreeze from 'deep-freeze';
-import { groupDomainProducts } from '../utils';
+import { translate } from 'i18n-calypso';
+import { groupDomainProducts, renderTransactionQuantitySummary } from '../utils';
 
 const ident = ( x ) => x;
 
@@ -350,6 +351,44 @@ describe( 'utils', () => {
 			expect( result[ 1 ].amount_integer ).toEqual( 200 );
 			expect( result[ 2 ].amount ).toEqual( '$19' );
 			expect( result[ 2 ].amount_integer ).toEqual( 1900 );
+		} );
+	} );
+	describe( '#renderTransactionQuantitySummary()', () => {
+		const item = ( wpcom_product_slug, licensed_quantity ) => ( {
+			wpcom_product_slug,
+			licensed_quantity,
+			new_quantity: 0,
+			type: 'new purchase',
+		} );
+
+		test( 'shows credit quantity for Studio Code AI Credits', () => {
+			expect(
+				renderTransactionQuantitySummary( item( 'studio-code-ai-credits', 500 ), translate )
+			).toEqual( 'Purchase of 500 AI credits' );
+		} );
+
+		test( 'uses the singular form for one credit', () => {
+			expect(
+				renderTransactionQuantitySummary( item( 'studio-code-ai-credits', 1 ), translate )
+			).toEqual( 'Purchase of 1 AI credit' );
+		} );
+
+		test( 'uses a separator for thousands of credits', () => {
+			expect(
+				renderTransactionQuantitySummary( item( 'studio-code-ai-credits', 30000 ), translate )
+			).toEqual( 'Purchase of 30,000 AI credits' );
+		} );
+
+		test( 'shows license quantity for Akismet Pro', () => {
+			expect( renderTransactionQuantitySummary( item( 'ak_pro5h_yearly', 3 ), translate ) ).toEqual(
+				'Purchase of 3 500 API call licenses'
+			);
+		} );
+
+		test( 'shows item quantity for other products', () => {
+			expect(
+				renderTransactionQuantitySummary( item( 'jetpack_ai_yearly', 3 ), translate )
+			).toEqual( 'Purchase of 3 items' );
 		} );
 	} );
 } );

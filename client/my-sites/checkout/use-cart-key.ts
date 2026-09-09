@@ -27,6 +27,8 @@ export default function useCartKey(): ReturnType< typeof getCartKey > {
 		! selectedSite &&
 		( currentUrlPath.includes( '/marketplace/checkout' ) ||
 			currentUrlPath.includes( '/client/checkout' ) );
+	// `/checkout/wpcom` is deliberately absent: it is logged-in only and needs the
+	// 'no-site' key, and listing it here would force 'no-user'.
 	const isNoSiteCart =
 		isJetpackCheckout ||
 		isAkismetSitelessCheckout ||

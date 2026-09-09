@@ -20,6 +20,12 @@ a[href^='https://smooch.io/live-web-chat'] {
 	z-index: $help-center-z-index;
 	cursor: default;
 
+	// The dialog container receives programmatic focus on open (tabindex="-1");
+	// it isn't interactive itself, so don't draw a focus ring on it.
+	&:focus {
+		outline: none;
+	}
+
 	// Raise above the Agents Manager panel while focused, so the last-clicked
 	// panel wins. Both panels share one base/focused scale.
 	&.is-focused {

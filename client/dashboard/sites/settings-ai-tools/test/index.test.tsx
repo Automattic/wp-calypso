@@ -25,6 +25,7 @@ const site = {
 	name: 'Email Assistant',
 	title: 'Email Assistant',
 	is_wpcom_atomic: true,
+	jetpack: true,
 	options: {
 		admin_url: 'https://email-assistant.wordpress.com/wp-admin/',
 	},
@@ -36,6 +37,14 @@ const simpleSite = {
 	slug: 'simple-email-assistant.wordpress.com',
 	is_wpcom_atomic: false,
 	jetpack: false,
+} as Site;
+
+const jetpackSite = {
+	...site,
+	ID: 789,
+	slug: 'jetpack-email-assistant.example.com',
+	is_wpcom_atomic: false,
+	jetpack: true,
 } as Site;
 
 let clipboardWriteText: jest.Mock;
@@ -127,17 +136,27 @@ function mockWpcomPostByEmailMutation(
 	return scope.delete( path ).reply( 200 );
 }
 
-function mockWpcomPostByEmailStatus( activeSite = simpleSite ) {
+function mockWpcomPostByEmailStatus( activeSite = simpleSite, postByEmailAddress?: string ) {
 	return nock( 'https://public-api.wordpress.com' )
 		.get( `/wpcom/v2/sites/${ activeSite.ID }/post-by-email` )
 		.reply( 200, {
-			is_enabled: false,
+			is_enabled: !! postByEmailAddress,
+			email: postByEmailAddress,
 		} );
 }
 
-function mockJetpackPostByEmailSettingsFailure() {
+function mockJetpackPostByEmailSettings( activeSite = site, postByEmailAddress?: string ) {
 	return nock( 'https://public-api.wordpress.com' )
-		.get( `/rest/v1.1/jetpack-blogs/${ site.ID }/rest-api/` )
+		.get( `/rest/v1.1/jetpack-blogs/${ activeSite.ID }/rest-api/` )
+		.query( true )
+		.reply( 200, {
+			data: { post_by_email_address: postByEmailAddress ?? 'NULL' },
+		} );
+}
+
+function mockJetpackPostByEmailSettingsFailure( activeSite = jetpackSite ) {
+	return nock( 'https://public-api.wordpress.com' )
+		.get( `/rest/v1.1/jetpack-blogs/${ activeSite.ID }/rest-api/` )
 		.query( true )
 		.reply( 404, {
 			message: 'No route was found matching the URL and request method.',
@@ -253,7 +272,9 @@ describe( '<AIToolsSettings>', () => {
 			'Upgrade your plan to enable this setting.'
 		);
 
-		const telegramButton = screen.getByRole( 'button', { name: /Connect Telegram/ } );
+		const telegramButton = screen.getByRole( 'button', {
+			name: /Connect WordPress Agent to Telegram/,
+		} );
 		expect( telegramButton ).toHaveClass( 'dashboard-summary-button' );
 		expect( telegramButton ).toHaveAttribute( 'aria-disabled', 'true' );
 
@@ -282,16 +303,15 @@ describe( '<AIToolsSettings>', () => {
 		expect( screen.queryByText( 'Upgrade required' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'enables, copies, regenerates, and disables the WordPress Agent email address', async () => {
+	test( 'manages the WordPress Agent email address on an Atomic site', async () => {
 		const user = userEvent.setup();
 		mockClipboard();
 		renderAIToolsSettings();
 
 		expect( screen.getByRole( 'heading', { name: 'Email WordPress Agent' } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: /Connect Telegram/ } ) ).toHaveAttribute(
-			'href',
-			'https://wordpress.com/me/developer'
-		);
+		expect(
+			screen.getByRole( 'link', { name: /Connect WordPress Agent to Telegram/ } )
+		).toHaveAttribute( 'href', '/me/agent' );
 		expect(
 			screen.getByText(
 				'Connect your WordPress.com account to Telegram. This connection is shared across multiple sites.'
@@ -311,7 +331,8 @@ describe( '<AIToolsSettings>', () => {
 
 		const createScope = mockJetpackPostByEmailMutation(
 			'create',
-			'first-secret@post.wordpress.com'
+			'first-secret@post.wordpress.com',
+			site
 		);
 		await user.click( toggle );
 
@@ -345,7 +366,8 @@ describe( '<AIToolsSettings>', () => {
 
 		const regenerateScope = mockJetpackPostByEmailMutation(
 			'regenerate',
-			'second-secret@post.wordpress.com'
+			'second-secret@post.wordpress.com',
+			site
 		);
 		await user.click( screen.getByRole( 'button', { name: 'Regenerate address' } ) );
 
@@ -358,7 +380,7 @@ describe( '<AIToolsSettings>', () => {
 			);
 		} );
 
-		const deleteScope = mockJetpackPostByEmailMutation( 'delete' );
+		const deleteScope = mockJetpackPostByEmailMutation( 'delete', undefined, site );
 		await user.click( toggle );
 
 		await waitFor( () => {
@@ -368,6 +390,29 @@ describe( '<AIToolsSettings>', () => {
 			expect( toggle ).not.toBeChecked();
 			expect( screen.queryByLabelText( 'WordPress Agent email address' ) ).not.toBeInTheDocument();
 		} );
+	} );
+
+	test( 'uses Jetpack settings for an external Jetpack site', async () => {
+		const user = userEvent.setup();
+		renderAIToolsSettings( '', true, jetpackSite );
+
+		const createScope = mockJetpackPostByEmailMutation(
+			'create',
+			'jetpack-secret@post.wordpress.com',
+			jetpackSite
+		);
+		await user.click(
+			screen.getByRole( 'checkbox', {
+				name: 'Enable WordPress Agent email address',
+			} )
+		);
+
+		await waitFor( () => {
+			expect( createScope.isDone() ).toBe( true );
+		} );
+		expect( await screen.findByLabelText( 'WordPress Agent email address' ) ).toHaveValue(
+			'agent+jetpack-secret@post.wordpress.com'
+		);
 	} );
 
 	test( 'uses the WordPress.com Post by Email endpoint for simple sites', async () => {
@@ -432,10 +477,31 @@ describe( '<AIToolsSettings>', () => {
 		).not.toBeChecked();
 	} );
 
-	test( 'does not fail the page when Jetpack settings are unavailable', async () => {
-		const settingsScope = mockJetpackPostByEmailSettingsFailure();
+	test( 'loads Atomic site Post by Email status from Jetpack settings', async () => {
+		const settingsScope = mockJetpackPostByEmailSettings(
+			site,
+			'atomic-secret@post.wordpress.com'
+		);
 
-		renderAIToolsSettings( '', false );
+		renderAIToolsSettings( '', false, site );
+
+		await waitFor( () => {
+			expect( settingsScope.isDone() ).toBe( true );
+		} );
+		expect(
+			screen.getByRole( 'checkbox', {
+				name: 'Enable WordPress Agent email address',
+			} )
+		).toBeChecked();
+		expect( screen.getByLabelText( 'WordPress Agent email address' ) ).toHaveValue(
+			'agent+atomic-secret@post.wordpress.com'
+		);
+	} );
+
+	test( 'does not fail the page when Jetpack settings are unavailable', async () => {
+		const settingsScope = mockJetpackPostByEmailSettingsFailure( jetpackSite );
+
+		renderAIToolsSettings( '', false, jetpackSite );
 
 		expect( screen.getByRole( 'heading', { name: 'Email WordPress Agent' } ) ).toBeVisible();
 		await waitFor( () => {

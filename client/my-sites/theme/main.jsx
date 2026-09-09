@@ -184,14 +184,15 @@ function BlueprintCtaButton( {
 		return null;
 	}
 
-	// The onboarding blueprint step accepts a blueprint-library post id or slug
-	// via ?blueprint=. build_dest=wow asks for the theme demo to be restored onto
-	// an Atomic site from the blueprint's archive, which keeps the plugins the
-	// Simple-site blueprint runner would drop; the step falls back to that runner
-	// when the blueprint has no archive.
+	// The onboarding blueprint step accepts a blueprint-library post id or slug via ?blueprint=.
+	// wow_funnel=blueprint builds the Atomic site from the blueprint's archive *before* checkout,
+	// so the finished site is waiting the moment the customer pays; dest=site-spec hands them to
+	// the AI site-spec afterwards. The step falls back to the legacy Simple-site runner when the
+	// blueprint has no archive.
 	const href = addQueryArgs( '/setup/onboarding/blueprint', {
 		blueprint: blueprintId,
-		build_dest: 'wow',
+		wow_funnel: 'blueprint',
+		dest: 'site-spec',
 		ref: `theme-${ themeId }`,
 	} );
 

@@ -1,7 +1,11 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .marketplace-thank-you__container {
 	max-width: 750px;
 	padding: 16px 24px 0;
+}
+
+.marketplace-thank-you__retry-button {
+	margin-block-start: 16px;
 }

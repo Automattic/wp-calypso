@@ -125,6 +125,7 @@ export const Header = ( {
 			case ImageStudioEntryPoint.EditorSidebar:
 			case ImageStudioEntryPoint.JetpackExternalMediaBlock:
 			case ImageStudioEntryPoint.JetpackExternalMediaFeaturedImage:
+			case ImageStudioEntryPoint.JetpackAIFeaturedImage:
 				return __( 'Save & Apply', __i18n_text_domain__ );
 			case ImageStudioEntryPoint.MediaLibrary:
 			default:
@@ -141,6 +142,7 @@ export const Header = ( {
 			case ImageStudioEntryPoint.EditorSidebar:
 			case ImageStudioEntryPoint.JetpackExternalMediaBlock:
 			case ImageStudioEntryPoint.JetpackExternalMediaFeaturedImage:
+			case ImageStudioEntryPoint.JetpackAIFeaturedImage:
 				return __( 'Save and apply image', __i18n_text_domain__ );
 			case ImageStudioEntryPoint.MediaLibrary:
 			default:

@@ -3,6 +3,7 @@
  */
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
+import { saveSessionId, setSessionSiteKey } from '../../utils/agent-session';
 import {
 	AgentsManagerContextProvider,
 	useAgentsManagerContext,
@@ -21,7 +22,7 @@ function ContextConsumer() {
 			<span data-testid="isLoggedIn">{ String( context.isLoggedIn ) }</span>
 			<span data-testid="userId">{ context.currentUser?.ID ?? 'none' }</span>
 			<span data-testid="siteId">{ context.site?.ID ?? 'none' }</span>
-			<span data-testid="activeSessionId">{ context.getActiveSessionId() }</span>
+			<span data-testid="tabSessionId">{ context.getTabSessionId() }</span>
 		</div>
 	);
 }
@@ -125,28 +126,20 @@ describe( 'AgentsManagerContext', () => {
 			expect( screen.getByTestId( 'isEligibleForChat' ).textContent ).toBe( 'false' );
 		} );
 
-		it( 'returns empty string from `getActiveSessionId` when no agentConfig is set', () => {
+		it( 'returns empty string from `getTabSessionId` when no agentConfig is set', () => {
 			renderWithProvider( { sectionName: 'wp-admin', siteKey: 'no-site' } );
 
-			expect( screen.getByTestId( 'activeSessionId' ).textContent ).toBe( '' );
+			expect( screen.getByTestId( 'tabSessionId' ).textContent ).toBe( '' );
 		} );
 
-		it( 'resumes the active chat by navigating to `/chat` with the active session id', () => {
+		it( 'resumes the chat for this tab by navigating to `/chat`', () => {
 			function ResumeProbe() {
-				const { resumeActiveChat, setAgentConfig } = useAgentsManagerContext();
+				const { resumeChat } = useAgentsManagerContext();
 				const location = useLocation();
 				return (
 					<>
-						<button
-							onClick={ () => setAgentConfig( { sessionId: 'session-xyz' } as UseAgentChatConfig ) }
-						>
-							set-config
-						</button>
-						<button onClick={ resumeActiveChat }>resume</button>
+						<button onClick={ resumeChat }>resume</button>
 						<span data-testid="path">{ location.pathname }</span>
-						<span data-testid="stateSessionId">
-							{ ( location.state as { sessionId?: string } | null )?.sessionId ?? 'none' }
-						</span>
 					</>
 				);
 			}
@@ -159,12 +152,67 @@ describe( 'AgentsManagerContext', () => {
 				</MemoryRouter>
 			);
 
-			// Set the session first; `resumeActiveChat` reads it on the next render.
-			fireEvent.click( screen.getByText( 'set-config' ) );
 			fireEvent.click( screen.getByText( 'resume' ) );
 
 			expect( screen.getByTestId( 'path' ).textContent ).toBe( '/chat' );
-			expect( screen.getByTestId( 'stateSessionId' ).textContent ).toBe( 'session-xyz' );
+		} );
+	} );
+
+	describe( 'tab session resolution', () => {
+		afterEach( () => {
+			sessionStorage.clear();
+			setSessionSiteKey( 'no-site' );
+		} );
+
+		it( 'reads the tab session for the provider’s site, following site switches', () => {
+			setSessionSiteKey( '111' );
+			saveSessionId( 'session-site-111' );
+			setSessionSiteKey( '456' );
+			saveSessionId( 'session-site-456' );
+
+			const { rerender } = renderWithProvider( { sectionName: 'wp-admin', siteKey: '111' } );
+
+			expect( screen.getByTestId( 'tabSessionId' ).textContent ).toBe( 'session-site-111' );
+
+			// Switching sites re-renders the provider with a new `siteKey`; children
+			// must read the new site's session in the same pass.
+			rerender(
+				<MemoryRouter>
+					<AgentsManagerContextProvider value={ { sectionName: 'wp-admin', siteKey: '456' } }>
+						<ContextConsumer />
+					</AgentsManagerContextProvider>
+				</MemoryRouter>
+			);
+
+			expect( screen.getByTestId( 'tabSessionId' ).textContent ).toBe( 'session-site-456' );
+		} );
+
+		it( 'reads the session for the configured agent', () => {
+			saveSessionId( 'reader-session', 'reader-chat' );
+
+			function AgentConfigProbe() {
+				const { setAgentConfig } = useAgentsManagerContext();
+				return (
+					<button
+						onClick={ () => setAgentConfig( { agentId: 'reader-chat' } as UseAgentChatConfig ) }
+					>
+						set-agent
+					</button>
+				);
+			}
+
+			render(
+				<MemoryRouter>
+					<AgentsManagerContextProvider value={ { sectionName: 'wp-admin', siteKey: 'no-site' } }>
+						<AgentConfigProbe />
+						<ContextConsumer />
+					</AgentsManagerContextProvider>
+				</MemoryRouter>
+			);
+
+			fireEvent.click( screen.getByText( 'set-agent' ) );
+
+			expect( screen.getByTestId( 'tabSessionId' ).textContent ).toBe( 'reader-session' );
 		} );
 	} );
 } );

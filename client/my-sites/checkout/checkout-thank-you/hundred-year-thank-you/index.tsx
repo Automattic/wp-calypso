@@ -17,6 +17,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import HundredYearLoaderView from 'calypso/components/hundred-year-loader-view';
+import { navigateToLandingPage } from 'calypso/lib/landing-page';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
@@ -41,17 +42,16 @@ const VideoContainer = styled.div< { isMobile: boolean } >`
 		min-height: ${ ( { isMobile } ) => ( isMobile ? '100%' : 'unset' ) };
 	}
 `;
-const hundredYearProducts = [
-	PLAN_100_YEARS,
-	domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION,
-	domainProductSlugs.TRANSFER_IN,
-] as const;
+type HundredYearProduct =
+	| typeof PLAN_100_YEARS
+	| typeof domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION
+	| typeof domainProductSlugs.TRANSFER_IN;
 
 interface Props {
 	siteId?: number;
 	siteSlug?: string;
 	receiptId: number;
-	productSlug: ( typeof hundredYearProducts )[ number ];
+	productSlug: HundredYearProduct;
 }
 
 const MasterBar = styled.div`
@@ -221,7 +221,7 @@ export default function HundredYearThankYou( {
 		// and blog created after the purchase (siteId != null).
 		resolvedProductSlug !== domainProductSlugs.TRANSFER_IN
 	) {
-		page( '/' );
+		dispatch( navigateToLandingPage() );
 	}
 
 	const primaryDomainFromState = siteDomains.find( ( domain ) => domain.isPrimary )?.domain;

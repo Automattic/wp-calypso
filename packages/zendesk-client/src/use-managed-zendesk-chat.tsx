@@ -42,6 +42,7 @@ import { useConnectionStatusNotice } from './use-connection-status-notice';
 import {
 	convertZendeskMessageToAgentticFormat,
 	getSmoochContainer,
+	isCsatTriggerMessage,
 	isSupportedImageType,
 	isTestModeEnvironment,
 	MAX_ATTACHMENTS,
@@ -331,7 +332,7 @@ export const useManagedZendeskChat = ( {
 
 	const hasCSAT = useMemo( () => {
 		const messages = conversation?.messages ?? [];
-		return messages.some( ( msg ) => msg.metadata?.type === 'csat' );
+		return messages.some( isCsatTriggerMessage );
 	}, [ conversation?.messages ] );
 
 	const disconnectedListener = useCallback( () => {
@@ -462,7 +463,7 @@ export const useManagedZendeskChat = ( {
 
 		let ticketId: number | null = null;
 		const messages = rawMessages.map( ( message ): AgentticMessage => {
-			const isCSAT = message.metadata?.type === 'csat';
+			const isCSAT = isCsatTriggerMessage( message );
 
 			if ( isCSAT ) {
 				ticketId = message.actions?.[ 0 ]?.metadata?.ticket_id ?? null;

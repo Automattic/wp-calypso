@@ -13,6 +13,7 @@ import useCreateWPCOMSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
 import useSiteCreatedCallback from 'calypso/a8c-for-agencies/hooks/use-site-created-callback';
 import useTrackProvisioningSites from 'calypso/a8c-for-agencies/hooks/use-track-provisioning-sites';
+import useClearCartOnCheckoutSuccess from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-clear-cart-on-checkout-success';
 import LayoutColumn from 'calypso/layout/hosting-dashboard/column';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
@@ -46,6 +47,8 @@ export default function NeedSetup( { licenseKey }: Props ) {
 	const [ currentSiteConfigurationId, setCurrentSiteConfigurationId ] = useState< number | null >(
 		null
 	);
+
+	useClearCartOnCheckoutSuccess();
 
 	const closeModal = () => setCurrentSiteConfigurationId( null );
 

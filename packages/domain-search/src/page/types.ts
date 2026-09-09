@@ -136,6 +136,12 @@ export interface DomainSearchConfig {
 		title?: string;
 		buttonText?: string;
 	};
+	/**
+	 * Hide the free *.wordpress.com subdomain skip card and offer only a plain "skip / set up a
+	 * domain later" control. Used by flows whose site never keeps a free subdomain (e.g. the
+	 * atomic funnel, which always transfers to Atomic).
+	 */
+	hideFreeSubdomainSuggestion?: boolean;
 	deemphasizedTlds: string[];
 	priceRules: PriceRulesConfig;
 	includeDotBlogSubdomain: boolean;

@@ -6,6 +6,21 @@ import { pollUntil, PollTimeoutError } from './poll-until';
 export const BUILD_WOW_QUERY_VALUE = '1';
 const BUILD_WOW_SITE_SPEC_PATH = '/setup/ai-site-builder-spec/site-spec';
 
+/**
+ * Generation graphs a build may ask for. The server takes this as an enum and
+ * rejects anything else with a 400, so an unrecognized value is dropped here
+ * instead: a typo in the URL then means "whatever the deploy runs" rather than
+ * a build request that fails outright.
+ */
+const BUILD_WOW_GRAPHS = [ 'html-first', 'legacy' ] as const;
+export type BuildWowGraph = ( typeof BUILD_WOW_GRAPHS )[ number ];
+
+export function getBuildWowGraph( queryParams: URLSearchParams ): BuildWowGraph | undefined {
+	const requested = queryParams.get( 'graph' );
+
+	return BUILD_WOW_GRAPHS.find( ( graph ) => graph === requested );
+}
+
 type BuildWowAtomicState = {
 	is_atomic?: boolean;
 	is_transfer_active?: boolean;
@@ -36,9 +51,9 @@ type BigSkyPluginStatus = {
 
 export function isBuildWowEnabled(
 	queryParams: URLSearchParams,
-	isAutomattician = false
+	hasBuildWowAccess: boolean
 ): boolean {
-	return isAutomattician && queryParams.get( 'build_wow' ) === BUILD_WOW_QUERY_VALUE;
+	return hasBuildWowAccess && queryParams.get( 'build_wow' ) === BUILD_WOW_QUERY_VALUE;
 }
 
 export function getBuildWowSiteIdentifier( {
@@ -59,16 +74,22 @@ export function getBuildWowSiteIdentifier( {
 	return null;
 }
 
+/**
+ * The spec widget reads `prompt` off the page URL and sends it as the opening
+ * message, so a prompt collected earlier rides along here.
+ */
 export function getBuildWowSiteSpecUrl( {
 	siteSlug,
 	siteId,
 	ref,
 	source,
+	prompt,
 }: {
 	siteSlug?: string | null;
 	siteId?: string | number | null;
 	ref?: string | null;
 	source?: string | null;
+	prompt?: string | null;
 } ): string {
 	return addQueryArgs( BUILD_WOW_SITE_SPEC_PATH, {
 		build_wow: BUILD_WOW_QUERY_VALUE,
@@ -76,6 +97,7 @@ export function getBuildWowSiteSpecUrl( {
 		...( siteId && String( siteId ) !== '0' ? { siteId } : {} ),
 		...( ref ? { ref } : {} ),
 		...( source ? { source } : {} ),
+		...( prompt ? { prompt } : {} ),
 	} );
 }
 
@@ -88,14 +110,21 @@ export function isBuildWowSiteEditorReady( response: BuildWowResponse ): boolean
 
 export async function requestBuildWowSite(
 	siteIdentifier: string,
-	specId?: string
+	specId?: string,
+	graph?: BuildWowGraph
 ): Promise< BuildWowResponse > {
 	return wpcom.req.post(
 		{
 			path: `/sites/${ siteIdentifier }/big-sky/build-wow`,
 			apiNamespace: 'wpcom/v2',
 		},
-		specId ? { spec_id: specId } : {}
+		{
+			...( specId ? { spec_id: specId } : {} ),
+			// Only sent on the call that carries a spec, which is the one that
+			// queues a build: the server records the graph with that build, and a
+			// call without a spec queues nothing to record it against.
+			...( specId && graph ? { graph } : {} ),
+		}
 	);
 }
 

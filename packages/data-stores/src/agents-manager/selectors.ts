@@ -4,6 +4,8 @@ export const getAgentsManagerState = ( state: State ) => ( {
 	isOpen: state.isOpen,
 	isDocked: state.isDocked,
 	isMinimized: state.isMinimized,
+	// Minimized counts as hidden even though the chat stays open.
+	isChatVisible: state.isOpen && ! state.isMinimized,
 	routerHistory: state.routerHistory,
 	lastActivity: state.lastActivity,
 	isLoading: state.isLoading,

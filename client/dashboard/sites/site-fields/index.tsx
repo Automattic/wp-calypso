@@ -6,7 +6,6 @@ import {
 	siteEngagementStatsQuery,
 	siteUptimeQuery,
 } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
@@ -16,6 +15,7 @@ import {
 } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useInView } from 'react-intersection-observer';
 import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT, normalizeVariation } from 'calypso/lib/ai-launchpad';
 import { useExperiment } from 'calypso/lib/explat';
@@ -43,10 +43,6 @@ import type { ComponentProps } from 'react';
 
 function IneligibleIndicator() {
 	return <Text color="#CCCCCC">-</Text>;
-}
-
-function LoadingIndicator( { label }: { label: string } ) {
-	return <TextBlur>{ label }</TextBlur>;
 }
 
 function getSiteManagementUrl( site: Site ) {
@@ -104,21 +100,21 @@ export function NameRenderer( {
 	const renderBadge = () => {
 		switch ( badge ) {
 			case 'redirect':
-				return <Badge>{ __( 'Redirect' ) }</Badge>;
+				return <Badge intent="draft">{ __( 'Redirect' ) }</Badge>;
 			case 'staging':
-				return <Badge>{ __( 'Staging' ) }</Badge>;
+				return <Badge intent="draft">{ __( 'Staging' ) }</Badge>;
 			case 'trial':
-				return <Badge>{ __( 'Trial' ) }</Badge>;
+				return <Badge intent="draft">{ __( 'Trial' ) }</Badge>;
 			case 'p2':
-				return <Badge>{ __( 'P2' ) }</Badge>;
+				return <Badge intent="draft">{ __( 'P2' ) }</Badge>;
 			case 'deleted':
-				return <Badge intent="error">{ __( 'Deleted' ) }</Badge>;
+				return <Badge intent="high">{ __( 'Deleted' ) }</Badge>;
 			case 'difm_lite_in_progress':
-				return <Badge>{ __( 'Express service' ) }</Badge>;
+				return <Badge intent="draft">{ __( 'Express service' ) }</Badge>;
 			case 'migration_pending':
-				return <Badge intent="warning">{ __( 'Migration pending' ) }</Badge>;
+				return <Badge intent="low">{ __( 'Migration pending' ) }</Badge>;
 			case 'migration_started':
-				return <Badge intent="info">{ __( 'Migration started' ) }</Badge>;
+				return <Badge intent="informational">{ __( 'Migration started' ) }</Badge>;
 			default:
 				return null;
 		}
@@ -213,9 +209,10 @@ export function AsyncEngagementStat( {
 		enabled: !! site?.ID && isEligible && inView,
 	} );
 
+	const isPending = ! site || isLoading;
 	const renderContent = () => {
-		if ( ! site || isLoading ) {
-			return <LoadingIndicator label="100" />;
+		if ( isPending ) {
+			return '100';
 		}
 
 		if ( ! isEligible ) {
@@ -225,7 +222,11 @@ export function AsyncEngagementStat( {
 		return stats?.currentData[ type ];
 	};
 
-	return <span ref={ ref }>{ renderContent() }</span>;
+	return (
+		<span ref={ ref }>
+			<TextBlur isBlurred={ isPending }>{ renderContent() }</TextBlur>
+		</span>
+	);
 }
 
 export function EngagementStat( { value }: { value: number | null } ) {
@@ -245,9 +246,10 @@ export function LastBackup( { site }: { site?: Site } ) {
 		enabled: !! site?.ID && isEligible && inView,
 	} );
 
+	const isPending = ! site || isLoading;
 	const renderContent = () => {
-		if ( ! site || isLoading ) {
-			return <LoadingIndicator label="Unknown" />;
+		if ( isPending ) {
+			return 'Unknown';
 		}
 
 		if ( ! isEligible ) {
@@ -261,7 +263,11 @@ export function LastBackup( { site }: { site?: Site } ) {
 		return <TimeSince timestamp={ lastBackup.published } />;
 	};
 
-	return <span ref={ ref }>{ renderContent() }</span>;
+	return (
+		<span ref={ ref }>
+			<TextBlur isBlurred={ isPending }>{ renderContent() }</TextBlur>
+		</span>
+	);
 }
 
 export function Uptime( { site }: { site?: Site } ) {
@@ -273,9 +279,10 @@ export function Uptime( { site }: { site?: Site } ) {
 		enabled: !! site?.ID && isEligible && inView,
 	} );
 
+	const isPending = ! site || isLoading;
 	const renderContent = () => {
-		if ( ! site || isLoading ) {
-			return <LoadingIndicator label="100%" />;
+		if ( isPending ) {
+			return '100%';
 		}
 
 		if ( ! isEligible ) {
@@ -285,7 +292,11 @@ export function Uptime( { site }: { site?: Site } ) {
 		return uptime ? `${ uptime }%` : <IneligibleIndicator />;
 	};
 
-	return <span ref={ ref }>{ renderContent() }</span>;
+	return (
+		<span ref={ ref }>
+			<TextBlur isBlurred={ isPending }>{ renderContent() }</TextBlur>
+		</span>
+	);
 }
 
 export function PHPVersion( { site }: { site: Site } ) {
@@ -304,7 +315,11 @@ export function PHPVersion( { site }: { site: Site } ) {
 		return <IneligibleIndicator />;
 	}
 
-	return <span ref={ ref }>{ ! isLoading ? data : <LoadingIndicator label="X.Y" /> }</span>;
+	return (
+		<span ref={ ref }>
+			<TextBlur isBlurred={ isLoading }>{ isLoading ? 'X.Y' : data }</TextBlur>
+		</span>
+	);
 }
 
 export function MediaStorage( { site }: { site?: Site } ) {
@@ -318,9 +333,10 @@ export function MediaStorage( { site }: { site?: Site } ) {
 		enabled: !! site?.ID && inView,
 	} );
 
+	const isPending = ! site || isLoading;
 	const renderContent = () => {
-		if ( ! site || isLoading ) {
-			return <LoadingIndicator label="100%" />;
+		if ( isPending ) {
+			return '100%';
 		}
 
 		if ( ! mediaStorage ) {
@@ -331,7 +347,11 @@ export function MediaStorage( { site }: { site?: Site } ) {
 		return `${ Math.round( ( storage_used_bytes / max_storage_bytes ) * 1000 ) / 10 }%`;
 	};
 
-	return <span ref={ ref }>{ renderContent() }</span>;
+	return (
+		<span ref={ ref }>
+			<TextBlur isBlurred={ isPending }>{ renderContent() }</TextBlur>
+		</span>
+	);
 }
 
 function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {

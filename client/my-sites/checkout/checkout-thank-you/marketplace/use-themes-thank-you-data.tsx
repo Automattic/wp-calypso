@@ -1,16 +1,17 @@
 import page from '@automattic/calypso-router';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import { useQueryThemes } from 'calypso/components/data/query-theme';
 import { useDispatch, useSelector } from 'calypso/state';
+import { fetchSitePurchases } from 'calypso/state/purchases/actions';
 import {
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
 import { isJetpackSite, getSiteOption } from 'calypso/state/sites/selectors';
-import { clearActivated } from 'calypso/state/themes/actions';
+import { clearActivated, requestTheme } from 'calypso/state/themes/actions';
 import {
 	getThemes,
 	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
@@ -20,17 +21,18 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import { Theme } from 'calypso/types';
 import { ThankYouThemeSection } from './marketplace-thank-you-theme-section';
 
-type ThankYouThemeData = [
-	Theme,
-	React.ReactElement[],
-	boolean,
-	string,
-	string,
-	string[],
-	boolean,
-	React.ReactElement | null,
-	boolean,
-];
+type ThankYouThemeData = {
+	firstTheme: Theme;
+	themesSection: React.ReactElement[];
+	allThemesFetched: boolean;
+	themeTitle: string;
+	themeSubtitle: string;
+	themesProgressbarSteps: string[];
+	isAtomicNeeded: boolean;
+	thankYouHeaderAction: React.ReactElement | null;
+	isLoaded: boolean;
+	retry: () => void;
+};
 
 export function useThemesThankYouData(
 	themeSlugs: string[],
@@ -171,19 +173,41 @@ export function useThemesThankYouData(
 		}
 	}, [ firstTheme, isAtomicNeeded, isJetpack, isOnboardingFlow, siteSlug ] );
 
-	return [
+	// The query hooks above request each source only once per mount, and the purchases hook
+	// suppresses re-requests for the same site, so a failed request would otherwise leave
+	// "Check again" unable to fill in whatever this page is still missing.
+	const retry = useCallback( () => {
+		themeSlugs.forEach( ( slug, index ) => {
+			if ( ! dotComThemes[ index ] && ! dotOrgThemes[ index ] ) {
+				dispatch( requestTheme( slug, 'wpcom' ) );
+				dispatch( requestTheme( slug, 'wporg' ) );
+			}
+		} );
+
+		// Unconditional on purpose: `hasLoadedSitePurchasesFromServer` is set even when the
+		// fetch failed, so it cannot distinguish "loaded" from "failed" — and a manual retry
+		// after a failure is exactly when a refetch is needed.
+		if ( ! isRequestingSitePurchases ) {
+			dispatch( fetchSitePurchases( siteId ) );
+		}
+	}, [ dispatch, dotComThemes, dotOrgThemes, isRequestingSitePurchases, siteId, themeSlugs ] );
+
+	return {
 		firstTheme,
 		themesSection,
 		allThemesFetched,
-		title,
-		subtitle,
-		thankyouSteps,
+		themeTitle: title,
+		themeSubtitle: subtitle,
+		themesProgressbarSteps: thankyouSteps,
 		isAtomicNeeded,
-		null,
-		// Always display the loading screen for the following situations:
-		// - Redirect to the plugin-bundle flow after the theme is activated for Woo themes.
-		// - Redirect to the Theme Details page after the atomic transfer if it's required.
-		// - Redirect to the /home page if the user removed the externally managed theme from checkout.
-		! ( continueWithPluginBundle || isAtomicNeeded || ! isRequestingSitePurchases ),
-	];
+		thankYouHeaderAction: null,
+		// Keep the loading screen up for the flows that redirect away from this page:
+		// - the plugin-bundle flow after the theme is activated for Woo themes;
+		// - the Theme Details page after the atomic transfer, if one is required.
+		// Otherwise the page is loaded once purchases have been fetched — the previous
+		// `isRequestingSitePurchases` form was only true *while* fetching, so a slow theme
+		// request could leave this false forever and time the page out.
+		isLoaded: ! continueWithPluginBundle && ! isAtomicNeeded && hasLoadedSitePurchases,
+		retry,
+	};
 }

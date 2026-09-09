@@ -65,13 +65,13 @@ import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
 import { useFormattedTime } from '../../../components/formatted-time';
+import InlineSupportLink from '../../../components/inline-support-link';
 import { MetadataList, MetadataItem } from '../../../components/metadata-list';
 import OverviewCard from '../../../components/overview-card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { getPlanExpiryUrgency, hasPlanExpiryNotice } from '../../../components/plan-expiry-notice';
 import SiteIcon from '../../../components/site-icon';
-import { Text as IntentText } from '../../../components/text';
 import SiteBandwidthStat from '../../../sites/overview-plan-card/site-bandwidth-stat';
 import SiteStorageStat from '../../../sites/overview-plan-card/site-storage-stat';
 import { formatDate } from '../../../utils/datetime';
@@ -100,10 +100,10 @@ import {
 	isExpiredAndInGracePeriod,
 	isExpiredWithNoAutoRenewAttemptsLeft,
 	isRemoved,
+	isManageableByUser,
 	isExpiredOrRemoved,
 	mightStillAutoRenew,
 	isWithinRefundWindowDowngradeEligible,
-	isA4ABillingDragonPurchase,
 	isCentennialPurchase,
 	hasAmountAvailableToRefund,
 } from '../../../utils/purchase';
@@ -115,6 +115,7 @@ import {
 } from '../../../utils/site-url';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
+import { BillingPurchaseInfoPopover } from '../dataviews';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import AkismetApiKeyCard from './akismet-api-key-card';
 import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
@@ -165,9 +166,19 @@ function getNonPlanUpgradeAction(
 		: undefined;
 }
 
-/** Whether the storage upgrade action is offered. */
+/**
+ * Whether the storage upgrade action is offered.
+ *
+ * Partner-managed subscriptions are excluded for the same reason `is_upgradable`
+ * is false for them server-side: the partner does the buying. There is no
+ * server-side flag for the storage add-on specifically, so it is checked here.
+ */
 function isStorageUpgradeShown( purchase: Purchase ): boolean {
-	return isStorageUpgradeEligible( purchase ) && ! isExpiredOrRemoved( purchase );
+	return (
+		isStorageUpgradeEligible( purchase ) &&
+		! isExpiredOrRemoved( purchase ) &&
+		! purchase.is_partner_managed
+	);
 }
 
 /**
@@ -331,6 +342,20 @@ export function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase }
 	// A fully removed subscription (no longer active) has nothing left to
 	// cancel or remove.
 	if ( isRemoved( purchase ) ) {
+		return null;
+	}
+
+	// The host owns the billing relationship for these, so cancelling has to
+	// happen there. `is_cancelable` and `is_removable` are both false server-side
+	// for them, but visibility below is driven by auto-renew state rather than by
+	// those flags, so the check has to be repeated here. Agency-provisioned
+	// purchases are bought through WordPress.com and stay cancellable.
+	if ( purchase.is_host_managed ) {
+		return null;
+	}
+
+	// Only support can cancel or remove some purchases.
+	if ( ! isManageableByUser( purchase ) ) {
 		return null;
 	}
 
@@ -663,18 +688,16 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 		<ActionList.ActionItem
 			title={ __( 'Reinstall plugins' ) }
 			actions={
-				<>
-					<Button
-						variant="secondary"
-						size="compact"
-						disabled={ isMutationPending }
-						onClick={ () => {
-							reinstallPlugins();
-						} }
-					>
-						{ __( 'Reinstall plugins' ) }
-					</Button>
-				</>
+				<Button
+					variant="secondary"
+					size="compact"
+					disabled={ isMutationPending }
+					onClick={ () => {
+						reinstallPlugins();
+					} }
+				>
+					{ __( 'Reinstall plugins' ) }
+				</Button>
 			}
 		/>
 	);
@@ -694,10 +717,24 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 		return null;
 	}
 
+	// Same for host-managed plans: upgrade and renew are false server-side and
+	// cancel/remove are gated above, so every action in the list resolves to
+	// nothing. Product links like CRM downloads still work, so the card stays
+	// when there is one of those to show.
+	if ( purchase.is_host_managed && ! hasProductAction ) {
+		return null;
+	}
+
 	// Users who don't own the purchase are only supposed to get a limited set
 	// of management links; if they aren't available, skip the card entirely so
 	// we don't render an empty shell.
 	if ( ! isOwner && ! hasProductAction ) {
+		return null;
+	}
+
+	// Skip the card for a purchase only support can change: cancel and remove are
+	// hidden above, and prepaid credits have nothing to renew or upgrade.
+	if ( ! isManageableByUser( purchase ) && ! hasProductAction ) {
 		return null;
 	}
 
@@ -830,19 +867,49 @@ function getFields( {
 					}
 					return undefined;
 				} )();
-				// The first branch above reads "You will be billed on 1 August", a
-				// statement of what is going to happen; coloring it would contradict
-				// it. Only the expiry wordings take a color.
-				const expiryUrgency = isRenewingBeforeExpiration( purchase )
-					? null
-					: getPlanExpiryUrgency( purchase );
-				const help =
-					helpText && ( expiryUrgency === 'warning' || expiryUrgency === 'error' ) ? (
-						<IntentText intent={ expiryUrgency }>{ helpText }</IntentText>
-					) : (
-						helpText
-					);
-				if ( purchase.is_auto_renew_enabled && ! purchase.is_rechargeable ) {
+				const help = ( () => {
+					if ( ! helpText ) {
+						return helpText;
+					}
+					if (
+						purchase.expiry_date &&
+						purchase.renew_date &&
+						! purchase.is_hundred_year_domain &&
+						purchase.is_auto_renew_enabled &&
+						purchase.renew_date !== purchase.expiry_date &&
+						( purchase.expiry_status === 'active' || purchase.expiry_status === 'auto-renewing' )
+					) {
+						return (
+							<HStack spacing={ 1 } expanded={ false }>
+								<span>{ helpText }</span>
+								<BillingPurchaseInfoPopover>
+									{ createInterpolateElement(
+										/* translators: <expireDate /> is a date and inlineSupportLink is a web link. */
+										__(
+											'Your subscription is paid through <expireDate></expireDate>, but will be renewed prior to that date. <inlineSupportLink>Learn more</inlineSupportLink>'
+										),
+										{
+											expireDate: (
+												<span>
+													{ formatDate( new Date( purchase.expiry_date ), locale, {
+														dateStyle: 'long',
+													} ) }
+												</span>
+											),
+											inlineSupportLink: <InlineSupportLink supportContext="autorenewal" />,
+										}
+									) }
+								</BillingPurchaseInfoPopover>
+							</HStack>
+						);
+					}
+					return helpText;
+				} )();
+				if (
+					! purchase.is_rechargeable &&
+					! purchase.is_iap_purchase &&
+					( purchase.is_auto_renew_enabled || isAutoRenewToggleDisabled( purchase, user ) )
+				) {
 					if ( String( user.ID ) !== String( purchase.user_id ) ) {
 						return null;
 					}
@@ -911,7 +978,7 @@ const form = {
 	],
 };
 
-function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
+export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 	const {
 		mutate: setAutoRenew,
 		error,
@@ -921,7 +988,14 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 	const navigate = useNavigate();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 
-	if ( String( user.ID ) !== String( purchase.user_id ) || isIncludedWithPlan( purchase ) ) {
+	// Auto-renew and the payment method are the partner's to manage rather than
+	// the customer's, so the whole card goes for a partner-managed subscription.
+	// The classic purchases page hides its equivalent block for the same reason.
+	if (
+		String( user.ID ) !== String( purchase.user_id ) ||
+		isIncludedWithPlan( purchase ) ||
+		purchase.is_partner_managed
+	) {
 		return null;
 	}
 
@@ -978,7 +1052,8 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 			/>
 		);
 	}
-	if ( purchase.partner_name && ! isA4ABillingDragonPurchase( purchase ) ) {
+	// There is no WordPress.com price to show for a subscription the partner bills.
+	if ( purchase.is_partner_managed ) {
 		return null;
 	}
 	if ( purchase.is_trial_plan ) {
@@ -1107,29 +1182,35 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 	return (
 		<div>
 			<div>
-				{ tier0.maximum_units === 1
-					? __( 'A professionally built single page website in 4 business days or less.' )
-					: sprintf(
-							// translators: numberOfIncludedPages is a number of pages
-							__(
-								'A professionally built %(numberOfIncludedPages)s-page website in 4 business days or less.'
+				{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
+				<span>
+					{ tier0.maximum_units === 1
+						? __( 'A professionally built single page website in 4 business days or less.' )
+						: sprintf(
+								// translators: numberOfIncludedPages is a number of pages
+								__(
+									'A professionally built %(numberOfIncludedPages)s-page website in 4 business days or less.'
+								),
+								{
+									numberOfIncludedPages: String( tier0.maximum_units ),
+								}
+						  ) }
+				</span>{ ' ' }
+				{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
+				<span>
+					{ extraPageCount > 0 &&
+						sprintf(
+							// translators: %(numberOfPages)d is a number of pages
+							_n(
+								'This purchase includes %(numberOfPages)d extra page.',
+								'This purchase includes %(numberOfPages)d extra pages.',
+								extraPageCount ?? 0
 							),
 							{
-								numberOfIncludedPages: String( tier0.maximum_units ),
+								numberOfPages: extraPageCount,
 							}
-					  ) }{ ' ' }
-				{ extraPageCount > 0 &&
-					sprintf(
-						// translators: %(numberOfPages)d is a number of pages
-						_n(
-							'This purchase includes %(numberOfPages)d extra page.',
-							'This purchase includes %(numberOfPages)d extra pages.',
-							extraPageCount ?? 0
-						),
-						{
-							numberOfPages: extraPageCount,
-						}
-					) }
+						) }
+				</span>
 			</div>
 			<div>
 				{ isSubmitted
@@ -1412,18 +1493,10 @@ function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 		return null;
 	}
 
-	if ( purchase.partner_name && ! isA4ABillingDragonPurchase( purchase ) ) {
-		return (
-			<MetadataItem
-				title={ sprintf(
-					// translators: %(subtitle)s is the type of purchase (e.g. "Host Managed Plan"), %(partnerName)s is the name of the business partner
-					__( '%(subtitle)s. Please contact %(partnerName)s for details.' ),
-					{ subtitle, partnerName: purchase.partner_name }
-				) }
-			/>
-		);
-	}
-
+	// For a partner-managed purchase the subtitle is just the product type ("Host
+	// Managed Plan" / "Agency Managed Plan"); PartnerManagedNotice carries the
+	// "contact the partner" guidance that used to be appended here, where it read
+	// as a minor detail next to the action list.
 	return <MetadataItem title={ subtitle } />;
 }
 
@@ -1486,7 +1559,7 @@ export default function PurchaseSettings() {
 		...purchaseCancelFeaturesQuery( purchase.ID ),
 	} );
 	const features = cancelFeaturesResponse?.features ?? null;
-	const hasExpiryInfo = ! purchase.partner_name || isA4ABillingDragonPurchase( purchase );
+	const hasExpiryInfo = ! purchase.is_partner_managed;
 	// These two are deliberately separate: the header stands down whenever there
 	// is a notice at all, while the expiry card only takes a color when there is
 	// something the customer has to act on. While a renewal is still expected the

@@ -50,14 +50,32 @@ export class HelpCenterComponent {
 			return;
 		}
 
-		if ( this.isWpAdmin ) {
-			await this.page.locator( '#wp-admin-bar-help-center' ).click();
-		} else {
-			await this.page.getByRole( 'button', { name: 'Help', exact: true } ).click();
-		}
+		await this.getToggleLocator().click();
 
 		await this.popup.locator( '.placeholder-lines__help-center' ).waitFor( { state: 'detached' } );
 		await this.popup.waitFor( { state: 'visible' } );
+	}
+
+	/**
+	 * Get the locator for the button that opens the popover.
+	 *
+	 * @returns {Locator} The toggle locator.
+	 */
+	getToggleLocator(): Locator {
+		return this.isWpAdmin
+			? this.page.locator( '#wp-admin-bar-help-center' )
+			: this.page.getByRole( 'button', { name: 'Help', exact: true } );
+	}
+
+	/**
+	 * Waits for the button that opens the popover to render.
+	 *
+	 * Asserting the popover is closed needs this: `toBeHidden` is satisfied by a
+	 * page that has not rendered the Help Center at all, so without it the
+	 * assertion passes for the wrong reason.
+	 */
+	async waitForToggle(): Promise< void > {
+		await this.getToggleLocator().waitFor();
 	}
 
 	/**

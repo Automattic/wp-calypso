@@ -22,10 +22,11 @@ test.describe( 'Help Center in Calypso', { tag: [ tags.CALYPSO_PR ] }, () => {
 
 		await test.step( 'Setup the page and test account', async () => {
 			testAccount = new TestAccount( 'defaultUser' );
-			await testAccount.authenticate( page, { waitUntilStable: true } );
+			await testAccount.authenticate( page );
 
 			helpCenterComponent = new HelpCenterComponent( page );
 			helpCenterLocator = helpCenterComponent.getHelpCenterLocator();
+			await helpCenterComponent.waitForToggle();
 
 			await helpCenterComponent.setZendeskStaging();
 			await helpCenterComponent.setOdieTestMode();

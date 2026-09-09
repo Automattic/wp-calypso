@@ -1,18 +1,46 @@
 body.is-section-marketplace.theme-default.color-scheme {
-	--color-surface-backdrop: var(--studio-white);
+	--color-surface-backdrop: var( --studio-white );
+}
+
+// The layout mounts its own masterbar behind this page's. An opaque fill on the one below used to
+// hide it; with the header transparent it would show through, so retire it while this page is up.
+body.is-section-marketplace:has( .marketplace-plugin-install__masterbar ) {
+	.masterbar:not( .marketplace-plugin-install__masterbar ),
+	#wpcom-omnibar {
+		display: none;
+	}
 }
 
 .marketplace-plugin-install__masterbar {
-	--color-masterbar-background: var(--studio-white);
-	--color-masterbar-text: var(--studio-gray-60);
+	// No bar in the design: the header sits directly on the page background, with no fill of its own
+	// and no divider. Transparent rather than a colour of its own, so the two cannot drift apart.
+	--color-masterbar-background: transparent;
+	--color-masterbar-text: var( --studio-gray-60 );
 	padding-right: 24px;
 	border-bottom: 0;
 
 	.marketplace-plugin-install__logo {
-		fill: rgb(54, 54, 54);
 		margin: 24px 12px 24px 24px;
-		@media (min-width: 480px) {
+		@media ( min-width: 480px ) {
 			margin: 24px;
+		}
+
+		// The wordmark carries a fill on each path, which a fill on the svg would not override.
+		path {
+			fill: var( --studio-gray-100 );
+		}
+	}
+
+	.marketplace-plugin-install__help {
+		margin: 0;
+		margin-inline-start: auto;
+		align-self: center;
+		font-size: 0.875rem;
+		color: var( --studio-gray-60 );
+
+		a {
+			color: inherit;
+			text-decoration: underline;
 		}
 	}
 }
@@ -28,6 +56,15 @@ body.is-section-marketplace {
 		align-items: center;
 		width: 100%;
 		height: 100vh;
+
+		&.is-top-aligned {
+			align-items: flex-start;
+			// The masterbar is fixed and `.layout__content` has had the padding that clears it
+			// removed above. Centred content cleared the masterbar by accident; aligning to the top
+			// puts the heading straight underneath it, so this variant has to make the room itself.
+			height: calc(100vh - var(--masterbar-height));
+			padding-block-start: var(--masterbar-height);
+		}
 	}
 
 	.marketplace-plugin-install__root .empty-content {

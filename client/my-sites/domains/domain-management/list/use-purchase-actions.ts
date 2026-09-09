@@ -1,46 +1,38 @@
+import { userPurchasesQuery } from '@automattic/api-queries';
 import { DomainStatusPurchaseActions, ResponseDomain } from '@automattic/domains-table';
-import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
+import { useQuery } from '@tanstack/react-query';
+import { handleRenewNowClick } from 'calypso/lib/purchases';
 import {
-	handleRenewNowClick,
 	monthsUntilCardExpires,
 	shouldRenderExpiringCreditCard,
-} from 'calypso/lib/purchases';
-import { useDispatch, useSelector } from 'calypso/state';
-import { getUserPurchases } from 'calypso/state/purchases/selectors';
+} from 'calypso/me/purchases/lib/raw-purchase-helpers';
+import { useDispatch } from 'calypso/state';
 
 export const usePurchaseActions = () => {
-	useQueryUserPurchases();
-
 	const dispatch = useDispatch();
-	const purchases = useSelector( getUserPurchases );
+	const { data: purchases } = useQuery( userPurchasesQuery() );
+
+	const findPurchase = ( domain: ResponseDomain ) =>
+		purchases?.find( ( p ) => Number( p.ID ) === parseInt( domain.subscriptionId ?? '', 10 ) );
 
 	const isCreditCardExpiring = ( domain: ResponseDomain ) => {
-		const purchase = purchases?.find(
-			( p ) => p.id === parseInt( domain.subscriptionId ?? '', 10 )
-		);
+		const purchase = findPurchase( domain );
 
 		return purchase ? shouldRenderExpiringCreditCard( purchase ) : false;
 	};
 
 	const isPurchasedDomain = ( domain: ResponseDomain ) => {
-		const purchase = purchases?.find(
-			( p ) => p.id === parseInt( domain.subscriptionId ?? '', 10 )
-		);
-		return !! purchase;
+		return !! findPurchase( domain );
 	};
 
 	const monthsUtilCreditCardExpires = ( domain: ResponseDomain ) => {
-		const purchase = purchases?.find(
-			( p ) => p.id === parseInt( domain.subscriptionId ?? '', 10 )
-		);
+		const purchase = findPurchase( domain );
 
 		return purchase ? monthsUntilCardExpires( purchase ) : null;
 	};
 
 	const onRenewNowClick = ( siteSlug: string, domain: ResponseDomain ) => {
-		const purchase = purchases?.find(
-			( p ) => p.id === parseInt( domain.subscriptionId ?? '', 10 )
-		);
+		const purchase = findPurchase( domain );
 		if ( purchase ) {
 			dispatch( handleRenewNowClick( purchase, siteSlug ) );
 		}

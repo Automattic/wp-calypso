@@ -26,14 +26,7 @@ const selectors = {
 	},
 	addOnComboboxButton: 'button[role="combobox"]',
 	addOnComboboxOption: ( addOn: string ) => `[role="option"]:has-text("${ addOn }")`,
-	selectPlanButton: ( name: Plans ) => {
-		if ( name === 'Free' ) {
-			// Free plan is a pseudo-button presented as a
-			// link.
-			return `button:text-matches("${ name }", "i"):visible`;
-		}
-		return `button.is-${ name.toLowerCase() }-plan:visible`;
-	},
+	selectPlanButton: ( name: Plans ) => `button.is-${ name.toLowerCase() }-plan:visible`,
 
 	// Navigation
 	mobileNavTabsToggle: 'button.section-nav__mobile-header',

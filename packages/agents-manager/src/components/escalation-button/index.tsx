@@ -107,20 +107,20 @@ async function getAiChatIdFromSession(
 }
 
 export function EscalationButton( { messageId }: { messageId: string } ) {
-	const { agentConfig, getActiveSessionId, site, zendeskSmoochIntegrationKey } =
+	const { agentConfig, getTabSessionId, site, zendeskSmoochIntegrationKey } =
 		useAgentsManagerContext();
 	const navigate = useNavigate();
-	const activeSessionId = getActiveSessionId();
+	const tabSessionId = getTabSessionId();
 	const [ isStartingNewConversation, setIsStartingNewConversation ] = useState( false );
 
 	const { conversations, isLoading } = useGetZendeskConversations(
-		!! activeSessionId,
+		!! tabSessionId,
 		zendeskSmoochIntegrationKey,
 		site?.ID
 	);
 	const existingConversation = useMemo(
-		() => findConversationByChatSessionId( conversations, activeSessionId ),
-		[ conversations, activeSessionId ]
+		() => findConversationByChatSessionId( conversations, tabSessionId ),
+		[ conversations, tabSessionId ]
 	);
 	const existingConversationStartedAt = existingConversation
 		? getConversationStartedAt( existingConversation )
@@ -139,7 +139,7 @@ export function EscalationButton( { messageId }: { messageId: string } ) {
 			}
 			disabled={ isLoading || isStartingNewConversation }
 			onClick={ async () => {
-				const currentChatSessionId = getActiveSessionId();
+				const currentChatSessionId = getTabSessionId();
 				const currentExistingConversation = findConversationByChatSessionId(
 					conversations,
 					currentChatSessionId

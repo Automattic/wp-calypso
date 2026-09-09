@@ -27,6 +27,14 @@ import Loading from 'calypso/components/loading';
 import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import {
+	getWowFunnelArgs,
+	getWowFunnelFromWfm,
+	getWowFunnelSlug,
+	logWowFunnelEvent,
+	wowFunnelSiteIsPaid,
+} from 'calypso/landing/stepper/utils/wow-funnel';
+import { startWowFunnelSite } from 'calypso/landing/stepper/utils/wow-funnel-site';
 import { resolveLaunchpadPersonalizationVariation } from 'calypso/lib/ai-launchpad';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
@@ -212,6 +220,53 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 
 			return {
 				siteSlug: getSignupCompleteSlug(),
+				goToCheckout: shouldGoToCheckout,
+				siteCreated: true,
+			};
+		}
+
+		// WoW funnel: the Simple site was already created at flow entry (its Atomic host is
+		// building in the background). Consume that site instead of creating a second one; if the
+		// background request has not finished — or failed — fall back to creating it here, sharing
+		// the same single-flight request.
+		const wowFunnelSlug = getWowFunnelSlug( urlQueryParams );
+		if ( wowFunnelSlug ) {
+			const funnelSite = await startWowFunnelSite( {
+				funnelSlug: wowFunnelSlug,
+				funnelArgs: getWowFunnelArgs( urlQueryParams ),
+				siteTitle: selectedSiteTitle,
+				fromWfm: getWowFunnelFromWfm( urlQueryParams ),
+			} );
+
+			// Last line of defence against selling a second plan for the same site. The flow entry
+			// already refuses to resume a paid funnel site, but this is where money is actually
+			// committed, so re-check here rather than trusting that the site reaching this point
+			// is the unpaid one we built.
+			const funnelSiteIsPaid = wowFunnelSiteIsPaid(
+				await wpcom.req
+					.get( { path: `/sites/${ funnelSite.blogId }`, apiVersion: '1.1' } )
+					.catch( () => null )
+			);
+
+			if ( funnelSiteIsPaid ) {
+				logWowFunnelEvent( 'plan_skipped_site_already_paid', {
+					funnel: wowFunnelSlug,
+					blog_id: funnelSite.blogId,
+				} );
+			}
+
+			const funnelCartItems = [
+				...( planCartItem && ! funnelSiteIsPaid ? [ planCartItem ] : [] ),
+				...( productCartItems ?? [] ),
+				...mergedDomainCartItems,
+			];
+			if ( funnelCartItems.length > 0 ) {
+				await addProductsToCart( funnelSite.siteSlug, flow, funnelCartItems );
+			}
+
+			return {
+				siteId: funnelSite.blogId,
+				siteSlug: funnelSite.siteSlug,
 				goToCheckout: shouldGoToCheckout,
 				siteCreated: true,
 			};

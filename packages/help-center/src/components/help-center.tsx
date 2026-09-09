@@ -36,15 +36,20 @@ const HelpCenter: React.FC< Container > = ( {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return helpCenterSelect.isHelpCenterShown();
 	}, [] );
-	const { currentUser } = useHelpCenterContext();
+	const { currentUser, site } = useHelpCenterContext();
 	const { setCurrentUser } = useDispatch( HELP_CENTER_STORE );
-	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging( !! currentUser?.ID );
 	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
 		useGetSupportInteractions( 'zendesk' );
 	const hasOpenZendeskConversations =
 		! isLoadingOpenInteractions && supportInteractionsOpen
 			? supportInteractionsOpen?.length > 0
 			: false;
+	// Only check connectivity when the answer can matter: the panel is open, or Smooch
+	// may need to mount for unread notifications.
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging(
+		!! currentUser?.ID && ( isHelpCenterShown || hasOpenZendeskConversations ),
+		site?.ID
+	);
 
 	useEffect( () => {
 		if ( currentUser ) {
@@ -59,9 +64,6 @@ const HelpCenter: React.FC< Container > = ( {
 		if ( ! shouldUseUnifiedAgent ) {
 			div = document.createElement( 'div' );
 			div.classList.add( 'help-center' );
-			div.setAttribute( 'role', 'dialog' );
-			div.setAttribute( 'aria-modal', 'true' );
-			div.setAttribute( 'aria-labelledby', 'header-text' );
 			document.body.appendChild( div );
 			setContainer( div );
 		}

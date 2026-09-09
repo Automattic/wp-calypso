@@ -84,10 +84,25 @@ marketplace subscriptions on site.
 
 ## Common Pitfalls
 
-1. **`isPartnerPurchase` type guard narrows to wrong field** — Checks
-   `purchase?.partner_name` but narrows the type to `{ partnerType: string }` (camelCase).
-   The actual field on the `Purchase` interface is `partner_type` (snake_case). Downstream
-   code using the narrowed type will reference a field that doesn't exist.
+1. **Read `is_partner_managed` / `is_host_managed`; don't re-derive them** — A
+   partner-provisioned ("Jetpack Start") subscription is billed by the partner, so
+   WordPress.com self-serve management doesn't apply. The backend reports this directly:
+   `is_partner_managed` (a partner provisioned and bills it, excluding A4A store
+   purchases) and `is_host_managed` (that subset provisioned by a host rather than an
+   agency). Agencies buy through WordPress.com and *do* cancel here, so only
+   `is_host_managed` gates cancel/remove; the cancel flow separately skips their survey.
+
+   The flags replace a client-side derivation: a `partner_name` check paired with
+   `! isA4ABillingDragonPurchase()`, plus an `[ 'agency', 'a4a_agency' ]` list for the
+   host/agency split. Use the flags in new code. Several older call sites still derive it
+   by hand (`purchase-payment-method.tsx`, `components/purchase-expiry-status/`, and
+   classic's `manage-purchase/index.tsx`) and are yet to be swept.
+
+   `is_upgradable`, `is_cancelable`, `is_removable`, and `can_explicit_renew` are all
+   false server-side for the relevant cases, so the client only needs its own check where
+   visibility is driven by something else: `CancelOrRemoveActionButton` and classic's
+   `renderCancelPurchaseNavItem` key off auto-renew state rather than `is_cancelable`, and
+   the storage add-on has no server flag of its own.
 
 2. **Payment method list is empty while loading** — `allowedPaymentMethods === undefined`
    returns `[]` (no methods shown). Errors fail open (all methods shown). Don't add
@@ -110,9 +125,11 @@ marketplace subscriptions on site.
 6. **Survey completion tracked per-purchase** — Stored in user preferences to avoid
    re-surveying. A new survey won't appear for a purchase that was already surveyed.
 
-6. **Siteless purchases** — Some products (Akismet, Jetpack, Marketplace) use temporary sites (`siteless.{jetpack|akismet|marketplace.wp|a4a}.com`). Guard with `hasQueryableSite( purchase )` (`utils/purchase.ts`), which wraps `purchase.is_attached_to_holding_site`. Never fire **any** site-scoped query for these — not just `siteBySlugQuery()`, but anything hitting `/sites/{blog_id}/…` (`siteFeaturesQuery`, `sitePurchasesQuery`, `siteByIdQuery`, `siteDomainsQuery`, `cancellationOffersQuery`, backup queries, …). Use `purchase.domain` or `purchase.blog_id` for display, and skip site-dependent UI entirely.
+7. **Siteless purchases** — Some products (Akismet, Jetpack, Marketplace) use temporary sites (`siteless.{jetpack|akismet|marketplace.wp|a4a}.com`). Guard with `hasQueryableSite( purchase )` (`utils/purchase.ts`), which wraps `purchase.is_attached_to_holding_site`. Never fire **any** site-scoped query for these — not just `siteBySlugQuery()`, but anything hitting `/sites/{blog_id}/…` (`siteFeaturesQuery`, `sitePurchasesQuery`, `siteByIdQuery`, `siteDomainsQuery`, `cancellationOffersQuery`, backup queries, …). Use `purchase.domain` or `purchase.blog_id` for display, and skip site-dependent UI entirely.
 
-   The user is not a member of the holding site, so those requests return `403 authorization_required`. `AuthProvider` (`app/auth/index.tsx`) subscribes to the whole query cache and treats that error as a signed-out session, redirecting to `/log-in` — which bounces straight back, looping forever (SHILL-2295). Note that `.catch()` on `ensureQueryData` does **not** protect you: the redirect is driven by the query *cache* entry going to `error`, not by the rejected promise. The query must not fire at all (`enabled: false`).
+   The user is not a member of the holding site, so those requests return `403 authorization_required`. `AuthProvider` (`app/auth/index.tsx`) subscribes to the whole query cache and once treated that as a signed-out session, redirecting to `/log-in` — which bounced straight back, looping forever (SHILL-2295). Its classifier now requires `statusCode === 401`, so a 403 no longer redirects, but keep these queries disabled anyway: the error still lands in the cache and every downstream consumer has to cope with it.
+
+   **`hasQueryableSite()` is a holding-site check, not a reachability check.** A purchase can also point at a real site the owner has since been removed from — WPCOM removes users from the blog when Jetpack disconnects, and deleted sites behave the same way. `blog_id` is set and `is_attached_to_holding_site` is false, so `hasQueryableSite()` returns `true`, but `/upgrades?site={blog_id}` and friends return `403 unauthorized` / `User cannot access upgrades.`. No purchase field reports this today, so **route loaders must `.catch()` their site-scoped `ensureQueryData` calls** — an unhandled rejection fails the whole route into the generic `500 Error` page and the user cannot enter the flow at all (SHILL-1442). `cancelPurchaseRoute` and `purchaseSettingsIndexRoute` in `app/router/me.tsx` both do this.
 
    When gating a query with `enabled`, read `isLoading` rather than `isPending` in loading conditions. A disabled query stays `isPending` forever, so an `isPending`-based gate leaves the screen stuck on its loading placeholder.
 

@@ -13,6 +13,7 @@ jest.mock( '../../../utils/csat', () => ( {
 		!! message?.metadata?.[ '__zendesk_msg.agent.id' ],
 	isZendeskChatStartedMessage: () => false,
 	isZendeskIntroMessage: () => false,
+	isZendeskSurveyMessage: () => false,
 } ) );
 
 // Tracks every mount of the mocked ChatMessage below, so tests can assert a re-render did (or

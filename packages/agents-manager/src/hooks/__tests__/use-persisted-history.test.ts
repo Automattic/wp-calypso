@@ -1,73 +1,29 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook } from '@testing-library/react';
+import { render, renderHook, act } from '@testing-library/react';
+import { createElement, useLayoutEffect } from 'react';
 import { usePersistedHistory } from '../use-persisted-history';
+import type { Location } from 'history';
 
-let mockSelectValues = {
-	persistedHistory: undefined as { entries: { pathname: string }[]; index: number } | undefined,
-	lastActive: undefined as number | undefined,
-};
-
-jest.mock( '@wordpress/data', () => ( {
-	useSelect: jest.fn( () => mockSelectValues ),
-	select: jest.fn( () => ( {
-		getAgentsManagerState: () => ( { routerHistory: {} } ),
-	} ) ),
-} ) );
-
-jest.mock( '../../stores', () => ( {
-	AGENTS_MANAGER_STORE: 'agents-manager-store',
-	persistAgentsManagerState: jest.fn(),
-} ) );
-
-const HOUR_MS = 60 * 60 * 1000;
+const STORAGE_KEY = 'agents-manager-router-history';
 
 function entry( pathname: string ) {
 	return { pathname, search: '', hash: '', key: pathname, state: null };
 }
 
-describe( 'usePersistedHistory — staleness gate', () => {
+function storeHistory( siteKey: string, entries: ReturnType< typeof entry >[], index: number ) {
+	sessionStorage.setItem( STORAGE_KEY, JSON.stringify( { [ siteKey ]: { entries, index } } ) );
+}
+
+describe( 'usePersistedHistory', () => {
 	afterEach( () => {
-		jest.clearAllMocks();
-		mockSelectValues = { persistedHistory: undefined, lastActive: undefined };
+		jest.restoreAllMocks();
+		sessionStorage.clear();
 	} );
 
-	it( 'does not restore an expired active chat (stale + /chat)', () => {
-		const logSpy = jest.spyOn( console, 'log' ).mockImplementation( () => {} );
-		mockSelectValues = {
-			persistedHistory: { entries: [ entry( '/' ), entry( '/chat' ) ], index: 1 },
-			lastActive: Date.now() - ( HOUR_MS + 1000 ),
-		};
-
-		const { result } = renderHook( () => usePersistedHistory( 'site-1' ) );
-
-		// Falls back to the default root entry instead of the persisted /chat.
-		expect( result.current.history.length ).toBe( 1 );
-		expect( result.current.history.location.pathname ).toBe( '/' );
-		expect( logSpy ).toHaveBeenCalledWith(
-			'[AgentsManager] Active chat expired for site key "site-1"'
-		);
-		logSpy.mockRestore();
-	} );
-
-	it( 'restores a stale history when the last path is not /chat', () => {
-		mockSelectValues = {
-			persistedHistory: { entries: [ entry( '/' ), entry( '/history' ) ], index: 1 },
-			lastActive: Date.now() - ( HOUR_MS + 1000 ),
-		};
-
-		const { result } = renderHook( () => usePersistedHistory( 'site-1' ) );
-
-		expect( result.current.history.length ).toBe( 2 );
-		expect( result.current.history.location.pathname ).toBe( '/history' );
-	} );
-
-	it( 'restores an active chat when not stale', () => {
-		mockSelectValues = {
-			persistedHistory: { entries: [ entry( '/' ), entry( '/chat' ) ], index: 1 },
-			lastActive: Date.now(),
-		};
+	it( 'restores the persisted history for the site', () => {
+		storeHistory( 'site-1', [ entry( '/' ), entry( '/chat' ) ], 1 );
 
 		const { result } = renderHook( () => usePersistedHistory( 'site-1' ) );
 
@@ -76,7 +32,188 @@ describe( 'usePersistedHistory — staleness gate', () => {
 	} );
 
 	it( 'falls back to the default root entry when there is no persisted history', () => {
-		mockSelectValues = { persistedHistory: undefined, lastActive: Date.now() };
+		const { result } = renderHook( () => usePersistedHistory( 'site-1' ) );
+
+		expect( result.current.history.length ).toBe( 1 );
+		expect( result.current.history.location.pathname ).toBe( '/' );
+	} );
+
+	it( 'keeps histories separate per site', () => {
+		storeHistory( 'site-1', [ entry( '/' ), entry( '/chat' ) ], 1 );
+
+		const { result } = renderHook( () => usePersistedHistory( 'site-2' ) );
+
+		expect( result.current.history.length ).toBe( 1 );
+		expect( result.current.history.location.pathname ).toBe( '/' );
+	} );
+
+	it( 'exposes the new site’s location in the same commit as its history', () => {
+		storeHistory( 'site-1', [ entry( '/' ), entry( '/chat' ) ], 1 );
+
+		const commits: Array< [ string, string ] > = [];
+		function Probe( { siteKey }: { siteKey: string } ) {
+			const { history, state } = usePersistedHistory( siteKey );
+			useLayoutEffect( () => {
+				commits.push( [ history.location.pathname, state.location.pathname ] );
+			} );
+			return null;
+		}
+
+		const { rerender } = render( createElement( Probe, { siteKey: 'site-1' } ) );
+		rerender( createElement( Probe, { siteKey: 'site-2' } ) );
+
+		expect( commits.every( ( [ h, s ] ) => h === s ) ).toBe( true );
+	} );
+
+	it( 'switches trails per site: a new site starts fresh, switching back restores', () => {
+		const { result, rerender } = renderHook(
+			( { siteKey }: { siteKey: string } ) => usePersistedHistory( siteKey ),
+			{ initialProps: { siteKey: 'site-1' } }
+		);
+
+		act( () => {
+			result.current.history.push( entry( '/history' ) as Location );
+		} );
+
+		rerender( { siteKey: 'site-2' } );
+
+		expect( result.current.history.length ).toBe( 1 );
+		expect( result.current.history.location.pathname ).toBe( '/' );
+
+		rerender( { siteKey: 'site-1' } );
+
+		expect( result.current.history.location.pathname ).toBe( '/history' );
+	} );
+
+	it( 'persists navigations, including route state', () => {
+		const { result } = renderHook( () => usePersistedHistory( 'site-1' ) );
+
+		act( () => {
+			result.current.history.push( entry( '/zendesk' ) as Location, {
+				conversationId: 'conversation-abc',
+			} );
+		} );
+
+		const stored = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '{}' );
+		expect( stored[ 'site-1' ].index ).toBe( 1 );
+		expect( stored[ 'site-1' ].entries[ 1 ].pathname ).toBe( '/zendesk' );
+		expect( stored[ 'site-1' ].entries[ 1 ].state ).toEqual( {
+			conversationId: 'conversation-abc',
+		} );
+	} );
+
+	it( 'navigates back and forward through the tab history', () => {
+		const { result } = renderHook( () => usePersistedHistory( 'site-1' ) );
+
+		act( () => {
+			result.current.history.push( entry( '/chat' ) as Location );
+		} );
+		act( () => {
+			result.current.history.back();
+		} );
+
+		expect( result.current.history.location.pathname ).toBe( '/' );
+
+		// `back()` at the start of the trail is a no-op.
+		act( () => {
+			result.current.history.back();
+		} );
+
+		expect( result.current.history.location.pathname ).toBe( '/' );
+
+		act( () => {
+			result.current.history.forward();
+		} );
+
+		expect( result.current.history.location.pathname ).toBe( '/chat' );
+	} );
+
+	it( 'replaces the current entry without growing the trail', () => {
+		const { result } = renderHook( () => usePersistedHistory( 'site-1' ) );
+
+		act( () => {
+			result.current.history.push( entry( '/chat' ) as Location );
+		} );
+		act( () => {
+			result.current.history.replace( entry( '/zendesk' ) as Location );
+		} );
+
+		expect( result.current.history.length ).toBe( 2 );
+		expect( result.current.history.location.pathname ).toBe( '/zendesk' );
+
+		const stored = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '{}' );
+		expect( stored[ 'site-1' ].entries[ 1 ].pathname ).toBe( '/zendesk' );
+	} );
+
+	it( 'caps the trail at 50 entries, keeping the root entry first', () => {
+		const { result } = renderHook( () => usePersistedHistory( 'site-1' ) );
+
+		act( () => {
+			for ( let i = 0; i < 60; i++ ) {
+				result.current.history.push( entry( `/page-${ i }` ) as Location );
+			}
+		} );
+
+		expect( result.current.history.length ).toBe( 50 );
+		expect( result.current.history.location.pathname ).toBe( '/page-59' );
+
+		const stored = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '{}' );
+		expect( stored[ 'site-1' ].entries[ 0 ].pathname ).toBe( '/' );
+	} );
+
+	it( 'shrinks an oversized restored trail back to the 50-entry cap on push', () => {
+		const oversized = Array.from( { length: 60 }, ( _, i ) => entry( `/page-${ i }` ) );
+		storeHistory( 'site-1', oversized, 59 );
+
+		const { result } = renderHook( () => usePersistedHistory( 'site-1' ) );
+		act( () => {
+			result.current.history.push( entry( '/chat' ) as Location );
+		} );
+
+		expect( result.current.history.length ).toBe( 50 );
+		expect( result.current.history.location.pathname ).toBe( '/chat' );
+	} );
+
+	it( 'merges with other sites when persisting', () => {
+		storeHistory( 'site-1', [ entry( '/' ), entry( '/chat' ) ], 1 );
+
+		const { result } = renderHook( () => usePersistedHistory( 'site-2' ) );
+		act( () => {
+			result.current.history.push( entry( '/history' ) as Location );
+		} );
+
+		const stored = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '{}' );
+		expect( stored[ 'site-1' ].entries ).toHaveLength( 2 );
+		expect( stored[ 'site-2' ].entries[ 1 ].pathname ).toBe( '/history' );
+	} );
+
+	it( 'keeps navigating when persisting fails', () => {
+		jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
+			throw new Error( 'quota exceeded' );
+		} );
+
+		const { result } = renderHook( () => usePersistedHistory( 'site-1' ) );
+
+		act( () => {
+			result.current.history.push( entry( '/chat' ) as Location );
+		} );
+
+		expect( result.current.history.location.pathname ).toBe( '/chat' );
+	} );
+
+	it.each( [
+		[ 'unparseable JSON', 'not-valid-json' ],
+		[ 'entries is not an array', JSON.stringify( { 'site-1': { entries: 'nope', index: 0 } } ) ],
+		[
+			'index is out of range',
+			JSON.stringify( { 'site-1': { entries: [ entry( '/chat' ) ], index: 5 } } ),
+		],
+		[
+			'an entry has no pathname',
+			JSON.stringify( { 'site-1': { entries: [ { search: '' } ], index: 0 } } ),
+		],
+	] )( 'falls back to the default root entry when the stored data is %s', ( _label, stored ) => {
+		sessionStorage.setItem( STORAGE_KEY, stored );
 
 		const { result } = renderHook( () => usePersistedHistory( 'site-1' ) );
 

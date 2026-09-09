@@ -23,6 +23,7 @@ type AgentsManagerActions = {
 
 interface SplitScreenGuideProps {
 	componentType: string;
+	toolCallId?: string;
 	isStale?: boolean;
 }
 
@@ -30,11 +31,13 @@ interface SplitScreenGuideProps {
  * Suggest split-screen mode after a current review result.
  * @param props               Component props.
  * @param props.componentType Existing show-component type for tracking.
+ * @param props.toolCallId    Tool call that produced the containing response, for tracking.
  * @param props.isStale       Whether the containing result is no longer interactive.
  * @returns An inline chat suggestion, or null when the guide is not relevant.
  */
 export default function SplitScreenGuide( {
 	componentType,
+	toolCallId,
 	isStale = false,
 }: SplitScreenGuideProps ) {
 	const { isDocked, isSplitScreen } = useSelect( ( select ) => {
@@ -51,9 +54,28 @@ export default function SplitScreenGuide( {
 		if ( ! isVisible || hasTrackedRenderRef.current ) {
 			return;
 		}
-		trackSplitScreenGuideRendered( { componentType } );
-		hasTrackedRenderRef.current = true;
-	}, [ componentType, isVisible ] );
+		if ( trackSplitScreenGuideRendered( { componentType, toolCallId } ) ) {
+			hasTrackedRenderRef.current = true;
+			return;
+		}
+		// The dock republishes the bridge recorder on every commit
+		// (delete-then-reassign), so a same-commit effect can catch the gap.
+		// Retry on the next task, and again if Agents Manager loads later.
+		const retry = () => {
+			if ( ! hasTrackedRenderRef.current ) {
+				hasTrackedRenderRef.current = trackSplitScreenGuideRendered( {
+					componentType,
+					toolCallId,
+				} );
+			}
+		};
+		const retryTimer = window.setTimeout( retry, 0 );
+		window.addEventListener( 'agents-manager-ready', retry );
+		return () => {
+			window.clearTimeout( retryTimer );
+			window.removeEventListener( 'agents-manager-ready', retry );
+		};
+	}, [ componentType, isVisible, toolCallId ] );
 
 	if ( ! isVisible ) {
 		return null;
@@ -72,7 +94,7 @@ export default function SplitScreenGuide( {
 				icon={ columns }
 				iconPosition="right"
 				onClick={ () => {
-					trackSplitScreenGuideClick( { componentType } );
+					trackSplitScreenGuideClick( { componentType, toolCallId } );
 					setIsSplitScreen( true );
 				} }
 			>

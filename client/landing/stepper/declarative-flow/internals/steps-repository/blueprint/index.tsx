@@ -23,6 +23,8 @@ export const BlueprintStep: StepType = ( { navigation } ) => {
 
 	const blueprintParam = query.get( 'blueprint' ) ?? '';
 	const buildDestParam = query.get( 'build_dest' ) ?? '';
+	// The wow funnel builds the Atomic site from the same archive, before checkout.
+	const wowFunnelParam = query.get( 'wow_funnel' ) ?? '';
 
 	useEffect( () => {
 		const fetchBlueprint = async () => {
@@ -38,11 +40,11 @@ export const BlueprintStep: StepType = ( { navigation } ) => {
 				return;
 			}
 
-			// build_dest=wow restores the blueprint's pre-built archive onto an
-			// Atomic site, so it needs that archive to exist on the library post.
-			// Verify up front; when missing, fall back to the legacy Simple-site
-			// import by stripping the param (tracked, so missing archives surface).
-			if ( 'wow' === buildDestParam ) {
+			// Both Atomic paths restore the blueprint's pre-built archive, so both need that
+			// archive to exist on the library post: build_dest=wow imports after checkout, the
+			// wow funnel before it. Verify up front; when missing, fall back to the legacy
+			// Simple-site import by stripping the params (tracked, so missing archives surface).
+			if ( 'wow' === buildDestParam || 'blueprint' === wowFunnelParam ) {
 				const hasArchive = await checkBlueprintExists( id );
 
 				if ( ! hasArchive ) {
@@ -54,11 +56,17 @@ export const BlueprintStep: StepType = ( { navigation } ) => {
 					// Strip through the router rather than window.history: navigation to
 					// a logged-out user's auth step builds its path from the router's
 					// search params, which a plain history.replaceState would leave
-					// holding build_dest=wow. Submitting is deferred to the re-run of
+					// holding the Atomic params. Submitting is deferred to the re-run of
 					// this effect, once the sanitized query is what navigation will
 					// carry forward.
+					//
+					// wow_funnel and dest go together: leaving the funnel on would build an
+					// Atomic site with nothing to import onto it, and leaving dest on would
+					// send the customer to a site-spec waiting for an import that never runs.
 					const sanitized = new URLSearchParams( query );
 					sanitized.delete( 'build_dest' );
+					sanitized.delete( 'wow_funnel' );
+					sanitized.delete( 'dest' );
 					setQuery( sanitized, { replace: true } );
 					return;
 				}
@@ -72,7 +80,7 @@ export const BlueprintStep: StepType = ( { navigation } ) => {
 
 		fetchBlueprint();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ blueprintParam, buildDestParam ] );
+	}, [ blueprintParam, buildDestParam, wowFunnelParam ] );
 
 	return (
 		<>

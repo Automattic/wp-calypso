@@ -1,4 +1,5 @@
 import { Icon } from '@wordpress/components';
+import { decodeEntities } from '@wordpress/html-entities';
 import { plugins as pluginIcon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { PluginListRow } from '../types';
@@ -10,7 +11,12 @@ const FALLBACK_ICON_SIZE = 32;
 
 export const PluginIcon = ( { item }: { item?: PluginListRow } ) => {
 	const icon = item?.icon ? (
-		<img src={ item.icon } alt={ item.name } width={ ICON_SIZE } height={ ICON_SIZE } />
+		<img
+			src={ item.icon }
+			alt={ decodeEntities( item.name ) }
+			width={ ICON_SIZE }
+			height={ ICON_SIZE }
+		/>
 	) : (
 		<Icon icon={ pluginIcon } size={ FALLBACK_ICON_SIZE } className="plugin-icon-fallback" />
 	);

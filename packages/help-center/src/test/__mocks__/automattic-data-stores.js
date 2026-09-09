@@ -5,6 +5,7 @@
 
 const HelpCenter = {
 	register: () => 'help-center',
+	PLANS_PRESALES_LAUNCHER_CONTEXT: 'plans-presales',
 };
 
 module.exports = { HelpCenter };

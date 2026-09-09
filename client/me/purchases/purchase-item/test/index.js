@@ -170,6 +170,57 @@ describe( 'PurchaseItem', () => {
 		} );
 	} );
 
+	describe( 'a free trial', () => {
+		const freeTrial = ( overrides = {} ) => ( {
+			product_slug: 'wp_titan_mail_monthly',
+			expiry_status: 'manual-renew',
+			subscription_status: 'active',
+			// Three months out, matching the end of the trial below.
+			expiry_date: '2026-05-24T00:00:00+00:00',
+			introductory_offer: {
+				cost_per_interval: 0,
+				end_date: '2026-05-24T00:00:00+00:00',
+				is_within_period: true,
+			},
+			...overrides,
+		} );
+
+		test( 'should be described by when the trial runs out', () => {
+			renderWithProvider( <PurchaseItem purchase={ freeTrial() } /> );
+
+			expect( screen.getByText( /free trial ends on/i ) ).toBeInTheDocument();
+			expect( screen.getByText( 'May 24, 2026' ) ).toBeInTheDocument();
+		} );
+
+		test( 'should be described by its expiry once an early renewal has paid past the trial', () => {
+			renderWithProvider(
+				<PurchaseItem purchase={ freeTrial( { expiry_date: '2027-05-24T00:00:00+00:00' } ) } />
+			);
+
+			expect( screen.queryByText( /free trial/i ) ).toBeNull();
+			expect( screen.getByText( /expires on/i ) ).toBeInTheDocument();
+			expect( screen.getByText( 'May 24, 2027' ) ).toBeInTheDocument();
+		} );
+
+		test( 'should be described by its renewal once an early renewal has paid past the trial', () => {
+			renderWithProvider(
+				<PurchaseItem
+					purchase={ freeTrial( {
+						expiry_status: 'active',
+						expiry_date: '2027-05-24T00:00:00+00:00',
+						renew_date: '2027-05-24T00:00:00+00:00',
+						bill_period_days: 365,
+						price_integer: 3500,
+						currency_code: 'USD',
+					} ) }
+				/>
+			);
+
+			expect( screen.queryByText( /free trial/i ) ).toBeNull();
+			expect( screen.getByText( /renews yearly at \$35/i ) ).toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'an in-app purchase', () => {
 		const purchase = {
 			is_iap_purchase: true,
@@ -215,5 +266,30 @@ describe( 'PurchaseItem', () => {
 		expect(
 			screen.queryByText( 'You don’t have a payment method to renew this subscription' )
 		).toBeNull();
+	} );
+
+	describe( 'a purchase with no site of its own', () => {
+		const holdingSitePurchase = ( productType ) => ( {
+			product_slug: 'studio-code-ai-credits',
+			product_type: productType,
+			is_attached_to_holding_site: true,
+			subscription_status: 'active',
+		} );
+
+		test( 'should not warn about site access for Studio Code AI Credits', () => {
+			renderWithProvider(
+				<PurchaseItem purchase={ holdingSitePurchase( 'studio_code' ) } isDisconnectedSite />
+			);
+
+			expect( screen.queryByText( /no longer have access to this site/i ) ).toBeNull();
+		} );
+
+		test( 'should warn about site access for a product type with its own site', () => {
+			renderWithProvider(
+				<PurchaseItem purchase={ holdingSitePurchase( 'bundle' ) } isDisconnectedSite />
+			);
+
+			expect( screen.getByText( /no longer have access to this site/i ) ).toBeInTheDocument();
+		} );
 	} );
 } );

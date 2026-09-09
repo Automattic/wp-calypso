@@ -18,13 +18,13 @@ import { setStore } from 'calypso/state/redux-store';
 import sites from 'calypso/state/sites/reducer';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
-import config from './lib/config-api';
+import config, { optionalConfig } from './lib/config-api';
 import initSentry from './lib/init-sentry';
 import { initializeSiteData } from './lib/initialize-site-data';
 import loadWpComponentsStyle from './lib/load-wp-components-style';
 import setLocale from './lib/set-locale';
 import { setupContextMiddleware } from './page-middleware/setup-context';
-import registerStatsPages from './routes';
+import registerStatsPages, { PRE_CONNECTION_PATH } from './routes';
 
 import 'calypso/assets/stylesheets/style.scss';
 import './app.scss';
@@ -43,17 +43,19 @@ async function AppBoot() {
 	} );
 
 	// TODO: fix `intial_state` typo.
-	let initialState = config( 'intial_state' );
+	// Absent on a site with no WordPress.com connection: every map inside it is keyed by blog id,
+	// so there is nothing for Jetpack to key. The store boots empty instead.
+	const seededState = optionalConfig( 'intial_state' );
 	// Fix missing user.localeSlug in `initial_state`.
-	initialState = {
-		...initialState,
+	const initialState = seededState && {
+		...seededState,
 		currentUser: {
-			...initialState.currentUser,
-			user: { ...initialState.currentUser.user, localeSlug },
+			...seededState.currentUser,
+			user: { ...seededState.currentUser.user, localeSlug },
 		},
 	};
 
-	const isSimple = isSimpleSite( initialState, siteId ) ?? false;
+	const isSimple = ( initialState && isSimpleSite( initialState, siteId ) ) ?? false;
 
 	const queryClient = new QueryClient();
 
@@ -67,12 +69,15 @@ async function AppBoot() {
 	setStore( store as Store & WithAddReducer );
 	setupContextMiddleware( store, queryClient );
 
-	// Initialize site data early in the app boot process.
-	await initializeSiteData( store );
+	// Initialize site data early in the app boot process. There is nothing to select or fetch
+	// without a connection: `GET /jetpack/v4/site` answers 400 `site_id_missing`.
+	if ( siteId ) {
+		await initializeSiteData( store );
+	}
 
 	if ( ! window.location?.hash ) {
 		// Redirect to the default stats page.
-		window.location.hash = `#!/stats/day/${ siteId }`;
+		window.location.hash = `#!${ siteId ? `/stats/day/${ siteId }` : PRE_CONNECTION_PATH }`;
 	} else {
 		// The URL could already gets broken by page.js by the appended `?page=stats`.
 		window.location.hash = `#!${ getPathWithUpdatedQueryString(

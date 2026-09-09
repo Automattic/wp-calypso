@@ -119,7 +119,7 @@ export function useFormSelectors() {
 		shared_managed: translate(
 			'Common shared / managed hosting (SiteGround, Bluehost, GoDaddy, etc.)'
 		),
-		managed_wp_hosts: translate( 'Managed WordPress hosts (WP Engine, Kinsta, etc.)' ),
+		managed_wp_hosts: translate( 'Managed WordPress hosts (Pressable, WP Engine, Kinsta, etc.)' ),
 		self_hosted: translate( 'Self-hosted / custom hosting' ),
 	};
 

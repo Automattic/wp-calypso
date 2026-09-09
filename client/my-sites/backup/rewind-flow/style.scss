@@ -93,18 +93,33 @@ input.rewind-flow__rewind-config-editor-checkbox.form-checkbox {
 }
 
 .rewind-flow-notice {
-	margin-top: 32px;
+	// Mirrors the Dashboard Notice: a 4% wash of the status color. The --dashboard__*
+	// tokens only exist on dashboard roots, so these use the Studio values behind them.
+	--rewind-flow-notice__status-color: var(--studio-gray-50);
+	--rewind-flow-notice__icon-color: var(--studio-gray-50);
 
-	.gridicon {
-		margin-right: 5px;
+	margin-top: 24px;
+	padding: 16px;
+	border-radius: 4px;
+	background-color: color-mix(in srgb, var(--rewind-flow-notice__status-color) 4%, transparent);
+
+	// Consecutive notices read as separate cards, so they need less room between
+	// them than the first one needs from the content above.
+	+ .rewind-flow-notice {
+		margin-top: 8px;
 	}
 
-	// the component renders a top-level a or div, depending on if it is a link or not
-	a,
-	div {
+	.gridicon {
+		margin-inline-end: 5px;
+		flex-shrink: 0;
+	}
+
+	// the component renders a top-level a or div, depending on if it is a link or not.
+	// Direct children only: a link inside the message must stay inline.
+	> a,
+	> div {
 		display: flex;
 		flex-direction: row;
-		margin-bottom: 16px;
 		width: fit-content;
 	}
 
@@ -118,14 +133,23 @@ input.rewind-flow__rewind-config-editor-checkbox.form-checkbox {
 	p {
 		margin: 0;
 	}
-	a {
+
+	> p {
+		margin-top: 4px;
+	}
+
+	> a {
 		align-items: center;
-		display: flex;
 	}
 
 	h4 {
 		text-wrap: wrap;
 	}
+}
+
+.rewind-flow-notice.is-warning {
+	--rewind-flow-notice__status-color: var(--studio-orange-40);
+	--rewind-flow-notice__icon-color: var(--studio-orange-50);
 }
 
 // when the reminder is default make the header more bold
@@ -149,11 +173,11 @@ div.rewind-flow-notice__title-warning,
 a.rewind-flow-notice__title-warning,
 a.rewind-flow-notice__title-warning:visited {
 	.gridicon {
-		fill: var(--color-error);
+		fill: var(--rewind-flow-notice__icon-color);
 	}
 
 	&:hover {
-		fill: var(--color-error-dark);
+		fill: var(--rewind-flow-notice__icon-color);
 	}
 }
 

@@ -10,25 +10,65 @@ import './csat-form.scss';
 
 export interface CSATFormProps {
 	ticketId: number | null;
-	onSendFeedback: ( score: 'good' | 'bad' ) => void;
+	onSendFeedback: ( score: 'good' | 'bad' ) => void | Promise< void >;
+	/**
+	 * When provided, the comment step submits through this callback instead of the
+	 * ticket_id-based `/help/csat` endpoint. Used by callers rating something that isn't a
+	 * Zendesk ticket satisfaction rating (e.g. a CSAT Survey Response).
+	 */
+	onSendComment?: (
+		comment: string,
+		reasonId: string,
+		score: 'good' | 'bad'
+	) => void | Promise< void >;
+	/**
+	 * Called once the form collapses after the responder submits (either "Send" or "No thanks").
+	 */
+	onFormHidden?: () => void;
 	className?: string;
 	preDeterminedScore?: 'good' | 'bad';
+	/**
+	 * The "Good 👍"/"Needs improvement 👎" message is hidden by default when preDeterminedScore
+	 * is set, since some callers already show the score another way (e.g. a pressed button on a
+	 * preceding message) and would otherwise show it twice. Set this to show it anyway.
+	 */
+	showRatingMessageWithPreDeterminedScore?: boolean;
+	/**
+	 * Options for the "bad" score's reason dropdown. Defaults to the static WPCOM reason
+	 * taxonomy (used by the ticket_id-based flow). Pass this explicitly -- even as an empty
+	 * array while real options are still loading -- for a caller whose reasons come from
+	 * somewhere else (e.g. a CSAT Survey's own closed-ended question options); an empty array
+	 * intentionally does NOT fall back to the static list, since those codes wouldn't mean
+	 * anything to that caller's backend.
+	 */
+	reasonOptions?: { label: string; value: string }[];
 }
 
 export const CSATForm = ( {
 	ticketId,
 	preDeterminedScore,
 	onSendFeedback,
+	onSendComment,
+	onFormHidden,
 	className,
+	showRatingMessageWithPreDeterminedScore,
+	reasonOptions: reasonOptionsProp,
 }: CSATFormProps ) => {
 	const [ score, setScore ] = useState( preDeterminedScore );
 	const [ comment, setComment ] = useState( '' );
 	const [ reason, setReason ] = useState( '' );
 	const [ isFormHidden, setIsFormHidden ] = useState( false );
+	const [ isSubmittingComment, setIsSubmittingComment ] = useState( false );
+	const [ isSubmittingScore, setIsSubmittingScore ] = useState( false );
+	// A ref alongside the state above: two clicks fired before the first re-render commits would
+	// both still see the pre-click `isSubmittingScore` value from state, so the state alone can't
+	// block a fast double-click. The ref updates synchronously and is shared across both closures.
+	const isSubmittingScoreRef = useRef( false );
 	const feedbackRef = useRef< HTMLDivElement | null >( null );
-	const badRatingReasons = getBadRatingReasons();
+	const reasonOptions = reasonOptionsProp ?? getBadRatingReasons();
 
-	const { isPending: isSubmitting, mutateAsync: rateChat } = useRateChat();
+	const { isPending: isSubmittingRateChat, mutateAsync: rateChat } = useRateChat();
+	const isSubmitting = isSubmittingRateChat || isSubmittingComment || isSubmittingScore;
 
 	useEffect( () => {
 		if ( score && feedbackRef?.current ) {
@@ -37,20 +77,51 @@ export const CSATForm = ( {
 	}, [ score ] );
 
 	const postScore = useCallback(
-		( selectedScore: 'good' | 'bad' ) => {
+		async ( selectedScore: 'good' | 'bad' ) => {
+			if ( isSubmittingScoreRef.current ) {
+				return;
+			}
+
+			isSubmittingScoreRef.current = true;
+			setIsSubmittingScore( true );
 			setScore( selectedScore );
-			onSendFeedback( selectedScore );
+
+			try {
+				await onSendFeedback( selectedScore );
+			} finally {
+				isSubmittingScoreRef.current = false;
+				setIsSubmittingScore( false );
+			}
 		},
 		[ onSendFeedback ]
 	);
 
+	const hideForm = useCallback( () => {
+		setIsFormHidden( true );
+		onFormHidden?.();
+	}, [ onFormHidden ] );
+
 	const postCSAT = useCallback( async () => {
-		if ( ! ticketId || ! score ) {
+		if ( ! score ) {
 			return;
 		}
 
-		setIsFormHidden( true );
+		hideForm();
 		if ( ! comment && ! reason ) {
+			return;
+		}
+
+		if ( onSendComment ) {
+			setIsSubmittingComment( true );
+			try {
+				await onSendComment( comment, reason, score );
+			} finally {
+				setIsSubmittingComment( false );
+			}
+			return;
+		}
+
+		if ( ! ticketId ) {
 			return;
 		}
 
@@ -61,7 +132,7 @@ export const CSATForm = ( {
 			reason_id: reason,
 			test_mode: isTestModeEnvironment(),
 		} );
-	}, [ rateChat, ticketId, score, comment, reason ] );
+	}, [ rateChat, ticketId, score, comment, reason, onSendComment, hideForm ] );
 
 	return (
 		<div className={ clsx( 'zendesk-csat-form', className ) }>
@@ -71,33 +142,34 @@ export const CSATForm = ( {
 						<Button
 							onClick={ () => postScore( 'good' ) }
 							className="zendesk-csat-form__thumbs-button"
+							disabled={ isSubmittingScore }
 						>
 							<ThumbsUpIcon />
 						</Button>
 						<Button
 							onClick={ () => postScore( 'bad' ) }
 							className="zendesk-csat-form__thumbs-button"
+							disabled={ isSubmittingScore }
 						>
 							<ThumbsDownIcon />
 						</Button>
 					</div>
 				</div>
 			) }
+			{ isSubmitting && (
+				<div className="zendesk-csat-form__loading">
+					<Spinner />
+				</div>
+			) }
 			{ score && (
 				<>
-					{ ! preDeterminedScore && (
+					{ ( ! preDeterminedScore || showRatingMessageWithPreDeterminedScore ) && (
 						<div className="zendesk-csat-form__rating-message">
 							<div>
 								{ score === 'good'
 									? __( 'Good 👍', '__i18n_text_domain__' )
 									: __( 'Needs improvement 👎', '__i18n_text_domain__' ) }
 							</div>
-						</div>
-					) }
-
-					{ isSubmitting && (
-						<div className="zendesk-csat-form__loading">
-							<Spinner />
 						</div>
 					) }
 
@@ -114,7 +186,7 @@ export const CSATForm = ( {
 									className="zendesk-csat-form__reason"
 									label={ __( 'Reason' ) }
 									value={ reason }
-									options={ badRatingReasons }
+									options={ reasonOptions }
 									onChange={ ( value ) => setReason( value ) }
 									__next40pxDefaultSize
 								/>
@@ -132,7 +204,7 @@ export const CSATForm = ( {
 									{ __( 'Send', '__i18n_text_domain__' ) }
 								</Button>
 
-								<Button variant="tertiary" onClick={ () => setIsFormHidden( true ) }>
+								<Button variant="tertiary" onClick={ hideForm }>
 									{ __( 'No thanks', '__i18n_text_domain__' ) }
 								</Button>
 							</div>

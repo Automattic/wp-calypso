@@ -1,0 +1,63 @@
+@use 'calypso/reader/shelves/colors' as shelf-colors;
+
+.sidebar-shelves__link {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.sidebar-shelves__icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	block-size: 22px;
+	border-radius: 8px;
+	background: var( --shelf-color-bg );
+	color: var( --shelf-color );
+}
+
+.sidebar-shelves__text {
+	display: flex;
+	flex-direction: column;
+	min-inline-size: 0;
+	flex: 1;
+}
+
+.sidebar-shelves__name {
+	color: var( --color-text );
+	font-weight: 500;
+	line-height: 1.2;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+// Each shelf exposes its accent colour as two custom properties — `--shelf-color`
+// (foreground: the icon glyph and the active row's name) and `--shelf-color-bg`
+// (the icon's surface tint). The modifier classes below only redefine those two
+// values (via the shared `shelf-accent-color` mixin); the icon/name rules above
+// consume them, so colours live in one place (`colors.scss`).
+@each $color in shelf-colors.$shelf-colors {
+	.sidebar-shelves__item--#{$color} {
+		@include shelf-colors.shelf-accent-color( $color );
+	}
+}
+
+// Active row: tint the whole row with the shelf's own accent so the current
+// shelf is unmistakable. The shared sidebar only paints a selected background in
+// dark mode, so in light mode this is the only active-state cue — without it the
+// current shelf reads no differently from the rest until hovered.
+//
+// The name keeps the neutral `--color-text` (just bolder): the accent foreground
+// is the dark `-80` step, which is illegible on the dark selected row, and the
+// row tint + weight + coloured icon already mark the active shelf.
+.sidebar-shelves__item.selected {
+	.sidebar-shelves__link {
+		background-color: var( --shelf-color-bg );
+	}
+
+	.sidebar-shelves__name {
+		font-weight: 600;
+	}
+}

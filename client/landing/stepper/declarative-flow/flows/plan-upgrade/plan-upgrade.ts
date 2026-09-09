@@ -10,8 +10,10 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { getCurrentQueryParams } from 'calypso/landing/stepper/utils/get-current-query-params';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
+import { goToLandingPage } from 'calypso/lib/landing-page';
 import { isExternal } from 'calypso/lib/url';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
+import type { Store } from 'redux';
 
 const BASE_STEPS = [ STEPS.UNIFIED_PLANS ];
 
@@ -44,11 +46,11 @@ async function checkUserHasAccess(): Promise< boolean > {
 	}
 }
 
-async function initialize() {
+async function initialize( reduxStore: Store ) {
 	const hasAccess = await checkUserHasAccess();
 
 	if ( ! hasAccess ) {
-		window.location.assign( '/' );
+		goToLandingPage( reduxStore, ( destination ) => window.location.assign( destination ) );
 		return false;
 	}
 

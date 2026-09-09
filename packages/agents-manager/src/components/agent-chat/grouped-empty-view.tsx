@@ -6,6 +6,7 @@ import { Icon, chevronDown, chevronLeft, chevronRight } from '@wordpress/icons';
 import {
 	DESIGN_SUGGESTION_IDS,
 	formatWritingSuggestionLabels,
+	hideTopLevelDescriptions,
 	WHAT_ELSE_CAN_I_DO_SUGGESTION_ID,
 	WRITING_SUGGESTION_IDS,
 } from '../../hooks/use-empty-view-suggestions';
@@ -69,10 +70,12 @@ export default function GroupedEmptyView( {
 		);
 	}
 
-	const topLevelSuggestions = displaySuggestions.filter(
-		( suggestion ) =>
-			! WRITING_SUGGESTION_IDS.has( suggestion.id ) &&
-			suggestion.id !== WHAT_ELSE_CAN_I_DO_SUGGESTION_ID
+	const topLevelSuggestions = hideTopLevelDescriptions(
+		displaySuggestions.filter(
+			( suggestion ) =>
+				! WRITING_SUGGESTION_IDS.has( suggestion.id ) &&
+				suggestion.id !== WHAT_ELSE_CAN_I_DO_SUGGESTION_ID
+		)
 	);
 	const collapsedIcon = isRTL() ? chevronLeft : chevronRight;
 

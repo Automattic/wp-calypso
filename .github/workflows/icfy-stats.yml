@@ -2,8 +2,12 @@ name: Calculate ICFY stats
 
 on:
   push:
-    branches-ignore:
-      - 'gh-readonly-queue/**'
+    branches:
+      - trunk
+  pull_request:
+    types:
+      - opened
+      - synchronize
 
 jobs:
   build:
@@ -14,33 +18,21 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          # Build the branch tip, not the ephemeral merge commit that pull_request
+          # events check out by default. The merge commit already contains the
+          # latest trunk, whose stats are usually still being built.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
-      - name: Fetch trunk history
-        env:
-          FETCH_DEPTH_STEP: 1000
-          FETCH_DEPTH_MAX_ATTEMPTS: 100
-        run: |
-          if git rev-parse --is-shallow-repository | grep -q true; then
-            attempt=0
-
-            until git merge-base HEAD origin/trunk >/dev/null 2>&1; do
-              attempt=$(( attempt + 1 ))
-
-              if [ "$attempt" -gt "$FETCH_DEPTH_MAX_ATTEMPTS" ]; then
-                echo "Unable to find a merge base with origin/trunk after deepening history $(( FETCH_DEPTH_STEP * FETCH_DEPTH_MAX_ATTEMPTS )) commits." >&2
-                exit 1
-              fi
-
-              echo "Deepening origin/trunk history by $FETCH_DEPTH_STEP commits (attempt $attempt/$FETCH_DEPTH_MAX_ATTEMPTS)"
-              git fetch --no-tags --deepen="$FETCH_DEPTH_STEP" origin +refs/heads/trunk:refs/remotes/origin/trunk
-            done
-          else
-            git fetch --no-tags origin +refs/heads/trunk:refs/remotes/origin/trunk
-          fi
       - name: Install dependencies
-        run: PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 SKIP_TSC=true SKIP_CALYPSO_POSTINSTALL=true yarn install --inline-builds
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+          SKIP_TSC: true
+          SKIP_CALYPSO_POSTINSTALL: true
+          YARN_ENABLE_HARDENED_MODE: false
+        run: yarn install --inline-builds
       - name: Prepare web workspace packages
         run: yarn run build-packages:web
       - name: Build ICFY stats
@@ -54,22 +46,80 @@ jobs:
         with:
           name: icfy
           path: icfy-stats
-          retention-days: 7
-      - name: Upload build artifact
+          # Trunk artifacts are the baseline that pull requests compare against, so
+          # they need to outlive the branches that forked off them.
+          retention-days: ${{ github.ref == 'refs/heads/trunk' && 30 || 7 }}
+      # The steps below compare the stats with trunk and report the result on the
+      # pull request. On a trunk push we're done once the artifact is uploaded.
+      # Pull requests from forks get a read-only token that can't comment, so
+      # there's nothing to report for them either.
+      - name: Download the trunk stats
+        if: >-
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
+        id: trunk_stats
         env:
-          ICFY_SECRET: ${{ secrets.ICFY_SECRET }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          ANCESTOR_SHA1=$(git merge-base HEAD origin/trunk)
-          CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-          curl -X POST --globoff                                                       \
-            "http://iscalypsofastyet.com/submit-stats?from=github&secret=$ICFY_SECRET" \
-            -H 'Cache-Control: no-cache'                                               \
-            -H 'Content-Type: application/json'                                        \
-            -d '{
-                  "payload": {
-                    "branch": "'"$CURRENT_BRANCH"'",
-                    "build_num": '"$GITHUB_RUN_ID"',
-                    "sha": "'"$GITHUB_SHA"'",
-                    "ancestor": "'"$ANCESTOR_SHA1"'"
-                  }
-                }'
+          ANCESTOR_SHA1=$(gh api "repos/$GITHUB_REPOSITORY/compare/trunk...$HEAD_SHA?per_page=1" --jq '.merge_base_commit.sha')
+          echo "Looking for the ICFY stats of trunk commit $ANCESTOR_SHA1"
+          RUN_ID=$(gh run list --workflow icfy-stats.yml --branch trunk --commit "$ANCESTOR_SHA1" --status success --limit 1 --json databaseId --jq '.[0].databaseId // empty')
+          if [ -z "$RUN_ID" ]; then
+            echo "No successful ICFY stats run for $ANCESTOR_SHA1, skipping the comparison with trunk."
+            exit 0
+          fi
+          echo "Downloading the icfy artifact of run $RUN_ID"
+          if ! gh run download "$RUN_ID" --name icfy --dir icfy-stats-trunk; then
+            echo "The ICFY stats artifact of $ANCESTOR_SHA1 is no longer available, skipping the comparison with trunk."
+            exit 0
+          fi
+          echo "Downloaded $( du -sh icfy-stats-trunk | cut -f1 ) into icfy-stats-trunk, comparing with trunk."
+          echo "found=true" >> "$GITHUB_OUTPUT"
+      - name: Compare the stats with trunk
+        if: steps.trunk_stats.outputs.found == 'true'
+        id: compare
+        run: |
+          if ! node -e "process.exit( require( './package.json' ).scripts[ 'compare-icfy' ] ? 0 : 1 )"; then
+            echo "The branch predates the compare-icfy script, skipping the comparison with trunk."
+            exit 0
+          fi
+          set -o pipefail
+          yarn run compare-icfy icfy-stats-trunk icfy-stats | tee icfy-comment.md
+          echo "compared=true" >> "$GITHUB_OUTPUT"
+      - name: Report the comparison on the pull request
+        if: steps.compare.outputs.compared == 'true'
+        uses: actions/github-script@v7
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { readFileSync } = require( 'fs' );
+
+            const watermark = '<!--icfy-watermark:v1-->';
+            const body = watermark + '\n' + readFileSync( 'icfy-comment.md', 'utf8' );
+            const issueNumber = Number( process.env.PR_NUMBER );
+
+            const comments = await github.paginate( github.rest.issues.listComments, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+            } );
+            const existingComment = comments.find( ( comment ) => comment.body?.includes( watermark ) );
+
+            if ( existingComment ) {
+              await github.rest.issues.updateComment( {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body,
+              } );
+            } else {
+              await github.rest.issues.createComment( {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                body,
+              } );
+            }

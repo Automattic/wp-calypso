@@ -18,11 +18,12 @@ jest.mock( '../use-post-transfer-plugin-recovery', () => ( {
 
 // Control the post-transfer site fetch.
 let mockFreshSite: unknown;
+const mockFetchFreshSite = jest.fn( () => Promise.resolve( mockFreshSite ) );
 jest.mock( '@automattic/api-queries', () => ( {
 	...jest.requireActual( '@automattic/api-queries' ),
 	siteByIdQuery: () => ( {
 		queryKey: [ 'tyr-site' ],
-		queryFn: () => Promise.resolve( mockFreshSite ),
+		queryFn: () => mockFetchFreshSite(),
 	} ),
 } ) );
 
@@ -50,6 +51,7 @@ const baseProps: Props = {
 	pluginActive: false,
 	atomicFlow: true,
 	automatedTransferStatus: transferStates.COMPLETE,
+	durableTransferCompleted: false,
 	isTransferredUpload: false,
 };
 // A zip upload whose transfer is running: no product slug in the route, and no plugin in the store,
@@ -119,6 +121,38 @@ describe( 'useThankYouRedirect', () => {
 		mockFreshSite = ATOMIC_READY;
 		render( { atomicFlow: true, pluginActive: false } );
 		await waitFor( () => expect( mockRecoveryProps?.enabled ).toBe( true ) );
+	} );
+
+	it( 'enables recovery for the checkout-initiated activation window', async () => {
+		mockFreshSite = ATOMIC_READY;
+		render( { atomicFlow: false, currentStep: 0, pluginActive: false } );
+
+		await waitFor( () => expect( mockRecoveryProps?.enabled ).toBe( true ) );
+		expect( mockRecoveryProps?.ownsActivation ).toBe( true );
+	} );
+
+	it( 'enables recovery from a durable completion when the legacy status was lost', async () => {
+		mockFreshSite = ATOMIC_READY;
+		render( {
+			atomicFlow: true,
+			automatedTransferStatus: null,
+			durableTransferCompleted: true,
+		} );
+
+		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
+		expect( mockFetchFreshSite ).toHaveBeenCalled();
+	} );
+
+	it( 'keeps the fresh-site query gated without either completion signal', () => {
+		mockFreshSite = ATOMIC_READY;
+		render( {
+			atomicFlow: true,
+			automatedTransferStatus: null,
+			durableTransferCompleted: false,
+		} );
+
+		expect( mockFetchFreshSite ).not.toHaveBeenCalled();
+		expect( mockRecoveryProps?.canActivate ).toBe( false );
 	} );
 
 	it( 'does not redirect after an atomic transfer while the plugin is still inactive', async () => {

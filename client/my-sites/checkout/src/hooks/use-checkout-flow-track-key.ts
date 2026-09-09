@@ -42,6 +42,10 @@ export default function useCheckoutFlowTrackKey( {
 			return 'a4a_siteless_checkout';
 		}
 
+		if ( sitelessCheckoutType === 'wpcom' ) {
+			return 'wpcom_siteless_checkout';
+		}
+
 		if ( isLoggedOutCart ) {
 			return 'wpcom_registrationless';
 		}

@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/ui';
 import {
 	Modal,
 	ExternalLink,
@@ -7,7 +6,8 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useLocale } from '../../app/locale';
+import { Badge } from '@wordpress/ui';
+import { useIntlLocale } from '../../app/locale';
 import type { ConnectedApplication } from '@automattic/api-core';
 
 interface Props {
@@ -62,7 +62,7 @@ const DetailItem = ( { label, value }: { label: string; value: React.ReactNode }
 };
 
 export default function ApplicationDetailsModal( { application, onClose }: Props ) {
-	const userLocale = useLocale();
+	const userLocale = useIntlLocale();
 
 	const siteObj =
 		application.site && typeof application.site === 'object' ? application.site : undefined;
@@ -89,7 +89,7 @@ export default function ApplicationDetailsModal( { application, onClose }: Props
 						value={
 							<VStack spacing={ 2 }>
 								<Badge
-									intent="default"
+									intent="draft"
 									style={ {
 										maxWidth: 'fit-content',
 									} }

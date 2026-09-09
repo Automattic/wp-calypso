@@ -27,13 +27,11 @@ import MutationErrorTracker from '../mutation-error-tracker';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Notifications from '../notifications';
 import { useOmnibarEvent } from '../omnibar/events';
-import OmnibarLanguageSwitcher from '../omnibar/omnibar-language-switcher';
 import OmnibarSiteSwitcher from '../omnibar/omnibar-site-switcher';
 import { useSyncOmnibarSite } from '../omnibar/site';
 import ResponsiveSidebar from '../responsive-sidebar';
 import { ResurrectedWelcomeModalGate } from '../resurrected-welcome-modal';
 import Snackbars from '../snackbars';
-import { OptInWelcomeModal } from '../welcome-modal';
 import './style.scss';
 
 const WebpackBuildMonitor = lazy(
@@ -57,8 +55,6 @@ function Root() {
 	const isAccountRecoveryInterstitialEnabled = isEnabled(
 		'dashboard/account-recovery-interstitial'
 	);
-	const isOptInWelcomeModalEnabled =
-		! isDashboardBackport() && ! isE2ETest() && isEnabled( 'dashboard/opt-in-welcome-modal' );
 	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
 	const isResurrectedWelcomeModalEnabled =
 		supports.resurrectedWelcomeModal && ! isDashboardBackport() && ! isE2ETest();
@@ -212,7 +208,6 @@ function Root() {
 			{ supports.help && <OmnibarHelpCenter /> }
 			{ supports.help && <OmnibarAgentsManager /> }
 			<OmnibarSiteSwitcher />
-			<OmnibarLanguageSwitcher />
 			<Snackbars />
 			<CheckoutSuccessFlashMessage />
 			{ isResurrectedWelcomeModalEnabled && (
@@ -220,9 +215,6 @@ function Root() {
 			) }
 			{ resurrectedModalState === 'ineligible' && isAccountRecoveryInterstitialEnabled && (
 				<AccountRecoveryInterstitial />
-			) }
-			{ resurrectedModalState === 'ineligible' && isOptInWelcomeModalEnabled && (
-				<OptInWelcomeModal />
 			) }
 			<PageViewTracker />
 			<MutationErrorTracker />

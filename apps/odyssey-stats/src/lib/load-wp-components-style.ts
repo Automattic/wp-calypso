@@ -1,4 +1,4 @@
-import config from './config-api';
+import config, { optionalConfig } from './config-api';
 
 /**
  * The WP release whose command palette enqueues `wp-components` globally across wp-admin, making
@@ -59,12 +59,23 @@ function isAtLeast( version: unknown, minimum: string ): boolean {
  * renders unstyled.
  */
 export function isProvidedByWpAdmin(): boolean {
+	// Both versions are also served at the top level, which is the only place they appear on a
+	// site with no WordPress.com connection: `intial_state` is keyed by blog id. The nested read
+	// stays as the fallback, since the JS ships from a CDN and can meet a `stats-admin` old enough
+	// to place them only inside the dashboard's state.
 	const siteOptions =
-		config( 'intial_state' )?.sites?.items?.[ config( 'blog_id' ) as number ]?.options ?? {};
+		optionalConfig( 'intial_state' )?.sites?.items?.[ config( 'blog_id' ) as number ]?.options ??
+		{};
 
 	return (
-		isAtLeast( siteOptions.stats_admin_version, STATS_ADMIN_VERSION_WITH_WP_COMPONENTS_DEP ) ||
-		isAtLeast( siteOptions.software_version, WP_VERSION_WITH_GLOBAL_WP_COMPONENTS )
+		isAtLeast(
+			optionalConfig( 'stats_admin_version' ) ?? siteOptions.stats_admin_version,
+			STATS_ADMIN_VERSION_WITH_WP_COMPONENTS_DEP
+		) ||
+		isAtLeast(
+			optionalConfig( 'software_version' ) ?? siteOptions.software_version,
+			WP_VERSION_WITH_GLOBAL_WP_COMPONENTS
+		)
 	);
 }
 

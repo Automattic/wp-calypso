@@ -19,6 +19,7 @@ import FeedbackList, {
 	type FeedbackListItem,
 	type FeedbackListSection,
 } from './feedback-list';
+import type { OnResponseAction } from '../utils/response-action';
 
 export interface PostFeedbackProps {
 	summary: string;
@@ -26,19 +27,19 @@ export interface PostFeedbackProps {
 	sections?: FeedbackListSection[];
 	postId?: EditorPostId;
 	isMessageStale?: boolean;
+	toolCallId?: string;
+	onResponseAction?: OnResponseAction;
 }
 
-/**
- * Render the post feedback component.
- * @param {PostFeedbackProps} props Component props.
- * @returns React element.
- */
+/** Configures the shared feedback list for generated post feedback. */
 export default function PostFeedback( {
 	summary,
 	items,
 	sections,
 	postId,
 	isMessageStale,
+	toolCallId,
+	onResponseAction,
 }: PostFeedbackProps ) {
 	return (
 		<FeedbackList
@@ -48,6 +49,8 @@ export default function PostFeedback( {
 			sections={ sections }
 			postId={ postId }
 			isMessageStale={ isMessageStale }
+			toolCallId={ toolCallId }
+			onResponseAction={ onResponseAction }
 			sectionFallbackTitle={ __( 'Suggested edits', __i18n_text_domain__ ) }
 			staleWarning={ __(
 				'Feedback context changed. Generate feedback again for this post.',

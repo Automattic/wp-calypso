@@ -1,22 +1,22 @@
+import { sitePurchasesQuery } from '@automattic/api-queries';
 import {
 	isJetpackProduct,
 	planHasFeature,
 	planHasSuperiorFeature,
 	JETPACK_SEARCH_PRODUCTS,
 } from '@automattic/calypso-products';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Notice from 'calypso/dashboard/components/notice';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from '@automattic/api-core';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
 import './style.scss';
@@ -49,13 +49,16 @@ export default function ProductPlanOverlapNotices( {
 	const currentPlanSlug = useSelector( ( state ) =>
 		selectedSiteId ? getSitePlanSlug( state, selectedSiteId ) : null
 	);
-	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
+	const { data: purchases = [] } = useQuery( {
+		...sitePurchasesQuery( selectedSiteId as number ),
+		enabled: !! selectedSiteId,
+	} );
 
 	const getProductName = ( productSlug: string ) =>
 		availableProducts[ productSlug ]?.product_name ?? '';
 
 	const getProductItem = ( productSlug: string ) => {
-		const productPurchase = purchases.find( ( purchase ) => purchase.productSlug === productSlug );
+		const productPurchase = purchases.find( ( purchase ) => purchase.product_slug === productSlug );
 
 		if ( ! productPurchase ) {
 			return null;
@@ -64,7 +67,7 @@ export default function ProductPlanOverlapNotices( {
 		return (
 			<li key={ productSlug }>
 				<a
-					href={ getManagePurchaseUrlFor( productPurchase.domain, productPurchase.id ) }
+					href={ getManagePurchaseUrlFor( productPurchase.domain, productPurchase.ID ) }
 					onClick={ () =>
 						reduxDispatch(
 							recordTracksEvent( 'calypso_product_overlap_purchase_click', {
@@ -84,8 +87,8 @@ export default function ProductPlanOverlapNotices( {
 
 	// Which of the products we're interested in are currently purchased?
 	const currentProductSlugs = purchases
-		.filter( ( purchase ) => products.includes( purchase.productSlug ) )
-		.map( ( purchase ) => purchase.productSlug );
+		.filter( ( purchase ) => products.includes( purchase.product_slug ) )
+		.map( ( purchase ) => purchase.product_slug );
 
 	// Does the current plan include any of those products as a feature, or have a superior version of it?
 	const overlappingProductSlugs =
@@ -106,13 +109,12 @@ export default function ProductPlanOverlapNotices( {
 		! (
 			currentPurchase &&
 			isJetpackProduct( currentPurchase ) &&
-			! overlappingProductSlugs.includes( currentPurchase.productSlug )
+			! overlappingProductSlugs.includes( currentPurchase.product_slug )
 		);
 
 	return (
 		<>
 			<QuerySitePlans siteId={ selectedSiteId } />
-			<QuerySitePurchases siteId={ selectedSiteId } />
 			<QueryProductsList />
 
 			{ showOverlap && (

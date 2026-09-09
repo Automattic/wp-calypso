@@ -18,7 +18,6 @@ export type OdieAssistantContextInterface = {
 	hasUserEverEscalatedToHumanSupport: boolean;
 	isMinimized?: boolean;
 	isUserEligibleForPaidSupport: boolean;
-	odieBroadcastClientId: string;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
@@ -27,6 +26,7 @@ export type OdieAssistantContextInterface = {
 	externalChatId?: string | null;
 	forceEmailSupport: boolean;
 	isChatRestricted: boolean;
+	launcherContext?: string;
 	setExperimentVariationName: ( variationName: string | null | undefined ) => void;
 	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
 	setChatStatus: ( status: ChatStatus ) => void;
@@ -53,6 +53,7 @@ export type OdieAssistantProviderProps = {
 	version?: string | null;
 	forceEmailSupport?: boolean;
 	isChatRestricted?: boolean;
+	launcherContext?: string;
 	children?: ReactNode;
 	setChatStatus?: ( status: ChatStatus ) => void;
 } & PropsWithChildren;
@@ -212,6 +213,7 @@ export type MessageAction = {
 	metadata: ChatFeedbackActions;
 	label: string;
 	onClick: () => void;
+	uri?: string;
 };
 
 export type OdieMessage = {

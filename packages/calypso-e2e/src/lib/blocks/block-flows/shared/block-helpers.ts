@@ -88,9 +88,18 @@ export async function labelFormFieldBlock(
 	if ( isRefactor && parentBlockName ) {
 		scope = scope.locator( makeSelectorFromBlockName( parentBlockName ) );
 	}
-	await scope
-		.locator( makeSelectorFromBlockName( blockName ) )
-		.getByRole( 'textbox', { name: accessibleLabelName } )
-		.first()
-		.fill( labelText );
+	const fieldBlock = scope.locator( makeSelectorFromBlockName( blockName ) );
+	const labelInput = fieldBlock.getByRole( 'textbox', { name: accessibleLabelName } ).first();
+	// The editor re-renders the field after the fill and can drop what was typed without the
+	// fill itself reporting anything. Read the label back and type it once more; left
+	// unchecked the flow publishes an unlabelled field and fails a minute later, on an
+	// assertion that cannot say which step lost the label.
+	const labelled = fieldBlock.getByText( labelText, { exact: true } ).first();
+	await labelInput.fill( labelText );
+	try {
+		await labelled.waitFor( { timeout: 5 * 1000 } );
+	} catch {
+		await labelInput.fill( labelText );
+		await labelled.waitFor( { timeout: 5 * 1000 } );
+	}
 }

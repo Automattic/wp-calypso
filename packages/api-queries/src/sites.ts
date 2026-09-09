@@ -34,3 +34,13 @@ export const paginatedSitesQuery = (
 };
 
 export const allSitesQuery = () => sitesQuery( 'all' );
+
+export const hasDeletedSitesQuery = () =>
+	queryOptions( {
+		...paginatedSitesQuery( 'all', {
+			site_visibility: 'deleted',
+			include_a8c_owned: false,
+			per_page: 1,
+		} ),
+		select: ( data ) => data.total > 0,
+	} );

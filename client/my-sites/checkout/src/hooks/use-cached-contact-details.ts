@@ -71,6 +71,12 @@ function convertSnakeCaseContactDetailsExtraToCamelCase(
 			trademarkNumber: extra.fr?.trademark_number,
 			sirenSiret: extra.fr?.siren_siret,
 		},
+		in: {
+			nexusDeclaration: extra.in?.nexus_declaration
+				? String( extra.in.nexus_declaration )
+				: undefined,
+			nexusConnectionType: extra.in?.nexus_connection_type,
+		},
 	};
 }
 

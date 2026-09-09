@@ -78,6 +78,7 @@ jest.mock( '../../store', () => ( {
 		EditorSidebar: 'editor_sidebar',
 		JetpackExternalMediaBlock: 'jetpack_external_media_block',
 		JetpackExternalMediaFeaturedImage: 'jetpack_external_media_featured_image',
+		JetpackAIFeaturedImage: 'jetpack_ai_featured_image',
 		PostEditorFeatureClip: 'post_editor_feature_clip',
 	},
 } ) );
@@ -250,6 +251,25 @@ describe( 'Header', () => {
 					getIsAnnotationMode: () => false,
 					getDraftIds: () => [],
 					getEntryPoint: () => ImageStudioEntryPoint.EditorBlock,
+				} ) );
+				return result;
+			} );
+
+			render( <Header { ...defaultProps } mode={ ImageStudioMode.Edit } /> );
+
+			expect( screen.getByRole( 'button', { name: /Save and apply/i } ) ).toHaveTextContent(
+				'Save & Apply'
+			);
+		} );
+
+		it( 'renders save button with "Save & Apply" text for the JetpackAIFeaturedImage entry point', () => {
+			mockUseSelect.mockImplementation( ( selector: any ) => {
+				const result = selector( () => ( {
+					getImageStudioAiProcessing: () => false,
+					getHasUpdatedMetadata: () => false,
+					getIsAnnotationMode: () => false,
+					getDraftIds: () => [],
+					getEntryPoint: () => ImageStudioEntryPoint.JetpackAIFeaturedImage,
 				} ) );
 				return result;
 			} );

@@ -59,6 +59,7 @@ import {
 	OtherRenewablePurchasesNotice,
 	shouldShowOtherRenewablePurchasesNotice,
 } from './other-renewable-purchases-notice';
+import { PartnerManagedNotice } from './partner-managed-notice';
 import { PurchaseCancelledNotice } from './purchase-cancelled-notice';
 import { PurchaseExpiringNotice, shouldShowExpiringNotice } from './purchase-expiring-notice';
 import { RenewNoticeAction, shouldShowRenewNoticeAction } from './renew-notice-action';
@@ -221,10 +222,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		);
 	}
 
-	// Persistent warning notice when a delayed downgrade is pending. Left ungated
-	// by `plans/delayed-downgrade` so a scheduled downgrade (and its cancel
-	// button) always stays visible, even if the flag is turned off as a kill
-	// switch while a downgrade is pending.
+	// Persistent warning notice when a delayed downgrade is pending.
 	if ( purchase.is_delayed_downgrade_pending ) {
 		const slug = purchase.delayed_downgrade_to_product_slug;
 		const planNames = getPlanNames() as Record< string, string | undefined >;
@@ -332,6 +330,13 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		return <ConciergeConsumedNotice />;
 	}
 
+	// Takes precedence over every notice below, including the expiry ones: those
+	// all push the customer toward a renewal or a payment method that the partner
+	// controls rather than WordPress.com.
+	if ( purchase.is_partner_managed ) {
+		return <PartnerManagedNotice purchase={ purchase } />;
+	}
+
 	// A plan that is expiring, expired, or otherwise at risk of not renewing
 	// takes precedence over everything below: it is the one thing on this page
 	// that needs the customer to act.
@@ -371,13 +376,11 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 
 	if ( shouldShowExpiredRenewNotice( purchase, purchaseAttachedTo ) ) {
 		return (
-			<>
-				<ExpiredRenewNotice
-					purchase={ purchase }
-					purchaseAttachedTo={ purchaseAttachedTo }
-					refunded={ refunded }
-				/>
-			</>
+			<ExpiredRenewNotice
+				purchase={ purchase }
+				purchaseAttachedTo={ purchaseAttachedTo }
+				refunded={ refunded }
+			/>
 		);
 	}
 

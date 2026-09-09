@@ -1,5 +1,7 @@
 import { DomainAvailabilityStatus, fetchDomainAvailability } from '@automattic/api-core';
 import { ART_PROMO_FLOW, addProductsToCart } from '@automattic/onboarding';
+import { navigateToLandingPage } from 'calypso/lib/landing-page';
+import { useDispatch } from 'calypso/state';
 import { useQuery } from '../../../hooks/use-query';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
@@ -19,10 +21,11 @@ const artPromoFlow: FlowV2< typeof initialize > = {
 		const flowName = this.name;
 		const queryParams = useQuery();
 		const domain = queryParams.get( 'new' ) || '';
+		const dispatch = useDispatch();
 
 		const submit = async () => {
 			if ( ! domain ) {
-				return window.location.assign( '/' );
+				return dispatch( navigateToLandingPage() );
 			}
 
 			const availability = await fetchDomainAvailability( domain, {

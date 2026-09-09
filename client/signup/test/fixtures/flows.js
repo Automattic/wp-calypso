@@ -1,21 +1,21 @@
 export default {
 	main: {
-		steps: [ 'user', 'site' ],
+		steps: [ 'user', 'domains' ],
 		destination: '/',
 	},
 
 	account: {
-		steps: [ 'user', 'site' ],
+		steps: [ 'user', 'domains' ],
 		destination: '/',
 	},
 
 	other: {
-		steps: [ 'user', 'site' ],
+		steps: [ 'user', 'domains' ],
 		destination: '/',
 	},
 
 	filtered: {
-		steps: [ 'user', 'site' ],
+		steps: [ 'user', 'domains' ],
 		destination: '/',
 	},
 

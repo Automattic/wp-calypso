@@ -10,6 +10,7 @@ import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
 import FileSectionPanelBody from './file-section-panel-body';
+import WooSubscriptionsNotice from './woo-subscriptions-notice';
 
 function SiteBackupGranularRestoreForm( {
 	siteId,
@@ -100,6 +101,12 @@ function SiteBackupGranularRestoreForm( {
 				<Notice variant="info" title={ __( 'Important' ) }>
 					{ restoreWarning }
 				</Notice>
+
+				<WooSubscriptionsNotice
+					siteId={ siteId }
+					rewindId={ rewindId }
+					includesDatabase={ hasSelectedTables }
+				/>
 
 				<ButtonStack justify="flex-start">
 					<Button

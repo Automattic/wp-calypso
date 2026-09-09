@@ -1,0 +1,41 @@
+@import 'calypso/assets/stylesheets/shared/functions/z-index';
+
+body #wpcom-omnibar {
+	position: fixed;
+	top: 0;
+	inset-inline: 0;
+	z-index: z-index( 'root', '.masterbar' );
+}
+
+body:has( .omnibar:not( .is-support-session ) ) {
+	--omnibar-background: var( --color-masterbar-background );
+	--omnibar-menu-active-background: var( --color-masterbar-item-hover-background );
+	--omnibar-submenu-background: var( --color-masterbar-item-hover-background );
+	--omnibar-text-color: var( --color-masterbar-text );
+	--omnibar-submenu-text-color: var( --color-masterbar-submenu-text );
+	--omnibar-highlight-color: var( --color-masterbar-highlight );
+	--omnibar-submenu-highlight-color: var(
+		--color-masterbar-submenu-hover-text,
+		var( --color-masterbar-highlight )
+	);
+	--omnibar-icon-color: var( --color-masterbar-icon );
+	--omnibar-avatar-ring-color: var( --color-masterbar-border );
+	--omnibar-avatar-background: var(
+		--color-masterbar-avatar-background,
+		var( --color-masterbar-border )
+	);
+	--omnibar-secondary-group-background: var( --color-masterbar-submenu-group-background );
+}
+
+.omnibar:not( .is-support-session ) .omnibar__notifications-unread-dot {
+	fill: var( --color-masterbar-unread-dot-background );
+}
+
+.omnibar__popover a:visited {
+	color: var( --omnibar-submenu-text-color );
+}
+
+.masterbar-omnibar-placeholder {
+	height: var( --masterbar-height );
+	background: var( --color-masterbar-background, #1e1e1e );
+}

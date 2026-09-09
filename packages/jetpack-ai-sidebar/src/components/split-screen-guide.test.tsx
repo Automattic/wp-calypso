@@ -3,7 +3,7 @@
  */
 
 import '@testing-library/jest-dom';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { trackSplitScreenGuideClick, trackSplitScreenGuideRendered } from '../utils/tracking';
 import SplitScreenGuide from './split-screen-guide';
@@ -37,8 +37,8 @@ jest.mock( '@wordpress/i18n', () => ( {
 } ) );
 
 jest.mock( '../utils/tracking', () => ( {
-	trackSplitScreenGuideClick: jest.fn(),
-	trackSplitScreenGuideRendered: jest.fn(),
+	trackSplitScreenGuideClick: jest.fn( () => true ),
+	trackSplitScreenGuideRendered: jest.fn( () => true ),
 } ) );
 
 const mockTrackSplitScreenGuideClick = trackSplitScreenGuideClick as jest.MockedFunction<
@@ -85,6 +85,52 @@ describe( 'SplitScreenGuide', () => {
 			componentType: 'post-feedback',
 		} );
 		expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( true );
+	} );
+
+	it( 'passes the tool call through to both guide events', () => {
+		render( <SplitScreenGuide componentType="proofread" toolCallId="tool-call-1" /> );
+		expect( mockTrackSplitScreenGuideRendered ).toHaveBeenCalledWith( {
+			componentType: 'proofread',
+			toolCallId: 'tool-call-1',
+		} );
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Switch to split screen mode' } ) );
+		expect( mockTrackSplitScreenGuideClick ).toHaveBeenCalledWith( {
+			componentType: 'proofread',
+			toolCallId: 'tool-call-1',
+		} );
+	} );
+
+	it( 'retries the impression on the next task after a same-commit republish', () => {
+		jest.useFakeTimers();
+		try {
+			mockTrackSplitScreenGuideRendered.mockReturnValueOnce( false );
+			render( <SplitScreenGuide componentType="proofread" /> );
+			expect( mockTrackSplitScreenGuideRendered ).toHaveBeenCalledTimes( 1 );
+
+			act( () => {
+				jest.runOnlyPendingTimers();
+			} );
+			expect( mockTrackSplitScreenGuideRendered ).toHaveBeenCalledTimes( 2 );
+		} finally {
+			jest.useRealTimers();
+		}
+	} );
+
+	it( 'retries the impression once the dock republishes the recorder', () => {
+		mockTrackSplitScreenGuideRendered.mockReturnValueOnce( false );
+		render( <SplitScreenGuide componentType="proofread" /> );
+		expect( mockTrackSplitScreenGuideRendered ).toHaveBeenCalledTimes( 1 );
+
+		act( () => {
+			window.dispatchEvent( new CustomEvent( 'agents-manager-ready' ) );
+		} );
+		expect( mockTrackSplitScreenGuideRendered ).toHaveBeenCalledTimes( 2 );
+
+		act( () => {
+			window.dispatchEvent( new CustomEvent( 'agents-manager-ready' ) );
+		} );
+		expect( mockTrackSplitScreenGuideRendered ).toHaveBeenCalledTimes( 2 );
 	} );
 
 	it( 'reappears after returning from split screen to the docked sidebar', () => {

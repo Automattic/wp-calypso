@@ -56,6 +56,11 @@ interface OneLoginLayoutProps {
 	 * default quiet ToS treatment.
 	 */
 	subHeadingProminent?: boolean;
+	/**
+	 * Rendered above the heading. Pass a component that returns `null` when it
+	 * has nothing to show, so the layout keeps its spacing.
+	 */
+	notice?: React.ReactNode;
 }
 
 const OneLoginLayout = ( {
@@ -71,6 +76,7 @@ const OneLoginLayout = ( {
 	columnWidth,
 	showLogo = true,
 	subHeadingProminent = false,
+	notice,
 }: OneLoginLayoutProps ) => {
 	const translate = useTranslate();
 	const urlLocale = useLocale();
@@ -86,7 +92,7 @@ const OneLoginLayout = ( {
 	const validatedHeadingText = ensureHeadingProvided( headingText );
 	const { topBarLogo } = usePartnerBranding();
 
-	const SignUpLink = () => {
+	const renderSignUpLink = () => {
 		// use '?signup_url' if explicitly passed as URL query param
 		const signupUrl: string = signupUrlProp
 			? window.location.origin + pathWithLeadingSlash( signupUrlProp )
@@ -112,7 +118,7 @@ const OneLoginLayout = ( {
 		);
 	};
 
-	const LoginLink = () => {
+	const renderLoginLink = () => {
 		if ( ! loginUrl ) {
 			return null;
 		}
@@ -124,7 +130,7 @@ const OneLoginLayout = ( {
 		);
 	};
 
-	const NoThanksLink = () => {
+	const renderNoThanksLink = () => {
 		if ( ! noThanksRedirectUrl ) {
 			return null;
 		}
@@ -147,8 +153,8 @@ const OneLoginLayout = ( {
 	const topBar = (): JSX.Element => {
 		const rightElement = (
 			<nav className="wp-login__one-login-layout-top-right">
-				{ isSectionSignup ? <LoginLink /> : <SignUpLink /> }
-				{ noThanksRedirectUrl && <NoThanksLink /> }
+				{ isSectionSignup ? renderLoginLink() : renderSignUpLink() }
+				{ renderNoThanksLink() }
 			</nav>
 		);
 
@@ -164,6 +170,7 @@ const OneLoginLayout = ( {
 			verticalAlign="center"
 		>
 			<div className="wp-login__one-login-layout-content-wrapper">
+				{ notice }
 				<div className="wp-login__one-login-layout-heading">
 					{ showLogo && (
 						<HeadingLogo

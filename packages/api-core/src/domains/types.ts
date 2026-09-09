@@ -1,3 +1,5 @@
+import type { DomainContactDetails } from '../domain-whois/types';
+
 export const DomainTypes = {
 	MAPPED: 'mapping',
 	SITE_REDIRECT: 'redirect',
@@ -91,7 +93,7 @@ export type BulkDomainsAction =
 			type: 'update-contact-info';
 			domains: string[];
 			transfer_lock: boolean;
-			whois: Record< string, string | undefined >;
+			whois: Omit< DomainContactDetails, 'optOutTransferLock' >;
 	  };
 
 export interface BulkDomainUpdateStatus {

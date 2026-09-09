@@ -8,6 +8,9 @@
 	background-color: var(--wp-components-color-gray-100, $gray-100);
 	border-radius: $radius-small;
 	padding: 4px;
+	// The icon box is taller than a text line, so pull it up to sit centred on the
+	// first line rather than a few pixels below it.
+	margin-block-start: -4px;
 
 	@include ui-mixins.when-dark-theme {
 		background-color: var(--wp-components-color-gray-200);

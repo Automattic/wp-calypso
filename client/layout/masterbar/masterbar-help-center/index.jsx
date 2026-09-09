@@ -25,7 +25,7 @@ const HELP_CENTER_STORE = HelpCenter.register();
 const MasterbarHelpCenter = ( { tooltip } ) => {
 	const translate = useTranslate();
 	const sectionName = useSelector( getSectionName );
-	const { site, siteContextSource } = useHelpCenterSite();
+	const { siteId, siteContextSource } = useHelpCenterSite();
 	const isNotificationsOpen = useSelector( ( state ) => getIsNotificationsOpen( state ) );
 	const prevIsNotificationsOpen = usePrevious( isNotificationsOpen );
 	const [ helpCenterPage, setHelpCenterPage ] = useState( null );
@@ -46,6 +46,24 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 	const isMenuPanelExperimentEnabled =
 		! isLoadingExperimentAssignment && experimentAssignment?.variationName === 'menu_popover';
 
+	// One impression per section view, so it divides cleanly into the click events
+	// below; site context is whatever has resolved by then.
+	useEffect( () => {
+		recordTracksEvent(
+			'calypso_inlinehelp_impression',
+			withSiteContext(
+				{
+					location: 'help-center',
+					entry_point: 'masterbar',
+					section: sectionName,
+				},
+				siteContextSource,
+				siteId
+			)
+		);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ sectionName ] );
+
 	const trackIconInteraction = () => {
 		recordTracksEvent(
 			`wpcom_help_center_icon_interaction`,
@@ -57,7 +75,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 					is_assignment_loaded: ! isLoadingExperimentAssignment,
 				},
 				siteContextSource,
-				site?.ID
+				siteId
 			)
 		);
 	};
@@ -73,7 +91,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 					section: sectionName,
 				},
 				siteContextSource,
-				site?.ID
+				siteId
 			)
 		);
 
@@ -103,7 +121,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 							section: sectionName,
 						},
 						siteContextSource,
-						site?.ID
+						siteId
 					)
 				);
 				setShowHelpCenter( false );
@@ -123,7 +141,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 						destination,
 					},
 					siteContextSource,
-					site?.ID
+					siteId
 				)
 			);
 		}

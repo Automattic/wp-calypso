@@ -1,6 +1,6 @@
 import { siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
-import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -9,11 +9,15 @@ import { useAppContext } from '../../app/context';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { siteRoute, siteDomainsRoute, siteSettingsRedirectRoute } from '../../app/router/sites';
-import { DataViews, DataViewsCard } from '../../components/dataviews';
+import {
+	DataViews,
+	DataViewsActionModal,
+	DataViewsCard,
+	useDeepLinkedDataViewsAction,
+} from '../../components/dataviews';
 import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import PendingPrimaryDomainNotice from '../../components/pending-primary-domain-notice';
 import AddDomainButton from '../../domains/add-domain-button';
 import {
 	useActions,
@@ -32,7 +36,6 @@ function getDomainId( domain: DomainSummary ) {
 }
 
 function SiteDomains() {
-	const queryClient = useQueryClient();
 	const { queries } = useAppContext();
 	const { siteSlug } = siteRoute.useParams();
 	const { user } = useAuth();
@@ -58,6 +61,14 @@ function SiteDomains() {
 	const actions = useActions( { user, sites: [ site ] } );
 
 	const searchParams = siteDomainsRoute.useSearch();
+	const navigate = useNavigate();
+
+	const deepLinkedAction = useDeepLinkedDataViewsAction( {
+		queryParams: searchParams,
+		navigate,
+		actions,
+		items: siteDomains,
+	} );
 
 	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'site-domains',
@@ -80,12 +91,6 @@ function SiteDomains() {
 					{ /* Action feedback, not an on-load banner: rendered outside the arbiter. */ }
 					{ bulkActionsNotice }
 					<SitesNoticeArbiter>
-						{ ! hasRedirect && pendingDomain && (
-							<PendingPrimaryDomainNotice
-								domainName={ pendingDomain.domain }
-								onComplete={ () => queryClient.invalidateQueries( queries.domainsQuery() ) }
-							/>
-						) }
 						{ ! hasRedirect && ! pendingDomain && (
 							<PrimaryDomainSelectorNotice domains={ siteDomains } site={ site } user={ user } />
 						) }
@@ -126,6 +131,7 @@ function SiteDomains() {
 					defaultLayouts={ DEFAULT_LAYOUTS }
 				/>
 			</DataViewsCard>
+			{ deepLinkedAction && <DataViewsActionModal { ...deepLinkedAction } /> }
 			<PerformanceTrackerStop />
 		</PageLayout>
 	);

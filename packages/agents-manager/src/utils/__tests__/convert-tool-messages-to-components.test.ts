@@ -2,6 +2,12 @@ function mockEscalationButton() {
 	return null;
 }
 
+const mockResponseAction = jest.fn();
+
+function mockCreateChatResponseActionCallback() {
+	return mockResponseAction;
+}
+
 jest.mock(
 	'@automattic/agenttic-client',
 	() => ( {
@@ -26,10 +32,16 @@ jest.mock( '../../components/font-picker', () => ( {
 	__esModule: true,
 	default: jest.fn( () => null ),
 } ) );
+jest.mock( '../../components/chat-response-tracking', () => ( {
+	__esModule: true,
+	default: jest.fn( () => null ),
+	createChatResponseActionCallback: mockCreateChatResponseActionCallback,
+} ) );
 
 import { render, waitFor } from '@testing-library/react';
 import { createElement } from '@wordpress/element';
 import ButtonPicker from '../../components/button-picker';
+import ChatResponseRenderedTracker from '../../components/chat-response-tracking';
 import ColorPicker from '../../components/color-picker';
 import FontPicker from '../../components/font-picker';
 import convertToolMessagesToComponents from '../convert-tool-messages-to-components';
@@ -155,11 +167,23 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'renders tool messages as components', () => {
-		const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
-			type: 'my-component',
-			props: { name: 'test' },
-			summary: 'Choose one of these options.',
-			isCurrent: true,
+		const message = createMessage( {
+			content: [
+				{
+					type: 'text',
+					text: JSON.stringify( {
+						tool_id: SHOW_COMPONENT_TOOL_ID,
+						tool_call_id: 'tool-call-1',
+						data: {
+							type: 'my-component',
+							props: { name: 'test' },
+							responseTrackingProperties: { suggested_edit_count: 2 },
+							summary: 'Choose one of these options.',
+							isCurrent: true,
+						},
+					} ),
+				},
+			],
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
@@ -180,6 +204,18 @@ describe( 'convertToolMessagesToComponents', () => {
 				name: 'test',
 				summary: 'Choose one of these options.',
 				contentType: 'my-component',
+				toolCallId: 'tool-call-1',
+				onResponseAction: mockResponseAction,
+			},
+		} );
+		expect( result[ 0 ].content[ 2 ] ).toMatchObject( {
+			type: 'component',
+			component: ChatResponseRenderedTracker,
+			componentProps: {
+				componentType: 'my-component',
+				toolId: SHOW_COMPONENT_TOOL_ID,
+				toolCallId: 'tool-call-1',
+				responseTrackingProperties: { suggested_edit_count: 2 },
 			},
 		} );
 	} );
@@ -236,9 +272,12 @@ describe( 'convertToolMessagesToComponents', () => {
 			getChatComponent,
 		} );
 
-		expect( result[ 0 ].content ).toHaveLength( 1 );
+		expect( result[ 0 ].content ).toHaveLength( 2 );
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( { type: 'component' } );
 		expect( result[ 0 ].content[ 0 ].componentProps.summary ).toBeUndefined();
+		expect( result[ 0 ].content[ 1 ] ).toMatchObject( {
+			component: ChatResponseRenderedTracker,
+		} );
 	} );
 
 	it( 'does not suppress the thinking indicator for component messages with follow-up tasks', () => {
@@ -273,6 +312,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
 		// History rows carry no `isCurrent`, so the message renders inert.
 		expect( result[ 0 ].disabled ).toBe( true );
+		expect( result[ 0 ].content ).toHaveLength( 1 );
 	} );
 
 	it( 'renders the notice for prototype-member component types', () => {
@@ -326,22 +366,6 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 1 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
 		// Message actions are resolved before conversion and must survive it.
 		expect( result[ 0 ].actions ).toEqual( actions );
-	} );
-
-	it( 'renders the start-over notice for the legacy start-over tool', () => {
-		const message = createToolMessage( 'big_sky__client_assistants', {
-			assistantId: 'big-sky-site-admin',
-		} );
-
-		const result = convertToolMessagesToComponents( {
-			messages: [ message ],
-		} );
-
-		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].content[ 0 ] ).toEqual( {
-			type: 'text',
-			text: 'To start over, please send your request again.',
-		} );
 	} );
 
 	it.each( [
@@ -583,6 +607,122 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ].content ).toEqual( [
 			{ type: 'text', text: 'Corrected one misspelling.' },
 		] );
+	} );
+
+	describe( 'pending visual check', () => {
+		const pendingCheckOutcome = ( overrides?: Partial< UIMessage > ) =>
+			createApplyBlockEditsMessage(
+				'tool-call-1',
+				{
+					result: {
+						success: true,
+						message: 'Corrected one misspelling.',
+						outcome: 'updated',
+					},
+					followUpTasks: false,
+					visualCheckPending: true,
+				},
+				{ id: 'applied-outcome', ...overrides }
+			);
+
+		it( 'withholds the summary while the reply is outstanding', () => {
+			const result = convertToolMessagesToComponents( {
+				messages: [ pendingCheckOutcome() ],
+				isProcessing: true,
+			} );
+
+			expect( result ).toEqual( [] );
+		} );
+
+		it( 'restores the summary and keeps the deferred reply once it arrives', () => {
+			const prose = createMessage( {
+				id: 'prose',
+				content: [
+					{ type: 'text', text: 'I looked at the result and the heading is aligned now.' },
+				],
+			} );
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ pendingCheckOutcome(), prose ],
+				isProcessing: true,
+			} );
+
+			expect( result ).toHaveLength( 2 );
+			expect( result[ 0 ].content ).toEqual( [
+				{ type: 'text', text: 'Corrected one misspelling.' },
+			] );
+			expect( result[ 1 ].id ).toBe( 'prose' );
+		} );
+
+		it( 'restores the summary when the turn ends without a reply', () => {
+			const nextTurn = createMessage( {
+				id: 'next-turn',
+				role: 'user',
+				content: [ { type: 'text', text: 'Now change the footer.' } ],
+			} );
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ pendingCheckOutcome(), nextTurn ],
+				isProcessing: true,
+			} );
+
+			expect( result ).toHaveLength( 2 );
+			expect( result[ 0 ].content ).toEqual( [
+				{ type: 'text', text: 'Corrected one misspelling.' },
+			] );
+		} );
+
+		// The flag can promise a check the ability will not run — the per-turn look
+		// budget is invisible to it — so a stopped stream must not swallow the edit.
+		it( 'restores the summary once the stream stops', () => {
+			const result = convertToolMessagesToComponents( {
+				messages: [ pendingCheckOutcome() ],
+				isProcessing: false,
+			} );
+
+			expect( result ).toHaveLength( 1 );
+			expect( result[ 0 ].content ).toEqual( [
+				{ type: 'text', text: 'Corrected one misspelling.' },
+			] );
+		} );
+
+		it( 'keeps waiting across an intervening tool message', () => {
+			const laterTool = createToolMessage(
+				'big_sky__editor_navigate',
+				{ summary: 'Opened the homepage.' },
+				{ id: 'later-tool' }
+			);
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ pendingCheckOutcome(), laterTool ],
+				isProcessing: true,
+			} );
+
+			expect( result ).toHaveLength( 1 );
+			expect( result[ 0 ].id ).toBe( 'later-tool' );
+		} );
+
+		it( 'ignores the flag for a no-change outcome', () => {
+			const noChangeOutcome = createApplyBlockEditsMessage(
+				'tool-call-1',
+				{
+					result: {
+						success: true,
+						message: 'The requested changes were already applied.',
+						outcome: 'no-changes',
+					},
+					visualCheckPending: true,
+				},
+				{ id: 'no-change-outcome' }
+			);
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ noChangeOutcome ],
+				isProcessing: true,
+			} );
+
+			expect( result[ 0 ].content ).toEqual( [ { type: 'text', text: '✓ No changes needed' } ] );
+		} );
 	} );
 
 	it( 'filters out unsuccessful apply-block-edits tool summaries', () => {
@@ -853,12 +993,54 @@ describe( 'convertToolMessagesToComponents', () => {
 			expect( result[ 0 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
 			const componentProps = (
 				result[ 0 ].content[ 0 ] as {
-					componentProps?: { isMessageStale?: boolean };
+					componentProps?: {
+						isMessageStale?: boolean;
+						onResponseAction?: typeof mockResponseAction;
+					};
 				}
 			 ).componentProps;
 			expect( componentProps?.isMessageStale === true ).toBe( disabled );
+			expect( componentProps?.onResponseAction ).toBe( disabled ? undefined : mockResponseAction );
+			expect(
+				result[ 0 ].content.some(
+					( content ) =>
+						content.type === 'component' && content.component === ChatResponseRenderedTracker
+				)
+			).toBe( ! disabled );
 		}
 	);
+
+	it( 'replaces a provider-supplied action callback with the host callback', () => {
+		const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
+			type: 'my-component',
+			props: { onResponseAction: 'untrusted-value' },
+			isCurrent: true,
+		} );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+			getChatComponent,
+		} );
+
+		expect( result[ 0 ].content[ 0 ].componentProps.onResponseAction ).toBe( mockResponseAction );
+	} );
+
+	it( 'removes a provider-supplied action callback from stale responses', () => {
+		const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
+			type: 'my-component',
+			props: { onResponseAction: 'untrusted-value' },
+			isCurrent: false,
+		} );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+			getChatComponent,
+		} );
+
+		expect( result[ 0 ].content[ 0 ].componentProps.onResponseAction ).toBeUndefined();
+	} );
 
 	describe( 'AM-owned components', () => {
 		// The AM components are lazy wrappers, so the assertion renders the

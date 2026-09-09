@@ -10,6 +10,19 @@ import {
 } from '@automattic/calypso-e2e';
 import { expect, tags as allTags, test } from '../../../lib/pw-base';
 
+// Publishing a post carrying a synced form saves two entities. On Atomic the second save
+// regularly outruns the cap that predates it, so only Atomic gets the longer one; Simple keeps
+// the tighter bound, where it still catches a regression.
+//
+// 60s was not enough: the Jetpack Forms flows overran it on the private variation, where four
+// workers share one site. Both values stay well inside the per-test budget set below.
+//
+// The tighter bound is 30s because publishing through the multi-entity save panel costs ~16s
+// locally and ~19s on CI: two 5s waits on panels that never open, either side of the entity save
+// and the publish itself.
+const PUBLISH_TIMEOUT = 30 * 1000;
+const ATOMIC_PUBLISH_TIMEOUT = 120 * 1000;
+
 /**
  * Creates a suite of block smoke tests for a set of block flows.
  *
@@ -33,6 +46,11 @@ export function createBlockTests(
 		] );
 
 		test( `${ specName }: smoke test blocks`, async ( { page, pageEditor } ) => {
+			// One test adds, configures and validates every flow in the list. The fixed cost —
+			// authenticate, load the editor on Atomic, publish — dominates and is what overruns the
+			// default, so most of the budget sits in the base and each flow adds a smaller share.
+			test.setTimeout( 180_000 + blockFlows.length * 45_000 );
+
 			let editorContext: EditorContext;
 			let publishedPostContext: PublishedPostContext;
 
@@ -88,7 +106,10 @@ export function createBlockTests(
 			}
 
 			await test.step( 'When I publish and visit the post', async () => {
-				await pageEditor.publish( { visit: true, timeout: 15 * 1000 } );
+				await pageEditor.publish( {
+					visit: true,
+					timeout: envVariables.TEST_ON_ATOMIC ? ATOMIC_PUBLISH_TIMEOUT : PUBLISH_TIMEOUT,
+				} );
 				publishedPostContext = {
 					browser: page.context().browser()!,
 					page,

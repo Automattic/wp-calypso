@@ -38,9 +38,11 @@ import {
 	isA4ABillingDragonPurchase,
 	isA4AHoldingSitePurchase,
 	isAkismetHoldingSitePurchase,
+	isFreeTrialEndingOnExpiryDate,
 	isJetpackHoldingSitePurchase,
 	isMarketplaceHoldingSitePurchase,
 	isPartnerPurchase,
+	isStudioCodeHoldingSitePurchase,
 	isTransferredOwnership,
 } from 'calypso/dashboard/utils/purchase';
 import {
@@ -52,7 +54,6 @@ import {
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { handleRenewNowClick } from 'calypso/lib/purchases';
-import { createPurchaseObject } from 'calypso/lib/purchases/assembler';
 import {
 	getDisplayName,
 	isExpiredOrRemoved,
@@ -68,8 +69,6 @@ import {
 	creditCardExpiresBeforeSubscription,
 	creditCardHasAlreadyExpired,
 	getPartnerName,
-	isWithinIntroductoryOfferPeriod,
-	isIntroductoryOfferFreeTrial,
 	hasPaymentMethod,
 	isPaidWithCredits,
 	mightStillAutoRenew,
@@ -432,19 +431,11 @@ function UrgentExpiryStatus( {
 					// listing page can run on other hosts like Jetpack Cloud and A4A.
 					const backUrl = window.location.href;
 					dispatch(
-						// Temporary bridge (SHILL-2256): handleRenewNowClick still expects
-						// the camelCase Purchase. Remove once it reads the raw shape.
-						handleRenewNowClick(
-							createPurchaseObject(
-								purchase as unknown as Parameters< typeof createPurchaseObject >[ 0 ]
-							),
-							purchase.site_slug ?? '',
-							{
-								redirectTo: backUrl,
-								cancelTo: backUrl,
-								tracksProps: { position: 'purchase-list' },
-							}
-						)
+						handleRenewNowClick( purchase, purchase.site_slug ?? '', {
+							redirectTo: backUrl,
+							cancelTo: backUrl,
+							tracksProps: { position: 'purchase-list' },
+						} )
 					);
 				} }
 			>
@@ -505,6 +496,7 @@ export function PurchaseItemStatus( {
 		isDisconnectedSite &&
 		! isAkismetHoldingSitePurchase( purchase ) &&
 		! isMarketplaceHoldingSitePurchase( purchase ) &&
+		! isStudioCodeHoldingSitePurchase( purchase ) &&
 		! isA4AHoldingSitePurchase( purchase ) &&
 		! isA4ABillingDragonPurchase( purchase )
 	) {
@@ -573,11 +565,7 @@ export function PurchaseItemStatus( {
 		);
 	}
 
-	if (
-		isWithinIntroductoryOfferPeriod( purchase ) &&
-		isIntroductoryOfferFreeTrial( purchase ) &&
-		! isExpiredOrRemoved( purchase )
-	) {
+	if ( isFreeTrialEndingOnExpiryDate( purchase ) && ! isExpiredOrRemoved( purchase ) ) {
 		if ( isRenewingBeforeExpiration( purchase ) ) {
 			return translate(
 				'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}}',

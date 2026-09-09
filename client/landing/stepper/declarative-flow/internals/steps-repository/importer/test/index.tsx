@@ -2,9 +2,11 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { useSiteResolution } from 'calypso/landing/stepper/hooks/use-site-resolution';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { requestSites } from 'calypso/state/sites/actions';
 import { withImporterWrapper } from '../index';
 import type { ImporterCompType } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -70,7 +72,7 @@ jest.mock( 'calypso/components/data/query-sites', () => ( { siteId }: { siteId: 
 ) );
 
 jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
-	useQuery: () => new URLSearchParams(),
+	useQuery: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/landing/stepper/hooks/use-save-hosting-flow-path-step', () => ( {
@@ -147,6 +149,10 @@ jest.mock( 'calypso/state/sites/selectors', () => ( {
 	isRequestingSite: ( state: typeof mockState ) => state.siteRequesting,
 } ) );
 
+jest.mock( 'calypso/state/sites/actions', () => ( {
+	requestSites: jest.fn( () => ( { type: 'SITES_REQUEST' } ) ),
+} ) );
+
 jest.mock( '../hooks/use-atomic-transfer-query-param-update', () => ( {
 	useAtomicTransferQueryParamUpdate: jest.fn(),
 } ) );
@@ -188,7 +194,7 @@ function setSiteData( overrides: Partial< ReturnType< typeof useSiteData > > = {
 	} );
 }
 
-describe( 'withImporterWrapper site loading', () => {
+describe.each( [ '', 'playground=true' ] )( 'withImporterWrapper site loading (?%s)', ( query ) => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockState = {
@@ -198,7 +204,14 @@ describe( 'withImporterWrapper site loading', () => {
 			canImport: true,
 		};
 		setSiteData();
+		jest.mocked( useQuery ).mockReturnValue( new URLSearchParams( query ) );
 		( useSiteResolution as jest.Mock ).mockReturnValue( true );
+	} );
+
+	it( 'does not request the full sites list', () => {
+		render( <WrappedImporter { ...props } /> );
+
+		expect( requestSites ).not.toHaveBeenCalled();
 	} );
 
 	it( 'waits for the current-site resolution before showing a missing-site state', () => {

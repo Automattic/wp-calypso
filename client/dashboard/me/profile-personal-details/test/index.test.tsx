@@ -303,7 +303,7 @@ describe( '<PersonalDetailsSection>', () => {
 			expect( await screen.findByText( /lose access to account recovery/i ) ).toBeVisible();
 		} );
 
-		test( 'links to the account recovery settings page', async () => {
+		test( 'shows a CTA linking to the account recovery settings page', async () => {
 			mockUserSettings( {
 				...settings,
 				user_email: 'jane@mycustomdomain.com',
@@ -314,7 +314,7 @@ describe( '<PersonalDetailsSection>', () => {
 			render( <PersonalDetailsSection /> );
 
 			expect(
-				await screen.findByRole( 'link', { name: /set up a recovery email or phone number/i } )
+				await screen.findByRole( 'link', { name: /set up account recovery/i } )
 			).toHaveAttribute( 'href', '/me/security/account-recovery' );
 		} );
 

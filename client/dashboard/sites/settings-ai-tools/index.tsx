@@ -11,7 +11,6 @@ import {
 	userSettingsQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { Badge } from '@automattic/ui';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -36,6 +35,7 @@ import {
 	seen,
 	termDescription,
 } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import { useState } from 'react';
 import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
 import {
@@ -61,9 +61,15 @@ import { SectionHeader } from '../../components/section-header';
 import SummaryButton from '../../components/summary-button';
 import { SummaryButtonList } from '../../components/summary-button-list';
 import { isWriteTool } from '../../me/mcp/categories';
-import { wpcomLink } from '../../utils/link';
+import {
+	getAgentEmailAddress,
+	getAgentEmailVCardDataUrl,
+	getAgentEmailVCardFileName,
+} from '../../utils/wordpress-agent-email';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
 import upsellIllustrationUrl from './upsell-illustration.svg';
+
+export { getAgentEmailAddress, getAgentEmailVCard } from '../../utils/wordpress-agent-email';
 
 interface McpAbility {
 	title: string;
@@ -75,37 +81,37 @@ interface McpAbility {
 
 function getReadBadge( tools: Array< [ string, McpAbility ] > ) {
 	if ( tools.length === 0 ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
 	if ( enabledCount === tools.length ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'Disabled' ) };
+		return { text: __( 'Disabled' ), intent: 'draft' as const };
 	}
 	return {
 		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
 		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, tools.length ),
-		intent: 'info' as const,
+		intent: 'informational' as const,
 	};
 }
 
 function getWriteBadge( tools: Array< [ string, McpAbility ] > ) {
 	if ( tools.length === 0 ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
 	if ( enabledCount === tools.length ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'Disabled' ) };
+		return { text: __( 'Disabled' ), intent: 'draft' as const };
 	}
 	return {
 		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
 		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, tools.length ),
-		intent: 'info' as const,
+		intent: 'informational' as const,
 	};
 }
 
@@ -117,80 +123,17 @@ const features = [
 ];
 
 const upgradeRequiredText = __( 'Upgrade your plan to enable this setting.' );
-const upgradeRequiredBadge = { text: __( 'Upgrade required' ), intent: 'info' as const };
+const upgradeRequiredBadge = { text: __( 'Upgrade required' ), intent: 'informational' as const };
 
 function UpgradeRequiredBadge() {
 	return (
 		<Tooltip text={ upgradeRequiredText } placement="top">
-			<Badge intent="info">{ upgradeRequiredBadge.text }</Badge>
+			<Badge intent={ upgradeRequiredBadge.intent }>{ upgradeRequiredBadge.text }</Badge>
 		</Tooltip>
 	);
 }
 
-const TELEGRAM_CONNECTION_PATH = '/me/developer';
-
-const INVALID_POST_BY_EMAIL_VALUES = new Set( [
-	'',
-	'null',
-	'noop',
-	'create',
-	'regenerate',
-	'delete',
-] );
-
-export function getAgentEmailAddress( postByEmailAddress?: string | null ) {
-	const trimmedAddress = postByEmailAddress?.trim() ?? '';
-	const normalizedAddress = trimmedAddress.toLowerCase();
-
-	if ( INVALID_POST_BY_EMAIL_VALUES.has( normalizedAddress ) ) {
-		return null;
-	}
-
-	const [ localPart, domain, ...extraParts ] = trimmedAddress.split( '@' );
-
-	if ( ! localPart || ! domain || extraParts.length > 0 ) {
-		return null;
-	}
-
-	const agentLocalPart = localPart.startsWith( 'agent+' ) ? localPart : `agent+${ localPart }`;
-
-	return `${ agentLocalPart }@${ domain }`;
-}
-
-function escapeVCardValue( value: string ) {
-	return value
-		.replace( /\\/g, '\\\\' )
-		.replace( /\r\n|\r|\n/g, '\\n' )
-		.replace( /,/g, '\\,' )
-		.replace( /;/g, '\\;' );
-}
-
-export function getAgentEmailVCard( siteDomain: string, agentEmailAddress: string ) {
-	const escapedSiteDomain = escapeVCardValue( siteDomain );
-	const escapedAgentEmailAddress = escapeVCardValue( agentEmailAddress );
-
-	return [
-		'BEGIN:VCARD',
-		'VERSION:3.0',
-		`FN:${ escapedSiteDomain }`,
-		`N:${ escapedSiteDomain };;;;`,
-		`EMAIL;TYPE=INTERNET:${ escapedAgentEmailAddress }`,
-		'END:VCARD',
-		'',
-	].join( '\r\n' );
-}
-
-function getVCardDataUrl( siteDomain: string, agentEmailAddress: string ) {
-	return `data:text/vcard;charset=utf-8,${ encodeURIComponent(
-		getAgentEmailVCard( siteDomain, agentEmailAddress )
-	) }`;
-}
-
-function getVCardFileName( siteDomain: string ) {
-	const fileName = siteDomain.replace( /[^a-z0-9.-]+/gi, '-' ).replace( /^-+|-+$/g, '' );
-
-	return `${ fileName || 'ai-agent' }.vcf`;
-}
+const TELEGRAM_CONNECTION_PATH = '/me/agent';
 
 function EmailAssistantCard( {
 	site,
@@ -207,8 +150,10 @@ function EmailAssistantCard( {
 	} );
 	const agentEmailAddress = getAgentEmailAddress( postByEmailSettings?.post_by_email_address );
 	const isAgentEmailEnabled = !! agentEmailAddress;
-	const vCardHref = agentEmailAddress ? getVCardDataUrl( site.slug, agentEmailAddress ) : undefined;
-	const vCardFileName = getVCardFileName( site.slug );
+	const vCardHref = agentEmailAddress
+		? getAgentEmailVCardDataUrl( site.slug, agentEmailAddress )
+		: undefined;
+	const vCardFileName = getAgentEmailVCardFileName( site.slug );
 
 	const emailAddressMutation = useMutation(
 		withSnackbar( sitePostByEmailSettingsMutation( site ), {
@@ -355,8 +300,8 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const hasSiteAbilityOverrides = Object.keys( siteAbilities ).length > 0;
 	const defaultToolEnabled = userSettings?.mcp_abilities?.site_level_enabled_default ?? false;
 	const defaultBadge = defaultToolEnabled
-		? { text: __( 'All enabled' ), intent: 'success' as const }
-		: { text: __( 'Disabled' ) };
+		? { text: __( 'All enabled' ), intent: 'stable' as const }
+		: { text: __( 'Disabled' ), intent: 'draft' as const };
 	const readBadge = hasSiteAbilityOverrides ? getReadBadge( readTools ) : defaultBadge;
 	const writeBadge = hasSiteAbilityOverrides ? getWriteBadge( writeTools ) : defaultBadge;
 	const mcpMutation = useMutation(
@@ -487,8 +432,8 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 				{ config.isEnabled( 'dolly/telegram' ) && (
 					<div className={ ! isAvailable ? 'ai-tools-settings__locked-card' : undefined }>
 						<SummaryButton
-							href={ wpcomLink( TELEGRAM_CONNECTION_PATH ) }
-							title={ __( 'Connect Telegram' ) }
+							href={ TELEGRAM_CONNECTION_PATH }
+							title={ __( 'Connect WordPress Agent to Telegram' ) }
 							description={ __(
 								'Connect your WordPress.com account to Telegram. This connection is shared across multiple sites.'
 							) }

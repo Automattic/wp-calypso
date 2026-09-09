@@ -7,5 +7,9 @@
 	},
 	"include": [ "src", "types.d.ts" ],
 	"exclude": [ "**/test/*" ],
-	"references": [ { "path": "../data-stores" }, { "path": "../calypso-config" } ]
+	"references": [
+		{ "path": "../agenttic-ui" },
+		{ "path": "../data-stores" },
+		{ "path": "../calypso-config" }
+	]
 }

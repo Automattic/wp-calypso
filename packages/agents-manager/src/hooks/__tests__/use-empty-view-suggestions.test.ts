@@ -8,6 +8,7 @@ let mockContext = {
 	currentRoute: undefined as string | undefined,
 };
 let mockCurrentPostType: string | undefined;
+let mockIsEditedPostEmpty = false;
 
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: (
@@ -25,7 +26,7 @@ jest.mock( '../../contexts', () => ( {
 } ) );
 
 import { renderHook, waitFor } from '@testing-library/react';
-import { useEmptyViewSuggestions } from '../use-empty-view-suggestions';
+import { hideTopLevelDescriptions, useEmptyViewSuggestions } from '../use-empty-view-suggestions';
 import type { LoadedProviders } from '../../utils/load-external-providers';
 
 const readerSuggestion = {
@@ -72,6 +73,7 @@ function mockCoreStoreReady( isReady: boolean ) {
 			if ( storeName === 'core/editor' ) {
 				return {
 					getCurrentPostType: () => mockCurrentPostType,
+					isEditedPostEmpty: () => mockIsEditedPostEmpty,
 				};
 			}
 
@@ -98,6 +100,7 @@ describe( 'useEmptyViewSuggestions', () => {
 			currentRoute: undefined,
 		};
 		mockCurrentPostType = undefined;
+		mockIsEditedPostEmpty = false;
 		mockCoreStoreReady( true );
 	} );
 
@@ -331,4 +334,68 @@ describe( 'useEmptyViewSuggestions', () => {
 			);
 		}
 	);
+} );
+
+describe( 'hideTopLevelDescriptions', () => {
+	const featuredImage = {
+		id: 'generate-featured-image',
+		label: 'Generate featured image',
+		description: 'Create a new image with AI and set it as the featured image.',
+		prompt: '',
+	};
+
+	it( 'drops the description', () => {
+		const [ formatted ] = hideTopLevelDescriptions( [ featuredImage ] );
+
+		expect( formatted.description ).toBeUndefined();
+	} );
+
+	it( 'keeps the rest of the suggestion intact', () => {
+		const action = jest.fn();
+		const [ formatted ] = hideTopLevelDescriptions( [ { ...featuredImage, action } ] );
+
+		expect( formatted.id ).toBe( featuredImage.id );
+		expect( formatted.label ).toBe( featuredImage.label );
+		expect( formatted.prompt ).toBe( '' );
+		expect( formatted.action ).toBe( action );
+	} );
+
+	it( 'leaves suggestions it does not know about alone', () => {
+		expect( hideTopLevelDescriptions( [ siteEditorSuggestion ] ) ).toEqual( [
+			siteEditorSuggestion,
+		] );
+	} );
+} );
+
+describe( 'useEmptyViewSuggestions post content changes', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockContext = { sectionName: 'gutenberg', currentRoute: undefined };
+		mockCurrentPostType = 'post';
+		mockIsEditedPostEmpty = true;
+		mockCoreStoreReady( true );
+	} );
+
+	afterEach( () => {
+		delete ( window as unknown as { agentsManagerData?: unknown } ).agentsManagerData;
+		mockIsEditedPostEmpty = false;
+	} );
+
+	// The list is cached in state, so it has to be rebuilt when emptiness flips.
+	it( 'refreshes the suggestions when the post gains content', async () => {
+		const getEmptyViewSuggestions = jest.fn( () => [
+			{ ...jetpackSuggestion, disabled: mockIsEditedPostEmpty },
+		] );
+		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
+
+		const { result, rerender } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
+
+		await waitFor( () => expect( result.current?.[ 0 ]?.disabled ).toBe( true ) );
+
+		mockIsEditedPostEmpty = false;
+		mockCoreStoreReady( true );
+		rerender();
+
+		await waitFor( () => expect( result.current?.[ 0 ]?.disabled ).toBe( false ) );
+	} );
 } );

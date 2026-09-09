@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import { normalizeMinHeight } from '../html-transformers';
 import { shufflePosts } from '../styles-transformers';
 import BlockRendererContainer from './block-renderer-container';
@@ -37,13 +37,21 @@ const PatternRenderer = ( {
 		patternHtml = transformHtml( patternHtml );
 	}
 
-	let patternStyles = [ ...styles, ...( pattern?.styles ?? [] ) ];
-	if ( shouldShufflePosts ) {
-		const css = shufflePosts( patternId, patternHtml );
-		patternStyles = [ ...patternStyles, { css } as RenderedStyle ];
-	}
+	const patternStyles = useMemo( () => {
+		let mergedStyles = [ ...styles, ...( pattern?.styles ?? [] ) ];
+		if ( shouldShufflePosts ) {
+			const css = shufflePosts( patternId, patternHtml );
+			mergedStyles = [ ...mergedStyles, { css } as RenderedStyle ];
+		}
+		return mergedStyles;
+	}, [ styles, pattern?.styles, shouldShufflePosts, patternId, patternHtml ] );
 
 	const patternScripts = [ pattern?.scripts ?? '', scripts ];
+
+	// React 19 reassigns `innerHTML` whenever the `dangerouslySetInnerHTML` object identity
+	// changes, even when `__html` holds the same string. An inline object here would wipe and
+	// re-parse the pattern on every render, re-fetching all of its images in a loop.
+	const patternHtmlMarkup = useMemo( () => ( { __html: patternHtml } ), [ patternHtml ] );
 
 	return (
 		<BlockRendererContainer
@@ -56,7 +64,7 @@ const PatternRenderer = ( {
 		>
 			<div
 				// eslint-disable-next-line react/no-danger
-				dangerouslySetInnerHTML={ { __html: patternHtml } }
+				dangerouslySetInnerHTML={ patternHtmlMarkup }
 			/>
 		</BlockRendererContainer>
 	);

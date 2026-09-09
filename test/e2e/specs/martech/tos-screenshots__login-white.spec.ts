@@ -1,4 +1,4 @@
-import { DataHelper } from '@automattic/calypso-e2e';
+import { DataHelper, TestAccount } from '@automattic/calypso-e2e';
 import uploadScreenshotsToBlog from '../../lib/martech-tos-helper';
 import { expect, tags, test } from '../../lib/pw-base';
 
@@ -40,7 +40,10 @@ test.describe(
 				}
 
 				const { username, password } = DataHelper.getAccountCredential( 'martechTosUser' );
-				await pageLogin.logInWithCredentials( username, password );
+				const testAccount = new TestAccount( 'martechTosUser' );
+				await testAccount.logInExclusively( () =>
+					pageLogin.logInWithCredentials( username, password )
+				);
 			} );
 
 			await test.step( 'Zip screenshots and upload', async () => {

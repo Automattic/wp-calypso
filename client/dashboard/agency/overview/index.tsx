@@ -10,10 +10,15 @@ import { useScheduleCall } from '../tiers/use-schedule-call';
 import { PROGRAM_INCENTIVES_URL } from './constants';
 import AgencyOverviewContent from './overview-content';
 import AgencyOverviewHeader from './overview-header';
+import usePressableOfferEligibility from './use-pressable-offer-eligibility';
 
 // TODO: the MSD dashboard has no contact-support entry point yet. This matches the
 // '#contact-support' placeholder in agency/tiers/constants.ts — wire both up together.
 const CONTACT_SUPPORT_URL = '#contact-support';
+
+// TODO: the MSD dashboard has no partner-directory screen yet — point the growth
+// card there once it exists.
+const PARTNER_DIRECTORY_URL = '#partner-directory';
 
 export default function AgencyOverview() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
@@ -21,7 +26,13 @@ export default function AgencyOverview() {
 	const locale = useLocale();
 	const agencyId = agency?.id ?? 0;
 	const approvalStatus = agency?.approval_status;
+	const hasPartnerDirectoryListing =
+		!! agency?.profile?.partner_directory_application?.directories.some(
+			( { status } ) => status === 'approved'
+		);
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall( agency?.id );
+	const { isEligibleForPressableIntroOffer, isEligibleForPressableExpansionOffer } =
+		usePressableOfferEligibility( agency );
 
 	if ( ! agency ) {
 		return <PageLayout header={ <PageHeader title={ __( 'Overview' ) } /> } />;
@@ -49,10 +60,16 @@ export default function AgencyOverview() {
 				influencedRevenue={ agency.influenced_revenue ?? 0 }
 				approvalStatus={ approvalStatus }
 				capabilities={ agency.user?.capabilities }
+				hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
+				isEligibleForPressableIntroOffer={ isEligibleForPressableIntroOffer }
+				isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 				links={ {
 					tiers: '/agency/tiers',
+					sites: '/sites',
 					referrals: '/earn/referrals',
 					woopayments: '/earn/woopayments',
+					marketplace: '/marketplace',
+					partnerDirectory: PARTNER_DIRECTORY_URL,
 					contactSupport: CONTACT_SUPPORT_URL,
 					helpful: [
 						{

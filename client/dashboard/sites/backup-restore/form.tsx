@@ -9,6 +9,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
+import WooSubscriptionsNotice from './woo-subscriptions-notice';
 import type { RestoreConfig } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
@@ -136,6 +137,12 @@ function SiteBackupRestoreForm( {
 				<Notice variant="info" title={ __( 'Important' ) }>
 					{ restoreWarning }
 				</Notice>
+
+				<WooSubscriptionsNotice
+					siteId={ siteId }
+					rewindId={ rewindId }
+					includesDatabase={ !! formData.sqls }
+				/>
 
 				<ButtonStack justify="flex-start">
 					<Button

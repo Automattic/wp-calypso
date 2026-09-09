@@ -42,6 +42,8 @@ export default class FormVerificationCodeInput extends Component {
 			defaultPlaceholder = constants.eightDigitBackupCodePlaceholder;
 		} else if ( method === 'sms' ) {
 			defaultPlaceholder = constants.sevenDigit2faPlaceholder;
+		} else if ( method === 'email' ) {
+			defaultPlaceholder = constants.nineDigit2faPlaceholder;
 		}
 
 		return (

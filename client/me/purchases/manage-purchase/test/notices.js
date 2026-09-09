@@ -370,4 +370,29 @@ describe( 'PurchaseNotice', () => {
 		renderNotice( { purchase, isProductOwner: true, selectedSite: { slug: 'testingsite' } } );
 		expect( screen.container ).toBeFalsy();
 	} );
+
+	it( 'renders a contact-the-partner notice for a host-managed plan instead of an expiring notice', () => {
+		const purchaseExpiry = new Date();
+		purchaseExpiry.setDate( purchaseExpiry.getDate() + 10 );
+		const purchase = {
+			ID: 'whatever1',
+			product_slug: 'jetpack_security_t1_yearly',
+			product_name: 'Jetpack Security',
+			is_plan: true,
+			is_renewable: true,
+			is_rechargeable: false,
+			expiry_status: 'manual-renew',
+			expiry_date: purchaseExpiry.toISOString(),
+			is_partner_managed: true,
+			is_host_managed: true,
+			partner_name: 'Bluehost',
+			partner_type: 'hosting_provider',
+		};
+		renderNotice( { purchase, isProductOwner: true, selectedSite: { slug: 'testingsite' } } );
+
+		expect(
+			screen.getByText( 'Host Managed Plan. Please contact Bluehost for details.' )
+		).toBeVisible();
+		expect( screen.queryByText( 'Renew Now' ) ).not.toBeInTheDocument();
+	} );
 } );

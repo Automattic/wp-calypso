@@ -1,6 +1,7 @@
 import { useCallback } from '@wordpress/element';
 import Smooch from 'smooch';
 import { Message, Chat } from '../../types';
+import { trackConversationStart } from '../../utils/track-conversation-start';
 import { MAX_MESSAGE_LENGTH } from '../notices/use-message-size-error-notice';
 
 interface UseSendMessageHandlerProps {
@@ -48,6 +49,8 @@ export function useSendMessageHandler( {
 		}
 
 		try {
+			trackConversationStart( chat, inputValue, trackEvent );
+
 			trackEvent( 'chat_message_action_send', {
 				message_length: inputValue.length,
 				provider: chat?.provider,
@@ -93,6 +96,7 @@ export function useSendMessageHandler( {
 		inputValue,
 		isChatBusy,
 		chat?.provider,
+		chat.messages,
 		sendMessage,
 		trackEvent,
 		chat.conversationId,

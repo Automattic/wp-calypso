@@ -130,8 +130,7 @@ export function buildExportArray( data, parent = null, modifierFn = null ) {
 		return [];
 	}
 	const label = parent ? parent + ' > ' + String( data.label ) : String( data.label );
-	// eslint-disable-next-line
-	const escapedLabel = label.replace( /\"/, '""' );
+	const escapedLabel = label.replace( /"/g, '""' );
 	let exportData = [ [ '"' + escapedLabel + '"', data.value ] ];
 
 	// Includes the URL for content data, but not for "Countries" data where it doesn't exist.
@@ -1224,6 +1223,7 @@ export const normalizers = {
 			return [];
 		}
 
+		// Never-emailed posts are filtered server-side, before pagination (STATS-452).
 		const emailsData = data?.posts ?? [];
 
 		return emailsData.map(

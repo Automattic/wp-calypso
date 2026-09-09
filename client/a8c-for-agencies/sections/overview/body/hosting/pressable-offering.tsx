@@ -1,8 +1,8 @@
 import page from '@automattic/calypso-router';
 import { Button, FoldableCard, Gridicon } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
-import { Badge } from '@automattic/ui';
 import { __experimentalHStack as HStack } from '@wordpress/components';
+import { Badge } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -53,7 +53,7 @@ const PressableOffering = () => {
 				<HStack spacing={ 3 }>
 					<span>{ translate( 'Pressable' ) }</span>
 					{ isPressableRegular && (
-						<Badge intent="success">{ translate( "You're signed up!" ) }</Badge>
+						<Badge intent="stable">{ translate( "You're signed up!" ) }</Badge>
 					) }
 				</HStack>
 			</h3>

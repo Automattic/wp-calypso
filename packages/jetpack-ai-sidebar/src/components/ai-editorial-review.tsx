@@ -11,7 +11,7 @@ import { Panel, PanelBody } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useState, useCallback, useEffect, useMemo, useRef } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { Icon, check, undo } from '@wordpress/icons';
+import { Icon, undo } from '@wordpress/icons';
 /**
  * Internal dependencies
  */
@@ -23,7 +23,6 @@ import {
 	getEditableBlockContent,
 	hasEditableBlockTarget,
 	toggleBlockReferenceFocus,
-	undoBlockEdit,
 } from '../utils/block-actions';
 import {
 	flattenBlocks,
@@ -31,16 +30,20 @@ import {
 	type BlockEditorStore,
 	type EditorStore,
 } from '../utils/blocks';
-import {
-	trackAiEditorialReviewItemAction,
-	trackAiEditorialReviewResultRendered,
-	type ReviewContext,
-} from '../utils/tracking';
+import { useReviewPostContext, type EditorPostId } from '../utils/review-post-context';
+import useBulkApply, { type BulkApplyStep } from '../utils/use-bulk-apply';
 import { useCopyToClipboard } from '../utils/use-copy-to-clipboard';
+import useLatestResponseAction from '../utils/use-latest-response-action';
+import useUndoSnapshots from '../utils/use-undo-snapshots';
 import BlockRef, { getBlockTypeName, type BlockSnapshot } from './block-ref';
-import ReviewCard, { ReviewCardActions, type ReviewCardRow } from './review-card';
+import ReviewCard, {
+	ReviewCardActions,
+	ReviewCardResolution,
+	type ReviewCardRow,
+} from './review-card';
 import ReviewerChip, { type ReviewerMetadata } from './reviewer-chip';
 import SplitScreenGuide from './split-screen-guide';
+import type { OnResponseAction } from '../utils/response-action';
 
 /**
  * Types mirroring the wpcom `AI_Editorial_Review_Ability` structured output.
@@ -99,8 +102,6 @@ interface GuidelineViolation {
 	issue: string;
 }
 
-type EditorPostId = number | string;
-
 interface AiEditorialReviewProps {
 	summary: string;
 	/**
@@ -112,11 +113,14 @@ interface AiEditorialReviewProps {
 	implications?: Implication[] | null;
 	suggested_edits?: SuggestedEdit[] | null;
 	guideline_violations?: GuidelineViolation[] | null;
-	review_context?: ReviewContext;
 	/** Source post the review was generated for. Used to detect navigation to a different post. */
 	postId?: EditorPostId;
 	/** Whether the containing chat message is no longer interactive. */
 	isMessageStale?: boolean;
+	/** Tool call that produced this response. Used for tracking. */
+	toolCallId?: string;
+	/** Reports completed user actions to the host that rendered this response. */
+	onResponseAction?: OnResponseAction;
 	/**
 	 * Server-built map keyed by reviewer display name. Optional — older
 	 * reviews or the empty-state payload may omit it; consumers degrade
@@ -134,32 +138,6 @@ interface AiEditorialReviewProps {
 }
 
 type EditStatus = 'pending' | 'applying' | 'accepted' | 'dismissed' | 'failed';
-type WpCurrentPostStore = { getCurrentPostId?: () => EditorPostId | null };
-type WpGlobal = Window & {
-	wp?: {
-		data?: {
-			select?: ( store: string ) => WpCurrentPostStore | undefined;
-		};
-	};
-};
-
-function normalizeEditorPostId( postId: unknown ): EditorPostId | undefined {
-	if ( typeof postId === 'number' && postId > 0 ) {
-		return postId;
-	}
-	if ( typeof postId === 'string' && postId.trim() ) {
-		return postId;
-	}
-	return undefined;
-}
-
-function getCurrentEditorPostIdFromStore(): EditorPostId | undefined {
-	if ( typeof window === 'undefined' ) {
-		return undefined;
-	}
-	const wp = ( window as WpGlobal ).wp;
-	return normalizeEditorPostId( wp?.data?.select?.( 'core/editor' )?.getCurrentPostId?.() );
-}
 
 /**
  * The five PanelBody sections we manage in controlled mode. Used as the
@@ -281,23 +259,6 @@ function isManualSuggestedEdit( edit: SuggestedEdit ): boolean {
 	return edit.requires_manual === true;
 }
 
-function deriveResultOutcome(
-	isCacheHit: boolean,
-	reviewContext: ReviewContext | undefined,
-	hasNoFindings: boolean
-): 'success' | 'cache_hit' | 'no_findings' | 'insufficient_input' {
-	if ( isCacheHit ) {
-		return 'cache_hit';
-	}
-	if ( reviewContext === 'insufficient_input' ) {
-		return 'insufficient_input';
-	}
-	if ( hasNoFindings ) {
-		return 'no_findings';
-	}
-	return 'success';
-}
-
 function getConflictApplyUnavailableReason(
 	reasons: Array< string | undefined >
 ): string | undefined {
@@ -311,20 +272,17 @@ function getConflictApplyUnavailableReason(
 	return __( 'Some resolutions need manual edit.', __i18n_text_domain__ );
 }
 
-/**
- * Main component.
- * @param {AiEditorialReviewProps} props - Structured review output.
- * @returns {import('react').ReactElement} The rendered component.
- */
+/** Renders an editorial review and applies supported review actions. */
 export default function AiEditorialReview( {
 	summary,
 	conflicts: conflictsProp,
 	implications: implicationsProp,
 	suggested_edits: suggestedEditsProp,
 	guideline_violations: guidelineViolationsProp,
-	review_context,
 	postId,
 	isMessageStale = false,
+	toolCallId,
+	onResponseAction,
 	reviewers_metadata,
 	cached_at,
 }: AiEditorialReviewProps ) {
@@ -338,17 +296,7 @@ export default function AiEditorialReview( {
 		[ guidelineViolationsProp ]
 	);
 	// Review actions are only safe when the result can be tied to the current editor entity.
-	const currentPostId = useSelect( ( select ) => {
-		const editor = select( 'core/editor' ) as WpCurrentPostStore;
-		return normalizeEditorPostId( editor?.getCurrentPostId?.() );
-	}, [] );
-	const isPostStale = ! postId || ! currentPostId || String( postId ) !== String( currentPostId );
-	const isLatestPostContextStale = useCallback( () => {
-		// Async edit guards must read the editor store at call time so navigation
-		// between the click and delayed block write is observed immediately.
-		const latestCurrentPostId = getCurrentEditorPostIdFromStore() ?? currentPostId;
-		return ! postId || ! latestCurrentPostId || String( postId ) !== String( latestCurrentPostId );
-	}, [ currentPostId, postId ] );
+	const { isPostStale, isLatestPostContextStale } = useReviewPostContext( postId );
 
 	const [ editStatuses, setEditStatuses ] = useState< Record< number, EditStatus > >( {} );
 	const [ conflictStatuses, setConflictStatuses ] = useState< Record< number, EditStatus > >( {} );
@@ -356,18 +304,11 @@ export default function AiEditorialReview( {
 	const [ violationStatuses, setViolationStatuses ] = useState< Record< number, EditStatus > >(
 		{}
 	);
-	const [ bulkRunning, setBulkRunning ] = useState( false );
 	// Only one card shows "Copied" at a time; the shared hook owns that state.
 	const { clipboardSupported, copiedKey, copy: copyToClipboard } = useCopyToClipboard();
 
-	type UndoSnapshot = {
-		clientId: string;
-		contentBefore: string;
-		contentAfter: string;
-		editableAttribute?: string;
-	};
-	const editSnapshots = useRef< Record< number, UndoSnapshot > >( {} );
-	const conflictSnapshots = useRef< Record< number, UndoSnapshot > >( {} );
+	const editSnapshots = useUndoSnapshots< number >();
+	const conflictSnapshots = useUndoSnapshots< number >();
 
 	// Controlled open-state per PanelBody so the stats-strip click handler
 	// can programmatically expand a section before scrolling to it.
@@ -473,17 +414,10 @@ export default function AiEditorialReview( {
 		[ getClientId, isPostStale ]
 	);
 	const focusCurrentPostBlock = isPostStale ? undefined : focusBlock;
-
-	const fireItemAction = useCallback(
-		( options: {
-			action: 'accept' | 'undo' | 'dismiss' | 'bulk_accept';
-			target: 'edit' | 'conflict' | 'mixed';
-			outcome: 'success' | 'failed' | 'partial_failed';
-			itemCount?: number;
-		} ) => {
-			trackAiEditorialReviewItemAction( options );
-		},
-		[]
+	const fireResponseAction = useLatestResponseAction( onResponseAction, isLatestPostContextStale );
+	const { bulkRunning, runBulkApply } = useBulkApply(
+		fireResponseAction,
+		isLatestPostContextStale
 	);
 
 	const handleRootMouseDown = useCallback( ( event: { target: EventTarget | null } ) => {
@@ -575,7 +509,7 @@ export default function AiEditorialReview( {
 			}
 			if ( edit.block_index === null ) {
 				setEditStatus( editIndex, 'failed' );
-				fireItemAction( {
+				fireResponseAction( {
 					action: 'accept',
 					target: 'edit',
 					outcome: 'failed',
@@ -589,74 +523,40 @@ export default function AiEditorialReview( {
 				edit.current_text,
 				edit.editable_attribute
 			);
-			if (
-				result.success &&
-				result.clientId &&
-				typeof result.contentBefore === 'string' &&
-				typeof result.contentAfter === 'string'
-			) {
-				editSnapshots.current[ editIndex ] = {
-					clientId: result.clientId,
-					contentBefore: result.contentBefore,
-					contentAfter: result.contentAfter,
-					editableAttribute: result.editableAttribute,
-				};
-			}
-			fireItemAction( {
+			editSnapshots.saveFromApplyResult( editIndex, result );
+			setEditStatus( editIndex, result.success ? 'accepted' : 'failed' );
+			fireResponseAction( {
 				action: 'accept',
 				target: 'edit',
 				outcome: result.success ? 'success' : 'failed',
 			} );
-			setEditStatus( editIndex, result.success ? 'accepted' : 'failed' );
 		},
-		[ applyTextToBlock, fireItemAction, isPostStale, setEditStatus ]
+		[ applyTextToBlock, editSnapshots, fireResponseAction, isPostStale, setEditStatus ]
 	);
 	const handleUndoEdit = useCallback(
 		( editIndex: number ) => {
 			if ( isPostStale ) {
 				return;
 			}
-			const snap = editSnapshots.current[ editIndex ];
-			if ( snap ) {
-				if (
-					! undoBlockEdit(
-						snap.clientId,
-						snap.contentBefore,
-						snap.contentAfter,
-						snap.editableAttribute
-					)
-				) {
-					fireItemAction( {
-						action: 'undo',
-						target: 'edit',
-						outcome: 'failed',
-					} );
-					return;
-				}
-				delete editSnapshots.current[ editIndex ];
+			const requireSnapshot = editStatuses[ editIndex ] === 'accepted';
+			if ( editSnapshots.undo( editIndex, requireSnapshot ) !== 'success' ) {
+				fireResponseAction( { action: 'undo', target: 'edit', outcome: 'failed' } );
+				return;
 			}
-			fireItemAction( {
-				action: 'undo',
-				target: 'edit',
-				outcome: 'success',
-			} );
 			setEditStatus( editIndex, 'pending' );
+			fireResponseAction( { action: 'undo', target: 'edit', outcome: 'success' } );
 		},
-		[ fireItemAction, isPostStale, setEditStatus ]
+		[ editSnapshots, editStatuses, fireResponseAction, isPostStale, setEditStatus ]
 	);
 	const handleDismissEdit = useCallback(
 		( editIndex: number ) => {
 			if ( isPostStale ) {
 				return;
 			}
-			fireItemAction( {
-				action: 'dismiss',
-				target: 'edit',
-				outcome: 'success',
-			} );
 			setEditStatus( editIndex, 'dismissed' );
+			fireResponseAction( { action: 'dismiss', target: 'edit', outcome: 'success' } );
 		},
-		[ fireItemAction, isPostStale, setEditStatus ]
+		[ fireResponseAction, isPostStale, setEditStatus ]
 	);
 
 	const handleDismissViolation = useCallback(
@@ -665,12 +565,28 @@ export default function AiEditorialReview( {
 				return;
 			}
 			setViolationStatuses( ( prev ) => ( { ...prev, [ index ]: 'dismissed' } ) );
+			fireResponseAction( {
+				action: 'dismiss',
+				target: 'guideline_violation',
+				outcome: 'success',
+			} );
 		},
-		[ isPostStale ]
+		[ fireResponseAction, isPostStale ]
 	);
-	const handleUndoViolation = useCallback( ( index: number ) => {
-		setViolationStatuses( ( prev ) => ( { ...prev, [ index ]: 'pending' } ) );
-	}, [] );
+	const handleUndoViolation = useCallback(
+		( index: number ) => {
+			if ( isPostStale ) {
+				return;
+			}
+			setViolationStatuses( ( prev ) => ( { ...prev, [ index ]: 'pending' } ) );
+			fireResponseAction( {
+				action: 'undo',
+				target: 'guideline_violation',
+				outcome: 'success',
+			} );
+		},
+		[ fireResponseAction, isPostStale ]
+	);
 
 	// ---------- Conflict handlers ----------
 	const handleAcceptCandidate = useCallback(
@@ -686,7 +602,7 @@ export default function AiEditorialReview( {
 				)
 			) {
 				setConflictStatus( conflictIndex, 'failed' );
-				fireItemAction( {
+				fireResponseAction( {
 					action: 'accept',
 					target: 'conflict',
 					outcome: 'failed',
@@ -700,74 +616,47 @@ export default function AiEditorialReview( {
 				candidate.current_text,
 				candidate.editable_attribute
 			);
-			if (
-				result.success &&
-				result.clientId &&
-				typeof result.contentBefore === 'string' &&
-				typeof result.contentAfter === 'string'
-			) {
-				conflictSnapshots.current[ conflictIndex ] = {
-					clientId: result.clientId,
-					contentBefore: result.contentBefore,
-					contentAfter: result.contentAfter,
-					editableAttribute: result.editableAttribute,
-				};
-			}
-			fireItemAction( {
+			conflictSnapshots.saveFromApplyResult( conflictIndex, result );
+			setConflictStatus( conflictIndex, result.success ? 'accepted' : 'failed' );
+			fireResponseAction( {
 				action: 'accept',
 				target: 'conflict',
 				outcome: result.success ? 'success' : 'failed',
 			} );
-			setConflictStatus( conflictIndex, result.success ? 'accepted' : 'failed' );
 		},
-		[ applyTextToBlock, fireItemAction, getBlockEditDisabledReason, isPostStale, setConflictStatus ]
+		[
+			applyTextToBlock,
+			conflictSnapshots,
+			fireResponseAction,
+			getBlockEditDisabledReason,
+			isPostStale,
+			setConflictStatus,
+		]
 	);
 	const handleUndoConflict = useCallback(
 		( conflictIndex: number ) => {
 			if ( isPostStale ) {
 				return;
 			}
-			const snap = conflictSnapshots.current[ conflictIndex ];
-			if ( snap ) {
-				if (
-					! undoBlockEdit(
-						snap.clientId,
-						snap.contentBefore,
-						snap.contentAfter,
-						snap.editableAttribute
-					)
-				) {
-					fireItemAction( {
-						action: 'undo',
-						target: 'conflict',
-						outcome: 'failed',
-					} );
-					return;
-				}
-				delete conflictSnapshots.current[ conflictIndex ];
+			const requireSnapshot = conflictStatuses[ conflictIndex ] === 'accepted';
+			if ( conflictSnapshots.undo( conflictIndex, requireSnapshot ) !== 'success' ) {
+				fireResponseAction( { action: 'undo', target: 'conflict', outcome: 'failed' } );
+				return;
 			}
-			fireItemAction( {
-				action: 'undo',
-				target: 'conflict',
-				outcome: 'success',
-			} );
 			setConflictStatus( conflictIndex, 'pending' );
+			fireResponseAction( { action: 'undo', target: 'conflict', outcome: 'success' } );
 		},
-		[ fireItemAction, isPostStale, setConflictStatus ]
+		[ conflictSnapshots, conflictStatuses, fireResponseAction, isPostStale, setConflictStatus ]
 	);
 	const handleDismissConflict = useCallback(
 		( conflictIndex: number ) => {
 			if ( isPostStale ) {
 				return;
 			}
-			fireItemAction( {
-				action: 'dismiss',
-				target: 'conflict',
-				outcome: 'success',
-			} );
 			setConflictStatus( conflictIndex, 'dismissed' );
+			fireResponseAction( { action: 'dismiss', target: 'conflict', outcome: 'success' } );
 		},
-		[ fireItemAction, isPostStale, setConflictStatus ]
+		[ fireResponseAction, isPostStale, setConflictStatus ]
 	);
 
 	// ---------- Bulk apply ----------
@@ -813,7 +702,7 @@ export default function AiEditorialReview( {
 	const totalPendingCount = pendingAiConflictCount + pendingEditCount;
 
 	const handleAcceptAllAi = useCallback( async () => {
-		if ( isPostStale || bulkRunning || totalPendingCount === 0 ) {
+		if ( isPostStale || totalPendingCount === 0 ) {
 			return;
 		}
 		let bulkTarget: 'edit' | 'conflict' | 'mixed' = 'edit';
@@ -822,32 +711,20 @@ export default function AiEditorialReview( {
 		} else if ( pendingAiConflictCount > 0 ) {
 			bulkTarget = 'conflict';
 		}
-		let successCount = 0;
-		let failureCount = 0;
-		const getBulkOutcome = () => {
-			if ( failureCount === 0 ) {
-				return 'success';
+		// Sequential steps so users see the shimmer on each block as it applies;
+		// parallel would race the same dispatch and confuse the state store.
+		const steps: BulkApplyStep[] = [];
+		conflicts.forEach( ( conflict, i ) => {
+			const status = conflictStatuses[ i ] ?? 'pending';
+			if ( status !== 'pending' && status !== 'failed' ) {
+				return;
 			}
-			return successCount === 0 ? 'failed' : 'partial_failed';
-		};
-		setBulkRunning( true );
-		try {
-			// Sequential so users see the shimmer on each block as it applies;
-			// parallel would race the same dispatch and confuse the state store.
-			for ( let i = 0; i < conflicts.length; i++ ) {
-				if ( isLatestPostContextStale() ) {
-					return;
-				}
-				const status = conflictStatuses[ i ] ?? 'pending';
-				if ( status !== 'pending' && status !== 'failed' ) {
-					continue;
-				}
-				const aiCandidate = findApplicableAiCandidate( conflicts[ i ] );
-				if ( ! aiCandidate ) {
-					continue;
-				}
+			const aiCandidate = findApplicableAiCandidate( conflict );
+			if ( ! aiCandidate ) {
+				return;
+			}
+			steps.push( async () => {
 				setConflictStatus( i, 'applying' );
-				// eslint-disable-next-line no-await-in-loop
 				const result = await applyTextToBlock(
 					aiCandidate.block_index,
 					aiCandidate.text,
@@ -856,47 +733,28 @@ export default function AiEditorialReview( {
 				);
 				if ( isLatestPostContextStale() ) {
 					setConflictStatus( i, status );
-					return;
+					return undefined;
 				}
-				if (
-					result.success &&
-					result.clientId &&
-					typeof result.contentBefore === 'string' &&
-					typeof result.contentAfter === 'string'
-				) {
-					conflictSnapshots.current[ i ] = {
-						clientId: result.clientId,
-						contentBefore: result.contentBefore,
-						contentAfter: result.contentAfter,
-						editableAttribute: result.editableAttribute,
-					};
-				}
-				if ( ! result.success ) {
-					failureCount++;
-				} else {
-					successCount++;
-				}
+				conflictSnapshots.saveFromApplyResult( i, result );
 				setConflictStatus( i, result.success ? 'accepted' : 'failed' );
+				return result.success;
+			} );
+		} );
+		suggested_edits.forEach( ( edit, i ) => {
+			const status = editStatuses[ i ] ?? 'pending';
+			if ( status !== 'pending' && status !== 'failed' ) {
+				return;
 			}
-			for ( let i = 0; i < suggested_edits.length; i++ ) {
-				if ( isLatestPostContextStale() ) {
-					return;
-				}
-				const status = editStatuses[ i ] ?? 'pending';
-				if ( status !== 'pending' && status !== 'failed' ) {
-					continue;
-				}
-				const edit = suggested_edits[ i ];
-				if ( isManualSuggestedEdit( edit ) ) {
-					continue;
-				}
-				if (
-					getBlockEditDisabledReason( edit.block_index, edit.current_text, edit.editable_attribute )
-				) {
-					continue;
-				}
+			if ( isManualSuggestedEdit( edit ) ) {
+				return;
+			}
+			if (
+				getBlockEditDisabledReason( edit.block_index, edit.current_text, edit.editable_attribute )
+			) {
+				return;
+			}
+			steps.push( async () => {
 				setEditStatus( i, 'applying' );
-				// eslint-disable-next-line no-await-in-loop
 				const result = await applyTextToBlock(
 					edit.block_index,
 					edit.suggested_text,
@@ -905,55 +763,30 @@ export default function AiEditorialReview( {
 				);
 				if ( isLatestPostContextStale() ) {
 					setEditStatus( i, status );
-					return;
+					return undefined;
 				}
-				if (
-					result.success &&
-					result.clientId &&
-					typeof result.contentBefore === 'string' &&
-					typeof result.contentAfter === 'string'
-				) {
-					editSnapshots.current[ i ] = {
-						clientId: result.clientId,
-						contentBefore: result.contentBefore,
-						contentAfter: result.contentAfter,
-						editableAttribute: result.editableAttribute,
-					};
-				}
-				if ( ! result.success ) {
-					failureCount++;
-				} else {
-					successCount++;
-				}
+				editSnapshots.saveFromApplyResult( i, result );
 				setEditStatus( i, result.success ? 'accepted' : 'failed' );
-			}
-			if ( isLatestPostContextStale() ) {
-				return;
-			}
-			fireItemAction( {
-				action: 'bulk_accept',
-				target: bulkTarget,
-				outcome: getBulkOutcome(),
-				itemCount: successCount + failureCount,
+				return result.success;
 			} );
-		} finally {
-			setBulkRunning( false );
-		}
+		} );
+		await runBulkApply( bulkTarget, steps );
 	}, [
-		bulkRunning,
 		totalPendingCount,
 		pendingAiConflictCount,
 		pendingEditCount,
 		conflicts,
 		conflictStatuses,
+		conflictSnapshots,
 		suggested_edits,
 		editStatuses,
+		editSnapshots,
 		applyTextToBlock,
 		findApplicableAiCandidate,
-		fireItemAction,
 		getBlockEditDisabledReason,
 		isLatestPostContextStale,
 		isPostStale,
+		runBulkApply,
 		setConflictStatus,
 		setEditStatus,
 	] );
@@ -984,37 +817,6 @@ export default function AiEditorialReview( {
 		[ reviewers_metadata ]
 	);
 
-	// Latch on the first effect run so re-renders do not duplicate `_result_rendered`.
-	const hasTrackedResultRef = useRef( false );
-	useEffect( () => {
-		if ( isPostStale || hasTrackedResultRef.current ) {
-			return;
-		}
-		hasTrackedResultRef.current = true;
-		const isCacheHit = cached_at !== undefined;
-		const noReviewerSignal =
-			conflicts.length === 0 &&
-			implications.length === 0 &&
-			suggested_edits.length === 0 &&
-			renderedGuidelineViolations.length === 0;
-		trackAiEditorialReviewResultRendered( {
-			outcome: deriveResultOutcome( isCacheHit, review_context, noReviewerSignal ),
-			conflictCount: conflicts.length,
-			implicationCount: implications.length,
-			suggestedEditCount: suggested_edits.length,
-			guidelineViolationCount: renderedGuidelineViolations.length,
-			reviewContext: review_context,
-		} );
-	}, [
-		cached_at,
-		conflicts,
-		implications,
-		isPostStale,
-		renderedGuidelineViolations,
-		review_context,
-		suggested_edits,
-	] );
-
 	return (
 		<div
 			className={ `jetpack-ai-editorial-review${ isPostStale ? ' is-post-stale' : '' }` }
@@ -1023,6 +825,7 @@ export default function AiEditorialReview( {
 		>
 			<SplitScreenGuide
 				componentType="ai-editorial-review"
+				toolCallId={ toolCallId }
 				isStale={ isMessageStale || isPostStale }
 			/>
 			{ isPostStale && (
@@ -1244,20 +1047,10 @@ export default function AiEditorialReview( {
 														) }
 													</header>
 													<div className="jetpack-ai-editorial-review__actions">
-														<span
-															className={ `jetpack-ai-editorial-review__resolution is-${ status }` }
-														>
-															{ status === 'accepted' && (
-																<Icon
-																	className="jetpack-ai-editorial-review__resolution-check"
-																	icon={ check }
-																	size={ 20 }
-																/>
-															) }
-															{ status === 'accepted'
-																? __( 'Applied', __i18n_text_domain__ )
-																: __( 'Dismissed', __i18n_text_domain__ ) }
-														</span>
+														<ReviewCardResolution
+															classPrefix="jetpack-ai-editorial-review"
+															status={ status }
+														/>
 														<button
 															type="button"
 															className="jetpack-ai-editorial-review__resolution-undo"

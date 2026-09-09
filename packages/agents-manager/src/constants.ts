@@ -6,3 +6,6 @@ export const DOLLY_AGENT_ID = 'dolly';
 export const UNIFIED_CHAT_AGENT_ID = 'wpcom-workflow-unified_chat';
 
 export const LOCAL_TOOL_RUNNING_MESSAGE = 'local_tool_running';
+
+/** Route-state origin marker for views opened from the chat (e.g. the post view). */
+export const FROM_CHAT = 'chat';

@@ -39,8 +39,8 @@ export class Suggestion extends Component {
 		const localeFromPath = retrieveLocaleFromPathLocaleInFront( window.location.pathname );
 
 		const searchUrl = localeFromPath
-			? `/${ localeFromPath }/reader/search?${ stringify( args ) }`
-			: `/reader/search?${ stringify( args ) }`;
+			? `/${ localeFromPath }/discover/search?${ stringify( args ) }`
+			: `/discover/search?${ stringify( args ) }`;
 
 		return (
 			<a onClick={ this.handleSuggestionClick } href={ searchUrl }>

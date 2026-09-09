@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
-import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
+import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import {
 	SITE_ADDRESS_AVAILABILITY_REQUEST,
 	SITE_ADDRESS_AVAILABILITY_SUCCESS,
@@ -173,11 +173,9 @@ export const requestSiteAddressChange =
 
 				// site slug, potentially freshly updated by the `requestSite` above
 				const siteSlug = getSiteSlug( getState(), siteId );
-				// new name of the `*.wordpress.com` domain that we just changed
-				const newDomain = newSlug + '.' + domain;
 
 				if ( ! skipRedirection ) {
-					page( domainManagementEdit( siteSlug, newDomain ) );
+					page.replace( domainManagementList( siteSlug ) );
 				}
 			}
 		} catch ( error ) {

@@ -1,11 +1,15 @@
-.omnibar .omnibar__menu svg.omnibar__help-icon {
-	width: 30px;
-	height: 30px;
+.omnibar .omnibar__menu .omnibar__help-icon {
+	display: flex;
 
-	@media ( min-width: 782px ) {
-		width: 22px;
-		height: 22px;
-		margin-inline: 3px;
+	svg {
+		width: 30px;
+		height: 30px;
+
+		@media ( min-width: 782px ) {
+			width: 22px;
+			height: 22px;
+			margin-inline: 3px;
+		}
 	}
 }
 

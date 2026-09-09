@@ -6,6 +6,7 @@ import Loading from 'calypso/components/loading';
 import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
 import { useInterval } from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';
+import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import { errorNotice } from 'calypso/state/notices/actions';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
@@ -81,6 +82,21 @@ const TransferPending: React.FunctionComponent< Props > = ( props ) => {
 		};
 	}, [ dispatch ] );
 
+	const latestTransfer = React.useRef( transfer );
+	latestTransfer.current = transfer;
+
+	// A client_timeout already in the store when this screen asks for the transfer is an earlier
+	// wait's verdict: the request drops it, and only a timeout stored afterwards ends this wait.
+	const preRequestTransfer = React.useRef( transfer );
+	React.useEffect( () => {
+		if ( ! siteId ) {
+			return;
+		}
+
+		preRequestTransfer.current = latestTransfer.current;
+		dispatch( fetchAtomicTransfer( siteId ) );
+	}, [ siteId, dispatch ] );
+
 	// Redirect based on transfer status
 	const didRedirect = React.useRef( false );
 	React.useEffect( () => {
@@ -121,11 +137,13 @@ const TransferPending: React.FunctionComponent< Props > = ( props ) => {
 			}
 
 			if ( transferStates.CLIENT_TIMEOUT === transfer.status ) {
-				redirectWithNotice(
-					__(
-						'Your transfer is taking longer than expected. It may still finish — reload the page to check.'
-					)
-				);
+				if ( transfer !== preRequestTransfer.current ) {
+					redirectWithNotice(
+						__(
+							'Your transfer is taking longer than expected. It may still finish — reload the page to check.'
+						)
+					);
+				}
 
 				return;
 			}

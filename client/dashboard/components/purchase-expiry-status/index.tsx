@@ -19,6 +19,7 @@ import {
 	isRenewingBeforeExpiration,
 	isExpiring,
 	isExpiredOrRemoved,
+	isFreeTrialEndingOnExpiryDate,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isAkismetFreeProduct,
@@ -192,7 +193,7 @@ export function PurchaseExpiryStatus( {
 	}
 
 	const isA4ABDPurchase = isA4ABillingDragonPurchase( purchase );
-	const temporarySitePurchaseProductTypes = [ 'saas_plugin', 'jetpack', 'akismet' ];
+	const temporarySitePurchaseProductTypes = [ 'saas_plugin', 'jetpack', 'akismet', 'studio_code' ];
 	const isKnownTemporarySiteProductType =
 		purchase.is_attached_to_holding_site &&
 		temporarySitePurchaseProductTypes.includes( purchase.product_type );
@@ -255,12 +256,8 @@ export function PurchaseExpiryStatus( {
 		);
 	}
 
-	const isIntroductoryOfferFreeTrial = purchase.introductory_offer?.cost_per_interval === 0;
-	if (
-		purchase.introductory_offer?.is_within_period &&
-		isIntroductoryOfferFreeTrial &&
-		isRenewingBeforeExpiration( purchase )
-	) {
+	const isFreeTrial = isFreeTrialEndingOnExpiryDate( purchase );
+	if ( isFreeTrial && isRenewingBeforeExpiration( purchase ) ) {
 		return createInterpolateElement(
 			sprintf(
 				// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
@@ -283,11 +280,7 @@ export function PurchaseExpiryStatus( {
 		);
 	}
 
-	if (
-		purchase.introductory_offer?.is_within_period &&
-		isIntroductoryOfferFreeTrial &&
-		! isExpiredOrRemoved( purchase )
-	) {
+	if ( isFreeTrial && ! isExpiredOrRemoved( purchase ) ) {
 		return (
 			<span>
 				{

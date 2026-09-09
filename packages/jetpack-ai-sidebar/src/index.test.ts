@@ -51,6 +51,7 @@ const mockSelectBlock = jest.fn( ( clientId?: string | null ) => {
 const mockClearSelectedBlock = jest.fn( () => {
 	mockSelectedBlockClientId = null;
 } );
+const mockEditPost = jest.fn();
 const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
 	typeof recordTracksEvent
 >;
@@ -58,6 +59,7 @@ let mockSelectedBlock: any = null;
 let mockCurrentPostType: string | undefined = 'post';
 let mockBlocksByClientId: Record< string, any > = {};
 let mockEditorBlocks: any[] = [];
+let mockImageStudioActions: { openImageStudio: jest.Mock } | null = null;
 const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
 const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
 const UPDATE_BLOCK_CONTENT_TOOL_ID = 'wpcom__update_block_content';
@@ -82,6 +84,15 @@ function appendBlockInRootLayout(
 	return { layout, block };
 }
 
+const mockSerializeBlocks = jest.fn( ( blocks: any[] ) => {
+	const normalize = ( block: any ): any => ( {
+		name: block.name,
+		attributes: block.attributes,
+		innerBlocks: ( block.innerBlocks ?? [] ).map( normalize ),
+	} );
+	return JSON.stringify( blocks.map( normalize ) );
+} );
+
 jest.mock( '@wordpress/block-editor', () => ( {
 	store: 'core/block-editor',
 	// BlockRef renders the block-type icon via BlockIcon; a stub keeps these
@@ -105,6 +116,7 @@ jest.mock( '@wordpress/blocks', () => ( {
 	// Nothing is registered in the test env, so block chips fall back to their
 	// prettified slug — which is all these tests assert about the block ref.
 	getBlockType: () => undefined,
+	serialize: ( blocks: any[] ) => mockSerializeBlocks( blocks ),
 } ) );
 
 jest.mock( '@wordpress/components', () => {
@@ -144,10 +156,20 @@ jest.mock( '@wordpress/data', () => ( {
 				clearSelectedBlock: mockClearSelectedBlock,
 			};
 		}
+		if ( store === 'image-studio' ) {
+			return mockImageStudioActions ?? {};
+		}
+		if ( store === 'core/editor' ) {
+			return { editPost: mockEditPost };
+		}
 		return {};
 	} ),
 	select: jest.fn( ( store: string ) => {
 		if ( store === 'core/block-editor' ) {
+			const windowStore = ( globalThis as any ).wp?.data?.select?.( store );
+			if ( windowStore ) {
+				return windowStore;
+			}
 			return {
 				getSelectedBlockClientId: () => mockSelectedBlockClientId,
 			};
@@ -240,12 +262,53 @@ function installWpDataMock(
 	return state;
 }
 
+interface PostTypeMockOptions {
+	supportsExcerpt?: boolean;
+	postTypeRecordResolved?: boolean;
+	/** add_post_type_support with arguments stores an array instead of true. */
+	supportsThumbnail?: boolean | unknown[];
+	/** Mirrors the theme support, which is a boolean or a list of post types. */
+	themeSupportsThumbnails?: boolean | string[];
+	/** core-data returns an empty object until the active theme resolves. */
+	themeSupportsResolved?: boolean;
+	/** Whole getThemeSupports return value, for a store that returns something else. */
+	themeSupportsReturnValue?: unknown;
+	isPostEmpty?: boolean;
+	/** Drops the selector, as an editor predating it would. */
+	omitIsEditedPostEmpty?: boolean;
+}
+
 function installPostTypeMock(
 	postType?: string,
 	postId: EditorPostId | null = 123,
-	supportsExcerpt: boolean = postType === 'post',
-	postTypeRecordResolved = true
+	options: PostTypeMockOptions = {}
 ) {
+	const {
+		supportsExcerpt = postType === 'post',
+		postTypeRecordResolved = true,
+		themeSupportsThumbnails = true,
+		themeSupportsResolved = true,
+		isPostEmpty = false,
+		omitIsEditedPostEmpty = false,
+	} = options;
+
+	// remove_post_type_support unsets the key, so an explicit undefined omits it.
+	const supportsThumbnail =
+		'supportsThumbnail' in options
+			? options.supportsThumbnail
+			: postType === 'post' || postType === 'page';
+	const supports: Record< string, unknown > = { excerpt: supportsExcerpt };
+	if ( supportsThumbnail !== undefined ) {
+		supports.thumbnail = supportsThumbnail;
+	}
+
+	const getThemeSupports = () => {
+		if ( 'themeSupportsReturnValue' in options ) {
+			return options.themeSupportsReturnValue;
+		}
+		return themeSupportsResolved ? { 'post-thumbnails': themeSupportsThumbnails } : {};
+	};
+
 	( window as any ).wp = {
 		data: {
 			select: ( store: string ) => {
@@ -253,6 +316,7 @@ function installPostTypeMock(
 					return {
 						getCurrentPostId: () => postId,
 						getCurrentPostType: () => postType,
+						...( omitIsEditedPostEmpty ? {} : { isEditedPostEmpty: () => isPostEmpty } ),
 					};
 				}
 				if ( store === 'core/block-editor' ) {
@@ -265,9 +329,8 @@ function installPostTypeMock(
 				if ( store === 'core' ) {
 					return {
 						getPostType: ( name: string ) =>
-							postTypeRecordResolved && name === postType
-								? { supports: { excerpt: supportsExcerpt } }
-								: undefined,
+							postTypeRecordResolved && name === postType ? { supports } : undefined,
+						getThemeSupports,
 					};
 				}
 				return undefined;
@@ -327,19 +390,28 @@ function installAiEditorialReviewData( features: Record< string, boolean > = {} 
 function SuggestionsProbe( {
 	onSuggestions,
 	maxSuggestions,
-	suggestionsVisible = true,
 }: {
 	onSuggestions: ( suggestions: any[], replaceEmptyViewSuggestions?: boolean ) => void;
 	maxSuggestions?: number;
-	suggestionsVisible?: boolean;
 } ) {
-	const { suggestions, replaceEmptyViewSuggestions } = useSuggestions( maxSuggestions, {
-		suggestionsVisible,
-	} );
+	const { suggestions, replaceEmptyViewSuggestions } = useSuggestions( maxSuggestions );
 	React.useEffect( () => {
 		onSuggestions( suggestions, replaceEmptyViewSuggestions );
 	}, [ onSuggestions, replaceEmptyViewSuggestions, suggestions ] );
 	return null;
+}
+
+function feedbackOptionIds(): string[] {
+	const options =
+		getEmptyViewSuggestions().find( ( suggestion ) => suggestion.id === 'get-feedback' )?.options ??
+		[];
+	return options.map( ( option: { id: string } ) => option.id );
+}
+
+function feedbackOptionPrompt( optionId: string ): string | undefined {
+	return getEmptyViewSuggestions()
+		.find( ( suggestion ) => suggestion.id === 'get-feedback' )
+		?.options?.find( ( option: { id: string } ) => option.id === optionId )?.value;
 }
 
 function getTracksCalls( eventName: string ) {
@@ -438,6 +510,7 @@ describe( 'getChatComponent', () => {
 		expect( getChatComponent( 'font-picker' ) ).toBeNull();
 		expect( getChatComponent( '' ) ).toBeNull();
 		expect( getChatComponent( 'anything-else' ) ).toBeNull();
+		expect( getChatComponent( 'toString' ) ).toBeNull();
 	} );
 } );
 
@@ -1811,6 +1884,100 @@ describe( 'Proofread', () => {
 	} );
 } );
 
+describe( 'empty post gating', () => {
+	// The three reviews sit inside the Get feedback dropdown, so that chip gates
+	// as a whole rather than each review separately.
+	const CONTENT_DEPENDENT_IDS = [
+		'optimize-title',
+		'generate-excerpt',
+		'get-feedback',
+		'seo-enhancer',
+	];
+
+	const ALL_FEATURES = {
+		optimizeTitleSuggestion: true,
+		excerptSuggestion: true,
+		proofreadContent: true,
+		seoSuggestions: true,
+	};
+
+	afterEach( () => {
+		delete ( globalThis as any ).agentsManagerData;
+		delete ( window as any ).wp;
+		mockImageStudioActions = null;
+	} );
+
+	function suggestionsFor( options: { isPostEmpty?: boolean; omitIsEditedPostEmpty?: boolean } ) {
+		installAiEditorialReviewData( ALL_FEATURES );
+		installPostTypeMock( 'post', 123, { supportsExcerpt: true, ...options } );
+		return getEmptyViewSuggestions();
+	}
+
+	it.each( CONTENT_DEPENDENT_IDS )( 'disables %s on an empty post', ( id ) => {
+		const suggestion = suggestionsFor( { isPostEmpty: true } ).find( ( s ) => s.id === id );
+
+		expect( suggestion ).toBeDefined();
+		expect( suggestion?.disabled ).toBe( true );
+	} );
+
+	it.each( CONTENT_DEPENDENT_IDS )( 'enables %s once the post has content', ( id ) => {
+		const suggestion = suggestionsFor( { isPostEmpty: false } ).find( ( s ) => s.id === id );
+
+		expect( suggestion ).toBeDefined();
+		expect( suggestion?.disabled ).toBeFalsy();
+	} );
+
+	it.each( CONTENT_DEPENDENT_IDS )( 'gives %s a reason for being disabled', ( id ) => {
+		const suggestion = suggestionsFor( { isPostEmpty: true } ).find( ( s ) => s.id === id );
+
+		expect( suggestion?.disabledReason ).toBe( 'This feature requires content to work.' );
+	} );
+
+	it( 'gives no reason once the suggestion is usable', () => {
+		const suggestion = suggestionsFor( { isPostEmpty: false } ).find(
+			( s ) => s.id === 'optimize-title'
+		);
+
+		expect( suggestion?.disabledReason ).toBeUndefined();
+	} );
+
+	it( 'keeps the disabled suggestions in the list so a blank post still shows them', () => {
+		const ids = suggestionsFor( { isPostEmpty: true } ).map( ( suggestion ) => suggestion.id );
+
+		CONTENT_DEPENDENT_IDS.forEach( ( id ) => expect( ids ).toContain( id ) );
+	} );
+
+	it( 'leaves generate-featured-image enabled, since the user types their own prompt', () => {
+		// The chip only appears when Image Studio is available.
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+		const suggestion = suggestionsFor( { isPostEmpty: true } ).find(
+			( s ) => s.id === 'generate-featured-image'
+		);
+
+		expect( suggestion ).toBeDefined();
+		expect( suggestion?.disabled ).toBeFalsy();
+	} );
+
+	it( 'does not mutate the shared suggestion definitions', () => {
+		// They are module constants, so marking one disabled in place would leak into
+		// every later render.
+		suggestionsFor( { isPostEmpty: true } );
+		const suggestion = suggestionsFor( { isPostEmpty: false } ).find(
+			( s ) => s.id === 'optimize-title'
+		);
+
+		expect( suggestion?.disabled ).toBeFalsy();
+	} );
+
+	it( 'enables the suggestions when the editor cannot say whether the post is empty', () => {
+		const suggestion = suggestionsFor( { omitIsEditedPostEmpty: true } ).find(
+			( s ) => s.id === 'optimize-title'
+		);
+
+		expect( suggestion?.disabled ).toBeFalsy();
+	} );
+} );
+
 describe( 'getEmptyViewSuggestions', () => {
 	beforeEach( () => {
 		mockedRecordTracksEvent.mockClear();
@@ -1819,26 +1986,30 @@ describe( 'getEmptyViewSuggestions', () => {
 	afterEach( () => {
 		delete ( globalThis as any ).agentsManagerData;
 		delete ( window as any ).wp;
+		mockImageStudioActions = null;
 	} );
 
 	it( 'hides post suggestions without a sidebar config', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'Editorial Review' );
+		expect( feedbackOptionIds() ).not.toContain( 'ai-editorial-review' );
 	} );
 
 	it( 'returns one AI Editorial Review suggestion with the existing UX label', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
 
-		const suggestions = getEmptyViewSuggestions();
-		const aiEditorialReviewSuggestions = suggestions.filter(
-			( suggestion ) => suggestion.id === 'ai-editorial-review'
+		const feedback = getEmptyViewSuggestions().filter(
+			( suggestion ) => suggestion.id === 'get-feedback'
 		);
 
-		expect( aiEditorialReviewSuggestions ).toEqual( [
-			expect.objectContaining( { label: 'Editorial Review' } ),
-		] );
+		expect( feedback ).toEqual( [ expect.objectContaining( { label: 'Get feedback' } ) ] );
+		expect( feedback[ 0 ].options ).toContainEqual(
+			expect.objectContaining( {
+				id: 'ai-editorial-review',
+				label: 'In-depth review against guidelines',
+			} )
+		);
 	} );
 
 	it( 'shows AI Editorial Review when enabled by agentsManagerData', () => {
@@ -1846,8 +2017,8 @@ describe( 'getEmptyViewSuggestions', () => {
 		installPostTypeMock( 'post' );
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).toContain( 'Editorial Review' );
-		expect( labels ).toContain( 'Simple Review' );
+		expect( feedbackOptionIds() ).toContain( 'ai-editorial-review' );
+		expect( feedbackOptionIds() ).toContain( 'generate-feedback' );
 	} );
 
 	it( 'shows AI Editorial Review on page editors', () => {
@@ -1857,8 +2028,8 @@ describe( 'getEmptyViewSuggestions', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).toContain( 'Editorial Review' );
-		expect( labels ).toContain( 'Simple Review' );
+		expect( feedbackOptionIds() ).toContain( 'ai-editorial-review' );
+		expect( feedbackOptionIds() ).toContain( 'generate-feedback' );
 	} );
 
 	it( 'shows all enabled editor-level suggestions on page editors', () => {
@@ -1867,16 +2038,15 @@ describe( 'getEmptyViewSuggestions', () => {
 			excerptSuggestion: true,
 			proofreadContent: true,
 		} );
-		installPostTypeMock( 'page', 123, true );
+		installPostTypeMock( 'page', 123, { supportsExcerpt: true } );
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
-		expect( labels ).toEqual( [
-			'Optimize Title',
-			'Generate Excerpt',
-			'Simple Review',
-			'Proofread',
-			'Editorial Review',
+		expect( labels ).toEqual( [ 'Optimize Title', 'Generate Excerpt', 'Get feedback' ] );
+		expect( feedbackOptionIds() ).toEqual( [
+			'generate-feedback',
+			'proofread-content',
+			'ai-editorial-review',
 		] );
 	} );
 
@@ -1889,7 +2059,7 @@ describe( 'getEmptyViewSuggestions', () => {
 				proofreadContent: true,
 				seoSuggestions: true,
 			} );
-			installPostTypeMock( postType, postId, true );
+			installPostTypeMock( postType, postId, { supportsExcerpt: true } );
 
 			const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
@@ -1904,50 +2074,40 @@ describe( 'getEmptyViewSuggestions', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'Editorial Review' );
+		expect( feedbackOptionIds() ).not.toContain( 'ai-editorial-review' );
 	} );
 
 	it( 'hides Simple Review until the editor entity has a saved ID', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post', null );
 
-		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
-
-		expect( labels ).not.toContain( 'Simple Review' );
-		expect( labels ).toContain( 'Editorial Review' );
+		expect( feedbackOptionIds() ).not.toContain( 'generate-feedback' );
+		expect( feedbackOptionIds() ).toContain( 'ai-editorial-review' );
 	} );
 
 	it( 'hides Simple Review when the preview feature disables it', () => {
 		installAiEditorialReviewData( { generateFeedback: false } );
 		installPostTypeMock( 'post' );
 
-		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
-
-		expect( labels ).not.toContain( 'Simple Review' );
-		expect( labels ).toContain( 'Editorial Review' );
+		expect( feedbackOptionIds() ).not.toContain( 'generate-feedback' );
+		expect( feedbackOptionIds() ).toContain( 'ai-editorial-review' );
 	} );
 
 	it( 'hides Proofread by default and shows it when the preview feature enables it', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
-		expect( getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label ) ).not.toContain(
-			'Proofread'
-		);
+		expect( feedbackOptionIds() ).not.toContain( 'proofread-content' );
 
 		installAiEditorialReviewData( { proofreadContent: true } );
 		installPostTypeMock( 'post' );
-		expect( getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label ) ).toContain(
-			'Proofread'
-		);
+		expect( feedbackOptionIds() ).toContain( 'proofread-content' );
 	} );
 
 	it( 'hides Proofread until the editor entity has a saved ID', () => {
 		installAiEditorialReviewData( { proofreadContent: true } );
 		installPostTypeMock( 'post', null );
 
-		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
-
-		expect( labels ).not.toContain( 'Proofread' );
+		expect( feedbackOptionIds() ).not.toContain( 'proofread-content' );
 	} );
 
 	it( 'hides Optimize Title when the feature disables it', () => {
@@ -1957,7 +2117,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'Editorial Review' );
+		expect( feedbackOptionIds() ).not.toContain( 'ai-editorial-review' );
 	} );
 
 	it( 'treats missing features as disabled', () => {
@@ -1972,11 +2132,11 @@ describe( 'getEmptyViewSuggestions', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).toContain( 'Editorial Review' );
-		expect( labels ).not.toContain( 'Simple Review' );
+		expect( feedbackOptionIds() ).toContain( 'ai-editorial-review' );
+		expect( feedbackOptionIds() ).not.toContain( 'generate-feedback' );
 	} );
 
-	it( 'attaches a one-line description to every starting-screen suggestion', () => {
+	it( 'carries no descriptions, since the labels say what each one does', () => {
 		installAiEditorialReviewData( {
 			optimizeTitleSuggestion: true,
 			proofreadContent: true,
@@ -1985,23 +2145,8 @@ describe( 'getEmptyViewSuggestions', () => {
 		} );
 		installPostTypeMock( 'post' );
 
-		const suggestions = getEmptyViewSuggestions();
-		const byLabel = ( label: string ) =>
-			suggestions.find( ( suggestion ) => suggestion.label === label );
-
-		[
-			'Optimize Title',
-			'Proofread',
-			'Simple Review',
-			'Editorial Review',
-			'SEO Enhancer',
-			'Generate Excerpt',
-		].forEach( ( label ) => {
-			const suggestion = byLabel( label );
-			expect( suggestion ).toBeDefined();
-			expect( typeof suggestion?.description ).toBe( 'string' );
-			expect( suggestion?.description ).toBeTruthy();
-			expect( suggestion?.description ).not.toContain( '\n' );
+		getEmptyViewSuggestions().forEach( ( suggestion ) => {
+			expect( suggestion.description ).toBeUndefined();
 		} );
 	} );
 
@@ -2048,7 +2193,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		installAiEditorialReviewData( { excerptSuggestion: true } );
 		// WordPress.com Simple / any site with the Jetpack SEO Tools module adds
 		// excerpt support to pages — the legacy AI Excerpt panel shows there too.
-		installPostTypeMock( 'page', 123, true );
+		installPostTypeMock( 'page', 123, { supportsExcerpt: true } );
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2057,7 +2202,7 @@ describe( 'getEmptyViewSuggestions', () => {
 
 	it( 'hides Generate Excerpt for site editor templates that support excerpts', () => {
 		installAiEditorialReviewData( { excerptSuggestion: true } );
-		installPostTypeMock( 'wp_template', 123, true );
+		installPostTypeMock( 'wp_template', 123, { supportsExcerpt: true } );
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2068,7 +2213,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		installAiEditorialReviewData( { excerptSuggestion: true } );
 		// Core registers excerpt support for wp_block (patterns), but the excerpt
 		// field acts as a description there — the chip still excludes patterns.
-		installPostTypeMock( 'wp_block', 123, true );
+		installPostTypeMock( 'wp_block', 123, { supportsExcerpt: true } );
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2077,7 +2222,10 @@ describe( 'getEmptyViewSuggestions', () => {
 
 	it( 'shows Generate Excerpt for posts while the post type record is still resolving', () => {
 		installAiEditorialReviewData( { excerptSuggestion: true } );
-		installPostTypeMock( 'post', 123, true, false );
+		installPostTypeMock( 'post', 123, {
+			supportsExcerpt: true,
+			postTypeRecordResolved: false,
+		} );
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2086,11 +2234,169 @@ describe( 'getEmptyViewSuggestions', () => {
 
 	it( 'hides Generate Excerpt for pages while the post type record is still resolving', () => {
 		installAiEditorialReviewData( { excerptSuggestion: true } );
-		installPostTypeMock( 'page', 123, false, false );
+		installPostTypeMock( 'page', 123, {
+			supportsExcerpt: false,
+			postTypeRecordResolved: false,
+		} );
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
 		expect( ids ).not.toContain( 'generate-excerpt' );
+	} );
+
+	it( 'shows Generate Featured Image when Image Studio is available', () => {
+		installPostTypeMock( 'post' );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const chip = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'generate-featured-image'
+		);
+
+		expect( chip?.label ).toBe( 'Generate featured image' );
+		expect( chip?.prompt ).toBe( '' );
+		expect( typeof chip?.action ).toBe( 'function' );
+	} );
+
+	it( 'hides Generate Featured Image when Image Studio is not available', () => {
+		installPostTypeMock( 'post' );
+		mockImageStudioActions = null;
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-featured-image' );
+	} );
+
+	it( 'hides Generate Featured Image for unsupported post-level entities', () => {
+		installPostTypeMock( 'wp_template', 123 );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-featured-image' );
+	} );
+
+	it( 'hides Generate Featured Image when the post type has no thumbnail support', () => {
+		// What remove_post_type_support leaves behind: the key is gone.
+		installPostTypeMock( 'post', 123, { supportsThumbnail: undefined } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-featured-image' );
+	} );
+
+	it( 'hides Generate Featured Image on pages that dropped thumbnail support', () => {
+		installPostTypeMock( 'page', 123, { supportsThumbnail: undefined } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-featured-image' );
+	} );
+
+	it( 'shows Generate Featured Image on pages that support featured images', () => {
+		installPostTypeMock( 'page', 123, { supportsThumbnail: true } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-featured-image' );
+	} );
+
+	it( 'shows Generate Featured Image when thumbnail support was registered with arguments', () => {
+		// add_post_type_support( 'post', 'thumbnail', $args ) stores the arguments,
+		// so the REST route reports an array. The editor treats that as supported.
+		installPostTypeMock( 'post', 123, { supportsThumbnail: [ [ 'custom' ] ] } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-featured-image' );
+	} );
+
+	it( 'hides Generate Featured Image when the theme does not support post thumbnails', () => {
+		// The post type keeps thumbnail support; the theme is what is missing.
+		installPostTypeMock( 'post', 123, { themeSupportsThumbnails: false } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-featured-image' );
+	} );
+
+	it( 'hides Generate Featured Image when the theme limits thumbnails to other post types', () => {
+		// add_theme_support( 'post-thumbnails', array( 'post' ) ) leaves pages out.
+		installPostTypeMock( 'page', 123, { themeSupportsThumbnails: [ 'post' ] } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-featured-image' );
+	} );
+
+	it( 'shows Generate Featured Image when the theme lists this post type', () => {
+		installPostTypeMock( 'page', 123, { themeSupportsThumbnails: [ 'post', 'page' ] } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-featured-image' );
+	} );
+
+	it( 'hides Generate Featured Image when the theme lists no post types', () => {
+		installPostTypeMock( 'post', 123, { themeSupportsThumbnails: [] } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-featured-image' );
+	} );
+
+	it( 'shows Generate Featured Image while the post type record is still resolving', () => {
+		installPostTypeMock( 'post', 123, { postTypeRecordResolved: false } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-featured-image' );
+	} );
+
+	it( 'shows Generate Featured Image when the theme supports are not an object', () => {
+		// core-data always returns an object, but the chip reads whichever store
+		// the page registered as 'core', so reading the key must not throw.
+		installPostTypeMock( 'post', 123, { themeSupportsReturnValue: true } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-featured-image' );
+	} );
+
+	it( 'shows Generate Featured Image while the theme supports are still resolving', () => {
+		installPostTypeMock( 'post', 123, { themeSupportsResolved: false } );
+		mockImageStudioActions = { openImageStudio: jest.fn() };
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-featured-image' );
+	} );
+
+	it( "invoking the suggestion's action opens Image Studio and does not submit a prompt", () => {
+		installPostTypeMock( 'post' );
+		const openImageStudio = jest.fn();
+		mockImageStudioActions = { openImageStudio };
+
+		const chip = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'generate-featured-image'
+		);
+		const shouldSubmitPrompt = chip?.action?.();
+
+		expect( openImageStudio ).toHaveBeenCalledWith(
+			undefined,
+			expect.any( Function ),
+			'jetpack_ai_featured_image'
+		);
+		expect( shouldSubmitPrompt ).toBe( false );
 	} );
 
 	it( 'shows the SEO Enhancer dropdown when the seoSuggestions feature is enabled', () => {
@@ -2181,25 +2487,6 @@ describe( 'useSuggestions', () => {
 		delete ( window as any ).wp;
 	} );
 
-	it( 'does not track rendered suggestions when the suggestions are not visible', () => {
-		installAiEditorialReviewData();
-		mockSelectedBlock = { clientId: 'b-hidden', name: 'core/paragraph' };
-		const onSuggestions = jest.fn();
-
-		render( React.createElement( SuggestionsProbe, { onSuggestions, suggestionsVisible: false } ) );
-
-		const latestSuggestions =
-			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
-		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
-			'Translate content',
-			'Change tone',
-			'Check grammar',
-			'Simplify text',
-		] );
-		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
-		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [] );
-	} );
-
 	it( 'shows only block-specific suggestions when a block is selected', () => {
 		installAiEditorialReviewData();
 		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
@@ -2216,44 +2503,6 @@ describe( 'useSuggestions', () => {
 			'Simplify text',
 		] );
 		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
-		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'translate',
-					suggestion_type: 'text',
-					block_type: 'core/paragraph',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'change-tone',
-					suggestion_type: 'text',
-					block_type: 'core/paragraph',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'check-grammar',
-					suggestion_type: 'text',
-					block_type: 'core/paragraph',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'simplify-text',
-					suggestion_type: 'text',
-					block_type: 'core/paragraph',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-		] );
 	} );
 
 	it( 'replaces editor-level empty-view suggestions when a block is selected', () => {
@@ -2317,13 +2566,10 @@ describe( 'useSuggestions', () => {
 
 		const emptyViewLabels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 		expect( emptyViewLabels ).toContain( 'Optimize Title' );
-		expect( emptyViewLabels ).toContain( 'Editorial Review' );
+		expect( emptyViewLabels ).toContain( 'Get feedback' );
 
-		// The rendered event fires once per page load (module-level guard), so
-		// only the first render with the chip available can assert it — which is
-		// this test: every earlier test either selects a block or uses an
-		// unsupported post type.
-		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toHaveLength( 1 );
+		// Chip exposure is tracked by Agents Manager's jetpack_big_sky_chat_suggestions_rendered.
+		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
 	} );
 
 	it( 'keeps selected-block suggestions on template entities', () => {
@@ -2363,35 +2609,6 @@ describe( 'useSuggestions', () => {
 			'Change tone',
 			'Check grammar',
 		] );
-		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'translate',
-					suggestion_type: 'text',
-					block_type: 'core/heading',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'change-tone',
-					suggestion_type: 'text',
-					block_type: 'core/heading',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'check-grammar',
-					suggestion_type: 'text',
-					block_type: 'core/heading',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
-		] );
 	} );
 
 	it( 'returns no suggestions after the selected-block chip is cleared', () => {
@@ -2418,6 +2635,8 @@ describe( 'useSuggestions', () => {
 		latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions ).toEqual( [] );
+		// Chip exposure is tracked by Agents Manager's jetpack_big_sky_chat_suggestions_rendered.
+		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
 	} );
 
 	it( 'tracks rendered image block transformation suggestions', () => {
@@ -2431,17 +2650,6 @@ describe( 'useSuggestions', () => {
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
 			'Generate alt text',
-		] );
-		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
-			[
-				'jetpack_ai_block_transformation_suggestion_rendered',
-				{
-					suggestion_id: 'generate-alt-text',
-					suggestion_type: 'image',
-					block_type: 'core/image',
-					surface: 'jetpack_ai_sidebar',
-				},
-			],
 		] );
 	} );
 
@@ -2474,8 +2682,9 @@ describe( 'useSuggestions', () => {
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions ).toEqual( [] );
 		expect( getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label ) ).toEqual( [
-			'Editorial Review',
+			'Get feedback',
 		] );
+		expect( feedbackOptionIds() ).toEqual( [ 'ai-editorial-review' ] );
 	} );
 
 	it( 'keeps Simple Review on the backend path without opening split-screen when clicked', () => {
@@ -2483,9 +2692,7 @@ describe( 'useSuggestions', () => {
 		installPostTypeMock( 'post' );
 		const addMessage = jest.fn();
 		const clearSuggestions = jest.fn();
-		const feedbackPrompt = getEmptyViewSuggestions().find(
-			( suggestion ) => suggestion.id === 'generate-feedback'
-		)?.prompt;
+		const feedbackPrompt = feedbackOptionPrompt( 'generate-feedback' );
 
 		expect( feedbackPrompt ).toContain( 'saved title and saved block content' );
 		expect( feedbackPrompt ).toContain( 'one-click suggestions when safe' );
@@ -2512,16 +2719,14 @@ describe( 'useSuggestions', () => {
 	it( 'does not open split-screen when the Proofread suggestion is clicked', () => {
 		installAiEditorialReviewData( { proofreadContent: true } );
 		installPostTypeMock( 'post' );
-		const proofreadPrompt = getEmptyViewSuggestions().find(
-			( suggestion ) => suggestion.id === 'proofread-content'
-		)?.prompt;
+		const proofreadPrompt = feedbackOptionPrompt( 'proofread-content' );
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
 
 		act( () => {
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: proofreadPrompt, suggestionId: 'proofread-content' },
+					detail: { value: proofreadPrompt, suggestionId: 'get-feedback' },
 				} )
 			);
 		} );
@@ -2537,14 +2742,13 @@ describe( 'useSuggestions', () => {
 		act( () => {
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { suggestionId: 'ai-editorial-review' },
+					detail: { suggestionId: 'get-feedback' },
 				} )
 			);
 		} );
 
 		expect( mockSetIsSplitScreen ).not.toHaveBeenCalled();
 		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_click' ) ).toEqual( [] );
-		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_click' ) ).toEqual( [] );
 	} );
 
 	it( 'exposes tone and language dropdown options on the block suggestions', () => {
@@ -2615,7 +2819,7 @@ describe( 'useSuggestions', () => {
 		act( () => {
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { suggestionId: 'ai-editorial-review' },
+					detail: { suggestionId: 'get-feedback' },
 				} )
 			);
 		} );
@@ -2687,9 +2891,7 @@ describe( 'useSuggestions', () => {
 		installAiEditorialReviewData( { proofreadContent: true } );
 		installPostTypeMock( 'post' );
 		mockSelectedBlock = { clientId: 'b-proofread', name: 'core/paragraph' };
-		const proofreadPrompt = getEmptyViewSuggestions().find(
-			( suggestion ) => suggestion.id === 'proofread-content'
-		)?.prompt;
+		const proofreadPrompt = feedbackOptionPrompt( 'proofread-content' );
 		const onSuggestions = jest.fn();
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
@@ -2697,7 +2899,7 @@ describe( 'useSuggestions', () => {
 		act( () => {
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: proofreadPrompt, suggestionId: 'proofread-content' },
+					detail: { value: proofreadPrompt, suggestionId: 'get-feedback' },
 				} )
 			);
 			useAbilitiesSetup( {
@@ -2811,16 +3013,14 @@ describe( 'contextProvider', () => {
 	it( 'suppresses full page content for the next Simple Review chip request', () => {
 		installAiEditorialReviewData();
 		installContextProviderMock();
-		const feedbackPrompt = getEmptyViewSuggestions().find(
-			( suggestion ) => suggestion.id === 'generate-feedback'
-		)?.prompt;
+		const feedbackPrompt = feedbackOptionPrompt( 'generate-feedback' );
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
 
 		act( () => {
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: feedbackPrompt, suggestionId: 'generate-feedback' },
+					detail: { value: feedbackPrompt, suggestionId: 'get-feedback' },
 				} )
 			);
 		} );
@@ -2835,16 +3035,14 @@ describe( 'contextProvider', () => {
 	it( 'suppresses full page content for the next Proofread chip request', () => {
 		installAiEditorialReviewData( { proofreadContent: true } );
 		installContextProviderMock();
-		const proofreadPrompt = getEmptyViewSuggestions().find(
-			( suggestion ) => suggestion.id === 'proofread-content'
-		)?.prompt;
+		const proofreadPrompt = feedbackOptionPrompt( 'proofread-content' );
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
 
 		act( () => {
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: proofreadPrompt, suggestionId: 'proofread-content' },
+					detail: { value: proofreadPrompt, suggestionId: 'get-feedback' },
 				} )
 			);
 		} );
@@ -2887,27 +3085,22 @@ describe( 'contextProvider', () => {
 	it( 'clears pending Simple Review content suppression when another suggestion is clicked', () => {
 		installAiEditorialReviewData();
 		installContextProviderMock();
-		const suggestions = getEmptyViewSuggestions();
-		const feedbackPrompt = suggestions.find(
-			( suggestion ) => suggestion.id === 'generate-feedback'
-		)?.prompt;
-		const aiEditorialReviewPrompt = suggestions.find(
-			( suggestion ) => suggestion.id === 'ai-editorial-review'
-		)?.prompt;
+		const feedbackPrompt = feedbackOptionPrompt( 'generate-feedback' );
+		const aiEditorialReviewPrompt = feedbackOptionPrompt( 'ai-editorial-review' );
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
 
 		act( () => {
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: feedbackPrompt, suggestionId: 'generate-feedback' },
+					detail: { value: feedbackPrompt, suggestionId: 'get-feedback' },
 				} )
 			);
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
 					detail: {
 						value: aiEditorialReviewPrompt,
-						suggestionId: 'ai-editorial-review',
+						suggestionId: 'get-feedback',
 					},
 				} )
 			);
@@ -3012,6 +3205,224 @@ describe( 'toolProvider', () => {
 			checkpoint.clearCheckpoint( 'call-update-block' );
 		} );
 
+		it( 'checkpoints the re-resolved clientId after a delayed block reparse', async () => {
+			jest.useFakeTimers();
+			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor( {
+				'first-live-client-id': {
+					name: 'core/paragraph',
+					attributes: { content: 'Teh quick fox jump over teh dog.' },
+				},
+			} );
+			const checkpoint = useCheckpoint();
+			const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const pending = updateBlock.callback( {
+				clientId: 'stale-client-id',
+				content: 'A quick fox leaps over the dog.',
+				currentText: 'Teh quick fox jump over teh dog.',
+				toolCallId: 'call-reparsed-block',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			blocks[ 'second-live-client-id' ] = {
+				...blocks[ 'first-live-client-id' ],
+				attributes: { ...blocks[ 'first-live-client-id' ].attributes },
+			};
+			delete blocks[ 'first-live-client-id' ];
+			jest.advanceTimersByTime( 1000 );
+			const result = await pending;
+
+			expect( result ).toMatchObject( {
+				success: true,
+				clientId: 'second-live-client-id',
+				contentBefore: 'Teh quick fox jump over teh dog.',
+				contentAfter: 'A quick fox leaps over the dog.',
+			} );
+			expect( warn ).toHaveBeenCalledWith( '[Jetpack AI] stale clientId matched by currentText', {
+				clientId: 'stale-client-id',
+				targetClientId: 'first-live-client-id',
+			} );
+			expect( blockUpdates[ 0 ] ).toEqual( {
+				clientId: 'second-live-client-id',
+				attrs: { content: 'A quick fox leaps over the dog.' },
+			} );
+			expect( checkpoint.canSwapCheckpoint( 'call-reparsed-block' ) ).toBe( true );
+			await checkpoint.swapCheckpoint( 'call-reparsed-block' );
+			expect( blocks[ 'second-live-client-id' ].attributes.content ).toBe(
+				'Teh quick fox jump over teh dog.'
+			);
+			checkpoint.clearCheckpoint( 'call-reparsed-block' );
+			warn.mockRestore();
+		} );
+
+		it( 'swaps a block checkpoint between the updated and original content', async () => {
+			jest.useFakeTimers();
+			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
+			const checkpoint = useCheckpoint();
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const pending = updateBlock.callback( {
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				content: 'Corrected block content.',
+				toolCallId: 'call-swap-block',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			jest.advanceTimersByTime( 1000 );
+			await pending;
+
+			expect( checkpoint.canSwapCheckpoint( 'call-swap-block' ) ).toBe( true );
+			await checkpoint.swapCheckpoint( 'call-swap-block' );
+			expect( blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content ).toBe(
+				'original block content'
+			);
+
+			await checkpoint.swapCheckpoint( 'call-swap-block' );
+			expect( blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content ).toBe(
+				'Corrected block content.'
+			);
+			expect( blockUpdates ).toHaveLength( 3 );
+			checkpoint.clearCheckpoint( 'call-swap-block' );
+		} );
+
+		it( 'does not swap a block checkpoint after a later edit', async () => {
+			jest.useFakeTimers();
+			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
+			const checkpoint = useCheckpoint();
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const pending = updateBlock.callback( {
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				content: 'Corrected block content.',
+				toolCallId: 'call-stale-swap',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			jest.advanceTimersByTime( 1000 );
+			await pending;
+
+			blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content = 'A later edit.';
+			expect( checkpoint.canSwapCheckpoint( 'call-stale-swap' ) ).toBe( false );
+			await expect( checkpoint.swapCheckpoint( 'call-stale-swap' ) ).rejects.toThrow(
+				'Failed to swap block edit checkpoint.'
+			);
+			expect( blockUpdates ).toHaveLength( 1 );
+			checkpoint.clearCheckpoint( 'call-stale-swap' );
+		} );
+
+		it( 'does not swap a block checkpoint after another block is added', async () => {
+			jest.useFakeTimers();
+			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
+			const checkpoint = useCheckpoint();
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const pending = updateBlock.callback( {
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				content: 'Corrected block content.',
+				toolCallId: 'call-block-added-after-edit',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			jest.advanceTimersByTime( 1000 );
+			await pending;
+
+			blocks[ 'new-paragraph-client-id' ] = {
+				name: 'core/paragraph',
+				attributes: { content: 'A new line.' },
+			};
+			expect( checkpoint.canSwapCheckpoint( 'call-block-added-after-edit' ) ).toBe( false );
+			await expect( checkpoint.swapCheckpoint( 'call-block-added-after-edit' ) ).rejects.toThrow(
+				'Failed to swap block edit checkpoint.'
+			);
+			await expect( checkpoint.restoreCheckpoint( 'call-block-added-after-edit' ) ).rejects.toThrow(
+				'Failed to restore block edit checkpoint.'
+			);
+			expect( blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content ).toBe(
+				'Corrected block content.'
+			);
+			expect( blocks[ 'new-paragraph-client-id' ].attributes.content ).toBe( 'A new line.' );
+			expect( blockUpdates ).toHaveLength( 1 );
+			checkpoint.clearCheckpoint( 'call-block-added-after-edit' );
+		} );
+
+		it( 'does not swap a block checkpoint without a safe editor signature', async () => {
+			jest.useFakeTimers();
+			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
+			const checkpoint = useCheckpoint();
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+			mockSerializeBlocks.mockImplementationOnce( () => {
+				throw new Error( 'Block serialization failed.' );
+			} );
+
+			const pending = updateBlock.callback( {
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				content: 'Corrected block content.',
+				toolCallId: 'call-unsafe-editor-signature',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			jest.advanceTimersByTime( 1000 );
+			await pending;
+
+			expect( checkpoint.canSwapCheckpoint( 'call-unsafe-editor-signature' ) ).toBe( false );
+			await expect( checkpoint.swapCheckpoint( 'call-unsafe-editor-signature' ) ).rejects.toThrow(
+				'Failed to swap block edit checkpoint.'
+			);
+			expect( blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content ).toBe(
+				'Corrected block content.'
+			);
+			expect( blockUpdates ).toHaveLength( 1 );
+			checkpoint.clearCheckpoint( 'call-unsafe-editor-signature' );
+		} );
+
+		it( 'does not redo a reverted block checkpoint after another block is added', async () => {
+			jest.useFakeTimers();
+			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
+			const checkpoint = useCheckpoint();
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const pending = updateBlock.callback( {
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				content: 'Corrected block content.',
+				toolCallId: 'call-block-added-after-undo',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			jest.advanceTimersByTime( 1000 );
+			await pending;
+			await checkpoint.swapCheckpoint( 'call-block-added-after-undo' );
+
+			blocks[ 'new-paragraph-after-undo' ] = {
+				name: 'core/paragraph',
+				attributes: { content: 'A new line after Undo.' },
+			};
+			expect( checkpoint.canSwapCheckpoint( 'call-block-added-after-undo' ) ).toBe( false );
+			await expect( checkpoint.swapCheckpoint( 'call-block-added-after-undo' ) ).rejects.toThrow(
+				'Failed to swap block edit checkpoint.'
+			);
+			expect( blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content ).toBe(
+				'original block content'
+			);
+			expect( blocks[ 'new-paragraph-after-undo' ].attributes.content ).toBe(
+				'A new line after Undo.'
+			);
+			expect( blockUpdates ).toHaveLength( 2 );
+			checkpoint.clearCheckpoint( 'call-block-added-after-undo' );
+		} );
+
 		it( 'surfaces a failed block checkpoint restore', async () => {
 			jest.useFakeTimers();
 			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
@@ -3084,6 +3495,46 @@ describe( 'toolProvider', () => {
 			expect( checkpoint.hasCheckpoint( 'call-no-block-change' ) ).toBe( false );
 		} );
 
+		it( 'surfaces a delayed block update failure without checkpointing', async () => {
+			jest.useFakeTimers();
+			const { blocks } = installWpDataMockWithBlockEditor();
+			const checkpoint = useCheckpoint();
+			const abilities = await toolProvider.getAbilities();
+			const updateBlock = abilities.find(
+				( ability: any ) => ability.name === 'wpcom/update-block-content'
+			);
+
+			const pending = updateBlock.callback( {
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				content: 'Corrected block content.',
+				currentText: 'original block content',
+				toolCallId: 'call-missing-target',
+				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
+			} );
+			delete blocks[ '550e8400-e29b-41d4-a716-446655440000' ];
+			jest.advanceTimersByTime( 1000 );
+			const result = await pending;
+
+			expect( result ).toMatchObject( {
+				success: false,
+				error: 'block not found',
+				returnToAgent: false,
+			} );
+			expect( JSON.parse( result.agentMessage ) ).toEqual( {
+				tool_id: UPDATE_BLOCK_CONTENT_TOOL_ID,
+				tool_call_id: 'call-missing-target',
+				data: {
+					result: {
+						success: false,
+						message: 'I could not update the block. Please try again.',
+						error: 'block not found',
+					},
+					followUpTasks: false,
+				},
+			} );
+			expect( checkpoint.hasCheckpoint( 'call-missing-target' ) ).toBe( false );
+		} );
+
 		it( 'documents the completed-edit summary contract in the update-block-content schema', async () => {
 			const abilities = await toolProvider.getAbilities();
 			const updateBlock = abilities.find( ( a: any ) => a.name === 'wpcom/update-block-content' );
@@ -3096,6 +3547,32 @@ describe( 'toolProvider', () => {
 			expect( summaryDescription ).toContain( 'Changed "stuffs" to "stuff".' );
 			expect( summaryDescription ).toContain( 'no changes were needed' );
 			expect( summaryDescription ).not.toContain( 'brief user-friendly description' );
+		} );
+
+		it( 'asks for a step summary in the show-component schema', async () => {
+			const abilities = await toolProvider.getAbilities();
+			const showComponent = abilities.find( ( a: any ) => a.name === SHOW_COMPONENT_ABILITY_NAME );
+			const legacyShowComponent = abilities.find(
+				( a: any ) => a.name === LEGACY_SHOW_COMPONENT_ABILITY_NAME
+			);
+
+			expect( showComponent?.input_schema?.properties?.summary?.type ).toBe( 'string' );
+			expect( showComponent?.input_schema?.required ).toEqual(
+				expect.arrayContaining( [ 'type', 'props' ] )
+			);
+			expect( showComponent?.input_schema?.properties?.type?.enum ).toEqual(
+				expect.arrayContaining( [
+					'title-picker',
+					'seo-description-picker',
+					'image-alt-text-picker',
+					'proofread',
+				] )
+			);
+			expect( showComponent?.input_schema?.properties?.type?.enum ).not.toContain(
+				'seo-description'
+			);
+			// The migration ability still delegates component types owned by Big Sky.
+			expect( legacyShowComponent?.input_schema?.properties?.type?.enum ).toBeUndefined();
 		} );
 
 		it( 'delegates non-Jetpack legacy show-component callbacks to Big Sky', async () => {
@@ -3145,8 +3622,8 @@ describe( 'toolProvider', () => {
 			} );
 
 			expect( executeAbility ).not.toHaveBeenCalled();
-			expect( result ).toMatchObject( { success: false } );
-			expect( result.error ).toMatch( /missing type/ );
+			expect( result.result ).toMatchObject( { success: false } );
+			expect( result.result.error ).toMatch( /missing type/ );
 		} );
 
 		it( 'omits update-block-content when block transformations are disabled', async () => {
@@ -3168,8 +3645,8 @@ describe( 'toolProvider', () => {
 
 		it( 'returns an error when type is missing', async () => {
 			const { result } = await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {} );
-			expect( result ).toMatchObject( { success: false } );
-			expect( ( result as any ).error ).toMatch( /missing type/ );
+			expect( result.result ).toMatchObject( { success: false } );
+			expect( result.result.error ).toMatch( /missing type/ );
 		} );
 
 		it( 'returns an error for an unknown component type', async () => {
@@ -3177,8 +3654,56 @@ describe( 'toolProvider', () => {
 				type: 'nonexistent-picker',
 				props: {},
 			} );
-			expect( result ).toMatchObject( { success: false } );
-			expect( ( result as any ).error ).toMatch( /no component registered/ );
+			expect( result.result ).toMatchObject( { success: false } );
+			expect( result.result.error ).toMatch( /no component registered/ );
+		} );
+
+		it.each( [
+			[ 'omitted', undefined ],
+			[ 'empty', {} ],
+			[ 'not an object', 'some text' ],
+			[ 'an array', [ { description: 'Description' } ] ],
+			[ 'the wrong option property', { titles: [ { title: 'Title' } ] } ],
+			[ 'an empty option array', { descriptions: [] } ],
+			[ 'invalid option entries', { descriptions: [ {} ] } ],
+		] )( 'rejects %s props instead of rendering a picker that crashes', async ( _label, props ) => {
+			// New executions need enough data to render a useful component. Old
+			// history remains tolerant inside the components themselves.
+			const { result, returnToAgent } = ( await toolProvider.executeAbility(
+				SHOW_COMPONENT_TOOL_ID,
+				{
+					type: 'seo-description-picker',
+					props,
+				}
+			) ) as any;
+
+			expect( returnToAgent ).toBe( true );
+			expect( result.result.success ).toBe( false );
+			expect( result.result.error ).toMatch( /props/i );
+			expect( result.agentMessage ).toBeUndefined();
+		} );
+
+		it( 'returns an unknown-type failure to the agent so it can recover', async () => {
+			// `seo-description` is what the model sent when it skipped the
+			// generate-seo-description ability and called this tool itself. The
+			// registered type is `seo-description-picker`, so the call fails —
+			// and the agent has to hear about it to correct itself.
+			const { result, returnToAgent } = ( await toolProvider.executeAbility(
+				SHOW_COMPONENT_TOOL_ID,
+				{
+					type: 'seo-description',
+					props: { descriptions: [] },
+				}
+			) ) as any;
+
+			expect( returnToAgent ).toBe( true );
+			expect( result.result.error ).toBe(
+				'show-component: no component registered for type "seo-description"'
+			);
+			// The backend shows `message` to the user and hands `error` to the
+			// model, so a failure needs both.
+			expect( typeof result.result.message ).toBe( 'string' );
+			expect( result.result.message.length ).toBeGreaterThan( 0 );
 		} );
 
 		it.each( [ SHOW_COMPONENT_ABILITY_NAME, SHOW_COMPONENT_TOOL_ID ] )(
@@ -3186,7 +3711,7 @@ describe( 'toolProvider', () => {
 			async ( name ) => {
 				const { result } = ( await toolProvider.executeAbility( name, {
 					type: 'title-picker',
-					props: { titles: [] },
+					props: { titles: [ { title: 'Title' } ] },
 				} ) ) as any;
 
 				expect( JSON.parse( result.agentMessage ).tool_id ).toBe( SHOW_COMPONENT_TOOL_ID );
@@ -3199,17 +3724,12 @@ describe( 'toolProvider', () => {
 				{ title: 'Title 2', explanation: 'b' },
 				{ title: 'Title 3', explanation: 'c' },
 			];
-			const { result, returnToAgent } = ( await toolProvider.executeAbility(
-				SHOW_COMPONENT_TOOL_ID,
-				{
-					type: 'title-picker',
-					props: { titles },
-					toolCallId: 'call_test_123',
-				}
-			) ) as any;
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'title-picker',
+				props: { titles },
+				toolCallId: 'call_test_123',
+			} ) ) as any;
 
-			expect( returnToAgent ).toBe( false );
-			expect( result.returnToAgent ).toBe( false );
 			expect( typeof result.agentMessage ).toBe( 'string' );
 
 			const parsed = JSON.parse( result.agentMessage );
@@ -3220,6 +3740,98 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_test_123' );
 			expect( parsed.data.isCurrent ).toBe( true );
 			expect( parsed.data.hideZoomAction ).toBe( true );
+			expect( parsed.data.responseTrackingProperties ).toBeUndefined();
+		} );
+
+		it( 'returns to the agent with a structured success result', async () => {
+			const { result, returnToAgent } = ( await toolProvider.executeAbility(
+				SHOW_COMPONENT_TOOL_ID,
+				{
+					type: 'title-picker',
+					props: { titles: [ { title: 'Title' } ] },
+				}
+			) ) as any;
+
+			// The backend acks a `{ success, message }` echo without another LLM
+			// turn. Withholding the result leaves the tool call unanswered, and
+			// the model re-plans the whole request instead of continuing it.
+			expect( returnToAgent ).toBe( true );
+			expect( result.returnToAgent ).toBe( true );
+			expect( result.result ).toEqual( {
+				success: true,
+				message: 'Choose from the options I provided.',
+				details: { type: 'title-picker' },
+			} );
+		} );
+
+		it( 'reports the supplied summary as the result message', async () => {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'proofread',
+				props: { summary: 'Proofread complete.', items: [] },
+				summary: 'Proofread complete. Fixed 2 typos.',
+			} ) ) as any;
+
+			// The backend records this text as the completed step, so a
+			// multi-step request continues from it instead of starting over.
+			expect( result.result.message ).toBe( 'Proofread complete. Fixed 2 typos.' );
+		} );
+
+		it.each( [
+			[ 'no summary', undefined ],
+			[ 'a whitespace-only summary', '   ' ],
+		] )( 'defaults the result message given %s', async ( _label, summary ) => {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'title-picker',
+				props: { titles: [ { title: 'Title' } ] },
+				summary,
+			} ) ) as any;
+
+			expect( result.result.message ).toBe( 'Choose from the options I provided.' );
+		} );
+
+		it.each( [
+			[
+				'proofread',
+				{ summary: 'Proofread complete.', items: [ {}, {} ] },
+				{ suggested_edit_count: 2 },
+			],
+			[
+				'post-feedback',
+				{ summary: 'Feedback complete.', items: [ {} ] },
+				{ suggested_edit_count: 1 },
+			],
+			[
+				'ai-editorial-review',
+				{
+					summary: 'Review complete.',
+					suggested_edits: [ {}, {} ],
+					conflicts: [ {} ],
+					implications: [],
+					guideline_violations: [
+						{ guideline_quote: 'Use sentence case.' },
+						{ guideline_quote: '' },
+						{ guideline_quote: 'Prefer active voice.' },
+					],
+					review_context: 'notes_and_guidelines',
+					cache_hit: true,
+				},
+				{
+					suggested_edit_count: 2,
+					conflict_count: 1,
+					implication_count: 0,
+					guideline_violation_count: 2,
+					review_context: 'notes_and_guidelines',
+					cache_hit: true,
+				},
+			],
+		] )( 'adds privacy-safe response metadata for %s', async ( type, props, expected ) => {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type,
+				props,
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.responseTrackingProperties ).toEqual( expected );
 		} );
 
 		it( 'echoes the tool call id at the envelope top level', async () => {
@@ -3329,11 +3941,11 @@ describe( 'toolProvider', () => {
 				props: {},
 			} ) ) as any;
 
-			expect( result ).toMatchObject( {
+			expect( result.result ).toMatchObject( {
 				success: false,
 				error: 'show-component: no component registered for type "unregistered-component"',
-				returnToAgent: false,
 			} );
+			expect( result.returnToAgent ).toBe( true );
 			expect( result.agentMessage ).toBeUndefined();
 		} );
 
@@ -3370,8 +3982,8 @@ describe( 'toolProvider', () => {
 			} );
 
 			expect( executeAbility ).not.toHaveBeenCalled();
-			expect( result ).toMatchObject( { success: false } );
-			expect( result.error ).toMatch( /missing type/ );
+			expect( result.result ).toMatchObject( { success: false } );
+			expect( result.result.error ).toMatch( /missing type/ );
 		} );
 
 		it( 'does not attach a title checkpoint to AI Editorial Review components', async () => {

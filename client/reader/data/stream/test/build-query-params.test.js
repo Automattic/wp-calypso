@@ -4,7 +4,7 @@
 import { buildStreamQueryParams } from '../build-query-params';
 
 const baseArgs = {
-	streamKey: 'space:6',
+	streamKey: 'shelf:6',
 	feedId: null,
 	isPoll: false,
 	gap: null,
@@ -13,11 +13,11 @@ const baseArgs = {
 	perPage: undefined,
 };
 
-describe( 'buildStreamQueryParams — space stream', () => {
+describe( 'buildStreamQueryParams — shelf stream', () => {
 	it( 'sends `count` (not `number`) and omits `page_handle` on the first page', () => {
 		const params = buildStreamQueryParams( { ...baseArgs, pageHandle: null } );
 
-		// Pinned SPACE_PER_PAGE (10) on the first page, locale as `_locale`, no cursor yet.
+		// Pinned SHELF_PER_PAGE (10) on the first page, locale as `_locale`, no cursor yet.
 		expect( params ).toEqual( { count: 10, _locale: 'en' } );
 	} );
 
@@ -38,8 +38,8 @@ describe( 'buildStreamQueryParams — space stream', () => {
 	} );
 
 	it( 'pins its own page size, ignoring the larger shared gap-fetch size', () => {
-		// A gap fetch would ask for PER_GAP (40) posts on other streams; the space
-		// ignores that and pins SPACE_PER_PAGE (10), which is already under the
+		// A gap fetch would ask for PER_GAP (40) posts on other streams; the shelf
+		// ignores that and pins SHELF_PER_PAGE (10), which is already under the
 		// 15-post server cap (the endpoint rejects a larger Elasticsearch query size).
 		const params = buildStreamQueryParams( {
 			...baseArgs,
@@ -51,8 +51,8 @@ describe( 'buildStreamQueryParams — space stream', () => {
 	} );
 } );
 
-describe( 'buildStreamQueryParams — space_discover stream', () => {
-	const discoverArgs = { ...baseArgs, streamKey: 'space_discover:6' };
+describe( 'buildStreamQueryParams — shelf_discover stream', () => {
+	const discoverArgs = { ...baseArgs, streamKey: 'shelf_discover:6' };
 
 	it( 'sends `count` and omits `page_handle` on the first page', () => {
 		const params = buildStreamQueryParams( { ...discoverArgs, pageHandle: null } );

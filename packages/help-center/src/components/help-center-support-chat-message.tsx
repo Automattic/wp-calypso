@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useGetHistoryChats } from '../hooks';
 import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
-import { getChatLinkFromConversation } from './utils';
+import { getChatLinkFromConversation, getZendeskSurveyRating } from './utils';
 import type { OdieConversation, OdieMessage } from '@automattic/odie-client';
 import type { ZendeskConversation, ZendeskMessage } from '@automattic/zendesk-client';
 
@@ -30,13 +30,21 @@ export const HelpCenterSupportChatMessage = ( {
 	const { currentUser } = useHelpCenterContext();
 	const recordTracksEvent = useHelpCenterTracksEvent();
 	const { received, role, text, altText } = message;
-	const messageText =
-		'metadata' in message && message.metadata?.type === 'csat'
-			? __(
-					'Please help us improve. How would you rate your support experience?',
-					__i18n_text_domain__
-			  )
-			: text;
+	const surveyRating = getZendeskSurveyRating( conversation );
+
+	let messageText: string | undefined;
+	if ( surveyRating === 'good' ) {
+		messageText = __( 'Good 👍', __i18n_text_domain__ );
+	} else if ( surveyRating === 'bad' ) {
+		messageText = __( 'Needs improvement 👎', __i18n_text_domain__ );
+	} else if ( 'metadata' in message && message.metadata?.type === 'csat' ) {
+		messageText = __(
+			'Please help us improve. How would you rate your support experience?',
+			__i18n_text_domain__
+		);
+	} else {
+		messageText = text;
+	}
 	const helpCenterContext = useHelpCenterContext();
 	const helpCenterContextSectionName = helpCenterContext.sectionName;
 	const { supportInteractions } = useGetHistoryChats();

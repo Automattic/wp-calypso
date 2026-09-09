@@ -34,6 +34,7 @@ import {
 	SidebarMenu,
 	SidebarMenuItem,
 } from '../../components/sidebar';
+import { wpcomLink } from '../../utils/link';
 import { hasHostingFeature } from '../../utils/site-features';
 import { isSiteMigrationInProgress } from '../../utils/site-status';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
@@ -72,7 +73,7 @@ function SiteMenuSidebar( { site }: { site: Site } ) {
 	const siteTypeSupports = getSiteTypeFeatureSupports( site );
 	const isApmEnabled = isEnabled( 'performance/apm' );
 
-	if ( isSiteMigrationInProgress( site ) ) {
+	if ( isSiteMigrationInProgress( site ) && ! isSupportSession() ) {
 		return null;
 	}
 
@@ -87,11 +88,27 @@ function SiteMenuSidebar( { site }: { site: Site } ) {
 	}
 
 	if ( site.options?.is_difm_lite_in_progress && ! isSupportSession() ) {
+		const shouldShowContentCollectionLinks =
+			site.options?.difm_lite_site_options?.is_website_content_submitted === false;
+
 		return (
 			<SidebarMenu>
 				<SidebarMenuItem to={ `/sites/${ siteSlug }/site-building-in-progress` }>
 					{ __( 'Site building' ) }
 				</SidebarMenuItem>
+				{ shouldShowContentCollectionLinks && (
+					<>
+						<SidebarMenuItem href={ wpcomLink( `/posts/${ siteSlug }` ) }>
+							{ __( 'Posts' ) }
+						</SidebarMenuItem>
+						<SidebarMenuItem href={ wpcomLink( `/media/${ siteSlug }` ) }>
+							{ __( 'Media' ) }
+						</SidebarMenuItem>
+						<SidebarMenuItem href={ wpcomLink( `/pages/${ siteSlug }` ) }>
+							{ __( 'Pages' ) }
+						</SidebarMenuItem>
+					</>
+				) }
 				{ siteTypeSupports.domains && (
 					<SidebarMenuItem to={ `/sites/${ siteSlug }/domains` }>
 						{ __( 'Domains' ) }

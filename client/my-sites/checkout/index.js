@@ -16,6 +16,7 @@ import {
 	checkoutJetpackSiteless,
 	checkoutMarketplaceSiteless,
 	checkoutUnifiedSiteless,
+	checkoutWpcomSiteless,
 	checkoutA4ASiteless,
 	checkoutRenewalBySubscriptionId,
 	checkoutThankYou,
@@ -35,6 +36,7 @@ import {
 	transferDomainToAnyUser,
 	checkoutFailedPurchases,
 	refreshUserSession,
+	studioCheckoutReturn,
 } from './controller';
 
 export default function () {
@@ -160,6 +162,18 @@ export default function () {
 		clientRender
 	);
 
+	// Must be registered before the generic /checkout/:product/renew/:purchaseId
+	// route, which would otherwise read "marketplace" as the product slug.
+	page(
+		`/checkout/marketplace/renew/:subscriptionId`,
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		noSite,
+		checkoutMarketplaceSiteless,
+		makeLayout,
+		clientRender
+	);
+
 	// Passport Marketplace checkout custom URLs
 	page(
 		`/checkout/passport/:productSlug`,
@@ -172,6 +186,16 @@ export default function () {
 
 	page(
 		`/checkout/passport/:productSlug/renew/:purchaseId`,
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		noSite,
+		checkoutMarketplaceSiteless,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		`/checkout/passport/renew/:subscriptionId`,
 		setLocaleMiddleware(),
 		redirectLoggedOut,
 		noSite,
@@ -201,6 +225,16 @@ export default function () {
 	);
 
 	page(
+		`/checkout/akismet/renew/:subscriptionId`,
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		noSite,
+		checkoutAkismetSiteless,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		'/checkout/akismet/thank-you/:productSlug',
 		setLocaleMiddleware(),
 		redirectLoggedOut,
@@ -216,6 +250,17 @@ export default function () {
 		setLocaleMiddleware(),
 		noSite,
 		checkoutUnifiedSiteless,
+		makeLayout,
+		clientRender
+	);
+
+	// WordPress.com siteless checkout is logged-in only, so it keeps redirectLoggedOut.
+	page(
+		'/checkout/wpcom/:productSlug',
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		noSite,
+		checkoutWpcomSiteless,
 		makeLayout,
 		clientRender
 	);
@@ -290,6 +335,17 @@ export default function () {
 	);
 
 	page( '/checkout/failed-purchases', checkoutFailedPurchases, makeLayout, clientRender );
+
+	// Must stay ahead of the generic `/checkout/:domainOrProduct` route below, which would
+	// otherwise match this as a product slug.
+	page(
+		'/checkout/studio-return',
+		redirectLoggedOut,
+		noSite,
+		studioCheckoutReturn,
+		makeLayout,
+		clientRender
+	);
 
 	page( '/checkout/no-site/:lang?', noSite, checkout, makeLayout, clientRender );
 

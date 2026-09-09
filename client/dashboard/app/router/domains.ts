@@ -189,8 +189,9 @@ export const domainOverviewRoute = createRoute( {
 		queryClient.prefetchQuery( siteByIdQuery( domain.blog_id ) );
 		queryClient.prefetchQuery( mailboxesQuery( domain.blog_id ) );
 
+		// The purchase can be forbidden as the domain owner may not be the current user.
 		if ( domain.subscription_id ) {
-			await queryClient.ensureQueryData( purchaseQuery( parseInt( domain.subscription_id, 10 ) ) );
+			queryClient.prefetchQuery( purchaseQuery( parseInt( domain.subscription_id, 10 ) ) );
 		}
 	},
 } ).lazy( () =>

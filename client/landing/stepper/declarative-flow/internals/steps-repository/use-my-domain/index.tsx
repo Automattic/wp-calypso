@@ -131,7 +131,11 @@ const UseMyDomain: StepType< {
 						domain,
 						...verificationData,
 					} );
+					clearQueryParams();
 					submit( { ownershipVerificationCompleted: true, domain } );
+
+					// Early return: the default handler below would re-submit a domainCartItem.
+					return;
 				} catch ( error ) {
 					// Validation failed - call onDone to display error and stay on current step
 					if ( onDone ) {
@@ -209,7 +213,9 @@ const UseMyDomain: StepType< {
 		} else {
 			columnWidth = 6 as const;
 			headingText = __( 'Set up your domain' );
-			subText = __( 'Transfer your domain, or connect it from your current provider.' );
+			subText = __(
+				'Transfer your domain name to WordPress.com, or keep it with your current registrar.'
+			);
 		}
 
 		const getTopBarLeftElement = () => {
@@ -263,13 +269,7 @@ const UseMyDomain: StepType< {
 						/>
 					}
 					columnWidth={ columnWidth }
-					heading={
-						<Step.Heading
-							text={ headingText }
-							subText={ subText }
-							align={ useMyDomainMode === 'domain-input' ? undefined : 'center' }
-						/>
-					}
+					heading={ <Step.Heading text={ headingText } subText={ subText } /> }
 					verticalAlign="center"
 					className="use-my-domain--redesign"
 				>
