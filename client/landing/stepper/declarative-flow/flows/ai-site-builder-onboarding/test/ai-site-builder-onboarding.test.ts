@@ -252,20 +252,29 @@ describe( 'ai-site-builder-onboarding flow', () => {
 				expect( redirectTo.searchParams.get( 'spec_id' ) ).toBe( 'spec-42' );
 			} );
 
-			it.each( [
-				'personal-bundle',
-				'value_bundle',
-				'business-bundle-monthly',
-				'ecommerce-bundle-2y',
-			] )( 'is used for the %s plan', async ( productSlug ) => {
-				setPlan( productSlug );
+			it.each( [ 'value_bundle', 'business-bundle-monthly' ] )(
+				'is used for the %s plan',
+				async ( productSlug ) => {
+					setPlan( productSlug );
 
-				await runProcessingSubmit();
+					await runProcessingSubmit();
 
-				expect( new URL( getRedirectTo(), 'https://wordpress.com' ).pathname ).toBe(
-					'/setup/ai-site-builder-spec/site-spec'
-				);
-			} );
+					expect( new URL( getRedirectTo(), 'https://wordpress.com' ).pathname ).toBe(
+						'/setup/ai-site-builder-spec/site-spec'
+					);
+				}
+			);
+
+			it.each( [ 'personal-bundle', 'ecommerce-bundle-2y' ] )(
+				'is not used for the %s plan',
+				async ( productSlug ) => {
+					setPlan( productSlug );
+
+					await runProcessingSubmit();
+
+					expect( new URL( getRedirectTo() ).pathname ).toBe( '/wp-admin/site-editor.php' );
+				}
+			);
 
 			it( 'is not used when the swap flag is off', async () => {
 				isEnabled.mockImplementation(
