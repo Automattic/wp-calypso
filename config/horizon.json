@@ -35,6 +35,7 @@
 		"dashboard/force-opt-in-visibility": false,
 		"dashboard/omnibar-radical": true,
 		"dashboard/plans": true,
+		"purchases/site-level-dashboard-backport": true,
 		"dashboard/rollout-advance-notice": true,
 		"dashboard/simulate-full-rollout": true,
 		"dashboard/wp-beta-program": true,
