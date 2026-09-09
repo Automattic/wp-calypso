@@ -222,23 +222,33 @@ const matchesPage =
 	};
 
 /**
- * Persists a menu's pending edits.
+ * Persists a menu's pending edits, putting `previous` back if the save fails.
  *
- * A menu write following a page *edit* is left unsaved on purpose: the two
- * join one unsaved-changes set and save together. A write following a page
- * creation or deletion has no such partner — `saveEntityRecord` and
- * `deleteEntityRecord` have already persisted — so leaving it unsaved means a
- * reload throws the menu change away while the page change stands.
+ * A menu write following a page *edit* is left unsaved on purpose: the two join
+ * one unsaved-changes set and save together. A write following a creation or
+ * deletion has no such partner — the page change has already persisted — so
+ * leaving it unsaved would let a reload throw it away while the page stands.
+ *
+ * The write is applied locally and `undoIgnore` keeps it out of the editor's
+ * stack, so a refused save would otherwise strand it with no undo of any kind.
+ * Errors are suppressed by default, which would report a menu change that never
+ * reached the server as a success.
  */
-const saveMenu = async ( id: unknown ): Promise< void > => {
+const saveMenu = async ( id: unknown, previous: NavigationBlock[] ): Promise< void > => {
 	const coreDispatch = dispatch( coreStore ) as unknown as CoreDispatch | undefined;
 
-	// Errors are suppressed by default, which would report a menu change that
-	// never reached the server as a success — the very regression this save
-	// exists to prevent.
-	await coreDispatch?.saveEditedEntityRecord( 'postType', 'wp_navigation', id as number | string, {
-		throwOnError: true,
-	} );
+	try {
+		await coreDispatch?.saveEditedEntityRecord(
+			'postType',
+			'wp_navigation',
+			id as number | string,
+			{ throwOnError: true }
+		);
+	} catch ( error ) {
+		await writeMenuItems( id, previous );
+
+		throw error;
+	}
 };
 
 /** Appends an item for a newly created page to the site's menu. */
@@ -255,8 +265,10 @@ export async function addNavigationItem( item: NavigationItem ): Promise< void >
 		return;
 	}
 
+	const previous = getItems( menu );
+
 	await writeMenuItems( menuId, [
-		...getItems( menu ),
+		...previous,
 		createBlock( NAVIGATION_LINK_BLOCK, {
 			label: item.label,
 			id: item.id,
@@ -266,7 +278,7 @@ export async function addNavigationItem( item: NavigationItem ): Promise< void >
 		} ),
 	] );
 
-	await saveMenu( menuId );
+	await saveMenu( menuId, previous );
 }
 
 /**
@@ -291,7 +303,8 @@ async function rewriteMenusHolding(
 			continue;
 		}
 
-		const rewritten = rewrite( getItems( menu ) );
+		const previous = getItems( menu );
+		const rewritten = rewrite( previous );
 
 		if ( ! rewritten ) {
 			continue;
@@ -300,7 +313,7 @@ async function rewriteMenusHolding(
 		await writeMenuItems( menuId, rewritten );
 
 		if ( save ) {
-			await saveMenu( menuId );
+			await saveMenu( menuId, previous );
 		}
 	}
 }
