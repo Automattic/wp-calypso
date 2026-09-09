@@ -63,6 +63,12 @@ const page = ( recordId?: number ) => ( {
 	...( recordId ? { recordId } : {} ),
 } );
 
+const menu = ( recordId?: number ) => ( {
+	entityType: 'postType',
+	entityName: 'wp_navigation',
+	...( recordId ? { recordId } : {} ),
+} );
+
 const site = { entityType: 'root', entityName: 'site' };
 
 beforeEach( () => {
@@ -356,26 +362,50 @@ describe( 'editEntityRecordCallback', () => {
 		expect( editEntityRecord ).not.toHaveBeenCalled();
 	} );
 
-	// The site is a singleton at `/wp/v2/settings`. Saving or deleting it here
-	// would rewrite the real settings with no checkpoint behind it.
+	// Creating and deleting take posts and pages only, and nothing validates the
+	// raw arguments: `root/site` would rewrite the real settings, and a menu
+	// delete would take every item with it.
 	it.each( [
 		{
-			case: 'created',
+			case: 'a site record created',
 			input: { addEntities: [ { ...site, record: { title: 'My Site' } } ] },
 			error: 'Cannot create root/site',
 		},
 		{
-			case: 'deleted',
+			case: 'a site record deleted',
 			input: { deleteEntities: [ { ...site, recordId: 1 } ] },
 			error: 'Cannot delete root/site',
 		},
-	] )( 'refuses a site record being $case', async ( { input, error } ) => {
+		{
+			case: 'a menu created',
+			input: { addEntities: [ { ...menu( 9 ), record: { title: 'Main' } } ] },
+			error: 'Cannot create postType/wp_navigation',
+		},
+		{
+			case: 'a menu deleted',
+			input: { deleteEntities: [ menu( 9 ) ] },
+			error: 'Cannot delete postType/wp_navigation',
+		},
+	] )( 'refuses $case', async ( { input, error } ) => {
 		const result = await editEntityRecordCallback( input );
 
 		expect( result.result.success ).toBe( false );
 		expect( result.result.error ).toContain( error );
 		expect( saveEntityRecord ).not.toHaveBeenCalled();
 		expect( deleteEntityRecord ).not.toHaveBeenCalled();
+	} );
+
+	// The callback runs on raw arguments, so an entry skipped for missing fields
+	// would write nothing and still be reported as applied.
+	it.each( [
+		{ case: 'create', input: { addEntities: [ {} ] }, error: 'Cannot create:' },
+		{ case: 'edit', input: { editEntities: [ page( 7 ) ] }, error: 'Cannot edit:' },
+		{ case: 'delete', input: { deleteEntities: [ page() ] }, error: 'Cannot delete:' },
+	] )( 'refuses a $case entry missing required fields', async ( { input, error } ) => {
+		const result = await editEntityRecordCallback( input );
+
+		expect( result.result.success ).toBe( false );
+		expect( result.result.error ).toContain( error );
 	} );
 
 	it( 'reports what applied when a later change fails', async () => {
