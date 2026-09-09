@@ -251,8 +251,9 @@ See https://dequeuniversity.com/rules/axe/4.6/link-in-text-block?application=Axe
 	max-width: 660px;
 	margin-inline: 0 auto;
 
-	/* The WordAds pitch is one sentence that reads better unbroken, so this card
-	   takes its own copy's width rather than the shared measure. */
+	/* Cards whose copy is a single sentence take its width rather than the shared
+	   measure. The rest keep the cap: the ineligible-plan copy is long enough
+	   that fit-content would resolve to the full page width. */
 	&.is-content-width {
 		max-width: fit-content;
 	}
