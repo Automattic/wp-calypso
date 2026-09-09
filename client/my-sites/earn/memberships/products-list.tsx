@@ -19,6 +19,7 @@ import PromoCard, { PromoCardVariation } from 'calypso/components/promo-section/
 import PromoCardCta from 'calypso/components/promo-section/promo-card/cta';
 import SectionHeader from 'calypso/components/section-header';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch, useSelector } from 'calypso/state';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
@@ -193,11 +194,15 @@ function ProductsList() {
 						className="earn__upsell-card"
 						variation={ PromoCardVariation.Compact }
 						icon="credit-card"
-						title={ translate( 'Upgrade to modify payment plans or add new plans' ) }
+						title={ preventWidows(
+							translate( 'Upgrade to modify payment plans or add new plans' )
+						) }
 					>
 						<p>
-							{ translate(
-								'Payment plans let you charge for memberships, subscriptions, and one-time offers.'
+							{ preventWidows(
+								translate(
+									'Payment plans let you charge for memberships, subscriptions, and one-time offers.'
+								)
 							) }
 						</p>
 						<PromoCardCta

@@ -21,6 +21,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import PromoCard, { PromoCardVariation } from 'calypso/components/promo-section/promo-card';
 import PromoCardCta from 'calypso/components/promo-section/promo-card/cta';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { preventWidows } from 'calypso/lib/formatting';
 import { WordAdsStatus } from 'calypso/my-sites/earn/ads/types';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -231,9 +232,9 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 					className="earn__upsell-card"
 					variation={ PromoCardVariation.Compact }
 					icon="speaker"
-					title={ title }
+					title={ preventWidows( title ) }
 				>
-					<p>{ body }</p>
+					<p>{ preventWidows( body ) }</p>
 					{ benefits && (
 						<ul className="earn__upsell-card-benefits">
 							{ benefits.map( ( benefit, index ) => (
@@ -266,7 +267,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 				"By upgrading to the %(premiumPlanName)s plan, you'll be able to monetize your site through the {{link}}WordAds program{{/link}}.",
 				{
 					args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() || '' },
-					components: { link: <ExternalLink href="https://wordads.co/" icon /> },
+					components: { link: <ExternalLink href="https://wordads.co/" /> },
 				}
 			),
 			benefits: [
