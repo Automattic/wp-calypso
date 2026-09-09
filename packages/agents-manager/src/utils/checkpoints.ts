@@ -1,10 +1,5 @@
 import { editGlobalStyles, getEditedGlobalStyles, type GlobalStylesRecord } from './global-styles';
-import {
-	readMenuItems,
-	renameNavigationItem,
-	writeMenuItems,
-	type NavigationBlock,
-} from './navigation-menu';
+import { readMenuItems, writeMenuItems, type NavigationBlock } from './navigation-menu';
 import { setPageTitle } from './page-title';
 import { getSiteLogo, setSiteLogo, type SiteLogo } from './site-logo';
 import { getSiteMetadata, replaceSiteMetadata, type SiteMetadata } from './site-metadata';
@@ -169,14 +164,17 @@ async function restoreMenuSnapshots( checkpoint: CheckpointRecord ): Promise< vo
 }
 
 /**
- * Puts renamed pages back, newest first: two renames of one page in the same
- * write must unwind in reverse, or the older title would be overwritten by
- * the newer one.
+ * Puts renamed page titles back, newest first: two renames of one page in the
+ * same write must unwind in reverse, or the older title would be overwritten
+ * by the newer one.
+ *
+ * The menu items follow from `menusBeforeUpdate`, which a rename snapshots —
+ * relabelling them here would overwrite a label the user had chosen with the
+ * page's old title.
  */
 async function restorePageRenames( checkpoint: CheckpointRecord ): Promise< void > {
 	for ( const rename of [ ...( checkpoint.pageRenames ?? [] ) ].reverse() ) {
 		await setPageTitle( rename.pageId, rename.from );
-		await renameNavigationItem( rename.pageId, rename.from, rename.to );
 	}
 }
 
