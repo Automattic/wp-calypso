@@ -23,6 +23,7 @@ import {
 import useLogoGenerator from '../hooks/use-logo-generator';
 import useRequestErrors from '../hooks/use-request-errors';
 import { isLogoHistoryEmpty, clearDeletedMedia } from '../lib/logo-storage';
+import { getUpgradeURL } from '../lib/upgrade-url';
 import { STORE_NAME } from '../store';
 import { FeatureFetchFailureScreen } from './feature-fetch-failure-screen';
 import { FirstLoadScreen } from './first-load-screen';
@@ -118,11 +119,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 			setNeedsMoreRequests( needsMoreRequests );
 
 			if ( ! feature?.hasFeature || needsMoreRequests ) {
-				const upgradeURL = new URL(
-					`${ location.origin }/checkout/${ siteDetails?.domain }/${ feature?.nextTier?.slug }`
-				);
-				upgradeURL.searchParams.set( 'redirect_to', location.href );
-				setUpgradeURL( upgradeURL.toString() );
+				setUpgradeURL( getUpgradeURL( { siteDetails, nextTierSlug: feature?.nextTier?.slug } ) );
 				setLoadingState( null );
 				return;
 			}
@@ -143,7 +140,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 			debug( 'Error fetching feature', error );
 			setLoadingState( null );
 		}
-	}, [ getFeature, siteId, loadLogoHistory, generateFirstLogo, siteDetails?.domain ] );
+	}, [ getFeature, siteId, loadLogoHistory, generateFirstLogo, siteDetails ] );
 
 	const handleModalOpen = useCallback( async () => {
 		setContext( context );
