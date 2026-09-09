@@ -65,9 +65,21 @@ export async function setSiteMetadata( changes: SiteMetadata ): Promise< SiteMet
 		throw new Error( SITE_RECORD_UNAVAILABLE );
 	}
 
-	const { [ RUNTIME_KEY ]: _runtime, ...merged } = { ...current, ...changes };
+	const merged = { ...current, ...changes };
 
-	await saveSiteFields( { [ METADATA_FIELD ]: JSON.stringify( merged ) } );
+	await replaceSiteMetadata( merged );
 
 	return merged;
+}
+
+/**
+ * Writes the metadata as given, replacing what is stored.
+ *
+ * What a checkpoint restore needs: merging a snapshot back would leave behind
+ * any key the change introduced, so the undo would be incomplete.
+ */
+export async function replaceSiteMetadata( metadata: SiteMetadata ): Promise< void > {
+	const { [ RUNTIME_KEY ]: _runtime, ...persisted } = metadata;
+
+	await saveSiteFields( { [ METADATA_FIELD ]: JSON.stringify( persisted ) } );
 }

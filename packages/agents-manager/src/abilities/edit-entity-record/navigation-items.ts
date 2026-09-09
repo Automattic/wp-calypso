@@ -158,6 +158,24 @@ export async function buildNavigationItems(
 			claim( input.items ?? [] );
 		} );
 
+	/**
+	 * A preserved subtree with every block the agent placed elsewhere removed,
+	 * at any depth. A parent left with no children becomes a plain link again,
+	 * so it does not draw a dropdown arrow over nothing.
+	 */
+	const prune = ( blocks: NavigationBlock[] = [] ): NavigationBlock[] =>
+		blocks
+			.filter( ( block ) => ! taken.has( block ) )
+			.map( ( block ) => {
+				const innerBlocks = prune( block.innerBlocks );
+
+				return {
+					...block,
+					innerBlocks,
+					name: innerBlocks.length ? SUBMENU_BLOCK : LINK_BLOCK,
+				};
+			} );
+
 	const build = ( inputs: NavigationItemInput[] ): NavigationBlock[] =>
 		inputs.map( ( input ) => {
 			const existing = resolved.get( input );
@@ -171,10 +189,10 @@ export async function buildNavigationItems(
 			}
 
 			// Listed children replace the block's own. Unlisted ones are kept, minus
-			// any the agent placed elsewhere in this same rebuild.
-			const innerBlocks = input.items
-				? build( input.items )
-				: ( existing?.innerBlocks ?? [] ).filter( ( child ) => ! taken.has( child ) );
+			// any the agent placed elsewhere in this same rebuild — pruned at every
+			// depth, since a block moved to the top level can sit further down than
+			// a direct child.
+			const innerBlocks = input.items ? build( input.items ) : prune( existing?.innerBlocks );
 
 			// A block with children is a submenu, one without is a link. The type is
 			// what draws the dropdown arrow, so deriving it from the final children
