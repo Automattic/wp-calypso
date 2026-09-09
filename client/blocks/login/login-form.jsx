@@ -762,7 +762,7 @@ export class LoginForm extends Component {
 			return (
 				<Notice variant="info">
 					{ this.props.translate(
-						'There’s already a WordPress.com account for "%(email)s". ' +
+						'There’s already a WordPress.com account for "%(email)s" that isn’t connected to %(service)s yet. ' +
 							'Log in to it and you’ll be able to connect your %(service)s account.',
 						{
 							args: {
