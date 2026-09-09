@@ -23,21 +23,36 @@ const EDIT_ENTITY_RECORD_TOOL_ID = 'big_sky__edit_entity_record';
 const SITE_TYPE = 'root';
 const SITE_NAME = 'site';
 
+const POST_TYPE = 'postType';
 const PAGE = 'page';
 const NAVIGATION = 'wp_navigation';
+
+const POST_TYPE_NAMES = [ 'post', PAGE, 'product', NAVIGATION ];
 
 // The schema declares the kind and the name as independent enums, so pairs
 // like `root/page` pass validation. Routing partly on the name would then
 // rename the real page while the rest of the record addressed nothing.
-const POST_TYPE_NAMES = [ 'post', PAGE, 'product', NAVIGATION ];
+const isPostType = ( entityType?: string, entityName?: string ) =>
+	entityType === POST_TYPE && POST_TYPE_NAMES.includes( entityName ?? '' );
 
-const isKnownEntity = ( entityType: string, entityName: string ) =>
-	entityType === SITE_TYPE ? entityName === SITE_NAME : POST_TYPE_NAMES.includes( entityName );
+const isSite = ( entityType?: string, entityName?: string ) =>
+	entityType === SITE_TYPE && entityName === SITE_NAME;
+
+// Derived from the list above, so the refusals cannot name a stale set.
+const POST_TYPE_HELP = `${ POST_TYPE } with ${ POST_TYPE_NAMES.join( ', ' ) }`;
 
 // Only `blocks` and `content` are covered by the menu snapshot, so only they
 // are checkpointed. Anything else a menu record carries — its own title, for
 // instance — keeps the editor's undo, as page content does.
 const MENU_FIELDS = [ 'blocks', 'content' ];
+
+// What makes a `wp_navigation` edit a menu edit. A title- or status-only one
+// changes nothing the snapshot covers, so it claims no navigation domain and
+// keeps the editor's undo like any other field.
+const MENU_EDIT_FIELDS = [ 'navigationItems', ...MENU_FIELDS ];
+
+const editsMenu = ( record?: Record< string, unknown > ) =>
+	!! record && MENU_EDIT_FIELDS.some( ( field ) => field in record );
 
 const pickFields = ( record: Record< string, unknown >, fields: string[], wanted: boolean ) =>
 	Object.fromEntries(
@@ -160,13 +175,13 @@ export function getCheckpointKeys( { editEntities }: EditEntityRecordInput ): st
 			keys.add( checkpointKeys.NAVIGATION );
 		}
 
-		if ( entity?.entityName === NAVIGATION ) {
+		if ( entity?.entityName === NAVIGATION && editsMenu( entity.record ) ) {
 			keys.add( checkpointKeys.NAVIGATION );
 		}
 
 		// Matched the same way the write routes: a site edit always touches the
 		// metadata, and one carrying a title touches the title too.
-		if ( entity?.entityType === SITE_TYPE && entity?.entityName === SITE_NAME ) {
+		if ( isSite( entity?.entityType, entity?.entityName ) ) {
 			keys.add( checkpointKeys.SITE_METADATA );
 
 			if ( entity.record && 'title' in entity.record ) {
@@ -182,6 +197,13 @@ async function applyCreates( entities: EntityRef[], applied: AppliedChanges ): P
 	for ( const { entityType, entityName, record, options } of entities ) {
 		if ( ! entityType || ! entityName || ! record ) {
 			continue;
+		}
+
+		// The site is a singleton at `/wp/v2/settings`: saving `root/site` here
+		// would rewrite the real settings, with no checkpoint behind it, and
+		// report it as a new record.
+		if ( ! isPostType( entityType, entityName ) ) {
+			throw new Error( `Cannot create ${ entityType }/${ entityName }. Use ${ POST_TYPE_HELP }.` );
 		}
 
 		const created = await coreDispatch().saveEntityRecord( entityType, entityName, record, {
@@ -259,16 +281,22 @@ async function applyRecordEdit(
 	// stack remains its only undo and it keeps it.
 	let recordToWrite = isRename ? withoutTitle( record ) : record;
 	let menuWrite: Record< string, unknown > | undefined;
+	let capturedMenu = false;
 
 	if ( entityName === NAVIGATION ) {
 		// Built before the snapshot: a refused rebuild must not leave a restore
 		// point for an edit that never happened.
 		const rebuilt = await buildNavigationItems( recordId, record );
+		const menuFields = pickFields( rebuilt, MENU_FIELDS, true );
 
-		await recorder.captureMenu( recordId );
-
-		menuWrite = pickFields( rebuilt, MENU_FIELDS, true );
 		recordToWrite = pickFields( rebuilt, MENU_FIELDS, false );
+
+		// Snapshot only where the menu itself changes: a title-only edit has
+		// nothing the restore could put back.
+		if ( Object.keys( menuFields ).length ) {
+			menuWrite = menuFields;
+			capturedMenu = await recorder.captureMenu( recordId );
+		}
 	}
 
 	if ( isRename ) {
@@ -281,7 +309,7 @@ async function applyRecordEdit(
 		updated();
 	}
 
-	if ( menuWrite && Object.keys( menuWrite ).length ) {
+	if ( menuWrite ) {
 		try {
 			// Checkpointed, so `restore-checkpoint` is its undo and the editor's
 			// stack would be a second, competing one.
@@ -290,13 +318,19 @@ async function applyRecordEdit(
 				undoIgnore: true,
 			} );
 		} catch ( error ) {
-			// The snapshot was taken before the write. If the write is refused,
-			// keeping it would leave a partial batch advertising an undo for a
-			// menu that never changed.
-			recorder.discardMenu( recordId );
+			// Only the snapshot this attempt took. An earlier successful edit to
+			// the same menu owns its own, and that one is still the way back.
+			if ( capturedMenu ) {
+				recorder.discardMenu( recordId );
+			}
 
 			throw error;
 		}
+
+		// Recorded here, not after the write below: this one has already changed
+		// the menu with `undoIgnore`, so a later failure must not take its only
+		// undo down with it.
+		updated();
 	}
 
 	if ( Object.keys( recordToWrite ).length ) {
@@ -335,15 +369,19 @@ async function applyEdits(
 			continue;
 		}
 
-		if ( ! isKnownEntity( entityType, entityName ) ) {
+		if ( ! Object.keys( record ).length ) {
+			throw new Error( `Nothing to change on ${ entityName } ${ recordId }: the record is empty.` );
+		}
+
+		if ( ! isSite( entityType, entityName ) && ! isPostType( entityType, entityName ) ) {
 			throw new Error(
-				`Unsupported entity: ${ entityType }/${ entityName }. Use root/site, or postType with post, page, product or wp_navigation.`
+				`Unsupported entity: ${ entityType }/${ entityName }. Use ${ SITE_TYPE }/${ SITE_NAME }, or ${ POST_TYPE_HELP }.`
 			);
 		}
 
 		const checked = { ...entity, entityType, entityName, recordId, record };
 
-		if ( entityType === SITE_TYPE && entityName === SITE_NAME ) {
+		if ( isSite( entityType, entityName ) ) {
 			await applySiteEdit( checked, applied );
 		} else {
 			await applyRecordEdit( checked, applied, recorder );
@@ -357,6 +395,11 @@ async function applyDeletes( entities: EntityRef[], applied: AppliedChanges ): P
 			continue;
 		}
 
+		// The site is a singleton: it can be edited, never deleted.
+		if ( ! isPostType( entityType, entityName ) ) {
+			throw new Error( `Cannot delete ${ entityType }/${ entityName }. Use ${ POST_TYPE_HELP }.` );
+		}
+
 		// TODO (ability-migration): Leave the page being deleted, once
 		// `editor-navigate` lands and can route to the home page. Deleting the
 		// page currently open leaves the editor showing one that is gone.
@@ -364,6 +407,10 @@ async function applyDeletes( entities: EntityRef[], applied: AppliedChanges ): P
 		// Resolved first so the record is in the store: deleting one that was
 		// never fetched leaves the editor holding a stale copy.
 		await coreResolve().getEditedEntityRecord( entityType, entityName, recordId );
+
+		// Read before the delete: a menu item carrying no page id is matched by
+		// its label, and the page is the only place that label comes from.
+		const previousLabel = entityName === PAGE ? await getPageTitle( recordId ) : '';
 
 		await coreDispatch().deleteEntityRecord( entityType, entityName, recordId, {
 			...options,
@@ -378,7 +425,7 @@ async function applyDeletes( entities: EntityRef[], applied: AppliedChanges ): P
 		// After the delete, never before: the menu write persists, so removing
 		// the item first would strip it for good if the delete then failed.
 		if ( entityName === PAGE ) {
-			await removeNavigationItem( recordId );
+			await removeNavigationItem( recordId, previousLabel );
 		}
 	}
 }
