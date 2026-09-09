@@ -209,14 +209,19 @@ export async function restoreCheckpointCallback(
 	// Record the pre-restore state under this call's own id, so an explicit
 	// redo can step back over this restore.
 	if ( reciprocalId ) {
-		await setReciprocalCheckpoint( reciprocalId, targetCheckpoint, {
-			toolId: RESTORE_CHECKPOINT_TOOL_ID,
-			summary,
-			restoresCheckpointId: checkpointId,
-			restoredCheckpointToolId: targetCheckpoint.toolId,
-			requestIntentType: reciprocalRequestIntentType,
-			createdByRequestIntentType: requestIntentType,
-		} );
+		try {
+			await setReciprocalCheckpoint( reciprocalId, targetCheckpoint, {
+				toolId: RESTORE_CHECKPOINT_TOOL_ID,
+				summary,
+				restoresCheckpointId: checkpointId,
+				restoredCheckpointToolId: targetCheckpoint.toolId,
+				requestIntentType: reciprocalRequestIntentType,
+				createdByRequestIntentType: requestIntentType,
+			} );
+		} catch {
+			// A redo that cannot be recorded is not worth failing the undo the
+			// user asked for, so the restore goes ahead without one.
+		}
 	}
 
 	try {

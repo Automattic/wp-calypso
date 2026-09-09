@@ -477,6 +477,49 @@ describe( 'withCheckpoint', () => {
 	} );
 } );
 
+describe( 'setReciprocalCheckpoint', () => {
+	const target = ( pageRenames: unknown[], menusBeforeUpdate: unknown[] = [] ) =>
+		( {
+			id: 'target',
+			checkpointKeys: [ 'page', 'navigation' ],
+			createdAt: 0,
+			pageRenames,
+			menusBeforeUpdate,
+		} ) as never;
+
+	// A restore unwinds newest first, so flipping in place would replay a
+	// double rename back to the middle title instead of the newest one.
+	it( 'orders a redo so a page renamed twice ends on its newest title', async () => {
+		const { setReciprocalCheckpoint, getCheckpoint } = await loadCheckpoints();
+
+		await setReciprocalCheckpoint(
+			'redo',
+			target( [
+				{ pageId: 7, from: 'A', to: 'B' },
+				{ pageId: 7, from: 'B', to: 'C' },
+			] ),
+			{}
+		);
+
+		expect( getCheckpoint( 'redo' )?.pageRenames ).toEqual( [
+			{ pageId: 7, from: 'C', to: 'B' },
+			{ pageId: 7, from: 'B', to: 'A' },
+		] );
+	} );
+
+	it( 'records nothing when a menu it must snapshot cannot be read', async () => {
+		const { setReciprocalCheckpoint, hasCheckpoint } = await loadCheckpoints();
+		jest.requireMock( '@wordpress/data' ).resolveSelect.mockReturnValue( {
+			getEditedEntityRecord: jest.fn().mockResolvedValue( null ),
+		} );
+
+		await expect(
+			setReciprocalCheckpoint( 'redo', target( [], [ { id: 19, items: [] } ] ), {} )
+		).rejects.toThrow( 'Navigation menu not found: 19' );
+		expect( hasCheckpoint( 'redo' ) ).toBe( false );
+	} );
+} );
+
 describe( 'checkpoint recorder', () => {
 	const RENAME = { pageId: 7, from: 'Old', to: 'New' };
 	const write = ( keys: string[] ) => ( { toolId: 'tool', keys, summary: 'Changed.' } );
