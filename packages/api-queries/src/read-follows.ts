@@ -21,6 +21,7 @@ import {
 	type InfiniteData,
 	type QueryClient,
 } from '@tanstack/react-query';
+import { seenCountQueryOptions } from './read-seen-posts';
 
 // The /read/following/mine endpoint paginates by walking raw subscription rows
 // with offset = (page - 1) * limit, and caps `limit` at 100 server-side
@@ -31,7 +32,6 @@ import {
 // offset) will paginate incorrectly.
 const ITEMS_PER_PAGE = 100;
 const MAX_ITEMS = 2000;
-const STALE_TIME = 60 * 60 * 1000;
 const MAX_PAGES_TO_FETCH = MAX_ITEMS / ITEMS_PER_PAGE;
 
 export type SiteSubscriptionsInfiniteData = InfiniteData< SiteSubscriptionsPage, number >;
@@ -73,8 +73,8 @@ export const siteSubscriptionsQuery = () =>
 			// empty page.
 			return lastPage.subscriptions.length === 0 ? undefined : allPages.length + 1;
 		},
-		staleTime: STALE_TIME,
 		meta: { persist: true },
+		...seenCountQueryOptions,
 	} );
 
 export const getSiteSubscriptionsFromData = (
