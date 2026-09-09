@@ -270,17 +270,18 @@ export async function addNavigationItem( item: NavigationItem ): Promise< void >
 }
 
 /**
- * Rewrites the first menu that holds the page.
+ * Rewrites every menu that holds the page.
  *
- * `rewrite` returns the new items, or `null` when this menu does not hold it.
- * Menus are tried in turn and the search stops at the first hit, so a site with
- * several menus does not get the change applied to one the page is not in.
+ * `rewrite` returns the new items, or `null` when this menu does not hold it,
+ * so menus the page is absent from are left alone. All of them, not just the
+ * first: a page can be linked from the header and the footer, and stopping at
+ * one leaves the other pointing at a page that was renamed or deleted.
  *
  * `save` persists the write, which a removal needs and a rename must not do:
  * a rename rides along with the page edit that triggered it, while the page a
  * removal follows has already been deleted.
  */
-async function rewriteMenuHolding(
+async function rewriteMenusHolding(
 	rewrite: ( items: NavigationBlock[] ) => NavigationBlock[] | null,
 	save = false
 ): Promise< void > {
@@ -293,14 +294,14 @@ async function rewriteMenuHolding(
 
 		const rewritten = rewrite( getItems( menu ) );
 
-		if ( rewritten ) {
-			await writeMenu( menuId, rewritten );
+		if ( ! rewritten ) {
+			continue;
+		}
 
-			if ( save ) {
-				await saveMenu( menuId );
-			}
+		await writeMenu( menuId, rewritten );
 
-			return;
+		if ( save ) {
+			await saveMenu( menuId );
 		}
 	}
 }
@@ -313,7 +314,7 @@ export async function renameNavigationItem(
 ): Promise< void > {
 	const matches = matchesPage( pageId, previousLabel );
 
-	await rewriteMenuHolding( ( items ) => {
+	await rewriteMenusHolding( ( items ) => {
 		let matched = false;
 
 		const renamed = mapItems( items, ( item ) => {
@@ -337,7 +338,7 @@ export async function renameNavigationItem(
 export async function removeNavigationItem( pageId: number | string ): Promise< void > {
 	const matches = matchesPage( pageId );
 
-	await rewriteMenuHolding( ( items ) => {
+	await rewriteMenusHolding( ( items ) => {
 		let removed = false;
 
 		const remaining = rejectItems( items, ( item ) => {
