@@ -108,18 +108,13 @@ function ProductsList() {
 		window.location.hash === ADD_TIER_PLAN_HASH;
 	const default_product_type = defaultToTierPanel ? TYPE_TIER : null;
 
-	const upgradeNudgeProperties = {
-		cta_name: 'calypso_earn_page_payment_plans_upgrade_nudge',
-		cta_feature: FEATURE_RECURRING_PAYMENTS,
-		cta_size: 'regular',
-	};
-
 	const trackUpgrade = () => {
 		dispatch(
-			recordTracksEvent(
-				'calypso_earn_page_payment_plans_upgrade_button_click',
-				upgradeNudgeProperties
-			)
+			recordTracksEvent( 'calypso_earn_page_payment_plans_upgrade_button_click', {
+				cta_name: 'calypso_earn_page_payment_plans_upgrade_nudge',
+				cta_feature: FEATURE_RECURRING_PAYMENTS,
+				cta_size: 'regular',
+			} )
 		);
 		dispatch( bumpStat( 'calypso_earn_page', 'payment-plans-upgrade-button' ) );
 	};
@@ -216,7 +211,11 @@ function ProductsList() {
 				<>
 					<TrackComponentView
 						eventName="calypso_earn_page_payment_plans_upgrade_button_view"
-						eventProperties={ upgradeNudgeProperties }
+						eventProperties={ {
+							cta_name: 'calypso_earn_page_payment_plans_upgrade_nudge',
+							cta_feature: FEATURE_RECURRING_PAYMENTS,
+							cta_size: 'regular',
+						} }
 					/>
 					<PromoCard
 						variation={ PromoCardVariation.Compact }

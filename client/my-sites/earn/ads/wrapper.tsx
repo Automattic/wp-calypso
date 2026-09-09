@@ -244,19 +244,24 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 		learnMoreUrl?: string;
 		fitToContent?: boolean;
 	} ) => {
-		const nudgeProperties = {
-			cta_name: ctaName,
-			cta_feature: WPCOM_FEATURES_WORDADS,
-			cta_size: 'regular',
-		};
 		const trackNudge = ( eventName: string ) =>
-			dispatch( recordTracksEvent( eventName, nudgeProperties ) );
+			dispatch(
+				recordTracksEvent( eventName, {
+					cta_name: ctaName,
+					cta_feature: WPCOM_FEATURES_WORDADS,
+					cta_size: 'regular',
+				} )
+			);
 
 		return (
 			<>
 				<TrackComponentView
 					eventName="calypso_upgrade_nudge_impression"
-					eventProperties={ nudgeProperties }
+					eventProperties={ {
+						cta_name: ctaName,
+						cta_feature: WPCOM_FEATURES_WORDADS,
+						cta_size: 'regular',
+					} }
 				/>
 				<PromoCard
 					className={ clsx( 'earn__upsell-card', {
