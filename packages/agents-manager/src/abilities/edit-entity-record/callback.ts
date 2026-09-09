@@ -220,8 +220,10 @@ async function applyCreates( entities: EntityRef[], applied: AppliedChanges ): P
 			throwOnError: true,
 		} );
 
+		// Refused for the same reason as a malformed entry: without an id there is
+		// nothing to report, and a silent skip would read as a success.
 		if ( ! created?.id ) {
-			continue;
+			throw new Error( `Created ${ entityType }/${ entityName }, but no id came back.` );
 		}
 
 		const title = flattenTitle( created.title );
@@ -290,8 +292,9 @@ async function applyRecordEdit(
 	const previousTitle = entityName === PAGE ? await getPageTitle( recordId ) : '';
 	const nextTitle = flattenTitle( record.title );
 
-	// Presence, matching the claimed domains: a request carrying an empty title
-	// clears the page name, and that is as restorable as any rename.
+	// Presence, not truthiness: a request carrying an empty title clears the page
+	// name, which is as restorable as any rename — and the same test the
+	// checkpoint keys are claimed with.
 	const isRename = entityName === PAGE && 'title' in record && nextTitle !== previousTitle;
 
 	// The title is checkpointed, so it goes through `setPageTitle` and stays out
