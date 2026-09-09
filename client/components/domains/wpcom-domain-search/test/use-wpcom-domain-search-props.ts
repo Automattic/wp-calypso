@@ -833,13 +833,10 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		expect( result.current.cart.items ).toEqual( [] );
 	} );
 
-	it( 'calls beforeAddDomainToCart so it is possible to modify the domain before it is added to the cart', async () => {
+	it( 'calls beforeAddDomainToCart so it is possible to modify the domain before it is added to the cart', () => {
 		const beforeAddDomainToCart = jest.fn().mockImplementation( ( domain ) => domain );
-		const replaceProductsInCart = jest.fn().mockResolvedValue( {
-			products: [ { meta: 'my-domain.com', product_slug: 'domain' } ],
-		} );
 
-		mockUseShoppingCart.mockReturnValue( buildShoppingCart( { replaceProductsInCart } ) );
+		mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
 
 		const { result } = renderHookWithProvider( () =>
 			useWPCOMDomainSearchProps( {
@@ -851,7 +848,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			} )
 		);
 
-		await result.current.cart.onAddItem( {
+		result.current.cart.onAddItem( {
 			domain_name: 'my-domain.com',
 			product_slug: 'domain',
 			supports_privacy: true,
@@ -925,21 +922,6 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			] );
 			expect( onContinue ).not.toHaveBeenCalled();
 		} );
-	} );
-
-	it( 'rejects when the backend drops the domain from the cart', async () => {
-		const replaceProductsInCart = jest.fn().mockResolvedValue( { products: [] } );
-		mockUseShoppingCart.mockReturnValue( buildShoppingCart( { replaceProductsInCart } ) );
-
-		const { result } = renderHookWithProvider( () => useWPCOMDomainSearchProps( defaultProps ) );
-
-		await expect(
-			result.current.cart.onAddItem( {
-				domain_name: 'my-domain.com',
-				product_slug: 'domain',
-				supports_privacy: false,
-			} )
-		).rejects.toThrow( 'This domain could not be added to your cart.' );
 	} );
 
 	describe( 'cart key', () => {
@@ -1450,9 +1432,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 	} );
 
 	it( 'prepends products in the cart when adding a new domain', async () => {
-		const replaceProductsInCart = jest.fn().mockResolvedValue( {
-			products: [ { meta: 'my-domain.com', product_slug: 'domain' } ],
-		} );
+		const replaceProductsInCart = jest.fn();
 
 		mockUseShoppingCart.mockReturnValue(
 			buildShoppingCart( {

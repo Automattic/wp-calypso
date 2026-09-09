@@ -14,10 +14,7 @@ import {
 	type ResponseCartProduct,
 	useShoppingCart,
 } from '@automattic/shopping-cart';
-import { __ } from '@wordpress/i18n';
 import { ComponentProps, useMemo } from 'react';
-
-export const DOMAIN_NOT_ADDED_ERROR_CODE = 'domain_not_added_to_cart';
 
 /**
  * A domain the user chose to continue with. Usually a cart item as returned by
@@ -217,15 +214,6 @@ export const useWPCOMDomainSearchCart = ( {
 				}
 
 				const cartItems = await replaceProductsInCart( [ product, ...responseCart.products ] );
-
-				// The backend can silently strip a product it will not sell in this
-				// cart. Surface that as an error so the CTA does not quietly reset.
-				if ( ! cartItems.products.some( ( item ) => item.meta === domain_name ) ) {
-					throw new CartActionError(
-						__( 'This domain could not be added to your cart. Please try again.' ),
-						DOMAIN_NOT_ADDED_ERROR_CODE
-					);
-				}
 
 				if ( ! flowAllowsMultipleDomainsInCart ) {
 					return onContinue( cartItems.products.filter( ( item ) => item.meta === domain_name ) );
