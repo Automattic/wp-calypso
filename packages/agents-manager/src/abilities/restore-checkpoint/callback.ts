@@ -16,7 +16,7 @@ import {
 } from '../../utils/provider-checkpoints';
 import { getToolCallIdFromConversationHistory } from '../../utils/tool-call-history';
 import { errorResult, successResult } from '../ability-result';
-import type { CheckpointMetadata, CheckpointRecord } from '../../utils/checkpoints';
+import type { CheckpointMetadata } from '../../utils/checkpoints';
 import type { UseCheckpointReturn } from '../../utils/load-external-providers';
 import type { AbilityResult } from '../types';
 
@@ -157,22 +157,6 @@ async function restoreProviderCheckpoint(
 	return successResult( summary, { checkpointId } );
 }
 
-// The reciprocal an undo or restore of `checkpointId` recorded, while no redo
-// has used it: it re-applies the change. A redo's own reciprocal carries `undo`.
-function findRedoReciprocal( checkpointId: string ): CheckpointRecord | undefined {
-	const checkpoints = getCheckpoints();
-
-	return [ ...checkpoints ]
-		.reverse()
-		.find(
-			( checkpoint ) =>
-				checkpoint.toolId === RESTORE_CHECKPOINT_TOOL_ID &&
-				checkpoint.restoresCheckpointId === checkpointId &&
-				checkpoint.requestIntentType !== 'undo' &&
-				! checkpoints.some( ( other ) => other.restoresCheckpointId === checkpoint.id )
-		);
-}
-
 /**
  * The `restore-checkpoint` ability callback.
  */
@@ -198,8 +182,8 @@ export async function restoreCheckpointCallback(
 		);
 	}
 
-	const requestedCheckpoint = getCheckpoint( checkpointId );
-	if ( ! requestedCheckpoint ) {
+	const targetCheckpoint = getCheckpoint( checkpointId );
+	if ( ! targetCheckpoint ) {
 		// TODO (ability-migration): Delete the delegation once the last
 		// checkpoint-writing Big Sky ability migrates — every checkpoint then
 		// lives in AM's own store.
@@ -215,11 +199,6 @@ export async function restoreCheckpointCallback(
 		);
 	}
 
-	// A redo may name the undone change itself, whose checkpoint would only put
-	// back the undone state; it runs from the undo's reciprocal instead.
-	const targetCheckpoint =
-		( requestIntentType === 'redo' && findRedoReciprocal( checkpointId ) ) || requestedCheckpoint;
-
 	const restoreToolCallId = getToolCallIdFromConversationHistory( RESTORE_CHECKPOINT_TOOL_ID );
 	const reciprocalRequestIntentType = getReciprocalRequestIntentType( requestIntentType );
 
@@ -229,18 +208,23 @@ export async function restoreCheckpointCallback(
 	// Record the pre-restore state under this call's own id, so an explicit
 	// redo can step back over this restore.
 	if ( reciprocalId ) {
-		await setReciprocalCheckpoint( reciprocalId, targetCheckpoint, {
-			toolId: RESTORE_CHECKPOINT_TOOL_ID,
-			summary,
-			restoresCheckpointId: targetCheckpoint.id,
-			restoredCheckpointToolId: targetCheckpoint.toolId,
-			requestIntentType: reciprocalRequestIntentType,
-			createdByRequestIntentType: requestIntentType,
-		} );
+		try {
+			await setReciprocalCheckpoint( reciprocalId, targetCheckpoint, {
+				toolId: RESTORE_CHECKPOINT_TOOL_ID,
+				summary,
+				restoresCheckpointId: checkpointId,
+				restoredCheckpointToolId: targetCheckpoint.toolId,
+				requestIntentType: reciprocalRequestIntentType,
+				createdByRequestIntentType: requestIntentType,
+			} );
+		} catch {
+			// A redo that cannot be recorded is not worth failing the undo the
+			// user asked for, so the restore goes ahead without one.
+		}
 	}
 
 	try {
-		await restoreCheckpoint( targetCheckpoint.id );
+		await restoreCheckpoint( checkpointId );
 	} catch ( error ) {
 		// A failed restore leaves the editor unchanged — drop the reciprocal
 		// so it does not advertise a redo for a restore that never happened.

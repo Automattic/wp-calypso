@@ -225,29 +225,35 @@ export async function setReciprocalCheckpoint(
 	target: CheckpointRecord,
 	metadata: CheckpointMetadata
 ): Promise< void > {
-	setCheckpoint( id, target.checkpointKeys, metadata );
-
-	const menus = await Promise.all(
+	// Read before anything is recorded, so a failure here leaves no half-built
+	// reciprocal behind. A menu that cannot be read would give the redo a
+	// navigation domain it could not honour, which is worse than no redo.
+	const menusBeforeUpdate = await Promise.all(
 		( target.menusBeforeUpdate ?? [] ).map( async ( menu ) => {
 			const items = await readMenuItems( menu.id );
 
-			return items ? { id: menu.id, items: deepClone( items ) } : null;
+			if ( ! items ) {
+				throw new Error( `Navigation menu not found: ${ menu.id }` );
+			}
+
+			return { id: menu.id, items: deepClone( items ) };
 		} )
 	);
 
-	const menusBeforeUpdate = menus.filter( Boolean ) as CheckpointRecord[ 'menusBeforeUpdate' ];
-	const pageRenames = ( target.pageRenames ?? [] ).map( ( { pageId, from, to } ) => ( {
-		pageId,
-		from: to,
-		to: from,
-	} ) );
+	// Reversed before flipping: a restore unwinds newest first, so a call that
+	// renamed one page twice needs its steps in the opposite order to replay.
+	const pageRenames = [ ...( target.pageRenames ?? [] ) ]
+		.reverse()
+		.map( ( { pageId, from, to } ) => ( { pageId, from: to, to: from } ) );
+
+	setCheckpoint( id, target.checkpointKeys, metadata );
 
 	const checkpoint = records.get( id );
 
 	if ( checkpoint ) {
 		records.set( id, {
 			...checkpoint,
-			...( menusBeforeUpdate?.length && { menusBeforeUpdate } ),
+			...( menusBeforeUpdate.length && { menusBeforeUpdate } ),
 			...( pageRenames.length && { pageRenames } ),
 		} );
 	}
