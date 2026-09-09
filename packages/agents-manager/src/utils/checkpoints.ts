@@ -17,9 +17,9 @@ import { getToolCallIdFromConversationHistory } from './tool-call-history';
  * Ported from Big Sky's `use-checkpoint` as plain functions — AM abilities
  * execute as plain callbacks, so no hook wiring is needed. The global-styles,
  * site-logo, site-title, page, navigation and site-metadata domains restore
- * today; the block domain lands with `apply-block-edits`. Until then, checkpoints for it
- * live in Big Sky's store and restore through the `provider-checkpoints`
- * bridge.
+ * today; the block domain lands with `apply-block-edits`, and until then its
+ * checkpoints live in Big Sky's store and restore through the
+ * `provider-checkpoints` bridge.
  *
  * Big Sky additionally re-applies the checkpoint's variation titles after the
  * snapshot restore to sync its variation-selection store. AM has no such
@@ -156,11 +156,10 @@ async function restoreSiteMetadataSnapshot( checkpoint: CheckpointRecord ): Prom
 /**
  * Puts back the menus the write changed.
  *
- * Empty is a valid state here, unlike the domains above, which throw when a
- * claimed key has no snapshot. Those are captured the moment the key is
- * claimed, so nothing to restore means the capture failed. The page and
- * navigation domains are claimed up front and captured only if the write
- * turns out to touch them — a rename to the title a page already had records
+ * An empty snapshot is valid here, unlike the domains above, which throw.
+ * Those capture the moment their key is claimed, so nothing to restore means
+ * the capture failed. Page and navigation are claimed up front but captured
+ * only if the write reaches them — a rename to a page's existing title records
  * nothing, and has nothing to undo.
  */
 async function restoreMenuSnapshots( checkpoint: CheckpointRecord ): Promise< void > {
