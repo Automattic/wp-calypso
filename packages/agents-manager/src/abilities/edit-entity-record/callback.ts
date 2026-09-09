@@ -27,19 +27,23 @@ const POST_TYPE = 'postType';
 const PAGE = 'page';
 const NAVIGATION = 'wp_navigation';
 
-const POST_TYPE_NAMES = [ 'post', PAGE, 'product', NAVIGATION ];
+// What each operation's schema allows, per operation: creating or deleting a
+// `wp_navigation` record would take a whole menu with it, and nothing validates
+// the arguments on the way in — the callback runs on them raw.
+const EDITABLE_NAMES = [ 'post', PAGE, 'product', NAVIGATION ];
+const ADDABLE_NAMES = [ 'post', PAGE ];
 
-// The schema declares the kind and the name as independent enums, so pairs
-// like `root/page` pass validation. Routing partly on the name would then
-// rename the real page while the rest of the record addressed nothing.
-const isPostType = ( entityType?: string, entityName?: string ) =>
-	entityType === POST_TYPE && POST_TYPE_NAMES.includes( entityName ?? '' );
+// The kind and the name are independent enums, so pairs like `root/page` pass
+// the schema. Routing partly on the name would then rename the real page while
+// the rest of the record addressed nothing.
+const isPostType = ( names: string[], entityType?: string, entityName?: string ) =>
+	entityType === POST_TYPE && names.includes( entityName ?? '' );
 
 const isSite = ( entityType?: string, entityName?: string ) =>
 	entityType === SITE_TYPE && entityName === SITE_NAME;
 
-// Derived from the list above, so the refusals cannot name a stale set.
-const POST_TYPE_HELP = `${ POST_TYPE } with ${ POST_TYPE_NAMES.join( ', ' ) }`;
+// Derived from the lists, so a refusal cannot name a stale set.
+const postTypeHelp = ( names: string[] ) => `${ POST_TYPE } with ${ names.join( ', ' ) }`;
 
 // Only `blocks` and `content` are covered by the menu snapshot, so only they
 // are checkpointed. Anything else a menu record carries — its own title, for
@@ -198,15 +202,16 @@ export function getCheckpointKeys( { editEntities }: EditEntityRecordInput ): st
 
 async function applyCreates( entities: EntityRef[], applied: AppliedChanges ): Promise< void > {
 	for ( const { entityType, entityName, record, options } of entities ) {
+		// Refused, not skipped: an entry dropped here would write nothing and
+		// still be reported as applied.
 		if ( ! entityType || ! entityName || ! record ) {
-			continue;
+			throw new Error( 'Cannot create: entityType, entityName and record are all required.' );
 		}
 
-		// The site is a singleton at `/wp/v2/settings`: saving `root/site` here
-		// would rewrite the real settings, with no checkpoint behind it, and
-		// report it as a new record.
-		if ( ! isPostType( entityType, entityName ) ) {
-			throw new Error( `Cannot create ${ entityType }/${ entityName }. Use ${ POST_TYPE_HELP }.` );
+		if ( ! isPostType( ADDABLE_NAMES, entityType, entityName ) ) {
+			throw new Error(
+				`Cannot create ${ entityType }/${ entityName }. Use ${ postTypeHelp( ADDABLE_NAMES ) }.`
+			);
 		}
 
 		const created = await coreDispatch().saveEntityRecord( entityType, entityName, record, {
@@ -378,16 +383,23 @@ async function applyEdits(
 		const { entityType, entityName, recordId, record } = entity;
 
 		if ( ! entityType || ! entityName || ! record || recordId === undefined ) {
-			continue;
+			throw new Error(
+				'Cannot edit: entityType, entityName, recordId and record are all required.'
+			);
 		}
 
 		if ( ! Object.keys( record ).length ) {
 			throw new Error( `Nothing to change on ${ entityName } ${ recordId }: the record is empty.` );
 		}
 
-		if ( ! isSite( entityType, entityName ) && ! isPostType( entityType, entityName ) ) {
+		if (
+			! isSite( entityType, entityName ) &&
+			! isPostType( EDITABLE_NAMES, entityType, entityName )
+		) {
 			throw new Error(
-				`Unsupported entity: ${ entityType }/${ entityName }. Use ${ SITE_TYPE }/${ SITE_NAME }, or ${ POST_TYPE_HELP }.`
+				`Unsupported entity: ${ entityType }/${ entityName }. Use ${ SITE_TYPE }/${ SITE_NAME }, or ${ postTypeHelp(
+					EDITABLE_NAMES
+				) }.`
 			);
 		}
 
@@ -404,12 +416,13 @@ async function applyEdits(
 async function applyDeletes( entities: EntityRef[], applied: AppliedChanges ): Promise< void > {
 	for ( const { entityType, entityName, recordId, options } of entities ) {
 		if ( ! entityType || ! entityName || recordId === undefined ) {
-			continue;
+			throw new Error( 'Cannot delete: entityType, entityName and recordId are all required.' );
 		}
 
-		// The site is a singleton: it can be edited, never deleted.
-		if ( ! isPostType( entityType, entityName ) ) {
-			throw new Error( `Cannot delete ${ entityType }/${ entityName }. Use ${ POST_TYPE_HELP }.` );
+		if ( ! isPostType( ADDABLE_NAMES, entityType, entityName ) ) {
+			throw new Error(
+				`Cannot delete ${ entityType }/${ entityName }. Use ${ postTypeHelp( ADDABLE_NAMES ) }.`
+			);
 		}
 
 		// TODO (ability-migration): Leave the page being deleted, once
