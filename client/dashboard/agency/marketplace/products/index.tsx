@@ -37,12 +37,12 @@ import ReferralToggle from '../referral-toggle';
 import TermPricingToggle from '../term-pricing-toggle';
 import { useMarketplaceType } from '../use-marketplace-type';
 import { useTermPricing } from '../use-term-pricing';
-import CategoryTiles from './category-tiles';
+import CategoryTiles, { isCategoryTileValue } from './category-tiles';
 import {
 	getBrandLabels,
 	getCategoryShortLabels,
 	getProductBrand,
-	getProductCategories,
+	getProductFilterCategories,
 	getProductType,
 	getTypeLabels,
 	isPressableAddon,
@@ -142,14 +142,16 @@ export default function MarketplaceProducts() {
 	const { hasItem, addItem, removeItem } = useShoppingCart();
 	const [ view, setView ] = useState< View >( () => ( {
 		...DEFAULT_VIEW,
-		search: searchParams.search_query ?? '',
+		search: searchParams.search_query != null ? String( searchParams.search_query ) : '',
 	} ) );
-	const [ tileCategory, setTileCategory ] = useState< CategoryTileValue | null >( () =>
-		searchParams.category
-			? CLASSIC_CATEGORY_KEYS[ searchParams.category ] ??
-			  ( searchParams.category as CategoryTileValue )
-			: null
-	);
+	const [ selectedTile, setSelectedTile ] = useState< CategoryTileValue | null >( () => {
+		const category = searchParams.category
+			? CLASSIC_CATEGORY_KEYS[ searchParams.category ] ?? searchParams.category
+			: null;
+		return isCategoryTileValue( category ) ? category : null;
+	} );
+	const showPressableTile = showPressableAddons && products.some( isPressableAddon );
+	const tileCategory = selectedTile === 'pressable' && ! showPressableTile ? null : selectedTile;
 
 	const [ detailsProduct, setDetailsProduct ] = useState< AgencyProduct | null >( null );
 
@@ -181,7 +183,10 @@ export default function MarketplaceProducts() {
 				],
 				filterBy: { operators: [ 'isAny' ] },
 				enableSorting: false,
-				getValue: ( { item } ) => [ getProductBrand( item ), ...getProductCategories( item ) ],
+				getValue: ( { item } ) => [
+					getProductBrand( item ),
+					...getProductFilterCategories( item ),
+				],
 			},
 			{
 				id: 'vendor',
@@ -226,7 +231,7 @@ export default function MarketplaceProducts() {
 		() =>
 			tileCategory
 				? products.filter( ( product ) =>
-						[ getProductBrand( product ), ...getProductCategories( product ) ].includes(
+						[ getProductBrand( product ), ...getProductFilterCategories( product ) ].includes(
 							tileCategory
 						)
 				  )
@@ -240,8 +245,6 @@ export default function MarketplaceProducts() {
 	// Every section stays while searching or filtering, each showing only its
 	// matching products, as the classic dashboard does.
 	const sections = useMemo( () => getProductSections( filteredProducts ), [ filteredProducts ] );
-
-	const trackingProps = { purchase_mode: marketplaceType, term_pricing: termPricing };
 
 	const handleViewChange = ( nextView: View ) => {
 		if ( nextView.search !== view.search ) {
@@ -272,7 +275,7 @@ export default function MarketplaceProducts() {
 		if ( category ) {
 			recordTracksEvent( 'calypso_a4a_marketplace_product_category_selected', { category } );
 		}
-		setTileCategory( category );
+		setSelectedTile( category );
 	};
 
 	const toggleCart = useCallback(
@@ -287,10 +290,15 @@ export default function MarketplaceProducts() {
 				wasInCart
 					? 'calypso_a4a_marketplace_products_overview_unselect_product'
 					: 'calypso_a4a_marketplace_products_overview_select_product',
-				{ product: product.slug, quantity: 1, ...trackingProps }
+				{
+					product: product.slug,
+					quantity: 1,
+					purchase_mode: marketplaceType,
+					term_pricing: termPricing,
+				}
 			);
 		},
-		[ hasItem, addItem, removeItem, recordTracksEvent, marketplaceType, termPricing ] // eslint-disable-line react-hooks/exhaustive-deps
+		[ hasItem, addItem, removeItem, recordTracksEvent, marketplaceType, termPricing ]
 	);
 
 	const openDetails = ( product: AgencyProduct ) => {
@@ -378,7 +386,7 @@ export default function MarketplaceProducts() {
 			) }
 			<CategoryTiles
 				selected={ tileCategory }
-				showPressable={ showPressableAddons }
+				showPressable={ showPressableTile }
 				onSelect={ handleTileSelect }
 			/>
 			<DataViews< AgencyProduct >

@@ -124,9 +124,14 @@ export default function ProductCard( {
 							onChange={ ( slug ) => {
 								setSelectedSlug( slug );
 								const next = variants.find( ( variant ) => variant.slug === slug );
-								if ( next ) {
-									onSelectVariant?.( next );
+								if ( ! next ) {
+									return;
 								}
+								if ( inCart ) {
+									onToggleCart( product );
+									onToggleCart( next );
+								}
+								onSelectVariant?.( next );
 							} }
 						/>
 					) }

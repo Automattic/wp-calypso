@@ -28,6 +28,13 @@ import type { ProductBrand, ProductCategory } from './lib/product-categories';
 
 export type CategoryTileValue = ProductBrand | ProductCategory;
 
+export function isCategoryTileValue( value: unknown ): value is CategoryTileValue {
+	return (
+		typeof value === 'string' &&
+		[ ...Object.keys( BRAND_LOGOS ), ...Object.keys( CATEGORY_ICONS ) ].includes( value )
+	);
+}
+
 interface Tile {
 	value: CategoryTileValue;
 	label: string;
