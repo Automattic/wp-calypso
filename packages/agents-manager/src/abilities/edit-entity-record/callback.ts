@@ -429,9 +429,10 @@ async function applyDeletes( entities: EntityRef[], applied: AppliedChanges ): P
 			);
 		}
 
-		// TODO (ability-migration): Leave the page being deleted, once
-		// `editor-navigate` lands and can route to the home page. Deleting the
-		// page currently open leaves the editor showing one that is gone.
+		// TODO (ability-migration): Route away before deleting the page the editor
+		// is showing, which is left on a page that no longer exists. Waiting on
+		// `editor-navigate`'s history bridge; then read `page_on_front` from
+		// `root/site` and navigate there, as Big Sky's `goToHomePage()` does.
 
 		// Resolved first so the record is in the store: deleting one that was
 		// never fetched leaves the editor holding a stale copy.
