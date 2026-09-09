@@ -61,7 +61,6 @@ interface CoreDispatch {
 	) => Promise< { id?: number | string; title?: unknown; link?: string } | null >;
 	// Core-data suppresses save errors unless asked not to, so a failed write
 	// would resolve and the ability would report a success that never happened.
-	// Merged over the caller's options rather than replacing them.
 	editEntityRecord: (
 		kind: string,
 		name: string,
@@ -178,16 +177,27 @@ async function applyEdits(
 			// metadata at once, and routing on the title alone dropped the rest.
 			// Presence decides, not truthiness — the schema allows an empty title,
 			// which means clearing the site name.
+			let recorded = false;
+
 			if ( 'title' in record ) {
 				const siteTitle = flattenTitle( title );
 
 				await setSiteTitle( siteTitle );
 				metadata.siteTitle = siteTitle;
+
+				// Recorded the moment it persists, before the metadata write that
+				// could still fail: an unreported change would take the checkpoint
+				// down with it and leave the new title with no undo.
+				applied.updated.push( { entityName, recordId } );
+				recorded = true;
 			}
 
 			await editSiteMetadata( metadata );
 
-			applied.updated.push( { entityName, recordId } );
+			if ( ! recorded ) {
+				applied.updated.push( { entityName, recordId } );
+			}
+
 			continue;
 		}
 
@@ -255,13 +265,16 @@ async function applyDeletes( entities: EntityRef[], applied: AppliedChanges ): P
 			throwOnError: true,
 		} );
 
+		// Recorded before the menu write, which can still fail: the page is gone
+		// either way, and a failure that did not report it would have the agent
+		// try the deletion again.
+		applied.deleted.push( { entityName, recordId } );
+
 		// After the delete, never before: the menu write persists, so removing
 		// the item first would strip it for good if the delete then failed.
 		if ( entityName === PAGE ) {
 			await removeNavigationItem( recordId );
 		}
-
-		applied.deleted.push( { entityName, recordId } );
 	}
 }
 

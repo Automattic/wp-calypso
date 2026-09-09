@@ -188,10 +188,7 @@ export async function buildNavigationItems(
 				unresolved.push( String( input.clientId ?? input.id ?? 'unknown' ) );
 			}
 
-			// Listed children replace the block's own. Unlisted ones are kept, minus
-			// any the agent placed elsewhere in this same rebuild — pruned at every
-			// depth, since a block moved to the top level can sit further down than
-			// a direct child.
+			// Listed children replace the block's own; unlisted ones are pruned.
 			const innerBlocks = input.items ? build( input.items ) : prune( existing?.innerBlocks );
 
 			// A block with children is a submenu, one without is a link. The type is
