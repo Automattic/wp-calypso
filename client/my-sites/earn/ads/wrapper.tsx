@@ -371,15 +371,16 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 			component = renderInstantActivationToggle( component );
 		} else if ( isWordadsInstantEligibleButNotOwner ) {
 			component = renderOwnerRequiredMessage();
-		} else if (
-			canUpgradeToUseWordAds &&
-			canShowUpsell &&
-			site?.jetpack &&
-			! site?.is_wpcom_atomic
-		) {
-			component = renderjetpackUpsell();
-		} else if ( canUpgradeToUseWordAds && canShowUpsell ) {
-			component = renderUpsell();
+		} else if ( canUpgradeToUseWordAds ) {
+			// Terminal: a site that needs an upgrade shows the upsell or nothing, never
+			// the authorization notice below, which asks a different question.
+			if ( ! canShowUpsell ) {
+				component = null;
+			} else if ( site?.jetpack && ! site?.is_wpcom_atomic ) {
+				component = renderjetpackUpsell();
+			} else {
+				component = renderUpsell();
+			}
 		} else if ( ! canAccessAds ) {
 			component = renderEmptyContent();
 		} else if ( ! site?.options?.wordads && ! ( site?.jetpack && canUpgradeToUseWordAds ) ) {

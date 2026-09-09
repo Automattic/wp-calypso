@@ -30,10 +30,13 @@ const renderWrapper = ( {
 		}
 	);
 
+const notAuthorized = 'You are not authorized to view this page';
+
 describe( 'AdsWrapper', () => {
 	it( 'only offers the WordAds upgrade to users who can upgrade the site', () => {
 		const { unmount } = renderWrapper( { manageOptions: false } );
 		expect( screen.queryByRole( 'link', { name: 'Upgrade' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( notAuthorized ) ).not.toBeInTheDocument();
 
 		unmount();
 		renderWrapper();
@@ -45,6 +48,7 @@ describe( 'AdsWrapper', () => {
 	it( 'waits for site features before offering the upgrade', () => {
 		renderWrapper( { features: {} } );
 		expect( screen.queryByRole( 'link', { name: 'Upgrade' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( notAuthorized ) ).not.toBeInTheDocument();
 	} );
 
 	// P2 sites get no upsell, but hiding it must not take the gate with it and
