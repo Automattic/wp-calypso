@@ -5,7 +5,7 @@ import {
 	FEATURE_WORDADS_INSTANT,
 	getPlan,
 } from '@automattic/calypso-products';
-import { Card, ExternalLink } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import wordAdsImage from 'calypso/assets/images/illustrations/dotcom-wordads.svg';
@@ -212,12 +212,14 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 		benefits,
 		href,
 		tracksClickName,
+		learnMoreUrl,
 	}: {
 		title: TranslateResult;
 		body: TranslateResult;
 		benefits?: TranslateResult[];
 		href: string;
 		tracksClickName: string;
+		learnMoreUrl?: string;
 	} ) => {
 		const trackNudge = ( eventName: string ) =>
 			dispatch( recordTracksEvent( eventName, { cta_feature: WPCOM_FEATURES_WORDADS } ) );
@@ -252,6 +254,14 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 								onClick: () => trackNudge( tracksClickName ),
 							},
 						} }
+						learnMoreLink={
+							learnMoreUrl
+								? {
+										url: learnMoreUrl,
+										onClick: () => trackNudge( 'calypso_upgrade_nudge_learn_more_click' ),
+								  }
+								: null
+						}
 					/>
 				</PromoCard>
 			</>
@@ -260,15 +270,10 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 
 	const renderUpsell = () =>
 		renderUpsellCard( {
-			title: translate( 'Upgrade to the %(premiumPlanName)s plan and start earning', {
-				args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() || '' },
-			} ),
+			title: translate( 'Earn ad revenue' ),
 			body: translate(
-				"By upgrading to the %(premiumPlanName)s plan, you'll be able to monetize your site through the {{link}}WordAds program{{/link}}.",
-				{
-					args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() || '' },
-					components: { link: <ExternalLink href="https://wordads.co/" icon /> },
-				}
+				"By upgrading to the %(premiumPlanName)s plan, you'll be able to monetize your site through the WordAds program.",
+				{ args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() || '' } }
 			),
 			benefits: [
 				translate( 'Instantly enroll into the WordAds network.' ),
@@ -276,6 +281,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 			],
 			href: buildCheckoutURL( siteSlug as string, PLAN_PREMIUM ),
 			tracksClickName: 'calypso_upgrade_nudge_cta_click',
+			learnMoreUrl: 'https://wordads.co/',
 		} );
 
 	const renderjetpackUpsell = () =>
