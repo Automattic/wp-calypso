@@ -496,16 +496,14 @@ export async function editEntityRecordCallback(
 	}
 
 	// The backend asks the model for a `confirmationMessage` before anything
-	// destructive. An ability cannot put a component on screen — only the
-	// backend's `show_component` can — so this refuses and writes nothing.
+	// destructive. Confirmation here is conversational — this refuses and writes
+	// nothing, the agent asks, and the user answers in the chat — where Big Sky
+	// renders Yes/No buttons from its own chat store.
 	//
 	// The tool echoes, so the refusal returns as a client-tool failure and the
 	// model runs again: the `error` tells it to ask first, then re-call without
 	// the field. Two attempts before the backend gives up, so it has to be
 	// directive rather than descriptive.
-	//
-	// TODO (ability-migration): Render Yes/No buttons once the backend can
-	// emit a confirmation component for this tool.
 	if ( typeof input.confirmationMessage === 'string' && input.confirmationMessage.trim() ) {
 		return errorResult(
 			`Nothing was changed yet. Ask the user to confirm: "${ input.confirmationMessage.trim() }" — then call this tool again with the same arguments and no confirmationMessage.`,
