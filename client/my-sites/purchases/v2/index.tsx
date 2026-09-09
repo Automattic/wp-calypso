@@ -9,12 +9,10 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import Layout from './layout';
 import router from './router';
-import type { PurchasesSection } from './main';
+import { shouldSeedSiteFilter } from './site-filter';
+import type { PurchasesSection } from './site-filter';
 
 import './style.scss';
-
-/** The Dashboard scopes these two screens to a site with a `?site=<blogId>` filter. */
-const SITE_FILTERED_SECTIONS: PurchasesSection[] = [ 'activeUpgrades', 'billingHistory' ];
 
 export default function DashboardBackportSitePurchases( {
 	path,
@@ -27,7 +25,7 @@ export default function DashboardBackportSitePurchases( {
 } ) {
 	const rootInstanceRef = useRef< ReturnType< typeof createRoot > | null >( null );
 	const containerRef = useRef< HTMLDivElement >( null );
-	const seededSectionsRef = useRef< Set< PurchasesSection > >( new Set() );
+	const previousSectionRef = useRef< PurchasesSection | undefined >( undefined );
 	const user = useSelector( getCurrentUser );
 	const analyticsClient = useAnalyticsClient( router );
 
@@ -47,21 +45,12 @@ export default function DashboardBackportSitePurchases( {
 		};
 	}, [] );
 
-	// The classic URLs carry the site in the path, so seed the Dashboard's site
-	// filter the first time each screen is opened. Seeding once per screen rather
-	// than on every navigation is what lets someone widen the filter afterwards
-	// without it snapping straight back to this site.
 	useEffect( () => {
-		if ( ! siteId || ! section || ! SITE_FILTERED_SECTIONS.includes( section ) ) {
-			return;
-		}
-		if ( seededSectionsRef.current.has( section ) ) {
-			return;
-		}
-		seededSectionsRef.current.add( section );
+		const previousSection = previousSectionRef.current;
+		previousSectionRef.current = section;
 
 		const { pathname, search } = window.location;
-		if ( ! new URLSearchParams( search ).has( 'site' ) ) {
+		if ( shouldSeedSiteFilter( { section, previousSection, siteId, search } ) ) {
 			page.replace( addQueryArgs( pathname + search, { site: siteId } ) );
 		}
 	}, [ section, siteId ] );

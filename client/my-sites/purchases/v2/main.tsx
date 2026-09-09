@@ -5,8 +5,7 @@ import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import DashboardBackportSitePurchases from './index';
-
-export type PurchasesSection = 'activeUpgrades' | 'billingHistory' | 'paymentMethods';
+import type { PurchasesSection } from './site-filter';
 
 /**
  * Site-level purchase management, rendered with the Dashboard's own billing
