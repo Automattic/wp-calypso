@@ -1,4 +1,4 @@
-import { Button, FormInputValidation, ExternalLink, FormLabel } from '@automattic/components';
+import { Button, FormInputValidation, ExternalLink } from '@automattic/components';
 import { omit } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
@@ -329,13 +329,13 @@ class SiteVerification extends Component {
 					<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
 						{ supportedServices.map( ( service ) => (
 							<FormFieldset key={ service.slug }>
-								<div className="seo-settings__verification-code-field">
-									<FormLabel
-										className="seo-settings__verification-code-label"
+								<div className="form-text-input-with-affixes seo-settings__verification-code-field">
+									<label
+										className="form-text-input-with-affixes__prefix"
 										htmlFor={ `verification_code_${ service.slug }` }
 									>
 										{ service.name }
-									</FormLabel>
+									</label>
 									<FormTextarea
 										className="seo-settings__verification-code-input"
 										rows={ 1 }
