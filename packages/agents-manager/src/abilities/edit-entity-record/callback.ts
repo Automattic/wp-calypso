@@ -46,6 +46,12 @@ export interface EditEntityRecordInput {
 	toolCallId?: string;
 }
 
+/** An entity reference the loop has already checked, so the writes can rely on it. */
+type CheckedEntity = Required<
+	Pick< EntityRef, 'entityType' | 'entityName' | 'recordId' | 'record' >
+> &
+	Pick< EntityRef, 'options' >;
+
 /**
  * What applied, so a partial failure still reports the work that landed.
  *
@@ -86,7 +92,13 @@ interface CoreDispatch {
 	) => Promise< unknown >;
 }
 
+interface CoreResolve {
+	getEditedEntityRecord: ( kind: string, name: string, id: number | string ) => Promise< unknown >;
+}
+
 const coreDispatch = () => dispatch( coreStore ) as unknown as CoreDispatch;
+
+const coreResolve = () => resolveSelect( coreStore ) as unknown as CoreResolve;
 
 /**
  * The domains an edit touches, so a restore puts back only what changed.
@@ -165,94 +177,106 @@ async function editSiteMetadata( changes: Record< string, unknown > ): Promise< 
 	}
 }
 
+/**
+ * Writes the site's title and metadata.
+ *
+ * The site record is addressed by a sentinel `recordId` rather than a real id,
+ * and the agent does not reliably send the one the instructions name, so the
+ * fields it carries are the discriminator. Title and metadata travel together:
+ * one call can carry both, and routing on the title alone dropped the rest.
+ */
+async function applySiteEdit(
+	{ entityName, recordId, record }: CheckedEntity,
+	applied: AppliedChanges
+): Promise< void > {
+	const { title, ...metadata } = record;
+	const renaming = 'title' in record;
+
+	if ( renaming ) {
+		await setSiteTitle( flattenTitle( title ) );
+		metadata.siteTitle = flattenTitle( title );
+
+		// Recorded the moment it persists, before the metadata write that could
+		// still fail: an unreported change would take the checkpoint down with
+		// it and leave the new title with no undo.
+		applied.updated.push( { entityName, recordId } );
+	}
+
+	await editSiteMetadata( metadata );
+
+	if ( ! renaming ) {
+		applied.updated.push( { entityName, recordId } );
+	}
+}
+
+/** Writes one page, post, product or menu record. */
+async function applyRecordEdit(
+	{ entityType, entityName, recordId, record, options }: CheckedEntity,
+	applied: AppliedChanges,
+	recorder: CheckpointRecorder
+): Promise< void > {
+	const previousTitle = entityName === PAGE ? await getPageTitle( recordId ) : '';
+	const nextTitle = flattenTitle( record.title );
+
+	// Presence, matching the claimed domains: a request carrying an empty title
+	// clears the page name, and that is as restorable as any rename.
+	const isRename = entityName === PAGE && 'title' in record && nextTitle !== previousTitle;
+
+	// The title is checkpointed, so it goes through `setPageTitle` and stays out
+	// of the editor's undo stack. The rest of the record is not, so the editor's
+	// stack remains its only undo and it keeps it.
+	let recordToWrite = isRename ? withoutTitle( record ) : record;
+
+	if ( entityName === NAVIGATION ) {
+		// Built before the snapshot: a refused rebuild must not leave a restore
+		// point for an edit that never happened.
+		recordToWrite = await buildNavigationItems( recordId, record );
+		await recorder.captureMenu( recordId );
+	}
+
+	if ( isRename ) {
+		await setPageTitle( recordId, nextTitle );
+
+		// Recorded once the rename lands, not before: an edit that rejected would
+		// otherwise leave a checkpoint offering to undo a rename that never
+		// happened, and relabel a menu item to match.
+		recorder.capturePageRename( { pageId: recordId, from: previousTitle, to: nextTitle } );
+	}
+
+	if ( Object.keys( recordToWrite ).length ) {
+		await coreDispatch().editEntityRecord( entityType, entityName, recordId, recordToWrite, {
+			...options,
+			// A menu edit is checkpointed, so `restore-checkpoint` is its undo and
+			// the editor's stack would be a second, competing one.
+			...( entityName === NAVIGATION && { undoIgnore: true } ),
+		} );
+	}
+
+	applied.updated.push( { entityName, recordId } );
+
+	if ( isRename ) {
+		await renameNavigationItem( recordId, nextTitle, previousTitle );
+	}
+}
+
 async function applyEdits(
 	entities: EntityRef[],
 	applied: AppliedChanges,
 	recorder: CheckpointRecorder
 ): Promise< void > {
-	for ( const { entityType, entityName, recordId, record, options } of entities ) {
+	for ( const entity of entities ) {
+		const { entityType, entityName, recordId, record } = entity;
+
 		if ( ! entityType || ! entityName || ! record || recordId === undefined ) {
 			continue;
 		}
 
-		// The site record is addressed by a sentinel `recordId` rather than a real
-		// id, and the agent does not reliably send the one the instructions name.
-		// The fields it carries are the dependable discriminator, and routing on
-		// them matters: falling through to the generic branch below would edit
-		// the site record without ever saving it.
+		const checked = { ...entity, entityType, entityName, recordId, record };
+
 		if ( entityType === SITE_TYPE && entityName === SITE_NAME ) {
-			const { title, ...metadata } = record;
-
-			// Split rather than branched: one call can carry a title and other
-			// metadata at once, and routing on the title alone dropped the rest.
-			// Presence decides, not truthiness — the schema allows an empty title,
-			// which means clearing the site name.
-			let recorded = false;
-
-			if ( 'title' in record ) {
-				const siteTitle = flattenTitle( title );
-
-				await setSiteTitle( siteTitle );
-				metadata.siteTitle = siteTitle;
-
-				// Recorded the moment it persists, before the metadata write that
-				// could still fail: an unreported change would take the checkpoint
-				// down with it and leave the new title with no undo.
-				applied.updated.push( { entityName, recordId } );
-				recorded = true;
-			}
-
-			await editSiteMetadata( metadata );
-
-			if ( ! recorded ) {
-				applied.updated.push( { entityName, recordId } );
-			}
-
-			continue;
-		}
-
-		// Renames are recorded before the write, so a restore knows the title
-		// to put back on both the page and the menu item that follows it.
-		const previousTitle = entityName === PAGE ? await getPageTitle( recordId ) : '';
-		const nextTitle = flattenTitle( record.title );
-		// Presence, matching the claimed domains: a request carrying an empty
-		// title clears the page name, and that is as restorable as any rename.
-		const isRename = entityName === PAGE && 'title' in record && nextTitle !== previousTitle;
-
-		// The title is checkpointed, so it goes through `setPageTitle` and stays
-		// out of the editor's undo stack. Everything else in the record is not,
-		// so the editor's stack remains its only undo and it keeps it.
-		let recordToWrite = isRename ? withoutTitle( record ) : record;
-
-		if ( entityName === NAVIGATION ) {
-			// Built before the snapshot: a refused rebuild must not leave a
-			// restore point for an edit that never happened.
-			recordToWrite = await buildNavigationItems( recordId, record );
-			await recorder.captureMenu( recordId );
-		}
-
-		if ( isRename ) {
-			await setPageTitle( recordId, nextTitle );
-
-			// Recorded once the rename lands, not before: an edit that rejected
-			// would otherwise leave a checkpoint offering to undo a rename that
-			// never happened, and relabel a menu item to match.
-			recorder.capturePageRename( { pageId: recordId, from: previousTitle, to: nextTitle } );
-		}
-
-		if ( Object.keys( recordToWrite ).length ) {
-			await coreDispatch().editEntityRecord( entityType, entityName, recordId, recordToWrite, {
-				...options,
-				// A menu edit is checkpointed, so `restore-checkpoint` is its undo
-				// and the editor's stack would be a second, competing one.
-				...( entityName === NAVIGATION && { undoIgnore: true } ),
-			} );
-		}
-
-		applied.updated.push( { entityName, recordId } );
-
-		if ( isRename ) {
-			await renameNavigationItem( recordId, nextTitle, previousTitle );
+			await applySiteEdit( checked, applied );
+		} else {
+			await applyRecordEdit( checked, applied, recorder );
 		}
 	}
 }
@@ -269,15 +293,7 @@ async function applyDeletes( entities: EntityRef[], applied: AppliedChanges ): P
 
 		// Resolved first so the record is in the store: deleting one that was
 		// never fetched leaves the editor holding a stale copy.
-		await (
-			resolveSelect( coreStore ) as unknown as {
-				getEditedEntityRecord: (
-					kind: string,
-					name: string,
-					id: number | string
-				) => Promise< unknown >;
-			}
-		 ).getEditedEntityRecord( entityType, entityName, recordId );
+		await coreResolve().getEditedEntityRecord( entityType, entityName, recordId );
 
 		await coreDispatch().deleteEntityRecord( entityType, entityName, recordId, {
 			...options,
