@@ -1,4 +1,4 @@
-import { dispatch } from '@wordpress/data';
+import { dispatch, select } from '@wordpress/data';
 import { isRecord } from './is-record';
 import { getSiteRecord, saveSiteFields, SITE_RECORD_UNAVAILABLE } from './site-record';
 
@@ -17,6 +17,9 @@ const METADATA_FIELD = 'big_sky_site_metadata';
 
 // Runtime-only, and never persisted alongside the rest.
 const RUNTIME_KEY = 'mode';
+
+// Big Sky's wp.data store, unregistered where its app is not mounted.
+const PROVIDER_STORE = 'ai-assembler';
 
 const parseMetadata = ( value: unknown ): SiteMetadata => {
 	if ( isRecord( value ) ) {
@@ -77,15 +80,38 @@ export async function setSiteMetadata( changes: SiteMetadata ): Promise< SiteMet
 /**
  * Keeps Big Sky's copy in step. It rebuilds this field from its own store
  * rather than from the site record, so a write it never saw would be undone by
- * its next one. Where its app is not mounted the store is unregistered and
- * this does nothing.
+ * its next one.
+ *
+ * Its reducer merges, so a key this write drops has to be sent as `undefined`:
+ * `JSON.stringify` then leaves it out of what Big Sky persists. The runtime key
+ * is exempt — it is Big Sky's to manage and never reaches the record.
+ *
+ * Residual, and not reachable from here: keys Big Sky itself wrote earlier in
+ * the page load still win, because its own writer replays them from a
+ * module-level buffer that nothing outside it can clear.
  */
 function syncProviderMetadata( metadata: SiteMetadata ): void {
-	(
-		dispatch( 'ai-assembler' ) as
-			| { setSiteMetadata?: ( metadata: SiteMetadata ) => void }
-			| undefined
-	 )?.setSiteMetadata?.( metadata );
+	const provider = dispatch( PROVIDER_STORE ) as
+		| { setSiteMetadata?: ( metadata: SiteMetadata ) => void }
+		| undefined;
+
+	if ( ! provider?.setSiteMetadata ) {
+		return;
+	}
+
+	const current =
+		(
+			select( PROVIDER_STORE ) as { getSiteMetadata?: () => SiteMetadata } | undefined
+		 )?.getSiteMetadata?.() ?? {};
+
+	const dropped = Object.keys( current ).filter(
+		( key ) => key !== RUNTIME_KEY && ! ( key in metadata )
+	);
+
+	provider.setSiteMetadata( {
+		...Object.fromEntries( dropped.map( ( key ) => [ key, undefined ] ) ),
+		...metadata,
+	} );
 }
 
 /**
