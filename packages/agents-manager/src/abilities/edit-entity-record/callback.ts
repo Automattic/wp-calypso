@@ -27,9 +27,10 @@ const POST_TYPE = 'postType';
 const PAGE = 'page';
 const NAVIGATION = 'wp_navigation';
 
-// What each operation's schema allows, per operation: creating or deleting a
-// `wp_navigation` record would take a whole menu with it, and nothing validates
-// the arguments on the way in — the callback runs on them raw.
+// What each operation's schema allows — deletes take the same names as creates.
+// Enforced here because nothing validates the arguments on the way in: the
+// callback runs on them raw, and deleting a `wp_navigation` record would take a
+// whole menu with it.
 const EDITABLE_NAMES = [ 'post', PAGE, 'product', NAVIGATION ];
 const ADDABLE_NAMES = [ 'post', PAGE ];
 
