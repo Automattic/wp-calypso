@@ -45,12 +45,6 @@ describe( 'getHostingDashboardEnrollment', () => {
 	describe( 'with the rollout flag on', () => {
 		beforeEach( () => enableFlags( 'dashboard/enable-percentage-rollout' ) );
 
-		it( 'the escape hatch (forced-opt-out) wins over cohort membership', () => {
-			expect(
-				getHostingDashboardEnrollment( preference( 'forced-opt-out' ), LOW_USER_ID )
-			).toEqual( { enrolled: false } );
-		} );
-
 		it( 'enrolls every user, whatever their ID', () => {
 			expect( getHostingDashboardEnrollment( undefined, LOW_USER_ID ) ).toEqual( {
 				enrolled: true,
@@ -91,10 +85,6 @@ describe( 'isOptInToggleVisible', () => {
 		expect( isOptInToggleVisible( preference( 'opt-out' ), HIGH_USER_ID ) ).toBe( true );
 	} );
 
-	it( 'hides the toggle from escape-hatched users even while the rollout flag is off', () => {
-		expect( isOptInToggleVisible( preference( 'forced-opt-out' ), HIGH_USER_ID ) ).toBe( false );
-	} );
-
 	describe( 'with the rollout flag on', () => {
 		beforeEach( () => enableFlags( 'dashboard/enable-percentage-rollout' ) );
 
@@ -105,10 +95,9 @@ describe( 'isOptInToggleVisible', () => {
 	} );
 
 	describe( 'with force-opt-in-visibility on', () => {
-		it( 'overrides the cohort and the escape hatch', () => {
+		it( 'overrides the cohort', () => {
 			enableFlags( 'dashboard/force-opt-in-visibility', 'dashboard/enable-percentage-rollout' );
 			expect( isOptInToggleVisible( undefined, LOW_USER_ID ) ).toBe( true );
-			expect( isOptInToggleVisible( preference( 'forced-opt-out' ), HIGH_USER_ID ) ).toBe( true );
 		} );
 	} );
 } );
@@ -127,14 +116,8 @@ describe( 'isAdvancedNoticeVisible', () => {
 			expect( isAdvancedNoticeVisible( undefined, HIGH_USER_ID ) ).toBe( true );
 		} );
 
-		it( 'hides the banner from escape-hatched (forced-opt-in) users', () => {
+		it( 'hides the banner from forced-opt-in users', () => {
 			expect( isAdvancedNoticeVisible( preference( 'forced-opt-in' ), LOW_USER_ID ) ).toBe( false );
-		} );
-
-		it( 'hides the banner from escape-hatched (forced-opt-out) users', () => {
-			expect( isAdvancedNoticeVisible( preference( 'forced-opt-out' ), LOW_USER_ID ) ).toBe(
-				false
-			);
 		} );
 	} );
 } );

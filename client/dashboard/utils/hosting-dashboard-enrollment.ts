@@ -40,11 +40,6 @@ export function getHostingDashboardEnrollment(
 	preference: HostingDashboardOptIn | undefined,
 	userId: number | undefined
 ): HostingDashboardEnrollment {
-	// Support provided escape hatch, wins over everything.
-	if ( preference?.value === 'forced-opt-out' ) {
-		return { enrolled: false };
-	}
-
 	if ( preference?.value === 'forced-opt-in' || isInRolloutCohort( userId ) ) {
 		return { enrolled: true, reason: 'forced' };
 	}
@@ -58,8 +53,7 @@ export function getHostingDashboardEnrollment(
 
 /**
  * Whether the user-facing opt-in toggle should be shown. Hidden for the
- * rollout cohort (the choice no longer exists) and for escape-hatched
- * users (their enrollment changes only via support tooling).
+ * rollout cohort (the choice no longer exists).
  */
 export function isOptInToggleVisible(
 	preference: HostingDashboardOptIn | undefined,
@@ -70,7 +64,7 @@ export function isOptInToggleVisible(
 		return true;
 	}
 
-	if ( isInRolloutCohort( userId ) || preference?.value === 'forced-opt-out' ) {
+	if ( isInRolloutCohort( userId ) ) {
 		return false;
 	}
 
@@ -79,14 +73,14 @@ export function isOptInToggleVisible(
 
 /**
  * Whether the advanced notice should be visible for this user. Shown to every
- * user once the flag is on, except escape-hatched users (forced opt-in or
- * opt-out), whose enrollment changes only via support tooling.
+ * user once the flag is on, except forced-opt-in users, whose enrollment
+ * changes only via support tooling.
  */
 export function isAdvancedNoticeVisible(
 	preference: HostingDashboardOptIn | undefined,
 	userId: number | undefined
 ): boolean {
-	if ( preference?.value === 'forced-opt-in' || preference?.value === 'forced-opt-out' ) {
+	if ( preference?.value === 'forced-opt-in' ) {
 		return false;
 	}
 

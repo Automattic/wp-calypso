@@ -12,7 +12,7 @@ jest.mock( 'calypso/lib/user/verification-checker', () => ( {
 // Opting out keeps the result on this dashboard, which is where the notices below are shown.
 const OPTED_OUT = {
 	fetching: false,
-	remoteValues: { 'hosting-dashboard-opt-in': { value: 'forced-opt-out' } },
+	remoteValues: { 'hosting-dashboard-opt-in': { value: 'opt-out' } },
 };
 // A cold load, before the preference that decides which dashboard has been read.
 const UNRESOLVED = { fetching: false, remoteValues: null };

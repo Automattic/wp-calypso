@@ -26,8 +26,6 @@ jest.mock( 'calypso/lib/analytics/mc', () => ( { bumpStat: jest.fn() } ) );
 const mockStore = configureStore();
 
 describe( 'maybeRedirectToMultiSiteDashboard', () => {
-	// `config/test.json` enables `dashboard/enable-percentage-rollout`, which now
-	// enrols every user, so `forced-opt-out` is the only way to be unenrolled.
 	const targetPath = ( params ) => `/emails/choose-email-solution/${ params.domain }`;
 
 	const buildContext = ( optIn ) => ( {
@@ -50,14 +48,16 @@ describe( 'maybeRedirectToMultiSiteDashboard', () => {
 		dashboardLink.mockClear();
 	} );
 
-	it( 'does not redirect when the flag is disabled and the user is not enrolled', () => {
+	it( 'redirects forced-opt-out users since the escape hatch is removed', () => {
 		maybeRedirectToMultiSiteDashboard( targetPath, () => false )(
 			buildContext( 'forced-opt-out' ),
 			next
 		);
 
-		expect( navigate ).not.toHaveBeenCalled();
-		expect( next ).toHaveBeenCalled();
+		expect( navigate ).toHaveBeenCalledWith(
+			'https://my.wordpress.com/emails/choose-email-solution/example.com'
+		);
+		expect( next ).not.toHaveBeenCalled();
 	} );
 
 	it( 'redirects to the flag target when the predicate returns true', () => {
