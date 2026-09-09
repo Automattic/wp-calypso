@@ -5,13 +5,13 @@ import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { useAppContext } from '../../app/context';
 import { Text } from '../../components/text';
+import { sortNullableDates } from './expiry';
 import { DomainNameField } from './field-domain-name';
 import { DomainSiteField } from './field-domain-site';
 import { DomainStatusField } from './field-domain-status';
 import { DomainExpiryField } from './field-expiry';
 import { DomainSslField } from './field-ssl';
 import { IneligibleIndicator } from './ineligible-indicator';
-import { sortNullableStrings } from './sort-nullable-strings';
 import type { DomainSummary, Site } from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';
 
@@ -139,7 +139,7 @@ export const useFields = ( {
 				label: __( 'Paid until' ),
 				enableHiding: false,
 				enableSorting: true,
-				sort: sortNullableStrings,
+				sort: sortNullableDates,
 				elements: [
 					{ value: '2-next-90-days', label: __( '90 days' ) },
 					{ value: '1-expired', label: __( 'Expired' ) },
@@ -147,23 +147,7 @@ export const useFields = ( {
 				filterBy: {
 					operators: [ 'isAny' as Operator ],
 				},
-				getValue: ( { item }: { item: DomainSummary } ) => {
-					if ( ! item.expiry ) {
-						return null;
-					}
-
-					const expiryDate = new Date( item.expiry );
-					const now = new Date();
-					const diffInMs = expiryDate.getTime() - now.getTime();
-					const diffInDays = Math.ceil( diffInMs / ( 1000 * 60 * 60 * 24 ) );
-
-					if ( item.expired ) {
-						return '1-expired';
-					} else if ( diffInDays <= 90 ) {
-						return '2-next-90-days';
-					}
-					return '3-more-than-90-days';
-				},
+				getValue: ( { item }: { item: DomainSummary } ) => item.expiry,
 				render: ( { item } ) => {
 					return (
 						<DomainExpiryField

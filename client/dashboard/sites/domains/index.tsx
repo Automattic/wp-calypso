@@ -1,7 +1,6 @@
 import { siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAuth } from '../../app/auth';
@@ -20,6 +19,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import AddDomainButton from '../../domains/add-domain-button';
 import {
+	filterSortAndPaginateDomains,
 	useActions,
 	useFields,
 	DEFAULT_LAYOUTS,
@@ -76,7 +76,11 @@ function SiteDomains() {
 		queryParams: searchParams,
 	} );
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( siteDomains, view, fields );
+	const { data: filteredData, paginationInfo } = filterSortAndPaginateDomains(
+		siteDomains,
+		view,
+		fields
+	);
 
 	// Hide actions column when no domain has eligible actions.
 	const hasEligibleActions = siteDomains.some( ( item ) =>
