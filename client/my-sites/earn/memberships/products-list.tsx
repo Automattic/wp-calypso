@@ -6,6 +6,7 @@ import {
 import { Badge, Button, Card, CompactCard, Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
 import { __experimentalHStack as HStack } from '@wordpress/components';
+import { addQueryArgs } from '@wordpress/url';
 import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -33,6 +34,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import RecurringPaymentsPlanAddEditModal from '../components/add-edit-plan-modal';
 import FreePlanModal from '../components/free-plan-modal';
 import { Product } from '../types';
+import { getUpsellReturnUrl } from '../upsell-return-url';
 import {
 	ADD_NEW_PAYMENT_PLAN_HASH,
 	ADD_TIER_PLAN_HASH,
@@ -238,7 +240,9 @@ function ProductsList() {
 								text: translate( 'Upgrade' ),
 								isPrimary: true,
 								action: {
-									url: `/plans/${ site?.slug }`,
+									url: addQueryArgs( `/plans/${ site?.slug }`, {
+										redirect_to: getUpsellReturnUrl(),
+									} ),
 									onClick: trackUpgrade,
 									selfTarget: true,
 								},
