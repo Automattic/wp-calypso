@@ -14,6 +14,7 @@ import {
 import isAmAbilitiesDisabled from '../utils/is-am-abilities-disabled';
 import { applyUpdateThemeAbility } from './apply-update-theme';
 import { BIG_SKY_ABILITY_CATEGORY } from './constants';
+import { editEntityRecordAbility } from './edit-entity-record';
 import { editorNavigateAbility } from './editor-navigate';
 import { getBlockTreeAbility } from './get-block-tree';
 import { restoreCheckpointAbility } from './restore-checkpoint';
@@ -32,6 +33,7 @@ import type { Ability } from './types';
 // and list it here.
 const MIGRATED_EDITOR_ABILITIES: Ability[] = [
 	applyUpdateThemeAbility,
+	editEntityRecordAbility,
 	editorNavigateAbility,
 	restoreCheckpointAbility,
 	setSiteLogoAbility,

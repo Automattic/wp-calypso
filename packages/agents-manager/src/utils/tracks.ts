@@ -73,7 +73,7 @@ export function getBigSkyTracksData(): BigSkyTracksData {
 	};
 }
 
-function getIsTest(): boolean {
+export function getIsTest(): boolean {
 	const amDevMode = typeof agentsManagerData !== 'undefined' && !! agentsManagerData?.isDevMode;
 	return amDevMode || getBigSkyTracksData().isDevMode;
 }

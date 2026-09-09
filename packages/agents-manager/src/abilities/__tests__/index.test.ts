@@ -7,7 +7,18 @@ jest.mock( '@wordpress/abilities', () => ( {
 	registerAbilityCategory: jest.fn(),
 	unregisterAbility: jest.fn(),
 } ) );
-jest.mock( '@wordpress/data', () => ( { select: () => undefined, dispatch: () => undefined } ) );
+jest.mock( '@wordpress/data', () => ( {
+	select: () => undefined,
+	dispatch: () => undefined,
+	resolveSelect: () => undefined,
+} ) );
+// Reached through the checkpoint engine's navigation domain, and it registers
+// a store on import — which the mocked `@wordpress/data` above cannot serve.
+jest.mock( '@wordpress/blocks', () => ( {
+	createBlock: jest.fn(),
+	parse: jest.fn( () => [] ),
+	serialize: jest.fn( () => '' ),
+} ) );
 jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
 jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: jest.fn() } ), {
 	virtual: true,

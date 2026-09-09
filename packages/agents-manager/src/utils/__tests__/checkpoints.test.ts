@@ -5,6 +5,14 @@ jest.mock( '../tool-call-history', () => ( {
 jest.mock( '@wordpress/data', () => ( {
 	select: jest.fn(),
 	dispatch: jest.fn(),
+	resolveSelect: jest.fn(),
+} ) );
+// Reached through the navigation domain, and it registers a store on import —
+// which the mocked `@wordpress/data` above cannot serve.
+jest.mock( '@wordpress/blocks', () => ( {
+	createBlock: jest.fn(),
+	parse: jest.fn( () => [] ),
+	serialize: jest.fn( () => '' ),
 } ) );
 
 const GLOBAL_STYLES_RECORD = {
@@ -65,7 +73,7 @@ describe( 'setCheckpoint', () => {
 		};
 		getEditedEntityRecord.mockReturnValue( liveRecord );
 
-		setCheckpoint( 'toolu_1', [] );
+		setCheckpoint( 'toolu_1', [ 'color' ] );
 		liveRecord.settings.color = { palette: [ 'mutated' ] };
 
 		expect( getCheckpoints()[ 0 ].themeBeforeUpdate?.settings ).toEqual( { color: {} } );
@@ -113,6 +121,18 @@ describe( 'setCheckpoint', () => {
 			{ id: 'toolu_1', keys: [ 'button' ], summary: 'Second.' },
 			{ id: 'toolu_2', keys: [ 'font' ], summary: undefined },
 		] );
+	} );
+} );
+
+describe( 'theme domain', () => {
+	it( 'snapshots the global styles only for theme checkpoints', async () => {
+		const { setCheckpoint, getCheckpoint, checkpointKeys } = await loadCheckpoints();
+
+		setCheckpoint( 'color-call', [ checkpointKeys.COLOR ] );
+		setCheckpoint( 'title-call', [ checkpointKeys.SITE_TITLE ] );
+
+		expect( getCheckpoint( 'color-call' )?.themeBeforeUpdate ).toEqual( GLOBAL_STYLES_RECORD );
+		expect( getCheckpoint( 'title-call' )?.themeBeforeUpdate ).toBeUndefined();
 	} );
 } );
 
@@ -185,6 +205,21 @@ describe( 'logo domain', () => {
 		await expect( restoreCheckpoint( 'logo-call' ) ).rejects.toThrow(
 			'Checkpoint has no site-logo snapshot to restore.'
 		);
+	} );
+} );
+
+describe( 'site domains', () => {
+	// The snapshot is missing only when the site record had not loaded, so a
+	// silent skip would report an undo that never ran.
+	it.each( [
+		[ 'site_title', 'Checkpoint has no site-title snapshot to restore.' ],
+		[ 'site_metadata', 'Checkpoint has no site-metadata snapshot to restore.' ],
+	] )( 'throws rather than skipping a %s restore with no snapshot', async ( key, message ) => {
+		const { setCheckpoint, restoreCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
+		getEditedEntityRecord.mockReturnValue( undefined );
+		setCheckpoint( 'site-call', [ key ] );
+
+		await expect( restoreCheckpoint( 'site-call' ) ).rejects.toThrow( message );
 	} );
 } );
 
@@ -344,6 +379,18 @@ describe( 'restoreCheckpoint', () => {
 describe( 'withCheckpoint', () => {
 	const LOGO_WRITE = { toolId: 'big_sky__set_site_logo', keys: [ 'logo' ], summary: 'Logo set.' };
 
+	// Every restore is key-gated, so a keyless checkpoint would offer an undo
+	// that silently does nothing.
+	it( 'records nothing when the write claims no domain', async () => {
+		const { withCheckpoint, getCheckpoints } = await loadCheckpoints();
+
+		await withCheckpoint( { toolId: 'tool', toolCallId: 'call-1', keys: [], summary: 'x' }, () =>
+			Promise.resolve( 'done' )
+		);
+
+		expect( getCheckpoints() ).toEqual( [] );
+	} );
+
 	it( 'snapshots under the tool call id before writing, and returns the write', async () => {
 		const { withCheckpoint, getCheckpoints } = await loadCheckpoints();
 		let checkpointsAtWrite = 0;
@@ -427,5 +474,52 @@ describe( 'withCheckpoint', () => {
 			} )
 		).rejects.toThrow();
 		expect( hasCheckpoint( 'call-1' ) ).toBe( true );
+	} );
+} );
+
+describe( 'checkpoint recorder', () => {
+	const RENAME = { pageId: 7, from: 'Old', to: 'New' };
+	const write = ( keys: string[] ) => ( { toolId: 'tool', keys, summary: 'Changed.' } );
+
+	// The recorder captures domains a write only discovers as it runs, so the
+	// key gate has to hold there too — a restore must never touch a domain the
+	// write did not declare.
+	it( 'ignores a rename from a write that never claimed the page domain', async () => {
+		const { withCheckpoint, getCheckpoint } = await loadCheckpoints();
+
+		await withCheckpoint( write( [ 'logo' ] ), ( recorder ) =>
+			recorder.capturePageRename( RENAME )
+		);
+
+		expect( getCheckpoint( 'call-1' )?.pageRenames ).toBeUndefined();
+	} );
+
+	it( 'records a rename from a write that claimed the page domain', async () => {
+		const { withCheckpoint, getCheckpoint } = await loadCheckpoints();
+
+		await withCheckpoint( write( [ 'page' ] ), ( recorder ) =>
+			recorder.capturePageRename( RENAME )
+		);
+
+		expect( getCheckpoint( 'call-1' )?.pageRenames ).toEqual( [ RENAME ] );
+	} );
+
+	it( 'refuses the write when the menu it must snapshot cannot be read', async () => {
+		const { withCheckpoint } = await loadCheckpoints();
+		jest.requireMock( '@wordpress/data' ).resolveSelect.mockReturnValue( {
+			getEditedEntityRecord: jest.fn().mockResolvedValue( null ),
+		} );
+
+		await expect(
+			withCheckpoint( write( [ 'navigation' ] ), ( recorder ) => recorder.captureMenu( 19 ) )
+		).rejects.toThrow( 'Navigation menu not found: 19' );
+	} );
+
+	it( 'ignores a menu from a write that never claimed the navigation domain', async () => {
+		const { withCheckpoint, getCheckpoint } = await loadCheckpoints();
+
+		await withCheckpoint( write( [ 'logo' ] ), ( recorder ) => recorder.captureMenu( 19 ) );
+
+		expect( getCheckpoint( 'call-1' )?.menusBeforeUpdate ).toBeUndefined();
 	} );
 } );
