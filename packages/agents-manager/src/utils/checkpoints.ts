@@ -2,7 +2,7 @@ import { editGlobalStyles, getEditedGlobalStyles, type GlobalStylesRecord } from
 import {
 	readMenuItems,
 	renameNavigationItem,
-	writeMenu,
+	writeMenuItems,
 	type NavigationBlock,
 } from './navigation-menu';
 import { setPageTitle } from './page-title';
@@ -164,7 +164,7 @@ async function restoreSiteMetadataSnapshot( checkpoint: CheckpointRecord ): Prom
  */
 async function restoreMenuSnapshots( checkpoint: CheckpointRecord ): Promise< void > {
 	await Promise.all(
-		( checkpoint.menusBeforeUpdate ?? [] ).map( ( menu ) => writeMenu( menu.id, menu.items ) )
+		( checkpoint.menusBeforeUpdate ?? [] ).map( ( menu ) => writeMenuItems( menu.id, menu.items ) )
 	);
 }
 
