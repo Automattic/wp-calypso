@@ -40,13 +40,23 @@ const CLAIM_TIERS = [ [ 'clientId', 'id' ], [ 'url' ], [ 'label' ] ] as const;
  * An item's children, or none.
  *
  * The schema stops validating below the first level, so a nested `items` can
- * arrive as any shape at all: neither the list nor its entries can be taken on
- * trust.
+ * arrive as any shape at all. A malformed entry is refused rather than dropped:
+ * the list replaces the item's existing children, so filtering one out would
+ * quietly empty a submenu the request never asked to clear.
  */
-const childrenOf = ( item: NavigationItemInput ): NavigationItemInput[] | undefined =>
-	Array.isArray( item.items )
-		? item.items.filter( ( child ): child is NavigationItemInput => isRecord( child ) )
-		: undefined;
+const childrenOf = ( item: NavigationItemInput ): NavigationItemInput[] | undefined => {
+	if ( ! Array.isArray( item.items ) ) {
+		return undefined;
+	}
+
+	if ( ! item.items.every( isRecord ) ) {
+		throw new Error(
+			`Invalid navigation items under "${ item.label ?? '' }": every entry must be an object.`
+		);
+	}
+
+	return item.items;
+};
 
 /**
  * The identity keys a menu item can be addressed by, most specific first.

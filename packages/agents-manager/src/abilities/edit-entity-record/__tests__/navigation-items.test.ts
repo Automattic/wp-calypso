@@ -279,6 +279,16 @@ it( 'creates an item when a stale clientId matches nothing in the menu', async (
 	expect( labelsOf( built ) ).toEqual( [ 'Contact' ] );
 } );
 
+// Dropping the entry instead would replace Home's children with an empty list,
+// clearing a submenu the request never asked to touch.
+it( 'refuses a malformed nested item', async () => {
+	withMenu( [ item( 'a1', 'Home' ) ] );
+
+	await expect(
+		buildNavigationItems( 10, { navigationItems: [ { label: 'Home', items: [ null ] } ] } )
+	).rejects.toThrow( 'every entry must be an object' );
+} );
+
 it( 'refuses when the menu cannot be read', async () => {
 	withMenu( null );
 
