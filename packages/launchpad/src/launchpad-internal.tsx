@@ -2,9 +2,13 @@ import { useLaunchpad } from '@automattic/data-stores';
 import { type FC, useMemo } from 'react';
 import Checklist, { Placeholder as ChecklistPlaceHolder } from './checklist';
 import ChecklistItem from './checklist-item';
+import { getCourseLessonUrl, openCourseLesson } from './course-lessons';
 import { useTracking } from './use-tracking';
 import type { Task } from './types';
 import type { SiteDetails, UseLaunchpadOptions } from '@automattic/data-stores';
+
+// Site Setup surfaces where tasks link to their matching course video lesson.
+const COURSE_LESSON_CONTEXTS = [ 'customer-home', 'wpadmin-dashboard-widget' ];
 
 interface Props {
 	site?: SiteDetails | null;
@@ -52,7 +56,7 @@ const LaunchpadInternal: FC< Props > = ( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ JSON.stringify( checklist ), taskFilter ] );
 
-	const { trackTaskClick } = useTracking( {
+	const { trackTaskClick, trackCourseLessonClick } = useTracking( {
 		tasks,
 		checklistSlug,
 		site,
@@ -63,6 +67,13 @@ const LaunchpadInternal: FC< Props > = ( {
 	const itemClickHandler = ( task: Task ) => {
 		trackTaskClick( task );
 		task?.actionDispatch?.();
+	};
+
+	const showCourseLessons = COURSE_LESSON_CONTEXTS.includes( launchpadContext );
+
+	const courseLessonClickHandler = ( task: Task, lessonUrl: string ) => {
+		trackCourseLessonClick( task, lessonUrl );
+		openCourseLesson( lessonUrl );
 	};
 
 	return (
@@ -77,6 +88,10 @@ const LaunchpadInternal: FC< Props > = ( {
 							task={ task }
 							key={ task.id }
 							onClick={ () => itemClickHandler( task ) }
+							courseLessonUrl={
+								showCourseLessons ? getCourseLessonUrl( task.id, checklistSlug ) : undefined
+							}
+							onCourseLessonClick={ ( lessonUrl ) => courseLessonClickHandler( task, lessonUrl ) }
 						/>
 					) ) }
 				</Checklist>

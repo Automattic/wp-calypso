@@ -85,7 +85,19 @@ export const useTracking = ( params: Params ) => {
 		} );
 	};
 
+	const trackCourseLessonClick = ( task: Task, lessonUrl: string ) => {
+		recordTracksEvent( 'calypso_launchpad_task_course_lesson_clicked', {
+			checklist_slug: checklistSlug,
+			context: context,
+			task_id: task.id,
+			lesson_url: lessonUrl,
+			flow,
+			goals,
+		} );
+	};
+
 	return {
 		trackTaskClick,
+		trackCourseLessonClick,
 	};
 };

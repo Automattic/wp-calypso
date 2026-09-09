@@ -109,6 +109,46 @@
 	cursor: default;
 }
 
+// Course video lesson link, rendered as a sibling of the task row button.
+.checklist-item__task.has-course-lesson {
+	display: flex;
+	align-items: stretch;
+
+	> .checklist-item__task-content.components-button {
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
+	.checklist-item__course-lesson.components-button {
+		align-items: center;
+		border-bottom: 1px solid var(--studio-gray-5);
+		border-radius: 0;
+		color: var(--color-neutral-60);
+		height: auto;
+		padding-inline: 4px;
+
+		&:hover,
+		&:focus {
+			color: var(--studio-blue-50);
+		}
+
+		&:focus-visible {
+			outline: var(--color-primary);
+			box-shadow: 0 0 0 2px var(--color-primary-light);
+		}
+	}
+
+	&:last-child .checklist-item__course-lesson.components-button {
+		border-bottom: none;
+	}
+}
+
+.checklist__has-primary-action
+.checklist-item__task.has-course-lesson:nth-last-child(2)
+.checklist-item__course-lesson.components-button {
+	border-bottom: none;
+}
+
 .checklist-item__checkmark-container {
 	margin-right: 7px;
 	display: flex;
