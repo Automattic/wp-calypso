@@ -208,7 +208,9 @@ describe( 'editEntityRecordCallback', () => {
 		await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
 
 		expect( removeNavigationItem ).toHaveBeenCalledWith( 7 );
-		expect( deleteEntityRecord ).toHaveBeenCalledWith( 'postType', 'page', 7, undefined );
+		expect( deleteEntityRecord ).toHaveBeenCalledWith( 'postType', 'page', 7, {
+			throwOnError: true,
+		} );
 	} );
 
 	// The menu write persists, so removing the item before the delete would

@@ -57,7 +57,9 @@ describe( 'addNavigationItem', () => {
 		expect( lastWrite().items[ 1 ].attributes ).toMatchObject( { label: 'About', id: 7 } );
 		// The page itself is already saved, so an unsaved menu item would vanish
 		// on the next reload and leave the new page unlinked.
-		expect( saveEditedEntityRecord ).toHaveBeenCalledWith( 'postType', 'wp_navigation', 10 );
+		expect( saveEditedEntityRecord ).toHaveBeenCalledWith( 'postType', 'wp_navigation', 10, {
+			throwOnError: true,
+		} );
 	} );
 
 	// The rendered list holds header and footer alike, so its first entry is
@@ -135,7 +137,9 @@ describe( 'removeNavigationItem', () => {
 		expect( lastWrite().items ).toEqual( [ link( 1, 'Home' ) ] );
 		// The page is already deleted, so the menu change has no page edit to
 		// save alongside — left unsaved, a reload brings the item back.
-		expect( saveEditedEntityRecord ).toHaveBeenCalledWith( 'postType', 'wp_navigation', 10 );
+		expect( saveEditedEntityRecord ).toHaveBeenCalledWith( 'postType', 'wp_navigation', 10, {
+			throwOnError: true,
+		} );
 	} );
 
 	// A submenu entry left behind points at a page that no longer exists, and
