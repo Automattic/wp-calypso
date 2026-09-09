@@ -8,11 +8,12 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { cart } from '@wordpress/icons';
 import { useAnalytics } from '../../../app/analytics';
 import { a4aLink } from '../../../utils/link';
 import { getProductCommissionPercentage } from '../../earn/referrals/lib/commissions';
+import { CLASSIC_MARKETPLACE_CHECKOUT_PATH, MARKETPLACE_PRODUCTS_ROUTE } from '../paths';
 import { getProductPriceInfo, getTermSuffix } from './lib/product-pricing';
 import { getProductShortTitle } from './lib/product-title';
 import type { TermPricing } from '../use-term-pricing';
@@ -26,6 +27,7 @@ interface Props {
 	isReferralMode: boolean;
 	isAgencyApproved: boolean;
 	onRemove: ( slug: string ) => void;
+	onCheckout: () => void;
 }
 
 const getCartProductName = ( product: AgencyProduct ) =>
@@ -40,6 +42,7 @@ export default function CartMenu( {
 	isReferralMode,
 	isAgencyApproved,
 	onRemove,
+	onCheckout,
 }: Props ) {
 	const { recordTracksEvent } = useAnalytics();
 
@@ -64,10 +67,20 @@ export default function CartMenu( {
 		0
 	);
 
-	const checkoutUrl = a4aLink(
-		`/marketplace/checkout?product_slug=${ items.map( ( item ) => item.slug ).join( ',' ) }` +
-			( isReferralMode ? '&purchase_type=referral' : '' )
-	);
+	// The classic checkout reads the products from the URL, but only takes the
+	// purchase mode from its own session, so referral carts go through the
+	// classic products page in referral mode instead.
+	const checkoutUrl = isReferralMode
+		? a4aLink(
+				`${ MARKETPLACE_PRODUCTS_ROUTE }?products=${ items
+					.map( ( item ) => `${ item.slug }:${ item.quantity }` )
+					.join( ',' ) }&purchase_type=referral`
+		  )
+		: a4aLink(
+				`${ CLASSIC_MARKETPLACE_CHECKOUT_PATH }?product_slug=${ items
+					.map( ( item ) => item.slug )
+					.join( ',' ) }`
+		  );
 
 	const checkoutButton = (
 		<Button
@@ -75,12 +88,13 @@ export default function CartMenu( {
 			__next40pxDefaultSize
 			href={ checkoutUrl }
 			disabled={ lines.length === 0 || ! isAgencyApproved }
-			onClick={ () =>
+			onClick={ () => {
 				recordTracksEvent( 'calypso_a4a_marketplace_checkout_click', {
 					purchase_mode: isReferralMode ? 'referral' : 'regular',
 					term_pricing: term,
-				} )
-			}
+				} );
+				onCheckout();
+			} }
 		>
 			{ __( 'Checkout' ) }
 		</Button>
@@ -92,7 +106,15 @@ export default function CartMenu( {
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<Button
 					icon={ cart }
-					label={ __( 'Shopping cart' ) }
+					label={
+						items.length > 0
+							? sprintf(
+									/* translators: %d is the number of items in the cart. */
+									_n( 'Shopping cart, %d item', 'Shopping cart, %d items', items.length ),
+									items.length
+							  )
+							: __( 'Shopping cart' )
+					}
 					aria-expanded={ isOpen }
 					text={ items.length > 0 ? String( items.length ) : undefined }
 					onClick={ () => {
@@ -124,9 +146,12 @@ export default function CartMenu( {
 										: getCartProductName( product ) }
 								</Text>
 								<Text variant="muted" size={ 12 }>
-									{ formatCurrency( priceInfo.price * item.quantity, currency ) +
-										getTermSuffix( term ) }
-									{ priceInfo.billingTerm !== term &&
+									{ priceInfo.isFree
+										? __( 'Free' )
+										: formatCurrency( priceInfo.price * item.quantity, currency ) +
+										  getTermSuffix( term ) }
+									{ ! priceInfo.isFree &&
+										priceInfo.billingTerm !== term &&
 										' ' +
 											( priceInfo.billingTerm === 'yearly'
 												? __( '(billed yearly)' )
@@ -148,7 +173,7 @@ export default function CartMenu( {
 									{ formatCurrency( total, currency ) + getTermSuffix( term ) }
 								</Text>
 							</HStack>
-							{ isReferralMode && (
+							{ isReferralMode && commission > 0 && (
 								<HStack justify="space-between">
 									<Text variant="muted">{ __( 'Your estimated commission:' ) }</Text>
 									<Text variant="muted">
