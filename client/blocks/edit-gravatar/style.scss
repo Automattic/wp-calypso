@@ -1,5 +1,4 @@
 @import "@automattic/typography/styles/variables";
-@import "calypso/assets/stylesheets/shared/mixins/placeholder";
 @import '@wordpress/base-styles/breakpoints';
 
 .edit-gravatar {
@@ -39,22 +38,6 @@
 		font-size: 14px;
 		text-decoration: none;
 		text-wrap: pretty;
-	}
-
-	.edit-gravatar__avatar-placeholder,
-	.edit-gravatar__action-button-placeholder {
-		@include placeholder();
-	}
-
-	.edit-gravatar__avatar-placeholder {
-		width: 150px;
-		height: 150px;
-		border-radius: 50%;
-	}
-
-	.edit-gravatar__action-button-placeholder {
-		height: 24px;
-		width: 160px;
 	}
 
 	&.edit-gravatar--is-unverified {

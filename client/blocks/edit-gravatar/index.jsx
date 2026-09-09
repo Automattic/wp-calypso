@@ -17,7 +17,6 @@ import {
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { receiveGravatarDetails } from 'calypso/state/gravatar-status/actions';
-import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 
 import './style.scss';
 
@@ -81,25 +80,8 @@ export class EditGravatar extends Component {
 		}
 	};
 
-	renderEditGravatarIsLoading = () => {
-		return (
-			<div className="edit-gravatar">
-				<div className="edit-gravatar__image-container">
-					<div className="edit-gravatar__avatar-placeholder" />
-				</div>
-				<div className="edit-gravatar__explanation-container">
-					<div className="edit-gravatar__action-button-placeholder" />
-				</div>
-			</div>
-		);
-	};
-
 	render() {
 		const { translate, user, recordClickButtonEvent } = this.props;
-
-		if ( this.props.isFetchingUserSettings ) {
-			return this.renderEditGravatarIsLoading();
-		}
 
 		return (
 			<div
@@ -162,7 +144,6 @@ const recordAvatarUpdatedEvent = () => recordTracksEvent( 'calypso_edit_gravatar
 export default connect(
 	( state ) => ( {
 		user: getCurrentUser( state ) || {},
-		isFetchingUserSettings: isFetchingUserSettings( state ),
 	} ),
 	{
 		setCurrentUser,
