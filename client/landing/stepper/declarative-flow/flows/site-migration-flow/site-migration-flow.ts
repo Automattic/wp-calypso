@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { FEATURE_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
@@ -24,7 +23,6 @@ import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
-import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { ImporterPlatform } from 'calypso/lib/importer/types';
@@ -32,9 +30,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import * as paths from './paths';
-import type { DomainSuggestion } from '@automattic/api-core';
 import type { OnboardActions } from '@automattic/data-stores';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
 	AssertConditionResult,
 	FlowV2,
@@ -58,15 +54,11 @@ const BASE_STEPS = [
 	STEPS.SITE_MIGRATION_SSH_VERIFICATION,
 	STEPS.SITE_MIGRATION_SSH_SHARE_ACCESS,
 	STEPS.SITE_MIGRATION_SSH_IN_PROGRESS,
-	// The scan and preview screens are parked until the API can report an
-	// analysis and a rendered preview. Their step definitions and components are
-	// still in the repository, just not reachable from this flow.
-	STEPS.SITE_MIGRATION_DESTINATION,
-	STEPS.SITE_MIGRATION_DOMAIN,
-	STEPS.DOMAIN_SEARCH,
-	STEPS.USE_MY_DOMAIN,
+	// The non-WordPress wizard: enter a URL, read the site, review, pick a plan,
+	// pay, import. The scan and preview screens are still parked; the choose,
+	// domain and SEO screens were removed when this order was settled.
+	STEPS.SITE_MIGRATION_CAPTURE,
 	STEPS.UNIFIED_PLANS,
-	STEPS.SITE_MIGRATION_SEO,
 	STEPS.SITE_MIGRATION_REVIEW,
 	STEPS.SITE_MIGRATION_IMPORT_PROGRESS,
 	STEPS.PICK_SITE,
@@ -105,15 +97,10 @@ const siteMigration: FlowV2< typeof initialize > = {
 	__experimentalUseBuiltinAuth: true,
 	initialize,
 	useStepsProps() {
-		const urlQueryParams = useQuery();
-		const hasDestinationSite = [ 'siteSlug', 'siteId' ].some( ( key ) =>
-			Boolean( urlQueryParams.get( key ) )
-		);
-
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {
-				isInSignup: ! hasDestinationSite,
-				selectedFeature: FEATURE_CUSTOM_DOMAIN,
+				// The wizard always builds a new site, so this is always signup framing.
+				isInSignup: true,
 				wrapperProps: {
 					goBack: () => window.history.back(),
 				},
@@ -163,20 +150,15 @@ const siteMigration: FlowV2< typeof initialize > = {
 		// after site creation is the import rather than the start of the wizard.
 		const isWizardComplete = urlQueryParams.get( 'wizardComplete' ) === 'true';
 		const { get, set, sessionId } = useFlowState();
-		const {
-			setDomain,
-			setDomainCartItem,
-			setDomainCartItems,
-			setPlanCartItem,
-			setSignupDomainOrigin,
-			setSiteUrl,
-		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
+		// The import session the capture step started, and the archive hash the user
+		// reviewed. Both have to reach the import step, which is on the far side of
+		// checkout, so they ride the URL rather than flow state.
+		const importSessionIdQueryParam = urlQueryParams.get( 'importSessionId' );
+		const archiveHashQueryParam = urlQueryParams.get( 'archiveHash' );
+		const { setPlanCartItem } = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const userHasOtherWPComSites = siteCount && siteCount > 1;
 		const entryPoint = get( 'flow' )?.entryPoint;
 		const canInstallPlugins = site?.plan?.features?.active.includes( 'install-plugins' ) ?? false;
-		// The non-WordPress wizard only needs the domain and SEO entitlements, so any paid plan
-		// clears its paywall — unlike the WordPress path, which needs `install-plugins`.
-		const isSiteOnPaidPlan = Boolean( site?.plan ) && ! site?.plan?.is_free;
 		const exitFlow = ( to: string, replace = false ) => {
 			if ( replace ) {
 				return window.location.replace(
@@ -228,21 +210,36 @@ const siteMigration: FlowV2< typeof initialize > = {
 			platform: platformQueryParam,
 		};
 
-		const afterDomainPath = () =>
-			isSiteOnPaidPlan ? paths.seoPath( wizardQueryParams ) : paths.plansPath( wizardQueryParams );
+		/** What the import step needs, carried across checkout's external redirect. */
+		const importSessionQueryParams = (
+			overrides: {
+				importSessionId?: string | null;
+				archiveHash?: string | null;
+			} = {}
+		) => ( {
+			importSessionId: overrides.importSessionId ?? importSessionIdQueryParam,
+			archiveHash: overrides.archiveHash ?? archiveHashQueryParam,
+		} );
 
 		const goToMigrationCheckout = ( {
 			siteId: destinationSiteId,
 			siteSlug: destinationSiteSlug,
+			importSessionId,
+			archiveHash,
 		}: {
 			siteId?: number | string;
 			siteSlug: string;
+			importSessionId?: string | null;
+			archiveHash?: string | null;
 		} ) => {
 			const destination = addQueryArgs(
 				{
 					siteSlug: destinationSiteSlug,
 					siteId: destinationSiteId,
 					from: fromQueryParam,
+					// Checkout leaves Calypso entirely, so anything not in this URL is gone
+					// by the time the user comes back.
+					...importSessionQueryParams( { importSessionId, archiveHash } ),
 				},
 				`/setup/${ flowPath }/${ STEPS.SITE_MIGRATION_IMPORT_PROGRESS.slug }`
 			);
@@ -322,7 +319,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 						action !== 'skip_platform_identification'
 					) {
 						set( STEPS.SITE_MIGRATION_IDENTIFY.slug, providedDependencies );
-						return navigate( paths.destinationPath( { from, platform } ) );
+						return navigate( paths.capturePath( { from, platform } ) );
 					}
 
 					if ( hasDestinationSite ) {
@@ -424,7 +421,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 							if ( canUseNonWordPressMigration( platformQueryParam, fromQueryParam ) ) {
 								return navigate(
-									paths.destinationPath( {
+									paths.capturePath( {
 										from: fromQueryParam,
 										platform: platformQueryParam,
 										siteId,
@@ -540,8 +537,8 @@ const siteMigration: FlowV2< typeof initialize > = {
 					}
 
 					if ( canUseNonWordPressMigration( platformQueryParam, fromQueryParam ) ) {
-						// The site was created off the back of the Review step, so the plan picked in the
-						// wizard is already in the cart and checkout is the next stop.
+						// The site was created off the back of the plans step, so the plan the user
+						// picked is already in the cart and checkout is the next stop.
 						if ( ( providedDependencies as { goToCheckout?: boolean } ).goToCheckout ) {
 							return goToMigrationCheckout( { siteId, siteSlug } );
 						}
@@ -552,13 +549,14 @@ const siteMigration: FlowV2< typeof initialize > = {
 									siteId,
 									siteSlug,
 									from: fromQueryParam,
+									...importSessionQueryParams(),
 								} )
 							);
 						}
 
 						// The site was created before the wizard ran, so start the wizard now.
 						return replace(
-							paths.destinationPath( {
+							paths.capturePath( {
 								siteId,
 								siteSlug,
 								from: fromQueryParam,
@@ -584,74 +582,31 @@ const siteMigration: FlowV2< typeof initialize > = {
 					return replace( paths.importOrMigratePath( { from: fromQueryParam, siteSlug, siteId } ) );
 				}
 
-				case STEPS.SITE_MIGRATION_DESTINATION.slug: {
-					set( STEPS.SITE_MIGRATION_DESTINATION.slug, providedDependencies );
+				case STEPS.SITE_MIGRATION_CAPTURE.slug: {
+					set( STEPS.SITE_MIGRATION_CAPTURE.slug, providedDependencies );
 
-					if ( providedDependencies.destination === 'space-fast' ) {
-						// TODO: Space Fast has nowhere to hand off to yet. Route it at its own signup
-						// once that destination exists.
-						return navigate( STEPS.ERROR.slug, {
-							message: 'Space Fast is not available yet',
-						} );
-					}
+					const { sessionId: importSessionId } = providedDependencies as { sessionId: string };
 
-					return navigate( paths.domainPath( wizardQueryParams ) );
+					// The read keeps running in the background; Review picks the same session up.
+					return navigate( paths.reviewPath( { ...wizardQueryParams, importSessionId } ) );
 				}
 
-				case STEPS.SITE_MIGRATION_DOMAIN.slug: {
-					set( STEPS.SITE_MIGRATION_DOMAIN.slug, providedDependencies );
+				case STEPS.SITE_MIGRATION_REVIEW.slug: {
+					set( STEPS.SITE_MIGRATION_REVIEW.slug, providedDependencies );
 
-					if ( providedDependencies.choice === 'register' ) {
-						return navigate( STEPS.DOMAIN_SEARCH.slug );
-					}
+					const { sessionId: importSessionId, archiveHash } = providedDependencies as {
+						action: 'migrate';
+						sessionId?: string;
+						archiveHash?: string;
+					};
 
-					if ( providedDependencies.choice === 'keep' ) {
-						return navigate( STEPS.USE_MY_DOMAIN.slug );
-					}
-
-					return navigate( afterDomainPath() );
-				}
-
-				case STEPS.DOMAIN_SEARCH.slug: {
-					if ( ! providedDependencies ) {
-						return navigate( afterDomainPath() );
-					}
-
-					if ( providedDependencies.navigateToUseMyDomain ) {
-						return navigate( STEPS.USE_MY_DOMAIN.slug );
-					}
-
-					set( STEPS.DOMAIN_SEARCH.slug, providedDependencies );
-					setSiteUrl( providedDependencies.siteUrl as string );
-					setDomain( providedDependencies.suggestion as DomainSuggestion );
-					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
-					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
-					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
-
-					return navigate( afterDomainPath() );
-				}
-
-				case STEPS.USE_MY_DOMAIN.slug: {
-					if (
-						providedDependencies &&
-						'mode' in providedDependencies &&
-						providedDependencies.mode &&
-						providedDependencies.domain
-					) {
-						return navigate(
-							addQueryArgs(
-								{ step: providedDependencies.mode, initialQuery: providedDependencies.domain },
-								STEPS.USE_MY_DOMAIN.slug
-							) as Parameters< typeof navigate >[ 0 ]
-						);
-					}
-
-					if ( providedDependencies && 'domainCartItem' in providedDependencies ) {
-						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
-						setDomainCartItem( providedDependencies.domainCartItem );
-					}
-
-					return navigate( afterDomainPath() );
+					// The wizard always builds a new site, so there is always a plan to pick.
+					return navigate(
+						paths.plansPath( {
+							...wizardQueryParams,
+							...importSessionQueryParams( { importSessionId, archiveHash } ),
+						} )
+					);
 				}
 
 				case STEPS.UNIFIED_PLANS.slug: {
@@ -661,37 +616,19 @@ const siteMigration: FlowV2< typeof initialize > = {
 						setPlanCartItem( planCartItem );
 					}
 
-					// `useCreateSite` reads the plan back out of flow state, so persisting this is what
-					// puts the plan in the cart when the site is created after Review.
+					// `useCreateSite` reads the plan back out of flow state, so persisting this is
+					// what puts the plan in the cart when the site is created just below. A free
+					// plan leaves the cart empty, and the processing step then skips checkout.
 					set( STEPS.UNIFIED_PLANS.slug, providedDependencies );
 
-					return navigate( paths.seoPath( wizardQueryParams ) );
-				}
-
-				case STEPS.SITE_MIGRATION_SEO.slug: {
-					return navigate( paths.reviewPath( wizardQueryParams ) );
-				}
-
-				case STEPS.SITE_MIGRATION_REVIEW.slug: {
-					set( STEPS.SITE_MIGRATION_REVIEW.slug, providedDependencies );
-
-					if ( ! hasSite( siteId, siteSlug ) ) {
-						return navigate(
-							paths.siteCreationPath( {
-								from: fromQueryParam,
-								platform: platformQueryParam,
-								wizardComplete: 'true',
-							} )
-						);
-					}
-
-					if ( isSiteOnPaidPlan ) {
-						return navigate(
-							paths.importProgressPath( { siteId, siteSlug, from: fromQueryParam } )
-						);
-					}
-
-					return goToMigrationCheckout( { siteId, siteSlug } );
+					return navigate(
+						paths.siteCreationPath( {
+							from: fromQueryParam,
+							platform: platformQueryParam,
+							wizardComplete: 'true',
+							...importSessionQueryParams(),
+						} )
+					);
 				}
 
 				case STEPS.SITE_MIGRATION_IMPORT_PROGRESS.slug: {

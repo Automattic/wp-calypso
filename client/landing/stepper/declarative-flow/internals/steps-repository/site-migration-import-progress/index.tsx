@@ -288,7 +288,7 @@ const SiteMigrationImportProgress: StepType< {
 				heading={ <Step.Heading text={ heading } subText={ body } /> }
 			>
 				<div className="site-migration-import-progress" data-testid="import-progress">
-					{ showProgress && <ProgressBar /> }
+					{ showProgress && <ProgressBar className="site-migration-import-progress__progress" /> }
 					{ needsConfirmation && (
 						<Step.PrimaryButton
 							onClick={ () => remember( { archiveHash: session?.archive_hash } ) }

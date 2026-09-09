@@ -327,11 +327,11 @@ export const STEPS = {
 			),
 	},
 
-	SITE_MIGRATION_DESTINATION: {
-		slug: 'site-migration-destination',
+	SITE_MIGRATION_CAPTURE: {
+		slug: 'site-migration-capture',
 		asyncComponent: () =>
 			import(
-				/* webpackChunkName: 'async-step-site-migration-destination' */ './steps-repository/site-migration-destination'
+				/* webpackChunkName: 'async-step-site-migration-capture' */ './steps-repository/site-migration-capture'
 			),
 	},
 
@@ -340,22 +340,6 @@ export const STEPS = {
 		asyncComponent: () =>
 			import(
 				/* webpackChunkName: 'async-step-site-migration-preview' */ './steps-repository/site-migration-preview'
-			),
-	},
-
-	SITE_MIGRATION_DOMAIN: {
-		slug: 'site-migration-domain',
-		asyncComponent: () =>
-			import(
-				/* webpackChunkName: 'async-step-site-migration-domain' */ './steps-repository/site-migration-domain'
-			),
-	},
-
-	SITE_MIGRATION_SEO: {
-		slug: 'site-migration-seo',
-		asyncComponent: () =>
-			import(
-				/* webpackChunkName: 'async-step-site-migration-seo' */ './steps-repository/site-migration-seo'
 			),
 	},
 

@@ -1,5 +1,7 @@
-import { getPlan } from '@automattic/calypso-products';
+import { STATIC_SITE_IMPORT_TERMINAL_STATES } from '@automattic/api-core';
+import { staticSiteImportSessionQuery } from '@automattic/api-queries';
 import { Step } from '@automattic/onboarding';
+import { useQuery as useReactQuery } from '@tanstack/react-query';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -13,88 +15,118 @@ import type { ReactNode } from 'react';
 import './style.scss';
 
 const SLUG = 'site-migration-review';
+const POLL_INTERVAL = 5000;
 
-const SiteMigrationReview: StepType< { submits: { action: 'migrate' } } > = ( { navigation } ) => {
-	const { __ } = useI18n();
+export type SiteMigrationReviewSubmits = {
+	action: 'migrate';
+	sessionId?: string;
+	archiveHash?: string;
+};
+
+const SiteMigrationReview: StepType< { submits: SiteMigrationReviewSubmits } > = ( {
+	navigation,
+} ) => {
+	const { __, _n } = useI18n();
 	const { get } = useFlowState();
 	const urlQueryParams = useQuery();
 
-	// The scan step is parked, so there is no analysis to read yet and every row
-	// below falls back. It hands the analysis over in flow state when it returns.
-	const analysis = get( 'site-migration-scan' )?.analysis;
-	const counts = analysis?.counts;
-	const from = urlQueryParams.get( 'from' );
+	const from = urlQueryParams.get( 'from' ) ?? get( 'site-migration-identify' )?.from ?? '';
 
-	const destination = get( 'site-migration-destination' )?.destination;
-	const domainChoice = get( 'site-migration-domain' )?.choice;
-	const planSlug = get( 'plans' )?.cartItems?.[ 0 ]?.product_slug;
+	/**
+	 * The session the capture step started. Not Stepper's own `sessionId` query
+	 * parameter, which is its flow-state key and is on every step URL.
+	 */
+	const sessionId =
+		urlQueryParams.get( 'importSessionId' ) ?? get( 'site-migration-capture' )?.sessionId ?? '';
 
-	const unknown = __( 'Not selected yet' );
+	const { data: session } = useReactQuery( {
+		...staticSiteImportSessionQuery( sessionId ),
+		enabled: Boolean( sessionId ),
+		refetchInterval: ( query ) => {
+			const state = query.state.data?.state;
+			if ( ! state ) {
+				return POLL_INTERVAL;
+			}
+			return state === 'preview_ready' || STATIC_SITE_IMPORT_TERMINAL_STATES.includes( state )
+				? false
+				: POLL_INTERVAL;
+		},
+	} );
 
-	const destinationLabels: Record< string, string > = {
-		wpcom: __( 'WordPress.com' ),
-		'space-fast': __( 'Space Fast' ),
-	};
-	const destinationLabel = ( destination && destinationLabels[ destination ] ) || unknown;
+	/**
+	 * Approval is bound to the hash of the archive that was built. Handing it to the
+	 * flow from here is what makes this screen the point of review: the import step
+	 * only approves a hash the user was actually shown.
+	 */
+	const archiveHash = session?.state === 'preview_ready' ? session.archive_hash : undefined;
+	const summary = session?.preview_summary;
+	const hasFailed = session?.state === 'failed';
 
-	let domainLabel: string = unknown;
-	if ( domainChoice === 'keep' ) {
-		domainLabel = analysis?.site.host
-			? sprintf(
-					/* translators: %s: the domain the user is migrating from, e.g. “example.com”. */
-					__( 'Keep %s' ),
-					analysis.site.host
-			  )
-			: __( 'Keep your current address' );
-	} else if ( domainChoice === 'free-subdomain' ) {
-		domainLabel = __( 'A free WordPress.com address' );
-	} else if ( domainChoice === 'register' ) {
-		domainLabel = __( 'A new domain' );
+	const unknown = __( 'Not read yet' );
+
+	let contentValue: ReactNode = __( 'We’re still reading your site.' );
+	if ( hasFailed ) {
+		contentValue = __( 'We couldn’t read your site.' );
+	} else if ( summary ) {
+		/**
+		 * Two things decide what goes on this list: whether the number can be
+		 * trusted, and whether it means anything to someone about to buy a plan.
+		 *
+		 * `pages` has the strongest guarantee — the API rejects a build whose report
+		 * has no `pages`, so it is there or the import never happened. `diagnostics`
+		 * is dropped wholesale when the build reported nothing, so an absent one is
+		 * distinguishable from a clean one; hence the truthiness check rather than
+		 * `!== undefined`.
+		 *
+		 * `documents`, `theme` and the other `counts` values are reliable too, they
+		 * just do not tell the user anything `pages` has not already said. Add them
+		 * only if they earn their place.
+		 *
+		 * `blocks` is the exception and must stay off this screen. It is the only
+		 * count read from a separate diagnostics envelope in the build report, and a
+		 * missing envelope degrades to 0 rather than to absent — so a perfectly good
+		 * import reports `blocks: 0`, which reads as "we built nothing".
+		 */
+		const lines = [
+			summary.pages !== undefined &&
+				sprintf(
+					/* translators: %d: number of pages read from the source site. */
+					_n( '%d page', '%d pages', summary.pages ),
+					summary.pages
+				),
+			summary.diagnostics?.total
+				? sprintf(
+						/* translators: %d: number of notes the build reported. */
+						_n( '%d thing to check', '%d things to check', summary.diagnostics.total ),
+						summary.diagnostics.total
+				  )
+				: false,
+		].filter( Boolean ) as string[];
+
+		contentValue = lines.length ? (
+			<ul className="site-migration-review__counts">
+				{ lines.map( ( line ) => (
+					<li key={ line }>{ line }</li>
+				) ) }
+			</ul>
+		) : (
+			__( 'Your site is ready to move.' )
+		);
 	}
 
-	const planLabel = planSlug ? getPlan( planSlug )?.getTitle() ?? planSlug : __( 'Free plan' );
-
-	const summary: { key: string; label: string; value: ReactNode }[] = [
-		{
-			key: 'source',
-			label: __( 'Site' ),
-			value: analysis?.site.title ?? analysis?.site.host ?? from ?? unknown,
-		},
-		{ key: 'destination', label: __( 'Moving to' ), value: destinationLabel },
-		{ key: 'domain', label: __( 'Address' ), value: domainLabel },
-		{ key: 'plan', label: __( 'Plan' ), value: planLabel },
-		{
-			key: 'content',
-			label: __( 'What comes across' ),
-			value: counts ? (
-				<ul className="site-migration-review__counts">
-					<li>
-						{ sprintf(
-							/* translators: %d: number of pages found on the source site. */
-							__( '%d pages' ),
-							counts.pages
-						) }
-					</li>
-					<li>
-						{ sprintf(
-							/* translators: %d: number of posts found on the source site. */
-							__( '%d posts' ),
-							counts.posts
-						) }
-					</li>
-					<li>
-						{ sprintf(
-							/* translators: %d: number of images found on the source site. */
-							__( '%d images' ),
-							counts.images
-						) }
-					</li>
-				</ul>
-			) : (
-				__( 'We’ll confirm this once your site has been read.' )
-			),
-		},
+	const rows: { key: string; label: string; value: ReactNode }[] = [
+		{ key: 'source', label: __( 'Site' ), value: from || unknown },
+		{ key: 'destination', label: __( 'Moving to' ), value: __( 'A new WordPress.com site' ) },
+		{ key: 'plan', label: __( 'Plan' ), value: __( 'You’ll pick one next' ) },
+		{ key: 'content', label: __( 'What comes across' ), value: contentValue },
 	];
+
+	let subText: string = __( 'Nothing moves until you continue.' );
+	if ( hasFailed ) {
+		subText = __( 'We couldn’t read your site. Nothing has been set up, and you haven’t paid.' );
+	} else if ( ! archiveHash ) {
+		subText = __( 'We’re still reading your site. This only takes a minute.' );
+	}
 
 	const heading = __( 'Review your migration' );
 
@@ -111,24 +143,26 @@ const SiteMigrationReview: StepType< { submits: { action: 'migrate' } } > = ( { 
 						}
 					/>
 				}
-				heading={
-					<Step.Heading text={ heading } subText={ __( 'Nothing moves until you hit Migrate.' ) } />
-				}
+				heading={ <Step.Heading text={ heading } subText={ subText } /> }
 				stickyBottomBar={ () => (
 					<Step.StickyBottomBar
 						leftElement={
 							navigation?.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : null
 						}
 						rightElement={
-							<Step.PrimaryButton onClick={ () => navigation.submit( { action: 'migrate' } ) }>
-								{ __( 'Migrate' ) }
+							<Step.PrimaryButton
+								disabled={ ! archiveHash }
+								onClick={ () => navigation.submit( { action: 'migrate', sessionId, archiveHash } ) }
+							>
+								{ /* The next stop is the plan picker and checkout, not the import. */ }
+								{ __( 'Continue to checkout' ) }
 							</Step.PrimaryButton>
 						}
 					/>
 				) }
 			>
 				<dl className="site-migration-review__summary">
-					{ summary.map( ( { key, label, value } ) => (
+					{ rows.map( ( { key, label, value } ) => (
 						<div className="site-migration-review__row" key={ key }>
 							<dt>{ label }</dt>
 							<dd>{ value }</dd>
