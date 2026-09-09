@@ -1,3 +1,4 @@
+import { cn } from '../../utils/classNames';
 import { Button } from '../ui/button';
 import styles from './MessageActions.module.css';
 import type { Message, MessageAction } from '../../types';
@@ -24,12 +25,23 @@ export function MessageActions( { message, actions: actionsProp }: MessageAction
 			{ actions.map( ( action: MessageAction ) => {
 				if ( action.type === 'component' ) {
 					const ActionComponent = action.component;
+					// Component actions render their own control, so the class goes on a wrapper.
+					if ( action.revealOnHover ) {
+						return (
+							<span key={ action.id } className={ styles.revealOnHover }>
+								<ActionComponent { ...( action.componentProps || {} ) } />
+							</span>
+						);
+					}
 					return <ActionComponent key={ action.id } { ...( action.componentProps || {} ) } />;
 				}
 				return (
 					<Button
 						key={ action.id }
-						className={ styles.button }
+						className={ cn(
+							styles.button,
+							action.revealOnHover ? styles.revealOnHover : undefined
+						) }
 						icon={ action.icon }
 						onClick={ () => action.onClick( message ) }
 						variant="ghost"

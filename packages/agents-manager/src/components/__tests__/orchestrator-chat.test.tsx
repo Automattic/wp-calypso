@@ -26,6 +26,7 @@ let mockConversationConfig:
 	  }
 	| undefined;
 const mockUseRegenerateAction = jest.fn();
+const mockGetFeedbackActionsForMessage = jest.fn();
 const mockUseCheckpointAction = jest.fn();
 const mockUseConversation = jest.fn();
 const mockUseImageUpload = jest.fn();
@@ -381,7 +382,7 @@ jest.mock( '../../hooks/use-feedback-action', () => () => ( {
 	showFeedbackInput: false,
 	submitFeedbackText: jest.fn(),
 	resetFeedback: jest.fn(),
-	getFeedbackActionsForMessage: () => [],
+	getFeedbackActionsForMessage: ( message: unknown ) => mockGetFeedbackActionsForMessage( message ),
 } ) );
 jest.mock( '../../hooks/use-regenerate-action', () => ( {
 	__esModule: true,
@@ -395,16 +396,6 @@ jest.mock( '../../hooks/use-sources-action', () => () => {} );
 jest.mock( '../../utils/convert-tool-messages-to-components', () => ( {
 	__esModule: true,
 	default: ( { messages }: { messages: unknown[] } ) => messages,
-	isContextOnlyMessage: ( message: {
-		context?: { flags?: { context_only?: boolean } };
-		content?: Array< { type?: string; data?: { flags?: { context_only?: boolean } } } >;
-	} ) =>
-		message.context?.flags?.context_only === true ||
-		message.content?.some(
-			( content ) =>
-				content.type === 'context' ||
-				( content.type === 'data' && content.data?.flags?.context_only === true )
-		),
 } ) );
 jest.mock( '../../utils/external-context', () => ( {
 	consumeNextMessageExternalContextEntries: jest.fn(),
@@ -637,8 +628,9 @@ describe( 'OrchestratorChat', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockUseCheckpointAction.mockReturnValue( () => [] );
-		// Default getter: contributes no actions.
+		// Default getters: contribute no actions.
 		mockUseRegenerateAction.mockReturnValue( () => [] );
+		mockGetFeedbackActionsForMessage.mockReturnValue( [] );
 		mockUseConversation.mockReturnValue( { isLoading: false } );
 		mockUseAgentChat.mockReturnValue( agentChatReturn() );
 		mockUseImageUpload.mockReturnValue( createImageUpload() );
@@ -3187,22 +3179,12 @@ describe( 'OrchestratorChat', () => {
 		);
 	} );
 
-	it( 'disables stale regenerate actions on older agent messages before render', () => {
+	it( 'keeps regenerate only on the last message of the settled latest turn', () => {
 		const onRegenerate = jest.fn();
-		// Mirror production: the getter enables regenerate only on the latest
-		// agent message and disables it on older ones.
-		mockUseRegenerateAction.mockReturnValue(
-			( message: { role: string }, options: { isLatestAgentMessage: boolean } ) =>
-				message.role === 'agent'
-					? [
-							{
-								id: 'regenerate',
-								label: 'Regenerate',
-								onClick: onRegenerate,
-								disabled: ! options.isLatestAgentMessage,
-							},
-					  ]
-					: []
+		mockUseRegenerateAction.mockReturnValue( ( message: { role: string } ) =>
+			message.role === 'agent'
+				? [ { id: 'regenerate', label: 'Regenerate', onClick: onRegenerate } ]
+				: []
 		);
 		mockUseAgentChat.mockReturnValue(
 			agentChatReturn( {
@@ -3230,42 +3212,31 @@ describe( 'OrchestratorChat', () => {
 		render( chat( { capabilities: { supportsRegenerateAction: true } } ) );
 
 		const messages = mockAgentChat.mock.calls[ 0 ][ 0 ].messages as Array< {
-			actions: Array< { id: string; disabled?: boolean } >;
+			actions?: Array< { id: string } >;
 		} >;
 
-		expect( messages[ 0 ].actions[ 0 ] ).toEqual(
-			expect.objectContaining( {
-				id: 'regenerate',
-				disabled: true,
-			} )
-		);
-		expect( messages[ 1 ].actions[ 0 ] ).toEqual(
-			expect.objectContaining( {
-				id: 'regenerate',
-				disabled: false,
-			} )
-		);
+		expect( messages[ 0 ].actions ?? [] ).toEqual( [] );
+		expect( messages[ 1 ].actions ).toEqual( [ expect.objectContaining( { id: 'regenerate' } ) ] );
 	} );
 
-	it( 'tells the regenerate getter which message is latest and whether it is streaming', () => {
-		const getRegenerateActions = jest.fn( () => [] );
+	it( 'drops response actions from the latest turn while it streams', () => {
+		const getRegenerateActions = jest.fn( ( message: { role: string } ) =>
+			message.role === 'agent'
+				? [ { id: 'regenerate', label: 'Regenerate', onClick: jest.fn() } ]
+				: []
+		);
 		mockUseRegenerateAction.mockReturnValue( getRegenerateActions );
+		mockGetFeedbackActionsForMessage.mockReturnValue( [
+			{ id: 'feedback-up', label: 'Good response', onClick: jest.fn(), order: 2 },
+		] );
 		mockUseAgentChat.mockReturnValue(
 			agentChatReturn( {
 				messages: [
 					{
 						id: 'agent-1',
 						role: 'agent',
-						content: [ { type: 'text', text: 'First response' } ],
-						timestamp: 1,
-						archived: false,
-						showIcon: true,
-					},
-					{
-						id: 'agent-2',
-						role: 'agent',
 						content: [ { type: 'text', text: 'Streaming response' } ],
-						timestamp: 2,
+						timestamp: 1,
 						archived: false,
 						showIcon: true,
 					},
@@ -3277,13 +3248,117 @@ describe( 'OrchestratorChat', () => {
 		render( chat( { capabilities: { supportsRegenerateAction: true } } ) );
 
 		expect( getRegenerateActions ).toHaveBeenCalledWith(
-			expect.objectContaining( { id: 'agent-1' } ),
-			{ isLatestAgentMessage: false, isStreaming: true }
+			expect.objectContaining( { id: 'agent-1' } )
 		);
-		expect( getRegenerateActions ).toHaveBeenCalledWith(
-			expect.objectContaining( { id: 'agent-2' } ),
-			{ isLatestAgentMessage: true, isStreaming: true }
+		const messages = mockAgentChat.mock.calls[ 0 ][ 0 ].messages as Array< {
+			actions?: Array< { id: string } >;
+		} >;
+		expect( messages[ 0 ].actions ?? [] ).toEqual( [] );
+	} );
+
+	it( 'reveals response actions of earlier turns only on hover, keeping state actions visible', () => {
+		const onClick = jest.fn();
+		mockGetFeedbackActionsForMessage.mockImplementation( ( message: { role: string } ) =>
+			message.role === 'agent'
+				? [ { id: 'feedback-up', label: 'Good response', onClick, order: 2 } ]
+				: []
 		);
+		// An earlier-turn reply with a checkpoint is superseded and disabled, so it
+		// cannot carry the rating; give the checkpoint to the other replies.
+		mockUseCheckpointAction.mockReturnValue( ( message: { id: string } ) =>
+			[ 'agent-1a', 'agent-2' ].includes( message.id )
+				? [ { id: 'checkpoint', label: 'Undo', onClick, order: 1 } ]
+				: []
+		);
+		const textMessage = (
+			id: string,
+			role: 'user' | 'agent',
+			text: string,
+			timestamp: number
+		) => ( {
+			id,
+			role,
+			content: [ { type: 'text' as const, text } ],
+			timestamp,
+			archived: false,
+			showIcon: role === 'agent',
+		} );
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [
+					textMessage( 'user-1', 'user', 'First ask', 1 ),
+					textMessage( 'agent-1a', 'agent', 'First response', 2 ),
+					textMessage( 'agent-1b', 'agent', 'First follow-up', 3 ),
+					textMessage( 'user-2', 'user', 'Second ask', 4 ),
+					textMessage( 'agent-2', 'agent', 'Second response', 5 ),
+				],
+			} )
+		);
+
+		render( chat() );
+
+		const messages = mockAgentChat.mock.calls[ 0 ][ 0 ].messages as Array< {
+			id: string;
+			actions?: Array< { id: string; revealOnHover?: boolean } >;
+		} >;
+		const actionsOf = ( id: string ) =>
+			messages
+				.find( ( message ) => message.id === id )
+				?.actions?.map( ( action ) => [ action.id, action.revealOnHover ] );
+
+		expect( actionsOf( 'agent-1a' ) ).toEqual( [ [ 'checkpoint', undefined ] ] );
+		expect( actionsOf( 'agent-1b' ) ).toEqual( [ [ 'feedback-up', true ] ] );
+		expect( actionsOf( 'agent-2' ) ).toEqual( [
+			[ 'checkpoint', undefined ],
+			[ 'feedback-up', undefined ],
+		] );
+	} );
+
+	it( 'keeps the rating on the last enabled text reply, not on a trailing picker or notice', () => {
+		const onClick = jest.fn();
+		mockGetFeedbackActionsForMessage.mockImplementation( ( message: { role: string } ) =>
+			message.role === 'agent'
+				? [ { id: 'feedback-up', label: 'Good response', onClick, order: 2 } ]
+				: []
+		);
+		const base = { timestamp: 1, archived: false, showIcon: true };
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [
+					{ id: 'user-1', role: 'user', content: [ { type: 'text', text: 'Ask' } ], ...base },
+					{ id: 'reply', role: 'agent', content: [ { type: 'text', text: 'Answer' } ], ...base },
+					{
+						id: 'picker',
+						role: 'agent',
+						content: [
+							{ type: 'text', text: 'Pick one' },
+							{ type: 'component', component: () => null },
+						],
+						...base,
+					},
+					{
+						id: 'canvas-move-abort-1',
+						role: 'agent',
+						content: [ { type: 'text', text: 'You navigated away.' } ],
+						...base,
+					},
+				],
+			} )
+		);
+
+		render( chat() );
+
+		const messages = mockAgentChat.mock.calls[ 0 ][ 0 ].messages as Array< {
+			id: string;
+			actions?: Array< { id: string } >;
+		} >;
+		const idsOf = ( id: string ) =>
+			messages.find( ( message ) => message.id === id )?.actions?.map( ( action ) => action.id ) ??
+			[];
+
+		expect( idsOf( 'reply' ) ).toEqual( [ 'feedback-up' ] );
+		expect( idsOf( 'picker' ) ).toEqual( [] );
+		expect( idsOf( 'canvas-move-abort-1' ) ).toEqual( [] );
 	} );
 
 	it( 'does not stack retained show-component messages across repeated regenerations', () => {

@@ -19,6 +19,7 @@ interface MessageAction {
   onClick: (message: Message) => void | Promise<void>;
   disabled?: boolean;
   tooltip?: string;
+  revealOnHover?: boolean; // keeps its footprint, shown only while the message or actions row is hovered/focused
 }
 ```
 

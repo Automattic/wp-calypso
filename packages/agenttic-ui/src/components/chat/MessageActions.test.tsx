@@ -3,6 +3,7 @@ import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MessageActions } from './MessageActions';
+import styles from './MessageActions.module.css';
 import type { Message } from '../../types';
 
 ( globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean } ).IS_REACT_ACT_ENVIRONMENT = true;
@@ -96,5 +97,40 @@ describe( 'MessageActions', () => {
 		} );
 
 		expect( onClick ).toHaveBeenCalledWith( message );
+	} );
+
+	it( 'marks reveal-on-hover actions so they stay hidden until the message is hovered', async () => {
+		const message: Message = {
+			id: 'agent-1',
+			role: 'agent',
+			content: [ { type: 'text', text: 'Answer' } ],
+			timestamp: 1,
+			archived: false,
+			showIcon: true,
+			actions: [
+				{ id: 'feedback-up', label: 'Good response', onClick: vi.fn(), revealOnHover: true },
+				{
+					type: 'component',
+					id: 'copy',
+					component: () => <button aria-label="Copy" />,
+					revealOnHover: true,
+				},
+				{ id: 'share', label: 'Share', onClick: vi.fn() },
+			],
+		};
+
+		await act( async () => {
+			root.render( <MessageActions message={ message } /> );
+		} );
+
+		const hoverOnlyButton = container.querySelector( 'button[aria-label="Good response"]' );
+		const hoverOnlyComponent = container.querySelector( 'button[aria-label="Copy"]' );
+		const alwaysVisible = container.querySelector( 'button[aria-label="Share"]' );
+
+		expect( hoverOnlyButton?.classList.contains( styles.revealOnHover ) ).toBe( true );
+		expect( hoverOnlyComponent?.parentElement?.classList.contains( styles.revealOnHover ) ).toBe(
+			true
+		);
+		expect( alwaysVisible?.classList.contains( styles.revealOnHover ) ).toBe( false );
 	} );
 } );

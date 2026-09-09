@@ -22,8 +22,6 @@ const createMessage = ( id: string, role: 'user' | 'agent' ): UIMessage => ( {
 	showIcon: true,
 } );
 
-const latestComplete = { isLatestAgentMessage: true, isStreaming: false };
-
 describe( 'useRegenerateAction', () => {
 	const onRegenerate = jest.fn();
 	const getRegenerateHandler = jest.fn( () => onRegenerate );
@@ -37,7 +35,7 @@ describe( 'useRegenerateAction', () => {
 			useRegenerateAction( { enabled: false, getRegenerateHandler } )
 		);
 
-		expect( result.current( createMessage( 'agent-1', 'agent' ), latestComplete ) ).toEqual( [] );
+		expect( result.current( createMessage( 'agent-1', 'agent' ) ) ).toEqual( [] );
 		expect( getRegenerateHandler ).not.toHaveBeenCalled();
 	} );
 
@@ -46,23 +44,22 @@ describe( 'useRegenerateAction', () => {
 			useRegenerateAction( { enabled: true, getRegenerateHandler: undefined } )
 		);
 
-		expect( result.current( createMessage( 'agent-1', 'agent' ), latestComplete ) ).toEqual( [] );
+		expect( result.current( createMessage( 'agent-1', 'agent' ) ) ).toEqual( [] );
 	} );
 
-	it( 'builds an enabled regenerate action for the latest completed agent message', () => {
+	it( 'builds the regenerate action when agenttic hands out a handler for the message', () => {
 		const { result } = renderHook( () =>
 			useRegenerateAction( { enabled: true, getRegenerateHandler } )
 		);
 
 		const message = createMessage( 'agent-1', 'agent' );
 
-		expect( result.current( message, latestComplete ) ).toEqual( [
+		expect( result.current( message ) ).toEqual( [
 			expect.objectContaining( {
 				id: 'regenerate',
 				label: 'Regenerate',
 				tooltip: 'Regenerate response',
 				onClick: onRegenerate,
-				disabled: false,
 				icon: expect.objectContaining( {
 					props: expect.objectContaining( {
 						className: 'agents-manager-message-action-icon',
@@ -74,56 +71,15 @@ describe( 'useRegenerateAction', () => {
 		expect( getRegenerateHandler ).toHaveBeenCalledWith( message );
 	} );
 
-	it( 'disables the action on older agent messages', () => {
-		const { result } = renderHook( () =>
-			useRegenerateAction( { enabled: true, getRegenerateHandler } )
-		);
-
-		const [ action ] = result.current( createMessage( 'agent-1', 'agent' ), {
-			isLatestAgentMessage: false,
-			isStreaming: false,
-		} );
-
-		expect( action ).toEqual(
-			expect.objectContaining( { id: 'regenerate', disabled: true, onClick: onRegenerate } )
-		);
-	} );
-
-	it( 'shows a disabled placeholder on the latest message while streaming', () => {
-		// Mid-stream the turn is not yet regeneratable, so agenttic returns no handler.
+	it( 'returns no action when agenttic has no handler for the message', () => {
+		// No handler when agenttic cannot rebuild history up to this message.
 		getRegenerateHandler.mockReturnValueOnce( null as unknown as typeof onRegenerate );
 
 		const { result } = renderHook( () =>
 			useRegenerateAction( { enabled: true, getRegenerateHandler } )
 		);
 
-		const [ action ] = result.current( createMessage( 'agent-1', 'agent' ), {
-			isLatestAgentMessage: true,
-			isStreaming: true,
-		} );
-
-		expect( action ).toEqual(
-			expect.objectContaining( {
-				id: 'regenerate',
-				disabled: true,
-				onClick: expect.any( Function ),
-			} )
-		);
-	} );
-
-	it( 'returns no action for a non-latest message with no handler', () => {
-		getRegenerateHandler.mockReturnValueOnce( null as unknown as typeof onRegenerate );
-
-		const { result } = renderHook( () =>
-			useRegenerateAction( { enabled: true, getRegenerateHandler } )
-		);
-
-		expect(
-			result.current( createMessage( 'agent-1', 'agent' ), {
-				isLatestAgentMessage: false,
-				isStreaming: true,
-			} )
-		).toEqual( [] );
+		expect( result.current( createMessage( 'agent-1', 'agent' ) ) ).toEqual( [] );
 	} );
 
 	it( 'keeps the getter stable while its inputs are unchanged', () => {

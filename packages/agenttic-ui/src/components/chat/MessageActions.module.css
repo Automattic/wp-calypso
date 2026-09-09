@@ -9,3 +9,30 @@
 .container button[aria-hidden='true'] {
 	display: none;
 }
+
+/* Opacity rather than visibility: the button keeps its footprint (no reflow)
+   and stays focusable, so :focus-within reveals it for keyboard users. */
+.revealOnHover {
+	opacity: 0;
+	transition: opacity 0.2s ease;
+}
+
+[data-slot='message']:hover .revealOnHover,
+[data-slot='message']:focus-within .revealOnHover,
+.container:hover .revealOnHover,
+.container:focus-within .revealOnHover,
+.revealOnHover[aria-pressed='true'] {
+	opacity: 1;
+}
+
+@media ( hover: none ) {
+	.revealOnHover {
+		opacity: 1;
+	}
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.revealOnHover {
+		transition: none;
+	}
+}

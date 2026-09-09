@@ -137,13 +137,6 @@ describe( 'convertToolMessagesToComponents', () => {
 
 	it.each( [
 		{
-			name: 'context flags',
-			message: createMessage( {
-				content: [ { type: 'text', text: 'This is only context for the model.' } ],
-				context: { flags: { context_only: true } },
-			} as Partial< UIMessage > ),
-		},
-		{
 			name: 'context content',
 			message: createMessage( {
 				content: [ { type: 'context', text: 'This is only context for the model.' } ],
