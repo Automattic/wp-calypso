@@ -110,6 +110,35 @@ describe( 'getAgentTurnPositions', () => {
 		} );
 	} );
 
+	it( 'keeps the carrier on the reply that already holds a vote when the turn grows', () => {
+		const positions = getAgentTurnPositions(
+			[ message( 'user-1', 'user' ), message( 'rated', 'agent' ), message( 'follow-up', 'agent' ) ],
+			{ hasTurnActions: ( candidate ) => candidate.id === 'rated' }
+		);
+
+		expect( positions.get( 'rated' ) ).toMatchObject( {
+			isLastInTurn: false,
+			carriesTurnActions: true,
+		} );
+		expect( positions.get( 'follow-up' ) ).toMatchObject( {
+			isLastInTurn: true,
+			carriesTurnActions: false,
+		} );
+	} );
+
+	it( 'treats a reply the agent has not answered yet as closing the previous turn', () => {
+		const positions = getAgentTurnPositions( [
+			message( 'user-1', 'user' ),
+			message( 'agent-1', 'agent' ),
+			message( 'user-2', 'user' ),
+		] );
+
+		expect( positions.get( 'agent-1' ) ).toMatchObject( {
+			isLatestTurn: false,
+			carriesTurnActions: true,
+		} );
+	} );
+
 	it( 'leaves a turn without a carrier when it only has components', () => {
 		const positions = getAgentTurnPositions( [ message( 'user-1', 'user' ), picker( 'picker' ) ] );
 

@@ -3361,6 +3361,48 @@ describe( 'OrchestratorChat', () => {
 		expect( idsOf( 'canvas-move-abort-1' ) ).toEqual( [] );
 	} );
 
+	it( 'keeps a rated reply as the carrier when its turn grows', () => {
+		const onClick = jest.fn();
+		mockGetFeedbackActionsForMessage.mockImplementation(
+			( message: { id: string; role: string } ) =>
+				message.role === 'agent'
+					? [
+							{
+								id: 'feedback-up',
+								label: 'Good response',
+								onClick,
+								order: 2,
+								pressed: message.id === 'rated',
+							},
+					  ]
+					: []
+		);
+		const base = { timestamp: 1, archived: false, showIcon: true };
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [
+					{ id: 'user-1', role: 'user', content: [ { type: 'text', text: 'Ask' } ], ...base },
+					{ id: 'rated', role: 'agent', content: [ { type: 'text', text: 'Answer' } ], ...base },
+					{ id: 'follow-up', role: 'agent', content: [ { type: 'text', text: 'More' } ], ...base },
+				],
+			} )
+		);
+
+		render( chat() );
+
+		const messages = mockAgentChat.mock.calls[ 0 ][ 0 ].messages as Array< {
+			id: string;
+			actions?: Array< { id: string; pressed?: boolean } >;
+		} >;
+		const actionsOf = ( id: string ) =>
+			messages.find( ( message ) => message.id === id )?.actions ?? [];
+
+		expect( actionsOf( 'rated' ) ).toEqual( [
+			expect.objectContaining( { id: 'feedback-up', pressed: true } ),
+		] );
+		expect( actionsOf( 'follow-up' ) ).toEqual( [] );
+	} );
+
 	it( 'does not stack retained show-component messages across repeated regenerations', () => {
 		// The picker's identity — tool_call_id|type|summary — is stable across
 		// regenerations even though each regenerated turn gets a fresh message id.

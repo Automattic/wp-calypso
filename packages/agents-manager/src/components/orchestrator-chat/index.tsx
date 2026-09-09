@@ -141,6 +141,10 @@ function activateLiveStreamedCheckpointSession(
 // UI-only notice ids: kept on screen but never part of the agent's history.
 const CANVAS_MOVE_ABORT_ID_PREFIX = 'canvas-move-abort-';
 
+function hasPressedAction( actions: MessageAction[] = [] ): boolean {
+	return actions.some( ( action ) => action.type !== 'component' && action.pressed === true );
+}
+
 function hasDisabledCheckpointAction( actions: MessageAction[] = [] ): boolean {
 	return actions.some(
 		( action ) =>
@@ -1642,14 +1646,20 @@ export default function OrchestratorChat( {
 			isProcessing,
 		} );
 
+		const feedbackActionsByMessageId = new Map(
+			currentMessages.map( ( message ) => [ message.id, getFeedbackActionsForMessage( message ) ] )
+		);
 		// Disabled replies cannot take clicks and UI-only notices are not the
-		// agent's answer, so neither may carry the turn's rating.
+		// agent's answer, so neither may carry the turn's rating; a reply that
+		// already holds a vote keeps carrying it as its turn grows.
 		const agentTurnPositions = getAgentTurnPositions( currentMessages, {
 			canCarryTurnActions: ( message ) =>
 				! ( message as AgentsManagerUIMessage ).disabled &&
 				! message.id.startsWith( CANVAS_MOVE_ABORT_ID_PREFIX ) &&
 				! supersededCheckpointMessageIds.has( message.id ) &&
 				! hasDisabledCheckpointAction( checkpointActionsByMessageId.get( message.id ) ),
+			hasTurnActions: ( message ) =>
+				hasPressedAction( feedbackActionsByMessageId.get( message.id ) ),
 		} );
 
 		currentMessages = currentMessages.map( ( message ) => {
@@ -1670,7 +1680,7 @@ export default function OrchestratorChat( {
 
 			const directActions = [
 				...checkpointActions,
-				...getFeedbackActionsForMessage( message ),
+				...( feedbackActionsByMessageId.get( message.id ) ?? [] ),
 				...getCopyActionsForMessage( message ),
 				...getRegenerateActionsForMessage( message ),
 			];

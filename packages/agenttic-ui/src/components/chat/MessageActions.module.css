@@ -21,7 +21,8 @@
 [data-slot='message']:focus-within .revealOnHover,
 .container:hover .revealOnHover,
 .container:focus-within .revealOnHover,
-.revealOnHover[aria-pressed='true'] {
+.revealOnHover[aria-pressed='true'],
+.revealOnHover:has( [aria-pressed='true'] ) {
 	opacity: 1;
 }
 
