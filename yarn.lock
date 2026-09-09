@@ -2534,6 +2534,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/survicate@workspace:packages/survicate"
   dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/load-script": "workspace:^"
     debug: "npm:^4.4.1"

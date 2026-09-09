@@ -205,10 +205,6 @@ export function isWithinIntroductoryOfferPeriod( purchase: Purchase ): boolean {
 	return purchase.introductory_offer?.is_within_period ?? false;
 }
 
-export function isIntroductoryOfferFreeTrial( purchase: Purchase ): boolean {
-	return purchase.introductory_offer?.cost_per_interval === 0;
-}
-
 export function mightStillAutoRenew( purchase: Purchase ): boolean {
 	return purchase.might_still_auto_renew;
 }
@@ -353,6 +349,16 @@ export function creditCardHasAlreadyExpired( purchase: Purchase ): boolean {
 	}
 
 	return moment( creditCard.expiryDate, 'MM/YY' ).isBefore( moment(), 'months' );
+}
+
+export function shouldRenderExpiringCreditCard( purchase: Purchase ): boolean {
+	return (
+		! isExpiredOrRemoved( purchase ) &&
+		! isExpiring( purchase ) &&
+		! isPurchaseOneTimePurchase( purchase ) &&
+		! isIncludedWithPlan( purchase ) &&
+		creditCardExpiresBeforeSubscription( purchase )
+	);
 }
 
 export function showCreditCardExpiringWarning( purchase: Purchase ): boolean {

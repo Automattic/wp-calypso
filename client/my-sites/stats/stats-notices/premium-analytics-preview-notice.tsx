@@ -1,4 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -14,27 +13,13 @@ import {
 	PREMIUM_ANALYTICS_ENABLED_SETTING,
 	premiumAnalyticsStatusQueryKey,
 } from 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query';
+import { trackPremiumAnalyticsPreviewEvent } from '../premium-analytics-preview/track-event';
 import { StatsNoticeProps } from './types';
-
-export const PREMIUM_ANALYTICS_PAGE_PATH = 'admin.php?page=jetpack-premium-analytics-wp-admin';
 
 const DAY_IN_SECONDS = 24 * 3600;
 // The notices endpoint decides when a postponed invitation stops coming back; the client only
 // says how long each one lasts.
 const DISMISSAL_POSTPONEMENT = 30 * DAY_IN_SECONDS;
-
-const trackEvent = (
-	isOdyssey: boolean,
-	name: string,
-	siteId: number | null,
-	properties: Record< string, unknown > = {}
-) => {
-	const prefix = isOdyssey ? 'jetpack_odyssey' : 'calypso';
-	recordTracksEvent( `${ prefix }_stats_premium_analytics_preview_notice_${ name }`, {
-		blog_id: siteId,
-		...properties,
-	} );
-};
 
 const NoticeContainer = ( {
 	isOdyssey,
@@ -61,6 +46,8 @@ const PremiumAnalyticsPreviewNotice = ( {
 	// `is_running_in_jetpack_site` and false in a Simple site's wp-admin. That prop still decides
 	// where support lives, because it says which API the site answers on.
 	const isOdyssey = config.isEnabled( 'is_odyssey' );
+	const trackEvent = ( name: string, properties: Record< string, unknown > = {} ) =>
+		trackPremiumAnalyticsPreviewEvent( 'notice', name, siteId, properties );
 	// Scoped to the site rather than held as a flag: the notices host reuses this component across
 	// site switches in Calypso, so a plain boolean would carry one site's dismissal to the next.
 	const [ dismissedSiteId, setDismissedSiteId ] = useState< number | null >( null );
@@ -92,7 +79,7 @@ const PremiumAnalyticsPreviewNotice = ( {
 	);
 
 	const dismissNotice = () => {
-		trackEvent( isOdyssey, 'dismissed', siteId );
+		trackEvent( 'dismissed' );
 		setDismissedSiteId( siteId );
 
 		// Best-effort: the local state above already hides the notice for this session.
@@ -104,7 +91,7 @@ const PremiumAnalyticsPreviewNotice = ( {
 	const hideNotice = () => setDismissedSiteId( siteId );
 
 	const enablePremiumAnalyticsPreview = async () => {
-		trackEvent( isOdyssey, 'enable_button_clicked', siteId );
+		trackEvent( 'enable_button_clicked' );
 		setFailedSiteId( null );
 
 		try {
@@ -112,12 +99,12 @@ const PremiumAnalyticsPreviewNotice = ( {
 			shouldRestoreFocus.current = true;
 
 			if ( ! enabled ) {
-				trackEvent( isOdyssey, 'enable_failed', siteId, { reason: 'not_enabled' } );
+				trackEvent( 'enable_failed', { reason: 'not_enabled' } );
 				setFailedSiteId( siteId );
 				return;
 			}
 
-			trackEvent( isOdyssey, 'enabled', siteId );
+			trackEvent( 'enabled' );
 
 			// Hand over a link rather than navigating for them: the dashboard only exists on a
 			// fresh page load, and being thrown out of the page you were reading is a poor reward
@@ -130,7 +117,7 @@ const PremiumAnalyticsPreviewNotice = ( {
 			setEnabledSiteId( siteId );
 		} catch {
 			shouldRestoreFocus.current = true;
-			trackEvent( isOdyssey, 'enable_failed', siteId, { reason: 'request_failed' } );
+			trackEvent( 'enable_failed', { reason: 'request_failed' } );
 			setFailedSiteId( siteId );
 		}
 	};
@@ -152,9 +139,9 @@ const PremiumAnalyticsPreviewNotice = ( {
 
 	useEffect( () => {
 		if ( ! noticeDismissed ) {
-			trackEvent( isOdyssey, 'viewed', siteId );
+			trackPremiumAnalyticsPreviewEvent( 'notice', 'viewed', siteId );
 		}
-	}, [ noticeDismissed, isOdyssey, siteId ] );
+	}, [ noticeDismissed, siteId ] );
 
 	if ( noticeDismissed ) {
 		return null;

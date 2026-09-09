@@ -17,6 +17,7 @@
 		"blackbox-login": true,
 		"blackbox-lost-password": true,
 		"blackbox-signup": true,
+		"blackbox-userless-checkout": true,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/all-domain-management": false,
 		"calypso/big-sky": true,

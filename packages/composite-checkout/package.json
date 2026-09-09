@@ -20,7 +20,7 @@
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
-		"storybook:start": "storybook dev"
+		"storybook:start": "storybook dev -p 26835"
 	},
 	"files": [
 		"dist",

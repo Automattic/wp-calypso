@@ -29,6 +29,7 @@ interface Nav2026DesktopDropdownProps {
 	dropdownRef: React.RefObject< HTMLDivElement | null >;
 	activeDropdown: string | null;
 	nav2026Menus: Nav2026Menu[];
+	onMouseEnter?: React.MouseEventHandler< HTMLDivElement >;
 	onMouseLeave?: React.MouseEventHandler< HTMLDivElement >;
 }
 
@@ -37,6 +38,7 @@ export function Nav2026DesktopDropdown( {
 	dropdownRef,
 	activeDropdown,
 	nav2026Menus,
+	onMouseEnter,
 	onMouseLeave,
 }: Nav2026DesktopDropdownProps ) {
 	return (
@@ -45,6 +47,7 @@ export function Nav2026DesktopDropdown( {
 			className={ clsx( 'x-dropdown x-dropdown--2026', {
 				'is-dropdown-open': activeDropdown !== null,
 			} ) }
+			onMouseEnter={ onMouseEnter }
 			onMouseLeave={ onMouseLeave }
 		>
 			{ nav2026Menus.map( ( menu ) => {

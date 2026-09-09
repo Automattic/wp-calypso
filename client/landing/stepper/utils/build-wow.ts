@@ -51,9 +51,9 @@ type BigSkyPluginStatus = {
 
 export function isBuildWowEnabled(
 	queryParams: URLSearchParams,
-	isAutomattician = false
+	hasBuildWowAccess: boolean
 ): boolean {
-	return isAutomattician && queryParams.get( 'build_wow' ) === BUILD_WOW_QUERY_VALUE;
+	return hasBuildWowAccess && queryParams.get( 'build_wow' ) === BUILD_WOW_QUERY_VALUE;
 }
 
 export function getBuildWowSiteIdentifier( {

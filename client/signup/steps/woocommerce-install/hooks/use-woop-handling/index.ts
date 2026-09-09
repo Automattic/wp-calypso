@@ -6,7 +6,10 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { requestLatestAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
 import { getLatestAtomicTransfer } from 'calypso/state/atomic/transfers/selectors';
 import { requestEligibility } from 'calypso/state/automated-transfer/actions';
-import { eligibilityHolds as eligibilityHoldsConstants } from 'calypso/state/automated-transfer/constants';
+import {
+	eligibilityHolds as eligibilityHoldsConstants,
+	type EligibilityHold,
+} from 'calypso/state/automated-transfer/constants';
 import {
 	getEligibility,
 	EligibilityData,
@@ -23,7 +26,7 @@ import isAtomicSiteSelector from 'calypso/state/selectors/is-site-automated-tran
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 
-const TRANSFERRING_NOT_BLOCKERS = [
+const TRANSFERRING_NOT_BLOCKERS: EligibilityHold[] = [
 	eligibilityHoldsConstants.NO_BUSINESS_PLAN, // Plans are upgraded in the install flow.
 	eligibilityHoldsConstants.TRANSFER_ALREADY_EXISTS, // Already Atomic sites are handled in the install flow.
 ];
