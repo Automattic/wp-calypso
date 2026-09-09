@@ -4,6 +4,7 @@ import {
 	CONVERSION_PRODUCT_SLUGS,
 	CUSTOMER_SERVICE_PRODUCT_SLUGS,
 	GROWTH_PRODUCT_SLUGS,
+	JETPACK_COMPLETE_PRODUCT_SLUG,
 	JETPACK_PACKS_FAMILY_SLUG,
 	MERCHANDISING_PRODUCT_SLUGS,
 	PAYMENTS_PRODUCT_SLUGS,
@@ -119,10 +120,22 @@ export function getProductCategories( product: AgencyProduct ): ProductCategory[
 	} );
 }
 
+// Jetpack Complete carries no category badges, but the classic category filters
+// still list it under every category its bundled products cover.
+export function getProductFilterCategories( product: AgencyProduct ): ProductCategory[] {
+	if ( product.slug === JETPACK_COMPLETE_PRODUCT_SLUG ) {
+		return [ 'security', 'performance', 'social', 'growth' ];
+	}
+	return getProductCategories( product );
+}
+
 // The labels the classic dashboard shows as badges on a product card.
 export function getProductBadgeLabels( product: AgencyProduct ): string[] {
 	const categoryLabels = getCategoryShortLabels();
-	const labels = getProductCategories( product ).map( ( category ) => categoryLabels[ category ] );
+	const labels: string[] = isWooCommerceProduct( product ) ? [ __( 'E-commerce' ) ] : [];
+	labels.push(
+		...getProductCategories( product ).map( ( category ) => categoryLabels[ category ] )
+	);
 
 	if ( product.family_slug === JETPACK_PACKS_FAMILY_SLUG ) {
 		labels.push( __( 'Bundle' ), __( 'Plan' ) );

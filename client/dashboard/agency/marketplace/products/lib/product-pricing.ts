@@ -15,11 +15,8 @@ export interface ProductPriceInfo {
 	isFree: boolean;
 }
 
-const getAmount = ( amount?: string ) =>
-	amount ? parseFloat( amount.replace( ',', '' ) ) || 0 : 0;
-
 export const isFreeProduct = ( product: AgencyProduct ) =>
-	! product.monthly_price && ! product.yearly_price && ! getAmount( product.amount );
+	! product.monthly_price && ! product.yearly_price;
 
 export const calculateDiscountPercentage = ( regularPrice: number, discountedPrice: number ) =>
 	regularPrice <= 0 ? 0 : Math.round( ( ( regularPrice - discountedPrice ) / regularPrice ) * 100 );
@@ -51,8 +48,9 @@ export function getTermAvailabilityNote(
 		: __( 'This product is not available for yearly billing. We will bill you monthly instead.' );
 }
 
-// Mirrors the classic dashboard's term pricing: the selected term's price, or
-// the other term's price converted when the product isn't sold on this term.
+// Mirrors the classic dashboard's term pricing: the selected term's price with
+// its introductory discount, or the other term's regular price converted when
+// the product isn't sold on this term.
 export function getProductPriceInfo(
 	product: AgencyProduct,
 	term: TermPricing,
@@ -61,26 +59,28 @@ export function getProductPriceInfo(
 	const billingTerm = getProductBillingTerm( product, term );
 	const isFree = isFreeProduct( product );
 
-	let regularPrice = term === 'yearly' ? product.yearly_price ?? 0 : product.monthly_price ?? 0;
-	let intervalLabel: string = term === 'yearly' ? __( 'per year' ) : __( 'per month' );
-	let introductoryPrice =
-		term === 'yearly' ? product.yearly_introductory_price : product.monthly_introductory_price;
-
 	if ( billingTerm !== term ) {
-		if ( billingTerm === 'yearly' ) {
-			regularPrice = ( product.yearly_price ?? 0 ) / 12;
-			introductoryPrice = product.yearly_introductory_price;
-			intervalLabel = __( 'per month, billed yearly' );
-		} else {
-			regularPrice = ( product.monthly_price ?? 0 ) * 12;
-			introductoryPrice = product.monthly_introductory_price;
-			intervalLabel = __( 'per year, billed monthly' );
-		}
-		if ( introductoryPrice != null ) {
-			introductoryPrice =
-				billingTerm === 'yearly' ? introductoryPrice / 12 : introductoryPrice * 12;
-		}
+		return billingTerm === 'yearly'
+			? {
+					price: ( product.yearly_price ?? 0 ) / 12,
+					discountPercentage: 0,
+					intervalLabel: __( 'per month, billed yearly' ),
+					billingTerm,
+					isFree,
+			  }
+			: {
+					price: ( product.monthly_price ?? 0 ) * 12,
+					discountPercentage: 0,
+					intervalLabel: __( 'per year, billed monthly' ),
+					billingTerm,
+					isFree,
+			  };
 	}
+
+	const regularPrice = term === 'yearly' ? product.yearly_price ?? 0 : product.monthly_price ?? 0;
+	const intervalLabel = term === 'yearly' ? __( 'per year' ) : __( 'per month' );
+	const introductoryPrice =
+		term === 'yearly' ? product.yearly_introductory_price : product.monthly_introductory_price;
 
 	if ( applyIntroductoryPrice && introductoryPrice != null && introductoryPrice < regularPrice ) {
 		return {
