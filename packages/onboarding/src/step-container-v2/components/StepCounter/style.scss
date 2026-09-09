@@ -1,12 +1,3 @@
-// Type comes from the `body-md` Text variant in StepCounter.tsx, not from here,
-// so the counter and the named step rail stay on one definition.
-//
-// Colour deliberately does not match the rail yet. The counter is on Color
-// Studio (`--color-text-subtle`, #50575e) and the rail is on the WPDS content
-// scale (#707070), so crossing the breakpoint changes the grey as well as the
-// text. Left alone on purpose: this is a shared component, and repainting it
-// for one experiment would push an onboarding decision onto every other flow
-// that adopts the counter later. Revisit once the experiment picks a winner.
 .step-container-v2__step-counter {
 	color: var( --color-text-subtle );
 	white-space: nowrap;

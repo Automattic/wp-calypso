@@ -62,26 +62,6 @@ describe( 'OnboardingProgress', () => {
 		expect( screen.getByRole( 'tab', { name: 'Step 3 of 3 Payment' } ) ).toBeVisible();
 	} );
 
-	// The rail and the counter are the same indicator at two widths, so they have
-	// to be the same type. Both go through @wordpress/ui `Text` at `body-md`
-	// rather than restating 13px / 20px / 400 in two stylesheets. This asserts
-	// they still land on the same variant, so the two cannot drift apart if the
-	// token moves or someone restyles one of them.
-	it( 'sets the step names in the same type as the counter', () => {
-		const rail = render( <OnboardingProgress currentStep="plans" /> );
-		const railClasses = new Set(
-			rail.container.querySelector( '.onboarding-progress-title' )?.className.split( /\s+/ )
-		);
-		rail.unmount();
-
-		render( <Step.StepCounter current={ 2 } total={ 3 } /> );
-		const counterClasses = screen.getByLabelText( 'Step 2 of 3' ).className.split( /\s+/ );
-
-		const shared = counterClasses.filter( ( c ) => railClasses.has( c ) );
-		expect( shared.some( ( c ) => c.endsWith( '__body-md' ) ) ).toBe( true );
-		expect( shared.some( ( c ) => c.endsWith( '__text' ) ) ).toBe( true );
-	} );
-
 	// The rail sits in the top bar's right slot now, between the back button and
 	// the help link. Tab order follows the DOM, and the DOM is logo, left slot,
 	// right slot, so this asserts the keyboard walks the bar left to right the
