@@ -245,22 +245,19 @@ See https://dequeuniversity.com/rules/axe/4.6/link-in-text-block?application=Axe
 	text-decoration: none;
 }
 
-/* Alone on a tab rather than in the promo grid: cap the measure, and undo the
-   centering that Card's `margin: 0 auto` applies once the width is capped. */
+/* Card's own `margin: 0 auto` would center these once the width is capped. */
 .earn__upsell-card.promo-card {
 	max-width: 660px;
 	margin-inline: 0 auto;
 
-	/* An upsell that is a tab's whole content has nothing beside it to line up
-	   with, so it takes its copy's width. One that sits in a stack of cards
-	   keeps the cap and aligns with them instead. */
+	/* For an upsell that is a whole tab's content, with nothing beside it to line
+	   up with. Ones sitting in a stack of cards keep the cap and align instead. */
 	&.is-content-width {
 		max-width: fit-content;
 	}
 }
 
-/* The benefits finish the thought the paragraph starts, so they sit tight to it
-   and keep the paragraph's usual 20px in front of the buttons. */
+/* The benefits continue the paragraph, so the 20px gap moves below them. */
 .earn__upsell-card p:has(+ .earn__upsell-card-benefits) {
 	margin-bottom: 8px;
 }

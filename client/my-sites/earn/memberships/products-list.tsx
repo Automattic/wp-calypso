@@ -24,6 +24,8 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -88,14 +90,29 @@ function ProductsList() {
 
 	const hasStripeFeature =
 		hasDonationsFeature || hasPremiumContentFeature || hasRecurringPaymentsFeature;
+	const isVip = useSelector( ( state ) => isVipSite( state, site?.ID ?? 0 ) );
+	const isWPForTeams = useSelector( ( state ) => isSiteWPForTeams( state, site?.ID ?? null ) );
+	// Admins are already the only ones here; the section returns a notice for everyone else.
+	const canShowUpsell = hasLoadedFeatures && ! hasStripeFeature && ! isVip && ! isWPForTeams;
 
 	const defaultToTierPanel =
 		window.location.hash === OLD_ADD_NEWSLETTER_PAYMENT_PLAN_HASH ||
 		window.location.hash === ADD_TIER_PLAN_HASH;
 	const default_product_type = defaultToTierPanel ? TYPE_TIER : null;
 
+	const upgradeNudgeProperties = {
+		cta_name: 'calypso_earn_page_payment_plans_upgrade_nudge',
+		cta_feature: FEATURE_RECURRING_PAYMENTS,
+		cta_size: 'regular',
+	};
+
 	const trackUpgrade = () => {
-		dispatch( recordTracksEvent( 'calypso_earn_page_payment_plans_upgrade_button_click' ) );
+		dispatch(
+			recordTracksEvent(
+				'calypso_earn_page_payment_plans_upgrade_button_click',
+				upgradeNudgeProperties
+			)
+		);
 		dispatch( bumpStat( 'calypso_earn_page', 'payment-plans-upgrade-button' ) );
 	};
 
@@ -187,9 +204,12 @@ function ProductsList() {
 			     only appears when a newsletter tier exists — avoid the extra
 			     request on donation-only / non-newsletter sites. */ }
 			{ hasNewsletterTier && site?.ID && <QuerySiteSettings siteId={ site.ID } /> }
-			{ hasLoadedFeatures && ! hasStripeFeature && (
+			{ canShowUpsell && (
 				<>
-					<TrackComponentView eventName="calypso_earn_page_payment_plans_upgrade_button_view" />
+					<TrackComponentView
+						eventName="calypso_earn_page_payment_plans_upgrade_button_view"
+						eventProperties={ upgradeNudgeProperties }
+					/>
 					<PromoCard
 						variation={ PromoCardVariation.Compact }
 						icon="credit-card"

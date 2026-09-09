@@ -28,7 +28,10 @@ import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purch
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import getSiteWordadsStatus from 'calypso/state/selectors/get-site-wordads-status';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasWordAds from 'calypso/state/selectors/site-has-wordads';
 import { canAccessWordAds, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -66,6 +69,13 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 	const canManageSite = useSelector( ( state ) =>
 		canCurrentUser( state, site?.ID, 'manage_options' )
 	);
+	// An unloaded feature list is indistinguishable from an absent feature, so wait
+	// rather than upsell a site that already qualifies.
+	const featuresLoaded = useSelector(
+		( state ) => getFeaturesBySiteId( state, site?.ID ) !== null
+	);
+	const isVip = useSelector( ( state ) => isVipSite( state, site?.ID ?? 0 ) );
+	const isWPForTeams = useSelector( ( state ) => isSiteWPForTeams( state, site?.ID ?? null ) );
 	const requestingWordAdsApproval = useSelector( ( state ) =>
 		isRequestingWordAdsApprovalForSite( state, site )
 	);
@@ -77,6 +87,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 	const canUpgradeToUseWordAds = ! site?.options?.wordads && ! hasWordAdsFeature;
 	const isWordadsInstantEligibleButNotOwner =
 		! site?.options?.wordads && hasWordAdsFeature && ! canActivateWordAds;
+	const canShowUpsell = featuresLoaded && canManageSite && ! isVip && ! isWPForTeams;
 	const isEnrolledWithIneligiblePlan =
 		site?.options?.wordads && ! hasWordAdsFeature && wordAdsStatus === WordAdsStatus.ineligible;
 
@@ -213,6 +224,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 		benefits,
 		href,
 		tracksClickName,
+		ctaName,
 		learnMoreUrl,
 		fitToContent,
 	}: {
@@ -221,17 +233,23 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 		benefits?: TranslateResult[];
 		href: string;
 		tracksClickName: string;
+		ctaName?: string;
 		learnMoreUrl?: string;
 		fitToContent?: boolean;
 	} ) => {
+		const nudgeProperties = {
+			cta_name: ctaName,
+			cta_feature: WPCOM_FEATURES_WORDADS,
+			cta_size: 'regular',
+		};
 		const trackNudge = ( eventName: string ) =>
-			dispatch( recordTracksEvent( eventName, { cta_feature: WPCOM_FEATURES_WORDADS } ) );
+			dispatch( recordTracksEvent( eventName, nudgeProperties ) );
 
 		return (
 			<>
 				<TrackComponentView
 					eventName="calypso_upgrade_nudge_impression"
-					eventProperties={ { cta_feature: WPCOM_FEATURES_WORDADS } }
+					eventProperties={ nudgeProperties }
 				/>
 				<PromoCard
 					className={ clsx( 'earn__upsell-card', {
@@ -298,6 +316,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 			),
 			href: `/checkout/${ siteSlug }/${ PLAN_JETPACK_SECURITY_DAILY }`,
 			tracksClickName: 'calypso_upgrade_nudge_click',
+			ctaName: 'calypso_upgrade_nudge_impression',
 		} );
 
 	const renderNoticeSiteIsPrivate = () => {
@@ -353,12 +372,12 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 			component = renderOwnerRequiredMessage();
 		} else if (
 			canUpgradeToUseWordAds &&
-			canManageSite &&
+			canShowUpsell &&
 			site?.jetpack &&
 			! site?.is_wpcom_atomic
 		) {
 			component = renderjetpackUpsell();
-		} else if ( canUpgradeToUseWordAds && canManageSite ) {
+		} else if ( canUpgradeToUseWordAds && canShowUpsell ) {
 			component = renderUpsell();
 		} else if ( ! canAccessAds ) {
 			component = renderEmptyContent();
@@ -366,7 +385,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 			component = null;
 		} else if ( site.options?.wordads && site.is_private ) {
 			notice = renderNoticeSiteIsPrivate();
-		} else if ( isEnrolledWithIneligiblePlan ) {
+		} else if ( isEnrolledWithIneligiblePlan && ! isWPForTeams ) {
 			component = renderContentWithUpsell( component );
 		}
 		return { component, notice };
