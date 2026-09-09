@@ -1,3 +1,8 @@
+// The DataViews wrapper paints its own surface; the filter bar sits on the page background.
+.dashboard-marketplace-products__filters {
+	--wp-dataviews-color-background: transparent;
+}
+
 .dashboard-marketplace-products__toolbar {
 	padding-block: 16px;
 }

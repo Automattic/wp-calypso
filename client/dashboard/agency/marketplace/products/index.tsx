@@ -389,27 +389,29 @@ export default function MarketplaceProducts() {
 				showPressable={ showPressableTile }
 				onSelect={ handleTileSelect }
 			/>
-			<DataViews< AgencyProduct >
-				data={ tileProducts }
-				getItemId={ ( item ) => item.slug }
-				fields={ fields }
-				view={ view }
-				onChangeView={ handleViewChange }
-				paginationInfo={ { totalItems: tileProducts.length, totalPages: 1 } }
-				defaultLayouts={ { list: {} } }
-				search
-			>
-				<HStack justify="space-between" className="dashboard-marketplace-products__toolbar">
-					<HStack justify="flex-start" expanded={ false }>
-						<DataViews.Search />
-						<DataViews.FiltersToggle />
+			<div className="dashboard-marketplace-products__filters">
+				<DataViews< AgencyProduct >
+					data={ tileProducts }
+					getItemId={ ( item ) => item.slug }
+					fields={ fields }
+					view={ view }
+					onChangeView={ handleViewChange }
+					paginationInfo={ { totalItems: tileProducts.length, totalPages: 1 } }
+					defaultLayouts={ { list: {} } }
+					search
+				>
+					<HStack justify="space-between" className="dashboard-marketplace-products__toolbar">
+						<HStack justify="flex-start" expanded={ false }>
+							<DataViews.Search />
+							<DataViews.FiltersToggle />
+						</HStack>
+						<TermPricingToggle />
 					</HStack>
-					<TermPricingToggle />
-				</HStack>
-				<Spacer marginBottom={ 4 }>
-					<DataViews.FiltersToggled />
-				</Spacer>
-			</DataViews>
+					<Spacer marginBottom={ 4 }>
+						<DataViews.FiltersToggled />
+					</Spacer>
+				</DataViews>
+			</div>
 			{ isLoading && (
 				<HStack justify="center">
 					<Spinner />
