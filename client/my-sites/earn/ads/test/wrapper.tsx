@@ -12,7 +12,7 @@ import AdsWrapper from '../wrapper';
 const renderWrapper = ( {
 	manageOptions = true,
 	features = { 1: { data: { active: [] } } },
-	options = {},
+	site = {},
 } = {} ) =>
 	renderWithProvider(
 		<AdsWrapper section="ads-earnings">
@@ -22,7 +22,7 @@ const renderWrapper = ( {
 			initialState: {
 				currentUser: { capabilities: { 1: { manage_options: manageOptions } } },
 				sites: {
-					items: { 1: { ID: 1, slug: 'example.wordpress.com', options } },
+					items: { 1: { ID: 1, slug: 'example.wordpress.com', options: {}, ...site } },
 					features,
 				},
 				ui: { selectedSiteId: 1 },
@@ -52,10 +52,14 @@ describe( 'AdsWrapper', () => {
 		expect( screen.queryByText( notAuthorized ) ).not.toBeInTheDocument();
 	} );
 
-	// A standalone Jetpack product connection reads as a Jetpack site without the
-	// `jetpack` flag; WordPress.com plans are the wrong product to sell it.
-	it( 'does not sell WordPress.com plans to a standalone Jetpack site', () => {
-		renderWrapper( { options: { jetpack_connection_active_plugins: [ 'jetpack-social' ] } } );
+	// None of these can buy the WordPress.com plan the card links to. The last
+	// reads as a Jetpack site while its `jetpack` flag stays false.
+	it.each( [
+		[ 'VIP', { is_vip: true } ],
+		[ 'WP for Teams', { options: { is_wpforteams_site: true } } ],
+		[ 'standalone Jetpack', { options: { jetpack_connection_active_plugins: [ 'boost' ] } } ],
+	] )( 'offers no upgrade to a %s site', ( _label, site ) => {
+		renderWrapper( { site } );
 		expect( screen.queryByRole( 'link', { name: 'Upgrade' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( notAuthorized ) ).not.toBeInTheDocument();
 	} );
