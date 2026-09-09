@@ -89,7 +89,12 @@ export function useShoppingCart() {
 		[ marketplaceType ]
 	);
 
+	const replaceItems = useCallback(
+		( nextItems: ShoppingCartItem[] ) => writeItems( marketplaceType, nextItems ),
+		[ marketplaceType ]
+	);
+
 	const clearCart = useCallback( () => writeItems( marketplaceType, [] ), [ marketplaceType ] );
 
-	return { items, hasItem, addItem, removeItem, clearCart };
+	return { items, hasItem, addItem, removeItem, replaceItems, clearCart };
 }
