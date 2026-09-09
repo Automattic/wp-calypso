@@ -1,16 +1,25 @@
 import { editGlobalStyles, getEditedGlobalStyles, type GlobalStylesRecord } from './global-styles';
+import {
+	readMenuItems,
+	renameNavigationItem,
+	writeMenu,
+	type NavigationBlock,
+} from './navigation-menu';
+import { setPageTitle } from './page-title';
 import { getSiteLogo, setSiteLogo, type SiteLogo } from './site-logo';
+import { getSiteMetadata, setSiteMetadata, type SiteMetadata } from './site-metadata';
+import { getSiteTitle, setSiteTitle } from './site-title';
 import { getToolCallIdFromConversationHistory } from './tool-call-history';
 
 /**
  * AM-owned checkpoint store: in-memory, per page load, keyed by tool call id.
  *
  * Ported from Big Sky's `use-checkpoint` as plain functions — AM abilities
- * execute as plain callbacks, so no hook wiring is needed. The global-styles
- * (`color`/`font`/`button`) and site-logo domains restore today; the block,
- * page, and navigation domains land with their abilities. Until then,
- * checkpoints for those domains live in Big Sky's store and restore through
- * the `provider-checkpoints` bridge.
+ * execute as plain callbacks, so no hook wiring is needed. The global-styles,
+ * site-logo, site-title, page, navigation and site-metadata domains restore
+ * today; the block domain lands with `apply-block-edits`. Until then, checkpoints for it
+ * live in Big Sky's store and restore through the `provider-checkpoints`
+ * bridge.
  *
  * Big Sky additionally re-applies the checkpoint's variation titles after the
  * snapshot restore to sync its variation-selection store. AM has no such
@@ -25,6 +34,10 @@ export const checkpointKeys = {
 	FONT: 'font',
 	BUTTON: 'button',
 	LOGO: 'logo',
+	PAGE: 'page',
+	NAVIGATION: 'navigation',
+	SITE_METADATA: 'site_metadata',
+	SITE_TITLE: 'site_title',
 } as const;
 
 export const THEME_CHECKPOINT_KEYS: string[] = [
@@ -44,12 +57,28 @@ export interface CheckpointMetadata {
 	restoredCheckpointToolId?: string;
 }
 
+/**
+ * A page rename, so a restore can put the old title back on both the page
+ * and the menu item that follows it.
+ */
+export interface PageRename {
+	pageId: number | string;
+	from: string;
+	to: string;
+}
+
 export interface CheckpointRecord extends CheckpointMetadata {
 	id: string;
 	checkpointKeys: string[];
 	createdAt: number;
 	themeBeforeUpdate?: Required< GlobalStylesRecord >;
 	logoBeforeUpdate?: SiteLogo;
+	siteTitleBeforeUpdate?: string;
+	siteMetadataBeforeUpdate?: SiteMetadata;
+	// A list, not a map: object keys are strings, and a menu id is a post id —
+	// restoring under the wrong type would address a different record.
+	menusBeforeUpdate?: { id: number | string; items: NavigationBlock[] }[];
+	pageRenames?: PageRename[];
 }
 
 const records = new Map< string, CheckpointRecord >();
@@ -100,6 +129,50 @@ function restoreLogoSnapshot( checkpoint: CheckpointRecord ): void {
 	setSiteLogo( checkpoint.logoBeforeUpdate );
 }
 
+async function restoreSiteTitleSnapshot( checkpoint: CheckpointRecord ): Promise< void > {
+	if ( ! checkpoint.checkpointKeys.includes( checkpointKeys.SITE_TITLE ) ) {
+		return;
+	}
+
+	if ( checkpoint.siteTitleBeforeUpdate === undefined ) {
+		throw new Error( 'Checkpoint has no site-title snapshot to restore.' );
+	}
+
+	await setSiteTitle( checkpoint.siteTitleBeforeUpdate );
+}
+
+async function restoreSiteMetadataSnapshot( checkpoint: CheckpointRecord ): Promise< void > {
+	if ( ! checkpoint.checkpointKeys.includes( checkpointKeys.SITE_METADATA ) ) {
+		return;
+	}
+
+	if ( ! checkpoint.siteMetadataBeforeUpdate ) {
+		throw new Error( 'Checkpoint has no site-metadata snapshot to restore.' );
+	}
+
+	// Merged, not replaced: a key another tool wrote in the meantime is not
+	// this checkpoint's to remove.
+	await setSiteMetadata( checkpoint.siteMetadataBeforeUpdate );
+}
+
+async function restoreMenuSnapshots( checkpoint: CheckpointRecord ): Promise< void > {
+	await Promise.all(
+		( checkpoint.menusBeforeUpdate ?? [] ).map( ( menu ) => writeMenu( menu.id, menu.items ) )
+	);
+}
+
+/**
+ * Puts renamed pages back, newest first: two renames of one page in the same
+ * write must unwind in reverse, or the older title would be overwritten by
+ * the newer one.
+ */
+async function restorePageRenames( checkpoint: CheckpointRecord ): Promise< void > {
+	for ( const rename of [ ...( checkpoint.pageRenames ?? [] ) ].reverse() ) {
+		await setPageTitle( rename.pageId, rename.from );
+		await renameNavigationItem( rename.pageId, rename.from, rename.to );
+	}
+}
+
 /**
  * Snapshots the current editor state under the given id; the keys scope what
  * a restore applies.
@@ -113,8 +186,19 @@ export function setCheckpoint(
 		return;
 	}
 
-	const themeBeforeUpdate = captureThemeSnapshot();
+	const themeBeforeUpdate = keys.some( ( key ) => THEME_CHECKPOINT_KEYS.includes( key ) )
+		? captureThemeSnapshot()
+		: undefined;
 	const logoBeforeUpdate = keys.includes( checkpointKeys.LOGO ) ? getSiteLogo() : undefined;
+
+	// Cheap reads of one record, so they snapshot up front. The page and
+	// navigation domains arrive through the `CheckpointRecorder` instead.
+	const siteTitleBeforeUpdate = keys.includes( checkpointKeys.SITE_TITLE )
+		? getSiteTitle()
+		: undefined;
+	const siteMetadataBeforeUpdate = keys.includes( checkpointKeys.SITE_METADATA )
+		? getSiteMetadata()
+		: undefined;
 
 	records.set( id, {
 		...metadata,
@@ -123,6 +207,10 @@ export function setCheckpoint(
 		createdAt: Date.now(),
 		...( themeBeforeUpdate && { themeBeforeUpdate } ),
 		...( logoBeforeUpdate !== undefined && { logoBeforeUpdate } ),
+		...( siteTitleBeforeUpdate !== undefined && { siteTitleBeforeUpdate } ),
+		...( siteMetadataBeforeUpdate && {
+			siteMetadataBeforeUpdate: deepClone( siteMetadataBeforeUpdate ),
+		} ),
 	} );
 }
 
@@ -136,6 +224,76 @@ export function getCheckpoint( id: string ): CheckpointRecord | undefined {
 
 export function clearCheckpoint( id: string ): void {
 	records.delete( id );
+}
+
+/**
+ * What a write can add to its own checkpoint while it runs.
+ *
+ * The page and navigation domains cannot be snapshotted up front: which page
+ * is being renamed, and which menu follows it, is only known once the write
+ * reaches them. A write with no checkpoint gets a recorder that does nothing,
+ * so callers never branch on whether one exists.
+ */
+export interface CheckpointRecorder {
+	/** Snapshots a menu before this write edits it. */
+	captureMenu: ( menuId: string | number ) => Promise< void >;
+	/** Records a rename so a restore can put the old title back. */
+	capturePageRename: ( rename: PageRename ) => void;
+}
+
+const NO_RECORDER: CheckpointRecorder = {
+	captureMenu: async () => {},
+	capturePageRename: () => {},
+};
+
+function createRecorder( checkpointId: string ): CheckpointRecorder {
+	const update = ( change: Partial< CheckpointRecord > ) => {
+		const checkpoint = records.get( checkpointId );
+
+		if ( checkpoint ) {
+			records.set( checkpointId, { ...checkpoint, ...change } );
+		}
+	};
+
+	// Recorded domains are key-gated the same way the up-front snapshots are,
+	// so a restore can only ever touch what the write declared it would.
+	const claims = ( checkpoint: CheckpointRecord | undefined, key: string ) =>
+		!! checkpoint?.checkpointKeys.includes( key );
+
+	return {
+		captureMenu: async ( menuId ) => {
+			const checkpoint = records.get( checkpointId );
+			const captured = checkpoint?.menusBeforeUpdate ?? [];
+
+			// First capture wins: a later edit in the same write must not
+			// snapshot a menu this write has already changed.
+			if (
+				! claims( checkpoint, checkpointKeys.NAVIGATION ) ||
+				captured.some( ( menu ) => menu.id === menuId )
+			) {
+				return;
+			}
+
+			const items = await readMenuItems( menuId );
+
+			// Refused rather than skipped: the caller is about to edit this menu,
+			// and without the snapshot that edit could never be undone.
+			if ( ! items ) {
+				throw new Error( `Navigation menu not found: ${ menuId }` );
+			}
+
+			update( {
+				menusBeforeUpdate: [ ...captured, { id: menuId, items: deepClone( items ) } ],
+			} );
+		},
+		capturePageRename: ( rename ) => {
+			const checkpoint = records.get( checkpointId );
+
+			if ( claims( checkpoint, checkpointKeys.PAGE ) ) {
+				update( { pageRenames: [ ...( checkpoint?.pageRenames ?? [] ), rename ] } );
+			}
+		},
+	};
 }
 
 /**
@@ -158,17 +316,20 @@ export async function withCheckpoint< T >(
 		keys: string[];
 		summary: string;
 	},
-	write: () => T | Promise< T >
+	write: ( recorder: CheckpointRecorder ) => T | Promise< T >
 ): Promise< T > {
 	const callId = toolCallId ?? getToolCallIdFromConversationHistory( toolId );
-	const checkpointId = callId && ! hasCheckpoint( callId ) ? callId : null;
+
+	// No keys means no domain to put back, and every restore is key-gated —
+	// so a checkpoint here would offer the user an undo that does nothing.
+	const checkpointId = keys.length && callId && ! hasCheckpoint( callId ) ? callId : null;
 
 	if ( checkpointId ) {
 		setCheckpoint( checkpointId, keys, { toolId, summary } );
 	}
 
 	try {
-		return await write();
+		return await write( checkpointId ? createRecorder( checkpointId ) : NO_RECORDER );
 	} catch ( error ) {
 		if ( checkpointId ) {
 			clearCheckpoint( checkpointId );
@@ -194,6 +355,13 @@ export async function restoreCheckpoint( id: string ): Promise< void > {
 
 	restoreThemeSnapshot( checkpoint );
 	restoreLogoSnapshot( checkpoint );
+	await restoreSiteTitleSnapshot( checkpoint );
+	await restoreSiteMetadataSnapshot( checkpoint );
+
+	// Menus first: a page rename relabels the menu item that follows it, so it
+	// has to run against the menu this checkpoint put back.
+	await restoreMenuSnapshots( checkpoint );
+	await restorePageRenames( checkpoint );
 }
 
 export interface CheckpointContextItem extends CheckpointMetadata {
