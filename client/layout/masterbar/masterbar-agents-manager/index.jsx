@@ -6,7 +6,7 @@ import {
 	openAgentsManagerChat,
 } from '@automattic/agents-manager';
 import { recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
-import { HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT } from '@automattic/data-stores/src/help-center/constants';
+import { HelpCenter } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useSelect as useDateStoreSelect } from '@wordpress/data';
 import { Icon, comment, backup, page, video, rss } from '@wordpress/icons';
@@ -24,7 +24,7 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 	const sectionName = useSelector( getSectionName );
 	const { siteId, siteContextSource } = useHelpCenterSite();
 	const [ isLoadingGetHelpAssignment, getHelpChatForwardAssignment ] = useExperiment(
-		HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT
+		HelpCenter.HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT
 	);
 	const showGetHelpLabel =
 		! isLoadingGetHelpAssignment && getHelpChatForwardAssignment?.variationName === 'treatment';

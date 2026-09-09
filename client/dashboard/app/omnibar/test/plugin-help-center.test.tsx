@@ -140,16 +140,24 @@ describe( 'useHelpCenterPlugin', () => {
 	it.each( [
 		{ entryPoint: 'agents manager', adminBarNodes: HELP_NODES },
 		{ entryPoint: 'legacy help center', adminBarNodes: [] },
-	] )( 'keeps the $entryPoint icon-only until the assignment loads', ( { adminBarNodes } ) => {
+	] )( 'labels the $entryPoint only once the assignment loads', ( { adminBarNodes } ) => {
 		mockUseExperiment.mockReturnValue( [ true, null ] );
 		const { result, rerender } = renderHook( () => useHelpCenterPlugin( { adminBarNodes } ) );
 
 		expect( result.current.title ).toBeUndefined();
 
-		mockUseExperiment.mockReturnValue( [ false, null ] );
+		mockUseExperiment.mockReturnValue( [
+			false,
+			{
+				experimentName: 'calypso_help_center_get_help_chat_forward',
+				variationName: 'treatment',
+				retrievedTimestamp: 0,
+				ttl: 60,
+			},
+		] );
 		rerender();
 
-		expect( result.current.title ).toBeUndefined();
+		expect( result.current.title ).toBe( 'Get Help' );
 	} );
 
 	it( 'takes its id, label and tooltip from the admin bar node', () => {

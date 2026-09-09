@@ -62,9 +62,10 @@ export class HelpCenterComponent {
 	 * @returns {Locator} The toggle locator.
 	 */
 	getToggleLocator(): Locator {
+		// The "Get Help" name comes from the calypso_help_center_get_help_chat_forward experiment.
 		return this.isWpAdmin
 			? this.page.locator( '#wp-admin-bar-help-center' )
-			: this.page.getByRole( 'button', { name: 'Help', exact: true } );
+			: this.page.getByRole( 'button', { name: /^(Get )?Help$/ } );
 	}
 
 	/**

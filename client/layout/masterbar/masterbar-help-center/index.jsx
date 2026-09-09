@@ -1,6 +1,5 @@
 import { recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
 import { HelpCenter } from '@automattic/data-stores';
-import { HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT } from '@automattic/data-stores/src/help-center/constants';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { usePrevious } from '@wordpress/compose';
 import {
@@ -42,7 +41,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 		'calypso_help_center_menu_popover_increase_exposure'
 	);
 	const [ isLoadingGetHelpAssignment, getHelpChatForwardAssignment ] = useExperiment(
-		HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT
+		HelpCenter.HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT
 	);
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 
