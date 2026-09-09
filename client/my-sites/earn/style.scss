@@ -250,6 +250,12 @@ See https://dequeuniversity.com/rules/axe/4.6/link-in-text-block?application=Axe
 .earn__upsell-card.promo-card {
 	max-width: 660px;
 	margin-inline: 0 auto;
+
+	/* The WordAds pitch is one sentence that reads better unbroken, so this card
+	   takes its own copy's width rather than the shared measure. */
+	&.is-content-width {
+		max-width: fit-content;
+	}
 }
 
 /* The benefits finish the thought the paragraph starts, so they sit tight to it

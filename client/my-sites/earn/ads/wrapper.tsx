@@ -6,6 +6,7 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
+import clsx from 'clsx';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import wordAdsImage from 'calypso/assets/images/illustrations/dotcom-wordads.svg';
@@ -213,6 +214,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 		href,
 		tracksClickName,
 		learnMoreUrl,
+		fitToContent,
 	}: {
 		title: TranslateResult;
 		body: TranslateResult;
@@ -220,6 +222,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 		href: string;
 		tracksClickName: string;
 		learnMoreUrl?: string;
+		fitToContent?: boolean;
 	} ) => {
 		const trackNudge = ( eventName: string ) =>
 			dispatch( recordTracksEvent( eventName, { cta_feature: WPCOM_FEATURES_WORDADS } ) );
@@ -231,7 +234,9 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 					eventProperties={ { cta_feature: WPCOM_FEATURES_WORDADS } }
 				/>
 				<PromoCard
-					className="earn__upsell-card"
+					className={ clsx( 'earn__upsell-card', {
+						'is-content-width': fitToContent,
+					} ) }
 					variation={ PromoCardVariation.Compact }
 					icon="speaker"
 					title={ preventWidows( title ) }
@@ -282,6 +287,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 			href: buildCheckoutURL( siteSlug as string, PLAN_PREMIUM ),
 			tracksClickName: 'calypso_upgrade_nudge_cta_click',
 			learnMoreUrl: 'https://wordads.co/',
+			fitToContent: true,
 		} );
 
 	const renderjetpackUpsell = () =>
