@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../../test-utils';
 import { PurchaseHeaderActions } from '../index';
@@ -60,7 +60,11 @@ describe( '<PurchaseHeaderActions />', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Quick actions' } ) );
 
-		expect( screen.getByRole( 'menuitem', { name: 'Renew' } ) ).toBeVisible();
+		// The menu's popover fades in from opacity 0, so give it a frame to become
+		// visible rather than asserting on the animation's first tick.
+		await waitFor( () =>
+			expect( screen.getByRole( 'menuitem', { name: 'Renew' } ) ).toBeVisible()
+		);
 		// The promoted action is not repeated in the menu.
 		expect( screen.queryByRole( 'menuitem', { name: 'Upgrade' } ) ).not.toBeInTheDocument();
 	} );
