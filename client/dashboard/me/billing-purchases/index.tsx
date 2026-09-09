@@ -157,6 +157,7 @@ export default function PurchasesList() {
 							: __( 'View and manage your active plans and purchases.' )
 					}
 					actions={
+						Boolean( supports.me ) &&
 						activeSiteId !== undefined && (
 							<RouterLinkButton
 								variant="secondary"
