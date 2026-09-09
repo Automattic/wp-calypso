@@ -10,6 +10,9 @@ jest.mock( '@wordpress/data', () => ( { dispatch: jest.fn(), resolveSelect: jest
 jest.mock( '../../../utils/is-editor-page', () => ( { isEditorPage: jest.fn( () => true ) } ) );
 jest.mock( '../../../utils/navigation-menu', () => ( {
 	addNavigationItem: jest.fn(),
+	getMenuIdsHolding: jest.fn( async () => [ 10 ] ),
+	// The checkpoint recorder reads through this to snapshot a menu.
+	readMenuItems: jest.fn( async () => [] ),
 	removeNavigationItem: jest.fn(),
 	renameNavigationItem: jest.fn(),
 } ) );
@@ -39,6 +42,7 @@ import { checkpointKeys, hasCheckpoint } from '../../../utils/checkpoints';
 import { isEditorPage } from '../../../utils/is-editor-page';
 import {
 	addNavigationItem,
+	getMenuIdsHolding,
 	removeNavigationItem,
 	renameNavigationItem,
 } from '../../../utils/navigation-menu';
@@ -203,6 +207,22 @@ describe( 'editEntityRecordCallback', () => {
 		// out of the editor's undo stack.
 		expect( setPageTitle ).toHaveBeenCalledWith( 7, 'About us' );
 		expect( renameNavigationItem ).toHaveBeenCalledWith( 7, 'About us', 'About' );
+	} );
+
+	// The item may carry a label the user chose, which only the menu records.
+	// Without the snapshot the undo would put the page's old title there.
+	it( 'snapshots the menus before a rename overwrites their labels', async () => {
+		await editEntityRecordCallback( {
+			toolCallId: 'call-rename',
+			editEntities: [ { ...page( 7 ), record: { title: 'About us' } } ],
+		} );
+
+		// Asked for the menus holding the page, and before the relabel: what the
+		// recorder then stores is covered in the checkpoint suite.
+		expect( getMenuIdsHolding ).toHaveBeenCalledWith( 7, 'About' );
+		expect( ( getMenuIdsHolding as jest.Mock ).mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+			( renameNavigationItem as jest.Mock ).mock.invocationCallOrder[ 0 ]
+		);
 	} );
 
 	it( 'leaves the menu alone when the title is unchanged', async () => {
