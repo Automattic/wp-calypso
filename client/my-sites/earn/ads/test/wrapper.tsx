@@ -46,4 +46,35 @@ describe( 'AdsWrapper', () => {
 		renderWrapper( { features: {} } );
 		expect( screen.queryByRole( 'link', { name: 'Upgrade' } ) ).not.toBeInTheDocument();
 	} );
+
+	// P2 sites get no upsell, but hiding it must not take the gate with it and
+	// leave them a live settings form.
+	it( 'still gates the settings form for a P2 site on an ineligible plan', () => {
+		const { container } = renderWithProvider(
+			<AdsWrapper section="ads-settings">
+				<div>settings form</div>
+			</AdsWrapper>,
+			{
+				initialState: {
+					currentUser: { capabilities: { 1: { manage_options: true } } },
+					sites: {
+						items: {
+							1: {
+								ID: 1,
+								slug: 'example.wordpress.com',
+								options: { wordads: true, is_wpforteams_site: true },
+							},
+						},
+						features: { 1: { data: { active: [] } } },
+					},
+					ui: { selectedSiteId: 1 },
+					wordads: { status: { 1: { status: 'ineligible' } } },
+				},
+				reducers: { ui: uiReducer, wordads: wordadsReducer },
+			}
+		);
+
+		expect( screen.queryByRole( 'link', { name: 'Upgrade' } ) ).not.toBeInTheDocument();
+		expect( container.querySelector( '.feature-example' ) ).toBeInTheDocument();
+	} );
 } );
