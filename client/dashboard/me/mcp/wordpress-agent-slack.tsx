@@ -206,7 +206,8 @@ export default function WordPressAgentSlack( {
 						disabled={ isActionPending }
 					>
 						<img src={ SlackMark } alt="" width={ 20 } height={ 20 } />
-						{ pairToken ? __( 'Add to another workspace' ) : __( 'Add to Slack' ) }
+						{ /* The span dodges a Google Translate DOM crash (react/react#11538). */ }
+						<span>{ pairToken ? __( 'Add to another workspace' ) : __( 'Add to Slack' ) }</span>
 					</Button>
 				</CardBody>
 
