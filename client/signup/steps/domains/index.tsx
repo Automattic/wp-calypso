@@ -1,11 +1,6 @@
 import { FreeDomainSuggestion, useMyDomainInputMode } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
-import {
-	isDomainForGravatarFlow,
-	isEcommerceFlow,
-	isFreeFlow,
-	isWithThemeFlow,
-} from '@automattic/onboarding';
+import { isDomainForGravatarFlow, isEcommerceFlow, isWithThemeFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
@@ -304,34 +299,29 @@ const DomainSearchUI = (
 		};
 	}, [ flowName, isDomainOnlyFlow, isOnboardingWithEmailFlow, allowedTldParam ] );
 
+	// For /start flows, we want to show the free domain for a year discount for all flows
+	// except if we're in a site context, in the free or monthly plan flows or in the domain-only flow
+	const isFirstDomainFreeForFirstYear = ! (
+		siteSlug ||
+		siteId ||
+		isMonthlyOrFreeFlow( flowName ) ||
+		isDomainOnlyFlow ||
+		isDomainForGravatarFlow( flowName )
+	);
+
+	// The slots have to be left out entirely rather than render nothing: the results
+	// page keys its mobile sticky banner off `BeforeResults` being present, and that
+	// banner carries its own "free domain with a paid plan" copy.
 	const slots = useMemo( () => {
+		if ( isOnboardingWithEmailFlow || ! isFirstDomainFreeForFirstYear ) {
+			return {};
+		}
+
 		return {
-			BeforeResults: () => {
-				if (
-					isDomainOnlyFlow ||
-					isDomainForGravatarFlow( flowName ) ||
-					isFreeFlow( flowName ) ||
-					isOnboardingWithEmailFlow
-				) {
-					return null;
-				}
-
-				return <FreeDomainForAYearPromo />;
-			},
-			BeforeFullCartItems: () => {
-				if (
-					isDomainOnlyFlow ||
-					isDomainForGravatarFlow( flowName ) ||
-					isFreeFlow( flowName ) ||
-					isOnboardingWithEmailFlow
-				) {
-					return null;
-				}
-
-				return <FreeDomainForAYearPromo textOnly />;
-			},
+			BeforeResults: () => <FreeDomainForAYearPromo />,
+			BeforeFullCartItems: () => <FreeDomainForAYearPromo textOnly />,
 		};
-	}, [ flowName, isOnboardingWithEmailFlow, isDomainOnlyFlow ] );
+	}, [ isOnboardingWithEmailFlow, isFirstDomainFreeForFirstYear ] );
 
 	const flowAllowsMultipleDomainsInCart = isDomainOnlyFlow;
 
@@ -419,21 +409,6 @@ const DomainSearchUI = (
 			</Button>
 		);
 	};
-
-	// For /start flows, we want to show the free domain for a year discount for all flows
-	// except if we're in a site context, in the free or monthly plan flows or in the domain-only flow
-	const isFirstDomainFreeForFirstYear = useMemo( () => {
-		if (
-			siteSlug ||
-			siteId ||
-			isMonthlyOrFreeFlow( flowName ) ||
-			isDomainOnlyFlow ||
-			isDomainForGravatarFlow( flowName )
-		) {
-			return false;
-		}
-		return true;
-	}, [ flowName, siteSlug, siteId, isDomainOnlyFlow ] );
 
 	return (
 		<StepWrapper

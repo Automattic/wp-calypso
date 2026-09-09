@@ -34,10 +34,14 @@ const baseProps = {
 	previousStepName: null,
 };
 
-function renderStep( props = baseProps, options = {} ) {
+function renderStepProps( props = baseProps, options = {} ) {
 	mockWPCOMDomainSearch.mockClear();
 	renderWithProvider( <DomainSearchStep { ...props } />, options );
-	return mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ].events;
+	return mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ];
+}
+
+function renderStep( props = baseProps, options = {} ) {
+	return renderStepProps( props, options ).events;
 }
 
 const LOGGED_IN_STATE = { currentUser: { id: 12345 } };
@@ -135,5 +139,33 @@ describe( 'DomainSearchStep — domain-only checkout simplification', () => {
 			} )
 		);
 		expect( goToNextStep ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
+
+describe( 'DomainSearchStep — free domain for a year promo', () => {
+	const onboardingProps = { ...baseProps, flowName: 'onboarding', stepName: 'domains' };
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockWPCOMDomainSearch.mockReturnValue( null );
+	} );
+
+	it( 'promotes the free first year when signing up for a new site', () => {
+		const { slots } = renderStepProps( onboardingProps, { initialState: LOGGED_IN_STATE } );
+
+		expect( slots.BeforeResults ).toBeDefined();
+		expect( slots.BeforeFullCartItems ).toBeDefined();
+	} );
+
+	// Asserting on the keys rather than what they render, because that is what the
+	// results page reads to decide whether to show the mobile sticky banner.
+	it( 'hides the promo when adding a domain to an existing site', () => {
+		const { slots } = renderStepProps(
+			{ ...onboardingProps, queryObject: { siteSlug: 'example.wordpress.com' } },
+			{ initialState: LOGGED_IN_STATE }
+		);
+
+		expect( slots.BeforeResults ).toBeUndefined();
+		expect( slots.BeforeFullCartItems ).toBeUndefined();
 	} );
 } );
