@@ -1,6 +1,8 @@
+import { userPurchasesQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { CompactCard } from '@automattic/components';
 import { CheckoutProvider } from '@automattic/composite-checkout';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { localize, translate } from 'i18n-calypso';
 import { Component } from 'react';
@@ -12,10 +14,6 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import PaymentMethod from 'calypso/me/purchases/payment-methods/payment-method';
 import { withStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
-import {
-	hasLoadedSitePurchasesFromServer,
-	hasLoadedUserPurchasesFromServer,
-} from 'calypso/state/purchases/selectors';
 import type { StoredPaymentMethod } from '@automattic/wpcom-checkout';
 import type { WithStoredPaymentMethodsProps } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import type { IAppState } from 'calypso/state/types';
@@ -26,18 +24,14 @@ interface PaymentMethodListProps {
 	addPaymentMethodUrl: string;
 	translate: typeof translate;
 	isAgencyUser: boolean;
-	hasLoadedSitePurchasesFromServer: boolean;
-	hasLoadedUserPurchasesFromServer: boolean;
+	hasLoadedPurchases: boolean;
 }
 
 class PaymentMethodList extends Component<
 	PaymentMethodListProps & WithStoredPaymentMethodsProps
 > {
 	renderPaymentMethods( paymentMethods: StoredPaymentMethod[] ) {
-		const hasLoadedPurchases =
-			this.props.hasLoadedUserPurchasesFromServer || this.props.hasLoadedSitePurchasesFromServer;
-
-		if ( this.props.paymentMethodsState.isLoading || ! hasLoadedPurchases ) {
+		if ( this.props.paymentMethodsState.isLoading || ! this.props.hasLoadedPurchases ) {
 			return (
 				<CompactCard className="payment-method-list__loader">
 					<div className="payment-method-list__loading-placeholder-card loading-placeholder__content" />
@@ -111,8 +105,22 @@ class PaymentMethodList extends Component<
 	}
 }
 
-export default connect( ( state: IAppState ) => ( {
+const ConnectedPaymentMethodList = connect( ( state: IAppState ) => ( {
 	isAgencyUser: isAgencyUser( state ),
-	hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
-	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 } ) )( withStoredPaymentMethods( localize( PaymentMethodList ), { type: 'all', expired: true } ) );
+
+export default function PaymentMethodListWrapper( {
+	addPaymentMethodUrl,
+}: {
+	addPaymentMethodUrl: string;
+} ) {
+	// The delete dialog lists the subscriptions paying with each method, so the
+	// list waits for the purchases it reads before rendering any of them.
+	const { isPending } = useQuery( userPurchasesQuery() );
+	return (
+		<ConnectedPaymentMethodList
+			addPaymentMethodUrl={ addPaymentMethodUrl }
+			hasLoadedPurchases={ ! isPending }
+		/>
+	);
+}
