@@ -18,26 +18,26 @@ interface OpenPopupOptions {
 	onMessage( message: any, popup: Window ): void;
 }
 
-const openPopup = ( { url, onMessage }: OpenPopupOptions ) => {
-	let popup: Window | null;
+const openCenteredWindow = ( url: string ): Window | null => {
+	const width = 700;
+	const height = 600;
+	const top = window.screen.height / 2 - height / 2;
+	const left = window.screen.width / 2 - width / 2;
 
 	try {
-		const width = 700;
-		const height = 600;
-
-		const top = window.screen.height / 2 - height / 2;
-		const left = window.screen.width / 2 - width / 2;
-
-		popup = window.open(
+		return window.open(
 			url,
 			undefined,
 			`popup=1,width=${ width },height=${ height },top=${ top },left=${ left }`
 		);
 	} catch {
-		return false;
+		return null;
 	}
+};
 
-	// A blocked popup returns null rather than throwing.
+const openPopup = ( { url, onMessage }: OpenPopupOptions ) => {
+	const popup = openCenteredWindow( url );
+
 	if ( ! popup ) {
 		return false;
 	}
