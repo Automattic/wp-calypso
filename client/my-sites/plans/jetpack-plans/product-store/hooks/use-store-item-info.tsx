@@ -254,7 +254,7 @@ export const useStoreItemInfo = ( {
 				// "Manage plan/Subscription" URL (`/me/purchases/:site/:productId`) - handled by getCheckoutURL.
 				if ( getIsOwned( item ) || getIsIncludedInPlan( item ) ) {
 					recordTracksEvent( 'calypso_pricing_manage_owned_product_click', {
-						productSlug: item.productSlug,
+						product_slug: item.productSlug,
 					} );
 					return;
 				}
@@ -272,7 +272,7 @@ export const useStoreItemInfo = ( {
 
 			if ( item.type === 'item-type-plan' ) {
 				recordTracksEvent( 'calypso_pricing_purchase_bundle_click', {
-					productSlug: item.productSlug,
+					product_slug: item.productSlug,
 				} );
 				return;
 			}

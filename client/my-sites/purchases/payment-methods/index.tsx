@@ -5,7 +5,6 @@ import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Layout from 'calypso/components/layout';
@@ -52,11 +51,6 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ) {
 			{ isJetpackCloud() && <SidebarNavigation /> }
 			<DocumentHead title={ titles.paymentMethods } />
 			<PageViewTracker path="/purchases/payment-methods" title="Payment Methods" />
-			{ /* Purchases are used to render the affected subscriptions when
-				removing a payment method. As such, we need to query all of a
-				user's purchases, instead of just the site-level purchases,
-				since a payment method can be used across sites. */ }
-			<QueryUserPurchases />
 			{ ! isJetpackCloud() && (
 				<NavigationHeader
 					title={ titles.sectionTitle }
