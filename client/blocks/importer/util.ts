@@ -1,14 +1,23 @@
-import { FEATURE_UPLOAD_THEMES_PLUGINS, planHasFeature } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
 import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
 import { untrailingslashit } from 'calypso/lib/route';
-import type { Importer } from './types';
+import type { ImportJob, Importer } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 export const getImporterTypeForEngine = ( engine: Importer ) => `importer-type-${ engine }`;
 
 export function isTargetSitePlanCompatible( targetSite: SiteDetails | undefined ) {
-	const planSlug = targetSite?.plan?.product_slug;
-	return planSlug && planHasFeature( planSlug, FEATURE_UPLOAD_THEMES_PLUGINS );
+	return Boolean( targetSite?.plan?.features?.active?.includes( WPCOM_FEATURES_ATOMIC ) );
+}
+
+export function isPlanUpgradeRequiredForImport(
+	targetSite: SiteDetails | undefined,
+	job: ImportJob | undefined
+) {
+	return (
+		! isTargetSitePlanCompatible( targetSite ) &&
+		( job?.importerFileType === 'playground' || job?.importerFileType === 'jetpack_backup' )
+	);
 }
 
 export function formatSlugToURL( inputUrl: string ) {
