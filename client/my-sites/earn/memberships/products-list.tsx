@@ -191,7 +191,6 @@ function ProductsList() {
 				<>
 					<TrackComponentView eventName="calypso_earn_page_payment_plans_upgrade_button_view" />
 					<PromoCard
-						className="earn__upsell-card is-content-width"
 						variation={ PromoCardVariation.Compact }
 						icon="credit-card"
 						title={ preventWidows(

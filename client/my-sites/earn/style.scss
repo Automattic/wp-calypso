@@ -251,9 +251,9 @@ See https://dequeuniversity.com/rules/axe/4.6/link-in-text-block?application=Axe
 	max-width: 660px;
 	margin-inline: 0 auto;
 
-	/* Cards whose copy is a single sentence take its width rather than the shared
-	   measure. The rest keep the cap: the ineligible-plan copy is long enough
-	   that fit-content would resolve to the full page width. */
+	/* An upsell that is a tab's whole content has nothing beside it to line up
+	   with, so it takes its copy's width. One that sits in a stack of cards
+	   keeps the cap and aligns with them instead. */
 	&.is-content-width {
 		max-width: fit-content;
 	}
