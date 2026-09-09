@@ -25,6 +25,24 @@ const SITE_NAME = 'site';
 const PAGE = 'page';
 const NAVIGATION = 'wp_navigation';
 
+/**
+ * Reports the entity as updated, once, however many of its writes land.
+ *
+ * Called the moment the first write persists rather than at the end: a later
+ * failure keeps the checkpoint only if something is reported as applied, and
+ * that checkpoint is the landed change's only undo.
+ */
+function reportUpdated( applied: AppliedChanges, { entityName, recordId }: CheckedEntity ) {
+	let reported = false;
+
+	return () => {
+		if ( ! reported ) {
+			applied.updated.push( { entityName, recordId } );
+			reported = true;
+		}
+	};
+}
+
 /** The record without its title, for a rename the title write already covers. */
 const withoutTitle = ( record: Record< string, unknown > ) =>
 	Object.fromEntries( Object.entries( record ).filter( ( [ key ] ) => key !== 'title' ) );
@@ -185,36 +203,31 @@ async function editSiteMetadata( changes: Record< string, unknown > ): Promise< 
  * fields it carries are the discriminator. Title and metadata travel together:
  * one call can carry both, and routing on the title alone dropped the rest.
  */
-async function applySiteEdit(
-	{ entityName, recordId, record }: CheckedEntity,
-	applied: AppliedChanges
-): Promise< void > {
+async function applySiteEdit( entity: CheckedEntity, applied: AppliedChanges ): Promise< void > {
+	const { record } = entity;
 	const { title, ...metadata } = record;
-	const renaming = 'title' in record;
+	const updated = reportUpdated( applied, entity );
 
-	if ( renaming ) {
-		await setSiteTitle( flattenTitle( title ) );
-		metadata.siteTitle = flattenTitle( title );
+	if ( 'title' in record ) {
+		const siteTitle = flattenTitle( title );
 
-		// Recorded the moment it persists, before the metadata write that could
-		// still fail: an unreported change would take the checkpoint down with
-		// it and leave the new title with no undo.
-		applied.updated.push( { entityName, recordId } );
+		await setSiteTitle( siteTitle );
+		metadata.siteTitle = siteTitle;
+		updated();
 	}
 
 	await editSiteMetadata( metadata );
-
-	if ( ! renaming ) {
-		applied.updated.push( { entityName, recordId } );
-	}
+	updated();
 }
 
 /** Writes one page, post, product or menu record. */
 async function applyRecordEdit(
-	{ entityType, entityName, recordId, record, options }: CheckedEntity,
+	entity: CheckedEntity,
 	applied: AppliedChanges,
 	recorder: CheckpointRecorder
 ): Promise< void > {
+	const { entityType, entityName, recordId, record, options } = entity;
+	const updated = reportUpdated( applied, entity );
 	const previousTitle = entityName === PAGE ? await getPageTitle( recordId ) : '';
 	const nextTitle = flattenTitle( record.title );
 
@@ -241,6 +254,7 @@ async function applyRecordEdit(
 		// otherwise leave a checkpoint offering to undo a rename that never
 		// happened, and relabel a menu item to match.
 		recorder.capturePageRename( { pageId: recordId, from: previousTitle, to: nextTitle } );
+		updated();
 	}
 
 	if ( Object.keys( recordToWrite ).length ) {
@@ -252,7 +266,7 @@ async function applyRecordEdit(
 		} );
 	}
 
-	applied.updated.push( { entityName, recordId } );
+	updated();
 
 	if ( isRename ) {
 		await renameNavigationItem( recordId, nextTitle, previousTitle );
