@@ -301,6 +301,21 @@ describe( 'editEntityRecordCallback', () => {
 		expect( hasCheckpoint( 'call-partial' ) ).toBe( true );
 	} );
 
+	// The title persisted before the content write failed, so it needs the
+	// checkpoint that undoes it — reporting nothing would take that down too.
+	it( 'reports a rename that landed before a later write in the same record failed', async () => {
+		editEntityRecord.mockRejectedValueOnce( new Error( 'content is locked' ) );
+
+		const result = await editEntityRecordCallback( {
+			toolCallId: 'call-rename-partial',
+			editEntities: [ { ...page( 8 ), record: { title: 'Contact', content: 'Hello' } } ],
+		} );
+
+		expect( setPageTitle ).toHaveBeenCalledWith( 8, 'Contact' );
+		expect( result.result.details ).toMatchObject( { updated: [ { recordId: 8 } ] } );
+		expect( hasCheckpoint( 'call-rename-partial' ) ).toBe( true );
+	} );
+
 	// The creation landed, but nothing can un-create a page, so the checkpoint
 	// holds nothing to restore and is dropped rather than offering an empty undo.
 	it( 'drops the checkpoint when only unrestorable work landed', async () => {
