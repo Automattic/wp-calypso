@@ -108,7 +108,7 @@ export function getCheckpointKeys( { editEntities }: EditEntityRecordInput ): st
 		if ( entity?.entityType === SITE_TYPE && entity?.entityName === SITE_NAME ) {
 			keys.add( checkpointKeys.SITE_METADATA );
 
-			if ( entity.record?.title ) {
+			if ( flattenTitle( entity.record?.title ) ) {
 				keys.add( checkpointKeys.SITE_TITLE );
 			}
 		}
@@ -225,10 +225,6 @@ async function applyDeletes( entities: EntityRef[], applied: AppliedChanges ): P
 			continue;
 		}
 
-		if ( entityName === PAGE ) {
-			await removeNavigationItem( recordId );
-		}
-
 		// TODO (ability-migration): Leave the page being deleted, once
 		// `editor-navigate` lands and can route to the home page. Deleting the
 		// page currently open leaves the editor showing one that is gone.
@@ -246,6 +242,12 @@ async function applyDeletes( entities: EntityRef[], applied: AppliedChanges ): P
 		 ).getEditedEntityRecord( entityType, entityName, recordId );
 
 		await coreDispatch().deleteEntityRecord( entityType, entityName, recordId, options );
+
+		// After the delete, never before: the menu write persists, so removing
+		// the item first would strip it for good if the delete then failed.
+		if ( entityName === PAGE ) {
+			await removeNavigationItem( recordId );
+		}
 
 		applied.deleted.push( { entityName, recordId } );
 	}
