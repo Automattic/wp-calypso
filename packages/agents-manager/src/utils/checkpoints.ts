@@ -150,9 +150,6 @@ async function restoreSiteMetadataSnapshot( checkpoint: CheckpointRecord ): Prom
 		throw new Error( 'Checkpoint has no site-metadata snapshot to restore.' );
 	}
 
-	// Replaced, not merged: merging would leave behind any key the change
-	// introduced, so the undo would put the old values back and keep the new
-	// ones too.
 	await replaceSiteMetadata( checkpoint.siteMetadataBeforeUpdate );
 }
 

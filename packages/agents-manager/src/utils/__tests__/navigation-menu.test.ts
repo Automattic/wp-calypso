@@ -166,14 +166,15 @@ describe( 'removeNavigationItem', () => {
 } );
 
 describe( 'menu selection', () => {
-	// What the user is looking at is what they mean.
-	it( 'prefers a rendered menu over the one site metadata names', async () => {
+	// A page linked from both the header and the footer has to be renamed in
+	// both, or one menu keeps the old label. Rendered menus come first.
+	it( 'renames the page in every menu that holds it', async () => {
 		( getSiteMetadata as jest.Mock ).mockReturnValue( { navigationId: 99 } );
 		withMenus( { 10: [ link( 7, 'About' ) ], 99: [ link( 7, 'About' ) ] }, [ '10' ] );
 
 		await renameNavigationItem( 7, 'About us' );
 
-		expect( lastWrite().menuId ).toBe( 10 );
+		expect( editEntityRecord.mock.calls.map( ( call ) => call[ 2 ] ) ).toEqual( [ 10, 99 ] );
 	} );
 
 	it( 'falls back to the metadata menu when the editor renders none', async () => {
