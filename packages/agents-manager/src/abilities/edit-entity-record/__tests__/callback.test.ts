@@ -265,7 +265,9 @@ describe( 'editEntityRecordCallback', () => {
 		await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
 
 		expect( removeNavigationItem ).toHaveBeenCalledWith( 7, 'About' );
-		expect( deleteEntityRecord ).toHaveBeenCalledWith( 'postType', 'page', 7, {
+		// The options go in the fifth argument: the fourth is the request's query
+		// args, where `throwOnError` would be ignored.
+		expect( deleteEntityRecord ).toHaveBeenCalledWith( 'postType', 'page', 7, undefined, {
 			throwOnError: true,
 		} );
 	} );
@@ -336,6 +338,22 @@ describe( 'editEntityRecordCallback', () => {
 
 		expect( result.result.success ).toBe( false );
 		expect( result.result.error ).toContain( 'Unsupported entity: root/page' );
+	} );
+
+	// `editEntityRecord()` reads the persisted record to tell a real change from
+	// a no-op, and throws on one that was never fetched.
+	it( 'refuses a record it cannot read', async () => {
+		( resolveSelect as jest.Mock ).mockReturnValue( {
+			getEditedEntityRecord: jest.fn().mockResolvedValue( undefined ),
+		} );
+
+		const result = await editEntityRecordCallback( {
+			editEntities: [ { ...page( 7 ), record: { content: 'Hello' } } ],
+		} );
+
+		expect( result.result.success ).toBe( false );
+		expect( result.result.error ).toContain( 'Cannot edit page 7' );
+		expect( editEntityRecord ).not.toHaveBeenCalled();
 	} );
 
 	// The site is a singleton at `/wp/v2/settings`. Saving or deleting it here
