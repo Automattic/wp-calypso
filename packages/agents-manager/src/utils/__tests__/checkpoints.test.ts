@@ -508,9 +508,7 @@ describe( 'setReciprocalCheckpoint', () => {
 			menusBeforeUpdate,
 		} ) as never;
 
-	// The redo has to return to the title the undo is about to overwrite, which
-	// is whatever the page carries now — not the one the target recorded, since
-	// the page may have been renamed again since.
+	// The redo returns to the title the undo is about to overwrite.
 	it( 'records each renamed page once, at its current title', async () => {
 		const { setReciprocalCheckpoint, getCheckpoint } = await loadCheckpoints();
 		jest.requireMock( '@wordpress/data' ).resolveSelect.mockReturnValue( {

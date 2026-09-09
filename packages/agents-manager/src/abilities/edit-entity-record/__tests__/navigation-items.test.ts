@@ -148,8 +148,7 @@ it( 'keeps children the input does not mention', async () => {
 	expect( blocks[ 0 ].name ).toBe( SUBMENU );
 } );
 
-// A menu can hold a Page List, Search or Social Links block. Preserving a
-// submenu's children must not retype them as navigation links.
+// Preserving a submenu's children must not retype the other blocks a menu holds.
 it( 'keeps the type of preserved blocks that are not menu links', async () => {
 	withMenu( [
 		{
@@ -164,8 +163,7 @@ it( 'keeps the type of preserved blocks that are not menu links', async () => {
 	expect( blocks[ 0 ].innerBlocks[ 0 ].name ).toBe( 'core/page-list' );
 } );
 
-// The schema stops validating below the first level, so a nested `items` can
-// arrive as any shape at all.
+// The schema stops validating below the first level.
 it( 'ignores a nested items value that is not an array', async () => {
 	withMenu( [ item( 'a', 'About' ) ] );
 
