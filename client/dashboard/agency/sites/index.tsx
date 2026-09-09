@@ -21,8 +21,11 @@ const AGENCY_LAYOUTS: SupportedLayouts = {
 		descriptionField: 'URL',
 	},
 	grid: {
+		layout: {
+			previewSize: 290,
+		},
 		showMedia: true,
-		mediaField: 'site_icon',
+		mediaField: 'preview',
 		titleField: 'name',
 		descriptionField: 'URL',
 	},
@@ -34,7 +37,7 @@ const DEFAULT_VIEW = {
 	mediaField: 'site_icon',
 	titleField: 'name',
 	descriptionField: 'URL',
-	fields: [ 'agency_boost', 'agency_backup' ],
+	fields: [ 'backup' ],
 	sort: { field: 'URL', direction: 'asc' },
 } as View;
 
