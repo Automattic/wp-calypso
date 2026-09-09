@@ -17,6 +17,15 @@ import type { Block } from '@wordpress/blocks';
 /** A menu item: `core/navigation-link`, or a submenu holding more of them. */
 export type NavigationBlock = Block< Record< string, unknown > >;
 
+/** A menu's post id, as block attributes and site metadata carry it. */
+export type MenuId = number | string;
+
+const isMenuId = ( value: unknown ): value is MenuId =>
+	( typeof value === 'number' || typeof value === 'string' ) && !! value;
+
+/** Ids arrive from block attributes and from metadata, so a `19` can meet a `'19'`. */
+export const isSameMenuId = ( a: MenuId, b: MenuId ): boolean => String( a ) === String( b );
+
 interface NavigationRecord {
 	id?: number | string;
 	blocks?: NavigationBlock[];
@@ -83,24 +92,24 @@ const getItems = ( record: NavigationRecord ): NavigationBlock[] => {
  */
 // TODO (ability-migration): `editor-navigate` reads the same refs for its menu
 // refresh. Whichever of the two lands second should call this instead.
-function getRenderedMenuIds(): unknown[] {
+function getRenderedMenuIds(): MenuId[] {
 	const blockEditor = select( BLOCK_EDITOR_STORE ) as unknown as BlockEditorSelect | undefined;
 
 	return [
 		...new Set(
 			( blockEditor?.getBlocksByName?.( NAVIGATION_BLOCK ) ?? [] )
 				.map( ( clientId ) => blockEditor?.getBlock?.( clientId )?.attributes?.ref )
-				.filter( Boolean )
+				.filter( isMenuId )
 		),
 	];
 }
 
 /** Every menu worth searching for a page, the rendered ones first. */
-function getMenuIds(): unknown[] {
+function getMenuIds(): MenuId[] {
 	const rendered = getRenderedMenuIds();
 	const fromMetadata = getSiteMetadata()?.navigationId;
 
-	if ( ! fromMetadata || rendered.includes( fromMetadata ) ) {
+	if ( ! isMenuId( fromMetadata ) || rendered.some( ( id ) => isSameMenuId( id, fromMetadata ) ) ) {
 		return rendered;
 	}
 
@@ -114,17 +123,19 @@ function getMenuIds(): unknown[] {
  * and footer alike, so a new page could land in the footer. A rendered menu is
  * the fallback for a site that names none.
  */
-function getMenuIdForNewPage(): unknown {
-	return getSiteMetadata()?.navigationId ?? getRenderedMenuIds()[ 0 ];
+function getMenuIdForNewPage(): MenuId | undefined {
+	const fromMetadata = getSiteMetadata()?.navigationId;
+
+	return isMenuId( fromMetadata ) ? fromMetadata : getRenderedMenuIds()[ 0 ];
 }
 
-const readMenu = async ( id: unknown ): Promise< NavigationRecord | null > => {
+const readMenu = async ( id: MenuId ): Promise< NavigationRecord | null > => {
 	const record = await (
 		resolveSelect( coreStore ) as unknown as {
 			getEditedEntityRecord: (
 				kind: string,
 				name: string,
-				id: unknown
+				id: MenuId
 			) => Promise< NavigationRecord | null >;
 		}
 	 ).getEditedEntityRecord( 'postType', 'wp_navigation', id );
@@ -132,7 +143,7 @@ const readMenu = async ( id: unknown ): Promise< NavigationRecord | null > => {
 	return record || null;
 };
 
-export const writeMenuItems = async ( id: unknown, items: NavigationBlock[] ): Promise< void > => {
+export const writeMenuItems = async ( id: MenuId, items: NavigationBlock[] ): Promise< void > => {
 	const coreDispatch = dispatch( coreStore ) as unknown as CoreDispatch | undefined;
 
 	if ( ! coreDispatch ) {
@@ -142,7 +153,7 @@ export const writeMenuItems = async ( id: unknown, items: NavigationBlock[] ): P
 	await coreDispatch.editEntityRecord(
 		'postType',
 		'wp_navigation',
-		id as number | string,
+		id,
 		{ blocks: items, content: serialize( items ) },
 		// Kept out of the editor's undo stack, as every other agent write is:
 		// `restore-checkpoint` is the undo the agent offers.
@@ -157,7 +168,7 @@ export const writeMenuItems = async ( id: unknown, items: NavigationBlock[] ): P
  * serialized `content`, so a caller reading `record.blocks` directly would see
  * nothing and conclude the menu was empty.
  */
-export async function readMenuItems( id: unknown ): Promise< NavigationBlock[] | null > {
+export async function readMenuItems( id: MenuId ): Promise< NavigationBlock[] | null > {
 	const menu = await readMenu( id );
 
 	return menu ? getItems( menu ) : null;
@@ -241,16 +252,13 @@ const matchesPage =
  * Errors are suppressed by default, which would report a menu change that never
  * reached the server as a success.
  */
-const saveMenu = async ( id: unknown, previous: NavigationBlock[] ): Promise< void > => {
+const saveMenu = async ( id: MenuId, previous: NavigationBlock[] ): Promise< void > => {
 	const coreDispatch = dispatch( coreStore ) as unknown as CoreDispatch | undefined;
 
 	try {
-		await coreDispatch?.saveEditedEntityRecord(
-			'postType',
-			'wp_navigation',
-			id as number | string,
-			{ throwOnError: true }
-		);
+		await coreDispatch?.saveEditedEntityRecord( 'postType', 'wp_navigation', id, {
+			throwOnError: true,
+		} );
 	} catch ( error ) {
 		await writeMenuItems( id, previous );
 
@@ -345,15 +353,15 @@ async function rewriteMenusHolding(
 export async function getMenuIdsHolding(
 	pageId: number | string,
 	previousLabel?: string
-): Promise< ( number | string )[] > {
+): Promise< MenuId[] > {
 	const matches = matchesPage( pageId, previousLabel );
-	const holding: ( number | string )[] = [];
+	const holding: MenuId[] = [];
 
 	for ( const menuId of getMenuIds() ) {
 		const menu = await readMenu( menuId );
 
 		if ( menu && someItem( getItems( menu ), matches ) ) {
-			holding.push( menuId as number | string );
+			holding.push( menuId );
 		}
 	}
 
@@ -392,9 +400,16 @@ export async function renameNavigationItem(
 /**
  * Removes a deleted page's menu item, wherever it sits. Submenus included: an
  * item left behind there points at a page that no longer exists.
+ *
+ * `previousLabel` is the page's title before the delete, which is how an item
+ * carrying no page id is matched — the same fallback `renameNavigationItem()`
+ * relies on.
  */
-export async function removeNavigationItem( pageId: number | string ): Promise< void > {
-	const matches = matchesPage( pageId );
+export async function removeNavigationItem(
+	pageId: number | string,
+	previousLabel?: string
+): Promise< void > {
+	const matches = matchesPage( pageId, previousLabel );
 
 	await rewriteMenusHolding( ( items ) => {
 		let removed = false;
