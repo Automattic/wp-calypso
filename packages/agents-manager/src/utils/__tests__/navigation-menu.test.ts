@@ -100,7 +100,7 @@ describe( 'renameNavigationItem', () => {
 		expect( lastWrite().items[ 1 ].attributes.label ).toBe( 'About us' );
 	} );
 
-	it( 'stops at the menu holding the page, leaving the others alone', async () => {
+	it( 'writes only the menus that hold the page', async () => {
 		withMenus( { 10: [ link( 1, 'Home' ) ], 20: [ link( 7, 'About' ) ] } );
 
 		await renameNavigationItem( 7, 'About us' );
