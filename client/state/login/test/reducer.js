@@ -600,9 +600,9 @@ describe( 'reducer', () => {
 				'/log-in/link',
 				'/log-in/link/fr',
 				'/log-in/jetpack/link',
-				'/log-in/new/link',
 				'/log-in/lostpassword',
 				'/log-in/jetpack/lostpassword',
+				'/log-in/jetpack/lostpassword/de',
 			] )( 'should reset linking mode when navigating to %s', ( path ) => {
 				const newState = socialAccountLink( linkingState, { type: ROUTE_SET, path, query: {} } );
 

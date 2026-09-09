@@ -1,3 +1,4 @@
+import { removeLocaleFromPath } from '@automattic/i18n-utils';
 import { pick, isEmpty } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
 import { login } from 'calypso/lib/paths';
@@ -402,8 +403,15 @@ const userExistsErrorHandler = ( state, { error, authInfo } ) => {
 // Linking can only complete through the password (or 2FA) path. Requesting a
 // magic link or a password reset ends in a full page load, so the pending
 // social auth info would be lost anyway.
+const socialAccountLinkAbandonPaths = [
+	login( { twoFactorAuthType: 'link' } ),
+	login( { twoFactorAuthType: 'link', isJetpack: true } ),
+	login( { action: 'lostpassword' } ),
+	login( { action: 'jetpack/lostpassword' } ),
+];
+
 const isAbandoningSocialAccountLinkPath = ( path ) =>
-	/^\/log-in\/(?:jetpack\/|new\/)?(?:link|lostpassword)\b/.test( path );
+	socialAccountLinkAbandonPaths.includes( removeLocaleFromPath( path ) );
 
 export const socialAccountLink = ( state = { isLinking: false }, action ) => {
 	switch ( action.type ) {
