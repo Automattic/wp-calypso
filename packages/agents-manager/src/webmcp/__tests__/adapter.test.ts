@@ -1,4 +1,5 @@
 import * as blocks from '@wordpress/blocks';
+import { findAbilityByName } from '../../abilities/ability-name';
 import { createWebMcpAdapter } from '../adapter';
 import type { Ability } from '../../abilities/types';
 import type { ToolProvider } from '../../extension-types';
@@ -78,7 +79,16 @@ function createHarness( initialAbilities: Ability[] = [ createAbility() ] ) {
 			signals.set( tool.name, options?.signal );
 		} ),
 	};
-	const adapter = createWebMcpAdapter( { toolProvider, modelContext } );
+	const adapter = createWebMcpAdapter( {
+		toolProvider: {
+			getAbilities: toolProvider.getAbilities,
+			resolveAbility: async ( name ) => {
+				const ability = findAbilityByName( await toolProvider.getAbilities(), name );
+				return ability && { ability, provider: toolProvider };
+			},
+		},
+		modelContext,
+	} );
 
 	return {
 		adapter,

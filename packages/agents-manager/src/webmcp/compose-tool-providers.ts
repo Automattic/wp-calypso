@@ -7,17 +7,21 @@ type ProvidedAbility = {
 	provider: ToolProvider;
 };
 
+export type WebMcpToolProvider = {
+	getAbilities: ToolProvider[ 'getAbilities' ];
+	resolveAbility: ( name: string ) => Promise< ProvidedAbility | undefined >;
+};
+
 /**
  * Merges the sources first-wins by ability name: the first source to list an
- * ability defines it and executes it, mirroring the rule of the chat provider
- * chain. The owner is resolved live on every call, so a source that arrives
- * later or changes its list takes effect without re-registration. A source
- * that fails to load is reported and skipped, so the others keep serving.
+ * ability defines it and executes it. Resolution returns the definition and
+ * owner together so validation and dispatch cannot select different sources.
+ * Each call resolves live; failed sources are reported and skipped.
  */
 export function mergeToolProviders(
 	getProviders: () => ToolProvider[],
 	onError: ( error: unknown ) => void
-): ToolProvider {
+): WebMcpToolProvider {
 	const collect = async (): Promise< Map< string, ProvidedAbility > > => {
 		const providers = getProviders();
 		const results = await Promise.all(
@@ -45,18 +49,13 @@ export function mergeToolProviders(
 
 	return {
 		getAbilities: async () => [ ...( await collect() ).values() ].map( ( { ability } ) => ability ),
-		executeAbility: async ( name, input ) => {
+		resolveAbility: async ( name ) => {
 			const merged = await collect();
 			const ability = findAbilityByName(
 				[ ...merged.values() ].map( ( entry ) => entry.ability ),
 				name
 			);
-			const owner = ability && merged.get( ability.name )?.provider;
-			if ( ! owner ) {
-				throw new Error( `No tool provider handles the ability: ${ name }` );
-			}
-
-			return owner.executeAbility( name, input );
+			return ability ? merged.get( ability.name ) : undefined;
 		},
 	};
 }

@@ -1,4 +1,4 @@
-import { findAbilityByName, normalizeAbilityName } from '../abilities/ability-name';
+import { normalizeAbilityName } from '../abilities/ability-name';
 import {
 	getWebMcpContract,
 	getWebMcpDescription,
@@ -10,14 +10,14 @@ import {
 	selectExposedAbilities,
 	shouldExposeWebMcpAbility,
 } from './exposure';
-import type { Ability } from '../abilities/types';
-import type { ToolProvider } from '../extension-types';
+import type { WebMcpToolProvider } from './compose-tool-providers';
 import type {
 	WebMcpAdapter,
 	WebMcpExecutionContext,
 	WebMcpModelContext,
 	WebMcpTool,
 } from './types';
+import type { Ability } from '../abilities/types';
 
 type Registration = {
 	abortController: AbortController;
@@ -26,7 +26,7 @@ type Registration = {
 };
 
 type CreateWebMcpAdapterOptions = {
-	toolProvider: ToolProvider;
+	toolProvider: WebMcpToolProvider;
 	modelContext: WebMcpModelContext;
 };
 
@@ -107,10 +107,8 @@ export function createWebMcpAdapter( {
 		}
 	};
 
-	// The browser agent picked the tool from the descriptor it was shown. The
-	// live winner for that ability name is read again before dispatch, so a
-	// definition that changed, opted out, or went away since the last reconcile
-	// is rejected, and the tools are reconciled for a fresh discovery.
+	// Resolve the definition and owner together: another lookup after validation
+	// could switch to a recovered source with different exposure or hints.
 	const createExecution =
 		( ability: Ability, registration: Registration ): WebMcpTool[ 'execute' ] =>
 		async ( input, options ) => {
@@ -120,11 +118,11 @@ export function createWebMcpAdapter( {
 				throw createAbortError();
 			}
 
-			const liveAbility = findAbilityByName( await toolProvider.getAbilities(), ability.name );
+			const resolved = await toolProvider.resolveAbility( ability.name );
 			if (
-				! liveAbility ||
-				! shouldExposeWebMcpAbility( liveAbility ) ||
-				JSON.stringify( getToolDescriptor( liveAbility ) ) !== fingerprint
+				! resolved ||
+				! shouldExposeWebMcpAbility( resolved.ability ) ||
+				JSON.stringify( getToolDescriptor( resolved.ability ) ) !== fingerprint
 			) {
 				await sync().catch( () => {} );
 				throw new Error(
@@ -135,12 +133,12 @@ export function createWebMcpAdapter( {
 				throw createAbortError();
 			}
 
-			const contract = getWebMcpContract( ability );
+			const contract = getWebMcpContract( resolved.ability );
 			const rawInput = input ?? {};
 			const preparedInput = contract.prepareInput
 				? contract.prepareInput( rawInput, context )
 				: rawInput;
-			const result = await toolProvider.executeAbility( ability.name, preparedInput );
+			const result = await resolved.provider.executeAbility( resolved.ability.name, preparedInput );
 			contract.afterExecute?.( result, context );
 
 			return contract.adaptResult ? contract.adaptResult( result ) : result;

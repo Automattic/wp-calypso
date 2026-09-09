@@ -196,6 +196,75 @@ describe( 'mountWebMcpTools', () => {
 		expect( apiFetch ).toHaveBeenLastCalledWith( expect.objectContaining( { method: 'POST' } ) );
 	} );
 
+	it.each( [
+		{ label: 'a mutating tool', public: true },
+		{ label: 'an opt-out', public: false },
+	] )( 'keeps the validated registry owner when REST recovers with $label', async ( recovery ) => {
+		const readAbility: Ability = {
+			...ability,
+			name: 'demo/read-note',
+			meta: { public: true, annotations: { clientRegistered: true, readonly: true } },
+		};
+		jest.mocked( getAbilities ).mockReturnValue( [ readAbility ] );
+		jest.mocked( executeAbility ).mockResolvedValue( { from: 'registry' } );
+		jest
+			.mocked( apiFetch )
+			.mockRejectedValueOnce( new Error( 'Initial discovery failed' ) )
+			.mockRejectedValueOnce( new Error( 'Pre-dispatch discovery failed' ) )
+			.mockResolvedValueOnce( [
+				{
+					...readAbility,
+					meta: {
+						webmcp: { public: recovery.public, consequential: true },
+						annotations: { readonly: false },
+					},
+				},
+			] )
+			.mockResolvedValue( {} );
+		const harness = createHarness();
+		await harness.runtime.sync();
+		const original = harness.registrations[ 0 ];
+		expect( original.tool.annotations.readOnlyHint ).toBe( true );
+
+		await expect( original.tool.execute( {} ) ).resolves.toEqual( { from: 'registry' } );
+		expect( executeAbility ).toHaveBeenCalledWith( readAbility.name, {} );
+		expect( apiFetch ).toHaveBeenCalledTimes( 2 );
+
+		await expect( original.tool.execute( {} ) ).rejects.toThrow( 'WebMCP tool changed' );
+		expect( executeAbility ).toHaveBeenCalledTimes( 1 );
+		expect( apiFetch ).toHaveBeenCalledTimes( 3 );
+		expect( apiFetch ).not.toHaveBeenCalledWith( expect.objectContaining( { method: 'POST' } ) );
+		expect( original.signal?.aborted ).toBe( true );
+	} );
+
+	it( 'keeps the validated provider when the provider changes during lookup', async () => {
+		const first: ToolProvider = {
+			getAbilities: jest.fn( async () => [ ability ] ),
+			executeAbility: jest.fn( async () => ( { from: 'first' } ) ),
+		};
+		const second: ToolProvider = {
+			getAbilities: async () => [ { ...ability, meta: { webmcp: { public: false } } } ],
+			executeAbility: jest.fn(),
+		};
+		const harness = createHarness( first );
+		await harness.runtime.sync();
+		let finishRead: ( abilities: Ability[] ) => void = () => {};
+		jest.mocked( first.getAbilities ).mockImplementationOnce(
+			() =>
+				new Promise( ( resolve ) => {
+					finishRead = resolve;
+				} )
+		);
+
+		const execution = harness.registrations[ 0 ].tool.execute( {} );
+		harness.setProvider( second );
+		finishRead( [ ability ] );
+
+		await expect( execution ).resolves.toEqual( { from: 'first' } );
+		expect( first.executeAbility ).toHaveBeenCalledTimes( 1 );
+		expect( second.executeAbility ).not.toHaveBeenCalled();
+	} );
+
 	it( 'dispatches to the live owner when the provider changes with identical metadata', async () => {
 		const first: ToolProvider = {
 			getAbilities: async () => [ ability ],
