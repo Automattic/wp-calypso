@@ -166,11 +166,24 @@ describe( 'SiteMigrationImportProgress', () => {
 			await waitFor( () => expect( create.isDone() ).toBe( true ) );
 		} );
 
+		it( "creates a session even though Stepper's own sessionId is in the URL", async () => {
+			// Stepper puts `sessionId` on every step URL as its flow-state key
+			// (utils/use-session-id). This step must not mistake that for an import
+			// session: doing so polled Stepper's short id, 404ed, and — because the
+			// value was truthy — skipped creating a session at all.
+			const create = mockCreate();
+			mockSessionForever( 'capturing' );
+
+			render( { search: `sessionId=xt&from=${ encodeURIComponent( SOURCE_URL ) }` } );
+
+			await waitFor( () => expect( create.isDone() ).toBe( true ) );
+		} );
+
 		it( 'polls an existing session without creating another one', async () => {
 			mockSessionForever( 'capturing' );
 
 			render( {
-				search: `sessionId=${ SESSION_ID }&from=${ encodeURIComponent( SOURCE_URL ) }`,
+				search: `importSessionId=${ SESSION_ID }&from=${ encodeURIComponent( SOURCE_URL ) }`,
 			} );
 
 			await waitFor( () =>
@@ -184,7 +197,7 @@ describe( 'SiteMigrationImportProgress', () => {
 			mockSiteId = undefined;
 			mockSessionForever( 'capturing' );
 
-			render( { search: `sessionId=${ SESSION_ID }` } );
+			render( { search: `importSessionId=${ SESSION_ID }` } );
 
 			await waitFor( () =>
 				expect( screen.getByRole( 'heading', { name: 'Reading your site' } ) ).toBeVisible()
@@ -253,7 +266,7 @@ describe( 'SiteMigrationImportProgress', () => {
 			mockSessionForever( 'preview_ready', ARCHIVE_HASH );
 			const approveCalls = mockApprove();
 
-			render( { search: `sessionId=${ SESSION_ID }&archiveHash=${ ARCHIVE_HASH }` } );
+			render( { search: `importSessionId=${ SESSION_ID }&archiveHash=${ ARCHIVE_HASH }` } );
 
 			await waitFor( () => expect( approveCalls ).toHaveLength( 1 ) );
 			expect( approveCalls[ 0 ] ).toEqual( {
@@ -270,7 +283,7 @@ describe( 'SiteMigrationImportProgress', () => {
 			mockSessionForever( 'preview_ready', 'b'.repeat( 64 ) );
 			const approveCalls = mockApprove();
 
-			render( { search: `sessionId=${ SESSION_ID }&archiveHash=${ ARCHIVE_HASH }` } );
+			render( { search: `importSessionId=${ SESSION_ID }&archiveHash=${ ARCHIVE_HASH }` } );
 
 			await settle( 50 );
 			expect( approveCalls ).toHaveLength( 0 );
@@ -280,7 +293,7 @@ describe( 'SiteMigrationImportProgress', () => {
 			mockSessionForever( 'preview_ready', ARCHIVE_HASH );
 			const approveCalls = mockApprove();
 
-			render( { search: `sessionId=${ SESSION_ID }` } );
+			render( { search: `importSessionId=${ SESSION_ID }` } );
 
 			await waitFor( () =>
 				expect( screen.getByRole( 'heading', { name: 'Ready to move your site' } ) ).toBeVisible()
@@ -295,7 +308,7 @@ describe( 'SiteMigrationImportProgress', () => {
 			mockSessionForever( 'preview_ready', ARCHIVE_HASH );
 			const approveCalls = mockApprove();
 
-			render( { search: `sessionId=${ SESSION_ID }` } );
+			render( { search: `importSessionId=${ SESSION_ID }` } );
 
 			await userEvent.click( await screen.findByRole( 'button', { name: 'Start the import' } ) );
 
@@ -310,7 +323,7 @@ describe( 'SiteMigrationImportProgress', () => {
 			mockSiteId = undefined;
 			mockSessionForever( 'preview_ready', ARCHIVE_HASH );
 
-			render( { search: `sessionId=${ SESSION_ID }` } );
+			render( { search: `importSessionId=${ SESSION_ID }` } );
 
 			expect( await screen.findByRole( 'button', { name: 'Start the import' } ) ).toBeDisabled();
 		} );
@@ -321,7 +334,7 @@ describe( 'SiteMigrationImportProgress', () => {
 			mockSessionForever( 'preview_ready', ARCHIVE_HASH );
 			const approveCalls = mockApprove( 409, code );
 
-			render( { search: `sessionId=${ SESSION_ID }&archiveHash=${ ARCHIVE_HASH }` } );
+			render( { search: `importSessionId=${ SESSION_ID }&archiveHash=${ ARCHIVE_HASH }` } );
 
 			await waitFor( () => expect( approveCalls ).toHaveLength( 1 ) );
 			return approveCalls;
@@ -409,7 +422,7 @@ describe( 'SiteMigrationImportProgress', () => {
 		it( 'shows the failure copy when the session fails', async () => {
 			mockSessionForever( 'failed' );
 
-			render( { search: `sessionId=${ SESSION_ID }&archiveHash=${ ARCHIVE_HASH }` } );
+			render( { search: `importSessionId=${ SESSION_ID }&archiveHash=${ ARCHIVE_HASH }` } );
 
 			await waitFor( () =>
 				expect(
@@ -426,7 +439,7 @@ describe( 'SiteMigrationImportProgress', () => {
 			const submit = jest.fn();
 
 			render( {
-				search: `sessionId=${ SESSION_ID }&archiveHash=${ ARCHIVE_HASH }`,
+				search: `importSessionId=${ SESSION_ID }&archiveHash=${ ARCHIVE_HASH }`,
 				navigation: { submit },
 			} );
 
@@ -458,7 +471,7 @@ describe( 'SiteMigrationImportProgress', () => {
 				} );
 
 			render( {
-				search: `sessionId=${ SESSION_ID }&archiveHash=${ ARCHIVE_HASH }`,
+				search: `importSessionId=${ SESSION_ID }&archiveHash=${ ARCHIVE_HASH }`,
 				navigation: { submit },
 			} );
 

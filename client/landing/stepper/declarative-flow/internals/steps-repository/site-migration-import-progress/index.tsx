@@ -97,7 +97,14 @@ const SiteMigrationImportProgress: StepType< {
 
 	/** The address the user gave at the start of the flow. */
 	const sourceUrl = searchParams.get( 'from' ) ?? get( 'site-migration-identify' )?.from ?? '';
-	const sessionId = searchParams.get( 'sessionId' ) ?? persisted?.sessionId ?? '';
+	/**
+	 * Deliberately not `sessionId`: Stepper already owns that query parameter for
+	 * its own flow-state key (see utils/use-session-id), and it is present on
+	 * every step URL. Reading it here picked up Stepper's short id, polled it as
+	 * an import session — a guaranteed 404 — and, because it was truthy, made the
+	 * create-on-mount effect below bail out, so no session was ever created.
+	 */
+	const sessionId = searchParams.get( 'importSessionId' ) ?? persisted?.sessionId ?? '';
 
 	/**
 	 * The archive hash the user actually reviewed. Approval is hash-bound, so
@@ -118,7 +125,7 @@ const SiteMigrationImportProgress: StepType< {
 			set( SLUG, merged );
 
 			const params = new URLSearchParams( searchParams );
-			params.set( 'sessionId', merged.sessionId );
+			params.set( 'importSessionId', merged.sessionId );
 			if ( merged.archiveHash ) {
 				params.set( 'archiveHash', merged.archiveHash );
 			}
