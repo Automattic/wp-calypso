@@ -65,14 +65,24 @@ export async function saveSiteFields( edits: SiteRecord ): Promise< void > {
 		throw new Error( UNAVAILABLE );
 	}
 
+	const fields = Object.keys( edits );
+	const site = getSiteRecord();
+	const previous = Object.fromEntries( fields.map( ( field ) => [ field, site?.[ field ] ] ) );
+
 	coreDispatch.editEntityRecord( 'root', 'site', undefined, edits, { undoIgnore: true } );
-	await coreDispatch.__experimentalSaveSpecifiedEntityEdits(
-		'root',
-		'site',
-		undefined,
-		Object.keys( edits ),
-		{ throwOnError: true }
-	);
+
+	try {
+		await coreDispatch.__experimentalSaveSpecifiedEntityEdits( 'root', 'site', undefined, fields, {
+			throwOnError: true,
+		} );
+	} catch ( error ) {
+		// The edit is already applied locally, and `undoIgnore` keeps it out of
+		// the editor's stack, so a failed save would strand a value with no undo
+		// of any kind — the checkpoint goes too, since the write threw.
+		coreDispatch.editEntityRecord( 'root', 'site', undefined, previous, { undoIgnore: true } );
+
+		throw error;
+	}
 }
 
 export { UNAVAILABLE as SITE_RECORD_UNAVAILABLE };

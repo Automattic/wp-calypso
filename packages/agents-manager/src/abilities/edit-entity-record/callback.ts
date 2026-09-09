@@ -9,7 +9,7 @@ import {
 	removeNavigationItem,
 	renameNavigationItem,
 } from '../../utils/navigation-menu';
-import { getPageTitle } from '../../utils/page-title';
+import { getPageTitle, setPageTitle } from '../../utils/page-title';
 import { logSiteMetadata, logSiteSession } from '../../utils/session-log';
 import { setSiteMetadata } from '../../utils/site-metadata';
 import { setSiteTitle } from '../../utils/site-title';
@@ -24,6 +24,10 @@ const SITE_NAME = 'site';
 
 const PAGE = 'page';
 const NAVIGATION = 'wp_navigation';
+
+/** The record without its title, for a rename the title write already covers. */
+const withoutTitle = ( record: Record< string, unknown > ) =>
+	Object.fromEntries( Object.entries( record ).filter( ( [ key ] ) => key !== 'title' ) );
 
 interface EntityRef {
 	entityType?: string;
@@ -213,11 +217,10 @@ async function applyEdits(
 		// title clears the page name, and that is as restorable as any rename.
 		const isRename = entityName === PAGE && 'title' in record && nextTitle !== previousTitle;
 
-		if ( isRename ) {
-			recorder.capturePageRename( { pageId: recordId, from: previousTitle, to: nextTitle } );
-		}
-
-		let recordToWrite = record;
+		// The title is checkpointed, so it goes through `setPageTitle` and stays
+		// out of the editor's undo stack. Everything else in the record is not,
+		// so the editor's stack remains its only undo and it keeps it.
+		let recordToWrite = isRename ? withoutTitle( record ) : record;
 
 		if ( entityName === NAVIGATION ) {
 			// Built before the snapshot: a refused rebuild must not leave a
@@ -226,13 +229,23 @@ async function applyEdits(
 			await recorder.captureMenu( recordId );
 		}
 
-		await coreDispatch().editEntityRecord( entityType, entityName, recordId, recordToWrite, {
-			...options,
-			// A menu edit is checkpointed, so `restore-checkpoint` is its undo and
-			// the editor's stack would be a second, competing one. Page and content
-			// edits keep the editor's, having no checkpoint to restore from.
-			...( entityName === NAVIGATION && { undoIgnore: true } ),
-		} );
+		if ( isRename ) {
+			await setPageTitle( recordId, nextTitle );
+
+			// Recorded once the rename lands, not before: an edit that rejected
+			// would otherwise leave a checkpoint offering to undo a rename that
+			// never happened, and relabel a menu item to match.
+			recorder.capturePageRename( { pageId: recordId, from: previousTitle, to: nextTitle } );
+		}
+
+		if ( Object.keys( recordToWrite ).length ) {
+			await coreDispatch().editEntityRecord( entityType, entityName, recordId, recordToWrite, {
+				...options,
+				// A menu edit is checkpointed, so `restore-checkpoint` is its undo
+				// and the editor's stack would be a second, competing one.
+				...( entityName === NAVIGATION && { undoIgnore: true } ),
+			} );
+		}
 
 		applied.updated.push( { entityName, recordId } );
 
