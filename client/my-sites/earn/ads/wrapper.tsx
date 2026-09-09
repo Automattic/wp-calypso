@@ -3,15 +3,13 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	WPCOM_FEATURES_WORDADS,
 	FEATURE_WORDADS_INSTANT,
-	Plan,
 	getPlan,
-	getPlanFeaturesObject,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
+import clsx from 'clsx';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import wordAdsImage from 'calypso/assets/images/illustrations/dotcom-wordads.svg';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import ActionCard from 'calypso/components/action-card';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -21,11 +19,19 @@ import FeatureExample from 'calypso/components/feature-example';
 import FormButton from 'calypso/components/forms/form-button';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import PromoCard, { PromoCardVariation } from 'calypso/components/promo-section/promo-card';
+import PromoCardCta from 'calypso/components/promo-section/promo-card/cta';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { preventWidows } from 'calypso/lib/formatting';
 import { WordAdsStatus } from 'calypso/my-sites/earn/ads/types';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import getSiteWordadsStatus from 'calypso/state/selectors/get-site-wordads-status';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasWordAds from 'calypso/state/selectors/site-has-wordads';
 import { canAccessWordAds, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -60,6 +66,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 	const canActivateWordAds = useSelector( ( state ) =>
 		canCurrentUser( state, site?.ID, 'activate_wordads' )
 	);
+	const isWPForTeams = useSelector( ( state ) => isSiteWPForTeams( state, site?.ID ?? null ) );
 	const requestingWordAdsApproval = useSelector( ( state ) =>
 		isRequestingWordAdsApprovalForSite( state, site )
 	);
@@ -71,6 +78,17 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 	const canUpgradeToUseWordAds = ! site?.options?.wordads && ! hasWordAdsFeature;
 	const isWordadsInstantEligibleButNotOwner =
 		! site?.options?.wordads && hasWordAdsFeature && ! canActivateWordAds;
+	// Everything the shared nudge checked before showing an upgrade. An unloaded
+	// feature list reads as an absent one, so wait for it; and a standalone Jetpack
+	// connection reads as a Jetpack site while its `jetpack` flag stays false.
+	const canShowUpsell =
+		useSelector(
+			( state ) =>
+				getFeaturesBySiteId( state, site?.ID ) !== null &&
+				Boolean( canCurrentUser( state, site?.ID, 'manage_options' ) ) &&
+				! isVipSite( state, site?.ID ?? 0 ) &&
+				! ( Boolean( isJetpackSite( state, site?.ID ) ) && ! site?.jetpack )
+		) && ! isWPForTeams;
 	const isEnrolledWithIneligiblePlan =
 		site?.options?.wordads && ! hasWordAdsFeature && wordAdsStatus === WordAdsStatus.ineligible;
 
@@ -201,64 +219,106 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 		);
 	};
 
-	const renderUpsell = () => {
-		const bannerURL = buildCheckoutURL( siteSlug as string, PLAN_PREMIUM );
-		const plan = getPlan( PLAN_PREMIUM ) as Plan;
-		const jetpackFeatures = plan?.get2023PricingGridSignupJetpackFeatures?.();
-		const jetpackFeaturesObject = getPlanFeaturesObject( jetpackFeatures );
+	const renderUpsellCard = ( {
+		title,
+		body,
+		benefits,
+		href,
+		tracksClickName,
+		ctaName,
+		learnMoreUrl,
+		fitToContent,
+	}: {
+		title: TranslateResult;
+		body: TranslateResult;
+		benefits?: TranslateResult[];
+		href: string;
+		tracksClickName: string;
+		ctaName?: string;
+		learnMoreUrl?: string;
+		fitToContent?: boolean;
+	} ) => {
+		const nudgeProperties = {
+			cta_name: ctaName,
+			cta_feature: WPCOM_FEATURES_WORDADS,
+			cta_size: 'regular',
+		};
+		const trackNudge = ( eventName: string ) =>
+			dispatch( recordTracksEvent( eventName, nudgeProperties ) );
 
 		return (
-			<UpsellNudge
-				callToAction={ translate( 'Upgrade' ) }
-				plan={ PLAN_PREMIUM }
-				title={ translate( 'Upgrade to the %(premiumPlanName)s plan and start earning', {
-					args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() || '' },
-				} ) }
-				description={ translate(
-					"By upgrading to the %(premiumPlanName)s plan, you'll be able to monetize your site through the <a href='%(url)s'>WordAds program</>.",
-					{
-						args: {
-							url: 'https://wordads.co/',
-							premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() || '',
-						},
-					}
-				) }
-				feature={ WPCOM_FEATURES_WORDADS }
-				href={ bannerURL }
-				showIcon
-				event="calypso_upgrade_nudge_impression"
-				tracksImpressionName="calypso_upgrade_nudge_impression"
-				tracksImpressionProperties={ { cta_name: undefined, cta_size: 'regular' } }
-				tracksClickName="calypso_upgrade_nudge_cta_click"
-				tracksClickProperties={ { cta_name: undefined, cta_size: 'regular' } }
-				list={ [
-					translate( 'Instantly enroll into the WordAds network.' ),
-					translate( 'Earn money from your content and traffic.' ),
-					...jetpackFeaturesObject.map( ( feature ) => feature.getTitle() ),
-				] }
-			/>
+			<>
+				<TrackComponentView
+					eventName="calypso_upgrade_nudge_impression"
+					eventProperties={ nudgeProperties }
+				/>
+				<PromoCard
+					className={ clsx( 'earn__upsell-card', {
+						'is-content-width': fitToContent,
+					} ) }
+					variation={ PromoCardVariation.Compact }
+					icon="speaker"
+					title={ preventWidows( title ) }
+				>
+					<p>{ preventWidows( body ) }</p>
+					{ benefits && (
+						<ul className="earn__upsell-card-benefits">
+							{ benefits.map( ( benefit, index ) => (
+								<li key={ index }>{ benefit }</li>
+							) ) }
+						</ul>
+					) }
+					<PromoCardCta
+						cta={ {
+							text: translate( 'Upgrade' ),
+							isPrimary: true,
+							action: {
+								url: href,
+								selfTarget: true,
+								onClick: () => trackNudge( tracksClickName ),
+							},
+						} }
+						learnMoreLink={
+							learnMoreUrl
+								? {
+										url: learnMoreUrl,
+										onClick: () => trackNudge( 'calypso_upgrade_nudge_learn_more_click' ),
+								  }
+								: null
+						}
+					/>
+				</PromoCard>
+			</>
 		);
 	};
 
-	const renderjetpackUpsell = () => {
-		const bannerURL = `/checkout/${ siteSlug }/${ PLAN_JETPACK_SECURITY_DAILY }`;
-		return (
-			<UpsellNudge
-				callToAction={ translate( 'Upgrade' ) }
-				plan={ PLAN_JETPACK_SECURITY_DAILY }
-				title={ translate( 'Upgrade and start earning' ) }
-				description={ translate(
-					'Make money each time someone visits your site by displaying ads on all your posts and pages.'
-				) }
-				href={ bannerURL }
-				feature={ WPCOM_FEATURES_WORDADS }
-				showIcon
-				event="calypso_upgrade_nudge_impression"
-				tracksImpressionName="calypso_upgrade_nudge_impression"
-				tracksClickName="calypso_upgrade_nudge_click"
-			/>
-		);
-	};
+	const renderUpsell = () =>
+		renderUpsellCard( {
+			title: translate( 'Earn ad revenue' ),
+			body: translate(
+				"By upgrading to the %(premiumPlanName)s plan, you'll be able to monetize your site through the WordAds program.",
+				{ args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() || '' } }
+			),
+			benefits: [
+				translate( 'Instantly enroll into the WordAds network.' ),
+				translate( 'Earn money from your content and traffic.' ),
+			],
+			href: buildCheckoutURL( siteSlug as string, PLAN_PREMIUM ),
+			tracksClickName: 'calypso_upgrade_nudge_cta_click',
+			learnMoreUrl: 'https://wordads.co/',
+			fitToContent: true,
+		} );
+
+	const renderjetpackUpsell = () =>
+		renderUpsellCard( {
+			title: translate( 'Upgrade and start earning' ),
+			body: translate(
+				'Make money each time someone visits your site by displaying ads on all your posts and pages.'
+			),
+			href: `/checkout/${ siteSlug }/${ PLAN_JETPACK_SECURITY_DAILY }`,
+			tracksClickName: 'calypso_upgrade_nudge_click',
+			ctaName: 'calypso_upgrade_nudge_impression',
+		} );
 
 	const renderNoticeSiteIsPrivate = () => {
 		const privacySettingPageLink = `https://wordpress.com/settings/general/${ siteSlug }#site-privacy-settings`;
@@ -282,25 +342,17 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 		const url = `/plans/${ siteSlug }?feature=${ FEATURE_WORDADS_INSTANT }&plan=${ PLAN_PREMIUM }`;
 		return (
 			<>
-				<UpsellNudge
-					forceDisplay
-					callToAction={ translate( 'Upgrade' ) }
-					plan={ PLAN_PREMIUM }
-					title={ translate( 'Upgrade to the %(premiumPlanName)s plan to continue earning', {
-						args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() || '' },
+				{ ! isWPForTeams &&
+					renderUpsellCard( {
+						title: translate( 'Upgrade to the %(premiumPlanName)s plan to continue earning', {
+							args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() || '' },
+						} ),
+						body: translate(
+							'WordAds is disabled for this site because it does not have an eligible plan. You are no longer earning ad revenue, but you can view your earning and payment history. To restore access to WordAds please upgrade to an eligible plan.'
+						),
+						href: url,
+						tracksClickName: 'calypso_upgrade_nudge_cta_click',
 					} ) }
-					description={ translate(
-						'WordAds is disabled for this site because it does not have an eligible plan. You are no longer earning ad revenue, but you can view your earning and payment history. To restore access to WordAds please upgrade to an eligible plan.'
-					) }
-					feature={ WPCOM_FEATURES_WORDADS }
-					href={ url }
-					showIcon
-					event="calypso_upgrade_nudge_impression"
-					tracksImpressionName="calypso_upgrade_nudge_impression"
-					tracksImpressionProperties={ { cta_name: undefined, cta_size: 'regular' } }
-					tracksClickName="calypso_upgrade_nudge_cta_click"
-					tracksClickProperties={ { cta_name: undefined, cta_size: 'regular' } }
-				/>
 				{ isAllowedSection ? component : <FeatureExample>{ component }</FeatureExample> }
 			</>
 		);
@@ -320,10 +372,16 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 			component = renderInstantActivationToggle( component );
 		} else if ( isWordadsInstantEligibleButNotOwner ) {
 			component = renderOwnerRequiredMessage();
-		} else if ( canUpgradeToUseWordAds && site?.jetpack && ! site?.is_wpcom_atomic ) {
-			component = renderjetpackUpsell();
 		} else if ( canUpgradeToUseWordAds ) {
-			component = renderUpsell();
+			// Terminal: a site that needs an upgrade shows the upsell or nothing, never
+			// the authorization notice below, which asks a different question.
+			if ( ! canShowUpsell ) {
+				component = null;
+			} else if ( site?.jetpack && ! site?.is_wpcom_atomic ) {
+				component = renderjetpackUpsell();
+			} else {
+				component = renderUpsell();
+			}
 		} else if ( ! canAccessAds ) {
 			component = renderEmptyContent();
 		} else if ( ! site?.options?.wordads && ! ( site?.jetpack && canUpgradeToUseWordAds ) ) {
