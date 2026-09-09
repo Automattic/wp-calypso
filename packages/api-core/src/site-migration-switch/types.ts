@@ -108,7 +108,13 @@ export interface SwitchRunPreview {
 	match?: SwitchRunPreviewMatch;
 }
 
-/** The underlying import record's status, which is coarser than `state`. */
+/**
+ * The underlying import record's status. Legacy: drive the UI from `state`.
+ *
+ * Until a destination is bound there is no import record and this is the
+ * constant `new`, carrying no information. It only starts moving after
+ * approval, and even then `state` says the same thing more precisely.
+ */
 export type StaticSiteImportStatus =
 	| 'new'
 	| 'processing'
@@ -191,21 +197,31 @@ export interface StaticSiteImportSession {
 /**
  * The error codes the session API returns that the UI has to tell apart.
  *
- * Four of these share a 409, so the status code on its own says nothing useful
- * and the message has to be chosen from the code.
+ * Most of these share a 409, so the status code on its own says nothing useful
+ * and the message has to be chosen from the code. Which call each one can come
+ * back from matters: creating a session names no site, so everything about a
+ * destination can only be reported at approval.
  */
 export const STATIC_SITE_IMPORT_ERROR_CODES = {
-	/** This user already has an import running. */
+	/** Approve: the destination site already has an import running. */
 	IMPORT_EXISTS: 'import_exists',
-	/** The destination cannot become an Atomic site, so there is nowhere to deliver to. */
+	/** Create: this user is already at the cap on live sessions. */
+	SESSION_LIMIT_EXCEEDED: 'static_site_import_session_limit_exceeded',
+	/** Approve: the destination cannot become an Atomic site, so there is nowhere to deliver to. */
 	ATOMIC_UNAVAILABLE: 'static_site_import_atomic_unavailable',
-	/** The session is not at a point where it can be approved. */
+	/** Approve: the session is not at a point where it can be approved. */
 	NOT_APPROVABLE: 'static_site_import_not_approvable',
-	/** The built archive changed since the summary the user approved was read. */
+	/** Approve: the session already named a different destination. */
+	ALREADY_APPROVED: 'static_site_import_session_already_approved',
+	/** Approve: the built archive changed since the summary the user approved was read. */
 	ARCHIVE_MISMATCH: 'static_site_import_archive_mismatch',
+	/** Either call: this user or site may not import content. */
+	BLOCKED: 'static_site_import_blocked',
+	/** Either call: the feature is not open to this user. */
+	DISABLED: 'static_site_import_disabled',
 	/** No such session, or it belongs to somebody else. */
 	SESSION_NOT_FOUND: 'static_site_import_session_not_found',
-	/** The source URL is not a public HTTPS address we can read. */
+	/** Create: the source URL is not a public HTTPS address we can read. */
 	INVALID_SOURCE_URL: 'invalid_static_site_source_url',
 } as const;
 

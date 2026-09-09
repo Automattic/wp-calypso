@@ -35,12 +35,55 @@ export type SiteMigrationImportProgressSubmits = {
 type FailureReason =
 	| 'create'
 	| 'source-url'
+	| 'session-limit'
+	| 'blocked'
+	| 'disabled'
 	| 'import-exists'
 	| 'atomic-unavailable'
 	| 'not-approvable'
+	| 'already-approved'
 	| 'stale-preview'
 	| 'import'
 	| 'missing';
+
+const CODES = STATIC_SITE_IMPORT_ERROR_CODES;
+
+/**
+ * Which failure each error code is.
+ *
+ * Creating a session names no site, so nothing about a destination can be
+ * reported here — a busy or ineligible destination only shows up at approval.
+ */
+const CREATE_FAILURES: Record< string, FailureReason > = {
+	[ CODES.SESSION_LIMIT_EXCEEDED ]: 'session-limit',
+	[ CODES.INVALID_SOURCE_URL ]: 'source-url',
+	[ CODES.BLOCKED ]: 'blocked',
+	[ CODES.DISABLED ]: 'disabled',
+};
+
+/**
+ * Pick the failure an error means, falling back when the code is missing,
+ * empty or one this screen has no separate message for.
+ */
+const failureFor = (
+	error: unknown,
+	failures: Record< string, FailureReason >,
+	fallback: FailureReason
+): FailureReason => {
+	const code = getStaticSiteImportErrorCode( error );
+	return ( code ? failures[ code ] : undefined ) ?? fallback;
+};
+
+/** Most of these are a 409, so only the code tells them apart. */
+const APPROVE_FAILURES: Record< string, FailureReason > = {
+	[ CODES.IMPORT_EXISTS ]: 'import-exists',
+	[ CODES.ATOMIC_UNAVAILABLE ]: 'atomic-unavailable',
+	[ CODES.NOT_APPROVABLE ]: 'not-approvable',
+	[ CODES.ALREADY_APPROVED ]: 'already-approved',
+	[ CODES.ARCHIVE_MISMATCH ]: 'stale-preview',
+	[ CODES.BLOCKED ]: 'blocked',
+	[ CODES.DISABLED ]: 'disabled',
+};
 
 const SiteMigrationImportProgress: StepType< {
 	submits: SiteMigrationImportProgressSubmits;
@@ -97,16 +140,7 @@ const SiteMigrationImportProgress: StepType< {
 		createRequested.current = true;
 		createSession( sourceUrl, {
 			onSuccess: ( session ) => remember( { sessionId: session.session_id } ),
-			onError: ( error ) => {
-				const code = getStaticSiteImportErrorCode( error );
-				if ( code === STATIC_SITE_IMPORT_ERROR_CODES.IMPORT_EXISTS ) {
-					return setFailure( 'import-exists' );
-				}
-				if ( code === STATIC_SITE_IMPORT_ERROR_CODES.INVALID_SOURCE_URL ) {
-					return setFailure( 'source-url' );
-				}
-				setFailure( 'create' );
-			},
+			onError: ( error ) => setFailure( failureFor( error, CREATE_FAILURES, 'create' ) ),
 		} );
 	}, [ createSession, remember, sessionId, sourceUrl ] );
 
@@ -143,19 +177,7 @@ const SiteMigrationImportProgress: StepType< {
 				destinationBlogId: siteId,
 			},
 			{
-				onError: ( error ) => {
-					const code = getStaticSiteImportErrorCode( error );
-					if ( code === STATIC_SITE_IMPORT_ERROR_CODES.ARCHIVE_MISMATCH ) {
-						return setFailure( 'stale-preview' );
-					}
-					if ( code === STATIC_SITE_IMPORT_ERROR_CODES.ATOMIC_UNAVAILABLE ) {
-						return setFailure( 'atomic-unavailable' );
-					}
-					if ( code === STATIC_SITE_IMPORT_ERROR_CODES.NOT_APPROVABLE ) {
-						return setFailure( 'not-approvable' );
-					}
-					setFailure( 'import' );
-				},
+				onError: ( error ) => setFailure( failureFor( error, APPROVE_FAILURES, 'import' ) ),
 			}
 		);
 	}, [ approve, reviewedArchiveHash, session, siteId ] );
@@ -187,16 +209,24 @@ const SiteMigrationImportProgress: StepType< {
 		Boolean( session?.archive_hash ) &&
 		! reviewedArchiveHash;
 
+	// Everything from 'import-exists' down happens at approval, after the wait, so
+	// each one says that nothing was changed and what to do next.
 	const failureCopy: Record< FailureReason, string > = {
 		create: __( 'We couldn’t start reading your site.' ),
 		'source-url': __( 'We couldn’t read that address. Check the site is public and try again.' ),
+		'session-limit': __(
+			'You already have imports running. Wait for one to finish, or cancel it.'
+		),
+		blocked: __( 'This site can’t import content.' ),
+		disabled: __( 'Imports aren’t available for this account.' ),
 		'import-exists': __(
-			'You already have an import running. Wait for it to finish, then try again.'
+			'This site already has an import running. Wait for it to finish, then refresh to try again.'
 		),
 		'atomic-unavailable': __(
-			'Your plan can’t host an imported site. Upgrade the plan and try again.'
+			'Your plan can’t host an imported site. Nothing has changed. Upgrade the plan, then refresh to try again.'
 		),
 		'not-approvable': __( 'This import isn’t ready to start yet. Refresh the page to try again.' ),
+		'already-approved': __( 'This import has already been sent to a different site.' ),
 		'stale-preview': __( 'This preview is out of date, so we stopped before changing anything.' ),
 		import: __( 'Something went wrong and your site wasn’t changed.' ),
 		missing: __( 'We couldn’t find a migration to continue.' ),

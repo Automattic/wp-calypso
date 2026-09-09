@@ -205,17 +205,37 @@ describe( 'SiteMigrationImportProgress', () => {
 			);
 		} );
 
-		it( 'reports an import that is already running rather than a generic failure', async () => {
-			mockCreateFailure( 'import_exists' );
+		it( 'reports the per-user session cap rather than a generic failure', async () => {
+			mockCreateFailure( 'static_site_import_session_limit_exceeded', 429 );
 
 			render( { search: `from=${ encodeURIComponent( SOURCE_URL ) }` } );
 
 			await waitFor( () =>
 				expect(
 					screen.getByText(
-						'You already have an import running. Wait for it to finish, then try again.'
+						'You already have imports running. Wait for one to finish, or cancel it.'
 					)
 				).toBeVisible()
+			);
+		} );
+
+		it( 'reports a user who may not import at all', async () => {
+			mockCreateFailure( 'static_site_import_blocked', 403 );
+
+			render( { search: `from=${ encodeURIComponent( SOURCE_URL ) }` } );
+
+			await waitFor( () =>
+				expect( screen.getByText( 'This site can’t import content.' ) ).toBeVisible()
+			);
+		} );
+
+		it( 'reports the feature being closed to this account', async () => {
+			mockCreateFailure( 'static_site_import_disabled', 404 );
+
+			render( { search: `from=${ encodeURIComponent( SOURCE_URL ) }` } );
+
+			await waitFor( () =>
+				expect( screen.getByText( 'Imports aren’t available for this account.' ) ).toBeVisible()
 			);
 		} );
 
@@ -326,8 +346,30 @@ describe( 'SiteMigrationImportProgress', () => {
 			await waitFor( () =>
 				expect(
 					screen.getByText(
-						'Your plan can’t host an imported site. Upgrade the plan and try again.'
+						'Your plan can’t host an imported site. Nothing has changed. Upgrade the plan, then refresh to try again.'
 					)
+				).toBeVisible()
+			);
+		} );
+
+		it( 'reads a busy destination site as an import that already exists', async () => {
+			await approveAndRead( 'import_exists' );
+
+			await waitFor( () =>
+				expect(
+					screen.getByText(
+						'This site already has an import running. Wait for it to finish, then refresh to try again.'
+					)
+				).toBeVisible()
+			);
+		} );
+
+		it( 'reads a session already sent somewhere else', async () => {
+			await approveAndRead( 'static_site_import_session_already_approved' );
+
+			await waitFor( () =>
+				expect(
+					screen.getByText( 'This import has already been sent to a different site.' )
 				).toBeVisible()
 			);
 		} );
@@ -344,6 +386,16 @@ describe( 'SiteMigrationImportProgress', () => {
 
 		it( 'falls back to the generic message for a code it does not know', async () => {
 			await approveAndRead( 'static_site_import_queue_failed' );
+
+			await waitFor( () =>
+				expect(
+					screen.getByText( 'Something went wrong and your site wasn’t changed.' )
+				).toBeVisible()
+			);
+		} );
+
+		it( 'falls back to the generic message when the error carries no code', async () => {
+			await approveAndRead( '' );
 
 			await waitFor( () =>
 				expect(
