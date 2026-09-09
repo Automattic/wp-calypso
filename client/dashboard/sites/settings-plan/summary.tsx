@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { payment } from '@wordpress/icons';
+import { useAppContext } from '../../app/context';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
 import { getSitePlanUrl } from '../../utils/site-url';
@@ -24,8 +25,16 @@ export default function SettingsPlanSummary( {
 		enabled: !! plan?.id,
 	} );
 
+	const { supports } = useAppContext();
+
 	const url = getSitePlanUrl( site, purchase );
 	if ( ! url || ! isRelativeUrl( url ) ) {
+		return null;
+	}
+
+	// The purchase-management URL only resolves in dashboards that register the
+	// `/me/billing` routes.
+	if ( url.startsWith( '/me/billing/' ) && ! ( supports.me && supports.me.billing ) ) {
 		return null;
 	}
 

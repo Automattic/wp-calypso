@@ -2,6 +2,7 @@ import '../style.scss';
 
 import { userSettingsQuery, userSettingsMutation, siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useParams } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -17,7 +18,6 @@ import {
 	mergeSiteMcpAbilities,
 } from '../../../../me/mcp/utils';
 import Breadcrumbs from '../../../app/breadcrumbs';
-import { siteRoute } from '../../../app/router/sites';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
@@ -45,7 +45,7 @@ interface McpAbility {
 }
 
 export default function SiteAIToolsRead() {
-	const { siteSlug } = siteRoute.useParams();
+	const { siteSlug } = useParams( { strict: false } ) as { siteSlug: string };
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 

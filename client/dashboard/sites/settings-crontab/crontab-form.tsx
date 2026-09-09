@@ -4,25 +4,20 @@ import {
 	siteCrontabUpdateMutation,
 } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, TextControl } from '@wordpress/components';
 import { DataForm, type Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
-import {
-	siteRoute,
-	siteSettingsCrontabAddRoute,
-	siteSettingsCrontabEditRoute,
-	siteSettingsCrontabRoute,
-} from '../../app/router/sites';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
+import { getSiteSettingsCrontabURL } from '../../utils/site-url';
 import { parseRequestedScheduleForBackwardCompatibility } from './parse-requested-schedule-for-backward-compatibility';
 import { ScheduleField } from './schedule-field';
 import type { Crontab, CrontabFormData } from '@automattic/api-core';
@@ -33,11 +28,9 @@ interface CrontabFormProps {
 
 export default function CrontabForm( { crontab }: CrontabFormProps ) {
 	const isEditMode = !! crontab;
-	const { siteSlug } = siteRoute.useParams();
+	const { siteSlug } = useParams( { strict: false } ) as { siteSlug: string };
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const navigate = useNavigate( {
-		from: isEditMode ? siteSettingsCrontabEditRoute.fullPath : siteSettingsCrontabAddRoute.fullPath,
-	} );
+	const navigate = useNavigate();
 
 	// Initialize form data once from the loaded crontab (edit mode) or defaults (add mode)
 	const [ formData, setFormData ] = useState< CrontabFormData >( () => {
@@ -70,10 +63,7 @@ export default function CrontabForm( { crontab }: CrontabFormProps ) {
 	const isPending = isEditMode ? isUpdating : isCreating;
 
 	const handleCancel = () => {
-		navigate( {
-			to: siteSettingsCrontabRoute.fullPath,
-			params: { siteSlug },
-		} );
+		navigate( { to: getSiteSettingsCrontabURL( siteSlug ) } );
 	};
 
 	const handleSubmit = ( e: React.FormEvent ) => {
@@ -84,10 +74,7 @@ export default function CrontabForm( { crontab }: CrontabFormProps ) {
 		}
 
 		const onSuccess = () => {
-			navigate( {
-				to: siteSettingsCrontabRoute.fullPath,
-				params: { siteSlug },
-			} );
+			navigate( { to: getSiteSettingsCrontabURL( siteSlug ) } );
 		};
 
 		if ( isEditMode && crontab ) {

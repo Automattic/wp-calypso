@@ -70,6 +70,34 @@ export function getSiteVisibilityURL( site: Site ) {
  * - If the site is a wpcom site without a purchase, returns the URL to upgrade the site plan.
  * - Otherwise, returns the most appropriate URL to manage the site's current plan.
  */
+export function getSiteSettingsCrontabURL( siteSlug: string ) {
+	return `/sites/${ siteSlug }/settings/crontab`;
+}
+
+export function getSiteSettingsCrontabAddURL( siteSlug: string ) {
+	return `${ getSiteSettingsCrontabURL( siteSlug ) }/add`;
+}
+
+export function getSiteSettingsCrontabEditURL( siteSlug: string, cronId: number ) {
+	return `${ getSiteSettingsCrontabURL( siteSlug ) }/${ cronId }/edit`;
+}
+
+export function getSiteSettingsRepositoriesURL( siteSlug: string ) {
+	return `/sites/${ siteSlug }/settings/repositories`;
+}
+
+export function getSiteSettingsRepositoriesConnectURL( siteSlug: string ) {
+	return `${ getSiteSettingsRepositoriesURL( siteSlug ) }/connect`;
+}
+
+export function getSiteSettingsRepositoriesManageURL( siteSlug: string, deploymentId: number ) {
+	return `${ getSiteSettingsRepositoriesURL( siteSlug ) }/manage/${ deploymentId }`;
+}
+
+export function getSiteDeploymentsURL( siteSlug: string ) {
+	return `/sites/${ siteSlug }/deployments`;
+}
+
 export function getSitePlanUrl( site: Site, purchase?: Purchase ) {
 	if ( site.is_wpcom_staging_site ) {
 		return undefined;

@@ -5,24 +5,22 @@ import {
 	githubInstallationsQuery,
 } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { useNavigate, useRouter } from '@tanstack/react-router';
+import { useNavigate, useParams, useRouter, useSearch } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
-import {
-	siteDeploymentsListRoute,
-	siteRoute,
-	siteSettingsRepositoriesConnectRoute,
-	siteSettingsRepositoriesManageRoute,
-	siteSettingsRepositoriesRoute,
-} from '../../app/router/sites';
 import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
+import {
+	getSiteDeploymentsURL,
+	getSiteSettingsRepositoriesConnectURL,
+	getSiteSettingsRepositoriesManageURL,
+} from '../../utils/site-url';
 import illustrationUrl from '../deployments/deployments-callout-illustration.svg';
 import GithubIcon from '../deployments/icons/github';
 import { TriggerDeploymentModalForm } from '../deployments-list/trigger-deployment-modal-form';
@@ -34,13 +32,13 @@ import type { RenderModalProps, Action } from '@wordpress/dataviews';
 
 function RepositoriesList() {
 	const router = useRouter();
-	const { siteSlug } = siteRoute.useParams();
+	const { siteSlug } = useParams( { strict: false } ) as { siteSlug: string };
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { error: githubInstallationsError, isLoading: isLoadingInstallations } = useQuery(
 		githubInstallationsQuery()
 	);
 
-	const searchParams = siteSettingsRepositoriesRoute.useSearch();
+	const searchParams = useSearch( { strict: false } );
 	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'site-settings-repositories',
 		defaultView: DEFAULT_VIEW,
@@ -75,11 +73,7 @@ function RepositoriesList() {
 			label: __( 'Configure repository' ),
 			callback: ( items ) => {
 				router.navigate( {
-					to: siteSettingsRepositoriesManageRoute.fullPath,
-					params: {
-						siteSlug: siteSlug,
-						deploymentId: items[ 0 ].id,
-					},
+					to: getSiteSettingsRepositoriesManageURL( siteSlug, items[ 0 ].id ),
 				} );
 			},
 		},
@@ -89,10 +83,7 @@ function RepositoriesList() {
 			callback: ( items ) => {
 				const repositoryName = items[ 0 ]?.repository_name;
 				router.navigate( {
-					to: siteDeploymentsListRoute.fullPath,
-					params: {
-						siteSlug: siteSlug,
-					},
+					to: getSiteDeploymentsURL( siteSlug ),
 					search: repositoryName ? { repository: repositoryName } : undefined,
 				} );
 			},
@@ -119,7 +110,7 @@ function RepositoriesList() {
 					<Button
 						variant="link"
 						onClick={ () =>
-							router.navigate( { to: siteSettingsRepositoriesConnectRoute.fullPath } )
+							router.navigate( { to: getSiteSettingsRepositoriesConnectURL( siteSlug ) } )
 						}
 					/>
 				),
@@ -150,8 +141,7 @@ function RepositoriesList() {
 						const item = filteredData.find( ( d ) => d.id.toString() === selection[ 0 ] );
 						if ( item ) {
 							router.navigate( {
-								to: siteSettingsRepositoriesManageRoute.fullPath,
-								params: { siteSlug, deploymentId: item.id },
+								to: getSiteSettingsRepositoriesManageURL( siteSlug, item.id ),
 							} );
 						}
 					}
@@ -162,13 +152,13 @@ function RepositoriesList() {
 }
 
 function SiteRepositories() {
-	const { siteSlug } = siteRoute.useParams();
+	const { siteSlug } = useParams( { strict: false } ) as { siteSlug: string };
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const navigate = useNavigate( { from: siteSettingsRepositoriesRoute.fullPath } );
+	const navigate = useNavigate();
 	const canConnect = hasHostingFeature( site, HostingFeatures.DEPLOYMENT );
 
 	const handleConnectRepository = () => {
-		navigate( { to: siteSettingsRepositoriesConnectRoute.fullPath } );
+		navigate( { to: getSiteSettingsRepositoriesConnectURL( siteSlug ) } );
 	};
 
 	return (
