@@ -120,6 +120,11 @@ type AppliedChanges = {
 const hasChanges = ( { created, updated, deleted }: AppliedChanges ): boolean =>
 	created.length > 0 || updated.length > 0 || deleted.length > 0;
 
+/**
+ * Core-data's own signatures, spelled out for two traps: errors are suppressed
+ * unless the options carry `throwOnError`, and those options come *fifth* on a
+ * delete — the fourth argument is the request's query args.
+ */
 interface CoreDispatch {
 	saveEntityRecord: (
 		kind: string,
@@ -127,8 +132,6 @@ interface CoreDispatch {
 		record: Record< string, unknown >,
 		options?: Record< string, unknown >
 	) => Promise< { id?: number | string; title?: unknown; link?: string } | null >;
-	// Core-data suppresses save errors unless asked not to, so a failed write
-	// would resolve and the ability would report a success that never happened.
 	editEntityRecord: (
 		kind: string,
 		name: string,
@@ -140,6 +143,7 @@ interface CoreDispatch {
 		kind: string,
 		name: string,
 		id: number | string,
+		query: Record< string, unknown > | undefined,
 		options?: Record< string, unknown >
 	) => Promise< unknown >;
 }
@@ -165,11 +169,10 @@ export function getCheckpointKeys( { editEntities }: EditEntityRecordInput ): st
 	const keys = new Set< string >();
 
 	for ( const entity of editEntities ?? [] ) {
-		// Title only. A restore rewrites a page's title and the menu item that
-		// follows it — never its content, excerpt or status — so a page edit
-		// that touches none of the title claims nothing.
-		// The same test the write uses, so the claimed domain cannot drift from
-		// what is recorded.
+		// Only the title is restorable on a page — a restore rewrites it and the
+		// menu item that follows it, never the content, excerpt or status. The
+		// write applies the same test, so the claim cannot drift from what the
+		// checkpoint records.
 		if ( entity?.entityName === PAGE && !! entity.record && 'title' in entity.record ) {
 			keys.add( checkpointKeys.PAGE );
 			keys.add( checkpointKeys.NAVIGATION );
@@ -269,6 +272,15 @@ async function applyRecordEdit(
 ): Promise< void > {
 	const { entityType, entityName, recordId, record, options } = entity;
 	const updated = reportUpdated( applied, entity );
+
+	// Resolved first: `editEntityRecord()` reads the persisted record to tell a
+	// real change from a no-op, and one that was never fetched throws there.
+	if ( ! ( await coreResolve().getEditedEntityRecord( entityType, entityName, recordId ) ) ) {
+		throw new Error(
+			`Cannot edit ${ entityName } ${ recordId }: it could not be read and may have been deleted.`
+		);
+	}
+
 	const previousTitle = entityName === PAGE ? await getPageTitle( recordId ) : '';
 	const nextTitle = flattenTitle( record.title );
 
@@ -412,7 +424,7 @@ async function applyDeletes( entities: EntityRef[], applied: AppliedChanges ): P
 		// its label, and the page is the only place that label comes from.
 		const previousLabel = entityName === PAGE ? await getPageTitle( recordId ) : '';
 
-		await coreDispatch().deleteEntityRecord( entityType, entityName, recordId, {
+		await coreDispatch().deleteEntityRecord( entityType, entityName, recordId, undefined, {
 			...options,
 			throwOnError: true,
 		} );
