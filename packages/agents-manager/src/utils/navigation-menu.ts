@@ -32,8 +32,8 @@ export interface NavigationItem {
 }
 
 const NAVIGATION_BLOCK = 'core/navigation';
-const NAVIGATION_LINK_BLOCK = 'core/navigation-link';
-const NAVIGATION_SUBMENU_BLOCK = 'core/navigation-submenu';
+export const NAVIGATION_LINK_BLOCK = 'core/navigation-link';
+export const NAVIGATION_SUBMENU_BLOCK = 'core/navigation-submenu';
 
 // Resolved by name to keep `@wordpress/block-editor` out of this module.
 const BLOCK_EDITOR_STORE = 'core/block-editor';
