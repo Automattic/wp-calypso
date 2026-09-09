@@ -86,7 +86,7 @@ export const editEntityRecordAbility: Ability = {
 				- Add pages with publish status.
 				You can edit and delete pages using the entityType: postType, entityName: page, recordId: page_id.
 				- Rename pages setting new title field.
-				- You can also delete pages, but its very important to pass the 'confirmationMessage' to the tool call since this is a destructive action. Once the user confirms the deletion, do not pass a 'confirmationMessage'.
+				- You can also delete pages, but it is very important to pass the 'confirmationMessage' to the tool call since this is a destructive action. Once the user confirms the deletion, do not pass a 'confirmationMessage'.
 			</page>
 			<site_title>
 				Change the site title by calling 'edit_entity_record' with: entityType: root, entityName: site, record: { title: "<new title>" }, recordId: site_title.
