@@ -1355,13 +1355,20 @@ $x-menu-2026-admin-bar-mobile: 46px;
 }
 
 @media ( min-width: 1025px ) {
-	// Keep diagonal pointer travel below the nav labels inside the open dropdown.
-	.x-dropdown.x-dropdown--2026.is-dropdown-open::before {
-		content: '';
-		position: absolute;
-		inset-inline: 0;
-		top: -16px;
-		height: 16px;
+	$x-dropdown-hover-area: 16px;
+
+	.x-dropdown.x-dropdown--2026.is-dropdown-open {
+		// Override the animation's inline overflow; clip only below the hover area.
+		overflow: visible !important;
+		clip-path: inset( -$x-dropdown-hover-area 0 0 );
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset-inline: 0;
+			top: -$x-dropdown-hover-area;
+			height: $x-dropdown-hover-area;
+		}
 	}
 
 	// Close: wipe the content at the rising edge so nothing trails below the roll.
