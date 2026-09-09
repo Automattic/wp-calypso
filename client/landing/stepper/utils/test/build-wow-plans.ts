@@ -10,13 +10,17 @@ describe( 'planSupportsBuildWow', () => {
 		'business-bundle',
 		'business-bundle-monthly',
 		'business-bundle-3y',
-		'ecommerce-bundle',
-		'ecommerce-bundle-monthly',
-	] )( 'accepts the Atomic-capable plan %s', ( slug ) => {
+	] )( 'accepts the chooser-eligible plan %s', ( slug ) => {
 		expect( planSupportsBuildWow( slug ) ).toBe( true );
 	} );
 
-	it.each( [ 'free_plan', 'pro-plan', 'not-a-plan' ] )( 'rejects %s', ( slug ) => {
+	it.each( [
+		'free_plan',
+		'pro-plan',
+		'ecommerce-bundle',
+		'ecommerce-bundle-monthly',
+		'not-a-plan',
+	] )( 'rejects %s', ( slug ) => {
 		expect( planSupportsBuildWow( slug ) ).toBe( false );
 	} );
 

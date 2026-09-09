@@ -1,22 +1,14 @@
-import {
-	isBusinessPlan,
-	isEcommercePlan,
-	isPersonalPlan,
-	isPremiumPlan,
-} from '@automattic/calypso-products';
+import { isBusinessPlan, isPersonalPlan, isPremiumPlan } from '@automattic/calypso-products';
 
 /**
- * build-wow transfers the site to Atomic. WordPress.com grants that feature to
- * Personal, Premium, Business and Commerce (the frozen client-side plan data
- * understates this), so only a plan outside those tiers falls back to the
- * legacy builder.
+ * wpcom grants the underlying Big Sky feature to Commerce too, but the
+ * post-checkout AI setup chooser only offers the AI build on Personal, Premium
+ * and Business (a Commerce checkout skips the chooser and lands on My Home),
+ * so build-wow routing matches that gate.
  */
 export function planSupportsBuildWow( planSlug: string | null | undefined ): boolean {
 	return (
 		!! planSlug &&
-		( isPersonalPlan( planSlug ) ||
-			isPremiumPlan( planSlug ) ||
-			isBusinessPlan( planSlug ) ||
-			isEcommercePlan( planSlug ) )
+		( isPersonalPlan( planSlug ) || isPremiumPlan( planSlug ) || isBusinessPlan( planSlug ) )
 	);
 }
