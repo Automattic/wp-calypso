@@ -272,14 +272,13 @@ export async function addNavigationItem( item: NavigationItem ): Promise< void >
 /**
  * Rewrites every menu that holds the page.
  *
- * `rewrite` returns the new items, or `null` when this menu does not hold it,
- * so menus the page is absent from are left alone. All of them, not just the
- * first: a page can be linked from the header and the footer, and stopping at
- * one leaves the other pointing at a page that was renamed or deleted.
+ * `rewrite` returns the new items, or `null` for a menu the page is not in.
+ * Every menu, not just the first: a page linked from the header and the footer
+ * would otherwise keep a stale link in one of them.
  *
- * `save` persists the write, which a removal needs and a rename must not do:
- * a rename rides along with the page edit that triggered it, while the page a
- * removal follows has already been deleted.
+ * `save` persists the write. A removal needs it, since the page it follows is
+ * already deleted; a rename must not, since it saves with the page edit that
+ * triggered it.
  */
 async function rewriteMenusHolding(
 	rewrite: ( items: NavigationBlock[] ) => NavigationBlock[] | null,
