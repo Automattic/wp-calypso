@@ -117,6 +117,7 @@ import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-
 import { LeaveCheckoutModal, useCheckoutLeaveModal } from './leave-checkout-modal';
 import { MobileCheckoutStickySummary } from './mobile-checkout-sticky-summary';
 import { mobileCheckoutStickySummaryRadioDotStyles } from './mobile-checkout-sticky-summary-styles';
+import { NonRenewableDomain, SearchForNewDomainButton } from './non-renewable-domain';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import { PaymentMethodFilter } from './payment-methods-filter';
 import { getRefundWindowCopy } from './refund-policies';
@@ -432,6 +433,7 @@ export default function CheckoutMainContent( {
 	isRemovingProductFromCart,
 	areThereErrors,
 	isWrongAccountRenewal,
+	isNonRenewableDomain,
 	isInitialCartLoading,
 	customizedPreviousPath,
 	loadingHeader,
@@ -456,6 +458,7 @@ export default function CheckoutMainContent( {
 	isRemovingProductFromCart: boolean;
 	areThereErrors: boolean;
 	isWrongAccountRenewal: boolean;
+	isNonRenewableDomain: boolean;
 	isInitialCartLoading: boolean;
 	customizedPreviousPath?: string;
 	loadingHeader?: ReactNode;
@@ -708,6 +711,25 @@ export default function CheckoutMainContent( {
 					</WPCheckoutTitle>
 					<WrongAccountRenewal />
 					<CheckoutFormSubmit submitButton={ <LogInToCorrectAccountButton /> } />
+				</WPCheckoutMainContent>
+			</WPCheckoutWrapper>
+		);
+	}
+
+	// Same reasoning as above: the domain renewal was rejected, so the cart is
+	// empty, and "you have no items in your cart" explains none of it.
+	if ( isNonRenewableDomain ) {
+		debug( 'rendering non-renewable domain page' );
+		return (
+			<WPCheckoutWrapper>
+				<WPCheckoutSidebarContent></WPCheckoutSidebarContent>
+				<WPCheckoutMainContent isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }>
+					<PerformanceTrackerStop />
+					<WPCheckoutTitle className="checkout__main-title">
+						{ translate( 'Checkout' ) }
+					</WPCheckoutTitle>
+					<NonRenewableDomain />
+					<CheckoutFormSubmit submitButton={ <SearchForNewDomainButton /> } />
 				</WPCheckoutMainContent>
 			</WPCheckoutWrapper>
 		);
