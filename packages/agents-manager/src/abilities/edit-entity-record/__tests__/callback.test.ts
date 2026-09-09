@@ -211,6 +211,17 @@ describe( 'editEntityRecordCallback', () => {
 		expect( deleteEntityRecord ).toHaveBeenCalledWith( 'postType', 'page', 7, undefined );
 	} );
 
+	// The menu write persists, so removing the item before the delete would
+	// strip it for good on a page that then survived.
+	it( 'leaves the menu item alone when the delete fails', async () => {
+		deleteEntityRecord.mockRejectedValueOnce( new Error( 'page is locked' ) );
+
+		const result = await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
+
+		expect( result.result.success ).toBe( false );
+		expect( removeNavigationItem ).not.toHaveBeenCalled();
+	} );
+
 	it( 'writes site metadata and logs it', async () => {
 		await editEntityRecordCallback( {
 			editEntities: [

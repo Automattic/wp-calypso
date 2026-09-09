@@ -48,7 +48,8 @@ interface CoreDispatch {
 		kind: string,
 		name: string,
 		id: number | string,
-		edits: Record< string, unknown >
+		edits: Record< string, unknown >,
+		options: { undoIgnore: boolean }
 	) => Promise< unknown >;
 	saveEditedEntityRecord: ( kind: string, name: string, id: number | string ) => Promise< unknown >;
 }
@@ -133,10 +134,15 @@ export const writeMenu = async ( id: unknown, items: NavigationBlock[] ): Promis
 		throw new Error( 'The navigation menu is unavailable to edit.' );
 	}
 
-	await coreDispatch.editEntityRecord( 'postType', 'wp_navigation', id as number, {
-		blocks: items,
-		content: serialize( items ),
-	} );
+	await coreDispatch.editEntityRecord(
+		'postType',
+		'wp_navigation',
+		id as number | string,
+		{ blocks: items, content: serialize( items ) },
+		// Kept out of the editor's undo stack, as every other agent write is:
+		// `restore-checkpoint` is the undo the agent offers.
+		{ undoIgnore: true }
+	);
 };
 
 /**
