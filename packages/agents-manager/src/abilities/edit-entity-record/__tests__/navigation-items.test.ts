@@ -144,6 +144,19 @@ it( 'keeps children the input does not mention', async () => {
 	expect( blocks[ 0 ].name ).toBe( SUBMENU );
 } );
 
+// Labels claim last, so a label match cannot take the block an id names.
+it( 'lets an id claim its block before a label takes it', async () => {
+	withMenu( [ item( 'a', 'Contact', { id: 5 } ), item( 'b', 'Contact', { id: 6 } ) ] );
+
+	const result = await buildNavigationItems( 10, {
+		navigationItems: [ { label: 'Contact' }, { id: 5 } ],
+	} );
+
+	const clientIds = ( result.blocks as { clientId: string }[] ).map( ( b ) => b.clientId );
+
+	expect( clientIds ).toEqual( [ 'b', 'a' ] );
+} );
+
 // A > B > C: moving C to the top level must lift it out of B as well, or the
 // same block sits in the menu twice under different parents.
 it( 'lifts an item out of a submenu nested more than one level deep', async () => {
