@@ -5,7 +5,7 @@ import {
 	getCheckpoints,
 	hasCheckpoint,
 	restoreCheckpoint,
-	setCheckpoint,
+	setReciprocalCheckpoint,
 } from '../../../utils/checkpoints';
 import { isEditorPage } from '../../../utils/is-editor-page';
 import {
@@ -23,7 +23,7 @@ jest.mock( '../../../utils/checkpoints', () => ( {
 	getCheckpoints: jest.fn( () => [] ),
 	hasCheckpoint: jest.fn(),
 	restoreCheckpoint: jest.fn(),
-	setCheckpoint: jest.fn(),
+	setReciprocalCheckpoint: jest.fn(),
 } ) );
 jest.mock( '../../../utils/is-editor-page', () => ( { isEditorPage: jest.fn( () => true ) } ) );
 jest.mock( '../../../utils/provider-checkpoints', () => ( {
@@ -140,18 +140,14 @@ describe( 'restoreCheckpointCallback', () => {
 
 			await restoreCheckpointCallback( makeInput( { requestIntentType } ) );
 
-			expect( setCheckpoint ).toHaveBeenCalledWith(
-				RESTORE_CALL_ID,
-				TARGET_CHECKPOINT.checkpointKeys,
-				{
-					toolId: 'big_sky__restore_checkpoint',
-					summary: RESTORE_SUMMARY,
-					restoresCheckpointId: TARGET_CHECKPOINT.id,
-					restoredCheckpointToolId: TARGET_CHECKPOINT.toolId,
-					requestIntentType: reciprocal,
-					createdByRequestIntentType: requestIntentType ?? 'restore',
-				}
-			);
+			expect( setReciprocalCheckpoint ).toHaveBeenCalledWith( RESTORE_CALL_ID, TARGET_CHECKPOINT, {
+				toolId: 'big_sky__restore_checkpoint',
+				summary: RESTORE_SUMMARY,
+				restoresCheckpointId: TARGET_CHECKPOINT.id,
+				restoredCheckpointToolId: TARGET_CHECKPOINT.toolId,
+				requestIntentType: reciprocal,
+				createdByRequestIntentType: requestIntentType ?? 'restore',
+			} );
 		}
 	);
 
@@ -161,13 +157,13 @@ describe( 'restoreCheckpointCallback', () => {
 
 		await restoreCheckpointCallback( makeInput() );
 
-		expect( setCheckpoint ).not.toHaveBeenCalled();
+		expect( setReciprocalCheckpoint ).not.toHaveBeenCalled();
 	} );
 
 	it( 'skips the reciprocal checkpoint when the call id is unknown', async () => {
 		await restoreCheckpointCallback( makeInput() );
 
-		expect( setCheckpoint ).not.toHaveBeenCalled();
+		expect( setReciprocalCheckpoint ).not.toHaveBeenCalled();
 	} );
 
 	it( 'clears stale restore reciprocals after a successful restore', async () => {
@@ -307,7 +303,7 @@ describe( 'restoreCheckpointCallback', () => {
 				createdByRequestIntentType: 'undo',
 			}
 		);
-		expect( setCheckpoint ).not.toHaveBeenCalled();
+		expect( setReciprocalCheckpoint ).not.toHaveBeenCalled();
 	} );
 
 	it( 'copies the page-rename flip and navigation snapshots into the reciprocal', async () => {
