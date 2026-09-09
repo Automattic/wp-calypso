@@ -64,7 +64,7 @@ describe( '<Plan>', () => {
 		expect( container.textContent ).toBe( 'Business' );
 	} );
 
-	test( 'for sites with expired plan, it renders the plan name with "-expired" suffix', () => {
+	test( 'for sites with expired plan, it renders the plan name with an "(expired)" suffix', () => {
 		const site = {
 			plan: {
 				product_name_short: 'Business',
@@ -79,10 +79,10 @@ describe( '<Plan>', () => {
 				nag={ { isExpired: true, site } }
 			/>
 		);
-		expect( container.textContent ).toBe( 'Business-expired' );
+		expect( container.textContent ).toBe( 'Business (expired)' );
 	} );
 
-	test( 'for sites with expired plan, it renders the plan name with "-expired" suffix and a renewal nag for the site owner', () => {
+	test( 'for sites with expired plan, it renders the plan name with an "(expired)" suffix and a renewal nag for the site owner', () => {
 		const site = {
 			slug: 'test.wordpress.com',
 			site_owner: userId,
@@ -101,14 +101,14 @@ describe( '<Plan>', () => {
 				nag={ { isExpired: true, site } }
 			/>
 		);
-		expect( getByText( 'Business-expired' ) ).toBeInTheDocument();
+		expect( getByText( 'Business (expired)' ) ).toBeInTheDocument();
 		expect( getByRole( 'link', { name: /Renew plan/ } ) ).toHaveAttribute(
 			'href',
 			wpcomLink( '/checkout/test.wordpress.com/business-bundle' )
 		);
 	} );
 
-	test( 'for Trial sites with expired plan, it renders the plan name with "-expired" suffix and an upgrade nag for the site owner', () => {
+	test( 'for Trial sites with expired plan, it renders the plan name with an "(expired)" suffix and an upgrade nag for the site owner', () => {
 		const site = {
 			slug: 'test.wordpress.com',
 			site_owner: userId,
@@ -127,7 +127,7 @@ describe( '<Plan>', () => {
 				nag={ { isExpired: true, site } }
 			/>
 		);
-		expect( getByText( 'Trial-expired' ) ).toBeInTheDocument();
+		expect( getByText( 'Trial (expired)' ) ).toBeInTheDocument();
 		expect( getByRole( 'link', { name: /Upgrade/ } ) ).toHaveAttribute(
 			'href',
 			wpcomLink( '/plans/test.wordpress.com' )
