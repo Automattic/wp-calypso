@@ -1,9 +1,9 @@
 @import '@wordpress/theme/design-tokens.css';
 
-// A text rail in the top bar: no indicators, no connectors, just the three
-// step names. It sits in the right slot, in the position the "1 of 3" counter
-// takes at narrower widths, so the indicator stays put across the breakpoint
-// instead of moving across the bar.
+// A text rail in the top bar: no indicators, no connectors, just the step names.
+// Three of them, or two when a plan arrived preselected. It sits in the right
+// slot, in the position the "1 of 3" counter takes at narrower widths, so the
+// indicator stays put across the breakpoint instead of moving across the bar.
 //
 // Nothing here adds outer spacing. The slot's own 1rem gap is what separates
 // the rail from whatever follows it, which is the same gap the counter gets,
@@ -61,21 +61,6 @@
 		padding-inline: 0;
 	}
 
-	// No dot is drawn in this treatment, but the indicator still carries the
-	// "Step 2 of 3, completed" text that gives each step its accessible name.
-	// Clip it instead of removing it.
-	.onboarding-progress-indicator {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		padding: 0;
-		margin: -1px;
-		overflow: hidden;
-		clip-path: inset( 50% );
-		white-space: nowrap;
-		border: 0;
-	}
-
 	// The component scopes its own title rules by [data-indicator-variant],
 	// which the root always renders. Qualifying with the same attribute is what
 	// lets these win without !important.
@@ -91,21 +76,30 @@
 		// weight above the counter beside them. The spec runs one weight across
 		// all three steps and lets colour carry the state, so it is pinned back
 		// to the default here for every step, not just the current one.
-		.onboarding-progress-step .onboarding-progress-title {
+		//
+		// The trigger is named in these selectors only to raise specificity. The
+		// component paints titles brand blue on hover at the same weight our
+		// colour rules would otherwise carry, and a tie is settled by whichever
+		// stylesheet the build happens to emit last. Naming the trigger puts
+		// these a step above it, so the colour is the spec's in every state.
+		.onboarding-progress-step .onboarding-progress-trigger .onboarding-progress-title {
 			font-weight: var( --wpds-typography-font-weight-default );
 			color: var( --wpds-color-foreground-content-neutral );
 			white-space: nowrap;
 		}
 
 		// Where you have not been yet.
-		.onboarding-progress-step:not( [data-status] ):not( [data-current] ) .onboarding-progress-title {
+		.onboarding-progress-step:not( [data-status] ):not( [data-current] ) .onboarding-progress-trigger .onboarding-progress-title {
 			color: var( --wpds-color-foreground-content-neutral-weak );
 		}
-	}
 
-	// Completed steps are the only navigable ones, so give the pointer an extra
-	// cue beyond the component's brand hover colour.
-	.onboarding-progress-trigger:hover:not( [aria-disabled='true'] ) .onboarding-progress-title {
-		text-decoration: underline;
+		// Completed steps are the only ones that go anywhere, so they are the
+		// only ones that answer the pointer. The current step is not disabled,
+		// so without the status here it would underline on hover and then do
+		// nothing when clicked. Underline only: the spec has no hover state, and
+		// colour is already carrying status.
+		.onboarding-progress-step[data-status='completed'] .onboarding-progress-trigger:hover .onboarding-progress-title {
+			text-decoration: underline;
+		}
 	}
 }

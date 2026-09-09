@@ -1,5 +1,6 @@
 import { Stepper as UIStepper } from '@automattic/ui';
 import { useI18n } from '@wordpress/react-i18n';
+import { VisuallyHidden } from '@wordpress/ui';
 
 import './style.scss';
 
@@ -26,7 +27,7 @@ type Props = {
  *
  * `Stepper.Indicator` is still rendered even though no dot is drawn. It is
  * what supplies the "Step 2 of 3, completed" text for screen readers, so it is
- * visually clipped in style.scss rather than dropped from the tree.
+ * wrapped in `VisuallyHidden` rather than dropped from the tree.
  */
 export function OnboardingProgress( {
 	currentStep,
@@ -61,7 +62,7 @@ export function OnboardingProgress( {
 					className="onboarding-progress-step"
 				>
 					<UIStepper.Trigger className="onboarding-progress-trigger">
-						<UIStepper.Indicator className="onboarding-progress-indicator" />
+						<VisuallyHidden render={ <UIStepper.Indicator /> } />
 						<UIStepper.Title className="onboarding-progress-title">
 							{ _x( 'Domain', 'onboarding purchase step' ) }
 						</UIStepper.Title>
@@ -75,7 +76,7 @@ export function OnboardingProgress( {
 						className="onboarding-progress-step"
 					>
 						<UIStepper.Trigger className="onboarding-progress-trigger">
-							<UIStepper.Indicator className="onboarding-progress-indicator" />
+							<VisuallyHidden render={ <UIStepper.Indicator /> } />
 							<UIStepper.Title className="onboarding-progress-title">
 								{ _x( 'Plan', 'onboarding purchase step' ) }
 							</UIStepper.Title>
@@ -84,7 +85,7 @@ export function OnboardingProgress( {
 				) }
 				<UIStepper.Step value="checkout" className="onboarding-progress-step">
 					<UIStepper.Trigger className="onboarding-progress-trigger">
-						<UIStepper.Indicator className="onboarding-progress-indicator" />
+						<VisuallyHidden render={ <UIStepper.Indicator /> } />
 						<UIStepper.Title className="onboarding-progress-title">
 							{ _x( 'Payment', 'onboarding purchase step' ) }
 						</UIStepper.Title>
