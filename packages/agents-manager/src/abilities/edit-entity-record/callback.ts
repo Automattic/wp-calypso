@@ -195,7 +195,9 @@ async function applyEdits(
 		// to put back on both the page and the menu item that follows it.
 		const previousTitle = entityName === PAGE ? await getPageTitle( recordId ) : '';
 		const nextTitle = flattenTitle( record.title );
-		const isRename = entityName === PAGE && !! nextTitle && nextTitle !== previousTitle;
+		// Presence, matching the claimed domains: a request carrying an empty
+		// title clears the page name, and that is as restorable as any rename.
+		const isRename = entityName === PAGE && 'title' in record && nextTitle !== previousTitle;
 
 		if ( isRename ) {
 			recorder.capturePageRename( { pageId: recordId, from: previousTitle, to: nextTitle } );

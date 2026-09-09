@@ -215,6 +215,47 @@ export function setCheckpoint(
 	} );
 }
 
+/**
+ * Records the state a restore is about to overwrite, so its redo can step back.
+ *
+ * The page and navigation domains are out of `setCheckpoint()`'s reach — they
+ * are only discovered mid-write — so they are taken from the checkpoint being
+ * restored: the menus it touched, read as they stand right now, and its renames
+ * flipped. Without them the redo would claim both domains and put nothing back.
+ */
+export async function setReciprocalCheckpoint(
+	id: string,
+	target: CheckpointRecord,
+	metadata: CheckpointMetadata
+): Promise< void > {
+	setCheckpoint( id, target.checkpointKeys, metadata );
+
+	const menus = await Promise.all(
+		( target.menusBeforeUpdate ?? [] ).map( async ( menu ) => {
+			const items = await readMenuItems( menu.id );
+
+			return items ? { id: menu.id, items: deepClone( items ) } : null;
+		} )
+	);
+
+	const menusBeforeUpdate = menus.filter( Boolean ) as CheckpointRecord[ 'menusBeforeUpdate' ];
+	const pageRenames = ( target.pageRenames ?? [] ).map( ( { pageId, from, to } ) => ( {
+		pageId,
+		from: to,
+		to: from,
+	} ) );
+
+	const checkpoint = records.get( id );
+
+	if ( checkpoint ) {
+		records.set( id, {
+			...checkpoint,
+			...( menusBeforeUpdate?.length && { menusBeforeUpdate } ),
+			...( pageRenames.length && { pageRenames } ),
+		} );
+	}
+}
+
 export function hasCheckpoint( id: string ): boolean {
 	return records.has( id );
 }
