@@ -258,6 +258,10 @@ const saveMenu = async ( id: unknown, previous: NavigationBlock[] ): Promise< vo
 	}
 };
 
+/** Whether an item's label still follows the page's title rather than the user's. */
+const followsPage = ( item: NavigationBlock, previousLabel?: string ) =>
+	! previousLabel || normalizeLabel( item.attributes?.label ) === normalizeLabel( previousLabel );
+
 /** Appends an item for a newly created page to the site's menu. */
 export async function addNavigationItem( item: NavigationItem ): Promise< void > {
 	const menuId = getMenuIdForNewPage();
@@ -362,7 +366,11 @@ export async function renameNavigationItem(
 		let matched = false;
 
 		const renamed = mapItems( items, ( item ) => {
-			if ( ! matches( item ) ) {
+			// Matched by id, but relabelled only where the label still follows the
+			// page. One that no longer does is the user's, and a page rename is
+			// not ours to overwrite it with — the same rule `matchesPage()` already
+			// applies to items carrying no id.
+			if ( ! matches( item ) || ! followsPage( item, previousLabel ) ) {
 				return item;
 			}
 
