@@ -124,10 +124,20 @@ function buildAgentsManagerMenuNodes(
 function HelpCenterIcon( { name, sectionName }: { name?: string; sectionName?: string } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: omnibarSiteId } = useQuery( omnibarSiteIdQuery() );
+	// Loaded here rather than in the hook so ExPlat exposure covers everyone who sees
+	// the entry point, not only users who open the Help Center.
+	const [ isLoadingGetHelpChatForwardAssignment, getHelpChatForwardAssignment ] = useExperiment(
+		HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT
+	);
 
 	// One impression per section view, so it divides cleanly into the click events
-	// this plugin records; site context is whatever has resolved by then.
+	// this plugin records; site context is whatever has resolved by then. Held until
+	// the assignment settles, so impressions and clicks split by the same arm.
 	useEffect( () => {
+		if ( isLoadingGetHelpChatForwardAssignment ) {
+			return;
+		}
+
 		recordTracksEvent(
 			'calypso_inlinehelp_impression',
 			withSiteContext(
@@ -135,13 +145,14 @@ function HelpCenterIcon( { name, sectionName }: { name?: string; sectionName?: s
 					location: 'help-center',
 					entry_point: 'omnibar',
 					section: sectionName,
+					get_help_chat_forward_variation: getHelpChatForwardAssignment?.variationName ?? null,
 				},
 				'omnibar',
 				omnibarSiteId
 			)
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ sectionName ] );
+	}, [ sectionName, isLoadingGetHelpChatForwardAssignment ] );
 
 	return adminBarIcon( name, 'omnibar__help-icon' );
 }
@@ -156,9 +167,6 @@ export function useHelpCenterPlugin( {
 	const { isShown: isHelpCenterShown, setShowHelpCenter } = useHelpCenter();
 	const { recordTracksEvent } = useAnalytics();
 	const { data: omnibarSiteId } = useQuery( omnibarSiteIdQuery() );
-	// Load the assignment where the entry point renders, so ExPlat exposure covers
-	// everyone who sees it, not only users who open the Help Center.
-	useExperiment( HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT );
 
 	const helpNode = adminBarNodes.find( ( node ) => node.id === AGENTS_MANAGER_NODE_ID );
 

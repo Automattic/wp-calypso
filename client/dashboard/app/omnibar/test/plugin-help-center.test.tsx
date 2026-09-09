@@ -8,6 +8,7 @@ import {
 	openAgentsManagerChat,
 } from '@automattic/agents-manager';
 import { render, renderHook } from '@testing-library/react';
+import { useExperiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../../analytics';
 import { useHelpCenter } from '../../help-center';
 import { useHelpCenterPlugin } from '../plugin-help-center';
@@ -33,6 +34,7 @@ jest.mock( '../../analytics', () => ( {
 jest.mock( '../../help-center', () => ( {
 	useHelpCenter: jest.fn( () => ( { isShown: false, setShowHelpCenter: jest.fn() } ) ),
 } ) );
+jest.mock( 'calypso/lib/explat', () => ( { useExperiment: jest.fn() } ) );
 
 const mockIsChatVisible = isAgentsManagerChatVisible as jest.MockedFunction<
 	typeof isAgentsManagerChatVisible
@@ -41,6 +43,10 @@ const mockGetChatRoute = getAgentsManagerChatRoute as jest.MockedFunction<
 	typeof getAgentsManagerChatRoute
 >;
 const mockUseHelpCenter = useHelpCenter as jest.MockedFunction< typeof useHelpCenter >;
+const mockUseExperiment = useExperiment as jest.MockedFunction< typeof useExperiment >;
+
+const assignment = ( variationName: string | null ) =>
+	[ false, { variationName } ] as unknown as ReturnType< typeof useExperiment >;
 const setShowHelpCenter = jest.fn();
 const recordTracksEvent = jest.fn();
 
@@ -102,6 +108,7 @@ describe( 'useHelpCenterPlugin', () => {
 			isShown: false,
 			setShowHelpCenter,
 		} as unknown as ReturnType< typeof useHelpCenter > );
+		mockUseExperiment.mockReturnValue( assignment( 'treatment' ) );
 	} );
 
 	it.each( [
@@ -127,7 +134,18 @@ describe( 'useHelpCenterPlugin', () => {
 			location: 'help-center',
 			entry_point: 'omnibar',
 			section: 'sites',
+			get_help_chat_forward_variation: 'treatment',
 		} );
+	} );
+
+	it( 'holds the impression until the experiment assignment settles', () => {
+		mockUseExperiment.mockReturnValue( [ true, null ] as unknown as ReturnType<
+			typeof useExperiment
+		> );
+
+		render( renderPlugin( HELP_NODES ).icon as React.ReactElement );
+
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	it( 'takes its id, label and tooltip from the admin bar node', () => {

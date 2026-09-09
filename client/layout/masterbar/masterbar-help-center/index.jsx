@@ -41,7 +41,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
 		'calypso_help_center_menu_popover_increase_exposure'
 	);
-	const [ , getHelpChatForwardAssignment ] = useExperiment(
+	const [ isLoadingGetHelpChatForwardAssignment, getHelpChatForwardAssignment ] = useExperiment(
 		HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT
 	);
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
@@ -51,8 +51,13 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 		! isLoadingExperimentAssignment && experimentAssignment?.variationName === 'menu_popover';
 
 	// One impression per section view, so it divides cleanly into the click events
-	// below; site context is whatever has resolved by then.
+	// below; site context is whatever has resolved by then. Held until the assignment
+	// settles, so impressions and clicks split by the same arm.
 	useEffect( () => {
+		if ( isLoadingGetHelpChatForwardAssignment ) {
+			return;
+		}
+
 		recordTracksEvent(
 			'calypso_inlinehelp_impression',
 			withSiteContext(
@@ -60,13 +65,14 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 					location: 'help-center',
 					entry_point: 'masterbar',
 					section: sectionName,
+					get_help_chat_forward_variation: getHelpChatForwardAssignment?.variationName ?? null,
 				},
 				siteContextSource,
 				siteId
 			)
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ sectionName ] );
+	}, [ sectionName, isLoadingGetHelpChatForwardAssignment ] );
 
 	const trackIconInteraction = () => {
 		recordTracksEvent(
