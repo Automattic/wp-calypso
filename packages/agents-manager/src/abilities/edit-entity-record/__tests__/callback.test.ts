@@ -15,15 +15,21 @@ jest.mock( '../../../utils/navigation-menu', () => ( {
 } ) );
 jest.mock( '../../../utils/page-title', () => ( {
 	getPageTitle: jest.fn( async () => 'About' ),
+	setPageTitle: jest.fn(),
 } ) );
 jest.mock( '../../../utils/session-log', () => ( {
 	logSiteMetadata: jest.fn(),
 	logSiteSession: jest.fn(),
 } ) );
+// The getters are what the checkpoint engine reads to snapshot these domains.
 jest.mock( '../../../utils/site-metadata', () => ( {
+	getSiteMetadata: jest.fn( () => ( { existing: true } ) ),
 	setSiteMetadata: jest.fn( ( changes ) => ( { existing: true, ...changes } ) ),
 } ) );
-jest.mock( '../../../utils/site-title', () => ( { setSiteTitle: jest.fn() } ) );
+jest.mock( '../../../utils/site-title', () => ( {
+	getSiteTitle: jest.fn( () => 'Old Site' ),
+	setSiteTitle: jest.fn(),
+} ) );
 jest.mock( '../navigation-items', () => ( {
 	buildNavigationItems: jest.fn( async ( _id, record ) => record ),
 } ) );
@@ -36,6 +42,7 @@ import {
 	removeNavigationItem,
 	renameNavigationItem,
 } from '../../../utils/navigation-menu';
+import { setPageTitle } from '../../../utils/page-title';
 import { logSiteMetadata, logSiteSession } from '../../../utils/session-log';
 import { setSiteMetadata } from '../../../utils/site-metadata';
 import { setSiteTitle } from '../../../utils/site-title';
@@ -192,7 +199,9 @@ describe( 'editEntityRecordCallback', () => {
 			editEntities: [ { ...page( 7 ), record: { title: 'About us' } } ],
 		} );
 
-		expect( editEntityRecord ).toHaveBeenCalled();
+		// The title is checkpointed, so it goes through `setPageTitle` and stays
+		// out of the editor's undo stack.
+		expect( setPageTitle ).toHaveBeenCalledWith( 7, 'About us' );
 		expect( renameNavigationItem ).toHaveBeenCalledWith( 7, 'About us', 'About' );
 	} );
 
@@ -263,7 +272,7 @@ describe( 'editEntityRecordCallback', () => {
 	// A batch that creates a page then fails must not have the agent create it
 	// again, so the failure carries what already landed.
 	it( 'reports what applied when a later change fails', async () => {
-		editEntityRecord.mockRejectedValueOnce( new Error( 'menu is locked' ) );
+		( setPageTitle as jest.Mock ).mockRejectedValueOnce( new Error( 'menu is locked' ) );
 
 		const result = await editEntityRecordCallback( {
 			addEntities: [ { ...page(), record: { title: 'About' } } ],
@@ -278,20 +287,36 @@ describe( 'editEntityRecordCallback', () => {
 
 	// The undo has to reach back to before the call, not vanish with the error
 	// — the writes that already landed are exactly what the user needs undone.
-	it( 'keeps the checkpoint when a batch fails part-way', async () => {
-		editEntityRecord.mockRejectedValueOnce( new Error( 'menu is locked' ) );
+	it( 'keeps the checkpoint when restorable work landed before the failure', async () => {
+		( setPageTitle as jest.Mock ).mockRejectedValueOnce( new Error( 'page is locked' ) );
 
 		await editEntityRecordCallback( {
 			toolCallId: 'call-partial',
-			addEntities: [ { ...page(), record: { title: 'About' } } ],
-			editEntities: [ { ...page( 8 ), record: { title: 'Contact' } } ],
+			editEntities: [
+				{ entityType: 'root', entityName: 'site', recordId: 1, record: { title: 'My Site' } },
+				{ ...page( 8 ), record: { title: 'Contact' } },
+			],
 		} );
 
 		expect( hasCheckpoint( 'call-partial' ) ).toBe( true );
 	} );
 
+	// The creation landed, but nothing can un-create a page, so the checkpoint
+	// holds nothing to restore and is dropped rather than offering an empty undo.
+	it( 'drops the checkpoint when only unrestorable work landed', async () => {
+		( setPageTitle as jest.Mock ).mockRejectedValueOnce( new Error( 'page is locked' ) );
+
+		await editEntityRecordCallback( {
+			toolCallId: 'call-created-only',
+			addEntities: [ { ...page(), record: { title: 'About' } } ],
+			editEntities: [ { ...page( 8 ), record: { title: 'Contact' } } ],
+		} );
+
+		expect( hasCheckpoint( 'call-created-only' ) ).toBe( false );
+	} );
+
 	it( 'drops the checkpoint when the batch changed nothing', async () => {
-		editEntityRecord.mockRejectedValueOnce( new Error( 'menu is locked' ) );
+		( setPageTitle as jest.Mock ).mockRejectedValueOnce( new Error( 'menu is locked' ) );
 
 		await editEntityRecordCallback( {
 			toolCallId: 'call-nothing',

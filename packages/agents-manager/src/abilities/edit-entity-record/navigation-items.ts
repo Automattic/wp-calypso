@@ -87,9 +87,17 @@ function indexMenu( items: NavigationBlock[] ): Map< string, NavigationBlock[] >
 const takeExisting = (
 	item: NavigationItemInput,
 	index: Map< string, NavigationBlock[] >,
-	taken: Set< NavigationBlock >
+	taken: Set< NavigationBlock >,
+	precise: boolean
 ): NavigationBlock | undefined => {
 	for ( const identity of identityKeys( item ) ) {
+		// Labels are not unique, so they claim nothing until every id and url
+		// has taken the block it names. Otherwise `[ { label: 'Contact' },
+		// { id: 5 } ]` hands the first input the block id 5 needed.
+		if ( precise === identity.startsWith( 'label:' ) ) {
+			continue;
+		}
+
 		const match = index.get( identity )?.find( ( block ) => ! taken.has( block ) );
 
 		if ( match ) {
@@ -147,15 +155,15 @@ export async function buildNavigationItems(
 	// there and copied — one block cannot appear in a menu twice.
 	const resolved = new Map< NavigationItemInput, NavigationBlock >();
 
-	const claim = ( inputs: NavigationItemInput[] ) =>
+	const claim = ( inputs: NavigationItemInput[], precise: boolean ) =>
 		inputs.forEach( ( input ) => {
-			const existing = takeExisting( input, index, taken );
+			const existing = resolved.get( input ) ?? takeExisting( input, index, taken, precise );
 
 			if ( existing ) {
 				resolved.set( input, existing );
 			}
 
-			claim( input.items ?? [] );
+			claim( input.items ?? [], precise );
 		} );
 
 	/**
@@ -205,7 +213,8 @@ export async function buildNavigationItems(
 			};
 		} );
 
-	claim( navigationItems as NavigationItemInput[] );
+	claim( navigationItems as NavigationItemInput[], true );
+	claim( navigationItems as NavigationItemInput[], false );
 
 	const blocks = build( navigationItems as NavigationItemInput[] );
 
