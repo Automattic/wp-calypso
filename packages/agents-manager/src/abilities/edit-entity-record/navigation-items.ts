@@ -36,6 +36,15 @@ export interface NavigationItemInput {
  * resolve here — but one that leaks through must not shadow the label or url
  * sent with it, so every key is tried in turn rather than only the first.
  */
+/**
+ * Claim order, least ambiguous first.
+ *
+ * A clientId or page id names one block; a url or a label can name several, so
+ * they claim only what the tiers above have left. Otherwise an input naming a
+ * shared url takes the block that a later, unambiguous id needed.
+ */
+const CLAIM_TIERS = [ [ 'clientId', 'id' ], [ 'url' ], [ 'label' ] ] as const;
+
 const identityKeys = ( {
 	clientId,
 	id,
@@ -90,13 +99,10 @@ const takeExisting = (
 	item: NavigationItemInput,
 	index: Map< string, NavigationBlock[] >,
 	taken: Set< NavigationBlock >,
-	precise: boolean
+	tier: readonly string[]
 ): NavigationBlock | undefined => {
 	for ( const identity of identityKeys( item ) ) {
-		// Labels are not unique, so they claim nothing until every id and url
-		// has taken the block it names. Otherwise `[ { label: 'Contact' },
-		// { id: 5 } ]` hands the first input the block id 5 needed.
-		if ( precise === identity.startsWith( 'label:' ) ) {
+		if ( ! tier.some( ( kind ) => identity.startsWith( `${ kind }:` ) ) ) {
 			continue;
 		}
 
@@ -157,15 +163,15 @@ export async function buildNavigationItems(
 	// there and copied — one block cannot appear in a menu twice.
 	const resolved = new Map< NavigationItemInput, NavigationBlock >();
 
-	const claim = ( inputs: NavigationItemInput[], precise: boolean ) =>
+	const claim = ( inputs: NavigationItemInput[], tier: readonly string[] ) =>
 		inputs.forEach( ( input ) => {
-			const existing = resolved.get( input ) ?? takeExisting( input, index, taken, precise );
+			const existing = resolved.get( input ) ?? takeExisting( input, index, taken, tier );
 
 			if ( existing ) {
 				resolved.set( input, existing );
 			}
 
-			claim( input.items ?? [], precise );
+			claim( input.items ?? [], tier );
 		} );
 
 	/**
@@ -215,8 +221,7 @@ export async function buildNavigationItems(
 			};
 		} );
 
-	claim( navigationItems as NavigationItemInput[], true );
-	claim( navigationItems as NavigationItemInput[], false );
+	CLAIM_TIERS.forEach( ( tier ) => claim( navigationItems as NavigationItemInput[], tier ) );
 
 	const blocks = build( navigationItems as NavigationItemInput[] );
 
