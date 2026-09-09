@@ -293,6 +293,15 @@ export const marketplaceProductsRoute = createRoute( {
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'marketplace/products',
+	loader: async () => {
+		const [ agency ] = await Promise.all( [
+			queryClient.ensureQueryData( activeAgencyQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
+		if ( agency?.id ) {
+			await queryClient.ensureQueryData( agencyProductsQuery( agency.id ) );
+		}
+	},
 } ).lazy( () =>
 	import( '../../agency/marketplace/products' ).then( ( d ) =>
 		createLazyRoute( 'marketplace-products' )( {
