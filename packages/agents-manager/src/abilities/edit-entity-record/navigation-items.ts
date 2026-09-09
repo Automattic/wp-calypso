@@ -1,4 +1,5 @@
 import { createBlock, serialize } from '@wordpress/blocks';
+import { isRecord } from '../../utils/is-record';
 import {
 	NAVIGATION_LINK_BLOCK,
 	NAVIGATION_SUBMENU_BLOCK,
@@ -27,16 +28,6 @@ export interface NavigationItemInput {
 }
 
 /**
- * The identity keys a menu item can be addressed by, most specific first.
- *
- * One definition for both sides: the keys an input claims and the keys a block
- * offers must be formed identically, or a lookup silently misses.
- *
- * The schema no longer offers a `clientId` — ids minted by another tool do not
- * resolve here — but one that leaks through must not shadow the label or url
- * sent with it, so every key is tried in turn rather than only the first.
- */
-/**
  * Claim order, least ambiguous first.
  *
  * A clientId or page id names one block; a url or a label can name several, so
@@ -49,11 +40,24 @@ const CLAIM_TIERS = [ [ 'clientId', 'id' ], [ 'url' ], [ 'label' ] ] as const;
  * An item's children, or none.
  *
  * The schema stops validating below the first level, so a nested `items` can
- * arrive as any shape at all and must not be walked as an array on trust.
+ * arrive as any shape at all: neither the list nor its entries can be taken on
+ * trust.
  */
 const childrenOf = ( item: NavigationItemInput ): NavigationItemInput[] | undefined =>
-	Array.isArray( item.items ) ? item.items : undefined;
+	Array.isArray( item.items )
+		? item.items.filter( ( child ): child is NavigationItemInput => isRecord( child ) )
+		: undefined;
 
+/**
+ * The identity keys a menu item can be addressed by, most specific first.
+ *
+ * One definition for both sides: the keys an input claims and the keys a block
+ * offers must be formed identically, or a lookup silently misses.
+ *
+ * The schema no longer offers a `clientId` — ids minted by another tool do not
+ * resolve here — but one that leaks through must not shadow the label or url
+ * sent with it, so every key is tried in turn rather than only the first.
+ */
 const identityKeys = ( {
 	clientId,
 	id,
@@ -70,7 +74,7 @@ const identityKeys = ( {
 		id && `id:${ id }`,
 		url && `url:${ url }`,
 		label && `label:${ label }`,
-	].filter( Boolean ) as string[];
+	].filter( ( key ): key is string => !! key );
 
 /**
  * Indexes the menu by every identity its items can be addressed with.
