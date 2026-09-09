@@ -66,15 +66,6 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 	const canActivateWordAds = useSelector( ( state ) =>
 		canCurrentUser( state, site?.ID, 'activate_wordads' )
 	);
-	const canManageSite = useSelector( ( state ) =>
-		canCurrentUser( state, site?.ID, 'manage_options' )
-	);
-	// An unloaded feature list is indistinguishable from an absent feature, so wait
-	// rather than upsell a site that already qualifies.
-	const featuresLoaded = useSelector(
-		( state ) => getFeaturesBySiteId( state, site?.ID ) !== null
-	);
-	const isVip = useSelector( ( state ) => isVipSite( state, site?.ID ?? 0 ) );
 	const isWPForTeams = useSelector( ( state ) => isSiteWPForTeams( state, site?.ID ?? null ) );
 	const requestingWordAdsApproval = useSelector( ( state ) =>
 		isRequestingWordAdsApprovalForSite( state, site )
@@ -87,14 +78,17 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 	const canUpgradeToUseWordAds = ! site?.options?.wordads && ! hasWordAdsFeature;
 	const isWordadsInstantEligibleButNotOwner =
 		! site?.options?.wordads && hasWordAdsFeature && ! canActivateWordAds;
-	// A site connected only through standalone Jetpack products reads as a Jetpack
-	// site without the `jetpack` flag, and WordPress.com plans are the wrong
-	// product for it.
-	const isStandaloneJetpack = useSelector(
-		( state ) => Boolean( isJetpackSite( state, site?.ID ) ) && ! site?.jetpack
-	);
+	// Everything the shared nudge checked before showing an upgrade. An unloaded
+	// feature list reads as an absent one, so wait for it; and a standalone Jetpack
+	// connection reads as a Jetpack site while its `jetpack` flag stays false.
 	const canShowUpsell =
-		featuresLoaded && canManageSite && ! isVip && ! isWPForTeams && ! isStandaloneJetpack;
+		useSelector(
+			( state ) =>
+				getFeaturesBySiteId( state, site?.ID ) !== null &&
+				Boolean( canCurrentUser( state, site?.ID, 'manage_options' ) ) &&
+				! isVipSite( state, site?.ID ?? 0 ) &&
+				! ( Boolean( isJetpackSite( state, site?.ID ) ) && ! site?.jetpack )
+		) && ! isWPForTeams;
 	const isEnrolledWithIneligiblePlan =
 		site?.options?.wordads && ! hasWordAdsFeature && wordAdsStatus === WordAdsStatus.ineligible;
 
@@ -244,24 +238,19 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 		learnMoreUrl?: string;
 		fitToContent?: boolean;
 	} ) => {
+		const nudgeProperties = {
+			cta_name: ctaName,
+			cta_feature: WPCOM_FEATURES_WORDADS,
+			cta_size: 'regular',
+		};
 		const trackNudge = ( eventName: string ) =>
-			dispatch(
-				recordTracksEvent( eventName, {
-					cta_name: ctaName,
-					cta_feature: WPCOM_FEATURES_WORDADS,
-					cta_size: 'regular',
-				} )
-			);
+			dispatch( recordTracksEvent( eventName, nudgeProperties ) );
 
 		return (
 			<>
 				<TrackComponentView
 					eventName="calypso_upgrade_nudge_impression"
-					eventProperties={ {
-						cta_name: ctaName,
-						cta_feature: WPCOM_FEATURES_WORDADS,
-						cta_size: 'regular',
-					} }
+					eventProperties={ nudgeProperties }
 				/>
 				<PromoCard
 					className={ clsx( 'earn__upsell-card', {

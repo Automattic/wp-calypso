@@ -91,30 +91,36 @@ function ProductsList() {
 
 	const hasStripeFeature =
 		hasDonationsFeature || hasPremiumContentFeature || hasRecurringPaymentsFeature;
-	const isVip = useSelector( ( state ) => isVipSite( state, site?.ID ?? 0 ) );
-	const isWPForTeams = useSelector( ( state ) => isSiteWPForTeams( state, site?.ID ?? null ) );
-	// Admins are already the only ones here; the section returns a notice for everyone else.
-	// A site connected only through standalone Jetpack products reads as a Jetpack
-	// site without the `jetpack` flag, and WordPress.com plans are the wrong
-	// product for it.
-	const isStandaloneJetpack = useSelector(
-		( state ) => Boolean( isJetpackSite( state, site?.ID ) ) && ! site?.jetpack
-	);
+	// Admins are already the only ones here; the section returns a notice for
+	// everyone else. A standalone Jetpack connection reads as a Jetpack site while
+	// its `jetpack` flag stays false, and none of these can buy a WordPress.com plan.
 	const canShowUpsell =
-		hasLoadedFeatures && ! hasStripeFeature && ! isVip && ! isWPForTeams && ! isStandaloneJetpack;
+		useSelector(
+			( state ) =>
+				! isVipSite( state, site?.ID ?? 0 ) &&
+				! isSiteWPForTeams( state, site?.ID ?? null ) &&
+				! ( Boolean( isJetpackSite( state, site?.ID ) ) && ! site?.jetpack )
+		) &&
+		hasLoadedFeatures &&
+		! hasStripeFeature;
 
 	const defaultToTierPanel =
 		window.location.hash === OLD_ADD_NEWSLETTER_PAYMENT_PLAN_HASH ||
 		window.location.hash === ADD_TIER_PLAN_HASH;
 	const default_product_type = defaultToTierPanel ? TYPE_TIER : null;
 
+	const upgradeNudgeProperties = {
+		cta_name: 'calypso_earn_page_payment_plans_upgrade_nudge',
+		cta_feature: FEATURE_RECURRING_PAYMENTS,
+		cta_size: 'regular',
+	};
+
 	const trackUpgrade = () => {
 		dispatch(
-			recordTracksEvent( 'calypso_earn_page_payment_plans_upgrade_button_click', {
-				cta_name: 'calypso_earn_page_payment_plans_upgrade_nudge',
-				cta_feature: FEATURE_RECURRING_PAYMENTS,
-				cta_size: 'regular',
-			} )
+			recordTracksEvent(
+				'calypso_earn_page_payment_plans_upgrade_button_click',
+				upgradeNudgeProperties
+			)
 		);
 		dispatch( bumpStat( 'calypso_earn_page', 'payment-plans-upgrade-button' ) );
 	};
@@ -211,11 +217,7 @@ function ProductsList() {
 				<>
 					<TrackComponentView
 						eventName="calypso_earn_page_payment_plans_upgrade_button_view"
-						eventProperties={ {
-							cta_name: 'calypso_earn_page_payment_plans_upgrade_nudge',
-							cta_feature: FEATURE_RECURRING_PAYMENTS,
-							cta_size: 'regular',
-						} }
+						eventProperties={ upgradeNudgeProperties }
 					/>
 					<PromoCard
 						variation={ PromoCardVariation.Compact }
