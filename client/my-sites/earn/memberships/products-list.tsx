@@ -28,6 +28,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import RecurringPaymentsPlanAddEditModal from '../components/add-edit-plan-modal';
 import FreePlanModal from '../components/free-plan-modal';
@@ -93,7 +94,14 @@ function ProductsList() {
 	const isVip = useSelector( ( state ) => isVipSite( state, site?.ID ?? 0 ) );
 	const isWPForTeams = useSelector( ( state ) => isSiteWPForTeams( state, site?.ID ?? null ) );
 	// Admins are already the only ones here; the section returns a notice for everyone else.
-	const canShowUpsell = hasLoadedFeatures && ! hasStripeFeature && ! isVip && ! isWPForTeams;
+	// A site connected only through standalone Jetpack products reads as a Jetpack
+	// site without the `jetpack` flag, and WordPress.com plans are the wrong
+	// product for it.
+	const isStandaloneJetpack = useSelector(
+		( state ) => Boolean( isJetpackSite( state, site?.ID ) ) && ! site?.jetpack
+	);
+	const canShowUpsell =
+		hasLoadedFeatures && ! hasStripeFeature && ! isVip && ! isWPForTeams && ! isStandaloneJetpack;
 
 	const defaultToTierPanel =
 		window.location.hash === OLD_ADD_NEWSLETTER_PAYMENT_PLAN_HASH ||

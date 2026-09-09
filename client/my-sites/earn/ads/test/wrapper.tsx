@@ -12,6 +12,7 @@ import AdsWrapper from '../wrapper';
 const renderWrapper = ( {
 	manageOptions = true,
 	features = { 1: { data: { active: [] } } },
+	options = {},
 } = {} ) =>
 	renderWithProvider(
 		<AdsWrapper section="ads-earnings">
@@ -21,7 +22,7 @@ const renderWrapper = ( {
 			initialState: {
 				currentUser: { capabilities: { 1: { manage_options: manageOptions } } },
 				sites: {
-					items: { 1: { ID: 1, slug: 'example.wordpress.com', options: {} } },
+					items: { 1: { ID: 1, slug: 'example.wordpress.com', options } },
 					features,
 				},
 				ui: { selectedSiteId: 1 },
@@ -47,6 +48,14 @@ describe( 'AdsWrapper', () => {
 	// upselling on it flashes an Upgrade card at sites that already have WordAds.
 	it( 'waits for site features before offering the upgrade', () => {
 		renderWrapper( { features: {} } );
+		expect( screen.queryByRole( 'link', { name: 'Upgrade' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( notAuthorized ) ).not.toBeInTheDocument();
+	} );
+
+	// A standalone Jetpack product connection reads as a Jetpack site without the
+	// `jetpack` flag; WordPress.com plans are the wrong product to sell it.
+	it( 'does not sell WordPress.com plans to a standalone Jetpack site', () => {
+		renderWrapper( { options: { jetpack_connection_active_plugins: [ 'jetpack-social' ] } } );
 		expect( screen.queryByRole( 'link', { name: 'Upgrade' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( notAuthorized ) ).not.toBeInTheDocument();
 	} );

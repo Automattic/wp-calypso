@@ -87,7 +87,14 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 	const canUpgradeToUseWordAds = ! site?.options?.wordads && ! hasWordAdsFeature;
 	const isWordadsInstantEligibleButNotOwner =
 		! site?.options?.wordads && hasWordAdsFeature && ! canActivateWordAds;
-	const canShowUpsell = featuresLoaded && canManageSite && ! isVip && ! isWPForTeams;
+	// A site connected only through standalone Jetpack products reads as a Jetpack
+	// site without the `jetpack` flag, and WordPress.com plans are the wrong
+	// product for it.
+	const isStandaloneJetpack = useSelector(
+		( state ) => Boolean( isJetpackSite( state, site?.ID ) ) && ! site?.jetpack
+	);
+	const canShowUpsell =
+		featuresLoaded && canManageSite && ! isVip && ! isWPForTeams && ! isStandaloneJetpack;
 	const isEnrolledWithIneligiblePlan =
 		site?.options?.wordads && ! hasWordAdsFeature && wordAdsStatus === WordAdsStatus.ineligible;
 
