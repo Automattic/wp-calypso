@@ -45,6 +45,15 @@ export interface NavigationItemInput {
  */
 const CLAIM_TIERS = [ [ 'clientId', 'id' ], [ 'url' ], [ 'label' ] ] as const;
 
+/**
+ * An item's children, or none.
+ *
+ * The schema stops validating below the first level, so a nested `items` can
+ * arrive as any shape at all and must not be walked as an array on trust.
+ */
+const childrenOf = ( item: NavigationItemInput ): NavigationItemInput[] | undefined =>
+	Array.isArray( item.items ) ? item.items : undefined;
+
 const identityKeys = ( {
 	clientId,
 	id,
@@ -118,6 +127,24 @@ const takeExisting = (
 	return undefined;
 };
 
+/**
+ * The type a block should carry once its children are known.
+ *
+ * Only the submenu/link distinction is ours to change: it is what draws the
+ * dropdown arrow. Any other block a menu holds keeps the type it had.
+ */
+const blockName = ( block: NavigationBlock, innerBlocks: NavigationBlock[] ): string => {
+	if ( block.name === NAVIGATION_SUBMENU_BLOCK && ! innerBlocks.length ) {
+		return NAVIGATION_LINK_BLOCK;
+	}
+
+	if ( block.name === NAVIGATION_LINK_BLOCK && innerBlocks.length ) {
+		return NAVIGATION_SUBMENU_BLOCK;
+	}
+
+	return block.name;
+};
+
 const attributesFor = ( item: NavigationItemInput ) => ( {
 	...( item.label ? { label: item.label } : {} ),
 	...( item.url ? { url: item.url } : {} ),
@@ -171,13 +198,14 @@ export async function buildNavigationItems(
 				resolved.set( input, existing );
 			}
 
-			claim( input.items ?? [], tier );
+			claim( childrenOf( input ) ?? [], tier );
 		} );
 
 	/**
 	 * A preserved subtree with every block the agent placed elsewhere removed,
-	 * at any depth. A parent left with no children becomes a plain link again,
-	 * so it does not draw a dropdown arrow over nothing.
+	 * at any depth. Names are kept as they are — a menu can hold a Page List,
+	 * Search or Social Links block — except a submenu emptied by the pruning,
+	 * which becomes a link again so it stops drawing an arrow over nothing.
 	 */
 	const prune = ( blocks: NavigationBlock[] = [] ): NavigationBlock[] =>
 		blocks
@@ -185,11 +213,7 @@ export async function buildNavigationItems(
 			.map( ( block ) => {
 				const innerBlocks = prune( block.innerBlocks );
 
-				return {
-					...block,
-					innerBlocks,
-					name: innerBlocks.length ? NAVIGATION_SUBMENU_BLOCK : NAVIGATION_LINK_BLOCK,
-				};
+				return { ...block, innerBlocks, name: blockName( block, innerBlocks ) };
 			} );
 
 	const build = ( inputs: NavigationItemInput[] ): NavigationBlock[] =>
@@ -205,13 +229,16 @@ export async function buildNavigationItems(
 			}
 
 			// Listed children replace the block's own; unlisted ones are pruned.
-			const innerBlocks = input.items ? build( input.items ) : prune( existing?.innerBlocks );
+			const children = childrenOf( input );
+			const innerBlocks = children ? build( children ) : prune( existing?.innerBlocks );
 
-			// A block with children is a submenu, one without is a link. The type is
-			// what draws the dropdown arrow, so deriving it from the final children
-			// is what keeps a chevron off an item with nothing left to open.
-			const name = innerBlocks.length ? NAVIGATION_SUBMENU_BLOCK : NAVIGATION_LINK_BLOCK;
-			const block = existing ?? ( createBlock( name, attributesFor( input ) ) as NavigationBlock );
+			const block =
+				existing ??
+				( createBlock(
+					innerBlocks.length ? NAVIGATION_SUBMENU_BLOCK : NAVIGATION_LINK_BLOCK,
+					attributesFor( input )
+				) as NavigationBlock );
+			const name = blockName( block, innerBlocks );
 
 			return {
 				...block,

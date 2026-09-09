@@ -1,6 +1,6 @@
 import { editGlobalStyles, getEditedGlobalStyles, type GlobalStylesRecord } from './global-styles';
 import { readMenuItems, writeMenuItems, type NavigationBlock } from './navigation-menu';
-import { setPageTitle } from './page-title';
+import { getPageTitle, setPageTitle } from './page-title';
 import { getSiteLogo, setSiteLogo, type SiteLogo } from './site-logo';
 import { getSiteMetadata, replaceSiteMetadata, type SiteMetadata } from './site-metadata';
 import { getSiteTitle, setSiteTitle } from './site-title';
@@ -247,11 +247,18 @@ export async function setReciprocalCheckpoint(
 		} )
 	);
 
-	// Reversed before flipping: a restore unwinds newest first, so a call that
-	// renamed one page twice needs its steps in the opposite order to replay.
-	const pageRenames = [ ...( target.pageRenames ?? [] ) ]
-		.reverse()
-		.map( ( { pageId, from, to } ) => ( { pageId, from: to, to: from } ) );
+	// Each page's title as it stands now, not the one the target recorded: the
+	// page may have been renamed again since, and a redo has to return to what
+	// the undo is about to overwrite. One entry per page, so a page renamed
+	// twice in the target does not replay through its intermediate title.
+	const renamedPageIds = [ ...new Set( ( target.pageRenames ?? [] ).map( ( r ) => r.pageId ) ) ];
+	const pageRenames = await Promise.all(
+		renamedPageIds.map( async ( pageId ) => {
+			const current = await getPageTitle( pageId );
+
+			return { pageId, from: current, to: current };
+		} )
+	);
 
 	setCheckpoint( id, target.checkpointKeys, metadata );
 
@@ -291,11 +298,14 @@ export interface CheckpointRecorder {
 	captureMenu: ( menuId: string | number ) => Promise< void >;
 	/** Records a rename so a restore can put the old title back. */
 	capturePageRename: ( rename: PageRename ) => void;
+	/** Drops a menu snapshot whose write then failed. */
+	discardMenu: ( menuId: string | number ) => void;
 }
 
 const NO_RECORDER: CheckpointRecorder = {
 	captureMenu: async () => {},
 	capturePageRename: () => {},
+	discardMenu: () => {},
 };
 
 function createRecorder( checkpointId: string ): CheckpointRecorder {
@@ -338,6 +348,16 @@ function createRecorder( checkpointId: string ): CheckpointRecorder {
 				menusBeforeUpdate: [ ...captured, { id: menuId, items: deepClone( items ) } ],
 			} );
 		},
+		discardMenu: ( menuId ) => {
+			const checkpoint = records.get( checkpointId );
+
+			if ( checkpoint?.menusBeforeUpdate?.length ) {
+				update( {
+					menusBeforeUpdate: checkpoint.menusBeforeUpdate.filter( ( menu ) => menu.id !== menuId ),
+				} );
+			}
+		},
+
 		capturePageRename: ( rename ) => {
 			const checkpoint = records.get( checkpointId );
 
@@ -367,8 +387,16 @@ function dropUnrecordedDomains( id: string ): void {
 	const renamed = !! checkpoint.pageRenames?.length;
 	const restorable: Record< string, boolean > = {
 		[ checkpointKeys.PAGE ]: renamed,
-		// A restored rename relabels the menu item too, so it keeps the domain.
 		[ checkpointKeys.NAVIGATION ]: renamed || !! checkpoint.menusBeforeUpdate?.length,
+		// Gated on the snapshot too: a site record that could not be read leaves
+		// the key claimed with nothing behind it, and the restore throws there
+		// before reaching the domains that did land.
+		[ checkpointKeys.SITE_TITLE ]: checkpoint.siteTitleBeforeUpdate !== undefined,
+		[ checkpointKeys.SITE_METADATA ]: !! checkpoint.siteMetadataBeforeUpdate,
+		[ checkpointKeys.LOGO ]: checkpoint.logoBeforeUpdate !== undefined,
+		...Object.fromEntries(
+			THEME_CHECKPOINT_KEYS.map( ( key ) => [ key, !! checkpoint.themeBeforeUpdate ] )
+		),
 	};
 
 	const checkpointKeysLeft = checkpoint.checkpointKeys.filter(
@@ -480,9 +508,23 @@ export function getAvailableCheckpoints(): CheckpointContextItem[] {
 		}
 	} );
 
-	// Snapshots stay out of the model-facing list.
+	// Snapshots stay out of the model-facing list: they carry whole global-styles
+	// records, menu block trees and site metadata, none of which the agent needs
+	// and all of which would be re-sent every turn.
 	return checkpoints.map(
-		( { id, themeBeforeUpdate: _theme, logoBeforeUpdate: _logo, ...checkpoint }, index ) => ( {
+		(
+			{
+				id,
+				themeBeforeUpdate: _theme,
+				logoBeforeUpdate: _logo,
+				siteTitleBeforeUpdate: _siteTitle,
+				siteMetadataBeforeUpdate: _siteMetadata,
+				menusBeforeUpdate: _menus,
+				pageRenames: _renames,
+				...checkpoint
+			},
+			index
+		) => ( {
 			...checkpoint,
 			checkpointId: id,
 			checkpointIndex: index,
