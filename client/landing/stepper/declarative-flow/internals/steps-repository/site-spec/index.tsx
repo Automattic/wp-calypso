@@ -136,12 +136,16 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 	const shouldEarlyProvisionSite = queryParams.get( 'early_provision_site' ) === '1';
 	const shouldProvisionAtomicSite =
 		shouldEarlyProvisionSite || queryParams.get( 'provision_target' ) === 'wpcom-atomic';
-	const buildWowRequested = queryParams.get( 'build_wow' ) === '1';
+	const isBuildWowFlagged = config.isEnabled( 'calypso/ai-site-builder-build-wow' );
+	const needsAutomatticianCheck = queryParams.get( 'build_wow' ) === '1' && ! isBuildWowFlagged;
 	const { data: isAutomattician, isLoading: isLoadingAutomattician } = useReactQuery( {
 		...isAutomatticianQuery(),
-		enabled: buildWowRequested,
+		enabled: needsAutomatticianCheck,
 	} );
-	const shouldBuildWow = isBuildWowEnabled( queryParams, isAutomattician === true );
+	const shouldBuildWow = isBuildWowEnabled(
+		queryParams,
+		isBuildWowFlagged || isAutomattician === true
+	);
 	const activeFlow = getActiveFlow( { shouldBuildWow, shouldProvisionAtomicSite, isCiab } );
 	const atomicProvisionSpecId = shouldProvisionAtomicSite ? queryParams.get( 'spec_id' ) ?? '' : '';
 	const buildWowSpecId = shouldBuildWow ? queryParams.get( 'spec_id' ) ?? '' : '';
@@ -555,7 +559,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 		blueprintArchiveSiteIdentifier,
 	] );
 
-	if ( buildWowRequested && isLoadingAutomattician ) {
+	if ( needsAutomatticianCheck && isLoadingAutomattician ) {
 		return <DocumentHead title={ translate( 'Build Your Site with AI' ) } />;
 	}
 
