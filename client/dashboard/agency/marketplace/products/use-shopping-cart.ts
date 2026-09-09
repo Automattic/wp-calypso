@@ -1,0 +1,92 @@
+import { useCallback, useSyncExternalStore } from 'react';
+import { useMarketplaceType } from '../use-marketplace-type';
+import type { MarketplaceType } from '../use-marketplace-type';
+
+export interface ShoppingCartItem {
+	slug: string;
+	quantity: number;
+}
+
+// Same keys and `slug:quantity` format as the classic marketplace cart.
+const STORAGE_KEYS: Record< MarketplaceType, string > = {
+	regular: 'shopping-card-selected-items',
+	referral: 'referrals-shopping-card-selected-items',
+};
+
+const listeners = new Set< () => void >();
+const snapshots = new Map< MarketplaceType, ShoppingCartItem[] >();
+
+function readItems( marketplaceType: MarketplaceType ): ShoppingCartItem[] {
+	const raw = sessionStorage.getItem( STORAGE_KEYS[ marketplaceType ] );
+	if ( ! raw ) {
+		return [];
+	}
+	return raw
+		.split( ',' )
+		.map( ( entry ) => {
+			const [ slug, quantity ] = entry.split( ':' );
+			return { slug, quantity: parseInt( quantity, 10 ) || 1 };
+		} )
+		.filter( ( item ) => item.slug );
+}
+
+function getSnapshot( marketplaceType: MarketplaceType ): ShoppingCartItem[] {
+	if ( ! snapshots.has( marketplaceType ) ) {
+		snapshots.set( marketplaceType, readItems( marketplaceType ) );
+	}
+	return snapshots.get( marketplaceType ) as ShoppingCartItem[];
+}
+
+function writeItems( marketplaceType: MarketplaceType, items: ShoppingCartItem[] ) {
+	if ( items.length === 0 ) {
+		sessionStorage.removeItem( STORAGE_KEYS[ marketplaceType ] );
+	} else {
+		sessionStorage.setItem(
+			STORAGE_KEYS[ marketplaceType ],
+			items.map( ( item ) => `${ item.slug }:${ item.quantity }` ).join( ',' )
+		);
+	}
+	snapshots.set( marketplaceType, items );
+	listeners.forEach( ( listener ) => listener() );
+}
+
+function subscribe( listener: () => void ) {
+	listeners.add( listener );
+	return () => {
+		listeners.delete( listener );
+	};
+}
+
+export function useShoppingCart() {
+	const { marketplaceType } = useMarketplaceType();
+	const items = useSyncExternalStore( subscribe, () => getSnapshot( marketplaceType ) );
+
+	const hasItem = useCallback(
+		( slug: string ) => items.some( ( item ) => item.slug === slug ),
+		[ items ]
+	);
+
+	const addItem = useCallback(
+		( slug: string ) => {
+			const current = getSnapshot( marketplaceType );
+			if ( ! current.some( ( item ) => item.slug === slug ) ) {
+				writeItems( marketplaceType, [ ...current, { slug, quantity: 1 } ] );
+			}
+		},
+		[ marketplaceType ]
+	);
+
+	const removeItem = useCallback(
+		( slug: string ) => {
+			writeItems(
+				marketplaceType,
+				getSnapshot( marketplaceType ).filter( ( item ) => item.slug !== slug )
+			);
+		},
+		[ marketplaceType ]
+	);
+
+	const clearCart = useCallback( () => writeItems( marketplaceType, [] ), [ marketplaceType ] );
+
+	return { items, hasItem, addItem, removeItem, clearCart };
+}

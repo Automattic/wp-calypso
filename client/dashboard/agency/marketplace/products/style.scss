@@ -1,0 +1,183 @@
+.dashboard-marketplace-products__toolbar {
+	padding-block: 16px;
+}
+
+// A horizontal row of category tiles that scrolls with a hidden scrollbar and
+// fades at the end to hint there is more.
+.dashboard-marketplace-products__tiles-wrap {
+	position: relative;
+
+	&::after {
+		content: '';
+		position: absolute;
+		inset-block-start: 0;
+		inset-inline-end: 0;
+		inline-size: 80px;
+		block-size: 100%;
+		background: linear-gradient( to right, transparent, var( --dashboard__background-color ) );
+		pointer-events: none;
+	}
+}
+
+.dashboard-marketplace-products__tiles {
+	display: flex;
+	gap: 16px;
+	overflow-x: auto;
+	padding: 4px;
+	scrollbar-width: none;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
+	&::after {
+		content: '';
+		flex: 0 0 64px;
+	}
+}
+
+.dashboard-marketplace-products__tile {
+	flex: 0 0 200px;
+	cursor: pointer;
+
+	&:hover,
+	&:focus-visible {
+		box-shadow: 0 0 0 1px var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) inset;
+	}
+
+	&.is-selected {
+		box-shadow: 0 0 0 2px var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) inset;
+	}
+}
+
+.dashboard-marketplace-products__tile-body {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	block-size: 100px;
+	box-sizing: border-box;
+}
+
+.dashboard-marketplace-products__tile-logo {
+	block-size: 28px;
+	inline-size: auto;
+}
+
+.dashboard-marketplace-products__tile-label {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.dashboard-marketplace-products__card {
+	block-size: 100%;
+}
+
+.dashboard-marketplace-products__card-body {
+	display: flex;
+	flex-direction: column;
+	block-size: 100%;
+	box-sizing: border-box;
+}
+
+.dashboard-marketplace-products__card-main {
+	flex: 1;
+}
+
+// Price and actions sit together at the foot of the card, so short
+// descriptions leave the gap above the price rather than between them.
+.dashboard-marketplace-products__card-footer {
+	margin-block-start: 16px;
+}
+
+// The brand mark is the round badge at the start of the descriptor lockup.
+.dashboard-marketplace-products__card-mark {
+	inline-size: 24px;
+	block-size: 24px;
+	object-fit: cover;
+	object-position: left;
+	flex-shrink: 0;
+}
+
+.dashboard-marketplace-products__card-logo {
+	block-size: 24px;
+	inline-size: auto;
+	max-inline-size: 160px;
+	object-fit: contain;
+}
+
+.dashboard-marketplace-products__section-mark {
+	object-position: left;
+}
+
+// Product details: content on the left, price rail on the right, so the price
+// and its button stay put while the benefits list runs long.
+// With the modal's own header hidden, the close control sits in the top corner.
+.dashboard-marketplace-products__modal-close {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline-end: 0;
+}
+
+.dashboard-marketplace-products__modal-layout {
+	position: relative;
+	display: grid;
+	gap: 32px;
+	grid-template-columns: 1fr;
+
+	@media ( min-width: 782px ) {
+		grid-template-columns: minmax( 0, 1fr ) 300px;
+	}
+}
+
+.dashboard-marketplace-products__modal-main {
+	padding-block-end: 8px;
+}
+
+.dashboard-marketplace-products__modal-rail {
+	margin-block-start: 48px;
+	padding: 24px;
+	border-radius: 4px;
+	background: var( --wp-components-color-gray-100 );
+	align-content: start;
+}
+
+// The rail's call to action spans the rail, with its label centered.
+.dashboard-marketplace-products__modal-cta {
+	justify-content: center;
+}
+
+.dashboard-marketplace-products__modal-footer {
+	margin-block-start: auto;
+	padding-block-start: 16px;
+	border-block-start: 1px solid var( --dashboard-overview__divider-color );
+}
+
+.dashboard-marketplace-products__modal-mark {
+	inline-size: 40px;
+	block-size: 40px;
+	object-fit: cover;
+	object-position: left;
+	border-radius: 4px;
+	flex-shrink: 0;
+}
+
+.dashboard-marketplace-products__list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	li {
+		display: flex;
+		align-items: flex-start;
+		gap: 8px;
+	}
+
+	svg {
+		flex-shrink: 0;
+		fill: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+	}
+}
