@@ -810,6 +810,14 @@ export const siteSettingsRoute = createRoute( {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
 		queryClient.prefetchQuery( siteCurrentPlanQuery( site.ID ) );
+
+		// These requests are served by the site itself, so they fail while it is
+		// unreachable. Awaiting them would take down the settings routes that
+		// remain available in that state.
+		if ( site.__inaccessible_jetpack_error ) {
+			return;
+		}
+
 		await Promise.all( [
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
 			hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) &&
@@ -1351,7 +1359,10 @@ export const siteSettingsDefensiveModeRoute = createRoute( {
 );
 
 export const siteSettingsSftpSshRoute = createRoute( {
-	staticData: { requiresSiteTypeSupport: 'settingsServer' },
+	staticData: {
+		requiresSiteTypeSupport: 'settingsServer',
+		availableToInaccessibleJetpackSites: true,
+	},
 	head: () => ( {
 		meta: [
 			{

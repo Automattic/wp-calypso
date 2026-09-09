@@ -1,4 +1,5 @@
-import { DotcomFeatures } from '@automattic/api-core';
+import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';
+import { siteTypeSupportsFeature } from './site-type-feature-support';
 import type {
 	DotcomFeatureSlug,
 	HostingFeatureSlug,
@@ -30,6 +31,16 @@ export function hasHostingFeature( site: Site, feature: HostingFeatureSlug ) {
 		}
 	}
 	return hasPlanFeature( site, feature );
+}
+
+// Whether the user can reach the SFTP/SSH settings page. Both recovery surfaces
+// for an unreachable site link there, so they share one gate.
+export function canAccessSftpSettings( site: Site ) {
+	return (
+		!! site.capabilities?.manage_options &&
+		siteTypeSupportsFeature( site, 'settingsServer' ) &&
+		hasHostingFeature( site, HostingFeatures.SFTP )
+	);
 }
 
 export function hasJetpackModule( site: Site, module: `${ JetpackModuleSlug }` ) {
