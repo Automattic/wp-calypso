@@ -12,7 +12,7 @@ import { pencil as edit, trash } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { useLocale } from '../../app/locale';
+import { useIntlLocale } from '../../app/locale';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
@@ -28,7 +28,7 @@ export default function SshKey( {
 	setIsEditing: ( isEditing: boolean ) => void;
 	username: string;
 } ) {
-	const userLocale = useLocale();
+	const userLocale = useIntlLocale();
 	const { recordTracksEvent } = useAnalytics();
 
 	const [ isRemoveDialogOpen, setIsRemoveDialogOpen ] = useState( false );

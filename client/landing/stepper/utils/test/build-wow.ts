@@ -68,6 +68,16 @@ describe( 'build-wow utilities', () => {
 		expect( url.searchParams.get( 'siteId' ) ).toBe( '123' );
 		expect( url.searchParams.get( 'ref' ) ).toBe( 'referrer' );
 		expect( url.searchParams.get( 'source' ) ).toBe( 'vega' );
+		expect( url.searchParams.has( 'prompt' ) ).toBe( false );
+	} );
+
+	it( 'carries a prompt on the Site Spec URL when one is given', () => {
+		const url = new URL(
+			getBuildWowSiteSpecUrl( { siteSlug: 'example.wordpress.com', prompt: 'a bakery website' } ),
+			'https://wordpress.com'
+		);
+
+		expect( url.searchParams.get( 'prompt' ) ).toBe( 'a bakery website' );
 	} );
 
 	it( 'treats Atomic sites with a ready remote option as editor-ready', () => {

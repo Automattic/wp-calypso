@@ -5,6 +5,7 @@ import { useQuery as useReactQuery } from '@tanstack/react-query';
 import { act, render } from '@testing-library/react';
 import {
 	applyBlueprintSpec,
+	getSiteAdminUrl,
 	startBlueprintArchiveImport,
 	waitForAtomicTransferComplete,
 	waitForBlueprintImportComplete,
@@ -16,20 +17,32 @@ import { EARLY_PROVISION_TARGET_WPCOM_ATOMIC } from '../early-provisioning';
 import SiteSpec from '../index';
 
 let mockQueryParams = new URLSearchParams();
+let mockBuildWowEnabled = false;
 
 jest.mock( '@automattic/calypso-config', () => {
 	return {
 		__esModule: true,
-		default: jest.fn( ( key: string ) => {
-			const values: Record< string, string > = {
-				wpcom_signup_id: 'signup-id',
-				wpcom_signup_key: 'signup-key',
-			};
+		default: Object.assign(
+			jest.fn( ( key: string ) => {
+				const values: Record< string, string > = {
+					wpcom_signup_id: 'signup-id',
+					wpcom_signup_key: 'signup-key',
+				};
 
-			return values[ key ];
-		} ),
+				return values[ key ];
+			} ),
+			{
+				isEnabled: jest.fn(
+					( flag: string ) => flag === 'calypso/ai-site-builder-build-wow' && mockBuildWowEnabled
+				),
+			}
+		),
 	};
 } );
+
+jest.mock( '@automattic/onboarding', () => ( {
+	Step: { Loading: () => null },
+} ) );
 
 jest.mock( '@automattic/posthog', () => ( {
 	getSessionId: jest.fn( () => 'ph-session' ),
@@ -75,19 +88,24 @@ jest.mock( 'calypso/lib/site-spec/utils', () => ( {
 } ) );
 
 const mockSetPendingAction = jest.fn();
+const mockSetSiteSetupError = jest.fn();
 
 jest.mock( '@wordpress/data', () => ( {
-	useDispatch: () => ( { setPendingAction: mockSetPendingAction } ),
+	useDispatch: () => ( {
+		setPendingAction: mockSetPendingAction,
+		setSiteSetupError: mockSetSiteSetupError,
+	} ),
 } ) );
 
 jest.mock( 'calypso/landing/stepper/stores', () => ( {
 	ONBOARD_STORE: 'automattic/onboard',
+	SITE_STORE: 'automattic/site',
 } ) );
 
 // The wow-funnel helpers stay real so the funnel's readiness rules are exercised; only the
 // requests they make are stubbed.
 jest.mock( 'calypso/landing/stepper/utils/blueprint-archive-import', () => ( {
-	applyBlueprintSpec: jest.fn( () => Promise.resolve( true ) ),
+	applyBlueprintSpec: jest.fn( () => Promise.resolve( { applied: true, adminUrl: null } ) ),
 	getBlueprintArchiveSiteIdentifier: jest.fn(
 		( { siteSlug, siteId }: { siteSlug?: string | null; siteId?: string | null } ) =>
 			siteSlug || ( siteId && String( siteId ) !== '0' ? String( siteId ) : null )
@@ -127,6 +145,7 @@ describe( 'SiteSpec early provisioning step', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockBuildWowEnabled = false;
 		window.sessionStorage.clear();
 		mockQueryParams = new URLSearchParams( 'early_provision_site=1&source=vega' );
 		mockUseReactQuery.mockReturnValue( {
@@ -217,7 +236,7 @@ describe( 'SiteSpec early provisioning step', () => {
 		expect( redirect.searchParams.get( 'ref' ) ).toBe( 'site-card' );
 		expect( redirect.searchParams.get( 'source' ) ).toBe( 'site-overview' );
 		expect( redirect.searchParams.get( 'editorUrl' ) ).toBe(
-			'https://example.wordpress.com/wp-admin/site-editor.php?spec_id=spec-456&source=site-overview'
+			'https://example.wordpress.com/wp-admin/site-editor.php?source=site-overview'
 		);
 
 		expect( logToLogstashMock ).toHaveBeenCalledWith(
@@ -235,7 +254,22 @@ describe( 'SiteSpec early provisioning step', () => {
 		);
 	} );
 
-	it( 'ignores build-wow Site Spec routing for non-Automatticians', () => {
+	it( 'loads build-wow for non-Automatticians without asking for staff status when the feature is enabled', () => {
+		mockBuildWowEnabled = true;
+		mockQueryParams = new URLSearchParams( 'build_wow=1&siteSlug=example.wordpress.com' );
+		mockUseReactQuery.mockReturnValue( { data: undefined, isLoading: false } );
+
+		renderSiteSpec();
+
+		expect( mockUseReactQuery ).toHaveBeenCalledWith(
+			expect.objectContaining( { enabled: false } )
+		);
+		expect( mockUseSiteSpec.mock.calls[ 0 ][ 0 ].siteSpecConfig ).toEqual( {
+			agentId: 'build-wow-site-spec',
+		} );
+	} );
+
+	it( 'ignores build-wow Site Spec routing for non-Automatticians when the feature is disabled', () => {
 		mockQueryParams = new URLSearchParams( 'build_wow=1&siteSlug=example.wordpress.com' );
 		mockUseReactQuery.mockReturnValue( {
 			data: false,
@@ -244,10 +278,68 @@ describe( 'SiteSpec early provisioning step', () => {
 
 		renderSiteSpec();
 
+		expect( mockUseReactQuery ).toHaveBeenCalledWith(
+			expect.objectContaining( { enabled: true } )
+		);
 		const siteSpecOptions = mockUseSiteSpec.mock.calls[ 0 ][ 0 ];
 		expect( siteSpecOptions.siteSpecConfig ).toBeUndefined();
 		expect( siteSpecOptions.onSpecConfirm ).toBeUndefined();
 		expect( wpcomPostMock ).not.toHaveBeenCalled();
+	} );
+
+	it( 'confirms a spec carried from entry without loading the interview widget', async () => {
+		mockQueryParams = new URLSearchParams(
+			'build_wow=1&siteSlug=example.wordpress.com&spec_id=spec-entry'
+		);
+		wpcomPostMock.mockResolvedValue( {
+			blog_id: 123,
+			site_editor_url: 'https://example.wordpress.com/wp-admin/site-editor.php',
+		} );
+
+		await act( async () => {
+			renderSiteSpec();
+		} );
+
+		expect( mockUseSiteSpec ).not.toHaveBeenCalled();
+		expect( wpcomPostMock ).toHaveBeenCalledWith(
+			expect.objectContaining( { path: '/sites/example.wordpress.com/big-sky/build-wow' } ),
+			{ spec_id: 'spec-entry' }
+		);
+		const redirect = new URL( window.location.href, 'https://wordpress.com' );
+		expect( redirect.pathname ).toBe( '/setup/ai-site-builder-spec/site-generation' );
+		expect( redirect.searchParams.get( 'specId' ) ).toBe( 'spec-entry' );
+	} );
+
+	it( 'sends a failed build request to the error step', async () => {
+		mockQueryParams = new URLSearchParams( 'build_wow=1&siteSlug=example.wordpress.com' );
+		wpcomPostMock.mockRejectedValue( new Error( 'Forbidden' ) );
+
+		renderSiteSpec();
+
+		const siteSpecOptions = mockUseSiteSpec.mock.calls[ 0 ][ 0 ];
+		await act( async () => {
+			await siteSpecOptions.onSpecConfirm( { spec_id: 'spec-456' } );
+		} );
+
+		expect( mockSetSiteSetupError ).toHaveBeenCalledWith( 'build_wow_request_failed', 'Forbidden' );
+		expect( navigation.submit ).toHaveBeenCalledWith( {
+			buildWowError: 'build_wow_request_failed',
+		} );
+		expect( window.location.href ).toBe( '' );
+	} );
+
+	it( 'goes straight to the error step when build_wow has no target site', () => {
+		mockQueryParams = new URLSearchParams( 'build_wow=1' );
+
+		renderSiteSpec();
+
+		expect( mockUseSiteSpec ).not.toHaveBeenCalled();
+		expect( wpcomPostMock ).not.toHaveBeenCalled();
+		expect( mockSetSiteSetupError ).toHaveBeenCalledWith(
+			'build_wow_missing_site',
+			expect.any( String )
+		);
+		expect( navigation.submit ).toHaveBeenCalledWith( { buildWowError: 'build_wow_missing_site' } );
 	} );
 } );
 
@@ -284,6 +376,38 @@ describe( 'SiteSpec blueprint archive import', () => {
 		// The poll belongs to the processing step now, so nothing has been asked for yet.
 		expect( waitForAtomicTransferComplete ).not.toHaveBeenCalled();
 		expect( waitForBlueprintImportComplete ).not.toHaveBeenCalled();
+	} );
+
+	it( 'uses the admin URL from the apply response, so confirm does not fetch it', async () => {
+		( applyBlueprintSpec as jest.Mock ).mockResolvedValueOnce( {
+			applied: true,
+			adminUrl: 'https://example.wpcomstaging.com/wp-admin/',
+		} );
+
+		await confirmSpec();
+
+		const pendingAction = mockSetPendingAction.mock.calls[ 0 ][ 0 ];
+		await expect( pendingAction() ).resolves.toEqual( {
+			redirectTo: 'https://example.wordpress.com/wp-admin/site-editor.php',
+		} );
+
+		// The response already knew the admin base, so the extra /sites/<id> round trip is skipped
+		// — that request is the one this change exists to remove from the hand-off.
+		expect( getSiteAdminUrl ).not.toHaveBeenCalled();
+	} );
+
+	it( 'falls back to fetching the admin URL when the response has none', async () => {
+		// A wpcom that predates the field. The hand-off must still work, just a round trip slower.
+		( applyBlueprintSpec as jest.Mock ).mockResolvedValueOnce( { applied: true, adminUrl: null } );
+
+		await confirmSpec();
+
+		const pendingAction = mockSetPendingAction.mock.calls[ 0 ][ 0 ];
+		await expect( pendingAction() ).resolves.toEqual( {
+			redirectTo: 'https://example.wordpress.com/wp-admin/site-editor.php',
+		} );
+
+		expect( getSiteAdminUrl ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'polls the import from the waiting screen and hands back the site editor URL', async () => {

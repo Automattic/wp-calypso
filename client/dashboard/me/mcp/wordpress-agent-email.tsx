@@ -210,7 +210,6 @@ export default function WordPressAgentEmail() {
 						onChange={ selectSite }
 						label={ __( 'Select site' ) }
 						isLoading={ sitesQuery.isLoading }
-						useSiteUrlAsLabel
 					/>
 					{ ! sitesQuery.isLoading && sites.length === 0 && (
 						<Notice status="info" isDismissible={ false }>

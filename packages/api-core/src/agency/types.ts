@@ -147,9 +147,6 @@ export interface Agency {
 	name: string;
 	url: string;
 	tier?: AgencyTier;
-	mcp?: {
-		allowed: boolean;
-	};
 	influenced_revenue?: number;
 	approval_status?: AgencyApprovalStatus | '';
 	profile?: AgencyProfile;
@@ -164,6 +161,9 @@ export interface Agency {
 	};
 	third_party?: null | {
 		pressable?: null | {
+			pressable_id?: number;
+			/** Null for a regular Pressable plan not bought through the A4A marketplace. */
+			a4a_id?: string | null;
 			usage?: null | {
 				start_date?: string;
 				end_date?: string;

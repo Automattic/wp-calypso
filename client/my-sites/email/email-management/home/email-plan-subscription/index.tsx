@@ -3,11 +3,10 @@ import { formatCurrency } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { getRenewalPrice } from 'calypso/lib/purchases';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
+import type { Purchase } from '@automattic/api-core';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { Purchase } from 'calypso/lib/purchases/types';
 
 import './style.scss';
 
@@ -40,29 +39,29 @@ export const EmailPlanSubscription = ( {
 	}
 
 	const todayTimestamp = new Date().setUTCHours( 0, 0, 0, 0 );
-	const expiryTimestamp = new Date( purchase.expiryDate ).getTime();
+	const expiryTimestamp = new Date( purchase.expiry_date ).getTime();
 	const hasSubscriptionExpired = todayTimestamp > expiryTimestamp;
 
 	const getDescription = () => {
 		const formattedRenewalPrice = formatCurrency(
-			getRenewalPrice( purchase ),
-			purchase.currencyCode,
+			purchase.sale_amount || purchase.amount,
+			purchase.currency_code,
 			{
 				stripZeros: true,
 			}
 		);
-		const expiryDate = moment( purchase.expiryDate ).format( 'LL' );
+		const expiryDate = moment( purchase.expiry_date ).format( 'LL' );
 
 		if ( hasSubscriptionExpired ) {
 			return translate( 'Expired on %(expiryDate)s.', {
 				args: {
-					expiryDate: moment( purchase.expiryDate ).format( 'LL' ),
+					expiryDate: moment( purchase.expiry_date ).format( 'LL' ),
 				},
 				comment: 'Shows the expiry date of the email subscription',
 			} );
 		}
 
-		return purchase.isAutoRenewEnabled
+		return purchase.is_auto_renew_enabled
 			? translate( 'Renews on %(expiryDate)s for %(formattedRenewalPrice)s', {
 					args: {
 						expiryDate,
@@ -72,7 +71,7 @@ export const EmailPlanSubscription = ( {
 			  } )
 			: translate( 'Expires on %(expiryDate)s.', {
 					args: {
-						expiryDate: moment( purchase.expiryDate ).format( 'LL' ),
+						expiryDate: moment( purchase.expiry_date ).format( 'LL' ),
 					},
 					comment: 'Shows the expiry date of the email subscription',
 			  } );
@@ -93,7 +92,7 @@ export const EmailPlanSubscription = ( {
 					purchase={ purchase }
 					primary={ hasSubscriptionExpired }
 					selectedSite={ selectedSite }
-					subscriptionId={ purchase.id }
+					subscriptionId={ Number( purchase.ID ) }
 					tracksProps={ { source: 'email-plan-view' } }
 					customLabel={ translate( 'Renew now' ) }
 				/>
@@ -102,7 +101,7 @@ export const EmailPlanSubscription = ( {
 				<AutoRenewToggle
 					planName={ selectedSite.plan?.product_name_short }
 					siteDomain={ selectedSite.domain }
-					purchase={ purchase.rawPurchase }
+					purchase={ purchase }
 					withTextStatus
 					toggleSource="email-plan-view"
 				/>

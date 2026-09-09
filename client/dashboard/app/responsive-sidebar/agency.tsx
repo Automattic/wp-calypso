@@ -44,8 +44,7 @@ export default function AgencySidebar() {
 		isMarketplaceSectionAvailable( section, agencySupports, capabilities )
 	);
 	const canAccessLearn = !! supports.agency.learn && canAccess( learnRoute );
-	const canAccessMcp =
-		!! ( supports.agency.mcp && activeAgency?.mcp?.allowed ) && canAccess( mcpRoute );
+	const canAccessMcp = !! supports.agency.mcp && canAccess( mcpRoute );
 	const canAccessEarn =
 		!! supports.agency.earn &&
 		[

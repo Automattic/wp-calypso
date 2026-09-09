@@ -19,7 +19,8 @@ import SnackbarBackButton from '../../app/snackbar-back-button';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { formatDate } from '../../utils/datetime';
-import { getDomainRenewalUrl, isTldInMaintenance } from '../../utils/domain';
+import { isTldInMaintenance } from '../../utils/domain';
+import { getRenewalUrlFromPurchase } from '../../utils/purchase';
 import { TLDMaintenanceNotice } from '../maintenance-notice';
 import Actions from './actions';
 import FeaturedCards from './featured-cards';
@@ -104,7 +105,7 @@ export default function DomainOverview() {
 									variant="primary"
 									__next40pxDefaultSize
 									disabled={ isTldInMaintenance( domain ) }
-									href={ getDomainRenewalUrl( domain, purchase ) }
+									href={ getRenewalUrlFromPurchase( purchase ) }
 								>
 									{
 										// translators: price is the price of the domain renewal.

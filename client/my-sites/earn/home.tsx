@@ -179,7 +179,7 @@ const Home = () => {
 					},
 			  }
 			: {
-					text: translate( 'Unlock this feature' ),
+					text: translate( 'Upgrade' ),
 					isPrimary: true,
 					action: () => {
 						trackUpgrade( 'plans', 'simple-payments' );
@@ -400,7 +400,7 @@ const Home = () => {
 					disabled: isPeerReferralCtaDisabled,
 			  }
 			: {
-					text: translate( 'Unlock this feature' ),
+					text: translate( 'Upgrade' ),
 					isPrimary: true,
 					action: () => {
 						trackUpgrade( 'plans', 'peer-referral' );
@@ -477,7 +477,7 @@ const Home = () => {
 						},
 				  }
 				: {
-						text: translate( 'Unlock this feature' ),
+						text: translate( 'Upgrade' ),
 						isPrimary: true,
 						action: () => {
 							trackUpgrade( 'plans', 'ads' );

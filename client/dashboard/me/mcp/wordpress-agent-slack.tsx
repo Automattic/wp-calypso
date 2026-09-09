@@ -4,11 +4,11 @@ import {
 	wordpressAgentSlackOauthMutation,
 	wordpressAgentSlackPairMutation,
 } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Notice, Spinner, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useState } from 'react';
 import SlackMark from 'calypso/assets/images/logos/slack-mark.svg';
 import { useAnalytics } from '../../app/analytics';
@@ -117,7 +117,7 @@ export default function WordPressAgentSlack( {
 						title={ connection.team_name }
 						actions={
 							connection.installed && connection.is_owner ? (
-								<Badge intent="info">{ __( 'Integration owner' ) }</Badge>
+								<Badge intent="informational">{ __( 'Integration owner' ) }</Badge>
 							) : undefined
 						}
 						description={

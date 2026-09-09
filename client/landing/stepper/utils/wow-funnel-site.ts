@@ -162,16 +162,19 @@ export function adoptWowFunnelSite(
  * @param options.funnelSlug The funnel slug.
  * @param options.funnelArgs Args from the entry URL.
  * @param options.siteTitle  Optional site title.
+ * @param options.fromWfm    CTA opt-in to claim a pre-provisioned site from the WoW fleet.
  * @returns The created or adopted site.
  */
 async function createSiteOrAdoptPending( {
 	funnelSlug,
 	funnelArgs,
 	siteTitle,
+	fromWfm,
 }: {
 	funnelSlug: string;
 	funnelArgs?: Record< string, string >;
 	siteTitle?: string;
+	fromWfm?: boolean;
 } ): Promise< { siteId: number; siteSlug: string } > {
 	let creationError: unknown;
 	let site;
@@ -200,7 +203,8 @@ async function createSiteOrAdoptPending( {
 			undefined, // provisionTarget.
 			undefined, // aiLaunchpadEnabled.
 			funnelSlug,
-			funnelArgs
+			funnelArgs,
+			fromWfm
 		);
 	} catch ( error ) {
 		creationError = error;
@@ -237,10 +241,13 @@ export function startWowFunnelSite( {
 	funnelSlug,
 	funnelArgs,
 	siteTitle,
+	fromWfm,
 }: {
 	funnelSlug: string;
 	funnelArgs?: Record< string, string >;
 	siteTitle?: string;
+	/** CTA opt-in to claim a pre-provisioned site from the WoW fleet — see getWowFunnelFromWfm(). */
+	fromWfm?: boolean;
 } ): Promise< RememberedWowFunnelSite > {
 	const funnelKey = getWowFunnelKey( funnelSlug, funnelArgs );
 
@@ -257,7 +264,7 @@ export function startWowFunnelSite( {
 	const request = ( async () => {
 		logWowFunnelEvent( 'start_site_creation', { funnel: funnelSlug } );
 
-		const site = await createSiteOrAdoptPending( { funnelSlug, funnelArgs, siteTitle } );
+		const site = await createSiteOrAdoptPending( { funnelSlug, funnelArgs, siteTitle, fromWfm } );
 
 		const result: RememberedWowFunnelSite = {
 			funnelSlug,

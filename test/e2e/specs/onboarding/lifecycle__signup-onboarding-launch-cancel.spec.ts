@@ -138,7 +138,7 @@ test.describe(
 				}
 			} );
 
-			await test.step( 'Then I land on the post-checkout "Set up your site" screen', async () => {
+			await test.step( 'Then I land on the post-checkout "Let’s design your site" screen', async () => {
 				const postCheckoutSetupSitePage = new PostCheckoutSetupSitePage( page );
 				await postCheckoutSetupSitePage.waitUntilLoaded();
 			} );

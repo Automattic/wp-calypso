@@ -24,22 +24,22 @@ const originalLocation = window.location;
 
 const STEPS = [
 	{ id: 'preparing', label: 'Preparing your site' },
-	{ id: 'designing', label: 'Choosing your design' },
+	{ id: 'designing', label: 'Creating your design' },
 	{ id: 'building', label: 'Building your pages' },
 	{ id: 'images', label: 'Adding your images' },
 	{ id: 'polishing', label: 'Polishing your site' },
-	{ id: 'publishing', label: 'Publishing your site' },
+	{ id: 'publishing', label: 'Doing final checks' },
 ];
 
 // A server checklist in the shape big_sky_build_wow_status_ui_steps() emits.
 const SERVER_STEPS = ( activeIndex: number ) =>
 	[
 		{ id: 'prepare', label: 'Preparing your site' },
-		{ id: 'design', label: 'Choosing your design' },
+		{ id: 'design', label: 'Creating your design' },
 		{ id: 'pages', label: 'Building your pages' },
 		{ id: 'images', label: 'Adding your images' },
 		{ id: 'polish', label: 'Polishing your site' },
-		{ id: 'publish', label: 'Publishing your site' },
+		{ id: 'publish', label: 'Doing final checks' },
 	].map( ( step, index ) => {
 		let state = 'pending';
 		if ( index < activeIndex ) {
@@ -58,6 +58,7 @@ describe( 'useSiteGeneration', () => {
 		logMock.mockClear();
 		requestBuildWowSiteMock.mockReset();
 		requestBuildWowSiteMock.mockResolvedValue( {} );
+		window.sessionStorage.clear();
 	} );
 
 	afterEach( () => {
@@ -143,10 +144,46 @@ describe( 'useSiteGeneration', () => {
 
 			const { onReady } = statusPollMock.mock.calls[ 0 ][ 0 ];
 			act( () => {
-				onReady();
+				// A live response with no site_editor_url: the captured URL stands.
+				onReady( { build_status: 'live' } );
 			} );
 			expect( window.location.assign ).toHaveBeenCalledWith(
 				'https://example.wordpress.com/wp-admin/site-editor.php'
+			);
+		} finally {
+			Object.defineProperty( window, 'location', {
+				value: originalLocation,
+				configurable: true,
+			} );
+		}
+	} );
+
+	it( 'redirects to the live editor URL, keeping the args the flow added to the captured one', () => {
+		Object.defineProperty( window, 'location', {
+			value: { ...originalLocation, assign: jest.fn() },
+			configurable: true,
+		} );
+
+		try {
+			renderHook( () =>
+				useSiteGeneration( {
+					siteIdentifier: '123',
+					editorUrl:
+						'https://example.wordpress.com/wp-admin/site-editor.php?easy-mode=true&source=dashboard',
+					steps: STEPS,
+				} )
+			);
+
+			const { onReady } = statusPollMock.mock.calls[ 0 ][ 0 ];
+			act( () => {
+				onReady( {
+					build_status: 'live',
+					site_editor_url:
+						'https://example.wordpress.com/wp-admin/site-editor.php?easy-mode=true&p=%2Fpage%2F12&canvas=edit',
+				} );
+			} );
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				'https://example.wordpress.com/wp-admin/site-editor.php?easy-mode=true&p=%2Fpage%2F12&canvas=edit&source=dashboard'
 			);
 		} finally {
 			Object.defineProperty( window, 'location', {
@@ -230,6 +267,73 @@ describe( 'useSiteGeneration', () => {
 
 		act( () => onUpdate( { state: 'generating', steps: SERVER_STEPS( 3 ) } ) );
 		expect( result.current.steps[ 3 ].startedAt ).toBe( 1723032230000 );
+	} );
+
+	it( 'restores the active step timer after a reload', () => {
+		jest.setSystemTime( 1723032220000 );
+		const firstRender = renderHook( () =>
+			useSiteGeneration( {
+				siteIdentifier: '123',
+				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
+				steps: STEPS,
+			} )
+		);
+
+		act( () => {
+			statusPollMock.mock.calls[ 0 ][ 0 ].onUpdate( {
+				state: 'generating',
+				steps: SERVER_STEPS( 2 ),
+			} );
+		} );
+		expect( firstRender.result.current.steps[ 2 ].startedAt ).toBe( 1723032220000 );
+
+		firstRender.unmount();
+		jest.advanceTimersByTime( 12000 );
+
+		const secondRender = renderHook( () =>
+			useSiteGeneration( {
+				siteIdentifier: '123',
+				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
+				steps: STEPS,
+			} )
+		);
+		act( () => {
+			statusPollMock.mock.calls[ 1 ][ 0 ].onUpdate( {
+				state: 'generating',
+				steps: SERVER_STEPS( 2 ),
+			} );
+		} );
+
+		expect( secondRender.result.current.steps[ 2 ].startedAt ).toBe( 1723032220000 );
+	} );
+
+	it( 'starts the next observed step at zero', () => {
+		jest.setSystemTime( 1723032220000 );
+		const { result } = renderHook( () =>
+			useSiteGeneration( {
+				siteIdentifier: '123',
+				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
+				steps: STEPS,
+			} )
+		);
+
+		const { onUpdate } = statusPollMock.mock.calls[ 0 ][ 0 ];
+		act( () => {
+			onUpdate( {
+				state: 'generating',
+				steps: SERVER_STEPS( 2 ),
+			} );
+		} );
+
+		jest.advanceTimersByTime( 12000 );
+		act( () => {
+			onUpdate( {
+				state: 'generating',
+				steps: SERVER_STEPS( 3 ),
+			} );
+		} );
+
+		expect( result.current.steps[ 3 ].startedAt ).toBe( 1723032232000 );
 	} );
 
 	it( 'keeps the fallback checklist when a response carries no usable steps', () => {

@@ -368,7 +368,8 @@ function LineItemWrapper( {
 	let isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
 	const has100YearPlanProduct = has100YearPlan( responseCart );
 	const signupFlowName = getSignupCompleteFlowName();
-	const shouldShowComparison = isWpComPlan( product.product_slug );
+	const shouldShowComparison =
+		isWpComPlan( product.product_slug ) && ! responseCart.is_gift_purchase;
 
 	if ( isCopySiteFlow( signupFlowName ) && ! product.is_domain_registration ) {
 		isDeletable = false;

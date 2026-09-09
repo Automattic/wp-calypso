@@ -37,6 +37,10 @@ export interface AgencyOverviewContentProps {
 	capabilities?: string[];
 	/** Whether the agency already has an approved Partner Directory listing. */
 	hasPartnerDirectoryListing?: boolean;
+	/** Shows the Pressable introductory offer in the news column. */
+	isEligibleForPressableIntroOffer?: boolean;
+	/** Shows the Pressable expansion offer in the news column. */
+	isEligibleForPressableExpansionOffer?: boolean;
 	links: AgencyOverviewLinks;
 	shouldUseRouterLink?: boolean;
 	onScheduleCall?: () => void;
@@ -57,6 +61,8 @@ export default function AgencyOverviewContent( {
 	approvalStatus,
 	capabilities,
 	hasPartnerDirectoryListing,
+	isEligibleForPressableIntroOffer,
+	isEligibleForPressableExpansionOffer,
 	links,
 	shouldUseRouterLink,
 	onScheduleCall,
@@ -123,8 +129,12 @@ export default function AgencyOverviewContent( {
 				/>
 			</VStack>
 			<VStack spacing={ spacing } justify="flex-start">
-				<EventCard recordTracksEvent={ recordTracksEvent } />
 				<HelpfulLinksCard links={ links.helpful } recordTracksEvent={ recordTracksEvent } />
+				<EventCard
+					isEligibleForPressableIntroOffer={ isEligibleForPressableIntroOffer }
+					isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
+					recordTracksEvent={ recordTracksEvent }
+				/>
 			</VStack>
 		</Grid>
 	);

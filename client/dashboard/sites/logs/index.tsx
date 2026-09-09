@@ -231,20 +231,18 @@ function SiteLogsContent( {
 							/>
 						</HostingFeatureGatedWithCallout>
 					) : (
-						<>
-							<SiteActivityLogsDataViews
-								logType={ logType }
-								dateRange={ dateRange }
-								dateRangeVersion={ dateRangeVersion }
-								autoRefresh={ autoRefresh }
-								setAutoRefresh={ setAutoRefresh }
-								gmtOffset={ gmtOffset }
-								timezoneString={ timezoneString }
-								site={ site }
-								hasActivityLogsAccess={ hasActivityLogAccess }
-								searchParams={ activitySearchParams }
-							/>
-						</>
+						<SiteActivityLogsDataViews
+							logType={ logType }
+							dateRange={ dateRange }
+							dateRangeVersion={ dateRangeVersion }
+							autoRefresh={ autoRefresh }
+							setAutoRefresh={ setAutoRefresh }
+							gmtOffset={ gmtOffset }
+							timezoneString={ timezoneString }
+							site={ site }
+							hasActivityLogsAccess={ hasActivityLogAccess }
+							searchParams={ activitySearchParams }
+						/>
 					) }
 				</CardBody>
 			</Card>

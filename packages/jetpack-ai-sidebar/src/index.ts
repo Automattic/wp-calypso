@@ -574,6 +574,69 @@ const SHOW_COMPONENT_ABILITY_NAME = 'jetpack-ai/show-component';
 const LEGACY_SHOW_COMPONENT_ABILITY_NAME = 'big-sky/show-component';
 const SHOW_COMPONENT_TOOL_IDS = [ SHOW_COMPONENT_TOOL_ID, LEGACY_SHOW_COMPONENT_TOOL_ID ];
 
+const CHAT_COMPONENTS: Record< string, ComponentType > = {
+	'excerpt-picker': ExcerptPicker as ComponentType,
+	'title-picker': TitlePicker as ComponentType,
+	'seo-title-picker': SeoTitlePicker as ComponentType,
+	'seo-description-picker': SeoDescriptionPicker as ComponentType,
+	'image-alt-text-picker': ImageAltTextPicker as ComponentType,
+	'ai-editorial-review': AiEditorialReview as ComponentType,
+	'post-feedback': PostFeedback as ComponentType,
+	proofread: Proofread as ComponentType,
+};
+
+const SHOW_COMPONENT_TYPES = Object.keys( CHAT_COMPONENTS );
+
+function hasPickerOptions(
+	props: Record< string, unknown >,
+	optionsKey: string,
+	valueKey: string
+): boolean {
+	const options = props[ optionsKey ];
+	return (
+		Array.isArray( options ) &&
+		options.length > 0 &&
+		options.every( ( option ) => {
+			if ( ! option || typeof option !== 'object' || Array.isArray( option ) ) {
+				return false;
+			}
+			const value = ( option as Record< string, unknown > )[ valueKey ];
+			return typeof value === 'string' && value.trim() !== '';
+		} )
+	);
+}
+
+function hasRenderableShowComponentProps( type: string, props: unknown ): boolean {
+	if ( ! props || typeof props !== 'object' || Array.isArray( props ) ) {
+		return false;
+	}
+
+	const componentProps = props as Record< string, unknown >;
+	switch ( type ) {
+		case 'excerpt-picker':
+			return hasPickerOptions( componentProps, 'excerpts', 'excerpt' );
+		case 'title-picker':
+		case 'seo-title-picker':
+			return hasPickerOptions( componentProps, 'titles', 'title' );
+		case 'seo-description-picker':
+			return hasPickerOptions( componentProps, 'descriptions', 'description' );
+		case 'image-alt-text-picker':
+			return (
+				hasPickerOptions( componentProps, 'images', 'alt' ) &&
+				( componentProps.images as unknown[] ).every( ( image ) => {
+					const clientId = ( image as Record< string, unknown > ).clientId;
+					return typeof clientId === 'string' && clientId.trim() !== '';
+				} )
+			);
+		case 'ai-editorial-review':
+		case 'post-feedback':
+		case 'proofread':
+			return typeof componentProps.summary === 'string' && componentProps.summary.trim() !== '';
+		default:
+			return false;
+	}
+}
+
 /**
  * Client-side ability definition for `jetpack-ai/show-component`.
  *
@@ -590,10 +653,15 @@ const SHOW_COMPONENT_ABILITY: any = {
 	input_schema: {
 		type: 'object',
 		properties: {
-			type: { type: 'string' },
+			type: { type: 'string', enum: SHOW_COMPONENT_TYPES },
 			props: { type: 'object' },
+			summary: {
+				type: 'string',
+				description:
+					'One line naming what this step produced, in the language of the current user message. Recorded as the completed step, so a multi-step request continues from it. For example: "Proofread the post and found 2 typos."',
+			},
 		},
-		required: [ 'type' ],
+		required: [ 'type', 'props' ],
 	},
 };
 
@@ -601,6 +669,13 @@ const LEGACY_SHOW_COMPONENT_ABILITY: any = {
 	...SHOW_COMPONENT_ABILITY,
 	id: LEGACY_SHOW_COMPONENT_TOOL_ID,
 	name: LEGACY_SHOW_COMPONENT_ABILITY_NAME,
+	input_schema: {
+		...SHOW_COMPONENT_ABILITY.input_schema,
+		properties: {
+			...SHOW_COMPONENT_ABILITY.input_schema.properties,
+			type: { type: 'string' },
+		},
+	},
 };
 
 function hasShowComponentType( type: unknown ): type is string {
@@ -620,25 +695,51 @@ function shouldDelegateLegacyShowComponent( input: any ): boolean {
  * Handle Jetpack show-component calls by returning an agentMessage envelope.
  * Title picker opts into AM's
  * message-level Undo because the checkpoint API snapshots the post title.
- * @param {any} input - Tool call arguments: `{ type, props, toolCallId, ... }`.
- * @returns {Object} Result containing the `agentMessage` to re-emit.
+ * @param {any} input - Tool call arguments: `{ type, props, summary, toolCallId, ... }`.
+ * @returns {Object} `{ result, returnToAgent, agentMessage }` — the picker
+ * renders from `agentMessage`, and `result` tells the agent it was shown.
  */
+/**
+ * Build a show-component failure the agent can recover from.
+ *
+ * Returns to the agent: a withheld failure ends the turn silently, leaving the
+ * user with no picker and no explanation. The backend shows `message` to the
+ * user and hands `error` to the model, so a failure carries both.
+ * @param {string} error - Technical reason, for the model.
+ * @returns {Object} `{ result, returnToAgent }`.
+ */
+function showComponentError( error: string ): any {
+	return {
+		result: {
+			success: false,
+			message: __(
+				'There was an error with this request. Please try again.',
+				__i18n_text_domain__
+			),
+			error,
+		},
+		returnToAgent: true,
+	};
+}
+
 function handleShowComponent( input: any ): any {
 	const { type, props } = input || {};
 
 	if ( ! hasShowComponentType( type ) ) {
-		return { success: false, error: 'show-component: missing type', returnToAgent: false };
+		return showComponentError( 'show-component: missing type' );
 	}
 
 	if ( ! getChatComponent( type ) ) {
-		return {
-			success: false,
-			error: `show-component: no component registered for type "${ type }"`,
-			returnToAgent: false,
-		};
+		return showComponentError( `show-component: no component registered for type "${ type }"` );
 	}
 
-	const componentProps: Record< string, unknown > = { ...( props ?? {} ) };
+	if ( ! hasRenderableShowComponentProps( type, props ) ) {
+		return showComponentError(
+			`show-component: props do not contain renderable data for type "${ type }"`
+		);
+	}
+
+	const componentProps: Record< string, unknown > = { ...props };
 	const data: Record< string, unknown > = {
 		type,
 		props: componentProps,
@@ -700,9 +801,23 @@ function handleShowComponent( input: any ): any {
 		data,
 	} );
 
+	const summary = typeof input?.summary === 'string' ? input.summary.trim() : '';
+	const message = summary || __( 'Choose from the options I provided.', __i18n_text_domain__ );
+
+	// The picker renders from the structured `agentMessage`, while the tool
+	// result tells the agent the picker was shown. Always return to the agent:
+	// the backend acks a `{ success, message }` echo without another LLM turn,
+	// whereas a withheld result leaves the tool call unanswered and the model
+	// re-plans the whole request. Mirrors `big-sky/show-component`.
 	return {
-		result: 'Component displayed successfully',
-		returnToAgent: data.followUpTasks,
+		// Keep the standard ability-result contract complete even when an older
+		// caller omits the model-written summary.
+		result: {
+			success: true,
+			message,
+			details: { type },
+		},
+		returnToAgent: true,
 		agentMessage,
 	};
 }
@@ -971,7 +1086,12 @@ export const toolProvider = {
 		}
 
 		if ( isShowComponentTool( name ) ) {
-			return { result: handleShowComponent( args ), returnToAgent: false };
+			const result = handleShowComponent( args );
+			return {
+				result,
+				returnToAgent: result.returnToAgent,
+				...( result.agentMessage && { agentMessage: result.agentMessage } ),
+			};
 		}
 
 		const executeAbility = getAbilitiesExecuteAbility();
@@ -1087,31 +1207,9 @@ export const contextProvider = {
  * @returns {ComponentType|null} The matching component, or null.
  */
 export function getChatComponent( type: string ): ComponentType | null {
-	if ( type === 'excerpt-picker' ) {
-		return ExcerptPicker as ComponentType;
-	}
-	if ( type === 'title-picker' ) {
-		return TitlePicker as ComponentType;
-	}
-	if ( type === 'seo-title-picker' ) {
-		return SeoTitlePicker as ComponentType;
-	}
-	if ( type === 'seo-description-picker' ) {
-		return SeoDescriptionPicker as ComponentType;
-	}
-	if ( type === 'image-alt-text-picker' ) {
-		return ImageAltTextPicker as ComponentType;
-	}
-	if ( type === 'ai-editorial-review' ) {
-		return AiEditorialReview as ComponentType;
-	}
-	if ( type === 'post-feedback' ) {
-		return PostFeedback as ComponentType;
-	}
-	if ( type === 'proofread' ) {
-		return Proofread as ComponentType;
-	}
-	return null;
+	return Object.prototype.hasOwnProperty.call( CHAT_COMPONENTS, type )
+		? CHAT_COMPONENTS[ type ]
+		: null;
 }
 
 // ---------- useCheckpoint ----------
