@@ -580,6 +580,24 @@ describe( 'checkpoint recorder', () => {
 		).rejects.toThrow( 'Navigation menu not found: 19' );
 	} );
 
+	// The caller discards the snapshot it took when its write fails; a second
+	// write to the same menu must not take the first one's snapshot with it.
+	it( 'reports only the call that added the menu snapshot', async () => {
+		const { withCheckpoint, getCheckpoint } = await loadCheckpoints();
+		jest.requireMock( '@wordpress/data' ).resolveSelect.mockReturnValue( {
+			getEditedEntityRecord: jest.fn().mockResolvedValue( { blocks: [] } ),
+		} );
+		const captured: boolean[] = [];
+
+		await withCheckpoint( write( [ 'navigation' ] ), async ( recorder ) => {
+			captured.push( await recorder.captureMenu( 19 ) );
+			captured.push( await recorder.captureMenu( 19 ) );
+		} );
+
+		expect( captured ).toEqual( [ true, false ] );
+		expect( getCheckpoint( 'call-1' )?.menusBeforeUpdate ).toHaveLength( 1 );
+	} );
+
 	it( 'ignores a menu from a write that never claimed the navigation domain', async () => {
 		const { withCheckpoint, getCheckpoint } = await loadCheckpoints();
 

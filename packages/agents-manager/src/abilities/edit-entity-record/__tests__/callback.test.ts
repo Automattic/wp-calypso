@@ -51,6 +51,7 @@ import { logSiteMetadata, logSiteSession } from '../../../utils/session-log';
 import { setSiteMetadata } from '../../../utils/site-metadata';
 import { setSiteTitle } from '../../../utils/site-title';
 import { editEntityRecordCallback, getCheckpointKeys } from '../callback';
+import { buildNavigationItems } from '../navigation-items';
 
 const saveEntityRecord = jest.fn( async () => ( { id: 7, title: 'About', link: '/about/' } ) );
 const editEntityRecord = jest.fn();
@@ -61,6 +62,8 @@ const page = ( recordId?: number ) => ( {
 	entityName: 'page',
 	...( recordId ? { recordId } : {} ),
 } );
+
+const site = { entityType: 'root', entityName: 'site' };
 
 beforeEach( () => {
 	jest.clearAllMocks();
@@ -92,9 +95,32 @@ describe( 'getCheckpointKeys', () => {
 		{
 			case: 'a menu write',
 			input: {
-				editEntities: [ { entityType: 'postType', entityName: 'wp_navigation', recordId: 9 } ],
+				editEntities: [
+					{
+						entityType: 'postType',
+						entityName: 'wp_navigation',
+						recordId: 9,
+						record: { navigationItems: [] },
+					},
+				],
 			},
 			expected: [ checkpointKeys.NAVIGATION ],
+		},
+		{
+			// The snapshot covers the menu items, so a title-only edit has nothing
+			// it could put back and keeps the editor's undo instead.
+			case: 'a menu record that changes only its own title',
+			input: {
+				editEntities: [
+					{
+						entityType: 'postType',
+						entityName: 'wp_navigation',
+						recordId: 9,
+						record: { title: 'Header' },
+					},
+				],
+			},
+			expected: [],
 		},
 		{
 			case: 'site metadata',
@@ -233,10 +259,12 @@ describe( 'editEntityRecordCallback', () => {
 		expect( renameNavigationItem ).not.toHaveBeenCalled();
 	} );
 
+	// The title travels with the removal: an item carrying no page id is matched
+	// by the label the page had before it was deleted.
 	it( 'deletes a page and removes its menu item', async () => {
 		await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
 
-		expect( removeNavigationItem ).toHaveBeenCalledWith( 7 );
+		expect( removeNavigationItem ).toHaveBeenCalledWith( 7, 'About' );
 		expect( deleteEntityRecord ).toHaveBeenCalledWith( 'postType', 'page', 7, {
 			throwOnError: true,
 		} );
@@ -310,6 +338,28 @@ describe( 'editEntityRecordCallback', () => {
 		expect( result.result.error ).toContain( 'Unsupported entity: root/page' );
 	} );
 
+	// The site is a singleton at `/wp/v2/settings`. Saving or deleting it here
+	// would rewrite the real settings with no checkpoint behind it.
+	it.each( [
+		{
+			case: 'created',
+			input: { addEntities: [ { ...site, record: { title: 'My Site' } } ] },
+			error: 'Cannot create root/site',
+		},
+		{
+			case: 'deleted',
+			input: { deleteEntities: [ { ...site, recordId: 1 } ] },
+			error: 'Cannot delete root/site',
+		},
+	] )( 'refuses a site record being $case', async ( { input, error } ) => {
+		const result = await editEntityRecordCallback( input );
+
+		expect( result.result.success ).toBe( false );
+		expect( result.result.error ).toContain( error );
+		expect( saveEntityRecord ).not.toHaveBeenCalled();
+		expect( deleteEntityRecord ).not.toHaveBeenCalled();
+	} );
+
 	it( 'reports what applied when a later change fails', async () => {
 		( setPageTitle as jest.Mock ).mockRejectedValueOnce( new Error( 'menu is locked' ) );
 
@@ -353,6 +403,29 @@ describe( 'editEntityRecordCallback', () => {
 		expect( setPageTitle ).toHaveBeenCalledWith( 8, 'Contact' );
 		expect( result.result.details ).toMatchObject( { updated: [ { recordId: 8 } ] } );
 		expect( hasCheckpoint( 'call-rename-partial' ) ).toBe( true );
+	} );
+
+	// The menu write landed outside the editor's undo stack, so the checkpoint
+	// is its only way back — a later failure must not take it down.
+	it( 'reports a menu write that landed before a later write in the same record failed', async () => {
+		( buildNavigationItems as jest.Mock ).mockResolvedValueOnce( { blocks: [], title: 'Header' } );
+		editEntityRecord.mockResolvedValueOnce( undefined );
+		editEntityRecord.mockRejectedValueOnce( new Error( 'title is locked' ) );
+
+		const result = await editEntityRecordCallback( {
+			toolCallId: 'call-menu-partial',
+			editEntities: [
+				{
+					entityType: 'postType',
+					entityName: 'wp_navigation',
+					recordId: 9,
+					record: { navigationItems: [], title: 'Header' },
+				},
+			],
+		} );
+
+		expect( result.result.details ).toMatchObject( { updated: [ { recordId: 9 } ] } );
+		expect( hasCheckpoint( 'call-menu-partial' ) ).toBe( true );
 	} );
 
 	// The creation landed, but nothing can un-create a page, so the checkpoint

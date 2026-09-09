@@ -1,5 +1,11 @@
 import { editGlobalStyles, getEditedGlobalStyles, type GlobalStylesRecord } from './global-styles';
-import { readMenuItems, writeMenuItems, type NavigationBlock } from './navigation-menu';
+import {
+	isSameMenuId,
+	readMenuItems,
+	writeMenuItems,
+	type MenuId,
+	type NavigationBlock,
+} from './navigation-menu';
 import { getPageTitle, setPageTitle } from './page-title';
 import { getSiteLogo, setSiteLogo, type SiteLogo } from './site-logo';
 import { getSiteMetadata, replaceSiteMetadata, type SiteMetadata } from './site-metadata';
@@ -72,7 +78,7 @@ export interface CheckpointRecord extends CheckpointMetadata {
 	siteMetadataBeforeUpdate?: SiteMetadata;
 	// A list, not a map: object keys are strings, and a menu id is a post id —
 	// restoring under the wrong type would address a different record.
-	menusBeforeUpdate?: { id: number | string; items: NavigationBlock[] }[];
+	menusBeforeUpdate?: { id: MenuId; items: NavigationBlock[] }[];
 	pageRenames?: PageRename[];
 }
 
@@ -294,16 +300,16 @@ export function clearCheckpoint( id: string ): void {
  * so callers never branch on whether one exists.
  */
 export interface CheckpointRecorder {
-	/** Snapshots a menu before this write edits it. */
-	captureMenu: ( menuId: string | number ) => Promise< void >;
+	/** Snapshots a menu before this write edits it, if not already snapshotted. */
+	captureMenu: ( menuId: MenuId ) => Promise< boolean >;
 	/** Records a rename so a restore can put the old title back. */
 	capturePageRename: ( rename: PageRename ) => void;
 	/** Drops a menu snapshot whose write then failed. */
-	discardMenu: ( menuId: string | number ) => void;
+	discardMenu: ( menuId: MenuId ) => void;
 }
 
 const NO_RECORDER: CheckpointRecorder = {
-	captureMenu: async () => {},
+	captureMenu: async () => false,
 	capturePageRename: () => {},
 	discardMenu: () => {},
 };
@@ -331,9 +337,9 @@ function createRecorder( checkpointId: string ): CheckpointRecorder {
 			// snapshot a menu this write has already changed.
 			if (
 				! claims( checkpoint, checkpointKeys.NAVIGATION ) ||
-				captured.some( ( menu ) => menu.id === menuId )
+				captured.some( ( menu ) => isSameMenuId( menu.id, menuId ) )
 			) {
-				return;
+				return false;
 			}
 
 			const items = await readMenuItems( menuId );
@@ -347,13 +353,17 @@ function createRecorder( checkpointId: string ): CheckpointRecorder {
 			update( {
 				menusBeforeUpdate: [ ...captured, { id: menuId, items: deepClone( items ) } ],
 			} );
+
+			return true;
 		},
 		discardMenu: ( menuId ) => {
 			const checkpoint = records.get( checkpointId );
 
 			if ( checkpoint?.menusBeforeUpdate?.length ) {
 				update( {
-					menusBeforeUpdate: checkpoint.menusBeforeUpdate.filter( ( menu ) => menu.id !== menuId ),
+					menusBeforeUpdate: checkpoint.menusBeforeUpdate.filter(
+						( menu ) => ! isSameMenuId( menu.id, menuId )
+					),
 				} );
 			}
 		},
