@@ -44,6 +44,7 @@ import {
 	useGridPlansForComparisonGrid,
 	useGridPlanForSpotlight,
 	usePlanBillingPeriod,
+	hasTailoredFeatureList,
 } from '@automattic/plans-grid-next';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
@@ -1280,9 +1281,13 @@ const PlansFeaturesMain = ( {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
 	} else if ( intent === 'plans-wordpress-hosting' ) {
 		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
-	} else if ( useVar42NoAiFeatures || usePlansGridRedesignFeatures ) {
+	} else if (
+		( useVar42NoAiFeatures || usePlansGridRedesignFeatures ) &&
+		! hasTailoredFeatureList( intent )
+	) {
 		// Stacked rollout variant should render a single, ordered list (no grouping),
 		// otherwise features get scattered across groups causing gaps and can be filtered out.
+		// Skipped for intents that curate their own feature list, whose grouping is theirs too.
 		const featureGroups = getPlanFeaturesGroupedForFeaturesGrid();
 		featureGroupMapForFeaturesGrid = Object.fromEntries(
 			Object.entries( featureGroups ).reverse()

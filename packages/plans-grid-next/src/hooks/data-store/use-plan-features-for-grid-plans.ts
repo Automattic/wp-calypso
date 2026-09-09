@@ -35,6 +35,7 @@ import {
 } from '@automattic/calypso-products';
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
+import { hasTailoredFeatureList } from '../../constants';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import useHighlightedFeatures from './use-highlighted-features';
 import type {
@@ -281,6 +282,13 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	const translate = useTranslate();
 	const highlightedFeatures = useHighlightedFeatures( { intent: intent ?? null, isInSignup } );
 	return useMemo( () => {
+		/*
+		 * The pricing-differentiation lists are the default presentation, not an override: an intent
+		 * that curates its own list keeps it. Checked here rather than by reordering the branches
+		 * below, so the relative order of the intent branches themselves is untouched.
+		 */
+		const useDifferentiationFeatures = ! hasTailoredFeatureList( intent );
+
 		return gridPlans.reduce(
 			( acc, gridPlan ) => {
 				const planSlug = gridPlan.planSlug;
@@ -290,7 +298,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 				let wpcomFeatures: FeatureObject[] = [];
 				let jetpackFeatures: FeatureObject[] = [];
 
-				if ( usePlansGridRedesignFeatures ) {
+				if ( usePlansGridRedesignFeatures && useDifferentiationFeatures ) {
 					const featureSlugs =
 						planConstantObj?.getVar42NoAiSignupWpcomFeatures?.() ??
 						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ??
@@ -307,7 +315,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? [],
 						true
 					);
-				} else if ( useVar42NoAiFeatures ) {
+				} else if ( useVar42NoAiFeatures && useDifferentiationFeatures ) {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj?.getVar42NoAiSignupWpcomFeatures?.() ??
@@ -402,7 +410,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 					);
 				}
 
-				if ( usePlansGridRedesignFeatures ) {
+				if ( usePlansGridRedesignFeatures && useDifferentiationFeatures ) {
 					wpcomFeatures = applyPlansGridRedesignFeatureTitleOverrides(
 						wpcomFeatures,
 						planSlug,
