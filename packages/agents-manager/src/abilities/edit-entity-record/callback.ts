@@ -26,6 +26,24 @@ const SITE_NAME = 'site';
 const PAGE = 'page';
 const NAVIGATION = 'wp_navigation';
 
+// The schema declares the kind and the name as independent enums, so pairs
+// like `root/page` pass validation. Routing partly on the name would then
+// rename the real page while the rest of the record addressed nothing.
+const POST_TYPE_NAMES = [ 'post', PAGE, 'product', NAVIGATION ];
+
+const isKnownEntity = ( entityType: string, entityName: string ) =>
+	entityType === SITE_TYPE ? entityName === SITE_NAME : POST_TYPE_NAMES.includes( entityName );
+
+// Only `blocks` and `content` are covered by the menu snapshot, so only they
+// are checkpointed. Anything else a menu record carries — its own title, for
+// instance — keeps the editor's undo, as page content does.
+const MENU_FIELDS = [ 'blocks', 'content' ];
+
+const pickFields = ( record: Record< string, unknown >, fields: string[], wanted: boolean ) =>
+	Object.fromEntries(
+		Object.entries( record ).filter( ( [ key ] ) => fields.includes( key ) === wanted )
+	);
+
 /**
  * Reports the entity as updated, once, however many of its writes land.
  *
@@ -240,12 +258,17 @@ async function applyRecordEdit(
 	// of the editor's undo stack. The rest of the record is not, so the editor's
 	// stack remains its only undo and it keeps it.
 	let recordToWrite = isRename ? withoutTitle( record ) : record;
+	let menuWrite: Record< string, unknown > | undefined;
 
 	if ( entityName === NAVIGATION ) {
 		// Built before the snapshot: a refused rebuild must not leave a restore
 		// point for an edit that never happened.
-		recordToWrite = await buildNavigationItems( recordId, record );
+		const rebuilt = await buildNavigationItems( recordId, record );
+
 		await recorder.captureMenu( recordId );
+
+		menuWrite = pickFields( rebuilt, MENU_FIELDS, true );
+		recordToWrite = pickFields( rebuilt, MENU_FIELDS, false );
 	}
 
 	if ( isRename ) {
@@ -258,13 +281,32 @@ async function applyRecordEdit(
 		updated();
 	}
 
+	if ( menuWrite && Object.keys( menuWrite ).length ) {
+		try {
+			// Checkpointed, so `restore-checkpoint` is its undo and the editor's
+			// stack would be a second, competing one.
+			await coreDispatch().editEntityRecord( entityType, entityName, recordId, menuWrite, {
+				...options,
+				undoIgnore: true,
+			} );
+		} catch ( error ) {
+			// The snapshot was taken before the write. If the write is refused,
+			// keeping it would leave a partial batch advertising an undo for a
+			// menu that never changed.
+			recorder.discardMenu( recordId );
+
+			throw error;
+		}
+	}
+
 	if ( Object.keys( recordToWrite ).length ) {
-		await coreDispatch().editEntityRecord( entityType, entityName, recordId, recordToWrite, {
-			...options,
-			// A menu edit is checkpointed, so `restore-checkpoint` is its undo and
-			// the editor's stack would be a second, competing one.
-			...( entityName === NAVIGATION && { undoIgnore: true } ),
-		} );
+		await coreDispatch().editEntityRecord(
+			entityType,
+			entityName,
+			recordId,
+			recordToWrite,
+			options
+		);
 	}
 
 	updated();
@@ -291,6 +333,12 @@ async function applyEdits(
 
 		if ( ! entityType || ! entityName || ! record || recordId === undefined ) {
 			continue;
+		}
+
+		if ( ! isKnownEntity( entityType, entityName ) ) {
+			throw new Error(
+				`Unsupported entity: ${ entityType }/${ entityName }. Use root/site, or postType with post, page, product or wp_navigation.`
+			);
 		}
 
 		const checked = { ...entity, entityType, entityName, recordId, record };
@@ -359,6 +407,13 @@ export async function editEntityRecordCallback(
 	) {
 		return errorResult(
 			'Invalid arguments. Provide arrays for addEntities, editEntities, and deleteEntities.',
+			failureMessage
+		);
+	}
+
+	if ( ! addEntities.length && ! editEntities.length && ! deleteEntities.length ) {
+		return errorResult(
+			'Nothing to do. Provide at least one entry in addEntities, editEntities or deleteEntities.',
 			failureMessage
 		);
 	}

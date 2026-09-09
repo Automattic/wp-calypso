@@ -148,6 +148,34 @@ it( 'keeps children the input does not mention', async () => {
 	expect( blocks[ 0 ].name ).toBe( SUBMENU );
 } );
 
+// A menu can hold a Page List, Search or Social Links block. Preserving a
+// submenu's children must not retype them as navigation links.
+it( 'keeps the type of preserved blocks that are not menu links', async () => {
+	withMenu( [
+		{
+			...item( 'about', 'About', {}, [ { ...item( 'pl', '' ), name: 'core/page-list' } ] ),
+			name: SUBMENU,
+		},
+	] );
+
+	const result = await buildNavigationItems( 10, { navigationItems: [ { label: 'About' } ] } );
+	const blocks = result.blocks as { innerBlocks: { name: string }[] }[];
+
+	expect( blocks[ 0 ].innerBlocks[ 0 ].name ).toBe( 'core/page-list' );
+} );
+
+// The schema stops validating below the first level, so a nested `items` can
+// arrive as any shape at all.
+it( 'ignores a nested items value that is not an array', async () => {
+	withMenu( [ item( 'a', 'About' ) ] );
+
+	const result = await buildNavigationItems( 10, {
+		navigationItems: [ { label: 'About', items: 'invalid' } ],
+	} );
+
+	expect( labelsOf( result ) ).toEqual( [ 'About' ] );
+} );
+
 // Urls are no more unique than labels, so they claim after ids do.
 it( 'lets an id claim its block before a shared url takes it', async () => {
 	withMenu( [

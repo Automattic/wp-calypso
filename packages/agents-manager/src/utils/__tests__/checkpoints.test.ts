@@ -244,6 +244,27 @@ describe( 'hasCheckpoint / clearCheckpoint / getCheckpoints', () => {
 } );
 
 describe( 'getAvailableCheckpoints', () => {
+	// The list is re-sent to the agent every turn; snapshots carry whole
+	// global-styles records, menu block trees and site metadata.
+	it( 'sends no snapshot fields to the model', async () => {
+		const { setCheckpoint, getAvailableCheckpoints, checkpointKeys } = await loadCheckpoints();
+
+		setCheckpoint( 'call-1', [ checkpointKeys.COLOR, checkpointKeys.LOGO ] );
+
+		const [ item ] = getAvailableCheckpoints();
+
+		expect( Object.keys( item ) ).toEqual(
+			expect.not.arrayContaining( [
+				'themeBeforeUpdate',
+				'logoBeforeUpdate',
+				'siteTitleBeforeUpdate',
+				'siteMetadataBeforeUpdate',
+				'menusBeforeUpdate',
+				'pageRenames',
+			] )
+		);
+	} );
+
 	it( 'returns an empty list without checkpoints', async () => {
 		const { getAvailableCheckpoints } = await loadCheckpoints();
 
@@ -487,10 +508,14 @@ describe( 'setReciprocalCheckpoint', () => {
 			menusBeforeUpdate,
 		} ) as never;
 
-	// A restore unwinds newest first, so flipping in place would replay a
-	// double rename back to the middle title instead of the newest one.
-	it( 'orders a redo so a page renamed twice ends on its newest title', async () => {
+	// The redo has to return to the title the undo is about to overwrite, which
+	// is whatever the page carries now — not the one the target recorded, since
+	// the page may have been renamed again since.
+	it( 'records each renamed page once, at its current title', async () => {
 		const { setReciprocalCheckpoint, getCheckpoint } = await loadCheckpoints();
+		jest.requireMock( '@wordpress/data' ).resolveSelect.mockReturnValue( {
+			getEditedEntityRecord: jest.fn().mockResolvedValue( { title: 'Renamed since' } ),
+		} );
 
 		await setReciprocalCheckpoint(
 			'redo',
@@ -502,8 +527,7 @@ describe( 'setReciprocalCheckpoint', () => {
 		);
 
 		expect( getCheckpoint( 'redo' )?.pageRenames ).toEqual( [
-			{ pageId: 7, from: 'C', to: 'B' },
-			{ pageId: 7, from: 'B', to: 'A' },
+			{ pageId: 7, from: 'Renamed since', to: 'Renamed since' },
 		] );
 	} );
 

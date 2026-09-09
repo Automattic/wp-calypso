@@ -291,6 +291,25 @@ describe( 'editEntityRecordCallback', () => {
 
 	// A batch that creates a page then fails must not have the agent create it
 	// again, so the failure carries what already landed.
+	it( 'refuses a batch with nothing in it', async () => {
+		const result = await editEntityRecordCallback( {} );
+
+		expect( result.result.success ).toBe( false );
+		expect( result.result.error ).toContain( 'Nothing to do' );
+	} );
+
+	// The schema's kind and name enums are independent, so `root/page` passes it.
+	it( 'refuses an entity kind and name that do not go together', async () => {
+		const result = await editEntityRecordCallback( {
+			editEntities: [
+				{ entityType: 'root', entityName: 'page', recordId: 7, record: { title: 'About' } },
+			],
+		} );
+
+		expect( result.result.success ).toBe( false );
+		expect( result.result.error ).toContain( 'Unsupported entity: root/page' );
+	} );
+
 	it( 'reports what applied when a later change fails', async () => {
 		( setPageTitle as jest.Mock ).mockRejectedValueOnce( new Error( 'menu is locked' ) );
 
