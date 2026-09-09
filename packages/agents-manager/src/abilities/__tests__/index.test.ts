@@ -168,7 +168,9 @@ describe( 'abilities facade', () => {
 		// Registration runs fire-and-forget with the load — let it settle.
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
-		// A migrated ability is handed back; one with no provider copy stays on.
+		// Named, not just derived from the list: an ability filed under the
+		// AM-only one by mistake would still satisfy a comparison against it.
+		expect( amOnlyNames ).not.toContain( 'big-sky/edit-entity-record' );
 		expect( amOnlyNames ).not.toContain( 'big-sky/show-component' );
 		expect( amOnlyNames ).toContain( 'big-sky/show-template' );
 		await expect( ownedAbilityNames( amToolProvider ) ).resolves.toEqual( [
