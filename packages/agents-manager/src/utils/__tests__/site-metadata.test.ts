@@ -2,19 +2,26 @@ jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
 jest.mock( '@wordpress/data', () => ( { select: jest.fn(), dispatch: jest.fn() } ) );
 
 import { dispatch, select } from '@wordpress/data';
-import { getSiteMetadata, setSiteMetadata } from '../site-metadata';
+import { getSiteMetadata, replaceSiteMetadata, setSiteMetadata } from '../site-metadata';
 
 const editEntityRecord = jest.fn();
 const saveSpecifiedEntityEdits = jest.fn();
 const setProviderMetadata = jest.fn();
 
-/** Serves `site` with the given `big_sky_site_metadata`, or nothing at all. */
-function withSiteRecord( metadata?: unknown ) {
-	( select as jest.Mock ).mockReturnValue(
-		metadata === undefined
+/**
+ * Serves `site` with the given `big_sky_site_metadata`, or nothing at all, and
+ * Big Sky's store with `provider`.
+ */
+function withSiteRecord( metadata?: unknown, provider: Record< string, unknown > = {} ) {
+	( select as jest.Mock ).mockImplementation( ( storeName: unknown ) => {
+		if ( storeName === 'ai-assembler' ) {
+			return { getSiteMetadata: () => provider };
+		}
+
+		return metadata === undefined
 			? { getEditedEntityRecord: () => false }
-			: { getEditedEntityRecord: () => ( { big_sky_site_metadata: metadata } ) }
-	);
+			: { getEditedEntityRecord: () => ( { big_sky_site_metadata: metadata } ) };
+	} );
 	( dispatch as jest.Mock ).mockImplementation( ( storeName: unknown ) =>
 		storeName === 'ai-assembler'
 			? { setSiteMetadata: setProviderMetadata }
@@ -116,5 +123,24 @@ describe( 'setSiteMetadata', () => {
 
 		await expect( setSiteMetadata( { personality: 'bold' } ) ).rejects.toThrow( 'unavailable' );
 		expect( editEntityRecord ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'replaceSiteMetadata', () => {
+	// Big Sky's reducer merges, so a key this write drops has to be sent as
+	// `undefined` or its next write would bring it back. Its runtime key stays.
+	it( "clears a dropped key from Big Sky's copy", async () => {
+		withSiteRecord( '{}', {
+			personality: 'bold',
+			siteLocation: { name: 'Lisbon' },
+			mode: 'editor',
+		} );
+
+		await replaceSiteMetadata( { personality: 'bold' } );
+
+		expect( setProviderMetadata.mock.calls[ 0 ][ 0 ] ).toStrictEqual( {
+			personality: 'bold',
+			siteLocation: undefined,
+		} );
 	} );
 } );
