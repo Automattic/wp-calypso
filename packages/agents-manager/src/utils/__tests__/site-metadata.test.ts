@@ -6,6 +6,7 @@ import { getSiteMetadata, setSiteMetadata } from '../site-metadata';
 
 const editEntityRecord = jest.fn();
 const saveSpecifiedEntityEdits = jest.fn();
+const setProviderMetadata = jest.fn();
 
 /** Serves `site` with the given `big_sky_site_metadata`, or nothing at all. */
 function withSiteRecord( metadata?: unknown ) {
@@ -14,10 +15,11 @@ function withSiteRecord( metadata?: unknown ) {
 			? { getEditedEntityRecord: () => false }
 			: { getEditedEntityRecord: () => ( { big_sky_site_metadata: metadata } ) }
 	);
-	( dispatch as jest.Mock ).mockReturnValue( {
-		editEntityRecord,
-		__experimentalSaveSpecifiedEntityEdits: saveSpecifiedEntityEdits,
-	} );
+	( dispatch as jest.Mock ).mockImplementation( ( storeName: unknown ) =>
+		storeName === 'ai-assembler'
+			? { setSiteMetadata: setProviderMetadata }
+			: { editEntityRecord, __experimentalSaveSpecifiedEntityEdits: saveSpecifiedEntityEdits }
+	);
 }
 
 /** The metadata JSON the last write sent. */
@@ -93,6 +95,19 @@ describe( 'setSiteMetadata', () => {
 				undoIgnore: true,
 			}
 		);
+	} );
+
+	// Big Sky rebuilds this field from its own store, so a write it never saw
+	// would be undone by its next one.
+	it( "keeps Big Sky's copy in step", async () => {
+		withSiteRecord( '{"personality":"bold"}' );
+
+		await setSiteMetadata( { siteLocation: { name: 'Lisbon' } } );
+
+		expect( setProviderMetadata ).toHaveBeenCalledWith( {
+			personality: 'bold',
+			siteLocation: { name: 'Lisbon' },
+		} );
 	} );
 
 	// Merging onto `{}` would silently drop every stored key.

@@ -1,3 +1,4 @@
+import { dispatch } from '@wordpress/data';
 import { isRecord } from './is-record';
 import { getSiteRecord, saveSiteFields, SITE_RECORD_UNAVAILABLE } from './site-record';
 
@@ -72,6 +73,21 @@ export async function setSiteMetadata( changes: SiteMetadata ): Promise< SiteMet
 	return merged;
 }
 
+// TODO (ability-migration): Delete once Big Sky no longer writes this field.
+/**
+ * Keeps Big Sky's copy in step. It rebuilds this field from its own store
+ * rather than from the site record, so a write it never saw would be undone by
+ * its next one. Where its app is not mounted the store is unregistered and
+ * this does nothing.
+ */
+function syncProviderMetadata( metadata: SiteMetadata ): void {
+	(
+		dispatch( 'ai-assembler' ) as
+			| { setSiteMetadata?: ( metadata: SiteMetadata ) => void }
+			| undefined
+	 )?.setSiteMetadata?.( metadata );
+}
+
 /**
  * Writes the metadata as given, replacing what is stored.
  *
@@ -82,4 +98,6 @@ export async function replaceSiteMetadata( metadata: SiteMetadata ): Promise< vo
 	const { [ RUNTIME_KEY ]: _runtime, ...persisted } = metadata;
 
 	await saveSiteFields( { [ METADATA_FIELD ]: JSON.stringify( persisted ) } );
+
+	syncProviderMetadata( persisted );
 }
