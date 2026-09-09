@@ -341,16 +341,17 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 		const url = `/plans/${ siteSlug }?feature=${ FEATURE_WORDADS_INSTANT }&plan=${ PLAN_PREMIUM }`;
 		return (
 			<>
-				{ renderUpsellCard( {
-					title: translate( 'Upgrade to the %(premiumPlanName)s plan to continue earning', {
-						args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() || '' },
-					} ),
-					body: translate(
-						'WordAds is disabled for this site because it does not have an eligible plan. You are no longer earning ad revenue, but you can view your earning and payment history. To restore access to WordAds please upgrade to an eligible plan.'
-					),
-					href: url,
-					tracksClickName: 'calypso_upgrade_nudge_cta_click',
-				} ) }
+				{ ! isWPForTeams &&
+					renderUpsellCard( {
+						title: translate( 'Upgrade to the %(premiumPlanName)s plan to continue earning', {
+							args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() || '' },
+						} ),
+						body: translate(
+							'WordAds is disabled for this site because it does not have an eligible plan. You are no longer earning ad revenue, but you can view your earning and payment history. To restore access to WordAds please upgrade to an eligible plan.'
+						),
+						href: url,
+						tracksClickName: 'calypso_upgrade_nudge_cta_click',
+					} ) }
 				{ isAllowedSection ? component : <FeatureExample>{ component }</FeatureExample> }
 			</>
 		);
@@ -385,7 +386,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 			component = null;
 		} else if ( site.options?.wordads && site.is_private ) {
 			notice = renderNoticeSiteIsPrivate();
-		} else if ( isEnrolledWithIneligiblePlan && ! isWPForTeams ) {
+		} else if ( isEnrolledWithIneligiblePlan ) {
 			component = renderContentWithUpsell( component );
 		}
 		return { component, notice };
