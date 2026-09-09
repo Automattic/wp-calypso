@@ -61,6 +61,22 @@ describe( 'editorNavigate', () => {
 		} );
 	} );
 
+	// Reading the departure state before the save would name a page the editor
+	// has since left, skipping the restore on a switch that really happened.
+	it( 'reads the page it is leaving after the save settles', async () => {
+		const getLoadedPageId = jest.fn().mockReturnValue( 123 );
+		const io = createIO( {
+			getLoadedPageId,
+			saveEverything: jest.fn( async () => {
+				getLoadedPageId.mockReturnValue( 789 );
+			} ),
+		} );
+
+		await editorNavigate( io, { path: '/page/123' } );
+
+		expect( io.restorePostContentEditing ).toHaveBeenCalledWith( 'departing-block' );
+	} );
+
 	it( 'skips the post-content restore when the page is already open', async () => {
 		const io = createIO( { getLoadedPageId: jest.fn().mockReturnValue( 123 ) } );
 

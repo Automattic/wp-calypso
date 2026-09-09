@@ -165,11 +165,6 @@ export async function editorNavigate(
 	// unmounting chat would take the history with it.
 	const history = io.getHistory();
 
-	// Captured before the route changes, so the restore can tell the
-	// destination's post-content block from the one being left behind.
-	const departingPostContent = io.getPostContentClientId();
-	const departingPageId = io.getLoadedPageId();
-
 	// Its own step: a failed save cancels the navigation, and saying "I could
 	// not open that page" would hide that the edits are still unsaved.
 	try {
@@ -183,6 +178,13 @@ export async function editorNavigate(
 			{ path: editorPath }
 		);
 	}
+
+	// Read after the save, not before: it awaits a round trip per dirty entity,
+	// and a page switch in that window would leave these naming a page the
+	// editor has already left — the restore compares them with the destination,
+	// so stale values skip it and the page stays uneditable.
+	const departingPostContent = io.getPostContentClientId();
+	const departingPageId = io.getLoadedPageId();
 
 	try {
 		// Outside the site editor there is no router, so the browser loads it
