@@ -267,7 +267,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 				"By upgrading to the %(premiumPlanName)s plan, you'll be able to monetize your site through the {{link}}WordAds program{{/link}}.",
 				{
 					args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() || '' },
-					components: { link: <ExternalLink href="https://wordads.co/" /> },
+					components: { link: <ExternalLink href="https://wordads.co/" icon /> },
 				}
 			),
 			benefits: [
