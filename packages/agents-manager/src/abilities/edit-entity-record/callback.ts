@@ -42,7 +42,13 @@ export interface EditEntityRecordInput {
 	toolCallId?: string;
 }
 
-/** What applied, so a partial failure still reports the work that landed. */
+/**
+ * What applied, so a partial failure still reports the work that landed.
+ *
+ * A type alias rather than an interface: this is passed as the result's
+ * `details`, and only an alias carries the implicit index signature that
+ * `Record< string, unknown >` needs.
+ */
 type AppliedChanges = {
 	created: { entityName?: string; recordId?: number | string; title?: string }[];
 	updated: { entityName?: string; recordId?: number | string }[];
@@ -81,13 +87,11 @@ const coreDispatch = () => dispatch( coreStore ) as unknown as CoreDispatch;
 /**
  * The domains an edit touches, so a restore puts back only what changed.
  *
- * Edits only. A restore rewrites records that already existed — it cannot
- * delete a created one or bring back a deleted one — so a creation or deletion
- * that claimed a domain would offer the user an undo that does nothing, the
- * same trap `withCheckpoint()` guards against for a write with no keys at all.
+ * Edits only: a restore cannot delete a created record or bring back a deleted
+ * one, so claiming a domain for either would offer an undo that does nothing.
  *
- * A page edit also claims the navigation domain: renaming a page renames the
- * menu item that follows it.
+ * A page edit also claims the navigation domain, since renaming a page renames
+ * the menu item that follows it.
  */
 export function getCheckpointKeys( { editEntities }: EditEntityRecordInput ): string[] {
 	const keys = new Set< string >();
@@ -308,13 +312,12 @@ export async function editEntityRecordCallback(
 
 	// The backend asks the model for a `confirmationMessage` before anything
 	// destructive. An ability cannot put a component on screen — only the
-	// backend's `show_component` renders one — so this refuses and writes
-	// nothing rather than answering on the user's behalf.
+	// backend's `show_component` can — so this refuses and writes nothing.
 	//
-	// This tool echoes, so the refusal reaches the model as a client-tool
-	// failure and it runs again: the `error` tells it to ask first and re-call
-	// without the field. Two attempts before the backend gives up, so the
-	// message has to be directive rather than merely descriptive.
+	// The tool echoes, so the refusal returns as a client-tool failure and the
+	// model runs again: the `error` tells it to ask first, then re-call without
+	// the field. Two attempts before the backend gives up, so it has to be
+	// directive rather than descriptive.
 	//
 	// TODO (ability-migration): Render Yes/No buttons once the backend can
 	// emit a confirmation component for this tool.
