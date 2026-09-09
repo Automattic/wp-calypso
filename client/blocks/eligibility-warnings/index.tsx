@@ -36,6 +36,7 @@ import HoldList, {
 	getBlockingMessages,
 } from './hold-list';
 import SupportLink from './support-link';
+import TransferStuckNotice from './transfer-stuck-notice';
 import { useIsTransferStuck } from './use-is-transfer-stuck';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 import WarningList, { type AtomicTransferAction } from './warning-list';
@@ -223,13 +224,15 @@ export const EligibilityWarnings = ( {
 
 			{ ! isPlaceholder && validBlockingHold && (
 				<CompactCard>
-					<HardBlockingNotice
-						blockingHold={ validBlockingHold }
-						translate={ translate }
-						blockingMessages={ blockingMessages }
-						isTransferStuck={ isTransferStuck }
-						onDismiss={ onDismiss }
-					/>
+					{ isTransferStuck ? (
+						<TransferStuckNotice onDismiss={ onDismiss } />
+					) : (
+						<HardBlockingNotice
+							blockingHold={ validBlockingHold }
+							translate={ translate }
+							blockingMessages={ blockingMessages }
+						/>
+					) }
 				</CompactCard>
 			) }
 

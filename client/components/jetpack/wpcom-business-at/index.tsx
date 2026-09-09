@@ -15,6 +15,7 @@ import {
 	HardBlockingNotice,
 	hasBlockingHold as hasBlockingHoldFunc,
 } from 'calypso/blocks/eligibility-warnings/hold-list';
+import TransferStuckNotice from 'calypso/blocks/eligibility-warnings/transfer-stuck-notice';
 import { useIsTransferStuck } from 'calypso/blocks/eligibility-warnings/use-is-transfer-stuck';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryAutomatedTransferEligibility from 'calypso/components/data/query-atat-eligibility';
@@ -130,12 +131,15 @@ function BlockingHoldNotice( {
 		)
 	);
 
+	if ( isTransferStuck ) {
+		return <TransferStuckNotice />;
+	}
+
 	return (
 		<HardBlockingNotice
 			translate={ translate }
 			blockingHold={ blockingHold }
 			blockingMessages={ blockingMessages }
-			isTransferStuck={ isTransferStuck }
 		/>
 	);
 }
