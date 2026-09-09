@@ -210,9 +210,9 @@ const rejectItems = (
 /**
  * Whether an item points at `pageId`.
  *
- * An item that carries no id is matched by its label instead, but only against
- * the title the page had before this edit: a label the user has since changed
- * by hand is theirs, not ours to overwrite.
+ * Identification only. An item carrying no id is matched by its label instead,
+ * against the title the page had before this edit — the only link back to the
+ * page it has. Whether that item may then be *relabelled* is `followsPage()`.
  */
 const matchesPage =
 	( pageId: number | string, previousLabel?: string ) => ( item: NavigationBlock ) => {
@@ -258,7 +258,13 @@ const saveMenu = async ( id: unknown, previous: NavigationBlock[] ): Promise< vo
 	}
 };
 
-/** Whether an item's label still follows the page's title rather than the user's. */
+/**
+ * Whether an item's label still follows the page rather than the user.
+ *
+ * A page rename may overwrite a label that tracked the page's title; one the
+ * user has since chosen is theirs to keep. Applied whether or not the item
+ * carries an id, so the same label is treated the same way either way.
+ */
 const followsPage = ( item: NavigationBlock, previousLabel?: string ) =>
 	! previousLabel || normalizeLabel( item.attributes?.label ) === normalizeLabel( previousLabel );
 

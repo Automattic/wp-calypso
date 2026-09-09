@@ -106,7 +106,7 @@ it( 'resolves an item moved under a different parent', async () => {
 
 // A clientId is only stable for a menu the editor already edited; a pristine one
 // re-parses to fresh ids. The label the agent sent alongside it still resolves.
-it( 'falls back to the label when the clientId is stale', async () => {
+it( 'reuses the block a stale clientId names by its label instead', async () => {
 	withMenu( [ item( 'fresh', 'About' ) ] );
 
 	const result = await buildNavigationItems( 10, {
@@ -269,7 +269,7 @@ it( 'refuses when a clientId resolves to nothing, naming the ids', async () => {
 } );
 
 // The item brought its own data, so a stale clientId is bookkeeping, not loss.
-it( 'accepts an unresolved clientId that carries a label', async () => {
+it( 'creates an item when a stale clientId matches nothing in the menu', async () => {
 	withMenu( [ item( 'a', 'Home' ) ] );
 
 	const built = await buildNavigationItems( 10, {
