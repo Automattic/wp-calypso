@@ -153,6 +153,16 @@ async function restoreSiteMetadataSnapshot( checkpoint: CheckpointRecord ): Prom
 	await replaceSiteMetadata( checkpoint.siteMetadataBeforeUpdate );
 }
 
+/**
+ * Puts back the menus the write changed.
+ *
+ * Empty is a valid state here, unlike the domains above, which throw when a
+ * claimed key has no snapshot. Those are captured the moment the key is
+ * claimed, so nothing to restore means the capture failed. The page and
+ * navigation domains are claimed up front and captured only if the write
+ * turns out to touch them — a rename to the title a page already had records
+ * nothing, and has nothing to undo.
+ */
 async function restoreMenuSnapshots( checkpoint: CheckpointRecord ): Promise< void > {
 	await Promise.all(
 		( checkpoint.menusBeforeUpdate ?? [] ).map( ( menu ) => writeMenu( menu.id, menu.items ) )
