@@ -1,3 +1,9 @@
+.dashboard-marketplace-products__header-actions {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
 // The DataViews wrapper paints its own surface; the filter bar sits on the page background.
 .dashboard-marketplace-products__filters {
 	--wp-dataviews-color-background: transparent;
@@ -5,6 +11,11 @@
 
 .dashboard-marketplace-products__toolbar {
 	padding-block: 16px;
+}
+
+.dashboard-marketplace-products__cart {
+	min-inline-size: 360px;
+	padding: 8px;
 }
 
 .dashboard-marketplace-products__tiles-wrap {

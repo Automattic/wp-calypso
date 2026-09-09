@@ -20,7 +20,7 @@ import {
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { check } from '@wordpress/icons';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useIntlLocale } from '../../../app/locale';
 import { marketplaceProductsRoute } from '../../../app/router/agency';
@@ -37,6 +37,7 @@ import ReferralToggle from '../referral-toggle';
 import TermPricingToggle from '../term-pricing-toggle';
 import { useMarketplaceType } from '../use-marketplace-type';
 import { useTermPricing } from '../use-term-pricing';
+import CartMenu from './cart-menu';
 import CategoryTiles, { isCategoryTileValue } from './category-tiles';
 import {
 	getBrandLabels,
@@ -87,6 +88,8 @@ const DEFAULT_VIEW: View = {
 interface ProductsSearchParams {
 	search_query?: string;
 	category?: string;
+	product_slug?: string;
+	products?: string;
 }
 
 // Classic category keys that differ from the tile values.
@@ -112,6 +115,8 @@ export default function MarketplaceProducts() {
 
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
+	// Old agencies didn't have approval_status set, so we need to account for that.
+	const isAgencyApproved = agency?.approval_status === 'approved' || agency?.approval_status === '';
 
 	const { data: allProducts, isLoading } = useQuery( agencyProductsQuery( agencyId ) );
 
@@ -140,7 +145,7 @@ export default function MarketplaceProducts() {
 	}, [ allProducts, showPressableAddons ] );
 
 	const searchParams = marketplaceProductsRoute.useSearch() as ProductsSearchParams;
-	const { hasItem, addItem, removeItem } = useShoppingCart();
+	const { items: cartItems, hasItem, addItem, removeItem, clearCart } = useShoppingCart();
 	const [ view, setView ] = useState< View >( () => ( {
 		...DEFAULT_VIEW,
 		search: searchParams.search_query != null ? String( searchParams.search_query ) : '',
@@ -154,6 +159,29 @@ export default function MarketplaceProducts() {
 	const showPressableTile = showPressableAddons && products.some( isPressableAddon );
 	const tileCategory = selectedTile === 'pressable' && ! showPressableTile ? null : selectedTile;
 
+	// `?product_slug=a,b` replaces the cart with those products; `?products=a:1,b:1` adds them.
+	const hasPreselected = useRef( false );
+	useEffect( () => {
+		if ( hasPreselected.current || ! allProducts ) {
+			return;
+		}
+		const slugs = searchParams.product_slug
+			? searchParams.product_slug.split( ',' )
+			: ( searchParams.products ?? '' )
+					.split( ',' )
+					.map( ( entry ) => entry.split( ':' )[ 0 ] )
+					.filter( Boolean );
+		if ( slugs.length === 0 ) {
+			return;
+		}
+		hasPreselected.current = true;
+		if ( searchParams.product_slug ) {
+			clearCart();
+		}
+		slugs
+			.filter( ( slug ) => allProducts.some( ( product ) => product.slug === slug ) )
+			.forEach( addItem );
+	}, [ allProducts, searchParams.product_slug, searchParams.products, clearCart, addItem ] );
 	const [ detailsProduct, setDetailsProduct ] = useState< AgencyProduct | null >( null );
 
 	const fields = useMemo< Field< AgencyProduct >[] >( () => {
@@ -375,7 +403,19 @@ export default function MarketplaceProducts() {
 					description={ __(
 						'Extensions, plans, and add-ons for your clients’ sites. Buy for your agency or refer them to a client.'
 					) }
-					actions={ <ReferralToggle /> }
+					actions={
+						<div className="dashboard-marketplace-products__header-actions">
+							<ReferralToggle />
+							<CartMenu
+								items={ cartItems }
+								products={ allProducts ?? [] }
+								term={ termPricing }
+								isReferralMode={ isReferralMode }
+								isAgencyApproved={ isAgencyApproved }
+								onRemove={ removeItem }
+							/>
+						</div>
+					}
 				/>
 			}
 		>
