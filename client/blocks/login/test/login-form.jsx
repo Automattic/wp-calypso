@@ -53,7 +53,7 @@ describe( 'LoginForm', () => {
 			initialState: { login: { socialAccountLink: { isLinking: true } } },
 		} );
 
-		const notice = screen.getByText( /We found a WordPress.com account registered to/i );
+		const notice = screen.getByText( /already a WordPress.com account for/i );
 		expect( notice ).toBeVisible();
 		expect( notice.closest( '.dashboard-notice' ) ).toHaveClass( 'is-info' );
 	} );
@@ -65,7 +65,7 @@ describe( 'LoginForm', () => {
 			initialState: { login: { socialAccountLink: { isLinking: true } } },
 		} );
 
-		const notice = screen.getByText( /We found a WordPress.com account registered to/i );
+		const notice = screen.getByText( /already a WordPress.com account for/i );
 		expect( notice ).toBeInTheDocument();
 	} );
 
@@ -95,7 +95,7 @@ describe( 'LoginForm', () => {
 		const username = screen.getByLabelText( /username/i );
 		await userEvent.type( username, 'test@example.com' );
 
-		const notice = screen.queryByText( /We found a WordPress.com account registered to/i );
+		const notice = screen.queryByText( /already a WordPress.com account for/i );
 		expect( notice ).not.toBeInTheDocument();
 	} );
 

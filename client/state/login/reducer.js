@@ -400,9 +400,7 @@ const userExistsErrorHandler = ( state, { error, authInfo } ) => {
 	return state;
 };
 
-// Linking can only complete through the password (or 2FA) path. Requesting a
-// magic link or a password reset ends in a full page load, so the pending
-// social auth info would be lost anyway.
+// Both end in a full page load, so a pending social link cannot survive them.
 const socialAccountLinkAbandonPaths = [
 	login( { twoFactorAuthType: 'link' } ),
 	login( { twoFactorAuthType: 'link', isJetpack: true } ),
