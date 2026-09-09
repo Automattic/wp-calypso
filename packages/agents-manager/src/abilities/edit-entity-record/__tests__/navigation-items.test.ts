@@ -148,6 +148,22 @@ it( 'keeps children the input does not mention', async () => {
 	expect( blocks[ 0 ].name ).toBe( SUBMENU );
 } );
 
+// Urls are no more unique than labels, so they claim after ids do.
+it( 'lets an id claim its block before a shared url takes it', async () => {
+	withMenu( [
+		item( 'a', 'Contact', { id: 5, url: '/contact/' } ),
+		item( 'b', 'Contact us', { id: 6, url: '/contact/' } ),
+	] );
+
+	const result = await buildNavigationItems( 10, {
+		navigationItems: [ { url: '/contact/' }, { id: 5 } ],
+	} );
+
+	const clientIds = ( result.blocks as { clientId: string }[] ).map( ( b ) => b.clientId );
+
+	expect( clientIds ).toEqual( [ 'b', 'a' ] );
+} );
+
 // Labels claim last, so a label match cannot take the block an id names.
 it( 'lets an id claim its block before a label takes it', async () => {
 	withMenu( [ item( 'a', 'Contact', { id: 5 } ), item( 'b', 'Contact', { id: 6 } ) ] );

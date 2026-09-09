@@ -6,6 +6,7 @@ import { flattenTitle } from '../../utils/entity-title';
 import { isEditorPage } from '../../utils/is-editor-page';
 import {
 	addNavigationItem,
+	getMenuIdsHolding,
 	removeNavigationItem,
 	renameNavigationItem,
 } from '../../utils/navigation-menu';
@@ -269,6 +270,13 @@ async function applyRecordEdit(
 	updated();
 
 	if ( isRename ) {
+		// Snapshot before relabelling: the item may carry a label the user chose,
+		// and only the menu itself records it — the rename would otherwise be
+		// undone to the page's old title instead of that label.
+		for ( const menuId of await getMenuIdsHolding( recordId, previousTitle ) ) {
+			await recorder.captureMenu( menuId );
+		}
+
 		await renameNavigationItem( recordId, nextTitle, previousTitle );
 	}
 }
