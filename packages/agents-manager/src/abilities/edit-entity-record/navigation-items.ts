@@ -203,9 +203,7 @@ export async function buildNavigationItems(
 
 	/**
 	 * A preserved subtree with every block the agent placed elsewhere removed,
-	 * at any depth. Names are kept as they are — a menu can hold a Page List,
-	 * Search or Social Links block — except a submenu emptied by the pruning,
-	 * which becomes a link again so it stops drawing an arrow over nothing.
+	 * at any depth. Types come from `blockName()`.
 	 */
 	const prune = ( blocks: NavigationBlock[] = [] ): NavigationBlock[] =>
 		blocks

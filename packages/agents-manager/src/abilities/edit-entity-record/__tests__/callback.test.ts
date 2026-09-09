@@ -298,7 +298,7 @@ describe( 'editEntityRecordCallback', () => {
 		expect( result.result.error ).toContain( 'Nothing to do' );
 	} );
 
-	// The schema's kind and name enums are independent, so `root/page` passes it.
+	// `root/page` passes the schema, whose two enums are independent.
 	it( 'refuses an entity kind and name that do not go together', async () => {
 		const result = await editEntityRecordCallback( {
 			editEntities: [
