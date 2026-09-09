@@ -7,7 +7,7 @@ import {
 } from './navigation-menu';
 import { setPageTitle } from './page-title';
 import { getSiteLogo, setSiteLogo, type SiteLogo } from './site-logo';
-import { getSiteMetadata, setSiteMetadata, type SiteMetadata } from './site-metadata';
+import { getSiteMetadata, replaceSiteMetadata, type SiteMetadata } from './site-metadata';
 import { getSiteTitle, setSiteTitle } from './site-title';
 import { getToolCallIdFromConversationHistory } from './tool-call-history';
 
@@ -150,9 +150,10 @@ async function restoreSiteMetadataSnapshot( checkpoint: CheckpointRecord ): Prom
 		throw new Error( 'Checkpoint has no site-metadata snapshot to restore.' );
 	}
 
-	// Merged, not replaced: a key another tool wrote in the meantime is not
-	// this checkpoint's to remove.
-	await setSiteMetadata( checkpoint.siteMetadataBeforeUpdate );
+	// Replaced, not merged: merging would leave behind any key the change
+	// introduced, so the undo would put the old values back and keep the new
+	// ones too.
+	await replaceSiteMetadata( checkpoint.siteMetadataBeforeUpdate );
 }
 
 async function restoreMenuSnapshots( checkpoint: CheckpointRecord ): Promise< void > {
