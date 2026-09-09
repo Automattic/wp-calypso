@@ -82,8 +82,6 @@ This mixin generates alias variables for a color palette. For example, the
 	--wpds-color-foreground-interactive-brand: var( --wp-components-color-accent );
 	--wpds-color-foreground-interactive-brand-active: var( --wp-components-color-accent-darker-20 );
 	--wpds-color-stroke-focus: var( --wp-components-color-accent );
-	// `@wordpress/theme` ships light-only neutral interactive tokens. TabPanel
-	// tabs read them directly, so remap them for dark surfaces.
 	--wpds-color-foreground-interactive-neutral: var( --wp-components-color-foreground );
 	--wpds-color-foreground-interactive-neutral-active: var( --wp-components-color-foreground );
 	--wpds-color-background-interactive-neutral-weak-active: var( --wp-components-color-gray-200 );
