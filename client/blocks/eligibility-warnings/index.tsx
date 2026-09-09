@@ -36,6 +36,7 @@ import HoldList, {
 	getBlockingMessages,
 } from './hold-list';
 import SupportLink from './support-link';
+import { useIsTransferStuck } from './use-is-transfer-stuck';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 import WarningList, { type AtomicTransferAction } from './warning-list';
 import type { EligibilityHold } from 'calypso/state/automated-transfer/constants';
@@ -141,6 +142,11 @@ export const EligibilityWarnings = ( {
 
 	const [ selectedGeoAffinity, setSelectedGeoAffinity ] = useState( '' );
 
+	const isTransferStuck = useIsTransferStuck(
+		siteId,
+		validBlockingHold === 'TRANSFER_ALREADY_EXISTS'
+	);
+
 	const showWarnings = warnings.length > 0 && ! hasValidBlockingHold;
 	const classes = clsx(
 		'eligibility-warnings',
@@ -221,6 +227,8 @@ export const EligibilityWarnings = ( {
 						blockingHold={ validBlockingHold }
 						translate={ translate }
 						blockingMessages={ blockingMessages }
+						isTransferStuck={ isTransferStuck }
+						onDismiss={ onDismiss }
 					/>
 				</CompactCard>
 			) }
@@ -273,7 +281,7 @@ export const EligibilityWarnings = ( {
 
 			<CompactCard>
 				<div className="eligibility-warnings__confirm-buttons">
-					<SupportLink onShowHelpAssistant={ onDismiss } />
+					{ ! isTransferStuck && <SupportLink onShowHelpAssistant={ onDismiss } /> }
 					{ ! hasValidBlockingHold && (
 						<Button
 							variant="primary"

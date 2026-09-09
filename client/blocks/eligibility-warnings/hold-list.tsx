@@ -6,6 +6,7 @@ import { localize, LocalizeProps, TranslateResult } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import ExcessiveDiskSpace from 'calypso/blocks/eligibility-warnings/excessive-disk-space';
 import CardHeading from 'calypso/components/card-heading';
+import { useShowHelpCenter } from 'calypso/components/help-center';
 import Notice, { NoticeStatus } from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
@@ -271,19 +272,43 @@ export const HardBlockingNotice = ( {
 	blockingHold,
 	translate,
 	blockingMessages,
+	isTransferStuck = false,
+	onDismiss,
 }: {
 	blockingHold: HardBlockingHold;
 	translate: LocalizeProps[ 'translate' ];
 	blockingMessages: BlockingMessages;
+	isTransferStuck?: boolean;
+	onDismiss?: () => void;
 } ) => {
+	const { setShowHelpCenter } = useShowHelpCenter();
+
+	const { message, status, contactUrl } = blockingMessages[ blockingHold ];
+
+	const openHelpCenter = () => {
+		onDismiss?.();
+		setShowHelpCenter( true );
+	};
+
 	return (
 		<Notice
-			status={ blockingMessages[ blockingHold ].status ?? 'is-info' }
-			text={ blockingMessages[ blockingHold ].message }
+			status={ isTransferStuck ? 'is-warning' : status ?? 'is-info' }
+			text={
+				isTransferStuck
+					? String(
+							translate(
+								'Setting up your site’s hosting is taking longer than it should. Get in touch and we’ll help.'
+							)
+					  )
+					: message
+			}
 			showDismiss={ false }
 		>
-			{ blockingMessages[ blockingHold ].contactUrl && (
-				<NoticeAction href={ blockingMessages[ blockingHold ].contactUrl } external>
+			{ isTransferStuck && (
+				<NoticeAction onClick={ openHelpCenter }>{ translate( 'Get help' ) }</NoticeAction>
+			) }
+			{ contactUrl && (
+				<NoticeAction href={ contactUrl } external>
 					{ translate( 'Contact us' ) }
 				</NoticeAction>
 			) }

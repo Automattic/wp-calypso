@@ -15,6 +15,7 @@ import {
 	HardBlockingNotice,
 	hasBlockingHold as hasBlockingHoldFunc,
 } from 'calypso/blocks/eligibility-warnings/hold-list';
+import { useIsTransferStuck } from 'calypso/blocks/eligibility-warnings/use-is-transfer-stuck';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryAutomatedTransferEligibility from 'calypso/components/data/query-atat-eligibility';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
@@ -113,11 +114,10 @@ function BlockingHoldNotice( {
 	suppressInstallNotice = false,
 }: BlockingHoldNoticeProps ) {
 	const { eligibilityHolds: holds } = useSelector( ( state ) => getEligibility( state, siteId ) );
-	if ( ! holds || suppressInstallNotice ) {
-		return null;
-	}
-	const blockingHold = getValidBlockingHold( holds );
-	if ( ! blockingHold ) {
+	const blockingHold = holds ? getValidBlockingHold( holds ) : undefined;
+	const isTransferStuck = useIsTransferStuck( siteId, blockingHold === 'TRANSFER_ALREADY_EXISTS' );
+
+	if ( ! holds || suppressInstallNotice || ! blockingHold ) {
 		return null;
 	}
 
@@ -135,6 +135,7 @@ function BlockingHoldNotice( {
 			translate={ translate }
 			blockingHold={ blockingHold }
 			blockingMessages={ blockingMessages }
+			isTransferStuck={ isTransferStuck }
 		/>
 	);
 }
