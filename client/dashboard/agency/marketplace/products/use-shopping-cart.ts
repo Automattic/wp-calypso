@@ -5,9 +5,12 @@ import type { MarketplaceType } from '../use-marketplace-type';
 export interface ShoppingCartItem {
 	slug: string;
 	quantity: number;
+	/** The stored entry, kept verbatim so classic's extra fields survive a rewrite. */
+	raw?: string;
 }
 
-// Same keys and `slug:quantity` format as the classic marketplace cart.
+// Same keys and `slug:quantity` format as the classic marketplace cart, which
+// may append a license id and site targets for its own flows.
 const STORAGE_KEYS: Record< MarketplaceType, string > = {
 	regular: 'shopping-card-selected-items',
 	referral: 'referrals-shopping-card-selected-items',
@@ -25,7 +28,7 @@ function readItems( marketplaceType: MarketplaceType ): ShoppingCartItem[] {
 		.split( ',' )
 		.map( ( entry ) => {
 			const [ slug, quantity ] = entry.split( ':' );
-			return { slug, quantity: parseInt( quantity, 10 ) || 1 };
+			return { slug, quantity: parseInt( quantity, 10 ) || 1, raw: entry };
 		} )
 		.filter( ( item ) => item.slug );
 }
@@ -43,7 +46,7 @@ function writeItems( marketplaceType: MarketplaceType, items: ShoppingCartItem[]
 	} else {
 		sessionStorage.setItem(
 			STORAGE_KEYS[ marketplaceType ],
-			items.map( ( item ) => `${ item.slug }:${ item.quantity }` ).join( ',' )
+			items.map( ( item ) => item.raw ?? `${ item.slug }:${ item.quantity }` ).join( ',' )
 		);
 	}
 	snapshots.set( marketplaceType, items );

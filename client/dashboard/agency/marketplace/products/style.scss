@@ -2,8 +2,6 @@
 	padding-block: 16px;
 }
 
-// A horizontal row of category tiles that scrolls with a hidden scrollbar and
-// fades at the end to hint there is more.
 .dashboard-marketplace-products__tiles-wrap {
 	position: relative;
 
@@ -142,7 +140,6 @@
 	align-content: start;
 }
 
-// The rail's call to action spans the rail, with its label centered.
 .dashboard-marketplace-products__modal-cta {
 	justify-content: center;
 }
