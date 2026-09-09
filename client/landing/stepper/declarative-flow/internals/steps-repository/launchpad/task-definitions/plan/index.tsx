@@ -104,11 +104,13 @@ const getNewsLetterPlanCreated: TaskAction = ( task, flow, context ) => {
 		...task,
 		actionDispatch: () => {
 			completePaidNewsletterTask( siteSlug, queryClient );
-			site?.ID
-				? setShowPlansModal( true )
-				: window.location.assign(
-						`/earn/payments/${ siteSlug }?launchpad=add-product${ ADD_TIER_PLAN_HASH }`
-				  );
+			if ( site?.ID ) {
+				setShowPlansModal( true );
+			} else {
+				window.location.assign(
+					`/earn/payments/${ siteSlug }?launchpad=add-product${ ADD_TIER_PLAN_HASH }`
+				);
+			}
 		},
 	};
 };
