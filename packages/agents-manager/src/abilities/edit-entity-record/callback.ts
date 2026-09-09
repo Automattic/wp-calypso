@@ -226,13 +226,13 @@ async function applyEdits(
 			await recorder.captureMenu( recordId );
 		}
 
-		await coreDispatch().editEntityRecord(
-			entityType,
-			entityName,
-			recordId,
-			recordToWrite,
-			options
-		);
+		await coreDispatch().editEntityRecord( entityType, entityName, recordId, recordToWrite, {
+			...options,
+			// A menu edit is checkpointed, so `restore-checkpoint` is its undo and
+			// the editor's stack would be a second, competing one. Page and content
+			// edits keep the editor's, having no checkpoint to restore from.
+			...( entityName === NAVIGATION && { undoIgnore: true } ),
+		} );
 
 		applied.updated.push( { entityName, recordId } );
 

@@ -45,8 +45,10 @@ function restoreFailedResult( error: unknown, checkpointId: string ): AbilityRes
 	console.error( `[AgentsManager] Error restoring checkpoint ${ checkpointId }:`, error );
 
 	return errorResult(
-		error instanceof Error ? error.message : String( error ),
-		__( 'I could not restore that checkpoint.', __i18n_text_domain__ ),
+		`${
+			error instanceof Error ? error.message : String( error )
+		} Some of the checkpoint may already have been restored, so check the current state before trying again.`,
+		__( 'I could not fully restore that checkpoint.', __i18n_text_domain__ ),
 		{ checkpointId }
 	);
 }
@@ -227,11 +229,9 @@ export async function restoreCheckpointCallback(
 	try {
 		await restoreCheckpoint( checkpointId );
 	} catch ( error ) {
-		// A failed restore leaves the editor unchanged — drop the reciprocal
-		// so it does not advertise a redo for a restore that never happened.
-		if ( reciprocalId ) {
-			clearCheckpoint( reciprocalId );
-		}
+		// The reciprocal is kept: domains restore in sequence and several persist,
+		// so a failure part-way leaves the site changed with this as the only way
+		// back. Where nothing was restored, redoing to the current state is free.
 		return restoreFailedResult( error, checkpointId );
 	}
 
