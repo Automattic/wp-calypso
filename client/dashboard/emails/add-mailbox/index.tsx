@@ -89,8 +89,8 @@ const AddProfessionalEmail = () => {
 					? 'calypso_dashboard_emails_add_mailbox_validation_failure'
 					: 'calypso_dashboard_emails_setup_mailbox_validation_failure',
 				{
-					domainName,
-					mailboxCount: mailboxEntities.length,
+					domain_name: domainName,
+					mailbox_count: mailboxEntities.length,
 					provider,
 					reason: validated ? 'user_cannot_add_email' : 'validation_failed',
 				}
@@ -125,8 +125,8 @@ const AddProfessionalEmail = () => {
 
 	const removeForm = ( index: number ) => {
 		recordTracksEvent( 'calypso_dashboard_emails_add_mailbox_remove_mailbox_click', {
-			domainName,
-			mailboxCount: mailboxEntities.length,
+			domain_name: domainName,
+			mailbox_count: mailboxEntities.length,
 			provider,
 		} );
 
@@ -172,8 +172,8 @@ const AddProfessionalEmail = () => {
 										? 'calypso_dashboard_emails_add_mailbox_back_to_emails_click'
 										: 'calypso_dashboard_emails_setup_mailbox_back_to_emails_click',
 									{
-										domainName,
-										mailboxCount: mailboxEntities.length,
+										domain_name: domainName,
+										mailbox_count: mailboxEntities.length,
 										provider,
 									}
 								);
@@ -188,19 +188,17 @@ const AddProfessionalEmail = () => {
 				showEmailPurchaseDisabledMessage && <EmailNonDomainOwnerNotice domain={ domain } />
 			}
 		>
-			{ isAddMailboxRoute && mailboxCost && (
-				<>
-					{ mailboxCost.notice ? (
-						<Notice status="info" isDismissible={ false }>
-							{ /* eslint-disable-next-line react/no-danger */ }
-							<div dangerouslySetInnerHTML={ { __html: mailboxCost.message } } />
-						</Notice>
-					) : (
-						// @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`.
-						<Text size={ 16 } as="p" dangerouslySetInnerHTML={ { __html: mailboxCost.message } } />
-					) }
-				</>
-			) }
+			{ isAddMailboxRoute &&
+				mailboxCost &&
+				( mailboxCost.notice ? (
+					<Notice status="info" isDismissible={ false }>
+						{ /* eslint-disable-next-line react/no-danger */ }
+						<div dangerouslySetInnerHTML={ { __html: mailboxCost.message } } />
+					</Notice>
+				) : (
+					// @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`.
+					<Text size={ 16 } as="p" dangerouslySetInnerHTML={ { __html: mailboxCost.message } } />
+				) ) }
 
 			<form onSubmit={ handleSubmit }>
 				<VStack spacing={ 6 }>
@@ -227,8 +225,8 @@ const AddProfessionalEmail = () => {
 									recordTracksEvent(
 										'calypso_dashboard_emails_add_mailbox_add_another_mailbox_click',
 										{
-											domainName,
-											mailboxCount: mailboxEntities.length,
+											domain_name: domainName,
+											mailbox_count: mailboxEntities.length,
 											provider,
 										}
 									);
@@ -251,7 +249,7 @@ const AddProfessionalEmail = () => {
 									recordTracksEvent(
 										'calypso_dashboard_emails_setup_mailbox_complete_setup_click',
 										{
-											domainName,
+											domain_name: domainName,
 										}
 									);
 								} }

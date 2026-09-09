@@ -11,7 +11,7 @@ export const ACTIVATION_EMAIL_SOURCE = 'onboarding-with-email-verification';
 //   control                         -> no step (current default)
 //   treatment_post_account_creation -> gate right after account creation (Variant A)
 //   treatment_post_plan_selection   -> gate after free-plan selection or after checkout (Variant B)
-const EXPERIMENT_NAME = 'calypso_signup_onboarding_email_verification_202608';
+const EXPERIMENT_NAME = 'calypso_signup_onboarding_email_verification_202609';
 
 type EmailVerificationVariant =
 	| 'control'

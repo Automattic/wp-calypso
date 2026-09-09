@@ -31,6 +31,7 @@ const noop = () => {};
 export class Banner extends Component {
 	static propTypes = {
 		callToAction: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+		children: PropTypes.node,
 		secondaryCallToAction: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 		className: PropTypes.string,
 		compactButton: PropTypes.bool,
@@ -261,6 +262,7 @@ export class Banner extends Component {
 			extraContent,
 			isBusy,
 			isCallToActionDisabled,
+			children,
 		} = this.props;
 
 		const prices = Array.isArray( price ) ? price : [ price ];
@@ -278,6 +280,7 @@ export class Banner extends Component {
 						} }
 					/>
 				) }
+				{ children }
 				<div className="banner__info">
 					<h3 className="banner__title">{ title }</h3>
 					{ this.renderDescription( description ) }
@@ -388,6 +391,7 @@ export class Banner extends Component {
 			{ 'is-atomic': isAtomic }
 		);
 		const href = ( disableHref || callToAction ) && ! forceHref ? null : this.getHref();
+		const onCardClick = callToAction && ! forceHref ? null : this.handleClick;
 		if ( dismissPreferenceName ) {
 			return (
 				<DismissibleCard
@@ -395,6 +399,7 @@ export class Banner extends Component {
 					preferenceName={ dismissPreferenceName }
 					temporary={ dismissTemporary }
 					onClick={ this.handleDismiss }
+					onCardClick={ href ? onCardClick : null }
 					href={ href }
 				>
 					{ this.getIcon() }
@@ -407,7 +412,7 @@ export class Banner extends Component {
 			<Card
 				className={ classes }
 				href={ href }
-				onClick={ callToAction && ! forceHref ? null : this.handleClick }
+				onClick={ onCardClick }
 				displayAsLink={ displayAsLink }
 				showLinkIcon={ showLinkIcon }
 			>

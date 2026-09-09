@@ -45,10 +45,6 @@ function IneligibleIndicator() {
 	return <Text color="#CCCCCC">-</Text>;
 }
 
-function LoadingIndicator( { label }: { label: string } ) {
-	return <TextBlur>{ label }</TextBlur>;
-}
-
 function getSiteManagementUrl( site: Site ) {
 	if ( canManageSite( site ) ) {
 		const path = `/sites/${ site.slug }`;
@@ -213,9 +209,10 @@ export function AsyncEngagementStat( {
 		enabled: !! site?.ID && isEligible && inView,
 	} );
 
+	const isPending = ! site || isLoading;
 	const renderContent = () => {
-		if ( ! site || isLoading ) {
-			return <LoadingIndicator label="100" />;
+		if ( isPending ) {
+			return '100';
 		}
 
 		if ( ! isEligible ) {
@@ -225,7 +222,11 @@ export function AsyncEngagementStat( {
 		return stats?.currentData[ type ];
 	};
 
-	return <span ref={ ref }>{ renderContent() }</span>;
+	return (
+		<span ref={ ref }>
+			<TextBlur isBlurred={ isPending }>{ renderContent() }</TextBlur>
+		</span>
+	);
 }
 
 export function EngagementStat( { value }: { value: number | null } ) {
@@ -245,9 +246,10 @@ export function LastBackup( { site }: { site?: Site } ) {
 		enabled: !! site?.ID && isEligible && inView,
 	} );
 
+	const isPending = ! site || isLoading;
 	const renderContent = () => {
-		if ( ! site || isLoading ) {
-			return <LoadingIndicator label="Unknown" />;
+		if ( isPending ) {
+			return 'Unknown';
 		}
 
 		if ( ! isEligible ) {
@@ -261,7 +263,11 @@ export function LastBackup( { site }: { site?: Site } ) {
 		return <TimeSince timestamp={ lastBackup.published } />;
 	};
 
-	return <span ref={ ref }>{ renderContent() }</span>;
+	return (
+		<span ref={ ref }>
+			<TextBlur isBlurred={ isPending }>{ renderContent() }</TextBlur>
+		</span>
+	);
 }
 
 export function Uptime( { site }: { site?: Site } ) {
@@ -273,9 +279,10 @@ export function Uptime( { site }: { site?: Site } ) {
 		enabled: !! site?.ID && isEligible && inView,
 	} );
 
+	const isPending = ! site || isLoading;
 	const renderContent = () => {
-		if ( ! site || isLoading ) {
-			return <LoadingIndicator label="100%" />;
+		if ( isPending ) {
+			return '100%';
 		}
 
 		if ( ! isEligible ) {
@@ -285,7 +292,11 @@ export function Uptime( { site }: { site?: Site } ) {
 		return uptime ? `${ uptime }%` : <IneligibleIndicator />;
 	};
 
-	return <span ref={ ref }>{ renderContent() }</span>;
+	return (
+		<span ref={ ref }>
+			<TextBlur isBlurred={ isPending }>{ renderContent() }</TextBlur>
+		</span>
+	);
 }
 
 export function PHPVersion( { site }: { site: Site } ) {
@@ -304,7 +315,11 @@ export function PHPVersion( { site }: { site: Site } ) {
 		return <IneligibleIndicator />;
 	}
 
-	return <span ref={ ref }>{ ! isLoading ? data : <LoadingIndicator label="X.Y" /> }</span>;
+	return (
+		<span ref={ ref }>
+			<TextBlur isBlurred={ isLoading }>{ isLoading ? 'X.Y' : data }</TextBlur>
+		</span>
+	);
 }
 
 export function MediaStorage( { site }: { site?: Site } ) {
@@ -318,9 +333,10 @@ export function MediaStorage( { site }: { site?: Site } ) {
 		enabled: !! site?.ID && inView,
 	} );
 
+	const isPending = ! site || isLoading;
 	const renderContent = () => {
-		if ( ! site || isLoading ) {
-			return <LoadingIndicator label="100%" />;
+		if ( isPending ) {
+			return '100%';
 		}
 
 		if ( ! mediaStorage ) {
@@ -331,7 +347,11 @@ export function MediaStorage( { site }: { site?: Site } ) {
 		return `${ Math.round( ( storage_used_bytes / max_storage_bytes ) * 1000 ) / 10 }%`;
 	};
 
-	return <span ref={ ref }>{ renderContent() }</span>;
+	return (
+		<span ref={ ref }>
+			<TextBlur isBlurred={ isPending }>{ renderContent() }</TextBlur>
+		</span>
+	);
 }
 
 function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {

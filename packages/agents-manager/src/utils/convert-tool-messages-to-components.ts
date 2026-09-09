@@ -530,28 +530,6 @@ export default function convertToolMessagesToComponents( {
 			];
 		}
 
-		// Handle start over tool message
-		// TODO (ability-migration): Double-check whether this branch is still needed when the
-		// `client-assistants` ability migrates. No agent offers that tool
-		// today — only old conversation history still contains it.
-		if (
-			textData.tool_id === 'big_sky__client_assistants' &&
-			textData.data?.assistantId === 'big-sky-site-admin'
-		) {
-			return [
-				{
-					...message,
-					content: [
-						{
-							type: 'text' as const,
-							text: __( 'To start over, please send your request again.', __i18n_text_domain__ ),
-						},
-					],
-					suppressThinking: true,
-				},
-			];
-		}
-
 		// Remove unhandled tool messages to avoid displaying raw JSON to the user.
 		// eslint-disable-next-line no-console
 		console.warn( `[AgentsManager] Unhandled tool message with tool_id: ${ textData.tool_id }` );

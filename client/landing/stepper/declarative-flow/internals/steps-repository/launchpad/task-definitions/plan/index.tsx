@@ -30,7 +30,7 @@ const getPlanTaskSubtitle = (
 					onClick={ ( event ) => {
 						event.stopPropagation();
 						recordGlobalStylesGattingPlanSelectedResetStylesEvent( task, flow, context, {
-							displayGlobalStylesWarning,
+							display_global_styles_warning: displayGlobalStylesWarning,
 						} );
 					} }
 				/>
@@ -54,7 +54,7 @@ export const getPlanSelectedTask: TaskAction = ( task, flow, context ): Task => 
 		actionDispatch: () => {
 			if ( displayGlobalStylesWarning ) {
 				recordGlobalStylesGattingPlanSelectedResetStylesEvent( task, flow, context, {
-					displayGlobalStylesWarning,
+					display_global_styles_warning: displayGlobalStylesWarning,
 				} );
 			}
 		},
@@ -104,11 +104,13 @@ const getNewsLetterPlanCreated: TaskAction = ( task, flow, context ) => {
 		...task,
 		actionDispatch: () => {
 			completePaidNewsletterTask( siteSlug, queryClient );
-			site?.ID
-				? setShowPlansModal( true )
-				: window.location.assign(
-						`/earn/payments/${ siteSlug }?launchpad=add-product${ ADD_TIER_PLAN_HASH }`
-				  );
+			if ( site?.ID ) {
+				setShowPlansModal( true );
+			} else {
+				window.location.assign(
+					`/earn/payments/${ siteSlug }?launchpad=add-product${ ADD_TIER_PLAN_HASH }`
+				);
+			}
 		},
 	};
 };

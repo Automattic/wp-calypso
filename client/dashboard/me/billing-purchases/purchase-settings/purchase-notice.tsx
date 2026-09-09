@@ -376,13 +376,11 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 
 	if ( shouldShowExpiredRenewNotice( purchase, purchaseAttachedTo ) ) {
 		return (
-			<>
-				<ExpiredRenewNotice
-					purchase={ purchase }
-					purchaseAttachedTo={ purchaseAttachedTo }
-					refunded={ refunded }
-				/>
-			</>
+			<ExpiredRenewNotice
+				purchase={ purchase }
+				purchaseAttachedTo={ purchaseAttachedTo }
+				refunded={ refunded }
+			/>
 		);
 	}
 

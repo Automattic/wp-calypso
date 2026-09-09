@@ -15,6 +15,7 @@ import {
 	sendSmsCode,
 } from 'calypso/state/login/actions';
 import { getTwoFactorAuthNonce, getTwoFactorAuthRequestError } from 'calypso/state/login/selectors';
+import { getVerificationCodeErrorMessage } from './get-verification-code-error-message';
 import TwoFactorActions from './two-factor-actions';
 
 import './verification-code-form.scss';
@@ -170,7 +171,14 @@ class VerificationCodeForm extends Component {
 							placeholder={ this.props.verificationCodeInputPlaceholder }
 						/>
 						{ requestError && requestError.field === 'twoStepCode' && (
-							<FormInputValidation isError text={ requestError.message } />
+							<FormInputValidation
+								isError
+								text={ getVerificationCodeErrorMessage(
+									requestError,
+									twoFactorAuthType,
+									translate
+								) }
+							/>
 						) }
 
 						{ smallPrint }

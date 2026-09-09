@@ -20,20 +20,20 @@ export default function SidebarBannerTemplate( {
 	}
 
 	return (
-		<>
-			<UpsellNudge
-				callToAction={ CTA.message }
-				compact
-				forceHref={ forceHref }
-				forceDisplay
-				dismissPreferenceName={ dismissPreferenceName }
-				dismissTemporary
-				href={ CTA.link }
-				onClick={ onClick }
-				onDismissClick={ onDismiss }
-				title={ message }
-			/>
+		<UpsellNudge
+			callToAction={ CTA.message }
+			compact
+			forceHref={ forceHref }
+			forceDisplay
+			dismissPreferenceName={ dismissPreferenceName }
+			dismissTemporary
+			event={ id }
+			href={ CTA.link }
+			onClick={ onClick }
+			onDismissClick={ onDismiss }
+			title={ message }
+		>
 			{ trackImpression && trackImpression() }
-		</>
+		</UpsellNudge>
 	);
 }

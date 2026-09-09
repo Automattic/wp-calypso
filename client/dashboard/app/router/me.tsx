@@ -485,8 +485,12 @@ export const cancelPurchaseRoute = createRoute( {
 		await Promise.all( [
 			...( hasQueryableSite( purchase )
 				? [
-						queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ),
-						queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ),
+						// `hasQueryableSite` only rules out holding sites. The owner can also
+						// have been removed from a real site — a disconnected Jetpack site, or a
+						// deleted one — and those requests 403. Load the flow without this data
+						// rather than failing the whole route (SHILL-1442).
+						queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ).catch( () => {} ),
+						queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ).catch( () => {} ),
 				  ]
 				: [] ),
 			queryClient.ensureQueryData( productsQuery() ),

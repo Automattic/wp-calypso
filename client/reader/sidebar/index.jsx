@@ -1,6 +1,6 @@
 import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
 import './style.scss';
-import { readSubscribedListsQuery } from '@automattic/api-queries';
+import { readSubscribedListsQuery, refetchSeenCounts } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useQuery } from '@tanstack/react-query';
@@ -99,7 +99,7 @@ const TrackingKeys = {
  * Loads every page of the shared site-subscriptions query once for the whole sidebar.
  */
 function SyncAllSiteSubscriptions() {
-	useSiteSubscriptions( { fetchAllPages: true } );
+	useSiteSubscriptions( { fetchAllPages: true }, { refetchOnMount: refetchSeenCounts } );
 	return null;
 }
 
@@ -378,7 +378,10 @@ export class ReaderSidebar extends Component {
 
 function withSubscribedLists( WrappedComponent ) {
 	return function WithSubscribedLists( props ) {
-		const { data } = useQuery( readSubscribedListsQuery() );
+		const { data } = useQuery( {
+			...readSubscribedListsQuery(),
+			refetchOnMount: refetchSeenCounts,
+		} );
 		const collator = useSelector( getCurrentIntlCollator );
 		const subscribedLists = useMemo( () => {
 			if ( ! data?.lists ) {

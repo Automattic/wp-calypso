@@ -1,19 +1,24 @@
 import { isAutomatticianQuery } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { BigSkyLogo, SummaryButton } from '@automattic/components';
 import { Step } from '@automattic/onboarding';
 import { useQuery as useReactQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
+	__experimentalText as Text,
 	Button,
 	Icon,
 	TextareaControl,
 } from '@wordpress/components';
 import { arrowUp, layout, brush } from '@wordpress/icons';
 import i18n, { useTranslate } from 'i18n-calypso';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
+import { planSupportsBuildWow } from 'calypso/landing/stepper/utils/build-wow-plans';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getSignupCompleteSlug } from 'calypso/signup/storageUtils';
+import { usePlanCartItem } from '../../../../hooks/use-plan-cart-item';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSiteData } from '../../../../hooks/use-site-data';
 import { usePurchasePlanNotification } from '../../hooks/use-purchase-plan-notification';
@@ -31,9 +36,49 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	usePurchasePlanNotification( siteId, site?.plan?.product_slug );
 	const showPromptInput = ref === WOO_HOSTING_SOLUTIONS_REF;
 	const [ prompt, setPrompt ] = useState( '' );
-	// Automattician-only "Generate Theme" entry point that provisions a WP Cloud
-	// site up front and runs the build-wow AI theme generation flow.
+	// Where the site builder swap is enabled, the custom design card goes to the
+	// build-wow AI theme generation flow (which provisions a WP Cloud site up
+	// front) on any Atomic-capable plan, and Automatticians get a link back to the
+	// previous Big Sky builder. Otherwise Automatticians get a separate "Generate
+	// Theme" card into build-wow, as before the swap.
 	const { data: isAutomattician } = useReactQuery( isAutomatticianQuery() );
+	const swapSiteBuilders =
+		config.isEnabled( 'calypso/ai-site-builder-build-wow' ) && config.isEnabled( 'site-spec' );
+	// Prefer the cart item (what was just bought) over site.plan, which can be
+	// stale before the plan assignment syncs. The cart item persists across runs,
+	// so only trust it when the checkout it came from was for this site.
+	const planCartItem = usePlanCartItem();
+	const boughtPlanSlug =
+		getSignupCompleteSlug() === siteSlug ? planCartItem?.product_slug : undefined;
+	const offerBuildWow =
+		swapSiteBuilders && planSupportsBuildWow( boughtPlanSlug ?? site?.plan?.product_slug );
+
+	// One choice per visit: submitting navigates away, so the controls disable and
+	// later clicks are ignored. The ref covers clicks landing before the re-render.
+	const isSubmittingRef = useRef( false );
+	const [ isSubmitting, setIsSubmitting ] = useState( false );
+
+	// A submit leaves the page, so Back can restore it from bfcache with the
+	// controls still disabled; re-enable them on that restore.
+	useEffect( () => {
+		const onPageShow = ( event: PageTransitionEvent ) => {
+			if ( event.persisted ) {
+				isSubmittingRef.current = false;
+				setIsSubmitting( false );
+			}
+		};
+		window.addEventListener( 'pageshow', onPageShow );
+		return () => window.removeEventListener( 'pageshow', onPageShow );
+	}, [] );
+
+	const claimSubmit = () => {
+		if ( isSubmittingRef.current ) {
+			return false;
+		}
+		isSubmittingRef.current = true;
+		setIsSubmitting( true );
+		return true;
+	};
 
 	const submitBuildWithAI = ( trimmedPrompt?: string ) => {
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
@@ -49,16 +94,40 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		} );
 	};
 
+	const submitGenerateTheme = () => {
+		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
+			selection: 'generate-theme',
+		} );
+
+		navigation.submit( {
+			setupChoice: 'generate-theme',
+			siteSlug,
+			siteId,
+		} );
+	};
+
 	const handleBuildWithAIClick = () => {
+		if ( ! claimSubmit() ) {
+			return;
+		}
 		submitBuildWithAI();
 	};
 
+	// The Woo hosting-solutions prompt form stays on the legacy builder regardless
+	// of the swap: only that path runs the store spec interview (store type, address
+	// for tax and shipping) and a WooCommerce-aware build.
 	const handleBuildWithAISubmit = ( event: FormEvent ) => {
 		event.preventDefault();
+		if ( ! claimSubmit() ) {
+			return;
+		}
 		submitBuildWithAI( prompt.trim() );
 	};
 
 	const handleBlankSite = () => {
+		if ( ! claimSubmit() ) {
+			return;
+		}
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
 			selection: 'blank-site',
 		} );
@@ -70,15 +139,23 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	};
 
 	const handleGenerateTheme = () => {
-		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
-			selection: 'generate-theme',
-		} );
+		if ( ! claimSubmit() ) {
+			return;
+		}
+		submitGenerateTheme();
+	};
 
-		navigation.submit( {
-			setupChoice: 'generate-theme',
-			siteSlug,
-			siteId,
-		} );
+	const handleCustomDesignClick = () => {
+		if ( ! claimSubmit() ) {
+			return;
+		}
+
+		if ( offerBuildWow ) {
+			submitGenerateTheme();
+			return;
+		}
+
+		submitBuildWithAI();
 	};
 
 	const buildWithAIPromptCard = (
@@ -116,7 +193,7 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 						className="setup-your-site-ai-step__prompt-submit"
 						label={ translate( 'Build with AI' ) }
 						icon={ arrowUp }
-						disabled={ ! prompt.trim() }
+						disabled={ ! prompt.trim() || isSubmitting }
 						accessibleWhenDisabled
 					/>
 				</div>
@@ -137,7 +214,34 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 				oldCopy: translate( 'Describe your idea and let AI help you refine your site.' ),
 			} ) }
 			decoration={ <BigSkyLogo.CentralLogo heartless /> }
-			onClick={ handleBuildWithAIClick }
+			onClick={ handleCustomDesignClick }
+			disabled={ isSubmitting }
+		/>
+	);
+
+	const legacySiteBuilderSection = offerBuildWow && isAutomattician && (
+		<VStack spacing={ 1 } alignment="left" className="setup-your-site-ai-step__legacy-builder">
+			<Step.LinkButton
+				className="setup-your-site-ai-step__legacy-builder-link"
+				onClick={ handleBuildWithAIClick }
+				disabled={ isSubmitting }
+				accessibleWhenDisabled
+			>
+				Create a custom design with the legacy site builder
+			</Step.LinkButton>
+			<Text variant="muted" size={ 12 }>
+				(Note: this link is only visible to Automatticians)
+			</Text>
+		</VStack>
+	);
+
+	const generateThemeCard = ! swapSiteBuilders && isAutomattician && (
+		<SummaryButton
+			title="Generate Theme"
+			description="Automattician only: provision a WordPress.com Cloud site and generate a custom theme with AI."
+			decoration={ <Icon icon={ brush } /> }
+			onClick={ handleGenerateTheme }
+			disabled={ isSubmitting }
 		/>
 	);
 
@@ -155,6 +259,7 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 			} ) }
 			decoration={ <Icon icon={ layout } /> }
 			onClick={ handleBlankSite }
+			disabled={ isSubmitting }
 		/>
 	);
 
@@ -169,16 +274,10 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 				<>
 					{ startWithTemplateCard }
 					{ buildWithAISummary }
+					{ legacySiteBuilderSection }
 				</>
 			) }
-			{ isAutomattician && (
-				<SummaryButton
-					title="Generate Theme"
-					description="Automattician only: provision a WordPress.com Cloud site and generate a custom theme with AI."
-					decoration={ <Icon icon={ brush } /> }
-					onClick={ handleGenerateTheme }
-				/>
-			) }
+			{ generateThemeCard }
 		</VStack>
 	);
 
