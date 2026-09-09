@@ -6,7 +6,7 @@ import {
 	getCheckpoints,
 	hasCheckpoint,
 	restoreCheckpoint,
-	setCheckpoint,
+	setReciprocalCheckpoint,
 } from '../../utils/checkpoints';
 import { isEditorPage } from '../../utils/is-editor-page';
 import {
@@ -209,7 +209,7 @@ export async function restoreCheckpointCallback(
 	// Record the pre-restore state under this call's own id, so an explicit
 	// redo can step back over this restore.
 	if ( reciprocalId ) {
-		setCheckpoint( reciprocalId, targetCheckpoint.checkpointKeys, {
+		await setReciprocalCheckpoint( reciprocalId, targetCheckpoint, {
 			toolId: RESTORE_CHECKPOINT_TOOL_ID,
 			summary,
 			restoresCheckpointId: checkpointId,
