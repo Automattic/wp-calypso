@@ -84,7 +84,12 @@ class VerificationCodeForm extends Component {
 				onSuccess();
 			} )
 			.catch( ( error ) => {
-				this.setState( { isDisabled: false } );
+				// The two-step endpoint sends no fresh nonce with this error, so another
+				// submit would reuse the stale one and fail the same way. Leave the form
+				// disabled rather than offer a retry that cannot work. The message reaches
+				// the user through the page-level notice, because the error carries the
+				// `global` field, and the login footer already links back to /log-in.
+				this.setState( { isDisabled: error.code === 'invalid_two_step_nonce' } );
 
 				this.props.recordTracksEvent( 'calypso_login_two_factor_verification_code_failure', {
 					error_code: error.code,
