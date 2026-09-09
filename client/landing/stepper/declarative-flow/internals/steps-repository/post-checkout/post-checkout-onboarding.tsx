@@ -1,11 +1,5 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
-import {
-	FEATURE_BIG_SKY,
-	isBusiness,
-	isEcommerce,
-	isPersonal,
-	isPremium,
-} from '@automattic/calypso-products';
+import { FEATURE_BIG_SKY, isBusiness, isEcommerce, isPremium } from '@automattic/calypso-products';
 import { SiteIntent } from '@automattic/data-stores/src/onboard';
 import { Step } from '@automattic/onboarding';
 import { useQuery } from '@tanstack/react-query';
@@ -62,7 +56,7 @@ const PostCheckoutOnboarding: StepType< {
 
 	const showBigSkyChoice =
 		!! site?.plan &&
-		( isPersonal( site.plan ) || isPremium( site.plan ) || isBusiness( site.plan ) ) &&
+		( isPremium( site.plan ) || isBusiness( site.plan ) ) &&
 		site.plan.features?.active?.includes( FEATURE_BIG_SKY );
 
 	const intent = useSelect(
