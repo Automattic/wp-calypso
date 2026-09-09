@@ -35,6 +35,7 @@ import pressableLogo from '../exclusive-offers/images/pressable-descriptor.svg';
 import wooLogo from '../exclusive-offers/images/woo-descriptor.svg';
 import ReferralToggle from '../referral-toggle';
 import TermPricingToggle from '../term-pricing-toggle';
+import { isAgencyApproved } from '../is-agency-approved';
 import { useMarketplaceType } from '../use-marketplace-type';
 import { useTermPricing } from '../use-term-pricing';
 import CartMenu from './cart-menu';
@@ -115,8 +116,6 @@ export default function MarketplaceProducts() {
 
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
-	// Old agencies didn't have approval_status set, so we need to account for that.
-	const isAgencyApproved = agency?.approval_status === 'approved' || agency?.approval_status === '';
 
 	const { data: allProducts, isLoading } = useQuery( agencyProductsQuery( agencyId ) );
 
@@ -145,7 +144,14 @@ export default function MarketplaceProducts() {
 	}, [ allProducts, showPressableAddons ] );
 
 	const searchParams = marketplaceProductsRoute.useSearch() as ProductsSearchParams;
-	const { items: cartItems, hasItem, addItem, removeItem, clearCart } = useShoppingCart();
+	const {
+		items: cartItems,
+		hasItem,
+		addItem,
+		removeItem,
+		replaceItems,
+		clearCart,
+	} = useShoppingCart();
 	const [ view, setView ] = useState< View >( () => ( {
 		...DEFAULT_VIEW,
 		search: searchParams.search_query != null ? String( searchParams.search_query ) : '',
@@ -159,29 +165,31 @@ export default function MarketplaceProducts() {
 	const showPressableTile = showPressableAddons && products.some( isPressableAddon );
 	const tileCategory = selectedTile === 'pressable' && ! showPressableTile ? null : selectedTile;
 
-	// `?product_slug=a,b` replaces the cart with those products; `?products=a:1,b:1` adds them.
+	// `?product_slug=a,b` and `?products=a:2,b:1` replace the cart with those
+	// products, as the classic products page does.
 	const hasPreselected = useRef( false );
 	useEffect( () => {
 		if ( hasPreselected.current || ! allProducts ) {
 			return;
 		}
-		const slugs = searchParams.product_slug
-			? searchParams.product_slug.split( ',' )
-			: ( searchParams.products ?? '' )
-					.split( ',' )
-					.map( ( entry ) => entry.split( ':' )[ 0 ] )
-					.filter( Boolean );
-		if ( slugs.length === 0 ) {
+		const productSlug =
+			searchParams.product_slug != null ? String( searchParams.product_slug ) : '';
+		const productsParam = searchParams.products != null ? String( searchParams.products ) : '';
+		const entries = productSlug
+			? productSlug.split( ',' ).map( ( slug ) => ( { slug, quantity: 1 } ) )
+			: productsParam.split( ',' ).map( ( entry ) => {
+					const [ slug, quantity ] = entry.split( ':' );
+					return { slug, quantity: parseInt( quantity, 10 ) || 1 };
+			  } );
+		const known = entries.filter( ( { slug } ) =>
+			allProducts.some( ( product ) => product.slug === slug )
+		);
+		if ( ! productSlug && ! productsParam ) {
 			return;
 		}
 		hasPreselected.current = true;
-		if ( searchParams.product_slug ) {
-			clearCart();
-		}
-		slugs
-			.filter( ( slug ) => allProducts.some( ( product ) => product.slug === slug ) )
-			.forEach( addItem );
-	}, [ allProducts, searchParams.product_slug, searchParams.products, clearCart, addItem ] );
+		replaceItems( known );
+	}, [ allProducts, searchParams.product_slug, searchParams.products, replaceItems ] );
 	const [ detailsProduct, setDetailsProduct ] = useState< AgencyProduct | null >( null );
 
 	const fields = useMemo< Field< AgencyProduct >[] >( () => {
@@ -404,17 +412,18 @@ export default function MarketplaceProducts() {
 						'Extensions, plans, and add-ons for your clients’ sites. Buy for your agency or refer them to a client.'
 					) }
 					actions={
-						<div className="dashboard-marketplace-products__header-actions">
+						<HStack spacing={ 4 } expanded={ false }>
 							<ReferralToggle />
 							<CartMenu
 								items={ cartItems }
 								products={ allProducts ?? [] }
 								term={ termPricing }
 								isReferralMode={ isReferralMode }
-								isAgencyApproved={ isAgencyApproved }
+								isAgencyApproved={ isAgencyApproved( agency ) }
 								onRemove={ removeItem }
+								onCheckout={ clearCart }
 							/>
-						</div>
+						</HStack>
 					}
 				/>
 			}
