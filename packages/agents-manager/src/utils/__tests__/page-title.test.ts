@@ -32,10 +32,11 @@ describe( 'getPageTitle', () => {
 		await expect( getPageTitle( 7 ) ).resolves.toBe( expected );
 	} );
 
-	it( 'is empty when the page cannot be read', async () => {
+	// An untitled page also reads as `''`, and that one is still editable.
+	it( 'refuses a page that cannot be read', async () => {
 		withPage( null );
 
-		await expect( getPageTitle( 7 ) ).resolves.toBe( '' );
+		await expect( getPageTitle( 7 ) ).rejects.toThrow( 'Page 7 could not be read' );
 	} );
 } );
 
@@ -52,5 +53,12 @@ describe( 'setPageTitle', () => {
 			{ title: 'About us' },
 			{ undoIgnore: true }
 		);
+	} );
+
+	it( 'refuses a page that cannot be read', async () => {
+		withPage( null );
+
+		await expect( setPageTitle( 7, 'About us' ) ).rejects.toThrow( 'Page 7 could not be read' );
+		expect( editEntityRecord ).not.toHaveBeenCalled();
 	} );
 } );
