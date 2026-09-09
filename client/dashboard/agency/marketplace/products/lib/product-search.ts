@@ -1,5 +1,5 @@
-import { getPlan } from '@automattic/calypso-products';
 import { getProductDescription } from './product-descriptions';
+import { getStorePlan } from './product-info';
 import type { AgencyProduct } from '@automattic/api-core';
 
 // Turns a store slug such as `jetpack_backup_t1_yearly` into the name a user
@@ -21,14 +21,11 @@ function getProductNameBySlug( slug: string ): string {
 }
 
 // Plans (Complete, Security, Growth, Starter) also match a search for any product
-// they bundle. The plan catalog is keyed by store slugs (`jetpack_complete`).
+// they bundle.
 function getIncludedProductNames( product: AgencyProduct ): string[] {
-	const storeSlug = product.slug.replaceAll( '-', '_' );
-	const plan =
-		getPlan( storeSlug ) ??
-		getPlan( `${ storeSlug }_yearly` ) ??
-		getPlan( `${ storeSlug }_monthly` );
-	return ( plan?.getProductsIncluded?.() ?? [] ).map( getProductNameBySlug );
+	return ( getStorePlan( product.slug )?.getProductsIncluded?.() ?? [] ).map(
+		getProductNameBySlug
+	);
 }
 
 export function getProductSearchText( product: AgencyProduct ): string {
