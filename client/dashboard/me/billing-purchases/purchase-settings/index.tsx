@@ -395,9 +395,12 @@ export function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase }
 	// When a refund is available with auto-renew still on, the refund path is
 	// surfaced inside the cancel flow via RefundEligibilityNotice instead of
 	// a second CTA here.
-	// Verified against wpcom-billing backend — cancel / disable-auto-renew /
-	// delete endpoints all accept the call in pending-renewal state, so we
-	// don't need to special-case it.
+	// Verified against wpcom-billing backend: disable-auto-renew always accepts
+	// the call. cancel / delete accept it while a renewal is queued but not yet
+	// attempted at the registrar (the backend deletes the pending-renewal flag)
+	// and reject it only while an attempt is due or running,
+	// with a domain-pending-async-renewal error the cancel flow already shows.
+	// No special-casing is needed here.
 	const showCancel =
 		! isBundledWithPlan &&
 		autoRenewOn &&
