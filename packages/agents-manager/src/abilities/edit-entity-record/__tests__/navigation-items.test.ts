@@ -103,6 +103,8 @@ it( 'resolves an item moved under a different parent', async () => {
 // A clientId is only stable for a menu the editor already edited; a pristine one
 // re-parses to fresh ids. The label the agent sent alongside it still resolves.
 it( 'falls back to the label when the clientId is stale', async () => {
+	withMenu( [ item( 'fresh', 'About' ) ] );
+
 	const result = await buildNavigationItems( 10, {
 		navigationItems: [ { clientId: 'gone', label: 'About' } ],
 	} );
@@ -142,6 +144,26 @@ it( 'keeps children the input does not mention', async () => {
 	expect( blocks[ 0 ].name ).toBe( SUBMENU );
 } );
 
+// A > B > C: moving C to the top level must lift it out of B as well, or the
+// same block sits in the menu twice under different parents.
+it( 'lifts an item out of a submenu nested more than one level deep', async () => {
+	withMenu( [
+		{
+			...item( 'a', 'A', {}, [ { ...item( 'b', 'B', {}, [ item( 'c', 'C' ) ] ), name: SUBMENU } ] ),
+			name: SUBMENU,
+		},
+	] );
+
+	const result = await buildNavigationItems( 10, {
+		navigationItems: [ { label: 'A' }, { label: 'C' } ],
+	} );
+
+	expect( JSON.stringify( result.blocks ).match( /"clientId":"c"/g ) ).toHaveLength( 1 );
+	// B lost its only child, so it must not still draw a dropdown arrow.
+	const a = ( result.blocks as { innerBlocks: { name: string }[] }[] )[ 0 ];
+	expect( a.innerBlocks[ 0 ].name ).toBe( 'core/navigation-link' );
+} );
+
 // Labels are not unique. Resolving both inputs to the same block would emit it
 // twice, and two menu items cannot share a clientId.
 it( 'gives two items sharing a label the two blocks that share it', async () => {
@@ -170,6 +192,8 @@ it( 'refuses a second item claiming an id only one block carries', async () => {
 // An id that resolves to nothing builds a link with no text — the same wipe a
 // stale clientId would cause, reachable without one.
 it( 'refuses an id that resolves to nothing and carries no label', async () => {
+	withMenu( [ item( 'a', 'About', { id: 5 } ) ] );
+
 	await expect( buildNavigationItems( 10, { navigationItems: [ { id: 999 } ] } ) ).rejects.toThrow(
 		'Navigation items not found: 999'
 	);

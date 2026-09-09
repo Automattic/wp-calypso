@@ -51,7 +51,12 @@ interface CoreDispatch {
 		edits: Record< string, unknown >,
 		options: { undoIgnore: boolean }
 	) => Promise< unknown >;
-	saveEditedEntityRecord: ( kind: string, name: string, id: number | string ) => Promise< unknown >;
+	saveEditedEntityRecord: (
+		kind: string,
+		name: string,
+		id: number | string,
+		options: { throwOnError: boolean }
+	) => Promise< unknown >;
 }
 
 const normalizeLabel = ( label: unknown ) =>
@@ -228,7 +233,12 @@ const matchesPage =
 const saveMenu = async ( id: unknown ): Promise< void > => {
 	const coreDispatch = dispatch( coreStore ) as unknown as CoreDispatch | undefined;
 
-	await coreDispatch?.saveEditedEntityRecord( 'postType', 'wp_navigation', id as number );
+	// Errors are suppressed by default, which would report a menu change that
+	// never reached the server as a success — the very regression this save
+	// exists to prevent.
+	await coreDispatch?.saveEditedEntityRecord( 'postType', 'wp_navigation', id as number | string, {
+		throwOnError: true,
+	} );
 };
 
 /** Appends an item for a newly created page to the site's menu. */

@@ -59,6 +59,9 @@ interface CoreDispatch {
 		record: Record< string, unknown >,
 		options?: Record< string, unknown >
 	) => Promise< { id?: number | string; title?: unknown; link?: string } | null >;
+	// Core-data suppresses save errors unless asked not to, so a failed write
+	// would resolve and the ability would report a success that never happened.
+	// Merged over the caller's options rather than replacing them.
 	editEntityRecord: (
 		kind: string,
 		name: string,
@@ -108,7 +111,7 @@ export function getCheckpointKeys( { editEntities }: EditEntityRecordInput ): st
 		if ( entity?.entityType === SITE_TYPE && entity?.entityName === SITE_NAME ) {
 			keys.add( checkpointKeys.SITE_METADATA );
 
-			if ( flattenTitle( entity.record?.title ) ) {
+			if ( entity.record && 'title' in entity.record ) {
 				keys.add( checkpointKeys.SITE_TITLE );
 			}
 		}
@@ -123,12 +126,10 @@ async function applyCreates( entities: EntityRef[], applied: AppliedChanges ): P
 			continue;
 		}
 
-		const created = await coreDispatch().saveEntityRecord(
-			entityType,
-			entityName,
-			record,
-			options
-		);
+		const created = await coreDispatch().saveEntityRecord( entityType, entityName, record, {
+			...options,
+			throwOnError: true,
+		} );
 
 		if ( ! created?.id ) {
 			continue;
@@ -171,14 +172,20 @@ async function applyEdits(
 		// them matters: falling through to the generic branch below would edit
 		// the site record without ever saving it.
 		if ( entityType === SITE_TYPE && entityName === SITE_NAME ) {
-			const title = flattenTitle( record.title );
+			const { title, ...metadata } = record;
 
-			if ( title ) {
-				await setSiteTitle( title );
-				await editSiteMetadata( { siteTitle: title } );
-			} else {
-				await editSiteMetadata( record );
+			// Split rather than branched: one call can carry a title and other
+			// metadata at once, and routing on the title alone dropped the rest.
+			// Presence decides, not truthiness — the schema allows an empty title,
+			// which means clearing the site name.
+			if ( 'title' in record ) {
+				const siteTitle = flattenTitle( title );
+
+				await setSiteTitle( siteTitle );
+				metadata.siteTitle = siteTitle;
 			}
+
+			await editSiteMetadata( metadata );
 
 			applied.updated.push( { entityName, recordId } );
 			continue;
@@ -241,7 +248,10 @@ async function applyDeletes( entities: EntityRef[], applied: AppliedChanges ): P
 			}
 		 ).getEditedEntityRecord( entityType, entityName, recordId );
 
-		await coreDispatch().deleteEntityRecord( entityType, entityName, recordId, options );
+		await coreDispatch().deleteEntityRecord( entityType, entityName, recordId, {
+			...options,
+			throwOnError: true,
+		} );
 
 		// After the delete, never before: the menu write persists, so removing
 		// the item first would strip it for good if the delete then failed.
