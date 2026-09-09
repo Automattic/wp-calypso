@@ -2,7 +2,11 @@ jest.mock( '@wordpress/blocks', () => ( {
 	createBlock: jest.fn( ( name, attributes ) => ( { name, attributes, innerBlocks: [] } ) ),
 	serialize: jest.fn( ( blocks ) => `<!-- ${ blocks.length } items -->` ),
 } ) );
-jest.mock( '../../../utils/navigation-menu', () => ( { readMenuItems: jest.fn() } ) );
+jest.mock( '../../../utils/navigation-menu', () => ( {
+	NAVIGATION_LINK_BLOCK: 'core/navigation-link',
+	NAVIGATION_SUBMENU_BLOCK: 'core/navigation-submenu',
+	readMenuItems: jest.fn(),
+} ) );
 
 import { readMenuItems } from '../../../utils/navigation-menu';
 import { buildNavigationItems } from '../navigation-items';

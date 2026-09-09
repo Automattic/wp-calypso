@@ -1,5 +1,10 @@
 import { createBlock, serialize } from '@wordpress/blocks';
-import { readMenuItems, type NavigationBlock } from '../../utils/navigation-menu';
+import {
+	NAVIGATION_LINK_BLOCK,
+	NAVIGATION_SUBMENU_BLOCK,
+	readMenuItems,
+	type NavigationBlock,
+} from '../../utils/navigation-menu';
 
 /**
  * Rebuilds a menu from the final item list the agent asks for.
@@ -20,9 +25,6 @@ export interface NavigationItemInput {
 	opensInNewTab?: boolean;
 	items?: NavigationItemInput[];
 }
-
-const LINK_BLOCK = 'core/navigation-link';
-const SUBMENU_BLOCK = 'core/navigation-submenu';
 
 /**
  * The identity keys a menu item can be addressed by, most specific first.
@@ -180,7 +182,7 @@ export async function buildNavigationItems(
 				return {
 					...block,
 					innerBlocks,
-					name: innerBlocks.length ? SUBMENU_BLOCK : LINK_BLOCK,
+					name: innerBlocks.length ? NAVIGATION_SUBMENU_BLOCK : NAVIGATION_LINK_BLOCK,
 				};
 			} );
 
@@ -202,7 +204,7 @@ export async function buildNavigationItems(
 			// A block with children is a submenu, one without is a link. The type is
 			// what draws the dropdown arrow, so deriving it from the final children
 			// is what keeps a chevron off an item with nothing left to open.
-			const name = innerBlocks.length ? SUBMENU_BLOCK : LINK_BLOCK;
+			const name = innerBlocks.length ? NAVIGATION_SUBMENU_BLOCK : NAVIGATION_LINK_BLOCK;
 			const block = existing ?? ( createBlock( name, attributesFor( input ) ) as NavigationBlock );
 
 			return {
