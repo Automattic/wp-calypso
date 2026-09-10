@@ -58,8 +58,8 @@ function mergeVariants( products: AgencyProduct[] ): ProductListItem[] {
 	return [ ...merged, ...rest ];
 }
 
-const byName = ( a: ProductListItem, b: ProductListItem ) =>
-	getItemProducts( a )[ 0 ].name.localeCompare( getItemProducts( b )[ 0 ].name );
+const byName = ( locale?: string ) => ( a: ProductListItem, b: ProductListItem ) =>
+	getItemProducts( a )[ 0 ].name.localeCompare( getItemProducts( b )[ 0 ].name, locale );
 
 const isJetpackProduct = ( product: AgencyProduct ) =>
 	! isWooCommerceProduct( product ) &&
@@ -68,7 +68,9 @@ const isJetpackProduct = ( product: AgencyProduct ) =>
 	product.family_slug !== BACKUP_STORAGE_FAMILY_SLUG;
 
 // The classic dashboard's fixed section order and copy.
-export function getProductSections( products: AgencyProduct[] ): ProductSection[] {
+// `locale` is the user's Intl language tag, so names sort by their language
+// rather than the browser's.
+export function getProductSections( products: AgencyProduct[], locale?: string ): ProductSection[] {
 	const featured = FEATURED_PRODUCT_SLUGS.map( ( slug ) =>
 		products.find( ( product ) => product.slug === slug )
 	).filter( ( product ): product is AgencyProduct => !! product );
@@ -86,7 +88,7 @@ export function getProductSections( products: AgencyProduct[] ): ProductSection[
 				'Explore the tools and integrations you need to grow your client’s Woo store.'
 			),
 			brand: 'woocommerce',
-			items: products.filter( isWooCommerceProduct ).sort( byName ),
+			items: products.filter( isWooCommerceProduct ).sort( byName( locale ) ),
 		},
 		{
 			key: 'jetpack-plans',
@@ -106,7 +108,7 @@ export function getProductSections( products: AgencyProduct[] ): ProductSection[
 				'Mix and match powerful security, performance, and growth tools for your sites.'
 			),
 			brand: 'jetpack',
-			items: mergeVariants( products.filter( isJetpackProduct ) ).sort( byName ),
+			items: mergeVariants( products.filter( isJetpackProduct ) ).sort( byName( locale ) ),
 		},
 		{
 			key: 'backup-addons',
@@ -124,7 +126,7 @@ export function getProductSections( products: AgencyProduct[] ): ProductSection[
 			brand: 'pressable',
 			items: products
 				.filter( isPressableAddon )
-				.sort( ( a, b ) => a.name.localeCompare( b.name, undefined, { numeric: true } ) ),
+				.sort( ( a, b ) => a.name.localeCompare( b.name, locale, { numeric: true } ) ),
 		},
 	];
 
