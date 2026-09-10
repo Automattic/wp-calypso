@@ -285,7 +285,6 @@ export const HardBlockingNotice = ( {
 	const { setShowHelpCenter } = useShowHelpCenter();
 
 	const openHelpCenter = () => {
-		// The Help Center would otherwise open behind the modal this can render in.
 		onDismiss?.();
 		setShowHelpCenter( true );
 	};
