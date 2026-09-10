@@ -1,11 +1,13 @@
 import { Button, FormInputValidation, ExternalLink } from '@automattic/components';
 import { omit } from '@automattic/js-utils';
+import { withBreakpoint } from '@automattic/viewport-react';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInput from 'calypso/components/forms/form-text-input-with-affixes';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
@@ -241,8 +243,14 @@ class SiteVerification extends Component {
 	};
 
 	render() {
-		const { isVerificationToolsActive, jetpackVersion, siteId, siteIsJetpack, translate } =
-			this.props;
+		const {
+			isBreakpointActive,
+			isVerificationToolsActive,
+			jetpackVersion,
+			siteId,
+			siteIsJetpack,
+			translate,
+		} = this.props;
 		const {
 			isSubmittingForm,
 			isFetchingSettings,
@@ -327,31 +335,40 @@ class SiteVerification extends Component {
 							.reduce( ( prev, curr ) => [ prev, ', ', curr ] ) }
 					</p>
 					<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
-						{ supportedServices.map( ( service ) => (
-							<FormFieldset key={ service.slug }>
-								<div className="form-text-input-with-affixes seo-settings__verification-code-field">
-									<label
-										className="form-text-input-with-affixes__prefix"
-										htmlFor={ `verification_code_${ service.slug }` }
-									>
-										{ service.name }
-									</label>
-									<FormTextarea
-										className="seo-settings__verification-code-input"
-										rows={ 1 }
-										name={ `verification_code_${ service.slug }` }
-										value={ service.code }
-										id={ `verification_code_${ service.slug }` }
-										spellCheck="false"
-										disabled={ isVerificationDisabled }
-										isError={ this.hasError( service.slug ) }
-										placeholder={ this.getMetaTag( service.slug, '1234' ) }
-										onChange={ this.handleVerificationCodeChange( service.slug ) }
-									/>
-								</div>
-								{ this.hasError( service.slug ) && this.getVerificationError( showPasteError ) }
-							</FormFieldset>
-						) ) }
+						{ supportedServices.map( ( service ) => {
+							const inputProps = {
+								name: `verification_code_${ service.slug }`,
+								value: service.code,
+								id: `verification_code_${ service.slug }`,
+								spellCheck: 'false',
+								disabled: isVerificationDisabled,
+								isError: this.hasError( service.slug ),
+								placeholder: this.getMetaTag( service.slug, '1234' ),
+								onChange: this.handleVerificationCodeChange( service.slug ),
+							};
+
+							return (
+								<FormFieldset key={ service.slug }>
+									{ isBreakpointActive ? (
+										<div className="form-text-input-with-affixes seo-settings__verification-code-field">
+											<label
+												className="form-text-input-with-affixes__prefix"
+												htmlFor={ inputProps.id }
+											>
+												{ service.name }
+											</label>
+											<FormTextarea
+												{ ...inputProps }
+												className="seo-settings__verification-code-input"
+											/>
+										</div>
+									) : (
+										<FormInput prefix={ service.name } { ...inputProps } />
+									) }
+									{ this.hasError( service.slug ) && this.getVerificationError( showPasteError ) }
+								</FormFieldset>
+							);
+						} ) }
 						<Button
 							className="is-primary"
 							disabled={ isSaveDisabled || isVerificationDisabled }
@@ -397,4 +414,4 @@ export default connect(
 		trackFormSubmitted: ( path ) =>
 			recordTracksEvent( 'calypso_seo_settings_form_submit', { path } ),
 	}
-)( protectForm( localize( SiteVerification ) ) );
+)( protectForm( localize( withBreakpoint( '<800px' )( SiteVerification ) ) ) );

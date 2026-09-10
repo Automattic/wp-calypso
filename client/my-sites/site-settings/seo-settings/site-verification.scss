@@ -1,26 +1,25 @@
-@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
-@import "calypso/components/forms/form-text-input-with-affixes/style";
+.seo-settings__seo-form .seo-settings__verification-code-field {
+	flex-direction: column;
+	width: 100%;
 
-.seo-settings__verification-code-field {
+	.form-text-input-with-affixes__prefix {
+		box-sizing: border-box;
+		width: 100%;
+		margin-bottom: 0;
+		border-right: 1px solid var( --color-neutral-10 );
+		border-bottom: none;
+		border-radius: 2px 2px 0 0;
+	}
+
 	textarea.seo-settings__verification-code-input {
-		flex-grow: 1;
+		box-sizing: border-box;
+		width: 100%;
 		min-width: 0;
-		height: 40px;
-		min-height: 40px;
-		overflow-x: auto;
-		overflow-y: hidden;
-		border-radius: 0;
-		resize: none;
-		white-space: pre;
-
-		@include breakpoint-deprecated( "<480px" ) {
-			height: auto;
-			min-height: 92px;
-			overflow-x: hidden;
-			overflow-y: auto;
-			overflow-wrap: anywhere;
-			resize: vertical;
-			white-space: pre-wrap;
-		}
+		min-height: 92px;
+		overflow-x: hidden;
+		overflow-wrap: anywhere;
+		border-radius: 0 0 2px 2px;
+		resize: vertical;
+		white-space: pre-wrap;
 	}
 }
