@@ -26,6 +26,7 @@ import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import ProcessingCallToAction from './call-to-action';
 import { ProcessingResult } from './constants';
 import { useLoadingMessageIndex } from './hooks/use-loading-message-index';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
@@ -85,6 +86,13 @@ const ProcessingStep: StepType< {
 	accepts: {
 		title?: string;
 		subtitle?: string;
+		callToAction?: {
+			id: string;
+			title: string;
+			description: string;
+			label: string;
+			href: string;
+		};
 	};
 } > = function ( props ) {
 	const { submit } = props.navigation;
@@ -265,6 +273,18 @@ const ProcessingStep: StepType< {
 	};
 
 	const flowName = props.flow || '';
+	const callToActionConfig = props.callToAction;
+	const callToAction = callToActionConfig && (
+		<ProcessingCallToAction
+			{ ...callToActionConfig }
+			onClick={ () =>
+				recordTracksEvent( 'calypso_signup_processing_action_click', {
+					flow: flowName,
+					action: callToActionConfig.id,
+				} )
+			}
+		/>
+	);
 
 	// Return tailored processing screens for flows that need them
 	if ( isNewsletterFlow( flowName ) || isUpdateDesignFlow( flowName ) ) {
@@ -299,7 +319,14 @@ const ProcessingStep: StepType< {
 				hideFormattedHeader
 				stepName="processing-step"
 				stepContent={
-					<Loading title={ getCurrentMessage() } subtitle={ getSubtitle() } progress={ progress } />
+					<>
+						<Loading
+							title={ getCurrentMessage() }
+							subtitle={ getSubtitle() }
+							progress={ progress }
+						/>
+						{ callToAction }
+					</>
 				}
 				recordTracksEvent={ recordTracksEvent }
 			/>
