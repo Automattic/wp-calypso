@@ -10,7 +10,8 @@ import moment from 'moment';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import { isExpiringSoon } from 'calypso/lib/domains/utils/is-expiring-soon';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils/is-recently-registered';
-import { shouldRenderExpiringCreditCard, handleRenewNowClick } from 'calypso/lib/purchases';
+import { handleRenewNowClick } from 'calypso/lib/purchases';
+import { shouldRenderExpiringCreditCard } from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import {
 	domainManagementEdit,
 	domainManagementEditContactInfo,
@@ -19,7 +20,7 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import { transferStatus, type as domainTypes, gdprConsentStatus } from './constants';
 import type { ResponseDomain } from './types';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from '@automattic/api-core';
 import type { CalypsoDispatch } from 'calypso/state/types';
 import type { I18N, TranslateResult } from 'i18n-calypso';
 
@@ -54,8 +55,6 @@ export type ResolveDomainStatusOptionsBag = {
 
 export function resolveDomainStatus(
 	domain: ResponseDomain,
-	// Temporary bridge (SHILL-2256): callers still pass the camelCase Purchase,
-	// so the renewal handlers below are given `purchase.rawPurchase`.
 	purchase: Purchase | null = null,
 	translate: I18N[ 'translate' ],
 	dispatch: CalypsoDispatch,
@@ -322,9 +321,7 @@ export function resolveDomainStatus(
 											a: (
 												<Button
 													plain
-													onClick={ () =>
-														dispatch( handleRenewNowClick( purchase.rawPurchase, siteSlug ) )
-													}
+													onClick={ () => dispatch( handleRenewNowClick( purchase, siteSlug ) ) }
 												/>
 											),
 										},
@@ -353,9 +350,7 @@ export function resolveDomainStatus(
 											a: (
 												<Button
 													plain
-													onClick={ () =>
-														dispatch( handleRenewNowClick( purchase.rawPurchase, siteSlug ) )
-													}
+													onClick={ () => dispatch( handleRenewNowClick( purchase, siteSlug ) ) }
 												/>
 											),
 										},
@@ -408,9 +403,7 @@ export function resolveDomainStatus(
 									a: (
 										<Button
 											plain
-											onClick={ () =>
-												dispatch( handleRenewNowClick( purchase.rawPurchase, siteSlug ) )
-											}
+											onClick={ () => dispatch( handleRenewNowClick( purchase, siteSlug ) ) }
 										/>
 									),
 								},

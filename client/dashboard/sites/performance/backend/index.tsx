@@ -8,16 +8,14 @@ import {
 	privateApis,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { __ } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { useMemo } from 'react';
 import { Card } from '../../../components/card';
-import { PageHeader } from '../../../components/page-header';
-import PageLayout from '../../../components/page-layout';
 import UpsellCallout from '../../hosting-feature-gated-with-callout/upsell';
 import { hasBackendAccess } from '../backend-access';
 import { getBackendCalloutProps } from '../backend-callout';
 import { VIEWPORT_BREAKPOINTS } from '../constants';
+import PerformancePage from '../performance-page';
 import { mergeAggregates } from './aggregate';
 import BackendEmptyState from './backend-empty-state';
 import BackendStatusNotice from './backend-status';
@@ -168,22 +166,19 @@ export default function SitePerformanceBackend( {
 	const [ timeframe, setTimeframe ] = usePersistedTimeframe();
 
 	return (
-		<PageLayout
-			header={
-				<PageHeader
-					title={ __( 'Backend' ) }
-					description={
-						userHasBackendAccess ? <BackendSubtitle capturing={ apmEnabled } /> : undefined
-					}
-					actions={
-						userHasBackendAccess ? (
-							<HStack spacing={ 2 } justify="flex-end" expanded={ false }>
-								<TimeframeSelector value={ timeframe } onChange={ setTimeframe } />
-								{ ! apmEnabled && <StartCapturingButton site={ site } /> }
-							</HStack>
-						) : undefined
-					}
-				/>
+		<PerformancePage
+			siteSlug={ siteSlug }
+			tab="backend"
+			description={
+				userHasBackendAccess ? <BackendSubtitle capturing={ apmEnabled } /> : undefined
+			}
+			actions={
+				userHasBackendAccess ? (
+					<HStack spacing={ 2 } justify="flex-end" expanded={ false }>
+						<TimeframeSelector value={ timeframe } onChange={ setTimeframe } />
+						{ ! apmEnabled && <StartCapturingButton site={ site } /> }
+					</HStack>
+				) : undefined
 			}
 		>
 			{ userHasBackendAccess ? (
@@ -191,6 +186,6 @@ export default function SitePerformanceBackend( {
 			) : (
 				<UpsellCallout site={ site } { ...getBackendCalloutProps() } />
 			) }
-		</PageLayout>
+		</PerformancePage>
 	);
 }
