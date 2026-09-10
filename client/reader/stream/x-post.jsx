@@ -9,7 +9,7 @@ import { createRef, PureComponent } from 'react';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import {
-	useIsSeenEnabled,
+	useCanMarkSeen,
 	useIsSeenVisible,
 	useMarkAsSeenMutation,
 } from 'calypso/reader/data/seen-posts';
@@ -27,7 +27,7 @@ export class CrossPost extends PureComponent {
 		postKey: PropTypes.object,
 		site: PropTypes.object,
 		feed: PropTypes.object,
-		isSeenEnabled: PropTypes.bool,
+		canMarkSeen: PropTypes.bool,
 		isSeenVisible: PropTypes.bool,
 		requestMarkAsSeen: PropTypes.func.isRequired,
 	};
@@ -82,9 +82,9 @@ export class CrossPost extends PureComponent {
 	};
 
 	markAsSeen = () => {
-		const { isSeenEnabled, post, postKey, requestMarkAsSeen } = this.props;
+		const { canMarkSeen, post, postKey, requestMarkAsSeen } = this.props;
 		const feedId = postKey?.feedId || post.feed_ID;
-		if ( ! isSeenEnabled || ! feedId || ! post.feed_item_ID ) {
+		if ( ! canMarkSeen || post.is_seen || ! feedId || ! post.feed_item_ID ) {
 			return;
 		}
 
@@ -236,7 +236,7 @@ export default function CrossPostContainer( props ) {
 	const { data: feedFromSite } = useFeedQuery( feedFromKey ? undefined : resolvedFeedId );
 	const { mutate: requestMarkAsSeen } = useMarkAsSeenMutation();
 	const seenProps = { feedId: resolvedFeedId, blogId: siteId, post: props.post };
-	const isSeenEnabled = useIsSeenEnabled( seenProps );
+	const canMarkSeen = useCanMarkSeen( seenProps );
 	const isSeenVisible = useIsSeenVisible( seenProps );
 
 	return (
@@ -244,7 +244,7 @@ export default function CrossPostContainer( props ) {
 			{ ...props }
 			site={ site }
 			feed={ feedFromKey || feedFromSite }
-			isSeenEnabled={ isSeenEnabled }
+			canMarkSeen={ canMarkSeen }
 			isSeenVisible={ isSeenVisible }
 			requestMarkAsSeen={ requestMarkAsSeen }
 		/>

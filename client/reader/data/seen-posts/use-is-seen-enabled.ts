@@ -29,19 +29,15 @@ interface SeenArgs {
 /**
  * Returns true if the user can mark a post as seen, false otherwise.
  */
-export function useIsSeenEnabled( { feedId, blogId, post }: SeenArgs ): boolean {
-	const isFeatureEnabled = useIsSeenFeatureEnabled( { feedId, blogId } );
+export function useCanMarkSeen( { feedId, blogId, post }: SeenArgs ): boolean {
+	const isSeenEnabled = useIsSeenEnabled( { feedId, blogId } );
 	const organizationId = useSiteSubscriptionOrganizationId( feedId, blogId );
 
-	if ( ! isFeatureEnabled ) {
+	if ( ! isSeenEnabled ) {
 		return false;
 	}
 
 	if ( isPostAnAFKPost( organizationId, post ) ) {
-		return false;
-	}
-
-	if ( post?.is_seen ) {
 		return false;
 	}
 
@@ -54,10 +50,10 @@ export function useIsSeenEnabled( { feedId, blogId, post }: SeenArgs ): boolean 
  * Mainly we need this because we want to show the seen state for AFK posts, but not allow users to mark them as seen.
  */
 export function useIsSeenVisible( { feedId, blogId, post }: SeenArgs ): boolean {
-	const isFeatureEnabled = useIsSeenFeatureEnabled( { feedId, blogId } );
+	const isSeenEnabled = useIsSeenEnabled( { feedId, blogId } );
 	const organizationId = useSiteSubscriptionOrganizationId( feedId, blogId );
 
-	if ( ! isFeatureEnabled ) {
+	if ( ! isSeenEnabled ) {
 		return false;
 	}
 
@@ -78,7 +74,7 @@ function isPostAnAFKPost( orgId: number, post: SeenArgs[ 'post' ] ): boolean {
 /**
  * Return true if the seen feature is enabled for the current user, false otherwise.
  */
-export function useIsSeenFeatureEnabled( { feedId, blogId }: SeenArgs ): boolean {
+function useIsSeenEnabled( { feedId, blogId }: SeenArgs ): boolean {
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 	const isSubscribed = useIsSubscribed( { feedId, blogId } );
 	const organizationId = useSiteSubscriptionOrganizationId( feedId, blogId );

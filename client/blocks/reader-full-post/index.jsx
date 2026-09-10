@@ -32,7 +32,7 @@ import { usePostCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { usePost } from 'calypso/reader/data/post';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
-import { useIsSeenEnabled, withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
+import { useCanMarkSeen, withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
 import { withSite } from 'calypso/reader/data/site';
 import { useSiteSubscriptionForFeed } from 'calypso/reader/data/site-subscriptions';
 import { getSiteName } from 'calypso/reader/get-helpers';
@@ -74,7 +74,7 @@ export class FullPostView extends Component {
 		onClose: PropTypes.func,
 		referralPost: PropTypes.object,
 		referralStream: PropTypes.string,
-		isSeenEnabled: PropTypes.bool,
+		canMarkSeen: PropTypes.bool,
 		layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
 		currentPath: PropTypes.string,
 		commentsApiDisabled: PropTypes.bool,
@@ -533,7 +533,7 @@ export class FullPostView extends Component {
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
-			if ( this.props.isSeenEnabled ) {
+			if ( this.props.canMarkSeen && ! post.is_seen ) {
 				this.markAsSeen();
 			}
 
@@ -761,7 +761,7 @@ export class FullPostView extends Component {
 										post.discussion?.comment_count > 0
 									}
 									renderMarkAsSeenButton={
-										this.props.isSeenEnabled ? this.renderMarkAsSeenButton : null
+										this.props.canMarkSeen ? this.renderMarkAsSeenButton : null
 									}
 									feedUrl={ feedUrl }
 									siteUrl={ post.site_URL }
@@ -961,7 +961,7 @@ export const withFullPostNavigation = ( WrappedComponent ) =>
 
 		const { data: previousPost } = usePost( previousPostKey );
 		const { data: nextPost } = usePost( nextPostKey );
-		const isSeenEnabled = useIsSeenEnabled( {
+		const canMarkSeen = useCanMarkSeen( {
 			feedId: props.feedId,
 			blogId: props.blogId ?? props.feed?.blog_ID ?? post?.site_ID,
 			post,
@@ -987,7 +987,7 @@ export const withFullPostNavigation = ( WrappedComponent ) =>
 				nextPostKey={ nextPostKey }
 				post={ post }
 				referralPost={ referralPost }
-				isSeenEnabled={ isSeenEnabled }
+				canMarkSeen={ canMarkSeen }
 				commentsApiDisabled={ commentsApiDisabled }
 				previousPost={ previousPost }
 				nextPost={ nextPost }
