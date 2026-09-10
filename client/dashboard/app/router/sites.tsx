@@ -811,8 +811,10 @@ export const siteSettingsRoute = createRoute( {
 
 		queryClient.prefetchQuery( siteCurrentPlanQuery( site.ID ) );
 
-		// Skip the settings fetch for sites we know can't reach Jetpack — it would
-		// fail and error the route, and SFTP/SSH doesn't need it anyway.
+		// The request below is answered by the site itself, so it fails while the
+		// site is broken, and that failure shows an error screen instead of the
+		// page. SFTP/SSH is the only settings page reachable then, and it doesn't
+		// need that data.
 		if ( site.__inaccessible_jetpack_error ) {
 			return;
 		}
