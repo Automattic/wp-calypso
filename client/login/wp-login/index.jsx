@@ -9,6 +9,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import LoginBlock from 'calypso/blocks/login';
 import PasswordResetSuccessNotice from 'calypso/blocks/login/password-reset-success-notice';
+import SignupExistingAccountNotice from 'calypso/blocks/login/signup-existing-account-notice';
 import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
@@ -357,6 +358,15 @@ export class Login extends Component {
 		// TODO: remove isGravPoweredClient when login pages are unified.
 		const isSocialFirst = ! isGravPoweredClient;
 
+		// Each returns null when it has nothing to say. The Grav-powered layout has no
+		// OneLoginLayout to hand these to, so it renders them inside Main instead.
+		const notices = (
+			<>
+				<PasswordResetSuccessNotice />
+				<SignupExistingAccountNotice />
+			</>
+		);
+
 		const mainContent = (
 			<Main
 				className={ clsx( 'wp-login__main', {
@@ -365,6 +375,8 @@ export class Login extends Component {
 					'is-jetpack': isJetpack,
 				} ) }
 			>
+				{ isGravPoweredClient && notices }
+
 				{ isGravPoweredClient && this.renderI18nSuggestions() }
 
 				<DocumentHead
@@ -403,7 +415,7 @@ export class Login extends Component {
 						isLostPasswordView={ isLostPasswordView }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
 						subHeadingProminent={ this.props.isFromJetpackConnector && ! isLostPasswordView }
-						notice={ <PasswordResetSuccessNotice /> }
+						notice={ notices }
 					>
 						{ mainContent }
 					</OneLoginLayout>

@@ -5,7 +5,7 @@ import SignupExistingAccountNotice from 'calypso/blocks/login/signup-existing-ac
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
 const renderAtPath = ( initialPath ) =>
-	renderWithProvider( <SignupExistingAccountNotice signupUrl="/start" />, { initialPath } );
+	renderWithProvider( <SignupExistingAccountNotice />, { initialPath } );
 
 describe( 'SignupExistingAccountNotice', () => {
 	test( 'names the address signup redirected with', () => {

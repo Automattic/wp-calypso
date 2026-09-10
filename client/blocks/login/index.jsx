@@ -58,7 +58,6 @@ import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
-import SignupExistingAccountNotice from './signup-existing-account-notice';
 import { shouldUseMagicCode } from './utils/should-use-magic-code';
 
 import './style.scss';
@@ -579,8 +578,6 @@ class Login extends Component {
 						twoFactorAuthType={ twoFactorAuthType }
 					/>
 				) }
-
-				<SignupExistingAccountNotice signupUrl={ this.getSignupUrl() } />
 
 				{ /* For Woo, we render the ErrrorNotice component in login-form.jsx */ }
 				{ ! isWCCOM && <ErrorNotice locale={ locale } /> }
