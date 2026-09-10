@@ -43,14 +43,13 @@ export function PlanExpiryStatus( { site }: { site: Site } ) {
 		return null;
 	}
 
-	// The event names and the first two properties are the renew nag's, which
-	// this field grew out of, so that its history stays readable across the
-	// change. The rest are named as the wp-admin banner names them
-	// (`wpcom_expiry_notices_track_props`), so a funnel can follow the same plan
-	// across both surfaces -- hence `surface` beside the older `source`, which
-	// says much the same thing under the name each side already uses. `urgency`
-	// is the one property neither had: wp-admin derives its colour from the day
-	// count rather than choosing it.
+	// The event names and first two properties match the existing
+	// `calypso_dashboard_sites_plan_renew_nag_*` events. The rest follow the
+	// wp-admin banner's naming (`wpcom_expiry_notices_track_props`), so a
+	// funnel can follow the same plan across both surfaces — hence `surface`
+	// beside the older `source`, which says much the same thing under the name
+	// each side already uses. `urgency` is the one property the wp-admin banner
+	// does not carry: it derives color from the day count rather than choosing it.
 	const eventProperties = {
 		product_slug: site.plan?.product_slug,
 		source: 'plan',
