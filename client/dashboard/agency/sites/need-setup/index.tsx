@@ -19,14 +19,9 @@ type SetupRow = {
 };
 
 function getReferralDescription( referral: ReferralApiResponse ): ReactNode {
-	return createInterpolateElement(
-		sprintf(
-			/* translators: %s is the email address of the client who owns the license. */
-			__( '<b>%s</b> owns this' ),
-			referral.client.email
-		),
-		{ b: <strong /> }
-	);
+	return createInterpolateElement( __( '<email /> owns this' ), {
+		email: <strong>{ referral.client.email }</strong>,
+	} );
 }
 
 /**
