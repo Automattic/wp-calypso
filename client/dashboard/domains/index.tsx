@@ -22,6 +22,7 @@ import {
 } from './dataviews';
 import EmptyDomainsStateActions from './empty-domains-state/actions';
 import { EmptyDomainsStateUpsell } from './empty-domains-state/upsell';
+import NamePulseSearch from './name-pulse-search';
 import type { DomainSummary } from '@automattic/api-core';
 
 export function getDomainId( domain: DomainSummary ): string {
@@ -78,7 +79,12 @@ function Domains() {
 						actions={ ! hasDomains ? null : <AddDomainButton /> }
 					/>
 				}
-				notices={ <BulkActionsProgressNotice /> }
+				notices={
+					<>
+						<NamePulseSearch />
+						<BulkActionsProgressNotice />
+					</>
+				}
 			>
 				{ ! hasDomains ? (
 					<DataViewsEmptyStateLayout
