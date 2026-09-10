@@ -40,6 +40,9 @@ jest.mock( '../navigation-items', () => ( {
 jest.mock( '../../../utils/site-record', () => ( {
 	getSiteRecord: jest.fn( () => ( { page_on_front: 3 } ) ),
 } ) );
+jest.mock( '../../../utils/canvas-guard', () => ( {
+	bindToEditorPath: jest.fn( () => jest.fn() ),
+} ) );
 jest.mock( '../../editor-navigate/callback', () => ( {
 	PAGES_LIST_PATH: 'all-pages',
 	editorNavigateCallback: jest.fn( async () => ( { result: { success: true } } ) ),
@@ -47,6 +50,7 @@ jest.mock( '../../editor-navigate/callback', () => ( {
 } ) );
 
 import { dispatch, resolveSelect } from '@wordpress/data';
+import { bindToEditorPath } from '../../../utils/canvas-guard';
 import { checkpointKeys, hasCheckpoint } from '../../../utils/checkpoints';
 import { isEditorPage } from '../../../utils/is-editor-page';
 import {
@@ -320,11 +324,23 @@ describe( 'editEntityRecordCallback', () => {
 			{ case: 'the posts index', site: {} },
 			{ case: 'the page being deleted', site: { page_on_front: 7 } },
 		] )( 'leaves for the pages list when the front page is $case', async ( { site } ) => {
-			( getSiteRecord as jest.Mock ).mockReturnValue( site );
+			( getSiteRecord as jest.Mock ).mockReturnValueOnce( site );
 
 			await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
 
 			expect( editorNavigateCallback ).toHaveBeenCalledWith( { path: 'all-pages' } );
+		} );
+
+		// The navigation runs outside the guarded dispatch, so the binding must be
+		// handed over here or the chat aborts the request as the user leaving.
+		it( 'hands the canvas binding to the navigation first', async () => {
+			await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
+
+			expect( bindToEditorPath ).toHaveBeenCalledWith( '/page/3' );
+			expect( ( bindToEditorPath as jest.Mock ).mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+				( editorNavigateCallback as jest.Mock ).mock.invocationCallOrder[ 0 ]
+			);
+			expect( ( bindToEditorPath as jest.Mock ).mock.results[ 0 ].value ).not.toHaveBeenCalled();
 		} );
 
 		it( 'does not delete when it cannot leave', async () => {
@@ -336,6 +352,7 @@ describe( 'editEntityRecordCallback', () => {
 
 			expect( result.result.error ).toContain( 'the editor is busy' );
 			expect( deleteEntityRecord ).not.toHaveBeenCalled();
+			expect( ( bindToEditorPath as jest.Mock ).mock.results[ 0 ].value ).toHaveBeenCalled();
 		} );
 
 		it( 'stays put when deleting a different page', async () => {
