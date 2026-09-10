@@ -37,7 +37,6 @@ import {
 	useRef,
 } from 'react';
 import { SectionHeader } from '../../components/section-header';
-import { getSiteSettingsRepositoriesURL } from '../../utils/site-url';
 import { AdvancedWorkflowStyle } from './advanced-workflow-style';
 import { useInstallGithub } from './use-install-github';
 import type {
@@ -423,7 +422,7 @@ export const ConnectRepositoryForm = ( {
 				createSuccessNotice( successMessage, {
 					type: 'snackbar',
 				} );
-				navigate( { to: getSiteSettingsRepositoriesURL( siteSlug ) } );
+				navigate( { to: `/sites/${ siteSlug }/settings/repositories` } );
 			},
 			onError: ( error ) => {
 				createErrorNotice( errorMessage( error.message ), {

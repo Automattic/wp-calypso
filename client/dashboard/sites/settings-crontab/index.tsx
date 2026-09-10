@@ -28,7 +28,6 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import TimeSince, { useTimeSince } from '../../components/time-since';
 import { hasHostingFeature } from '../../utils/site-features';
-import { getSiteSettingsCrontabAddURL, getSiteSettingsCrontabEditURL } from '../../utils/site-url';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { parseRequestedScheduleForBackwardCompatibility } from './parse-requested-schedule-for-backward-compatibility';
 import { formatScheduleLabel, formatScheduleDescription } from './schedules';
@@ -221,7 +220,7 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 			label: __( 'Edit' ),
 			callback: ( items: Crontab[] ) => {
 				router.navigate( {
-					to: getSiteSettingsCrontabEditURL( siteSlug, items[ 0 ].cron_id ),
+					to: `/sites/${ siteSlug }/settings/crontab/${ items[ 0 ].cron_id }/edit`,
 				} );
 			},
 		},
@@ -261,7 +260,7 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 								__next40pxDefaultSize
 								onClick={ () =>
 									router.navigate( {
-										to: getSiteSettingsCrontabAddURL( siteSlug ),
+										to: `/sites/${ siteSlug }/settings/crontab/add`,
 									} )
 								}
 							>

@@ -17,7 +17,6 @@ import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
-import { getSiteSettingsCrontabURL } from '../../utils/site-url';
 import { parseRequestedScheduleForBackwardCompatibility } from './parse-requested-schedule-for-backward-compatibility';
 import { ScheduleField } from './schedule-field';
 import type { Crontab, CrontabFormData } from '@automattic/api-core';
@@ -63,7 +62,7 @@ export default function CrontabForm( { crontab }: CrontabFormProps ) {
 	const isPending = isEditMode ? isUpdating : isCreating;
 
 	const handleCancel = () => {
-		navigate( { to: getSiteSettingsCrontabURL( siteSlug ) } );
+		navigate( { to: `/sites/${ siteSlug }/settings/crontab` } );
 	};
 
 	const handleSubmit = ( e: React.FormEvent ) => {
@@ -74,7 +73,7 @@ export default function CrontabForm( { crontab }: CrontabFormProps ) {
 		}
 
 		const onSuccess = () => {
-			navigate( { to: getSiteSettingsCrontabURL( siteSlug ) } );
+			navigate( { to: `/sites/${ siteSlug }/settings/crontab` } );
 		};
 
 		if ( isEditMode && crontab ) {

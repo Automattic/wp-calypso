@@ -11,7 +11,6 @@ import Breadcrumbs from '../../app/breadcrumbs';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { getSiteSettingsRepositoriesURL } from '../../utils/site-url';
 import { ConnectRepositoryForm } from './connect-repository-form';
 import { getDeploymentErrorReason, getDeploymentTypeFromPath } from './deployment-tracks';
 import type { ConnectRepositoryFormData } from './connect-repository-form';
@@ -24,7 +23,7 @@ export default function ConnectRepository() {
 	const { recordTracksEvent } = useAnalytics();
 
 	const handleCancel = () => {
-		navigate( { to: getSiteSettingsRepositoriesURL( siteSlug ) } );
+		navigate( { to: `/sites/${ siteSlug }/settings/repositories` } );
 	};
 
 	const createMutationOptions = createCodeDeploymentMutation( site.ID );
