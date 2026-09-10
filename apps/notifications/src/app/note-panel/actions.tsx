@@ -1,6 +1,6 @@
-import { Button, DropdownMenu, Icon, privateApis } from '@wordpress/components';
+import { Button, DropdownMenu, ExternalLink, Icon, privateApis } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { bell, cog, external, keyboard } from '@wordpress/icons';
+import { bell, cog, keyboard } from '@wordpress/icons';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../panel/state/actions';
@@ -87,12 +87,12 @@ export default function NotePanelActions() {
 						</>
 					) }
 					<Menu.Group>
-						{ /* The menu reserves a prefix column for the layout group's checkmarks, so
-						   this item needs its own icon or it reads as oddly indented. */ }
+						{ /* ExternalLink supplies the arrow and the "opens in a new tab" label. It
+						   wraps the item's own prefix and content wrappers in a span, so the icon
+						   sits beside the label rather than in the menu's shared prefix column. */ }
 						<Menu.Item
-							render={ <a href={ SETTINGS_URL } target="_blank" rel="noopener noreferrer" /> }
+							render={ <ExternalLink href={ SETTINGS_URL } /> }
 							prefix={ <Icon icon={ bell } size={ 20 } /> }
-							suffix={ <Icon icon={ external } size={ 16 } /> }
 						>
 							<Menu.ItemLabel>{ __( 'Notification settings' ) }</Menu.ItemLabel>
 						</Menu.Item>
