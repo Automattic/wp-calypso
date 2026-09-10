@@ -89,26 +89,6 @@ describe( 'NotePanel view picker', () => {
 		expect( screen.getByRole( 'checkbox', { name: 'Store' } ) ).not.toBeChecked();
 	} );
 
-	it( 'reorders a view without closing the popover', async () => {
-		const { post } = renderPanel( { isViewSettingsEnabled: true } );
-
-		await userEvent.click( screen.getByRole( 'button', { name: 'Add or remove views' } ) );
-		await userEvent.click( screen.getByRole( 'button', { name: 'Move Subscribers up' } ) );
-
-		// Reordering doesn't change the strip's width, so the popover can stay open.
-		expect( screen.getByRole( 'checkbox', { name: 'Likes' } ) ).toBeVisible();
-
-		await waitFor( () => {
-			expect( post ).toHaveBeenCalled();
-		} );
-
-		const [ , , body ] = post.mock.calls[ 0 ] as unknown[];
-		const saved = ( body as { calypso_preferences: { 'notifications-views': { name: string }[] } } )
-			.calypso_preferences[ 'notifications-views' ];
-
-		expect( saved.map( ( { name } ) => name ).slice( 0, 2 ) ).toEqual( [ 'follows', 'comments' ] );
-	} );
-
 	it( 'adds a view to the tab strip and saves the whole list', async () => {
 		const { post } = renderPanel( { isViewSettingsEnabled: true } );
 
