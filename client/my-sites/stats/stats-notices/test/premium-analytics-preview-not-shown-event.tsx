@@ -150,9 +150,11 @@ jest.mock( 'calypso/state/sites/selectors/has-site-product-jetpack-stats-pwyw-on
 	__esModule: true,
 	default: () => false,
 } ) );
+let mockIsAtomic = false;
 jest.mock( 'calypso/state/sites/selectors/is-jetpack-site', () => ( {
 	__esModule: true,
-	default: () => false,
+	default: ( _state: unknown, _siteId: number, options: { treatAtomicAsJetpackSite: boolean } ) =>
+		mockIsAtomic && options.treatAtomicAsJetpackSite,
 } ) );
 jest.mock( 'calypso/state/stats/lists/selectors', () => ( {
 	getSiteStatsNormalizedData: () => ( {} ),
@@ -183,6 +185,7 @@ describe( 'premium analytics preview "not shown" event', () => {
 		mockCanManageOptions = true;
 		mockSiteFeatures = { active: [] };
 		mockIsWpcom = true;
+		mockIsAtomic = false;
 		mockIsP2 = false;
 		mockIsVip = false;
 		mockAdminUrl = 'https://example.com/wp-admin/admin.php?page=jetpack-premium-analytics-wp-admin';
@@ -232,6 +235,13 @@ describe( 'premium analytics preview "not shown" event', () => {
 			'is_p2',
 			() => {
 				mockIsP2 = true;
+			},
+		],
+		[
+			'atomic_hold',
+			() => {
+				mockIsAtomic = true;
+				mockPremiumAnalyticsStatus = { data: undefined, isLoading: true, isError: false };
 			},
 		],
 		[
@@ -302,6 +312,35 @@ describe( 'premium analytics preview "not shown" event', () => {
 		renderNotices();
 
 		expect( notShownEvents() ).toEqual( [] );
+	} );
+
+	it.each( [ true, false ] )( 'does not hold Simple with Atomic flag %s', ( flag ) => {
+		mockFlags()[ 'stats/premium-analytics-preview-atomic' ] = flag;
+		renderNotices();
+		expect( notShownEvents() ).toEqual( [] );
+	} );
+
+	it( 'does not hold Atomic when its flag is on', () => {
+		mockIsAtomic = true;
+		mockFlags()[ 'stats/premium-analytics-preview-atomic' ] = true;
+		renderNotices();
+		expect( notShownEvents() ).toEqual( [] );
+	} );
+
+	it.each( [ true, undefined ] )( 'records atomic_hold before status %s', ( status ) => {
+		mockIsAtomic = true;
+		mockPremiumAnalyticsStatus.data = status;
+		renderNotices();
+		expect( notShownEvents() ).toEqual( [
+			[ EVENT_NAME, { blog_id: 123, reason: 'atomic_hold' } ],
+		] );
+	} );
+
+	it( 'records is_p2 before atomic_hold', () => {
+		mockIsAtomic = true;
+		mockIsP2 = true;
+		renderNotices();
+		expect( notShownEvents() ).toEqual( [ [ EVENT_NAME, { blog_id: 123, reason: 'is_p2' } ] ] );
 	} );
 
 	it( 'stays quiet for a site that was offered the invitation and then dismissed it', () => {
