@@ -1,5 +1,6 @@
 import { createBlock, parse, serialize } from '@wordpress/blocks';
 import { select } from '@wordpress/data';
+import { PROVIDER_STORE } from '../../constants';
 import { isRecord } from '../../utils/is-record';
 import {
 	NAVIGATION_LINK_BLOCK,
@@ -7,7 +8,6 @@ import {
 	readMenuItems,
 	type NavigationBlock,
 } from '../../utils/navigation-menu';
-import { PROVIDER_STORE } from '../../utils/provider-store';
 
 /**
  * Rebuilds a menu from the final item list the agent asks for.
@@ -82,10 +82,9 @@ const childrenOf = ( item: NavigationItemInput ): NavigationItemInput[] | undefi
  */
 const CLAIM_TIERS = [ [ 'clientId' ], [ 'id' ], [ 'url' ], [ 'label' ] ] as const;
 
-// TODO (ability-migration): the page structure Big Sky sends the agent carries
-// short block ids, and the map back to the editor's clientIds lives in its
-// store. Until that context migrates, this is the only way to read them back;
-// an id the map does not know is taken as the editor's own.
+// TODO (ability-migration): Big Sky's page structure hands the agent short block
+// ids and keeps the map to editor clientIds in its store. Until that context
+// migrates, this is the only way back; an unknown id is taken as an editor's.
 const toEditorClientId = ( id: string ): string =>
 	(
 		select( PROVIDER_STORE ) as
@@ -97,9 +96,10 @@ const toEditorClientId = ( id: string ): string =>
  * The identity keys a menu item can be addressed by, most specific first.
  *
  * One definition for both sides: the keys an input claims and the keys a block
- * offers must be formed identically, or a lookup silently misses. An id is
- * qualified by its type — a category can carry the same number as a page — and
- * a bare id means a page, which is what the schema offers.
+ * offers must be formed identically, or a lookup silently misses. A clientId is
+ * the editor's own, resolved before it gets here. An id is qualified by its
+ * type — a category can carry the same number as a page — and a bare id means
+ * a page, which is what the schema offers.
  */
 const identityKeys = ( {
 	clientId,
