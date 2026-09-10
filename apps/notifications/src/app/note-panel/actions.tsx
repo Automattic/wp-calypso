@@ -1,15 +1,7 @@
-import {
-	Button,
-	Dropdown,
-	DropdownMenu,
-	ExternalLink,
-	RadioControl,
-	__experimentalDivider as Divider,
-	__experimentalHeading as Heading,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { Button, DropdownMenu, privateApis } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { cog, keyboard } from '@wordpress/icons';
+import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../panel/state/actions';
 import getIsShortcutsPopoverOpen from '../../panel/state/selectors/get-is-shortcuts-popover-open';
@@ -17,6 +9,15 @@ import getLayoutStyle from '../../panel/state/selectors/get-layout-style';
 import { useAppContext } from '../context';
 import NoteShortcuts from '../note-shortcuts';
 import { useSavePreference } from './use-save-preference';
+
+const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
+	'@wordpress/components'
+);
+
+// The same menu DataViews uses for its own layout switcher, so the checkmark and the
+// full-width group separator match what people already see there.
+const { Menu } = unlock( privateApis );
 
 const SETTINGS_URL = 'https://wordpress.com/me/notifications';
 
@@ -61,44 +62,39 @@ export default function NotePanelActions() {
 			>
 				{ () => <NoteShortcuts /> }
 			</DropdownMenu>
-			<Dropdown
-				popoverProps={ { placement: 'bottom-end' } }
-				renderToggle={ ( { isOpen, onToggle } ) => (
-					<Button
-						size="small"
-						icon={ cog }
-						onClick={ onToggle }
-						aria-expanded={ isOpen }
-						label={ __( 'Settings' ) }
-					/>
-				) }
-				renderContent={ () => (
-					// The padding sits on each section rather than the stack, so the divider
-					// between them can reach both edges of the popover.
-					<VStack spacing={ 0 } style={ { minWidth: '200px' } }>
-						{ isViewSettingsEnabled && (
-							<>
-								<VStack spacing={ 2 } style={ { padding: '8px' } }>
-									<Heading level={ 3 } size={ 13 } weight={ 500 }>
-										{ __( 'Layout' ) }
-									</Heading>
-									<RadioControl
-										label={ __( 'Layout' ) }
-										hideLabelFromVision
-										selected={ layoutStyle }
-										options={ LAYOUTS }
-										onChange={ setLayoutStyle }
-									/>
-								</VStack>
-								<Divider margin={ 0 } />
-							</>
-						) }
-						<div style={ { padding: '8px' } }>
-							<ExternalLink href={ SETTINGS_URL }>{ __( 'Notification settings' ) }</ExternalLink>
-						</div>
-					</VStack>
-				) }
-			/>
+			<Menu placement="bottom-end">
+				<Menu.TriggerButton
+					render={ <Button size="small" icon={ cog } label={ __( 'Settings' ) } /> }
+				/>
+				<Menu.Popover>
+					{ isViewSettingsEnabled && (
+						<>
+							<Menu.Group>
+								<Menu.GroupLabel>{ __( 'Layout' ) }</Menu.GroupLabel>
+								{ LAYOUTS.map( ( { value, label } ) => (
+									<Menu.RadioItem
+										key={ value }
+										name="notifications-layout-style"
+										value={ value }
+										checked={ layoutStyle === value }
+										onChange={ () => setLayoutStyle( value ) }
+									>
+										<Menu.ItemLabel>{ label }</Menu.ItemLabel>
+									</Menu.RadioItem>
+								) ) }
+							</Menu.Group>
+							<Menu.Separator />
+						</>
+					) }
+					<Menu.Group>
+						<Menu.Item
+							render={ <a href={ SETTINGS_URL } target="_blank" rel="noopener noreferrer" /> }
+						>
+							<Menu.ItemLabel>{ __( 'Notification settings' ) }</Menu.ItemLabel>
+						</Menu.Item>
+					</Menu.Group>
+				</Menu.Popover>
+			</Menu>
 		</>
 	);
 }

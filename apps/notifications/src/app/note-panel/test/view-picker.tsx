@@ -39,8 +39,11 @@ describe( 'NotePanel settings menu', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Settings' } ) );
 
-		expect( screen.queryByRole( 'radio', { name: 'Simplified' } ) ).not.toBeInTheDocument();
-		expect( screen.getByRole( 'link', { name: /Notification settings/ } ) ).toBeVisible();
+		expect( screen.queryByRole( 'menuitemradio', { name: 'Simplified' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'menuitem', { name: 'Notification settings' } ) ).toHaveAttribute(
+			'href',
+			'https://wordpress.com/me/notifications'
+		);
 	} );
 
 	it( 'marks the saved layout and saves a new one', async () => {
@@ -48,9 +51,12 @@ describe( 'NotePanel settings menu', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Settings' } ) );
 
-		expect( screen.getByRole( 'radio', { name: 'Classic' } ) ).toBeChecked();
+		expect( screen.getByRole( 'menuitemradio', { name: 'Classic' } ) ).toHaveAttribute(
+			'aria-checked',
+			'true'
+		);
 
-		await userEvent.click( screen.getByRole( 'radio', { name: 'Simplified' } ) );
+		await userEvent.click( screen.getByRole( 'menuitemradio', { name: 'Simplified' } ) );
 
 		await waitFor( () => {
 			expect( post ).toHaveBeenCalled();
