@@ -9,7 +9,7 @@ import { canAccessSftpSettings } from '../../utils/site-features';
 import type { Site } from '@automattic/api-core';
 
 // `site` is optional because the site error boundary renders this notice when
-// the site request itself failed and there is no site to read.
+// even the WPCOM-only retry failed and there is no site object to read.
 export function InaccessibleJetpackNotice( { error, site }: { error: Error; site?: Site } ) {
 	useEffect( () => {
 		logToLogstash( {
