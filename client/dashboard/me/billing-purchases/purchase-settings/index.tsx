@@ -123,6 +123,8 @@ import {
 	AddMailboxesActionItem,
 	EmailPlanMailboxCard,
 	EmailPlanPriceCard,
+	ManageEmailPlanActionItem,
+	isEmailPlanAtHighestTier,
 	isEmailPlanManagementEnabled,
 } from './email-plan';
 import { getCancelButtonCopy, getRemoveButtonCopy } from './get-cancel-remove-copy';
@@ -153,6 +155,11 @@ function getNonPlanUpgradeAction(
 	// Titan email upgrades route through the flag-gated tier grid; without the flag
 	// the upgrade URL would fall through to the wrong (site plan) page.
 	if ( isTitanMail( purchase ) && ! config.isEnabled( 'emails/titan-tiers' ) ) {
+		return undefined;
+	}
+	// The highest email tier has nothing to upgrade to; "Manage your plan"
+	// takes over so the user can still reach the plan grid.
+	if ( isEmailPlanAtHighestTier( purchase ) ) {
 		return undefined;
 	}
 	const href = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() );
@@ -814,6 +821,9 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 				<ReinstallButton purchase={ purchase } />
 				<JetpackCRMDownloadsButton purchase={ purchase } />
 				<ProductChangeActionItem purchase={ purchase } />
+				{ ! isExpiredOrRemoved( purchase ) && isEmailPlanAtHighestTier( purchase ) && (
+					<ManageEmailPlanActionItem purchase={ purchase } />
+				) }
 				<StorageUpgradeActionButton purchase={ purchase } />
 				{ ! isExpiredOrRemoved( purchase ) && isEmailPlanManagementEnabled( purchase ) && (
 					<AddMailboxesActionItem purchase={ purchase } />
