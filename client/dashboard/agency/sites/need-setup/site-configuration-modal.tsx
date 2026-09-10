@@ -208,7 +208,11 @@ export default function SiteConfigurationModal( {
 	};
 
 	return (
-		<Modal title={ __( 'Configure your new site' ) } onRequestClose={ handleRequestClose }>
+		<Modal
+			title={ __( 'Configure your new site' ) }
+			size="medium"
+			onRequestClose={ handleRequestClose }
+		>
 			<form onSubmit={ handleSubmit }>
 				<VStack spacing={ 4 }>
 					<AddressField siteAddress={ siteAddress } />
