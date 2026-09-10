@@ -12,7 +12,7 @@ import { __ } from '@wordpress/i18n';
  */
 import { EVENT_PLACEMENT_FREE_USER_SCREEN, EVENT_UPGRADE } from '../../constants';
 import useLogoGenerator from '../hooks/use-logo-generator';
-import { isWpcomSimpleSite } from '../lib/upgrade-url';
+import { shouldUpgradePlan } from '../lib/upgrade-url';
 import { STORE_NAME } from '../store';
 /**
  * Types
@@ -33,8 +33,7 @@ export const UpgradeScreen: React.FC< {
 		return selectors.getSiteDetails();
 	}, [] );
 
-	// A Simple site upgrades its WordPress.com plan, not a Jetpack AI tier.
-	const upgradeMessageFeature = isWpcomSimpleSite( siteDetails )
+	const upgradeMessageFeature = shouldUpgradePlan( siteDetails, reason )
 		? __(
 				'Upgrade your WordPress.com plan for access to exclusive Jetpack AI features, including logo generation. A paid plan also increases the amount of requests you can use in all AI-powered features.',
 				'jetpack'
@@ -44,15 +43,10 @@ export const UpgradeScreen: React.FC< {
 				'jetpack'
 		  );
 
-	const upgradeMessageRequests = isWpcomSimpleSite( siteDetails )
-		? __(
-				'Not enough requests left to generate a logo. Upgrade your WordPress.com plan to increase the amount of requests you can use in all AI-powered features.',
-				'jetpack'
-		  )
-		: __(
-				'Not enough requests left to generate a logo. Upgrade your Jetpack AI to increase the amount of requests you can use in all AI-powered features.',
-				'jetpack'
-		  );
+	const upgradeMessageRequests = __(
+		'Not enough requests left to generate a logo. Upgrade your Jetpack AI to increase the amount of requests you can use in all AI-powered features.',
+		'jetpack'
+	);
 
 	const { context } = useLogoGenerator();
 

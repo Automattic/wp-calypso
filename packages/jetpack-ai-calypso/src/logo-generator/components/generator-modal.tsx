@@ -119,7 +119,13 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 			setNeedsMoreRequests( needsMoreRequests );
 
 			if ( ! feature?.hasFeature || needsMoreRequests ) {
-				setUpgradeURL( getUpgradeURL( { siteDetails, nextTierSlug: feature?.nextTier?.slug } ) );
+				setUpgradeURL(
+					getUpgradeURL( {
+						siteDetails,
+						nextTierSlug: feature?.nextTier?.slug,
+						reason: feature?.hasFeature ? 'requests' : 'feature',
+					} )
+				);
 				setLoadingState( null );
 				return;
 			}

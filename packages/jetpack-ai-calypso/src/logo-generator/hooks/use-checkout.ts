@@ -6,7 +6,6 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { getUpgradeURL } from '../lib/upgrade-url';
 import { STORE_NAME } from '../store';
 /**
  * Types
@@ -24,12 +23,15 @@ export const useCheckout = () => {
 		};
 	}, [] );
 
-	const upgradeURL = getUpgradeURL( { siteDetails, nextTierSlug: nextTier?.slug } );
+	const upgradeURL = new URL(
+		`${ location.origin }/checkout/${ siteDetails?.domain }/${ nextTier?.slug }`
+	);
+	upgradeURL.searchParams.set( 'redirect_to', location.href );
 
-	debug( 'Next tier checkout URL: ', upgradeURL );
+	debug( 'Next tier checkout URL: ', upgradeURL.toString() );
 
 	return {
-		nextTierCheckoutURL: upgradeURL,
+		nextTierCheckoutURL: upgradeURL.toString(),
 		hasNextTier: !! nextTier,
 	};
 };
