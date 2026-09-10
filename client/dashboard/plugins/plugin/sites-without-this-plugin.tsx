@@ -112,8 +112,7 @@ export const SitesWithoutThisPlugin = ( {
 				getValue: ( { item }: { item: Site } ) => getSitePlanDisplayName( item ) ?? '',
 				render: ( { field, item } ) => (
 					<Plan
-						// Match behaviour of the main sites DataView plan field
-						nag={ item.plan?.expired ? { isExpired: true, site: item } : { isExpired: false } }
+						site={ item }
 						isSelfHostedJetpackConnected={ isSelfHostedJetpackConnected( item ) }
 						isJetpack={ item.jetpack }
 						value={ field.getValue( { item } ) }

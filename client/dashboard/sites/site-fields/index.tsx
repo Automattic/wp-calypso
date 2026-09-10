@@ -14,7 +14,7 @@ import {
 	ExternalLink,
 } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import { useInView } from 'react-intersection-observer';
 import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT, normalizeVariation } from 'calypso/lib/ai-launchpad';
@@ -30,13 +30,12 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
 import { getSiteBadge } from '../../utils/site-badge';
 import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
-import { getSitePlanUpgradeUrl } from '../../utils/site-url';
 import { getVisibilityLabels } from '../../utils/site-visibility';
 import { canManageSite } from '../features';
 import { useAiLaunchpad } from '../hooks/use-ai-launchpad';
-import { isSitePlanTrial } from '../plans';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
+import { PlanExpiryStatus } from './plan-expiry-status';
 import type { SiteBadge, SiteBlockingStatus, SiteVisibility } from '../../types';
 import type { Site } from '@automattic/api-core';
 import type { ComponentProps } from 'react';
@@ -387,35 +386,6 @@ function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {
 	);
 }
 
-function PlanRenewNag( { site, source }: { site: Site; source: string } ) {
-	const { recordTracksEvent } = useAnalytics();
-	const isTrial = isSitePlanTrial( site );
-
-	return (
-		<>
-			<ComponentViewTracker
-				eventName="calypso_dashboard_sites_plan_renew_nag_impression"
-				properties={ { product_slug: site.plan?.product_slug, source } }
-			/>
-			<ExternalLink
-				href={
-					isTrial
-						? getSitePlanUpgradeUrl( site )
-						: wpcomLink( `/checkout/${ site.slug }/${ site.plan?.product_slug }` )
-				}
-				onClick={ () => {
-					recordTracksEvent( 'calypso_dashboard_sites_plan_renew_nag_click', {
-						product_slug: site.plan?.product_slug,
-						source,
-					} );
-				} }
-			>
-				{ isTrial ? __( 'Upgrade' ) : __( 'Renew plan' ) }
-			</ExternalLink>
-		</>
-	);
-}
-
 export function Visibility( {
 	siteSlug,
 	visibility,
@@ -438,16 +408,14 @@ export function Visibility( {
 }
 
 export function Plan( {
-	nag,
+	site,
 	isSelfHostedJetpackConnected,
 	isJetpack,
-	isOwner,
 	value,
 }: {
-	nag: { isExpired: false } | { isExpired: true; site: Site };
+	site: Site;
 	isSelfHostedJetpackConnected: boolean;
 	isJetpack: boolean;
-	isOwner?: boolean;
 	value: string;
 } ) {
 	if ( isSelfHostedJetpackConnected ) {
@@ -462,20 +430,10 @@ export function Plan( {
 		);
 	}
 
-	if ( nag.isExpired ) {
-		return (
-			<VStack spacing={ 1 }>
-				<Text intent="error">
-					{ sprintf(
-						/* translators: %s: plan name */
-						__( '%s-expired' ),
-						value
-					) }
-				</Text>
-				{ isOwner && <PlanRenewNag site={ nag.site } source="plan" /> }
-			</VStack>
-		);
-	}
-
-	return value;
+	return (
+		<VStack spacing={ 1 }>
+			<span>{ value }</span>
+			<PlanExpiryStatus site={ site } />
+		</VStack>
+	);
 }
