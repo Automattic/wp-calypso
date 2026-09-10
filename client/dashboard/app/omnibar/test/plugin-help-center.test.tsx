@@ -108,7 +108,10 @@ describe( 'useHelpCenterPlugin', () => {
 			isShown: false,
 			setShowHelpCenter,
 		} as unknown as ReturnType< typeof useHelpCenter > );
-		mockUseExperiment.mockReturnValue( assignment( 'treatment' ) );
+		// Mirrors ExPlat: an ineligible caller gets no assignment and no exposure.
+		mockUseExperiment.mockImplementation( ( _name, options ) =>
+			options?.isEligible === false ? assignment( null ) : assignment( 'treatment' )
+		);
 	} );
 
 	it.each( [
@@ -121,10 +124,10 @@ describe( 'useHelpCenterPlugin', () => {
 	} );
 
 	it.each( [
-		[ 'agents manager', HELP_NODES ],
-		[ 'legacy help', [] ],
-	] )( 'tracks an impression only when the %s icon renders', ( _, nodes ) => {
-		const result = renderPlugin( nodes );
+		[ 'agents manager', HELP_NODES, null ],
+		[ 'legacy help', [], 'treatment' ],
+	] )( 'tracks an impression only when the %s icon renders', ( _, nodes, variation ) => {
+		const result = renderPlugin( nodes as AdminBarNode[] );
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
 
 		render( result.icon as React.ReactElement );
@@ -134,7 +137,7 @@ describe( 'useHelpCenterPlugin', () => {
 			location: 'help-center',
 			entry_point: 'omnibar',
 			section: 'sites',
-			get_help_chat_forward_variation: 'treatment',
+			get_help_chat_forward_variation: variation,
 			is_get_help_chat_forward_assignment_loaded: true,
 		} );
 	} );
@@ -144,9 +147,18 @@ describe( 'useHelpCenterPlugin', () => {
 			typeof useExperiment
 		> );
 
-		render( renderPlugin( HELP_NODES ).icon as React.ReactElement );
+		render( renderPlugin( [] ).icon as React.ReactElement );
 
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
+	} );
+
+	it.each( [
+		[ 'agents manager', HELP_NODES, false ],
+		[ 'legacy help', [], true ],
+	] )( 'only enters the experiment from the %s icon', ( _, nodes, isEligible ) => {
+		render( renderPlugin( nodes as AdminBarNode[] ).icon as React.ReactElement );
+
+		expect( mockUseExperiment ).toHaveBeenCalledWith( expect.any( String ), { isEligible } );
 	} );
 
 	it( 'takes its id, label and tooltip from the admin bar node', () => {

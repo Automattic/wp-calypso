@@ -1,3 +1,4 @@
+import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import { omnibarSiteIdQuery, siteByIdQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT } from '@automattic/help-center/src/experiments';
@@ -62,10 +63,14 @@ export default function OmnibarHelpCenter() {
 		...siteByIdQuery( omnibarSiteId ?? 0 ),
 		enabled: !! omnibarSiteId,
 	} );
+	// Unified-agent users get the Big Sky chat instead of this panel, so they can never
+	// see the treatment and must stay out of the assignment.
+	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 	// Passed down keyed by experiment name, and only once the assignment has settled, so
 	// the Help Center can tell a resolved "no variation" from one that never resolved.
 	const [ isLoadingGetHelpChatForwardAssignment, getHelpChatForwardAssignment ] = useExperiment(
-		HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT
+		HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT,
+		{ isEligible: ! shouldUseUnifiedAgent }
 	);
 
 	const handleClose = useCallback( () => {

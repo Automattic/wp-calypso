@@ -120,13 +120,22 @@ function buildAgentsManagerMenuNodes(
 		);
 }
 
-function HelpCenterIcon( { name, sectionName }: { name?: string; sectionName?: string } ) {
+function HelpCenterIcon( {
+	name,
+	sectionName,
+	isGetHelpChatForwardEligible,
+}: {
+	name?: string;
+	sectionName?: string;
+	isGetHelpChatForwardEligible: boolean;
+} ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: omnibarSiteId } = useQuery( omnibarSiteIdQuery() );
 	// Loaded here rather than in the hook so ExPlat exposure covers everyone who sees
 	// the entry point, not only users who open the Help Center.
 	const [ isLoadingGetHelpChatForwardAssignment, getHelpChatForwardAssignment ] = useExperiment(
-		HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT
+		HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT,
+		{ isEligible: isGetHelpChatForwardEligible }
 	);
 
 	// One impression per section view, so it divides cleanly into the click events
@@ -182,7 +191,15 @@ export function useHelpCenterPlugin( {
 		return {
 			id: helpNode.id,
 			label: helpNode.meta?.menu_title,
-			icon: <HelpCenterIcon name={ helpNode.meta?.icon } sectionName={ sectionName } />,
+			// The agents-manager node means Big Sky chat, not the Help Center panel, so these
+			// users can never see the treatment and stay out of the assignment.
+			icon: (
+				<HelpCenterIcon
+					name={ helpNode.meta?.icon }
+					sectionName={ sectionName }
+					isGetHelpChatForwardEligible={ false }
+				/>
+			),
 			tooltip: helpNode.meta?.menu_title,
 			// Disconnected sites get a link instead of a dropdown, opened in a new tab as in wp-admin.
 			...( children.length
@@ -194,7 +211,7 @@ export function useHelpCenterPlugin( {
 	return {
 		id: 'help-center',
 		label: __( 'Help' ),
-		icon: <HelpCenterIcon name="help" sectionName={ sectionName } />,
+		icon: <HelpCenterIcon name="help" sectionName={ sectionName } isGetHelpChatForwardEligible />,
 		onClick: () => setShowHelpCenter( ! isHelpCenterShown ),
 	};
 }
