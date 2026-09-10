@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { QueryClient, useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import getDefaultQueryParams from './default-query-params';
 
@@ -172,12 +172,33 @@ const queryNotices = async function ( siteId: number | null ): Promise< NoticeRe
 	return normalizeNoticeRecords( payload );
 };
 
+// Calypso persists this cache for a week with no buster, so the shape change from a boolean
+// map to records needs its own key or an older build's entry is read as records.
 export const noticesVisibilityQueryKey = ( siteId: number | null ) => [
 	'stats',
 	'notices-visibility',
-	'raw',
+	'details',
 	siteId,
 ];
+
+/**
+ * Mark a notice hidden in the cache, from the record a write returned or the one already held.
+ * A cache that was never filled is left alone; only a fetch may seed it.
+ */
+export const setNoticeHidden = (
+	queryClient: QueryClient,
+	siteId: number | null,
+	noticeId: NoticeIdType,
+	record?: unknown
+) =>
+	queryClient.setQueryData< NoticeRecords >( noticesVisibilityQueryKey( siteId ), ( records ) =>
+		records
+			? normalizeNoticeRecords( {
+					...records,
+					[ noticeId ]: { ...toNoticeRecord( record ?? records[ noticeId ] ), show: false },
+			  } )
+			: records
+	);
 
 const useNoticesVisibilityQueryRaw = function < T >(
 	siteId: number | null,

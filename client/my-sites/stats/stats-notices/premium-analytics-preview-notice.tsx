@@ -49,6 +49,10 @@ const PremiumAnalyticsPreviewNotice = ( {
 	const isOdyssey = config.isEnabled( 'is_odyssey' );
 	const { data: noticeRecord } = useNoticeRecordQuery( siteId, 'premium_analytics_preview' );
 	const postponedCount = noticeRecord?.postponed_count ?? 0;
+	// Read through a ref by the impression effect, so a record refreshed mid-mount does not
+	// count as a second showing.
+	const postponedCountRef = useRef( postponedCount );
+	postponedCountRef.current = postponedCount;
 	const trackEvent = ( name: string, properties: Record< string, unknown > = {} ) =>
 		trackPremiumAnalyticsPreviewEvent( 'notice', name, siteId, properties );
 	// Scoped to the site rather than held as a flag: the notices host reuses this component across
@@ -145,10 +149,10 @@ const PremiumAnalyticsPreviewNotice = ( {
 	useEffect( () => {
 		if ( ! noticeDismissed ) {
 			trackPremiumAnalyticsPreviewEvent( 'notice', 'viewed', siteId, {
-				postponed_count: postponedCount,
+				postponed_count: postponedCountRef.current,
 			} );
 		}
-	}, [ noticeDismissed, siteId, postponedCount ] );
+	}, [ noticeDismissed, siteId ] );
 
 	if ( noticeDismissed ) {
 		return null;

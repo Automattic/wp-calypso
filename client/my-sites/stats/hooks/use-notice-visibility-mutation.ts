@@ -1,11 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import {
-	NoticeRecords,
-	Notices,
-	noticesVisibilityQueryKey,
-	toNoticeRecord,
-} from './use-notice-visibility-query';
+import { Notices, noticesVisibilityQueryKey, setNoticeHidden } from './use-notice-visibility-query';
 
 type Status = 'dismissed' | 'postponed';
 
@@ -49,7 +44,7 @@ export default function useNoticeVisibilityMutation(
 	const queryClient = useQueryClient();
 	return useMutation( {
 		mutationKey: noticesVisibilityQueryKey( siteId ),
-		mutationFn: ( update?: NoticeUpdate ) =>
+		mutationFn: ( update: NoticeUpdate | void ) =>
 			dismissNotice(
 				siteId,
 				noticeId,
@@ -65,15 +60,17 @@ export default function useNoticeVisibilityMutation(
 		onSuccess: ( response ) => {
 			const queryKey = noticesVisibilityQueryKey( siteId );
 			const record = response?.notice;
-			if ( ! record || ! queryClient.getQueryData< NoticeRecords >( queryKey ) ) {
+			// A fetch already in flight would land after the patch and undo it; invalidating
+			// cancels that fetch and starts one that sees the write.
+			if (
+				! record ||
+				! queryClient.getQueryData( queryKey ) ||
+				queryClient.getQueryState( queryKey )?.fetchStatus === 'fetching'
+			) {
 				queryClient.invalidateQueries( { queryKey } );
 				return;
 			}
-			// The POST record carries no `show`, but a write that went through always hides the notice.
-			queryClient.setQueryData< NoticeRecords >( queryKey, ( records ) => ( {
-				...records,
-				[ noticeId ]: { ...toNoticeRecord( record ), show: false },
-			} ) );
+			setNoticeHidden( queryClient, siteId, noticeId, record );
 		},
 	} );
 }

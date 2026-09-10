@@ -1,6 +1,9 @@
+import { QueryClient } from '@tanstack/react-query';
 import {
 	normalizeNoticeRecords,
 	normalizeNoticesVisibility,
+	noticesVisibilityQueryKey,
+	setNoticeHidden,
 	toNoticeRecord,
 	toNoticesVisibility,
 } from '../use-notice-visibility-query';
@@ -133,5 +136,57 @@ describe( 'normalizeNoticeRecords', () => {
 		expect( visibility.premium_analytics_preview ).toBe( false );
 		expect( visibility.tier_upgrade ).toBe( true );
 		expect( visibility.gdpr_cookie_consent ).toBe( false );
+	} );
+} );
+
+describe( 'setNoticeHidden', () => {
+	const read = ( client: QueryClient ) =>
+		client.getQueryData< ReturnType< typeof normalizeNoticeRecords > >(
+			noticesVisibilityQueryKey( 1 )
+		);
+
+	it( 'hides the notice from the record it already holds when no record is given', () => {
+		const client = new QueryClient();
+		client.setQueryData(
+			noticesVisibilityQueryKey( 1 ),
+			normalizeNoticeRecords( {
+				pricing_grid: { show: true, status: null, postponed_count: 2, next_show_at: null },
+				tier_upgrade: true,
+			} )
+		);
+
+		setNoticeHidden( client, 1, 'pricing_grid' );
+
+		expect( read( client )?.pricing_grid ).toEqual( {
+			show: false,
+			status: null,
+			postponed_count: 2,
+			next_show_at: null,
+		} );
+		expect( read( client )?.tier_upgrade.show ).toBe( true );
+	} );
+
+	it( 'applies the same inheritance rules a fetch would', () => {
+		const client = new QueryClient();
+		client.setQueryData(
+			noticesVisibilityQueryKey( 1 ),
+			normalizeNoticeRecords( { do_you_love_jetpack_stats: true, free_site_upgrade: true } )
+		);
+
+		setNoticeHidden( client, 1, 'do_you_love_jetpack_stats', {
+			status: 'postponed',
+			postponed_count: 1,
+			next_show_at: 1,
+		} );
+
+		expect( read( client )?.free_site_upgrade.show ).toBe( false );
+	} );
+
+	it( 'leaves a cache that was never fetched empty', () => {
+		const client = new QueryClient();
+
+		setNoticeHidden( client, 1, 'pricing_grid' );
+
+		expect( read( client ) ).toBeUndefined();
 	} );
 } );

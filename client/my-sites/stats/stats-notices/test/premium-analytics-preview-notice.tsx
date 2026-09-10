@@ -344,6 +344,30 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		expect( screen.queryByText( 'Try the new Traffic tab' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'counts one impression per showing, however often the record is refreshed', () => {
+		const { rerender } = renderNotice();
+
+		mockPostponedCount = 1;
+		rerender(
+			<PremiumAnalyticsPreviewNotice
+				siteId={ 123 }
+				isOdysseyStats={ false }
+				premiumAnalyticsDashboardUrl={ DASHBOARD_URL }
+			/>
+		);
+
+		expect(
+			mockRecordTracksEvent.mock.calls.filter(
+				( [ name ] ) => name === 'calypso_stats_premium_analytics_preview_notice_viewed'
+			)
+		).toEqual( [
+			[
+				'calypso_stats_premium_analytics_preview_notice_viewed',
+				{ blog_id: 123, postponed_count: 0 },
+			],
+		] );
+	} );
+
 	it( 'does not hide the notice for a different site after a dismissal', async () => {
 		const { rerender } = renderNotice();
 

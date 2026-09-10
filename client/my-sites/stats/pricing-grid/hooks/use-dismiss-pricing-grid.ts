@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
-import type { Notices } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { setNoticeHidden } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 
 /** The `from` value the pricing grid's paid CTA sends to the purchase page. */
 export const PRICING_GRID_REFERRER = 'jetpack-stats-pricing-grid';
@@ -38,9 +38,6 @@ export default function useDismissPricingGrid( siteId: number | null ) {
 
 	return useCallback( () => {
 		recordDismissal().catch( () => null );
-		queryClient.setQueryData(
-			[ 'stats', 'notices-visibility', 'raw', siteId ],
-			( notices: Notices | undefined ) => notices && { ...notices, pricing_grid: false }
-		);
+		setNoticeHidden( queryClient, siteId, 'pricing_grid' );
 	}, [ recordDismissal, queryClient, siteId ] );
 }
