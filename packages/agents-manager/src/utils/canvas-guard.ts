@@ -37,7 +37,8 @@ import type { ContextProvider, ToolProvider } from '../types';
 // `edit-entity-record` is deliberately absent: it names its target explicitly
 // (`entityType`/`entityName`/`recordId`, often site-level like `root`/`site` or
 // `wp_navigation`), so moving the canvas cannot redirect its write. Guarding it
-// would refuse legitimate site-level edits from any screen.
+// would refuse legitimate site-level edits from any screen. It moves the canvas
+// itself before deleting the open page, through `bindToEditorPath()`.
 //
 // Normalized, because the agent invokes `big-sky/apply-block-edits` as
 // `big_sky__apply_block_edits`. Matching the registered form against the name that
@@ -62,29 +63,20 @@ const POLICED_ABILITIES = new Set( [ ...CANVAS_BOUND_ABILITIES, ...CANVAS_MOVING
 const EDITOR_NAVIGATE_ABILITY = normalizeAbilityName( 'big-sky/editor-navigate' );
 
 /**
- * The canvas a navigation ability is heading for.
+ * Hands the binding to an editor navigation about to run.
  *
- * Only `editor-navigate` names one. `wp-admin/navigate` takes a wp-admin path and
- * leaves the editor entirely, and a path that does not parse names no page — both
- * answer null, which leaves the caller to drop the binding instead of guessing.
- * @param normalizedName The normalized ability name.
- * @param args           The ability arguments, untyped as they arrive off the wire.
- * @returns The destination canvas key, or null when the ability names no page.
+ * Only a page path names a destination the binding can follow; `all-pages` drops
+ * it instead. Exported for `edit-entity-record`, which leaves the page it is about
+ * to delete by calling the navigate callback directly, outside the dispatch this
+ * policy wraps — without the handoff, its own move reads as the user leaving and
+ * aborts the request.
+ * @param path The editor path being navigated to.
+ * @returns A rollback for a navigation that never happens; see `canvas-binding`.
  */
-function resolveNavigationTarget( normalizedName: string, args: unknown ): string | null {
-	if ( normalizedName !== EDITOR_NAVIGATE_ABILITY ) {
-		return null;
-	}
+export function bindToEditorPath( path: string ): () => void {
+	const target = buildCanvasKey( 'page', PAGE_PATH.exec( path )?.[ 1 ] );
 
-	const path = ( args as { path?: unknown } | undefined )?.path;
-
-	if ( typeof path !== 'string' ) {
-		return null;
-	}
-
-	// Only a page path names a canvas; `all-pages` matches nothing here, so
-	// the binding is dropped rather than moved.
-	return buildCanvasKey( 'page', PAGE_PATH.exec( path )?.[ 1 ] );
+	return target ? bindToNavigationTarget( target ) : clearCanvasBinding();
 }
 
 function buildCanvasRefusal( move: CanvasMove ): AbilityResult {
@@ -173,11 +165,16 @@ function applyCanvasPolicy( name: string, args: unknown ): CanvasPolicy {
 	}
 
 	if ( CANVAS_MOVING_ABILITIES.has( normalizedName ) ) {
-		const target = resolveNavigationTarget( normalizedName, args );
+		// Only `editor-navigate` names a destination. `wp-admin/navigate` leaves the
+		// editor entirely, so the binding is dropped rather than guessed.
+		const path =
+			normalizedName === EDITOR_NAVIGATE_ABILITY
+				? ( args as { path?: unknown } | undefined )?.path
+				: undefined;
 
 		return {
 			refusal: null,
-			rollbackBinding: target ? bindToNavigationTarget( target ) : clearCanvasBinding(),
+			rollbackBinding: typeof path === 'string' ? bindToEditorPath( path ) : clearCanvasBinding(),
 		};
 	}
 
