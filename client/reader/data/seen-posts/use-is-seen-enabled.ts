@@ -15,7 +15,7 @@ const SEEN_DISABLED_ROUTES = [
 	'/reader/conversations/a8c',
 ];
 
-interface SeenArgs {
+export interface SeenArgs {
 	feedId?: number | string; // Route params arrive as strings.
 	blogId?: number | string; // Route params arrive as strings.
 	post?: {
@@ -27,54 +27,9 @@ interface SeenArgs {
 }
 
 /**
- * Returns true if the user can mark a post as seen, false otherwise.
- */
-export function useCanMarkSeen( { feedId, blogId, post }: SeenArgs ): boolean {
-	const isSeenEnabled = useIsSeenEnabled( { feedId, blogId } );
-	const organizationId = useSiteSubscriptionOrganizationId( feedId, blogId );
-
-	if ( ! isSeenEnabled ) {
-		return false;
-	}
-
-	if ( isPostAnAFKPost( organizationId, post ) ) {
-		return false;
-	}
-
-	return true;
-}
-
-/**
- * Returns true if the user can apply the seen state to a post, false otherwise.
- *
- * Mainly we need this because we want to show the seen state for AFK posts, but not allow users to mark them as seen.
- */
-export function useIsSeenVisible( { feedId, blogId, post }: SeenArgs ): boolean {
-	const isSeenEnabled = useIsSeenEnabled( { feedId, blogId } );
-	const organizationId = useSiteSubscriptionOrganizationId( feedId, blogId );
-
-	if ( ! isSeenEnabled ) {
-		return false;
-	}
-
-	if ( isPostAnAFKPost( organizationId, post ) ) {
-		return true;
-	}
-
-	return Boolean( post?.is_seen );
-}
-
-function isPostAnAFKPost( orgId: number, post: SeenArgs[ 'post' ] ): boolean {
-	const isAutomatticPrivate = orgId === AUTOMATTIC_ORG_ID && !! post?.site_is_private;
-	const tags = post?.tags ?? {};
-
-	return isAutomatticPrivate && 'afk' in tags && `afk-${ post?.author?.login }` in tags;
-}
-
-/**
  * Return true if the seen feature is enabled for the current user, false otherwise.
  */
-function useIsSeenEnabled( { feedId, blogId }: SeenArgs ): boolean {
+export function useIsSeenEnabled( { feedId, blogId }: SeenArgs ): boolean {
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 	const isSubscribed = useIsSubscribed( { feedId, blogId } );
 	const organizationId = useSiteSubscriptionOrganizationId( feedId, blogId );
@@ -97,4 +52,11 @@ function useIsSeenEnabled( { feedId, blogId }: SeenArgs ): boolean {
 		// Allow automatticians on all p2's regardless of subscription, or any feed they are subscribed to.
 		( Boolean( isAutomattician ) && ( isP2 || isSubscribed || isInSubscribedList ) )
 	);
+}
+
+export function isPostAnAFKPost( orgId: number, post: SeenArgs[ 'post' ] ): boolean {
+	const isAutomatticPrivate = orgId === AUTOMATTIC_ORG_ID && !! post?.site_is_private;
+	const tags = post?.tags ?? {};
+
+	return isAutomatticPrivate && 'afk' in tags && `afk-${ post?.author?.login }` in tags;
 }
