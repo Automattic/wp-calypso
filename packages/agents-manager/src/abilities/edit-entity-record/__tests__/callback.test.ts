@@ -37,6 +37,14 @@ jest.mock( '../../../utils/site-title', () => ( {
 jest.mock( '../navigation-items', () => ( {
 	buildNavigationItems: jest.fn( async ( _id, record ) => record ),
 } ) );
+jest.mock( '../../../utils/site-record', () => ( {
+	getSiteRecord: jest.fn( () => ( { page_on_front: 3 } ) ),
+} ) );
+jest.mock( '../../editor-navigate/callback', () => ( {
+	PAGES_LIST_PATH: 'all-pages',
+	editorNavigateCallback: jest.fn( async () => ( { result: { success: true } } ) ),
+	getLoadedPageId: jest.fn( () => undefined ),
+} ) );
 
 import { dispatch, resolveSelect } from '@wordpress/data';
 import { checkpointKeys, hasCheckpoint } from '../../../utils/checkpoints';
@@ -50,7 +58,9 @@ import {
 import { setPageTitle } from '../../../utils/page-title';
 import { logSiteMetadata, logSiteSession } from '../../../utils/session-log';
 import { setSiteMetadata } from '../../../utils/site-metadata';
+import { getSiteRecord } from '../../../utils/site-record';
 import { setSiteTitle } from '../../../utils/site-title';
+import { editorNavigateCallback, getLoadedPageId } from '../../editor-navigate/callback';
 import { editEntityRecordCallback, getCheckpointKeys } from '../callback';
 import { buildNavigationItems } from '../navigation-items';
 
@@ -290,6 +300,49 @@ describe( 'editEntityRecordCallback', () => {
 		expect( deleteEntityRecord.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
 			editEntityRecord.mock.invocationCallOrder[ 0 ]
 		);
+	} );
+
+	describe( 'deleting the page on screen', () => {
+		beforeEach( () => ( getLoadedPageId as jest.Mock ).mockReturnValue( 7 ) );
+
+		// Deleting it under the canvas would leave the editor on a page that no
+		// longer exists, so the editor is routed to the front page first.
+		it( 'leaves for the front page before deleting', async () => {
+			await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
+
+			expect( editorNavigateCallback ).toHaveBeenCalledWith( { path: '/page/3' } );
+			expect( ( editorNavigateCallback as jest.Mock ).mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+				deleteEntityRecord.mock.invocationCallOrder[ 0 ]
+			);
+		} );
+
+		it.each( [
+			{ case: 'the posts index', site: {} },
+			{ case: 'the page being deleted', site: { page_on_front: 7 } },
+		] )( 'leaves for the pages list when the front page is $case', async ( { site } ) => {
+			( getSiteRecord as jest.Mock ).mockReturnValue( site );
+
+			await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
+
+			expect( editorNavigateCallback ).toHaveBeenCalledWith( { path: 'all-pages' } );
+		} );
+
+		it( 'does not delete when it cannot leave', async () => {
+			( editorNavigateCallback as jest.Mock ).mockResolvedValueOnce( {
+				result: { success: false, error: 'the editor is busy' },
+			} );
+
+			const result = await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
+
+			expect( result.result.error ).toContain( 'the editor is busy' );
+			expect( deleteEntityRecord ).not.toHaveBeenCalled();
+		} );
+
+		it( 'stays put when deleting a different page', async () => {
+			await editEntityRecordCallback( { deleteEntities: [ page( 8 ) ] } );
+
+			expect( editorNavigateCallback ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	// The menu write persists, so removing the item before the delete would
