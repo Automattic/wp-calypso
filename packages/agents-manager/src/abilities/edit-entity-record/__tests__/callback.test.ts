@@ -12,7 +12,8 @@ jest.mock( '../../../utils/navigation-menu', () => ( {
 	MENU_FIELDS: [ 'blocks', 'content' ],
 	addNavigationItem: jest.fn(),
 	getMenuIdsToRelabel: jest.fn( async () => [ 10 ] ),
-	// The checkpoint recorder reads through this to snapshot a menu.
+	// The checkpoint recorder snapshots and discards menus through these.
+	isSameMenuId: ( a: unknown, b: unknown ) => String( a ) === String( b ),
 	readMenuItems: jest.fn( async () => [] ),
 	removeNavigationItem: jest.fn(),
 	renameNavigationItem: jest.fn(),
@@ -54,12 +55,13 @@ jest.mock( '../../editor-navigate/callback', () => ( {
 
 import { dispatch, resolveSelect } from '@wordpress/data';
 import { bindToEditorPath } from '../../../utils/canvas-guard';
-import { checkpointKeys, hasCheckpoint } from '../../../utils/checkpoints';
+import { checkpointKeys, getCheckpoint, hasCheckpoint } from '../../../utils/checkpoints';
 import { getEditorHistory } from '../../../utils/editor-history';
 import { isEditorPage } from '../../../utils/is-editor-page';
 import {
 	addNavigationItem,
 	getMenuIdsToRelabel,
+	readMenuItems,
 	removeNavigationItem,
 	renameNavigationItem,
 } from '../../../utils/navigation-menu';
@@ -276,6 +278,22 @@ describe( 'editEntityRecordCallback', () => {
 		expect( ( getMenuIdsToRelabel as jest.Mock ).mock.invocationCallOrder[ 0 ] ).toBeLessThan(
 			( renameNavigationItem as jest.Mock ).mock.invocationCallOrder[ 0 ]
 		);
+	} );
+
+	// A menu that cannot be read stops the rename, and a snapshot of a menu the
+	// rename never touched would let an undo overwrite the user's edits there.
+	it( 'discards the menu snapshots it took when a later menu cannot be read', async () => {
+		( getMenuIdsToRelabel as jest.Mock ).mockResolvedValueOnce( [ 10, 11 ] );
+		( readMenuItems as jest.Mock ).mockResolvedValueOnce( [] ).mockResolvedValueOnce( null );
+
+		const result = await editEntityRecordCallback( {
+			toolCallId: 'call-rename-unreadable-menu',
+			editEntities: [ { ...page( 7 ), record: { title: 'About us' } } ],
+		} );
+
+		expect( result.result.success ).toBe( false );
+		expect( renameNavigationItem ).not.toHaveBeenCalled();
+		expect( getCheckpoint( 'call-rename-unreadable-menu' )?.menusBeforeUpdate ).toEqual( [] );
 	} );
 
 	it( 'leaves the menu alone when the title is unchanged', async () => {
