@@ -1439,10 +1439,7 @@ const PlansFeaturesMain = ( {
 					intent={ intent }
 					isPlansGridRedesign={ usePlansGridRedesign }
 					showDifferentiatorHeader={
-						// The "Paid plans include:" strip is part of the pricing-differentiation
-						// presentation, so an intent that curates its own grid does not get it.
-						( showDifferentiatorHeader || showPlansGridRedesignDifferentiatorHeader ) &&
-						! hasTailoredFeatureList( intent )
+						showDifferentiatorHeader || showPlansGridRedesignDifferentiatorHeader
 					}
 				/>
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }

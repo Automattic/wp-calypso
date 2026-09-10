@@ -255,37 +255,6 @@ describe( 'PlansFeaturesMain', () => {
 		} );
 	} );
 
-	describe( 'differentiator header', () => {
-		// The "Paid plans include:" strip belongs to the pricing-differentiation presentation, so it
-		// must not appear on a grid an intent curates for itself.
-		const enableDifferentiatorHeader = () =>
-			usePlansGridRedesignExperiment.mockImplementation( () => ( {
-				isLoading: false,
-				variant: 'six_plan_new_features',
-				usePlansGridRedesign: true,
-				showDifferentiatorHeader: true,
-				showEnterpriseBottomCard: false,
-				showWooCommerceBottomCard: false,
-				isExperimentEligible: true,
-			} ) );
-
-		test( 'renders the strip for an intent with no curated grid of its own', () => {
-			enableDifferentiatorHeader();
-
-			renderWithProvider( <PlansFeaturesMain { ...props } intent="plans-default-wpcom" /> );
-
-			expect( screen.getByText( 'Paid plans include:' ) ).toBeInTheDocument();
-		} );
-
-		test( 'omits the strip for an intent that curates its own grid', () => {
-			enableDifferentiatorHeader();
-
-			renderWithProvider( <PlansFeaturesMain { ...props } intent="plans-newsletter" /> );
-
-			expect( screen.queryByText( 'Paid plans include:' ) ).not.toBeInTheDocument();
-		} );
-	} );
-
 	describe( 'PlansFeaturesMain. Plan exclusion props', () => {
 		test( 'Should render <PlanFeatures /> removing the free plan when hideFreePlan prop is present, regardless of its position', () => {
 			renderWithProvider( <PlansFeaturesMain { ...props } hideFreePlan /> );
