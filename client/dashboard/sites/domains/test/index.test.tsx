@@ -217,6 +217,6 @@ describe( '<SiteDomains>', () => {
 		const actionsButtons = await screen.findAllByLabelText( 'Actions' );
 		await user.click( actionsButtons[ 0 ] );
 
-		expect( screen.getByText( 'Make primary site address' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Make primary site address' ) ).toBeVisible();
 	} );
 } );
