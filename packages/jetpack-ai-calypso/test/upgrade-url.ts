@@ -37,20 +37,17 @@ describe( 'shouldUpgradePlan', () => {
 } );
 
 describe( 'getUpgradeURL', () => {
-	const redirectTo = 'http://localhost/home/some-site';
-
 	it( 'sends a Simple site without the feature to the WordPress.com plans page', () => {
 		const url = new URL(
 			getUpgradeURL( {
 				siteDetails: simpleSite,
 				nextTierSlug: 'jetpack_ai_yearly',
 				reason: 'feature',
-				redirectTo,
 			} )
 		);
 
 		expect( url.pathname ).toBe( '/plans/simple.wordpress.com' );
-		expect( url.searchParams.get( 'redirect_to' ) ).toBe( redirectTo );
+		expect( url.searchParams.get( 'redirect_to' ) ).toBe( window.location.href );
 	} );
 
 	it( 'keeps the Jetpack AI tier checkout for a Simple site that ran out of requests', () => {
@@ -59,7 +56,6 @@ describe( 'getUpgradeURL', () => {
 				siteDetails: simpleSite,
 				nextTierSlug: 'jetpack_ai_yearly',
 				reason: 'requests',
-				redirectTo,
 			} )
 		);
 
@@ -72,11 +68,10 @@ describe( 'getUpgradeURL', () => {
 				siteDetails: jetpackSite,
 				nextTierSlug: 'jetpack_ai_yearly',
 				reason: 'feature',
-				redirectTo,
 			} )
 		);
 
 		expect( url.pathname ).toBe( '/checkout/example.com/jetpack_ai_yearly' );
-		expect( url.searchParams.get( 'redirect_to' ) ).toBe( redirectTo );
+		expect( url.searchParams.get( 'redirect_to' ) ).toBe( window.location.href );
 	} );
 } );

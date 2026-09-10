@@ -19,18 +19,16 @@ export const getUpgradeURL = ( {
 	siteDetails,
 	nextTierSlug,
 	reason,
-	redirectTo = location.href,
 }: {
 	siteDetails?: SiteDetails;
 	nextTierSlug?: string;
 	reason: UpgradeReason;
-	redirectTo?: string;
 } ): string => {
 	const upgradeURL = shouldUpgradePlan( siteDetails, reason )
 		? new URL( `${ location.origin }/plans/${ siteDetails?.slug }` )
 		: new URL( `${ location.origin }/checkout/${ siteDetails?.domain }/${ nextTierSlug }` );
 
-	upgradeURL.searchParams.set( 'redirect_to', redirectTo );
+	upgradeURL.searchParams.set( 'redirect_to', location.href );
 
 	return upgradeURL.toString();
 };
