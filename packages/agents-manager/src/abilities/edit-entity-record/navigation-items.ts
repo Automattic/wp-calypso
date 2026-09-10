@@ -1,4 +1,4 @@
-import { createBlock, serialize } from '@wordpress/blocks';
+import { createBlock, parse, serialize } from '@wordpress/blocks';
 import { isRecord } from '../../utils/is-record';
 import {
 	NAVIGATION_LINK_BLOCK,
@@ -17,7 +17,6 @@ import {
  */
 
 export interface NavigationItemInput {
-	clientId?: string;
 	label?: string;
 	url?: string;
 	id?: number | string;
@@ -27,61 +26,76 @@ export interface NavigationItemInput {
 	items?: NavigationItemInput[];
 }
 
-/**
- * Claim order, least ambiguous first.
- *
- * A clientId or page id names one block; a url or a label can name several, so
- * they claim only what the tiers above have left. Otherwise an input naming a
- * shared url takes the block that a later, unambiguous id needed.
- */
-const CLAIM_TIERS = [ [ 'clientId', 'id' ], [ 'url' ], [ 'label' ] ] as const;
+const isOptional = ( value: unknown, type: 'string' | 'boolean' ) =>
+	value === undefined || typeof value === type;
 
 /**
- * An item's children, or none.
- *
- * The schema stops validating below the first level, so a nested `items` can
- * arrive as any shape at all. A malformed entry is refused rather than dropped:
- * the list replaces the item's existing children, so filtering one out would
- * quietly empty a submenu the request never asked to clear.
+ * The schema validates nothing below the first level, and the callback runs on
+ * raw arguments anyway, so every entry is checked here before it reaches a
+ * block attribute.
  */
-const childrenOf = ( item: NavigationItemInput ): NavigationItemInput[] | undefined => {
-	if ( ! Array.isArray( item.items ) ) {
-		return undefined;
-	}
+const isNavigationItemInput = ( value: unknown ): value is NavigationItemInput =>
+	isRecord( value ) &&
+	( value.label !== undefined || value.url !== undefined || value.id !== undefined ) &&
+	isOptional( value.label, 'string' ) &&
+	isOptional( value.url, 'string' ) &&
+	isOptional( value.kind, 'string' ) &&
+	isOptional( value.type, 'string' ) &&
+	isOptional( value.opensInNewTab, 'boolean' ) &&
+	( value.id === undefined || typeof value.id === 'number' || typeof value.id === 'string' ) &&
+	( value.items === undefined || Array.isArray( value.items ) );
 
-	if ( ! item.items.every( isRecord ) ) {
+/**
+ * A list of items, refused rather than filtered when an entry is malformed: the
+ * list replaces what is there, so dropping an entry would quietly remove items
+ * the request never asked to touch.
+ */
+function checkItems( items: unknown[], where: string ): NavigationItemInput[] {
+	if ( ! items.every( isNavigationItemInput ) ) {
 		throw new Error(
-			`Invalid navigation items under "${ item.label ?? '' }": every entry must be an object.`
+			`Invalid navigation items ${ where }: each entry must be an object naming a label, ` +
+				'url or id — strings, or a number for the id — with any kind and type as strings, ' +
+				'opensInNewTab as a boolean, and items as an array.'
 		);
 	}
 
-	return item.items;
-};
+	return items;
+}
+
+/** An item's children, or none — an absent list keeps the existing children. */
+const childrenOf = ( item: NavigationItemInput ): NavigationItemInput[] | undefined =>
+	item.items && checkItems( item.items, `under "${ item.label ?? '' }"` );
+
+/**
+ * Claim order, least ambiguous first.
+ *
+ * A page id names one block; a url or a label can name several, so they claim
+ * only what the tiers above have left. Otherwise an input naming a shared url
+ * takes the block that a later, unambiguous id needed.
+ */
+const CLAIM_TIERS = [ [ 'id' ], [ 'url' ], [ 'label' ] ] as const;
 
 /**
  * The identity keys a menu item can be addressed by, most specific first.
  *
  * One definition for both sides: the keys an input claims and the keys a block
- * offers must be formed identically, or a lookup silently misses.
- *
- * The schema no longer offers a `clientId` — ids minted by another tool do not
- * resolve here — but one that leaks through must not shadow the label or url
- * sent with it, so every key is tried in turn rather than only the first.
+ * offers must be formed identically, or a lookup silently misses. An id is
+ * qualified by its type — a category can carry the same number as a page — and
+ * a bare id means a page, which is what the schema offers.
  */
 const identityKeys = ( {
-	clientId,
 	id,
+	type,
 	url,
 	label,
 }: {
-	clientId?: unknown;
 	id?: unknown;
+	type?: unknown;
 	url?: unknown;
 	label?: unknown;
 } ): string[] =>
 	[
-		clientId && `clientId:${ clientId }`,
-		id && `id:${ id }`,
+		id && `id:${ type ?? 'page' }:${ id }`,
 		url && `url:${ url }`,
 		label && `label:${ label }`,
 	].filter( ( key ): key is string => !! key );
@@ -98,7 +112,7 @@ function indexMenu( items: NavigationBlock[] ): Map< string, NavigationBlock[] >
 	const index = new Map< string, NavigationBlock[] >();
 
 	const add = ( item: NavigationBlock ) => {
-		for ( const key of identityKeys( { clientId: item.clientId, ...item.attributes } ) ) {
+		for ( const key of identityKeys( item.attributes ?? {} ) ) {
 			index.set( key, [ ...( index.get( key ) ?? [] ), item ] );
 		}
 
@@ -169,8 +183,27 @@ const attributesFor = ( item: NavigationItemInput ) => ( {
 } );
 
 /**
+ * Both halves of a raw menu edit: `content` is what persists, `blocks` what the
+ * editor reads, and a record carrying only one would leave the other stale.
+ */
+function withBothHalves( record: Record< string, unknown > ): Record< string, unknown > {
+	const { blocks, content } = record;
+
+	if ( blocks !== undefined ) {
+		if ( ! Array.isArray( blocks ) ) {
+			throw new Error( 'blocks must be an array of navigation blocks.' );
+		}
+
+		return { ...record, content: serialize( blocks ) };
+	}
+
+	return typeof content === 'string' ? { ...record, blocks: parse( content ) } : record;
+}
+
+/**
  * Replaces `navigationItems` with the blocks a write can apply, leaving any
- * other field of the record untouched. A record without it passes through.
+ * other field of the record untouched. A record without it passes through, with
+ * a raw `blocks` or `content` edit completed to both halves.
  */
 export async function buildNavigationItems(
 	menuId: number | string,
@@ -178,9 +211,15 @@ export async function buildNavigationItems(
 ): Promise< Record< string, unknown > > {
 	const { navigationItems, ...rest } = record;
 
-	if ( ! Array.isArray( navigationItems ) ) {
-		return record;
+	if ( navigationItems === undefined ) {
+		return withBothHalves( record );
 	}
+
+	if ( ! Array.isArray( navigationItems ) ) {
+		throw new Error( 'navigationItems must be an array of menu items.' );
+	}
+
+	const items = checkItems( navigationItems, 'at the top level' );
 
 	const current = await readMenuItems( menuId );
 
@@ -237,7 +276,7 @@ export async function buildNavigationItems(
 			// having been wiped. Collected rather than thrown so every offending
 			// item can be named at once and the whole rebuild refused.
 			if ( ! existing && ! input.label && ! input.url ) {
-				unresolved.push( String( input.clientId ?? input.id ?? 'unknown' ) );
+				unresolved.push( String( input.id ) );
 			}
 
 			// Listed children replace the block's own; unlisted ones are pruned.
@@ -260,21 +299,19 @@ export async function buildNavigationItems(
 			};
 		} );
 
-	CLAIM_TIERS.forEach( ( tier ) => claim( navigationItems as NavigationItemInput[], tier ) );
+	CLAIM_TIERS.forEach( ( tier ) => claim( items, tier ) );
 
-	const blocks = build( navigationItems as NavigationItemInput[] );
+	const blocks = build( items );
 
 	if ( unresolved.length ) {
 		// Model-facing, so deliberately untranslated: this is an instruction the
 		// agent has to act on, and the user never sees it.
 		throw new Error(
 			`Navigation items not found: ${ [ ...new Set( unresolved ) ].join( ', ' ) }. ` +
-				'They are not in this menu. Ids read from another tool do not resolve ' +
-				'here — identify each item by its label or url instead. Nothing was changed.'
+				'No page with that id is in this menu — identify each item by its label or url ' +
+				'instead. Nothing was changed.'
 		);
 	}
 
-	// Both halves: `content` is what the record persists, `blocks` what the
-	// editor reads. Writing one alone leaves the menu's saved form stale.
 	return { ...rest, blocks, content: serialize( blocks ) };
 }

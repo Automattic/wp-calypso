@@ -12,19 +12,32 @@ jest.mock( '@wordpress/blocks', () => ( {
 jest.mock( '../site-metadata', () => ( { getSiteMetadata: jest.fn( () => ( {} ) ) } ) );
 
 import { dispatch, resolveSelect, select } from '@wordpress/data';
-import { addNavigationItem, removeNavigationItem, renameNavigationItem } from '../navigation-menu';
+import {
+	addNavigationItem,
+	getMenuIdsToRelabel,
+	removeNavigationItem,
+	renameNavigationItem,
+} from '../navigation-menu';
 import { getSiteMetadata } from '../site-metadata';
 
 const editEntityRecord = jest.fn();
-const saveEditedEntityRecord = jest.fn();
+const saveSpecifiedEntityEdits = jest.fn();
 
-const link = ( id: number | string | undefined, label: string, innerBlocks: unknown[] = [] ) => ( {
+const link = (
+	id: number | string | undefined,
+	label: string,
+	innerBlocks: unknown[] = [],
+	attributes: Record< string, unknown > = {}
+) => ( {
 	name: 'core/navigation-link',
-	attributes: { id, label },
+	attributes: { id, label, ...attributes },
 	innerBlocks,
 } );
 
-/** Serves `menus` by id, and reports which menus the editor renders. */
+/**
+ * Serves `menus` by id — every one of them is a saved record — and reports
+ * which of them the editor renders.
+ */
 function withMenus( menus: Record< string, unknown[] >, rendered = Object.keys( menus ) ) {
 	( select as jest.Mock ).mockReturnValue( {
 		getBlocksByName: () => rendered.map( ( id ) => `client-${ id }` ),
@@ -35,9 +48,24 @@ function withMenus( menus: Record< string, unknown[] >, rendered = Object.keys( 
 	( resolveSelect as jest.Mock ).mockReturnValue( {
 		getEditedEntityRecord: ( _kind: string, _name: string, id: number ) =>
 			Promise.resolve( menus[ String( id ) ] ? { id, blocks: menus[ String( id ) ] } : null ),
+		getEntityRecords: () =>
+			Promise.resolve( Object.keys( menus ).map( ( id ) => ( { id: Number( id ) } ) ) ),
 	} );
-	( dispatch as jest.Mock ).mockReturnValue( { editEntityRecord, saveEditedEntityRecord } );
+	( dispatch as jest.Mock ).mockReturnValue( {
+		editEntityRecord,
+		__experimentalSaveSpecifiedEntityEdits: saveSpecifiedEntityEdits,
+	} );
 }
+
+/** The scoped save: the item fields only, so a pending title edit stays the user's. */
+const savedItemsOf = ( menuId: number ) =>
+	expect( saveSpecifiedEntityEdits ).toHaveBeenCalledWith(
+		'postType',
+		'wp_navigation',
+		menuId,
+		[ 'blocks', 'content' ],
+		{ throwOnError: true }
+	);
 
 /** The items the last write sent, and the menu it wrote to. */
 const lastWrite = () => {
@@ -57,9 +85,7 @@ describe( 'addNavigationItem', () => {
 		expect( lastWrite().items[ 1 ].attributes ).toMatchObject( { label: 'About', id: 7 } );
 		// The page itself is already saved, so an unsaved menu item would vanish
 		// on the next reload and leave the new page unlinked.
-		expect( saveEditedEntityRecord ).toHaveBeenCalledWith( 'postType', 'wp_navigation', 10, {
-			throwOnError: true,
-		} );
+		savedItemsOf( 10 );
 	} );
 
 	// The rendered list holds header and footer alike, so its first entry is
@@ -88,6 +114,16 @@ describe( 'addNavigationItem', () => {
 		await addNavigationItem( { label: 'About', id: 7 } );
 
 		expect( editEntityRecord ).not.toHaveBeenCalled();
+	} );
+
+	// A silent return would call the page created and its item never added.
+	it( 'refuses when the menu the site names cannot be read', async () => {
+		( getSiteMetadata as jest.Mock ).mockReturnValue( { navigationId: 99 } );
+		withMenus( { 10: [ link( 1, 'Home' ) ] }, [ '10' ] );
+
+		await expect( addNavigationItem( { label: 'About', id: 7 } ) ).rejects.toThrow(
+			'Navigation menu not found: 99'
+		);
 	} );
 } );
 
@@ -126,6 +162,35 @@ describe( 'renameNavigationItem', () => {
 
 		expect( editEntityRecord ).not.toHaveBeenCalled();
 	} );
+
+	// An empty previous title is a title, not an unknown one: the item's label
+	// does not follow it, so it is the user's.
+	it( 'leaves a custom label alone when the page was untitled', async () => {
+		withMenus( { 10: [ link( 7, 'Learn more' ) ] } );
+
+		await renameNavigationItem( 7, 'About us', '' );
+
+		expect( editEntityRecord ).not.toHaveBeenCalled();
+	} );
+
+	// A category can carry the same number as a page.
+	it( 'does not match a taxonomy link by the page id', async () => {
+		withMenus( { 10: [ link( 7, 'News', [], { type: 'category', kind: 'taxonomy' } ) ] } );
+
+		await renameNavigationItem( 7, 'About us' );
+
+		expect( editEntityRecord ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'getMenuIdsToRelabel', () => {
+	// Snapshotting a menu the rename leaves alone would let a later undo
+	// overwrite whatever the user changed there since.
+	it( 'lists only the menus the rename will change', async () => {
+		withMenus( { 10: [ link( 7, 'About' ) ], 20: [ link( 7, 'Learn more' ) ] } );
+
+		await expect( getMenuIdsToRelabel( 7, 'About' ) ).resolves.toEqual( [ 10 ] );
+	} );
 } );
 
 describe( 'removeNavigationItem', () => {
@@ -137,9 +202,7 @@ describe( 'removeNavigationItem', () => {
 		expect( lastWrite().items ).toEqual( [ link( 1, 'Home' ) ] );
 		// The page is already deleted, so the menu change has no page edit to
 		// save alongside — left unsaved, a reload brings the item back.
-		expect( saveEditedEntityRecord ).toHaveBeenCalledWith( 'postType', 'wp_navigation', 10, {
-			throwOnError: true,
-		} );
+		savedItemsOf( 10 );
 	} );
 
 	// A submenu entry left behind points at a page that no longer exists, and
@@ -158,6 +221,21 @@ describe( 'removeNavigationItem', () => {
 
 	it( 'writes nothing when the page is not in any menu', async () => {
 		withMenus( { 10: [ link( 1, 'Home' ) ] } );
+
+		await removeNavigationItem( 7 );
+
+		expect( editEntityRecord ).not.toHaveBeenCalled();
+	} );
+
+	// An edited menu carries its items as `blocks`; an empty array there is a
+	// cleared menu, not a cue to reparse the saved content.
+	it( 'reads an emptied menu as empty', async () => {
+		withMenus( { 10: [] } );
+		( resolveSelect as jest.Mock ).mockReturnValue( {
+			getEditedEntityRecord: () =>
+				Promise.resolve( { id: 10, blocks: [], content: '<!-- wp:navigation-link -->' } ),
+			getEntityRecords: () => Promise.resolve( [ { id: 10 } ] ),
+		} );
 
 		await removeNavigationItem( 7 );
 
@@ -194,5 +272,15 @@ describe( 'menu selection', () => {
 		await renameNavigationItem( 7, 'About us' );
 
 		expect( lastWrite().menuId ).toBe( 99 );
+	} );
+
+	// A menu neither on screen nor named by the site still holds its links.
+	it( 'reaches a menu that is neither rendered nor named', async () => {
+		( getSiteMetadata as jest.Mock ).mockReturnValue( {} );
+		withMenus( { 10: [ link( 1, 'Home' ) ], 30: [ link( 7, 'About' ) ] }, [ '10' ] );
+
+		await removeNavigationItem( 7 );
+
+		expect( lastWrite().menuId ).toBe( 30 );
 	} );
 } );
