@@ -3,6 +3,7 @@
  */
 
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
 import AgencySitesNeedSetup from '../index';
@@ -72,5 +73,25 @@ describe( '<AgencySitesNeedSetup>', () => {
 		render( <AgencySitesNeedSetup /> );
 
 		expect( await screen.findByText( 'Nothing to set up' ) ).toBeVisible();
+	} );
+	test( 'opens the configuration modal for the license the row acts on', async () => {
+		mockAgencyAndPendingSites( [ pendingSite( 1 ) ] );
+		nock( API )
+			.persist()
+			.get( '/wpcom/v2/site-suggestions' )
+			.reply( 200, { suggestions: [ { title: 'Rambling Thoughts' } ] } );
+		nock( API )
+			.persist()
+			.get( '/rest/v1.1/domains/suggestions' )
+			.query( true )
+			.reply( 200, [ { domain_name: 'ramblingthoughts.wordpress.com' } ] );
+
+		render( <AgencySitesNeedSetup /> );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Create new site' } ) );
+
+		expect(
+			await screen.findByRole( 'dialog', { name: 'Configure your new site' } )
+		).toBeVisible();
 	} );
 } );
