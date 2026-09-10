@@ -1,5 +1,6 @@
 jest.mock( '@wordpress/blocks', () => ( {
 	createBlock: jest.fn( ( name, attributes ) => ( { name, attributes, innerBlocks: [] } ) ),
+	parse: jest.fn( () => [ { name: 'core/navigation-link', attributes: {}, innerBlocks: [] } ] ),
 	serialize: jest.fn( ( blocks ) => `<!-- ${ blocks.length } items -->` ),
 } ) );
 jest.mock( '../../../utils/navigation-menu', () => ( {
@@ -47,7 +48,7 @@ it( 'passes a record without navigationItems straight through', async () => {
 it( 'writes both the blocks and the serialized content', async () => {
 	withMenu( [ item( 'a', 'Home' ) ] );
 
-	const built = await buildNavigationItems( 10, { navigationItems: [ { clientId: 'a' } ] } );
+	const built = await buildNavigationItems( 10, { navigationItems: [ { label: 'Home' } ] } );
 
 	expect( built.blocks ).toHaveLength( 1 );
 	expect( built.content ).toBe( '<!-- 1 items -->' );
@@ -57,17 +58,17 @@ it( 'reorders existing items, keeping the blocks they already are', async () => 
 	withMenu( [ item( 'a', 'Home' ), item( 'b', 'About' ) ] );
 
 	const built = await buildNavigationItems( 10, {
-		navigationItems: [ { clientId: 'b' }, { clientId: 'a' } ],
+		navigationItems: [ { label: 'About' }, { label: 'Home' } ],
 	} );
 
 	expect( labelsOf( built ) ).toEqual( [ 'About', 'Home' ] );
 } );
 
 it( 'relabels an item while leaving the rest alone', async () => {
-	withMenu( [ item( 'a', 'Home' ), item( 'b', 'About' ) ] );
+	withMenu( [ item( 'a', 'Home' ), item( 'b', 'About', { id: 7 } ) ] );
 
 	const built = await buildNavigationItems( 10, {
-		navigationItems: [ { clientId: 'a' }, { clientId: 'b', label: 'About us' } ],
+		navigationItems: [ { label: 'Home' }, { id: 7, label: 'About us' } ],
 	} );
 
 	expect( labelsOf( built ) ).toEqual( [ 'Home', 'About us' ] );
@@ -77,7 +78,7 @@ it( 'adds an item that matches nothing in the menu', async () => {
 	withMenu( [ item( 'a', 'Home' ) ] );
 
 	const built = await buildNavigationItems( 10, {
-		navigationItems: [ { clientId: 'a' }, { label: 'Contact', url: '/contact/' } ],
+		navigationItems: [ { label: 'Home' }, { label: 'Contact', url: '/contact/' } ],
 	} );
 
 	expect( labelsOf( built ) ).toEqual( [ 'Home', 'Contact' ] );
@@ -86,7 +87,7 @@ it( 'adds an item that matches nothing in the menu', async () => {
 it( 'removes an item by omitting it', async () => {
 	withMenu( [ item( 'a', 'Home' ), item( 'b', 'About' ) ] );
 
-	const built = await buildNavigationItems( 10, { navigationItems: [ { clientId: 'a' } ] } );
+	const built = await buildNavigationItems( 10, { navigationItems: [ { label: 'Home' } ] } );
 
 	expect( labelsOf( built ) ).toEqual( [ 'Home' ] );
 } );
@@ -95,7 +96,7 @@ it( 'resolves an item moved under a different parent', async () => {
 	withMenu( [ item( 'a', 'Company' ), item( 'b', 'About' ) ] );
 
 	const built = await buildNavigationItems( 10, {
-		navigationItems: [ { clientId: 'a', items: [ { clientId: 'b' } ] } ],
+		navigationItems: [ { label: 'Company', items: [ { label: 'About' } ] } ],
 	} );
 
 	expect( labelsOf( built ) ).toEqual( [ 'Company' ] );
@@ -104,16 +105,78 @@ it( 'resolves an item moved under a different parent', async () => {
 	} );
 } );
 
-// A clientId is only stable for a menu the editor already edited; a pristine one
-// re-parses to fresh ids. The label the agent sent alongside it still resolves.
-it( 'reuses the block a stale clientId names by its label instead', async () => {
-	withMenu( [ item( 'fresh', 'About' ) ] );
+// A clientId is never an identity here: minted by another tool, or by a parse
+// that will not repeat, it would claim the wrong block or none at all.
+it( 'ignores a clientId and resolves by the label sent with it', async () => {
+	withMenu( [ item( 'a', 'Home' ), item( 'b', 'About' ) ] );
 
 	const result = await buildNavigationItems( 10, {
-		navigationItems: [ { clientId: 'gone', label: 'About' } ],
+		navigationItems: [ { clientId: 'a', label: 'About' } as never ],
 	} );
 
-	expect( labelsOf( result ) ).toEqual( [ 'About' ] );
+	expect( ( result.blocks as { clientId: string }[] ).map( ( b ) => b.clientId ) ).toEqual( [
+		'b',
+	] );
+} );
+
+// A category can carry the same number as a page, and a bare id means a page.
+it( 'does not let a page id claim a taxonomy link', async () => {
+	withMenu( [ item( 'a', 'News', { id: 5, type: 'category' } ) ] );
+
+	const result = await buildNavigationItems( 10, {
+		navigationItems: [ { label: 'News' }, { id: 5, label: 'Page five' } ],
+	} );
+
+	expect( labelsOf( result ) ).toEqual( [ 'News', 'Page five' ] );
+} );
+
+describe( 'input validation', () => {
+	it( 'refuses navigationItems that is not an array', async () => {
+		withMenu( [ item( 'a', 'Home' ) ] );
+
+		await expect( buildNavigationItems( 10, { navigationItems: 'Home' } ) ).rejects.toThrow(
+			'navigationItems must be an array'
+		);
+	} );
+
+	it.each( [
+		{ case: 'a top-level entry that is not an object', items: [ null ] },
+		{ case: 'a nested entry that is not an object', items: [ { label: 'A', items: [ null ] } ] },
+		{ case: 'a label that is not a string', items: [ { label: 123 } ] },
+		{ case: 'an id that is not a number or string', items: [ { id: { page: 7 } } ] },
+		{ case: 'items that is not an array', items: [ { label: 'A', items: 'B' } ] },
+	] )( 'refuses $case', async ( { items } ) => {
+		withMenu( [ item( 'a', 'Home' ) ] );
+
+		await expect( buildNavigationItems( 10, { navigationItems: items } ) ).rejects.toThrow(
+			'Invalid navigation items'
+		);
+	} );
+
+	it( 'refuses raw blocks that are not an array', async () => {
+		await expect( buildNavigationItems( 10, { blocks: 'Home' } ) ).rejects.toThrow(
+			'blocks must be an array'
+		);
+	} );
+} );
+
+// `content` is what persists and `blocks` what the editor reads; a raw edit
+// carrying one half is completed so neither goes stale.
+describe( 'raw menu edits', () => {
+	it( 'serializes content from raw blocks', async () => {
+		const built = await buildNavigationItems( 10, {
+			blocks: [ item( 'a', 'Home' ) ],
+			title: 'Main',
+		} );
+
+		expect( built ).toMatchObject( { content: '<!-- 1 items -->', title: 'Main' } );
+	} );
+
+	it( 'parses blocks from raw content', async () => {
+		const built = await buildNavigationItems( 10, { content: '<!-- wp:navigation-link /-->' } );
+
+		expect( built.blocks ).toHaveLength( 1 );
+	} );
 } );
 
 // Listing a child at the top level moves it: keeping it nested *and* placing it
@@ -161,17 +224,6 @@ it( 'keeps the type of preserved blocks that are not menu links', async () => {
 	const blocks = result.blocks as { innerBlocks: { name: string }[] }[];
 
 	expect( blocks[ 0 ].innerBlocks[ 0 ].name ).toBe( 'core/page-list' );
-} );
-
-// The schema stops validating below the first level.
-it( 'ignores a nested items value that is not an array', async () => {
-	withMenu( [ item( 'a', 'About' ) ] );
-
-	const result = await buildNavigationItems( 10, {
-		navigationItems: [ { label: 'About', items: 'invalid' } ],
-	} );
-
-	expect( labelsOf( result ) ).toEqual( [ 'About' ] );
 } );
 
 // Urls are no more unique than labels, so they claim after ids do.
@@ -258,25 +310,14 @@ it( 'refuses an id that resolves to nothing and carries no label', async () => {
 	);
 } );
 
-// A clientId with no label or url carries nothing to rebuild from. Building a
+// An id with no label or url carries nothing to rebuild from. Building a
 // blank link over a real item reads to the user as the menu being wiped.
-it( 'refuses when a clientId resolves to nothing, naming the ids', async () => {
+it( 'refuses when an id resolves to nothing, naming it', async () => {
 	withMenu( [ item( 'a', 'Home' ) ] );
 
 	await expect(
-		buildNavigationItems( 10, { navigationItems: [ { clientId: 'a' }, { clientId: 'gone' } ] } )
-	).rejects.toThrow( 'gone' );
-} );
-
-// The item brought its own data, so a stale clientId is bookkeeping, not loss.
-it( 'creates an item when a stale clientId matches nothing in the menu', async () => {
-	withMenu( [ item( 'a', 'Home' ) ] );
-
-	const built = await buildNavigationItems( 10, {
-		navigationItems: [ { clientId: 'gone', label: 'Contact', url: '/contact/' } ],
-	} );
-
-	expect( labelsOf( built ) ).toEqual( [ 'Contact' ] );
+		buildNavigationItems( 10, { navigationItems: [ { label: 'Home' }, { id: 42 } ] } )
+	).rejects.toThrow( 'Navigation items not found: 42' );
 } );
 
 // Dropping the entry instead would replace Home's children with an empty list,
@@ -286,7 +327,7 @@ it( 'refuses a malformed nested item', async () => {
 
 	await expect(
 		buildNavigationItems( 10, { navigationItems: [ { label: 'Home', items: [ null ] } ] } )
-	).rejects.toThrow( 'every entry must be an object' );
+	).rejects.toThrow( 'Invalid navigation items under "Home"' );
 } );
 
 it( 'refuses when the menu cannot be read', async () => {
