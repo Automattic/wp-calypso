@@ -18,7 +18,7 @@ import {
 	type PartnerConfig,
 } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
-import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
+import { getRedirectAfterAccept, isSameEmail } from 'calypso/my-sites/invites/utils';
 import { useDispatch } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors/has-dashboard-opt-in';
@@ -165,7 +165,7 @@ export function AcceptInviteScreen( { invite }: AcceptInviteScreenProps ) {
 
 	// Check if the invite requires a specific email that doesn't match the current user
 	const forceMatchingEmail =
-		invite?.invite?.meta?.force_matching_email && user?.email !== inviteSentTo;
+		invite?.invite?.meta?.force_matching_email && ! isSameEmail( user?.email, inviteSentTo );
 
 	// Get branding from blog_details garden info
 	const branding = getBrandingFromBlogDetails( invite?.blog_details );

@@ -25,11 +25,18 @@ jest.mock( 'calypso/state', () => ( {
 
 // An administrator on a WordPress.com site with commercial Stats and a wp-admin to land in.
 let mockIsWpcom = true;
+let mockIsAtomic = false;
 let mockCanManageOptions = true;
 let mockSiteFeatures: object | null = { active: [] };
 let mockIsGated = false;
 let mockAdminUrl: string | null =
 	'https://example.com/wp-admin/admin.php?page=jetpack-premium-analytics-wp-admin';
+
+jest.mock( 'calypso/state/sites/selectors/is-jetpack-site', () => ( {
+	__esModule: true,
+	default: ( _state: unknown, _siteId: number, options: { treatAtomicAsJetpackSite: boolean } ) =>
+		mockIsAtomic && options.treatAtomicAsJetpackSite,
+} ) );
 
 jest.mock( 'calypso/state/selectors/is-site-wpcom', () => ( {
 	__esModule: true,
@@ -80,6 +87,8 @@ describe( 'usePremiumAnalyticsPreviewInvitation', () => {
 		jest.clearAllMocks();
 		mockFlags()[ 'stats/premium-analytics-preview' ] = true;
 		mockIsWpcom = true;
+		mockIsAtomic = false;
+		delete mockFlags()[ 'stats/premium-analytics-preview-atomic' ];
 		mockCanManageOptions = true;
 		mockSiteFeatures = { active: [] };
 		mockIsGated = false;
@@ -94,6 +103,19 @@ describe( 'usePremiumAnalyticsPreviewInvitation', () => {
 				'https://example.com/wp-admin/admin.php?page=jetpack-premium-analytics-wp-admin',
 		} );
 		expect( mockUseStatusQuery ).toHaveBeenCalledWith( 123, true );
+	} );
+
+	it.each( [
+		[ true, false, false ],
+		[ true, true, true ],
+		[ false, false, true ],
+		[ false, true, true ],
+	] )( 'Atomic %s with flag %s requests status: %s', ( isAtomic, flag, expected ) => {
+		mockIsAtomic = isAtomic;
+		mockFlags()[ 'stats/premium-analytics-preview-atomic' ] = flag;
+
+		expect( invitation().isInvited ).toBe( expected );
+		expect( mockUseStatusQuery ).toHaveBeenCalledWith( 123, expected );
 	} );
 
 	it( 'does not invite a site that already has the dashboard', () => {

@@ -48,7 +48,7 @@ export default function BackendStatusNotice( {
 				variant="error"
 				title={ sprintf(
 					/* translators: %s is the average response time. */
-					__( 'Backend is slow — avg %s' ),
+					__( 'Server response is slow — avg %s' ),
 					formatted
 				) }
 			>
@@ -65,7 +65,7 @@ export default function BackendStatusNotice( {
 				variant="warning"
 				title={ sprintf(
 					/* translators: %s is the average response time. */
-					__( 'Backend needs improvement — avg %s' ),
+					__( 'Server response needs improvement — avg %s' ),
 					formatted
 				) }
 			>
@@ -81,7 +81,7 @@ export default function BackendStatusNotice( {
 			variant="success"
 			title={ sprintf(
 				/* translators: %s is the average response time. */
-				__( 'Healthy backend — avg %s' ),
+				__( 'Healthy server response — avg %s' ),
 				formatted
 			) }
 		>
