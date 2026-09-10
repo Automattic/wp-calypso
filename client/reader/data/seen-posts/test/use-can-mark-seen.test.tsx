@@ -12,13 +12,13 @@ import {
 } from './fixtures';
 import type { Subscription } from './fixtures';
 
-const AUTHOR = 'test_user';
 const a8cSubscription: Subscription = { ...subscription, organization_id: AUTOMATTIC_ORG_ID };
 const eligible = { subscriptions: [ a8cSubscription ] };
+
 // An AFK post satisfies both halves of the wpcom `is_automattic_private()` guard.
 const afkPost = {
+	organization_id: AUTOMATTIC_ORG_ID,
 	site_is_private: true,
-	author: { login: AUTHOR },
 	tags: { afk: { slug: 'afk' } },
 };
 
@@ -31,7 +31,15 @@ describe( 'useCanMarkSeen', () => {
 		expect( result.current ).toBe( false );
 	} );
 
-	it( 'returns false for an AFK post on A8C private blog', () => {
+	it( 'returns true when the seen feature is available and the post is not an AFK post', () => {
+		const { result } = renderHook( () => useCanMarkSeen( { feedId: FEED_ID } ), {
+			wrapper: createSeenPostsWrapper( eligible ),
+		} );
+
+		expect( result.current ).toBe( true );
+	} );
+
+	it( 'returns false for an AFK post on an Automattic-private blog', () => {
 		const { result } = renderHook( () => useCanMarkSeen( { feedId: FEED_ID, post: afkPost } ), {
 			wrapper: createSeenPostsWrapper( eligible ),
 		} );
@@ -44,15 +52,15 @@ describe( 'useCanMarkSeen', () => {
 			wrapper: createSeenPostsWrapper( {
 				isAutomattician: true,
 				wpForTeamsBlogIds: [ BLOG_ID ],
-				feedOrganizationIds: { [ FEED_ID ]: AUTOMATTIC_ORG_ID },
 			} ),
 		} );
 
 		expect( result.current ).toBe( false );
 	} );
 
-	it( 'returns true when seen feature is available and post is not an AFK post', () => {
-		const { result } = renderHook( () => useCanMarkSeen( { feedId: FEED_ID } ), {
+	it( 'returns true for an AFK post on a public Automattic blog', () => {
+		const post = { ...afkPost, site_is_private: false };
+		const { result } = renderHook( () => useCanMarkSeen( { feedId: FEED_ID, post } ), {
 			wrapper: createSeenPostsWrapper( eligible ),
 		} );
 

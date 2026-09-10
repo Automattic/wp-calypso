@@ -1,14 +1,13 @@
 import {
 	getSiteSubscriptionsQueryKey,
 	isAutomatticianQuery,
-	readFeedQuery,
 	readSubscribedListsQuery,
 } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { AUTOMATTIC_ORG_ID, P2_ORG_ID } from 'calypso/state/reader/organizations/constants';
-import type { ReadFeedItem, SiteSubscriptionItem } from '@automattic/api-core';
+import type { SiteSubscriptionItem } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
 export const USER_ID = 10;
@@ -23,8 +22,6 @@ interface SeenPostsWrapperOptions {
 	isAutomattician?: boolean;
 	wpForTeamsBlogIds?: number[];
 	subscribedListFeedIds?: number[];
-	/** Feed records to seed, so an unsubscribed feed still resolves an organization. */
-	feedOrganizationIds?: Record< number, number >;
 	route?: string;
 }
 
@@ -36,7 +33,6 @@ export function createSeenPostsWrapper( {
 	isAutomattician = false,
 	wpForTeamsBlogIds = [],
 	subscribedListFeedIds = [],
-	feedOrganizationIds = {},
 	route,
 }: SeenPostsWrapperOptions = {} ) {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
@@ -68,14 +64,6 @@ export function createSeenPostsWrapper( {
 				} ) ),
 			},
 		],
-	} );
-
-	Object.entries( feedOrganizationIds ).forEach( ( [ feedId, organizationId ] ) => {
-		queryClient.setQueryData( readFeedQuery( Number( feedId ) ).queryKey, {
-			feed_ID: String( feedId ),
-			blog_ID: String( BLOG_ID ),
-			organization_id: organizationId,
-		} as ReadFeedItem );
 	} );
 
 	const state = {

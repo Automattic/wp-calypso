@@ -6,12 +6,11 @@ import { useIsSeenVisible } from '../use-is-seen-visible';
 import { AUTOMATTIC_ORG_ID, FEED_ID, createSeenPostsWrapper, subscription } from './fixtures';
 import type { Subscription } from './fixtures';
 
-const AUTHOR = 'user_name';
 const a8cSubscription: Subscription = { ...subscription, organization_id: AUTOMATTIC_ORG_ID };
 const eligible = { subscriptions: [ a8cSubscription ] };
 const afkPost = {
+	organization_id: AUTOMATTIC_ORG_ID,
 	site_is_private: true,
-	author: { login: AUTHOR },
 	tags: { afk: { slug: 'afk' } },
 };
 
