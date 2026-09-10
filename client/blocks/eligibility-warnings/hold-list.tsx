@@ -189,7 +189,6 @@ type BlockingMessage = {
 	message: string;
 	status: NoticeStatus | null;
 	contactUrl: string | null;
-	/** Opens the in-app support assistant instead of linking out to the contact form. */
 	opensHelpCenter?: boolean;
 };
 
