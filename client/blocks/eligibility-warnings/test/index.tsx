@@ -140,7 +140,6 @@ describe( '<EligibilityWarnings>', () => {
 		const notice = container.querySelector( '.calypso-notice' );
 		expect( notice ).toBeVisible();
 		expect( notice ).toHaveTextContent( /Setting up your site/ );
-		// Opens the in-app support assistant, and replaces the generic link below it.
 		expect( queryByText( 'Get help' ) ).toBeVisible();
 		expect( queryByText( 'Need help?' ) ).not.toBeInTheDocument();
 		expect( queryByTestId( 'HoldList-Card' ) ).not.toBeInTheDocument();
