@@ -214,8 +214,10 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 						...previousPlanFeatures.jetpackFeatures,
 					],
 					storageFeature: planFeaturesForGridPlans[ planSlug ].storageFeature,
+					// Labels follow the list: the experiment copy describes features the experiment
+					// override lists, so pairing it with a curated list mislabels the rows.
 					comparisonGridFeatureLabels: planConstantObj.getPlanComparisonFeatureLabels?.( {
-						isExperimentVariant,
+						isExperimentVariant: isExperimentVariant && useDifferentiationFeatures,
 					} ),
 				};
 

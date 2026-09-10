@@ -1270,7 +1270,10 @@ const PlansFeaturesMain = ( {
 		featureGroupMapForComparisonGrid = getWooExpressFeaturesGroupedForComparisonGrid();
 	} else {
 		featureGroupMapForComparisonGrid = getPlanFeaturesGroupedForComparisonGrid( {
-			isExperimentVariant,
+			// The row set has to match the feature lists the comparison grid is built from, which a
+			// curated intent keeps for itself. Leaving this un-gated pairs experiment rows and group
+			// titles with a control list.
+			isExperimentVariant: isExperimentVariant && ! hasTailoredFeatureList( intent ),
 		} );
 	}
 
