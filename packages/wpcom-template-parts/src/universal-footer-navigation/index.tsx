@@ -68,6 +68,14 @@ const APP_STORE_URL =
 const GOOGLE_PLAY_URL =
 	'https://play.google.com/store/apps/details?id=com.jetpack.android&referrer=utm_source%3Dwordpress.com%26utm_campaign%3Dfooter%26utm_medium%3Dwebsite';
 
+// `?footer_2026=` accepts `1`/`light` for white and `2`/`dark` for dark.
+const FOOTER_2026_COLORWAY_ALIASES: Record< string, FooterProps[ 'colorway' ] > = {
+	'1': 'white',
+	light: 'white',
+	'2': 'dark',
+	dark: 'dark',
+};
+
 export const getFooter2026Colorway = (
 	isFooter2026Enabled: boolean,
 	previewColorway?: string | string[]
@@ -76,7 +84,12 @@ export const getFooter2026Colorway = (
 		return undefined;
 	}
 
-	return previewColorway === 'dark' ? 'dark' : 'white';
+	// A repeated query parameter arrives as an array; the last one wins.
+	const flag = Array.isArray( previewColorway )
+		? previewColorway[ previewColorway.length - 1 ]
+		: previewColorway;
+
+	return FOOTER_2026_COLORWAY_ALIASES[ flag as string ] ?? 'white';
 };
 
 const FooterStack = ( {
