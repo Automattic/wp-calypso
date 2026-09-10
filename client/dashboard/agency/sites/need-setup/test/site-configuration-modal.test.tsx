@@ -6,6 +6,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
+import { getProvisioningSiteIds, untrackProvisioningSite } from '../../provisioning-sites';
 import SiteConfigurationModal from '../site-configuration-modal';
 
 const API = 'https://public-api.wordpress.com';
@@ -43,6 +44,8 @@ async function waitForSuggestedAddress() {
 }
 
 describe( '<SiteConfigurationModal>', () => {
+	afterEach( () => untrackProvisioningSite( 7 ) );
+
 	test( 'creates the site at the suggested address', async () => {
 		mockAddressSuggestion( 'ramblingthoughts' );
 		const { onRequestClose, user } = renderModal();
@@ -67,6 +70,8 @@ describe( '<SiteConfigurationModal>', () => {
 
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 		expect( onRequestClose ).toHaveBeenCalled();
+		// The sites page reports on it from here.
+		expect( getProvisioningSiteIds() ).toEqual( [ 7 ] );
 	} );
 
 	test( 'keeps the agency fully managed when client access is turned off', async () => {

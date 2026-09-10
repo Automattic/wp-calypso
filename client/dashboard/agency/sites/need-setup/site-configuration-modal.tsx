@@ -18,6 +18,7 @@ import { useAnalytics } from '../../../app/analytics';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../components/button-stack';
 import SuffixInputControl from '../../../components/input-control/suffix-input-control';
+import { trackProvisioningSite } from '../provisioning-sites';
 import { useSiteAddress } from './use-site-address';
 import type { SiteAddress } from './use-site-address';
 import type { DataFormControlProps, Field } from '@wordpress/dataviews';
@@ -191,6 +192,9 @@ export default function SiteConfigurationModal( {
 					queryClient.invalidateQueries( {
 						queryKey: pendingAgencySitesQuery( agencyId ).queryKey,
 					} );
+					// The sites page reports on it from here; the site itself takes
+					// a few minutes to answer.
+					trackProvisioningSite( pendingSiteId );
 					// The next site gets its own address rather than the one just claimed.
 					siteAddress.refreshSuggestion();
 					onRequestClose();

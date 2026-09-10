@@ -10,6 +10,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { DEFAULT_PER_PAGE, DEFAULT_CONFIG, recordViewChanges } from '../../sites/dataviews/views';
 import { getAgencyFields, getAgencyActions } from './dataviews';
+import ProvisioningSiteNotices from './provisioning-notice';
 import type { AgencySite, FetchAgencySitesOptions } from '@automattic/api-core';
 import type { SupportedLayouts, View } from '@wordpress/dataviews';
 
@@ -80,7 +81,10 @@ export default function AgencySites() {
 	};
 
 	return (
-		<PageLayout header={ <PageHeader title={ __( 'Sites' ) } /> }>
+		<PageLayout
+			header={ <PageHeader title={ __( 'Sites' ) } /> }
+			notices={ <ProvisioningSiteNotices /> }
+		>
 			{ ! isLoading && <PerformanceTrackerStop /> }
 			<DataViewsCard>
 				<DataViews< AgencySite >

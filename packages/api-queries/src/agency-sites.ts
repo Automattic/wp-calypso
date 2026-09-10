@@ -1,6 +1,7 @@
 import {
 	fetchAgencySitesWithPlugins,
 	fetchPendingAgencySites,
+	fetchProvisionedAgencySites,
 	provisionAgencySite,
 	validateAgencySiteAddress,
 } from '@automattic/api-core';
@@ -24,6 +25,16 @@ export const pendingAgencySitesQuery = ( agencyId: number ) =>
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'sites', 'pending' ] as const,
 		queryFn: () => fetchPendingAgencySites( agencyId ),
+	} );
+
+/**
+ * Every site the agency has. Backs the readiness check behind the provisioning
+ * notice, which polls it while a site is being created.
+ */
+export const provisionedAgencySitesQuery = ( agencyId: number ) =>
+	queryOptions( {
+		queryKey: [ 'agency', agencyId, 'sites', 'provisioned' ] as const,
+		queryFn: () => fetchProvisionedAgencySites( agencyId ),
 	} );
 
 // A4A runs on Calypso's QueryClient rather than the `api-queries` singleton, so
