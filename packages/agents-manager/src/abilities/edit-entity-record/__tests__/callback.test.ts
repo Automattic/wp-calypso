@@ -9,8 +9,9 @@ jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: jest.fn() }
 jest.mock( '@wordpress/data', () => ( { dispatch: jest.fn(), resolveSelect: jest.fn() } ) );
 jest.mock( '../../../utils/is-editor-page', () => ( { isEditorPage: jest.fn( () => true ) } ) );
 jest.mock( '../../../utils/navigation-menu', () => ( {
+	MENU_FIELDS: [ 'blocks', 'content' ],
 	addNavigationItem: jest.fn(),
-	getMenuIdsHolding: jest.fn( async () => [ 10 ] ),
+	getMenuIdsToRelabel: jest.fn( async () => [ 10 ] ),
 	// The checkpoint recorder reads through this to snapshot a menu.
 	readMenuItems: jest.fn( async () => [] ),
 	removeNavigationItem: jest.fn(),
@@ -42,7 +43,7 @@ import { checkpointKeys, hasCheckpoint } from '../../../utils/checkpoints';
 import { isEditorPage } from '../../../utils/is-editor-page';
 import {
 	addNavigationItem,
-	getMenuIdsHolding,
+	getMenuIdsToRelabel,
 	removeNavigationItem,
 	renameNavigationItem,
 } from '../../../utils/navigation-menu';
@@ -251,8 +252,8 @@ describe( 'editEntityRecordCallback', () => {
 
 		// Asked for the menus holding the page, and before the relabel: what the
 		// recorder then stores is covered in the checkpoint suite.
-		expect( getMenuIdsHolding ).toHaveBeenCalledWith( 7, 'About' );
-		expect( ( getMenuIdsHolding as jest.Mock ).mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+		expect( getMenuIdsToRelabel ).toHaveBeenCalledWith( 7, 'About' );
+		expect( ( getMenuIdsToRelabel as jest.Mock ).mock.invocationCallOrder[ 0 ] ).toBeLessThan(
 			( renameNavigationItem as jest.Mock ).mock.invocationCallOrder[ 0 ]
 		);
 	} );
@@ -276,6 +277,19 @@ describe( 'editEntityRecordCallback', () => {
 		expect( deleteEntityRecord ).toHaveBeenCalledWith( 'postType', 'page', 7, undefined, {
 			throwOnError: true,
 		} );
+	} );
+
+	// A menu edit then snapshots the menu as the deletion left it, so undoing
+	// the edit cannot bring back a link to a page that is gone.
+	it( 'deletes before it edits', async () => {
+		await editEntityRecordCallback( {
+			deleteEntities: [ page( 7 ) ],
+			editEntities: [ { ...page( 8 ), record: { content: 'Hello' } } ],
+		} );
+
+		expect( deleteEntityRecord.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+			editEntityRecord.mock.invocationCallOrder[ 0 ]
+		);
 	} );
 
 	// The menu write persists, so removing the item before the delete would
