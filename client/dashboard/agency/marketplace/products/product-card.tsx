@@ -22,8 +22,8 @@ import { getProductPriceInfo, getTermAvailabilityNote } from './lib/product-pric
 import { BACKUP_STORAGE_FAMILY_SLUG, WOOPAYMENTS_PRODUCT_SLUG } from './lib/product-slugs';
 import { getProductShortTitle } from './lib/product-title';
 import ProductPrice from './product-price';
-import type { ProductListItem } from './lib/product-groups';
 import type { TermPricing } from '../use-term-pricing';
+import type { ProductListItem } from './lib/product-groups';
 import type { AgencyProduct } from '@automattic/api-core';
 
 const BRAND_MARKS = {
