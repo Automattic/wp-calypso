@@ -8,6 +8,7 @@ import { render } from '../../../test-utils';
 import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../context';
 import AgencySidebar from '../agency';
 import type { AgencySupports } from '../../context';
+import type { PendingAgencySite } from '@automattic/api-core';
 
 const agencySupports: AgencySupports = {
 	overview: true,
@@ -42,8 +43,16 @@ function mockAgency( capabilities: string[] ) {
 		] );
 }
 
-async function renderSidebar( capabilities: string[] ) {
+function mockPendingSites( pendingSites: PendingAgencySite[] ) {
+	nock( 'https://public-api.wordpress.com' )
+		.persist()
+		.get( '/wpcom/v2/agency/1/sites/pending' )
+		.reply( 200, pendingSites );
+}
+
+async function renderSidebar( capabilities: string[], pendingSites: PendingAgencySite[] = [] ) {
 	mockAgency( capabilities );
+	mockPendingSites( pendingSites );
 	render(
 		<AppProvider config={ config }>
 			<AgencySidebar />
@@ -85,6 +94,27 @@ describe( '<AgencySidebar>', () => {
 		expect( screen.queryByRole( 'button', { name: 'Marketplace' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Resources' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Earn' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'expands Sites with a Needs setup item when a license is awaiting a site', async () => {
+		await renderSidebar(
+			[ 'a4a_read_managed_sites' ],
+			[ { id: 1, features: { wpcom_atomic: { state: 'pending', license_key: 'abc-123' } } } ]
+		);
+
+		expect( await screen.findByRole( 'link', { name: 'Needs setup' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'All' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Sites' } ) ).toBeVisible();
+	} );
+
+	test( 'leaves Sites flat when a license is already provisioning', async () => {
+		await renderSidebar(
+			[ 'a4a_read_managed_sites' ],
+			[ { id: 1, features: { wpcom_atomic: { state: 'provisioning', license_key: 'abc-123' } } } ]
+		);
+
+		expect( screen.getByRole( 'link', { name: 'Sites' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: 'Needs setup' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'leaves only Home when the user holds no capabilities', async () => {

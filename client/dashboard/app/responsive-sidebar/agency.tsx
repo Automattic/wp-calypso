@@ -1,11 +1,13 @@
-import { agencyQuery, activeAgencyQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { agencyQuery, activeAgencyQuery, pendingAgencySitesQuery } from '@automattic/api-queries';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { home, globe, layout, pages, tag, currencyDollar, people } from '@wordpress/icons';
+import { hasWpcomLicenseWithoutSite } from '../../agency/sites/need-setup/lib';
 import { SidebarExpandableMenuItem, SidebarMenuItem } from '../../components/sidebar';
 import { useAppContext } from '../context';
 import {
 	agencyPartnerDirectoryRoute,
+	agencySitesNeedSetupRoute,
 	agencySitesRoute,
 	agencyTeamRoute,
 	agencyTiersRoute,
@@ -26,6 +28,12 @@ export default function AgencySidebar() {
 	const { supports } = useAppContext();
 	const { data: agency } = useSuspenseQuery( agencyQuery() );
 	const { data: activeAgency } = useSuspenseQuery( activeAgencyQuery() );
+	// Not suspended: the rest of the menu must not wait on this request. The
+	// Needs setup item appears once the pending sites resolve.
+	const { data: pendingSites } = useQuery( {
+		...pendingAgencySitesQuery( activeAgency?.id ?? 0 ),
+		enabled: !! activeAgency?.id,
+	} );
 	if ( agency.isClientUser || ! supports.agency ) {
 		return null;
 	}
@@ -37,6 +45,10 @@ export default function AgencySidebar() {
 	const canAccess = ( route: AnyRoute ) => isRouteAllowedByCapabilities( route, capabilities );
 
 	const canAccessTiers = !! supports.agency.tiers && canAccess( agencyTiersRoute );
+	// Mirrors the route guard: without a paid license awaiting a site there is
+	// nothing for the screen to show.
+	const canAccessNeedSetup =
+		canAccess( agencySitesNeedSetupRoute ) && !! pendingSites?.some( hasWpcomLicenseWithoutSite );
 	const canAccessPartnerDirectory =
 		!! ( supports.agency.partnerDirectory && activeAgency?.partner_directory?.allowed ) &&
 		canAccess( agencyPartnerDirectoryRoute );
@@ -60,11 +72,20 @@ export default function AgencySidebar() {
 			<SidebarMenuItem icon={ home } to="/overview">
 				{ __( 'Home' ) }
 			</SidebarMenuItem>
-			{ supports.agency.sites && canAccess( agencySitesRoute ) && (
-				<SidebarMenuItem icon={ layout } to="/sites">
-					{ __( 'Sites' ) }
-				</SidebarMenuItem>
-			) }
+			{ supports.agency.sites &&
+				canAccess( agencySitesRoute ) &&
+				( canAccessNeedSetup ? (
+					<SidebarExpandableMenuItem label={ __( 'Sites' ) } icon={ layout } to="/sites">
+						<SidebarMenuItem to="/sites" activeOptions={ { exact: true } }>
+							{ __( 'All' ) }
+						</SidebarMenuItem>
+						<SidebarMenuItem to="/sites/need-setup">{ __( 'Needs setup' ) }</SidebarMenuItem>
+					</SidebarExpandableMenuItem>
+				) : (
+					<SidebarMenuItem icon={ layout } to="/sites">
+						{ __( 'Sites' ) }
+					</SidebarMenuItem>
+				) ) }
 			{ supports.agency.team && canAccess( agencyTeamRoute ) && (
 				<SidebarMenuItem icon={ people } to="/team">
 					{ __( 'Team' ) }
