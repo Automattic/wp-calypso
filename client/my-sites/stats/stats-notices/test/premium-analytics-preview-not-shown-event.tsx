@@ -28,7 +28,27 @@ jest.mock( 'calypso/state', () => ( {
 	useDispatch: () => jest.fn(),
 } ) );
 
-jest.mock( '../all-notice-definitions', () => ( { __esModule: true, default: [] } ) );
+// Empty by default so the gates alone decide; a case that needs the conflict group fills it in.
+jest.mock( '../all-notice-definitions', () => {
+	const definitions: unknown[] = [];
+	( globalThis as Record< string, unknown > ).__notShownEventTestNotices = definitions;
+	return { __esModule: true, default: definitions };
+} );
+
+const mockNoticeDefinitions = () =>
+	( globalThis as Record< string, unknown > ).__notShownEventTestNotices as Array< {
+		component: () => null;
+		noticeId: string;
+		isVisibleFunc: () => boolean;
+		disabled: boolean;
+	} >;
+
+const noticeDefinition = ( noticeId: string, isVisible = true ) => ( {
+	component: () => null,
+	noticeId,
+	isVisibleFunc: () => isVisible,
+	disabled: false,
+} );
 
 jest.mock( 'calypso/components/data/query-site-stats', () => ( {
 	__esModule: true,
@@ -150,9 +170,11 @@ jest.mock( 'calypso/state/sites/selectors/has-site-product-jetpack-stats-pwyw-on
 	__esModule: true,
 	default: () => false,
 } ) );
+let mockIsAtomic = false;
 jest.mock( 'calypso/state/sites/selectors/is-jetpack-site', () => ( {
 	__esModule: true,
-	default: () => false,
+	default: ( _state: unknown, _siteId: number, options: { treatAtomicAsJetpackSite: boolean } ) =>
+		mockIsAtomic && options.treatAtomicAsJetpackSite,
 } ) );
 jest.mock( 'calypso/state/stats/lists/selectors', () => ( {
 	getSiteStatsNormalizedData: () => ( {} ),
@@ -183,11 +205,13 @@ describe( 'premium analytics preview "not shown" event', () => {
 		mockCanManageOptions = true;
 		mockSiteFeatures = { active: [] };
 		mockIsWpcom = true;
+		mockIsAtomic = false;
 		mockIsP2 = false;
 		mockIsVip = false;
 		mockAdminUrl = 'https://example.com/wp-admin/admin.php?page=jetpack-premium-analytics-wp-admin';
 		mockHasLoadedSiteFeatures = true;
 		mockIsStatsGated = false;
+		mockNoticeDefinitions().length = 0;
 		recordedSiteIds.clear();
 	} );
 
@@ -232,6 +256,13 @@ describe( 'premium analytics preview "not shown" event', () => {
 			'is_p2',
 			() => {
 				mockIsP2 = true;
+			},
+		],
+		[
+			'atomic_hold',
+			() => {
+				mockIsAtomic = true;
+				mockPremiumAnalyticsStatus = { data: undefined, isLoading: true, isError: false };
 			},
 		],
 		[
@@ -302,6 +333,84 @@ describe( 'premium analytics preview "not shown" event', () => {
 		renderNotices();
 
 		expect( notShownEvents() ).toEqual( [] );
+	} );
+
+	it.each( [ true, false ] )( 'does not hold Simple with Atomic flag %s', ( flag ) => {
+		mockFlags()[ 'stats/premium-analytics-preview-atomic' ] = flag;
+		renderNotices();
+		expect( notShownEvents() ).toEqual( [] );
+	} );
+
+	it( 'does not hold Atomic when its flag is on', () => {
+		mockIsAtomic = true;
+		mockFlags()[ 'stats/premium-analytics-preview-atomic' ] = true;
+		renderNotices();
+		expect( notShownEvents() ).toEqual( [] );
+	} );
+
+	it.each( [ true, undefined ] )( 'records atomic_hold before status %s', ( status ) => {
+		mockIsAtomic = true;
+		mockPremiumAnalyticsStatus.data = status;
+		renderNotices();
+		expect( notShownEvents() ).toEqual( [
+			[ EVENT_NAME, { blog_id: 123, reason: 'atomic_hold' } ],
+		] );
+	} );
+
+	it( 'records is_p2 before atomic_hold', () => {
+		mockIsAtomic = true;
+		mockIsP2 = true;
+		renderNotices();
+		expect( notShownEvents() ).toEqual( [ [ EVENT_NAME, { blog_id: 123, reason: 'is_p2' } ] ] );
+	} );
+
+	describe( 'with another notice in the conflict group', () => {
+		beforeEach( () => {
+			mockNoticeDefinitions().push(
+				noticeDefinition( 'gdpr_cookie_consent' ),
+				noticeDefinition( 'premium_analytics_preview' )
+			);
+		} );
+
+		it( 'records suppressed, naming the notice that outranked the invitation', () => {
+			mockNoticesVisibility.data = {
+				gdpr_cookie_consent: true,
+				premium_analytics_preview: true,
+			} as unknown as Notices;
+
+			renderNotices();
+
+			expect( notShownEvents() ).toEqual( [
+				[ EVENT_NAME, { blog_id: 123, reason: 'suppressed', by: 'gdpr_cookie_consent' } ],
+			] );
+		} );
+
+		it( 'stays quiet when the invitation wins the group', () => {
+			mockNoticesVisibility.data = {
+				gdpr_cookie_consent: false,
+				premium_analytics_preview: true,
+			} as unknown as Notices;
+
+			renderNotices();
+
+			expect( notShownEvents() ).toEqual( [] );
+		} );
+
+		// A gate failure is the reason a reader would reach first, and the site was never in the
+		// running for the group to suppress.
+		it( 'keeps the gate reason over suppressed', () => {
+			mockCanManageOptions = false;
+			mockNoticesVisibility.data = {
+				gdpr_cookie_consent: true,
+				premium_analytics_preview: true,
+			} as unknown as Notices;
+
+			renderNotices();
+
+			expect( notShownEvents() ).toEqual( [
+				[ EVENT_NAME, { blog_id: 123, reason: 'not_admin' } ],
+			] );
+		} );
 	} );
 
 	it( 'stays quiet for a site that was offered the invitation and then dismissed it', () => {

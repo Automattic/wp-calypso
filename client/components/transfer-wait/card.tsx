@@ -115,7 +115,7 @@ export default function TransferWaitCard( {
 					{
 						icon: 'time',
 						text: translate(
-							'Setting up usually takes about a minute — your site is getting its own dedicated server.'
+							'Setting up usually takes about a minute — your site is moving to a dedicated server.'
 						),
 					},
 					{

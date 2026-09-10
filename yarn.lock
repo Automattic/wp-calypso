@@ -2193,6 +2193,7 @@ __metadata:
     copyfiles: "npm:^2.4.1"
     css-loader: "npm:^6.11.0"
     debug: "npm:^4.4.1"
+    email-validator: "npm:^2.0.4"
     i18n-calypso: "workspace:^"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -2534,6 +2535,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/survicate@workspace:packages/survicate"
   dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/load-script": "workspace:^"
     debug: "npm:^4.4.1"

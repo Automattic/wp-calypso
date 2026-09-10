@@ -189,9 +189,14 @@ function BlueprintCtaButton( {
 	// so the finished site is waiting the moment the customer pays; dest=site-spec hands them to
 	// the AI site-spec afterwards. The step falls back to the legacy Simple-site runner when the
 	// blueprint has no archive.
+	// from_wfm=1 opts this CTA into the WoW fleet: /sites/new hands out a
+	// pre-provisioned Atomic site instead of building one, so the customer skips
+	// the provision wait. Purely an opt-in hint — the server falls back to the
+	// ordinary funnel build when the fleet is disabled, empty, or contended.
 	const href = addQueryArgs( '/setup/onboarding/blueprint', {
 		blueprint: blueprintId,
 		wow_funnel: 'blueprint',
+		from_wfm: 1,
 		dest: 'site-spec',
 		ref: `theme-${ themeId }`,
 	} );
