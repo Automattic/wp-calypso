@@ -1,5 +1,5 @@
 import { store as coreStore } from '@wordpress/core-data';
-import { dispatch, resolveSelect } from '@wordpress/data';
+import { dispatch, resolveSelect, select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { bindToEditorPath } from '../../utils/canvas-guard';
 import { checkpointKeys, withCheckpoint, type CheckpointRecorder } from '../../utils/checkpoints';
@@ -21,11 +21,7 @@ import { setSiteMetadata } from '../../utils/site-metadata';
 import { getSiteRecord } from '../../utils/site-record';
 import { setSiteTitle } from '../../utils/site-title';
 import { errorResult, successResult } from '../ability-result';
-import {
-	editorNavigateCallback,
-	getLoadedPageId,
-	PAGES_LIST_PATH,
-} from '../editor-navigate/callback';
+import { editorNavigateCallback, PAGES_LIST_PATH } from '../editor-navigate/callback';
 import { buildNavigationItems } from './navigation-items';
 import type { AbilityResult } from '../types';
 
@@ -285,6 +281,21 @@ const coreDispatch = () => dispatch( coreStore ) as unknown as CoreDispatch;
 
 const coreResolve = () => resolveSelect( coreStore ) as unknown as CoreResolve;
 
+/** Whether the editor has this record open — a post or page in the post editor, a page in the site editor. */
+const isOpenInEditor = ( entityName: string, recordId: number | string ): boolean => {
+	const editor = select( 'core/editor' ) as
+		| {
+				getCurrentPostType?: () => string | undefined;
+				getCurrentPostId?: () => number | string | undefined;
+		  }
+		| undefined;
+
+	return (
+		editor?.getCurrentPostType?.() === entityName &&
+		String( editor.getCurrentPostId?.() ) === String( recordId )
+	);
+};
+
 /**
  * The domains an edit touches, so a restore puts back only what changed.
  *
@@ -415,7 +426,7 @@ async function applyRecordEdit(
 	applied: AppliedChanges,
 	recorder: CheckpointRecorder
 ): Promise< void > {
-	const { entityType, entityName, recordId, record, options } = entity;
+	const { entityType, entityName, recordId, record } = entity;
 	const updated = reportUpdated( applied, entity );
 
 	// Resolved first: `editEntityRecord()` reads the persisted record to tell a
@@ -472,7 +483,6 @@ async function applyRecordEdit(
 			// Checkpointed, so `restore-checkpoint` is its undo and the editor's
 			// stack would be a second, competing one.
 			await coreDispatch().editEntityRecord( entityType, entityName, recordId, menuWrite, {
-				...options,
 				undoIgnore: true,
 			} );
 		} catch ( error ) {
@@ -491,14 +501,11 @@ async function applyRecordEdit(
 		updated();
 	}
 
+	// The agent's `options` stay out of edits: the only one core-data reads
+	// here is `undoIgnore`, and whether a write keeps the editor's undo is
+	// decided above, not by the request.
 	if ( Object.keys( recordToWrite ).length ) {
-		await coreDispatch().editEntityRecord(
-			entityType,
-			entityName,
-			recordId,
-			recordToWrite,
-			options
-		);
+		await coreDispatch().editEntityRecord( entityType, entityName, recordId, recordToWrite );
 	}
 
 	updated();
@@ -547,26 +554,29 @@ async function applyEdits(
 }
 
 /**
- * Routes the editor off a page about to be deleted — to the front page, or to
- * the pages list when the front page is the posts index or the page itself —
- * through `editor-navigate`, which saves, navigates and waits for the
- * destination to load. Only the site editor's router can do that without a
- * full page load, which could cut the delete request off, so the post editor
- * refuses instead. The canvas binding is handed over first, as the guard does
- * for the ability: left on the page being deleted, the move would read as the
- * user leaving and abort the request.
+ * Routes the editor off a record about to be deleted — to the front page, or
+ * to the pages list when the site shows posts on the front or the page is the
+ * front page itself — through `editor-navigate`, which saves, navigates and
+ * waits for the destination to load. Only the site editor's router can do
+ * that without a full page load, which could cut the delete request off, so
+ * the post editor refuses instead. The canvas binding is handed over first,
+ * as the guard does for the ability: left on the record being deleted, the
+ * move would read as the user leaving and abort the request.
  */
-async function leavePage( pageId: number | string ): Promise< void > {
+async function leaveRecord( entityName: string, recordId: number | string ): Promise< void > {
 	if ( ! getEditorHistory() ) {
 		throw new Error(
-			`Cannot delete page ${ pageId }: it is open in this editor, which cannot leave it first. ` +
-				'Ask the user to open a different page, then call again.'
+			`Cannot delete ${ entityName } ${ recordId }: it is open in this editor, which cannot ` +
+				'leave it first. Ask the user to open a different page, then call again.'
 		);
 	}
 
-	const frontPageId = Number( getSiteRecord()?.page_on_front );
+	// `page_on_front` lingers after a site switches to showing posts, so it
+	// counts only while the site shows a page there.
+	const site = getSiteRecord();
+	const frontPageId = site?.show_on_front === 'page' ? Number( site.page_on_front ) : 0;
 	const path =
-		frontPageId && frontPageId !== Number( pageId ) ? `/page/${ frontPageId }` : PAGES_LIST_PATH;
+		frontPageId && frontPageId !== Number( recordId ) ? `/page/${ frontPageId }` : PAGES_LIST_PATH;
 	const rollbackBinding = bindToEditorPath( path );
 	const { result } = await editorNavigateCallback( { path } );
 
@@ -581,10 +591,10 @@ async function applyDeletes(
 	applied: AppliedChanges
 ): Promise< void > {
 	for ( const { entityType, entityName, recordId, options } of entities ) {
-		// Deleting the page on screen would leave the editor showing one that no
-		// longer exists.
-		if ( entityName === PAGE && getLoadedPageId() === Number( recordId ) ) {
-			await leavePage( recordId );
+		// Deleting the record on screen would leave the editor showing one that
+		// no longer exists.
+		if ( isOpenInEditor( entityName, recordId ) ) {
+			await leaveRecord( entityName, recordId );
 		}
 
 		// Resolved first so the record is in the store: deleting one that was
