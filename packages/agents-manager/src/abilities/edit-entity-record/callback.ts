@@ -14,8 +14,14 @@ import {
 import { getPageTitle, setPageTitle } from '../../utils/page-title';
 import { logSiteMetadata, logSiteSession } from '../../utils/session-log';
 import { setSiteMetadata } from '../../utils/site-metadata';
+import { getSiteRecord } from '../../utils/site-record';
 import { setSiteTitle } from '../../utils/site-title';
 import { errorResult, successResult } from '../ability-result';
+import {
+	editorNavigateCallback,
+	getLoadedPageId,
+	PAGES_LIST_PATH,
+} from '../editor-navigate/callback';
 import { buildNavigationItems } from './navigation-items';
 import type { AbilityResult } from '../types';
 
@@ -412,6 +418,24 @@ async function applyEdits(
 	}
 }
 
+/**
+ * Routes the editor away from a page about to be deleted: to the front page,
+ * or to the pages list when the front page is the posts index or the page
+ * itself. Through `editor-navigate`, which saves, navigates and waits for the
+ * destination to load — so the delete runs once the canvas has let go of the
+ * record.
+ */
+async function leavePage( pageId: number | string ): Promise< void > {
+	const frontPageId = Number( getSiteRecord()?.page_on_front );
+	const path =
+		frontPageId && frontPageId !== Number( pageId ) ? `/page/${ frontPageId }` : PAGES_LIST_PATH;
+	const { result } = await editorNavigateCallback( { path } );
+
+	if ( ! result.success ) {
+		throw new Error( `Could not leave the page before deleting it: ${ result.error }` );
+	}
+}
+
 async function applyDeletes( entities: EntityRef[], applied: AppliedChanges ): Promise< void > {
 	for ( const { entityType, entityName, recordId, options } of entities ) {
 		if ( ! entityType || ! entityName || recordId === undefined ) {
@@ -424,10 +448,11 @@ async function applyDeletes( entities: EntityRef[], applied: AppliedChanges ): P
 			);
 		}
 
-		// TODO (ability-migration): Route away before deleting the page the editor
-		// is showing, which is left on a page that no longer exists. Waiting on
-		// `editor-navigate`'s history bridge; then read `page_on_front` from
-		// `root/site` and navigate there, as Big Sky's `goToHomePage()` does.
+		// Deleting the page on screen would leave the editor showing one that no
+		// longer exists.
+		if ( entityName === PAGE && getLoadedPageId() === Number( recordId ) ) {
+			await leavePage( recordId );
+		}
 
 		// Resolved first so the record is in the store: deleting one that was
 		// never fetched leaves the editor holding a stale copy.

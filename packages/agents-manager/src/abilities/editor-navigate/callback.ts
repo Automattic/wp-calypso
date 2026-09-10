@@ -11,7 +11,7 @@ import type { AbilityResult } from '../types';
 // The two navigable targets: one page, or the pages list. The backend
 // documents both for this tool id — see `ability.editor-navigate.php`'s
 // model instructions.
-const PAGES_LIST_PATH = 'all-pages';
+export const PAGES_LIST_PATH = 'all-pages';
 const PAGES_LIST_ROUTE = '/page';
 
 // `history.navigate()` resolves on the route change, not on the editor loading
@@ -295,7 +295,7 @@ async function saveEverything(): Promise< void > {
  * match could accept a template or a menu as the destination page — the same
  * invariant `utils/canvas-binding.ts` keys its canvases on.
  */
-const getLoadedPageId = (): number | undefined => {
+export const getLoadedPageId = (): number | undefined => {
 	const editor = editorSelect();
 
 	return editor?.getCurrentPostType?.() === 'page'
