@@ -1,5 +1,5 @@
 import { agencyQuery, activeAgencyQuery, pendingAgencySitesQuery } from '@automattic/api-queries';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { home, globe, layout, pages, tag, currencyDollar, people } from '@wordpress/icons';
 import { hasWpcomLicenseWithoutSite } from '../../agency/sites/need-setup/lib';
@@ -24,16 +24,42 @@ import {
 } from '../router/agency';
 import type { AnyRoute } from '@tanstack/react-router';
 
+function SitesLink() {
+	return (
+		<SidebarMenuItem icon={ layout } to="/sites">
+			{ __( 'Sites' ) }
+		</SidebarMenuItem>
+	);
+}
+
+/**
+ * Suspends so the item takes its final shape before the menu paints. Swapping
+ * the link for an expandable item once the request lands shifts the menu and
+ * risks the Google Translate crash described in client/dashboard/AGENTS.md.
+ */
+function SitesMenuItem( { agencyId }: { agencyId: number } ) {
+	const { data: pendingSites } = useSuspenseQuery( pendingAgencySitesQuery( agencyId ) );
+
+	// Mirrors the route guard: without a paid license awaiting a site there is
+	// nothing for the Needs setup screen to show.
+	if ( ! pendingSites.some( hasWpcomLicenseWithoutSite ) ) {
+		return <SitesLink />;
+	}
+
+	return (
+		<SidebarExpandableMenuItem label={ __( 'Sites' ) } icon={ layout } to="/sites">
+			<SidebarMenuItem to="/sites" activeOptions={ { exact: true } }>
+				{ __( 'All' ) }
+			</SidebarMenuItem>
+			<SidebarMenuItem to="/sites/need-setup">{ __( 'Needs setup' ) }</SidebarMenuItem>
+		</SidebarExpandableMenuItem>
+	);
+}
+
 export default function AgencySidebar() {
 	const { supports } = useAppContext();
 	const { data: agency } = useSuspenseQuery( agencyQuery() );
 	const { data: activeAgency } = useSuspenseQuery( activeAgencyQuery() );
-	// Not suspended: the rest of the menu must not wait on this request. The
-	// Needs setup item appears once the pending sites resolve.
-	const { data: pendingSites } = useQuery( {
-		...pendingAgencySitesQuery( activeAgency?.id ?? 0 ),
-		enabled: !! activeAgency?.id,
-	} );
 	if ( agency.isClientUser || ! supports.agency ) {
 		return null;
 	}
@@ -45,10 +71,6 @@ export default function AgencySidebar() {
 	const canAccess = ( route: AnyRoute ) => isRouteAllowedByCapabilities( route, capabilities );
 
 	const canAccessTiers = !! supports.agency.tiers && canAccess( agencyTiersRoute );
-	// Mirrors the route guard: without a paid license awaiting a site there is
-	// nothing for the screen to show.
-	const canAccessNeedSetup =
-		canAccess( agencySitesNeedSetupRoute ) && !! pendingSites?.some( hasWpcomLicenseWithoutSite );
 	const canAccessPartnerDirectory =
 		!! ( supports.agency.partnerDirectory && activeAgency?.partner_directory?.allowed ) &&
 		canAccess( agencyPartnerDirectoryRoute );
@@ -74,17 +96,10 @@ export default function AgencySidebar() {
 			</SidebarMenuItem>
 			{ supports.agency.sites &&
 				canAccess( agencySitesRoute ) &&
-				( canAccessNeedSetup ? (
-					<SidebarExpandableMenuItem label={ __( 'Sites' ) } icon={ layout } to="/sites">
-						<SidebarMenuItem to="/sites" activeOptions={ { exact: true } }>
-							{ __( 'All' ) }
-						</SidebarMenuItem>
-						<SidebarMenuItem to="/sites/need-setup">{ __( 'Needs setup' ) }</SidebarMenuItem>
-					</SidebarExpandableMenuItem>
+				( activeAgency?.id && canAccess( agencySitesNeedSetupRoute ) ? (
+					<SitesMenuItem agencyId={ activeAgency.id } />
 				) : (
-					<SidebarMenuItem icon={ layout } to="/sites">
-						{ __( 'Sites' ) }
-					</SidebarMenuItem>
+					<SitesLink />
 				) ) }
 			{ supports.agency.team && canAccess( agencyTeamRoute ) && (
 				<SidebarMenuItem icon={ people } to="/team">
