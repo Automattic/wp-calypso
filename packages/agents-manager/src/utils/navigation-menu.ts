@@ -45,6 +45,13 @@ const NAVIGATION_BLOCK = 'core/navigation';
 export const NAVIGATION_LINK_BLOCK = 'core/navigation-link';
 export const NAVIGATION_SUBMENU_BLOCK = 'core/navigation-submenu';
 
+/**
+ * The fields that hold the items: `content` is what persists, `blocks` what the
+ * editor reads. They are written and saved together, and nothing else on the
+ * record — a title, a status — is touched.
+ */
+export const MENU_FIELDS = [ 'blocks', 'content' ];
+
 // Resolved by name to keep `@wordpress/block-editor` out of this module.
 const BLOCK_EDITOR_STORE = 'core/block-editor';
 
@@ -53,30 +60,50 @@ interface BlockEditorSelect {
 	getBlock?: ( clientId: string ) => { attributes?: { ref?: unknown } } | null;
 }
 
+interface CoreResolve {
+	getEditedEntityRecord: (
+		kind: string,
+		name: string,
+		id: MenuId
+	) => Promise< NavigationRecord | null >;
+	getEntityRecords: (
+		kind: string,
+		name: string,
+		query: Record< string, unknown >
+	) => Promise< NavigationRecord[] | null >;
+}
+
 interface CoreDispatch {
 	editEntityRecord: (
 		kind: string,
 		name: string,
-		id: number | string,
+		id: MenuId,
 		edits: Record< string, unknown >,
 		options: { undoIgnore: boolean }
 	) => Promise< unknown >;
-	saveEditedEntityRecord: (
+	__experimentalSaveSpecifiedEntityEdits: (
 		kind: string,
 		name: string,
-		id: number | string,
+		id: MenuId,
+		fields: string[],
 		options: { throwOnError: boolean }
 	) => Promise< unknown >;
 }
+
+const coreResolve = () => resolveSelect( coreStore ) as unknown as CoreResolve;
 
 const normalizeLabel = ( label: unknown ) =>
 	String( label ?? '' )
 		.trim()
 		.toLocaleLowerCase();
 
-/** A record's items, from its blocks or by parsing its serialized content. */
+/**
+ * A record's items: its blocks once the editor has touched it, otherwise parsed
+ * from its serialized content. An empty `blocks` is a cleared menu, not an
+ * unedited one, so any array is taken as it is.
+ */
 const getItems = ( record: NavigationRecord ): NavigationBlock[] => {
-	if ( Array.isArray( record.blocks ) && record.blocks.length ) {
+	if ( Array.isArray( record.blocks ) ) {
 		return record.blocks;
 	}
 
@@ -105,16 +132,26 @@ function getRenderedMenuIds(): MenuId[] {
 	];
 }
 
-/** Every menu worth searching for a page, the rendered ones first. */
-function getMenuIds(): MenuId[] {
-	const rendered = getRenderedMenuIds();
-	const fromMetadata = getSiteMetadata()?.navigationId;
+/**
+ * Every menu the site has, the rendered ones first, then the one site metadata
+ * names, then the rest. A menu off screen still holds its links, so a page
+ * rename or deletion has to reach it too.
+ */
+async function getMenuIds(): Promise< MenuId[] > {
+	const records =
+		( await coreResolve().getEntityRecords( 'postType', 'wp_navigation', {
+			per_page: -1,
+			status: [ 'publish', 'draft' ],
+		} ) ) ?? [];
+	const ids = [ ...getRenderedMenuIds() ];
 
-	if ( ! isMenuId( fromMetadata ) || rendered.some( ( id ) => isSameMenuId( id, fromMetadata ) ) ) {
-		return rendered;
+	for ( const id of [ getSiteMetadata()?.navigationId, ...records.map( ( r ) => r.id ) ] ) {
+		if ( isMenuId( id ) && ! ids.some( ( known ) => isSameMenuId( known, id ) ) ) {
+			ids.push( id );
+		}
 	}
 
-	return [ ...rendered, fromMetadata ];
+	return ids;
 }
 
 /**
@@ -130,19 +167,8 @@ function getMenuIdForNewPage(): MenuId | undefined {
 	return isMenuId( fromMetadata ) ? fromMetadata : getRenderedMenuIds()[ 0 ];
 }
 
-const readMenu = async ( id: MenuId ): Promise< NavigationRecord | null > => {
-	const record = await (
-		resolveSelect( coreStore ) as unknown as {
-			getEditedEntityRecord: (
-				kind: string,
-				name: string,
-				id: MenuId
-			) => Promise< NavigationRecord | null >;
-		}
-	 ).getEditedEntityRecord( 'postType', 'wp_navigation', id );
-
-	return record || null;
-};
+const readMenu = async ( id: MenuId ): Promise< NavigationRecord | null > =>
+	( await coreResolve().getEditedEntityRecord( 'postType', 'wp_navigation', id ) ) || null;
 
 export const writeMenuItems = async ( id: MenuId, items: NavigationBlock[] ): Promise< void > => {
 	const coreDispatch = dispatch( coreStore ) as unknown as CoreDispatch | undefined;
@@ -228,10 +254,12 @@ const rejectItems = (
  */
 const matchesPage =
 	( pageId: number | string, previousLabel?: string ) => ( item: NavigationBlock ) => {
-		const itemId = item.attributes?.id;
+		const { id: itemId, type } = item.attributes ?? {};
 
+		// An id is only unique within a kind — a category can carry the same
+		// number as a page — so it counts on a page link alone.
 		if ( itemId ) {
-			return String( itemId ) === String( pageId );
+			return ( type ?? 'page' ) === 'page' && String( itemId ) === String( pageId );
 		}
 
 		return (
@@ -245,31 +273,39 @@ const matchesPage =
  *
  * A page rename may overwrite a label that tracked the page's title; one the
  * user has since chosen is theirs to keep. Applied whether or not the item
- * carries an id, so the same label is treated the same way either way.
+ * carries an id, so the same label is treated the same way either way. Only an
+ * unknown previous title skips the check — an empty one is a title too.
  */
 const followsPage = ( item: NavigationBlock, previousLabel?: string ) =>
-	! previousLabel || normalizeLabel( item.attributes?.label ) === normalizeLabel( previousLabel );
+	previousLabel === undefined ||
+	normalizeLabel( item.attributes?.label ) === normalizeLabel( previousLabel );
 
 /**
- * Persists a menu's pending edits, putting `previous` back if the save fails.
+ * Persists a menu's items, putting `previous` back if the save fails.
  *
  * A menu write following a page *edit* is left unsaved on purpose: the two join
  * one unsaved-changes set and save together. A write following a creation or
  * deletion has no such partner — the page change has already persisted — so
  * leaving it unsaved would let a reload throw it away while the page stands.
  *
- * The write is applied locally and `undoIgnore` keeps it out of the editor's
- * stack, so a refused save would otherwise strand it with no undo of any kind.
- * Errors are suppressed by default, which would report a menu change that never
- * reached the server as a success.
+ * Only the item fields are saved: a title or status edit the user left pending
+ * on the menu is theirs to save, not ours. The write is applied locally and
+ * `undoIgnore` keeps it out of the editor's stack, so a refused save would
+ * otherwise strand it with no undo of any kind. Errors are suppressed by
+ * default, which would report a menu change that never reached the server as a
+ * success.
  */
 const saveMenu = async ( id: MenuId, previous: NavigationBlock[] ): Promise< void > => {
 	const coreDispatch = dispatch( coreStore ) as unknown as CoreDispatch | undefined;
 
 	try {
-		await coreDispatch?.saveEditedEntityRecord( 'postType', 'wp_navigation', id, {
-			throwOnError: true,
-		} );
+		await coreDispatch?.__experimentalSaveSpecifiedEntityEdits(
+			'postType',
+			'wp_navigation',
+			id,
+			MENU_FIELDS,
+			{ throwOnError: true }
+		);
 	} catch ( error ) {
 		await writeMenuItems( id, previous );
 
@@ -287,8 +323,10 @@ export async function addNavigationItem( item: NavigationItem ): Promise< void >
 
 	const menu = await readMenu( menuId );
 
+	// The site named this menu, so nothing to read is a failure to report — a
+	// silent return would call the page created and its item never added.
 	if ( ! menu ) {
-		return;
+		throw new Error( `Navigation menu not found: ${ menuId }` );
 	}
 
 	const previous = getItems( menu );
@@ -322,9 +360,11 @@ async function rewriteMenusHolding(
 	rewrite: ( items: NavigationBlock[] ) => NavigationBlock[] | null,
 	save = false
 ): Promise< void > {
-	for ( const menuId of getMenuIds() ) {
+	for ( const menuId of await getMenuIds() ) {
 		const menu = await readMenu( menuId );
 
+		// Only a rendered `ref` pointing at a deleted menu reads as nothing;
+		// there is no link left there to keep in step.
 		if ( ! menu ) {
 			continue;
 		}
@@ -345,28 +385,28 @@ async function rewriteMenusHolding(
 }
 
 /**
- * The menus currently holding an item for this page.
- *
- * A rename overwrites that item's label, which may be one the user chose, so a
- * caller about to rename can snapshot these menus first and have the undo put
- * the exact label back rather than the page's old title.
+ * The menus a rename of this page will relabel, so the caller can snapshot
+ * them first. Only those: a snapshot of a menu the rename leaves alone would
+ * let a later undo overwrite whatever the user changed there since.
  */
-export async function getMenuIdsHolding(
+export async function getMenuIdsToRelabel(
 	pageId: number | string,
 	previousLabel?: string
 ): Promise< MenuId[] > {
 	const matches = matchesPage( pageId, previousLabel );
-	const holding: MenuId[] = [];
+	const relabels = ( item: NavigationBlock ) =>
+		matches( item ) && followsPage( item, previousLabel );
+	const ids: MenuId[] = [];
 
-	for ( const menuId of getMenuIds() ) {
+	for ( const menuId of await getMenuIds() ) {
 		const menu = await readMenu( menuId );
 
-		if ( menu && someItem( getItems( menu ), matches ) ) {
-			holding.push( menuId );
+		if ( menu && someItem( getItems( menu ), relabels ) ) {
+			ids.push( menuId );
 		}
 	}
 
-	return holding;
+	return ids;
 }
 
 /** Relabels a page's menu item. */

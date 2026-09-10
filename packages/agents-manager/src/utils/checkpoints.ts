@@ -452,22 +452,26 @@ export async function withCheckpoint< T >(
 
 	// No keys means no domain to put back, and every restore is key-gated —
 	// so a checkpoint here would offer the user an undo that does nothing.
-	const checkpointId = keys.length && callId && ! hasCheckpoint( callId ) ? callId : null;
+	const checkpointId = keys.length && callId ? callId : null;
 
-	if ( checkpointId ) {
+	// A repeat of the same call keeps the first snapshot but still records what
+	// it touches; only the run that created the checkpoint may drop it.
+	const created = !! checkpointId && ! hasCheckpoint( checkpointId );
+
+	if ( created ) {
 		setCheckpoint( checkpointId, keys, { toolId, summary } );
 	}
 
 	try {
 		const result = await write( checkpointId ? createRecorder( checkpointId ) : NO_RECORDER );
 
-		if ( checkpointId ) {
+		if ( created ) {
 			dropUnrecordedDomains( checkpointId );
 		}
 
 		return result;
 	} catch ( error ) {
-		if ( checkpointId ) {
+		if ( created ) {
 			clearCheckpoint( checkpointId );
 		}
 
@@ -494,10 +498,10 @@ export async function restoreCheckpoint( id: string ): Promise< void > {
 	await restoreSiteTitleSnapshot( checkpoint );
 	await restoreSiteMetadataSnapshot( checkpoint );
 
-	// Menus first: a page rename relabels the menu item that follows it, so it
-	// has to run against the menu this checkpoint put back.
-	await restoreMenuSnapshots( checkpoint );
+	// Titles first: a page deleted since makes `setPageTitle()` throw, and that
+	// has to happen before any menu is rewritten.
 	await restorePageRenames( checkpoint );
+	await restoreMenuSnapshots( checkpoint );
 }
 
 export interface CheckpointContextItem extends CheckpointMetadata {
