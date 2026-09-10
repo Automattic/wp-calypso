@@ -533,7 +533,7 @@ export class FullPostView extends Component {
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
-			if ( this.props.isSeenEnabled && ! post.is_seen ) {
+			if ( this.props.isSeenEnabled ) {
 				this.markAsSeen();
 			}
 

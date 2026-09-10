@@ -87,7 +87,10 @@ export const useSubscribedFeedsInfo = () => {
 	return getFeedsInfo( sites );
 };
 
-export const useHasSiteSubscriptionOrganization = ( feedId?: FollowId, blogId?: FollowId ) => {
+export const useSiteSubscriptionOrganizationId = (
+	feedId?: FollowId,
+	blogId?: FollowId
+): number => {
 	const { data } = useSiteSubscriptions();
 	const feedFollow = hasId( feedId )
 		? getSiteSubscriptionByFeedIdFromData( data, feedId )
@@ -96,5 +99,5 @@ export const useHasSiteSubscriptionOrganization = ( feedId?: FollowId, blogId?: 
 		feedFollow ??
 		( hasId( blogId ) ? getSiteSubscriptionByBlogIdFromData( data, blogId ) : undefined );
 
-	return !! follow?.organization_id;
+	return follow?.organization_id ?? NO_ORG_ID;
 };

@@ -8,7 +8,11 @@ import PropTypes from 'prop-types';
 import { createRef, PureComponent } from 'react';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import { useFeedQuery } from 'calypso/reader/data/feed';
-import { useIsSeenEnabled, useMarkAsSeenMutation } from 'calypso/reader/data/seen-posts';
+import {
+	useIsSeenEnabled,
+	useIsSeenVisible,
+	useMarkAsSeenMutation,
+} from 'calypso/reader/data/seen-posts';
 import { useSite } from 'calypso/reader/data/site';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -24,6 +28,7 @@ export class CrossPost extends PureComponent {
 		site: PropTypes.object,
 		feed: PropTypes.object,
 		isSeenEnabled: PropTypes.bool,
+		isSeenVisible: PropTypes.bool,
 		requestMarkAsSeen: PropTypes.func.isRequired,
 	};
 
@@ -79,7 +84,7 @@ export class CrossPost extends PureComponent {
 	markAsSeen = () => {
 		const { isSeenEnabled, post, postKey, requestMarkAsSeen } = this.props;
 		const feedId = postKey?.feedId || post.feed_ID;
-		if ( ! isSeenEnabled || post.is_seen || ! feedId || ! post.feed_item_ID ) {
+		if ( ! isSeenEnabled || ! feedId || ! post.feed_item_ID ) {
 			return;
 		}
 
@@ -177,7 +182,7 @@ export class CrossPost extends PureComponent {
 			reader__card: true,
 			'is-x-post': true,
 			'is-selected': this.props.isSelected,
-			'is-seen': this.props.isSeenEnabled && post?.is_seen,
+			'is-seen': this.props.isSeenVisible,
 		} );
 
 		// Remove the x-post text from the title.
@@ -230,11 +235,9 @@ export default function CrossPostContainer( props ) {
 	const resolvedFeedId = feedId || site?.feed_ID;
 	const { data: feedFromSite } = useFeedQuery( feedFromKey ? undefined : resolvedFeedId );
 	const { mutate: requestMarkAsSeen } = useMarkAsSeenMutation();
-	const isSeenEnabled = useIsSeenEnabled( {
-		feedId: resolvedFeedId,
-		blogId: siteId,
-		post: props.post,
-	} );
+	const seenProps = { feedId: resolvedFeedId, blogId: siteId, post: props.post };
+	const isSeenEnabled = useIsSeenEnabled( seenProps );
+	const isSeenVisible = useIsSeenVisible( seenProps );
 
 	return (
 		<LocalizedCrossPost
@@ -242,6 +245,7 @@ export default function CrossPostContainer( props ) {
 			site={ site }
 			feed={ feedFromKey || feedFromSite }
 			isSeenEnabled={ isSeenEnabled }
+			isSeenVisible={ isSeenVisible }
 			requestMarkAsSeen={ requestMarkAsSeen }
 		/>
 	);
