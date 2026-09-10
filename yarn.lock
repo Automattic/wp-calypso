@@ -1017,7 +1017,6 @@ __metadata:
     "@automattic/material-design-icons": "workspace:^"
     "@automattic/number-formatters": "npm:^1.2.0"
     "@automattic/typography": "workspace:^"
-    "@automattic/ui": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
     "@emotion/css": "npm:^11.11.2"
