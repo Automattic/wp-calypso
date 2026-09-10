@@ -39,7 +39,9 @@ describe( 'NotePanel density menu', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Settings' } ) );
 
-		expect( screen.queryByRole( 'menuitemradio', { name: 'Simplified' } ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'menuitemradio', { name: /^Simplified/ } )
+		).not.toBeInTheDocument();
 		expect( screen.getByRole( 'menuitem', { name: 'Notification settings' } ) ).toBeVisible();
 	} );
 
@@ -48,12 +50,12 @@ describe( 'NotePanel density menu', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Settings' } ) );
 
-		expect( screen.getByRole( 'menuitemradio', { name: 'Classic' } ) ).toHaveAttribute(
+		expect( screen.getByRole( 'menuitemradio', { name: /^Classic/ } ) ).toHaveAttribute(
 			'aria-checked',
 			'true'
 		);
 
-		await userEvent.click( screen.getByRole( 'menuitemradio', { name: 'Simplified' } ) );
+		await userEvent.click( screen.getByRole( 'menuitemradio', { name: /^Simplified/ } ) );
 
 		await waitFor( () => {
 			expect( post ).toHaveBeenCalled();
