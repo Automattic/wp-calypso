@@ -77,16 +77,17 @@ export function getDefaultView( {
 export function recordViewChanges(
 	oldView: View,
 	newView: View,
-	recordTracksEvent: AnalyticsClient[ 'recordTracksEvent' ]
+	recordTracksEvent: AnalyticsClient[ 'recordTracksEvent' ],
+	eventPrefix = 'calypso_dashboard_sites'
 ) {
 	// Fire once when the user starts searching (empty -> non-empty), rather than
 	// on every keystroke, and without logging the term itself.
 	if ( ! oldView.search && newView.search ) {
-		recordTracksEvent( 'calypso_dashboard_sites_search' );
+		recordTracksEvent( `${ eventPrefix }_search` );
 	}
 
 	if ( oldView.type !== newView.type ) {
-		recordTracksEvent( 'calypso_dashboard_sites_view_type_changed', { type: newView.type } );
+		recordTracksEvent( `${ eventPrefix }_view_type_changed`, { type: newView.type } );
 
 		// Changing view type can also change fields, but they weren't triggered by a user
 		// action, so we won't record those tracks events.
@@ -97,7 +98,7 @@ export function recordViewChanges(
 		oldView.sort?.field !== newView.sort?.field ||
 		oldView.sort?.direction !== newView.sort?.direction
 	) {
-		recordTracksEvent( 'calypso_dashboard_sites_view_sort_changed', {
+		recordTracksEvent( `${ eventPrefix }_view_sort_changed`, {
 			field: newView.sort?.field,
 			direction: newView.sort?.direction,
 		} );
@@ -107,13 +108,13 @@ export function recordViewChanges(
 	const newFilterFields = new Set( newView.filters?.map( ( { field } ) => field ) || [] );
 
 	for ( const added of setDifference( newFilterFields, oldFilterFields ) ) {
-		recordTracksEvent( 'calypso_dashboard_sites_view_filter_changed', {
+		recordTracksEvent( `${ eventPrefix }_view_filter_changed`, {
 			change: 'added',
 			field: added,
 		} );
 	}
 	for ( const removed of setDifference( oldFilterFields, newFilterFields ) ) {
-		recordTracksEvent( 'calypso_dashboard_sites_view_filter_changed', {
+		recordTracksEvent( `${ eventPrefix }_view_filter_changed`, {
 			change: 'removed',
 			field: removed,
 		} );
@@ -123,13 +124,13 @@ export function recordViewChanges(
 	const newShownFields = new Set( newView.fields || [] );
 
 	for ( const added of setDifference( newShownFields, oldShownFields ) ) {
-		recordTracksEvent( 'calypso_dashboard_sites_view_field_visibility_changed', {
+		recordTracksEvent( `${ eventPrefix }_view_field_visibility_changed`, {
 			change: 'added',
 			field: added,
 		} );
 	}
 	for ( const removed of setDifference( oldShownFields, newShownFields ) ) {
-		recordTracksEvent( 'calypso_dashboard_sites_view_field_visibility_changed', {
+		recordTracksEvent( `${ eventPrefix }_view_field_visibility_changed`, {
 			change: 'removed',
 			field: removed,
 		} );

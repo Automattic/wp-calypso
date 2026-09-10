@@ -313,6 +313,12 @@ export const marketplacePurchasesRoute = createRoute( {
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'marketplace/purchases',
+	loader: async () => {
+		await Promise.all( [
+			queryClient.ensureQueryData( activeAgencyQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
+	},
 } ).lazy( () =>
 	import( '../../agency/marketplace/purchases' ).then( ( d ) =>
 		createLazyRoute( 'marketplace-purchases' )( {
