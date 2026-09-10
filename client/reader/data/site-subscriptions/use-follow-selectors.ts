@@ -7,6 +7,7 @@ import {
 	getOrganizationSiteSubscriptionsFromData,
 } from '@automattic/api-queries';
 import { NO_ORG_ID } from 'calypso/state/reader/organizations/constants';
+import { useFeedQuery } from '../feed';
 import { useSiteSubscriptions } from './use-site-subscriptions';
 import type { SiteSubscriptionItem } from '@automattic/api-core';
 
@@ -87,7 +88,10 @@ export const useSubscribedFeedsInfo = () => {
 	return getFeedsInfo( sites );
 };
 
-export const useHasSiteSubscriptionOrganization = ( feedId?: FollowId, blogId?: FollowId ) => {
+export const useSiteSubscriptionOrganizationId = (
+	feedId?: FollowId,
+	blogId?: FollowId
+): number => {
 	const { data } = useSiteSubscriptions();
 	const feedFollow = hasId( feedId )
 		? getSiteSubscriptionByFeedIdFromData( data, feedId )
@@ -96,5 +100,19 @@ export const useHasSiteSubscriptionOrganization = ( feedId?: FollowId, blogId?: 
 		feedFollow ??
 		( hasId( blogId ) ? getSiteSubscriptionByBlogIdFromData( data, blogId ) : undefined );
 
-	return !! follow?.organization_id;
+	return follow?.organization_id ?? NO_ORG_ID;
 };
+
+/**
+ * Resolve the organization owning a feed.
+ *
+ * `useSiteSubscriptionOrganizationId` only knows about feeds the viewer follows, so fall back to
+ * the feed record. Without it an Automattician who does not follow an a8c P2 sees `NO_ORG_ID` and
+ * the AFK guard never fires, even though the seen feature is enabled for them via WP For Teams.
+ */
+export function useOrganizationId( feedId?: number | string, blogId?: number | string ): number {
+	const subscriptionOrganizationId = useSiteSubscriptionOrganizationId( feedId, blogId );
+	const { data: feed } = useFeedQuery( subscriptionOrganizationId ? null : feedId );
+
+	return subscriptionOrganizationId || feed?.organization_id || NO_ORG_ID;
+}
