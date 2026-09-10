@@ -215,7 +215,7 @@ const DomainSearchStep: StepType< {
 				! isDomainAndPlanFlow( flow ),
 			// Free-subdomain skip card copy, in order of precedence: per-flow
 			// `freeSubdomainTitle` / `freeSubdomainButtonLabel` overrides, then the WoW
-			// funnel default (paid plan required, so skipping doesn't start a free site),
+			// funnel default (no free-subdomain option to offer, see `isWowFunnel` above),
 			// then the flow default resolved by `getSkipSuggestionCopy`.
 			skipSuggestionCopy: getSkipSuggestionCopy( flow, __, {
 				title: freeSubdomainTitle ?? wowSkipCopy,

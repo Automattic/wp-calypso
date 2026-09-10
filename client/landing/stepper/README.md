@@ -387,6 +387,10 @@ flows keep working unchanged:
   (HundredYearPlanStepWrapper, V2 `Step.CenteredColumnLayout`, V1 `StepContainer`) — the
   subdomain-copy props travel via the shared `config` object, which all three branches render. See
   [`steps-repository/domain-search/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/domain-search/index.tsx).
+- `%(domain)s` is interpolated only on the free-subdomain card itself. A `?wow_funnel` request
+  hides that card (`hideFreeSubdomainSuggestion`) and renders a skip-only control that has no
+  subdomain to substitute, so a `freeSubdomainTitle` carrying the placeholder renders it
+  literally there.
 - The `unified-plans` (`plans`) step exposes `headerText` and `subHeaderText` (override the
   per-intent header/subheader chains in `getHeaderText()` / `getSubheaderText()`), the
   plan-visibility toggles `hideFreePlan`, `hideEnterprisePlan`, `hidePersonalPlan`,
