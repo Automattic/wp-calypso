@@ -33,29 +33,24 @@ const renderPanel = ( { isViewSettingsEnabled }: { isViewSettingsEnabled: boolea
 	return { store, post };
 };
 
-describe( 'NotePanel density menu', () => {
-	it( 'offers the density options only when the host has enabled view settings', async () => {
+describe( 'NotePanel settings menu', () => {
+	it( 'offers the layout options only when the host has enabled view settings', async () => {
 		renderPanel( { isViewSettingsEnabled: false } );
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Settings' } ) );
 
-		expect(
-			screen.queryByRole( 'menuitemradio', { name: /^Simplified/ } )
-		).not.toBeInTheDocument();
-		expect( screen.getByRole( 'menuitem', { name: 'Notification settings' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'radio', { name: 'Simplified' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'link', { name: /Notification settings/ } ) ).toBeVisible();
 	} );
 
-	it( 'marks the saved density and saves a new one', async () => {
+	it( 'marks the saved layout and saves a new one', async () => {
 		const { post } = renderPanel( { isViewSettingsEnabled: true } );
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Settings' } ) );
 
-		expect( screen.getByRole( 'menuitemradio', { name: /^Classic/ } ) ).toHaveAttribute(
-			'aria-checked',
-			'true'
-		);
+		expect( screen.getByRole( 'radio', { name: 'Classic' } ) ).toBeChecked();
 
-		await userEvent.click( screen.getByRole( 'menuitemradio', { name: /^Simplified/ } ) );
+		await userEvent.click( screen.getByRole( 'radio', { name: 'Simplified' } ) );
 
 		await waitFor( () => {
 			expect( post ).toHaveBeenCalled();
