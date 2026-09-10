@@ -1,33 +1,41 @@
+import { sitePurchasesQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import expiredIllustration from 'calypso/assets/images/customer-home/disconnected-dark.svg';
 import expiringIllustration from 'calypso/assets/images/customer-home/disconnected.svg';
 import { getRelativeDayString } from 'calypso/dashboard/utils/datetime';
 import { TASK_RENEW_EXPIRED_PLAN } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
-import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
+import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { TranslateResult } from 'i18n-calypso';
 
-const Renew = ( { card, purchases, site } ) => {
+const Renew = ( { card }: { card: string } ) => {
 	const translate = useTranslate();
+	const siteId = useSelector( getSelectedSiteId );
+	const site = useSelector( ( state ) => getSite( state, siteId ) );
+	const { data: purchases } = useQuery( {
+		...sitePurchasesQuery( siteId ?? 0 ),
+		enabled: Boolean( siteId ),
+	} );
 	const hasExpired = card === TASK_RENEW_EXPIRED_PLAN;
 
-	const planPurchase = purchases.find(
-		( purchase ) => purchase.productId === site?.plan.product_id
+	const planPurchase = purchases?.find(
+		( purchase ) => purchase.product_id === site?.plan?.product_id
 	);
 
-	const planName = site?.plan.product_name_short;
-	const expiryText = planPurchase?.expiryDate
-		? getRelativeDayString( new Date( planPurchase.expiryDate ), hasExpired ? 'past' : 'upcoming' )
+	const planName = site?.plan?.product_name_short ?? '';
+	const expiryText = planPurchase?.expiry_date
+		? getRelativeDayString( new Date( planPurchase.expiry_date ), hasExpired ? 'past' : 'upcoming' )
 		: '';
-	const isOwner = site?.plan.user_is_owner;
+	const isOwner = Boolean( site?.plan?.user_is_owner );
 
 	const title = hasExpired
 		? translate( 'Reactivate your %(planName)s plan', { args: { planName } } )
 		: translate( '%(planName)s plan expiring soon', { args: { planName } } );
-	let description;
-	let actionText;
+	let description: TranslateResult | undefined;
+	let actionText: TranslateResult | undefined;
 	if ( isOwner && hasExpired ) {
 		description = translate(
 			'Your %(planName)s plan expired %(timeSinceExpiry)s. Reactivate now to continue enjoying features such as increased storage space, access to expert support, and automatic removal of WordPress.com ads.',
@@ -79,7 +87,9 @@ const Renew = ( { card, purchases, site } ) => {
 		);
 		actionText = translate( 'Got it' );
 	}
-	const actionUrl = isOwner ? `/checkout/renew/${ planPurchase?.id }` : null;
+	const actionProps = isOwner
+		? ( { hasAction: true, actionUrl: `/checkout/renew/${ planPurchase?.ID }` } as const )
+		: ( { hasAction: false } as const );
 	const illustration = hasExpired ? expiredIllustration : expiringIllustration;
 
 	return (
@@ -87,24 +97,14 @@ const Renew = ( { card, purchases, site } ) => {
 			title={ title }
 			description={ description }
 			actionText={ actionText }
-			actionUrl={ actionUrl }
 			badgeText={ translate( 'Action required' ) }
 			illustration={ illustration }
 			isLoading={ ! planPurchase }
 			isUrgent={ hasExpired }
-			hasAction={ isOwner }
 			taskId={ card }
+			{ ...actionProps }
 		/>
 	);
 };
 
-const mapStateToProps = ( state ) => {
-	const siteId = getSelectedSiteId( state );
-
-	return {
-		purchases: getSitePurchases( state, siteId ),
-		site: getSite( state, siteId ),
-	};
-};
-
-export default connect( mapStateToProps )( Renew );
+export default Renew;
