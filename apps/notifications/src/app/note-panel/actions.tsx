@@ -4,6 +4,7 @@ import {
 	DropdownMenu,
 	ExternalLink,
 	RadioControl,
+	__experimentalDivider as Divider,
 	__experimentalHeading as Heading,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -72,22 +73,29 @@ export default function NotePanelActions() {
 					/>
 				) }
 				renderContent={ () => (
-					<VStack spacing={ 3 } style={ { minWidth: '200px', padding: '8px' } }>
+					// The padding sits on each section rather than the stack, so the divider
+					// between them can reach both edges of the popover.
+					<VStack spacing={ 0 } style={ { minWidth: '200px' } }>
 						{ isViewSettingsEnabled && (
-							<VStack spacing={ 2 }>
-								<Heading level={ 3 } size={ 13 } weight={ 500 }>
-									{ __( 'Layout' ) }
-								</Heading>
-								<RadioControl
-									label={ __( 'Layout' ) }
-									hideLabelFromVision
-									selected={ layoutStyle }
-									options={ LAYOUTS }
-									onChange={ setLayoutStyle }
-								/>
-							</VStack>
+							<>
+								<VStack spacing={ 2 } style={ { padding: '8px' } }>
+									<Heading level={ 3 } size={ 13 } weight={ 500 }>
+										{ __( 'Layout' ) }
+									</Heading>
+									<RadioControl
+										label={ __( 'Layout' ) }
+										hideLabelFromVision
+										selected={ layoutStyle }
+										options={ LAYOUTS }
+										onChange={ setLayoutStyle }
+									/>
+								</VStack>
+								<Divider margin={ 0 } />
+							</>
 						) }
-						<ExternalLink href={ SETTINGS_URL }>{ __( 'Notification settings' ) }</ExternalLink>
+						<div style={ { padding: '8px' } }>
+							<ExternalLink href={ SETTINGS_URL }>{ __( 'Notification settings' ) }</ExternalLink>
+						</div>
 					</VStack>
 				) }
 			/>
