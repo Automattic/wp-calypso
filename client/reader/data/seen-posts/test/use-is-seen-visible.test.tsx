@@ -12,7 +12,7 @@ const eligible = { subscriptions: [ a8cSubscription ] };
 const afkPost = {
 	site_is_private: true,
 	author: { login: AUTHOR },
-	tags: { afk: {}, 'afk-vacation': {}, [ `afk-${ AUTHOR }` ]: {} },
+	tags: { afk: { slug: 'afk' } },
 };
 
 describe( 'useIsSeenVisible', () => {

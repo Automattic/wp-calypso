@@ -1,4 +1,4 @@
-import { useSiteSubscriptionOrganizationId } from 'calypso/reader/data/site-subscriptions';
+import { useOrganizationId } from 'calypso/reader/data/site-subscriptions/use-follow-selectors';
 import { SeenArgs, useIsSeenEnabled, isPostAnAFKPost } from './use-is-seen-enabled';
 
 /**
@@ -6,7 +6,7 @@ import { SeenArgs, useIsSeenEnabled, isPostAnAFKPost } from './use-is-seen-enabl
  */
 export function useCanMarkSeen( { feedId, blogId, post }: SeenArgs ): boolean {
 	const isSeenEnabled = useIsSeenEnabled( { feedId, blogId } );
-	const organizationId = useSiteSubscriptionOrganizationId( feedId, blogId );
+	const organizationId = useOrganizationId( feedId, blogId );
 
 	if ( ! isSeenEnabled ) {
 		return false;

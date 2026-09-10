@@ -1,9 +1,7 @@
 import { isAutomatticianQuery, readSubscribedListsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import {
-	useIsSubscribed,
-	useSiteSubscriptionOrganizationId,
-} from 'calypso/reader/data/site-subscriptions';
+import { useIsSubscribed } from 'calypso/reader/data/site-subscriptions';
+import { useOrganizationId } from 'calypso/reader/data/site-subscriptions/use-follow-selectors';
 import { useSelector } from 'calypso/state';
 import { AUTOMATTIC_ORG_ID } from 'calypso/state/reader/organizations/constants';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -20,8 +18,7 @@ export interface SeenArgs {
 	blogId?: number | string; // Route params arrive as strings.
 	post?: {
 		is_seen?: boolean;
-		tags?: Record< string, unknown >;
-		author?: { login?: string };
+		tags?: Record< string, { slug?: string } >;
 		site_is_private?: boolean;
 	};
 }
@@ -32,7 +29,7 @@ export interface SeenArgs {
 export function useIsSeenEnabled( { feedId, blogId }: SeenArgs ): boolean {
 	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 	const isSubscribed = useIsSubscribed( { feedId, blogId } );
-	const organizationId = useSiteSubscriptionOrganizationId( feedId, blogId );
+	const organizationId = useOrganizationId( feedId, blogId );
 	const isWPForTeamsItem = useSelector( ( state ) => isSiteWPForTeams( state, Number( blogId ) ) );
 	const { data: subscribedLists } = useQuery( readSubscribedListsQuery() );
 	const currentRoute = useSelector( getCurrentRoute );
@@ -55,8 +52,14 @@ export function useIsSeenEnabled( { feedId, blogId }: SeenArgs ): boolean {
 }
 
 export function isPostAnAFKPost( orgId: number, post: SeenArgs[ 'post' ] ): boolean {
-	const isAutomatticPrivate = orgId === AUTOMATTIC_ORG_ID && !! post?.site_is_private;
-	const tags = post?.tags ?? {};
+	if ( ! post ) {
+		return false;
+	}
 
-	return isAutomatticPrivate && 'afk' in tags && `afk-${ post?.author?.login }` in tags;
+	const isAutomatticPrivate = orgId === AUTOMATTIC_ORG_ID && !! post?.site_is_private;
+	const isAFKPost = Object.entries( post.tags ?? {} ).some( ( [ name, tag ] ) => {
+		return ( tag.slug ?? name ).toLowerCase() === 'afk';
+	} );
+
+	return isAutomatticPrivate && isAFKPost;
 }
