@@ -505,11 +505,10 @@ export const agencySitesNeedSetupRoute = createRoute( {
 		}
 
 		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
-		if ( ! agency?.id ) {
-			return;
-		}
+		const pendingSites = agency
+			? await queryClient.ensureQueryData( pendingAgencySitesQuery( agency.id ) )
+			: [];
 
-		const pendingSites = await queryClient.ensureQueryData( pendingAgencySitesQuery( agency.id ) );
 		if ( ! pendingSites.some( hasWpcomLicenseWithoutSite ) ) {
 			throw dashboardRedirect( { to: '/sites' } );
 		}
