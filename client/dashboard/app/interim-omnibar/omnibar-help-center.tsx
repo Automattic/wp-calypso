@@ -1,4 +1,4 @@
-import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
+import { useShouldUseUnifiedAgent } from '@automattic/agents-manager/src/hooks/use-should-use-unified-agent';
 import { omnibarSiteIdQuery, siteByIdQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT } from '@automattic/help-center/src/experiments';
