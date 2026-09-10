@@ -74,12 +74,17 @@ export default function SubscriberSummary( { stepContent, status }: SubscriberSu
 			parseInt( stepContent.meta?.already_subscribed_count || '0' ) +
 			parseInt( stepContent.meta?.paid_already_subscribed_count || '0' ) +
 			parseInt( stepContent.meta?.comp_already_subscribed_count || '0' );
+		const compSkipReason = stepContent.meta?.comp_skip_reason;
+		// Comps the server could not grant are counted as failed, but they still arrived as free
+		// subscribers, so counting them here too would both double-count them and contradict the
+		// explanation below.
+		const compFailed = compSkipReason
+			? 0
+			: parseInt( stepContent.meta?.comp_failed_subscribed_count || '0' );
 		const failedTotal =
 			parseInt( stepContent.meta?.failed_subscribed_count || '0' ) +
 			parseInt( stepContent.meta?.paid_failed_subscribed_count || '0' ) +
-			parseInt( stepContent.meta?.comp_failed_subscribed_count || '0' );
-
-		const compSkipReason = stepContent.meta?.comp_skip_reason;
+			compFailed;
 
 		return (
 			<>
@@ -97,7 +102,7 @@ export default function SubscriberSummary( { stepContent, status }: SubscriberSu
 					{ addedPaid > 0 && (
 						<SummaryStat count={ addedPaid } label={ __( 'Paid Subscribers' ) } />
 					) }
-					{ compCount > 0 && (
+					{ addedComp > 0 && (
 						<SummaryStat count={ addedComp } label={ __( 'Comped Subscribers' ) } />
 					) }
 					{ existingTotal > 0 && (
