@@ -40,7 +40,7 @@ describe( 'NotePanel settings menu', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Settings' } ) );
 
 		expect( screen.queryByRole( 'menuitemradio', { name: 'Simplified' } ) ).not.toBeInTheDocument();
-		expect( screen.getByRole( 'menuitem', { name: /Notification settings/ } ) ).toHaveAttribute(
+		expect( screen.getByRole( 'menuitem', { name: 'Notification settings' } ) ).toHaveAttribute(
 			'href',
 			'https://wordpress.com/me/notifications'
 		);
