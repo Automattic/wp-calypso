@@ -31,6 +31,7 @@ import { EmailNonDomainOwnerNotice } from '../components/email-non-domain-owner-
 import { useAnnualSavings } from '../hooks/use-annual-savings';
 import { useDomainFromUrlParam } from '../hooks/use-domain-from-url-param';
 import { useEmailProduct } from '../hooks/use-email-product';
+import { useTitanDowngrade } from '../hooks/use-titan-downgrade';
 import poweredByTitanLogo from '../resources/powered-by-titan-caps.svg';
 import { IntervalLength, MailboxProvider, TitanPlanTier } from '../types';
 import { getTitanTierUpgradeUrl } from '../utils/get-tier-upgrade-url';
@@ -40,7 +41,9 @@ import { isMonthlyEmailProduct } from '../utils/is-monthly-email-product';
 import { getTitanTierFromSlug } from '../utils/titan-tiers';
 import { ExistingForwardsNotice } from './components/existing-forwards-notice';
 import { GoogleWorkspaceCard } from './components/google-workspace-card';
+import { TitanDowngradeModal } from './components/titan-downgrade-modal';
 import { TitanPlanGrid } from './components/titan-plan-grid';
+import type { PendingTitanDowngrade } from './components/titan-downgrade-modal';
 
 import './style.scss';
 
@@ -68,6 +71,31 @@ export default function ChooseEmailSolution() {
 	);
 
 	const { bestAnnualSavings } = useAnnualSavings( domain );
+
+	// The tier the subscription is on today, and therefore what every other card
+	// in the grid is an upgrade or a downgrade relative to.
+	const currentTier = isUpgradeIntent
+		? getTitanTierFromSlug( titanEmailSubscription?.product_slug )
+		: undefined;
+
+	const [ pendingDowngrade, setPendingDowngrade ] = useState< PendingTitanDowngrade | null >(
+		null
+	);
+	const {
+		purchase: titanPurchase,
+		mode: downgradeMode,
+		getRefundAmount,
+		downgrade,
+		cancelDowngrade,
+		pendingDowngradeTier,
+		isDowngrading,
+		isCancellingDowngrade,
+		canDowngrade,
+	} = useTitanDowngrade( {
+		domain,
+		domainName,
+		enabled: isTitanPlanSelectionEnabled && Boolean( currentTier ),
+	} );
 
 	const { product: googleProduct } = useEmailProduct(
 		MailboxProvider.Google,
@@ -155,6 +183,22 @@ export default function ChooseEmailSolution() {
 			tier,
 			interval: billingInterval,
 			quantity: getMaxTitanMailboxCount( domain ),
+		} );
+	};
+
+	// A downgrade is a direct call on the subscription, not a checkout: the
+	// backend rejects buying a lower tier while a subscription is active.
+	const handleTierDowngrade = ( tier: TitanPlanTier, toProductId: number ) => {
+		setPendingDowngrade( { tier, toProductId } );
+	};
+
+	const confirmDowngrade = () => {
+		if ( ! pendingDowngrade ) {
+			return;
+		}
+
+		downgrade( pendingDowngrade.toProductId, {
+			onSuccess: () => setPendingDowngrade( null ),
 		} );
 	};
 
@@ -282,12 +326,13 @@ export default function ChooseEmailSolution() {
 						domainName={ domainName }
 						interval={ billingInterval }
 						available={ isTitanAvailable }
-						currentTier={
-							isUpgradeIntent
-								? getTitanTierFromSlug( titanEmailSubscription?.product_slug )
-								: undefined
-						}
+						currentTier={ currentTier }
+						canDowngrade={ canDowngrade }
+						pendingDowngradeTier={ pendingDowngradeTier }
+						isDowngradeBusy={ isDowngrading || isCancellingDowngrade }
 						onUpgrade={ handleTierUpgrade }
+						onDowngrade={ handleTierDowngrade }
+						onCancelScheduledDowngrade={ cancelDowngrade }
 					/>
 					{ ! isUpgradeIntent && (
 						<GoogleWorkspaceCard
@@ -308,6 +353,20 @@ export default function ChooseEmailSolution() {
 						/>
 					) }
 				</VStack>
+			) }
+
+			{ currentTier && (
+				<TitanDowngradeModal
+					pendingDowngrade={ pendingDowngrade }
+					currentTier={ currentTier }
+					mode={ downgradeMode }
+					refundAmount={ pendingDowngrade ? getRefundAmount( pendingDowngrade.toProductId ) : 0 }
+					currencyCode={ titanPurchase?.currency_code ?? 'USD' }
+					renewDate={ titanPurchase?.renew_date }
+					isBusy={ isDowngrading }
+					onCancel={ () => setPendingDowngrade( null ) }
+					onConfirm={ confirmDowngrade }
+				/>
 			) }
 
 			{ /* Split card for providers */ }
