@@ -42,6 +42,7 @@ type SiteConfigurationFormData = {
 function AddressField( { siteAddress }: { siteAddress: SiteAddress } ) {
 	const { recordTracksEvent } = useAnalytics();
 
+	const { alternative } = siteAddress;
 	let help: ReactNode = __( 'You can connect a custom domain once the site is created.' );
 
 	if ( siteAddress.formatError ) {
@@ -49,12 +50,12 @@ function AddressField( { siteAddress }: { siteAddress: SiteAddress } ) {
 	} else if ( siteAddress.isChecking ) {
 		help = __( 'Checking availability…' );
 	} else if ( siteAddress.isTaken ) {
-		help = siteAddress.alternative
+		help = alternative
 			? createInterpolateElement(
 					sprintf(
 						/* translators: %s is a site address that is free to use, e.g. myagency2. */
 						__( 'Sorry, that address is taken. How about <suggestion>%s</suggestion>?' ),
-						siteAddress.alternative
+						alternative
 					),
 					{
 						suggestion: (
@@ -62,7 +63,7 @@ function AddressField( { siteAddress }: { siteAddress: SiteAddress } ) {
 								variant="link"
 								onClick={ () => {
 									recordTracksEvent( 'calypso_a4a_create_site_config_suggested_name' );
-									siteAddress.setAddress( siteAddress.alternative as string );
+									siteAddress.setAddress( alternative );
 								} }
 							/>
 						),
@@ -77,7 +78,10 @@ function AddressField( { siteAddress }: { siteAddress: SiteAddress } ) {
 			label={ __( 'Site address' ) }
 			suffix={ DOMAIN_SUFFIX }
 			value={ siteAddress.address }
-			help={ help }
+			// The span keeps one element mounted across every help state: swapping
+			// a bare string for an element here crashes React under Google
+			// Translate (react/react#11538).
+			help={ <span>{ help }</span> }
 			disabled={ siteAddress.isSuggesting }
 			spellCheck="false"
 			onChange={ ( value?: string ) => siteAddress.setAddress( ( value ?? '' ).toLowerCase() ) }
@@ -142,7 +146,10 @@ export default function SiteConfigurationModal( {
 	const mutation = useMutation(
 		withSnackbar( provisionAgencySiteMutation( agencyId ), {
 			success: __( 'Site creation started.' ),
-			error: __( 'Failed to start creating the site.' ),
+			// The server explains itself here — an address claimed since we checked
+			// it, a blocked account, an unverified email — and a generic message
+			// would leave the agency with nothing to act on.
+			error: { source: 'server' },
 		} )
 	);
 
@@ -203,6 +210,10 @@ export default function SiteConfigurationModal( {
 					onRequestClose();
 					navigate( { to: '/sites' } );
 				},
+				// The address is checked before submit but only claimed by the
+				// provision itself, so anything that failed may have failed on the
+				// name. Re-check it so the field can say so.
+				onError: () => siteAddress.revalidate(),
 			}
 		);
 	};

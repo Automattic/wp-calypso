@@ -3,9 +3,9 @@ import {
 	freeSuggestionQuery,
 	randomSiteNameQuery,
 } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { sprintf, __ } from '@wordpress/i18n';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useDebouncedState from '../../../app/hooks/use-debounced-state';
 
 const MIN_LENGTH = 4;
@@ -42,6 +42,8 @@ export type SiteAddress = {
 	alternative?: string;
 	isReady: boolean;
 	refreshSuggestion: () => void;
+	/** Re-checks the current address, for when provisioning rejected it. */
+	revalidate: () => void;
 };
 
 /**
@@ -49,8 +51,10 @@ export type SiteAddress = {
  * checked against the agency's account as the user edits it.
  */
 export function useSiteAddress( agencyId: number ): SiteAddress {
+	const queryClient = useQueryClient();
 	const suggestion = useQuery( randomSiteNameQuery() );
 	const [ address, setAddress, debouncedAddress ] = useDebouncedState( '', CHECK_DELAY_MS );
+	const [ trustSuggestion, setTrustSuggestion ] = useState( true );
 
 	useEffect( () => {
 		if ( suggestion.data ) {
@@ -61,8 +65,10 @@ export function useSiteAddress( agencyId: number ): SiteAddress {
 	const formatError = getFormatError( address );
 	const isDebouncing = address !== debouncedAddress;
 	// The suggested address was chosen because it is free, so checking it again
-	// would only flash a spinner under an untouched field.
-	const skipCheck = !! formatError || isDebouncing || debouncedAddress === suggestion.data;
+	// would only flash a spinner under an untouched field — until a provision
+	// fails, at which point the suggestion has earned no such trust.
+	const skipCheck =
+		!! formatError || isDebouncing || ( trustSuggestion && debouncedAddress === suggestion.data );
 
 	const validation = useQuery( {
 		...agencySiteAddressValidationQuery( agencyId, debouncedAddress ),
@@ -82,13 +88,21 @@ export function useSiteAddress( agencyId: number ): SiteAddress {
 		address,
 		setAddress,
 		isSuggesting: suggestion.isLoading,
-		formatError,
+		// Held back until the suggested address arrives, so an untouched field
+		// does not open with a length error about its own emptiness.
+		formatError: suggestion.isLoading ? undefined : formatError,
 		isChecking,
 		isTaken,
 		alternative: alternative.data?.domain_name.split( '.' )[ 0 ],
 		isReady: !! address && ! formatError && ! isChecking && ! isTaken && ! suggestion.isLoading,
 		refreshSuggestion: () => {
 			suggestion.refetch();
+		},
+		revalidate: () => {
+			setTrustSuggestion( false );
+			queryClient.invalidateQueries( {
+				queryKey: agencySiteAddressValidationQuery( agencyId, address ).queryKey,
+			} );
 		},
 	};
 }
