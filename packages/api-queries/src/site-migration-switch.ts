@@ -1,6 +1,7 @@
 import {
 	approveStaticSiteImportSession,
 	attachSwitchRun,
+	createStaticSiteImportSession,
 	createSwitchRun,
 	fetchStaticSiteImportSession,
 	fetchSwitchRun,
@@ -25,10 +26,11 @@ export const switchRunPreviewQuery = ( runId: string ) =>
 		queryFn: () => fetchSwitchRunPreview( runId ),
 	} );
 
-export const staticSiteImportSessionQuery = ( siteId: number, sessionId: string ) =>
+/** Keyed by session alone: the session is the user's, and has no site until approval. */
+export const staticSiteImportSessionQuery = ( sessionId: string ) =>
 	queryOptions( {
-		queryKey: [ 'site', siteId, 'static-site-import-session', sessionId ],
-		queryFn: () => fetchStaticSiteImportSession( siteId, sessionId ),
+		queryKey: [ 'static-site-import-session', sessionId ],
+		queryFn: () => fetchStaticSiteImportSession( sessionId ),
 	} );
 
 export const createSwitchRunMutation = () =>
@@ -49,14 +51,26 @@ export const attachSwitchRunMutation = () =>
 		},
 	} );
 
+export const createStaticSiteImportSessionMutation = () =>
+	mutationOptions( {
+		meta: { statId: 'site-import-session-create' },
+		mutationFn: ( sourceUrl: string ) => createStaticSiteImportSession( sourceUrl ),
+		onSuccess: ( session ) => {
+			queryClient.setQueryData(
+				staticSiteImportSessionQuery( session.session_id ).queryKey,
+				session
+			);
+		},
+	} );
+
 export const approveStaticSiteImportSessionMutation = () =>
 	mutationOptions( {
 		meta: { statId: 'site-import-approve' },
 		mutationFn: ( params: ApproveStaticSiteImportSessionParams ) =>
 			approveStaticSiteImportSession( params ),
-		onSuccess: ( session, { siteId } ) => {
+		onSuccess: ( session ) => {
 			queryClient.setQueryData(
-				staticSiteImportSessionQuery( siteId, session.session_id ).queryKey,
+				staticSiteImportSessionQuery( session.session_id ).queryKey,
 				session
 			);
 		},

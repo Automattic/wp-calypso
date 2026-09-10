@@ -47,7 +47,9 @@ export const siteCreationPath = buildPathHelper<
 			platform: ImporterPlatform;
 			ssh?: string;
 			host?: string;
-			switchRunId?: string | null;
+			wizardComplete?: string;
+			importSessionId?: string | null;
+			archiveHash?: string | null;
 		};
 	},
 	typeof STEPS.SITE_CREATION_STEP.slug
@@ -60,7 +62,6 @@ export const sitePickerPath = buildPathHelper<
 			platform: ImporterPlatform;
 			ssh?: string;
 			host?: string;
-			switchRunId?: string | null;
 		};
 	},
 	typeof STEPS.PICK_SITE.slug
@@ -95,7 +96,7 @@ export const processingPath = buildPathHelper<
 			platform: ImporterPlatform;
 			action: string | null;
 			host?: string | null;
-			switchRunId?: string | null;
+			wizardComplete?: string;
 		};
 	},
 	typeof STEPS.PROCESSING.slug
@@ -252,19 +253,6 @@ export const scanPath = buildPathHelper<
 	typeof STEPS.SITE_MIGRATION_SCAN.slug
 >( STEPS.SITE_MIGRATION_SCAN.slug );
 
-export const destinationPath = buildPathHelper<
-	{
-		queryParams: {
-			from?: string | null;
-			platform?: ImporterPlatform;
-			siteId?: number | string;
-			siteSlug?: string;
-			switchRunId?: string | null;
-		};
-	},
-	typeof STEPS.SITE_MIGRATION_DESTINATION.slug
->( STEPS.SITE_MIGRATION_DESTINATION.slug );
-
 export const previewPath = buildPathHelper<
 	{
 		queryParams: {
@@ -278,18 +266,22 @@ export const previewPath = buildPathHelper<
 	typeof STEPS.SITE_MIGRATION_PREVIEW.slug
 >( STEPS.SITE_MIGRATION_PREVIEW.slug );
 
-export const domainPath = buildPathHelper<
+/**
+ * "Reading your site". Carries the import session it starts on `importSessionId`,
+ * which is not Stepper's own `sessionId` query parameter.
+ */
+export const capturePath = buildPathHelper<
 	{
 		queryParams: {
 			from?: string | null;
 			platform?: ImporterPlatform;
 			siteId?: number | string;
 			siteSlug?: string;
-			switchRunId?: string | null;
+			importSessionId?: string | null;
 		};
 	},
-	typeof STEPS.SITE_MIGRATION_DOMAIN.slug
->( STEPS.SITE_MIGRATION_DOMAIN.slug );
+	typeof STEPS.SITE_MIGRATION_CAPTURE.slug
+>( STEPS.SITE_MIGRATION_CAPTURE.slug );
 
 export const plansPath = buildPathHelper<
 	{
@@ -298,24 +290,12 @@ export const plansPath = buildPathHelper<
 			platform?: ImporterPlatform;
 			siteId?: number | string;
 			siteSlug?: string;
-			switchRunId?: string | null;
+			importSessionId?: string | null;
+			archiveHash?: string | null;
 		};
 	},
 	typeof STEPS.UNIFIED_PLANS.slug
 >( STEPS.UNIFIED_PLANS.slug );
-
-export const seoPath = buildPathHelper<
-	{
-		queryParams: {
-			from?: string | null;
-			platform?: ImporterPlatform;
-			siteId?: number | string;
-			siteSlug?: string;
-			switchRunId?: string | null;
-		};
-	},
-	typeof STEPS.SITE_MIGRATION_SEO.slug
->( STEPS.SITE_MIGRATION_SEO.slug );
 
 export const reviewPath = buildPathHelper<
 	{
@@ -324,7 +304,7 @@ export const reviewPath = buildPathHelper<
 			platform?: ImporterPlatform;
 			siteId?: number | string;
 			siteSlug?: string;
-			switchRunId?: string | null;
+			importSessionId?: string | null;
 		};
 	},
 	typeof STEPS.SITE_MIGRATION_REVIEW.slug
@@ -336,8 +316,10 @@ export const importProgressPath = buildPathHelper<
 			from?: string | null;
 			siteId?: number | string;
 			siteSlug?: string;
-			switchRunId?: string | null;
 			sessionId?: string | null;
+			/** The import session, and the archive hash the user reviewed. */
+			importSessionId?: string | null;
+			archiveHash?: string | null;
 		};
 	},
 	typeof STEPS.SITE_MIGRATION_IMPORT_PROGRESS.slug
