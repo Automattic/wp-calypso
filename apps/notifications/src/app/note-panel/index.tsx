@@ -1,4 +1,5 @@
 import {
+	FlexItem,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalHeading as Heading,
@@ -159,29 +160,40 @@ const NotePanel = ( {
 							{ isDismissible && <CloseButton /> }
 						</HStack>
 					</HStack>
-					<Tabs selectedTabId={ activeFilterName } onSelect={ handleSelect }>
-						<Tabs.TabList
-							style={ {
-								maxWidth: '100%',
-							} }
-						>
-							{ notificationViews.map( ( { name, title } ) => (
-								<Tabs.Tab
-									key={ name }
-									tabId={ name }
-									style={ { fontFamily: 'inherit', fontWeight: 500, lineHeight: '16px' } }
-									ref={ ( element: HTMLButtonElement ) => {
-										tabRefs.current[ name ] = element;
+					<HStack justify="flex-start" alignment="center" spacing={ 1 }>
+						{ /* `width: fit-content` keeps the strip only as wide as its tabs, so the
+						   picker sits beside the last one; `minWidth: 0` lets it shrink and scroll
+						   when there are more tabs than room, leaving the picker at the edge. The
+						   tab list's own `fit-content` rule is in a zero-specificity `:where()`,
+						   so it loses to FlexItem's `display: block`. */ }
+						<FlexItem style={ { minWidth: 0, width: 'fit-content' } }>
+							<Tabs selectedTabId={ activeFilterName } onSelect={ handleSelect }>
+								<Tabs.TabList
+									style={ {
+										maxWidth: '100%',
 									} }
 								>
-									{ title }
-								</Tabs.Tab>
-							) ) }
-							{ /* Inside the list, after the last tab, so it scrolls with the tabs
-							   instead of staying pinned to the panel edge once they overflow. */ }
-							{ isViewSettingsEnabled && <ViewPicker views={ resolvedViews } /> }
-						</Tabs.TabList>
-					</Tabs>
+									{ notificationViews.map( ( { name, title } ) => (
+										<Tabs.Tab
+											key={ name }
+											tabId={ name }
+											style={ { fontFamily: 'inherit', fontWeight: 500, lineHeight: '16px' } }
+											ref={ ( element: HTMLButtonElement ) => {
+												tabRefs.current[ name ] = element;
+											} }
+										>
+											{ title }
+										</Tabs.Tab>
+									) ) }
+								</Tabs.TabList>
+							</Tabs>
+						</FlexItem>
+						{ isViewSettingsEnabled && (
+							<FlexItem>
+								<ViewPicker views={ resolvedViews } />
+							</FlexItem>
+						) }
+					</HStack>
 				</VStack>
 			</CardHeader>
 			{ /* Scope the boundary to the list content so a render error there
