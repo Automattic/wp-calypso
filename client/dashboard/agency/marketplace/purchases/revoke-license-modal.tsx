@@ -7,7 +7,7 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
@@ -101,15 +101,13 @@ export default function RevokeLicenseModal( { license, closeModal }: Props ) {
 			<Text>
 				{ isBundle
 					? createInterpolateElement(
-							sprintf(
-								/* translators: %1$s is the product name, %2$d is the number of assigned sites. */
-								__(
-									'Revoking this bundle will cause <b>%1$s</b> to stop working on your %2$d assigned sites.'
-								),
-								getLicenseProductName( license ),
-								license.quantity ?? 0
+							__(
+								'Revoking this bundle will cause <productName /> to stop working on your <count /> assigned sites.'
 							),
-							{ b: <strong /> }
+							{
+								productName: <strong>{ getLicenseProductName( license ) }</strong>,
+								count: <>{ license.quantity ?? 0 }</>,
+							}
 					  )
 					: __(
 							'A revoked license cannot be reused, and the associated site will no longer have access to the provisioned product. You will stop being billed for this license immediately.'
