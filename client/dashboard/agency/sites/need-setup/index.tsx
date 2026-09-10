@@ -4,12 +4,14 @@ import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __, _n } from '@wordpress/i18n';
 import { Icon, wordpress } from '@wordpress/icons';
+import { useMemo, useState } from 'react';
 import { DataViews, DataViewsCard } from '../../../components/dataviews';
 import EmptyState from '../../../components/empty-state';
 import { IconListItem } from '../../../components/icon-list/icon-list-item';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { hasWpcomLicenseWithoutSite } from './lib';
+import SiteConfigurationModal from './site-configuration-modal';
 import type { PendingAgencySite, ReferralApiResponse } from '@automattic/api-core';
 import type { Field, ViewTable } from '@wordpress/dataviews';
 import type { ReactNode } from 'react';
@@ -18,6 +20,8 @@ import './style.scss';
 
 type SetupRow = {
 	id: string;
+	/** The pending site the row's button acts on. */
+	siteId: number;
 	description: ReactNode;
 };
 
@@ -29,29 +33,35 @@ const VIEW: ViewTable = {
 	layout: { enableMoving: false },
 };
 
-const fields: Field< SetupRow >[] = [
-	{
-		id: 'site',
-		label: __( 'Site' ),
-		enableHiding: false,
-		enableSorting: false,
-		filterBy: false,
-		getValue: () => __( 'WordPress.com' ),
-		render: ( { item } ) => (
-			<IconListItem
-				title={ __( 'WordPress.com' ) }
-				description={ item.description }
-				decoration={ <Icon icon={ wordpress } size={ 24 } /> }
-				suffix={
-					/* TODO: open the site configuration modal, then provision the site. */
-					<Button variant="secondary" size="compact" disabled __next40pxDefaultSize>
-						{ __( 'Create new site' ) }
-					</Button>
-				}
-			/>
-		),
-	},
-];
+function getFields( onCreateSite: ( siteId: number ) => void ): Field< SetupRow >[] {
+	return [
+		{
+			id: 'site',
+			label: __( 'Site' ),
+			enableHiding: false,
+			enableSorting: false,
+			filterBy: false,
+			getValue: () => __( 'WordPress.com' ),
+			render: ( { item } ) => (
+				<IconListItem
+					title={ __( 'WordPress.com' ) }
+					description={ item.description }
+					decoration={ <Icon icon={ wordpress } size={ 24 } /> }
+					suffix={
+						<Button
+							variant="secondary"
+							size="compact"
+							onClick={ () => onCreateSite( item.siteId ) }
+							__next40pxDefaultSize
+						>
+							{ __( 'Create new site' ) }
+						</Button>
+					}
+				/>
+			),
+		},
+	];
+}
 
 function getReferralDescription( referral: ReferralApiResponse ): ReactNode {
 	return createInterpolateElement( __( '<email /> owns this' ), {
@@ -70,14 +80,17 @@ function getSetupRows( pendingSites: PendingAgencySite[] ): SetupRow[] {
 	const rows: SetupRow[] = available.flatMap( ( { id, features } ) => {
 		const { referral } = features.wpcom_atomic;
 		return referral
-			? [ { id: `referral-${ id }`, description: getReferralDescription( referral ) } ]
+			? [ { id: `referral-${ id }`, siteId: id, description: getReferralDescription( referral ) } ]
 			: [];
 	} );
 
-	const unreferredCount = available.length - rows.length;
+	const unreferred = available.filter( ( { features } ) => ! features.wpcom_atomic.referral );
+	const unreferredCount = unreferred.length;
 	if ( unreferredCount ) {
 		rows.push( {
 			id: 'available',
+			// The licenses are interchangeable, so the row sets up whichever comes first.
+			siteId: unreferred[ 0 ].id,
 			description: sprintf(
 				/* translators: %d is the number of licenses available to set up. */
 				_n( '%d site available', '%d sites available', unreferredCount ),
@@ -106,6 +119,8 @@ function NothingToSetUp() {
 
 function PendingSitesList( { agencyId }: { agencyId: number } ) {
 	const { data: pendingSites } = useSuspenseQuery( pendingAgencySitesQuery( agencyId ) );
+	const [ configuringSiteId, setConfiguringSiteId ] = useState< number | null >( null );
+	const fields = useMemo( () => getFields( setConfiguringSiteId ), [] );
 	const rows = getSetupRows( pendingSites );
 
 	// The route guard redirects when nothing is pending, so this is reached only
@@ -115,19 +130,28 @@ function PendingSitesList( { agencyId }: { agencyId: number } ) {
 	}
 
 	return (
-		<DataViewsCard className="agency-need-setup-table">
-			<DataViews< SetupRow >
-				data={ rows }
-				fields={ fields }
-				view={ VIEW }
-				onChangeView={ () => {} }
-				getItemId={ ( item ) => item.id }
-				defaultLayouts={ { table: {} } }
-				paginationInfo={ { totalItems: rows.length, totalPages: 1 } }
-			>
-				<DataViews.Layout />
-			</DataViews>
-		</DataViewsCard>
+		<>
+			<DataViewsCard className="agency-need-setup-table">
+				<DataViews< SetupRow >
+					data={ rows }
+					fields={ fields }
+					view={ VIEW }
+					onChangeView={ () => {} }
+					getItemId={ ( item ) => item.id }
+					defaultLayouts={ { table: {} } }
+					paginationInfo={ { totalItems: rows.length, totalPages: 1 } }
+				>
+					<DataViews.Layout />
+				</DataViews>
+			</DataViewsCard>
+			{ configuringSiteId !== null && (
+				<SiteConfigurationModal
+					agencyId={ agencyId }
+					pendingSiteId={ configuringSiteId }
+					onRequestClose={ () => setConfiguringSiteId( null ) }
+				/>
+			) }
+		</>
 	);
 }
 

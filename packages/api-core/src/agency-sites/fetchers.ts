@@ -1,3 +1,4 @@
+import { FreeSiteAddressType } from '../site-address-change/types';
 import { wpcom } from '../wpcom-fetcher';
 import type { AgencySiteAddressValidation, AgencySiteWithPlugin, PendingAgencySite } from './types';
 
@@ -41,6 +42,6 @@ export async function validateAgencySiteAddress(
 			apiNamespace: 'wpcom/v2',
 			path: `/agency/${ agencyId }/validate-site-address`,
 		},
-		{ site_name: siteName, domain: 'wordpress.com', type: 'blog' }
+		{ site_name: siteName, domain: 'wordpress.com', type: FreeSiteAddressType.BLOG }
 	);
 }
