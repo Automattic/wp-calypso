@@ -5,6 +5,7 @@ import { bindToEditorPath } from '../../utils/canvas-guard';
 import { checkpointKeys, withCheckpoint, type CheckpointRecorder } from '../../utils/checkpoints';
 import { flattenTitle } from '../../utils/entity-title';
 import { isEditorPage } from '../../utils/is-editor-page';
+import { isRecord } from '../../utils/is-record';
 import {
 	addNavigationItem,
 	getMenuIdsToRelabel,
@@ -74,7 +75,7 @@ const pickFields = ( record: Record< string, unknown >, fields: string[], wanted
  * failure keeps the checkpoint only if something is reported as applied, and
  * that checkpoint is the landed change's only undo.
  */
-function reportUpdated( applied: AppliedChanges, { entityName, recordId }: CheckedEntity ) {
+function reportUpdated( applied: AppliedChanges, { entityName, recordId }: Entity< 'edit' > ) {
 	let reported = false;
 
 	return () => {
@@ -89,6 +90,7 @@ function reportUpdated( applied: AppliedChanges, { entityName, recordId }: Check
 const withoutTitle = ( record: Record< string, unknown > ) =>
 	Object.fromEntries( Object.entries( record ).filter( ( [ key ] ) => key !== 'title' ) );
 
+/** An entry as the agent sends it; `checkEntities()` turns it into an `Entity`. */
 interface EntityRef {
 	entityType?: string;
 	entityName?: string;
@@ -106,11 +108,102 @@ export interface EditEntityRecordInput {
 	toolCallId?: string;
 }
 
-/** An entity reference the loop has already checked, so the writes can rely on it. */
-type CheckedEntity = Required<
-	Pick< EntityRef, 'entityType' | 'entityName' | 'recordId' | 'record' >
-> &
-	Pick< EntityRef, 'options' >;
+type Operation = 'create' | 'edit' | 'delete';
+
+// The fields each operation cannot do without; `options` is optional everywhere.
+const REQUIRED_FIELDS = {
+	create: [ 'record' ],
+	edit: [ 'recordId', 'record' ],
+	delete: [ 'recordId' ],
+} as const;
+
+const FIELD_CHECKS: Record< keyof EntityRef, ( value: unknown ) => boolean > = {
+	entityType: ( value ) => typeof value === 'string' && value !== '',
+	entityName: ( value ) => typeof value === 'string' && value !== '',
+	recordId: ( value ) => typeof value === 'number' || typeof value === 'string',
+	record: isRecord,
+	options: isRecord,
+};
+
+/** An entry checked for its operation, so the writes can rely on its fields. */
+type Entity< O extends Operation > = EntityRef &
+	Required<
+		Pick< EntityRef, 'entityType' | 'entityName' | ( typeof REQUIRED_FIELDS )[ O ][ number ] >
+	>;
+
+/**
+ * Every entry, checked field by field before anything reads it.
+ *
+ * The callback runs on raw arguments, so this is where a wrong type is caught:
+ * an array `record` would spread into numeric metadata keys, and a string one
+ * would throw inside the checkpoint-key lookup before the structured error
+ * path. Refused rather than skipped — a dropped entry would write nothing and
+ * still read as applied.
+ */
+function checkEntities< O extends Operation >( entities: unknown[], operation: O ): Entity< O >[] {
+	const required: string[] = [ 'entityType', 'entityName', ...REQUIRED_FIELDS[ operation ] ];
+
+	return entities.map( ( entity ) => {
+		const fields = isRecord( entity ) ? entity : {};
+		const valid = ( Object.keys( FIELD_CHECKS ) as ( keyof EntityRef )[] ).every( ( field ) =>
+			fields[ field ] === undefined
+				? ! required.includes( field )
+				: FIELD_CHECKS[ field ]( fields[ field ] )
+		);
+
+		if ( ! valid ) {
+			throw new Error(
+				`Cannot ${ operation }: each entry needs ${ required.join( ', ' ) } — entityType and ` +
+					'entityName as strings, recordId as a number or string, record and options as objects.'
+			);
+		}
+
+		return fields as Entity< O >;
+	} );
+}
+
+type Batch = {
+	creates: Entity< 'create' >[];
+	edits: Entity< 'edit' >[];
+	deletes: Entity< 'delete' >[];
+};
+
+/**
+ * The whole batch checked before the confirmation refusal, the checkpoint keys
+ * and any write, so a malformed batch is refused whole rather than partly
+ * applied.
+ */
+function checkBatch( {
+	addEntities = [],
+	editEntities = [],
+	deleteEntities = [],
+}: EditEntityRecordInput ): Batch | Error {
+	if (
+		! Array.isArray( addEntities ) ||
+		! Array.isArray( editEntities ) ||
+		! Array.isArray( deleteEntities )
+	) {
+		return new Error(
+			'Invalid arguments. Provide arrays for addEntities, editEntities, and deleteEntities.'
+		);
+	}
+
+	if ( ! addEntities.length && ! editEntities.length && ! deleteEntities.length ) {
+		return new Error(
+			'Nothing to do. Provide at least one entry in addEntities, editEntities or deleteEntities.'
+		);
+	}
+
+	try {
+		return {
+			creates: checkEntities( addEntities, 'create' ),
+			edits: checkEntities( editEntities, 'edit' ),
+			deletes: checkEntities( deleteEntities, 'delete' ),
+		};
+	} catch ( error ) {
+		return error as Error;
+	}
+}
 
 /**
  * What applied, so a partial failure still reports the work that landed.
@@ -173,29 +266,29 @@ const coreResolve = () => resolveSelect( coreStore ) as unknown as CoreResolve;
  * A page edit also claims the navigation domain, since renaming a page renames
  * the menu item that follows it.
  */
-export function getCheckpointKeys( { editEntities }: EditEntityRecordInput ): string[] {
+export function getCheckpointKeys( edits: Entity< 'edit' >[] ): string[] {
 	const keys = new Set< string >();
 
-	for ( const entity of editEntities ?? [] ) {
+	for ( const { entityType, entityName, record } of edits ) {
 		// Only the title is restorable on a page — a restore rewrites it and the
 		// menu item that follows it, never the content, excerpt or status. The
 		// write applies the same test, so the claim cannot drift from what the
 		// checkpoint records.
-		if ( entity?.entityName === PAGE && !! entity.record && 'title' in entity.record ) {
+		if ( entityName === PAGE && 'title' in record ) {
 			keys.add( checkpointKeys.PAGE );
 			keys.add( checkpointKeys.NAVIGATION );
 		}
 
-		if ( entity?.entityName === NAVIGATION && editsMenu( entity.record ) ) {
+		if ( entityName === NAVIGATION && editsMenu( record ) ) {
 			keys.add( checkpointKeys.NAVIGATION );
 		}
 
 		// Matched the same way the write routes: a site edit always touches the
 		// metadata, and one carrying a title touches the title too.
-		if ( isSite( entity?.entityType, entity?.entityName ) ) {
+		if ( isSite( entityType, entityName ) ) {
 			keys.add( checkpointKeys.SITE_METADATA );
 
-			if ( entity.record && 'title' in entity.record ) {
+			if ( 'title' in record ) {
 				keys.add( checkpointKeys.SITE_TITLE );
 			}
 		}
@@ -204,14 +297,11 @@ export function getCheckpointKeys( { editEntities }: EditEntityRecordInput ): st
 	return [ ...keys ];
 }
 
-async function applyCreates( entities: EntityRef[], applied: AppliedChanges ): Promise< void > {
+async function applyCreates(
+	entities: Entity< 'create' >[],
+	applied: AppliedChanges
+): Promise< void > {
 	for ( const { entityType, entityName, record, options } of entities ) {
-		// Refused, not skipped: an entry dropped here would write nothing and
-		// still be reported as applied.
-		if ( ! entityType || ! entityName || ! record ) {
-			throw new Error( 'Cannot create: entityType, entityName and record are all required.' );
-		}
-
 		if ( ! isPostType( ADDABLE_NAMES, entityType, entityName ) ) {
 			throw new Error(
 				`Cannot create ${ entityType }/${ entityName }. Use ${ postTypeHelp( ADDABLE_NAMES ) }.`
@@ -258,7 +348,7 @@ async function editSiteMetadata( changes: Record< string, unknown > ): Promise< 
  * fields it carries are the discriminator. Title and metadata travel together:
  * one call can carry both, and routing on the title alone dropped the rest.
  */
-async function applySiteEdit( entity: CheckedEntity, applied: AppliedChanges ): Promise< void > {
+async function applySiteEdit( entity: Entity< 'edit' >, applied: AppliedChanges ): Promise< void > {
 	const { record } = entity;
 	const { title, ...metadata } = record;
 	const updated = reportUpdated( applied, entity );
@@ -277,7 +367,7 @@ async function applySiteEdit( entity: CheckedEntity, applied: AppliedChanges ): 
 
 /** Writes one page, post, product or menu record. */
 async function applyRecordEdit(
-	entity: CheckedEntity,
+	entity: Entity< 'edit' >,
 	applied: AppliedChanges,
 	recorder: CheckpointRecorder
 ): Promise< void > {
@@ -381,18 +471,12 @@ async function applyRecordEdit(
 }
 
 async function applyEdits(
-	entities: EntityRef[],
+	entities: Entity< 'edit' >[],
 	applied: AppliedChanges,
 	recorder: CheckpointRecorder
 ): Promise< void > {
 	for ( const entity of entities ) {
 		const { entityType, entityName, recordId, record } = entity;
-
-		if ( ! entityType || ! entityName || ! record || recordId === undefined ) {
-			throw new Error(
-				'Cannot edit: entityType, entityName, recordId and record are all required.'
-			);
-		}
 
 		if ( ! Object.keys( record ).length ) {
 			throw new Error( `Nothing to change on ${ entityName } ${ recordId }: the record is empty.` );
@@ -409,12 +493,10 @@ async function applyEdits(
 			);
 		}
 
-		const checked = { ...entity, entityType, entityName, recordId, record };
-
 		if ( isSite( entityType, entityName ) ) {
-			await applySiteEdit( checked, applied );
+			await applySiteEdit( entity, applied );
 		} else {
-			await applyRecordEdit( checked, applied, recorder );
+			await applyRecordEdit( entity, applied, recorder );
 		}
 	}
 }
@@ -444,12 +526,11 @@ async function leavePage( pageId: number | string ): Promise< void > {
 	}
 }
 
-async function applyDeletes( entities: EntityRef[], applied: AppliedChanges ): Promise< void > {
+async function applyDeletes(
+	entities: Entity< 'delete' >[],
+	applied: AppliedChanges
+): Promise< void > {
 	for ( const { entityType, entityName, recordId, options } of entities ) {
-		if ( ! entityType || ! entityName || recordId === undefined ) {
-			throw new Error( 'Cannot delete: entityType, entityName and recordId are all required.' );
-		}
-
 		if ( ! isPostType( ADDABLE_NAMES, entityType, entityName ) ) {
 			throw new Error(
 				`Cannot delete ${ entityType }/${ entityName }. Use ${ postTypeHelp( ADDABLE_NAMES ) }.`
@@ -503,24 +584,10 @@ export async function editEntityRecordCallback(
 		return errorResult( 'The editor is not open, so there is nothing to change.', failureMessage );
 	}
 
-	const { addEntities = [], editEntities = [], deleteEntities = [] } = input;
+	const batch = checkBatch( input );
 
-	if (
-		! Array.isArray( addEntities ) ||
-		! Array.isArray( editEntities ) ||
-		! Array.isArray( deleteEntities )
-	) {
-		return errorResult(
-			'Invalid arguments. Provide arrays for addEntities, editEntities, and deleteEntities.',
-			failureMessage
-		);
-	}
-
-	if ( ! addEntities.length && ! editEntities.length && ! deleteEntities.length ) {
-		return errorResult(
-			'Nothing to do. Provide at least one entry in addEntities, editEntities or deleteEntities.',
-			failureMessage
-		);
+	if ( batch instanceof Error ) {
+		return errorResult( batch.message, failureMessage );
 	}
 
 	// The backend asks the model for a `confirmationMessage` before anything
@@ -557,7 +624,7 @@ export async function editEntityRecordCallback(
 		{
 			toolId: EDIT_ENTITY_RECORD_TOOL_ID,
 			toolCallId: input.toolCallId,
-			keys: getCheckpointKeys( input ),
+			keys: getCheckpointKeys( batch.edits ),
 			summary,
 		},
 		async ( recorder ): Promise< Error | undefined > => {
@@ -565,9 +632,9 @@ export async function editEntityRecordCallback(
 				// Deletes before edits: a menu edit then snapshots the menu as the
 				// deletion left it, so undoing the edit cannot bring back a link
 				// to a page that is gone.
-				await applyCreates( addEntities, applied );
-				await applyDeletes( deleteEntities, applied );
-				await applyEdits( editEntities, applied, recorder );
+				await applyCreates( batch.creates, applied );
+				await applyDeletes( batch.deletes, applied );
+				await applyEdits( batch.edits, applied, recorder );
 			} catch ( error ) {
 				if ( ! hasChanges( applied ) ) {
 					throw error;

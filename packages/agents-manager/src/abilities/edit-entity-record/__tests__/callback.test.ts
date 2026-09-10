@@ -197,7 +197,9 @@ describe( 'getCheckpointKeys', () => {
 			expected: [],
 		},
 	] )( 'claims the domains for $case', ( { input, expected } ) => {
-		expect( getCheckpointKeys( input ).sort() ).toEqual( expected.sort() );
+		expect( getCheckpointKeys( ( input.editEntities ?? [] ) as never ).sort() ).toEqual(
+			expected.sort()
+		);
 	} );
 } );
 
@@ -490,6 +492,37 @@ describe( 'editEntityRecordCallback', () => {
 
 		expect( result.result.success ).toBe( false );
 		expect( result.result.error ).toContain( error );
+	} );
+
+	// Field types too: an array record would spread into numeric metadata keys,
+	// and a string one would throw inside the checkpoint-key lookup.
+	it.each( [
+		{ case: 'a string record', input: { editEntities: [ { ...page( 7 ), record: 'x' } ] } },
+		{
+			case: 'an array record',
+			input: { editEntities: [ { ...site, recordId: 1, record: [ 'x' ] } ] },
+		},
+		{ case: 'an object recordId', input: { deleteEntities: [ { ...page(), recordId: {} } ] } },
+		{ case: 'string options', input: { deleteEntities: [ { ...page( 7 ), options: 'x' } ] } },
+		{ case: 'a non-object entry', input: { addEntities: [ 'page' ] } },
+	] )( 'refuses $case', async ( { input } ) => {
+		const result = await editEntityRecordCallback( input as never );
+
+		expect( result.result.success ).toBe( false );
+		expect( result.result.error ).toMatch( /^Cannot (create|edit|delete):/ );
+		expect( editEntityRecord ).not.toHaveBeenCalled();
+		expect( deleteEntityRecord ).not.toHaveBeenCalled();
+		expect( setSiteMetadata ).not.toHaveBeenCalled();
+	} );
+
+	it( 'refuses the whole batch before writing when any entry is malformed', async () => {
+		const result = await editEntityRecordCallback( {
+			addEntities: [ { ...page(), record: { title: 'About' } } ],
+			editEntities: [ { ...page( 8 ), record: 'x' as never } ],
+		} );
+
+		expect( result.result.error ).toContain( 'Cannot edit:' );
+		expect( saveEntityRecord ).not.toHaveBeenCalled();
 	} );
 
 	it( 'reports what applied when a later change fails', async () => {
