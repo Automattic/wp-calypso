@@ -1,13 +1,13 @@
 import {
-	activeAgencyQuery,
-	agencyProductsQuery,
-	jetpackAgencyLicensesQuery,
-} from '@automattic/api-queries';
-import {
 	JetpackLicenseFilter,
 	JetpackLicenseSortDirection,
 	JetpackLicenseSortField,
 } from '@automattic/api-core';
+import {
+	activeAgencyQuery,
+	agencyProductsQuery,
+	jetpackAgencyLicensesQuery,
+} from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
@@ -23,6 +23,7 @@ import { __ } from '@wordpress/i18n';
 import { check } from '@wordpress/icons';
 import { useCallback, useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
+import { useIntlLocale } from '../../../app/locale';
 import { marketplaceProductsRoute } from '../../../app/router/agency';
 import { ButtonStack } from '../../../components/button-stack';
 import { Callout } from '../../../components/callout';
@@ -244,7 +245,11 @@ export default function MarketplaceProducts() {
 	);
 	// Every section stays while searching or filtering, each showing only its
 	// matching products, as the classic dashboard does.
-	const sections = useMemo( () => getProductSections( filteredProducts ), [ filteredProducts ] );
+	const locale = useIntlLocale();
+	const sections = useMemo(
+		() => getProductSections( filteredProducts, locale ),
+		[ filteredProducts, locale ]
+	);
 
 	const handleViewChange = ( nextView: View ) => {
 		if ( nextView.search !== view.search ) {
