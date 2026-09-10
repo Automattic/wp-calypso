@@ -13,6 +13,7 @@ import poweredByTitanLogo from '../../resources/powered-by-titan-caps.svg';
 import { IntervalLength, MailboxProvider, TitanPlanTier } from '../../types';
 import { getTrialMonths } from '../../utils/get-trial-months';
 import { isEligibleForIntroductoryOffer } from '../../utils/is-eligible-for-introductory-offer';
+import { TITAN_TIER_ORDER } from '../../utils/titan-tiers';
 import type { Domain, EmailSubscription, Product } from '@automattic/api-core';
 
 interface TitanPlan {
@@ -100,14 +101,6 @@ const getTierDetails = ( tier: TitanPlanTier ): { description: string; features:
 	}
 };
 
-// Tiers ordered from lowest to highest, used to tell upgrades from downgrades
-// relative to the current tier.
-const TIER_ORDER: TitanPlanTier[] = [
-	TitanPlanTier.Pro,
-	TitanPlanTier.Premium,
-	TitanPlanTier.Ultra,
-];
-
 export function TitanPlanGrid( {
 	domain,
 	domainName,
@@ -181,7 +174,9 @@ export function TitanPlanGrid( {
 	// All tiers stay visible when upgrading; lower tiers render with a disabled
 	// button since this flow cannot downgrade.
 	const isLowerTier = ( tier: TitanPlanTier ) =>
-		currentTier ? TIER_ORDER.indexOf( tier ) < TIER_ORDER.indexOf( currentTier ) : false;
+		currentTier
+			? TITAN_TIER_ORDER.indexOf( tier ) < TITAN_TIER_ORDER.indexOf( currentTier )
+			: false;
 
 	// The tier that gets the emphasized (primary) button: the recommended plan when
 	// buying, or the recommended upgrade target when upgrading. The current and lower

@@ -72,8 +72,8 @@ export const Cart = ( {
 								type="submit"
 								onClick={ () => {
 									recordTracksEvent( 'calypso_dashboard_emails_add_mailbox_add_to_cart_click', {
-										domainName,
-										mailboxCount: totalItems,
+										domain_name: domainName,
+										mailbox_count: totalItems,
 										provider,
 									} );
 								} }

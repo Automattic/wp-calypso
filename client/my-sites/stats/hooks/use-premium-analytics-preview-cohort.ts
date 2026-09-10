@@ -13,6 +13,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 
 export type PremiumAnalyticsPreviewCohort = {
 	isWpcom: boolean;
@@ -37,6 +38,11 @@ export type PremiumAnalyticsPreviewCohort = {
 export default function usePremiumAnalyticsPreviewCohort(
 	siteId: number | null
 ): PremiumAnalyticsPreviewCohort {
+	const isAtomic = useSelector(
+		( state ) =>
+			!! isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: true } ) &&
+			! isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
 	const isWpcom = useSelector( ( state ) => !! isSiteWpcom( state, siteId ) );
 	// `is_vip` is not correctly placed in Odyssey, so we need to check `options.is_vip` as well.
 	const isVip = useSelector(
@@ -85,6 +91,7 @@ export default function usePremiumAnalyticsPreviewCohort(
 			config.isEnabled( PREMIUM_ANALYTICS_PREVIEW_FLAG ) &&
 			isPremiumAnalyticsPreviewCohort( {
 				isWpcom,
+				isAtomic,
 				isVip,
 				isP2,
 				canManageOptions,

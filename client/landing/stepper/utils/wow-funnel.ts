@@ -353,14 +353,21 @@ export async function waitForWowFunnelReady( {
 export async function getWowFunnelHandoffUrl( {
 	dest,
 	siteIdentifier,
+	adminUrl: knownAdminUrl,
 }: {
 	dest: WowFunnelDest;
 	siteIdentifier: string;
+	/**
+	 * The site's admin base, when the caller already has it — the apply-spec response carries it.
+	 * Supplying it skips a `/sites/<id>` round trip on the hand-off, which happens while the
+	 * customer is watching a spinner.
+	 */
+	adminUrl?: string | null;
 } ): Promise< string > {
 	switch ( dest ) {
 		case 'editor':
 		default: {
-			const adminUrl = await getSiteAdminUrl( siteIdentifier );
+			const adminUrl = knownAdminUrl ?? ( await getSiteAdminUrl( siteIdentifier ) );
 			// `p` opens the front page rather than whatever the editor last had; `canvasEdit`
 			// because a plain site-editor.php load stays in view mode.
 			return getSiteEditorUrl( adminUrl, { canvasEdit: true, path: '/' } );

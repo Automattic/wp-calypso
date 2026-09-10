@@ -102,17 +102,19 @@
 			align-items: center;
 			font-size: $font-body;
 			font-weight: 500;
+
+			/* Scoped to the title so it can't chip an icon in the card body. */
+			.gridicon {
+				fill: var(--studio-gray-30);
+				width: 20px;
+				height: 20px;
+				background: var(--studio-gray-0);
+				padding: 8px;
+				border-radius: 3px;
+			}
 		}
 		.action-panel__cta {
 			padding-top: 0;
-		}
-		.gridicon {
-			fill: var(--studio-gray-30);
-			width: 20px;
-			height: 20px;
-			background: var(--studio-gray-0);
-			padding: 8px;
-			border-radius: 3px;
 		}
 	}
 

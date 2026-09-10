@@ -1,22 +1,11 @@
-import {
-	isBusinessPlan,
-	isEcommercePlan,
-	isPersonalPlan,
-	isPremiumPlan,
-} from '@automattic/calypso-products';
+import { isBusinessPlan, isPremiumPlan } from '@automattic/calypso-products';
 
 /**
- * build-wow transfers the site to Atomic. WordPress.com grants that feature to
- * Personal, Premium, Business and Commerce (the frozen client-side plan data
- * understates this), so only a plan outside those tiers falls back to the
- * legacy builder.
+ * Which plans route the AI build through build-wow. The post-checkout AI
+ * setup chooser offers "Create a custom design" on Personal and higher, but
+ * Personal stays on the legacy Big Sky builder and a Commerce checkout skips
+ * the chooser entirely, so only Premium and Business land on build-wow.
  */
 export function planSupportsBuildWow( planSlug: string | null | undefined ): boolean {
-	return (
-		!! planSlug &&
-		( isPersonalPlan( planSlug ) ||
-			isPremiumPlan( planSlug ) ||
-			isBusinessPlan( planSlug ) ||
-			isEcommercePlan( planSlug ) )
-	);
+	return !! planSlug && ( isPremiumPlan( planSlug ) || isBusinessPlan( planSlug ) );
 }

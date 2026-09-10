@@ -152,16 +152,6 @@
 		&__loading {
 			margin-bottom: 20px;
 		}
-
-		.badge {
-			margin: 0 8px 0 0;
-			border-radius: 4px;
-			font-size: rem(12px);
-		}
-		.badge--success {
-			background-color: $studio-green-5;
-			color: $studio-green-100;
-		}
 	}
 
 	&__unsubscribe-button.components-button {
