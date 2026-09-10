@@ -9,12 +9,7 @@ import type { NoticeIdType } from '../hooks/use-notice-visibility-query';
 
 type PreviewGateSignals = {
 	isServerVisible: boolean;
-	canManageOptions: boolean;
-	hasSiteFeatures: boolean;
-	hasCommercialStats: boolean;
 	premiumAnalyticsDashboardUrl?: string | null;
-	isVip: boolean;
-	isP2: boolean;
 	isAtomic: boolean;
 	isPremiumAnalyticsEnabled?: boolean;
 	isStatusError: boolean;
@@ -25,6 +20,10 @@ type PreviewGateSignals = {
 type NotShownSignals = PreviewGateSignals & {
 	siteId: number | null;
 	isWpcom: boolean;
+	canManageOptions: boolean;
+	hasCommercialStats: boolean;
+	isVip: boolean;
+	isP2: boolean;
 	isSettled: boolean;
 };
 
@@ -47,12 +46,7 @@ export const recordedSiteIds = new Set< number >();
  */
 const notShownReason = ( {
 	isServerVisible,
-	canManageOptions,
-	hasSiteFeatures,
-	hasCommercialStats,
 	premiumAnalyticsDashboardUrl,
-	isVip,
-	isP2,
 	isAtomic,
 	isPremiumAnalyticsEnabled,
 	isStatusError,
@@ -61,25 +55,8 @@ const notShownReason = ( {
 	if ( ! isServerVisible ) {
 		return 'server_hidden';
 	}
-	if ( ! canManageOptions ) {
-		return 'not_admin';
-	}
-	// Kept apart from the tier answer below: with no features `shouldGateStats` cannot tell us
-	// anything, and filing that as `no_commercial_stats` would read as a site on the wrong tier.
-	if ( ! hasSiteFeatures ) {
-		return 'features_unavailable';
-	}
-	if ( ! hasCommercialStats ) {
-		return 'no_commercial_stats';
-	}
 	if ( ! premiumAnalyticsDashboardUrl ) {
 		return 'no_admin_url';
-	}
-	if ( isVip ) {
-		return 'is_vip';
-	}
-	if ( isP2 ) {
-		return 'is_p2';
 	}
 	if ( isAtomic && ! config.isEnabled( PREMIUM_ANALYTICS_PREVIEW_ATOMIC_FLAG ) ) {
 		return 'atomic_hold';
@@ -108,19 +85,20 @@ const notShownReason = ( {
  * Record one Tracks event per site when the preview invitation is not going to be shown.
  *
  * The five events the notice records all need it to mount first, which leaves the rate of sites
- * we skip without a denominator.
+ * we skip without a denominator. Only sites the invitation is for count towards it: the tier,
+ * the administrator role and the VIP and P2 exclusions are fixed audience rules, not stages of
+ * the rollout, and free sites alone would otherwise outnumber every reason worth reading.
  */
 export default function usePremiumAnalyticsPreviewNotShownEvent( {
 	siteId,
 	isWpcom,
-	isSettled,
-	isServerVisible,
 	canManageOptions,
-	hasSiteFeatures,
 	hasCommercialStats,
-	premiumAnalyticsDashboardUrl,
 	isVip,
 	isP2,
+	isSettled,
+	isServerVisible,
+	premiumAnalyticsDashboardUrl,
 	isAtomic,
 	isPremiumAnalyticsEnabled,
 	isStatusError,
@@ -144,14 +122,14 @@ export default function usePremiumAnalyticsPreviewNotShownEvent( {
 			return;
 		}
 
+		// Outside the audience, so never in the running: nothing to count.
+		if ( ! canManageOptions || ! hasCommercialStats || isVip || isP2 ) {
+			return;
+		}
+
 		const reason = notShownReason( {
 			isServerVisible,
-			canManageOptions,
-			hasSiteFeatures,
-			hasCommercialStats,
 			premiumAnalyticsDashboardUrl,
-			isVip,
-			isP2,
 			isAtomic,
 			isPremiumAnalyticsEnabled,
 			isStatusError,
@@ -173,14 +151,13 @@ export default function usePremiumAnalyticsPreviewNotShownEvent( {
 	}, [
 		siteId,
 		isWpcom,
-		isSettled,
-		isServerVisible,
 		canManageOptions,
-		hasSiteFeatures,
 		hasCommercialStats,
-		premiumAnalyticsDashboardUrl,
 		isVip,
 		isP2,
+		isSettled,
+		isServerVisible,
+		premiumAnalyticsDashboardUrl,
 		isAtomic,
 		isPremiumAnalyticsEnabled,
 		isStatusError,

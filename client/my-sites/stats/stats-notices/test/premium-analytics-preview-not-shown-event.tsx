@@ -223,39 +223,9 @@ describe( 'premium analytics preview "not shown" event', () => {
 			},
 		],
 		[
-			'not_admin',
-			() => {
-				mockCanManageOptions = false;
-			},
-		],
-		[
-			'features_unavailable',
-			() => {
-				mockSiteFeatures = null;
-			},
-		],
-		[
-			'no_commercial_stats',
-			() => {
-				mockIsStatsGated = true;
-			},
-		],
-		[
 			'no_admin_url',
 			() => {
 				mockAdminUrl = null;
-			},
-		],
-		[
-			'is_vip',
-			() => {
-				mockIsVip = true;
-			},
-		],
-		[
-			'is_p2',
-			() => {
-				mockIsP2 = true;
 			},
 		],
 		[
@@ -295,12 +265,52 @@ describe( 'premium analytics preview "not shown" event', () => {
 
 	const quietCases: Array< [ string, () => void ] > = [
 		[ 'the invitation is shown', () => {} ],
+		// Fixed audience rules rather than stages of the rollout: outside them a site was never in
+		// the running, and free sites alone would outnumber every reason worth reading.
+		[
+			'the site has no commercial Stats',
+			() => {
+				mockIsStatsGated = true;
+			},
+		],
+		[
+			'the site features are missing',
+			() => {
+				mockSiteFeatures = null;
+			},
+		],
+		[
+			'the user is not an administrator',
+			() => {
+				mockCanManageOptions = false;
+			},
+		],
+		[
+			'the site is VIP',
+			() => {
+				mockIsVip = true;
+			},
+		],
+		[
+			'the site is a P2',
+			() => {
+				mockIsP2 = true;
+			},
+		],
+		// Even when the server would have hidden it: the audience rule comes first.
+		[
+			'the site is free and the server hides the invitation',
+			() => {
+				mockIsStatsGated = true;
+				mockNoticesVisibility.data = { premium_analytics_preview: false } as unknown as Notices;
+			},
+		],
 		// The two rows that would otherwise pass every gate, so a missing guard would leave them
 		// silent for the wrong reason. Failing one gate gives each a reason to record.
 		[
 			'the flag is off',
 			() => {
-				mockCanManageOptions = false;
+				mockAdminUrl = null;
 				delete mockFlags()[ 'stats/premium-analytics-preview' ];
 			},
 		],
@@ -321,7 +331,7 @@ describe( 'premium analytics preview "not shown" event', () => {
 		[
 			'the site is self-hosted Jetpack',
 			() => {
-				mockCanManageOptions = false;
+				mockAdminUrl = null;
 				mockIsWpcom = false;
 			},
 		],
@@ -357,11 +367,11 @@ describe( 'premium analytics preview "not shown" event', () => {
 		] );
 	} );
 
-	it( 'records is_p2 before atomic_hold', () => {
+	it( 'stays quiet for a P2 even during the Atomic hold', () => {
 		mockIsAtomic = true;
 		mockIsP2 = true;
 		renderNotices();
-		expect( notShownEvents() ).toEqual( [ [ EVENT_NAME, { blog_id: 123, reason: 'is_p2' } ] ] );
+		expect( notShownEvents() ).toEqual( [] );
 	} );
 
 	describe( 'with another notice in the conflict group', () => {
@@ -399,16 +409,15 @@ describe( 'premium analytics preview "not shown" event', () => {
 		// A gate failure is the reason a reader would reach first, and the site was never in the
 		// running for the group to suppress.
 		it( 'keeps the gate reason over suppressed', () => {
-			mockCanManageOptions = false;
 			mockNoticesVisibility.data = {
 				gdpr_cookie_consent: true,
-				premium_analytics_preview: true,
+				premium_analytics_preview: false,
 			} as unknown as Notices;
 
 			renderNotices();
 
 			expect( notShownEvents() ).toEqual( [
-				[ EVENT_NAME, { blog_id: 123, reason: 'not_admin' } ],
+				[ EVENT_NAME, { blog_id: 123, reason: 'server_hidden' } ],
 			] );
 		} );
 	} );
