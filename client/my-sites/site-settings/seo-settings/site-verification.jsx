@@ -8,10 +8,10 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInput from 'calypso/components/forms/form-text-input-with-affixes';
-import FormTextarea from 'calypso/components/forms/form-textarea';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SupportInfo from 'calypso/components/support-info';
+import TextareaAutosize from 'calypso/components/textarea-autosize';
 import { protectForm } from 'calypso/lib/protect-form';
 import versionCompare from 'calypso/lib/version-compare';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
@@ -357,9 +357,10 @@ class SiteVerification extends Component {
 											>
 												{ service.name }
 											</label>
-											<FormTextarea
+											<TextareaAutosize
 												{ ...inputProps }
 												className="seo-settings__verification-code-input"
+												rows={ 1 }
 											/>
 										</div>
 									) : (

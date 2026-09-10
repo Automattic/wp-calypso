@@ -15,11 +15,11 @@
 		box-sizing: border-box;
 		width: 100%;
 		min-width: 0;
-		min-height: 92px;
+		min-height: 40px;
 		overflow-x: hidden;
 		overflow-wrap: anywhere;
 		border-radius: 0 0 2px 2px;
-		resize: vertical;
+		resize: none;
 		white-space: pre-wrap;
 	}
 }
