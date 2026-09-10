@@ -23,6 +23,7 @@ import { requestSiteSettings, saveSiteSettings } from 'calypso/state/site-settin
 import {
 	isSiteSettingsSaveSuccessful,
 	getSiteSettingsSaveError,
+	getSiteSettings,
 } from 'calypso/state/site-settings/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -31,9 +32,9 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getSupportedServices from './services';
 import './site-verification.scss';
 
-class SiteVerification extends Component {
+export class SiteVerification extends Component {
 	state = {
-		...this.stateForSite( this.props.site ),
+		...this.stateForSite( this.props.site, this.props.siteSettings ),
 		dirtyFields: new Set(),
 		invalidatedSiteObject: this.props.site,
 	};
@@ -74,7 +75,7 @@ class SiteVerification extends Component {
 		if ( prevSiteId !== nextSiteId ) {
 			return this.setState(
 				{
-					...this.stateForSite( nextSite ),
+					...this.stateForSite( nextSite, nextProps.siteSettings ),
 					invalidatedSiteObject: nextSite,
 					dirtyFields: new Set(),
 					invalidCodes: [],
@@ -84,7 +85,7 @@ class SiteVerification extends Component {
 		}
 
 		let nextState = {
-			...this.stateForSite( nextProps.site ),
+			...this.stateForSite( nextProps.site, nextProps.siteSettings ),
 		};
 
 		// Don't update state for fields the user has edited
@@ -95,13 +96,17 @@ class SiteVerification extends Component {
 		} );
 	}
 
-	stateForSite( site ) {
+	stateForSite( site, siteSettings ) {
 		const supportedServices = getSupportedServices();
 		const stateItems = {};
 
 		supportedServices.forEach( ( service ) => {
+			// Prefer the value from the live site-settings REST API. Older Jetpack versions
+			// do not expose verification codes there, so fall back to the site object's options.
 			stateItems[ service.slug ] =
-				site?.options?.verification_services_codes?.[ service.slug ] ?? '';
+				siteSettings?.verification_services_codes?.[ service.slug ] ??
+				site?.options?.verification_services_codes?.[ service.slug ] ??
+				'';
 		} );
 		stateItems.isFetchingSettings = site?.fetchingSettings ?? false;
 
@@ -398,6 +403,7 @@ export default connect(
 			site,
 			siteId,
 			siteIsJetpack: isJetpackSite( state, siteId ),
+			siteSettings: getSiteSettings( state, siteId ),
 			path: getCurrentRouteParameterized( state, siteId ),
 		};
 	},
