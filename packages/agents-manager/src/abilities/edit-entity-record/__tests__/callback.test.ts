@@ -535,6 +535,13 @@ describe( 'editEntityRecordCallback', () => {
 		expect( setSiteMetadata ).not.toHaveBeenCalled();
 	} );
 
+	it( 'refuses a payload that is not an object', async () => {
+		const result = await editEntityRecordCallback( null as never );
+
+		expect( result.result.success ).toBe( false );
+		expect( result.result.error ).toContain( 'Invalid arguments' );
+	} );
+
 	it( 'refuses a confirmationMessage that is not a string', async () => {
 		const result = await editEntityRecordCallback( {
 			deleteEntities: [ page( 7 ) ],
@@ -543,6 +550,14 @@ describe( 'editEntityRecordCallback', () => {
 
 		expect( result.result.error ).toContain( 'confirmationMessage' );
 		expect( deleteEntityRecord ).not.toHaveBeenCalled();
+	} );
+
+	it( 'clears a page title sent as null, as the schema allows', async () => {
+		await editEntityRecordCallback( {
+			editEntities: [ { ...page( 7 ), record: { title: null } } ],
+		} );
+
+		expect( setPageTitle ).toHaveBeenCalledWith( 7, '' );
 	} );
 
 	it( 'refuses the whole batch before writing when any entry is malformed', async () => {

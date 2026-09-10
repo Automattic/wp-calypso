@@ -231,11 +231,11 @@ const attributesFor = ( item: NavigationItemInput ) => ( {
 function withBothHalves( record: Record< string, unknown > ): Record< string, unknown > {
 	const { blocks, content } = record;
 
-	// The schema allows a null `content` for other records; on a menu it would
-	// persist nothing while the editor keeps its blocks.
-	if ( content === null ) {
+	// Anything but serialized blocks would persist while the editor kept its
+	// own; the schema's null is allowed on other records, not here.
+	if ( content !== undefined && typeof content !== 'string' ) {
 		throw new Error(
-			'content cannot be null on a navigation menu. Send navigationItems to rewrite it.'
+			'content must be a string of serialized blocks. Send navigationItems to rewrite the menu.'
 		);
 	}
 
@@ -247,7 +247,7 @@ function withBothHalves( record: Record< string, unknown > ): Record< string, un
 		return { ...record, content: serialize( blocks ) };
 	}
 
-	return typeof content === 'string' ? { ...record, blocks: parse( content ) } : record;
+	return content === undefined ? record : { ...record, blocks: parse( content ) };
 }
 
 /**
