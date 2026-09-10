@@ -9,3 +9,6 @@ export const LOCAL_TOOL_RUNNING_MESSAGE = 'local_tool_running';
 
 /** Route-state origin marker for views opened from the chat (e.g. the post view). */
 export const FROM_CHAT = 'chat';
+
+// Big Sky's data store. Each remaining read of it is marked `TODO (ability-migration)`.
+export const PROVIDER_STORE = 'ai-assembler';
