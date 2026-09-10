@@ -498,6 +498,21 @@ describe( 'withCheckpoint', () => {
 		expect( getCheckpoint( 'call-1' )?.pageRenames ).toEqual( [ rename ] );
 	} );
 
+	// A partial first run drops the domains it never reached; a repeat must be
+	// able to record them, or its rename would apply with no way back.
+	it( 'lets a repeat record a domain the first run dropped as unrecorded', async () => {
+		const { withCheckpoint, getCheckpoint } = await loadCheckpoints();
+		const write = { ...LOGO_WRITE, keys: [ ...LOGO_WRITE.keys, 'page' ] };
+		const rename = { pageId: 7, from: 'Old', to: 'New' };
+
+		await withCheckpoint( write, () => {} );
+		expect( getCheckpoint( 'call-1' )?.checkpointKeys ).not.toContain( 'page' );
+
+		await withCheckpoint( write, ( recorder ) => recorder.capturePageRename( rename ) );
+
+		expect( getCheckpoint( 'call-1' )?.pageRenames ).toEqual( [ rename ] );
+	} );
+
 	it( 'keeps the first snapshot when a repeat write throws', async () => {
 		const { withCheckpoint, hasCheckpoint } = await loadCheckpoints();
 		await withCheckpoint( LOGO_WRITE, () => {} );
