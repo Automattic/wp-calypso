@@ -268,7 +268,7 @@ describe( '<CompSubscribers>', () => {
 		expect(
 			screen.getAllByText( '3 subscribers won’t be comped unless you set up a paid tier.' )[ 0 ]
 		).toBeVisible();
-		expect( screen.queryByRole( 'button', { name: /Select a tier/ } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: /Select a plan/ } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'offers the picker with a single tier pre-selected', () => {
@@ -276,13 +276,13 @@ describe( '<CompSubscribers>', () => {
 
 		expect( screen.getByText( '3 complimentary subscribers' ) ).toBeVisible();
 		expect( screen.getByText( 'Supporter' ) ).toBeVisible();
-		expect( screen.queryByText( 'Select a tier' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Select a plan' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'asks for a choice when several tiers are available', () => {
 		renderCompSubscribers( cardData( { available_tiers: [ monthlyAnchor, secondTier ] } ) );
 
-		expect( screen.getByText( 'Select a tier' ) ).toBeVisible();
+		expect( screen.getByText( 'Select a plan' ) ).toBeVisible();
 	} );
 
 	it( 'warns rather than crashing when the tier list comes back null', () => {
@@ -306,7 +306,7 @@ describe( '<CompSubscribers>', () => {
 				'The paid tier you chose for comped subscribers no longer exists. Choose another one.'
 			)[ 0 ]
 		).toBeVisible();
-		expect( screen.getByText( 'Select a tier' ) ).toBeVisible();
+		expect( screen.getByText( 'Select a plan' ) ).toBeVisible();
 	} );
 
 	it( 'renders nothing when the import carries no comps', () => {

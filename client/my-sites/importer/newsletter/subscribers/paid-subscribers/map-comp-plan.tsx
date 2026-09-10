@@ -69,12 +69,12 @@ export function MapCompPlan( {
 					className="map-plan__selected"
 					onClick={ () => setIsOpen( ! isOpen ) }
 				>
-					{ displayTier( selectedTier, __( 'Select a tier' ) ) }
+					{ displayTier( selectedTier, __( 'Select a plan' ) ) }
 				</Button>
 				<DropdownMenu
 					onToggle={ ( openState: boolean ) => setIsOpen( openState ) }
 					icon={ chevronDown }
-					label={ __( 'Choose a tier for comped subscribers' ) }
+					label={ __( 'Choose a plan for comped subscribers' ) }
 					open={ isOpen }
 				>
 					{ ( { onClose }: { onClose: () => void } ) => (
