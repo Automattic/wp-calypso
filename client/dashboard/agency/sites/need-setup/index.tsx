@@ -2,20 +2,31 @@ import { activeAgencyQuery, pendingAgencySitesQuery } from '@automattic/api-quer
 import config from '@automattic/calypso-config';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __, _n } from '@wordpress/i18n';
 import { Icon, wordpress } from '@wordpress/icons';
 import { ActionList } from '../../../components/action-list';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import ClientSite from './client-site';
 import { hasWpcomLicenseWithoutSite } from './lib';
-import type { PendingAgencySite } from '@automattic/api-core';
+import type { PendingAgencySite, ReferralApiResponse } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
 type SetupRow = {
 	key: string;
 	description: ReactNode;
 };
+
+function getReferralDescription( referral: ReferralApiResponse ): ReactNode {
+	return createInterpolateElement(
+		sprintf(
+			/* translators: %s is the email address of the client who owns the license. */
+			__( '<b>%s</b> owns this' ),
+			referral.client.email
+		),
+		{ b: <strong /> }
+	);
+}
 
 /**
  * Referred licenses are listed one by one so each shows its owner, while the
@@ -28,7 +39,7 @@ function getSetupRows( pendingSites: PendingAgencySite[] ): SetupRow[] {
 	const rows: SetupRow[] = available.flatMap( ( { id, features } ) => {
 		const { referral } = features.wpcom_atomic;
 		return referral
-			? [ { key: `referral-${ id }`, description: <ClientSite referral={ referral } /> } ]
+			? [ { key: `referral-${ id }`, description: getReferralDescription( referral ) } ]
 			: [];
 	} );
 
