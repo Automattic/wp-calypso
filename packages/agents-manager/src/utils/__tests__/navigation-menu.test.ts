@@ -108,6 +108,18 @@ describe( 'addNavigationItem', () => {
 		expect( lastWrite().menuId ).toBe( 10 );
 	} );
 
+	// An unread site record would look like a site naming no menu, and the page
+	// would land in the first rendered one — the footer, say.
+	it( 'refuses when the site settings cannot be read', async () => {
+		( getSiteMetadata as jest.Mock ).mockReturnValueOnce( undefined );
+		withMenus( { 10: [ link( 1, 'Home' ) ] } );
+
+		await expect( addNavigationItem( { label: 'About', id: 7 } ) ).rejects.toThrow(
+			'site settings could not be read'
+		);
+		expect( editEntityRecord ).not.toHaveBeenCalled();
+	} );
+
 	it( 'does nothing when the site has no menu', async () => {
 		withMenus( {}, [] );
 

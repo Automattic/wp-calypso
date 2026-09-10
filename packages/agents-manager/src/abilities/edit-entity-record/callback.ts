@@ -3,6 +3,7 @@ import { dispatch, resolveSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { bindToEditorPath } from '../../utils/canvas-guard';
 import { checkpointKeys, withCheckpoint, type CheckpointRecorder } from '../../utils/checkpoints';
+import { getEditorHistory } from '../../utils/editor-history';
 import { flattenTitle } from '../../utils/entity-title';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { isRecord } from '../../utils/is-record';
@@ -125,6 +126,13 @@ const FIELD_CHECKS: Record< keyof EntityRef, ( value: unknown ) => boolean > = {
 	options: isRecord,
 };
 
+// The one record field this ability rewrites (`flattenTitle()`); a wrong type
+// there would clear a title. Everything else reaches core-data as sent.
+const isTitle = ( value: unknown ) =>
+	value === undefined ||
+	typeof value === 'string' ||
+	( isRecord( value ) && ( typeof value.raw === 'string' || typeof value.rendered === 'string' ) );
+
 /** An entry checked for its operation, so the writes can rely on its fields. */
 type Entity< O extends Operation > = EntityRef &
 	Required<
@@ -158,6 +166,33 @@ function checkEntities< O extends Operation >( entities: unknown[], operation: O
 			);
 		}
 
+		const { entityType, entityName, record } = fields as Entity< O >;
+
+		if ( operation === 'edit' ) {
+			if (
+				! isSite( entityType, entityName ) &&
+				! isPostType( EDITABLE_NAMES, entityType, entityName )
+			) {
+				throw new Error(
+					`Unsupported entity: ${ entityType }/${ entityName }. Use ${ SITE_TYPE }/${ SITE_NAME }, or ${ postTypeHelp(
+						EDITABLE_NAMES
+					) }.`
+				);
+			}
+		} else if ( ! isPostType( ADDABLE_NAMES, entityType, entityName ) ) {
+			throw new Error(
+				`Cannot ${ operation } ${ entityType }/${ entityName }. Use ${ postTypeHelp(
+					ADDABLE_NAMES
+				) }.`
+			);
+		}
+
+		if ( ! isTitle( record?.title ) ) {
+			throw new Error(
+				`Cannot ${ operation }: title must be a string, or an object with a raw or rendered string.`
+			);
+		}
+
 		return fields as Entity< O >;
 	} );
 }
@@ -177,7 +212,12 @@ function checkBatch( {
 	addEntities = [],
 	editEntities = [],
 	deleteEntities = [],
+	confirmationMessage,
 }: EditEntityRecordInput ): Batch | Error {
+	if ( confirmationMessage != null && typeof confirmationMessage !== 'string' ) {
+		return new Error( 'Invalid arguments. confirmationMessage must be a string when present.' );
+	}
+
 	if (
 		! Array.isArray( addEntities ) ||
 		! Array.isArray( editEntities ) ||
@@ -302,12 +342,6 @@ async function applyCreates(
 	applied: AppliedChanges
 ): Promise< void > {
 	for ( const { entityType, entityName, record, options } of entities ) {
-		if ( ! isPostType( ADDABLE_NAMES, entityType, entityName ) ) {
-			throw new Error(
-				`Cannot create ${ entityType }/${ entityName }. Use ${ postTypeHelp( ADDABLE_NAMES ) }.`
-			);
-		}
-
 		const created = await coreDispatch().saveEntityRecord( entityType, entityName, record, {
 			...options,
 			throwOnError: true,
@@ -482,17 +516,6 @@ async function applyEdits(
 			throw new Error( `Nothing to change on ${ entityName } ${ recordId }: the record is empty.` );
 		}
 
-		if (
-			! isSite( entityType, entityName ) &&
-			! isPostType( EDITABLE_NAMES, entityType, entityName )
-		) {
-			throw new Error(
-				`Unsupported entity: ${ entityType }/${ entityName }. Use ${ SITE_TYPE }/${ SITE_NAME }, or ${ postTypeHelp(
-					EDITABLE_NAMES
-				) }.`
-			);
-		}
-
 		if ( isSite( entityType, entityName ) ) {
 			await applySiteEdit( entity, applied );
 		} else {
@@ -508,12 +531,23 @@ async function applyEdits(
  * destination to load — so the delete runs once the canvas has let go of the
  * record.
  *
+ * Only the site editor's router can leave without a full page load. Under a
+ * full load the delete request could be cut off by the unload, so the post
+ * editor refuses instead.
+ *
  * The canvas binding is handed to the navigation first, as the guard does for
  * the ability itself: this call bypasses that dispatch, and a binding left on
  * the page being deleted would read the move as the user leaving and abort
  * the request.
  */
 async function leavePage( pageId: number | string ): Promise< void > {
+	if ( ! getEditorHistory() ) {
+		throw new Error(
+			`Cannot delete page ${ pageId }: it is open in this editor, which cannot leave it first. ` +
+				'Ask the user to open a different page, then call again.'
+		);
+	}
+
 	const frontPageId = Number( getSiteRecord()?.page_on_front );
 	const path =
 		frontPageId && frontPageId !== Number( pageId ) ? `/page/${ frontPageId }` : PAGES_LIST_PATH;
@@ -531,12 +565,6 @@ async function applyDeletes(
 	applied: AppliedChanges
 ): Promise< void > {
 	for ( const { entityType, entityName, recordId, options } of entities ) {
-		if ( ! isPostType( ADDABLE_NAMES, entityType, entityName ) ) {
-			throw new Error(
-				`Cannot delete ${ entityType }/${ entityName }. Use ${ postTypeHelp( ADDABLE_NAMES ) }.`
-			);
-		}
-
 		// Deleting the page on screen would leave the editor showing one that no
 		// longer exists.
 		if ( entityName === PAGE && getLoadedPageId() === Number( recordId ) ) {
