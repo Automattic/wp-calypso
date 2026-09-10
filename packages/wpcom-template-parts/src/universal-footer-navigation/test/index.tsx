@@ -82,7 +82,29 @@ describe( 'PureUniversalNavbarFooter', () => {
 
 	test( 'only enables the preview colorway when the feature flag is enabled', () => {
 		expect( getFooter2026Colorway( false, 'dark' ) ).toBeUndefined();
+		expect( getFooter2026Colorway( false, '2' ) ).toBeUndefined();
+		expect( getFooter2026Colorway( false, 'light' ) ).toBeUndefined();
 		expect( getFooter2026Colorway( true ) ).toBe( 'white' );
 		expect( getFooter2026Colorway( true, 'dark' ) ).toBe( 'dark' );
+	} );
+
+	test.each( [
+		[ '1', 'white' ],
+		[ 'light', 'white' ],
+		[ '2', 'dark' ],
+		[ 'dark', 'dark' ],
+	] as const )( 'maps ?footer_2026=%s to the %s colorway', ( flag, colorway ) => {
+		expect( getFooter2026Colorway( true, flag ) ).toBe( colorway );
+	} );
+
+	test( 'falls back to white for values outside the alias list', () => {
+		expect( getFooter2026Colorway( true, '' ) ).toBe( 'white' );
+		expect( getFooter2026Colorway( true, '3' ) ).toBe( 'white' );
+		expect( getFooter2026Colorway( true, 'DARK' ) ).toBe( 'white' );
+	} );
+
+	test( 'uses the last value when the query parameter repeats', () => {
+		expect( getFooter2026Colorway( true, [ 'light', 'dark' ] ) ).toBe( 'dark' );
+		expect( getFooter2026Colorway( true, [ 'dark', '1' ] ) ).toBe( 'white' );
 	} );
 } );
