@@ -1,7 +1,10 @@
 import config from '@automattic/calypso-config';
 import { useEffect } from 'react';
 import { trackPremiumAnalyticsPreviewEvent } from '../premium-analytics-preview/track-event';
-import { PREMIUM_ANALYTICS_PREVIEW_FLAG } from './premium-analytics-preview-cohort';
+import {
+	PREMIUM_ANALYTICS_PREVIEW_FLAG,
+	PREMIUM_ANALYTICS_PREVIEW_ATOMIC_FLAG,
+} from './premium-analytics-preview-cohort';
 
 type PreviewGateSignals = {
 	isServerVisible: boolean;
@@ -11,6 +14,7 @@ type PreviewGateSignals = {
 	premiumAnalyticsDashboardUrl?: string | null;
 	isVip: boolean;
 	isP2: boolean;
+	isAtomic: boolean;
 	isPremiumAnalyticsEnabled?: boolean;
 	isStatusError: boolean;
 };
@@ -46,6 +50,7 @@ const notShownReason = ( {
 	premiumAnalyticsDashboardUrl,
 	isVip,
 	isP2,
+	isAtomic,
 	isPremiumAnalyticsEnabled,
 	isStatusError,
 }: PreviewGateSignals ): string | null => {
@@ -71,6 +76,9 @@ const notShownReason = ( {
 	}
 	if ( isP2 ) {
 		return 'is_p2';
+	}
+	if ( isAtomic && ! config.isEnabled( PREMIUM_ANALYTICS_PREVIEW_ATOMIC_FLAG ) ) {
+		return 'atomic_hold';
 	}
 	if ( isPremiumAnalyticsEnabled === true ) {
 		return 'already_enabled';
@@ -104,6 +112,7 @@ export default function usePremiumAnalyticsPreviewNotShownEvent( {
 	premiumAnalyticsDashboardUrl,
 	isVip,
 	isP2,
+	isAtomic,
 	isPremiumAnalyticsEnabled,
 	isStatusError,
 }: NotShownSignals ) {
@@ -133,6 +142,7 @@ export default function usePremiumAnalyticsPreviewNotShownEvent( {
 			premiumAnalyticsDashboardUrl,
 			isVip,
 			isP2,
+			isAtomic,
 			isPremiumAnalyticsEnabled,
 			isStatusError,
 		} );
@@ -157,6 +167,7 @@ export default function usePremiumAnalyticsPreviewNotShownEvent( {
 		premiumAnalyticsDashboardUrl,
 		isVip,
 		isP2,
+		isAtomic,
 		isPremiumAnalyticsEnabled,
 		isStatusError,
 	] );
