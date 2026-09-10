@@ -32,9 +32,9 @@ export default function SettingsPlanSummary( {
 		return null;
 	}
 
-	// The purchase-management URL only resolves in dashboards that register the
-	// `/me/billing` routes.
-	if ( url.startsWith( '/me/billing/' ) && ! ( supports.me && supports.me.billing ) ) {
+	// The only relative URL getSitePlanUrl returns is the purchase-management
+	// link, which lives under the `/me/billing` routes.
+	if ( ! ( supports.me && supports.me.billing ) ) {
 		return null;
 	}
 
