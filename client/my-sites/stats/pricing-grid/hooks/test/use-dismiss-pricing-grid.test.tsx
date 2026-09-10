@@ -35,10 +35,6 @@ describe( 'useDismissPricingGrid', () => {
 		);
 	} );
 
-	/**
-	 * The cache holds records, and every reader relies on that shape. The patch that hides the
-	 * grid before the POST lands must keep it.
-	 */
 	it( 'hides the grid in the cache as a record, before the write lands', async () => {
 		const { result: dismiss } = renderHook( () => useDismissPricingGrid( SITE_ID ), { wrapper } );
 		const { result: all } = renderHook( () => useNoticesVisibilityQuery( SITE_ID ), { wrapper } );

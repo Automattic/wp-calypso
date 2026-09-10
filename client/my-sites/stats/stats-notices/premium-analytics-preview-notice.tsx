@@ -7,7 +7,9 @@ import { Button } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
+import useNoticeVisibilityMutation, {
+	NoticeUpdate,
+} from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useNoticeRecordQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import usePremiumAnalyticsStatusMutation from 'calypso/my-sites/stats/hooks/use-premium-analytics-status-mutation';
 import {
@@ -49,8 +51,8 @@ const PremiumAnalyticsPreviewNotice = ( {
 	const isOdyssey = config.isEnabled( 'is_odyssey' );
 	const { data: noticeRecord } = useNoticeRecordQuery( siteId, 'premium_analytics_preview' );
 	const postponedCount = noticeRecord?.postponed_count ?? 0;
-	// Read through a ref by the impression effect, so a record refreshed mid-mount does not
-	// count as a second showing.
+	// Read through a ref so the impression effect does not depend on the count: a record refreshed
+	// while mounted is not a second showing.
 	const postponedCountRef = useRef( postponedCount );
 	postponedCountRef.current = postponedCount;
 	const trackEvent = ( name: string, properties: Record< string, unknown > = {} ) =>
@@ -87,13 +89,16 @@ const PremiumAnalyticsPreviewNotice = ( {
 		trackEvent( 'dismissed', { postponed_count: postponedCount } );
 		setDismissedSiteId( siteId );
 
-		// Best-effort past the mutation's own retry: local state already hides it for this session,
-		// and a lost write only re-offers the same step on the next load, so nothing is surfaced.
-		recordDismissalAsync(
+		const update: NoticeUpdate =
 			postponedCount === 0
 				? { status: 'postponed', postponedFor: DISMISSAL_POSTPONEMENT }
-				: { status: 'dismissed' }
-		).catch( () => {} );
+				: { status: 'dismissed' };
+		// Best-effort past the mutation's own retry: local state already hides it for this session,
+		// and a lost write only re-offers the same step on the next load. The event is what tells a
+		// site that keeps failing apart from one that never got past its first sighting.
+		recordDismissalAsync( update ).catch( () =>
+			trackEvent( 'dismiss_failed', { postponed_count: postponedCount, status: update.status } )
+		);
 	};
 
 	// Neither the confirmation nor a failed attempt is a rejection, so closing those records
@@ -121,8 +126,9 @@ const PremiumAnalyticsPreviewNotice = ( {
 			// for saying yes.
 			//
 			// Deliberately no dismissal here. An enabled site already fails the eligibility rule, so
-			// the invitation is gone on the next load either way — and recording one marks the
-			// notice hidden, which unmounts this notice mid-sentence, taking the link with it.
+			// the invitation is gone on the next load either way — and recording one would refetch
+			// the notices, which now answers "dismissed" and unmounts this notice mid-sentence,
+			// taking the link with it.
 			setEnabledSiteId( siteId );
 		} catch {
 			shouldRestoreFocus.current = true;

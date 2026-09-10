@@ -4,7 +4,6 @@ import {
 	normalizeNoticesVisibility,
 	noticesVisibilityQueryKey,
 	setNoticeHidden,
-	toNoticeRecord,
 	toNoticesVisibility,
 } from '../use-notice-visibility-query';
 
@@ -70,11 +69,6 @@ describe( 'normalizeNoticeRecords', () => {
 		).toEqual( detail );
 	} );
 
-	/**
-	 * An older server, or a Jetpack plugin without the details route, still answers with a flat
-	 * `{ id: bool }` map. It must land in the same shape, reading as never postponed, so the
-	 * banner keeps its single 30-day hold there instead of throwing.
-	 */
 	it( 'wraps a bare boolean as a record that was never postponed', () => {
 		const records = normalizeNoticeRecords( {
 			premium_analytics_preview: true,
@@ -113,12 +107,14 @@ describe( 'normalizeNoticeRecords', () => {
 	} );
 
 	it( 'discards malformed escalation fields rather than passing them on', () => {
-		const record = toNoticeRecord( {
-			show: 1,
-			status: 'expired',
-			postponed_count: 'two',
-			next_show_at: 'soon',
-		} );
+		const record = normalizeNoticeRecords( {
+			premium_analytics_preview: {
+				show: 1,
+				status: 'expired',
+				postponed_count: 'two',
+				next_show_at: 'soon',
+			},
+		} ).premium_analytics_preview;
 
 		expect( record ).toEqual( {
 			show: true,
@@ -145,7 +141,7 @@ describe( 'setNoticeHidden', () => {
 			noticesVisibilityQueryKey( 1 )
 		);
 
-	it( 'hides the notice from the record it already holds when no record is given', () => {
+	it( 'hides the notice, keeping the record it already holds', () => {
 		const client = new QueryClient();
 		client.setQueryData(
 			noticesVisibilityQueryKey( 1 ),
@@ -165,39 +161,6 @@ describe( 'setNoticeHidden', () => {
 		} );
 		expect( read( client )?.tier_upgrade.show ).toBe( true );
 	} );
-
-	it.each( [ 'do_you_love_jetpack_stats', 'commercial_site_upgrade' ] as const )(
-		'hides the successor when %s is hidden, preserving its metadata',
-		( noticeId ) => {
-			const client = new QueryClient();
-			const records = normalizeNoticeRecords( {
-				[ noticeId ]: true,
-				free_site_upgrade: {
-					show: true,
-					status: 'postponed',
-					postponed_count: 2,
-					next_show_at: 1_700_000_000,
-				},
-				tier_upgrade: true,
-			} );
-			client.setQueryData( noticesVisibilityQueryKey( 1 ), records );
-
-			expect( records.free_site_upgrade.show ).toBe( true );
-
-			setNoticeHidden( client, 1, noticeId, {
-				status: 'postponed',
-				postponed_count: 1,
-				next_show_at: 1_800_000_000,
-			} );
-
-			expect( read( client )?.[ noticeId ].show ).toBe( false );
-			expect( read( client )?.free_site_upgrade ).toEqual( {
-				...records.free_site_upgrade,
-				show: false,
-			} );
-			expect( read( client )?.tier_upgrade ).toBe( records.tier_upgrade );
-		}
-	);
 
 	it( 'leaves a cache that was never fetched empty', () => {
 		const client = new QueryClient();

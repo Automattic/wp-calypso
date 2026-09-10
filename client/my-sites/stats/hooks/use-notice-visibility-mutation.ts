@@ -1,25 +1,22 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import { Notices, noticesVisibilityQueryKey, setNoticeHidden } from './use-notice-visibility-query';
-
-type Status = 'dismissed' | 'postponed';
+import {
+	Notices,
+	NoticeDismissStatus,
+	noticesVisibilityQueryKey,
+} from './use-notice-visibility-query';
 
 export interface NoticeUpdate {
-	status: Status;
+	status: NoticeDismissStatus;
 	postponedFor?: number;
-}
-
-interface NoticeUpdateResponse {
-	updated?: boolean;
-	notice?: Record< string, unknown >;
 }
 
 export function dismissNotice(
 	siteId: number | null,
 	noticeId: keyof Notices,
-	status: Status,
+	status: NoticeDismissStatus,
 	postponedFor = 0
-): Promise< NoticeUpdateResponse > {
+): Promise< unknown > {
 	return wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
 		path: `/sites/${ siteId }/jetpack-stats-dashboard/notices`,
@@ -32,13 +29,13 @@ export function dismissNotice(
 }
 
 /**
- * The hook arguments are the default update; `mutate()` may pass a `NoticeUpdate` to override
- * them per call, for notices whose next step depends on the saved record.
+ * The hook arguments are the default update. `mutate()` may pass a `NoticeUpdate` for notices
+ * whose next step depends on the saved record; each field it omits falls back to the hook argument.
  */
 export default function useNoticeVisibilityMutation(
 	siteId: number | null,
 	noticeId: keyof Notices,
-	status: Status = 'dismissed',
+	status: NoticeDismissStatus = 'dismissed',
 	postponedFor = 0
 ) {
 	const queryClient = useQueryClient();
@@ -57,20 +54,8 @@ export default function useNoticeVisibilityMutation(
 		// callbacks while the calling component is still mounted, and consumers may
 		// navigate away before the retry succeeds. Not awaited, so callers chaining
 		// on mutateAsync() don't also wait out the refetch.
-		onSuccess: ( response ) => {
-			const queryKey = noticesVisibilityQueryKey( siteId );
-			const record = response?.notice;
-			// A fetch already in flight would land after the patch and undo it; invalidating
-			// cancels that fetch and starts one that sees the write.
-			if (
-				! record ||
-				! queryClient.getQueryData( queryKey ) ||
-				queryClient.getQueryState( queryKey )?.fetchStatus === 'fetching'
-			) {
-				queryClient.invalidateQueries( { queryKey } );
-				return;
-			}
-			setNoticeHidden( queryClient, siteId, noticeId, record );
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: noticesVisibilityQueryKey( siteId ) } );
 		},
 	} );
 }

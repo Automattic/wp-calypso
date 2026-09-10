@@ -18,7 +18,7 @@ export const PLAN_CHOSEN_QUERY_ARG = 'stats_plan_chosen';
  * Returns a function that records the pricing grid dismissal server-side and
  * patches the cached notices in place, so the gate sees the choice on SPA route
  * changes without waiting for a refetch. The patch can't cover every path — the
- * raw notices entry may be absent when the purchase page was reached directly —
+ * notices entry may be absent when the purchase page was reached directly —
  * but the round-trip needn't be awaited: the mutation invalidates the notices
  * query on success, so a gate that fetched pre-dismissal state self-corrects
  * once the POST lands. A rejection (after the mutation's own retry) is

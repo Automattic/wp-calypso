@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { PREMIUM_ANALYTICS_PAGE_PATH } from '../premium-analytics-preview-cohort';
 import PremiumAnalyticsPreviewNotice from '../premium-analytics-preview-notice';
@@ -283,10 +283,6 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		expect( container.querySelector( '.inner-notice-container--calypso' ) ).toBeNull();
 	} );
 
-	/**
-	 * The client owns the schedule; the server only counts. A first dismissal is a 30-day hold, and
-	 * the one after the invitation has come back is for good.
-	 */
 	it( 'holds the invitation back for a month on the first dismissal', async () => {
 		renderNotice();
 
@@ -307,20 +303,23 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		);
 	} );
 
-	it( 'dismisses the invitation for good once it has already come back', async () => {
-		mockPostponedCount = 1;
+	it.each( [ 1, 2, 5 ] )(
+		'dismisses the invitation for good once it has already come back (postponed %i times)',
+		async ( postponedCount ) => {
+			mockPostponedCount = postponedCount;
 
-		renderNotice();
+			renderNotice();
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
+			await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
 
-		expect( mockRecordDismissal ).toHaveBeenCalledTimes( 1 );
-		expect( mockRecordDismissal ).toHaveBeenCalledWith( { status: 'dismissed' } );
-		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_stats_premium_analytics_preview_notice_dismissed',
-			{ blog_id: 123, postponed_count: 1 }
-		);
-	} );
+			expect( mockRecordDismissal ).toHaveBeenCalledTimes( 1 );
+			expect( mockRecordDismissal ).toHaveBeenCalledWith( { status: 'dismissed' } );
+			expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_stats_premium_analytics_preview_notice_dismissed',
+				{ blog_id: 123, postponed_count: postponedCount }
+			);
+		}
+	);
 
 	it( 'hides the invitation before the write is answered', async () => {
 		let settle: () => void = () => {};
@@ -335,13 +334,20 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		settle();
 	} );
 
-	it( 'stays hidden when the write fails', async () => {
+	it( 'stays hidden when the write fails, and says so', async () => {
+		mockPostponedCount = 1;
 		mockRecordDismissal.mockRejectedValue( new Error( 'nope' ) );
 
 		renderNotice();
 		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
 
 		expect( screen.queryByText( 'Try the new Traffic tab' ) ).not.toBeInTheDocument();
+		await waitFor( () =>
+			expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_stats_premium_analytics_preview_notice_dismiss_failed',
+				{ blog_id: 123, postponed_count: 1, status: 'dismissed' }
+			)
+		);
 	} );
 
 	it( 'counts one impression per showing, however often the record is refreshed', () => {

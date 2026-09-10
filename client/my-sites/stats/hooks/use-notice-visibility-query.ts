@@ -36,10 +36,11 @@ export const DEFAULT_NOTICES_VISIBILITY = {
 export type Notices = typeof DEFAULT_NOTICES_VISIBILITY;
 export type NoticeIdType = keyof Notices;
 
-export type NoticeStatus = 'dismissed' | 'postponed' | null;
+const NOTICE_DISMISS_STATUSES = [ 'dismissed', 'postponed' ] as const;
+export type NoticeDismissStatus = ( typeof NOTICE_DISMISS_STATUSES )[ number ];
 export interface NoticeRecord {
 	show: boolean;
-	status: NoticeStatus;
+	status: NoticeDismissStatus | null;
 	postponed_count: number;
 	next_show_at: number | null;
 }
@@ -110,39 +111,23 @@ export const normalizeNoticesVisibility = (
 const isNoticeRecord = ( value: unknown ): value is Partial< NoticeRecord > =>
 	typeof value === 'object' && value !== null;
 
+const isNoticeDismissStatus = ( value: unknown ): value is NoticeDismissStatus =>
+	NOTICE_DISMISS_STATUSES.includes( value as NoticeDismissStatus );
+
 /**
  * Both the flat map an older server answers with and a detail record land in one shape, so the
  * escalation fields read as "never postponed" wherever the server cannot say otherwise.
  */
-export const toNoticeRecord = ( value: unknown ): NoticeRecord => {
+const toNoticeRecord = ( value: unknown ): NoticeRecord => {
 	if ( ! isNoticeRecord( value ) ) {
 		return { show: !! value, status: null, postponed_count: 0, next_show_at: null };
 	}
 	return {
 		show: !! value.show,
-		status: value.status === 'dismissed' || value.status === 'postponed' ? value.status : null,
+		status: isNoticeDismissStatus( value.status ) ? value.status : null,
 		postponed_count: Number( value.postponed_count ) || 0,
 		next_show_at: typeof value.next_show_at === 'number' ? value.next_show_at : null,
 	};
-};
-
-export const normalizeNoticeRecords = (
-	payload: Record< string, unknown > | null | undefined
-): NoticeRecords => {
-	const records = {} as NoticeRecords;
-	const payloadVisibility: Record< string, boolean > = {};
-	for ( const [ noticeId, value ] of Object.entries( payload ?? {} ) ) {
-		records[ noticeId as NoticeIdType ] = toNoticeRecord( value );
-		payloadVisibility[ noticeId ] = records[ noticeId as NoticeIdType ].show;
-	}
-	const visibility = normalizeNoticesVisibility( payloadVisibility );
-	for ( const noticeId of Object.keys( visibility ) as NoticeIdType[] ) {
-		records[ noticeId ] = {
-			...( records[ noticeId ] ?? toNoticeRecord( false ) ),
-			show: visibility[ noticeId ],
-		};
-	}
-	return records;
 };
 
 export const toNoticesVisibility = ( records: NoticeRecords ): Notices => {
@@ -151,6 +136,23 @@ export const toNoticesVisibility = ( records: NoticeRecords ): Notices => {
 		visibility[ noticeId ] = records[ noticeId ].show;
 	}
 	return visibility;
+};
+
+export const normalizeNoticeRecords = (
+	payload: Record< string, unknown > | null | undefined
+): NoticeRecords => {
+	const records = {} as NoticeRecords;
+	for ( const [ noticeId, value ] of Object.entries( payload ?? {} ) ) {
+		records[ noticeId as NoticeIdType ] = toNoticeRecord( value );
+	}
+	const visibility = normalizeNoticesVisibility( toNoticesVisibility( records ) );
+	for ( const noticeId of Object.keys( visibility ) as NoticeIdType[] ) {
+		records[ noticeId ] = {
+			...( records[ noticeId ] ?? toNoticeRecord( false ) ),
+			show: visibility[ noticeId ],
+		};
+	}
+	return records;
 };
 
 const queryNotices = async function ( siteId: number | null ): Promise< NoticeRecords > {
@@ -182,24 +184,17 @@ export const noticesVisibilityQueryKey = ( siteId: number | null ) => [
 ];
 
 /**
- * Mark a notice hidden in the cache, from the record a write returned or the one already held.
+ * Mark a notice hidden in the cache, ahead of the refetch the write triggers.
  * A cache that was never filled is left alone; only a fetch may seed it.
  */
 export const setNoticeHidden = (
 	queryClient: QueryClient,
 	siteId: number | null,
-	noticeId: NoticeIdType,
-	record?: unknown
+	noticeId: NoticeIdType
 ) =>
 	queryClient.setQueryData< NoticeRecords >( noticesVisibilityQueryKey( siteId ), ( records ) =>
 		records
-			? {
-					...records,
-					[ noticeId ]: { ...toNoticeRecord( record ?? records[ noticeId ] ), show: false },
-					...( noticeId === 'do_you_love_jetpack_stats' || noticeId === 'commercial_site_upgrade'
-						? { free_site_upgrade: { ...records.free_site_upgrade, show: false } }
-						: {} ),
-			  }
+			? { ...records, [ noticeId ]: { ...toNoticeRecord( records[ noticeId ] ), show: false } }
 			: records
 	);
 
@@ -239,5 +234,5 @@ export function useNoticesVisibilityQuery( siteId: number | null ) {
 
 export function useNoticeRecordQuery( siteId: number | null, noticeId: NoticeIdType ) {
 	const selectRecord = ( records: NoticeRecords ) => records[ noticeId ];
-	return useNoticesVisibilityQueryRaw< NoticeRecord | undefined >( siteId, selectRecord );
+	return useNoticesVisibilityQueryRaw< NoticeRecord >( siteId, selectRecord );
 }
