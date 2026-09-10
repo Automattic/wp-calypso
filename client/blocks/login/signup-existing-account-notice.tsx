@@ -1,5 +1,5 @@
+import { Notice } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import Notice from 'calypso/dashboard/components/notice';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -42,7 +42,7 @@ export default function SignupExistingAccountNotice( { signupUrl }: { signupUrl:
 	};
 
 	return (
-		<Notice variant="info">
+		<Notice status="info" isDismissible={ false }>
 			{ email
 				? translate(
 						'We found a WordPress.com account with the email %(email)s. Log in below, or {{a}}sign up with a different email{{/a}}.',

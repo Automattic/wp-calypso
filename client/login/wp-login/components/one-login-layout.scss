@@ -10,7 +10,7 @@
 
 // The wrapper centers its children, so a notice would otherwise shrink to its
 // text. Span it, like the heading and form below.
-.wp-login__one-login-layout-content-wrapper > .dashboard-notice {
+.wp-login__one-login-layout-content-wrapper > .components-notice {
 	width: 100%;
 }
 
