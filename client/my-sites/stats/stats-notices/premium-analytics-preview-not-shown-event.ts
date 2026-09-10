@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { useEffect } from 'react';
 import { trackPremiumAnalyticsPreviewEvent } from '../premium-analytics-preview/track-event';
 import { PREMIUM_ANALYTICS_PREVIEW_FLAG } from './premium-analytics-preview-cohort';
+import type { NoticeIdType } from '../hooks/use-notice-visibility-query';
 
 type PreviewGateSignals = {
 	isServerVisible: boolean;
@@ -13,6 +14,8 @@ type PreviewGateSignals = {
 	isP2: boolean;
 	isPremiumAnalyticsEnabled?: boolean;
 	isStatusError: boolean;
+	/** The notice that won the conflict group over the invitation, when one did. */
+	suppressedBy?: NoticeIdType | null;
 };
 
 type NotShownSignals = PreviewGateSignals & {
@@ -48,6 +51,7 @@ const notShownReason = ( {
 	isP2,
 	isPremiumAnalyticsEnabled,
 	isStatusError,
+	suppressedBy,
 }: PreviewGateSignals ): string | null => {
 	if ( ! isServerVisible ) {
 		return 'server_hidden';
@@ -83,6 +87,11 @@ const notShownReason = ( {
 	if ( isPremiumAnalyticsEnabled === undefined ) {
 		return 'setting_unavailable';
 	}
+	// Every gate passed and another notice in the group outranked the invitation. Last, so the
+	// count is of sites that would otherwise have seen it.
+	if ( suppressedBy ) {
+		return 'suppressed';
+	}
 
 	return null;
 };
@@ -106,6 +115,7 @@ export default function usePremiumAnalyticsPreviewNotShownEvent( {
 	isP2,
 	isPremiumAnalyticsEnabled,
 	isStatusError,
+	suppressedBy,
 }: NotShownSignals ) {
 	useEffect( () => {
 		// The flag is off everywhere the preview has not reached yet, so counting those sites would
@@ -135,6 +145,7 @@ export default function usePremiumAnalyticsPreviewNotShownEvent( {
 			isP2,
 			isPremiumAnalyticsEnabled,
 			isStatusError,
+			suppressedBy,
 		} );
 
 		// Marked before the shown case returns, so a site that was offered the invitation stays out
@@ -145,7 +156,10 @@ export default function usePremiumAnalyticsPreviewNotShownEvent( {
 			return;
 		}
 
-		trackPremiumAnalyticsPreviewEvent( 'notice', 'not_shown', siteId, { reason } );
+		trackPremiumAnalyticsPreviewEvent( 'notice', 'not_shown', siteId, {
+			reason,
+			...( reason === 'suppressed' ? { by: suppressedBy } : {} ),
+		} );
 	}, [
 		siteId,
 		isWpcom,
@@ -159,5 +173,6 @@ export default function usePremiumAnalyticsPreviewNotShownEvent( {
 		isP2,
 		isPremiumAnalyticsEnabled,
 		isStatusError,
+		suppressedBy,
 	] );
 }

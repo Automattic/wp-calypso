@@ -6,6 +6,7 @@ import { STATS_FEATURE_PAGE_TRAFFIC } from 'calypso/my-sites/stats/constants';
 import {
 	DEFAULT_NOTICES_VISIBILITY,
 	Notices,
+	NoticeIdType,
 	useNoticesVisibilityQuery,
 	processConflictNotices,
 } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
@@ -40,7 +41,8 @@ import './style.scss';
 const TEAM51_OWNER_ID = 70055110;
 const SIGNIFICANT_VIEWS_AMOUNT = 100;
 
-const ensureOnlyOneNoticeVisible = (
+/** Every notice that could show on its own, before the conflict groups pick one. */
+const calculateNoticesVisibility = (
 	serverNoticesVisibility: Notices,
 	noticeOptions: StatsNoticeProps
 ) => {
@@ -54,7 +56,26 @@ const ensureOnlyOneNoticeVisible = (
 				notice.isVisibleFunc( noticeOptions ) )
 	);
 
-	return processConflictNotices( calculatedNoticesVisibility );
+	return calculatedNoticesVisibility;
+};
+
+/**
+ * The notice that kept the preview invitation off the page, or null when the invitation was
+ * never in the running or is the one showing.
+ */
+const findPreviewSuppressor = (
+	noticesInTheRunning: Notices,
+	noticesVisibility: Notices
+): NoticeIdType | null => {
+	if (
+		! noticesInTheRunning.premium_analytics_preview ||
+		noticesVisibility.premium_analytics_preview
+	) {
+		return null;
+	}
+	return (
+		ALL_STATS_NOTICES.find( ( notice ) => noticesVisibility[ notice.noticeId ] )?.noticeId ?? null
+	);
 };
 
 /**
@@ -205,6 +226,12 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		// the modules menu and reports its fetch status to every observer, disabled ones included.
 		( shouldAskStatus && isLoadingPremiumAnalyticsStatus );
 
+	const noticesInTheRunning = calculateNoticesVisibility(
+		serverNoticesVisibility ?? DEFAULT_NOTICES_VISIBILITY,
+		noticeOptions
+	);
+	const calculatedNoticesVisibility = processConflictNotices( noticesInTheRunning );
+
 	usePremiumAnalyticsPreviewNotShownEvent( {
 		siteId,
 		isWpcom,
@@ -220,16 +247,12 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		isP2,
 		isPremiumAnalyticsEnabled,
 		isStatusError: isPremiumAnalyticsStatusError,
+		suppressedBy: findPreviewSuppressor( noticesInTheRunning, calculatedNoticesVisibility ),
 	} );
 
 	if ( isWaitingForNoticeInputs || isError ) {
 		return null;
 	}
-
-	const calculatedNoticesVisibility = ensureOnlyOneNoticeVisible(
-		serverNoticesVisibility ?? DEFAULT_NOTICES_VISIBILITY,
-		noticeOptions
-	);
 
 	const allNotices = ALL_STATS_NOTICES.map(
 		( notice ) =>
