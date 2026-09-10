@@ -6,7 +6,8 @@ import { flattenTitle } from '../../utils/entity-title';
 import { isEditorPage } from '../../utils/is-editor-page';
 import {
 	addNavigationItem,
-	getMenuIdsHolding,
+	getMenuIdsToRelabel,
+	MENU_FIELDS,
 	removeNavigationItem,
 	renameNavigationItem,
 } from '../../utils/navigation-menu';
@@ -46,14 +47,9 @@ const isSite = ( entityType?: string, entityName?: string ) =>
 // Derived from the lists, so a refusal cannot name a stale set.
 const postTypeHelp = ( names: string[] ) => `${ POST_TYPE } with ${ names.join( ', ' ) }`;
 
-// Only `blocks` and `content` are covered by the menu snapshot, so only they
-// are checkpointed. Anything else a menu record carries — its own title, for
-// instance — keeps the editor's undo, as page content does.
-const MENU_FIELDS = [ 'blocks', 'content' ];
-
-// What makes a `wp_navigation` edit a menu edit. A title- or status-only one
-// changes nothing the snapshot covers, so it claims no navigation domain and
-// keeps the editor's undo like any other field.
+// What makes a `wp_navigation` edit a menu edit. Only the item fields are
+// checkpointed; a title- or status-only edit changes nothing the snapshot
+// covers, so it claims no navigation domain and keeps the editor's undo.
 const MENU_EDIT_FIELDS = [ 'navigationItems', ...MENU_FIELDS ];
 
 const editsMenu = ( record?: Record< string, unknown > ) =>
@@ -367,10 +363,9 @@ async function applyRecordEdit(
 	updated();
 
 	if ( isRename ) {
-		// Snapshot before relabelling: the item may carry a label the user chose,
-		// and only the menu itself records it — the rename would otherwise be
-		// undone to the page's old title instead of that label.
-		for ( const menuId of await getMenuIdsHolding( recordId, previousTitle ) ) {
+		// Snapshot the menus the rename will relabel: a restore puts each back as
+		// it was rather than relabelling, so the item's label returns exactly.
+		for ( const menuId of await getMenuIdsToRelabel( recordId, previousTitle ) ) {
 			await recorder.captureMenu( menuId );
 		}
 
@@ -534,9 +529,12 @@ export async function editEntityRecordCallback(
 		},
 		async ( recorder ): Promise< Error | undefined > => {
 			try {
+				// Deletes before edits: a menu edit then snapshots the menu as the
+				// deletion left it, so undoing the edit cannot bring back a link
+				// to a page that is gone.
 				await applyCreates( addEntities, applied );
-				await applyEdits( editEntities, applied, recorder );
 				await applyDeletes( deleteEntities, applied );
+				await applyEdits( editEntities, applied, recorder );
 			} catch ( error ) {
 				if ( ! hasChanges( applied ) ) {
 					throw error;

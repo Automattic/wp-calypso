@@ -485,6 +485,19 @@ describe( 'withCheckpoint', () => {
 		expect( hasCheckpoint( 'call-1' ) ).toBe( false );
 	} );
 
+	// The first run snapshots; a repeat of the same call still records the
+	// page or menu it reaches, or an undo would leave that change behind.
+	it( 'still records what a repeat of the same call touches', async () => {
+		const { withCheckpoint, getCheckpoint } = await loadCheckpoints();
+		const write = { toolId: 'tool', toolCallId: 'call-1', keys: [ 'page' ], summary: 'x' };
+		const rename = { pageId: 7, from: 'Old', to: 'New' };
+
+		await withCheckpoint( write, () => {} );
+		await withCheckpoint( write, ( recorder ) => recorder.capturePageRename( rename ) );
+
+		expect( getCheckpoint( 'call-1' )?.pageRenames ).toEqual( [ rename ] );
+	} );
+
 	it( 'keeps the first snapshot when a repeat write throws', async () => {
 		const { withCheckpoint, hasCheckpoint } = await loadCheckpoints();
 		await withCheckpoint( LOGO_WRITE, () => {} );
@@ -495,6 +508,27 @@ describe( 'withCheckpoint', () => {
 			} )
 		).rejects.toThrow();
 		expect( hasCheckpoint( 'call-1' ) ).toBe( true );
+	} );
+} );
+
+describe( 'restore order', () => {
+	// A page deleted since makes the title restore throw; menus must not have
+	// been rewritten by then, or the failure leaves a half-restored site.
+	it( 'restores page titles before menus, so a missing page fails first', async () => {
+		const { setCheckpoint, restoreCheckpoint, getCheckpoint, editEntityRecord } =
+			await loadCheckpoints();
+		jest.requireMock( '@wordpress/data' ).resolveSelect.mockReturnValue( {
+			getEditedEntityRecord: jest.fn().mockResolvedValue( null ),
+		} );
+
+		setCheckpoint( 'call-1', [ 'page', 'navigation' ] );
+		Object.assign( getCheckpoint( 'call-1' ) ?? {}, {
+			pageRenames: [ { pageId: 7, from: 'Old', to: 'New' } ],
+			menusBeforeUpdate: [ { id: 19, items: [] } ],
+		} );
+
+		await expect( restoreCheckpoint( 'call-1' ) ).rejects.toThrow( 'Page 7 could not be read' );
+		expect( editEntityRecord ).not.toHaveBeenCalled();
 	} );
 } );
 
