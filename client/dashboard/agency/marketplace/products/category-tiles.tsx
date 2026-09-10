@@ -28,13 +28,6 @@ import type { ProductBrand, ProductCategory } from './lib/product-categories';
 
 export type CategoryTileValue = ProductBrand | ProductCategory;
 
-export function isCategoryTileValue( value: unknown ): value is CategoryTileValue {
-	return (
-		typeof value === 'string' &&
-		[ ...Object.keys( BRAND_LOGOS ), ...Object.keys( CATEGORY_ICONS ) ].includes( value )
-	);
-}
-
 interface Tile {
 	value: CategoryTileValue;
 	label: string;
@@ -61,6 +54,13 @@ const BRAND_LOGOS: Record< ProductBrand, string > = {
 	woocommerce: wooLogo,
 	pressable: pressableLogo,
 };
+
+export function isCategoryTileValue( value: unknown ): value is CategoryTileValue {
+	return (
+		typeof value === 'string' &&
+		[ ...Object.keys( BRAND_LOGOS ), ...Object.keys( CATEGORY_ICONS ) ].includes( value )
+	);
+}
 
 // The classic dashboard's category menu, in its order.
 function getTiles( { showPressable }: { showPressable: boolean } ): Tile[] {
