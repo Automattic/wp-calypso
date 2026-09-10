@@ -1,6 +1,9 @@
 import { formatCurrency } from '@automattic/number-formatters';
+import { Link } from '@tanstack/react-router';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../../app/locale';
+import { changePaymentMethodRoute } from '../../../app/router/me';
 import ConfirmModal from '../../../components/confirm-modal';
 import { formatDate } from '../../../utils/datetime';
 import { getTitanTierName } from '../../utils/titan-tiers';
@@ -19,6 +22,8 @@ export function TitanDowngradeModal( {
 	refundAmount,
 	currencyCode,
 	renewDate,
+	purchaseId,
+	isRechargeable,
 	isBusy,
 	onCancel,
 	onConfirm,
@@ -31,6 +36,9 @@ export function TitanDowngradeModal( {
 	currencyCode: string;
 	/** ISO date of the next renewal, when one is scheduled. */
 	renewDate?: string;
+	purchaseId?: number;
+	// Whether the subscription has a payment method that can be charged.
+	isRechargeable: boolean;
 	isBusy: boolean;
 	onCancel: () => void;
 	onConfirm: () => void;
@@ -91,6 +99,22 @@ export function TitanDowngradeModal( {
 			  );
 	} )();
 
+	// The delayed flow bills the new plan at renewal, so the server refuses it
+	// without a payment method. The instant flow only refunds, so it does not.
+	const isMissingPaymentMethod = ! isInstant && ! isRechargeable;
+
+	const paymentMethodNotice =
+		isMissingPaymentMethod && purchaseId
+			? createInterpolateElement(
+					__(
+						'Your new plan is charged at your next renewal, so a payment method is required. <link>Add a payment method</link> to schedule this change.'
+					),
+					{
+						link: <Link to={ changePaymentMethodRoute.fullPath } params={ { purchaseId } } />,
+					}
+			  )
+			: null;
+
 	const confirmLabel =
 		isInstant && refundText
 			? sprintf(
@@ -106,11 +130,16 @@ export function TitanDowngradeModal( {
 			__experimentalHideHeader={ false }
 			title={ isInstant ? __( 'Change your plan' ) : __( 'Schedule your plan change' ) }
 			cancelButtonText={ __( 'Keep current plan' ) }
-			confirmButtonProps={ { label: confirmLabel, isBusy, disabled: isBusy } }
+			confirmButtonProps={ {
+				label: confirmLabel,
+				isBusy,
+				disabled: isBusy || isMissingPaymentMethod,
+			} }
 			onCancel={ onCancel }
 			onConfirm={ onConfirm }
 		>
 			{ description }
+			{ paymentMethodNotice && <> { paymentMethodNotice }</> }
 		</ConfirmModal>
 	);
 }
