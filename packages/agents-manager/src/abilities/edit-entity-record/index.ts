@@ -17,6 +17,7 @@ const entityRecordSchema = {
 const navigationItemSchema = {
 	type: 'object',
 	properties: {
+		clientId: { type: 'string' },
 		label: { type: 'string' },
 		url: { type: 'string' },
 		id: { type: [ 'number', 'string' ] },
@@ -96,7 +97,7 @@ export const editEntityRecordAbility: Ability = {
 				To reorder, add, remove, or relabel navigation menu items, edit the wp_navigation entity instead of editing the core/navigation block.
 				Use entityType: postType, entityName: wp_navigation, recordId: the navigation block's numeric ref attribute — a block's clientId is not a ref.
 				Preferred format: pass record.navigationItems as the desired final list of menu items. The client will rebuild record.blocks and serialized record.content from the live navigation menu.
-				Identify each existing item by its label, url, or page id — never by a clientId or any id read from another tool, which will not resolve here. Omitting an existing item removes it. Reordering the array reorders the menu. Nest items under a parent with 'items' to build a submenu. Omitting 'items' on a parent leaves its existing children in place; pass an empty items array to empty a submenu.
+				Identify each existing item by its clientId from the page structure, its label, its url, or its page id. Omitting an existing item removes it. Reordering the array reorders the menu. Nest items under a parent with 'items' to build a submenu. Omitting 'items' on a parent leaves its existing children in place; pass an empty items array to empty a submenu.
 				Example: { entityType: 'postType', entityName: 'wp_navigation', recordId: 19311, record: { navigationItems: [ { label: 'Home' }, { label: 'About', items: [ { label: 'Services' } ] }, { label: 'Contact', url: '/contact/' } ] } }
 			</navigation>
 			`,
@@ -158,7 +159,7 @@ export const editEntityRecordAbility: Ability = {
 								navigationItems: {
 									type: 'array',
 									description:
-										'Desired final navigation menu items, only for entityName: wp_navigation. Identify existing items by their label, url, or page id. Reorder the array to reorder the menu; omit an item to remove it; nest with items to build a submenu; include label/url to relabel or add items.',
+										'Desired final navigation menu items, only for entityName: wp_navigation. Identify existing items by clientId, label, url, or page id. Reorder the array to reorder the menu; omit an item to remove it; nest with items to build a submenu; include label/url to relabel or add items.',
 									items: navigationItemSchema,
 								},
 							},
