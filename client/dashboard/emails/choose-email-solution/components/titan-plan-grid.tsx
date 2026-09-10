@@ -13,7 +13,7 @@ import poweredByTitanLogo from '../../resources/powered-by-titan-caps.svg';
 import { IntervalLength, MailboxProvider, TitanPlanTier } from '../../types';
 import { getTrialMonths } from '../../utils/get-trial-months';
 import { isEligibleForIntroductoryOffer } from '../../utils/is-eligible-for-introductory-offer';
-import { TITAN_TIER_ORDER } from '../../utils/titan-tiers';
+import { getTitanTierName, TITAN_TIER_ORDER } from '../../utils/titan-tiers';
 import type { Domain, EmailSubscription, Product } from '@automattic/api-core';
 
 interface TitanPlan {
@@ -24,17 +24,6 @@ interface TitanPlan {
 	isPopular: boolean;
 	everythingInName?: string;
 }
-
-const getTierName = ( tier: TitanPlanTier ): string => {
-	switch ( tier ) {
-		case TitanPlanTier.Pro:
-			return __( 'Pro' );
-		case TitanPlanTier.Premium:
-			return __( 'Premium' );
-		case TitanPlanTier.Ultra:
-			return __( 'Ultra' );
-	}
-};
 
 // Descriptions remain placeholder copy; feature lists reflect the tier
 // comparison from DOTEMP-111.
@@ -159,7 +148,7 @@ export function TitanPlanGrid( {
 			hasFreeTrial: hasFreeTrial( premiumProduct ),
 			trialMonths: getTrialMonths( premiumProduct ),
 			isPopular: true,
-			everythingInName: getTierName( TitanPlanTier.Pro ),
+			everythingInName: getTitanTierName( TitanPlanTier.Pro ),
 		},
 		{
 			tier: TitanPlanTier.Ultra,
@@ -167,7 +156,7 @@ export function TitanPlanGrid( {
 			hasFreeTrial: hasFreeTrial( ultraProduct ),
 			trialMonths: getTrialMonths( ultraProduct ),
 			isPopular: false,
-			everythingInName: getTierName( TitanPlanTier.Premium ),
+			everythingInName: getTitanTierName( TitanPlanTier.Premium ),
 		},
 	];
 
@@ -200,7 +189,7 @@ export function TitanPlanGrid( {
 	return (
 		<div className="email-providers">
 			{ plans.map( ( plan ) => {
-				const planName = getTierName( plan.tier );
+				const planName = getTitanTierName( plan.tier );
 				const details = getTierDetails( plan.tier );
 				const isCurrentPlan = plan.tier === currentTier;
 				const isDowngrade = isLowerTier( plan.tier );
