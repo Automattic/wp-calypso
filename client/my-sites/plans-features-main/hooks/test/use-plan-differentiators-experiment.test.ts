@@ -13,9 +13,6 @@ const ELIGIBLE_RESULT = {
 };
 
 describe( 'usePlanDifferentiatorsExperiment', () => {
-	// The hook used to read `is_gating_business_q1` off the site and gate on it. The 2026 gating is
-	// now the server-side default, so the verdict is unconditional and the site context is ignored;
-	// these cases pin that it no longer varies by input.
 	test( 'is eligible in signup before a site exists', () => {
 		const { result } = renderHook( () =>
 			usePlanDifferentiatorsExperiment( { isInSignup: true, siteId: null } )
