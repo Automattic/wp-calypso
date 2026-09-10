@@ -53,19 +53,41 @@ export function getCompCount( cardData?: SubscribersStepContent ): number {
 }
 
 /**
- * The tier a comp will be granted against, as a string for the picker. Falls back to the only
- * tier on the site, which is what the server grants against when nothing has been chosen.
+ * The tier a comp will be granted against, as a string for the picker.
+ *
+ * A choice already made and a choice never made are different situations. With nothing chosen we
+ * fall back to the only tier, which is what the server grants against anyway. But a saved choice
+ * whose tier has since been deleted is left unresolved rather than quietly replaced: the server
+ * refuses to substitute, so showing another tier as selected would promise access nobody picked
+ * and the import would grant no comps at all.
  * @param cardData The subscribers step content.
  */
 export function getSelectedCompTierId( cardData?: SubscribersStepContent ): string {
 	const tiers = groupCompTiers( cardData?.available_tiers );
 	const selectedId = cardData?.comp_product_id;
 
-	if ( selectedId && tiers.some( ( tier ) => tier.id === Number( selectedId ) ) ) {
-		return selectedId.toString();
+	if ( selectedId ) {
+		return tiers.some( ( tier ) => tier.id === Number( selectedId ) ) ? selectedId.toString() : '';
 	}
 
 	return tiers.length === 1 ? tiers[ 0 ].id.toString() : '';
+}
+
+/**
+ * Whether a tier chosen in an earlier session has since been deleted. The selection outlives the
+ * import, so this can surface long after the choice was made.
+ * @param cardData The subscribers step content.
+ */
+export function isCompSelectionStale( cardData?: SubscribersStepContent ): boolean {
+	const selectedId = cardData?.comp_product_id;
+	if ( ! selectedId ) {
+		return false;
+	}
+
+	const tiers = groupCompTiers( cardData?.available_tiers );
+
+	// With no tiers at all the site-level warning already covers it.
+	return tiers.length > 0 && ! tiers.some( ( tier ) => tier.id === Number( selectedId ) );
 }
 
 /**
@@ -93,7 +115,7 @@ type CompSubscribersProps = {
 };
 
 export default function CompSubscribers( { cardData, siteId, engine }: CompSubscribersProps ) {
-	const { _n } = useI18n();
+	const { __, _n } = useI18n();
 	const { setCompPlan } = useSetCompPlanMutation();
 
 	const compCount = getCompCount( cardData );
@@ -120,11 +142,20 @@ export default function CompSubscribers( { cardData, siteId, engine }: CompSubsc
 	}
 
 	return (
-		<MapCompPlan
-			compCount={ compCount }
-			tiers={ tiers }
-			selectedTierId={ getSelectedCompTierId( cardData ) }
-			onCompPlanSelect={ ( tierId ) => setCompPlan( siteId, engine, 'subscribers', tierId ) }
-		/>
+		<>
+			{ isCompSelectionStale( cardData ) && (
+				<Notice isDismissible={ false } status="warning">
+					{ __(
+						'The paid tier you chose for comped subscribers no longer exists. Choose another one.'
+					) }
+				</Notice>
+			) }
+			<MapCompPlan
+				compCount={ compCount }
+				tiers={ tiers }
+				selectedTierId={ getSelectedCompTierId( cardData ) }
+				onCompPlanSelect={ ( tierId ) => setCompPlan( siteId, engine, 'subscribers', tierId ) }
+			/>
+		</>
 	);
 }

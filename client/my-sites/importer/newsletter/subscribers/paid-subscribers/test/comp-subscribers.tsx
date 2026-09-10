@@ -12,6 +12,7 @@ import CompSubscribers, {
 	groupCompTiers,
 	getSelectedCompTierId,
 	isCompSelectionSatisfied,
+	isCompSelectionStale,
 } from '../comp-subscribers';
 
 jest.mock( 'calypso/lib/wp', () => ( {
@@ -151,10 +152,50 @@ describe( 'getSelectedCompTierId', () => {
 		).toBe( '20' );
 	} );
 
+	it( 'does not substitute another tier when the chosen one was deleted', () => {
+		// The server refuses to grant against a tier nobody chose, so pre-selecting the survivor
+		// would show access that will not be granted.
+		expect(
+			getSelectedCompTierId( cardData( { available_tiers: [ secondTier ], comp_product_id: 10 } ) )
+		).toBe( '' );
+	} );
+
+	it( 'auto-selects the only tier when no choice has been saved yet', () => {
+		expect(
+			getSelectedCompTierId(
+				cardData( { available_tiers: [ secondTier ], comp_product_id: null } )
+			)
+		).toBe( '20' );
+	} );
+
 	it( 'has no selection when several tiers are available and none is saved', () => {
 		expect(
 			getSelectedCompTierId( cardData( { available_tiers: [ monthlyAnchor, secondTier ] } ) )
 		).toBe( '' );
+	} );
+} );
+
+describe( 'isCompSelectionStale', () => {
+	it( 'reports a saved choice whose tier has been deleted', () => {
+		expect(
+			isCompSelectionStale( cardData( { available_tiers: [ secondTier ], comp_product_id: 10 } ) )
+		).toBe( true );
+	} );
+
+	it( 'is not stale when the saved choice still resolves', () => {
+		expect(
+			isCompSelectionStale( cardData( { available_tiers: [ secondTier ], comp_product_id: 20 } ) )
+		).toBe( false );
+	} );
+
+	it( 'is not stale when nothing has been chosen', () => {
+		expect( isCompSelectionStale( cardData( { available_tiers: [ secondTier ] } ) ) ).toBe( false );
+	} );
+
+	it( 'leaves the no-tier warning to speak for itself', () => {
+		expect( isCompSelectionStale( cardData( { available_tiers: [], comp_product_id: 10 } ) ) ).toBe(
+			false
+		);
 	} );
 } );
 
@@ -175,6 +216,14 @@ describe( 'isCompSelectionSatisfied', () => {
 		expect(
 			isCompSelectionSatisfied( cardData( { available_tiers: [ monthlyAnchor, yearlyPair ] } ) )
 		).toBe( true );
+	} );
+
+	it( 'blocks while the chosen tier is gone and only one other remains', () => {
+		expect(
+			isCompSelectionSatisfied(
+				cardData( { available_tiers: [ secondTier ], comp_product_id: 10 } )
+			)
+		).toBe( false );
 	} );
 
 	it( 'blocks while several tiers are available and none is chosen', () => {
@@ -217,6 +266,19 @@ describe( '<CompSubscribers>', () => {
 		expect(
 			screen.getAllByText( '3 subscribers won’t be comped unless you set up a paid tier.' )[ 0 ]
 		).toBeVisible();
+	} );
+
+	it( 'asks for a new choice when the chosen tier was deleted', () => {
+		renderCompSubscribers(
+			cardData( { available_tiers: [ monthlyAnchor, yearlyPair ], comp_product_id: 99 } )
+		);
+
+		expect(
+			screen.getAllByText(
+				'The paid tier you chose for comped subscribers no longer exists. Choose another one.'
+			)[ 0 ]
+		).toBeVisible();
+		expect( screen.getByText( 'Select a tier' ) ).toBeVisible();
 	} );
 
 	it( 'renders nothing when the import carries no comps', () => {
