@@ -112,6 +112,8 @@
 		"site-admin:storybook:start": "yarn workspace @automattic/site-admin run storybook:start",
 		"start": "check-node-version --package && node bin/welcome.js && node packages/calypso-doctor/cli.js --once && yarn run build-start && yarn run start-build",
 		"start:debug": "NODE_OPTIONS='--max-old-space-size=8192' SOURCEMAP='eval-source-map' yarn start",
+		"start-auto-port": "node bin/with-free-port.js yarn run start",
+		"start-dashboard-auto-port": "node bin/with-free-port.js yarn run start-dashboard",
 		"start-mock-wordpress-com": "MOCK_WORDPRESSDOTCOM=1 yarn run start",
 		"start-build": "BROWSERSLIST_ENV=evergreen node build/server.js | bunyan -o short",
 		"start-jetpack-cloud": "CALYPSO_ENV=jetpack-cloud-development yarn run start",
