@@ -64,7 +64,7 @@ interface CoreResolve {
 	getEditedEntityRecord: (
 		kind: string,
 		name: string,
-		id: MenuId
+		id?: MenuId
 	) => Promise< NavigationRecord | null >;
 	getEntityRecords: (
 		kind: string,
@@ -152,19 +152,6 @@ async function getMenuIds(): Promise< MenuId[] > {
 	}
 
 	return ids;
-}
-
-/**
- * The menu a new page joins: the one the site names as its own.
- *
- * Not the first rendered one — that list holds every menu on screen, header
- * and footer alike, so a new page could land in the footer. A rendered menu is
- * the fallback for a site that names none.
- */
-function getMenuIdForNewPage(): MenuId | undefined {
-	const fromMetadata = getSiteMetadata()?.navigationId;
-
-	return isMenuId( fromMetadata ) ? fromMetadata : getRenderedMenuIds()[ 0 ];
 }
 
 const readMenu = async ( id: MenuId ): Promise< NavigationRecord | null > =>
@@ -315,7 +302,24 @@ const saveMenu = async ( id: MenuId, previous: NavigationBlock[] ): Promise< voi
 
 /** Appends an item for a newly created page to the site's menu. */
 export async function addNavigationItem( item: NavigationItem ): Promise< void > {
-	const menuId = getMenuIdForNewPage();
+	// Resolved first: an unread site record would read as a site naming no
+	// menu, and the page would land in whichever menu renders first.
+	await coreResolve().getEditedEntityRecord( 'root', 'site' );
+
+	const metadata = getSiteMetadata();
+
+	if ( ! metadata ) {
+		throw new Error(
+			'The site settings could not be read, so the menu for the new page is unknown.'
+		);
+	}
+
+	// The menu the site names, not the first rendered one: that list holds
+	// header and footer alike. A rendered menu is the fallback for a site that
+	// names none.
+	const menuId = isMenuId( metadata.navigationId )
+		? metadata.navigationId
+		: getRenderedMenuIds()[ 0 ];
 
 	if ( ! menuId ) {
 		return;

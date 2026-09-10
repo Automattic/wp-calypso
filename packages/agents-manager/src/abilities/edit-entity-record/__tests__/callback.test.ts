@@ -40,6 +40,9 @@ jest.mock( '../navigation-items', () => ( {
 jest.mock( '../../../utils/site-record', () => ( {
 	getSiteRecord: jest.fn( () => ( { page_on_front: 3 } ) ),
 } ) );
+jest.mock( '../../../utils/editor-history', () => ( {
+	getEditorHistory: jest.fn( () => ( {} ) ),
+} ) );
 jest.mock( '../../../utils/canvas-guard', () => ( {
 	bindToEditorPath: jest.fn( () => jest.fn() ),
 } ) );
@@ -52,6 +55,7 @@ jest.mock( '../../editor-navigate/callback', () => ( {
 import { dispatch, resolveSelect } from '@wordpress/data';
 import { bindToEditorPath } from '../../../utils/canvas-guard';
 import { checkpointKeys, hasCheckpoint } from '../../../utils/checkpoints';
+import { getEditorHistory } from '../../../utils/editor-history';
 import { isEditorPage } from '../../../utils/is-editor-page';
 import {
 	addNavigationItem,
@@ -345,6 +349,18 @@ describe( 'editEntityRecordCallback', () => {
 			expect( ( bindToEditorPath as jest.Mock ).mock.results[ 0 ].value ).not.toHaveBeenCalled();
 		} );
 
+		// Without the site editor's router the only way out is a full page load,
+		// which could cut the delete request off mid-flight.
+		it( 'refuses without a router to leave by', async () => {
+			( getEditorHistory as jest.Mock ).mockReturnValueOnce( undefined );
+
+			const result = await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
+
+			expect( result.result.error ).toContain( 'cannot leave it first' );
+			expect( editorNavigateCallback ).not.toHaveBeenCalled();
+			expect( deleteEntityRecord ).not.toHaveBeenCalled();
+		} );
+
 		it( 'does not delete when it cannot leave', async () => {
 			( editorNavigateCallback as jest.Mock ).mockResolvedValueOnce( {
 				result: { success: false, error: 'the editor is busy' },
@@ -505,6 +521,10 @@ describe( 'editEntityRecordCallback', () => {
 		{ case: 'an object recordId', input: { deleteEntities: [ { ...page(), recordId: {} } ] } },
 		{ case: 'string options', input: { deleteEntities: [ { ...page( 7 ), options: 'x' } ] } },
 		{ case: 'a non-object entry', input: { addEntities: [ 'page' ] } },
+		{
+			case: 'a title that is not text',
+			input: { editEntities: [ { ...page( 7 ), record: { title: {} } } ] },
+		},
 	] )( 'refuses $case', async ( { input } ) => {
 		const result = await editEntityRecordCallback( input as never );
 
@@ -513,6 +533,16 @@ describe( 'editEntityRecordCallback', () => {
 		expect( editEntityRecord ).not.toHaveBeenCalled();
 		expect( deleteEntityRecord ).not.toHaveBeenCalled();
 		expect( setSiteMetadata ).not.toHaveBeenCalled();
+	} );
+
+	it( 'refuses a confirmationMessage that is not a string', async () => {
+		const result = await editEntityRecordCallback( {
+			deleteEntities: [ page( 7 ) ],
+			confirmationMessage: true as never,
+		} );
+
+		expect( result.result.error ).toContain( 'confirmationMessage' );
+		expect( deleteEntityRecord ).not.toHaveBeenCalled();
 	} );
 
 	it( 'refuses the whole batch before writing when any entry is malformed', async () => {
