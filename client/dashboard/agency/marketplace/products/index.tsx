@@ -20,7 +20,7 @@ import {
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { check } from '@wordpress/icons';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useIntlLocale } from '../../../app/locale';
 import { marketplaceProductsRoute } from '../../../app/router/agency';
@@ -33,10 +33,12 @@ import WooPaymentsIllustration from '../../overview/woopayments-illustration';
 import jetpackLogo from '../exclusive-offers/images/jetpack-descriptor.svg';
 import pressableLogo from '../exclusive-offers/images/pressable-descriptor.svg';
 import wooLogo from '../exclusive-offers/images/woo-descriptor.svg';
+import { isAgencyApproved } from '../is-agency-approved';
 import ReferralToggle from '../referral-toggle';
 import TermPricingToggle from '../term-pricing-toggle';
 import { useMarketplaceType } from '../use-marketplace-type';
 import { useTermPricing } from '../use-term-pricing';
+import CartMenu from './cart-menu';
 import CategoryTiles, { isCategoryTileValue } from './category-tiles';
 import {
 	getBrandLabels,
@@ -87,6 +89,8 @@ const DEFAULT_VIEW: View = {
 interface ProductsSearchParams {
 	search_query?: string;
 	category?: string;
+	product_slug?: string;
+	products?: string;
 }
 
 // Classic category keys that differ from the tile values.
@@ -140,7 +144,14 @@ export default function MarketplaceProducts() {
 	}, [ allProducts, showPressableAddons ] );
 
 	const searchParams = marketplaceProductsRoute.useSearch() as ProductsSearchParams;
-	const { hasItem, addItem, removeItem } = useShoppingCart();
+	const {
+		items: cartItems,
+		hasItem,
+		addItem,
+		removeItem,
+		replaceItems,
+		clearCart,
+	} = useShoppingCart();
 	const [ view, setView ] = useState< View >( () => ( {
 		...DEFAULT_VIEW,
 		search: searchParams.search_query != null ? String( searchParams.search_query ) : '',
@@ -154,6 +165,31 @@ export default function MarketplaceProducts() {
 	const showPressableTile = showPressableAddons && products.some( isPressableAddon );
 	const tileCategory = selectedTile === 'pressable' && ! showPressableTile ? null : selectedTile;
 
+	// `?product_slug=a,b` and `?products=a:2,b:1` replace the cart with those
+	// products, as the classic products page does.
+	const hasPreselected = useRef( false );
+	useEffect( () => {
+		if ( hasPreselected.current || ! allProducts ) {
+			return;
+		}
+		const productSlug =
+			searchParams.product_slug != null ? String( searchParams.product_slug ) : '';
+		const productsParam = searchParams.products != null ? String( searchParams.products ) : '';
+		const entries = productSlug
+			? productSlug.split( ',' ).map( ( slug ) => ( { slug, quantity: 1 } ) )
+			: productsParam.split( ',' ).map( ( entry ) => {
+					const [ slug, quantity ] = entry.split( ':' );
+					return { slug, quantity: parseInt( quantity, 10 ) || 1 };
+			  } );
+		const known = entries.filter( ( { slug } ) =>
+			allProducts.some( ( product ) => product.slug === slug )
+		);
+		if ( ! productSlug && ! productsParam ) {
+			return;
+		}
+		hasPreselected.current = true;
+		replaceItems( known );
+	}, [ allProducts, searchParams.product_slug, searchParams.products, replaceItems ] );
 	const [ detailsProduct, setDetailsProduct ] = useState< AgencyProduct | null >( null );
 
 	const fields = useMemo< Field< AgencyProduct >[] >( () => {
@@ -375,7 +411,20 @@ export default function MarketplaceProducts() {
 					description={ __(
 						'Extensions, plans, and add-ons for your clients’ sites. Buy for your agency or refer them to a client.'
 					) }
-					actions={ <ReferralToggle /> }
+					actions={
+						<HStack spacing={ 4 } expanded={ false }>
+							<ReferralToggle />
+							<CartMenu
+								items={ cartItems }
+								products={ allProducts ?? [] }
+								term={ termPricing }
+								isReferralMode={ isReferralMode }
+								isAgencyApproved={ isAgencyApproved( agency ) }
+								onRemove={ removeItem }
+								onCheckout={ clearCart }
+							/>
+						</HStack>
+					}
 				/>
 			}
 		>
