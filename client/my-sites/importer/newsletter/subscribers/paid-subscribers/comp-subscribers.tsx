@@ -12,17 +12,32 @@ import { MapCompPlan } from './map-comp-plan';
  * Newsletter tiers arrive as a monthly/yearly pair: the yearly entry points at the monthly
  * anchor through `tier`, and the anchor carries `tier: 0`. A comp attaches to the tier as a
  * whole, so collapse each pair into a single choice keyed on the anchor id.
+ *
+ * The endpoint returns `price` as a string, so its ids cannot be assumed to be numbers either.
+ * Everything is normalized to a number here so the grouping and the later selection lookup
+ * compare in the same representation.
  * @param availableTiers Tiers as returned by the importer endpoint.
  */
-export function groupCompTiers( availableTiers: Product[] = [] ): Product[] {
+export function groupCompTiers( availableTiers?: Product[] ): Product[] {
+	if ( ! Array.isArray( availableTiers ) ) {
+		return [];
+	}
+
 	const tiersByAnchor = new Map< number, Product >();
 
 	availableTiers.forEach( ( product ) => {
-		const anchorId = product.tier || product.id;
+		const tier = Number( product.tier ) || 0;
+		const anchorId = tier || Number( product.id );
+
+		if ( ! Number.isFinite( anchorId ) ) {
+			return;
+		}
+
 		const existing = tiersByAnchor.get( anchorId );
 
-		if ( ! existing || ( ! product.tier && existing.tier ) ) {
-			tiersByAnchor.set( anchorId, { ...product, id: anchorId } );
+		// Prefer the anchor, whichever order the pair arrives in, so the label and price are monthly.
+		if ( ! existing || ( tier === 0 && existing.tier !== 0 ) ) {
+			tiersByAnchor.set( anchorId, { ...product, id: anchorId, tier } );
 		}
 	} );
 

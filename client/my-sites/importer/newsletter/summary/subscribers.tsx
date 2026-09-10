@@ -45,6 +45,9 @@ export default function SubscriberSummary( { stepContent, status }: SubscriberSu
 				) }`;
 			case 'chosen_tier_gone':
 				return `${ addedAsFree } ${ __( 'The paid tier you chose no longer exists.' ) }`;
+			default:
+				// A reason we do not have copy for yet still tells them where the people went.
+				return addedAsFree;
 		}
 	}
 

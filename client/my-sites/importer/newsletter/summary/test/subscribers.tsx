@@ -98,6 +98,26 @@ describe( '<SubscriberSummary>', () => {
 		expect( screen.queryByText( 'Not imported' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'still says what happened when the server sends an unfamiliar reason', () => {
+		const { container } = render(
+			<SubscriberSummary
+				status="done"
+				stepContent={ stepContent( {
+					email_count: '3',
+					subscribed_count: '3',
+					comp_count: 1,
+					comp_failed_subscribed_count: '1',
+					comp_skip_reason: 'something_new' as Meta[ 'comp_skip_reason' ],
+				} ) }
+			/>
+		);
+
+		expect(
+			screen.getByText( '1 comped subscriber was added as a free subscriber.' )
+		).toBeVisible();
+		expect( container.querySelector( '.summary__comp-skip-reason' ) ).not.toBeEmptyDOMElement();
+	} );
+
 	it( 'explains a comp tier that disappeared before the import ran', () => {
 		render(
 			<SubscriberSummary

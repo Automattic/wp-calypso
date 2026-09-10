@@ -4,7 +4,10 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
-import { SubscribersStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
+import {
+	Product,
+	SubscribersStepContent,
+} from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import CompSubscribers, {
 	groupCompTiers,
 	getSelectedCompTierId,
@@ -84,6 +87,21 @@ describe( 'groupCompTiers', () => {
 		expect( groupCompTiers( [] ) ).toEqual( [] );
 		expect( groupCompTiers() ).toEqual( [] );
 	} );
+
+	it( 'collapses the pair when the endpoint stringifies the ids', () => {
+		// This endpoint already returns `price` as a string, so numerics cannot be assumed.
+		const tiers = groupCompTiers( [
+			{ ...monthlyAnchor, id: '10', tier: '0' },
+			{ ...yearlyPair, id: '11', tier: '10' },
+		] as unknown as Product[] );
+
+		expect( tiers ).toHaveLength( 1 );
+		expect( tiers[ 0 ].id ).toBe( 10 );
+	} );
+
+	it( 'survives a null tier list', () => {
+		expect( groupCompTiers( null as unknown as Product[] ) ).toEqual( [] );
+	} );
 } );
 
 describe( 'getSelectedCompTierId', () => {
@@ -109,6 +127,19 @@ describe( 'getSelectedCompTierId', () => {
 				cardData( { available_tiers: [ monthlyAnchor, secondTier ], comp_product_id: 99 } )
 			)
 		).toBe( '' );
+	} );
+
+	it( 'resolves a stringified selection against stringified tier ids', () => {
+		expect(
+			getSelectedCompTierId( {
+				...cardData(),
+				available_tiers: [
+					{ ...monthlyAnchor, id: '10', tier: '0' },
+					{ ...secondTier, id: '20', tier: '0' },
+				],
+				comp_product_id: '20',
+			} as unknown as SubscribersStepContent )
+		).toBe( '20' );
 	} );
 
 	it( 'has no selection when several tiers are available and none is saved', () => {
@@ -166,6 +197,17 @@ describe( '<CompSubscribers>', () => {
 		renderCompSubscribers( cardData( { available_tiers: [ monthlyAnchor, secondTier ] } ) );
 
 		expect( screen.getByText( 'Select a tier' ) ).toBeVisible();
+	} );
+
+	it( 'warns rather than crashing when the tier list comes back null', () => {
+		renderCompSubscribers( {
+			...cardData(),
+			available_tiers: null,
+		} as unknown as SubscribersStepContent );
+
+		expect(
+			screen.getAllByText( '3 subscribers won’t be comped unless you set up a paid tier.' )[ 0 ]
+		).toBeVisible();
 	} );
 
 	it( 'renders nothing when the import carries no comps', () => {
