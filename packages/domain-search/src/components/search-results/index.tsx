@@ -6,6 +6,7 @@ import {
 	DomainSuggestionLoadMore,
 } from '../../ui';
 import { InlineBundleRow } from '../inline-bundle-row';
+import { NamePulseSearch } from '../name-pulse-search';
 import { SearchResultsItem } from './item';
 import { SearchResultsPlaceholder } from './placeholder';
 import type { InlineBundleEntry } from '../../hooks/use-inline-bundles';
@@ -45,30 +46,33 @@ const SearchResults = ( {
 
 	const shouldShowMoreResultsButton = numberOfVisibleSuggestions < suggestions.length;
 	const suggestionsToShow = suggestions.slice( 0, numberOfVisibleSuggestions );
+	const rows = suggestionsToShow.flatMap( ( suggestion ) => {
+		const row = <SearchResultsItem key={ suggestion } domainName={ suggestion } />;
+		const inlineBundle = getInlineBundle( suggestion );
+
+		// Only emit an inline row when this domain is a trigger in the cart
+		// and it either has a bundle or is still fetching one. DomainSuggestionsList
+		// flattens children and inserts dividers, so an adjacent array slots in.
+		if ( ! inlineBundle || ( ! inlineBundle.isLoading && ! inlineBundle.bundle ) ) {
+			return [ row ];
+		}
+
+		return [
+			row,
+			<InlineBundleRow
+				key={ `${ suggestion }-bundle` }
+				bundle={ inlineBundle.bundle }
+				isLoading={ inlineBundle.isLoading }
+			/>,
+		];
+	} );
 
 	return (
 		<>
 			<DomainSuggestionsList>
-				{ suggestionsToShow.flatMap( ( suggestion ) => {
-					const row = <SearchResultsItem key={ suggestion } domainName={ suggestion } />;
-					const inlineBundle = getInlineBundle( suggestion );
-
-					// Only emit an inline row when this domain is a trigger in the cart
-					// and it either has a bundle or is still fetching one. DomainSuggestionsList
-					// flattens children and inserts dividers, so an adjacent array slots in.
-					if ( ! inlineBundle || ( ! inlineBundle.isLoading && ! inlineBundle.bundle ) ) {
-						return [ row ];
-					}
-
-					return [
-						row,
-						<InlineBundleRow
-							key={ `${ suggestion }-bundle` }
-							bundle={ inlineBundle.bundle }
-							isLoading={ inlineBundle.isLoading }
-						/>,
-					];
-				} ) }
+				{ config.showNamePulseSearch
+					? [ <NamePulseSearch key="name-pulse-search" />, ...rows ]
+					: rows }
 			</DomainSuggestionsList>
 			{ shouldShowMoreResultsButton && <DomainSuggestionLoadMore onClick={ showMoreResults } /> }
 		</>

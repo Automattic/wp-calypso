@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import config from '@automattic/calypso-config';
 import {
 	DOMAIN_FOR_GRAVATAR_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
@@ -1370,6 +1371,28 @@ describe( 'useWPCOMDomainSearchProps', () => {
 				expect( result.current.config.showBundleSuggestions ).toBe( false );
 			}
 		);
+	} );
+
+	describe( 'showNamePulseSearch', () => {
+		let isEnabledSpy: jest.SpyInstance;
+
+		beforeAll( () => {
+			isEnabledSpy = jest
+				.spyOn( config, 'isEnabled' )
+				.mockImplementation( ( flag: string ) => flag === 'domain-search/name-pulse' );
+		} );
+
+		afterAll( () => {
+			isEnabledSpy.mockRestore();
+		} );
+
+		it( 'follows the domain-search/name-pulse flag', () => {
+			mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
+
+			const { result } = renderHookWithProvider( () => useWPCOMDomainSearchProps( defaultProps ) );
+
+			expect( result.current.config.showNamePulseSearch ).toBe( true );
+		} );
 	} );
 
 	it( 'prepends products in the cart when adding a new domain', async () => {

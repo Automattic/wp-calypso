@@ -28,6 +28,25 @@ describe( 'SearchResults', () => {
 
 		expect( await screen.findByTitle( 'test-regular.com' ) ).toBeInTheDocument();
 		expect( await screen.findByTitle( 'test-regular.net' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Name Pulse search' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders the Name Pulse search row at the top of the list when enabled', async () => {
+		mockGetSuggestionsQuery( {
+			params: { query: 'test' },
+			suggestions: [ buildSuggestion( { domain_name: 'test-regular.com' } ) ],
+		} );
+
+		render(
+			<TestDomainSearchWithSuggestions query="test" config={ { showNamePulseSearch: true } }>
+				<SearchResults suggestions={ [ 'test-regular.com' ] } getInlineBundle={ () => undefined } />
+			</TestDomainSearchWithSuggestions>
+		);
+
+		await screen.findByTitle( 'test-regular.com' );
+
+		const [ firstItem ] = screen.getAllByRole( 'listitem' );
+		expect( firstItem ).toHaveTextContent( 'Name Pulse search' );
 	} );
 
 	it( 'renders nothing if there are no suggestions and no active filters', async () => {
