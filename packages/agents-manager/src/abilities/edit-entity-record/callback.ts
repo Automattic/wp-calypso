@@ -1,6 +1,7 @@
 import { store as coreStore } from '@wordpress/core-data';
 import { dispatch, resolveSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { bindToEditorPath } from '../../utils/canvas-guard';
 import { checkpointKeys, withCheckpoint, type CheckpointRecorder } from '../../utils/checkpoints';
 import { flattenTitle } from '../../utils/entity-title';
 import { isEditorPage } from '../../utils/is-editor-page';
@@ -424,14 +425,21 @@ async function applyEdits(
  * itself. Through `editor-navigate`, which saves, navigates and waits for the
  * destination to load — so the delete runs once the canvas has let go of the
  * record.
+ *
+ * The canvas binding is handed to the navigation first, as the guard does for
+ * the ability itself: this call bypasses that dispatch, and a binding left on
+ * the page being deleted would read the move as the user leaving and abort
+ * the request.
  */
 async function leavePage( pageId: number | string ): Promise< void > {
 	const frontPageId = Number( getSiteRecord()?.page_on_front );
 	const path =
 		frontPageId && frontPageId !== Number( pageId ) ? `/page/${ frontPageId }` : PAGES_LIST_PATH;
+	const rollbackBinding = bindToEditorPath( path );
 	const { result } = await editorNavigateCallback( { path } );
 
 	if ( ! result.success ) {
+		rollbackBinding();
 		throw new Error( `Could not leave the page before deleting it: ${ result.error }` );
 	}
 }

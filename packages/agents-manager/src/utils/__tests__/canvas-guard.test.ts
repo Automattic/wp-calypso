@@ -8,7 +8,7 @@ import {
 	getCanvasMove,
 	startNewUserRequest,
 } from '../canvas-binding';
-import { withCanvasBinding, withCanvasGuard } from '../canvas-guard';
+import { bindToEditorPath, withCanvasBinding, withCanvasGuard } from '../canvas-guard';
 import type { ClientContextType, ToolProvider } from '../../types';
 
 jest.mock( '@wordpress/data', () => ( { select: jest.fn() } ) );
@@ -483,6 +483,36 @@ describe( 'withCanvasGuard, dispatched through ability callbacks', () => {
 		const abilities = await withCanvasGuard( provider )!.getAbilities();
 
 		expect( abilities[ 0 ].callback ).toBeUndefined();
+	} );
+} );
+
+describe( 'bindToEditorPath', () => {
+	beforeEach( () => {
+		mockSelect.mockReset();
+		startNewUserRequest();
+	} );
+
+	it.each( [
+		{ path: '/page/34', to: 'a page' },
+		{ path: 'all-pages', to: 'the pages list' },
+	] )( 'lets a navigation to $to run without reading as a move', ( { path } ) => {
+		setOpenPost( ABOUT_PAGE );
+		bindToOpenCanvas();
+
+		bindToEditorPath( path );
+		setOpenPost( path === 'all-pages' ? null : CONTACT_PAGE );
+
+		expect( getCanvasMove() ).toBeNull();
+	} );
+
+	it( 'puts the binding back when the navigation never happens', () => {
+		setOpenPost( ABOUT_PAGE );
+		bindToOpenCanvas();
+
+		bindToEditorPath( '/page/34' )();
+		setOpenPost( CONTACT_PAGE );
+
+		expect( getCanvasMove() ).toMatchObject( { from: 'About', to: 'Contact' } );
 	} );
 } );
 
