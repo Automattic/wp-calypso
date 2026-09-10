@@ -30,8 +30,6 @@ function mockAgencyAndPendingSites( pendingSites: PendingAgencySite[] ) {
 }
 
 describe( '<AgencySitesNeedSetup>', () => {
-	afterEach( () => nock.cleanAll() );
-
 	test( 'collapses the licenses the agency owns into one row with a create button', async () => {
 		mockAgencyAndPendingSites( [ pendingSite( 1 ), pendingSite( 2 ) ] );
 
