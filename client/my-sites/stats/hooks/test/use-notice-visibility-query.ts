@@ -166,6 +166,39 @@ describe( 'setNoticeHidden', () => {
 		expect( read( client )?.tier_upgrade.show ).toBe( true );
 	} );
 
+	it.each( [ 'do_you_love_jetpack_stats', 'commercial_site_upgrade' ] as const )(
+		'hides the successor when %s is hidden, preserving its metadata',
+		( noticeId ) => {
+			const client = new QueryClient();
+			const records = normalizeNoticeRecords( {
+				[ noticeId ]: true,
+				free_site_upgrade: {
+					show: true,
+					status: 'postponed',
+					postponed_count: 2,
+					next_show_at: 1_700_000_000,
+				},
+				tier_upgrade: true,
+			} );
+			client.setQueryData( noticesVisibilityQueryKey( 1 ), records );
+
+			expect( records.free_site_upgrade.show ).toBe( true );
+
+			setNoticeHidden( client, 1, noticeId, {
+				status: 'postponed',
+				postponed_count: 1,
+				next_show_at: 1_800_000_000,
+			} );
+
+			expect( read( client )?.[ noticeId ].show ).toBe( false );
+			expect( read( client )?.free_site_upgrade ).toEqual( {
+				...records.free_site_upgrade,
+				show: false,
+			} );
+			expect( read( client )?.tier_upgrade ).toBe( records.tier_upgrade );
+		}
+	);
+
 	it( 'leaves a cache that was never fetched empty', () => {
 		const client = new QueryClient();
 

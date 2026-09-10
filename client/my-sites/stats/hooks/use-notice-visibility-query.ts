@@ -196,6 +196,9 @@ export const setNoticeHidden = (
 			? {
 					...records,
 					[ noticeId ]: { ...toNoticeRecord( record ?? records[ noticeId ] ), show: false },
+					...( noticeId === 'do_you_love_jetpack_stats' || noticeId === 'commercial_site_upgrade'
+						? { free_site_upgrade: { ...records.free_site_upgrade, show: false } }
+						: {} ),
 			  }
 			: records
 	);
