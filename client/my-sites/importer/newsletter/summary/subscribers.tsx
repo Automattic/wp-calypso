@@ -45,6 +45,10 @@ export default function SubscriberSummary( { stepContent, status }: SubscriberSu
 				) }`;
 			case 'chosen_tier_gone':
 				return `${ addedAsFree } ${ __( 'The paid tier you chose no longer exists.' ) }`;
+			case 'tier_lookup_failed':
+				return `${ addedAsFree } ${ __(
+					'We couldn’t read your site’s paid tiers, so complimentary access wasn’t granted.'
+				) }`;
 			default:
 				// A reason we do not have copy for yet still tells them where the people went.
 				return addedAsFree;

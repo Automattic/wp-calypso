@@ -99,6 +99,15 @@ describe( 'groupCompTiers', () => {
 		expect( tiers[ 0 ].id ).toBe( 10 );
 	} );
 
+	it( 'keeps a yearly tier whose monthly anchor has been deleted', () => {
+		// The server leaves the back-reference pointing at the deleted anchor, and grants against
+		// the survivor's own id, so following `tier` here would name a plan that no longer exists.
+		const tiers = groupCompTiers( [ yearlyPair ] );
+
+		expect( tiers ).toHaveLength( 1 );
+		expect( tiers[ 0 ].id ).toBe( 11 );
+	} );
+
 	it( 'survives a null tier list', () => {
 		expect( groupCompTiers( null as unknown as Product[] ) ).toEqual( [] );
 	} );

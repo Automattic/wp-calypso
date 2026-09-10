@@ -98,6 +98,27 @@ describe( '<SubscriberSummary>', () => {
 		expect( screen.queryByText( 'Not imported' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'distinguishes a tier list we could not read from having no tier', () => {
+		render(
+			<SubscriberSummary
+				status="done"
+				stepContent={ stepContent( {
+					email_count: '3',
+					subscribed_count: '3',
+					comp_count: 1,
+					comp_failed_subscribed_count: '1',
+					comp_skip_reason: 'tier_lookup_failed',
+				} ) }
+			/>
+		);
+
+		expect(
+			screen.getByText(
+				'1 comped subscriber was added as a free subscriber. We couldn’t read your site’s paid tiers, so complimentary access wasn’t granted.'
+			)
+		).toBeVisible();
+	} );
+
 	it( 'still says what happened when the server sends an unfamiliar reason', () => {
 		const { container } = render(
 			<SubscriberSummary

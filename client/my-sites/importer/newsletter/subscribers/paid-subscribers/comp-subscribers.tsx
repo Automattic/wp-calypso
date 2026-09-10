@@ -24,10 +24,14 @@ export function groupCompTiers( availableTiers?: Product[] ): Product[] {
 	}
 
 	const tiersByAnchor = new Map< number, Product >();
+	// A deleted monthly anchor leaves its yearly half behind, still pointing at the id that went
+	// away, so the back-reference is only worth following when the anchor is still in the list.
+	// The server grants against the survivor's own id in that case.
+	const presentIds = new Set( availableTiers.map( ( product ) => Number( product.id ) ) );
 
 	availableTiers.forEach( ( product ) => {
 		const tier = Number( product.tier ) || 0;
-		const anchorId = tier || Number( product.id );
+		const anchorId = tier && presentIds.has( tier ) ? tier : Number( product.id );
 
 		if ( ! Number.isFinite( anchorId ) ) {
 			return;
@@ -36,7 +40,7 @@ export function groupCompTiers( availableTiers?: Product[] ): Product[] {
 		const existing = tiersByAnchor.get( anchorId );
 
 		// Prefer the anchor, whichever order the pair arrives in, so the label and price are monthly.
-		if ( ! existing || ( tier === 0 && existing.tier !== 0 ) ) {
+		if ( ! existing || ( anchorId === Number( product.id ) && existing.tier !== 0 ) ) {
 			tiersByAnchor.set( anchorId, { ...product, id: anchorId, tier } );
 		}
 	} );

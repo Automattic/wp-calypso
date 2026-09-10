@@ -1,9 +1,10 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import { useQueryClient } from '@tanstack/react-query';
+import { useIsMutating, useQueryClient } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState, useRef } from 'react';
 import { useMapStripePlanToProductMutation } from 'calypso/data/paid-newsletter/use-map-stripe-plan-to-product-mutation';
+import { setCompPlanMutationKey } from 'calypso/data/paid-newsletter/use-set-comp-plan-mutation';
 import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
 import {
 	PLAN_YEARLY_FREQUENCY,
@@ -74,6 +75,7 @@ export default function MapPlans( {
 	const currentStep = 'subscribers';
 
 	const queryClient = useQueryClient();
+	const isSavingCompPlan = useIsMutating( { mutationKey: setCompPlanMutationKey } ) > 0;
 
 	const newsletterTiers = useSelector( ( state ) =>
 		getProductsForSiteId( state, selectedSite.ID )
@@ -162,7 +164,10 @@ export default function MapPlans( {
 		},
 	};
 
-	const isImportButtonDisabled = ! shouldEnableImporting( cardData ) || isSavingPlanMapping;
+	// The comp selection is written optimistically, so without this the import can start before the
+	// choice reaches the server, which would then report that no tier was chosen.
+	const isImportButtonDisabled =
+		! shouldEnableImporting( cardData ) || isSavingPlanMapping || isSavingCompPlan;
 
 	const onProductSelect = ( stripePlanId: string, productId: string ) => {
 		mapStripePlanToProduct( selectedSite.ID, engine, currentStep, stripePlanId, productId );

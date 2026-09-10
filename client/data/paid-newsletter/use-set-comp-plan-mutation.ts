@@ -14,11 +14,15 @@ interface MutationVariables {
 	compProductId: string;
 }
 
+// Lets a screen that does not own this mutation still tell whether a selection is in flight.
+export const setCompPlanMutationKey = [ 'paid-newsletter-set-comp-plan' ];
+
 export const useSetCompPlanMutation = (
 	options: UseMutationOptions< unknown, DefaultError, MutationVariables > = {}
 ) => {
 	const queryClient = useQueryClient();
 	const mutation = useMutation( {
+		mutationKey: setCompPlanMutationKey,
 		mutationFn: async ( { siteId, engine, currentStep, compProductId }: MutationVariables ) => {
 			// Optimistically set the value.
 			queryClient.setQueryData(
