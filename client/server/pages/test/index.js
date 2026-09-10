@@ -16,11 +16,6 @@ jest.mock( '@automattic/calypso-config', () => {
 
 jest.mock( 'calypso/server/sanitize', () => jest.fn() );
 
-jest.mock( 'calypso/server/bundler/utils', () => ( {
-	hashFile: jest.fn( () => 'hash' ),
-	getUrl: jest.fn( jest.requireActual( 'calypso/server/bundler/utils' ).getUrl ),
-} ) );
-
 jest.mock( 'calypso/sections', () => {
 	// eslint-disable-next-line no-shadow
 	const sections = jest.requireActual( 'calypso/sections' );

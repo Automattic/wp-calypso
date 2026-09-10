@@ -623,13 +623,6 @@ export const sitePerformanceIndexRoute = createRoute( {
 } );
 
 export const sitePerformanceFrontendRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: isEnabled( 'performance/apm' ) ? __( 'Frontend' ) : undefined,
-			},
-		],
-	} ),
 	getParentRoute: () => sitePerformanceRoute,
 	path: 'frontend',
 } ).lazy( () =>
@@ -641,13 +634,6 @@ export const sitePerformanceFrontendRoute = createRoute( {
 );
 
 export const sitePerformanceBackendRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Backend' ),
-			},
-		],
-	} ),
 	getParentRoute: () => sitePerformanceRoute,
 	path: 'backend',
 } );

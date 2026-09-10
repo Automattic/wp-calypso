@@ -9,6 +9,7 @@ import {
 } from '@automattic/agents-manager';
 import { render, renderHook } from '@testing-library/react';
 import { useExperiment } from 'calypso/lib/explat';
+import { useAnalytics } from '../../analytics';
 import { useHelpCenter } from '../../help-center';
 import { useHelpCenterPlugin } from '../plugin-help-center';
 import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
@@ -44,6 +45,7 @@ const mockGetChatRoute = getAgentsManagerChatRoute as jest.MockedFunction<
 const mockUseHelpCenter = useHelpCenter as jest.MockedFunction< typeof useHelpCenter >;
 const setShowHelpCenter = jest.fn();
 const mockUseExperiment = jest.mocked( useExperiment );
+const recordTracksEvent = jest.fn();
 
 const ICON = 'help';
 
@@ -94,6 +96,10 @@ describe( 'useHelpCenterPlugin', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockUseExperiment.mockReturnValue( [ false, null ] );
+		jest.mocked( useAnalytics ).mockReturnValue( {
+			recordTracksEvent,
+			recordPageView: jest.fn(),
+		} );
 		mockIsChatVisible.mockReturnValue( false );
 		mockGetChatRoute.mockReturnValue( undefined );
 		mockUseHelpCenter.mockReturnValue( {
@@ -158,6 +164,32 @@ describe( 'useHelpCenterPlugin', () => {
 		rerender();
 
 		expect( result.current.title ).toBe( 'Get Help' );
+	} );
+
+	it.each( [
+		[ 'agents manager', HELP_NODES ],
+		[ 'legacy help', [] ],
+	] )( 'does not track an unrendered %s node', ( _, nodes ) => {
+		renderPlugin( nodes );
+
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
+	} );
+
+	it.each( [
+		[ 'agents manager', HELP_NODES ],
+		[ 'legacy help', [] ],
+	] )( 'tracks an impression only when the %s icon renders', ( _, nodes ) => {
+		const result = renderPlugin( nodes );
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
+
+		render( result.icon as React.ReactElement );
+
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_inlinehelp_impression', {
+			location: 'help-center',
+			entry_point: 'omnibar',
+			section: 'sites',
+		} );
 	} );
 
 	it( 'takes its id, label and tooltip from the admin bar node', () => {

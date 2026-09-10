@@ -2,8 +2,11 @@
  * @jest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { useSelector } from 'calypso/state';
 import accountRecoveryReducer from 'calypso/state/account-recovery/reducer';
+import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import userSettingsReducer from 'calypso/state/user-settings/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import AccountEmailField from '../account-email-field';
@@ -135,5 +138,53 @@ describe( 'AccountEmailField — custom domain warning', () => {
 	it( 'does not show the warning for an email ending with @', () => {
 		renderFieldWithEmail( 'user@' );
 		expect( screen.queryByText( WARNING_MATCHER ) ).toBeNull();
+	} );
+} );
+
+describe( 'AccountEmailField TLD validation', () => {
+	// Mirrors the parent screen, which hands the store's unsaved settings back down as props.
+	function EditableAccountEmailField( {
+		emailValidationHandler,
+	}: {
+		emailValidationHandler: ( isEmailValid: boolean ) => void;
+	} ) {
+		const unsavedUserSettings = useSelector( getUnsavedUserSettings ) ?? undefined;
+		return (
+			<AccountEmailField
+				userSettings={ { user_email: 'user@gmail.com' } }
+				unsavedUserSettings={ unsavedUserSettings }
+				emailValidationHandler={ emailValidationHandler }
+			/>
+		);
+	}
+
+	const renderAndType = async ( email: string ) => {
+		const emailValidationHandler = jest.fn();
+		renderWithProvider(
+			<EditableAccountEmailField emailValidationHandler={ emailValidationHandler } />,
+			{
+				initialState: buildInitialState(),
+				reducers: { userSettings: userSettingsReducer, accountRecovery: accountRecoveryReducer },
+			}
+		);
+		const input = screen.getByRole( 'textbox', { name: /email/i } );
+		await userEvent.clear( input );
+		await userEvent.type( input, email );
+		return emailValidationHandler;
+	};
+
+	it( 'reports the field invalid and names the domain when the TLD is not real', async () => {
+		const emailValidationHandler = await renderAndType( 'user@gmail.commmm' );
+
+		expect( screen.getByText( /gmail\.commmm/ ) ).toBeVisible();
+		expect( screen.getByText( /real domain/i ) ).toBeVisible();
+		expect( emailValidationHandler ).toHaveBeenLastCalledWith( false );
+	} );
+
+	it( 'reports the field valid for a known TLD', async () => {
+		const emailValidationHandler = await renderAndType( 'user@example.zip' );
+
+		expect( screen.queryByText( /real domain/i ) ).toBeNull();
+		expect( emailValidationHandler ).toHaveBeenLastCalledWith( true );
 	} );
 } );

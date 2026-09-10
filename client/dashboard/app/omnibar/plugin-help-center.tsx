@@ -10,6 +10,7 @@ import { withSiteContext } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
+import { useEffect } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../analytics';
 import { useHelpCenter } from '../help-center';
@@ -118,6 +119,31 @@ function buildAgentsManagerMenuNodes(
 		);
 }
 
+function HelpCenterIcon( { name, sectionName }: { name?: string; sectionName?: string } ) {
+	const { recordTracksEvent } = useAnalytics();
+	const { data: omnibarSiteId } = useQuery( omnibarSiteIdQuery() );
+
+	// One impression per section view, so it divides cleanly into the click events
+	// this plugin records; site context is whatever has resolved by then.
+	useEffect( () => {
+		recordTracksEvent(
+			'calypso_inlinehelp_impression',
+			withSiteContext(
+				{
+					location: 'help-center',
+					entry_point: 'omnibar',
+					section: sectionName,
+				},
+				'omnibar',
+				omnibarSiteId
+			)
+		);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ sectionName ] );
+
+	return adminBarIcon( name, 'omnibar__help-icon' );
+}
+
 export function useHelpCenterPlugin( {
 	sectionName,
 	adminBarNodes,
@@ -151,7 +177,7 @@ export function useHelpCenterPlugin( {
 			id: helpNode.id,
 			label: helpNode.meta?.menu_title,
 			title: showGetHelpLabel ? __( 'Get Help' ) : undefined,
-			icon: adminBarIcon( helpNode.meta?.icon, 'omnibar__help-icon' ),
+			icon: <HelpCenterIcon name={ helpNode.meta?.icon } sectionName={ sectionName } />,
 			tooltip: helpNode.meta?.menu_title,
 			// Disconnected sites get a link instead of a dropdown, opened in a new tab as in wp-admin.
 			...( children.length
@@ -164,7 +190,7 @@ export function useHelpCenterPlugin( {
 		id: 'help-center',
 		label: __( 'Help' ),
 		title: showGetHelpLabel ? __( 'Get Help' ) : undefined,
-		icon: adminBarIcon( 'help', 'omnibar__help-icon' ),
+		icon: <HelpCenterIcon name="help" sectionName={ sectionName } />,
 		onClick: () => setShowHelpCenter( ! isHelpCenterShown ),
 	};
 }
