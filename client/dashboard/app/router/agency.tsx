@@ -12,6 +12,7 @@ import {
 	codeDeploymentsQuery,
 	githubInstallationsQuery,
 	mcpSettingsQuery,
+	pendingAgencySitesQuery,
 	productsQuery,
 	queryClient,
 	rawUserPreferencesQuery,
@@ -58,6 +59,7 @@ import {
 	PARTNER_DIRECTORY_EXPERTISE_SEGMENT,
 	PARTNER_DIRECTORY_ROUTE,
 } from '../../agency/partner-directory/paths';
+import { hasWpcomLicenseWithoutSite } from '../../agency/sites/need-setup/lib';
 import {
 	canOptOutOfWordPressBeta,
 	canSwitchWordPressVersion,
@@ -561,6 +563,37 @@ export const agencySitesRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../agency/sites' ).then( ( d ) =>
 		createLazyRoute( 'agency-sites' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// `/sites/need-setup` – sites the agency has purchased but not yet provisioned
+export const agencySitesNeedSetupRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_managed_sites' },
+	head: () => ( {
+		meta: [ { title: __( 'Needs setup' ) } ],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'sites/need-setup',
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( ! agency?.id ) {
+			return;
+		}
+
+		const pendingSites = await queryClient.ensureQueryData( pendingAgencySitesQuery( agency.id ) );
+		if ( ! pendingSites.some( hasWpcomLicenseWithoutSite ) ) {
+			throw dashboardRedirect( { to: '/sites' } );
+		}
+	},
+} ).lazy( () =>
+	import( '../../agency/sites/need-setup' ).then( ( d ) =>
+		createLazyRoute( 'agency-sites-need-setup' )( {
 			component: d.default,
 		} )
 	)
@@ -1877,6 +1910,7 @@ export const createAgencyRoutes = () => [
 			mcpConnectRoute,
 		] ),
 		agencySitesRoute,
+		agencySitesNeedSetupRoute,
 		agencyTeamRoute,
 		earnOverviewRoute,
 		earnReferralsRoute,
