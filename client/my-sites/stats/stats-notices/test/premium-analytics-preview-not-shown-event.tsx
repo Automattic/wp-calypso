@@ -28,7 +28,27 @@ jest.mock( 'calypso/state', () => ( {
 	useDispatch: () => jest.fn(),
 } ) );
 
-jest.mock( '../all-notice-definitions', () => ( { __esModule: true, default: [] } ) );
+// Empty by default so the gates alone decide; a case that needs the conflict group fills it in.
+jest.mock( '../all-notice-definitions', () => {
+	const definitions: unknown[] = [];
+	( globalThis as Record< string, unknown > ).__notShownEventTestNotices = definitions;
+	return { __esModule: true, default: definitions };
+} );
+
+const mockNoticeDefinitions = () =>
+	( globalThis as Record< string, unknown > ).__notShownEventTestNotices as Array< {
+		component: () => null;
+		noticeId: string;
+		isVisibleFunc: () => boolean;
+		disabled: boolean;
+	} >;
+
+const noticeDefinition = ( noticeId: string, isVisible = true ) => ( {
+	component: () => null,
+	noticeId,
+	isVisibleFunc: () => isVisible,
+	disabled: false,
+} );
 
 jest.mock( 'calypso/components/data/query-site-stats', () => ( {
 	__esModule: true,
@@ -191,6 +211,7 @@ describe( 'premium analytics preview "not shown" event', () => {
 		mockAdminUrl = 'https://example.com/wp-admin/admin.php?page=jetpack-premium-analytics-wp-admin';
 		mockHasLoadedSiteFeatures = true;
 		mockIsStatsGated = false;
+		mockNoticeDefinitions().length = 0;
 		recordedSiteIds.clear();
 	} );
 
@@ -341,6 +362,55 @@ describe( 'premium analytics preview "not shown" event', () => {
 		mockIsP2 = true;
 		renderNotices();
 		expect( notShownEvents() ).toEqual( [ [ EVENT_NAME, { blog_id: 123, reason: 'is_p2' } ] ] );
+	} );
+
+	describe( 'with another notice in the conflict group', () => {
+		beforeEach( () => {
+			mockNoticeDefinitions().push(
+				noticeDefinition( 'gdpr_cookie_consent' ),
+				noticeDefinition( 'premium_analytics_preview' )
+			);
+		} );
+
+		it( 'records suppressed, naming the notice that outranked the invitation', () => {
+			mockNoticesVisibility.data = {
+				gdpr_cookie_consent: true,
+				premium_analytics_preview: true,
+			} as unknown as Notices;
+
+			renderNotices();
+
+			expect( notShownEvents() ).toEqual( [
+				[ EVENT_NAME, { blog_id: 123, reason: 'suppressed', by: 'gdpr_cookie_consent' } ],
+			] );
+		} );
+
+		it( 'stays quiet when the invitation wins the group', () => {
+			mockNoticesVisibility.data = {
+				gdpr_cookie_consent: false,
+				premium_analytics_preview: true,
+			} as unknown as Notices;
+
+			renderNotices();
+
+			expect( notShownEvents() ).toEqual( [] );
+		} );
+
+		// A gate failure is the reason a reader would reach first, and the site was never in the
+		// running for the group to suppress.
+		it( 'keeps the gate reason over suppressed', () => {
+			mockCanManageOptions = false;
+			mockNoticesVisibility.data = {
+				gdpr_cookie_consent: true,
+				premium_analytics_preview: true,
+			} as unknown as Notices;
+
+			renderNotices();
+
+			expect( notShownEvents() ).toEqual( [
+				[ EVENT_NAME, { blog_id: 123, reason: 'not_admin' } ],
+			] );
+		} );
 	} );
 
 	it( 'stays quiet for a site that was offered the invitation and then dismissed it', () => {
