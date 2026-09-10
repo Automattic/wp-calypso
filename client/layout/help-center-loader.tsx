@@ -1,5 +1,5 @@
 import { HelpCenter } from '@automattic/data-stores';
-import { HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT } from '@automattic/data-stores/src/help-center/constants';
+import { HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT } from '@automattic/help-center/src/experiments';
 import { useLocale } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useDispatch } from '@wordpress/data';
@@ -38,7 +38,9 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 	const user = useSelector( getCurrentUser );
 	const agency = useSelector( getActiveAgency );
 	const { site } = useHelpCenterSite();
-	const [ , getHelpChatForwardAssignment ] = useExperiment(
+	// Passed down keyed by experiment name, and only once the assignment has settled, so
+	// the Help Center can tell a resolved "no variation" from one that never resolved.
+	const [ isLoadingGetHelpChatForwardAssignment, getHelpChatForwardAssignment ] = useExperiment(
 		HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT,
 		{ isEligible: loadHelpCenter }
 	);
@@ -76,8 +78,10 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 			onboardingUrl={ onboardingUrl() }
 			googleMailServiceFamily={ getGoogleMailServiceFamily() }
 			experimentVariations={ {
-				[ HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT ]:
-					getHelpChatForwardAssignment?.variationName ?? null,
+				...( ! isLoadingGetHelpChatForwardAssignment && {
+					[ HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT ]:
+						getHelpChatForwardAssignment?.variationName ?? null,
+				} ),
 			} }
 			{ ...additionalHelpCenterProps }
 		/>

@@ -36,7 +36,9 @@ export type HelpCenterRequiredInformation = {
 	launcherContext?: string;
 	/**
 	 * ExPlat variation names keyed by experiment name, resolved by the host app.
-	 * The Help Center packages have no ExPlat access of their own.
+	 * The Help Center packages have no ExPlat access of their own. Hosts add a key
+	 * only once its assignment has settled, so an absent key means "not resolved"
+	 * while a `null` value means "resolved to no variation".
 	 */
 	experimentVariations?: Record< string, string | null >;
 };

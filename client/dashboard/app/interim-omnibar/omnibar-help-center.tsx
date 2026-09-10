@@ -1,7 +1,6 @@
 import { omnibarSiteIdQuery, siteByIdQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-// eslint-disable-next-line no-restricted-imports -- constants-only module, keeps data-stores out of the main bundle
-import { HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT } from '@automattic/data-stores/src/help-center/constants';
+import { HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT } from '@automattic/help-center/src/experiments';
 import { useQuery } from '@tanstack/react-query';
 import { Suspense, lazy, useCallback, useState } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
@@ -63,7 +62,9 @@ export default function OmnibarHelpCenter() {
 		...siteByIdQuery( omnibarSiteId ?? 0 ),
 		enabled: !! omnibarSiteId,
 	} );
-	const [ , getHelpChatForwardAssignment ] = useExperiment(
+	// Passed down keyed by experiment name, and only once the assignment has settled, so
+	// the Help Center can tell a resolved "no variation" from one that never resolved.
+	const [ isLoadingGetHelpChatForwardAssignment, getHelpChatForwardAssignment ] = useExperiment(
 		HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT
 	);
 
@@ -92,8 +93,10 @@ export default function OmnibarHelpCenter() {
 				sectionName="dashboard"
 				site={ site ? toHelpCenterSite( site ) : null }
 				experimentVariations={ {
-					[ HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT ]:
-						getHelpChatForwardAssignment?.variationName ?? null,
+					...( ! isLoadingGetHelpChatForwardAssignment && {
+						[ HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT ]:
+							getHelpChatForwardAssignment?.variationName ?? null,
+					} ),
 				} }
 			/>
 		</Suspense>
