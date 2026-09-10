@@ -13,6 +13,7 @@ import {
 	MENU_FIELDS,
 	removeNavigationItem,
 	renameNavigationItem,
+	type MenuId,
 } from '../../utils/navigation-menu';
 import { getPageTitle, setPageTitle } from '../../utils/page-title';
 import { logSiteMetadata, logSiteSession } from '../../utils/session-log';
@@ -505,8 +506,20 @@ async function applyRecordEdit(
 	if ( isRename ) {
 		// Snapshot the menus the rename will relabel: a restore puts each back as
 		// it was rather than relabelling, so the item's label returns exactly.
-		for ( const menuId of await getMenuIdsToRelabel( recordId, previousTitle ) ) {
-			await recorder.captureMenu( menuId );
+		// Discarded together if one cannot be read — the rename never runs then,
+		// and a snapshot of an untouched menu would let an undo overwrite it.
+		const captured: MenuId[] = [];
+
+		try {
+			for ( const menuId of await getMenuIdsToRelabel( recordId, previousTitle ) ) {
+				if ( await recorder.captureMenu( menuId ) ) {
+					captured.push( menuId );
+				}
+			}
+		} catch ( error ) {
+			captured.forEach( ( menuId ) => recorder.discardMenu( menuId ) );
+
+			throw error;
 		}
 
 		await renameNavigationItem( recordId, nextTitle, previousTitle );
