@@ -24,11 +24,11 @@ export default function SubscriberSummary( { stepContent, status }: SubscriberSu
 	 * @param count  How many comped subscribers the file carried.
 	 */
 	function getCompSkipMessage( reason: CompSkipReason, count: number ) {
-		const importedAsFree = sprintf(
+		const addedAsFree = sprintf(
 			// Translators: %d is number of complimentary subscribers
 			_n(
-				'%d comped subscriber was imported as a free subscriber.',
-				'%d comped subscribers were imported as free subscribers.',
+				'%d comped subscriber was added as a free subscriber.',
+				'%d comped subscribers were added as free subscribers.',
 				count
 			),
 			count
@@ -36,11 +36,15 @@ export default function SubscriberSummary( { stepContent, status }: SubscriberSu
 
 		switch ( reason ) {
 			case 'no_tier':
-				return `${ importedAsFree } ${ __( 'There was no paid tier to grant against.' ) }`;
+				return `${ addedAsFree } ${ __(
+					'Set up a paid tier to give them complimentary access.'
+				) }`;
 			case 'multiple_tiers':
-				return `${ importedAsFree } ${ __( 'No tier was chosen to grant against.' ) }`;
+				return `${ addedAsFree } ${ __(
+					'Your site has more than one paid tier, so we didn’t know which one to use.'
+				) }`;
 			case 'chosen_tier_gone':
-				return `${ importedAsFree } ${ __( 'The chosen tier no longer exists.' ) }`;
+				return `${ addedAsFree } ${ __( 'The paid tier you chose no longer exists.' ) }`;
 		}
 	}
 
