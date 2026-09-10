@@ -114,7 +114,7 @@ describe( '<SubscriberSummary>', () => {
 
 		expect(
 			screen.getByText(
-				'1 comped subscriber was added as a free subscriber. We couldn’t read your site’s paid tiers, so complimentary access wasn’t granted.'
+				'1 comped subscriber was added as a free subscriber. We couldn’t read your site’s paid tiers this time. Run the import again to grant them complimentary access.'
 			)
 		).toBeVisible();
 	} );
