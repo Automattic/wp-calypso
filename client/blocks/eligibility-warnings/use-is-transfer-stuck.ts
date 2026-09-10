@@ -9,8 +9,6 @@ export function useIsTransferStuck( siteId?: number | null, enabled = true ): bo
 	const { data: transfer } = useQuery( {
 		...siteLatestAtomicTransferQuery( siteId as number ),
 		enabled: !! siteId && enabled,
-		refetchOnWindowFocus: false,
-		refetchOnReconnect: false,
 	} );
 
 	if ( ! enabled || ! transfer || ! isAtomicTransferInProgress( transfer.status ) ) {
