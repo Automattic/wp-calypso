@@ -145,17 +145,22 @@ export default function CartMenu( {
 										  )
 										: getCartProductName( product ) }
 								</Text>
+								{ /* The spans keep Google Translate from crashing on sibling text nodes. */ }
 								<Text variant="muted" size={ 12 }>
-									{ priceInfo.isFree
-										? __( 'Free' )
-										: formatCurrency( priceInfo.price * item.quantity, currency ) +
-										  getTermSuffix( term ) }
-									{ ! priceInfo.isFree &&
-										priceInfo.billingTerm !== term &&
-										' ' +
-											( priceInfo.billingTerm === 'yearly'
-												? __( '(billed yearly)' )
-												: __( '(billed monthly)' ) ) }
+									<span>
+										{ priceInfo.isFree
+											? __( 'Free' )
+											: formatCurrency( priceInfo.price * item.quantity, currency ) +
+											  getTermSuffix( term ) }
+									</span>
+									{ ! priceInfo.isFree && priceInfo.billingTerm !== term && (
+										<span>
+											{ ' ' +
+												( priceInfo.billingTerm === 'yearly'
+													? __( '(billed yearly)' )
+													: __( '(billed monthly)' ) ) }
+										</span>
+									) }
 								</Text>
 							</VStack>
 							<Button variant="link" isDestructive onClick={ () => onRemove( item.slug ) }>
