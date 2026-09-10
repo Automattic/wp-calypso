@@ -7,7 +7,6 @@ import { scheduled } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { hasHostingFeature } from '../../utils/site-features';
-import { getSiteSettingsCrontabURL } from '../../utils/site-url';
 import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
@@ -49,7 +48,7 @@ export default function CrontabSettingsSummary( {
 
 	return (
 		<RouterLinkSummaryButton
-			to={ getSiteSettingsCrontabURL( site.slug ) }
+			to={ `/sites/${ site.slug }/settings/crontab` }
 			title={ __( 'Cron' ) }
 			density={ density }
 			decoration={ <Icon icon={ scheduled } /> }

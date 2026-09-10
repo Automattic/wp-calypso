@@ -16,11 +16,6 @@ import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
-import {
-	getSiteDeploymentsURL,
-	getSiteSettingsRepositoriesConnectURL,
-	getSiteSettingsRepositoriesManageURL,
-} from '../../utils/site-url';
 import illustrationUrl from '../deployments/deployments-callout-illustration.svg';
 import GithubIcon from '../deployments/icons/github';
 import { TriggerDeploymentModalForm } from '../deployments-list/trigger-deployment-modal-form';
@@ -73,7 +68,7 @@ function RepositoriesList() {
 			label: __( 'Configure repository' ),
 			callback: ( items ) => {
 				router.navigate( {
-					to: getSiteSettingsRepositoriesManageURL( siteSlug, items[ 0 ].id ),
+					to: `/sites/${ siteSlug }/settings/repositories/manage/${ items[ 0 ].id }`,
 				} );
 			},
 		},
@@ -83,7 +78,7 @@ function RepositoriesList() {
 			callback: ( items ) => {
 				const repositoryName = items[ 0 ]?.repository_name;
 				router.navigate( {
-					to: getSiteDeploymentsURL( siteSlug ),
+					to: `/sites/${ siteSlug }/deployments`,
 					search: repositoryName ? { repository: repositoryName } : undefined,
 				} );
 			},
@@ -110,7 +105,7 @@ function RepositoriesList() {
 					<Button
 						variant="link"
 						onClick={ () =>
-							router.navigate( { to: getSiteSettingsRepositoriesConnectURL( siteSlug ) } )
+							router.navigate( { to: `/sites/${ siteSlug }/settings/repositories/connect` } )
 						}
 					/>
 				),
@@ -141,7 +136,7 @@ function RepositoriesList() {
 						const item = filteredData.find( ( d ) => d.id.toString() === selection[ 0 ] );
 						if ( item ) {
 							router.navigate( {
-								to: getSiteSettingsRepositoriesManageURL( siteSlug, item.id ),
+								to: `/sites/${ siteSlug }/settings/repositories/manage/${ item.id }`,
 							} );
 						}
 					}
@@ -158,7 +153,7 @@ function SiteRepositories() {
 	const canConnect = hasHostingFeature( site, HostingFeatures.DEPLOYMENT );
 
 	const handleConnectRepository = () => {
-		navigate( { to: getSiteSettingsRepositoriesConnectURL( siteSlug ) } );
+		navigate( { to: `/sites/${ siteSlug }/settings/repositories/connect` } );
 	};
 
 	return (

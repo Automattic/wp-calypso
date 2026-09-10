@@ -1,7 +1,6 @@
 import { siteBySlugQuery, siteCrontabsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate, useParams } from '@tanstack/react-router';
-import { getSiteSettingsCrontabURL } from '../../utils/site-url';
 import CrontabForm from './crontab-form';
 
 export default function EditCrontab() {
@@ -18,7 +17,7 @@ export default function EditCrontab() {
 
 	// If crontab not found, redirect back to list
 	if ( ! crontab ) {
-		navigate( { to: getSiteSettingsCrontabURL( siteSlug ) } );
+		navigate( { to: `/sites/${ siteSlug }/settings/crontab` } );
 		return null;
 	}
 
