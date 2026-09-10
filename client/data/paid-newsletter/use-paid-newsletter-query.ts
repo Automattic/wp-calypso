@@ -60,7 +60,7 @@ export interface SubscribersStepContent {
 		comp_subscribed_count: string | null;
 		comp_already_subscribed_count: string | null;
 		comp_failed_subscribed_count: string | null;
-		comp_failed_emails?: string[];
+		comp_failed_emails?: { email: string; reason: string }[];
 		comp_skip_reason?: CompSkipReason | null;
 		timestamp: string;
 	};
