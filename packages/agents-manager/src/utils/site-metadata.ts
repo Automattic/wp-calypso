@@ -1,6 +1,6 @@
 import { dispatch, select } from '@wordpress/data';
+import { PROVIDER_STORE } from '../constants';
 import { isRecord } from './is-record';
-import { PROVIDER_STORE } from './provider-store';
 import { getSiteRecord, saveSiteFields, SITE_RECORD_UNAVAILABLE } from './site-record';
 
 /**
