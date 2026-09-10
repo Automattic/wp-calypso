@@ -220,9 +220,17 @@ export async function restoreCheckpointCallback(
 				requestIntentType: reciprocalRequestIntentType,
 				createdByRequestIntentType: requestIntentType,
 			} );
-		} catch {
-			// A redo that cannot be recorded is not worth failing the undo the
-			// user asked for, so the restore goes ahead without one.
+		} catch ( error ) {
+			// Refused rather than restored without a way back: the same unreadable
+			// page or menu would fail the restore part-way, leaving the site
+			// half-restored with no redo.
+			return errorResult(
+				`Could not record a way back before restoring: ${
+					error instanceof Error ? error.message : String( error )
+				} Nothing was restored.`,
+				__( 'I could not restore that checkpoint.', __i18n_text_domain__ ),
+				{ checkpointId }
+			);
 		}
 	}
 

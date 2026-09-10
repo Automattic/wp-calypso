@@ -151,6 +151,21 @@ describe( 'restoreCheckpointCallback', () => {
 		}
 	);
 
+	// A reciprocal that cannot be recorded means the same page or menu would
+	// fail the restore part-way, leaving the site half-restored with no redo.
+	it( 'refuses the restore when the reciprocal cannot be recorded', async () => {
+		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
+		( setReciprocalCheckpoint as jest.Mock ).mockRejectedValueOnce(
+			new Error( 'Navigation menu not found: 9' )
+		);
+
+		const result = await restoreCheckpointCallback( makeInput() );
+
+		expect( result.result.success ).toBe( false );
+		expect( result.result.error ).toContain( 'Navigation menu not found: 9' );
+		expect( restoreCheckpoint ).not.toHaveBeenCalled();
+	} );
+
 	it( 'keeps an existing checkpoint under the restore call id', async () => {
 		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
 		mockHasCheckpoint.mockReturnValue( true );

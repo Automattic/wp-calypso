@@ -291,7 +291,7 @@ async function saveEverything(): Promise< void > {
  * match could accept a template or a menu as the destination page — the same
  * invariant `utils/canvas-binding.ts` keys its canvases on.
  */
-export const getLoadedPageId = (): number | undefined => {
+const getLoadedPageId = (): number | undefined => {
 	const editor = editorSelect();
 
 	return editor?.getCurrentPostType?.() === 'page'
