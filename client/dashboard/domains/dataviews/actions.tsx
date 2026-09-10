@@ -25,7 +25,7 @@ import {
 import { getCurrentDashboard } from '../../app/routing';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import ComponentViewTracker from '../../components/component-view-tracker';
-import { isDomainRenewable, canSetAsPrimary } from '../../utils/domain';
+import { isDomainRenewable, canSetAsPrimaryIgnoringSsl } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { getRenewalUrlFromPurchase } from '../../utils/purchase';
@@ -82,12 +82,10 @@ export const useActions = ( {
 		return ( domains ?? [] )
 			.filter( ( item ) => {
 				const site = sitesByBlogId[ item.blog_id ];
-				const hasRedirect = site?.options?.is_redirect ?? false;
 				return (
 					!! site &&
 					item.subtype.id !== DomainSubtype.DEFAULT_ADDRESS &&
-					canSetAsPrimary( { domain: item, site, user } ) &&
-					! hasRedirect
+					canSetAsPrimaryIgnoringSsl( { domain: item, site, user } )
 				);
 			} )
 			.map( ( item ) => item.domain );
@@ -282,15 +280,11 @@ export const useActions = ( {
 				},
 				isEligible: ( item: DomainSummary ) => {
 					const site = sitesByBlogId[ item.blog_id ];
-					const hasRedirect = site?.options?.is_redirect ?? false;
 					const isSslActive =
 						item.subtype.id === DomainSubtype.DEFAULT_ADDRESS ||
 						( sslActiveByDomain[ item.domain ] ?? false );
 					return (
-						!! site &&
-						canSetAsPrimary( { domain: item, site, user } ) &&
-						! hasRedirect &&
-						isSslActive
+						!! site && canSetAsPrimaryIgnoringSsl( { domain: item, site, user } ) && isSslActive
 					);
 				},
 				disabled: isSettingPrimaryDomain,
