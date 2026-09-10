@@ -166,22 +166,6 @@ describe( 'setNoticeHidden', () => {
 		expect( read( client )?.tier_upgrade.show ).toBe( true );
 	} );
 
-	it( 'applies the same inheritance rules a fetch would', () => {
-		const client = new QueryClient();
-		client.setQueryData(
-			noticesVisibilityQueryKey( 1 ),
-			normalizeNoticeRecords( { do_you_love_jetpack_stats: true, free_site_upgrade: true } )
-		);
-
-		setNoticeHidden( client, 1, 'do_you_love_jetpack_stats', {
-			status: 'postponed',
-			postponed_count: 1,
-			next_show_at: 1,
-		} );
-
-		expect( read( client )?.free_site_upgrade.show ).toBe( false );
-	} );
-
 	it( 'leaves a cache that was never fetched empty', () => {
 		const client = new QueryClient();
 

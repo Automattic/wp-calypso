@@ -193,10 +193,10 @@ export const setNoticeHidden = (
 ) =>
 	queryClient.setQueryData< NoticeRecords >( noticesVisibilityQueryKey( siteId ), ( records ) =>
 		records
-			? normalizeNoticeRecords( {
+			? {
 					...records,
 					[ noticeId ]: { ...toNoticeRecord( record ?? records[ noticeId ] ), show: false },
-			  } )
+			  }
 			: records
 	);
 
