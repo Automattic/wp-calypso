@@ -135,6 +135,7 @@ describe( 'useHelpCenterPlugin', () => {
 			entry_point: 'omnibar',
 			section: 'sites',
 			get_help_chat_forward_variation: 'treatment',
+			is_get_help_chat_forward_assignment_loaded: true,
 		} );
 	} );
 

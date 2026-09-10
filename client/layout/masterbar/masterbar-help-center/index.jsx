@@ -1,6 +1,6 @@
 import { recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
 import { HelpCenter } from '@automattic/data-stores';
-import { HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT } from '@automattic/data-stores/src/help-center/constants';
+import { HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT } from '@automattic/help-center/src/experiments';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { usePrevious } from '@wordpress/compose';
 import {
@@ -66,6 +66,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 					entry_point: 'masterbar',
 					section: sectionName,
 					get_help_chat_forward_variation: getHelpChatForwardAssignment?.variationName ?? null,
+					is_get_help_chat_forward_assignment_loaded: ! isLoadingGetHelpChatForwardAssignment,
 				},
 				siteContextSource,
 				siteId
@@ -84,6 +85,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 					is_menu_panel_enabled: isMenuPanelExperimentEnabled,
 					is_assignment_loaded: ! isLoadingExperimentAssignment,
 					get_help_chat_forward_variation: getHelpChatForwardAssignment?.variationName ?? null,
+					is_get_help_chat_forward_assignment_loaded: ! isLoadingGetHelpChatForwardAssignment,
 				},
 				siteContextSource,
 				siteId

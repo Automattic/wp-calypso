@@ -2,7 +2,6 @@
 /**
  * External Dependencies
  */
-import { HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT } from '@automattic/data-stores/src/help-center/constants';
 import { HelpCenterArticle } from '@automattic/support-articles';
 import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -15,6 +14,7 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
  */
 import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
+import { HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT } from '../experiments';
 import { useChatStatus } from '../hooks';
 import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import { HELP_CENTER_STORE } from '../stores';
@@ -92,9 +92,18 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		experimentVariations,
 	} = useHelpCenterContext();
 	// Read via a ref so a late-resolving assignment doesn't re-fire the page-open event.
-	const getHelpChatForwardVariationRef = useRef< string | null >( null );
-	getHelpChatForwardVariationRef.current =
-		experimentVariations?.[ HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT ] ?? null;
+	// Hosts add the key only once the assignment settles, so its absence means "not
+	// resolved" rather than "resolved to no variation".
+	const getHelpChatForwardRef = useRef< { variation: string | null; isLoaded: boolean } >( {
+		variation: null,
+		isLoaded: false,
+	} );
+	getHelpChatForwardRef.current = {
+		variation: experimentVariations?.[ HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT ] ?? null,
+		isLoaded: Boolean(
+			experimentVariations && HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT in experimentVariations
+		),
+	};
 	const recordTracksEvent = useHelpCenterTracksEvent();
 	const featureConfig = useFeatureConfig();
 	const { data, isLoading: isLoadingSupportStatus } = useSupportStatus();
@@ -126,7 +135,8 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 			force_site_id: true,
 			location: 'help-center',
 			is_free_user: ! isUserEligibleForPaidSupport,
-			get_help_chat_forward_variation: getHelpChatForwardVariationRef.current,
+			get_help_chat_forward_variation: getHelpChatForwardRef.current.variation,
+			is_get_help_chat_forward_assignment_loaded: getHelpChatForwardRef.current.isLoaded,
 		} );
 	}, [
 		location.pathname,
