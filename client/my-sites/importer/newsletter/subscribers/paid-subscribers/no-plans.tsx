@@ -1,16 +1,17 @@
 import { Dialog } from '@automattic/components';
-import { useQueryClient } from '@tanstack/react-query';
+import { useIsMutating, useQueryClient } from '@tanstack/react-query';
 import { Notice } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState, useEffect } from 'react';
 import { SubscribersStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
+import { setCompPlanMutationKey } from 'calypso/data/paid-newsletter/use-set-comp-plan-mutation';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
 import { useDispatch } from 'calypso/state';
 import { requestDisconnectSiteStripeAccount } from 'calypso/state/memberships/settings/actions';
 import StartImportButton from './../start-import-button';
-import CompSubscribers from './comp-subscribers';
+import CompSubscribers, { isCompSelectionSatisfied } from './comp-subscribers';
 import type { SiteDetails } from '@automattic/data-stores';
 
 type NoPlansProps = {
@@ -29,6 +30,10 @@ export default function NoPlans( { cardData, selectedSite, engine, onStartImport
 
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
+	const isSavingCompPlan = useIsMutating( { mutationKey: setCompPlanMutationKey } ) > 0;
+	// Same reasoning as the Connect Stripe screen: an unresolved comp choice holds the import,
+	// while a site with nothing to grant against does not.
+	const isImportDisabled = ! isCompSelectionSatisfied( cardData ) || isSavingCompPlan;
 
 	const disconnectStripe = () => {
 		setShowDisconnectStripeDialog( true );
@@ -87,6 +92,7 @@ export default function NoPlans( { cardData, selectedSite, engine, onStartImport
 					siteId={ selectedSite.ID }
 					primary={ false }
 					step={ currentStep }
+					disabled={ isImportDisabled }
 					label={ __( 'Only import free subscribers' ) }
 					navigate={ onStartImport }
 				/>

@@ -1,15 +1,17 @@
+import { useIsMutating } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg, addQueryArgs } from '@wordpress/url';
 import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
 import { fixMe } from 'i18n-calypso';
 import StripeLogoSvg from 'calypso/assets/images/jetpack/stripe-logo-white.svg';
+import { setCompPlanMutationKey } from 'calypso/data/paid-newsletter/use-set-comp-plan-mutation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ImporterActionButton from '../../../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../../../importer-action-buttons/container';
 import { SubscribersStepProps } from '../../types';
 import StartImportButton from '../start-import-button';
-import CompSubscribers from './comp-subscribers';
+import CompSubscribers, { isCompSelectionSatisfied } from './comp-subscribers';
 import SuccessNotice from './success-notice';
 
 /**
@@ -41,12 +43,17 @@ export default function ConnectStripe( {
 	onStartImport,
 }: ConnectStripeProps ) {
 	const { __ } = useI18n();
+	const isSavingCompPlan = useIsMutating( { mutationKey: setCompPlanMutationKey } ) > 0;
+
 	if ( cardData?.connect_url === undefined ) {
 		return null;
 	}
 
 	const connectUrl = updateConnectUrl( cardData?.connect_url ?? '', fromSite, engine );
 	const allEmailsCount = parseInt( cardData?.meta?.email_count || '0' );
+	// Comps are dropped for good once the job runs, so an unresolved choice holds the import even
+	// here. A site with no tier to grant against resolves on its own, leaving the escape hatch open.
+	const isImportDisabled = ! isCompSelectionSatisfied( cardData ) || isSavingCompPlan;
 
 	return (
 		<>
@@ -83,6 +90,7 @@ export default function ConnectStripe( {
 					siteId={ selectedSite.ID }
 					step="subscribers"
 					primary={ false }
+					disabled={ isImportDisabled }
 					navigate={ onStartImport }
 					label={
 						fixMe( {
