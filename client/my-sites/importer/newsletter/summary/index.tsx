@@ -222,9 +222,12 @@ export default function Summary( {
 				) }
 				<hr />
 				<p>{ __( 'What would you like to do next?' ) }</p>
+				{ /* The wp-admin Newsletter page opens on its Subscribers tab, so settings needs asking for
+				   by name. It is also where subscriber management lives now: Calypso's /subscribers is the
+				   fallback Jetpack routes to only when wp-admin subscriber management is filtered off. */ }
 				<ImporterActionButtonContainer noSpacing>
 					<ImporterActionButton
-						href={ `${ siteAdminUrl }admin.php?page=jetpack-newsletter` }
+						href={ `${ siteAdminUrl }admin.php?page=jetpack-newsletter&tab=settings` }
 						primary
 					>
 						{ __( 'Customize your newsletter' ) }
@@ -238,7 +241,7 @@ export default function Summary( {
 						href={
 							isJetpack
 								? `https://cloud.jetpack.com/subscribers/${ selectedSite.slug }`
-								: `/subscribers/${ selectedSite.slug }`
+								: `${ siteAdminUrl }admin.php?page=jetpack-newsletter`
 						}
 					>
 						{ __( 'Manage subscribers' ) }
