@@ -3,12 +3,14 @@ jest.mock( '@wordpress/blocks', () => ( {
 	parse: jest.fn( () => [ { name: 'core/navigation-link', attributes: {}, innerBlocks: [] } ] ),
 	serialize: jest.fn( ( blocks ) => `<!-- ${ blocks.length } items -->` ),
 } ) );
+jest.mock( '@wordpress/data', () => ( { select: jest.fn() } ) );
 jest.mock( '../../../utils/navigation-menu', () => ( {
 	NAVIGATION_LINK_BLOCK: 'core/navigation-link',
 	NAVIGATION_SUBMENU_BLOCK: 'core/navigation-submenu',
 	readMenuItems: jest.fn(),
 } ) );
 
+import { select } from '@wordpress/data';
 import { readMenuItems } from '../../../utils/navigation-menu';
 import { buildNavigationItems } from '../navigation-items';
 
@@ -29,13 +31,20 @@ const SUBMENU = 'core/navigation-submenu';
 const withMenu = ( items: unknown[] | null ) =>
 	( readMenuItems as jest.Mock ).mockResolvedValue( items );
 
+/** The short-id map Big Sky's page structure leaves in its store. */
+const withShortIds = ( clientIdMap: Record< string, string > ) =>
+	( select as jest.Mock ).mockReturnValue( { getFullPageStructure: () => ( { clientIdMap } ) } );
+
 /** The labels of the rebuilt menu, in order. */
 const labelsOf = ( record: Record< string, unknown > ) =>
 	( record.blocks as { attributes: { label: string } }[] ).map(
 		( block ) => block.attributes.label
 	);
 
-beforeEach( () => jest.clearAllMocks() );
+beforeEach( () => {
+	jest.clearAllMocks();
+	( select as jest.Mock ).mockReturnValue( undefined );
+} );
 
 it( 'passes a record without navigationItems straight through', async () => {
 	const record = { title: 'Main' };
@@ -105,18 +114,46 @@ it( 'resolves an item moved under a different parent', async () => {
 	} );
 } );
 
-// A clientId is never an identity here: minted by another tool, or by a parse
-// that will not repeat, it would claim the wrong block or none at all.
-it( 'ignores a clientId and resolves by the label sent with it', async () => {
-	withMenu( [ item( 'a', 'Home' ), item( 'b', 'About' ) ] );
+// The page structure Big Sky sends the agent carries short block ids, with the
+// map back to the editor's clientIds in its store; the editor's own ids, which
+// `get-block-tree` reports, work directly.
+describe( 'clientId', () => {
+	beforeEach( () => withMenu( [ item( 'about', 'About' ), item( 'svc', 'Services' ) ] ) );
 
-	const result = await buildNavigationItems( 10, {
-		navigationItems: [ { clientId: 'a', label: 'About' } as never ],
+	it( 'resolves a short id through the provider map', async () => {
+		withShortIds( { bMnU: 'svc' } );
+
+		const result = await buildNavigationItems( 10, {
+			navigationItems: [ { clientId: 'bMnU' }, { label: 'About' } ],
+		} );
+
+		expect( labelsOf( result ) ).toEqual( [ 'Services', 'About' ] );
 	} );
 
-	expect( ( result.blocks as { clientId: string }[] ).map( ( b ) => b.clientId ) ).toEqual( [
-		'b',
-	] );
+	it( 'accepts the editor clientId itself', async () => {
+		const result = await buildNavigationItems( 10, { navigationItems: [ { clientId: 'svc' } ] } );
+
+		expect( labelsOf( result ) ).toEqual( [ 'Services' ] );
+	} );
+
+	it( 'outranks a label sent with it, which then relabels the item', async () => {
+		const result = await buildNavigationItems( 10, {
+			navigationItems: [ { clientId: 'svc', label: 'Our services' } ],
+		} );
+
+		expect( ( result.blocks as { clientId: string }[] ).map( ( b ) => b.clientId ) ).toEqual( [
+			'svc',
+		] );
+		expect( labelsOf( result ) ).toEqual( [ 'Our services' ] );
+	} );
+
+	// Directive, and self-sufficient: the retry needs no further reading.
+	it( 'refuses an unknown clientId and names the menu items', async () => {
+		const rebuild = buildNavigationItems( 10, { navigationItems: [ { clientId: 'gone' } ] } );
+
+		await expect( rebuild ).rejects.toThrow( 'Navigation items not found: gone' );
+		await expect( rebuild ).rejects.toThrow( 'this menu holds "About", "Services"' );
+	} );
 } );
 
 // A category can carry the same number as a page, and a bare id means a page.
@@ -142,6 +179,7 @@ describe( 'input validation', () => {
 	it.each( [
 		{ case: 'a top-level entry that is not an object', items: [ null ] },
 		{ case: 'a nested entry that is not an object', items: [ { label: 'A', items: [ null ] } ] },
+		{ case: 'a clientId that is not a string', items: [ { clientId: 7 } ] },
 		{ case: 'a label that is not a string', items: [ { label: 123 } ] },
 		{ case: 'an id that is not a number or string', items: [ { id: { page: 7 } } ] },
 		{ case: 'items that is not an array', items: [ { label: 'A', items: 'B' } ] },
