@@ -1,4 +1,4 @@
-import { useMemo, useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useSyncExternalStore } from 'react';
 
 const STORAGE_KEY = 'a4a-provisioning-sites';
 const CHANGE_EVENT = 'a4a-provisioning-sites-change';
@@ -84,12 +84,40 @@ function toLiveIds( stored: string ): number[] {
 		.map( ( { id } ) => id );
 }
 
+/**
+ * Drops the sites whose TTL has passed. Writes (and so notifies) only when
+ * something actually expired, or the notification would loop.
+ */
+function pruneExpired(): void {
+	const sites = parse( read() );
+	const live = sites.filter( ( { expiresAt } ) => expiresAt > Date.now() );
+
+	if ( live.length !== sites.length ) {
+		write( live );
+	}
+}
+
 export function getProvisioningSiteIds(): number[] {
 	return toLiveIds( read() );
 }
 
 export function useProvisioningSiteIds(): number[] {
 	const stored = useSyncExternalStore( subscribe, read, () => '' );
+
+	// `useSyncExternalStore` only re-reads on a store event, so nothing would
+	// otherwise notice the TTL passing while the page stays open: a site that
+	// never reports ready would hold its notice, and its poll, for good.
+	useEffect( () => {
+		const sites = parse( stored );
+		if ( ! sites.length ) {
+			return;
+		}
+
+		const nextExpiry = Math.min( ...sites.map( ( { expiresAt } ) => expiresAt ) );
+		const timer = setTimeout( pruneExpired, Math.max( nextExpiry - Date.now(), 0 ) );
+
+		return () => clearTimeout( timer );
+	}, [ stored ] );
 
 	return useMemo( () => toLiveIds( stored ), [ stored ] );
 }
