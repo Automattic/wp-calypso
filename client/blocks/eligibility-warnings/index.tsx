@@ -36,8 +36,6 @@ import HoldList, {
 	getBlockingMessages,
 } from './hold-list';
 import SupportLink from './support-link';
-import TransferStuckNotice from './transfer-stuck-notice';
-import { useIsTransferStuck } from './use-is-transfer-stuck';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 import WarningList, { type AtomicTransferAction } from './warning-list';
 import type { EligibilityHold } from 'calypso/state/automated-transfer/constants';
@@ -143,11 +141,6 @@ export const EligibilityWarnings = ( {
 
 	const [ selectedGeoAffinity, setSelectedGeoAffinity ] = useState( '' );
 
-	const isTransferStuck = useIsTransferStuck(
-		siteId,
-		validBlockingHold === 'TRANSFER_ALREADY_EXISTS'
-	);
-
 	const showWarnings = warnings.length > 0 && ! hasValidBlockingHold;
 	const classes = clsx(
 		'eligibility-warnings',
@@ -207,6 +200,10 @@ export const EligibilityWarnings = ( {
 
 	const hasHoldsToDisplay = isPlaceholder || hasDisplayableHold( listHolds );
 
+	// Otherwise the link below the notice is a second route to the same place.
+	const noticeOffersSupport =
+		!! validBlockingHold && blockingMessages[ validBlockingHold ].opensHelpCenter;
+
 	return (
 		<div className={ classes }>
 			<QueryEligibility siteId={ siteId } />
@@ -224,15 +221,12 @@ export const EligibilityWarnings = ( {
 
 			{ ! isPlaceholder && validBlockingHold && (
 				<CompactCard>
-					{ isTransferStuck ? (
-						<TransferStuckNotice onDismiss={ onDismiss } />
-					) : (
-						<HardBlockingNotice
-							blockingHold={ validBlockingHold }
-							translate={ translate }
-							blockingMessages={ blockingMessages }
-						/>
-					) }
+					<HardBlockingNotice
+						blockingHold={ validBlockingHold }
+						translate={ translate }
+						blockingMessages={ blockingMessages }
+						onDismiss={ onDismiss }
+					/>
 				</CompactCard>
 			) }
 
@@ -284,7 +278,7 @@ export const EligibilityWarnings = ( {
 
 			<CompactCard>
 				<div className="eligibility-warnings__confirm-buttons">
-					{ ! isTransferStuck && <SupportLink onShowHelpAssistant={ onDismiss } /> }
+					{ ! noticeOffersSupport && <SupportLink onShowHelpAssistant={ onDismiss } /> }
 					{ ! hasValidBlockingHold && (
 						<Button
 							variant="primary"

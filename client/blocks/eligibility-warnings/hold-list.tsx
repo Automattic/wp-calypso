@@ -6,6 +6,7 @@ import { localize, LocalizeProps, TranslateResult } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import ExcessiveDiskSpace from 'calypso/blocks/eligibility-warnings/excessive-disk-space';
 import CardHeading from 'calypso/components/card-heading';
+import { useShowHelpCenter } from 'calypso/components/help-center';
 import Notice, { NoticeStatus } from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
@@ -188,6 +189,8 @@ type BlockingMessage = {
 	message: string;
 	status: NoticeStatus | null;
 	contactUrl: string | null;
+	/** Opens the in-app support assistant instead of linking out to the contact form. */
+	opensHelpCenter?: boolean;
 };
 
 type BlockingMessages = Record< HardBlockingHold, BlockingMessage >;
@@ -203,16 +206,18 @@ export function getBlockingMessages(
 				)
 			),
 			status: 'is-error',
-			contactUrl: localizeUrl( 'https://wordpress.com/help/contact' ),
+			contactUrl: null,
+			opensHelpCenter: true,
 		},
 		TRANSFER_ALREADY_EXISTS: {
 			message: String(
 				translate(
-					'Installation in progress. Just a minute! Please wait until the installation is finished, then try again.'
+					'Setting up your site’s hosting. This usually takes a minute or two — if it’s been longer, get in touch.'
 				)
 			),
 			status: null,
 			contactUrl: null,
+			opensHelpCenter: true,
 		},
 		NO_JETPACK_SITES: {
 			message: String( translate( 'Try using a different site.' ) ),
@@ -271,17 +276,30 @@ export const HardBlockingNotice = ( {
 	blockingHold,
 	translate,
 	blockingMessages,
+	onDismiss,
 }: {
 	blockingHold: HardBlockingHold;
 	translate: LocalizeProps[ 'translate' ];
 	blockingMessages: BlockingMessages;
+	onDismiss?: () => void;
 } ) => {
+	const { setShowHelpCenter } = useShowHelpCenter();
+
+	const openHelpCenter = () => {
+		// The Help Center would otherwise open behind the modal this can render in.
+		onDismiss?.();
+		setShowHelpCenter( true );
+	};
+
 	return (
 		<Notice
 			status={ blockingMessages[ blockingHold ].status ?? 'is-info' }
 			text={ blockingMessages[ blockingHold ].message }
 			showDismiss={ false }
 		>
+			{ blockingMessages[ blockingHold ].opensHelpCenter && (
+				<NoticeAction onClick={ openHelpCenter }>{ translate( 'Get help' ) }</NoticeAction>
+			) }
 			{ blockingMessages[ blockingHold ].contactUrl && (
 				<NoticeAction href={ blockingMessages[ blockingHold ].contactUrl } external>
 					{ translate( 'Contact us' ) }

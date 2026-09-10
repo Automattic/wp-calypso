@@ -4,8 +4,7 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 
 import page from '@automattic/calypso-router';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ReactElement } from 'react';
 import { Provider } from 'react-redux';
@@ -15,23 +14,6 @@ import EligibilityWarnings from '..';
 jest.mock( '@automattic/calypso-router', () => ( {
 	redirect: jest.fn(),
 } ) );
-
-const mockFetchLatestAtomicTransfer = jest.fn();
-
-jest.mock( '@automattic/api-core', () => ( {
-	...jest.requireActual( '@automattic/api-core' ),
-	fetchLatestAtomicTransfer: ( siteId: number ) => mockFetchLatestAtomicTransfer( siteId ),
-} ) );
-
-const inFlightTransfer = ( { agoMs = 0, isStuck = false } = {} ) => ( {
-	atomic_transfer_id: 10,
-	blog_id: 1,
-	status: 'active',
-	created_at: new Date( Date.now() - agoMs ).toISOString(),
-	is_stuck: isStuck,
-	is_stuck_reset: false,
-	in_lossless_revert: false,
-} );
 
 jest.mock( '@automattic/odie-client/src/data', () => ( {
 	useManageSupportInteraction: () => ( {
@@ -46,15 +28,8 @@ jest.mock( '@automattic/odie-client/src/data', () => ( {
 
 function renderWithStore( element: ReactElement, initialState: Record< string, unknown > ) {
 	const store = createStore( ( state ) => state, initialState );
-	const queryClient = new QueryClient( {
-		defaultOptions: { queries: { retry: false } },
-	} );
 	return {
-		...render(
-			<Provider store={ store }>
-				<QueryClientProvider client={ queryClient }>{ element }</QueryClientProvider>
-			</Provider>
-		),
+		...render( <Provider store={ store }>{ element }</Provider> ),
 		store,
 	};
 }
@@ -90,10 +65,6 @@ function createState( {
 describe( '<EligibilityWarnings>', () => {
 	beforeEach( () => {
 		page.redirect.mockReset();
-		// A site that has never transferred answers 404, which is the right default for every test
-		// that isn't about the transfer itself.
-		mockFetchLatestAtomicTransfer.mockReset();
-		mockFetchLatestAtomicTransfer.mockRejectedValue( { status: 404 } );
 	} );
 
 	afterAll( () => {
@@ -168,61 +139,12 @@ describe( '<EligibilityWarnings>', () => {
 
 		const notice = container.querySelector( '.calypso-notice' );
 		expect( notice ).toBeVisible();
-		expect( notice ).toHaveTextContent( /Installation in progress/ );
+		expect( notice ).toHaveTextContent( /Setting up your site.s hosting/ );
+		// Opens the in-app support assistant, and replaces the generic link below it.
+		expect( queryByText( 'Get help' ) ).toBeVisible();
+		expect( queryByText( 'Need help?' ) ).not.toBeInTheDocument();
 		expect( queryByTestId( 'HoldList-Card' ) ).not.toBeInTheDocument();
 		expect( queryByText( 'Continue' ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'keeps the in-progress notice reassuring while the transfer is still young', async () => {
-		mockFetchLatestAtomicTransfer.mockResolvedValue( inFlightTransfer( { agoMs: 10 * 1000 } ) );
-
-		const { container } = renderWithStore(
-			<EligibilityWarnings context={ null } onProceed={ noop } />,
-			createState( { holds: [ 'TRANSFER_ALREADY_EXISTS' ] } )
-		);
-
-		await waitFor( () => expect( mockFetchLatestAtomicTransfer ).toHaveBeenCalled() );
-
-		const notice = container.querySelector( '.calypso-notice' );
-		expect( notice ).toHaveTextContent( /Just a minute!/ );
-		expect( screen.queryByText( 'Get help' ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'escalates on the transfer’s own age, before the backend calls it stuck', async () => {
-		// Past the deadline but not yet flagged: the age is the only thing that can escalate here,
-		// and it is read from the transfer rather than from when this modal opened.
-		mockFetchLatestAtomicTransfer.mockResolvedValue( inFlightTransfer( { agoMs: 6 * 60 * 1000 } ) );
-
-		const { container } = renderWithStore(
-			<EligibilityWarnings context={ null } onProceed={ noop } />,
-			createState( { holds: [ 'TRANSFER_ALREADY_EXISTS' ] } )
-		);
-
-		await waitFor( () =>
-			expect( container.querySelector( '.calypso-notice' ) ).toHaveTextContent(
-				/taking longer than it should/
-			)
-		);
-		expect( screen.getByText( 'Get help' ) ).toBeVisible();
-	} );
-
-	it( 'offers a way to reach support once the backend calls the transfer stuck', async () => {
-		mockFetchLatestAtomicTransfer.mockResolvedValue( inFlightTransfer( { isStuck: true } ) );
-
-		const { container } = renderWithStore(
-			<EligibilityWarnings context={ null } onProceed={ noop } />,
-			createState( { holds: [ 'TRANSFER_ALREADY_EXISTS' ] } )
-		);
-
-		await waitFor( () =>
-			expect( container.querySelector( '.calypso-notice' ) ).toHaveTextContent(
-				/taking longer than it should/
-			)
-		);
-		expect( container.querySelector( '.is-warning' ) ).toBeVisible();
-		expect( screen.getByText( 'Get help' ) ).toBeVisible();
-		// The generic footer link would be a second route to the same place.
-		expect( screen.queryByText( 'Need help?' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'shows the upgrade path, not the blocking notice, for an Atomic site below Business', () => {
