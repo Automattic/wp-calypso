@@ -554,14 +554,13 @@ async function applyEdits(
 }
 
 /**
- * Routes the editor off a record about to be deleted — to the front page, or
- * to the pages list when the site shows posts on the front or the page is the
- * front page itself — through `editor-navigate`, which saves, navigates and
- * waits for the destination to load. Only the site editor's router can do
- * that without a full page load, which could cut the delete request off, so
- * the post editor refuses instead. The canvas binding is handed over first,
- * as the guard does for the ability: left on the record being deleted, the
- * move would read as the user leaving and abort the request.
+ * Routes the editor off a record about to be deleted, through
+ * `editor-navigate`: to the front page, or the pages list when the site shows
+ * posts there or the page is the front page itself. Only the site editor's
+ * router can leave without a full page load, which could cut the delete off,
+ * so the post editor refuses. The canvas binding is handed over first, as the
+ * guard does for the ability — left behind, the move would read as the user
+ * leaving and abort the request.
  */
 async function leaveRecord( entityName: string, recordId: number | string ): Promise< void > {
 	if ( ! getEditorHistory() ) {
