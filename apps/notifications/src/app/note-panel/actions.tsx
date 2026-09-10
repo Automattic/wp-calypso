@@ -91,7 +91,11 @@ export default function NotePanelActions() {
 						   wraps the item's own prefix and content wrappers in a span, so the icon
 						   sits beside the label rather than in the menu's shared prefix column. */ }
 						<Menu.Item
-							render={ <ExternalLink href={ SETTINGS_URL } /> }
+							// The label is given twice because the menu replaces the rendered
+							// element's children with its own; ExternalLink still requires them.
+							render={
+								<ExternalLink href={ SETTINGS_URL }>{ __( 'Notification settings' ) }</ExternalLink>
+							}
 							prefix={ <Icon icon={ bell } size={ 20 } /> }
 						>
 							<Menu.ItemLabel>{ __( 'Notification settings' ) }</Menu.ItemLabel>
