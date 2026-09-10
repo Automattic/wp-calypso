@@ -12,7 +12,7 @@ import { __ } from '@wordpress/i18n';
  */
 import { EVENT_PLACEMENT_FREE_USER_SCREEN, EVENT_UPGRADE } from '../../constants';
 import useLogoGenerator from '../hooks/use-logo-generator';
-import { shouldUpgradePlan } from '../lib/upgrade-url';
+import { isWpcomSimpleSite } from '../lib/upgrade-url';
 import { STORE_NAME } from '../store';
 /**
  * Types
@@ -33,7 +33,7 @@ export const UpgradeScreen: React.FC< {
 		return selectors.getSiteDetails();
 	}, [] );
 
-	const upgradeMessageFeature = shouldUpgradePlan( siteDetails, reason )
+	const upgradeMessageFeature = isWpcomSimpleSite( siteDetails )
 		? __(
 				'Upgrade your WordPress.com plan for access to exclusive Jetpack AI features, including logo generation. A paid plan also increases the amount of requests you can use in all AI-powered features.',
 				'jetpack'

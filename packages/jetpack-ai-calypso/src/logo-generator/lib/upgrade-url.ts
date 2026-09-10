@@ -3,28 +3,22 @@
  */
 import type { SiteDetails } from '@automattic/data-stores';
 
-export type UpgradeReason = 'feature' | 'requests';
-
+/**
+ * A WordPress.com Simple site gets Jetpack AI, with unlimited logo generation,
+ * through a paid WordPress.com plan rather than a Jetpack AI tier, so it upgrades
+ * on the plans page instead of the Jetpack AI checkout.
+ */
 export const isWpcomSimpleSite = ( siteDetails?: SiteDetails ): boolean =>
 	!! siteDetails && ! siteDetails.jetpack;
-
-/**
- * A WordPress.com Simple site without the feature gets Jetpack AI through a paid
- * WordPress.com plan, not a Jetpack AI tier, so it upgrades on the plans page.
- */
-export const shouldUpgradePlan = ( siteDetails?: SiteDetails, reason?: UpgradeReason ): boolean =>
-	reason === 'feature' && isWpcomSimpleSite( siteDetails );
 
 export const getUpgradeURL = ( {
 	siteDetails,
 	nextTierSlug,
-	reason,
 }: {
 	siteDetails?: SiteDetails;
 	nextTierSlug?: string;
-	reason: UpgradeReason;
 } ): string => {
-	const upgradeURL = shouldUpgradePlan( siteDetails, reason )
+	const upgradeURL = isWpcomSimpleSite( siteDetails )
 		? new URL( `${ location.origin }/plans/${ siteDetails?.slug }` )
 		: new URL( `${ location.origin }/checkout/${ siteDetails?.domain }/${ nextTierSlug }` );
 
