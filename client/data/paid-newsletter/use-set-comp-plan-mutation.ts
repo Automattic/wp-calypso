@@ -11,7 +11,7 @@ interface MutationVariables {
 	siteId: number;
 	engine: string;
 	currentStep: string;
-	stripePlanId: string;
+	compProductId: string;
 }
 
 export const useSetCompPlanMutation = (
@@ -19,7 +19,7 @@ export const useSetCompPlanMutation = (
 ) => {
 	const queryClient = useQueryClient();
 	const mutation = useMutation( {
-		mutationFn: async ( { siteId, engine, currentStep, stripePlanId }: MutationVariables ) => {
+		mutationFn: async ( { siteId, engine, currentStep, compProductId }: MutationVariables ) => {
 			// Optimistically set the value.
 			queryClient.setQueryData(
 				[ 'paid-newsletter-importer', siteId, engine ],
@@ -27,7 +27,9 @@ export const useSetCompPlanMutation = (
 					if ( ! previous ) {
 						return previous;
 					}
-					previous.steps[ 'subscribers' ].content.comp_stripe_plan_id = stripePlanId;
+					previous.steps[ 'subscribers' ].content.comp_product_id = compProductId
+						? parseInt( compProductId )
+						: null;
 					return previous;
 				}
 			);
@@ -40,7 +42,7 @@ export const useSetCompPlanMutation = (
 				{
 					engine: engine,
 					current_step: currentStep,
-					comp_stripe_plan_id: stripePlanId,
+					comp_product_id: compProductId,
 				}
 			);
 
@@ -61,8 +63,8 @@ export const useSetCompPlanMutation = (
 	const { mutate } = mutation;
 
 	const setCompPlan = useCallback(
-		( siteId: number, engine: string, currentStep: string, stripePlanId: string ) =>
-			mutate( { siteId, engine, currentStep, stripePlanId } ),
+		( siteId: number, engine: string, currentStep: string, compProductId: string ) =>
+			mutate( { siteId, engine, currentStep, compProductId } ),
 		[ mutate ]
 	);
 

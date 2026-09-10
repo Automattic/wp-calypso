@@ -28,12 +28,15 @@ export interface ContentStepContent {
 	};
 }
 
+export type CompSkipReason = 'no_tier' | 'multiple_tiers' | 'chosen_tier_gone';
+
 export interface SubscribersStepContent {
 	available_tiers?: Product[];
 	connect_url?: string;
 	is_connected_stripe: boolean;
 	map_plans?: Record< string, string >;
 	comp_stripe_plan_id?: string;
+	comp_product_id?: number | null;
 	account_display?: string;
 	plans?: Plan[];
 	meta?: {
@@ -53,6 +56,8 @@ export interface SubscribersStepContent {
 		comp_subscribed_count: string | null;
 		comp_already_subscribed_count: string | null;
 		comp_failed_subscribed_count: string | null;
+		comp_failed_emails?: string[];
+		comp_skip_reason?: CompSkipReason | null;
 		timestamp: string;
 	};
 }
@@ -63,6 +68,8 @@ export interface Product {
 	interval: string;
 	price: string;
 	title: string;
+	// The id of the monthly anchor this product belongs to, or 0 on an anchor itself.
+	tier?: number;
 }
 
 export interface Plan {
@@ -76,6 +83,7 @@ export interface Plan {
 	product_id: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface SummaryStepContent {}
 
 interface Step< T > {

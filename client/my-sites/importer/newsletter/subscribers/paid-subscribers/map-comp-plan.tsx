@@ -4,52 +4,48 @@ import { sprintf } from '@wordpress/i18n';
 import { chevronDown, Icon, arrowRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
-import { Plan } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
+import { Product } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
+
+import './map-plan.scss';
 
 type MapCompPlanProps = {
 	compCount: number;
-	plans: Plan[];
-	selectedStripePlanId: string;
-	onCompPlanSelect: ( stripePlanId: string ) => void;
+	tiers: Product[];
+	selectedTierId: string;
+	onCompPlanSelect: ( tierId: string ) => void;
 };
 
-function displayPlan( plan?: Plan, fallback?: string ) {
-	if ( ! plan ) {
+function formatTierPrice( tier: Product ) {
+	return `${ formatCurrency( parseFloat( tier.price ), tier.currency ) }/${ tier.interval }`;
+}
+
+function displayTier( tier?: Product, fallback?: string ) {
+	if ( ! tier ) {
 		return fallback;
 	}
 
 	return (
 		<span>
-			<strong>{ plan.name }</strong>{ ' ' }
-			<span>
-				{ formatCurrency( plan.plan_amount_decimal, plan.plan_currency, {
-					isSmallestUnit: true,
-					stripZeros: true,
-				} ) }
-				/{ plan.plan_interval }
-			</span>
+			<strong>{ tier.title }</strong> <span>{ formatTierPrice( tier ) }</span>
 		</span>
 	);
 }
 
 export function MapCompPlan( {
 	compCount,
-	plans,
-	selectedStripePlanId,
+	tiers,
+	selectedTierId,
 	onCompPlanSelect,
 }: MapCompPlanProps ) {
 	const { __, _n } = useI18n();
 	const [ isOpen, setIsOpen ] = useState( false );
 
-	const selectedPlan = plans.find( ( plan ) => plan.product_id === selectedStripePlanId );
+	const selectedTier = tiers.find( ( tier ) => tier.id.toString() === selectedTierId );
 
-	const choices = plans.map( ( plan ) => ( {
-		info: `${ formatCurrency( plan.plan_amount_decimal, plan.plan_currency, {
-			isSmallestUnit: true,
-			stripZeros: true,
-		} ) } / ${ plan.plan_interval }`,
-		label: plan.name,
-		value: plan.product_id,
+	const choices = tiers.map( ( tier ) => ( {
+		info: formatTierPrice( tier ),
+		label: tier.title,
+		value: tier.id.toString(),
 	} ) );
 
 	return (
@@ -73,24 +69,24 @@ export function MapCompPlan( {
 					className="map-plan__selected"
 					onClick={ () => setIsOpen( ! isOpen ) }
 				>
-					{ displayPlan( selectedPlan, __( 'Select a plan' ) ) }
+					{ displayTier( selectedTier, __( 'Select a tier' ) ) }
 				</Button>
 				<DropdownMenu
 					onToggle={ ( openState: boolean ) => setIsOpen( openState ) }
 					icon={ chevronDown }
-					label={ __( 'Choose a plan for comped subscribers' ) }
+					label={ __( 'Choose a tier for comped subscribers' ) }
 					open={ isOpen }
 				>
 					{ ( { onClose }: { onClose: () => void } ) => (
 						<MenuGroup label={ __( 'Grant complimentary access to' ) }>
 							<MenuItemsChoice
 								choices={ choices }
-								onSelect={ ( stripePlanId ) => {
-									onCompPlanSelect( stripePlanId );
+								onSelect={ ( tierId ) => {
+									onCompPlanSelect( tierId );
 									onClose();
 								} }
 								onHover={ () => {} }
-								value={ selectedStripePlanId }
+								value={ selectedTierId }
 							/>
 						</MenuGroup>
 					) }

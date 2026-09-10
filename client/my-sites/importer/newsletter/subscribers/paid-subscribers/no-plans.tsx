@@ -10,6 +10,7 @@ import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-ac
 import { useDispatch } from 'calypso/state';
 import { requestDisconnectSiteStripeAccount } from 'calypso/state/memberships/settings/actions';
 import StartImportButton from './../start-import-button';
+import CompSubscribers from './comp-subscribers';
 import type { SiteDetails } from '@automattic/data-stores';
 
 type NoPlansProps = {
@@ -75,6 +76,7 @@ export default function NoPlans( { cardData, selectedSite, engine, onStartImport
 					) }
 				</p>
 			</div>
+			<CompSubscribers cardData={ cardData } siteId={ selectedSite.ID } engine={ engine } />
 			<ImporterActionButtonContainer>
 				<ImporterActionButton onClick={ disconnectStripe } primary>
 					{ __( 'Try a different Stripe account' ) }

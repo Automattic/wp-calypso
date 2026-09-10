@@ -9,6 +9,7 @@ import ImporterActionButton from '../../../importer-action-buttons/action-button
 import ImporterActionButtonContainer from '../../../importer-action-buttons/container';
 import { SubscribersStepProps } from '../../types';
 import StartImportButton from '../start-import-button';
+import CompSubscribers from './comp-subscribers';
 import SuccessNotice from './success-notice';
 
 /**
@@ -61,6 +62,7 @@ export default function ConnectStripe( {
 					}
 				) }
 			</p>
+			<CompSubscribers cardData={ cardData } siteId={ selectedSite.ID } engine={ engine } />
 			<ImporterActionButtonContainer noSpacing>
 				<ImporterActionButton
 					primary
