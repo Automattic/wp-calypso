@@ -1,6 +1,6 @@
 import * as blocks from '@wordpress/blocks';
-import { findAbilityByName } from '../../abilities/ability-name';
 import { createWebMcpAdapter } from '../adapter';
+import { mergeToolProviders } from '../compose-tool-providers';
 import type { Ability } from '../../abilities/types';
 import type { ToolProvider } from '../../extension-types';
 import type { WebMcpModelContext, WebMcpTool } from '../types';
@@ -79,20 +79,17 @@ function createHarness( initialAbilities: Ability[] = [ createAbility() ] ) {
 			signals.set( tool.name, options?.signal );
 		} ),
 	};
+	const onSourceError = jest.fn();
 	const adapter = createWebMcpAdapter( {
-		toolProvider: {
-			getAbilities: toolProvider.getAbilities,
-			resolveAbility: async ( name ) => {
-				const ability = findAbilityByName( await toolProvider.getAbilities(), name );
-				return ability && { ability, provider: toolProvider };
-			},
-		},
+		// The same seam the mount uses, over this single source.
+		toolProvider: mergeToolProviders( () => [ toolProvider ], onSourceError ),
 		modelContext,
 	} );
 
 	return {
 		adapter,
 		modelContext,
+		onSourceError,
 		setAbilities: ( next: Ability[] ) => {
 			abilities = next;
 		},
@@ -627,5 +624,36 @@ describe( 'WebMCP adapter', () => {
 		await harness.adapter.sync();
 
 		expect( harness.modelContext.registerTool ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'skips an ability whose descriptor cannot be serialized and keeps registering the others', async () => {
+		const cyclic: Record< string, unknown > = { type: 'object', properties: {} };
+		cyclic.self = cyclic;
+		const broken = createAbility( {
+			name: 'other-plugin/broken-schema',
+			input_schema: cyclic as Ability[ 'input_schema' ],
+			meta: { webmcp: { public: true }, annotations: { clientRegistered: true, readonly: true } },
+		} );
+		const harness = createHarness( [ broken, createBlockTreeAbility(), createAbility() ] );
+
+		await expect( harness.adapter.sync() ).rejects.toThrow( 'other-plugin/broken-schema' );
+		expect( harness.tools.has( 'other_plugin__broken_schema' ) ).toBe( false );
+		expect( harness.tools.has( 'agents_manager__get_block_tree' ) ).toBe( true );
+		expect( harness.tools.has( 'big_sky__apply_block_edits' ) ).toBe( true );
+	} );
+
+	it( 'removes a registered tool whose live descriptor stops being serializable', async () => {
+		const initial = createBlockTreeAbility();
+		const harness = createHarness( [ initial ] );
+		await harness.adapter.sync();
+		const tool = harness.tools.get( 'agents_manager__get_block_tree' )!;
+		const signal = harness.signals.get( 'agents_manager__get_block_tree' );
+		const cyclic: Record< string, unknown > = { type: 'object', properties: {} };
+		cyclic.self = cyclic;
+		harness.setAbilities( [ { ...initial, input_schema: cyclic as Ability[ 'input_schema' ] } ] );
+
+		await expect( tool.execute( {} ) ).rejects.toThrow( 'WebMCP tool changed' );
+		expect( signal?.aborted ).toBe( true );
+		expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
 	} );
 } );

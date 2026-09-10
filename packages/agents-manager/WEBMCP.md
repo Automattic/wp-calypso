@@ -57,7 +57,10 @@ or carries a different descriptor, then reconciles the tools so the browser can 
 afresh. Execution uses that validated source without another cross-source lookup; a recovering
 source or provider replacement takes effect on the next call. A winner that changed source but
 kept an identical descriptor keeps its registration and executes through the new source. Callbacks
-from replaced or disposed registrations reject.
+from replaced or disposed registrations reject. Within a call, each owner still dispatches by
+ability name, because the `ToolProvider` contract and the registry's `executeAbility()` are
+name-based, so an implementation swapped under the same name between validation and dispatch is
+not caught until the next call; the store subscription reconciles the tools afterwards.
 
 The adapter itself is generic. The few abilities whose projection differs from the ability, such
 as the edit tool's WebMCP-only schema and input shaping, are described in one contract table in
@@ -140,8 +143,10 @@ reconcile. The experiment requires a browser that accepts the current draft's de
 The adapter subscribes to the `core/abilities` store and reconciles on every change, so abilities
 registered by later React effects or by other plugins appear without polling. The merged provider
 lives outside that store, so the hook re-syncs once when it arrives. Changing scope or unmounting
-Agents Manager aborts all registrations. A source that fails to load or a registration the browser
-rejects is reported and does not block the remaining tools. A failed REST discovery is not cached,
+Agents Manager aborts all registrations. A source that fails to load, a registration the browser
+rejects, or an ability whose descriptor cannot be serialized, such as a cyclic schema, is reported
+and does not block the remaining tools. A registered tool whose live descriptor stops being
+serializable is removed. A failed REST discovery is not cached,
 so the next reconcile fetches it again, whether a store change, a provider change, or a dispatch
 that found a stale definition triggered it. There are no timed retries, and executions are never
 retried automatically.

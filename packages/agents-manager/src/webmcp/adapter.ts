@@ -60,6 +60,25 @@ function getToolDescriptor( ability: Ability ): Omit< WebMcpTool, 'execute' > {
 	};
 }
 
+type ToolDescription = {
+	descriptor: Omit< WebMcpTool, 'execute' >;
+	fingerprint: string;
+};
+
+/**
+ * A registry ability can carry a schema that cannot be serialized, such as a
+ * cyclic object. That is a defect of that one ability, so it is reported and
+ * skipped rather than allowed to abort the reconcile for the tools after it.
+ */
+function describeTool( ability: Ability ): ToolDescription | undefined {
+	try {
+		const descriptor = getToolDescriptor( ability );
+		return { descriptor, fingerprint: JSON.stringify( descriptor ) };
+	} catch {
+		return undefined;
+	}
+}
+
 export function createWebMcpAdapter( {
 	toolProvider,
 	modelContext,
@@ -122,7 +141,7 @@ export function createWebMcpAdapter( {
 			if (
 				! resolved ||
 				! shouldExposeWebMcpAbility( resolved.ability ) ||
-				JSON.stringify( getToolDescriptor( resolved.ability ) ) !== fingerprint
+				describeTool( resolved.ability )?.fingerprint !== fingerprint
 			) {
 				await sync().catch( () => {} );
 				throw new Error(
@@ -170,10 +189,20 @@ export function createWebMcpAdapter( {
 				break;
 			}
 
-			const descriptor = getToolDescriptor( ability );
-			const fingerprint = JSON.stringify( descriptor );
 			const current = registrations.get( abilityName );
+			const described = describeTool( ability );
+			if ( ! described ) {
+				failure ??= {
+					error: new Error( `The WebMCP descriptor of ${ ability.name } cannot be serialized.` ),
+				};
+				if ( current ) {
+					await unregister( current );
+					registrations.delete( abilityName );
+				}
+				continue;
+			}
 
+			const { descriptor, fingerprint } = described;
 			if ( current?.fingerprint === fingerprint ) {
 				continue;
 			}
