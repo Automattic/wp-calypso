@@ -53,34 +53,63 @@ function renderConnectStripe( content: Partial< SubscribersStepContent > ) {
 	);
 }
 
-function freeSubscribersButton() {
-	return screen.getByRole( 'button', { name: /free subscribers/i } );
+// The label reads differently once a comp tier resolves, so match either wording.
+function continueButton() {
+	return screen.getByRole( 'button', { name: /free subscribers|without paid subscribers/i } );
 }
+
+describe( '<ConnectStripe> button label', () => {
+	it( 'does not claim free subscribers only when a comp tier will be granted', () => {
+		renderConnectStripe( { available_tiers: [ tier ], comp_product_id: 10 } );
+
+		expect(
+			screen.getByRole( 'button', { name: 'Continue without paid subscribers' } )
+		).toBeVisible();
+	} );
+
+	it( 'keeps the free-subscribers wording when the comps have nowhere to go', () => {
+		renderConnectStripe( { available_tiers: [] } );
+
+		expect( screen.getByRole( 'button', { name: /free subscribers/i } ) ).toBeVisible();
+		expect(
+			screen.queryByRole( 'button', { name: 'Continue without paid subscribers' } )
+		).not.toBeInTheDocument();
+	} );
+
+	it( 'keeps the free-subscribers wording when there are no comps at all', () => {
+		renderConnectStripe( {
+			available_tiers: [ tier ],
+			meta: { email_count: '8', comp_count: 0 } as SubscribersStepContent[ 'meta' ],
+		} );
+
+		expect( screen.getByRole( 'button', { name: /free subscribers/i } ) ).toBeVisible();
+	} );
+} );
 
 describe( '<ConnectStripe> comp gating', () => {
 	it( 'leaves the escape hatch open when there is no tier to grant against', () => {
 		renderConnectStripe( { available_tiers: [] } );
 
-		expect( freeSubscribersButton() ).toBeEnabled();
+		expect( continueButton() ).toBeEnabled();
 	} );
 
 	it( 'holds the import while the chosen tier is gone', () => {
 		// Importing here would drop every comp, which is the outcome this flow exists to prevent.
 		renderConnectStripe( { available_tiers: [ tier ], comp_product_id: 99 } );
 
-		expect( freeSubscribersButton() ).toBeDisabled();
+		expect( continueButton() ).toBeDisabled();
 	} );
 
 	it( 'holds the import while several tiers are available and none is chosen', () => {
 		renderConnectStripe( { available_tiers: [ tier, secondTier ] } );
 
-		expect( freeSubscribersButton() ).toBeDisabled();
+		expect( continueButton() ).toBeDisabled();
 	} );
 
 	it( 'allows the import once a tier resolves', () => {
 		renderConnectStripe( { available_tiers: [ tier ], comp_product_id: 10 } );
 
-		expect( freeSubscribersButton() ).toBeEnabled();
+		expect( continueButton() ).toBeEnabled();
 	} );
 
 	it( 'leaves the escape hatch open when the file carries no comps', () => {
@@ -89,6 +118,6 @@ describe( '<ConnectStripe> comp gating', () => {
 			meta: { email_count: '8', comp_count: 0 } as SubscribersStepContent[ 'meta' ],
 		} );
 
-		expect( freeSubscribersButton() ).toBeEnabled();
+		expect( continueButton() ).toBeEnabled();
 	} );
 } );

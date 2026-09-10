@@ -13,6 +13,7 @@ import CompSubscribers, {
 	getSelectedCompTierId,
 	isCompSelectionSatisfied,
 	isCompSelectionStale,
+	willGrantComps,
 } from '../comp-subscribers';
 
 jest.mock( 'calypso/lib/wp', () => ( {
@@ -229,6 +230,33 @@ describe( 'isCompSelectionSatisfied', () => {
 	it( 'blocks while several tiers are available and none is chosen', () => {
 		expect(
 			isCompSelectionSatisfied( cardData( { available_tiers: [ monthlyAnchor, secondTier ] } ) )
+		).toBe( false );
+	} );
+} );
+
+describe( 'willGrantComps', () => {
+	it( 'is true once a tier resolves, so the button cannot claim free subscribers only', () => {
+		expect( willGrantComps( cardData( { available_tiers: [ secondTier ] } ) ) ).toBe( true );
+	} );
+
+	it( 'is false with no tier to grant against, where the comps do arrive as free', () => {
+		expect( willGrantComps( cardData( { available_tiers: [] } ) ) ).toBe( false );
+	} );
+
+	it( 'is false while several tiers are available and none is chosen', () => {
+		expect( willGrantComps( cardData( { available_tiers: [ monthlyAnchor, secondTier ] } ) ) ).toBe(
+			false
+		);
+	} );
+
+	it( 'is false when the file carries no comps', () => {
+		expect(
+			willGrantComps(
+				cardData( {
+					available_tiers: [ secondTier ],
+					meta: { comp_count: 0 } as SubscribersStepContent[ 'meta' ],
+				} )
+			)
 		).toBe( false );
 	} );
 } );

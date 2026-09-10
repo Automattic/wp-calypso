@@ -11,7 +11,7 @@ import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-ac
 import { useDispatch } from 'calypso/state';
 import { requestDisconnectSiteStripeAccount } from 'calypso/state/memberships/settings/actions';
 import StartImportButton from './../start-import-button';
-import CompSubscribers, { isCompSelectionSatisfied } from './comp-subscribers';
+import CompSubscribers, { isCompSelectionSatisfied, willGrantComps } from './comp-subscribers';
 import type { SiteDetails } from '@automattic/data-stores';
 
 type NoPlansProps = {
@@ -93,7 +93,11 @@ export default function NoPlans( { cardData, selectedSite, engine, onStartImport
 					primary={ false }
 					step={ currentStep }
 					disabled={ isImportDisabled }
-					label={ __( 'Only import free subscribers' ) }
+					label={
+						willGrantComps( cardData )
+							? __( 'Import without paid subscribers' )
+							: __( 'Only import free subscribers' )
+					}
 					navigate={ onStartImport }
 				/>
 			</ImporterActionButtonContainer>

@@ -108,6 +108,16 @@ export function isCompSelectionSatisfied( cardData?: SubscribersStepContent ): b
 	return getSelectedCompTierId( cardData ) !== '';
 }
 
+/**
+ * Whether the import will actually grant complimentary access, which decides whether a button
+ * offering to continue "with free subscribers" would be telling the truth. Comps with no tier to
+ * grant against do arrive as plain free subscribers, so that case is still free-only.
+ * @param cardData The subscribers step content.
+ */
+export function willGrantComps( cardData?: SubscribersStepContent ): boolean {
+	return getCompCount( cardData ) > 0 && getSelectedCompTierId( cardData ) !== '';
+}
+
 type CompSubscribersProps = {
 	cardData: SubscribersStepContent;
 	siteId: number;

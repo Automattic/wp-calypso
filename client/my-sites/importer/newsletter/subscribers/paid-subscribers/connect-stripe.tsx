@@ -11,7 +11,7 @@ import ImporterActionButton from '../../../importer-action-buttons/action-button
 import ImporterActionButtonContainer from '../../../importer-action-buttons/container';
 import { SubscribersStepProps } from '../../types';
 import StartImportButton from '../start-import-button';
-import CompSubscribers, { isCompSelectionSatisfied } from './comp-subscribers';
+import CompSubscribers, { isCompSelectionSatisfied, willGrantComps } from './comp-subscribers';
 import SuccessNotice from './success-notice';
 
 /**
@@ -93,11 +93,13 @@ export default function ConnectStripe( {
 					disabled={ isImportDisabled }
 					navigate={ onStartImport }
 					label={
-						fixMe( {
-							text: 'Continue with free subscribers',
-							newCopy: __( 'Continue with free subscribers' ),
-							oldCopy: __( 'I have only free subscribers' ),
-						} ) as string
+						willGrantComps( cardData )
+							? __( 'Continue without paid subscribers' )
+							: ( fixMe( {
+									text: 'Continue with free subscribers',
+									newCopy: __( 'Continue with free subscribers' ),
+									oldCopy: __( 'I have only free subscribers' ),
+							  } ) as string )
 					}
 				/>
 			</ImporterActionButtonContainer>
