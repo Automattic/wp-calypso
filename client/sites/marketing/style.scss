@@ -6,7 +6,7 @@
 
 // Section-wide, so it has to live here rather than with any one screen.
 .is-section-marketing .layout__content {
-	background-color: #fff;
+	background-color: var(--color-surface);
 }
 
 .foldable-card.sharing-service {
