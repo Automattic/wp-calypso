@@ -43,17 +43,23 @@ export function PlanExpiryStatus( { site }: { site: Site } ) {
 		return null;
 	}
 
+	// Named as the wp-admin banner names them (`wpcom_expiry_notices_track_props`),
+	// so that a funnel can follow the same plan across both surfaces. `urgency`
+	// has no counterpart there, where the colour is derived from the day count
+	// rather than chosen.
 	const eventProperties = {
-		product_slug: site.plan?.product_slug,
-		source: 'plan',
+		surface: 'dashboard-sites-list',
+		state: status.state,
 		urgency: status.intent,
-		has_renew_link: !! status.href,
+		product_slug: site.plan?.product_slug,
+		is_plan_owner: !! site.plan?.user_is_owner,
+		...( status.daysRemaining !== undefined && { days_remaining: status.daysRemaining } ),
 	};
 
 	return (
 		<>
 			<ComponentViewTracker
-				eventName="calypso_dashboard_sites_plan_renew_nag_impression"
+				eventName="calypso_dashboard_sites_plan_expiry_status_impression"
 				properties={ eventProperties }
 			/>
 			<Text intent={ status.intent } title={ status.href ? undefined : status.title }>
@@ -65,7 +71,10 @@ export function PlanExpiryStatus( { site }: { site: Site } ) {
 						title={ status.title }
 						href={ status.href }
 						onClick={ () =>
-							recordTracksEvent( 'calypso_dashboard_sites_plan_renew_nag_click', eventProperties )
+							recordTracksEvent( 'calypso_dashboard_sites_plan_expiry_status_click', {
+								...eventProperties,
+								cta: status.cta,
+							} )
 						}
 					>
 						{ status.text }

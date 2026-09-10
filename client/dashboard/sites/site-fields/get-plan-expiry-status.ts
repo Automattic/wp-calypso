@@ -1,7 +1,7 @@
 import { SubscriptionBillPeriod } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import { getPlanExpiryUrgency } from '../../components/plan-expiry-notice';
-import { formatDate } from '../../utils/datetime';
+import { formatDate, getCalendarDaysUntil } from '../../utils/datetime';
 import { wpcomLink } from '../../utils/link';
 import { getRenewalUrlFromPurchase } from '../../utils/purchase';
 import {
@@ -13,6 +13,8 @@ import { getSitePlanUpgradeUrl } from '../../utils/site-url';
 import { isSitePlanTrial } from '../plans';
 import type { Purchase, Site } from '@automattic/api-core';
 
+export type PlanExpiryCta = 'renew' | 'upgrade';
+
 export interface PlanExpiryStatus {
 	intent: 'warning' | 'error';
 	text: string;
@@ -20,11 +22,29 @@ export interface PlanExpiryStatus {
 	/** Renewal checkout, left out when the viewer is not the one who can renew. */
 	href?: string;
 
+	/** What `href` leads to, for the click event. Absent along with it. */
+	cta?: PlanExpiryCta;
+
 	/**
 	 * Tooltip naming the expiry date, which the wording leaves out to keep the
 	 * column short. Absent when we have no date to name.
 	 */
 	title?: string;
+
+	/**
+	 * Which stage this is, under the names `Expiry_Data::STATE_*` gives them in
+	 * jetpack-mu-wpcom, so that this surface's events line up with the wp-admin
+	 * banner's. The third state there, a plan past its grace period, never
+	 * reaches here: the site is back on the free plan by then.
+	 */
+	state: 'approaching_expiry' | 'expired_grace';
+
+	/**
+	 * Days until expiry, negative once past it, as `days_remaining` counts them
+	 * in wp-admin. Absent when the reader has no subscription to read a date
+	 * from — see the comment on the purchase below.
+	 */
+	daysRemaining?: number;
 }
 
 function formatExpiryDate( purchase: Purchase, locale: string ): string {
@@ -54,7 +74,10 @@ function getExpiredTitle( purchase: Purchase | undefined, locale: string ): stri
  * Where to send someone who wants their plan back, or `undefined` when renewing
  * it is not theirs to do.
  */
-function getRenewUrl( site: Site, purchase?: Purchase ): string | undefined {
+function getRenewUrl(
+	site: Site,
+	purchase?: Purchase
+): { href: string; cta: PlanExpiryCta } | undefined {
 	if ( ! site.plan?.user_is_owner ) {
 		return undefined;
 	}
@@ -62,15 +85,18 @@ function getRenewUrl( site: Site, purchase?: Purchase ): string | undefined {
 	// A trial has no subscription to renew, so keeping the site's features
 	// means buying a plan instead.
 	if ( isSitePlanTrial( site ) ) {
-		return getSitePlanUpgradeUrl( site );
+		return { href: getSitePlanUpgradeUrl( site ), cta: 'upgrade' };
 	}
 
 	// Renewing from the subscription ID is the more precise route, but the
 	// purchase may not have loaded yet — and for a plan that is still the site's
 	// current one, checking out its product slug renews it just the same.
-	return purchase
-		? getRenewalUrlFromPurchase( purchase )
-		: wpcomLink( `/checkout/${ site.slug }/${ site.plan.product_slug }` );
+	return {
+		href: purchase
+			? getRenewalUrlFromPurchase( purchase )
+			: wpcomLink( `/checkout/${ site.slug }/${ site.plan.product_slug }` ),
+		cta: 'renew',
+	};
 }
 
 /**
@@ -90,13 +116,18 @@ export function getPlanExpiryStatus(
 	// rather than the subscription so that it shows for everyone who can see
 	// the site, not only the subscriber who can act on it.
 	if ( site.plan?.expired ) {
-		const href = getRenewUrl( site, purchase );
+		const renewal = getRenewUrl( site, purchase );
 
 		return {
 			intent: 'error',
 			text: __( 'Plan expired' ),
-			href,
-			title: href ? getExpiredTitle( purchase, locale ) : getNotTheSubscriberTitle(),
+			href: renewal?.href,
+			cta: renewal?.cta,
+			title: renewal ? getExpiredTitle( purchase, locale ) : getNotTheSubscriberTitle(),
+			state: 'expired_grace',
+			daysRemaining: purchase
+				? getCalendarDaysUntil( new Date( purchase.expiry_date ) )
+				: undefined,
 		};
 	}
 
@@ -143,6 +174,9 @@ export function getPlanExpiryStatus(
 		intent: urgency,
 		text: copy.text,
 		href: getRenewalUrlFromPurchase( purchase ),
+		cta: 'renew',
 		title: getExpiringSoonRenewalTitle( expiryDate ) ?? expiryDate,
+		state: 'approaching_expiry',
+		daysRemaining: getCalendarDaysUntil( new Date( purchase.expiry_date ) ),
 	};
 }

@@ -3,6 +3,7 @@
  */
 import { DotcomPlans, SubscriptionBillPeriod } from '@automattic/api-core';
 import { QueryClient } from '@tanstack/react-query';
+import userEvent from '@testing-library/user-event';
 import MockDate from 'mockdate';
 import { render as testUtilsRender } from '../../../test-utils';
 import { wpcomLink } from '../../../utils/link';
@@ -186,6 +187,80 @@ describe( '<Plan>', () => {
 		const link = getByRole( 'link' );
 		expect( link ).toHaveTextContent( 'Plan expired' );
 		expect( link ).toHaveAttribute( 'href', expect.stringContaining( '/checkout/renew/1234' ) );
+	} );
+
+	test( 'records an impression naming the stage, urgency and whose plan it is', () => {
+		const { recordTracksEvent } = renderPlan( {
+			site: makeSite( { user_is_owner: true } ),
+			purchases: [ makePurchase( { expiry_date: expiryInDays( 45 ) } ) ],
+		} );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_sites_plan_expiry_status_impression',
+			{
+				surface: 'dashboard-sites-list',
+				state: 'approaching_expiry',
+				urgency: 'warning',
+				product_slug: 'business-bundle',
+				is_plan_owner: true,
+				days_remaining: 45,
+			}
+		);
+	} );
+
+	test( 'records an impression for a lapsed plan the reader cannot renew', () => {
+		const { recordTracksEvent } = renderPlan( {
+			site: makeSite( { expired: true, user_is_owner: false } ),
+		} );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_sites_plan_expiry_status_impression',
+			expect.objectContaining( { state: 'expired_grace', is_plan_owner: false } )
+		);
+		// No date to count from, so the property is left off rather than guessed.
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_dashboard_sites_plan_expiry_status_impression',
+			expect.objectContaining( { days_remaining: expect.anything() } )
+		);
+	} );
+
+	test( 'records a click on the renewal link', async () => {
+		const { getByRole, recordTracksEvent } = renderPlan( {
+			site: makeSite( { user_is_owner: true } ),
+			purchases: [ makePurchase( { expiry_date: expiryInDays( 3 ) } ) ],
+		} );
+
+		await userEvent.click( getByRole( 'link' ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_sites_plan_expiry_status_click',
+			expect.objectContaining( {
+				surface: 'dashboard-sites-list',
+				state: 'approaching_expiry',
+				urgency: 'error',
+				is_plan_owner: true,
+				days_remaining: 3,
+				cta: 'renew',
+			} )
+		);
+	} );
+
+	test( 'tells a click on an expired trial apart from a renewal', async () => {
+		const { getByRole, recordTracksEvent } = renderPlan( {
+			site: makeSite( {
+				product_slug: DotcomPlans.ECOMMERCE_TRIAL_MONTHLY,
+				product_name_short: 'Trial',
+				expired: true,
+				user_is_owner: true,
+			} ),
+		} );
+
+		await userEvent.click( getByRole( 'link' ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_sites_plan_expiry_status_click',
+			expect.objectContaining( { cta: 'upgrade', state: 'expired_grace' } )
+		);
 	} );
 
 	test( 'an expired trial sends the subscriber to buy a plan instead of renewing one', () => {

@@ -119,6 +119,14 @@ describe( 'getPlanExpiryStatus', () => {
 		);
 	} );
 
+	test( 'reports the stage and day count the wp-admin banner reports', () => {
+		const purchase = makePurchase( { expiry_date: expiryInDays( 45 ) } );
+
+		expect( getPlanExpiryStatus( makeSite(), purchase, 'en' ) ).toEqual(
+			expect.objectContaining( { state: 'approaching_expiry', daysRemaining: 45, cta: 'renew' } )
+		);
+	} );
+
 	test( 'names the expiry date the wording leaves out', () => {
 		const purchase = makePurchase( { expiry_date: expiryInDays( 45 ) } );
 
@@ -138,7 +146,10 @@ describe( 'getPlanExpiryStatus', () => {
 			intent: 'error',
 			text: 'Plan expired',
 			href: expect.stringContaining( '/checkout/renew/1234' ),
+			cta: 'renew',
 			title: 'Expired on February 21, 2026 (renew this purchase)',
+			state: 'expired_grace',
+			daysRemaining: -3,
 		} );
 	} );
 
@@ -149,8 +160,11 @@ describe( 'getPlanExpiryStatus', () => {
 			intent: 'error',
 			text: 'Plan expired',
 			href: undefined,
+			cta: undefined,
 			title:
 				'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.',
+			state: 'expired_grace',
+			daysRemaining: undefined,
 		} );
 	} );
 
@@ -192,8 +206,11 @@ describe( 'getPlanExpiryStatus', () => {
 			expired: true,
 		} );
 
-		expect( getPlanExpiryStatus( site, undefined, 'en' )?.href ).toContain(
-			'/plans/test.wordpress.com'
+		expect( getPlanExpiryStatus( site, undefined, 'en' ) ).toEqual(
+			expect.objectContaining( {
+				href: expect.stringContaining( '/plans/test.wordpress.com' ),
+				cta: 'upgrade',
+			} )
 		);
 	} );
 
