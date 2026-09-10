@@ -1,4 +1,5 @@
 import { TitanMailSlugs } from '@automattic/api-core';
+import { __ } from '@wordpress/i18n';
 import { IntervalLength, TitanPlanTier } from '../types';
 
 export const TITAN_TIER_SLUGS: Record< TitanPlanTier, Record< IntervalLength, string > > = {
@@ -25,6 +26,17 @@ export const TITAN_TIER_ORDER: TitanPlanTier[] = [
 
 export function isTitanPlanTier( value: unknown ): value is TitanPlanTier {
 	return Object.values( TitanPlanTier ).includes( value as TitanPlanTier );
+}
+
+export function getTitanTierName( tier: TitanPlanTier ): string {
+	switch ( tier ) {
+		case TitanPlanTier.Pro:
+			return __( 'Pro' );
+		case TitanPlanTier.Premium:
+			return __( 'Premium' );
+		case TitanPlanTier.Ultra:
+			return __( 'Ultra' );
+	}
 }
 
 // The highest tier has nothing to upgrade to.
