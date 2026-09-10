@@ -38,9 +38,8 @@ const PAGE = 'page';
 const NAVIGATION = 'wp_navigation';
 
 // What each operation's schema allows — deletes take the same names as creates.
-// Enforced here because nothing validates the arguments on the way in: the
-// callback runs on them raw, and deleting a `wp_navigation` record would take a
-// whole menu with it.
+// Checked in `checkEntities()`: the callback runs on raw arguments, and deleting
+// a `wp_navigation` record would take a whole menu with it.
 const EDITABLE_NAMES = [ 'post', PAGE, 'product', NAVIGATION ];
 const ADDABLE_NAMES = [ 'post', PAGE ];
 
@@ -68,28 +67,6 @@ const pickFields = ( record: Record< string, unknown >, fields: string[], wanted
 	Object.fromEntries(
 		Object.entries( record ).filter( ( [ key ] ) => fields.includes( key ) === wanted )
 	);
-
-/**
- * Reports the entity as updated, once, however many of its writes land.
- *
- * Called the moment the first write persists rather than at the end: a later
- * failure keeps the checkpoint only if something is reported as applied, and
- * that checkpoint is the landed change's only undo.
- */
-function reportUpdated( applied: AppliedChanges, { entityName, recordId }: Entity< 'edit' > ) {
-	let reported = false;
-
-	return () => {
-		if ( ! reported ) {
-			applied.updated.push( { entityName, recordId } );
-			reported = true;
-		}
-	};
-}
-
-/** The record without its title, for a rename the title write already covers. */
-const withoutTitle = ( record: Record< string, unknown > ) =>
-	Object.fromEntries( Object.entries( record ).filter( ( [ key ] ) => key !== 'title' ) );
 
 /** An entry as the agent sends it; `checkEntities()` turns it into an `Entity`. */
 interface EntityRef {
@@ -126,10 +103,11 @@ const FIELD_CHECKS: Record< keyof EntityRef, ( value: unknown ) => boolean > = {
 	options: isRecord,
 };
 
-// The one record field this ability rewrites (`flattenTitle()`); a wrong type
-// there would clear a title. Everything else reaches core-data as sent.
+// The one record field this ability rewrites (`flattenTitle()`): a wrong type
+// there would clear a title, where null clears it on purpose, as the schema
+// allows. Everything else reaches core-data as sent.
 const isTitle = ( value: unknown ) =>
-	value === undefined ||
+	value == null ||
 	typeof value === 'string' ||
 	( isRecord( value ) && ( typeof value.raw === 'string' || typeof value.rendered === 'string' ) );
 
@@ -166,7 +144,8 @@ function checkEntities< O extends Operation >( entities: unknown[], operation: O
 			);
 		}
 
-		const { entityType, entityName, record } = fields as Entity< O >;
+		const checked = fields as Entity< O >;
+		const { entityType, entityName, record } = checked;
 
 		if ( operation === 'edit' ) {
 			if (
@@ -193,7 +172,7 @@ function checkEntities< O extends Operation >( entities: unknown[], operation: O
 			);
 		}
 
-		return fields as Entity< O >;
+		return checked;
 	} );
 }
 
@@ -208,12 +187,20 @@ type Batch = {
  * and any write, so a malformed batch is refused whole rather than partly
  * applied.
  */
-function checkBatch( {
-	addEntities = [],
-	editEntities = [],
-	deleteEntities = [],
-	confirmationMessage,
-}: EditEntityRecordInput ): Batch | Error {
+function checkBatch( input: unknown ): Batch | Error {
+	if ( ! isRecord( input ) ) {
+		return new Error(
+			'Invalid arguments. Provide an object with addEntities, editEntities or deleteEntities.'
+		);
+	}
+
+	const {
+		addEntities = [],
+		editEntities = [],
+		deleteEntities = [],
+		confirmationMessage,
+	} = input as EditEntityRecordInput;
+
 	if ( confirmationMessage != null && typeof confirmationMessage !== 'string' ) {
 		return new Error( 'Invalid arguments. confirmationMessage must be a string when present.' );
 	}
@@ -375,6 +362,28 @@ async function editSiteMetadata( changes: Record< string, unknown > ): Promise< 
 }
 
 /**
+ * Reports the entity as updated, once, however many of its writes land.
+ *
+ * Called the moment the first write persists rather than at the end: a later
+ * failure keeps the checkpoint only if something is reported as applied, and
+ * that checkpoint is the landed change's only undo.
+ */
+function reportUpdated( applied: AppliedChanges, { entityName, recordId }: Entity< 'edit' > ) {
+	let reported = false;
+
+	return () => {
+		if ( ! reported ) {
+			applied.updated.push( { entityName, recordId } );
+			reported = true;
+		}
+	};
+}
+
+/** The record without its title, for a rename the title write already covers. */
+const withoutTitle = ( record: Record< string, unknown > ) =>
+	Object.fromEntries( Object.entries( record ).filter( ( [ key ] ) => key !== 'title' ) );
+
+/**
  * Writes the site's title and metadata.
  *
  * The site record is addressed by a sentinel `recordId` rather than a real id,
@@ -525,20 +534,14 @@ async function applyEdits(
 }
 
 /**
- * Routes the editor away from a page about to be deleted: to the front page,
- * or to the pages list when the front page is the posts index or the page
- * itself. Through `editor-navigate`, which saves, navigates and waits for the
- * destination to load — so the delete runs once the canvas has let go of the
- * record.
- *
- * Only the site editor's router can leave without a full page load. Under a
- * full load the delete request could be cut off by the unload, so the post
- * editor refuses instead.
- *
- * The canvas binding is handed to the navigation first, as the guard does for
- * the ability itself: this call bypasses that dispatch, and a binding left on
- * the page being deleted would read the move as the user leaving and abort
- * the request.
+ * Routes the editor off a page about to be deleted — to the front page, or to
+ * the pages list when the front page is the posts index or the page itself —
+ * through `editor-navigate`, which saves, navigates and waits for the
+ * destination to load. Only the site editor's router can do that without a
+ * full page load, which could cut the delete request off, so the post editor
+ * refuses instead. The canvas binding is handed over first, as the guard does
+ * for the ability: left on the page being deleted, the move would read as the
+ * user leaving and abort the request.
  */
 async function leavePage( pageId: number | string ): Promise< void > {
 	if ( ! getEditorHistory() ) {
