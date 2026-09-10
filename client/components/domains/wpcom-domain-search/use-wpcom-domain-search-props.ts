@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { DomainSearch } from '@automattic/domain-search';
 import {
+	DOMAIN_FLOW,
 	isDomainForGravatarFlow,
 	isHundredYearDomainFlow,
 	isHundredYearPlanFlow,
@@ -93,6 +94,11 @@ export const useWPCOMDomainSearchProps = ( {
 		return {
 			...externalConfig,
 			showBundleSuggestions: isEnabled( 'domain-bundling' ) && flowSupportsBundles,
+			// Name Pulse ships on the domain-first flow only; every other flow keeps
+			// the classic results page regardless of the feature flag.
+			namePulse: {
+				enabled: isEnabled( 'domain-search/name-pulse' ) && flowName === DOMAIN_FLOW,
+			},
 			priceRules: {
 				...externalConfig?.priceRules,
 				freeForFirstYear: isNextDomainFree,

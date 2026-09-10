@@ -81,6 +81,7 @@ export * from './me-tax-details';
 export * from './me-two-step';
 export * from './me-username';
 export * from './meta-sms-country-codes';
+export * from './name-pulse';
 export * from './notification-devices';
 export * from './odie';
 export * from './p2';
