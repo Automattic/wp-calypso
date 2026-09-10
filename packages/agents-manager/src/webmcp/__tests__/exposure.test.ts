@@ -154,21 +154,45 @@ describe( 'WebMCP exposure', () => {
 			).toBe( false );
 		} );
 
-		it( 'does not treat the stored public default as an opt-out', () => {
+		it( 'exposes allowlisted abilities through the allowlist, not the stored public default', () => {
+			// WordPress 7.1 stores `public: false` on every ability whose author did
+			// not set the flag, so the client cannot tell that default from an
+			// explicit opt-out. Only the channel flag opts out.
+			const storedDefault = { public: false, annotations: { serverRegistered: true } };
+
+			// Allowlisted read: exposed by the allowlist.
 			expect(
 				shouldExposeWebMcpAbility(
 					createServerAbility( 'wpcom/get-posts', {
-						meta: { public: false, annotations: { serverRegistered: true, readonly: true } },
+						meta: {
+							...storedDefault,
+							annotations: { ...storedDefault.annotations, readonly: true },
+						},
 					} )
 				)
 			).toBe( true );
+			// Allowlisted write: exposed by the allowlist.
 			expect(
 				shouldExposeWebMcpAbility(
 					createServerAbility( 'wpcom/media-create', {
-						meta: { public: true, annotations: { serverRegistered: true, readonly: false } },
+						meta: {
+							...storedDefault,
+							annotations: { ...storedDefault.annotations, readonly: false },
+						},
 					} )
 				)
 			).toBe( true );
+			// Not allowlisted: the same flag and annotations expose nothing.
+			expect(
+				shouldExposeWebMcpAbility(
+					createServerAbility( 'other-plugin/get-posts', {
+						meta: {
+							...storedDefault,
+							annotations: { ...storedDefault.annotations, readonly: true },
+						},
+					} )
+				)
+			).toBe( false );
 		} );
 
 		it( 'requires a known provenance even when a flag opts in', () => {
