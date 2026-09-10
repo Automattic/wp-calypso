@@ -59,13 +59,15 @@ describe( '<SubscriberSummary>', () => {
 		).toBeVisible();
 	} );
 
-	it( 'still reports comps that failed for their own reasons', () => {
+	it( 'reports a comp that failed on its own as imported but not comped', () => {
+		// A per-email comp failure is not added to the imported list, so the free pass subscribes
+		// that address anyway. Counting it as "Not imported" would contradict the total.
 		render(
 			<SubscriberSummary
 				status="done"
 				stepContent={ stepContent( {
 					email_count: '8',
-					subscribed_count: '6',
+					subscribed_count: '7',
 					comp_count: 2,
 					comp_subscribed_count: '1',
 					comp_failed_subscribed_count: '1',
@@ -73,8 +75,45 @@ describe( '<SubscriberSummary>', () => {
 			/>
 		);
 
+		expect( statFor( 'Total Subscribers' ) ).toBe( '8' );
+		expect( statFor( 'Free Subscribers' ) ).toBe( '7' );
 		expect( statFor( 'Comped Subscribers' ) ).toBe( '1' );
+		expect( statFor( 'Not comped' ) ).toBe( '1' );
+		expect( screen.queryByText( 'Not imported' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'keeps genuine free-subscriber failures under "Not imported"', () => {
+		render(
+			<SubscriberSummary
+				status="done"
+				stepContent={ stepContent( {
+					email_count: '8',
+					subscribed_count: '7',
+					failed_subscribed_count: '1',
+				} ) }
+			/>
+		);
+
 		expect( statFor( 'Not imported' ) ).toBe( '1' );
+		expect( screen.queryByText( 'Not comped' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'leaves the explanation to speak for a whole batch that was skipped', () => {
+		render(
+			<SubscriberSummary
+				status="done"
+				stepContent={ stepContent( {
+					email_count: '8',
+					subscribed_count: '8',
+					comp_count: 2,
+					comp_failed_subscribed_count: '2',
+					comp_skip_reason: 'no_tier',
+				} ) }
+			/>
+		);
+
+		expect( screen.queryByText( 'Not comped' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Not imported' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'counts comps that were already subscribed as duplicates', () => {

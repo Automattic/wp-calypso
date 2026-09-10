@@ -82,16 +82,14 @@ export default function SubscriberSummary( { stepContent, status }: SubscriberSu
 			parseInt( stepContent.meta?.paid_already_subscribed_count || '0' ) +
 			parseInt( stepContent.meta?.comp_already_subscribed_count || '0' );
 		const compSkipReason = stepContent.meta?.comp_skip_reason;
-		// Comps the server could not grant are counted as failed, but they still arrived as free
-		// subscribers, so counting them here too would both double-count them and contradict the
-		// explanation below.
-		const compFailed = compSkipReason
-			? 0
-			: parseInt( stepContent.meta?.comp_failed_subscribed_count || '0' );
+		// A comp that could not be granted, for any reason, is never added to the imported list, so
+		// the free pass subscribes that address anyway. These people arrived; they just arrived
+		// without complimentary access. Counting them as not imported would exceed the total and
+		// contradict what the rest of the summary says.
+		const notComped = parseInt( stepContent.meta?.comp_failed_subscribed_count || '0' );
 		const failedTotal =
 			parseInt( stepContent.meta?.failed_subscribed_count || '0' ) +
-			parseInt( stepContent.meta?.paid_failed_subscribed_count || '0' ) +
-			compFailed;
+			parseInt( stepContent.meta?.paid_failed_subscribed_count || '0' );
 
 		return (
 			<>
@@ -114,6 +112,9 @@ export default function SubscriberSummary( { stepContent, status }: SubscriberSu
 					) }
 					{ existingTotal > 0 && (
 						<SummaryStat count={ existingTotal } label={ __( 'Skipped (duplicate)' ) } />
+					) }
+					{ notComped > 0 && ! compSkipReason && (
+						<SummaryStat count={ notComped } label={ __( 'Not comped' ) } />
 					) }
 					{ failedTotal > 0 && (
 						<SummaryStat count={ failedTotal } label={ __( 'Not imported' ) } />
