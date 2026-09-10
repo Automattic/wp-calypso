@@ -3,6 +3,7 @@ import { dispatch, resolveSelect, select } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { getEditorHistory, type EditorHistory } from '../../utils/editor-history';
 import { isEditorPage } from '../../utils/is-editor-page';
+import { getRenderedMenuIds } from '../../utils/navigation-menu';
 import { waitForStore } from '../../utils/wait-for-store';
 import { errorResult, successResult } from '../ability-result';
 import { PAGE_PATH } from './page-path';
@@ -23,10 +24,6 @@ const NAVIGATION_REFS_TIMEOUT_MS = 1500;
 
 // Lets this turn's stream close before the page unloads.
 const UNLOAD_DELAY_MS = 1000;
-
-interface Block {
-	attributes?: Record< string, unknown >;
-}
 
 // `select`/`dispatch`/`resolveSelect` by store name are untyped, so each
 // store's shape is declared once here and every cast lives in one accessor.
@@ -55,7 +52,6 @@ interface CoreActions {
 	invalidateResolution?: ( selector: string, args: unknown[] ) => void;
 }
 interface BlockEditorSelectors {
-	getBlock?: ( clientId: string ) => Block | null;
 	getBlocksByName?: ( name: string ) => string[];
 	getBlockEditingMode?: ( clientId: string ) => string | undefined;
 }
@@ -307,19 +303,6 @@ export const getLoadedPageId = (): number | undefined => {
 const waitForPage = ( pageId: number ) =>
 	waitForStore( 'core/editor', () => getLoadedPageId() === pageId, EDITOR_LOAD_TIMEOUT_MS );
 
-/** The distinct menus referenced by every navigation block in the tree. */
-function getNavigationRefs(): unknown[] {
-	const blockEditor = blockEditorSelect();
-
-	return [
-		...new Set(
-			( blockEditor.getBlocksByName?.( 'core/navigation' ) ?? [] )
-				.map( ( clientId ) => blockEditor.getBlock?.( clientId )?.attributes?.ref )
-				.filter( Boolean )
-		),
-	];
-}
-
 /** Drops cached navigation records, so a page just added to a menu appears. */
 async function refreshNavigationBlocks(): Promise< number > {
 	const core = coreDispatch();
@@ -329,11 +312,11 @@ async function refreshNavigationBlocks(): Promise< number > {
 	// not in the tree on the first read.
 	await waitForStore(
 		'core/block-editor',
-		() => getNavigationRefs().length > 0,
+		() => getRenderedMenuIds().length > 0,
 		NAVIGATION_REFS_TIMEOUT_MS
 	);
 
-	const refs = getNavigationRefs();
+	const refs = getRenderedMenuIds();
 
 	let refreshed = 0;
 

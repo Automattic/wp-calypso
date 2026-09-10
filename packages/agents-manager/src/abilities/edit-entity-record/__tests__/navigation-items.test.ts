@@ -218,11 +218,10 @@ describe( 'raw menu edits', () => {
 		expect( built.blocks ).toHaveLength( 1 );
 	} );
 
-	// The schema allows a null `content` for other records; on a menu it would
-	// persist nothing while the editor kept its blocks.
-	it( 'refuses null content', async () => {
-		await expect( buildNavigationItems( 10, { content: null } ) ).rejects.toThrow(
-			'content cannot be null'
+	// Anything but serialized blocks would persist while the editor kept its own.
+	it.each( [ null, 7, {} ] )( 'refuses content that is not a string: %p', async ( content ) => {
+		await expect( buildNavigationItems( 10, { content } ) ).rejects.toThrow(
+			'content must be a string'
 		);
 	} );
 } );

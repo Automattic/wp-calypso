@@ -14,6 +14,8 @@ jest.mock( '@wordpress/data', () => ( {
 	subscribe: jest.fn( () => () => {} ),
 } ) );
 jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+// Pulled in by the shared menu reader; the block registry plays no part here.
+jest.mock( '@wordpress/blocks', () => ( {} ) );
 jest.mock( '../../../utils/is-editor-page', () => ( { isEditorPage: jest.fn( () => true ) } ) );
 jest.mock( '../../../utils/editor-history', () => ( { getEditorHistory: jest.fn() } ) );
 

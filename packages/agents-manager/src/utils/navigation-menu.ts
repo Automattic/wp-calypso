@@ -114,13 +114,11 @@ const getItems = ( record: NavigationRecord ): NavigationBlock[] => {
 	return serialized ? ( parse( serialized ) as NavigationBlock[] ) : [];
 };
 
-// TODO (ability-migration): `editor-navigate` reads the same refs for its menu
-// refresh. Whichever of the two lands second should call this instead.
 /**
  * The menus rendered by the open view. Preferred over the one site metadata
  * names: what the user is looking at is what they mean.
  */
-function getRenderedMenuIds(): MenuId[] {
+export function getRenderedMenuIds(): MenuId[] {
 	const blockEditor = select( BLOCK_EDITOR_STORE ) as unknown as BlockEditorSelect | undefined;
 
 	return [

@@ -513,6 +513,24 @@ describe( 'withCheckpoint', () => {
 		expect( getCheckpoint( 'call-1' )?.pageRenames ).toEqual( [ rename ] );
 	} );
 
+	// The same for a domain that snapshots up front: the first run could not
+	// read the site record, so the retry has to take that snapshot itself.
+	it( 'lets a repeat snapshot an eager domain the first run could not', async () => {
+		const { withCheckpoint, getCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
+		const write = { ...LOGO_WRITE, keys: [ 'page', 'site_title' ] };
+		const rename = { pageId: 7, from: 'Old', to: 'New' };
+
+		getEditedEntityRecord.mockReturnValue( undefined );
+		await withCheckpoint( write, ( recorder ) => recorder.capturePageRename( rename ) );
+		expect( getCheckpoint( 'call-1' )?.checkpointKeys ).toEqual( [ 'page' ] );
+
+		getEditedEntityRecord.mockReturnValue( { title: 'Old site title' } );
+		await withCheckpoint( write, () => {} );
+
+		expect( getCheckpoint( 'call-1' )?.siteTitleBeforeUpdate ).toBe( 'Old site title' );
+		expect( getCheckpoint( 'call-1' )?.checkpointKeys ).toEqual( [ 'page', 'site_title' ] );
+	} );
+
 	it( 'keeps the first snapshot when a repeat write throws', async () => {
 		const { withCheckpoint, hasCheckpoint } = await loadCheckpoints();
 		await withCheckpoint( LOGO_WRITE, () => {} );
