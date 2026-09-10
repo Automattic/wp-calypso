@@ -18,22 +18,27 @@ interface OpenPopupOptions {
 	onMessage( message: any, popup: Window ): void;
 }
 
-const openPopup = ( { url, onMessage }: OpenPopupOptions ) => {
-	let popup: Window | null;
+const openCenteredWindow = ( url: string ): Window | null => {
+	const width = 700;
+	const height = 600;
+	const top = window.screen.height / 2 - height / 2;
+	const left = window.screen.width / 2 - width / 2;
 
 	try {
-		const width = 700;
-		const height = 600;
-
-		const top = window.screen.height / 2 - height / 2;
-		const left = window.screen.width / 2 - width / 2;
-
-		popup = window.open(
+		return window.open(
 			url,
 			undefined,
 			`popup=1,width=${ width },height=${ height },top=${ top },left=${ left }`
 		);
 	} catch {
+		return null;
+	}
+};
+
+const openPopup = ( { url, onMessage }: OpenPopupOptions ) => {
+	const popup = openCenteredWindow( url );
+
+	if ( ! popup ) {
 		return false;
 	}
 
@@ -65,8 +70,6 @@ export const useInstallGithub = () => {
 	const { createInfoNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { mutate: saveGithubCredentials } = useMutation( saveGithubCredentialsMutation() );
 
-	recordTracksEvent( 'calypso_hosting_github_app_open_auth_popup_requested' );
-
 	const authorizeApp = async ( { code, state }: { code: string; state: string } ) => {
 		const response = await postLoginRequest( 'exchange-social-auth-code', {
 			service: 'github',
@@ -82,6 +85,8 @@ export const useInstallGithub = () => {
 	};
 
 	const installGithub = ( { onSuccess }: { onSuccess: ( installationId: number ) => void } ) => {
+		recordTracksEvent( 'calypso_hosting_github_app_open_auth_popup_requested' );
+
 		const openedPopup = openPopup( {
 			url:
 				githubInstallationsError?.name === 'UnauthorizedError'

@@ -15,6 +15,7 @@ import {
 	DeviceTabProvider,
 	useDeviceTab,
 } from 'calypso/hosting/performance/contexts/device-tab-context';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteLaunchGatingVariant } from 'calypso/lib/use-site-launch-gating-variant';
 import { TabType } from 'calypso/performance-profiler/components/header';
@@ -161,9 +162,11 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 	const [ isExperimentLoading, experimentVariant ] = useSiteLaunchGatingVariant();
 
 	// A free, already-public, or A4A dev site never qualifies, so skip the bridge
-	// and let the CTA redirect instantly.
+	// and let the CTA redirect instantly. A4A sends the CTA to WordPress.com
+	// instead, so the bridge never applies there either.
 	const isFreePlan = site?.plan?.is_free ?? false;
-	const canOfferPreLaunch = ! isSitePublic && ! site?.is_a4a_dev_site && ! isFreePlan;
+	const canOfferPreLaunch =
+		! isSitePublic && ! site?.is_a4a_dev_site && ! isFreePlan && ! isA8CForAgencies();
 	const [ isLaunchModalOpen, setIsLaunchModalOpen ] = useState( false );
 	const [ launchUrl, setLaunchUrl ] = useState( '' );
 
@@ -182,6 +185,15 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 	};
 
 	const onLaunchSiteClick = () => {
+		// A4A has no site settings of its own, so launching happens on WordPress.com.
+		if ( isA8CForAgencies() ) {
+			recordTracksEvent( 'calypso_performance_profiler_prepare_launch_cta_click' );
+			window.location.assign(
+				`https://wordpress.com/sites/${ site?.slug }/settings/site-visibility`
+			);
+			return;
+		}
+
 		if ( site?.is_a4a_dev_site ) {
 			recordTracksEvent( 'calypso_performance_profiler_prepare_launch_cta_click' );
 			page( `/sites/settings/site/${ site.slug }` );

@@ -7,9 +7,21 @@ import type { Purchase, PriceTierEntry, PurchasePriceTier } from './types';
  * of properties here are the ones that the legacy `createPurchaseObject`
  * assembler used to reshape (nested objects, value-mapped enums, coercions),
  * so they cannot be replaced by a plain field rename. Consumers migrating off
- * the assembler should read those properties through these helpers.
+ * the assembler should read those properties through these helpers until they
+ * can be migrated to the raw properties instead.
  */
 
+/**
+ * @deprecated Migration shim; read the `payment_card_*` fields off the
+ * `Purchase` instead. See {@link PurchasePayment}.
+ *
+ * Field-for-field: `id` is `payment_card_id` (raw, this may be a numeric
+ * string), `type` is `payment_card_type`, `displayBrand` is
+ * `payment_card_display_brand`, `processor` is `payment_card_processor`,
+ * `number` is `payment_details` and `expiryDate` is `payment_expiry`. All but
+ * `displayBrand` may be undefined on the raw purchase, where this shape
+ * substitutes `''`.
+ */
 export interface PurchasePaymentCreditCard {
 	id: number;
 	type: string;
@@ -25,6 +37,25 @@ export interface PurchasePaymentCreditCard {
 	expiryDate: string;
 }
 
+/**
+ * @deprecated Migration shim; read the flat `payment_*` fields off the
+ * `Purchase` instead.
+ *
+ * This is the nested payment object the legacy `createPurchaseObject`
+ * assembler built (SHILL-2256). It exists only so that code moving off the
+ * assembler can keep its existing property reads while the rest of the
+ * purchase is migrated; unlike the other shapes in this module it adds nothing
+ * the raw purchase does not already carry, so new code should read the raw
+ * fields directly and existing consumers of {@link getPurchasePayment} should
+ * be migrated off it.
+ *
+ * Field-for-field: `name` is `payment_name`, `type` is `payment_type`,
+ * `countryCode` is `payment_country_code`, `countryName` is
+ * `payment_country_name`, `storedDetailsId` is `stored_details_id`,
+ * `expiryDate` is `payment_expiry` (PayPal Direct only) and `creditCard` is the
+ * `payment_card_*` group (credit cards only). `paymentPartner` is vestigial and
+ * never populated.
+ */
 export interface PurchasePayment {
 	name: string | undefined;
 	type: string | undefined;
@@ -62,6 +93,15 @@ export interface PurchaseIntroductoryOffer {
  * The raw purchase exposes payment details as flat `payment_*` fields; this
  * groups them into the shape the app expects, adding the `creditCard` sub-object
  * only for card payments and the paypal_direct expiry date.
+ * @deprecated Migration shim; read the flat `payment_*` fields off the
+ * `Purchase` instead. Every property this returns is a rename of a field the
+ * purchase already carries (see {@link PurchasePayment} for the mapping). The
+ * only work it adds is gating `creditCard` and `expiryDate` on `payment_type`,
+ * coercing `payment_card_id` with `Number()` (raw, it may be a numeric string)
+ * and defaulting the other card fields to `''` — all of which a caller reading
+ * a single property can do more cheaply itself. This exists to let code migrate
+ * off the `createPurchaseObject` assembler (SHILL-2256) a page at a time; it
+ * should go away once its callers have.
  */
 export function getPurchasePayment( purchase: Purchase ): PurchasePayment {
 	const payment: PurchasePayment = {

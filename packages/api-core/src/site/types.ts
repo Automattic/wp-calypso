@@ -16,6 +16,12 @@ interface SitePlan {
 	product_name_en: string;
 	expired: boolean;
 	is_free: boolean;
+
+	/**
+	 * Whether the current user owns the plan's subscription, which is not the
+	 * same as owning the site: only the subscriber can renew it.
+	 */
+	user_is_owner?: boolean;
 	license_key?: string;
 	billing_period?: 'Yearly' | 'Monthly';
 	features: {

@@ -351,6 +351,16 @@ export function creditCardHasAlreadyExpired( purchase: Purchase ): boolean {
 	return moment( creditCard.expiryDate, 'MM/YY' ).isBefore( moment(), 'months' );
 }
 
+export function shouldRenderExpiringCreditCard( purchase: Purchase ): boolean {
+	return (
+		! isExpiredOrRemoved( purchase ) &&
+		! isExpiring( purchase ) &&
+		! isPurchaseOneTimePurchase( purchase ) &&
+		! isIncludedWithPlan( purchase ) &&
+		creditCardExpiresBeforeSubscription( purchase )
+	);
+}
+
 export function showCreditCardExpiringWarning( purchase: Purchase ): boolean {
 	return (
 		! isIncludedWithPlan( purchase ) &&

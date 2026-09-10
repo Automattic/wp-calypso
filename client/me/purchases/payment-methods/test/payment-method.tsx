@@ -67,32 +67,21 @@ const payPalAgreement: StoredPaymentMethodPayPal = {
 
 const mockPurchases = [
 	{
-		productName: 'WordPress.com Business Plan',
+		ID: '1234',
+		product_name: 'WordPress.com Business Plan',
 		domain: 'associatedsubscription.wordpress.com',
 		meta: 'associatedsubscription.wordpress.com',
-		payment: { storedDetailsId: '1234' },
-		isAutoRenewEnabled: true,
-		mightStillAutoRenew: true,
-		renewDate: '2080-12-31',
-		id: '1234',
+		stored_details_id: '1234',
+		payment_type: 'credit_card',
+		is_auto_renew_enabled: true,
+		might_still_auto_renew: true,
+		renew_date: '2080-12-31',
 	},
 ];
-
-jest.mock( 'calypso/state/purchases/selectors', () => ( {
-	getUserPurchases: jest.fn( () => mockPurchases ),
-	getSitePurchases: jest.fn( () => mockPurchases ),
-	hasLoadedSitePurchasesFromServer: jest.fn( () => true ),
-	hasLoadedUserPurchasesFromServer: jest.fn( () => true ),
-} ) );
 
 function createMockReduxStoreForPurchase() {
 	return createReduxStore(
 		{
-			purchases: {
-				data: mockPurchases,
-				hasLoadedUserPurchasesFromServer: true,
-				hasLoadedSitePurchasesFromServer: true,
-			},
 			ui: { selectSiteId: '' },
 		},
 		( state ) => {
@@ -110,6 +99,10 @@ describe( 'PaymentMethod', () => {
 			.persist()
 			.get( new RegExp( '^/rest/v1.2/me/payment-methods' ) )
 			.reply( 200, () => currentData.cards );
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( '/rest/v1.2/upgrades' )
+			.reply( 200, () => mockPurchases );
 		nock( 'https://public-api.wordpress.com' )
 			.post( new RegExp( '/rest/v1.1/me/stored-cards/\\d+/delete' ) )
 			.reply( 200, ( uri ) => {
@@ -167,7 +160,7 @@ describe( 'PaymentMethod', () => {
 		const store = createMockReduxStoreForPurchase();
 		const queryClient = new QueryClient();
 
-		mockPurchases[ 0 ].payment.storedDetailsId = '5678';
+		mockPurchases[ 0 ].stored_details_id = '5678';
 
 		render(
 			<ReduxProvider store={ store }>
