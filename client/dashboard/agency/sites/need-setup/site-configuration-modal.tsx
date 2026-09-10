@@ -24,7 +24,10 @@ import type { SiteAddress } from './use-site-address';
 import type { DataFormControlProps, Field } from '@wordpress/dataviews';
 import type { ReactNode } from 'react';
 
-const DOMAIN_SUFFIX = '.wordpress.com';
+// Agency licenses provision Atomic sites, which land on `.wpcomstaging.com`.
+// Availability is still checked against the `wordpress.com` namespace, which is
+// what the validation endpoint takes.
+const DOMAIN_SUFFIX = '.wpcomstaging.com';
 
 const HELP_CENTER_URL = 'https://wordpress.com/support/help-support-options/#how-to-contact-us';
 const HOSTING_FEATURES_URL =
