@@ -9,6 +9,8 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 
+import './signup-existing-account-notice.scss';
+
 /**
  * Explain the redirect signup makes when the address already has an account.
  *
@@ -25,12 +27,15 @@ export default function SignupExistingAccountNotice() {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const locale = useSelector( getCurrentLocaleSlug );
 
-	if ( ! initialQuery?.is_signup_existing_account && ! currentQuery?.is_signup_existing_account ) {
+	// Signup sets the marker and the address together, so read both from the same
+	// snapshot: the initial query outlives the navigation that carried them.
+	const sourceQuery = currentQuery?.is_signup_existing_account ? currentQuery : initialQuery;
+
+	if ( ! sourceQuery?.is_signup_existing_account ) {
 		return null;
 	}
 
-	// Matches how the form below resolves the address it prefills.
-	const address = initialQuery?.email_address ?? currentQuery?.email_address;
+	const address = sourceQuery.email_address;
 	const email = typeof address === 'string' ? address : undefined;
 
 	const override = currentQuery?.signup_url;
@@ -55,7 +60,7 @@ export default function SignupExistingAccountNotice() {
 	};
 
 	return (
-		<Notice status="info" isDismissible={ false }>
+		<Notice className="signup-existing-account-notice" status="info" isDismissible={ false }>
 			{ email
 				? translate(
 						'We found a WordPress.com account with the email %(email)s. Log in below, or {{a}}sign up with a different email{{/a}}.',
