@@ -33,8 +33,6 @@ export function hasHostingFeature( site: Site, feature: HostingFeatureSlug ) {
 	return hasPlanFeature( site, feature );
 }
 
-// Whether the user can reach the SFTP/SSH settings page. Both recovery surfaces
-// for an unreachable site link there, so they share one gate.
 export function canAccessSftpSettings( site: Site ) {
 	return (
 		!! site.capabilities?.manage_options &&
