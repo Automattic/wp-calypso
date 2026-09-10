@@ -1,3 +1,4 @@
+// Deep import: the package root pulls in `@wordpress/media-utils`, which touches `document` at import time and breaks SSR.
 import { useShouldUseUnifiedAgent } from '@automattic/agents-manager/src/hooks/use-should-use-unified-agent';
 import { omnibarSiteIdQuery, siteByIdQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
