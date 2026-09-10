@@ -239,13 +239,26 @@ step" → Worked example** section of [`README.md`](README.md); the tables below
 
 #### `STEPS.DOMAIN_SEARCH` (slug: `'domains'`)
 
-| Prop                                               | Type       | What it does                                                        |
-| -------------------------------------------------- | ---------- | ------------------------------------------------------------------- |
-| `headerText` / `subHeaderText`                     | `string`   | Override the step heading / sub-heading                             |
-| `hideUseMyDomainLink`                              | `boolean`  | Suppress the "Use a domain I own" CTA (V2 top bar + V1 skip button) |
-| `hideFreeDomainPromo`                              | `boolean`  | Hide the free-domain-for-a-year banner                              |
-| `freeDomainPromoTitle` / `freeDomainPromoSubtitle` | `string`   | Copy overrides for that banner                                      |
-| `allowedTlds`                                      | `string[]` | Per-flow TLD filter (the URL `?tld=` param can override)            |
+| Prop                                               | Type       | What it does                                                                                                                                                            |
+| -------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `headerText` / `subHeaderText`                     | `string`   | Override the step heading / sub-heading                                                                                                                                 |
+| `hideUseMyDomainLink`                              | `boolean`  | Suppress the "Use a domain I own" CTA (V2 top bar + V1 skip button)                                                                                                     |
+| `hideFreeDomainPromo`                              | `boolean`  | Hide the free-domain-for-a-year banner                                                                                                                                  |
+| `freeDomainPromoTitle` / `freeDomainPromoSubtitle` | `string`   | Copy overrides for that banner                                                                                                                                          |
+| `freeSubdomainTitle` / `freeSubdomainButtonLabel`  | `string`   | Copy overrides for the free-subdomain "Start free" skip card and its button; `freeSubdomainTitle` may keep the `%(domain)s` placeholder, which the package interpolates |
+| `allowedTlds`                                      | `string[]` | Per-flow TLD filter (the URL `?tld=` param can override)                                                                                                                |
+| `freeForFirstYearTlds`                             | `string[]` | TLDs priced as free for the first year in suggestions and the cart                                                                                                      |
+
+#### `STEPS.PROCESSING` (slug: `'processing'`)
+
+| Prop                 | Type                         | What it does                                                                                                              |
+| -------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `title` / `subtitle` | `string`                     | Override the single visible frame; these win over the carousel                                                            |
+| `loadingMessages`    | `ProcessingLoadingMessage[]` | Replace the rotating loading-carousel copy. `duration` is optional per message — one without a usable duration is held 5s |
+
+Applies to the generic V1 `StepContainer` / `Loading` and V2 `Step.Loading` paths only. The
+tailored (`TailoredFlowPreCheckoutScreen`, newsletter / update-design) and hundred-year
+processing screens short-circuit earlier and keep their own dedicated copy.
 
 #### The register / user step (slug: `'user'`, auto-injected)
 
