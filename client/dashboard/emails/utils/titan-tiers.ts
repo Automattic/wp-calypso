@@ -16,8 +16,21 @@ export const TITAN_TIER_SLUGS: Record< TitanPlanTier, Record< IntervalLength, st
 	},
 };
 
+// Tiers ordered from lowest to highest, used to tell upgrades from downgrades
+// relative to the current tier.
+export const TITAN_TIER_ORDER: TitanPlanTier[] = [
+	TitanPlanTier.Pro,
+	TitanPlanTier.Premium,
+	TitanPlanTier.Ultra,
+];
+
 export function isTitanPlanTier( value: unknown ): value is TitanPlanTier {
 	return Object.values( TitanPlanTier ).includes( value as TitanPlanTier );
+}
+
+// The top tier has nothing higher to upgrade to.
+export function isHighestTitanTier( tier?: TitanPlanTier ): boolean {
+	return !! tier && tier === TITAN_TIER_ORDER[ TITAN_TIER_ORDER.length - 1 ];
 }
 
 export function getTitanTierFromSlug( productSlug?: string ): TitanPlanTier | undefined {
