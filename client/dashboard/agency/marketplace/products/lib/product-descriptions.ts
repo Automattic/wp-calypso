@@ -347,7 +347,7 @@ export function getProductDescription( productSlug: string ): ProductDescription
 			break;
 		case 'woocommerce-square':
 			description = __(
-				'Accepting payments is easy with Square. Clear rates, fast deposits (1-2 business days). Sell online and in person, and sync all payments, items and inventory.'
+				'Accepting payments is easy with Square. Clear rates, fast deposits (1–2 business days). Sell online and in person, and sync all payments, items and inventory.'
 			);
 			break;
 		case 'woocommerce-affirm':
