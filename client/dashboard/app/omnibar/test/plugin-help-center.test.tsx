@@ -46,7 +46,9 @@ const mockUseHelpCenter = useHelpCenter as jest.MockedFunction< typeof useHelpCe
 const mockUseExperiment = useExperiment as jest.MockedFunction< typeof useExperiment >;
 
 const assignment = ( variationName: string | null ) =>
-	[ false, { variationName } ] as unknown as ReturnType< typeof useExperiment >;
+	[ false, variationName === null ? null : { variationName } ] as unknown as ReturnType<
+		typeof useExperiment
+	>;
 const setShowHelpCenter = jest.fn();
 const recordTracksEvent = jest.fn();
 
