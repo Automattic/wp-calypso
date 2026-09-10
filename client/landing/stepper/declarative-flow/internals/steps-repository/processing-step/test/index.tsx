@@ -43,12 +43,10 @@ describe( 'ProcessingStep', () => {
 		render( { flow: TRANSFERRING_HOSTED_SITE_FLOW } );
 
 		expect( screen.getByText( 'Setting up your site' ) ).toBeVisible();
-		expect( screen.getByRole( 'status' ).textContent ).toContain(
-			'preparing a dedicated server for your site'
-		);
+		expect( screen.getByRole( 'status' ).textContent ).toContain( 'preparing a dedicated server' );
 		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute(
 			'aria-label',
-			'Preparing a dedicated server for your site'
+			'Preparing a dedicated server'
 		);
 	} );
 
