@@ -31,9 +31,11 @@ const SUBMENU = 'core/navigation-submenu';
 const withMenu = ( items: unknown[] | null ) =>
 	( readMenuItems as jest.Mock ).mockResolvedValue( items );
 
-/** The short-id map Big Sky's page structure leaves in its store. */
-const withShortIds = ( clientIdMap: Record< string, string > ) =>
-	( select as jest.Mock ).mockReturnValue( { getFullPageStructure: () => ( { clientIdMap } ) } );
+/** What Big Sky's page structure leaves in its store for the agent's short ids. */
+const withPageStructure = ( structure: {
+	clientIdMap?: Record< string, string >;
+	navigationItemMap?: Record< string, { attributes?: Record< string, unknown > } >;
+} ) => ( select as jest.Mock ).mockReturnValue( { getFullPageStructure: () => structure } );
 
 /** The labels of the rebuilt menu, in order. */
 const labelsOf = ( record: Record< string, unknown > ) =>
@@ -121,13 +123,27 @@ describe( 'clientId', () => {
 	beforeEach( () => withMenu( [ item( 'about', 'About' ), item( 'svc', 'Services' ) ] ) );
 
 	it( 'resolves a short id through the provider map', async () => {
-		withShortIds( { bMnU: 'svc' } );
+		withPageStructure( { clientIdMap: { bMnU: 'svc' } } );
 
 		const result = await buildNavigationItems( 10, {
 			navigationItems: [ { clientId: 'bMnU' }, { label: 'About' } ],
 		} );
 
 		expect( labelsOf( result ) ).toEqual( [ 'Services', 'About' ] );
+	} );
+
+	// The editor re-creates a menu's blocks when the record reloads, so the
+	// clientId a short id mapped to can be gone; what the structure recorded
+	// for the item still names it.
+	it( 'falls back to the attributes the structure recorded for a short id', async () => {
+		withPageStructure( {
+			clientIdMap: { bMnU: 'gone' },
+			navigationItemMap: { bMnU: { attributes: { label: 'Services' } } },
+		} );
+
+		const result = await buildNavigationItems( 10, { navigationItems: [ { clientId: 'bMnU' } ] } );
+
+		expect( labelsOf( result ) ).toEqual( [ 'Services' ] );
 	} );
 
 	it( 'accepts the editor clientId itself', async () => {
