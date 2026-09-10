@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button, Dropdown } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -200,6 +201,7 @@ export default function Notifications( {
 					<AsyncNotificationApp
 						locale={ locale }
 						isDismissible={ isMobileViewport }
+						isViewSettingsEnabled={ config.isEnabled( 'notifications/view-settings' ) }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
 					/>

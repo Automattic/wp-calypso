@@ -6,6 +6,7 @@ import { NotificationsCommentsSummary } from '../notifications-comments/summary'
 import { NotificationsEmailsSummary } from '../notifications-emails/summary';
 import { NotificationsExtrasSummary } from '../notifications-extras/summary';
 import { NotificationsSitesSummary } from '../notifications-sites/summary';
+import { NotificationsUserInterfaceSummary } from '../notifications-ui/summary';
 
 function Notifications() {
 	return (
@@ -25,6 +26,7 @@ function Notifications() {
 				<NotificationsCommentsSummary />
 				<NotificationsEmailsSummary />
 				<NotificationsExtrasSummary />
+				<NotificationsUserInterfaceSummary />
 			</SummaryButtonList>
 		</PageLayout>
 	);

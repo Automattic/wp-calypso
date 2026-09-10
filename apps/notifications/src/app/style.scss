@@ -200,3 +200,13 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 		box-shadow: none;
 	}
 }
+
+// Sits among the tabs, so it must not stretch to the tab list's height and must keep its
+// width when the list scrolls. The nudge lines it up with the tab labels, which the
+// selection indicator below them raises.
+.wpnc-app__view-picker {
+	align-self: center;
+	flex-shrink: 0;
+	margin-top: 6px;
+	margin-inline-end: 12px;
+}

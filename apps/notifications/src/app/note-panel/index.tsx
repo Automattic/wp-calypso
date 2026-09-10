@@ -8,15 +8,19 @@ import {
 import '@wordpress/components/build-style/style.css';
 import { __ } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
+import { PREMADE_VIEWS, resolveViewOrder, type StoredView } from '../../common/premade-views';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
+import getViews from '../../panel/state/selectors/get-views';
 import { getFilters } from '../../panel/templates/filters';
+import { useAppContext } from '../context';
 import ErrorBoundary from '../error-boundary';
 import NoteList from '../note-list';
 import CloseButton from '../templates/close-button';
 import NotePanelActions from './actions';
+import ViewPicker from './view-picker';
 import type { FilterName } from '../types';
 
 const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
@@ -26,11 +30,28 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 
 const { Tabs } = unlock( privateApis );
 
-export const getNotificationTabs = () =>
-	Object.values( getFilters() ).map( ( { name, label } ) => ( {
-		name,
-		title: label,
+// Every view this panel can show, in the user's order, each flagged hidden or not.
+export const getResolvedViews = ( storedViews: StoredView[] = [] ) => {
+	const known = [
+		...Object.values( getFilters() ).map( ( { name, label } ) => ( {
+			name,
+			label,
+			isPremade: false,
+		} ) ),
+		...PREMADE_VIEWS.map( ( { name, label } ) => ( { name, label, isPremade: true } ) ),
+	];
+
+	return resolveViewOrder( known, storedViews ).map( ( { view, hidden } ) => ( {
+		name: view.name,
+		label: view.label,
+		hidden,
 	} ) );
+};
+
+export const getNotificationViews = ( storedViews: StoredView[] = [] ) =>
+	getResolvedViews( storedViews )
+		.filter( ( { hidden } ) => ! hidden )
+		.map( ( { name, label } ) => ( { name, title: label } ) );
 
 type NotePanelProps = {
 	isDismissible?: boolean;
@@ -47,9 +68,26 @@ const NotePanel = ( {
 	selectedNoteId,
 	setSelectedNoteId,
 }: NotePanelProps ) => {
-	const notificationTabs = getNotificationTabs();
+	const storedViews = useSelector( getViews );
+	// Memoized because the panel re-renders on every notes-store update, and these feed
+	// the keydown effect's dependencies below.
+	const resolvedViews = useMemo( () => getResolvedViews( storedViews ), [ storedViews ] );
+	const notificationViews = useMemo( () => getNotificationViews( storedViews ), [ storedViews ] );
+	const { isViewSettingsEnabled } = useAppContext();
 	const tabRefs = useRef< Record< string, HTMLButtonElement > >( {} );
 	const keyboardShortcutsAreEnabled = useSelector( getKeyboardShortcutsEnabled );
+
+	// A tab hidden while it was selected leaves `filterName` pointing at a tab that
+	// is no longer rendered, which would leave the tab list with nothing selected.
+	const activeFilterName = notificationViews.some( ( { name } ) => name === filterName )
+		? filterName
+		: 'all';
+
+	useEffect( () => {
+		if ( activeFilterName !== filterName ) {
+			setFilterName( activeFilterName );
+		}
+	}, [ activeFilterName, filterName, setFilterName ] );
 
 	const handleSelect = useCallback(
 		( tabId: string | null | undefined ) => {
@@ -88,7 +126,7 @@ const NotePanel = ( {
 			};
 
 			const tabId = shortcutToTabId[ event.key ];
-			if ( tabId ) {
+			if ( tabId && notificationViews.some( ( { name } ) => name === tabId ) ) {
 				stopEvent( event );
 				handleSelect( tabId );
 
@@ -101,7 +139,7 @@ const NotePanel = ( {
 		return () => {
 			window.removeEventListener( 'keydown', handleKeyDown, false );
 		};
-	}, [ tabRefs, handleSelect, keyboardShortcutsAreEnabled ] );
+	}, [ tabRefs, handleSelect, keyboardShortcutsAreEnabled, notificationViews ] );
 
 	return (
 		<>
@@ -121,13 +159,13 @@ const NotePanel = ( {
 							{ isDismissible && <CloseButton /> }
 						</HStack>
 					</HStack>
-					<Tabs selectedTabId={ filterName } onSelect={ handleSelect }>
+					<Tabs selectedTabId={ activeFilterName } onSelect={ handleSelect }>
 						<Tabs.TabList
 							style={ {
 								maxWidth: '100%',
 							} }
 						>
-							{ notificationTabs.map( ( { name, title } ) => (
+							{ notificationViews.map( ( { name, title } ) => (
 								<Tabs.Tab
 									key={ name }
 									tabId={ name }
@@ -139,6 +177,9 @@ const NotePanel = ( {
 									{ title }
 								</Tabs.Tab>
 							) ) }
+							{ /* Inside the list, after the last tab, so it scrolls with the tabs
+							   instead of staying pinned to the panel edge once they overflow. */ }
+							{ isViewSettingsEnabled && <ViewPicker views={ resolvedViews } /> }
 						</Tabs.TabList>
 					</Tabs>
 				</VStack>
@@ -152,8 +193,8 @@ const NotePanel = ( {
 				   infinite-scroll row accumulation would otherwise carry stale
 				   notes from the previously selected tab. */ }
 				<NoteList
-					key={ filterName }
-					filterName={ filterName }
+					key={ activeFilterName }
+					filterName={ activeFilterName }
 					selectedNoteId={ selectedNoteId }
 					setSelectedNoteId={ setSelectedNoteId }
 				/>

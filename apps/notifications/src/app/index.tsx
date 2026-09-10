@@ -2,9 +2,11 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import clsx from 'clsx';
 import { useEffect, useState, type TransitionEvent } from 'react';
 import { Provider } from 'react-redux';
+import { type StoredView } from '../common/premade-views';
 import repliesCache from '../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../panel/helpers/input';
 import { logError } from '../panel/helpers/log-error';
+import { fetchNotificationPreferences } from '../panel/rest-client/wpcom';
 import { init as initStore, store } from '../panel/state';
 import { SET_IS_SHOWING } from '../panel/state/action-types';
 import actions from '../panel/state/actions';
@@ -22,6 +24,8 @@ import type { FilterName } from './types';
 import './style.scss';
 
 repliesCache.cleanup();
+
+let hasFetchedPreferences = false;
 
 /**
  * Force a manual refresh of the notes data
@@ -119,12 +123,14 @@ const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) =>
 const NotificationApp = ( {
 	locale = 'en',
 	isDismissible = false,
+	isViewSettingsEnabled = false,
 	customEnhancer,
 	actionHandlers = {},
 	wpcom,
 }: {
 	locale?: string;
 	isDismissible?: boolean;
+	isViewSettingsEnabled?: boolean;
 	customEnhancer?: any;
 	actionHandlers?: any;
 	wpcom: any;
@@ -138,6 +144,23 @@ const NotificationApp = ( {
 		store.dispatch( { type: 'APP_IS_READY' } );
 		store.dispatch( { type: SET_IS_SHOWING, isShowing: true } );
 		getClient()?.setVisibility( { isShowing: true, isVisible: ! document.hidden } );
+
+		// Once per session, not per mount: in the dashboard the panel lives inside a
+		// dropdown and remounts on every open, and a late response would also overwrite a
+		// change the view picker had just made.
+		if ( ! hasFetchedPreferences ) {
+			hasFetchedPreferences = true;
+			fetchNotificationPreferences()
+				.then( ( { layoutStyle, views }: { layoutStyle?: string; views?: StoredView[] } ) => {
+					if ( layoutStyle ) {
+						store.dispatch( actions.ui.setLayoutStyle( layoutStyle ) );
+					}
+					if ( views ) {
+						store.dispatch( actions.ui.setViews( views ) );
+					}
+				} )
+				.catch( logError );
+		}
 
 		return () => {
 			store.dispatch( { type: SET_IS_SHOWING, isShowing: false } );
@@ -223,7 +246,11 @@ const NotificationApp = ( {
 	return (
 		<ErrorBoundary>
 			<Provider store={ store }>
-				<AppProvider client={ getClient() } locale={ locale }>
+				<AppProvider
+					client={ getClient() }
+					locale={ locale }
+					isViewSettingsEnabled={ isViewSettingsEnabled }
+				>
 					<NotificationContent isDismissible={ isDismissible } />
 				</AppProvider>
 			</Provider>

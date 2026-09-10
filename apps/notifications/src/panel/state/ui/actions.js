@@ -5,6 +5,8 @@ import {
 	NOTES_LOADING,
 	SELECT_NOTE,
 	SET_LAYOUT,
+	SET_LAYOUT_STYLE,
+	SET_VIEWS,
 	UNDO_ACTION,
 	VIEW_SETTINGS,
 	CLOSE_SHORTCUTS_POPOVER,
@@ -45,6 +47,16 @@ export const selectNote = ( noteId ) => ( {
 export const setLayout = ( layout ) => ( {
 	type: SET_LAYOUT,
 	layout,
+} );
+
+export const setLayoutStyle = ( layoutStyle ) => ( {
+	type: SET_LAYOUT_STYLE,
+	layoutStyle,
+} );
+
+export const setViews = ( views ) => ( {
+	type: SET_VIEWS,
+	views,
 } );
 
 export const undoAction = ( noteId ) => ( {
@@ -94,6 +106,8 @@ export default {
 	loadedNotes,
 	selectNote,
 	setLayout,
+	setLayoutStyle,
+	setViews,
 	undoAction,
 	unselectNote,
 	viewSettings,

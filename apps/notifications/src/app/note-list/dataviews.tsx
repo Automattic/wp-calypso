@@ -16,6 +16,7 @@ import clsx from 'clsx';
 import { html } from '../../panel/indices-to-html';
 import NoteIcon from '../note-icon';
 import trophyGridicon from '../note-icon/trophy-gridicon';
+import { splitSubject } from './simplified-subject';
 import type { Note } from '../types';
 import type { Field } from '@wordpress/dataviews';
 import type { JSX } from 'react';
@@ -67,7 +68,10 @@ const getTimeGroupKey = ( timestamp: string ): number => {
 	return timeGroups.findIndex( ( [ after, before ] ) => before < time && time <= after );
 };
 
-export function getFields(): Field< Note >[] {
+export function getFields( layoutStyle: 'classic' | 'simplified' = 'classic' ): Field< Note >[] {
+	const simplify = ( item: Note ) =>
+		layoutStyle === 'simplified' ? splitSubject( item.subject[ 0 ] ) : null;
+
 	return [
 		{
 			id: 'icon',
@@ -87,28 +91,47 @@ export function getFields(): Field< Note >[] {
 		{
 			id: 'title',
 			label: __( 'Title' ),
+			// In the simplified layout this leading line carries what happened, and the
+			// post it happened to goes in `description` below it.
 			getValue: ( { item } ) =>
+				simplify( item )?.action ??
 				html( item.subject[ 0 ], {
 					links: false,
 				} ),
-			render: ( { field, item } ) => (
-				<div
-					className={ clsx( 'wpnc__subject', {
-						// Marks the open note's row for the active highlight (see CSS).
-						'is-active': ( item as Note & { isActive?: boolean } ).isActive,
-					} ) }
-					/* eslint-disable-next-line react/no-danger */
-					dangerouslySetInnerHTML={ { __html: field.getValue( { item } ) } }
-				/>
-			),
+			render: ( { field, item } ) => {
+				const className = clsx( 'wpnc__subject', {
+					// Marks the open note's row for the active highlight (see CSS).
+					'is-active': ( item as Note & { isActive?: boolean } ).isActive,
+				} );
+				const simplified = simplify( item );
+
+				if ( simplified ) {
+					return <div className={ className }>{ simplified.action }</div>;
+				}
+
+				return (
+					<div
+						className={ className }
+						/* eslint-disable-next-line react/no-danger */
+						dangerouslySetInnerHTML={ { __html: field.getValue( { item } ) } }
+					/>
+				);
+			},
 		},
 		{
 			id: 'description',
 			label: __( 'Description' ),
-			render: ( { item } ) =>
-				item.subject.length > 1 ? (
+			render: ( { item } ) => {
+				const simplified = simplify( item );
+
+				if ( simplified ) {
+					return <div className="wpnc__excerpt">{ simplified.title }</div>;
+				}
+
+				return item.subject.length > 1 ? (
 					<div className="wpnc__excerpt">{ item.subject[ 1 ].text }</div>
-				) : null,
+				) : null;
+			},
 		},
 		{
 			// Group-only field for the time-section headers; never added to the

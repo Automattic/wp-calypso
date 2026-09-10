@@ -17,6 +17,7 @@ import {
 	purchaseQuery,
 	queryClient,
 	rawUserPreferencesQuery,
+	readTeamsQuery,
 	receiptQuery,
 	siteBySlugQuery,
 	siteFeaturesQuery,
@@ -955,6 +956,7 @@ export const notificationsRoute = createRoute( {
 export const notificationsIndexRoute = createRoute( {
 	getParentRoute: () => notificationsRoute,
 	path: '/',
+	loader: () => queryClient.ensureQueryData( isAutomatticianQuery() ),
 } ).lazy( () =>
 	import( '../../me/notifications' ).then( ( d ) =>
 		createLazyRoute( 'notifications' )( {
@@ -1040,6 +1042,39 @@ export const notificationsExtrasRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../me/notifications-extras' ).then( ( d ) =>
 		createLazyRoute( 'notifications-extras' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const notificationsUiRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'User interface' ),
+			},
+		],
+	} ),
+	getParentRoute: () => notificationsRoute,
+	path: '/ui',
+	loader: async () => {
+		// `ensureQueryData` returns the query's raw data, so apply the `select`
+		// that turns the teams list into the Automattician flag.
+		const [ teams ] = await Promise.all( [
+			queryClient.ensureQueryData( readTeamsQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
+
+		if (
+			! isEnabled( 'notifications/view-settings' ) ||
+			! isAutomatticianQuery().select?.( teams )
+		) {
+			throw dashboardRedirect( { to: '/me/notifications' } );
+		}
+	},
+} ).lazy( () =>
+	import( '../../me/notifications-ui' ).then( ( d ) =>
+		createLazyRoute( 'notifications-ui' )( {
 			component: d.default,
 		} )
 	)
@@ -1508,6 +1543,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 			notificationsEmailsRoute,
 			notificationsCommentsRoute,
 			notificationsExtrasRoute,
+			notificationsUiRoute,
 		] )
 	);
 

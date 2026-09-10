@@ -5,6 +5,8 @@ import {
 	SELECT_NOTE,
 	SET_IS_SHOWING,
 	SET_FILTER,
+	SET_LAYOUT_STYLE,
+	SET_VIEWS,
 	ENABLE_KEYBOARD_SHORTCUTS,
 	DISABLE_KEYBOARD_SHORTCUTS,
 } from '../action-types';
@@ -44,6 +46,16 @@ export const filteredLoading = ( state = null, { type, filter } ) => {
 
 	return state;
 };
+
+// eslint-disable-next-line no-shadow
+export const layoutStyle = ( state = 'classic', { type, layoutStyle } ) =>
+	SET_LAYOUT_STYLE === type ? layoutStyle : state;
+
+const NO_VIEWS = [];
+
+// eslint-disable-next-line no-shadow
+export const views = ( state = NO_VIEWS, { type, views } ) =>
+	SET_VIEWS === type ? views : state;
 
 export const isPanelOpen = ( state = false, { type, isShowing } ) =>
 	SET_IS_SHOWING === type ? isShowing : state;
@@ -99,9 +111,11 @@ export default combineReducers( {
 	isLoading,
 	filteredLoading,
 	isPanelOpen,
+	layoutStyle,
 	selectedNoteId,
 	lastSelectedNoteId,
 	filterName,
 	keyboardShortcutsAreEnabled,
 	shortcutsPopoverIsOpen,
+	views,
 } );
