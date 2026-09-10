@@ -6,6 +6,7 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useAppContext } from '../../app/context';
 import { purchaseSettingsRoute } from '../../app/router/me';
 import { Card, CardBody } from '../../components/card';
 import SiteRedirectForm, { SiteRedirectFormData } from './site-redirect-form';
@@ -16,6 +17,7 @@ interface ManageSiteRedirectProps {
 }
 
 export default function ManageSiteRedirect( { siteId, currentRedirect }: ManageSiteRedirectProps ) {
+	const { supports } = useAppContext();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { mutate: updateSiteRedirect, isPending } = useMutation(
 		updateSiteRedirectMutation( siteId )
@@ -50,7 +52,7 @@ export default function ManageSiteRedirect( { siteId, currentRedirect }: ManageS
 						isSubmitting={ isPending }
 						disableWhenUnchanged
 					/>
-					{ purchase && (
+					{ purchase && !! ( supports.me && supports.me.billing ) && (
 						<Text>
 							{ createInterpolateElement( __( '<link>Manage</link> your site redirect upgrade.' ), {
 								link: (

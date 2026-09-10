@@ -21,7 +21,6 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useLocale } from '../../app/locale';
-import { siteSettingsCrontabAddRoute, siteSettingsCrontabEditRoute } from '../../app/router/sites';
 import ConfirmModal from '../../components/confirm-modal';
 import { DataViewsCard } from '../../components/dataviews';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -221,8 +220,7 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 			label: __( 'Edit' ),
 			callback: ( items: Crontab[] ) => {
 				router.navigate( {
-					to: siteSettingsCrontabEditRoute.fullPath,
-					params: { siteSlug, cronId: items[ 0 ].cron_id },
+					to: `/sites/${ siteSlug }/settings/crontab/${ items[ 0 ].cron_id }/edit`,
 				} );
 			},
 		},
@@ -262,8 +260,7 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 								__next40pxDefaultSize
 								onClick={ () =>
 									router.navigate( {
-										to: siteSettingsCrontabAddRoute.fullPath,
-										params: { siteSlug },
+										to: `/sites/${ siteSlug }/settings/crontab/add`,
 									} )
 								}
 							>
