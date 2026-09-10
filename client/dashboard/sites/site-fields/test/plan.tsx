@@ -196,12 +196,13 @@ describe( '<Plan>', () => {
 		} );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_sites_plan_expiry_status_impression',
+			'calypso_dashboard_sites_plan_renew_nag_impression',
 			{
+				product_slug: 'business-bundle',
+				source: 'plan',
 				surface: 'dashboard-sites-list',
 				state: 'approaching_expiry',
 				urgency: 'warning',
-				product_slug: 'business-bundle',
 				is_plan_owner: true,
 				days_remaining: 45,
 			}
@@ -214,12 +215,12 @@ describe( '<Plan>', () => {
 		} );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_sites_plan_expiry_status_impression',
+			'calypso_dashboard_sites_plan_renew_nag_impression',
 			expect.objectContaining( { state: 'expired_grace', is_plan_owner: false } )
 		);
 		// No date to count from, so the property is left off rather than guessed.
 		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
-			'calypso_dashboard_sites_plan_expiry_status_impression',
+			'calypso_dashboard_sites_plan_renew_nag_impression',
 			expect.objectContaining( { days_remaining: expect.anything() } )
 		);
 	} );
@@ -233,8 +234,9 @@ describe( '<Plan>', () => {
 		await userEvent.click( getByRole( 'link' ) );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_sites_plan_expiry_status_click',
+			'calypso_dashboard_sites_plan_renew_nag_click',
 			expect.objectContaining( {
+				source: 'plan',
 				surface: 'dashboard-sites-list',
 				state: 'approaching_expiry',
 				urgency: 'error',
@@ -258,7 +260,7 @@ describe( '<Plan>', () => {
 		await userEvent.click( getByRole( 'link' ) );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_sites_plan_expiry_status_click',
+			'calypso_dashboard_sites_plan_renew_nag_click',
 			expect.objectContaining( { cta: 'upgrade', state: 'expired_grace' } )
 		);
 	} );

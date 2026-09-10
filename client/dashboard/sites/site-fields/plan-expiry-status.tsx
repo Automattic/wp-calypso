@@ -43,15 +43,20 @@ export function PlanExpiryStatus( { site }: { site: Site } ) {
 		return null;
 	}
 
-	// Named as the wp-admin banner names them (`wpcom_expiry_notices_track_props`),
-	// so that a funnel can follow the same plan across both surfaces. `urgency`
-	// has no counterpart there, where the colour is derived from the day count
-	// rather than chosen.
+	// The event names and the first two properties are the renew nag's, which
+	// this field grew out of, so that its history stays readable across the
+	// change. The rest are named as the wp-admin banner names them
+	// (`wpcom_expiry_notices_track_props`), so a funnel can follow the same plan
+	// across both surfaces -- hence `surface` beside the older `source`, which
+	// says much the same thing under the name each side already uses. `urgency`
+	// is the one property neither had: wp-admin derives its colour from the day
+	// count rather than choosing it.
 	const eventProperties = {
+		product_slug: site.plan?.product_slug,
+		source: 'plan',
 		surface: 'dashboard-sites-list',
 		state: status.state,
 		urgency: status.intent,
-		product_slug: site.plan?.product_slug,
 		is_plan_owner: !! site.plan?.user_is_owner,
 		...( status.daysRemaining !== undefined && { days_remaining: status.daysRemaining } ),
 	};
@@ -59,7 +64,7 @@ export function PlanExpiryStatus( { site }: { site: Site } ) {
 	return (
 		<>
 			<ComponentViewTracker
-				eventName="calypso_dashboard_sites_plan_expiry_status_impression"
+				eventName="calypso_dashboard_sites_plan_renew_nag_impression"
 				properties={ eventProperties }
 			/>
 			<Text intent={ status.intent } title={ status.href ? undefined : status.title }>
@@ -71,7 +76,7 @@ export function PlanExpiryStatus( { site }: { site: Site } ) {
 						title={ status.title }
 						href={ status.href }
 						onClick={ () =>
-							recordTracksEvent( 'calypso_dashboard_sites_plan_expiry_status_click', {
+							recordTracksEvent( 'calypso_dashboard_sites_plan_renew_nag_click', {
 								...eventProperties,
 								cta: status.cta,
 							} )
