@@ -32,21 +32,6 @@ export interface VisitCounter {
 	lastUpdated: number | null; // Result of Date.now(), or null before the first visit
 }
 
-export type NotificationsLayoutStyle = 'classic' | 'simplified';
-
-/**
- * One entry in the user's notification view list: its position is the order it appears
- * in the panel, and `hidden` switches it off.
- *
- * Views missing from the list keep their built-in default — the panel's own views are
- * shown, optional premade ones are not — so a view added later still appears without
- * anyone having to re-save. 'all' and 'unread' are always shown first and are not stored.
- */
-export type NotificationsView = {
-	name: string;
-	hidden?: boolean;
-};
-
 export interface UserPreferences {
 	recentSites?: number[];
 	'hosting-dashboard-color-scheme'?: 'light' | 'dark' | 'system';
@@ -68,8 +53,6 @@ export interface UserPreferences {
 	'logged-in-homepage'?: LoggedInHomepagePreference;
 	[ key: `cancel-purchase-survey-completed-${ string | number }` ]: string | undefined;
 	[ key: `cancellation-offer-accepted-notice-dismissed-${ string | number }` ]: string | undefined;
-	'notifications-layout-style'?: NotificationsLayoutStyle;
-	'notifications-views'?: NotificationsView[];
 	'achievements-visibility'?: 'public' | 'private';
 	'achievements-global-notifications'?: 'enabled' | 'disabled';
 	'reader-profile-posts-visibility'?: 'public' | 'hidden';

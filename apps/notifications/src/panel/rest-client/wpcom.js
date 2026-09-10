@@ -25,14 +25,14 @@ export const fetchNotificationPreferences = () =>
 			views: preferences?.[ 'notifications-views' ],
 		} ) );
 
-export const updateNotificationViews = ( views ) =>
+export const updateNotificationPreferences = ( preferences ) =>
 	wpcom().req.post(
 		{
 			path: '/me/preferences',
 			apiVersion: '1.1',
 		},
 		null,
-		{ calypso_preferences: { 'notifications-views': views } }
+		{ calypso_preferences: preferences }
 	);
 
 export const fetchSuggestions = ( query, callback ) =>

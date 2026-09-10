@@ -4,7 +4,7 @@ import { createContext, PureComponent } from 'react';
 import { Provider } from 'react-redux';
 import repliesCache from './comment-replies-cache';
 import RestClient from './rest-client';
-import { fetchNotificationPreferences, init as initAPI } from './rest-client/wpcom';
+import { init as initAPI } from './rest-client/wpcom';
 import { init as initStore, store } from './state';
 import { SET_IS_SHOWING } from './state/action-types';
 import actions from './state/actions';
@@ -116,17 +116,6 @@ export class Notifications extends PureComponent {
 		client.setVisibility( { isShowing, isVisible } );
 
 		store.dispatch( { type: 'APP_IS_READY' } );
-
-		fetchNotificationPreferences()
-			.then( ( { layoutStyle, views } ) => {
-				if ( layoutStyle ) {
-					store.dispatch( actions.ui.setLayoutStyle( layoutStyle ) );
-				}
-				if ( views ) {
-					store.dispatch( actions.ui.setViews( views ) );
-				}
-			} )
-			.catch( ( error ) => debug( 'Could not load the notification preferences', error ) );
 
 		// The client is intentionally created here, in the commit phase; render
 		// one more time now that it exists so the panel can mount with it.

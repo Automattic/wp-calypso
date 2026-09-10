@@ -2,23 +2,19 @@ import {
 	Button,
 	CheckboxControl,
 	Dropdown,
-	ExternalLink,
+	FlexBlock,
+	FlexItem,
+	__experimentalHStack as HStack,
 	__experimentalHeading as Heading,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { plus } from '@wordpress/icons';
-import { useDispatch, useSelector } from 'react-redux';
+import { __, sprintf } from '@wordpress/i18n';
+import { chevronDown, chevronUp, plus } from '@wordpress/icons';
+import { useSelector } from 'react-redux';
 import { PINNED_VIEW_NAMES, type StoredView } from '../../common/premade-views';
-import { logError } from '../../panel/helpers/log-error';
-import { updateNotificationViews } from '../../panel/rest-client/wpcom';
 import actions from '../../panel/state/actions';
 import getViews from '../../panel/state/selectors/get-views';
-
-// Relative so the link stays on the host the panel is running in; an absolute
-// wordpress.com URL would send an internal environment to production, where the feature
-// flag is off and the route redirects away.
-const SETTINGS_URL = '/me/notifications/ui';
+import { useSavePreference } from './use-save-preference';
 
 type PickerView = {
 	name: string;
@@ -26,36 +22,34 @@ type PickerView = {
 	hidden: boolean;
 };
 
-/**
- * Adds and removes views from the tab strip.
- *
- * Toggling saves straight away — there is no Save button in a panel this small — and the
- * store is updated first so the tab appears without waiting for the round trip.
- */
 const ViewPicker = ( { views }: { views: PickerView[] } ) => {
 	const storedViews = useSelector( getViews ) as StoredView[];
-	const dispatch = useDispatch();
+	const savePreference = useSavePreference();
 
-	const toggleView = ( name: string, isVisible: boolean ) => {
-		// Write the whole resolved list, not just the toggled view: it carries the order
-		// as well, so a partial write would drop it. The pinned views are always shown
-		// and always first, so they stay out of the stored value.
-		const next = views
-			.filter( ( view ) => ! PINNED_VIEW_NAMES.includes( view.name ) )
-			.map( ( view ) => ( {
+	// The pinned views are always shown and always first, so they stay out of the stored
+	// value; the rest is written whole, because the list carries the order too.
+	const orderable = views.filter( ( view ) => ! PINNED_VIEW_NAMES.includes( view.name ) );
+
+	const save = ( next: StoredView[] ) =>
+		savePreference( {
+			preferences: { 'notifications-views': next },
+			apply: () => actions.ui.setViews( next ),
+			revert: () => actions.ui.setViews( storedViews ),
+		} );
+
+	const toggleView = ( name: string, isVisible: boolean ) =>
+		save(
+			orderable.map( ( view ) => ( {
 				name: view.name,
 				hidden: view.name === name ? ! isVisible : view.hidden,
-			} ) );
+			} ) )
+		);
 
-		dispatch( actions.ui.setViews( next ) );
-		// `Promise.resolve().then` so a synchronous throw — an uninitialised REST client,
-		// say — lands in the same catch as a failed request and still rolls back.
-		Promise.resolve()
-			.then( () => updateNotificationViews( next ) )
-			.catch( ( error: unknown ) => {
-				logError( error );
-				dispatch( actions.ui.setViews( storedViews ) );
-			} );
+	const moveView = ( index: number, offset: number ) => {
+		const next = orderable.map( ( { name, hidden } ) => ( { name, hidden } ) );
+		const [ moved ] = next.splice( index, 1 );
+		next.splice( index + offset, 0, moved );
+		save( next );
 	};
 
 	return (
@@ -72,28 +66,61 @@ const ViewPicker = ( { views }: { views: PickerView[] } ) => {
 				/>
 			) }
 			renderContent={ ( { onClose } ) => (
-				<VStack spacing={ 3 } style={ { minWidth: '200px', padding: '8px' } }>
+				<VStack spacing={ 3 } style={ { minWidth: '240px', padding: '8px' } }>
 					<Heading level={ 3 } size={ 13 } weight={ 500 }>
 						{ __( 'Views' ) }
 					</Heading>
 					<VStack spacing={ 2 }>
-						{ views.map( ( { name, label, hidden } ) => (
-							<CheckboxControl
-								__nextHasNoMarginBottom
-								key={ name }
-								label={ label }
-								checked={ ! hidden }
-								disabled={ PINNED_VIEW_NAMES.includes( name ) }
-								onChange={ ( isVisible ) => {
-									// Close on toggle: adding a view widens the tab strip, which moves the
-									// button this popover is anchored to, and it would jump under the cursor.
-									toggleView( name, isVisible );
-									onClose();
-								} }
-							/>
+						{ views
+							.filter( ( { name } ) => PINNED_VIEW_NAMES.includes( name ) )
+							.map( ( { name, label } ) => (
+								<CheckboxControl
+									__nextHasNoMarginBottom
+									key={ name }
+									label={ label }
+									checked
+									disabled
+									onChange={ () => {} }
+								/>
+							) ) }
+						{ orderable.map( ( { name, label, hidden }, index ) => (
+							<HStack key={ name } justify="space-between" alignment="center" spacing={ 2 }>
+								<FlexBlock>
+									<CheckboxControl
+										__nextHasNoMarginBottom
+										label={ label }
+										checked={ ! hidden }
+										onChange={ ( isVisible ) => {
+											toggleView( name, isVisible );
+											// Adding a view widens the tab strip, which moves the button this
+											// popover is anchored to; it would jump out from under the cursor.
+											onClose();
+										} }
+									/>
+								</FlexBlock>
+								<FlexItem>
+									<HStack spacing={ 0 }>
+										<Button
+											size="small"
+											icon={ chevronUp }
+											disabled={ index === 0 }
+											onClick={ () => moveView( index, -1 ) }
+											/* translators: %s is the name of a notifications view, e.g. Likes. */
+											label={ sprintf( __( 'Move %s up' ), label ) }
+										/>
+										<Button
+											size="small"
+											icon={ chevronDown }
+											disabled={ index === orderable.length - 1 }
+											onClick={ () => moveView( index, 1 ) }
+											/* translators: %s is the name of a notifications view, e.g. Likes. */
+											label={ sprintf( __( 'Move %s down' ), label ) }
+										/>
+									</HStack>
+								</FlexItem>
+							</HStack>
 						) ) }
 					</VStack>
-					<ExternalLink href={ SETTINGS_URL }>{ __( 'Manage views' ) }</ExternalLink>
 				</VStack>
 			) }
 		/>

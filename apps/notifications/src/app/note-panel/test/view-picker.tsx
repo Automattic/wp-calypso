@@ -33,6 +33,39 @@ const renderPanel = ( { isViewSettingsEnabled }: { isViewSettingsEnabled: boolea
 	return { store, post };
 };
 
+describe( 'NotePanel density menu', () => {
+	it( 'offers the density options only when the host has enabled view settings', async () => {
+		renderPanel( { isViewSettingsEnabled: false } );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Settings' } ) );
+
+		expect( screen.queryByRole( 'menuitemradio', { name: 'Simplified' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'menuitem', { name: 'Notification settings' } ) ).toBeVisible();
+	} );
+
+	it( 'marks the saved density and saves a new one', async () => {
+		const { post } = renderPanel( { isViewSettingsEnabled: true } );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Settings' } ) );
+
+		expect( screen.getByRole( 'menuitemradio', { name: 'Classic' } ) ).toHaveAttribute(
+			'aria-checked',
+			'true'
+		);
+
+		await userEvent.click( screen.getByRole( 'menuitemradio', { name: 'Simplified' } ) );
+
+		await waitFor( () => {
+			expect( post ).toHaveBeenCalled();
+		} );
+
+		const [ , , body ] = post.mock.calls[ 0 ] as unknown[];
+		expect(
+			( body as { calypso_preferences: Record< string, unknown > } ).calypso_preferences
+		).toEqual( { 'notifications-layout-style': 'simplified' } );
+	} );
+} );
+
 describe( 'NotePanel view picker', () => {
 	it( 'is not offered when the host has not enabled view settings', () => {
 		renderPanel( { isViewSettingsEnabled: false } );
@@ -51,6 +84,26 @@ describe( 'NotePanel view picker', () => {
 		expect( screen.getByRole( 'checkbox', { name: 'Unread' } ) ).toBeDisabled();
 		expect( screen.getByRole( 'checkbox', { name: 'Likes' } ) ).toBeChecked();
 		expect( screen.getByRole( 'checkbox', { name: 'Store' } ) ).not.toBeChecked();
+	} );
+
+	it( 'reorders a view without closing the popover', async () => {
+		const { post } = renderPanel( { isViewSettingsEnabled: true } );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Add or remove views' } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Move Subscribers up' } ) );
+
+		// Reordering doesn't change the strip's width, so the popover can stay open.
+		expect( screen.getByRole( 'checkbox', { name: 'Likes' } ) ).toBeVisible();
+
+		await waitFor( () => {
+			expect( post ).toHaveBeenCalled();
+		} );
+
+		const [ , , body ] = post.mock.calls[ 0 ] as unknown[];
+		const saved = ( body as { calypso_preferences: { 'notifications-views': { name: string }[] } } )
+			.calypso_preferences[ 'notifications-views' ];
+
+		expect( saved.map( ( { name } ) => name ).slice( 0, 2 ) ).toEqual( [ 'follows', 'comments' ] );
 	} );
 
 	it( 'adds a view to the tab strip and saves the whole list', async () => {

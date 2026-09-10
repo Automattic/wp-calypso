@@ -1,14 +1,32 @@
-import { Button, DropdownMenu } from '@wordpress/components';
+import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { cog, keyboard } from '@wordpress/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../panel/state/actions';
 import getIsShortcutsPopoverOpen from '../../panel/state/selectors/get-is-shortcuts-popover-open';
+import getLayoutStyle from '../../panel/state/selectors/get-layout-style';
+import { useAppContext } from '../context';
 import NoteShortcuts from '../note-shortcuts';
+import { useSavePreference } from './use-save-preference';
+
+const DENSITIES = [
+	{ value: 'classic', label: __( 'Classic' ) },
+	{ value: 'simplified', label: __( 'Simplified' ) },
+];
 
 export default function NotePanelActions() {
 	const dispatch = useDispatch();
 	const isShortcutsPopoverOpen = useSelector( getIsShortcutsPopoverOpen );
+	const layoutStyle = useSelector( getLayoutStyle );
+	const { isViewSettingsEnabled } = useAppContext();
+	const savePreference = useSavePreference();
+
+	const setLayoutStyle = ( value: string ) =>
+		savePreference( {
+			preferences: { 'notifications-layout-style': value },
+			apply: () => actions.ui.setLayoutStyle( value ),
+			revert: () => actions.ui.setLayoutStyle( layoutStyle ),
+		} );
 
 	return (
 		<>
@@ -32,12 +50,44 @@ export default function NotePanelActions() {
 			>
 				{ () => <NoteShortcuts /> }
 			</DropdownMenu>
-			<Button
-				size="small"
+			<DropdownMenu
 				icon={ cog }
 				label={ __( 'Settings' ) }
-				onClick={ () => dispatch( actions.ui.viewSettings() ) }
-			/>
+				toggleProps={ { size: 'small' } }
+				popoverProps={ { placement: 'bottom-end' } }
+			>
+				{ ( { onClose } ) => (
+					<>
+						{ isViewSettingsEnabled && (
+							<MenuGroup label={ __( 'Density' ) }>
+								{ DENSITIES.map( ( { value, label } ) => (
+									<MenuItem
+										key={ value }
+										role="menuitemradio"
+										isSelected={ layoutStyle === value }
+										onClick={ () => {
+											setLayoutStyle( value );
+											onClose();
+										} }
+									>
+										{ label }
+									</MenuItem>
+								) ) }
+							</MenuGroup>
+						) }
+						<MenuGroup>
+							<MenuItem
+								onClick={ () => {
+									dispatch( actions.ui.viewSettings() );
+									onClose();
+								} }
+							>
+								{ __( 'Notification settings' ) }
+							</MenuItem>
+						</MenuGroup>
+					</>
+				) }
+			</DropdownMenu>
 		</>
 	);
 }

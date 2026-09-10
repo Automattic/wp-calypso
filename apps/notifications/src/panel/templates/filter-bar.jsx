@@ -5,9 +5,7 @@ import {
 import { localize } from 'i18n-calypso';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
-import { resolveViewOrder } from '../../common/premade-views';
 import getFilterName from '../state/selectors/get-filter-name';
-import getViews from '../state/selectors/get-views';
 import { getFilters } from './filters';
 
 export class FilterBar extends Component {
@@ -26,11 +24,9 @@ export class FilterBar extends Component {
 			this.focusOnSelectedTab();
 		}
 
-		// Hiding the selected view would otherwise leave the control reading "All" while
-		// the list still renders the hidden view's notes.
-		const activeFilterName = this.getActiveFilterName();
-		if ( activeFilterName !== this.props.filterName ) {
-			this.props.controller.selectFilter( activeFilterName );
+		// Reset the filter items when i18n data changes, to ensure the translatable fields are properly updated.
+		if ( prevProps.translate !== this.props.translate ) {
+			this.setFilterItems();
 		}
 	}
 
@@ -40,25 +36,17 @@ export class FilterBar extends Component {
 		}
 	}
 
-	// This panel only knows its own filters, so a premade view in the stored list is
-	// simply not resolved here — it has no tab to render.
-	getFilterItems = () => {
-		const filters = getFilters();
-		// Sorted by `index` so that with nothing stored the order is the one this panel
-		// has always shown, rather than however `getFilters()` happens to be declared.
-		const known = Object.values( filters )
-			.sort( ( a, b ) => a.index - b.index )
-			.map( ( { name, label } ) => ( { name, label, isPremade: false } ) );
-
-		return resolveViewOrder( known, this.props.views )
-			.filter( ( { hidden } ) => ! hidden )
-			.map( ( { view } ) => filters[ view.name ] );
+	setFilterItems = () => {
+		this.filterItems = Object.values( getFilters() ).sort( ( a, b ) => a.index - b.index );
 	};
 
-	getActiveFilterName() {
-		const { filterName } = this.props;
-		return this.getFilterItems().some( ( { name } ) => name === filterName ) ? filterName : 'all';
-	}
+	getFilterItems = () => {
+		if ( ! this.filterItems ) {
+			this.setFilterItems();
+		}
+
+		return this.filterItems;
+	};
 
 	focusOnSelectedTab() {
 		if ( ! this.props.autoFocus ) {
@@ -87,17 +75,14 @@ export class FilterBar extends Component {
 		}
 		event.stopPropagation();
 		const filterItems = this.getFilterItems();
-		const currentIndex = filterItems.findIndex(
-			( { name } ) => name === this.getActiveFilterName()
-		);
+		const currentIndex = filterItems.findIndex( ( { name } ) => name === this.props.filterName );
 		const nextIndex = ( currentIndex + direction + filterItems.length ) % filterItems.length;
 		this.props.controller.selectFilter( filterItems[ nextIndex ].name );
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { filterName, translate } = this.props;
 		const filterItems = this.getFilterItems();
-		const activeFilterName = this.getActiveFilterName();
 
 		return (
 			<div className="wpnc__filter" ref={ this.filterListRef }>
@@ -105,7 +90,7 @@ export class FilterBar extends Component {
 					hideLabelFromVision
 					isBlock
 					label={ translate( 'Filter Notifications' ) }
-					value={ activeFilterName }
+					value={ filterName }
 					onChange={ ( selectedFilter ) => this.props.controller.selectFilter( selectedFilter ) }
 					onKeyDown={ this.handleKeydown }
 					__nextHasNoMarginBottom
@@ -122,7 +107,6 @@ export class FilterBar extends Component {
 
 const mapStateToProps = ( state ) => ( {
 	filterName: getFilterName( state ),
-	views: getViews( state ),
 } );
 
 export default connect( mapStateToProps )( localize( FilterBar ) );
