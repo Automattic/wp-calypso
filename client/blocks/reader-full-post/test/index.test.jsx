@@ -23,7 +23,7 @@ jest.mock( 'calypso/reader/stream/use-stream-post-key-selection', () => ( {
 
 // The seen gate reads React Query caches these tests don't provide.
 jest.mock( 'calypso/reader/data/seen-posts', () => ( {
-	useIsSeenEnabled: jest.fn( () => false ),
+	useCanMarkSeen: jest.fn( () => false ),
 	withSeenPostsMutations: ( WrappedComponent ) => WrappedComponent,
 } ) );
 
@@ -258,7 +258,7 @@ describe( 'FullPostView Comments API Disabled Logic', () => {
 
 describe( 'FullPostView automatic mark-as-seen on view', () => {
 	const baseProps = {
-		isSeenEnabled: true,
+		canMarkSeen: true,
 		teams: [],
 		referralStream: '',
 		setViewingFullPostKey: jest.fn(),
@@ -315,7 +315,7 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 		const requestMarkAsSeenBlog = jest.fn();
 		const instance = new FullPostView( {
 			...baseProps,
-			isSeenEnabled: false,
+			canMarkSeen: false,
 			requestMarkAsSeen,
 			requestMarkAsSeenBlog,
 			post: { ...feedPost, is_seen: false },

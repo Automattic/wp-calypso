@@ -24,7 +24,7 @@ describe( 'CrossPost', () => {
 			<CrossPost
 				post={ post }
 				postKey={ { feedId: 100, postId: 200 } }
-				isSeenEnabled
+				canMarkSeen
 				requestMarkAsSeen={ requestMarkAsSeen }
 				handleClick={ jest.fn() }
 			/>
@@ -39,5 +39,53 @@ describe( 'CrossPost', () => {
 			feedItemIds: [ 200 ],
 			globalIds: [ 'x-post-global-id' ],
 		} );
+	} );
+
+	it( 'does not mark the feed item as seen when marking is not allowed', async () => {
+		const user = userEvent.setup();
+		const requestMarkAsSeen = jest.fn();
+		const { container } = render(
+			<CrossPost
+				post={ post }
+				postKey={ { feedId: 100, postId: 200 } }
+				canMarkSeen={ false }
+				requestMarkAsSeen={ requestMarkAsSeen }
+				handleClick={ jest.fn() }
+			/>
+		);
+
+		await user.click( container.querySelector( 'article' )! );
+
+		expect( requestMarkAsSeen ).not.toHaveBeenCalled();
+	} );
+
+	it( 'renders the seen styling when isSeenVisible is true', () => {
+		const { container } = render(
+			<CrossPost
+				post={ post }
+				postKey={ { feedId: 100, postId: 200 } }
+				canMarkSeen={ false }
+				isSeenVisible
+				requestMarkAsSeen={ jest.fn() }
+				handleClick={ jest.fn() }
+			/>
+		);
+
+		expect( container.querySelector( 'article' ) ).toHaveClass( 'is-seen' );
+	} );
+
+	it( 'omits the seen styling when isSeenVisible is false', () => {
+		const { container } = render(
+			<CrossPost
+				post={ { ...post, is_seen: true } }
+				postKey={ { feedId: 100, postId: 200 } }
+				canMarkSeen
+				isSeenVisible={ false }
+				requestMarkAsSeen={ jest.fn() }
+				handleClick={ jest.fn() }
+			/>
+		);
+
+		expect( container.querySelector( 'article' ) ).not.toHaveClass( 'is-seen' );
 	} );
 } );
