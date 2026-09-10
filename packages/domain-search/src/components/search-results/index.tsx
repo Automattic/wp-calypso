@@ -70,9 +70,7 @@ const SearchResults = ( {
 	return (
 		<>
 			<DomainSuggestionsList>
-				{ config.showNamePulseSearch
-					? [ <NamePulseSearch key="name-pulse-search" />, ...rows ]
-					: rows }
+				{ config.showNamePulseSearch ? [ <NamePulseSearch key="name-pulse-search" /> ] : rows }
 			</DomainSuggestionsList>
 			{ shouldShowMoreResultsButton && <DomainSuggestionLoadMore onClick={ showMoreResults } /> }
 		</>
