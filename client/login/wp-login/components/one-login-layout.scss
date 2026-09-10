@@ -8,9 +8,10 @@
 	gap: 2em;
 }
 
-// The content wrapper's gap already spaces the notice from the heading.
-.wp-login__one-login-layout-content-wrapper > .calypso-notice {
-	margin-bottom: 0;
+// The wrapper centers its children, so a notice would otherwise shrink to its
+// text. Span it, like the heading and form below.
+.wp-login__one-login-layout-content-wrapper > .dashboard-notice {
+	width: 100%;
 }
 
 .wp-login__one-login-layout-heading {
