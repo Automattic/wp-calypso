@@ -46,11 +46,15 @@ export const provisionAgencySiteMutation = ( agencyId: number ) =>
 	} );
 
 /**
- * Whether the agency can claim `{siteName}.wordpress.com`. Keyed by name so a
- * form that returns to an address it already checked does not ask again.
+ * Whether the agency can claim `{siteName}.wordpress.com`, keyed by name so each
+ * address gets its own entry.
+ *
+ * Not persisted: an address is only free until someone else takes it, so a
+ * verdict read back from storage says nothing about now.
  */
 export const agencySiteAddressValidationQuery = ( agencyId: number, siteName: string ) =>
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'validate-site-address', siteName ] as const,
 		queryFn: () => validateAgencySiteAddress( agencyId, siteName ),
+		meta: { persist: false },
 	} );

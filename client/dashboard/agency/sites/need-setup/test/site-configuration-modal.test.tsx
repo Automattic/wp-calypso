@@ -116,6 +116,43 @@ describe( '<SiteConfigurationModal>', () => {
 		expect( screen.getByRole( 'button', { name: 'Create site' } ) ).toBeDisabled();
 	} );
 
+	// The suggested address is taken on trust until it isn't: it is only claimed
+	// by the provision itself, so a failure there has to send it back for a check.
+	test( 're-checks the suggested address when provisioning rejects it', async () => {
+		nock( API )
+			.persist()
+			.get( '/wpcom/v2/site-suggestions' )
+			.reply( 200, { suggestions: [ { title: 'Rambling Thoughts' } ] } );
+		// The title seeds the address; the address then seeds the alternative.
+		nock( API )
+			.persist()
+			.get( '/rest/v1.1/domains/suggestions' )
+			.query( ( { query } ) => query === 'rambling thoughts' )
+			.reply( 200, [ { domain_name: 'ramblingthoughts.wordpress.com' } ] );
+		nock( API )
+			.persist()
+			.get( '/rest/v1.1/domains/suggestions' )
+			.query( ( { query } ) => query === 'ramblingthoughts' )
+			.reply( 200, [ { domain_name: 'ramblingthoughts2.wordpress.com' } ] );
+		nock( API )
+			.persist()
+			.post( '/wpcom/v2/agency/1/validate-site-address' )
+			.reply( 200, { valid: false } );
+		nock( API )
+			.post( '/wpcom/v2/agency/1/sites/7/provision' )
+			.reply( 400, { message: 'Sorry, that site address is unavailable.' } );
+
+		const { user } = renderModal();
+		await waitForSuggestedAddress();
+
+		await user.click( screen.getByRole( 'button', { name: 'Create site' } ) );
+
+		expect(
+			await screen.findByRole( 'button', { name: 'ramblingthoughts2' }, { timeout: 3000 } )
+		).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Create site' } ) ).toBeDisabled();
+	} );
+
 	test( 'rejects an address with unsupported characters', async () => {
 		mockAddressSuggestion( 'ramblingthoughts' );
 		const { user } = renderModal();
