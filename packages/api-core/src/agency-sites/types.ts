@@ -39,3 +39,20 @@ export interface ProvisionAgencySiteParams {
 export interface AgencySiteAddressValidation {
 	valid: boolean;
 }
+
+/**
+ * A site the agency already has, as returned by GET /agency/{agencyId}/sites.
+ * Counterpart to `PendingAgencySite`: this one exists, though it may still be
+ * mid-provisioning.
+ */
+export interface ProvisionedAgencySite {
+	id: number;
+	url: string;
+	features?: {
+		wpcom_atomic?: {
+			// `active` once the site is ready to use.
+			state?: string;
+			blog_id?: number;
+		};
+	};
+}

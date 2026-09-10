@@ -1,6 +1,7 @@
 import {
 	fetchAgencySitesWithPlugins,
 	fetchPendingAgencySites,
+	fetchProvisionedAgencySites,
 	provisionAgencySite,
 	validateAgencySiteAddress,
 } from '@automattic/api-core';
@@ -28,6 +29,16 @@ export const pendingAgencySitesQuery = ( agencyId: number ) =>
 		// Not persisted: checkout and provisioning change this server-side, and
 		// the route guard reads it without refetching.
 		meta: { persist: false },
+	} );
+
+/**
+ * Every site the agency has. Backs the readiness check behind the provisioning
+ * notice, which polls it while a site is being created.
+ */
+export const provisionedAgencySitesQuery = ( agencyId: number ) =>
+	queryOptions( {
+		queryKey: [ 'agency', agencyId, 'sites', 'provisioned' ] as const,
+		queryFn: () => fetchProvisionedAgencySites( agencyId ),
 	} );
 
 export const provisionAgencySiteMutation = ( agencyId: number ) =>

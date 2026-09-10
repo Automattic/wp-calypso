@@ -1,6 +1,11 @@
 import { FreeSiteAddressType } from '../site-address-change/types';
 import { wpcom } from '../wpcom-fetcher';
-import type { AgencySiteAddressValidation, AgencySiteWithPlugin, PendingAgencySite } from './types';
+import type {
+	AgencySiteAddressValidation,
+	AgencySiteWithPlugin,
+	PendingAgencySite,
+	ProvisionedAgencySite,
+} from './types';
 
 export async function fetchAgencySitesWithPlugins(
 	agencyId: number,
@@ -17,6 +22,18 @@ export async function fetchAgencySitesWithPlugins(
 			},
 		}
 	);
+}
+
+/**
+ * Every site the agency has, provisioned or still being created.
+ */
+export async function fetchProvisionedAgencySites(
+	agencyId: number
+): Promise< ProvisionedAgencySite[] > {
+	return wpcom.req.get( {
+		apiNamespace: 'wpcom/v2',
+		path: `/agency/${ agencyId }/sites`,
+	} );
 }
 
 /**
