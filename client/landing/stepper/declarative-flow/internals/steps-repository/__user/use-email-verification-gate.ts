@@ -33,6 +33,13 @@ function useEmailVerificationVariant( flow: string ): {
 		isEligible: isOnboardingFlow( flow ),
 	} );
 
+	// TEST-ONLY STUB. DO NOT MERGE. Every onboarding signup on this build lands in Variant B so
+	// the signup-gate-repro skill can reach the post-plan-selection gate without an ExPlat
+	// assignment. The useExperiment call above stays so the hook order is unchanged.
+	if ( isOnboardingFlow( flow ) ) {
+		return { isLoading: false, variant: 'treatment_post_plan_selection' };
+	}
+
 	const variant = (
 		isLoading ? 'control' : assignment?.variationName ?? 'control'
 	) as EmailVerificationVariant;
