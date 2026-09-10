@@ -200,7 +200,6 @@ export const EligibilityWarnings = ( {
 
 	const hasHoldsToDisplay = isPlaceholder || hasDisplayableHold( listHolds );
 
-	// Otherwise the link below the notice is a second route to the same place.
 	const noticeOffersSupport =
 		!! validBlockingHold && blockingMessages[ validBlockingHold ].opensHelpCenter;
 
