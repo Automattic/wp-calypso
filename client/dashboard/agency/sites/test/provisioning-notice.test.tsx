@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { screen } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -24,7 +24,13 @@ function provisionedSite( id: number, state: string ) {
 }
 
 describe( '<ProvisioningSiteNotices>', () => {
-	afterEach( () => untrackProvisioningSite( 7 ) );
+	// Wrapped: the untrack notifies the store, which re-renders a mounted notice.
+	afterEach( () =>
+		act( () => {
+			untrackProvisioningSite( 7 );
+			untrackProvisioningSite( 8 );
+		} )
+	);
 
 	test( 'says nothing when this browser started no sites', () => {
 		mockAgencySites( [] );
@@ -65,5 +71,59 @@ describe( '<ProvisioningSiteNotices>', () => {
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Dismiss' } ) );
 
 		expect( screen.queryByText( 'Your WordPress.com site is ready!' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'lets the user dismiss a site that is still being created', async () => {
+		mockAgencySites( [ provisionedSite( 7, 'provisioning' ) ] );
+		trackProvisioningSite( 7 );
+
+		render( <ProvisioningSiteNotices /> );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Dismiss' } ) );
+
+		expect(
+			screen.queryByText( 'Setting up your new WordPress.com site' )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'gives up on a site that never reports ready', async () => {
+		jest.useFakeTimers();
+		mockAgencySites( [ provisionedSite( 7, 'provisioning' ) ] );
+		trackProvisioningSite( 7 );
+
+		render( <ProvisioningSiteNotices /> );
+
+		expect( await screen.findByText( 'Setting up your new WordPress.com site' ) ).toBeVisible();
+
+		await act( async () => {
+			jest.advanceTimersByTime( 5 * 60 * 1000 );
+		} );
+
+		expect(
+			screen.queryByText( 'Setting up your new WordPress.com site' )
+		).not.toBeInTheDocument();
+		jest.useRealTimers();
+	} );
+
+	// The banner renders on every /sites load, so it must not take the route down
+	// when the endpoint answers with something other than the expected list.
+	test( 'survives a response that is not a list of sites', async () => {
+		nock( API )
+			.persist()
+			.get( '/wpcom/v2/agency' )
+			.reply( 200, [ { id: 1 } ] );
+		const scope = nock( API )
+			.get( '/wpcom/v2/agency/1/sites' )
+			.reply( 200, { error: 'unauthorized' } );
+		trackProvisioningSite( 7 );
+
+		render( <ProvisioningSiteNotices /> );
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+
+		// Re-render now that the bad payload is in the cache, so a render that
+		// cannot survive it fails here rather than after the assertion.
+		act( () => trackProvisioningSite( 8 ) );
+
+		expect( screen.getAllByText( 'Setting up your new WordPress.com site' ) ).toHaveLength( 2 );
 	} );
 } );
