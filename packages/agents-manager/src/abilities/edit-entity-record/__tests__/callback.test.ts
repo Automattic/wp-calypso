@@ -6,7 +6,11 @@ jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
 jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: jest.fn() } ), {
 	virtual: true,
 } );
-jest.mock( '@wordpress/data', () => ( { dispatch: jest.fn(), resolveSelect: jest.fn() } ) );
+jest.mock( '@wordpress/data', () => ( {
+	dispatch: jest.fn(),
+	resolveSelect: jest.fn(),
+	select: jest.fn(),
+} ) );
 jest.mock( '../../../utils/is-editor-page', () => ( { isEditorPage: jest.fn( () => true ) } ) );
 jest.mock( '../../../utils/navigation-menu', () => ( {
 	MENU_FIELDS: [ 'blocks', 'content' ],
@@ -39,7 +43,7 @@ jest.mock( '../navigation-items', () => ( {
 	buildNavigationItems: jest.fn( async ( _id, record ) => record ),
 } ) );
 jest.mock( '../../../utils/site-record', () => ( {
-	getSiteRecord: jest.fn( () => ( { page_on_front: 3 } ) ),
+	getSiteRecord: jest.fn( () => ( { show_on_front: 'page', page_on_front: 3 } ) ),
 } ) );
 jest.mock( '../../../utils/editor-history', () => ( {
 	getEditorHistory: jest.fn( () => ( {} ) ),
@@ -50,10 +54,9 @@ jest.mock( '../../../utils/canvas-guard', () => ( {
 jest.mock( '../../editor-navigate/callback', () => ( {
 	PAGES_LIST_PATH: 'all-pages',
 	editorNavigateCallback: jest.fn( async () => ( { result: { success: true } } ) ),
-	getLoadedPageId: jest.fn( () => undefined ),
 } ) );
 
-import { dispatch, resolveSelect } from '@wordpress/data';
+import { dispatch, resolveSelect, select } from '@wordpress/data';
 import { bindToEditorPath } from '../../../utils/canvas-guard';
 import { checkpointKeys, getCheckpoint, hasCheckpoint } from '../../../utils/checkpoints';
 import { getEditorHistory } from '../../../utils/editor-history';
@@ -70,7 +73,7 @@ import { logSiteMetadata, logSiteSession } from '../../../utils/session-log';
 import { setSiteMetadata } from '../../../utils/site-metadata';
 import { getSiteRecord } from '../../../utils/site-record';
 import { setSiteTitle } from '../../../utils/site-title';
-import { editorNavigateCallback, getLoadedPageId } from '../../editor-navigate/callback';
+import { editorNavigateCallback } from '../../editor-navigate/callback';
 import { editEntityRecordCallback, getCheckpointKeys } from '../callback';
 import { buildNavigationItems } from '../navigation-items';
 
@@ -94,6 +97,7 @@ const site = { entityType: 'root', entityName: 'site' };
 
 beforeEach( () => {
 	jest.clearAllMocks();
+	( select as jest.Mock ).mockReturnValue( undefined );
 	( isEditorPage as jest.Mock ).mockReturnValue( true );
 	( dispatch as jest.Mock ).mockReturnValue( {
 		saveEntityRecord,
@@ -330,8 +334,14 @@ describe( 'editEntityRecordCallback', () => {
 		);
 	} );
 
-	describe( 'deleting the page on screen', () => {
-		beforeEach( () => ( getLoadedPageId as jest.Mock ).mockReturnValue( 7 ) );
+	describe( 'deleting the record on screen', () => {
+		const open = ( type: string, id: number ) =>
+			( select as jest.Mock ).mockReturnValue( {
+				getCurrentPostType: () => type,
+				getCurrentPostId: () => id,
+			} );
+
+		beforeEach( () => open( 'page', 7 ) );
 
 		// Deleting it under the canvas would leave the editor on a page that no
 		// longer exists, so the editor is routed to the front page first.
@@ -345,8 +355,9 @@ describe( 'editEntityRecordCallback', () => {
 		} );
 
 		it.each( [
-			{ case: 'the posts index', site: {} },
-			{ case: 'the page being deleted', site: { page_on_front: 7 } },
+			// `page_on_front` lingers after a site switches to showing posts.
+			{ case: 'the posts index', site: { show_on_front: 'posts', page_on_front: 3 } },
+			{ case: 'the page being deleted', site: { show_on_front: 'page', page_on_front: 7 } },
 		] )( 'leaves for the pages list when the front page is $case', async ( { site } ) => {
 			( getSiteRecord as jest.Mock ).mockReturnValueOnce( site );
 
@@ -376,6 +387,19 @@ describe( 'editEntityRecordCallback', () => {
 
 			expect( result.result.error ).toContain( 'cannot leave it first' );
 			expect( editorNavigateCallback ).not.toHaveBeenCalled();
+			expect( deleteEntityRecord ).not.toHaveBeenCalled();
+		} );
+
+		// The post editor opens posts too, and has no router to leave by.
+		it( 'refuses to delete the post open in the post editor', async () => {
+			open( 'post', 7 );
+			( getEditorHistory as jest.Mock ).mockReturnValueOnce( undefined );
+
+			const result = await editEntityRecordCallback( {
+				deleteEntities: [ { entityType: 'postType', entityName: 'post', recordId: 7 } ],
+			} );
+
+			expect( result.result.error ).toContain( 'Cannot delete post 7' );
 			expect( deleteEntityRecord ).not.toHaveBeenCalled();
 		} );
 
@@ -568,6 +592,18 @@ describe( 'editEntityRecordCallback', () => {
 
 		expect( result.result.error ).toContain( 'confirmationMessage' );
 		expect( deleteEntityRecord ).not.toHaveBeenCalled();
+	} );
+
+	// A content-only edit records no checkpoint, so the editor's undo is its
+	// only undo — not the request's to switch off.
+	it( "keeps the agent's options out of an edit", async () => {
+		await editEntityRecordCallback( {
+			editEntities: [
+				{ ...page( 8 ), record: { content: 'Hello' }, options: { undoIgnore: true } },
+			],
+		} );
+
+		expect( editEntityRecord ).toHaveBeenCalledWith( 'postType', 'page', 8, { content: 'Hello' } );
 	} );
 
 	it( 'clears a page title sent as null, as the schema allows', async () => {
