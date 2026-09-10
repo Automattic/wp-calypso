@@ -4,6 +4,7 @@
 
 import config from '@automattic/calypso-config';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -401,5 +402,55 @@ describe( 'Blackbox integration', () => {
 
 			expect( window.Blackbox.reset ).not.toHaveBeenCalled();
 		} );
+	} );
+} );
+
+describe( 'email domain validation', () => {
+	const mockStore = configureStore( [ thunk ] );
+
+	const renderAndSubmit = async ( email, props = {} ) => {
+		const store = mockStore( {} );
+		render(
+			<Provider store={ store }>
+				<PasswordlessSignupForm { ...props } />
+			</Provider>
+		);
+		await userEvent.type( screen.getByRole( 'textbox', { name: /email/i } ), email );
+		await userEvent.click( screen.getByRole( 'button', { name: /create your account/i } ) );
+		return store;
+	};
+
+	// A request in flight would flip the button to its disabled "Creating your account" state
+	// before anything is awaited, so an enabled button means the guard stopped the submit.
+	it( 'names the domain, records the failure, and stays submittable when the TLD is not real', async () => {
+		const store = await renderAndSubmit( 'user@gmail.commmm' );
+
+		expect( screen.getByText( /gmail\.commmm/ ) ).toBeVisible();
+		expect( screen.getByText( /real domain/i ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: /create your account/i } ) ).toBeEnabled();
+		expect( store.getActions() ).toHaveLength( 1 );
+		expect( store.getActions()[ 0 ].meta.analytics[ 0 ].payload ).toMatchObject( {
+			name: 'calypso_signup_actions_onboarding_passwordless_login_error',
+			properties: { action_message: 'Email domain does not end in a valid TLD.' },
+		} );
+	} );
+
+	// A prefilled address can carry whitespace that the email input would strip if typed.
+	it( 'submits the trimmed address when the prefilled email has surrounding whitespace', async () => {
+		const submitForm = jest.fn();
+		render(
+			<Provider store={ mockStore( {} ) }>
+				<PasswordlessSignupForm
+					userEmail="  user@example.com  "
+					flowName=""
+					submitForm={ submitForm }
+				/>
+			</Provider>
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: /create your account/i } ) );
+
+		await waitFor( () => expect( submitForm ).toHaveBeenCalled() );
+		expect( submitForm.mock.calls[ 0 ][ 0 ].email ).toBe( 'user@example.com' );
 	} );
 } );

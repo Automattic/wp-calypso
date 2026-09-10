@@ -78,6 +78,13 @@ module.exports = {
 							'!@automattic/load-script',
 							'!@automattic/mini-cart',
 							'!@automattic/number-formatters',
+							'!@automattic/onboarding',
+							'@automattic/onboarding/*',
+							'!@automattic/onboarding/src',
+							'@automattic/onboarding/src/*',
+							'!@automattic/onboarding/src/utils',
+							'@automattic/onboarding/src/utils/*',
+							'!@automattic/onboarding/src/utils/email-validation',
 							'!@automattic/search',
 							'!@automattic/calypso-stripe',
 							'!@automattic/calypso-url',
@@ -113,6 +120,11 @@ module.exports = {
 						name: '@automattic/components',
 						message:
 							'Do not import from the barrel file. Use specific imports like @automattic/components/src/summary-button instead. This prevents the entire package being bundled into the dashboard.',
+					},
+					{
+						name: '@automattic/onboarding',
+						message:
+							'Do not import from the barrel file. Only @automattic/onboarding/src/utils/email-validation is allowed in the dashboard; the rest of the package carries Calypso onboarding concepts.',
 					},
 					{
 						name: 'i18n-calypso',
