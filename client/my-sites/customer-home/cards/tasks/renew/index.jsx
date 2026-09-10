@@ -1,25 +1,32 @@
+import { sitePurchasesQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import expiredIllustration from 'calypso/assets/images/customer-home/disconnected-dark.svg';
 import expiringIllustration from 'calypso/assets/images/customer-home/disconnected.svg';
 import { getRelativeDayString } from 'calypso/dashboard/utils/datetime';
 import { TASK_RENEW_EXPIRED_PLAN } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
-import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
+import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-const Renew = ( { card, purchases, site } ) => {
+const Renew = ( { card } ) => {
 	const translate = useTranslate();
+	const siteId = useSelector( getSelectedSiteId );
+	const site = useSelector( ( state ) => getSite( state, siteId ) );
+	const { data: purchases } = useQuery( {
+		...sitePurchasesQuery( siteId ),
+		enabled: Boolean( siteId ),
+	} );
 	const hasExpired = card === TASK_RENEW_EXPIRED_PLAN;
 
-	const planPurchase = purchases.find(
-		( purchase ) => purchase.productId === site?.plan.product_id
+	const planPurchase = purchases?.find(
+		( purchase ) => purchase.product_id === site?.plan.product_id
 	);
 
 	const planName = site?.plan.product_name_short;
-	const expiryText = planPurchase?.expiryDate
-		? getRelativeDayString( new Date( planPurchase.expiryDate ), hasExpired ? 'past' : 'upcoming' )
+	const expiryText = planPurchase?.expiry_date
+		? getRelativeDayString( new Date( planPurchase.expiry_date ), hasExpired ? 'past' : 'upcoming' )
 		: '';
 	const isOwner = site?.plan.user_is_owner;
 
@@ -79,7 +86,7 @@ const Renew = ( { card, purchases, site } ) => {
 		);
 		actionText = translate( 'Got it' );
 	}
-	const actionUrl = isOwner ? `/checkout/renew/${ planPurchase?.id }` : null;
+	const actionUrl = isOwner ? `/checkout/renew/${ planPurchase?.ID }` : null;
 	const illustration = hasExpired ? expiredIllustration : expiringIllustration;
 
 	return (
@@ -98,13 +105,4 @@ const Renew = ( { card, purchases, site } ) => {
 	);
 };
 
-const mapStateToProps = ( state ) => {
-	const siteId = getSelectedSiteId( state );
-
-	return {
-		purchases: getSitePurchases( state, siteId ),
-		site: getSite( state, siteId ),
-	};
-};
-
-export default connect( mapStateToProps )( Renew );
+export default Renew;
