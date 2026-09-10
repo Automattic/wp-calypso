@@ -5,11 +5,9 @@ import {
 	siteSshAccessStatusQuery,
 } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { file } from '@wordpress/icons';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';
@@ -25,12 +23,7 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 	const hasSftpFeature = hasHostingFeature( site, HostingFeatures.SFTP );
 	const hasSshFeature = hasHostingFeature( site, HostingFeatures.SSH );
 
-	const {
-		data: sftpUsers,
-		isError: hasSftpUsersError,
-		isFetching: isFetchingSftpUsers,
-		refetch: refetchSftpUsers,
-	} = useQuery( {
+	const { data: sftpUsers } = useQuery( {
 		...siteSftpUsersQuery( site.ID ),
 		enabled: hasSftpFeature,
 	} );
@@ -66,29 +59,12 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 					'SFTP and SSH give you secure, direct access to your site’s filesystem—fast, reliable, and built for your workflow.'
 				) }
 			>
-				{ hasSftpUsersError && (
-					<Notice
-						variant="error"
-						actions={
-							<Button
-								variant="primary"
-								isBusy={ isFetchingSftpUsers }
-								onClick={ () => refetchSftpUsers() }
-							>
-								{ __( 'Try again' ) }
-							</Button>
-						}
-					>
-						{ __( 'We couldn’t load your SFTP/SSH credentials. Please try again.' ) }
-					</Notice>
+				{ sftpEnabled ? (
+					<SftpCard siteId={ site.ID } sftpUsers={ sftpUsers } />
+				) : (
+					<EnableSftpCard siteId={ site.ID } canUseSsh={ hasSshFeature } />
 				) }
-				{ ! hasSftpUsersError &&
-					( sftpEnabled ? (
-						<SftpCard siteId={ site.ID } sftpUsers={ sftpUsers } />
-					) : (
-						<EnableSftpCard siteId={ site.ID } canUseSsh={ hasSshFeature } />
-					) ) }
-				{ ! hasSftpUsersError && sftpEnabled && hasSshFeature && (
+				{ sftpEnabled && hasSshFeature && (
 					<SshCard
 						siteId={ site.ID }
 						sftpUsers={ sftpUsers }
