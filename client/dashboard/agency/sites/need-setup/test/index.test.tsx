@@ -67,4 +67,12 @@ describe( '<AgencySitesNeedSetup>', () => {
 
 		expect( await screen.findByText( '1 site available' ) ).toBeVisible();
 	} );
+
+	test( 'shows an empty state when every license is already set up', async () => {
+		mockAgencyAndPendingSites( [ pendingSite( 1, { state: 'provisioning' } ) ] );
+
+		render( <AgencySitesNeedSetup /> );
+
+		expect( await screen.findByText( 'Nothing to set up' ) ).toBeVisible();
+	} );
 } );
