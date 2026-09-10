@@ -811,9 +811,8 @@ export const siteSettingsRoute = createRoute( {
 
 		queryClient.prefetchQuery( siteCurrentPlanQuery( site.ID ) );
 
-		// These requests are served by the site itself, so they fail while it is
-		// unreachable. Awaiting them would take down the settings routes that
-		// remain available in that state.
+		// Skip the settings fetch for sites we know can't reach Jetpack — it would
+		// fail and error the route, and SFTP/SSH doesn't need it anyway.
 		if ( site.__inaccessible_jetpack_error ) {
 			return;
 		}
