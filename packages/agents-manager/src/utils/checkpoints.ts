@@ -197,13 +197,25 @@ export function setCheckpoint(
 		return;
 	}
 
+	records.set( id, {
+		...metadata,
+		id,
+		checkpointKeys: keys,
+		createdAt: Date.now(),
+		...captureSnapshots( keys ),
+	} );
+}
+
+/**
+ * The domains that snapshot the moment their key is claimed — cheap reads of
+ * one record each. The page and navigation domains arrive through the
+ * `CheckpointRecorder` instead.
+ */
+function captureSnapshots( keys: string[] ): Partial< CheckpointRecord > {
 	const themeBeforeUpdate = keys.some( ( key ) => THEME_CHECKPOINT_KEYS.includes( key ) )
 		? captureThemeSnapshot()
 		: undefined;
 	const logoBeforeUpdate = keys.includes( checkpointKeys.LOGO ) ? getSiteLogo() : undefined;
-
-	// Cheap reads of one record, so they snapshot up front. The page and
-	// navigation domains arrive through the `CheckpointRecorder` instead.
 	const siteTitleBeforeUpdate = keys.includes( checkpointKeys.SITE_TITLE )
 		? getSiteTitle()
 		: undefined;
@@ -211,18 +223,14 @@ export function setCheckpoint(
 		? getSiteMetadata()
 		: undefined;
 
-	records.set( id, {
-		...metadata,
-		id,
-		checkpointKeys: keys,
-		createdAt: Date.now(),
+	return {
 		...( themeBeforeUpdate && { themeBeforeUpdate } ),
 		...( logoBeforeUpdate !== undefined && { logoBeforeUpdate } ),
 		...( siteTitleBeforeUpdate !== undefined && { siteTitleBeforeUpdate } ),
 		...( siteMetadataBeforeUpdate && {
 			siteMetadataBeforeUpdate: deepClone( siteMetadataBeforeUpdate ),
 		} ),
-	} );
+	};
 }
 
 /**
@@ -426,16 +434,25 @@ function dropUnrecordedDomains( id: string ): void {
 	records.set( id, { ...checkpoint, checkpointKeys: checkpointKeysLeft } );
 }
 
-/** A repeat may reach domains the first run dropped as unrecorded, so it claims them again. */
+/**
+ * A repeat may reach domains the first run dropped as unrecorded, so it claims
+ * them again — snapshotting the ones that capture up front, and keeping every
+ * snapshot the first run took.
+ */
 function redeclareDomains( id: string, keys: string[] ): void {
 	const checkpoint = records.get( id );
 
-	if ( checkpoint ) {
-		records.set( id, {
-			...checkpoint,
-			checkpointKeys: [ ...new Set( [ ...checkpoint.checkpointKeys, ...keys ] ) ],
-		} );
+	if ( ! checkpoint ) {
+		return;
 	}
+
+	const added = keys.filter( ( key ) => ! checkpoint.checkpointKeys.includes( key ) );
+
+	records.set( id, {
+		...captureSnapshots( added ),
+		...checkpoint,
+		checkpointKeys: [ ...checkpoint.checkpointKeys, ...added ],
+	} );
 }
 
 /**
