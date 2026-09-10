@@ -1,10 +1,10 @@
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
-import { WEBMCP_SERVER_ABILITY_NAMES } from './contracts';
+import { findAbilityByName } from '../abilities/ability-name';
 import type { Ability } from '../abilities/types';
 import type { ToolProvider } from '../extension-types';
 
-const SERVER_ABILITY_NAMES = new Set< string >( WEBMCP_SERVER_ABILITY_NAMES );
+const ABILITIES_ENDPOINT = '/wp-abilities/v1/abilities';
 
 function markServerRegistered( ability: Ability ): Ability {
 	return {
@@ -19,83 +19,55 @@ function markServerRegistered( ability: Ability ): Ability {
 	};
 }
 
-export function createWebMcpToolProvider( toolProvider: ToolProvider ): ToolProvider {
-	let serverAbilitiesPromise: Promise< Ability[] > | undefined;
-	let didWarnAboutServerAbilities = false;
+function getAbilityRequestMethod( ability: Ability ): 'GET' | 'POST' | 'DELETE' {
+	const annotations = ability.meta?.annotations;
+	if ( annotations?.readonly === true ) {
+		return 'GET';
+	}
+	return annotations?.destructive === true && annotations?.idempotent === true ? 'DELETE' : 'POST';
+}
 
-	const getServerAbilities = (): Promise< Ability[] > => {
-		if ( ! serverAbilitiesPromise ) {
-			serverAbilitiesPromise = apiFetch< Ability[] >( {
-				path: addQueryArgs( '/wp-abilities/v1/abilities', {
-					context: 'edit',
-					per_page: -1,
-					webmcp: 1,
-				} ),
+/**
+ * Fetches REST definitions once per mount, preserving opt-outs for precedence
+ * resolution. Failed discovery is left uncached so the mount can retry it.
+ */
+export function createServerAbilityProvider(): ToolProvider {
+	let abilitiesPromise: Promise< Ability[] > | undefined;
+
+	const getAbilities = (): Promise< Ability[] > => {
+		if ( ! abilitiesPromise ) {
+			abilitiesPromise = apiFetch< Ability[] >( {
+				path: addQueryArgs( ABILITIES_ENDPOINT, { context: 'edit', per_page: -1, webmcp: 1 } ),
 			} )
-				.then( ( abilities ) =>
-					abilities
-						.filter( ( ability ) => SERVER_ABILITY_NAMES.has( ability.name ) )
-						.map( markServerRegistered )
-				)
+				.then( ( abilities ) => abilities.map( markServerRegistered ) )
 				.catch( ( error ) => {
-					serverAbilitiesPromise = undefined;
+					abilitiesPromise = undefined;
 					throw error;
 				} );
 		}
 
-		return serverAbilitiesPromise;
+		return abilitiesPromise;
 	};
 
 	return {
-		getAbilities: async () => {
-			const abilities = await toolProvider.getAbilities();
-			let serverAbilities: Ability[] = [];
-
-			try {
-				serverAbilities = await getServerAbilities();
-				didWarnAboutServerAbilities = false;
-			} catch ( error ) {
-				if ( ! didWarnAboutServerAbilities ) {
-					// eslint-disable-next-line no-console
-					console.warn( '[AgentsManager] Failed to load WebMCP server abilities:', error );
-					didWarnAboutServerAbilities = true;
-				}
-			}
-
-			const serverNames = new Set( serverAbilities.map( ( ability ) => ability.name ) );
-
-			return [
-				...abilities.filter( ( ability ) => ! serverNames.has( ability.name ) ),
-				...serverAbilities,
-			];
-		},
+		getAbilities,
 		executeAbility: async ( name, input ) => {
-			if ( ! SERVER_ABILITY_NAMES.has( name ) ) {
-				return toolProvider.executeAbility( name, input );
-			}
-
-			const ability = ( await getServerAbilities() ).find( ( item ) => item.name === name );
+			const ability = findAbilityByName( await getAbilities(), name );
 			if ( ! ability ) {
 				throw new Error( `WebMCP server ability is unavailable: ${ name }` );
 			}
 
-			if ( ability.meta?.annotations?.readonly !== true ) {
+			const path = `${ ABILITIES_ENDPOINT }/${ ability.name }/run`;
+			const method = getAbilityRequestMethod( ability );
+			if ( method === 'POST' ) {
 				return apiFetch( {
 					method: 'POST',
-					path: addQueryArgs( `/wp-abilities/v1/abilities/${ name }/run`, {
-						webmcp: 1,
-					} ),
+					path: addQueryArgs( path, { webmcp: 1 } ),
 					data: { input },
 				} );
 			}
 
-			return apiFetch( {
-				method: 'GET',
-				path: addQueryArgs( `/wp-abilities/v1/abilities/${ name }/run`, {
-					input,
-					webmcp: 1,
-				} ),
-			} );
+			return apiFetch( { method, path: addQueryArgs( path, { input, webmcp: 1 } ) } );
 		},
 	};
 }

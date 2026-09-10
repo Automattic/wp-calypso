@@ -1,20 +1,23 @@
-import { parse } from '@wordpress/blocks';
 import { normalizeAbilityName } from '../abilities/ability-name';
 import {
-	APPLY_BLOCK_EDITS_ABILITY_NAME,
-	GET_BLOCK_TREE_ABILITY_NAME,
-	SHOW_TEMPLATE_ABILITY_NAME,
-	WEBMCP_SERVER_ABILITY_NAMES,
+	getWebMcpContract,
 	getWebMcpDescription,
 	getWebMcpInputSchema,
-	isWebMcpMutatingServerAbilityName,
+	normalizeInputSchema,
 } from './contracts';
+import {
+	isWebMcpConsequential,
+	selectExposedAbilities,
+	shouldExposeWebMcpAbility,
+} from './exposure';
+import type { WebMcpToolProvider } from './compose-tool-providers';
+import type {
+	WebMcpAdapter,
+	WebMcpExecutionContext,
+	WebMcpModelContext,
+	WebMcpTool,
+} from './types';
 import type { Ability } from '../abilities/types';
-import type { ToolProvider } from '../extension-types';
-import type { WebMcpAdapter, WebMcpModelContext, WebMcpTool } from './types';
-import type { Block } from '@wordpress/blocks';
-
-export { createWebMcpToolProvider } from './server-ability-provider';
 
 type Registration = {
 	abortController: AbortController;
@@ -23,56 +26,9 @@ type Registration = {
 };
 
 type CreateWebMcpAdapterOptions = {
-	toolProvider: ToolProvider;
+	toolProvider: WebMcpToolProvider;
 	modelContext: WebMcpModelContext;
-	shouldExposeAbility?: ( ability: Ability ) => boolean;
 };
-
-/**
- * Execution remains behind the merged provider's permission checks and canvas
- * guard.
- */
-export const WEBMCP_EDITOR_ABILITY_ALLOWLIST = new Set( [
-	APPLY_BLOCK_EDITS_ABILITY_NAME,
-	GET_BLOCK_TREE_ABILITY_NAME,
-	SHOW_TEMPLATE_ABILITY_NAME,
-] );
-
-export const WEBMCP_SERVER_ABILITY_ALLOWLIST = new Set< string >( WEBMCP_SERVER_ABILITY_NAMES );
-
-export function shouldExposeWebMcpAbility( ability: Ability ): boolean {
-	const annotations = ability.meta?.annotations;
-
-	if ( WEBMCP_SERVER_ABILITY_ALLOWLIST.has( ability.name ) ) {
-		return (
-			annotations?.serverRegistered === true &&
-			( annotations.readonly === true || isWebMcpMutatingServerAbilityName( ability.name ) )
-		);
-	}
-
-	if ( ! WEBMCP_EDITOR_ABILITY_ALLOWLIST.has( ability.name ) ) {
-		return false;
-	}
-
-	if ( annotations?.serverRegistered === true ) {
-		return false;
-	}
-
-	return annotations?.clientRegistered === true || typeof ability.callback === 'function';
-}
-
-export function normalizeInputSchema( schema: unknown ): Record< string, unknown > {
-	if ( ! schema || typeof schema !== 'object' || Array.isArray( schema ) ) {
-		return { type: 'object', properties: {} };
-	}
-
-	const normalized = schema as Record< string, unknown >;
-	if ( ! ( 'type' in normalized ) && ! ( 'anyOf' in normalized ) && ! ( 'oneOf' in normalized ) ) {
-		return { ...normalized, type: 'object' };
-	}
-
-	return normalized;
-}
 
 function createAbortError(): Error {
 	const error = new Error( 'WebMCP tool execution was aborted.' );
@@ -80,166 +36,57 @@ function createAbortError(): Error {
 	return error;
 }
 
-type ExecutionContext = {
-	knownBlockClientIds: Set< string >;
-};
+function getToolDescriptor( ability: Ability ): Omit< WebMcpTool, 'execute' > {
+	const contract = getWebMcpContract( ability );
+	const annotations = ability.meta?.annotations;
 
-function isRecord( value: unknown ): value is Record< string, unknown > {
-	return !! value && typeof value === 'object' && ! Array.isArray( value );
-}
-
-function rememberBlockClientIds( result: unknown, context: ExecutionContext ): void {
-	if (
-		! isRecord( result ) ||
-		! isRecord( result.result ) ||
-		! isRecord( result.result.details )
-	) {
-		return;
-	}
-
-	const visit = ( blocks: unknown ) => {
-		if ( ! Array.isArray( blocks ) ) {
-			return;
-		}
-
-		for ( const block of blocks ) {
-			if ( ! isRecord( block ) ) {
-				continue;
-			}
-
-			if ( typeof block.clientId === 'string' ) {
-				context.knownBlockClientIds.add( block.clientId );
-			}
-			visit( block.innerBlocks );
-		}
-	};
-
-	context.knownBlockClientIds.clear();
-	visit( result.result.details.blocks );
-}
-
-function prepareApplyBlockEditsInput(
-	input: Record< string, unknown >,
-	context: ExecutionContext
-): Record< string, unknown > {
-	const toBlockData = ( block: Block ): Record< string, unknown > => ( {
-		name: block.name,
-		attributes: block.attributes,
-		...( block.innerBlocks.length ? { innerBlocks: block.innerBlocks.map( toBlockData ) } : {} ),
-	} );
-	const inserts = Array.isArray( input.inserts )
-		? input.inserts.flatMap( ( insert ) => {
-				if ( ! isRecord( insert ) || typeof insert.blockMarkup !== 'string' ) {
-					return [ insert ];
-				}
-
-				const blocks = parse( insert.blockMarkup );
-				if ( blocks.length === 0 ) {
-					throw new Error( 'The supplied blockMarkup did not contain any Gutenberg blocks.' );
-				}
-
-				const { blockMarkup: _blockMarkup, block: _block, ...placement } = insert;
-				return blocks.map( ( block, offset ) => ( {
-					...placement,
-					...( typeof placement.index === 'number' ? { index: placement.index + offset } : {} ),
-					block: toBlockData( block ),
-				} ) );
-		  } )
-		: undefined;
-	const reverseMap = Object.fromEntries(
-		Array.from( context.knownBlockClientIds, ( clientId ) => [ clientId, clientId ] )
-	);
-
-	return {
-		...( Array.isArray( input.updates ) ? { updates: input.updates } : {} ),
-		...( inserts ? { inserts } : {} ),
-		...( Array.isArray( input.deletes ) ? { deletes: input.deletes } : {} ),
-		...( typeof input.summary === 'string' ? { summary: input.summary } : {} ),
-		reverseMap,
-		suppressAssistantMessage: true,
-	};
-}
-
-function adaptResultForWebMcp( abilityName: string, value: unknown ): unknown {
-	if ( abilityName !== SHOW_TEMPLATE_ABILITY_NAME ) {
-		return value;
-	}
-
-	if ( typeof value === 'string' ) {
-		return value.replaceAll( 'big_sky__get_page_structure', 'agents_manager__get_block_tree' );
-	}
-
-	if ( Array.isArray( value ) ) {
-		return value.map( ( item ) => adaptResultForWebMcp( abilityName, item ) );
-	}
-
-	if ( isRecord( value ) ) {
-		return Object.fromEntries(
-			Object.entries( value ).map( ( [ key, item ] ) => [
-				key,
-				adaptResultForWebMcp( abilityName, item ),
-			] )
-		);
-	}
-
-	return value;
-}
-
-function createTool(
-	ability: Ability,
-	toolProvider: ToolProvider,
-	executionContext: ExecutionContext
-): WebMcpTool {
 	return {
 		name: normalizeAbilityName( ability.name ),
 		title: ability.label || ability.name,
 		description: getWebMcpDescription( ability ),
 		inputSchema: normalizeInputSchema( getWebMcpInputSchema( ability ) ),
+		// Only the three hints the WebMCP draft defines. The MCP-style
+		// `destructiveHint` and `idempotentHint` are not part of it.
 		annotations: {
-			readOnlyHint: ability.meta?.annotations?.readonly === true,
-			destructiveHint:
-				ability.name === APPLY_BLOCK_EDITS_ABILITY_NAME ||
-				ability.meta?.annotations?.destructive === true,
-			idempotentHint: ability.meta?.annotations?.idempotent === true,
-		},
-		execute: async ( input, options ) => {
-			if ( options?.signal?.aborted ) {
-				throw createAbortError();
-			}
-
-			const preparedInput =
-				ability.name === APPLY_BLOCK_EDITS_ABILITY_NAME
-					? prepareApplyBlockEditsInput( input ?? {}, executionContext )
-					: input ?? {};
-			const result = await toolProvider.executeAbility( ability.name, preparedInput );
-
-			if ( ability.name === GET_BLOCK_TREE_ABILITY_NAME ) {
-				rememberBlockClientIds( result, executionContext );
-			}
-
-			return adaptResultForWebMcp( ability.name, result );
+			readOnlyHint: annotations?.readonly === true,
+			// Site content, labels, and third-party abilities are user-authored.
+			untrustedContentHint: true,
+			// Lets a browser agent insist on user confirmation before running it.
+			consequentialHint:
+				contract.consequential === true ||
+				isWebMcpConsequential( ability ) ||
+				annotations?.destructive === true,
 		},
 	};
 }
 
-function fingerprintTool( tool: WebMcpTool ): string {
-	return JSON.stringify( {
-		name: tool.name,
-		title: tool.title,
-		description: tool.description,
-		inputSchema: tool.inputSchema,
-		annotations: tool.annotations,
-	} );
+type ToolDescription = {
+	descriptor: Omit< WebMcpTool, 'execute' >;
+	fingerprint: string;
+};
+
+/**
+ * A registry ability can carry a schema that cannot be serialized, such as a
+ * cyclic object. That is a defect of that one ability, so it is reported and
+ * skipped rather than allowed to abort the reconcile for the tools after it.
+ */
+function describeTool( ability: Ability ): ToolDescription | undefined {
+	try {
+		const descriptor = getToolDescriptor( ability );
+		return { descriptor, fingerprint: JSON.stringify( descriptor ) };
+	} catch {
+		return undefined;
+	}
 }
 
 export function createWebMcpAdapter( {
 	toolProvider,
 	modelContext,
-	shouldExposeAbility = shouldExposeWebMcpAbility,
 }: CreateWebMcpAdapterOptions ): WebMcpAdapter {
 	const registrations = new Map< string, Registration >();
 	const pendingControllers = new Set< AbortController >();
-	const executionContext: ExecutionContext = { knownBlockClientIds: new Set() };
+	const context: WebMcpExecutionContext = { knownBlockClientIds: new Set() };
+	const reportedCollisions = new Set< string >();
 	let disposed = false;
 	let syncRequested = false;
 	let syncQueue = Promise.resolve();
@@ -256,30 +103,106 @@ export function createWebMcpAdapter( {
 		}
 	};
 
+	// Warned once per collision, and again only if it goes away and comes back.
+	const reportCollisions = ( collisions: Map< string, Ability[] > ) => {
+		for ( const toolName of reportedCollisions ) {
+			if ( ! collisions.has( toolName ) ) {
+				reportedCollisions.delete( toolName );
+			}
+		}
+
+		for ( const [ toolName, candidates ] of collisions ) {
+			if ( reportedCollisions.has( toolName ) ) {
+				continue;
+			}
+
+			reportedCollisions.add( toolName );
+			// eslint-disable-next-line no-console
+			console.warn(
+				`[AgentsManager] WebMCP tool name "${ toolName }" is claimed by several abilities (${ candidates
+					.map( ( candidate ) => candidate.name )
+					.join( ', ' ) }). None of them are exposed.`
+			);
+		}
+	};
+
+	// Resolve the definition and owner together: another lookup after validation
+	// could switch to a recovered source with different exposure or hints.
+	const createExecution =
+		( ability: Ability, registration: Registration ): WebMcpTool[ 'execute' ] =>
+		async ( input, options ) => {
+			const { abortController, fingerprint, toolName } = registration;
+			const isAborted = () => abortController.signal.aborted || options?.signal?.aborted;
+			if ( isAborted() ) {
+				throw createAbortError();
+			}
+
+			const resolved = await toolProvider.resolveAbility( ability.name );
+			if (
+				! resolved ||
+				! shouldExposeWebMcpAbility( resolved.ability ) ||
+				describeTool( resolved.ability )?.fingerprint !== fingerprint
+			) {
+				await sync().catch( () => {} );
+				throw new Error(
+					`WebMCP tool changed: ${ toolName }. Discover tools again before retrying.`
+				);
+			}
+			if ( isAborted() ) {
+				throw createAbortError();
+			}
+
+			const contract = getWebMcpContract( resolved.ability );
+			const rawInput = input ?? {};
+			const preparedInput = contract.prepareInput
+				? contract.prepareInput( rawInput, context )
+				: rawInput;
+			const result = await resolved.provider.executeAbility( resolved.ability.name, preparedInput );
+			contract.afterExecute?.( result, context );
+
+			return contract.adaptResult ? contract.adaptResult( result ) : result;
+		};
+
 	const reconcile = async () => {
 		const abilities = await toolProvider.getAbilities();
 		if ( disposed ) {
 			return;
 		}
 
-		const eligible = new Map(
-			abilities
-				.filter( shouldExposeAbility )
-				.map( ( ability ) => [ ability.name, ability ] as const )
-		);
+		const { exposed, collisions } = selectExposedAbilities( abilities );
+		reportCollisions( collisions );
 
 		for ( const [ abilityName, registration ] of registrations ) {
-			if ( ! eligible.has( abilityName ) ) {
+			if ( ! exposed.has( abilityName ) ) {
 				await unregister( registration );
 				registrations.delete( abilityName );
 			}
 		}
 
-		for ( const [ abilityName, ability ] of eligible ) {
-			const tool = createTool( ability, toolProvider, executionContext );
-			const fingerprint = fingerprintTool( tool );
-			const current = registrations.get( abilityName );
+		// One rejected registration must not block the tools after it. The
+		// first failure is rethrown once every candidate has been attempted;
+		// the failed ones stay unregistered, so the next sync retries them.
+		let failure: { error: unknown } | undefined;
 
+		for ( const [ abilityName, ability ] of exposed ) {
+			if ( disposed ) {
+				break;
+			}
+
+			const current = registrations.get( abilityName );
+			const described = describeTool( ability );
+			if ( ! described ) {
+				failure ??= {
+					error: new Error( `The WebMCP descriptor of ${ ability.name } cannot be serialized.` ),
+				};
+				if ( current ) {
+					await unregister( current );
+					registrations.delete( abilityName );
+				}
+				continue;
+			}
+
+			const { descriptor, fingerprint } = described;
 			if ( current?.fingerprint === fingerprint ) {
 				continue;
 			}
@@ -288,15 +211,27 @@ export function createWebMcpAdapter( {
 				await unregister( current );
 				registrations.delete( abilityName );
 			}
+			if ( disposed ) {
+				break;
+			}
 
 			const abortController = new AbortController();
+			const registration: Registration = {
+				abortController,
+				fingerprint,
+				toolName: descriptor.name,
+			};
 			pendingControllers.add( abortController );
 
 			try {
-				await modelContext.registerTool( tool, { signal: abortController.signal } );
+				await modelContext.registerTool(
+					{ ...descriptor, execute: createExecution( ability, registration ) },
+					{ signal: abortController.signal }
+				);
 			} catch ( error ) {
 				abortController.abort();
-				throw error;
+				failure ??= { error };
+				continue;
 			} finally {
 				pendingControllers.delete( abortController );
 			}
@@ -306,15 +241,15 @@ export function createWebMcpAdapter( {
 				continue;
 			}
 
-			registrations.set( abilityName, {
-				abortController,
-				fingerprint,
-				toolName: tool.name,
-			} );
+			registrations.set( abilityName, registration );
+		}
+
+		if ( failure ) {
+			throw failure.error;
 		}
 	};
 
-	const sync = (): Promise< void > => {
+	function sync(): Promise< void > {
 		if ( disposed ) {
 			return Promise.resolve();
 		}
@@ -329,7 +264,7 @@ export function createWebMcpAdapter( {
 
 		syncQueue = result.catch( () => {} );
 		return result;
-	};
+	}
 
 	return {
 		sync,
@@ -346,7 +281,7 @@ export function createWebMcpAdapter( {
 				void unregister( registration );
 			}
 			registrations.clear();
-			executionContext.knownBlockClientIds.clear();
+			context.knownBlockClientIds.clear();
 		},
 	};
 }

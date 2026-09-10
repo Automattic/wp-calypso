@@ -1,6 +1,6 @@
 import * as blocks from '@wordpress/blocks';
-import { createWebMcpAdapter, normalizeInputSchema, shouldExposeWebMcpAbility } from '../adapter';
-import { WEBMCP_SERVER_ABILITY_NAMES } from '../contracts';
+import { createWebMcpAdapter } from '../adapter';
+import { mergeToolProviders } from '../compose-tool-providers';
 import type { Ability } from '../../abilities/types';
 import type { ToolProvider } from '../../extension-types';
 import type { WebMcpModelContext, WebMcpTool } from '../types';
@@ -79,11 +79,17 @@ function createHarness( initialAbilities: Ability[] = [ createAbility() ] ) {
 			signals.set( tool.name, options?.signal );
 		} ),
 	};
-	const adapter = createWebMcpAdapter( { toolProvider, modelContext } );
+	const onSourceError = jest.fn();
+	const adapter = createWebMcpAdapter( {
+		// The same seam the mount uses, over this single source.
+		toolProvider: mergeToolProviders( () => [ toolProvider ], onSourceError ),
+		modelContext,
+	} );
 
 	return {
 		adapter,
 		modelContext,
+		onSourceError,
 		setAbilities: ( next: Ability[] ) => {
 			abilities = next;
 		},
@@ -98,69 +104,114 @@ describe( 'WebMCP adapter', () => {
 		jest.mocked( blocks.parse ).mockReset().mockReturnValue( [] );
 	} );
 
-	it( 'normalizes missing and malformed input schemas', () => {
-		expect( normalizeInputSchema( undefined ) ).toEqual( { type: 'object', properties: {} } );
-		expect( normalizeInputSchema( 'invalid' ) ).toEqual( { type: 'object', properties: {} } );
-		expect( normalizeInputSchema( [] ) ).toEqual( { type: 'object', properties: {} } );
-		expect( normalizeInputSchema( { properties: { value: { type: 'string' } } } ) ).toEqual( {
-			properties: { value: { type: 'string' } },
-			type: 'object',
+	it( 'emits only the annotations the WebMCP draft defines', async () => {
+		const harness = createHarness( [ createBlockTreeAbility(), createAbility() ] );
+		await harness.adapter.sync();
+
+		expect( harness.tools.get( 'agents_manager__get_block_tree' )?.annotations ).toEqual( {
+			readOnlyHint: true,
+			untrustedContentHint: true,
+			consequentialHint: false,
 		} );
-		expect( normalizeInputSchema( { anyOf: [ { type: 'string' } ] } ) ).toEqual( {
-			anyOf: [ { type: 'string' } ],
-		} );
-		expect( normalizeInputSchema( { oneOf: [ { type: 'number' } ] } ) ).toEqual( {
-			oneOf: [ { type: 'number' } ],
+		expect( harness.tools.get( 'big_sky__apply_block_edits' )?.annotations ).toEqual( {
+			readOnlyHint: false,
+			untrustedContentHint: true,
+			consequentialHint: false,
 		} );
 	} );
 
-	it( 'requires the explicit allowlist and matching client or server provenance', () => {
-		expect( shouldExposeWebMcpAbility( createAbility() ) ).toBe( true );
-		expect( shouldExposeWebMcpAbility( createBlockTreeAbility() ) ).toBe( true );
-		expect( shouldExposeWebMcpAbility( createShowTemplateAbility() ) ).toBe( true );
-		for ( const name of WEBMCP_SERVER_ABILITY_NAMES ) {
-			expect( shouldExposeWebMcpAbility( createServerAbility( name ) ) ).toBe( true );
-		}
-		expect(
-			shouldExposeWebMcpAbility( createAbility( { meta: undefined, callback: jest.fn() } ) )
-		).toBe( true );
-		expect( shouldExposeWebMcpAbility( createAbility( { name: 'big-sky/save-post' } ) ) ).toBe(
-			false
+	it( 'flags consequential tools from the contract, the channel meta, or the destructive annotation', async () => {
+		const harness = createHarness( [
+			createServerAbility( 'wpcom/media-create', {
+				meta: { annotations: { serverRegistered: true, readonly: false } },
+			} ),
+			createAbility( {
+				name: 'other-plugin/publish-post',
+				meta: {
+					webmcp: { public: true, consequential: true },
+					annotations: { clientRegistered: true },
+				},
+			} ),
+			createAbility( {
+				name: 'other-plugin/delete-post',
+				meta: {
+					webmcp: { public: true },
+					annotations: { clientRegistered: true, destructive: true },
+				},
+			} ),
+			createAbility( {
+				name: 'other-plugin/set-panel-tone',
+				meta: {
+					webmcp: { public: true, consequential: 'yes' },
+					annotations: { clientRegistered: true, destructive: false },
+				},
+			} ),
+		] );
+		await harness.adapter.sync();
+
+		const consequential = ( toolName: string ) =>
+			harness.tools.get( toolName )?.annotations.consequentialHint;
+		expect( consequential( 'wpcom__media_create' ) ).toBe( true );
+		expect( consequential( 'other_plugin__publish_post' ) ).toBe( true );
+		expect( consequential( 'other_plugin__delete_post' ) ).toBe( true );
+		expect( consequential( 'other_plugin__set_panel_tone' ) ).toBe( false );
+	} );
+
+	it( 'skips abilities whose tool names collide and warns once', async () => {
+		// eslint-disable-next-line no-console
+		const warn = jest.spyOn( console, 'warn' ).mockImplementation();
+		const createReadAbility = ( name: string ): Ability =>
+			createAbility( {
+				name,
+				meta: {
+					webmcp: { public: true },
+					annotations: { clientRegistered: true, readonly: true },
+				},
+			} );
+		const harness = createHarness( [
+			createReadAbility( 'demo--plugin/read' ),
+			createReadAbility( 'demo/plugin/read' ),
+		] );
+
+		await harness.adapter.sync();
+		await harness.adapter.sync();
+		expect( harness.modelContext.registerTool ).not.toHaveBeenCalled();
+		expect( warn ).toHaveBeenCalledTimes( 1 );
+		expect( warn ).toHaveBeenCalledWith( expect.stringContaining( 'demo__plugin__read' ) );
+
+		harness.setAbilities( [ createReadAbility( 'demo/plugin/read' ) ] );
+		await harness.adapter.sync();
+		expect( harness.tools.has( 'demo__plugin__read' ) ).toBe( true );
+		warn.mockRestore();
+	} );
+
+	it( 'keeps registering other tools when one registration fails', async () => {
+		const harness = createHarness( [ createBlockTreeAbility(), createAbility() ] );
+		( harness.modelContext.registerTool as jest.Mock ).mockRejectedValueOnce(
+			new Error( 'Invalid WebMCP schema' )
 		);
-		expect(
-			shouldExposeWebMcpAbility(
-				createAbility( {
-					meta: { annotations: { serverRegistered: true, clientRegistered: true } },
-				} )
-			)
-		).toBe( false );
-		expect( shouldExposeWebMcpAbility( createServerAbility( 'wpcom/delete-site' ) ) ).toBe( false );
-		expect(
-			shouldExposeWebMcpAbility(
-				createServerAbility( 'wpcom/get-posts', {
-					meta: { annotations: { clientRegistered: true } },
-				} )
-			)
-		).toBe( false );
-		expect(
-			shouldExposeWebMcpAbility(
-				createServerAbility( 'wpcom/get-posts', {
-					meta: { annotations: { serverRegistered: true, readonly: false } },
-				} )
-			)
-		).toBe( false );
-		expect(
-			shouldExposeWebMcpAbility(
-				createServerAbility( 'wpcom/media-create', {
-					meta: { annotations: { serverRegistered: true, readonly: false } },
-				} )
-			)
-		).toBe( true );
-		expect(
-			shouldExposeWebMcpAbility(
-				createAbility( { meta: { annotations: {} }, callback: undefined } )
-			)
-		).toBe( false );
+
+		await expect( harness.adapter.sync() ).rejects.toThrow( 'Invalid WebMCP schema' );
+		expect( harness.tools.has( 'big_sky__apply_block_edits' ) ).toBe( true );
+		expect( harness.tools.has( 'agents_manager__get_block_tree' ) ).toBe( false );
+
+		await expect( harness.adapter.sync() ).resolves.toBeUndefined();
+		expect( harness.tools.has( 'agents_manager__get_block_tree' ) ).toBe( true );
+		expect( harness.modelContext.registerTool ).toHaveBeenCalledTimes( 3 );
+	} );
+
+	it( 'preserves annotations when registration rejects with a TypeError', async () => {
+		const harness = createHarness();
+		const registerTool = jest.mocked( harness.modelContext.registerTool );
+		registerTool.mockRejectedValueOnce( new TypeError( 'Invalid descriptor' ) );
+
+		await expect( harness.adapter.sync() ).rejects.toThrow( 'Invalid descriptor' );
+		expect( registerTool ).toHaveBeenCalledTimes( 1 );
+		expect( harness.tools.size ).toBe( 0 );
+		await harness.adapter.sync();
+		expect( registerTool.mock.calls[ 1 ][ 0 ].annotations ).toEqual(
+			registerTool.mock.calls[ 0 ][ 0 ].annotations
+		);
 	} );
 
 	it( 'registers a server ability with its schema and executes through the provider', async () => {
@@ -177,7 +228,7 @@ describe( 'WebMCP adapter', () => {
 		expect( tool ).toMatchObject( {
 			description: expect.stringContaining( 'Instructions for wpcom/get-posts' ),
 			inputSchema: ability.input_schema,
-			annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true },
+			annotations: { readOnlyHint: true, untrustedContentHint: true, consequentialHint: false },
 		} );
 		await tool?.execute( { fields: 'summary' } );
 		expect( harness.toolProvider.executeAbility ).toHaveBeenCalledWith( 'wpcom/get-posts', {
@@ -203,7 +254,7 @@ describe( 'WebMCP adapter', () => {
 		expect( tool ).toMatchObject( {
 			description: expect.stringContaining( 'agents_manager__get_block_tree' ),
 			inputSchema: { type: 'object', properties: {}, additionalProperties: false },
-			annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true },
+			annotations: { readOnlyHint: false, untrustedContentHint: true, consequentialHint: false },
 		} );
 		await expect( tool?.execute( {} ) ).resolves.toEqual( {
 			result: {
@@ -243,7 +294,7 @@ describe( 'WebMCP adapter', () => {
 				},
 				additionalProperties: false,
 			},
-			annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false },
+			annotations: { readOnlyHint: false, untrustedContentHint: true, consequentialHint: false },
 		} );
 
 		const input = {
@@ -295,7 +346,7 @@ describe( 'WebMCP adapter', () => {
 
 		const readTool = harness.tools.get( 'agents_manager__get_block_tree' );
 		expect( readTool ).toMatchObject( {
-			annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true },
+			annotations: { readOnlyHint: true, untrustedContentHint: true, consequentialHint: false },
 		} );
 		await readTool?.execute( {} );
 
@@ -492,5 +543,117 @@ describe( 'WebMCP adapter', () => {
 		await expect( harness.adapter.sync() ).rejects.toThrow( 'Invalid WebMCP schema' );
 		await expect( harness.adapter.sync() ).resolves.toBeUndefined();
 		expect( harness.modelContext.registerTool ).toHaveBeenCalledTimes( 2 );
+	} );
+	it.each( [
+		{ label: 'Changed label' },
+		{ input_schema: { type: 'object', properties: { count: { type: 'integer' } } } },
+		{ meta: { webmcp: { public: false }, annotations: { clientRegistered: true } } },
+		{ meta: { public: true, annotations: { clientRegistered: true, readonly: false } } },
+	] )( 'rejects a changed definition before dispatch: %j', async ( change ) => {
+		const initial = createBlockTreeAbility();
+		const harness = createHarness( [ initial ] );
+		await harness.adapter.sync();
+		const original = harness.tools.get( 'agents_manager__get_block_tree' )!;
+		harness.setAbilities( [ { ...initial, ...change } ] );
+
+		await expect( original.execute( {} ) ).rejects.toThrow( 'WebMCP tool changed' );
+		expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
+	} );
+
+	it( 'rejects an ability removed before reconciliation', async () => {
+		const harness = createHarness();
+		await harness.adapter.sync();
+		const tool = harness.tools.get( 'big_sky__apply_block_edits' )!;
+		harness.setAbilities( [] );
+
+		await expect( tool.execute( {} ) ).rejects.toThrow( 'WebMCP tool changed' );
+		expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
+	} );
+
+	it( 'rejects cancellation while validating the registered definition', async () => {
+		const harness = createHarness();
+		await harness.adapter.sync();
+		let finishRead: ( abilities: Ability[] ) => void = () => {};
+		jest.mocked( harness.toolProvider.getAbilities ).mockImplementationOnce(
+			() =>
+				new Promise( ( resolve ) => {
+					finishRead = resolve;
+				} )
+		);
+		const controller = new AbortController();
+		const execution = harness.tools
+			.get( 'big_sky__apply_block_edits' )!
+			.execute( {}, { signal: controller.signal } );
+		controller.abort();
+		finishRead( [ createAbility() ] );
+
+		await expect( execution ).rejects.toMatchObject( { name: 'AbortError' } );
+		expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
+	} );
+	it( 'stops registration after disposal while a browser registration is pending', async () => {
+		const harness = createHarness( [ createBlockTreeAbility(), createAbility() ] );
+		let finishRegistration: () => void = () => {};
+		let startedRegistration: () => void = () => {};
+		const started = new Promise< void >( ( resolve ) => {
+			startedRegistration = resolve;
+		} );
+		jest.mocked( harness.modelContext.registerTool ).mockImplementationOnce( () => {
+			startedRegistration();
+			return new Promise< void >( ( resolve ) => {
+				finishRegistration = resolve;
+			} );
+		} );
+		const pending = harness.adapter.sync();
+		await started;
+		const signal = jest.mocked( harness.modelContext.registerTool ).mock.calls[ 0 ][ 1 ]?.signal;
+		harness.adapter.dispose();
+		finishRegistration();
+		await pending;
+
+		expect( signal?.aborted ).toBe( true );
+		expect( harness.modelContext.registerTool ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'does not register a replacement if disposal happens during unregistration', async () => {
+		const harness = createHarness();
+		await harness.adapter.sync();
+		harness.setAbilities( [ createAbility( { label: 'Changed label' } ) ] );
+		harness.modelContext.unregisterTool = jest
+			.fn()
+			.mockImplementationOnce( () => harness.adapter.dispose() );
+		await harness.adapter.sync();
+
+		expect( harness.modelContext.registerTool ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'skips an ability whose descriptor cannot be serialized and keeps registering the others', async () => {
+		const cyclic: Record< string, unknown > = { type: 'object', properties: {} };
+		cyclic.self = cyclic;
+		const broken = createAbility( {
+			name: 'other-plugin/broken-schema',
+			input_schema: cyclic as Ability[ 'input_schema' ],
+			meta: { webmcp: { public: true }, annotations: { clientRegistered: true, readonly: true } },
+		} );
+		const harness = createHarness( [ broken, createBlockTreeAbility(), createAbility() ] );
+
+		await expect( harness.adapter.sync() ).rejects.toThrow( 'other-plugin/broken-schema' );
+		expect( harness.tools.has( 'other_plugin__broken_schema' ) ).toBe( false );
+		expect( harness.tools.has( 'agents_manager__get_block_tree' ) ).toBe( true );
+		expect( harness.tools.has( 'big_sky__apply_block_edits' ) ).toBe( true );
+	} );
+
+	it( 'removes a registered tool whose live descriptor stops being serializable', async () => {
+		const initial = createBlockTreeAbility();
+		const harness = createHarness( [ initial ] );
+		await harness.adapter.sync();
+		const tool = harness.tools.get( 'agents_manager__get_block_tree' )!;
+		const signal = harness.signals.get( 'agents_manager__get_block_tree' );
+		const cyclic: Record< string, unknown > = { type: 'object', properties: {} };
+		cyclic.self = cyclic;
+		harness.setAbilities( [ { ...initial, input_schema: cyclic as Ability[ 'input_schema' ] } ] );
+
+		await expect( tool.execute( {} ) ).rejects.toThrow( 'WebMCP tool changed' );
+		expect( signal?.aborted ).toBe( true );
+		expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
 	} );
 } );
