@@ -1,7 +1,7 @@
 import { JetpackLogo } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useContext, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import pressableIcon from 'calypso/assets/images/a8c-for-agencies/product-logos/pressable.svg';
 import WooLogoColor from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -12,18 +12,24 @@ import {
 } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/incompatible-products';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { PRODUCT_CATEGORY_PRESSABLE_ADDON, PRODUCT_FILTER_KEY_CATEGORIES } from '../../constants';
 import { MarketplaceTypeContext, ShoppingCartContext } from '../../context';
 import { useProductTermAvailabilityTooltip } from '../../hooks/use-marketplace';
 import usePressableAddonVisibility, {
 	canShowPressableAddonsInMarketplace,
 } from '../../hooks/use-pressable-addon-visibility';
-import { SelectedFilters } from '../../lib/product-filter';
+import { filterProductsAndPlans, type SelectedFilters } from '../../lib/product-filter';
 import useProductAndPlansWithPressableVisibility from '../hooks/use-product-and-plans-with-pressable-visibility';
 import { getSupportedBundleSizes } from '../hooks/use-product-bundle-size';
 import useSubmitForm from '../hooks/use-submit-form';
+import { getTitanInboxMockProduct, isTitanInboxMockProduct } from '../lib/titan-inbox-mock';
 import ProductCard from '../product-card';
 import ProductListingEmpty from './empty';
 import ProductListingSection from './section';
+import TitanInboxDomainSelectorModal, {
+	TITAN_INBOX_MOCK_DOMAINS,
+} from './titan-inbox-domain-selector-modal';
+import type { TitanInboxDomain } from './titan-inbox-domain-selector-modal';
 import type { ShoppingCartItem, TermPricingType } from '../../types';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
@@ -57,6 +63,8 @@ export default function ProductListing( {
 
 	const { selectedCartItems, setSelectedCartItems } = useContext( ShoppingCartContext );
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
+	const [ pendingTitanInboxProduct, setPendingTitanInboxProduct ] =
+		useState< APIProductFamilyProduct | null >( null );
 
 	const termAvailabilityTooltip = useProductTermAvailabilityTooltip( termPricing );
 
@@ -90,7 +98,51 @@ export default function ProductListing( {
 		canShowPressableAddonsByMode
 	);
 
-	const isEmptyList = ! filteredProductsAndBundles.length;
+	const titanInboxMockProduct = useMemo(
+		() => getTitanInboxMockProduct( pressableAddons[ 0 ] ),
+		[ pressableAddons ]
+	);
+	const shouldShowTitanInboxMockProduct = useMemo( () => {
+		const selectedCategoryFilters = selectedFilters[ PRODUCT_FILTER_KEY_CATEGORIES ];
+		const hasSelectedCategoryFilter = Object.values( selectedCategoryFilters ).some( Boolean );
+		const canShowForSelectedCategory =
+			! hasSelectedCategoryFilter || selectedCategoryFilters[ PRODUCT_CATEGORY_PRESSABLE_ADDON ];
+
+		if ( ! canShowForSelectedCategory ) {
+			return false;
+		}
+
+		if ( ! filterProductsAndPlans( [ titanInboxMockProduct ], selectedFilters ).length ) {
+			return false;
+		}
+
+		const normalizedSearch = productSearchQuery?.trim().toLowerCase();
+
+		if ( ! normalizedSearch ) {
+			return true;
+		}
+
+		return [
+			titanInboxMockProduct.name,
+			titanInboxMockProduct.slug,
+			'Titan email mailbox Pressable',
+		]
+			.join( ' ' )
+			.toLowerCase()
+			.includes( normalizedSearch );
+	}, [ productSearchQuery, selectedFilters, titanInboxMockProduct ] );
+	const pressableAddonsWithTitanMock = useMemo( () => {
+		if ( ! shouldShowTitanInboxMockProduct ) {
+			return pressableAddons;
+		}
+
+		if ( pressableAddons.some( isTitanInboxMockProduct ) ) {
+			return pressableAddons;
+		}
+
+		return [ ...pressableAddons, titanInboxMockProduct ];
+	}, [ pressableAddons, shouldShowTitanInboxMockProduct, titanInboxMockProduct ] );
+	const isEmptyList = ! filteredProductsAndBundles.length && ! shouldShowTitanInboxMockProduct;
 
 	// Create a ref for `filteredProductsAndBundles` to prevent unnecessary re-renders caused by the `useEffect` hook.
 	const filteredProductsAndBundlesRef = useRef( filteredProductsAndBundles );
@@ -181,6 +233,41 @@ export default function ProductListing( {
 
 	const onSelectOrReplaceProduct = useCallback(
 		( product: APIProductFamilyProduct, replace?: APIProductFamilyProduct ) => {
+			if ( isTitanInboxMockProduct( product ) ) {
+				const isSelectedTitanInbox = selectedCartItems.some(
+					( item ) => item.slug === product.slug
+				);
+
+				if ( isSelectedTitanInbox ) {
+					const selectedTitanInboxItem = selectedCartItems.find(
+						( item ) => item.slug === product.slug
+					);
+
+					setSelectedCartItems(
+						selectedCartItems.filter( ( item ) => item.slug !== product.slug )
+					);
+					dispatch(
+						recordTracksEvent( 'calypso_a4a_marketplace_products_overview_unselect_product', {
+							product: product.slug,
+							quantity: selectedTitanInboxItem?.quantity ?? quantity,
+							purchase_mode: marketplaceType,
+							term_pricing: termPricing,
+						} )
+					);
+					return;
+				}
+
+				setPendingTitanInboxProduct( product );
+				dispatch(
+					recordTracksEvent( 'calypso_a4a_marketplace_titan_inbox_domain_selector_open', {
+						product: product.slug,
+						purchase_mode: marketplaceType,
+						term_pricing: termPricing,
+					} )
+				);
+				return;
+			}
+
 			if ( replace ) {
 				setSelectedCartItems(
 					selectedCartItems.map( ( item ) => {
@@ -225,15 +312,58 @@ export default function ProductListing( {
 		]
 	);
 
+	const handleConfirmTitanInboxDomain = useCallback(
+		( domain: TitanInboxDomain, inboxQuantity: number ) => {
+			if ( ! pendingTitanInboxProduct ) {
+				return;
+			}
+
+			const titanInboxCartItem = {
+				...pendingTitanInboxProduct,
+				name: `${ pendingTitanInboxProduct.name } (${ domain.domain })`,
+				site_domain: domain.domain,
+				titan_inbox_quantity: inboxQuantity,
+				quantity: inboxQuantity,
+			};
+
+			setSelectedCartItems( [
+				...selectedCartItems.filter( ( item ) => item.slug !== pendingTitanInboxProduct.slug ),
+				titanInboxCartItem,
+			] );
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_marketplace_titan_inbox_domain_selected', {
+					product: pendingTitanInboxProduct.slug,
+					quantity: inboxQuantity,
+					purchase_mode: marketplaceType,
+					term_pricing: termPricing,
+					active_inboxes: domain.activeInboxes,
+					allowed_inboxes: domain.allowedInboxes,
+				} )
+			);
+			setPendingTitanInboxProduct( null );
+		},
+		[
+			dispatch,
+			marketplaceType,
+			pendingTitanInboxProduct,
+			selectedCartItems,
+			setSelectedCartItems,
+			termPricing,
+		]
+	);
+
 	const { isReady } = useSubmitForm( { selectedSite, suggestedProductSlugs } );
 
 	const isSelected = useCallback(
-		( slug: string | string[] ) =>
-			selectedCartItems.some(
+		( slug: string | string[] ) => {
+			const slugs = Array.isArray( slug ) ? slug : [ slug ];
+
+			return selectedCartItems.some(
 				( item ) =>
-					( Array.isArray( slug ) ? slug.includes( item.slug ) : item.slug === slug ) &&
-					item.quantity === quantity
-			),
+					slugs.includes( item.slug ) &&
+					( isTitanInboxMockProduct( item ) || item.quantity === quantity )
+			);
+		},
 		[ quantity, selectedCartItems ]
 	);
 
@@ -291,6 +421,11 @@ export default function ProductListing( {
 				( productDoNotHaveSupportedBundles
 					? translate( 'This product does not offer volume discounts.' )
 					: undefined );
+			const selectedTitanInboxQuantity = options.some( isTitanInboxMockProduct )
+				? selectedCartItems.find( ( item ) =>
+						options.some( ( option ) => option.slug === item.slug )
+				  )?.quantity
+				: undefined;
 
 			return (
 				<ProductCard
@@ -309,7 +444,7 @@ export default function ProductListing( {
 					}
 					hideDiscount={ isSingleLicenseView }
 					suggestedProduct={ suggestedProduct }
-					quantity={ productDoNotHaveSupportedBundles ? 1 : quantity }
+					quantity={ productDoNotHaveSupportedBundles ? 1 : selectedTitanInboxQuantity ?? quantity }
 					withCustomCard={ withCustomCard }
 					tooltip={ tooltip }
 					tooltipPosition="bottom"
@@ -393,15 +528,23 @@ export default function ProductListing( {
 				</ProductListingSection>
 			) }
 
-			{ pressableAddons.length > 0 && (
+			{ pressableAddonsWithTitanMock.length > 0 && (
 				<ProductListingSection
 					icon={ <img src={ pressableIcon } width={ 26 } height={ 26 } alt="Pressable" /> }
 					title={ translate( 'Pressable add-ons' ) }
 					description={ translate( 'Increase your plan limits and features with plan add-ons.' ) }
 					stickyHeadingTopOffset={ stickyHeadingTopOffset }
 				>
-					{ getProductCards( pressableAddons ) }
+					{ getProductCards( pressableAddonsWithTitanMock ) }
 				</ProductListingSection>
+			) }
+			{ pendingTitanInboxProduct && (
+				<TitanInboxDomainSelectorModal
+					product={ pendingTitanInboxProduct }
+					domains={ TITAN_INBOX_MOCK_DOMAINS }
+					onClose={ () => setPendingTitanInboxProduct( null ) }
+					onConfirm={ handleConfirmTitanInboxDomain }
+				/>
 			) }
 		</>
 	);
