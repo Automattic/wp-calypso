@@ -1,22 +1,44 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
+import { findAgencyProduct } from './get-product-name';
 import type { AgencyProduct, ReferralPurchase } from '@automattic/api-core';
 
 /**
+ * The catalog lists each product once with both term prices, so the term a
+ * referral was created on comes from which of the product's ids it points at.
+ */
+function getCatalogPrice( product: AgencyProduct, productId: number ) {
+	const isMonthly = [ product.monthly_product_id, product.monthly_alternative_product_id ].includes(
+		productId
+	);
+	if ( isMonthly && product.monthly_price ) {
+		return { amount: product.monthly_price, interval: 'month' };
+	}
+	if ( product.yearly_price ) {
+		return { amount: product.yearly_price, interval: 'year' };
+	}
+	return { amount: product.monthly_price ?? 0, interval: 'month' };
+}
+
+/**
  * Falls back to the catalog price while a referral is unpaid and has no
- * subscription. Unlike the name lookup, this matches on `product_id` alone: the
- * monthly and yearly variants are separate catalog entries with different
- * amounts, so matching a variant ID would report the wrong price.
+ * subscription.
  */
 export function getPurchaseTotal(
 	purchase: ReferralPurchase,
 	products?: AgencyProduct[]
 ): string | null {
-	const product = products?.find( ( item ) => item.product_id === purchase.product_id );
+	let amount = 0;
+	let currency = 'USD';
+	let interval = 'month';
 
-	let amount = Number( product?.amount );
-	let currency = product?.currency ?? 'USD';
-	let interval = product?.price_interval ?? 'month';
+	const product = findAgencyProduct( purchase.product_id, products );
+	if ( product ) {
+		const catalogPrice = getCatalogPrice( product, purchase.product_id );
+		amount = catalogPrice.amount;
+		currency = product.currency;
+		interval = catalogPrice.interval;
+	}
 
 	if ( purchase.subscription?.purchase_price ) {
 		amount = Number( purchase.subscription.purchase_price );
