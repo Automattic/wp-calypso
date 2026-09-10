@@ -19,7 +19,7 @@ const tier = {
 	title: 'Supporter',
 	price: '5',
 	currency: 'USD',
-	interval: '1 month',
+	interval: 'month',
 };
 const secondTier = { ...tier, id: 20, title: 'Founding member', price: '25' };
 

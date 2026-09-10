@@ -26,7 +26,7 @@ const monthlyAnchor = {
 	title: 'Supporter',
 	price: '5',
 	currency: 'USD',
-	interval: '1 month',
+	interval: 'month',
 };
 const yearlyPair = {
 	id: 11,
@@ -34,7 +34,7 @@ const yearlyPair = {
 	title: 'Supporter',
 	price: '50',
 	currency: 'USD',
-	interval: '1 year',
+	interval: 'year',
 };
 const secondTier = {
 	id: 20,
@@ -42,7 +42,7 @@ const secondTier = {
 	title: 'Founding member',
 	price: '25',
 	currency: 'USD',
-	interval: '1 month',
+	interval: 'month',
 };
 
 function cardData( overrides: Partial< SubscribersStepContent > = {} ): SubscribersStepContent {
@@ -68,7 +68,7 @@ describe( 'groupCompTiers', () => {
 
 		expect( tiers ).toHaveLength( 1 );
 		expect( tiers[ 0 ].id ).toBe( 10 );
-		expect( tiers[ 0 ].interval ).toBe( '1 month' );
+		expect( tiers[ 0 ].interval ).toBe( 'month' );
 	} );
 
 	it( 'prefers the anchor even when the yearly entry comes first', () => {
