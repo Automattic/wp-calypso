@@ -152,6 +152,7 @@ export * from './site-staging-sites';
 export * from './site-staging-sync';
 export * from './site-static-file-404';
 export * from './site-stats';
+export * from './site-suggestions';
 export * from './site-themes';
 export * from './site-update-schedules';
 export * from './site-uptime';

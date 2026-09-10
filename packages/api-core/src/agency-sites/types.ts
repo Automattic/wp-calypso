@@ -32,3 +32,10 @@ export interface ProvisionAgencySiteParams {
 	primary_data_center?: string;
 	is_fully_managed_agency_site?: boolean;
 }
+
+/**
+ * Whether a `.wordpress.com` address is free for the agency to claim.
+ */
+export interface AgencySiteAddressValidation {
+	valid: boolean;
+}

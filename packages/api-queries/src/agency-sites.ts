@@ -2,6 +2,7 @@ import {
 	fetchAgencySitesWithPlugins,
 	fetchPendingAgencySites,
 	provisionAgencySite,
+	validateAgencySiteAddress,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import type { ProvisionAgencySiteParams } from '@automattic/api-core';
@@ -31,4 +32,14 @@ export const provisionAgencySiteMutation = ( agencyId: number ) =>
 	mutationOptions( {
 		meta: { statId: 'agcy-site-provision' },
 		mutationFn: ( params: ProvisionAgencySiteParams ) => provisionAgencySite( agencyId, params ),
+	} );
+
+/**
+ * Whether the agency can claim `{siteName}.wordpress.com`. Keyed by name so a
+ * form that returns to an address it already checked does not ask again.
+ */
+export const agencySiteAddressValidationQuery = ( agencyId: number, siteName: string ) =>
+	queryOptions( {
+		queryKey: [ 'agency', agencyId, 'validate-site-address', siteName ] as const,
+		queryFn: () => validateAgencySiteAddress( agencyId, siteName ),
 	} );
