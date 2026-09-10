@@ -189,6 +189,14 @@ const attributesFor = ( item: NavigationItemInput ) => ( {
 function withBothHalves( record: Record< string, unknown > ): Record< string, unknown > {
 	const { blocks, content } = record;
 
+	// The schema allows a null `content` for other records; on a menu it would
+	// persist nothing while the editor keeps its blocks.
+	if ( content === null ) {
+		throw new Error(
+			'content cannot be null on a navigation menu. Send navigationItems to rewrite it.'
+		);
+	}
+
 	if ( blocks !== undefined ) {
 		if ( ! Array.isArray( blocks ) ) {
 			throw new Error( 'blocks must be an array of navigation blocks.' );
