@@ -8,6 +8,7 @@ import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
+import { useNoticeRecordQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import usePremiumAnalyticsStatusMutation from 'calypso/my-sites/stats/hooks/use-premium-analytics-status-mutation';
 import {
 	PREMIUM_ANALYTICS_ENABLED_SETTING,
@@ -17,8 +18,8 @@ import { trackPremiumAnalyticsPreviewEvent } from '../premium-analytics-preview/
 import { StatsNoticeProps } from './types';
 
 const DAY_IN_SECONDS = 24 * 3600;
-// The notices endpoint decides when a postponed invitation stops coming back; the client only
-// says how long each one lasts.
+// The client owns the schedule: the server only counts postponements. The first dismissal holds
+// the invitation back for this long and it returns once; the next one is for good.
 const DISMISSAL_POSTPONEMENT = 30 * DAY_IN_SECONDS;
 
 const NoticeContainer = ( {
@@ -46,6 +47,8 @@ const PremiumAnalyticsPreviewNotice = ( {
 	// `is_running_in_jetpack_site` and false in a Simple site's wp-admin. That prop still decides
 	// where support lives, because it says which API the site answers on.
 	const isOdyssey = config.isEnabled( 'is_odyssey' );
+	const { data: noticeRecord } = useNoticeRecordQuery( siteId, 'premium_analytics_preview' );
+	const postponedCount = noticeRecord?.postponed_count ?? 0;
 	const trackEvent = ( name: string, properties: Record< string, unknown > = {} ) =>
 		trackPremiumAnalyticsPreviewEvent( 'notice', name, siteId, properties );
 	// Scoped to the site rather than held as a flag: the notices host reuses this component across
@@ -71,19 +74,22 @@ const PremiumAnalyticsPreviewNotice = ( {
 	const { mutateAsync: enablePreviewAsync, isPending: isEnabling } =
 		usePremiumAnalyticsStatusMutation( siteId );
 
-	const { mutateAsync: postponeNoticeAsync } = useNoticeVisibilityMutation(
+	const { mutateAsync: recordDismissalAsync } = useNoticeVisibilityMutation(
 		siteId,
-		'premium_analytics_preview',
-		'postponed',
-		DISMISSAL_POSTPONEMENT
+		'premium_analytics_preview'
 	);
 
 	const dismissNotice = () => {
-		trackEvent( 'dismissed' );
+		trackEvent( 'dismissed', { postponed_count: postponedCount } );
 		setDismissedSiteId( siteId );
 
-		// Best-effort: the local state above already hides the notice for this session.
-		postponeNoticeAsync().catch( () => {} );
+		// Best-effort past the mutation's own retry: local state already hides it for this session,
+		// and a lost write only re-offers the same step on the next load, so nothing is surfaced.
+		recordDismissalAsync(
+			postponedCount === 0
+				? { status: 'postponed', postponedFor: DISMISSAL_POSTPONEMENT }
+				: { status: 'dismissed' }
+		).catch( () => {} );
 	};
 
 	// Neither the confirmation nor a failed attempt is a rejection, so closing those records
@@ -111,9 +117,8 @@ const PremiumAnalyticsPreviewNotice = ( {
 			// for saying yes.
 			//
 			// Deliberately no dismissal here. An enabled site already fails the eligibility rule, so
-			// the invitation is gone on the next load either way — and recording one would refetch
-			// the notices, which now answers "dismissed" and unmounts this notice mid-sentence,
-			// taking the link with it.
+			// the invitation is gone on the next load either way — and recording one marks the
+			// notice hidden, which unmounts this notice mid-sentence, taking the link with it.
 			setEnabledSiteId( siteId );
 		} catch {
 			shouldRestoreFocus.current = true;
@@ -139,9 +144,11 @@ const PremiumAnalyticsPreviewNotice = ( {
 
 	useEffect( () => {
 		if ( ! noticeDismissed ) {
-			trackPremiumAnalyticsPreviewEvent( 'notice', 'viewed', siteId );
+			trackPremiumAnalyticsPreviewEvent( 'notice', 'viewed', siteId, {
+				postponed_count: postponedCount,
+			} );
 		}
-	}, [ noticeDismissed, siteId ] );
+	}, [ noticeDismissed, siteId, postponedCount ] );
 
 	if ( noticeDismissed ) {
 		return null;

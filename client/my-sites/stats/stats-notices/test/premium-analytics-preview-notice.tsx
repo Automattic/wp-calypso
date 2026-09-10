@@ -28,14 +28,21 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: ( ...args: unknown[] ) => mockRecordTracksEvent( ...args ),
 } ) );
 
-const mockPostponeNotice = jest.fn();
+const mockRecordDismissal = jest.fn();
 const mockUseNoticeVisibilityMutation = jest.fn();
 jest.mock( 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation', () => ( {
 	__esModule: true,
 	default: ( ...args: unknown[] ) => {
 		mockUseNoticeVisibilityMutation( ...args );
-		return { mutateAsync: mockPostponeNotice };
+		return { mutateAsync: mockRecordDismissal };
 	},
+} ) );
+
+let mockPostponedCount = 0;
+jest.mock( 'calypso/my-sites/stats/hooks/use-notice-visibility-query', () => ( {
+	useNoticeRecordQuery: () => ( {
+		data: { show: true, status: null, postponed_count: mockPostponedCount, next_show_at: null },
+	} ),
 } ) );
 
 const mockEnablePreview = jest.fn();
@@ -63,9 +70,10 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		Object.keys( mockFlags() ).forEach( ( flag ) => delete mockFlags()[ flag ] );
-		mockPostponeNotice.mockResolvedValue( undefined );
+		mockRecordDismissal.mockResolvedValue( undefined );
 		mockEnablePreview.mockResolvedValue( true );
 		mockIsEnabling = false;
+		mockPostponedCount = 0;
 		Object.defineProperty( window, 'location', { value: { href: '' }, writable: true } );
 	} );
 
@@ -83,14 +91,21 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		);
 	} );
 
-	it( 'records exactly one impression', () => {
+	it( 'records exactly one impression, stamped with the showing it belongs to', () => {
+		mockPostponedCount = 1;
+
 		renderNotice();
 
 		expect(
 			mockRecordTracksEvent.mock.calls.filter(
 				( [ name ] ) => name === 'calypso_stats_premium_analytics_preview_notice_viewed'
 			)
-		).toHaveLength( 1 );
+		).toEqual( [
+			[
+				'calypso_stats_premium_analytics_preview_notice_viewed',
+				{ blog_id: 123, postponed_count: 1 },
+			],
+		] );
 	} );
 
 	it( 'enables the dashboard and offers a link into it, without navigating', async () => {
@@ -135,9 +150,9 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 	} );
 
 	/**
-	 * Recording a dismissal refetches the notices, which then answers "dismissed" and unmounts this
-	 * notice - taking the link with it before anyone can follow it. An enabled site already fails
-	 * the eligibility rule, so the invitation is gone on the next load without one.
+	 * Recording a dismissal marks the notice hidden, which unmounts this notice - taking the link
+	 * with it before anyone can follow it. An enabled site already fails the eligibility rule, so
+	 * the invitation is gone on the next load without one.
 	 */
 	it( 'does not record a dismissal when the invitation is accepted', async () => {
 		renderNotice();
@@ -147,12 +162,12 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		expect(
 			await screen.findByRole( 'link', { name: 'Go to the new Traffic tab' } )
 		).toBeVisible();
-		expect( mockPostponeNotice ).not.toHaveBeenCalled();
+		expect( mockRecordDismissal ).not.toHaveBeenCalled();
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
 
 		expect( screen.queryByText( 'The new Traffic tab is on' ) ).not.toBeInTheDocument();
-		expect( mockPostponeNotice ).not.toHaveBeenCalled();
+		expect( mockRecordDismissal ).not.toHaveBeenCalled();
 	} );
 
 	it( 'offers a retry and a way to reach support when the write fails', async () => {
@@ -202,7 +217,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
 
 		expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument();
-		expect( mockPostponeNotice ).not.toHaveBeenCalled();
+		expect( mockRecordDismissal ).not.toHaveBeenCalled();
 	} );
 
 	it( 'records why an enable failed, so uptake can be told from breakage', async () => {
@@ -255,9 +270,9 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
 			'jetpack_odyssey_stats_premium_analytics_preview_notice_dismissed',
-			{ blog_id: 123 }
+			{ blog_id: 123, postponed_count: 0 }
 		);
-		expect( mockPostponeNotice ).toHaveBeenCalled();
+		expect( mockRecordDismissal ).toHaveBeenCalled();
 	} );
 
 	it( 'keeps the Calypso container class out of wp-admin', () => {
@@ -269,25 +284,64 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 	} );
 
 	/**
-	 * The client only says how long a dismissal lasts. Whether a repeat dismissal ends the invitation
-	 * for good is the notices endpoint's call, so there is no count kept here.
+	 * The client owns the schedule; the server only counts. A first dismissal is a 30-day hold, and
+	 * the one after the invitation has come back is for good.
 	 */
-	it( 'holds the invitation back for a month on dismissal', async () => {
+	it( 'holds the invitation back for a month on the first dismissal', async () => {
 		renderNotice();
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
 
 		expect( mockUseNoticeVisibilityMutation ).toHaveBeenCalledWith(
 			123,
-			'premium_analytics_preview',
-			'postponed',
-			THIRTY_DAYS
+			'premium_analytics_preview'
 		);
-		expect( mockPostponeNotice ).toHaveBeenCalledTimes( 1 );
+		expect( mockRecordDismissal ).toHaveBeenCalledTimes( 1 );
+		expect( mockRecordDismissal ).toHaveBeenCalledWith( {
+			status: 'postponed',
+			postponedFor: THIRTY_DAYS,
+		} );
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_stats_premium_analytics_preview_notice_dismissed',
-			{ blog_id: 123 }
+			{ blog_id: 123, postponed_count: 0 }
 		);
+	} );
+
+	it( 'dismisses the invitation for good once it has already come back', async () => {
+		mockPostponedCount = 1;
+
+		renderNotice();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
+
+		expect( mockRecordDismissal ).toHaveBeenCalledTimes( 1 );
+		expect( mockRecordDismissal ).toHaveBeenCalledWith( { status: 'dismissed' } );
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_stats_premium_analytics_preview_notice_dismissed',
+			{ blog_id: 123, postponed_count: 1 }
+		);
+	} );
+
+	it( 'hides the invitation before the write is answered', async () => {
+		let settle: () => void = () => {};
+		mockRecordDismissal.mockReturnValue(
+			new Promise< void >( ( resolve ) => ( settle = resolve ) )
+		);
+
+		renderNotice();
+		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
+
+		expect( screen.queryByText( 'Try the new Traffic tab' ) ).not.toBeInTheDocument();
+		settle();
+	} );
+
+	it( 'stays hidden when the write fails', async () => {
+		mockRecordDismissal.mockRejectedValue( new Error( 'nope' ) );
+
+		renderNotice();
+		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
+
+		expect( screen.queryByText( 'Try the new Traffic tab' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'does not hide the notice for a different site after a dismissal', async () => {
