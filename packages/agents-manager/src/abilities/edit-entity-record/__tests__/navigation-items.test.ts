@@ -177,6 +177,14 @@ describe( 'raw menu edits', () => {
 
 		expect( built.blocks ).toHaveLength( 1 );
 	} );
+
+	// The schema allows a null `content` for other records; on a menu it would
+	// persist nothing while the editor kept its blocks.
+	it( 'refuses null content', async () => {
+		await expect( buildNavigationItems( 10, { content: null } ) ).rejects.toThrow(
+			'content cannot be null'
+		);
+	} );
 } );
 
 // Listing a child at the top level moves it: keeping it nested *and* placing it
