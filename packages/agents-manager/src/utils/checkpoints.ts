@@ -426,6 +426,18 @@ function dropUnrecordedDomains( id: string ): void {
 	records.set( id, { ...checkpoint, checkpointKeys: checkpointKeysLeft } );
 }
 
+/** A repeat may reach domains the first run dropped as unrecorded, so it claims them again. */
+function redeclareDomains( id: string, keys: string[] ): void {
+	const checkpoint = records.get( id );
+
+	if ( checkpoint ) {
+		records.set( id, {
+			...checkpoint,
+			checkpointKeys: [ ...new Set( [ ...checkpoint.checkpointKeys, ...keys ] ) ],
+		} );
+	}
+}
+
 /**
  * Runs an ability's write under a checkpoint keyed by its tool call, so
  * `restore-checkpoint` can undo it. The first snapshot for a call wins — a
@@ -460,12 +472,14 @@ export async function withCheckpoint< T >(
 
 	if ( created ) {
 		setCheckpoint( checkpointId, keys, { toolId, summary } );
+	} else if ( checkpointId ) {
+		redeclareDomains( checkpointId, keys );
 	}
 
 	try {
 		const result = await write( checkpointId ? createRecorder( checkpointId ) : NO_RECORDER );
 
-		if ( created ) {
+		if ( checkpointId ) {
 			dropUnrecordedDomains( checkpointId );
 		}
 

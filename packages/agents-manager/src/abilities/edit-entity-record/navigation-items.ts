@@ -29,8 +29,15 @@ export interface NavigationItemInput {
 	items?: NavigationItemInput[];
 }
 
-const isOptional = ( value: unknown, type: 'string' | 'boolean' ) =>
-	value === undefined || typeof value === type;
+// Absent, or a string with something in it: an empty one names nothing and
+// would clear what it landed on.
+const isOptionalText = ( value: unknown ) =>
+	value === undefined || ( typeof value === 'string' && value !== '' );
+
+const isOptionalId = ( value: unknown ) =>
+	value === undefined ||
+	( typeof value === 'number' && value > 0 ) ||
+	( typeof value === 'string' && value !== '' );
 
 /**
  * The schema validates nothing below the first level, and the callback runs on
@@ -43,13 +50,13 @@ const isNavigationItemInput = ( value: unknown ): value is NavigationItemInput =
 		value.label !== undefined ||
 		value.url !== undefined ||
 		value.id !== undefined ) &&
-	isOptional( value.clientId, 'string' ) &&
-	isOptional( value.label, 'string' ) &&
-	isOptional( value.url, 'string' ) &&
-	isOptional( value.kind, 'string' ) &&
-	isOptional( value.type, 'string' ) &&
-	isOptional( value.opensInNewTab, 'boolean' ) &&
-	( value.id === undefined || typeof value.id === 'number' || typeof value.id === 'string' ) &&
+	isOptionalText( value.clientId ) &&
+	isOptionalText( value.label ) &&
+	isOptionalText( value.url ) &&
+	isOptionalText( value.kind ) &&
+	isOptionalText( value.type ) &&
+	isOptionalId( value.id ) &&
+	( value.opensInNewTab === undefined || typeof value.opensInNewTab === 'boolean' ) &&
 	( value.items === undefined || Array.isArray( value.items ) );
 
 /**
@@ -61,8 +68,8 @@ function checkItems( items: unknown[], where: string ): NavigationItemInput[] {
 	if ( ! items.every( isNavigationItemInput ) ) {
 		throw new Error(
 			`Invalid navigation items ${ where }: each entry must be an object naming a clientId, ` +
-				'label, url or id — strings, or a number for the id — with any kind and type as ' +
-				'strings, opensInNewTab as a boolean, and items as an array.'
+				'label, url or id — non-empty strings, or a positive number for the id — with any ' +
+				'kind and type as strings, opensInNewTab as a boolean, and items as an array.'
 		);
 	}
 
