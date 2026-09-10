@@ -89,24 +89,13 @@ const childrenOf = ( item: NavigationItemInput ): NavigationItemInput[] | undefi
  */
 const CLAIM_TIERS = [ [ 'clientId' ], [ 'id' ], [ 'url' ], [ 'label' ] ] as const;
 
-// TODO (ability-migration): Big Sky's page structure hands the agent short block
-// ids and keeps the map to editor clientIds in its store. Until that context
-// migrates, this is the only way back; an unknown id is taken as an editor's.
-const toEditorClientId = ( id: string ): string =>
-	(
-		select( PROVIDER_STORE ) as
-			| { getFullPageStructure?: () => { clientIdMap?: Record< string, string > } }
-			| undefined
-	 )?.getFullPageStructure?.()?.clientIdMap?.[ id ] ?? id;
-
 /**
  * The identity keys a menu item can be addressed by, most specific first.
  *
  * One definition for both sides: the keys an input claims and the keys a block
- * offers must be formed identically, or a lookup silently misses. A clientId is
- * the editor's own, resolved before it gets here. An id is qualified by its
- * type — a category can carry the same number as a page — and a bare id means
- * a page, which is what the schema offers.
+ * offers must be formed identically, or a lookup silently misses. An id is
+ * qualified by its type — a category can carry the same number as a page — and
+ * a bare id means a page, which is what the schema offers.
  */
 const identityKeys = ( {
 	clientId,
@@ -127,6 +116,39 @@ const identityKeys = ( {
 		url && `url:${ url }`,
 		label && `label:${ label }`,
 	].filter( ( key ): key is string => !! key );
+
+interface PageStructure {
+	clientIdMap?: Record< string, string >;
+	navigationItemMap?: Record< string, { attributes?: Record< string, unknown > } >;
+}
+
+// TODO (ability-migration): Big Sky's page structure hands the agent short block
+// ids, and its store keeps what they stood for — the editor's clientId, and a
+// menu item's attributes. Until that context migrates, this is the way back.
+const pageStructure = (): PageStructure | undefined =>
+	(
+		select( PROVIDER_STORE ) as { getFullPageStructure?: () => PageStructure } | undefined
+	 )?.getFullPageStructure?.();
+
+/**
+ * The identities an input can claim: its own, plus what the page structure
+ * recorded under its short id — the editor's clientId, and the item's
+ * attributes. So an item named only by a short id still resolves by label, url
+ * or page id once the editor has re-created its blocks. An id the structure
+ * does not know is taken as an editor clientId.
+ */
+const identitiesOf = ( item: NavigationItemInput ): string[] => {
+	const structure = pageStructure();
+	const recorded = item.clientId
+		? structure?.navigationItemMap?.[ item.clientId ]?.attributes
+		: undefined;
+
+	return identityKeys( {
+		...recorded,
+		...item,
+		clientId: item.clientId && ( structure?.clientIdMap?.[ item.clientId ] ?? item.clientId ),
+	} );
+};
 
 /**
  * Indexes the menu by every identity its items can be addressed with.
@@ -166,12 +188,7 @@ const takeExisting = (
 	taken: Set< NavigationBlock >,
 	tier: readonly string[]
 ): NavigationBlock | undefined => {
-	const identities = identityKeys( {
-		...item,
-		clientId: item.clientId && toEditorClientId( item.clientId ),
-	} );
-
-	for ( const identity of identities ) {
+	for ( const identity of identitiesOf( item ) ) {
 		if ( ! tier.some( ( kind ) => identity.startsWith( `${ kind }:` ) ) ) {
 			continue;
 		}
