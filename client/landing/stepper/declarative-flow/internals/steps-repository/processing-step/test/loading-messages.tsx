@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import { dispatch } from '@wordpress/data';
 import React from 'react';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -22,9 +22,6 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 	useSiteData: () => ( { siteSlug: 'example.wordpress.com' } ),
 } ) );
-// Freeze the carousel on its first message: these tests assert which list is
-// selected, not the rotation (covered by the use-loading-message-index suite).
-jest.mock( 'calypso/lib/interval', () => ( { useInterval: () => undefined } ) );
 jest.mock( '../hooks/use-processing-loading-messages', () => ( {
 	useProcessingLoadingMessages: () => [
 		{ title: 'Default first step', duration: 2000 },
@@ -34,35 +31,47 @@ jest.mock( '../hooks/use-processing-loading-messages', () => ( {
 
 type ProcessingStepProps = React.ComponentProps< typeof ProcessingStep >;
 
+const TITLE_DELAY_MS = 1000;
+
 describe( 'ProcessingStep loading-carousel accepts-props', () => {
 	// The onboard store is shared across tests in this file; a completed run would
 	// otherwise leave the next render with nothing to show.
 	beforeEach( () => {
+		jest.useFakeTimers();
 		( dispatch( ONBOARD_STORE ) as OnboardActions ).resetOnboardStore();
 	} );
 
-	const render = ( props = {} ) =>
-		renderStep(
+	afterEach( () => {
+		jest.useRealTimers();
+	} );
+
+	const render = ( props = {} ) => {
+		const rendered = renderStep(
 			<ProcessingStep
 				{ ...( mockStepProps( { flow: ONBOARDING_FLOW, ...props } ) as ProcessingStepProps ) }
 			/>
 		);
 
-	it( 'renders the default per-flow carousel when no loadingMessages prop is passed', async () => {
+		act( () => void jest.advanceTimersByTime( TITLE_DELAY_MS ) );
+
+		return rendered;
+	};
+
+	it( 'renders the default per-flow carousel when no loadingMessages prop is passed', () => {
 		render();
 
-		expect( await screen.findByText( 'Default first step' ) ).toBeVisible();
+		expect( screen.getByText( 'Default first step' ) ).toBeVisible();
 	} );
 
-	it( 'renders the flow-provided loadingMessages override instead of the default', async () => {
+	it( 'renders the flow-provided loadingMessages override instead of the default', () => {
 		render( {
 			loadingMessages: [
-				{ title: 'Custom first step', duration: 1000 },
+				{ title: 'Custom first step', duration: 2000 },
 				{ title: 'Custom second step' },
 			],
 		} );
 
-		expect( await screen.findByText( 'Custom first step' ) ).toBeVisible();
+		expect( screen.getByText( 'Custom first step' ) ).toBeVisible();
 		expect( screen.queryByText( 'Default first step' ) ).not.toBeInTheDocument();
 	} );
 } );
