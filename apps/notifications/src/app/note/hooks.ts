@@ -37,7 +37,7 @@ export function useNoteNavigation( {
 		| number[]
 		| undefined;
 
-	const filter = getFilters()[ filterName ] ?? getPremadeFilter( filterName )!;
+	const filter = getFilters()[ filterName ] ?? getPremadeFilter( filterName ) ?? getFilters().all;
 
 	// Walk the same notes the list renders — the server's id list for this view, or the
 	// whole store before its first fetch. The store is shared, so another view's fetch

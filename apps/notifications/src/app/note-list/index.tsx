@@ -51,7 +51,9 @@ type NoteListProps = {
 };
 
 const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListProps ) => {
-	const filter = getFilters()[ filterName ] ?? getPremadeFilter( filterName )!;
+	// Falls back to All rather than asserting: a name that is neither a built-in filter
+	// nor a premade view would otherwise throw while rendering the list.
+	const filter = getFilters()[ filterName ] ?? getPremadeFilter( filterName ) ?? getFilters().all;
 	const isAllTab = filterName === 'all';
 	const allNotes = useSelector( ( state ) => getAllNotes( state ) || [] ) as Note[];
 	// This tab's cached id list, keyed by tab name, or undefined until its first
@@ -67,7 +69,8 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	// Everything the render needs that depends on which tab is active, derived in
 	// one place so the All-vs-filtered split lives here and nowhere else.
 	const tab = useMemo( () => {
-		const { filter: matches } = getFilters()[ filterName ] ?? getPremadeFilter( filterName )!;
+		const { filter: matches } =
+			getFilters()[ filterName ] ?? getPremadeFilter( filterName ) ?? getFilters().all;
 
 		// Every tab renders the server's id list for its own view, All included: the
 		// store is shared, so a filtered view's fetch can leave notes in it that fall
