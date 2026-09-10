@@ -20,6 +20,10 @@
 		background: linear-gradient( to right, transparent, var( --dashboard__background-color ) );
 		pointer-events: none;
 	}
+
+	html[dir='rtl'] &::after {
+		background: linear-gradient( to left, transparent, var( --dashboard__background-color ) ) #{'/*rtl:ignore*/'};
+	}
 }
 
 .dashboard-marketplace-products__tiles {

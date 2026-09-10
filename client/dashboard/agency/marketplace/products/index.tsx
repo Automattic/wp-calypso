@@ -11,7 +11,6 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
-	Spinner,
 	__experimentalGrid as Grid,
 	__experimentalHStack as HStack,
 	__experimentalSpacer as Spacer,
@@ -58,6 +57,7 @@ import { isFreeProduct } from './lib/product-pricing';
 import { getProductSearchText } from './lib/product-search';
 import { WOOPAYMENTS_PRODUCT_SLUG } from './lib/product-slugs';
 import ProductCard, { getCartActionLabel, getWooPaymentsCardCopy } from './product-card';
+import ProductCardSkeleton from './product-card-skeleton';
 import ProductDetailsModal from './product-details-modal';
 import { useShoppingCart } from './use-shopping-cart';
 import type { CategoryTileValue } from './category-tiles';
@@ -418,9 +418,11 @@ export default function MarketplaceProducts() {
 				</DataViews>
 			</div>
 			{ isLoading && (
-				<HStack justify="center">
-					<Spinner />
-				</HStack>
+				<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap={ 6 }>
+					{ Array.from( { length: 4 }, ( _, index ) => (
+						<ProductCardSkeleton key={ index } />
+					) ) }
+				</Grid>
 			) }
 			{ ! isLoading && sections.length === 0 && (
 				<VStack spacing={ 1 }>
