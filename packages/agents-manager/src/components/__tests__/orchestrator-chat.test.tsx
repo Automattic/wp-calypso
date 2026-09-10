@@ -453,6 +453,7 @@ import {
 	getBlockingMove,
 	startNewUserRequest,
 } from '../../utils/canvas-binding';
+import { bindToEditorPath } from '../../utils/canvas-guard';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import OrchestratorChat from '../orchestrator-chat';
 
@@ -3745,6 +3746,46 @@ describe( 'OrchestratorChat', () => {
 
 			expect( abortCurrentRequest ).toHaveBeenCalledTimes( 1 );
 			expect( getBlockingMove() ).toEqual( { from: 'Contact', to: 'About' } );
+		} );
+
+		it( 'does not abort when the agent leaves the page it is deleting', () => {
+			// `edit-entity-record` routes the editor off the page on screen before
+			// deleting it, through the navigate callback rather than the ability — so
+			// it hands the binding over itself, or its own move reads as the user
+			// leaving and aborts the turn that asked for the delete.
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest, addMessage } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+
+			// Leaving About for the front page, Contact.
+			bindToEditorPath( '/page/9' );
+			openPage( CONTACT_PAGE );
+			// The delete's tool result, sent from the front page.
+			bindToOpenCanvas();
+
+			expect( abortCurrentRequest ).not.toHaveBeenCalled();
+			expect( addMessage ).not.toHaveBeenCalled();
+
+			// The user leaving afterwards is still caught.
+			openPage( ABOUT_PAGE );
+
+			expect( abortCurrentRequest ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'does not abort when the agent leaves for the pages list before deleting', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { abortCurrentRequest, addMessage } = mockUseAgentChat();
+
+			render( chat() );
+			bindToOpenCanvas();
+
+			bindToEditorPath( 'all-pages' );
+			openPage( null );
+
+			expect( abortCurrentRequest ).not.toHaveBeenCalled();
+			expect( addMessage ).not.toHaveBeenCalled();
 		} );
 
 		it( 'does not abort a new message sent after navigating between turns', async () => {
