@@ -11,7 +11,7 @@ import {
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { sprintf, __ } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { getPHPVersions } from 'calypso/data/php-versions';
 import { useAnalytics } from '../../../app/analytics';
@@ -51,24 +51,19 @@ function AddressField( { siteAddress }: { siteAddress: SiteAddress } ) {
 		help = __( 'Checking availability…' );
 	} else if ( siteAddress.isTaken ) {
 		help = alternative
-			? createInterpolateElement(
-					sprintf(
-						/* translators: %s is a site address that is free to use, e.g. myagency2. */
-						__( 'Sorry, that address is taken. How about <suggestion>%s</suggestion>?' ),
-						alternative
+			? createInterpolateElement( __( 'Sorry, that address is taken. How about <suggestion />?' ), {
+					suggestion: (
+						<Button
+							variant="link"
+							onClick={ () => {
+								recordTracksEvent( 'calypso_a4a_create_site_config_suggested_name' );
+								siteAddress.setAddress( alternative );
+							} }
+						>
+							{ alternative }
+						</Button>
 					),
-					{
-						suggestion: (
-							<Button
-								variant="link"
-								onClick={ () => {
-									recordTracksEvent( 'calypso_a4a_create_site_config_suggested_name' );
-									siteAddress.setAddress( alternative );
-								} }
-							/>
-						),
-					}
-			  )
+			  } )
 			: __( 'Sorry, that address is taken.' );
 	}
 
