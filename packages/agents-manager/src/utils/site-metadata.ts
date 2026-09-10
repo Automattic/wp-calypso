@@ -1,5 +1,6 @@
 import { dispatch, select } from '@wordpress/data';
 import { isRecord } from './is-record';
+import { PROVIDER_STORE } from './provider-store';
 import { getSiteRecord, saveSiteFields, SITE_RECORD_UNAVAILABLE } from './site-record';
 
 /**
@@ -17,9 +18,6 @@ const METADATA_FIELD = 'big_sky_site_metadata';
 
 // Runtime-only, and never persisted alongside the rest.
 const RUNTIME_KEY = 'mode';
-
-// Big Sky's wp.data store, unregistered where its app is not mounted.
-const PROVIDER_STORE = 'ai-assembler';
 
 const parseMetadata = ( value: unknown ): SiteMetadata => {
 	if ( isRecord( value ) ) {

@@ -1,4 +1,5 @@
 import { createBlock, parse, serialize } from '@wordpress/blocks';
+import { select } from '@wordpress/data';
 import { isRecord } from '../../utils/is-record';
 import {
 	NAVIGATION_LINK_BLOCK,
@@ -6,17 +7,19 @@ import {
 	readMenuItems,
 	type NavigationBlock,
 } from '../../utils/navigation-menu';
+import { PROVIDER_STORE } from '../../utils/provider-store';
 
 /**
  * Rebuilds a menu from the final item list the agent asks for.
  *
  * The agent sends `navigationItems` — the menu as it should end up — and each
- * item names an existing one by its `label`, `url` or page `id`. Reordering the
- * list reorders the menu, omitting an item removes it, and an item with a label
- * or url that matches nothing is added.
+ * item names an existing one by its `clientId`, `label`, `url` or page `id`.
+ * Reordering the list reorders the menu, omitting an item removes it, and an
+ * item with a label or url that matches nothing is added.
  */
 
 export interface NavigationItemInput {
+	clientId?: string;
 	label?: string;
 	url?: string;
 	id?: number | string;
@@ -36,7 +39,11 @@ const isOptional = ( value: unknown, type: 'string' | 'boolean' ) =>
  */
 const isNavigationItemInput = ( value: unknown ): value is NavigationItemInput =>
 	isRecord( value ) &&
-	( value.label !== undefined || value.url !== undefined || value.id !== undefined ) &&
+	( value.clientId !== undefined ||
+		value.label !== undefined ||
+		value.url !== undefined ||
+		value.id !== undefined ) &&
+	isOptional( value.clientId, 'string' ) &&
 	isOptional( value.label, 'string' ) &&
 	isOptional( value.url, 'string' ) &&
 	isOptional( value.kind, 'string' ) &&
@@ -53,9 +60,9 @@ const isNavigationItemInput = ( value: unknown ): value is NavigationItemInput =
 function checkItems( items: unknown[], where: string ): NavigationItemInput[] {
 	if ( ! items.every( isNavigationItemInput ) ) {
 		throw new Error(
-			`Invalid navigation items ${ where }: each entry must be an object naming a label, ` +
-				'url or id — strings, or a number for the id — with any kind and type as strings, ' +
-				'opensInNewTab as a boolean, and items as an array.'
+			`Invalid navigation items ${ where }: each entry must be an object naming a clientId, ` +
+				'label, url or id — strings, or a number for the id — with any kind and type as ' +
+				'strings, opensInNewTab as a boolean, and items as an array.'
 		);
 	}
 
@@ -69,11 +76,22 @@ const childrenOf = ( item: NavigationItemInput ): NavigationItemInput[] | undefi
 /**
  * Claim order, least ambiguous first.
  *
- * A page id names one block; a url or a label can name several, so they claim
- * only what the tiers above have left. Otherwise an input naming a shared url
- * takes the block that a later, unambiguous id needed.
+ * A clientId or a page id names one block; a url or a label can name several,
+ * so they claim only what the tiers above have left. Otherwise an input naming
+ * a shared url takes the block that a later, unambiguous id needed.
  */
-const CLAIM_TIERS = [ [ 'id' ], [ 'url' ], [ 'label' ] ] as const;
+const CLAIM_TIERS = [ [ 'clientId' ], [ 'id' ], [ 'url' ], [ 'label' ] ] as const;
+
+// TODO (ability-migration): the page structure Big Sky sends the agent carries
+// short block ids, and the map back to the editor's clientIds lives in its
+// store. Until that context migrates, this is the only way to read them back;
+// an id the map does not know is taken as the editor's own.
+const toEditorClientId = ( id: string ): string =>
+	(
+		select( PROVIDER_STORE ) as
+			| { getFullPageStructure?: () => { clientIdMap?: Record< string, string > } }
+			| undefined
+	 )?.getFullPageStructure?.()?.clientIdMap?.[ id ] ?? id;
 
 /**
  * The identity keys a menu item can be addressed by, most specific first.
@@ -84,17 +102,20 @@ const CLAIM_TIERS = [ [ 'id' ], [ 'url' ], [ 'label' ] ] as const;
  * a bare id means a page, which is what the schema offers.
  */
 const identityKeys = ( {
+	clientId,
 	id,
 	type,
 	url,
 	label,
 }: {
+	clientId?: unknown;
 	id?: unknown;
 	type?: unknown;
 	url?: unknown;
 	label?: unknown;
 } ): string[] =>
 	[
+		clientId && `clientId:${ clientId }`,
 		id && `id:${ type ?? 'page' }:${ id }`,
 		url && `url:${ url }`,
 		label && `label:${ label }`,
@@ -112,7 +133,7 @@ function indexMenu( items: NavigationBlock[] ): Map< string, NavigationBlock[] >
 	const index = new Map< string, NavigationBlock[] >();
 
 	const add = ( item: NavigationBlock ) => {
-		for ( const key of identityKeys( item.attributes ?? {} ) ) {
+		for ( const key of identityKeys( { ...item.attributes, clientId: item.clientId } ) ) {
 			index.set( key, [ ...( index.get( key ) ?? [] ), item ] );
 		}
 
@@ -138,7 +159,12 @@ const takeExisting = (
 	taken: Set< NavigationBlock >,
 	tier: readonly string[]
 ): NavigationBlock | undefined => {
-	for ( const identity of identityKeys( item ) ) {
+	const identities = identityKeys( {
+		...item,
+		clientId: item.clientId && toEditorClientId( item.clientId ),
+	} );
+
+	for ( const identity of identities ) {
 		if ( ! tier.some( ( kind ) => identity.startsWith( `${ kind }:` ) ) ) {
 			continue;
 		}
@@ -172,6 +198,15 @@ const blockName = ( block: NavigationBlock, innerBlocks: NavigationBlock[] ): st
 
 	return block.name;
 };
+
+/** Every label in a menu, top to bottom, for a refusal to name. */
+const labelsOf = ( blocks: NavigationBlock[] ): string[] =>
+	blocks
+		.flatMap( ( block ) => [
+			String( block.attributes?.label ?? '' ),
+			...labelsOf( block.innerBlocks ?? [] ),
+		] )
+		.filter( Boolean );
 
 const attributesFor = ( item: NavigationItemInput ) => ( {
 	...( item.label ? { label: item.label } : {} ),
@@ -284,7 +319,7 @@ export async function buildNavigationItems(
 			// having been wiped. Collected rather than thrown so every offending
 			// item can be named at once and the whole rebuild refused.
 			if ( ! existing && ! input.label && ! input.url ) {
-				unresolved.push( String( input.id ) );
+				unresolved.push( String( input.clientId ?? input.id ) );
 			}
 
 			// Listed children replace the block's own; unlisted ones are pruned.
@@ -313,11 +348,15 @@ export async function buildNavigationItems(
 
 	if ( unresolved.length ) {
 		// Model-facing, so deliberately untranslated: this is an instruction the
-		// agent has to act on, and the user never sees it.
+		// agent has to act on, and the user never sees it. The menu's own labels
+		// are listed so the retry needs no further reading.
+		const labels = labelsOf( current ).map( ( label ) => `"${ label }"` );
+
 		throw new Error(
 			`Navigation items not found: ${ [ ...new Set( unresolved ) ].join( ', ' ) }. ` +
-				'No page with that id is in this menu — identify each item by its label or url ' +
-				'instead. Nothing was changed.'
+				'Identify each existing item by its clientId from the page structure, its label, ' +
+				`its url or its page id — this menu holds ${ labels.join( ', ' ) || 'no items' }. ` +
+				'Nothing was changed.'
 		);
 	}
 
