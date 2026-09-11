@@ -273,6 +273,23 @@ describe( 'withCanvasGuard', () => {
 		expect( getCanvasMove() ).toEqual( { from: 'About', to: 'Contact' } );
 	} );
 
+	it( 'keeps the destination bound when a navigation failed after moving', async () => {
+		// The load timeout fires after the route has changed. Put back, the old
+		// binding would read the late arrival as the user leaving.
+		setOpenPost( ABOUT_PAGE );
+		bindToOpenCanvas();
+
+		const executeAbility = jest.fn().mockResolvedValue( {
+			result: { success: false, details: { path: '/page/34', navigated: true } },
+		} );
+		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
+
+		await guarded!.executeAbility( 'big_sky__editor_navigate', { path: '/page/34' } );
+		setOpenPost( CONTACT_PAGE );
+
+		expect( getCanvasMove() ).toBeNull();
+	} );
+
 	it( 'puts the binding back when a navigation throws', async () => {
 		setOpenPost( ABOUT_PAGE );
 		bindToOpenCanvas();
