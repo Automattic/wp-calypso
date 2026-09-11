@@ -35,7 +35,7 @@ export const UpgradeScreen: React.FC< {
 
 	const upgradeMessageFeature = isWpcomSimpleSite( siteDetails )
 		? __(
-				'Upgrade your WordPress.com plan for access to exclusive Jetpack AI features, including logo generation. A paid plan also increases the amount of requests you can use in all AI-powered features.',
+				'Upgrade your WordPress.com plan for access to exclusive Jetpack AI features, including logo generation. A paid plan also gives you unlimited requests in all AI-powered features.',
 				'jetpack'
 		  )
 		: __(

@@ -30,6 +30,7 @@ import { FirstLoadScreen } from './first-load-screen';
 import { HistoryCarousel } from './history-carousel';
 import { LogoPresenter } from './logo-presenter';
 import { Prompt } from './prompt';
+import { UpgradePendingScreen } from './upgrade-pending-screen';
 import { UpgradeScreen } from './upgrade-screen';
 import { VisitSiteBanner } from './visit-site-banner';
 import './generator-modal.scss';
@@ -56,6 +57,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 	const [ isFirstCallOnOpen, setIsFirstCallOnOpen ] = useState( true );
 	const [ needsFeature, setNeedsFeature ] = useState( false );
 	const [ needsMoreRequests, setNeedsMoreRequests ] = useState( false );
+	const [ isUpgradePending, setIsUpgradePending ] = useState( false );
 	const [ upgradeURL, setUpgradeURL ] = useState( '' );
 	const { selectedLogo, getAiAssistantFeature, generateFirstPrompt, generateLogo, setContext } =
 		useLogoGenerator();
@@ -99,6 +101,19 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 		// First fetch the feature data so we have the most up-to-date info from the backend.
 		try {
 			const feature = await getFeature();
+
+			// Right after a plan purchase the endpoint can keep reporting the free tier for a
+			// while. Having the feature while still on the free tier only happens in that window.
+			const upgradePending = !! feature?.hasFeature && feature?.currentTier?.value === 0;
+
+			setIsUpgradePending( upgradePending );
+			if ( upgradePending ) {
+				setNeedsFeature( false );
+				setNeedsMoreRequests( false );
+				setLoadingState( null );
+				return;
+			}
+
 			const hasHistory = ! isLogoHistoryEmpty( String( siteId ) );
 			const logoCost = feature?.costs?.[ 'jetpack-ai-logo-generator' ]?.logo ?? DEFAULT_LOGO_COST;
 			const promptCreationCost = 1;
@@ -209,6 +224,8 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 		body = <FirstLoadScreen state={ loadingState } />;
 	} else if ( featureFetchError || firstLogoPromptFetchError ) {
 		body = <FeatureFetchFailureScreen onCancel={ closeModal } onRetry={ initializeModal } />;
+	} else if ( isUpgradePending ) {
+		body = <UpgradePendingScreen onCancel={ closeModal } onRetry={ initializeModal } />;
 	} else if ( needsFeature || needsMoreRequests ) {
 		body = (
 			<UpgradeScreen
@@ -273,7 +290,11 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 					<div
 						className={ clsx( 'jetpack-ai-logo-generator-modal__body', {
 							'notice-modal':
-								needsFeature || needsMoreRequests || featureFetchError || firstLogoPromptFetchError,
+								needsFeature ||
+								needsMoreRequests ||
+								isUpgradePending ||
+								featureFetchError ||
+								firstLogoPromptFetchError,
 						} ) }
 					>
 						{ body }
