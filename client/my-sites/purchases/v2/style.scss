@@ -11,11 +11,10 @@
 	}
 
 	.dataviews-wrapper .dataviews-no-results {
-		// In v1 we specify margins for <p> globally in <body>.
-		// Here, we revert them to make <p> look good in DataViews' empty state.
+		// In v1 we specify a bottom margin for <p> globally in <body>.
+		// Here, we revert it to make <p> look good in DataViews' empty state.
 		p {
-			margin-top: revert;
-			margin-bottom: revert;
+			margin-block-end: revert;
 		}
 	}
 }
