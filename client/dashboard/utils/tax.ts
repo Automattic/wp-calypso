@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import type { CountryListItem, CountryListItemWithVat } from '@automattic/api-core';
+import type { CountryListItem } from '@automattic/api-core';
 
 interface CountryCodeOption {
 	label: string;
@@ -18,18 +18,20 @@ function getUniqueCountries< C extends CountryListItem >( countries: C[] ): C[] 
 }
 
 export function getDataFormCountryCodes( countries: CountryListItem[] ): CountryCodeOption[] {
-	const isVatSupported = ( country: CountryListItem ): country is CountryListItemWithVat =>
-		country.vat_supported;
-
-	const vatCountries = getUniqueCountries( countries.filter( isVatSupported ) );
-	const codes = vatCountries.map( ( country ) =>
-		country.tax_country_codes.map( ( countryCode: string ) => {
-			const countryName = countryCode === 'XI' ? __( 'Northern Ireland' ) : country.name;
-			return {
-				label: `${ countryCode } - ${ countryName }`,
-				value: countryCode,
-			};
-		} )
+	const uniqueCountries = getUniqueCountries( countries );
+	const codes = uniqueCountries.map( ( country ) =>
+		country.vat_supported
+			? country.tax_country_codes.map( ( countryCode: string ) => {
+					const countryName = countryCode === 'XI' ? __( 'Northern Ireland' ) : country.name;
+					return {
+						label: `${ countryCode } - ${ countryName }`,
+						value: countryCode,
+					};
+			  } )
+			: {
+					label: `${ country.code } - ${ country.name }`,
+					value: country.code,
+			  }
 	);
 	return codes.flat();
 }
