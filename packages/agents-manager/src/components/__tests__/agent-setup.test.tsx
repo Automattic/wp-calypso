@@ -11,6 +11,7 @@ const mockAgentManager = {
 };
 let mockIsOpen = true;
 let mockHasAiChatEntry = false;
+let mockAgentConfig = { agentId: 'wp-orchestrator', isLoading: false };
 const mockUseAbilitiesSetup = jest.fn();
 const mockCreateAgentConfig = jest.fn(
 	async ( { sessionId, agentId }: { sessionId: string; agentId: string } ) => ( {
@@ -44,7 +45,7 @@ jest.mock( '../../utils/create-agent-config', () => ( {
 		mockCreateAgentConfig( options ),
 } ) );
 jest.mock( '../../hooks/use-agent-config', () => ( {
-	useAgentConfig: () => ( { agentId: 'wp-orchestrator', isLoading: false } ),
+	useAgentConfig: () => mockAgentConfig,
 } ) );
 jest.mock( '../../hooks/use-open-chat-url-param', () => ( {
 	useOpenChatUrlParam: () => true,
@@ -105,6 +106,7 @@ describe( 'AgentSetup', () => {
 		mockAgentManager.hasAgent.mockReturnValue( true );
 		mockIsOpen = true;
 		mockHasAiChatEntry = false;
+		mockAgentConfig = { agentId: 'wp-orchestrator', isLoading: false };
 		sessionStorage.clear();
 		document.body.className = '';
 		window.history.replaceState( {}, '', '/' );
@@ -177,6 +179,30 @@ describe( 'AgentSetup', () => {
 		expect( new URLSearchParams( window.location.search ).has( 'wp-agent-chat' ) ).toBe( false );
 		expect( window.location.search ).toBe( '?canvas=edit' );
 		expect( window.history.state ).toEqual( { canvas: 'edit' } );
+	} );
+
+	it( 'waits for the agent config before consuming the URL session', async () => {
+		mockAgentConfig = { agentId: 'wp-orchestrator', isLoading: true };
+		window.history.replaceState( {}, '', '/?wp-agent-chat=url-session' );
+
+		const { rerender } = render( manager( 111 ) );
+
+		expect( window.location.search ).toBe( '?wp-agent-chat=url-session' );
+		expect( mockCreateAgentConfig ).not.toHaveBeenCalled();
+
+		mockAgentConfig = { agentId: 'wpcom-workflow-unified_chat', isLoading: false };
+		rerender( manager( 111 ) );
+
+		await waitFor( () =>
+			expect( mockCreateAgentConfig ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					agentId: 'wpcom-workflow-unified_chat',
+					sessionId: 'url-session',
+				} )
+			)
+		);
+		expect( getSessionId( 'wpcom-workflow-unified_chat', '111' ) ).toBe( 'url-session' );
+		expect( window.location.search ).toBe( '' );
 	} );
 
 	it( 'aligns the config with the stored session when leaving the chat view', async () => {

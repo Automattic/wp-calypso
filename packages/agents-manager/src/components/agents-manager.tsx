@@ -140,9 +140,8 @@ export default function AgentsManager( {
 }
 
 /**
- * Resolve the session to resume. A URL transfer takes precedence; otherwise,
- * use this tab's stored session, which conversation switches save before
- * navigating here.
+ * Resolve the session to resume from this tab's stored session, which
+ * conversation switches save before navigating here.
  * Reader chat pre-generates one (blog frontends reload on every navigation);
  * other agents get theirs from the server via `onSessionIdChange`.
  * Empty means a new chat.
@@ -153,14 +152,6 @@ function resolveTabSessionId(
 	siteKey: string,
 	userId?: number
 ): string {
-	const url = new URL( window.location.href );
-	const urlSessionId = url.searchParams.get( 'wp-agent-chat' );
-	if ( urlSessionId ) {
-		saveSessionId( urlSessionId, agentId, siteKey, userId );
-		url.searchParams.delete( 'wp-agent-chat' );
-		window.history.replaceState( window.history.state, '', url );
-		return urlSessionId;
-	}
 	if ( isNewChat ) {
 		return '';
 	}
@@ -202,7 +193,8 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 	// PersistentRouter (memory router) does not track window.location.search.
 	const { agentId, version, isLoading: isAgentConfigLoading } = useAgentConfig( hostAgentId );
 
-	const sessionId = resolveTabSessionId( isNewChat, agentId, siteKey, userId );
+	const urlSessionId = new URL( window.location.href ).searchParams.get( 'wp-agent-chat' ) || '';
+	const sessionId = urlSessionId || resolveTabSessionId( isNewChat, agentId, siteKey, userId );
 
 	useWebMcpTools( {
 		toolProvider: loadedProvidersRef.current?.toolProvider,
@@ -215,6 +207,13 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 		// Wait for the agent config to stabilize before initializing.
 		if ( isAgentConfigLoading ) {
 			return;
+		}
+
+		if ( urlSessionId ) {
+			saveSessionId( urlSessionId, agentId, siteKey, userId );
+			const url = new URL( window.location.href );
+			url.searchParams.delete( 'wp-agent-chat' );
+			window.history.replaceState( window.history.state, '', url );
 		}
 
 		// A dep change supersedes this run mid-await — a stale initialization
@@ -339,6 +338,7 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 		site?.ID,
 		siteKey,
 		userId,
+		urlSessionId,
 		version,
 	] );
 
