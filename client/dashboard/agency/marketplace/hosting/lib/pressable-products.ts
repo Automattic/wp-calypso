@@ -58,7 +58,7 @@ const matchesProduct = ( license: JetpackLicense, product: AgencyProduct | undef
 		license.product_id === product.yearly_product_id );
 
 export const isPressablePlanLicense = ( license: JetpackLicense ) =>
-	license.license_key.startsWith( 'pressable' ) &&
+	license.license_key.startsWith( 'pressable-' ) &&
 	! isPressableAddonProduct( license.license_key ) &&
 	! license.referral;
 
