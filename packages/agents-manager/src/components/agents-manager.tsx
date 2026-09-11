@@ -15,7 +15,12 @@ import useHasAiChatEntryButton from '../hooks/use-has-ai-chat-entry-button';
 import { useOpenChatUrlParam } from '../hooks/use-open-chat-url-param';
 import useWebMcpTools from '../hooks/use-webmcp-tools';
 import { AGENTS_MANAGER_STORE } from '../stores';
-import { clearSessionId, getOrCreateSessionId, getSessionId } from '../utils/agent-session';
+import {
+	clearSessionId,
+	getOrCreateSessionId,
+	getSessionId,
+	saveSessionId,
+} from '../utils/agent-session';
 import { createAgentConfig } from '../utils/create-agent-config';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 import {
@@ -135,8 +140,9 @@ export default function AgentsManager( {
 }
 
 /**
- * Resolve the session to resume from this tab's stored session — the single
- * source of truth; conversation switches save it before navigating here.
+ * Resolve the session to resume. A URL transfer takes precedence; otherwise,
+ * use this tab's stored session, which conversation switches save before
+ * navigating here.
  * Reader chat pre-generates one (blog frontends reload on every navigation);
  * other agents get theirs from the server via `onSessionIdChange`.
  * Empty means a new chat.
@@ -147,6 +153,14 @@ function resolveTabSessionId(
 	siteKey: string,
 	userId?: number
 ): string {
+	const url = new URL( window.location.href );
+	const urlSessionId = url.searchParams.get( 'wp-agent-chat' );
+	if ( urlSessionId ) {
+		saveSessionId( urlSessionId, agentId, siteKey, userId );
+		url.searchParams.delete( 'wp-agent-chat' );
+		window.history.replaceState( window.history.state, '', url );
+		return urlSessionId;
+	}
 	if ( isNewChat ) {
 		return '';
 	}

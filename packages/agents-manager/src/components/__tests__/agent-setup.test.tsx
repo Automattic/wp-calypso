@@ -158,6 +158,27 @@ describe( 'AgentSetup', () => {
 		expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'prefers the URL session over the stored session', async () => {
+		saveSessionId( 'stored-session', undefined, '111' );
+		window.history.replaceState(
+			{ canvas: 'edit' },
+			'',
+			'/?canvas=edit&wp-agent-chat=url-session'
+		);
+
+		render( manager( 111 ) );
+
+		await waitFor( () =>
+			expect( mockCreateAgentConfig ).toHaveBeenCalledWith(
+				expect.objectContaining( { sessionId: 'url-session' } )
+			)
+		);
+		expect( getSessionId( undefined, '111' ) ).toBe( 'url-session' );
+		expect( new URLSearchParams( window.location.search ).has( 'wp-agent-chat' ) ).toBe( false );
+		expect( window.location.search ).toBe( '?canvas=edit' );
+		expect( window.history.state ).toEqual( { canvas: 'edit' } );
+	} );
+
 	it( 'aligns the config with the stored session when leaving the chat view', async () => {
 		const { rerender } = render( manager( 111 ) );
 		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
