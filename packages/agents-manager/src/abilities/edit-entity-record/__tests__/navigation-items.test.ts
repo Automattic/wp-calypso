@@ -146,6 +146,22 @@ describe( 'clientId', () => {
 		expect( labelsOf( result ) ).toEqual( [ 'Services' ] );
 	} );
 
+	it( 'still finds an item the request relabels and re-links', async () => {
+		withPageStructure( {
+			clientIdMap: { bMnU: 'gone' },
+			navigationItemMap: { bMnU: { attributes: { label: 'Services' } } },
+		} );
+
+		const result = await buildNavigationItems( 10, {
+			navigationItems: [ { clientId: 'bMnU', label: 'Our services', url: '/our-services/' } ],
+		} );
+
+		expect( ( result.blocks as { clientId: string }[] ).map( ( b ) => b.clientId ) ).toEqual( [
+			'svc',
+		] );
+		expect( labelsOf( result ) ).toEqual( [ 'Our services' ] );
+	} );
+
 	it( 'accepts the editor clientId itself', async () => {
 		const result = await buildNavigationItems( 10, { navigationItems: [ { clientId: 'svc' } ] } );
 
