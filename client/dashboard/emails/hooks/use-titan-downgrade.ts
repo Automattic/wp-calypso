@@ -59,9 +59,10 @@ export function useTitanDowngrade( {
 		[ purchase ]
 	);
 
-	// The mutations only invalidate the user-wide purchases list. Refresh what
+	// Runs alongside the invalidation the mutations already do, to refresh what
 	// this page reads: the site's purchases, and the domain, whose
-	// titan_mail_subscription slug gives the grid its current tier.
+	// titan_mail_subscription slug gives the grid its current tier. Passed per
+	// call, since an onSuccess on useMutation would replace the factory's own.
 	const invalidateAfterDowngrade = useCallback( () => {
 		if ( siteId ) {
 			queryClient.invalidateQueries( sitePurchasesQuery( siteId ) );
@@ -69,29 +70,26 @@ export function useTitanDowngrade( {
 		queryClient.invalidateQueries( domainQuery( domainName ) );
 	}, [ queryClient, siteId, domainName ] );
 
-	const { mutate: mutateInstantDowngrade, isPending: isInstantDowngradePending } = useMutation( {
-		...withSnackbar( cancelAndRefundPurchaseMutation(), {
+	const { mutate: mutateInstantDowngrade, isPending: isInstantDowngradePending } = useMutation(
+		withSnackbar( cancelAndRefundPurchaseMutation(), {
 			success: __( 'Your plan has been changed.' ),
 			error: { source: 'server' },
-		} ),
-		onSuccess: invalidateAfterDowngrade,
-	} );
+		} )
+	);
 
-	const { mutate: mutateDelayedDowngrade, isPending: isDelayedDowngradePending } = useMutation( {
-		...withSnackbar( setDelayedDowngradeMutation(), {
+	const { mutate: mutateDelayedDowngrade, isPending: isDelayedDowngradePending } = useMutation(
+		withSnackbar( setDelayedDowngradeMutation(), {
 			success: __( 'Your plan change has been scheduled.' ),
 			error: { source: 'server' },
-		} ),
-		onSuccess: invalidateAfterDowngrade,
-	} );
+		} )
+	);
 
-	const { mutate: mutateCancelDowngrade, isPending: isCancelDowngradePending } = useMutation( {
-		...withSnackbar( setDelayedDowngradeMutation(), {
+	const { mutate: mutateCancelDowngrade, isPending: isCancelDowngradePending } = useMutation(
+		withSnackbar( setDelayedDowngradeMutation(), {
 			success: __( 'Your scheduled plan change has been cancelled.' ),
 			error: { source: 'server' },
-		} ),
-		onSuccess: invalidateAfterDowngrade,
-	} );
+		} )
+	);
 
 	const downgrade = useCallback(
 		( toProductId: number, { onSuccess }: { onSuccess?: () => void } = {} ) => {
@@ -99,30 +97,38 @@ export function useTitanDowngrade( {
 				return;
 			}
 
+			const onDowngraded = () => {
+				invalidateAfterDowngrade();
+				onSuccess?.();
+			};
+
 			if ( mode === 'instant' ) {
 				mutateInstantDowngrade(
 					{
 						purchaseId: purchase.ID,
 						options: { type: 'downgrade', to_product_id: toProductId },
 					},
-					{ onSuccess }
+					{ onSuccess: onDowngraded }
 				);
 				return;
 			}
 
 			mutateDelayedDowngrade(
 				{ purchaseId: purchase.ID, enabled: true, toProductId },
-				{ onSuccess }
+				{ onSuccess: onDowngraded }
 			);
 		},
-		[ purchase, mode, mutateInstantDowngrade, mutateDelayedDowngrade ]
+		[ purchase, mode, invalidateAfterDowngrade, mutateInstantDowngrade, mutateDelayedDowngrade ]
 	);
 
 	const cancelDowngrade = useCallback( () => {
 		if ( purchase ) {
-			mutateCancelDowngrade( { purchaseId: purchase.ID, enabled: false } );
+			mutateCancelDowngrade(
+				{ purchaseId: purchase.ID, enabled: false },
+				{ onSuccess: invalidateAfterDowngrade }
+			);
 		}
-	}, [ purchase, mutateCancelDowngrade ] );
+	}, [ purchase, invalidateAfterDowngrade, mutateCancelDowngrade ] );
 
 	// Stays set until the renewal applies the change, so the grid can offer to
 	// cancel it instead of repeating the downgrade.
