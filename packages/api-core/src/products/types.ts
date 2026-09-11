@@ -1,3 +1,4 @@
+import type { PlanProductDowngrade } from '../plans';
 import type { PriceTierEntry } from '../upgrades';
 
 export type IntroductoryOfferTimeUnit = 'day' | 'week' | 'month' | 'year';
@@ -53,6 +54,15 @@ export interface Product {
 
 	// Introductory offer (conditional - when product has intro offer)
 	introductory_offer?: IntroductoryOffer;
+
+	/**
+	 * Products this one can be downgraded to, all on the same billing term.
+	 *
+	 * Not returned by any products endpoint today: wpcom builds it for plans
+	 * only, and the products endpoints filter it out. Declared here for when
+	 * that changes, so callers need a fallback. When present it is exhaustive.
+	 */
+	downgrade_paths?: PlanProductDowngrade[];
 
 	// Hundred year domain pricing (conditional - when hundred_year_slugs param is provided)
 	hundred_year_combined_cost_display?: string;
