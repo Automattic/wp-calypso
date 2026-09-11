@@ -50,14 +50,14 @@ Calypso output, editor behavior, deployment, RTL production, or the full
 project. Do not substitute provisional or locally generated hashes for these
 values:
 
-| Manifest key | Accepted SHA-256 |
-| --- | --- |
-| `css` | `8541e751af97a13cdb73fe82bcf9e458bf3891885dcaaefcacb923ef7e02fb0d` |
-| `rtlCss` | `1283e555fc727ebdf10cad0c3daf5a15de4dddf1343791556e8512f00b0d530d` |
-| `fontCss` | `2ff3fe8c46bcc8d1f60569d0c1a3168f7a2398f62773cd42c1966ab587d9ab86` |
-| `legacyHtml` | `c10ded71fbf6a9402841e28bf7a89eb91ab49b6ad8e5b23f21e2b0c2cd960a26` |
-| `whiteHtml` | `84800c7d868d3d1df3f2cfcb1569fa5740dd68469086ee13c111ea39c551ad54` |
-| `darkHtml` | `e435c0f83e37a1a556e538b8c05353bf7ecff57c1ee3d29123622743c71cc279` |
+| Manifest key  | Accepted SHA-256                                                   |
+| ------------- | ------------------------------------------------------------------ |
+| `css`         | `8541e751af97a13cdb73fe82bcf9e458bf3891885dcaaefcacb923ef7e02fb0d` |
+| `rtlCss`      | `1283e555fc727ebdf10cad0c3daf5a15de4dddf1343791556e8512f00b0d530d` |
+| `fontCss`     | `2ff3fe8c46bcc8d1f60569d0c1a3168f7a2398f62773cd42c1966ab587d9ab86` |
+| `legacyHtml`  | `c10ded71fbf6a9402841e28bf7a89eb91ab49b6ad8e5b23f21e2b0c2cd960a26` |
+| `whiteHtml`   | `84800c7d868d3d1df3f2cfcb1569fa5740dd68469086ee13c111ea39c551ad54` |
+| `darkHtml`    | `e435c0f83e37a1a556e538b8c05353bf7ecff57c1ee3d29123622743c71cc279` |
 | `calypsoHtml` | `18025b77dcf3233ef9ac165d0c71516e1e7bea2223a08c7cb365d284b73545e7` |
 
 The manifest remains caller-provided at `$ACCEPTED/manifest.json`; the durable
@@ -79,7 +79,7 @@ with this shape; every listed SHA-256 is the hash of the saved served artifact:
 }
 ```
 
-The independently controlled CLI run with generator `cb97bcdaf017f9969a3e1cd3e60edf4fa77b794ce82ec0f6758ba33fe55b0a10`
+The independently controlled CLI run with generator `643c573adc36da5dd7cbe2b0695a6ee7fc69de951c82f454d64998dfb2fc67b4`
 produced these reproducibility checkpoints:
 
 - expected output SHA-256: `231138e076c87d4a9bf9386823279f790553c857e1a11c8b0524c14d48fe2ad6`;
