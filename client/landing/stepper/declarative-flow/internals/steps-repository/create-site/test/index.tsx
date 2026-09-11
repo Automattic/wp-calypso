@@ -207,9 +207,13 @@ describe( 'create-site', () => {
 			siteSlug: 'brand-new.wordpress.com',
 			domainItem: undefined,
 		} );
-		await Promise.all( [ firstRun, secondRun ] );
+		const [ firstResult, secondResult ] = await Promise.all( [ firstRun, secondRun ] );
 
 		expect( createSite ).toHaveBeenCalledTimes( 1 );
+		// The same result, not an equal one: the second run joined the first instead of running the
+		// cart and trial tail again against the site the first run made.
+		expect( secondResult ).toBe( firstResult );
+		expect( firstResult ).toMatchObject( { siteId: 111, siteSlug: 'brand-new.wordpress.com' } );
 	} );
 
 	// The in-flight map outlives the run that filled it. A failed request has to leave the map, or

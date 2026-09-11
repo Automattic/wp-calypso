@@ -111,38 +111,28 @@ async function pollForGardenProvisioning(
 	throw error;
 }
 
-type CreatedSite = { siteId: number; siteSlug: string };
+// Runs of the action still in progress, by the name asked for. The `createdSite` record in the
+// flow state is written only after /sites/new returns, so a second run of the action that starts
+// inside that wait reads nothing and would send its own request. This is where it joins the
+// first run instead. The whole tail is joined, not only the request: a run that adopts the record
+// still adds to the cart and starts the trial, and doing that twice at once is its own problem.
+// The processing step reruns the action whenever it mounts again, which is how two runs come to
+// overlap. Unnamed requests share one key: /sites/new picks a name for each of them, so two
+// overlapping ones would make two sites.
+const runsInFlight = new Map< string, Promise< unknown > >();
 
-// Site creations still waiting on /sites/new, by the name asked for. The `createdSite` record in
-// the flow state is written only after the request returns, so a second run of the action that
-// starts inside that wait reads nothing and would send its own request. This is where it joins
-// the first one instead. The processing step reruns the action whenever it mounts again, which
-// is how two runs come to overlap. Unnamed requests share one key: /sites/new picks a name for
-// each of them, so two overlapping ones would make two sites.
-const siteCreationsInFlight = new Map< string, Promise< CreatedSite > >();
-
-async function createSiteOnce(
-	requestedName: string,
-	create: () => Promise< CreatedSite | undefined >
-): Promise< CreatedSite > {
-	const inFlight = siteCreationsInFlight.get( requestedName );
+function runOnce< T >( requestedName: string, run: () => Promise< T > ): Promise< T > {
+	const inFlight = runsInFlight.get( requestedName );
 	if ( inFlight ) {
-		const site = await inFlight;
-		// A copy: the run that made the site goes on to mutate its slug during provisioning.
-		return { siteId: site.siteId, siteSlug: site.siteSlug };
+		return inFlight as Promise< T >;
 	}
 
-	const request = create().then( ( site ) => {
-		if ( ! site ) {
-			throw new Error( 'Failed to create site' );
-		}
-		return { siteId: site.siteId, siteSlug: site.siteSlug };
-	} );
-	siteCreationsInFlight.set( requestedName, request );
-	const forget = () => siteCreationsInFlight.delete( requestedName );
-	request.then( forget, forget );
+	const result = run();
+	runsInFlight.set( requestedName, result );
+	const forget = () => runsInFlight.delete( requestedName );
+	result.then( forget, forget );
 
-	return request;
+	return result;
 }
 
 const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
@@ -373,14 +363,14 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		// that the site on file is not the one it is asking for — and an unnamed request, which
 		// /sites/new answers with a name of its own choosing, matches nothing.
 		const requestedName = siteUrl || domainItem?.domain_name || '';
-		const recordedSite = flowState.get( 'createdSite' );
-		const siteFromThisRun =
-			requestedName && recordedSite?.requestedName === requestedName ? recordedSite : undefined;
+		return runOnce( requestedName, async () => {
+			const recordedSite = flowState.get( 'createdSite' );
+			const siteFromThisRun =
+				requestedName && recordedSite?.requestedName === requestedName ? recordedSite : undefined;
 
-		const site = siteFromThisRun
-			? { siteId: siteFromThisRun.siteId, siteSlug: siteFromThisRun.siteSlug }
-			: await createSiteOnce( requestedName, () =>
-					createSite(
+			const site = siteFromThisRun
+				? { siteId: siteFromThisRun.siteId, siteSlug: siteFromThisRun.siteSlug }
+				: await createSite(
 						flow,
 						theme,
 						siteVisibility,
@@ -403,57 +393,61 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 						isPlaygroundPublish ? 'playground-publish' : undefined,
 						undefined, // provisionTarget
 						launchpadPersonalizationVariation === 'ai_launchpad'
-					)
-			  );
+				  );
 
-		// Recorded as soon as the site exists, ahead of the waits below rather than after them: the
-		// Atomic and garden polls run for minutes, and leaving during one is how someone comes back
-		// here with a site already made. The slug can still be the pre-transfer one, so the adopting
-		// run re-polls on the ID and settles it again.
-		flowState.set( 'createdSite', {
-			siteId: site.siteId,
-			siteSlug: site.siteSlug,
-			requestedName,
-		} );
+			if ( ! site ) {
+				throw new Error( 'Failed to create site' );
+			}
 
-		if ( earlyProvisionTarget === EARLY_PROVISION_TARGET_WPCOM_ATOMIC ) {
-			const atomicSite = await pollForAtomicProvisioning( site.siteId );
-			site.siteSlug = atomicSite.siteSlug;
-		}
+			// Recorded as soon as the site exists, ahead of the waits below rather than after them: the
+			// Atomic and garden polls run for minutes, and leaving during one is how someone comes back
+			// here with a site already made. The slug can still be the pre-transfer one, so the adopting
+			// run re-polls on the ID and settles it again.
+			flowState.set( 'createdSite', {
+				siteId: site.siteId,
+				siteSlug: site.siteSlug,
+				requestedName,
+			} );
 
-		const additionalCartItems = [
-			...( planCartItem ? [ planCartItem ] : [] ),
-			...( productCartItems ?? [] ),
-			...mergedDomainCartItems,
-		];
+			if ( earlyProvisionTarget === EARLY_PROVISION_TARGET_WPCOM_ATOMIC ) {
+				const atomicSite = await pollForAtomicProvisioning( site.siteId );
+				site.siteSlug = atomicSite.siteSlug;
+			}
 
-		if ( additionalCartItems.length > 0 ) {
-			await addProductsToCart( site.siteSlug, flow, additionalCartItems );
-		}
+			const additionalCartItems = [
+				...( planCartItem ? [ planCartItem ] : [] ),
+				...( productCartItems ?? [] ),
+				...mergedDomainCartItems,
+			];
 
-		// Poll for garden provisioning status if this is a garden site
-		if ( gardenName ) {
-			await pollForGardenProvisioning( site.siteId );
-		}
+			if ( additionalCartItems.length > 0 ) {
+				await addProductsToCart( site.siteSlug, flow, additionalCartItems );
+			}
 
-		if ( isEntrepreneurFlow( flow ) ) {
-			await addEcommerceTrial( { siteId: site.siteId } );
+			// Poll for garden provisioning status if this is a garden site
+			if ( gardenName ) {
+				await pollForGardenProvisioning( site.siteId );
+			}
+
+			if ( isEntrepreneurFlow( flow ) ) {
+				await addEcommerceTrial( { siteId: site.siteId } );
+
+				return {
+					siteId: site.siteId,
+					siteSlug: site.siteSlug,
+					goToCheckout: false,
+					siteCreated: true,
+				};
+			}
 
 			return {
 				siteId: site.siteId,
 				siteSlug: site.siteSlug,
-				goToCheckout: false,
+				goToCheckout: shouldGoToCheckout,
 				siteCreated: true,
+				platform,
 			};
-		}
-
-		return {
-			siteId: site.siteId,
-			siteSlug: site.siteSlug,
-			goToCheckout: shouldGoToCheckout,
-			siteCreated: true,
-			platform,
-		};
+		} );
 	}
 
 	useEffect( () => {
