@@ -188,14 +188,41 @@ describe( 'clientId', () => {
 
 	// `core/navigation-link` supplies no default `type` or `kind`, and without
 	// them WordPress does not treat the item as the page's.
-	it( 'gives a new item with a page id the page relationship', async () => {
+	it( 'gives a new item with a page id the page relationship, as a number', async () => {
 		const result = await buildNavigationItems( 10, {
-			navigationItems: [ { label: 'Services' }, { id: 7, label: 'About' } ],
+			navigationItems: [ { label: 'Services' }, { id: '7', label: 'About', url: '/about/' } ],
 		} );
 
 		expect(
 			( result.blocks as { attributes: Record< string, unknown > }[] )[ 1 ].attributes
-		).toMatchObject( { id: 7, type: 'page', kind: 'post-type' } );
+		).toMatchObject( { id: 7, type: 'page', kind: 'post-type', url: '/about/' } );
+	} );
+
+	// The block renders its href from `url`: a page link without one has no
+	// destination, or keeps the previous page's.
+	it( 'refuses a page link without its url', async () => {
+		await expect(
+			buildNavigationItems( 10, { navigationItems: [ { id: 7, label: 'About' } ] } )
+		).rejects.toThrow( 'needs its url' );
+	} );
+
+	// A re-link's new page id must not claim the item already pointing at that
+	// page: what the structure recorded for the short id names the block.
+	it( 'prefers what the structure recorded over a re-linked page id', async () => {
+		withMenu( [ item( 'svc', 'Services', { id: 5 } ), item( 'team', 'Team', { id: 9 } ) ] );
+		withPageStructure( {
+			clientIdMap: { bMnU: 'gone' },
+			navigationItemMap: { bMnU: { attributes: { label: 'Services' } } },
+		} );
+
+		const result = await buildNavigationItems( 10, {
+			navigationItems: [ { clientId: 'bMnU', id: 9, url: '/team/' }, { label: 'Team' } ],
+		} );
+
+		expect( ( result.blocks as { clientId: string }[] ).map( ( b ) => b.clientId ) ).toEqual( [
+			'svc',
+			'team',
+		] );
 	} );
 
 	// Two anchor links into one page are two items: the fragment tells them
@@ -325,7 +352,7 @@ it( 'does not let a page id claim a taxonomy link', async () => {
 	withMenu( [ item( 'a', 'News', { id: 5, type: 'category' } ) ] );
 
 	const result = await buildNavigationItems( 10, {
-		navigationItems: [ { label: 'News' }, { id: 5, label: 'Page five' } ],
+		navigationItems: [ { label: 'News' }, { id: 5, label: 'Page five', url: '/page-five/' } ],
 	} );
 
 	expect( labelsOf( result ) ).toEqual( [ 'News', 'Page five' ] );
@@ -348,6 +375,7 @@ describe( 'input validation', () => {
 		{ case: 'a blank label', items: [ { label: '  ' } ] },
 		{ case: 'a zero id', items: [ { id: 0 } ] },
 		{ case: 'an id that is not a number or string', items: [ { id: { page: 7 } } ] },
+		{ case: 'an id that is not a positive integer', items: [ { id: 'abc' } ] },
 		{ case: 'items that is not an array', items: [ { label: 'A', items: 'B' } ] },
 		{ case: 'a key the schema does not name', items: [ { label: 'A', openInNewTab: true } ] },
 	] )( 'refuses $case', async ( { items } ) => {
