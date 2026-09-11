@@ -211,11 +211,10 @@ describe( 'withCanvasGuard', () => {
 
 	it( 'holds the destination while the navigation is still in flight', async () => {
 		// The gap a bare `clearCanvasBinding()` leaves. agenttic-client re-requests
-		// client context when it sends a tool result, so the navigate result rebinds
-		// before the editor has opened the page — and a page the server only just
-		// created is never in the store yet, so the editor still reports the old one.
-		// Binding to the destination up front is what stops that rebind latching the
-		// page the user is leaving and aborting the agent's own navigation.
+		// client context with every tool result, so the navigate result rebinds
+		// before the editor has opened the page — and a just-created page is not in
+		// the store yet, so the editor still reports the old one. Binding to the
+		// destination up front stops that rebind latching the page being left.
 		setOpenPost( ABOUT_PAGE );
 		bindToOpenCanvas();
 
@@ -379,12 +378,10 @@ describe( 'withCanvasGuard', () => {
 	} );
 } );
 
-// The path production actually takes. agenttic-client resolves an ability from
-// `getAbilities()` and calls `ability.callback` directly whenever it has one,
-// falling back to `executeAbility` only when it does not — and every Big Sky
-// ability is registered with a callback. A guard installed on `executeAbility`
-// alone never runs against them, which is invisible to any test that calls
-// `executeAbility` itself.
+// The path production actually takes: agenttic-client calls `ability.callback`
+// when it has one, and every Big Sky ability has one. A guard on
+// `executeAbility` alone never runs against them, which a test calling
+// `executeAbility` itself cannot see.
 describe( 'withCanvasGuard, dispatched through ability callbacks', () => {
 	/**
 	 * Fetch a guarded ability the way agenttic-client does, then invoke it.

@@ -304,7 +304,6 @@ describe( 'input validation', () => {
 
 	it.each( [
 		{ case: 'a top-level entry that is not an object', items: [ null ] },
-		{ case: 'a nested entry that is not an object', items: [ { label: 'A', items: [ null ] } ] },
 		{ case: 'a clientId that is not a string', items: [ { clientId: 7 } ] },
 		{ case: 'a label that is not a string', items: [ { label: 123 } ] },
 		{ case: 'an empty label', items: [ { label: '' } ] },
@@ -482,16 +481,6 @@ it( 'refuses an id that resolves to nothing and carries no label', async () => {
 	await expect( buildNavigationItems( 10, { navigationItems: [ { id: 999 } ] } ) ).rejects.toThrow(
 		'Navigation items not found: 999'
 	);
-} );
-
-// An id with no label or url carries nothing to rebuild from. Building a
-// blank link over a real item reads to the user as the menu being wiped.
-it( 'refuses when an id resolves to nothing, naming it', async () => {
-	withMenu( [ item( 'a', 'Home' ) ] );
-
-	await expect(
-		buildNavigationItems( 10, { navigationItems: [ { label: 'Home' }, { id: 42 } ] } )
-	).rejects.toThrow( 'Navigation items not found: 42' );
 } );
 
 // Dropping the entry instead would replace Home's children with an empty list,

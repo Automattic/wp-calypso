@@ -35,8 +35,8 @@ const PAGE = 'page';
 const NAVIGATION = 'wp_navigation';
 
 // What each operation's schema allows — deletes take the same names as creates.
-// Checked in `checkEntities()`: the callback runs on raw arguments, and deleting
-// a `wp_navigation` record would take a whole menu with it.
+// Checked in `checkEntities()`, since deleting a `wp_navigation` record would
+// take a whole menu with it.
 const EDITABLE_NAMES = [ 'post', PAGE, 'product', NAVIGATION ];
 const ADDABLE_NAMES = [ 'post', PAGE ];
 
@@ -313,8 +313,8 @@ const coreResolve = () => resolveSelect( coreStore ) as unknown as CoreResolve;
  * The titles a menu label may follow: the one on screen, and the one saved
  * when the page's own edit is still pending.
  */
-const pageLabels = async ( pageId: number | string ): Promise< string[] > => [
-	...new Set( [ await getPageTitle( pageId ), await getSavedPageTitle( pageId ) ] ),
+const pageLabels = async ( pageId: number | string, current: string ): Promise< string[] > => [
+	...new Set( [ current, await getSavedPageTitle( pageId ) ] ),
 ];
 
 /** Whether the editor has this record open — a post or page in the post editor, a page in the site editor. */
@@ -345,10 +345,9 @@ export function getCheckpointKeys( edits: Entity< 'edit' >[] ): string[] {
 	const keys = new Set< string >();
 
 	for ( const { entityType, entityName, record } of edits ) {
-		// Only the title is restorable on a page — a restore rewrites it and the
-		// menu item that follows it, never the content, excerpt or status. Claimed
-		// on presence alone; a rename to the title the page already has records
-		// nothing, and the claim is dropped afterwards.
+		// Only the title is restorable on a page, never the content, excerpt or
+		// status. Claimed on presence alone: a rename to the title the page
+		// already has records nothing, and the claim is dropped afterwards.
 		if ( entityName === PAGE && 'title' in record ) {
 			keys.add( checkpointKeys.PAGE );
 			keys.add( checkpointKeys.NAVIGATION );
@@ -434,10 +433,6 @@ function reportUpdated( applied: AppliedChanges, { entityName, recordId }: Entit
 	};
 }
 
-/** The record without its title, for a rename the title write already covers. */
-const withoutTitle = ( record: Record< string, unknown > ) =>
-	Object.fromEntries( Object.entries( record ).filter( ( [ key ] ) => key !== 'title' ) );
-
 /**
  * Writes the site's title and metadata.
  *
@@ -494,13 +489,13 @@ async function applyRecordEdit(
 	const isRename = renaming && nextTitle !== previousTitle;
 
 	// Read before the title changes: what the menu item followed until now.
-	const previousLabels = isRename ? await pageLabels( recordId ) : [];
+	const previousLabels = isRename ? await pageLabels( recordId, previousTitle ) : [];
 	const previousUrl = isRename ? await getPageUrl( recordId ) : undefined;
 
 	// The title is checkpointed, so it goes through `setPageTitle` and stays out
 	// of the editor's undo stack. The rest of the record is not, so the editor's
 	// stack remains its only undo and it keeps it.
-	let recordToWrite = isRename ? withoutTitle( record ) : record;
+	let recordToWrite = isRename ? pickFields( record, [ 'title' ], false ) : record;
 	let menuWrite: Record< string, unknown > | undefined;
 	let capturedMenu = false;
 
@@ -605,13 +600,13 @@ async function applyEdits(
 }
 
 /**
- * Routes the editor off a record about to be deleted: to the front page, or
- * the pages list when the site shows posts there or the page is the front page
- * itself. It navigates without saving — the user's pending edits are theirs to
- * publish. Only the site editor's router can leave without a full page load,
- * which could cut the delete off, so the post editor refuses. The canvas
- * binding is handed over first, as the guard does for the ability — left
- * behind, the move would read as the user leaving and abort the request.
+ * Routes the editor off a record about to be deleted: to the front page, or the
+ * pages list when the site shows posts there or the page is the front page.
+ *
+ * It navigates without saving, since pending edits are the user's to publish.
+ * The post editor refuses: only the site editor's router can leave without a
+ * full page load, which could cut the delete off. The canvas binding is handed
+ * over first, or the move reads as the user leaving and aborts the request.
  */
 async function leaveRecord( entityName: string, recordId: number | string ): Promise< void > {
 	if ( ! getEditorHistory() ) {
@@ -700,14 +695,11 @@ export async function editEntityRecordCallback(
 	}
 
 	// The backend asks the model for a `confirmationMessage` before anything
-	// destructive. Confirmation here is conversational — this refuses and writes
-	// nothing, the agent asks, and the user answers in the chat — where Big Sky
-	// renders Yes/No buttons from its own chat store.
-	//
-	// The tool echoes, so the refusal returns as a client-tool failure and the
-	// model runs again: the `error` tells it to ask first, then re-call without
-	// the field. Two attempts before the backend gives up, so it has to be
-	// directive rather than descriptive.
+	// destructive. Confirmation is conversational: this writes nothing, the agent
+	// asks, and the user answers in the chat, where Big Sky renders Yes/No
+	// buttons from its own chat store. The refusal comes back as a client-tool
+	// failure and the model runs again, so the `error` has to be directive — it
+	// gets two attempts before the backend gives up.
 	if ( typeof input.confirmationMessage === 'string' && input.confirmationMessage.trim() ) {
 		return errorResult(
 			`Nothing was changed yet. Ask the user to confirm: "${ input.confirmationMessage.trim() }" — then call this tool again with the same arguments and no confirmationMessage.`,
@@ -766,11 +758,7 @@ export async function editEntityRecordCallback(
 			);
 		}
 
-		return errorResult(
-			`Failed to change the site. Error: ${ failure.message }`,
-			failureMessage,
-			applied
-		);
+		return errorResult( `Failed to change the site. Error: ${ failure.message }`, failureMessage );
 	}
 
 	return successResult( summary, applied );
