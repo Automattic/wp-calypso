@@ -1,6 +1,6 @@
 import { addQueryArgs } from '@wordpress/url';
 import { wpcomLink } from '../../../utils/link';
-import type { Agency, AgencyPendingSite } from '@automattic/api-core';
+import type { Agency, AgencyPendingSite, Site } from '@automattic/api-core';
 
 export type PressableOwnershipType = 'none' | 'regular' | 'agency';
 
@@ -92,4 +92,23 @@ export function getJetpackConnectUrl( site: string ): string | null {
 		url: site.trim(),
 		source: 'a8c-for-agencies',
 	} );
+}
+
+/**
+ * The user's own sites that can still be brought under agency management:
+ * WordPress.com, Jetpack or A4A-plugin sites the agency does not already
+ * manage. Staging sites are never importable.
+ */
+export function getImportableSites(
+	sites: Site[] | undefined,
+	managedSiteIds: number[] | undefined
+): Site[] {
+	const managed = new Set( managedSiteIds ?? [] );
+
+	return ( sites ?? [] ).filter(
+		( site ) =>
+			! site.is_wpcom_staging_site &&
+			( site.is_wpcom_atomic || site.jetpack || !! site.is_a4a_client ) &&
+			! managed.has( site.ID )
+	);
 }

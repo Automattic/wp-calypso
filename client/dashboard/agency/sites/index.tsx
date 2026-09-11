@@ -13,6 +13,7 @@ import PageLayout from '../../components/page-layout';
 import { DEFAULT_PER_PAGE, DEFAULT_CONFIG, recordViewChanges } from '../../sites/dataviews/views';
 import AddNewSite from './add-new-site';
 import ConnectSiteModal from './add-new-site/connect-site-modal';
+import ImportFromWPCOMModal from './add-new-site/import-from-wpcom-modal';
 import { getAgencyFields, getAgencyActions } from './dataviews';
 import type { AddNewSiteAction } from './add-new-site/types';
 import type { AgencySite, FetchAgencySitesOptions } from '@automattic/api-core';
@@ -109,14 +110,15 @@ export default function AgencySites() {
 		>
 			{ activeModal === 'menu' && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ closeModal }>
-					{ /* The import and dev-site modals are ported separately, so those
-					     actions close the menu without opening anything yet. */ }
+					{ /* The dev-site modal is ported separately, so that action closes
+					     the menu without opening anything yet. */ }
 					<AddNewSite onSelectAction={ setActiveModal } />
 				</Modal>
 			) }
 			{ ( activeModal === 'a4a-connection' || activeModal === 'jetpack-connection' ) && (
 				<ConnectSiteModal action={ activeModal } onClose={ closeModal } />
 			) }
+			{ activeModal === 'import-from-wpcom' && <ImportFromWPCOMModal onClose={ closeModal } /> }
 			{ ! isLoading && <PerformanceTrackerStop /> }
 			<DataViewsCard>
 				<DataViews< AgencySite >
