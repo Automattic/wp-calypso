@@ -709,6 +709,29 @@ describe( 'editEntityRecordCallback', () => {
 		expect( editEntityRecord ).toHaveBeenCalledWith( 'postType', 'page', 8, { content: 'Hello' } );
 	} );
 
+	// A misspelt field would otherwise be dropped and the rest reported as done.
+	it( 'refuses a batch carrying a field the schema does not name', async () => {
+		const result = await editEntityRecordCallback( {
+			addEntities: [ { ...page(), record: { title: 'About' } } ],
+			deleteEntites: [ page( 7 ) ],
+		} as never );
+
+		expect( result.result.success ).toBe( false );
+		expect( result.result.error ).toContain( 'Unknown field: deleteEntites' );
+		expect( saveEntityRecord ).not.toHaveBeenCalled();
+	} );
+
+	it( 'accepts the fields agenttic-client adds to every call', async () => {
+		const result = await editEntityRecordCallback( {
+			messageId: 'm1',
+			toolCallId: 'call-envelope',
+			toolId: 'big_sky__edit_entity_record',
+			editEntities: [ { ...page( 8 ), record: { content: 'Hello' } } ],
+		} as never );
+
+		expect( result.result.success ).toBe( true );
+	} );
+
 	it( 'reports what applied when a later change fails', async () => {
 		( setPageTitle as jest.Mock ).mockRejectedValueOnce( new Error( 'menu is locked' ) );
 
