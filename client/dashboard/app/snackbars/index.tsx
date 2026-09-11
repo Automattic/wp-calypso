@@ -4,7 +4,6 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { Icon, published, error } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
-import { renderHtmlMessage } from '../../utils/render-html-message';
 import './style.scss';
 
 const statusIcon: Record< string, React.JSX.Element > = {
@@ -50,10 +49,6 @@ export default function Snackbars() {
 
 			return {
 				...notice,
-				// SnackbarList types `content` as a string but renders it as children.
-				content: ( notice.__unstableHTML
-					? renderHtmlMessage( notice.content )
-					: notice.content ) as string,
 				className: statusClassName,
 				icon:
 					'icon' in notice
