@@ -43,6 +43,7 @@ jest.mock( '../../../utils/site-title', () => ( {
 } ) );
 jest.mock( '../navigation-items', () => ( {
 	buildNavigationItems: jest.fn( async ( _id, record ) => record ),
+	checkMenuRecord: jest.fn(),
 } ) );
 jest.mock( '../../../utils/site-record', () => ( {
 	getSiteRecord: jest.fn( () => ( { show_on_front: 'page', page_on_front: 3 } ) ),
@@ -82,7 +83,7 @@ import { getSiteRecord } from '../../../utils/site-record';
 import { setSiteTitle } from '../../../utils/site-title';
 import { navigateEditorWithoutSaving } from '../../editor-navigate/callback';
 import { editEntityRecordCallback, getCheckpointKeys } from '../callback';
-import { buildNavigationItems } from '../navigation-items';
+import { buildNavigationItems, checkMenuRecord } from '../navigation-items';
 
 const saveEntityRecord = jest.fn( async () => ( { id: 7, title: 'About', link: '/about/' } ) );
 const editEntityRecord = jest.fn();
@@ -734,6 +735,41 @@ describe( 'editEntityRecordCallback', () => {
 
 		expect( result.result.success ).toBe( true );
 		expect( result.result.message ).toBe( 'Updated the page.' );
+	} );
+
+	// The create schema is closed: a misspelt title would create an untitled page.
+	it( 'refuses a create whose record carries a field the schema does not name', async () => {
+		const result = await editEntityRecordCallback( {
+			addEntities: [ { ...page(), record: { titel: 'About' } } ],
+		} as never );
+
+		expect( result.result.success ).toBe( false );
+		expect( result.result.error ).toContain( 'unknown field titel' );
+		expect( saveEntityRecord ).not.toHaveBeenCalled();
+	} );
+
+	// Checked with the rest of the batch: found only when its turn came, a
+	// malformed menu edit would fail after the creates before it had landed.
+	it( 'refuses a malformed menu edit before anything is written', async () => {
+		( checkMenuRecord as jest.Mock ).mockImplementationOnce( () => {
+			throw new Error( 'Invalid navigation items at the top level' );
+		} );
+
+		const result = await editEntityRecordCallback( {
+			addEntities: [ { ...page(), record: { title: 'About' } } ],
+			editEntities: [
+				{
+					entityType: 'postType',
+					entityName: 'wp_navigation',
+					recordId: 9,
+					record: { navigationItems: [ null ] },
+				},
+			],
+		} as never );
+
+		expect( result.result.success ).toBe( false );
+		expect( result.result.error ).toContain( 'Invalid navigation items' );
+		expect( saveEntityRecord ).not.toHaveBeenCalled();
 	} );
 
 	it( 'refuses an entry carrying a field the schema does not name', async () => {
