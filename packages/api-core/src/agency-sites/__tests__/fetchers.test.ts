@@ -1,5 +1,5 @@
 import nock from 'nock';
-import { fetchAgencyPendingSites, fetchAgencySitesWithPlugins } from '..';
+import { createAgencySite, fetchAgencyPendingSites, fetchAgencySitesWithPlugins } from '..';
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -32,6 +32,19 @@ describe( 'fetchAgencyPendingSites', () => {
 			.reply( 200, pendingSites );
 
 		await expect( fetchAgencyPendingSites( 123 ) ).resolves.toEqual( pendingSites );
+		expect( scope.isDone() ).toBe( true );
+	} );
+} );
+
+describe( 'createAgencySite', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'brings a site the user owns under the agency', async () => {
+		const scope = nock( BASE )
+			.post( '/wpcom/v2/agency/123/sites', { blog_id: 456 } )
+			.reply( 200, { success: true } );
+
+		await expect( createAgencySite( 123, 456 ) ).resolves.toEqual( { success: true } );
 		expect( scope.isDone() ).toBe( true );
 	} );
 } );
