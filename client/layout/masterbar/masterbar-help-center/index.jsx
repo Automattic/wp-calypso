@@ -1,3 +1,5 @@
+// Deep import: the package root pulls in `@wordpress/media-utils`, which touches `document` at import time and breaks SSR.
+import { useUnifiedAiChat } from '@automattic/agents-manager/src/hooks/use-unified-ai-chat';
 import { recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
 import { HelpCenter } from '@automattic/data-stores';
 import { HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT } from '@automattic/help-center/src/experiments';
@@ -41,8 +43,15 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
 		'calypso_help_center_menu_popover_increase_exposure'
 	);
+	// Unified-agent users get the Big Sky chat instead of this panel, so they can never see
+	// the treatment and must stay out of the assignment. `logged-in.jsx` coerces the flag
+	// with `!!`, so this component can mount for them during the unresolved window; read
+	// through the query so an unresolved flag is distinguishable from a resolved `false`.
+	const { data: shouldUseUnifiedAgent, isPending: isUnifiedAgentPending } = useUnifiedAiChat();
+	const isGetHelpChatForwardEligible = ! isUnifiedAgentPending && ! shouldUseUnifiedAgent;
 	const [ isLoadingGetHelpChatForwardAssignment, getHelpChatForwardAssignment ] = useExperiment(
-		HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT
+		HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT,
+		{ isEligible: isGetHelpChatForwardEligible }
 	);
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 
@@ -51,10 +60,11 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 		! isLoadingExperimentAssignment && experimentAssignment?.variationName === 'menu_popover';
 
 	// One impression per section view, so it divides cleanly into the click events
-	// below; site context is whatever has resolved by then. Held until the assignment
-	// settles, so impressions and clicks split by the same arm.
+	// below; site context is whatever has resolved by then. Held until eligibility and
+	// the assignment settle, so impressions and clicks split by the same arm and
+	// ineligible users are never counted into one.
 	useEffect( () => {
-		if ( isLoadingGetHelpChatForwardAssignment ) {
+		if ( isUnifiedAgentPending || isLoadingGetHelpChatForwardAssignment ) {
 			return;
 		}
 
@@ -65,15 +75,17 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 					location: 'help-center',
 					entry_point: 'masterbar',
 					section: sectionName,
-					get_help_chat_forward_variation: getHelpChatForwardAssignment?.variationName ?? null,
-					is_get_help_chat_forward_assignment_loaded: ! isLoadingGetHelpChatForwardAssignment,
+					...( isGetHelpChatForwardEligible && {
+						get_help_chat_forward_variation: getHelpChatForwardAssignment?.variationName ?? null,
+						is_get_help_chat_forward_assignment_loaded: true,
+					} ),
 				},
 				siteContextSource,
 				siteId
 			)
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ sectionName, isLoadingGetHelpChatForwardAssignment ] );
+	}, [ sectionName, isUnifiedAgentPending, isLoadingGetHelpChatForwardAssignment ] );
 
 	const trackIconInteraction = () => {
 		recordTracksEvent(
@@ -84,8 +96,10 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 					section: sectionName,
 					is_menu_panel_enabled: isMenuPanelExperimentEnabled,
 					is_assignment_loaded: ! isLoadingExperimentAssignment,
-					get_help_chat_forward_variation: getHelpChatForwardAssignment?.variationName ?? null,
-					is_get_help_chat_forward_assignment_loaded: ! isLoadingGetHelpChatForwardAssignment,
+					...( isGetHelpChatForwardEligible && {
+						get_help_chat_forward_variation: getHelpChatForwardAssignment?.variationName ?? null,
+						is_get_help_chat_forward_assignment_loaded: ! isLoadingGetHelpChatForwardAssignment,
+					} ),
 				},
 				siteContextSource,
 				siteId
