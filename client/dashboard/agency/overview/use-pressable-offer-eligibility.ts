@@ -50,13 +50,16 @@ export function hasPlanEligibleForExpansionOffer( licenses: JetpackLicense[] ): 
 }
 
 /** The licenses behind the expansion-offer check, oldest first. */
-export const pressableOfferLicensesQuery = ( agencyId: number ) =>
-	jetpackAgencyLicensesQuery( agencyId, {
+export const pressableOfferLicensesQuery = ( agencyId: number ) => ( {
+	...jetpackAgencyLicensesQuery( agencyId, {
 		filter: JetpackLicenseFilter.NotRevoked,
 		search: 'pressable',
 		sortField: JetpackLicenseSortField.IssuedAt,
 		sortDirection: JetpackLicenseSortDirection.Ascending,
-	} );
+	} ),
+	// Keeps the route loader's prefetch fresh when the banner mounts.
+	staleTime: 5 * 60 * 1000,
+} );
 
 export const isPressableOfferActive = () =>
 	new Date() < new Date( PRESSABLE_Q3_2026_OFFER_ENDS_AT );
