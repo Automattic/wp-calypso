@@ -26,6 +26,8 @@ interface Props {
 	term: TermPricing;
 	isReferralMode: boolean;
 	isAgencyApproved: boolean;
+	/** Pressable's introductory price only applies to agencies without a Pressable plan. */
+	applyPressableIntroductoryPrice?: boolean;
 	/** Controls the dropdown, for pages that open the cart after adding to it. */
 	open?: boolean;
 	onToggle?: ( willOpen: boolean ) => void;
@@ -44,6 +46,7 @@ export default function CartMenu( {
 	term,
 	isReferralMode,
 	isAgencyApproved,
+	applyPressableIntroductoryPrice = true,
 	open,
 	onToggle,
 	onRemove,
@@ -54,7 +57,16 @@ export default function CartMenu( {
 	const lines = items
 		.map( ( item ) => {
 			const product = products.find( ( candidate ) => candidate.slug === item.slug );
-			return product ? { item, product, priceInfo: getProductPriceInfo( product, term ) } : null;
+			if ( ! product ) {
+				return null;
+			}
+			const applyIntroductoryPrice =
+				product.family_slug !== 'pressable-hosting' || applyPressableIntroductoryPrice;
+			return {
+				item,
+				product,
+				priceInfo: getProductPriceInfo( product, term, { applyIntroductoryPrice } ),
+			};
 		} )
 		.filter( ( line ): line is NonNullable< typeof line > => line !== null );
 

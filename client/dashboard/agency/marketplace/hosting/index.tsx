@@ -1,4 +1,13 @@
-import { activeAgencyQuery, agencyProductsQuery } from '@automattic/api-queries';
+import {
+	JetpackLicenseFilter,
+	JetpackLicenseSortDirection,
+	JetpackLicenseSortField,
+} from '@automattic/api-core';
+import {
+	activeAgencyQuery,
+	agencyProductsQuery,
+	jetpackAgencyLicensesQuery,
+} from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -10,7 +19,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -22,7 +31,15 @@ import ReferralToggle from '../referral-toggle';
 import TermPricingToggle from '../term-pricing-toggle';
 import { useMarketplaceType } from '../use-marketplace-type';
 import { useTermPricing } from '../use-term-pricing';
+import {
+	findAgencyPressablePlan,
+	getPressableLicenses,
+	getPressableOwnershipType,
+	getPressableProducts,
+} from './lib/pressable-products';
+import PressableSection from './pressable-section';
 import type { HostingSection } from '../paths';
+import type { AgencyProduct } from '@automattic/api-core';
 
 import './style.scss';
 
@@ -53,10 +70,9 @@ const getHostingBrands = (): { key: HostingSection; tier: string; subtitle: stri
 	},
 ];
 
-// Placeholder content until the per-host sections land.
-const PLACEHOLDERS: Record< HostingSection, string > = {
+// Placeholder content until the WordPress.com and VIP sections land.
+const PLACEHOLDERS: Record< Exclude< HostingSection, 'pressable' >, string > = {
 	wpcom: 'WordPress.com hosting content will appear here.',
-	pressable: 'Pressable hosting content will appear here.',
 	vip: 'WordPress VIP hosting content will appear here.',
 };
 
@@ -76,9 +92,55 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 	const agencyApproved = isAgencyApproved( agency );
 
 	const { data: allProducts } = useQuery( agencyProductsQuery( agencyId ) );
+	// Pressable licenses tell which plan the agency is on and what its add-ons contribute.
+	const { data: licenses, isFetched: isLicensesFetched } = useQuery( {
+		...jetpackAgencyLicensesQuery( agencyId, {
+			filter: JetpackLicenseFilter.NotRevoked,
+			sortField: JetpackLicenseSortField.IssuedAt,
+			sortDirection: JetpackLicenseSortDirection.Descending,
+		} ),
+		enabled: agencyId > 0,
+		staleTime: 5 * 60 * 1000,
+	} );
 
-	const { items: cartItems, removeItem, clearCart } = useShoppingCart();
+	const pressableProducts = useMemo(
+		() => getPressableProducts( allProducts ?? [] ),
+		[ allProducts ]
+	);
+	const pressableLicenses = useMemo( () => getPressableLicenses( licenses ?? [] ), [ licenses ] );
+	const agencyPressablePlan = useMemo(
+		() => findAgencyPressablePlan( pressableLicenses, pressableProducts ),
+		[ pressableLicenses, pressableProducts ]
+	);
+	const pressableOwnership = getPressableOwnershipType( agency ?? undefined );
+	// A Pressable account from outside A4A doesn't change what the page sells,
+	// so it counts as no plan; a referral or an A4A plan counts as owning one.
+	const effectivePressableOwnership = ( () => {
+		if ( isReferralMode || agencyPressablePlan ) {
+			return 'agency';
+		}
+		return pressableOwnership === 'regular' ? 'none' : pressableOwnership;
+	} )();
+
+	const { items: cartItems, swapItems, removeItem, clearCart } = useShoppingCart();
 	const [ isCartOpen, setIsCartOpen ] = useState( false );
+
+	// A hosting plan replaces the plan of the same family already in the cart.
+	const addToCart = ( plan: AgencyProduct, quantity: number ) => {
+		const sameFamilySlugs = cartItems
+			.map( ( item ) => allProducts?.find( ( product ) => product.slug === item.slug ) )
+			.filter( ( product ): product is AgencyProduct => !! product )
+			.filter( ( product ) => product.family_slug === plan.family_slug )
+			.map( ( product ) => product.slug );
+		swapItems( sameFamilySlugs, { slug: plan.slug, quantity } );
+		setIsCartOpen( true );
+		recordTracksEvent( 'calypso_a4a_marketplace_hosting_add_to_cart', {
+			quantity,
+			item: plan.family_slug,
+			purchase_mode: marketplaceType,
+			term_pricing: termPricing,
+		} );
+	};
 
 	const handleSectionChange = ( tab: string | null | undefined ) => {
 		if ( ! tab || tab === section ) {
@@ -88,9 +150,24 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 		navigate( { to: getMarketplaceHostingSectionRoute( tab as HostingSection ) } );
 	};
 
-	const renderSection = ( brand: HostingSection ) => (
-		<Text variant="muted">{ PLACEHOLDERS[ brand ] }</Text>
-	);
+	const renderSection = ( brand: HostingSection ) => {
+		if ( brand !== 'pressable' ) {
+			return <Text variant="muted">{ PLACEHOLDERS[ brand ] }</Text>;
+		}
+		if ( ! isLicensesFetched ) {
+			return null;
+		}
+		return (
+			<PressableSection
+				products={ pressableProducts }
+				existingPlan={ agencyPressablePlan }
+				ownership={ effectivePressableOwnership }
+				term={ termPricing }
+				isReferralMode={ isReferralMode }
+				onAddToCart={ addToCart }
+			/>
+		);
+	};
 
 	return (
 		<PageLayout
@@ -109,6 +186,9 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 								term={ termPricing }
 								isReferralMode={ isReferralMode }
 								isAgencyApproved={ agencyApproved }
+								applyPressableIntroductoryPrice={
+									isReferralMode || effectivePressableOwnership !== 'agency'
+								}
 								open={ isCartOpen }
 								onToggle={ setIsCartOpen }
 								onRemove={ removeItem }
