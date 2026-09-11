@@ -10,67 +10,70 @@ import type { ConnectSiteAction } from '../types';
 
 function renderModal( action: ConnectSiteAction ) {
 	const onClose = jest.fn();
-	const open = jest.spyOn( window, 'open' ).mockImplementation( () => null );
 
 	render( <ConnectSiteModal action={ action } onClose={ onClose } /> );
 
-	return { onClose, open };
+	return { onClose };
 }
 
 const siteField = () => screen.getByLabelText( 'What site do you want to connect?' );
-const submitButton = ( name: string ) => screen.getByRole( 'button', { name } );
 
-afterEach( () => {
-	jest.restoreAllMocks();
-} );
+// The submit control is a link once there is somewhere to send the agency, and
+// a disabled button until then.
+const submitLink = ( name: string ) => screen.getByRole( 'link', { name } );
+const submitButton = ( name: string ) => screen.getByRole( 'button', { name } );
 
 describe( 'ConnectSiteModal', () => {
 	test( 'sends the agency to the site’s plugin installer for the Automattic plugin', async () => {
-		const { onClose, open } = renderModal( 'a4a-connection' );
+		renderModal( 'a4a-connection' );
 
 		await userEvent.type( siteField(), 'example.com' );
-		await userEvent.click( submitButton( 'Connect' ) );
 
-		expect( open ).toHaveBeenCalledWith(
-			'https://example.com/wp-admin/plugin-install.php?s=automattic-for-agencies-client&tab=search&type=term',
-			'_blank',
-			'noreferrer'
+		const link = submitLink( 'Connect' );
+		expect( link ).toHaveAttribute(
+			'href',
+			'https://example.com/wp-admin/plugin-install.php?s=automattic-for-agencies-client&tab=search&type=term'
 		);
-		expect( onClose ).toHaveBeenCalled();
+		expect( link ).toHaveAttribute( 'target', '_blank' );
 	} );
 
 	test( 'sends the agency to Jetpack connect for the Jetpack plugin', async () => {
-		const { onClose, open } = renderModal( 'jetpack-connection' );
+		renderModal( 'jetpack-connection' );
 
 		await userEvent.type( siteField(), 'example.com' );
-		await userEvent.click( submitButton( 'Install Jetpack' ) );
 
-		const [ url ] = open.mock.calls[ 0 ];
-		expect( url ).toContain( '/jetpack/connect' );
-		expect( url ).toContain( 'url=example.com' );
-		expect( url ).toContain( 'source=a8c-for-agencies' );
-		expect( onClose ).toHaveBeenCalled();
+		const href = submitLink( 'Install Jetpack' ).getAttribute( 'href' );
+		expect( href ).toContain( '/jetpack/connect' );
+		expect( href ).toContain( 'url=example.com' );
+		expect( href ).toContain( 'source=a8c-for-agencies' );
 	} );
 
 	test( 'keeps the scheme the agency typed', async () => {
-		const { open } = renderModal( 'a4a-connection' );
+		renderModal( 'a4a-connection' );
 
 		await userEvent.type( siteField(), 'http://example.com' );
-		await userEvent.click( submitButton( 'Connect' ) );
 
-		expect( open ).toHaveBeenCalledWith(
-			expect.stringContaining( 'http://example.com/wp-admin' ),
-			'_blank',
-			'noreferrer'
+		expect( submitLink( 'Connect' ) ).toHaveAttribute(
+			'href',
+			expect.stringContaining( 'http://example.com/wp-admin' )
 		);
 	} );
 
+	test( 'closes once the agency is on their way to the installer', async () => {
+		const { onClose } = renderModal( 'a4a-connection' );
+
+		await userEvent.type( siteField(), 'example.com' );
+		await userEvent.click( submitLink( 'Connect' ) );
+
+		expect( onClose ).toHaveBeenCalled();
+	} );
+
 	test( 'submits on Enter without leaving the field', async () => {
-		const { open } = renderModal( 'a4a-connection' );
+		const { onClose } = renderModal( 'a4a-connection' );
 
 		await userEvent.type( siteField(), 'example.com{Enter}' );
 
-		expect( open ).toHaveBeenCalled();
+		expect( onClose ).toHaveBeenCalled();
 	} );
 
 	test( 'blocks submission until a site is entered', () => {
@@ -95,12 +98,12 @@ describe( 'ConnectSiteModal', () => {
 		expect( submitButton( 'Connect' ) ).toBeDisabled();
 	} );
 
-	test( 'closes without opening anything when cancelled', async () => {
-		const { onClose, open } = renderModal( 'a4a-connection' );
+	test( 'closes without sending the agency anywhere when cancelled', async () => {
+		const { onClose } = renderModal( 'a4a-connection' );
 
+		await userEvent.type( siteField(), 'example.com' );
 		await userEvent.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
 
 		expect( onClose ).toHaveBeenCalled();
-		expect( open ).not.toHaveBeenCalled();
 	} );
 } );
