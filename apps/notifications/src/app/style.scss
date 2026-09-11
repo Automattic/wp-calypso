@@ -224,6 +224,9 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	height: 6px;
 	border-radius: 50%;
 	background: var(--color-accent);
+	// A ring in the panel's own background colour, so the dot reads against the gear
+	// rather than disappearing into its strokes.
+	box-shadow: 0 0 0 2px var(--color-surface);
 	pointer-events: none;
 }
 
