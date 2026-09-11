@@ -12,7 +12,11 @@ export function flattenTitle( title: unknown ): string {
 		return title;
 	}
 
-	const parts = title as { raw?: string; rendered?: string } | undefined;
+	const { raw, rendered } = ( title ?? {} ) as { raw?: unknown; rendered?: unknown };
 
-	return parts?.raw ?? ( parts?.rendered ? decodeEntities( parts.rendered ) : '' );
+	if ( typeof raw === 'string' ) {
+		return raw;
+	}
+
+	return typeof rendered === 'string' ? decodeEntities( rendered ) : '';
 }
