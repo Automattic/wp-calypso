@@ -87,7 +87,13 @@ test( 'in post-grace it also settles the meta and the transfer status, toleratin
 	).toBe( 'error' );
 } );
 
-test( 'never rejects when purchases fail', async () => {
-	api().get( '/rest/v1.2/upgrades' ).query( true ).reply( 500, {} );
+test( 'never rejects when purchases fail, and does not retry', async () => {
+	// One reply only: a retry would hang on an unmocked request rather than
+	// settling, which is the point -- the loader blocks the page's first paint.
+	const scope = api().get( '/rest/v1.2/upgrades' ).query( true ).reply( 500, {} );
+
 	await expect( ensureSiteExpiryNoticeData( SITE_ID ) ).resolves.toBeUndefined();
+
+	expect( scope.isDone() ).toBe( true );
+	expect( queryClient.getQueryState( [ 'upgrades', 'site', SITE_ID ] )?.status ).toBe( 'error' );
 } );

@@ -37,7 +37,8 @@ describe( 'isPlanExpiryNoticeDismissed', () => {
 	test( 'false for a stamp from before this term expired', () => {
 		expect( isPlanExpiryNoticeDismissed( expirySeconds - 1, purchase ) ).toBe( false );
 	} );
-	test( 'true for a stamp after the expiry date', () => {
+	test( 'true for a stamp on or after the expiry second', () => {
+		expect( isPlanExpiryNoticeDismissed( expirySeconds, purchase ) ).toBe( true );
 		expect( isPlanExpiryNoticeDismissed( expirySeconds + 1, purchase ) ).toBe( true );
 	} );
 } );

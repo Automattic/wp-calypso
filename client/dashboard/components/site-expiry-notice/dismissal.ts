@@ -28,5 +28,5 @@ export function isPlanExpiryNoticeDismissed(
 	if ( ! dismissedAt ) {
 		return false;
 	}
-	return dismissedAt * 1000 > new Date( purchase.expiry_date ).getTime();
+	return dismissedAt * 1000 >= new Date( purchase.expiry_date ).getTime();
 }

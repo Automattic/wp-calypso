@@ -97,6 +97,29 @@ describe( '<SitesNoticeArbiter>', () => {
 		expect( screen.queryByText( 'Page notice' ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'dismissing an urgent shared candidate leaves the slot empty', async () => {
+		function DismissibleSharedNotice() {
+			const [ isDismissed, setIsDismissed ] = useState( false );
+			if ( isDismissed ) {
+				return null;
+			}
+			return <Notice onClose={ () => setIsDismissed( true ) }>Plan expired</Notice>;
+		}
+		mockCandidate.mockReturnValue( { node: <DismissibleSharedNotice />, isUrgent: true } );
+
+		render(
+			<SitesNoticeArbiter>
+				<Notice>Page notice</Notice>
+			</SitesNoticeArbiter>
+		);
+
+		expect( await screen.findByText( 'Plan expired' ) ).toBeVisible();
+		await userEvent.click( screen.getByRole( 'button', { name: /dismiss/i } ) );
+
+		expect( screen.queryByText( 'Plan expired' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Page notice' ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'a non-urgent shared candidate loses to page candidates', async () => {
 		mockCandidate.mockReturnValue( { node: <Notice>Plan expiring</Notice>, isUrgent: false } );
 		render(

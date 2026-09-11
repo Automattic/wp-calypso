@@ -5,6 +5,7 @@ import {
 	sitePurchasesQuery,
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import {
 	getPlanExpiryNotice,
 	getSitewideExpiryStage,
@@ -173,13 +174,36 @@ export function useSiteExpiryNotice(
 		retry: ( failureCount, error ) => ! isClientError( error ) && failureCount < 3,
 	} );
 
-	return getSiteExpiryNoticeState( {
-		...options,
-		purchases,
-		currentUser,
-		isCurrentUserFetched,
-		latestTransfer,
-		latestTransferError,
-		isLatestTransferPending: isPostGrace && isLatestTransferPending,
-	} );
+	// Memoised on the primitives that feed it: the state object is a prop of
+	// the banner and a dependency of the arbiter candidate's own memo, so a new
+	// object on every render would re-render both for nothing.
+	const { isDashboardScreen, currentUserId, isAtomic, locale } = options;
+	return useMemo(
+		() =>
+			getSiteExpiryNoticeState( {
+				isDashboardScreen,
+				currentUserId,
+				isAtomic,
+				locale,
+				purchases,
+				currentUser,
+				isCurrentUserFetched,
+				latestTransfer,
+				latestTransferError,
+				isLatestTransferPending: isPostGrace && isLatestTransferPending,
+			} ),
+		[
+			isDashboardScreen,
+			currentUserId,
+			isAtomic,
+			locale,
+			purchases,
+			currentUser,
+			isCurrentUserFetched,
+			latestTransfer,
+			latestTransferError,
+			isPostGrace,
+			isLatestTransferPending,
+		]
+	);
 }

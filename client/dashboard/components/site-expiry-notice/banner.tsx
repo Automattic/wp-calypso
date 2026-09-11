@@ -1,7 +1,7 @@
 import { siteCurrentUserMetaMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
-import { PlanExpiryNotice, getExpiryStateName } from '../plan-expiry-notice';
+import { PlanExpiryNotice, getPlanExpiryEventProperties } from '../plan-expiry-notice';
 import type { SiteExpiryNoticeState } from './use-site-expiry-notice';
 
 export interface SiteExpiryNoticeBannerProps {
@@ -37,15 +37,12 @@ export function SiteExpiryNoticeBanner( {
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const { mutate: updateMeta } = useMutation( siteCurrentUserMetaMutation( siteId ) );
 
-	const eventProperties = {
+	const eventProperties = getPlanExpiryEventProperties( purchase, {
 		surface,
-		purchase_id: purchase.ID,
-		product_slug: purchase.product_slug,
 		stage,
-		state: getExpiryStateName( stage ),
-		is_plan_owner: isPlanOwner,
-		...extraEventProperties,
-	};
+		isPlanOwner,
+		extra: extraEventProperties,
+	} );
 
 	const dismiss = () => {
 		if ( ! dismissMetaKey ) {
@@ -77,6 +74,7 @@ export function SiteExpiryNoticeBanner( {
 			scope="sitewide"
 			isReverted={ isReverted }
 			isPlanOwner={ isPlanOwner }
+			stage={ stage }
 			locale={ locale }
 			surface={ surface }
 			recordTracksEvent={ recordTracksEvent }
