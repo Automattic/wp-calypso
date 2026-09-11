@@ -205,6 +205,11 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 // indicator below them raises.
 .wpnc-app__view-picker {
 	flex-shrink: 0;
+}
+
+// Only the tab row needs the nudge: it lines the button up with the tab labels, which
+// the tab list's selection indicator below them raises.
+.wpnc-app__view-picker.is-in-tabs {
 	margin-top: 6px;
 }
 

@@ -7,6 +7,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import { PINNED_VIEW_NAMES, type StoredView } from '../../common/premade-views';
 import actions from '../../panel/state/actions';
@@ -19,7 +20,7 @@ type PickerView = {
 	hidden: boolean;
 };
 
-const ViewPicker = ( { views }: { views: PickerView[] } ) => {
+const ViewPicker = ( { views, className }: { views: PickerView[]; className?: string } ) => {
 	const storedViews = useSelector( getViews ) as StoredView[];
 	const savePreference = useSavePreference();
 
@@ -42,7 +43,7 @@ const ViewPicker = ( { views }: { views: PickerView[] } ) => {
 
 	return (
 		<Dropdown
-			className="wpnc-app__view-picker"
+			className={ clsx( 'wpnc-app__view-picker', className ) }
 			popoverProps={ { placement: 'bottom-end' } }
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<Button

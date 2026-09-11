@@ -26,6 +26,10 @@ const savedPreference = ( post: jest.Mock, key: string ) => {
 	return ( call?.[ 2 ] as { calypso_preferences: Record< string, unknown > } ).calypso_preferences;
 };
 
+// The placement class sits on the dropdown wrapper, not the button inside it.
+const pickerWrapper = () =>
+	screen.getByRole( 'button', { name: 'Add or remove views' } ).closest( '.wpnc-app__view-picker' );
+
 const renderPanel = ( { isViewSettingsEnabled }: { isViewSettingsEnabled: boolean } ) => {
 	const store = initStore();
 	const post = jest.fn( () => Promise.resolve( {} ) );
@@ -113,6 +117,25 @@ describe( 'NotePanel settings menu', () => {
 
 		expect( savedPreference( post, 'notifications-layout-style' ) ).toEqual( {
 			'notifications-layout-style': 'simplified',
+		} );
+	} );
+} );
+
+describe( 'NotePanel view picker placement', () => {
+	// Five tabs already fill the panel, so the picker moves out of the strip and up beside
+	// the header controls rather than squeezing them further.
+	it( 'sits beside the header controls with the default five views', () => {
+		renderPanel( { isViewSettingsEnabled: true } );
+
+		expect( pickerWrapper() ).not.toHaveClass( 'is-in-tabs' );
+	} );
+
+	it( 'sits in the tab strip once a view is hidden', async () => {
+		const { store } = renderPanel( { isViewSettingsEnabled: true } );
+		store.dispatch( actions.ui.setViews( [ { name: 'likes', hidden: true } ] ) );
+
+		await waitFor( () => {
+			expect( pickerWrapper() ).toHaveClass( 'is-in-tabs' );
 		} );
 	} );
 } );

@@ -31,6 +31,10 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 
 const { Tabs } = unlock( privateApis );
 
+// Above this many tabs the strip has no room to spare, so the picker moves up beside
+// the other header controls instead of competing with them for width.
+const MAX_TABS_BESIDE_PICKER = 4;
+
 // Every view this panel can show, in the user's order, each flagged hidden or not.
 export const getResolvedViews = ( storedViews: StoredView[] = [] ) => {
 	const known = [
@@ -74,6 +78,7 @@ const NotePanel = ( {
 	// the keydown effect's dependencies below.
 	const resolvedViews = useMemo( () => getResolvedViews( storedViews ), [ storedViews ] );
 	const notificationViews = useMemo( () => getNotificationViews( storedViews ), [ storedViews ] );
+	const isPickerBesideTabs = notificationViews.length <= MAX_TABS_BESIDE_PICKER;
 	const { isViewSettingsEnabled } = useAppContext();
 	const tabRefs = useRef< Record< string, HTMLButtonElement > >( {} );
 	const keyboardShortcutsAreEnabled = useSelector( getKeyboardShortcutsEnabled );
@@ -156,6 +161,9 @@ const NotePanel = ( {
 							</Heading>
 						</HStack>
 						<HStack justify="flex-end">
+							{ isViewSettingsEnabled && ! isPickerBesideTabs && (
+								<ViewPicker views={ resolvedViews } />
+							) }
 							<NotePanelActions />
 							{ isDismissible && <CloseButton /> }
 						</HStack>
@@ -188,9 +196,9 @@ const NotePanel = ( {
 								</Tabs.TabList>
 							</Tabs>
 						</FlexItem>
-						{ isViewSettingsEnabled && (
+						{ isViewSettingsEnabled && isPickerBesideTabs && (
 							<FlexItem>
-								<ViewPicker views={ resolvedViews } />
+								<ViewPicker views={ resolvedViews } className="is-in-tabs" />
 							</FlexItem>
 						) }
 					</HStack>
