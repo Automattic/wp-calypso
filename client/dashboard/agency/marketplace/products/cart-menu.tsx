@@ -13,6 +13,7 @@ import { cart } from '@wordpress/icons';
 import { useAnalytics } from '../../../app/analytics';
 import { a4aLink } from '../../../utils/link';
 import { getProductCommissionPercentage } from '../../earn/referrals/lib/commissions';
+import { isPressableHostingProduct } from '../hosting/lib/pressable-plans';
 import { getEffectivePressableOwnership } from '../hosting/lib/pressable-products';
 import { CLASSIC_MARKETPLACE_CHECKOUT_PATH, MARKETPLACE_PRODUCTS_ROUTE } from '../paths';
 import { useAgencyPressablePlan } from '../use-agency-pressable-plan';
@@ -67,7 +68,7 @@ export default function CartMenu( {
 				return null;
 			}
 			const applyIntroductoryPrice =
-				product.family_slug !== 'pressable-hosting' || applyPressableIntroductoryPrice;
+				! isPressableHostingProduct( product.family_slug ) || applyPressableIntroductoryPrice;
 			return {
 				item,
 				product,
