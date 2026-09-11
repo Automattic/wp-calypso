@@ -218,8 +218,7 @@ const domain: FlowV2< typeof initialize > = {
 					) {
 						const queryArgs = getQueryArgs( window.location.href );
 						const domainConnectionSetupUrl = queryArgs.domainConnectionSetupUrl as
-							| string
-							| undefined;
+							string | undefined;
 						window.location.href = domainConnectionSetupUrl
 							? domainConnectionSetupUrl.replace( '%s', providedDependencies.domain )
 							: defaultRedirect;
@@ -264,8 +263,7 @@ const domain: FlowV2< typeof initialize > = {
 						if ( isDomainMapping && ( mappingIsFree || hasPaidPlan ) ) {
 							const queryArgs = getQueryArgs( window.location.href );
 							const domainConnectionSetupUrl = queryArgs.domainConnectionSetupUrl as
-								| string
-								| undefined;
+								string | undefined;
 							const domain = providedDependencies.domainCartItem.meta;
 
 							// Use pending action for domain mapping

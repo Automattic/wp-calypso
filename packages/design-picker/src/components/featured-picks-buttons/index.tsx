@@ -31,7 +31,7 @@ const FeaturedPicksButtons: React.FC< Props > = ( { className, designs, onSelect
 					{ isBlankCanvasDesign( design )
 						? __( 'Use a blank theme' )
 						: /* translators: %s is the title of design */
-						  sprintf( __( 'Use %s' ), design.title ) }
+							sprintf( __( 'Use %s' ), design.title ) }
 				</Button>
 			) ) }
 		</div>

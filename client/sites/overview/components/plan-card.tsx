@@ -79,7 +79,7 @@ const PlanCard = () => {
 	// Show that this is an Agency Managed plan for agency purchases.
 	const planName = isAgencyPurchase
 		? purchaseType( planPurchase )
-		: planDetails?.product_name_short ?? '';
+		: ( planDetails?.product_name_short ?? '' );
 	const planPurchaseLoading = ! isFreePlan && planPurchase === null;
 	const isLoading = ! planDetails || planPurchaseLoading;
 

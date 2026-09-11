@@ -11,7 +11,7 @@ jest.mock( '@automattic/data-stores', () => ( {
 } ) );
 jest.mock( '../../grid-context', () => ( { usePlansGridContext: jest.fn() } ) );
 jest.mock( '../shared/storage/components/storage-dropdown', () => {
-	const ReactActual = jest.requireActual< typeof import('react') >( 'react' );
+	const ReactActual = jest.requireActual< typeof import( 'react' ) >( 'react' );
 
 	return {
 		__esModule: true,
@@ -23,7 +23,7 @@ jest.mock( '../shared/storage/components/storage-dropdown', () => {
 	};
 } );
 jest.mock( '../shared/storage/components/storage-feature-label', () => {
-	const ReactActual = jest.requireActual< typeof import('react') >( 'react' );
+	const ReactActual = jest.requireActual< typeof import( 'react' ) >( 'react' );
 
 	return {
 		__esModule: true,

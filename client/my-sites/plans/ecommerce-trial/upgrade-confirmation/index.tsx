@@ -48,8 +48,10 @@ const TrialUpgradeConfirmation = () => {
 		return isRequestingSitePlans( state, selectedSite.ID );
 	} );
 
-	const currentPlanName = isFetchingSitePlan ? '' : selectedSite?.plan?.product_name_short ?? '';
-	const currentPlanSlug = isFetchingSitePlan ? '' : selectedSite?.plan?.product_slug ?? '';
+	const currentPlanName = isFetchingSitePlan
+		? ''
+		: ( selectedSite?.plan?.product_name_short ?? '' );
+	const currentPlanSlug = isFetchingSitePlan ? '' : ( selectedSite?.plan?.product_slug ?? '' );
 	const isEntrepreneurPlan = [
 		PLAN_ECOMMERCE_MONTHLY,
 		PLAN_ECOMMERCE,

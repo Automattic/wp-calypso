@@ -64,7 +64,7 @@ type PollHeadQueryKey = readonly [
 ];
 
 const postKeyId = ( postKey: StreamItem | null | undefined ): string =>
-	postKey ? keyToString( postKey ) ?? '' : '';
+	postKey ? ( keyToString( postKey ) ?? '' ) : '';
 
 const railcarId = ( railcar: unknown ): string | null => {
 	if ( ! railcar || typeof railcar !== 'object' ) {
@@ -341,7 +341,7 @@ export function useStreamPendingPosts( {
 							pollHead.data as ReadStreamResponse,
 							currentPendingCount,
 							startDate ? { before: startDate } : null
-					  )
+						)
 					: current;
 			} );
 			void queryClient.invalidateQueries( {

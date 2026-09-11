@@ -351,7 +351,7 @@ export default function AppsDesktopCard( { appSlug }: { appSlug: keyof typeof De
 		? []
 		: platformEntries.filter( ( [ , config ] ) =>
 				detectionFailed ? config.group === platformConfig.group : config === platformConfig
-		  );
+			);
 	const alsoAvailableEntries = platformEntries.filter(
 		( [ , config ] ) => ! downloadEntries.some( ( [ , download ] ) => download === config )
 	);

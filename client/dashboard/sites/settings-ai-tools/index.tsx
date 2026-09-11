@@ -287,7 +287,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const siteAccountAbilities = siteContextToolIds.size
 		? Object.fromEntries(
 				Object.entries( accountAbilities ).filter( ( [ id ] ) => siteContextToolIds.has( id ) )
-		  )
+			)
 		: accountAbilities;
 	const mcpAbilities = mergeSiteMcpAbilities( siteAccountAbilities, siteAbilities );
 	const availableTools = (
@@ -361,7 +361,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 				{
 					learnMoreLink: <InlineSupportLink supportContext="ai-tools" />,
 				}
-		  )
+			)
 		: undefined;
 
 	const handleToggle = ( enable: boolean ) => {

@@ -99,10 +99,10 @@ export default function DomainConnectionVerification( {
 												<ExternalLink href="https://www.cloudflare.com/">Cloudflare</ExternalLink>
 											),
 										}
-								  )
+									)
 								: __(
 										'We’re checking your DNS records. Most updates happen quickly, but some providers cache old settings for up to 72 hours.'
-								  ) }
+									) }
 						</Notice>
 					) }
 

@@ -176,8 +176,8 @@ function useIssueAndAssignLicenses(
 			// then, redirect to somewhere more appropriate
 			const selectedSiteId = selectedSite?.ID;
 			if ( ! selectedSiteId ) {
-				const wpcomPlan = issuedLicenses.find(
-					( license ) => license.slug?.startsWith( 'wpcom-hosting' )
+				const wpcomPlan = issuedLicenses.find( ( license ) =>
+					license.slug?.startsWith( 'wpcom-hosting' )
 				);
 				const hasPurchaseWPCOMPlan = !! wpcomPlan;
 
@@ -190,7 +190,7 @@ function useIssueAndAssignLicenses(
 					hasPurchaseWPCOMPlan
 						? addQueryArgs( A4A_SITES_LINK_NEEDS_SETUP, {
 								wpcom_creator_purchased: wpcomPlan.slug,
-						  } )
+							} )
 						: A4A_LICENSES_LINK
 				);
 				return;
@@ -223,7 +223,7 @@ function useIssueAndAssignLicenses(
 											em: <em />,
 										},
 									}
-							  )
+								)
 							: translate( 'Your license has been successfully issued and assigned to your site.' );
 					dispatch( successNotice( message, { displayOnNextPage: true } ) );
 				}

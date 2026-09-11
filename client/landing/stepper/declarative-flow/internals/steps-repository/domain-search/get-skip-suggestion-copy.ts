@@ -24,7 +24,7 @@ export const getSkipSuggestionCopy = (
 				// translators: %(domain)s is the free WordPress.com subdomain
 				title: __( 'Start with %(domain)s' ),
 				buttonText: __( 'Choose a domain later' ),
-		  }
+			}
 		: undefined;
 
 	const title = overrides?.title ?? flowCopy?.title;

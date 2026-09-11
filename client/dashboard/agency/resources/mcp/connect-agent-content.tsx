@@ -53,7 +53,7 @@ function ConfigSnippet( {
 								/* translators: %(file)s is the config file name */
 								__( 'Copy this configuration into %(file)s.' ),
 								{ file }
-						  )
+							)
 						: __( 'Copy this configuration into your client’s MCP settings.' ) }
 				</Text>
 				<Button

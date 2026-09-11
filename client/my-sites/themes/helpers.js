@@ -126,7 +126,7 @@ export function interlaceThemes( wpComThemes, wpOrgThemes, searchTerm, isLastPag
 				( theme ) =>
 					! wpComThemesSlugs.includes( theme?.id?.toLowerCase() ) && // Avoid duplicate themes. Some free themes are available in both wpcom and wporg.
 					! RETIRED_THEME_SLUGS_SET.has( theme?.id?.toLowerCase() ) // Avoid retired themes.
-		  )
+			)
 		: [];
 
 	const interlacedThemes = [];

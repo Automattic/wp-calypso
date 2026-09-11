@@ -25,7 +25,7 @@ export default function StatsHeatMapLegend( { levels = 5, labelFewer, labelMore 
 					? labelFewer
 					: translate( 'Fewer Views', {
 							context: 'Legend label in stats all-time views table',
-					  } ) }
+						} ) }
 			</span>
 			<ul className="stats-heat-map__legend-item-list">{ items }</ul>
 			<span className="stats-heat-map__legend-label">
@@ -33,7 +33,7 @@ export default function StatsHeatMapLegend( { levels = 5, labelFewer, labelMore 
 					? labelMore
 					: translate( 'More Views', {
 							context: 'Legend label in stats all-time views table',
-					  } ) }
+						} ) }
 			</span>
 		</div>
 	);

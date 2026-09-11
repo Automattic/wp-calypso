@@ -182,7 +182,7 @@ function SiteNotificationSettings( {
 							? translate(
 									'You currently have email delivery turned off. Visit your {{a}}Notification Settings{{/a}} to turn it back on.',
 									{ components: { a: <a href="/me/notifications/subscriptions" /> } }
-							  )
+								)
 							: null
 					}
 					isDisabled={ isEmailBlocked }

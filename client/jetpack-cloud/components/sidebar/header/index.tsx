@@ -49,7 +49,7 @@ const useShowSiteSelector = ( {
 				? recordTracksEvent( 'calypso_jetpack_sidebar_switch_site_all_click' )
 				: recordTracksEvent( 'calypso_jetpack_sidebar_switch_site_single_click', {
 						site_id: selectedSiteId,
-				  } )
+					} )
 		);
 
 		// NOTE: If the selector is visible, dismissal will happen automatically

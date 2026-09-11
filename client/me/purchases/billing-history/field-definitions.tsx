@@ -27,7 +27,7 @@ function renderServiceNameDescription(
 	const planName = isAkismet
 		? String(
 				getAkismetPro500ProductDisplayName( transaction.variation, transaction.licensed_quantity )
-		  )
+			)
 		: transaction.variation;
 	const plan = capitalPDangit( planName );
 	const termLabel = getTransactionTermLabel( transaction, translate );
@@ -228,7 +228,7 @@ export function getFieldDefinitions(
 								transactionItem.variation,
 								transactionItem.licensed_quantity
 							)
-					  )
+						)
 					: transactionItem.variation;
 				return capitalPDangit( name );
 			},

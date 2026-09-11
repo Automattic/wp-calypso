@@ -130,11 +130,11 @@ export function resolveDomainStatus(
 									args: { expiryDate: moment.utc( domain.expiry ).format( 'LL' ) },
 									components: { strong: <strong /> },
 								}
-						  )
+							)
 						: translate( 'Domain connection expires in {{strong}}%(days)s{{/strong}}', {
 								args: { days: moment.utc( domain.expiry ).fromNow( true ) },
 								components: { strong: <strong /> },
-						  } );
+							} );
 
 				let noticeText = null;
 
@@ -278,10 +278,10 @@ export function resolveDomainStatus(
 									domainName: domain.name,
 								},
 							}
-					  )
+						)
 					: translate(
 							'We sent an email to the domain owner. Please complete the verification or your domain will stop working.'
-					  );
+						);
 
 				return {
 					statusText: translate( 'Action required' ),
@@ -296,7 +296,7 @@ export function resolveDomainStatus(
 									domain.name,
 									currentRoute
 								),
-						  }
+							}
 						: undefined,
 					icon: 'info',
 					listStatusWeight: 600,
@@ -684,7 +684,7 @@ export function resolveDomainStatus(
 					? translate(
 							'The transfer should complete by {{strong}}%(transferFinishDate)s{{/strong}}. {{a}}Learn more{{/a}}',
 							transferOptions
-					  )
+						)
 					: null,
 				listStatusWeight: 200,
 			};

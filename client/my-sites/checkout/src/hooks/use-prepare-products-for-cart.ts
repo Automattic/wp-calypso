@@ -148,15 +148,15 @@ export default function usePrepareProductsForCart( {
 	// recreate the cart from the URL again.
 	const doNotStripProducts = Boolean(
 		! areProductsRetrievedFromUrl ||
-			addHandler === 'doNotAdd' ||
-			addHandler === 'addRenewalBySubscriptionId' ||
-			sitelessCheckoutType === 'jetpack' ||
-			sitelessCheckoutType === 'akismet' ||
-			sitelessCheckoutType === 'marketplace' ||
-			sitelessCheckoutType === 'a4a' ||
-			sitelessCheckoutType === 'unified' ||
-			sitelessCheckoutType === 'wpcom' ||
-			isGiftPurchase
+		addHandler === 'doNotAdd' ||
+		addHandler === 'addRenewalBySubscriptionId' ||
+		sitelessCheckoutType === 'jetpack' ||
+		sitelessCheckoutType === 'akismet' ||
+		sitelessCheckoutType === 'marketplace' ||
+		sitelessCheckoutType === 'a4a' ||
+		sitelessCheckoutType === 'unified' ||
+		sitelessCheckoutType === 'wpcom' ||
+		isGiftPurchase
 	);
 	useStripProductsFromUrl( siteSlug, doNotStripProducts );
 

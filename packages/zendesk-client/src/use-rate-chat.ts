@@ -19,13 +19,13 @@ export const useRateChat = () => {
 						apiNamespace: 'wpcom/v2',
 						method: 'POST',
 						body: payload,
-				  } )
+					} )
 				: apiFetch( {
 						global: true,
 						path: '/help-center/csat',
 						method: 'POST',
 						data: payload,
-				  } as APIFetchOptions );
+					} as APIFetchOptions );
 		},
 	} );
 };

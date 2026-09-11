@@ -86,7 +86,7 @@ export const MigrationPlanFeatureList = ( {
 								comment: 'percentage like 50% off',
 							},
 							components: { strong: <strong /> },
-					  } )
+						} )
 					: translate( 'No first year discount' ),
 				...commonDiscountedFeatures,
 				...businessFeatures,
@@ -113,7 +113,7 @@ export const MigrationPlanFeatureList = ( {
 								comment: 'percentage like 50% off',
 							},
 							components: { strong: <strong /> },
-					  } )
+						} )
 					: translate( 'No discount on your first two years' ),
 				...commonDiscountedFeatures,
 				...businessFeatures,

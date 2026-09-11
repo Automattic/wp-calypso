@@ -63,10 +63,10 @@ const SiteMigrationHowToMigrate: StepType< {
 		return siteCanInstallPlugins
 			? translate(
 					"Save yourself the headache of migrating. Our expert team takes care of everything without interrupting your current site. Plus it's included in your plan."
-			  )
+				)
 			: translate(
 					'Skip the migration hassle. Our team handles everything without disrupting your current site.'
-			  );
+				);
 	};
 
 	const renderStepContent = () => {

@@ -133,7 +133,7 @@ export function getPurchasesFieldDefinitions( {
 				? sites.map( ( site ) => ( {
 						value: String( site.ID ),
 						label: `${ site.name } (${ site.domain })`,
-				  } ) )
+					} ) )
 				: undefined,
 			filterBy: shouldAllowSiteFiltering ? { operators: [ 'isAny' ] } : false,
 			getValue: ( { item }: { item: Purchase } ) => {
@@ -368,10 +368,10 @@ export function getPurchasesFieldDefinitions( {
 				// Allows sorting by card number or payment partner (eg: `type === 'paypal'`).
 				return ! mightStillAutoRenew( item )
 					? // Do not return the card number when the payment method isn't in
-					  // use, since it won't be displayed; sorting it alongside active
-					  // purchases that have the same card would look wrong.
-					  'expired'
-					: payment.creditCard?.number ?? payment.type ?? 'no-payment-method';
+						// use, since it won't be displayed; sorting it alongside active
+						// purchases that have the same card would look wrong.
+						'expired'
+					: ( payment.creditCard?.number ?? payment.type ?? 'no-payment-method' );
 			},
 			render: ( { item }: { item: Purchase } ) => {
 				let isBackupMethodAvailable = false;

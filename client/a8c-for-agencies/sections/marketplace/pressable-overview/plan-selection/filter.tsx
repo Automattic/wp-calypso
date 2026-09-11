@@ -96,7 +96,7 @@ export default function PlanSelectionFilter( {
 							value: null,
 							category: null,
 						},
-				  ] ),
+					] ),
 		],
 		[ filterType, isMobile, plans, isPremiumPlanTab, translate, areSignaturePlans ]
 	);
@@ -282,7 +282,7 @@ export default function PlanSelectionFilter( {
 								? translate( 'Signature plans 11-17' )
 								: translate( 'Signature 11-17' ),
 						},
-				  ]
+					]
 				: [
 						{
 							name: PLAN_CATEGORY_STANDARD,
@@ -293,16 +293,16 @@ export default function PlanSelectionFilter( {
 							name: PLAN_CATEGORY_ENTERPRISE,
 							title: isDesktop ? translate( 'Enterprise plans' ) : translate( 'Enterprise' ),
 						},
-				  ] ),
+					] ),
 			hasNewPremiumPlans
 				? {
 						name: PLAN_CATEGORY_PREMIUM,
 						title: isDesktop ? translate( 'Premium plans 1-11' ) : translate( 'Premium 1-11' ),
-				  }
+					}
 				: {
 						name: PLAN_CATEGORY_PREMIUM,
 						title: isDesktop ? translate( 'Premium plans' ) : translate( 'Premium' ),
-				  },
+					},
 		],
 		[ areSignaturePlans, isDesktop, translate, disableStandardTab, hasNewPremiumPlans ]
 	);

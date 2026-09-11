@@ -44,7 +44,7 @@ const EngagementBar = ( {
 			? {
 					feedId: Number( feedId ),
 					postId: Number( postId ),
-			  }
+				}
 			: null;
 	const { data: post } = usePost( postKey );
 

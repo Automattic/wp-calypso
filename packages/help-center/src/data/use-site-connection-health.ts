@@ -44,11 +44,11 @@ export function useSiteConnectionHealth( enabled = true ) {
 				? await wpcomRequest( {
 						path: `/sites/${ siteId }/jetpack-connection-health`,
 						apiNamespace: 'wpcom/v2',
-				  } )
+					} )
 				: await apiFetch( {
 						path: 'help-center/jetpack-connection-health',
 						global: true,
-				  } as APIFetchOptions ),
+					} as APIFetchOptions ),
 		enabled: enabled && canBeUnreachable && Boolean( siteId ),
 		refetchOnWindowFocus: false,
 		retry: false,

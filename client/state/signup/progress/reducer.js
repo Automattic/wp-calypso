@@ -96,7 +96,7 @@ const saveStep = ( state, { step } ) => {
 		? updateStep( state, {
 				...step,
 				status,
-		  } )
+			} )
 		: addStep( state, { ...step, status: 'in-progress' } );
 };
 

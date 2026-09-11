@@ -153,7 +153,7 @@ export default function PurchasesList() {
 									{
 										link: <RouterLinkButton variant="link" to={ monetizeSubscriptionsRoute.to } />,
 									}
-							  )
+								)
 							: __( 'View and manage your active plans and purchases.' )
 					}
 					actions={

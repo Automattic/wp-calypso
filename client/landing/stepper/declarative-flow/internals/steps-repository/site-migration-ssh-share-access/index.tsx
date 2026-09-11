@@ -343,14 +343,14 @@ const SiteMigrationSshShareAccess: StepType< {
 					args: { hostName: hostDisplayName, siteName: displaySiteName },
 					components: { strong: <strong /> },
 				}
-		  )
+			)
 		: translate(
 				'We use SSH to safely transfer your site to WordPress.com. Follow the steps below so we can start migrating {{strong}}%(siteName)s{{/strong}}.',
 				{
 					args: { siteName: displaySiteName },
 					components: { strong: <strong /> },
 				}
-		  );
+			);
 	const topBar = (
 		<Step.TopBar
 			rightElement={

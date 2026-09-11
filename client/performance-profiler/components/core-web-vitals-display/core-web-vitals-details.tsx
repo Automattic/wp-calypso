@@ -145,11 +145,11 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 								? translate( '(90–%(to)s)', {
 										args: { to: formatUnit( good ) },
 										comment: 'Displaying a percentage range, eg. 90-100',
-								  } )
+									} )
 								: translate( '(0–%(to)s%(unit)s)', {
 										args: { to: formatUnit( good ), unit: displayUnit() },
 										comment: 'Displaying a time range, eg. 0-1s',
-								  } ) }
+									} ) }
 						</div>
 					</div>
 					<div className="range">
@@ -164,7 +164,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 											to: formatUnit( needsImprovement ),
 										},
 										comment: 'Displaying a percentage range, eg. 50-89',
-								  } )
+									} )
 								: translate( '(%(from)s–%(to)s%(unit)s)', {
 										args: {
 											from: formatUnit( good ),
@@ -172,7 +172,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 											unit: displayUnit(),
 										},
 										comment: 'Displaying a time range, eg. 2-3s',
-								  } ) }
+									} ) }
 						</div>
 					</div>
 					<div className="range">
@@ -187,14 +187,14 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 											to: formatUnit( bad ),
 										},
 										comment: 'Displaying a percentage range, eg. 0-49',
-								  } )
+									} )
 								: translate( '(Over %(from)s%(unit)s) ', {
 										args: {
 											from: formatUnit( needsImprovement ),
 											unit: displayUnit(),
 										},
 										comment: 'Displaying a time range, eg. >2s',
-								  } ) }
+									} ) }
 						</div>
 					</div>
 				</div>

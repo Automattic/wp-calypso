@@ -58,7 +58,7 @@ function LicensingPromptDialog( { siteId }: Props ) {
 								productName: detachedUserLicense.product,
 							},
 						} )
-				  )
+					)
 				: translate( 'Your product is pending activation' );
 		} else {
 			titleToRender = translate( 'Activate your new Jetpack features' );
@@ -76,10 +76,10 @@ function LicensingPromptDialog( { siteId }: Props ) {
 									productName: detachedUserLicense?.product,
 								},
 							}
-					  )
+						)
 					: translate(
 							'You have licenses available for some Jetpack features. You can activate them now if you want.'
-					  ) }
+						) }
 			</b>
 			<ul>
 				<li>

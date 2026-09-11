@@ -82,11 +82,11 @@ export const fetchLaunchpad = (
 				apiNamespace: 'wpcom/v2',
 				method: 'GET',
 				token: typeof token === 'string' ? token : undefined,
-		  } )
+			} )
 		: apiFetch( {
 				global: true,
 				path: addQueryArgs( '/wpcom/v2/launchpad', queryArgs ),
-		  } as APIFetchOptions );
+			} as APIFetchOptions );
 };
 
 const getKey = ( siteSlug: SiteSlug, checklistSlug?: string | null ) => {
@@ -168,13 +168,13 @@ export const updateLaunchpadSettings = (
 				method: 'PUT',
 				body: settings,
 				token: typeof token === 'string' ? token : undefined,
-		  } )
+			} )
 		: apiFetch( {
 				global: true,
 				path: '/wpcom/v2/launchpad',
 				method: 'PUT',
 				data: settings,
-		  } as APIFetchOptions );
+			} as APIFetchOptions );
 };
 
 export interface PermanentDismiss {

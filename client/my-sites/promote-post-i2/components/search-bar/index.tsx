@@ -268,7 +268,7 @@ export default function SearchBar( props: Props ) {
 			return isDesktop
 				? translate( 'Sort: %(sortOption)s', {
 						args: { sortOption: selectedOption },
-				  } )
+					} )
 				: selectedOption;
 		}
 
@@ -284,14 +284,15 @@ export default function SearchBar( props: Props ) {
 			selectedSortOption = `${ campaignSortOption.orderBy }|${ campaignSortOption.order }`;
 		}
 
-		const selectedOption = campaignSortOptions.find( ( item ) => item.value === selectedSortOption )
-			?.label;
+		const selectedOption = campaignSortOptions.find(
+			( item ) => item.value === selectedSortOption
+		)?.label;
 
 		if ( selectedOption ) {
 			return isDesktop
 				? translate( 'Sort: %(sortOption)s', {
 						args: { sortOption: selectedOption },
-				  } )
+					} )
 				: selectedOption;
 		}
 
@@ -305,9 +306,9 @@ export default function SearchBar( props: Props ) {
 
 		return selectedOption
 			? // translators: filterOption is something like All, Posts and Pages
-			  translate( 'Post type: %(filterOption)s', {
+				translate( 'Post type: %(filterOption)s', {
 					args: { filterOption: selectedOption },
-			  } )
+				} )
 			: undefined;
 	};
 
@@ -318,9 +319,9 @@ export default function SearchBar( props: Props ) {
 
 		return selectedOption
 			? // translators: filterOption is something like All, Active, In Moderation, Completed or Rejected.
-			  translate( '%(filterOption)s campaigns', {
+				translate( '%(filterOption)s campaigns', {
 					args: { filterOption: selectedOption },
-			  } )
+				} )
 			: undefined;
 	};
 

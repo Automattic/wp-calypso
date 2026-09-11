@@ -71,12 +71,12 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 					{
 						link: <ExternalLink href={ plugin.authorUrl } children={ null } />,
 					}
-			  )
+				)
 			: sprintf(
 					// translators: author is the plugin author.
 					__( 'By %(author)s' ),
 					{ author: plugin.author }
-			  );
+				);
 	};
 
 	return (

@@ -209,8 +209,8 @@ class PurchaseNotice extends Component<
 		}
 
 		const targetPlanName = purchase.delayed_downgrade_to_product_slug
-			? getPlan( purchase.delayed_downgrade_to_product_slug )?.getTitle() ??
-			  purchase.delayed_downgrade_to_product_slug
+			? ( getPlan( purchase.delayed_downgrade_to_product_slug )?.getTitle() ??
+				purchase.delayed_downgrade_to_product_slug )
 			: null;
 		// `renewDate` is the next auto-renewal attempt date, which for annual
 		// plans is up to 30 days before expiry. The downgrade takes effect on
@@ -367,8 +367,8 @@ class PurchaseNotice extends Component<
 			return null;
 		}
 		const targetPlanName = purchase.delayed_downgrade_to_product_slug
-			? getPlan( purchase.delayed_downgrade_to_product_slug )?.getTitle() ??
-			  purchase.delayed_downgrade_to_product_slug
+			? ( getPlan( purchase.delayed_downgrade_to_product_slug )?.getTitle() ??
+				purchase.delayed_downgrade_to_product_slug )
 			: null;
 		// `renewDate` is the next auto-renewal attempt date (up to 30 days before
 		// expiry for annual plans) — the date the scheduled downgrade takes effect.
@@ -651,9 +651,9 @@ class PurchaseNotice extends Component<
 		// display).
 		const usePlanInsteadOfIncludedPurchase = Boolean(
 			config.isEnabled( 'upgrades/upcoming-renewals-notices' ) &&
-				isIncludedWithPlan( purchase ) &&
-				purchaseAttachedTo &&
-				isPlan( purchaseAttachedTo )
+			isIncludedWithPlan( purchase ) &&
+			purchaseAttachedTo &&
+			isPlan( purchaseAttachedTo )
 		);
 		const currentPurchase =
 			usePlanInsteadOfIncludedPurchase && purchaseAttachedTo ? purchaseAttachedTo : purchase;
@@ -816,7 +816,7 @@ class PurchaseNotice extends Component<
 					? getRelativeDayString(
 							new Date( earliestOtherExpiringPurchase.expiry_date ),
 							isExpiredOrRemoved( earliestOtherExpiringPurchase ) ? 'past' : 'upcoming'
-					  )
+						)
 					: '',
 			},
 			components: {
@@ -1074,7 +1074,7 @@ class PurchaseNotice extends Component<
 									getPurchasePayment( currentPurchase ).creditCard as PurchasePaymentCreditCard
 								),
 							}
-					  )
+						)
 					: translate(
 							'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.',
 							{
@@ -1083,7 +1083,7 @@ class PurchaseNotice extends Component<
 									getPurchasePayment( currentPurchase ).creditCard as PurchasePaymentCreditCard
 								),
 							}
-					  );
+						);
 			}
 		}
 
@@ -1209,7 +1209,7 @@ class PurchaseNotice extends Component<
 									getPurchasePayment( currentPurchase ).creditCard as PurchasePaymentCreditCard
 								),
 							}
-					  )
+						)
 					: translate(
 							'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.',
 							{
@@ -1218,7 +1218,7 @@ class PurchaseNotice extends Component<
 									getPurchasePayment( currentPurchase ).creditCard as PurchasePaymentCreditCard
 								),
 							}
-					  );
+						);
 			}
 		}
 
@@ -1318,7 +1318,7 @@ class PurchaseNotice extends Component<
 										a: linkComponent,
 									},
 								}
-						  )
+							)
 						: translate(
 								'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s ' +
 									'– before the next renewal. Please {{a}}update your payment information{{/a}}.',
@@ -1330,7 +1330,7 @@ class PurchaseNotice extends Component<
 										a: linkComponent,
 									},
 								}
-						  ) }
+							) }
 					{ this.trackImpression( 'credit-card-expiring' ) }
 				</Notice>
 			);
@@ -1355,9 +1355,9 @@ class PurchaseNotice extends Component<
 		// display).
 		const usePlanInsteadOfIncludedPurchase = Boolean(
 			config.isEnabled( 'upgrades/upcoming-renewals-notices' ) &&
-				isIncludedWithPlan( purchase ) &&
-				purchaseAttachedTo &&
-				isPlan( purchaseAttachedTo )
+			isIncludedWithPlan( purchase ) &&
+			purchaseAttachedTo &&
+			isPlan( purchaseAttachedTo )
 		);
 		const currentPurchase =
 			usePlanInsteadOfIncludedPurchase && purchaseAttachedTo ? purchaseAttachedTo : purchase;
@@ -1426,7 +1426,7 @@ class PurchaseNotice extends Component<
 			? translate(
 					'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) has expired and is no longer in use.',
 					translateOptions
-			  )
+				)
 			: fixMe( {
 					text: 'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) has expired and will be removed soon unless it is renewed.',
 					newCopy: translate(
@@ -1437,7 +1437,7 @@ class PurchaseNotice extends Component<
 						'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) has expired and is no longer in use.',
 						translateOptions
 					),
-			  } );
+				} );
 		// We can't show the action here, because it would try to renew the
 		// included purchase (rather than the plan that it is attached to).
 		// So we have to rely on the user going to the manage purchase page

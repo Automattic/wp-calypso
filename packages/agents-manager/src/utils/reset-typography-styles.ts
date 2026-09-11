@@ -31,7 +31,7 @@ export default function resetTypographyStyles( record: {
 	const settings = record.settings
 		? ( withoutTypography( record.settings as Record< string, unknown > ) as NonNullable<
 				GlobalStyles[ 'settings' ]
-		  > )
+			> )
 		: record.settings;
 
 	let styles = record.styles;

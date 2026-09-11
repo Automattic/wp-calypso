@@ -27,7 +27,7 @@ export const uploadPlugin = ( action ) => {
 					? [
 							[ 'zip[]', file ],
 							[ 'slug', replaceSlug ],
-					  ]
+						]
 					: [ [ 'zip[]', file ] ],
 			},
 			action

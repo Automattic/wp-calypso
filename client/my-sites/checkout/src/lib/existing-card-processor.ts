@@ -102,7 +102,7 @@ export default async function existingCardProcessor(
 					? await loadStripeLibrary( {
 							fetchStripeConfiguration: getStripeConfiguration,
 							paymentPartner: transactionData.paymentPartnerProcessorId,
-					  } )
+						} )
 					: undefined;
 
 				await handle3DSChallenge(

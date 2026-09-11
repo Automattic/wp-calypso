@@ -639,7 +639,7 @@ function patchMastodonQueryData(
 						? {
 								...page,
 								items: patchFeedItems( page.items, statusId, patch, items, seenOccurrences ),
-						  }
+							}
 						: page
 				),
 			},
@@ -790,7 +790,7 @@ function restoreMastodonQueryData(
 					? {
 							...page,
 							items: restoreFeedItems( page.items, itemSnapshots, seenOccurrences ),
-					  }
+						}
 					: page
 			),
 		};
@@ -1230,7 +1230,7 @@ export const followMastodonActorMutation = ( queryClient: QueryClient ) =>
 								following: isLocked ? false : true,
 								requested: isLocked ? true : false,
 							},
-					  }
+						}
 					: old
 			);
 			return { previous };
@@ -1254,7 +1254,7 @@ export const followMastodonActorMutation = ( queryClient: QueryClient ) =>
 					? {
 							...old,
 							viewer: data.viewer,
-					  }
+						}
 					: old
 			);
 			if ( ! updated ) {
@@ -1305,7 +1305,7 @@ export const unfollowMastodonActorMutation = ( queryClient: QueryClient ) =>
 								following: false,
 								requested: false,
 							},
-					  }
+						}
 					: old
 			);
 			return { previous };
@@ -1328,7 +1328,7 @@ export const unfollowMastodonActorMutation = ( queryClient: QueryClient ) =>
 					? {
 							...old,
 							viewer: data.viewer,
-					  }
+						}
 					: old
 			);
 			if ( ! updated ) {

@@ -78,7 +78,7 @@ function useCachedContactDetailsForCheckoutForm(
 		didFillForm.current = true;
 		loadDomainContactDetailsFromCache( {
 			...cachedContactDetails,
-			postalCode: arePostalCodesSupported ? cachedContactDetails.postalCode ?? null : '',
+			postalCode: arePostalCodesSupported ? ( cachedContactDetails.postalCode ?? null ) : '',
 		} )
 			.then( () => {
 				if ( ! isMounted.current ) {

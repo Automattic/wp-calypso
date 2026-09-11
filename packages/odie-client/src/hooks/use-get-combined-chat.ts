@@ -249,7 +249,7 @@ export const useGetCombinedChat = (
 									conversationId,
 									status: 'loaded',
 									provider: 'zendesk',
-							  }
+								}
 					);
 				} )
 				.finally( () => {

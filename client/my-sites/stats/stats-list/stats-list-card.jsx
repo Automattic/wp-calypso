@@ -155,7 +155,7 @@ const StatsListCard = ( {
 							url: showMore?.url,
 							label: showMore?.label,
 							onClick: onShowMoreClick || undefined,
-					  }
+						}
 					: undefined
 			}
 			emptyMessage={ emptyMessage }

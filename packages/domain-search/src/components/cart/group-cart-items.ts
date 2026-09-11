@@ -58,7 +58,7 @@ export function groupCartItems( items: SelectedDomain[] ): CartEntry[] {
 
 	for ( const item of items ) {
 		const bundle = item.bundle;
-		const members = bundle ? membersByGroup.get( bundle.groupId ) ?? [] : [];
+		const members = bundle ? ( membersByGroup.get( bundle.groupId ) ?? [] ) : [];
 
 		// Group ids that ended up with a single member fall back to plain items.
 		if ( ! bundle || members.length < 2 ) {

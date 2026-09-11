@@ -71,7 +71,7 @@ export default function useStyles() {
 								variationType === 'button'
 									? resetButtonStyles( currentRecord.styles || {}, variation )
 									: currentRecord.styles,
-					  };
+						};
 
 			const merged = {
 				// Big Sky never applies a button variation's `settings`.
@@ -113,8 +113,7 @@ export default function useStyles() {
 					// and this is a no-op.
 					(
 						dispatch( 'ai-assembler' ) as
-							| { setLegacyCssBlocks?: ( legacyBlocks: typeof blocks ) => void }
-							| undefined
+							{ setLegacyCssBlocks?: ( legacyBlocks: typeof blocks ) => void } | undefined
 					 )?.setLegacyCssBlocks?.( blocks );
 				}
 			}

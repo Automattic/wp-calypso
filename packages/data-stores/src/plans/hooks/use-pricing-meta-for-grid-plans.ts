@@ -189,7 +189,7 @@ const usePricingMetaForGridPlans = ( {
 					selectedStorageOption && reflectStorageSelectionInPlanPrices
 						? storageAddOns?.find( ( addOn ) => {
 								return addOn?.addOnSlug === selectedStorageOption;
-						  } )
+							} )
 						: null;
 				const storageAddOnPriceMonthly = selectedStorageAddOn?.prices?.monthlyPrice || 0;
 				const storageAddOnPriceYearly = selectedStorageAddOn?.prices?.yearlyPrice || 0;
@@ -202,7 +202,7 @@ const usePricingMetaForGridPlans = ( {
 							full:
 								introOffer.rawPrice.full +
 								( 'year' === introOffer.intervalUnit ? storageAddOnPriceYearly : 0 ),
-					  } as const )
+						} as const )
 					: undefined;
 
 				/**

@@ -121,12 +121,12 @@ export default function Receipt() {
 													/* translators: %s: organization name */
 													__( 'Payment processed by %s' ),
 													displayReceipt.org
-											  )
+												)
 											: sprintf(
 													/* translators: %s: organization name */
 													__( 'by %s' ),
 													displayReceipt.org
-											  ) }
+												) }
 									</Text>
 									{ displayReceipt.address && (
 										<Text variant="muted" size={ 11 }>
@@ -562,7 +562,7 @@ function ReceiptLineItem( { item, receipt }: { item: ReceiptItem; receipt: Recei
 				__( '%1$s (%2$d requests/month)' ),
 				item.variation.replace( /\s*\(.*$/, '' ).trim(),
 				500 * parseInt( String( item.licensed_quantity ) )
-		  )
+			)
 		: item.variation;
 	const shouldShowDiscount = areReceiptItemDiscountsAccurate( receipt.date );
 	const subtotalInteger = shouldShowDiscount
@@ -629,7 +629,7 @@ function ReceiptItemDiscounts( { item, receiptDate }: { item: ReceiptItem; recei
 						? formatCurrency( -costOverride.discountAmount, item.currency, {
 								isSmallestUnit: true,
 								stripZeros: true,
-						  } )
+							} )
 						: '';
 
 				if (
@@ -768,12 +768,12 @@ function getIntroductoryOfferIntervalDisplay( {
 							/* translators: %d: number of months */
 							__( 'Price for first %d months' ),
 							intervalCount
-					  )
+						)
 					: sprintf(
 							/* translators: %d: number of months */
 							__( 'Discount for first %d months' ),
 							intervalCount
-					  );
+						);
 			}
 		}
 		if ( intervalUnit === 'year' ) {
@@ -785,12 +785,12 @@ function getIntroductoryOfferIntervalDisplay( {
 							/* translators: %d: number of years */
 							__( 'Price for first %d years' ),
 							intervalCount
-					  )
+						)
 					: sprintf(
 							/* translators: %d: number of years */
 							__( 'Discount for first %d years' ),
 							intervalCount
-					  );
+						);
 			}
 		}
 	}
@@ -816,7 +816,7 @@ function getIntroductoryOfferIntervalDisplay( {
 								/* translators: %d: number of renewals */
 								__( 'The first %d renewals are also discounted.' ),
 								remainingRenewalsUsingOffer
-						  );
+							);
 			}
 		} else if ( isPriceIncrease ) {
 			text +=
@@ -826,7 +826,7 @@ function getIntroductoryOfferIntervalDisplay( {
 							/* translators: %d: number of renewals */
 							__( 'Applies for %d renewals' ),
 							remainingRenewalsUsingOffer
-					  );
+						);
 		} else {
 			text +=
 				remainingRenewalsUsingOffer === 1
@@ -835,7 +835,7 @@ function getIntroductoryOfferIntervalDisplay( {
 							/* translators: %d: number of renewals */
 							__( '%d discounted renewals remaining.' ),
 							remainingRenewalsUsingOffer
-					  );
+						);
 		}
 	}
 

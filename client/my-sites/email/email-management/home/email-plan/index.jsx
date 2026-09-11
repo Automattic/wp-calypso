@@ -73,7 +73,7 @@ const UpgradeNavItem = ( { currentRoute, domain, selectedSiteId, selectedSiteSlu
 						months: trialMonths,
 					},
 					comment: '%(months)d is the number of free trial months',
-			  } )
+				} )
 			: translate( 'Try 3 months free' );
 
 	return (
@@ -224,10 +224,10 @@ function EmailPlan( {
 			const controlPanelUrl = showExternalControlPanelLink
 				? getTitanControlPanelRedirectPath( selectedSite.slug, domain.name, currentRoute, {
 						context: TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
-				  } )
+					} )
 				: getManageTitanAccountPath( selectedSite.slug, domain.name, currentRoute, {
 						context: TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
-				  } );
+					} );
 
 			return {
 				external: showExternalControlPanelLink,
@@ -346,7 +346,7 @@ function EmailPlan( {
 				{ isAtEmailForwardsLimit
 					? translate( 'Using %1$s of %1$s email forwards', {
 							args: [ emailForwardsLimit ],
-					  } )
+						} )
 					: translate( 'Add new email forwards' ) }
 			</VerticalNavItem>
 		);

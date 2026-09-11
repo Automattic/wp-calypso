@@ -86,13 +86,13 @@ async function shouldAutoLoadHelpCenter() {
 		? await wpcomRequest( {
 				path: '/me/preferences',
 				apiNamespace: 'wpcom/v2',
-		  } )
+			} )
 				.then( ( prefs ) => prefs.calypso_preferences )
 				.catch( () => {} )
 		: await apiFetch( {
 				global: true,
 				path: '/help-center/open-state',
-		  } ).catch( () => {} );
+			} ).catch( () => {} );
 
 	return preferences?.help_center_open;
 }

@@ -487,7 +487,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						const badgeText = showPricingDifferentiationFeaturePills
 							? getPricingDifferentiationFeatureBadgeText( planSlug, featureSlug, translate, {
 									suppressAiPills: useVar42NoAiFeatures,
-							  } )
+								} )
 							: undefined;
 
 						wpcomFeaturesTransformed.push( {

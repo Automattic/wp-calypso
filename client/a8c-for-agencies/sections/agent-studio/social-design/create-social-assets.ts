@@ -183,6 +183,6 @@ export async function composeSocialAssetsFromBrief(
 					height: BEA_SIZES[ sizeKey ].height,
 					html: '',
 					directionId: `fallback-${ sizeKey }`,
-			  } ) ),
+				} ) ),
 	};
 }

@@ -231,7 +231,7 @@ export function flattenManagedContactDetailsShape< A, B >(
 					x.tldExtraFields.ca.ciraAgreementAccepted
 						? f( x.tldExtraFields.ca.ciraAgreementAccepted )
 						: null,
-			  ].filter( Boolean ) as B[] )
+				].filter( Boolean ) as B[] )
 			: [];
 
 	const ukValues =
@@ -242,7 +242,7 @@ export function flattenManagedContactDetailsShape< A, B >(
 						? f( x.tldExtraFields.uk.registrationNumber )
 						: null,
 					x.tldExtraFields.uk.tradingName ? f( x.tldExtraFields.uk.tradingName ) : null,
-			  ].filter( Boolean ) as B[] )
+				].filter( Boolean ) as B[] )
 			: [];
 
 	const frValues =
@@ -251,7 +251,7 @@ export function flattenManagedContactDetailsShape< A, B >(
 					x.tldExtraFields.fr.registrantType ? f( x.tldExtraFields.fr.registrantType ) : null,
 					x.tldExtraFields.fr.trademarkNumber ? f( x.tldExtraFields.fr.trademarkNumber ) : null,
 					x.tldExtraFields.fr.sirenSiret ? f( x.tldExtraFields.fr.sirenSiret ) : null,
-			  ].filter( Boolean ) as B[] )
+				].filter( Boolean ) as B[] )
 			: [];
 
 	const inValues =
@@ -261,7 +261,7 @@ export function flattenManagedContactDetailsShape< A, B >(
 					x.tldExtraFields.in.nexusConnectionType
 						? f( x.tldExtraFields.in.nexusConnectionType )
 						: null,
-			  ].filter( Boolean ) as B[] )
+				].filter( Boolean ) as B[] )
 			: [];
 
 	return values.concat( caValues, ukValues, frValues, inValues );

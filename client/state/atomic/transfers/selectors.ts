@@ -9,4 +9,4 @@ export const getLatestAtomicTransfer = (
 	state: AppState,
 	siteId: number | null
 ): { transfer?: AtomicTransfer; error?: AtomicTransferError } =>
-	siteId ? state?.atomicTransfers?.[ siteId ] ?? emptyData : emptyData;
+	siteId ? ( state?.atomicTransfers?.[ siteId ] ?? emptyData ) : emptyData;

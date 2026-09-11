@@ -180,8 +180,8 @@ export function isAkismetProduct( product: Purchase ): boolean {
 export function isRecentMonthlyPurchase( purchase: Purchase ): boolean {
 	return Boolean(
 		purchase.subscribed_date &&
-			isWithinLast( new Date( purchase.subscribed_date ), 7, 'days' ) &&
-			purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
+		isWithinLast( new Date( purchase.subscribed_date ), 7, 'days' ) &&
+		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
 	);
 }
 

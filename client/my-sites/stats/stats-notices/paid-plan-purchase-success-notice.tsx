@@ -53,7 +53,7 @@ const PaidPlanPurchaseSuccessJetpackStatsNotice = ( {
 									p: <p />,
 								},
 							}
-					  )
+						)
 					: translate(
 							"{{p}}You'll stop seeing the upgrade banners and get Email support if applicable.{{/p}}",
 							{
@@ -61,7 +61,7 @@ const PaidPlanPurchaseSuccessJetpackStatsNotice = ( {
 									p: <p />,
 								},
 							}
-					  ) }
+						) }
 			</NoticeBanner>
 		</div>
 	);

@@ -27,7 +27,7 @@ const { animateMock, dragStartSpy, floatingDragProps } = vi.hoisted( () => ( {
 	},
 } ) );
 vi.mock( 'framer-motion', async () => {
-	const actual = await vi.importActual< typeof import('framer-motion') >( 'framer-motion' );
+	const actual = await vi.importActual< typeof import( 'framer-motion' ) >( 'framer-motion' );
 	const { createElement } = await import( 'react' );
 	return {
 		...actual,

@@ -70,7 +70,7 @@ export const getTask = (
 					task.unverifiedDomains.length === 1
 						? translate( 'Verify the email address for %(domainName)s', {
 								args: { domainName: task.unverifiedDomains[ 0 ] },
-						  } )
+							} )
 						: translate( 'Verify the email address for your domains' ),
 				description: translate(
 					'We need to check your contact information to make sure you can be reached. Please verify your details using the email we sent you, or your domain will stop working.'
@@ -114,7 +114,7 @@ export const getTask = (
 				description: isBlogger
 					? translate(
 							"Choose a name for your blog that reflects your site's personality. Don't worry, you can change it any time you like."
-					  )
+						)
 					: translate( 'Give your new site a title to let people know what your site is about.' ),
 				actionText: isBlogger ? translate( 'Name your blog' ) : translate( 'Name your site' ),
 				actionUrl: `/settings/general/${ siteSlug }`,
@@ -195,10 +195,10 @@ export const getTask = (
 			const description = isBlogger
 				? translate(
 						"Ready for the big reveal? Right now, your blog is private and visible only to you. Launch your blog so that it's public for everyone."
-				  )
+					)
 				: translate(
 						"Your site is private and only visible to you. When you're ready, launch your site to make it public."
-				  );
+					);
 			const descriptionOnCompleted = translate(
 				'Your site is already live. You can change your site visibility in {{link}}privacy options{{/link}} at any time.',
 				{
@@ -332,10 +332,10 @@ export const getTask = (
 				description: isBlogger
 					? translate(
 							'Enable post sharing to automatically share your new blog posts to Facebook, LinkedIn, Instagram, Tumblr, or Mastodon to ensure your audience will never miss an update.'
-					  )
+						)
 					: translate(
 							'Enable post sharing to automatically share your new posts to Facebook, LinkedIn, Instagram, Tumblr, or Mastodon to ensure your audience will never miss an update.'
-					  ),
+						),
 				actionText: translate( 'Enable sharing' ),
 				actionUrl: `/marketing/connections/${ siteSlug }`,
 				isSkippable: true,

@@ -889,7 +889,7 @@ class ThemeSheet extends Component {
 							learnMoreLink: <InlineSupportLink supportContext="themes-retired" />,
 						},
 					}
-			  )
+				)
 			: this.props.translate(
 					'This theme has been retired and will only receive security updates. It is no longer available to sites that are not already using it. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
 					{
@@ -902,7 +902,7 @@ class ThemeSheet extends Component {
 							),
 						},
 					}
-			  );
+				);
 
 		return (
 			<div className="theme__sheet-retired-notice">
@@ -1039,7 +1039,7 @@ class ThemeSheet extends Component {
 								tierFilter: tier,
 								styleVariationSlug,
 								themeTier,
-						  } )
+							} )
 						: null
 				}
 				onClick={ ( event ) => {
@@ -1295,7 +1295,7 @@ class ThemeSheet extends Component {
 			? seo_title
 			: translate( '%(themeName)s Theme', {
 					args: { themeName },
-			  } );
+				} );
 
 		const metas = [
 			{ property: 'og:title', content: title },
@@ -1551,7 +1551,7 @@ export default connect(
 		const error = theme
 			? false
 			: getThemeRequestErrors( state, themeId, 'wpcom' ) ||
-			  getThemeRequestErrors( state, themeId, siteId );
+				getThemeRequestErrors( state, themeId, siteId );
 		const englishUrl = 'https://wordpress.com' + getThemeDetailsUrl( state, themeId );
 
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );

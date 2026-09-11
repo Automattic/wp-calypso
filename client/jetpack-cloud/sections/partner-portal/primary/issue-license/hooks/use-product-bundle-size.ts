@@ -49,7 +49,7 @@ export function useProductBundleSize( isPublicFacing = false ) {
 					: addQueryArgs( window.location.href, {
 							...getQueryArgs( window.location.href ),
 							[ BUNDLE_SIZE_PARAM_KEY ]: `${ size }`,
-					  } );
+						} );
 
 			window.history.pushState( null, '', queryArgs );
 

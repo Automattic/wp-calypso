@@ -92,7 +92,7 @@ export default function buildFallbackResponse( {
 								type: 'submenu-item',
 								url: `/add-ons/${ siteDomain }`,
 							},
-					  ]
+						]
 					: [] ),
 				{
 					parent: 'upgrades',
@@ -180,7 +180,7 @@ export default function buildFallbackResponse( {
 							},
 						],
 					},
-			  ]
+				]
 			: [] ),
 		{
 			icon: 'dashicons-admin-page',
@@ -230,7 +230,7 @@ export default function buildFallbackResponse( {
 							},
 						],
 					},
-			  ]
+				]
 			: [] ),
 		...( shouldShowPortfolio
 			? [
@@ -271,7 +271,7 @@ export default function buildFallbackResponse( {
 							},
 						],
 					},
-			  ]
+				]
 			: [] ),
 		{
 			icon: 'dashicons-admin-comments',
@@ -352,7 +352,7 @@ export default function buildFallbackResponse( {
 					{
 						type: 'separator',
 					},
-			  ]
+				]
 			: [] ),
 		...( shouldShowThemes
 			? [
@@ -387,7 +387,7 @@ export default function buildFallbackResponse( {
 											type: 'submenu-item',
 											url: `https://${ siteDomain }/wp-admin/customize.php?return=%2Fwp-admin%2F&autofocus%5Bcontrol%5D=header_image`,
 										},
-								  ]
+									]
 								: [] ),
 							...( shouldShowApperanceBackground
 								? [
@@ -398,7 +398,7 @@ export default function buildFallbackResponse( {
 											type: 'submenu-item',
 											url: `https://${ siteDomain }/wp-admin/customize.php?return=%2Fwp-admin%2F&autofocus%5Bcontrol%5D=background_image`,
 										},
-								  ]
+									]
 								: [] ),
 							{
 								parent: 'themes.php',
@@ -416,7 +416,7 @@ export default function buildFallbackResponse( {
 							},
 						],
 					},
-			  ]
+				]
 			: [] ),
 		{
 			icon: 'dashicons-admin-plugins',
@@ -520,7 +520,7 @@ export default function buildFallbackResponse( {
 								type: 'submenu-item',
 								url: `/site-monitoring/${ siteDomain }`,
 							},
-					  ]
+						]
 					: [] ),
 			],
 		},
@@ -613,7 +613,7 @@ export default function buildFallbackResponse( {
 								type: 'submenu-item',
 								url: `https://${ siteDomain }/wp-admin/options-general.php?page=adcontrol`,
 							},
-					  ]
+						]
 					: [] ),
 			],
 		},

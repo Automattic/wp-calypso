@@ -39,13 +39,13 @@ const TotalAmount = ( { purchase, data, isFetching }: Props ) => {
 
 	return interval === 'year'
 		? /* translators: %(total)s is the price of the subscription per year */
-		  translate( '%(total)s/yr', {
+			translate( '%(total)s/yr', {
 				args: { total: formatted },
-		  } )
+			} )
 		: /* translators: %(total)s is the price of the subscription per month */
-		  translate( '%(total)s/mo', {
+			translate( '%(total)s/mo', {
 				args: { total: formatted },
-		  } );
+			} );
 };
 
 export default TotalAmount;

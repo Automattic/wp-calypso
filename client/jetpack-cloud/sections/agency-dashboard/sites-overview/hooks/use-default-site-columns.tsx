@@ -29,7 +29,7 @@ const useDefaultSiteColumns = ( isLargeScreen = false ): SiteColumns => {
 						isExpandable: true,
 						showInfo: true,
 					},
-			  ]
+				]
 			: [];
 
 		return [
@@ -41,7 +41,7 @@ const useDefaultSiteColumns = ( isLargeScreen = false ): SiteColumns => {
 								components: {
 									div: <div className="site-host-info" />,
 								},
-						  } ) as string )
+							} ) as string )
 						: translate( 'Site' ),
 				isSortable: true,
 			},

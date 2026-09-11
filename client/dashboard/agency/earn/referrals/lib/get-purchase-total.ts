@@ -35,10 +35,10 @@ export function getPurchaseTotal(
 				/* translators: %s is the price of the subscription per year, e.g. "US$25.00" */
 				__( '%s/yr' ),
 				formatted
-		  )
+			)
 		: sprintf(
 				/* translators: %s is the price of the subscription per month, e.g. "US$25.00" */
 				__( '%s/mo' ),
 				formatted
-		  );
+			);
 }

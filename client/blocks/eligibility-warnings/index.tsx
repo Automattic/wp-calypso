@@ -46,12 +46,7 @@ import './style.scss';
 export type { AtomicTransferAction } from './warning-list';
 
 export type EligibilityContext =
-	| 'plugin-details'
-	| 'plugins-upload'
-	| 'themes'
-	| 'hosting'
-	| 'hosting-features'
-	| 'performance';
+	'plugin-details' | 'plugins-upload' | 'themes' | 'hosting' | 'hosting-features' | 'performance';
 
 const upsellByContext: Record< EligibilityContext, { feature: string; ctaName: string } > = {
 	'plugin-details': {

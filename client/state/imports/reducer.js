@@ -131,7 +131,7 @@ function importerStatus( state = {}, action ) {
 									? {
 											...author,
 											mappedTo: action.targetAuthor,
-									  }
+										}
 									: author
 						),
 					},

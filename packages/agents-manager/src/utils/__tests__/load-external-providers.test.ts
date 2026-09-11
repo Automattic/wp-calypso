@@ -348,7 +348,7 @@ describe( 'loadExternalProviders', () => {
 		// The switch is read once per page load, so load the providers under it.
 		await jest.isolateModulesAsync( async () => {
 			const { loadExternalProviders: loadUnderSwitch } = jest.requireActual<
-				typeof import('../load-external-providers')
+				typeof import( '../load-external-providers' )
 			>( '../load-external-providers' );
 
 			const providers = await loadUnderSwitch();

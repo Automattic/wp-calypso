@@ -1018,7 +1018,7 @@ export default function AiEditorialReview( {
 											? undefined
 											: getConflictApplyUnavailableReason(
 													candidateStates.map( ( state ) => state.disabledReason )
-											  ) || __( 'Needs manual edit.', __i18n_text_domain__ );
+												) || __( 'Needs manual edit.', __i18n_text_domain__ );
 										const applyUnavailableReasonId = `ai-editorial-review-conflict-${ i }-apply-reason`;
 										const isResolved = status === 'accepted' || status === 'dismissed';
 										if ( isResolved ) {
@@ -1061,7 +1061,7 @@ export default function AiEditorialReview( {
 																	? __(
 																			'Revert the block change and re-show this conflict.',
 																			__i18n_text_domain__
-																	  )
+																		)
 																	: __( 'Re-show this conflict.', __i18n_text_domain__ )
 															}
 														>
@@ -1181,7 +1181,7 @@ export default function AiEditorialReview( {
 																? {
 																		label: getAiButtonLabel( status ),
 																		onClick: () => handleAcceptCandidate( i, aiCandidate ),
-																  }
+																	}
 																: undefined
 														}
 														disabled={ actionsDisabled }
@@ -1263,7 +1263,7 @@ export default function AiEditorialReview( {
 														edit.block_index,
 														edit.current_text,
 														edit.editable_attribute
-												  );
+													);
 											// Stale can't apply anything (block refs point at the wrong post) even if the
 											// current post still contains the text — so Go to section, never a dead Apply.
 											const canApply = ! requiresManual && ! disabledReason && ! isPostStale;
@@ -1494,7 +1494,7 @@ export default function AiEditorialReview( {
 									/* translators: %d is the count of pending AI-resolution + suggested-edit items */
 									__( 'Apply all (%d)', __i18n_text_domain__ ),
 									totalPendingCount
-							  ) }
+								) }
 					</button>
 				</footer>
 			) }

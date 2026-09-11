@@ -127,7 +127,7 @@ export class PlanBillingPeriod extends Component<
 								'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
 						} ),
 						oldCopy: translate( 'Billed monthly' ),
-				  } )
+					} )
 				: translate( 'Billed monthly' );
 
 		return (

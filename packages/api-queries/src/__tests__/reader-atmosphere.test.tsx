@@ -2985,7 +2985,7 @@ describe( 'reader-atmosphere hooks', () => {
 						? {
 								...page,
 								items: [ makeFeedItem( { uri: siblingPendingUri, cid: '' } ), ...page.items ],
-						  }
+							}
 						: page
 				),
 			} );

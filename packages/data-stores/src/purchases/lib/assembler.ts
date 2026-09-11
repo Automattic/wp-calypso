@@ -55,7 +55,7 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 						purchase.introductory_offer.should_prorate_when_offer_ends
 					),
 					isNextRenewalProrated: Boolean( purchase.introductory_offer.is_next_renewal_prorated ),
-			  }
+				}
 			: null,
 		isCancelable: Boolean( purchase.is_cancelable ),
 		isDomain: Boolean( purchase.is_domain ),
@@ -75,16 +75,14 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		meta: purchase.meta,
 		ownershipId: Number( purchase.ownership_id ),
 		priceText: purchase.price_text,
-		priceTierList: purchase.price_tier_list?.map(
-			( rawTier ): PurchasePriceTier => ( {
-				minimumUnits: rawTier.minimum_units,
-				maximumUnits: rawTier.maximum_units,
-				minimumPrice: rawTier.minimum_price,
-				maximumPrice: rawTier.maximum_price,
-				minimumPriceDisplay: rawTier.minimum_price_display,
-				maximumPriceDisplay: rawTier.maximum_price_display,
-			} )
-		),
+		priceTierList: purchase.price_tier_list?.map( ( rawTier ): PurchasePriceTier => ( {
+			minimumUnits: rawTier.minimum_units,
+			maximumUnits: rawTier.maximum_units,
+			minimumPrice: rawTier.minimum_price,
+			maximumPrice: rawTier.maximum_price,
+			minimumPriceDisplay: rawTier.minimum_price_display,
+			maximumPriceDisplay: rawTier.maximum_price_display,
+		} ) ),
 		partnerName: purchase.partner_name,
 		partnerSlug: purchase.partner_slug,
 		partnerType: purchase.partner_type,

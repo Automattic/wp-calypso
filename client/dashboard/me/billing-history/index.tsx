@@ -28,9 +28,8 @@ import type { Receipt } from '@automattic/api-core';
 const emptyReceipts: Receipt[] = [];
 
 export default function BillingHistory() {
-	const { data: receipts = emptyReceipts, isLoading: isLoadingReceipts } = useQuery(
-		userReceiptsQuery()
-	);
+	const { data: receipts = emptyReceipts, isLoading: isLoadingReceipts } =
+		useQuery( userReceiptsQuery() );
 	const { data: countryList = [] } = useQuery( countryListQuery() );
 	const { data: sites = [], isLoading: isLoadingSites } = useQuery( allSitesQuery() );
 	const isLoading = isLoadingReceipts || isLoadingSites;

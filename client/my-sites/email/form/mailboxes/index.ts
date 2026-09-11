@@ -135,13 +135,13 @@ class MailboxForm< T extends EmailProvider > {
 					firstname: this.getFieldValue< string >( FIELD_FIRSTNAME ),
 					lastname: this.getFieldValue< string >( FIELD_LASTNAME ),
 					recoveryEmail: this.getFieldValue< string >( FIELD_PASSWORD_RESET_EMAIL ),
-			  }
+				}
 			: {
 					...commonFields,
 					alternative_email: this.getFieldValue< string >( FIELD_PASSWORD_RESET_EMAIL ),
 					is_admin: this.getFieldValue< boolean >( FIELD_IS_ADMIN ),
 					name: this.getFieldValue< string >( FIELD_NAME ),
-			  };
+				};
 	}
 
 	getAsFlatObject(): Record< FormFieldNames, string | boolean | undefined > {

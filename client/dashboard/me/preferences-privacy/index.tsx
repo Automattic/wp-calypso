@@ -19,7 +19,7 @@ export default function PreferencesPrivacy( { density }: { density?: Density } )
 							: __( 'Not sharing usage information' ),
 						intent: isSharingUsageInfo ? ( 'stable' as const ) : ( 'draft' as const ),
 					},
-			  ]
+				]
 			: undefined;
 
 	return (

@@ -50,7 +50,7 @@ const PricingSlider: React.FC< PricingSliderProps > = ( {
 		? renderThumb
 		: ( ( ( props, state ) => {
 				return <div { ...props }>{ state.valueNow }</div>;
-		  } ) as RenderThumbFunction );
+			} ) as RenderThumbFunction );
 
 	const renderMarks = ( props: HTMLProps< HTMLSpanElement > ) => (
 		<span

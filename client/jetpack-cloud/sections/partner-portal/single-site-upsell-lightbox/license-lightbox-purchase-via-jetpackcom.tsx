@@ -75,7 +75,7 @@ const LicenseLightboxPurchaseViaJetpackcom: FunctionComponent< Props > = ( {
 							args: {
 								formattedNonManagePrice,
 							},
-					  } )
+						} )
 					: translate( 'Purchase via Jetpack.com' ) }
 			</Button>
 			<div className="review-licenses__notice">

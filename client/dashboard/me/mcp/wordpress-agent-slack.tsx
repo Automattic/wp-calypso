@@ -49,7 +49,7 @@ export default function WordPressAgentSlack( {
 				/* translators: %s is the WordPress.com user's display name and/or username. */
 				__( 'Connect your WordPress.com account %s to this Slack workspace?' ),
 				username
-		  )
+			)
 		: __( 'Connect your WordPress.com account to this Slack workspace?' );
 	const installTitle = __( 'Slack' );
 	const installDescription = pairToken
@@ -125,7 +125,7 @@ export default function WordPressAgentSlack( {
 								? createInterpolateElement(
 										__( 'Your account is <connected>connected</connected>.' ),
 										{ connected: <strong /> }
-								  )
+									)
 								: __( 'The app is no longer installed in this workspace.' )
 						}
 					/>

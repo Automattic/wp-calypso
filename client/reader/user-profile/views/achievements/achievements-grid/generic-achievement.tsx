@@ -35,22 +35,22 @@ export default function GenericAchievement( {
 							timeSince: <TimeSince date={ unlockDate } />,
 							a: <a href={ site.URL } target="_blank" rel="noopener noreferrer" />,
 						},
-				  } )
+					} )
 				: translate( 'Unlocked: {{timeSince/}} on {{a}}%(site)s{{/a}}', {
 						args: { site: site.name },
 						components: {
 							timeSince: <TimeSince date={ unlockDate } />,
 							a: <a href={ site.URL } target="_blank" rel="noopener noreferrer" />,
 						},
-				  } );
+					} );
 		}
 		return hasMultiple
 			? translate( 'First unlocked: {{timeSince/}}', {
 					components: { timeSince: <TimeSince date={ unlockDate } /> },
-			  } )
+				} )
 			: translate( 'Unlocked: {{timeSince/}}', {
 					components: { timeSince: <TimeSince date={ unlockDate } /> },
-			  } );
+				} );
 	};
 
 	// Only own-profile reads carry `context`, and only on achievements the
@@ -75,10 +75,10 @@ export default function GenericAchievement( {
 		return isComment
 			? translate( '{{a}}View comment{{/a}}', {
 					components: { a: <a href={ safeUrl } target="_blank" rel="noopener noreferrer" /> },
-			  } )
+				} )
 			: translate( '{{a}}View post{{/a}}', {
 					components: { a: <a href={ safeUrl } target="_blank" rel="noopener noreferrer" /> },
-			  } );
+				} );
 	};
 
 	// The `automattician` achievement pins its `date_unlocked` to the 2012

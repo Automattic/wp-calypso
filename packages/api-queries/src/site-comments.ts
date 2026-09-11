@@ -142,7 +142,7 @@ export const siteCommentsInfiniteQuery = ( {
 				? {
 						direction: 'before' as const,
 						before: oldest.toISOString(),
-				  }
+					}
 				: undefined;
 		},
 		getPreviousPageParam: ( firstPage, allPages ) => {
@@ -155,7 +155,7 @@ export const siteCommentsInfiniteQuery = ( {
 							allPages.flatMap( ( page ) => page.comments ),
 							newest
 						),
-				  }
+					}
 				: undefined;
 		},
 		enabled: Boolean( siteId && postId ),

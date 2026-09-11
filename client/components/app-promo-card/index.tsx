@@ -69,10 +69,10 @@ export function AppPromoCard( { className, isWoo, clickHandler }: AppPromoCardPr
 			return isWoo
 				? translate(
 						'Check your stats on-the-go and get real-time notifications with the Woo mobile app.'
-				  )
+					)
 				: translate(
 						'Check your stats on-the-go and get real-time notifications with the Jetpack mobile app.'
-				  );
+					);
 		}
 		// Using useTranslate() with interpolation to set up the linked message.
 		// https://github.com/Automattic/wp-calypso/blob/trunk/packages/i18n-calypso/README.md

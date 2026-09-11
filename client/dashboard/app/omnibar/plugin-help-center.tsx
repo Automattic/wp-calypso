@@ -88,34 +88,32 @@ function buildAgentsManagerMenuNodes(
 ): OmnibarNode[] {
 	return adminBarNodes
 		.filter( ( node ) => node.group && node.parent === AGENTS_MANAGER_NODE_ID )
-		.map(
-			( group ): OmnibarNode => ( {
-				id: group.id,
-				group: true,
-				// Not keyed on `ab-sub-secondary`: wp-admin marks both groups with it, Calypso shades one.
-				...( group.id === SECONDARY_GROUP_NODE_ID ? { variant: 'secondary' as const } : {} ),
-				children: adminBarNodes
-					.filter( ( node ) => node.parent === group.id && ( node.meta?.route || node.href ) )
-					.map( ( node ): OmnibarNode => {
-						const route = node.meta?.route;
-						const destination = route ?? localizeUrl( node.href );
+		.map( ( group ): OmnibarNode => ( {
+			id: group.id,
+			group: true,
+			// Not keyed on `ab-sub-secondary`: wp-admin marks both groups with it, Calypso shades one.
+			...( group.id === SECONDARY_GROUP_NODE_ID ? { variant: 'secondary' as const } : {} ),
+			children: adminBarNodes
+				.filter( ( node ) => node.parent === group.id && ( node.meta?.route || node.href ) )
+				.map( ( node ): OmnibarNode => {
+					const route = node.meta?.route;
+					const destination = route ?? localizeUrl( node.href );
 
-						return {
-							id: node.id,
-							title: node.meta?.menu_title,
-							icon: adminBarIcon( node.meta?.icon, 'omnibar__help-menu-icon' ),
-							onClick: () =>
-								handleMenuClick(
-									recordTracksEvent,
-									destination,
-									omnibarSiteId,
-									sectionName,
-									! route
-								),
-						};
-					} ),
-			} )
-		);
+					return {
+						id: node.id,
+						title: node.meta?.menu_title,
+						icon: adminBarIcon( node.meta?.icon, 'omnibar__help-menu-icon' ),
+						onClick: () =>
+							handleMenuClick(
+								recordTracksEvent,
+								destination,
+								omnibarSiteId,
+								sectionName,
+								! route
+							),
+					};
+				} ),
+		} ) );
 }
 
 function HelpCenterIcon( { name, sectionName }: { name?: string; sectionName?: string } ) {

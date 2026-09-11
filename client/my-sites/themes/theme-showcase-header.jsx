@@ -63,7 +63,7 @@ export default function ThemeShowcaseHeader( {
 						},
 					}
 				),
-		  }
+			}
 		: loggedOutSeoContent;
 
 	// Don't show the Install Theme button if the site is on a Ecommerce free trial or siteID is not available

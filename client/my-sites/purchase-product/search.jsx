@@ -37,13 +37,13 @@ export class SearchPurchase extends Component {
 				shownUrl: this.props.url,
 				waitingForSites: false,
 				candidateSites: this.props.searchSites( this.props.url ),
-		  }
+			}
 		: {
 				currentUrl: '',
 				shownUrl: '',
 				waitingForSites: false,
 				candidateSites: [],
-		  };
+			};
 
 	getCandidateSites( url ) {
 		this.props.searchSites( url );

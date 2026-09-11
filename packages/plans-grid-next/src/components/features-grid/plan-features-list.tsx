@@ -91,9 +91,9 @@ const PlanFeaturesList = ( {
 			const filteredWpcomFeatures =
 				featureGroup?.slug === FEATURE_GROUP_ALL_FEATURES
 					? wpcomFeatures
-					: wpcomFeatures.filter(
-							( feature ) => featureGroup?.getFeatures().includes( feature.getSlug() )
-					  );
+					: wpcomFeatures.filter( ( feature ) =>
+							featureGroup?.getFeatures().includes( feature.getSlug() )
+						);
 
 			/**
 			 * 1. Storage group is still it's own thing, with no actual features associated. It will join the rest in a follow-up.

@@ -127,8 +127,8 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				const isHighlightedFeature = selectedFeature
 					? currentFeature.getSlug() === selectedFeature
 					: currentFeature?.isHighlighted ||
-					  ( currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN && paidDomainName ) ||
-					  ! currentFeature.availableForCurrentPlan;
+						( currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN && paidDomainName ) ||
+						! currentFeature.availableForCurrentPlan;
 
 				const featureSlug = currentFeature.getSlug();
 				const shouldBreakAfterAiWebsiteBuilderTitle =
@@ -188,7 +188,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 													? translate( '%s is not included', {
 															args: [ paidDomainName as string ],
 															comment: '%s is a domain name.',
-													  } )
+														} )
 													: undefined
 											}
 											activeTooltipId={ activeTooltipId }

@@ -160,17 +160,17 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 		'Migrations are exclusive to the %(planName)s plan. Check out all its benefits, and upgrade to get started.'
 	)
 		? // translators: %(planName)s is a plan name. E.g. Commerce plan.
-		  translate(
+			translate(
 				'Migrations are exclusive to the %(planName)s plan. Check out all its benefits, and upgrade to get started.',
 				{
 					args: {
 						planName: plan?.getTitle() ?? '',
 					},
 				}
-		  )
+			)
 		: translate(
 				'Migrations are exclusive to the Creator plan. Check out all its benefits, and upgrade to get started.'
-		  );
+			);
 
 	if ( isFetchingHostingDetails || ! pricing[ visiblePlan ] ) {
 		if ( ! showVariants ) {
@@ -198,7 +198,7 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 											plan: plan?.getTitle() ?? '',
 										},
 									}
-							  ) }
+								) }
 					</SubTitle>
 				</div>
 			) }

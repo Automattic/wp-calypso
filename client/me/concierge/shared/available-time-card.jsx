@@ -239,10 +239,10 @@ class CalendarCard extends Component {
 		const description = isDefaultLocale
 			? translate( 'Sessions are %(durationInMinutes)d minutes long.', {
 					args: { durationInMinutes },
-			  } )
+				} )
 			: translate( 'Sessions are %(durationInMinutes)d minutes long and in %(defaultLanguage)s.', {
 					args: { defaultLanguage, durationInMinutes },
-			  } );
+				} );
 
 		const isMorningTimeGroupSelected = this.state.selectedTimeGroup === 'morning';
 		let timesForTimeGroup;

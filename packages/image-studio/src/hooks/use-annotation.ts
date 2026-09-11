@@ -45,8 +45,7 @@ export function useAnnotation( { originalImageUrl, config }: UseAnnotationOption
 	const getCurrentAttachmentId = useCallback( () => {
 		// Access image-studio store directly via window.wp.data (bypasses React context for sync access)
 		const state = window.wp?.data?.select( 'image-studio' ) as
-			| CurriedImageStudioSelectors
-			| undefined;
+			CurriedImageStudioSelectors | undefined;
 		const attachmentId = state?.getImageStudioAttachmentId?.();
 		if ( typeof attachmentId === 'number' ) {
 			return attachmentId;

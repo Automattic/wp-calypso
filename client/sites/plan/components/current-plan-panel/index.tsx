@@ -28,7 +28,9 @@ export default function CurrentPlanPanel() {
 	const isA4APlan = planPurchase && isPartnerPurchase( planPurchase );
 	const is100YearPlan = planPurchase && is100Year( planPurchase );
 
-	const planName = isA4APlan ? purchaseType( planPurchase ) : planDetails?.product_name_short ?? '';
+	const planName = isA4APlan
+		? purchaseType( planPurchase )
+		: ( planDetails?.product_name_short ?? '' );
 	const planPurchaseLoading = ! isFreePlan && planPurchase === null;
 
 	const isOwner = planDetails?.user_is_owner;

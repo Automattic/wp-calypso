@@ -84,7 +84,7 @@ export default function PluginsList() {
 							slugs,
 							groupId: 'wporg',
 						} )
-				  )
+					)
 				: [],
 		combine: ( results ) => ( {
 			marketplaceSearchData: results.flatMap( ( result ) => result.data?.data.results || [] ),

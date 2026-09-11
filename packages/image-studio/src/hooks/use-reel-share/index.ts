@@ -74,8 +74,7 @@ export function useReelShare(
 		const videoStore = select( videoStudioStore );
 		const studio = select( imageStudioStore );
 		const editor = select( EDITOR_STORE ) as
-			| { getEditedPostAttribute: ( attr: string ) => unknown }
-			| undefined;
+			{ getEditedPostAttribute: ( attr: string ) => unknown } | undefined;
 		const social = select( SOCIAL_STORE ) as { isSharingCurrentPost: () => boolean } | undefined;
 
 		return {
@@ -92,7 +91,7 @@ export function useReelShare(
 
 	const currentVideoUrl = hasOverride ? clip.url : storeUrl;
 	const currentAttachmentId = hasOverride ? clip.attachmentId : storeAttachmentId;
-	const currentDurationSeconds = hasOverride ? clip.durationSeconds ?? null : storeDuration;
+	const currentDurationSeconds = hasOverride ? ( clip.durationSeconds ?? null ) : storeDuration;
 
 	const { editPost } = useDispatch( EDITOR_STORE ) as {
 		editPost: ( edits: { meta: Record< string, unknown > } ) => void;
@@ -208,15 +207,13 @@ export function useReelShare(
 		// `hasInstagramConnection: false` even after IG hydrates. Standalone
 		// `select()` always reads the current registry state.
 		const freshSocial = freshSelect( SOCIAL_STORE ) as unknown as
-			| { getConnections: () => Connection[] }
-			| undefined;
+			{ getConnections: () => Connection[] } | undefined;
 		const freshConnections = freshSocial?.getConnections?.() ?? [];
 		const freshIgConnection = freshConnections.find( ( c ) => c.service_name === IG_SERVICE );
 		const freshIgIsEnabled = !! freshIgConnection && freshIgConnection.enabled !== false;
 
 		const freshEditor = freshSelect( EDITOR_STORE ) as unknown as
-			| { isCurrentPostPublished: () => boolean }
-			| undefined;
+			{ isCurrentPostPublished: () => boolean } | undefined;
 		const freshIsPublished = freshEditor?.isCurrentPostPublished?.() ?? false;
 
 		if ( ! currentVideoUrl || ! currentAttachmentId ) {
@@ -316,8 +313,7 @@ export function useReelShare(
 		// hydrating while the dialog is open — those would NOT be in
 		// `skipped_connections` and the Reel would also publish to them.
 		const freshSocial = freshSelect( SOCIAL_STORE ) as unknown as
-			| { getConnections: () => Connection[] }
-			| undefined;
+			{ getConnections: () => Connection[] } | undefined;
 		const freshConnections = freshSocial?.getConnections?.() ?? [];
 		const skipped = freshConnections
 			.filter( ( c ) => c.enabled !== false && c.service_name !== IG_SERVICE )

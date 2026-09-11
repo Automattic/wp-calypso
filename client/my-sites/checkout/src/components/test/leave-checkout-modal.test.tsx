@@ -75,7 +75,7 @@ function createFakeCartBackend( initialCarts: Partial< Record< CartKey, FakeCart
 		const cartKey = ( isNaN( Number( key ) ) ? key : Number( key ) ) as CartKey;
 		const overrides: Partial< ResponseCart > = Array.isArray( seed )
 			? { products: seed }
-			: seed ?? {};
+			: ( seed ?? {} );
 		carts.set( cartKey, {
 			...getEmptyResponseCart(),
 			cart_key: cartKey,

@@ -84,10 +84,10 @@ const SecurityKeysList = ( {
 												<InlineSupportLink supportContext="two-step-authentication-security-key" />
 											),
 										}
-								  )
+									)
 								: __(
 										'Your browser doesn‘t support the FIDO2 security key standard yet. To use a second factor security key to sign in please try a supported browser like Chrome, Safari, or Firefox.'
-								  )
+									)
 						}
 					/>
 					{ isBrowserSupported && (

@@ -11,7 +11,7 @@ const fetchExperimentAssignment = async ( experimentName ) => {
 				query: {
 					experiment_name: experimentName,
 				},
-		  } )
+			} )
 		: await apiFetch( {
 				path: addQueryArgs( 'jetpack/v4/explat/assignments', {
 					experiment_name: experimentName,
@@ -19,7 +19,7 @@ const fetchExperimentAssignment = async ( experimentName ) => {
 					as_connected_user: 'true',
 				} ),
 				global: true,
-		  } );
+			} );
 
 	return result;
 };

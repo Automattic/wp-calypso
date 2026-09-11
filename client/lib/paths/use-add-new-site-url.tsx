@@ -14,7 +14,7 @@ export const useAddNewSiteUrl = ( queryParameters: Record< string, Primitive > )
 		isJetpackCloud() || isA8CForAgencies()
 			? config( 'jetpack_connect_url' )
 			: isHostingFlow
-			? '/setup/new-hosted-site'
-			: '/start'
+				? '/setup/new-hosted-site'
+				: '/start'
 	);
 };

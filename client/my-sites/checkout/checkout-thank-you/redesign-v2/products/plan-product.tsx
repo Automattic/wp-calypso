@@ -56,7 +56,7 @@ export default function ThankYouPlanProduct( {
 		launchpad && launchpad.checklist
 			? launchpad.checklist.filter(
 					( item ) => item?.completed === false && item?.disabled === false
-			  ).length > 0
+				).length > 0
 			: false;
 
 	useEffect( () => {
