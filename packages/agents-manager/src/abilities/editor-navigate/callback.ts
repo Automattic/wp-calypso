@@ -180,6 +180,10 @@ export async function editorNavigate(
 	// destination, so stale values skip it and the page stays uneditable.
 	const departingPostContent = io.getPostContentClientId();
 	const departingPageId = io.getLoadedPageId();
+	// Once the route has changed, a failure must say so: a caller holding a
+	// canvas binding for the destination keeps it, or the arrival reads as a
+	// move.
+	let navigated = false;
 
 	try {
 		// Outside the site editor there is no router, so the browser loads it
@@ -203,6 +207,7 @@ export async function editorNavigate(
 		}
 
 		await history.navigate( routeQuery ? `${ editorPath }?${ routeQuery }` : editorPath );
+		navigated = true;
 		io.closeCommandPalette();
 
 		if ( isPagesList ) {
@@ -215,9 +220,7 @@ export async function editorNavigate(
 			return errorResult(
 				`Navigated to ${ editorPath }, but the editor did not finish loading that page in time. Do not edit content yet — the editor may still be showing the previous page. Tell the user the page did not open, and stop.`,
 				__( 'That page did not finish opening.', __i18n_text_domain__ ),
-				// The route has changed by now: a caller holding a canvas binding
-				// for the destination must keep it, or the arrival reads as a move.
-				{ path: editorPath, navigated: true }
+				{ path: editorPath, navigated }
 			);
 		}
 
@@ -248,7 +251,7 @@ export async function editorNavigate(
 			isPagesList
 				? __( 'I could not open the pages list.', __i18n_text_domain__ )
 				: __( 'I could not open that page.', __i18n_text_domain__ ),
-			{ path: editorPath }
+			{ path: editorPath, ...( navigated && { navigated } ) }
 		);
 	}
 }
