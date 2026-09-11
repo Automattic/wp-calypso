@@ -38,7 +38,7 @@ export default function NotePanelActions() {
 	const savePreference = useSavePreference();
 
 	// Nudge people towards settings they have never opened, once.
-	const isNew = isViewSettingsEnabled && ! viewSettingsSeen;
+	const isNew = isViewSettingsEnabled && viewSettingsSeen === false;
 	// Opening the menu clears the dot, so the label inside it reads from a snapshot taken
 	// at that moment — otherwise it would vanish before anyone could read it.
 	const [ showsWhatIsNew, setShowsWhatIsNew ] = useState( false );

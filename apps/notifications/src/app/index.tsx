@@ -167,9 +167,9 @@ const NotificationApp = ( {
 						if ( views ) {
 							store.dispatch( actions.ui.setViews( views ) );
 						}
-						if ( viewSettingsSeen ) {
-							store.dispatch( actions.ui.setViewSettingsSeen( true ) );
-						}
+						// Always dispatched, so an absent preference resolves to "not seen" rather
+						// than staying unknown.
+						store.dispatch( actions.ui.setViewSettingsSeen( !! viewSettingsSeen ) );
 					}
 				)
 				.catch( logError );

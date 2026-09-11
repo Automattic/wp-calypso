@@ -43,10 +43,19 @@ const renderPanel = ( { isViewSettingsEnabled }: { isViewSettingsEnabled: boolea
 };
 
 describe( 'NotePanel settings menu', () => {
-	it( 'marks the gear as new until the menu is opened', async () => {
-		const { post } = renderPanel( { isViewSettingsEnabled: true } );
+	it( 'leaves the gear unmarked until the preference has loaded', () => {
+		renderPanel( { isViewSettingsEnabled: true } );
 
-		const gear = screen.getByRole( 'button', { name: 'Settings (new)' } );
+		// Nothing has resolved the preference yet, so the dot must not appear and then
+		// correct itself a moment later.
+		expect( screen.getByRole( 'button', { name: 'Settings' } ) ).not.toHaveClass( 'is-new' );
+	} );
+
+	it( 'marks the gear as new until the menu is opened', async () => {
+		const { post, store } = renderPanel( { isViewSettingsEnabled: true } );
+		store.dispatch( actions.ui.setViewSettingsSeen( false ) );
+
+		const gear = await screen.findByRole( 'button', { name: 'Settings (new)' } );
 		expect( gear ).toHaveClass( 'is-new' );
 
 		await userEvent.click( gear );

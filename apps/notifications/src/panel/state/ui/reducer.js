@@ -58,8 +58,10 @@ const NO_VIEWS = [];
 export const views = ( state = NO_VIEWS, { type, views } ) =>
 	SET_VIEWS === type ? views : state;
 
+// `null` until the preference has loaded, so nothing that depends on it renders on a
+// guess and then corrects itself.
 // eslint-disable-next-line no-shadow
-export const viewSettingsSeen = ( state = false, { type, viewSettingsSeen } ) =>
+export const viewSettingsSeen = ( state = null, { type, viewSettingsSeen } ) =>
 	SET_VIEW_SETTINGS_SEEN === type ? viewSettingsSeen : state;
 
 export const isPanelOpen = ( state = false, { type, isShowing } ) =>
