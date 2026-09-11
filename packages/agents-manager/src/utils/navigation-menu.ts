@@ -387,9 +387,12 @@ export async function addNavigationItem( item: NavigationItem ): Promise< void >
  *
  * `rewrite` returns the new items, or `null` for a menu the page is not in.
  * Every menu, not just the first: a page linked from the header and the footer
- * would otherwise keep a stale link in one of them.
+ * would otherwise keep a stale link in one of them. Every menu is read before
+ * the first is written: one that cannot be read then costs nothing, where a
+ * write already made would leave the menus disagreeing — and the page change
+ * this follows has landed, so a retry could not finish the job.
  *
- * `save` persists the write. A removal needs it, since the page it follows is
+ * `save` persists the writes. A removal needs it, since the page it follows is
  * already deleted; a rename must not, since it saves with the page edit that
  * triggered it.
  */
@@ -397,6 +400,8 @@ async function rewriteMenusHolding(
 	rewrite: ( items: NavigationBlock[] ) => NavigationBlock[] | null,
 	save = false
 ): Promise< void > {
+	const rewrites: { menuId: MenuId; previous: NavigationBlock[]; items: NavigationBlock[] }[] = [];
+
 	for ( const menuId of await getMenuIds() ) {
 		const menu = await readMenu( menuId );
 
@@ -407,15 +412,19 @@ async function rewriteMenusHolding(
 		}
 
 		const previous = getItems( menu );
-		const rewritten = rewrite( previous );
+		const items = rewrite( previous );
 
-		if ( ! rewritten ) {
-			continue;
+		if ( items ) {
+			rewrites.push( { menuId, previous, items } );
 		}
+	}
 
-		await writeMenuItems( menuId, rewritten );
+	for ( const { menuId, items } of rewrites ) {
+		await writeMenuItems( menuId, items );
+	}
 
-		if ( save ) {
+	if ( save ) {
+		for ( const { menuId, previous } of rewrites ) {
 			await saveMenu( menuId, previous );
 		}
 	}
