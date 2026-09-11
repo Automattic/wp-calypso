@@ -1,22 +1,57 @@
 import { activeAgencyQuery, pendingAgencySitesQuery } from '@automattic/api-queries';
-import config from '@automattic/calypso-config';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __, _n } from '@wordpress/i18n';
 import { Icon, wordpress } from '@wordpress/icons';
-import { ActionList } from '../../../components/action-list';
+import { DataViews, DataViewsCard } from '../../../components/dataviews';
 import EmptyState from '../../../components/empty-state';
+import { IconListItem } from '../../../components/icon-list/icon-list-item';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { hasWpcomLicenseWithoutSite } from './lib';
 import type { PendingAgencySite, ReferralApiResponse } from '@automattic/api-core';
+import type { Field, ViewTable } from '@wordpress/dataviews';
 import type { ReactNode } from 'react';
 
+import './style.scss';
+
 type SetupRow = {
-	key: string;
+	id: string;
 	description: ReactNode;
 };
+
+// Only the table itself is rendered: a fixed, single-column list has nothing to
+// search, filter, sort, paginate or reconfigure.
+const VIEW: ViewTable = {
+	type: 'table',
+	fields: [ 'site' ],
+	layout: { enableMoving: false },
+};
+
+const fields: Field< SetupRow >[] = [
+	{
+		id: 'site',
+		label: __( 'Site' ),
+		enableHiding: false,
+		enableSorting: false,
+		filterBy: false,
+		getValue: () => __( 'WordPress.com' ),
+		render: ( { item } ) => (
+			<IconListItem
+				title={ __( 'WordPress.com' ) }
+				description={ item.description }
+				decoration={ <Icon icon={ wordpress } size={ 24 } /> }
+				suffix={
+					/* TODO: open the site configuration modal, then provision the site. */
+					<Button variant="secondary" size="compact" disabled __next40pxDefaultSize>
+						{ __( 'Create new site' ) }
+					</Button>
+				}
+			/>
+		),
+	},
+];
 
 function getReferralDescription( referral: ReferralApiResponse ): ReactNode {
 	return createInterpolateElement( __( '<email /> owns this' ), {
@@ -35,14 +70,14 @@ function getSetupRows( pendingSites: PendingAgencySite[] ): SetupRow[] {
 	const rows: SetupRow[] = available.flatMap( ( { id, features } ) => {
 		const { referral } = features.wpcom_atomic;
 		return referral
-			? [ { key: `referral-${ id }`, description: getReferralDescription( referral ) } ]
+			? [ { id: `referral-${ id }`, description: getReferralDescription( referral ) } ]
 			: [];
 	} );
 
 	const unreferredCount = available.length - rows.length;
 	if ( unreferredCount ) {
 		rows.push( {
-			key: 'available',
+			id: 'available',
 			description: sprintf(
 				/* translators: %d is the number of licenses available to set up. */
 				_n( '%d site available', '%d sites available', unreferredCount ),
@@ -80,29 +115,19 @@ function PendingSitesList( { agencyId }: { agencyId: number } ) {
 	}
 
 	return (
-		<ActionList>
-			{ rows.map( ( { key, description } ) => (
-				<ActionList.ActionItem
-					key={ key }
-					title={ __( 'WordPress.com' ) }
-					description={ description }
-					decoration={ <Icon icon={ wordpress } size={ 24 } /> }
-					actions={
-						<>
-							{ /* TODO: open the site configuration modal, then provision the site. */ }
-							<Button variant="secondary" size="compact" disabled __next40pxDefaultSize>
-								{ __( 'Create new site' ) }
-							</Button>
-							{ config.isEnabled( 'a4a/site-migration' ) && (
-								<Button variant="tertiary" size="compact" disabled __next40pxDefaultSize>
-									{ __( 'Migrate an existing site' ) }
-								</Button>
-							) }
-						</>
-					}
-				/>
-			) ) }
-		</ActionList>
+		<DataViewsCard className="agency-need-setup-table">
+			<DataViews< SetupRow >
+				data={ rows }
+				fields={ fields }
+				view={ VIEW }
+				onChangeView={ () => {} }
+				getItemId={ ( item ) => item.id }
+				defaultLayouts={ { table: {} } }
+				paginationInfo={ { totalItems: rows.length, totalPages: 1 } }
+			>
+				<DataViews.Layout />
+			</DataViews>
+		</DataViewsCard>
 	);
 }
 
