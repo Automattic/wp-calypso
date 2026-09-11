@@ -202,15 +202,36 @@ type Batch = {
 	deletes: Entity< 'delete' >[];
 };
 
+// The schema's fields, plus what agenttic-client adds to every callback's input.
+const BATCH_FIELDS = [
+	'addEntities',
+	'editEntities',
+	'deleteEntities',
+	'confirmationMessage',
+	'messageId',
+	'toolCallId',
+	'toolId',
+];
+
 /**
  * The whole batch checked before the confirmation refusal, the checkpoint keys
  * and any write, so a malformed batch is refused whole rather than partly
- * applied.
+ * applied. A field the schema does not name is refused too: a misspelt
+ * `deleteEntities` would otherwise be dropped and the rest reported as done.
  */
 function checkBatch( input: unknown ): Batch | Error {
 	if ( ! isRecord( input ) ) {
 		return new Error(
 			'Invalid arguments. Provide an object with addEntities, editEntities or deleteEntities.'
+		);
+	}
+
+	const unknownFields = Object.keys( input ).filter( ( key ) => ! BATCH_FIELDS.includes( key ) );
+
+	if ( unknownFields.length ) {
+		return new Error(
+			`Invalid arguments. Unknown field: ${ unknownFields.join( ', ' ) }. Use addEntities, ` +
+				'editEntities, deleteEntities and confirmationMessage only.'
 		);
 	}
 
@@ -559,9 +580,10 @@ async function applyRecordEdit(
 	if ( isRename ) {
 		// Snapshot the menus the rename will relabel: a restore puts each back as
 		// it was rather than relabelling, so the item's label returns exactly.
-		// Discarded together when the rename fails — it reads every menu before
-		// writing any, so nothing changed, and a snapshot of an untouched menu
-		// would let an undo overwrite the user's later edits there.
+		// Discarded together when the rename fails: it reads every menu before
+		// writing any, and its writes are local dispatches that fail for every
+		// menu or none, so a rename that fails changed nothing — and a snapshot
+		// of an untouched menu would let an undo overwrite the user's later edits.
 		const captured: MenuId[] = [];
 
 		try {
