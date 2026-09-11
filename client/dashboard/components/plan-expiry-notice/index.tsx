@@ -2,10 +2,10 @@ import { userPurchaseSetAutoRenewQuery } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { useEffect, useMemo } from 'react';
+import { getCalendarDaysUntil } from '../../utils/datetime';
 import { isExpiredOrRemoved, mightStillAutoRenew } from '../../utils/purchase';
 import Notice from '../notice';
-import { getPlanExpiryEventProperties } from './event-properties';
-import { getPlanExpiryNotice } from './get-plan-expiry-notice';
+import { getExpiryStateName, getPlanExpiryNotice } from './get-plan-expiry-notice';
 import type {
 	PlanExpiryNoticeAction,
 	PlanExpiryNoticeScope,
@@ -13,8 +13,6 @@ import type {
 } from './get-plan-expiry-notice';
 import type { Purchase } from '@automattic/api-core';
 
-export { getPlanExpiryEventProperties } from './event-properties';
-export type { PlanExpiryEventContext } from './event-properties';
 export {
 	getExpiryStateName,
 	getPlanExpiryNotice,
@@ -86,10 +84,7 @@ interface PlanExpiryNoticeProps {
 	 */
 	onAutoRenewEnabled?: () => void;
 
-	/**
-	 * See `PlanExpiryNoticeOptions.scope`. Defaults to the purchase-management
-	 * behaviour.
-	 */
+	/** See `PlanExpiryNoticeOptions.scope`. */
 	scope?: PlanExpiryNoticeScope;
 
 	/** See `PlanExpiryNoticeOptions.isReverted`. */
@@ -101,23 +96,13 @@ interface PlanExpiryNoticeProps {
 	/** See `PlanExpiryNoticeOptions.stage`. */
 	stage?: PlanExpiryNoticeStage;
 
-	/**
-	 * Renders a close button and is called when it is clicked. The caller owns
-	 * the dismissal; the notice keeps rendering until it is unmounted.
-	 */
+	/** Renders a close button. The caller owns the dismissal; the notice keeps rendering until unmounted. */
 	onClose?: () => void;
 
-	/**
-	 * Called with the prefilled support message when the "Contact support"
-	 * action is clicked. Hosts open their Help Center with it. Without it the
-	 * action is not offered.
-	 */
+	/** Opens the host's Help Center with a prefilled message. Without it the action is not offered. */
 	onContactSupport?: ( message: string ) => void;
 
-	/**
-	 * Extra properties for every event this notice records, for what only the
-	 * caller knows, such as which page it is on.
-	 */
+	/** Extra properties for every event this notice records. */
 	eventProperties?: Record< string, unknown >;
 }
 
@@ -220,12 +205,11 @@ export function PlanExpiryNotice( {
 
 	// Pulled out as primitives so that they, and the memo below, stay stable
 	// across renders. `purchase` and `notice` are both new objects every time,
-	// and so is `extraEventProperties` for a caller passing an inline object
-	// literal; it is turned into the primitive `extraEventPropertiesKey` below
-	// for the same reason.
+	// and so is an inline `extraEventProperties`, hence its JSON key.
 	const purchaseId = purchase.ID;
-	const expiryDate = purchase.expiry_date;
+	const productSlug = purchase.product_slug;
 	const status = isExpiredOrRemoved( purchase ) ? 'expired' : 'active';
+	const daysUntilExpiry = getCalendarDaysUntil( new Date( purchase.expiry_date ) );
 	const canStillAutoRenew = mightStillAutoRenew( purchase );
 	const variant = notice?.variant;
 	const stage = notice?.stage;
@@ -233,20 +217,27 @@ export function PlanExpiryNotice( {
 	const extraEventPropertiesKey = JSON.stringify( extraEventProperties ?? {} );
 
 	const eventProperties = useMemo(
-		() =>
-			getPlanExpiryEventProperties( purchase, {
-				surface,
-				stage,
-				variant,
-				isPlanOwner,
-				extra: extraEventProperties,
-			} ),
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- the primitives below stand in for purchase, and extraEventPropertiesKey for extraEventProperties.
+		() => ( {
+			...extraEventProperties,
+			surface,
+			purchase_id: purchaseId,
+			product_slug: productSlug,
+			status,
+			days_until_expiry: daysUntilExpiry,
+			days_remaining: daysUntilExpiry,
+			might_still_auto_renew: canStillAutoRenew,
+			variant,
+			stage,
+			state: stage ? getExpiryStateName( stage ) : undefined,
+			is_plan_owner: isPlanOwner,
+		} ),
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- extraEventPropertiesKey stands in for extraEventProperties.
 		[
 			surface,
 			purchaseId,
-			expiryDate,
+			productSlug,
 			status,
+			daysUntilExpiry,
 			canStillAutoRenew,
 			variant,
 			stage,
