@@ -38,6 +38,19 @@ function AnalyticsProviderWithClient( {
 	}, [ user, router ] );
 
 	useEffect( () => {
+		return router.subscribe( 'onResolved', ( { pathChanged } ) => {
+			if ( ! pathChanged ) {
+				return;
+			}
+			recordTracksEvent( 'calypso_route_render', {
+				app: 'dashboard',
+				path: getNormalizedPath( router.state.matches, router.basepath ),
+				pathname: window.location.pathname,
+			} );
+		} );
+	}, [ router ] );
+
+	useEffect( () => {
 		if ( posthog ) {
 			import( '@automattic/posthog' ).then( ( { init } ) =>
 				init( posthog.apiKey, user ? { ID: user.ID } : undefined, posthog.overrides )
