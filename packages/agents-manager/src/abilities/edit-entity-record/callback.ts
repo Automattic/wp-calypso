@@ -593,7 +593,7 @@ async function applyRecordEdit(
 		// Recorded here, not after the write below: this one has already changed
 		// the menu with `undoIgnore`, so a later failure must not take its only
 		// undo down with it.
-		updated( 'navigationItems' );
+		updated( ...MENU_EDIT_FIELDS.filter( ( field ) => field in record ) );
 	}
 
 	// The agent's `options` stay out of edits: the only one core-data reads

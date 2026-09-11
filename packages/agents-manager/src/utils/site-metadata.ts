@@ -66,7 +66,13 @@ export async function setSiteMetadata( changes: SiteMetadata ): Promise< SiteMet
 		throw new Error( SITE_RECORD_UNAVAILABLE );
 	}
 
-	const merged = { ...current, ...changes };
+	// Big Sky's runtime state, never stored: a change to it would be dropped
+	// at the save and still reported as applied.
+	if ( RUNTIME_KEY in changes ) {
+		throw new Error( `${ RUNTIME_KEY } is Big Sky's runtime state and cannot be set.` );
+	}
+
+	const { [ RUNTIME_KEY ]: _runtime, ...merged } = { ...current, ...changes };
 
 	await replaceSiteMetadata( merged );
 
