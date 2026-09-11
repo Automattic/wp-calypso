@@ -1,6 +1,8 @@
 import { paginatedAgencySitesQuery } from '@automattic/api-queries';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
@@ -9,6 +11,7 @@ import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../compo
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { DEFAULT_PER_PAGE, DEFAULT_CONFIG, recordViewChanges } from '../../sites/dataviews/views';
+import AddNewSite from './add-new-site';
 import { getAgencyFields, getAgencyActions } from './dataviews';
 import type { AgencySite, FetchAgencySitesOptions } from '@automattic/api-core';
 import type { SupportedLayouts, View } from '@wordpress/dataviews';
@@ -54,6 +57,7 @@ function toAgencyFetchOptions( view: View ): FetchAgencySitesOptions {
 export default function AgencySites() {
 	const { recordTracksEvent } = useAnalytics();
 	const currentSearchParams = agencySitesRoute.useSearch();
+	const [ isAddNewSiteOpen, setIsAddNewSiteOpen ] = useState( false );
 
 	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'agency-sites',
@@ -80,7 +84,31 @@ export default function AgencySites() {
 	};
 
 	return (
-		<PageLayout header={ <PageHeader title={ __( 'Sites' ) } /> }>
+		<PageLayout
+			header={
+				<PageHeader
+					title={ __( 'Sites' ) }
+					actions={
+						<Button
+							variant="primary"
+							onClick={ () => {
+								recordTracksEvent( 'calypso_dashboard_agency_sites_add_new_site_clicked' );
+								setIsAddNewSiteOpen( true );
+							} }
+							__next40pxDefaultSize
+						>
+							{ __( 'Add new site' ) }
+						</Button>
+					}
+				/>
+			}
+		>
+			{ isAddNewSiteOpen && (
+				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsAddNewSiteOpen( false ) }>
+					{ /* The modals these actions open are ported separately. */ }
+					<AddNewSite onSelectAction={ () => setIsAddNewSiteOpen( false ) } />
+				</Modal>
+			) }
 			{ ! isLoading && <PerformanceTrackerStop /> }
 			<DataViewsCard>
 				<DataViews< AgencySite >
