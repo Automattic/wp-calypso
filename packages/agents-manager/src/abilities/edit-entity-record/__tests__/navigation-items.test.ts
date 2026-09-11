@@ -198,6 +198,18 @@ describe( 'clientId', () => {
 		).toMatchObject( { id: 7, type: 'page', kind: 'post-type' } );
 	} );
 
+	it( 'claims an item by its url written differently', async () => {
+		withMenu( [
+			item( 'about', 'About', { url: 'http://localhost/about/' }, [ item( 'team', 'Team' ) ] ),
+		] );
+
+		const result = await buildNavigationItems( 10, { navigationItems: [ { url: '/about' } ] } );
+		const [ block ] = result.blocks as { clientId: string; innerBlocks: unknown[] }[];
+
+		expect( block.clientId ).toBe( 'about' );
+		expect( block.innerBlocks ).toHaveLength( 1 );
+	} );
+
 	it( 'keeps the page relationship when the url is the same one written differently', async () => {
 		withMenu( [
 			item( 'about', 'About', { id: 7, type: 'page', kind: 'post-type', url: '/about/' } ),
