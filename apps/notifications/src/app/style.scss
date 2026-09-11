@@ -4,6 +4,7 @@
 @import "calypso/dashboard/app/wp-components-overrides.scss";
 
 $wpnc-pane-width: 448px;
+$wpnc-list-pane-width: 450px;
 $wpnc-pane-border: 1px solid var(--color-border-subtle, #c3c4c7);
 $wpnc-pane-radius: 4px;
 $wpnc-pane-shadow: 0 0 16px rgba(0, 0, 0, 0.12);
@@ -171,7 +172,7 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 @include break-large {
 	.wpnc-app__list-pane {
 		inset-inline-start: auto;
-		width: $wpnc-pane-width;
+		width: $wpnc-list-pane-width;
 		z-index: 2;
 		border: $wpnc-pane-border;
 		border-radius: $wpnc-pane-radius;
