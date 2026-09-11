@@ -18,7 +18,13 @@ import { SectionHeader } from '../../../components/section-header';
 import { a4aLink } from '../../../utils/link';
 import pressableDescriptor from '../exclusive-offers/images/pressable-descriptor.svg';
 import { getProductPriceInfo } from '../products/lib/product-pricing';
-import { BrandMark, CheckGrid, HostingFeatures, Testimonials } from './content-sections';
+import {
+	BrandMark,
+	CheckGrid,
+	HostingFeatures,
+	JetpackComplete,
+	Testimonials,
+} from './content-sections';
 import demoIllustration from './demo-callout-illustration.svg';
 import {
 	PLAN_CATEGORY_PREMIUM,
@@ -38,6 +44,8 @@ import {
 	sortPlansForCategory,
 } from './lib/pressable-plans';
 import OptionCards from './option-cards';
+import PressablePremiumSection from './pressable-premium-section';
+import PressableUsageCard from './pressable-usage-card';
 import SelectedPlanCard from './selected-plan-card';
 import { useKeyedSessionState, useSessionState } from './use-session-state';
 import type { TermPricing } from '../use-term-pricing';
@@ -234,6 +242,8 @@ export default function PressableSection( {
 	const showPremiumSection = selectedTab === PLAN_CATEGORY_PREMIUM && ! hasNewPremiumPlans;
 
 	const disableLowTab = isLowTabDisabled( existingPressablePlan, lowOptions );
+
+	const showUsage = !! existingPlan && ! isReferralMode;
 
 	const priceInfo = selectedProduct
 		? getProductPriceInfo( selectedProduct, term, {
@@ -443,6 +453,7 @@ export default function PressableSection( {
 		<div className="dashboard-marketplace-hosting__layout">
 			<VStack spacing={ 8 } justify="flex-start">
 				<VStack spacing={ 4 }>
+					{ showUsage && <PressableUsageCard existingPlan={ existingPlan } /> }
 					<Card>
 						<CardHeader>
 							<SectionHeader
@@ -508,13 +519,7 @@ export default function PressableSection( {
 									</VStack>
 								) }
 								<CardDivider />
-								{ showPremiumSection ? (
-									<Text variant="muted">
-										{ __( 'Premium plans are available through referrals.' ) }
-									</Text>
-								) : (
-									renderPlanDetails()
-								) }
+								{ showPremiumSection ? <PressablePremiumSection /> : renderPlanDetails() }
 							</VStack>
 						</CardBody>
 					</Card>
@@ -522,6 +527,7 @@ export default function PressableSection( {
 				</VStack>
 				<Divider style={ { color: 'var(--dashboard-overview__divider-color)' } } />
 				<HostingFeatures brand="pressable" />
+				<JetpackComplete />
 				<Testimonials brand="pressable" />
 			</VStack>
 			{ ! showPremiumSection && (
