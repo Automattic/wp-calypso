@@ -640,6 +640,14 @@ describe( 'editEntityRecordCallback', () => {
 			input: { editEntities: [ { ...page( 7 ), record: { content: 123 } } ] },
 		},
 		{
+			case: 'a site location with a null name',
+			input: {
+				editEntities: [
+					{ ...site, recordId: 'big_sky_site_metadata', record: { siteLocation: { name: null } } },
+				],
+			},
+		},
+		{
 			case: 'a site location with a numeric name',
 			input: {
 				editEntities: [
