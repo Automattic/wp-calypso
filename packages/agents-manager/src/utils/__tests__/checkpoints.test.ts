@@ -531,6 +531,22 @@ describe( 'withCheckpoint', () => {
 		expect( getCheckpoint( 'call-1' )?.checkpointKeys ).toEqual( [ 'page', 'site_title' ] );
 	} );
 
+	// The first run never wrote the domain it dropped, so the snapshot it left
+	// behind may predate a change made since; the repeat's own is the true one.
+	it( 'snapshots a re-added eager domain afresh', async () => {
+		const { withCheckpoint, getCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
+		const write = { ...LOGO_WRITE, keys: [ 'page', 'site_title' ] };
+		const rename = { pageId: 7, from: 'Old', to: 'New' };
+
+		getEditedEntityRecord.mockReturnValue( { title: 'Before the first attempt' } );
+		await withCheckpoint( write, ( recorder ) => recorder.capturePageRename( rename ) );
+
+		getEditedEntityRecord.mockReturnValue( { title: 'Changed since' } );
+		await withCheckpoint( write, ( recorder ) => recorder.markWritten( 'site_title' ) );
+
+		expect( getCheckpoint( 'call-1' )?.siteTitleBeforeUpdate ).toBe( 'Changed since' );
+	} );
+
 	// Site title and metadata snapshot up front but are written mid-batch, so a
 	// batch that fails before reaching them must not keep an undo for them.
 	it( 'drops an eager site domain the write never reached', async () => {
