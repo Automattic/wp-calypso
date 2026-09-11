@@ -18,21 +18,25 @@ describe( 'premade views', () => {
 	} );
 
 	it( 'builds a comma-separated type query', () => {
-		expect( getPremadeFilter( 'store' )?.query ).toEqual( {
-			type: 'store_order,simple_payments_payment,recurring_payments_note',
-		} );
+		expect( getPremadeFilter( 'following' )?.query ).toEqual( { type: 'new_post' } );
+		expect( getPremadeFilter( 'store' )?.query.type.split( ',' ) ).toContain( 'store_order' );
 	} );
 
 	// `trophy` is a server-side alias covering the achieve/best name prefixes, so the
 	// ~60 badge types don't have to be listed (and future ones are picked up).
-	it( 'queries achievements through the trophy alias', () => {
-		expect( getPremadeFilter( 'achievements' )?.query ).toEqual( { type: 'trophy' } );
+	it( 'queries the badge types through the trophy alias', () => {
+		expect( getPremadeFilter( 'wordpress_com' )?.query.type.split( ',' ) ).toContain( 'trophy' );
+	} );
+
+	it( 'never repeats a type across views', () => {
+		const all = PREMADE_VIEWS.flatMap( ( view ) => view.types );
+		expect( new Set( all ).size ).toBe( all.length );
 	} );
 
 	// The server owns membership for these views; the predicate only exists so the
 	// shared filter shape works.
 	it( 'accepts every note the server returned', () => {
-		expect( getPremadeFilter( 'billing' )?.filter() ).toBe( true );
+		expect( getPremadeFilter( 'sites' )?.filter() ).toBe( true );
 	} );
 } );
 
