@@ -43,7 +43,6 @@ export const jetpackAgencyDevLicensesQuery = ( agencyId: number ) =>
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'jetpack-agency-licenses', 'dev' ] as const,
 		queryFn: () => fetchJetpackAgencyDevLicenses( agencyId ),
-		enabled: !! agencyId,
 	} );
 
 export const jetpackAgencyLicenseCountsQuery = ( agencyId: number ) =>

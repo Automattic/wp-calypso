@@ -15,5 +15,4 @@ export const agencyPendingSitesQuery = ( agencyId: number ) =>
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'sites', 'pending' ] as const,
 		queryFn: () => fetchAgencyPendingSites( agencyId ),
-		enabled: !! agencyId,
 	} );
