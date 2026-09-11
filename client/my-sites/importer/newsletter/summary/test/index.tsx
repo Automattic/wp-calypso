@@ -77,12 +77,12 @@ describe( '<Summary> next steps', () => {
 		);
 	} );
 
-	it( 'keeps Jetpack sites on Jetpack Cloud, which does not depend on the wp-admin page', () => {
+	it( 'sends subscriber management to wp-admin on a Jetpack site too', () => {
 		renderSummary( { isJetpack: true } );
 
 		expect( screen.getByRole( 'link', { name: 'Manage subscribers' } ) ).toHaveAttribute(
 			'href',
-			'https://cloud.jetpack.com/subscribers/example.wordpress.com'
+			`${ ADMIN_URL }admin.php?page=jetpack-newsletter`
 		);
 	} );
 } );

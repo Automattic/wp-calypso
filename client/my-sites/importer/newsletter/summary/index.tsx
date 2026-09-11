@@ -9,7 +9,7 @@ import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'reac
 import pauseSubstackBillingImg from 'calypso/assets/images/importer/pause-substack-billing.webp';
 import { Steps, StepStatus } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { useSelector } from 'calypso/state';
-import { isJetpackSite, getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import ImporterActionButton from '../../importer-action-buttons/action-button';
 import ImporterActionButtonContainer from '../../importer-action-buttons/container';
 import { getImporterStatus, normalizeFromSite } from '../utils';
@@ -57,7 +57,6 @@ export default function Summary( {
 }: SummaryProps ) {
 	const { __ } = useI18n();
 	const prefersReducedMotion = useReducedMotion();
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite.ID ) );
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, selectedSite.ID ) );
 	const [ isImportCompleted, setIsImportCompleted ] = useState( false );
 	const [ importStepsResults, setImportStepsResults ] = useState< Steps | null >();
@@ -223,8 +222,7 @@ export default function Summary( {
 				<hr />
 				<p>{ __( 'What would you like to do next?' ) }</p>
 				{ /* The wp-admin Newsletter page opens on its Subscribers tab, so settings needs asking for
-				   by name. It is also where subscriber management lives now: Calypso's /subscribers is the
-				   fallback Jetpack routes to only when wp-admin subscriber management is filtered off. */ }
+				   by name. */ }
 				<ImporterActionButtonContainer noSpacing>
 					<ImporterActionButton
 						href={ `${ siteAdminUrl }admin.php?page=jetpack-newsletter&tab=settings` }
@@ -237,13 +235,7 @@ export default function Summary( {
 							{ __( 'View content' ) }
 						</ImporterActionButton>
 					) }
-					<ImporterActionButton
-						href={
-							isJetpack
-								? `https://cloud.jetpack.com/subscribers/${ selectedSite.slug }`
-								: `${ siteAdminUrl }admin.php?page=jetpack-newsletter`
-						}
-					>
+					<ImporterActionButton href={ `${ siteAdminUrl }admin.php?page=jetpack-newsletter` }>
 						{ __( 'Manage subscribers' ) }
 					</ImporterActionButton>
 				</ImporterActionButtonContainer>
