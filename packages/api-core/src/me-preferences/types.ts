@@ -62,4 +62,6 @@ export interface UserPreferences {
 	'a4a-dashboard-pd-not-approved-popover'?: boolean;
 	'a4a-marketplace-referral-guide-seen'?: boolean;
 	'a4a-marketplace-term-pricing'?: 'monthly' | 'yearly';
+	/** Timestamp of the Pressable usage-limit notification the user dismissed. */
+	'pressable-limit-notification-dismissed'?: number;
 }

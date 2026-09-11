@@ -34,6 +34,7 @@ const defaultValues: Required< UserPreferences > = {
 	'a4a-dashboard-pd-not-approved-popover': false,
 	'a4a-marketplace-referral-guide-seen': false,
 	'a4a-marketplace-term-pricing': 'yearly',
+	'pressable-limit-notification-dismissed': 0,
 };
 
 const staticPreferenceStatIds: Record< string, string > = {
@@ -58,6 +59,7 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'a4a-dashboard-pd-not-approved-popover': 'a4apd',
 	'a4a-marketplace-referral-guide-seen': 'a4agde',
 	'a4a-marketplace-term-pricing': 'a4aterm',
+	'pressable-limit-notification-dismissed': 'prslim',
 };
 
 const dynamicPreferenceStatPrefixes: Record< string, string > = {
