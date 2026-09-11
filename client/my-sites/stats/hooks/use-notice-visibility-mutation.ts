@@ -1,15 +1,22 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import { Notices } from './use-notice-visibility-query';
+import {
+	Notices,
+	NoticeDismissStatus,
+	noticesVisibilityQueryKey,
+} from './use-notice-visibility-query';
 
-type Status = 'dismissed' | 'postponed';
+export interface NoticeUpdate {
+	status: NoticeDismissStatus;
+	postponedFor?: number;
+}
 
 export function dismissNotice(
 	siteId: number | null,
 	noticeId: keyof Notices,
-	status: Status,
+	status: NoticeDismissStatus,
 	postponedFor = 0
-): Promise< any > {
+): Promise< unknown > {
 	return wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
 		path: `/sites/${ siteId }/jetpack-stats-dashboard/notices`,
@@ -21,16 +28,26 @@ export function dismissNotice(
 	} );
 }
 
+/**
+ * The hook arguments are the default update. `mutate()` may pass a `NoticeUpdate` for notices
+ * whose next step depends on the saved record; each field it omits falls back to the hook argument.
+ */
 export default function useNoticeVisibilityMutation(
 	siteId: number | null,
 	noticeId: keyof Notices,
-	status: Status = 'dismissed',
+	status: NoticeDismissStatus = 'dismissed',
 	postponedFor = 0
 ) {
 	const queryClient = useQueryClient();
 	return useMutation( {
-		mutationKey: [ 'stats', 'notices-visibility', 'raw', siteId ],
-		mutationFn: () => dismissNotice( siteId, noticeId, status, postponedFor ),
+		mutationKey: noticesVisibilityQueryKey( siteId ),
+		mutationFn: ( update: NoticeUpdate | void ) =>
+			dismissNotice(
+				siteId,
+				noticeId,
+				update?.status ?? status,
+				update?.postponedFor ?? postponedFor
+			),
 		retry: 1,
 		retryDelay: 3 * 1000, // 3 seconds
 		// Mutation-level rather than per-call: query-core only runs mutate()'s own
@@ -38,9 +55,7 @@ export default function useNoticeVisibilityMutation(
 		// navigate away before the retry succeeds. Not awaited, so callers chaining
 		// on mutateAsync() don't also wait out the refetch.
 		onSuccess: () => {
-			queryClient.invalidateQueries( {
-				queryKey: [ 'stats', 'notices-visibility', 'raw', siteId ],
-			} );
+			queryClient.invalidateQueries( { queryKey: noticesVisibilityQueryKey( siteId ) } );
 		},
 	} );
 }

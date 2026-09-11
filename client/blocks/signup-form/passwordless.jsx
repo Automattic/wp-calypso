@@ -1,7 +1,11 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Button, FormLabel } from '@automattic/components';
-import { suggestEmailCorrection } from '@automattic/onboarding';
+import {
+	getEmailAddressError,
+	getEmailDomain,
+	suggestEmailCorrection,
+} from '@automattic/onboarding';
 import { debounce } from '@wordpress/compose';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
@@ -67,6 +71,8 @@ class PasswordlessSignupForm extends Component {
 		errorMessages: null,
 	};
 
+	submitLock = false;
+
 	submitTracksEvent = ( isSuccessful, props ) => {
 		const tracksEventName = isSuccessful
 			? 'calypso_signup_actions_onboarding_passwordless_login_success'
@@ -79,31 +85,39 @@ class PasswordlessSignupForm extends Component {
 	onFormSubmit = async ( event ) => {
 		event.preventDefault();
 
-		if ( this.props.isSubmitBlocked ) {
+		if ( this.props.isSubmitBlocked || this.props.blackbox.isSubmitBlocked || this.submitLock ) {
 			return;
 		}
 
-		if ( ! this.state.email || ! emailValidator.validate( this.state.email ) ) {
+		const email = this.getTrimmedEmail();
+		const emailError = getEmailAddressError( email );
+		if ( emailError ) {
 			this.setState( {
-				errorMessages: [ this.props.translate( 'Please provide a valid email address.' ) ],
+				errorMessages: [ this.getEmailErrorMessage( emailError, email ) ],
 				isSubmitting: false,
 			} );
 			if ( ! this.props.onUpdateEmail ) {
 				this.submitTracksEvent( false, {
-					action_message: 'Please provide a valid email address.',
+					action_message:
+						emailError === 'unknown_tld'
+							? 'Email domain does not end in a valid TLD.'
+							: 'Please provide a valid email address.',
 				} );
 			}
 			return;
 		}
 
+		this.submitLock = true;
+
 		if ( this.props.onUpdateEmail ) {
 			this.setState( { isSubmitting: true } );
 			try {
-				await this.props.onUpdateEmail( this.state.email.trim() );
+				await this.props.onUpdateEmail( email );
 			} catch {
 				// The caller reports its own failures. This only keeps one it didn't from leaving
 				// the screen disabled with nothing to press.
 			} finally {
+				this.submitLock = false;
 				this.setState( { isSubmitting: false } );
 			}
 			return;
@@ -113,7 +127,7 @@ class PasswordlessSignupForm extends Component {
 		const form = {
 			firstName: '',
 			lastName: '',
-			email: this.state.email,
+			email,
 			username: '',
 			password: '',
 		};
@@ -129,12 +143,13 @@ class PasswordlessSignupForm extends Component {
 			// The parent spreads this payload into its /users/new request body.
 			this.props.submitForm(
 				{
-					email: this.state.email,
+					email,
 					is_passwordless: true,
 					is_dev_account: isDevAccount,
 					...( blackboxSessionId && { blackbox_session_id: blackboxSessionId } ),
 				},
 				( error ) => {
+					this.submitLock = false;
 					// The handed-off session was consumed by the parent's failed
 					// request; reset so a retry gets a verifiable one.
 					if ( error ) {
@@ -164,7 +179,7 @@ class PasswordlessSignupForm extends Component {
 			const blackboxSessionId = await this.props.blackbox.getSessionId();
 
 			const body = {
-				email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
+				email: this.getTrimmedEmail(),
 				is_passwordless: true,
 				signup_flow_name: signup_flow_name,
 				validate: false,
@@ -201,6 +216,7 @@ class PasswordlessSignupForm extends Component {
 	};
 
 	createAccountError = async ( error ) => {
+		this.submitLock = false;
 		this.submitTracksEvent( false, { action_message: error.message, error_code: error.error } );
 
 		// Reset Blackbox so the next signup attempt gets a fresh session.
@@ -237,7 +253,7 @@ class PasswordlessSignupForm extends Component {
 			isSubmitting: false,
 		} );
 
-		this.props.onCreateAccountError?.( error, this.state.email );
+		this.props.onCreateAccountError?.( error, this.getTrimmedEmail() );
 	};
 
 	createAccountCallback = ( response ) => {
@@ -254,7 +270,7 @@ class PasswordlessSignupForm extends Component {
 		const userData = {
 			ID: userId,
 			username: username,
-			email: this.state.email,
+			email: this.getTrimmedEmail(),
 		};
 
 		const marketing_price_group = response?.marketing_price_group ?? '';
@@ -302,6 +318,18 @@ class PasswordlessSignupForm extends Component {
 		} else {
 			goToNextStep();
 		}
+	};
+
+	getTrimmedEmail = () => ( typeof this.state.email === 'string' ? this.state.email.trim() : '' );
+
+	getEmailErrorMessage = ( emailError, email ) => {
+		if ( emailError === 'unknown_tld' ) {
+			return this.props.translate(
+				'“%(domain)s” doesn’t look like a real domain. Check the address for typos.',
+				{ args: { domain: getEmailDomain( email ) } }
+			);
+		}
+		return this.props.translate( 'Please provide a valid email address.' );
 	};
 
 	handleAcceptDomainSuggestion = ( newEmail, newDomain, oldDomain ) => {
@@ -381,13 +409,16 @@ class PasswordlessSignupForm extends Component {
 
 	formFooter() {
 		const { isSubmitting } = this.state;
+		// A challenge raised by the submit's own collect holds account creation until
+		// it is solved, so stop claiming the account is being created.
+		const isCreatingAccount = isSubmitting && ! this.props.blackbox.isSubmitBlocked;
 		const isPrimaryDisabled =
 			isSubmitting ||
 			!! this.props.disabled ||
 			!! this.props.disableSubmitButton ||
 			!! this.props.isSubmitBlocked ||
 			this.props.blackbox.isSubmitBlocked;
-		const submitButtonText = isSubmitting
+		const submitButtonText = isCreatingAccount
 			? this.props.submitButtonLoadingLabel || this.props.translate( 'Creating your account…' )
 			: this.props.submitButtonLabel || this.props.translate( 'Create your account' );
 
@@ -398,7 +429,7 @@ class PasswordlessSignupForm extends Component {
 						className="signup-form__action-buttons"
 						primaryLabel={ submitButtonText }
 						primaryType="submit"
-						primaryLoading={ isSubmitting }
+						primaryLoading={ isCreatingAccount }
 						primaryDisabled={ isPrimaryDisabled }
 					/>
 					{ this.props.secondaryFooterButton }
@@ -408,7 +439,7 @@ class PasswordlessSignupForm extends Component {
 
 		return (
 			<LoggedOutFormFooter>
-				<SignupSubmitButton isBusy={ isSubmitting } isDisabled={ isPrimaryDisabled }>
+				<SignupSubmitButton isBusy={ isCreatingAccount } isDisabled={ isPrimaryDisabled }>
 					{ submitButtonText }
 				</SignupSubmitButton>
 				{ this.props.secondaryFooterButton }

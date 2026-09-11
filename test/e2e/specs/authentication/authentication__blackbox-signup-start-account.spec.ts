@@ -31,10 +31,10 @@ test.describe( 'Signup: Blackbox /start/account', { tag: [ tags.AUTHENTICATION ]
 		}
 	} );
 
-	const waitForUsersNewRequest = ( page: Page ): Promise< Request > =>
+	const waitForUsersNewRequest = ( page: Page, timeout = 60 * 1000 ): Promise< Request > =>
 		page.waitForRequest(
 			( request ) => request.method() === 'POST' && /\/users\/new\?/.test( request.url() ),
-			{ timeout: 60 * 1000 }
+			{ timeout }
 		);
 
 	test( 'As a new user, I can sign up when Blackbox returns allow', async ( {
@@ -131,6 +131,88 @@ test.describe( 'Signup: Blackbox /start/account', { tag: [ tags.AUTHENTICATION ]
 			await expect(
 				page.locator( '.signup-form__passwordless-form-wrapper button[type="submit"]' )
 			).toBeDisabled();
+		} );
+	} );
+
+	test( 'As a new user, my signup waits when the submit itself starts a challenge', async ( {
+		page,
+	}, workerInfo ) => {
+		test.skip(
+			workerInfo.project.name !== 'authentication',
+			'The authentication project is the only one that has the right browser settings for authentication tests'
+		);
+
+		const testUser = DataHelper.getNewTestUser( { usernamePrefix: 'blackbox' } );
+		const signupPage = new UserSignupPage( page );
+
+		await test.step( 'Given the page mints no session, so the submit has to', async function () {
+			await useBlackboxTestKeyForCollect( page, [ 'unavailable', 'challenge' ] );
+
+			// Nothing should reach /users/new, but a regression creates a real
+			// account, so queue it for teardown instead of leaking it.
+			page.on( 'response', async ( response ) => {
+				if ( response.request().method() !== 'POST' || ! /\/users\/new\?/.test( response.url() ) ) {
+					return;
+				}
+				const body = ( await response.json().catch( () => null ) ) as NewUserResponse | null;
+				if ( body?.body?.user_id ) {
+					accountsToCleanup.push( {
+						user: body.body,
+						password: testUser.password,
+						email: testUser.email,
+					} );
+				}
+			} );
+		} );
+
+		await test.step( 'When I reveal the email form', async function () {
+			await signupPage.visit( { path: 'account' } );
+
+			const continueWithEmailButton = page.getByRole( 'button', {
+				name: /continue with email/i,
+			} );
+			await Promise.race( [
+				continueWithEmailButton.waitFor( { state: 'visible', timeout: 30 * 1000 } ),
+				page
+					.locator( 'input[name="email"]:visible' )
+					.first()
+					.waitFor( { state: 'visible', timeout: 30 * 1000 } ),
+			] );
+			if ( await continueWithEmailButton.isVisible() ) {
+				await continueWithEmailButton.click();
+			}
+		} );
+
+		const submitButton = page.locator(
+			'.signup-form__passwordless-form-wrapper button[type="submit"]'
+		);
+
+		// Registered before the click so a request sent the moment the submit-time
+		// collect resolves cannot slip past unobserved.
+		let heldRequest: Promise< Request | null >;
+
+		await test.step( 'And I submit my email while nothing is blocking it', async function () {
+			await expect(
+				page.locator( '.login__form-blackbox-challenge.has-visible-challenge' )
+			).toBeHidden();
+			await expect( submitButton ).toBeEnabled();
+			await signupPage.emailInput.fill( testUser.email );
+
+			heldRequest = waitForUsersNewRequest( page, 10 * 1000 ).catch( () => null );
+
+			await submitButton.click();
+		} );
+
+		await test.step( 'Then no account is created and the challenge is shown', async function () {
+			const request = await heldRequest;
+			// On a regression the account is real, so let its response land and
+			// reach the teardown listener before the assertion ends the test.
+			await request?.response();
+
+			expect( request ).toBeNull();
+			await expect(
+				page.locator( '.login__form-blackbox-challenge.has-visible-challenge' )
+			).toBeVisible();
 		} );
 	} );
 

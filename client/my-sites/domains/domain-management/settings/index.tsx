@@ -1,12 +1,13 @@
+import { purchaseQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { isSubdomain } from '@automattic/domain-search';
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from '@wordpress/element';
 import { Icon, info } from '@wordpress/icons';
 import { removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Accordion from 'calypso/components/domains/accordion';
 import {
 	modeType,
@@ -48,11 +49,6 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getDomainDns } from 'calypso/state/domains/dns/selectors';
 import { requestWhois, verifyIcannEmail } from 'calypso/state/domains/management/actions';
 import { getWhoisData } from 'calypso/state/domains/management/selectors';
-import {
-	getByPurchaseId,
-	isFetchingSitePurchases,
-	hasLoadedSitePurchasesFromServer,
-} from 'calypso/state/purchases/selectors';
 import { canAnySiteConnectDomains } from 'calypso/state/selectors/can-any-site-connect-domains';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { IAppState } from 'calypso/state/types';
@@ -78,13 +74,11 @@ const Settings = ( {
 	domain,
 	domains,
 	isFetchingNameservers,
-	isLoadingPurchase,
 	isLoadingNameservers,
 	isUpdatingNameservers,
 	loadingNameserversError,
 	nameservers,
 	dns,
-	purchase,
 	requestWhois,
 	selectedDomainName,
 	selectedSite,
@@ -94,6 +88,23 @@ const Settings = ( {
 }: SettingsPageProps ) => {
 	const translate = useTranslate();
 	const contactInformation = findRegistrantWhois( whoisData );
+	const currentUserId = useSelector( getCurrentUserId );
+	// `domain` above is resolved with `isSiteRedirect: true`, but the purchase
+	// has always been looked up from the domain without it, so site redirects
+	// never get one.
+	const purchaseDomain = domains ? getSelectedDomain( { domains, selectedDomainName } ) : undefined;
+	const subscriptionId = purchaseDomain?.subscriptionId
+		? parseInt( purchaseDomain.subscriptionId, 10 )
+		: undefined;
+	const { data: domainPurchase, isPending } = useQuery( {
+		...purchaseQuery( subscriptionId as number ),
+		enabled: Boolean( subscriptionId ),
+	} );
+	// A disabled query stays `pending` forever, so a domain without a
+	// subscription must not read as perpetually loading.
+	const isLoadingPurchase = Boolean( subscriptionId ) && isPending;
+	const purchase =
+		domainPurchase && Number( domainPurchase.user_id ) === currentUserId ? domainPurchase : null;
 
 	const queryParams = new URLSearchParams( window.location.search );
 
@@ -817,7 +828,6 @@ const Settings = ( {
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="domain-settings-page">
-			{ selectedSite?.ID && <QuerySitePurchases siteId={ selectedSite?.ID } /> }
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			{ renderHeader() }
 			<TwoColumnsLayout content={ renderMainContent() } sidebar={ renderSettingsCards() } />
@@ -827,19 +837,10 @@ const Settings = ( {
 
 export default connect(
 	( state: IAppState, ownProps: SettingsPageProps ): SettingsPageConnectedProps => {
-		const domain = ownProps.domains && getSelectedDomain( ownProps );
-		const subscriptionId = domain && domain.subscriptionId;
-		const currentUserId = getCurrentUserId( state );
-		const purchase = subscriptionId
-			? getByPurchaseId( state, parseInt( subscriptionId, 10 ) )
-			: null;
 		return {
 			whoisData: getWhoisData( state, ownProps.selectedDomainName ),
 			currentRoute: getCurrentRoute( state ),
 			domain: getSelectedDomain( { ...ownProps, isSiteRedirect: true } ),
-			isLoadingPurchase:
-				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
-			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
 			dns: getDomainDns( state, ownProps.selectedDomainName ),
 		};
 	},
