@@ -17,6 +17,7 @@ import { useAuth } from '../../app/auth';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useAppContext } from '../../app/context';
 import { NavigationBlocker } from '../../app/navigation-blocker';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack/';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
@@ -297,7 +298,6 @@ function PrimarySiteCard() {
 }
 
 function WritingPromptEditorCard() {
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
 
 	// An unset or unrecognized value means no choice has been recorded, so the default applies.
@@ -307,7 +307,12 @@ function WritingPromptEditorCard() {
 			data.preferred_editor === 'block-editor' ? 'block-editor' : 'write-editor',
 	} );
 
-	const { mutateAsync: saveUserSettings, isPending } = useMutation( userSettingsMutation() );
+	const { mutate: saveUserSettings, isPending } = useMutation(
+		withSnackbar( userSettingsMutation(), {
+			success: __( 'Editor preference saved.' ),
+			error: __( 'Failed to save editor preference.' ),
+		} )
+	);
 
 	const [ formData, setFormData ] = useState< PreferredEditorFormData >( {
 		preferredEditor: savedEditor,
@@ -334,23 +339,17 @@ function WritingPromptEditorCard() {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		saveUserSettings( {
-			preferred_editor: formData.preferredEditor,
-		} )
-			.then( () => {
-				recordTracksEvent( 'calypso_dashboard_preferences_defaults_preferred_editor_change', {
-					editor: formData.preferredEditor,
-					source: 'account_defaults',
-				} );
-				createSuccessNotice( __( 'Editor preference saved.' ), {
-					type: 'snackbar',
-				} );
-			} )
-			.catch( () => {
-				createErrorNotice( __( 'Failed to save editor preference.' ), {
-					type: 'snackbar',
-				} );
-			} );
+		saveUserSettings(
+			{ preferred_editor: formData.preferredEditor },
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_preferences_defaults_preferred_editor_change', {
+						editor: formData.preferredEditor,
+						source: 'account_defaults',
+					} );
+				},
+			}
+		);
 	};
 
 	return (
