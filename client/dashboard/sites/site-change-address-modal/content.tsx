@@ -19,7 +19,6 @@ import SuffixInputControl from '../../components/input-control/suffix-input-cont
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
 import { getAddSiteDomainUrl } from '../../utils/domain-url';
-import { parseHtmlMessage } from '../../utils/html-message';
 import type { Site, DomainSummary } from '@automattic/api-core';
 import type { DataFormControlProps, Field } from '@wordpress/dataviews';
 
@@ -122,10 +121,9 @@ const NewSiteAddressForm = ( {
 				},
 				onError: ( error ) => {
 					// TODO: Show the error via Data Form when the ValidatedInputControl is ready.
-					const { text, link } = parseHtmlMessage( error.message ?? '' );
-					createErrorNotice( text || __( 'Sorry, that site address is unavailable.' ), {
+					createErrorNotice( error.message || __( 'Sorry, that site address is unavailable.' ), {
 						type: 'snackbar',
-						actions: link ? [ link ] : undefined,
+						__unstableHTML: true,
 					} );
 				},
 			}
@@ -258,10 +256,9 @@ const ConfirmNewSiteAddressForm = ( {
 					);
 				},
 				onError: ( error: Error ) => {
-					const { text, link } = parseHtmlMessage( error.message ?? '' );
-					createErrorNotice( text || __( 'Failed to change site address.' ), {
+					createErrorNotice( error.message || __( 'Failed to change site address.' ), {
 						type: 'snackbar',
-						actions: link ? [ link ] : undefined,
+						__unstableHTML: true,
 					} );
 				},
 			}

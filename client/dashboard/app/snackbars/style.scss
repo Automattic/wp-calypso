@@ -6,6 +6,10 @@
 .dashboard-snackbars {
 	@include snackbar-container();
 
+	.components-snackbar__content a {
+		color: inherit;
+	}
+
 	@include ui-mixins.when-dark-theme {
 		.components-snackbar {
 			background: var( --dashboard-surface__background-color );
