@@ -244,13 +244,18 @@ function captureSnapshots( keys: string[] ): Partial< CheckpointRecord > {
 
 const SITE_KEYS: string[] = [ checkpointKeys.SITE_TITLE, checkpointKeys.SITE_METADATA ];
 
-const EAGER_KEYS: string[] = [ ...SITE_KEYS, checkpointKeys.LOGO, ...THEME_CHECKPOINT_KEYS ];
+/** The record field each domain that snapshots up front captures into. */
+const SNAPSHOT_FIELDS: Record< string, keyof CheckpointRecord > = {
+	[ checkpointKeys.SITE_TITLE ]: 'siteTitleBeforeUpdate',
+	[ checkpointKeys.SITE_METADATA ]: 'siteMetadataBeforeUpdate',
+	[ checkpointKeys.LOGO ]: 'logoBeforeUpdate',
+	...Object.fromEntries( THEME_CHECKPOINT_KEYS.map( ( key ) => [ key, 'themeBeforeUpdate' ] ) ),
+};
+
+const EAGER_KEYS = Object.keys( SNAPSHOT_FIELDS );
 
 const hasSnapshot = ( checkpoint: CheckpointRecord, key: string ): boolean =>
-	( key === checkpointKeys.SITE_TITLE && checkpoint.siteTitleBeforeUpdate !== undefined ) ||
-	( key === checkpointKeys.SITE_METADATA && !! checkpoint.siteMetadataBeforeUpdate ) ||
-	( key === checkpointKeys.LOGO && checkpoint.logoBeforeUpdate !== undefined ) ||
-	( THEME_CHECKPOINT_KEYS.includes( key ) && !! checkpoint.themeBeforeUpdate );
+	key in SNAPSHOT_FIELDS && checkpoint[ SNAPSHOT_FIELDS[ key ] ] !== undefined;
 
 /** The eager domains among `keys` whose snapshot could not be taken. */
 const unsnapshotted = ( checkpoint: CheckpointRecord, keys: string[] ): string[] =>
@@ -496,9 +501,17 @@ function redeclareDomains( id: string, keys: string[] ): void {
 	}
 
 	const added = keys.filter( ( key ) => ! checkpoint.checkpointKeys.includes( key ) );
+	// Cleared before the fresh capture: kept, an old snapshot would stand in
+	// for one that could not be taken, and the write would run unrefused.
+	const cleared = Object.fromEntries(
+		added
+			.filter( ( key ) => key in SNAPSHOT_FIELDS )
+			.map( ( key ) => [ SNAPSHOT_FIELDS[ key ], undefined ] )
+	);
 
 	records.set( id, {
 		...checkpoint,
+		...cleared,
 		...captureSnapshots( added ),
 		checkpointKeys: [ ...checkpoint.checkpointKeys, ...added ],
 	} );

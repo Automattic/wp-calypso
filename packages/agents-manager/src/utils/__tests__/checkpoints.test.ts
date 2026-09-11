@@ -513,6 +513,23 @@ describe( 'withCheckpoint', () => {
 		expect( getCheckpoint( 'call-1' )?.pageRenames ).toEqual( [ rename ] );
 	} );
 
+	// The first run's snapshot must not stand in for a fresh one that failed.
+	it( 'refuses a repeat whose re-added domain cannot be snapshotted again', async () => {
+		const { withCheckpoint, getCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
+		const write = { ...LOGO_WRITE, keys: [ 'page', 'site_title' ] };
+
+		getEditedEntityRecord.mockReturnValue( { title: 'Old' } );
+		await withCheckpoint( write, ( recorder ) =>
+			recorder.capturePageRename( { pageId: 7, from: 'Old', to: 'New' } )
+		);
+
+		getEditedEntityRecord.mockReturnValue( undefined );
+		await expect( withCheckpoint( write, jest.fn() ) ).rejects.toThrow(
+			'Cannot record a way back for site_title'
+		);
+		expect( getCheckpoint( 'call-1' )?.checkpointKeys ).toEqual( [ 'page' ] );
+	} );
+
 	// A domain that snapshots up front and cannot be read would leave the
 	// change with no way back, so the write is refused instead.
 	it( 'refuses a write whose eager domain cannot be snapshotted', async () => {

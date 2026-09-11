@@ -38,12 +38,18 @@ const link = (
  * Serves `menus` by id — every one of them is a saved record — and reports
  * which of them the editor renders.
  */
-function withMenus( menus: Record< string, unknown[] >, rendered = Object.keys( menus ) ) {
+function withMenus(
+	menus: Record< string, unknown[] >,
+	rendered = Object.keys( menus ),
+	{ unsaved = [] as string[] } = {}
+) {
 	( select as jest.Mock ).mockReturnValue( {
 		getBlocksByName: () => rendered.map( ( id ) => `client-${ id }` ),
 		getBlock: ( clientId: string ) => ( {
 			attributes: { ref: Number( clientId.replace( 'client-', '' ) ) },
 		} ),
+		hasEditsForEntityRecord: ( _kind: string, _name: string, id: number ) =>
+			unsaved.includes( String( id ) ),
 	} );
 	( resolveSelect as jest.Mock ).mockReturnValue( {
 		getEditedEntityRecord: ( _kind: string, _name: string, id: number ) =>
@@ -140,6 +146,15 @@ describe( 'addNavigationItem', () => {
 		withMenus( { 10: [ pageList( 3 ) ] } );
 		await addNavigationItem( { label: 'About', id: 7 } );
 		expect( lastWrite().items ).toHaveLength( 2 );
+	} );
+
+	// The user's unsaved edits are theirs to save; the item waits with them.
+	it( 'leaves a menu with unsaved edits unsaved, and says which', async () => {
+		withMenus( { 10: [ link( 1, 'Home' ) ] }, undefined, { unsaved: [ '10' ] } );
+
+		expect( await addNavigationItem( { label: 'About', id: 7 } ) ).toEqual( [ 10 ] );
+		expect( lastWrite().items ).toHaveLength( 2 );
+		expect( saveSpecifiedEntityEdits ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does nothing when the site has no menu', async () => {
@@ -294,6 +309,17 @@ describe( 'removeNavigationItem', () => {
 		savedItemsOf( 10 );
 		expect( lastWrite() ).toEqual( { menuId: 99, items: [ link( 7, 'About' ) ] } );
 		saveSpecifiedEntityEdits.mockReset();
+	} );
+
+	it( 'saves the menus without unsaved edits, and returns the one with', async () => {
+		( getSiteMetadata as jest.Mock ).mockReturnValue( { navigationId: 99 } );
+		withMenus( { 10: [ link( 7, 'About' ) ], 99: [ link( 7, 'About' ) ] }, [ '10' ], {
+			unsaved: [ '99' ],
+		} );
+
+		expect( await removeNavigationItem( 7 ) ).toEqual( [ 99 ] );
+		savedItemsOf( 10 );
+		expect( saveSpecifiedEntityEdits ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'writes nothing when the page is not in any menu', async () => {

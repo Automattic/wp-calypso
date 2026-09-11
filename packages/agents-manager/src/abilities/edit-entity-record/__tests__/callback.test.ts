@@ -14,12 +14,12 @@ jest.mock( '@wordpress/data', () => ( {
 jest.mock( '../../../utils/is-editor-page', () => ( { isEditorPage: jest.fn( () => true ) } ) );
 jest.mock( '../../../utils/navigation-menu', () => ( {
 	MENU_FIELDS: [ 'blocks', 'content' ],
-	addNavigationItem: jest.fn(),
+	addNavigationItem: jest.fn( async () => [] ),
 	getMenuIdsToRelabel: jest.fn( async () => [ 10 ] ),
 	// The checkpoint recorder snapshots and discards menus through these.
 	isSameMenuId: ( a: unknown, b: unknown ) => String( a ) === String( b ),
 	readMenuItems: jest.fn( async () => [] ),
-	removeNavigationItem: jest.fn(),
+	removeNavigationItem: jest.fn( async () => [] ),
 	renameNavigationItem: jest.fn(),
 } ) );
 jest.mock( '../../../utils/page-title', () => ( {
@@ -350,6 +350,20 @@ describe( 'editEntityRecordCallback', () => {
 
 	// The url travels with the removal: an item carrying no page id is matched
 	// by it.
+	// The user's unsaved menu edits are theirs to save; the item waits with
+	// them, and the reply says so rather than leaving it to the model.
+	it( 'tells the user when the menu item waits with their unsaved edits', async () => {
+		( addNavigationItem as jest.Mock ).mockResolvedValueOnce( [ 10 ] );
+
+		const result = await editEntityRecordCallback( {
+			addEntities: [ { ...page(), record: { title: 'About' } } ],
+		} );
+
+		expect( result.result.success ).toBe( true );
+		expect( result.result.message ).toContain( 'unsaved changes' );
+		expect( result.result.details ).toMatchObject( { unsavedMenus: [ 10 ] } );
+	} );
+
 	it( 'deletes a page and removes its menu item', async () => {
 		await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
 
