@@ -1,5 +1,9 @@
 import nock from 'nock';
-import { fetchAgencySitesWithPlugins, fetchPendingAgencySites } from '..';
+import {
+	fetchAgencySitesWithPlugins,
+	fetchPendingAgencySites,
+	validateAgencySiteAddress,
+} from '..';
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -33,5 +37,30 @@ describe( 'fetchPendingAgencySites', () => {
 
 		await expect( fetchPendingAgencySites( 123 ) ).resolves.toEqual( pendingSites );
 		expect( scope.isDone() ).toBe( true );
+	} );
+} );
+
+describe( 'validateAgencySiteAddress', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'posts the address as a free wordpress.com blog subdomain', async () => {
+		const scope = nock( BASE )
+			.post( '/wpcom/v2/agency/123/validate-site-address', {
+				site_name: 'example',
+				domain: 'wordpress.com',
+				type: 'blog',
+			} )
+			.reply( 200, { valid: true } );
+
+		await expect( validateAgencySiteAddress( 123, 'example' ) ).resolves.toEqual( { valid: true } );
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'reports an address that is taken', async () => {
+		nock( BASE )
+			.post( '/wpcom/v2/agency/123/validate-site-address' )
+			.reply( 200, { valid: false } );
+
+		await expect( validateAgencySiteAddress( 123, 'taken' ) ).resolves.toEqual( { valid: false } );
 	} );
 } );

@@ -1,5 +1,11 @@
+import { FreeSiteAddressType } from '../site-address-change/types';
 import { wpcom } from '../wpcom-fetcher';
-import type { AgencySiteWithPlugin, PendingAgencySite } from './types';
+import type {
+	AgencySiteAddressValidation,
+	AgencySiteWithPlugin,
+	PendingAgencySite,
+	ProvisionedAgencySite,
+} from './types';
 
 export async function fetchAgencySitesWithPlugins(
 	agencyId: number,
@@ -19,6 +25,18 @@ export async function fetchAgencySitesWithPlugins(
 }
 
 /**
+ * Every site the agency has, provisioned or still being created.
+ */
+export async function fetchProvisionedAgencySites(
+	agencyId: number
+): Promise< ProvisionedAgencySite[] > {
+	return wpcom.req.get( {
+		apiNamespace: 'wpcom/v2',
+		path: `/agency/${ agencyId }/sites`,
+	} );
+}
+
+/**
  * Sites the agency has purchased but not yet provisioned.
  */
 export async function fetchPendingAgencySites( agencyId: number ): Promise< PendingAgencySite[] > {
@@ -26,4 +44,21 @@ export async function fetchPendingAgencySites( agencyId: number ): Promise< Pend
 		apiNamespace: 'wpcom/v2',
 		path: `/agency/${ agencyId }/sites/pending`,
 	} );
+}
+
+/**
+ * Checks whether the agency can claim `{siteName}.wordpress.com`. A POST, but
+ * it only validates: the address is not reserved until the site is provisioned.
+ */
+export async function validateAgencySiteAddress(
+	agencyId: number,
+	siteName: string
+): Promise< AgencySiteAddressValidation > {
+	return wpcom.req.post(
+		{
+			apiNamespace: 'wpcom/v2',
+			path: `/agency/${ agencyId }/validate-site-address`,
+		},
+		{ site_name: siteName, domain: 'wordpress.com', type: FreeSiteAddressType.BLOG }
+	);
 }
