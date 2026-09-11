@@ -5,6 +5,7 @@
 import { act, render, screen } from '@testing-library/react';
 import { useRef } from 'react';
 import { loadBlackboxSdk } from '../blackbox-sdk';
+import { waitForChallengeSettled } from '../challenge-gate';
 import { useBlackbox } from '../use-blackbox';
 
 jest.mock( '../blackbox-sdk', () => ( {
@@ -215,6 +216,71 @@ describe( 'useBlackbox', () => {
 		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/inactive/empty' );
 	} );
 
+	test( 'waitForChallengeSettled resolves immediately when no challenge is active', async () => {
+		render( <TestComponent /> );
+
+		await act( async () => {} );
+
+		await expect( waitForChallengeSettled() ).resolves.toBeUndefined();
+	} );
+
+	test( 'waitForChallengeSettled stays pending until the challenge completes', async () => {
+		let callbacks;
+		window.Blackbox.configure.mockImplementationOnce( ( config ) => {
+			callbacks = config;
+		} );
+
+		render( <TestComponent /> );
+
+		await act( async () => {} );
+		act( () => callbacks.onChallengeStart() );
+
+		let settled = false;
+		const settledPromise = waitForChallengeSettled().then( () => {
+			settled = true;
+		} );
+
+		await act( async () => {} );
+		expect( settled ).toBe( false );
+
+		act( () => callbacks.onChallengeComplete() );
+		await act( async () => settledPromise );
+
+		expect( settled ).toBe( true );
+	} );
+
+	test( 'waitForChallengeSettled resolves when the challenge fails', async () => {
+		let callbacks;
+		window.Blackbox.configure.mockImplementationOnce( ( config ) => {
+			callbacks = config;
+		} );
+
+		render( <TestComponent /> );
+
+		await act( async () => {} );
+		act( () => callbacks.onChallengeStart() );
+
+		const settledPromise = waitForChallengeSettled();
+		act( () => callbacks.onChallengeFailure() );
+		await expect( settledPromise ).resolves.toBeUndefined();
+	} );
+
+	test( 'waitForChallengeSettled resolves when the SDK cannot present the challenge', async () => {
+		let callbacks;
+		window.Blackbox.configure.mockImplementationOnce( ( config ) => {
+			callbacks = config;
+		} );
+
+		render( <TestComponent /> );
+
+		await act( async () => {} );
+		act( () => callbacks.onChallengeStart() );
+
+		const settledPromise = waitForChallengeSettled();
+		act( () => callbacks.onError( { method: 'challenge' } ) );
+		await expect( settledPromise ).resolves.toBeUndefined();
+	} );
+
 	test( 'clears blocking state when disabled mid-challenge', async () => {
 		let callbacks;
 		window.Blackbox.configure.mockImplementationOnce( ( config ) => {
@@ -231,5 +297,6 @@ describe( 'useBlackbox', () => {
 		rerender( <TestComponent enabled={ false } /> );
 
 		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/inactive/empty' );
+		await expect( waitForChallengeSettled() ).resolves.toBeUndefined();
 	} );
 } );

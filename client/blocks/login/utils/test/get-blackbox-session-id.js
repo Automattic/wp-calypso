@@ -7,10 +7,15 @@ jest.mock( '../blackbox-sdk', () => ( {
 } ) );
 
 import { loadBlackboxSdk } from '../blackbox-sdk';
+import { setChallengeRunning } from '../challenge-gate';
 import { getBlackboxSessionId } from '../get-blackbox-session-id';
+
+const flushMicrotasks = () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
 describe( 'getBlackboxSessionId', () => {
 	afterEach( () => {
+		// The gate is module state, so an open one would hang the next test.
+		setChallengeRunning( false );
 		delete window.Blackbox;
 		jest.clearAllMocks();
 	} );
@@ -48,5 +53,27 @@ describe( 'getBlackboxSessionId', () => {
 	test( 'returns undefined when collect throws', async () => {
 		window.Blackbox = { collect: jest.fn( () => Promise.reject( new Error( 'boom' ) ) ) };
 		await expect( getBlackboxSessionId() ).resolves.toBeUndefined();
+	} );
+
+	test( 'withholds the session until a challenge raised by its own collect settles', async () => {
+		window.Blackbox = {
+			collect: jest.fn( async () => {
+				setChallengeRunning( true );
+				return 'sid';
+			} ),
+		};
+
+		let sessionId;
+		const pending = getBlackboxSessionId().then( ( id ) => {
+			sessionId = id;
+		} );
+
+		await flushMicrotasks();
+		expect( sessionId ).toBeUndefined();
+
+		setChallengeRunning( false );
+		await pending;
+
+		expect( sessionId ).toBe( 'sid' );
 	} );
 } );

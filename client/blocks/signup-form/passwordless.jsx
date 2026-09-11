@@ -71,6 +71,8 @@ class PasswordlessSignupForm extends Component {
 		errorMessages: null,
 	};
 
+	submitLock = false;
+
 	submitTracksEvent = ( isSuccessful, props ) => {
 		const tracksEventName = isSuccessful
 			? 'calypso_signup_actions_onboarding_passwordless_login_success'
@@ -83,7 +85,7 @@ class PasswordlessSignupForm extends Component {
 	onFormSubmit = async ( event ) => {
 		event.preventDefault();
 
-		if ( this.props.isSubmitBlocked ) {
+		if ( this.props.isSubmitBlocked || this.props.blackbox.isSubmitBlocked || this.submitLock ) {
 			return;
 		}
 
@@ -105,6 +107,8 @@ class PasswordlessSignupForm extends Component {
 			return;
 		}
 
+		this.submitLock = true;
+
 		if ( this.props.onUpdateEmail ) {
 			this.setState( { isSubmitting: true } );
 			try {
@@ -113,6 +117,7 @@ class PasswordlessSignupForm extends Component {
 				// The caller reports its own failures. This only keeps one it didn't from leaving
 				// the screen disabled with nothing to press.
 			} finally {
+				this.submitLock = false;
 				this.setState( { isSubmitting: false } );
 			}
 			return;
@@ -144,6 +149,7 @@ class PasswordlessSignupForm extends Component {
 					...( blackboxSessionId && { blackbox_session_id: blackboxSessionId } ),
 				},
 				( error ) => {
+					this.submitLock = false;
 					// The handed-off session was consumed by the parent's failed
 					// request; reset so a retry gets a verifiable one.
 					if ( error ) {
@@ -210,6 +216,7 @@ class PasswordlessSignupForm extends Component {
 	};
 
 	createAccountError = async ( error ) => {
+		this.submitLock = false;
 		this.submitTracksEvent( false, { action_message: error.message, error_code: error.error } );
 
 		// Reset Blackbox so the next signup attempt gets a fresh session.
@@ -402,13 +409,16 @@ class PasswordlessSignupForm extends Component {
 
 	formFooter() {
 		const { isSubmitting } = this.state;
+		// A challenge raised by the submit's own collect holds account creation until
+		// it is solved, so stop claiming the account is being created.
+		const isCreatingAccount = isSubmitting && ! this.props.blackbox.isSubmitBlocked;
 		const isPrimaryDisabled =
 			isSubmitting ||
 			!! this.props.disabled ||
 			!! this.props.disableSubmitButton ||
 			!! this.props.isSubmitBlocked ||
 			this.props.blackbox.isSubmitBlocked;
-		const submitButtonText = isSubmitting
+		const submitButtonText = isCreatingAccount
 			? this.props.submitButtonLoadingLabel || this.props.translate( 'Creating your account…' )
 			: this.props.submitButtonLabel || this.props.translate( 'Create your account' );
 
@@ -419,7 +429,7 @@ class PasswordlessSignupForm extends Component {
 						className="signup-form__action-buttons"
 						primaryLabel={ submitButtonText }
 						primaryType="submit"
-						primaryLoading={ isSubmitting }
+						primaryLoading={ isCreatingAccount }
 						primaryDisabled={ isPrimaryDisabled }
 					/>
 					{ this.props.secondaryFooterButton }
@@ -429,7 +439,7 @@ class PasswordlessSignupForm extends Component {
 
 		return (
 			<LoggedOutFormFooter>
-				<SignupSubmitButton isBusy={ isSubmitting } isDisabled={ isPrimaryDisabled }>
+				<SignupSubmitButton isBusy={ isCreatingAccount } isDisabled={ isPrimaryDisabled }>
 					{ submitButtonText }
 				</SignupSubmitButton>
 				{ this.props.secondaryFooterButton }
