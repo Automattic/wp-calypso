@@ -7,7 +7,10 @@ import { Button } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
+import useNoticeVisibilityMutation, {
+	NoticeUpdate,
+} from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
+import { useNoticeRecordQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import usePremiumAnalyticsStatusMutation from 'calypso/my-sites/stats/hooks/use-premium-analytics-status-mutation';
 import {
 	PREMIUM_ANALYTICS_ENABLED_SETTING,
@@ -20,8 +23,8 @@ import {
 import { StatsNoticeProps } from './types';
 
 const DAY_IN_SECONDS = 24 * 3600;
-// The notices endpoint decides when a postponed invitation stops coming back; the client only
-// says how long each one lasts.
+// The client owns the schedule: the server only counts postponements. The first dismissal holds
+// the invitation back for this long and it returns once; the next one is for good.
 const DISMISSAL_POSTPONEMENT = 30 * DAY_IN_SECONDS;
 
 const NoticeContainer = ( {
@@ -49,6 +52,12 @@ const PremiumAnalyticsPreviewNotice = ( {
 	// `is_running_in_jetpack_site` and false in a Simple site's wp-admin. That prop still decides
 	// where support lives, because it says which API the site answers on.
 	const isOdyssey = config.isEnabled( 'is_odyssey' );
+	const { data: noticeRecord } = useNoticeRecordQuery( siteId, 'premium_analytics_preview' );
+	const postponedCount = noticeRecord?.postponed_count ?? 0;
+	// Read through a ref so the impression effect does not depend on the count: a record refreshed
+	// while mounted is not a second showing.
+	const postponedCountRef = useRef( postponedCount );
+	postponedCountRef.current = postponedCount;
 	const trackEvent = ( name: string, properties: Record< string, unknown > = {} ) =>
 		trackPremiumAnalyticsPreviewEvent( 'notice', name, siteId, properties );
 	// Scoped to the site rather than held as a flag: the notices host reuses this component across
@@ -76,19 +85,25 @@ const PremiumAnalyticsPreviewNotice = ( {
 		usePremiumAnalyticsStatusMutation( siteId );
 	const isBusy = isEnabling || isLeaving;
 
-	const { mutateAsync: postponeNoticeAsync } = useNoticeVisibilityMutation(
+	const { mutateAsync: recordDismissalAsync } = useNoticeVisibilityMutation(
 		siteId,
-		'premium_analytics_preview',
-		'postponed',
-		DISMISSAL_POSTPONEMENT
+		'premium_analytics_preview'
 	);
 
 	const dismissNotice = () => {
-		trackEvent( 'dismissed' );
+		trackEvent( 'dismissed', { postponed_count: postponedCount } );
 		setDismissedSiteId( siteId );
 
-		// Best-effort: the local state above already hides the notice for this session.
-		postponeNoticeAsync().catch( () => {} );
+		const update: NoticeUpdate =
+			postponedCount === 0
+				? { status: 'postponed', postponedFor: DISMISSAL_POSTPONEMENT }
+				: { status: 'dismissed' };
+		// Best-effort past the mutation's own retry: local state already hides it for this session,
+		// and a lost write only re-offers the same step on the next load. The event is what tells a
+		// site that keeps failing apart from one that never got past its first sighting.
+		recordDismissalAsync( update ).catch( () =>
+			trackEvent( 'dismiss_failed', { postponed_count: postponedCount, status: update.status } )
+		);
 	};
 
 	// Neither the confirmation nor a failed attempt is a rejection, so closing those records
@@ -153,7 +168,9 @@ const PremiumAnalyticsPreviewNotice = ( {
 
 	useEffect( () => {
 		if ( ! noticeDismissed ) {
-			trackPremiumAnalyticsPreviewEvent( 'notice', 'viewed', siteId );
+			trackPremiumAnalyticsPreviewEvent( 'notice', 'viewed', siteId, {
+				postponed_count: postponedCountRef.current,
+			} );
 		}
 	}, [ noticeDismissed, siteId ] );
 

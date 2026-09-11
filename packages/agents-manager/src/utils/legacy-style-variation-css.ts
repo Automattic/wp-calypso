@@ -1,3 +1,4 @@
+import { isRecord } from './is-record';
 // Detection of the legacy style-variation CSS block that older versions of the
 // Easy Site Editor injected into the user's Additional CSS (`styles.css`):
 //
@@ -21,10 +22,6 @@ export interface LegacyBlock {
 	end: number;
 	/** The block as shown to the user, without leading blank lines. */
 	text: string;
-}
-
-function isRecord( value: unknown ): value is Record< string, unknown > {
-	return !! value && typeof value === 'object' && ! Array.isArray( value );
 }
 
 /**
