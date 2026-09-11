@@ -225,11 +225,17 @@ function HelpCenterContent() {
 		[ handleMenuClick ]
 	);
 
+	// The backend decides who sees the "Get Help" text beside the icon; it hides at the
+	// admin bar's mobile breakpoint, like the admin bar entry point.
+	const isAboveMobileBreakpoint = useMediaQuery( '(min-width: 783px)' );
+	const entryLabel = isAboveMobileBreakpoint ? helpCenterData?.entryLabel : undefined;
+
 	const content = isMenuPanelExperimentEnabled ? (
 		<DropdownMenu
 			className={ [ 'entry-point-button', 'help-center', isShown ? 'is-active' : '' ].join( ' ' ) }
 			icon={ <HelpIcon /> }
 			label="Help"
+			text={ entryLabel }
 			controls={ menuControls }
 			popoverProps={ {
 				position: 'bottom left',
@@ -245,7 +251,9 @@ function HelpCenterContent() {
 			aria-pressed={ ( ! canvasMode || canvasMode === 'edit' ) && isShown ? true : false }
 			aria-expanded={ isShown ? true : false }
 			size={ ! canvasMode || canvasMode === 'edit' ? 'compact' : undefined }
-		/>
+		>
+			{ entryLabel }
+		</Button>
 	);
 
 	const customProps = {};

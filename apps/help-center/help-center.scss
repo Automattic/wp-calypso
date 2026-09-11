@@ -4,6 +4,7 @@
 .help-center.entry-point-button {
 	&.is-active {
 		background: #1e1e1e;
+		color: var(--studio-white);
 
 		svg {
 			fill: var(--studio-white);
