@@ -15,17 +15,18 @@ const AGENCY_ID = 123;
 interface Options {
 	agency?: Partial< Agency >;
 	pendingSiteCount?: number;
+	/** Overrides `pendingSiteCount` when the payload shape itself is the subject. */
+	pendingSites?: unknown[];
 	availableDevLicenses?: number;
 }
 
-/**
- * Renders the menu and waits for both counts to arrive. Every gate in the menu
- * reads from the agency, so asserting before the queries settle would test the
- * empty first paint instead.
- */
-async function renderMenu( {
+function mockAgencyEndpoints( {
 	agency = {},
 	pendingSiteCount = 0,
+	pendingSites = Array.from( { length: pendingSiteCount }, ( _, index ) => ( {
+		id: index + 1,
+		features: { wpcom_atomic: { state: 'pending', license_key: `key-${ index }` } },
+	} ) ),
 	availableDevLicenses = 5,
 }: Options = {} ) {
 	nock( BASE )
@@ -33,15 +34,7 @@ async function renderMenu( {
 		.query( true )
 		.reply( 200, [ { id: AGENCY_ID, approval_status: 'approved', ...agency } ] );
 
-	nock( BASE )
-		.get( `/wpcom/v2/agency/${ AGENCY_ID }/sites/pending` )
-		.reply(
-			200,
-			Array.from( { length: pendingSiteCount }, ( _, index ) => ( {
-				id: index + 1,
-				features: { wpcom_atomic: { state: 'pending', license_key: `key-${ index }` } },
-			} ) )
-		);
+	nock( BASE ).get( `/wpcom/v2/agency/${ AGENCY_ID }/sites/pending` ).reply( 200, pendingSites );
 
 	nock( BASE )
 		.get( '/wpcom/v2/jetpack-licensing/dev-licenses' )
@@ -50,6 +43,17 @@ async function renderMenu( {
 
 	const onSelectAction = jest.fn();
 	render( <AddNewSite onSelectAction={ onSelectAction } /> );
+
+	return { onSelectAction, availableDevLicenses };
+}
+
+/**
+ * Renders the menu and waits for both counts to arrive. Every gate in the menu
+ * reads from the agency, so asserting before the queries settle would test the
+ * empty first paint instead.
+ */
+async function renderMenu( options: Options = {} ) {
+	const { onSelectAction, availableDevLicenses } = mockAgencyEndpoints( options );
 
 	await screen.findByText( `${ availableDevLicenses } of 5 free licenses available` );
 
@@ -65,8 +69,8 @@ describe( 'agency AddNewSite', () => {
 		expect( screen.getByRole( 'button', { name: /Via WordPress.com connection/ } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: /Via the Automattic plugin/ } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: /Via the Jetpack plugin/ } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Pressable' } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'WordPress.com' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: /Pressable/ } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: /on WordPress.com/ } ) ).toBeVisible();
 		expect( screen.getByText( 'Start building for free' ) ).toBeVisible();
 	} );
 
@@ -82,7 +86,7 @@ describe( 'agency AddNewSite', () => {
 		await renderMenu( { pendingSiteCount: 2 } );
 
 		expect( screen.getByText( '2 sites available' ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'WordPress.com' } ) ).toHaveAttribute(
+		expect( screen.getByRole( 'link', { name: /on WordPress.com/ } ) ).toHaveAttribute(
 			'href',
 			expect.stringContaining( '/sites/need-setup' )
 		);
@@ -92,7 +96,7 @@ describe( 'agency AddNewSite', () => {
 		await renderMenu();
 
 		expect( screen.queryByText( /sites? available/ ) ).not.toBeInTheDocument();
-		expect( screen.getByRole( 'link', { name: 'WordPress.com' } ) ).toHaveAttribute(
+		expect( screen.getByRole( 'link', { name: /on WordPress.com/ } ) ).toHaveAttribute(
 			'href',
 			expect.stringContaining( '/marketplace/hosting/wpcom' )
 		);
@@ -103,7 +107,7 @@ describe( 'agency AddNewSite', () => {
 			agency: { third_party: { pressable: { pressable_id: 1, a4a_id: null } } },
 		} );
 
-		const pressable = screen.getByRole( 'link', { name: 'Pressable' } );
+		const pressable = screen.getByRole( 'link', { name: /Pressable/ } );
 		expect( pressable ).toHaveAttribute( 'href', 'https://my.pressable.com/agency/auth' );
 		expect( pressable ).toHaveAttribute( 'target', '_blank' );
 	} );
@@ -113,7 +117,7 @@ describe( 'agency AddNewSite', () => {
 			agency: { third_party: { pressable: { pressable_id: 1, a4a_id: 'a4a-1' } } },
 		} );
 
-		const pressable = screen.getByRole( 'link', { name: 'Pressable' } );
+		const pressable = screen.getByRole( 'link', { name: /Pressable/ } );
 		expect( pressable ).toHaveAttribute(
 			'href',
 			expect.stringContaining( '/marketplace/hosting/pressable' )
@@ -141,9 +145,29 @@ describe( 'agency AddNewSite', () => {
 		expect( devSiteButton() ).toHaveAttribute( 'aria-disabled', 'true' );
 	} );
 
-	test( 'treats an agency with no approval status as approved', async () => {
+	test( 'treats an agency with an empty approval status as approved', async () => {
 		await renderMenu( { agency: { approval_status: '' } } );
 
 		expect( devSiteButton() ).not.toHaveAttribute( 'aria-disabled', 'true' );
+	} );
+
+	test( 'treats an agency with no approval status at all as approved', async () => {
+		await renderMenu( { agency: { approval_status: undefined } } );
+
+		expect( devSiteButton() ).not.toHaveAttribute( 'aria-disabled', 'true' );
+	} );
+
+	test( 'ignores a pending site the backend has not licensed yet', async () => {
+		await renderMenu( { pendingSites: [ { id: 1, features: {} } ] } );
+
+		expect( screen.queryByText( /sites? available/ ) ).not.toBeInTheDocument();
+	} );
+
+	// Nothing has resolved on the first paint, so this asserts the pre-settle state.
+	test( 'holds the free development site back until the count arrives', () => {
+		mockAgencyEndpoints();
+
+		expect( screen.queryByText( /free licenses available/ ) ).not.toBeInTheDocument();
+		expect( devSiteButton() ).toHaveAttribute( 'aria-disabled', 'true' );
 	} );
 } );

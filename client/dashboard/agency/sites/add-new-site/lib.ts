@@ -24,7 +24,10 @@ export function getPressableOwnershipType(
  * existed have no status at all, and count as approved.
  */
 export function isAgencyApproved( agency: Agency | null | undefined ): boolean {
-	return agency?.approval_status === 'approved' || agency?.approval_status === '';
+	if ( ! agency ) {
+		return false;
+	}
+	return ! agency.approval_status || agency.approval_status === 'approved';
 }
 
 /**
@@ -35,9 +38,9 @@ export function getAvailablePendingSites(
 	pendingSites: AgencyPendingSite[] | undefined
 ): AgencyPendingSite[] {
 	return (
-		pendingSites?.filter(
-			( { features } ) =>
-				features.wpcom_atomic.state === 'pending' && !! features.wpcom_atomic.license_key
-		) ?? []
+		pendingSites?.filter( ( { features } ) => {
+			const atomic = features?.wpcom_atomic;
+			return atomic?.state === 'pending' && !! atomic?.license_key;
+		} ) ?? []
 	);
 }
