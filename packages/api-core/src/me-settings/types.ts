@@ -97,6 +97,8 @@ export interface UserSettings {
 	p2_disable_autofollow_on_comment: boolean;
 
 	primary_site_ID?: number;
+	/** Which editor a daily writing prompt opens. Empty or absent means no choice has been recorded. */
+	preferred_editor?: 'write-editor' | 'block-editor' | '' | null;
 	mcp_abilities?: McpAbilities;
 	/** When true, account-level AI assistant features are enabled (requires API support). */
 	ai_assistant?: boolean | null;

@@ -35,6 +35,12 @@ interface PrimarySiteFormData {
 	primarySiteId?: number;
 }
 
+type PreferredEditor = 'write-editor' | 'block-editor';
+
+interface PreferredEditorFormData {
+	preferredEditor: PreferredEditor;
+}
+
 function LandingPageCard() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
@@ -290,6 +296,100 @@ function PrimarySiteCard() {
 	);
 }
 
+function WritingPromptEditorCard() {
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { recordTracksEvent } = useAnalytics();
+
+	// An unset or unrecognized value means no choice has been recorded, so the default applies.
+	const { data: savedEditor } = useSuspenseQuery( {
+		...userSettingsQuery(),
+		select: ( data ): PreferredEditor =>
+			data.preferred_editor === 'block-editor' ? 'block-editor' : 'write-editor',
+	} );
+
+	const { mutateAsync: saveUserSettings, isPending } = useMutation( userSettingsMutation() );
+
+	const [ formData, setFormData ] = useState< PreferredEditorFormData >( {
+		preferredEditor: savedEditor,
+	} );
+
+	const isDirty = savedEditor !== formData.preferredEditor;
+
+	const fields: Field< PreferredEditorFormData >[] = [
+		{
+			id: 'preferredEditor',
+			label: __( 'Editor' ),
+			Edit: 'radio',
+			elements: [
+				{ label: __( 'Write editor' ), value: 'write-editor' },
+				{ label: __( 'Block editor' ), value: 'block-editor' },
+			] satisfies { label: string; value: PreferredEditor }[],
+		},
+	];
+
+	const form = {
+		layout: { type: 'regular' as const },
+		fields: [ 'preferredEditor' ],
+	};
+
+	const handleSubmit = ( e: React.FormEvent ) => {
+		e.preventDefault();
+		saveUserSettings( {
+			preferred_editor: formData.preferredEditor,
+		} )
+			.then( () => {
+				recordTracksEvent( 'calypso_dashboard_preferences_defaults_preferred_editor_change', {
+					editor: formData.preferredEditor,
+					source: 'account_defaults',
+				} );
+				createSuccessNotice( __( 'Editor preference saved.' ), {
+					type: 'snackbar',
+				} );
+			} )
+			.catch( () => {
+				createErrorNotice( __( 'Failed to save editor preference.' ), {
+					type: 'snackbar',
+				} );
+			} );
+	};
+
+	return (
+		<Card>
+			<CardBody>
+				<form onSubmit={ handleSubmit } aria-label={ __( 'Daily writing prompts' ) }>
+					<VStack spacing={ 4 }>
+						<SectionHeader
+							level={ 3 }
+							title={ __( 'Daily writing prompts' ) }
+							description={ __( 'Choose which editor “Post your answer” opens.' ) }
+						/>
+						<NavigationBlocker shouldBlock={ isDirty } />
+						<DataForm< PreferredEditorFormData >
+							data={ formData }
+							fields={ fields }
+							form={ form }
+							onChange={ ( edits: Partial< PreferredEditorFormData > ) => {
+								setFormData( ( data ) => ( { ...data, ...edits } ) );
+							} }
+						/>
+						<ButtonStack>
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								type="submit"
+								isBusy={ isPending }
+								disabled={ isPending || ! isDirty }
+							>
+								{ __( 'Save' ) }
+							</Button>
+						</ButtonStack>
+					</VStack>
+				</form>
+			</CardBody>
+		</Card>
+	);
+}
+
 export default function PreferencesDefaults() {
 	return (
 		<PageLayout
@@ -305,6 +405,7 @@ export default function PreferencesDefaults() {
 			<VStack spacing={ 4 }>
 				<LandingPageCard />
 				<PrimarySiteCard />
+				<WritingPromptEditorCard />
 			</VStack>
 		</PageLayout>
 	);

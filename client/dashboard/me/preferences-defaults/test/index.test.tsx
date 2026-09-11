@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import PreferencesDefaults from '../index';
-import type { Site, User, UserPreferences } from '@automattic/api-core';
+import type { Site, User, UserPreferences, UserSettings } from '@automattic/api-core';
 
 // The suggestions list scrolls the highlighted option into view, which JSDOM lacks.
 Element.prototype.scrollIntoView = jest.fn();
@@ -39,11 +39,14 @@ function mockPreferences( preferences: Partial< UserPreferences > = {} ) {
 		.reply( 200, { calypso_preferences: preferences } );
 }
 
-function mockUserSettings( primarySiteId: number | null = PRIMARY_SITE_ID ) {
+function mockUserSettings(
+	primarySiteId: number | null = PRIMARY_SITE_ID,
+	settings: Partial< UserSettings > = {}
+) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/me/settings' )
 		.query( true )
-		.reply( 200, { primary_site_ID: primarySiteId } );
+		.reply( 200, { primary_site_ID: primarySiteId, ...settings } );
 }
 
 function mockSites( sites: Site[] ) {
@@ -298,6 +301,99 @@ describe( '<PreferencesDefaults>', () => {
 			await waitFor( () => expect( saveRequest.isDone() ).toBe( true ) );
 			expect( recordTracksEvent ).not.toHaveBeenCalledWith(
 				'calypso_dashboard_preferences_defaults_homepage_toggle',
+				expect.anything()
+			);
+		} );
+	} );
+
+	describe( 'daily writing prompts', () => {
+		function mockPromptDefaults( settings: Partial< UserSettings > = {} ) {
+			mockPreferences();
+			mockUserSettings( PRIMARY_SITE_ID, settings );
+			mockSites( [ primarySite, otherSite ] );
+			mockSite( primarySite );
+		}
+
+		test( 'falls back to the Write editor when nothing is saved', async () => {
+			mockPromptDefaults();
+
+			renderPage();
+
+			await expect( screen.findByLabelText( 'Write editor' ) ).resolves.toBeChecked();
+			expect( screen.getByLabelText( 'Block editor' ) ).not.toBeChecked();
+		} );
+
+		test( 'treats an empty value as unset', async () => {
+			mockPromptDefaults( { preferred_editor: '' } );
+
+			renderPage();
+
+			await expect( screen.findByLabelText( 'Write editor' ) ).resolves.toBeChecked();
+		} );
+
+		test( 'preselects the block editor when it is saved', async () => {
+			mockPromptDefaults( { preferred_editor: 'block-editor' } );
+
+			renderPage();
+
+			await expect( screen.findByLabelText( 'Block editor' ) ).resolves.toBeChecked();
+		} );
+
+		test( 'save button is disabled until the selection changes', async () => {
+			const currentUser = userEvent.setup();
+			mockPromptDefaults();
+
+			renderPage();
+
+			await screen.findByRole( 'form', { name: 'Daily writing prompts' } );
+			const saveButton = saveButtonFor( 'Daily writing prompts' );
+			expect( saveButton ).toBeDisabled();
+
+			await currentUser.click( screen.getByLabelText( 'Block editor' ) );
+			expect( saveButton ).toBeEnabled();
+		} );
+
+		test( 'saves the selected editor to /me/settings', async () => {
+			const currentUser = userEvent.setup();
+			mockPromptDefaults();
+			let savedBody: Record< string, unknown > = {};
+			const saveRequest = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/settings', ( body ) => {
+					savedBody = body;
+					return true;
+				} )
+				.reply( 200, { preferred_editor: 'block-editor' } );
+
+			const { recordTracksEvent } = renderPage();
+
+			await currentUser.click( await screen.findByLabelText( 'Block editor' ) );
+			await currentUser.click( saveButtonFor( 'Daily writing prompts' ) );
+
+			await waitFor( () => expect( saveRequest.isDone() ).toBe( true ) );
+			expect( savedBody ).toEqual( { preferred_editor: 'block-editor' } );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_preferences_defaults_preferred_editor_change',
+				{ editor: 'block-editor', source: 'account_defaults' }
+			);
+		} );
+
+		test( 'keeps the change when saving fails', async () => {
+			const currentUser = userEvent.setup();
+			mockPromptDefaults();
+			const saveRequest = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/settings' )
+				.reply( 500 );
+
+			const { recordTracksEvent } = renderPage();
+
+			await currentUser.click( await screen.findByLabelText( 'Block editor' ) );
+			await currentUser.click( saveButtonFor( 'Daily writing prompts' ) );
+
+			await waitFor( () => expect( saveRequest.isDone() ).toBe( true ) );
+			expect( screen.getByLabelText( 'Block editor' ) ).toBeChecked();
+			await waitFor( () => expect( saveButtonFor( 'Daily writing prompts' ) ).toBeEnabled() );
+			expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+				'calypso_dashboard_preferences_defaults_preferred_editor_change',
 				expect.anything()
 			);
 		} );

@@ -36,6 +36,7 @@ export async function updateUserSettings(
 		'two_step_sms_phone_number',
 		'two_step_enhanced_security',
 		'primary_site_ID',
+		'preferred_editor',
 		'mcp_abilities',
 		'ai_assistant',
 		'user_email_change_pending',
