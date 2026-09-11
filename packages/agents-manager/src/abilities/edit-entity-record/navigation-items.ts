@@ -32,7 +32,7 @@ export interface NavigationItemInput {
 // Absent, or a string with something in it: an empty one names nothing and
 // would clear what it landed on.
 const isOptionalText = ( value: unknown ) =>
-	value === undefined || ( typeof value === 'string' && value !== '' );
+	value === undefined || ( typeof value === 'string' && value.trim() !== '' );
 
 const isOptionalId = ( value: unknown ) =>
 	value === undefined ||
