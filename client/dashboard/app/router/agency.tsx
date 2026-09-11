@@ -216,6 +216,15 @@ export const marketplaceHostingRoute = createRoute( {
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'marketplace/hosting',
+	loader: async () => {
+		const [ agency ] = await Promise.all( [
+			queryClient.ensureQueryData( activeAgencyQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] );
+		if ( agency?.id ) {
+			await queryClient.ensureQueryData( agencyProductsQuery( agency.id ) );
+		}
+	},
 } );
 
 const createMarketplaceHostingSectionRoute = ( section: HostingSection ) =>
