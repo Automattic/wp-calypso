@@ -5,7 +5,7 @@ import { setActiveAgency } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { Agency as AgencyPayload } from '@automattic/api-core';
-import type { Agency } from 'calypso/state/a8c-for-agencies/types';
+import type { A4AStore, Agency } from 'calypso/state/a8c-for-agencies/types';
 
 /**
  * Bridges the shared partner directory screens into this app: exposes the
@@ -14,7 +14,7 @@ import type { Agency } from 'calypso/state/a8c-for-agencies/types';
  */
 export default function usePartnerDirectoryHost() {
 	const dispatch = useDispatch();
-	const store = useStore();
+	const store = useStore< A4AStore >();
 
 	const agency = useSelector( getActiveAgency );
 
