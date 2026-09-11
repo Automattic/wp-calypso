@@ -1,6 +1,5 @@
 import { DomainSubtype } from '@automattic/api-core';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
@@ -14,6 +13,7 @@ import PageLayout from '../components/page-layout';
 import AddDomainButton from './add-domain-button';
 import {
 	BulkActionsProgressNotice,
+	filterSortAndPaginateDomains,
 	useActions,
 	useFields,
 	DEFAULT_VIEW,
@@ -61,7 +61,7 @@ function Domains() {
 		},
 	} );
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
+	const { data: filteredData, paginationInfo } = filterSortAndPaginateDomains(
 		domains ?? [],
 		view,
 		fields
