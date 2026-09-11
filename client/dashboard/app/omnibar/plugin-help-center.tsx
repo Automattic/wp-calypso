@@ -3,6 +3,7 @@ import {
 	getAgentsManagerChatRoute,
 	isAgentsManagerChatVisible,
 	openAgentsManagerChat,
+	useUnifiedAiChat,
 } from '@automattic/agents-manager';
 import { omnibarSiteIdQuery } from '@automattic/api-queries';
 // eslint-disable-next-line no-restricted-imports -- Help Center host events need explicit site attribution.
@@ -120,17 +121,15 @@ function buildAgentsManagerMenuNodes(
 		);
 }
 
-function HelpCenterIcon( {
-	name,
-	sectionName,
-	isGetHelpChatForwardEligible,
-}: {
-	name?: string;
-	sectionName?: string;
-	isGetHelpChatForwardEligible: boolean;
-} ) {
+function HelpCenterIcon( { name, sectionName }: { name?: string; sectionName?: string } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: omnibarSiteId } = useQuery( omnibarSiteIdQuery() );
+	// Unified-agent users get the Big Sky chat instead of the Help Center panel, so they
+	// can never see the treatment and must stay out of the assignment. Read through the
+	// query rather than `useShouldUseUnifiedAgent` so an unresolved flag is distinguishable
+	// from a resolved `false`; a failed query settles as legacy rather than hanging.
+	const { data: shouldUseUnifiedAgent, isPending: isUnifiedAgentPending } = useUnifiedAiChat();
+	const isGetHelpChatForwardEligible = ! isUnifiedAgentPending && ! shouldUseUnifiedAgent;
 	// Loaded here rather than in the hook so ExPlat exposure covers everyone who sees
 	// the entry point, not only users who open the Help Center.
 	const [ isLoadingGetHelpChatForwardAssignment, getHelpChatForwardAssignment ] = useExperiment(
@@ -140,9 +139,10 @@ function HelpCenterIcon( {
 
 	// One impression per section view, so it divides cleanly into the click events
 	// this plugin records; site context is whatever has resolved by then. Held until
-	// the assignment settles, so impressions and clicks split by the same arm.
+	// eligibility and the assignment settle, so impressions and clicks split by the
+	// same arm and ineligible users are never counted into one.
 	useEffect( () => {
-		if ( isLoadingGetHelpChatForwardAssignment ) {
+		if ( isUnifiedAgentPending || isLoadingGetHelpChatForwardAssignment ) {
 			return;
 		}
 
@@ -153,15 +153,17 @@ function HelpCenterIcon( {
 					location: 'help-center',
 					entry_point: 'omnibar',
 					section: sectionName,
-					get_help_chat_forward_variation: getHelpChatForwardAssignment?.variationName ?? null,
-					is_get_help_chat_forward_assignment_loaded: ! isLoadingGetHelpChatForwardAssignment,
+					...( isGetHelpChatForwardEligible && {
+						get_help_chat_forward_variation: getHelpChatForwardAssignment?.variationName ?? null,
+						is_get_help_chat_forward_assignment_loaded: true,
+					} ),
 				},
 				'omnibar',
 				omnibarSiteId
 			)
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ sectionName, isLoadingGetHelpChatForwardAssignment ] );
+	}, [ sectionName, isUnifiedAgentPending, isLoadingGetHelpChatForwardAssignment ] );
 
 	return adminBarIcon( name, 'omnibar__help-icon' );
 }
@@ -191,15 +193,7 @@ export function useHelpCenterPlugin( {
 		return {
 			id: helpNode.id,
 			label: helpNode.meta?.menu_title,
-			// The agents-manager node means Big Sky chat, not the Help Center panel, so these
-			// users can never see the treatment and stay out of the assignment.
-			icon: (
-				<HelpCenterIcon
-					name={ helpNode.meta?.icon }
-					sectionName={ sectionName }
-					isGetHelpChatForwardEligible={ false }
-				/>
-			),
+			icon: <HelpCenterIcon name={ helpNode.meta?.icon } sectionName={ sectionName } />,
 			tooltip: helpNode.meta?.menu_title,
 			// Disconnected sites get a link instead of a dropdown, opened in a new tab as in wp-admin.
 			...( children.length
@@ -211,7 +205,7 @@ export function useHelpCenterPlugin( {
 	return {
 		id: 'help-center',
 		label: __( 'Help' ),
-		icon: <HelpCenterIcon name="help" sectionName={ sectionName } isGetHelpChatForwardEligible />,
+		icon: <HelpCenterIcon name="help" sectionName={ sectionName } />,
 		onClick: () => setShowHelpCenter( ! isHelpCenterShown ),
 	};
 }

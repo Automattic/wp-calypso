@@ -1,5 +1,5 @@
 // Deep import: the package root pulls in `@wordpress/media-utils`, which touches `document` at import time and breaks SSR.
-import { useShouldUseUnifiedAgent } from '@automattic/agents-manager/src/hooks/use-should-use-unified-agent';
+import { useUnifiedAiChat } from '@automattic/agents-manager/src/hooks/use-unified-ai-chat';
 import { omnibarSiteIdQuery, siteByIdQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT } from '@automattic/help-center/src/experiments';
@@ -65,13 +65,16 @@ export default function OmnibarHelpCenter() {
 		enabled: !! omnibarSiteId,
 	} );
 	// Unified-agent users get the Big Sky chat instead of this panel, so they can never
-	// see the treatment and must stay out of the assignment.
-	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
+	// see the treatment and must stay out of the assignment. Read through the query rather
+	// than `useShouldUseUnifiedAgent` so an unresolved flag is distinguishable from a
+	// resolved `false` and we don't enrol them during the loading window.
+	const { data: shouldUseUnifiedAgent, isPending: isUnifiedAgentPending } = useUnifiedAiChat();
+	const isGetHelpChatForwardEligible = ! isUnifiedAgentPending && ! shouldUseUnifiedAgent;
 	// Passed down keyed by experiment name, and only once the assignment has settled, so
 	// the Help Center can tell a resolved "no variation" from one that never resolved.
 	const [ isLoadingGetHelpChatForwardAssignment, getHelpChatForwardAssignment ] = useExperiment(
 		HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT,
-		{ isEligible: ! shouldUseUnifiedAgent }
+		{ isEligible: isGetHelpChatForwardEligible }
 	);
 
 	const handleClose = useCallback( () => {
@@ -99,10 +102,11 @@ export default function OmnibarHelpCenter() {
 				sectionName="dashboard"
 				site={ site ? toHelpCenterSite( site ) : null }
 				experimentVariations={ {
-					...( ! isLoadingGetHelpChatForwardAssignment && {
-						[ HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT ]:
-							getHelpChatForwardAssignment?.variationName ?? null,
-					} ),
+					...( isGetHelpChatForwardEligible &&
+						! isLoadingGetHelpChatForwardAssignment && {
+							[ HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT ]:
+								getHelpChatForwardAssignment?.variationName ?? null,
+						} ),
 				} }
 			/>
 		</Suspense>

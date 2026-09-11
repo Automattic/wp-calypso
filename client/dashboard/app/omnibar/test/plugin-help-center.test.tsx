@@ -6,6 +6,7 @@ import {
 	getAgentsManagerChatRoute,
 	isAgentsManagerChatVisible,
 	openAgentsManagerChat,
+	useUnifiedAiChat,
 } from '@automattic/agents-manager';
 import { render, renderHook } from '@testing-library/react';
 import { useExperiment } from 'calypso/lib/explat';
@@ -19,6 +20,7 @@ jest.mock( '@automattic/agents-manager', () => ( {
 	getAgentsManagerChatRoute: jest.fn( () => undefined ),
 	isAgentsManagerChatVisible: jest.fn( () => false ),
 	openAgentsManagerChat: jest.fn(),
+	useUnifiedAiChat: jest.fn(),
 } ) );
 jest.mock( '@automattic/api-queries', () => ( { omnibarSiteIdQuery: jest.fn( () => ( {} ) ) } ) );
 jest.mock( '@automattic/calypso-analytics', () => ( {
@@ -44,6 +46,12 @@ const mockGetChatRoute = getAgentsManagerChatRoute as jest.MockedFunction<
 >;
 const mockUseHelpCenter = useHelpCenter as jest.MockedFunction< typeof useHelpCenter >;
 const mockUseExperiment = useExperiment as jest.MockedFunction< typeof useExperiment >;
+const mockUseUnifiedAiChat = useUnifiedAiChat as jest.MockedFunction< typeof useUnifiedAiChat >;
+
+const unifiedAgent = ( data: boolean | undefined, isPending = false ) =>
+	mockUseUnifiedAiChat.mockReturnValue( { data, isPending } as unknown as ReturnType<
+		typeof useUnifiedAiChat
+	> );
 
 const assignment = ( variationName: string | null ) =>
 	[ false, variationName === null ? null : { variationName } ] as unknown as ReturnType<
@@ -110,6 +118,7 @@ describe( 'useHelpCenterPlugin', () => {
 			isShown: false,
 			setShowHelpCenter,
 		} as unknown as ReturnType< typeof useHelpCenter > );
+		unifiedAgent( false );
 		// Mirrors ExPlat: an ineligible caller gets no assignment and no exposure.
 		mockUseExperiment.mockImplementation( ( _name, options ) =>
 			options?.isEligible === false ? assignment( null ) : assignment( 'treatment' )
@@ -126,9 +135,9 @@ describe( 'useHelpCenterPlugin', () => {
 	} );
 
 	it.each( [
-		[ 'agents manager', HELP_NODES, null ],
-		[ 'legacy help', [], 'treatment' ],
-	] )( 'tracks an impression only when the %s icon renders', ( _, nodes, variation ) => {
+		[ 'agents manager', HELP_NODES ],
+		[ 'legacy help', [] ],
+	] )( 'tracks an impression only when the %s icon renders', ( _, nodes ) => {
 		const result = renderPlugin( nodes as AdminBarNode[] );
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
 
@@ -139,8 +148,20 @@ describe( 'useHelpCenterPlugin', () => {
 			location: 'help-center',
 			entry_point: 'omnibar',
 			section: 'sites',
-			get_help_chat_forward_variation: variation,
+			get_help_chat_forward_variation: 'treatment',
 			is_get_help_chat_forward_assignment_loaded: true,
+		} );
+	} );
+
+	it( 'leaves the experiment fields off the impression for unified-agent users', () => {
+		unifiedAgent( true );
+
+		render( renderPlugin( HELP_NODES ).icon as React.ReactElement );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_inlinehelp_impression', {
+			location: 'help-center',
+			entry_point: 'omnibar',
+			section: 'sites',
 		} );
 	} );
 
@@ -154,11 +175,22 @@ describe( 'useHelpCenterPlugin', () => {
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
+	it( 'holds the impression until the unified-agent flag resolves', () => {
+		unifiedAgent( undefined, true );
+
+		render( renderPlugin( [] ).icon as React.ReactElement );
+
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
+	} );
+
 	it.each( [
-		[ 'agents manager', HELP_NODES, false ],
-		[ 'legacy help', [], true ],
-	] )( 'only enters the experiment from the %s icon', ( _, nodes, isEligible ) => {
-		render( renderPlugin( nodes as AdminBarNode[] ).icon as React.ReactElement );
+		[ 'a unified-agent user', true, false ],
+		[ 'an unresolved unified-agent flag', undefined, false ],
+		[ 'a legacy user', false, true ],
+	] )( 'only enters the experiment for %s', ( _, flag, isEligible ) => {
+		unifiedAgent( flag as boolean | undefined, flag === undefined );
+
+		render( renderPlugin( [] ).icon as React.ReactElement );
 
 		expect( mockUseExperiment ).toHaveBeenCalledWith( expect.any( String ), { isEligible } );
 	} );
