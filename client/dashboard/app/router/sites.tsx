@@ -49,6 +49,10 @@ import { isEnabled } from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { createLazyRoute, createRoute, lazyRouteComponent, notFound } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+// Imported from its own module, not the `site-expiry-notice` barrel: the
+// barrel also re-exports the arbiter candidate hook, which imports routes
+// from this file, and importing the barrel here would make that a cycle.
+import { ensureSiteExpiryNoticeData } from '../../components/site-expiry-notice/ensure-site-expiry-notice-data';
 import {
 	canManageSite,
 	canOptOutOfWordPressBeta,
@@ -197,7 +201,11 @@ export const siteRoute = createRoute( {
 			queryClient.prefetchQuery( siteByIdQuery( otherEnvironmentSiteId ) );
 		}
 
-		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+		await Promise.all( [
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+			// Settles the plan-expiry notice before paint so it can outrank page notices.
+			ensureSiteExpiryNoticeData( site.ID ),
+		] );
 
 		return { site };
 	},
