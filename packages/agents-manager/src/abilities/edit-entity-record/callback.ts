@@ -22,7 +22,7 @@ import { getSiteRecord } from '../../utils/site-record';
 import { setSiteTitle } from '../../utils/site-title';
 import { errorResult, successResult } from '../ability-result';
 import { navigateEditorWithoutSaving, PAGES_LIST_PATH } from '../editor-navigate/callback';
-import { buildNavigationItems } from './navigation-items';
+import { buildNavigationItems, checkMenuRecord } from './navigation-items';
 import type { AbilityResult } from '../types';
 
 const EDIT_ENTITY_RECORD_TOOL_ID = 'big_sky__edit_entity_record';
@@ -91,6 +91,9 @@ const REQUIRED_FIELDS = {
 	edit: [ 'recordId', 'record' ],
 	delete: [ 'recordId' ],
 } as const;
+
+// A create's record is closed by the schema; an edit's is open to core-data.
+const CREATE_RECORD_FIELDS = [ 'title', 'excerpt', 'content', 'status' ];
 
 const FIELD_CHECKS: Record< keyof EntityRef, ( value: unknown ) => boolean > = {
 	entityType: ( value ) => typeof value === 'string' && value !== '',
@@ -194,6 +197,20 @@ function checkEntities< O extends Operation >( entities: unknown[], operation: O
 					'rendered string), siteLocation is an object with a string name and an array of ' +
 					'coordinates.'
 			);
+		}
+		const unknownRecordField =
+			operation === 'create' &&
+			Object.keys( record ?? {} ).find( ( field ) => ! CREATE_RECORD_FIELDS.includes( field ) );
+
+		if ( unknownRecordField ) {
+			throw new Error(
+				`Cannot create: unknown field ${ unknownRecordField } in record. A new ${ entityName } ` +
+					`takes ${ CREATE_RECORD_FIELDS.join( ', ' ) } only.`
+			);
+		}
+
+		if ( entityName === NAVIGATION && record ) {
+			checkMenuRecord( record );
 		}
 
 		return checked;
