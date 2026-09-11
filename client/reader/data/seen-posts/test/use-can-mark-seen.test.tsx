@@ -15,9 +15,11 @@ import type { Subscription } from './fixtures';
 const a8cSubscription: Subscription = { ...subscription, organization_id: AUTOMATTIC_ORG_ID };
 const eligible = { subscriptions: [ a8cSubscription ] };
 
+const p2Post = { organization_id: AUTOMATTIC_ORG_ID };
+
 // An AFK post satisfies both halves of the wpcom `is_automattic_private()` guard.
 const afkPost = {
-	organization_id: AUTOMATTIC_ORG_ID,
+	...p2Post,
 	site_is_private: true,
 	tags: { afk: { slug: 'afk' } },
 };
@@ -32,7 +34,7 @@ describe( 'useCanMarkSeen', () => {
 	} );
 
 	it( 'returns true when the seen feature is available and the post is not an AFK post', () => {
-		const { result } = renderHook( () => useCanMarkSeen( { feedId: FEED_ID } ), {
+		const { result } = renderHook( () => useCanMarkSeen( { feedId: FEED_ID, post: p2Post } ), {
 			wrapper: createSeenPostsWrapper( eligible ),
 		} );
 
