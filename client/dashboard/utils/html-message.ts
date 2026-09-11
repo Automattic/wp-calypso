@@ -1,3 +1,5 @@
+import { isWebUrl } from './is-web-url';
+
 export interface HtmlMessage {
 	text: string;
 	link?: {
@@ -17,7 +19,7 @@ export function parseHtmlMessage( html: string ): HtmlMessage {
 	const label = anchor?.textContent?.replace( /\s+/g, ' ' ).trim();
 	const url = anchor?.getAttribute( 'href' );
 
-	if ( ! label || ! url ) {
+	if ( ! label || ! url || ! isWebUrl( url ) ) {
 		return { text };
 	}
 

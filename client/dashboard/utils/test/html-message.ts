@@ -33,4 +33,14 @@ describe( 'parseHtmlMessage', () => {
 	test( 'ignores links without an href', () => {
 		expect( parseHtmlMessage( 'See <a>this</a>' ) ).toEqual( { text: 'See this' } );
 	} );
+
+	test( 'ignores links that are not http(s)', () => {
+		expect( parseHtmlMessage( 'See <a href="javascript:alert(1)">this</a>' ) ).toEqual( {
+			text: 'See this',
+		} );
+	} );
+
+	test( 'returns empty text for an empty message', () => {
+		expect( parseHtmlMessage( '' ) ).toEqual( { text: '' } );
+	} );
 } );
