@@ -31,8 +31,8 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 
 const { Tabs } = unlock( privateApis );
 
-// Above this many tabs the strip has no room to spare, so the picker moves up beside
-// the other header controls instead of competing with them for width.
+// Above this many tabs the strip has no room to spare, so the picker stops trailing
+// the last tab and sits at the panel edge instead.
 const MAX_TABS_BESIDE_PICKER = 4;
 
 // Every view this panel can show, in the user's order, each flagged hidden or not.
@@ -161,9 +161,6 @@ const NotePanel = ( {
 							</Heading>
 						</HStack>
 						<HStack justify="flex-end">
-							{ isViewSettingsEnabled && ! isPickerBesideTabs && (
-								<ViewPicker views={ resolvedViews } />
-							) }
 							<NotePanelActions />
 							{ isDismissible && <CloseButton /> }
 						</HStack>
@@ -196,9 +193,12 @@ const NotePanel = ( {
 								</Tabs.TabList>
 							</Tabs>
 						</FlexItem>
-						{ isViewSettingsEnabled && isPickerBesideTabs && (
+						{ isViewSettingsEnabled && (
 							<FlexItem>
-								<ViewPicker views={ resolvedViews } className="is-in-tabs" />
+								<ViewPicker
+									views={ resolvedViews }
+									className={ isPickerBesideTabs ? undefined : 'is-at-edge' }
+								/>
 							</FlexItem>
 						) }
 					</HStack>

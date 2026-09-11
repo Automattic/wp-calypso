@@ -122,20 +122,19 @@ describe( 'NotePanel settings menu', () => {
 } );
 
 describe( 'NotePanel view picker placement', () => {
-	// Five tabs already fill the panel, so the picker moves out of the strip and up beside
-	// the header controls rather than squeezing them further.
-	it( 'sits beside the header controls with the default five views', () => {
+	// Five tabs already fill the panel, so the picker stops trailing the last one.
+	it( 'sits at the panel edge with the default five views', () => {
 		renderPanel( { isViewSettingsEnabled: true } );
 
-		expect( pickerWrapper() ).not.toHaveClass( 'is-in-tabs' );
+		expect( pickerWrapper() ).toHaveClass( 'is-at-edge' );
 	} );
 
-	it( 'sits in the tab strip once a view is hidden', async () => {
+	it( 'trails the last tab once a view is hidden', async () => {
 		const { store } = renderPanel( { isViewSettingsEnabled: true } );
 		store.dispatch( actions.ui.setViews( [ { name: 'likes', hidden: true } ] ) );
 
 		await waitFor( () => {
-			expect( pickerWrapper() ).toHaveClass( 'is-in-tabs' );
+			expect( pickerWrapper() ).not.toHaveClass( 'is-at-edge' );
 		} );
 	} );
 } );
