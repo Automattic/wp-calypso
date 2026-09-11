@@ -293,14 +293,22 @@ export default function ActionRenderModal( {
 			case 'enable-autoupdate':
 				return sprintf(
 					// translators: %1$s is the plugin name, %2$d is the number of sites.
-					_n( 'Enabled auto‑updates for %1$s on %2$d site', 'Enabled auto‑updates for %1$s on %2$d sites', siteCount ),
+					_n(
+						'Enabled auto‑updates for %1$s on %2$d site',
+						'Enabled auto‑updates for %1$s on %2$d sites',
+						siteCount
+					),
 					pluginName,
 					siteCount
 				);
 			case 'disable-autoupdate':
 				return sprintf(
 					// translators: %1$s is the plugin name, %2$d is the number of sites.
-					_n( 'Disabled auto‑updates for %1$s on %2$d site', 'Disabled auto‑updates for %1$s on %2$d sites', siteCount ),
+					_n(
+						'Disabled auto‑updates for %1$s on %2$d site',
+						'Disabled auto‑updates for %1$s on %2$d sites',
+						siteCount
+					),
 					pluginName,
 					siteCount
 				);
@@ -326,42 +334,66 @@ export default function ActionRenderModal( {
 			case 'activate':
 				return sprintf(
 					// translators: %1$s is the plugin name, %2$d is the number of sites.
-					_n( 'Failed to activate %1$s on %2$d site', 'Failed to activate %1$s on %2$d sites', siteCount ),
+					_n(
+						'Failed to activate %1$s on %2$d site',
+						'Failed to activate %1$s on %2$d sites',
+						siteCount
+					),
 					pluginName,
 					siteCount
 				);
 			case 'deactivate':
 				return sprintf(
 					// translators: %1$s is the plugin name, %2$d is the number of sites.
-					_n( 'Failed to deactivate %1$s on %2$d site', 'Failed to deactivate %1$s on %2$d sites', siteCount ),
+					_n(
+						'Failed to deactivate %1$s on %2$d site',
+						'Failed to deactivate %1$s on %2$d sites',
+						siteCount
+					),
 					pluginName,
 					siteCount
 				);
 			case 'update':
 				return sprintf(
 					// translators: %1$s is the plugin name, %2$d is the number of sites.
-					_n( 'Failed to update %1$s on %2$d site', 'Failed to update %1$s on %2$d sites', siteCount ),
+					_n(
+						'Failed to update %1$s on %2$d site',
+						'Failed to update %1$s on %2$d sites',
+						siteCount
+					),
 					pluginName,
 					siteCount
 				);
 			case 'enable-autoupdate':
 				return sprintf(
 					// translators: %1$s is the plugin name, %2$d is the number of sites.
-					_n( 'Failed to enable auto‑updates for %1$s on %2$d site', 'Failed to enable auto‑updates for %1$s on %2$d sites', siteCount ),
+					_n(
+						'Failed to enable auto‑updates for %1$s on %2$d site',
+						'Failed to enable auto‑updates for %1$s on %2$d sites',
+						siteCount
+					),
 					pluginName,
 					siteCount
 				);
 			case 'disable-autoupdate':
 				return sprintf(
 					// translators: %1$s is the plugin name, %2$d is the number of sites.
-					_n( 'Failed to disable auto‑updates for %1$s on %2$d site', 'Failed to disable auto‑updates for %1$s on %2$d sites', siteCount ),
+					_n(
+						'Failed to disable auto‑updates for %1$s on %2$d site',
+						'Failed to disable auto‑updates for %1$s on %2$d sites',
+						siteCount
+					),
 					pluginName,
 					siteCount
 				);
 			case 'delete':
 				return sprintf(
 					// translators: %1$s is the plugin name, %2$d is the number of sites.
-					_n( 'Failed to delete %1$s on %2$d site', 'Failed to delete %1$s on %2$d sites', siteCount ),
+					_n(
+						'Failed to delete %1$s on %2$d site',
+						'Failed to delete %1$s on %2$d sites',
+						siteCount
+					),
 					pluginName,
 					siteCount
 				);
