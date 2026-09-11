@@ -192,10 +192,21 @@ function applyCanvasPolicy( name: string, args: unknown ): CanvasPolicy {
  * @param result Whatever the ability answered.
  * @returns Whether it reported failure.
  */
-function reportsFailure( result: unknown ): boolean {
-	const answer = result as { success?: unknown; result?: { success?: unknown } } | undefined;
+interface FailureAnswer {
+	success?: unknown;
+	details?: { navigated?: unknown };
+}
 
-	return false === ( answer?.result?.success ?? answer?.success );
+/**
+ * A failure that never moved. One carrying `navigated` changed the route
+ * before failing — `editor-navigate`'s load timeout — so its destination is
+ * still where the editor is heading.
+ */
+function failedWithoutMoving( result: unknown ): boolean {
+	const answer = result as ( FailureAnswer & { result?: FailureAnswer } ) | undefined;
+	const failure = answer?.result ?? answer;
+
+	return false === failure?.success && ! failure?.details?.navigated;
 }
 
 /**
@@ -229,7 +240,7 @@ async function dispatchUnderCanvasPolicy(
 	try {
 		const result = await dispatch();
 
-		if ( reportsFailure( result ) ) {
+		if ( failedWithoutMoving( result ) ) {
 			rollbackBinding();
 		}
 
