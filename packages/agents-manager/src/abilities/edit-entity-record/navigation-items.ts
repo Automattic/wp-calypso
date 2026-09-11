@@ -37,7 +37,7 @@ const isOptionalText = ( value: unknown ) =>
 const isOptionalId = ( value: unknown ) =>
 	value === undefined ||
 	( typeof value === 'number' && value > 0 ) ||
-	( typeof value === 'string' && value !== '' );
+	( typeof value === 'string' && /^[1-9]\d*$/.test( value ) );
 
 const NAVIGATION_ITEM_KEYS = [
 	'clientId',
@@ -175,26 +175,31 @@ const pageStructure = (): PageStructure | undefined =>
 	providerSelectors< { getFullPageStructure?: () => PageStructure } >()?.getFullPageStructure?.();
 
 /**
- * The identities an input can claim: its own, and then what the page structure
- * recorded under its short id — the editor's clientId, and the attributes the
- * item had. Both sets, so an item the request relabels and re-links still
- * finds its block once the editor has re-created it. An id the structure does
- * not know is taken as an editor clientId.
+ * The identities an input can claim, in two groups claimed one after the
+ * other: what is known about the item — the editor clientId its short id maps
+ * to, and the attributes the page structure recorded for it — and then its own
+ * values. Its own come second because they may be new: a re-link's page id
+ * would otherwise claim whichever item already points at that page. An id the
+ * structure does not know is taken as an editor clientId.
  */
-const identitiesOf = ( item: NavigationItemInput ): string[] => {
+const identitiesOf = ( item: NavigationItemInput ): { known: string[]; own: string[] } => {
 	const structure = pageStructure();
 	const recorded = item.clientId
 		? structure?.navigationItemMap?.[ item.clientId ]?.attributes
 		: undefined;
 
-	return [
-		...identityKeys( {
-			...item,
-			clientId: item.clientId && ( structure?.clientIdMap?.[ item.clientId ] ?? item.clientId ),
-		} ),
-		...( recorded ? identityKeys( recorded ) : [] ),
-	];
+	return {
+		known: [
+			...identityKeys( {
+				clientId: item.clientId && ( structure?.clientIdMap?.[ item.clientId ] ?? item.clientId ),
+			} ),
+			...( recorded ? identityKeys( recorded ) : [] ),
+		],
+		own: identityKeys( { ...item, clientId: undefined } ),
+	};
 };
+
+type IdentitySource = keyof ReturnType< typeof identitiesOf >;
 
 /**
  * Indexes the menu by every identity its items can be addressed with.
@@ -229,12 +234,12 @@ function indexMenu( items: NavigationBlock[] ): Map< string, NavigationBlock[] >
  * on the same one.
  */
 const takeExisting = (
-	item: NavigationItemInput,
+	identities: string[],
 	index: Map< string, NavigationBlock[] >,
 	taken: Set< NavigationBlock >,
 	tier: readonly string[]
 ): NavigationBlock | undefined => {
-	for ( const identity of identitiesOf( item ) ) {
+	for ( const identity of identities ) {
 		if ( ! tier.some( ( kind ) => identity.startsWith( `${ kind }:` ) ) ) {
 			continue;
 		}
@@ -281,7 +286,8 @@ const labelsOf = ( blocks: NavigationBlock[] ): string[] =>
 const attributesFor = ( item: NavigationItemInput ) => ( {
 	...( item.label ? { label: item.label } : {} ),
 	...( item.url ? { url: item.url } : {} ),
-	...( item.id ? { id: item.id } : {} ),
+	// The block declares `id` as a number; the schema lets a call send a string.
+	...( item.id ? { id: Number( item.id ) } : {} ),
 	...( item.kind ? { kind: item.kind } : {} ),
 	...( item.type ? { type: item.type } : {} ),
 	...( typeof item.opensInNewTab === 'boolean' ? { opensInNewTab: item.opensInNewTab } : {} ),
@@ -342,15 +348,21 @@ export async function buildNavigationItems(
 	// there and copied — one block cannot appear in a menu twice.
 	const resolved = new Map< NavigationItemInput, NavigationBlock >();
 
-	const claim = ( inputs: NavigationItemInput[], tier: readonly string[] ) =>
+	const claim = (
+		inputs: NavigationItemInput[],
+		source: IdentitySource,
+		tier: readonly string[]
+	) =>
 		inputs.forEach( ( input ) => {
-			const existing = resolved.get( input ) ?? takeExisting( input, index, taken, tier );
+			const existing =
+				resolved.get( input ) ??
+				takeExisting( identitiesOf( input )[ source ], index, taken, tier );
 
 			if ( existing ) {
 				resolved.set( input, existing );
 			}
 
-			claim( childrenOf( input ) ?? [], tier );
+			claim( childrenOf( input ) ?? [], source, tier );
 		} );
 
 	/**
@@ -376,7 +388,9 @@ export async function buildNavigationItems(
 			// a label — a url or id alone makes a link with no text, which reads as
 			// the menu having been wiped. Collected rather than thrown so every
 			// offending item can be named at once.
-			if ( ! existing && ( input.clientId || ! input.label ) ) {
+			const missing = ! existing && ( input.clientId || ! input.label );
+
+			if ( missing ) {
 				unresolved.push( String( input.clientId ?? input.id ?? input.url ) );
 			}
 
@@ -402,7 +416,15 @@ export async function buildNavigationItems(
 				String( input.id ) === String( existing?.attributes?.id ) &&
 				( input.type ?? 'page' ) === ( existing?.attributes?.type ?? 'page' );
 
-			if ( input.id && ! sameEntity ) {
+			if ( input.id && ! sameEntity && ! missing ) {
+				// The block renders its href from `url`; a page link without one
+				// would have no destination, or keep the previous page's.
+				if ( ! input.url ) {
+					throw new Error(
+						`Navigation item for page ${ input.id } needs its url. Nothing was changed.`
+					);
+				}
+
 				Object.assign( attributes, { type: 'page', kind: 'post-type' }, attributesFor( input ) );
 			} else if ( input.url && ! sameUrl( input.url, existing?.attributes?.url ) ) {
 				delete attributes.id;
@@ -412,7 +434,9 @@ export async function buildNavigationItems(
 			return { ...block, name, attributes, innerBlocks };
 		} );
 
-	CLAIM_TIERS.forEach( ( tier ) => claim( items, tier ) );
+	( [ 'known', 'own' ] as const ).forEach( ( source ) =>
+		CLAIM_TIERS.forEach( ( tier ) => claim( items, source, tier ) )
+	);
 
 	const blocks = build( items );
 
