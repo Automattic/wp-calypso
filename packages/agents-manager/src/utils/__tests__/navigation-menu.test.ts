@@ -262,6 +262,24 @@ describe( 'removeNavigationItem', () => {
 		expect( lastWrite().items[ 0 ].name ).toBe( 'core/navigation-link' );
 	} );
 
+	// The page is already gone, so a retry could not finish a removal that
+	// stopped part-way: nothing is written until every menu has been read.
+	it( 'writes nothing when a later menu cannot be read', async () => {
+		( getSiteMetadata as jest.Mock ).mockReturnValue( { navigationId: 99 } );
+		withMenus( { 10: [ link( 7, 'About' ) ], 99: [ link( 7, 'About' ) ] }, [ '10' ] );
+		const resolvers = ( resolveSelect as jest.Mock )();
+		( resolveSelect as jest.Mock ).mockReturnValue( {
+			...resolvers,
+			getEditedEntityRecord: ( kind: string, name: string, id: number ) =>
+				id === 99
+					? Promise.reject( new Error( 'menu 99 is unreadable' ) )
+					: resolvers.getEditedEntityRecord( kind, name, id ),
+		} );
+
+		await expect( removeNavigationItem( 7 ) ).rejects.toThrow( 'menu 99 is unreadable' );
+		expect( editEntityRecord ).not.toHaveBeenCalled();
+	} );
+
 	it( 'writes nothing when the page is not in any menu', async () => {
 		withMenus( { 10: [ link( 1, 'Home' ) ] } );
 
