@@ -39,11 +39,14 @@ export interface NavigationItem {
 	url?: string;
 	type?: string;
 	kind?: string;
+	/** The page's parent, for a Page List scoped to one. */
+	parent?: number;
 }
 
 const NAVIGATION_BLOCK = 'core/navigation';
 export const NAVIGATION_LINK_BLOCK = 'core/navigation-link';
 export const NAVIGATION_SUBMENU_BLOCK = 'core/navigation-submenu';
+const PAGE_LIST_BLOCK = 'core/page-list';
 
 /**
  * The fields that hold the items: `content` is what persists, `blocks` what the
@@ -333,7 +336,17 @@ const saveMenu = async ( id: MenuId, previous: NavigationBlock[] ): Promise< voi
 	}
 };
 
-/** Appends an item for a newly created page to the site's menu. */
+/** Whether a Page List block lists the page: every page, or its parent's children. */
+const listsPage =
+	( parent = 0 ) =>
+	( block: NavigationBlock ): boolean =>
+		block.name === PAGE_LIST_BLOCK &&
+		[ 0, parent ].includes( Number( block.attributes.parentPageID ?? 0 ) );
+
+/**
+ * Appends an item for a newly created page to the site's menu, unless a Page
+ * List block there shows the page already.
+ */
 export async function addNavigationItem( item: NavigationItem ): Promise< void > {
 	// Resolved first: an unread site record would read as a site naming no
 	// menu, and the page would land in whichever menu renders first.
@@ -367,6 +380,10 @@ export async function addNavigationItem( item: NavigationItem ): Promise< void >
 	}
 
 	const previous = getItems( menu );
+
+	if ( someItem( previous, listsPage( item.parent ) ) ) {
+		return;
+	}
 
 	await writeMenuItems( menuId, [
 		...previous,
