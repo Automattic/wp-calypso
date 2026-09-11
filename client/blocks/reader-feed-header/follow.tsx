@@ -33,6 +33,7 @@ interface ReaderFeed {
 	subscription_id?: number;
 	blog_owner?: string;
 	name?: string;
+	organization_id?: number;
 }
 
 interface ReaderSite {
@@ -57,7 +58,11 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 	const resolvedSiteId = siteId ?? resolvedFeed?.blog_ID;
 	const followFeedId = resolvedFeed?.feed_ID;
 	const reduxFollowing = useIsSubscribed( { feedUrl: followFeedUrl } );
-	const canMarkSeen = useCanMarkSeen( { feedId: followFeedId, blogId: resolvedSiteId } );
+	const canMarkSeen = useCanMarkSeen( {
+		feedId: followFeedId,
+		blogId: resolvedSiteId,
+		organizationId: resolvedFeed?.organization_id,
+	} );
 	const {
 		isRecommended,
 		isUpdating: isRecommendationPending,

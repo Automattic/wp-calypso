@@ -6,12 +6,12 @@ import { useIsSeenVisible } from '../use-is-seen-visible';
 import { AUTOMATTIC_ORG_ID, FEED_ID, createSeenPostsWrapper, subscription } from './fixtures';
 import type { Subscription } from './fixtures';
 
-const AUTHOR = 'user_name';
 const a8cSubscription: Subscription = { ...subscription, organization_id: AUTOMATTIC_ORG_ID };
 const eligible = { subscriptions: [ a8cSubscription ] };
+const p2Post = { organization_id: AUTOMATTIC_ORG_ID };
 const afkPost = {
+	...p2Post,
 	site_is_private: true,
-	author: { login: AUTHOR },
 	tags: { afk: { slug: 'afk' } },
 };
 
@@ -27,7 +27,7 @@ describe( 'useIsSeenVisible', () => {
 
 	it( 'returns false for an unseen post', () => {
 		const { result } = renderHook(
-			() => useIsSeenVisible( { feedId: FEED_ID, post: { is_seen: false } } ),
+			() => useIsSeenVisible( { feedId: FEED_ID, post: { ...p2Post, is_seen: false } } ),
 			{ wrapper: createSeenPostsWrapper( eligible ) }
 		);
 
@@ -35,7 +35,7 @@ describe( 'useIsSeenVisible', () => {
 	} );
 
 	it( 'returns false when the post carries no seen flag', () => {
-		const { result } = renderHook( () => useIsSeenVisible( { feedId: FEED_ID } ), {
+		const { result } = renderHook( () => useIsSeenVisible( { feedId: FEED_ID, post: p2Post } ), {
 			wrapper: createSeenPostsWrapper( eligible ),
 		} );
 
@@ -44,7 +44,7 @@ describe( 'useIsSeenVisible', () => {
 
 	it( 'returns true for a post carrying the seen flag', () => {
 		const { result } = renderHook(
-			() => useIsSeenVisible( { feedId: FEED_ID, post: { is_seen: true } } ),
+			() => useIsSeenVisible( { feedId: FEED_ID, post: { ...p2Post, is_seen: true } } ),
 			{ wrapper: createSeenPostsWrapper( eligible ) }
 		);
 

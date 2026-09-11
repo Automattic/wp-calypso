@@ -6,6 +6,7 @@ import { useIsSeenEnabled } from '../use-is-seen-enabled';
 import {
 	BLOG_ID,
 	FEED_ID,
+	ORG_ID,
 	organizationSubscription,
 	createSeenPostsWrapper,
 	subscription,
@@ -13,17 +14,23 @@ import {
 
 describe( 'useIsSeenEnabled', () => {
 	it( 'returns true when user is subscribed to a feed', () => {
-		const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID } ), {
-			wrapper: createSeenPostsWrapper( { subscriptions: [ organizationSubscription ] } ),
-		} );
+		const { result } = renderHook(
+			() => useIsSeenEnabled( { feedId: FEED_ID, organizationId: ORG_ID } ),
+			{
+				wrapper: createSeenPostsWrapper( { subscriptions: [ subscription ] } ),
+			}
+		);
 
 		expect( result.current ).toBe( true );
 	} );
 
 	it( 'returns false when user is not subscribed to a feed', () => {
-		const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID + 1 } ), {
-			wrapper: createSeenPostsWrapper( { subscriptions: [ organizationSubscription ] } ),
-		} );
+		const { result } = renderHook(
+			() => useIsSeenEnabled( { feedId: FEED_ID + 1, organizationId: ORG_ID } ),
+			{
+				wrapper: createSeenPostsWrapper( { subscriptions: [ subscription ] } ),
+			}
+		);
 
 		expect( result.current ).toBe( false );
 	} );
@@ -60,19 +67,36 @@ describe( 'useIsSeenEnabled', () => {
 		} );
 
 		it( 'returns false for an organization feed the user no longer follows', () => {
-			const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID } ), {
-				wrapper: createSeenPostsWrapper( {
-					subscriptions: [ { ...organizationSubscription, is_following: false } ],
-				} ),
-			} );
+			const { result } = renderHook(
+				() => useIsSeenEnabled( { feedId: FEED_ID, organizationId: ORG_ID } ),
+				{
+					wrapper: createSeenPostsWrapper( {
+						subscriptions: [ { ...organizationSubscription, is_following: false } ],
+					} ),
+				}
+			);
 
 			expect( result.current ).toBe( false );
 		} );
 
 		it( 'returns true when user is subscribed to an organization feed', () => {
-			const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID } ), {
-				wrapper: createSeenPostsWrapper( { subscriptions: [ organizationSubscription ] } ),
-			} );
+			const { result } = renderHook(
+				() => useIsSeenEnabled( { feedId: FEED_ID, organizationId: ORG_ID } ),
+				{
+					wrapper: createSeenPostsWrapper( { subscriptions: [ organizationSubscription ] } ),
+				}
+			);
+
+			expect( result.current ).toBe( true );
+		} );
+
+		it( 'returns true when the post itself carries an organization id', () => {
+			const { result } = renderHook(
+				() => useIsSeenEnabled( { feedId: FEED_ID, post: { organization_id: ORG_ID } } ),
+				{
+					wrapper: createSeenPostsWrapper( { subscriptions: [ organizationSubscription ] } ),
+				}
+			);
 
 			expect( result.current ).toBe( true );
 		} );
@@ -102,12 +126,15 @@ describe( 'useIsSeenEnabled', () => {
 		} );
 
 		it( 'returns true when a user is not subscribed to an organization feed', () => {
-			const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID } ), {
-				wrapper: createSeenPostsWrapper( {
-					subscriptions: [ { ...organizationSubscription, is_following: false } ],
-					isAutomattician: true,
-				} ),
-			} );
+			const { result } = renderHook(
+				() => useIsSeenEnabled( { feedId: FEED_ID, organizationId: ORG_ID } ),
+				{
+					wrapper: createSeenPostsWrapper( {
+						subscriptions: [ { ...organizationSubscription, is_following: false } ],
+						isAutomattician: true,
+					} ),
+				}
+			);
 
 			expect( result.current ).toBe( true );
 		} );
@@ -180,7 +207,12 @@ describe( 'useIsSeenEnabled', () => {
 			'returns false on %s even when the post already carries the seen flag',
 			( route ) => {
 				const { result } = renderHook(
-					() => useIsSeenEnabled( { feedId: FEED_ID, post: { is_seen: true } } ),
+					() =>
+						useIsSeenEnabled( {
+							feedId: FEED_ID,
+							organizationId: ORG_ID,
+							post: { is_seen: true },
+						} ),
 					{ wrapper: createSeenPostsWrapper( { ...eligible, route } ) }
 				);
 
@@ -200,9 +232,12 @@ describe( 'useIsSeenEnabled', () => {
 		);
 
 		it( 'returns true on non-disabled route route when the user is otherwise eligible', () => {
-			const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID } ), {
-				wrapper: createSeenPostsWrapper( { ...eligible, route: '/reader' } ),
-			} );
+			const { result } = renderHook(
+				() => useIsSeenEnabled( { feedId: FEED_ID, organizationId: ORG_ID } ),
+				{
+					wrapper: createSeenPostsWrapper( { ...eligible, route: '/reader' } ),
+				}
+			);
 
 			expect( result.current ).toBe( true );
 		} );
