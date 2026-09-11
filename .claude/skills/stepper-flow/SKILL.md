@@ -225,9 +225,11 @@ Use the FlowV2 pattern from AGENTS.md exactly. Rules:
 Add the appropriate `dispatch( ONBOARD_STORE )` calls inside `initialize()` — see the
 "Store-based customizations" section of AGENTS.md for the full list.
 
-**If `useStepsProps` customizations were requested** (e.g. `displayedIntervals`, `isInSignup`):
-Add a `useStepsProps()` method to the flow object — see AGENTS.md for the pattern and
-the full list of props `STEPS.UNIFIED_PLANS` accepts.
+**If `useStepsProps` customizations were requested** (e.g. `displayedIntervals`, `hideFreePlan`,
+or a domain-search / register-user-step prop):
+Add a `useStepsProps()` method to the flow object — see the "Steps that accept customization props
+today" catalog in AGENTS.md for the pattern and the full per-step prop lists (plans, domain search,
+and the auto-injected user step all expose an `accepts:` surface today).
 
 Only include `useStepsProps` if at least one step has supported props to pass.
 Do not add it for customizations that require Engineering — those go in the preview
