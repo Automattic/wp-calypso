@@ -186,6 +186,18 @@ describe( 'clientId', () => {
 		}
 	);
 
+	// `core/navigation-link` supplies no default `type` or `kind`, and without
+	// them WordPress does not treat the item as the page's.
+	it( 'gives a new item with a page id the page relationship', async () => {
+		const result = await buildNavigationItems( 10, {
+			navigationItems: [ { label: 'Services' }, { id: 7, label: 'About' } ],
+		} );
+
+		expect(
+			( result.blocks as { attributes: Record< string, unknown > }[] )[ 1 ].attributes
+		).toMatchObject( { id: 7, type: 'page', kind: 'post-type' } );
+	} );
+
 	it( 'keeps the page relationship when the url is the same one written differently', async () => {
 		withMenu( [
 			item( 'about', 'About', { id: 7, type: 'page', kind: 'post-type', url: '/about/' } ),
