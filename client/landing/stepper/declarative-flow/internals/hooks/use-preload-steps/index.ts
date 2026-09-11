@@ -1,6 +1,7 @@
 import { SiteDetails } from '@automattic/data-stores';
 import debugFactory from 'debug';
 import { useEffect, useState } from 'react';
+import { dsrTrace } from 'calypso/landing/stepper/utils/dsr-trace';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import type { Flow, FlowV2, StepperStep } from '../../types';
@@ -15,7 +16,12 @@ export const lazyCache = new WeakMap<
 export async function tryPreload( step?: StepperStep, followingStep?: StepperStep ) {
 	if ( step && 'asyncComponent' in step ) {
 		debug( 'Preloading step:', step.slug );
+		dsrTrace( 'tryPreload start', { slug: step.slug } );
 		const { default: component } = await step.asyncComponent();
+		dsrTrace( 'tryPreload set', {
+			slug: step.slug,
+			hadEntry: lazyCache.has( step.asyncComponent ),
+		} );
 		lazyCache.set( step.asyncComponent, component );
 	}
 	// Flows are indeterminate, they often pick one of the two next steps based on user input, so load two steps ahead.

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { dsrTrace } from 'calypso/landing/stepper/utils/dsr-trace';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useInterval } from 'calypso/lib/interval';
 
@@ -168,14 +169,16 @@ export function useWaitHeartbeat( {
 			visibleSince: isDocumentVisible() ? startedAt : null,
 			hasEnded: false,
 		};
+		dsrTrace( 'wait start', { surface, waitId: waitRef.current.id.slice( 0, 8 ) } );
 		emit( 'calypso_transfer_wait_started' );
 		setIsBeating( true );
 
 		return () => {
+			dsrTrace( 'wait stop', { surface, waitId: waitRef.current?.id.slice( 0, 8 ) } );
 			endWait( 'stopped' );
 			waitRef.current = null;
 		};
-	}, [ enabled, emit, endWait ] );
+	}, [ enabled, emit, endWait, surface ] );
 
 	useEffect( () => {
 		if ( ! enabled || typeof document === 'undefined' ) {

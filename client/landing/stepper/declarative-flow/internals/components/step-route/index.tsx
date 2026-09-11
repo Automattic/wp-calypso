@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { useEffect, type JSX } from 'react';
 import { useLoginUrlForFlow } from 'calypso/landing/stepper/hooks/use-login-url-for-flow';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
+import { dsrTrace } from 'calypso/landing/stepper/utils/dsr-trace';
 import kebabCase from 'calypso/landing/stepper/utils/kebabCase';
 import { StepperPerformanceTrackerStop } from 'calypso/landing/stepper/utils/performance-tracking';
 import SignupHeader from 'calypso/signup/signup-header';
@@ -23,6 +24,7 @@ type StepRouteProps = {
 // TODO: Check we can move RenderStep function to here and remove the renderStep prop
 const StepRoute = ( { step, flow, renderStep, navigate }: StepRouteProps ) => {
 	const userIsLoggedIn = useSelector( isUserLoggedIn );
+	dsrTrace( 'StepRoute render', { slug: step.slug } );
 	const stepContent = renderStep( step );
 	const stepData = useSelect(
 		( select ) => ( select( STEPPER_INTERNAL_STORE ) as StepperInternalSelect ).getStepData(),

@@ -20,6 +20,7 @@ import availableFlows from 'calypso/landing/stepper/declarative-flow/registered-
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { dsrTrace } from 'calypso/landing/stepper/utils/dsr-trace';
 import { recordSignupProcessingScreen } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
@@ -175,6 +176,16 @@ const ProcessingStep: StepType< {
 	};
 
 	const captureFlowException = useCaptureFlowException( props.flow, 'ProcessingStep' );
+
+	dsrTrace( 'ProcessingStep render', {
+		hasAction: typeof action === 'function',
+		hasActionSuccessfullyRun,
+	} );
+	useEffect( () => {
+		const mountId = Math.random().toString( 36 ).slice( 2, 8 );
+		dsrTrace( 'ProcessingStep mount', { mountId } );
+		return () => dsrTrace( 'ProcessingStep unmount', { mountId } );
+	}, [] );
 
 	const { setSiteSetupError, clearSiteSetupError } = useDispatch( SITE_STORE );
 

@@ -7,6 +7,7 @@ import { throttle } from '@wordpress/compose';
 import { defaultI18n } from '@wordpress/i18n';
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
+import { dsrTrace } from 'calypso/landing/stepper/utils/dsr-trace';
 import { loadAndSetCurrencyOverrides } from 'calypso/lib/i18n-utils/load-currency-overrides';
 const debug = debugFactory( 'calypso:i18n' );
 
@@ -617,6 +618,7 @@ const _addTranslationsBatch = throttle( function ( userTranslations ) {
  * @param {Object} [userTranslations] User translations data that will override chunk translations
  */
 function addTranslations( translations, userTranslations ) {
+	dsrTrace( 'addTranslations', { keys: Object.keys( translations || {} ).length } );
 	_translationsBatch.push( translations );
 	_addTranslationsBatch( userTranslations );
 }

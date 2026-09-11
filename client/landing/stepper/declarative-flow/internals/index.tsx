@@ -10,6 +10,7 @@ import Loading from 'calypso/components/loading';
 import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
 import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
+import { dsrTrace } from 'calypso/landing/stepper/utils/dsr-trace';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -39,12 +40,21 @@ function flowStepComponent( flowStep: StepperStep | undefined ) {
 	}
 
 	let lazyComponent = lazyCache.get( flowStep.asyncComponent );
+	const hit = !! lazyComponent;
 	if ( ! lazyComponent ) {
 		lazyComponent = lazy(
 			flowStep.asyncComponent as () => Promise< { default: React.ComponentType< StepProps > } >
 		);
 		lazyCache.set( flowStep.asyncComponent, lazyComponent );
 	}
+	dsrTrace( 'flowStepComponent', {
+		slug: flowStep.slug,
+		hit,
+		type:
+			( lazyComponent as { $$typeof?: symbol } ).$$typeof === Symbol.for( 'react.lazy' )
+				? 'lazy'
+				: 'raw',
+	} );
 	return lazyComponent;
 }
 
@@ -131,6 +141,8 @@ export const FlowRenderer: React.FC< {
 			logo: getDashboardStepperLogo( dashboard ),
 		};
 	}, [ flow.name, currentStepRoute, dashboard ] );
+
+	dsrTrace( 'FlowRenderer render', { step: currentStepRoute } );
 
 	const renderStep = ( step: StepperStep ) => {
 		if ( assertCondition ) {
