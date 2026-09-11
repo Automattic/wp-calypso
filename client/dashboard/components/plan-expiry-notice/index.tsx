@@ -84,16 +84,9 @@ interface PlanExpiryNoticeProps {
 	 */
 	onAutoRenewEnabled?: () => void;
 
-	/** See `PlanExpiryNoticeOptions.scope`. */
 	scope?: PlanExpiryNoticeScope;
-
-	/** See `PlanExpiryNoticeOptions.isReverted`. */
 	isReverted?: boolean;
-
-	/** See `PlanExpiryNoticeOptions.isPlanOwner`. */
 	isPlanOwner?: boolean;
-
-	/** See `PlanExpiryNoticeOptions.stage`. */
 	stage?: PlanExpiryNoticeStage;
 
 	/** Renders a close button. The caller owns the dismissal; the notice keeps rendering until unmounted. */
