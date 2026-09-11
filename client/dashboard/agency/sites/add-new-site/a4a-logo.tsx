@@ -6,9 +6,18 @@ const LOGO_COLOR_SECONDARY = '#021A23';
  * (client/a8c-for-agencies/components/a4a-logo) because the dashboard does not
  * reuse Calypso client code.
  */
-export default function A4ALogo( { size = 24 }: { size?: number } ) {
+export default function A4ALogo( {
+	size = 24,
+	...props
+}: { size?: number } & React.SVGProps< SVGSVGElement > ) {
 	return (
-		<svg width={ size } height={ size } viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+		<svg
+			width={ size }
+			height={ size }
+			viewBox="0 0 64 64"
+			xmlns="http://www.w3.org/2000/svg"
+			{ ...props }
+		>
 			<path
 				fillRule="evenodd"
 				clipRule="evenodd"

@@ -13,7 +13,7 @@ export interface AgencySiteWithPlugin {
 export interface AgencyPendingSite {
 	id: number;
 	features: {
-		wpcom_atomic: {
+		wpcom_atomic?: {
 			state: string;
 			license_key: string;
 		};

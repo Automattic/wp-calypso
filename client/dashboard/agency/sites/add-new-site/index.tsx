@@ -1,7 +1,7 @@
 import {
 	activeAgencyQuery,
-	jetpackAgencyDevLicensesQuery,
 	agencyPendingSitesQuery,
+	jetpackAgencyDevLicensesQuery,
 } from '@automattic/api-queries';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
@@ -33,8 +33,14 @@ function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
-	const { data: pendingSites } = useQuery( agencyPendingSitesQuery( agencyId ) );
-	const { data: devLicenses } = useQuery( jetpackAgencyDevLicensesQuery( agencyId ) );
+	const { data: pendingSites } = useQuery( {
+		...agencyPendingSitesQuery( agencyId ),
+		enabled: !! agencyId,
+	} );
+	const { data: devLicenses } = useQuery( {
+		...jetpackAgencyDevLicensesQuery( agencyId ),
+		enabled: !! agencyId,
+	} );
 
 	const availablePendingSites = getAvailablePendingSites( pendingSites );
 	const hasPendingSites = availablePendingSites.length > 0;
@@ -44,13 +50,13 @@ function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 	const isDesktop = useViewportMatch( 'medium' );
 	const Wrapper = isDesktop ? HStack : VStack;
 
-	const selectAction = ( action: AddNewSiteAction ) => {
-		recordTracksEvent( 'calypso_dashboard_agency_sites_new_site_action_click_item', { action } );
-		onSelectAction( action );
-	};
-
 	const recordNavigation = ( action: string ) => {
 		recordTracksEvent( 'calypso_dashboard_agency_sites_new_site_action_click_item', { action } );
+	};
+
+	const selectAction = ( action: AddNewSiteAction ) => {
+		recordNavigation( action );
+		onSelectAction( action );
 	};
 
 	return (
@@ -75,6 +81,9 @@ function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 					onClick={ () => selectAction( 'jetpack-connection' ) }
 				/>
 			</Column>
+			{ /* The marketplace and pending-sites screens don't exist in the dashboard yet, so
+			     these are `dashboardLink()` hrefs (a full page load) rather than router links.
+			     Swap them for `Link` once the routes land. */ }
 			<Column title={ __( 'Add a new production site' ) }>
 				<MenuItem
 					icon={ <img src={ pressableIcon } alt="" width={ 24 } /> }
@@ -87,6 +96,7 @@ function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 							: dashboardLink( '/marketplace/hosting/pressable' )
 					}
 					target={ ownsPressableDirectly ? '_blank' : undefined }
+					aria-label={ __( 'Add a new production site on Pressable' ) }
 				/>
 				<MenuItem
 					icon={ <WordPressLogo /> }
@@ -96,6 +106,7 @@ function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 					href={ dashboardLink(
 						hasPendingSites ? '/sites/need-setup' : '/marketplace/hosting/wpcom'
 					) }
+					aria-label={ __( 'Add a new production site on WordPress.com' ) }
 				>
 					{ hasPendingSites ? (
 						<Text variant="muted">
@@ -110,7 +121,7 @@ function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 			</Column>
 			<Column>
 				<DevSiteCard
-					availableDevSites={ devLicenses?.available ?? 0 }
+					availableDevSites={ devLicenses?.available }
 					isAgencyApproved={ isAgencyApproved( agency ) }
 					onClick={ () => selectAction( 'dev-site-configurations' ) }
 				/>
