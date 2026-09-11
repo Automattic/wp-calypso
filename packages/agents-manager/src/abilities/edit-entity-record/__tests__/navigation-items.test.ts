@@ -180,15 +180,33 @@ describe( 'clientId', () => {
 			).toEqual( {
 				label: 'About',
 				url: 'https://elsewhere.com/',
+				type: 'custom',
 				kind: 'custom',
 			} );
 		}
 	);
 
-	it( 'keeps a page link that is re-linked to another page', async () => {
+	it( 'keeps the page relationship when the url is the same one written differently', async () => {
 		withMenu( [
 			item( 'about', 'About', { id: 7, type: 'page', kind: 'post-type', url: '/about/' } ),
 		] );
+
+		const result = await buildNavigationItems( 10, {
+			navigationItems: [ { clientId: 'about', url: 'http://localhost/about' } ],
+		} );
+
+		expect(
+			( result.blocks as { attributes: Record< string, unknown > }[] )[ 0 ].attributes
+		).toMatchObject( { id: 7, type: 'page', kind: 'post-type' } );
+	} );
+
+	// A new page id makes a page link whatever the block linked before — a
+	// category link would otherwise keep declaring a category with a page id.
+	it.each( [
+		{ id: 7, type: 'page', kind: 'post-type', url: '/about/' },
+		{ id: 3, type: 'category', kind: 'taxonomy', url: '/category/news/' },
+	] )( 'makes a page link of an item re-linked to another page from %o', async ( from ) => {
+		withMenu( [ item( 'about', 'About', from ) ] );
 
 		const result = await buildNavigationItems( 10, {
 			navigationItems: [ { clientId: 'about', id: 9, url: '/team/' } ],
