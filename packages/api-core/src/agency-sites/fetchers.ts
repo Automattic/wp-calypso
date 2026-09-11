@@ -1,5 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { AgencySiteWithPlugin } from './types';
+import type { AgencyPendingSite, AgencySiteWithPlugin } from './types';
 
 export async function fetchAgencySitesWithPlugins(
 	agencyId: number,
@@ -16,4 +16,11 @@ export async function fetchAgencySitesWithPlugins(
 			},
 		}
 	);
+}
+
+export async function fetchAgencyPendingSites( agencyId: number ): Promise< AgencyPendingSite[] > {
+	return wpcom.req.get( {
+		apiNamespace: 'wpcom/v2',
+		path: `/agency/${ agencyId }/sites/pending`,
+	} );
 }
