@@ -63,7 +63,7 @@ export async function getPageTitle( pageId: number | string ): Promise< string >
 
 /**
  * The title as last saved. A menu label follows this one until the page's
- * own edit is saved, so it is what the label is matched against.
+ * own edit is saved, so it is matched alongside the title on screen.
  */
 export async function getSavedPageTitle( pageId: number | string ): Promise< string > {
 	const coreResolve = resolveSelect( coreStore ) as unknown as CoreResolve | undefined;
