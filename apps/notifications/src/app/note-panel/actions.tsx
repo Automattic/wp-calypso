@@ -1,7 +1,8 @@
-import { Button, DropdownMenu, Icon, privateApis } from '@wordpress/components';
+import { Button, DropdownMenu, privateApis } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { cog, external, keyboard } from '@wordpress/icons';
+import { cog, keyboard } from '@wordpress/icons';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
+import { Link } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -127,8 +128,14 @@ export default function NotePanelActions() {
 					<Menu.Group>
 						<Menu.GroupLabel>{ __( 'Links' ) }</Menu.GroupLabel>
 						<Menu.Item
-							render={ <a href={ SETTINGS_URL } target="_blank" rel="noopener noreferrer" /> }
-							suffix={ <Icon icon={ external } size={ 16 } /> }
+							render={
+								<Link
+									className="wpnc-app__settings-link"
+									href={ SETTINGS_URL }
+									openInNewTab
+									variant="unstyled"
+								/>
+							}
 						>
 							<Menu.ItemLabel>{ __( 'Notification settings' ) }</Menu.ItemLabel>
 						</Menu.Item>
