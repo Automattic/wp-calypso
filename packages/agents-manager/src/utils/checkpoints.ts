@@ -252,6 +252,10 @@ const hasSnapshot = ( checkpoint: CheckpointRecord, key: string ): boolean =>
 	( key === checkpointKeys.LOGO && checkpoint.logoBeforeUpdate !== undefined ) ||
 	( THEME_CHECKPOINT_KEYS.includes( key ) && !! checkpoint.themeBeforeUpdate );
 
+/** The eager domains among `keys` whose snapshot could not be taken. */
+const unsnapshotted = ( checkpoint: CheckpointRecord, keys: string[] ): string[] =>
+	keys.filter( ( key ) => EAGER_KEYS.includes( key ) && ! hasSnapshot( checkpoint, key ) );
+
 /**
  * Records the state a restore is about to overwrite, so its redo can step back.
  *
@@ -303,9 +307,7 @@ export async function setReciprocalCheckpoint(
 
 	// A redo claiming a domain it could not snapshot would throw part-way,
 	// like any restore with one missing — refused whole instead.
-	const missing = target.checkpointKeys.filter(
-		( key ) => EAGER_KEYS.includes( key ) && ! hasSnapshot( checkpoint, key )
-	);
+	const missing = unsnapshotted( checkpoint, target.checkpointKeys );
 
 	if ( missing.length ) {
 		records.delete( id );
@@ -507,7 +509,8 @@ function redeclareDomains( id: string, keys: string[] ): void {
  * `restore-checkpoint` can undo it. The first snapshot for a call wins — a
  * repeat must not overwrite the pre-change state. A write that fails drops the
  * checkpoint it created; a repeat that fails is rolled back to the first run's,
- * which still undoes the change that landed. Without a call id the write runs
+ * which still undoes the change that landed. A write is refused when a domain
+ * that snapshots up front could not be read. Without a call id the write runs
  * uncheckpointed.
  */
 export async function withCheckpoint< T >(
@@ -545,6 +548,27 @@ export async function withCheckpoint< T >(
 		redeclareDomains( checkpointId, keys );
 	}
 
+	const undo = () => {
+		if ( created ) {
+			clearCheckpoint( checkpointId );
+		} else if ( before ) {
+			records.set( checkpointId as string, before );
+		}
+	};
+
+	// Refused before the write, not made unrestorable: a domain that snapshots
+	// up front and could not be read would leave the change with no way back.
+	const missing = checkpointId ? unsnapshotted( records.get( checkpointId )!, keys ) : [];
+
+	if ( missing.length ) {
+		undo();
+
+		throw new Error(
+			`Cannot record a way back for ${ missing.join( ', ' ) }: its current state could not ` +
+				'be read. Nothing was changed.'
+		);
+	}
+
 	try {
 		const result = await write( checkpointId ? createRecorder( checkpointId ) : NO_RECORDER );
 
@@ -554,11 +578,7 @@ export async function withCheckpoint< T >(
 
 		return result;
 	} catch ( error ) {
-		if ( created ) {
-			clearCheckpoint( checkpointId );
-		} else if ( before ) {
-			records.set( checkpointId as string, before );
-		}
+		undo();
 
 		throw error;
 	}

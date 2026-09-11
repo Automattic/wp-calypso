@@ -216,6 +216,14 @@ describe( 'clientId', () => {
 		] );
 	} );
 
+	// A url alone names an existing item; a new one needs a label, or a stale
+	// url would drop the item it meant and insert a link with no text.
+	it( 'refuses a url that names no item and comes with no label', async () => {
+		await expect(
+			buildNavigationItems( 10, { navigationItems: [ { url: '/nowhere/' } ] } )
+		).rejects.toThrow( 'Navigation items not found: /nowhere/' );
+	} );
+
 	// A clientId names an existing item; one that resolves to nothing must not
 	// be rebuilt from the label, dropping the block it meant.
 	it( 'refuses a clientId that resolves to nothing, even with a label', async () => {
@@ -328,7 +336,7 @@ describe( 'input validation', () => {
 		withMenu( [ item( 'a', 'Home' ) ] );
 
 		await expect( buildNavigationItems( 10, { navigationItems: 'Home' } ) ).rejects.toThrow(
-			'navigationItems must be an array'
+			'must be an array of menu items'
 		);
 	} );
 
