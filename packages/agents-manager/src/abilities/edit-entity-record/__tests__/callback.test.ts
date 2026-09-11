@@ -327,8 +327,8 @@ describe( 'editEntityRecordCallback', () => {
 		);
 	} );
 
-	// The title travels with the removal: an item carrying no page id is matched
-	// by the label the page had before it was deleted.
+	// The url travels with the removal: an item carrying no page id is matched
+	// by it.
 	it( 'deletes a page and removes its menu item', async () => {
 		await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
 
