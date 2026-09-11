@@ -7,7 +7,7 @@ import {
 	type NavigationBlock,
 } from '../../utils/navigation-menu';
 import { providerSelectors } from '../../utils/provider-store';
-import { sameUrl } from '../../utils/same-url';
+import { sameUrl, urlKey } from '../../utils/same-url';
 
 /**
  * Rebuilds a menu from the final item list the agent asks for.
@@ -113,7 +113,7 @@ const identityKeys = ( {
 	[
 		clientId && `clientId:${ clientId }`,
 		id && `id:${ type ?? 'page' }:${ id }`,
-		url && `url:${ url }`,
+		url && `url:${ urlKey( url ) ?? url }`,
 		label && `label:${ label }`,
 	].filter( ( key ): key is string => !! key );
 
