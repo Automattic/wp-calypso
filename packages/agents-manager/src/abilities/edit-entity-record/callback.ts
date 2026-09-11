@@ -279,7 +279,12 @@ interface CoreDispatch {
 		name: string,
 		record: Record< string, unknown >,
 		options?: Record< string, unknown >
-	) => Promise< { id?: number | string; title?: unknown; link?: string } | null >;
+	) => Promise< {
+		id?: number | string;
+		title?: unknown;
+		link?: string;
+		parent?: number;
+	} | null >;
 	editEntityRecord: (
 		kind: string,
 		name: string,
@@ -388,7 +393,12 @@ async function applyCreates(
 		applied.created.push( { entityName, recordId: created.id, title } );
 
 		if ( entityName === PAGE ) {
-			await addNavigationItem( { label: title, id: created.id, url: created.link } );
+			await addNavigationItem( {
+				label: title,
+				id: created.id,
+				url: created.link,
+				parent: created.parent,
+			} );
 		}
 	}
 }
