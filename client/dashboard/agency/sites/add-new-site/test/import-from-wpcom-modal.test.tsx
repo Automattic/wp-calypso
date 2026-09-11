@@ -29,9 +29,14 @@ function site( overrides: Record< string, unknown > ) {
 interface Options {
 	sites?: Record< string, unknown >[];
 	managedSites?: { blog_id: number }[];
+	failManagedSites?: boolean;
 }
 
-function mockEndpoints( { sites = [ site( {} ) ], managedSites = [] }: Options = {} ) {
+function mockEndpoints( {
+	sites = [ site( {} ) ],
+	managedSites = [],
+	failManagedSites = false,
+}: Options = {} ) {
 	nock( BASE )
 		.get( '/wpcom/v2/agency' )
 		.query( true )
@@ -39,11 +44,18 @@ function mockEndpoints( { sites = [ site( {} ) ], managedSites = [] }: Options =
 
 	nock( BASE ).get( '/rest/v1.2/me/sites' ).query( true ).reply( 200, { sites } );
 
-	nock( BASE )
-		.get( '/wpcom/v2/jetpack-agency/sites' )
-		.query( true )
-		.times( 2 )
-		.reply( 200, { sites: managedSites, total: managedSites.length } );
+	if ( failManagedSites ) {
+		nock( BASE )
+			.get( '/wpcom/v2/jetpack-agency/sites' )
+			.query( true )
+			.reply( 500, { message: 'Nope' } );
+	} else {
+		nock( BASE )
+			.get( '/wpcom/v2/jetpack-agency/sites' )
+			.query( true )
+			.times( 2 )
+			.reply( 200, { sites: managedSites, total: managedSites.length } );
+	}
 
 	const onClose = jest.fn();
 	render( <ImportFromWPCOMModal onClose={ onClose } /> );
@@ -171,6 +183,30 @@ describe( 'ImportFromWPCOMModal', () => {
 
 		await waitFor( () => expect( addButton() ).toBeEnabled() );
 		expect( onClose ).not.toHaveBeenCalled();
+	} );
+
+	test( 'offers nothing when the agency’s managed sites cannot be loaded', async () => {
+		mockEndpoints( { sites: [ site( { ID: 1, name: 'Example' } ) ], failManagedSites: true } );
+
+		expect( await screen.findByText( /load your sites/ ) ).toBeVisible();
+		expect( screen.queryByText( 'Example' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'holds the modal open while the import is running', async () => {
+		const { onClose } = mockEndpoints();
+		nock( BASE )
+			.post( `/wpcom/v2/agency/${ AGENCY_ID }/sites`, { blog_id: 1 } )
+			.delay( 100 )
+			.reply( 200, { success: true } );
+
+		await screen.findByText( 'Example' );
+		await userEvent.click( screen.getByRole( 'option', { name: /Example/ } ) );
+		await userEvent.click( addButton() );
+
+		expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeDisabled();
+		expect( onClose ).not.toHaveBeenCalled();
+
+		await waitFor( () => expect( onClose ).toHaveBeenCalled() );
 	} );
 
 	test( 'says so when there is nothing left to add', async () => {
