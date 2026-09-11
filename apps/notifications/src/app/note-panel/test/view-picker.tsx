@@ -17,6 +17,15 @@ const defaultProps = {
 	setSelectedNoteId: noop,
 };
 
+const savedPreference = ( post: jest.Mock, key: string ) => {
+	const call = post.mock.calls.find( ( [ , , body ] ) => {
+		const prefs = ( body as { calypso_preferences: Record< string, unknown > } )
+			.calypso_preferences;
+		return key in prefs;
+	} );
+	return ( call?.[ 2 ] as { calypso_preferences: Record< string, unknown > } ).calypso_preferences;
+};
+
 const renderPanel = ( { isViewSettingsEnabled }: { isViewSettingsEnabled: boolean } ) => {
 	const store = initStore();
 	const post = jest.fn( () => Promise.resolve( {} ) );
@@ -34,6 +43,34 @@ const renderPanel = ( { isViewSettingsEnabled }: { isViewSettingsEnabled: boolea
 };
 
 describe( 'NotePanel settings menu', () => {
+	it( 'marks the gear as new until the menu is opened', async () => {
+		const { post } = renderPanel( { isViewSettingsEnabled: true } );
+
+		const gear = screen.getByRole( 'button', { name: 'Settings (new)' } );
+		expect( gear ).toHaveClass( 'is-new' );
+
+		await userEvent.click( gear );
+
+		await waitFor( () => {
+			expect( post ).toHaveBeenCalled();
+		} );
+
+		expect( savedPreference( post, 'notifications-view-settings-seen' ) ).toEqual( {
+			'notifications-view-settings-seen': true,
+		} );
+
+		// The open menu makes the rest of the tree inert, so close it before looking again.
+		await userEvent.keyboard( '{Escape}' );
+
+		expect( screen.getByRole( 'button', { name: 'Settings' } ) ).not.toHaveClass( 'is-new' );
+	} );
+
+	it( 'does not mark the gear as new when view settings are off', async () => {
+		renderPanel( { isViewSettingsEnabled: false } );
+
+		expect( screen.getByRole( 'button', { name: 'Settings' } ) ).not.toHaveClass( 'is-new' );
+	} );
+
 	it( 'offers the layout options only when the host has enabled view settings', async () => {
 		renderPanel( { isViewSettingsEnabled: false } );
 
@@ -49,7 +86,7 @@ describe( 'NotePanel settings menu', () => {
 	it( 'marks the saved layout and saves a new one', async () => {
 		const { post } = renderPanel( { isViewSettingsEnabled: true } );
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'Settings' } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: /^Settings/ } ) );
 
 		expect( screen.getByRole( 'menuitemradio', { name: 'Classic' } ) ).toHaveAttribute(
 			'aria-checked',
@@ -62,10 +99,9 @@ describe( 'NotePanel settings menu', () => {
 			expect( post ).toHaveBeenCalled();
 		} );
 
-		const [ , , body ] = post.mock.calls[ 0 ] as unknown[];
-		expect(
-			( body as { calypso_preferences: Record< string, unknown > } ).calypso_preferences
-		).toEqual( { 'notifications-layout-style': 'simplified' } );
+		expect( savedPreference( post, 'notifications-layout-style' ) ).toEqual( {
+			'notifications-layout-style': 'simplified',
+		} );
 	} );
 } );
 

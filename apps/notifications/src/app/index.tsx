@@ -151,14 +151,27 @@ const NotificationApp = ( {
 		if ( ! hasFetchedPreferences ) {
 			hasFetchedPreferences = true;
 			fetchNotificationPreferences()
-				.then( ( { layoutStyle, views }: { layoutStyle?: string; views?: StoredView[] } ) => {
-					if ( layoutStyle ) {
-						store.dispatch( actions.ui.setLayoutStyle( layoutStyle ) );
+				.then(
+					( {
+						layoutStyle,
+						views,
+						viewSettingsSeen,
+					}: {
+						layoutStyle?: string;
+						views?: StoredView[];
+						viewSettingsSeen?: boolean;
+					} ) => {
+						if ( layoutStyle ) {
+							store.dispatch( actions.ui.setLayoutStyle( layoutStyle ) );
+						}
+						if ( views ) {
+							store.dispatch( actions.ui.setViews( views ) );
+						}
+						if ( viewSettingsSeen ) {
+							store.dispatch( actions.ui.setViewSettingsSeen( true ) );
+						}
 					}
-					if ( views ) {
-						store.dispatch( actions.ui.setViews( views ) );
-					}
-				} )
+				)
 				.catch( logError );
 		}
 

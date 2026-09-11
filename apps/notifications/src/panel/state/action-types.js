@@ -14,6 +14,7 @@ export const SET_IS_SHOWING = 'SET_IS_SHOWING'; // special! do not use
 export const SET_LAYOUT = 'SET_LAYOUT';
 export const SET_LAYOUT_STYLE = 'SET_LAYOUT_STYLE';
 export const SET_VIEWS = 'SET_VIEWS';
+export const SET_VIEW_SETTINGS_SEEN = 'SET_VIEW_SETTINGS_SEEN';
 export const SPAM_NOTE = 'SPAM_NOTE';
 export const SUGGESTIONS_FETCH = 'SUGGESTIONS_FETCH';
 export const SUGGESTIONS_STORE = 'SUGGESTIONS_STORE';

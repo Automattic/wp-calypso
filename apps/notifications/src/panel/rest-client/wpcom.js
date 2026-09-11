@@ -23,6 +23,7 @@ export const fetchNotificationPreferences = () =>
 		.then( ( { calypso_preferences: preferences } ) => ( {
 			layoutStyle: preferences?.[ 'notifications-layout-style' ],
 			views: preferences?.[ 'notifications-views' ],
+			viewSettingsSeen: preferences?.[ 'notifications-view-settings-seen' ],
 		} ) );
 
 export const updateNotificationPreferences = ( preferences ) =>

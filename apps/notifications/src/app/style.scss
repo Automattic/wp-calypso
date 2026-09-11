@@ -208,3 +208,25 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	margin-top: 6px;
 	margin-inline-end: 12px;
 }
+
+// A one-time nudge towards the view settings, cleared the first time the menu opens.
+.wpnc-app__settings-toggle.is-new::after {
+	content: attr(data-new-label);
+	position: absolute;
+	inset-block-start: -4px;
+	inset-inline-start: 50%;
+	padding: 1px 4px;
+	border-radius: 8px;
+	background: var(--color-accent);
+	color: var(--color-text-inverted);
+	font-size: 9px;
+	font-weight: 600;
+	line-height: 1.4;
+	letter-spacing: 0.02em;
+	pointer-events: none;
+}
+
+.wpnc-app__settings-toggle.is-new {
+	position: relative;
+	overflow: visible;
+}

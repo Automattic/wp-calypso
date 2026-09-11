@@ -7,6 +7,7 @@ import {
 	SET_LAYOUT,
 	SET_LAYOUT_STYLE,
 	SET_VIEWS,
+	SET_VIEW_SETTINGS_SEEN,
 	UNDO_ACTION,
 	VIEW_SETTINGS,
 	CLOSE_SHORTCUTS_POPOVER,
@@ -59,6 +60,11 @@ export const setViews = ( views ) => ( {
 	views,
 } );
 
+export const setViewSettingsSeen = ( viewSettingsSeen ) => ( {
+	type: SET_VIEW_SETTINGS_SEEN,
+	viewSettingsSeen,
+} );
+
 export const undoAction = ( noteId ) => ( {
 	type: UNDO_ACTION,
 	noteId,
@@ -108,6 +114,7 @@ export default {
 	setLayout,
 	setLayoutStyle,
 	setViews,
+	setViewSettingsSeen,
 	undoAction,
 	unselectNote,
 	viewSettings,

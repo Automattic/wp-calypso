@@ -7,6 +7,7 @@ import {
 	SET_FILTER,
 	SET_LAYOUT_STYLE,
 	SET_VIEWS,
+	SET_VIEW_SETTINGS_SEEN,
 	ENABLE_KEYBOARD_SHORTCUTS,
 	DISABLE_KEYBOARD_SHORTCUTS,
 } from '../action-types';
@@ -56,6 +57,10 @@ const NO_VIEWS = [];
 // eslint-disable-next-line no-shadow
 export const views = ( state = NO_VIEWS, { type, views } ) =>
 	SET_VIEWS === type ? views : state;
+
+// eslint-disable-next-line no-shadow
+export const viewSettingsSeen = ( state = false, { type, viewSettingsSeen } ) =>
+	SET_VIEW_SETTINGS_SEEN === type ? viewSettingsSeen : state;
 
 export const isPanelOpen = ( state = false, { type, isShowing } ) =>
 	SET_IS_SHOWING === type ? isShowing : state;
@@ -118,4 +123,5 @@ export default combineReducers( {
 	keyboardShortcutsAreEnabled,
 	shortcutsPopoverIsOpen,
 	views,
+	viewSettingsSeen,
 } );

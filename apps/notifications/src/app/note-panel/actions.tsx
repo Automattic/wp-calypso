@@ -2,10 +2,12 @@ import { Button, DropdownMenu, Icon, privateApis } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { cog, external, keyboard } from '@wordpress/icons';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
+import clsx from 'clsx';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../panel/state/actions';
 import getIsShortcutsPopoverOpen from '../../panel/state/selectors/get-is-shortcuts-popover-open';
 import getLayoutStyle from '../../panel/state/selectors/get-layout-style';
+import getViewSettingsSeen from '../../panel/state/selectors/get-view-settings-seen';
 import { useAppContext } from '../context';
 import NoteShortcuts from '../note-shortcuts';
 import { useSavePreference } from './use-save-preference';
@@ -31,7 +33,18 @@ export default function NotePanelActions() {
 	const isShortcutsPopoverOpen = useSelector( getIsShortcutsPopoverOpen );
 	const layoutStyle = useSelector( getLayoutStyle );
 	const { isViewSettingsEnabled } = useAppContext();
+	const viewSettingsSeen = useSelector( getViewSettingsSeen );
 	const savePreference = useSavePreference();
+
+	// Nudge people towards settings they have never opened, once.
+	const isNew = isViewSettingsEnabled && ! viewSettingsSeen;
+
+	const markSeen = () =>
+		savePreference( {
+			preferences: { 'notifications-view-settings-seen': true },
+			apply: () => actions.ui.setViewSettingsSeen( true ),
+			revert: () => actions.ui.setViewSettingsSeen( false ),
+		} );
 
 	const setLayoutStyle = ( value: string ) =>
 		savePreference( {
@@ -62,9 +75,25 @@ export default function NotePanelActions() {
 			>
 				{ () => <NoteShortcuts /> }
 			</DropdownMenu>
-			<Menu placement="bottom-end">
+			<Menu
+				placement="bottom-end"
+				onOpenChange={ ( isOpen: boolean ) => {
+					if ( isOpen && isNew ) {
+						markSeen();
+					}
+				} }
+			>
 				<Menu.TriggerButton
-					render={ <Button size="small" icon={ cog } label={ __( 'Settings' ) } /> }
+					render={
+						<Button
+							size="small"
+							icon={ cog }
+							label={ isNew ? __( 'Settings (new)' ) : __( 'Settings' ) }
+							className={ clsx( 'wpnc-app__settings-toggle', { 'is-new': isNew } ) }
+							// Read by the badge's `content: attr()` so the label stays translatable.
+							data-new-label={ __( 'New' ) }
+						/>
+					}
 				/>
 				<Menu.Popover>
 					{ isViewSettingsEnabled && (
