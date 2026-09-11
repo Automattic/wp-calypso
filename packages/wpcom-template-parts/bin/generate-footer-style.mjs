@@ -465,8 +465,7 @@ export async function generateFooterStyle( argv = process.argv.slice( 2 ) ) {
 		...classesFrom( inputs.whiteHtml ),
 		...classesFrom( inputs.darkHtml ),
 	] );
-	const banner =
-		'/* DO NOT HAND-EDIT — generated from accepted served WPCOM assets. */\n';
+	const banner = '/* DO NOT HAND-EDIT — generated from accepted served WPCOM assets. */\n';
 	const legacyScss = await readFile( args[ 'legacy-scss' ], 'utf8' );
 	const legacySha256 = createHash( 'sha256' ).update( legacyScss ).digest( 'hex' );
 	if (
