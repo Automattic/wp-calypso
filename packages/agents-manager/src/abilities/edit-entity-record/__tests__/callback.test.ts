@@ -311,14 +311,17 @@ describe( 'editEntityRecordCallback', () => {
 	} );
 
 	// A menu label follows the saved title until the page's own edit is saved,
-	// so both titles travel with the removal.
-	it( 'matches a menu item by the saved title when the one on screen is an unsaved edit', async () => {
-		( getPageTitle as jest.Mock ).mockResolvedValueOnce( 'About (draft)' );
+	// so both titles travel with the rename.
+	it( 'relabels by the saved title too when the one on screen is an unsaved edit', async () => {
+		( getPageTitle as jest.Mock ).mockResolvedValue( 'About (draft)' );
 
-		await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
+		await editEntityRecordCallback( {
+			editEntities: [ { ...page( 7 ), record: { title: 'About us' } } ],
+		} );
 
-		expect( removeNavigationItem ).toHaveBeenCalledWith(
+		expect( renameNavigationItem ).toHaveBeenCalledWith(
 			7,
+			'About us',
 			[ 'About (draft)', 'About' ],
 			'/about/'
 		);
@@ -329,7 +332,7 @@ describe( 'editEntityRecordCallback', () => {
 	it( 'deletes a page and removes its menu item', async () => {
 		await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
 
-		expect( removeNavigationItem ).toHaveBeenCalledWith( 7, [ 'About' ], '/about/' );
+		expect( removeNavigationItem ).toHaveBeenCalledWith( 7, '/about/' );
 		// The options go in the fifth argument: the fourth is the request's query
 		// args, where `throwOnError` would be ignored.
 		expect( deleteEntityRecord ).toHaveBeenCalledWith( 'postType', 'page', 7, undefined, {
@@ -416,6 +419,20 @@ describe( 'editEntityRecordCallback', () => {
 			} );
 
 			expect( result.result.error ).toContain( 'Cannot delete post 7' );
+			expect( deleteEntityRecord ).not.toHaveBeenCalled();
+		} );
+
+		// The route may have changed by the time the navigation reports a
+		// failure; rebinding the source page then would read the arrival as the
+		// user leaving.
+		it( 'keeps the destination binding when the navigation fired but did not settle', async () => {
+			( navigateEditorWithoutSaving as jest.Mock ).mockResolvedValueOnce( {
+				result: { success: false, error: 'did not finish', details: { navigated: true } },
+			} );
+
+			await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
+
+			expect( ( bindToEditorPath as jest.Mock ).mock.results[ 0 ].value ).not.toHaveBeenCalled();
 			expect( deleteEntityRecord ).not.toHaveBeenCalled();
 		} );
 
@@ -586,6 +603,14 @@ describe( 'editEntityRecordCallback', () => {
 		{
 			case: 'content that is not text',
 			input: { editEntities: [ { ...page( 7 ), record: { content: 123 } } ] },
+		},
+		{
+			case: 'a site location with a numeric name',
+			input: {
+				editEntities: [
+					{ ...site, recordId: 'big_sky_site_metadata', record: { siteLocation: { name: 7 } } },
+				],
+			},
 		},
 		{
 			case: 'a personality that is not text',

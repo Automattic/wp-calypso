@@ -356,13 +356,17 @@ export async function buildNavigationItems(
 					attributesFor( input )
 				) as NavigationBlock );
 			const name = blockName( block, innerBlocks );
+			const attributes = { ...block.attributes, ...attributesFor( input ) };
 
-			return {
-				...block,
-				name,
-				attributes: { ...block.attributes, ...attributesFor( input ) },
-				innerBlocks,
-			};
+			// A new url without a page id makes the item a custom link: the page
+			// it used to point at must not follow it into renames and deletions.
+			if ( input.url && ! input.id && input.url !== block.attributes?.url ) {
+				delete attributes.id;
+				delete attributes.type;
+				attributes.kind = 'custom';
+			}
+
+			return { ...block, name, attributes, innerBlocks };
 		} );
 
 	CLAIM_TIERS.forEach( ( tier ) => claim( items, tier ) );

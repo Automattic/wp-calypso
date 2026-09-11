@@ -216,7 +216,9 @@ export async function editorNavigate(
 			return errorResult(
 				`Navigated to ${ editorPath }, but the editor did not finish loading that page in time. Do not edit content yet — the editor may still be showing the previous page. Tell the user the page did not open, and stop.`,
 				__( 'That page did not finish opening.', __i18n_text_domain__ ),
-				{ path: editorPath }
+				// The route has changed by now: a caller holding a canvas binding
+				// for the destination must keep it, or the arrival reads as a move.
+				{ path: editorPath, navigated: true }
 			);
 		}
 
