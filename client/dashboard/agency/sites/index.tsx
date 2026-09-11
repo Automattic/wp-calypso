@@ -12,7 +12,10 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { DEFAULT_PER_PAGE, DEFAULT_CONFIG, recordViewChanges } from '../../sites/dataviews/views';
 import AddNewSite from './add-new-site';
+import ConnectSiteModal from './add-new-site/connect-site-modal';
+import ImportFromWPCOMModal from './add-new-site/import-from-wpcom-modal';
 import { getAgencyFields, getAgencyActions } from './dataviews';
+import type { AddNewSiteAction } from './add-new-site/types';
 import type { AgencySite, FetchAgencySitesOptions } from '@automattic/api-core';
 import type { SupportedLayouts, View } from '@wordpress/dataviews';
 
@@ -57,7 +60,7 @@ function toAgencyFetchOptions( view: View ): FetchAgencySitesOptions {
 export default function AgencySites() {
 	const { recordTracksEvent } = useAnalytics();
 	const currentSearchParams = agencySitesRoute.useSearch();
-	const [ isAddNewSiteOpen, setIsAddNewSiteOpen ] = useState( false );
+	const [ activeModal, setActiveModal ] = useState< 'menu' | AddNewSiteAction | null >( null );
 
 	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'agency-sites',
@@ -78,6 +81,8 @@ export default function AgencySites() {
 		updateView( nextView );
 	};
 
+	const closeModal = () => setActiveModal( null );
+
 	const paginationInfo = {
 		totalItems,
 		totalPages: view.perPage ? Math.ceil( totalItems / view.perPage ) : 1,
@@ -93,7 +98,7 @@ export default function AgencySites() {
 							variant="primary"
 							onClick={ () => {
 								recordTracksEvent( 'calypso_dashboard_agency_sites_add_new_site_clicked' );
-								setIsAddNewSiteOpen( true );
+								setActiveModal( 'menu' );
 							} }
 							__next40pxDefaultSize
 						>
@@ -103,12 +108,17 @@ export default function AgencySites() {
 				/>
 			}
 		>
-			{ isAddNewSiteOpen && (
-				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsAddNewSiteOpen( false ) }>
-					{ /* The modals these actions open are ported separately. */ }
-					<AddNewSite onSelectAction={ () => setIsAddNewSiteOpen( false ) } />
+			{ activeModal === 'menu' && (
+				<Modal title={ __( 'Add new site' ) } onRequestClose={ closeModal }>
+					{ /* The dev-site modal is ported separately, so that action closes
+					     the menu without opening anything yet. */ }
+					<AddNewSite onSelectAction={ setActiveModal } />
 				</Modal>
 			) }
+			{ ( activeModal === 'a4a-connection' || activeModal === 'jetpack-connection' ) && (
+				<ConnectSiteModal action={ activeModal } onClose={ closeModal } />
+			) }
+			{ activeModal === 'import-from-wpcom' && <ImportFromWPCOMModal onClose={ closeModal } /> }
 			{ ! isLoading && <PerformanceTrackerStop /> }
 			<DataViewsCard>
 				<DataViews< AgencySite >

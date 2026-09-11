@@ -19,3 +19,8 @@ export interface AgencyPendingSite {
 		};
 	};
 }
+
+/** The `/agency/{id}/sites` POST response for a single imported site. */
+export interface CreateAgencySiteResponse {
+	success: boolean;
+}
