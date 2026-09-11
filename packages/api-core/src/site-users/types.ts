@@ -1,7 +1,14 @@
+/**
+ * User meta exposed on `wp/v2` `users/me`. Keys are whatever the site has
+ * registered with `show_in_rest`; values here are Unix timestamps in seconds.
+ */
+export type SiteUserMeta = Record< string, number | undefined >;
+
 export interface SiteUser {
 	id: number;
 	name: string;
 	slug: string;
+	meta?: SiteUserMeta;
 }
 
 export interface WpcomSiteUser {
