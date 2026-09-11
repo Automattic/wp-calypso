@@ -177,4 +177,67 @@ describe( 'create-site', () => {
 		expect( createSite ).toHaveBeenCalledTimes( 1 );
 		expect( result ).toMatchObject( { siteId: 111, siteSlug: 'brand-new.wordpress.com' } );
 	} );
+
+	// The record is read before `await createSite()` and written after it. A second run of the
+	// action that starts inside that window finds no record and asks /sites/new for the same name,
+	// which the free-subdomain path refuses as `blog_name_exists`. The processing step runs the
+	// action again whenever it mounts again, so this is the double-POST seen in production.
+	it( 'asks /sites/new once when a second run starts while the first is still creating', async () => {
+		let finishFirstCreate: ( site: unknown ) => void = () => {};
+		( createSite as jest.Mock ).mockImplementationOnce(
+			() =>
+				new Promise( ( resolve ) => {
+					finishFirstCreate = resolve;
+				} )
+		);
+
+		const StepComponent = CreateSite as unknown as React.ComponentType< Record< string, unknown > >;
+		render( <StepComponent navigation={ { submit: jest.fn() } } flow="onboarding" /> );
+		await waitFor( () => expect( pendingAction ).toBeDefined() );
+
+		const firstRun = pendingAction!();
+		// Let the first run read the empty record and reach its await.
+		await waitFor( () => expect( createSite ).toHaveBeenCalled() );
+		const secondRun = pendingAction!();
+		// Give the second run the same chance to reach the guard before the first request returns.
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+		finishFirstCreate( {
+			siteId: 111,
+			siteSlug: 'brand-new.wordpress.com',
+			domainItem: undefined,
+		} );
+		const [ firstResult, secondResult ] = await Promise.all( [ firstRun, secondRun ] );
+
+		expect( createSite ).toHaveBeenCalledTimes( 1 );
+		// The same result, not an equal one: the second run joined the first instead of running the
+		// cart and trial tail again against the site the first run made.
+		expect( secondResult ).toBe( firstResult );
+		expect( firstResult ).toMatchObject( { siteId: 111, siteSlug: 'brand-new.wordpress.com' } );
+	} );
+
+	// The in-flight map outlives the run that filled it. A failed request has to leave the map, or
+	// every later run for the same name — Back from the error step, or another mount of the
+	// processing step — joins the old rejection instead of asking again.
+	it( 'asks /sites/new again after a failed creation instead of joining the stale rejection', async () => {
+		( createSite as jest.Mock ).mockRejectedValueOnce( new Error( 'boom' ) );
+
+		const StepComponent = CreateSite as unknown as React.ComponentType< Record< string, unknown > >;
+		render( <StepComponent navigation={ { submit: jest.fn() } } flow="onboarding" /> );
+		await waitFor( () => expect( pendingAction ).toBeDefined() );
+
+		await expect( pendingAction!() ).rejects.toThrow( 'boom' );
+
+		await expect( pendingAction!() ).resolves.toMatchObject( {
+			siteId: 111,
+			siteSlug: 'brand-new.wordpress.com',
+		} );
+		expect( createSite ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'rejects with "Failed to create site" when /sites/new returns nothing', async () => {
+		( createSite as jest.Mock ).mockResolvedValueOnce( undefined );
+
+		await expect( runStep() ).rejects.toThrow( 'Failed to create site' );
+	} );
 } );
