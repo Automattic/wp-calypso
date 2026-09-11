@@ -22,6 +22,7 @@ import { useAnalytics } from '../../../app/analytics';
 import { useIntlLocale } from '../../../app/locale';
 import { ButtonStack } from '../../../components/button-stack';
 import { DataViewsCard, DataViewsEmptyStateLayout } from '../../../components/dataviews';
+import Notice from '../../../components/notice';
 import SiteIcon from '../../../components/site-icon';
 import { Name, URL } from '../../../sites/site-fields';
 import { getSiteDisplayName } from '../../../utils/site-name';
@@ -101,11 +102,23 @@ export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalP
 	const locale = useIntlLocale();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const { data: agency, isLoading: isLoadingAgency } = useQuery( activeAgencyQuery() );
+	const {
+		data: agency,
+		isLoading: isLoadingAgency,
+		isError: isAgencyError,
+	} = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
 
-	const { data: sites, isLoading: isLoadingSites } = useQuery( allSitesQuery() );
-	const { data: managedSiteIds, isLoading: isLoadingManagedSites } = useQuery( {
+	const {
+		data: sites,
+		isLoading: isLoadingSites,
+		isError: isSitesError,
+	} = useQuery( allSitesQuery() );
+	const {
+		data: managedSiteIds,
+		isLoading: isLoadingManagedSites,
+		isError: isManagedSitesError,
+	} = useQuery( {
 		...agencyManagedSiteIdsQuery( agencyId ),
 		enabled: !! agencyId,
 	} );
@@ -152,13 +165,16 @@ export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalP
 		[ locale ]
 	);
 
-	// A site the agency already manages must never appear as selectable, so the
-	// rows stay hidden until that list has arrived (or failed).
 	const isLoading = isLoadingSites || isLoadingAgency || ( !! agencyId && isLoadingManagedSites );
 
+	// Without the agency there is nothing to import into, and without the
+	// managed list a site the agency already has would show up as importable.
+	// Offer nothing rather than something wrong.
+	const hasLoadError = isAgencyError || isSitesError || isManagedSitesError;
+
 	const importableSites = useMemo(
-		() => ( isLoading ? [] : getImportableSites( sites, managedSiteIds ) ),
-		[ isLoading, sites, managedSiteIds ]
+		() => ( isLoading || hasLoadError ? [] : getImportableSites( sites, managedSiteIds ) ),
+		[ isLoading, hasLoadError, sites, managedSiteIds ]
 	);
 
 	const { data: shownSites, paginationInfo } = useMemo(
@@ -192,11 +208,18 @@ export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalP
 		} );
 	};
 
+	// Closing mid-import drops the mutation's callbacks with it, so the list
+	// would never refresh and nobody would hear how it went.
+	const isImporting = importSites.isPending;
+
 	return (
 		<Modal
 			title={ __( 'Add sites via WordPress.com connection' ) }
 			onRequestClose={ onClose }
 			size="large"
+			isDismissible={ ! isImporting }
+			shouldCloseOnEsc={ ! isImporting }
+			shouldCloseOnClickOutside={ ! isImporting }
 		>
 			<VStack spacing={ 4 }>
 				<Text variant="muted" as="p">
@@ -204,6 +227,11 @@ export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalP
 						'Add one or more sites you previously created on WordPress.com or connected with Jetpack.'
 					) }
 				</Text>
+				{ hasLoadError && (
+					<Notice variant="error">
+						{ __( 'We couldn’t load your sites. Please refresh the page and try again.' ) }
+					</Notice>
+				) }
 				<DataViewsCard>
 					<DataViewsPicker< Site >
 						data={ shownSites }
@@ -246,14 +274,19 @@ export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalP
 					</DataViewsPicker>
 				</DataViewsCard>
 				<ButtonStack justify="flex-end">
-					<Button variant="tertiary" __next40pxDefaultSize onClick={ onClose }>
+					<Button
+						variant="tertiary"
+						__next40pxDefaultSize
+						onClick={ onClose }
+						disabled={ isImporting }
+					>
 						{ __( 'Cancel' ) }
 					</Button>
 					<Button
 						variant="primary"
 						__next40pxDefaultSize
-						disabled={ selection.length === 0 || importSites.isPending }
-						isBusy={ importSites.isPending }
+						disabled={ selection.length === 0 || isImporting || hasLoadError }
+						isBusy={ isImporting }
 						onClick={ handleAddSites }
 					>
 						{ selection.length > 0
