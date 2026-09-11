@@ -1,7 +1,6 @@
 import {
 	JETPACK_COMPLETE_PLANS,
 	JETPACK_GROWTH_PLANS,
-	JETPACK_SECURITY_PLANS,
 	JETPACK_VIDEOPRESS_PRODUCTS,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -82,20 +81,16 @@ const isVideoPressOwned = ( ownedPurchases: Purchase[] ) => {
 	return areProductsOwned( ownedPurchases, [ ...JETPACK_VIDEOPRESS_PRODUCTS ] );
 };
 
-export const hasBusinessPlan = ( ownedPurchases: Purchase[] ) => {
+const hasBusinessPlan = ( ownedPurchases: Purchase[] ) => {
 	return areProductsOwned( ownedPurchases, [ ...JETPACK_BUSINESS_PLANS ] );
 };
 
-export const hasCompletePlan = ( ownedPurchases: Purchase[] ) => {
+const hasCompletePlan = ( ownedPurchases: Purchase[] ) => {
 	return areProductsOwned( ownedPurchases, [ ...JETPACK_COMPLETE_PLANS ] );
 };
 
-export const hasGrowthPlan = ( ownedPurchases: Purchase[] ) => {
+const hasGrowthPlan = ( ownedPurchases: Purchase[] ) => {
 	return areProductsOwned( ownedPurchases, [ ...JETPACK_GROWTH_PLANS ] );
-};
-
-export const hasSecurityPlan = ( ownedPurchases: Purchase[] ) => {
-	return areProductsOwned( ownedPurchases, [ ...JETPACK_SECURITY_PLANS ] );
 };
 
 export const hasSupportedCommercialUse = ( state: object, siteId: number | null ) => {
