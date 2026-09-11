@@ -1,4 +1,4 @@
-import { getSiteRecord, saveSiteFields, SITE_RECORD_UNAVAILABLE } from './site-record';
+import { getSiteRecord, saveSiteFields } from './site-record';
 
 /**
  * The site's `title` setting. Kept apart from `site-metadata` because it is a
@@ -26,12 +26,5 @@ export function getSiteTitle(): string | undefined {
  * stay pending.
  */
 export async function setSiteTitle( title: string ): Promise< void > {
-	// Checked against the record, not just the dispatch: a title written before
-	// the record loads is a title the checkpoint could not snapshot, leaving a
-	// change with no undo behind it.
-	if ( getSiteTitle() === undefined ) {
-		throw new Error( SITE_RECORD_UNAVAILABLE );
-	}
-
 	await saveSiteFields( { title } );
 }

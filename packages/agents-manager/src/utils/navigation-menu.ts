@@ -259,34 +259,26 @@ const rejectItems = (
 /**
  * Whether a menu item points at `pageId`.
  *
- * Identification only. An item carrying no id is matched by its url where
- * both are known — a custom label does not make it another link — and
- * otherwise by its label, against the titles the page had before this edit.
- * Whether a matched item may then be *relabelled* is `followsPage()`.
+ * Identification only. An item carrying no id is matched by its url — a
+ * custom label does not make it another link, and a label alone names nothing,
+ * since an unlinked submenu can share the page's name. Whether a matched item
+ * may then be *relabelled* is `followsPage()`.
  */
-const matchesPage =
-	( pageId: number | string, previousLabels: string[] = [], previousUrl?: string ) =>
-	( item: NavigationBlock ) => {
-		if ( ! isMenuItem( item ) ) {
-			return false;
-		}
+const matchesPage = ( pageId: number | string, pageUrl?: string ) => ( item: NavigationBlock ) => {
+	if ( ! isMenuItem( item ) ) {
+		return false;
+	}
 
-		const { id: itemId, type, label, url } = item.attributes ?? {};
+	const { id: itemId, type, url } = item.attributes ?? {};
 
-		// An id is only unique within a kind — a category can carry the same
-		// number as a page — so it counts on a page link alone.
-		if ( itemId ) {
-			return ( type ?? 'page' ) === 'page' && String( itemId ) === String( pageId );
-		}
+	// An id is only unique within a kind — a category can carry the same
+	// number as a page — so it counts on a page link alone.
+	if ( itemId ) {
+		return ( type ?? 'page' ) === 'page' && String( itemId ) === String( pageId );
+	}
 
-		if ( url && previousUrl ) {
-			return sameUrl( url, previousUrl );
-		}
-
-		return previousLabels.some(
-			( previous ) => !! previous && normalizeLabel( label ) === normalizeLabel( previous )
-		);
-	};
+	return !! url && !! pageUrl && sameUrl( url, pageUrl );
+};
 
 /**
  * Whether an item's label still follows the page rather than the user.
@@ -437,9 +429,9 @@ async function rewriteMenusHolding(
 export async function getMenuIdsToRelabel(
 	pageId: number | string,
 	previousLabels?: string[],
-	previousUrl?: string
+	pageUrl?: string
 ): Promise< MenuId[] > {
-	const matches = matchesPage( pageId, previousLabels, previousUrl );
+	const matches = matchesPage( pageId, pageUrl );
 	const relabels = ( item: NavigationBlock ) =>
 		matches( item ) && followsPage( item, previousLabels );
 	const ids: MenuId[] = [];
@@ -455,14 +447,18 @@ export async function getMenuIdsToRelabel(
 	return ids;
 }
 
-/** Relabels a page's menu item. */
+/**
+ * Relabels a page's menu item. `previousLabels` are the titles the page had,
+ * on screen and saved: an item whose label still follows one of them is
+ * relabelled, one the user renamed by hand is left alone.
+ */
 export async function renameNavigationItem(
 	pageId: number | string,
 	label: string,
 	previousLabels?: string[],
-	previousUrl?: string
+	pageUrl?: string
 ): Promise< void > {
-	const matches = matchesPage( pageId, previousLabels, previousUrl );
+	const matches = matchesPage( pageId, pageUrl );
 
 	await rewriteMenusHolding( ( items ) => {
 		let matched = false;
@@ -489,16 +485,14 @@ export async function renameNavigationItem(
  * Removes a deleted page's menu item, wherever it sits. Submenus included: an
  * item left behind there points at a page that no longer exists.
  *
- * `previousLabels` and `previousUrl` are the page's titles and permalink
- * before the delete, which is how an item carrying no page id is matched — the
- * same fallback `renameNavigationItem()` relies on.
+ * `pageUrl` is the page's permalink before the delete, which is how an item
+ * carrying no page id is matched.
  */
 export async function removeNavigationItem(
 	pageId: number | string,
-	previousLabels?: string[],
-	previousUrl?: string
+	pageUrl?: string
 ): Promise< void > {
-	const matches = matchesPage( pageId, previousLabels, previousUrl );
+	const matches = matchesPage( pageId, pageUrl );
 
 	await rewriteMenusHolding( ( items ) => {
 		let removed = false;
