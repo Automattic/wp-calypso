@@ -204,11 +204,6 @@ export const useWPCOMDomainSearchCart = ( {
 					},
 				} );
 
-				// Moving a domain the user already owns needs a destination site. A
-				// siteless (signup) cart has none, so the backend drops the product
-				// without reporting an error and the click appears to do nothing.
-				// Hand the product straight to the flow instead; it adds it to the
-				// new site's cart once that site exists.
 				if ( isDomainMoveInternal( product ) && typeof cartKey !== 'number' ) {
 					return onContinue( [ { ...product, meta: product.meta ?? domain_name } ] );
 				}
