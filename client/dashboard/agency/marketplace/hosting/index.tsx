@@ -1,4 +1,8 @@
-import { activeAgencyQuery, agencyProductsQuery } from '@automattic/api-queries';
+import {
+	activeAgencyQuery,
+	agencyDevLicensesQuery,
+	agencyProductsQuery,
+} from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -10,19 +14,23 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { isAgencyApproved } from '../is-agency-approved';
+import { getWpcomPlan } from '../lib/wpcom-hosting';
 import { getMarketplaceHostingSectionRoute } from '../paths';
 import CartMenu from '../products/cart-menu';
 import { useShoppingCart } from '../products/use-shopping-cart';
 import ReferralToggle from '../referral-toggle';
 import TermPricingToggle from '../term-pricing-toggle';
 import { useMarketplaceType } from '../use-marketplace-type';
+import { useOwnedWpcomSites } from '../use-owned-wpcom-sites';
 import { useTermPricing } from '../use-term-pricing';
+import WpcomSection from './wpcom-section';
 import type { HostingSection } from '../paths';
+import type { AgencyProduct } from '@automattic/api-core';
 
 import './style.scss';
 
@@ -53,9 +61,8 @@ const getHostingBrands = (): { key: HostingSection; tier: string; subtitle: stri
 	},
 ];
 
-// Placeholder content until the per-host sections land.
-const PLACEHOLDERS: Record< HostingSection, string > = {
-	wpcom: 'WordPress.com hosting content will appear here.',
+// Placeholder content until the Pressable and VIP sections land.
+const PLACEHOLDERS: Record< Exclude< HostingSection, 'wpcom' >, string > = {
 	pressable: 'Pressable hosting content will appear here.',
 	vip: 'WordPress VIP hosting content will appear here.',
 };
@@ -76,9 +83,33 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 	const agencyApproved = isAgencyApproved( agency );
 
 	const { data: allProducts } = useQuery( agencyProductsQuery( agencyId ) );
+	const { data: devLicenses } = useQuery( {
+		...agencyDevLicensesQuery( agencyId ),
+		enabled: agencyId > 0,
+	} );
+	const { ownedSites: ownedWpcomSites, isReady: isOwnedSitesReady } = useOwnedWpcomSites();
 
-	const { items: cartItems, removeItem, clearCart } = useShoppingCart();
+	const wpcomPlan = useMemo( () => getWpcomPlan( allProducts ?? [] ), [ allProducts ] );
+
+	const { items: cartItems, swapItems, removeItem, clearCart } = useShoppingCart();
 	const [ isCartOpen, setIsCartOpen ] = useState( false );
+
+	// A hosting plan replaces the plan of the same family already in the cart.
+	const addToCart = ( plan: AgencyProduct, quantity: number ) => {
+		const sameFamilySlugs = cartItems
+			.map( ( item ) => allProducts?.find( ( product ) => product.slug === item.slug ) )
+			.filter( ( product ): product is AgencyProduct => !! product )
+			.filter( ( product ) => product.family_slug === plan.family_slug )
+			.map( ( product ) => product.slug );
+		swapItems( sameFamilySlugs, { slug: plan.slug, quantity } );
+		setIsCartOpen( true );
+		recordTracksEvent( 'calypso_a4a_marketplace_hosting_add_to_cart', {
+			quantity,
+			item: plan.family_slug,
+			purchase_mode: marketplaceType,
+			term_pricing: termPricing,
+		} );
+	};
 
 	const handleSectionChange = ( tab: string | null | undefined ) => {
 		if ( ! tab || tab === section ) {
@@ -88,9 +119,26 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 		navigate( { to: getMarketplaceHostingSectionRoute( tab as HostingSection ) } );
 	};
 
-	const renderSection = ( brand: HostingSection ) => (
-		<Text variant="muted">{ PLACEHOLDERS[ brand ] }</Text>
-	);
+	const renderSection = ( brand: HostingSection ) => {
+		if ( brand !== 'wpcom' ) {
+			return <Text variant="muted">{ PLACEHOLDERS[ brand ] }</Text>;
+		}
+		if ( ! wpcomPlan ) {
+			return null;
+		}
+		return (
+			<WpcomSection
+				plan={ wpcomPlan }
+				term={ termPricing }
+				isReferralMode={ isReferralMode }
+				ownedSites={ ownedWpcomSites }
+				isOwnedSitesReady={ isOwnedSitesReady }
+				isAgencyApproved={ agencyApproved }
+				availableDevSites={ devLicenses?.available }
+				onAddToCart={ addToCart }
+			/>
+		);
+	};
 
 	return (
 		<PageLayout

@@ -13,8 +13,10 @@ import { cart } from '@wordpress/icons';
 import { useAnalytics } from '../../../app/analytics';
 import { a4aLink } from '../../../utils/link';
 import { getProductCommissionPercentage } from '../../earn/referrals/lib/commissions';
+import { WPCOM_CREATOR_PLAN_SLUG, WPCOM_HOSTING_FAMILY_SLUG } from '../lib/wpcom-hosting';
 import { CLASSIC_MARKETPLACE_CHECKOUT_PATH, MARKETPLACE_PRODUCTS_ROUTE } from '../paths';
-import { getProductPriceInfo, getTermSuffix } from './lib/product-pricing';
+import { useOwnedWpcomSites } from '../use-owned-wpcom-sites';
+import { getProductPriceInfo, getTermSuffix, getWpcomTieredPrice } from './lib/product-pricing';
 import { getProductShortTitle } from './lib/product-title';
 import type { TermPricing } from '../use-term-pricing';
 import type { ShoppingCartItem } from './use-shopping-cart';
@@ -34,7 +36,7 @@ interface Props {
 }
 
 const getCartProductName = ( product: AgencyProduct ) =>
-	product.slug === 'wpcom-hosting-business'
+	product.slug === WPCOM_CREATOR_PLAN_SLUG
 		? __( 'WordPress.com Site' )
 		: getProductShortTitle( product );
 
@@ -50,25 +52,33 @@ export default function CartMenu( {
 	onCheckout,
 }: Props ) {
 	const { recordTracksEvent } = useAnalytics();
+	// Owned WordPress.com sites raise the volume tier, so the total matches the
+	// Hosting page wherever the cart is shown.
+	const { ownedSites: ownedWpcomSites } = useOwnedWpcomSites();
+
+	const getLineTotal = ( product: AgencyProduct, quantity: number ) => {
+		if ( product.family_slug === WPCOM_HOSTING_FAMILY_SLUG ) {
+			return getWpcomTieredPrice( product, quantity, term, ownedWpcomSites ).discountedCost;
+		}
+		return getProductPriceInfo( product, term ).price * quantity;
+	};
 
 	const lines = items
 		.map( ( item ) => {
 			const product = products.find( ( candidate ) => candidate.slug === item.slug );
-			return product ? { item, product, priceInfo: getProductPriceInfo( product, term ) } : null;
+			if ( ! product ) {
+				return null;
+			}
+			const { billingTerm, isFree } = getProductPriceInfo( product, term );
+			return { item, product, billingTerm, isFree, total: getLineTotal( product, item.quantity ) };
 		} )
 		.filter( ( line ): line is NonNullable< typeof line > => line !== null );
 
 	const currency = lines[ 0 ]?.product.currency ?? 'USD';
-	const total = lines.reduce(
-		( sum, { item, priceInfo } ) => sum + priceInfo.price * item.quantity,
-		0
-	);
+	const total = lines.reduce( ( sum, line ) => sum + line.total, 0 );
 	const commission = lines.reduce(
-		( sum, { item, product, priceInfo } ) =>
-			sum +
-			priceInfo.price *
-				item.quantity *
-				getProductCommissionPercentage( product.slug, product.family_slug ),
+		( sum, { product, total: lineTotal } ) =>
+			sum + lineTotal * getProductCommissionPercentage( product.slug, product.family_slug ),
 		0
 	);
 
@@ -139,7 +149,7 @@ export default function CartMenu( {
 						{ __( 'Your cart' ) }
 					</Heading>
 					{ lines.length === 0 && <Text variant="muted">{ __( 'Your cart is empty.' ) }</Text> }
-					{ lines.map( ( { item, product, priceInfo } ) => (
+					{ lines.map( ( { item, product, billingTerm, isFree, total: lineTotal } ) => (
 						<HStack key={ item.slug } justify="space-between" spacing={ 4 } alignment="flex-start">
 							<VStack spacing={ 0 }>
 								<Text>
@@ -155,15 +165,14 @@ export default function CartMenu( {
 								{ /* The spans keep Google Translate from crashing on sibling text nodes. */ }
 								<Text variant="muted" size={ 12 }>
 									<span>
-										{ priceInfo.isFree
+										{ isFree
 											? __( 'Free' )
-											: formatCurrency( priceInfo.price * item.quantity, currency ) +
-											  getTermSuffix( term ) }
+											: formatCurrency( lineTotal, currency ) + getTermSuffix( term ) }
 									</span>
-									{ ! priceInfo.isFree && priceInfo.billingTerm !== term && (
+									{ ! isFree && billingTerm !== term && (
 										<span>
 											{ ' ' +
-												( priceInfo.billingTerm === 'yearly'
+												( billingTerm === 'yearly'
 													? __( '(billed yearly)' )
 													: __( '(billed monthly)' ) ) }
 										</span>
