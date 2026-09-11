@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { init as initAPI } from '../../../panel/rest-client/wpcom';
@@ -153,10 +153,22 @@ describe( 'NotePanel view picker', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Add or remove views' } ) );
 
-		expect( screen.getByRole( 'checkbox', { name: 'All' } ) ).toBeDisabled();
-		expect( screen.getByRole( 'checkbox', { name: 'Unread' } ) ).toBeDisabled();
-		expect( screen.getByRole( 'checkbox', { name: 'Likes' } ) ).toBeChecked();
-		expect( screen.getByRole( 'checkbox', { name: 'Store' } ) ).not.toBeChecked();
+		const rows = within( screen.getByRole( 'list' ) );
+
+		// Pinned views have nothing to press, so they are not buttons at all.
+		expect( rows.queryByRole( 'button', { name: 'All' } ) ).not.toBeInTheDocument();
+		expect( rows.queryByRole( 'button', { name: 'Unread' } ) ).not.toBeInTheDocument();
+		expect( rows.getByText( 'All' ) ).toBeVisible();
+		expect( rows.getByText( 'Unread' ) ).toBeVisible();
+
+		expect( rows.getByRole( 'button', { name: 'Likes' } ) ).toHaveAttribute(
+			'aria-pressed',
+			'true'
+		);
+		expect( rows.getByRole( 'button', { name: 'Store' } ) ).toHaveAttribute(
+			'aria-pressed',
+			'false'
+		);
 	} );
 
 	it( 'adds a view to the tab strip and saves the whole list', async () => {
@@ -165,7 +177,7 @@ describe( 'NotePanel view picker', () => {
 		expect( screen.queryByRole( 'tab', { name: 'Store' } ) ).not.toBeInTheDocument();
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Add or remove views' } ) );
-		await userEvent.click( screen.getByRole( 'checkbox', { name: 'Store' } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Store' } ) );
 
 		expect( await screen.findByRole( 'tab', { name: 'Store' } ) ).toBeVisible();
 
@@ -187,7 +199,7 @@ describe( 'NotePanel view picker', () => {
 		store.dispatch( actions.ui.setViews( [ { name: 'likes', hidden: false } ] ) );
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Add or remove views' } ) );
-		await userEvent.click( screen.getByRole( 'checkbox', { name: 'Likes' } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Likes' } ) );
 
 		await waitFor( () => {
 			expect( screen.queryByRole( 'tab', { name: 'Likes' } ) ).not.toBeInTheDocument();
