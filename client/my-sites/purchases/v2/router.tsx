@@ -17,22 +17,12 @@ import type { RootRouterContext } from 'calypso/dashboard/app/router/root';
 import type { ErrorInfo } from 'react';
 
 /**
- * The Dashboard's billing components reference their route objects directly
- * (`purchaseSettingsRoute.useParams()`, `<Link to={ cancelPurchaseRoute.fullPath } />`
- * and so on), so this backport reuses those very objects rather than rebuilding
- * equivalents from their options the way `calypso/sites/v2` does. A route's
- * `id`/`fullPath` are derived at router init from whatever tree it is placed in,
- * which means re-homing the three section routes below is enough to move the
- * whole subtree from `/me/billing/*` to the site-level `/purchases/*` URLs —
- * every descendant link, redirect and `useParams()` call follows along without
- * the components knowing anything changed.
- *
- * The trade-off is that we mutate route singletons owned by another module.
- * That is safe here only because the Dashboard's own `me` route tree is never
- * built in the Calypso bundle (it is built on the `my.wordpress.com` Dashboard
- * environment instead), so nothing else observes these objects. If that ever
- * stops being true, this has to become an options-copy plus a route indirection
- * inside `client/dashboard/me/billing-purchases`.
+ * Mutates route singletons owned by `calypso/dashboard/app/router/me`. That is
+ * safe only because the Dashboard's own `me` route tree is never built in the
+ * Calypso bundle (it is built on the `my.wordpress.com` Dashboard environment
+ * instead), so nothing else observes these objects. If that ever stops being
+ * true, this has to become an options-copy plus a route indirection inside
+ * `client/dashboard/me/billing-purchases`.
  */
 function rehome< TRoute extends AnyRoute >(
 	route: TRoute,

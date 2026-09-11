@@ -7,12 +7,8 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import DashboardBackportSitePurchases from './index';
 import type { PurchasesSection } from './site-filter';
 
-/**
- * Site-level purchase management, rendered with the Dashboard's own billing
- * screens inside the classic site chrome. The Dashboard screens bring their own
- * page header and breadcrumbs, so the only classic chrome left here is the
- * section tab bar that moves between the three top-level pages.
- */
+// The Dashboard screens bring their own page header and breadcrumbs, so the only
+// classic chrome left here is the section tab bar.
 export default function SitePurchasesBackport( {
 	path,
 	section,

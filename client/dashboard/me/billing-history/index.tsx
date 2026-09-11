@@ -29,10 +29,6 @@ import type { Receipt } from '@automattic/api-core';
 const emptyReceipts: Receipt[] = [];
 
 export default function BillingHistory() {
-	// A host that does not provide the account-level billing section — the
-	// site-level Calypso pages, which embed these screens under their own
-	// section tabs — has its own navigation between these screens, so the
-	// cross-link below would only duplicate it.
 	const { supports } = useAppContext();
 	const { data: receipts = emptyReceipts, isLoading: isLoadingReceipts } = useQuery(
 		userReceiptsQuery()
