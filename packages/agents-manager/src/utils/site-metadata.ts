@@ -94,14 +94,13 @@ function syncProviderMetadata( metadata: SiteMetadata ): void {
 		return;
 	}
 
-	const current =
-		providerSelectors< { getSiteMetadata?: () => SiteMetadata } >()?.getSiteMetadata?.() ?? {};
-
-	const dropped = Object.keys( current ).filter(
-		( key ) => key !== RUNTIME_KEY && ! ( key in metadata )
-	);
-
 	try {
+		const current =
+			providerSelectors< { getSiteMetadata?: () => SiteMetadata } >()?.getSiteMetadata?.() ?? {};
+		const dropped = Object.keys( current ).filter(
+			( key ) => key !== RUNTIME_KEY && ! ( key in metadata )
+		);
+
 		provider.setSiteMetadata( {
 			...Object.fromEntries( dropped.map( ( key ) => [ key, undefined ] ) ),
 			...metadata,
