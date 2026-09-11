@@ -23,7 +23,7 @@ describe( 'SignupExistingAccountNotice', () => {
 		expect( container ).toHaveTextContent( 'account with that email address' );
 	} );
 
-	test( 'names the address from the navigation that set the marker', () => {
+	test( 'ignores an address left over in the initial query', () => {
 		const { container } = renderWithProvider( <SignupExistingAccountNotice />, {
 			reducers: { route: routeReducer },
 			initialState: {

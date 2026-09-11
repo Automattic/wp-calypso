@@ -358,8 +358,7 @@ export class Login extends Component {
 		// TODO: remove isGravPoweredClient when login pages are unified.
 		const isSocialFirst = ! isGravPoweredClient;
 
-		// Each returns null when it has nothing to say. The Grav-powered layout has no
-		// OneLoginLayout to hand these to, so it renders them inside Main instead.
+		// Each returns null when it has nothing to say.
 		const notices = (
 			<>
 				<PasswordResetSuccessNotice />
@@ -375,8 +374,6 @@ export class Login extends Component {
 					'is-jetpack': isJetpack,
 				} ) }
 			>
-				{ isGravPoweredClient && notices }
-
 				{ isGravPoweredClient && this.renderI18nSuggestions() }
 
 				<DocumentHead

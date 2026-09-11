@@ -7,7 +7,6 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 
 import './signup-existing-account-notice.scss';
 
@@ -21,21 +20,20 @@ import './signup-existing-account-notice.scss';
 export default function SignupExistingAccountNotice() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const initialQuery = useSelector( getInitialQueryArguments );
 	const currentQuery = useSelector( getCurrentQueryArguments );
 	const currentRoute = useSelector( getCurrentRoute );
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const locale = useSelector( getCurrentLocaleSlug );
 
-	// Signup sets the marker and the address together, so read both from the same
-	// snapshot: the initial query outlives the navigation that carried them.
-	const sourceQuery = currentQuery?.is_signup_existing_account ? currentQuery : initialQuery;
-
-	if ( ! sourceQuery?.is_signup_existing_account ) {
+	// Only the current query: signup puts the marker and the address there together,
+	// and navigating on within login drops both, which is when this stops applying.
+	// It also keeps `currentQuery` non-empty, so the signup URL below resolves the
+	// same way the login block's own resolver would.
+	if ( ! currentQuery?.is_signup_existing_account ) {
 		return null;
 	}
 
-	const address = sourceQuery.email_address;
+	const address = currentQuery.email_address;
 	const email = typeof address === 'string' ? address : undefined;
 
 	const override = currentQuery?.signup_url;
