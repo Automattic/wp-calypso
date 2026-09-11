@@ -162,6 +162,26 @@ describe( 'clientId', () => {
 		expect( labelsOf( result ) ).toEqual( [ 'Our services' ] );
 	} );
 
+	// The page it pointed at must not follow a re-linked item into renames and
+	// deletions.
+	it( 'drops the page relationship from an item re-linked elsewhere', async () => {
+		withMenu( [
+			item( 'about', 'About', { id: 7, type: 'page', kind: 'post-type', url: '/about/' } ),
+		] );
+
+		const result = await buildNavigationItems( 10, {
+			navigationItems: [ { clientId: 'about', url: 'https://elsewhere.com/' } ],
+		} );
+
+		expect(
+			( result.blocks as { attributes: Record< string, unknown > }[] )[ 0 ].attributes
+		).toEqual( {
+			label: 'About',
+			url: 'https://elsewhere.com/',
+			kind: 'custom',
+		} );
+	} );
+
 	it( 'accepts the editor clientId itself', async () => {
 		const result = await buildNavigationItems( 10, { navigationItems: [ { clientId: 'svc' } ] } );
 
