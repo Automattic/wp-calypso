@@ -211,4 +211,29 @@ describe( 'create-site', () => {
 
 		expect( createSite ).toHaveBeenCalledTimes( 1 );
 	} );
+
+	// The in-flight map outlives the run that filled it. A failed request has to leave the map, or
+	// every later run for the same name — Back from the error step, or another mount of the
+	// processing step — joins the old rejection instead of asking again.
+	it( 'asks /sites/new again after a failed creation instead of joining the stale rejection', async () => {
+		( createSite as jest.Mock ).mockRejectedValueOnce( new Error( 'boom' ) );
+
+		const StepComponent = CreateSite as unknown as React.ComponentType< Record< string, unknown > >;
+		render( <StepComponent navigation={ { submit: jest.fn() } } flow="onboarding" /> );
+		await waitFor( () => expect( pendingAction ).toBeDefined() );
+
+		await expect( pendingAction!() ).rejects.toThrow( 'boom' );
+
+		await expect( pendingAction!() ).resolves.toMatchObject( {
+			siteId: 111,
+			siteSlug: 'brand-new.wordpress.com',
+		} );
+		expect( createSite ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'rejects with "Failed to create site" when /sites/new returns nothing', async () => {
+		( createSite as jest.Mock ).mockResolvedValueOnce( undefined );
+
+		await expect( runStep() ).rejects.toThrow( 'Failed to create site' );
+	} );
 } );
