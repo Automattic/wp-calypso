@@ -25,6 +25,7 @@ jest.mock( '../../../utils/navigation-menu', () => ( {
 jest.mock( '../../../utils/page-title', () => ( {
 	getPageTitle: jest.fn( async () => 'About' ),
 	getPageUrl: jest.fn( async () => '/about/' ),
+	getSavedPageTitle: jest.fn( async () => 'About' ),
 	setPageTitle: jest.fn(),
 } ) );
 jest.mock( '../../../utils/session-log', () => ( {
@@ -69,7 +70,7 @@ import {
 	removeNavigationItem,
 	renameNavigationItem,
 } from '../../../utils/navigation-menu';
-import { setPageTitle } from '../../../utils/page-title';
+import { getPageTitle, setPageTitle } from '../../../utils/page-title';
 import { logSiteMetadata, logSiteSession } from '../../../utils/session-log';
 import { setSiteMetadata } from '../../../utils/site-metadata';
 import { getSiteRecord } from '../../../utils/site-record';
@@ -266,7 +267,7 @@ describe( 'editEntityRecordCallback', () => {
 		// The title is checkpointed, so it goes through `setPageTitle` and stays
 		// out of the editor's undo stack.
 		expect( setPageTitle ).toHaveBeenCalledWith( 7, 'About us' );
-		expect( renameNavigationItem ).toHaveBeenCalledWith( 7, 'About us', 'About', '/about/' );
+		expect( renameNavigationItem ).toHaveBeenCalledWith( 7, 'About us', [ 'About' ], '/about/' );
 	} );
 
 	// The item may carry a label the user chose, which only the menu records.
@@ -279,7 +280,7 @@ describe( 'editEntityRecordCallback', () => {
 
 		// Asked for the menus holding the page, and before the relabel: what the
 		// recorder then stores is covered in the checkpoint suite.
-		expect( getMenuIdsToRelabel ).toHaveBeenCalledWith( 7, 'About', '/about/' );
+		expect( getMenuIdsToRelabel ).toHaveBeenCalledWith( 7, [ 'About' ], '/about/' );
 		expect( ( getMenuIdsToRelabel as jest.Mock ).mock.invocationCallOrder[ 0 ] ).toBeLessThan(
 			( renameNavigationItem as jest.Mock ).mock.invocationCallOrder[ 0 ]
 		);
@@ -309,12 +310,26 @@ describe( 'editEntityRecordCallback', () => {
 		expect( renameNavigationItem ).not.toHaveBeenCalled();
 	} );
 
+	// A menu label follows the saved title until the page's own edit is saved,
+	// so both titles travel with the removal.
+	it( 'matches a menu item by the saved title when the one on screen is an unsaved edit', async () => {
+		( getPageTitle as jest.Mock ).mockResolvedValueOnce( 'About (draft)' );
+
+		await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
+
+		expect( removeNavigationItem ).toHaveBeenCalledWith(
+			7,
+			[ 'About (draft)', 'About' ],
+			'/about/'
+		);
+	} );
+
 	// The title travels with the removal: an item carrying no page id is matched
 	// by the label the page had before it was deleted.
 	it( 'deletes a page and removes its menu item', async () => {
 		await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
 
-		expect( removeNavigationItem ).toHaveBeenCalledWith( 7, 'About', '/about/' );
+		expect( removeNavigationItem ).toHaveBeenCalledWith( 7, [ 'About' ], '/about/' );
 		// The options go in the fifth argument: the fourth is the request's query
 		// args, where `throwOnError` would be ignored.
 		expect( deleteEntityRecord ).toHaveBeenCalledWith( 'postType', 'page', 7, undefined, {
@@ -567,6 +582,18 @@ describe( 'editEntityRecordCallback', () => {
 		{
 			case: 'a title that is not text',
 			input: { editEntities: [ { ...page( 7 ), record: { title: {} } } ] },
+		},
+		{
+			case: 'content that is not text',
+			input: { editEntities: [ { ...page( 7 ), record: { content: 123 } } ] },
+		},
+		{
+			case: 'a personality that is not text',
+			input: {
+				editEntities: [
+					{ ...site, recordId: 'big_sky_site_metadata', record: { personality: {} } },
+				],
+			},
 		},
 	] )( 'refuses $case', async ( { input } ) => {
 		const result = await editEntityRecordCallback( input as never );
