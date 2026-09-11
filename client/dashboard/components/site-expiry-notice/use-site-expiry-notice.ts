@@ -69,7 +69,14 @@ export function useSiteExpiryNotice(
 	{ isDashboardScreen, currentUserId, isAtomic, locale }: SiteExpiryNoticeOptions
 ): SiteExpiryNoticeState | null {
 	// Hosts may render before a site is selected; `0` must never hit the API.
-	const { data: purchases } = useQuery( { ...sitePurchasesQuery( siteId ), enabled: siteId > 0 } );
+	// Fresh for a while: the loader settled this before paint, and every site
+	// page mounts the arbiter, so the client's stale-at-once default would
+	// refetch purchases on each navigation. Invalidations still get through.
+	const { data: purchases } = useQuery( {
+		...sitePurchasesQuery( siteId ),
+		enabled: siteId > 0,
+		staleTime: 5 * 60 * 1000,
+	} );
 	const purchase = purchases ? pickSitewideExpiryPurchase( purchases ) : null;
 	const isPostGrace = !! purchase && getSitewideExpiryStage( purchase ) === 'post-grace';
 
