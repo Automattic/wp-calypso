@@ -157,20 +157,29 @@ describe( 'renameNavigationItem', () => {
 		expect( lastWrite().menuId ).toBe( 20 );
 	} );
 
-	// An idless item is matched by label, but only the one it had before this
-	// edit — a label the user changed by hand is theirs to keep.
-	it( 'matches an idless item by its previous label', async () => {
-		withMenus( { 10: [ link( undefined, 'About' ) ] } );
+	// An idless item is matched by its url, and relabelled only while its label
+	// still follows the page — one the user changed by hand is theirs to keep.
+	it( 'relabels an idless item found by its url', async () => {
+		withMenus( { 10: [ link( undefined, 'About', [], { url: '/about/' } ) ] } );
 
-		await renameNavigationItem( 7, 'About us', [ 'About' ] );
+		await renameNavigationItem( 7, 'About us', [ 'About' ], 'http://localhost/about/' );
 
 		expect( lastWrite().items[ 0 ].attributes.label ).toBe( 'About us' );
 	} );
 
-	it( 'leaves an idless item alone when its label no longer matches', async () => {
-		withMenus( { 10: [ link( undefined, 'Our story' ) ] } );
+	it( 'leaves an idless item alone when its label no longer follows the page', async () => {
+		withMenus( { 10: [ link( undefined, 'Our story', [], { url: '/about/' } ) ] } );
 
-		await renameNavigationItem( 7, 'About us', [ 'About' ] );
+		await renameNavigationItem( 7, 'About us', [ 'About' ], 'http://localhost/about/' );
+
+		expect( editEntityRecord ).not.toHaveBeenCalled();
+	} );
+
+	// An unlinked submenu can share the page's name; a label alone names nothing.
+	it( 'leaves an unlinked item that shares the label alone', async () => {
+		withMenus( { 10: [ link( undefined, 'About' ) ] } );
+
+		await renameNavigationItem( 7, 'About us', [ 'About' ], 'http://localhost/about/' );
 
 		expect( editEntityRecord ).not.toHaveBeenCalled();
 	} );
@@ -295,7 +304,7 @@ describe( 'menu selection', () => {
 			],
 		} );
 
-		await removeNavigationItem( 7, [ 'About' ], 'http://localhost/about/' );
+		await removeNavigationItem( 7, 'http://localhost/about/' );
 
 		expect(
 			lastWrite().items.map( ( item: { attributes: { url?: string } } ) => item.attributes.url )
@@ -306,7 +315,7 @@ describe( 'menu selection', () => {
 	it( 'removes an idless link by its url even under a custom label', async () => {
 		withMenus( { 10: [ link( undefined, 'Get in touch', [], { url: '/about/' } ) ] } );
 
-		await removeNavigationItem( 7, [ 'About' ], 'http://localhost/about/' );
+		await removeNavigationItem( 7, 'http://localhost/about/' );
 
 		expect( lastWrite().items ).toEqual( [] );
 	} );
@@ -315,7 +324,7 @@ describe( 'menu selection', () => {
 	it( 'tells plain-permalink links apart by their query', async () => {
 		withMenus( { 10: [ link( undefined, 'About', [], { url: '/?page_id=8' } ) ] } );
 
-		await removeNavigationItem( 7, [ 'About' ], 'http://localhost/?page_id=7' );
+		await removeNavigationItem( 7, 'http://localhost/?page_id=7' );
 
 		expect( editEntityRecord ).not.toHaveBeenCalled();
 	} );
@@ -329,7 +338,7 @@ describe( 'menu selection', () => {
 			],
 		} );
 
-		await removeNavigationItem( 7, [ 'About' ] );
+		await removeNavigationItem( 7 );
 
 		expect( lastWrite().items.map( ( item: { name: string } ) => item.name ) ).toEqual( [
 			'core/search',
