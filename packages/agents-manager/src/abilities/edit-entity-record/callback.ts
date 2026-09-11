@@ -304,6 +304,8 @@ function checkBatch( input: unknown ): Batch | Error {
  * `Record< string, unknown >` needs.
  */
 type AppliedChanges = {
+	/** Menus the user had unsaved edits in, where the agent's item waits with them. */
+	unsavedMenus: MenuId[];
 	created: { entityName?: string; recordId?: number | string; title?: string }[];
 	updated: { entityName?: string; recordId?: number | string; fields: string[] }[];
 	deleted: { entityName?: string; recordId?: number | string }[];
@@ -436,12 +438,14 @@ async function applyCreates(
 		applied.created.push( { entityName, recordId: created.id, title } );
 
 		if ( entityName === PAGE ) {
-			await addNavigationItem( {
-				label: title,
-				id: created.id,
-				url: created.link,
-				parent: created.parent,
-			} );
+			applied.unsavedMenus.push(
+				...( await addNavigationItem( {
+					label: title,
+					id: created.id,
+					url: created.link,
+					parent: created.parent,
+				} ) )
+			);
 		}
 	}
 }
@@ -714,7 +718,7 @@ async function applyDeletes(
 		// After the delete, never before: the menu write persists, so removing
 		// the item first would strip it for good if the delete then failed.
 		if ( entityName === PAGE ) {
-			await removeNavigationItem( recordId, previousUrl );
+			applied.unsavedMenus.push( ...( await removeNavigationItem( recordId, previousUrl ) ) );
 		}
 	}
 }
@@ -760,7 +764,7 @@ export async function editEntityRecordCallback(
 	// Held outside the write: creating a page and then failing a menu edit has
 	// already created the page, and reporting a bare failure would have the
 	// agent create it again.
-	const applied: AppliedChanges = { created: [], updated: [], deleted: [] };
+	const applied: AppliedChanges = { unsavedMenus: [], created: [], updated: [], deleted: [] };
 
 	// The write returns its failure rather than throwing it, so a batch that
 	// partly applied keeps the checkpoint — the earlier writes are still in
@@ -807,5 +811,14 @@ export async function editEntityRecordCallback(
 		return errorResult( `Failed to change the site. Error: ${ failure.message }`, failureMessage );
 	}
 
-	return successResult( summary, applied );
+	// Said here, not left to the model: the item is on screen but not on the
+	// site until the user saves, and the details alone may not be relayed.
+	const message = applied.unsavedMenus.length
+		? `${ summary } ${ __(
+				'Your menu has unsaved changes, so the menu item is waiting with them — save when you are ready.',
+				__i18n_text_domain__
+		  ) }`
+		: summary;
+
+	return successResult( message, applied );
 }
