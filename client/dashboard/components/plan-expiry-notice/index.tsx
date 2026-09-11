@@ -10,14 +10,22 @@ import type { PlanExpiryNoticeAction } from './get-plan-expiry-notice';
 import type { Purchase } from '@automattic/api-core';
 
 export {
+	getExpiryStateName,
 	getPlanExpiryNotice,
 	getPlanExpiryUrgency,
+	getSitewideExpiryStage,
 	hasPlanExpiryNotice,
 	isEligibleForPlanExpiryNotice,
+	pickSitewideExpiryPurchase,
+	NOTICE_CUTOFF_DAYS_PAST_EXPIRY,
 } from './get-plan-expiry-notice';
 export type {
+	PlanExpiryNoticeAction,
 	PlanExpiryNoticeContent,
 	PlanExpiryNoticeOptions,
+	PlanExpiryNoticeScope,
+	PlanExpiryNoticeStage,
+	PlanExpiryStateName,
 	PlanExpiryUrgency,
 } from './get-plan-expiry-notice';
 
@@ -112,12 +120,20 @@ function PlanExpiryNoticeButton( {
 	return (
 		<Button
 			variant={ variant }
-			href={ action.type === 'add-payment-method' ? addPaymentMethodUrl : action.href }
+			href={ action.type === 'add-payment-method' ? addPaymentMethodUrl : getActionHref( action ) }
 			onClick={ onClick }
 		>
 			{ action.label }
 		</Button>
 	);
+}
+
+/**
+ * An action's href, when it has one. `contact-support` has no destination of
+ * its own; the click is handled elsewhere.
+ */
+function getActionHref( action: PlanExpiryNoticeAction ): string | undefined {
+	return 'href' in action ? action.href : undefined;
 }
 
 /**
