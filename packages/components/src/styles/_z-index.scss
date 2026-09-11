@@ -4,6 +4,10 @@
 
 $select-dropdown-z-index: 170;
 $popover-z-index: 1000;
-$screen-reader-text-focus-z-index: 100000; // Above the WP toolbar.
+
+// Above the WP toolbar. apps/notifications still reads this one from the
+// registry, so the two have to stay in step.
+$screen-reader-text-focus-z-index: 100000;
+
 $dialog-backdrop-z-index: 100200;
 $popover-over-dialog-z-index: $dialog-backdrop-z-index + 100;
