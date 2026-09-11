@@ -1,6 +1,10 @@
 const parse = ( url: unknown ): URL | null => {
+	if ( typeof url !== 'string' || ! url.trim() ) {
+		return null;
+	}
+
 	try {
-		return new URL( String( url ), window.location.origin );
+		return new URL( url, window.location.origin );
 	} catch {
 		return null;
 	}
