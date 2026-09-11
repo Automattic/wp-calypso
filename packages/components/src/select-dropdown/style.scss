@@ -1,6 +1,5 @@
-@import "calypso/assets/stylesheets/shared/functions/z-index";
-
 @import "@automattic/typography/styles/variables";
+@import "../styles/z-index";
 
 /**
  * Select Dropdown
@@ -30,12 +29,12 @@ $compact-header-height: 35;
 	max-width: 100%;
 
 	.select-dropdown.is-open & {
-		z-index: z-index("root", ".select-dropdown.is-open .select-dropdown__container");
+		z-index: $select-dropdown-z-index;
 	}
 
 	.accessible-focus &:focus,
 	.accessible-focus .select-dropdown.is-open & {
-		z-index: z-index("root", ".accessible-focus .select-dropdown.is-open .select-dropdown__container");
+		z-index: $select-dropdown-z-index;
 		.select-dropdown__header {
 			border-color: var(--color-primary);
 		}

@@ -1,10 +1,11 @@
-@import "calypso/assets/stylesheets/shared/functions/z-index";
-
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@automattic/typography/styles/fonts";
 
 $design-preview-sidebar-width: 311px;
+
+// Above the dialog backdrop in Calypso's global stacking order.
+$premium-badge-tooltip-z-index: 100300;
 
 .design-preview {
 	display: flex;
@@ -425,7 +426,7 @@ $design-preview-sidebar-width: 311px;
 }
 
 .design-picker__premium-badge-tooltip.popover {
-	z-index: z-index("root", ".design-picker__premium-badge-tooltip");
+	z-index: $premium-badge-tooltip-z-index;
 
 	&.is-top,
 	&.is-top-left,
