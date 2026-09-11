@@ -384,9 +384,6 @@ async function restorePostContentEditing( departingClientId: string | undefined 
 	blockEditor.setBlockEditingMode?.( postContentClientId, 'default' );
 }
 
-/**
- * The `editor-navigate` ability callback.
- */
 const createIO = (): EditorNavigateIO => ( {
 	saveEverything,
 	getHistory: getEditorHistory,
@@ -409,6 +406,9 @@ const createIO = (): EditorNavigateIO => ( {
 	},
 } );
 
+/**
+ * The `editor-navigate` ability callback.
+ */
 export async function editorNavigateCallback(
 	input: EditorNavigateInput
 ): Promise< AbilityResult > {

@@ -245,7 +245,6 @@ function captureSnapshots( keys: string[] ): Partial< CheckpointRecord > {
 
 const SITE_KEYS: string[] = [ checkpointKeys.SITE_TITLE, checkpointKeys.SITE_METADATA ];
 
-// The domains that snapshot the moment their key is claimed.
 const EAGER_KEYS: string[] = [ ...SITE_KEYS, checkpointKeys.LOGO, ...THEME_CHECKPOINT_KEYS ];
 
 const hasSnapshot = ( checkpoint: CheckpointRecord, key: string ): boolean =>
@@ -506,9 +505,10 @@ function redeclareDomains( id: string, keys: string[] ): void {
 /**
  * Runs an ability's write under a checkpoint keyed by its tool call, so
  * `restore-checkpoint` can undo it. The first snapshot for a call wins — a
- * repeat must not overwrite the pre-change state — and a write that throws or
- * rejects drops its checkpoint, so no undo is offered for a change that never
- * happened. Without a call id the write runs uncheckpointed.
+ * repeat must not overwrite the pre-change state. A write that fails drops the
+ * checkpoint it created; a repeat that fails is rolled back to the first run's,
+ * which still undoes the change that landed. Without a call id the write runs
+ * uncheckpointed.
  */
 export async function withCheckpoint< T >(
 	{
