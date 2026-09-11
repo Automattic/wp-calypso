@@ -28220,12 +28220,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:wp-prettier@3.0.3":
-  version: 3.0.3
-  resolution: "wp-prettier@npm:3.0.3"
+"prettier@npm:wp-prettier@3.9.6-beta.2":
+  version: 3.9.6-beta.2
+  resolution: "wp-prettier@npm:3.9.6-beta.2"
   bin:
     prettier: bin/prettier.cjs
-  checksum: a8026c481a9d7957826da0ab8bfa6d79032d159a0bb99a322a53962874913b08b9f0470803fc465da0a8287b78004079cba606fdcd89f3086edefd42de2a545c
+  checksum: 87a5ce1adb03e07e843d749ff0989b2f756a6acbbc952374d12e07d07231032554111117f9b3387d50614e9f807580280f1045e00caf0e54c19df78d494cbd17
   languageName: node
   linkType: hard
 
@@ -35309,7 +35309,7 @@ __metadata:
     postcss-cli: "npm:^9.0.1"
     postcss-custom-properties: "npm:^12.1.11"
     postcss-scss: "npm:^4.0.9"
-    prettier: "npm:wp-prettier@3.0.3"
+    prettier: "npm:wp-prettier@3.9.6-beta.2"
     react: "npm:19.2.7"
     react-dom: "npm:19.2.7"
     react-hook-form: "npm:^7.52.2"
