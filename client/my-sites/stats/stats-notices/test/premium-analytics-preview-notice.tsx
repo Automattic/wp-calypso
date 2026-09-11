@@ -81,6 +81,12 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		renderNotice();
 
 		expect( screen.getByText( 'Try the new Traffic tab' ) ).toBeVisible();
+		// Accepting leaves the page, so the invitation says so up front.
+		expect(
+			screen.getByText(
+				'We’ll take you there once it’s on. Your current Stats stay where they are.'
+			)
+		).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Switch it on' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'close' } ) ).toBeVisible();
 	} );
@@ -108,7 +114,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		] );
 	} );
 
-	it( 'enables the dashboard and offers a link into it, without navigating', async () => {
+	it( 'switches on, records it, and takes the reader to the new Traffic tab', async () => {
 		renderNotice();
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
@@ -118,16 +124,21 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 			{ blog_id: 123 }
 		);
 		expect( mockEnablePreview ).toHaveBeenCalledWith( true );
-
-		const link = await screen.findByRole( 'link', { name: 'Go to the new Traffic tab' } );
-		expect( link ).toHaveAttribute( 'href', DASHBOARD_URL );
-		expect( screen.getByText( 'The new Traffic tab is on' ) ).toBeVisible();
 		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_stats_premium_analytics_preview_notice_enabled',
 			{ blog_id: 123 }
 		);
-		// The customer chooses when to leave the page they were reading.
+
+		// Still on its way out: nothing to press again while the page unloads, and no second step
+		// to miss.
+		const button = screen.getByRole( 'button', { name: 'Switching it on…' } );
+		expect( button ).toHaveAttribute( 'aria-disabled', 'true' );
+		expect( screen.queryByRole( 'button', { name: 'close' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: /Traffic tab/ } ) ).not.toBeInTheDocument();
+
+		// The beacon gets a head start on the navigation.
 		expect( window.location.href ).toBe( '' );
+		await waitFor( () => expect( window.location.href ).toBe( DASHBOARD_URL ) );
 	} );
 
 	it( 'hides the close button while the write is in flight', async () => {
@@ -150,23 +161,15 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 	} );
 
 	/**
-	 * Recording a dismissal marks the notice hidden, which unmounts this notice - taking the link
-	 * with it before anyone can follow it. An enabled site already fails the eligibility rule, so
-	 * the invitation is gone on the next load without one.
+	 * An enabled site already fails the eligibility rule, so the invitation is gone on the next
+	 * load without one.
 	 */
 	it( 'does not record a dismissal when the invitation is accepted', async () => {
 		renderNotice();
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
+		await waitFor( () => expect( window.location.href ).toBe( DASHBOARD_URL ) );
 
-		expect(
-			await screen.findByRole( 'link', { name: 'Go to the new Traffic tab' } )
-		).toBeVisible();
-		expect( mockRecordDismissal ).not.toHaveBeenCalled();
-
-		await userEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
-
-		expect( screen.queryByText( 'The new Traffic tab is on' ) ).not.toBeInTheDocument();
 		expect( mockRecordDismissal ).not.toHaveBeenCalled();
 	} );
 
@@ -187,9 +190,7 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		mockEnablePreview.mockResolvedValue( true );
 		await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
 
-		expect(
-			await screen.findByRole( 'link', { name: 'Go to the new Traffic tab' } )
-		).toBeVisible();
+		await waitFor( () => expect( window.location.href ).toBe( DASHBOARD_URL ) );
 	} );
 
 	it( 'points self-hosted sites at Jetpack support rather than the Calypso contact form', async () => {
@@ -244,16 +245,15 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		).toBe( true );
 	} );
 
-	it( 'does not offer the link when the site reports the dashboard is still off', async () => {
+	it( 'stays put when the site reports the dashboard is still off', async () => {
 		mockEnablePreview.mockResolvedValue( false );
 
 		renderNotice();
 		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
 
 		expect( await screen.findByRole( 'alert' ) ).toBeVisible();
-		expect(
-			screen.queryByRole( 'link', { name: 'Go to the new Traffic tab' } )
-		).not.toBeInTheDocument();
+		expect( window.location.href ).toBe( '' );
+		expect( mockSetQueryData ).not.toHaveBeenCalled();
 	} );
 
 	/**
@@ -392,25 +392,46 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 	} );
 
 	/**
-	 * The confirmation lives on local state, so leaving Traffic and coming back inside the SPA
-	 * remounts this notice while the cached status still reads false - and invites a site that has
-	 * just said yes.
+	 * Back from the new Traffic tab, the browser can restore this page from its cache with the
+	 * button still busy. The site is on by then, so the cache says so and the notices host takes
+	 * the invitation down.
 	 */
-	it( 'leaves the switched-on status behind for the next mount', async () => {
-		const { unmount } = renderNotice();
+	it( 'settles when the page is restored from the back/forward cache', async () => {
+		renderNotice();
 		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
-		expect(
-			await screen.findByRole( 'link', { name: 'Go to the new Traffic tab' } )
-		).toBeVisible();
+		await waitFor( () => expect( window.location.href ).toBe( DASHBOARD_URL ) );
 
-		// Not while the confirmation is still on screen: that would pull it away mid-sentence.
+		// Not before leaving: the cache is what hides this notice, and it should not vanish
+		// under the reader while the page is still here.
 		expect( mockSetQueryData ).not.toHaveBeenCalled();
 
-		unmount();
+		// A plain load is not a restore.
+		window.dispatchEvent( new Event( 'pageshow' ) );
+		expect( mockSetQueryData ).not.toHaveBeenCalled();
+		expect( screen.getByRole( 'button', { name: 'Switching it on…' } ) ).toBeVisible();
+
+		const restored = new Event( 'pageshow' );
+		Object.defineProperty( restored, 'persisted', { value: true } );
+		window.dispatchEvent( restored );
 
 		expect( mockSetQueryData ).toHaveBeenCalledWith( [ 'stats', 'premium-analytics-status', 123 ], {
 			jetpack_premium_analytics_enabled: true,
 		} );
+		expect( await screen.findByRole( 'button', { name: 'Switch it on' } ) ).toBeEnabled();
+	} );
+
+	it( 'stops listening for a restore once the notice is gone', async () => {
+		const { unmount } = renderNotice();
+		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
+		await waitFor( () => expect( window.location.href ).toBe( DASHBOARD_URL ) );
+
+		unmount();
+
+		const restored = new Event( 'pageshow' );
+		Object.defineProperty( restored, 'persisted', { value: true } );
+		window.dispatchEvent( restored );
+
+		expect( mockSetQueryData ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not report a site as switched on when it was only dismissed', async () => {
@@ -420,20 +441,6 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		unmount();
 
 		expect( mockSetQueryData ).not.toHaveBeenCalled();
-	} );
-
-	/**
-	 * The button that had focus is removed the moment it goes busy, so without this the next Tab
-	 * starts again from the top of the page.
-	 */
-	it( 'keeps keyboard focus on the control that replaces the button', async () => {
-		renderNotice();
-
-		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
-
-		expect(
-			await screen.findByRole( 'link', { name: 'Go to the new Traffic tab' } )
-		).toHaveFocus();
 	} );
 
 	it( 'moves focus to Try again when the write fails', async () => {

@@ -16,7 +16,10 @@ import {
 	PREMIUM_ANALYTICS_ENABLED_SETTING,
 	premiumAnalyticsStatusQueryKey,
 } from 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query';
-import { trackPremiumAnalyticsPreviewEvent } from '../premium-analytics-preview/track-event';
+import {
+	NAVIGATION_DELAY,
+	trackPremiumAnalyticsPreviewEvent,
+} from '../premium-analytics-preview/track-event';
 import { StatsNoticeProps } from './types';
 
 const DAY_IN_SECONDS = 24 * 3600;
@@ -61,11 +64,12 @@ const PremiumAnalyticsPreviewNotice = ( {
 	// site switches in Calypso, so a plain boolean would carry one site's dismissal to the next.
 	const [ dismissedSiteId, setDismissedSiteId ] = useState< number | null >( null );
 	const [ failedSiteId, setFailedSiteId ] = useState< number | null >( null );
-	const [ enabledSiteId, setEnabledSiteId ] = useState< number | null >( null );
+	// Stays busy until the page unloads: the write has succeeded and the reader is on their way.
+	const [ leavingSiteId, setLeavingSiteId ] = useState< number | null >( null );
 
 	const noticeDismissed = dismissedSiteId === siteId;
 	const enableFailed = failedSiteId === siteId;
-	const isSwitchedOn = enabledSiteId === siteId;
+	const isLeaving = leavingSiteId === siteId;
 
 	// Activating the button removes it, so focus would otherwise fall back to the document and the
 	// next Tab would start again from the top of the page.
@@ -79,6 +83,7 @@ const PremiumAnalyticsPreviewNotice = ( {
 
 	const { mutateAsync: enablePreviewAsync, isPending: isEnabling } =
 		usePremiumAnalyticsStatusMutation( siteId );
+	const isBusy = isEnabling || isLeaving;
 
 	const { mutateAsync: recordDismissalAsync } = useNoticeVisibilityMutation(
 		siteId,
@@ -111,46 +116,55 @@ const PremiumAnalyticsPreviewNotice = ( {
 
 		try {
 			const enabled = await enablePreviewAsync( true );
-			shouldRestoreFocus.current = true;
 
 			if ( ! enabled ) {
+				shouldRestoreFocus.current = true;
 				trackEvent( 'enable_failed', { reason: 'not_enabled' } );
 				setFailedSiteId( siteId );
 				return;
 			}
-
-			trackEvent( 'enabled' );
-
-			// Hand over a link rather than navigating for them: the dashboard only exists on a
-			// fresh page load, and being thrown out of the page you were reading is a poor reward
-			// for saying yes.
-			//
-			// Deliberately no dismissal here. An enabled site already fails the eligibility rule, so
-			// the invitation is gone on the next load either way — and recording one would refetch
-			// the notices, which now answers "dismissed" and unmounts this notice mid-sentence,
-			// taking the link with it.
-			setEnabledSiteId( siteId );
 		} catch {
 			shouldRestoreFocus.current = true;
 			trackEvent( 'enable_failed', { reason: 'request_failed' } );
 			setFailedSiteId( siteId );
-		}
-	};
-
-	// The confirmation lives on local state, so a round trip through another Stats page would
-	// remount this component and invite the site again while the cached status still reads false.
-	// Recorded as the notice goes away rather than on success, which would pull the confirmation
-	// off the screen before it could be read.
-	useEffect( () => {
-		if ( ! isSwitchedOn ) {
 			return;
 		}
-		return () => {
+
+		// After the write so a retry counts once, before the navigation so it is not cut short.
+		trackEvent( 'enabled' );
+		// Straight there rather than a link: left on this page, a reader can miss that there is a
+		// second step and take the old Traffic page for the new one. The dashboard only exists on
+		// a fresh page load, so this is a navigation, not a route change.
+		//
+		// Deliberately no dismissal here. An enabled site already fails the eligibility rule, so
+		// the invitation is gone on the next load either way.
+		setLeavingSiteId( siteId );
+		// The cohort rule requires the URL before this notice can win its slot, so it is never
+		// null here; the shared notice props are just looser than that gate.
+		setTimeout( () => {
+			window.location.href = premiumAnalyticsDashboardUrl!;
+		}, NAVIGATION_DELAY );
+	};
+
+	// The browser's Back button can restore this page from the back/forward cache with the button
+	// still locked in its leaving state. The site is on by then, so the cache says so and the
+	// notices host takes the invitation down rather than offering it again.
+	useEffect( () => {
+		if ( ! isLeaving ) {
+			return;
+		}
+		const settleOnRestore = ( event: PageTransitionEvent ) => {
+			if ( ! event.persisted ) {
+				return;
+			}
+			setLeavingSiteId( null );
 			queryClient.setQueryData( premiumAnalyticsStatusQueryKey( siteId ), {
 				[ PREMIUM_ANALYTICS_ENABLED_SETTING ]: true,
 			} );
 		};
-	}, [ isSwitchedOn, queryClient, siteId ] );
+		window.addEventListener( 'pageshow', settleOnRestore );
+		return () => window.removeEventListener( 'pageshow', settleOnRestore );
+	}, [ isLeaving, queryClient, siteId ] );
 
 	useEffect( () => {
 		if ( ! noticeDismissed ) {
@@ -162,33 +176,6 @@ const PremiumAnalyticsPreviewNotice = ( {
 
 	if ( noticeDismissed ) {
 		return null;
-	}
-
-	if ( isSwitchedOn ) {
-		return (
-			<NoticeContainer isOdyssey={ isOdyssey }>
-				<NoticeBanner
-					level="success"
-					title={ translate( 'The new Traffic tab is on' ) }
-					onClose={ hideNotice }
-				>
-					<p key="desc" role="status">
-						{ translate(
-							'You’ll find it in the menu alongside your current Stats. You can switch it off again from the settings in the new Traffic tab.'
-						) }
-					</p>
-					<p key="cta">
-						<Button
-							variant="primary"
-							href={ premiumAnalyticsDashboardUrl ?? undefined }
-							ref={ restoreFocus }
-						>
-							{ translate( 'Go to the new Traffic tab' ) }
-						</Button>
-					</p>
-				</NoticeBanner>
-			</NoticeContainer>
-		);
 	}
 
 	if ( enableFailed ) {
@@ -233,7 +220,7 @@ const PremiumAnalyticsPreviewNotice = ( {
 				level="info"
 				title={ translate( 'Try the new Traffic tab' ) }
 				// Nothing to dismiss halfway through a write that is about to change the answer.
-				hideCloseButton={ isEnabling }
+				hideCloseButton={ isBusy }
 				onClose={ dismissNotice }
 			>
 				<p key="desc">
@@ -241,17 +228,22 @@ const PremiumAnalyticsPreviewNotice = ( {
 						'Clearer charts, and widgets you can move and resize to suit how you read your site. It’s an early version, and you can switch it off again at any time.'
 					) }
 				</p>
+				<p key="next">
+					{ translate(
+						'We’ll take you there once it’s on. Your current Stats stay where they are.'
+					) }
+				</p>
 				<p key="cta">
 					<Button
 						variant="primary"
 						onClick={ enablePremiumAnalyticsPreview }
-						isBusy={ isEnabling }
-						disabled={ isEnabling }
+						isBusy={ isBusy }
+						disabled={ isBusy }
 						// Keyboard focus survives the button going busy, so the next Tab carries on
 						// from here rather than from the top of the page.
 						accessibleWhenDisabled
 					>
-						{ isEnabling ? translate( 'Switching it on…' ) : translate( 'Switch it on' ) }
+						{ isBusy ? translate( 'Switching it on…' ) : translate( 'Switch it on' ) }
 					</Button>
 				</p>
 			</NoticeBanner>
