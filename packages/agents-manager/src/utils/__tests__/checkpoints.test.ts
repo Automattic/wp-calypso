@@ -513,22 +513,19 @@ describe( 'withCheckpoint', () => {
 		expect( getCheckpoint( 'call-1' )?.pageRenames ).toEqual( [ rename ] );
 	} );
 
-	// The same for a domain that snapshots up front: the first run could not
-	// read the site record, so the retry has to take that snapshot itself.
-	it( 'lets a repeat snapshot an eager domain the first run could not', async () => {
-		const { withCheckpoint, getCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
-		const write = { ...LOGO_WRITE, keys: [ 'page', 'site_title' ] };
-		const rename = { pageId: 7, from: 'Old', to: 'New' };
+	// A domain that snapshots up front and cannot be read would leave the
+	// change with no way back, so the write is refused instead.
+	it( 'refuses a write whose eager domain cannot be snapshotted', async () => {
+		const { withCheckpoint, hasCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
+		const write = jest.fn();
 
 		getEditedEntityRecord.mockReturnValue( undefined );
-		await withCheckpoint( write, ( recorder ) => recorder.capturePageRename( rename ) );
-		expect( getCheckpoint( 'call-1' )?.checkpointKeys ).toEqual( [ 'page' ] );
 
-		getEditedEntityRecord.mockReturnValue( { title: 'Old site title' } );
-		await withCheckpoint( write, ( recorder ) => recorder.markWritten( 'site_title' ) );
-
-		expect( getCheckpoint( 'call-1' )?.siteTitleBeforeUpdate ).toBe( 'Old site title' );
-		expect( getCheckpoint( 'call-1' )?.checkpointKeys ).toEqual( [ 'page', 'site_title' ] );
+		await expect(
+			withCheckpoint( { ...LOGO_WRITE, keys: [ 'page', 'site_title' ] }, write )
+		).rejects.toThrow( 'Cannot record a way back for site_title' );
+		expect( write ).not.toHaveBeenCalled();
+		expect( hasCheckpoint( 'call-1' ) ).toBe( false );
 	} );
 
 	// The first run never wrote the domain it dropped, so the snapshot it left
@@ -565,12 +562,12 @@ describe( 'withCheckpoint', () => {
 		const { withCheckpoint, getCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
 		const write = { ...LOGO_WRITE, keys: [ 'page', 'site_title' ] };
 
-		getEditedEntityRecord.mockReturnValue( undefined );
+		// The first run never reaches the site title, so the domain is dropped.
+		getEditedEntityRecord.mockReturnValue( { title: 'Old' } );
 		await withCheckpoint( write, ( recorder ) =>
 			recorder.capturePageRename( { pageId: 7, from: 'Old', to: 'New' } )
 		);
 
-		getEditedEntityRecord.mockReturnValue( { title: 'Old' } );
 		await expect(
 			withCheckpoint( write, () => {
 				throw new Error( 'x' );
@@ -578,7 +575,6 @@ describe( 'withCheckpoint', () => {
 		).rejects.toThrow( 'x' );
 
 		expect( getCheckpoint( 'call-1' )?.checkpointKeys ).toEqual( [ 'page' ] );
-		expect( getCheckpoint( 'call-1' )?.siteTitleBeforeUpdate ).toBeUndefined();
 	} );
 
 	it( 'keeps the first snapshot when a repeat write throws', async () => {
