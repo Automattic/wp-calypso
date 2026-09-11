@@ -6,7 +6,7 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { ButtonStack } from '../../../components/button-stack';
 import { getA4APluginInstallUrl, getJetpackConnectUrl } from './lib';
@@ -57,19 +57,21 @@ interface ConnectSiteModalProps {
 export default function ConnectSiteModal( { action, onClose }: ConnectSiteModalProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const [ site, setSite ] = useState( '' );
+	const submitRef = useRef< HTMLAnchorElement >( null );
 
 	const { title, description, submitLabel, trackEventName, getUrl } = getConnection( action );
 	const url = getUrl( site );
 
+	// The submit control is a link, so pressing Enter in the field has to go
+	// through it rather than opening the installer itself. A popup blocker can
+	// swallow `window.open()` without telling anyone.
 	const onSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
+		submitRef.current?.click();
+	};
 
-		if ( ! url ) {
-			return;
-		}
-
+	const onOpenInstaller = () => {
 		recordTracksEvent( trackEventName, { site: site.trim() } );
-		window.open( url, '_blank', 'noreferrer' );
 		onClose();
 	};
 
@@ -92,7 +94,16 @@ export default function ConnectSiteModal( { action, onClose }: ConnectSiteModalP
 						<Button variant="tertiary" __next40pxDefaultSize onClick={ onClose }>
 							{ __( 'Cancel' ) }
 						</Button>
-						<Button variant="primary" type="submit" __next40pxDefaultSize disabled={ ! url }>
+						<Button
+							ref={ submitRef }
+							variant="primary"
+							__next40pxDefaultSize
+							disabled={ ! url }
+							href={ url ?? undefined }
+							target="_blank"
+							rel="noreferrer noopener"
+							onClick={ onOpenInstaller }
+						>
 							{ submitLabel }
 						</Button>
 					</ButtonStack>
