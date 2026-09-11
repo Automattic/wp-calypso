@@ -10,10 +10,9 @@ import type { Block } from '@wordpress/blocks';
  * page added to the site gets a menu item, a renamed page renames its item,
  * and a deleted page loses it.
  *
- * The menu is a `wp_navigation` entity whose blocks are the items. A rename's
- * write joins the same unsaved-changes set as the page edit that triggered it;
- * one following a creation or deletion is saved here instead, since that page
- * change has already persisted — see `saveMenu()`.
+ * The menu is a `wp_navigation` entity whose blocks are the items. Whether a
+ * write saves at once or joins the page edit's unsaved changes is decided in
+ * `saveMenu()`.
  */
 
 /** A menu item: `core/navigation-link`, or a submenu holding more of them. */
@@ -38,8 +37,6 @@ export interface NavigationItem {
 	label: string;
 	id: number | string;
 	url?: string;
-	type?: string;
-	kind?: string;
 	/** The page's parent, for a Page List scoped to one. */
 	parent?: number;
 }
@@ -284,14 +281,13 @@ const followsPage = ( item: NavigationBlock, previousLabels?: string[] ) =>
  * Persists a menu's items, putting `previous` back if the save fails.
  *
  * A menu write following a page *edit* is left unsaved on purpose: the two join
- * one unsaved-changes set and save together. A write following a creation or
- * deletion has no such partner — the page change has already persisted — so
- * leaving it unsaved would let a reload throw it away while the page stands.
+ * one unsaved-changes set and save together. One following a creation or
+ * deletion has no such partner, and a reload would throw it away while the page
+ * stands.
  *
- * Only the item fields are saved: a title or status edit the user left pending
- * on the menu is theirs to save, not ours. The write is applied locally and
- * `undoIgnore` keeps it out of the editor's stack, so a refused save would
- * otherwise strand it with no undo of any kind. Errors are suppressed by
+ * Only the item fields are saved, so a title or status edit the user left
+ * pending stays theirs. The write is applied locally with `undoIgnore`, so a
+ * refused save would strand it with no undo at all. Errors are suppressed by
  * default, which would report a menu change that never reached the server as a
  * success.
  */
@@ -374,8 +370,8 @@ export async function addNavigationItem( item: NavigationItem ): Promise< void >
 			label: item.label,
 			id: item.id,
 			url: item.url,
-			type: item.type ?? 'page',
-			kind: item.kind ?? 'post-type',
+			type: 'page',
+			kind: 'post-type',
 		} ),
 	] );
 
@@ -383,18 +379,17 @@ export async function addNavigationItem( item: NavigationItem ): Promise< void >
 }
 
 /**
- * Rewrites every menu that holds the page.
+ * Rewrites every menu that holds the page. `rewrite` returns the new items, or
+ * `null` for a menu the page is not in.
  *
- * `rewrite` returns the new items, or `null` for a menu the page is not in.
  * Every menu, not just the first: a page linked from the header and the footer
- * would otherwise keep a stale link in one of them. Every menu is read before
- * the first is written: one that cannot be read then costs nothing, where a
- * write already made would leave the menus disagreeing — and the page change
- * this follows has landed, so a retry could not finish the job.
+ * would otherwise keep a stale link in one. All are read before any is written,
+ * so one that cannot be read costs nothing, where a write already made would
+ * leave the menus disagreeing. The page change this follows has landed, so a
+ * retry could not finish the job.
  *
- * `save` persists the writes. A removal needs it, since the page it follows is
- * already deleted; a rename must not, since it saves with the page edit that
- * triggered it.
+ * `save` persists the writes. A removal needs it, since its page is already
+ * deleted; a rename does not, since it saves with the page edit.
  */
 async function rewriteMenusHolding(
 	rewrite: ( items: NavigationBlock[] ) => NavigationBlock[] | null,

@@ -321,8 +321,6 @@ describe( 'removeNavigationItem', () => {
 } );
 
 describe( 'menu selection', () => {
-	// A page linked from both the header and the footer has to be renamed in
-	// both, or one menu keeps the old label. Rendered menus come first.
 	// The label no longer follows the page, so it is the user's. Matching by id
 	// must not make a page rename overwrite it.
 	it( 'leaves a label the user chose, even on an id-backed item', async () => {
@@ -333,6 +331,8 @@ describe( 'menu selection', () => {
 		expect( editEntityRecord ).not.toHaveBeenCalled();
 	} );
 
+	// A page linked from both the header and the footer has to be renamed in
+	// both, or one menu keeps the old label. Rendered menus come first.
 	it( 'renames the page in every menu that holds it', async () => {
 		( getSiteMetadata as jest.Mock ).mockReturnValue( { navigationId: 99 } );
 		withMenus( { 10: [ link( 7, 'About' ) ], 99: [ link( 7, 'About' ) ] }, [ '10' ] );

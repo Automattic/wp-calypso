@@ -59,11 +59,10 @@ let hasRegistered = false;
 /**
  * Registers the editor abilities in the `@wordpress/abilities` registry.
  *
- * Registration keeps the abilities discoverable in the registry — execution
- * ownership lives in `amToolProvider`. The registry rejects duplicate
- * names, and providers may register their own copies first; a collision is
- * resolved by replacing the provider's copy. Providers delete their copies as
- * cleanup once a migration lands.
+ * Registration only makes the abilities discoverable; execution ownership lives
+ * in `amToolProvider`. The registry rejects duplicate names, so a collision with
+ * a provider's own copy is resolved by replacing it. Providers delete their
+ * copies once a migration lands.
  */
 export async function registerEditorAbilities(): Promise< void > {
 	if ( hasRegistered ) {

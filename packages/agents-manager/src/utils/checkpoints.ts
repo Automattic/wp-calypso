@@ -15,16 +15,15 @@ import { getToolCallIdFromConversationHistory } from './tool-call-history';
 /**
  * AM-owned checkpoint store: in-memory, per page load, keyed by tool call id.
  *
- * Ported from Big Sky's `use-checkpoint` as plain functions — AM abilities
- * execute as plain callbacks, so no hook wiring is needed. The global-styles,
- * site-logo, site-title, page, navigation and site-metadata domains restore
- * today; the block domain lands with `apply-block-edits`, and until then its
- * checkpoints live in Big Sky's store and restore through the
- * `provider-checkpoints` bridge.
+ * Ported from Big Sky's `use-checkpoint` as plain functions, since AM abilities
+ * execute as plain callbacks. The global-styles, site-logo, site-title, page,
+ * navigation and site-metadata domains restore today. The block domain lands
+ * with `apply-block-edits`; until then its checkpoints live in Big Sky's store
+ * and restore through the `provider-checkpoints` bridge.
  *
- * Big Sky additionally re-applies the checkpoint's variation titles after the
- * snapshot restore to sync its variation-selection store. AM has no such
- * store — the entity snapshot alone restores the full visual state.
+ * Big Sky also re-applies the checkpoint's variation titles after a restore, to
+ * sync its variation-selection store. AM has no such store, and the entity
+ * snapshot alone restores the full visual state.
  */
 
 // Big Sky's scoped checkpoint keys — they gate which domains a restore
