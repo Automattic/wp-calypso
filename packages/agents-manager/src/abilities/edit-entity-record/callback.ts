@@ -144,16 +144,20 @@ function checkEntities< O extends Operation >( entities: unknown[], operation: O
 
 	return entities.map( ( entity ) => {
 		const fields = isRecord( entity ) ? entity : {};
+		const unknownField = Object.keys( fields ).find( ( field ) => ! ( field in FIELD_CHECKS ) );
 		const valid = ( Object.keys( FIELD_CHECKS ) as ( keyof EntityRef )[] ).every( ( field ) =>
 			fields[ field ] === undefined
 				? ! required.includes( field )
 				: FIELD_CHECKS[ field ]( fields[ field ] )
 		);
 
-		if ( ! valid ) {
+		// A misspelt field is refused like a wrong-typed one: dropped, an
+		// `option` meant as `options` would run the write without it.
+		if ( unknownField || ! valid ) {
 			throw new Error(
-				`Cannot ${ operation }: each entry needs ${ required.join( ', ' ) } — entityType and ` +
-					'entityName as strings, recordId as a number or string, record and options as objects.'
+				`Cannot ${ operation }: ${ unknownField ? `unknown field ${ unknownField }; ` : '' }each ` +
+					`entry needs ${ required.join( ', ' ) } — entityType and entityName as strings, ` +
+					'recordId as a number or string, record and options as objects, and nothing else.'
 			);
 		}
 
@@ -208,6 +212,8 @@ const BATCH_FIELDS = [
 	'editEntities',
 	'deleteEntities',
 	'confirmationMessage',
+	'summary',
+	'followUpTasks',
 	'messageId',
 	'toolCallId',
 	'toolId',
