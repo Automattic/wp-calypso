@@ -437,6 +437,8 @@ async function applyCreates(
 
 		applied.created.push( { entityName, recordId: created.id, title } );
 
+		// A draft gets its item too: core renders a page's link only once the
+		// page is published, so the item waits, hidden, until then.
 		if ( entityName === PAGE ) {
 			applied.unsavedMenus.push(
 				...( await addNavigationItem( {
