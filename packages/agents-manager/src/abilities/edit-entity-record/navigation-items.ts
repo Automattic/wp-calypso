@@ -351,11 +351,13 @@ export async function buildNavigationItems(
 		inputs.map( ( input ) => {
 			const existing = resolved.get( input );
 
-			// Nothing to reuse and nothing to build from — an id alone makes a link
-			// with no text, and writing that over a real menu item reads as the menu
+			// A clientId names an existing item, so one that resolves to nothing is
+			// refused rather than rebuilt from the label: the block it meant would be
+			// dropped with everything the request did not restate. An id alone is
+			// refused too — it makes a link with no text, which reads as the menu
 			// having been wiped. Collected rather than thrown so every offending
-			// item can be named at once and the whole rebuild refused.
-			if ( ! existing && ! input.label && ! input.url ) {
+			// item can be named at once.
+			if ( ! existing && ( input.clientId || ( ! input.label && ! input.url ) ) ) {
 				unresolved.push( String( input.clientId ?? input.id ) );
 			}
 
@@ -373,11 +375,15 @@ export async function buildNavigationItems(
 			const attributes = { ...block.attributes, ...attributesFor( input ) };
 
 			// A page id makes a page link — on a new item, or whatever the block
-			// linked before. A new url without one makes a custom link, as the
-			// editor's own link control does: the page it used to point at must not
-			// follow it into renames and deletions. The id may have only identified
-			// the item.
-			if ( input.id && String( input.id ) !== String( existing?.attributes?.id ) ) {
+			// linked before; a category can carry the same number as a page. A new
+			// url without one makes a custom link, as the editor's own link control
+			// does: the page it used to point at must not follow it into renames and
+			// deletions. The id may have only identified the item.
+			const sameEntity =
+				String( input.id ) === String( existing?.attributes?.id ) &&
+				( input.type ?? 'page' ) === ( existing?.attributes?.type ?? 'page' );
+
+			if ( input.id && ! sameEntity ) {
 				Object.assign( attributes, { type: 'page', kind: 'post-type' }, attributesFor( input ) );
 			} else if ( input.url && ! sameUrl( input.url, existing?.attributes?.url ) ) {
 				delete attributes.id;
