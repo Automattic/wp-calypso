@@ -1,13 +1,4 @@
-import {
-	JetpackLicenseFilter,
-	JetpackLicenseSortDirection,
-	JetpackLicenseSortField,
-} from '@automattic/api-core';
-import {
-	activeAgencyQuery,
-	agencyProductsQuery,
-	jetpackAgencyLicensesQuery,
-} from '@automattic/api-queries';
+import { activeAgencyQuery, agencyProductsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
@@ -33,6 +24,7 @@ import WooPaymentsIllustration from '../../overview/woopayments-illustration';
 import jetpackLogo from '../exclusive-offers/images/jetpack-descriptor.svg';
 import pressableLogo from '../exclusive-offers/images/pressable-descriptor.svg';
 import wooLogo from '../exclusive-offers/images/woo-descriptor.svg';
+import { isPressablePlanLicense, pressableLicensesQuery } from '../hosting/lib/pressable-products';
 import { isAgencyApproved } from '../is-agency-approved';
 import ReferralToggle from '../referral-toggle';
 import TermPricingToggle from '../term-pricing-toggle';
@@ -100,9 +92,6 @@ const CLASSIC_CATEGORY_KEYS: Record< string, CategoryTileValue > = {
 	'store-content-and-customization': 'store-content',
 };
 
-const isPressablePlanLicense = ( licenseKey: string ) =>
-	licenseKey.startsWith( 'pressable-' ) && ! licenseKey.startsWith( 'pressable-addon' );
-
 // TODO: Still missing from the classic Products page:
 // - the agency approval notice (pending / approved / rejected)
 // - the overdue invoice notice
@@ -122,18 +111,10 @@ export default function MarketplaceProducts() {
 	// Pressable add-ons only make sense for an agency that owns a Pressable plan
 	// (not one it referred), except in referral mode, where a client may buy them.
 	const { data: pressableLicenses } = useQuery( {
-		...jetpackAgencyLicensesQuery( agencyId, {
-			filter: JetpackLicenseFilter.NotRevoked,
-			search: 'pressable',
-			sortField: JetpackLicenseSortField.IssuedAt,
-			sortDirection: JetpackLicenseSortDirection.Descending,
-		} ),
+		...pressableLicensesQuery( agencyId ),
 		enabled: agencyId > 0,
 	} );
-	const hasPressablePlan =
-		pressableLicenses?.some(
-			( license ) => isPressablePlanLicense( license.license_key ) && ! license.referral
-		) ?? false;
+	const hasPressablePlan = pressableLicenses?.some( isPressablePlanLicense ) ?? false;
 	const showPressableAddons = isReferralMode || hasPressablePlan;
 
 	const products = useMemo( () => {
