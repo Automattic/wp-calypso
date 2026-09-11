@@ -120,6 +120,28 @@ describe( 'addNavigationItem', () => {
 		expect( editEntityRecord ).not.toHaveBeenCalled();
 	} );
 
+	// A Page List shows every published page on its own; a link beside it
+	// would show the new page twice.
+	it( 'skips a menu whose Page List shows the page already', async () => {
+		const pageList = ( parentPageID?: number ) => ( {
+			name: 'core/page-list',
+			attributes: { parentPageID },
+			innerBlocks: [],
+		} );
+
+		withMenus( { 10: [ link( 1, 'Home', [ pageList() ] ) ] } );
+		await addNavigationItem( { label: 'About', id: 7 } );
+		expect( editEntityRecord ).not.toHaveBeenCalled();
+
+		withMenus( { 10: [ pageList( 3 ) ] } );
+		await addNavigationItem( { label: 'About', id: 7, parent: 3 } );
+		expect( editEntityRecord ).not.toHaveBeenCalled();
+
+		withMenus( { 10: [ pageList( 3 ) ] } );
+		await addNavigationItem( { label: 'About', id: 7 } );
+		expect( lastWrite().items ).toHaveLength( 2 );
+	} );
+
 	it( 'does nothing when the site has no menu', async () => {
 		withMenus( {}, [] );
 
