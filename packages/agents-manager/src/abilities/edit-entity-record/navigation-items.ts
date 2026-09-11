@@ -1,6 +1,4 @@
 import { createBlock, parse, serialize } from '@wordpress/blocks';
-import { select } from '@wordpress/data';
-import { PROVIDER_STORE } from '../../constants';
 import { isRecord } from '../../utils/is-record';
 import {
 	NAVIGATION_LINK_BLOCK,
@@ -8,6 +6,7 @@ import {
 	readMenuItems,
 	type NavigationBlock,
 } from '../../utils/navigation-menu';
+import { providerSelectors } from '../../utils/provider-store';
 
 /**
  * Rebuilds a menu from the final item list the agent asks for.
@@ -126,9 +125,7 @@ interface PageStructure {
 // ids, and its store keeps what they stood for — the editor's clientId, and a
 // menu item's attributes. Until that context migrates, this is the way back.
 const pageStructure = (): PageStructure | undefined =>
-	(
-		select( PROVIDER_STORE ) as { getFullPageStructure?: () => PageStructure } | undefined
-	 )?.getFullPageStructure?.();
+	providerSelectors< { getFullPageStructure?: () => PageStructure } >()?.getFullPageStructure?.();
 
 /**
  * The identities an input can claim: its own, and then what the page structure
