@@ -878,6 +878,29 @@ describe( 'editEntityRecordCallback', () => {
 		expect( hasCheckpoint( 'call-menu-partial' ) ).toBe( true );
 	} );
 
+	// A raw menu edit reports the fields it sent, not the one it did not.
+	it( 'reports the raw menu fields a partial edit wrote', async () => {
+		( buildNavigationItems as jest.Mock ).mockResolvedValueOnce( { blocks: [], title: 'Header' } );
+		editEntityRecord.mockResolvedValueOnce( undefined );
+		editEntityRecord.mockRejectedValueOnce( new Error( 'title is locked' ) );
+
+		const result = await editEntityRecordCallback( {
+			toolCallId: 'call-raw-menu-partial',
+			editEntities: [
+				{
+					entityType: 'postType',
+					entityName: 'wp_navigation',
+					recordId: 9,
+					record: { blocks: [], title: 'Header' },
+				},
+			],
+		} );
+
+		expect( result.result.details ).toMatchObject( {
+			updated: [ { recordId: 9, fields: [ 'blocks' ] } ],
+		} );
+	} );
+
 	// The creation landed, but nothing can un-create a page, so the checkpoint
 	// holds nothing to restore and is dropped rather than offering an empty undo.
 	it( 'drops the checkpoint when only unrestorable work landed', async () => {

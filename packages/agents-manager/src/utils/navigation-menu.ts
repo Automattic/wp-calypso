@@ -466,7 +466,11 @@ async function rewriteMenusHolding(
 		throw new Error(
 			`Could not save menu ${ failed.map( ( { menuId } ) => menuId ).join( ', ' ) }: ${
 				( reason as Error )?.message ?? String( reason )
-			}. Its items were put back; every other menu was saved.`
+			}. Its items were put back${
+				unsaved.length
+					? `; menu ${ unsaved.join( ', ' ) } holds the user's unsaved edits and was left unsaved`
+					: ''
+			}; every other menu was saved.`
 		);
 	}
 

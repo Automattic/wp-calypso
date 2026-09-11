@@ -71,12 +71,20 @@ describe( 'setSiteMetadata', () => {
 		} );
 	} );
 
-	it( 'drops the runtime-only mode key', async () => {
+	it( 'drops the runtime-only mode key, and returns what it stored', async () => {
 		withSiteRecord( '{"mode":"editor","personality":"bold"}' );
 
-		await setSiteMetadata( { personality: 'playful' } );
+		const stored = await setSiteMetadata( { personality: 'playful' } );
 
 		expect( writtenMetadata() ).toEqual( { personality: 'playful' } );
+		expect( stored ).toEqual( { personality: 'playful' } );
+	} );
+
+	// Dropped at the save, a change to it would still be reported as applied.
+	it( 'refuses a change to the runtime-only mode key', async () => {
+		withSiteRecord( '{}' );
+
+		await expect( setSiteMetadata( { mode: 'editor' } ) ).rejects.toThrow( 'cannot be set' );
 	} );
 
 	it( 'keeps agent edits out of the undo stack', async () => {
