@@ -24,7 +24,7 @@
 
 - Pages pass their page-specific notices ("page candidates") as children of the arbiter, **ordered by priority** (most urgent first). Eligibility is decided at the call site, not inside the notice.
 - The arbiter renders the **first non-null child**.
-- The arbiter owns "shared candidates" we would want to appear on any sites page (e.g.: `SomeSurvey`). They compete on every page that renders the arbiter, but they always lose to page candidates.
+- The arbiter owns "shared candidates" that can appear on any sites page. Today that is the sitewide plan-expiry notice (`client/dashboard/components/site-expiry-notice/`). A shared candidate marked **urgent** (expiry within 7 days, in grace, or past grace) beats every page candidate; a non-urgent one (the early expiry warning) always loses to page candidates. Its eligibility is settled by `ensureSiteExpiryNoticeData()` in the `siteRoute` loader, so it never pops in.
 
 ### Rules for notice candidates
 
@@ -38,7 +38,7 @@
 2. Put the visibility condition in a hook or at the call site — not inside the component's render.
 3. Add it as a child of `<SitesNoticeArbiter>` in the page's `notices` prop, positioned by priority relative to the page's other candidates.
 4. Ensure the data the condition reads is prefetched in the page's route loader.
-5. If the notice should appear on *many* pages, add it to the arbiter's shared candidates instead and place it in the shared priority order.
+5. If the notice should appear on *many* pages, add it to the arbiter's shared candidates instead, decide whether it is urgent, and settle its data in the `siteRoute` loader.
 
 ### Exceptions
 
