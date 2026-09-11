@@ -65,9 +65,17 @@ export async function saveSiteFields( edits: SiteRecord ): Promise< void > {
 		throw new Error( UNAVAILABLE );
 	}
 
-	const fields = Object.keys( edits );
 	const site = getSiteRecord();
-	const previous = Object.fromEntries( fields.map( ( field ) => [ field, site?.[ field ] ] ) );
+
+	// Checked against the record, not just the dispatch: a field written before
+	// the record loads is one no checkpoint could have snapshotted, leaving a
+	// change with no undo behind it.
+	if ( ! site ) {
+		throw new Error( UNAVAILABLE );
+	}
+
+	const fields = Object.keys( edits );
+	const previous = Object.fromEntries( fields.map( ( field ) => [ field, site[ field ] ] ) );
 
 	coreDispatch.editEntityRecord( 'root', 'site', undefined, edits, { undoIgnore: true } );
 

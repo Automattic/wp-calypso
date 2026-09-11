@@ -115,7 +115,13 @@ const RECORD_FIELD_CHECKS: Record< string, ( value: unknown ) => boolean > = {
 	excerpt: isText,
 	status: isText,
 	personality: isText,
-	siteLocation: ( value ) => value == null || isRecord( value ),
+	siteLocation: ( value ) =>
+		value == null ||
+		( isRecord( value ) &&
+			isText( value.name ) &&
+			( value.coordinates === undefined ||
+				( Array.isArray( value.coordinates ) &&
+					value.coordinates.every( ( c ) => typeof c === 'number' || typeof c === 'string' ) ) ) ),
 };
 
 /** An entry checked for its operation, so the writes can rely on its fields. */
@@ -181,7 +187,8 @@ function checkEntities< O extends Operation >( entities: unknown[], operation: O
 			throw new Error(
 				`Cannot ${ operation }: ${ wrongField } has the wrong type — title, content, excerpt, ` +
 					'status and personality are strings (title may also be an object with a raw or ' +
-					'rendered string), siteLocation is an object.'
+					'rendered string), siteLocation is an object with a string name and an array of ' +
+					'coordinates.'
 			);
 		}
 
@@ -613,7 +620,12 @@ async function leaveRecord( entityName: string, recordId: number | string ): Pro
 	const { result } = await navigateEditorWithoutSaving( path );
 
 	if ( ! result.success ) {
-		rollbackBinding();
+		// A navigation that fired but did not settle keeps its destination
+		// binding, or the arrival would read as the user leaving.
+		if ( ! result.details?.navigated ) {
+			rollbackBinding();
+		}
+
 		throw new Error( `Could not leave the page before deleting it: ${ result.error }` );
 	}
 }
@@ -634,8 +646,7 @@ async function applyDeletes(
 		await coreResolve().getEditedEntityRecord( entityType, entityName, recordId );
 
 		// Read before the delete: a menu item carrying no page id is matched by
-		// its url or label, and the page is the only place those come from.
-		const previousLabels = entityName === PAGE ? await pageLabels( recordId ) : [];
+		// its url, and the page is the only place it comes from.
 		const previousUrl = entityName === PAGE ? await getPageUrl( recordId ) : undefined;
 
 		await coreDispatch().deleteEntityRecord( entityType, entityName, recordId, undefined, {
@@ -651,7 +662,7 @@ async function applyDeletes(
 		// After the delete, never before: the menu write persists, so removing
 		// the item first would strip it for good if the delete then failed.
 		if ( entityName === PAGE ) {
-			await removeNavigationItem( recordId, previousLabels, previousUrl );
+			await removeNavigationItem( recordId, previousUrl );
 		}
 	}
 }
