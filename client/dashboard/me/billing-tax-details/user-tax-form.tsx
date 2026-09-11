@@ -28,12 +28,7 @@ import { useHelpCenter } from '../../app/help-center';
 import InlineSupportLink from '../../components/inline-support-link';
 import { wpcomLink } from '../../utils/link';
 import { getTaxName, getDataFormCountryCodes, stripCountryCodeFromVatId } from '../../utils/tax';
-import type {
-	UserTaxDetails,
-	UserTaxFormData,
-	CountryListItem,
-	CountryListItemWithVat,
-} from '@automattic/api-core';
+import type { UserTaxDetails, UserTaxFormData } from '@automattic/api-core';
 
 const SUPPORT_CONTACT_URL = wpcomLink( '/support/contact' );
 
@@ -229,9 +224,9 @@ export default function UserTaxForm() {
 	const isDisabled = query.isLoading || mutation.isPending;
 	const canUserEdit = userTaxDetails.can_user_edit ?? false;
 
-	const isSelectedCountry = ( country: CountryListItem ): country is CountryListItemWithVat =>
-		country.code === localData.country;
-	const selectedCountry = localData.country ? countryList.find( isSelectedCountry ) : null;
+	const selectedCountry = localData.country
+		? countryList.find( ( country ) => country.code === localData.country )
+		: null;
 	const selectedCountryIsVatSupportedOrNoCountryIsSelected = selectedCountry
 		? selectedCountry.vat_supported
 		: true;
@@ -315,17 +310,13 @@ export default function UserTaxForm() {
 					{ ! selectedCountryIsVatSupportedOrNoCountryIsSelected && (
 						<Text variant="muted">
 							{ createInterpolateElement(
-								sprintf(
-									/* translators: This tells the customer that they will need to contact support to add their tax details, %(taxName)s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names, %(countryName)s is the name of the country, contactSupportLink links to a document asking the customer to contact support. */
-									__(
-										'Unfortunately %(taxName)s details for %(countryName)s cannot be added via this form. Please <contactSupportLink>contact our Happiness Engineers</contactSupportLink> to add your %(taxName)s details. Include your %(taxName)s number and country code when you contact us.'
-									),
-									{
-										taxName: taxName ?? fallbackTaxName,
-										countryName: selectedCountry.name,
-									}
+								/* translators: This tells the customer that they will need to contact support to add their tax details, <taxName /> is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names, <countryName /> is the name of the country, contactSupportLink links to a document asking the customer to contact support. */
+								__(
+									'Unfortunately <taxName /> details for <countryName /> cannot be added via this form. Please <contactSupportLink>contact our Happiness Engineers</contactSupportLink>. Include your <taxName /> number and country code when you contact us.'
 								),
 								{
+									taxName: taxName ?? fallbackTaxName,
+									countryName: selectedCountry.name,
 									contactSupportLink: (
 										<a
 											href={ wpcomLink( '/help' ) }
