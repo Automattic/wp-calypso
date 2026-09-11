@@ -8,7 +8,6 @@ import {
 	openAgentsManagerChat,
 } from '@automattic/agents-manager';
 import { render, renderHook } from '@testing-library/react';
-import { useExperiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../../analytics';
 import { useHelpCenter } from '../../help-center';
 import { useHelpCenterPlugin } from '../plugin-help-center';
@@ -28,7 +27,6 @@ jest.mock( '@automattic/i18n-utils', () => ( {
 	localizeUrl: jest.fn( ( url ) => `${ url }?l=fr` ),
 } ) );
 jest.mock( '@tanstack/react-query', () => ( { useQuery: jest.fn( () => ( { data: 7 } ) ) } ) );
-jest.mock( 'calypso/lib/explat', () => ( { useExperiment: jest.fn() } ) );
 jest.mock( '../../analytics', () => ( {
 	useAnalytics: jest.fn( () => ( { recordTracksEvent: jest.fn() } ) ),
 } ) );
@@ -44,7 +42,6 @@ const mockGetChatRoute = getAgentsManagerChatRoute as jest.MockedFunction<
 >;
 const mockUseHelpCenter = useHelpCenter as jest.MockedFunction< typeof useHelpCenter >;
 const setShowHelpCenter = jest.fn();
-const mockUseExperiment = jest.mocked( useExperiment );
 const recordTracksEvent = jest.fn();
 
 const ICON = 'help';
@@ -86,6 +83,12 @@ const HELP_NODES: AdminBarNode[] = [
 	} ),
 ];
 
+const HELP_CENTER_NODE = node( 'help-center', {
+	parent: 'top-secondary',
+	href: 'https://wordpress.com/help',
+	meta: { menu_title: 'Help Center', icon: ICON, class: 'menupop', target: '_blank' },
+} );
+
 const renderPlugin = ( adminBarNodes: AdminBarNode[] ) =>
 	renderHook( () => useHelpCenterPlugin( { sectionName: 'sites', adminBarNodes } ) ).result.current;
 
@@ -95,7 +98,6 @@ const childrenOf = ( n: OmnibarNode | undefined, id: string ) =>
 describe( 'useHelpCenterPlugin', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockUseExperiment.mockReturnValue( [ false, null ] );
 		jest.mocked( useAnalytics ).mockReturnValue( {
 			recordTracksEvent,
 			recordPageView: jest.fn(),
@@ -106,64 +108,6 @@ describe( 'useHelpCenterPlugin', () => {
 			isShown: false,
 			setShowHelpCenter,
 		} as unknown as ReturnType< typeof useHelpCenter > );
-	} );
-
-	it.each( [
-		{ entryPoint: 'agents manager', adminBarNodes: HELP_NODES },
-		{ entryPoint: 'legacy help center', adminBarNodes: [] },
-	] )( 'keeps the control $entryPoint icon-only', ( { adminBarNodes } ) => {
-		mockUseExperiment.mockReturnValue( [
-			false,
-			{
-				experimentName: 'calypso_help_center_get_help_chat_forward',
-				variationName: 'control',
-				retrievedTimestamp: 0,
-				ttl: 60,
-			},
-		] );
-
-		expect( renderPlugin( adminBarNodes ).title ).toBeUndefined();
-	} );
-
-	it.each( [
-		{ adminBarNodes: HELP_NODES, title: 'Get Help' },
-		{ adminBarNodes: [], title: 'Get Help' },
-	] )( 'shows the treatment title "$title"', ( { adminBarNodes, title } ) => {
-		mockUseExperiment.mockReturnValue( [
-			false,
-			{
-				experimentName: 'calypso_help_center_get_help_chat_forward',
-				variationName: 'treatment',
-				retrievedTimestamp: 0,
-				ttl: 60,
-			},
-		] );
-
-		expect( renderPlugin( adminBarNodes ).title ).toBe( title );
-		expect( mockUseExperiment ).toHaveBeenCalledWith( 'calypso_help_center_get_help_chat_forward' );
-	} );
-
-	it.each( [
-		{ entryPoint: 'agents manager', adminBarNodes: HELP_NODES },
-		{ entryPoint: 'legacy help center', adminBarNodes: [] },
-	] )( 'labels the $entryPoint only once the assignment loads', ( { adminBarNodes } ) => {
-		mockUseExperiment.mockReturnValue( [ true, null ] );
-		const { result, rerender } = renderHook( () => useHelpCenterPlugin( { adminBarNodes } ) );
-
-		expect( result.current.title ).toBeUndefined();
-
-		mockUseExperiment.mockReturnValue( [
-			false,
-			{
-				experimentName: 'calypso_help_center_get_help_chat_forward',
-				variationName: 'treatment',
-				retrievedTimestamp: 0,
-				ttl: 60,
-			},
-		] );
-		rerender();
-
-		expect( result.current.title ).toBe( 'Get Help' );
 	} );
 
 	it.each( [
@@ -308,6 +252,7 @@ describe( 'useHelpCenterPlugin', () => {
 
 		expect( result.id ).toBe( 'help-center' );
 		expect( result.label ).toBe( 'Help' );
+		expect( result.title ).toBeUndefined();
 		expect( result.children ).toBeUndefined();
 
 		// The icon must keep the wrapper the stylesheet sizes through.
@@ -315,5 +260,30 @@ describe( 'useHelpCenterPlugin', () => {
 
 		result.onClick?.( {} as React.MouseEvent );
 		expect( setShowHelpCenter ).toHaveBeenCalledWith( true );
+	} );
+
+	it( 'names the legacy Help Center from its admin bar node', () => {
+		const result = renderPlugin( [ HELP_CENTER_NODE ] );
+
+		expect( result.id ).toBe( 'help-center' );
+		expect( result.label ).toBe( 'Help Center' );
+		expect( result.tooltip ).toBe( 'Help Center' );
+		expect( result.title ).toBeUndefined();
+		expect( result.children ).toBeUndefined();
+
+		result.onClick?.( {} as React.MouseEvent );
+		expect( setShowHelpCenter ).toHaveBeenCalledWith( true );
+	} );
+
+	it( 'shows the entry label the backend sends for the legacy Help Center', () => {
+		const result = renderPlugin( [
+			node( 'help-center', {
+				...HELP_CENTER_NODE,
+				meta: { ...HELP_CENTER_NODE.meta, entry_label: 'Get Help' },
+			} ),
+		] );
+
+		expect( result.title ).toBe( 'Get Help' );
+		expect( result.label ).toBe( 'Help Center' );
 	} );
 } );

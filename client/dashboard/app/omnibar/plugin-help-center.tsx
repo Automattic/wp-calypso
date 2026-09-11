@@ -11,7 +11,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
-import { useExperiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../analytics';
 import { useHelpCenter } from '../help-center';
 import { adminBarIcon } from './admin-bar-icon';
@@ -23,6 +22,7 @@ import './plugin-help-center.scss';
 type RecordTracksEvent = AnalyticsClient[ 'recordTracksEvent' ];
 
 const AGENTS_MANAGER_NODE_ID = 'agents-manager';
+const HELP_CENTER_NODE_ID = 'help-center';
 const SECONDARY_GROUP_NODE_ID = 'agents-manager-menu-panel-links';
 
 function handleMenuClick(
@@ -154,13 +154,6 @@ export function useHelpCenterPlugin( {
 	const { isShown: isHelpCenterShown, setShowHelpCenter } = useHelpCenter();
 	const { recordTracksEvent } = useAnalytics();
 	const { data: omnibarSiteId } = useQuery( omnibarSiteIdQuery() );
-	// Load the assignment where the entry point renders, so ExPlat exposure covers
-	// everyone who sees it, not only users who open the Help Center.
-	const [ isLoadingGetHelpAssignment, getHelpChatForwardAssignment ] = useExperiment(
-		'calypso_help_center_get_help_chat_forward'
-	);
-	const showGetHelpLabel =
-		! isLoadingGetHelpAssignment && getHelpChatForwardAssignment?.variationName === 'treatment';
 
 	const helpNode = adminBarNodes.find( ( node ) => node.id === AGENTS_MANAGER_NODE_ID );
 
@@ -176,7 +169,6 @@ export function useHelpCenterPlugin( {
 		return {
 			id: helpNode.id,
 			label: helpNode.meta?.menu_title,
-			title: showGetHelpLabel ? __( 'Get Help' ) : undefined,
 			icon: <HelpCenterIcon name={ helpNode.meta?.icon } sectionName={ sectionName } />,
 			tooltip: helpNode.meta?.menu_title,
 			// Disconnected sites get a link instead of a dropdown, opened in a new tab as in wp-admin.
@@ -186,11 +178,18 @@ export function useHelpCenterPlugin( {
 		};
 	}
 
+	// The backend owns the label and its experiment; older backends send no node, so the
+	// client-side defaults keep the entry point rendering until they catch up.
+	const helpCenterNode = adminBarNodes.find( ( node ) => node.id === HELP_CENTER_NODE_ID );
+
 	return {
-		id: 'help-center',
-		label: __( 'Help' ),
-		title: showGetHelpLabel ? __( 'Get Help' ) : undefined,
-		icon: <HelpCenterIcon name="help" sectionName={ sectionName } />,
+		id: HELP_CENTER_NODE_ID,
+		label: helpCenterNode?.meta?.menu_title ?? __( 'Help' ),
+		title: helpCenterNode?.meta?.entry_label,
+		tooltip: helpCenterNode?.meta?.menu_title,
+		icon: (
+			<HelpCenterIcon name={ helpCenterNode?.meta?.icon ?? 'help' } sectionName={ sectionName } />
+		),
 		onClick: () => setShowHelpCenter( ! isHelpCenterShown ),
 	};
 }

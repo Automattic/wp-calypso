@@ -6,14 +6,12 @@ import {
 	openAgentsManagerChat,
 } from '@automattic/agents-manager';
 import { recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
-import { HelpCenter } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useSelect as useDateStoreSelect } from '@wordpress/data';
 import { Icon, comment, backup, page, video, rss } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useHelpCenterSite } from 'calypso/layout/use-help-center-site';
-import { useExperiment } from 'calypso/lib/explat';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import Item from '../item';
 import HelpIcon from './help-icon';
@@ -23,11 +21,6 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 	const translate = useTranslate();
 	const sectionName = useSelector( getSectionName );
 	const { siteId, siteContextSource } = useHelpCenterSite();
-	const [ isLoadingGetHelpAssignment, getHelpChatForwardAssignment ] = useExperiment(
-		HelpCenter.HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT
-	);
-	const showGetHelpLabel =
-		! isLoadingGetHelpAssignment && getHelpChatForwardAssignment?.variationName === 'treatment';
 
 	const agentsManagerVisible = useDateStoreSelect(
 		( select ) => select( AGENTS_MANAGER_STORE ).getAgentsManagerState().isOpen,
@@ -172,11 +165,7 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 			subItems={ menuItems }
 			openSubMenuOnClick
 			closeSubMenuOnItemClick
-		>
-			{ showGetHelpLabel && (
-				<span className="masterbar__item-help-label">{ translate( 'Get Help' ) }</span>
-			) }
-		</Item>
+		/>
 	);
 };
 
