@@ -10,7 +10,15 @@ import type { Agency } from '@automattic/api-core';
 // Shared with the classic dashboard so a dismissal carries over.
 const DISMISS_PREFERENCE = 'pressable-limit-notification-dismissed' as const;
 
-export default function PressableUsageLimitNotice( { agency }: { agency?: Agency } ) {
+// The references the API sends, misspelling included.
+const LIMIT_EXCEEDED_REFERENCE = 'pressable_plan_usage_limit_exeeded';
+const LIMIT_APPROACHING_REFERENCE = 'pressable_plan_usage_limit_approaching';
+
+export default function PressableUsageLimitNotice( {
+	agency,
+}: {
+	agency: Agency | null | undefined;
+} ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: dismissedTimestamp, isFetched } = useQuery(
 		userPreferenceQuery( DISMISS_PREFERENCE )
@@ -19,10 +27,10 @@ export default function PressableUsageLimitNotice( { agency }: { agency?: Agency
 
 	const notifications = agency?.notifications ?? [];
 	const exceeded = notifications.find(
-		( notification ) => notification.reference === 'pressable_plan_usage_limit_exeeded'
+		( notification ) => notification.reference === LIMIT_EXCEEDED_REFERENCE
 	);
 	const approaching = notifications.find(
-		( notification ) => notification.reference === 'pressable_plan_usage_limit_approaching'
+		( notification ) => notification.reference === LIMIT_APPROACHING_REFERENCE
 	);
 	const notice = exceeded ?? approaching;
 

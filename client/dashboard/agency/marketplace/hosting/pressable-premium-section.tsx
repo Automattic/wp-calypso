@@ -1,4 +1,6 @@
+import { activeAgencyQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
+import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
 	__experimentalHeading as Heading,
@@ -16,15 +18,12 @@ import { CheckGrid } from './content-sections';
 export const PRESSABLE_PREMIUM_PLAN_COMMISSION_PERCENTAGE = 20;
 const PRESSABLE_PREMIUM_PLAN_STARTING_PRICE = 350;
 
-interface Props {
-	agencyId?: number;
-}
-
 /** Shown on the Premium tab when there are no Premium plans to pick from. */
-export default function PressablePremiumSection( { agencyId }: Props ) {
+export default function PressablePremiumSection() {
 	const { recordTracksEvent } = useAnalytics();
 	const { marketplaceType, updateMarketplaceType } = useMarketplaceType();
-	const { scheduleCall, isLoading } = useScheduleCall( agencyId );
+	const { data: agency } = useQuery( activeAgencyQuery() );
+	const { scheduleCall, isLoading } = useScheduleCall( agency?.id );
 	const isReferralMode = marketplaceType === 'referral';
 
 	const onReferNowClick = () => {
@@ -42,7 +41,7 @@ export default function PressablePremiumSection( { agencyId }: Props ) {
 	return (
 		<VStack spacing={ 5 }>
 			<VStack spacing={ 3 }>
-				<Heading level={ 3 } size={ 16 }>
+				<Heading level={ 4 } size={ 16 }>
 					{ sprintf(
 						/* translators: %d is the commission percentage. */
 						__( 'Earn %d%% on Premium Plan Referrals' ),
@@ -79,7 +78,7 @@ export default function PressablePremiumSection( { agencyId }: Props ) {
 			</VStack>
 			<VStack spacing={ 3 }>
 				<VStack spacing={ 1 }>
-					<Heading level={ 3 } size={ 13 }>
+					<Heading level={ 4 } size={ 13 }>
 						{ sprintf(
 							/* translators: %1$s is the starting price, %2$d the commission percentage. */
 							__( 'Premium plans from %1$s per month. Get %2$d%% commission when you refer.' ),

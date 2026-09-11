@@ -49,6 +49,32 @@ export function hasPlanEligibleForExpansionOffer( licenses: JetpackLicense[] ): 
 	);
 }
 
+/** The licenses behind the expansion-offer check, oldest first. */
+export const pressableOfferLicensesQuery = ( agencyId: number ) =>
+	jetpackAgencyLicensesQuery( agencyId, {
+		filter: JetpackLicenseFilter.NotRevoked,
+		search: 'pressable',
+		sortField: JetpackLicenseSortField.IssuedAt,
+		sortDirection: JetpackLicenseSortDirection.Ascending,
+	} );
+
+export const isPressableOfferActive = () =>
+	new Date() < new Date( PRESSABLE_Q3_2026_OFFER_ENDS_AT );
+
+/**
+ * The cheap checks before the license fetch: the offer is still running and
+ * the agency is a Billing Dragon agency with a Pressable plan bought through A4A.
+ */
+export function mayBeEligibleForPressableExpansionOffer( agency: Agency | null | undefined ) {
+	const pressable = agency?.third_party?.pressable;
+	const ownsPressableThroughA4A = !! pressable?.pressable_id && pressable?.a4a_id !== null;
+	return (
+		isPressableOfferActive() &&
+		agency?.billing_system === 'billingdragon' &&
+		ownsPressableThroughA4A
+	);
+}
+
 /**
  * The dashboard's port of the classic app's Pressable Q3 2026 offer
  * eligibility (client/a8c-for-agencies/components/a4a-pressable-offer): the
@@ -64,17 +90,10 @@ export default function usePressableOfferEligibility( agency: Agency | null | un
 	const isBillingDragonAgency = agency?.billing_system === 'billingdragon';
 	// Once the offer ends the cards can never render, so don't pay for the
 	// license fetch either.
-	const isOfferActive = new Date() < new Date( PRESSABLE_Q3_2026_OFFER_ENDS_AT );
-	const mayBeEligibleForExpansionOffer =
-		isOfferActive && isBillingDragonAgency && ownsPressableThroughA4A;
+	const mayBeEligibleForExpansionOffer = mayBeEligibleForPressableExpansionOffer( agency );
 
 	const { data: licenses, isFetched } = useQuery( {
-		...jetpackAgencyLicensesQuery( agency?.id ?? 0, {
-			filter: JetpackLicenseFilter.NotRevoked,
-			search: 'pressable',
-			sortField: JetpackLicenseSortField.IssuedAt,
-			sortDirection: JetpackLicenseSortDirection.Ascending,
-		} ),
+		...pressableOfferLicensesQuery( agency?.id ?? 0 ),
 		enabled: !! agency?.id && mayBeEligibleForExpansionOffer,
 		refetchOnWindowFocus: false,
 	} );

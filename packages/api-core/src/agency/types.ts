@@ -172,19 +172,16 @@ export interface Agency {
 }
 
 export interface AgencyPressableUsage {
-	status?: string;
 	storage_gb?: number;
 	visits_count?: number;
 	sites_count?: number;
 	start_date?: string;
 	end_date?: string;
-	created_at?: number;
 }
 
 export interface AgencyPressableTitanOrder {
 	domain: string;
 	status: string;
-	order_plan: string;
 	billable_inboxes: number;
 	trial_end_at: string | null;
 }
