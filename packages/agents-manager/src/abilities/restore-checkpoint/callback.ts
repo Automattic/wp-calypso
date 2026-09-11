@@ -84,13 +84,13 @@ function clearStaleReciprocals(
 	}
 }
 
-// Restores a checkpoint Big Sky still holds — its tools write to its own store
-// until they migrate. The reciprocal is recorded there too, scoped to the
-// target's keys: a keyless record would redo through Big Sky's legacy
-// full-snapshot path, which re-applies its (stale) variation titles over
-// AM-applied styles. Unreadable or keyless targets get no reciprocal — no
-// redo beats a wrong redo. The page-rename flip and navigation snapshots are
-// copied like Big Sky's own tool does, so a redo re-applies them.
+// Restores a checkpoint Big Sky still holds, since its tools write to its own
+// store until they migrate. The reciprocal goes there too, scoped to the
+// target's keys: a keyless one would redo through Big Sky's legacy full-snapshot
+// path, which re-applies its stale variation titles over AM-applied styles. An
+// unreadable or keyless target gets no reciprocal — no redo beats a wrong redo.
+// The page-rename flip and navigation snapshots are copied as Big Sky's tool
+// does, so a redo re-applies them.
 async function restoreProviderCheckpoint(
 	providerCheckpoints: UseCheckpointReturn,
 	{ checkpointId, summary, requestIntentType = 'restore' }: RestoreCheckpointInput

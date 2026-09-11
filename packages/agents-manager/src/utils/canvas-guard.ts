@@ -1,16 +1,15 @@
 /**
  * Enforces the canvas binding on the merged providers.
  *
- * `canvas-binding` owns the state machine; this module owns the policy — which
- * abilities are bound to the open canvas, which ones legitimately move it, and what
- * a refusal says. The ability lists live next to the state machine they encode
- * against rather than in the provider loader, which only composes them.
+ * `canvas-binding` owns the state machine; this module owns the policy: which
+ * abilities are bound to the open canvas, which ones legitimately move it, and
+ * what a refusal says. The lists live here, next to the state machine they
+ * encode against, rather than in the provider loader that composes them.
  *
- * The policy is installed on both dispatch paths, because agenttic-client picks
- * between them per ability: it calls an ability's own `callback` when it has one and
- * only falls back to the provider's `executeAbility` when it does not. Every Big Sky
- * ability is registered with a callback, so guarding `executeAbility` alone leaves
- * the guard switched off for exactly the abilities it exists to police.
+ * The policy is installed on both dispatch paths. agenttic-client calls an
+ * ability's own `callback` when it has one and falls back to `executeAbility`
+ * only when it does not, and every Big Sky ability has a callback — so guarding
+ * `executeAbility` alone would leave the guard inert.
  */
 
 import { normalizeAbilityName } from '../abilities/ability-name';
@@ -27,22 +26,17 @@ import {
 import type { Ability, AbilityResult } from '../abilities/types';
 import type { ContextProvider, ToolProvider } from '../types';
 
-// Abilities that write to the page open in the editor. Deliberately excludes
-// `big-sky/apply-update-theme` and `big-sky/set-site-logo` (site-wide — moving
-// between pages does not make them wrong) and `big-sky/show-component` (not a
-// write). Ownership is irrelevant here: this list is checked on the merged
-// provider, so it covers abilities that have migrated into AM and abilities still
-// served by an external provider alike.
+// Abilities that write to the page open in the editor. `apply-update-theme` and
+// `set-site-logo` are site-wide and `show-component` is not a write, so moving
+// between pages cannot make them wrong. `edit-entity-record` names its own
+// target (`entityType`/`entityName`/`recordId`, often site-level like
+// `root`/`site`), so guarding it would refuse legitimate site-level edits; it
+// moves the canvas itself through `bindToEditorPath()` before deleting the open
+// page.
 //
-// `edit-entity-record` is deliberately absent: it names its target explicitly
-// (`entityType`/`entityName`/`recordId`, often site-level like `root`/`site` or
-// `wp_navigation`), so moving the canvas cannot redirect its write. Guarding it
-// would refuse legitimate site-level edits from any screen. It moves the canvas
-// itself before deleting the open page, through `bindToEditorPath()`.
-//
-// Normalized, because the agent invokes `big-sky/apply-block-edits` as
-// `big_sky__apply_block_edits`. Matching the registered form against the name that
-// actually arrives would never hit, leaving the guard inert in production.
+// Checked on the merged provider, so it covers AM's abilities and external ones
+// alike. Normalized, because the agent invokes `big-sky/apply-block-edits` as
+// `big_sky__apply_block_edits` — matching the registered form would never hit.
 const CANVAS_BOUND_ABILITIES = new Set(
 	[ 'big-sky/apply-block-edits', 'big-sky/stream-page-design', 'big-sky/restore-checkpoint' ].map(
 		normalizeAbilityName
@@ -80,13 +74,10 @@ export function bindToEditorPath( path: string ): () => void {
 }
 
 function buildCanvasRefusal( move: CanvasMove ): AbilityResult {
-	// Untranslated on purpose: `returnToAgent: true` means these strings are read by
-	// the model, not shown to the user, unlike neighbouring abilities' messages.
-	//
-	// Both spell out "do not retry", and the no-canvas one says so hardest. The
-	// write abilities poll for a canvas to appear, so a model that responds to the
-	// refusal by trying another route into the same write can keep a doomed request
-	// alive indefinitely.
+	// Untranslated on purpose: `returnToAgent: true` means the model reads these
+	// strings, not the user. Both spell out "do not retry", the no-canvas one
+	// hardest: the write abilities poll for a canvas to appear, so a model that
+	// finds another route into the same write keeps a doomed request alive.
 	const message =
 		null === move.to
 			? `Nothing was changed: this was requested for ${ move.from }, but the editor is no longer open on it and there is no page on screen to change. Do not retry this or try another way to make the same change — nothing can be edited until a page is open. Tell the user the request stopped because they navigated away, and ask them to reopen the page if they still want it.`

@@ -175,10 +175,9 @@ export async function editorNavigate(
 		);
 	}
 
-	// Read after the save, not before: it awaits a round trip per dirty entity,
-	// and a page switch in that window would leave these naming a page the
-	// editor has already left — the restore compares them with the destination,
-	// so stale values skip it and the page stays uneditable.
+	// Read after the save: a page switch during it would leave these naming a
+	// page the editor has already left. The restore compares them with the
+	// destination, so stale values skip it and the page stays uneditable.
 	const departingPostContent = io.getPostContentClientId();
 	const departingPageId = io.getLoadedPageId();
 

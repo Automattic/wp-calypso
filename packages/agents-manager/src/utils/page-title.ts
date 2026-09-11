@@ -5,9 +5,9 @@ import { flattenTitle } from './entity-title';
 /**
  * A page's title, read and written through core-data.
  *
- * Shared by `edit-entity-record` — which needs the title and url a page had
- * before a rename or deletion, to find its menu item and to snapshot the
- * change — and by the checkpoint engine, which puts that title back on restore.
+ * `edit-entity-record` needs the title and url a page had before a rename or
+ * deletion, to find its menu item and snapshot the change. The checkpoint
+ * engine puts that title back on restore.
  */
 
 interface PageRecord {
