@@ -97,8 +97,9 @@ function CheckoutV1( { isClient, referralBlogId }: Props ) {
 		return Object.values(
 			selectedCartItems.reduce(
 				( acc: Record< string, ShoppingCartItem[] >, item ) => (
-					( acc[ item.slug ] = ( acc[ item.slug ] || [] ).concat( item ) ), acc
-				),
+					( acc[ item.slug ] = ( acc[ item.slug ] || [] ).concat( item ) ),
+					acc
+				 ),
 				{}
 			)
 		)
@@ -182,7 +183,7 @@ function CheckoutV1( { isClient, referralBlogId }: Props ) {
 						! isAgencyApproved
 							? translate(
 									'Your agency is not yet approved. Please wait for approval before making a purchase.'
-							  )
+								)
 							: undefined
 					}
 				>

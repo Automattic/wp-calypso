@@ -174,10 +174,10 @@ export function DomainCodePair( {
 				{ isHundredYearDomainsTransferFlow
 					? __(
 							'Your secret key to unlock the domain transfer. Get yours from your current domain provider.'
-					  )
+						)
 					: __(
 							'Unique code proving ownership, needed for secure domain transfer between registrars.'
-					  ) }
+						) }
 				<div>
 					<Button
 						href={ localizeUrl(

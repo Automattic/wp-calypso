@@ -178,7 +178,7 @@ export class ImageEditorToolbar extends Component {
 						text: this.props.displayOnlyIcon ? '' : translate( 'Crop' ),
 						onClick: this.onAspectOpen,
 						disabled: isAspectRatioDisabled,
-				  },
+					},
 			{
 				tool: 'flip-vertical',
 				icon: 'flip-vertical',

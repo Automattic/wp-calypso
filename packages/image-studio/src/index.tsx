@@ -99,7 +99,7 @@ function ImageStudioIntegration(): JSX.Element | null {
 	} = useDispatch( imageStudioStore ) as ImageStudioActions;
 	const { invalidateResolution, saveEntityRecord } = useDispatch(
 		coreStore
-	) as unknown as import('./types/wordpress').CoreDataDispatch;
+	) as unknown as import( './types/wordpress' ).CoreDataDispatch;
 	const { isOpen, attachmentId, canvasMetadata, originalAttachmentId, onCloseCallback } = useSelect(
 		( selectStore ) => ( {
 			isOpen: selectStore( imageStudioStore ).getIsImageStudioOpen(),
@@ -381,7 +381,7 @@ function ImageStudioIntegration(): JSX.Element | null {
 			const lastSavedAttachmentId = (
 				select(
 					imageStudioStore
-				) as unknown as import('./types/wordpress').CurriedImageStudioSelectors
+				) as unknown as import( './types/wordpress' ).CurriedImageStudioSelectors
 			 ).getLastSavedAttachmentId();
 
 			// Apply saved image to block/chat context (if not discarded)

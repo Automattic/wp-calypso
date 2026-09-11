@@ -279,7 +279,7 @@ class ActivityCardList extends Component {
 						visibleLimitCutoffDate,
 						'day'
 					)
-			  )
+				)
 			: logs;
 
 		const { page: requestedPage } = filter;

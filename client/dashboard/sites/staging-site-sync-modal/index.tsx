@@ -307,7 +307,7 @@ function StagingSiteSyncModalInner( {
 	const displayBackupDate = lastKnownBackupAttempt
 		? new Intl.DateTimeFormat( locale, { dateStyle: 'medium', timeStyle: 'short' } ).format(
 				new Date( lastKnownBackupAttempt.activityTs )
-		  )
+			)
 		: null;
 
 	const shouldDisableGranularSync = ! lastKnownBackupAttempt && ! isLoadingBackupAttempt;

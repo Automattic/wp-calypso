@@ -75,10 +75,10 @@ export function getConnectSupportedTopText( losingRegistrar ) {
 								losingRegistrar
 							),
 							{ strong: <strong /> }
-					  )
+						)
 					: __(
 							'Your domain name stays with your current registrar and will just point to your new site.'
-					  ) }
+						) }
 			</span>
 			<span>
 				{

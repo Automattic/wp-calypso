@@ -46,7 +46,7 @@ export const ScheduleForm = ( { onNavBack, scheduleForEdit, onRecordSuccessEvent
 				plugins: scheduleForEdit?.args,
 				schedule: scheduleForEdit?.schedule,
 				timestamp: scheduleForEdit?.timestamp * 1000,
-		  }
+			}
 		: { sites: [], plugins: [], schedule: 'daily', timestamp: Date.now() / 1000 };
 
 	const [ selectedSites, setSelectedSites ] = useState< number[] >( initialData.sites );

@@ -283,8 +283,8 @@ const TransferPage = ( props: TransferPageProps ) => {
 
 		const disabled = Boolean(
 			! domain?.domainLockingAvailable ||
-				domain?.transferAwayEligibleAt ||
-				isLockingOrUnlockingDomain
+			domain?.transferAwayEligibleAt ||
+			isLockingOrUnlockingDomain
 		);
 
 		return (

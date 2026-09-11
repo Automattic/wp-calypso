@@ -119,7 +119,7 @@ function setFrRegistrantType(
 							...( registrantVatId ? { registrantVatId } : {} ),
 							...( sirenSiret ? { sirenSiret } : {} ),
 							...( trademarkNumber ? { trademarkNumber } : {} ),
-					  }
+						}
 					: {} ),
 			},
 		},

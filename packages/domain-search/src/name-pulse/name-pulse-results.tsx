@@ -59,7 +59,7 @@ export const NamePulseResults = () => {
 											// translators: %(name)s is the domain name the user searched for, without the TLD.
 											__( 'Exact match for “%(name)s”' ),
 											{ name: layout.baseName }
-									  )
+										)
 							}
 							results={ exactList }
 							isLoading={ isLoadingTlds }

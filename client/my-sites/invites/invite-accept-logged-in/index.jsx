@@ -79,11 +79,11 @@ class InviteAcceptLoggedIn extends Component {
 							? this.props.translate( 'Sign in as %(email)s', {
 									context: 'button',
 									args: { email: this.props.invite.sentTo },
-							  } )
+								} )
 							: this.props.translate( 'Register as %(email)s', {
 									context: 'button',
 									args: { email: this.props.invite.sentTo },
-							  } ) }
+								} ) }
 					</Button>
 				</div>
 			</Card>

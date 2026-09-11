@@ -677,7 +677,7 @@ export const ConnectRepositoryForm = ( {
 									'branch',
 									'targetDir',
 									'isAutomated',
-							  ]
+								]
 							: [ 'selectedInstallationId', 'selectedRepositoryId' ],
 					} }
 					onChange={ handleChange }

@@ -308,7 +308,7 @@ export default function PricingGrid( {
 					isIncluded
 						? feature.name
 						: translate( '%s not included', { args: [ feature.name ], comment: 'Feature name' } )
-			  );
+				);
 		const text = label ?? defaultLabel;
 		return (
 			<div

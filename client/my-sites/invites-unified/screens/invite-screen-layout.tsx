@@ -77,7 +77,7 @@ export function InviteScreenLayout( {
 	const branding = blogDetails?.garden
 		? getPartnerConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
 				persistToSession: true,
-		  } )
+			} )
 		: null;
 	const titleBranding = branding ?? detectPartnerConfig();
 

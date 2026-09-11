@@ -111,7 +111,7 @@ export function useActivityFields( {
 							},
 							filterBy: { operators: [] },
 						} as Field< Activity >,
-				  ]
+					]
 				: [] ),
 			{
 				id: 'event',

@@ -85,8 +85,8 @@ const skeletonsIn = ( id: string ) =>
 	document.querySelectorAll( `[data-section="${ id }"] .name-pulse-row--skeleton` ).length;
 
 const domainsIn = ( id: string ) =>
-	sectionRows( id ).map(
-		( item ) => item.querySelector( '[data-domain]' )?.getAttribute( 'data-domain' )
+	sectionRows( id ).map( ( item ) =>
+		item.querySelector( '[data-domain]' )?.getAttribute( 'data-domain' )
 	);
 
 describe( 'NamePulseResults', () => {

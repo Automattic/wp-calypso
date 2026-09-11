@@ -173,10 +173,10 @@ export default function ProductInstallErrorView( {
 											installedVersion: error.installedVersion,
 										},
 									}
-							  )
+								)
 							: translate(
 									'This plugin is already installed on your site. Replace it with the uploaded version?'
-							  )
+								)
 					}
 				>
 					<Button
@@ -231,10 +231,10 @@ export default function ProductInstallErrorView( {
 							isTakingTooLong
 								? translate(
 										'Installing this theme is taking longer than expected. It may still finish on its own — check your themes in a few minutes.'
-								  )
+									)
 								: translate(
 										'We were unable to finish setting up your site for this theme. You can try again, or contact support if it keeps happening.'
-								  )
+									)
 						}
 						secondaryAction={ translate( 'Contact support' ) }
 						secondaryActionURL="/help/contact"
@@ -253,10 +253,10 @@ export default function ProductInstallErrorView( {
 						isTakingTooLong
 							? translate(
 									'Installing this plugin is taking longer than expected. It may still finish on its own — check your installed plugins in a few minutes.'
-							  )
+								)
 							: translate(
 									'We were unable to finish setting up your site for this plugin. You can try again, or contact support if it keeps happening.'
-							  )
+								)
 					}
 					secondaryAction={ translate( 'Contact support' ) }
 					secondaryActionURL="/help/contact"

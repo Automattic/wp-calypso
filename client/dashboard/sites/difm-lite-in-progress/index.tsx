@@ -106,7 +106,7 @@ function WebsiteContentSubmissionPending( { site }: { site: Site } ) {
 											dateStyle: 'long',
 										} ),
 									}
-							  )
+								)
 							: __( 'Click the button below to provide the content we need to build your site.' )
 					}
 				/>

@@ -52,7 +52,7 @@ const EmailVerificationBanner: React.FC< {
 						? customDescription
 						: translate(
 								'Verifying your email helps you secure your WordPress.com account and enables key features, like changing your username.'
-						  )
+							)
 				}
 				callToAction={ translate( 'Verify email' ) }
 				onClick={ () => {
@@ -160,7 +160,7 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 		? translate( 'Resend email (%(countdown)s)', {
 				args: { countdown: formatCooldown( secondsUntilResend ) },
 				comment: 'countdown to when the verification email can be resent, e.g. 4:59',
-		  } )
+			} )
 		: translate( 'Resend email' );
 
 	return (

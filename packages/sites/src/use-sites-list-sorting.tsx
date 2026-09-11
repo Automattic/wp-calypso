@@ -32,8 +32,7 @@ type SiteDetailsForSortingWithUserInteractions = Pick<
 	Required< Pick< MinimumSite, 'user_interactions' > >;
 
 export type SiteDetailsForSorting =
-	| SiteDetailsForSortingWithOptionalUserInteractions
-	| SiteDetailsForSortingWithUserInteractions;
+	SiteDetailsForSortingWithOptionalUserInteractions | SiteDetailsForSortingWithUserInteractions;
 
 const validSortKeys = [
 	'lastInteractedWith',

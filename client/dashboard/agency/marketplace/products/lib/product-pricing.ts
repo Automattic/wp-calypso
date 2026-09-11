@@ -67,17 +67,18 @@ export function getProductPriceInfo(
 					intervalLabel: __( 'per month, billed yearly' ),
 					billingTerm,
 					isFree,
-			  }
+				}
 			: {
 					price: ( product.monthly_price ?? 0 ) * 12,
 					discountPercentage: 0,
 					intervalLabel: __( 'per year, billed monthly' ),
 					billingTerm,
 					isFree,
-			  };
+				};
 	}
 
-	const regularPrice = term === 'yearly' ? product.yearly_price ?? 0 : product.monthly_price ?? 0;
+	const regularPrice =
+		term === 'yearly' ? ( product.yearly_price ?? 0 ) : ( product.monthly_price ?? 0 );
 	const intervalLabel = term === 'yearly' ? __( 'per year' ) : __( 'per month' );
 	const introductoryPrice =
 		term === 'yearly' ? product.yearly_introductory_price : product.monthly_introductory_price;
