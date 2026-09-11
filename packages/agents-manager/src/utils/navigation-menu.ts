@@ -423,10 +423,27 @@ async function rewriteMenusHolding(
 		await writeMenuItems( menuId, items );
 	}
 
-	if ( save ) {
-		for ( const { menuId, previous } of rewrites ) {
-			await saveMenu( menuId, previous );
-		}
+	if ( ! save ) {
+		return;
+	}
+
+	// Every menu gets its save, whatever the others do: the page change is
+	// already persisted, so each menu saved is one fewer left disagreeing with
+	// it. A menu whose save failed has its items put back, and is named.
+	const saves = await Promise.allSettled(
+		rewrites.map( ( { menuId, previous } ) => saveMenu( menuId, previous ) )
+	);
+	const failed = rewrites.filter( ( _rewrite, i ) => saves[ i ].status === 'rejected' );
+
+	if ( failed.length ) {
+		const reason = ( saves.find( ( s ) => s.status === 'rejected' ) as PromiseRejectedResult )
+			.reason;
+
+		throw new Error(
+			`Could not save menu ${ failed.map( ( { menuId } ) => menuId ).join( ', ' ) }: ${
+				( reason as Error )?.message ?? String( reason )
+			}. Its items were put back; every other menu was saved.`
+		);
 	}
 }
 
