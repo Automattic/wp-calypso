@@ -1,6 +1,5 @@
-import { dispatch, select } from '@wordpress/data';
-import { PROVIDER_STORE } from '../constants';
 import { isRecord } from './is-record';
+import { providerActions, providerSelectors } from './provider-store';
 import { getSiteRecord, saveSiteFields, SITE_RECORD_UNAVAILABLE } from './site-record';
 
 /**
@@ -89,18 +88,14 @@ export async function setSiteMetadata( changes: SiteMetadata ): Promise< SiteMet
  * module-level buffer that nothing outside it can clear.
  */
 function syncProviderMetadata( metadata: SiteMetadata ): void {
-	const provider = dispatch( PROVIDER_STORE ) as
-		| { setSiteMetadata?: ( metadata: SiteMetadata ) => void }
-		| undefined;
+	const provider = providerActions< { setSiteMetadata?: ( metadata: SiteMetadata ) => void } >();
 
 	if ( ! provider?.setSiteMetadata ) {
 		return;
 	}
 
 	const current =
-		(
-			select( PROVIDER_STORE ) as { getSiteMetadata?: () => SiteMetadata } | undefined
-		 )?.getSiteMetadata?.() ?? {};
+		providerSelectors< { getSiteMetadata?: () => SiteMetadata } >()?.getSiteMetadata?.() ?? {};
 
 	const dropped = Object.keys( current ).filter(
 		( key ) => key !== RUNTIME_KEY && ! ( key in metadata )

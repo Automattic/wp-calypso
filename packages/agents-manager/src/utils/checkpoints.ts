@@ -243,6 +243,17 @@ function captureSnapshots( keys: string[] ): Partial< CheckpointRecord > {
 	};
 }
 
+const SITE_KEYS: string[] = [ checkpointKeys.SITE_TITLE, checkpointKeys.SITE_METADATA ];
+
+// The domains that snapshot the moment their key is claimed.
+const EAGER_KEYS: string[] = [ ...SITE_KEYS, checkpointKeys.LOGO, ...THEME_CHECKPOINT_KEYS ];
+
+const hasSnapshot = ( checkpoint: CheckpointRecord, key: string ): boolean =>
+	( key === checkpointKeys.SITE_TITLE && checkpoint.siteTitleBeforeUpdate !== undefined ) ||
+	( key === checkpointKeys.SITE_METADATA && !! checkpoint.siteMetadataBeforeUpdate ) ||
+	( key === checkpointKeys.LOGO && checkpoint.logoBeforeUpdate !== undefined ) ||
+	( THEME_CHECKPOINT_KEYS.includes( key ) && !! checkpoint.themeBeforeUpdate );
+
 /**
  * Records the state a restore is about to overwrite, so its redo can step back.
  *
@@ -288,13 +299,27 @@ export async function setReciprocalCheckpoint(
 
 	const checkpoint = records.get( id );
 
-	if ( checkpoint ) {
-		records.set( id, {
-			...checkpoint,
-			...( menusBeforeUpdate.length && { menusBeforeUpdate } ),
-			...( pageRenames.length && { pageRenames } ),
-		} );
+	if ( ! checkpoint ) {
+		return;
 	}
+
+	// A redo claiming a domain it could not snapshot would throw part-way,
+	// like any restore with one missing — refused whole instead.
+	const missing = target.checkpointKeys.filter(
+		( key ) => EAGER_KEYS.includes( key ) && ! hasSnapshot( checkpoint, key )
+	);
+
+	if ( missing.length ) {
+		records.delete( id );
+
+		throw new Error( `Could not snapshot ${ missing.join( ', ' ) } for a redo.` );
+	}
+
+	records.set( id, {
+		...checkpoint,
+		...( menusBeforeUpdate.length && { menusBeforeUpdate } ),
+		...( pageRenames.length && { pageRenames } ),
+	} );
 }
 
 export function hasCheckpoint( id: string ): boolean {
@@ -432,17 +457,15 @@ function dropUnrecordedDomains( id: string ): void {
 	const restorable: Record< string, boolean > = {
 		[ checkpointKeys.PAGE ]: renamed,
 		[ checkpointKeys.NAVIGATION ]: renamed || !! checkpoint.menusBeforeUpdate?.length,
-		// Snapshotted up front but written mid-batch, so both are needed: a site
-		// record that could not be read leaves the key claimed with nothing
-		// behind it, and a batch that failed before the site edit never changed
-		// what the snapshot would put back.
-		[ checkpointKeys.SITE_TITLE ]:
-			checkpoint.siteTitleBeforeUpdate !== undefined && written( checkpointKeys.SITE_TITLE ),
-		[ checkpointKeys.SITE_METADATA ]:
-			!! checkpoint.siteMetadataBeforeUpdate && written( checkpointKeys.SITE_METADATA ),
-		[ checkpointKeys.LOGO ]: checkpoint.logoBeforeUpdate !== undefined,
+		// The site domains snapshot up front but are written mid-batch, so both
+		// are needed there: a site record that could not be read leaves the key
+		// claimed with nothing behind it, and a batch that failed before the
+		// site edit never changed what the snapshot would put back.
 		...Object.fromEntries(
-			THEME_CHECKPOINT_KEYS.map( ( key ) => [ key, !! checkpoint.themeBeforeUpdate ] )
+			EAGER_KEYS.map( ( key ) => [
+				key,
+				hasSnapshot( checkpoint, key ) && ( ! SITE_KEYS.includes( key ) || written( key ) ),
+			] )
 		),
 	};
 
@@ -601,6 +624,7 @@ export function getAvailableCheckpoints(): CheckpointContextItem[] {
 				siteMetadataBeforeUpdate: _siteMetadata,
 				menusBeforeUpdate: _menus,
 				pageRenames: _renames,
+				writtenKeys: _written,
 				...checkpoint
 			},
 			index

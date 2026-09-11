@@ -15,7 +15,7 @@ import {
 	renameNavigationItem,
 	type MenuId,
 } from '../../utils/navigation-menu';
-import { getPageTitle, getPageUrl, setPageTitle } from '../../utils/page-title';
+import { getPageTitle, getPageUrl, getSavedPageTitle, setPageTitle } from '../../utils/page-title';
 import { logSiteMetadata, logSiteSession } from '../../utils/session-log';
 import { setSiteMetadata } from '../../utils/site-metadata';
 import { getSiteRecord } from '../../utils/site-record';
@@ -100,13 +100,23 @@ const FIELD_CHECKS: Record< keyof EntityRef, ( value: unknown ) => boolean > = {
 	options: isRecord,
 };
 
-// The one record field this ability rewrites (`flattenTitle()`): a wrong type
-// there would clear a title, where null clears it on purpose, as the schema
-// allows. Everything else reaches core-data as sent.
-const isTitle = ( value: unknown ) =>
-	value == null ||
-	typeof value === 'string' ||
-	( isRecord( value ) && ( typeof value.raw === 'string' || typeof value.rendered === 'string' ) );
+// The record fields the schema types, checked at runtime because a raw call
+// can send anything: a wrong-typed title would clear one (null clears it on
+// purpose), and a wrong-typed metadata field would persist as sent. Fields the
+// schema leaves open reach core-data as sent.
+const isText = ( value: unknown ) => value == null || typeof value === 'string';
+
+const RECORD_FIELD_CHECKS: Record< string, ( value: unknown ) => boolean > = {
+	title: ( value ) =>
+		isText( value ) ||
+		( isRecord( value ) &&
+			( typeof value.raw === 'string' || typeof value.rendered === 'string' ) ),
+	content: isText,
+	excerpt: isText,
+	status: isText,
+	personality: isText,
+	siteLocation: ( value ) => value == null || isRecord( value ),
+};
 
 /** An entry checked for its operation, so the writes can rely on its fields. */
 type Entity< O extends Operation > = EntityRef &
@@ -163,9 +173,15 @@ function checkEntities< O extends Operation >( entities: unknown[], operation: O
 			);
 		}
 
-		if ( ! isTitle( record?.title ) ) {
+		const wrongField = Object.keys( RECORD_FIELD_CHECKS ).find(
+			( field ) => record && field in record && ! RECORD_FIELD_CHECKS[ field ]( record[ field ] )
+		);
+
+		if ( wrongField ) {
 			throw new Error(
-				`Cannot ${ operation }: title must be a string, or an object with a raw or rendered string.`
+				`Cannot ${ operation }: ${ wrongField } has the wrong type — title, content, excerpt, ` +
+					'status and personality are strings (title may also be an object with a raw or ' +
+					'rendered string), siteLocation is an object.'
 			);
 		}
 
@@ -280,6 +296,14 @@ interface CoreResolve {
 const coreDispatch = () => dispatch( coreStore ) as unknown as CoreDispatch;
 
 const coreResolve = () => resolveSelect( coreStore ) as unknown as CoreResolve;
+
+/**
+ * The titles a menu label may follow: the one on screen, and the one saved
+ * when the page's own edit is still pending.
+ */
+const pageLabels = async ( pageId: number | string ): Promise< string[] > => [
+	...new Set( [ await getPageTitle( pageId ), await getSavedPageTitle( pageId ) ] ),
+];
 
 /** Whether the editor has this record open — a post or page in the post editor, a page in the site editor. */
 const isOpenInEditor = ( entityName: string, recordId: number | string ): boolean => {
@@ -444,6 +468,7 @@ async function applyRecordEdit(
 	}
 
 	const previousTitle = entityName === PAGE ? await getPageTitle( recordId ) : '';
+	const previousLabels = entityName === PAGE ? await pageLabels( recordId ) : [];
 	const previousUrl = entityName === PAGE ? await getPageUrl( recordId ) : undefined;
 	const nextTitle = flattenTitle( record.title );
 
@@ -525,7 +550,7 @@ async function applyRecordEdit(
 		const captured: MenuId[] = [];
 
 		try {
-			for ( const menuId of await getMenuIdsToRelabel( recordId, previousTitle, previousUrl ) ) {
+			for ( const menuId of await getMenuIdsToRelabel( recordId, previousLabels, previousUrl ) ) {
 				if ( await recorder.captureMenu( menuId ) ) {
 					captured.push( menuId );
 				}
@@ -536,7 +561,7 @@ async function applyRecordEdit(
 			throw error;
 		}
 
-		await renameNavigationItem( recordId, nextTitle, previousTitle, previousUrl );
+		await renameNavigationItem( recordId, nextTitle, previousLabels, previousUrl );
 	}
 }
 
@@ -609,8 +634,8 @@ async function applyDeletes(
 		await coreResolve().getEditedEntityRecord( entityType, entityName, recordId );
 
 		// Read before the delete: a menu item carrying no page id is matched by
-		// its label and url, and the page is the only place those come from.
-		const previousLabel = entityName === PAGE ? await getPageTitle( recordId ) : '';
+		// its url or label, and the page is the only place those come from.
+		const previousLabels = entityName === PAGE ? await pageLabels( recordId ) : [];
 		const previousUrl = entityName === PAGE ? await getPageUrl( recordId ) : undefined;
 
 		await coreDispatch().deleteEntityRecord( entityType, entityName, recordId, undefined, {
@@ -626,7 +651,7 @@ async function applyDeletes(
 		// After the delete, never before: the menu write persists, so removing
 		// the item first would strip it for good if the delete then failed.
 		if ( entityName === PAGE ) {
-			await removeNavigationItem( recordId, previousLabel, previousUrl );
+			await removeNavigationItem( recordId, previousLabels, previousUrl );
 		}
 	}
 }
