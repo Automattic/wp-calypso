@@ -11,6 +11,7 @@ import type { Message } from '@automattic/agenttic-ui/dist/types';
 // Capture the onFeedback callback passed to createFeedbackActions
 let capturedOnFeedback: ( messageId: string, feedback: 'up' | 'down' ) => void;
 let capturedCondition: ( ( message: Message ) => boolean ) | undefined;
+let mockGetActionsForMessage: jest.Mock;
 
 jest.mock(
 	'@automattic/agenttic-ui',
@@ -18,8 +19,9 @@ jest.mock(
 		createFeedbackActions: jest.fn( ( { onFeedback, condition } ) => {
 			capturedOnFeedback = onFeedback;
 			capturedCondition = condition;
+			mockGetActionsForMessage = jest.fn( () => [] );
 			return {
-				getActionsForMessage: jest.fn(),
+				getActionsForMessage: mockGetActionsForMessage,
 				onChange: jest.fn(),
 				offChange: jest.fn(),
 			};
@@ -156,6 +158,25 @@ describe( 'useFeedbackAction', () => {
 
 			expect( capturedCondition?.( createMessage( '1', 'agent', 'hi' ) ) ).toBe( true );
 			expect( capturedCondition?.( createMessage( '2', 'user', 'hi' ) ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'message actions', () => {
+		it( 'returns the thumbs pair ordered after the checkpoint action', () => {
+			const agentMessage = createMessage( 'msg-1', 'agent', 'Answer' );
+			const { result } = renderHook( () => useFeedbackAction( defaultConfig ) );
+			mockGetActionsForMessage.mockReturnValue( [
+				{ id: 'feedback-up', label: 'Good response', onClick: jest.fn() },
+				{ id: 'feedback-down', label: 'Bad response', onClick: jest.fn() },
+			] );
+
+			const actions = result.current.getFeedbackActionsForMessage( agentMessage );
+
+			expect( actions.map( ( action ) => [ action.id, action.order ] ) ).toEqual( [
+				[ 'feedback-up', 2 ],
+				[ 'feedback-down', 3 ],
+			] );
+			expect( mockGetActionsForMessage ).toHaveBeenCalledWith( agentMessage );
 		} );
 	} );
 

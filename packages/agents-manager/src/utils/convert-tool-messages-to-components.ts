@@ -3,6 +3,7 @@ import ChatResponseRenderedTracker, {
 	createChatResponseActionCallback,
 } from '../components/chat-response-tracking';
 import { EscalationButton } from '../components/escalation-button';
+import { isContextOnlyMessage } from './context-only-message';
 import isAmAbilitiesDisabled from './is-am-abilities-disabled';
 import lazyComponent from './lazy-component';
 import { isShowComponentTool } from './show-component-tools';
@@ -55,29 +56,6 @@ interface Options {
 	currentPostId?: number | string;
 	/** Whether the agent's turn is still running, so a promised check may still land. */
 	isProcessing?: boolean;
-}
-
-interface MessageWithContextFlags extends UIMessage {
-	context?: {
-		flags?: {
-			context_only?: boolean;
-		};
-	};
-}
-
-export function isContextOnlyMessage( message: UIMessage ): boolean {
-	return (
-		( message as MessageWithContextFlags ).context?.flags?.context_only === true ||
-		message.content?.some( ( content ) => {
-			if ( content.type === 'context' ) {
-				return true;
-			}
-
-			const flags =
-				content.type === 'data' ? ( content.data?.flags as { context_only?: boolean } ) : undefined;
-			return flags?.context_only === true;
-		} )
-	);
 }
 
 function getShowComponentSummary( message: UIMessage ): string | undefined {

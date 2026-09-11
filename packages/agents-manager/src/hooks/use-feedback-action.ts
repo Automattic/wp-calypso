@@ -177,6 +177,13 @@ function getPreviousMessages( messages: Message[], targetMessageId: string ): Pr
 	return result;
 }
 
+/**
+ * Thumbs up/down on agent replies, plus the free-text follow-up after a thumbs
+ * down. Ratings go to the feedback API with the reply's Langfuse trace so they
+ * can be scored against the run that produced it. The pair is built for every
+ * agent message; the transcript's turn policy (`applyTurnActionPolicy`) keeps
+ * it on a turn's last message only.
+ */
 export default function useFeedbackAction( {
 	messages,
 	getTraceIdForMessage,
@@ -270,6 +277,7 @@ export default function useFeedbackAction( {
 
 	const getFeedbackActionsForMessage = useCallback(
 		( message: Message ) => {
+			// Read so a vote changes this callback's identity and the transcript memo recomputes.
 			void feedbackActionsVersion;
 
 			return (

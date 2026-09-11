@@ -125,6 +125,7 @@ export type UIMessageAction =
 			pressed?: boolean;
 			showLabel?: boolean;
 			order?: number;
+			revealOnHover?: boolean;
 	  }
 	| {
 			type: 'component';
@@ -133,6 +134,7 @@ export type UIMessageAction =
 			component: React.ComponentType< any >;
 			componentProps?: Record< string, unknown >;
 			order?: number;
+			revealOnHover?: boolean;
 	  };
 
 // Internal types for message actions with conditional logic
@@ -149,6 +151,7 @@ export type MessageActionDefinition =
 			pressed?: boolean;
 			showLabel?: boolean;
 			order?: number;
+			revealOnHover?: boolean;
 	  }
 	| {
 			type: 'component';
@@ -158,6 +161,7 @@ export type MessageActionDefinition =
 			componentProps?: Record< string, unknown >;
 			condition?: ( message: UIMessage ) => boolean;
 			order?: number;
+			revealOnHover?: boolean;
 	  };
 
 export interface MessageActionsRegistration {
