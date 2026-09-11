@@ -7,6 +7,7 @@ import {
 	type NavigationBlock,
 } from '../../utils/navigation-menu';
 import { providerSelectors } from '../../utils/provider-store';
+import { sameUrl } from '../../utils/same-url';
 
 /**
  * Rebuilds a menu from the final item list the agent asks for.
@@ -358,16 +359,15 @@ export async function buildNavigationItems(
 			const name = blockName( block, innerBlocks );
 			const attributes = { ...block.attributes, ...attributesFor( input ) };
 
-			// A new url makes the item a custom link, unless a new page id comes
-			// with it: the page it used to point at must not follow it into renames
-			// and deletions. The id may have only identified the item.
-			const relinked = input.url && input.url !== block.attributes?.url;
-			const samePage = ! input.id || String( input.id ) === String( block.attributes?.id );
-
-			if ( relinked && samePage ) {
+			// A new page id makes a page link, whatever the block linked before. A
+			// new url without one makes a custom link, as the editor's own link
+			// control does: the page it used to point at must not follow it into
+			// renames and deletions. The id may have only identified the item.
+			if ( input.id && String( input.id ) !== String( block.attributes?.id ) ) {
+				Object.assign( attributes, { type: 'page', kind: 'post-type' }, attributesFor( input ) );
+			} else if ( input.url && ! sameUrl( input.url, block.attributes?.url ) ) {
 				delete attributes.id;
-				delete attributes.type;
-				attributes.kind = 'custom';
+				Object.assign( attributes, { type: 'custom', kind: 'custom' } );
 			}
 
 			return { ...block, name, attributes, innerBlocks };
