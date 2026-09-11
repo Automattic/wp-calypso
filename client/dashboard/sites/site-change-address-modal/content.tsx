@@ -259,7 +259,7 @@ const ConfirmNewSiteAddressForm = ( {
 				},
 				onError: ( error: Error ) => {
 					const { text, link } = parseHtmlMessage( error.message ?? '' );
-					createErrorNotice( text || __( 'Failed to change site address' ), {
+					createErrorNotice( text || __( 'Failed to change site address.' ), {
 						type: 'snackbar',
 						actions: link ? [ link ] : undefined,
 					} );
