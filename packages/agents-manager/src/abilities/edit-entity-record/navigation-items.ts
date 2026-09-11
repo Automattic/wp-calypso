@@ -358,9 +358,13 @@ export async function buildNavigationItems(
 			const name = blockName( block, innerBlocks );
 			const attributes = { ...block.attributes, ...attributesFor( input ) };
 
-			// A new url without a page id makes the item a custom link: the page
-			// it used to point at must not follow it into renames and deletions.
-			if ( input.url && ! input.id && input.url !== block.attributes?.url ) {
+			// A new url makes the item a custom link, unless a new page id comes
+			// with it: the page it used to point at must not follow it into renames
+			// and deletions. The id may have only identified the item.
+			const relinked = input.url && input.url !== block.attributes?.url;
+			const samePage = ! input.id || String( input.id ) === String( block.attributes?.id );
+
+			if ( relinked && samePage ) {
 				delete attributes.id;
 				delete attributes.type;
 				attributes.kind = 'custom';
