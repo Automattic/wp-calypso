@@ -80,6 +80,44 @@ test( 'sitewide impression carries the aligned properties', () => {
 	);
 } );
 
+test( 'a re-render with an equal but new eventProperties object does not re-fire the impression', () => {
+	const recordTracksEvent = jest.fn();
+	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	const purchase = makePurchase();
+
+	const { rerender } = render(
+		<QueryClientProvider client={ queryClient }>
+			<PlanExpiryNotice
+				purchase={ purchase }
+				locale="en"
+				surface="test"
+				recordTracksEvent={ recordTracksEvent }
+				scope="sitewide"
+				eventProperties={ { page: 'overview' } }
+			/>
+		</QueryClientProvider>
+	);
+
+	rerender(
+		<QueryClientProvider client={ queryClient }>
+			<PlanExpiryNotice
+				purchase={ purchase }
+				locale="en"
+				surface="test"
+				recordTracksEvent={ recordTracksEvent }
+				scope="sitewide"
+				eventProperties={ { page: 'overview' } }
+			/>
+		</QueryClientProvider>
+	);
+
+	expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+	expect( recordTracksEvent ).toHaveBeenCalledWith(
+		'calypso_purchases_plan_expiry_notice_impression',
+		expect.objectContaining( { page: 'overview' } )
+	);
+} );
+
 test( 'clicks name the cta beside the action', async () => {
 	const { recordTracksEvent } = renderNotice( { scope: 'sitewide' } );
 	await userEvent.click( screen.getByRole( 'link', { name: 'Renew now' } ) );

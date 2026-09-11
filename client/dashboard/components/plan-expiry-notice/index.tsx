@@ -208,7 +208,10 @@ export function PlanExpiryNotice( {
 	} );
 
 	// Pulled out as primitives so that they, and the memo below, stay stable
-	// across renders. `purchase` and `notice` are both new objects every time.
+	// across renders. `purchase` and `notice` are both new objects every time,
+	// and so is `extraEventProperties` for a caller passing an inline object
+	// literal; it is turned into the primitive `extraEventPropertiesKey` below
+	// for the same reason.
 	const purchaseId = purchase.ID;
 	const productSlug = purchase.product_slug;
 	const status = isExpiredOrRemoved( purchase ) ? 'expired' : 'active';
@@ -217,9 +220,11 @@ export function PlanExpiryNotice( {
 	const variant = notice?.variant;
 	const stage = notice?.stage;
 	const isPlanOwner = isPlanOwnerProp ?? true;
+	const extraEventPropertiesKey = JSON.stringify( extraEventProperties ?? {} );
 
 	const eventProperties = useMemo(
 		() => ( {
+			...extraEventProperties,
 			surface,
 			purchase_id: purchaseId,
 			product_slug: productSlug,
@@ -231,8 +236,8 @@ export function PlanExpiryNotice( {
 			stage,
 			state: stage ? getExpiryStateName( stage ) : undefined,
 			is_plan_owner: isPlanOwner,
-			...extraEventProperties,
 		} ),
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- extraEventPropertiesKey stands in for extraEventProperties.
 		[
 			surface,
 			purchaseId,
@@ -243,7 +248,7 @@ export function PlanExpiryNotice( {
 			variant,
 			stage,
 			isPlanOwner,
-			extraEventProperties,
+			extraEventPropertiesKey,
 		]
 	);
 
