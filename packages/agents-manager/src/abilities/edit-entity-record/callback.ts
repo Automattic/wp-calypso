@@ -261,7 +261,7 @@ function checkBatch( input: unknown ): Batch | Error {
  */
 type AppliedChanges = {
 	created: { entityName?: string; recordId?: number | string; title?: string }[];
-	updated: { entityName?: string; recordId?: number | string }[];
+	updated: { entityName?: string; recordId?: number | string; fields: string[] }[];
 	deleted: { entityName?: string; recordId?: number | string }[];
 };
 
@@ -422,13 +422,15 @@ async function editSiteMetadata( changes: Record< string, unknown > ): Promise< 
  * that checkpoint is the landed change's only undo.
  */
 function reportUpdated( applied: AppliedChanges, { entityName, recordId }: Entity< 'edit' > ) {
-	let reported = false;
+	let entry: AppliedChanges[ 'updated' ][ number ] | undefined;
 
-	return () => {
-		if ( ! reported ) {
-			applied.updated.push( { entityName, recordId } );
-			reported = true;
+	return ( ...fields: string[] ) => {
+		if ( ! entry ) {
+			entry = { entityName, recordId, fields: [] };
+			applied.updated.push( entry );
 		}
+
+		entry.fields.push( ...fields );
 	};
 }
 
@@ -459,12 +461,12 @@ async function applySiteEdit(
 		await setSiteTitle( siteTitle );
 		recorder.markWritten( checkpointKeys.SITE_TITLE );
 		metadata.siteTitle = siteTitle;
-		updated();
+		updated( 'title' );
 	}
 
 	await editSiteMetadata( metadata );
 	recorder.markWritten( checkpointKeys.SITE_METADATA );
-	updated();
+	updated( ...Object.keys( metadata ) );
 }
 
 /** Writes one page, post, product or menu record. */
@@ -484,14 +486,16 @@ async function applyRecordEdit(
 		);
 	}
 
-	const previousTitle = entityName === PAGE ? await getPageTitle( recordId ) : '';
-	const previousLabels = entityName === PAGE ? await pageLabels( recordId ) : [];
-	const previousUrl = entityName === PAGE ? await getPageUrl( recordId ) : undefined;
-	const nextTitle = flattenTitle( record.title );
-
 	// Presence, not truthiness: a request carrying an empty title clears the page
 	// name, which is as restorable as any rename.
-	const isRename = entityName === PAGE && 'title' in record && nextTitle !== previousTitle;
+	const renaming = entityName === PAGE && 'title' in record;
+	const previousTitle = renaming ? await getPageTitle( recordId ) : '';
+	const nextTitle = flattenTitle( record.title );
+	const isRename = renaming && nextTitle !== previousTitle;
+
+	// Read before the title changes: what the menu item followed until now.
+	const previousLabels = isRename ? await pageLabels( recordId ) : [];
+	const previousUrl = isRename ? await getPageUrl( recordId ) : undefined;
 
 	// The title is checkpointed, so it goes through `setPageTitle` and stays out
 	// of the editor's undo stack. The rest of the record is not, so the editor's
@@ -523,7 +527,7 @@ async function applyRecordEdit(
 		// otherwise leave a checkpoint offering to undo a rename that never
 		// happened, and relabel a menu item to match.
 		recorder.capturePageRename( { pageId: recordId, from: previousTitle, to: nextTitle } );
-		updated();
+		updated( 'title' );
 	}
 
 	if ( menuWrite ) {
@@ -546,7 +550,7 @@ async function applyRecordEdit(
 		// Recorded here, not after the write below: this one has already changed
 		// the menu with `undoIgnore`, so a later failure must not take its only
 		// undo down with it.
-		updated();
+		updated( 'navigationItems' );
 	}
 
 	// The agent's `options` stay out of edits: the only one core-data reads
@@ -554,9 +558,8 @@ async function applyRecordEdit(
 	// decided above, not by the request.
 	if ( Object.keys( recordToWrite ).length ) {
 		await coreDispatch().editEntityRecord( entityType, entityName, recordId, recordToWrite );
+		updated( ...Object.keys( recordToWrite ) );
 	}
-
-	updated();
 
 	if ( isRename ) {
 		// Snapshot the menus the rename will relabel: a restore puts each back as
@@ -757,7 +760,7 @@ export async function editEntityRecordCallback(
 		// landed and duplicate them.
 		if ( hasChanges( applied ) ) {
 			return errorResult(
-				`Partly applied, then failed with: ${ failure.message }. The changes listed in details already landed — do not repeat them.`,
+				`Partly applied, then failed with: ${ failure.message }. The changes listed in details already landed — do not repeat them; on an updated record, only the fields listed did.`,
 				__( 'Some of those changes were applied, but the rest failed.', __i18n_text_domain__ ),
 				applied
 			);

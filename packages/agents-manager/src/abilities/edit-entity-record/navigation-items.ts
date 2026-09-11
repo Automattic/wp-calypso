@@ -359,11 +359,12 @@ export async function buildNavigationItems(
 			const name = blockName( block, innerBlocks );
 			const attributes = { ...block.attributes, ...attributesFor( input ) };
 
-			// A new page id makes a page link, whatever the block linked before. A
-			// new url without one makes a custom link, as the editor's own link
-			// control does: the page it used to point at must not follow it into
-			// renames and deletions. The id may have only identified the item.
-			if ( input.id && String( input.id ) !== String( block.attributes?.id ) ) {
+			// A page id makes a page link — on a new item, or whatever the block
+			// linked before. A new url without one makes a custom link, as the
+			// editor's own link control does: the page it used to point at must not
+			// follow it into renames and deletions. The id may have only identified
+			// the item.
+			if ( input.id && String( input.id ) !== String( existing?.attributes?.id ) ) {
 				Object.assign( attributes, { type: 'page', kind: 'post-type' }, attributesFor( input ) );
 			} else if ( input.url && ! sameUrl( input.url, block.attributes?.url ) ) {
 				delete attributes.id;
