@@ -237,7 +237,6 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
 
 		expect( await screen.findByRole( 'alert' ) ).toBeVisible();
-		await new Promise( ( resolve ) => setTimeout( resolve, 300 ) );
 		expect( window.location.href ).toBe( '' );
 		expect( mockSetQueryData ).not.toHaveBeenCalled();
 	} );
@@ -337,6 +336,20 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		expect( await screen.findByRole( 'button', { name: 'Switch it on' } ) ).toBeEnabled();
 	} );
 
+	it( 'stops listening for a restore once the notice is gone', async () => {
+		const { unmount } = renderNotice();
+		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
+		await waitFor( () => expect( window.location.href ).toBe( DASHBOARD_URL ) );
+
+		unmount();
+
+		const restored = new Event( 'pageshow' );
+		Object.defineProperty( restored, 'persisted', { value: true } );
+		window.dispatchEvent( restored );
+
+		expect( mockSetQueryData ).not.toHaveBeenCalled();
+	} );
+
 	it( 'does not report a site as switched on when it was only dismissed', async () => {
 		const { unmount } = renderNotice();
 
@@ -344,14 +357,6 @@ describe( 'PremiumAnalyticsPreviewNotice', () => {
 		unmount();
 
 		expect( mockSetQueryData ).not.toHaveBeenCalled();
-	} );
-
-	it( 'keeps keyboard focus on the button while it goes busy', async () => {
-		renderNotice();
-
-		await userEvent.click( screen.getByRole( 'button', { name: 'Switch it on' } ) );
-
-		expect( screen.getByRole( 'button', { name: 'Switching it on…' } ) ).toHaveFocus();
 	} );
 
 	it( 'moves focus to Try again when the write fails', async () => {

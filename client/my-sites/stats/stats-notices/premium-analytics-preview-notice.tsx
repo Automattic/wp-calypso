@@ -13,15 +13,16 @@ import {
 	PREMIUM_ANALYTICS_ENABLED_SETTING,
 	premiumAnalyticsStatusQueryKey,
 } from 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query';
-import { trackPremiumAnalyticsPreviewEvent } from '../premium-analytics-preview/track-event';
+import {
+	NAVIGATION_DELAY,
+	trackPremiumAnalyticsPreviewEvent,
+} from '../premium-analytics-preview/track-event';
 import { StatsNoticeProps } from './types';
 
 const DAY_IN_SECONDS = 24 * 3600;
 // The notices endpoint decides when a postponed invitation stops coming back; the client only
 // says how long each one lasts.
 const DISMISSAL_POSTPONEMENT = 30 * DAY_IN_SECONDS;
-// Long enough for the Tracks beacon to leave before the page does; the modules menu uses the same.
-const NAVIGATION_DELAY = 250;
 
 const NoticeContainer = ( {
 	isOdyssey,
@@ -123,11 +124,11 @@ const PremiumAnalyticsPreviewNotice = ( {
 		// Deliberately no dismissal here. An enabled site already fails the eligibility rule, so
 		// the invitation is gone on the next load either way.
 		setLeavingSiteId( siteId );
-		if ( premiumAnalyticsDashboardUrl ) {
-			setTimeout( () => {
-				window.location.href = premiumAnalyticsDashboardUrl;
-			}, NAVIGATION_DELAY );
-		}
+		// The cohort rule requires the URL before this notice can win its slot, so it is never
+		// null here; the shared notice props are just looser than that gate.
+		setTimeout( () => {
+			window.location.href = premiumAnalyticsDashboardUrl!;
+		}, NAVIGATION_DELAY );
 	};
 
 	// The browser's Back button can restore this page from the back/forward cache with the button
