@@ -1,7 +1,8 @@
 import { siteCurrentUserMetaMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
-import { PlanExpiryNotice, getPlanExpiryEventProperties } from '../plan-expiry-notice';
+import { getCalendarDaysUntil } from '../../utils/datetime';
+import { PlanExpiryNotice, getExpiryStateName } from '../plan-expiry-notice';
 import type { SiteExpiryNoticeState } from './use-site-expiry-notice';
 
 export interface SiteExpiryNoticeBannerProps {
@@ -17,10 +18,8 @@ export interface SiteExpiryNoticeBannerProps {
 }
 
 /**
- * The sitewide plan-expiry banner, given a state that `useSiteExpiryNotice`
- * has already decided should show. Never decides visibility itself; the one
- * time it renders nothing is after the reader has just dismissed it, which is
- * the dashboard arbiter's sanctioned in-session dismissal.
+ * The sitewide plan-expiry banner. Never decides visibility itself; the one time
+ * it renders nothing is the arbiter's sanctioned in-session dismissal.
  */
 export function SiteExpiryNoticeBanner( {
 	siteId,
@@ -37,12 +36,16 @@ export function SiteExpiryNoticeBanner( {
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const { mutate: updateMeta } = useMutation( siteCurrentUserMetaMutation( siteId ) );
 
-	const eventProperties = getPlanExpiryEventProperties( purchase, {
+	const eventProperties = {
+		...extraEventProperties,
 		surface,
+		purchase_id: purchase.ID,
+		product_slug: purchase.product_slug,
 		stage,
-		isPlanOwner,
-		extra: extraEventProperties,
-	} );
+		state: getExpiryStateName( stage ),
+		days_remaining: getCalendarDaysUntil( new Date( purchase.expiry_date ) ),
+		is_plan_owner: isPlanOwner,
+	};
 
 	const dismiss = () => {
 		if ( ! dismissMetaKey ) {

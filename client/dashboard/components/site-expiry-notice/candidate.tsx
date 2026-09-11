@@ -1,7 +1,6 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useMatch, useRouterState } from '@tanstack/react-router';
-import { useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import { useHelpCenter } from '../../app/help-center';
@@ -19,10 +18,10 @@ export interface SiteExpiryNoticeCandidate {
 }
 
 /**
- * The sitewide expiry notice as an arbiter candidate for whichever `/sites/*`
- * page is showing, or null off site pages and when there is nothing to say.
- * Eligibility is settled by `ensureSiteExpiryNoticeData` in the site route's
- * loader, so the answer is known on the page's first render.
+ * The sitewide expiry notice as an arbiter candidate, or null off site pages and
+ * when there is nothing to say. Eligibility is settled by
+ * `ensureSiteExpiryNoticeData` in the site route's loader, so the answer is
+ * known on the page's first render.
  */
 export function useSiteExpiryNoticeCandidate(): SiteExpiryNoticeCandidate | null {
 	const siteMatch = useMatch( { from: siteRoute.id, shouldThrow: false } );
@@ -46,39 +45,30 @@ export function useSiteExpiryNoticeCandidate(): SiteExpiryNoticeCandidate | null
 		locale,
 	} );
 
-	const openSupport = useCallback(
-		( message: string ) => {
-			setNavigateToRoute( `/odie?query=${ encodeURIComponent( message ) }` );
-			setShowHelpCenter( true );
-		},
-		[ setNavigateToRoute, setShowHelpCenter ]
-	);
+	if ( ! site || ! state ) {
+		return null;
+	}
 
-	const siteId = site?.ID;
-	const viewOtherPlansUrl = site ? getSitePlanUpgradeUrl( site ) : undefined;
-	const page = getPageName( routeId );
+	const openSupport = ( message: string ) => {
+		setNavigateToRoute( `/odie?query=${ encodeURIComponent( message ) }` );
+		setShowHelpCenter( true );
+	};
 
-	return useMemo( () => {
-		if ( ! siteId || ! state ) {
-			return null;
-		}
-
-		return {
-			isUrgent: isUrgentStage( state.stage ),
-			node: (
-				<SiteExpiryNoticeBanner
-					siteId={ siteId }
-					state={ state }
-					locale={ locale }
-					surface="dashboard-site"
-					eventProperties={ { page } }
-					recordTracksEvent={ recordTracksEvent }
-					onContactSupport={ openSupport }
-					viewOtherPlansUrl={ viewOtherPlansUrl }
-				/>
-			),
-		};
-	}, [ siteId, state, locale, page, openSupport, recordTracksEvent, viewOtherPlansUrl ] );
+	return {
+		isUrgent: isUrgentStage( state.stage ),
+		node: (
+			<SiteExpiryNoticeBanner
+				siteId={ site.ID }
+				state={ state }
+				locale={ locale }
+				surface="dashboard-site"
+				eventProperties={ { page: getPageName( routeId ) } }
+				recordTracksEvent={ recordTracksEvent }
+				onContactSupport={ openSupport }
+				viewOtherPlansUrl={ getSitePlanUpgradeUrl( site ) }
+			/>
+		),
+	};
 }
 
 /**

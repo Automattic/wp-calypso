@@ -3,10 +3,8 @@ import { useSiteExpiryNoticeCandidate } from '../components/site-expiry-notice';
 import type { ReactNode } from 'react';
 
 /**
- * Shared candidates compete on every page that renders the arbiter. Today
- * there is one: the sitewide plan-expiry notice, which is null off `/sites/*`
- * site pages. Its eligibility is settled in the site route loader, so the
- * pick below is stable from the first render.
+ * Shared candidates compete on every page that renders the arbiter. Today there
+ * is one: the sitewide plan-expiry notice, null off `/sites/*` site pages.
  */
 function useSharedCandidate(): { node: ReactNode; isUrgent: boolean } | null {
 	return useSiteExpiryNoticeCandidate();

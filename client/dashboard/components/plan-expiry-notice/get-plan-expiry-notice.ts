@@ -18,11 +18,7 @@ import type { Purchase } from '@automattic/api-core';
 
 export type PlanExpiryUrgency = 'info' | 'warning' | 'error';
 
-/**
- * Days after the expiry date until the sitewide notice stops talking about a
- * removed plan. Matches wp-admin's `GRACE_PERIOD_DAYS + POST_GRACE_PERIOD_DAYS`
- * so both surfaces go quiet on the same day.
- */
+/** Matches wp-admin's `GRACE_PERIOD_DAYS + POST_GRACE_PERIOD_DAYS`, so both surfaces go quiet on the same day. */
 export const NOTICE_CUTOFF_DAYS_PAST_EXPIRY = 60;
 
 export type PlanExpiryStateName = 'approaching_expiry' | 'expired_grace' | 'expired';
@@ -61,34 +57,19 @@ export interface PlanExpiryNoticeOptions {
 	 */
 	renewReturnUrl?: string;
 
-	/**
-	 * `purchase` (default) is the purchase-management notice: it may speak up
-	 * months ahead and suggests turning auto-renew back on. `sitewide` mirrors
-	 * the wp-admin banner: silent until 60 days out (7 for monthly plans), never
-	 * offers auto-renew, and keeps talking about a removed plan until 60 days
-	 * after its expiry date.
-	 */
+	/** `purchase` (default) is the purchase-management notice; `sitewide` mirrors the wp-admin banner. */
 	scope?: PlanExpiryNoticeScope;
 
-	/**
-	 * Sitewide scope only. Whether the site has already been reverted from
-	 * Atomic to Simple, which changes the post-grace copy and sends the owner
-	 * to support instead of checkout.
-	 */
+	/** Sitewide scope only. A reverted site is sent to support instead of checkout. */
 	isReverted?: boolean;
 
-	/**
-	 * Sitewide scope only. Whether the viewer is the account that bought the
-	 * plan. Nobody else can renew it, so a non-owner gets an explanation of
-	 * whose plan it is and no actions. Defaults to true.
-	 */
+	/** Sitewide scope only. Nobody but the owner can renew, so a non-owner gets no actions. Defaults to true. */
 	isPlanOwner?: boolean;
 
 	/**
-	 * Sitewide scope only. The effective stage, for a caller that knows better
-	 * than the purchase's own status does: an Atomic site past the grace period
-	 * that has not been reverted yet has lost nothing, and hears the grace
-	 * period's words. Defaults to {@link getSitewideExpiryStage}.
+	 * Sitewide scope only. For a caller that knows better than the purchase's own
+	 * status does: an Atomic site past grace that has not been reverted yet has
+	 * lost nothing. Defaults to {@link getSitewideExpiryStage}.
 	 */
 	stage?: PlanExpiryNoticeStage;
 }
@@ -98,10 +79,7 @@ export interface PlanExpiryNoticeContent {
 	title?: string;
 	body: string;
 
-	/**
-	 * Sitewide scope only. Which of the wp-admin banner's windows the notice is
-	 * in.
-	 */
+	/** Sitewide scope only. Which of the wp-admin banner's windows the notice is in. */
 	stage?: PlanExpiryNoticeStage;
 	primaryAction?: PlanExpiryNoticeAction;
 	secondaryAction?: PlanExpiryNoticeAction;
@@ -159,10 +137,8 @@ export function isEligibleForPlanExpiryNotice(
 }
 
 /**
- * The plan purchase a site's expiry notice is about: the eligible WordPress.com
- * plan with the latest expiry date, so that a renewed plan hides the record of
- * the one it replaced. Mirrors `Expiry_Data::pick_primary_plan_purchase()`. Any
- * owner: the viewer learns whose plan it is from the copy.
+ * The eligible plan with the latest expiry date, so a renewed plan hides the
+ * one it replaced. Mirrors `Expiry_Data::pick_primary_plan_purchase()`.
  */
 export function pickSitewideExpiryPurchase( purchases: Purchase[] ): Purchase | null {
 	return purchases
@@ -428,12 +404,7 @@ function resolveNotice(
 	};
 }
 
-/**
- * The grace period's copy: the plan has lapsed but the site still has
- * everything, and renewing keeps it that way. Shared with the sitewide
- * notice, which shows these words to an Atomic site that is past grace but
- * has not been reverted.
- */
+/** The grace period's copy: the plan has lapsed but the site still has everything. */
 function graceNotice(
 	purchase: Purchase,
 	{ viewOtherPlansUrl, renewReturnUrl, scope }: PlanExpiryNoticeOptions
@@ -529,11 +500,7 @@ export function getExpiryStateName( stage: PlanExpiryNoticeStage ): PlanExpirySt
 	}
 }
 
-/**
- * The wp-admin banner's state machine, on top of the shared copy. Shows
- * English when a string is untranslated, as wp-admin does, rather than
- * falling back to the purchase pages' older messages.
- */
+/** The wp-admin banner's state machine, on top of the shared copy. */
 function resolveSitewideNotice(
 	purchase: Purchase,
 	options: PlanExpiryNoticeOptions
@@ -579,11 +546,9 @@ function withStage(
 }
 
 /**
- * A removed subscription the caller has downgraded to grace: an Atomic site
- * past the grace period that has not been reverted has lost nothing yet, so it
- * hears the grace period's words. Renewal is no longer possible for a removed
- * subscription, so the way back is post-grace's fresh checkout, and there is no
- * "View other plans" — wp-admin only offers that in a real grace period.
+ * Grace-period words for a removed subscription. Renewal is no longer possible,
+ * so the way back is post-grace's fresh checkout, and wp-admin offers "View
+ * other plans" only in a real grace period.
  */
 function revertPendingGraceNotice(
 	purchase: Purchase,
@@ -655,10 +620,7 @@ function postGraceNotice(
 	};
 }
 
-/**
- * A removed subscription cannot be renewed, so the way back is a fresh
- * purchase of the same plan. Matches the wp-admin banner's checkout link.
- */
+/** A removed subscription cannot be renewed, so the way back is a fresh purchase of the same plan. */
 function getRestoreUrl( purchase: Purchase, renewReturnUrl?: string ): string {
 	const backUrl = renewReturnUrl ?? redirectToDashboardLink();
 	return addQueryArgs(

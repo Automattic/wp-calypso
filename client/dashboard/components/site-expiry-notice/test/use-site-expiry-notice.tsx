@@ -2,45 +2,27 @@
  * @jest-environment jsdom
  */
 
-import { DotcomPlans, SubscriptionBillPeriod } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import MockDate from 'mockdate';
 import nock from 'nock';
+import {
+	NOW,
+	OWNER_ID,
+	SITE_ID,
+	expiryInDays,
+	makePurchase,
+	postGrace,
+	renewing,
+} from '../../plan-expiry-notice/test/fixtures';
 import { useSiteExpiryNotice } from '../use-site-expiry-notice';
 import type { SiteExpiryNoticeOptions } from '../use-site-expiry-notice';
 import type { Purchase } from '@automattic/api-core';
 
-const NOW = '2026-02-24T12:00:00Z';
-const SITE_ID = 99;
-const OWNER_ID = 7;
-
-function expiryInDays( days: number ): string {
-	return new Date( Date.UTC( 2026, 1, 24 + days, 12 ) ).toISOString();
-}
-
-function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
-	return {
-		ID: 1234,
-		blog_id: SITE_ID,
-		user_id: OWNER_ID,
-		product_slug: DotcomPlans.BUSINESS,
-		product_name: 'WordPress.com Business',
-		site_slug: 'example.wordpress.com',
-		expiry_date: expiryInDays( 30 ),
-		expiry_status: 'manual-renew',
-		subscription_status: 'active',
-		is_plan: true,
-		is_jetpack_plan_or_product: false,
-		bill_period_days: SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD,
-		is_auto_renew_enabled: false,
-		is_rechargeable: true,
-		might_still_auto_renew: false,
-		is_past_first_auto_renew_attempt_date: false,
-		is_past_last_auto_renew_attempt_date: false,
-		...overrides,
-	} as Purchase;
-}
+const DISMISS_KEY = 'wp_wpcom_plan_expiry_notice_dismiss';
+const PURCHASES_KEY = [ 'upgrades', 'site', SITE_ID ];
+const CURRENT_USER_KEY = [ 'site', SITE_ID, 'users', 'current' ];
+const TRANSFER_KEY = [ 'site', SITE_ID, 'atomic', 'transfers', 'latest' ];
 
 function mockApi( {
 	purchases,
@@ -73,41 +55,33 @@ function mockApi( {
 }
 
 function renderNotice(
-	options: SiteExpiryNoticeOptions = {
-		isDashboardScreen: false,
-		currentUserId: OWNER_ID,
-		isAtomic: true,
-		locale: 'en',
-	},
+	options: Partial< SiteExpiryNoticeOptions > = {},
 	// Off by default so that a mocked failure fails a test fast. The transfer
 	// query has to opt out of retries on its own; one test checks that it does.
+	// `retryDelay: 0` keeps those retries from adding exponential backoff.
 	{ retry = false }: { retry?: boolean } = {}
 ) {
-	// `retryDelay: 0` keeps the transfer query's own retries from adding
-	// TanStack's exponential backoff to a test's runtime.
-	const queryClient = new QueryClient( {
-		defaultOptions: { queries: { retry, retryDelay: 0 } },
-	} );
-	const rendered = renderHook( () => useSiteExpiryNotice( SITE_ID, options ), {
-		wrapper: ( { children } ) => (
-			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
-		),
-	} );
-	const waitForPurchases = () =>
-		waitFor( () =>
-			expect( queryClient.getQueryData( [ 'upgrades', 'site', SITE_ID ] ) ).toBeDefined()
-		);
-	const waitForCurrentUser = () =>
-		waitFor( () =>
-			expect( queryClient.getQueryData( [ 'site', SITE_ID, 'users', 'current' ] ) ).toBeDefined()
-		);
+	const queryClient = new QueryClient( { defaultOptions: { queries: { retry, retryDelay: 0 } } } );
+	const rendered = renderHook(
+		() =>
+			useSiteExpiryNotice( SITE_ID, {
+				isDashboardScreen: false,
+				currentUserId: OWNER_ID,
+				isAtomic: true,
+				locale: 'en',
+				...options,
+			} ),
+		{
+			wrapper: ( { children } ) => (
+				<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+			),
+		}
+	);
+	const waitForData = ( key: unknown[] ) =>
+		waitFor( () => expect( queryClient.getQueryData( key ) ).toBeDefined() );
 	const waitForTransferError = () =>
-		waitFor( () =>
-			expect(
-				queryClient.getQueryState( [ 'site', SITE_ID, 'atomic', 'transfers', 'latest' ] )?.status
-			).toBe( 'error' )
-		);
-	return { ...rendered, waitForPurchases, waitForCurrentUser, waitForTransferError };
+		waitFor( () => expect( queryClient.getQueryState( TRANSFER_KEY )?.status ).toBe( 'error' ) );
+	return { ...rendered, waitForData, waitForTransferError };
 }
 
 beforeEach( () => MockDate.set( NOW ) );
@@ -119,9 +93,16 @@ afterEach( () => {
 describe( 'useSiteExpiryNotice', () => {
 	test( 'is null while loading and null with no eligible plan', async () => {
 		mockApi( { purchases: [] } );
-		const { result, waitForPurchases } = renderNotice();
+		const { result, waitForData } = renderNotice();
 		expect( result.current ).toBeNull();
-		await waitForPurchases();
+		await waitForData( PURCHASES_KEY );
+		expect( result.current ).toBeNull();
+	} );
+
+	test( 'is null for an auto-renewing annual plan before its first attempt', async () => {
+		mockApi( { purchases: [ renewing( { expiry_date: expiryInDays( 30 ) } ) ] } );
+		const { result, waitForData } = renderNotice( { isDashboardScreen: true } );
+		await waitForData( PURCHASES_KEY );
 		expect( result.current ).toBeNull();
 	} );
 
@@ -134,28 +115,16 @@ describe( 'useSiteExpiryNotice', () => {
 		expect( result.current?.isPlanOwner ).toBe( false );
 	} );
 
-	test( 'hides the early warning off dashboard screens', async () => {
-		mockApi( { purchases: [ makePurchase() ] } );
-		const { result, waitForPurchases } = renderNotice( {
-			isDashboardScreen: false,
-			currentUserId: OWNER_ID,
-			isAtomic: true,
-			locale: 'en',
-		} );
-		await waitForPurchases();
-		expect( result.current ).toBeNull();
-	} );
+	test( 'the early warning shows on dashboard screens only', async () => {
+		mockApi( { purchases: [ makePurchase( { expiry_date: expiryInDays( 30 ) } ) ] } );
 
-	test( 'shows the early warning on dashboard screens', async () => {
-		mockApi( { purchases: [ makePurchase() ] } );
-		const { result } = renderNotice( {
-			isDashboardScreen: true,
-			currentUserId: OWNER_ID,
-			isAtomic: true,
-			locale: 'en',
-		} );
-		await waitFor( () => expect( result.current?.stage ).toBe( 'early-warning' ) );
-		expect( result.current?.isDismissible ).toBe( false );
+		const off = renderNotice( { isDashboardScreen: false } );
+		await off.waitForData( PURCHASES_KEY );
+		expect( off.result.current ).toBeNull();
+
+		const on = renderNotice( { isDashboardScreen: true } );
+		await waitFor( () => expect( on.result.current?.stage ).toBe( 'early-warning' ) );
+		expect( on.result.current?.isDismissible ).toBe( false );
 	} );
 
 	test( 'shows the final window everywhere', async () => {
@@ -166,34 +135,19 @@ describe( 'useSiteExpiryNotice', () => {
 
 	test( 'post-grace is dismissible and reads the reverted transfer', async () => {
 		mockApi( {
-			purchases: [
-				makePurchase( {
-					expiry_date: expiryInDays( -40 ),
-					expiry_status: 'expired',
-					subscription_status: 'inactive',
-				} ),
-			],
+			purchases: [ postGrace() ],
 			transferStatus: 'reverted',
-			meta: { wp_wpcom_plan_expiry_notice_dismiss: 0 },
+			meta: { [ DISMISS_KEY ]: 0 },
 		} );
 		const { result } = renderNotice();
 		await waitFor( () => expect( result.current?.isReverted ).toBe( true ) );
 		expect( result.current?.stage ).toBe( 'post-grace' );
 		expect( result.current?.isDismissible ).toBe( true );
-		expect( result.current?.dismissMetaKey ).toBe( 'wp_wpcom_plan_expiry_notice_dismiss' );
+		expect( result.current?.dismissMetaKey ).toBe( DISMISS_KEY );
 	} );
 
 	test( 'post-grace on an Atomic site that is not reverted is rendered as grace', async () => {
-		mockApi( {
-			purchases: [
-				makePurchase( {
-					expiry_date: expiryInDays( -40 ),
-					expiry_status: 'expired',
-					subscription_status: 'inactive',
-				} ),
-			],
-			transferStatus: 'completed',
-		} );
+		mockApi( { purchases: [ postGrace() ], transferStatus: 'completed' } );
 		const { result } = renderNotice();
 		await waitFor( () => expect( result.current ).not.toBeNull() );
 		expect( result.current?.stage ).toBe( 'grace' );
@@ -202,20 +156,11 @@ describe( 'useSiteExpiryNotice', () => {
 
 	test( 'post-grace on a Simple site with no transfer record: restore path, dismissible', async () => {
 		mockApi( {
-			purchases: [
-				makePurchase( {
-					expiry_date: expiryInDays( -40 ),
-					expiry_status: 'expired',
-					subscription_status: 'inactive',
-				} ),
-			],
+			purchases: [ postGrace() ],
 			transferStatusCode: 404,
 			meta: { wp_123_wpcom_plan_expiry_notice_dismiss: 0 },
 		} );
-		const { result } = renderNotice(
-			{ isDashboardScreen: false, currentUserId: OWNER_ID, isAtomic: false, locale: 'en' },
-			{ retry: true }
-		);
+		const { result } = renderNotice( { isAtomic: false }, { retry: true } );
 		await waitFor( () => expect( result.current?.stage ).toBe( 'post-grace' ), { timeout: 1000 } );
 		expect( result.current?.isReverted ).toBe( false );
 		expect( result.current?.isDismissible ).toBe( true );
@@ -223,101 +168,47 @@ describe( 'useSiteExpiryNotice', () => {
 	} );
 
 	test( 'stays null in post-grace until the transfer status resolves', async () => {
-		mockApi( {
-			purchases: [
-				makePurchase( {
-					expiry_date: expiryInDays( -40 ),
-					expiry_status: 'expired',
-					subscription_status: 'inactive',
-				} ),
-			],
-			transferStatus: 'reverted',
-			transferDelay: 50,
-		} );
-		const { result, waitForCurrentUser } = renderNotice();
-		await waitForCurrentUser();
+		mockApi( { purchases: [ postGrace() ], transferStatus: 'reverted', transferDelay: 50 } );
+		const { result, waitForData } = renderNotice();
+		await waitForData( CURRENT_USER_KEY );
 		expect( result.current ).toBeNull();
 		await waitFor( () => expect( result.current?.isReverted ).toBe( true ) );
 	} );
 
 	test( 'stays null in post-grace until the dismissal meta is known', async () => {
 		mockApi( {
-			purchases: [
-				makePurchase( {
-					expiry_date: expiryInDays( -40 ),
-					expiry_status: 'expired',
-					subscription_status: 'inactive',
-				} ),
-			],
+			purchases: [ postGrace() ],
 			// Never dismissed, so the only thing holding the notice back is the
 			// meta not having arrived yet.
-			meta: { wp_wpcom_plan_expiry_notice_dismiss: 0 },
+			meta: { [ DISMISS_KEY ]: 0 },
 			metaDelay: 50,
 			transferStatus: 'reverted',
 		} );
-		const { result, waitForPurchases } = renderNotice();
-		await waitForPurchases();
+		const { result, waitForData } = renderNotice();
+		await waitForData( PURCHASES_KEY );
 		expect( result.current ).toBeNull();
 		await waitFor( () => expect( result.current?.stage ).toBe( 'post-grace' ) );
 	} );
 
 	test( 'stays null in post-grace when the transfer lookup fails', async () => {
-		mockApi( {
-			purchases: [
-				makePurchase( {
-					expiry_date: expiryInDays( -40 ),
-					expiry_status: 'expired',
-					subscription_status: 'inactive',
-				} ),
-			],
-			transferStatusCode: 500,
-		} );
-		const { result, waitForCurrentUser, waitForTransferError } = renderNotice();
-		await waitForCurrentUser();
+		mockApi( { purchases: [ postGrace() ], transferStatusCode: 500 } );
+		const { result, waitForData, waitForTransferError } = renderNotice();
+		await waitForData( CURRENT_USER_KEY );
 		await waitForTransferError();
 		expect( result.current ).toBeNull();
 	} );
 
 	test( 'a dismissal newer than the expiry date hides post-grace', async () => {
-		const expiry = expiryInDays( -40 );
+		const purchase = postGrace();
 		mockApi( {
-			purchases: [
-				makePurchase( {
-					expiry_date: expiry,
-					expiry_status: 'expired',
-					subscription_status: 'inactive',
-				} ),
-			],
+			purchases: [ purchase ],
 			meta: {
-				wp_wpcom_plan_expiry_notice_dismiss:
-					Math.floor( new Date( expiry ).getTime() / 1000 ) + 86400,
+				[ DISMISS_KEY ]: Math.floor( new Date( purchase.expiry_date ).getTime() / 1000 ) + 86400,
 			},
 			transferStatus: 'reverted',
 		} );
-		const { result, waitForCurrentUser } = renderNotice();
-		await waitForCurrentUser();
-		expect( result.current ).toBeNull();
-	} );
-
-	test( 'is null after purchases load for an auto-renewing annual plan before its first attempt', async () => {
-		mockApi( {
-			purchases: [
-				makePurchase( {
-					expiry_date: expiryInDays( 30 ),
-					expiry_status: 'active',
-					is_auto_renew_enabled: true,
-					might_still_auto_renew: true,
-					is_past_first_auto_renew_attempt_date: false,
-				} ),
-			],
-		} );
-		const { result, waitForPurchases } = renderNotice( {
-			isDashboardScreen: true,
-			currentUserId: OWNER_ID,
-			isAtomic: true,
-			locale: 'en',
-		} );
-		await waitForPurchases();
+		const { result, waitForData } = renderNotice();
+		await waitForData( CURRENT_USER_KEY );
 		expect( result.current ).toBeNull();
 	} );
 } );

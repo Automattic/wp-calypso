@@ -5,7 +5,6 @@ import {
 	sitePurchasesQuery,
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
 import {
 	getPlanExpiryNotice,
 	getSitewideExpiryStage,
@@ -13,27 +12,23 @@ import {
 } from '../plan-expiry-notice';
 import { findPlanExpiryNoticeDismissMetaKey, isPlanExpiryNoticeDismissed } from './dismissal';
 import type { PlanExpiryNoticeStage } from '../plan-expiry-notice';
-import type { AtomicTransfer, Purchase, SiteUser } from '@automattic/api-core';
+import type { Purchase } from '@automattic/api-core';
 
 export interface SiteExpiryNoticeOptions {
 	/**
-	 * Whether the current screen is the site's landing page (the overview in
-	 * the dashboard, My Home in Calypso). The early warning, more than a week
-	 * before expiry, shows only there; wp-admin limits it to its Dashboard the
-	 * same way.
+	 * Whether the current screen is the site's landing page. The early warning,
+	 * more than a week before expiry, shows only there; wp-admin limits it to
+	 * its Dashboard the same way.
 	 */
 	isDashboardScreen: boolean;
 
-	/**
-	 * The current WordPress.com user's ID, to tell the plan's owner from any
-	 * other administrator. Hosts supply it so the hook stays free of app context.
-	 */
+	/** Tells the plan's owner from any other administrator. */
 	currentUserId: number;
 
 	/**
-	 * Whether the site is on Atomic now. Past the grace period, an Atomic site
-	 * that has not been reverted has lost nothing yet, and is told so in the
-	 * grace period's words; mirrors `wpcom_expiry_notices_revert_applies_to_site()`.
+	 * Past the grace period, an Atomic site that has not been reverted has lost
+	 * nothing yet, and is told so in the grace period's words; mirrors
+	 * `wpcom_expiry_notices_revert_applies_to_site()`.
 	 */
 	isAtomic: boolean;
 	locale: string;
@@ -62,91 +57,16 @@ function isClientError( error: unknown ): boolean {
 	return isWpError( error ) && error.status >= 400 && error.status < 500;
 }
 
-export interface SiteExpiryNoticeInput extends SiteExpiryNoticeOptions {
-	purchases?: Purchase[];
-	currentUser?: SiteUser;
-	isCurrentUserFetched: boolean;
-	latestTransfer?: AtomicTransfer;
-	latestTransferError?: unknown;
-	isLatestTransferPending: boolean;
-}
-
 /**
  * Everything the sitewide expiry banner needs to know about one site, or null
- * when nothing should show. Pure, so the route loader and the hook cannot
- * disagree about what is needed.
- */
-export function getSiteExpiryNoticeState(
-	input: SiteExpiryNoticeInput
-): SiteExpiryNoticeState | null {
-	const purchase = input.purchases ? pickSitewideExpiryPurchase( input.purchases ) : null;
-	if ( ! purchase ) {
-		return null;
-	}
-
-	// Derived from the notice itself, not from `getSitewideExpiryStage`: an
-	// auto-renewing annual plan before its first renewal attempt has a stage
-	// window but no notice, and a candidate must never self-null.
-	const notice = getPlanExpiryNotice( purchase, { scope: 'sitewide', locale: input.locale } );
-	let stage = notice?.stage ?? null;
-	if ( ! stage ) {
-		return null;
-	}
-	if ( stage === 'early-warning' && ! input.isDashboardScreen ) {
-		return null;
-	}
-
-	const isPlanOwner = String( purchase.user_id ) === String( input.currentUserId );
-	let isReverted = false;
-
-	if ( stage === 'post-grace' ) {
-		// Until the transfer status is known, a reverted site would be offered
-		// "Restore site" and then have it swapped for "Contact support".
-		if ( input.isLatestTransferPending ) {
-			return null;
-		}
-		// A 5xx or a network failure leaves the revert state unknown, and the
-		// wrong guess offers "Restore site" to a site that is already reverted.
-		if ( input.latestTransferError && ! isClientError( input.latestTransferError ) ) {
-			return null;
-		}
-		isReverted = input.latestTransfer?.status === 'reverted';
-
-		if ( ! isReverted && input.isAtomic ) {
-			stage = 'grace';
-		}
-	}
-
-	const isDismissible = stage === 'post-grace';
-	if ( ! isDismissible ) {
-		return { purchase, stage, isDismissible, isReverted, isPlanOwner };
-	}
-
-	// A dismissal made on another surface only arrives with this fetch, so a
-	// cached copy from before it would flash the notice back up.
-	if ( ! input.isCurrentUserFetched ) {
-		return null;
-	}
-	const dismissMetaKey = findPlanExpiryNoticeDismissMetaKey( input.currentUser?.meta );
-	if (
-		dismissMetaKey &&
-		isPlanExpiryNoticeDismissed( input.currentUser?.meta?.[ dismissMetaKey ], purchase )
-	) {
-		return null;
-	}
-
-	return { purchase, stage, isDismissible, isReverted, isPlanOwner, dismissMetaKey };
-}
-
-/**
- * Reads what `getSiteExpiryNoticeState` needs from the query cache. Plain
- * queries, not suspense: the dashboard's route loader has already settled
- * them (see `ensureSiteExpiryNoticeData`), and a query the loader let fail
- * must render nothing rather than throw to an error boundary.
+ * when nothing should show. Plain queries, not suspense: the dashboard's route
+ * loader has already settled them (see `ensureSiteExpiryNoticeData`), and a
+ * query the loader let fail must render nothing rather than throw to an error
+ * boundary.
  */
 export function useSiteExpiryNotice(
 	siteId: number,
-	options: SiteExpiryNoticeOptions
+	{ isDashboardScreen, currentUserId, isAtomic, locale }: SiteExpiryNoticeOptions
 ): SiteExpiryNoticeState | null {
 	// Hosts may render before a site is selected; `0` must never hit the API.
 	const { data: purchases } = useQuery( { ...sitePurchasesQuery( siteId ), enabled: siteId > 0 } );
@@ -174,36 +94,60 @@ export function useSiteExpiryNotice(
 		retry: ( failureCount, error ) => ! isClientError( error ) && failureCount < 3,
 	} );
 
-	// Memoised on the primitives that feed it: the state object is a prop of
-	// the banner and a dependency of the arbiter candidate's own memo, so a new
-	// object on every render would re-render both for nothing.
-	const { isDashboardScreen, currentUserId, isAtomic, locale } = options;
-	return useMemo(
-		() =>
-			getSiteExpiryNoticeState( {
-				isDashboardScreen,
-				currentUserId,
-				isAtomic,
-				locale,
-				purchases,
-				currentUser,
-				isCurrentUserFetched,
-				latestTransfer,
-				latestTransferError,
-				isLatestTransferPending: isPostGrace && isLatestTransferPending,
-			} ),
-		[
-			isDashboardScreen,
-			currentUserId,
-			isAtomic,
-			locale,
-			purchases,
-			currentUser,
-			isCurrentUserFetched,
-			latestTransfer,
-			latestTransferError,
-			isPostGrace,
-			isLatestTransferPending,
-		]
-	);
+	if ( ! purchase ) {
+		return null;
+	}
+
+	// Derived from the notice itself, not from `getSitewideExpiryStage`: an
+	// auto-renewing annual plan before its first renewal attempt has a stage
+	// window but no notice, and a candidate must never self-null.
+	const notice = getPlanExpiryNotice( purchase, { scope: 'sitewide', locale } );
+	let stage = notice?.stage ?? null;
+	if ( ! stage ) {
+		return null;
+	}
+	if ( stage === 'early-warning' && ! isDashboardScreen ) {
+		return null;
+	}
+
+	const isPlanOwner = String( purchase.user_id ) === String( currentUserId );
+	let isReverted = false;
+
+	if ( stage === 'post-grace' ) {
+		// Until the transfer status is known, a reverted site would be offered
+		// "Restore site" and then have it swapped for "Contact support".
+		if ( isLatestTransferPending ) {
+			return null;
+		}
+		// A 5xx or a network failure leaves the revert state unknown, and the
+		// wrong guess offers "Restore site" to a site that is already reverted.
+		if ( latestTransferError && ! isClientError( latestTransferError ) ) {
+			return null;
+		}
+		isReverted = latestTransfer?.status === 'reverted';
+
+		if ( ! isReverted && isAtomic ) {
+			stage = 'grace';
+		}
+	}
+
+	const isDismissible = stage === 'post-grace';
+	if ( ! isDismissible ) {
+		return { purchase, stage, isDismissible, isReverted, isPlanOwner };
+	}
+
+	// A dismissal made on another surface only arrives with this fetch, so a
+	// cached copy from before it would flash the notice back up.
+	if ( ! isCurrentUserFetched ) {
+		return null;
+	}
+	const dismissMetaKey = findPlanExpiryNoticeDismissMetaKey( currentUser?.meta );
+	if (
+		dismissMetaKey &&
+		isPlanExpiryNoticeDismissed( currentUser?.meta?.[ dismissMetaKey ], purchase )
+	) {
+		return null;
+	}
+
+	return { purchase, stage, isDismissible, isReverted, isPlanOwner, dismissMetaKey };
 }
