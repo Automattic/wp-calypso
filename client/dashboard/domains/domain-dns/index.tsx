@@ -386,7 +386,7 @@ export default function DomainDns() {
 			<RestoreDefaultEmailRecords
 				onConfirm={ handleRestoreDefaultEmailRecords }
 				onCancel={ () => setIsRestoreDefaultEmailRecordsDialogOpen( false ) }
-				isBusy={ updateDnsMutation.isPending }
+				isBusy={ restoreDefaultEmailRecordsMutation.isPending }
 				isOpen={ isRestoreDefaultEmailRecordsDialogOpen }
 			/>
 			{ isImportDialogOpen && (

@@ -28,6 +28,7 @@ import { useFlowNavigation } from './hooks/use-flow-navigation';
 import { usePreloadSteps, lazyCache } from './hooks/use-preload-steps';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
 import { useStepNavigationWithTracking } from './hooks/use-step-navigation-with-tracking';
+import { componentTypeOf, recordStepComponentType } from './step-mount-registry';
 import { PRIVATE_STEPS } from './steps';
 import { AssertConditionState, FlowV2, StepProps, type Flow, type StepperStep } from './types';
 import type { StepperInternalSelect } from '@automattic/data-stores';
@@ -45,6 +46,7 @@ function flowStepComponent( flowStep: StepperStep | undefined ) {
 		);
 		lazyCache.set( flowStep.asyncComponent, lazyComponent );
 	}
+	recordStepComponentType( flowStep.slug, componentTypeOf( lazyComponent ) );
 	return lazyComponent;
 }
 

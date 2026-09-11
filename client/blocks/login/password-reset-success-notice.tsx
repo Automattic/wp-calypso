@@ -1,6 +1,6 @@
+import { Notice } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import Notice from 'calypso/components/notice';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 
 /**
@@ -15,7 +15,7 @@ export default function PasswordResetSuccessNotice() {
 	}
 
 	return (
-		<Notice status="is-success" showDismiss={ false }>
+		<Notice status="success" isDismissible={ false }>
 			{ translate( 'Your password has been reset successfully.' ) }
 		</Notice>
 	);

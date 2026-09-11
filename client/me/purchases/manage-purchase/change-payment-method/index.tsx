@@ -1,11 +1,14 @@
+import { getPurchasePayment } from '@automattic/api-core';
+import { purchaseQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
+import { useQuery } from '@tanstack/react-query';
 import { Fragment, useEffect } from 'react';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { invalidatePurchaseQueries } from 'calypso/lib/purchases/actions';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
@@ -15,10 +18,6 @@ import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use
 import { useSelector, useDispatch } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { clearPurchases } from 'calypso/state/purchases/actions';
-import {
-	getByPurchaseId,
-	hasLoadedUserPurchasesFromServer,
-} from 'calypso/state/purchases/selectors';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
 import PaymentMethodSelector from '../payment-method-selector';
 import getPaymentMethodIdFromPayment from '../payment-method-selector/get-payment-method-id-from-payment';
@@ -38,15 +37,14 @@ function ChangePaymentMethod( {
 	siteSlug,
 }: ChangePaymentMethodProps ) {
 	const hasLoadedSites = useSelector( ( state ) => ! isRequestingSites( state ) );
-	const hasLoadedUserPurchases = useSelector( hasLoadedUserPurchasesFromServer );
-	const purchase = useSelector( ( state ) => getByPurchaseId( state, purchaseId ) );
-	const payment = useSelector( ( state ) => getByPurchaseId( state, purchaseId )?.payment );
+	const { data: purchase, isPending: isPendingPurchase } = useQuery( purchaseQuery( purchaseId ) );
+	const payment = purchase ? getPurchasePayment( purchase ) : undefined;
 	const { isLoading: isLoadingStoredCards } = useStoredPaymentMethods( { type: 'card' } );
 
 	const { isStripeLoading } = useStripe();
 
 	const isDataLoading =
-		! hasLoadedSites || ! hasLoadedUserPurchases || isLoadingStoredCards || isStripeLoading;
+		! hasLoadedSites || isPendingPurchase || isLoadingStoredCards || isStripeLoading;
 
 	useEffect( () => {
 		if ( ! isDataLoading && ! purchase ) {
@@ -61,17 +59,13 @@ function ChangePaymentMethod( {
 	const reduxDispatch = useDispatch();
 
 	if ( isDataLoading || ! purchase ) {
-		return (
-			<Fragment>
-				<QueryUserPurchases />
-				<PaymentMethodLoader title={ changePaymentMethodTitle } />
-			</Fragment>
-		);
+		return <PaymentMethodLoader title={ changePaymentMethodTitle } />;
 	}
 
 	const successCallback = () => {
 		reduxDispatch( clearPurchases() );
-		page( getManagePurchaseUrlFor( siteSlug, purchase.id ) );
+		invalidatePurchaseQueries();
+		page( getManagePurchaseUrlFor( siteSlug, purchase.ID ) );
 	};
 
 	return (

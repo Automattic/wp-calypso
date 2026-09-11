@@ -6,6 +6,7 @@ import {
 import { useSuspenseQuery, useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { __, sprintf } from '@wordpress/i18n';
+import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import {
 	siteRoute,
@@ -16,6 +17,7 @@ import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { ConnectRepositoryForm } from './connect-repository-form';
+import { getDeploymentErrorReason, getDeploymentTypeFromPath } from './deployment-tracks';
 import type { ConnectRepositoryFormData } from './connect-repository-form';
 
 export default function ConnectRepository() {
@@ -24,12 +26,30 @@ export default function ConnectRepository() {
 	const { data: installations = [] } = useQuery( githubInstallationsQuery() );
 	const navigateFrom = siteSettingsRepositoriesConnectRoute.fullPath;
 	const navigate = useNavigate( { from: navigateFrom } );
+	const { recordTracksEvent } = useAnalytics();
 
 	const handleCancel = () => {
 		navigate( { to: siteSettingsRepositoriesRoute.fullPath } );
 	};
 
-	const createMutation = useMutation( createCodeDeploymentMutation( site.ID ) );
+	const createMutationOptions = createCodeDeploymentMutation( site.ID );
+	const createMutation = useMutation( {
+		...createMutationOptions,
+		onSuccess: ( data, variables, context ) => {
+			createMutationOptions.onSuccess?.( data, variables, context );
+			recordTracksEvent( 'calypso_hosting_github_create_deployment_success', {
+				deployment_type: getDeploymentTypeFromPath( data.target_dir ),
+				is_automated: data.is_automated,
+				workflow_path: data.workflow_path,
+			} );
+		},
+		onError: ( error, variables, context ) => {
+			createMutationOptions.onError?.( error, variables, context );
+			recordTracksEvent( 'calypso_hosting_github_create_deployment_failure', {
+				reason: getDeploymentErrorReason( error ),
+			} );
+		},
+	} );
 
 	const initialValues: ConnectRepositoryFormData = {
 		selectedInstallationId: installations[ 0 ]?.external_id || '',

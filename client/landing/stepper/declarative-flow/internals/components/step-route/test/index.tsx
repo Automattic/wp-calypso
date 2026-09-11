@@ -19,6 +19,7 @@ import {
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import StepRoute from '../';
+import { describeStepMount } from '../../../step-mount-registry';
 import type {
 	Flow,
 	StepperStep,
@@ -148,6 +149,30 @@ describe( 'StepRoute', () => {
 	} );
 
 	describe( 'tracking', () => {
+		it( 'records the route mount before the step reads it during its own first render', () => {
+			const now = jest.spyOn( performance, 'now' ).mockReturnValue( 1040 );
+			let seen: ReturnType< typeof describeStepMount > | undefined;
+			const ReadsMountOnRender: FC< StepProps > = ( { stepName } ) => {
+				seen = seen ?? describeStepMount( stepName );
+				return <div>Step Content</div>;
+			};
+
+			render( {
+				step: regularStep,
+				renderStep: ( step ) => (
+					<ReadsMountOnRender
+						navigation={ {} as NavigationControls }
+						flow={ fakeFlow.name }
+						stepName={ step.slug }
+						data={ {} }
+					/>
+				),
+			} );
+
+			expect( seen?.ms_since_route_mount ).toBe( 0 );
+			now.mockRestore();
+		} );
+
 		it( 'records a page view', async () => {
 			render( { step: regularStep } );
 

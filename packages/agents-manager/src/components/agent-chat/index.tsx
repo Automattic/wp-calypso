@@ -16,9 +16,11 @@ import { formatWritingSuggestionLabels } from '../../hooks/use-empty-view-sugges
 import useFloatingPanelProps from '../../hooks/use-floating-panel-props';
 import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
+import isAmAbilitiesDisabled from '../../utils/is-am-abilities-disabled';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
 import lazyComponent from '../../utils/lazy-component';
+import { isSiteEditorContext } from '../../utils/site-editor-context';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
@@ -70,6 +72,8 @@ interface Props {
 		selectedSuggestion: Suggestion | string,
 		availableSuggestions?: Suggestion[]
 	) => void;
+	/** Called with the suggestions Agenttic actually renders (after truncation, only while visible). */
+	onSuggestionsRendered?: ( shown: Suggestion[] ) => void;
 	/** Called when the typing status changes. */
 	onTypingStatusChange?: ( isTyping: boolean ) => void;
 	/** Custom components for rendering markdown. */
@@ -114,6 +118,12 @@ interface Props {
 // pages, keeping the chunk out of every other chat.
 const SelectedBlock = lazyComponent(
 	() => import( /* webpackChunkName: "am-selected-block" */ '../selected-block' )
+);
+
+// Opts into the router's private API, so it loads only on the one surface
+// that uses it.
+const EditorHistoryBridge = lazyComponent(
+	() => import( /* webpackChunkName: "am-editor-history-bridge" */ '../editor-history-bridge' )
 );
 
 const DEFAULT_ACCEPTED_IMAGE_TYPES = [
@@ -171,6 +181,7 @@ export default function AgentChat( {
 	onExpand,
 	clearSuggestions,
 	onSuggestionClick,
+	onSuggestionsRendered,
 	notice,
 	markdownComponents = {},
 	markdownExtensions = {},
@@ -303,6 +314,7 @@ export default function AgentChat( {
 			suggestions={ displayedSuggestions }
 			clearSuggestions={ clearSuggestions }
 			onSuggestionClick={ onSuggestionClick ? handleDisplayedSuggestionClick : undefined }
+			onSuggestionsRendered={ onSuggestionsRendered }
 			floatingChatState={ floatingChatState }
 			triggerTitle={ __( 'Agent', __i18n_text_domain__ ) }
 			onClose={ onClose }
@@ -329,6 +341,7 @@ export default function AgentChat( {
 			}
 		>
 			<AgentUI.ConversationView ref={ conversationViewRef }>
+				{ ! isAmAbilitiesDisabled() && isSiteEditorContext() && <EditorHistoryBridge /> }
 				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } isDocked={ isDocked } />
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
 				{ ( onContextCardAction || onContextCardDismiss ) && (

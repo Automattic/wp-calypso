@@ -25,6 +25,7 @@ import {
 	isPremiumPlan,
 	isFreePlan,
 	isPersonalPlan,
+	isWpComPlan,
 	planHasFeature,
 	getPlanClass,
 } from '@automattic/calypso-products';
@@ -418,11 +419,15 @@ const useGridPlans: UseGridPlansType = ( {
 		const isCurrentPlan = sitePlanSlug ? isSamePlan( sitePlanSlug, planSlug ) : false;
 
 		let tagline: TranslateResult = '';
+		let hasIntentSpecificTagline = false;
 		if ( 'plans-newsletter' === intent ) {
 			tagline = planConstantObj.getNewsletterTagLine?.() ?? '';
+			hasIntentSpecificTagline = !! tagline;
 		} else if ( 'plans-blog-onboarding' === intent ) {
 			tagline = planConstantObj.getBlogOnboardingTagLine?.() ?? '';
+			hasIntentSpecificTagline = !! tagline;
 		} else if ( 'plans-woo-hosting-solutions' === intent ) {
+			hasIntentSpecificTagline = true;
 			if ( isPersonalPlan( planSlug ) ) {
 				tagline = translate(
 					'Try out a store idea with low commitment. Custom domain and basic tools.'
@@ -441,12 +446,19 @@ const useGridPlans: UseGridPlansType = ( {
 				);
 			} else {
 				tagline = planConstantObj.getPlanTagline?.() ?? '';
+				hasIntentSpecificTagline = false;
 			}
 		} else {
 			tagline = planConstantObj.getPlanTagline?.() ?? '';
 		}
 
-		if ( useFocusedNewCopyTaglines ) {
+		/*
+		 * The focused copy is written for the standard WordPress.com plans, so it only replaces a
+		 * tagline that is not already specific to this surface: an intent that supplies its own
+		 * (newsletter, blog onboarding, Woo hosting solutions), or a plan outside the wpcom group
+		 * that overrides getPlanTagline -- P2 Free, which is TYPE_FREE but GROUP_P2, is the live case.
+		 */
+		if ( useFocusedNewCopyTaglines && ! hasIntentSpecificTagline && isWpComPlan( planSlug ) ) {
 			const existingTagline = tagline;
 			if ( isFreePlan( planSlug ) ) {
 				tagline =

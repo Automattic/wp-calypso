@@ -10,6 +10,7 @@ export interface StatsNoticeProps {
 	onNoticeViewed?: () => void;
 	onNoticeDismissed?: () => void;
 	isWpcom?: boolean;
+	isAtomic?: boolean;
 	isVip?: boolean;
 	isP2?: boolean;
 	isOwnedByTeam51?: boolean;

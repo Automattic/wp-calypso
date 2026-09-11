@@ -1,4 +1,4 @@
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { getRawSitePurchases } from 'calypso/state/purchases/selectors';
 
 import 'calypso/state/purchases/init';
 
@@ -16,16 +16,16 @@ export const hasCancelableSitePurchases = ( state, siteId, userId = null ) => {
 		return false;
 	}
 
-	let purchases = getSitePurchases( state, siteId ).filter( ( purchase ) => {
-		if ( purchase.isRefundable ) {
+	let purchases = getRawSitePurchases( state, siteId ).filter( ( purchase ) => {
+		if ( purchase.is_refundable ) {
 			return true;
 		}
 
-		return purchase.productSlug !== 'premium_theme';
+		return purchase.product_slug !== 'premium_theme';
 	} );
 
 	if ( userId != null ) {
-		purchases = purchases.filter( ( purchase ) => Number( purchase.userId ) === userId );
+		purchases = purchases.filter( ( purchase ) => purchase.user_id === userId );
 	}
 
 	return purchases && purchases.length > 0;

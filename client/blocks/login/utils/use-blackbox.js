@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getBlackboxApiKey, loadBlackboxSdk } from 'calypso/blocks/login/utils/blackbox-sdk';
+import { setChallengeRunning } from 'calypso/blocks/login/utils/challenge-gate';
 
 // Give the SDK a short window to synchronously or near-synchronously start a challenge
 // after configure(), avoiding a brief enabled submit button while the widget initializes.
@@ -46,11 +47,16 @@ export function useBlackbox( { containerRef, enabled } ) {
 	}, [ containerRef, isEnabled ] );
 
 	useEffect( () => {
+		const syncChallengeState = ( active ) => {
+			setChallengeRunning( active );
+			setIsChallengeActive( active );
+		};
+
 		if ( ! isEnabled ) {
 			// Covers the surface being suspended after a challenge appeared: drop
 			// all blocking state so the form isn't wedged when it re-enables.
 			setIsLoading( false );
-			setIsChallengeActive( false );
+			syncChallengeState( false );
 			setHasChallengeContent( false );
 			return;
 		}
@@ -105,14 +111,14 @@ export function useBlackbox( { containerRef, enabled } ) {
 					onError: ( error ) => {
 						if ( ! cancelled && error?.method === 'challenge' ) {
 							stopLoading();
-							setIsChallengeActive( false );
+							syncChallengeState( false );
 						}
 					},
 					onChallengeStart: () => {
 						if ( ! cancelled ) {
 							hasStartedChallenge = true;
 							stopLoading();
-							setIsChallengeActive( true );
+							syncChallengeState( true );
 						}
 					},
 					onChallengeComplete: () => {
@@ -120,7 +126,7 @@ export function useBlackbox( { containerRef, enabled } ) {
 							if ( hasStartedChallenge ) {
 								stopLoading();
 							}
-							setIsChallengeActive( false );
+							syncChallengeState( false );
 						}
 					},
 					onChallengeFailure: () => {
@@ -128,7 +134,7 @@ export function useBlackbox( { containerRef, enabled } ) {
 							if ( hasStartedChallenge ) {
 								stopLoading();
 							}
-							setIsChallengeActive( false );
+							syncChallengeState( false );
 						}
 					},
 				} );
@@ -151,6 +157,7 @@ export function useBlackbox( { containerRef, enabled } ) {
 		return () => {
 			cancelled = true;
 			clearPendingTimeouts();
+			setChallengeRunning( false );
 		};
 	}, [ containerRef, isEnabled ] );
 

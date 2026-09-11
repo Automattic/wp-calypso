@@ -5,11 +5,10 @@
  * application), so they load as an async chunk and only on editor pages.
  * Chats everywhere else (Reader, wp-admin list screens, Calypso) never fetch
  * the chunk, keeping their bundles small. The `?am_abilities=0` testing
- * switch skips the load too, flipping the editor abilities back to the
- * provider copies — the all-surface abilities have no fallback and stay on.
+ * switch hands the migrated editor abilities back to the provider copies;
+ * abilities with no provider copy stay on.
  */
 
-import isAmAbilitiesDisabled from '../utils/is-am-abilities-disabled';
 import { isEditorPage } from '../utils/is-editor-page';
 import { executeAbilityFromList } from './execute-ability';
 import { wpAdminNavigateAbility } from './wp-admin-navigate';
@@ -22,11 +21,8 @@ type EditorAbilitiesModule = typeof import('./editor-abilities');
 let editorAbilitiesPromise: Promise< EditorAbilitiesModule > | null = null;
 let loadedEditorAbilities: EditorAbilitiesModule | null = null;
 
-// TODO (ability-migration): Drop the `?am_abilities=0` checks in this file —
-// the load gate below, the owned-ability list, and the checkpoint context —
-// with the switch itself. See `utils/is-am-abilities-disabled.ts`.
 function loadEditorAbilities(): Promise< EditorAbilitiesModule > | null {
-	if ( ! editorAbilitiesPromise && isEditorPage() && ! isAmAbilitiesDisabled() ) {
+	if ( ! editorAbilitiesPromise && isEditorPage() ) {
 		editorAbilitiesPromise = import(
 			/* webpackChunkName: "am-editor-abilities" */ './editor-abilities'
 		).then(
@@ -64,12 +60,6 @@ const ALL_SURFACE_ABILITIES: Ability[] = [ wpAdminNavigateAbility ];
 // the all-surface list — editor tool calls then fall through to the provider
 // copies.
 async function getOwnedAbilities(): Promise< Ability[] > {
-	// All-surface abilities are fully migrated — no provider fallback, so the
-	// `?am_abilities=0` switch flips only the editor abilities.
-	if ( isAmAbilitiesDisabled() ) {
-		return [ ...ALL_SURFACE_ABILITIES ];
-	}
-
 	let editorAbilities: Ability[] = [];
 	try {
 		const module = loadEditorAbilities();
@@ -114,14 +104,8 @@ export async function registerAmAbilities(): Promise< void > {
  * AM's checkpoints for the merged `availableCheckpoints` context — a sync
  * view because the `ContextProvider` contract is sync. Empty until the
  * editor abilities finish loading: with no ability executions there are no
- * checkpoints, so reading is never a reason to load them. Empty again under
- * `?am_abilities=0`, so the agent is never offered ids that AM no longer
- * restores.
+ * checkpoints, so reading is never a reason to load them.
  */
 export function getAmCheckpointContext(): CheckpointContextItem[] {
-	if ( isAmAbilitiesDisabled() || ! loadedEditorAbilities ) {
-		return [];
-	}
-
-	return loadedEditorAbilities.getAvailableCheckpoints();
+	return loadedEditorAbilities?.getAvailableCheckpoints() ?? [];
 }

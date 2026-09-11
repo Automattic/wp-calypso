@@ -6,6 +6,7 @@ import {
 	FEATURE_CUSTOM_DOMAIN,
 } from '@automattic/calypso-products';
 import { useMemo } from '@wordpress/element';
+import { hasTailoredFeatureList } from '../../constants';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import usePlanFeaturesForGridPlans from './use-plan-features-for-grid-plans';
 import type {
@@ -61,6 +62,8 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 		} );
 
 		return useMemo( () => {
+			// An intent that curates its own comparison list keeps it; see TAILORED_FEATURE_LIST_INTENTS.
+			const useDifferentiationFeatures = ! hasTailoredFeatureList( intent );
 			let previousPlan = null;
 			const planFeatureMap: Record< string, PlanFeaturesForGridPlan > = {};
 
@@ -75,6 +78,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 				// Plans differentiators (non-control): use experiment comparison override when present.
 				if (
 					isExperimentVariant &&
+					useDifferentiationFeatures &&
 					planConstantObj.get2023PlanComparisonFeatureOverrideForExperiment?.()?.length
 				) {
 					wpcomFeatures = getPlanFeaturesObject(
@@ -124,6 +128,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 				let jetpackFeatures;
 				if (
 					isExperimentVariant &&
+					useDifferentiationFeatures &&
 					planConstantObj.get2023PlanComparisonJetpackFeatureOverrideForExperiment
 				) {
 					jetpackFeatures = getPlanFeaturesObject(
@@ -209,8 +214,10 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 						...previousPlanFeatures.jetpackFeatures,
 					],
 					storageFeature: planFeaturesForGridPlans[ planSlug ].storageFeature,
+					// Labels follow the list: the experiment copy describes features the experiment
+					// override lists, so pairing it with a curated list mislabels the rows.
 					comparisonGridFeatureLabels: planConstantObj.getPlanComparisonFeatureLabels?.( {
-						isExperimentVariant,
+						isExperimentVariant: isExperimentVariant && useDifferentiationFeatures,
 					} ),
 				};
 

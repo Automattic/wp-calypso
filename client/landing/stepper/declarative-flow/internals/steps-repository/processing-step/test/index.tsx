@@ -6,8 +6,10 @@ import { act, screen } from '@testing-library/react';
 import { dispatch } from '@wordpress/data';
 import React from 'react';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import ProcessingStep from '../';
+import { recordStepComponentType, recordStepRouteMount } from '../../../step-mount-registry';
 import { mockStepProps, renderStep } from '../../test/helpers/index';
 import type { OnboardActions } from '@automattic/data-stores';
 
@@ -43,12 +45,10 @@ describe( 'ProcessingStep', () => {
 		render( { flow: TRANSFERRING_HOSTED_SITE_FLOW } );
 
 		expect( screen.getByText( 'Setting up your site' ) ).toBeVisible();
-		expect( screen.getByRole( 'status' ).textContent ).toContain(
-			'preparing a dedicated server for your site'
-		);
+		expect( screen.getByRole( 'status' ).textContent ).toContain( 'preparing a dedicated server' );
 		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute(
 			'aria-label',
-			'Preparing a dedicated server for your site'
+			'Preparing a dedicated server'
 		);
 	} );
 
@@ -74,6 +74,31 @@ describe( 'ProcessingStep', () => {
 			'/sites/example.wordpress.com'
 		);
 		jest.useRealTimers();
+	} );
+
+	// The processing step is seen mounting twice for one signup in production, a second or less
+	// apart, and only for translated locales. The wait heartbeat is the only event that fires once
+	// per mount, so it carries how this mount came about: which component type the renderer handed
+	// React for the step, and how long after the route mounted the step itself did.
+	it( 'reports how the step came to mount on the wait heartbeat', () => {
+		const now = jest.spyOn( performance, 'now' );
+		now.mockReturnValue( 5000 );
+		recordStepRouteMount( 'processing' );
+		recordStepComponentType( 'processing', 'lazy' );
+		now.mockReturnValue( 5040 );
+		onboardActions().setPendingAction( () => new Promise( () => {} ) );
+
+		render( { flow: ONBOARDING_FLOW, stepName: 'processing' } );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_transfer_wait_started',
+			expect.objectContaining( {
+				surface: 'stepper_processing',
+				step_component_type: 'lazy',
+				ms_since_route_mount: 40,
+			} )
+		);
+		now.mockRestore();
 	} );
 
 	it( 'keeps the generic loading screen for other flows', () => {

@@ -1,5 +1,6 @@
 import { Button, FormInputValidation, ExternalLink } from '@automattic/components';
 import { omit } from '@automattic/js-utils';
+import { withBreakpoint } from '@automattic/viewport-react';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -10,6 +11,7 @@ import FormInput from 'calypso/components/forms/form-text-input-with-affixes';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SupportInfo from 'calypso/components/support-info';
+import TextareaAutosize from 'calypso/components/textarea-autosize';
 import { protectForm } from 'calypso/lib/protect-form';
 import versionCompare from 'calypso/lib/version-compare';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
@@ -21,16 +23,18 @@ import { requestSiteSettings, saveSiteSettings } from 'calypso/state/site-settin
 import {
 	isSiteSettingsSaveSuccessful,
 	getSiteSettingsSaveError,
+	getSiteSettings,
 } from 'calypso/state/site-settings/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getSupportedServices from './services';
+import './site-verification.scss';
 
-class SiteVerification extends Component {
+export class SiteVerification extends Component {
 	state = {
-		...this.stateForSite( this.props.site ),
+		...this.stateForSite( this.props.site, this.props.siteSettings ),
 		dirtyFields: new Set(),
 		invalidatedSiteObject: this.props.site,
 	};
@@ -71,7 +75,7 @@ class SiteVerification extends Component {
 		if ( prevSiteId !== nextSiteId ) {
 			return this.setState(
 				{
-					...this.stateForSite( nextSite ),
+					...this.stateForSite( nextSite, nextProps.siteSettings ),
 					invalidatedSiteObject: nextSite,
 					dirtyFields: new Set(),
 					invalidCodes: [],
@@ -81,7 +85,7 @@ class SiteVerification extends Component {
 		}
 
 		let nextState = {
-			...this.stateForSite( nextProps.site ),
+			...this.stateForSite( nextProps.site, nextProps.siteSettings ),
 		};
 
 		// Don't update state for fields the user has edited
@@ -92,13 +96,17 @@ class SiteVerification extends Component {
 		} );
 	}
 
-	stateForSite( site ) {
+	stateForSite( site, siteSettings ) {
 		const supportedServices = getSupportedServices();
 		const stateItems = {};
 
 		supportedServices.forEach( ( service ) => {
+			// Prefer the value from the live site-settings REST API. Older Jetpack versions
+			// do not expose verification codes there, so fall back to the site object's options.
 			stateItems[ service.slug ] =
-				site?.options?.verification_services_codes?.[ service.slug ] ?? '';
+				siteSettings?.verification_services_codes?.[ service.slug ] ??
+				site?.options?.verification_services_codes?.[ service.slug ] ??
+				'';
 		} );
 		stateItems.isFetchingSettings = site?.fetchingSettings ?? false;
 
@@ -240,8 +248,14 @@ class SiteVerification extends Component {
 	};
 
 	render() {
-		const { isVerificationToolsActive, jetpackVersion, siteId, siteIsJetpack, translate } =
-			this.props;
+		const {
+			isBreakpointActive,
+			isVerificationToolsActive,
+			jetpackVersion,
+			siteId,
+			siteIsJetpack,
+			translate,
+		} = this.props;
 		const {
 			isSubmittingForm,
 			isFetchingSettings,
@@ -326,22 +340,41 @@ class SiteVerification extends Component {
 							.reduce( ( prev, curr ) => [ prev, ', ', curr ] ) }
 					</p>
 					<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
-						{ supportedServices.map( ( service ) => (
-							<FormFieldset key={ service.slug }>
-								<FormInput
-									prefix={ service.name }
-									name={ `verification_code_${ service.slug }` }
-									value={ service.code }
-									id={ `verification_code_${ service.slug }` }
-									spellCheck="false"
-									disabled={ isVerificationDisabled }
-									isError={ this.hasError( service.slug ) }
-									placeholder={ this.getMetaTag( service.slug, '1234' ) }
-									onChange={ this.handleVerificationCodeChange( service.slug ) }
-								/>
-								{ this.hasError( service.slug ) && this.getVerificationError( showPasteError ) }
-							</FormFieldset>
-						) ) }
+						{ supportedServices.map( ( service ) => {
+							const inputProps = {
+								name: `verification_code_${ service.slug }`,
+								value: service.code,
+								id: `verification_code_${ service.slug }`,
+								spellCheck: 'false',
+								disabled: isVerificationDisabled,
+								isError: this.hasError( service.slug ),
+								placeholder: this.getMetaTag( service.slug, '1234' ),
+								onChange: this.handleVerificationCodeChange( service.slug ),
+							};
+
+							return (
+								<FormFieldset key={ service.slug }>
+									{ isBreakpointActive ? (
+										<div className="form-text-input-with-affixes seo-settings__verification-code-field">
+											<label
+												className="form-text-input-with-affixes__prefix"
+												htmlFor={ inputProps.id }
+											>
+												{ service.name }
+											</label>
+											<TextareaAutosize
+												{ ...inputProps }
+												className="seo-settings__verification-code-input"
+												rows={ 1 }
+											/>
+										</div>
+									) : (
+										<FormInput prefix={ service.name } { ...inputProps } />
+									) }
+									{ this.hasError( service.slug ) && this.getVerificationError( showPasteError ) }
+								</FormFieldset>
+							);
+						} ) }
 						<Button
 							className="is-primary"
 							disabled={ isSaveDisabled || isVerificationDisabled }
@@ -370,6 +403,7 @@ export default connect(
 			site,
 			siteId,
 			siteIsJetpack: isJetpackSite( state, siteId ),
+			siteSettings: getSiteSettings( state, siteId ),
 			path: getCurrentRouteParameterized( state, siteId ),
 		};
 	},
@@ -387,4 +421,4 @@ export default connect(
 		trackFormSubmitted: ( path ) =>
 			recordTracksEvent( 'calypso_seo_settings_form_submit', { path } ),
 	}
-)( protectForm( localize( SiteVerification ) ) );
+)( protectForm( localize( withBreakpoint( '<800px' )( SiteVerification ) ) ) );

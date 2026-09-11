@@ -1,13 +1,14 @@
+import { sitePurchasesQuery } from '@automattic/api-queries';
 import { WPCOM_DIFM_LITE } from '@automattic/calypso-products';
 import { useFlowCustomOptions } from '@automattic/help-center/src/hooks';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { DIFM_FLOW } from '@automattic/onboarding';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useCurrentRoute } from 'calypso/components/route';
@@ -17,7 +18,6 @@ import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import { useGetWebsiteContentQuery } from 'calypso/state/signup/steps/website-content/hooks/use-get-website-content-query';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -67,17 +67,20 @@ function SupportLink( { children }: { children?: JSX.Element } ) {
 
 function WebsiteContentSubmissionPending( { siteId, siteSlug }: Props ) {
 	const translate = useTranslate();
-	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
-	const difmPurchase = sitePurchases.find(
-		( purchase ) => WPCOM_DIFM_LITE === purchase.productSlug
+	const { data: sitePurchases } = useQuery( {
+		...sitePurchasesQuery( siteId ?? 0 ),
+		enabled: Boolean( siteId ),
+	} );
+	const difmPurchase = sitePurchases?.find(
+		( purchase ) => WPCOM_DIFM_LITE === purchase.product_slug
 	);
 
 	const moment = useLocalizedMoment();
 	let contentSubmissionDueDate: number | null = null;
-	if ( difmPurchase?.subscribedDate ) {
-		const subscribedDate = new Date( difmPurchase.subscribedDate );
+	if ( difmPurchase?.subscribed_date ) {
+		const subscribedDate = new Date( difmPurchase.subscribed_date );
 		contentSubmissionDueDate = subscribedDate.setDate(
-			subscribedDate.getDate() + difmPurchase.refundPeriodInDays
+			subscribedDate.getDate() + difmPurchase.refund_period_in_days
 		);
 		// Due dates in the past are invalid.
 		if ( contentSubmissionDueDate < Date.now() ) {
@@ -173,10 +176,7 @@ function WebsiteContentSubmitted( { primaryDomain, siteSlug }: Props ) {
 
 function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ) {
 	const siteSlug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) );
-	useQuerySitePurchases( siteId );
-	const isLoadingSitePurchases = useSelector( ( state: AppState ) =>
-		isFetchingSitePurchases( state )
-	);
+	const { isLoading: isLoadingSitePurchases } = useQuery( sitePurchasesQuery( siteId ) );
 	const { isLoading: isLoadingWebsiteContent, data: websiteContentQueryResult } =
 		useGetWebsiteContentQuery( siteSlug );
 	const primaryDomain = useSelector( ( state: AppState ) =>
