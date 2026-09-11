@@ -12,8 +12,10 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { cart } from '@wordpress/icons';
 import { useAnalytics } from '../../../app/analytics';
 import { getProductCommissionPercentage } from '../../earn/referrals/lib/commissions';
+import { WPCOM_CREATOR_PLAN_SLUG, WPCOM_HOSTING_FAMILY_SLUG } from '../lib/wpcom-hosting';
+import { useOwnedWpcomSites } from '../use-owned-wpcom-sites';
 import { getCheckoutUrl } from './lib/checkout-url';
-import { getProductPriceInfo, getTermSuffix } from './lib/product-pricing';
+import { getProductPriceInfo, getTermSuffix, getWpcomTieredPrice } from './lib/product-pricing';
 import { getProductShortTitle } from './lib/product-title';
 import type { TermPricing } from '../use-term-pricing';
 import type { ShoppingCartItem } from './use-shopping-cart';
@@ -33,7 +35,7 @@ interface Props {
 }
 
 const getCartProductName = ( product: AgencyProduct ) =>
-	product.slug === 'wpcom-hosting-business'
+	product.slug === WPCOM_CREATOR_PLAN_SLUG
 		? __( 'WordPress.com Site' )
 		: getProductShortTitle( product );
 
@@ -49,6 +51,16 @@ export default function CartMenu( {
 	onCheckout,
 }: Props ) {
 	const { recordTracksEvent } = useAnalytics();
+	// Owned WordPress.com sites raise the volume tier, so the total matches the
+	// Hosting page wherever the cart is shown.
+	const { ownedSites: ownedWpcomSites } = useOwnedWpcomSites();
+
+	const getLineTotal = ( product: AgencyProduct, quantity: number ) => {
+		if ( product.family_slug === WPCOM_HOSTING_FAMILY_SLUG ) {
+			return getWpcomTieredPrice( product, quantity, term, ownedWpcomSites ).discountedCost;
+		}
+		return getProductPriceInfo( product, term ).price * quantity;
+	};
 
 	const lines = items
 		.map( ( item ) => {
@@ -57,7 +69,7 @@ export default function CartMenu( {
 				return null;
 			}
 			const priceInfo = getProductPriceInfo( product, term );
-			const subtotal = priceInfo.price * item.quantity;
+			const subtotal = getLineTotal( product, item.quantity );
 			return {
 				item,
 				product,
@@ -147,7 +159,7 @@ export default function CartMenu( {
 								{ /* The spans keep Google Translate from crashing on sibling text nodes. */ }
 								<Text variant="muted" size={ 12 }>
 									<span>
-										{ priceInfo.isFree
+										{ isFree
 											? __( 'Free' )
 											: formatCurrency( subtotal, currency ) + getTermSuffix( term ) }
 									</span>
@@ -160,7 +172,7 @@ export default function CartMenu( {
 									{ ! priceInfo.isFree && priceInfo.billingTerm !== term && (
 										<span>
 											{ ' ' +
-												( priceInfo.billingTerm === 'yearly'
+												( billingTerm === 'yearly'
 													? __( '(billed yearly)' )
 													: __( '(billed monthly)' ) ) }
 										</span>
