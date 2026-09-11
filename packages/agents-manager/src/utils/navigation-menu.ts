@@ -93,6 +93,14 @@ interface CoreDispatch {
 
 const coreResolve = () => resolveSelect( coreStore ) as unknown as CoreResolve;
 
+/** Whether the user has unsaved edits on the menu, which are theirs to save. */
+const hasPendingEdits = ( id: MenuId ): boolean =>
+	!! (
+		select( coreStore ) as unknown as
+			| { hasEditsForEntityRecord?: ( kind: string, name: string, id: MenuId ) => boolean }
+			| undefined
+	 )?.hasEditsForEntityRecord?.( 'postType', 'wp_navigation', id );
+
 const normalizeLabel = ( label: unknown ) =>
 	String( label ?? '' )
 		.trim()
@@ -324,9 +332,11 @@ const listsPage =
 
 /**
  * Appends an item for a newly created page to the site's menu, unless a Page
- * List block there shows the page already.
+ * List block there shows the page already. Returns the menu when it was left
+ * unsaved: one the user has unsaved edits in is theirs to save, and the item
+ * waits with them.
  */
-export async function addNavigationItem( item: NavigationItem ): Promise< void > {
+export async function addNavigationItem( item: NavigationItem ): Promise< MenuId[] > {
 	// Resolved first: an unread site record would read as a site naming no
 	// menu, and the page would land in whichever menu renders first.
 	await coreResolve().getEditedEntityRecord( 'root', 'site' );
@@ -347,7 +357,7 @@ export async function addNavigationItem( item: NavigationItem ): Promise< void >
 		: getRenderedMenuIds()[ 0 ];
 
 	if ( ! menuId ) {
-		return;
+		return [];
 	}
 
 	const menu = await readMenu( menuId );
@@ -361,8 +371,10 @@ export async function addNavigationItem( item: NavigationItem ): Promise< void >
 	const previous = getItems( menu );
 
 	if ( someItem( previous, listsPage( item.parent ) ) ) {
-		return;
+		return [];
 	}
+
+	const pending = hasPendingEdits( menuId );
 
 	await writeMenuItems( menuId, [
 		...previous,
@@ -375,7 +387,13 @@ export async function addNavigationItem( item: NavigationItem ): Promise< void >
 		} ),
 	] );
 
+	if ( pending ) {
+		return [ menuId ];
+	}
+
 	await saveMenu( menuId, previous );
+
+	return [];
 }
 
 /**
@@ -389,13 +407,21 @@ export async function addNavigationItem( item: NavigationItem ): Promise< void >
  * retry could not finish the job.
  *
  * `save` persists the writes. A removal needs it, since its page is already
- * deleted; a rename does not, since it saves with the page edit.
+ * deleted; a rename does not, since it saves with the page edit. A menu the
+ * user has unsaved edits in is left unsaved either way — those edits are
+ * theirs to save, and the write waits with them — and returned so the caller
+ * can say so.
  */
 async function rewriteMenusHolding(
 	rewrite: ( items: NavigationBlock[] ) => NavigationBlock[] | null,
 	save = false
-): Promise< void > {
-	const rewrites: { menuId: MenuId; previous: NavigationBlock[]; items: NavigationBlock[] }[] = [];
+): Promise< MenuId[] > {
+	const rewrites: {
+		menuId: MenuId;
+		previous: NavigationBlock[];
+		items: NavigationBlock[];
+		pending: boolean;
+	}[] = [];
 
 	for ( const menuId of await getMenuIds() ) {
 		const menu = await readMenu( menuId );
@@ -410,7 +436,7 @@ async function rewriteMenusHolding(
 		const items = rewrite( previous );
 
 		if ( items ) {
-			rewrites.push( { menuId, previous, items } );
+			rewrites.push( { menuId, previous, items, pending: hasPendingEdits( menuId ) } );
 		}
 	}
 
@@ -418,17 +444,20 @@ async function rewriteMenusHolding(
 		await writeMenuItems( menuId, items );
 	}
 
+	const unsaved = rewrites.filter( ( { pending } ) => pending ).map( ( { menuId } ) => menuId );
+
 	if ( ! save ) {
-		return;
+		return unsaved;
 	}
 
 	// Every menu gets its save, whatever the others do: the page change is
 	// already persisted, so each menu saved is one fewer left disagreeing with
 	// it. A menu whose save failed has its items put back, and is named.
+	const toSave = rewrites.filter( ( { pending } ) => ! pending );
 	const saves = await Promise.allSettled(
-		rewrites.map( ( { menuId, previous } ) => saveMenu( menuId, previous ) )
+		toSave.map( ( { menuId, previous } ) => saveMenu( menuId, previous ) )
 	);
-	const failed = rewrites.filter( ( _rewrite, i ) => saves[ i ].status === 'rejected' );
+	const failed = toSave.filter( ( _rewrite, i ) => saves[ i ].status === 'rejected' );
 
 	if ( failed.length ) {
 		const reason = ( saves.find( ( s ) => s.status === 'rejected' ) as PromiseRejectedResult )
@@ -440,6 +469,8 @@ async function rewriteMenusHolding(
 			}. Its items were put back; every other menu was saved.`
 		);
 	}
+
+	return unsaved;
 }
 
 /**
@@ -510,10 +541,10 @@ export async function renameNavigationItem(
 export async function removeNavigationItem(
 	pageId: number | string,
 	pageUrl?: string
-): Promise< void > {
+): Promise< MenuId[] > {
 	const matches = matchesPage( pageId, pageUrl );
 
-	await rewriteMenusHolding( ( items ) => {
+	return rewriteMenusHolding( ( items ) => {
 		let removed = false;
 
 		const remaining = rejectItems( items, ( item ) => {
