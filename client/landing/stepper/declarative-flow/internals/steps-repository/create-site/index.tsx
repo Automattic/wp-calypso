@@ -111,6 +111,40 @@ async function pollForGardenProvisioning(
 	throw error;
 }
 
+type CreatedSite = { siteId: number; siteSlug: string };
+
+// Site creations still waiting on /sites/new, by the name asked for. The `createdSite` record in
+// the flow state is written only after the request returns, so a second run of the action that
+// starts inside that wait reads nothing and would send its own request. This is where it joins
+// the first one instead. The processing step reruns the action whenever it mounts again, which
+// is how two runs come to overlap. Unnamed requests share one key: /sites/new picks a name for
+// each of them, so two overlapping ones would make two sites.
+const siteCreationsInFlight = new Map< string, Promise< CreatedSite > >();
+
+async function createSiteOnce(
+	requestedName: string,
+	create: () => Promise< CreatedSite | undefined >
+): Promise< CreatedSite > {
+	const inFlight = siteCreationsInFlight.get( requestedName );
+	if ( inFlight ) {
+		const site = await inFlight;
+		// A copy: the run that made the site goes on to mutate its slug during provisioning.
+		return { siteId: site.siteId, siteSlug: site.siteSlug };
+	}
+
+	const request = create().then( ( site ) => {
+		if ( ! site ) {
+			throw new Error( 'Failed to create site' );
+		}
+		return { siteId: site.siteId, siteSlug: site.siteSlug };
+	} );
+	siteCreationsInFlight.set( requestedName, request );
+	const forget = () => siteCreationsInFlight.delete( requestedName );
+	request.then( forget, forget );
+
+	return request;
+}
+
 const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
@@ -345,34 +379,32 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 
 		const site = siteFromThisRun
 			? { siteId: siteFromThisRun.siteId, siteSlug: siteFromThisRun.siteSlug }
-			: await createSite(
-					flow,
-					theme,
-					siteVisibility,
-					urlData?.meta.title ?? selectedSiteTitle,
-					// We removed the color option during newsletter onboarding.
-					// But backend still expects/needs a value, so supplying the default.
-					// Ideally should remove this and update code downstream to handle this.
-					'#113AF5',
-					useThemeHeadstart,
-					username,
-					partnerBundle,
-					siteUrl,
-					domainItem,
-					sourceSlug,
-					siteIntent,
-					undefined, // siteGoals
-					gardenName,
-					gardenPartnerName,
-					urlQueryParams.get( 'spec_id' ),
-					isPlaygroundPublish ? 'playground-publish' : undefined,
-					undefined, // provisionTarget
-					launchpadPersonalizationVariation === 'ai_launchpad'
+			: await createSiteOnce( requestedName, () =>
+					createSite(
+						flow,
+						theme,
+						siteVisibility,
+						urlData?.meta.title ?? selectedSiteTitle,
+						// We removed the color option during newsletter onboarding.
+						// But backend still expects/needs a value, so supplying the default.
+						// Ideally should remove this and update code downstream to handle this.
+						'#113AF5',
+						useThemeHeadstart,
+						username,
+						partnerBundle,
+						siteUrl,
+						domainItem,
+						sourceSlug,
+						siteIntent,
+						undefined, // siteGoals
+						gardenName,
+						gardenPartnerName,
+						urlQueryParams.get( 'spec_id' ),
+						isPlaygroundPublish ? 'playground-publish' : undefined,
+						undefined, // provisionTarget
+						launchpadPersonalizationVariation === 'ai_launchpad'
+					)
 			  );
-
-		if ( ! site ) {
-			throw new Error( 'Failed to create site' );
-		}
 
 		// Recorded as soon as the site exists, ahead of the waits below rather than after them: the
 		// Atomic and garden polls run for minutes, and leaving during one is how someone comes back

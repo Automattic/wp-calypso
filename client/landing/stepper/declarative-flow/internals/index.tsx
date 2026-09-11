@@ -33,7 +33,7 @@ import { AssertConditionState, FlowV2, StepProps, type Flow, type StepperStep } 
 import type { StepperInternalSelect } from '@automattic/data-stores';
 import './global.scss';
 
-function flowStepComponent( flowStep: StepperStep | undefined ) {
+export function flowStepComponent( flowStep: StepperStep | undefined ) {
 	if ( ! flowStep ) {
 		return null;
 	}

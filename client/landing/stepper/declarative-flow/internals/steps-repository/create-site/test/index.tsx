@@ -177,4 +177,38 @@ describe( 'create-site', () => {
 		expect( createSite ).toHaveBeenCalledTimes( 1 );
 		expect( result ).toMatchObject( { siteId: 111, siteSlug: 'brand-new.wordpress.com' } );
 	} );
+
+	// The record is read before `await createSite()` and written after it. A second run of the
+	// action that starts inside that window finds no record and asks /sites/new for the same name,
+	// which the free-subdomain path refuses as `blog_name_exists`. The processing step runs the
+	// action again whenever it mounts again, so this is the double-POST seen in production.
+	it( 'asks /sites/new once when a second run starts while the first is still creating', async () => {
+		let finishFirstCreate: ( site: unknown ) => void = () => {};
+		( createSite as jest.Mock ).mockImplementationOnce(
+			() =>
+				new Promise( ( resolve ) => {
+					finishFirstCreate = resolve;
+				} )
+		);
+
+		const StepComponent = CreateSite as unknown as React.ComponentType< Record< string, unknown > >;
+		render( <StepComponent navigation={ { submit: jest.fn() } } flow="onboarding" /> );
+		await waitFor( () => expect( pendingAction ).toBeDefined() );
+
+		const firstRun = pendingAction!();
+		// Let the first run read the empty record and reach its await.
+		await waitFor( () => expect( createSite ).toHaveBeenCalled() );
+		const secondRun = pendingAction!();
+		// Give the second run the same chance to reach the guard before the first request returns.
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+		finishFirstCreate( {
+			siteId: 111,
+			siteSlug: 'brand-new.wordpress.com',
+			domainItem: undefined,
+		} );
+		await Promise.all( [ firstRun, secondRun ] );
+
+		expect( createSite ).toHaveBeenCalledTimes( 1 );
+	} );
 } );
