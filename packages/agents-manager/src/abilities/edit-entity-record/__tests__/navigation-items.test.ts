@@ -210,6 +210,21 @@ describe( 'clientId', () => {
 		expect( block.innerBlocks ).toHaveLength( 1 );
 	} );
 
+	// Like a page id, a url alone classifies a new item — as the custom link the
+	// editor's link control would make of it.
+	it( 'makes a custom link of a new item with a url alone', async () => {
+		const result = await buildNavigationItems( 10, {
+			navigationItems: [
+				{ label: 'Services' },
+				{ label: 'Blog', url: 'https://blog.example.com/' },
+			],
+		} );
+
+		expect(
+			( result.blocks as { attributes: Record< string, unknown > }[] )[ 1 ].attributes
+		).toMatchObject( { url: 'https://blog.example.com/', type: 'custom', kind: 'custom' } );
+	} );
+
 	it( 'keeps the page relationship when the url is the same one written differently', async () => {
 		withMenu( [
 			item( 'about', 'About', { id: 7, type: 'page', kind: 'post-type', url: '/about/' } ),
@@ -296,6 +311,7 @@ describe( 'input validation', () => {
 		{ case: 'a zero id', items: [ { id: 0 } ] },
 		{ case: 'an id that is not a number or string', items: [ { id: { page: 7 } } ] },
 		{ case: 'items that is not an array', items: [ { label: 'A', items: 'B' } ] },
+		{ case: 'a key the schema does not name', items: [ { label: 'A', openInNewTab: true } ] },
 	] )( 'refuses $case', async ( { items } ) => {
 		withMenu( [ item( 'a', 'Home' ) ] );
 
