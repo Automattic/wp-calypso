@@ -249,13 +249,3 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	letter-spacing: 0.02em;
 	text-transform: none;
 }
-
-// The link appends its own new-tab arrow after the menu item's content, which makes it a
-// third child of a two-column grid and drops it onto a second row. Put it back on the
-// first, at the end, where a suffix would sit.
-.wpnc-app__settings-link > :last-child {
-	grid-column: 2;
-	grid-row: 1;
-	align-self: center;
-	justify-self: end;
-}
