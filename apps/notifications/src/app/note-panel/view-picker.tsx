@@ -47,7 +47,11 @@ const ViewPicker = ( { views, className }: { views: PickerView[]; className?: st
 	return (
 		<Dropdown
 			className={ clsx( 'wpnc-app__view-picker', className ) }
-			popoverProps={ { placement: 'bottom-end' } }
+			// `inline` renders the popover in place. Portalled to the body its
+			// coordinates are document-relative, so every scroll frame has to re-derive
+			// them from a panel that is fixed to the viewport, and it visibly chases the
+			// page.
+			popoverProps={ { placement: 'bottom-end', inline: true } }
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<Button
 					size="small"

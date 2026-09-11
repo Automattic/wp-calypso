@@ -75,6 +75,10 @@ export default function NotePanelActions() {
 				} }
 				popoverProps={ {
 					focusOnMount: true,
+					// Render in place. Portalled to the body the popover's coordinates are
+					// document-relative, so every scroll frame has to re-derive them from a
+					// panel that is fixed to the viewport, and it visibly chases the page.
+					inline: true,
 				} }
 			>
 				{ () => <NoteShortcuts /> }

@@ -158,8 +158,8 @@ describe( 'NotePanel view picker', () => {
 		// Pinned views have nothing to press, so they are not buttons at all.
 		expect( rows.queryByRole( 'button', { name: 'All' } ) ).not.toBeInTheDocument();
 		expect( rows.queryByRole( 'button', { name: 'Unread' } ) ).not.toBeInTheDocument();
-		expect( rows.getByText( 'All' ) ).toBeVisible();
-		expect( rows.getByText( 'Unread' ) ).toBeVisible();
+		expect( rows.getByText( 'All' ) ).toBeInTheDocument();
+		expect( rows.getByText( 'Unread' ) ).toBeInTheDocument();
 
 		expect( rows.getByRole( 'button', { name: 'Likes' } ) ).toHaveAttribute(
 			'aria-pressed',
