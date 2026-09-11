@@ -145,8 +145,10 @@ export const isPressableHostingProduct = ( keyOrSlug: string ) =>
 export const isPressableAddonProduct = ( keyOrSlug: string ) =>
 	keyOrSlug.startsWith( 'pressable-addon' );
 
+export const isPremiumPlanSlug = ( slug: string ) => slug.startsWith( 'pressable-premium-' );
+
 export const isSignaturePlanSlug = ( slug: string ) =>
-	slug.startsWith( 'pressable-signature-' ) || slug.startsWith( 'pressable-premium-' );
+	slug.startsWith( 'pressable-signature-' ) || isPremiumPlanSlug( slug );
 
 /** The plan name as shown on the page: "Pressable Signature 3" -> "Signature 3". */
 export const getPressablePlanName = ( name: string ) => name.replace( /Pressable/g, '' ).trim();

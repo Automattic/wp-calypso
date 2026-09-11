@@ -13,7 +13,9 @@ import { cart } from '@wordpress/icons';
 import { useAnalytics } from '../../../app/analytics';
 import { a4aLink } from '../../../utils/link';
 import { getProductCommissionPercentage } from '../../earn/referrals/lib/commissions';
+import { getEffectivePressableOwnership } from '../hosting/lib/pressable-products';
 import { CLASSIC_MARKETPLACE_CHECKOUT_PATH, MARKETPLACE_PRODUCTS_ROUTE } from '../paths';
+import { useAgencyPressablePlan } from '../use-agency-pressable-plan';
 import { getProductPriceInfo, getTermSuffix } from './lib/product-pricing';
 import { getProductShortTitle } from './lib/product-title';
 import type { TermPricing } from '../use-term-pricing';
@@ -26,8 +28,6 @@ interface Props {
 	term: TermPricing;
 	isReferralMode: boolean;
 	isAgencyApproved: boolean;
-	/** Pressable's introductory price only applies to agencies without a Pressable plan. */
-	applyPressableIntroductoryPrice?: boolean;
 	/** Controls the dropdown, for pages that open the cart after adding to it. */
 	open?: boolean;
 	onToggle?: ( willOpen: boolean ) => void;
@@ -46,13 +46,19 @@ export default function CartMenu( {
 	term,
 	isReferralMode,
 	isAgencyApproved,
-	applyPressableIntroductoryPrice = true,
 	open,
 	onToggle,
 	onRemove,
 	onCheckout,
 }: Props ) {
 	const { recordTracksEvent } = useAnalytics();
+	// Pressable's introductory price only applies to agencies without a plan,
+	// so the cart checks for one itself and matches the Hosting page everywhere.
+	const { plan: pressablePlan, ownership: pressableOwnership } = useAgencyPressablePlan();
+	const applyPressableIntroductoryPrice =
+		isReferralMode ||
+		getEffectivePressableOwnership( pressableOwnership, pressablePlan, isReferralMode ) !==
+			'agency';
 
 	const lines = items
 		.map( ( item ) => {

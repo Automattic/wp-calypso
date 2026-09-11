@@ -1,5 +1,24 @@
+import {
+	JetpackLicenseFilter,
+	JetpackLicenseSortDirection,
+	JetpackLicenseSortField,
+} from '@automattic/api-core';
+import { jetpackAgencyLicensesQuery } from '@automattic/api-queries';
 import { isPressableAddonProduct, isPressableHostingProduct } from './pressable-plans';
 import type { Agency, AgencyProduct, JetpackLicense } from '@automattic/api-core';
+
+const LICENSES_STALE_TIME = 5 * 60 * 1000;
+
+/** The agency's live Pressable licenses, newest first. Shared with the Products page. */
+export const pressableLicensesQuery = ( agencyId: number ) => ( {
+	...jetpackAgencyLicensesQuery( agencyId, {
+		filter: JetpackLicenseFilter.NotRevoked,
+		search: 'pressable',
+		sortField: JetpackLicenseSortField.IssuedAt,
+		sortDirection: JetpackLicenseSortDirection.Descending,
+	} ),
+	staleTime: LICENSES_STALE_TIME,
+} );
 
 export const getPressableProducts = ( products: AgencyProduct[] ) =>
 	products.filter( ( product ) => isPressableHostingProduct( product.family_slug ) );
@@ -7,12 +26,29 @@ export const getPressableProducts = ( products: AgencyProduct[] ) =>
 export type PressableOwnershipType = 'none' | 'regular' | 'agency';
 
 // A Pressable account bought outside the A4A marketplace has no A4A id.
-export function getPressableOwnershipType( agency: Agency | undefined ): PressableOwnershipType {
+export function getPressableOwnershipType(
+	agency: Agency | null | undefined
+): PressableOwnershipType {
 	const pressable = agency?.third_party?.pressable;
 	if ( ! pressable?.pressable_id ) {
 		return 'none';
 	}
 	return pressable.a4a_id === null ? 'regular' : 'agency';
+}
+
+/**
+ * What the page sells depends on this: a referral or an A4A plan counts as
+ * owning one, while a Pressable account from outside A4A counts as none.
+ */
+export function getEffectivePressableOwnership(
+	ownership: PressableOwnershipType,
+	plan: AgencyProduct | undefined,
+	isReferralMode: boolean
+): PressableOwnershipType {
+	if ( isReferralMode || plan ) {
+		return 'agency';
+	}
+	return ownership === 'regular' ? 'none' : ownership;
 }
 
 const matchesProduct = ( license: JetpackLicense, product: AgencyProduct | undefined ) =>
