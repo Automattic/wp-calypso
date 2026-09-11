@@ -3,6 +3,7 @@ import { useCallback, useSyncExternalStore } from 'react';
 // Same sessionStorage keys as the classic marketplace, so a selection made on
 // one dashboard is still there on the other.
 const VALUE_KEY_PREFIX = 'a4a-marketplace-slider-';
+const MAP_KEY_PREFIX = 'a4a-marketplace-keyed-';
 
 const listeners = new Map< string, Set< () => void > >();
 
@@ -55,4 +56,45 @@ export function useSessionState< T >(
 	);
 
 	return [ value, setSessionValue ];
+}
+
+/** A map of values persisted per key (e.g. the chosen plan per plan tab). */
+export function useKeyedSessionState< T >( storageKey: string ) {
+	const fullKey = MAP_KEY_PREFIX + storageKey;
+	const stored = useSyncExternalStore(
+		useCallback( ( listener: () => void ) => subscribe( fullKey, listener ), [ fullKey ] ),
+		() => readStorage( fullKey )
+	);
+
+	const readMap = useCallback( (): Record< string, string > => {
+		try {
+			return JSON.parse( stored ?? '{}' );
+		} catch {
+			return {};
+		}
+	}, [ stored ] );
+
+	const getValue = useCallback(
+		( key: string ): T | null => {
+			const map = readMap();
+			if ( ! ( key in map ) ) {
+				return null;
+			}
+			try {
+				return JSON.parse( map[ key ] ) as T;
+			} catch {
+				return null;
+			}
+		},
+		[ readMap ]
+	);
+
+	const setValue = useCallback(
+		( key: string, value: T ) => {
+			writeStorage( fullKey, JSON.stringify( { ...readMap(), [ key ]: JSON.stringify( value ) } ) );
+		},
+		[ fullKey, readMap ]
+	);
+
+	return { getValue, setValue };
 }
