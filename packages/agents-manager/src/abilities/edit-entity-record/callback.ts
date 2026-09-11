@@ -15,13 +15,13 @@ import {
 	renameNavigationItem,
 	type MenuId,
 } from '../../utils/navigation-menu';
-import { getPageTitle, setPageTitle } from '../../utils/page-title';
+import { getPageTitle, getPageUrl, setPageTitle } from '../../utils/page-title';
 import { logSiteMetadata, logSiteSession } from '../../utils/session-log';
 import { setSiteMetadata } from '../../utils/site-metadata';
 import { getSiteRecord } from '../../utils/site-record';
 import { setSiteTitle } from '../../utils/site-title';
 import { errorResult, successResult } from '../ability-result';
-import { editorNavigateCallback, PAGES_LIST_PATH } from '../editor-navigate/callback';
+import { navigateEditorWithoutSaving, PAGES_LIST_PATH } from '../editor-navigate/callback';
 import { buildNavigationItems } from './navigation-items';
 import type { AbilityResult } from '../types';
 
@@ -403,7 +403,11 @@ const withoutTitle = ( record: Record< string, unknown > ) =>
  * fields it carries are the discriminator. Title and metadata travel together:
  * one call can carry both, and routing on the title alone dropped the rest.
  */
-async function applySiteEdit( entity: Entity< 'edit' >, applied: AppliedChanges ): Promise< void > {
+async function applySiteEdit(
+	entity: Entity< 'edit' >,
+	applied: AppliedChanges,
+	recorder: CheckpointRecorder
+): Promise< void > {
 	const { record } = entity;
 	const { title, ...metadata } = record;
 	const updated = reportUpdated( applied, entity );
@@ -412,11 +416,13 @@ async function applySiteEdit( entity: Entity< 'edit' >, applied: AppliedChanges 
 		const siteTitle = flattenTitle( title );
 
 		await setSiteTitle( siteTitle );
+		recorder.markWritten( checkpointKeys.SITE_TITLE );
 		metadata.siteTitle = siteTitle;
 		updated();
 	}
 
 	await editSiteMetadata( metadata );
+	recorder.markWritten( checkpointKeys.SITE_METADATA );
 	updated();
 }
 
@@ -438,6 +444,7 @@ async function applyRecordEdit(
 	}
 
 	const previousTitle = entityName === PAGE ? await getPageTitle( recordId ) : '';
+	const previousUrl = entityName === PAGE ? await getPageUrl( recordId ) : undefined;
 	const nextTitle = flattenTitle( record.title );
 
 	// Presence, not truthiness: a request carrying an empty title clears the page
@@ -518,7 +525,7 @@ async function applyRecordEdit(
 		const captured: MenuId[] = [];
 
 		try {
-			for ( const menuId of await getMenuIdsToRelabel( recordId, previousTitle ) ) {
+			for ( const menuId of await getMenuIdsToRelabel( recordId, previousTitle, previousUrl ) ) {
 				if ( await recorder.captureMenu( menuId ) ) {
 					captured.push( menuId );
 				}
@@ -529,7 +536,7 @@ async function applyRecordEdit(
 			throw error;
 		}
 
-		await renameNavigationItem( recordId, nextTitle, previousTitle );
+		await renameNavigationItem( recordId, nextTitle, previousTitle, previousUrl );
 	}
 }
 
@@ -546,7 +553,7 @@ async function applyEdits(
 		}
 
 		if ( isSite( entityType, entityName ) ) {
-			await applySiteEdit( entity, applied );
+			await applySiteEdit( entity, applied, recorder );
 		} else {
 			await applyRecordEdit( entity, applied, recorder );
 		}
@@ -555,12 +562,13 @@ async function applyEdits(
 
 /**
  * Routes the editor off a record about to be deleted, through
- * `editor-navigate`: to the front page, or the pages list when the site shows
- * posts there or the page is the front page itself. Only the site editor's
- * router can leave without a full page load, which could cut the delete off,
- * so the post editor refuses. The canvas binding is handed over first, as the
- * guard does for the ability — left behind, the move would read as the user
- * leaving and abort the request.
+ * `editor-navigate` without its save — the user's pending edits are theirs to
+ * publish: to the front page, or the pages list when the site shows posts
+ * there or the page is the front page itself. Only the site editor's router
+ * can leave without a full page load, which could cut the delete off, so the
+ * post editor refuses. The canvas binding is handed over first, as the guard
+ * does for the ability — left behind, the move would read as the user leaving
+ * and abort the request.
  */
 async function leaveRecord( entityName: string, recordId: number | string ): Promise< void > {
 	if ( ! getEditorHistory() ) {
@@ -577,7 +585,7 @@ async function leaveRecord( entityName: string, recordId: number | string ): Pro
 	const path =
 		frontPageId && frontPageId !== Number( recordId ) ? `/page/${ frontPageId }` : PAGES_LIST_PATH;
 	const rollbackBinding = bindToEditorPath( path );
-	const { result } = await editorNavigateCallback( { path } );
+	const { result } = await navigateEditorWithoutSaving( path );
 
 	if ( ! result.success ) {
 		rollbackBinding();
@@ -601,8 +609,9 @@ async function applyDeletes(
 		await coreResolve().getEditedEntityRecord( entityType, entityName, recordId );
 
 		// Read before the delete: a menu item carrying no page id is matched by
-		// its label, and the page is the only place that label comes from.
+		// its label and url, and the page is the only place those come from.
 		const previousLabel = entityName === PAGE ? await getPageTitle( recordId ) : '';
+		const previousUrl = entityName === PAGE ? await getPageUrl( recordId ) : undefined;
 
 		await coreDispatch().deleteEntityRecord( entityType, entityName, recordId, undefined, {
 			...options,
@@ -617,7 +626,7 @@ async function applyDeletes(
 		// After the delete, never before: the menu write persists, so removing
 		// the item first would strip it for good if the delete then failed.
 		if ( entityName === PAGE ) {
-			await removeNavigationItem( recordId, previousLabel );
+			await removeNavigationItem( recordId, previousLabel, previousUrl );
 		}
 	}
 }
