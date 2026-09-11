@@ -88,7 +88,7 @@ function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 				<MenuItem
 					icon={ <img src={ pressableIcon } alt="" width={ 24 } /> }
 					title="Pressable"
-					description={ __( 'Optimized and hassle-free hosting for business websites.' ) }
+					description={ __( 'Best for large-scale businesses and major eCommerce sites.' ) }
 					onClick={ () => recordNavigation( 'pressable' ) }
 					href={
 						ownsPressableDirectly
@@ -101,22 +101,24 @@ function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 				<MenuItem
 					icon={ <WordPressLogo /> }
 					title="WordPress.com"
-					description={ __( 'Best for large-scale businesses and major eCommerce sites.' ) }
+					description={ __( 'Optimized and hassle-free hosting for business websites.' ) }
 					onClick={ () => recordNavigation( 'wpcom' ) }
 					href={ dashboardLink(
 						hasPendingSites ? '/sites/need-setup' : '/marketplace/hosting/wpcom'
 					) }
 					aria-label={ __( 'Add a new production site on WordPress.com' ) }
 				>
-					{ hasPendingSites ? (
-						<Text variant="muted">
-							{ sprintf(
-								/* translators: %d is the number of paid-for sites waiting to be set up. */
-								_n( '%d site available', '%d sites available', availablePendingSites.length ),
-								availablePendingSites.length
-							) }
-						</Text>
-					) : undefined }
+					{ /* Stays mounted with nothing waiting: inserting a sibling once the
+					     count arrives is what crashes translated pages. */ }
+					<Text variant="muted" hidden={ ! hasPendingSites }>
+						{ hasPendingSites
+							? sprintf(
+									/* translators: %d is the number of paid-for sites waiting to be set up. */
+									_n( '%d site available', '%d sites available', availablePendingSites.length ),
+									availablePendingSites.length
+							  )
+							: '' }
+					</Text>
 				</MenuItem>
 			</Column>
 			<Column>
