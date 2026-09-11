@@ -162,7 +162,7 @@ describe( 'renameNavigationItem', () => {
 	it( 'matches an idless item by its previous label', async () => {
 		withMenus( { 10: [ link( undefined, 'About' ) ] } );
 
-		await renameNavigationItem( 7, 'About us', 'About' );
+		await renameNavigationItem( 7, 'About us', [ 'About' ] );
 
 		expect( lastWrite().items[ 0 ].attributes.label ).toBe( 'About us' );
 	} );
@@ -170,7 +170,7 @@ describe( 'renameNavigationItem', () => {
 	it( 'leaves an idless item alone when its label no longer matches', async () => {
 		withMenus( { 10: [ link( undefined, 'Our story' ) ] } );
 
-		await renameNavigationItem( 7, 'About us', 'About' );
+		await renameNavigationItem( 7, 'About us', [ 'About' ] );
 
 		expect( editEntityRecord ).not.toHaveBeenCalled();
 	} );
@@ -180,7 +180,7 @@ describe( 'renameNavigationItem', () => {
 	it( 'leaves a custom label alone when the page was untitled', async () => {
 		withMenus( { 10: [ link( 7, 'Learn more' ) ] } );
 
-		await renameNavigationItem( 7, 'About us', '' );
+		await renameNavigationItem( 7, 'About us', [ '' ] );
 
 		expect( editEntityRecord ).not.toHaveBeenCalled();
 	} );
@@ -201,7 +201,7 @@ describe( 'getMenuIdsToRelabel', () => {
 	it( 'lists only the menus the rename will change', async () => {
 		withMenus( { 10: [ link( 7, 'About' ) ], 20: [ link( 7, 'Learn more' ) ] } );
 
-		await expect( getMenuIdsToRelabel( 7, 'About' ) ).resolves.toEqual( [ 10 ] );
+		await expect( getMenuIdsToRelabel( 7, [ 'About' ] ) ).resolves.toEqual( [ 10 ] );
 	} );
 } );
 
@@ -263,7 +263,7 @@ describe( 'menu selection', () => {
 	it( 'leaves a label the user chose, even on an id-backed item', async () => {
 		withMenus( { 10: [ link( 7, 'Learn more' ) ] } );
 
-		await renameNavigationItem( 7, 'About us', 'About' );
+		await renameNavigationItem( 7, 'About us', [ 'About' ] );
 
 		expect( editEntityRecord ).not.toHaveBeenCalled();
 	} );
@@ -295,11 +295,29 @@ describe( 'menu selection', () => {
 			],
 		} );
 
-		await removeNavigationItem( 7, 'About', 'http://localhost/about/' );
+		await removeNavigationItem( 7, [ 'About' ], 'http://localhost/about/' );
 
 		expect(
 			lastWrite().items.map( ( item: { attributes: { url?: string } } ) => item.attributes.url )
 		).toEqual( [ 'https://elsewhere.com/about/' ] );
+	} );
+
+	// The url names the page whatever the user called the link.
+	it( 'removes an idless link by its url even under a custom label', async () => {
+		withMenus( { 10: [ link( undefined, 'Get in touch', [], { url: '/about/' } ) ] } );
+
+		await removeNavigationItem( 7, [ 'About' ], 'http://localhost/about/' );
+
+		expect( lastWrite().items ).toEqual( [] );
+	} );
+
+	// Plain permalinks differ only in the query.
+	it( 'tells plain-permalink links apart by their query', async () => {
+		withMenus( { 10: [ link( undefined, 'About', [], { url: '/?page_id=8' } ) ] } );
+
+		await removeNavigationItem( 7, [ 'About' ], 'http://localhost/?page_id=7' );
+
+		expect( editEntityRecord ).not.toHaveBeenCalled();
 	} );
 
 	// A block that is not a menu item can carry a label too.
@@ -311,7 +329,7 @@ describe( 'menu selection', () => {
 			],
 		} );
 
-		await removeNavigationItem( 7, 'About' );
+		await removeNavigationItem( 7, [ 'About' ] );
 
 		expect( lastWrite().items.map( ( item: { name: string } ) => item.name ) ).toEqual( [
 			'core/search',

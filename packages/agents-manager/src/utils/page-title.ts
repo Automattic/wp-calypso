@@ -21,6 +21,11 @@ interface CoreResolve {
 		name: string,
 		id: number | string
 	) => Promise< PageRecord | null >;
+	getEntityRecord: (
+		kind: string,
+		name: string,
+		id: number | string
+	) => Promise< PageRecord | null >;
 }
 
 interface CoreDispatch {
@@ -54,6 +59,17 @@ export async function getPageTitle( pageId: number | string ): Promise< string >
 	const page = await readPage( pageId );
 
 	return flattenTitle( page.title );
+}
+
+/**
+ * The title as last saved. A menu label follows this one until the page's
+ * own edit is saved, so it is what the label is matched against.
+ */
+export async function getSavedPageTitle( pageId: number | string ): Promise< string > {
+	const coreResolve = resolveSelect( coreStore ) as unknown as CoreResolve | undefined;
+	const page = await coreResolve?.getEntityRecord( 'postType', 'page', pageId );
+
+	return flattenTitle( page?.title );
 }
 
 /** The page's permalink, or `undefined` when the record carries none. */
