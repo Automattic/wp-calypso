@@ -2,13 +2,19 @@ import { userPurchaseSetAutoRenewQuery } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { useEffect, useMemo } from 'react';
-import { getCalendarDaysUntil } from '../../utils/datetime';
 import { isExpiredOrRemoved, mightStillAutoRenew } from '../../utils/purchase';
 import Notice from '../notice';
-import { getExpiryStateName, getPlanExpiryNotice } from './get-plan-expiry-notice';
-import type { PlanExpiryNoticeAction, PlanExpiryNoticeScope } from './get-plan-expiry-notice';
+import { getPlanExpiryEventProperties } from './event-properties';
+import { getPlanExpiryNotice } from './get-plan-expiry-notice';
+import type {
+	PlanExpiryNoticeAction,
+	PlanExpiryNoticeScope,
+	PlanExpiryNoticeStage,
+} from './get-plan-expiry-notice';
 import type { Purchase } from '@automattic/api-core';
 
+export { getPlanExpiryEventProperties } from './event-properties';
+export type { PlanExpiryEventContext } from './event-properties';
 export {
 	getExpiryStateName,
 	getPlanExpiryNotice,
@@ -91,6 +97,9 @@ interface PlanExpiryNoticeProps {
 
 	/** See `PlanExpiryNoticeOptions.isPlanOwner`. */
 	isPlanOwner?: boolean;
+
+	/** See `PlanExpiryNoticeOptions.stage`. */
+	stage?: PlanExpiryNoticeStage;
 
 	/**
 	 * Renders a close button and is called when it is clicked. The caller owns
@@ -194,6 +203,7 @@ export function PlanExpiryNotice( {
 	scope,
 	isReverted,
 	isPlanOwner: isPlanOwnerProp,
+	stage: stageOverride,
 	onClose,
 	onContactSupport,
 	eventProperties: extraEventProperties,
@@ -205,6 +215,7 @@ export function PlanExpiryNotice( {
 		scope,
 		isReverted,
 		isPlanOwner: isPlanOwnerProp,
+		stage: stageOverride,
 	} );
 
 	// Pulled out as primitives so that they, and the memo below, stay stable
@@ -213,9 +224,8 @@ export function PlanExpiryNotice( {
 	// literal; it is turned into the primitive `extraEventPropertiesKey` below
 	// for the same reason.
 	const purchaseId = purchase.ID;
-	const productSlug = purchase.product_slug;
+	const expiryDate = purchase.expiry_date;
 	const status = isExpiredOrRemoved( purchase ) ? 'expired' : 'active';
-	const daysUntilExpiry = getCalendarDaysUntil( new Date( purchase.expiry_date ) );
 	const canStillAutoRenew = mightStillAutoRenew( purchase );
 	const variant = notice?.variant;
 	const stage = notice?.stage;
@@ -223,27 +233,20 @@ export function PlanExpiryNotice( {
 	const extraEventPropertiesKey = JSON.stringify( extraEventProperties ?? {} );
 
 	const eventProperties = useMemo(
-		() => ( {
-			...extraEventProperties,
-			surface,
-			purchase_id: purchaseId,
-			product_slug: productSlug,
-			status,
-			days_until_expiry: daysUntilExpiry,
-			days_remaining: daysUntilExpiry,
-			might_still_auto_renew: canStillAutoRenew,
-			variant,
-			stage,
-			state: stage ? getExpiryStateName( stage ) : undefined,
-			is_plan_owner: isPlanOwner,
-		} ),
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- extraEventPropertiesKey stands in for extraEventProperties.
+		() =>
+			getPlanExpiryEventProperties( purchase, {
+				surface,
+				stage,
+				variant,
+				isPlanOwner,
+				extra: extraEventProperties,
+			} ),
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- the primitives below stand in for purchase, and extraEventPropertiesKey for extraEventProperties.
 		[
 			surface,
 			purchaseId,
-			productSlug,
+			expiryDate,
 			status,
-			daysUntilExpiry,
 			canStillAutoRenew,
 			variant,
 			stage,

@@ -135,6 +135,7 @@ test( 'dismisses post-grace: hides at once, writes the meta, records the event',
 			stage: 'post-grace',
 			state: 'expired',
 			is_plan_owner: true,
+			days_remaining: -40,
 		} )
 	);
 } );
@@ -156,6 +157,7 @@ test( 'restores the notice when the dismissal fails', async () => {
 				purchase_id: 1234,
 				product_slug: DotcomPlans.BUSINESS,
 				stage: 'post-grace',
+				days_remaining: -40,
 				error_message: expect.any( String ),
 			} )
 		)
@@ -178,6 +180,24 @@ test( 'offers "View other plans" during grace when a URL is given', () => {
 		'href',
 		'/plans/x'
 	);
+} );
+
+test( 'an un-reverted Atomic site past grace hears the grace copy, not post-grace’s', () => {
+	renderBanner( {
+		purchase: postGrace(),
+		stage: 'grace',
+		isDismissible: false,
+		isReverted: false,
+		isPlanOwner: true,
+	} );
+
+	expect(
+		screen.getByText(
+			'Your site will move to the Free plan. That means losing plugins, custom themes, and 50 GB of storage. But it’s not too late. Renew now to keep your site as it is.'
+		)
+	).toBeVisible();
+	expect( screen.getByRole( 'link', { name: 'Restore site' } ) ).toBeVisible();
+	expect( screen.queryByRole( 'link', { name: 'View other plans' } ) ).not.toBeInTheDocument();
 } );
 
 test( 'a non-owner state renders the explanation with no actions', () => {

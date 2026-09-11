@@ -241,27 +241,24 @@ describe( 'useSiteExpiryNotice', () => {
 	} );
 
 	test( 'stays null in post-grace until the dismissal meta is known', async () => {
-		const expiry = expiryInDays( -40 );
 		mockApi( {
 			purchases: [
 				makePurchase( {
-					expiry_date: expiry,
+					expiry_date: expiryInDays( -40 ),
 					expiry_status: 'expired',
 					subscription_status: 'inactive',
 				} ),
 			],
-			meta: {
-				wp_wpcom_plan_expiry_notice_dismiss:
-					Math.floor( new Date( expiry ).getTime() / 1000 ) + 86400,
-			},
+			// Never dismissed, so the only thing holding the notice back is the
+			// meta not having arrived yet.
+			meta: { wp_wpcom_plan_expiry_notice_dismiss: 0 },
 			metaDelay: 50,
 			transferStatus: 'reverted',
 		} );
-		const { result, waitForPurchases, waitForCurrentUser } = renderNotice();
+		const { result, waitForPurchases } = renderNotice();
 		await waitForPurchases();
 		expect( result.current ).toBeNull();
-		await waitForCurrentUser();
-		expect( result.current ).toBeNull();
+		await waitFor( () => expect( result.current?.stage ).toBe( 'post-grace' ) );
 	} );
 
 	test( 'stays null in post-grace when the transfer lookup fails', async () => {

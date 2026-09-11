@@ -13,12 +13,14 @@ const ignore = () => undefined;
  * the notice is there on first render and can outrank the page's own notices.
  * Only post-grace needs the dismissal stamp and the revert status, and those
  * are fetched fresh so a dismissal made in wp-admin is honoured on the next
- * dashboard load. Nothing here may block the page: failures are swallowed and
- * `useSiteExpiryNotice` renders nothing for an errored query.
+ * dashboard load. Nothing here may block the page: failures are swallowed,
+ * retries are off so that a failing endpoint costs one request rather than
+ * seconds of backoff, and `useSiteExpiryNotice` renders nothing for an errored
+ * query.
  */
 export async function ensureSiteExpiryNoticeData( siteId: number ): Promise< void > {
 	const purchases = await queryClient
-		.ensureQueryData( sitePurchasesQuery( siteId ) )
+		.ensureQueryData( { ...sitePurchasesQuery( siteId ), retry: false } )
 		.catch( ignore );
 	if ( ! purchases ) {
 		return;

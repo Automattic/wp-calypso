@@ -1,7 +1,7 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useMatch, useRouterState } from '@tanstack/react-router';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import { useHelpCenter } from '../../app/help-center';
@@ -33,7 +33,11 @@ export function useSiteExpiryNoticeCandidate(): SiteExpiryNoticeCandidate | null
 	const locale = useLocale();
 	const { recordTracksEvent } = useAnalytics();
 	const { setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
-	const pathname = useRouterState( { select: ( routerState ) => routerState.location.pathname } );
+	// The leaf route's id, not the URL: it is free of the dashboard's basePath
+	// and of the site slug's own segments.
+	const routeId = useRouterState( {
+		select: ( routerState ): string => routerState.matches.at( -1 )?.routeId ?? '',
+	} );
 
 	const state = useSiteExpiryNotice( site?.ID ?? 0, {
 		isDashboardScreen: !! overviewMatch,
@@ -50,26 +54,38 @@ export function useSiteExpiryNoticeCandidate(): SiteExpiryNoticeCandidate | null
 		[ setNavigateToRoute, setShowHelpCenter ]
 	);
 
-	if ( ! site || ! state ) {
-		return null;
-	}
+	const siteId = site?.ID;
+	const viewOtherPlansUrl = site ? getSitePlanUpgradeUrl( site ) : undefined;
+	const page = getPageName( routeId );
 
-	// `/sites/{slug}` is the overview; deeper paths name the page after the slug.
-	const page = pathname.split( '/' )[ 3 ] || 'overview';
+	return useMemo( () => {
+		if ( ! siteId || ! state ) {
+			return null;
+		}
 
-	return {
-		isUrgent: isUrgentStage( state.stage ),
-		node: (
-			<SiteExpiryNoticeBanner
-				siteId={ site.ID }
-				state={ state }
-				locale={ locale }
-				surface="dashboard-site"
-				eventProperties={ { page } }
-				recordTracksEvent={ recordTracksEvent }
-				onContactSupport={ openSupport }
-				viewOtherPlansUrl={ getSitePlanUpgradeUrl( site ) }
-			/>
-		),
-	};
+		return {
+			isUrgent: isUrgentStage( state.stage ),
+			node: (
+				<SiteExpiryNoticeBanner
+					siteId={ siteId }
+					state={ state }
+					locale={ locale }
+					surface="dashboard-site"
+					eventProperties={ { page } }
+					recordTracksEvent={ recordTracksEvent }
+					onContactSupport={ openSupport }
+					viewOtherPlansUrl={ viewOtherPlansUrl }
+				/>
+			),
+		};
+	}, [ siteId, state, locale, page, openSupport, recordTracksEvent, viewOtherPlansUrl ] );
+}
+
+/**
+ * Which site page an event came from: `overview` for `/sites/{slug}`, and the
+ * first segment after the slug anywhere deeper.
+ */
+function getPageName( routeId: string ): string {
+	const withinSite = routeId.startsWith( siteRoute.id ) ? routeId.slice( siteRoute.id.length ) : '';
+	return withinSite.split( '/' ).filter( Boolean )[ 0 ] ?? 'overview';
 }

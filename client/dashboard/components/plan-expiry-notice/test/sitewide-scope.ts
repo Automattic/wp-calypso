@@ -288,6 +288,21 @@ describe( 'sitewide scope: post-grace', () => {
 	test( 'removed before its expiry date (refund, cancellation): nothing', () => {
 		expect( sitewide( removed( -10 ) ) ).toBeNull();
 	} );
+
+	test( 'overridden to grace: the grace body, restore-site, no secondary action', () => {
+		const notice = sitewide( removed( 40 ), { stage: 'grace' } );
+		expect( notice?.stage ).toBe( 'grace' );
+		expect( notice?.variant ).toBe( 'error' );
+		expect( notice?.title ).toBe( 'Your Business plan has expired' );
+		expect( notice?.body ).toMatch(
+			/^Your site will move to the Free plan. That means losing plugins, custom themes, and 50 GB of storage/
+		);
+		expect( notice?.primaryAction ).toMatchObject( {
+			type: 'restore-site',
+			label: 'Restore site',
+		} );
+		expect( notice?.secondaryAction ).toBeUndefined();
+	} );
 } );
 
 describe( 'sitewide scope: eligibility and fallbacks', () => {
@@ -396,5 +411,10 @@ describe( 'getSitewideExpiryStage / getExpiryStateName', () => {
 		);
 		expect( getSitewideExpiryStage( removed( 59 ) ) ).toBe( 'post-grace' );
 		expect( getSitewideExpiryStage( removed( 60 ) ) ).toBeNull();
+	} );
+
+	test( 'a missing or unparseable expiry date has no stage', () => {
+		expect( getSitewideExpiryStage( makePurchase( { expiry_date: '' } ) ) ).toBeNull();
+		expect( getSitewideExpiryStage( makePurchase( { expiry_date: 'not a date' } ) ) ).toBeNull();
 	} );
 } );
