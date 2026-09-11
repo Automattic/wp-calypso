@@ -1,7 +1,8 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
-import { useIntlLocale } from '../../../app/locale';
+import { useLocale } from '../../../app/locale';
 import ConfirmModal from '../../../components/confirm-modal';
+import { formatDate } from '../../../utils/datetime';
 import { getTitanTierName } from '../../utils/titan-tiers';
 import type { TitanDowngradeMode } from '../../hooks/use-titan-downgrade';
 import type { TitanPlanTier } from '../../types';
@@ -34,7 +35,7 @@ export function TitanDowngradeModal( {
 	onCancel: () => void;
 	onConfirm: () => void;
 } ) {
-	const locale = useIntlLocale();
+	const locale = useLocale();
 
 	if ( ! pendingDowngrade ) {
 		return null;
@@ -46,7 +47,7 @@ export function TitanDowngradeModal( {
 	const refundText =
 		refundAmount > 0 ? formatCurrency( refundAmount, currencyCode, { stripZeros: true } ) : null;
 	const renewalDate = renewDate
-		? new Intl.DateTimeFormat( locale, { dateStyle: 'long' } ).format( new Date( renewDate ) )
+		? formatDate( new Date( renewDate ), locale, { dateStyle: 'long' } )
 		: null;
 
 	// Each message states what happens to the customer's money.
@@ -54,7 +55,7 @@ export function TitanDowngradeModal( {
 		if ( isInstant ) {
 			return refundText
 				? sprintf(
-						/* translators: %1$s is the current email plan name, %2$s the plan being switched to, %3$s a refunded amount such as "$18.00". */
+						/* translators: %1$s is the current email plan name, %2$s the plan being switched to, %3$s a refunded amount such as "$18". */
 						__(
 							'Your plan will change from %1$s to %2$s right away, and you will be refunded %3$s.'
 						),
@@ -93,7 +94,7 @@ export function TitanDowngradeModal( {
 	const confirmLabel =
 		isInstant && refundText
 			? sprintf(
-					/* translators: %s is a refunded amount, e.g. "$18.00". */
+					/* translators: %s is a refunded amount, e.g. "$18". */
 					__( 'Change plan and refund %s' ),
 					refundText
 			  )

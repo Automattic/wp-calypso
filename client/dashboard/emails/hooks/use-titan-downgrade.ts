@@ -59,16 +59,15 @@ export function useTitanDowngrade( {
 		[ purchase ]
 	);
 
-	// Runs alongside the invalidation the mutations already do, to refresh what
-	// this page reads: the site's purchases, and the domain, whose
-	// titan_mail_subscription slug gives the grid its current tier. Passed per
-	// call, since an onSuccess on useMutation would replace the factory's own.
-	const invalidateAfterDowngrade = useCallback( () => {
-		if ( siteId ) {
-			queryClient.invalidateQueries( sitePurchasesQuery( siteId ) );
-		}
-		queryClient.invalidateQueries( domainQuery( domainName ) );
-	}, [ queryClient, siteId, domainName ] );
+	// The mutations invalidate the [ 'upgrades' ] key, which covers every
+	// purchase query. The domain is not under that key and holds the
+	// titan_mail_subscription slug the grid reads its current tier from.
+	// Passed per call, since an onSuccess on useMutation would replace the
+	// factory's own.
+	const invalidateAfterDowngrade = useCallback(
+		() => queryClient.invalidateQueries( domainQuery( domainName ) ),
+		[ queryClient, domainName ]
+	);
 
 	const { mutate: mutateInstantDowngrade, isPending: isInstantDowngradePending } = useMutation(
 		withSnackbar( cancelAndRefundPurchaseMutation(), {
@@ -97,8 +96,8 @@ export function useTitanDowngrade( {
 				return;
 			}
 
-			const onDowngraded = () => {
-				invalidateAfterDowngrade();
+			const onDowngraded = async () => {
+				await invalidateAfterDowngrade();
 				onSuccess?.();
 			};
 
@@ -125,15 +124,17 @@ export function useTitanDowngrade( {
 		if ( purchase ) {
 			mutateCancelDowngrade(
 				{ purchaseId: purchase.ID, enabled: false },
-				{ onSuccess: invalidateAfterDowngrade }
+				{ onSuccess: () => invalidateAfterDowngrade() }
 			);
 		}
 	}, [ purchase, invalidateAfterDowngrade, mutateCancelDowngrade ] );
 
 	// Stays set until the renewal applies the change, so the grid can offer to
-	// cancel it instead of repeating the downgrade.
-	const pendingDowngradeTier: TitanPlanTier | undefined = purchase?.is_delayed_downgrade_pending
-		? getTitanTierFromSlug( purchase.delayed_downgrade_to_product_slug ?? undefined )
+	// cancel it instead of repeating the downgrade. The tier only labels which
+	// card shows that action; the flag is what says a downgrade is scheduled.
+	const isDowngradePending = Boolean( purchase?.is_delayed_downgrade_pending );
+	const pendingDowngradeTier: TitanPlanTier | undefined = isDowngradePending
+		? getTitanTierFromSlug( purchase?.delayed_downgrade_to_product_slug ?? undefined )
 		: undefined;
 
 	return {
@@ -142,10 +143,11 @@ export function useTitanDowngrade( {
 		getRefundAmount,
 		downgrade,
 		cancelDowngrade,
+		isDowngradePending,
 		pendingDowngradeTier,
 		isDowngrading: isInstantDowngradePending || isDelayedDowngradePending,
 		isCancellingDowngrade: isCancelDowngradePending,
 		// An expired or removed subscription has nothing to downgrade.
-		canDowngrade: Boolean( purchase ) && ! ( purchase && isExpiredOrRemoved( purchase ) ),
+		canDowngrade: Boolean( purchase && ! isExpiredOrRemoved( purchase ) ),
 	};
 }

@@ -87,6 +87,7 @@ export default function ChooseEmailSolution() {
 		getRefundAmount,
 		downgrade,
 		cancelDowngrade,
+		isDowngradePending,
 		pendingDowngradeTier,
 		isDowngrading,
 		isCancellingDowngrade,
@@ -327,9 +328,19 @@ export default function ChooseEmailSolution() {
 						interval={ billingInterval }
 						available={ isTitanAvailable }
 						currentTier={ currentTier }
+						subscriptionInterval={
+							isMonthlyEmailProduct( titanEmailSubscription )
+								? IntervalLength.Monthly
+								: IntervalLength.Annually
+						}
 						canDowngrade={ canDowngrade }
+						isDowngradePending={ isDowngradePending }
 						pendingDowngradeTier={ pendingDowngradeTier }
-						isDowngradeBusy={ isDowngrading || isCancellingDowngrade }
+						busyDowngradeTier={
+							isDowngrading || isCancellingDowngrade
+								? pendingDowngrade?.tier ?? pendingDowngradeTier
+								: undefined
+						}
 						onUpgrade={ handleTierUpgrade }
 						onDowngrade={ handleTierDowngrade }
 						onCancelScheduledDowngrade={ cancelDowngrade }

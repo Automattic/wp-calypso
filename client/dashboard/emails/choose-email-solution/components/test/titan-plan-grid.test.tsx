@@ -123,6 +123,7 @@ describe( '<TitanPlanGrid>', () => {
 		const onCancelScheduledDowngrade = jest.fn();
 		const onDowngrade = jest.fn();
 		renderGrid( {
+			isDowngradePending: true,
 			pendingDowngradeTier: TitanPlanTier.Premium,
 			onCancelScheduledDowngrade,
 			onDowngrade,

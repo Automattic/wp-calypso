@@ -100,9 +100,11 @@ export function TitanPlanGrid( {
 	interval,
 	available,
 	currentTier,
+	subscriptionInterval,
 	canDowngrade = false,
+	isDowngradePending = false,
 	pendingDowngradeTier,
-	isDowngradeBusy = false,
+	busyDowngradeTier,
 	onUpgrade,
 	onDowngrade,
 	onCancelScheduledDowngrade,
@@ -115,12 +117,19 @@ export function TitanPlanGrid( {
 	// plan-change mode: the current tier is labeled, higher tiers offer an
 	// upgrade, and lower tiers offer a downgrade.
 	currentTier?: TitanPlanTier;
+	// Billing term of the current subscription. A downgrade keeps that term, so
+	// lower tiers are only actionable while the selected interval matches it.
+	subscriptionInterval?: IntervalLength;
 	// False when no live subscription backs the grid, which leaves lower tiers
 	// disabled instead of offering an action that would fail.
 	canDowngrade?: boolean;
-	// Tier a downgrade is already scheduled for. That card offers to cancel it.
+	// Whether a downgrade is already scheduled.
+	isDowngradePending?: boolean;
+	// Tier that downgrade targets, when it maps to a known tier. Only labels
+	// which card offers to cancel it.
 	pendingDowngradeTier?: TitanPlanTier;
-	isDowngradeBusy?: boolean;
+	// Tier whose downgrade action is in flight.
+	busyDowngradeTier?: TitanPlanTier;
 	// Upgrades are purchases, so this routes to checkout.
 	onUpgrade?: ( tier: TitanPlanTier ) => void;
 	// Downgrades are a direct API call, so this never goes to checkout.
@@ -184,14 +193,21 @@ export function TitanPlanGrid( {
 	const productForTier = ( tier: TitanPlanTier ) =>
 		plans.find( ( plan ) => plan.tier === tier )?.product;
 
+	// The interval selector is still available to monthly subscribers so they can
+	// upgrade onto annual billing. Downgrades cannot change term, so they are
+	// offered only while the selected interval matches the subscription's.
+	const isSubscriptionInterval = ! subscriptionInterval || interval === subscriptionInterval;
+
 	const getDowngradeTargetId = ( tier: TitanPlanTier ) =>
-		getTitanDowngradeTargetId( {
-			currentTier,
-			currentProduct: currentTier ? productForTier( currentTier ) : undefined,
-			targetTier: tier,
-			targetProduct: productForTier( tier ),
-			interval,
-		} );
+		isSubscriptionInterval
+			? getTitanDowngradeTargetId( {
+					currentTier,
+					currentProduct: currentTier ? productForTier( currentTier ) : undefined,
+					targetTier: tier,
+					targetProduct: productForTier( tier ),
+					interval,
+			  } )
+			: undefined;
 
 	// The tier that gets the emphasized (primary) button: the recommended plan when
 	// buying, or the recommended upgrade target when upgrading. The current and lower
@@ -225,9 +241,10 @@ export function TitanPlanGrid( {
 				);
 				// Scheduling a second downgrade would replace the first.
 				const isBlockedByPendingDowngrade =
-					Boolean( pendingDowngradeTier ) && isDowngrade && ! isPendingDowngrade;
+					isDowngradePending && isDowngrade && ! isPendingDowngrade;
+				const isBlockedByInterval = isDowngrade && ! isSubscriptionInterval;
 				const isDowngradeAvailable =
-					isDowngrade && canDowngrade && Boolean( downgradeTargetId ) && ! pendingDowngradeTier;
+					isDowngrade && canDowngrade && Boolean( downgradeTargetId ) && ! isDowngradePending;
 
 				let actionLabel;
 				if ( isCurrentPlan ) {
@@ -314,8 +331,8 @@ export function TitanPlanGrid( {
 							__next40pxDefaultSize
 							className="email-provider-action"
 							variant={ plan.tier === primaryTier ? 'primary' : 'secondary' }
-							disabled={ isActionDisabled || isDowngradeBusy }
-							isBusy={ isDowngradeBusy && ( isDowngrade || isPendingDowngrade ) }
+							disabled={ isActionDisabled || Boolean( busyDowngradeTier ) }
+							isBusy={ busyDowngradeTier === plan.tier }
 							onClick={ () => {
 								if ( isPendingDowngrade ) {
 									onCancelScheduledDowngrade?.();
@@ -346,6 +363,11 @@ export function TitanPlanGrid( {
 						{ isBlockedByPendingDowngrade && (
 							<Text variant="muted" className="email-titan-plan-downgrade-note">
 								{ __( 'Cancel your scheduled plan change to pick a different plan.' ) }
+							</Text>
+						) }
+						{ isBlockedByInterval && (
+							<Text variant="muted" className="email-titan-plan-downgrade-note">
+								{ __( 'Switch back to your current billing period to downgrade.' ) }
 							</Text>
 						) }
 						<VStack spacing={ 1 }>
