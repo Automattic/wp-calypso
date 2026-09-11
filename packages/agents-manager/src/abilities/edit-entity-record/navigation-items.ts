@@ -39,13 +39,26 @@ const isOptionalId = ( value: unknown ) =>
 	( typeof value === 'number' && value > 0 ) ||
 	( typeof value === 'string' && value !== '' );
 
+const NAVIGATION_ITEM_KEYS = [
+	'clientId',
+	'label',
+	'url',
+	'id',
+	'kind',
+	'type',
+	'opensInNewTab',
+	'items',
+];
+
 /**
  * The schema validates nothing below the first level, and the callback runs on
  * raw arguments anyway, so every entry is checked here before it reaches a
- * block attribute.
+ * block attribute. Unknown keys are refused as the schema says: a misspelt one
+ * would otherwise be dropped and the edit reported as done.
  */
 const isNavigationItemInput = ( value: unknown ): value is NavigationItemInput =>
 	isRecord( value ) &&
+	Object.keys( value ).every( ( key ) => NAVIGATION_ITEM_KEYS.includes( key ) ) &&
 	( value.clientId !== undefined ||
 		value.label !== undefined ||
 		value.url !== undefined ||
@@ -69,7 +82,7 @@ function checkItems( items: unknown[], where: string ): NavigationItemInput[] {
 		throw new Error(
 			`Invalid navigation items ${ where }: each entry must be an object naming a clientId, ` +
 				'label, url or id — non-empty strings, or a positive number for the id — with any ' +
-				'kind and type as strings, opensInNewTab as a boolean, and items as an array.'
+				'kind and type as strings, opensInNewTab as a boolean, items as an array, and no other keys.'
 		);
 	}
 
@@ -366,7 +379,7 @@ export async function buildNavigationItems(
 			// the item.
 			if ( input.id && String( input.id ) !== String( existing?.attributes?.id ) ) {
 				Object.assign( attributes, { type: 'page', kind: 'post-type' }, attributesFor( input ) );
-			} else if ( input.url && ! sameUrl( input.url, block.attributes?.url ) ) {
+			} else if ( input.url && ! sameUrl( input.url, existing?.attributes?.url ) ) {
 				delete attributes.id;
 				Object.assign( attributes, { type: 'custom', kind: 'custom' } );
 			}
