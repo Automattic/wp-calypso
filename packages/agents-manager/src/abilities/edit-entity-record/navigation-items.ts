@@ -73,11 +73,15 @@ const isNavigationItemInput = ( value: unknown ): value is NavigationItemInput =
 	( value.items === undefined || Array.isArray( value.items ) );
 
 /**
- * A list of items, refused rather than filtered when an entry is malformed: the
- * list replaces what is there, so dropping an entry would quietly remove items
- * the request never asked to touch.
+ * A list of items at every level, refused rather than filtered when an entry is
+ * malformed: the list replaces what is there, so dropping an entry would
+ * quietly remove items the request never asked to touch.
  */
-function checkItems( items: unknown[], where: string ): NavigationItemInput[] {
+function checkNavigationItems( items: unknown, where: string ): NavigationItemInput[] {
+	if ( ! Array.isArray( items ) ) {
+		throw new Error( `navigationItems ${ where } must be an array of menu items.` );
+	}
+
 	if ( ! items.every( isNavigationItemInput ) ) {
 		throw new Error(
 			`Invalid navigation items ${ where }: each entry must be an object naming a clientId, ` +
@@ -86,12 +90,41 @@ function checkItems( items: unknown[], where: string ): NavigationItemInput[] {
 		);
 	}
 
+	items.forEach(
+		( item ) =>
+			item.items !== undefined &&
+			checkNavigationItems( item.items, `under "${ item.label ?? '' }"` )
+	);
+
 	return items;
 }
 
 /** An item's children, or none — an absent list keeps the existing children. */
-const childrenOf = ( item: NavigationItemInput ): NavigationItemInput[] | undefined =>
-	item.items && checkItems( item.items, `under "${ item.label ?? '' }"` );
+const childrenOf = ( item: NavigationItemInput ): NavigationItemInput[] | undefined => item.items;
+
+/**
+ * Refuses a malformed menu record before anything in the batch is written.
+ * Both halves of a raw edit are checked: `content` is what persists, `blocks`
+ * what the editor reads, and anything but serialized blocks would persist
+ * while the editor kept its own.
+ */
+export function checkMenuRecord( record: Record< string, unknown > ): void {
+	const { blocks, content, navigationItems } = record;
+
+	if ( content !== undefined && typeof content !== 'string' ) {
+		throw new Error(
+			'content must be a string of serialized blocks. Send navigationItems to rewrite the menu.'
+		);
+	}
+
+	if ( blocks !== undefined && ! Array.isArray( blocks ) ) {
+		throw new Error( 'blocks must be an array of navigation blocks.' );
+	}
+
+	if ( navigationItems !== undefined ) {
+		checkNavigationItems( navigationItems, 'at the top level' );
+	}
+}
 
 /**
  * Claim order, least ambiguous first.
@@ -261,23 +294,11 @@ const attributesFor = ( item: NavigationItemInput ) => ( {
 function withBothHalves( record: Record< string, unknown > ): Record< string, unknown > {
 	const { blocks, content } = record;
 
-	// Anything but serialized blocks would persist while the editor kept its
-	// own; the schema's null is allowed on other records, not here.
-	if ( content !== undefined && typeof content !== 'string' ) {
-		throw new Error(
-			'content must be a string of serialized blocks. Send navigationItems to rewrite the menu.'
-		);
-	}
-
-	if ( blocks !== undefined ) {
-		if ( ! Array.isArray( blocks ) ) {
-			throw new Error( 'blocks must be an array of navigation blocks.' );
-		}
-
+	if ( Array.isArray( blocks ) ) {
 		return { ...record, content: serialize( blocks ) };
 	}
 
-	return content === undefined ? record : { ...record, blocks: parse( content ) };
+	return typeof content === 'string' ? { ...record, blocks: parse( content ) } : record;
 }
 
 /**
@@ -289,17 +310,15 @@ export async function buildNavigationItems(
 	menuId: number | string,
 	record: Record< string, unknown >
 ): Promise< Record< string, unknown > > {
+	checkMenuRecord( record );
+
 	const { navigationItems, ...rest } = record;
 
 	if ( navigationItems === undefined ) {
 		return withBothHalves( record );
 	}
 
-	if ( ! Array.isArray( navigationItems ) ) {
-		throw new Error( 'navigationItems must be an array of menu items.' );
-	}
-
-	const items = checkItems( navigationItems, 'at the top level' );
+	const items = navigationItems as NavigationItemInput[];
 
 	const current = await readMenuItems( menuId );
 
@@ -353,12 +372,12 @@ export async function buildNavigationItems(
 
 			// A clientId names an existing item, so one that resolves to nothing is
 			// refused rather than rebuilt from the label: the block it meant would be
-			// dropped with everything the request did not restate. An id alone is
-			// refused too — it makes a link with no text, which reads as the menu
-			// having been wiped. Collected rather than thrown so every offending
-			// item can be named at once.
-			if ( ! existing && ( input.clientId || ( ! input.label && ! input.url ) ) ) {
-				unresolved.push( String( input.clientId ?? input.id ) );
+			// dropped with everything the request did not restate. A new item needs
+			// a label — a url or id alone makes a link with no text, which reads as
+			// the menu having been wiped. Collected rather than thrown so every
+			// offending item can be named at once.
+			if ( ! existing && ( input.clientId || ! input.label ) ) {
+				unresolved.push( String( input.clientId ?? input.id ?? input.url ) );
 			}
 
 			// Listed children replace the block's own; unlisted ones are pruned.
@@ -407,7 +426,7 @@ export async function buildNavigationItems(
 			`Navigation items not found: ${ [ ...new Set( unresolved ) ].join( ', ' ) }. ` +
 				'Identify each existing item by its clientId from the page structure, its label, ' +
 				`its url or its page id — this menu holds ${ labels.join( ', ' ) || 'no items' }. ` +
-				'Nothing was changed.'
+				'A new item needs a label. Nothing was changed.'
 		);
 	}
 
