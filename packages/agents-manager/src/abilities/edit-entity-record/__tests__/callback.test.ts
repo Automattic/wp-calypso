@@ -721,15 +721,29 @@ describe( 'editEntityRecordCallback', () => {
 		expect( saveEntityRecord ).not.toHaveBeenCalled();
 	} );
 
-	it( 'accepts the fields agenttic-client adds to every call', async () => {
+	it( 'accepts every field the schema declares, and the ones agenttic-client adds', async () => {
 		const result = await editEntityRecordCallback( {
+			editEntities: [ { ...page( 8 ), record: { content: 'Hello' } } ],
+			confirmationMessage: '',
+			summary: 'Updated the page.',
+			followUpTasks: [],
 			messageId: 'm1',
 			toolCallId: 'call-envelope',
 			toolId: 'big_sky__edit_entity_record',
-			editEntities: [ { ...page( 8 ), record: { content: 'Hello' } } ],
 		} as never );
 
 		expect( result.result.success ).toBe( true );
+		expect( result.result.message ).toBe( 'Updated the page.' );
+	} );
+
+	it( 'refuses an entry carrying a field the schema does not name', async () => {
+		const result = await editEntityRecordCallback( {
+			editEntities: [ { ...page( 8 ), record: { content: 'Hello' }, option: { force: true } } ],
+		} as never );
+
+		expect( result.result.success ).toBe( false );
+		expect( result.result.error ).toContain( 'unknown field option' );
+		expect( editEntityRecord ).not.toHaveBeenCalled();
 	} );
 
 	it( 'reports what applied when a later change fails', async () => {
