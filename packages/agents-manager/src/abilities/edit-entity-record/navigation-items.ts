@@ -131,11 +131,11 @@ const pageStructure = (): PageStructure | undefined =>
 	 )?.getFullPageStructure?.();
 
 /**
- * The identities an input can claim: its own, plus what the page structure
- * recorded under its short id — the editor's clientId, and the item's
- * attributes. So an item named only by a short id still resolves by label, url
- * or page id once the editor has re-created its blocks. An id the structure
- * does not know is taken as an editor clientId.
+ * The identities an input can claim: its own, and then what the page structure
+ * recorded under its short id — the editor's clientId, and the attributes the
+ * item had. Both sets, so an item the request relabels and re-links still
+ * finds its block once the editor has re-created it. An id the structure does
+ * not know is taken as an editor clientId.
  */
 const identitiesOf = ( item: NavigationItemInput ): string[] => {
 	const structure = pageStructure();
@@ -143,11 +143,13 @@ const identitiesOf = ( item: NavigationItemInput ): string[] => {
 		? structure?.navigationItemMap?.[ item.clientId ]?.attributes
 		: undefined;
 
-	return identityKeys( {
-		...recorded,
-		...item,
-		clientId: item.clientId && ( structure?.clientIdMap?.[ item.clientId ] ?? item.clientId ),
-	} );
+	return [
+		...identityKeys( {
+			...item,
+			clientId: item.clientId && ( structure?.clientIdMap?.[ item.clientId ] ?? item.clientId ),
+		} ),
+		...( recorded ? identityKeys( recorded ) : [] ),
+	];
 };
 
 /**

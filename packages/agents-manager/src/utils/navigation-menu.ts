@@ -97,6 +97,22 @@ const normalizeLabel = ( label: unknown ) =>
 		.trim()
 		.toLocaleLowerCase();
 
+/** Whether two links point at the same place, however each was written — relative or absolute. */
+const sameUrl = ( a: unknown, b: unknown ): boolean => {
+	try {
+		const [ x, y ] = [ a, b ].map( ( url ) => new URL( String( url ), window.location.origin ) );
+
+		return (
+			x.origin === y.origin && x.pathname.replace( /\/+$/, '' ) === y.pathname.replace( /\/+$/, '' )
+		);
+	} catch {
+		return false;
+	}
+};
+
+const isMenuItem = ( item: NavigationBlock ) =>
+	item.name === NAVIGATION_LINK_BLOCK || item.name === NAVIGATION_SUBMENU_BLOCK;
+
 /**
  * A record's items: its blocks once the editor has touched it, otherwise parsed
  * from its serialized content. An empty `blocks` is a cleared menu, not an
@@ -207,7 +223,9 @@ const mapItems = (
 	} );
 
 /**
- * Drops every item matching `matches`, however deeply nested.
+ * Drops every item matching `matches`, however deeply nested. A dropped
+ * parent's children move up to take its place: they point at pages that
+ * still exist.
  *
  * A submenu that loses its last child becomes a plain link again: the block
  * type is what draws the dropdown arrow, so leaving it as a submenu shows a
@@ -217,29 +235,38 @@ const rejectItems = (
 	items: NavigationBlock[],
 	matches: ( item: NavigationBlock ) => boolean
 ): NavigationBlock[] =>
-	items
-		.filter( ( item ) => ! matches( item ) )
-		.map( ( item ) => {
-			if ( ! item.innerBlocks?.length ) {
-				return item;
-			}
+	items.flatMap( ( item ) => {
+		const innerBlocks = item.innerBlocks?.length ? rejectItems( item.innerBlocks, matches ) : [];
 
-			const innerBlocks = rejectItems( item.innerBlocks, matches );
-			const emptied = ! innerBlocks.length && item.name === NAVIGATION_SUBMENU_BLOCK;
+		if ( matches( item ) ) {
+			return innerBlocks;
+		}
 
-			return { ...item, innerBlocks, ...( emptied && { name: NAVIGATION_LINK_BLOCK } ) };
-		} );
+		if ( ! item.innerBlocks?.length ) {
+			return [ item ];
+		}
+
+		const emptied = ! innerBlocks.length && item.name === NAVIGATION_SUBMENU_BLOCK;
+
+		return [ { ...item, innerBlocks, ...( emptied && { name: NAVIGATION_LINK_BLOCK } ) } ];
+	} );
 
 /**
- * Whether an item points at `pageId`.
+ * Whether a menu item points at `pageId`.
  *
  * Identification only. An item carrying no id is matched by its label instead,
- * against the title the page had before this edit — the only link back to the
- * page it has. Whether that item may then be *relabelled* is `followsPage()`.
+ * against the title the page had before this edit — and by its url where both
+ * are known, so a link elsewhere that shares the label is left alone. Whether
+ * a matched item may then be *relabelled* is `followsPage()`.
  */
 const matchesPage =
-	( pageId: number | string, previousLabel?: string ) => ( item: NavigationBlock ) => {
-		const { id: itemId, type } = item.attributes ?? {};
+	( pageId: number | string, previousLabel?: string, previousUrl?: string ) =>
+	( item: NavigationBlock ) => {
+		if ( ! isMenuItem( item ) ) {
+			return false;
+		}
+
+		const { id: itemId, type, label, url } = item.attributes ?? {};
 
 		// An id is only unique within a kind — a category can carry the same
 		// number as a page — so it counts on a page link alone.
@@ -249,7 +276,8 @@ const matchesPage =
 
 		return (
 			!! previousLabel &&
-			normalizeLabel( item.attributes?.label ) === normalizeLabel( previousLabel )
+			normalizeLabel( label ) === normalizeLabel( previousLabel ) &&
+			( ! url || ! previousUrl || sameUrl( url, previousUrl ) )
 		);
 	};
 
@@ -284,7 +312,13 @@ const saveMenu = async ( id: MenuId, previous: NavigationBlock[] ): Promise< voi
 	const coreDispatch = dispatch( coreStore ) as unknown as CoreDispatch | undefined;
 
 	try {
-		await coreDispatch?.__experimentalSaveSpecifiedEntityEdits(
+		// Refused, not skipped: a save that silently never ran would report a
+		// menu change that the next reload throws away.
+		if ( ! coreDispatch?.__experimentalSaveSpecifiedEntityEdits ) {
+			throw new Error( 'The navigation menu is unavailable to save.' );
+		}
+
+		await coreDispatch.__experimentalSaveSpecifiedEntityEdits(
 			'postType',
 			'wp_navigation',
 			id,
@@ -393,9 +427,10 @@ async function rewriteMenusHolding(
  */
 export async function getMenuIdsToRelabel(
 	pageId: number | string,
-	previousLabel?: string
+	previousLabel?: string,
+	previousUrl?: string
 ): Promise< MenuId[] > {
-	const matches = matchesPage( pageId, previousLabel );
+	const matches = matchesPage( pageId, previousLabel, previousUrl );
 	const relabels = ( item: NavigationBlock ) =>
 		matches( item ) && followsPage( item, previousLabel );
 	const ids: MenuId[] = [];
@@ -415,9 +450,10 @@ export async function getMenuIdsToRelabel(
 export async function renameNavigationItem(
 	pageId: number | string,
 	label: string,
-	previousLabel?: string
+	previousLabel?: string,
+	previousUrl?: string
 ): Promise< void > {
-	const matches = matchesPage( pageId, previousLabel );
+	const matches = matchesPage( pageId, previousLabel, previousUrl );
 
 	await rewriteMenusHolding( ( items ) => {
 		let matched = false;
@@ -444,15 +480,16 @@ export async function renameNavigationItem(
  * Removes a deleted page's menu item, wherever it sits. Submenus included: an
  * item left behind there points at a page that no longer exists.
  *
- * `previousLabel` is the page's title before the delete, which is how an item
- * carrying no page id is matched — the same fallback `renameNavigationItem()`
- * relies on.
+ * `previousLabel` and `previousUrl` are the page's title and permalink before
+ * the delete, which is how an item carrying no page id is matched — the same
+ * fallback `renameNavigationItem()` relies on.
  */
 export async function removeNavigationItem(
 	pageId: number | string,
-	previousLabel?: string
+	previousLabel?: string,
+	previousUrl?: string
 ): Promise< void > {
-	const matches = matchesPage( pageId, previousLabel );
+	const matches = matchesPage( pageId, previousLabel, previousUrl );
 
 	await rewriteMenusHolding( ( items ) => {
 		let removed = false;

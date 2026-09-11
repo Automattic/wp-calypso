@@ -525,10 +525,44 @@ describe( 'withCheckpoint', () => {
 		expect( getCheckpoint( 'call-1' )?.checkpointKeys ).toEqual( [ 'page' ] );
 
 		getEditedEntityRecord.mockReturnValue( { title: 'Old site title' } );
-		await withCheckpoint( write, () => {} );
+		await withCheckpoint( write, ( recorder ) => recorder.markWritten( 'site_title' ) );
 
 		expect( getCheckpoint( 'call-1' )?.siteTitleBeforeUpdate ).toBe( 'Old site title' );
 		expect( getCheckpoint( 'call-1' )?.checkpointKeys ).toEqual( [ 'page', 'site_title' ] );
+	} );
+
+	// Site title and metadata snapshot up front but are written mid-batch, so a
+	// batch that fails before reaching them must not keep an undo for them.
+	it( 'drops an eager site domain the write never reached', async () => {
+		const { withCheckpoint, getCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
+		getEditedEntityRecord.mockReturnValue( { title: 'Old' } );
+		const write = { ...LOGO_WRITE, keys: [ 'page', 'site_title' ] };
+
+		await withCheckpoint( write, ( recorder ) =>
+			recorder.capturePageRename( { pageId: 7, from: 'Old', to: 'New' } )
+		);
+
+		expect( getCheckpoint( 'call-1' )?.checkpointKeys ).toEqual( [ 'page' ] );
+	} );
+
+	it( "puts a repeat's re-declared domains back when it throws", async () => {
+		const { withCheckpoint, getCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
+		const write = { ...LOGO_WRITE, keys: [ 'page', 'site_title' ] };
+
+		getEditedEntityRecord.mockReturnValue( undefined );
+		await withCheckpoint( write, ( recorder ) =>
+			recorder.capturePageRename( { pageId: 7, from: 'Old', to: 'New' } )
+		);
+
+		getEditedEntityRecord.mockReturnValue( { title: 'Old' } );
+		await expect(
+			withCheckpoint( write, () => {
+				throw new Error( 'x' );
+			} )
+		).rejects.toThrow( 'x' );
+
+		expect( getCheckpoint( 'call-1' )?.checkpointKeys ).toEqual( [ 'page' ] );
+		expect( getCheckpoint( 'call-1' )?.siteTitleBeforeUpdate ).toBeUndefined();
 	} );
 
 	it( 'keeps the first snapshot when a repeat write throws', async () => {

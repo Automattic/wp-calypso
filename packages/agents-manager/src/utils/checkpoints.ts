@@ -80,6 +80,8 @@ export interface CheckpointRecord extends CheckpointMetadata {
 	// restoring under the wrong type would address a different record.
 	menusBeforeUpdate?: { id: MenuId; items: NavigationBlock[] }[];
 	pageRenames?: PageRename[];
+	// The eager domains a batch write reached; one it never wrote is dropped.
+	writtenKeys?: string[];
 }
 
 const records = new Map< string, CheckpointRecord >();
@@ -157,13 +159,17 @@ async function restoreSiteMetadataSnapshot( checkpoint: CheckpointRecord ): Prom
 /**
  * Puts back the menus the write changed.
  *
- * An empty snapshot is valid here, unlike the domains above, which throw.
- * Those capture the moment their key is claimed, so nothing to restore means
- * the capture failed. Page and navigation are claimed up front but captured
- * only if the write reaches them — a rename to a page's existing title records
- * nothing, and has nothing to undo.
+ * Key-gated like every restore. An empty snapshot is valid here, unlike the
+ * domains above, which throw: those capture the moment their key is claimed,
+ * so nothing to restore means the capture failed. Page and navigation are
+ * claimed up front but captured only if the write reaches them — a rename to
+ * a page's existing title records nothing, and has nothing to undo.
  */
 async function restoreMenuSnapshots( checkpoint: CheckpointRecord ): Promise< void > {
+	if ( ! checkpoint.checkpointKeys.includes( checkpointKeys.NAVIGATION ) ) {
+		return;
+	}
+
 	await Promise.all(
 		( checkpoint.menusBeforeUpdate ?? [] ).map( ( menu ) => writeMenuItems( menu.id, menu.items ) )
 	);
@@ -179,6 +185,10 @@ async function restoreMenuSnapshots( checkpoint: CheckpointRecord ): Promise< vo
  * page's old title.
  */
 async function restorePageRenames( checkpoint: CheckpointRecord ): Promise< void > {
+	if ( ! checkpoint.checkpointKeys.includes( checkpointKeys.PAGE ) ) {
+		return;
+	}
+
 	for ( const rename of [ ...( checkpoint.pageRenames ?? [] ) ].reverse() ) {
 		await setPageTitle( rename.pageId, rename.from );
 	}
@@ -318,12 +328,15 @@ export interface CheckpointRecorder {
 	capturePageRename: ( rename: PageRename ) => void;
 	/** Drops a menu snapshot whose write then failed. */
 	discardMenu: ( menuId: MenuId ) => void;
+	/** Marks an up-front domain as written, so a batch failing before it keeps no undo for it. */
+	markWritten: ( key: string ) => void;
 }
 
 const NO_RECORDER: CheckpointRecorder = {
 	captureMenu: async () => false,
 	capturePageRename: () => {},
 	discardMenu: () => {},
+	markWritten: () => {},
 };
 
 function createRecorder( checkpointId: string ): CheckpointRecorder {
@@ -387,6 +400,14 @@ function createRecorder( checkpointId: string ): CheckpointRecorder {
 				update( { pageRenames: [ ...( checkpoint?.pageRenames ?? [] ), rename ] } );
 			}
 		},
+
+		markWritten: ( key ) => {
+			const written = records.get( checkpointId )?.writtenKeys ?? [];
+
+			if ( ! written.includes( key ) ) {
+				update( { writtenKeys: [ ...written, key ] } );
+			}
+		},
 	};
 }
 
@@ -407,14 +428,18 @@ function dropUnrecordedDomains( id: string ): void {
 	}
 
 	const renamed = !! checkpoint.pageRenames?.length;
+	const written = ( key: string ) => !! checkpoint.writtenKeys?.includes( key );
 	const restorable: Record< string, boolean > = {
 		[ checkpointKeys.PAGE ]: renamed,
 		[ checkpointKeys.NAVIGATION ]: renamed || !! checkpoint.menusBeforeUpdate?.length,
-		// Gated on the snapshot too: a site record that could not be read leaves
-		// the key claimed with nothing behind it, and the restore throws there
-		// before reaching the domains that did land.
-		[ checkpointKeys.SITE_TITLE ]: checkpoint.siteTitleBeforeUpdate !== undefined,
-		[ checkpointKeys.SITE_METADATA ]: !! checkpoint.siteMetadataBeforeUpdate,
+		// Snapshotted up front but written mid-batch, so both are needed: a site
+		// record that could not be read leaves the key claimed with nothing
+		// behind it, and a batch that failed before the site edit never changed
+		// what the snapshot would put back.
+		[ checkpointKeys.SITE_TITLE ]:
+			checkpoint.siteTitleBeforeUpdate !== undefined && written( checkpointKeys.SITE_TITLE ),
+		[ checkpointKeys.SITE_METADATA ]:
+			!! checkpoint.siteMetadataBeforeUpdate && written( checkpointKeys.SITE_METADATA ),
 		[ checkpointKeys.LOGO ]: checkpoint.logoBeforeUpdate !== undefined,
 		...Object.fromEntries(
 			THEME_CHECKPOINT_KEYS.map( ( key ) => [ key, !! checkpoint.themeBeforeUpdate ] )
@@ -487,6 +512,10 @@ export async function withCheckpoint< T >(
 	// it touches; only the run that created the checkpoint may drop it.
 	const created = !! checkpointId && ! hasCheckpoint( checkpointId );
 
+	// A repeat's re-declared domains are put back as they were if it throws:
+	// nothing landed, so nothing new is restorable.
+	const before = checkpointId && ! created ? records.get( checkpointId ) : undefined;
+
 	if ( created ) {
 		setCheckpoint( checkpointId, keys, { toolId, summary } );
 	} else if ( checkpointId ) {
@@ -504,6 +533,8 @@ export async function withCheckpoint< T >(
 	} catch ( error ) {
 		if ( created ) {
 			clearCheckpoint( checkpointId );
+		} else if ( before ) {
+			records.set( checkpointId as string, before );
 		}
 
 		throw error;

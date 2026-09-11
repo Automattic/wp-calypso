@@ -286,6 +286,70 @@ describe( 'menu selection', () => {
 		expect( lastWrite().menuId ).toBe( 99 );
 	} );
 
+	// A link elsewhere that happens to share the page's title is not its item.
+	it( 'leaves an idless link with the same label but another url alone', async () => {
+		withMenus( {
+			10: [
+				link( undefined, 'About', [], { url: 'https://elsewhere.com/about/' } ),
+				link( undefined, 'About', [], { url: '/about/' } ),
+			],
+		} );
+
+		await removeNavigationItem( 7, 'About', 'http://localhost/about/' );
+
+		expect(
+			lastWrite().items.map( ( item: { attributes: { url?: string } } ) => item.attributes.url )
+		).toEqual( [ 'https://elsewhere.com/about/' ] );
+	} );
+
+	// A block that is not a menu item can carry a label too.
+	it( 'ignores a block that is not a menu item, whatever its label', async () => {
+		withMenus( {
+			10: [
+				{ name: 'core/search', attributes: { label: 'About' }, innerBlocks: [] },
+				link( 7, 'About' ),
+			],
+		} );
+
+		await removeNavigationItem( 7, 'About' );
+
+		expect( lastWrite().items.map( ( item: { name: string } ) => item.name ) ).toEqual( [
+			'core/search',
+		] );
+	} );
+
+	// The children point at pages that still exist.
+	it( "promotes a deleted parent's children a level up", async () => {
+		withMenus( {
+			10: [
+				{
+					...link( 7, 'Services', [ link( 8, 'Web' ), link( 9, 'Design' ) ] ),
+					name: 'core/navigation-submenu',
+				},
+				link( 1, 'Home' ),
+			],
+		} );
+
+		await removeNavigationItem( 7 );
+
+		expect(
+			lastWrite().items.map( ( item: { attributes: { label?: string } } ) => item.attributes.label )
+		).toEqual( [ 'Web', 'Design', 'Home' ] );
+	} );
+
+	// A save that silently never ran would report a menu change the next
+	// reload throws away.
+	it( 'refuses when the save action is unavailable, and puts the menu back', async () => {
+		( getSiteMetadata as jest.Mock ).mockReturnValue( {} );
+		withMenus( { 10: [ link( 1, 'Home' ) ] } );
+		( dispatch as jest.Mock ).mockReturnValue( { editEntityRecord } );
+
+		await expect( addNavigationItem( { label: 'About', id: 7 } ) ).rejects.toThrow(
+			'unavailable to save'
+		);
+		expect( editEntityRecord ).toHaveBeenCalledTimes( 2 );
+	} );
+
 	// A menu neither on screen nor named by the site still holds its links.
 	it( 'reaches a menu that is neither rendered nor named', async () => {
 		( getSiteMetadata as jest.Mock ).mockReturnValue( {} );
