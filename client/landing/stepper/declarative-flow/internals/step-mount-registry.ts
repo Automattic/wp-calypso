@@ -16,6 +16,12 @@ export type StepComponentType = 'lazy' | 'raw';
 const componentTypes = new Map< string, StepComponentType >();
 const routeMounts = new Map< string, number >();
 
+export function componentTypeOf( component: unknown ): StepComponentType {
+	return ( component as { $$typeof?: symbol } | null )?.$$typeof === Symbol.for( 'react.lazy' )
+		? 'lazy'
+		: 'raw';
+}
+
 export function recordStepComponentType( slug: string, type: StepComponentType ): void {
 	componentTypes.set( slug, type );
 }
