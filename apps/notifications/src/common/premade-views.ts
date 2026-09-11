@@ -163,32 +163,24 @@ type KnownView = {
 };
 
 /**
- * Apply the user's stored order and visibility to the views the panel knows about.
+ * Work out which views the panel shows, in the order it shows them.
  *
- * A view the list doesn't mention keeps its default — the panel's own views are shown,
- * optional premade ones are not — and lands after the ones that are mentioned, so a view
- * added later appears on its own instead of waiting for a re-save.
+ * The order is the one declared here — the stored value only says what is switched off,
+ * because there is no way to reorder views. A view the stored list doesn't mention keeps
+ * its default: the panel's own views are shown, optional premade ones are not.
  */
 export const resolveViewOrder = ( known: KnownView[], stored: StoredView[] = [] ) => {
-	const byName = new Map( known.map( ( view ) => [ view.name, view ] ) );
-	const pinned = PINNED_VIEW_NAMES.map( ( name ) => byName.get( name ) ).filter(
-		( view ): view is KnownView => !! view
+	const isPinned = ( { name }: KnownView ) => PINNED_VIEW_NAMES.includes( name );
+	const storedByName = new Map( stored.map( ( view ) => [ view.name, view ] ) );
+
+	return [ ...known.filter( isPinned ), ...known.filter( ( view ) => ! isPinned( view ) ) ].map(
+		( view ) => {
+			// Only a view the stored list never mentions falls back to its default; one it
+			// does mention is visible unless it says otherwise.
+			const storedView = storedByName.get( view.name );
+			const hidden = storedView ? !! storedView.hidden : view.isPremade;
+
+			return { view, hidden: isPinned( view ) ? false : hidden };
+		}
 	);
-
-	const mentioned = stored
-		.filter( ( { name } ) => ! PINNED_VIEW_NAMES.includes( name ) )
-		.map( ( { name, hidden } ) => {
-			const view = byName.get( name );
-			return view ? { view, hidden: !! hidden } : undefined;
-		} )
-		.filter( ( entry ): entry is { view: KnownView; hidden: boolean } => !! entry );
-
-	const mentionedNames = new Set( mentioned.map( ( { view } ) => view.name ) );
-	const rest = known
-		.filter(
-			( view ) => ! PINNED_VIEW_NAMES.includes( view.name ) && ! mentionedNames.has( view.name )
-		)
-		.map( ( view ) => ( { view, hidden: view.isPremade } ) );
-
-	return [ ...pinned.map( ( view ) => ( { view, hidden: false } ) ), ...mentioned, ...rest ];
 };

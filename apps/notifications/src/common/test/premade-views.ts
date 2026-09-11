@@ -58,33 +58,45 @@ describe( 'resolveViewOrder', () => {
 		expect( names() ).toEqual( [ 'all', 'unread', 'comments', 'likes', 'store:hidden' ] );
 	} );
 
-	it( 'keeps the pinned views first whatever the stored order says', () => {
-		expect( names( [ { name: 'store' }, { name: 'unread' } ] ) ).toEqual( [
+	// The stored value says what is switched off, never what order to use — there is no
+	// way to reorder views, so honouring a stale order would only shuffle the tabs.
+	it( 'keeps the declared order whatever the stored order says', () => {
+		expect( names( [ { name: 'store' }, { name: 'likes', hidden: true } ] ) ).toEqual( [
 			'all',
 			'unread',
-			'store',
 			'comments',
-			'likes',
+			'likes:hidden',
+			'store',
 		] );
 	} );
 
-	it( 'appends a view the stored list has never seen, at its default', () => {
-		expect( names( [ { name: 'likes' }, { name: 'comments', hidden: true } ] ) ).toEqual( [
+	it( 'leaves a view the stored list has never seen at its default', () => {
+		expect( names( [ { name: 'comments', hidden: true } ] ) ).toEqual( [
 			'all',
 			'unread',
-			'likes',
 			'comments:hidden',
+			'likes',
 			'store:hidden',
 		] );
 	} );
 
 	it( 'ignores stored views it no longer knows about', () => {
-		expect( names( [ { name: 'retired_view' }, { name: 'likes' } ] ) ).toEqual( [
+		expect( names( [ { name: 'retired_view' }, { name: 'store' } ] ) ).toEqual( [
 			'all',
 			'unread',
-			'likes',
 			'comments',
-			'store:hidden',
+			'likes',
+			'store',
+		] );
+	} );
+
+	it( 'keeps the pinned views first even if they are declared elsewhere', () => {
+		const shuffled = [ known[ 2 ], known[ 4 ], known[ 0 ], known[ 1 ] ];
+		expect( resolveViewOrder( shuffled ).map( ( { view } ) => view.name ) ).toEqual( [
+			'all',
+			'unread',
+			'comments',
+			'store',
 		] );
 	} );
 } );
