@@ -139,8 +139,8 @@ const getItems = ( record: NavigationRecord ): NavigationBlock[] => {
 };
 
 /**
- * The menus rendered by the open view. Preferred over the one site metadata
- * names: what the user is looking at is what they mean.
+ * The menus rendered by the open view: listed first by `getMenuIds()`, and the
+ * fallback for a site whose metadata names no menu.
  */
 export function getRenderedMenuIds(): MenuId[] {
 	const blockEditor = select( BLOCK_EDITOR_STORE ) as unknown as BlockEditorSelect | undefined;
@@ -481,10 +481,8 @@ export async function renameNavigationItem(
 		let matched = false;
 
 		const renamed = mapItems( items, ( item ) => {
-			// Matched by id, but relabelled only where the label still follows the
-			// page. One that no longer does is the user's, and a page rename is
-			// not ours to overwrite it with — the same rule `matchesPage()` already
-			// applies to items carrying no id.
+			// Matched by id or url, but relabelled only where the label still
+			// follows the page: one the user has since renamed is theirs.
 			if ( ! matches( item ) || ! followsPage( item, previousLabels ) ) {
 				return item;
 			}
