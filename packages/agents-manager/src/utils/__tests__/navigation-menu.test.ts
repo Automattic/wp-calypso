@@ -280,6 +280,22 @@ describe( 'removeNavigationItem', () => {
 		expect( editEntityRecord ).not.toHaveBeenCalled();
 	} );
 
+	// The page is gone either way, so every menu that can be saved is; the one
+	// that cannot has its items put back and is named for the model.
+	it( 'saves every menu it can when one save fails', async () => {
+		( getSiteMetadata as jest.Mock ).mockReturnValue( { navigationId: 99 } );
+		withMenus( { 10: [ link( 7, 'About' ) ], 99: [ link( 7, 'About' ) ] }, [ '10' ] );
+		saveSpecifiedEntityEdits.mockImplementation( ( _kind, _name, id ) =>
+			id === 99 ? Promise.reject( new Error( 'menu 99 is locked' ) ) : Promise.resolve()
+		);
+
+		await expect( removeNavigationItem( 7 ) ).rejects.toThrow( 'Could not save menu 99' );
+
+		savedItemsOf( 10 );
+		expect( lastWrite() ).toEqual( { menuId: 99, items: [ link( 7, 'About' ) ] } );
+		saveSpecifiedEntityEdits.mockReset();
+	} );
+
 	it( 'writes nothing when the page is not in any menu', async () => {
 		withMenus( { 10: [ link( 1, 'Home' ) ] } );
 

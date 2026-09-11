@@ -1,17 +1,21 @@
 /**
- * Whether two links point at the same place, however each was written —
- * relative or absolute. The query counts: plain permalinks differ only there.
+ * A url reduced to what names its destination — origin, path without trailing
+ * slashes, query — however it was written, relative or absolute. The query
+ * counts: plain permalinks differ only there. `null` for what is not a url.
  */
-export const sameUrl = ( a: unknown, b: unknown ): boolean => {
+export const urlKey = ( url: unknown ): string | null => {
 	try {
-		const [ x, y ] = [ a, b ].map( ( url ) => new URL( String( url ), window.location.origin ) );
+		const { origin, pathname, search } = new URL( String( url ), window.location.origin );
 
-		return (
-			x.origin === y.origin &&
-			x.pathname.replace( /\/+$/, '' ) === y.pathname.replace( /\/+$/, '' ) &&
-			x.search === y.search
-		);
+		return `${ origin }${ pathname.replace( /\/+$/, '' ) }${ search }`;
 	} catch {
-		return false;
+		return null;
 	}
+};
+
+/** Whether two links point at the same place. */
+export const sameUrl = ( a: unknown, b: unknown ): boolean => {
+	const key = urlKey( a );
+
+	return key !== null && key === urlKey( b );
 };
