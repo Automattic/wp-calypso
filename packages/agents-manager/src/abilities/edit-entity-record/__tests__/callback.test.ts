@@ -307,6 +307,21 @@ describe( 'editEntityRecordCallback', () => {
 		expect( getCheckpoint( 'call-rename-unreadable-menu' )?.menusBeforeUpdate ).toEqual( [] );
 	} );
 
+	// The rename reads every menu before writing any, so one that fails changed
+	// nothing; its snapshots would only let an undo overwrite later user edits.
+	it( 'discards the menu snapshots it took when the rename fails', async () => {
+		( readMenuItems as jest.Mock ).mockResolvedValueOnce( [] );
+		( renameNavigationItem as jest.Mock ).mockRejectedValueOnce( new Error( 'menu is locked' ) );
+
+		const result = await editEntityRecordCallback( {
+			toolCallId: 'call-rename-failed',
+			editEntities: [ { ...page( 7 ), record: { title: 'About us' } } ],
+		} );
+
+		expect( result.result.success ).toBe( false );
+		expect( getCheckpoint( 'call-rename-failed' )?.menusBeforeUpdate ).toEqual( [] );
+	} );
+
 	it( 'leaves the menu alone when the title is unchanged', async () => {
 		await editEntityRecordCallback( {
 			editEntities: [ { ...page( 7 ), record: { title: 'About' } } ],
