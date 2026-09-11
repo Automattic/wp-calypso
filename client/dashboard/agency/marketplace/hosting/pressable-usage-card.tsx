@@ -75,6 +75,7 @@ export default function PressableUsageCard( { existingPlan }: { existingPlan: Ag
 					<div className="dashboard-marketplace-hosting__grid dashboard-marketplace-hosting__grid--3">
 						<Stat
 							density="high"
+							isLoading={ ! usage }
 							strapline={ __( 'Storage used' ) }
 							metric={ sprintf(
 								/* translators: %s is the storage used in GB. */
@@ -90,6 +91,7 @@ export default function PressableUsageCard( { existingPlan }: { existingPlan: Ag
 						/>
 						<Stat
 							density="high"
+							isLoading={ ! usage }
 							strapline={ __( 'Sites created' ) }
 							metric={ formatNumber( sitesUsed ) }
 							description={ sprintf(
@@ -101,6 +103,7 @@ export default function PressableUsageCard( { existingPlan }: { existingPlan: Ag
 						/>
 						<Stat
 							density="high"
+							isLoading={ ! usage }
 							strapline={ __( 'Monthly visits' ) }
 							metric={ formatNumber( visitsUsed ) }
 							description={ sprintf(
