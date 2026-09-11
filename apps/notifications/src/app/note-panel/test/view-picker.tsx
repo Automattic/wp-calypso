@@ -59,6 +59,9 @@ describe( 'NotePanel settings menu', () => {
 			'notifications-view-settings-seen': true,
 		} );
 
+		// The dot clears on open, so the menu carries the label that says what is new.
+		expect( screen.getByText( 'New' ) ).toBeVisible();
+
 		// The open menu makes the rest of the tree inert, so close it before looking again.
 		await userEvent.keyboard( '{Escape}' );
 

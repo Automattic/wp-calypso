@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { cog, external, keyboard } from '@wordpress/icons';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import clsx from 'clsx';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../panel/state/actions';
 import getIsShortcutsPopoverOpen from '../../panel/state/selectors/get-is-shortcuts-popover-open';
@@ -38,6 +39,9 @@ export default function NotePanelActions() {
 
 	// Nudge people towards settings they have never opened, once.
 	const isNew = isViewSettingsEnabled && ! viewSettingsSeen;
+	// Opening the menu clears the dot, so the label inside it reads from a snapshot taken
+	// at that moment — otherwise it would vanish before anyone could read it.
+	const [ showsWhatIsNew, setShowsWhatIsNew ] = useState( false );
 
 	const markSeen = () =>
 		savePreference( {
@@ -78,7 +82,11 @@ export default function NotePanelActions() {
 			<Menu
 				placement="bottom-end"
 				onOpenChange={ ( isOpen: boolean ) => {
-					if ( isOpen && isNew ) {
+					if ( ! isOpen ) {
+						return;
+					}
+					setShowsWhatIsNew( isNew );
+					if ( isNew ) {
 						markSeen();
 					}
 				} }
@@ -90,8 +98,6 @@ export default function NotePanelActions() {
 							icon={ cog }
 							label={ isNew ? __( 'Settings (new)' ) : __( 'Settings' ) }
 							className={ clsx( 'wpnc-app__settings-toggle', { 'is-new': isNew } ) }
-							// Read by the badge's `content: attr()` so the label stays translatable.
-							data-new-label={ __( 'New' ) }
 						/>
 					}
 				/>
@@ -99,7 +105,10 @@ export default function NotePanelActions() {
 					{ isViewSettingsEnabled && (
 						<>
 							<Menu.Group>
-								<Menu.GroupLabel>{ __( 'Layout' ) }</Menu.GroupLabel>
+								<Menu.GroupLabel>
+									{ __( 'Layout' ) }
+									{ showsWhatIsNew && <span className="wpnc-app__new-badge">{ __( 'New' ) }</span> }
+								</Menu.GroupLabel>
 								{ LAYOUTS.map( ( { value, label } ) => (
 									<Menu.RadioItem
 										key={ value }
