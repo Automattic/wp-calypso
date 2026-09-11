@@ -198,6 +198,34 @@ describe( 'clientId', () => {
 		).toMatchObject( { id: 7, type: 'page', kind: 'post-type' } );
 	} );
 
+	// Two anchor links into one page are two items: the fragment tells them
+	// apart, where a page's own link is the same page with or without one.
+	it( 'claims anchor links into one page apart', async () => {
+		withMenu( [
+			item( 'team', 'Team', { url: '/about/#team' } ),
+			item( 'contact', 'Contact', { url: '/about/#contact' } ),
+		] );
+
+		const result = await buildNavigationItems( 10, {
+			navigationItems: [ { url: '/about/#contact' }, { url: '/about/#team' } ],
+		} );
+
+		expect( ( result.blocks as { clientId: string }[] ).map( ( b ) => b.clientId ) ).toEqual( [
+			'contact',
+			'team',
+		] );
+	} );
+
+	// A clientId names an existing item; one that resolves to nothing must not
+	// be rebuilt from the label, dropping the block it meant.
+	it( 'refuses a clientId that resolves to nothing, even with a label', async () => {
+		withPageStructure( {} );
+
+		await expect(
+			buildNavigationItems( 10, { navigationItems: [ { clientId: 'gone', label: 'New' } ] } )
+		).rejects.toThrow( 'Navigation items not found: gone' );
+	} );
+
 	it( 'claims an item by its url written differently', async () => {
 		withMenu( [
 			item( 'about', 'About', { url: 'http://localhost/about/' }, [ item( 'team', 'Team' ) ] ),
@@ -244,6 +272,8 @@ describe( 'clientId', () => {
 	it.each( [
 		{ id: 7, type: 'page', kind: 'post-type', url: '/about/' },
 		{ id: 3, type: 'category', kind: 'taxonomy', url: '/category/news/' },
+		// A category can carry the same number as the page.
+		{ id: 9, type: 'category', kind: 'taxonomy', url: '/category/team/' },
 	] )( 'makes a page link of an item re-linked to another page from %o', async ( from ) => {
 		withMenu( [ item( 'about', 'About', from ) ] );
 

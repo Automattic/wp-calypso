@@ -559,8 +559,9 @@ async function applyRecordEdit(
 	if ( isRename ) {
 		// Snapshot the menus the rename will relabel: a restore puts each back as
 		// it was rather than relabelling, so the item's label returns exactly.
-		// Discarded together if one cannot be read — the rename never runs then,
-		// and a snapshot of an untouched menu would let an undo overwrite it.
+		// Discarded together when the rename fails — it reads every menu before
+		// writing any, so nothing changed, and a snapshot of an untouched menu
+		// would let an undo overwrite the user's later edits there.
 		const captured: MenuId[] = [];
 
 		try {
@@ -569,13 +570,13 @@ async function applyRecordEdit(
 					captured.push( menuId );
 				}
 			}
+
+			await renameNavigationItem( recordId, nextTitle, previousLabels, previousUrl );
 		} catch ( error ) {
 			captured.forEach( ( menuId ) => recorder.discardMenu( menuId ) );
 
 			throw error;
 		}
-
-		await renameNavigationItem( recordId, nextTitle, previousLabels, previousUrl );
 	}
 }
 
