@@ -106,10 +106,15 @@ function syncProviderMetadata( metadata: SiteMetadata ): void {
 		( key ) => key !== RUNTIME_KEY && ! ( key in metadata )
 	);
 
-	provider.setSiteMetadata( {
-		...Object.fromEntries( dropped.map( ( key ) => [ key, undefined ] ) ),
-		...metadata,
-	} );
+	try {
+		provider.setSiteMetadata( {
+			...Object.fromEntries( dropped.map( ( key ) => [ key, undefined ] ) ),
+			...metadata,
+		} );
+	} catch {
+		// The record is already saved: a stale Big Sky copy is the lesser harm
+		// than reporting a saved write as failed.
+	}
 }
 
 /**

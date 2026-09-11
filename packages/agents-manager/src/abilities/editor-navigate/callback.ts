@@ -385,6 +385,28 @@ async function restorePostContentEditing( departingClientId: string | undefined 
 /**
  * The `editor-navigate` ability callback.
  */
+const createIO = (): EditorNavigateIO => ( {
+	saveEverything,
+	getHistory: getEditorHistory,
+	waitForPage,
+	closeCommandPalette: () => commandsDispatch()?.close?.(),
+	getPostContentClientId,
+	getLoadedPageId,
+	restorePostContentEditing,
+	refreshNavigationBlocks,
+	navigateWholePage: ( destination ) => {
+		// After the turn's stream closes, so the result is delivered
+		// before the page unloads.
+		const startedAt = window.location.href;
+		setTimeout( () => {
+			// The user moved on during the delay; leave them there.
+			if ( window.location.href === startedAt ) {
+				window.location.href = destination;
+			}
+		}, UNLOAD_DELAY_MS );
+	},
+} );
+
 export async function editorNavigateCallback(
 	input: EditorNavigateInput
 ): Promise< AbilityResult > {
@@ -397,28 +419,13 @@ export async function editorNavigateCallback(
 		);
 	}
 
-	return editorNavigate(
-		{
-			saveEverything,
-			getHistory: getEditorHistory,
-			waitForPage,
-			closeCommandPalette: () => commandsDispatch()?.close?.(),
-			getPostContentClientId,
-			getLoadedPageId,
-			restorePostContentEditing,
-			refreshNavigationBlocks,
-			navigateWholePage: ( destination ) => {
-				// After the turn's stream closes, so the result is delivered
-				// before the page unloads.
-				const startedAt = window.location.href;
-				setTimeout( () => {
-					// The user moved on during the delay; leave them there.
-					if ( window.location.href === startedAt ) {
-						window.location.href = destination;
-					}
-				}, UNLOAD_DELAY_MS );
-			},
-		},
-		input
-	);
+	return editorNavigate( createIO(), input );
 }
+
+/**
+ * Leaves for an editor path without saving first, for a caller whose write
+ * must not publish the user's pending work — `edit-entity-record` moving off
+ * a record it is about to delete.
+ */
+export const navigateEditorWithoutSaving = ( path: string ): Promise< AbilityResult > =>
+	editorNavigate( { ...createIO(), saveEverything: async () => {} }, { path } );
