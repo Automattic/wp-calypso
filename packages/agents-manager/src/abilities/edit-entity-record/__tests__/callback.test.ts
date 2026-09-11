@@ -24,6 +24,7 @@ jest.mock( '../../../utils/navigation-menu', () => ( {
 } ) );
 jest.mock( '../../../utils/page-title', () => ( {
 	getPageTitle: jest.fn( async () => 'About' ),
+	getPageUrl: jest.fn( async () => '/about/' ),
 	setPageTitle: jest.fn(),
 } ) );
 jest.mock( '../../../utils/session-log', () => ( {
@@ -53,7 +54,7 @@ jest.mock( '../../../utils/canvas-guard', () => ( {
 } ) );
 jest.mock( '../../editor-navigate/callback', () => ( {
 	PAGES_LIST_PATH: 'all-pages',
-	editorNavigateCallback: jest.fn( async () => ( { result: { success: true } } ) ),
+	navigateEditorWithoutSaving: jest.fn( async () => ( { result: { success: true } } ) ),
 } ) );
 
 import { dispatch, resolveSelect, select } from '@wordpress/data';
@@ -73,7 +74,7 @@ import { logSiteMetadata, logSiteSession } from '../../../utils/session-log';
 import { setSiteMetadata } from '../../../utils/site-metadata';
 import { getSiteRecord } from '../../../utils/site-record';
 import { setSiteTitle } from '../../../utils/site-title';
-import { editorNavigateCallback } from '../../editor-navigate/callback';
+import { navigateEditorWithoutSaving } from '../../editor-navigate/callback';
 import { editEntityRecordCallback, getCheckpointKeys } from '../callback';
 import { buildNavigationItems } from '../navigation-items';
 
@@ -265,7 +266,7 @@ describe( 'editEntityRecordCallback', () => {
 		// The title is checkpointed, so it goes through `setPageTitle` and stays
 		// out of the editor's undo stack.
 		expect( setPageTitle ).toHaveBeenCalledWith( 7, 'About us' );
-		expect( renameNavigationItem ).toHaveBeenCalledWith( 7, 'About us', 'About' );
+		expect( renameNavigationItem ).toHaveBeenCalledWith( 7, 'About us', 'About', '/about/' );
 	} );
 
 	// The item may carry a label the user chose, which only the menu records.
@@ -278,7 +279,7 @@ describe( 'editEntityRecordCallback', () => {
 
 		// Asked for the menus holding the page, and before the relabel: what the
 		// recorder then stores is covered in the checkpoint suite.
-		expect( getMenuIdsToRelabel ).toHaveBeenCalledWith( 7, 'About' );
+		expect( getMenuIdsToRelabel ).toHaveBeenCalledWith( 7, 'About', '/about/' );
 		expect( ( getMenuIdsToRelabel as jest.Mock ).mock.invocationCallOrder[ 0 ] ).toBeLessThan(
 			( renameNavigationItem as jest.Mock ).mock.invocationCallOrder[ 0 ]
 		);
@@ -313,7 +314,7 @@ describe( 'editEntityRecordCallback', () => {
 	it( 'deletes a page and removes its menu item', async () => {
 		await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
 
-		expect( removeNavigationItem ).toHaveBeenCalledWith( 7, 'About' );
+		expect( removeNavigationItem ).toHaveBeenCalledWith( 7, 'About', '/about/' );
 		// The options go in the fifth argument: the fourth is the request's query
 		// args, where `throwOnError` would be ignored.
 		expect( deleteEntityRecord ).toHaveBeenCalledWith( 'postType', 'page', 7, undefined, {
@@ -348,10 +349,10 @@ describe( 'editEntityRecordCallback', () => {
 		it( 'leaves for the front page before deleting', async () => {
 			await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
 
-			expect( editorNavigateCallback ).toHaveBeenCalledWith( { path: '/page/3' } );
-			expect( ( editorNavigateCallback as jest.Mock ).mock.invocationCallOrder[ 0 ] ).toBeLessThan(
-				deleteEntityRecord.mock.invocationCallOrder[ 0 ]
-			);
+			expect( navigateEditorWithoutSaving ).toHaveBeenCalledWith( '/page/3' );
+			expect(
+				( navigateEditorWithoutSaving as jest.Mock ).mock.invocationCallOrder[ 0 ]
+			).toBeLessThan( deleteEntityRecord.mock.invocationCallOrder[ 0 ] );
 		} );
 
 		it.each( [
@@ -363,7 +364,7 @@ describe( 'editEntityRecordCallback', () => {
 
 			await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
 
-			expect( editorNavigateCallback ).toHaveBeenCalledWith( { path: 'all-pages' } );
+			expect( navigateEditorWithoutSaving ).toHaveBeenCalledWith( 'all-pages' );
 		} );
 
 		// The navigation runs outside the guarded dispatch, so the binding must be
@@ -373,7 +374,7 @@ describe( 'editEntityRecordCallback', () => {
 
 			expect( bindToEditorPath ).toHaveBeenCalledWith( '/page/3' );
 			expect( ( bindToEditorPath as jest.Mock ).mock.invocationCallOrder[ 0 ] ).toBeLessThan(
-				( editorNavigateCallback as jest.Mock ).mock.invocationCallOrder[ 0 ]
+				( navigateEditorWithoutSaving as jest.Mock ).mock.invocationCallOrder[ 0 ]
 			);
 			expect( ( bindToEditorPath as jest.Mock ).mock.results[ 0 ].value ).not.toHaveBeenCalled();
 		} );
@@ -386,7 +387,7 @@ describe( 'editEntityRecordCallback', () => {
 			const result = await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
 
 			expect( result.result.error ).toContain( 'cannot leave it first' );
-			expect( editorNavigateCallback ).not.toHaveBeenCalled();
+			expect( navigateEditorWithoutSaving ).not.toHaveBeenCalled();
 			expect( deleteEntityRecord ).not.toHaveBeenCalled();
 		} );
 
@@ -404,7 +405,7 @@ describe( 'editEntityRecordCallback', () => {
 		} );
 
 		it( 'does not delete when it cannot leave', async () => {
-			( editorNavigateCallback as jest.Mock ).mockResolvedValueOnce( {
+			( navigateEditorWithoutSaving as jest.Mock ).mockResolvedValueOnce( {
 				result: { success: false, error: 'the editor is busy' },
 			} );
 
@@ -418,7 +419,7 @@ describe( 'editEntityRecordCallback', () => {
 		it( 'stays put when deleting a different page', async () => {
 			await editEntityRecordCallback( { deleteEntities: [ page( 8 ) ] } );
 
-			expect( editorNavigateCallback ).not.toHaveBeenCalled();
+			expect( navigateEditorWithoutSaving ).not.toHaveBeenCalled();
 		} );
 	} );
 

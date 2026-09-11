@@ -5,13 +5,14 @@ import { flattenTitle } from './entity-title';
 /**
  * A page's title, read and written through core-data.
  *
- * Shared by `edit-entity-record` — which needs the title a page had before a
- * rename, to relabel its menu item and to snapshot the change — and by the
- * checkpoint engine, which puts that title back on restore.
+ * Shared by `edit-entity-record` — which needs the title and url a page had
+ * before a rename or deletion, to find its menu item and to snapshot the
+ * change — and by the checkpoint engine, which puts that title back on restore.
  */
 
 interface PageRecord {
 	title?: unknown;
+	link?: unknown;
 }
 
 interface CoreResolve {
@@ -53,6 +54,13 @@ export async function getPageTitle( pageId: number | string ): Promise< string >
 	const page = await readPage( pageId );
 
 	return flattenTitle( page.title );
+}
+
+/** The page's permalink, or `undefined` when the record carries none. */
+export async function getPageUrl( pageId: number | string ): Promise< string | undefined > {
+	const page = await readPage( pageId );
+
+	return typeof page.link === 'string' ? page.link : undefined;
 }
 
 /** Renames the page, outside the editor's undo stack. */
