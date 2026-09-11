@@ -41,20 +41,23 @@ and records SHA-256 hashes for all of these saved served artifacts:
 - exact Calypso wrapper markup: outer `.wpcom-global-nav-footer` with child
   `section.lp-footer-section`.
 
-The independent validator accepted these seven inputs on 2026-09-08
-(`accepted: true`). This is input-only acceptance: it does not accept generated
+The independent validator accepted these seven inputs on 2026-09-11
+(`accepted: true`; the CSS inputs are the served build after the Figma
+type-ramp, spacing and hover fixes, and the HTML subtrees were re-captured
+from the served `/hosting/` page with the same class set as the 2026-09-08
+acceptance). This is input-only acceptance: it does not accept generated
 Calypso output, editor behavior, deployment, RTL production, or the full
 project. Do not substitute provisional or locally generated hashes for these
 values:
 
 | Manifest key | Accepted SHA-256 |
 | --- | --- |
-| `css` | `3658f68ae242629fa1cdd782afb56af0c72f47acc2409bd9d264198480c8b173` |
-| `rtlCss` | `ac44e994aaca698b5c883796ec77cf5dad029d4c822d1f288c91135d13680260` |
-| `fontCss` | `aa6fe706e410c08920e56b546c67b3ce410d1323f5b46b6a299b5df9e457f8d5` |
-| `legacyHtml` | `218ca6088d34d8966713cc9acffc5653637b71703eca7edd9f13930e19ed3e9d` |
-| `whiteHtml` | `185d580670e1905ae5432fd43ce3282d16987eb672b3497ecb934d527f352f33` |
-| `darkHtml` | `b82247d1da53236b20e39b130212cd0f27ae6087c1ef0bb41473296f853835c1` |
+| `css` | `8541e751af97a13cdb73fe82bcf9e458bf3891885dcaaefcacb923ef7e02fb0d` |
+| `rtlCss` | `1283e555fc727ebdf10cad0c3daf5a15de4dddf1343791556e8512f00b0d530d` |
+| `fontCss` | `2ff3fe8c46bcc8d1f60569d0c1a3168f7a2398f62773cd42c1966ab587d9ab86` |
+| `legacyHtml` | `c10ded71fbf6a9402841e28bf7a89eb91ab49b6ad8e5b23f21e2b0c2cd960a26` |
+| `whiteHtml` | `84800c7d868d3d1df3f2cfcb1569fa5740dd68469086ee13c111ea39c551ad54` |
+| `darkHtml` | `e435c0f83e37a1a556e538b8c05353bf7ecff57c1ee3d29123622743c71cc279` |
 | `calypsoHtml` | `18025b77dcf3233ef9ac165d0c71516e1e7bea2223a08c7cb365d284b73545e7` |
 
 The manifest remains caller-provided at `$ACCEPTED/manifest.json`; the durable
@@ -76,11 +79,11 @@ with this shape; every listed SHA-256 is the hash of the saved served artifact:
 }
 ```
 
-The independently controlled CLI run with generator `81e4aa57fcae92b205b20774680631430d3f8d1764b8e9f2672fcf7d8399eb33`
+The independently controlled CLI run with generator `cb97bcdaf017f9969a3e1cd3e60edf4fa77b794ce82ec0f6758ba33fe55b0a10`
 produced these reproducibility checkpoints:
 
-- expected output SHA-256: `311d7f0be5395b63edafb2646510e2d1a0b7283b4067a904f0dc90daf1876c24`;
-- expected preview-append SHA-256: `8132fce78296352c4afa6ffbaeab8d38a205852392297ac2df7324f5e387ad2d`.
+- expected output SHA-256: `231138e076c87d4a9bf9386823279f790553c857e1a11c8b0524c14d48fe2ad6`;
+- expected preview-append SHA-256: `e7400bfb3909442569ec9767caeb9e07483adf627b4bf593e52c0ab0b61bfc92`.
 
 These hashes document the controlled generation result only. They do not
 accept generated Calypso output or replace downstream RTL, off-mode, and live
