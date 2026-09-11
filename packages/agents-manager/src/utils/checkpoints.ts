@@ -483,8 +483,9 @@ function dropUnrecordedDomains( id: string ): void {
 
 /**
  * A repeat may reach domains the first run dropped as unrecorded, so it claims
- * them again — snapshotting the ones that capture up front, and keeping every
- * snapshot the first run took.
+ * them again. The ones that capture up front are snapshotted afresh: the first
+ * run never wrote them, so what stands now is their pre-change state, and a
+ * snapshot it left behind could predate a change made since.
  */
 function redeclareDomains( id: string, keys: string[] ): void {
 	const checkpoint = records.get( id );
@@ -496,8 +497,8 @@ function redeclareDomains( id: string, keys: string[] ): void {
 	const added = keys.filter( ( key ) => ! checkpoint.checkpointKeys.includes( key ) );
 
 	records.set( id, {
-		...captureSnapshots( added ),
 		...checkpoint,
+		...captureSnapshots( added ),
 		checkpointKeys: [ ...checkpoint.checkpointKeys, ...added ],
 	} );
 }
