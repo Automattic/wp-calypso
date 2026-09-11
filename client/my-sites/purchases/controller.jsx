@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getCancelIntentFromQuery } from 'calypso/lib/purchases/utils';
 import { BillingHistory, ReceiptView } from 'calypso/my-sites/purchases/billing-history';
 import CrmDownloads from 'calypso/my-sites/purchases/crm-downloads';
@@ -18,9 +17,7 @@ import {
 import SitePurchasesBackport from 'calypso/my-sites/purchases/v2/main';
 
 export function isDashboardBackportEnabled() {
-	// Jetpack Cloud serves these same routes but has no Dashboard client to
-	// borrow screens from, so it stays on the classic components.
-	return ! isJetpackCloud() && isEnabled( 'purchases/site-level-dashboard-backport' );
+	return isEnabled( 'purchases/site-level-dashboard-backport' );
 }
 
 /**
