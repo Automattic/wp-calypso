@@ -18,7 +18,13 @@ import { SectionHeader } from '../../../components/section-header';
 import { a4aLink } from '../../../utils/link';
 import pressableDescriptor from '../exclusive-offers/images/pressable-descriptor.svg';
 import { getProductPriceInfo } from '../products/lib/product-pricing';
-import { BrandMark, CheckGrid, HostingFeatures, Testimonials } from './content-sections';
+import {
+	BrandMark,
+	CheckGrid,
+	HostingFeatures,
+	JetpackComplete,
+	Testimonials,
+} from './content-sections';
 import demoIllustration from './demo-callout-illustration.svg';
 import {
 	PLAN_CATEGORY_PREMIUM,
@@ -38,21 +44,26 @@ import {
 	sortPlansForCategory,
 } from './lib/pressable-plans';
 import OptionCards from './option-cards';
+import PressablePremiumSection from './pressable-premium-section';
+import PressableUsageCard from './pressable-usage-card';
 import SelectedPlanCard from './selected-plan-card';
 import { useKeyedSessionState, useSessionState } from './use-session-state';
 import type { TermPricing } from '../use-term-pricing';
 import type { PressablePlan } from './lib/pressable-plans';
 import type { PressableOwnershipType } from './lib/pressable-products';
-import type { AgencyProduct } from '@automattic/api-core';
+import type { Agency, AgencyProduct, JetpackLicense } from '@automattic/api-core';
 
 const PRESSABLE_DEMO_URL = 'https://pressable.com/request-demo';
 const CUSTOM_PLAN_OPTION = 'custom';
 
 interface Props {
+	agencyId: number;
+	agency?: Agency;
 	/** The Pressable hosting plans in the catalog. */
 	products: AgencyProduct[];
 	/** The plan the agency bought for itself, if any. */
 	existingPlan?: AgencyProduct;
+	pressableLicenses: JetpackLicense[];
 	ownership: PressableOwnershipType;
 	term: TermPricing;
 	isReferralMode: boolean;
@@ -109,8 +120,11 @@ function ScheduleDemoCallout() {
 }
 
 export default function PressableSection( {
+	agencyId,
+	agency,
 	products,
 	existingPlan,
+	pressableLicenses,
 	ownership,
 	term,
 	isReferralMode,
@@ -234,6 +248,9 @@ export default function PressableSection( {
 	const showPremiumSection = selectedTab === PLAN_CATEGORY_PREMIUM && ! hasNewPremiumPlans;
 
 	const disableLowTab = isLowTabDisabled( existingPressablePlan, lowOptions );
+
+	const pressable = agency?.third_party?.pressable ?? undefined;
+	const showUsage = !! existingPlan && ! isReferralMode && !! pressable;
 
 	const priceInfo = selectedProduct
 		? getProductPriceInfo( selectedProduct, term, {
@@ -443,6 +460,13 @@ export default function PressableSection( {
 		<div className="dashboard-marketplace-hosting__layout">
 			<VStack spacing={ 8 } justify="flex-start">
 				<VStack spacing={ 4 }>
+					{ showUsage && (
+						<PressableUsageCard
+							existingPlan={ existingPlan }
+							pressable={ pressable }
+							licenses={ pressableLicenses }
+						/>
+					) }
 					<Card>
 						<CardHeader>
 							<SectionHeader
@@ -509,9 +533,7 @@ export default function PressableSection( {
 								) }
 								<CardDivider />
 								{ showPremiumSection ? (
-									<Text variant="muted">
-										{ __( 'Premium plans are available through referrals.' ) }
-									</Text>
+									<PressablePremiumSection agencyId={ agencyId } />
 								) : (
 									renderPlanDetails()
 								) }
@@ -522,6 +544,7 @@ export default function PressableSection( {
 				</VStack>
 				<Divider style={ { color: 'var(--dashboard-overview__divider-color)' } } />
 				<HostingFeatures brand="pressable" />
+				<JetpackComplete />
 				<Testimonials brand="pressable" />
 			</VStack>
 			{ ! showPremiumSection && (

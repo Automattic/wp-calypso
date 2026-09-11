@@ -24,7 +24,9 @@ import { useAgencyPressablePlan } from '../use-agency-pressable-plan';
 import { useMarketplaceType } from '../use-marketplace-type';
 import { useTermPricing } from '../use-term-pricing';
 import { getEffectivePressableOwnership } from './lib/pressable-products';
+import PressableOffers from './pressable-offer-banner';
 import PressableSection from './pressable-section';
+import PressableUsageLimitNotice from './pressable-usage-limit-notice';
 import type { HostingSection } from '../paths';
 import type { AgencyProduct } from '@automattic/api-core';
 
@@ -82,6 +84,7 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 	const {
 		plan: agencyPressablePlan,
 		products: pressableProducts,
+		licenses: pressableLicenses,
 		ownership: pressableOwnership,
 		isReady: isPressableReady,
 	} = useAgencyPressablePlan();
@@ -128,8 +131,11 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 		}
 		return (
 			<PressableSection
+				agencyId={ agencyId }
+				agency={ agency ?? undefined }
 				products={ pressableProducts }
 				existingPlan={ agencyPressablePlan }
+				pressableLicenses={ pressableLicenses }
 				ownership={ effectivePressableOwnership }
 				term={ termPricing }
 				isReferralMode={ isReferralMode }
@@ -165,6 +171,13 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 				/>
 			}
 		>
+			<PressableUsageLimitNotice agency={ agency ?? undefined } />
+			<PressableOffers
+				agency={ agency ?? undefined }
+				ownership={ pressableOwnership }
+				pressableLicenses={ pressableLicenses }
+				isLicensesFetched={ isPressableReady }
+			/>
 			<Tabs selectedTabId={ section } onSelect={ handleSectionChange }>
 				<VStack spacing={ 0 }>
 					<HStack justify="space-between" wrap>
