@@ -345,6 +345,7 @@ describe( 'input validation', () => {
 		{ case: 'a clientId that is not a string', items: [ { clientId: 7 } ] },
 		{ case: 'a label that is not a string', items: [ { label: 123 } ] },
 		{ case: 'an empty label', items: [ { label: '' } ] },
+		{ case: 'a blank label', items: [ { label: '  ' } ] },
 		{ case: 'a zero id', items: [ { id: 0 } ] },
 		{ case: 'an id that is not a number or string', items: [ { id: { page: 7 } } ] },
 		{ case: 'items that is not an array', items: [ { label: 'A', items: 'B' } ] },

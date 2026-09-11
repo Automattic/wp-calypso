@@ -121,7 +121,7 @@ const RECORD_FIELD_CHECKS: Record< string, ( value: unknown ) => boolean > = {
 	siteLocation: ( value ) =>
 		value == null ||
 		( isRecord( value ) &&
-			isText( value.name ) &&
+			( value.name === undefined || typeof value.name === 'string' ) &&
 			( value.coordinates === undefined ||
 				( Array.isArray( value.coordinates ) &&
 					value.coordinates.every( ( c ) => typeof c === 'number' || typeof c === 'string' ) ) ) ),
