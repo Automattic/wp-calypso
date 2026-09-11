@@ -1,7 +1,7 @@
-import { Button, DropdownMenu, Icon, privateApis } from '@wordpress/components';
+import { Button, DropdownMenu } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { cog, external, keyboard } from '@wordpress/icons';
-import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
+import { cog, keyboard } from '@wordpress/icons';
+import { Menu } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,15 +12,6 @@ import getViewSettingsSeen from '../../panel/state/selectors/get-view-settings-s
 import { useAppContext } from '../context';
 import NoteShortcuts from '../note-shortcuts';
 import { useSavePreference } from './use-save-preference';
-
-const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
-	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
-	'@wordpress/components'
-);
-
-// The same menu DataViews uses for its own layout switcher, so the checkmark and the
-// full-width group separator match what people already see there.
-const { Menu } = unlock( privateApis );
 
 const SETTINGS_URL = 'https://wordpress.com/me/notifications';
 
@@ -79,8 +70,7 @@ export default function NotePanelActions() {
 			>
 				{ () => <NoteShortcuts /> }
 			</DropdownMenu>
-			<Menu
-				placement="bottom-end"
+			<Menu.Root
 				onOpenChange={ ( isOpen: boolean ) => {
 					if ( ! isOpen ) {
 						return;
@@ -91,7 +81,7 @@ export default function NotePanelActions() {
 					}
 				} }
 			>
-				<Menu.TriggerButton
+				<Menu.Trigger
 					render={
 						<Button
 							size="small"
@@ -101,48 +91,31 @@ export default function NotePanelActions() {
 						/>
 					}
 				/>
-				<Menu.Popover>
+				<Menu.Popup positioner={ <Menu.Positioner side="bottom" align="end" /> }>
 					{ isViewSettingsEnabled && (
 						<>
-							<Menu.Group>
+							<Menu.RadioGroup value={ layoutStyle } onValueChange={ setLayoutStyle }>
 								<Menu.GroupLabel>
 									{ __( 'Layout' ) }
 									{ showsWhatIsNew && <span className="wpnc-app__new-badge">{ __( 'New' ) }</span> }
 								</Menu.GroupLabel>
 								{ LAYOUTS.map( ( { value, label } ) => (
-									<Menu.RadioItem
-										key={ value }
-										name="notifications-layout-style"
-										value={ value }
-										checked={ layoutStyle === value }
-										onChange={ () => setLayoutStyle( value ) }
-									>
+									<Menu.RadioItem key={ value } value={ value }>
 										<Menu.ItemLabel>{ label }</Menu.ItemLabel>
 									</Menu.RadioItem>
 								) ) }
-							</Menu.Group>
+							</Menu.RadioGroup>
 							<Menu.Separator />
 						</>
 					) }
 					<Menu.Group>
 						<Menu.GroupLabel>{ __( 'Links' ) }</Menu.GroupLabel>
-						<Menu.Item
-							render={
-								<a
-									href={ SETTINGS_URL }
-									target="_blank"
-									rel="noopener noreferrer"
-									// The arrow is decorative, so the new-tab hint rides on the name.
-									aria-label={ __( 'Notification settings (opens in a new tab)' ) }
-								/>
-							}
-							suffix={ <Icon icon={ external } size={ 16 } /> }
-						>
+						<Menu.LinkItem href={ SETTINGS_URL } openInNewTab rel="noopener noreferrer">
 							<Menu.ItemLabel>{ __( 'Notification settings' ) }</Menu.ItemLabel>
-						</Menu.Item>
+						</Menu.LinkItem>
 					</Menu.Group>
-				</Menu.Popover>
-			</Menu>
+				</Menu.Popup>
+			</Menu.Root>
 		</>
 	);
 }

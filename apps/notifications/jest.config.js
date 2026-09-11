@@ -1,3 +1,6 @@
+const preset = require( '../../test/apps/jest-preset.js' );
+
 module.exports = {
-	preset: '../../test/apps/jest-preset.js',
+	...preset,
+	setupFilesAfterEnv: [ ...preset.setupFilesAfterEnv, require.resolve( './jest.setup.js' ) ],
 };
