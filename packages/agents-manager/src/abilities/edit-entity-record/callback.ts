@@ -346,9 +346,9 @@ export function getCheckpointKeys( edits: Entity< 'edit' >[] ): string[] {
 
 	for ( const { entityType, entityName, record } of edits ) {
 		// Only the title is restorable on a page — a restore rewrites it and the
-		// menu item that follows it, never the content, excerpt or status. The
-		// write applies the same test, so the claim cannot drift from what the
-		// checkpoint records.
+		// menu item that follows it, never the content, excerpt or status. Claimed
+		// on presence alone; a rename to the title the page already has records
+		// nothing, and the claim is dropped afterwards.
 		if ( entityName === PAGE && 'title' in record ) {
 			keys.add( checkpointKeys.PAGE );
 			keys.add( checkpointKeys.NAVIGATION );
@@ -490,8 +490,7 @@ async function applyRecordEdit(
 	const nextTitle = flattenTitle( record.title );
 
 	// Presence, not truthiness: a request carrying an empty title clears the page
-	// name, which is as restorable as any rename — and the same test the
-	// checkpoint keys are claimed with.
+	// name, which is as restorable as any rename.
 	const isRename = entityName === PAGE && 'title' in record && nextTitle !== previousTitle;
 
 	// The title is checkpointed, so it goes through `setPageTitle` and stays out
@@ -603,14 +602,13 @@ async function applyEdits(
 }
 
 /**
- * Routes the editor off a record about to be deleted, through
- * `editor-navigate` without its save — the user's pending edits are theirs to
- * publish: to the front page, or the pages list when the site shows posts
- * there or the page is the front page itself. Only the site editor's router
- * can leave without a full page load, which could cut the delete off, so the
- * post editor refuses. The canvas binding is handed over first, as the guard
- * does for the ability — left behind, the move would read as the user leaving
- * and abort the request.
+ * Routes the editor off a record about to be deleted: to the front page, or
+ * the pages list when the site shows posts there or the page is the front page
+ * itself. It navigates without saving — the user's pending edits are theirs to
+ * publish. Only the site editor's router can leave without a full page load,
+ * which could cut the delete off, so the post editor refuses. The canvas
+ * binding is handed over first, as the guard does for the ability — left
+ * behind, the move would read as the user leaving and abort the request.
  */
 async function leaveRecord( entityName: string, recordId: number | string ): Promise< void > {
 	if ( ! getEditorHistory() ) {
