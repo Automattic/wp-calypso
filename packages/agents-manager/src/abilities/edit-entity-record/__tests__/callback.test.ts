@@ -70,7 +70,12 @@ import {
 	removeNavigationItem,
 	renameNavigationItem,
 } from '../../../utils/navigation-menu';
-import { getPageTitle, setPageTitle } from '../../../utils/page-title';
+import {
+	getPageTitle,
+	getPageUrl,
+	getSavedPageTitle,
+	setPageTitle,
+} from '../../../utils/page-title';
 import { logSiteMetadata, logSiteSession } from '../../../utils/session-log';
 import { setSiteMetadata } from '../../../utils/site-metadata';
 import { getSiteRecord } from '../../../utils/site-record';
@@ -677,6 +682,18 @@ describe( 'editEntityRecordCallback', () => {
 		expect( saveEntityRecord ).not.toHaveBeenCalled();
 	} );
 
+	// The saved title and the permalink serve the menu relabel, so a read that
+	// rejects must not block an edit that renames nothing.
+	it( 'reads no menu context for an edit that renames nothing', async () => {
+		await editEntityRecordCallback( {
+			editEntities: [ { ...page( 8 ), record: { content: 'Hello' } } ],
+		} );
+
+		expect( getSavedPageTitle ).not.toHaveBeenCalled();
+		expect( getPageUrl ).not.toHaveBeenCalled();
+		expect( editEntityRecord ).toHaveBeenCalledWith( 'postType', 'page', 8, { content: 'Hello' } );
+	} );
+
 	it( 'reports what applied when a later change fails', async () => {
 		( setPageTitle as jest.Mock ).mockRejectedValueOnce( new Error( 'menu is locked' ) );
 
@@ -718,7 +735,11 @@ describe( 'editEntityRecordCallback', () => {
 		} );
 
 		expect( setPageTitle ).toHaveBeenCalledWith( 8, 'Contact' );
-		expect( result.result.details ).toMatchObject( { updated: [ { recordId: 8 } ] } );
+		// The fields say what landed: told only that the page was updated, a
+		// retry would drop the content that was not.
+		expect( result.result.details ).toMatchObject( {
+			updated: [ { recordId: 8, fields: [ 'title' ] } ],
+		} );
 		expect( hasCheckpoint( 'call-rename-partial' ) ).toBe( true );
 	} );
 
@@ -741,7 +762,9 @@ describe( 'editEntityRecordCallback', () => {
 			],
 		} );
 
-		expect( result.result.details ).toMatchObject( { updated: [ { recordId: 9 } ] } );
+		expect( result.result.details ).toMatchObject( {
+			updated: [ { recordId: 9, fields: [ 'navigationItems' ] } ],
+		} );
 		expect( hasCheckpoint( 'call-menu-partial' ) ).toBe( true );
 	} );
 
