@@ -278,9 +278,9 @@ export function JetpackComplete() {
 					description={ sprintf(
 						/* translators: %s is the yearly price of Jetpack Complete. */
 						__(
-							'Supercharge your clients’ sites. Every Pressable site comes with a free Jetpack Complete license, a %s/year/site value.'
+							'Every Pressable site comes with a free Jetpack Complete license, a %s/year/site value.'
 						),
-						formatCurrency( 899, 'USD' )
+						formatCurrency( 899, 'USD', { stripZeros: true } )
 					) }
 					decoration={ <BrandMark src={ jetpackDescriptor } /> }
 				/>
@@ -297,8 +297,7 @@ export function JetpackComplete() {
 						__( 'Social Advanced w/ unlimited shares' ),
 						__( 'Site Search up to 100k records and 100k requests/mo' ),
 						__( 'CRM Entrepreneur' ),
-						__( 'All Jetpack features' ),
-						createInterpolateElement( __( '<a>And more</a>' ), {
+						createInterpolateElement( __( '<a>All Jetpack Complete features</a>' ), {
 							a: (
 								<ExternalLink
 									href="https://jetpack.com/complete/"

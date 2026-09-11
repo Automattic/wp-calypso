@@ -1,4 +1,6 @@
+import { activeAgencyQuery } from '@automattic/api-queries';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
+import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -6,39 +8,40 @@ import {
 } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
+import { useIntlLocale } from '../../../app/locale';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import { Stat } from '../../../components/stat';
+import { useAgencyPressablePlan } from '../use-agency-pressable-plan';
 import { calculateEffectiveCapacity } from './lib/pressable-capacity';
 import { getPressablePlan } from './lib/pressable-plans';
-import type { Agency, AgencyProduct, JetpackLicense } from '@automattic/api-core';
-
-interface Props {
-	existingPlan: AgencyProduct;
-	pressable: NonNullable< NonNullable< Agency[ 'third_party' ] >[ 'pressable' ] >;
-	/** The agency's Pressable licenses; add-ons among them raise the plan limits. */
-	licenses: JetpackLicense[];
-}
+import type { AgencyProduct } from '@automattic/api-core';
 
 const TITAN_INBOX_MONTHLY_PRICE = 3.5;
 
 const percentage = ( value: number, total: number ) =>
 	total > 0 ? Math.min( 100, Math.round( ( value / total ) * 100 ) ) : 0;
 
-const formatTrialEndDate = ( date: string ) =>
-	new Intl.DateTimeFormat( 'en-US', { month: 'long', day: 'numeric', timeZone: 'UTC' } ).format(
+const formatTrialEndDate = ( date: string, locale: string ) =>
+	new Intl.DateTimeFormat( locale, { month: 'long', day: 'numeric', timeZone: 'UTC' } ).format(
 		new Date( date )
 	);
 
-export default function PressableUsageCard( { existingPlan, pressable, licenses }: Props ) {
+/** The agency's current plan and its usage; add-on licenses raise the limits. */
+export default function PressableUsageCard( { existingPlan }: { existingPlan: AgencyProduct } ) {
+	const locale = useIntlLocale();
+	const { data: agency } = useQuery( activeAgencyQuery() );
+	const { licenses } = useAgencyPressablePlan();
 	const planInfo = getPressablePlan( existingPlan.slug );
 	if ( ! planInfo ) {
 		return null;
 	}
 
-	const usage = pressable.usage ?? undefined;
+	// The usage is only there once the Pressable account is linked.
+	const pressable = agency?.third_party?.pressable;
+	const usage = pressable?.usage ?? undefined;
 	const capacity = calculateEffectiveCapacity( planInfo, licenses );
-	const activeTitanOrders = ( pressable.titan_usage?.orders ?? [] ).filter(
+	const activeTitanOrders = ( pressable?.titan_usage?.orders ?? [] ).filter(
 		( order ) => order.status === 'active'
 	);
 	const totalInboxes = activeTitanOrders.reduce(
@@ -56,7 +59,7 @@ export default function PressableUsageCard( { existingPlan, pressable, licenses 
 				<SectionHeader
 					level={ 3 }
 					title={
-						<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
+						<HStack as="span" spacing={ 2 } justify="flex-start" expanded={ false }>
 							<span>{ existingPlan.name }</span>
 							<Badge>{ __( 'Plan' ) }</Badge>
 						</HStack>
@@ -146,7 +149,7 @@ export default function PressableUsageCard( { existingPlan, pressable, licenses 
 														{ sprintf(
 															/* translators: %s is the formatted trial end date. */
 															__( 'The trial ends by %s' ),
-															formatTrialEndDate( order.trial_end_at )
+															formatTrialEndDate( order.trial_end_at, locale )
 														) }
 													</Text>
 												</>

@@ -84,7 +84,6 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 	const {
 		plan: agencyPressablePlan,
 		products: pressableProducts,
-		licenses: pressableLicenses,
 		ownership: pressableOwnership,
 		isReady: isPressableReady,
 	} = useAgencyPressablePlan();
@@ -131,11 +130,8 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 		}
 		return (
 			<PressableSection
-				agencyId={ agencyId }
-				agency={ agency ?? undefined }
 				products={ pressableProducts }
 				existingPlan={ agencyPressablePlan }
-				pressableLicenses={ pressableLicenses }
 				ownership={ effectivePressableOwnership }
 				term={ termPricing }
 				isReferralMode={ isReferralMode }
@@ -171,13 +167,8 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 				/>
 			}
 		>
-			<PressableUsageLimitNotice agency={ agency ?? undefined } />
-			<PressableOffers
-				agency={ agency ?? undefined }
-				ownership={ pressableOwnership }
-				pressableLicenses={ pressableLicenses }
-				isLicensesFetched={ isPressableReady }
-			/>
+			<PressableUsageLimitNotice agency={ agency } />
+			<PressableOffers agency={ agency } />
 			<Tabs selectedTabId={ section } onSelect={ handleSectionChange }>
 				<VStack spacing={ 0 }>
 					<HStack justify="space-between" wrap>

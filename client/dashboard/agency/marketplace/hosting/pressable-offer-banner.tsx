@@ -12,16 +12,15 @@ import { useAnalytics } from '../../../app/analytics';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
 import { a4aLink } from '../../../utils/link';
-import { CheckList } from './content-sections';
 import {
 	PRESSABLE_EXPANSION_OFFER_TERMS_URL,
 	PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
-	hasBenefitedFromIntroductoryOffer,
-	hasPlanEligibleForExpansionOffer,
-	isOfferWindowOpen,
-} from './lib/pressable-offers';
-import type { PressableOwnershipType } from './lib/pressable-products';
-import type { Agency, JetpackLicense } from '@automattic/api-core';
+} from '../../overview/constants';
+import usePressableOfferEligibility, {
+	isPressableOfferActive,
+} from '../../overview/use-pressable-offer-eligibility';
+import { CheckList } from './content-sections';
+import type { Agency } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
 interface BannerCta {
@@ -59,6 +58,7 @@ function PressableOfferBanner( { title, items, ctas, footnote, toggleEventName }
 							icon={ isExpanded ? chevronUp : chevronDown }
 							label={ isExpanded ? __( 'Collapse offer details' ) : __( 'Expand offer details' ) }
 							size="compact"
+							aria-expanded={ isExpanded }
 							onClick={ toggle }
 						/>
 					</HStack>
@@ -92,29 +92,17 @@ function PressableOfferBanner( { title, items, ctas, footnote, toggleEventName }
 
 const bold = ( text: string ) => createInterpolateElement( text, { b: <b /> } );
 
-interface OffersProps {
-	agency?: Agency;
-	ownership: PressableOwnershipType;
-	/** The agency's non-revoked Pressable licenses, oldest first. */
-	pressableLicenses: JetpackLicense[];
-	isLicensesFetched: boolean;
-}
-
-// The introductory offer targets agencies without a Pressable plan through
-// A4A; the expansion offer targets agencies on an eligible plan that did not
-// already benefit from the introductory offer.
-export default function PressableOffers( {
-	agency,
-	ownership,
-	pressableLicenses,
-	isLicensesFetched,
-}: OffersProps ) {
-	const isBillingDragonAgency = agency?.billing_system === 'billingdragon';
-	if ( ! isBillingDragonAgency || ! isOfferWindowOpen() ) {
+// The same eligibility rules as the Overview cards: the introductory offer
+// targets agencies without a Pressable plan through A4A, the expansion offer
+// agencies on an eligible plan that did not benefit from the introductory one.
+export default function PressableOffers( { agency }: { agency: Agency | null | undefined } ) {
+	const { isEligibleForPressableIntroOffer, isEligibleForPressableExpansionOffer } =
+		usePressableOfferEligibility( agency );
+	if ( ! isPressableOfferActive() ) {
 		return null;
 	}
 
-	if ( ownership !== 'agency' ) {
+	if ( isEligibleForPressableIntroOffer ) {
 		return (
 			<PressableOfferBanner
 				title={ bold(
@@ -160,11 +148,7 @@ export default function PressableOffers( {
 		);
 	}
 
-	const isEligibleForExpansionOffer =
-		isLicensesFetched &&
-		hasPlanEligibleForExpansionOffer( pressableLicenses ) &&
-		hasBenefitedFromIntroductoryOffer( pressableLicenses ) === false;
-	if ( ! isEligibleForExpansionOffer ) {
+	if ( ! isEligibleForPressableExpansionOffer ) {
 		return null;
 	}
 
