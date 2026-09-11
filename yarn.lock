@@ -1965,7 +1965,7 @@ __metadata:
     "@wordpress/element": "npm:^8.0.0"
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/icons": "npm:^13.3.0"
-    "@wordpress/ui": "npm:^0.22.0"
+    "@wordpress/ui": "npm:^0.18.0"
     autoprefixer: "npm:^10.4.21"
     calypso: "workspace:^"
     clsx: "npm:^2.1.1"
@@ -4511,7 +4511,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:7.29.7, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.20.13, @babel/runtime@npm:^7.27.1, @babel/runtime@npm:^7.29.2, @babel/runtime@npm:^7.29.7, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.6.3, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.9.2":
+"@babel/runtime@npm:7.29.7, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.20.13, @babel/runtime@npm:^7.27.1, @babel/runtime@npm:^7.29.2, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.6.3, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.9.2":
   version: 7.29.7
   resolution: "@babel/runtime@npm:7.29.7"
   checksum: ca11572f7146b21e0bde6a9ed4bb6a89eafbee5f0944c7eb54d0d8a2dac962c33638a1d611e14faa71dfbb92b4b5f9236232208568a6b7d5c6f3f39ddb91771e
@@ -4554,7 +4554,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@base-ui/react@npm:^1.5.0":
+"@base-ui/react@npm:^1.5.0, @base-ui/react@npm:^1.6.0":
   version: 1.6.0
   resolution: "@base-ui/react@npm:1.6.0"
   dependencies:
@@ -4580,32 +4580,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@base-ui/react@npm:^1.7.0":
-  version: 1.8.0
-  resolution: "@base-ui/react@npm:1.8.0"
-  dependencies:
-    "@babel/runtime": "npm:^7.29.7"
-    "@base-ui/utils": "npm:0.4.0"
-    "@floating-ui/react-dom": "npm:^2.1.9"
-    "@floating-ui/utils": "npm:^0.2.12"
-    use-sync-external-store: "npm:^1.6.0"
-  peerDependencies:
-    "@date-fns/tz": ^1.2.0
-    "@types/react": ^17 || ^18 || ^19
-    date-fns: ^4.0.0
-    react: ^17 || ^18 || ^19
-    react-dom: ^17 || ^18 || ^19
-  peerDependenciesMeta:
-    "@date-fns/tz":
-      optional: true
-    "@types/react":
-      optional: true
-    date-fns:
-      optional: true
-  checksum: bf3faa8891fe6c9695a07b30caa3349f9ffc067f0efd381bb6ed12d68400a2d273ab0f764dd07c5cc6b25f5bc6df6a5688e0164d4e2500ad07efaec8bdd88896
-  languageName: node
-  linkType: hard
-
 "@base-ui/utils@npm:0.3.1":
   version: 0.3.1
   resolution: "@base-ui/utils@npm:0.3.1"
@@ -4622,25 +4596,6 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 4de858c3e2c8a4486a549d51c5e887bba6921e5a7f8db54439ba558feaf1656c3592a873928aee8a1711ee9210be3a65ca43b26713e97f649695ed2fa8c3af2c
-  languageName: node
-  linkType: hard
-
-"@base-ui/utils@npm:0.4.0":
-  version: 0.4.0
-  resolution: "@base-ui/utils@npm:0.4.0"
-  dependencies:
-    "@babel/runtime": "npm:^7.29.7"
-    "@floating-ui/utils": "npm:^0.2.12"
-    reselect: "npm:^5.2.0"
-    use-sync-external-store: "npm:^1.6.0"
-  peerDependencies:
-    "@types/react": ^17 || ^18 || ^19
-    react: ^17 || ^18 || ^19
-    react-dom: ^17 || ^18 || ^19
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-  checksum: dd32220d13d42ed2cf0d0ae18e02bf9ece5c54d6a26e49c9449514d66d38b1fee51c875f7d9d21484a326b7a8a2c33c95be620e8a5976b7b6f3bfa27572b6baf
   languageName: node
   linkType: hard
 
@@ -5790,7 +5745,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@floating-ui/react-dom@npm:^2.0.0, @floating-ui/react-dom@npm:^2.0.8, @floating-ui/react-dom@npm:^2.1.8, @floating-ui/react-dom@npm:^2.1.9":
+"@floating-ui/react-dom@npm:^2.0.0, @floating-ui/react-dom@npm:^2.0.8, @floating-ui/react-dom@npm:^2.1.8":
   version: 2.1.9
   resolution: "@floating-ui/react-dom@npm:2.1.9"
   dependencies:
@@ -13350,13 +13305,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/style-runtime@npm:^0.11.0":
-  version: 0.11.0
-  resolution: "@wordpress/style-runtime@npm:0.11.0"
-  checksum: 3b7ed8ec3b9d9af704e5c01f0cc2a56213ad7f0a7aa0d2c213a39d094f68d7e01c7934f8daa4051046ea075dfb2241e3f9293594077dd071121f0bd6a67a7424
-  languageName: node
-  linkType: hard
-
 "@wordpress/style-runtime@npm:^0.4.0":
   version: 0.4.0
   resolution: "@wordpress/style-runtime@npm:0.4.0"
@@ -13368,6 +13316,13 @@ __metadata:
   version: 0.7.0
   resolution: "@wordpress/style-runtime@npm:0.7.0"
   checksum: 50da94a9ecaa26aac7e182fd865e7feb363b5ec410e1827cedab756be44694a99213eba4849ffa18a13e951360630975ffafb32ce03dec576010acf433c56e05
+  languageName: node
+  linkType: hard
+
+"@wordpress/style-runtime@npm:^0.9.0":
+  version: 0.9.0
+  resolution: "@wordpress/style-runtime@npm:0.9.0"
+  checksum: 4b5516291a91cc60844c2bc898a4c9525490412b4506c5baf6deba233bb19a91b14bba5369510944e13387bb289fa4c6425ff1b71825d4799e189690605e3b9d
   languageName: node
   linkType: hard
 
@@ -13444,23 +13399,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/ui@npm:0.22.0":
-  version: 0.22.0
-  resolution: "@wordpress/ui@npm:0.22.0"
+"@wordpress/ui@npm:0.20.0":
+  version: 0.20.0
+  resolution: "@wordpress/ui@npm:0.20.0"
   dependencies:
-    "@base-ui/react": "npm:^1.7.0"
+    "@base-ui/react": "npm:^1.6.0"
     "@daypicker/react": "npm:^10.0.1"
-    "@wordpress/a11y": "npm:^4.55.0"
-    "@wordpress/compose": "npm:^8.8.0"
-    "@wordpress/element": "npm:^8.7.0"
-    "@wordpress/i18n": "npm:^6.28.0"
-    "@wordpress/icons": "npm:^16.0.0"
-    "@wordpress/keycodes": "npm:^4.55.0"
-    "@wordpress/primitives": "npm:^4.55.0"
-    "@wordpress/private-apis": "npm:^1.55.0"
-    "@wordpress/style-runtime": "npm:^0.11.0"
-    "@wordpress/theme": "npm:^2.1.0"
-    "@wordpress/warning": "npm:^3.55.0"
+    "@wordpress/a11y": "npm:^4.53.0"
+    "@wordpress/compose": "npm:^8.6.0"
+    "@wordpress/element": "npm:^8.5.0"
+    "@wordpress/i18n": "npm:^6.26.0"
+    "@wordpress/icons": "npm:^15.4.0"
+    "@wordpress/keycodes": "npm:^4.53.0"
+    "@wordpress/primitives": "npm:^4.53.0"
+    "@wordpress/private-apis": "npm:^1.53.0"
+    "@wordpress/style-runtime": "npm:^0.9.0"
+    "@wordpress/theme": "npm:^1.2.0"
     clsx: "npm:^2.1.1"
     date-fns: "npm:^4.4.0"
     tabbable: "npm:^6.4.0"
@@ -13471,7 +13425,7 @@ __metadata:
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: ed23935ae12a0d495c1e0be09bbf8613e4bcf9cefd9abcb599979df83dff431be170785db2a1d8b80429ff3b7d940925ce9af23e53aeb5af57739a269e426132
+  checksum: a397bce5e16af2b81df0e37b98d2fe08b7770ba090a35f77b11586d31e9cb8acfd48bf66fda7c0ea42398760b6edb4537a7c72d7b1f1ea889487c7053a396c97
   languageName: node
   linkType: hard
 

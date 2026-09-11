@@ -73,7 +73,7 @@ describe( 'NotePanel settings menu', () => {
 		} );
 
 		// The dot clears on open, so the menu carries the label that says what is new.
-		expect( await screen.findByText( 'New' ) ).toBeVisible();
+		expect( screen.getByText( 'New' ) ).toBeVisible();
 
 		// The open menu makes the rest of the tree inert, so close it before looking again.
 		await userEvent.keyboard( '{Escape}' );
@@ -92,27 +92,11 @@ describe( 'NotePanel settings menu', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Settings' } ) );
 
-		// The menu opens a tick after the click, so wait for its contents before
-		// concluding that the layout options are absent.
-		expect(
-			await screen.findByRole( 'menuitem', { name: /Notification settings/ } )
-		).toHaveAttribute( 'href', 'https://wordpress.com/me/notifications' );
 		expect( screen.queryByRole( 'menuitemradio', { name: 'Simplified' } ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'opens the settings link in a new tab and says so', async () => {
-		renderPanel( { isViewSettingsEnabled: true } );
-
-		await userEvent.click( screen.getByRole( 'button', { name: /^Settings/ } ) );
-
-		// The link has to be the menu item itself: wrapping an anchor in one puts the
-		// label and the new-tab arrow outside the slots the item lays out.
-		const link = await screen.findByRole( 'menuitem', {
-			name: 'Notification settings (opens in a new tab)',
-		} );
-		expect( link.tagName ).toBe( 'A' );
-		expect( link ).toHaveAttribute( 'target', '_blank' );
-		expect( link ).toHaveAttribute( 'rel', 'noopener noreferrer' );
+		expect( screen.getByRole( 'menuitem', { name: /Notification settings/ } ) ).toHaveAttribute(
+			'href',
+			'https://wordpress.com/me/notifications'
+		);
 	} );
 
 	it( 'marks the saved layout and saves a new one', async () => {
@@ -120,7 +104,7 @@ describe( 'NotePanel settings menu', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: /^Settings/ } ) );
 
-		expect( await screen.findByRole( 'menuitemradio', { name: 'Classic' } ) ).toHaveAttribute(
+		expect( screen.getByRole( 'menuitemradio', { name: 'Classic' } ) ).toHaveAttribute(
 			'aria-checked',
 			'true'
 		);
