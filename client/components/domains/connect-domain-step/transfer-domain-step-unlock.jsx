@@ -76,10 +76,10 @@ const TransferDomainStepUnlock = ( {
 		return lockStatusUnknown
 			? __(
 					'Can’t get the domain’s lock status. If you’ve already unlocked it, wait a few minutes and try again.'
-			  )
+				)
 			: __(
 					'Your domain is still locked. If you’ve already unlocked it, wait a few minutes and try again.'
-			  );
+				);
 	};
 
 	const stepContent = (

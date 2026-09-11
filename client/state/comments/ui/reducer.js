@@ -94,7 +94,7 @@ export const queries = ( state = {}, action ) => {
 						state,
 						action.comments.map( ( comment ) => comment?.ID ),
 						action.query
-				  );
+					);
 		default:
 			return state;
 	}

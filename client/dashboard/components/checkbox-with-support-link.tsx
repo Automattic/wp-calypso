@@ -30,7 +30,7 @@ export function CheckboxWithSupportLink( {
 					? ''
 					: ( createInterpolateElement( label, {
 							link: <InlineSupportLink supportContext={ supportContext } />,
-					  } ) as unknown as string )
+						} ) as unknown as string )
 			}
 			checked={ checked }
 			onChange={ onChange }

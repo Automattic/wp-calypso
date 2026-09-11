@@ -68,10 +68,10 @@ export default function SiteErrorPreview( {
 	const troubleshootingHref = isA4APluginInstalled
 		? localizeUrl(
 				'https://agencieshelp.automattic.com/knowledge-base/fix-automattic-for-agencies-plugin-issues/'
-		  )
+			)
 		: localizeUrl(
 				'https://jetpack.com/support/getting-started-with-jetpack/fixing-jetpack-connection-issues/'
-		  );
+			);
 
 	const page = isA4APluginInstalled ? A4A_PLUGIN_SLUG : JETPACK_PLUGIN_SLUG;
 
@@ -102,10 +102,10 @@ export default function SiteErrorPreview( {
 							isA4APluginInstalled
 								? translate(
 										"Visit your site to make sure it loads properly. If there's an issue, fix your site before worrying about Automattic for Agencies! That may resolve this error."
-								  )
+									)
 								: translate(
 										"Visit your site to make sure it loads properly. If there's an issue, fix your site before worrying about Jetpack! That may resolve this error."
-								  )
+									)
 						}
 					>
 						<Button
@@ -132,10 +132,10 @@ export default function SiteErrorPreview( {
 							isA4APluginInstalled
 								? translate(
 										"If your site is loading but you're still seeing this error, this guide will help you troubleshoot the Automattic for Agencies connection."
-								  )
+									)
 								: translate(
 										"If your site is loading but you're still seeing this error, this guide will help you troubleshoot the Jetpack connection."
-								  )
+									)
 						}
 					>
 						{ isA4APluginInstalled ? (
@@ -176,10 +176,10 @@ export default function SiteErrorPreview( {
 							isA4APluginInstalled
 								? translate(
 										"If you're no longer using Automattic for Agencies and/or WordPress for your site, or you've taken your site down, it's time to disconnect Automattic for Agencies."
-								  )
+									)
 								: translate(
 										"If you're no longer using Jetpack and/or WordPress for your site, or you've taken your site down, it's time to disconnect Jetpack."
-								  )
+									)
 						}
 					>
 						<Button

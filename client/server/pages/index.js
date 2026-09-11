@@ -1157,9 +1157,9 @@ function wpcomPages( app ) {
 				const activeFlags = data?.meta?.data?.flags?.active_flags ?? [];
 
 				// A8C check
-				if (
-					! ( Array.isArray( activeFlags ) && activeFlags.includes( 'calypso_support_user' ) )
-				) {
+				if ( ! (
+					Array.isArray( activeFlags ) && activeFlags.includes( 'calypso_support_user' )
+				) ) {
 					return res.send( renderJsx( 'support-user' ) );
 				}
 

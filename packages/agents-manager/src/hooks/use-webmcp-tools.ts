@@ -23,7 +23,7 @@ export default function useWebMcpTools( {
 
 		let disposed = false;
 		let interval: ReturnType< typeof setInterval > | undefined;
-		let adapter: import('../webmcp/types').WebMcpAdapter | undefined;
+		let adapter: import( '../webmcp/types' ).WebMcpAdapter | undefined;
 
 		import( /* webpackChunkName: "am-webmcp" */ '../webmcp/adapter' )
 			.then( ( { createWebMcpAdapter, createWebMcpToolProvider } ) => {

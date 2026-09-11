@@ -107,7 +107,7 @@ const MultiStepForm = ( {
 						isActive: currentStep > 5,
 						value: getFinishSurveyProgress( currentStep ),
 					},
-			  ]
+				]
 			: [] ),
 	];
 

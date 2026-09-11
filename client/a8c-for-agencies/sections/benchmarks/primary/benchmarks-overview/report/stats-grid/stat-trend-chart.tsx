@@ -68,8 +68,7 @@ export default function StatTrendChart( { points, formatter }: Props ) {
 				) }
 				renderTooltip={ ( { tooltipData } ) => {
 					const datum = tooltipData?.nearestDatum?.datum as
-						| { date: Date; value: number }
-						| undefined;
+						{ date: Date; value: number } | undefined;
 					if ( ! datum ) {
 						return null;
 					}

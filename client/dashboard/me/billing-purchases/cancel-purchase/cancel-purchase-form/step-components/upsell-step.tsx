@@ -158,7 +158,7 @@ export default function UpsellStep( {
 								{
 									b: <strong />,
 								}
-						  )
+							)
 						: createInterpolateElement(
 								__(
 									'If you’re feeling a bit stuck with your site, our expert <b>Happiness Engineers</b> are always ready to chat. ' +
@@ -167,7 +167,7 @@ export default function UpsellStep( {
 								{
 									b: <strong />,
 								}
-						  ) }
+							) }
 				</Upsell>
 			);
 		case 'built-by':
@@ -277,7 +277,7 @@ export default function UpsellStep( {
 									{
 										refundAmount: formatCurrency( refundAmount, currencyCode ),
 									}
-							  )
+								)
 							: null }
 					</>
 				</Upsell>
@@ -313,7 +313,7 @@ export default function UpsellStep( {
 									{
 										amount: formatCurrency( refundAmount, currencyCode ),
 									}
-							  )
+								)
 							: null }
 					</>
 				</Upsell>

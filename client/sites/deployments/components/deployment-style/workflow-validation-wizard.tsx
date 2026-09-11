@@ -54,13 +54,13 @@ export const WorkflowValidationWizard = ( {
 			workflowCheckResult.conclusion === 'error'
 				? createInterpolateElement( __( 'Your workflow <filename /> is good to go!' ), {
 						filename: <ExternalLink href={ workflowPath }>{ workflow.file_name }</ExternalLink>,
-				  } )
+					} )
 				: createInterpolateElement(
 						__( 'Please edit <filename /> and fix the problems we found.' ),
 						{
 							filename: <ExternalLink href={ workflowPath }>{ workflow.file_name }</ExternalLink>,
 						}
-				  );
+					);
 
 		return <p css={ { fontSize: '14px' } }>{ description }</p>;
 	};

@@ -98,12 +98,12 @@ export default function MigrationsTagSitesModal( {
 									/* translators: %s: the site URL */
 									__( 'The site %s has been successfully tagged for commission.' ),
 									siteUrl
-							  )
+								)
 							: sprintf(
 									/* translators: %d: the number of sites tagged */
 									__( '%d sites have been successfully tagged for commission.' ),
 									selectedSites.length
-							  )
+								)
 					);
 					onClose();
 				},
@@ -132,8 +132,8 @@ export default function MigrationsTagSitesModal( {
 
 	const selectedMigrationSourceHost = isOtherSelected
 		? otherHostingProvider
-		: migrationSourceOptions.find( ( option ) => option.value === migrationSourceHost )?.label ??
-		  '';
+		: ( migrationSourceOptions.find( ( option ) => option.value === migrationSourceHost )?.label ??
+			'' );
 
 	return (
 		<Modal
@@ -206,7 +206,7 @@ export default function MigrationsTagSitesModal( {
 								/* translators: %d: the number of sites selected */
 								_n( 'Add %d site', 'Add %d sites', selectedSites.length ),
 								selectedSites.length
-						  )
+							)
 						: __( 'Add sites' ) }
 				</Button>
 			</HStack>

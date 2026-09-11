@@ -333,8 +333,8 @@ class MasterbarLoggedIn extends Component {
 											this.props.recordTracksEvent( 'calypso_masterbar_get_involved_clicked' ),
 									},
 								],
-						  ] ),
-			  ];
+							] ),
+				];
 
 		return (
 			<Item
@@ -523,7 +523,7 @@ class MasterbarLoggedIn extends Component {
 					<span className="masterbar__site-badge" key={ badge }>
 						{ badge }
 					</span>
-			  ) )
+				) )
 			: null;
 	}
 

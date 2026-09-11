@@ -80,20 +80,20 @@ export default function ToggleActivateMonitoring( {
 		const hours = Math.floor( duration.asHours() );
 		const currentDurationText = hours
 			? // Adding the plural form since some languages might need different forms for the abbreviation.
-			  translate( '%(hours)dhr', '%(hours)dhr', {
+				translate( '%(hours)dhr', '%(hours)dhr', {
 					count: hours,
 					args: {
 						hours,
 					},
 					comment: '%(hours) is the no of hours, e.g. "1hr"',
-			  } )
+				} )
 			: translate( '%(minutes)dm', '%(minutes)dm', {
 					count: minutes,
 					args: {
 						minutes,
 					},
 					comment: '%(minutes) is the no of minutes, e.g. "5m"',
-			  } );
+				} );
 
 		const currentSchedule = hours
 			? translate( '%(hours)d hour', '%(hours)d hours', {
@@ -102,14 +102,14 @@ export default function ToggleActivateMonitoring( {
 						hours,
 					},
 					comment: '%(hours) is the no of hours, e.g. "1 hour"',
-			  } )
+				} )
 			: translate( '%(minutes)d minute', '%(minutes)d minutes', {
 					count: minutes,
 					args: {
 						minutes,
 					},
 					comment: '%(minutes) is the no of minutes, e.g. "5 minutes"',
-			  } );
+				} );
 		return (
 			<div className="toggle-activate-monitoring__duration">
 				<Button

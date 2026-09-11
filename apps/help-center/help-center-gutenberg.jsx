@@ -218,7 +218,7 @@ function HelpCenterContent() {
 										true
 									),
 							},
-					  ]
+						]
 					: [] ),
 			],
 		],

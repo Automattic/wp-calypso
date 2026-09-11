@@ -83,7 +83,7 @@ const wooHostedPlansFlow: FlowV2< typeof initialize > = {
 
 		// Validate back_to to prevent open redirect - must not be external
 		const safeBackTo =
-			backTo && ! isExternal( backTo ) ? backTo : safeAdminUrl ?? dashboardLink( '/sites' );
+			backTo && ! isExternal( backTo ) ? backTo : ( safeAdminUrl ?? dashboardLink( '/sites' ) );
 
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {

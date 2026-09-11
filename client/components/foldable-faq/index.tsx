@@ -66,7 +66,7 @@ const FoldableFAQ: FC< FAQProps > = ( {
 	}, [ buttonId, checkHash ] );
 
 	useLayoutEffect( () => {
-		const targetHeight = isExpanded ? answerRef?.current?.scrollHeight ?? 250 : 0;
+		const targetHeight = isExpanded ? ( answerRef?.current?.scrollHeight ?? 250 ) : 0;
 		setHeight( targetHeight );
 
 		if ( firstRender.current ) {

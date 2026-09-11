@@ -61,10 +61,7 @@ export default function WordPressAgentTelegram( {
 	const authUrl = config( 'dolly_telegram_auth_url' ) as unknown as string | undefined;
 	const requestAccess = config( 'dolly_telegram_request_access' ) as unknown as 'write' | undefined;
 	const configuredSize = config( 'dolly_telegram_widget_size' ) as unknown as
-		| 'large'
-		| 'medium'
-		| 'small'
-		| undefined;
+		'large' | 'medium' | 'small' | undefined;
 	const showUserpic = Boolean(
 		config( 'dolly_telegram_show_userpic' ) as unknown as boolean | undefined
 	);
@@ -95,7 +92,7 @@ export default function WordPressAgentTelegram( {
 				/* translators: %s is the WordPress.com user's display name and/or username. */
 				__( 'Connect your WordPress.com account %s to Telegram?' ),
 				username
-		  )
+			)
 		: __( 'Connect your WordPress.com account to Telegram?' );
 
 	useEffect( () => {

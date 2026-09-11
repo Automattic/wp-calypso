@@ -121,12 +121,12 @@ export function makeUseMastodonLikeAction( connectionId: number ): UseLikeAction
 						count,
 						args: { count: formatNumber( count ) },
 						textOnly: true,
-				  } )
+					} )
 				: translate( 'Favorite', {
 						textOnly: true,
 						comment:
 							'Accessible label and tooltip for the favorite button on a Mastodon post card when the post has no favorites yet. Verb (Mastodon UI vocabulary; equivalent to "like").',
-				  } );
+					} );
 
 		const statRowText = ( count: number ) =>
 			translate(

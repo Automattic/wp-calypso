@@ -171,11 +171,10 @@ export interface DomainSearchProps {
 	config?: Partial< DomainSearchConfig >;
 }
 
-export interface DomainSearchContextType
-	extends Omit<
-		DomainSearchProps,
-		'className' | 'events' | 'config' | 'getPriceRuleForSuggestion'
-	> {
+export interface DomainSearchContextType extends Omit<
+	DomainSearchProps,
+	'className' | 'events' | 'config' | 'getPriceRuleForSuggestion'
+> {
 	events: DomainSearchEvents;
 	isFullCartOpen: boolean;
 	closeFullCart: () => void;

@@ -81,7 +81,7 @@ export class SocialConnectionsManager {
 	isSimpleConnectionTestUrl( url: URL ) {
 		return Boolean(
 			url.searchParams.get( 'test_connections' ) === '1' &&
-				this.patterns.CONNECTION_TESTS.exec( url.pathname )?.groups?.site_prefix
+			this.patterns.CONNECTION_TESTS.exec( url.pathname )?.groups?.site_prefix
 		);
 	}
 
@@ -93,9 +93,9 @@ export class SocialConnectionsManager {
 
 		return Boolean(
 			url.searchParams.get( 'test_connections' ) === '1' &&
-				match &&
-				// Atomic sites don't have a site prefix in the URL.
-				! match.groups?.site_prefix
+			match &&
+			// Atomic sites don't have a site prefix in the URL.
+			! match.groups?.site_prefix
 		);
 	}
 

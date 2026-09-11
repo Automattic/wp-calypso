@@ -66,7 +66,7 @@ const EnterpriseFeatures = ( { renderedGridPlans, options }: EnterpriseFeaturesP
 							 */
 							rowSpan: enableCategorisedFeatures ? Object.values( featureGroupMap ).length + 2 : 4,
 						} ),
-				  }
+					}
 				: {};
 
 		return (

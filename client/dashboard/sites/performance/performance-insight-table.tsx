@@ -59,7 +59,7 @@ const PerformanceInsightTable = ( {
 
 			const valueType =
 				heading.subItemsHeading && item.__isSubItem
-					? heading.subItemsHeading.valueType ?? heading.valueType
+					? ( heading.subItemsHeading.valueType ?? heading.valueType )
 					: heading.valueType;
 
 			if ( typeof value === 'object' ) {

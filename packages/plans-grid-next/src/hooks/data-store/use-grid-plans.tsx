@@ -515,7 +515,7 @@ const useGridPlans: UseGridPlansType = ( {
 					)
 						? translate(
 								'For businesses and developers who need powerful tools and priority support.'
-						  )
+							)
 						: existingTagline;
 			} else if ( isEcommercePlan( planSlug ) ) {
 				tagline =
@@ -541,7 +541,7 @@ const useGridPlans: UseGridPlansType = ( {
 		// server-provided product name; fall back to its fixed path slug.
 		const productNameShort = isWpcomEnterpriseGridPlan( planSlug )
 			? 'enterprise'
-			: planObject?.productNameShort ?? null;
+			: ( planObject?.productNameShort ?? null );
 
 		// cartItemForPlan done in line here as it's a small piece of logic to pass another selector for
 		const cartItemForPlan =
@@ -549,7 +549,7 @@ const useGridPlans: UseGridPlansType = ( {
 				? null
 				: {
 						product_slug: planSlug,
-				  };
+					};
 
 		const isVisible = isGridPlanVisible( {
 			gridPlanSlug: planSlug,

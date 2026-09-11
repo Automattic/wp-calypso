@@ -24,7 +24,9 @@ const AsyncHelpCenterApp = ( {
 	// When login is required, detect it from the live store rather than the passed prop, which a
 	// caller may have captured before the user authenticated (e.g. signing up mid-onboarding).
 	const reduxCurrentUser = useSelector( getCurrentUser );
-	const currentUser = props.requireLogin ? reduxCurrentUser ?? currentUserProp : currentUserProp;
+	const currentUser = props.requireLogin
+		? ( reduxCurrentUser ?? currentUserProp )
+		: currentUserProp;
 
 	if ( props.requireLogin && ! currentUser ) {
 		return null;

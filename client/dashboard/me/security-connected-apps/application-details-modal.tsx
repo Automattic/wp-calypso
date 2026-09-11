@@ -40,11 +40,11 @@ const getAccessScopeDetails = ( scope: string, site?: { site_name: string; site_
 								siteLink: <ExternalLink href={ site.site_URL }>{ site.site_name }</ExternalLink>,
 							}
 						),
-				  }
+					}
 				: {
 						label: '',
 						value: '',
-				  };
+					};
 	}
 };
 

@@ -72,7 +72,7 @@ export default function BulkEditContactInfoPage( {
 							.filter( ( { domain } ) => selectedDomainsArg.includes( domain ) )
 							.map( ( { blog_id } ) => blog_id )
 					),
-			  ]
+				]
 			: [];
 
 	const allSiteDomains = useQueries( {
@@ -118,9 +118,8 @@ export default function BulkEditContactInfoPage( {
 	);
 
 	const currentRoute = useSelector( getCurrentRoute );
-	const isRequestingWhois = useSelector(
-		( state: IAppState ) =>
-			selectedDomains?.some( ( domain ) => isRequestingWhoisSelector( state, domain.domain ) )
+	const isRequestingWhois = useSelector( ( state: IAppState ) =>
+		selectedDomains?.some( ( domain ) => isRequestingWhoisSelector( state, domain.domain ) )
 	);
 
 	const isDataLoading = () =>

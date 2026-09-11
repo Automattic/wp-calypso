@@ -14,9 +14,7 @@ export const ACTIVATION_EMAIL_SOURCE = 'onboarding-with-email-verification';
 const EXPERIMENT_NAME = 'calypso_signup_onboarding_email_verification_202609';
 
 type EmailVerificationVariant =
-	| 'control'
-	| 'treatment_post_account_creation'
-	| 'treatment_post_plan_selection';
+	'control' | 'treatment_post_account_creation' | 'treatment_post_plan_selection';
 
 /**
  * The assigned arm of the email-verification experiment, defaulting to `control` while the
@@ -34,7 +32,7 @@ function useEmailVerificationVariant( flow: string ): {
 	} );
 
 	const variant = (
-		isLoading ? 'control' : assignment?.variationName ?? 'control'
+		isLoading ? 'control' : ( assignment?.variationName ?? 'control' )
 	) as EmailVerificationVariant;
 
 	return { isLoading, variant };

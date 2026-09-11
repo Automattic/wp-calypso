@@ -48,10 +48,10 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 					? {
 							id: agency.id,
 							pressableId: agency?.third_party?.pressable?.pressable_id,
-					  }
+						}
 					: null,
 				product: 'a4a' as const,
-		  }
+			}
 		: {};
 
 	return (

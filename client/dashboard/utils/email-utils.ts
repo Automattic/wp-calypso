@@ -2,9 +2,7 @@ import { EmailAccount } from '@automattic/api-core';
 import { dashboardLink } from './link';
 
 export type EmailWarningType =
-	| 'google_pending_tos_acceptance'
-	| 'unverified_forwards'
-	| 'unused_mailboxes';
+	'google_pending_tos_acceptance' | 'unverified_forwards' | 'unused_mailboxes';
 
 export function accountHasWarningWithSlug(
 	warningType: EmailWarningType,

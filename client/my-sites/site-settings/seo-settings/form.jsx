@@ -261,7 +261,7 @@ export class SiteSettingsFormSEO extends Component {
 						title: translate( 'Boost your search engine ranking' ),
 						feature: FEATURE_SEO_PREVIEW_TOOLS,
 						href: `/checkout/${ slug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_ADVANCED_SEO ] }`,
-				  }
+					}
 				: {
 						title: translate(
 							'Boost your search engine ranking with the powerful SEO tools in the %(planName)s plan',
@@ -273,7 +273,7 @@ export class SiteSettingsFormSEO extends Component {
 							findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
 								type: upsellPlanType,
 							} ),
-				  };
+					};
 
 		// To ensure two Coming Soon badges don't appear while sites with Coming Soon v1 (isSitePrivate && siteIsComingSoon) still exist.
 		const isPublicComingSoon = ! isSitePrivate && siteIsComingSoon;

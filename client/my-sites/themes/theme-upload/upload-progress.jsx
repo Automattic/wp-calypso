@@ -111,7 +111,7 @@ export default function ThemeUploadProgress( {
 		? {
 				href: localizeUrl( 'https://wordpress.com/support' ),
 				onClick: () => recordCtaClick( 'contact_support' ),
-		  }
+			}
 		: { onClick: openHelpCenter };
 
 	if ( timedOut ) {

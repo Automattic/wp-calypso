@@ -77,10 +77,10 @@ function getHoldMessages( {
 					)
 						? translate(
 								"You'll also get to install custom plugins, have more storage, and access priority 24/7 support."
-						  )
+							)
 						: translate(
 								"You'll also get to install custom plugins, have more storage, and access live support."
-						  );
+							);
 				}
 
 				if ( upsellPersonalPlan ) {
@@ -97,10 +97,10 @@ function getHoldMessages( {
 					)
 						? translate(
 								"You'll also get to install custom themes, have more storage, and access fast support."
-						  )
+							)
 						: translate(
 								"You'll also get to install custom themes, have more storage, and access email support."
-						  );
+							);
 				}
 
 				return hasEnTranslation(
@@ -108,10 +108,10 @@ function getHoldMessages( {
 				)
 					? translate(
 							"You'll also get to install custom themes, have more storage, and access priority 24/7 support."
-					  )
+						)
 					: translate(
 							"You'll also get to install custom themes, have more storage, and access live support."
-					  );
+						);
 			} )(),
 			supportUrl: null,
 		},

@@ -475,9 +475,9 @@ function getFields( {
 				return item.tax_location
 					? `${ item.tax_location.organization ?? '' } ${ item.tax_location.address ?? '' } ${
 							item.tax_location.postal_code ?? ''
-					  } ${ item.tax_location.city ?? '' } ${ item.tax_location.subdivision_code ?? '' } ${
+						} ${ item.tax_location.city ?? '' } ${ item.tax_location.subdivision_code ?? '' } ${
 							item.tax_location.country_code ?? ''
-					  } ${ item.tax_location.is_for_business ? 'business-use' : '' }`
+						} ${ item.tax_location.is_for_business ? 'business-use' : '' }`
 					: 'no-tax-information';
 			},
 			render: ( { item }: { item: StoredPaymentMethod } ) => {

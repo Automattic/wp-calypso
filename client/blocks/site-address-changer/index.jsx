@@ -272,7 +272,7 @@ export class SiteAddressChanger extends Component {
 			? this.props.translate( 'Please check your inbox for a confirmation email.' )
 			: this.props.translate(
 					'You need to confirm your email in order to change the site address.'
-			  );
+				);
 	}
 
 	renderDomainSuffix() {
@@ -402,7 +402,7 @@ export class SiteAddressChanger extends Component {
 										args: { ownerInfo: currentDomain.owner },
 										components: { strong: <strong /> },
 									}
-							  ) }
+								) }
 					</span>
 				</div>
 			);

@@ -70,7 +70,7 @@ export function acceptInvite( context, next ) {
 			blogDetails?.is_garden_site && blogDetails.garden
 				? getPartnerConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
 						persistToSession: true,
-				  } )
+					} )
 				: detectPartnerConfig();
 
 		return (

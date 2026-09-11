@@ -25,7 +25,7 @@ jest.mock( '../../utils/is-am-abilities-disabled', () => ( {
 jest.mock(
 	'@automattic/agenttic-ui',
 	() => {
-		const React = jest.requireActual< typeof import('react') >( 'react' );
+		const React = jest.requireActual< typeof import( 'react' ) >( 'react' );
 
 		function MockContainer( {
 			children,

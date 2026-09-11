@@ -13,12 +13,7 @@ import type { BrandPack } from '../brandPacks/types';
 // layout directions; no LLM call from the browser anymore.
 
 export type CampaignGoal =
-	| 'drive-read'
-	| 'announce'
-	| 'promote-offer'
-	| 'event'
-	| 'case-study'
-	| 'sales-enable';
+	'drive-read' | 'announce' | 'promote-offer' | 'event' | 'case-study' | 'sales-enable';
 
 export type CampaignBrief = {
 	sourceTitle: string;
@@ -131,7 +126,7 @@ export function campaignBriefFromManual( fields: ManualCampaignFields ): Campaig
 						label: clampPhrase( fields.statContext || '', 36 ),
 						context: truncate( fields.statContext || title, 90 ),
 					},
-			  ]
+				]
 			: [],
 		ctas: fields.cta ? [ truncate( fields.cta, 22 ) ] : [],
 	};
@@ -330,8 +325,8 @@ function scoreFamily( family: BeaLayoutFamily, signals: BeaSignals ): FamilyScor
 			family.id.startsWith( 'square-' )
 				? 'locked square layout'
 				: family.id.startsWith( 'story-' )
-				? 'locked story layout'
-				: 'locked horizontal layout'
+					? 'locked story layout'
+					: 'locked horizontal layout'
 		);
 	}
 

@@ -193,9 +193,9 @@ export function StylePicker( { disabled = false, mode, variant = 'image' }: Styl
 							label: __( 'Highlights (a12s only)', __i18n_text_domain__ ),
 							preview: videoHighlightsPreview,
 							disabled: false,
-					  }
+						}
 					: opt
-		  )
+			)
 		: STYLE_OPTIONS;
 
 	const handleStyleSelect = ( value: string ) => {

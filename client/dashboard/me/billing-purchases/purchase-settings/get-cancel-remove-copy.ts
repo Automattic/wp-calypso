@@ -140,11 +140,11 @@ function getRemoveDescription(
 						// translators: %(productName)s is a product name like "Jetpack Stats"
 						__( 'Get a refund and remove %(productName)s immediately.' ),
 						{ productName }
-				  )
+					)
 				: sprintf(
 						// translators: %(productName)s is a product name like "Jetpack Stats"
 						__( '%(productName)s will be removed immediately.' ),
 						{ productName }
-				  );
+					);
 	}
 }

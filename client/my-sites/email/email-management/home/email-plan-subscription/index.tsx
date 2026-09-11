@@ -68,13 +68,13 @@ export const EmailPlanSubscription = ( {
 						formattedRenewalPrice,
 					},
 					comment: 'Shows the renews date and price of the email subscription',
-			  } )
+				} )
 			: translate( 'Expires on %(expiryDate)s.', {
 					args: {
 						expiryDate: moment( purchase.expiry_date ).format( 'LL' ),
 					},
 					comment: 'Shows the expiry date of the email subscription',
-			  } );
+				} );
 	};
 
 	return (

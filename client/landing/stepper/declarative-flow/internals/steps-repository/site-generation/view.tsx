@@ -109,11 +109,11 @@ function ElapsedTime( { startedAt }: { startedAt: number } ) {
 			? translate( '%(minutes)dm %(seconds)ds', {
 					args: { minutes, seconds },
 					comment: 'Short elapsed duration. “m” means minutes and “s” means seconds.',
-			  } )
+				} )
 			: translate( '%(seconds)ds', {
 					args: { seconds },
 					comment: 'Short elapsed duration. “s” means seconds.',
-			  } );
+				} );
 	const elapsedTimeLabel = translate( 'Elapsed time: %(elapsedTime)s', {
 		args: { elapsedTime: String( elapsedTime ) },
 	} );

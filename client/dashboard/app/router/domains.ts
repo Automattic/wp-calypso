@@ -563,12 +563,12 @@ export const domainTransferSetupRoute = createRoute( {
 				createLazyRoute( 'domain-transfer-setup' )( {
 					component: d.default,
 				} )
-		  )
+			)
 		: import( '../../domains/domain-connection-setup/legacy-transfer-setup' ).then( ( d ) =>
 				createLazyRoute( 'domain-transfer-setup' )( {
 					component: d.default,
 				} )
-		  )
+			)
 );
 
 export const domainTransferRoute = createRoute( {

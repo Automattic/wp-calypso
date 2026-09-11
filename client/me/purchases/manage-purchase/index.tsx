@@ -1198,10 +1198,10 @@ class ManagePurchase extends Component<
 			const description = isTitanMail( purchase )
 				? translate(
 						'Integrated email solution with powerful features. Manage your email and more on any device.'
-				  )
+					)
 				: translate(
 						'Business email with Gmail. Includes other collaboration and productivity tools from Google.'
-				  );
+					);
 
 			if ( purchase.renewal_price_tier_usage_quantity ) {
 				return (
@@ -1687,7 +1687,7 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 						{ numberOfIncludedPages === 1
 							? translate(
 									'A professionally built single page website in 4 business days or less.'
-							  )
+								)
 							: translate(
 									'A professionally built %(numberOfIncludedPages)s-page website in 4 business days or less.',
 									{
@@ -1695,7 +1695,7 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 											numberOfIncludedPages,
 										},
 									}
-							  ) }{ ' ' }
+								) }{ ' ' }
 						{ extraPageCount > 0
 							? translate(
 									'This purchase includes %(numberOfPages)d extra page.',
@@ -1706,7 +1706,7 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 											numberOfPages: extraPageCount,
 										},
 									}
-							  )
+								)
 							: null }
 					</div>
 					<div>
@@ -1718,7 +1718,7 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 											BBESupportLink,
 										},
 									}
-							  )
+								)
 							: translate(
 									'{{FormLink}}Submit content{{/FormLink}} for your website build or {{BBESupportLink}}contact us{{/BBESupportLink}} with any questions about your project.',
 									{
@@ -1731,7 +1731,7 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 											BBESupportLink,
 										},
 									}
-							  ) }
+								) }
 					</div>
 				</>
 			) }

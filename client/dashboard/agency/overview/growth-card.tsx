@@ -179,7 +179,7 @@ function getPremierContent(
 						actionLabel: __( 'Review sites' ),
 						href: links.sites,
 						requiredCapability: 'a4a_read_managed_sites',
-				  }
+					}
 				: {
 						id: 'partner-directory',
 						icon: globe,
@@ -190,7 +190,7 @@ function getPremierContent(
 						actionLabel: __( 'Set up listing' ),
 						href: links.partnerDirectory,
 						requiredCapability: 'a4a_read_partner_directory',
-				  },
+					},
 			{
 				id: 'set-up-woopayments',
 				icon: payment,

@@ -66,7 +66,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const domainItem = dependencies.domainItem
 		? prepareItemForAddingToCart(
 				addPrivacyProtectionIfSupported( dependencies.domainItem, reduxState )
-		  )
+			)
 		: null;
 
 	if ( designType === 'domain' ) {
@@ -822,7 +822,7 @@ export function createAccount(
 							message: error.message,
 							...emailInError,
 						},
-				  ]
+					]
 				: undefined;
 
 		if ( errors ) {
@@ -935,7 +935,7 @@ export function createAccount(
 							// url of the WordPress.com authorize page for this OAuth2 client
 							// convert to legacy oauth2_redirect format: %s@https://public-api.wordpress.com/oauth2/authorize/...
 							oauth2_redirect: queryArgs.oauth2_redirect && '0@' + queryArgs.oauth2_redirect,
-					  }
+						}
 					: null,
 				recaptchaDidntLoad ? { 'g-recaptcha-error': 'recaptcha_didnt_load' } : null,
 				recaptchaFailed ? { 'g-recaptcha-error': 'recaptcha_failed' } : null,

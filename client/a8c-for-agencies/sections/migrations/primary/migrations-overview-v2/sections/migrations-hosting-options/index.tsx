@@ -116,7 +116,7 @@ export default function MigrationsHostingOptions() {
 								! isAgencyApproved
 									? translate(
 											'Your agency is not yet approved. Please wait for approval before creating a development site.'
-									  )
+										)
 									: undefined
 							}
 						>

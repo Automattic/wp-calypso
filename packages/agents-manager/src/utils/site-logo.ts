@@ -38,7 +38,7 @@ export function getSiteLogo(): SiteLogo | undefined {
 		'site'
 	);
 
-	return site ? site.site_logo ?? null : undefined;
+	return site ? ( site.site_logo ?? null ) : undefined;
 }
 
 /**

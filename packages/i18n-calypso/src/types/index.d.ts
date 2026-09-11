@@ -19,9 +19,7 @@ type ExistingReactNode = React.ReactElement | string | number;
 export type Substitution = ExistingReactNode;
 
 export type Substitutions =
-	| Substitution
-	| Substitution[]
-	| { [ placeholder: string ]: Substitution };
+	Substitution | Substitution[] | { [ placeholder: string ]: Substitution };
 
 export interface ComponentInterpolations {
 	[ placeholder: string ]: React.ReactElement;

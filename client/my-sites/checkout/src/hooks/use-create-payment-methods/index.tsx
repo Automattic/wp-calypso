@@ -109,7 +109,7 @@ export function useCreateCreditCard( {
 						submitButtonContent,
 						allowUseForAllSubscriptions,
 						hasExistingCardMethods,
-				  } )
+					} )
 				: null,
 		[
 			currency,
@@ -158,7 +158,7 @@ function useCreateAlipay( {
 			shouldLoad
 				? createAlipayMethod( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
+					} )
 				: null,
 		[ shouldLoad ]
 	);
@@ -177,7 +177,7 @@ function useCreateP24( {
 			shouldLoad
 				? createP24Method( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
+					} )
 				: null,
 		[ shouldLoad ]
 	);
@@ -196,7 +196,7 @@ function useCreateBancontact( {
 			shouldLoad
 				? createBancontactMethod( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
+					} )
 				: null,
 		[ shouldLoad ]
 	);
@@ -226,7 +226,7 @@ function useCreateIdeal( {
 			shouldLoad
 				? createIdealMethod( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
+					} )
 				: null,
 		[ shouldLoad ]
 	);
@@ -248,7 +248,7 @@ function useCreateBlik( {
 			shouldLoad
 				? createBlikMethod( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
+					} )
 				: null,
 		[ shouldLoad ]
 	);
@@ -267,7 +267,7 @@ function useCreateSofort( {
 			shouldLoad
 				? createSofortMethod( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
+					} )
 				: null,
 		[ shouldLoad ]
 	);
@@ -286,7 +286,7 @@ function useCreateEps( {
 			shouldLoad
 				? createEpsMethod( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
+					} )
 				: null,
 		[ shouldLoad ]
 	);
@@ -357,7 +357,7 @@ function useCreateStripeUpi( {
 			shouldLoad
 				? createStripeUpiMethod( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
+					} )
 				: null,
 		[ shouldLoad ]
 	);

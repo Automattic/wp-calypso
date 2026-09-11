@@ -142,7 +142,7 @@ export function UpcomingRenewalsDialog( {
 								<CardDivider />
 								<CheckboxControl
 									__nextHasNoMarginBottom
-									label={ item.is_domain ? item.meta ?? '' : item.product_name }
+									label={ item.is_domain ? ( item.meta ?? '' ) : item.product_name }
 									help={ getRenewalDescription( item, locale, hasEnTranslation ) }
 									checked={ selection.includes( id ) }
 									onChange={ () => {

@@ -23,7 +23,7 @@ export default function DesktopLoginFinalize( props: Props ) {
 	const { accessToken } = props;
 	const [ username, setUsername ] = useState< string >();
 	const [ error, setError ] = useState< string | undefined >(
-		props.error ?? ! accessToken ? 'Access token is missing' : undefined
+		( props.error ?? ! accessToken ) ? 'Access token is missing' : undefined
 	);
 
 	if ( error ) {

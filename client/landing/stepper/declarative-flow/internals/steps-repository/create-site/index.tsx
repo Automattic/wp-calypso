@@ -368,7 +368,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 					isPlaygroundPublish ? 'playground-publish' : undefined,
 					undefined, // provisionTarget
 					launchpadPersonalizationVariation === 'ai_launchpad'
-			  );
+				);
 
 		if ( ! site ) {
 			throw new Error( 'Failed to create site' );

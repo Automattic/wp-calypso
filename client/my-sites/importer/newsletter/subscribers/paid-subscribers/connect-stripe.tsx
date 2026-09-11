@@ -99,7 +99,7 @@ export default function ConnectStripe( {
 									text: 'Continue with free subscribers',
 									newCopy: __( 'Continue with free subscribers' ),
 									oldCopy: __( 'I have only free subscribers' ),
-							  } ) as string )
+								} ) as string )
 					}
 				/>
 			</ImporterActionButtonContainer>

@@ -30,7 +30,8 @@ export function useSubscriptionDetails( subscription: Subscription ) {
 	const productName = useMemo( () => {
 		return isBillingTypeBD && storeSubscription?.product_name
 			? storeSubscription.product_name
-			: products?.find( ( product ) => product.product_id === subscription.product_id )?.name ?? '';
+			: ( products?.find( ( product ) => product.product_id === subscription.product_id )?.name ??
+					'' );
 	}, [ isBillingTypeBD, storeSubscription?.product_name, products, subscription.product_id ] );
 
 	const expiryDate = useMemo( () => {
@@ -127,7 +128,7 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 	// If subscription.subscription exists but is_auto_renew_enabled is null/undefined, default to true (show the button)
 	// TODO: Later we might show added details and the ability to actually remove a cancelled subscription that has auto-renew disabled, like on the WPCOM side.
 	const isAutoRenewEnabled = subscription.subscription
-		? subscription.subscription.is_auto_renew_enabled ?? true
+		? ( subscription.subscription.is_auto_renew_enabled ?? true )
 		: true;
 
 	return (
@@ -181,7 +182,7 @@ function A4ACancelSubscriptionContent( { subscription }: { subscription: Subscri
 									comment:
 										'%(productName)s is the name of the product that the user is about to cancel.',
 								}
-						  )
+							)
 						: translate(
 								'{{b}}%(productName)s{{/b}} will be canceled, but it will remain active until {{b}}%(expiryDate)s{{/b}}. After that, it will not renew',
 								{
@@ -195,7 +196,7 @@ function A4ACancelSubscriptionContent( { subscription }: { subscription: Subscri
 									comment:
 										'%(productName)s is the name of the product that the user is about to cancel.',
 								}
-						  ) }
+							) }
 				</div>
 				<p>{ translate( 'Are you sure you want to cancel?' ) }</p>
 				<p>

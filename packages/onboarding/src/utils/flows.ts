@@ -75,7 +75,7 @@ export const isTransferringHostedSiteCreationFlow = ( flowName: string | null ) 
 export const isAnyHostingFlow = ( flowName?: string | null ) => {
 	return Boolean(
 		flowName &&
-			[ HOSTING_LP_FLOW, NEW_HOSTED_SITE_FLOW, TRANSFERRING_HOSTED_SITE_FLOW ].includes( flowName )
+		[ HOSTING_LP_FLOW, NEW_HOSTED_SITE_FLOW, TRANSFERRING_HOSTED_SITE_FLOW ].includes( flowName )
 	);
 };
 

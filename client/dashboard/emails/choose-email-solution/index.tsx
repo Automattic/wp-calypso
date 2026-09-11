@@ -329,7 +329,7 @@ export default function ChooseEmailSolution() {
 									<>
 										<HStack alignment="bottomLeft">
 											<PriceDisplay
-												price={ provider.hasFreeTrial ? 0 : provider.product?.cost ?? 0 }
+												price={ provider.hasFreeTrial ? 0 : ( provider.product?.cost ?? 0 ) }
 												currency={ provider.product?.currency_code ?? 'USD' }
 											/>
 											{ provider.hasFreeTrial && (
@@ -352,7 +352,7 @@ export default function ChooseEmailSolution() {
 															/* translators: %d is the number of free trial months. */
 															__( '%d month free trial' ),
 															provider.trialMonths
-													  )
+														)
 													: __( '3 month free trial' ) }
 											</div>
 										) }

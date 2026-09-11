@@ -66,7 +66,7 @@ export default function NewReferralOrderNotification( {
 					( flowType === 'send'
 						? translate( 'Referral sent to %(referralEmail)s', {
 								args: { referralEmail: referralOrderEmail },
-						  } )
+							} )
 						: translate( 'The referral link has been copied to your clipboard!' ) ) as string
 				}
 			>

@@ -62,7 +62,7 @@ jest.mock( '../utils/upload-annotation', () => ( {
 
 const { uploadAnnotation: mockUploadAnnotation } = jest.requireMock(
 	'../utils/upload-annotation'
-) as jest.Mocked< typeof import('../utils/upload-annotation') >;
+) as jest.Mocked< typeof import( '../utils/upload-annotation' ) >;
 
 jest.mock( '../utils/tracking', () => ( {
 	trackImageStudioAnnotationSave: jest.fn(),
@@ -72,7 +72,7 @@ jest.mock( '../utils/tracking', () => ( {
 } ) );
 
 const trackingMocks = jest.requireMock( '../utils/tracking' ) as jest.Mocked<
-	typeof import('../utils/tracking')
+	typeof import( '../utils/tracking' )
 >;
 const {
 	trackImageStudioAnnotationSave: mockTrackImageStudioAnnotationSave,

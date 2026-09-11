@@ -411,8 +411,8 @@ function recordFormSubmitEvent( {
 		? recordTracksEvent( 'calypso_purchases_credit_card_form_submit', {
 				product_slug: purchase.product_slug,
 				use_for_all_subs: String( useForAllSubscriptions ),
-		  } )
+			} )
 		: recordTracksEvent( 'calypso_add_credit_card_form_submit', {
 				use_for_all_subs: String( useForAllSubscriptions ),
-		  } );
+			} );
 }

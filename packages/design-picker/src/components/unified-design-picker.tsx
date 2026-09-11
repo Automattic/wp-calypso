@@ -425,7 +425,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 								? translate( '%s themes', {
 										args: getCategoryName( categorySlug ),
 										comment: '%s will be a name of the theme category. e.g. Blog.',
-								  } )
+									} )
 								: ''
 						}
 						category={ categorySlug }

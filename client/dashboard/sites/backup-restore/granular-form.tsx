@@ -73,10 +73,10 @@ function SiteBackupGranularRestoreForm( {
 	const restoreWarning = hasSelectedTables
 		? __(
 				'This action will replace all settings, posts, pages and other site content with the information from the selected restore point.'
-		  )
+			)
 		: __(
 				'This action will replace the selected content with the content from the selected restore point.'
-		  );
+			);
 
 	return (
 		<form onSubmit={ handleSubmit }>

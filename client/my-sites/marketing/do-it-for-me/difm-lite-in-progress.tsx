@@ -96,7 +96,7 @@ function WebsiteContentSubmissionPending( { siteId, siteSlug }: Props ) {
 						contentSubmissionDueDate: moment( contentSubmissionDueDate ).format( 'MMMM Do, YYYY' ),
 					},
 				}
-		  )
+			)
 		: translate( 'Click the button below to provide the content we need to build your site.' );
 
 	return (

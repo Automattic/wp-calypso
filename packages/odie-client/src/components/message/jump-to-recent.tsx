@@ -17,8 +17,8 @@ export const JumpToRecent = ( {
 	const [ needsScrolling, setNeedsScrolling ] = useState(
 		Boolean(
 			scrollParent &&
-				scrollParent.scrollTop + scrollParent.offsetHeight <
-					scrollParent.scrollHeight - SCROLL_THRESHOLD
+			scrollParent.scrollTop + scrollParent.offsetHeight <
+				scrollParent.scrollHeight - SCROLL_THRESHOLD
 		)
 	);
 

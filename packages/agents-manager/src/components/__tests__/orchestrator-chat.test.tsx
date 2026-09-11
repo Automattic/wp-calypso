@@ -102,8 +102,7 @@ function mockGetCheckpointIdForMessage( message: {
 
 const mockCheckpointActions = () => {
 	let getCheckpointActionState:
-		| ( ( checkpointId: string ) => 'disabled' | 'enabled' | 'hidden' )
-		| undefined;
+		( ( checkpointId: string ) => 'disabled' | 'enabled' | 'hidden' ) | undefined;
 	const getActions = ( message: { content?: Array< { text?: string } > } ) => {
 		const checkpointId = mockGetCheckpointIdForMessage( message );
 		if ( ! checkpointId ) {
@@ -112,7 +111,7 @@ const mockCheckpointActions = () => {
 
 		const actionState = mockInvalidatedCheckpointIds.has( checkpointId )
 			? 'hidden'
-			: getCheckpointActionState?.( checkpointId ) ?? 'enabled';
+			: ( getCheckpointActionState?.( checkpointId ) ?? 'enabled' );
 		const canAct = actionState === 'enabled';
 		const isReverted = mockRevertedCheckpointIds.has( checkpointId );
 		const showDisabledAction = actionState === 'disabled';
@@ -303,7 +302,8 @@ jest.mock(
 	{ virtual: true }
 );
 jest.mock( '@wordpress/data', () => {
-	const { useEffect, useReducer, useRef } = jest.requireActual< typeof import('react') >( 'react' );
+	const { useEffect, useReducer, useRef } =
+		jest.requireActual< typeof import( 'react' ) >( 'react' );
 
 	return {
 		select: ( storeName: string ) => mockSelectDataStore( storeName ),
@@ -3201,7 +3201,7 @@ describe( 'OrchestratorChat', () => {
 								onClick: onRegenerate,
 								disabled: ! options.isLatestAgentMessage,
 							},
-					  ]
+						]
 					: []
 		);
 		mockUseAgentChat.mockReturnValue(

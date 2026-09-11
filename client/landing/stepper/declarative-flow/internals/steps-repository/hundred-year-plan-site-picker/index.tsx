@@ -211,12 +211,12 @@ const ConfirmationModal = ( {
 										components: {
 											ChatLink: <Button variant="link" onClick={ openHelpCenter } />,
 										},
-								  } )
+									} )
 								: translate( 'Need help? {{ChatLink}}Chat with us{{/ChatLink}}', {
 										components: {
 											ChatLink: <Button variant="link" onClick={ openHelpCenter } />,
 										},
-								  } ) }
+									} ) }
 						</HelpLink>
 						<ButtonsContainer>
 							<StyledButton variant="secondary" onClick={ closeModal }>

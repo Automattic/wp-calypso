@@ -15,7 +15,7 @@ export default localize( ( { isJetpack, translate } ) => {
 					? {
 							href: localizeUrl( 'https://jetpack.com/support/pay-with-paypal/' ),
 							target: '_blank',
-					  }
+						}
 					: { supportContext: 'sell-online-paypal' } ) }
 				icon={ <img alt="" src={ paymentsImage } /> }
 				title={ translate( 'Sell online with PayPal' ) }

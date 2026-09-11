@@ -57,7 +57,7 @@ const createFields = ( users: WpcomSiteUser[] ): Field< TransferFormData >[] => 
 							value: getWpcomUserId( user ),
 							label: getUserDisplayName( user ),
 						} ) ),
-				  ]
+					]
 				: [ { value: '', label: '--' + __( 'Site has no other administrators' ) + '--' } ],
 		isValid: {
 			required: true,
@@ -219,10 +219,10 @@ export default function TransferDomainToOtherUser() {
 							isMapping
 								? __(
 										'Do you want to transfer the domain connection of <domainName/> to <selectedUserDisplay/>?'
-								  )
+									)
 								: __(
 										'Do you want to transfer the ownership of <domainName/> to <selectedUserDisplay/>?'
-								  ),
+									),
 							{
 								domainName: <strong>{ domainName }</strong>,
 								selectedUserDisplay: (

@@ -92,11 +92,11 @@ const DataCenterPicker = ( {
 							? translate(
 									'For redundancy, your site will be replicated in real-time to another region. {{supportLink}}Learn more{{/supportLink}}.',
 									{ components: { supportLink } }
-							  )
+								)
 							: translate(
 									'For redundancy, your site will replicate in real-time to a second data center in a different region. {{supportLink}}Learn more{{/supportLink}}.',
 									{ components: { supportLink } }
-							  )
+								)
 					}
 					options={ AllDataCenterOptions.map( ( option ) => ( {
 						label: option.label,

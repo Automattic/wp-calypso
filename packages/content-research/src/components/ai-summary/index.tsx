@@ -230,7 +230,7 @@ export default function AiSummary( {
 						/* translators: %d: number of selected articles */
 						__( 'Summarize selected (%d)', 'content-research' ),
 						selectedCount
-				  )
+					)
 				: __( 'Summarize', 'content-research' );
 		return (
 			<div className="content-research-ai-summary">

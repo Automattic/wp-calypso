@@ -622,7 +622,7 @@ class Signup extends Component {
 			const signupDomainOriginValue =
 				isTransfer || isMapping
 					? SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN
-					: signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET;
+					: ( signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET );
 
 			recordSignupComplete( {
 				flow: this.props.flowName,

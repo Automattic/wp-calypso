@@ -37,7 +37,7 @@ const CloudCart = ( { cartStyle }: { cartStyle?: React.CSSProperties } ) => {
 			responseCart.products.length > 1
 				? {
 						redirect_to: `https://${ siteSlug }/wp-admin/admin.php?${ pageParam }`,
-				  }
+					}
 				: undefined;
 
 		window.location.href = buildCheckoutURL( siteSlug, '', buildUrlParams );

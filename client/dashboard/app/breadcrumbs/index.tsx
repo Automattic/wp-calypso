@@ -26,8 +26,7 @@ export default function Breadcrumbs( { length, onItemClick }: BreadcrumbsProps )
 			const title = match.meta?.find( ( meta ) => meta?.title )?.title;
 			const breadcrumbHref = (
 				match.meta?.find( ( meta ) => ( meta as Record< string, unknown > )?.breadcrumbHref ) as
-					| Record< string, string >
-					| undefined
+					Record< string, string > | undefined
 			 )?.breadcrumbHref;
 			const href = breadcrumbHref ?? match.pathname;
 			return {

@@ -106,13 +106,13 @@ export default function SubscriptionsContentWrapper() {
 									),
 								},
 							}
-					  )
+						)
 					: translate(
 							'Your %(productNoun)s has been removed. You\u2019ll receive a confirmation email shortly.',
 							{
 								args: { productNoun: removedNoticeData.productNoun },
 							}
-					  ) }
+						) }
 			</Notice>
 		) : null;
 

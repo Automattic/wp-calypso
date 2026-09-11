@@ -393,7 +393,7 @@ const Settings = ( {
 									? domainMappingSetup( selectedSite.slug, selectedDomainName, mappingSetupStep )
 									: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute, {
 											nameservers: true,
-									  } )
+										} )
 							}
 						/>
 					),
@@ -412,7 +412,7 @@ const Settings = ( {
 									? domainMappingSetup( selectedSite.slug, selectedDomainName, mappingSetupStep )
 									: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute, {
 											nameservers: true,
-									  } )
+										} )
 							}
 						/>
 					),

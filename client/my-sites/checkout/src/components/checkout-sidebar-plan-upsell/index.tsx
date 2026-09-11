@@ -38,7 +38,7 @@ function getUpsellVariant( currentVariant: WPCOMProductVariant, variants: WPCOMP
 function getUpsellTextForVariant(
 	upsellVariant: WPCOMProductVariant,
 	percentSavings: number,
-	__: typeof import('@wordpress/i18n').__
+	__: typeof import( '@wordpress/i18n' ).__
 ) {
 	if ( upsellVariant.productBillingTermInMonths === 12 ) {
 		// translators: %(percentSavings)d%% is the savings percentage for the upgrade as a number, like '20' for '20%'.

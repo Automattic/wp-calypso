@@ -211,12 +211,12 @@ const fileLoader = FileConfig.loader(
 		? {
 				publicPath: `/calypso/${ extraPath }/`,
 				outputPath: 'images/',
-		  }
+			}
 		: {
 				// Build off `outputPath` for a result like `/…/public/evergreen/../images/`.
 				publicPath: '/calypso/images/',
 				outputPath: '../images/',
-		  }
+			}
 );
 
 const filePaths = {
@@ -468,7 +468,7 @@ const webpackConfig = {
 							infrastructureLogging: {
 								debug: /webpack\.cache/,
 							},
-					  }
+						}
 					: {} ),
 				snapshot: {
 					managedPaths: [
@@ -476,7 +476,7 @@ const webpackConfig = {
 						path.resolve( __dirname, 'node_modules' ),
 					],
 				},
-		  }
+			}
 		: {} ),
 
 	experiments: {

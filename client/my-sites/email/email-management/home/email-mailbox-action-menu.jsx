@@ -131,7 +131,7 @@ const getGSuiteMenuItems = ( { account, mailbox, translate } ) => {
 						title: translate( 'View Admin' ),
 						onClick: getGoogleClickHandler( 'admin' ),
 					},
-			  ]
+				]
 			: [] ),
 		{
 			href: getGoogleCalendarUrl( email ),

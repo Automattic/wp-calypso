@@ -136,7 +136,7 @@ export function ShelfFeed( { shelf, onRetryShelf, variant = 'feed', onAddSources
 	const [ scrollElement, setScrollElement ] = useState< HTMLElement | null >( null );
 	const setViewport = useCallback( ( element: HTMLDivElement | null ) => {
 		setScrollElement(
-			element ? element.closest< HTMLElement >( '.layout__primary > div' ) ?? element : null
+			element ? ( element.closest< HTMLElement >( '.layout__primary > div' ) ?? element ) : null
 		);
 	}, [] );
 	const Layout = getLayout( layout );

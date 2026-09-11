@@ -69,16 +69,16 @@ class StatsActionSpam extends Component {
 			: this.props.translate( 'Mark as Spam', {
 					context: 'Stats: Action to mark an item as spam',
 					comment: 'Default label (changes into "Mark as Not Spam").',
-			  } );
+				} );
 		const title = this.state.spammed
 			? this.props.translate( 'Mark as Not Spam', {
 					textOnly: true,
 					context: 'Stats: Action to undo marking an item as spam',
-			  } )
+				} )
 			: this.props.translate( 'Mark as Spam', {
 					textOnly: true,
 					context: 'Stats: Action to mark an item as spam',
-			  } );
+				} );
 
 		const wrapperClass = clsx( 'module-content-list-item-action-wrapper', 'is-link', {
 			spam: ! this.state.spammed,

@@ -229,8 +229,7 @@ const domainUpsell: Flow = {
 					}
 
 					const domainCartItem = providedDependencies.domainCartItem as
-						| MinimalRequestCartProduct
-						| undefined;
+						MinimalRequestCartProduct | undefined;
 
 					if ( ! domainCartItem ) {
 						return navigate( STEPS.PLANS.slug );

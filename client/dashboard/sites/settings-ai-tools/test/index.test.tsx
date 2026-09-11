@@ -80,7 +80,7 @@ function seedQueries(
 							site_level_enabled: true,
 							abilities: {},
 						},
-				  ]
+					]
 				: [],
 		},
 	} as UserSettings );

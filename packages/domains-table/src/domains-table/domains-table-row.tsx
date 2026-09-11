@@ -101,7 +101,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 				isAllSitesView,
 				selectedFeature,
 				isHostingOverview
-		  )
+			)
 		: '';
 
 	const renderOwnerCell = () => {

@@ -177,7 +177,7 @@ class SiteOwnership extends Component {
 											strong: <strong />,
 										},
 									}
-							  ) }
+								) }
 					</FormSettingExplanation>
 				) }
 				{ userIsConnectionOwner && this.renderCurrentUserDropdown() }

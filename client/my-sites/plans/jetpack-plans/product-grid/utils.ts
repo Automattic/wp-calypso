@@ -29,7 +29,7 @@ export const getPlansToDisplay = ( {
 		? findPlansKeys( {
 				type: currentPlan.type,
 				group: currentPlan.group,
-		  } )
+			} )
 		: [];
 
 	let planSlugsToDisplay = SELECTOR_PLANS;

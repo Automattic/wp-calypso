@@ -52,12 +52,12 @@ export function useRateArticle() {
 						apiNamespace: 'wpcom/v2',
 						method: 'POST',
 						body,
-				  } )
+					} )
 				: apiFetch( {
 						path: '/help-center/article-rating',
 						method: 'POST',
 						data: body,
-				  } );
+					} );
 		},
 		onMutate: ( { blogId, postId, rating } ) => {
 			const key = sessionKey( blogId, postId );

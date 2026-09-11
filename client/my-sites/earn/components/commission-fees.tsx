@@ -38,7 +38,7 @@ const CommissionFees = ( {
 		? 'https://jetpack.com/creator/#pricing'
 		: addQueryArgs( `https://wordpress.com/plans/${ siteSlug ? siteSlug : '' }`, {
 				redirect_to: getUpsellReturnUrl(),
-		  } );
+			} );
 
 	const upgradeLink =
 		commission === 0 || isPlan100YearPlan ? null : (

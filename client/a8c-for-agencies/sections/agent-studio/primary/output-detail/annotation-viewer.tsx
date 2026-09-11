@@ -118,7 +118,7 @@ function AnnotationToolbar( {
 							/* translators: %d is the number of notes collected so far. */
 							_n( '%d note', '%d notes', noteCount ),
 							noteCount
-					  )
+						)
 					: __( 'Click anything on a page to leave a note. The cover can’t be edited.' ) }
 			</span>
 			<Button size="small" variant="tertiary" onClick={ onCancel }>

@@ -70,7 +70,7 @@ export default function ReferralLogo( { onChange }: Props ) {
 		onChange( {
 			option: logoOption,
 			// Only send logoUrl when "different" is chosen; omit for profile logo.
-			logoUrl: logoOption === 'different' ? logoPreviewUrl ?? agencyReferralsLogoUrl : null,
+			logoUrl: logoOption === 'different' ? ( logoPreviewUrl ?? agencyReferralsLogoUrl ) : null,
 			file: logoOption === 'different' ? selectedLogoFile : null,
 		} );
 	}, [ logoOption, logoPreviewUrl, agencyReferralsLogoUrl, onChange, selectedLogoFile ] );

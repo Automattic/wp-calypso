@@ -318,10 +318,10 @@ const UnifiedDesignPickerPreview = ( {
 		const destination = selectedDesign?.is_externally_managed
 			? addQueryArgs( `/marketplace/thank-you/${ wpcomSiteSlug ?? siteSlug }?onboarding`, {
 					themes: selectedDesign?.slug,
-			  } )
+				} )
 			: addQueryArgs( window.location.href.replace( window.location.origin, '' ), {
 					continue: 1,
-			  } );
+				} );
 
 		goToCheckout( {
 			flowName: flow,
@@ -562,8 +562,8 @@ const UnifiedDesignPickerPreview = ( {
 		navigatorRef,
 		previewUrl: themeDemoUrl || previewUrl,
 		siteInfo: {
-			title: shouldCustomizeText ? site?.name ?? '' : '',
-			tagline: shouldCustomizeText ? site?.description ?? '' : '',
+			title: shouldCustomizeText ? ( site?.name ?? '' ) : '',
+			tagline: shouldCustomizeText ? ( site?.description ?? '' ) : '',
 		},
 		splitDefaultVariation:
 			selectedDesign?.design_tier === THEME_TIER_FREE && shouldLimitGlobalStyles,

@@ -4,8 +4,8 @@ import { matchPath } from 'react-router';
 export const DEFAULT_FLOW = ONBOARDING_FLOW;
 
 export const getFlowFromURL = ( pathname?: string, search?: string ) => {
-	pathname ??= typeof window !== 'undefined' ? window.location.pathname ?? '' : '';
-	search ??= typeof window !== 'undefined' ? window.location.search ?? '' : '';
+	pathname ??= typeof window !== 'undefined' ? ( window.location.pathname ?? '' ) : '';
+	search ??= typeof window !== 'undefined' ? ( window.location.search ?? '' ) : '';
 
 	const fromPath = matchPath( { path: '/setup/:flow/*' }, pathname )?.params?.flow;
 	// backward support the old Stepper URL structure (?flow=something)

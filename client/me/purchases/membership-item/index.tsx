@@ -33,7 +33,7 @@ export const MembershipTerms = ( { subscription }: { subscription: MembershipSub
 							},
 							context:
 								'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
-					  } ) }
+						} ) }
 			</span>
 		);
 	}
@@ -45,13 +45,13 @@ export const MembershipTerms = ( { subscription }: { subscription: MembershipSub
 						args: {
 							date: endDate.format( 'LL' ),
 						},
-				  } )
+					} )
 				: translate( 'Renews at %(amount)s on %(date)s', {
 						args: {
 							amount: formatCurrency( Number( subscription.renewal_price ), subscription.currency ),
 							date: endDate.format( 'LL' ),
 						},
-				  } ) }
+					} ) }
 		</>
 	);
 };

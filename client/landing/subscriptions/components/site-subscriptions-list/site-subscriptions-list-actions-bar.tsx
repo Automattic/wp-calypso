@@ -64,7 +64,7 @@ const ListActionsBar = () => {
 									reason: disabledReasonText,
 								},
 								textOnly: true,
-						  } )
+							} )
 						: undefined
 				}
 			/>
@@ -82,7 +82,7 @@ const ListActionsBar = () => {
 									reason: disabledReasonText,
 								},
 								textOnly: true,
-						  } )
+							} )
 						: undefined
 				}
 				title={ isSortDisabled ? disabledReasonText : undefined }

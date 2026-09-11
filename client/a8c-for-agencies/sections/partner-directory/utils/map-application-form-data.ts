@@ -74,7 +74,7 @@ const normalizeValues = ( values: string[] | undefined, allowedValues: Set< stri
 	Array.from( new Set( ( values ?? [] ).filter( ( value ) => allowedValues.has( value ) ) ) );
 
 const normalizeOptionalValue = ( value: string | undefined, allowedValues: Set< string > ) =>
-	allowedValues.has( value ?? '' ) ? value ?? '' : '';
+	allowedValues.has( value ?? '' ) ? ( value ?? '' ) : '';
 
 export function createDefaultLeadMatchingDetails(): LeadMatchingDetails {
 	return {

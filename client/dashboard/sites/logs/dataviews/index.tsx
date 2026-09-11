@@ -369,7 +369,7 @@ function SiteLogsDataViews( {
 								wpDebugLog: <code />,
 								errorLog: <code />,
 							}
-					  )
+						)
 					: __( 'No server requests were logged for the selected time range.' )
 			}
 		/>

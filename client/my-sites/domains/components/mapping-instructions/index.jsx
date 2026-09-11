@@ -193,10 +193,10 @@ class DomainMappingInstructions extends Component {
 		const aRecordMappingWarning = isSubdomain( domainName )
 			? translate(
 					'If you map a subdomain using A records rather than WordPress.com name servers, you will need to manage your subdomain’s DNS records yourself for any other services you are using with your subdomain, including email forwarding or email hosting (i.e. with Google Workspace or Titan)'
-			  )
+				)
 			: translate(
 					'If you map a domain using A records rather than WordPress.com name servers, you will need to manage your domain’s DNS records yourself for any other services you are using with your domain, including email forwarding or email hosting (i.e. with Google Workspace or Titan)'
-			  );
+				);
 		const aRecordsSetupMessage = this.getARecordsSetupMessage();
 
 		return (

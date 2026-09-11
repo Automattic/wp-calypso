@@ -54,11 +54,7 @@ type Warning = {
 export type EmailAccount = {
 	account_id?: number;
 	account_type:
-		| 'email_forwarding'
-		| 'google_workspace'
-		| 'google_gsuite'
-		| 'titan'
-		| 'titan_external';
+		'email_forwarding' | 'google_workspace' | 'google_gsuite' | 'titan' | 'titan_external';
 	domains: EmailAccountDomain[];
 	emails: EmailAccountEmail[];
 	maximum_mailboxes: number;

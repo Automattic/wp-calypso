@@ -35,7 +35,7 @@ export const getUpgradeNudgeHref = ( { isOdyssey, siteSlug, plan } ) =>
 		? addQueryArgs(
 				{ feature: FEATURE_SEO_PREVIEW_TOOLS, plan },
 				`${ getCalypsoUrl() }/plans/${ siteSlug }`
-		  )
+			)
 		: undefined;
 
 export const SeoPreviewNudge = ( {
@@ -70,11 +70,11 @@ export const SeoPreviewNudge = ( {
 					canCurrentUserUpgrade
 						? translate( 'Upgrade to a %(planName)s plan to unlock the power of our SEO tools!', {
 								args: { planName },
-						  } )
+							} )
 						: translate(
 								"Unlock powerful SEO tools! Contact your site's administrator to upgrade to a %(planName)s plan.",
 								{ args: { planName } }
-						  )
+							)
 				}
 				forceDisplay
 				disableHref={ ! canCurrentUserUpgrade }

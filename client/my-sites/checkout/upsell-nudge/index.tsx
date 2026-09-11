@@ -432,7 +432,7 @@ const WrappedUpsellNudge = (
 			? createRequestCartProduct( {
 					product_slug: upsellProduct.productSlug,
 					product_id: upsellProduct.id,
-			  } )
+				} )
 			: undefined;
 	// `upgradeItem` may reference a plan by its `path_slug` (e.g. `business`), so
 	// resolve it to the product slug (from the server plans list) before checking

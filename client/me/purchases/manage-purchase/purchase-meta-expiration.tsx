@@ -144,12 +144,12 @@ function PurchaseMetaExpiration( {
 					components: {
 						autoRenewToggle,
 					},
-			  } )
+				} )
 			: translate( 'Auto-renew is {{autoRenewToggle}}OFF{{/autoRenewToggle}}', {
 					components: {
 						autoRenewToggle,
 					},
-			  } );
+				} );
 
 		const subsReEnableText = translate(
 			'{{autoRenewToggle}}Re-activate subscription{{/autoRenewToggle}}',

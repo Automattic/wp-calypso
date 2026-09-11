@@ -212,10 +212,10 @@ function ConditionalContactDetailsMessage( {
 			{ isMobileCheckoutStickySummary
 				? translate(
 						'Required for domain registration. Your details are protected for eligible domains.'
-				  )
+					)
 				: translate(
 						'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
-				  ) }
+					) }
 		</ContactDetailsFormDescription>
 	);
 }
@@ -278,7 +278,7 @@ const ContactFormTitle = () => {
 								},
 								comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
 							} )
-					  )
+						)
 					: String(
 							translate( 'Enter your %(googleMailService)s account information', {
 								args: {
@@ -286,7 +286,7 @@ const ContactFormTitle = () => {
 								},
 								comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
 							} )
-					  ) }
+						) }
 			</>
 		);
 	}
@@ -1011,7 +1011,7 @@ export default function CheckoutMainContent( {
 													? `${ vatError.message } ${ translate(
 															'You can uncheck “Add VAT details” to finish your purchase now without a VAT ID.',
 															{ textOnly: true }
-													  ) }`
+														) }`
 													: vatError.message;
 											reduxDispatch( errorNotice( vatErrorMessage, { id: 'vat_info_notice' } ) );
 										}
@@ -3098,129 +3098,131 @@ const WPCheckoutMainContent = styled.div< {
 		.form-fieldset.contact-details-form-fields .contact-details-form-fields__field {
 			margin-bottom: ${ props.isMobileCheckoutStickySummary ? '0' : '10px' };
 		}
-		${ props.isMobileCheckoutStickySummary &&
-		css`
-			.form-fieldset.contact-details-form-fields .contact-details-form-fields__field,
-			.form-fieldset.contact-details-form-fields .contact-details-form-fields__country {
-				margin-top: 0;
-			}
-			/* "+ Add Address Line 2" / "+ Add organization name" toggles
+		${
+			props.isMobileCheckoutStickySummary &&
+			css`
+				.form-fieldset.contact-details-form-fields .contact-details-form-fields__field,
+				.form-fieldset.contact-details-form-fields .contact-details-form-fields__country {
+					margin-top: 0;
+				}
+				/* "+ Add Address Line 2" / "+ Add organization name" toggles
 			   come from .form__hidden-input. Reset its 5px margin-top so
 			   the link sits at the parent's flex-gap rhythm, and match the
 			   "Remove plan" link typography (13/20/regular/Gray 100/underline)
 			   so all destructive/secondary links read as one family. */
-			.form-fieldset.contact-details-form-fields .form__hidden-input a {
-				margin-top: 0;
-				font-size: 13px;
-				line-height: 20px;
-				font-weight: 400;
-				color: ${ colorStudio.colors[ 'Gray 100' ] };
-				text-decoration: underline;
-			}
-			/* .vat-form__row carries its own 16px margin-top (plus a
+				.form-fieldset.contact-details-form-fields .form__hidden-input a {
+					margin-top: 0;
+					font-size: 13px;
+					line-height: 20px;
+					font-weight: 400;
+					color: ${ colorStudio.colors[ 'Gray 100' ] };
+					text-decoration: underline;
+				}
+				/* .vat-form__row carries its own 16px margin-top (plus a
 			   16px margin-block-start on stacked rows on mobile) — both
 			   redundant now that we drive spacing through column gaps. */
-			.checkout-contact-form-step .vat-form__row,
-			.checkout-contact-form-step .vat-form__row > div:not( :first-child ) {
-				margin-top: 0;
-				margin-block-start: 0;
-			}
-			/* The VAT form lives inside .__extra-fields (not flex by default)
+				.checkout-contact-form-step .vat-form__row,
+				.checkout-contact-form-step .vat-form__row > div:not( :first-child ) {
+					margin-top: 0;
+					margin-block-start: 0;
+				}
+				/* The VAT form lives inside .__extra-fields (not flex by default)
 			   and each .vat-form__row stacks fields on mobile. Promote both
 			   plus the expanded-fields wrapper to flex columns with the
 			   unified 16px gap so the whole block matches the rest of the
 			   contact form's rhythm. */
-			.checkout-contact-form-step .contact-details-form-fields__extra-fields,
-			.checkout-contact-form-step .vat-form__expanded,
-			.checkout-contact-form-step .vat-form__row {
-				display: flex;
-				flex-direction: column;
-				gap: 16px;
-			}
-			/* Expanded VAT fields render as a quiet card to signal they
+				.checkout-contact-form-step .contact-details-form-fields__extra-fields,
+				.checkout-contact-form-step .vat-form__expanded,
+				.checkout-contact-form-step .vat-form__row {
+					display: flex;
+					flex-direction: column;
+					gap: 16px;
+				}
+				/* Expanded VAT fields render as a quiet card to signal they
 			   form a distinct section toggled by the checkbox above. */
-			.checkout-contact-form-step .vat-form__expanded {
-				background: ${ colorStudio.colors[ 'Gray 0' ] };
-				border: 1px solid ${ colorStudio.colors[ 'Gray 5' ] };
-				border-radius: 4px;
-				padding: 16px;
-				margin-top: 8px;
-			}
-			/* Figma 2392:15444 — VAT details checkbox renders at 16x16.
+				.checkout-contact-form-step .vat-form__expanded {
+					background: ${ colorStudio.colors[ 'Gray 0' ] };
+					border: 1px solid ${ colorStudio.colors[ 'Gray 5' ] };
+					border-radius: 4px;
+					padding: 16px;
+					margin-top: 8px;
+				}
+				/* Figma 2392:15444 — VAT details checkbox renders at 16x16.
 			   WPDS' .components-checkbox-control drives every dimension
 			   (input, checkmark icon, hover/active/disabled outlines)
 			   off --checkbox-input-size, so a single var override gives
 			   a properly-scaled checkbox with all states intact. */
-			.checkout-contact-form-step .vat-form__expand-button.components-checkbox-control {
-				--checkbox-input-size: 16px;
-			}
-			/* CheckboxControl's HStack ships with alignment="top" which makes
+				.checkout-contact-form-step .vat-form__expand-button.components-checkbox-control {
+					--checkbox-input-size: 16px;
+				}
+				/* CheckboxControl's HStack ships with alignment="top" which makes
 			   the box sit at the line-box top while the text's cap-height
 			   sits a few pixels lower — visible misalignment. Center the
 			   pair instead. */
-			.checkout-contact-form-step
-				.vat-form__expand-button.components-checkbox-control
-				.components-h-stack {
-				align-items: center;
-			}
-			/* Figma 2392:15431 — contact form labels render in Gray 100. Scoped to
+				.checkout-contact-form-step
+					.vat-form__expand-button.components-checkbox-control
+					.components-h-stack {
+					align-items: center;
+				}
+				/* Figma 2392:15431 — contact form labels render in Gray 100. Scoped to
 			   the contact step: the payment step's own labels are handled by the
 			   .credit-card-fields-inner-wrapper rules. */
-			.checkout-contact-form-step .form-label {
-				color: ${ colorStudio.colors[ 'Gray 100' ] };
-			}
-			/* The VAT form (Field from @automattic/wpcom-checkout) renders
+				.checkout-contact-form-step .form-label {
+					color: ${ colorStudio.colors[ 'Gray 100' ] };
+				}
+				/* The VAT form (Field from @automattic/wpcom-checkout) renders
 			   a plain <label> via emotion, not .form-label, so it doesn't
 			   pick up the contact-form label styling. Match it here. */
-			.checkout-contact-form-step .vat-form__row label {
-				font-size: 13px;
-				line-height: 20px;
-				font-weight: 500;
-				color: ${ colorStudio.colors[ 'Gray 100' ] };
-				margin-bottom: 6px;
-			}
-			/* The "ES"/country-code prefix in front of the VAT ID input
+				.checkout-contact-form-step .vat-form__row label {
+					font-size: 13px;
+					line-height: 20px;
+					font-weight: 500;
+					color: ${ colorStudio.colors[ 'Gray 100' ] };
+					margin-bottom: 6px;
+				}
+				/* The "ES"/country-code prefix in front of the VAT ID input
 			   carries a 3.5rem min-width and 14px font that push the input
 			   over and leave a yawning gap. Match it to the input rhythm. */
-			.checkout-contact-form-step .vat-form__row .field__overlay-prefix {
-				font-size: 13px;
-				min-width: 0;
-				padding-inline: 12px;
-			}
-			/* Figma 2461:4947 — "Continue to payment" spans the full column. */
-			.checkout-next-step-button {
-				width: 100%;
-			}
-			/* Unified 16px vertical rhythm between every row. The outer
+				.checkout-contact-form-step .vat-form__row .field__overlay-prefix {
+					font-size: 13px;
+					min-width: 0;
+					padding-inline: 12px;
+				}
+				/* Figma 2461:4947 — "Continue to payment" spans the full column. */
+				.checkout-next-step-button {
+					width: 100%;
+				}
+				/* Unified 16px vertical rhythm between every row. The outer
 			   FormFieldset is already flex-column but ships without a gap,
 			   and First/Last name is rendered as its sibling — not inside
 			   __contact-details. So the gap needs to live on all of:
 			   the outer FormFieldset, __contact-details itself, and both
 			   wrapper divs from RegionAddressFieldsets. */
-			.form-fieldset.contact-details-form-fields,
-			.form-fieldset.contact-details-form-fields .contact-details-form-fields__contact-details,
-			.form-fieldset.contact-details-form-fields .region-address-fieldsets,
-			.form-fieldset.contact-details-form-fields .region-address-fieldsets__street-address {
-				display: flex;
-				flex-direction: column;
-				gap: 16px;
-			}
-			/* …except the street-address wrapper, which pairs an input with its
+				.form-fieldset.contact-details-form-fields,
+				.form-fieldset.contact-details-form-fields .contact-details-form-fields__contact-details,
+				.form-fieldset.contact-details-form-fields .region-address-fieldsets,
+				.form-fieldset.contact-details-form-fields .region-address-fieldsets__street-address {
+					display: flex;
+					flex-direction: column;
+					gap: 16px;
+				}
+				/* …except the street-address wrapper, which pairs an input with its
 			   toggle link ("+ Add Address Line 2") as a "Field + Action" group —
 			   Figma 2392:15432 puts those 8px apart, not 16. */
-			.form-fieldset.contact-details-form-fields .region-address-fieldsets__street-address {
-				gap: 8px;
-			}
-			/* Same rhythm for the "Add organization name" row — it sits in
+				.form-fieldset.contact-details-form-fields .region-address-fieldsets__street-address {
+					gap: 8px;
+				}
+				/* Same rhythm for the "Add organization name" row — it sits in
 			   its own __row but is conceptually a Field+Action paired with
 			   the Last name field above. Negative margin compensates the
 			   parent's 16px column gap down to 8px. Only fires while the
 			   HiddenInput link is showing; once toggled to an input the
 			   row drops back to full 16px spacing. */
-			.contact-details-form-fields__row:has( .form__hidden-input ) {
-				margin-top: -8px;
-			}
-		` }
+				.contact-details-form-fields__row:has( .form__hidden-input ) {
+					margin-top: -8px;
+				}
+			`
+		}
 		.checkout-terms-and-checkboxes a {
 			color: ${ props.theme.colors.textColorDark };
 		}

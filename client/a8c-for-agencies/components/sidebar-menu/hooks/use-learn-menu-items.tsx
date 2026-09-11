@@ -31,7 +31,7 @@ const useLearnMenuItems = ( path: string ) => {
 								menu_item: 'Automattic for Agencies / Resources and tools / Agent studio',
 							},
 						},
-				  ]
+					]
 				: [] ),
 			...( isBenchmarksEnabled
 				? [
@@ -44,7 +44,7 @@ const useLearnMenuItems = ( path: string ) => {
 								menu_item: 'Automattic for Agencies / Resources and tools / Benchmarks',
 							},
 						},
-				  ]
+					]
 				: [] ),
 			{
 				icon: (

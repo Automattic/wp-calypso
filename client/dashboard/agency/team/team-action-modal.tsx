@@ -111,7 +111,7 @@ export default function TeamActionModal( {
 							/* translators: %s is the agency name. */
 							__( 'Are you sure you want to leave %s?' ),
 							agencyName
-					  )
+						)
 					: __( 'Remove team member' )
 			}
 			confirmButtonProps={ {
@@ -139,10 +139,10 @@ export default function TeamActionModal( {
 			{ isSelf
 				? __(
 						'By proceeding, you’ll lose management access of all sites that belong to this agency and you will be removed from this dashboard. The agency owner will need to re-invite you if you wish to gain access again.'
-				  )
+					)
 				: createInterpolateElement( __( 'Are you sure you want to remove <memberName />?' ), {
 						memberName: <strong>{ memberName }</strong>,
-				  } ) }
+					} ) }
 		</ConfirmModal>
 	);
 }

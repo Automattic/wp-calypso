@@ -14,7 +14,7 @@ export function SocialTagFeedHeader( { hashtag, count }: SocialTagFeedHeaderProp
 			? translate( '%(count)d post', '%(count)d posts', {
 					count,
 					args: { count },
-			  } )
+				} )
 			: null;
 
 	return (
