@@ -41,11 +41,7 @@ export type AgencyCapability =
 	| 'a4a_remove_managed_sites';
 
 export type AgencyPartnerDirectorySlug =
-	| 'wordpress'
-	| 'jetpack'
-	| 'woocommerce'
-	| 'pressable'
-	| 'vip';
+	'wordpress' | 'jetpack' | 'woocommerce' | 'pressable' | 'vip';
 
 export type AgencyPartnerDirectoryEntryStatus = 'pending' | 'approved' | 'rejected' | 'closed';
 

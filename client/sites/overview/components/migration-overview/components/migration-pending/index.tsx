@@ -107,7 +107,7 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 							em: <em />,
 						},
 					}
-			  )
+				)
 			: translate( 'Start your migration today and get ready for unmatched WordPress hosting.' );
 
 	const {

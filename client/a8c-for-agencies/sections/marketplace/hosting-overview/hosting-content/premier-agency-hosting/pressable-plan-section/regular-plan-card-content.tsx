@@ -38,7 +38,7 @@ export default function RegularPlanCardContent( {
 				actualCostFormatted: '',
 				showActualCost: false,
 				discountPercentage: 0,
-		  };
+			};
 
 	const ctaLabel = useMemo( () => {
 		if ( isReferralMode ) {

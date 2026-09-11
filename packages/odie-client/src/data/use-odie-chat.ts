@@ -44,7 +44,7 @@ export const useOdieChat = (
 							method: 'GET',
 							path,
 							apiNamespace: 'wpcom/v2',
-					  } );
+						} );
 			} else {
 				data = await apiFetch( {
 					path: `/help-center/odie/chat/${ botSlug }/${ chatId }?${ queryParams }`,

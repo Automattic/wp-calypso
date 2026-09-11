@@ -61,10 +61,10 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 
 		const eligible = Boolean(
 			hasManageOptions &&
-				! isJetpackNonAtomic && // Simple, Garden, and Atomic sites. Not Jetpack sites.
-				! isWpcomStagingSite &&
-				! isDomainOnly &&
-				! isSameSite
+			! isJetpackNonAtomic && // Simple, Garden, and Atomic sites. Not Jetpack sites.
+			! isWpcomStagingSite &&
+			! isDomainOnly &&
+			! isSameSite
 		);
 
 		return eligible;

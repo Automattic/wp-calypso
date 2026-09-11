@@ -156,7 +156,7 @@ const aiSiteBuilderFlows: Record< string, () => Promise< { default: FlowV2< any 
 	config.isEnabled( 'calypso/ai-site-builder-flow' )
 		? {
 				[ AI_SITE_BUILDER_FLOW ]: () => import( './flows/ai-site-builder/ai-site-builder' ),
-		  }
+			}
 		: {};
 
 const aiSiteBuilderOnboardingFlows: Record< string, () => Promise< { default: FlowV2< any > } > > =

@@ -112,7 +112,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 					percent: discount,
 				},
 				comment: 'Should be as concise as possible.',
-		  } )
+			} )
 		: null;
 
 	const starIcon = (

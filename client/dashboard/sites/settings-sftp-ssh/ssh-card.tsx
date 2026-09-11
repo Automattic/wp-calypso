@@ -178,10 +178,10 @@ export default function SshCard( {
 					sshEnabled
 						? __(
 								'Sorry, we had a problem disabling SSH access for this site. Please refresh the page and try again.'
-						  )
+							)
 						: __(
 								'Sorry, we had a problem enabling SSH access for this site. Please refresh the page and try again.'
-						  ),
+							),
 					{
 						type: 'snackbar',
 					}
@@ -289,13 +289,13 @@ export default function SshCard( {
 				? userSshKeys.map( ( userSshKey: UserSshKey ) => ( {
 						label: `${ user.username }-${ userSshKey.name }`,
 						value: userSshKey.name,
-				  } ) )
+					} ) )
 				: [
 						{
 							label: __( 'No SSH keys available' ),
 							value: '',
 						},
-				  ],
+					],
 		},
 	];
 

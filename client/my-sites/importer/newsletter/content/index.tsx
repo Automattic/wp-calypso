@@ -144,7 +144,7 @@ export default function Content( {
 					href: overrideDestination
 						.replace( '%SITE_SLUG%', siteSlug )
 						.replace( '%SITE_ID%', siteId.toString() ),
-			  }
+				}
 			: undefined ),
 		/**
 		 * I am not sure why this is needed.

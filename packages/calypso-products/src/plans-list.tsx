@@ -979,7 +979,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			? {
 					...baseFeatures,
 					[ FEATURE_STATS_JP ]: i18n.translate( 'Full history, filters & peak times' ),
-			  }
+				}
 			: baseFeatures;
 	},
 
@@ -1267,7 +1267,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 					[ FEATURE_STATS_JP ]: i18n.translate(
 						'Advanced insights, including UTM & device analytics'
 					),
-			  }
+				}
 			: baseFeatures;
 	},
 	getHostingSignupFeatures: ( term ) => () =>
@@ -1816,7 +1816,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 					[ FEATURE_STATS_JP ]: i18n.translate(
 						'Advanced insights, including UTM & device analytics'
 					),
-			  }
+				}
 			: baseFeatures;
 	},
 	get2023PlanComparisonJetpackFeatureOverride: () => {
@@ -2144,7 +2144,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 					[ FEATURE_STATS_JP ]: i18n.translate(
 						'Advanced insights, including UTM & device analytics'
 					),
-			  }
+				}
 			: featureLabels;
 	},
 
@@ -2518,12 +2518,12 @@ const getJetpackBusinessDetails = (): IncompleteJetpackPlan => ( {
 			? i18n.translate(
 					'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites.',
 					plansDescriptionHeadingComponent
-			  )
+				)
 			: i18n.translate(
 					'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites: real-time backups ' +
 						'and premium themes.',
 					plansDescriptionHeadingComponent
-			  ),
+				),
 	getTagline: () => i18n.translate( 'You have the full suite of security and performance tools.' ),
 	getPlanCardFeatures: () => [
 		FEATURE_BACKUP_REALTIME_V2,

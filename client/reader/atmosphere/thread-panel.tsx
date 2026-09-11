@@ -324,7 +324,7 @@ function renderError( {
 										count: error.retry_after,
 										args: { s: error.retry_after },
 									}
-							  )
+								)
 							: translate( 'Bluesky is asking us to slow down. Try again in a moment.' )
 					}
 					action={

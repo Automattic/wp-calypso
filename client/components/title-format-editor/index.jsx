@@ -238,7 +238,7 @@ export class TitleFormatEditor extends Component {
 						{ [ type.value ]: fromEditor( editorState.getCurrentContent() ) },
 						type.value,
 						titleData
-				  )
+					)
 				: '';
 
 		const formattedPreview = previewText ? `${ translate( 'Preview' ) }: ${ previewText }` : '';

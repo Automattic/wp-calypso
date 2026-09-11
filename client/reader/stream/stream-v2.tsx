@@ -116,7 +116,7 @@ export function ReaderStreamV2( {
 		count,
 		estimateSize: GUESSED_POST_HEIGHT,
 		getItemKey: ( index ) =>
-			index < items.length ? keyToString( items[ index ] ) ?? index : `placeholder-${ index }`,
+			index < items.length ? ( keyToString( items[ index ] ) ?? index ) : `placeholder-${ index }`,
 		overscan: 6,
 		hasMore: hasNextPage,
 		isLoadingMore: isFetchingNextPage,

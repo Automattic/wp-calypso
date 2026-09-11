@@ -25,10 +25,10 @@ export default function DisconnectedSite() {
 							{ isWooStore
 								? translate( 'Create ads from your products in a snap with %(productName)s', {
 										args: { productName: 'Blaze Ads' },
-								  } )
+									} )
 								: translate( 'Create ads from your content in a snap with %(productName)s', {
 										args: { productName: 'Blaze Ads' },
-								  } ) }
+									} ) }
 							<span className="blaze-title-logo" aria-hidden="true">
 								<img
 									className="blaze-title-logo__icon"
@@ -87,20 +87,20 @@ export default function DisconnectedSite() {
 							? translate(
 									'%(productName)s is built for merchants who have a business to run and no time for endless settings. You can start driving traffic in just a few minutes.',
 									{ args: { productName: 'Blaze Ads' } }
-							  )
+								)
 							: translate(
 									'%(productName)s is built for creators who have stories to tell but no time for complex ad platforms. You can launch a campaign in just a few minutes.',
 									{ args: { productName: 'Blaze Ads' } }
-							  ) }
+								) }
 					</p>
 					<p className="blaze-disconnected-site__features-description">
 						{ isWooStore
 							? translate(
 									'Create ads directly from your product catalog or upload custom images to showcase your brand. The AI assistant helps draft compelling copy, while geographic and interest targeting connects you with the customers most likely to buy.'
-							  )
+								)
 							: translate(
 									'Instantly turn your existing posts into ads, or upload custom images. The AI assistant helps refine your message, while interest targeting ensures you connect with the people who matter most.'
-							  ) }
+								) }
 					</p>
 				</div>
 			</div>
@@ -119,10 +119,10 @@ export default function DisconnectedSite() {
 							{ isWooStore
 								? translate(
 										'Select items directly from your inventory and transform them into ads with a single click.'
-								  )
+									)
 								: translate(
 										'Transform your top-performing posts and pages into ads with a single click.'
-								  ) }
+									) }
 						</p>
 					</div>
 
@@ -137,10 +137,10 @@ export default function DisconnectedSite() {
 							{ isWooStore
 								? translate(
 										'We present your products to interested shoppers right where they are browsing.'
-								  )
+									)
 								: translate(
 										'We display your stories where interested users are already looking to discover new content.'
-								  ) }
+									) }
 						</p>
 					</div>
 
@@ -156,13 +156,13 @@ export default function DisconnectedSite() {
 										{
 											args: { minDailyBudget },
 										}
-								  )
+									)
 								: translate(
 										'Start building momentum and traffic for just %(minDailyBudget)s per day.',
 										{
 											args: { minDailyBudget },
 										}
-								  ) }
+									) }
 						</p>
 					</div>
 				</div>

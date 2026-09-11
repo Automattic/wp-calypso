@@ -19,7 +19,7 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 				site.name === site.slug
 					? __( 'View site' )
 					: // translators: %(siteName)s: the name of the site
-					  sprintf( __( 'View %(siteName)s' ), { siteName: site.name } );
+						sprintf( __( 'View %(siteName)s' ), { siteName: site.name } );
 			const linkText = site.name === site.slug ? __( 'View site' ) : site.slug;
 			return (
 				<div>
@@ -102,7 +102,7 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 				site.name === site.slug
 					? __( 'View site' )
 					: // translators: %(siteName)s: the name of the site
-					  sprintf( __( 'View %(siteName)s' ), { siteName: site.name } );
+						sprintf( __( 'View %(siteName)s' ), { siteName: site.name } );
 			const linkText = site.name === site.slug ? __( 'View site' ) : site.slug;
 			return (
 				<div>

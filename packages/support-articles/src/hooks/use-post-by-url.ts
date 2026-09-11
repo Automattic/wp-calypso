@@ -15,10 +15,10 @@ export function usePostByUrl( url: string, sectionName: string ) {
 				? wpcomRequest( {
 						path: `/help/article?post_url=${ postUrl }`,
 						apiNamespace: 'wpcom/v2',
-				  } )
+					} )
 				: apiFetch( {
 						path: `/help-center/fetch-post?post_url=${ postUrl }`,
-				  } ),
+					} ),
 		enabled: !! url,
 		refetchOnWindowFocus: false,
 		staleTime: 12 * 3600, // 12 hours

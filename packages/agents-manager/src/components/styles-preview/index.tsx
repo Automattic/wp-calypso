@@ -331,7 +331,7 @@ export default function StylesPreview( { type, variation }: Props ) {
 							css: fontFamiliesToCSS( fontFamilies ),
 							isGlobalStyles: true,
 						},
-				  ]
+					]
 				: [] ),
 			{
 				css: 'html{overflow:hidden}body{min-width: 0;padding: 0;border: none;}',

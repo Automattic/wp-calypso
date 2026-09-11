@@ -77,12 +77,12 @@ export default function MoreMenuActions( {
 				text: 'Mark as read',
 				newCopy: translate( 'Mark as read' ),
 				oldCopy: translate( 'Mark as seen' ),
-		  } ) as string )
+			} ) as string )
 		: ( fixMe( {
 				text: 'Mark all as read',
 				newCopy: translate( 'Mark all as read' ),
 				oldCopy: translate( 'Mark all as seen' ),
-		  } ) as string );
+			} ) as string );
 
 	const controls = [];
 

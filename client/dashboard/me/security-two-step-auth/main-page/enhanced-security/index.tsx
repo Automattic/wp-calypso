@@ -15,9 +15,8 @@ export default function EnhancedSecurity() {
 
 	const { two_step_enhanced_security_forced, two_step_enhanced_security } = userSettings;
 
-	const { mutate: updateUserSettings, isPending: isUpdatingUserSettings } = useMutation(
-		userSettingsMutation()
-	);
+	const { mutate: updateUserSettings, isPending: isUpdatingUserSettings } =
+		useMutation( userSettingsMutation() );
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
@@ -62,10 +61,10 @@ export default function EnhancedSecurity() {
 							two_step_enhanced_security_forced
 								? __(
 										'Your account is currently required to use security keys (passkeys) as a second factor.'
-								  )
+									)
 								: __(
 										'Secure your account by requiring the use of security keys (passkeys) as second factor.'
-								  )
+									)
 						}
 					/>
 				</VStack>

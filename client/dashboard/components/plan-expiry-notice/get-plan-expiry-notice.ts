@@ -84,18 +84,18 @@ export function isEligibleForPlanExpiryNotice( purchase: Purchase ): boolean {
 	return Boolean(
 		// Names the plan for the copy, and covers exactly the four paid tiers.
 		getPlanName( purchase ) &&
-			// The copy always quotes a storage figure, so a plan we have no number
-			// for cannot be described. Doubles as the same allowlist.
-			getPlanStorageInGb( purchase.product_slug ) !== null &&
-			// The copy is all about a site losing plan features, so require the
-			// purchase to actually be a WordPress.com plan and not merely carry a
-			// plan-shaped product slug.
-			isDotcomPlan( purchase ) &&
-			purchase.expiry_date &&
-			// Agency- and host-managed plans can't be renewed by the customer.
-			! purchase.partner_type &&
-			// Removed subscriptions keep their existing "no longer in use" copy.
-			! isRemoved( purchase )
+		// The copy always quotes a storage figure, so a plan we have no number
+		// for cannot be described. Doubles as the same allowlist.
+		getPlanStorageInGb( purchase.product_slug ) !== null &&
+		// The copy is all about a site losing plan features, so require the
+		// purchase to actually be a WordPress.com plan and not merely carry a
+		// plan-shaped product slug.
+		isDotcomPlan( purchase ) &&
+		purchase.expiry_date &&
+		// Agency- and host-managed plans can't be renewed by the customer.
+		! purchase.partner_type &&
+		// Removed subscriptions keep their existing "no longer in use" copy.
+		! isRemoved( purchase )
 	);
 }
 
@@ -205,14 +205,14 @@ function resolveNotice(
 							'If renewal doesn’t go through, your site will move to the Free plan. That means losing plugins, custom themes, and %(storageGb)d GB of storage. But it’s not too late. Renew now to keep your site as it is.'
 						),
 						{ storageGb }
-				  )
+					)
 				: sprintf(
 						// translators: %(storageGb)d is a number of gigabytes of storage
 						__(
 							'Your site will move to the Free plan. That means losing plugins, custom themes, and %(storageGb)d GB of storage. But it’s not too late. Renew now to keep your site as it is.'
 						),
 						{ storageGb }
-				  ),
+					),
 			primaryAction: renewAction,
 			// This label is new, so it may not be translated yet. Drop the action
 			// rather than show one English button among translated copy; the primary
@@ -295,14 +295,14 @@ function resolveNotice(
 							'Unless you renew your plan, your site will move to the Free plan, and you’ll lose plugins, custom themes, and %(storageGb)d GB of storage. Renew now to keep everything in place.'
 						),
 						{ storageGb }
-				  )
+					)
 				: sprintf(
 						// translators: %(storageGb)d is a number of gigabytes of storage
 						__(
 							'Your site will move to the Free plan and you’ll lose plugins, custom themes, and %(storageGb)d GB of storage. Renew now to keep everything in place.'
 						),
 						{ storageGb }
-				  ),
+					),
 			primaryAction: renewAction,
 		};
 	}

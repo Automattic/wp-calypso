@@ -43,7 +43,7 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 	const describedByText = selectedOption?.accessibleName
 		? translate( 'Currently selected billing period: %(billingPeriod)s', {
 				args: { billingPeriod: selectedOption.accessibleName },
-		  } )
+			} )
 		: undefined;
 
 	return (

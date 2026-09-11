@@ -175,7 +175,7 @@ export const SitesContentControls = ( {
 									{
 										siteStatus: selectedStatus.title,
 									}
-							  )
+								)
 					}
 				>
 					{ statuses.map( ( { name, title, count } ) => (

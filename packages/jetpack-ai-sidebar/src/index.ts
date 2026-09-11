@@ -157,8 +157,9 @@ function canSwapBlockEditSnapshot( snapshot: BlockEditSnapshot ): boolean {
  * we cannot read.
  */
 function isPostContentEmpty(): boolean {
-	const isEditedPostEmpty = ( window as any ).wp?.data?.select?.( 'core/editor' )
-		?.isEditedPostEmpty;
+	const isEditedPostEmpty = ( window as any ).wp?.data?.select?.(
+		'core/editor'
+	)?.isEditedPostEmpty;
 	return typeof isEditedPostEmpty === 'function' && isEditedPostEmpty() === true;
 }
 
@@ -846,8 +847,7 @@ function hasAbilitiesApi(): boolean {
 }
 
 function getAbilitiesExecuteAbility():
-	| ( ( name: string, args: unknown ) => Promise< any > )
-	| null {
+	( ( name: string, args: unknown ) => Promise< any > ) | null {
 	try {
 		const executeAbility = ( window as any ).wp?.abilities?.executeAbility;
 		return typeof executeAbility === 'function' ? executeAbility : null;
@@ -953,7 +953,7 @@ async function handleUpdateBlockContentForChat( input: any ): Promise< any > {
 					success: false,
 					message,
 					error,
-			  } )
+				} )
 			: result?.agentMessage;
 		return {
 			...result,
@@ -1003,7 +1003,7 @@ async function handleUpdateBlockContentForChat( input: any ): Promise< any > {
 				success: true,
 				message,
 				outcome,
-		  } )
+			} )
 		: result.agentMessage;
 
 	return {
@@ -1047,7 +1047,7 @@ export const toolProvider = {
 							...UPDATE_BLOCK_CONTENT_ABILITY,
 							callback: handleUpdateBlockContentForChat,
 						},
-				  ]
+					]
 				: [] ),
 			{
 				...SHOW_COMPONENT_ABILITY,
@@ -1575,7 +1575,7 @@ export function useSuggestions( maxSuggestions?: number ): {
 			clearSuggestionsFn?.();
 			suppressCurrentPageContentForNextContext = false;
 			pendingBlockShimmerClientId = BLOCK_SUGGESTIONS.some( matchesSuggestion )
-				? getSelectedOrRememberedBlock()?.clientId ?? null
+				? ( getSelectedOrRememberedBlock()?.clientId ?? null )
 				: null;
 
 			if ( typeof value === 'string' && SAVED_POST_PROMPTS.has( value ) ) {

@@ -647,12 +647,12 @@ export class FullPostView extends Component {
 					text: 'Mark post as unread',
 					newCopy: translate( 'Mark post as unread' ),
 					oldCopy: translate( 'Mark post as unseen' ),
-			  } )
+				} )
 			: fixMe( {
 					text: 'Mark post as read',
 					newCopy: translate( 'Mark post as read' ),
 					oldCopy: translate( 'Mark post as seen' ),
-			  } );
+				} );
 
 		return (
 			<button

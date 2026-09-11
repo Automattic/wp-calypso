@@ -57,7 +57,7 @@ export default function SecurityTwoStepAuthMainPage( {
 							? enforcedByOrganizationText
 							: __(
 									'Want to use a different number? Just disable two-step authentication and set it up again using the new number.'
-							  ) }
+								) }
 					</>
 				) }
 
@@ -81,7 +81,7 @@ export default function SecurityTwoStepAuthMainPage( {
 											/>
 										),
 									}
-							  ) }
+								) }
 					</span>
 				) }
 			</Notice>

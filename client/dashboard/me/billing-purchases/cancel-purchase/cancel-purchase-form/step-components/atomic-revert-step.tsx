@@ -141,10 +141,10 @@ export function AtomicRevertStep( props: Props ) {
 								{
 									purchaseRenewalDate: intlFormat( purchase.expiry_date, { dateStyle: 'medium' } ),
 								}
-						  )
+							)
 						: __(
 								'Any themes/plugins you have installed on the site will be removed, along with their data.'
-						  )
+							)
 				}
 				checked={ atomicRevertCheckOne }
 				onChange={ onClickCheckOne }
@@ -160,10 +160,10 @@ export function AtomicRevertStep( props: Props ) {
 								{
 									purchaseRenewalDate: intlFormat( purchase.expiry_date, { dateStyle: 'medium' } ),
 								}
-						  )
+							)
 						: __(
 								'Your site will return to its original settings and theme right before the first plugin or custom theme was installed.'
-						  )
+							)
 				}
 				checked={ atomicRevertCheckTwo }
 				onChange={ onClickCheckTwo }

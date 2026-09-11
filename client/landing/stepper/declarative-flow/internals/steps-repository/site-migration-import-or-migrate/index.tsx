@@ -106,7 +106,7 @@ const SiteMigrationImportOrMigrate: StepType< {
 	const pageSubTitle = shouldDisplayHostIdentificationMessage
 		? translate( 'Your WordPress site is hosted with %(hostingProviderName)s.', {
 				args: { hostingProviderName },
-		  } )
+			} )
 		: '';
 
 	return (

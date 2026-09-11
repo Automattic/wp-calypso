@@ -270,7 +270,7 @@ export const getPagedBlazeSearchData = (
 			: {
 					total_impressions: 0,
 					total_clicks: 0,
-			  };
+				};
 
 	if ( lastPage ) {
 		const { has_more_pages, total_items, warnings, tsp_eligible = false } = lastPage;
@@ -333,18 +333,18 @@ export const getShortDateString = ( date: string, withTime: boolean = false ) =>
 	if ( withTime ) {
 		const format = timestamp.isSame( now, 'year' )
 			? // translators: Moment.js date format, `MMM` refers to short month name (e.g. `Sep`), `DD`` refers to 2-digit day of month (e.g. `05`). Wrap text [] to be displayed as is, for example `DD [de] MMM` will be formatted as `05 de sep.`. HH:mm refers to 24-hour time format (e.g. `18:00`).
-			  _x( 'MMM DD, HH:mm', 'short date format' )
+				_x( 'MMM DD, HH:mm', 'short date format' )
 			: // translators: Moment.js date format, `MMM` refers to short month name (e.g. `Sep`), `DD`` refers to 2-digit day of month (e.g. `05`), `YYYY` refers to the full year format (e.g. `2023`). Wrap text [] to be displayed as is, for example `DD [de] MMM [de] YYYY` will be formatted as `05 de sep. de 2023`. HH:mm refers to 24-hour time format (e.g. `18:00`).
-			  _x( 'MMM DD, YYYY HH:mm', 'short date with year format' );
+				_x( 'MMM DD, YYYY HH:mm', 'short date with year format' );
 
 		return moment( date ).format( format );
 	}
 
 	const format = timestamp.isSame( now, 'year' )
 		? // translators: Moment.js date format, `MMM` refers to short month name (e.g. `Sep`), `DD`` refers to 2-digit day of month (e.g. `05`). Wrap text [] to be displayed as is, for example `DD [de] MMM` will be formatted as `05 de sep.`.
-		  _x( 'MMM DD', 'short date format' )
+			_x( 'MMM DD', 'short date format' )
 		: // translators: Moment.js date format, `MMM` refers to short month name (e.g. `Sep`), `DD`` refers to 2-digit day of month (e.g. `05`), `YYYY` refers to the full year format (e.g. `2023`). Wrap text [] to be displayed as is, for example `DD [de] MMM [de] YYYY` will be formatted as `05 de sep. de 2023`.
-		  _x( 'MMM DD, YYYY', 'short date with year format' );
+			_x( 'MMM DD, YYYY', 'short date with year format' );
 
 	return moment( date ).format( format );
 };

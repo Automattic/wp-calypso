@@ -509,7 +509,7 @@ function ReceiptItemDiscounts( {
 						? formatCurrency( -costOverride.discountAmount, item.currency, {
 								isSmallestUnit: true,
 								stripZeros: true,
-						  } )
+							} )
 						: '';
 				if (
 					doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
@@ -618,7 +618,7 @@ export function ReceiptItemTaxes( { transaction }: { transaction: BillingTransac
 						comment:
 							'Label indicating a state-level business use tax. %(state)s is a state name like "Ohio".',
 					} )
-			  )
+				)
 			: null;
 
 	return (

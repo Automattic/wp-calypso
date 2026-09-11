@@ -91,7 +91,7 @@ function FileBrowser( {
 						{ displayBackupDate
 							? createInterpolateElement( __( 'Content from the latest backup: <date />.' ), {
 									date: <span>{ displayBackupDate }</span>,
-							  } )
+								} )
 							: __( 'There are no backups.' ) }{ ' ' }
 						<ExternalLink href={ `/backup/${ siteSlug }` } children={ __( 'Create new backup' ) } />
 					</Text>
