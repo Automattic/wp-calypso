@@ -100,7 +100,6 @@
 		"help/gpt-response": true,
 		"home/layout-dev": true,
 		"hosting-server-settings-enhancements": true,
-		"i18n/community-translator": false,
 		"i18n/empathy-mode": true,
 		"i18n/translation-scanner": true,
 		"importer/site-backups": true,

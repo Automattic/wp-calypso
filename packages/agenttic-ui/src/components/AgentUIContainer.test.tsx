@@ -3,6 +3,7 @@ import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AgentUIContainer } from './AgentUIContainer';
+import { Suggestions } from './chat/Suggestions';
 import { AgentUISuggestions } from './composable/AgentUISuggestions';
 import type { ChatState, Suggestion } from '../types';
 import type { MotionValue } from 'framer-motion';
@@ -288,6 +289,104 @@ describe( 'AgentUIContainer suggestions-rendered dedup', () => {
 		expect( ids( onSuggestionsRendered.mock.calls ) ).toEqual( [
 			[ 'a', 'b', 'c' ],
 			[ 'a', 'b', 'c' ],
+		] );
+	} );
+} );
+
+// Several Suggestions instances can be mounted at once ( a consumer's grouped empty
+// view splits one list across sections ). The container reports their union, in
+// mount order, as one impression, and hidden instances stay out of it.
+describe( 'AgentUIContainer suggestions-rendered union', () => {
+	let container: HTMLDivElement;
+	let root: Root;
+
+	beforeEach( () => {
+		container = document.createElement( 'div' );
+		document.body.appendChild( container );
+		root = createRoot( container );
+	} );
+
+	afterEach( async () => {
+		await act( async () => {
+			root.unmount();
+		} );
+		container.remove();
+		animateMock.mockClear();
+	} );
+
+	const topLevel: Suggestion[] = [
+		{ id: 'design', label: 'Design', prompt: 'Design' },
+		{ id: 'what-else', label: 'What else', prompt: 'What else' },
+	];
+	const writing: Suggestion[] = [
+		{ id: 'title', label: 'Title', prompt: 'Title' },
+		{ id: 'excerpt', label: 'Excerpt', prompt: 'Excerpt' },
+	];
+
+	// Fresh arrays on every render, like a consumer filtering one list per section.
+	const App = ( {
+		writingVisible,
+		onSuggestionsRendered,
+	}: {
+		writingVisible: boolean;
+		onSuggestionsRendered: ( shown: Suggestion[] ) => void;
+	} ) => (
+		<AgentUIContainer
+			messages={ [] }
+			isProcessing={ false }
+			onSubmit={ () => {} }
+			variant="floating"
+			floatingChatState="expanded"
+			onSuggestionsRendered={ onSuggestionsRendered }
+		>
+			<div>
+				<Suggestions suggestions={ [ ...topLevel ] } />
+				<Suggestions suggestions={ [ ...writing ] } visible={ writingVisible } />
+			</div>
+		</AgentUIContainer>
+	);
+
+	const renderApp = async (
+		writingVisible: boolean,
+		onSuggestionsRendered: ( shown: Suggestion[] ) => void
+	) => {
+		await act( async () => {
+			root.render(
+				<App writingVisible={ writingVisible } onSuggestionsRendered={ onSuggestionsRendered } />
+			);
+		} );
+	};
+
+	const ids = ( calls: Suggestion[][][] ) =>
+		calls.map( ( [ shown ] ) => shown.map( ( s ) => s.id ) );
+
+	it( 'reports every visible instance as one impression, in mount order', async () => {
+		const onSuggestionsRendered = vi.fn();
+		await renderApp( true, onSuggestionsRendered );
+
+		expect( ids( onSuggestionsRendered.mock.calls ) ).toEqual( [
+			[ 'design', 'what-else', 'title', 'excerpt' ],
+		] );
+	} );
+
+	it( 'leaves hidden instances out and ignores re-renders with fresh arrays', async () => {
+		const onSuggestionsRendered = vi.fn();
+		await renderApp( false, onSuggestionsRendered );
+		await renderApp( false, onSuggestionsRendered );
+
+		expect( ids( onSuggestionsRendered.mock.calls ) ).toEqual( [ [ 'design', 'what-else' ] ] );
+	} );
+
+	it( 'reports the new on-screen set when an instance is shown or hidden', async () => {
+		const onSuggestionsRendered = vi.fn();
+		await renderApp( false, onSuggestionsRendered );
+		await renderApp( true, onSuggestionsRendered );
+		await renderApp( false, onSuggestionsRendered );
+
+		expect( ids( onSuggestionsRendered.mock.calls ) ).toEqual( [
+			[ 'design', 'what-else' ],
+			[ 'design', 'what-else', 'title', 'excerpt' ],
+			[ 'design', 'what-else' ],
 		] );
 	} );
 } );

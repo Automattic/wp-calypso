@@ -6,6 +6,7 @@ import usePressableOfferEligibility from 'calypso/a8c-for-agencies/components/a4
 import { ONBOARDING_TOUR_HASH } from 'calypso/a8c-for-agencies/components/hoc/with-onboarding-tour/hooks/use-onboarding-tour';
 import {
 	A4A_AGENCY_TIER_LINK,
+	A4A_AI_MCP_LINK,
 	A4A_MARKETPLACE_PRODUCTS_LINK,
 	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 	A4A_REFERRALS_DASHBOARD,
@@ -71,6 +72,7 @@ function DashboardOverviewBodyContent( {
 				marketplace: A4A_MARKETPLACE_PRODUCTS_LINK,
 				partnerDirectory: A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 				contactSupport: CONTACT_URL_HASH_FRAGMENT,
+				aiMcp: A4A_AI_MCP_LINK,
 				helpful: [
 					{
 						id: 'contact-support',
