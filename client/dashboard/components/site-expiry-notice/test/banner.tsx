@@ -66,6 +66,13 @@ const postGrace = () =>
 		subscription_status: 'inactive',
 	} );
 
+const grace = () =>
+	makePurchase( {
+		expiry_date: expiryInDays( -5 ),
+		expiry_status: 'expired',
+		subscription_status: 'active',
+	} );
+
 function renderBanner(
 	state: SiteExpiryNoticeState,
 	extra: Partial< ComponentProps< typeof SiteExpiryNoticeBanner > > = {}
@@ -162,6 +169,14 @@ test( 'hands the prefilled message to the contact-support callback', async () =>
 	await userEvent.click( screen.getByRole( 'button', { name: 'Contact support' } ) );
 	expect( onContactSupport ).toHaveBeenCalledWith(
 		'My Business plan expired and I need your help getting it restored.'
+	);
+} );
+
+test( 'offers "View other plans" during grace when a URL is given', () => {
+	renderBanner( makeState( grace() ), { viewOtherPlansUrl: '/plans/x' } );
+	expect( screen.getByRole( 'link', { name: 'View other plans' } ) ).toHaveAttribute(
+		'href',
+		'/plans/x'
 	);
 } );
 

@@ -40,7 +40,6 @@ export function useSiteExpiryNoticeCandidate(): SiteExpiryNoticeCandidate | null
 		currentUserId: user.ID,
 		isAtomic: !! site?.is_wpcom_atomic,
 		locale,
-		viewOtherPlansUrl: site ? getSitePlanUpgradeUrl( site ) : undefined,
 	} );
 
 	const openSupport = useCallback(
@@ -69,6 +68,7 @@ export function useSiteExpiryNoticeCandidate(): SiteExpiryNoticeCandidate | null
 				eventProperties={ { page } }
 				recordTracksEvent={ recordTracksEvent }
 				onContactSupport={ openSupport }
+				viewOtherPlansUrl={ getSitePlanUpgradeUrl( site ) }
 			/>
 		),
 	};

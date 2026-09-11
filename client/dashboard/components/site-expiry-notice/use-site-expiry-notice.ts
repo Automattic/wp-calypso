@@ -36,8 +36,6 @@ export interface SiteExpiryNoticeOptions {
 	 */
 	isAtomic: boolean;
 	locale: string;
-	renewReturnUrl?: string;
-	viewOtherPlansUrl?: string;
 }
 
 export interface SiteExpiryNoticeState {
