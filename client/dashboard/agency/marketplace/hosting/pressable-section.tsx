@@ -33,6 +33,7 @@ import {
 	getPressablePlan,
 	getPressablePlanName,
 	isLowTabDisabled,
+	isPremiumPlanSlug,
 	isSignaturePlanSlug,
 	sortPlansForCategory,
 } from './lib/pressable-plans';
@@ -57,8 +58,6 @@ interface Props {
 	isReferralMode: boolean;
 	onAddToCart: ( plan: AgencyProduct, quantity: number ) => void;
 }
-
-const bold = ( text: string ) => createInterpolateElement( text, { b: <b /> } );
 
 function getPlanOptionLabel( product: AgencyProduct, plan: PressablePlan ) {
 	return sprintf(
@@ -89,7 +88,7 @@ function ScheduleDemoCallout() {
 				</Text>
 			}
 			image={ demoIllustration }
-			imageAlt={ __( 'Responsive website design' ) }
+			imageAlt=""
 			imageVariant="full-bleed"
 			actions={
 				<Button
@@ -144,13 +143,14 @@ export default function PressableSection( {
 
 	// Premium plans are only sold through referrals for now.
 	const hasNewPremiumPlans =
-		isReferralMode &&
-		catalog.some( ( product ) => product.slug.startsWith( 'pressable-premium-' ) );
+		isReferralMode && catalog.some( ( product ) => isPremiumPlanSlug( product.slug ) );
 
-	const [ selectedTab, setSelectedTab ] = useSessionState(
-		'pressable-tab',
-		getDefaultPlanCategoryTab( existingPressablePlan, areSignaturePlans )
-	);
+	const defaultTab = getDefaultPlanCategoryTab( existingPressablePlan, areSignaturePlans );
+	const [ storedTab, setSelectedTab ] = useSessionState( 'pressable-tab', defaultTab );
+	const tabs = getPlanCategoryTabs( areSignaturePlans, hasNewPremiumPlans );
+	// The stored tab is shared with classic and may not exist in this catalog
+	// (e.g. after toggling referral mode), so fall back like classic's TabPanel.
+	const selectedTab = tabs.some( ( tab ) => tab.key === storedTab ) ? storedTab : defaultTab;
 	const { getValue: getPersistedSlug, setValue: persistSlug } =
 		useKeyedSessionState< string >( 'pressable-plan' );
 	// `null` is the custom plan; `undefined` means nothing is chosen yet.
@@ -191,10 +191,11 @@ export default function PressableSection( {
 		const defaultSlug = getDefaultPlanSlug( selectedTab, areSignaturePlans );
 		const defaultProduct = catalog.find( ( product ) => product.slug === defaultSlug );
 		setSelectedSlug(
-			defaultProduct?.slug ?? ( isReferralMode ? null : catalog[ 0 ]?.slug ?? null )
+			defaultProduct?.slug ?? ( isReferralMode ? null : tabOptions[ 0 ]?.slug ?? null )
 		);
 	}, [
 		catalog,
+		tabOptions,
 		selectedTab,
 		getPersistedSlug,
 		persistSlug,
@@ -230,10 +231,8 @@ export default function PressableSection( {
 		: undefined;
 	const selectedPlanInfo = selectedProduct ? getPressablePlan( selectedProduct.slug ) : undefined;
 	const isCustomPlan = selectedSlug === null;
-	const showPremiumSection =
-		selectedTab === PLAN_CATEGORY_PREMIUM && ( ! hasNewPremiumPlans || isCustomPlan );
+	const showPremiumSection = selectedTab === PLAN_CATEGORY_PREMIUM && ! hasNewPremiumPlans;
 
-	const tabs = getPlanCategoryTabs( areSignaturePlans, hasNewPremiumPlans );
 	const disableLowTab = isLowTabDisabled( existingPressablePlan, lowOptions );
 
 	const priceInfo = selectedProduct
@@ -243,8 +242,6 @@ export default function PressableSection( {
 		: undefined;
 	const hasIntroductoryDiscount = !! priceInfo && priceInfo.regularPrice !== undefined;
 
-	const isStandardPlan =
-		! areSignaturePlans && selectedPlanInfo?.category === PLAN_CATEGORY_STANDARD;
 	const planName = selectedProduct ? getPressablePlanName( selectedProduct.name ) : __( 'Custom' );
 
 	const getPlanDetailsIntro = () => {
@@ -253,78 +250,55 @@ export default function PressableSection( {
 				'When you refer a Pressable plan to your client, they’ll pay and manage the billing. You’ll manage the site, and make a recurring commission.'
 			);
 		}
-		return areSignaturePlans || isStandardPlan
-			? __(
-					'With Signature plans, your traffic & storage limits are shared amongst your total sites.'
-			  )
-			: __(
-					'With Enterprise plans, your traffic & storage limits are shared amongst your total sites.'
-			  );
+		return __( 'Your traffic and storage limits are shared amongst your total sites.' );
 	};
 
 	const renderPlanDetails = () => (
 		<VStack spacing={ 3 }>
-			<Heading level={ 4 } size={ 13 }>
-				{ planName }
-			</Heading>
 			<Text variant="muted">{ getPlanDetailsIntro() }</Text>
 			{ isCustomPlan || ! selectedPlanInfo ? (
 				<CheckGrid
 					items={ [
 						__( 'Custom WordPress installs' ),
-						bold( __( '<b>Custom</b> visits per month*' ) ),
-						bold( __( '<b>Custom</b> storage per month*' ) ),
-						bold( __( '<b>Unmetered</b> bandwidth' ) ),
+						__( 'Custom visits per month*' ),
+						__( 'Custom storage per month*' ),
+						__( 'Unmetered bandwidth' ),
 					] }
 				/>
 			) : (
 				<CheckGrid
 					columns={ 3 }
 					items={ [
-						bold(
-							sprintf(
-								/* translators: %d is the number of WordPress installs. */
-								_n(
-									'Up to <b>%d WordPress install</b>',
-									'Up to <b>%d WordPress installs</b>',
-									selectedPlanInfo.install
-								),
+						sprintf(
+							/* translators: %d is the number of WordPress installs. */
+							_n(
+								'Up to %d WordPress install',
+								'Up to %d WordPress installs',
 								selectedPlanInfo.install
-							)
+							),
+							selectedPlanInfo.install
 						),
-						bold(
-							sprintf(
-								/* translators: %d is the number of staging sites. */
-								_n(
-									'Up to <b>%d staging site</b>',
-									'Up to <b>%d staging sites</b>',
-									selectedPlanInfo.install
-								),
-								selectedPlanInfo.install
-							)
+						sprintf(
+							/* translators: %d is the number of staging sites. */
+							_n( 'Up to %d staging site', 'Up to %d staging sites', selectedPlanInfo.install ),
+							selectedPlanInfo.install
 						),
-						bold(
-							sprintf(
-								/* translators: %s is the number of visits. */
-								__( '<b>%s visits</b> per month*' ),
-								formatNumberCompact( selectedPlanInfo.visits )
-							)
+						sprintf(
+							/* translators: %s is the number of visits. */
+							__( '%s visits per month*' ),
+							formatNumberCompact( selectedPlanInfo.visits )
 						),
-						bold(
-							sprintf(
-								/* translators: %d is the size of storage in GB. */
-								__( '<b>%dGB of storage*</b>' ),
-								selectedPlanInfo.storage
-							)
+						sprintf(
+							/* translators: %d is the size of storage in GB. */
+							__( '%dGB of storage*' ),
+							selectedPlanInfo.storage
 						),
-						bold(
-							sprintf(
-								/* translators: %d is the number of PHP workers. */
-								__( '<b>%d</b> base PHP Workers' ),
-								selectedPlanInfo.worker ?? 5
-							)
+						sprintf(
+							/* translators: %d is the number of PHP workers. */
+							__( '%d base PHP workers' ),
+							selectedPlanInfo.worker ?? 5
 						),
-						bold( __( '<b>Unmetered bandwidth</b>' ) ),
+						__( 'Unmetered bandwidth' ),
 					] }
 				/>
 			) }
@@ -334,8 +308,8 @@ export default function PressableSection( {
 					__(
 						'*If you exceed your plan’s storage or traffic limits, you will be charged %1$s per GB and %2$s per %3$s visits per month.'
 					),
-					formatCurrency( 0.5, 'USD', { stripZeros: true } ),
-					formatCurrency( 8, 'USD', { stripZeros: true } ),
+					formatCurrency( 0.5, 'USD' ),
+					formatCurrency( 8, 'USD' ),
 					formatNumberCompact( 10000 )
 				) }
 			</Text>

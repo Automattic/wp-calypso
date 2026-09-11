@@ -1,13 +1,4 @@
-import {
-	JetpackLicenseFilter,
-	JetpackLicenseSortDirection,
-	JetpackLicenseSortField,
-} from '@automattic/api-core';
-import {
-	activeAgencyQuery,
-	agencyProductsQuery,
-	jetpackAgencyLicensesQuery,
-} from '@automattic/api-queries';
+import { activeAgencyQuery, agencyProductsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -19,7 +10,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -29,14 +20,10 @@ import CartMenu from '../products/cart-menu';
 import { useShoppingCart } from '../products/use-shopping-cart';
 import ReferralToggle from '../referral-toggle';
 import TermPricingToggle from '../term-pricing-toggle';
+import { useAgencyPressablePlan } from '../use-agency-pressable-plan';
 import { useMarketplaceType } from '../use-marketplace-type';
 import { useTermPricing } from '../use-term-pricing';
-import {
-	findAgencyPressablePlan,
-	getPressableLicenses,
-	getPressableOwnershipType,
-	getPressableProducts,
-} from './lib/pressable-products';
+import { getEffectivePressableOwnership } from './lib/pressable-products';
 import PressableSection from './pressable-section';
 import type { HostingSection } from '../paths';
 import type { AgencyProduct } from '@automattic/api-core';
@@ -92,35 +79,17 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 	const agencyApproved = isAgencyApproved( agency );
 
 	const { data: allProducts } = useQuery( agencyProductsQuery( agencyId ) );
-	// Pressable licenses tell which plan the agency is on and what its add-ons contribute.
-	const { data: licenses, isFetched: isLicensesFetched } = useQuery( {
-		...jetpackAgencyLicensesQuery( agencyId, {
-			filter: JetpackLicenseFilter.NotRevoked,
-			sortField: JetpackLicenseSortField.IssuedAt,
-			sortDirection: JetpackLicenseSortDirection.Descending,
-		} ),
-		enabled: agencyId > 0,
-		staleTime: 5 * 60 * 1000,
-	} );
-
-	const pressableProducts = useMemo(
-		() => getPressableProducts( allProducts ?? [] ),
-		[ allProducts ]
+	const {
+		plan: agencyPressablePlan,
+		products: pressableProducts,
+		ownership: pressableOwnership,
+		isReady: isPressableReady,
+	} = useAgencyPressablePlan();
+	const effectivePressableOwnership = getEffectivePressableOwnership(
+		pressableOwnership,
+		agencyPressablePlan,
+		isReferralMode
 	);
-	const pressableLicenses = useMemo( () => getPressableLicenses( licenses ?? [] ), [ licenses ] );
-	const agencyPressablePlan = useMemo(
-		() => findAgencyPressablePlan( pressableLicenses, pressableProducts ),
-		[ pressableLicenses, pressableProducts ]
-	);
-	const pressableOwnership = getPressableOwnershipType( agency ?? undefined );
-	// A Pressable account from outside A4A doesn't change what the page sells,
-	// so it counts as no plan; a referral or an A4A plan counts as owning one.
-	const effectivePressableOwnership = ( () => {
-		if ( isReferralMode || agencyPressablePlan ) {
-			return 'agency';
-		}
-		return pressableOwnership === 'regular' ? 'none' : pressableOwnership;
-	} )();
 
 	const { items: cartItems, swapItems, removeItem, clearCart } = useShoppingCart();
 	const [ isCartOpen, setIsCartOpen ] = useState( false );
@@ -154,7 +123,7 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 		if ( brand !== 'pressable' ) {
 			return <Text variant="muted">{ PLACEHOLDERS[ brand ] }</Text>;
 		}
-		if ( ! isLicensesFetched ) {
+		if ( ! isPressableReady ) {
 			return null;
 		}
 		return (
@@ -186,9 +155,6 @@ export default function MarketplaceHosting( { section }: { section: HostingSecti
 								term={ termPricing }
 								isReferralMode={ isReferralMode }
 								isAgencyApproved={ agencyApproved }
-								applyPressableIntroductoryPrice={
-									isReferralMode || effectivePressableOwnership !== 'agency'
-								}
 								open={ isCartOpen }
 								onToggle={ setIsCartOpen }
 								onRemove={ removeItem }

@@ -26,14 +26,6 @@
 	}
 }
 
-.dashboard-marketplace-hosting__grid--3 {
-	grid-template-columns: 1fr;
-
-	@include break-xlarge {
-		grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
-	}
-}
-
 .dashboard-marketplace-hosting__grid--4 {
 	grid-template-columns: 1fr;
 

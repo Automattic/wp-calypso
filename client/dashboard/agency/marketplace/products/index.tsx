@@ -33,6 +33,7 @@ import WooPaymentsIllustration from '../../overview/woopayments-illustration';
 import jetpackLogo from '../exclusive-offers/images/jetpack-descriptor.svg';
 import pressableLogo from '../exclusive-offers/images/pressable-descriptor.svg';
 import wooLogo from '../exclusive-offers/images/woo-descriptor.svg';
+import { isPressablePlanLicense } from '../hosting/lib/pressable-products';
 import { isAgencyApproved } from '../is-agency-approved';
 import ReferralToggle from '../referral-toggle';
 import TermPricingToggle from '../term-pricing-toggle';
@@ -100,9 +101,6 @@ const CLASSIC_CATEGORY_KEYS: Record< string, CategoryTileValue > = {
 	'store-content-and-customization': 'store-content',
 };
 
-const isPressablePlanLicense = ( licenseKey: string ) =>
-	licenseKey.startsWith( 'pressable-' ) && ! licenseKey.startsWith( 'pressable-addon' );
-
 // TODO: Still missing from the classic Products page:
 // - the agency approval notice (pending / approved / rejected)
 // - the overdue invoice notice
@@ -130,10 +128,7 @@ export default function MarketplaceProducts() {
 		} ),
 		enabled: agencyId > 0,
 	} );
-	const hasPressablePlan =
-		pressableLicenses?.some(
-			( license ) => isPressablePlanLicense( license.license_key ) && ! license.referral
-		) ?? false;
+	const hasPressablePlan = pressableLicenses?.some( isPressablePlanLicense ) ?? false;
 	const showPressableAddons = isReferralMode || hasPressablePlan;
 
 	const products = useMemo( () => {
