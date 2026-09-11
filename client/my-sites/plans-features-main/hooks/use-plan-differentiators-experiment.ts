@@ -1,7 +1,3 @@
-import { useSelector } from 'calypso/state';
-import getSite from 'calypso/state/sites/selectors/get-site';
-import type { IAppState } from 'calypso/state/types';
-
 type PlanDifferentiatorsResult = {
 	/**
 	 * When true, show the differentiator header (3 bullet points). Currently disabled.
@@ -31,17 +27,11 @@ interface UsePlanDifferentiatorsParams {
 	siteId?: number | null;
 }
 
-function usePlanDifferentiatorsExperiment( {
-	isInSignup,
-	siteId,
-}: UsePlanDifferentiatorsParams ): PlanDifferentiatorsResult {
-	const site = useSelector( ( state: IAppState ) => getSite( state, siteId ) );
-
-	const hasGatingFlag = !! site?.options?.is_gating_business_q1;
-
-	// New-site signups (no siteId yet) are always eligible.
-	// Flows operating on an existing site are eligible only when the gating flag is set.
-	const isEligible = ( isInSignup && ! siteId ) || hasGatingFlag;
+function usePlanDifferentiatorsExperiment(
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	params: UsePlanDifferentiatorsParams
+): PlanDifferentiatorsResult {
+	const isEligible = true;
 
 	return {
 		showDifferentiatorHeader: false,
