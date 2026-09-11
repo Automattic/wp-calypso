@@ -3,12 +3,13 @@
  */
 
 import config from '@automattic/calypso-config';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { act, render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import MockBlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import PasswordlessSignupForm from '../passwordless';
 
@@ -16,14 +17,7 @@ jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
 	getBlackboxSessionId: jest.fn().mockResolvedValue( undefined ),
 } ) );
 
-jest.mock( 'calypso/blocks/login/blackbox-challenge', () => {
-	const { useEffect } = require( 'react' );
-	// Stand-in widget that reports "not blocking" so an enabled form stays submittable.
-	return ( { onSubmitBlockedChange } ) => {
-		useEffect( () => onSubmitBlockedChange?.( false ), [ onSubmitBlockedChange ] );
-		return null;
-	};
-} );
+jest.mock( 'calypso/blocks/login/blackbox-challenge' );
 
 describe( 'createAccountError', () => {
 	const mockStore = configureStore( [ thunk ] );
@@ -301,6 +295,7 @@ describe( 'Blackbox integration', () => {
 		config.enable( 'blackbox-signup' );
 		getBlackboxSessionId.mockReset();
 		getBlackboxSessionId.mockResolvedValue( undefined );
+		MockBlackboxChallenge.blocked = false;
 		delete window.Blackbox;
 		nock.cleanAll();
 	} );
@@ -325,6 +320,54 @@ describe( 'Blackbox integration', () => {
 		await waitFor( () => expect( getRequestBody() ).toBeTruthy() );
 		expect( getRequestBody() ).not.toHaveProperty( 'blackbox_session_id' );
 		expect( getBlackboxSessionId ).not.toHaveBeenCalled();
+	} );
+
+	it( 'sends no request when Enter submits while a challenge is blocking', async () => {
+		MockBlackboxChallenge.blocked = true;
+		const getRequestBody = interceptUsersNew( 403, { error: 'throttled' } );
+
+		renderFormAndSubmit();
+		fireEvent.submit( screen.getByRole( 'textbox', { name: /email/i } ).closest( 'form' ) );
+
+		await waitFor( () => expect( getRequestBody() ).toBeUndefined() );
+		expect( getBlackboxSessionId ).not.toHaveBeenCalled();
+	} );
+
+	it( 'stops the submit button spinning when a challenge appears mid-submit', async () => {
+		getBlackboxSessionId.mockReturnValue( new Promise( () => {} ) );
+		interceptUsersNew( 403, { error: 'throttled' } );
+
+		renderFormAndSubmit();
+
+		const submitButton = await screen.findByRole( 'button', { name: /creating your account/i } );
+		expect( submitButton ).toHaveClass( 'is-busy' );
+
+		act( () => MockBlackboxChallenge.setBlocked( true ) );
+
+		const idleButton = screen.getByRole( 'button', { name: /create your account/i } );
+		expect( idleButton ).not.toHaveClass( 'is-busy' );
+		expect( idleButton ).toBeDisabled();
+	} );
+
+	it( 'does not start a second signup while the first is waiting on Blackbox', async () => {
+		getBlackboxSessionId.mockReturnValue( new Promise( () => {} ) );
+		interceptUsersNew( 403, { error: 'throttled' } );
+
+		const store = mockStore( {} );
+		render(
+			<Provider store={ store }>
+				<PasswordlessSignupForm flowName="onboarding" />
+			</Provider>
+		);
+		fireEvent.change( screen.getByRole( 'textbox', { name: /email/i } ), {
+			target: { value: 'test@example.com' },
+		} );
+
+		const form = screen.getByRole( 'textbox', { name: /email/i } ).closest( 'form' );
+		fireEvent.submit( form );
+		fireEvent.submit( form );
+
+		await waitFor( () => expect( getBlackboxSessionId ).toHaveBeenCalledTimes( 1 ) );
 	} );
 
 	it( 'resets Blackbox when the signup request fails', async () => {

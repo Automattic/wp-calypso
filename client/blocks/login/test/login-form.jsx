@@ -5,6 +5,7 @@ import config from '@automattic/calypso-config';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import cookie from 'cookie';
+import MockBlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import LoginForm from 'calypso/blocks/login/login-form';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import loginReducer from 'calypso/state/login/reducer';
@@ -20,13 +21,7 @@ jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
 	getBlackboxSessionId: jest.fn().mockResolvedValue( undefined ),
 } ) );
 
-jest.mock( 'calypso/blocks/login/blackbox-challenge', () => {
-	const { useEffect } = require( 'react' );
-	return ( { onSubmitBlockedChange } ) => {
-		useEffect( () => onSubmitBlockedChange?.( false ), [ onSubmitBlockedChange ] );
-		return null;
-	};
-} );
+jest.mock( 'calypso/blocks/login/blackbox-challenge' );
 
 const render = ( el, options ) =>
 	renderWithProvider( el, { ...options, reducers: { login: loginReducer, route: routeReducer } } );
@@ -275,6 +270,7 @@ describe( 'LoginForm', () => {
 			mockFetch.mockReset();
 			getBlackboxSessionId.mockReset();
 			getBlackboxSessionId.mockResolvedValue( undefined );
+			MockBlackboxChallenge.blocked = false;
 			delete window.Blackbox;
 		} );
 
@@ -324,6 +320,21 @@ describe( 'LoginForm', () => {
 			await userEvent.click( screen.getByRole( 'button', { name: /Log In/i } ) );
 
 			await waitFor( () => expect( window.Blackbox.reset ).toHaveBeenCalledTimes( 1 ) );
+		} );
+
+		test( 'sends no request when Enter submits while a challenge is blocking', async () => {
+			MockBlackboxChallenge.blocked = true;
+			getBlackboxSessionId.mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
+
+			renderRegularLoginForm();
+
+			const form = document.querySelector( 'form[method="post"]' );
+			act( () => {
+				form.requestSubmit();
+			} );
+
+			await waitFor( () => expect( getBlackboxSessionId ).not.toHaveBeenCalled() );
+			expect( mockFetch ).not.toHaveBeenCalled();
 		} );
 
 		test( 'sends only one login request when the form is submitted twice', async () => {
