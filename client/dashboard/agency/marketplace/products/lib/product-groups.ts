@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { PRESSABLE_HOSTING_FAMILY_SLUG, WPCOM_HOSTING_FAMILY_SLUG } from '../../lib/wpcom-hosting';
 import { isPressableAddon, isWooCommerceProduct } from './product-categories';
 import {
 	BACKUP_STORAGE_FAMILY_SLUG,
@@ -32,7 +33,8 @@ export interface ProductSection {
 }
 
 const isHostingPlan = ( product: AgencyProduct ) =>
-	product.family_slug === 'wpcom-hosting' || product.family_slug === 'pressable-hosting';
+	product.family_slug === WPCOM_HOSTING_FAMILY_SLUG ||
+	product.family_slug === PRESSABLE_HOSTING_FAMILY_SLUG;
 
 // The marketplace catalog: hosting plans live on the Hosting page.
 export function getMarketplaceProducts( products: AgencyProduct[] ): AgencyProduct[] {

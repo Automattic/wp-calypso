@@ -94,3 +94,10 @@ export interface IssueJetpackLicensesInput {
 export interface JetpackLicenseDownloadUrl {
 	download_url: string;
 }
+
+/** Free WordPress.com development-site licenses granted to an agency. */
+export interface AgencyDevLicenses {
+	licenses: JetpackLicense[];
+	/** How many free development licenses are still unused. */
+	available: number;
+}
