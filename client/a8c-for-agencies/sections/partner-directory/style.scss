@@ -1,6 +1,5 @@
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 
-@import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
 
 .partner-directory__dashboard {
@@ -10,9 +9,11 @@
 }
 
 // Match the dashboard's base typography (its body font) so the shared
-// expertise screen renders the same in both hosts, and provide the
-// dashboard token its error text reads, which only the dashboard apps define.
-.partner-directory-agency-expertise {
+// expertise and details screens render the same in both hosts, and provide
+// the dashboard token their error text reads, which only the dashboard apps
+// define.
+.partner-directory-agency-expertise,
+.partner-directory-agency-details {
 	--dashboard__foreground-color-error: var(--color-error);
 
 	font-size: $font-size-medium;
@@ -41,18 +42,3 @@
 	}
 }
 
-.partner-directory__body {
-	.searchable-dropdown input.components-combobox-control__input[type="text"] {
-		@include body-medium;
-	}
-
-	.searchable-dropdown .components-form-token-field__suggestions-list li {
-		@include body-medium;
-	}
-}
-
-.partner-directory-agency-cta__required-information {
-	@include body-medium;
-	color: var(--color-neutral-50);
-	margin-block-start: -32px;
-}
