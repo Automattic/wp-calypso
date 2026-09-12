@@ -42,6 +42,7 @@
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,
 		"dolly/telegram": true,
+		"domain-search/name-pulse": true,
 		"domain-transfer-redesign": true,
 		"emails/titan-tiers": true,
 		"marketplace-redesign": true,

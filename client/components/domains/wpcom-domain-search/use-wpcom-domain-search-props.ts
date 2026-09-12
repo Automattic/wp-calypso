@@ -93,6 +93,7 @@ export const useWPCOMDomainSearchProps = ( {
 		return {
 			...externalConfig,
 			showBundleSuggestions: isEnabled( 'domain-bundling' ) && flowSupportsBundles,
+			showNamePulseSearch: isEnabled( 'domain-search/name-pulse' ),
 			priceRules: {
 				...externalConfig?.priceRules,
 				freeForFirstYear: isNextDomainFree,
