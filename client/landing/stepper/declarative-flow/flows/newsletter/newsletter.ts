@@ -138,6 +138,7 @@ const newsletter: Flow = {
 						setHideFreePlan( true );
 						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
 						setDomainCartItem( providedDependencies.domainCartItem as MinimalRequestCartProduct );
+						setDomainCartItems( [] );
 					}
 
 					return navigate( 'plans' );
