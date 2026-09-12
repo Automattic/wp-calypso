@@ -1,10 +1,13 @@
 import pagejs from '@automattic/calypso-router';
 import { createMemoryHistory } from '@tanstack/react-router';
+import { suppressSkippedViewTransitions } from 'calypso/dashboard/app/router/suppress-skipped-view-transitions';
 import UnknownError from '../components/500';
 import type { AnyRoute, AnyRouter } from '@tanstack/react-router';
 import type { AppConfig } from 'calypso/dashboard/app/context';
 
 export function getRouterOptions( config: AppConfig ) {
+	suppressSkippedViewTransitions();
+
 	return {
 		basepath: config.basePath,
 		context: {
