@@ -108,6 +108,7 @@
 		"me/legacy-contact": true,
 		"migration-flow/introductory-offer": true,
 		"migration/ssh-migration": false,
+		"notifications/view-settings": true,
 		"oauth/unified-experience": true,
 		"onboarding/create-course": false,
 		"onboarding/import-from-blogger": true,

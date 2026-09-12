@@ -153,6 +153,7 @@
 		"migration-flow/introductory-offer": true,
 		"migration/ssh-migration": false,
 		"notifications/redesign": true,
+		"notifications/view-settings": true,
 		"oauth": false,
 		"oauth/unified-experience": true,
 		"onboarding/create-course": false,
