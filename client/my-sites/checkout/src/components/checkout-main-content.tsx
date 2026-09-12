@@ -55,7 +55,10 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Loading from 'calypso/components/loading';
 import { ONBOARDING_STEPPER_TOTAL } from 'calypso/landing/stepper/declarative-flow/flows/onboarding/step-counter-config';
 import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress';
-import { useShowOnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
+import {
+	ONBOARDING_PROGRESS_BREAKPOINT,
+	useShowOnboardingProgress,
+} from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
@@ -506,8 +509,12 @@ export default function CheckoutMainContent( {
 	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
 	// The flow that redirected to checkout may pass a step indicator via the
 	// `steps_current` / `steps_total` query params. Checkout has no per-flow
-	// knowledge — any flow can opt in by including the params. Mobile-only.
-	const isMobileViewport = useViewportMatch( 'small', '<' );
+	// knowledge — any flow can opt in by including the params.
+	//
+	// Gated on the same breakpoint as the named step rail above, so the counter
+	// starts exactly where the names stop. It used to be gated to mobile, which
+	// left every width between mobile and desktop with no indicator at all.
+	const hasRoomForStepNames = useViewportMatch( ONBOARDING_PROGRESS_BREAKPOINT );
 	const stepsCurrent = Number( searchParams.get( 'steps_current' ) );
 	const stepsTotal = Number( searchParams.get( 'steps_total' ) );
 	const hasStepCount =
@@ -517,7 +524,7 @@ export default function CheckoutMainContent( {
 		stepsTotal > 0 &&
 		stepsCurrent <= stepsTotal;
 	const stepCounter =
-		isMobileViewport && hasStepCount ? { current: stepsCurrent, total: stepsTotal } : null;
+		! hasRoomForStepNames && hasStepCount ? { current: stepsCurrent, total: stepsTotal } : null;
 	// The flow reports how many steps its visit had. Onboarding sends one fewer when the plan
 	// arrived preselected, so the grid was never among them.
 	const shouldHidePlansStep =
@@ -1215,37 +1222,39 @@ export default function CheckoutMainContent( {
 				<Step.TwoColumnLayout
 					firstColumnWidth={ 8 }
 					secondColumnWidth={ 4 }
-					heading={
-						showProgress ? (
-							<OnboardingProgress
-								currentStep="checkout"
-								shouldHidePlansStep={ shouldHidePlansStep }
-								isStepSelectDisabled={ leaveModalProps.isLeaveDisabled }
-								onStepSelect={ ( step ) =>
-									handleProgressStepSelect( step, {
-										forceCheckoutBackUrlDomains,
-										forceCheckoutBackUrl,
-										clickStepBack: leaveModalProps.clickStepBack,
-										clickClose: leaveModalProps.clickClose,
-									} )
-								}
-							/>
-						) : undefined
-					}
 					topBar={ ( { isLargeViewport } ) => {
 						const topBar = (
 							<Step.TopBar
 								leftElement={
-									showProgress ? undefined : (
-										<Step.BackButton
-											onClick={ leaveModalProps.clickClose }
-											disabled={ leaveModalProps.isLeaveDisabled }
-											accessibleWhenDisabled
-										/>
-									)
+									// The rail used to stand in for the back button here. It
+									// sits on the right now, beside where the counter goes, so
+									// this slot behaves as it does everywhere else.
+									<Step.BackButton
+										onClick={ leaveModalProps.clickClose }
+										disabled={ leaveModalProps.isLeaveDisabled }
+										accessibleWhenDisabled
+									/>
 								}
 								rightElement={
 									<>
+										{ /* The rail and the counter are the same indicator at
+										     two widths, so they share this slot and never
+										     overlap. */ }
+										{ showProgress && (
+											<OnboardingProgress
+												currentStep="checkout"
+												shouldHidePlansStep={ shouldHidePlansStep }
+												isStepSelectDisabled={ leaveModalProps.isLeaveDisabled }
+												onStepSelect={ ( step ) =>
+													handleProgressStepSelect( step, {
+														forceCheckoutBackUrlDomains,
+														forceCheckoutBackUrl,
+														clickStepBack: leaveModalProps.clickStepBack,
+														clickClose: leaveModalProps.clickClose,
+													} )
+												}
+											/>
+										) }
 										{ stepCounter && (
 											<Step.StepCounter
 												current={ stepCounter.current }
