@@ -213,6 +213,7 @@ export interface AgentManager {
 	resetConversation: ( key: string ) => Promise< void >;
 	replaceMessages: ( key: string, messages: Message[] ) => Promise< void >;
 	getConversationHistory: ( key: string ) => Message[];
+	getLiveSessionIds: () => string[];
 	updateSessionId: ( key: string, sessionId: string ) => void;
 	abortCurrentRequest: ( key: string ) => void;
 	/**
@@ -877,6 +878,16 @@ function createAgentManager(): AgentManager {
 				managedAgent.currentAbortController.abort();
 				managedAgent.currentAbortController = null;
 			}
+		},
+
+		getLiveSessionIds(): string[] {
+			const sessionIds: string[] = [];
+			for ( const managedAgent of agents.values() ) {
+				if ( managedAgent.sessionId ) {
+					sessionIds.push( managedAgent.sessionId );
+				}
+			}
+			return sessionIds;
 		},
 
 		isTurnInFlight( key: string ): boolean {
