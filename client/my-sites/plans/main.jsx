@@ -167,7 +167,13 @@ class PlansComponent extends Component {
 		}
 
 		// The Jetpack mobile app wants to display a specific selection of plans
-		const plansIntent = this.props.jetpackAppPlans ? 'plans-jetpack-app' : null;
+		const intentFromQuery = this.props.context?.query?.intent;
+		let plansIntent = null;
+		if ( this.props.jetpackAppPlans ) {
+			plansIntent = 'plans-jetpack-app';
+		} else if ( intentFromQuery === 'plans-themes' ) {
+			plansIntent = intentFromQuery;
+		}
 
 		// De-emphasize the current plan card: relabel it instead of spotlighting it.
 		const highlightLabelOverrides = currentPlan?.productSlug
