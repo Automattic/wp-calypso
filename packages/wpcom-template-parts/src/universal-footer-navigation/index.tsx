@@ -68,6 +68,30 @@ const APP_STORE_URL =
 const GOOGLE_PLAY_URL =
 	'https://play.google.com/store/apps/details?id=com.jetpack.android&referrer=utm_source%3Dwordpress.com%26utm_campaign%3Dfooter%26utm_medium%3Dwebsite';
 
+// `?footer_2026=` accepts `1`/`light` for white and `2`/`dark` for dark.
+const FOOTER_2026_COLORWAY_ALIASES: Record< string, FooterProps[ 'colorway' ] > = {
+	'1': 'white',
+	light: 'white',
+	'2': 'dark',
+	dark: 'dark',
+};
+
+export const getFooter2026Colorway = (
+	isFooter2026Enabled: boolean,
+	previewColorway?: string | string[]
+): FooterProps[ 'colorway' ] => {
+	if ( ! isFooter2026Enabled ) {
+		return undefined;
+	}
+
+	// A repeated query parameter arrives as an array; the last one wins.
+	const flag = Array.isArray( previewColorway )
+		? previewColorway[ previewColorway.length - 1 ]
+		: previewColorway;
+
+	return FOOTER_2026_COLORWAY_ALIASES[ flag as string ] ?? 'white';
+};
+
 const FooterStack = ( {
 	column,
 	open,
@@ -125,13 +149,32 @@ export const PureUniversalNavbarFooter = ( {
 	locale,
 	currentRoute,
 	collapseStacks = false,
+	colorway,
 }: PureFooterProps ) => {
 	const columns = getFooterColumns( { localizeUrl, locale, isLoggedIn } );
+	const sectionColorwayClass =
+		colorway === 'white'
+			? 'is-style-text-gray-100-background-white'
+			: 'is-style-text-white-background-gray-100';
+	let automatticBarColorwayClass = 'is-style-white-gray-mono';
+	if ( colorway === 'white' ) {
+		automatticBarColorwayClass = 'is-style-text-gray-100-background-white';
+	} else if ( colorway === 'dark' ) {
+		automatticBarColorwayClass = 'is-style-text-white-background-gray-100';
+	}
 
 	return (
-		<div className="wpcom-global-nav-footer">
+		<div
+			className={ [
+				'wpcom-global-nav-footer',
+				colorway && 'wpcom-global-nav-footer--2026',
+				colorway === 'dark' && 'wpcom-global-nav-footer--dark',
+			]
+				.filter( Boolean )
+				.join( ' ' ) }
+		>
 			<section
-				className="lp-block lp-footer-section lp-section is-style-text-white-background-gray-100 lp-padding-top-7 lp-padding-bottom-0"
+				className={ `lp-block lp-footer-section lp-section ${ sectionColorwayClass } lp-padding-top-7 lp-padding-bottom-0` }
 				data-section-name="footer"
 			>
 				<div className="lp-section__content has-small-font-size has-text-align-left">
@@ -291,7 +334,9 @@ export const PureUniversalNavbarFooter = ( {
 						</div>
 					</div>
 					<div className="lp-wrapper lp-wrapper--layout-full lp-padding-top-5">
-						<footer className="lp-section is-style-white-gray-mono lp-padding-top-4 lp-padding-bottom-4">
+						<footer
+							className={ `lp-section ${ automatticBarColorwayClass } lp-padding-top-4 lp-padding-bottom-4` }
+						>
 							<div className="lp-section__content has-tiny-font-size has-text-align-center">
 								<h2 className="lp-hidden">Automattic</h2>
 								<div className="lp-wrapper lp-wrapper--layout-wide">
@@ -328,6 +373,7 @@ const UniversalNavbarFooter = ( {
 	isLoggedIn = false,
 	currentRoute,
 	additionalCompanyLinks,
+	colorway,
 }: FooterProps ) => {
 	const localizeUrl = useLocalizeUrl();
 	const locale = useLocale();
@@ -364,6 +410,7 @@ const UniversalNavbarFooter = ( {
 			isLoggedIn={ isLoggedIn }
 			currentRoute={ pathNameWithoutLocale }
 			additionalCompanyLinks={ additionalCompanyLinks }
+			colorway={ colorway }
 			localizeUrl={ localizeUrl }
 			automatticBranding={ automatticBranding }
 			collapseStacks={ collapseStacks }
