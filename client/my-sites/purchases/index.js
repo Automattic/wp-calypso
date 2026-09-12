@@ -11,12 +11,15 @@ import {
 	redirectToPurchases,
 	purchaseDetails,
 	purchaseCancel,
-	purchaseCancelDomain,
+	purchaseCancelDomainOrBackport,
 	purchaseChangePaymentMethod,
+	purchaseChangePaymentMethodLegacyPath,
+	purchaseSiteActions,
 	billingHistory,
 	receiptView,
 	paymentMethods,
 	addPaymentMethod,
+	addPaymentMethodOrBackport,
 	crmDownloads,
 } from './controller';
 
@@ -50,7 +53,23 @@ export default ( router ) => {
 	page(
 		'/purchases/subscriptions/:site/:purchaseId/confirm-cancel-domain',
 		...commonHandlers,
-		purchaseCancelDomain,
+		purchaseCancelDomainOrBackport,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/purchases/subscriptions/:site/:purchaseId/site-actions/:action',
+		...commonHandlers,
+		purchaseSiteActions,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/purchases/subscriptions/:site/:purchaseId/payment-method/change',
+		...commonHandlers,
+		purchaseChangePaymentMethod,
 		makeLayout,
 		clientRender
 	);
@@ -58,7 +77,7 @@ export default ( router ) => {
 	page(
 		'/purchases/subscriptions/:site/:purchaseId/payment-method/add',
 		...commonHandlers,
-		purchaseChangePaymentMethod,
+		purchaseChangePaymentMethodLegacyPath,
 		makeLayout,
 		clientRender
 	);
@@ -74,13 +93,21 @@ export default ( router ) => {
 	page(
 		'/purchases/subscriptions/:site/:purchaseId/payment-method/change/:cardId',
 		...commonHandlers,
-		purchaseChangePaymentMethod,
+		purchaseChangePaymentMethodLegacyPath,
 		makeLayout,
 		clientRender
 	);
 
 	page(
 		'/purchases/add-payment-method/:site',
+		...commonHandlers,
+		addPaymentMethodOrBackport,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/purchases/payment-methods/:site/add',
 		...commonHandlers,
 		addPaymentMethod,
 		makeLayout,
