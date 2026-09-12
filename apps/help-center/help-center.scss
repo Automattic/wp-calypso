@@ -2,6 +2,13 @@
 @import "@automattic/calypso-color-schemes";
 
 .help-center.entry-point-button {
+	// Hidden at the admin bar's mobile breakpoint, like the admin bar entry point.
+	.help-center__entry-label {
+		@media (max-width: 782px) {
+			display: none;
+		}
+	}
+
 	&.is-active {
 		background: #1e1e1e;
 		color: var(--studio-white);

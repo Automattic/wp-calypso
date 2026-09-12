@@ -178,15 +178,16 @@ export function useHelpCenterPlugin( {
 		};
 	}
 
-	// The backend owns the label and its experiment; older backends send no node, so the
-	// client-side defaults keep the entry point rendering until they catch up.
+	// Older backends send no node; the client-side defaults cover them.
 	const helpCenterNode = adminBarNodes.find( ( node ) => node.id === HELP_CENTER_NODE_ID );
+	const menuTitle = helpCenterNode?.meta?.menu_title;
+	const hasEntryLabel = !! helpCenterNode?.meta?.class?.includes( 'has-help-entry-label' );
 
 	return {
 		id: HELP_CENTER_NODE_ID,
-		label: helpCenterNode?.meta?.menu_title ?? __( 'Help' ),
-		title: helpCenterNode?.meta?.entry_label,
-		tooltip: helpCenterNode?.meta?.menu_title,
+		label: menuTitle ?? __( 'Help' ),
+		title: hasEntryLabel ? menuTitle : undefined,
+		tooltip: menuTitle,
 		icon: (
 			<HelpCenterIcon name={ helpCenterNode?.meta?.icon ?? 'help' } sectionName={ sectionName } />
 		),

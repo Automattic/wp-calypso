@@ -275,15 +275,20 @@ describe( 'useHelpCenterPlugin', () => {
 		expect( setShowHelpCenter ).toHaveBeenCalledWith( true );
 	} );
 
-	it( 'shows the entry label the backend sends for the legacy Help Center', () => {
+	it( 'shows the menu title as the entry label when the backend marks the node', () => {
 		const result = renderPlugin( [
 			node( 'help-center', {
 				...HELP_CENTER_NODE,
-				meta: { ...HELP_CENTER_NODE.meta, entry_label: 'Get Help' },
+				meta: {
+					...HELP_CENTER_NODE.meta,
+					menu_title: 'Get Help',
+					class: 'menupop has-help-entry-label',
+				},
 			} ),
 		] );
 
 		expect( result.title ).toBe( 'Get Help' );
-		expect( result.label ).toBe( 'Help Center' );
+		expect( result.label ).toBe( 'Get Help' );
+		expect( result.tooltip ).toBe( 'Get Help' );
 	} );
 } );
