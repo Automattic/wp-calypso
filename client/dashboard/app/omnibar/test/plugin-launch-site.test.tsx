@@ -49,6 +49,11 @@ function LaunchHarness( { site }: { site: Site } ) {
 					{ node.title }
 				</button>
 			) }
+			{ node?.href && (
+				<a href={ node.href } data-testid="launch-href">
+					launch link
+				</a>
+			) }
 			{ panel }
 		</>
 	);
@@ -75,5 +80,23 @@ describe( 'useLaunchSitePlugin', () => {
 		expect(
 			await screen.findByRole( 'dialog', { name: 'Launching makes your site public' } )
 		).toBeVisible();
+	} );
+
+	test( 'sends Back to the page the launch started from, not the site overview', async () => {
+		const settingsPath = '/sites/kaonashi.wordpress.com/settings/site-visibility';
+		window.history.replaceState( {}, '', settingsPath );
+		mockDomainsApi( [ createMockDomain( 'kaonashi.wordpress.com', false ) ] );
+
+		render( <LaunchHarness site={ createMockSite() } /> );
+
+		const link = await screen.findByTestId( 'launch-href' );
+		const params = new URL( link.getAttribute( 'href' ) as string, window.location.origin )
+			.searchParams;
+
+		// Back returns to the settings screen the omnibar was clicked from…
+		expect( params.get( 'back_to' ) ).toContain( settingsPath );
+		// …while the post-launch landing stays on the site overview.
+		expect( params.get( 'redirect_to' ) ).toContain( '/sites/kaonashi.wordpress.com' );
+		expect( params.get( 'redirect_to' ) ).not.toContain( '/settings/site-visibility' );
 	} );
 } );

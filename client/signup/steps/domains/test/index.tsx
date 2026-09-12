@@ -2,9 +2,8 @@
  * @jest-environment jsdom
  */
 
-jest.mock(
-	'calypso/signup/step-wrapper',
-	() => ( props: { stepContent?: React.ReactNode } ) => props.stepContent ?? null
+jest.mock( 'calypso/signup/step-wrapper', () =>
+	jest.fn( ( props: { stepContent?: React.ReactNode } ) => props.stepContent ?? null )
 );
 jest.mock( 'calypso/components/domains/wpcom-domain-search', () => ( {
 	WPCOMDomainSearch: jest.fn().mockReturnValue( null ),
@@ -15,10 +14,12 @@ jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', (
 
 import React from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
+import StepWrapper from 'calypso/signup/step-wrapper';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import DomainSearchStep from '../';
 
 const mockWPCOMDomainSearch = WPCOMDomainSearch as jest.Mock;
+const mockStepWrapper = StepWrapper as unknown as jest.Mock;
 
 const domainItem = { meta: 'example.com', product_slug: 'domain_reg' };
 
@@ -38,6 +39,12 @@ function renderStep( props = baseProps, options = {} ) {
 	mockWPCOMDomainSearch.mockClear();
 	renderWithProvider( <DomainSearchStep { ...props } />, options );
 	return mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ].events;
+}
+
+function renderStepForNavigation( props: typeof baseProps, options = {} ) {
+	mockStepWrapper.mockClear();
+	renderWithProvider( <DomainSearchStep { ...props } />, options );
+	return mockStepWrapper.mock.calls.at( -1 )?.[ 0 ];
 }
 
 const LOGGED_IN_STATE = { currentUser: { id: 12345 } };
@@ -135,5 +142,58 @@ describe( 'DomainSearchStep — domain-only checkout simplification', () => {
 			} )
 		);
 		expect( goToNextStep ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
+
+describe( 'DomainSearchStep — launch-site Back button', () => {
+	const launchProps = {
+		...baseProps,
+		flowName: 'launch-site',
+		stepName: 'domains-launch',
+	};
+
+	// The site the signup controller loaded and selected for the flow.
+	const withSelectedSite = ( selectedSiteId: number | null ) => ( {
+		initialState: {
+			currentUser: { id: 12345 },
+			sites: { items: { 77: { ID: 77, URL: 'https://real-site.wordpress.com' } } },
+		},
+		reducers: { ui: () => ( { selectedSiteId } ) },
+	} );
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockWPCOMDomainSearch.mockReturnValue( null );
+	} );
+
+	it( 'returns to the wp-admin page the launch started from', () => {
+		const props = renderStepForNavigation(
+			{ ...launchProps, queryObject: { ref: 'wp-admin/admin.php?page=stats' } },
+			withSelectedSite( 77 )
+		);
+
+		expect( props?.backUrl ).toBe(
+			'https://real-site.wordpress.com/wp-admin/admin.php?page=stats'
+		);
+		expect( props?.backLabelText ).toBe( 'Back' );
+	} );
+
+	it( 'takes the host from the loaded site, not from the siteSlug query arg', () => {
+		const props = renderStepForNavigation(
+			{ ...launchProps, queryObject: { ref: 'wp-admin', siteSlug: 'evil.example' } },
+			withSelectedSite( 77 )
+		);
+
+		expect( props?.backUrl ).toBe( 'https://real-site.wordpress.com/wp-admin' );
+	} );
+
+	it( 'falls back to the sites list when no site was loaded for the flow', () => {
+		const props = renderStepForNavigation(
+			{ ...launchProps, queryObject: { ref: 'wp-admin', siteSlug: 'evil.example' } },
+			withSelectedSite( null )
+		);
+
+		expect( props?.backUrl ).not.toContain( 'evil.example' );
+		expect( props?.backLabelText ).toBe( 'Back to sites' );
 	} );
 } );
