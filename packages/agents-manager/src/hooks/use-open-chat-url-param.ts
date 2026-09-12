@@ -2,14 +2,9 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import { isReaderChatHost } from '../utils/is-reader-chat-agent';
+import { hasOpenChatUrlParam, OPEN_CHAT_URL_PARAM } from '../utils/open-chat-url-param';
 import { recordBigSkyTracksEvent } from '../utils/tracks';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
-
-const OPEN_CHAT_URL_PARAM = 'ai-open';
-
-const hasOpenChatUrlParam = () =>
-	typeof window !== 'undefined' &&
-	new URLSearchParams( window.location.search ).get( OPEN_CHAT_URL_PARAM ) === 'true';
 
 /**
  * Opens the chat when the page URL carries `?ai-open=true` (e.g. promo links
