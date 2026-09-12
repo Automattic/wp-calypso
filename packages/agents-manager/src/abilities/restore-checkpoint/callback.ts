@@ -6,7 +6,7 @@ import {
 	getCheckpoints,
 	hasCheckpoint,
 	restoreCheckpoint,
-	setCheckpoint,
+	setReciprocalCheckpoint,
 } from '../../utils/checkpoints';
 import { isEditorPage } from '../../utils/is-editor-page';
 import {
@@ -45,8 +45,10 @@ function restoreFailedResult( error: unknown, checkpointId: string ): AbilityRes
 	console.error( `[AgentsManager] Error restoring checkpoint ${ checkpointId }:`, error );
 
 	return errorResult(
-		error instanceof Error ? error.message : String( error ),
-		__( 'I could not restore that checkpoint.', __i18n_text_domain__ ),
+		`${
+			error instanceof Error ? error.message : String( error )
+		} Some of the checkpoint may already have been restored, so check the current state before trying again.`,
+		__( 'I could not fully restore that checkpoint.', __i18n_text_domain__ ),
 		{ checkpointId }
 	);
 }
@@ -82,13 +84,13 @@ function clearStaleReciprocals(
 	}
 }
 
-// Restores a checkpoint Big Sky still holds — its tools write to its own store
-// until they migrate. The reciprocal is recorded there too, scoped to the
-// target's keys: a keyless record would redo through Big Sky's legacy
-// full-snapshot path, which re-applies its (stale) variation titles over
-// AM-applied styles. Unreadable or keyless targets get no reciprocal — no
-// redo beats a wrong redo. The page-rename flip and navigation snapshots are
-// copied like Big Sky's own tool does, so a redo re-applies them.
+// Restores a checkpoint Big Sky still holds, since its tools write to its own
+// store until they migrate. The reciprocal goes there too, scoped to the
+// target's keys: a keyless one would redo through Big Sky's legacy full-snapshot
+// path, which re-applies its stale variation titles over AM-applied styles. An
+// unreadable or keyless target gets no reciprocal — no redo beats a wrong redo.
+// The page-rename flip and navigation snapshots are copied as Big Sky's tool
+// does, so a redo re-applies them.
 async function restoreProviderCheckpoint(
 	providerCheckpoints: UseCheckpointReturn,
 	{ checkpointId, summary, requestIntentType = 'restore' }: RestoreCheckpointInput
@@ -209,24 +211,35 @@ export async function restoreCheckpointCallback(
 	// Record the pre-restore state under this call's own id, so an explicit
 	// redo can step back over this restore.
 	if ( reciprocalId ) {
-		setCheckpoint( reciprocalId, targetCheckpoint.checkpointKeys, {
-			toolId: RESTORE_CHECKPOINT_TOOL_ID,
-			summary,
-			restoresCheckpointId: checkpointId,
-			restoredCheckpointToolId: targetCheckpoint.toolId,
-			requestIntentType: reciprocalRequestIntentType,
-			createdByRequestIntentType: requestIntentType,
-		} );
+		try {
+			await setReciprocalCheckpoint( reciprocalId, targetCheckpoint, {
+				toolId: RESTORE_CHECKPOINT_TOOL_ID,
+				summary,
+				restoresCheckpointId: checkpointId,
+				restoredCheckpointToolId: targetCheckpoint.toolId,
+				requestIntentType: reciprocalRequestIntentType,
+				createdByRequestIntentType: requestIntentType,
+			} );
+		} catch ( error ) {
+			// Refused rather than restored without a way back: the same unreadable
+			// page or menu would fail the restore part-way, leaving the site
+			// half-restored with no redo.
+			return errorResult(
+				`Could not record a way back before restoring: ${
+					error instanceof Error ? error.message : String( error )
+				} Nothing was restored.`,
+				__( 'I could not restore that checkpoint.', __i18n_text_domain__ ),
+				{ checkpointId }
+			);
+		}
 	}
 
 	try {
 		await restoreCheckpoint( checkpointId );
 	} catch ( error ) {
-		// A failed restore leaves the editor unchanged — drop the reciprocal
-		// so it does not advertise a redo for a restore that never happened.
-		if ( reciprocalId ) {
-			clearCheckpoint( reciprocalId );
-		}
+		// The reciprocal is kept: domains restore in sequence and several persist,
+		// so a failure part-way leaves the site changed with this as the only way
+		// back. Where nothing was restored, redoing to the current state is free.
 		return restoreFailedResult( error, checkpointId );
 	}
 

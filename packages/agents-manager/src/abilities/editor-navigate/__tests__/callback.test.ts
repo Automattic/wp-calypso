@@ -14,6 +14,8 @@ jest.mock( '@wordpress/data', () => ( {
 	subscribe: jest.fn( () => () => {} ),
 } ) );
 jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+// Pulled in by the shared menu reader; the block registry plays no part here.
+jest.mock( '@wordpress/blocks', () => ( {} ) );
 jest.mock( '../../../utils/is-editor-page', () => ( { isEditorPage: jest.fn( () => true ) } ) );
 jest.mock( '../../../utils/editor-history', () => ( { getEditorHistory: jest.fn() } ) );
 
@@ -257,6 +259,19 @@ describe( 'editorNavigate', () => {
 		} );
 
 		expect( result.result.message ).toBe( 'Opened the About page.' );
+	} );
+
+	// The route has changed by the time a later step throws; put back, the
+	// source binding would read the arrival as the user leaving.
+	it( 'says it navigated when a step after the route change fails', async () => {
+		const io = createIO( {
+			restorePostContentEditing: jest.fn().mockRejectedValue( new Error( 'restore failed' ) ),
+		} );
+
+		const result = await editorNavigate( io, { path: '/page/3' } );
+
+		expect( result.result.success ).toBe( false );
+		expect( result.result.details ).toMatchObject( { navigated: true } );
 	} );
 
 	it( 'reports a failed save as an error instead of claiming arrival', async () => {

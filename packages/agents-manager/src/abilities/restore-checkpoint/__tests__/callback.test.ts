@@ -5,7 +5,7 @@ import {
 	getCheckpoints,
 	hasCheckpoint,
 	restoreCheckpoint,
-	setCheckpoint,
+	setReciprocalCheckpoint,
 } from '../../../utils/checkpoints';
 import { isEditorPage } from '../../../utils/is-editor-page';
 import {
@@ -23,7 +23,7 @@ jest.mock( '../../../utils/checkpoints', () => ( {
 	getCheckpoints: jest.fn( () => [] ),
 	hasCheckpoint: jest.fn(),
 	restoreCheckpoint: jest.fn(),
-	setCheckpoint: jest.fn(),
+	setReciprocalCheckpoint: jest.fn(),
 } ) );
 jest.mock( '../../../utils/is-editor-page', () => ( { isEditorPage: jest.fn( () => true ) } ) );
 jest.mock( '../../../utils/provider-checkpoints', () => ( {
@@ -140,20 +140,31 @@ describe( 'restoreCheckpointCallback', () => {
 
 			await restoreCheckpointCallback( makeInput( { requestIntentType } ) );
 
-			expect( setCheckpoint ).toHaveBeenCalledWith(
-				RESTORE_CALL_ID,
-				TARGET_CHECKPOINT.checkpointKeys,
-				{
-					toolId: 'big_sky__restore_checkpoint',
-					summary: RESTORE_SUMMARY,
-					restoresCheckpointId: TARGET_CHECKPOINT.id,
-					restoredCheckpointToolId: TARGET_CHECKPOINT.toolId,
-					requestIntentType: reciprocal,
-					createdByRequestIntentType: requestIntentType ?? 'restore',
-				}
-			);
+			expect( setReciprocalCheckpoint ).toHaveBeenCalledWith( RESTORE_CALL_ID, TARGET_CHECKPOINT, {
+				toolId: 'big_sky__restore_checkpoint',
+				summary: RESTORE_SUMMARY,
+				restoresCheckpointId: TARGET_CHECKPOINT.id,
+				restoredCheckpointToolId: TARGET_CHECKPOINT.toolId,
+				requestIntentType: reciprocal,
+				createdByRequestIntentType: requestIntentType ?? 'restore',
+			} );
 		}
 	);
+
+	// A reciprocal that cannot be recorded means the same page or menu would
+	// fail the restore part-way, leaving the site half-restored with no redo.
+	it( 'refuses the restore when the reciprocal cannot be recorded', async () => {
+		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
+		( setReciprocalCheckpoint as jest.Mock ).mockRejectedValueOnce(
+			new Error( 'Navigation menu not found: 9' )
+		);
+
+		const result = await restoreCheckpointCallback( makeInput() );
+
+		expect( result.result.success ).toBe( false );
+		expect( result.result.error ).toContain( 'Navigation menu not found: 9' );
+		expect( restoreCheckpoint ).not.toHaveBeenCalled();
+	} );
 
 	it( 'keeps an existing checkpoint under the restore call id', async () => {
 		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
@@ -161,13 +172,13 @@ describe( 'restoreCheckpointCallback', () => {
 
 		await restoreCheckpointCallback( makeInput() );
 
-		expect( setCheckpoint ).not.toHaveBeenCalled();
+		expect( setReciprocalCheckpoint ).not.toHaveBeenCalled();
 	} );
 
 	it( 'skips the reciprocal checkpoint when the call id is unknown', async () => {
 		await restoreCheckpointCallback( makeInput() );
 
-		expect( setCheckpoint ).not.toHaveBeenCalled();
+		expect( setReciprocalCheckpoint ).not.toHaveBeenCalled();
 	} );
 
 	it( 'clears stale restore reciprocals after a successful restore', async () => {
@@ -307,7 +318,7 @@ describe( 'restoreCheckpointCallback', () => {
 				createdByRequestIntentType: 'undo',
 			}
 		);
-		expect( setCheckpoint ).not.toHaveBeenCalled();
+		expect( setReciprocalCheckpoint ).not.toHaveBeenCalled();
 	} );
 
 	it( 'copies the page-rename flip and navigation snapshots into the reciprocal', async () => {
@@ -364,10 +375,15 @@ describe( 'restoreCheckpointCallback', () => {
 		const result = await restoreCheckpointCallback( makeInput() );
 
 		expect( providerCheckpoints.clearCheckpoint ).toHaveBeenCalledWith( RESTORE_CALL_ID );
-		expect( result.result ).toMatchObject( { success: false, error: 'Restore exploded.' } );
+		expect( result.result ).toMatchObject( {
+			success: false,
+			error: expect.stringContaining( 'Restore exploded.' ),
+		} );
 	} );
 
-	it( 'reports a failed restore and drops the just-created reciprocal', async () => {
+	// Kept, not dropped: several domains persist as they restore, so a failure
+	// part-way leaves the site changed and the reciprocal is the way back.
+	it( 'reports a failed restore and keeps the reciprocal', async () => {
 		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
 		( restoreCheckpoint as jest.Mock ).mockRejectedValueOnce( new Error( 'Restore exploded.' ) );
@@ -376,11 +392,10 @@ describe( 'restoreCheckpointCallback', () => {
 
 		expect( result.result ).toMatchObject( {
 			success: false,
-			error: 'Restore exploded.',
+			error: expect.stringContaining( 'Restore exploded.' ),
 			details: { checkpointId: TARGET_CHECKPOINT.id },
 		} );
-		expect( clearCheckpoint ).toHaveBeenCalledTimes( 1 );
-		expect( clearCheckpoint ).toHaveBeenCalledWith( RESTORE_CALL_ID );
+		expect( clearCheckpoint ).not.toHaveBeenCalled();
 		expect( error ).toHaveBeenCalledWith(
 			`[AgentsManager] Error restoring checkpoint ${ TARGET_CHECKPOINT.id }:`,
 			expect.any( Error )
