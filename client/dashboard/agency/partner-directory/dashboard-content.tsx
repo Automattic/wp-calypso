@@ -171,18 +171,27 @@ export default function PartnerDirectoryDashboardContent( {
 		// The extra block-start padding separates the badges from the item title,
 		// which sits closer to plain-text descriptions than to badge chips.
 		<VStack spacing={ 2 } as="span" style={ { paddingBlockStart: '4px' } }>
-			{ directoryStatuses.map( ( { directory, badge } ) => (
-				<HStack key={ directory } spacing={ 2 } justify="flex-start" as="span">
-					<StatusBadge
-						badge={ badge }
-						showPopoverOnLoad={ showPopoverOnLoad }
-						expertiseUrl={ expertiseUrl }
-						recordTracksEvent={ recordTracksEvent }
-						shouldUseRouterLink={ shouldUseRouterLink }
-					/>
-					<Text>{ DIRECTORY_NAMES[ directory ] }</Text>
-				</HStack>
-			) ) }
+			{ directoryStatuses.map( ( { directory, badge } ) => {
+				const brandMeta = getBrandMeta( directory );
+				return (
+					<HStack key={ directory } spacing={ 2 } justify="flex-start" as="span">
+						<StatusBadge
+							badge={ badge }
+							showPopoverOnLoad={ showPopoverOnLoad }
+							expertiseUrl={ expertiseUrl }
+							recordTracksEvent={ recordTracksEvent }
+							shouldUseRouterLink={ shouldUseRouterLink }
+						/>
+						{ badge.key === 'approved' && brandMeta.isAvailable ? (
+							<ExternalLink href={ brandMeta.url }>
+								{ DIRECTORY_NAMES[ directory ] }
+							</ExternalLink>
+						) : (
+							<Text>{ DIRECTORY_NAMES[ directory ] }</Text>
+						) }
+					</HStack>
+				);
+			} ) }
 		</VStack>
 	);
 
