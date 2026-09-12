@@ -12,3 +12,4 @@ export { useFlowZendeskUserFields } from './use-flow-zendesk-user-fields';
 export { useGetHistoryChats } from './use-get-history-chats';
 export { useHelpCenterSearch } from './use-help-center-search';
 export { useHelpCenterCTA } from './use-help-center-cta';
+export { useIsGetHelpChatForward } from './use-get-help-chat-forward';

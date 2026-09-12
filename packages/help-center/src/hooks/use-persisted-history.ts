@@ -3,6 +3,7 @@ import { dispatch, useSelect } from '@wordpress/data';
 import { Action, Location } from 'history';
 import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { HELP_CENTER_STORE } from '../stores';
+import { useIsGetHelpChatForward } from './use-get-help-chat-forward';
 export interface HistoryEvent {
 	action: Action;
 	location: Location;
@@ -13,6 +14,14 @@ export interface HistoryEvent {
  * It is used to persist the navigation history of the help center.
  * It persists the history to the server using user preferences.
  */
+const createEntry = ( pathname: string ): Location => ( {
+	pathname,
+	search: '',
+	hash: '',
+	key: crypto.randomUUID(),
+	state: null,
+} );
+
 class MemoryHistory {
 	private entries: Location[] = [];
 	private index: number = -1;
@@ -139,6 +148,8 @@ export const usePersistedHistory = () => {
 		};
 	}, [] );
 
+	const isGetHelpChatForward = useIsGetHelpChatForward();
+
 	// Track if we've already restored history to prevent infinite loop.
 	// The loop happens because: navigation -> notifyListeners -> setHelpCenterRouterHistory
 	// -> persistedHistory changes -> useEffect runs -> creates new MemoryHistory -> loop
@@ -147,6 +158,19 @@ export const usePersistedHistory = () => {
 	useLayoutEffect( () => {
 		return history.listen( setState );
 	}, [ history ] );
+
+	// In the chat-forward treatment the AI chat is the landing screen, so the saved
+	// history is dropped and search is kept one step back for the back button.
+	useEffect( () => {
+		if ( hasRestoredHistory.current || ! isGetHelpChatForward || navigateToRoute?.route ) {
+			return;
+		}
+
+		hasRestoredHistory.current = true;
+		const history = new MemoryHistory( [ createEntry( '/' ), createEntry( '/odie' ) ], 1 );
+		setHistory( history );
+		setState( { action: history.action, location: history.location } );
+	}, [ isGetHelpChatForward, navigateToRoute ] );
 
 	useEffect( () => {
 		if ( hasRestoredHistory.current ) {
