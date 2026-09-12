@@ -62,9 +62,10 @@ export class HelpCenterComponent {
 	 * @returns {Locator} The toggle locator.
 	 */
 	getToggleLocator(): Locator {
+		// The backend names the button: "Help Center" by default, "Get Help" under experiment.
 		return this.isWpAdmin
 			? this.page.locator( '#wp-admin-bar-help-center' )
-			: this.page.getByRole( 'button', { name: 'Help', exact: true } );
+			: this.page.getByRole( 'button', { name: /^(Help|Help Center|Get Help)$/ } );
 	}
 
 	/**

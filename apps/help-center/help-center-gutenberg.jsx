@@ -133,16 +133,21 @@ function HelpCenterContent() {
 		};
 	}, [ isDesktop, isShown, setShowHelpCenter ] );
 
+	// The backend decides who sees the "Get Help" text beside the icon.
+	const entryLabel = helpCenterData?.entryLabel;
+
 	const content = (
 		<Button
 			className={ [ 'entry-point-button', 'help-center', isShown ? 'is-active' : '' ].join( ' ' ) }
 			onClick={ handleToggleHelpCenter }
 			icon={ <HelpIcon /> }
-			label="Help"
+			label={ entryLabel ?? 'Help' }
 			aria-pressed={ ( ! canvasMode || canvasMode === 'edit' ) && isShown ? true : false }
 			aria-expanded={ isShown ? true : false }
 			size={ ! canvasMode || canvasMode === 'edit' ? 'compact' : undefined }
-		/>
+		>
+			{ entryLabel && <span className="help-center__entry-label">{ entryLabel }</span> }
+		</Button>
 	);
 
 	const customProps = {};
