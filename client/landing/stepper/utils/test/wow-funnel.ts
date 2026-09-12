@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 import {
+	isBlueprintImportFailure,
+	startBlueprintArchiveImport,
 	waitForAtomicTransferComplete,
 	waitForBlueprintImportComplete,
 } from '../blueprint-archive-import';
@@ -24,12 +26,19 @@ jest.mock( '../blueprint-archive-import', () => ( {
 	__esModule: true,
 	waitForAtomicTransferComplete: jest.fn( () => Promise.resolve() ),
 	waitForBlueprintImportComplete: jest.fn( () => Promise.resolve() ),
+	startBlueprintArchiveImport: jest.fn( () => Promise.resolve() ),
+	isBlueprintImportFailure: jest.fn(
+		( error ) =>
+			error instanceof Error && error.message.startsWith( 'Blueprint import failed with status: ' )
+	),
 	getSiteAdminUrl: jest.fn(),
 	getSiteEditorUrl: jest.fn(),
 } ) );
 
 const mockTransferWait = waitForAtomicTransferComplete as jest.Mock;
 const mockImportWait = waitForBlueprintImportComplete as jest.Mock;
+const mockImportStart = startBlueprintArchiveImport as jest.Mock;
+const importFailed = () => new Error( 'Blueprint import failed with status: failed' );
 
 const never = () => new Promise< void >( () => {} );
 
@@ -246,5 +255,76 @@ describe( 'waitForWowFunnelReady', () => {
 		await Promise.resolve();
 
 		jest.useRealTimers();
+	} );
+} );
+
+describe( 'waitForWowFunnelReady — recovering a failed import', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockTransferWait.mockResolvedValue( undefined );
+		( isBlueprintImportFailure as jest.Mock ).mockImplementation(
+			( error ) =>
+				error instanceof Error &&
+				error.message.startsWith( 'Blueprint import failed with status: ' )
+		);
+	} );
+
+	it( 'restarts the import once and waits again, so a stored failure is not a dead end', async () => {
+		mockImportWait.mockRejectedValueOnce( importFailed() ).mockResolvedValueOnce( undefined );
+
+		await expect(
+			waitForWowFunnelReady( {
+				funnelSlug: 'blueprint',
+				siteIdentifier: 'example.wordpress.com',
+				blueprintSlug: 'punk',
+			} )
+		).resolves.toBeUndefined();
+
+		expect( mockImportStart ).toHaveBeenCalledWith( 'example.wordpress.com', 'punk' );
+		expect( mockImportWait ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'gives up when the restarted import fails too', async () => {
+		mockImportWait.mockRejectedValue( importFailed() );
+
+		await expect(
+			waitForWowFunnelReady( {
+				funnelSlug: 'blueprint',
+				siteIdentifier: 'example.wordpress.com',
+				blueprintSlug: 'punk',
+			} )
+		).rejects.toThrow();
+
+		// Restarted exactly once: a second failure is terminal, not an invitation to loop.
+		expect( mockImportStart ).toHaveBeenCalledTimes( 1 );
+		expect( mockImportWait ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'does not restart without a blueprint slug, having nothing to restart from', async () => {
+		mockImportWait.mockRejectedValue( importFailed() );
+
+		await expect(
+			waitForWowFunnelReady( {
+				funnelSlug: 'blueprint',
+				siteIdentifier: 'example.wordpress.com',
+			} )
+		).rejects.toThrow();
+
+		expect( mockImportStart ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not restart on a transient error, which is no evidence the import is broken', async () => {
+		mockImportWait.mockRejectedValue( new Error( 'Timed out waiting for blueprint import.' ) );
+
+		await expect(
+			waitForWowFunnelReady( {
+				funnelSlug: 'blueprint',
+				siteIdentifier: 'example.wordpress.com',
+				blueprintSlug: 'punk',
+			} )
+		).rejects.toThrow();
+
+		expect( mockImportStart ).not.toHaveBeenCalled();
+		expect( mockImportWait ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
