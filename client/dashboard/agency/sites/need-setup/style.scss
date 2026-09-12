@@ -1,0 +1,11 @@
+// The single column spans the table, so the cell content has to fill it for the
+// action to land at the right edge.
+.agency-need-setup-table {
+	.dataviews-view-table__cell-content-wrapper {
+		max-width: none;
+	}
+
+	.icon-list-item {
+		width: 100%;
+	}
+}
