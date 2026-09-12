@@ -84,6 +84,35 @@ export default function Notifications( {
 		setIsOpen( willOpen );
 	};
 
+	// The settings menu opens on mousedown and takes the matching mouseup with it,
+	// which leaves the popover's own blur check suppressed from then on: it can no
+	// longer close itself when focus leaves. Close on an outside press instead.
+	useEffect( () => {
+		if ( ! isOpen ) {
+			return;
+		}
+
+		const handlePointerDown = ( event: PointerEvent ) => {
+			const target = event.target as HTMLElement | null;
+
+			if (
+				target?.closest( '.dashboard-notifications__popover' ) ||
+				// The settings menu renders outside the panel.
+				target?.closest( '[role="menu"]' ) ||
+				// Leave the bell to the omnibar's own toggle, or the two race and the
+				// panel closes and immediately reopens.
+				target?.closest( '#wpcom-omnibar' )
+			) {
+				return;
+			}
+
+			setIsOpen( false );
+		};
+
+		document.addEventListener( 'pointerdown', handlePointerDown );
+		return () => document.removeEventListener( 'pointerdown', handlePointerDown );
+	}, [ isOpen ] );
+
 	// Close notifications when help center opens.
 	useEffect( () => {
 		if ( isHelpCenterShown ) {
@@ -181,6 +210,7 @@ export default function Notifications( {
 	const dropdown = (
 		<Dropdown
 			popoverProps={ {
+				className: 'dashboard-notifications__popover',
 				placement: 'bottom-start',
 				offset: 8,
 				focusOnMount: true,

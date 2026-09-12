@@ -105,7 +105,11 @@ export default function NotePanelActions() {
 						/>
 					}
 				/>
-				<Menu.Popover>
+				{ /* Without the modal backdrop a press outside reports what it actually
+				   landed on, which is what lets the host tell "dismiss the menu" from
+				   "close the panel". The backdrop covers the panel too, so every press
+				   would look the same. */ }
+				<Menu.Popover modal={ false }>
 					{ isViewSettingsEnabled && (
 						<>
 							<Menu.Group>
