@@ -86,7 +86,7 @@ const HELP_NODES: AdminBarNode[] = [
 const HELP_CENTER_NODE = node( 'help-center', {
 	parent: 'top-secondary',
 	href: 'https://wordpress.com/help',
-	meta: { menu_title: 'Help Center', icon: ICON, class: 'menupop', target: '_blank' },
+	meta: { icon: ICON, class: 'menupop', target: '_blank' },
 } );
 
 const renderPlugin = ( adminBarNodes: AdminBarNode[] ) =>
@@ -112,7 +112,7 @@ describe( 'useHelpCenterPlugin', () => {
 
 	it.each( [
 		[ 'agents manager', HELP_NODES ],
-		[ 'legacy help', [] ],
+		[ 'help center', [] ],
 	] )( 'does not track an unrendered %s node', ( _, nodes ) => {
 		renderPlugin( nodes );
 
@@ -121,7 +121,7 @@ describe( 'useHelpCenterPlugin', () => {
 
 	it.each( [
 		[ 'agents manager', HELP_NODES ],
-		[ 'legacy help', [] ],
+		[ 'help center', [] ],
 	] )( 'tracks an impression only when the %s icon renders', ( _, nodes ) => {
 		const result = renderPlugin( nodes );
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
@@ -245,7 +245,7 @@ describe( 'useHelpCenterPlugin', () => {
 		expect( result.children ).toBeUndefined();
 	} );
 
-	it( 'falls back to the legacy Help Center when the payload has no agents manager node', () => {
+	it( 'falls back to the Help Center when the payload has no agents manager node', () => {
 		const result = renderPlugin( [] );
 
 		const { container } = render( result.icon as React.ReactElement );
@@ -262,33 +262,28 @@ describe( 'useHelpCenterPlugin', () => {
 		expect( setShowHelpCenter ).toHaveBeenCalledWith( true );
 	} );
 
-	it( 'names the Help Center from its admin bar node', () => {
+	it( 'stays icon only when the Help Center node carries no menu title', () => {
 		const result = renderPlugin( [ HELP_CENTER_NODE ] );
 
 		expect( result.id ).toBe( 'help-center' );
-		expect( result.label ).toBe( 'Help Center' );
-		expect( result.tooltip ).toBe( 'Help Center' );
+		expect( result.label ).toBe( 'Help' );
 		expect( result.title ).toBeUndefined();
+		expect( result.tooltip ).toBeUndefined();
 		expect( result.children ).toBeUndefined();
 
 		result.onClick?.( {} as React.MouseEvent );
 		expect( setShowHelpCenter ).toHaveBeenCalledWith( true );
 	} );
 
-	it( 'shows the menu title as the entry label when the backend marks the node', () => {
+	it( 'shows the entry label the backend sends as the menu title', () => {
 		const result = renderPlugin( [
 			node( 'help-center', {
 				...HELP_CENTER_NODE,
-				meta: {
-					...HELP_CENTER_NODE.meta,
-					menu_title: 'Get Help',
-					class: 'menupop has-help-entry-label',
-				},
+				meta: { ...HELP_CENTER_NODE.meta, menu_title: 'Get Help' },
 			} ),
 		] );
 
 		expect( result.title ).toBe( 'Get Help' );
-		expect( result.label ).toBe( 'Get Help' );
 		expect( result.tooltip ).toBe( 'Get Help' );
 	} );
 } );

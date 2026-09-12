@@ -179,14 +179,14 @@ export function useHelpCenterPlugin( {
 	}
 
 	// Older backends send no node; the client-side defaults cover them.
+	// `menu_title` arrives only when the entry point shows a label.
 	const helpCenterNode = adminBarNodes.find( ( node ) => node.id === HELP_CENTER_NODE_ID );
-	const menuTitle = helpCenterNode?.meta?.menu_title;
-	const hasEntryLabel = !! helpCenterNode?.meta?.class?.includes( 'has-help-entry-label' );
+	const menuTitle = helpCenterNode?.meta?.menu_title || undefined;
 
 	return {
 		id: HELP_CENTER_NODE_ID,
-		label: menuTitle ?? __( 'Help' ),
-		title: hasEntryLabel ? menuTitle : undefined,
+		label: __( 'Help' ),
+		title: menuTitle,
 		tooltip: menuTitle,
 		icon: (
 			<HelpCenterIcon name={ helpCenterNode?.meta?.icon ?? 'help' } sectionName={ sectionName } />
