@@ -58,6 +58,7 @@ export default function Notifications( {
 			layoutStyle:
 				userPreferences[ 'notifications-layout-style' ] ??
 				( isAutomattician ? ( 'simplified' as const ) : undefined ),
+			views: userPreferences[ 'notifications-views' ],
 			viewSettingsSeen: userPreferences[ 'notifications-view-settings-seen' ],
 		};
 	}, [ userPreferences, isAutomattician, isResolvingAutomattician, isViewSettingsEnabled ] );

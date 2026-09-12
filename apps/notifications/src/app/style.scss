@@ -3,7 +3,7 @@
 @import "@wordpress/base-styles/mixins";
 @import "calypso/dashboard/app/wp-components-overrides.scss";
 
-$wpnc-pane-width: 448px;
+$wpnc-pane-width: 450px;
 $wpnc-pane-border: 1px solid var(--color-border-subtle, #c3c4c7);
 $wpnc-pane-radius: 4px;
 $wpnc-pane-shadow: 0 0 16px rgba(0, 0, 0, 0.12);
@@ -26,7 +26,7 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 
 @include break-small {
 	.components-popover:has(.wpnc-app) > .components-popover__content {
-		max-width: 448px;
+		max-width: $wpnc-pane-width;
 		margin-inline: 8px;
 	}
 }
@@ -34,8 +34,8 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 @include break-large {
 	// At xlarge each pane carries its own chrome, so the popover goes
 	// transparent and lets the combined card show through. The popover
-	// is sized for both panes (896px) at all times; without this the
-	// 448px → 896px width jump on detail open makes floating-ui's `shift`
+	// is sized for both panes at all times; without this the single-pane
+	// to two-pane width jump on detail open makes floating-ui's `shift`
 	// middleware re-compute the popover's x, and framer-motion (used
 	// internally by `@wordpress/components` Popover) tweens that x
 	// change as a visible leftward skid. Pre-sizing keeps the popover
@@ -54,7 +54,7 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 			border: none;
 			border-radius: 0;
 			overflow: visible;
-			max-width: 896px;
+			max-width: $wpnc-pane-width * 2;
 		}
 	}
 }
@@ -203,6 +203,29 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 		border-end-start-radius: 0;
 		box-shadow: none;
 	}
+}
+
+// The tab list already fades its overflowing edge to show there is more, so the
+// scrollbar is redundant chrome in a strip this short.
+.wpnc-app__tab-list {
+	scrollbar-width: none;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
+
+// The nudge lines the button up with the tab labels, which the tab list's selection
+// indicator below them raises.
+.wpnc-app__view-picker {
+	flex-shrink: 0;
+	margin-top: 6px;
+}
+
+// With a full strip the button leaves the last tab's side and takes the free space,
+// which parks it against the panel edge.
+.wpnc-app__view-picker.is-at-edge {
+	margin-inline-start: auto;
 }
 
 // A one-time nudge towards the view settings, cleared the first time the menu opens.
