@@ -764,11 +764,10 @@ export class LoginForm extends Component {
 
 		const renderSocialLinkingNotice = () => {
 			return (
-				<Notice variant="error">
+				<Notice variant="info">
 					{ this.props.translate(
-						'We found a WordPress.com account with the email address "%(email)s". ' +
-							'Log in to this account to connect it to your %(service)s profile, ' +
-							'or choose a different %(service)s profile.',
+						'There’s already a WordPress.com account for "%(email)s" that isn’t connected to %(service)s yet. ' +
+							'Log in to it and you’ll be able to connect your %(service)s account.',
 						{
 							args: {
 								email: this.props.socialAccountLinkEmail,
