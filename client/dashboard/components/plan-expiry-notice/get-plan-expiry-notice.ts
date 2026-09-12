@@ -1,7 +1,9 @@
 import { SubscriptionBillPeriod, getPlanNames } from '@automattic/api-core';
 import { translationExists } from '@automattic/i18n-utils';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { formatDate, getCalendarDaysUntil, getRelativeDayString } from '../../utils/datetime';
+import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import {
 	EXPIRY_ERROR_DAYS,
 	EXPIRY_WARNING_DAYS,
@@ -16,11 +18,22 @@ import type { Purchase } from '@automattic/api-core';
 
 export type PlanExpiryUrgency = 'info' | 'warning' | 'error';
 
+/** Matches wp-admin's `GRACE_PERIOD_DAYS + POST_GRACE_PERIOD_DAYS`, so both surfaces go quiet on the same day. */
+export const NOTICE_CUTOFF_DAYS_PAST_EXPIRY = 60;
+
+export type PlanExpiryStateName = 'approaching_expiry' | 'expired_grace' | 'expired';
+
+export type PlanExpiryNoticeScope = 'purchase' | 'sitewide';
+
+export type PlanExpiryNoticeStage = 'early-warning' | 'final-window' | 'grace' | 'post-grace';
+
 export type PlanExpiryNoticeAction =
 	| { type: 'renew'; label: string; href: string }
 	| { type: 'view-other-plans'; label: string; href: string }
 	| { type: 'enable-auto-renew'; label: string }
-	| { type: 'add-payment-method'; label: string };
+	| { type: 'add-payment-method'; label: string }
+	| { type: 'restore-site'; label: string; href: string }
+	| { type: 'contact-support'; label: string; message: string };
 
 export interface PlanExpiryNoticeOptions {
 	/**
@@ -43,12 +56,31 @@ export interface PlanExpiryNoticeOptions {
 	 * is on, so surfaces outside the dashboard have to say where they are.
 	 */
 	renewReturnUrl?: string;
+
+	/** `purchase` (default) is the purchase-management notice; `sitewide` mirrors the wp-admin banner. */
+	scope?: PlanExpiryNoticeScope;
+
+	/** Sitewide scope only. A reverted site is sent to support instead of checkout. */
+	isReverted?: boolean;
+
+	/** Sitewide scope only. Nobody but the owner can renew, so a non-owner gets no actions. Defaults to true. */
+	isPlanOwner?: boolean;
+
+	/**
+	 * Sitewide scope only. For a caller that knows better than the purchase's own
+	 * status does: an Atomic site past grace that has not been reverted yet has
+	 * lost nothing. Defaults to {@link getSitewideExpiryStage}.
+	 */
+	stage?: PlanExpiryNoticeStage;
 }
 
 export interface PlanExpiryNoticeContent {
 	variant: PlanExpiryUrgency;
 	title?: string;
 	body: string;
+
+	/** Sitewide scope only. Which of the wp-admin banner's windows the notice is in. */
+	stage?: PlanExpiryNoticeStage;
 	primaryAction?: PlanExpiryNoticeAction;
 	secondaryAction?: PlanExpiryNoticeAction;
 }
@@ -80,7 +112,10 @@ interface ResolvedNotice extends PlanExpiryNoticeContent {
  * Akismet, domains and the free plan are all excluded because they appear in
  * neither lookup. Adding a new plan tier means adding it to both.
  */
-export function isEligibleForPlanExpiryNotice( purchase: Purchase ): boolean {
+export function isEligibleForPlanExpiryNotice(
+	purchase: Purchase,
+	scope: PlanExpiryNoticeScope = 'purchase'
+): boolean {
 	return Boolean(
 		// Names the plan for the copy, and covers exactly the four paid tiers.
 		getPlanName( purchase ) &&
@@ -94,9 +129,27 @@ export function isEligibleForPlanExpiryNotice( purchase: Purchase ): boolean {
 			purchase.expiry_date &&
 			// Agency- and host-managed plans can't be renewed by the customer.
 			! purchase.partner_type &&
-			// Removed subscriptions keep their existing "no longer in use" copy.
-			! isRemoved( purchase )
+			// Removed subscriptions keep their existing "no longer in use" copy on
+			// the purchase pages; the sitewide banner is the one place that still
+			// talks about them, for a month after the grace period.
+			( scope === 'sitewide' || ! isRemoved( purchase ) )
 	);
+}
+
+/**
+ * The eligible plan with the latest expiry date, so a renewed plan hides the
+ * one it replaced. Mirrors `Expiry_Data::pick_primary_plan_purchase()`.
+ */
+export function pickSitewideExpiryPurchase( purchases: Purchase[] ): Purchase | null {
+	return purchases
+		.filter( ( purchase ) => isEligibleForPlanExpiryNotice( purchase, 'sitewide' ) )
+		.reduce< Purchase | null >(
+			( latest, purchase ) =>
+				! latest || new Date( purchase.expiry_date ) > new Date( latest.expiry_date )
+					? purchase
+					: latest,
+			null
+		);
 }
 
 /**
@@ -132,8 +185,14 @@ export function getPlanExpiryNotice(
 	purchase: Purchase,
 	options: PlanExpiryNoticeOptions = {}
 ): PlanExpiryNoticeContent | null {
-	if ( ! isEligibleForPlanExpiryNotice( purchase ) ) {
+	const scope = options.scope ?? 'purchase';
+
+	if ( ! isEligibleForPlanExpiryNotice( purchase, scope ) ) {
 		return null;
+	}
+
+	if ( scope === 'sitewide' ) {
+		return resolveSitewideNotice( purchase, options );
 	}
 
 	const resolved = resolveNotice( purchase, options );
@@ -168,8 +227,9 @@ export function getPlanExpiryNotice(
 
 function resolveNotice(
 	purchase: Purchase,
-	{ viewOtherPlansUrl, locale, renewReturnUrl }: PlanExpiryNoticeOptions
+	options: PlanExpiryNoticeOptions
 ): ResolvedNotice | null {
+	const { locale, renewReturnUrl } = options;
 	const planName = getPlanName( purchase ) as string;
 	const storageGb = getPlanStorageInGb( purchase.product_slug ) as number;
 	const canAutoRenew = mightStillAutoRenew( purchase );
@@ -185,43 +245,9 @@ function resolveNotice(
 		href: getRenewalUrlFromPurchase( purchase, renewReturnUrl ),
 	};
 
-	// Past the expiry date, still inside the grace period. Note that
-	// `mightStillAutoRenew` is already false once the final auto-renewal
-	// attempt has passed, so those purchases fall through to the "can't
-	// auto-renew" wording on their own.
+	// Past the expiry date, still inside the grace period.
 	if ( isExpiredAndInGracePeriod( purchase ) ) {
-		return {
-			variant: 'error',
-			titleSource: 'Your %(planName)s plan has expired',
-			// translators: %(planName)s is a short plan name, like "Business"
-			title: sprintf( __( 'Your %(planName)s plan has expired' ), { planName } ),
-			bodySource: canAutoRenew
-				? 'If renewal doesn’t go through, your site will move to the Free plan. That means losing plugins, custom themes, and %(storageGb)d GB of storage. But it’s not too late. Renew now to keep your site as it is.'
-				: 'Your site will move to the Free plan. That means losing plugins, custom themes, and %(storageGb)d GB of storage. But it’s not too late. Renew now to keep your site as it is.',
-			body: canAutoRenew
-				? sprintf(
-						// translators: %(storageGb)d is a number of gigabytes of storage
-						__(
-							'If renewal doesn’t go through, your site will move to the Free plan. That means losing plugins, custom themes, and %(storageGb)d GB of storage. But it’s not too late. Renew now to keep your site as it is.'
-						),
-						{ storageGb }
-				  )
-				: sprintf(
-						// translators: %(storageGb)d is a number of gigabytes of storage
-						__(
-							'Your site will move to the Free plan. That means losing plugins, custom themes, and %(storageGb)d GB of storage. But it’s not too late. Renew now to keep your site as it is.'
-						),
-						{ storageGb }
-				  ),
-			primaryAction: renewAction,
-			// This label is new, so it may not be translated yet. Drop the action
-			// rather than show one English button among translated copy; the primary
-			// action is always there to fall back on.
-			secondaryAction:
-				viewOtherPlansUrl && translationExists( 'View other plans' )
-					? { type: 'view-other-plans', label: __( 'View other plans' ), href: viewOtherPlansUrl }
-					: undefined,
-		};
+		return graceNotice( purchase, options );
 	}
 
 	// A monthly plan that is billing normally has nothing to warn about.
@@ -376,6 +402,231 @@ function resolveNotice(
 		),
 		primaryAction: getTurnOnAutoRenewAction( purchase ),
 	};
+}
+
+/** The grace period's copy: the plan has lapsed but the site still has everything. */
+function graceNotice(
+	purchase: Purchase,
+	{ viewOtherPlansUrl, renewReturnUrl, scope }: PlanExpiryNoticeOptions
+): ResolvedNotice {
+	const planName = getPlanName( purchase ) as string;
+	const storageGb = getPlanStorageInGb( purchase.product_slug ) as number;
+	// Note that `mightStillAutoRenew` is already false once the final
+	// auto-renewal attempt has passed, so those purchases get the "can't
+	// auto-renew" wording on their own.
+	const canAutoRenew = mightStillAutoRenew( purchase );
+
+	return {
+		variant: 'error',
+		titleSource: 'Your %(planName)s plan has expired',
+		// translators: %(planName)s is a short plan name, like "Business"
+		title: sprintf( __( 'Your %(planName)s plan has expired' ), { planName } ),
+		bodySource: canAutoRenew
+			? 'If renewal doesn’t go through, your site will move to the Free plan. That means losing plugins, custom themes, and %(storageGb)d GB of storage. But it’s not too late. Renew now to keep your site as it is.'
+			: 'Your site will move to the Free plan. That means losing plugins, custom themes, and %(storageGb)d GB of storage. But it’s not too late. Renew now to keep your site as it is.',
+		body: canAutoRenew
+			? sprintf(
+					// translators: %(storageGb)d is a number of gigabytes of storage
+					__(
+						'If renewal doesn’t go through, your site will move to the Free plan. That means losing plugins, custom themes, and %(storageGb)d GB of storage. But it’s not too late. Renew now to keep your site as it is.'
+					),
+					{ storageGb }
+			  )
+			: sprintf(
+					// translators: %(storageGb)d is a number of gigabytes of storage
+					__(
+						'Your site will move to the Free plan. That means losing plugins, custom themes, and %(storageGb)d GB of storage. But it’s not too late. Renew now to keep your site as it is.'
+					),
+					{ storageGb }
+			  ),
+		primaryAction: {
+			type: 'renew',
+			label: __( 'Renew now' ),
+			href: getRenewalUrlFromPurchase( purchase, renewReturnUrl ),
+		},
+		// This label is new, so it may not be translated yet. On the purchase
+		// pages, drop the action rather than show one English button among
+		// translated copy; the primary action is always there to fall back on.
+		// The sitewide notice shows English instead, as wp-admin does.
+		secondaryAction:
+			viewOtherPlansUrl && ( scope === 'sitewide' || translationExists( 'View other plans' ) )
+				? { type: 'view-other-plans', label: __( 'View other plans' ), href: viewOtherPlansUrl }
+				: undefined,
+	};
+}
+
+/**
+ * Which of the wp-admin banner's windows a plan is in, or null when there is
+ * nothing to say. Grace and post-grace come from the subscription's status,
+ * not from counting days past the date: billing decides when a lapsed plan
+ * stops being renewable, and a subscription removed before its date (refund,
+ * cancellation) is not an expiry at all.
+ */
+export function getSitewideExpiryStage( purchase: Purchase ): PlanExpiryNoticeStage | null {
+	const expiresAt = new Date( purchase.expiry_date );
+	if ( ! purchase.expiry_date || Number.isNaN( expiresAt.getTime() ) ) {
+		return null;
+	}
+
+	const daysUntilExpiry = getCalendarDaysUntil( expiresAt );
+
+	if ( isRemoved( purchase ) ) {
+		if ( daysUntilExpiry > 0 || -daysUntilExpiry >= NOTICE_CUTOFF_DAYS_PAST_EXPIRY ) {
+			return null;
+		}
+		return 'post-grace';
+	}
+
+	if ( isExpiredAndInGracePeriod( purchase ) ) {
+		return 'grace';
+	}
+
+	const isAnnualOrLonger = purchase.bill_period_days >= SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD;
+	const noticeWindowDays = isAnnualOrLonger ? EXPIRY_WARNING_DAYS : EXPIRY_ERROR_DAYS;
+	if ( daysUntilExpiry > noticeWindowDays ) {
+		return null;
+	}
+	return daysUntilExpiry > EXPIRY_ERROR_DAYS ? 'early-warning' : 'final-window';
+}
+
+export function getExpiryStateName( stage: PlanExpiryNoticeStage ): PlanExpiryStateName {
+	switch ( stage ) {
+		case 'grace':
+			return 'expired_grace';
+		case 'post-grace':
+			return 'expired';
+		default:
+			return 'approaching_expiry';
+	}
+}
+
+/** The wp-admin banner's state machine, on top of the shared copy. */
+function resolveSitewideNotice(
+	purchase: Purchase,
+	options: PlanExpiryNoticeOptions
+): PlanExpiryNoticeContent | null {
+	const stage = options.stage ?? getSitewideExpiryStage( purchase );
+	if ( ! stage ) {
+		return null;
+	}
+
+	let notice: PlanExpiryNoticeContent | null;
+	if ( stage === 'post-grace' ) {
+		notice = postGraceNotice( purchase, options );
+	} else if ( stage === 'grace' && ! isExpiredAndInGracePeriod( purchase ) ) {
+		notice = revertPendingGraceNotice( purchase, options );
+	} else {
+		const resolved = resolveNotice( purchase, options );
+		notice = resolved ? withStage( resolved, stage ) : null;
+	}
+	if ( ! notice ) {
+		return null;
+	}
+
+	if ( options.isPlanOwner === false ) {
+		return {
+			variant: notice.variant,
+			stage: notice.stage,
+			title: notice.title,
+			body: __(
+				'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
+			),
+		};
+	}
+
+	return notice;
+}
+
+function withStage(
+	resolved: ResolvedNotice,
+	stage: PlanExpiryNoticeStage
+): PlanExpiryNoticeContent {
+	const { titleSource, bodySource, ...notice } = resolved;
+	return { ...notice, stage };
+}
+
+/**
+ * Grace-period words for a removed subscription. Renewal is no longer possible,
+ * so the way back is post-grace's fresh checkout, and wp-admin offers "View
+ * other plans" only in a real grace period.
+ */
+function revertPendingGraceNotice(
+	purchase: Purchase,
+	options: PlanExpiryNoticeOptions
+): PlanExpiryNoticeContent {
+	const { titleSource, bodySource, ...notice } = graceNotice( purchase, options );
+	return {
+		...notice,
+		stage: 'grace',
+		primaryAction: {
+			type: 'restore-site',
+			label: __( 'Restore site' ),
+			href: getRestoreUrl( purchase, options.renewReturnUrl ),
+		},
+		secondaryAction: undefined,
+	};
+}
+
+function postGraceNotice(
+	purchase: Purchase,
+	{ isReverted, renewReturnUrl }: PlanExpiryNoticeOptions
+): PlanExpiryNoticeContent {
+	const planName = getPlanName( purchase ) as string;
+	const storageGb = getPlanStorageInGb( purchase.product_slug ) as number;
+
+	// translators: %(planName)s is a short plan name, like "Business"
+	const title = sprintf( __( 'Your %(planName)s plan has expired' ), { planName } );
+
+	if ( isReverted ) {
+		return {
+			variant: 'error',
+			stage: 'post-grace',
+			title,
+			body: sprintf(
+				// translators: %(storageGb)d is a number of gigabytes of storage
+				__(
+					'Your site has been moved to the Free plan and set to private. You no longer have access to plugins, custom themes, or %(storageGb)d GB of storage. Contact support to get help restoring it.'
+				),
+				{ storageGb }
+			),
+			primaryAction: {
+				type: 'contact-support',
+				label: __( 'Contact support' ),
+				message: sprintf(
+					// translators: %(planName)s is a short plan name, like "Business"
+					__( 'My %(planName)s plan expired and I need your help getting it restored.' ),
+					{ planName }
+				),
+			},
+		};
+	}
+
+	return {
+		variant: 'error',
+		stage: 'post-grace',
+		title,
+		body: sprintf(
+			// translators: %(storageGb)d is a number of gigabytes of storage
+			__(
+				'Your site has been moved to the Free plan. You no longer have access to plugins, custom themes, or %(storageGb)d GB of storage. Upgrade your plan to restore your site.'
+			),
+			{ storageGb }
+		),
+		primaryAction: {
+			type: 'restore-site',
+			label: __( 'Restore site' ),
+			href: getRestoreUrl( purchase, renewReturnUrl ),
+		},
+	};
+}
+
+/** A removed subscription cannot be renewed, so the way back is a fresh purchase of the same plan. */
+function getRestoreUrl( purchase: Purchase, renewReturnUrl?: string ): string {
+	const backUrl = renewReturnUrl ?? redirectToDashboardLink();
+	return addQueryArgs(
+		wpcomLink( `/checkout/${ purchase.site_slug }/${ purchase.product_slug }` ),
+		{ cancel_to: backUrl, redirect_to: backUrl }
+	);
 }
 
 function getPlanName( purchase: Purchase ): string | undefined {
