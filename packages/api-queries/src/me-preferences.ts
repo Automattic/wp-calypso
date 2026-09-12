@@ -32,6 +32,8 @@ const defaultValues: Required< UserPreferences > = {
 	'reader-profile-hidden-sites': [],
 	two_step_security_key_reregister_required: false,
 	'a4a-dashboard-pd-not-approved-popover': false,
+	'notifications-layout-style': 'classic',
+	'notifications-view-settings-seen': false,
 };
 
 const staticPreferenceStatIds: Record< string, string > = {

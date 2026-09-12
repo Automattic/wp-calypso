@@ -148,6 +148,7 @@ const RedesignedNotifications = ( {
 					<NotificationApp
 						locale={ locale }
 						isDismissible={ isMobile }
+						isViewSettingsEnabled={ config.isEnabled( 'notifications/view-settings' ) }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
 					/>
@@ -190,6 +191,7 @@ const RedesignedNotifications = ( {
 					<NotificationApp
 						locale={ locale }
 						isDismissible={ isMobile }
+						isViewSettingsEnabled={ config.isEnabled( 'notifications/view-settings' ) }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
 					/>
@@ -520,6 +522,7 @@ export class Notifications extends Component {
 							actionHandlers={ this.actionHandlers }
 							isShowing={ this.props.isShowing }
 							isVisible={ this.state.isVisible }
+							isViewSettingsEnabled={ config.isEnabled( 'notifications/view-settings' ) }
 							locale={ localeSlug }
 							wpcom={ wpcom }
 						/>

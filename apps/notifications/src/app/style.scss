@@ -4,6 +4,7 @@
 @import "calypso/dashboard/app/wp-components-overrides.scss";
 
 $wpnc-pane-width: 448px;
+$wpnc-list-pane-width: 450px;
 $wpnc-pane-border: 1px solid var(--color-border-subtle, #c3c4c7);
 $wpnc-pane-radius: 4px;
 $wpnc-pane-shadow: 0 0 16px rgba(0, 0, 0, 0.12);
@@ -13,7 +14,11 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 // inner wrapper) so apps/notifications owns its own popover layout and
 // consumers don't have to redeclare it. The popover's default 8px
 // padding is removed so the panel reaches the edges.
-.components-popover:has(.wpnc-app) .components-popover__content {
+//
+// These have to stay direct-child selectors. The panel's own popovers render
+// inline, so they sit inside `.wpnc-app` and a descendant selector would size
+// and strip the chrome off those too.
+.components-popover:has(.wpnc-app) > .components-popover__content {
 	width: 100vw;
 	height: 100vh;
 	max-height: inherit;
@@ -21,7 +26,7 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 }
 
 @include break-small {
-	.components-popover:has(.wpnc-app) .components-popover__content {
+	.components-popover:has(.wpnc-app) > .components-popover__content {
 		max-width: 448px;
 		margin-inline: 8px;
 	}
@@ -44,7 +49,7 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 		pointer-events: none;
 		outline: none;
 
-		.components-popover__content {
+		> .components-popover__content {
 			background: transparent;
 			box-shadow: none;
 			border: none;
@@ -58,11 +63,11 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 // Below small, the popover opens full-screen via `expandOnMobile`. Hide
 // the redundant popover header and let the content fill the height.
 .components-popover.is-expanded:has(.wpnc-app) {
-	.components-popover__header {
+	> .components-popover__header {
 		display: none;
 	}
 
-	.components-popover__content {
+	> .components-popover__content {
 		height: 100%;
 	}
 }
@@ -171,7 +176,7 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 @include break-large {
 	.wpnc-app__list-pane {
 		inset-inline-start: auto;
-		width: $wpnc-pane-width;
+		width: $wpnc-list-pane-width;
 		z-index: 2;
 		border: $wpnc-pane-border;
 		border-radius: $wpnc-pane-radius;
@@ -199,4 +204,37 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 		border-end-start-radius: 0;
 		box-shadow: none;
 	}
+}
+
+// A one-time nudge towards the view settings, cleared the first time the menu opens.
+.wpnc-app__settings-toggle.is-new {
+	position: relative;
+	overflow: visible;
+}
+
+.wpnc-app__settings-toggle.is-new::after {
+	content: "";
+	position: absolute;
+	inset-block-start: -2px;
+	inset-inline-end: -2px;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: var(--color-accent);
+	// A ring in the panel's own background colour, so the dot reads against the gear
+	// rather than disappearing into its strokes.
+	box-shadow: 0 0 0 1px var(--color-surface);
+	pointer-events: none;
+}
+
+.wpnc-app__new-badge {
+	margin-inline-start: 6px;
+	padding: 1px 5px;
+	border-radius: 8px;
+	background: var(--color-accent);
+	color: var(--color-text-inverted);
+	font-size: 10px;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	text-transform: none;
 }
