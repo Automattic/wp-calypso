@@ -20,12 +20,7 @@ import StatsModule from '../../../stats-module';
 import { StatsEmptyActionEmail } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import { isRateKnown, toCount } from './is-rate-known';
-import {
-	TooltipWrapper,
-	OpensTooltipContent,
-	ClicksTooltipContent,
-	EmailStatsItem,
-} from './tooltips';
+import { TooltipWrapper, OpensTooltipContent, EmailStatsItem } from './tooltips';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 import './style.scss';
 
@@ -92,7 +87,6 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 							<>
 								<span>{ translate( 'Opens' ) }</span>
 								<span>{ translate( 'Open rate' ) }</span>
-								<span>{ translate( 'Clicks' ) }</span>
 							</>
 						),
 						body: ( item: EmailStatsItem ) => {
@@ -120,7 +114,6 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 											TooltipContent={ OpensTooltipContent }
 										/>
 									</span>
-									<span>{ formatNumber( toCount( item.clicks ) ) }</span>
 								</>
 							);
 						},
@@ -130,34 +123,10 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 					query={ query }
 					statType={ statType }
 					mainItemLabel={ translate( 'Latest emails' ) }
-					metricLabel={ translate( 'Click rate' ) }
-					valueField="clicks_rate"
-					formatValue={ ( value: number, item: EmailStatsItem ) => {
-						if ( ! item ) {
-							return value;
-						}
-						const rateKnown = isRateKnown( {
-							uniques: toCount( item.unique_clicks ),
-							totals: toCount( item.clicks ),
-							sends: toCount( item.total_sends ),
-						} );
-						return (
-							<TooltipWrapper
-								value={
-									rateKnown
-										? `${ formatNumber( item.clicks_rate ?? 0, {
-												numberFormatOptions: {
-													maximumFractionDigits: 2,
-												},
-										  } ) }%`
-										: '—'
-								}
-								item={ item }
-								TooltipContent={ ClicksTooltipContent }
-							/>
-						);
-					} }
-					className={ clsx( className, 'stats-emails--four-columns' ) }
+					metricLabel={ translate( 'Clicks' ) }
+					valueField="clicks"
+					formatValue={ ( value: number ) => formatNumber( toCount( value ) ) }
+					className={ clsx( className, 'stats-emails--fixed-columns' ) }
 					hasNoBackground
 					skipQuery
 				/>
