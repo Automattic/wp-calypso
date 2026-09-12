@@ -1,4 +1,5 @@
 import { createRoot, hydrateRoot } from 'react-dom/client';
+import { recordRouteRender } from 'calypso/lib/analytics/route-render';
 
 // The classic Calypso app mounts into a single, long-lived `#wpcom` container.
 // `createRoot`/`hydrateRoot` must be called exactly once per container; every
@@ -12,6 +13,7 @@ export function render( context ) {
 		root = createRoot( document.getElementById( 'wpcom' ) );
 	}
 	root.render( context.layout );
+	recordRouteRender( context );
 }
 
 export function hydrate( context ) {
@@ -20,4 +22,5 @@ export function hydrate( context ) {
 	} else {
 		root.render( context.layout );
 	}
+	recordRouteRender( context );
 }

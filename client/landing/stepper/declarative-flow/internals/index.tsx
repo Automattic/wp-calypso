@@ -26,6 +26,7 @@ import { RedirectToStep } from './components/redirect-to-step';
 import { useFlowAnalytics } from './hooks/use-flow-analytics';
 import { useFlowNavigation } from './hooks/use-flow-navigation';
 import { usePreloadSteps, lazyCache } from './hooks/use-preload-steps';
+import { useRouteRenderTracking } from './hooks/use-route-render-tracking';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
 import { useStepNavigationWithTracking } from './hooks/use-step-navigation-with-tracking';
 import { componentTypeOf, recordStepComponentType } from './step-mount-registry';
@@ -86,6 +87,7 @@ export const FlowRenderer: React.FC< {
 		{ flow: params.flow, step: params.step, variant: flow.variantSlug },
 		{ enabled: isValidStep }
 	);
+	useRouteRenderTracking( { flow: params.flow, step: params.step, enabled: isValidStep } );
 
 	const { __ } = useI18n();
 	useSaveQueryParams();
