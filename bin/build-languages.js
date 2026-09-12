@@ -158,6 +158,7 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 		const languageRevisionsHashes = {};
 		// CHUNKS_MAP_PATTERN is relative to the project root, while require is relative to current dir. Hence the `../`
 		const chunksMap = require( '../' + CHUNKS_MAP_PATTERN );
+		const translationRefs = Object.keys( translationsByRef );
 
 		const chunks = {};
 		for ( const [ chunkName, modules ] of Object.entries( chunksMap ) ) {
@@ -167,9 +168,7 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 				modulePath = getModuleReference( modulePath );
 				const key = /\.\w+/.test( modulePath )
 					? modulePath
-					: Object.keys( translationsByRef ).find(
-							( ref ) => ref.indexOf( modulePath + '.' ) === 0
-					  );
+					: translationRefs.find( ( ref ) => ref.indexOf( modulePath + '.' ) === 0 );
 
 				if ( ! key ) {
 					return;
