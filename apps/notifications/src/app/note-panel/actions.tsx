@@ -2,6 +2,7 @@ import { Button, DropdownMenu, privateApis } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { cog, keyboard } from '@wordpress/icons';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -115,7 +116,7 @@ export default function NotePanelActions() {
 							<Menu.Group>
 								<Menu.GroupLabel>
 									{ __( 'Layout' ) }
-									{ showsWhatIsNew && <span className="wpnc-app__new-badge">{ __( 'New' ) }</span> }
+									{ showsWhatIsNew && <Badge intent="informational">{ __( 'New' ) }</Badge> }
 								</Menu.GroupLabel>
 								{ LAYOUTS.map( ( { value, label } ) => (
 									<Menu.RadioItem
