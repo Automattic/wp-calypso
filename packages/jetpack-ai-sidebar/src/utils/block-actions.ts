@@ -8,6 +8,7 @@
 
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { dispatch, select } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { countOccurrences } from './blocks';
 
 /**
@@ -39,6 +40,13 @@ let activeBlockFocusClientId: string | null = null;
 let activeBlockFocusLayout: HTMLElement | null = null;
 const FOCUS_MODE_CLASS = 'is-focus-mode';
 const ROOT_BLOCK_LIST_SELECTOR = '.block-editor-block-list__layout.is-root-container';
+
+function getUnsupportedEditTargetMessage(): string {
+	return __(
+		'I can edit text inside supported blocks, but I can’t add, move, remove, or reorder blocks.',
+		__i18n_text_domain__
+	);
+}
 
 export const BLOCK_ACTION_COMPLETE_EVENT = 'jetpack-ai-sidebar-block-action-complete';
 export const SELECTED_BLOCK_CLEAR_EVENT = 'agents-manager-selected-block-cleared';
@@ -713,6 +721,7 @@ export function handleUpdateBlockContent( input: any ): any {
 		return {
 			success: false,
 			error: `unsupported edit target: ${ snapshot.name }`,
+			agentMessage: getUnsupportedEditTargetMessage(),
 			returnToAgent: false,
 		};
 	}
@@ -755,12 +764,17 @@ export function handleUpdateBlockContent( input: any ): any {
 	return new Promise< any >( ( resolve ) => {
 		setTimeout( () => {
 			let latestSnapshot = getBlockSnapshot( targetClientId, snapshotAttribute, currentText );
-			const resolveFailure = ( error: string ) => {
+			const resolveFailure = ( error: string, agentMessage?: string ) => {
 				if ( blockEl ) {
 					removeProcessingEffect( blockEl );
 				}
 				notifyBlockActionComplete();
-				resolve( { success: false, error, returnToAgent: false } );
+				resolve( {
+					success: false,
+					error,
+					...( agentMessage ? { agentMessage } : {} ),
+					returnToAgent: false,
+				} );
 			};
 
 			// Re-check immediately before mutation because the shimmer intentionally delays writes.
@@ -792,7 +806,10 @@ export function handleUpdateBlockContent( input: any ): any {
 				return;
 			}
 			if ( ! latestSnapshot.attributeName ) {
-				resolveFailure( `unsupported edit target: ${ latestSnapshot.name }` );
+				resolveFailure(
+					`unsupported edit target: ${ latestSnapshot.name }`,
+					getUnsupportedEditTargetMessage()
+				);
 				return;
 			}
 

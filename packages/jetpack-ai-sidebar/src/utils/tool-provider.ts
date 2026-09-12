@@ -18,7 +18,7 @@ export const UPDATE_BLOCK_CONTENT_ABILITY: Tool = {
 	name: UPDATE_BLOCK_CONTENT_TOOL_ID,
 	...( { label: 'Update block content', category: 'jetpack-ai' } as any ), // eslint-disable-line @typescript-eslint/no-explicit-any
 	description:
-		'Update the text content of a specific block in the editor. Use this after translating, changing tone, checking grammar, or any other text transformation. The block will be updated directly in the editor.',
+		'Update text within an existing supported text block in the editor. Use this after translating, changing tone, checking grammar, or another text transformation. Do not use this tool to add, move, remove, or reorder blocks, sections, or template parts. The block text will be updated directly in the editor.',
 	input_schema: {
 		type: 'object',
 		properties: {
