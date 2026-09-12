@@ -22,7 +22,13 @@ const arrayKeyBy = < T >( array: T[], iteratee: Iteratee< T, PropertyKey > ) =>
 			);
 		}
 
-		return { ...result, [ key ]: value };
+		Object.defineProperty( result, key, {
+			value,
+			writable: true,
+			enumerable: true,
+			configurable: true,
+		} );
+		return result;
 	}, {} );
 
 const collectionKeyBy = < T >(
