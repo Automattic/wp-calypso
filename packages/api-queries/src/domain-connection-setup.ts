@@ -28,7 +28,7 @@ export const updateConnectionModeMutation = ( domainName: string, siteId: number
 		mutationFn: ( connectionMode: string | null ) =>
 			updateConnectionModeAndGetMappingStatus( domainName, connectionMode ),
 		onSuccess: () => {
-			queryClient.invalidateQueries( domainConnectionSetupInfoQuery( domainName, siteId ) );
+			queryClient.invalidateQueries( { queryKey: [ 'domain-setup-info', domainName, siteId ] } );
 			queryClient.invalidateQueries( domainMappingStatusQuery( domainName ) );
 		},
 	} );
