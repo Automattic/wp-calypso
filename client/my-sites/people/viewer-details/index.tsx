@@ -1,7 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 import EmptyContent from 'calypso/components/empty-content';
 import HeaderCake from 'calypso/components/header-cake';
@@ -18,7 +17,6 @@ import { deleteInvite } from 'calypso/state/invites/actions';
 import { getAcceptedInvitesForSite } from 'calypso/state/invites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { Member } from '@automattic/data-stores';
-import type { Invite } from 'calypso/my-sites/people/team-invites/types';
 
 interface Props {
 	userId: string;
@@ -33,33 +31,12 @@ export default function ViewerDetails( props: Props ) {
 	const acceptedInvites = useSelector( ( state ) =>
 		getAcceptedInvitesForSite( state, site?.ID as number )
 	);
-	const [ invite, setInvite ] = useState< Invite >();
-	const [ templateState, setTemplateState ] = useState( 'loading' );
 	const { data: viewer, isLoading } = useViewerQuery( site?.ID, userId ) as {
 		data: Member;
 		isLoading: boolean;
 	};
 	const { removeViewer } = useRemoveViewer();
-
-	useEffect( () => checkTemplateState(), [ viewer ] );
-	useEffect( () => findInviteObject(), [ acceptedInvites, viewer ] );
-
-	function findInviteObject() {
-		const inv =
-			viewer && acceptedInvites && acceptedInvites.find( ( x ) => x.key === viewer.invite_key );
-
-		inv && setInvite( inv );
-	}
-
-	function checkTemplateState() {
-		if ( isLoading ) {
-			setTemplateState( 'loading' );
-		} else if ( ! viewer ) {
-			setTemplateState( 'not-found' );
-		} else {
-			setTemplateState( 'default' );
-		}
-	}
+	const invite = viewer && acceptedInvites?.find( ( entry ) => entry.key === viewer.invite_key );
 
 	function onRemove() {
 		dispatch( recordGoogleEvent( 'People', 'Clicked Remove Viewer Button On Viewer Details' ) );
@@ -69,8 +46,12 @@ export default function ViewerDetails( props: Props ) {
 	function onRemoveAccept() {
 		// since we show the full user details with the invite information,
 		// the button Remove simultaneously calls, remove the viewer | delete the invite
-		viewer && removeViewer( site?.ID, viewer.ID );
-		invite && dispatch( deleteInvite( site?.ID, invite.key ) );
+		if ( viewer ) {
+			removeViewer( site?.ID, viewer.ID );
+		}
+		if ( invite ) {
+			dispatch( deleteInvite( site?.ID, invite.key ) );
+		}
 		goBack();
 	}
 
@@ -120,17 +101,17 @@ export default function ViewerDetails( props: Props ) {
 				{ translate( 'User Details' ) }
 			</HeaderCake>
 
-			{ templateState === 'loading' && (
+			{ isLoading && (
 				<Card>
 					<PeopleListItem key="people-list-item-placeholder" />
 				</Card>
 			) }
 
-			{ templateState === 'not-found' && (
+			{ ! isLoading && ! viewer && (
 				<EmptyContent title={ translate( 'The requested subscriber does not exist.' ) } />
 			) }
 
-			{ templateState === 'default' && (
+			{ ! isLoading && viewer && (
 				<Card className="member-details">
 					<PeopleListItem
 						key={ `viewer-details-${ viewer.ID }` }
