@@ -11,7 +11,7 @@ import { DomainStatusField } from './field-domain-status';
 import { DomainExpiryField } from './field-expiry';
 import { DomainSslField } from './field-ssl';
 import { IneligibleIndicator } from './ineligible-indicator';
-import { sortNullableStrings } from './sort-nullable-strings';
+import { fieldSort, sortNullableDates } from './sort';
 import type { DomainSummary, Site } from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';
 
@@ -67,14 +67,14 @@ export const useFields = ( {
 				id: 'is_primary_domain',
 				label: __( 'Primary' ),
 				getValue: ( { item }: { item: DomainSummary } ) => item.primary_domain,
-				sort: ( a, b, direction ) => {
-					if ( a.primary_domain === b.primary_domain ) {
+				sort: fieldSort< boolean >( ( a, b, direction ) => {
+					if ( a === b ) {
 						return 0;
 					}
 
 					const factor = direction === 'asc' ? 1 : -1;
-					return a.primary_domain ? -1 * factor : 1 * factor;
-				},
+					return a ? -1 * factor : 1 * factor;
+				} ),
 				render: ( { field, item } ) =>
 					field.getValue( { item } ) ? <Text>{ __( 'Primary' ) }</Text> : <IneligibleIndicator />,
 			},
@@ -135,11 +135,12 @@ export const useFields = ( {
 				render: ( { item } ) => <DomainSslField domain={ item } />,
 			},
 			{
-				id: 'expiry',
+				// DataViews feeds one getValue to both filtering and sorting, so the filter
+				// buckets need a field of their own; `expiry` below sorts by the raw date.
+				id: 'expiry_status',
 				label: __( 'Paid until' ),
 				enableHiding: false,
-				enableSorting: true,
-				sort: sortNullableStrings,
+				enableSorting: false,
 				elements: [
 					{ value: '2-next-90-days', label: __( '90 days' ) },
 					{ value: '1-expired', label: __( 'Expired' ) },
@@ -164,6 +165,17 @@ export const useFields = ( {
 					}
 					return '3-more-than-90-days';
 				},
+			},
+			{
+				// `type` is what makes a filter saved against the old string field inert:
+				// a date field rejects the bucket operator instead of matching nothing.
+				id: 'expiry',
+				type: 'date' as const,
+				label: __( 'Paid until' ),
+				enableHiding: false,
+				enableSorting: true,
+				getValue: ( { item }: { item: DomainSummary } ) => item.expiry,
+				sort: fieldSort( sortNullableDates ),
 				render: ( { item } ) => {
 					return (
 						<DomainExpiryField
