@@ -6,6 +6,7 @@ import {
 	SELECT_NOTE,
 	SET_LAYOUT,
 	SET_LAYOUT_STYLE,
+	SET_VIEWS,
 	SET_VIEW_SETTINGS_SEEN,
 	UNDO_ACTION,
 	VIEW_SETTINGS,
@@ -52,6 +53,11 @@ export const setLayout = ( layout ) => ( {
 export const setLayoutStyle = ( layoutStyle ) => ( {
 	type: SET_LAYOUT_STYLE,
 	layoutStyle,
+} );
+
+export const setViews = ( views ) => ( {
+	type: SET_VIEWS,
+	views,
 } );
 
 export const setViewSettingsSeen = ( viewSettingsSeen ) => ( {
@@ -107,6 +113,7 @@ export default {
 	selectNote,
 	setLayout,
 	setLayoutStyle,
+	setViews,
 	setViewSettingsSeen,
 	undoAction,
 	unselectNote,

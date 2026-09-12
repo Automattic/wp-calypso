@@ -2,6 +2,7 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import clsx from 'clsx';
 import { useEffect, useState, type TransitionEvent } from 'react';
 import { Provider } from 'react-redux';
+import { type StoredView } from '../common/premade-views';
 import repliesCache from '../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../panel/helpers/input';
 import { logError } from '../panel/helpers/log-error';
@@ -26,14 +27,18 @@ repliesCache.cleanup();
 
 export type NotificationPreferences = {
 	layoutStyle?: string;
+	views?: StoredView[];
 	viewSettingsSeen?: boolean;
 };
 
 let hasResolvedPreferences = false;
 
-const applyPreferences = ( { layoutStyle, viewSettingsSeen }: NotificationPreferences ) => {
+const applyPreferences = ( { layoutStyle, views, viewSettingsSeen }: NotificationPreferences ) => {
 	if ( layoutStyle ) {
 		store.dispatch( actions.ui.setLayoutStyle( layoutStyle ) );
+	}
+	if ( views ) {
+		store.dispatch( actions.ui.setViews( views ) );
 	}
 	// Always dispatched, so an absent preference resolves to "not seen" rather
 	// than staying unknown.

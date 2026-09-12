@@ -206,6 +206,29 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	}
 }
 
+// The tab list already fades its overflowing edge to show there is more, so the
+// scrollbar is redundant chrome in a strip this short.
+.wpnc-app__tab-list {
+	scrollbar-width: none;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
+
+// The nudge lines the button up with the tab labels, which the tab list's selection
+// indicator below them raises.
+.wpnc-app__view-picker {
+	flex-shrink: 0;
+	margin-top: 6px;
+}
+
+// With a full strip the button leaves the last tab's side and takes the free space,
+// which parks it against the panel edge.
+.wpnc-app__view-picker.is-at-edge {
+	margin-inline-start: auto;
+}
+
 // A one-time nudge towards the view settings, cleared the first time the menu opens.
 .wpnc-app__settings-toggle.is-new {
 	position: relative;

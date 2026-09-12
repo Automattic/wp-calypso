@@ -6,6 +6,7 @@ import {
 	SET_IS_SHOWING,
 	SET_FILTER,
 	SET_LAYOUT_STYLE,
+	SET_VIEWS,
 	SET_VIEW_SETTINGS_SEEN,
 	ENABLE_KEYBOARD_SHORTCUTS,
 	DISABLE_KEYBOARD_SHORTCUTS,
@@ -50,6 +51,12 @@ export const filteredLoading = ( state = null, { type, filter } ) => {
 // eslint-disable-next-line no-shadow
 export const layoutStyle = ( state = 'classic', { type, layoutStyle } ) =>
 	SET_LAYOUT_STYLE === type ? layoutStyle : state;
+
+const NO_VIEWS = [];
+
+// eslint-disable-next-line no-shadow
+export const views = ( state = NO_VIEWS, { type, views } ) =>
+	SET_VIEWS === type ? views : state;
 
 // `null` until the preference has loaded, so nothing that depends on it renders on a
 // guess and then corrects itself.
@@ -117,5 +124,6 @@ export default combineReducers( {
 	filterName,
 	keyboardShortcutsAreEnabled,
 	shortcutsPopoverIsOpen,
+	views,
 	viewSettingsSeen,
 } );
