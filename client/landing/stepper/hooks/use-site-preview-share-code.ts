@@ -14,29 +14,36 @@ export function useSitePreviewShareCode() {
 		? isWpComEcommercePlan( site?.plan?.product_slug )
 		: false;
 
-	const usePreviewSiteLinksQueryEnabled =
+	const isPreviewEligible =
 		site?.is_coming_soon && ( isBusinessPlan || isEcommercePlan ) && site?.is_wpcom_atomic;
 
 	// Retrieves site preview share code if it exists
 	const { data: previewLinks, isInitialLoading: isPreviewLinksLoading } = useSitePreviewLinks( {
 		siteId: Number( site?.ID ),
-		isEnabled: usePreviewSiteLinksQueryEnabled ?? false,
+		isEnabled: isPreviewEligible ?? false,
 	} );
 
 	// Provides createLink() function used to generate a new site preview share code
-	const { createLink, isPending: isCreatingSitePreviewLinks } = useCreateSitePreviewLink( {
+	const {
+		createLink,
+		isPending: isCreatingSitePreviewLinks,
+		isError: hasCreateError,
+	} = useCreateSitePreviewLink( {
 		siteId: Number( site?.ID ),
 	} );
 
 	// Generate preview link for site on business or ecommerce plan
 	// Preview links are only available on these two plans
 	useEffect( () => {
-		if ( previewLinks && Array.isArray( previewLinks ) && previewLinks.length === 0 ) {
-			if ( isBusinessPlan || isEcommercePlan ) {
-				createLink();
-			}
+		if (
+			isPreviewEligible &&
+			! hasCreateError &&
+			Array.isArray( previewLinks ) &&
+			previewLinks.length === 0
+		) {
+			createLink();
 		}
-	}, [ previewLinks, createLink, isBusinessPlan, isEcommercePlan ] );
+	}, [ previewLinks, createLink, isPreviewEligible, hasCreateError ] );
 
 	const shareCode = previewLinks?.[ 0 ]?.code;
 
