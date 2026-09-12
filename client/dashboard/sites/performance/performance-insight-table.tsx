@@ -10,8 +10,27 @@ import type {
 } from '@automattic/api-core';
 
 // DataViews sets white-space: nowrap on the cell wrapper, which suppresses every wrap
-// opportunity; word-break alone has no effect without overriding it.
-const wrapLongValueStyle = { whiteSpace: 'normal', wordBreak: 'break-all' } as const;
+// opportunity; overflow-wrap alone has no effect without overriding it.
+const wrapLongValueStyle = { whiteSpace: 'normal', overflowWrap: 'anywhere' } as const;
+
+const FLEXIBLE_VALUE_TYPES = [ 'code', 'link', 'source-location', 'text', 'url' ];
+
+type PerformanceMetricAuditDetailsHeading = NonNullable<
+	PerformanceMetricAuditDetails[ 'headings' ]
+>[ number ];
+
+type PerformanceInsightRow = PerformanceMetricAuditDetailsItem & {
+	id: string;
+	__isSubItem?: boolean;
+};
+
+const getCellValue = (
+	heading: PerformanceMetricAuditDetailsHeading,
+	item: PerformanceMetricAuditDetailsItem
+) =>
+	heading.subItemsHeading && item.__isSubItem
+		? item[ heading.subItemsHeading.key ]
+		: item[ heading.key ];
 
 const renderNode = (
 	data: { [ key: string ]: any },
@@ -52,10 +71,7 @@ const PerformanceInsightTable = ( {
 		enableSorting: false,
 		enableHiding: false,
 		render: ( { item }: { item: PerformanceMetricAuditDetailsItem } ) => {
-			const value =
-				heading.subItemsHeading && item.__isSubItem
-					? item[ heading.subItemsHeading.key ]
-					: item[ heading.key ];
+			const value = getCellValue( heading, item );
 
 			const valueType =
 				heading.subItemsHeading && item.__isSubItem
@@ -112,35 +128,49 @@ const PerformanceInsightTable = ( {
 		},
 	} ) );
 
+	const rows: PerformanceInsightRow[] = details.isEntityGrouped
+		? items.flatMap( ( item, i ) => [
+				{ ...item, id: `${ i }` },
+				...( item.subItems?.items ?? [] ).map( ( subItem, j ) => ( {
+					...subItem,
+					id: `${ item.entity }- ${ j }`,
+					entity: item.entity,
+					__isSubItem: true,
+				} ) ),
+		  ] )
+		: items.map( ( item, i ) => ( { ...item, id: `${ i }` } ) );
+
+	// Without explicit widths DataViews shrinks every column to its content and hands all the
+	// slack to the last one, which collapses wrapped text columns into a narrow stack. Columns
+	// that render nothing are skipped so they can't claim a share of the width.
+	const flexibleHeadings = headings.filter(
+		( heading ) =>
+			FLEXIBLE_VALUE_TYPES.includes( heading.valueType ) &&
+			rows.some( ( row ) => {
+				const value = getCellValue( heading, row );
+				return value !== undefined && value !== null && value !== '';
+			} )
+	);
+	const columnStyles = Object.fromEntries(
+		flexibleHeadings.map( ( heading ) => [
+			heading.key,
+			{ width: `${ 100 / flexibleHeadings.length }%` },
+		] )
+	);
+
 	const view = {
 		fields: fields.map( ( field ) => field.id ),
 		type: 'table' as const,
 		groupBy: details.isEntityGrouped ? { field: 'entity', direction: 'asc' as const } : undefined,
 		layout: {
 			enableMoving: false,
+			styles: columnStyles,
 		},
 	};
 
 	return (
-		<DataViews< PerformanceMetricAuditDetailsItem & { id: string; __isSubItem?: boolean } >
-			data={
-				details.isEntityGrouped
-					? items
-							.map( ( item, i ) => [
-								{
-									...item,
-									id: `${ i }`,
-								},
-								...( item.subItems?.items ?? [] ).map( ( subItem, j ) => ( {
-									...subItem,
-									id: `${ item.entity }- ${ j }`,
-									entity: item.entity,
-									__isSubItem: true,
-								} ) ),
-							] )
-							.flat()
-					: items.map( ( item, i ) => ( { ...item, id: `${ i }` } ) )
-			}
+		<DataViews< PerformanceInsightRow >
+			data={ rows }
 			fields={ fields }
 			view={ view }
 			defaultLayouts={ { table: {} } }
