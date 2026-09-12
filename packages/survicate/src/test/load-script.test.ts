@@ -15,6 +15,12 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
+// This suite covers the modal and Help Center suppressors only: the script is
+// never loaded in a support session, so `load-script.ts` can never see one.
+jest.mock( '@automattic/calypso-support-session', () => ( {
+	isSupportSession: () => false,
+} ) );
+
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { loadScript } from '@automattic/load-script';
 import { select, subscribe } from '@wordpress/data';

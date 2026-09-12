@@ -30,7 +30,7 @@ export function loadSurvicateScript( workspaceId: string, signal?: AbortSignal )
 
 		const reason = getSuppressionReason();
 		if ( reason ) {
-			debug( 'Survicate survey suppressed (Help Center or a modal is open)' );
+			debug( 'Survicate survey suppressed (reason: %s)', reason );
 			recordSurveySuppressed( reason, 'survey_displayed' );
 			// Closing alone is not enough for auto-campaigns: the SDK's targeting
 			// engine re-evaluates every few seconds and re-displays a closed
@@ -78,9 +78,10 @@ export function loadSurvicateScript( workspaceId: string, signal?: AbortSignal )
 		const disconnectModalObserver = observeModals( onModalOpened, resumeIfClear );
 		const unsubscribeHelpCenter = observeHelpCenter( onHelpCenterOpened, resumeIfClear );
 
-		// A modal or the Help Center already open when the SDK becomes ready
-		// (e.g. an onboarding modal shown at page load) pauses targeting up
-		// front, so the survey never displays at all — no show-then-hide flash.
+		// A suppressor already in place when the SDK becomes ready (a support
+		// session, or an onboarding modal shown at page load) pauses targeting
+		// up front, so the survey never displays at all — no show-then-hide
+		// flash.
 		if ( shouldSuppressSurvey() ) {
 			pauseSurvicateTargeting();
 		}

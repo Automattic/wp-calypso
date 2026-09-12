@@ -39,6 +39,7 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/calypso-support-session": "workspace:^",
 		"@automattic/load-script": "workspace:^",
 		"debug": "^4.4.1",
 		"tslib": "^2.8.1"
