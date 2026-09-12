@@ -2,11 +2,11 @@ import { Step } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import MigrationPlansGrid from 'calypso/blocks/importer/components/migration-plans-grid';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
-import MigrationPlansGrid from './migration-plans-grid';
 import type { Step as StepType } from '../../types';
 
 import './style.scss';

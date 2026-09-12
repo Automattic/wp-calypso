@@ -20,6 +20,8 @@ import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hook
 import useGenerateActionHook from 'calypso/my-sites/plans-features-main/hooks/use-generate-action-hook';
 import type { DataResponse, SupportedUrlFriendlyTermType } from '@automattic/plans-grid-next';
 
+import './style.scss';
+
 interface MigrationPlansGridProps {
 	siteId: number;
 	onUpgradeClick: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
