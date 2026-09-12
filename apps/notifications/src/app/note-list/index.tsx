@@ -7,12 +7,14 @@ import {
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
+import { getPremadeFilter } from '../../common/premade-views';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getFilteredLoading from '../../panel/state/selectors/get-filtered-loading';
 import getFilteredNoteIds from '../../panel/state/selectors/get-filtered-note-ids';
 import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
 import { getIsNoteRead } from '../../panel/state/selectors/get-is-note-read';
+import getLayoutStyle from '../../panel/state/selectors/get-layout-style';
 import getNotes from '../../panel/state/selectors/get-notes';
 import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
@@ -49,7 +51,9 @@ type NoteListProps = {
 };
 
 const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListProps ) => {
-	const filter = getFilters()[ filterName ];
+	// Falls back to All rather than asserting: a name that is neither a built-in filter
+	// nor a premade view would otherwise throw while rendering the list.
+	const filter = getFilters()[ filterName ] ?? getPremadeFilter( filterName ) ?? getFilters().all;
 	const isAllTab = filterName === 'all';
 	const allNotes = useSelector( ( state ) => getAllNotes( state ) || [] ) as Note[];
 	// This tab's cached id list, keyed by tab name, or undefined until its first
@@ -65,17 +69,22 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	// Everything the render needs that depends on which tab is active, derived in
 	// one place so the All-vs-filtered split lives here and nowhere else.
 	const tab = useMemo( () => {
-		const { filter: matches } = getFilters()[ filterName ];
+		const { filter: matches } =
+			getFilters()[ filterName ] ?? getPremadeFilter( filterName ) ?? getFilters().all;
 
-		// The All tab renders the whole store; a filtered tab renders the server's
-		// id list for its filter. `matches` still runs on top so an in-app change
-		// (e.g. reading a note on Unread) drops it out before a refetch.
+		// Every tab renders the server's id list for its own view, All included: the
+		// store is shared, so a filtered view's fetch can leave notes in it that fall
+		// outside All's window. `matches` still runs on top so an in-app change (e.g.
+		// reading a note on Unread) drops it out before a refetch.
 		const notesById = new Map( allNotes.map( ( note ) => [ note.id, note ] ) );
-		const source = isAllTab
-			? allNotes
-			: ( cachedNoteIds ?? [] )
-					.map( ( id ) => notesById.get( id ) )
-					.filter( ( note ): note is Note => !! note );
+		// Before All's first fetch there is no window to clip to, so show what the store
+		// has rather than nothing.
+		const source =
+			isAllTab && cachedNoteIds === undefined
+				? allNotes
+				: ( cachedNoteIds ?? [] )
+						.map( ( id ) => notesById.get( id ) )
+						.filter( ( note ): note is Note => !! note );
 		const notes = source.filter( ( note ) => matches( note ) );
 
 		// Loading scoped to this tab, so another tab's fetch (or the background
@@ -133,7 +142,8 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	const startPosition = view.startPosition ?? 1;
 
 	// Field identities must stay stable or DataViews remounts every cell per re-render.
-	const fields = useMemo( () => getFields(), [] );
+	const layoutStyle = useSelector( getLayoutStyle );
+	const fields = useMemo( () => getFields( layoutStyle ), [ layoutStyle ] );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		visibleNotes,
@@ -249,7 +259,9 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 							<Text size={ 15 } weight={ 500 }>
 								{ filter.emptyMessage }
 							</Text>
-							<ExternalLink href={ filter.emptyLink }>{ filter.emptyLinkMessage }</ExternalLink>
+							{ filter.emptyLink && (
+								<ExternalLink href={ filter.emptyLink }>{ filter.emptyLinkMessage }</ExternalLink>
+							) }
 						</VStack>
 					)
 				}

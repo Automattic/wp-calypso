@@ -32,6 +32,11 @@ export interface VisitCounter {
 	lastUpdated: number | null; // Result of Date.now(), or null before the first visit
 }
 
+export interface NotificationView {
+	name: string;
+	hidden?: boolean;
+}
+
 export interface UserPreferences {
 	recentSites?: number[];
 	'hosting-dashboard-color-scheme'?: 'light' | 'dark' | 'system';
@@ -60,4 +65,7 @@ export interface UserPreferences {
 	'reader-profile-hidden-sites'?: number[];
 	two_step_security_key_reregister_required?: boolean;
 	'a4a-dashboard-pd-not-approved-popover'?: boolean;
+	'notifications-layout-style'?: 'classic' | 'simplified';
+	'notifications-views'?: NotificationView[];
+	'notifications-view-settings-seen'?: boolean;
 }

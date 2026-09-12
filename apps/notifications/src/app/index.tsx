@@ -2,9 +2,11 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import clsx from 'clsx';
 import { useEffect, useState, type TransitionEvent } from 'react';
 import { Provider } from 'react-redux';
+import { type StoredView } from '../common/premade-views';
 import repliesCache from '../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../panel/helpers/input';
 import { logError } from '../panel/helpers/log-error';
+import { fetchNotificationPreferences } from '../panel/rest-client/wpcom';
 import { init as initStore, store } from '../panel/state';
 import { SET_IS_SHOWING } from '../panel/state/action-types';
 import actions from '../panel/state/actions';
@@ -22,6 +24,26 @@ import type { FilterName } from './types';
 import './style.scss';
 
 repliesCache.cleanup();
+
+export type NotificationPreferences = {
+	layoutStyle?: string;
+	views?: StoredView[];
+	viewSettingsSeen?: boolean;
+};
+
+let hasResolvedPreferences = false;
+
+const applyPreferences = ( { layoutStyle, views, viewSettingsSeen }: NotificationPreferences ) => {
+	if ( layoutStyle ) {
+		store.dispatch( actions.ui.setLayoutStyle( layoutStyle ) );
+	}
+	if ( views ) {
+		store.dispatch( actions.ui.setViews( views ) );
+	}
+	// Always dispatched, so an absent preference resolves to "not seen" rather
+	// than staying unknown.
+	store.dispatch( actions.ui.setViewSettingsSeen( !! viewSettingsSeen ) );
+};
 
 /**
  * Force a manual refresh of the notes data
@@ -119,12 +141,20 @@ const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) =>
 const NotificationApp = ( {
 	locale = 'en',
 	isDismissible = false,
+	isViewSettingsEnabled = false,
+	preferences,
 	customEnhancer,
 	actionHandlers = {},
 	wpcom,
 }: {
 	locale?: string;
 	isDismissible?: boolean;
+	isViewSettingsEnabled?: boolean;
+	/**
+	 * Supplied by hosts that already hold the user's preferences, so the panel does
+	 *  not have to fetch them and paint its defaults while it waits.
+	 */
+	preferences?: NotificationPreferences;
 	customEnhancer?: any;
 	actionHandlers?: any;
 	wpcom: any;
@@ -139,10 +169,29 @@ const NotificationApp = ( {
 		store.dispatch( { type: SET_IS_SHOWING, isShowing: true } );
 		getClient()?.setVisibility( { isShowing: true, isVisible: ! document.hidden } );
 
+		// Once per session, not per mount: in the dashboard the panel lives inside a
+		// dropdown and remounts on every open, and a late response would also overwrite a
+		// change the view picker had just made.
+		if ( ! hasResolvedPreferences ) {
+			hasResolvedPreferences = true;
+			// A host that already holds these hands them over, and they land before the
+			// panel first paints. Fetching them here instead would paint the defaults and
+			// then move the tabs under the reader.
+			if ( preferences ) {
+				applyPreferences( preferences );
+			} else {
+				fetchNotificationPreferences().then( applyPreferences ).catch( logError );
+			}
+		}
+
 		return () => {
 			store.dispatch( { type: SET_IS_SHOWING, isShowing: false } );
 			getClient()?.setVisibility( { isShowing: false, isVisible: ! document.hidden } );
 		};
+		// `preferences` is read once, on mount. Re-running on a later value would
+		// re-announce the panel as showing and overwrite whatever the picker has since
+		// saved.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ wpcom ] );
 
 	useEffect( () => {
@@ -223,7 +272,11 @@ const NotificationApp = ( {
 	return (
 		<ErrorBoundary>
 			<Provider store={ store }>
-				<AppProvider client={ getClient() } locale={ locale }>
+				<AppProvider
+					client={ getClient() }
+					locale={ locale }
+					isViewSettingsEnabled={ isViewSettingsEnabled }
+				>
 					<NotificationContent isDismissible={ isDismissible } />
 				</AppProvider>
 			</Provider>

@@ -14,6 +14,28 @@ export const fetchNote = ( noteId, query, callback ) =>
 		callback
 	);
 
+export const fetchNotificationPreferences = () =>
+	wpcom()
+		.req.get( {
+			path: '/me/preferences',
+			apiVersion: '1.1',
+		} )
+		.then( ( { calypso_preferences: preferences } ) => ( {
+			layoutStyle: preferences?.[ 'notifications-layout-style' ],
+			views: preferences?.[ 'notifications-views' ],
+			viewSettingsSeen: preferences?.[ 'notifications-view-settings-seen' ],
+		} ) );
+
+export const updateNotificationPreferences = ( preferences ) =>
+	wpcom().req.post(
+		{
+			path: '/me/preferences',
+			apiVersion: '1.1',
+		},
+		null,
+		{ calypso_preferences: preferences }
+	);
+
 export const fetchSuggestions = ( query, callback ) =>
 	wpcom().req.get(
 		{

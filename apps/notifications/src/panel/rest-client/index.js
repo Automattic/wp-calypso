@@ -1,4 +1,5 @@
 import debugFactory from 'debug';
+import { getPremadeFilter } from '../../common/premade-views';
 import repliesCache from '../comment-replies-cache';
 import { logError } from '../helpers/log-error';
 import { recordTracksEvent } from '../helpers/stats';
@@ -173,6 +174,18 @@ function getNote( note_id ) {
 			return;
 		}
 		store.dispatch( actions.notes.addNotes( data.notes ) );
+
+		const [ note ] = data.notes;
+		if ( note && ! this.noteList.some( ( n ) => n.id === note.id ) ) {
+			this.noteList = [ { id: note.id, note_hash: note.note_hash }, ...this.noteList ];
+			store.dispatch(
+				actions.notes.setFilteredNoteIds(
+					'all',
+					this.noteList.map( ( n ) => n.id )
+				)
+			);
+		}
+
 		ready.call( this );
 	} );
 }
@@ -304,6 +317,16 @@ function getNotes( before ) {
 		}
 
 		store.dispatch( actions.notes.addNotes( data.notes ) );
+		// Publish the All window as an ordered id list, like a filtered view does, so the
+		// tab renders its own window rather than every note the store happens to hold —
+		// a filtered fetch can pull in much older notes, and those would otherwise show
+		// up under All.
+		store.dispatch(
+			actions.notes.setFilteredNoteIds(
+				'all',
+				this.noteList.map( ( n ) => n.id )
+			)
+		);
 		this.updateLastSeenTime( Number( data.last_seen_time ) );
 
 		if ( this.allNotesLoaded ) {
@@ -428,7 +451,8 @@ function getNotesList() {
  */
 function setFilter( filterName ) {
 	this.filterName = filterName ?? 'all';
-	this.filter = getFilters()[ this.filterName ]?.query ?? null;
+	this.filter =
+		( getFilters()[ this.filterName ] ?? getPremadeFilter( this.filterName ) )?.query ?? null;
 
 	if ( this.filter && this.isVisible ) {
 		this.getFilteredNotes();
