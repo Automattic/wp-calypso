@@ -3,8 +3,7 @@
 @import "@wordpress/base-styles/mixins";
 @import "calypso/dashboard/app/wp-components-overrides.scss";
 
-$wpnc-pane-width: 448px;
-$wpnc-list-pane-width: 450px;
+$wpnc-pane-width: 450px;
 $wpnc-pane-border: 1px solid var(--color-border-subtle, #c3c4c7);
 $wpnc-pane-radius: 4px;
 $wpnc-pane-shadow: 0 0 16px rgba(0, 0, 0, 0.12);
@@ -27,7 +26,7 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 
 @include break-small {
 	.components-popover:has(.wpnc-app) > .components-popover__content {
-		max-width: 448px;
+		max-width: $wpnc-pane-width;
 		margin-inline: 8px;
 	}
 }
@@ -35,8 +34,8 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 @include break-large {
 	// At xlarge each pane carries its own chrome, so the popover goes
 	// transparent and lets the combined card show through. The popover
-	// is sized for both panes (896px) at all times; without this the
-	// 448px → 896px width jump on detail open makes floating-ui's `shift`
+	// is sized for both panes at all times; without this the single-pane
+	// to two-pane width jump on detail open makes floating-ui's `shift`
 	// middleware re-compute the popover's x, and framer-motion (used
 	// internally by `@wordpress/components` Popover) tweens that x
 	// change as a visible leftward skid. Pre-sizing keeps the popover
@@ -55,7 +54,7 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 			border: none;
 			border-radius: 0;
 			overflow: visible;
-			max-width: 896px;
+			max-width: $wpnc-pane-width * 2;
 		}
 	}
 }
@@ -176,7 +175,7 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 @include break-large {
 	.wpnc-app__list-pane {
 		inset-inline-start: auto;
-		width: $wpnc-list-pane-width;
+		width: $wpnc-pane-width;
 		z-index: 2;
 		border: $wpnc-pane-border;
 		border-radius: $wpnc-pane-radius;
