@@ -25,7 +25,25 @@ import './style.scss';
 
 repliesCache.cleanup();
 
-let hasFetchedPreferences = false;
+export type NotificationPreferences = {
+	layoutStyle?: string;
+	views?: StoredView[];
+	viewSettingsSeen?: boolean;
+};
+
+let hasResolvedPreferences = false;
+
+const applyPreferences = ( { layoutStyle, views, viewSettingsSeen }: NotificationPreferences ) => {
+	if ( layoutStyle ) {
+		store.dispatch( actions.ui.setLayoutStyle( layoutStyle ) );
+	}
+	if ( views ) {
+		store.dispatch( actions.ui.setViews( views ) );
+	}
+	// Always dispatched, so an absent preference resolves to "not seen" rather
+	// than staying unknown.
+	store.dispatch( actions.ui.setViewSettingsSeen( !! viewSettingsSeen ) );
+};
 
 /**
  * Force a manual refresh of the notes data
@@ -124,6 +142,7 @@ const NotificationApp = ( {
 	locale = 'en',
 	isDismissible = false,
 	isViewSettingsEnabled = false,
+	preferences,
 	customEnhancer,
 	actionHandlers = {},
 	wpcom,
@@ -131,6 +150,11 @@ const NotificationApp = ( {
 	locale?: string;
 	isDismissible?: boolean;
 	isViewSettingsEnabled?: boolean;
+	/**
+	 * Supplied by hosts that already hold the user's preferences, so the panel does
+	 *  not have to fetch them and paint its defaults while it waits.
+	 */
+	preferences?: NotificationPreferences;
 	customEnhancer?: any;
 	actionHandlers?: any;
 	wpcom: any;
@@ -148,37 +172,26 @@ const NotificationApp = ( {
 		// Once per session, not per mount: in the dashboard the panel lives inside a
 		// dropdown and remounts on every open, and a late response would also overwrite a
 		// change the view picker had just made.
-		if ( ! hasFetchedPreferences ) {
-			hasFetchedPreferences = true;
-			fetchNotificationPreferences()
-				.then(
-					( {
-						layoutStyle,
-						views,
-						viewSettingsSeen,
-					}: {
-						layoutStyle?: string;
-						views?: StoredView[];
-						viewSettingsSeen?: boolean;
-					} ) => {
-						if ( layoutStyle ) {
-							store.dispatch( actions.ui.setLayoutStyle( layoutStyle ) );
-						}
-						if ( views ) {
-							store.dispatch( actions.ui.setViews( views ) );
-						}
-						// Always dispatched, so an absent preference resolves to "not seen" rather
-						// than staying unknown.
-						store.dispatch( actions.ui.setViewSettingsSeen( !! viewSettingsSeen ) );
-					}
-				)
-				.catch( logError );
+		if ( ! hasResolvedPreferences ) {
+			hasResolvedPreferences = true;
+			// A host that already holds these hands them over, and they land before the
+			// panel first paints. Fetching them here instead would paint the defaults and
+			// then move the tabs under the reader.
+			if ( preferences ) {
+				applyPreferences( preferences );
+			} else {
+				fetchNotificationPreferences().then( applyPreferences ).catch( logError );
+			}
 		}
 
 		return () => {
 			store.dispatch( { type: SET_IS_SHOWING, isShowing: false } );
 			getClient()?.setVisibility( { isShowing: false, isVisible: ! document.hidden } );
 		};
+		// `preferences` is read once, on mount. Re-running on a later value would
+		// re-announce the panel as showing and overwrite whatever the picker has since
+		// saved.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ wpcom ] );
 
 	useEffect( () => {

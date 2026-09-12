@@ -1,4 +1,6 @@
+import { rawUserPreferencesQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+import { useQuery } from '@tanstack/react-query';
 import { Button, Dropdown } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -31,6 +33,19 @@ export default function Notifications( {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
 	const [ anchorEl, setAnchorEl ] = useState< HTMLElement | null >( null );
+
+	// The bell mounts with the page, so by the time the panel opens these are almost
+	// always cached and the panel paints the right tabs on its first frame.
+	const { data: userPreferences } = useQuery( rawUserPreferencesQuery() );
+	const notificationPreferences = useMemo(
+		() =>
+			userPreferences && {
+				layoutStyle: userPreferences[ 'notifications-layout-style' ],
+				views: userPreferences[ 'notifications-views' ],
+				viewSettingsSeen: userPreferences[ 'notifications-view-settings-seen' ],
+			},
+		[ userPreferences ]
+	);
 
 	// The masterbar remounts the bell when the unseen count changes, detaching any
 	// cached node. Resolve the live bell at measurement time so the popover stays
@@ -202,6 +217,7 @@ export default function Notifications( {
 						locale={ locale }
 						isDismissible={ isMobileViewport }
 						isViewSettingsEnabled={ config.isEnabled( 'notifications/view-settings' ) }
+						preferences={ notificationPreferences }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
 					/>
