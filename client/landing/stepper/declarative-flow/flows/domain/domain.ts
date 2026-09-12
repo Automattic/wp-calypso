@@ -45,6 +45,7 @@ function initialize() {
 		STEPS.UNIFIED_PLANS,
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
+		STEPS.ERROR,
 	];
 
 	return stepsWithRequiredLogin( steps );
@@ -478,8 +479,7 @@ const domain: FlowV2< typeof initialize > = {
 						// replace the location to delete processing step from history.
 						window.location.replace( destination );
 					} else {
-						// TODO: Handle errors
-						// navigate( 'error' );
+						return navigate( STEPS.ERROR.slug );
 					}
 					return;
 				}
