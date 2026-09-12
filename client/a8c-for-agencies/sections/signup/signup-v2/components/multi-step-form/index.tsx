@@ -2,15 +2,16 @@ import page from '@automattic/calypso-router';
 import { APIError } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
 import A4ALogo, {
 	LOGO_COLOR_SECONDARY_ALT,
 	LOGO_COLOR_SECONDARY,
 } from 'calypso/a8c-for-agencies/components/a4a-logo';
 import { useIsDarkMode } from 'calypso/a8c-for-agencies/hooks/use-is-dark-mode';
 import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/signup/types';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
+import useAcquisitionProps from '../../../hooks/use-acquisition-props';
 import useCreateSignupMutation from '../../../hooks/use-create-signup-mutation';
 import StepProgress from '../step-progress';
 import BlueprintForm from './blueprint-form';
@@ -86,6 +87,7 @@ const MultiStepForm = ( {
 	const [ currentStep, setCurrentStep ] = useState( 1 );
 	const dispatch = useDispatch();
 	const isDarkMode = useIsDarkMode();
+	const acquisitionProps = useAcquisitionProps();
 
 	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {} );
 
@@ -113,7 +115,12 @@ const MultiStepForm = ( {
 
 	const { mutate: submitSurvey, isPending: isSubmittingSurveyPending } = useCreateSignupMutation( {
 		onSuccess: () => {
-			dispatch( recordTracksEvent( 'calypso_a4a_agency_signup_form_via_magic_link_submitted' ) );
+			dispatch(
+				recordTracksEvent(
+					'calypso_a4a_agency_signup_form_via_magic_link_submitted',
+					acquisitionProps
+				)
+			);
 		},
 		onError: ( error: APIError ) => {
 			dispatch( errorNotice( error?.message, { id: notificationId } ) );
@@ -136,10 +143,11 @@ const MultiStepForm = ( {
 			dispatch(
 				recordTracksEvent( 'calypso_a4a_agency_signup_form_view', {
 					step: viewMap[ step as keyof typeof viewMap ],
+					...acquisitionProps,
 				} )
 			);
 		},
-		[ dispatch ]
+		[ dispatch, acquisitionProps ]
 	);
 
 	const updateDataAndContinue = useCallback(

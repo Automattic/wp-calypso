@@ -22,6 +22,7 @@ export interface AgencyDetailsPayload {
 	};
 	state: string;
 	referer?: string | null;
+	acquisition?: Record< string, string >;
 	tos?: 'consented';
 	initialSource?: string;
 }
