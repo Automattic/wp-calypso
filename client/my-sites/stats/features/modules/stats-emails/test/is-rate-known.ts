@@ -1,4 +1,36 @@
-import { isRateKnown, toCount } from '../is-rate-known';
+import { calculateClickRate, isRateKnown, toCount } from '../is-rate-known';
+
+describe( 'calculateClickRate', () => {
+	it( 'calculates the rate from unique clicks when they are available', () => {
+		expect( calculateClickRate( { uniqueClicks: 13, totalClicks: 20, sends: 52 } ) ).toBe( 25 );
+	} );
+
+	it( 'preserves fractional precision', () => {
+		expect( calculateClickRate( { uniqueClicks: 2, totalClicks: 4, sends: 17 } ) ).toBeCloseTo(
+			11.7647
+		);
+	} );
+
+	it( 'falls back to total clicks when unique attribution is unavailable', () => {
+		expect( calculateClickRate( { uniqueClicks: 0, totalClicks: 15, sends: 209 } ) ).toBeCloseTo(
+			7.177
+		);
+		expect(
+			calculateClickRate( { uniqueClicks: undefined, totalClicks: 15, sends: 209 } )
+		).toBeCloseTo( 7.177 );
+	} );
+
+	it( 'returns zero when sends are positive and there are no clicks', () => {
+		expect( calculateClickRate( { uniqueClicks: 0, totalClicks: 0, sends: 52 } ) ).toBe( 0 );
+	} );
+
+	it( 'returns null without a usable send denominator', () => {
+		expect( calculateClickRate( { uniqueClicks: 13, totalClicks: 20, sends: 0 } ) ).toBeNull();
+		expect(
+			calculateClickRate( { uniqueClicks: 13, totalClicks: 20, sends: undefined } )
+		).toBeNull();
+	} );
+} );
 
 describe( 'isRateKnown', () => {
 	it( 'is known when uniques were attributed', () => {
