@@ -5,16 +5,19 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenter } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
 import { EVENT_PLACEMENT_FREE_USER_SCREEN, EVENT_UPGRADE } from '../../constants';
 import useLogoGenerator from '../hooks/use-logo-generator';
+import { isWpcomSimpleSite } from '../lib/upgrade-url';
+import { STORE_NAME } from '../store';
 /**
  * Types
  */
+import type { Selectors } from '../store/types';
 import type React from 'react';
 
 const HELP_CENTER_STORE = HelpCenter.register();
@@ -25,11 +28,20 @@ export const UpgradeScreen: React.FC< {
 	reason: 'feature' | 'requests';
 } > = ( { onCancel, upgradeURL, reason } ) => {
 	const { setShowHelpCenter, setShowSupportDoc } = useDispatch( HELP_CENTER_STORE );
+	const siteDetails = useSelect( ( select ) => {
+		const selectors: Selectors = select( STORE_NAME );
+		return selectors.getSiteDetails();
+	}, [] );
 
-	const upgradeMessageFeature = __(
-		'Upgrade your Jetpack AI for access to exclusive features, including logo generation. This upgrade will also increase the amount of requests you can use in all AI-powered features.',
-		'jetpack'
-	);
+	const upgradeMessageFeature = isWpcomSimpleSite( siteDetails )
+		? __(
+				'Upgrade your WordPress.com plan for access to exclusive Jetpack AI features, including logo generation. A paid plan also gives you unlimited requests in all AI-powered features.',
+				'jetpack'
+		  )
+		: __(
+				'Upgrade your Jetpack AI for access to exclusive features, including logo generation. This upgrade will also increase the amount of requests you can use in all AI-powered features.',
+				'jetpack'
+		  );
 
 	const upgradeMessageRequests = __(
 		'Not enough requests left to generate a logo. Upgrade your Jetpack AI to increase the amount of requests you can use in all AI-powered features.',
