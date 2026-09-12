@@ -63,7 +63,7 @@
 		"postcss": "^8.4.0",
 		"react": "^18.0.0",
 		"react-dom": "^18.0.0",
-		"typescript": "^5.0.0",
+		"typescript": "^7.0.2",
 		"unified": "^11.0.5",
 		"vite": "^5.0.0",
 		"vite-plugin-lib-inject-css": "^2.2.2",

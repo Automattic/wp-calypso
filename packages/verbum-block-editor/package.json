@@ -68,7 +68,7 @@
 		"@wordpress/stylelint-config": "^23.40.0",
 		"stylelint": "^16.2.1",
 		"stylelint-scss": "^6.4.0",
-		"typescript": "^6.0.3"
+		"typescript": "^7.0.2"
 	},
 	"peerDependencies": {
 		"@babel/core": "*",

@@ -67,6 +67,6 @@
 	"devDependencies": {
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^6.0.3"
+		"typescript": "^7.0.2"
 	}
 }
