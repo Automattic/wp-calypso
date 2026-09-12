@@ -29,7 +29,6 @@ export const CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES = [
 	'DE',
 	'DK',
 	'EE',
-	'ES',
 	'FI',
 	'FR',
 	'HU',
