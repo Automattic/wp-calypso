@@ -145,20 +145,25 @@ export const useDomainSearchContextValue = ( {
 			? normalizedConfig.allowedTlds
 			: undefined;
 
+		// One params object for the plain suggestions request and the wrapped
+		// with_bundles request: the backend anchors a bare-term bundle on its own
+		// suggestion list (DOMAINS-2238), so both requests must see the same list.
+		const suggestionParams = {
+			quantity: 30,
+			vendor: normalizedConfig.vendor,
+			tlds: filter.tlds.length > 0 ? filter.tlds : allowedTlds,
+			exact_sld_matches_only: filter.exactSldMatchesOnly,
+			include_internal_move_eligible: normalizedConfig.includeOwnedDomainInSuggestions,
+			site_slug: currentSiteUrl,
+		};
+
 		return {
 			...DEFAULT_CONTEXT_VALUE,
 			events: normalizedEvents,
 			config: normalizedConfig,
 			queries: {
 				domainSuggestions: ( query ) => ( {
-					...domainSuggestionsQuery( query, {
-						quantity: 30,
-						vendor: normalizedConfig.vendor,
-						tlds: filter.tlds.length > 0 ? filter.tlds : allowedTlds,
-						exact_sld_matches_only: filter.exactSldMatchesOnly,
-						include_internal_move_eligible: normalizedConfig.includeOwnedDomainInSuggestions,
-						site_slug: currentSiteUrl,
-					} ),
+					...domainSuggestionsQuery( query, suggestionParams ),
 					enabled: false,
 					staleTime: Infinity,
 					refetchOnMount: false,
@@ -175,14 +180,14 @@ export const useDomainSearchContextValue = ( {
 					refetchOnWindowFocus: false,
 				} ),
 				bundleSuggestion: ( query ) => ( {
-					...bundleSuggestionQuery( query ),
+					...bundleSuggestionQuery( query, suggestionParams ),
 					enabled: false,
 					staleTime: Infinity,
 					refetchOnMount: false,
 					refetchOnWindowFocus: false,
 				} ),
 				bundleTriggers: ( query ) => ( {
-					...bundleTriggersQuery( query ),
+					...bundleTriggersQuery( query, suggestionParams ),
 					enabled: false,
 					staleTime: Infinity,
 					refetchOnMount: false,
