@@ -115,6 +115,16 @@ export default function () {
 	);
 
 	page(
+		'/people/edit/:site/user/:user_id',
+		peopleController.enforceSiteEnding,
+		siteSelection,
+		navigation,
+		peopleController.person,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		'/people/edit/:site_id/:user_login',
 		peopleController.enforceSiteEnding,
 		siteSelection,
