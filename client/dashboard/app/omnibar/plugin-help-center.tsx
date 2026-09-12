@@ -3,14 +3,17 @@ import {
 	getAgentsManagerChatRoute,
 	isAgentsManagerChatVisible,
 	openAgentsManagerChat,
+	useUnifiedAiChat,
 } from '@automattic/agents-manager';
 import { omnibarSiteIdQuery } from '@automattic/api-queries';
 // eslint-disable-next-line no-restricted-imports -- Help Center host events need explicit site attribution.
 import { withSiteContext } from '@automattic/calypso-analytics';
+import { HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT } from '@automattic/help-center/src/experiments';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
+import { useExperiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../analytics';
 import { useHelpCenter } from '../help-center';
 import { adminBarIcon } from './admin-bar-icon';
@@ -121,10 +124,28 @@ function buildAgentsManagerMenuNodes(
 function HelpCenterIcon( { name, sectionName }: { name?: string; sectionName?: string } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: omnibarSiteId } = useQuery( omnibarSiteIdQuery() );
+	// Unified-agent users get the Big Sky chat instead of the Help Center panel, so they
+	// can never see the treatment and must stay out of the assignment. Read through the
+	// query rather than `useShouldUseUnifiedAgent` so an unresolved flag is distinguishable
+	// from a resolved `false`; a failed query settles as legacy rather than hanging.
+	const { data: shouldUseUnifiedAgent, isPending: isUnifiedAgentPending } = useUnifiedAiChat();
+	const isGetHelpChatForwardEligible = ! isUnifiedAgentPending && ! shouldUseUnifiedAgent;
+	// Loaded here rather than in the hook so ExPlat exposure covers everyone who sees
+	// the entry point, not only users who open the Help Center.
+	const [ isLoadingGetHelpChatForwardAssignment, getHelpChatForwardAssignment ] = useExperiment(
+		HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT,
+		{ isEligible: isGetHelpChatForwardEligible }
+	);
 
 	// One impression per section view, so it divides cleanly into the click events
-	// this plugin records; site context is whatever has resolved by then.
+	// this plugin records; site context is whatever has resolved by then. Held until
+	// eligibility and the assignment settle, so impressions and clicks split by the
+	// same arm and ineligible users are never counted into one.
 	useEffect( () => {
+		if ( isUnifiedAgentPending || isLoadingGetHelpChatForwardAssignment ) {
+			return;
+		}
+
 		recordTracksEvent(
 			'calypso_inlinehelp_impression',
 			withSiteContext(
@@ -132,13 +153,17 @@ function HelpCenterIcon( { name, sectionName }: { name?: string; sectionName?: s
 					location: 'help-center',
 					entry_point: 'omnibar',
 					section: sectionName,
+					...( isGetHelpChatForwardEligible && {
+						get_help_chat_forward_variation: getHelpChatForwardAssignment?.variationName ?? null,
+						is_get_help_chat_forward_assignment_loaded: true,
+					} ),
 				},
 				'omnibar',
 				omnibarSiteId
 			)
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ sectionName ] );
+	}, [ sectionName, isUnifiedAgentPending, isLoadingGetHelpChatForwardAssignment ] );
 
 	return adminBarIcon( name, 'omnibar__help-icon' );
 }
