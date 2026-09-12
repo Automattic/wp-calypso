@@ -1,0 +1,25 @@
+.seo-settings__seo-form .seo-settings__verification-code-field {
+	flex-direction: column;
+	width: 100%;
+
+	.form-text-input-with-affixes__prefix {
+		box-sizing: border-box;
+		width: 100%;
+		margin-bottom: 0;
+		border-right: 1px solid var( --color-neutral-10 );
+		border-bottom: none;
+		border-radius: 2px 2px 0 0;
+	}
+
+	textarea.seo-settings__verification-code-input {
+		box-sizing: border-box;
+		width: 100%;
+		min-width: 0;
+		min-height: 40px;
+		overflow-x: hidden;
+		overflow-wrap: anywhere;
+		border-radius: 0 0 2px 2px;
+		resize: none;
+		white-space: pre-wrap;
+	}
+}

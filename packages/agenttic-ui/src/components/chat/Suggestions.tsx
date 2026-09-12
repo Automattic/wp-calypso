@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useId, useMemo } from 'react';
 import { useAgentUIContext } from '../../context/AgentUIContext.tsx';
 import { cn } from '../../utils/classNames';
 import { fastSpringWithDelay } from '../animations';
@@ -33,6 +33,7 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 	translateY = '-100%',
 } ) => {
 	const { variant, reportSuggestionsRendered } = useAgentUIContext();
+	const instanceId = useId();
 
 	// Limit suggestions for floating layout to prevent overflow
 	const internalSuggestions = useMemo(
@@ -40,13 +41,21 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 		[ suggestions, variant ]
 	);
 
-	// Report the set actually rendered — after truncation, only while visible.
-	// The container dedups across instance swaps, so this is intentionally dumb.
+	// Register the set actually rendered — after truncation, empty while hidden. The
+	// container unions every mounted instance and dedups, so this is intentionally dumb.
 	useEffect( () => {
-		if ( visible && internalSuggestions?.length ) {
-			reportSuggestionsRendered?.( internalSuggestions );
-		}
-	}, [ visible, internalSuggestions, reportSuggestionsRendered ] );
+		reportSuggestionsRendered?.(
+			instanceId,
+			visible && internalSuggestions?.length ? internalSuggestions : []
+		);
+	}, [ instanceId, visible, internalSuggestions, reportSuggestionsRendered ] );
+
+	useEffect(
+		() => () => {
+			reportSuggestionsRendered?.( instanceId, null );
+		},
+		[ instanceId, reportSuggestionsRendered ]
+	);
 
 	const handleSuggestionClick = async (
 		selectedSuggestion: Suggestion,

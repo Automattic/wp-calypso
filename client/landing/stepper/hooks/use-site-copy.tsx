@@ -1,24 +1,20 @@
+import { userPurchasesQuery } from '@automattic/api-queries';
 import { WPCOM_FEATURES_COPY_SITE } from '@automattic/calypso-products';
 import { COPY_SITE_FLOW, addProductsToCart } from '@automattic/onboarding';
+import { useQuery } from '@tanstack/react-query';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useMemo, useCallback } from 'react';
-import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import {
-	hasLoadedUserPurchasesFromServer,
-	isFetchingUserPurchases,
-	getUserPurchases,
-} from 'calypso/state/purchases/selectors';
 import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
+import type { Purchase } from '@automattic/api-core';
 import type { SiteSelect } from '@automattic/data-stores';
 import type { SiteExcerptData } from '@automattic/sites';
-import type { Purchase } from 'calypso/lib/purchases/types';
 
 interface SiteCopyOptions {
 	enabled: boolean;
@@ -41,14 +37,14 @@ function useSafeSiteHasFeature( siteId: number | undefined, feature: string, ena
 	} );
 }
 
-function getMarketplaceProducts( purchases: Purchase[] | null, siteId: number ) {
-	return ( purchases || [] )
+function getMarketplaceProducts( purchases: Purchase[] | undefined, siteId: number ) {
+	return ( purchases ?? [] )
 		.filter(
 			( purchase ) =>
-				[ 'marketplace_plugin', 'marketplace_theme' ].includes( purchase.productType ) &&
-				purchase.siteId === siteId
+				[ 'marketplace_plugin', 'marketplace_theme' ].includes( purchase.product_type ) &&
+				purchase.blog_id === siteId
 		)
-		.map( ( purchase ) => ( { product_slug: purchase.productSlug } ) );
+		.map( ( purchase ) => ( { product_slug: purchase.product_slug } ) );
 }
 
 function getPlanProduct( plan: SiteExcerptData[ 'plan' ] ) {
@@ -76,12 +72,10 @@ export const useSiteCopy = (
 	const plan = site?.plan;
 	const isSiteOwner = site?.site_owner === userId;
 
-	useQueryUserPurchases( options.enabled );
-	const isLoadingPurchases = useSelector(
-		( state ) => isFetchingUserPurchases( state ) || ! hasLoadedUserPurchasesFromServer( state )
-	);
-
-	const purchases = useSelector( getUserPurchases );
+	const { data: purchases, isPending: isLoadingPurchases } = useQuery( {
+		...userPurchasesQuery(),
+		enabled: options.enabled,
+	} );
 
 	const { setPlanCartItem, setProductCartItems, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
@@ -140,15 +134,16 @@ export const useSiteCopy = (
 };
 
 export const withSiteCopy = createHigherOrderComponent(
-	( Wrapped ) => ( props ) => {
-		const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( props.site );
-		return (
-			<Wrapped
-				{ ...props }
-				shouldShowSiteCopyItem={ shouldShowSiteCopyItem }
-				startSiteCopy={ startSiteCopy }
-			/>
-		);
-	},
+	( Wrapped ) =>
+		function WithSiteCopy( props ) {
+			const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( props.site );
+			return (
+				<Wrapped
+					{ ...props }
+					shouldShowSiteCopyItem={ shouldShowSiteCopyItem }
+					startSiteCopy={ startSiteCopy }
+				/>
+			);
+		},
 	'withSiteCopy'
 );

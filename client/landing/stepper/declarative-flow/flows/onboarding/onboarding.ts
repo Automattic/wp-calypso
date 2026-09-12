@@ -579,7 +579,11 @@ const onboarding: FlowV2< typeof initialize > = {
 				}
 				case 'email-verification': {
 					const next = queryParams.get( 'next' ) || 'create-site';
-					return navigate( next as typeof currentStepSlug );
+					// Replaced rather than pushed, so a gate that has been passed leaves no history
+					// entry behind it. Pushed, Back off the destination lands here again, and the
+					// step advances on sight of a verified account without being asked — into site
+					// creation, under the name the site it just went back past already holds.
+					return navigate( next as typeof currentStepSlug, undefined, true );
 				}
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
