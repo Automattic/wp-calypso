@@ -21,6 +21,7 @@ import { saveSessionId } from '../../utils/agent-session';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
+import { usesLocalStatePersistence } from '../../utils/uses-local-state-persistence';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import EditorAiChatButton from '../editor-ai-chat-button';
@@ -107,13 +108,18 @@ export default function AgentDock( {
 	const agentId = agentConfig!.agentId;
 
 	// Reader chat runs on public blog frontends with no wp-admin sidebar. We
-	// detect it to hide docking options and skip persisting open/close state to
-	// the logged-in REST endpoint.
+	// detect it to hide docking options (UI only).
 	const isReaderChat = isReaderChatAgent( agentId );
 
+	// Client-persisted hosts (reader-chat + `persistStateLocally`, e.g. the
+	// logged-out storefront) must NOT persist open/close to the logged-in REST
+	// endpoint (it 401s); the localStorage mirror in useReaderChatPersistence
+	// handles them instead.
+	const persistsLocally = usesLocalStatePersistence( agentId );
+
 	const setOpenState = useCallback(
-		( isOpen: boolean ) => setIsOpen( isOpen, ! isReaderChat ),
-		[ isReaderChat, setIsOpen ]
+		( isOpen: boolean ) => setIsOpen( isOpen, ! persistsLocally ),
+		[ persistsLocally, setIsOpen ]
 	);
 
 	const {

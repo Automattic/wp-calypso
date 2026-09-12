@@ -3,7 +3,12 @@
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'automattic/agents-manager' } ) );
-jest.mock( '../../utils/is-reader-chat-agent', () => ( { isReaderChatHost: jest.fn() } ) );
+jest.mock( '../../utils/uses-local-state-persistence', () => ( {
+	usesLocalStatePersistence: jest.fn(),
+} ) );
+jest.mock( '../../utils/get-agents-manager-inline-data', () => ( {
+	getAgentsManagerInlineData: jest.fn( () => ( { agentId: 'test-agent' } ) ),
+} ) );
 jest.mock( '../../utils/tracks', () => ( { recordBigSkyTracksEvent: jest.fn() } ) );
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: jest.fn(),
@@ -12,13 +17,13 @@ jest.mock( '@wordpress/data', () => ( {
 
 import { renderHook } from '@testing-library/react';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
+import { usesLocalStatePersistence } from '../../utils/uses-local-state-persistence';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import { useOpenChatUrlParam } from '../use-open-chat-url-param';
 
 const mockUseDispatch = useDispatch as jest.Mock;
 const mockUseSelect = useSelect as jest.Mock;
-const mockIsReaderChatHost = isReaderChatHost as jest.Mock;
+const mockUsesLocalStatePersistence = usesLocalStatePersistence as jest.Mock;
 
 const setIsOpen = jest.fn();
 const setIsMinimized = jest.fn();
@@ -39,7 +44,7 @@ describe( 'useOpenChatUrlParam', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockUseDispatch.mockReturnValue( { setIsOpen, setIsMinimized } );
-		mockIsReaderChatHost.mockReturnValue( false );
+		mockUsesLocalStatePersistence.mockReturnValue( false );
 		mockStoreState();
 		window.history.replaceState( null, '', '/' );
 	} );
@@ -152,10 +157,10 @@ describe( 'useOpenChatUrlParam', () => {
 		expect( result.current ).toBe( true );
 	} );
 
-	it( 'opens without persisting or tracking on reader-chat hosts', () => {
+	it( 'opens without persisting or tracking on client-persisted hosts', () => {
 		window.history.replaceState( null, '', '/?ai-open=true' );
 		mockStoreState( { isMinimized: true } );
-		mockIsReaderChatHost.mockReturnValue( true );
+		mockUsesLocalStatePersistence.mockReturnValue( true );
 
 		renderHook( () => useOpenChatUrlParam() );
 
