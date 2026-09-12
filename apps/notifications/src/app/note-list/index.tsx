@@ -13,6 +13,7 @@ import getFilteredNoteIds from '../../panel/state/selectors/get-filtered-note-id
 import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
 import { getIsNoteRead } from '../../panel/state/selectors/get-is-note-read';
+import getLayoutStyle from '../../panel/state/selectors/get-layout-style';
 import getNotes from '../../panel/state/selectors/get-notes';
 import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
@@ -133,7 +134,8 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	const startPosition = view.startPosition ?? 1;
 
 	// Field identities must stay stable or DataViews remounts every cell per re-render.
-	const fields = useMemo( () => getFields(), [] );
+	const layoutStyle = useSelector( getLayoutStyle );
+	const fields = useMemo( () => getFields( layoutStyle ), [ layoutStyle ] );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		visibleNotes,
