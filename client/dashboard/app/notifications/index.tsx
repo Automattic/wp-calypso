@@ -1,4 +1,4 @@
-import { rawUserPreferencesQuery } from '@automattic/api-queries';
+import { isAutomatticianQuery, rawUserPreferencesQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { Button, Dropdown } from '@wordpress/components';
@@ -34,18 +34,34 @@ export default function Notifications( {
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
 	const [ anchorEl, setAnchorEl ] = useState< HTMLElement | null >( null );
 
+	const isViewSettingsEnabled = config.isEnabled( 'notifications/view-settings' );
+
 	// The bell mounts with the page, so by the time the panel opens these are almost
 	// always cached and the panel paints the right tabs on its first frame.
 	const { data: userPreferences } = useQuery( rawUserPreferencesQuery() );
-	const notificationPreferences = useMemo(
-		() =>
-			userPreferences && {
-				layoutStyle: userPreferences[ 'notifications-layout-style' ],
-				views: userPreferences[ 'notifications-views' ],
-				viewSettingsSeen: userPreferences[ 'notifications-view-settings-seen' ],
-			},
-		[ userPreferences ]
-	);
+	// Only asked where the layout can be changed back, so nobody is stranded in a
+	// layout whose control isn't rendered.
+	const { data: isAutomattician, isPending: isResolvingAutomattician } = useQuery( {
+		...isAutomatticianQuery(),
+		enabled: isViewSettingsEnabled,
+	} );
+
+	const notificationPreferences = useMemo( () => {
+		// Both answers have to be in before the panel seeds itself; it reads them once.
+		if ( ! userPreferences || ( isViewSettingsEnabled && isResolvingAutomattician ) ) {
+			return undefined;
+		}
+
+		return {
+			// Automatticians start on the new layout. An explicit choice always wins,
+			// including a deliberate switch back to Classic.
+			layoutStyle:
+				userPreferences[ 'notifications-layout-style' ] ??
+				( isAutomattician ? ( 'simplified' as const ) : undefined ),
+			views: userPreferences[ 'notifications-views' ],
+			viewSettingsSeen: userPreferences[ 'notifications-view-settings-seen' ],
+		};
+	}, [ userPreferences, isAutomattician, isResolvingAutomattician, isViewSettingsEnabled ] );
 
 	// The masterbar remounts the bell when the unseen count changes, detaching any
 	// cached node. Resolve the live bell at measurement time so the popover stays
@@ -216,7 +232,7 @@ export default function Notifications( {
 					<AsyncNotificationApp
 						locale={ locale }
 						isDismissible={ isMobileViewport }
-						isViewSettingsEnabled={ config.isEnabled( 'notifications/view-settings' ) }
+						isViewSettingsEnabled={ isViewSettingsEnabled }
 						preferences={ notificationPreferences }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
