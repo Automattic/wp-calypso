@@ -9,6 +9,7 @@ export default ( state = {}, action ) => {
 				[ action.siteId ]: {
 					isConnected:
 						action?.data?.is_connected ?? ( action?.data?.connected_account_id ?? null ) > 0,
+					connectedAccountId: action?.data?.connected_account_id ?? null,
 					connectedAccountDescription: action?.data?.connected_account_description ?? null,
 					connectedAccountDefaultCurrency: action?.data?.connected_account_default_currency ?? null,
 					connectedAccountMinimumCurrency: action?.data?.connected_account_minimum_currency ?? null,

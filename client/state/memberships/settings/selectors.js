@@ -26,3 +26,18 @@ export function getConnectUrlForSiteId( state, siteId ) {
 export function getCouponsAndGiftsEnabledForSiteId( state, siteId ) {
 	return state?.memberships?.settings?.[ siteId ]?.couponsAndGiftsEnabled ?? null;
 }
+
+export function getConnectedAccountIdForSiteId( state, siteId ) {
+	return state?.memberships?.settings?.[ siteId ]?.connectedAccountId ?? null;
+}
+
+/**
+ * Returns true when the site has a known Stripe account (connected_account_id
+ * is set) but is_connected is false — indicating a broken/revoked connection
+ * rather than a genuinely unconnected site.
+ */
+export function getIsBrokenStripeConnectionForSiteId( state, siteId ) {
+	const isConnected = getIsConnectedForSiteId( state, siteId );
+	const connectedAccountId = getConnectedAccountIdForSiteId( state, siteId );
+	return ! isConnected && Boolean( connectedAccountId );
+}
