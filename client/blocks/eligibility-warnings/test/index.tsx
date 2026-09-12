@@ -139,7 +139,9 @@ describe( '<EligibilityWarnings>', () => {
 
 		const notice = container.querySelector( '.calypso-notice' );
 		expect( notice ).toBeVisible();
-		expect( notice ).toHaveTextContent( /Installation in progress/ );
+		expect( notice ).toHaveTextContent( /Setting up your site/ );
+		expect( queryByText( 'Get help' ) ).toBeVisible();
+		expect( queryByText( 'Need help?' ) ).not.toBeInTheDocument();
 		expect( queryByTestId( 'HoldList-Card' ) ).not.toBeInTheDocument();
 		expect( queryByText( 'Continue' ) ).not.toBeInTheDocument();
 	} );
