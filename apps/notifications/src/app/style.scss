@@ -227,14 +227,3 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	pointer-events: none;
 }
 
-.wpnc-app__new-badge {
-	margin-inline-start: 6px;
-	padding: 1px 5px;
-	border-radius: 8px;
-	background: var(--color-accent);
-	color: var(--color-text-inverted);
-	font-size: 10px;
-	font-weight: 600;
-	letter-spacing: 0.02em;
-	text-transform: none;
-}
