@@ -865,6 +865,65 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		} );
 	} );
 
+	describe( 'internal domain moves', () => {
+		const ownedDomain = {
+			domain_name: 'owned-domain.com',
+			product_slug: 'domain_move_internal',
+			supports_privacy: false,
+		};
+
+		it( 'continues with the domain without touching a siteless cart', async () => {
+			const replaceProductsInCart = jest.fn();
+			const onContinue = jest.fn();
+			mockUseShoppingCart.mockReturnValue( buildShoppingCart( { replaceProductsInCart } ) );
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( {
+					...defaultProps,
+					events: { ...defaultProps.events, onContinue },
+				} )
+			);
+
+			await result.current.cart.onAddItem( ownedDomain );
+
+			expect( replaceProductsInCart ).not.toHaveBeenCalled();
+			expect( onContinue ).toHaveBeenCalledWith( [
+				{
+					product_slug: 'domain_move_internal',
+					meta: 'owned-domain.com',
+					extra: { flow_name: 'flow-name' },
+				},
+			] );
+		} );
+
+		it( 'adds the domain to a site cart like any other domain', async () => {
+			const replaceProductsInCart = jest.fn().mockResolvedValue( {
+				products: [ { meta: 'owned-domain.com', product_slug: 'domain_move_internal' } ],
+			} );
+			const onContinue = jest.fn();
+			mockUseShoppingCart.mockReturnValue( buildShoppingCart( { replaceProductsInCart } ) );
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( {
+					...defaultProps,
+					currentSiteId: 123,
+					events: { ...defaultProps.events, onContinue },
+				} )
+			);
+
+			await result.current.cart.onAddItem( ownedDomain );
+
+			expect( replaceProductsInCart ).toHaveBeenCalledWith( [
+				{
+					product_slug: 'domain_move_internal',
+					meta: 'owned-domain.com',
+					extra: { flow_name: 'flow-name' },
+				},
+			] );
+			expect( onContinue ).not.toHaveBeenCalled();
+		} );
+	} );
+
 	describe( 'cart key', () => {
 		it( 'returns the site id if provided', () => {
 			expect( getCartKey( { isLoggedIn: false, currentSiteId: 123 } ) ).toBe( 123 );

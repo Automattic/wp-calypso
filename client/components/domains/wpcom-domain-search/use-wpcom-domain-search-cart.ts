@@ -16,6 +16,13 @@ import {
 } from '@automattic/shopping-cart';
 import { ComponentProps, useMemo } from 'react';
 
+/**
+ * A domain the user chose to continue with. Usually a cart item as returned by
+ * the shopping cart endpoint, but an internal domain move selected in a
+ * siteless flow never reaches the cart, so only the request shape is guaranteed.
+ */
+export type ContinuedDomainProduct = MinimalRequestCartProduct & { meta: string };
+
 const wpcomCartToDomainSearchCart = (
 	domain: ResponseCartProduct,
 	isEffectivelyFree: boolean,
@@ -57,7 +64,7 @@ interface UseWPCOMDomainSearchCartOptions {
 	flowAllowsMultipleDomainsInCart: boolean;
 	isFirstDomainFreeForFirstYear: boolean;
 	freeForFirstYearTlds?: string[];
-	onContinue( cartItems: ResponseCartProduct[] ): void;
+	onContinue( cartItems: ContinuedDomainProduct[] ): void;
 	beforeAddDomainToCart?: ( domain: MinimalRequestCartProduct ) => MinimalRequestCartProduct;
 }
 
@@ -185,20 +192,23 @@ export const useWPCOMDomainSearchCart = ( {
 			total,
 			hasItem: ( domain ) => !! domainItems.find( ( item ) => item.meta === domain ),
 			onAddItem: async ( { domain_name, product_slug, supports_privacy } ) => {
-				const cartItems = await replaceProductsInCart( [
-					beforeAddDomainToCart( {
-						product_slug,
-						meta: domain_name,
-						extra: {
-							...( supports_privacy && {
-								privacy_available: supports_privacy,
-								privacy: supports_privacy,
-							} ),
-							...( flowName && { flow_name: flowName } ),
-						},
-					} ),
-					...responseCart.products,
-				] );
+				const product = beforeAddDomainToCart( {
+					product_slug,
+					meta: domain_name,
+					extra: {
+						...( supports_privacy && {
+							privacy_available: supports_privacy,
+							privacy: supports_privacy,
+						} ),
+						...( flowName && { flow_name: flowName } ),
+					},
+				} );
+
+				if ( isDomainMoveInternal( product ) && typeof cartKey !== 'number' ) {
+					return onContinue( [ { ...product, meta: product.meta ?? domain_name } ] );
+				}
+
+				const cartItems = await replaceProductsInCart( [ product, ...responseCart.products ] );
 
 				if ( ! flowAllowsMultipleDomainsInCart ) {
 					return onContinue( cartItems.products.filter( ( item ) => item.meta === domain_name ) );
@@ -295,6 +305,7 @@ export const useWPCOMDomainSearchCart = ( {
 			onContinue: () => onContinue( domainItems ),
 		};
 	}, [
+		cartKey,
 		responseCart,
 		removeProductFromCart,
 		replaceProductsInCart,
