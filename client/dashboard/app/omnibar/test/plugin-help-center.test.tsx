@@ -262,7 +262,7 @@ describe( 'useHelpCenterPlugin', () => {
 		expect( setShowHelpCenter ).toHaveBeenCalledWith( true );
 	} );
 
-	it( 'names the legacy Help Center from its admin bar node', () => {
+	it( 'names the Help Center from its admin bar node', () => {
 		const result = renderPlugin( [ HELP_CENTER_NODE ] );
 
 		expect( result.id ).toBe( 'help-center' );
