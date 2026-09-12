@@ -158,6 +158,32 @@ describe( 'useSiteSubscriptionsQuery hook', () => {
 		);
 	} );
 
+	it( 'defers cached pagination until a subscriber key is available', async () => {
+		( getSubkey as jest.Mock ).mockReturnValue( undefined );
+		seedSiteSubscriptions(
+			[ Array.from( { length: 100 }, ( _, index ) => makeFollow( { ID: String( index + 1 ) } ) ) ],
+			101
+		);
+		( callApi as jest.Mock ).mockResolvedValue( {
+			subscriptions: [ makeApiSubscription( 101 ) ],
+			total_subscriptions: 101,
+			page: 2,
+			number: 1,
+		} );
+
+		const { result, rerender } = renderHook( () => useSiteSubscriptionsQuery(), { wrapper } );
+		await waitFor( () => expect( result.current.isFetching ).toBe( false ) );
+		expect( callApi ).not.toHaveBeenCalled();
+		expect( result.current.data.subscriptions ).toHaveLength( 100 );
+
+		( getSubkey as jest.Mock ).mockReturnValue( 'subscriber-key' );
+		rerender();
+		await waitFor( () => expect( result.current.data.subscriptions ).toHaveLength( 101 ) );
+		expect( callApi ).toHaveBeenCalledTimes( 1 );
+		expect( ( callApi as jest.Mock ).mock.calls[ 0 ][ 0 ].path ).toContain( 'page=2' );
+		expect( result.current.hasNextPage ).toBe( false );
+	} );
+
 	it( 'fetches subscriptions data with search term', async () => {
 		seedSiteSubscriptions( [
 			[
