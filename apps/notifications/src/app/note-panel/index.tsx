@@ -174,6 +174,7 @@ const NotePanel = ( {
 						<FlexItem style={ { minWidth: 0, width: 'fit-content' } }>
 							<Tabs selectedTabId={ activeFilterName } onSelect={ handleSelect }>
 								<Tabs.TabList
+									className="wpnc-app__tab-list"
 									style={ {
 										maxWidth: '100%',
 									} }
