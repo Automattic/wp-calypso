@@ -1,6 +1,12 @@
-import { loadAllMessagesFromServer, type Message } from '@automattic/agenttic-client';
+import {
+	getUnresolvedMessages,
+	loadAllMessagesFromServer,
+	loadConversation,
+	messageTextContent,
+	type Message,
+} from '@automattic/agenttic-client';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useRef } from '@wordpress/element';
+import { useEffect, useRef, useState } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
 import { getConversationBotId } from '../utils/conversation-bot-id';
@@ -9,6 +15,12 @@ import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 interface Config {
 	maxPages?: number;
 	enabled?: boolean;
+	/**
+	 * Refetch until a question is answered: the transcript ends on a user turn,
+	 * or a turn this tab sent (`pending` in the local store) has no reply yet —
+	 * the server persists a turn only once it starts processing it.
+	 */
+	refetchWhileAwaitingReply?: boolean;
 	onSuccess?: ( messages: Message[], sessionId: string ) => void;
 }
 
@@ -16,6 +28,33 @@ interface Result {
 	data: { messages: Message[]; sessionId?: string } | undefined;
 	isLoading: boolean;
 	isError: boolean;
+	/** True while polling for an unanswered question. */
+	isAwaitingReply: boolean;
+}
+
+const POLL_INTERVAL_MS = 3000;
+// Tool-heavy turns (catalog reviews, batch edits) can run for minutes.
+const POLL_TIMEOUT_MS = 5 * 60_000;
+
+function endsOnUserTurn( data?: { messages: Message[] } ): boolean {
+	const last = data?.messages[ data.messages.length - 1 ];
+	return last?.role === 'user';
+}
+
+/** Whether the transcript has an agent reply after the last user turn with `text`. */
+function hasReplyTo( messages: Message[], text: string ): boolean {
+	const index = messages.findLastIndex(
+		( m ) => m.role === 'user' && messageTextContent( m ) === text
+	);
+	return index !== -1 && messages.slice( index + 1 ).some( ( m ) => m.role === 'agent' );
+}
+
+/** Text of user turns this tab sent that were still in flight when it last persisted. */
+async function loadPendingTexts( sessionId: string ): Promise< string[] > {
+	const { messages } = await loadConversation( sessionId );
+	return getUnresolvedMessages( messages )
+		.filter( ( m ) => m.role === 'user' )
+		.map( messageTextContent );
 }
 
 /**
@@ -24,6 +63,7 @@ interface Result {
 export default function useConversation( {
 	maxPages = 10,
 	enabled = true,
+	refetchWhileAwaitingReply = false,
 	onSuccess = () => {},
 }: Config ): Result {
 	const { agentConfig } = useAgentsManagerContext();
@@ -32,6 +72,44 @@ export default function useConversation( {
 	// Keep a ref to the latest callback to avoid re-triggering effects when it changes.
 	const onSuccessRef = useRef( onSuccess );
 	onSuccessRef.current = onSuccess;
+	const pollStartedAtRef = useRef< number | null >( null );
+	const [ pendingTexts, setPendingTexts ] = useState< string[] >( [] );
+
+	useEffect( () => {
+		if ( ! refetchWhileAwaitingReply || ! sessionId ) {
+			setPendingTexts( [] );
+			return;
+		}
+		let cancelled = false;
+		loadPendingTexts( sessionId )
+			.then( ( texts ) => {
+				if ( ! cancelled ) {
+					setPendingTexts( texts );
+				}
+			} )
+			.catch( ( loadError ) => {
+				// eslint-disable-next-line no-console
+				console.error( '[useConversation] Error loading pending turns:', loadError );
+				if ( ! cancelled ) {
+					setPendingTexts( [] );
+				}
+			} );
+		return () => {
+			cancelled = true;
+		};
+	}, [ refetchWhileAwaitingReply, sessionId ] );
+
+	const shouldPoll = ( current?: { messages: Message[] } ): boolean => {
+		const unanswered =
+			endsOnUserTurn( current ) ||
+			( !! current && pendingTexts.some( ( text ) => ! hasReplyTo( current.messages, text ) ) );
+		if ( ! refetchWhileAwaitingReply || ! unanswered ) {
+			pollStartedAtRef.current = null;
+			return false;
+		}
+		pollStartedAtRef.current ??= Date.now();
+		return Date.now() - pollStartedAtRef.current < POLL_TIMEOUT_MS;
+	};
 
 	const { data, isLoading, isError, error } = useQuery( {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when sessionId changes
@@ -57,6 +135,9 @@ export default function useConversation( {
 		// usually do not have.
 		enabled: enabled && !! sessionId && ! isReaderChatAgent( agentId ),
 		refetchOnWindowFocus: false,
+		refetchInterval: ( query ) => ( shouldPoll( query.state.data ) ? POLL_INTERVAL_MS : false ),
+		// Keep waiting for the reply even if the merchant switches tabs meanwhile.
+		refetchIntervalInBackground: true,
 	} );
 
 	useEffect(
@@ -76,5 +157,5 @@ export default function useConversation( {
 		}
 	}, [ error ] );
 
-	return { data, isLoading, isError };
+	return { data, isLoading, isError, isAwaitingReply: shouldPoll( data ) };
 }
