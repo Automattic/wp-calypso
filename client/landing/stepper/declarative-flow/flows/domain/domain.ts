@@ -45,6 +45,7 @@ function initialize() {
 		STEPS.UNIFIED_PLANS,
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
+		STEPS.ERROR,
 	];
 
 	return stepsWithRequiredLogin( steps );
@@ -223,6 +224,7 @@ const domain: FlowV2< typeof initialize > = {
 						window.location.href = domainConnectionSetupUrl
 							? domainConnectionSetupUrl.replace( '%s', providedDependencies.domain )
 							: defaultRedirect;
+						return;
 					}
 
 					if (
@@ -455,6 +457,10 @@ const domain: FlowV2< typeof initialize > = {
 				case STEPS.SITE_CREATION_STEP.slug:
 					return navigate( STEPS.PROCESSING.slug, undefined, true );
 				case STEPS.PROCESSING.slug: {
+					if ( providedDependencies.processingResult === ProcessingResult.NO_ACTION ) {
+						return navigate( STEPS.DOMAIN_SEARCH.slug, undefined, true );
+					}
+
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						if ( providedDependencies.redirectTo ) {
 							return window.location.replace( providedDependencies.redirectTo );
@@ -478,8 +484,7 @@ const domain: FlowV2< typeof initialize > = {
 						// replace the location to delete processing step from history.
 						window.location.replace( destination );
 					} else {
-						// TODO: Handle errors
-						// navigate( 'error' );
+						return navigate( STEPS.ERROR.slug, undefined, true );
 					}
 					return;
 				}
