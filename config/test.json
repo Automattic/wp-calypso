@@ -76,6 +76,7 @@
 		"mcp-settings": true,
 		"me/account-close": true,
 		"migration-flow/introductory-offer": true,
+		"migration/non-wordpress-source": true,
 		"migration/ssh-migration": false,
 		"oauth/unified-experience": false,
 		"onboarding/create-course": false,

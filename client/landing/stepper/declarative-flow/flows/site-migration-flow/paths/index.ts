@@ -47,6 +47,7 @@ export const siteCreationPath = buildPathHelper<
 			platform: ImporterPlatform;
 			ssh?: string;
 			host?: string;
+			switchRunId?: string | null;
 		};
 	},
 	typeof STEPS.SITE_CREATION_STEP.slug
@@ -54,7 +55,13 @@ export const siteCreationPath = buildPathHelper<
 
 export const sitePickerPath = buildPathHelper<
 	{
-		queryParams: { from: string | null; platform: ImporterPlatform; ssh?: string; host?: string };
+		queryParams: {
+			from: string | null;
+			platform: ImporterPlatform;
+			ssh?: string;
+			host?: string;
+			switchRunId?: string | null;
+		};
 	},
 	typeof STEPS.PICK_SITE.slug
 >( STEPS.PICK_SITE.slug );
@@ -88,6 +95,7 @@ export const processingPath = buildPathHelper<
 			platform: ImporterPlatform;
 			action: string | null;
 			host?: string | null;
+			switchRunId?: string | null;
 		};
 	},
 	typeof STEPS.PROCESSING.slug
@@ -101,6 +109,7 @@ export const credentialsPath = buildPathHelper<
 			from?: string | null;
 			authorizationUrl?: string;
 			backTo?: string;
+			how?: string;
 		};
 	},
 	typeof STEPS.SITE_MIGRATION_CREDENTIALS.slug
@@ -229,6 +238,110 @@ export const sshInProgressPath = buildPathHelper<
 	},
 	typeof STEPS.SITE_MIGRATION_SSH_IN_PROGRESS.slug
 >( STEPS.SITE_MIGRATION_SSH_IN_PROGRESS.slug );
+
+export const scanPath = buildPathHelper<
+	{
+		queryParams: {
+			from?: string | null;
+			platform?: ImporterPlatform;
+			siteId?: number | string;
+			siteSlug?: string;
+			switchRunId?: string | null;
+		};
+	},
+	typeof STEPS.SITE_MIGRATION_SCAN.slug
+>( STEPS.SITE_MIGRATION_SCAN.slug );
+
+export const destinationPath = buildPathHelper<
+	{
+		queryParams: {
+			from?: string | null;
+			platform?: ImporterPlatform;
+			siteId?: number | string;
+			siteSlug?: string;
+			switchRunId?: string | null;
+		};
+	},
+	typeof STEPS.SITE_MIGRATION_DESTINATION.slug
+>( STEPS.SITE_MIGRATION_DESTINATION.slug );
+
+export const previewPath = buildPathHelper<
+	{
+		queryParams: {
+			from?: string | null;
+			platform?: ImporterPlatform;
+			siteId?: number | string;
+			siteSlug?: string;
+			switchRunId?: string | null;
+		};
+	},
+	typeof STEPS.SITE_MIGRATION_PREVIEW.slug
+>( STEPS.SITE_MIGRATION_PREVIEW.slug );
+
+export const domainPath = buildPathHelper<
+	{
+		queryParams: {
+			from?: string | null;
+			platform?: ImporterPlatform;
+			siteId?: number | string;
+			siteSlug?: string;
+			switchRunId?: string | null;
+		};
+	},
+	typeof STEPS.SITE_MIGRATION_DOMAIN.slug
+>( STEPS.SITE_MIGRATION_DOMAIN.slug );
+
+export const plansPath = buildPathHelper<
+	{
+		queryParams: {
+			from?: string | null;
+			platform?: ImporterPlatform;
+			siteId?: number | string;
+			siteSlug?: string;
+			switchRunId?: string | null;
+		};
+	},
+	typeof STEPS.UNIFIED_PLANS.slug
+>( STEPS.UNIFIED_PLANS.slug );
+
+export const seoPath = buildPathHelper<
+	{
+		queryParams: {
+			from?: string | null;
+			platform?: ImporterPlatform;
+			siteId?: number | string;
+			siteSlug?: string;
+			switchRunId?: string | null;
+		};
+	},
+	typeof STEPS.SITE_MIGRATION_SEO.slug
+>( STEPS.SITE_MIGRATION_SEO.slug );
+
+export const reviewPath = buildPathHelper<
+	{
+		queryParams: {
+			from?: string | null;
+			platform?: ImporterPlatform;
+			siteId?: number | string;
+			siteSlug?: string;
+			switchRunId?: string | null;
+		};
+	},
+	typeof STEPS.SITE_MIGRATION_REVIEW.slug
+>( STEPS.SITE_MIGRATION_REVIEW.slug );
+
+export const importProgressPath = buildPathHelper<
+	{
+		queryParams: {
+			from?: string | null;
+			siteId?: number | string;
+			siteSlug?: string;
+			switchRunId?: string | null;
+			sessionId?: string | null;
+		};
+	},
+	typeof STEPS.SITE_MIGRATION_IMPORT_PROGRESS.slug
+>( STEPS.SITE_MIGRATION_IMPORT_PROGRESS.slug );
 
 export const identifyPath = buildPathHelper<
 	{

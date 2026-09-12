@@ -1,0 +1,72 @@
+@import '@wordpress/base-styles/breakpoints';
+
+.migration-wizard-progress {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	width: 100%;
+	max-width: 640px;
+	margin-inline: auto;
+}
+
+.migration-wizard-progress__counter {
+	margin: 0;
+	overflow: hidden;
+	color: var( --color-text-subtle );
+	font-size: 0.75rem;
+	text-align: center;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+
+	.step-container-v2__step-counter {
+		color: var( --color-text );
+		font-weight: 600;
+	}
+}
+
+.migration-wizard-progress__track {
+	display: flex;
+	gap: 4px;
+	align-items: flex-start;
+}
+
+.migration-wizard-progress__segment {
+	display: flex;
+	flex: 1 1 0;
+	flex-direction: column;
+	gap: 4px;
+	min-width: 0;
+}
+
+.migration-wizard-progress__segment-bar {
+	display: block;
+	height: 4px;
+	border-radius: 2px;
+	background-color: var( --color-border-subtle );
+
+	.migration-wizard-progress__segment.is-filled & {
+		background-color: var( --color-primary );
+	}
+}
+
+.migration-wizard-progress__segment-label {
+	display: none;
+	overflow: hidden;
+	color: var( --color-text-subtle );
+	font-size: 0.75rem;
+	line-height: 1.4;
+	text-align: center;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+
+	// Seven labels never fit a narrow viewport; the counter above still names the current step.
+	@media ( min-width: $break-medium ) {
+		display: block;
+	}
+
+	.migration-wizard-progress__segment.is-current & {
+		color: var( --color-text );
+		font-weight: 500;
+	}
+}
