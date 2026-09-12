@@ -155,6 +155,15 @@ export interface DomainSearchConfig {
 	 * false, so bundles stay hidden unless a consumer opts in.
 	 */
 	showBundleSuggestions: boolean;
+	/**
+	 * Name Pulse results mode: keystroke search, client-generated exact-match grid
+	 * with bulk availability, keyword and AI suggestions in sections. Gated at the
+	 * app layer by the `domain-search/name-pulse` feature flag and the `domain`
+	 * flow. When absent or disabled the classic results page renders unchanged.
+	 */
+	namePulse?: {
+		enabled: boolean;
+	};
 }
 
 export interface DomainSearchProps {
