@@ -34,6 +34,7 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 						{
 							siteName: (
 								<RouterLinkButton
+									className="billing-purchases__site-name"
 									variant="link"
 									to={ purchasesRoute.fullPath }
 									search={ { site: site.ID } }
@@ -48,7 +49,12 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 								</RouterLinkButton>
 							),
 							siteDomain: (
-								<ExternalLink href={ 'https://' + site.slug } rel="noreferrer" title={ linkTitle }>
+								<ExternalLink
+									className="billing-purchases__site-url"
+									href={ 'https://' + site.slug }
+									rel="noreferrer"
+									title={ linkTitle }
+								>
 									{ linkText }
 								</ExternalLink>
 							),
@@ -62,13 +68,13 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 			return (
 				<div>
 					{ createInterpolateElement(
-						// translators: %(purchaseType)s: the product name. The string also contains the URL of the site and a link to visit the site (e.g. "Premium plan for blockstore.com (view site)")
-						sprintf( __( '%(purchaseType)s for <siteDomain /> (<viewSite />)' ), {
-							purchaseType: productType,
-						} ),
+						// translators: <purchaseType />: the product name. The string also contains the URL of the site and a link to visit the site (e.g. "Premium plan for blockstore.com (view site)")
+						__( '<purchaseType /> for <siteDomain /> (<viewSite />)' ),
 						{
+							purchaseType: <span>{ productType }</span>,
 							siteDomain: (
 								<RouterLinkButton
+									className="billing-purchases__site-name"
 									variant="link"
 									to={ purchasesRoute.fullPath }
 									search={ { site: site.ID } }
@@ -84,6 +90,7 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 							),
 							viewSite: (
 								<ExternalLink
+									className="billing-purchases__site-url"
 									href={ 'https://' + site.slug }
 									rel="noreferrer"
 									title={ __( 'View site' ) }
@@ -108,10 +115,13 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 				<div>
 					{ createInterpolateElement(
 						// translators: The string contains the name of the site, and the URL of the site e.g. for Block Store (blockstore.com)
-						__( 'for <siteName /> (<viewSite />)' ),
+						purchase.is_plan
+							? __( 'Site plan for <siteName /> (<viewSite />)' )
+							: __( 'for <siteName /> (<viewSite />)' ),
 						{
 							siteName: (
 								<RouterLinkButton
+									className="billing-purchases__site-name"
 									variant="link"
 									to={ purchasesRoute.fullPath }
 									search={ { site: site.ID } }
@@ -126,7 +136,12 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 								</RouterLinkButton>
 							),
 							viewSite: (
-								<ExternalLink href={ 'https://' + site.slug } rel="noreferrer" title={ linkTitle }>
+								<ExternalLink
+									className="billing-purchases__site-url"
+									href={ 'https://' + site.slug }
+									rel="noreferrer"
+									title={ linkTitle }
+								>
 									{ linkText }
 								</ExternalLink>
 							),
@@ -152,6 +167,7 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 					{
 						viewSite: (
 							<ExternalLink
+								className="billing-purchases__site-url"
 								href={ 'https://' + purchase.domain }
 								rel="noreferrer"
 								title={ __( 'View site' ) }
