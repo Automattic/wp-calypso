@@ -1,6 +1,6 @@
 import { referralsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import useFetchAllLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-all-licenses';
+import useFetchLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-licenses';
 import useFetchSitesWithPlugins from 'calypso/a8c-for-agencies/data/sites/use-fetch-sites-with-plugins';
 import useFetchTaggedSitesForMigration from 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-tagged-sites-for-migration';
 import {
@@ -27,11 +27,13 @@ export default function useHasCommissionActivity() {
 
 	const { data: taggedSites, isLoading: isLoadingMigrations } = useFetchTaggedSitesForMigration();
 
-	const { data: woopaymentsLicenses, isLoading: isLoadingLicenses } = useFetchAllLicenses(
+	const { data: woopaymentsLicenses, isLoading: isLoadingLicenses } = useFetchLicenses(
 		LicenseFilter.Attached,
 		'woopayments',
 		LicenseSortField.IssuedAt,
-		LicenseSortDirection.Descending
+		LicenseSortDirection.Descending,
+		1,
+		1
 	);
 
 	const { data: sitesWithWooPaymentsPlugin, isLoading: isLoadingSitesWithPlugin } =
