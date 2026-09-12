@@ -36,6 +36,42 @@ type AtomicTransferResponse = {
 
 const wait = ( ms: number ) => new Promise< void >( ( resolve ) => setTimeout( resolve, ms ) );
 
+/**
+ * Delay before each successive status check, in milliseconds.
+ *
+ * Front-loaded deliberately. The readiness waits usually run over work that is already finished or
+ * about to be — a claimed fleet site is Atomic before the customer arrives, and its import starts
+ * at claim — so what a flat interval mostly buys is the customer sitting out the remainder of it
+ * after the work completed. Checking again quickly a few times converts most of that dead time
+ * into getting them to wp-admin.
+ *
+ * The tail settles at POLL_MAX_INTERVAL_MS, so a genuinely slow build costs the same request rate
+ * it always did; only the first few seconds are denser, which is where the win is.
+ */
+const POLL_BACKOFF_MS = [ 250, 500, 1000, 2000, 3000 ];
+
+/**
+ * Interval the backoff settles at once the early checks have not found the work done.
+ */
+const POLL_MAX_INTERVAL_MS = 5000;
+
+/**
+ * Delay before the *first* check when the caller has just started the work.
+ *
+ * Not a throughput number: it guards against reading the previous run's terminal state, because
+ * `/atomic/transfers/latest` returns the site's latest transfer rather than the one just asked
+ * for. The backoff above deliberately does not apply here — a quick first check is only safe when
+ * the caller knows the work predates the page, which it signals by passing 0.
+ */
+const POLL_INITIAL_DELAY_MS = 5000;
+
+/**
+ * How long to wait before the next check, given how many have already been made.
+ */
+function pollDelayMs( checksMade: number ): number {
+	return POLL_BACKOFF_MS[ checksMade ] ?? POLL_MAX_INTERVAL_MS;
+}
+
 // Terminal states returned by GET /sites/{id}/imports (see Import_V1_1_Helpers::translate_status).
 const IMPORT_SUCCESS = 'importSuccess';
 const IMPORT_FAILURE_STATUSES = [ 'importFailure', 'importExpired', 'importStopped' ];
@@ -140,29 +176,38 @@ export async function startBlueprintArchiveImport(
  * Poll the site's import status until the backup import finishes.
  * Resolves on success; throws on a terminal failure or timeout.
  *
- * `initialDelayMs` defaults to a full poll interval, because a caller that has just *started* the
+ * `initialDelayMs` defaults to POLL_INITIAL_DELAY_MS, because a caller that has just *started* the
  * work must not read the previous run's terminal state: `/atomic/transfers/latest` returns the
  * site's latest transfer, not the one you asked about (see createRevertedTransferWatcher). Pass 0
  * only when the work was started before this page existed, where an immediate check is both safe
  * and the difference between handing over at once and sitting on a loading screen for nothing.
+ *
+ * Checks after the first back off from POLL_BACKOFF_MS toward POLL_MAX_INTERVAL_MS. That is a
+ * throughput choice and is independent of the guard above: it only affects how soon we look again
+ * after a check that already read the current run.
  */
 export async function waitForBlueprintImportComplete(
 	siteIdentifier: string,
 	{
 		totalTimeoutSeconds = 900,
-		pollIntervalMs = 5000,
-		initialDelayMs = pollIntervalMs,
+		pollIntervalMs,
+		initialDelayMs = pollIntervalMs ?? POLL_INITIAL_DELAY_MS,
 	}: { totalTimeoutSeconds?: number; pollIntervalMs?: number; initialDelayMs?: number } = {}
 ): Promise< void > {
 	const maxFinishTime = Date.now() + totalTimeoutSeconds * 1000;
 	let lastStatus: string | null | undefined;
 	let delayMs = initialDelayMs;
+	let checksMade = 0;
 
 	while ( Date.now() < maxFinishTime ) {
 		if ( delayMs > 0 ) {
 			await wait( delayMs );
 		}
-		delayMs = pollIntervalMs;
+
+		// An explicit interval from the caller wins and stays flat; otherwise back off from a quick
+		// first retry toward the steady rate.
+		delayMs = pollIntervalMs ?? pollDelayMs( checksMade );
+		checksMade += 1;
 
 		try {
 			const status = ( await wpcom.req.get( {
@@ -204,29 +249,38 @@ export async function waitForBlueprintImportComplete(
  * is restored. Pair this with waitForBlueprintImportComplete() for full
  * readiness.
  *
- * `initialDelayMs` defaults to a full poll interval, because a caller that has just *started* the
+ * `initialDelayMs` defaults to POLL_INITIAL_DELAY_MS, because a caller that has just *started* the
  * work must not read the previous run's terminal state: `/atomic/transfers/latest` returns the
  * site's latest transfer, not the one you asked about (see createRevertedTransferWatcher). Pass 0
  * only when the work was started before this page existed, where an immediate check is both safe
  * and the difference between handing over at once and sitting on a loading screen for nothing.
+ *
+ * Checks after the first back off from POLL_BACKOFF_MS toward POLL_MAX_INTERVAL_MS. That is a
+ * throughput choice and is independent of the guard above: it only affects how soon we look again
+ * after a check that already read the current run.
  */
 export async function waitForAtomicTransferComplete(
 	siteIdentifier: string,
 	{
 		totalTimeoutSeconds = 900,
-		pollIntervalMs = 5000,
-		initialDelayMs = pollIntervalMs,
+		pollIntervalMs,
+		initialDelayMs = pollIntervalMs ?? POLL_INITIAL_DELAY_MS,
 	}: { totalTimeoutSeconds?: number; pollIntervalMs?: number; initialDelayMs?: number } = {}
 ): Promise< void > {
 	const maxFinishTime = Date.now() + totalTimeoutSeconds * 1000;
 	let lastStatus: TransferStates | undefined;
 	let delayMs = initialDelayMs;
+	let checksMade = 0;
 
 	while ( Date.now() < maxFinishTime ) {
 		if ( delayMs > 0 ) {
 			await wait( delayMs );
 		}
-		delayMs = pollIntervalMs;
+
+		// An explicit interval from the caller wins and stays flat; otherwise back off from a quick
+		// first retry toward the steady rate.
+		delayMs = pollIntervalMs ?? pollDelayMs( checksMade );
+		checksMade += 1;
 
 		try {
 			const transfer = ( await wpcom.req.get( {
