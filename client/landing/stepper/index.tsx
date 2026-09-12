@@ -275,7 +275,11 @@ async function main() {
 					<BrowserRouter basename="setup">
 						<FlowRenderer flow={ flow } steps={ flowSteps } />
 						{ config.isEnabled( 'cookie-banner' ) && (
-							<AsyncLoad require={ loadCookieBanner } placeholder={ null } />
+							<AsyncLoad
+								require={ loadCookieBanner }
+								placeholder={ null }
+								loadFailureFallback={ null }
+							/>
 						) }
 						<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
 					</BrowserRouter>
