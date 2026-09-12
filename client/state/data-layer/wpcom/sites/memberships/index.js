@@ -11,6 +11,7 @@ import {
 	MEMBERSHIPS_COUPONS_RECEIVE,
 } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
@@ -127,6 +128,8 @@ export const handleMembershipGetEarnings = dispatchRequest( {
 	onError: noop,
 } );
 
+export const handleMembershipSubscribersError = ( action ) => bypassDataLayer( action );
+
 export const handleMembershipGetSubscribers = dispatchRequest( {
 	fetch: ( action ) =>
 		http(
@@ -142,7 +145,7 @@ export const handleMembershipGetSubscribers = dispatchRequest( {
 		siteId,
 		subscribers,
 	} ),
-	onError: noop,
+	onError: handleMembershipSubscribersError,
 } );
 
 export const handleMembershipGetSettings = dispatchRequest( {
