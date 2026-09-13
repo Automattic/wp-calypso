@@ -84,74 +84,80 @@ export default function NotePanelActions() {
 			>
 				{ () => <NoteShortcuts /> }
 			</DropdownMenu>
-			<Menu
-				placement="bottom-end"
-				onOpenChange={ ( isOpen: boolean ) => {
-					if ( ! isOpen ) {
-						return;
-					}
-					setShowsWhatIsNew( isNew );
-					if ( isNew ) {
-						markSeen();
-					}
-				} }
-			>
-				<Menu.TriggerButton
-					render={
-						<Button
-							size="small"
-							icon={ cog }
-							label={ isNew ? __( 'Settings (new)' ) : __( 'Settings' ) }
-							className={ clsx( 'wpnc-app__settings-toggle', { 'is-new': isNew } ) }
-						/>
-					}
+			{ ! isViewSettingsEnabled && (
+				<Button
+					size="small"
+					icon={ cog }
+					label={ __( 'Settings' ) }
+					onClick={ () => dispatch( actions.ui.viewSettings() ) }
 				/>
-				{ /* Without the modal backdrop a press outside reports what it actually
+			) }
+			{ isViewSettingsEnabled && (
+				<Menu
+					placement="bottom-end"
+					onOpenChange={ ( isOpen: boolean ) => {
+						if ( ! isOpen ) {
+							return;
+						}
+						setShowsWhatIsNew( isNew );
+						if ( isNew ) {
+							markSeen();
+						}
+					} }
+				>
+					<Menu.TriggerButton
+						render={
+							<Button
+								size="small"
+								icon={ cog }
+								label={ isNew ? __( 'Settings (new)' ) : __( 'Settings' ) }
+								className={ clsx( 'wpnc-app__settings-toggle', { 'is-new': isNew } ) }
+							/>
+						}
+					/>
+					{ /* Without the modal backdrop a press outside reports what it actually
 				   landed on, which is what lets the host tell "dismiss the menu" from
 				   "close the panel". The backdrop covers the panel too, so every press
 				   would look the same. */ }
-				<Menu.Popover modal={ false }>
-					{ isViewSettingsEnabled && (
-						<>
-							<Menu.Group>
-								<Menu.GroupLabel>
-									{ __( 'Layout' ) }
-									{ showsWhatIsNew && <Badge intent="informational">{ __( 'New' ) }</Badge> }
-								</Menu.GroupLabel>
-								{ LAYOUTS.map( ( { value, label } ) => (
-									<Menu.RadioItem
-										key={ value }
-										name="notifications-layout-style"
-										value={ value }
-										checked={ layoutStyle === value }
-										onChange={ () => setLayoutStyle( value ) }
-									>
-										<Menu.ItemLabel>{ label }</Menu.ItemLabel>
-									</Menu.RadioItem>
-								) ) }
-							</Menu.Group>
-							<Menu.Separator />
-						</>
-					) }
-					<Menu.Group>
-						<Menu.GroupLabel>{ __( 'Links' ) }</Menu.GroupLabel>
-						<Menu.Item
-							render={
-								<a
-									href={ SETTINGS_URL }
-									target="_blank"
-									rel="noopener noreferrer"
-									// The arrow is decorative, so the new-tab hint rides on the name.
-									aria-label={ __( 'Notification settings (opens in a new tab)' ) }
-								/>
-							}
-							suffix={ <span aria-hidden="true">&#8599;</span> }
-						>
-							<Menu.ItemLabel>{ __( 'Notification settings' ) }</Menu.ItemLabel>
-						</Menu.Item>
-					</Menu.Group>
-				</Menu.Popover>
-			</Menu>
+					<Menu.Popover modal={ false }>
+						<Menu.Group>
+							<Menu.GroupLabel>
+								{ __( 'Layout' ) }
+								{ showsWhatIsNew && <Badge intent="informational">{ __( 'New' ) }</Badge> }
+							</Menu.GroupLabel>
+							{ LAYOUTS.map( ( { value, label } ) => (
+								<Menu.RadioItem
+									key={ value }
+									name="notifications-layout-style"
+									value={ value }
+									checked={ layoutStyle === value }
+									onChange={ () => setLayoutStyle( value ) }
+								>
+									<Menu.ItemLabel>{ label }</Menu.ItemLabel>
+								</Menu.RadioItem>
+							) ) }
+						</Menu.Group>
+						<Menu.Separator />
+						<Menu.Group>
+							<Menu.GroupLabel>{ __( 'Links' ) }</Menu.GroupLabel>
+							<Menu.Item
+								render={
+									<a
+										href={ SETTINGS_URL }
+										target="_blank"
+										rel="noopener noreferrer"
+										// The arrow is decorative, so the new-tab hint rides on the name.
+										aria-label={ __( 'Notification settings (opens in a new tab)' ) }
+									/>
+								}
+								suffix={ <span aria-hidden="true">&#8599;</span> }
+							>
+								<Menu.ItemLabel>{ __( 'Notification settings' ) }</Menu.ItemLabel>
+							</Menu.Item>
+						</Menu.Group>
+					</Menu.Popover>
+				</Menu>
+			) }
 		</>
 	);
 }

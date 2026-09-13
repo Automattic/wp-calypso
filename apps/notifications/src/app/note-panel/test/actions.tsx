@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { init as initAPI } from '../../../panel/rest-client/wpcom';
 import { init as initStore } from '../../../panel/state';
 import actions from '../../../panel/state/actions';
+import { addListeners } from '../../../panel/state/create-listener-middleware';
 import { AppProvider } from '../../context';
 import NotePanel from '../index';
 import type { FilterName } from '../../types';
@@ -83,16 +84,28 @@ describe( 'NotePanel settings menu', () => {
 		expect( screen.getByRole( 'button', { name: 'Settings' } ) ).not.toHaveClass( 'is-new' );
 	} );
 
-	it( 'offers the layout options only when the host has enabled view settings', async () => {
-		renderPanel( { isViewSettingsEnabled: false } );
+	it( 'asks the host for the settings page when view settings are off', async () => {
+		const { store } = renderPanel( { isViewSettingsEnabled: false } );
+		// Hosts listen for VIEW_SETTINGS and open the settings page; listen the same way.
+		const onViewSettings = jest.fn();
+		store.dispatch( addListeners( { VIEW_SETTINGS: [ onViewSettings ] } ) );
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Settings' } ) );
 
+		// With no layout setting there is nothing worth opening a menu for, so the gear
+		// does what it did before: hands off to the host, which shows the settings page.
+		expect( onViewSettings ).toHaveBeenCalled();
 		expect( screen.queryByRole( 'menuitemradio', { name: 'Simplified' } ) ).not.toBeInTheDocument();
-		expect( screen.getByRole( 'menuitem', { name: /Notification settings/ } ) ).toHaveAttribute(
-			'href',
-			'https://wordpress.com/me/notifications'
-		);
+		expect( screen.queryByRole( 'menuitem' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'offers the layout options when the host has enabled view settings', async () => {
+		renderPanel( { isViewSettingsEnabled: true } );
+
+		await userEvent.click( screen.getByRole( 'button', { name: /^Settings/ } ) );
+
+		expect( await screen.findByRole( 'menuitemradio', { name: 'Classic' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'menuitemradio', { name: 'Simplified' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'marks the saved layout and saves a new one', async () => {
