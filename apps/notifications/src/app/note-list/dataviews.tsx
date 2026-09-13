@@ -68,10 +68,20 @@ const getTimeGroupKey = ( timestamp: string ): number => {
 	return timeGroups.findIndex( ( [ after, before ] ) => before < time && time <= after );
 };
 
-export function getFields( layoutStyle: 'classic' | 'simplified' = 'classic' ): Field< Note >[] {
-	const simplify = ( item: Note ) =>
-		layoutStyle === 'simplified' ? splitSubject( item.subject[ 0 ] ) : null;
+/**
+ * Split a note's subject into what happened and the post it happened to.
+ *
+ * Temporary, and only good enough to put the layout in front of people. The API renders
+ * the subject as one finished sentence, so leading with the action means cutting that
+ * sentence up here — which holds in English and gives up in any locale whose word order
+ * differs. The fix belongs on the server: notes would have to carry the action as its own
+ * translated string. Until they do, `splitSubject` returns null whenever it is not
+ * confident and the row falls back to the classic layout.
+ */
+const simplify = ( item: Note, layoutStyle: 'classic' | 'simplified' ) =>
+	layoutStyle === 'simplified' ? splitSubject( item.subject[ 0 ] ) : null;
 
+export function getFields( layoutStyle: 'classic' | 'simplified' = 'classic' ): Field< Note >[] {
 	return [
 		{
 			id: 'icon',
@@ -94,7 +104,7 @@ export function getFields( layoutStyle: 'classic' | 'simplified' = 'classic' ): 
 			// In the simplified layout this leading line carries what happened, and the
 			// post it happened to goes in `description` below it.
 			getValue: ( { item } ) =>
-				simplify( item )?.action ??
+				simplify( item, layoutStyle )?.action ??
 				html( item.subject[ 0 ], {
 					links: false,
 				} ),
@@ -103,7 +113,7 @@ export function getFields( layoutStyle: 'classic' | 'simplified' = 'classic' ): 
 					// Marks the open note's row for the active highlight (see CSS).
 					'is-active': ( item as Note & { isActive?: boolean } ).isActive,
 				} );
-				const simplified = simplify( item );
+				const simplified = simplify( item, layoutStyle );
 
 				if ( simplified ) {
 					return <div className={ className }>{ simplified.action }</div>;
@@ -122,7 +132,7 @@ export function getFields( layoutStyle: 'classic' | 'simplified' = 'classic' ): 
 			id: 'description',
 			label: __( 'Description' ),
 			render: ( { item } ) => {
-				const simplified = simplify( item );
+				const simplified = simplify( item, layoutStyle );
 
 				if ( simplified ) {
 					return <div className="wpnc__excerpt">{ simplified.title }</div>;
