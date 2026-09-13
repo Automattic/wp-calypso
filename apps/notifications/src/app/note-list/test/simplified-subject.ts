@@ -62,6 +62,58 @@ describe( 'splitSubject', () => {
 		expect( splitSubject( subjectWithPost( 'on My Post Title', 'My Post Title' ) ) ).toBeNull();
 	} );
 
+	// Real reply payloads: the quoted comment closes the sentence, with its own range.
+	it( 'splits a reply on the comment it quotes', () => {
+		const text = 'Lucas Mendes replied to your comment Aligns with adams prototype: ';
+
+		expect(
+			splitSubject( {
+				text,
+				ranges: [
+					{ type: 'user', indices: [ 0, 12 ] },
+					{ type: 'comment', indices: [ 37, 66 ] },
+				],
+			} as never )
+		).toEqual( {
+			action: 'Lucas Mendes replied to your comment',
+			title: 'Aligns with adams prototype:',
+		} );
+	} );
+
+	it( 'splits a reply whose quoted comment was truncated', () => {
+		const text =
+			'Lucas Mendes replied to your comment I understand the reflex to think with first principles and architect \u2026\n';
+
+		expect(
+			splitSubject( {
+				text,
+				ranges: [
+					{ type: 'user', indices: [ 0, 12 ] },
+					{ type: 'comment', indices: [ 37, 108 ] },
+				],
+			} as never )
+		).toEqual( {
+			action: 'Lucas Mendes replied to your comment',
+			// The ellipsis is inside the range: the API truncated the comment, and saying so
+			// is worth keeping.
+			title: 'I understand the reflex to think with first principles and architect \u2026',
+		} );
+	} );
+
+	it( 'prefers whichever range closes the sentence', () => {
+		const text = 'Ashar liked your comment on My Post Title';
+
+		expect(
+			splitSubject( {
+				text,
+				ranges: [
+					{ type: 'comment', indices: [ 17, 24 ] },
+					{ type: 'post', indices: [ 28, 41 ] },
+				],
+			} as never )
+		).toEqual( { action: 'Ashar liked your comment', title: 'My Post Title' } );
+	} );
+
 	it( 'returns null without a subject', () => {
 		expect( splitSubject( undefined ) ).toBeNull();
 	} );
