@@ -101,8 +101,6 @@ export function getFields( layoutStyle: 'classic' | 'simplified' = 'classic' ): 
 		{
 			id: 'title',
 			label: __( 'Title' ),
-			// In the simplified layout this leading line carries what happened, and the
-			// post it happened to goes in `description` below it.
 			getValue: ( { item } ) =>
 				simplify( item, layoutStyle )?.action ??
 				html( item.subject[ 0 ], {
