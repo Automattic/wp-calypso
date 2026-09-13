@@ -113,7 +113,7 @@ export default function AgentDock( {
 
 	// Client-persisted hosts (reader-chat + `persistStateLocally`, e.g. the
 	// logged-out storefront) must NOT persist open/close to the logged-in REST
-	// endpoint (it 401s); the localStorage mirror in useReaderChatPersistence
+	// endpoint (it 401s); the sessionStorage mirror in useReaderChatPersistence
 	// handles them instead.
 	const persistsLocally = usesLocalStatePersistence( agentId );
 

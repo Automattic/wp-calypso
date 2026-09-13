@@ -1,7 +1,8 @@
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect } from '@wordpress/element';
+import { useEffect, useRef } from '@wordpress/element';
 import { useAgentsManagerContext } from '../contexts';
 import { AGENTS_MANAGER_STORE } from '../stores';
+import { getAgentsManagerInlineData } from '../utils/get-agents-manager-inline-data';
 import { usesLocalStatePersistence } from '../utils/uses-local-state-persistence';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
@@ -16,8 +17,9 @@ import type { AgentsManagerSelect } from '@automattic/data-stores';
  */
 export default function useReaderChatPersistence(): void {
 	const { agentConfig } = useAgentsManagerContext();
-	// No-op until the agent config is ready; `usesLocalStatePersistence( '' )` is false.
-	const agentId = agentConfig?.agentId ?? '';
+	// The storefront's provider loads asynchronously, so the context agentId
+	// lands after mount; the inline payload is on the page before that.
+	const agentId = agentConfig?.agentId ?? getAgentsManagerInlineData()?.agentId ?? '';
 
 	const persistsLocally = usesLocalStatePersistence( agentId );
 	const storageKey = `jetpack-reader-chat-open-${ agentId }`;
@@ -28,11 +30,15 @@ export default function useReaderChatPersistence(): void {
 		[]
 	);
 
-	// Restore on first mount.
+	const hasRestored = useRef( false );
+
+	// Restore once, on the first render where the gate and the id are both known.
 	useEffect( () => {
-		if ( ! persistsLocally ) {
+		if ( ! persistsLocally || ! agentId || hasRestored.current ) {
 			return;
 		}
+
+		hasRestored.current = true;
 
 		try {
 			if ( sessionStorage.getItem( storageKey ) === '1' && ! isOpen ) {
@@ -42,11 +48,12 @@ export default function useReaderChatPersistence(): void {
 			// ignore
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+	}, [ persistsLocally, agentId, storageKey ] );
 
-	// Write on every toggle.
+	// Write on every toggle, never before the restore: `isOpen` starts false and
+	// would clear the flag the restore is about to read.
 	useEffect( () => {
-		if ( ! persistsLocally ) {
+		if ( ! persistsLocally || ! agentId || ! hasRestored.current ) {
 			return;
 		}
 
@@ -59,5 +66,5 @@ export default function useReaderChatPersistence(): void {
 		} catch {
 			// ignore
 		}
-	}, [ isOpen, persistsLocally, storageKey ] );
+	}, [ isOpen, persistsLocally, agentId, storageKey ] );
 }
