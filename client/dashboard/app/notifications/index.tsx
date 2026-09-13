@@ -1,4 +1,4 @@
-import { isAutomatticianQuery, rawUserPreferencesQuery } from '@automattic/api-queries';
+import { rawUserPreferencesQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { Button, Dropdown } from '@wordpress/components';
@@ -36,31 +36,27 @@ export default function Notifications( {
 
 	const isViewSettingsEnabled = config.isEnabled( 'notifications/view-settings' );
 
-	// The bell mounts with the page, so by the time the panel opens these are almost
-	// always cached and the panel paints the right tabs on its first frame.
+	// The bell mounts with the page, so by the time the panel opens this is almost always
+	// cached and the panel paints the right layout on its first frame.
 	const { data: userPreferences } = useQuery( rawUserPreferencesQuery() );
-	// Only asked where the layout can be changed back, so nobody is stranded in a
-	// layout whose control isn't rendered.
-	const { data: isAutomattician, isPending: isResolvingAutomattician } = useQuery( {
-		...isAutomatticianQuery(),
-		enabled: isViewSettingsEnabled,
-	} );
 
 	const notificationPreferences = useMemo( () => {
-		// Both answers have to be in before the panel seeds itself; it reads them once.
-		if ( ! userPreferences || ( isViewSettingsEnabled && isResolvingAutomattician ) ) {
+		// The panel reads this once, so hand it over only when it is the real answer.
+		if ( ! userPreferences ) {
 			return undefined;
 		}
 
 		return {
-			// Automatticians start on the new layout. An explicit choice always wins,
-			// including a deliberate switch back to Classic.
+			// The flag is only on where the layout can also be changed back, which today
+			// means environments nobody outside the company reaches — so it stands in for
+			// "start this account on the new layout" without asking who the account
+			// belongs to. An explicit choice always wins, including a switch to Classic.
 			layoutStyle:
 				userPreferences[ 'notifications-layout-style' ] ??
-				( isAutomattician ? ( 'simplified' as const ) : undefined ),
+				( isViewSettingsEnabled ? ( 'simplified' as const ) : undefined ),
 			viewSettingsSeen: userPreferences[ 'notifications-view-settings-seen' ],
 		};
-	}, [ userPreferences, isAutomattician, isResolvingAutomattician, isViewSettingsEnabled ] );
+	}, [ userPreferences, isViewSettingsEnabled ] );
 
 	// The masterbar remounts the bell when the unseen count changes, detaching any
 	// cached node. Resolve the live bell at measurement time so the popover stays
