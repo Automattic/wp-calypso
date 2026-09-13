@@ -51,8 +51,6 @@ export const filteredLoading = ( state = null, { type, filter } ) => {
 export const layoutStyle = ( state = 'classic', { type, layoutStyle } ) =>
 	SET_LAYOUT_STYLE === type ? layoutStyle : state;
 
-// `null` until the preference has loaded, so nothing that depends on it renders on a
-// guess and then corrects itself.
 // eslint-disable-next-line no-shadow
 export const viewSettingsSeen = ( state = null, { type, viewSettingsSeen } ) =>
 	SET_VIEW_SETTINGS_SEEN === type ? viewSettingsSeen : state;
