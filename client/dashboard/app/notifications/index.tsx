@@ -36,21 +36,14 @@ export default function Notifications( {
 
 	const isViewSettingsEnabled = config.isEnabled( 'notifications/view-settings' );
 
-	// The bell mounts with the page, so by the time the panel opens this is almost always
-	// cached and the panel paints the right layout on its first frame.
 	const { data: userPreferences } = useQuery( rawUserPreferencesQuery() );
 
 	const notificationPreferences = useMemo( () => {
-		// The panel reads this once, so hand it over only when it is the real answer.
 		if ( ! userPreferences ) {
 			return undefined;
 		}
 
 		return {
-			// The flag is only on where the layout can also be changed back, which today
-			// means environments nobody outside the company reaches — so it stands in for
-			// "start this account on the new layout" without asking who the account
-			// belongs to. An explicit choice always wins, including a switch to Classic.
 			layoutStyle:
 				userPreferences[ 'notifications-layout-style' ] ??
 				( isViewSettingsEnabled ? ( 'simplified' as const ) : undefined ),
