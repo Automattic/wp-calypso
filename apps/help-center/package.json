@@ -60,7 +60,7 @@
 		"@automattic/wp-babel-makepot": "workspace:^",
 		"@wordpress/dependency-extraction-webpack-plugin": "^6.24.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "^3.24.0",
-		"copy-webpack-plugin": "^10.2.4",
+		"copy-webpack-plugin": "^14.0.0",
 		"typescript": "^6.0.3",
 		"webpack": "^5.99.8"
 	},
