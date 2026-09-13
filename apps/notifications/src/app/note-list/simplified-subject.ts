@@ -5,6 +5,9 @@ import type { Subject } from '../types';
 // to cut on, and the glue varies by note type and locale.
 const CONNECTORS = [ 'on', 'in', 'at', 'to', 'for' ];
 
+// The subject trails off into whichever of these the note concerns.
+const SUBJECT_RANGE_TYPES = [ 'post', 'comment' ];
+
 const TRAILING_PUNCTUATION = /[\s\p{P}]+$/u;
 const ONLY_PUNCTUATION = /^[\s\p{P}]*$/u;
 
@@ -25,24 +28,34 @@ const trimAction = ( text: string ) => {
 };
 
 /**
- * Split a note's subject into the post it concerns and what happened to it, so the
- * simplified list can show the post on top and the action underneath.
+ * Split a note's subject into what happened and the thing it happened to — the post for
+ * a like, the comment for a reply — so the simplified list can lead with the action.
  *
  * Returns null whenever the sentence can't be split confidently — the caller then
  * renders the subject unchanged rather than guessing.
  */
 export const splitSubject = ( subject?: Subject ): SimplifiedSubject | null => {
 	const text = subject?.text;
-	const postRange = subject?.ranges?.find( ( { type } ) => type === 'post' );
+	// What the note is about sits at the end of the sentence: the post for a like, the
+	// comment for a reply. Take the one reaching furthest right — a subject carrying both
+	// is still describing the later one — and let the guard below reject it if it turns
+	// out not to close the sentence.
+	const target = subject?.ranges
+		?.filter( ( { type } ) => SUBJECT_RANGE_TYPES.includes( type ) )
+		.reduce(
+			( furthest, range ) =>
+				! furthest || range.indices[ 1 ] > furthest.indices[ 1 ] ? range : furthest,
+			undefined as NonNullable< Subject[ 'ranges' ] >[ number ] | undefined
+		);
 
-	if ( ! text || ! postRange ) {
+	if ( ! text || ! target ) {
 		return null;
 	}
 
-	const [ start, end ] = postRange.indices;
+	const [ start, end ] = target.indices;
 
-	// Only split when the post title ends the sentence. Anything else is a shape we
-	// don't understand well enough to rewrite.
+	// Only split when it ends the sentence. Anything else is a shape we don't understand
+	// well enough to rewrite.
 	if ( start <= 0 || ! ONLY_PUNCTUATION.test( text.slice( end ) ) ) {
 		return null;
 	}
