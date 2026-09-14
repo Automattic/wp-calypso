@@ -47,13 +47,11 @@ export const filteredLoading = ( state = null, { type, filter } ) => {
 	return state;
 };
 
-// eslint-disable-next-line no-shadow
-export const layoutStyle = ( state = 'classic', { type, layoutStyle } ) =>
-	SET_LAYOUT_STYLE === type ? layoutStyle : state;
+export const layoutStyle = ( state = 'classic', action ) =>
+	SET_LAYOUT_STYLE === action.type ? action.layoutStyle : state;
 
-// eslint-disable-next-line no-shadow
-export const viewSettingsSeen = ( state = null, { type, viewSettingsSeen } ) =>
-	SET_VIEW_SETTINGS_SEEN === type ? viewSettingsSeen : state;
+export const viewSettingsSeen = ( state = null, action ) =>
+	SET_VIEW_SETTINGS_SEEN === action.type ? action.viewSettingsSeen : state;
 
 export const isPanelOpen = ( state = false, { type, isShowing } ) =>
 	SET_IS_SHOWING === type ? isShowing : state;
