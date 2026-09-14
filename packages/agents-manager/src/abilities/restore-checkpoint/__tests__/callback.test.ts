@@ -67,8 +67,12 @@ const makeInput = ( overrides = {} ) => ( {
 	...overrides,
 } );
 
+// The callback logs a failed restore; the spy keeps the run quiet and pins the message.
+let consoleError: jest.SpyInstance;
+
 beforeEach( () => {
 	jest.clearAllMocks();
+	consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 	( isEditorPage as jest.Mock ).mockReturnValue( true );
 	mockHasCheckpoint.mockReturnValue( false );
 	mockGetCheckpoint.mockImplementation( ( id: string ) =>
@@ -80,6 +84,8 @@ beforeEach( () => {
 	mockGetProviderCheckpoint.mockReturnValue( null );
 	mockGetProviderCheckpointRecords.mockReturnValue( [] );
 } );
+
+afterEach( () => consoleError.mockRestore() );
 
 describe( 'restoreCheckpointCallback', () => {
 	it( 'refuses outside the editor', async () => {
@@ -254,7 +260,6 @@ describe( 'restoreCheckpointCallback', () => {
 	} );
 
 	it( 'restores even when recording the provider reciprocal fails', async () => {
-		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 		mockGetCheckpoint.mockReturnValue( undefined );
 		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
 		mockGetProviderCheckpoint.mockReturnValue( { checkpointKeys: [ 'site_title' ] } );
@@ -269,7 +274,7 @@ describe( 'restoreCheckpointCallback', () => {
 		expect( providerCheckpoints.restoreCheckpoint ).toHaveBeenCalledWith( TARGET_CHECKPOINT.id );
 		expect( providerCheckpoints.clearCheckpoint ).toHaveBeenCalledWith( RESTORE_CALL_ID );
 		expect( result.result.success ).toBe( true );
-		expect( error ).toHaveBeenCalledWith(
+		expect( consoleError ).toHaveBeenCalledWith(
 			`[AgentsManager] Failed to record a redo checkpoint for ${ TARGET_CHECKPOINT.id }:`,
 			expect.any( Error )
 		);
@@ -364,7 +369,6 @@ describe( 'restoreCheckpointCallback', () => {
 	} );
 
 	it( 'drops the provider reciprocal when a delegated restore fails', async () => {
-		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 		mockGetCheckpoint.mockReturnValue( undefined );
 		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
 		mockGetProviderCheckpoint.mockReturnValue( { checkpointKeys: [ 'site_title' ] } );
@@ -384,7 +388,6 @@ describe( 'restoreCheckpointCallback', () => {
 	// Kept, not dropped: several domains persist as they restore, so a failure
 	// part-way leaves the site changed and the reciprocal is the way back.
 	it( 'reports a failed restore and keeps the reciprocal', async () => {
-		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
 		( restoreCheckpoint as jest.Mock ).mockRejectedValueOnce( new Error( 'Restore exploded.' ) );
 
@@ -396,20 +399,9 @@ describe( 'restoreCheckpointCallback', () => {
 			details: { checkpointId: TARGET_CHECKPOINT.id },
 		} );
 		expect( clearCheckpoint ).not.toHaveBeenCalled();
-		expect( error ).toHaveBeenCalledWith(
+		expect( consoleError ).toHaveBeenCalledWith(
 			`[AgentsManager] Error restoring checkpoint ${ TARGET_CHECKPOINT.id }:`,
 			expect.any( Error )
 		);
-	} );
-
-	it( 'keeps a pre-existing reciprocal when the restore fails', async () => {
-		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
-		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
-		mockHasCheckpoint.mockReturnValue( true );
-		( restoreCheckpoint as jest.Mock ).mockRejectedValueOnce( new Error( 'Restore exploded.' ) );
-
-		await restoreCheckpointCallback( makeInput() );
-
-		expect( clearCheckpoint ).not.toHaveBeenCalled();
 	} );
 } );

@@ -10,6 +10,7 @@ jest.mock( '../../../utils/navigation-menu', () => ( {
 	readMenuItems: jest.fn(),
 } ) );
 
+import { parse } from '@wordpress/blocks';
 import { select } from '@wordpress/data';
 import { readMenuItems } from '../../../utils/navigation-menu';
 import { buildNavigationItems } from '../navigation-items';
@@ -83,6 +84,15 @@ it( 'relabels an item while leaving the rest alone', async () => {
 	} );
 
 	expect( labelsOf( built ) ).toEqual( [ 'Home', 'About us' ] );
+} );
+
+// The rename path compares labels the same way, so one rule serves both.
+it( 'claims an item by its label in another case, with spare whitespace', async () => {
+	withMenu( [ item( 'a', 'About Us' ) ] );
+
+	const built = await buildNavigationItems( 10, { navigationItems: [ { label: ' about us ' } ] } );
+
+	expect( ( built.blocks as { clientId: string }[] )[ 0 ].clientId ).toBe( 'a' );
 } );
 
 it( 'adds an item that matches nothing in the menu', async () => {
@@ -423,6 +433,7 @@ describe( 'raw menu edits', () => {
 	it( 'parses blocks from raw content', async () => {
 		const built = await buildNavigationItems( 10, { content: '<!-- wp:navigation-link /-->' } );
 
+		expect( parse ).toHaveBeenCalledWith( '<!-- wp:navigation-link /-->' );
 		expect( built.blocks ).toHaveLength( 1 );
 	} );
 
