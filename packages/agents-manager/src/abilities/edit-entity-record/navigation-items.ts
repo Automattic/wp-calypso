@@ -397,6 +397,16 @@ export async function buildNavigationItems(
 			const children = childrenOf( input );
 			const innerBlocks = children ? build( children ) : prune( existing?.innerBlocks );
 
+			// A new link needs somewhere to go: without a url the editor shows
+			// "Add link" in its place and the site a dead link. A new submenu may
+			// stand on its label alone.
+			if ( ! existing && ! missing && ! input.url && ! innerBlocks.length ) {
+				throw new Error(
+					`Navigation item "${ input.label }" needs a url. Ask the user where it should link, ` +
+						"or use an existing page's id and url. Nothing was changed."
+				);
+			}
+
 			const block =
 				existing ??
 				( createBlock(
