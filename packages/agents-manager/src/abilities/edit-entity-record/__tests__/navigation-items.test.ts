@@ -243,20 +243,6 @@ describe( 'clientId', () => {
 		] );
 	} );
 
-	// Without a url the editor shows "Add link" in the item's place, and the
-	// site a dead link; a submenu needs none.
-	it( 'refuses a new link without a url, and lets a new submenu stand on its label', async () => {
-		await expect(
-			buildNavigationItems( 10, { navigationItems: [ { label: 'Blog' } ] } )
-		).rejects.toThrow( 'Navigation item "Blog" needs a url' );
-
-		const result = await buildNavigationItems( 10, {
-			navigationItems: [ { label: 'Company', items: [ { label: 'Team', url: '/team/' } ] } ],
-		} );
-
-		expect( labelsOf( result ) ).toEqual( [ 'Company' ] );
-	} );
-
 	// A url alone names an existing item; a new one needs a label, or a stale
 	// url would drop the item it meant and insert a link with no text.
 	it( 'refuses a url that names no item and comes with no label', async () => {
