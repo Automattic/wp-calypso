@@ -931,14 +931,24 @@ const PlansFeaturesMain = ( {
 	useEffect( () => {
 		if (
 			! forceDefaultPlans &&
+			! isInSignup &&
+			! isDisplayingPlansNeededForFeature &&
 			intentFromSiteMeta.intent &&
+			! hideEscapeHatchForIntent( intentFromSiteMeta.intent ) &&
 			intent === intentFromSiteMeta.intent &&
 			gridPlansForFeaturesGridRaw &&
 			gridPlansForFeaturesGridRaw.length <= 1
 		) {
 			setForceDefaultPlans( true );
 		}
-	}, [ forceDefaultPlans, intent, intentFromSiteMeta.intent, gridPlansForFeaturesGridRaw ] );
+	}, [
+		forceDefaultPlans,
+		isInSignup,
+		isDisplayingPlansNeededForFeature,
+		intent,
+		intentFromSiteMeta.intent,
+		gridPlansForFeaturesGridRaw,
+	] );
 
 	const isIndiaA4A = useIsIndiaA4A();
 

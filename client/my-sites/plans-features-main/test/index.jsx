@@ -187,6 +187,19 @@ describe( 'PlansFeaturesMain', () => {
 			);
 		} );
 
+		test( 'Should keep the site intent plans in signup even when only one plan remains', () => {
+			useIntentFromSiteMeta.mockImplementation( () => ( {
+				processing: false,
+				intent: 'plans-newsletter',
+			} ) );
+			renderWithProvider(
+				<PlansFeaturesMain { ...props } isInSignup hideFreePlan hidePersonalPlan />
+			);
+			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+				JSON.stringify( [ PLAN_PREMIUM ] )
+			);
+		} );
+
 		test( 'Should render <PlanFeatures /> with WP.com data-e2e-plans when requested', () => {
 			renderWithProvider( <PlansFeaturesMain { ...props } /> );
 
