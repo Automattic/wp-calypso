@@ -201,7 +201,7 @@ export const siteRoute = createRoute( {
 		await Promise.all( [
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 			// Settles the plan-expiry notice before paint so it can outrank page notices.
-			ensureSiteExpiryNoticeData( site.ID ),
+			ensureSiteExpiryNoticeData( site ),
 		] );
 
 		return { site };
