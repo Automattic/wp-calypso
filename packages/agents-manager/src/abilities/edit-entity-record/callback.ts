@@ -16,6 +16,7 @@ import {
 	type MenuId,
 } from '../../utils/navigation-menu';
 import { getPageTitle, getPageUrl, getSavedPageTitle, setPageTitle } from '../../utils/page-title';
+import { readRecord } from '../../utils/read-record';
 import { logSiteMetadata, logSiteSession } from '../../utils/session-log';
 import { setSiteMetadata } from '../../utils/site-metadata';
 import { getSiteRecord } from '../../utils/site-record';
@@ -74,7 +75,7 @@ interface EntityRef {
 	options?: Record< string, unknown >;
 }
 
-export interface EditEntityRecordInput {
+interface EditEntityRecordInput {
 	addEntities?: EntityRef[];
 	editEntities?: EntityRef[];
 	deleteEntities?: EntityRef[];
@@ -107,17 +108,17 @@ const FIELD_CHECKS: Record< keyof EntityRef, ( value: unknown ) => boolean > = {
 // can send anything: a wrong-typed title would clear one (null clears it on
 // purpose), and a wrong-typed metadata field would persist as sent. Fields the
 // schema leaves open reach core-data as sent.
-const isText = ( value: unknown ) => value == null || typeof value === 'string';
+const isTextOrNull = ( value: unknown ) => value == null || typeof value === 'string';
 
 const RECORD_FIELD_CHECKS: Record< string, ( value: unknown ) => boolean > = {
 	title: ( value ) =>
-		isText( value ) ||
+		isTextOrNull( value ) ||
 		( isRecord( value ) &&
 			( typeof value.raw === 'string' || typeof value.rendered === 'string' ) ),
-	content: isText,
-	excerpt: isText,
-	status: isText,
-	personality: isText,
+	content: isTextOrNull,
+	excerpt: isTextOrNull,
+	status: isTextOrNull,
+	personality: isTextOrNull,
 	siteLocation: ( value ) =>
 		value == null ||
 		( isRecord( value ) &&
@@ -176,6 +177,12 @@ function checkEntities< O extends Operation >( entities: unknown[], operation: O
 					`Unsupported entity: ${ entityType }/${ entityName }. Use ${ SITE_TYPE }/${ SITE_NAME }, or ${ postTypeHelp(
 						EDITABLE_NAMES
 					) }.`
+				);
+			}
+
+			if ( ! Object.keys( record ?? {} ).length ) {
+				throw new Error(
+					`Nothing to change on ${ entityName } ${ checked.recordId }: the record is empty.`
 				);
 			}
 		} else if ( ! isPostType( ADDABLE_NAMES, entityType, entityName ) ) {
@@ -237,7 +244,7 @@ const BATCH_FIELDS = [
 ];
 
 /**
- * The whole batch checked before the confirmation refusal, the checkpoint keys
+ * The whole batch checked before the confirmation request, the checkpoint keys
  * and any write, so a malformed batch is refused whole rather than partly
  * applied. A field the schema does not name is refused too: a misspelt
  * `deleteEntities` would otherwise be dropped and the rest reported as done.
@@ -520,14 +527,23 @@ async function applyRecordEdit(
 	applied: AppliedChanges,
 	recorder: CheckpointRecorder
 ): Promise< void > {
-	const { entityType, entityName, recordId, record } = entity;
+	const { entityType, entityName, recordId } = entity;
 	const updated = reportUpdated( applied, entity );
+
+	// One title shape from here on: the schema also allows `{ raw }`.
+	const record =
+		'title' in entity.record
+			? { ...entity.record, title: flattenTitle( entity.record.title ) }
+			: entity.record;
 
 	// Resolved first: `editEntityRecord()` reads the persisted record to tell a
 	// real change from a no-op, and one that was never fetched throws there.
-	if ( ! ( await coreResolve().getEditedEntityRecord( entityType, entityName, recordId ) ) ) {
+	if ( ! ( await readRecord( entityType, entityName, recordId ) ) ) {
 		throw new Error(
-			`Cannot edit ${ entityName } ${ recordId }: it could not be read and may have been deleted.`
+			entityName === NAVIGATION
+				? `Navigation menu not found: ${ recordId }. recordId must be the navigation ` +
+				  "block's numeric `ref` attribute, not its clientId. Nothing was changed."
+				: `Cannot edit ${ entityName } ${ recordId }: it could not be read and may have been deleted.`
 		);
 	}
 
@@ -636,11 +652,7 @@ async function applyEdits(
 	recorder: CheckpointRecorder
 ): Promise< void > {
 	for ( const entity of entities ) {
-		const { entityType, entityName, recordId, record } = entity;
-
-		if ( ! Object.keys( record ).length ) {
-			throw new Error( `Nothing to change on ${ entityName } ${ recordId }: the record is empty.` );
-		}
+		const { entityType, entityName } = entity;
 
 		if ( isSite( entityType, entityName ) ) {
 			await applySiteEdit( entity, applied, recorder );
@@ -654,7 +666,7 @@ async function applyEdits(
  * Why a deletion cannot go ahead, or nothing: the record is open in an editor
  * with no router, and a full page load could cut the delete off.
  */
-const stuckDelete = ( { entityName, recordId }: Entity< 'delete' > ): string | undefined =>
+const deleteProblem = ( { entityName, recordId }: Entity< 'delete' > ): string | undefined =>
 	isOpenInEditor( entityName, recordId ) && ! getEditorHistory()
 		? `Cannot delete ${ entityName } ${ recordId }: it is open in this editor, which cannot ` +
 		  'leave it first. Ask the user to open a different page, then call again.'
@@ -668,13 +680,17 @@ const stuckDelete = ( { entityName, recordId }: Entity< 'delete' > ): string | u
  * The canvas binding is handed over first, or the move reads as the user
  * leaving and aborts the request.
  */
-async function leaveRecord( recordId: number | string ): Promise< void > {
+async function leaveRecord( deleting: string[] ): Promise< void > {
 	// `page_on_front` lingers after a site switches to showing posts, so it
-	// counts only while the site shows a page there.
+	// counts only while the site shows a page there, and not one this batch
+	// deletes.
 	const site = getSiteRecord();
 	const frontPageId = site?.show_on_front === 'page' ? Number( site.page_on_front ) : 0;
 	const path =
-		frontPageId && frontPageId !== Number( recordId ) ? `/page/${ frontPageId }` : PAGES_LIST_PATH;
+		frontPageId && ! deleting.includes( String( frontPageId ) )
+			? `/page/${ frontPageId }`
+			: PAGES_LIST_PATH;
+
 	const rollbackBinding = bindToEditorPath( path );
 	const { result } = await navigateEditorWithoutSaving( path );
 
@@ -693,11 +709,13 @@ async function applyDeletes(
 	entities: Entity< 'delete' >[],
 	applied: AppliedChanges
 ): Promise< void > {
+	const deleting = entities.map( ( { recordId } ) => String( recordId ) );
+
 	for ( const { entityType, entityName, recordId, options } of entities ) {
 		// Deleting the record on screen would leave the editor showing one that
 		// no longer exists.
 		if ( isOpenInEditor( entityName, recordId ) ) {
-			await leaveRecord( recordId );
+			await leaveRecord( deleting );
 		}
 
 		// Resolved first so the record is in the store: deleting one that was
@@ -743,9 +761,12 @@ export async function editEntityRecordCallback(
 	const result = await editEntityRecord( input );
 
 	// Every refusal, not only a failed write: the model paraphrases them, so
-	// the console is where the reason can be read. Asking the user to confirm
-	// is the ability's own step, not a refusal.
-	if ( ! result.result.success && ! awaitsConfirmation( input ) ) {
+	// the console is where the reason can be read. The confirmation request,
+	// which answers with the question itself, is not one.
+	const askingToConfirm =
+		awaitsConfirmation( input ) && result.result.message === input.confirmationMessage.trim();
+
+	if ( ! result.result.success && ! askingToConfirm ) {
 		// eslint-disable-next-line no-console
 		console.error( '[AgentsManager] edit-entity-record refused:', result.result.error );
 	}
@@ -768,17 +789,17 @@ async function editEntityRecord( input: EditEntityRecordInput ): Promise< Abilit
 	}
 
 	// Before the confirmation: a deletion that cannot happen is not worth asking about.
-	const stuck = batch.deletes.map( stuckDelete ).find( Boolean );
+	const problem = batch.deletes.map( deleteProblem ).find( Boolean );
 
-	if ( stuck ) {
-		return errorResult( stuck, failureMessage );
+	if ( problem ) {
+		return errorResult( problem, failureMessage );
 	}
 
 	// The backend asks the model for a `confirmationMessage` before anything
-	// destructive. Confirmation is conversational: this writes nothing, the agent
-	// asks, and the user answers in the chat, where Big Sky renders the Yes/No
-	// buttons. The refusal returns as a client-tool failure and the model runs
-	// again, so the `error` has to be directive — it gets two attempts.
+	// destructive. Confirmation is conversational by decision: this writes
+	// nothing, the agent asks in prose, and the user answers in the chat. The
+	// request returns as a client-tool failure and the model runs again, so the
+	// `error` has to be directive — it gets two attempts.
 	if ( awaitsConfirmation( input ) ) {
 		const question = input.confirmationMessage.trim();
 

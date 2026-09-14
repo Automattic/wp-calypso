@@ -1,6 +1,8 @@
 import { createBlock, parse, serialize } from '@wordpress/blocks';
 import { store as coreStore } from '@wordpress/core-data';
 import { dispatch, resolveSelect, select } from '@wordpress/data';
+import { normalizeLabel } from './entity-title';
+import { readRecord } from './read-record';
 import { sameUrl } from './same-url';
 import { getSiteMetadata } from './site-metadata';
 import type { Block } from '@wordpress/blocks';
@@ -34,7 +36,7 @@ interface NavigationRecord {
 	content?: unknown;
 }
 
-export interface NavigationItem {
+interface NavigationItem {
 	label: string;
 	id: number | string;
 	url?: string;
@@ -102,11 +104,6 @@ const hasPendingEdits = ( id: MenuId ): boolean =>
 			| undefined
 	 )?.hasEditsForEntityRecord?.( 'postType', 'wp_navigation', id );
 
-const normalizeLabel = ( label: unknown ) =>
-	String( label ?? '' )
-		.trim()
-		.toLocaleLowerCase();
-
 const isMenuItem = ( item: NavigationBlock ) =>
 	item.name === NAVIGATION_LINK_BLOCK || item.name === NAVIGATION_SUBMENU_BLOCK;
 
@@ -165,8 +162,8 @@ async function getMenuIds(): Promise< MenuId[] > {
 	return ids;
 }
 
-const readMenu = async ( id: MenuId ): Promise< NavigationRecord | null > =>
-	( await coreResolve().getEditedEntityRecord( 'postType', 'wp_navigation', id ) ) || null;
+const readMenu = ( id: MenuId ) =>
+	readRecord( 'postType', 'wp_navigation', id ) as Promise< NavigationRecord | null >;
 
 export const writeMenuItems = async ( id: MenuId, items: NavigationBlock[] ): Promise< void > => {
 	const coreDispatch = dispatch( coreStore ) as unknown as CoreDispatch | undefined;
@@ -187,7 +184,7 @@ export const writeMenuItems = async ( id: MenuId, items: NavigationBlock[] ): Pr
 };
 
 /**
- * A menu's items, or `null` when it cannot be read.
+ * A menu's items, or `null` when the menu no longer exists.
  *
  * Always resolved to items: a menu nothing has edited yet carries only its
  * serialized `content`, so a caller reading `record.blocks` directly would see

@@ -1,4 +1,5 @@
 import { createBlock, parse, serialize } from '@wordpress/blocks';
+import { normalizeLabel } from '../../utils/entity-title';
 import { isRecord } from '../../utils/is-record';
 import {
 	NAVIGATION_LINK_BLOCK,
@@ -14,12 +15,12 @@ import { sameUrl, urlKey } from '../../utils/same-url';
  *
  * The agent sends `navigationItems` — the menu as it should end up — and each
  * item names an existing one by its `clientId`, `label`, `url` or page `id`.
- * Reordering the list reorders the menu, omitting an item removes it, and an
- * item with a label that matches nothing is added — a clientId, url or id that
- * names nothing is refused.
+ * Reordering the list reorders the menu, omitting an item removes it, and a
+ * labelled item that matches nothing is added as a new link. A clientId that
+ * names nothing is refused, as is an unmatched item with no label.
  */
 
-export interface NavigationItemInput {
+interface NavigationItemInput {
 	clientId?: string;
 	label?: string;
 	url?: string;
@@ -167,7 +168,7 @@ const identityKeys = ( {
 		clientId && `clientId:${ clientId }`,
 		id && `id:${ type ?? 'page' }:${ id }`,
 		url && `url:${ urlKey( url ) ?? url }`,
-		label && `label:${ label }`,
+		label && `label:${ normalizeLabel( label ) }`,
 	].filter( ( key ): key is string => !! key );
 
 interface PageStructure {
@@ -336,14 +337,7 @@ export async function buildNavigationItems(
 	const current = await readMenuItems( menuId );
 
 	if ( ! current ) {
-		// Directive, because the id is the usual thing to get wrong: the agent
-		// reads the menu from the block tree, where the numeric `ref` sits
-		// alongside a clientId that looks just as much like an identifier.
-		throw new Error(
-			`Navigation menu not found: ${ menuId }. recordId must be the navigation ` +
-				"block's numeric `ref` attribute, not its clientId. Read the block tree " +
-				'again and use the `ref`. Nothing was changed.'
-		);
+		throw new Error( `Navigation menu not found: ${ menuId }. Nothing was changed.` );
 	}
 
 	const index = indexMenu( current );

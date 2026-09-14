@@ -11,6 +11,7 @@ jest.mock( '@wordpress/blocks', () => ( {
 } ) );
 jest.mock( '../site-metadata', () => ( { getSiteMetadata: jest.fn( () => ( {} ) ) } ) );
 
+import { parse } from '@wordpress/blocks';
 import { dispatch, resolveSelect, select } from '@wordpress/data';
 import {
 	addNavigationItem,
@@ -73,10 +74,22 @@ const savedItemsOf = ( menuId: number ) =>
 		{ throwOnError: true }
 	);
 
-/** The items the last write sent, and the menu it wrote to. */
+/** The items the last write sent, the menu it wrote to, and its options. */
 const lastWrite = () => {
 	const call = editEntityRecord.mock.calls.at( -1 );
-	return { menuId: call[ 2 ], items: call[ 3 ].blocks };
+	return { menuId: call[ 2 ], items: call[ 3 ].blocks, options: call[ 4 ] };
+};
+
+/** Serves one menu as the store does once it exists no more: a 404 rejection. */
+const withoutMenu = ( id: number ) => {
+	const resolvers = ( resolveSelect as jest.Mock )();
+	( resolveSelect as jest.Mock ).mockReturnValue( {
+		...resolvers,
+		getEditedEntityRecord: ( kind: string, name: string, menuId: number ) =>
+			menuId === id
+				? Promise.reject( { code: 'rest_post_invalid_id', data: { status: 404 } } )
+				: resolvers.getEditedEntityRecord( kind, name, menuId ),
+	} );
 };
 
 beforeEach( () => jest.clearAllMocks() );
@@ -183,6 +196,25 @@ describe( 'renameNavigationItem', () => {
 		await renameNavigationItem( 7, 'About us' );
 
 		expect( lastWrite().items[ 1 ].attributes.label ).toBe( 'About us' );
+		// Out of the editor's undo stack: `restore-checkpoint` is the undo.
+		expect( lastWrite().options ).toEqual( { undoIgnore: true } );
+	} );
+
+	// After a reload a menu carries only its serialized `content`.
+	it( 'reads a menu the editor has not touched from its content', async () => {
+		withMenus( { 10: [] } );
+		const resolvers = ( resolveSelect as jest.Mock )();
+		( resolveSelect as jest.Mock ).mockReturnValue( {
+			...resolvers,
+			getEditedEntityRecord: () =>
+				Promise.resolve( { id: 10, content: '<!-- wp:navigation-link {"id":7} /-->' } ),
+		} );
+		( parse as jest.Mock ).mockReturnValueOnce( [ link( 7, 'About' ) ] );
+
+		await renameNavigationItem( 7, 'About us' );
+
+		expect( parse ).toHaveBeenCalledWith( '<!-- wp:navigation-link {"id":7} /-->' );
+		expect( lastWrite().items[ 0 ].attributes.label ).toBe( 'About us' );
 	} );
 
 	it( 'writes only the menus that hold the page', async () => {
@@ -277,6 +309,18 @@ describe( 'removeNavigationItem', () => {
 		expect( lastWrite().items[ 0 ].name ).toBe( 'core/navigation-link' );
 	} );
 
+	// A template can keep a `ref` to a menu deleted since; there is no link
+	// left there to keep in step.
+	it( 'skips a rendered ref whose menu no longer exists', async () => {
+		withMenus( { 10: [ link( 7, 'About' ) ], 99: [ link( 7, 'About' ) ] } );
+		withoutMenu( 99 );
+
+		await removeNavigationItem( 7 );
+
+		expect( editEntityRecord ).toHaveBeenCalledTimes( 1 );
+		expect( lastWrite().menuId ).toBe( 10 );
+	} );
+
 	// The page is already gone, so a retry could not finish a removal that
 	// stopped part-way: nothing is written until every menu has been read.
 	it( 'writes nothing when a later menu cannot be read', async () => {
@@ -307,7 +351,7 @@ describe( 'removeNavigationItem', () => {
 		await expect( removeNavigationItem( 7 ) ).rejects.toThrow( 'Could not save menu 99' );
 
 		savedItemsOf( 10 );
-		expect( lastWrite() ).toEqual( { menuId: 99, items: [ link( 7, 'About' ) ] } );
+		expect( lastWrite() ).toMatchObject( { menuId: 99, items: [ link( 7, 'About' ) ] } );
 		saveSpecifiedEntityEdits.mockReset();
 	} );
 

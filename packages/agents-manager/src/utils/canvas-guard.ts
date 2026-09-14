@@ -57,9 +57,9 @@ const EDITOR_NAVIGATE_ABILITY = normalizeAbilityName( 'big-sky/editor-navigate' 
  * Hands the binding to an editor navigation about to run.
  *
  * Only a page path names a destination the binding can follow; `all-pages` drops
- * it. Exported for `edit-entity-record`, which calls the navigate callback
- * directly to leave a page it is deleting: without the handoff, its own move
- * reads as the user leaving and aborts the request.
+ * it. Exported for `edit-entity-record`, which calls `navigateEditorWithoutSaving()`
+ * to leave a page it is deleting: without the handoff, its own move reads as
+ * the user leaving and aborts the request.
  * @param path The editor path being navigated to.
  * @returns A rollback for a navigation that never happens; see `canvas-binding`.
  */

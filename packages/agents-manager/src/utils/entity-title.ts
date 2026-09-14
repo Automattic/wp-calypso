@@ -1,5 +1,11 @@
 import { decodeEntities } from '@wordpress/html-entities';
 
+/** A label as compared: case and surrounding whitespace do not tell items apart. */
+export const normalizeLabel = ( label: unknown ): string =>
+	String( label ?? '' )
+		.trim()
+		.toLocaleLowerCase();
+
 /**
  * A title field flattened to a plain string: core-data returns `raw` from an
  * edited record, `rendered` from a saved one, and a plain string from a write.
