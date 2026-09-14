@@ -1,3 +1,15 @@
+## 4.2.0
+
+- Stop importing Calypso's z-index map from published stylesheets, so the package SCSS resolves outside the monorepo ([#114281](https://github.com/Automattic/wp-calypso/pull/114281)).
+- Add `ResurrectedWelcomeModal` ([#113008](https://github.com/Automattic/wp-calypso/pull/113008)).
+- Drop the unused `@automattic/ui` dependency ([#114250](https://github.com/Automattic/wp-calypso/pull/114250)).
+- Remove CSS rules that matched no markup ([#114294](https://github.com/Automattic/wp-calypso/pull/114294)).
+- Update `@wordpress/components` to ^37.0.0, `@wordpress/ui` to ^0.18.0, `@wordpress/private-apis` to ^1.51.0, and `react-router-dom` to 7.18.2.
+
+## 4.1.0
+
+- Declare missing dependencies for published packages ([#112684](https://github.com/Automattic/wp-calypso/pull/112684)).
+
 ## 4.0.0
 
 ### Breaking Changes
