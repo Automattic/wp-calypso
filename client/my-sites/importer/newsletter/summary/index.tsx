@@ -67,7 +67,7 @@ export default function Summary( {
 	// The Newsletter page's Subscribers tab shipped in Jetpack 16.1. Below that,
 	// `page=jetpack-newsletter` renders the legacy settings app and ignores `p`, so those sites
 	// keep the Jetpack Cloud subscriber list. Simple sites always have it.
-	const hasNewsletterSubscribers = useSelector(
+	const hasNewsletterSubscribersTab = useSelector(
 		( state ) =>
 			! isJetpackSite( state, selectedSite.ID ) ||
 			!! isJetpackMinimumVersion( state, selectedSite.ID, '16.1' )
@@ -76,7 +76,7 @@ export default function Summary( {
 	// The Newsletter page is a router that reads its route from `p`, and it opens on Subscribers,
 	// so settings has to be asked for as an encoded route rather than a plain query arg.
 	const newsletterSettingsUrl = `${ newsletterUrl }&p=${ encodeURIComponent( '/?tab=settings' ) }`;
-	const subscribersUrl = hasNewsletterSubscribers
+	const subscribersUrl = hasNewsletterSubscribersTab
 		? newsletterUrl
 		: `https://cloud.jetpack.com/subscribers/${ selectedSite.slug }`;
 	const [ isImportCompleted, setIsImportCompleted ] = useState( false );
