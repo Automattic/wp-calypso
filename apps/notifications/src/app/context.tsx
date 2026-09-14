@@ -4,9 +4,6 @@ import type { Client } from './types';
 export type AppContextData = {
 	client: Client | null;
 	locale: string;
-	// Whether the host lets the user change which views the panel shows. This package
-	// also builds standalone for widgets.wp.com, where there is no Calypso config to
-	// read a feature flag from, so the host has to tell us — and off is the safe default.
 	isViewSettingsEnabled: boolean;
 };
 
