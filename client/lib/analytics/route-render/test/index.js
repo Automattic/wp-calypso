@@ -8,32 +8,32 @@ describe( 'recordRouteRender', () => {
 		recordTracksEvent.mockClear();
 	} );
 
-	test( 'records the matched route pattern, the pathname, and the section', () => {
+	test( 'records the matched route pattern and the section, never the concrete path', () => {
 		recordRouteRender( {
-			currentRoutePattern: '/plans/:site?',
-			pathname: '/plans/example.wordpress.com',
-			section: { name: 'plans' },
+			currentRoutePattern: '/accept-invite/:site/:invitation_key',
+			pathname: '/accept-invite/example.wordpress.com/secret-key',
+			section: { name: 'accept-invite' },
 		} );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_route_render', {
 			app: 'calypso',
-			path: '/plans/:site?',
-			pathname: '/plans/example.wordpress.com',
-			section: 'plans',
+			path: '/accept-invite/:site/:invitation_key',
+			section: 'accept-invite',
 		} );
 	} );
 
-	test( 'falls back to the pathname when no route pattern was recorded', () => {
+	test( 'records a placeholder when no route pattern was recorded', () => {
 		recordRouteRender( { pathname: '/sites', section: { name: 'sites-dashboard' } } );
 
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_route_render',
-			expect.objectContaining( { path: '/sites', pathname: '/sites' } )
-		);
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_route_render', {
+			app: 'calypso',
+			path: '(unmatched)',
+			section: 'sites-dashboard',
+		} );
 	} );
 
 	test( 'counts a context that renders more than once only once', () => {
-		const context = { currentRoutePattern: '/me', pathname: '/me', section: { name: 'me' } };
+		const context = { currentRoutePattern: '/me', section: { name: 'me' } };
 
 		recordRouteRender( context );
 		recordRouteRender( context );

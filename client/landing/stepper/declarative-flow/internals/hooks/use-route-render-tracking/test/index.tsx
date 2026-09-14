@@ -12,15 +12,14 @@ describe( 'useRouteRenderTracking', () => {
 		( recordTracksEvent as jest.Mock ).mockClear();
 	} );
 
-	test( 'records a route render keyed by the stepper route pattern', () => {
+	test( 'records a route render keyed the same way as the stepper page view', () => {
 		renderHook( () =>
 			useRouteRenderTracking( { flow: 'onboarding', step: 'plans', enabled: true } )
 		);
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_route_render', {
 			app: 'stepper',
-			path: '/setup/:flow/:step',
-			pathname: window.location.pathname,
+			path: '/setup/onboarding/plans',
 			flow: 'onboarding',
 			step: 'plans',
 		} );

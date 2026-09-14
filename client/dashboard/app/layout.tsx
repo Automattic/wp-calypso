@@ -45,7 +45,6 @@ function AnalyticsProviderWithClient( {
 			recordTracksEvent( 'calypso_route_render', {
 				app: 'dashboard',
 				path: getNormalizedPath( router.state.matches, router.basepath ),
-				pathname: window.location.pathname,
 			} );
 		} );
 	}, [ router ] );

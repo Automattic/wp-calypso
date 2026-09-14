@@ -1,6 +1,7 @@
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 export const ROUTE_RENDER_EVENT = 'calypso_route_render';
+export const UNMATCHED_ROUTE = '(unmatched)';
 
 let lastContext = null;
 
@@ -10,6 +11,9 @@ let lastContext = null;
  * This is a temporary audit event: it fires from the shared render layer so it can be compared
  * against `calypso_page_view`, which each view opts into individually. A context that renders
  * more than once (for example a handler that re-renders while it loads) is counted once.
+ *
+ * Only the route pattern is recorded, never the concrete path: some routes carry invitation
+ * and activation keys in the URL.
  * @param {Object} context - Router context of the rendered route
  */
 export function recordRouteRender( context ) {
@@ -18,12 +22,11 @@ export function recordRouteRender( context ) {
 	}
 	lastContext = context;
 
-	const { currentRoutePattern, pathname, section } = context;
+	const { currentRoutePattern, section } = context;
 
 	recordTracksEvent( ROUTE_RENDER_EVENT, {
 		app: 'calypso',
-		path: currentRoutePattern ?? pathname,
-		pathname,
+		path: currentRoutePattern ?? UNMATCHED_ROUTE,
 		section: section?.name,
 	} );
 }
