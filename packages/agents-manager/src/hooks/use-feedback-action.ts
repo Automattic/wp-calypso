@@ -182,7 +182,8 @@ function getPreviousMessages( messages: Message[], targetMessageId: string ): Pr
  * down. Ratings go to the feedback API with the reply's Langfuse trace so they
  * can be scored against the run that produced it. The pair is built for every
  * agent message; the transcript's turn policy (`applyTurnActionPolicy`) keeps
- * it on a turn's last message only.
+ * it on the turn's carrier only: its last eligible text reply, or the reply
+ * already holding a vote (see `getAgentTurnPositions`).
  */
 export default function useFeedbackAction( {
 	messages,
