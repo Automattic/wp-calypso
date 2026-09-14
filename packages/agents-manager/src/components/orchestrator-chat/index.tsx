@@ -454,6 +454,7 @@ export default function OrchestratorChat( {
 			);
 	}, [ checkpointScopeIdentity, checkpointSessionId, checkpointSessionIdentity ] );
 	const checkpointStreamGeneration = streamedCheckpointMessagesRef.current.streamGeneration;
+	const reportedResponseTaskIdsRef = useRef( new Set< string >() );
 	const agentChatConfig = useMemo( () => {
 		if ( ! agentConfig ) {
 			return null;
@@ -504,6 +505,18 @@ export default function OrchestratorChat( {
 					}
 					streamedMessages.pendingByTaskId.delete( update.id );
 					streamedMessages.regeneratingMessageId = undefined;
+				}
+
+				// One outcome per agent turn; a stream can repeat its terminal update.
+				if ( isTerminal && ! reportedResponseTaskIdsRef.current.has( update.id ) ) {
+					reportedResponseTaskIdsRef.current.add( update.id );
+					const messageId = update.status.message?.messageId ?? update.agentMessage?.messageId;
+					recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_response_completed', {
+						status: [ 'canceled', 'failed' ].includes( update.status.state )
+							? update.status.state
+							: 'completed',
+						...( messageId ? { message_id: messageId } : {} ),
+					} );
 				}
 
 				await onTaskUpdate?.( update );
