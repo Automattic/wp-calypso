@@ -4,9 +4,6 @@
 
 $design-preview-sidebar-width: 311px;
 
-// Above the dialog backdrop in Calypso's global stacking order.
-$premium-badge-tooltip-z-index: 100300;
-
 .design-preview {
 	display: flex;
 	flex-direction: column;
@@ -411,52 +408,6 @@ $premium-badge-tooltip-z-index: 100300;
 		@include break-large {
 			display: block;
 		}
-	}
-}
-
-.design-picker__premium-badge {
-	background-color: var(--color-neutral-80);
-	color: var(--color-neutral-0);
-	font-size: 0.75rem;
-	margin: 0;
-	padding: 2px 12px 2px 6px;
-	position: absolute;
-	top: 9px;
-	left: 9px;
-}
-
-.design-picker__premium-badge-tooltip.popover {
-	z-index: $premium-badge-tooltip-z-index;
-
-	&.is-top,
-	&.is-top-left,
-	&.is-top-right {
-		.popover__arrow {
-			border-top-color: var(--color-neutral-80);
-			bottom: 4px;
-		}
-	}
-
-	&.is-bottom,
-	&.is-bottom-left,
-	&.is-bottom-right {
-		.popover__arrow {
-			border-bottom-color: var(--color-neutral-80);
-			top: 4px;
-		}
-	}
-
-	.popover__arrow {
-		&::before {
-			content: none;
-		}
-	}
-
-	.popover__inner {
-		background-color: var(--color-neutral-80);
-		color: var(--color-neutral-0);
-		padding: 8px;
-		-webkit-font-smoothing: antialiased;
 	}
 }
 
