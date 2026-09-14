@@ -76,7 +76,7 @@ let buffered;
 const requests = {};
 
 /**
- * A flag which stores whether the iframe has sent a cookie-auth-missing event.
+ * Whether the iframe last reported a cookie-auth failure. Cleared when it reports success.
  * @type boolean
  */
 let _isCookieAuthMissing = false;
@@ -208,25 +208,6 @@ const request = ( originalParams, fn ) => {
  */
 export function requestAllBlogsAccess() {
 	return request( { metaAPI: { accessAllUsersBlogs: true } } );
-}
-
-/**
- * Set localStorage item in the proxy iframe.
- * @param {string} key - The key to set.
- * @param {string} value - The value to set.
- * @returns {Promise} - A promise that resolves when the item is set.
- */
-export function setCrossOriginStorageItem( key, value ) {
-	return request( { metaAPI: { setCrossOriginStorageItem: { key, value } } } );
-}
-
-/**
- * Get localStorage item in the proxy iframe.
- * @param {string} key - The key to get.
- * @returns {Promise} - A promise that resolves when the item is set.
- */
-export function getCrossOriginStorageItem( key ) {
-	return request( { metaAPI: { getCrossOriginStorageItem: { key } } } );
 }
 
 /**
@@ -419,13 +400,8 @@ function onmessage( e ) {
 
 	// Allows packages consumers to check whether the iframe had a cookie
 	// error. See the isCookieAuthMissing() function.
-	if ( data === 'cookie-auth-missing' ) {
-		_isCookieAuthMissing = true;
-		return;
-	}
-
-	// Another string non-JSON message, client can ignore it.
-	if ( data === 'cookie-auth-ok' ) {
+	if ( data === 'cookie-auth-missing' || data === 'cookie-auth-ok' ) {
+		_isCookieAuthMissing = data === 'cookie-auth-missing';
 		return;
 	}
 
@@ -604,8 +580,8 @@ function canAccessWpcomApis() {
 }
 
 /**
- * Returns whether the iframe has ever sent the "cookie-auth-missing" event, signalling
- * that something is wrong with the user's cookie.
+ * Returns whether the iframe last reported a cookie-auth failure, signalling that
+ * something is wrong with the user's cookie. Reset once the iframe authenticates.
  * @returns {boolean}
  */
 function isCookieAuthMissing() {
