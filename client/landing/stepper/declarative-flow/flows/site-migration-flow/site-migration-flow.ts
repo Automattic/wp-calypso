@@ -318,8 +318,28 @@ const siteMigration: FlowV2< typeof initialize > = {
 						canUseNonWordPressMigration( platform, from ) &&
 						action !== 'skip_platform_identification'
 					) {
+						// A read belongs to the address it was started for. The same address
+						// keeps its read, so coming back here and continuing does not pay for
+						// it twice; a different one has to drop it, or the capture step would
+						// resume the old session and show the previous site's results.
+						const sourceChanged = get( STEPS.SITE_MIGRATION_IDENTIFY.slug )?.from !== from;
+
 						set( STEPS.SITE_MIGRATION_IDENTIFY.slug, providedDependencies );
-						return navigate( paths.capturePath( { from, platform } ) );
+
+						if ( sourceChanged ) {
+							set( STEPS.SITE_MIGRATION_CAPTURE.slug, { sessionId: '' } );
+						}
+
+						return navigate(
+							paths.capturePath( {
+								from,
+								platform,
+								// Empty rather than absent: navigation merges the current query
+								// string into the next step's, so only a value set here can
+								// replace the one already in the URL.
+								...( sourceChanged && { importSessionId: '', archiveHash: '' } ),
+							} )
+						);
 					}
 
 					if ( hasDestinationSite ) {
@@ -1001,7 +1021,20 @@ const siteMigration: FlowV2< typeof initialize > = {
 			}
 		};
 
-		return { submit, exitFlow };
+		return {
+			submit,
+			exitFlow,
+			/**
+			 * Back from Review goes to the address field, not to the read it came from.
+			 * The read step advances by itself as soon as the session is ready, so
+			 * landing on it again would bounce straight back to Review. Whether the read
+			 * survives is decided when the address is submitted: the same address keeps
+			 * it, a different one starts over.
+			 */
+			...( currentStep === STEPS.SITE_MIGRATION_REVIEW.slug && {
+				goBack: () => navigate( paths.identifyPath( { from: fromQueryParam } ) ),
+			} ),
+		};
 	},
 };
 

@@ -278,6 +278,8 @@ export const capturePath = buildPathHelper<
 			siteId?: number | string;
 			siteSlug?: string;
 			importSessionId?: string | null;
+			/** Only ever set empty here, to drop a hash left by an earlier address. */
+			archiveHash?: string | null;
 		};
 	},
 	typeof STEPS.SITE_MIGRATION_CAPTURE.slug

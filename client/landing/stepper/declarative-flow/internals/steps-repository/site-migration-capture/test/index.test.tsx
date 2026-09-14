@@ -149,6 +149,19 @@ describe( 'SiteMigrationCapture', () => {
 			// No create interceptor was registered, so any attempt would throw.
 			await settle( 50 );
 		} );
+
+		it( 'starts a fresh read when the flow emptied the session for a new address', async () => {
+			// Changing the address empties `importSessionId` rather than dropping it,
+			// because navigation merges the current query string into the next step's.
+			// An empty value has to beat the session left in flow state too.
+			flowState[ 'site-migration-capture' ] = { sessionId: SESSION_ID };
+			const create = mockCreate();
+			mockSessionForever( 'capturing' );
+
+			render( { search: `importSessionId=&from=${ encodeURIComponent( SOURCE_URL ) }` } );
+
+			await waitFor( () => expect( create.isDone() ).toBe( true ) );
+		} );
 	} );
 
 	describe( 'waiting for the read to finish', () => {

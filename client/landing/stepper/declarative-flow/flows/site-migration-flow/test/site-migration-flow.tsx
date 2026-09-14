@@ -50,6 +50,9 @@ jest.mock( 'calypso/landing/stepper/hooks/use-record-signup-complete', () => ( {
 const runNavigation = ( options: Parameters< typeof runFlowNavigation >[ 1 ] ) =>
 	runFlowNavigation( siteMigrationFlow, options, 'forward' );
 
+const runBackNavigation = ( options: Parameters< typeof runFlowNavigation >[ 1 ] ) =>
+	runFlowNavigation( siteMigrationFlow, options, 'back' );
+
 describe( 'Site Migration Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
@@ -1194,6 +1197,46 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
+			it( 'starts a new read when the address changes', () => {
+				const OTHER = 'https://a-different-site.com';
+				mockFlowState( { [ STEPS.SITE_MIGRATION_IDENTIFY.slug ]: { from: OTHER } } );
+
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_IDENTIFY,
+					dependencies: { platform: 'wix', from: FROM },
+					query: { ...SITE_QUERY, ...IMPORT_SESSION_QUERY },
+				} );
+
+				// Both halves have to go: the capture step prefers the URL over flow
+				// state, so leaving either behind resumes the previous site's read.
+				expect( setFlowState ).toHaveBeenCalledWith( STEPS.SITE_MIGRATION_CAPTURE.slug, {
+					sessionId: '',
+				} );
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_CAPTURE,
+					query: { from: FROM, platform: 'wix', importSessionId: '', archiveHash: '' },
+				} );
+			} );
+
+			it( 'keeps the read already running when the address is unchanged', () => {
+				mockFlowState( { [ STEPS.SITE_MIGRATION_IDENTIFY.slug ]: { from: FROM } } );
+
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_IDENTIFY,
+					dependencies: { platform: 'wix', from: FROM },
+					query: { ...SITE_QUERY, ...IMPORT_SESSION_QUERY },
+				} );
+
+				expect( setFlowState ).not.toHaveBeenCalledWith(
+					STEPS.SITE_MIGRATION_CAPTURE.slug,
+					expect.anything()
+				);
+				// Nothing is emptied, so the session already in the URL survives the hop
+				// and the capture step picks the same read back up.
+				expect( destination.query.has( 'importSessionId' ) ).toBe( false );
+				expect( destination.query.has( 'archiveHash' ) ).toBe( false );
+			} );
+
 			it( 'leaves the WordPress path on import-or-migrate', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_IDENTIFY,
@@ -1331,6 +1374,20 @@ describe( 'Site Migration Flow', () => {
 				expect( destination ).toMatchDestination( {
 					step: STEPS.SITE_MIGRATION_REVIEW,
 					query: { ...WIZARD_QUERY, importSessionId: IMPORT_SESSION_ID },
+				} );
+			} );
+
+			it( 'sends Back from review to the address field, not to the read', () => {
+				// The read step advances by itself at preview_ready, so going back to it
+				// would bounce the user straight to review again.
+				const destination = runBackNavigation( {
+					from: STEPS.SITE_MIGRATION_REVIEW,
+					query: { ...WIZARD_QUERY, ...IMPORT_SESSION_QUERY },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_IDENTIFY,
+					query: { from: FROM },
 				} );
 			} );
 
