@@ -143,7 +143,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 				/>
 			);
 		} else if (
-			! [ 'uk', 'fr', 'ca', 'de', 'jp' ].includes( getTopLevelOfTld( selectedDomainName ) ) &&
+			! [ 'uk', 'fr', 'ca', 'jp' ].includes( getTopLevelOfTld( selectedDomainName ) ) &&
 			canTransferToOtherSite
 		) {
 			options.push(
