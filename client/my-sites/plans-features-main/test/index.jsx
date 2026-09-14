@@ -158,6 +158,35 @@ describe( 'PlansFeaturesMain', () => {
 			);
 		} );
 
+		test( 'Should fall back to default plans when the site intent leaves no plans to show', () => {
+			useIntentFromSiteMeta.mockImplementation( () => ( {
+				processing: false,
+				intent: 'plans-newsletter',
+			} ) );
+			renderWithProvider(
+				<PlansFeaturesMain { ...props } hideFreePlan hidePersonalPlan hidePremiumPlan />
+			);
+			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+				JSON.stringify( [ PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_ENTERPRISE_GRID_WPCOM ] )
+			);
+		} );
+
+		test( 'Should fall back to default plans when the site intent leaves only the current plan', () => {
+			useIntentFromSiteMeta.mockImplementation( () => ( {
+				processing: false,
+				intent: 'plans-newsletter',
+			} ) );
+			renderWithProvider( <PlansFeaturesMain { ...props } hideFreePlan hidePersonalPlan /> );
+			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+				JSON.stringify( [
+					PLAN_PREMIUM,
+					PLAN_BUSINESS,
+					PLAN_ECOMMERCE,
+					PLAN_ENTERPRISE_GRID_WPCOM,
+				] )
+			);
+		} );
+
 		test( 'Should render <PlanFeatures /> with WP.com data-e2e-plans when requested', () => {
 			renderWithProvider( <PlansFeaturesMain { ...props } /> );
 
