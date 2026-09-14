@@ -5,14 +5,8 @@ export const UNMATCHED_ROUTE = '(unmatched)';
 
 let lastContext = null;
 
-/**
- * Records that a route rendered, keyed by the matched route pattern.
- *
- * Temporary audit event: remove after the comparison with `calypso_page_view`. Only the route
- * pattern is recorded, never the concrete path, because some routes carry invitation and
- * activation keys in the URL.
- * @param {Object} context - Router context of the rendered route
- */
+// Temporary audit event: remove after the comparison with calypso_page_view.
+// Only the route pattern is recorded, never the concrete path, which can carry invitation keys.
 export function recordRouteRender( context ) {
 	if ( ! context || context === lastContext ) {
 		return;

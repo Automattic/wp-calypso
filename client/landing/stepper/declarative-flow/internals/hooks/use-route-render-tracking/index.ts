@@ -7,12 +7,7 @@ interface Params {
 	enabled: boolean;
 }
 
-/**
- * Records a `calypso_route_render` event whenever the Stepper resolves a flow step.
- *
- * Temporary audit event: remove after the comparison with `calypso_page_view`. The `path`
- * uses the same `/setup/<flow>/<step>` form as that page view so the two compare directly.
- */
+// Temporary audit event: remove after the comparison with calypso_page_view.
 export const useRouteRenderTracking = ( { flow, step, enabled }: Params ) => {
 	useEffect( () => {
 		if ( ! enabled || ! flow || ! step ) {
