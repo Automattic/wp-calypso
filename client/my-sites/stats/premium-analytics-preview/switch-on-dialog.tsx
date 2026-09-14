@@ -10,7 +10,7 @@ import {
 	PREMIUM_ANALYTICS_ENABLED_SETTING,
 	premiumAnalyticsStatusQueryKey,
 } from 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query';
-import { trackPremiumAnalyticsPreviewEvent } from './track-event';
+import { NAVIGATION_DELAY, trackPremiumAnalyticsPreviewEvent } from './track-event';
 
 import './style.scss';
 
@@ -32,8 +32,6 @@ type SwitchOnDialogProps = {
  * @param props.dashboardUrl Where to go once it is on.
  * @param props.onClose Called when the reader leaves without switching on.
  */
-// Long enough for the Tracks beacon to leave before the page does; the Stats notices use the same.
-const NAVIGATION_DELAY = 250;
 
 export default function SwitchOnDialog( { siteId, dashboardUrl, onClose }: SwitchOnDialogProps ) {
 	const translate = useTranslate();

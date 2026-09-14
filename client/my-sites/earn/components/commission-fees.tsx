@@ -1,10 +1,12 @@
 import { ExternalLink } from '@automattic/components';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useSelector } from 'calypso/state';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getUpsellReturnUrl } from '../upsell-return-url';
 
 type CommissionFeesProps = {
 	className?: string;
@@ -34,7 +36,9 @@ const CommissionFees = ( {
 
 	const upgradeLinkHost = isJetpackNotAtomic
 		? 'https://jetpack.com/creator/#pricing'
-		: `https://wordpress.com/plans/${ siteSlug ? siteSlug : '' }`;
+		: addQueryArgs( `https://wordpress.com/plans/${ siteSlug ? siteSlug : '' }`, {
+				redirect_to: getUpsellReturnUrl(),
+		  } );
 
 	const upgradeLink =
 		commission === 0 || isPlan100YearPlan ? null : (

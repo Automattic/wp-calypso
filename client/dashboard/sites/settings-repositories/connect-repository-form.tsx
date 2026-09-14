@@ -27,7 +27,15 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, lock } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
+import {
+	createContext,
+	useContext,
+	useEffect,
+	useMemo,
+	useState,
+	useCallback,
+	useRef,
+} from 'react';
 import { siteRoute } from '../../app/router/sites';
 import { SectionHeader } from '../../components/section-header';
 import { AdvancedWorkflowStyle } from './advanced-workflow-style';
@@ -87,13 +95,21 @@ const sanitizePath = ( input: string ): string => {
 	return sanitized;
 };
 
+// DataForm remounts a field whenever its `Edit` prop changes identity, which resets the
+// control's internal state mid-interaction. These two controls are therefore defined once
+// at module scope and read what they need from context rather than from closure props.
+const FormControlsContext = createContext< {
+	onAddGithubAccount: () => void;
+	shouldRestoreRepositoryFocus: boolean;
+} >( { onAddGithubAccount: () => {}, shouldRestoreRepositoryFocus: false } );
+
 // Custom repository selector component with search functionality
 const RepositorySelector = ( {
 	field,
 	onChange,
 	data,
-	shouldRestoreFocus,
-}: DataFormControlProps< ConnectRepositoryFormData > & { shouldRestoreFocus: boolean } ) => {
+}: DataFormControlProps< ConnectRepositoryFormData > ) => {
+	const { shouldRestoreRepositoryFocus: shouldRestoreFocus } = useContext( FormControlsContext );
 	const { id, getValue, description } = field;
 	const currentValue = getValue?.( { item: data } );
 	const comboboxRef = useRef< HTMLDivElement | null >( null );
@@ -118,6 +134,8 @@ const RepositorySelector = ( {
 					__next40pxDefaultSize
 					__nextHasNoMarginBottom
 					allowReset
+					label={ __( 'Repository' ) }
+					hideLabelFromVision
 					expandOnFocus={ false }
 					value={ currentValue === '' ? '' : currentValue?.toString() || '' }
 					onChange={ ( value ) => {
@@ -153,26 +171,13 @@ const RepositorySelector = ( {
 	);
 };
 
-type GithubAccountSelectorProps = DataFormControlProps< ConnectRepositoryFormData > & {
-	onAddGithubAccount: () => void;
-	shouldRestoreFocus: boolean;
-};
-
 const GithubAccountSelector = ( {
 	field,
 	onChange,
 	data,
-	onAddGithubAccount,
-	shouldRestoreFocus,
-}: GithubAccountSelectorProps ) => {
+}: DataFormControlProps< ConnectRepositoryFormData > ) => {
+	const { onAddGithubAccount } = useContext( FormControlsContext );
 	const { id, getValue } = field;
-	const selectRef = useRef< HTMLSelectElement | null >( null );
-
-	useEffect( () => {
-		if ( selectRef.current && shouldRestoreFocus ) {
-			selectRef.current.focus();
-		}
-	}, [ shouldRestoreFocus ] );
 
 	return (
 		<VStack spacing={ 2 }>
@@ -197,7 +202,6 @@ const GithubAccountSelector = ( {
 						? field.elements
 						: [ { label: __( 'Select a GitHub account' ), value: '' } ]
 				}
-				ref={ selectRef }
 			/>
 		</VStack>
 	);
@@ -244,7 +248,6 @@ export const ConnectRepositoryForm = ( {
 		isLoading: isLoadingInstallations,
 	} = useQuery( githubInstallationsQuery() );
 	const [ formData, setFormData ] = useState< ConnectRepositoryFormData >( initialValues );
-	const [ shouldRestoreInstallationFocus, setShouldRestoreInstallationFocus ] = useState( false );
 	const [ shouldRestoreRepositoryFocus, setShouldRestoreRepositoryFocus ] = useState( false );
 	const { installGithub } = useInstallGithub();
 
@@ -328,17 +331,9 @@ export const ConnectRepositoryForm = ( {
 	const isAdvancedSelected = formData.deploymentMode === 'advanced';
 
 	const handleChange = ( updates: Partial< ConnectRepositoryFormData > ) => {
-		let shouldRestoreInstallationFocus = false;
 		let shouldRestoreRepositoryFocus = false;
 		setFormData( ( prev ) => {
 			const newFormData = { ...prev, ...updates };
-
-			if (
-				'selectedInstallationId' in updates &&
-				updates.selectedInstallationId !== prev.selectedInstallationId
-			) {
-				shouldRestoreInstallationFocus = true;
-			}
 
 			if ( 'selectedRepositoryId' in updates ) {
 				shouldRestoreRepositoryFocus = true;
@@ -389,7 +384,6 @@ export const ConnectRepositoryForm = ( {
 
 			return newFormData;
 		} );
-		setShouldRestoreInstallationFocus( shouldRestoreInstallationFocus );
 		setShouldRestoreRepositoryFocus( shouldRestoreRepositoryFocus );
 	};
 
@@ -405,7 +399,7 @@ export const ConnectRepositoryForm = ( {
 		}
 	}, [ repositoryChecks?.suggested_directory, formData.targetDir ] );
 
-	const handleSubmit = async () => {
+	const handleSubmit = () => {
 		if (
 			! selectedRepository ||
 			! selectedInstallation ||
@@ -427,8 +421,8 @@ export const ConnectRepositoryForm = ( {
 			mutationData.workflow_path = formData.workflowPath || '.github/workflows/wpcom.yml';
 		}
 
-		await mutation.mutateAsync( mutationData, {
-			onSuccess: async () => {
+		mutation.mutate( mutationData, {
+			onSuccess: () => {
 				createSuccessNotice( successMessage, {
 					type: 'snackbar',
 				} );
@@ -551,6 +545,11 @@ export const ConnectRepositoryForm = ( {
 		} );
 	}, [ refetchGithubInstallations, installGithub ] );
 
+	const formControls = useMemo(
+		() => ( { onAddGithubAccount: handleAddGithubAccount, shouldRestoreRepositoryFocus } ),
+		[ handleAddGithubAccount, shouldRestoreRepositoryFocus ]
+	);
+
 	const renderAdvancedWorkflow = () => {
 		if ( ! selectedRepository ) {
 			return null;
@@ -576,15 +575,7 @@ export const ConnectRepositoryForm = ( {
 				id: 'selectedInstallationId',
 				label: __( 'GitHub account' ),
 				type: 'text' as const,
-				Edit: ( props ) => {
-					return (
-						<GithubAccountSelector
-							{ ...props }
-							onAddGithubAccount={ handleAddGithubAccount }
-							shouldRestoreFocus={ shouldRestoreInstallationFocus }
-						/>
-					);
-				},
+				Edit: GithubAccountSelector,
 				elements: installationOptions,
 				description: installationHelpText,
 			},
@@ -592,11 +583,7 @@ export const ConnectRepositoryForm = ( {
 				id: 'selectedRepositoryId',
 				label: __( 'Repository' ),
 				type: 'text' as const,
-				Edit: ( props ) => {
-					return (
-						<RepositorySelector { ...props } shouldRestoreFocus={ shouldRestoreRepositoryFocus } />
-					);
-				},
+				Edit: RepositorySelector,
 				elements: repositoryOptions,
 				description: repositoryHelpText as string,
 			},
@@ -644,9 +631,6 @@ export const ConnectRepositoryForm = ( {
 		repositoryOptions,
 		repositoryHelpText,
 		branchOptions,
-		handleAddGithubAccount,
-		shouldRestoreInstallationFocus,
-		shouldRestoreRepositoryFocus,
 		isLoadingBranches,
 		allBranchesConnected,
 		selectedRepository,
@@ -681,26 +665,28 @@ export const ConnectRepositoryForm = ( {
 	return (
 		<VStack spacing={ 6 }>
 			<SectionHeader level={ 3 } title={ formTitle } description={ formDescription } />
-			<DataForm< ConnectRepositoryFormData >
-				// Force a re-render when the repository changes
-				// Otherwise, the fields that have validation errors will not be reset
-				key={ formData.selectedRepositoryId }
-				data={ formData }
-				fields={ fields }
-				form={ {
-					layout: { type: 'regular' as const },
-					fields: selectedRepository
-						? [
-								'selectedInstallationId',
-								'selectedRepositoryId',
-								'branch',
-								'targetDir',
-								'isAutomated',
-						  ]
-						: [ 'selectedInstallationId', 'selectedRepositoryId' ],
-				} }
-				onChange={ handleChange }
-			/>
+			<FormControlsContext.Provider value={ formControls }>
+				<DataForm< ConnectRepositoryFormData >
+					// Force a re-render when the repository changes
+					// Otherwise, the fields that have validation errors will not be reset
+					key={ formData.selectedRepositoryId }
+					data={ formData }
+					fields={ fields }
+					form={ {
+						layout: { type: 'regular' as const },
+						fields: selectedRepository
+							? [
+									'selectedInstallationId',
+									'selectedRepositoryId',
+									'branch',
+									'targetDir',
+									'isAutomated',
+							  ]
+							: [ 'selectedInstallationId', 'selectedRepositoryId' ],
+					} }
+					onChange={ handleChange }
+				/>
+			</FormControlsContext.Provider>
 
 			{ selectedRepository && (
 				<div>

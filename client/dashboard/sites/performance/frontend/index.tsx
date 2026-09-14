@@ -6,10 +6,9 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useEffect, useState, useMemo } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { sitePerformanceFrontendRoute } from '../../../app/router/sites';
-import { PageHeader } from '../../../components/page-header';
-import PageLayout from '../../../components/page-layout';
 import DeviceToggle from '../device-toggle';
 import PageSelector from '../page-selector';
+import PerformancePage from '../performance-page';
 import Report from '../report';
 import ReportErrorNotice from '../report-error-notice';
 import ReportLoading from '../report-loading';
@@ -114,43 +113,38 @@ export default function SitePerformanceFrontend( { siteSlug }: { siteSlug: strin
 	};
 
 	return (
-		<PageLayout
-			header={
-				<PageHeader
-					description={
-						<Subtitle timestamp={ currentReport?.timestamp } onClick={ handleReportRefetch } />
-					}
-					actions={
-						<HStack>
-							<PageSelector
-								siteUrl={ site.URL }
-								currentPage={ currentPage }
-								pages={ pagesData || [] }
-								onChange={ ( pageId ) => {
-									setRunNewReport( false );
-									recordTracksEvent(
-										'calypso_dashboard_performance_profiler_page_selector_change',
-										{
-											is_home: pageId === '0',
-										}
-									);
+		<PerformancePage
+			siteSlug={ siteSlug }
+			tab="frontend"
+			description={
+				<Subtitle timestamp={ currentReport?.timestamp } onClick={ handleReportRefetch } />
+			}
+			actions={
+				<HStack>
+					<PageSelector
+						siteUrl={ site.URL }
+						currentPage={ currentPage }
+						pages={ pagesData || [] }
+						onChange={ ( pageId ) => {
+							setRunNewReport( false );
+							recordTracksEvent( 'calypso_dashboard_performance_profiler_page_selector_change', {
+								is_home: pageId === '0',
+							} );
 
-									navigate( {
-										to: `/sites/${ siteSlug }/performance/frontend`,
-										search: ( prev: Record< string, string > ) => ( {
-											...prev,
-											page_id: Number( pageId ),
-										} ),
-									} );
-								} }
-							/>
-							<DeviceToggle value={ deviceToggle } onChange={ setDeviceToggle } />
-						</HStack>
-					}
-				/>
+							navigate( {
+								to: `/sites/${ siteSlug }/performance/frontend`,
+								search: ( prev: Record< string, string > ) => ( {
+									...prev,
+									page_id: Number( pageId ),
+								} ),
+							} );
+						} }
+					/>
+					<DeviceToggle value={ deviceToggle } onChange={ setDeviceToggle } />
+				</HStack>
 			}
 		>
 			{ renderContent() }
-		</PageLayout>
+		</PerformancePage>
 	);
 }

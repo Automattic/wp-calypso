@@ -1,8 +1,9 @@
 import './styles.scss';
 import page from '@automattic/calypso-router';
-import { Badge, TimeSince } from '@automattic/components';
+import { TimeSince } from '@automattic/components';
 import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
+import { Badge, Stack } from '@wordpress/ui';
 import { fixMe, useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { SiteIcon } from 'calypso/blocks/site-icon';
@@ -299,10 +300,10 @@ const SiteSubscriptionDetails = ( {
 						{ paymentPlans.length === 0 && (
 							<dl className="site-subscription-info__list">
 								<dt>{ translate( 'Status' ) }</dt>
-								<dd>
-									<Badge type="success">{ translate( 'Active' ) }</Badge>
+								<Stack render={ <dd /> } align="center" gap="sm">
+									<Badge intent="stable">{ translate( 'Active' ) }</Badge>
 									{ translate( 'Free subscriber' ) }
-								</dd>
+								</Stack>
 							</dl>
 						) }
 						{ paymentPlans &&

@@ -13,6 +13,12 @@ export const BLACKBOX_TEST_COLLECT_KEYS = {
 
 export type BlackboxTestCollectOutcome = keyof typeof BLACKBOX_TEST_COLLECT_KEYS;
 
+// Aborts the collect instead of keying it, leaving the SDK without a session.
+// The server only attaches a challenge to the collect that mints a session,
+// never to a recollect, so this is how a test arranges for the mint — and
+// therefore the challenge — to happen on the collect the submit fires.
+export type BlackboxTestCollectStep = BlackboxTestCollectOutcome | 'unavailable';
+
 export type BlackboxCollectBody = {
 	data?: { session_id?: string; challenge?: unknown };
 };
@@ -38,17 +44,25 @@ export function waitForCollectData( page: Page ): Promise< BlackboxCollectBody >
 
 export async function useBlackboxTestKeyForCollect(
 	page: Page,
-	outcome: BlackboxTestCollectOutcome = 'allow'
+	outcome: BlackboxTestCollectStep | BlackboxTestCollectStep[] = 'allow'
 ): Promise< void > {
-	const collectKey = BLACKBOX_TEST_COLLECT_KEYS[ outcome ];
+	// In a sequence, the last entry applies to every collect after it.
+	const outcomes = Array.isArray( outcome ) ? outcome : [ outcome ];
+	let collectsSeen = 0;
+	const currentStep = () => outcomes[ Math.min( collectsSeen, outcomes.length - 1 ) ];
 
 	await page.unroute( BLACKBOX_COLLECT_ROUTE );
 	await page.route( BLACKBOX_COLLECT_ROUTE, async ( route ) => {
 		const request = route.request();
+		const step = currentStep();
 
 		if ( request.method() === 'GET' ) {
+			if ( step === 'unavailable' ) {
+				await route.abort();
+				return;
+			}
 			const url = new URL( request.url() );
-			url.searchParams.set( 'apikey', collectKey );
+			url.searchParams.set( 'apikey', BLACKBOX_TEST_COLLECT_KEYS[ step ] );
 			await route.continue( { url: url.toString() } );
 			return;
 		}
@@ -58,10 +72,17 @@ export async function useBlackboxTestKeyForCollect(
 			return;
 		}
 
+		collectsSeen++;
+
+		if ( step === 'unavailable' ) {
+			await route.abort();
+			return;
+		}
+
 		await route.continue( {
 			headers: {
 				...request.headers(),
-				'x-blackbox-api-key': collectKey,
+				'x-blackbox-api-key': BLACKBOX_TEST_COLLECT_KEYS[ step ],
 			},
 		} );
 	} );

@@ -22,7 +22,15 @@ const renderWrapper = ( {
 			initialState: {
 				currentUser: { capabilities: { 1: { manage_options: manageOptions } } },
 				sites: {
-					items: { 1: { ID: 1, slug: 'example.wordpress.com', options: {}, ...site } },
+					items: {
+						1: {
+							ID: 1,
+							slug: 'example.wordpress.com',
+							URL: 'https://example.wordpress.com',
+							options: {},
+							...site,
+						},
+					},
 					features,
 				},
 				ui: { selectedSiteId: 1 },
@@ -33,7 +41,17 @@ const renderWrapper = ( {
 
 const notAuthorized = 'You are not authorized to view this page';
 
+const upgradeUrl = () =>
+	new URL(
+		screen.getByRole( 'link', { name: 'Upgrade' } ).getAttribute( 'href' ),
+		window.location.origin
+	);
+
 describe( 'AdsWrapper', () => {
+	beforeEach( () => {
+		window.history.pushState( {}, '', '/earn/ads-settings/example.wordpress.com' );
+	} );
+
 	it( 'only offers the WordAds upgrade to users who can upgrade the site', () => {
 		const { unmount } = renderWrapper( { manageOptions: false } );
 		expect( screen.queryByRole( 'link', { name: 'Upgrade' } ) ).not.toBeInTheDocument();
@@ -42,6 +60,66 @@ describe( 'AdsWrapper', () => {
 		unmount();
 		renderWrapper();
 		expect( screen.getByRole( 'link', { name: 'Upgrade' } ) ).toBeVisible();
+	} );
+
+	// Without these, checkout drops the user on the generic thank-you page with no
+	// way back to the ads dashboard they were setting up.
+	it( 'sends the user back to the ads page after checkout', () => {
+		renderWrapper();
+
+		const url = upgradeUrl();
+		expect( url.pathname ).toBe( '/checkout/example.wordpress.com/value_bundle' );
+		expect( url.searchParams.get( 'redirect_to' ) ).toBe(
+			'/earn/ads-settings/example.wordpress.com'
+		);
+		expect( url.searchParams.get( 'cancel_to' ) ).toBe(
+			'/earn/ads-settings/example.wordpress.com'
+		);
+	} );
+
+	it( 'sends a Jetpack site back to the ads page after checkout', () => {
+		renderWrapper( { site: { jetpack: true } } );
+
+		const url = upgradeUrl();
+		expect( url.pathname ).toBe( '/checkout/example.wordpress.com/jetpack_security_daily' );
+		expect( url.searchParams.get( 'redirect_to' ) ).toBe(
+			'/earn/ads-settings/example.wordpress.com'
+		);
+	} );
+
+	// The plans page forwards `redirect_to` to checkout, but has no use for
+	// `cancel_to`.
+	it( 'sends a site on an ineligible plan back to the ads page after checkout', () => {
+		renderWithProvider(
+			<AdsWrapper section="ads-earnings">
+				<div />
+			</AdsWrapper>,
+			{
+				initialState: {
+					currentUser: { capabilities: { 1: { manage_options: true } } },
+					sites: {
+						items: {
+							1: {
+								ID: 1,
+								slug: 'example.wordpress.com',
+								URL: 'https://example.wordpress.com',
+								options: { wordads: true },
+							},
+						},
+						features: { 1: { data: { active: [] } } },
+					},
+					ui: { selectedSiteId: 1 },
+					wordads: { status: { 1: { status: 'ineligible' } } },
+				},
+				reducers: { ui: uiReducer, wordads: wordadsReducer },
+			}
+		);
+
+		const url = upgradeUrl();
+		expect( url.pathname ).toBe( '/plans/example.wordpress.com' );
+		expect( url.searchParams.get( 'redirect_to' ) ).toBe(
+			'/earn/ads-settings/example.wordpress.com'
+		);
 	} );
 
 	// An unloaded feature list is indistinguishable from an absent feature, so

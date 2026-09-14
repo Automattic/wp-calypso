@@ -11,7 +11,6 @@ import {
 	followSiteMutation,
 	siteSubscriptionsQuery,
 	getAliasedSiteSubscriptionFeedUrl,
-	getSiteSubscriptionByBlogIdFromData,
 	getSiteSubscriptionByFeedIdFromData,
 	getSubscribedSitesFromData,
 	getSiteSubscriptionsCountFromData,
@@ -341,7 +340,6 @@ describe( 'follow selectors and cache helpers', () => {
 
 		expect( getSiteSubscriptionsFromData( data ) ).toEqual( [ alpha, beta ] );
 		expect( getSiteSubscriptionsCountFromData( data ) ).toBe( 2 );
-		expect( getSiteSubscriptionByBlogIdFromData( data, 22 ) ).toBe( beta );
 		expect( getSiteSubscriptionByFeedIdFromData( data, 101 ) ).toBe( alpha );
 		expect( getSiteSubscriptionFromData( data, { feedUrl: 'https://alpha.example/feed/' } ) ).toBe(
 			alpha

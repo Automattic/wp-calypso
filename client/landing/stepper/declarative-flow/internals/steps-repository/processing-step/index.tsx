@@ -26,11 +26,13 @@ import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import { describeStepMount } from '../../step-mount-registry';
 import { ProcessingResult } from './constants';
 import { useLoadingMessageIndex } from './hooks/use-loading-message-index';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
 import HundredYearPlanFlowProcessingScreen from './hundred-year-plan-flow-processing-screen';
 import TailoredFlowPreCheckoutScreen from './tailored-flow-precheckout-screen';
+import type { ProcessingLoadingMessage } from './hooks/types';
 import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { SiteIntent } from '@automattic/data-stores/src/onboard';
@@ -85,13 +87,18 @@ const ProcessingStep: StepType< {
 	accepts: {
 		title?: string;
 		subtitle?: string;
+		loadingMessages?: ProcessingLoadingMessage[];
 	};
 } > = function ( props ) {
 	const { submit } = props.navigation;
 	const { flow } = props;
 
 	const { __ } = useI18n();
-	const loadingMessages = useProcessingLoadingMessages( flow );
+	const defaultLoadingMessages = useProcessingLoadingMessages( flow );
+	const loadingMessages: ProcessingLoadingMessage[] =
+		props.loadingMessages && props.loadingMessages.length > 0
+			? props.loadingMessages
+			: defaultLoadingMessages;
 
 	const [ hasActionSuccessfullyRun, setHasActionSuccessfullyRun ] = useState( false );
 	const [ hasEmptyActionRun, setHasEmptyActionRun ] = useState( false );
@@ -148,10 +155,12 @@ const ProcessingStep: StepType< {
 	// How the wait ended is known only inside the callback that ends it, and that callback submits —
 	// navigating away in the same tick, with no render in between to carry the outcome. Mutating the
 	// object the heartbeat is already holding is what gets it onto the closing event.
+	// Read once per mount, so a second mount of this step reports its own arrival, not the first's.
 	const waitProperties = useRef< Record< string, unknown > >( {
 		flow,
 		previous_step: props.data?.previousStep ?? null,
 		outcome: null,
+		...describeStepMount( props.stepName ),
 	} ).current;
 	waitProperties.flow = flow;
 	waitProperties.previous_step = props.data?.previousStep ?? null;

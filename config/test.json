@@ -115,6 +115,7 @@
 		"stats/chart-library": true,
 		"stats/empty-module-traffic": true,
 		"stats/premium-analytics-preview": true,
+		"stats/premium-analytics-preview-atomic": true,
 		"themes/premium": true,
 		"themes/showcase-modern": true,
 		"upgrades/redirect-payments": true,

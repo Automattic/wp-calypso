@@ -49,6 +49,7 @@ import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { useSimplifiedOnboarding } from '../../../../hooks/use-simplified-onboarding';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import { useFlowState } from '../../state-manager/store';
 import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../playground/lib/constants';
 import {
 	EARLY_PROVISION_TARGET_WPCOM_ATOMIC,
@@ -110,6 +111,30 @@ async function pollForGardenProvisioning(
 	throw error;
 }
 
+// Runs of the action still in progress, by the name asked for. The `createdSite` record in the
+// flow state is written only after /sites/new returns, so a second run of the action that starts
+// inside that wait reads nothing and would send its own request. This is where it joins the
+// first run instead. The whole tail is joined, not only the request: a run that adopts the record
+// still adds to the cart and starts the trial, and doing that twice at once is its own problem.
+// The processing step reruns the action whenever it mounts again, which is how two runs come to
+// overlap. Unnamed requests share one key: /sites/new picks a name for each of them, so two
+// overlapping ones would make two sites.
+const runsInFlight = new Map< string, Promise< unknown > >();
+
+function runOnce< T >( requestedName: string, run: () => Promise< T > ): Promise< T > {
+	const inFlight = runsInFlight.get( requestedName );
+	if ( inFlight ) {
+		return inFlight as Promise< T >;
+	}
+
+	const result = run();
+	runsInFlight.set( requestedName, result );
+	const forget = () => runsInFlight.delete( requestedName );
+	result.then( forget, forget );
+
+	return result;
+}
+
 const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
@@ -157,6 +182,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const username = useSelector( getCurrentUserName );
 
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
+	const flowState = useFlowState();
 
 	// when it's empty, the default WordPress theme will be used.
 	let theme = '';
@@ -325,73 +351,103 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			? await resolveLaunchpadPersonalizationVariation( urlQueryParams.get( 'diy-launchpad' ) )
 			: 'control';
 
-		const site = await createSite(
-			flow,
-			theme,
-			siteVisibility,
-			urlData?.meta.title ?? selectedSiteTitle,
-			// We removed the color option during newsletter onboarding.
-			// But backend still expects/needs a value, so supplying the default.
-			// Ideally should remove this and update code downstream to handle this.
-			'#113AF5',
-			useThemeHeadstart,
-			username,
-			partnerBundle,
-			siteUrl,
-			domainItem,
-			sourceSlug,
-			siteIntent,
-			undefined, // siteGoals
-			gardenName,
-			gardenPartnerName,
-			urlQueryParams.get( 'spec_id' ),
-			isPlaygroundPublish ? 'playground-publish' : undefined,
-			undefined, // provisionTarget
-			launchpadPersonalizationVariation === 'ai_launchpad'
-		);
+		// A run creates one site. Arriving here again — Back onto a step that advances by itself, a
+		// reload, a second tab landing on the flow — has to adopt the site this run already made
+		// rather than ask for another. /sites/new is not idempotent, and the free-subdomain path
+		// sends `find_available_url: false`, so the same name asked for twice is refused outright
+		// as `blog_name_exists`. Everything below still runs against the adopted site, so follow-up
+		// work a re-entry interrupted is finished rather than skipped.
+		//
+		// Matched on the name being asked for, which is what `createSite` derives the blog name
+		// from. Nothing scopes this record to a single run, so a later signup must be able to tell
+		// that the site on file is not the one it is asking for — and an unnamed request, which
+		// /sites/new answers with a name of its own choosing, matches nothing.
+		const requestedName = siteUrl || domainItem?.domain_name || '';
+		return runOnce( requestedName, async () => {
+			const recordedSite = flowState.get( 'createdSite' );
+			const siteFromThisRun =
+				requestedName && recordedSite?.requestedName === requestedName ? recordedSite : undefined;
 
-		if ( ! site ) {
-			throw new Error( 'Failed to create site' );
-		}
+			const site = siteFromThisRun
+				? { siteId: siteFromThisRun.siteId, siteSlug: siteFromThisRun.siteSlug }
+				: await createSite(
+						flow,
+						theme,
+						siteVisibility,
+						urlData?.meta.title ?? selectedSiteTitle,
+						// We removed the color option during newsletter onboarding.
+						// But backend still expects/needs a value, so supplying the default.
+						// Ideally should remove this and update code downstream to handle this.
+						'#113AF5',
+						useThemeHeadstart,
+						username,
+						partnerBundle,
+						siteUrl,
+						domainItem,
+						sourceSlug,
+						siteIntent,
+						undefined, // siteGoals
+						gardenName,
+						gardenPartnerName,
+						urlQueryParams.get( 'spec_id' ),
+						isPlaygroundPublish ? 'playground-publish' : undefined,
+						undefined, // provisionTarget
+						launchpadPersonalizationVariation === 'ai_launchpad'
+				  );
 
-		if ( earlyProvisionTarget === EARLY_PROVISION_TARGET_WPCOM_ATOMIC ) {
-			const atomicSite = await pollForAtomicProvisioning( site.siteId );
-			site.siteSlug = atomicSite.siteSlug;
-		}
+			if ( ! site ) {
+				throw new Error( 'Failed to create site' );
+			}
 
-		const additionalCartItems = [
-			...( planCartItem ? [ planCartItem ] : [] ),
-			...( productCartItems ?? [] ),
-			...mergedDomainCartItems,
-		];
+			// Recorded as soon as the site exists, ahead of the waits below rather than after them: the
+			// Atomic and garden polls run for minutes, and leaving during one is how someone comes back
+			// here with a site already made. The slug can still be the pre-transfer one, so the adopting
+			// run re-polls on the ID and settles it again.
+			flowState.set( 'createdSite', {
+				siteId: site.siteId,
+				siteSlug: site.siteSlug,
+				requestedName,
+			} );
 
-		if ( additionalCartItems.length > 0 ) {
-			await addProductsToCart( site.siteSlug, flow, additionalCartItems );
-		}
+			if ( earlyProvisionTarget === EARLY_PROVISION_TARGET_WPCOM_ATOMIC ) {
+				const atomicSite = await pollForAtomicProvisioning( site.siteId );
+				site.siteSlug = atomicSite.siteSlug;
+			}
 
-		// Poll for garden provisioning status if this is a garden site
-		if ( gardenName ) {
-			await pollForGardenProvisioning( site.siteId );
-		}
+			const additionalCartItems = [
+				...( planCartItem ? [ planCartItem ] : [] ),
+				...( productCartItems ?? [] ),
+				...mergedDomainCartItems,
+			];
 
-		if ( isEntrepreneurFlow( flow ) ) {
-			await addEcommerceTrial( { siteId: site.siteId } );
+			if ( additionalCartItems.length > 0 ) {
+				await addProductsToCart( site.siteSlug, flow, additionalCartItems );
+			}
+
+			// Poll for garden provisioning status if this is a garden site
+			if ( gardenName ) {
+				await pollForGardenProvisioning( site.siteId );
+			}
+
+			if ( isEntrepreneurFlow( flow ) ) {
+				await addEcommerceTrial( { siteId: site.siteId } );
+
+				return {
+					siteId: site.siteId,
+					siteSlug: site.siteSlug,
+					goToCheckout: false,
+					siteCreated: true,
+				};
+			}
 
 			return {
 				siteId: site.siteId,
 				siteSlug: site.siteSlug,
-				goToCheckout: false,
+				goToCheckout: shouldGoToCheckout,
 				siteCreated: true,
+				platform,
 			};
-		}
-
-		return {
-			siteId: site.siteId,
-			siteSlug: site.siteSlug,
-			goToCheckout: shouldGoToCheckout,
-			siteCreated: true,
-			platform,
-		};
+		} );
 	}
 
 	useEffect( () => {

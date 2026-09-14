@@ -11,6 +11,7 @@ import wp from 'calypso/lib/wp';
 import { getTaxValidationResult } from 'calypso/my-sites/checkout/src/lib/contact-validation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateCreditCard, saveCreditCard } from './stored-payment-method-api';
+import type { Purchase } from '@automattic/api-core';
 import type {
 	StripeSetupIntentId,
 	StripeConfiguration,
@@ -18,7 +19,6 @@ import type {
 } from '@automattic/calypso-stripe';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { Stripe, StripeCardNumberElement } from '@stripe/stripe-js';
-import type { Purchase } from 'calypso/lib/purchases/types';
 import type { CalypsoDispatch } from 'calypso/state/types';
 import type { LocalizeProps } from 'i18n-calypso';
 
@@ -307,7 +307,7 @@ export async function assignExistingCardProcessor(
 		if ( ! purchase ) {
 			throw new Error( 'Cannot assign PayPal payment method without a purchase' );
 		}
-		const data = await wpcomAssignPaymentMethod( String( purchase.id ), storedDetailsId );
+		const data = await wpcomAssignPaymentMethod( String( purchase.ID ), storedDetailsId );
 		return makeSuccessResponse( data );
 	} catch ( error ) {
 		return makeErrorResponse( ( error as Error ).message );
@@ -351,7 +351,7 @@ export async function assignPayPalProcessor(
 		}
 		reduxDispatch( recordFormSubmitEvent( { purchase } ) );
 		const data = await wpcomCreatePayPalAgreement(
-			String( purchase.id ),
+			String( purchase.ID ),
 			addQueryArgs( window.location.href, { success: 'true' } ),
 			window.location.href,
 			submitData.countryCode,
@@ -381,7 +381,7 @@ export async function assignExistingPayPalPPCPProcessor(
 		if ( ! purchase ) {
 			throw new Error( 'Cannot assign existing PayPal payment method without a purchase' );
 		}
-		const data = await wpcomAssignPaymentMethod( String( purchase.id ), storedDetailsId );
+		const data = await wpcomAssignPaymentMethod( String( purchase.ID ), storedDetailsId );
 		return makeSuccessResponse( data );
 	} catch ( error ) {
 		return makeErrorResponse( ( error as Error ).message );
@@ -407,9 +407,9 @@ function recordFormSubmitEvent( {
 	purchase?: Purchase;
 	useForAllSubscriptions?: boolean;
 } ) {
-	return purchase?.productSlug
+	return purchase?.product_slug
 		? recordTracksEvent( 'calypso_purchases_credit_card_form_submit', {
-				product_slug: purchase.productSlug,
+				product_slug: purchase.product_slug,
 				use_for_all_subs: String( useForAllSubscriptions ),
 		  } )
 		: recordTracksEvent( 'calypso_add_credit_card_form_submit', {

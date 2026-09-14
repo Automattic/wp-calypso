@@ -3,7 +3,6 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import { pollUntil, PollTimeoutError } from './poll-until';
 
-export const BUILD_WOW_QUERY_VALUE = '1';
 const BUILD_WOW_SITE_SPEC_PATH = '/setup/ai-site-builder-spec/site-spec';
 
 /**
@@ -49,13 +48,6 @@ type BigSkyPluginStatus = {
 	remote_option_ready?: boolean;
 };
 
-export function isBuildWowEnabled(
-	queryParams: URLSearchParams,
-	hasBuildWowAccess: boolean
-): boolean {
-	return hasBuildWowAccess && queryParams.get( 'build_wow' ) === BUILD_WOW_QUERY_VALUE;
-}
-
 export function getBuildWowSiteIdentifier( {
 	siteSlug,
 	siteId,
@@ -92,7 +84,7 @@ export function getBuildWowSiteSpecUrl( {
 	prompt?: string | null;
 } ): string {
 	return addQueryArgs( BUILD_WOW_SITE_SPEC_PATH, {
-		build_wow: BUILD_WOW_QUERY_VALUE,
+		build_wow: '1',
 		...( siteSlug ? { siteSlug } : {} ),
 		...( siteId && String( siteId ) !== '0' ? { siteId } : {} ),
 		...( ref ? { ref } : {} ),
