@@ -721,7 +721,13 @@ describe( 'useNavigationContinuation Tracks', () => {
 		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledTimes( 1 );
 		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
 			'calypso_agents_manager_wp_admin_navigate_complete',
-			{ navigated: true, matched: true }
+			{
+				navigated: true,
+				matched: true,
+				destination_path: '/wp-admin/plugins.php',
+				destination_page: '',
+				landed_page: '',
+			}
 		);
 	} );
 
@@ -733,7 +739,32 @@ describe( 'useNavigationContinuation Tracks', () => {
 
 		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
 			'calypso_agents_manager_wp_admin_navigate_complete',
-			{ navigated: false, matched: false }
+			{
+				navigated: false,
+				matched: false,
+				destination_path: '/wp-admin/edit.php',
+				destination_page: '',
+				landed_page: '',
+			}
+		);
+	} );
+
+	it( 'records a server redirect with both the requested and the landed route', async () => {
+		parkNavigationFromPreviousLoad( { destination: '/wp-admin/edit.php?post_type=shop_order' } );
+		window.history.replaceState( {}, '', '/wp-admin/admin.php?page=wc-orders' );
+
+		renderContinuation();
+		await jest.runAllTimersAsync();
+
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_wp_admin_navigate_complete',
+			{
+				navigated: true,
+				matched: false,
+				destination_path: '/wp-admin/edit.php',
+				destination_page: '',
+				landed_page: 'wc-orders',
+			}
 		);
 	} );
 

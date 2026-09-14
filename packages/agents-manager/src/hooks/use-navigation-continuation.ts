@@ -8,6 +8,7 @@ import {
 	markContinuationSent,
 	NAVIGATION_PENDING_EVENT,
 	getPendingNavigation,
+	getRouteTracksProps,
 	unmarkContinuationSent,
 	wasContinuationSentThisLoad,
 	wasNavigationCreatedThisLoad,
@@ -247,9 +248,16 @@ export function useNavigationContinuation( {
 				try {
 					await sendToolResultRef.current( { toolCallId, toolId, message, sessionId } );
 					completePendingNavigation( pendingNavigation );
+					// A server redirect lands elsewhere with `matched: false`, so the
+					// requested and landed routes are both recorded; the base `path`
+					// is the landed pathname.
+					const destinationRoute = getRouteTracksProps( pendingNavigation.destination );
 					recordAgentsManagerTracksEvent( 'calypso_agents_manager_wp_admin_navigate_complete', {
 						navigated,
 						matched,
+						destination_path: destinationRoute.path,
+						destination_page: destinationRoute.page,
+						landed_page: getRouteTracksProps( window.location.href ).page,
 					} );
 				} catch ( error ) {
 					// Unmark, so a later mount retries; the 5-minute expiry bounds it.

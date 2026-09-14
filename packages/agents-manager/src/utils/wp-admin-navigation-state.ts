@@ -207,3 +207,17 @@ export function isNavigationSessionValid(
 
 	return true;
 }
+
+/**
+ * The Tracks props for a wp-admin route: the pathname and the `page` query arg
+ * that names the screen. Other query values can carry search terms and IDs,
+ * so they are never recorded. Never throws, so it is safe beside a send.
+ */
+export function getRouteTracksProps( href: string ): { path: string; page: string } {
+	try {
+		const url = new URL( href, window.location.origin );
+		return { path: url.pathname, page: url.searchParams.get( 'page' ) ?? '' };
+	} catch {
+		return { path: '', page: '' };
+	}
+}
