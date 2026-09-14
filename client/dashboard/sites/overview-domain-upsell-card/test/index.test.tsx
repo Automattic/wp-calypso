@@ -108,7 +108,9 @@ describe( 'DomainUpsellCard', () => {
 		expect(
 			await screen.findByRole( 'button', { name: 'Switch to annual billing' } )
 		).toBeVisible();
-		expect( screen.getByText( /Switch your Personal plan to annual billing/ ) ).toBeVisible();
+		expect( screen.getByText( 'Personal' ).parentElement ).toHaveTextContent(
+			'Switch your Personal plan to annual billing to get example.com free for one year.'
+		);
 		expect( screen.queryByRole( 'button', { name: 'Choose a plan' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( /Upgrade to an annual paid plan/ ) ).not.toBeInTheDocument();
 	} );
