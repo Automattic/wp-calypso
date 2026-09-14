@@ -1,6 +1,6 @@
 import { useCallback, useState } from '@wordpress/element';
 import { useOdieAssistantContext } from '../context';
-import { broadcastOdieMessage, useSendOdieMessage } from '../data';
+import { useSendOdieMessage } from '../data';
 import { useSendZendeskMessage } from './use-send-zendesk-message';
 import type { Message } from '../types';
 
@@ -8,7 +8,7 @@ import type { Message } from '../types';
  * This is the gate that manages which message provider to use.
  */
 export const useSendChatMessage = () => {
-	const { addMessage, odieBroadcastClientId, chat } = useOdieAssistantContext();
+	const { addMessage, chat } = useOdieAssistantContext();
 
 	const [ abortController, setAbortController ] = useState< AbortController >(
 		() => new AbortController()
@@ -22,9 +22,7 @@ export const useSendChatMessage = () => {
 			setAbortController( controller );
 			// Payload messages should not be immediately added to chats
 			if ( ! message.payload ) {
-				// Add the user message to the chat and broadcast it to the client.
 				addMessage( message );
-				broadcastOdieMessage( message, odieBroadcastClientId );
 			}
 
 			if ( chat.provider === 'zendesk' ) {
@@ -32,7 +30,7 @@ export const useSendChatMessage = () => {
 			}
 			return sendOdieMessage( message );
 		},
-		[ sendOdieMessage, sendZendeskMessage, addMessage, odieBroadcastClientId, chat?.provider ]
+		[ sendOdieMessage, sendZendeskMessage, addMessage, chat?.provider ]
 	);
 
 	return { sendMessage, abort: abortController.abort.bind( abortController ) };

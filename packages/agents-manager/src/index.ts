@@ -30,6 +30,8 @@ export type {
 } from './types';
 
 export { useShouldUseUnifiedAgent } from './hooks/use-should-use-unified-agent';
+export { useAiChatEntryState } from './hooks/use-ai-chat-entry-state';
+export { default as AiChatEntryLabel } from './components/ai-chat-entry-label';
 
 // Feedback exports
 export {

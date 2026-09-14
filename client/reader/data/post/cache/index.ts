@@ -48,6 +48,15 @@ const isValidReaderPostId = ( value: unknown ): boolean => {
 	return Boolean( stringValue && stringValue !== '0' );
 };
 
+// Same rule as `isValidReaderPostId`, applied to a `feed_item_IDs`-shaped list:
+// drop entries that are `0`/missing so they can't form a false shared identity.
+const validReaderPostIds = ( values: unknown ): string[] =>
+	Array.isArray( values )
+		? values
+				.map( valueToString )
+				.filter( ( value ): value is string => isValidReaderPostId( value ) )
+		: [];
+
 const postKeyStringFromKey = ( postKey: PostCacheKey ): string | null => {
 	return keyToString( postKey );
 };
@@ -62,11 +71,11 @@ const postKeyStringsFromPost = ( post: Post ): string[] => {
 	const postId = valueToString( post.ID );
 	const feedId = valueToString( post.feed_ID );
 	const feedItemId = valueToString( post.feed_item_ID );
-	const feedItemIds = Array.isArray( post.feed_item_IDs )
-		? post.feed_item_IDs.map( valueToString ).filter( Boolean )
-		: [];
+	// `feed_item_IDs` entries are treated the same as `feed_item_ID`: a `0` means
+	// "no id assigned", not a real id, so it must not form a shared alias either.
+	const feedItemIds = validReaderPostIds( post.feed_item_IDs );
 
-	if ( feedId && feedItemId ) {
+	if ( feedId && isValidReaderPostId( post.feed_item_ID ) ) {
 		keyStrings.add( `feed-${ feedItemId }-${ feedId }` );
 	}
 	if ( feedId ) {
@@ -181,11 +190,14 @@ const postMatchesKey = ( post: Post, key: PostCacheKey ): boolean => {
 	}
 
 	if ( key.feedId && key.postId ) {
-		if ( ! valuesMatch( post.feed_ID, key.feedId ) ) {
+		if ( ! isValidReaderPostId( key.postId ) || ! valuesMatch( post.feed_ID, key.feedId ) ) {
 			return false;
 		}
 
-		if ( valuesMatch( post.feed_item_ID, key.postId ) ) {
+		if (
+			isValidReaderPostId( post.feed_item_ID ) &&
+			valuesMatch( post.feed_item_ID, key.postId )
+		) {
 			return true;
 		}
 
@@ -207,12 +219,23 @@ const postsShareIdentity = ( left: Post, right: Post ): boolean => {
 	) {
 		return true;
 	}
+	// `feed_item_ID: 0` means "no id assigned" (common for older externally-crawled
+	// items), not a real, matching id — every such item on a feed shares that `0`,
+	// so it must never be treated as shared identity. Mirrors the `isValidReaderPostId`
+	// guard above for `ID`.
 	if (
 		valuesMatch( left.feed_ID, right.feed_ID ) &&
-		( valuesMatch( left.feed_item_ID, right.feed_item_ID ) ||
-			arrayIncludesMatchingValue( left.feed_item_IDs, right.feed_item_ID ) ||
-			arrayIncludesMatchingValue( right.feed_item_IDs, left.feed_item_ID ) ||
-			arraysShareMatchingValue( left.feed_item_IDs, right.feed_item_IDs ) )
+		( ( isValidReaderPostId( left.feed_item_ID ) &&
+			isValidReaderPostId( right.feed_item_ID ) &&
+			valuesMatch( left.feed_item_ID, right.feed_item_ID ) ) ||
+			( isValidReaderPostId( right.feed_item_ID ) &&
+				arrayIncludesMatchingValue( left.feed_item_IDs, right.feed_item_ID ) ) ||
+			( isValidReaderPostId( left.feed_item_ID ) &&
+				arrayIncludesMatchingValue( right.feed_item_IDs, left.feed_item_ID ) ) ||
+			arraysShareMatchingValue(
+				validReaderPostIds( left.feed_item_IDs ),
+				validReaderPostIds( right.feed_item_IDs )
+			) )
 	) {
 		return true;
 	}

@@ -7,10 +7,18 @@ import { getPlansIntent } from '../util/get-plans-intent';
 describe( 'getPlansIntent', () => {
 	afterEach( () => {
 		window.history.replaceState( {}, '', '/' );
+		window.localStorage.clear();
 	} );
 
 	it( 'maps the ai-site-builder-onboarding flow to the four paid plans intent', () => {
 		expect( getPlansIntent( 'ai-site-builder-onboarding' ) ).toBe( 'plans-ai-assembler-paid-only' );
+	} );
+
+	it( 'uses the fixed Playground plans intent', () => {
+		window.history.replaceState( {}, '', '/?playground=playground-id' );
+		window.localStorage.setItem( 'playground-plans-intent-playground-id', 'plans-blog-onboarding' );
+
+		expect( getPlansIntent( ONBOARDING_FLOW ) ).toBe( 'plans-playground' );
 	} );
 
 	describe( 'onboarding flow blueprint param (legacy behavior)', () => {

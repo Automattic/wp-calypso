@@ -133,11 +133,9 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 							onClickAdditionalEvent?.( 'chat', {
 								has_open_conversation: !! supportInteraction,
 							} );
-							if ( isChatLoaded ) {
-								createZendeskConversation( {
-									createdFrom: 'chat_support_button',
-								} );
-							}
+							await createZendeskConversation( {
+								createdFrom: 'chat_support_button',
+							} );
 						},
 					} );
 				}

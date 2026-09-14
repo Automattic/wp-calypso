@@ -605,6 +605,26 @@ export interface Purchase {
 	is_plan_term_downgradable: boolean;
 
 	/**
+	 * True if this subscription's plan can be downgraded instantly, right now,
+	 * rather than having the change scheduled for its next renewal.
+	 *
+	 * When this is true, `POST /wpcom/v2/upgrades/$purchase_id/cancel` with
+	 * `{ type: 'downgrade', to_product_id }` will be accepted and will provision
+	 * the lower plan immediately.
+	 *
+	 * This is not the same question as `is_refundable`, and must not be derived
+	 * from it. In particular it is true for a refundable receipt worth nothing
+	 * (a comped plan, a 100%-off coupon, or a purchase paid entirely with
+	 * credits) — the instant downgrade is still valid, it just issues no refund.
+	 * For whether any money would come back, check `total_refund_amount`.
+	 *
+	 * It is also true for a renewal that is still within its own refund window,
+	 * not only for an initial purchase, so it is unrelated to
+	 * `is_within_initial_refund_window`.
+	 */
+	is_instant_downgrade_available: boolean;
+
+	/**
 	 * True if deactivating this subscription will cause the site to be reverted
 	 * from an Atomic site to a Simple site. This is only true if the site is
 	 * currently on the Atomic architecture and removing this subscription would

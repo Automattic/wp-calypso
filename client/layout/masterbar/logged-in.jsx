@@ -2,7 +2,6 @@ import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { Badge } from '@automattic/ui';
 // @ts-expect-error The commands package is not yet typed.
 import { store as commandsStore } from '@wordpress/commands';
 import { dispatch } from '@wordpress/data';
@@ -69,7 +68,6 @@ import Item from './item';
 import Masterbar from './masterbar';
 import MasterbarAiChatButton from './masterbar-agents-manager/ai-chat-button';
 import HelpIcon from './masterbar-agents-manager/help-icon';
-import { HelpCenterIcon } from './masterbar-help-center/help-center-icon';
 import { MasterbarLaunchButton } from './masterbar-launch-button';
 import Notifications from './masterbar-notifications/notifications-button';
 import MasterbarStatsSparkline from './masterbar-stats-sparkline';
@@ -87,10 +85,6 @@ const loadMasterbarCartWrapper = () =>
 const loadMasterbarAgentsManager = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-agents-manager" */ './masterbar-agents-manager'
-	);
-const loadMasterbarHelpCenter = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-help-center" */ './masterbar-help-center'
 	);
 
 class MasterbarLoggedIn extends Component {
@@ -521,9 +515,9 @@ class MasterbarLoggedIn extends Component {
 
 		return badges.length > 0
 			? badges.map( ( badge ) => (
-					<Badge className="masterbar__info-badge" key={ badge }>
+					<span className="masterbar__site-badge" key={ badge }>
 						{ badge }
-					</Badge>
+					</span>
 			  ) )
 			: null;
 	}
@@ -597,7 +591,7 @@ class MasterbarLoggedIn extends Component {
 					<div className="masterbar__site-info masterbar__site-plan">
 						<span className="masterbar__site-info-label">{ translate( 'Plan' ) }</span>
 						<div className="masterbar__info-badges">
-							<Badge className="masterbar__info-badge">{ sitePlanName }</Badge>
+							<span className="masterbar__site-badge">{ sitePlanName }</span>
 						</div>
 					</div>
 				),
@@ -949,37 +943,20 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	// The legacy Help Center entry point lives in the omnibar now; only the
+	// unified-agent variant is still drawn by this masterbar.
 	renderHelpCenter() {
 		const { siteId, translate, useUnifiedAgent } = this.props;
 
-		if ( useUnifiedAgent ) {
-			const placeholder = (
-				<Item
-					className="masterbar__item-agents-manager"
-					tooltip={ translate( 'Help' ) }
-					icon={ <HelpIcon /> }
-				/>
-			);
-
-			if ( ! this.state.mounted ) {
-				return placeholder;
-			}
-
-			return (
-				<AsyncLoad
-					require={ loadMasterbarAgentsManager }
-					siteId={ siteId }
-					tooltip={ translate( 'Help' ) }
-					placeholder={ placeholder }
-				/>
-			);
+		if ( ! useUnifiedAgent ) {
+			return null;
 		}
 
 		const placeholder = (
 			<Item
-				className="masterbar__item-help"
+				className="masterbar__item-agents-manager"
 				tooltip={ translate( 'Help' ) }
-				icon={ <HelpCenterIcon hasUnread={ false } /> }
+				icon={ <HelpIcon /> }
 			/>
 		);
 
@@ -989,7 +966,7 @@ class MasterbarLoggedIn extends Component {
 
 		return (
 			<AsyncLoad
-				require={ loadMasterbarHelpCenter }
+				require={ loadMasterbarAgentsManager }
 				siteId={ siteId }
 				tooltip={ translate( 'Help' ) }
 				placeholder={ placeholder }

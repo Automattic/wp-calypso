@@ -58,7 +58,7 @@ function SiteDomains() {
 		site,
 	} );
 
-	const actions = useActions( { user, sites: [ site ] } );
+	const actions = useActions( { user, sites: [ site ], domains: siteDomains } );
 
 	const searchParams = siteDomainsRoute.useSearch();
 	const navigate = useNavigate();

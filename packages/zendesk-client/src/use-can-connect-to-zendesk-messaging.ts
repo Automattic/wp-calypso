@@ -1,4 +1,9 @@
-import { getValidBlogId, recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
+import {
+	getValidBlogId,
+	NO_SITE_CONTEXT,
+	recordTracksEvent,
+	withSiteContext,
+} from '@automattic/calypso-analytics';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from '@wordpress/element';
 import type { Query } from '@tanstack/react-query';
@@ -10,8 +15,10 @@ const QUERY_KEY = [ 'canConnectToZendesk' ];
  * ones. Version 2 reports once per settled query instead of once per observer per state.
  * Version 3 attaches the support site as `blog_id` when a consumer knows it; only the
  * request event gained anything in v3, the error event merely shares the counter.
+ * Version 4 declares `site_context_source: 'none'` instead of omitting it when no
+ * consumer supplied a site.
  */
-const REPORTING_VERSION = 3;
+const REPORTING_VERSION = 4;
 
 type ReportingState = {
 	lastResolutionKey?: string;
@@ -51,8 +58,7 @@ function fetchZendeskConfig() {
  *
  * `siteId` is the support site the caller knows, if any. The connectivity check is shared
  * across all consumers, so the reported event attaches the last valid site any of them
- * supplied; when none did, the properties stay site-less rather than asserting that no
- * site exists.
+ * supplied; when none did, it reports `site_context_source: 'none'`.
  */
 export function useCanConnectToZendeskMessaging( enabled = true, siteId?: number | string ) {
 	const queryClient = useQueryClient();
@@ -135,9 +141,11 @@ export function useCanConnectToZendeskMessaging( enabled = true, siteId?: number
 		};
 		recordTracksEvent(
 			'calypso_helpcenter_zendesk_config_request',
-			reportingState.blogId
-				? withSiteContext( requestProperties, 'help_center_context', reportingState.blogId )
-				: requestProperties
+			withSiteContext(
+				requestProperties,
+				reportingState.blogId ? 'help_center_context' : NO_SITE_CONTEXT,
+				reportingState.blogId
+			)
 		);
 		// The two timestamps look redundant next to `fetchStatus`, which already cycles on
 		// every network refetch. They are what re-runs this for a resolution that leaves

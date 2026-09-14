@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/ui';
 import {
 	Button,
 	Icon,
@@ -8,6 +7,7 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { Fragment } from 'react';
 import { Card, CardBody, CardDivider, CardHeader } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
@@ -130,7 +130,7 @@ function BenefitRow( {
 					<Text weight={ 500 } variant={ isLocked ? 'muted' : undefined }>
 						{ benefit.title }
 					</Text>
-					{ benefit.status && <Badge intent="default" children={ benefit.status } /> }
+					{ benefit.status && <Badge intent="draft" children={ benefit.status } /> }
 				</HStack>
 				<Text size={ 12 } variant="muted">
 					{ benefit.description }

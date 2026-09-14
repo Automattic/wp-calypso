@@ -6,8 +6,6 @@ export { getPostPreviewUrl } from 'calypso/state/posts/selectors/get-post-previe
 export { getPostsForQuery } from 'calypso/state/posts/selectors/get-posts-for-query';
 export { getPostsLastPageForQuery } from 'calypso/state/posts/selectors/get-posts-last-page-for-query';
 export { getSitePost } from 'calypso/state/posts/selectors/get-site-post';
-export { getSitePosts } from 'calypso/state/posts/selectors/get-site-posts';
-export { getSitePostsByTerm } from 'calypso/state/posts/selectors/get-site-posts-by-term';
 export { isPostsLastPageForQuery } from 'calypso/state/posts/selectors/is-posts-last-page-for-query';
 export { isRequestingPostsForQuery } from 'calypso/state/posts/selectors/is-requesting-posts-for-query';
 export { isRequestingSitePost } from 'calypso/state/posts/selectors/is-requesting-site-post';

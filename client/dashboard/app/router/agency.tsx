@@ -23,7 +23,6 @@ import {
 	wooPaymentsLicensesQuery,
 	WOOPAYMENTS_PLUGIN,
 } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { hasApprovedDirectory } from '../../agency/partner-directory/lib';
@@ -419,16 +418,6 @@ export const mcpRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'AI and MCP' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'resources/ai-mcp',
-	beforeLoad: async ( { cause } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-
-		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
-		if ( ! agency?.mcp?.allowed ) {
-			throw redirectAsNotAllowed( { to: '/overview' } );
-		}
-	},
 } );
 
 const mcpOverviewRoute = createRoute( {
@@ -882,7 +871,7 @@ export const agencySiteScanHistoryRoute = createRoute( {
 	)
 );
 
-// `/sites/$siteSlug/performance` – layout hosting the Frontend and Backend views
+// `/sites/$siteSlug/performance` - layout hosting the page speed and server response views
 const agencySitePerformanceRoute = createRoute( {
 	staticData: { requiresSiteTypeSupport: 'performance' },
 	head: () => ( { meta: [ { title: __( 'Performance' ) } ] } ),
@@ -905,9 +894,6 @@ const agencySitePerformanceIndexRoute = createRoute( {
 } );
 
 export const agencySitePerformanceFrontendRoute = createRoute( {
-	head: () => ( {
-		meta: [ { title: isEnabled( 'performance/apm' ) ? __( 'Frontend' ) : undefined } ],
-	} ),
 	getParentRoute: () => agencySitePerformanceRoute,
 	path: 'frontend',
 } ).lazy( () =>
@@ -919,7 +905,6 @@ export const agencySitePerformanceFrontendRoute = createRoute( {
 );
 
 export const agencySitePerformanceBackendRoute = createRoute( {
-	head: () => ( { meta: [ { title: __( 'Backend' ) } ] } ),
 	getParentRoute: () => agencySitePerformanceRoute,
 	path: 'backend',
 } );

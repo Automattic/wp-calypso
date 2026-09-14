@@ -26,11 +26,12 @@ const setIsMinimized = jest.fn();
 const mockStoreState = (
 	state: { hasLoaded?: boolean; isOpen?: boolean; isMinimized?: boolean } = {}
 ) => {
+	const { hasLoaded = true, isOpen = false, isMinimized = false } = state;
 	mockUseSelect.mockImplementation( () => ( {
-		hasLoaded: true,
-		isOpen: false,
-		isMinimized: false,
-		...state,
+		hasLoaded,
+		isOpen,
+		isMinimized,
+		isChatVisible: isOpen && ! isMinimized,
 	} ) );
 };
 

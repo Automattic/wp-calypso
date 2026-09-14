@@ -11,7 +11,7 @@ interface DnsRequirementsNoticeProps {
 }
 
 export const DnsRequirementsNotice = ( { domainName, domainData }: DnsRequirementsNoticeProps ) => {
-	if ( ! domainData.has_wpcom_nameservers ) {
+	if ( domainData.has_wpcom_nameservers ) {
 		return null;
 	}
 

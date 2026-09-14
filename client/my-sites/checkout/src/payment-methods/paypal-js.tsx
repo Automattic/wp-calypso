@@ -1,5 +1,6 @@
 import { PayPalConfigurationApiResponse, PayPalProvider } from '@automattic/calypso-paypal';
 import {
+	PaymentProcessorResponseType,
 	useTogglePaymentMethod,
 	type PaymentMethod,
 	type ProcessPayment,
@@ -190,8 +191,24 @@ function PayPalSubmitButton( {
 		// handler) to call the transactions endpoint and then eventually
 		// return here to trigger the PayPal popup which happens when this
 		// Promise resolves with the PayPal order ID.
-		const { promise: orderPromise, resolve: resolvePayPalOrderPromise } = deferred< string >();
-		onClick( { resolvePayPalOrderPromise, payPalApprovalPromise } );
+		const {
+			promise: orderPromise,
+			resolve: resolvePayPalOrderPromise,
+			reject: rejectPayPalOrderPromise,
+		} = deferred< string >();
+		onClick( { resolvePayPalOrderPromise, payPalApprovalPromise } )
+			.then( ( response ) => {
+				if ( response.type === PaymentProcessorResponseType.ERROR ) {
+					// PayPal already opened its checkout UI; rejecting createOrder
+					// is how we ask it to close when we never minted an order.
+					rejectPayPalOrderPromise( new Error( response.payload ) );
+					setForceReRender( ( val ) => val + 1 );
+				}
+			} )
+			.catch( ( error ) => {
+				rejectPayPalOrderPromise( error );
+				setForceReRender( ( val ) => val + 1 );
+			} );
 		return orderPromise;
 	};
 

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { getSafeEditorUrl } from '../editor-url';
+import { getLiveEditorUrl, getSafeEditorUrl } from '../editor-url';
 
 describe( 'getSafeEditorUrl', () => {
 	it( 'returns null for a missing value', () => {
@@ -77,5 +77,42 @@ describe( 'getSafeEditorUrl', () => {
 		expect( getSafeEditorUrl( 'https://evil.example/phishing' ) ).toBeNull();
 		expect( getSafeEditorUrl( 'https://evilwordpress.com/' ) ).toBeNull();
 		expect( getSafeEditorUrl( 'https://wordpress.com.evil.example/' ) ).toBeNull();
+	} );
+} );
+
+describe( 'getLiveEditorUrl', () => {
+	const captured =
+		'https://example.wordpress.com/wp-admin/site-editor.php?easy-mode=true&source=dashboard';
+	const live =
+		'https://example.wordpress.com/wp-admin/site-editor.php?easy-mode=true&p=%2Fpage%2F12&canvas=edit';
+
+	it( 'prefers the live URL and carries over the query args the flow added', () => {
+		const url = new URL( getLiveEditorUrl( captured, live ) );
+
+		expect( url.origin + url.pathname ).toBe(
+			'https://example.wordpress.com/wp-admin/site-editor.php'
+		);
+		expect( url.searchParams.get( 'p' ) ).toBe( '/page/12' );
+		expect( url.searchParams.get( 'canvas' ) ).toBe( 'edit' );
+		expect( url.searchParams.get( 'easy-mode' ) ).toBe( 'true' );
+		expect( url.searchParams.get( 'source' ) ).toBe( 'dashboard' );
+		// Not duplicated: the live URL's own value wins for a shared key.
+		expect( url.searchParams.getAll( 'easy-mode' ) ).toEqual( [ 'true' ] );
+	} );
+
+	it( 'keeps the route encoded the way the site editor documents it', () => {
+		expect( getLiveEditorUrl( captured, live ) ).toContain( 'p=%2Fpage%2F12' );
+	} );
+
+	it( 'falls back to the captured URL when the response carries none', () => {
+		expect( getLiveEditorUrl( captured, undefined ) ).toBe( captured );
+		expect( getLiveEditorUrl( captured, '' ) ).toBe( captured );
+		expect( getLiveEditorUrl( captured, 42 ) ).toBe( captured );
+	} );
+
+	it( 'falls back to the captured URL when the live URL fails the host allowlist', () => {
+		expect( getLiveEditorUrl( captured, 'https://evil.example/wp-admin/site-editor.php' ) ).toBe(
+			captured
+		);
 	} );
 } );

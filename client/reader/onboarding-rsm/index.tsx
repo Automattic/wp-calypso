@@ -14,9 +14,6 @@ import { useSiteSubscriptions as useCachedSiteSubscriptions } from 'calypso/read
 import { useFollowedTags } from 'calypso/reader/data/tags';
 import { useNonSelfSubscriptionsCount } from 'calypso/reader/following/hooks/use-non-self-subscriptions-count';
 import {
-	READER_EARLY_READERS_DECLINED_EVENT,
-	READER_EARLY_READERS_OPT_IN_EVENT,
-	READER_EARLY_READERS_SOURCE_STEP,
 	READER_ONBOARDING_ELIGIBLE_REGISTRATION_DATE,
 	READER_ONBOARDING_MIN_FOLLOWED_SITES,
 	READER_ONBOARDING_MIN_FOLLOWED_TAGS,
@@ -25,7 +22,6 @@ import {
 	READER_ONBOARDING_PREFERENCE_KEY,
 	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
 } from 'calypso/reader/onboarding-rsm/constants';
-import { EarlyReadersModal } from 'calypso/reader/onboarding-rsm/early-readers-modal';
 import InterestsModal from 'calypso/reader/onboarding-rsm/interests-modal';
 import { getPackBlogs } from 'calypso/reader/onboarding-rsm/interests-modal/get-pack-blogs';
 import { getTopicGroups } from 'calypso/reader/onboarding-rsm/interests-modal/topic-groups';
@@ -34,12 +30,10 @@ import WelcomeModal from 'calypso/reader/onboarding-rsm/welcome-modal';
 import { useDispatch, useSelector } from 'calypso/state';
 import {
 	getCurrentUserDate,
-	getCurrentUserSiteCount,
 	isCurrentUserEmailVerified,
 } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { getReloadStep } from './get-reload-step';
 import { useRefreshFollowingStreams } from './use-refresh-following-streams';
 import type { CuratedBlog } from 'calypso/reader/onboarding-rsm/curated-blogs';
@@ -49,21 +43,12 @@ import './style.scss';
 // them feel seamless (no close/open animation between steps). The active
 // step's body is rendered as the only child of the shared modal; the
 // per-step CSS class on the modal frame keeps existing styles working.
-type Step = 'welcome' | 'interests' | 'discover' | 'early-readers';
+type Step = 'welcome' | 'interests' | 'discover';
 
 const STEP_FRAME_CLASS: Record< Step, string > = {
 	welcome: 'reader-welcome-modal',
 	interests: 'interests-modal',
 	discover: 'subscribe-modal',
-	'early-readers': 'early-readers-modal',
-};
-
-// Infix of the `*_modal_open` / `*_modal_close` Tracks events.
-const STEP_EVENT_SLUG: Record< Step, string > = {
-	welcome: 'welcome',
-	interests: 'interests',
-	discover: 'discover',
-	'early-readers': 'early_readers',
 };
 
 const ReaderOnboardingRsm = ( {
@@ -111,9 +96,6 @@ const ReaderOnboardingRsm = ( {
 	);
 	const userRegistrationDate = useSelector( getCurrentUserDate ) as string | null;
 	const promptVerification = ! useSelector( isCurrentUserEmailVerified );
-	const currentUserSiteCount = useSelector( getCurrentUserSiteCount ) as number | null;
-	const hasSite = ( currentUserSiteCount ?? 0 ) > 0;
-	const primarySiteId = useSelector( getPrimarySiteId ) as number | null;
 
 	const hasCompletedOnboarding: boolean | null = useSelector( ( state ) =>
 		getPreference( state, READER_ONBOARDING_PREFERENCE_KEY )
@@ -143,13 +125,9 @@ const ReaderOnboardingRsm = ( {
 	//   persists across remounts of `InterestsModal` — without that, a user
 	//   could subscribe to a tagless pack, advance to discover, click Back,
 	//   and find the relaxed Continue gate forgotten on the fresh modal.
-	// - `hasJoinedEarlyReaders`: latched on opt-in. Owned here because the parent
-	//   renders the modal's Back button and decides whether the dismiss path
-	//   records a decline.
 	const [ currentStep, setCurrentStep ] = useState< Step | null >( null );
 	const [ hasHiddenOnboardingThisSession, setHasHiddenOnboardingThisSession ] = useState( false );
 	const [ hasFollowedInInterestsStep, setHasFollowedInInterestsStep ] = useState( false );
-	const [ hasJoinedEarlyReaders, setHasJoinedEarlyReaders ] = useState( false );
 	const [ isDismissConfirmOpen, setIsDismissConfirmOpen ] = useState( false );
 	const markFollowedInInterestsStep = () => setHasFollowedInInterestsStep( true );
 	const hideOnboardingThisSession = () => setHasHiddenOnboardingThisSession( true );
@@ -231,10 +209,6 @@ const ReaderOnboardingRsm = ( {
 
 	const shouldRenderOnboarding = shouldShowOnboarding && ! isSuppressed;
 
-	// The Early Readers opt-in step (a 4th step after discover) ships to everyone
-	// who sees onboarding.
-	const totalOnboardingSteps = 4;
-
 	// Lazy-initialize the blog map now that we know the modal will be shown.
 	// Placing this after shouldRenderOnboarding means getTopicGroups /
 	// getPackBlogs never run for the common case where onboarding is not shown.
@@ -264,74 +238,34 @@ const ReaderOnboardingRsm = ( {
 		}
 	};
 
-	const recordStepEvent = ( step: Step, action: 'open' | 'close' ) => {
-		recordTracksEvent(
-			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }${ STEP_EVENT_SLUG[ step ] }_modal_${ action }`
-		);
+	const recordStepClose = ( step: Step ) => {
+		if ( step === 'welcome' ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }welcome_modal_close` );
+		} else if ( step === 'interests' ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_close` );
+		} else if ( step === 'discover' ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_close` );
+		}
 	};
 
-	const recordStepClose = ( step: Step ) => recordStepEvent( step, 'close' );
-
-	const recordStepOpen = ( step: Step ) => recordStepEvent( step, 'open' );
+	const recordStepOpen = ( step: Step ) => {
+		if ( step === 'welcome' ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }welcome_modal_open` );
+		} else if ( step === 'interests' ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_open` );
+		} else if ( step === 'discover' ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_open` );
+		}
+	};
 
 	const openStep = ( step: Step ) => {
 		recordStepOpen( step );
 		setCurrentStep( step );
 	};
 
-	const recordOnboardingCompleted = () => {
-		// record tracks for completion regardless of setting, to still track it in flows that forceShow.
-		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`, {
-			followed_tags_count: followedTags?.length ?? 0,
-			followed_non_self_sites_count: followedNonSelfSitesCount,
-		} );
-		if ( hasCompletedOnboarding ) {
-			return;
-		}
-		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
-	};
-
-	// Must run exactly once on every exit that counts as finishing the flow.
-	const completeOnboarding = ( step: Step ) => {
-		// Fire-and-forget: errors are swallowed so Finish UI is never blocked.
-		void flushOnboardingWelcomeDigest().catch( () => {} );
-		recordOnboardingCompleted();
-		runStepSideEffects( step );
-		setCurrentStep( null );
-		hideOnboardingThisSession();
-	};
-
-	// Shared by both sides of the funnel so they can be joined on these fields.
-	const earlyReadersEventProps = {
-		has_site: hasSite,
-		blog_id: primarySiteId,
-		source_step: READER_EARLY_READERS_SOURCE_STEP,
-	};
-
-	// Both decline methods are non-participation and both belong in the opt-in
-	// rate's denominator, but a dismiss is weaker evidence of a real "no".
-	const recordEarlyReadersDeclined = ( declineMethod: 'button' | 'dismiss' ) => {
-		recordTracksEvent( READER_EARLY_READERS_DECLINED_EVENT, {
-			...earlyReadersEventProps,
-			decline_method: declineMethod,
-		} );
-	};
-
 	const handleStepClose = () => {
 		if ( currentStep ) {
 			recordStepClose( currentStep );
-			// Unlike the other steps, this one sits past the discover step's
-			// forward action, so dismissing it still finishes onboarding.
-			if ( currentStep === 'early-readers' ) {
-				// Closing the offer counts as a decline, keeping the opt-in rate's
-				// denominator whole. After a join the user is dismissing the
-				// confirmation, not the offer.
-				if ( ! hasJoinedEarlyReaders ) {
-					recordEarlyReadersDeclined( 'dismiss' );
-				}
-				completeOnboarding( 'early-readers' );
-				return;
-			}
 			runStepSideEffects( currentStep );
 		}
 		setCurrentStep( null );
@@ -363,28 +297,25 @@ const ReaderOnboardingRsm = ( {
 		openStep( 'interests' );
 	};
 
+	const recordOnboardingCompleted = () => {
+		// record tracks for completion regardless of setting, to still track it in flows that forceShow.
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`, {
+			followed_tags_count: followedTags?.length ?? 0,
+			followed_non_self_sites_count: followedNonSelfSitesCount,
+		} );
+		if ( hasCompletedOnboarding ) {
+			return;
+		}
+		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
+	};
+
 	const handleDiscoverFinish = () => {
+		// Fire-and-forget: errors are swallowed so Finish UI is never blocked.
+		void flushOnboardingWelcomeDigest().catch( () => {} );
+		recordOnboardingCompleted();
 		runStepSideEffects( 'discover' );
-		openStep( 'early-readers' );
-	};
-
-	const handleEarlyReadersBack = () => {
-		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }early_readers_modal_back` );
-		openStep( 'discover' );
-	};
-
-	const handleEarlyReadersJoin = () => {
-		setHasJoinedEarlyReaders( true );
-		recordTracksEvent( READER_EARLY_READERS_OPT_IN_EVENT, earlyReadersEventProps );
-	};
-
-	const handleEarlyReadersDecline = () => {
-		recordEarlyReadersDeclined( 'button' );
-		completeOnboarding( 'early-readers' );
-	};
-
-	const handleEarlyReadersFinish = () => {
-		completeOnboarding( 'early-readers' );
+		setCurrentStep( null );
+		hideOnboardingThisSession();
 	};
 
 	const itemClickHandler = ( task: Task ) => {
@@ -480,23 +411,28 @@ const ReaderOnboardingRsm = ( {
 		},
 	];
 
-	const stepBackHandler: Partial< Record< Step, () => void > > = {
-		interests: handleInterestsBack,
-		discover: handleDiscoverBack,
-		// Omitted once the user is in: Back would walk them from the confirmation
-		// into the discover step, implying the opt-in can be undone. It can't.
-		...( hasJoinedEarlyReaders ? {} : { 'early-readers': handleEarlyReadersBack } ),
-	};
-	const onModalBack = currentStep ? stepBackHandler[ currentStep ] : undefined;
-	const modalBackButton = onModalBack ? (
-		<Button
-			size="compact"
-			className="reader-onboarding-modal__back-button"
-			onClick={ onModalBack }
-			icon={ chevronLeft }
-			label={ translate( 'Back' ) }
-		/>
-	) : null;
+	let modalBackButton = null;
+	if ( currentStep === 'interests' ) {
+		modalBackButton = (
+			<Button
+				size="compact"
+				className="reader-onboarding-modal__back-button"
+				onClick={ handleInterestsBack }
+				icon={ chevronLeft }
+				label={ translate( 'Back' ) }
+			/>
+		);
+	} else if ( currentStep === 'discover' ) {
+		modalBackButton = (
+			<Button
+				size="compact"
+				className="reader-onboarding-modal__back-button"
+				onClick={ handleDiscoverBack }
+				icon={ chevronLeft }
+				label={ translate( 'Back' ) }
+			/>
+		);
+	}
 
 	return (
 		<>
@@ -570,11 +506,7 @@ const ReaderOnboardingRsm = ( {
 					headerActions={ modalBackButton }
 				>
 					{ currentStep === 'welcome' && (
-						<WelcomeModal
-							onClose={ handleStepClose }
-							onContinue={ handleWelcomeContinue }
-							totalSteps={ totalOnboardingSteps }
-						/>
+						<WelcomeModal onClose={ handleStepClose } onContinue={ handleWelcomeContinue } />
 					) }
 					{ currentStep === 'interests' && (
 						<InterestsModal
@@ -585,24 +517,12 @@ const ReaderOnboardingRsm = ( {
 							packBlogsById={ packBlogsByIdRef.current! }
 							relaxedPackCriteria={ relaxedPackCriteria }
 							onPackSubscribed={ handlePackSubscribed }
-							totalSteps={ totalOnboardingSteps }
 						/>
 					) }
 					{ currentStep === 'discover' && (
 						<SubscribeModal
 							onFinish={ handleDiscoverFinish }
 							promptVerification={ promptVerification }
-							totalSteps={ totalOnboardingSteps }
-						/>
-					) }
-					{ currentStep === 'early-readers' && (
-						<EarlyReadersModal
-							hasSite={ hasSite }
-							hasJoined={ hasJoinedEarlyReaders }
-							totalSteps={ totalOnboardingSteps }
-							onDecline={ handleEarlyReadersDecline }
-							onJoin={ handleEarlyReadersJoin }
-							onFinish={ handleEarlyReadersFinish }
 						/>
 					) }
 				</Modal>

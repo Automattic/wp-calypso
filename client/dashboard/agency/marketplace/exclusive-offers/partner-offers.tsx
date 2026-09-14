@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/ui';
 import {
 	Button,
 	__experimentalGrid as Grid,
@@ -9,6 +8,7 @@ import {
 } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useState, useMemo } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
@@ -63,7 +63,7 @@ function PartnerOfferCard( {
 						>
 							{ item.logo }
 						</HStack>
-						{ offerType?.label && <Badge>{ offerType.label }</Badge> }
+						{ offerType?.label && <Badge intent="draft">{ offerType.label }</Badge> }
 					</HStack>
 					<VStack spacing={ 1 }>
 						<Text size={ 13 } weight={ 500 }>

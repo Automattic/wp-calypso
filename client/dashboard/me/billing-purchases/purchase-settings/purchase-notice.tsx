@@ -1,9 +1,4 @@
-import {
-	DomainProductSlugs,
-	DotcomPlans,
-	WooHostedPlans,
-	getPlanNames,
-} from '@automattic/api-core';
+import { DomainProductSlugs, DotcomPlans, WooHostedPlans } from '@automattic/api-core';
 import {
 	purchaseQuery,
 	sitePurchasesQuery,
@@ -33,6 +28,7 @@ import {
 	isEligibleForPlanExpiryNotice,
 } from '../../../components/plan-expiry-notice';
 import { formatDate } from '../../../utils/datetime';
+import { getDowngradeTargetProductName } from '../../../utils/downgrade-target-name';
 import { wpcomLink } from '../../../utils/link';
 import {
 	isExpiredOrRemoved,
@@ -222,14 +218,11 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		);
 	}
 
-	// Persistent warning notice when a delayed downgrade is pending. Left ungated
-	// by `plans/delayed-downgrade` so a scheduled downgrade (and its cancel
-	// button) always stays visible, even if the flag is turned off as a kill
-	// switch while a downgrade is pending.
+	// Persistent warning notice when a delayed downgrade is pending.
 	if ( purchase.is_delayed_downgrade_pending ) {
-		const slug = purchase.delayed_downgrade_to_product_slug;
-		const planNames = getPlanNames() as Record< string, string | undefined >;
-		const targetPlanName = slug ? planNames[ slug ] ?? null : null;
+		const targetPlanName = getDowngradeTargetProductName(
+			purchase.delayed_downgrade_to_product_slug
+		);
 		// `renew_date` is the next auto-renewal attempt date, which for annual
 		// plans is up to 30 days before expiry. The downgrade takes effect on
 		// that renewal, so it's the accurate date to show the customer.
@@ -379,13 +372,11 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 
 	if ( shouldShowExpiredRenewNotice( purchase, purchaseAttachedTo ) ) {
 		return (
-			<>
-				<ExpiredRenewNotice
-					purchase={ purchase }
-					purchaseAttachedTo={ purchaseAttachedTo }
-					refunded={ refunded }
-				/>
-			</>
+			<ExpiredRenewNotice
+				purchase={ purchase }
+				purchaseAttachedTo={ purchaseAttachedTo }
+				refunded={ refunded }
+			/>
 		);
 	}
 

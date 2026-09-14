@@ -1,9 +1,9 @@
 import { agencyProductsQuery, referralCommissionPayoutQuery } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalGrid as Grid, __experimentalHStack as HStack } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useMemo } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
 import { useLocale } from '../../../../app/locale';

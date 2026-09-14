@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import getSite from 'calypso/state/sites/selectors/get-site';
@@ -16,6 +17,10 @@ jest.mock( 'calypso/state/selectors/get-primary-site-slug', () => ( {
 	__esModule: true,
 	default: jest.fn(),
 } ) );
+jest.mock( 'calypso/state/selectors/get-primary-site-id', () => ( {
+	__esModule: true,
+	default: jest.fn(),
+} ) );
 jest.mock( 'calypso/state/sites/selectors', () => ( {
 	getSiteBySlug: jest.fn(),
 } ) );
@@ -25,6 +30,7 @@ jest.mock( 'calypso/state/sites/selectors/get-site', () => ( {
 } ) );
 
 const mockGetSelectedSite = getSelectedSite as unknown as jest.Mock;
+const mockGetPrimarySiteId = getPrimarySiteId as unknown as jest.Mock;
 const mockGetPrimarySiteSlug = getPrimarySiteSlug as unknown as jest.Mock;
 const mockGetSiteBySlug = getSiteBySlug as unknown as jest.Mock;
 const mockGetSite = getSite as unknown as jest.Mock;
@@ -38,6 +44,7 @@ describe( 'useHelpCenterSite', () => {
 		jest.clearAllMocks();
 		window.history.replaceState( {}, '', '/' );
 		mockGetSelectedSite.mockReturnValue( null );
+		mockGetPrimarySiteId.mockReturnValue( null );
 		mockGetPrimarySiteSlug.mockReturnValue( null );
 		mockGetSiteBySlug.mockReturnValue( null );
 		mockGetSite.mockReturnValue( null );
@@ -89,6 +96,16 @@ describe( 'useHelpCenterSite', () => {
 		const { result } = renderHookWithProvider( () => useHelpCenterSite() );
 
 		expect( result.current.site ).toBe( primarySite );
+		expect( result.current.siteContextSource ).toBe( 'calypso_primary_site' );
+	} );
+
+	it( 'falls back to primary site ID before primary site data loads', () => {
+		mockGetPrimarySiteId.mockReturnValue( 3 );
+
+		const { result } = renderHookWithProvider( () => useHelpCenterSite() );
+
+		expect( result.current.site ).toBeNull();
+		expect( result.current.siteId ).toBe( 3 );
 		expect( result.current.siteContextSource ).toBe( 'calypso_primary_site' );
 	} );
 

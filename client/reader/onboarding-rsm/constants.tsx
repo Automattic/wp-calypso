@@ -1,14 +1,4 @@
 export const READER_ONBOARDING_PREFERENCE_KEY = 'has_completed_reader_onboarding';
-
-// Deliberately outside the `calypso_reader_onboarding_` prefix: these measure
-// the Early Readers program's own funnel, not onboarding step navigation.
-export const READER_EARLY_READERS_OPT_IN_EVENT = 'calypso_reader_early_readers_opt_in';
-export const READER_EARLY_READERS_DECLINED_EVENT = 'calypso_reader_early_readers_declined';
-
-// Identifies which onboarding step hosted the opt-in screen, so v1 can move the
-// placement without making the v0 numbers ambiguous.
-export const READER_EARLY_READERS_SOURCE_STEP = 'onboarding_final';
-
 export const READER_ONBOARDING_SEEN_PREFERENCE_KEY = 'has_seen_reader_onboarding';
 export const READER_ONBOARDING_DISMISSED_PREFERENCE_KEY = 'has_dismissed_reader_onboarding';
 export const READER_ONBOARDING_TRACKS_EVENT_PREFIX = 'calypso_reader_onboarding_';

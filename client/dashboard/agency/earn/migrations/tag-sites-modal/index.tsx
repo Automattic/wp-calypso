@@ -138,12 +138,16 @@ export default function MigrationsTagSitesModal( {
 	return (
 		<Modal
 			className="migrations-tag-sites-modal"
-			title={ __( 'Tag your transferred sites for commission.' ) }
+			title={ __( 'Tag the sites you moved to Automattic for commission.' ) }
 			onRequestClose={ handleOnClose }
 			size="large"
 		>
 			<VStack spacing={ 4 }>
-				<Text>{ __( 'Select the sites you moved on your own.' ) }</Text>
+				<Text>
+					{ __(
+						'This list shows every site connected to your account. Tag the ones you moved to Automattic so we can pay you for them.'
+					) }
+				</Text>
 				<HStack
 					className="migrations-tag-sites-modal__instruction"
 					spacing={ 2 }
@@ -154,7 +158,7 @@ export default function MigrationsTagSitesModal( {
 					<Icon size={ 18 } icon={ info } />
 					<Text variant="muted">
 						{ __(
-							'Can’t find your transferred site? Ensure the Automattic for Agencies plugin is connected in WP-Admin to display the site here.'
+							'Can’t find a site you moved? Ensure the Automattic for Agencies plugin is connected in WP-Admin to display the site here.'
 						) }
 					</Text>
 				</HStack>

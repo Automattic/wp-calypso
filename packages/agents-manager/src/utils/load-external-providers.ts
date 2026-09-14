@@ -18,6 +18,7 @@ import { withAbilityCompletionBroadcast } from './ability-completion-broadcast';
 import { withCanvasBinding, withCanvasGuard } from './canvas-guard';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent } from './is-reader-chat-agent';
+import { setLoadedProviderIds } from './loaded-provider-ids';
 import {
 	getProviderCheckpointObservedAt,
 	getProviderCheckpointRecords,
@@ -581,10 +582,12 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	if ( registerReaderFollowups ) {
 		// Reader Chat runs on the public frontend and should not inherit editor providers
 		// such as the Jetpack AI sidebar.
+		setLoadedProviderIds( [] );
 		return { useSuggestions: useReaderFollowupSuggestions };
 	}
 
 	if ( agentProviders.length === 0 ) {
+		setLoadedProviderIds( [] );
 		return {};
 	}
 
@@ -840,6 +843,8 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			return combined;
 		};
 	}
+
+	setLoadedProviderIds( allProviderIds );
 
 	return {
 		toolProvider: mergedToolProvider,

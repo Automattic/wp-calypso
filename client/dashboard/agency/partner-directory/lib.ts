@@ -6,7 +6,7 @@ import type {
 	AgencyPartnerDirectorySlug,
 	AgencyProfile,
 } from '@automattic/api-core';
-import type { Badge } from '@automattic/ui';
+import type { Badge } from '@wordpress/ui';
 import type { ComponentProps } from 'react';
 
 export type StatusBadgeIntent = ComponentProps< typeof Badge >[ 'intent' ];
@@ -30,15 +30,15 @@ export function getDirectoryStatusBadge(
 ): DirectoryStatusBadge {
 	switch ( status ) {
 		case 'pending':
-			return { key: 'pending', label: __( 'Pending' ), intent: 'warning' };
+			return { key: 'pending', label: __( 'Pending' ), intent: 'medium' };
 		case 'approved':
-			return { key: 'approved', label: __( 'Approved' ), intent: 'success' };
+			return { key: 'approved', label: __( 'Approved' ), intent: 'stable' };
 		case 'rejected':
-			return { key: 'rejected', label: __( 'Not approved' ), intent: 'error' };
+			return { key: 'rejected', label: __( 'Not approved' ), intent: 'high' };
 		case 'closed':
-			return { key: 'closed', label: __( 'Closed' ), intent: 'default' };
+			return { key: 'closed', label: __( 'Closed' ), intent: 'draft' };
 		default:
-			return { key: 'unknown', label: '-', intent: 'default' };
+			return { key: 'unknown', label: '-', intent: 'draft' };
 	}
 }
 

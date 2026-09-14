@@ -1,5 +1,17 @@
 @import '@wordpress/base-styles/variables';
 
+// Set the font explicitly so the modal doesn't inherit the host page's font
+// (e.g. a site theme's typography when shown over a site preview).
+.site-launch-pre-launch-modal {
+	font-family: $default-font;
+
+	// The header title is styled by a rule that targets this element directly,
+	// which beats the inherited font above, so declare it here as well.
+	.components-modal__header-heading-container {
+		font-family: $default-font;
+	}
+}
+
 .site-launch-pre-launch-modal__preview-card {
 	padding: $grid-unit-20 $grid-unit-20;
 	background-color: var( --studio-blue-5 );

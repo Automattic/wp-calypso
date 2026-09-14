@@ -47,6 +47,7 @@
 		{ "path": "./launchpad" },
 		{ "path": "./mini-cart" },
 		{ "path": "./odie-client" },
+		{ "path": "./omnibar" },
 		{ "path": "./onboarding" },
 		{ "path": "./photon" },
 		{ "path": "./plans-grid-next" },
@@ -63,7 +64,6 @@
 		{ "path": "./viewport" },
 		{ "path": "./viewport-react" },
 		{ "path": "./wpcom-checkout" },
-		{ "path": "./wpcom-smart-dictation" },
 		{ "path": "./verbum-block-editor" },
 		{ "path": "./wpcom-template-parts" },
 		{ "path": "./zendesk-client" }

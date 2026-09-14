@@ -43,6 +43,8 @@ import type {
 	CommentLikeResponse,
 	JetpackSearchResponse,
 	JetpackSearchParams,
+	SiteSettingsParams,
+	SiteSettingsResponse,
 	Subscriber,
 	SitePostState,
 	AllPurchasesResponse,
@@ -54,7 +56,7 @@ import type {
 /**
  * Specifies the version of WordPress.com REST API.
  */
-type EndpointVersions = '1' | '1.1' | '1.2' | '1.3' | '2';
+type EndpointVersions = '1' | '1.1' | '1.2' | '1.3' | '1.4' | '2';
 type EndpointNamespace = 'rest' | 'wpcom' | 'wp';
 
 /**
@@ -1280,6 +1282,72 @@ export class RestAPIClient {
 		return response.media[ 0 ];
 	}
 
+	/* Site Settings */
+
+	/**
+	 * Gets the settings of a site.
+	 *
+	 * @param {number|string} siteID Site ID or slug.
+	 * @returns {Promise<SiteSettingsResponse>} The site name and its settings.
+	 * @throws {Error} If API responded with an error.
+	 */
+	async getSiteSettings( siteID: number | string ): Promise< SiteSettingsResponse > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.4', `/sites/${ siteID }/settings` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Updates the settings of a site.
+	 *
+	 * @param {number|string} siteID Site ID or slug.
+	 * @param {SiteSettingsParams} settings Key/value attributes to be set for the site.
+	 * @returns {Promise<SiteSettingsParams>} The settings that were updated.
+	 * @throws {Error} If API responded with an error.
+	 */
+	async setSiteSettings(
+		siteID: number | string,
+		settings: SiteSettingsParams
+	): Promise< SiteSettingsParams > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( settings ),
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.4', `/sites/${ siteID }/settings` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response.updated;
+	}
+
 	/* Shopping Cart */
 
 	/**
@@ -1535,7 +1603,7 @@ export class RestAPIClient {
 	async deleteAllWidgets( siteID: number ): Promise< void > {
 		const widgets = await this.getAllWidgets( siteID );
 
-		widgets.map( async ( widget ) => await this.deleteWidget( siteID, widget.id ) );
+		await Promise.all( widgets.map( ( widget ) => this.deleteWidget( siteID, widget.id ) ) );
 	}
 
 	/* Search */

@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/components",
-	"version": "4.1.0",
+	"version": "5.0.0",
 	"description": "Automattic Components.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -52,7 +52,6 @@
 		"@automattic/material-design-icons": "workspace:^",
 		"@automattic/number-formatters": "^1.2.0",
 		"@automattic/typography": "workspace:^",
-		"@automattic/ui": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
 		"@emotion/css": "^11.11.2",
@@ -82,7 +81,6 @@
 		"lodash": "^4.18.1",
 		"prop-types": "^15.8.1",
 		"react-modal": "^3.16.3",
-		"react-router-dom": "7.18.2",
 		"tslib": "^2.8.1",
 		"utility-types": "^3.10.0"
 	},

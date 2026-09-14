@@ -307,7 +307,15 @@ export class DomainSearchComponent {
 		}
 
 		const addToCartButton = row.getByRole( 'button', { name: 'Add to cart' } );
-		await addToCartButton.waitFor();
+		try {
+			await addToCartButton.waitFor();
+		} catch ( error ) {
+			// The check on entry only sees a ban that was already in force then; this
+			// one sees one raised since, by this worker or by a peer's. Reaching the
+			// throw means none was, and the wait's own error stands.
+			handleActiveThrottles( [ 'domain-availability' ] );
+			throw error;
+		}
 
 		const cartResponseSummaries: Promise< CartResponseDiagnostic >[] = [];
 		const trackCartResponse = ( response: Response ) => {

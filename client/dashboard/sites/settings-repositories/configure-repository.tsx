@@ -6,6 +6,7 @@ import {
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { __, sprintf } from '@wordpress/i18n';
+import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import {
 	siteRoute,
@@ -16,6 +17,7 @@ import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { ConnectRepositoryForm } from './connect-repository-form';
+import { getDeploymentErrorReason, getDeploymentTypeFromPath } from './deployment-tracks';
 
 export default function ConfigureRepository() {
 	const { siteSlug, deploymentId } = siteRoute.useParams();
@@ -27,12 +29,30 @@ export default function ConfigureRepository() {
 	const navigate = useNavigate( {
 		from: navigateFrom,
 	} );
+	const { recordTracksEvent } = useAnalytics();
 
 	const handleCancel = () => {
 		navigate( { to: siteSettingsRepositoriesRoute.fullPath } );
 	};
 
-	const updateMutation = useMutation( updateCodeDeploymentMutation( site.ID, deploymentId ?? 0 ) );
+	const updateMutationOptions = updateCodeDeploymentMutation( site.ID, deploymentId ?? 0 );
+	const updateMutation = useMutation( {
+		...updateMutationOptions,
+		onSuccess: ( data, variables, context ) => {
+			updateMutationOptions.onSuccess?.( data, variables, context );
+			recordTracksEvent( 'calypso_hosting_github_update_deployment_success', {
+				deployment_type: getDeploymentTypeFromPath( data.target_dir ),
+				is_automated: data.is_automated,
+				workflow_path: data.workflow_path,
+			} );
+		},
+		onError: ( error, variables, context ) => {
+			updateMutationOptions.onError?.( error, variables, context );
+			recordTracksEvent( 'calypso_hosting_github_update_deployment_failure', {
+				reason: getDeploymentErrorReason( error ),
+			} );
+		},
+	} );
 
 	const initialValues = {
 		selectedInstallationId: existingDeployment.installation_id,

@@ -1224,7 +1224,9 @@ export function LineItemSublabelAndPrice( {
 		return (
 			<>
 				<DefaultLineItemSublabel product={ product } />:{ ' ' }
-				{ translate( '%(price)s per month', { args: { price } } ) }
+				{ product.is_gift_purchase
+					? translate( '%(price)s (one time payment)', { args: { price } } )
+					: translate( '%(price)s per month', { args: { price } } ) }
 				<LineItemExpiryDates product={ product } />
 			</>
 		);
@@ -1234,7 +1236,9 @@ export function LineItemSublabelAndPrice( {
 		return (
 			<>
 				<DefaultLineItemSublabel product={ product } />:{ ' ' }
-				{ translate( '%(price)s per year', { args: { price } } ) }
+				{ product.is_gift_purchase
+					? translate( '%(price)s (one time payment)', { args: { price } } )
+					: translate( '%(price)s per year', { args: { price } } ) }
 				<LineItemExpiryDates product={ product } />
 			</>
 		);
@@ -1244,7 +1248,9 @@ export function LineItemSublabelAndPrice( {
 		return (
 			<>
 				<DefaultLineItemSublabel product={ product } />:{ ' ' }
-				{ translate( '%(price)s per two years', { args: { price } } ) }
+				{ product.is_gift_purchase
+					? translate( '%(price)s (one time payment)', { args: { price } } )
+					: translate( '%(price)s per two years', { args: { price } } ) }
 				<LineItemExpiryDates product={ product } />
 			</>
 		);
@@ -1254,7 +1260,9 @@ export function LineItemSublabelAndPrice( {
 		return (
 			<>
 				<DefaultLineItemSublabel product={ product } />:{ ' ' }
-				{ translate( '%(price)s per three years', { args: { price } } ) }
+				{ product.is_gift_purchase
+					? translate( '%(price)s (one time payment)', { args: { price } } )
+					: translate( '%(price)s per three years', { args: { price } } ) }
 				<LineItemExpiryDates product={ product } />
 			</>
 		);

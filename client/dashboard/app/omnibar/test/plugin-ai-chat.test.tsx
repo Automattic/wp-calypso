@@ -6,70 +6,92 @@ import {
 	isAgentsManagerChatVisible,
 	openAgentsManagerChat,
 	recordAgentsManagerTracksEvent,
-	useShouldUseUnifiedAgent,
 } from '@automattic/agents-manager';
-import { renderHook } from '@testing-library/react';
-import { useAiChatPlugin } from '../plugin-ai-chat';
+import { render, screen } from '@testing-library/react';
+import { createAiChatNodeBuilder } from '../plugin-ai-chat';
+import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
 jest.mock( '@automattic/agents-manager', () => ( {
+	AiChatEntryLabel: ( { children }: { children: React.ReactNode } ) => (
+		<span aria-hidden="true">{ children }</span>
+	),
 	closeAgentsManagerChat: jest.fn(),
 	isAgentsManagerChatVisible: jest.fn( () => false ),
 	openAgentsManagerChat: jest.fn(),
 	recordAgentsManagerTracksEvent: jest.fn(),
-	useShouldUseUnifiedAgent: jest.fn( () => true ),
 } ) );
 
 const mockIsChatVisible = isAgentsManagerChatVisible as jest.MockedFunction<
 	typeof isAgentsManagerChatVisible
 >;
-const mockUseShouldUseUnifiedAgent = useShouldUseUnifiedAgent as jest.MockedFunction<
-	typeof useShouldUseUnifiedAgent
->;
 
-describe( 'useAiChatPlugin', () => {
+const AI_CHAT_NODE: AdminBarNode = {
+	id: 'agents-manager-ai-chat',
+	title: '<span>Agent</span>',
+	parent: 'top-secondary',
+	href: '',
+	group: false,
+	meta: {
+		menu_title: 'Agent',
+		icon: 'sparkle',
+	},
+};
+
+const buildAiChatNode = ( sectionName?: string ) =>
+	createAiChatNodeBuilder( sectionName )( AI_CHAT_NODE );
+
+describe( 'createAiChatNodeBuilder', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockIsChatVisible.mockReturnValue( false );
-		mockUseShouldUseUnifiedAgent.mockReturnValue( true );
 	} );
 
-	it( 'returns no node when the unified agent is unavailable', () => {
-		mockUseShouldUseUnifiedAgent.mockReturnValue( false );
+	it( 'takes its label, tooltip and icon from the admin bar node', () => {
+		const node = buildAiChatNode( 'sites' );
+		const { container } = render( node.icon as React.ReactElement );
 
-		const { result } = renderHook( () => useAiChatPlugin( { sectionName: 'sites' } ) );
+		expect( node.label ).toBe( 'Agent' );
+		expect( node.tooltip ).toBe( 'Agent' );
+		expect( container.querySelector( '.omnibar__ai-chat-icon > svg' ) ).toBeVisible();
+	} );
 
-		expect( result.current ).toBeUndefined();
+	it( 'renders the icon with the entry label beside it', () => {
+		const node = buildAiChatNode( 'sites' );
+		const { container } = render( <>{ node.render?.( node as OmnibarNode ) }</> );
+
+		expect( container.querySelector( '.omnibar__ai-chat-icon > svg' ) ).toBeVisible();
+		expect( screen.getByText( 'Agent' ) ).toBeVisible();
+	} );
+
+	it( 'drops the title so the button renders as an icon', () => {
+		expect( buildAiChatNode( 'sites' ).title ).toBeUndefined();
 	} );
 
 	it( 'carries the class that marks it as the chat entry button', () => {
-		const { result } = renderHook( () => useAiChatPlugin( { sectionName: 'sites' } ) );
-
-		expect( result.current?.className ).toBe( 'masterbar__item-agents-manager-ai-chat' );
+		expect( buildAiChatNode( 'sites' ).className ).toBe( 'masterbar__item-agents-manager-ai-chat' );
 	} );
 
 	it( 'records the masterbar event with the section and opens the chat on click', () => {
-		const { result } = renderHook( () => useAiChatPlugin( { sectionName: 'sites' } ) );
-		result.current?.onClick?.( {} as React.MouseEvent );
+		buildAiChatNode( 'sites' ).onClick?.( {} as React.MouseEvent );
 
 		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
 			'calypso_agents_manager_ai_chat_clicked',
 			{ surface: 'masterbar', section: 'sites', action: 'open' }
 		);
-		expect( openAgentsManagerChat ).toHaveBeenCalled();
+		expect( openAgentsManagerChat ).toHaveBeenCalledTimes( 1 );
 		expect( closeAgentsManagerChat ).not.toHaveBeenCalled();
 	} );
 
 	it( 'records an unknown section and closes a visible chat on click', () => {
 		mockIsChatVisible.mockReturnValue( true );
 
-		const { result } = renderHook( () => useAiChatPlugin( {} ) );
-		result.current?.onClick?.( {} as React.MouseEvent );
+		buildAiChatNode().onClick?.( {} as React.MouseEvent );
 
 		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
 			'calypso_agents_manager_ai_chat_clicked',
 			{ surface: 'masterbar', section: 'unknown', action: 'close' }
 		);
-		expect( closeAgentsManagerChat ).toHaveBeenCalled();
+		expect( closeAgentsManagerChat ).toHaveBeenCalledTimes( 1 );
 		expect( openAgentsManagerChat ).not.toHaveBeenCalled();
 	} );
 } );

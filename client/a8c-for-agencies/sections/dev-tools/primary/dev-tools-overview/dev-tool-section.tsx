@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/ui';
 import {
 	Button,
 	__experimentalHeading as Heading,
@@ -6,6 +5,7 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { Badge } from '@wordpress/ui';
 import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section-columns';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -49,7 +49,7 @@ export default function DevToolSection( {
 					<>
 						<HStack alignment="left">
 							<Heading level={ 3 }>{ name }</Heading>
-							<Badge>{ badge }</Badge>
+							<Badge intent="draft">{ badge }</Badge>
 						</HStack>
 						<Text className="dev-tools-overview__tagline" weight={ 500 }>
 							{ tagline }

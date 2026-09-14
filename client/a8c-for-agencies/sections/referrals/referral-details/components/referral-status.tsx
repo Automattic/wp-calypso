@@ -1,4 +1,4 @@
-import { Badge } from '@automattic/ui';
+import { Badge } from '@wordpress/ui';
 import { ReactNode } from 'react';
 import { getReferralStatus } from 'calypso/dashboard/agency/earn/referrals/lib/get-referral-status';
 

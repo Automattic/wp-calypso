@@ -28,8 +28,6 @@
 	"features": {
 		"activity-log/v2": true,
 		"always_use_logout_url": false,
-		"checkout/checkout-version": false,
-		"checkout/google-pay": true,
 		"current-site/domain-warning": false,
 		"current-site/notice": false,
 		"importers/newsletter": true,

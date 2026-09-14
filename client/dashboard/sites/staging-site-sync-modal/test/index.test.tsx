@@ -24,6 +24,7 @@ jest.mock( '../../../../data/activity-log/use-rewindable-activity-log-query', ()
 
 jest.mock( '../../../app/locale', () => ( {
 	useLocale: () => 'en',
+	useIntlLocale: () => 'en',
 } ) );
 
 jest.mock( '../../../components/inline-support-link', () => {

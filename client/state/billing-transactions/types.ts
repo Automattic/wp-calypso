@@ -1,3 +1,4 @@
+import type { TaxCustomerInfo } from '@automattic/api-core';
 import type { IntroductoryOfferTerms } from '@automattic/shopping-cart';
 import type { TaxBreakdownEntry, TaxVendorInfo } from '@automattic/wpcom-checkout';
 
@@ -70,6 +71,16 @@ export interface BillingTransaction {
 	url: string;
 
 	tax_vendor_info?: TaxVendorInfo;
+
+	/**
+	 * The buyer's tax identity as the document currently standing for this
+	 * receipt states it, rather than the user's details today.
+	 *
+	 * Optional only because responses cached before this field shipped will not
+	 * carry it; the API always sends it.
+	 */
+	tax_customer_info?: TaxCustomerInfo;
+
 	tax_breakdown?: TaxBreakdownEntry[];
 }
 

@@ -1,9 +1,9 @@
 import { Button, WordPressLogo } from '@automattic/components';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { formatNumber } from '@automattic/number-formatters';
-import { Badge } from '@automattic/ui';
 import { ExternalLink, Tooltip } from '@wordpress/components';
 import { chevronRight, reusableBlock } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import {
@@ -79,7 +79,7 @@ export default function LayoutBodyContent( {
 		if ( ! accountStatus ) {
 			return undefined;
 		}
-		const badge = <Badge intent={ accountStatus.statusType }>{ accountStatus.status }</Badge>;
+		const badge = <Badge intent={ accountStatus.badgeIntent }>{ accountStatus.status }</Badge>;
 		return accountStatus.statusReason ? (
 			<Tooltip text={ accountStatus.statusReason }>{ badge }</Tooltip>
 		) : (

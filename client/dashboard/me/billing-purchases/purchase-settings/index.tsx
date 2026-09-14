@@ -65,13 +65,13 @@ import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
 import { useFormattedTime } from '../../../components/formatted-time';
+import InlineSupportLink from '../../../components/inline-support-link';
 import { MetadataList, MetadataItem } from '../../../components/metadata-list';
 import OverviewCard from '../../../components/overview-card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { getPlanExpiryUrgency, hasPlanExpiryNotice } from '../../../components/plan-expiry-notice';
 import SiteIcon from '../../../components/site-icon';
-import { Text as IntentText } from '../../../components/text';
 import SiteBandwidthStat from '../../../sites/overview-plan-card/site-bandwidth-stat';
 import SiteStorageStat from '../../../sites/overview-plan-card/site-storage-stat';
 import { formatDate } from '../../../utils/datetime';
@@ -115,6 +115,7 @@ import {
 } from '../../../utils/site-url';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
+import { BillingPurchaseInfoPopover } from '../dataviews';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import AkismetApiKeyCard from './akismet-api-key-card';
 import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
@@ -122,6 +123,8 @@ import {
 	AddMailboxesActionItem,
 	EmailPlanMailboxCard,
 	EmailPlanPriceCard,
+	ManageEmailPlanActionItem,
+	isEmailPlanAtHighestTier,
 	isEmailPlanManagementEnabled,
 } from './email-plan';
 import { getCancelButtonCopy, getRemoveButtonCopy } from './get-cancel-remove-copy';
@@ -152,6 +155,11 @@ function getNonPlanUpgradeAction(
 	// Titan email upgrades route through the flag-gated tier grid; without the flag
 	// the upgrade URL would fall through to the wrong (site plan) page.
 	if ( isTitanMail( purchase ) && ! config.isEnabled( 'emails/titan-tiers' ) ) {
+		return undefined;
+	}
+	// The highest email tier has nothing to upgrade to; "Manage your plan"
+	// takes over so the user can still reach the plan grid.
+	if ( isEmailPlanAtHighestTier( purchase ) ) {
 		return undefined;
 	}
 	const href = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() );
@@ -264,68 +272,138 @@ function ProductLink( { purchase }: { purchase: Purchase } ) {
 	return null;
 }
 
-function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
+interface PurchaseHeaderAction {
+	label: string;
+	href: string;
+	recordClick: () => void;
+}
+
+/**
+ * The quick actions offered in the page header, most prominent first. Empty for
+ * anyone but the purchase's owner.
+ */
+function usePurchaseHeaderActions( purchase: Purchase ): PurchaseHeaderAction[] {
 	const hasEnTranslation = useHasEnTranslation();
 	const { user } = useAuth();
-	const isOwner = String( user.ID ) === String( purchase.user_id );
-	// The purchase list gates its renewal link on these same two conditions.
-	const canBeRenewed = purchase.can_explicit_renew && isOwner;
+	const { recordTracksEvent } = useAnalytics();
+
+	// The purchase list gates its renewal link on ownership too.
+	if ( String( user.ID ) !== String( purchase.user_id ) ) {
+		return [];
+	}
+
+	const actions: PurchaseHeaderAction[] = [];
 	const upgradeAction = getHeaderUpgradeAction( purchase );
 	const storageUpgradeUrl = getSitePurchaseStorageUpgradeUrl( purchase );
-	const { recordTracksEvent } = useAnalytics();
-	const menuItems = [
-		upgradeAction && isOwner && (
-			<MenuItem
-				onClick={ () => {
-					recordTracksEvent( 'calypso_purchases_upgrade_plan', {
-						status: isExpiredOrRemoved( purchase ) ? 'expired' : 'active',
-						plan: purchase.product_name,
-					} );
-					upgradePurchase( upgradeAction.href );
-				} }
-			>
-				{ getUpgradeControlLabel( purchase, upgradeAction.title, hasEnTranslation ) }
-			</MenuItem>
-		),
-		isStorageUpgradeShown( purchase ) && storageUpgradeUrl && isOwner && (
-			<MenuItem
-				onClick={ () => {
-					recordTracksEvent( 'calypso_purchases_upgrade_storage', {
-						status: isExpiredOrRemoved( purchase ) ? 'expired' : 'active',
-						plan: purchase.product_name,
-					} );
-					upgradePurchase( storageUpgradeUrl );
-				} }
-			>
-				{ _x( 'Upgrade storage', 'Buy more storage space for the subscription.' ) }
-			</MenuItem>
-		),
-		canBeRenewed && (
-			<MenuItem
-				onClick={ () => {
-					recordTracksEvent( 'calypso_purchases_renew_now_click', {
-						product_slug: purchase.product_slug,
-						position: 'purchase-settings',
-					} );
-					renewPurchase( purchase );
-				} }
-			>
-				{ _x(
-					'Renew',
-					'Immediately pay for and receive another term of the subscription, extending the expiration date by another term.'
-				) }
-			</MenuItem>
-		),
-	].filter( Boolean );
 
-	if ( menuItems.length === 0 ) {
+	if ( upgradeAction ) {
+		actions.push( {
+			label: getUpgradeControlLabel( purchase, upgradeAction.title, hasEnTranslation ),
+			href: upgradeAction.href,
+			recordClick: () =>
+				recordTracksEvent( 'calypso_purchases_upgrade_plan', {
+					status: isExpiredOrRemoved( purchase ) ? 'expired' : 'active',
+					plan: purchase.product_name,
+				} ),
+		} );
+	}
+
+	if ( isStorageUpgradeShown( purchase ) && storageUpgradeUrl ) {
+		actions.push( {
+			label: _x( 'Upgrade storage', 'Buy more storage space for the subscription.' ),
+			href: storageUpgradeUrl,
+			recordClick: () =>
+				recordTracksEvent( 'calypso_purchases_upgrade_storage', {
+					status: isExpiredOrRemoved( purchase ) ? 'expired' : 'active',
+					plan: purchase.product_name,
+				} ),
+		} );
+	}
+
+	if ( purchase.can_explicit_renew ) {
+		actions.push( {
+			label: _x(
+				'Renew',
+				'Immediately pay for and receive another term of the subscription, extending the expiration date by another term.'
+			),
+			href: getRenewalUrlFromPurchase( purchase ),
+			recordClick: () =>
+				recordTracksEvent( 'calypso_purchases_renew_now_click', {
+					product_slug: purchase.product_slug,
+					position: 'purchase-settings',
+				} ),
+		} );
+	}
+
+	return actions;
+}
+
+function PurchaseActionMenu( { actions }: { actions: PurchaseHeaderAction[] } ) {
+	if ( actions.length === 0 ) {
 		return null;
 	}
 
 	return (
 		<DropdownMenu icon={ moreVertical } label={ __( 'Quick actions' ) }>
-			{ () => <MenuGroup>{ menuItems }</MenuGroup> }
+			{ () => (
+				<MenuGroup>
+					{ actions.map( ( action ) => (
+						<MenuItem
+							key={ action.label }
+							onClick={ () => {
+								action.recordClick();
+								window.location.href = action.href;
+							} }
+						>
+							{ action.label }
+						</MenuItem>
+					) ) }
+				</MenuGroup>
+			) }
 		</DropdownMenu>
+	);
+}
+
+/**
+ * The header's quick actions. The most prominent one is a button and the rest go
+ * behind the overflow menu, so a purchase with a single action never hides it
+ * in a menu of one.
+ */
+export function PurchaseHeaderActions( {
+	purchase,
+	planExpiryNoticeShowing,
+}: {
+	purchase: Purchase;
+	planExpiryNoticeShowing: boolean;
+} ) {
+	const actions = usePurchaseHeaderActions( purchase );
+	// While the plan-expiry notice is up it owns the call to action, so nothing is
+	// promoted out of the menu to compete with it.
+	const promotedAction = planExpiryNoticeShowing ? undefined : actions[ 0 ];
+	// Email plans surface every action in the list below, so an overflow menu
+	// would only duplicate them.
+	const overflowActions = isEmailPlanManagementEnabled( purchase )
+		? []
+		: actions.filter( ( action ) => action !== promotedAction );
+
+	return (
+		<HStack justify="space-between">
+			{ promotedAction && (
+				<Button
+					__next40pxDefaultSize
+					variant="primary"
+					href={ promotedAction.href }
+					onClick={ promotedAction.recordClick }
+				>
+					{ promotedAction.label }
+				</Button>
+			) }
+			{ overflowActions.length > 0 && (
+				<PageHeader.ActionMenu>
+					<PurchaseActionMenu actions={ overflowActions } />
+				</PageHeader.ActionMenu>
+			) }
+		</HStack>
 	);
 }
 
@@ -687,18 +765,16 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 		<ActionList.ActionItem
 			title={ __( 'Reinstall plugins' ) }
 			actions={
-				<>
-					<Button
-						variant="secondary"
-						size="compact"
-						disabled={ isMutationPending }
-						onClick={ () => {
-							reinstallPlugins();
-						} }
-					>
-						{ __( 'Reinstall plugins' ) }
-					</Button>
-				</>
+				<Button
+					variant="secondary"
+					size="compact"
+					disabled={ isMutationPending }
+					onClick={ () => {
+						reinstallPlugins();
+					} }
+				>
+					{ __( 'Reinstall plugins' ) }
+				</Button>
 			}
 		/>
 	);
@@ -745,6 +821,9 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 				<ReinstallButton purchase={ purchase } />
 				<JetpackCRMDownloadsButton purchase={ purchase } />
 				<ProductChangeActionItem purchase={ purchase } />
+				{ ! isExpiredOrRemoved( purchase ) && isEmailPlanAtHighestTier( purchase ) && (
+					<ManageEmailPlanActionItem purchase={ purchase } />
+				) }
 				<StorageUpgradeActionButton purchase={ purchase } />
 				{ ! isExpiredOrRemoved( purchase ) && isEmailPlanManagementEnabled( purchase ) && (
 					<AddMailboxesActionItem purchase={ purchase } />
@@ -868,18 +947,44 @@ function getFields( {
 					}
 					return undefined;
 				} )();
-				// The first branch above reads "You will be billed on 1 August", a
-				// statement of what is going to happen; coloring it would contradict
-				// it. Only the expiry wordings take a color.
-				const expiryUrgency = isRenewingBeforeExpiration( purchase )
-					? null
-					: getPlanExpiryUrgency( purchase );
-				const help =
-					helpText && ( expiryUrgency === 'warning' || expiryUrgency === 'error' ) ? (
-						<IntentText intent={ expiryUrgency }>{ helpText }</IntentText>
-					) : (
-						helpText
-					);
+				const help = ( () => {
+					if ( ! helpText ) {
+						return helpText;
+					}
+					if (
+						purchase.expiry_date &&
+						purchase.renew_date &&
+						! purchase.is_hundred_year_domain &&
+						purchase.is_auto_renew_enabled &&
+						purchase.renew_date !== purchase.expiry_date &&
+						( purchase.expiry_status === 'active' || purchase.expiry_status === 'auto-renewing' )
+					) {
+						return (
+							<HStack spacing={ 1 } expanded={ false }>
+								<span>{ helpText }</span>
+								<BillingPurchaseInfoPopover>
+									{ createInterpolateElement(
+										/* translators: <expireDate /> is a date and inlineSupportLink is a web link. */
+										__(
+											'Your subscription is paid through <expireDate></expireDate>, but will be renewed prior to that date. <inlineSupportLink>Learn more</inlineSupportLink>'
+										),
+										{
+											expireDate: (
+												<span>
+													{ formatDate( new Date( purchase.expiry_date ), locale, {
+														dateStyle: 'long',
+													} ) }
+												</span>
+											),
+											inlineSupportLink: <InlineSupportLink supportContext="autorenewal" />,
+										}
+									) }
+								</BillingPurchaseInfoPopover>
+							</HStack>
+						);
+					}
+					return helpText;
+				} )();
 				if (
 					! purchase.is_rechargeable &&
 					! purchase.is_iap_purchase &&
@@ -1157,29 +1262,35 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 	return (
 		<div>
 			<div>
-				{ tier0.maximum_units === 1
-					? __( 'A professionally built single page website in 4 business days or less.' )
-					: sprintf(
-							// translators: numberOfIncludedPages is a number of pages
-							__(
-								'A professionally built %(numberOfIncludedPages)s-page website in 4 business days or less.'
+				{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
+				<span>
+					{ tier0.maximum_units === 1
+						? __( 'A professionally built single page website in 4 business days or less.' )
+						: sprintf(
+								// translators: numberOfIncludedPages is a number of pages
+								__(
+									'A professionally built %(numberOfIncludedPages)s-page website in 4 business days or less.'
+								),
+								{
+									numberOfIncludedPages: String( tier0.maximum_units ),
+								}
+						  ) }
+				</span>{ ' ' }
+				{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
+				<span>
+					{ extraPageCount > 0 &&
+						sprintf(
+							// translators: %(numberOfPages)d is a number of pages
+							_n(
+								'This purchase includes %(numberOfPages)d extra page.',
+								'This purchase includes %(numberOfPages)d extra pages.',
+								extraPageCount ?? 0
 							),
 							{
-								numberOfIncludedPages: String( tier0.maximum_units ),
+								numberOfPages: extraPageCount,
 							}
-					  ) }{ ' ' }
-				{ extraPageCount > 0 &&
-					sprintf(
-						// translators: %(numberOfPages)d is a number of pages
-						_n(
-							'This purchase includes %(numberOfPages)d extra page.',
-							'This purchase includes %(numberOfPages)d extra pages.',
-							extraPageCount ?? 0
-						),
-						{
-							numberOfPages: extraPageCount,
-						}
-					) }
+						) }
+				</span>
 			</div>
 			<div>
 				{ isSubmitted
@@ -1491,8 +1602,6 @@ export default function PurchaseSettings() {
 	const formattedRenewal = useFormattedTime( purchase.renew_date ?? '' );
 	const formattedParentExpiry = useFormattedTime( parentPurchase?.expiry_date ?? '' );
 	const formattedParentRenewal = useFormattedTime( parentPurchase?.renew_date ?? '' );
-	const hasEnTranslation = useHasEnTranslation();
-	const upgradeAction = getHeaderUpgradeAction( purchase );
 	// During the expiration grace period, we don't want to display the
 	// purchase.renew_date from the server even if there is an upcoming
 	// auto-renewal attempt (since we want to communicate the urgency of the
@@ -1540,18 +1649,10 @@ export default function PurchaseSettings() {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const columns = isSmallViewport ? 1 : 2;
 	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
-	const isCurrentPurchaseOwner = String( user.ID ) === String( purchase.user_id );
-	const canHeaderUpgrade = Boolean( upgradeAction );
-	// While the plan-expiry notice is up, keep the header on the one thing that
-	// needs doing. The quick-actions menu still holds everything else.
-	const shouldShowHeaderUpgradeAction =
-		canHeaderUpgrade && isCurrentPurchaseOwner && ! planExpiryNoticeShowing;
-	const shouldShowHeaderActionMenu =
-		isCurrentPurchaseOwner && ( canHeaderUpgrade || purchase.can_explicit_renew );
-	const shouldShowHeaderActions =
-		site?.options?.admin_url &&
-		! isCentennial &&
-		( shouldShowHeaderUpgradeAction || shouldShowHeaderActionMenu );
+	const hasHeaderActions = usePurchaseHeaderActions( purchase ).length > 0;
+	const shouldShowHeaderActions = Boolean(
+		site?.options?.admin_url && ! isCentennial && hasHeaderActions
+	);
 
 	// Email plans order the overview cards as Renews, Renewal price, Mailbox, Site;
 	// every other purchase keeps Site, Owner, Renews, Price. Extract the two cards
@@ -1609,20 +1710,10 @@ export default function PurchaseSettings() {
 						}
 						actions={
 							shouldShowHeaderActions && (
-								<HStack justify="space-between">
-									{ shouldShowHeaderUpgradeAction && upgradeAction && (
-										<Button __next40pxDefaultSize variant="primary" href={ upgradeAction.href }>
-											{ getUpgradeControlLabel( purchase, upgradeAction.title, hasEnTranslation ) }
-										</Button>
-									) }
-									{ /* Email plans surface every action in the list below, so the
-									     quick-actions menu would only duplicate them. */ }
-									{ shouldShowHeaderActionMenu && ! isEmailPlanManagementEnabled( purchase ) && (
-										<PageHeader.ActionMenu>
-											<PurchaseActionMenu purchase={ purchase } />
-										</PageHeader.ActionMenu>
-									) }
-								</HStack>
+								<PurchaseHeaderActions
+									purchase={ purchase }
+									planExpiryNoticeShowing={ planExpiryNoticeShowing }
+								/>
 							)
 						}
 						description={

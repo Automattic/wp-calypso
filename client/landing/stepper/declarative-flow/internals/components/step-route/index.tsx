@@ -1,6 +1,6 @@
 import { useSelect } from '@wordpress/data';
 import clsx from 'clsx';
-import { useEffect, type JSX } from 'react';
+import { useEffect, useState, type JSX } from 'react';
 import { useLoginUrlForFlow } from 'calypso/landing/stepper/hooks/use-login-url-for-flow';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import kebabCase from 'calypso/landing/stepper/utils/kebabCase';
@@ -8,6 +8,7 @@ import { StepperPerformanceTrackerStop } from 'calypso/landing/stepper/utils/per
 import SignupHeader from 'calypso/signup/signup-header';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { recordStepRouteMount } from '../../step-mount-registry';
 import { PRIVATE_STEPS } from '../../steps';
 import { useStepRouteTracking } from './hooks/use-step-route-tracking';
 import type { Flow, FlowV2, Navigate, StepperStep } from '../../types';
@@ -22,6 +23,9 @@ type StepRouteProps = {
 
 // TODO: Check we can move RenderStep function to here and remove the renderStep prop
 const StepRoute = ( { step, flow, renderStep, navigate }: StepRouteProps ) => {
+	// In render rather than an effect: a child's effects run before this component's, and the step
+	// reads this during its own first render.
+	useState( () => recordStepRouteMount( step.slug ) );
 	const userIsLoggedIn = useSelector( isUserLoggedIn );
 	const stepContent = renderStep( step );
 	const stepData = useSelect(

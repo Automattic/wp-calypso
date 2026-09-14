@@ -167,7 +167,11 @@ export const siteRoute = createRoute( {
 		}
 
 		const migrationUrl = `/sites/${ siteSlug }/migration-overview`;
-		if ( isSiteMigrationInProgress( site ) && ! location.pathname.includes( migrationUrl ) ) {
+		if (
+			isSiteMigrationInProgress( site ) &&
+			! isSupportSession() &&
+			! location.pathname.includes( migrationUrl )
+		) {
 			throw dashboardRedirect( { to: migrationUrl } );
 		}
 
@@ -619,13 +623,6 @@ export const sitePerformanceIndexRoute = createRoute( {
 } );
 
 export const sitePerformanceFrontendRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: isEnabled( 'performance/apm' ) ? __( 'Frontend' ) : undefined,
-			},
-		],
-	} ),
 	getParentRoute: () => sitePerformanceRoute,
 	path: 'frontend',
 } ).lazy( () =>
@@ -637,13 +634,6 @@ export const sitePerformanceFrontendRoute = createRoute( {
 );
 
 export const sitePerformanceBackendRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Backend' ),
-			},
-		],
-	} ),
 	getParentRoute: () => sitePerformanceRoute,
 	path: 'backend',
 } );

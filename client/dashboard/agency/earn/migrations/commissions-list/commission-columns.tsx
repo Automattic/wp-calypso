@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/ui';
 import {
 	Button,
 	Popover,
@@ -8,7 +7,8 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
-import { useState } from 'react';
+import { Badge } from '@wordpress/ui';
+import { useState, ComponentProps } from 'react';
 import { formatDate } from '../../../../utils/datetime';
 import { urlToSlug } from '../../../../utils/url';
 
@@ -46,21 +46,21 @@ export const ReviewStatusColumn = ( {
 
 	const getStatusProps = (): {
 		statusText: string;
-		intent: 'success' | 'info' | 'warning';
+		intent: NonNullable< ComponentProps< typeof Badge >[ 'intent' ] >;
 	} | null => {
 		switch ( reviewStatus ) {
 			case 'paid':
-				return { statusText: __( 'Paid' ), intent: 'success' };
+				return { statusText: __( 'Paid' ), intent: 'stable' };
 			case 'verified':
-				return { statusText: __( 'Confirmed' ), intent: 'success' };
+				return { statusText: __( 'Confirmed' ), intent: 'stable' };
 			case 'rejected':
-				return { statusText: __( 'Ineligible' ), intent: 'info' };
+				return { statusText: __( 'Ineligible' ), intent: 'informational' };
 			case 'ineligible':
-				return { statusText: __( 'Ineligible' ), intent: 'info' };
+				return { statusText: __( 'Ineligible' ), intent: 'informational' };
 			case 'reverification':
-				return { statusText: __( 'Pending re-verification' ), intent: 'info' };
+				return { statusText: __( 'Pending re-verification' ), intent: 'informational' };
 			case 'pending':
-				return { statusText: __( 'Pending' ), intent: 'warning' };
+				return { statusText: __( 'Pending' ), intent: 'medium' };
 			default:
 				// Unknown status - don't show a badge
 				return null;

@@ -11,7 +11,7 @@ import Client from '../index';
 import { init } from '../wpcom';
 
 // Mirrors settings.max_limit in the client.
-const MAX_LIMIT = 200;
+const MAX_LIMIT = 500;
 
 // Every filtered test here uses the Unread tab; its id list is cached under its name.
 const UNREAD_KEY = 'unread';
@@ -552,15 +552,19 @@ describe( 'RestClient', () => {
 		// Reaching the cap with a full page must clear `filteredHasMore`, or the next
 		// load-more fires a zero-count request (number = max_limit - 100).
 		it( 'stops filtered paging at the cap without a zero-count request', () => {
+			// Ids run from TOP_ID down to 10, so a full window lands exactly on the cap.
+			const TOP_ID = MAX_LIMIT + 9;
 			client.setFilter( 'unread' );
-			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 209 ), last_seen_time: 0 } );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, TOP_ID ), last_seen_time: 0 } );
 
 			// Page in full older pages (10 at a time) until the list reaches max_limit.
-			// Starts at 10 loaded (ids 209..200); each page adds the next 10 older ids.
-			for ( let oldest = 199; oldest >= 219 - MAX_LIMIT; oldest -= 10 ) {
+			for ( let loaded = 10; loaded < MAX_LIMIT; loaded += 10 ) {
 				getCalls.length = 0;
 				client.loadMore();
-				getCalls[ 0 ].callback( null, { notes: fullPage( 10, oldest ), last_seen_time: 0 } );
+				getCalls[ 0 ].callback( null, {
+					notes: fullPage( 10, TOP_ID - loaded ),
+					last_seen_time: 0,
+				} );
 			}
 
 			expect( getFilteredNoteIds( store.getState(), UNREAD_KEY ) ).toHaveLength( MAX_LIMIT );

@@ -2,14 +2,16 @@ import { getTracksAnonymousUserId, recordTracksEvent } from '@automattic/calypso
 import config from '@automattic/calypso-config';
 import {
 	WPCOM_DIFM_LITE,
-	PRODUCT_1GB_SPACE,
 	getPlan,
 	TERM_MONTHLY,
+	PLAN_PERSONAL_TRIAL_MONTHLY,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PLAN_HOSTING_TRIAL_MONTHLY,
+	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
-import { Site, AddOns } from '@automattic/data-stores';
-import { STORAGE_ADD_ONS } from '@automattic/data-stores/src/add-ons';
-import { getAddOn } from '@automattic/data-stores/src/add-ons/add-ons-list';
+import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { pick, isEmpty } from '@automattic/js-utils';
@@ -662,29 +664,6 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 		lastKnownFlow,
 	} );
 }
-export function addAddOnsToCart(
-	callback,
-	dependencies,
-	stepProvidedItems,
-	reduxStore,
-	siteSlug,
-	stepProvidedDependencies
-) {
-	const slug = siteSlug || dependencies.siteSlug;
-	const { cartItem } = stepProvidedItems;
-
-	const providedDependencies = stepProvidedDependencies || { cartItem };
-	if ( ! cartItem || isEmpty( cartItem ) ) {
-		// the user hans't selected any addons
-		setTimeout( callback, 0 );
-
-		return;
-	}
-
-	const newCartItems = cartItem.filter( ( item ) => item );
-	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug );
-}
-
 export function addDomainToCart(
 	callback,
 	dependencies,
@@ -1058,40 +1037,22 @@ export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencie
 	}
 }
 
-export function maybeAddStorageAddonToCart( stepName, defaultDependencies, nextProps ) {
-	const { submitSignupStep, sitePlanSlug, store } = nextProps;
-	const fulfilledDependencies = [];
-	const cartItem = [];
-
-	const state = store.getState();
-	const selectedStorage = getSignupDependencyStore( state )?.storage ?? null;
-
-	if ( STORAGE_ADD_ONS.includes( selectedStorage ) ) {
-		const selectedAddOn = getAddOn( selectedStorage );
-		cartItem.push( {
-			product_slug: PRODUCT_1GB_SPACE,
-			quantity: selectedAddOn.quantity,
-			volume: 1,
-			extra: { feature_slug: AddOns.ADD_ON_50GB_STORAGE },
-		} );
-		recordTracksEvent( 'calypso_signup_storage_add_on_selected', {
-			add_on_slug: selectedAddOn.addOnSlug,
-		} );
-	}
-
-	submitSignupStep( { stepName, cartItem, wasSkipped: true }, { cartItem } );
-	fulfilledDependencies.push( 'cartItems' );
-
-	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
-		flows.excludeStep( stepName );
-		recordExcludeStepEvent( stepName, sitePlanSlug );
-	}
-}
+const FREE_TRIAL_PLAN_SLUGS = [
+	PLAN_PERSONAL_TRIAL_MONTHLY,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PLAN_HOSTING_TRIAL_MONTHLY,
+	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
+];
 
 export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 	const { isPaidPlan, sitePlanSlug, submitSignupStep } = nextProps;
 	const fulfilledDependencies = [];
 	const dependenciesFromDefaults = {};
+
+	// A free trial has a non-free product ID, so it reads as a paid plan. Keep the plan
+	// step available so trial sites can still purchase the underlying plan on launch.
+	const isFreeTrialPlan = FREE_TRIAL_PLAN_SLUGS.includes( sitePlanSlug );
 
 	// Check for plan-specific default theme
 	if ( defaultDependencies && defaultDependencies.themeSlugWithRepo ) {
@@ -1099,7 +1060,7 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 		dependenciesFromDefaults.themeSlugWithRepo = defaultDependencies.themeSlugWithRepo;
 	}
 
-	if ( isPaidPlan ) {
+	if ( isPaidPlan && ! isFreeTrialPlan ) {
 		const cartItems = undefined;
 		submitSignupStep(
 			{ stepName, cartItems, wasSkipped: true },

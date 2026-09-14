@@ -334,12 +334,7 @@ function useCreateGooglePay( {
 	stripe: Stripe | null;
 	cartKey: CartKey | undefined;
 } ): PaymentMethod | null {
-	const isStripeReady =
-		! isStripeLoading &&
-		! stripeLoadingError &&
-		stripe &&
-		stripeConfiguration &&
-		isEnabled( 'checkout/google-pay' );
+	const isStripeReady = ! isStripeLoading && ! stripeLoadingError && stripe && stripeConfiguration;
 
 	return useMemo( () => {
 		return isStripeReady && stripe && stripeConfiguration && cartKey

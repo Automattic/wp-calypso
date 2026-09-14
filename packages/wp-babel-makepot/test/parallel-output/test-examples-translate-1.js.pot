@@ -1,0 +1,28 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+#: test/examples/translate-1.js:2
+msgid "Simple string"
+msgstr ""
+
+#: test/examples/translate-1.js:4
+msgid "Singular"
+msgid_plural "Plural"
+msgstr[0] ""
+msgstr[1] ""
+
+#: test/examples/translate-1.js:14
+#: test/examples/translate-1.js:18
+#. String comment
+msgid "String with comment"
+msgid_plural "Plural with comment"
+msgstr[0] ""
+msgstr[1] ""
+
+#: test/examples/translate-1.js:6
+#: test/examples/translate-1.js:10
+msgctxt "simple context"
+msgid "String with context"
+msgid_plural "Plural with context"
+msgstr[0] ""
+msgstr[1] ""

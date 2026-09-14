@@ -510,6 +510,7 @@ describe( 'getChatComponent', () => {
 		expect( getChatComponent( 'font-picker' ) ).toBeNull();
 		expect( getChatComponent( '' ) ).toBeNull();
 		expect( getChatComponent( 'anything-else' ) ).toBeNull();
+		expect( getChatComponent( 'toString' ) ).toBeNull();
 	} );
 } );
 
@@ -3548,6 +3549,32 @@ describe( 'toolProvider', () => {
 			expect( summaryDescription ).not.toContain( 'brief user-friendly description' );
 		} );
 
+		it( 'asks for a step summary in the show-component schema', async () => {
+			const abilities = await toolProvider.getAbilities();
+			const showComponent = abilities.find( ( a: any ) => a.name === SHOW_COMPONENT_ABILITY_NAME );
+			const legacyShowComponent = abilities.find(
+				( a: any ) => a.name === LEGACY_SHOW_COMPONENT_ABILITY_NAME
+			);
+
+			expect( showComponent?.input_schema?.properties?.summary?.type ).toBe( 'string' );
+			expect( showComponent?.input_schema?.required ).toEqual(
+				expect.arrayContaining( [ 'type', 'props' ] )
+			);
+			expect( showComponent?.input_schema?.properties?.type?.enum ).toEqual(
+				expect.arrayContaining( [
+					'title-picker',
+					'seo-description-picker',
+					'image-alt-text-picker',
+					'proofread',
+				] )
+			);
+			expect( showComponent?.input_schema?.properties?.type?.enum ).not.toContain(
+				'seo-description'
+			);
+			// The migration ability still delegates component types owned by Big Sky.
+			expect( legacyShowComponent?.input_schema?.properties?.type?.enum ).toBeUndefined();
+		} );
+
 		it( 'delegates non-Jetpack legacy show-component callbacks to Big Sky', async () => {
 			const args = {
 				type: 'color-picker',
@@ -3595,8 +3622,8 @@ describe( 'toolProvider', () => {
 			} );
 
 			expect( executeAbility ).not.toHaveBeenCalled();
-			expect( result ).toMatchObject( { success: false } );
-			expect( result.error ).toMatch( /missing type/ );
+			expect( result.result ).toMatchObject( { success: false } );
+			expect( result.result.error ).toMatch( /missing type/ );
 		} );
 
 		it( 'omits update-block-content when block transformations are disabled', async () => {
@@ -3618,8 +3645,8 @@ describe( 'toolProvider', () => {
 
 		it( 'returns an error when type is missing', async () => {
 			const { result } = await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {} );
-			expect( result ).toMatchObject( { success: false } );
-			expect( ( result as any ).error ).toMatch( /missing type/ );
+			expect( result.result ).toMatchObject( { success: false } );
+			expect( result.result.error ).toMatch( /missing type/ );
 		} );
 
 		it( 'returns an error for an unknown component type', async () => {
@@ -3627,8 +3654,56 @@ describe( 'toolProvider', () => {
 				type: 'nonexistent-picker',
 				props: {},
 			} );
-			expect( result ).toMatchObject( { success: false } );
-			expect( ( result as any ).error ).toMatch( /no component registered/ );
+			expect( result.result ).toMatchObject( { success: false } );
+			expect( result.result.error ).toMatch( /no component registered/ );
+		} );
+
+		it.each( [
+			[ 'omitted', undefined ],
+			[ 'empty', {} ],
+			[ 'not an object', 'some text' ],
+			[ 'an array', [ { description: 'Description' } ] ],
+			[ 'the wrong option property', { titles: [ { title: 'Title' } ] } ],
+			[ 'an empty option array', { descriptions: [] } ],
+			[ 'invalid option entries', { descriptions: [ {} ] } ],
+		] )( 'rejects %s props instead of rendering a picker that crashes', async ( _label, props ) => {
+			// New executions need enough data to render a useful component. Old
+			// history remains tolerant inside the components themselves.
+			const { result, returnToAgent } = ( await toolProvider.executeAbility(
+				SHOW_COMPONENT_TOOL_ID,
+				{
+					type: 'seo-description-picker',
+					props,
+				}
+			) ) as any;
+
+			expect( returnToAgent ).toBe( true );
+			expect( result.result.success ).toBe( false );
+			expect( result.result.error ).toMatch( /props/i );
+			expect( result.agentMessage ).toBeUndefined();
+		} );
+
+		it( 'returns an unknown-type failure to the agent so it can recover', async () => {
+			// `seo-description` is what the model sent when it skipped the
+			// generate-seo-description ability and called this tool itself. The
+			// registered type is `seo-description-picker`, so the call fails —
+			// and the agent has to hear about it to correct itself.
+			const { result, returnToAgent } = ( await toolProvider.executeAbility(
+				SHOW_COMPONENT_TOOL_ID,
+				{
+					type: 'seo-description',
+					props: { descriptions: [] },
+				}
+			) ) as any;
+
+			expect( returnToAgent ).toBe( true );
+			expect( result.result.error ).toBe(
+				'show-component: no component registered for type "seo-description"'
+			);
+			// The backend shows `message` to the user and hands `error` to the
+			// model, so a failure needs both.
+			expect( typeof result.result.message ).toBe( 'string' );
+			expect( result.result.message.length ).toBeGreaterThan( 0 );
 		} );
 
 		it.each( [ SHOW_COMPONENT_ABILITY_NAME, SHOW_COMPONENT_TOOL_ID ] )(
@@ -3636,7 +3711,7 @@ describe( 'toolProvider', () => {
 			async ( name ) => {
 				const { result } = ( await toolProvider.executeAbility( name, {
 					type: 'title-picker',
-					props: { titles: [] },
+					props: { titles: [ { title: 'Title' } ] },
 				} ) ) as any;
 
 				expect( JSON.parse( result.agentMessage ).tool_id ).toBe( SHOW_COMPONENT_TOOL_ID );
@@ -3649,17 +3724,12 @@ describe( 'toolProvider', () => {
 				{ title: 'Title 2', explanation: 'b' },
 				{ title: 'Title 3', explanation: 'c' },
 			];
-			const { result, returnToAgent } = ( await toolProvider.executeAbility(
-				SHOW_COMPONENT_TOOL_ID,
-				{
-					type: 'title-picker',
-					props: { titles },
-					toolCallId: 'call_test_123',
-				}
-			) ) as any;
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'title-picker',
+				props: { titles },
+				toolCallId: 'call_test_123',
+			} ) ) as any;
 
-			expect( returnToAgent ).toBe( false );
-			expect( result.returnToAgent ).toBe( false );
 			expect( typeof result.agentMessage ).toBe( 'string' );
 
 			const parsed = JSON.parse( result.agentMessage );
@@ -3673,12 +3743,67 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.responseTrackingProperties ).toBeUndefined();
 		} );
 
+		it( 'returns to the agent with a structured success result', async () => {
+			const { result, returnToAgent } = ( await toolProvider.executeAbility(
+				SHOW_COMPONENT_TOOL_ID,
+				{
+					type: 'title-picker',
+					props: { titles: [ { title: 'Title' } ] },
+				}
+			) ) as any;
+
+			// The backend acks a `{ success, message }` echo without another LLM
+			// turn. Withholding the result leaves the tool call unanswered, and
+			// the model re-plans the whole request instead of continuing it.
+			expect( returnToAgent ).toBe( true );
+			expect( result.returnToAgent ).toBe( true );
+			expect( result.result ).toEqual( {
+				success: true,
+				message: 'Choose from the options I provided.',
+				details: { type: 'title-picker' },
+			} );
+		} );
+
+		it( 'reports the supplied summary as the result message', async () => {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'proofread',
+				props: { summary: 'Proofread complete.', items: [] },
+				summary: 'Proofread complete. Fixed 2 typos.',
+			} ) ) as any;
+
+			// The backend records this text as the completed step, so a
+			// multi-step request continues from it instead of starting over.
+			expect( result.result.message ).toBe( 'Proofread complete. Fixed 2 typos.' );
+		} );
+
 		it.each( [
-			[ 'proofread', { items: [ {}, {} ] }, { suggested_edit_count: 2 } ],
-			[ 'post-feedback', { items: [ {} ] }, { suggested_edit_count: 1 } ],
+			[ 'no summary', undefined ],
+			[ 'a whitespace-only summary', '   ' ],
+		] )( 'defaults the result message given %s', async ( _label, summary ) => {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'title-picker',
+				props: { titles: [ { title: 'Title' } ] },
+				summary,
+			} ) ) as any;
+
+			expect( result.result.message ).toBe( 'Choose from the options I provided.' );
+		} );
+
+		it.each( [
+			[
+				'proofread',
+				{ summary: 'Proofread complete.', items: [ {}, {} ] },
+				{ suggested_edit_count: 2 },
+			],
+			[
+				'post-feedback',
+				{ summary: 'Feedback complete.', items: [ {} ] },
+				{ suggested_edit_count: 1 },
+			],
 			[
 				'ai-editorial-review',
 				{
+					summary: 'Review complete.',
 					suggested_edits: [ {}, {} ],
 					conflicts: [ {} ],
 					implications: [],
@@ -3816,11 +3941,11 @@ describe( 'toolProvider', () => {
 				props: {},
 			} ) ) as any;
 
-			expect( result ).toMatchObject( {
+			expect( result.result ).toMatchObject( {
 				success: false,
 				error: 'show-component: no component registered for type "unregistered-component"',
-				returnToAgent: false,
 			} );
+			expect( result.returnToAgent ).toBe( true );
 			expect( result.agentMessage ).toBeUndefined();
 		} );
 
@@ -3857,8 +3982,8 @@ describe( 'toolProvider', () => {
 			} );
 
 			expect( executeAbility ).not.toHaveBeenCalled();
-			expect( result ).toMatchObject( { success: false } );
-			expect( result.error ).toMatch( /missing type/ );
+			expect( result.result ).toMatchObject( { success: false } );
+			expect( result.result.error ).toMatch( /missing type/ );
 		} );
 
 		it( 'does not attach a title checkpoint to AI Editorial Review components', async () => {

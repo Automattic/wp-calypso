@@ -14,6 +14,7 @@ import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import CommandPalette from './command-palette';
 import type { AnalyticsClient } from 'calypso/dashboard/app/analytics';
 import type { AppConfig } from 'calypso/dashboard/app/context';
 
@@ -79,6 +80,7 @@ export default function Omnibar( {
 			reader: true,
 			notifications: true,
 			help: !! loadHelpCenterIcon,
+			commandPalette: true,
 		},
 	};
 
@@ -94,6 +96,7 @@ export default function Omnibar( {
 							sectionName={ sectionName ?? undefined }
 						/>
 					</div>
+					<CommandPalette />
 				</AnalyticsProvider>
 			</QueryClientProvider>
 		</AppProvider>

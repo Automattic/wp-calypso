@@ -22,6 +22,11 @@ export interface ReaderLandingPage extends LandingPagePreference {
 	useReaderAsLandingPage: boolean;
 }
 
+export interface LoggedInHomepagePreference {
+	show: boolean;
+	updatedAt: number; // Result of Date.now()
+}
+
 export interface VisitCounter {
 	count: number;
 	lastUpdated: number | null; // Result of Date.now(), or null before the first visit
@@ -32,7 +37,6 @@ export interface UserPreferences {
 	'hosting-dashboard-color-scheme'?: 'light' | 'dark' | 'system';
 	'hosting-dashboard-opt-in'?: HostingDashboardOptIn;
 	'hosting-dashboard-dark-mode-announcement-dismissed'?: string; // Timestamp when the user dismissed the notice
-	'hosting-dashboard-opt-in-welcome-modal-dismissed'?: string; // Timestamp when the user dismissed the modal
 	[ key: `hosting-dashboard-dataviews-view-${ string }` ]: View | undefined;
 	[ key: `hosting-dashboard-visit-count-${ string }` ]: VisitCounter | undefined;
 	[ key: `hosting-dashboard-overview-storage-notice-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
@@ -46,6 +50,7 @@ export interface UserPreferences {
 	'account-recovery-interstitial-dismiss-count'?: number; // How many times the user has dismissed the account-recovery interstitial; capped so we stop nudging after a few dismissals
 	'reader-landing-page'?: ReaderLandingPage;
 	'sites-landing-page'?: SitesLandingPage;
+	'logged-in-homepage'?: LoggedInHomepagePreference;
 	[ key: `cancel-purchase-survey-completed-${ string | number }` ]: string | undefined;
 	[ key: `cancellation-offer-accepted-notice-dismissed-${ string | number }` ]: string | undefined;
 	'achievements-visibility'?: 'public' | 'private';

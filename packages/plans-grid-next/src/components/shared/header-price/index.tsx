@@ -191,12 +191,11 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	const isGridPlanOnIntroOffer = introOffer && ! introOffer.isOfferComplete;
 
 	const { prices } = usePlanPricingInfoFromGridPlans( { gridPlans: visibleGridPlans } );
-	const isLargeCurrency =
-		useIsLargeCurrency( {
-			prices,
-			currencyCode: currencyCode || 'USD',
-			ignoreWhitespace: true,
-		} ) && ! showBillingDescriptionForIncreasedRenewalPrice; // a temporary fix to handle an issue with isLargeCurrency logic for intro offers
+	const isLargeCurrency = useIsLargeCurrency( {
+		prices,
+		currencyCode: currencyCode || 'USD',
+		ignoreWhitespace: true,
+	} );
 
 	const termVariantPlanSlug = useTermVariantPlanSlugForSavings( { planSlug, billingPeriod } );
 	const termVariantPricing = Plans.usePricingMetaForGridPlans( {

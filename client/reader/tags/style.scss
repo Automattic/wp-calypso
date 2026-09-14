@@ -1,37 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@automattic/typography/styles/variables";
-@import "https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap";
-
-.layout.has-header-section.is-section-reader .layout__header-section-content {
-	box-sizing: border-box;
-	max-width: 1140px;
-	margin: 0 auto;
-
-	@include break-medium {
-		padding-left: 108px;
-		padding-right: 108px;
-	}
-	@include break-wide {
-		padding-left: 0;
-		padding-right: 0;
-	}
-	h1 {
-		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
-		font-size: 60px;
-		font-weight: 400;
-		margin-bottom: 4px;
-
-		@media (max-width: $break-medium) {
-			font-size: $font-headline-small;
-			font-weight: 400;
-			line-height: 40px;
-		}
-	}
-	p {
-		font-weight: 400;
-	}
-}
 
 .is-section-reader.has-no-sidebar .layout__content .tags__main {
 	padding-left: 24px;

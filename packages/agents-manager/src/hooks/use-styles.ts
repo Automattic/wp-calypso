@@ -106,8 +106,8 @@ export default function useStyles() {
 						'[AgentsManager] Legacy Easy Site Editor CSS found — font picks may not be visible until it is removed.'
 					);
 
-					// TODO (ability-migration): Delete this dispatch once the removal
-					// dialog ports with `set-styles`. Where Big Sky's app mounts, it
+					// TODO (ability-migration): Delete this dispatch once AM has its own
+					// removal dialog (AM-27). Where Big Sky's app mounts, it
 					// opens Big Sky's existing removal dialog — exactly as before AM
 					// took over pick execution; elsewhere the store is unregistered
 					// and this is a no-op.
