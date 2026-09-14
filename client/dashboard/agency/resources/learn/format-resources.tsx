@@ -4,6 +4,7 @@ import VIPLogo from '../../marketplace/exclusive-offers/images/vip-descriptor.sv
 import WooLogo from '../../marketplace/exclusive-offers/images/woo-descriptor.svg';
 import WordPressDotComLogo from '../../marketplace/exclusive-offers/images/wordpressdotcom-descriptor.svg';
 import AgencyHabitsLogo from './images/agencyhabits.png';
+import WordPressLogo from './images/wordpress.png';
 import type { ResourceItem } from './types';
 import type { AgencyResource } from '@automattic/api-core';
 import type { ReactNode } from 'react';
@@ -46,6 +47,7 @@ function getProductLogo( relatedProduct = '', externalUrl = '' ): ReactNode | nu
 		pressable: { src: PressableLogo, alt: 'Pressable' },
 		'wordpress.com': { src: WordPressDotComLogo, alt: 'WordPress.com' },
 		'wordpress vip': { src: VIPLogo, alt: 'WordPress VIP' },
+		wordpress: { src: WordPressLogo, alt: 'WordPress' },
 	};
 
 	const logo = logos[ relatedProduct.toLowerCase() ] ?? getPublisherLogo( externalUrl );
