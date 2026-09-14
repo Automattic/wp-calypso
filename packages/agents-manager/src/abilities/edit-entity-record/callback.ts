@@ -652,8 +652,7 @@ async function applyEdits(
 
 /**
  * Why a deletion cannot go ahead, or nothing: the record is open in an editor
- * with no router to leave by. Only the site editor's router can leave without
- * a full page load, which could cut the delete off.
+ * with no router, and a full page load could cut the delete off.
  */
 const stuckDelete = ( { entityName, recordId }: Entity< 'delete' > ): string | undefined =>
 	isOpenInEditor( entityName, recordId ) && ! getEditorHistory()
@@ -768,8 +767,7 @@ async function editEntityRecord( input: EditEntityRecordInput ): Promise< Abilit
 		return errorResult( batch.message, failureMessage );
 	}
 
-	// Refused before the confirmation: a deletion that cannot happen is not
-	// worth asking the user about.
+	// Before the confirmation: a deletion that cannot happen is not worth asking about.
 	const stuck = batch.deletes.map( stuckDelete ).find( Boolean );
 
 	if ( stuck ) {
