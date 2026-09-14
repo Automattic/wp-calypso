@@ -50,16 +50,25 @@ export const setLayout = ( layout ) => ( {
 	layout,
 } );
 
+/**
+ * @param {'classic' | 'simplified'} layoutStyle
+ */
 export const setLayoutStyle = ( layoutStyle ) => ( {
 	type: SET_LAYOUT_STYLE,
 	layoutStyle,
 } );
 
+/**
+ * @param {import('../../../common/premade-views').StoredView[]} views
+ */
 export const setViews = ( views ) => ( {
 	type: SET_VIEWS,
 	views,
 } );
 
+/**
+ * @param {boolean} viewSettingsSeen
+ */
 export const setViewSettingsSeen = ( viewSettingsSeen ) => ( {
 	type: SET_VIEW_SETTINGS_SEEN,
 	viewSettingsSeen,

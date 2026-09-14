@@ -18,14 +18,14 @@ import ErrorBoundary from './error-boundary';
 import Note from './note';
 import { useNoteNavigation } from './note/hooks';
 import NotePanel from './note-panel';
-import type { FilterName } from './types';
+import type { FilterName, LayoutStyle } from './types';
 
 import './style.scss';
 
 repliesCache.cleanup();
 
 export type NotificationPreferences = {
-	layoutStyle?: string | null;
+	layoutStyle?: LayoutStyle | null;
 	views?: StoredView[] | null;
 	viewSettingsSeen?: boolean | null;
 };
