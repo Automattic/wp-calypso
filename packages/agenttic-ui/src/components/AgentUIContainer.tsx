@@ -23,6 +23,20 @@ interface AgentUIContainerProps extends AgentUIProps {
 	children: React.ReactNode;
 }
 
+function unionSuggestions( sets: Suggestion[][] ): Suggestion[] {
+	const seenIds = new Set< string >();
+	const union: Suggestion[] = [];
+	for ( const set of sets ) {
+		for ( const suggestion of set ) {
+			if ( ! seenIds.has( suggestion.id ) ) {
+				seenIds.add( suggestion.id );
+				union.push( suggestion );
+			}
+		}
+	}
+	return union;
+}
+
 export function AgentUIContainer( {
 	children,
 	messages,
@@ -222,11 +236,16 @@ export function AgentUIContainer( {
 	} );
 
 	// Dedup-aware reporter for the actually-rendered suggestion set. Owned here so
-	// dedup survives the AnimatePresence instance swap between compact and expanded.
+	// dedup survives the AnimatePresence instance swap between compact and expanded,
+	// and so several mounted instances ( e.g. a grouped empty view ) report as one.
 	const onSuggestionsRenderedRef = useRef( onSuggestionsRendered );
 	onSuggestionsRenderedRef.current = onSuggestionsRendered;
 
+	// Per-instance rendered sets in mount order; hidden instances keep an empty
+	// slot so the union stays in on-screen order.
+	const renderedByInstanceRef = useRef< Map< string, Suggestion[] > >( new Map() );
 	const lastReportedKeyRef = useRef( '' );
+	const isReportScheduledRef = useRef( false );
 
 	// The ONLY reset: data-level clear, so identical ids returning later count fresh.
 	const hasSuggestions = !! suggestions?.length;
@@ -236,17 +255,39 @@ export function AgentUIContainer( {
 		}
 	}, [ hasSuggestions ] );
 
-	// Stable ( empty deps ) so it never retriggers consumers' effects.
-	const reportSuggestionsRendered = useCallback( ( shown: Suggestion[] ) => {
-		const key = shown.length ? JSON.stringify( shown.map( ( suggestion ) => suggestion.id ) ) : '';
+	// Stable ( empty deps ) so it never retriggers consumers' effects. Reported in
+	// a microtask so instances registering in one commit produce a single report.
+	const reportSuggestionsRendered = useCallback(
+		( instanceId: string, shown: Suggestion[] | null ) => {
+			if ( shown === null ) {
+				renderedByInstanceRef.current.delete( instanceId );
+			} else {
+				renderedByInstanceRef.current.set( instanceId, shown );
+			}
 
-		if ( ! key || key === lastReportedKeyRef.current ) {
-			return;
-		}
+			if ( isReportScheduledRef.current ) {
+				return;
+			}
 
-		lastReportedKeyRef.current = key;
-		onSuggestionsRenderedRef.current?.( shown );
-	}, [] );
+			isReportScheduledRef.current = true;
+
+			queueMicrotask( () => {
+				isReportScheduledRef.current = false;
+				const rendered = unionSuggestions( Array.from( renderedByInstanceRef.current.values() ) );
+				const key = rendered.length
+					? JSON.stringify( rendered.map( ( suggestion ) => suggestion.id ) )
+					: '';
+
+				if ( ! key || key === lastReportedKeyRef.current ) {
+					return;
+				}
+
+				lastReportedKeyRef.current = key;
+				onSuggestionsRenderedRef.current?.( rendered );
+			} );
+		},
+		[]
+	);
 
 	// Handle suggestion submission
 	const handleSuggestionSubmit = useCallback(

@@ -2,6 +2,7 @@ import { dateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
 import { startOfDay, endOfDay, fromUnixTime, isValid as isValidDate } from 'date-fns';
 import { formatDateWithOffset, getUtcOffsetDisplay } from '../../utils/datetime';
+import { getIntlLocale } from '../../utils/locale';
 import type { PHPLog, ServerLog } from '@automattic/api-core';
 import type { Badge } from '@wordpress/ui';
 import type { ComponentProps } from 'react';
@@ -98,7 +99,7 @@ export function formatLogDateTimeForDisplay(
 	if ( timezoneString ) {
 		const date = new Date( dateTime );
 
-		return new Intl.DateTimeFormat( locale, {
+		return new Intl.DateTimeFormat( getIntlLocale( locale ), {
 			dateStyle: 'long',
 			timeStyle: 'short',
 			timeZone: timezoneString,

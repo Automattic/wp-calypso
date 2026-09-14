@@ -1,30 +1,31 @@
 /**
  * @jest-environment jsdom
  */
-import { useQuery as useReactQuery } from '@tanstack/react-query';
+import config from '@automattic/calypso-config';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getSignupCompleteSlug } from 'calypso/signup/storageUtils';
+import { usePlanCartItem } from '../../../../../hooks/use-plan-cart-item';
 import { useSiteData } from '../../../../../hooks/use-site-data';
 import SetupYourSiteAIStep from '../index';
 
 let mockQueryParams = new URLSearchParams();
 
-jest.mock( '@automattic/api-queries', () => ( {
-	isAutomatticianQuery: jest.fn( () => ( {
-		queryKey: [ 'me', 'is-automattician' ],
-		queryFn: jest.fn(),
-	} ) ),
-} ) );
-
-jest.mock( '@tanstack/react-query', () => ( {
-	useQuery: jest.fn( () => ( { data: false } ) ),
-} ) );
-
 jest.mock( '@automattic/components', () => ( {
 	BigSkyLogo: { CentralLogo: () => null },
-	SummaryButton: ( { title, onClick }: { title: string; onClick: () => void } ) => (
-		<button onClick={ onClick }>{ title }</button>
+	SummaryButton: ( {
+		title,
+		onClick,
+		disabled,
+	}: {
+		title: string;
+		onClick: () => void;
+		disabled?: boolean;
+	} ) => (
+		<button onClick={ onClick } disabled={ disabled }>
+			{ title }
+		</button>
 	),
 } ) );
 
@@ -48,6 +49,18 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/signup/storageUtils', () => ( {
+	getSignupCompleteSlug: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/landing/stepper/utils/build-wow-plans', () => ( {
+	planSupportsBuildWow: ( slug?: string ) => !! slug && slug !== 'pro-plan',
+} ) );
+
+jest.mock( '../../../../../hooks/use-plan-cart-item', () => ( {
+	usePlanCartItem: jest.fn(),
+} ) );
+
 jest.mock( '../../../../../hooks/use-query', () => ( {
 	useQuery: () => mockQueryParams,
 } ) );
@@ -61,8 +74,8 @@ jest.mock( '../../../hooks/use-purchase-plan-notification', () => ( {
 } ) );
 
 describe( 'SetupYourSiteAIStep', () => {
-	const mockUseReactQuery = useReactQuery as jest.Mock;
 	const mockUseSiteData = useSiteData as jest.Mock;
+	const isEnabled = jest.spyOn( config, 'isEnabled' );
 	const navigation = { submit: jest.fn() };
 
 	const renderStep = () =>
@@ -79,11 +92,28 @@ describe( 'SetupYourSiteAIStep', () => {
 			.getAllByRole( 'button' )
 			.map( ( button ) => button.getAttribute( 'aria-label' ) || button.textContent );
 
+	const setSitePlan = ( productSlug: string ) =>
+		mockUseSiteData.mockReturnValue( {
+			site: { plan: { product_slug: productSlug } },
+			siteSlug: 'example.wordpress.com',
+			siteId: 123,
+		} );
+
+	const setPlanCartItem = ( productSlug: string | null ) =>
+		( usePlanCartItem as jest.Mock ).mockReturnValue(
+			productSlug ? { product_slug: productSlug } : null
+		);
+
+	const clickCustomDesign = () =>
+		fireEvent.click( screen.getByRole( 'button', { name: 'Create a custom design' } ) );
+
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockQueryParams = new URLSearchParams();
-		mockUseReactQuery.mockReturnValue( { data: false } );
-		mockUseSiteData.mockReturnValue( { siteSlug: 'example.wordpress.com', siteId: 123 } );
+		isEnabled.mockReturnValue( true );
+		setSitePlan( 'business-bundle' );
+		setPlanCartItem( null );
+		( getSignupCompleteSlug as jest.Mock ).mockReturnValue( 'example.wordpress.com' );
 	} );
 
 	describe( 'card order', () => {
@@ -118,10 +148,28 @@ describe( 'SetupYourSiteAIStep', () => {
 			} );
 		} );
 
-		it( 'submits the build-with-ai choice from the custom design card', () => {
+		it( 'submits the generate-theme choice from the custom design card on an Atomic-capable plan', () => {
 			renderStep();
 
-			fireEvent.click( screen.getByRole( 'button', { name: 'Create a custom design' } ) );
+			clickCustomDesign();
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_onboarding_setup_your_site_with_ai_selection',
+				{ selection: 'generate-theme' }
+			);
+			expect( navigation.submit ).toHaveBeenCalledWith( {
+				setupChoice: 'generate-theme',
+				siteSlug: 'example.wordpress.com',
+				siteId: 123,
+			} );
+		} );
+
+		it( 'submits the build-with-ai choice from the custom design card on a plan without Atomic', () => {
+			setSitePlan( 'pro-plan' );
+
+			renderStep();
+
+			clickCustomDesign();
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_onboarding_setup_your_site_with_ai_selection',
@@ -133,33 +181,94 @@ describe( 'SetupYourSiteAIStep', () => {
 				siteId: 123,
 			} );
 		} );
-	} );
 
-	describe( 'Generate Theme (Automattician only)', () => {
-		it( 'hides the Generate Theme option for non-Automatticians', () => {
-			mockUseReactQuery.mockReturnValue( { data: false } );
+		it( 'keeps the Woo hosting solutions form on build-with-ai', () => {
+			mockQueryParams = new URLSearchParams( { ref: WOO_HOSTING_SOLUTIONS_REF } );
 
 			renderStep();
 
-			expect( screen.queryByText( 'Generate Theme' ) ).not.toBeInTheDocument();
+			fireEvent.change( screen.getByPlaceholderText( 'Take bookings for a hair salon…' ), {
+				target: { value: 'a hair salon' },
+			} );
+			fireEvent.click( screen.getByRole( 'button', { name: 'Build with AI' } ) );
+
+			expect( navigation.submit ).toHaveBeenCalledWith( {
+				setupChoice: 'build-with-ai',
+				siteSlug: 'example.wordpress.com',
+				siteId: 123,
+				prompt: 'a hair salon',
+			} );
 		} );
 
-		it( 'shows Generate Theme and submits the generate-theme choice for Automatticians', () => {
-			mockUseReactQuery.mockReturnValue( { data: true } );
+		it( 'prefers the plan just bought over a stale site plan', () => {
+			setSitePlan( 'pro-plan' );
+			setPlanCartItem( 'value_bundle' );
 
 			renderStep();
 
-			const button = screen.getByText( 'Generate Theme' );
-			expect( button ).toBeInTheDocument();
+			clickCustomDesign();
 
-			fireEvent.click( button );
+			expect( navigation.submit ).toHaveBeenCalledWith(
+				expect.objectContaining( { setupChoice: 'generate-theme' } )
+			);
+		} );
+
+		it( 'ignores a cart item left over from a checkout for another site', () => {
+			( getSignupCompleteSlug as jest.Mock ).mockReturnValue( 'other.wordpress.com' );
+			setSitePlan( 'pro-plan' );
+			setPlanCartItem( 'business-bundle' );
+
+			renderStep();
+
+			clickCustomDesign();
+
+			expect( navigation.submit ).toHaveBeenCalledWith(
+				expect.objectContaining( { setupChoice: 'build-with-ai' } )
+			);
+		} );
+
+		it( 're-enables the controls when the page is restored from bfcache', () => {
+			renderStep();
+
+			clickCustomDesign();
+			expect( screen.getByRole( 'button', { name: 'Start with a template' } ) ).toBeDisabled();
+
+			const pageshow = new Event( 'pageshow' ) as PageTransitionEvent;
+			Object.defineProperty( pageshow, 'persisted', { value: true } );
+			fireEvent( window, pageshow );
+
+			expect( screen.getByRole( 'button', { name: 'Start with a template' } ) ).toBeEnabled();
+		} );
+
+		it( 'submits a choice only once per visit and disables the controls', () => {
+			renderStep();
+
+			clickCustomDesign();
+			clickCustomDesign();
+			fireEvent.click( screen.getByRole( 'button', { name: 'Start with a template' } ) );
+
+			expect( navigation.submit ).toHaveBeenCalledTimes( 1 );
+			expect( screen.getByRole( 'button', { name: 'Start with a template' } ) ).toBeDisabled();
+			expect( screen.getByRole( 'button', { name: 'Create a custom design' } ) ).toBeDisabled();
+		} );
+	} );
+
+	describe( 'with the site-spec feature disabled', () => {
+		beforeEach( () => {
+			isEnabled.mockImplementation( ( flag: string ) => flag !== 'site-spec' );
+		} );
+
+		it( 'submits the build-with-ai choice from the custom design card', () => {
+			renderStep();
+
+			clickCustomDesign();
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_onboarding_setup_your_site_with_ai_selection',
-				{ selection: 'generate-theme' }
+				{ selection: 'build-with-ai', has_prompt: false }
 			);
 			expect( navigation.submit ).toHaveBeenCalledWith( {
-				setupChoice: 'generate-theme',
+				setupChoice: 'build-with-ai',
 				siteSlug: 'example.wordpress.com',
 				siteId: 123,
 			} );

@@ -101,7 +101,7 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	const { onClearCart } = useShoppingCart();
 
 	const onEmailChange = ( value: string ) => {
-		setEmail( value );
+		setEmail( value.trim() );
 		if ( validationError.email ) {
 			setValidationError( { email: undefined } );
 		}

@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 import { amToolProvider } from '../../abilities';
+import { applyUpdateThemeAbility } from '../../abilities/apply-update-theme';
+import { editorNavigateAbility } from '../../abilities/editor-navigate';
 import { getBlockTreeAbility } from '../../abilities/get-block-tree';
 import { restoreCheckpointAbility } from '../../abilities/restore-checkpoint';
 import { setSiteLogoAbility } from '../../abilities/set-site-logo';
@@ -15,6 +17,7 @@ import {
 	mergeCapabilitiesInto,
 	mergeUseSuggestionsHooks,
 } from '../load-external-providers';
+import { getLoadedProviderIds, setLoadedProviderIds } from '../loaded-provider-ids';
 import {
 	getProviderCheckpointObservedAt,
 	getProviderCheckpointRecords,
@@ -172,6 +175,7 @@ describe( 'loadExternalProviders', () => {
 		window.history.replaceState( {}, '', '/' );
 		delete ( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData;
 		delete ( window as typeof window & { agentsManagerData?: unknown } ).agentsManagerData;
+		setLoadedProviderIds( undefined );
 	} );
 
 	it( 'does not merge external editor providers into Reader Chat', async () => {
@@ -197,6 +201,28 @@ describe( 'loadExternalProviders', () => {
 		setAgentsManagerData( { agentProviders } );
 
 		await expect( loadExternalProviders() ).resolves.toEqual( {} );
+		expect( getLoadedProviderIds() ).toEqual( [] );
+	} );
+
+	it( 'publishes the loaded provider ids for the Tracks wrappers', async () => {
+		setAgentsManagerData( {
+			agentProviders: [ { providerId: 'jetpack-ai' }, { providerId: 'woocommerce-ai' } ],
+		} );
+
+		await loadExternalProviders();
+
+		expect( getLoadedProviderIds() ).toEqual( [ 'jetpack-ai', 'woocommerce-ai' ] );
+	} );
+
+	it( 'publishes an empty provider list for Reader Chat', async () => {
+		setAgentsManagerData( {
+			agentId: 'reader-chat',
+			agentProviders: [ { providerId: 'jetpack-ai' } ],
+		} );
+
+		await loadExternalProviders();
+
+		expect( getLoadedProviderIds() ).toEqual( [] );
 	} );
 
 	it( 'merges abilities from multiple tool providers and dispatches execution to the owner', async () => {
@@ -219,10 +245,12 @@ describe( 'loadExternalProviders', () => {
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
 				wpAdminNavigateAbility,
-				getBlockTreeAbility,
+				applyUpdateThemeAbility,
+				editorNavigateAbility,
 				restoreCheckpointAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
+				getBlockTreeAbility,
 				showTemplateAbility,
 				createAbility( 'host/navigate' ),
 				createAbility( 'woocommerce/get-products' ),
@@ -255,10 +283,12 @@ describe( 'loadExternalProviders', () => {
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
 				wpAdminNavigateAbility,
-				getBlockTreeAbility,
+				applyUpdateThemeAbility,
+				editorNavigateAbility,
 				restoreCheckpointAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
+				getBlockTreeAbility,
 				showTemplateAbility,
 				createAbility( 'shared/action' ),
 			] )
@@ -315,17 +345,29 @@ describe( 'loadExternalProviders', () => {
 		};
 		setAgentsManagerData( { agentProviders: [ { toolProvider: bigSkyProvider } ] } );
 
-		const providers = await loadExternalProviders();
+		// The switch is read once per page load, so load the providers under it.
+		await jest.isolateModulesAsync( async () => {
+			const { loadExternalProviders: loadUnderSwitch } = jest.requireActual<
+				typeof import('../load-external-providers')
+			>( '../load-external-providers' );
 
-		// Editor abilities flip to the provider copy; the fully migrated
-		// all-surface abilities stay AM's.
-		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
-			abilityShapes( [ wpAdminNavigateAbility, createAbility( 'big-sky/show-component' ) ] )
-		);
-		await expect(
-			providers.toolProvider?.executeAbility( 'big_sky__show_component', {} )
-		).resolves.toEqual( { handledBy: 'big-sky' } );
-		expect( bigSkyProvider.executeAbility ).toHaveBeenCalled();
+			const providers = await loadUnderSwitch();
+
+			// Migrated editor abilities flip to the provider copy; abilities with
+			// no provider copy stay AM's.
+			expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
+				abilityShapes( [
+					wpAdminNavigateAbility,
+					getBlockTreeAbility,
+					showTemplateAbility,
+					createAbility( 'big-sky/show-component' ),
+				] )
+			);
+			await expect(
+				providers.toolProvider?.executeAbility( 'big_sky__show_component', {} )
+			).resolves.toEqual( { handledBy: 'big-sky' } );
+			expect( bigSkyProvider.executeAbility ).toHaveBeenCalled();
+		} );
 	} );
 
 	it( 'keeps the remaining abilities when a provider fails to list its own', async () => {
@@ -347,10 +389,12 @@ describe( 'loadExternalProviders', () => {
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
 				wpAdminNavigateAbility,
-				getBlockTreeAbility,
+				applyUpdateThemeAbility,
+				editorNavigateAbility,
 				restoreCheckpointAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
+				getBlockTreeAbility,
 				showTemplateAbility,
 				createAbility( 'host/navigate' ),
 			] )
@@ -824,10 +868,12 @@ describe( 'loadExternalProviders', () => {
 		expect( abilityShapes( await providers.toolProvider?.getAbilities() ) ).toEqual(
 			abilityShapes( [
 				wpAdminNavigateAbility,
-				getBlockTreeAbility,
+				applyUpdateThemeAbility,
+				editorNavigateAbility,
 				restoreCheckpointAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
+				getBlockTreeAbility,
 				showTemplateAbility,
 				createAbility( 'big-sky/apply-block-edits' ),
 				createAbility( 'wpcom/manage-site' ),

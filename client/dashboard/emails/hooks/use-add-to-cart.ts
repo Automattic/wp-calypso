@@ -77,8 +77,8 @@ export const useAddToCart = () => {
 			.actions.addProductsToCart( [ getCartItems( mailboxOperations.mailboxes, emailProperties ) ] )
 			.then( () => {
 				recordTracksEvent( 'calypso_dashboard_emails_add_mailbox_add_to_cart_success', {
-					domainName,
-					mailboxCount: mailboxOperations.mailboxes.length,
+					domain_name: domainName,
+					mailbox_count: mailboxOperations.mailboxes.length,
 					provider,
 				} );
 
@@ -87,8 +87,8 @@ export const useAddToCart = () => {
 			.finally( onFinally )
 			.catch( ( error: CartActionError ) => {
 				recordTracksEvent( 'calypso_dashboard_emails_add_mailbox_add_to_cart_failure', {
-					domainName,
-					mailboxCount: mailboxOperations.mailboxes.length,
+					domain_name: domainName,
+					mailbox_count: mailboxOperations.mailboxes.length,
 					provider,
 					error: error.message,
 				} );

@@ -8,10 +8,10 @@ import { useEffect, useState } from 'react';
 import titleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import { isExpiredOrRemoved } from 'calypso/dashboard/utils/purchase';
 import { useIsLoading as useAddEmailForwardMutationIsLoading } from 'calypso/data/emails/use-add-email-forward-mutation';
 import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -23,7 +23,7 @@ import {
 	getProductType,
 	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
-import { handleRenewNowClick, isExpiredOrRemoved } from 'calypso/lib/purchases';
+import { handleRenewNowClick } from 'calypso/lib/purchases';
 import {
 	getTitanProductName,
 	getTitanSubscriptionId,
@@ -34,10 +34,8 @@ import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/cons
 import { EmailPlanHeader } from 'calypso/my-sites/email/email-management/home/email-plan-header';
 import EmailPlanMailboxesList from 'calypso/my-sites/email/email-management/home/email-plan-mailboxes-list';
 import MailPoetUpsell from 'calypso/my-sites/email/email-management/home/mailpoet-upsell';
-import {
-	getEmailPurchaseByDomain,
-	hasEmailSubscription,
-} from 'calypso/my-sites/email/email-management/home/utils';
+import { useEmailPurchaseByDomain } from 'calypso/my-sites/email/email-management/home/use-email-purchase';
+import { hasEmailSubscription } from 'calypso/my-sites/email/email-management/home/utils';
 import {
 	getEmailManagementPath,
 	getAddEmailForwardsPath,
@@ -51,10 +49,6 @@ import {
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
-import {
-	hasLoadedSitePurchasesFromServer,
-	isFetchingSitePurchases,
-} from 'calypso/state/purchases/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
 
@@ -128,10 +122,7 @@ function EmailPlan( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const purchase = useSelector( ( state ) => getEmailPurchaseByDomain( state, domain ) );
-	const isLoadingPurchase = useSelector(
-		( state ) => isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state )
-	);
+	const { purchase } = useEmailPurchaseByDomain( domain );
 	const currentRoute = useSelector( getCurrentRoute );
 	const canAddMailboxes = canAddMailboxesToEmailSubscription( domain );
 	const hasSubscription = hasEmailSubscription( domain );
@@ -144,9 +135,7 @@ function EmailPlan( {
 		event.preventDefault();
 
 		dispatch(
-			// Temporary bridge (SHILL-2256): this page still reads the camelCase
-			// Purchase from Redux. Remove once it reads the raw shape.
-			handleRenewNowClick( purchase.rawPurchase, selectedSite.slug, {
+			handleRenewNowClick( purchase, selectedSite.slug, {
 				tracksProps: { source: 'email-plan-view' },
 			} )
 		);
@@ -279,7 +268,7 @@ function EmailPlan( {
 
 	function renderViewBillingAndPaymentSettingsNavItem() {
 		const managePurchaseUrl = purchase
-			? getManagePurchaseUrlFor( selectedSite.slug, purchase.id )
+			? getManagePurchaseUrlFor( selectedSite.slug, purchase.ID )
 			: '';
 
 		if ( ! hasSubscription || ! purchase ) {
@@ -366,7 +355,6 @@ function EmailPlan( {
 	return (
 		<>
 			{ selectedSite && <QuerySiteProducts siteId={ selectedSite.ID } /> }
-			{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 			<DocumentHead title={ titleCase( getHeaderText() ) } />
 			{ ! hideMailPoetUpsell && <MailPoetUpsell /> }
 			{ ! hideHeaderCake && <HeaderCake onClick={ handleBack }>{ getHeaderText() }</HeaderCake> }
@@ -375,8 +363,6 @@ function EmailPlan( {
 					domain={ domain }
 					hasEmailSubscription={ hasSubscription }
 					isLoadingEmails={ isLoading }
-					isLoadingPurchase={ isLoadingPurchase }
-					purchase={ purchase }
 					selectedSite={ selectedSite }
 					emailAccount={ getAccount( emailAccounts ) }
 				/>

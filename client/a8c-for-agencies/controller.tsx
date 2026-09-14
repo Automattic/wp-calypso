@@ -96,16 +96,6 @@ export const requireTierAccessContext: Callback = ( context, next ) => {
 	next();
 };
 
-export const requireMcpBetaAccessContext: Callback = ( context, next ) => {
-	const agency = getActiveAgency( context.store.getState() );
-
-	if ( ! agency?.mcp?.allowed ) {
-		page.redirect( A4A_OVERVIEW_LINK );
-		return;
-	}
-	next();
-};
-
 export const requireAmplifyAccessContext: Callback = ( context, next ) => {
 	const agency = getActiveAgency( context.store.getState() );
 

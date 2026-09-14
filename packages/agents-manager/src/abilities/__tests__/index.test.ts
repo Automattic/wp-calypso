@@ -41,9 +41,9 @@ async function load() {
 	};
 }
 
-// The editor count reads the real `EDITOR_ABILITIES` list, so it stays
-// correct as abilities migrate in; the all-surface names are mirrored by
-// hand (the facade does not export its list).
+// The editor count reads the real editor list, so it stays correct as
+// abilities migrate in; the all-surface names are mirrored by hand (the
+// facade does not export its list).
 // Compared by name: `load()` resets modules, so instances never match.
 const ALL_SURFACE_ABILITY_NAMES = [ 'wp-admin/navigate' ];
 
@@ -146,40 +146,25 @@ describe( 'abilities facade', () => {
 		);
 	} );
 
-	it( 'skips loading with `?am_abilities=0`, keeping the all-surface abilities', async () => {
+	it( 'hands only the migrated editor abilities back with `?am_abilities=0`', async () => {
 		setEditorPage( true );
 		window.history.replaceState( {}, '', '/?am_abilities=0' );
-		const { registerAmAbilities, amToolProvider, registerAbility } = await load();
+		const { registerAmAbilities, amToolProvider, registerAbility, editorAbilities } = await load();
+		const amOnlyNames = editorAbilities.getEditorAbilities().map( ( { name } ) => name );
 
 		await registerAmAbilities();
 
-		expect( registerAbility ).not.toHaveBeenCalled();
-		await expect( ownedAbilityNames( amToolProvider ) ).resolves.toEqual(
-			ALL_SURFACE_ABILITY_NAMES
-		);
-	} );
+		// Registration runs fire-and-forget with the load — let it settle.
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
-	it( 'stops advertising checkpoints when `?am_abilities=0` is set after a load', async () => {
-		setEditorPage( true );
-		jest.resetModules();
-		jest.doMock( '../editor-abilities', () => ( {
-			getEditorAbilities: () => [],
-			registerEditorAbilities: jest.fn().mockResolvedValue( undefined ),
-			getAvailableCheckpoints: () => [ { checkpointId: 'cp-1' } ],
-		} ) );
-
-		try {
-			const { amToolProvider, getAmCheckpointContext } = await import( '..' );
-			await amToolProvider.getAbilities();
-
-			expect( getAmCheckpointContext() ).toHaveLength( 1 );
-
-			window.history.replaceState( {}, '', '/?am_abilities=0' );
-
-			expect( getAmCheckpointContext() ).toEqual( [] );
-		} finally {
-			jest.dontMock( '../editor-abilities' );
-		}
+		// A migrated ability is handed back; one with no provider copy stays on.
+		expect( amOnlyNames ).not.toContain( 'big-sky/show-component' );
+		expect( amOnlyNames ).toContain( 'big-sky/show-template' );
+		await expect( ownedAbilityNames( amToolProvider ) ).resolves.toEqual( [
+			...ALL_SURFACE_ABILITY_NAMES,
+			...amOnlyNames,
+		] );
+		expect( registerAbility.mock.calls.map( ( [ { name } ] ) => name ) ).toEqual( amOnlyNames );
 	} );
 
 	it( 'retries the load after a failed chunk fetch', async () => {
@@ -328,6 +313,9 @@ describe( 'registerEditorAbilities', () => {
 
 		expect( registerAbility ).toHaveBeenCalledTimes( editorAbilities.getEditorAbilities().length );
 		expect( registerAbility ).toHaveBeenCalledWith(
+			expect.objectContaining( { name: 'big-sky/apply-update-theme' } )
+		);
+		expect( registerAbility ).toHaveBeenCalledWith(
 			expect.objectContaining( { name: 'agents-manager/get-block-tree' } )
 		);
 		expect( registerAbility ).toHaveBeenCalledWith(
@@ -350,14 +338,16 @@ describe( 'registerEditorAbilities', () => {
 
 	it( 'replaces a provider copy when the name is already registered', async () => {
 		const { editorAbilities, getAbility, registerAbility, unregisterAbility } = await load();
+		// The first registration is the one made to collide.
+		const { name } = editorAbilities.getEditorAbilities()[ 0 ];
 		registerAbility.mockRejectedValueOnce(
-			new Error( 'Ability "agents-manager/get-block-tree" is already registered' )
+			new Error( `Ability "${ name }" is already registered` )
 		);
-		getAbility.mockReturnValue( { name: 'agents-manager/get-block-tree' } );
+		getAbility.mockReturnValue( { name } );
 
 		await editorAbilities.registerEditorAbilities();
 
-		expect( unregisterAbility ).toHaveBeenCalledWith( 'agents-manager/get-block-tree' );
+		expect( unregisterAbility ).toHaveBeenCalledWith( name );
 		// One extra call: the collision is retried after unregistering.
 		expect( registerAbility ).toHaveBeenCalledTimes(
 			editorAbilities.getEditorAbilities().length + 1

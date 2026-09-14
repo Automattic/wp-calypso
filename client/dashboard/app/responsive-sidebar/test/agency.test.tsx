@@ -36,7 +36,6 @@ function mockAgency( capabilities: string[] ) {
 		.reply( 200, [
 			{
 				id: 1,
-				mcp: { allowed: true },
 				partner_directory: { allowed: true, directories: [] },
 				user: { capabilities },
 			},
@@ -143,16 +142,13 @@ describe( '<AgencySidebar>', () => {
 		expect( screen.queryByRole( 'link', { name: 'Partner Directories' } ) ).not.toBeInTheDocument();
 	} );
 
-	// MCP is the one item gated by both a tier flag (`mcp.allowed`) and a
-	// capability (`a4a_read_learn`). `mockAgency` always reports the tier flag
-	// on, so these cases isolate the capability gate.
-	test( 'shows MCP when the agency is MCP-enabled and the user holds the learn capability', async () => {
+	test( 'shows MCP when the user holds the learn capability', async () => {
 		await renderSidebar( [ 'a4a_read_learn' ] );
 
 		expect( screen.getByRole( 'link', { name: 'AI and MCP' } ) ).toBeVisible();
 	} );
 
-	test( 'hides MCP when the agency is MCP-enabled but the user lacks the learn capability', async () => {
+	test( 'hides MCP when the user lacks the learn capability', async () => {
 		await renderSidebar( [ 'a4a_read_managed_sites' ] );
 
 		expect( screen.queryByRole( 'link', { name: 'AI and MCP' } ) ).not.toBeInTheDocument();

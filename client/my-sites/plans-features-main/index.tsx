@@ -44,6 +44,7 @@ import {
 	useGridPlansForComparisonGrid,
 	useGridPlanForSpotlight,
 	usePlanBillingPeriod,
+	hasTailoredFeatureList,
 } from '@automattic/plans-grid-next';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
@@ -797,7 +798,7 @@ const PlansFeaturesMain = ( {
 	// existing plan (rather than passively reading "Your plan") so the user is
 	// reminded they can keep their plan instead of letting the downgrade apply.
 	const renewCurrentPlanWithPendingDowngrade = () => {
-		if ( ! siteSlug || ! currentPlanPurchaseId || ! currentPurchase?.product_slug ) {
+		if ( ! currentPlanPurchaseId ) {
 			return;
 		}
 		recordTracksEvent( 'calypso_plan_features_renew_pending_downgrade_click', {
@@ -814,7 +815,7 @@ const PlansFeaturesMain = ( {
 		}
 		window.location.href = addQueryArgs(
 			checkoutQuery,
-			`/checkout/${ currentPurchase.product_slug }/renew/${ currentPlanPurchaseId }/${ siteSlug }`
+			`/checkout/renew/${ currentPlanPurchaseId }`
 		);
 	};
 
@@ -923,6 +924,31 @@ const PlansFeaturesMain = ( {
 		isExperimentVariant,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
+
+	// A site-meta intent (e.g. newsletter) can leave nothing to upgrade to once the
+	// plans page hides the tiers below the current plan. Fall back to the default
+	// grid, the same way the "View all plans" escape hatch does.
+	useEffect( () => {
+		if (
+			! forceDefaultPlans &&
+			! isInSignup &&
+			! isDisplayingPlansNeededForFeature &&
+			intentFromSiteMeta.intent &&
+			! hideEscapeHatchForIntent( intentFromSiteMeta.intent ) &&
+			intent === intentFromSiteMeta.intent &&
+			gridPlansForFeaturesGridRaw &&
+			gridPlansForFeaturesGridRaw.length <= 1
+		) {
+			setForceDefaultPlans( true );
+		}
+	}, [
+		forceDefaultPlans,
+		isInSignup,
+		isDisplayingPlansNeededForFeature,
+		intent,
+		intentFromSiteMeta.intent,
+		gridPlansForFeaturesGridRaw,
+	] );
 
 	const isIndiaA4A = useIsIndiaA4A();
 
@@ -1269,7 +1295,10 @@ const PlansFeaturesMain = ( {
 		featureGroupMapForComparisonGrid = getWooExpressFeaturesGroupedForComparisonGrid();
 	} else {
 		featureGroupMapForComparisonGrid = getPlanFeaturesGroupedForComparisonGrid( {
-			isExperimentVariant,
+			// The row set has to match the feature lists the comparison grid is built from, which a
+			// curated intent keeps for itself. Leaving this un-gated pairs experiment rows and group
+			// titles with a control list.
+			isExperimentVariant: isExperimentVariant && ! hasTailoredFeatureList( intent ),
 		} );
 	}
 
@@ -1280,9 +1309,13 @@ const PlansFeaturesMain = ( {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
 	} else if ( intent === 'plans-wordpress-hosting' ) {
 		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
-	} else if ( useVar42NoAiFeatures || usePlansGridRedesignFeatures ) {
+	} else if (
+		( useVar42NoAiFeatures || usePlansGridRedesignFeatures ) &&
+		! hasTailoredFeatureList( intent )
+	) {
 		// Stacked rollout variant should render a single, ordered list (no grouping),
 		// otherwise features get scattered across groups causing gaps and can be filtered out.
+		// Skipped for intents that curate their own feature list, whose grouping is theirs too.
 		const featureGroups = getPlanFeaturesGroupedForFeaturesGrid();
 		featureGroupMapForFeaturesGrid = Object.fromEntries(
 			Object.entries( featureGroups ).reverse()

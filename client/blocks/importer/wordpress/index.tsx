@@ -3,7 +3,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSelector } from 'calypso/state';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { getSite, isJetpackSite, hasAllSitesList } from 'calypso/state/sites/selectors';
+import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { Importer, ImportJob, StepNavigator } from '../types';
 import ImportContentOnly from './import-content-only';
 
@@ -23,25 +23,17 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	const siteItem = useSelector( ( state ) => getSite( state, siteId ) );
 	const isSiteAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const isSiteJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
-	const hasAllSitesFetched = useSelector( hasAllSitesList );
 	const fromSiteAnalyzedData = useSelector( getUrlData );
+	const shouldRedirectToWpAdmin = ! isSiteAtomic && isSiteJetpack;
 
 	/**
 	 ↓ Effects
 	 */
-	useEffect( checkImporterAvailability, [ siteId ] );
-
-	function checkImporterAvailability() {
-		isNotAtomicJetpack() && redirectToWpAdminImportPage();
-	}
-
-	function isNotAtomicJetpack() {
-		return ! isSiteAtomic && isSiteJetpack;
-	}
-
-	function redirectToWpAdminImportPage() {
-		stepNavigator?.goToWpAdminImportPage?.();
-	}
+	useEffect( () => {
+		if ( shouldRedirectToWpAdmin ) {
+			stepNavigator?.goToWpAdminImportPage?.();
+		}
+	}, [ shouldRedirectToWpAdmin, stepNavigator ] );
 
 	/**
 	 ↓ HTML
@@ -49,10 +41,10 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	return (
 		<>
 			{ ( () => {
-				if ( isNotAtomicJetpack() || ! hasAllSitesFetched ) {
+				if ( shouldRedirectToWpAdmin ) {
 					return (
 						<div className="import-layout__center">
-							<LoadingEllipsis />;
+							<LoadingEllipsis />
 						</div>
 					);
 				}

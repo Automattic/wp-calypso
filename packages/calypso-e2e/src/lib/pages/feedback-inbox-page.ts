@@ -2,6 +2,28 @@ import { Locator, Page } from 'playwright';
 import { envVariables } from '../..';
 
 /**
+ * How long to wait for a response action to settle on the single response page.
+ *
+ * Jetpack caps the save at 30 seconds and keeps the "Actions" toggle disabled
+ * until it resolves, so this matches that cap.
+ *
+ * @see https://github.com/Automattic/jetpack/blob/trunk/projects/packages/forms/routes/responses/actions.tsx
+ */
+const RESPONSE_ACTION_TIMEOUT = 30 * 1000;
+
+/**
+ * Accessible name of the unread dot on a response row, in both the legacy
+ * inbox and the DataViews list.
+ */
+const UNREAD_ROW_LABEL = '(Unread form response)';
+
+/**
+ * The mark-as-read request, on Simple (`/wp/v2/sites/<id>/feedback/<id>/read`)
+ * and Atomic (`/wp-json/wp/v2/feedback/<id>/read`) sites alike.
+ */
+const MARK_AS_READ_REQUEST = /\/wp\/v2\/(sites\/\d+\/)?feedback\/\d+\/read\b/;
+
+/**
  * Page repsresenting the Feedback page, Inbox view variant. Accessed under Sidebar > Feedback.
  */
 export class FeedbackInboxPage {
@@ -25,6 +47,94 @@ export class FeedbackInboxPage {
 	 */
 	private getResponseRow( text: string ): Locator {
 		return this.page.locator( '.dataviews-view-table__row' ).filter( { hasText: text } ).first();
+	}
+
+	/**
+	 * Returns a locator for the standalone single response page.
+	 *
+	 * Jetpack Forms moved the "View" row action from an in-place inspector panel
+	 * to a full page at `/response/<id>`. Sites on an older Jetpack still open the
+	 * inspector, so both have to be supported.
+	 *
+	 * @see https://github.com/Automattic/jetpack/pull/51127
+	 * @returns {Locator} The single response page locator.
+	 */
+	private getSingleResponsePage(): Locator {
+		return this.page.locator( '.jp-forms__single-response' );
+	}
+
+	/**
+	 * Whether a response is currently open on the standalone single response page.
+	 *
+	 * @returns {Promise<boolean>} True if the single response page is showing.
+	 */
+	private async isOnSingleResponsePage(): Promise< boolean > {
+		// `isVisible()` returns immediately rather than waiting. Every caller is
+		// reached after an explicit wait on the response view, so by this point the
+		// DOM has already settled on one UI or the other.
+		return this.getSingleResponsePage().isVisible();
+	}
+
+	/**
+	 * Runs an action from the single response page's "Actions" dropdown.
+	 *
+	 * That page keeps every action behind a three dot menu in the page header,
+	 * rather than rendering them as buttons the way the inspector and the legacy
+	 * panels do. Callers check `isOnSingleResponsePage` before reaching for this.
+	 *
+	 * @param {string} menuItemName The action's label within the dropdown.
+	 */
+	private async clickSingleResponseMenuAction( menuItemName: string ): Promise< void > {
+		const actionsMenu = this.page.locator( '.jp-forms__single-response-actions' );
+		await actionsMenu.getByRole( 'button', { name: 'Actions' } ).click();
+
+		// Anchored rather than exact: an item carrying a keyboard shortcut renders it
+		// as a visible span inside the button, so "Trash" is named "Trash #". Matching
+		// the prefix keeps that working while still rejecting a longer item that merely
+		// contains the label, which a bare substring match would not — "Empty Trash"
+		// for "Trash". Left strict on purpose: should two items ever both match, the
+		// run should fail loudly rather than quietly pick one.
+		const menuItem = this.page.getByRole( 'menuitem', {
+			name: new RegExp( `^${ menuItemName }\\b` ),
+		} );
+		await menuItem.click();
+
+		// The page stays put after an action, so there's no panel closing or
+		// notification to wait on. The dropdown closes and disables its toggle in the
+		// same render, so once the item is gone a re-enabled toggle means the request
+		// settled. Whether the server accepted it is the caller's to assert — the spec
+		// already checks each folder for the response afterwards.
+		await menuItem.waitFor( { state: 'detached', timeout: 10 * 1000 } );
+		await actionsMenu
+			.getByRole( 'button', { name: 'Actions', disabled: false } )
+			.waitFor( { timeout: RESPONSE_ACTION_TIMEOUT } );
+	}
+
+	/**
+	 * Returns to the responses list from the standalone single response page.
+	 *
+	 * Status actions leave the user on the page (the header badge changes instead),
+	 * so anything that needs the list has to navigate back first. There's no Close
+	 * button on this page — the "Forms" breadcrumb is the way back, and it lands on
+	 * the folder the response was opened from, not necessarily the Inbox.
+	 */
+	private async leaveSingleResponsePage(): Promise< void > {
+		if ( ! ( await this.isOnSingleResponsePage() ) ) {
+			return;
+		}
+
+		await this.page
+			.locator( '.jp-forms__single-response-breadcrumbs' )
+			// Exact, so a form title containing "Forms" in the trailing crumb can't be
+			// picked up instead.
+			.getByRole( 'link', { name: 'Forms', exact: true } )
+			.click();
+		await this.getSingleResponsePage().waitFor( { state: 'hidden', timeout: 10 * 1000 } );
+		// The folder chip is the list view's own render signal.
+		await this.page
+			.locator( '.dataviews-filters__summary-chip' )
+			.filter( { hasText: /Folder is:/i } )
+			.waitFor( { state: 'visible', timeout: 10 * 1000 } );
 	}
 
 	/**
@@ -66,14 +176,28 @@ export class FeedbackInboxPage {
 	async viewResponseRowByText( text: string ): Promise< void > {
 		const responseRowLocator = this.getResponseRow( text );
 		await responseRowLocator.waitFor( { state: 'visible' } );
+
+		// Opening an unread response fires a mark-as-read request. Server side that
+		// is a full-row post update, so a status change sent while it is still in
+		// flight gets overwritten by it: the un-spam lands, then the read write puts
+		// "spam" back. Arm the wait here and hold the caller until it has settled.
+		const isUnread = ( await responseRowLocator.getByLabel( UNREAD_ROW_LABEL ).count() ) > 0;
+		const markedAsRead = isUnread
+			? this.page.waitForResponse( ( response ) => MARK_AS_READ_REQUEST.test( response.url() ) )
+			: null;
+
 		await responseRowLocator.getByRole( 'button', { name: 'Actions' } ).click();
 		// The menu item is on a popover portal, so outside of the response row locator
 		const viewMenuItem = this.page.getByRole( 'menuitem', { name: 'View' } ).first();
 		await viewMenuItem.click();
 
 		if ( await this.isCentralFormManagement() ) {
-			// CFM uses the DataViews inspector on both desktop and mobile.
-			await this.page.locator( '.jp-forms-response-header' ).waitFor( { state: 'visible' } );
+			// "View" navigates to the standalone single response page on newer
+			// Jetpack versions, and opens the DataViews inspector on older ones.
+			await this.getSingleResponsePage()
+				.or( this.page.locator( '.jp-forms-response-header' ) )
+				.first()
+				.waitFor( { state: 'visible' } );
 		} else if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
 			await this.page.locator( '.jp-forms__inbox-response' ).waitFor( { state: 'visible' } );
 		} else {
@@ -82,6 +206,8 @@ export class FeedbackInboxPage {
 				.filter( { has: this.page.getByRole( 'heading', { name: 'Response' } ) } )
 				.waitFor();
 		}
+
+		await markedAsRead;
 	}
 
 	/**
@@ -161,6 +287,32 @@ export class FeedbackInboxPage {
 	}
 
 	/**
+	 * Searches for a response and waits for its row, re-searching until it appears.
+	 *
+	 * A status change reaches the list query a beat after the request that made it
+	 * returns, and the view does not re-fetch on its own: a search issued in that
+	 * window comes back without the row, and the table then sits on that result for
+	 * as long as anything waits on it. Only another search can resolve it.
+	 *
+	 * @param {string} text     Text identifying the response row, e.g. the email address.
+	 * @param {number} attempts How many searches to make before giving up.
+	 * @throws If the row never appears.
+	 */
+	async searchUntilResponseRow( text: string, attempts = 3 ): Promise< void > {
+		for ( let attempt = 1; attempt <= attempts; attempt++ ) {
+			// Clear first: re-filling an identical value fires no request.
+			await this.clearSearch( true );
+			await this.searchResponses( text );
+
+			if ( await this.hasResponseRow( text ) ) {
+				return;
+			}
+		}
+
+		throw new Error( `No response matching "${ text }" found after ${ attempts } searches.` );
+	}
+
+	/**
 	 * Clicks on a folder tab (Inbox, Spam, or Trash).
 	 *
 	 * Handles both the old dashboard (role="tab" within a tablist) and the
@@ -170,6 +322,10 @@ export class FeedbackInboxPage {
 	 */
 	async clickFolderTab( folderName: string ): Promise< void > {
 		if ( await this.isCentralFormManagement() ) {
+			// Status actions leave the user on the single response page, so get back
+			// to the list before reaching for the folder chips.
+			await this.leaveSingleResponsePage();
+
 			// On mobile, the DataViews inspector may overlap the filter chips.
 			// Close it first if it's open.
 			const closeButton = this.page.locator( '.jp-forms-response-header' ).getByRole( 'button', {
@@ -222,11 +378,11 @@ export class FeedbackInboxPage {
 			await listResponse;
 
 			// Selecting a folder leaves the popover open over the table, where it
-			// swallows clicks on the rows underneath. Dismiss unconditionally:
-			// isVisible() is point-in-time, so polled mid-transition it reports
-			// false and the popover survives — the state this block exists to
-			// prevent. Escape on an already-closed popover is a no-op.
-			await this.page.keyboard.press( 'Escape' );
+			// swallows clicks on the rows underneath. Toggle it shut with the chip:
+			// an Escape landing within ~500ms of the filter's re-render segfaults the
+			// renderer on Atomic (SIGSEGV, null deref on CrRendererMain), and the run
+			// then dies at whatever call comes next.
+			await folderChip.click();
 			await folderOption.waitFor( { state: 'hidden', timeout: 5000 } );
 			return;
 		}
@@ -301,6 +457,10 @@ export class FeedbackInboxPage {
 	 * Clicks the "Not spam" action button for the current response.
 	 */
 	async clickNotSpamAction(): Promise< void > {
+		if ( await this.isOnSingleResponsePage() ) {
+			await this.clickSingleResponseMenuAction( 'Not spam' );
+			return;
+		}
 		// Use .last() to get the button in the side panel, not in the table row
 		await this.page.getByRole( 'button', { name: 'Not spam' } ).last().click();
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
@@ -323,6 +483,10 @@ export class FeedbackInboxPage {
 	 * Clicks the "Mark as spam" action button for the current response.
 	 */
 	async clickMarkAsSpamAction(): Promise< void > {
+		if ( await this.isOnSingleResponsePage() ) {
+			await this.clickSingleResponseMenuAction( 'Mark as spam' );
+			return;
+		}
 		// Use .last() to get the button in the side panel, not in the table row
 		await this.page.getByRole( 'button', { name: 'Spam' } ).last().click();
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
@@ -341,6 +505,10 @@ export class FeedbackInboxPage {
 	 * Clicks the "Mark as read" action button for the current response.
 	 */
 	async clickMarkAsReadAction(): Promise< void > {
+		if ( await this.isOnSingleResponsePage() ) {
+			await this.clickSingleResponseMenuAction( 'Mark as read' );
+			return;
+		}
 		// Use .last() to get the button in the side panel, not in the table row
 		await this.page.getByRole( 'button', { name: 'Mark as read' } ).last().click();
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
@@ -359,6 +527,10 @@ export class FeedbackInboxPage {
 	 * Clicks the "Mark as unread" action button for the current response.
 	 */
 	async clickMarkAsUnreadAction(): Promise< void > {
+		if ( await this.isOnSingleResponsePage() ) {
+			await this.clickSingleResponseMenuAction( 'Mark as unread' );
+			return;
+		}
 		// Use .last() to get the button in the side panel, not in the table row
 		await this.page.getByRole( 'button', { name: 'Mark as unread' } ).last().click();
 		if ( await this.isCentralFormManagement() ) {
@@ -384,6 +556,10 @@ export class FeedbackInboxPage {
 	 * Clicks the "Move to trash" action button for the current response.
 	 */
 	async clickMoveToTrashAction(): Promise< void > {
+		if ( await this.isOnSingleResponsePage() ) {
+			await this.clickSingleResponseMenuAction( 'Trash' );
+			return;
+		}
 		// Use .last() to get the button in the side panel, not in the table row
 		await this.page.getByRole( 'button', { name: 'Trash' } ).last().click();
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
@@ -402,6 +578,10 @@ export class FeedbackInboxPage {
 	 * Clicks the "Restore" action button for the current response.
 	 */
 	async clickRestoreAction(): Promise< void > {
+		if ( await this.isOnSingleResponsePage() ) {
+			await this.clickSingleResponseMenuAction( 'Restore' );
+			return;
+		}
 		// Use .last() to get the button in the side panel, not in the table row
 		await this.page.getByRole( 'button', { name: 'Restore' } ).last().click();
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
@@ -448,14 +628,25 @@ export class FeedbackInboxPage {
 	 * Clicks the "Close" button in the response view.
 	 */
 	async clickCloseResponse(): Promise< void > {
-		await this.page.getByRole( 'button', { name: 'Close' } ).last().click();
-		// Wait for whichever panel was open (CFM inspector, legacy desktop side
-		// panel, or mobile dialog) to actually close.
-		await this.page
+		// The single response page has no Close button — the breadcrumb is the way
+		// back to the list.
+		if ( await this.isOnSingleResponsePage() ) {
+			await this.leaveSingleResponsePage();
+			return;
+		}
+
+		// Whichever panel is open: CFM inspector, legacy desktop side panel, or
+		// mobile dialog.
+		const panel = this.page
 			.locator( '.jp-forms-response-header' )
 			.or( this.page.locator( '.jp-forms__inbox-response' ) )
-			.or( this.page.getByRole( 'dialog', { name: 'Response' } ) )
-			.waitFor( { state: 'hidden', timeout: 5000 } );
+			.or( this.page.getByRole( 'dialog', { name: 'Response' } ) );
+
+		// Scoped to the panel: wp-admin intermittently renders a survey whose own
+		// "Close the survey" button is later in the DOM, and an unscoped .last()
+		// clicks that instead, leaving the response open.
+		await panel.getByRole( 'button', { name: 'Close' } ).last().click();
+		await panel.waitFor( { state: 'hidden', timeout: 5000 } );
 	}
 
 	/**

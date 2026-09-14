@@ -52,7 +52,7 @@ const discover = ( context, next ) => {
 
 	context.primary = (
 		<>
-			<DiscoverDocumentHead />
+			<DiscoverDocumentHead noindex={ !! context.query?.selectedTag } />
 			<AsyncLoad
 				require={ loadDiscoverStream }
 				key="discover-page"

@@ -529,45 +529,6 @@ describe( 'getDomainPriceRule()', () => {
 			).toBe( 'PRICE' );
 		} );
 
-		test( 'should return PRICE if flowName is personal-monthly', () => {
-			expect(
-				getDomainPriceRule(
-					true,
-					null,
-					{},
-					{ domain_name: 'domain.com', product_slug: 'domain' },
-					false,
-					'personal-monthly'
-				)
-			).toBe( 'PRICE' );
-		} );
-
-		test( 'should return PRICE if flowName is premium-monthly', () => {
-			expect(
-				getDomainPriceRule(
-					true,
-					null,
-					{},
-					{ domain_name: 'domain.com', product_slug: 'domain' },
-					false,
-					'premium-monthly'
-				)
-			).toBe( 'PRICE' );
-		} );
-
-		test( 'should return PRICE if flowName is business-monthly', () => {
-			expect(
-				getDomainPriceRule(
-					true,
-					null,
-					{},
-					{ domain_name: 'domain.com', product_slug: 'domain' },
-					false,
-					'business-monthly'
-				)
-			).toBe( 'PRICE' );
-		} );
-
 		test( 'should return PRICE if flowName is ecommerce-monthly', () => {
 			expect(
 				getDomainPriceRule(

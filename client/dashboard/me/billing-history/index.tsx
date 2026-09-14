@@ -7,7 +7,7 @@ import { useState, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
-import { useLocale } from '../../app/locale';
+import { useIntlLocale } from '../../app/locale';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { billingHistoryRoute, purchasesRoute } from '../../app/router/me';
 import { DataViews, DataViewsCard } from '../../components/dataviews';
@@ -35,7 +35,7 @@ export default function BillingHistory() {
 	const { data: sites = [], isLoading: isLoadingSites } = useQuery( allSitesQuery() );
 	const isLoading = isLoadingReceipts || isLoadingSites;
 
-	const locale = useLocale();
+	const locale = useIntlLocale();
 	const searchParams = billingHistoryRoute.useSearch();
 	const [ defaultView, setDefaultView ] = useState( DEFAULT_VIEW );
 	const { view, updateView, resetView } = usePersistentView( {

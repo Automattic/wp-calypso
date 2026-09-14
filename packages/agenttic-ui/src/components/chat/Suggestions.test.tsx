@@ -32,7 +32,7 @@ const suggestions: Suggestion[] = [
 
 const makeContext = (
 	variant: 'floating' | 'embedded',
-	reportSuggestionsRendered: ( shown: Suggestion[] ) => void
+	reportSuggestionsRendered: ( instanceId: string, shown: Suggestion[] | null ) => void
 ) =>
 	( {
 		variant,
@@ -69,7 +69,7 @@ afterEach( () => {
 
 const render = (
 	variant: 'floating' | 'embedded',
-	report: ( shown: Suggestion[] ) => void,
+	report: ( instanceId: string, shown: Suggestion[] | null ) => void,
 	props: React.ComponentProps< typeof Suggestions >
 ) => {
 	act( () => {
@@ -81,48 +81,44 @@ const render = (
 	} );
 };
 
-// Suggestions is intentionally dumb: it reports the truncated set to the context
-// reporter whenever visible. Dedup lives in the container ( see Chat.test.tsx ).
+// Suggestions is intentionally dumb: it registers the truncated set with the
+// context reporter whenever it renders — empty while hidden, null on unmount.
+// Dedup and the union across instances live in the container ( see
+// AgentUIContainer.test.tsx ).
 describe( 'Suggestions reportSuggestionsRendered', () => {
+	const reported = ( report: ReturnType< typeof vi.fn > ) =>
+		report.mock.calls.map( ( call ) => {
+			const shown = call[ 1 ] as Suggestion[] | null;
+			return shown === null ? null : shown.map( ( s ) => s.id );
+		} );
+
 	it( 'reports the full list when embedded', () => {
 		const report = vi.fn();
 		render( 'embedded', report, { suggestions } );
 
-		expect( report ).toHaveBeenCalledOnce();
-		expect( report.mock.calls[ 0 ][ 0 ].map( ( s: Suggestion ) => s.id ) ).toEqual( [
-			'a',
-			'b',
-			'c',
-			'd',
-		] );
+		expect( reported( report ) ).toEqual( [ [ 'a', 'b', 'c', 'd' ] ] );
 	} );
 
 	it( 'reports at most three when floating (after truncation)', () => {
 		const report = vi.fn();
 		render( 'floating', report, { suggestions } );
 
-		expect( report ).toHaveBeenCalledOnce();
-		expect( report.mock.calls[ 0 ][ 0 ].map( ( s: Suggestion ) => s.id ) ).toEqual( [
-			'a',
-			'b',
-			'c',
-		] );
+		expect( reported( report ) ).toEqual( [ [ 'a', 'b', 'c' ] ] );
 	} );
 
-	it( 'does not fire while hidden', () => {
+	it( 'reports an empty set while hidden', () => {
 		const report = vi.fn();
 		render( 'embedded', report, { suggestions, visible: false } );
 
-		expect( report ).not.toHaveBeenCalled();
+		expect( reported( report ) ).toEqual( [ [] ] );
 	} );
 
-	it( 'fires when it becomes visible', () => {
+	it( 'reports the set once it becomes visible', () => {
 		const report = vi.fn();
 		render( 'embedded', report, { suggestions, visible: false } );
-		expect( report ).not.toHaveBeenCalled();
-
 		render( 'embedded', report, { suggestions, visible: true } );
-		expect( report ).toHaveBeenCalledOnce();
+
+		expect( reported( report ) ).toEqual( [ [], [ 'a', 'b', 'c', 'd' ] ] );
 	} );
 
 	it( 'reports the new set when the rendered set changes', () => {
@@ -132,13 +128,23 @@ describe( 'Suggestions reportSuggestionsRendered', () => {
 		} );
 		render( 'embedded', report, { suggestions } );
 
-		expect( report ).toHaveBeenCalledTimes( 2 );
-		expect(
-			report.mock.calls.map( ( [ shown ]: [ Suggestion[] ] ) => shown.map( ( s ) => s.id ) )
-		).toEqual( [
+		expect( reported( report ) ).toEqual( [
 			[ 'a', 'b' ],
 			[ 'a', 'b', 'c', 'd' ],
 		] );
+	} );
+
+	it( 'keeps one instance id across re-renders and unregisters on unmount', () => {
+		const report = vi.fn();
+		render( 'embedded', report, { suggestions: suggestions.slice( 0, 2 ) } );
+		render( 'embedded', report, { suggestions } );
+		act( () => {
+			root.render( null );
+		} );
+
+		const instanceIds = new Set( report.mock.calls.map( ( call ) => call[ 0 ] ) );
+		expect( instanceIds.size ).toBe( 1 );
+		expect( reported( report ) ).toEqual( [ [ 'a', 'b' ], [ 'a', 'b', 'c', 'd' ], null ] );
 	} );
 } );
 

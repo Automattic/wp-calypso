@@ -872,7 +872,10 @@ describe( 'Checkout', () => {
 							{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
 							{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
 							{ props.withProp ? (
-								<CheckoutFormSubmit continueToNextIncompleteStep />
+								<CheckoutFormSubmit
+									continueToNextIncompleteStep
+									disableSubmitButton={ props.disableSubmitButton }
+								/>
 							) : (
 								<CheckoutFormSubmit />
 							) }
@@ -931,6 +934,20 @@ describe( 'Checkout', () => {
 				'aria-label',
 				'Continue to the next step'
 			);
+			expect( queryByTextInNode( submitArea, 'Pay Please' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'still renders Continue when disableSubmitButton is set', () => {
+			const { container } = render(
+				<ContinueCheckout
+					withProp
+					disableSubmitButton
+					steps={ [ steps[ 0 ], steps[ 1 ], steps[ 3 ] ] }
+				/>
+			);
+			const submitArea = getSubmitArea( container );
+			expect( getByTextInNode( submitArea, 'Continue' ) ).toBeInTheDocument();
+			expect( getByTextInNode( submitArea, 'Continue' ) ).not.toBeDisabled();
 			expect( queryByTextInNode( submitArea, 'Pay Please' ) ).not.toBeInTheDocument();
 		} );
 

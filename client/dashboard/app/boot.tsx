@@ -11,6 +11,7 @@ import { AUTH_QUERY_KEY, initializeCurrentUser } from './auth';
 import { handleOAuthCallback } from './auth/oauth-callback';
 import { loadPreferencesHelper } from './dev-tools/preferences';
 import Layout from './layout';
+import { handleUncaughtError } from './logger';
 import { omnibarEvents } from './omnibar/events';
 import limitTotalSnackbars from './snackbars/limit-total-snackbars';
 import type { AppConfig } from './context';
@@ -39,7 +40,9 @@ function boot( config: AppConfig ) {
 	if ( rootElement === null ) {
 		throw new Error( 'No root element found' );
 	}
-	const root = createRoot( rootElement );
+	const root = createRoot( rootElement, {
+		onUncaughtError: handleUncaughtError,
+	} );
 
 	if ( isEnabled( 'dashboard/omnibar-radical' ) ) {
 		import( './omnibar' ).then( ( m ) => m.default( config ) ).catch( captureException );

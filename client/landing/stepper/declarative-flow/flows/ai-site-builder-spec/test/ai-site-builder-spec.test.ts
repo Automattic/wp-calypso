@@ -31,10 +31,15 @@ describe( 'ai-site-builder-spec flow', () => {
 		expect( aiSiteBuilderSpec.initialize() ).toEqual( [ STEPS.SITE_SPEC ] );
 	} );
 
-	it( 'adds site generation only for the explicit build_wow flow', () => {
+	it( 'adds site generation and an error step, behind login, for the explicit build_wow flow', () => {
 		window.history.replaceState( {}, '', '/setup/ai-site-builder-spec/site-spec?build_wow=1' );
 
-		expect( aiSiteBuilderSpec.initialize() ).toEqual( [ STEPS.SITE_SPEC, STEPS.SITE_GENERATION ] );
+		expect( aiSiteBuilderSpec.initialize() ).toEqual(
+			[ STEPS.SITE_SPEC, STEPS.SITE_GENERATION, STEPS.ERROR ].map( ( step ) => ( {
+				...step,
+				requiresLoggedInUser: true,
+			} ) )
+		);
 	} );
 
 	it( 'gives a blueprint-archive run somewhere to wait', () => {
@@ -76,6 +81,12 @@ describe( 'ai-site-builder-spec flow', () => {
 
 			// Replacing rather than pushing keeps Back off the spec the customer just confirmed.
 			expect( navigate ).toHaveBeenCalledWith( 'processing', undefined, true );
+		} );
+
+		it( 'shows the error step when the build-wow request fails on the spec page', () => {
+			submitFrom( 'site-spec', { buildWowError: 'build_wow_request_failed' } );
+
+			expect( navigate ).toHaveBeenCalledWith( 'error', undefined, true );
 		} );
 
 		it( 'hands off to the built site once the wait resolves', () => {

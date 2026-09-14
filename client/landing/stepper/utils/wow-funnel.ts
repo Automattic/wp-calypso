@@ -171,6 +171,19 @@ export function getWowFunnelArgs( queryParams: URLSearchParams ): Record< string
 }
 
 /**
+ * Whether the CTA opted into the WoW fleet.
+ *
+ * `from_wfm` present and truthy asks /sites/new to hand out a pre-provisioned Atomic site from
+ * the fleet manager instead of building one. It is only ever an opt-in hint: the server falls
+ * back to the ordinary funnel build when the fleet is disabled, empty, or contended, so the flow
+ * on this side is identical either way.
+ */
+export function getWowFunnelFromWfm( queryParams: URLSearchParams ): boolean {
+	const raw = queryParams.get( 'from_wfm' );
+	return null !== raw && '' !== raw && '0' !== raw && 'false' !== raw;
+}
+
+/**
  * The funnel's destination. `dest` in the URL is an OVERRIDE for a CTA that wants somewhere other
  * than the funnel's default; absent or unrecognized, the configured default applies.
  *
@@ -340,14 +353,21 @@ export async function waitForWowFunnelReady( {
 export async function getWowFunnelHandoffUrl( {
 	dest,
 	siteIdentifier,
+	adminUrl: knownAdminUrl,
 }: {
 	dest: WowFunnelDest;
 	siteIdentifier: string;
+	/**
+	 * The site's admin base, when the caller already has it — the apply-spec response carries it.
+	 * Supplying it skips a `/sites/<id>` round trip on the hand-off, which happens while the
+	 * customer is watching a spinner.
+	 */
+	adminUrl?: string | null;
 } ): Promise< string > {
 	switch ( dest ) {
 		case 'editor':
 		default: {
-			const adminUrl = await getSiteAdminUrl( siteIdentifier );
+			const adminUrl = knownAdminUrl ?? ( await getSiteAdminUrl( siteIdentifier ) );
 			// `p` opens the front page rather than whatever the editor last had; `canvasEdit`
 			// because a plain site-editor.php load stays in view mode.
 			return getSiteEditorUrl( adminUrl, { canvasEdit: true, path: '/' } );

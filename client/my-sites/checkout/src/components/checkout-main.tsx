@@ -41,6 +41,8 @@ import { existingPayPalPPCPPrefix } from '../hooks/use-create-payment-methods/us
 import useCreatePaymentSubmittedAndProcessingCallback from '../hooks/use-create-payment-submitted-and-processing-callback';
 import useDetectedCountryCode from '../hooks/use-detected-country-code';
 import useGetThankYouUrl from '../hooks/use-get-thank-you-url';
+import { useHasNonRenewableDomainError } from '../hooks/use-has-non-renewable-domain-error';
+import { useHasWrongAccountRenewalError } from '../hooks/use-has-wrong-account-renewal-error';
 import { useMobileCheckoutStickySummaryExperiment } from '../hooks/use-mobile-checkout-sticky-summary-experiment';
 import usePrepareProductsForCart from '../hooks/use-prepare-products-for-cart';
 import useRecordCartLoaded from '../hooks/use-record-cart-loaded';
@@ -375,9 +377,9 @@ export default function CheckoutMain( {
 		} );
 	} );
 
-	// Display errors. Note that we display all errors if any of them change,
-	// because errorNotice() otherwise will remove the previously displayed
-	// errors.
+	// Display errors. These notices share an ID so that a new one replaces the
+	// last rather than stacking; that means each notice must render every error
+	// currently active, not just the ones which have changed.
 	const errorsToDisplay = [
 		cartLoadingError,
 		stripeLoadingError?.message,
@@ -385,11 +387,24 @@ export default function CheckoutMain( {
 	].filter( isValueTruthy );
 	useActOnceOnStrings( errorsToDisplay, () => {
 		reduxDispatch(
-			errorNotice( errorsToDisplay.map( ( message ) => <p key={ message }>{ message }</p> ) )
+			errorNotice(
+				errorsToDisplay.map( ( message ) => <p key={ message }>{ message }</p> ),
+				{ id: 'checkout-cart-error' }
+			)
 		);
 	} );
 
 	const responseCartErrors = responseCart.messages?.errors ?? [];
+
+	// A renewal for a subscription owned by another account gets its own screen
+	// rather than the generic empty cart page, because there is something the
+	// customer can do about it.
+	const isWrongAccountRenewal = useHasWrongAccountRenewalError( responseCart );
+
+	// Likewise for a domain renewal that arrived too late to be a renewal at
+	// all: the customer can still go and look for another domain.
+	const isNonRenewableDomain = useHasNonRenewableDomainError( responseCart );
+
 	const areThereErrors =
 		[ ...responseCartErrors, cartLoadingError, cartProductPrepError ].filter( isValueTruthy )
 			.length > 0;
@@ -914,6 +929,8 @@ export default function CheckoutMain( {
 						customizedPreviousPath={ customizedPreviousPath }
 						isRemovingProductFromCart={ isRemovingProductFromCart }
 						areThereErrors={ areThereErrors }
+						isWrongAccountRenewal={ isWrongAccountRenewal }
+						isNonRenewableDomain={ isNonRenewableDomain }
 						isInitialCartLoading={ isInitialCartLoading }
 						addItemToCart={ addItemAndLog }
 						changeSelection={ changeSelection }

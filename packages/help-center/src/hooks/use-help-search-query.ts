@@ -12,12 +12,17 @@ interface APIFetchOptions {
 	path: string;
 }
 
+interface FetchArticlesOptions {
+	siteId?: number | string;
+	primarySiteId?: number | string;
+}
+
 const fetchArticlesAPI = async (
 	search: string,
 	locale: string,
 	sectionName: string,
 	source: HelpCenterProduct,
-	siteId: unknown
+	{ siteId, primarySiteId }: FetchArticlesOptions
 ): Promise< SearchResult[] > => {
 	let searchResultResponse: SearchResult[] = [];
 
@@ -45,7 +50,7 @@ const fetchArticlesAPI = async (
 						ui_algo: 'default',
 						ui_position: index,
 					},
-					{ siteId }
+					{ siteId, primarySiteId }
 				);
 			} );
 		}
@@ -60,12 +65,13 @@ export const useHelpSearchQuery = (
 	product: HelpCenterProduct = 'wpcom',
 	queryOptions: Record< string, unknown > = {}
 ) => {
-	const { site } = useHelpCenterContext();
+	const { site, primarySiteId } = useHelpCenterContext();
 	const siteId = site?.ID;
 
 	return useQuery( {
-		queryKey: [ 'help-center-search', search, locale, sectionName, product, siteId ],
-		queryFn: () => fetchArticlesAPI( search, locale, sectionName, product, siteId ),
+		queryKey: [ 'help-center-search', search, locale, sectionName, product, siteId, primarySiteId ],
+		queryFn: () =>
+			fetchArticlesAPI( search, locale, sectionName, product, { siteId, primarySiteId } ),
 		refetchOnWindowFocus: false,
 		...queryOptions,
 	} );

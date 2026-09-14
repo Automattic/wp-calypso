@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useMemo, useRef } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
+import { parseTransferCreatedAt } from 'calypso/components/transfer-wait/transfer-created-at';
 import {
 	isRevertedTransferStatus,
 	transferStates as atomicTransferStates,
@@ -53,7 +54,6 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import { chooseInstallStrategy } from './install-strategy';
-import { parseTransferCreatedAt } from './transfer-created-at';
 import { useDelayedCondition } from './use-delayed-condition';
 import { INSTALL_DEADLINE_MS, isSettled, useInstallDeadline } from './use-install-deadline';
 import useMarketplaceAdditionalSteps from './use-marketplace-additional-steps';

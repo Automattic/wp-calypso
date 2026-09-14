@@ -207,7 +207,6 @@ class PluginUpload extends Component {
 			translate,
 			isJetpackMultisite,
 			siteId,
-			siteSlug,
 			isJetpack,
 			isTrialSite,
 			isAtomic,
@@ -235,7 +234,7 @@ class PluginUpload extends Component {
 				{ showUpgradeBanner && this.renderUpgradeBanner() }
 				{ showEligibilityWarnings && (
 					<EligibilityWarnings
-						backUrl={ `/plugins/${ siteSlug }` }
+						context="plugins-upload"
 						atomicTransferAction="plugins"
 						onProceed={ this.onProceedClick }
 					/>

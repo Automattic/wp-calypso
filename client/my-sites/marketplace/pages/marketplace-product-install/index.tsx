@@ -3,13 +3,13 @@ import { css, Global, ThemeProvider } from '@emotion/react';
 import clsx from 'clsx';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import TransferWaitCard from 'calypso/components/transfer-wait/card';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import theme from 'calypso/my-sites/marketplace/theme';
 import './style.scss';
 import MarketplaceInstallHelpLink from './help-link';
-import InstallProgressCard from './install-progress/card';
 import ProductInstallErrorView from './product-install-error';
 import { useProductInstall } from './use-product-install';
 
@@ -73,10 +73,10 @@ const MarketplaceProductInstall = ( {
 				{ ! error && isTransferWait && (
 					// Keyed by product: an SPA navigation from one install to the next keeps this
 					// component mounted, and the wait's clock and furthest stage belong to one install.
-					<InstallProgressCard
+					<TransferWaitCard
 						key={ pluginSlug || themeSlug }
 						transferStatus={ transferStatus }
-						currentStep={ currentStep }
+						fallbackStep={ currentStep }
 						startedAt={ transferStartedAt }
 						siteSlug={ selectedSiteSlug }
 						productSlug={ pluginSlug || themeSlug }

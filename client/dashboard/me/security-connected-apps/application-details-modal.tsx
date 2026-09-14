@@ -7,7 +7,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
-import { useLocale } from '../../app/locale';
+import { useIntlLocale } from '../../app/locale';
 import type { ConnectedApplication } from '@automattic/api-core';
 
 interface Props {
@@ -62,7 +62,7 @@ const DetailItem = ( { label, value }: { label: string; value: React.ReactNode }
 };
 
 export default function ApplicationDetailsModal( { application, onClose }: Props ) {
-	const userLocale = useLocale();
+	const userLocale = useIntlLocale();
 
 	const siteObj =
 		application.site && typeof application.site === 'object' ? application.site : undefined;

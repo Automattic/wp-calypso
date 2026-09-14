@@ -182,7 +182,7 @@ function resolveNotice(
 	const renewAction: PlanExpiryNoticeAction = {
 		type: 'renew',
 		label: __( 'Renew now' ),
-		href: getRenewalUrlFromPurchase( purchase, undefined, renewReturnUrl ),
+		href: getRenewalUrlFromPurchase( purchase, renewReturnUrl ),
 	};
 
 	// Past the expiry date, still inside the grace period. Note that

@@ -52,29 +52,6 @@ export const PlaygroundSetupStep: Step< {
 		}
 	}, [ query, submit, siteSlug, siteId, importBlueprint ] );
 
-	useEffect( () => {
-		// Clean up any playground-related localStorage items on unmount
-		return () => {
-			const playgroundId = query.get( 'playground' );
-			const currentTimestamp = Math.floor( Date.now() / 1000 );
-
-			if ( playgroundId ) {
-				window.localStorage.removeItem( 'playground-plans-intent-' + playgroundId );
-				window.localStorage.removeItem( 'playground-plans-intent-' + playgroundId + '-ts' );
-			}
-
-			Object.keys( window.localStorage ).forEach( ( key ) => {
-				if ( key.startsWith( 'playground-plans-intent-' ) && key.endsWith( '-ts' ) ) {
-					const storedAt = parseInt( window.localStorage.getItem( key ) || '0' );
-					if ( currentTimestamp - storedAt > 7 * 24 * 60 * 60 ) {
-						window.localStorage.removeItem( key );
-						window.localStorage.removeItem( key.replace( '-ts', '' ) );
-					}
-				}
-			} );
-		};
-	}, [] );
-
 	const startImport = async ( client: PlaygroundClient ) => {
 		if ( ! client ) {
 			return;
