@@ -16,7 +16,9 @@
 	},
 	"files": [
 		"dist",
-		"src"
+		"src",
+		"!dist/**/*.tsbuildinfo",
+		"!src/test"
 	],
 	"types": "dist/types",
 	"publishConfig": {
