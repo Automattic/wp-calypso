@@ -11,6 +11,8 @@ import type { FilterName } from '../../types';
 
 const noop = () => {};
 
+const tkq = () => ( window as unknown as { _tkq: unknown[] } )._tkq;
+
 const defaultProps = {
 	filterName: 'all' as FilterName,
 	setFilterName: noop,
@@ -120,6 +122,23 @@ describe( 'NotePanel settings menu', () => {
 
 		// Not a hardcoded URL: each host knows which dashboard the settings live on.
 		expect( onViewSettings ).toHaveBeenCalled();
+	} );
+
+	it( 'records opening the menu and switching layout', async () => {
+		( window as unknown as { _tkq: unknown[] } )._tkq = [];
+		renderPanel( { isViewSettingsEnabled: true } );
+
+		await userEvent.click( screen.getByRole( 'button', { name: /^Settings/ } ) );
+		await userEvent.click( await screen.findByRole( 'menuitemradio', { name: 'Simplified' } ) );
+
+		expect( tkq() ).toEqual( [
+			[ 'recordEvent', 'calypso_notification_settings_menu_open', undefined ],
+			[
+				'recordEvent',
+				'calypso_notification_layout_style_change',
+				{ from: 'classic', to: 'simplified' },
+			],
+		] );
 	} );
 
 	it( 'marks the saved layout and saves a new one', async () => {

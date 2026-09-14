@@ -6,6 +6,7 @@ import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { recordTracksEvent } from '../../panel/helpers/stats';
 import actions from '../../panel/state/actions';
 import getIsShortcutsPopoverOpen from '../../panel/state/selectors/get-is-shortcuts-popover-open';
 import getLayoutStyle from '../../panel/state/selectors/get-layout-style';
@@ -49,12 +50,17 @@ export default function NotePanelActions() {
 			revert: () => actions.ui.setViewSettingsSeen( false ),
 		} );
 
-	const setLayoutStyle = ( value: string ) =>
+	const setLayoutStyle = ( value: string ) => {
+		recordTracksEvent( 'calypso_notification_layout_style_change', {
+			from: layoutStyle,
+			to: value,
+		} );
 		savePreference( {
 			preferences: { 'notifications-layout-style': value },
 			apply: () => actions.ui.setLayoutStyle( value ),
 			revert: () => actions.ui.setLayoutStyle( layoutStyle ),
 		} );
+	};
 
 	return (
 		<>
@@ -97,6 +103,7 @@ export default function NotePanelActions() {
 						if ( ! isOpen ) {
 							return;
 						}
+						recordTracksEvent( 'calypso_notification_settings_menu_open' );
 						setShowsWhatIsNew( isNew );
 						if ( isNew ) {
 							markSeen();
