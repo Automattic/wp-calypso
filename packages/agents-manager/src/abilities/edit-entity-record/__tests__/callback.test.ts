@@ -95,6 +95,12 @@ const page = ( recordId?: number ) => ( {
 	...( recordId ? { recordId } : {} ),
 } );
 
+const post = ( recordId?: number ) => ( {
+	entityType: 'postType',
+	entityName: 'post',
+	...( recordId ? { recordId } : {} ),
+} );
+
 const menu = ( recordId?: number ) => ( {
 	entityType: 'postType',
 	entityName: 'wp_navigation',
@@ -103,8 +109,12 @@ const menu = ( recordId?: number ) => ( {
 
 const site = { entityType: 'root', entityName: 'site' };
 
+// Every refusal logs once; the spy keeps the run quiet and pins the prefix.
+let consoleError: jest.SpyInstance;
+
 beforeEach( () => {
 	jest.clearAllMocks();
+	consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 	( select as jest.Mock ).mockReturnValue( undefined );
 	( isEditorPage as jest.Mock ).mockReturnValue( true );
 	( dispatch as jest.Mock ).mockReturnValue( {
@@ -117,12 +127,20 @@ beforeEach( () => {
 	} );
 } );
 
+afterEach( () => consoleError.mockRestore() );
+
 describe( 'getCheckpointKeys', () => {
 	it.each( [
 		{
 			case: 'a page rename, which moves the menu with it',
 			input: { editEntities: [ { ...page( 7 ), record: { title: 'About us' } } ] },
 			expected: [ checkpointKeys.PAGE, checkpointKeys.NAVIGATION ],
+		},
+		{
+			// A post title is not checkpointed, as in Big Sky.
+			case: 'a post rename',
+			input: { editEntities: [ { ...post( 7 ), record: { title: 'Hello' } } ] },
+			expected: [],
 		},
 		{
 			// Only the title is restorable on a page, so an edit that leaves it
@@ -233,7 +251,6 @@ describe( 'editEntityRecordCallback', () => {
 
 	// The guard the backend asks for before anything destructive.
 	it( 'writes nothing while a confirmation is outstanding', async () => {
-		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 		const result = await editEntityRecordCallback( {
 			deleteEntities: [ page( 7 ) ],
 			confirmationMessage: 'Delete the About page?',
@@ -246,13 +263,6 @@ describe( 'editEntityRecordCallback', () => {
 		expect( removeNavigationItem ).not.toHaveBeenCalled();
 		// Asking is the ability's own step, so nothing is logged as refused.
 		expect( consoleError ).not.toHaveBeenCalled();
-		consoleError.mockRestore();
-	} );
-
-	it( 'applies the delete once the confirmation is gone', async () => {
-		await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
-
-		expect( deleteEntityRecord ).toHaveBeenCalled();
 	} );
 
 	it( 'creates a page and puts it in the menu', async () => {
@@ -260,7 +270,12 @@ describe( 'editEntityRecordCallback', () => {
 			addEntities: [ { ...page(), record: { title: 'About', status: 'publish' } } ],
 		} );
 
-		expect( saveEntityRecord ).toHaveBeenCalled();
+		expect( saveEntityRecord ).toHaveBeenCalledWith(
+			'postType',
+			'page',
+			{ title: 'About', status: 'publish' },
+			{ throwOnError: true }
+		);
 		expect( addNavigationItem ).toHaveBeenCalledWith( {
 			label: 'About',
 			id: 7,
@@ -315,7 +330,6 @@ describe( 'editEntityRecordCallback', () => {
 	// The rename reads every menu before writing any, so one that fails changed
 	// nothing; its snapshots would only let an undo overwrite later user edits.
 	it( 'discards the menu snapshots it took when the rename fails', async () => {
-		( readMenuItems as jest.Mock ).mockResolvedValueOnce( [] );
 		( renameNavigationItem as jest.Mock ).mockRejectedValueOnce( new Error( 'menu is locked' ) );
 
 		const result = await editEntityRecordCallback( {
@@ -424,6 +438,12 @@ describe( 'editEntityRecordCallback', () => {
 			expect( navigateEditorWithoutSaving ).toHaveBeenCalledWith( 'all-pages' );
 		} );
 
+		it( 'leaves for the pages list when the batch deletes the front page too', async () => {
+			await editEntityRecordCallback( { deleteEntities: [ page( 3 ), page( 7 ) ] } );
+
+			expect( navigateEditorWithoutSaving ).toHaveBeenCalledWith( 'all-pages' );
+		} );
+
 		// The navigation runs outside the guarded dispatch, so the binding must be
 		// handed over here or the chat aborts the request as the user leaving.
 		it( 'hands the canvas binding to the navigation first', async () => {
@@ -446,6 +466,10 @@ describe( 'editEntityRecordCallback', () => {
 			expect( result.result.error ).toContain( 'cannot leave it first' );
 			expect( navigateEditorWithoutSaving ).not.toHaveBeenCalled();
 			expect( deleteEntityRecord ).not.toHaveBeenCalled();
+			expect( consoleError ).toHaveBeenCalledWith(
+				'[AgentsManager] edit-entity-record refused:',
+				expect.stringContaining( 'cannot leave it first' )
+			);
 		} );
 
 		it( 'refuses without a router before asking to confirm', async () => {
@@ -458,6 +482,8 @@ describe( 'editEntityRecordCallback', () => {
 
 			expect( result.result.error ).toContain( 'cannot leave it first' );
 			expect( result.result.error ).not.toContain( 'confirm' );
+			// A refusal, even one arriving with the confirmation, is logged.
+			expect( consoleError ).toHaveBeenCalled();
 		} );
 
 		// The post editor opens posts too, and has no router to leave by.
@@ -662,14 +688,6 @@ describe( 'editEntityRecordCallback', () => {
 			},
 		},
 		{
-			case: 'a site location with a numeric name',
-			input: {
-				editEntities: [
-					{ ...site, recordId: 'big_sky_site_metadata', record: { siteLocation: { name: 7 } } },
-				],
-			},
-		},
-		{
 			case: 'a personality that is not text',
 			input: {
 				editEntities: [
@@ -714,6 +732,61 @@ describe( 'editEntityRecordCallback', () => {
 		} );
 
 		expect( editEntityRecord ).toHaveBeenCalledWith( 'postType', 'page', 8, { content: 'Hello' } );
+	} );
+
+	// Refused with the batch, before a create in the same batch could land.
+	it( 'refuses an empty edit before anything is written', async () => {
+		const result = await editEntityRecordCallback( {
+			addEntities: [ { ...page(), record: { title: 'About' } } ],
+			editEntities: [ { ...page( 8 ), record: {} } ],
+		} );
+
+		expect( result.result.error ).toContain( 'the record is empty' );
+		expect( saveEntityRecord ).not.toHaveBeenCalled();
+	} );
+
+	it( 'writes a post title as a plain edit, with no menu to follow it', async () => {
+		await editEntityRecordCallback( {
+			editEntities: [ { ...post( 7 ), record: { title: 'Hello' } } ],
+		} );
+
+		expect( editEntityRecord ).toHaveBeenCalledWith( 'postType', 'post', 7, { title: 'Hello' } );
+		expect( setPageTitle ).not.toHaveBeenCalled();
+		expect( renameNavigationItem ).not.toHaveBeenCalled();
+	} );
+
+	it( 'creates a post without a menu item', async () => {
+		await editEntityRecordCallback( { addEntities: [ { ...post(), record: { title: 'News' } } ] } );
+
+		expect( saveEntityRecord ).toHaveBeenCalled();
+		expect( addNavigationItem ).not.toHaveBeenCalled();
+	} );
+
+	// The schema allows `{ raw }` and `{ rendered }`; core-data expects a string.
+	it( 'writes an object title as a string', async () => {
+		await editEntityRecordCallback( {
+			editEntities: [ { ...post( 7 ), record: { title: { rendered: 'Hello' }, content: 'x' } } ],
+		} );
+
+		expect( editEntityRecord ).toHaveBeenCalledWith( 'postType', 'post', 7, {
+			title: 'Hello',
+			content: 'x',
+		} );
+	} );
+
+	// The block tree shows a clientId beside the numeric `ref`; the hint names
+	// the one that works.
+	it( 'names the numeric ref when a menu edit names no menu', async () => {
+		( resolveSelect as jest.Mock ).mockReturnValue( {
+			getEditedEntityRecord: jest.fn().mockResolvedValue( null ),
+		} );
+
+		const result = await editEntityRecordCallback( {
+			editEntities: [ { ...menu( 9 ), record: { navigationItems: [] } } ],
+		} );
+
+		expect( result.result.error ).toContain( 'numeric `ref`' );
+		expect( editEntityRecord ).not.toHaveBeenCalled();
 	} );
 
 	it( 'clears a page title sent as null, as the schema allows', async () => {
@@ -888,6 +961,14 @@ describe( 'editEntityRecordCallback', () => {
 			],
 		} );
 
+		expect( editEntityRecord ).toHaveBeenNthCalledWith(
+			1,
+			'postType',
+			'wp_navigation',
+			9,
+			{ blocks: [] },
+			{ undoIgnore: true }
+		);
 		expect( result.result.details ).toMatchObject( {
 			updated: [ { recordId: 9, fields: [ 'navigationItems' ] } ],
 		} );

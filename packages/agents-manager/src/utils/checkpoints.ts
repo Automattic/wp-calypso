@@ -61,7 +61,7 @@ export interface CheckpointMetadata {
  * A page rename, so a restore can put the old title back on both the page
  * and the menu item that follows it.
  */
-export interface PageRename {
+interface PageRename {
 	pageId: number | string;
 	from: string;
 	to: string;
@@ -168,9 +168,17 @@ async function restoreMenuSnapshots( checkpoint: CheckpointRecord ): Promise< vo
 		return;
 	}
 
-	await Promise.all(
-		( checkpoint.menusBeforeUpdate ?? [] ).map( ( menu ) => writeMenuItems( menu.id, menu.items ) )
-	);
+	const menus = checkpoint.menusBeforeUpdate ?? [];
+	const items = await Promise.all( menus.map( ( menu ) => readMenuItems( menu.id ) ) );
+	const missing = items.findIndex( ( current ) => ! current );
+
+	// Checked before any write: a menu deleted since would fail inside the
+	// store, after the others were already put back.
+	if ( missing >= 0 ) {
+		throw new Error( `Navigation menu not found: ${ menus[ missing ].id }` );
+	}
+
+	await Promise.all( menus.map( ( menu ) => writeMenuItems( menu.id, menu.items ) ) );
 }
 
 /**
@@ -404,8 +412,12 @@ function createRecorder( checkpointId: string ): CheckpointRecorder {
 				throw new Error( `Navigation menu not found: ${ menuId }` );
 			}
 
+			// Re-read after the await: another capture may have landed meanwhile.
 			update( {
-				menusBeforeUpdate: [ ...captured, { id: menuId, items: deepClone( items ) } ],
+				menusBeforeUpdate: [
+					...( records.get( checkpointId )?.menusBeforeUpdate ?? [] ),
+					{ id: menuId, items: deepClone( items ) },
+				],
 			} );
 
 			return true;
@@ -519,7 +531,8 @@ function redeclareDomains( id: string, keys: string[] ): void {
  * Runs an ability's write under a checkpoint keyed by its tool call, so
  * `restore-checkpoint` can undo it. The first snapshot for a call wins; a repeat
  * that fails rolls back to it, and a first run that fails drops the checkpoint.
- * Without a call id the write runs uncheckpointed.
+ * A domain that snapshots up front and cannot be read refuses the write before
+ * it runs. Without a call id the write runs uncheckpointed.
  */
 export async function withCheckpoint< T >(
 	{
