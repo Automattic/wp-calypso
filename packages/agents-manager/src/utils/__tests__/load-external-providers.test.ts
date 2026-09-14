@@ -8,7 +8,10 @@ import { editorNavigateAbility } from '../../abilities/editor-navigate';
 import { getBlockTreeAbility } from '../../abilities/get-block-tree';
 import { restoreCheckpointAbility } from '../../abilities/restore-checkpoint';
 import { setSiteLogoAbility } from '../../abilities/set-site-logo';
-import { showComponentAbility } from '../../abilities/show-component';
+import {
+	jetpackAiShowComponentAbility,
+	showComponentAbility,
+} from '../../abilities/show-component';
 import { showTemplateAbility } from '../../abilities/show-template';
 import { wpAdminNavigateAbility } from '../../abilities/wp-admin-navigate';
 import * as canvasBinding from '../canvas-binding';
@@ -253,6 +256,7 @@ describe( 'loadExternalProviders', () => {
 				setSiteLogoAbility,
 				showComponentAbility,
 				getBlockTreeAbility,
+				jetpackAiShowComponentAbility,
 				showTemplateAbility,
 				createAbility( 'host/navigate' ),
 				createAbility( 'woocommerce/get-products' ),
@@ -292,6 +296,7 @@ describe( 'loadExternalProviders', () => {
 				setSiteLogoAbility,
 				showComponentAbility,
 				getBlockTreeAbility,
+				jetpackAiShowComponentAbility,
 				showTemplateAbility,
 				createAbility( 'shared/action' ),
 			] )
@@ -362,6 +367,7 @@ describe( 'loadExternalProviders', () => {
 				abilityShapes( [
 					wpAdminNavigateAbility,
 					getBlockTreeAbility,
+					jetpackAiShowComponentAbility,
 					showTemplateAbility,
 					createAbility( 'big-sky/show-component' ),
 				] )
@@ -399,6 +405,7 @@ describe( 'loadExternalProviders', () => {
 				setSiteLogoAbility,
 				showComponentAbility,
 				getBlockTreeAbility,
+				jetpackAiShowComponentAbility,
 				showTemplateAbility,
 				createAbility( 'host/navigate' ),
 			] )
@@ -879,6 +886,7 @@ describe( 'loadExternalProviders', () => {
 				setSiteLogoAbility,
 				showComponentAbility,
 				getBlockTreeAbility,
+				jetpackAiShowComponentAbility,
 				showTemplateAbility,
 				createAbility( 'big-sky/apply-block-edits' ),
 				createAbility( 'wpcom/manage-site' ),

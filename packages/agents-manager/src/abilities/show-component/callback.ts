@@ -5,19 +5,26 @@ import { BIG_SKY_SHOW_COMPONENT_TOOL_ID } from '../../utils/show-component-tools
 import { getToolCallIdFromConversationHistory } from '../../utils/tool-call-history';
 import { errorResult } from '../ability-result';
 import type { AbilityResult } from '../types';
-import type { ShowComponentType } from './index';
 
-const CHECKPOINT_KEYS_BY_TYPE: Record< ShowComponentType, string[] > = {
+// The pre-pick state each picker type snapshots. Provider-rendered pickers are
+// listed too: AM executes every show-component call, so undo is wired here.
+const CHECKPOINT_KEYS_BY_TYPE: Partial< Record< string, string[] > > = {
 	'button-picker': [ checkpointKeys.BUTTON ],
 	'font-picker': [ checkpointKeys.FONT ],
 	'color-picker': [ checkpointKeys.COLOR ],
+	'title-picker': [ checkpointKeys.POST_TITLE ],
+	'excerpt-picker': [ checkpointKeys.POST_EXCERPT ],
 };
 
 export interface ShowComponentInput {
-	type: ShowComponentType;
+	type: string;
 	props: Record< string, unknown >;
 	summary?: string;
 	followUpTasks?: boolean;
+	/** The client's id for this call, which every agenttic execution path passes. */
+	toolCallId?: string;
+	/** Server-computed counts for the rendered-response Tracks event. */
+	responseTrackingProperties?: unknown;
 }
 
 /**
@@ -25,7 +32,7 @@ export interface ShowComponentInput {
  * Returns a JSON `agentMessage` for `convertToolMessagesToComponents()`.
  */
 export async function showComponentCallback( input: ShowComponentInput ): Promise< AbilityResult > {
-	const { type, props, summary, followUpTasks } = input;
+	const { type, props, summary, followUpTasks, responseTrackingProperties } = input;
 
 	if ( ! props || typeof props !== 'object' || Object.keys( props ).length === 0 ) {
 		// eslint-disable-next-line no-console
@@ -45,16 +52,20 @@ export async function showComponentCallback( input: ShowComponentInput ): Promis
 			__( 'Choose from the options I provided.', __i18n_text_domain__ );
 
 		// Snapshot the pre-pick state under this call's id, scoped to the picker's
-		// style domain — the checkpoint `restore-checkpoint` can undo picks with.
+		// domain — the checkpoint `restore-checkpoint` can undo picks with.
 		// Unknown types get no checkpoint; the schema enum is advisory only.
 		const checkpointKeysForType = CHECKPOINT_KEYS_BY_TYPE[ type ];
-		const toolCallId = checkpointKeysForType
-			? getToolCallIdFromConversationHistory( BIG_SKY_SHOW_COMPONENT_TOOL_ID )
-			: null;
+		// The history lookup is the fallback, and only worth a scan for a type
+		// that checkpoints.
+		const toolCallId =
+			( typeof input.toolCallId === 'string' && input.toolCallId ) ||
+			( checkpointKeysForType
+				? getToolCallIdFromConversationHistory( BIG_SKY_SHOW_COMPONENT_TOOL_ID )
+				: null );
 		// First write wins: the first snapshot under an id is the pre-pick
 		// state — overwriting it would capture post-pick styles and turn its
 		// undo into a silent no-op.
-		if ( toolCallId && ! hasCheckpoint( toolCallId ) ) {
+		if ( checkpointKeysForType && toolCallId && ! hasCheckpoint( toolCallId ) ) {
 			setCheckpoint( toolCallId, checkpointKeysForType, {
 				toolId: BIG_SKY_SHOW_COMPONENT_TOOL_ID,
 				summary: successMessage,
@@ -72,6 +83,9 @@ export async function showComponentCallback( input: ShowComponentInput ): Promis
 			returnToAgent: true,
 			agentMessage: JSON.stringify( {
 				tool_id: BIG_SKY_SHOW_COMPONENT_TOOL_ID,
+				// Both copies of this message — the live echo and the stored one —
+				// carry the id, so the chat shows one picker after a reload.
+				...( toolCallId && { tool_call_id: toolCallId } ),
 				data: {
 					type,
 					props,
@@ -79,6 +93,7 @@ export async function showComponentCallback( input: ShowComponentInput ): Promis
 					summary: successMessage,
 					isCurrent: true,
 					postId: currentPostId,
+					...( responseTrackingProperties !== undefined && { responseTrackingProperties } ),
 				},
 			} ),
 		};

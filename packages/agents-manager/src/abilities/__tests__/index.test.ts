@@ -27,6 +27,10 @@ jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: jest.fn() }
 const mockShowComponentCallback = jest.fn();
 jest.mock( '../show-component', () => ( {
 	showComponentAbility: { name: 'big-sky/show-component', callback: mockShowComponentCallback },
+	jetpackAiShowComponentAbility: {
+		name: 'jetpack-ai/show-component',
+		callback: mockShowComponentCallback,
+	},
 } ) );
 
 const mockShowTemplateCallback = jest.fn();
@@ -173,6 +177,7 @@ describe( 'abilities facade', () => {
 		expect( amOnlyNames ).not.toContain( 'big-sky/edit-entity-record' );
 		expect( amOnlyNames ).not.toContain( 'big-sky/show-component' );
 		expect( amOnlyNames ).toContain( 'big-sky/show-template' );
+		expect( amOnlyNames ).toContain( 'jetpack-ai/show-component' );
 		await expect( ownedAbilityNames( amToolProvider ) ).resolves.toEqual( [
 			...ALL_SURFACE_ABILITY_NAMES,
 			...amOnlyNames,

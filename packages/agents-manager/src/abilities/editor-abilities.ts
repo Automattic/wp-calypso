@@ -19,7 +19,7 @@ import { editorNavigateAbility } from './editor-navigate';
 import { getBlockTreeAbility } from './get-block-tree';
 import { restoreCheckpointAbility } from './restore-checkpoint';
 import { setSiteLogoAbility } from './set-site-logo';
-import { showComponentAbility } from './show-component';
+import { jetpackAiShowComponentAbility, showComponentAbility } from './show-component';
 import { showTemplateAbility } from './show-template';
 import type { Ability } from './types';
 
@@ -40,8 +40,14 @@ const MIGRATED_EDITOR_ABILITIES: Ability[] = [
 	showComponentAbility,
 ];
 
-// Editor abilities with no copy anywhere else.
-const AM_ONLY_EDITOR_ABILITIES: Ability[] = [ getBlockTreeAbility, showTemplateAbility ];
+// Editor abilities with no copy anywhere else. The Jetpack show-component
+// alias belongs here too: the sidebar deleted its copy, so the switch has
+// nothing to hand it back to.
+const AM_ONLY_EDITOR_ABILITIES: Ability[] = [
+	getBlockTreeAbility,
+	jetpackAiShowComponentAbility,
+	showTemplateAbility,
+];
 
 const EDITOR_ABILITIES: Ability[] = [ ...MIGRATED_EDITOR_ABILITIES, ...AM_ONLY_EDITOR_ABILITIES ];
 
