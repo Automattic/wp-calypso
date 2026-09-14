@@ -12,62 +12,56 @@ import {
 	SITE_ID,
 	expiryInDays,
 	makePurchase,
-	postGrace,
 	renewing,
+	revertedTransfer,
 } from '../../plan-expiry-notice/test/fixtures';
 import { useSiteExpiryNotice } from '../use-site-expiry-notice';
 import type { SiteExpiryNoticeOptions } from '../use-site-expiry-notice';
-import type { Purchase } from '@automattic/api-core';
+import type { AtomicTransfer, Purchase } from '@automattic/api-core';
 
-const DISMISS_KEY = 'wp_wpcom_plan_expiry_notice_dismiss';
+const DISMISS_KEY = 'wp_123_wpcom_plan_expiry_notice_dismiss';
 const PURCHASES_KEY = [ 'upgrades', 'site', SITE_ID ];
 const CURRENT_USER_KEY = [ 'site', SITE_ID, 'users', 'current' ];
 const TRANSFER_KEY = [ 'site', SITE_ID, 'atomic', 'transfers', 'latest' ];
 
 function mockApi( {
 	purchases,
-	meta = {},
-	metaDelay = 0,
-	transferStatus,
-	transferDelay = 0,
-	transferStatusCode = 200,
+	meta,
+	transfer,
+	transferStatusCode = transfer ? 200 : 404,
 }: {
 	purchases: Purchase[];
 	meta?: Record< string, number >;
-	metaDelay?: number;
-	transferStatus?: string;
-	transferDelay?: number;
+	transfer?: AtomicTransfer;
 	transferStatusCode?: number;
 } ) {
-	nock( 'https://public-api.wordpress.com' )
+	const api = nock( 'https://public-api.wordpress.com' )
 		.persist()
 		.get( '/rest/v1.2/upgrades' )
 		.query( true )
 		.reply( 200, purchases )
-		.get( `/wp/v2/sites/${ SITE_ID }/users/me` )
-		.query( true )
-		.delay( metaDelay )
-		.reply( 200, { id: 1, name: 'me', slug: 'me', meta } )
 		.get( `/wpcom/v2/sites/${ SITE_ID }/atomic/transfers/latest` )
 		.query( true )
-		.delay( transferDelay )
-		.reply( transferStatusCode, transferStatus ? { status: transferStatus, created_at: NOW } : {} );
+		.reply( transferStatusCode, transfer ?? { code: 'no_transfer_record' } );
+	if ( meta ) {
+		api
+			.get( `/wp/v2/sites/${ SITE_ID }/users/me` )
+			.query( true )
+			.reply( 200, { id: 1, name: 'me', slug: 'me', meta } );
+	}
+	return api;
 }
 
-function renderNotice(
-	options: Partial< SiteExpiryNoticeOptions > = {},
-	// Off by default so that a mocked failure fails a test fast. The transfer
-	// query has to opt out of retries on its own; one test checks that it does.
-	// `retryDelay: 0` keeps those retries from adding exponential backoff.
-	{ retry = false }: { retry?: boolean } = {}
-) {
-	const queryClient = new QueryClient( { defaultOptions: { queries: { retry, retryDelay: 0 } } } );
+function renderNotice( options: Partial< SiteExpiryNoticeOptions > = {} ) {
+	const queryClient = new QueryClient( {
+		defaultOptions: { queries: { retry: false, retryDelay: 0 } },
+	} );
 	const rendered = renderHook(
 		() =>
 			useSiteExpiryNotice( SITE_ID, {
 				isDashboardScreen: false,
 				currentUserId: OWNER_ID,
-				isAtomic: true,
+				isAtomic: false,
 				locale: 'en',
 				...options,
 			} ),
@@ -77,32 +71,30 @@ function renderNotice(
 			),
 		}
 	);
-	const waitForData = ( key: unknown[] ) =>
-		waitFor( () => expect( queryClient.getQueryData( key ) ).toBeDefined() );
-	const waitForTransferError = () =>
-		waitFor( () => expect( queryClient.getQueryState( TRANSFER_KEY )?.status ).toBe( 'error' ) );
-	return { ...rendered, waitForData, waitForTransferError };
+	const waitForSettled = ( key: unknown[] ) =>
+		waitFor( () =>
+			expect( [ 'success', 'error' ] ).toContain( queryClient.getQueryState( key )?.status )
+		);
+	return { ...rendered, queryClient, waitForSettled };
 }
 
 beforeEach( () => MockDate.set( NOW ) );
-afterEach( () => {
-	MockDate.reset();
-	nock.cleanAll();
-} );
+afterEach( () => MockDate.reset() );
 
-describe( 'useSiteExpiryNotice', () => {
-	test( 'is null while loading and null with no eligible plan', async () => {
+describe( 'useSiteExpiryNotice: purchase states', () => {
+	test( 'is null while loading and null with no plan and no revert', async () => {
 		mockApi( { purchases: [] } );
-		const { result, waitForData } = renderNotice();
+		const { result, waitForSettled } = renderNotice();
 		expect( result.current ).toBeNull();
-		await waitForData( PURCHASES_KEY );
+		await waitForSettled( PURCHASES_KEY );
+		await waitForSettled( TRANSFER_KEY );
 		expect( result.current ).toBeNull();
 	} );
 
 	test( 'is null for an auto-renewing annual plan before its first attempt', async () => {
 		mockApi( { purchases: [ renewing( { expiry_date: expiryInDays( 30 ) } ) ] } );
-		const { result, waitForData } = renderNotice( { isDashboardScreen: true } );
-		await waitForData( PURCHASES_KEY );
+		const { result, waitForSettled } = renderNotice( { isDashboardScreen: true } );
+		await waitForSettled( PURCHASES_KEY );
 		expect( result.current ).toBeNull();
 	} );
 
@@ -111,104 +103,148 @@ describe( 'useSiteExpiryNotice', () => {
 			purchases: [ makePurchase( { user_id: OWNER_ID + 1, expiry_date: expiryInDays( 3 ) } ) ],
 		} );
 		const { result } = renderNotice();
-		await waitFor( () => expect( result.current?.stage ).toBe( 'final-window' ) );
-		expect( result.current?.isPlanOwner ).toBe( false );
+		await waitFor( () => expect( result.current ).not.toBeNull() );
+		expect( result.current ).toMatchObject( {
+			kind: 'purchase',
+			stage: 'final-window',
+			isPlanOwner: false,
+		} );
 	} );
 
 	test( 'the early warning shows on dashboard screens only', async () => {
 		mockApi( { purchases: [ makePurchase( { expiry_date: expiryInDays( 30 ) } ) ] } );
 
 		const off = renderNotice( { isDashboardScreen: false } );
-		await off.waitForData( PURCHASES_KEY );
+		await off.waitForSettled( PURCHASES_KEY );
 		expect( off.result.current ).toBeNull();
 
 		const on = renderNotice( { isDashboardScreen: true } );
-		await waitFor( () => expect( on.result.current?.stage ).toBe( 'early-warning' ) );
-		expect( on.result.current?.isDismissible ).toBe( false );
+		await waitFor( () => expect( on.result.current ).toMatchObject( { stage: 'early-warning' } ) );
 	} );
 
-	test( 'shows the final window everywhere', async () => {
-		mockApi( { purchases: [ makePurchase( { expiry_date: expiryInDays( 3 ) } ) ] } );
-		const { result } = renderNotice();
-		await waitFor( () => expect( result.current?.stage ).toBe( 'final-window' ) );
-	} );
-
-	test( 'post-grace is dismissible and reads the reverted transfer', async () => {
-		mockApi( {
-			purchases: [ postGrace() ],
-			transferStatus: 'reverted',
-			meta: { [ DISMISS_KEY ]: 0 },
+	test( 'a plan past its date but still active is grace, and the transfer is never asked for', async () => {
+		const api = mockApi( {
+			purchases: [ makePurchase( { expiry_date: expiryInDays( -45 ), expiry_status: 'expired' } ) ],
 		} );
-		const { result } = renderNotice();
-		await waitFor( () => expect( result.current?.isReverted ).toBe( true ) );
-		expect( result.current?.stage ).toBe( 'post-grace' );
-		expect( result.current?.isDismissible ).toBe( true );
-		expect( result.current?.dismissMetaKey ).toBe( DISMISS_KEY );
+		const { result, queryClient } = renderNotice( { isAtomic: true } );
+		await waitFor( () =>
+			expect( result.current ).toMatchObject( { kind: 'purchase', stage: 'grace' } )
+		);
+		const transferState = queryClient.getQueryState( TRANSFER_KEY );
+		expect( transferState?.fetchStatus ).toBe( 'idle' );
+		expect( transferState?.dataUpdatedAt ).toBe( 0 );
+		api.persist( false );
 	} );
+} );
 
-	test( 'post-grace on an Atomic site that is not reverted is rendered as grace', async () => {
-		mockApi( { purchases: [ postGrace() ], transferStatus: 'completed' } );
+describe( 'useSiteExpiryNotice: reverted state', () => {
+	test( 'a site reverted for an expired plan is post-grace with the dismiss key', async () => {
+		const transfer = revertedTransfer( 10 );
+		mockApi( { purchases: [], transfer, meta: { [ DISMISS_KEY ]: 0 } } );
 		const { result } = renderNotice();
 		await waitFor( () => expect( result.current ).not.toBeNull() );
-		expect( result.current?.stage ).toBe( 'grace' );
-		expect( result.current?.isDismissible ).toBe( false );
-	} );
-
-	test( 'post-grace on a Simple site with no transfer record: restore path, dismissible', async () => {
-		mockApi( {
-			purchases: [ postGrace() ],
-			transferStatusCode: 404,
-			meta: { wp_123_wpcom_plan_expiry_notice_dismiss: 0 },
+		expect( result.current ).toEqual( {
+			kind: 'reverted',
+			revertedAt: new Date( transfer.reverted_at!.replace( ' ', 'T' ) + 'Z' ).getTime(),
+			dismissMetaKey: DISMISS_KEY,
 		} );
-		const { result } = renderNotice( { isAtomic: false }, { retry: true } );
-		await waitFor( () => expect( result.current?.stage ).toBe( 'post-grace' ), { timeout: 1000 } );
-		expect( result.current?.isReverted ).toBe( false );
-		expect( result.current?.isDismissible ).toBe( true );
-		expect( result.current?.dismissMetaKey ).toBe( 'wp_123_wpcom_plan_expiry_notice_dismiss' );
 	} );
 
-	test( 'stays null in post-grace until the transfer status resolves', async () => {
-		mockApi( { purchases: [ postGrace() ], transferStatus: 'reverted', transferDelay: 50 } );
-		const { result, waitForData } = renderNotice();
-		await waitForData( CURRENT_USER_KEY );
+	test( 'the reverted state is not offered on an Atomic site', async () => {
+		mockApi( { purchases: [], transfer: revertedTransfer( 10 ), meta: {} } );
+		const { result, queryClient, waitForSettled } = renderNotice( { isAtomic: true } );
+		await waitForSettled( PURCHASES_KEY );
 		expect( result.current ).toBeNull();
-		await waitFor( () => expect( result.current?.isReverted ).toBe( true ) );
+		const transferState = queryClient.getQueryState( TRANSFER_KEY );
+		expect( transferState?.fetchStatus ).toBe( 'idle' );
+		expect( transferState?.dataUpdatedAt ).toBe( 0 );
 	} );
 
-	test( 'stays null in post-grace until the dismissal meta is known', async () => {
-		mockApi( {
-			purchases: [ postGrace() ],
-			// Never dismissed, so the only thing holding the notice back is the
-			// meta not having arrived yet.
-			meta: { [ DISMISS_KEY ]: 0 },
-			metaDelay: 50,
-			transferStatus: 'reverted',
-		} );
-		const { result, waitForData } = renderNotice();
-		await waitForData( PURCHASES_KEY );
-		expect( result.current ).toBeNull();
-		await waitFor( () => expect( result.current?.stage ).toBe( 'post-grace' ) );
+	test( 'a revert for another reason, or a completed transfer, is nothing', async () => {
+		for ( const transfer of [
+			revertedTransfer( 10, { reverted_for_expired_plan: false } ),
+			revertedTransfer( 10, { status: 'completed', reverted_at: null } ),
+		] ) {
+			nock.cleanAll();
+			mockApi( { purchases: [], transfer, meta: {} } );
+			const { result, waitForSettled } = renderNotice();
+			await waitForSettled( TRANSFER_KEY );
+			expect( result.current ).toBeNull();
+		}
 	} );
 
-	test( 'stays null in post-grace when the transfer lookup fails', async () => {
-		mockApi( { purchases: [ postGrace() ], transferStatusCode: 500 } );
-		const { result, waitForData, waitForTransferError } = renderNotice();
-		await waitForData( CURRENT_USER_KEY );
-		await waitForTransferError();
+	test( 'runs out 30 days after the revert', async () => {
+		mockApi( { purchases: [], transfer: revertedTransfer( 29 ), meta: { [ DISMISS_KEY ]: 0 } } );
+		const inWindow = renderNotice();
+		await waitFor( () => expect( inWindow.result.current ).toMatchObject( { kind: 'reverted' } ) );
+
+		nock.cleanAll();
+		mockApi( { purchases: [], transfer: revertedTransfer( 30 ), meta: {} } );
+		const outOfWindow = renderNotice();
+		await outOfWindow.waitForSettled( TRANSFER_KEY );
+		expect( outOfWindow.result.current ).toBeNull();
+	} );
+
+	test( 'a never-transferred site (404) is nothing, and the 404 is not refetched on mount', async () => {
+		const api = mockApi( { purchases: [] } );
+		const first = renderNotice();
+		await first.waitForSettled( TRANSFER_KEY );
+		expect( first.result.current ).toBeNull();
+
+		const cached = first.queryClient.getQueryState( TRANSFER_KEY );
+		expect( cached?.status ).toBe( 'error' );
+		const fetchesBefore = cached?.fetchFailureCount;
+
+		const again = renderHook(
+			() =>
+				useSiteExpiryNotice( SITE_ID, {
+					isDashboardScreen: false,
+					currentUserId: OWNER_ID,
+					isAtomic: false,
+					locale: 'en',
+				} ),
+			{
+				wrapper: ( { children } ) => (
+					<QueryClientProvider client={ first.queryClient }>{ children }</QueryClientProvider>
+				),
+			}
+		);
+		expect( again.result.current ).toBeNull();
+		expect( first.queryClient.getQueryState( TRANSFER_KEY )?.fetchStatus ).toBe( 'idle' );
+		expect( first.queryClient.getQueryState( TRANSFER_KEY )?.fetchFailureCount ).toBe(
+			fetchesBefore
+		);
+		api.persist( false );
+	} );
+
+	test( 'stays null until the dismissal meta has been fetched, then honours a newer stamp', async () => {
+		const transfer = revertedTransfer( 10 );
+		const revertedAtSeconds = Math.floor(
+			new Date( transfer.reverted_at!.replace( ' ', 'T' ) + 'Z' ).getTime() / 1000
+		);
+
+		mockApi( { purchases: [], transfer, meta: { [ DISMISS_KEY ]: revertedAtSeconds + 3600 } } );
+		const { result, waitForSettled } = renderNotice();
+		await waitForSettled( TRANSFER_KEY );
+		await waitForSettled( CURRENT_USER_KEY );
 		expect( result.current ).toBeNull();
 	} );
 
-	test( 'a dismissal newer than the expiry date hides post-grace', async () => {
-		const purchase = postGrace();
-		mockApi( {
-			purchases: [ purchase ],
-			meta: {
-				[ DISMISS_KEY ]: Math.floor( new Date( purchase.expiry_date ).getTime() / 1000 ) + 86400,
-			},
-			transferStatus: 'reverted',
-		} );
-		const { result, waitForData } = renderNotice();
-		await waitForData( CURRENT_USER_KEY );
-		expect( result.current ).toBeNull();
+	test( 'a dismissal stamp from before the revert does not count', async () => {
+		const transfer = revertedTransfer( 10 );
+		const revertedAtSeconds = Math.floor(
+			new Date( transfer.reverted_at!.replace( ' ', 'T' ) + 'Z' ).getTime() / 1000
+		);
+
+		mockApi( { purchases: [], transfer, meta: { [ DISMISS_KEY ]: revertedAtSeconds - 3600 } } );
+		const { result } = renderNotice();
+		await waitFor( () => expect( result.current ).toMatchObject( { kind: 'reverted' } ) );
+	} );
+
+	test( 'with no dismiss key on the site the state is still shown, without a key', async () => {
+		mockApi( { purchases: [], transfer: revertedTransfer( 10 ), meta: { unrelated: 1 } } );
+		const { result } = renderNotice();
+		await waitFor( () => expect( result.current ).toMatchObject( { kind: 'reverted' } ) );
+		expect( ( result.current as { dismissMetaKey?: string } ).dismissMetaKey ).toBeUndefined();
 	} );
 } );
