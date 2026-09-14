@@ -208,7 +208,6 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 // A one-time nudge towards the view settings, cleared the first time the menu opens.
 .wpnc-app__settings-toggle.is-new {
 	position: relative;
-	overflow: visible;
 }
 
 .wpnc-app__settings-toggle.is-new::after {
@@ -223,6 +222,5 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	// A ring in the panel's own background colour, so the dot reads against the gear
 	// rather than disappearing into its strokes.
 	box-shadow: 0 0 0 1px var(--color-surface);
-	pointer-events: none;
 }
 
