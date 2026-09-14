@@ -24,7 +24,7 @@
 
 - Pages pass their page-specific notices ("page candidates") as children of the arbiter, **ordered by priority** (most urgent first). Eligibility is decided at the call site, not inside the notice.
 - The arbiter renders the **first non-null child**.
-- The arbiter owns "shared candidates" that can appear on any sites page. Today that is the sitewide plan-expiry notice (`client/dashboard/components/site-expiry-notice/`). A shared candidate marked **urgent** (expiry within 7 days, in grace, or past grace) beats every page candidate; a non-urgent one (the early expiry warning) always loses to page candidates. Its eligibility is settled by `ensureSiteExpiryNoticeData()` in the `siteRoute` loader, so it never pops in.
+- The arbiter owns "shared candidates" that can appear on any sites page. Today that is the sitewide plan-expiry notice (`client/dashboard/components/site-expiry-notice/`). A shared candidate marked **urgent** (expiry within 7 days, in grace, or a Simple site reverted for an expired plan within the last 30 days) beats every page candidate; a non-urgent one (the early expiry warning) always loses to page candidates. Its eligibility is settled by `ensureSiteExpiryNoticeData()` in the `siteRoute` loader, so it never pops in.
 
 ### Rules for notice candidates
 
