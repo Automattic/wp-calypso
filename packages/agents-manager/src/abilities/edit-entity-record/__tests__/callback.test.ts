@@ -233,6 +233,7 @@ describe( 'editEntityRecordCallback', () => {
 
 	// The guard the backend asks for before anything destructive.
 	it( 'writes nothing while a confirmation is outstanding', async () => {
+		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 		const result = await editEntityRecordCallback( {
 			deleteEntities: [ page( 7 ) ],
 			confirmationMessage: 'Delete the About page?',
@@ -243,6 +244,9 @@ describe( 'editEntityRecordCallback', () => {
 		expect( result.result.error ).toContain( 'no confirmationMessage' );
 		expect( deleteEntityRecord ).not.toHaveBeenCalled();
 		expect( removeNavigationItem ).not.toHaveBeenCalled();
+		// Asking is the ability's own step, so nothing is logged as refused.
+		expect( consoleError ).not.toHaveBeenCalled();
+		consoleError.mockRestore();
 	} );
 
 	it( 'applies the delete once the confirmation is gone', async () => {

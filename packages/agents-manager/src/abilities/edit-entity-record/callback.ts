@@ -724,6 +724,12 @@ async function applyDeletes(
 	}
 }
 
+// Raw arguments, so `input` itself may be anything.
+const awaitsConfirmation = (
+	input: EditEntityRecordInput
+): input is EditEntityRecordInput & { confirmationMessage: string } =>
+	typeof input?.confirmationMessage === 'string' && input.confirmationMessage.trim() !== '';
+
 /**
  * The `edit-entity-record` ability callback: creates, edits and deletes the
  * site's entity records, keeping the navigation menu in step with the pages
@@ -735,8 +741,9 @@ export async function editEntityRecordCallback(
 	const result = await editEntityRecord( input );
 
 	// Every refusal, not only a failed write: the model paraphrases them, so
-	// the console is where the reason can be read.
-	if ( ! result.result.success ) {
+	// the console is where the reason can be read. Asking the user to confirm
+	// is the ability's own step, not a refusal.
+	if ( ! result.result.success && ! awaitsConfirmation( input ) ) {
 		// eslint-disable-next-line no-console
 		console.error( '[AgentsManager] edit-entity-record refused:', result.result.error );
 	}
@@ -763,10 +770,12 @@ async function editEntityRecord( input: EditEntityRecordInput ): Promise< Abilit
 	// asks, and the user answers in the chat, where Big Sky renders the Yes/No
 	// buttons. The refusal returns as a client-tool failure and the model runs
 	// again, so the `error` has to be directive — it gets two attempts.
-	if ( typeof input.confirmationMessage === 'string' && input.confirmationMessage.trim() ) {
+	if ( awaitsConfirmation( input ) ) {
+		const question = input.confirmationMessage.trim();
+
 		return errorResult(
-			`Nothing was changed yet. Ask the user to confirm: "${ input.confirmationMessage.trim() }" — then call this tool again with the same arguments and no confirmationMessage.`,
-			input.confirmationMessage.trim()
+			`Nothing was changed yet. Ask the user to confirm: "${ question }" — then call this tool again with the same arguments and no confirmationMessage.`,
+			question
 		);
 	}
 
