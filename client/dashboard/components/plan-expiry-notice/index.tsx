@@ -6,11 +6,7 @@ import { getCalendarDaysUntil } from '../../utils/datetime';
 import { isExpiredOrRemoved, mightStillAutoRenew } from '../../utils/purchase';
 import Notice from '../notice';
 import { getExpiryStateName, getPlanExpiryNotice } from './get-plan-expiry-notice';
-import type {
-	PlanExpiryNoticeAction,
-	PlanExpiryNoticeScope,
-	PlanExpiryNoticeStage,
-} from './get-plan-expiry-notice';
+import type { PlanExpiryNoticeAction, PlanExpiryNoticeScope } from './get-plan-expiry-notice';
 import type { Purchase } from '@automattic/api-core';
 
 export {
@@ -18,10 +14,10 @@ export {
 	getPlanExpiryNotice,
 	getPlanExpiryUrgency,
 	getSitewideExpiryStage,
+	getSiteRevertedNotice,
 	hasPlanExpiryNotice,
 	isEligibleForPlanExpiryNotice,
 	pickSitewideExpiryPurchase,
-	NOTICE_CUTOFF_DAYS_PAST_EXPIRY,
 } from './get-plan-expiry-notice';
 export type {
 	PlanExpiryNoticeAction,
@@ -31,6 +27,7 @@ export type {
 	PlanExpiryNoticeStage,
 	PlanExpiryStateName,
 	PlanExpiryUrgency,
+	SiteRevertedNoticeContent,
 } from './get-plan-expiry-notice';
 
 interface PlanExpiryNoticeProps {
@@ -85,15 +82,10 @@ interface PlanExpiryNoticeProps {
 	onAutoRenewEnabled?: () => void;
 
 	scope?: PlanExpiryNoticeScope;
-	isReverted?: boolean;
 	isPlanOwner?: boolean;
-	stage?: PlanExpiryNoticeStage;
 
 	/** Renders a close button. The caller owns the dismissal; the notice keeps rendering until unmounted. */
 	onClose?: () => void;
-
-	/** Opens the host's Help Center with a prefilled message. Without it the action is not offered. */
-	onContactSupport?: ( message: string ) => void;
 
 	/** Extra properties for every event this notice records. */
 	eventProperties?: Record< string, unknown >;
@@ -106,7 +98,6 @@ function PlanExpiryNoticeButton( {
 	addPaymentMethodUrl,
 	onClick,
 	onAutoRenewEnabled,
-	onContactSupport,
 }: {
 	action: PlanExpiryNoticeAction;
 	variant: 'primary' | 'secondary';
@@ -114,23 +105,8 @@ function PlanExpiryNoticeButton( {
 	addPaymentMethodUrl?: string;
 	onClick: () => void;
 	onAutoRenewEnabled?: () => void;
-	onContactSupport?: ( message: string ) => void;
 } ) {
 	const { mutate: setAutoRenew, isPending } = useMutation( userPurchaseSetAutoRenewQuery() );
-
-	if ( action.type === 'contact-support' ) {
-		return (
-			<Button
-				variant={ variant }
-				onClick={ () => {
-					onClick();
-					onContactSupport?.( action.message );
-				} }
-			>
-				{ action.label }
-			</Button>
-		);
-	}
 
 	if ( action.type === 'enable-auto-renew' ) {
 		return (
@@ -179,11 +155,8 @@ export function PlanExpiryNotice( {
 	recordTracksEvent,
 	onAutoRenewEnabled,
 	scope,
-	isReverted,
 	isPlanOwner: isPlanOwnerProp,
-	stage: stageOverride,
 	onClose,
-	onContactSupport,
 	eventProperties: extraEventProperties,
 }: PlanExpiryNoticeProps ) {
 	const notice = getPlanExpiryNotice( purchase, {
@@ -191,9 +164,7 @@ export function PlanExpiryNotice( {
 		locale,
 		renewReturnUrl,
 		scope,
-		isReverted,
 		isPlanOwner: isPlanOwnerProp,
-		stage: stageOverride,
 	} );
 
 	// Pulled out as primitives so that they, and the memo below, stay stable
@@ -261,9 +232,6 @@ export function PlanExpiryNotice( {
 		if ( action.type === 'add-payment-method' && ! addPaymentMethodUrl ) {
 			return undefined;
 		}
-		if ( action.type === 'contact-support' && ! onContactSupport ) {
-			return undefined;
-		}
 		return action;
 	};
 	const primaryAction = shown( notice.primaryAction );
@@ -273,7 +241,7 @@ export function PlanExpiryNotice( {
 		recordTracksEvent( 'calypso_purchases_plan_expiry_notice_click', {
 			...eventProperties,
 			action: action.type,
-			cta: action.type === 'contact-support' ? 'support' : slot,
+			cta: slot,
 		} );
 
 	return (
@@ -292,7 +260,6 @@ export function PlanExpiryNotice( {
 								addPaymentMethodUrl={ addPaymentMethodUrl }
 								onClick={ () => recordClick( primaryAction, 'primary' ) }
 								onAutoRenewEnabled={ onAutoRenewEnabled }
-								onContactSupport={ onContactSupport }
 							/>
 						) }
 						{ secondaryAction && (
@@ -303,7 +270,6 @@ export function PlanExpiryNotice( {
 								addPaymentMethodUrl={ addPaymentMethodUrl }
 								onClick={ () => recordClick( secondaryAction, 'secondary' ) }
 								onAutoRenewEnabled={ onAutoRenewEnabled }
-								onContactSupport={ onContactSupport }
 							/>
 						) }
 					</>

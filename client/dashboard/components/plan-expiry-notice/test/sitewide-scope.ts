@@ -7,20 +7,12 @@ import MockDate from 'mockdate';
 import {
 	getExpiryStateName,
 	getPlanExpiryNotice,
+	getSiteRevertedNotice,
 	getSitewideExpiryStage,
 	isEligibleForPlanExpiryNotice,
 	pickSitewideExpiryPurchase,
 } from '../get-plan-expiry-notice';
-import {
-	NOW,
-	OWNER_ID,
-	expiryInDays,
-	grace,
-	makePurchase,
-	monthly,
-	removed,
-	renewing,
-} from './fixtures';
+import { NOW, OWNER_ID, expiryInDays, grace, makePurchase, monthly, renewing } from './fixtures';
 import type { Purchase } from '@automattic/api-core';
 
 jest.mock( '@automattic/i18n-utils', () => ( {
@@ -30,9 +22,6 @@ jest.mock( '@automattic/i18n-utils', () => ( {
 
 const sitewide = ( purchase: Purchase, extra = {} ) =>
 	getPlanExpiryNotice( purchase, { scope: 'sitewide', viewOtherPlansUrl: '/plans/x', ...extra } );
-
-const hrefOf = ( action: unknown ) =>
-	action && typeof action === 'object' && 'href' in action ? String( action.href ) : undefined;
 
 beforeEach( () => {
 	MockDate.set( NOW );
@@ -149,70 +138,30 @@ describe( 'sitewide scope: grace period', () => {
 	} );
 } );
 
-describe( 'sitewide scope: post-grace', () => {
-	test( 'not reverted: restore-site action carrying the return URL both ways', () => {
-		const notice = sitewide( removed( 30 ), { renewReturnUrl: '/home/example' } );
-		expect( notice?.stage ).toBe( 'post-grace' );
-		expect( notice?.variant ).toBe( 'error' );
-		expect( notice?.title ).toBe( 'Your Business plan has expired' );
-		expect( notice?.body ).toBe(
-			'Your site has been moved to the Free plan. You no longer have access to plugins, custom themes, or 50 GB of storage. Upgrade your plan to restore your site.'
-		);
-		expect( notice?.primaryAction ).toMatchObject( {
-			type: 'restore-site',
-			label: 'Restore site',
+describe( 'sitewide scope: a removed purchase is nothing', () => {
+	test( 'removed subscriptions are not eligible, in either scope', () => {
+		const removed = makePurchase( {
+			expiry_date: expiryInDays( -30 ),
+			expiry_status: 'expired',
+			subscription_status: 'inactive',
 		} );
-		const href = hrefOf( notice?.primaryAction );
-		expect( href ).toContain( '/checkout/example.wordpress.com/business-bundle' );
-		expect( href ).toContain( `redirect_to=${ encodeURIComponent( '/home/example' ) }` );
-		expect( href ).toContain( `cancel_to=${ encodeURIComponent( '/home/example' ) }` );
-		expect( notice?.secondaryAction ).toBeUndefined();
+		expect( isEligibleForPlanExpiryNotice( removed ) ).toBe( false );
+		expect( sitewide( removed ) ).toBeNull();
+		expect( getSitewideExpiryStage( removed ) ).toBeNull();
 	} );
+} );
 
-	test( 'reverted: contact-support action with prefilled message', () => {
-		const notice = sitewide( removed( 30 ), { isReverted: true } );
-		expect( notice?.body ).toBe(
-			'Your site has been moved to the Free plan and set to private. You no longer have access to plugins, custom themes, or 50 GB of storage. Contact support to get help restoring it.'
-		);
-		expect( notice?.primaryAction ).toEqual( {
-			type: 'contact-support',
-			label: 'Contact support',
-			message: 'My Business plan expired and I need your help getting it restored.',
+describe( 'getSiteRevertedNotice', () => {
+	test( 'the post-grace copy names no plan and asks for support', () => {
+		expect( getSiteRevertedNotice() ).toEqual( {
+			title: 'Your plan has expired',
+			body: 'Your site has been moved to the Free plan and set to private. You no longer have access to plugins, custom themes, or additional storage. Contact support to get help restoring it.',
+			supportMessage: 'My plan expired and I need your help getting it restored.',
 		} );
-	} );
-
-	test( 'runs out 60 days past the expiry date', () => {
-		expect( sitewide( removed( 59 ) )?.stage ).toBe( 'post-grace' );
-		expect( sitewide( removed( 60 ) ) ).toBeNull();
-	} );
-
-	test( 'removed 5 days past expiry is already post-grace; removed before it is nothing', () => {
-		expect( sitewide( removed( 5 ) )?.stage ).toBe( 'post-grace' );
-		expect( sitewide( removed( -10 ) ) ).toBeNull();
-	} );
-
-	test( 'overridden to grace: the grace body, restore-site, no secondary action', () => {
-		const notice = sitewide( removed( 40 ), { stage: 'grace' } );
-		expect( notice?.stage ).toBe( 'grace' );
-		expect( notice?.variant ).toBe( 'error' );
-		expect( notice?.title ).toBe( 'Your Business plan has expired' );
-		expect( notice?.body ).toMatch(
-			/^Your site will move to the Free plan. That means losing plugins, custom themes, and 50 GB of storage/
-		);
-		expect( notice?.primaryAction ).toMatchObject( {
-			type: 'restore-site',
-			label: 'Restore site',
-		} );
-		expect( notice?.secondaryAction ).toBeUndefined();
 	} );
 } );
 
 describe( 'sitewide scope: eligibility and fallbacks', () => {
-	test( 'removed subscriptions are eligible in sitewide scope only', () => {
-		expect( isEligibleForPlanExpiryNotice( removed( 30 ) ) ).toBe( false );
-		expect( isEligibleForPlanExpiryNotice( removed( 30 ), 'sitewide' ) ).toBe( true );
-	} );
-
 	test( 'partner-managed plans stay excluded', () => {
 		expect(
 			sitewide( makePurchase( { expiry_date: expiryInDays( 7 ), partner_type: 'a4a' } ) )
@@ -242,11 +191,16 @@ describe( 'pickSitewideExpiryPurchase', () => {
 		expect( pickSitewideExpiryPurchase( [ makePurchase( { partner_type: 'a4a' } ) ] ) ).toBeNull();
 	} );
 
-	test( 'picks the latest expiry date, including removed plans and other owners', () => {
-		const older = removed( 35, { ID: 1 } );
+	test( 'picks the latest expiry date among live plans, whoever owns them', () => {
+		const older = makePurchase( { ID: 1, expiry_date: expiryInDays( 5 ) } );
 		const newer = makePurchase( { ID: 2, expiry_date: expiryInDays( 10 ), user_id: OWNER_ID + 1 } );
-		expect( pickSitewideExpiryPurchase( [ older, newer ] ) ).toBe( newer );
-		expect( pickSitewideExpiryPurchase( [ older ] ) ).toBe( older );
+		const removed = makePurchase( {
+			ID: 3,
+			expiry_date: expiryInDays( 300 ),
+			subscription_status: 'inactive',
+		} );
+		expect( pickSitewideExpiryPurchase( [ older, newer, removed ] ) ).toBe( newer );
+		expect( pickSitewideExpiryPurchase( [ removed ] ) ).toBeNull();
 	} );
 } );
 
@@ -263,11 +217,6 @@ describe( 'sitewide scope: non-owner', () => {
 		expect( notice?.body ).toBe( nonOwnerBody );
 		expect( notice?.primaryAction ).toBeUndefined();
 		expect( notice?.secondaryAction ).toBeUndefined();
-
-		const postGraceNotice = sitewide( removed( 30 ), { isPlanOwner: false, isReverted: true } );
-		expect( postGraceNotice?.title ).toBe( 'Your Business plan has expired' );
-		expect( postGraceNotice?.body ).toBe( nonOwnerBody );
-		expect( postGraceNotice?.primaryAction ).toBeUndefined();
 	} );
 } );
 
@@ -289,8 +238,6 @@ describe( 'getSitewideExpiryStage / getExpiryStateName', () => {
 		expect( getSitewideExpiryStage( makePurchase( { expiry_date: expiryInDays( 7 ) } ) ) ).toBe(
 			'final-window'
 		);
-		expect( getSitewideExpiryStage( removed( 59 ) ) ).toBe( 'post-grace' );
-		expect( getSitewideExpiryStage( removed( 60 ) ) ).toBeNull();
 		expect( getSitewideExpiryStage( makePurchase( { expiry_date: '' } ) ) ).toBeNull();
 		expect( getSitewideExpiryStage( makePurchase( { expiry_date: 'not a date' } ) ) ).toBeNull();
 	} );

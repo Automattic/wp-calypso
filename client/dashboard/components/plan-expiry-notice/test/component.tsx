@@ -7,7 +7,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockDate from 'mockdate';
 import { PlanExpiryNotice } from '..';
-import { NOW, expiryInDays, makePurchase, postGrace } from './fixtures';
+import { NOW, expiryInDays, makePurchase } from './fixtures';
 import type { ComponentProps } from 'react';
 
 type Props = Partial< ComponentProps< typeof PlanExpiryNotice > >;
@@ -84,22 +84,5 @@ test( 'clicks name the cta beside the action', async () => {
 	expect( recordTracksEvent ).toHaveBeenCalledWith(
 		'calypso_purchases_plan_expiry_notice_click',
 		expect.objectContaining( { action: 'renew', cta: 'primary' } )
-	);
-} );
-
-test( 'contact support is a button that hands over the message, cta support', async () => {
-	const onContactSupport = jest.fn();
-	const { recordTracksEvent } = renderNotice( {
-		isReverted: true,
-		onContactSupport,
-		purchase: postGrace(),
-	} );
-	await userEvent.click( screen.getByRole( 'button', { name: 'Contact support' } ) );
-	expect( onContactSupport ).toHaveBeenCalledWith(
-		'My Business plan expired and I need your help getting it restored.'
-	);
-	expect( recordTracksEvent ).toHaveBeenCalledWith(
-		'calypso_purchases_plan_expiry_notice_click',
-		expect.objectContaining( { action: 'contact-support', cta: 'support' } )
 	);
 } );
