@@ -348,8 +348,6 @@ describe( 'editEntityRecordCallback', () => {
 		);
 	} );
 
-	// The url travels with the removal: an item carrying no page id is matched
-	// by it.
 	// The user's unsaved menu edits are theirs to save; the item waits with
 	// them, and the reply says so rather than leaving it to the model.
 	it( 'tells the user when the menu item waits with their unsaved edits', async () => {
@@ -364,6 +362,8 @@ describe( 'editEntityRecordCallback', () => {
 		expect( result.result.details ).toMatchObject( { unsavedMenus: [ 10 ] } );
 	} );
 
+	// The url travels with the removal: an item carrying no page id is matched
+	// by it.
 	it( 'deletes a page and removes its menu item', async () => {
 		await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
 
@@ -537,8 +537,6 @@ describe( 'editEntityRecordCallback', () => {
 		expect( logSiteSession ).toHaveBeenCalledWith( 'My Site' );
 	} );
 
-	// A batch that creates a page then fails must not have the agent create it
-	// again, so the failure carries what already landed.
 	it( 'refuses a batch with nothing in it', async () => {
 		const result = await editEntityRecordCallback( {} );
 
@@ -804,6 +802,8 @@ describe( 'editEntityRecordCallback', () => {
 		expect( editEntityRecord ).not.toHaveBeenCalled();
 	} );
 
+	// A batch that creates a page then fails must not have the agent create it
+	// again, so the failure carries what already landed.
 	it( 'reports what applied when a later change fails', async () => {
 		( setPageTitle as jest.Mock ).mockRejectedValueOnce( new Error( 'menu is locked' ) );
 

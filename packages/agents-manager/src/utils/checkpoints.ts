@@ -158,11 +158,10 @@ async function restoreSiteMetadataSnapshot( checkpoint: CheckpointRecord ): Prom
 /**
  * Puts back the menus the write changed.
  *
- * Key-gated like every restore. An empty snapshot is valid here, unlike the
- * domains above, which throw: those capture the moment their key is claimed,
- * so nothing to restore means the capture failed. Page and navigation are
- * claimed up front but captured only if the write reaches them — a rename to
- * a page's existing title records nothing, and has nothing to undo.
+ * An empty snapshot is valid here, unlike the domains above, which throw: those
+ * capture the moment their key is claimed, so nothing to restore means the
+ * capture failed. Navigation is claimed up front but captured only as the write
+ * reaches each menu.
  */
 async function restoreMenuSnapshots( checkpoint: CheckpointRecord ): Promise< void > {
 	if ( ! checkpoint.checkpointKeys.includes( checkpointKeys.NAVIGATION ) ) {
@@ -446,9 +445,8 @@ function createRecorder( checkpointId: string ): CheckpointRecorder {
  * them when nothing is left.
  *
  * Page and navigation are claimed from the request alone, so a rename to the
- * title a page already has claims both and records neither — an undo that
- * restores nothing, and looks like it should where the same request changed
- * content too.
+ * title a page already has claims both and records neither — leaving an undo
+ * that would restore nothing.
  */
 function dropUnrecordedDomains( id: string ): void {
 	const checkpoint = records.get( id );
@@ -519,12 +517,9 @@ function redeclareDomains( id: string, keys: string[] ): void {
 
 /**
  * Runs an ability's write under a checkpoint keyed by its tool call, so
- * `restore-checkpoint` can undo it. The first snapshot for a call wins — a
- * repeat must not overwrite the pre-change state. A write that fails drops the
- * checkpoint it created; a repeat that fails is rolled back to the first run's,
- * which still undoes the change that landed. A write is refused when a domain
- * that snapshots up front could not be read. Without a call id the write runs
- * uncheckpointed.
+ * `restore-checkpoint` can undo it. The first snapshot for a call wins; a repeat
+ * that fails rolls back to it, and a first run that fails drops the checkpoint.
+ * Without a call id the write runs uncheckpointed.
  */
 export async function withCheckpoint< T >(
 	{
