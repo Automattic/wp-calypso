@@ -1,35 +1,42 @@
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { logError } from '../../panel/helpers/log-error';
-import { updateNotificationPreferences } from '../../panel/rest-client/wpcom';
+import { useAppContext } from '../context';
 
 /**
- * Applies a notification preference to the store first, then persists it, rolling the
- * store back if the request fails.
+ * Applies a notification preference to the store first, then hands it to the host to
+ * persist, rolling the store back if that fails.
  *
  * The panel's controls save on change rather than behind a Save button, so the tab strip
  * has to react immediately instead of waiting for the round trip.
  */
 export const useSavePreference = () => {
 	const dispatch = useDispatch();
+	const { onPreferenceChange } = useAppContext();
 
-	return ( {
-		preferences,
-		apply,
-		revert,
-	}: {
-		preferences: Record< string, unknown >;
-		apply: () => { type: string };
-		revert: () => { type: string };
-	} ) => {
-		dispatch( apply() );
+	return useCallback(
+		( {
+			key,
+			value,
+			apply,
+			revert,
+		}: {
+			key: string;
+			value: unknown;
+			apply: () => { type: string };
+			revert: () => { type: string };
+		} ) => {
+			dispatch( apply() );
 
-		// `Promise.resolve().then` so a synchronous throw — an uninitialised REST client,
-		// say — lands in the same catch as a failed request and still rolls back.
-		Promise.resolve()
-			.then( () => updateNotificationPreferences( preferences ) )
-			.catch( ( error: unknown ) => {
-				logError( error );
-				dispatch( revert() );
-			} );
-	};
+			// `Promise.resolve().then` so a synchronous throw from the host lands in the
+			// same catch as a rejected request and still rolls back.
+			Promise.resolve()
+				.then( () => onPreferenceChange( key, value ) )
+				.catch( ( error: unknown ) => {
+					logError( error );
+					dispatch( revert() );
+				} );
+		},
+		[ dispatch, onPreferenceChange ]
+	);
 };

@@ -1,7 +1,6 @@
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
-import { init as initAPI } from '../../../panel/rest-client/wpcom';
 import { init as initStore } from '../../../panel/state';
 import actions from '../../../panel/state/actions';
 import { AppProvider } from '../../context';
@@ -23,18 +22,22 @@ const pickerWrapper = () =>
 
 const renderPanel = ( { isViewSettingsEnabled }: { isViewSettingsEnabled: boolean } ) => {
 	const store = initStore();
-	const post = jest.fn( () => Promise.resolve( {} ) );
-	initAPI( { req: { post } } );
+	const onPreferenceChange = jest.fn( () => Promise.resolve() );
 
 	render(
 		<Provider store={ store }>
-			<AppProvider client={ null } locale="en" isViewSettingsEnabled={ isViewSettingsEnabled }>
+			<AppProvider
+				client={ null }
+				locale="en"
+				isViewSettingsEnabled={ isViewSettingsEnabled }
+				onPreferenceChange={ onPreferenceChange }
+			>
 				<NotePanel { ...defaultProps } />
 			</AppProvider>
 		</Provider>
 	);
 
-	return { store, post };
+	return { store, onPreferenceChange };
 };
 
 describe( 'NotePanel view picker placement', () => {
@@ -88,7 +91,7 @@ describe( 'NotePanel view picker', () => {
 	} );
 
 	it( 'adds a view to the tab strip and saves the whole list', async () => {
-		const { post } = renderPanel( { isViewSettingsEnabled: true } );
+		const { onPreferenceChange } = renderPanel( { isViewSettingsEnabled: true } );
 
 		expect( screen.queryByRole( 'tab', { name: 'Store' } ) ).not.toBeInTheDocument();
 
@@ -98,12 +101,11 @@ describe( 'NotePanel view picker', () => {
 		expect( await screen.findByRole( 'tab', { name: 'Store' } ) ).toBeVisible();
 
 		await waitFor( () => {
-			expect( post ).toHaveBeenCalled();
+			expect( onPreferenceChange ).toHaveBeenCalled();
 		} );
 
-		const [ , , body ] = post.mock.calls[ 0 ] as unknown[];
-		const saved = ( body as { calypso_preferences: { 'notifications-views': unknown } } )
-			.calypso_preferences[ 'notifications-views' ];
+		const [ key, saved ] = onPreferenceChange.mock.calls[ 0 ] as unknown[];
+		expect( key ).toBe( 'notifications-views' );
 
 		// The whole resolved list is written, so the order survives the round trip.
 		expect( saved ).toEqual( expect.arrayContaining( [ { name: 'store', hidden: false } ] ) );

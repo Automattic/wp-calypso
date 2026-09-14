@@ -38,7 +38,8 @@ const ViewPicker = ( { views, className }: { views: PickerView[]; className?: st
 		} ) );
 
 		savePreference( {
-			preferences: { 'notifications-views': next },
+			key: 'notifications-views',
+			value: next,
 			apply: () => actions.ui.setViews( next ),
 			revert: () => actions.ui.setViews( storedViews ),
 		} );
