@@ -3,6 +3,7 @@
 ## 7.1.0 / 2026-09-14
 
 - Export `isCookieAuthMissing()` so consumers can detect that the proxy iframe reported missing cookie auth.
+- Export `setCrossOriginStorageItem()` and `getCrossOriginStorageItem()`.
 - Handle the `cookie-auth-ok` message from the proxy iframe.
 - Recognise additional Calypso environments, and resolve the dev port dynamically instead of assuming 3000.
 

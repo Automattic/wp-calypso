@@ -1805,6 +1805,7 @@ __metadata:
   resolution: "@automattic/js-utils@workspace:packages/js-utils"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
   languageName: unknown
   linkType: soft
