@@ -57,11 +57,14 @@ const ReaderReblogSelection = ( props ) => {
 			popoverTitle={ translate( 'Repost on' ) }
 			onClose={ props.closeMenu }
 		>
-			<SiteSelector
-				className="reader-share__site-selector"
-				onSiteSelect={ pickSiteToShareTo }
-				groups
-			/>
+			{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */ }
+			<div onClick={ ( event ) => event.preventDefault() }>
+				<SiteSelector
+					className="reader-share__site-selector"
+					onSiteSelect={ pickSiteToShareTo }
+					groups
+				/>
+			</div>
 		</ReaderPopoverMenu>
 	);
 };
