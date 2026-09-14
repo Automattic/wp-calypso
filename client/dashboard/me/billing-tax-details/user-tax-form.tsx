@@ -307,16 +307,16 @@ export default function UserTaxForm() {
 						form={ form }
 						onChange={ ( edits ) => setLocalData( ( current ) => ( { ...current, ...edits } ) ) }
 					/>
-					{ ! selectedCountryIsVatSupportedOrNoCountryIsSelected && (
+					{ ! selectedCountryIsVatSupportedOrNoCountryIsSelected && selectedCountry && (
 						<Text variant="muted">
 							{ createInterpolateElement(
-								/* translators: This tells the customer that they will need to contact support to add their tax details, <taxName /> is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names, <countryName /> is the name of the country, contactSupportLink links to a document asking the customer to contact support. */
+								/* translators: This tells the customer that they will need to contact support to add their tax details, <nameOfTax></nameOfTax> is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names, <countryName></countryName> is the name of the country, contactSupportLink links to a document asking the customer to contact support. */
 								__(
-									'Unfortunately <taxName /> details for <countryName /> cannot be added via this form. Please <contactSupportLink>contact our Happiness Engineers</contactSupportLink>. Include your <taxName /> number and country code when you contact us.'
+									'Unfortunately <nameOfTax></nameOfTax> details for <countryName></countryName> cannot be added via this form. Please <contactSupportLink>contact our Happiness Engineers</contactSupportLink>. Include your <nameOfTax></nameOfTax> number and country code when you contact us.'
 								),
 								{
-									taxName: taxName ?? fallbackTaxName,
-									countryName: selectedCountry.name,
+									nameOfTax: <span>{ taxName ?? fallbackTaxName }</span>,
+									countryName: <span>{ selectedCountry.name }</span>,
 									contactSupportLink: (
 										<a
 											href={ wpcomLink( '/help' ) }
