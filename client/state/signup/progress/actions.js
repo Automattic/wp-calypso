@@ -32,6 +32,7 @@ const EXCLUDED_DEPENDENCIES = [
 	'password',
 	'password_confirm',
 	'domainCart',
+	'site',
 ];
 
 function recordSubmitStep( flow, stepName, providedDependencies, optionalProps ) {
