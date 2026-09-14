@@ -1,7 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
-import { init as initAPI } from '../../../panel/rest-client/wpcom';
 import { init as initStore } from '../../../panel/state';
 import actions from '../../../panel/state/actions';
 import { addListeners } from '../../../panel/state/create-listener-middleware';
@@ -20,29 +19,24 @@ const defaultProps = {
 	setSelectedNoteId: noop,
 };
 
-const savedPreference = ( post: jest.Mock, key: string ) => {
-	const call = post.mock.calls.find( ( [ , , body ] ) => {
-		const prefs = ( body as { calypso_preferences: Record< string, unknown > } )
-			.calypso_preferences;
-		return key in prefs;
-	} );
-	return ( call?.[ 2 ] as { calypso_preferences: Record< string, unknown > } ).calypso_preferences;
-};
-
 const renderPanel = ( { isViewSettingsEnabled }: { isViewSettingsEnabled: boolean } ) => {
 	const store = initStore();
-	const post = jest.fn( () => Promise.resolve( {} ) );
-	initAPI( { req: { post } } );
+	const onPreferenceChange = jest.fn( () => Promise.resolve() );
 
 	render(
 		<Provider store={ store }>
-			<AppProvider client={ null } locale="en" isViewSettingsEnabled={ isViewSettingsEnabled }>
+			<AppProvider
+				client={ null }
+				locale="en"
+				isViewSettingsEnabled={ isViewSettingsEnabled }
+				onPreferenceChange={ onPreferenceChange }
+			>
 				<NotePanel { ...defaultProps } />
 			</AppProvider>
 		</Provider>
 	);
 
-	return { store, post };
+	return { store, onPreferenceChange };
 };
 
 describe( 'NotePanel settings menu', () => {
@@ -55,7 +49,7 @@ describe( 'NotePanel settings menu', () => {
 	} );
 
 	it( 'marks the gear as new until the menu is opened', async () => {
-		const { post, store } = renderPanel( { isViewSettingsEnabled: true } );
+		const { onPreferenceChange, store } = renderPanel( { isViewSettingsEnabled: true } );
 		store.dispatch( actions.ui.setViewSettingsSeen( false ) );
 
 		const gear = await screen.findByRole( 'button', { name: 'Settings (new)' } );
@@ -64,11 +58,7 @@ describe( 'NotePanel settings menu', () => {
 		await userEvent.click( gear );
 
 		await waitFor( () => {
-			expect( post ).toHaveBeenCalled();
-		} );
-
-		expect( savedPreference( post, 'notifications-view-settings-seen' ) ).toEqual( {
-			'notifications-view-settings-seen': true,
+			expect( onPreferenceChange ).toHaveBeenCalledWith( 'notifications-view-settings-seen', true );
 		} );
 
 		// The dot clears on open, so the menu carries the label that says what is new.
@@ -142,7 +132,7 @@ describe( 'NotePanel settings menu', () => {
 	} );
 
 	it( 'marks the saved layout and saves a new one', async () => {
-		const { post } = renderPanel( { isViewSettingsEnabled: true } );
+		const { onPreferenceChange } = renderPanel( { isViewSettingsEnabled: true } );
 
 		await userEvent.click( screen.getByRole( 'button', { name: /^Settings/ } ) );
 
@@ -154,11 +144,10 @@ describe( 'NotePanel settings menu', () => {
 		await userEvent.click( screen.getByRole( 'menuitemradio', { name: 'Simplified' } ) );
 
 		await waitFor( () => {
-			expect( post ).toHaveBeenCalled();
-		} );
-
-		expect( savedPreference( post, 'notifications-layout-style' ) ).toEqual( {
-			'notifications-layout-style': 'simplified',
+			expect( onPreferenceChange ).toHaveBeenCalledWith(
+				'notifications-layout-style',
+				'simplified'
+			);
 		} );
 	} );
 } );
