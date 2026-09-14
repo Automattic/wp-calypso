@@ -33,14 +33,30 @@ async function loadCheckpoints() {
 			name === 'site' ? SITE_RECORD : GLOBAL_STYLES_RECORD
 	);
 	const editEntityRecord = jest.fn();
+	const saveSpecifiedEntityEdits = jest.fn();
 	select.mockReturnValue( {
 		__experimentalGetCurrentGlobalStylesId: getGlobalStylesId,
 		getEditedEntityRecord,
 	} );
-	dispatch.mockReturnValue( { editEntityRecord } );
+	dispatch.mockReturnValue( {
+		editEntityRecord,
+		__experimentalSaveSpecifiedEntityEdits: saveSpecifiedEntityEdits,
+	} );
 	const checkpoints = await import( '../checkpoints' );
-	return { ...checkpoints, getGlobalStylesId, getEditedEntityRecord, editEntityRecord };
+	return {
+		...checkpoints,
+		getGlobalStylesId,
+		getEditedEntityRecord,
+		editEntityRecord,
+		saveSpecifiedEntityEdits,
+	};
 }
+
+/** What `resolveSelect` serves for every record read during a restore. */
+const withRecord = ( record: unknown ) =>
+	jest.requireMock( '@wordpress/data' ).resolveSelect.mockReturnValue( {
+		getEditedEntityRecord: jest.fn().mockResolvedValue( record ),
+	} );
 
 beforeEach( () => jest.clearAllMocks() );
 
@@ -607,6 +623,122 @@ describe( 'withCheckpoint', () => {
 	} );
 } );
 
+describe( 'restore by domain', () => {
+	const ITEM = { name: 'core/navigation-link', attributes: { label: 'Old' }, innerBlocks: [] };
+
+	it( 'puts the menus back as they were, out of the undo stack', async () => {
+		const { setCheckpoint, restoreCheckpoint, getCheckpoint, editEntityRecord } =
+			await loadCheckpoints();
+		withRecord( { id: 19, blocks: [] } );
+		setCheckpoint( 'call-1', [ 'navigation' ] );
+		Object.assign( getCheckpoint( 'call-1' ) ?? {}, {
+			menusBeforeUpdate: [ { id: 19, items: [ ITEM ] } ],
+		} );
+
+		await restoreCheckpoint( 'call-1' );
+
+		expect( editEntityRecord ).toHaveBeenCalledWith(
+			'postType',
+			'wp_navigation',
+			19,
+			{ blocks: [ ITEM ], content: '' },
+			{ undoIgnore: true }
+		);
+	} );
+
+	// Checked before any write: a menu deleted since would otherwise fail
+	// after the others were already put back.
+	it( 'writes no menu when one of them no longer exists', async () => {
+		const { setCheckpoint, restoreCheckpoint, getCheckpoint, editEntityRecord } =
+			await loadCheckpoints();
+		jest.requireMock( '@wordpress/data' ).resolveSelect.mockReturnValue( {
+			getEditedEntityRecord: jest.fn( ( _kind: string, _name: string, id: number ) =>
+				Promise.resolve( id === 19 ? { id, blocks: [] } : null )
+			),
+		} );
+		setCheckpoint( 'call-1', [ 'navigation' ] );
+		Object.assign( getCheckpoint( 'call-1' ) ?? {}, {
+			menusBeforeUpdate: [
+				{ id: 19, items: [] },
+				{ id: 20, items: [] },
+			],
+		} );
+
+		await expect( restoreCheckpoint( 'call-1' ) ).rejects.toThrow(
+			'Navigation menu not found: 20'
+		);
+		expect( editEntityRecord ).not.toHaveBeenCalled();
+	} );
+
+	// Newest first, so a page renamed twice in one call ends at its first title.
+	it( 'puts page titles back newest first', async () => {
+		const { setCheckpoint, restoreCheckpoint, getCheckpoint, editEntityRecord } =
+			await loadCheckpoints();
+		withRecord( { title: 'C' } );
+		setCheckpoint( 'call-1', [ 'page' ] );
+		Object.assign( getCheckpoint( 'call-1' ) ?? {}, {
+			pageRenames: [
+				{ pageId: 7, from: 'A', to: 'B' },
+				{ pageId: 7, from: 'B', to: 'C' },
+			],
+		} );
+
+		await restoreCheckpoint( 'call-1' );
+
+		expect( editEntityRecord.mock.calls.map( ( call ) => call[ 3 ] ) ).toEqual( [
+			{ title: 'B' },
+			{ title: 'A' },
+		] );
+		expect( editEntityRecord ).toHaveBeenCalledWith(
+			'postType',
+			'page',
+			7,
+			{ title: 'A' },
+			{
+				undoIgnore: true,
+			}
+		);
+	} );
+
+	it( 'puts the site title and metadata back, and saves each', async () => {
+		const {
+			setCheckpoint,
+			restoreCheckpoint,
+			getCheckpoint,
+			editEntityRecord,
+			saveSpecifiedEntityEdits,
+		} = await loadCheckpoints();
+		setCheckpoint( 'call-1', [ 'site_title', 'site_metadata' ] );
+		Object.assign( getCheckpoint( 'call-1' ) ?? {}, {
+			siteTitleBeforeUpdate: 'Old',
+			siteMetadataBeforeUpdate: { personality: 'calm' },
+		} );
+
+		await restoreCheckpoint( 'call-1' );
+
+		expect( editEntityRecord ).toHaveBeenCalledWith(
+			'root',
+			'site',
+			undefined,
+			{ title: 'Old' },
+			{
+				undoIgnore: true,
+			}
+		);
+		expect( editEntityRecord ).toHaveBeenCalledWith(
+			'root',
+			'site',
+			undefined,
+			{ big_sky_site_metadata: JSON.stringify( { personality: 'calm' } ) },
+			{ undoIgnore: true }
+		);
+		expect( saveSpecifiedEntityEdits.mock.calls.map( ( call ) => call[ 3 ] ) ).toEqual( [
+			[ 'title' ],
+			[ 'big_sky_site_metadata' ],
+		] );
+	} );
+} );
+
 describe( 'restore order', () => {
 	// A page deleted since makes the title restore throw; menus must not have
 	// been rewritten by then, or the failure leaves a half-restored site.
@@ -657,6 +789,17 @@ describe( 'setReciprocalCheckpoint', () => {
 		expect( getCheckpoint( 'redo' )?.pageRenames ).toEqual( [
 			{ pageId: 7, from: 'Renamed since', to: 'Renamed since' },
 		] );
+	} );
+
+	// The redo puts back the menu as the undo is about to overwrite it.
+	it( 'snapshots each menu as it is now', async () => {
+		const { setReciprocalCheckpoint, getCheckpoint } = await loadCheckpoints();
+		const item = { name: 'core/navigation-link', attributes: { label: 'Now' }, innerBlocks: [] };
+		withRecord( { id: 19, blocks: [ item ] } );
+
+		await setReciprocalCheckpoint( 'redo', target( [], [ { id: 19, items: [] } ] ), {} );
+
+		expect( getCheckpoint( 'redo' )?.menusBeforeUpdate ).toEqual( [ { id: 19, items: [ item ] } ] );
 	} );
 
 	it( 'records nothing when a menu it must snapshot cannot be read', async () => {
