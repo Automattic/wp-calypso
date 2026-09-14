@@ -40,13 +40,15 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 	const user = useSelector( getCurrentUser );
 	const agency = useSelector( getActiveAgency );
 	const { site } = useHelpCenterSite();
-	// Unified-agent users get the Big Sky chat instead of this panel, so they can never
-	// see the treatment and must stay out of the assignment. Read through the query rather
-	// than `useShouldUseUnifiedAgent` so an unresolved flag is distinguishable from a
-	// resolved `false` and we don't enrol them during the loading window.
-	const { data: shouldUseUnifiedAgent, isPending: isUnifiedAgentPending } = useUnifiedAiChat();
+	// The experiment lives on the logged-in entry points (masterbar/omnibar), so the
+	// logged-out FAB stays out. Unified-agent users get the Big Sky chat instead of this
+	// panel and can never see the treatment; read the query rather than
+	// `useShouldUseUnifiedAgent` so an unresolved flag isn't mistaken for a resolved `false`.
+	const isLoggedIn = Boolean( user );
+	const { data: shouldUseUnifiedAgent, isPending: isUnifiedAgentPending } =
+		useUnifiedAiChat( isLoggedIn );
 	const isGetHelpChatForwardEligible =
-		loadHelpCenter && ! isUnifiedAgentPending && ! shouldUseUnifiedAgent;
+		loadHelpCenter && isLoggedIn && ! isUnifiedAgentPending && ! shouldUseUnifiedAgent;
 	// Passed down keyed by experiment name, and only once the assignment has settled, so
 	// the Help Center can tell a resolved "no variation" from one that never resolved.
 	const [ isLoadingGetHelpChatForwardAssignment, getHelpChatForwardAssignment ] = useExperiment(
