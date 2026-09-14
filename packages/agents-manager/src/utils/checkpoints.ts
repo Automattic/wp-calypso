@@ -271,10 +271,9 @@ const missingSnapshots = ( checkpoint: CheckpointRecord, keys: string[] ): strin
 /**
  * Records the state a restore is about to overwrite, so its redo can step back.
  *
- * The page and navigation domains are out of `setCheckpoint()`'s reach — they
- * are only discovered mid-write — so they are taken from the checkpoint being
- * restored: the menus it touched, read as they stand right now, and its renames
- * flipped. Without them the redo would claim both domains and put nothing back.
+ * The page and navigation domains are only discovered mid-write, so they come
+ * from the checkpoint being restored: the menus it touched, read as they stand
+ * now, and its renames flipped.
  */
 export async function setReciprocalCheckpoint(
 	id: string,
@@ -498,10 +497,9 @@ function dropUnrecordedDomains( id: string ): void {
 }
 
 /**
- * A repeat may reach domains the first run dropped as unrecorded, so it claims
- * them again. The ones that capture up front are snapshotted afresh: the first
- * run never wrote them, so what stands now is their pre-change state, and a
- * snapshot it left behind could predate a change made since.
+ * A repeat claims again the domains the first run dropped as unrecorded. Those
+ * that capture up front are snapshotted afresh: the first run never wrote them,
+ * so what stands now is their pre-change state.
  */
 function redeclareDomains( id: string, keys: string[] ): void {
 	const checkpoint = records.get( id );

@@ -49,14 +49,12 @@ export function getSiteRecord(): SiteRecord | undefined {
 }
 
 /**
- * Writes fields on the site record and saves them.
+ * Writes fields on the site record and saves them, out of the editor's undo
+ * stack — `restore-checkpoint` is the undo the agent offers.
  *
- * Agent edits stay out of the editor's undo stack — `restore-checkpoint` is the
- * undo the agent offers. The save is scoped to the fields written, derived from
- * the edits themselves so the two cannot drift: a blanket save would publish
- * whatever else the user had left pending on the record. Save errors are
- * suppressed by default, which would report a write that never reached the
- * server as a success.
+ * The save is scoped to the fields written: a blanket save would publish
+ * whatever else the user had left pending. `throwOnError`, because a save that
+ * never reached the server would otherwise read as a success.
  */
 export async function saveSiteFields( edits: SiteRecord ): Promise< void > {
 	const coreDispatch = dispatch( coreStore ) as CoreDispatch | undefined;
