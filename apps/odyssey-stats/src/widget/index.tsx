@@ -87,6 +87,7 @@ export function init() {
 			return (
 				<div id="stats-widget-content" className="stats-widget-content">
 					<div className="stats-widget-header">
+						<h3 className="stats-widget-header__title">{ translate( 'Overview' ) }</h3>
 						<DateRangeControl value={ rangeId } onChange={ onRangeChange } />
 					</div>
 					<MiniChart

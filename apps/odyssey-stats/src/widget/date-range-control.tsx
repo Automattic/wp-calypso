@@ -16,6 +16,11 @@ interface DateRangeControlProps {
 	onChange: ( value: DateRangeId ) => void;
 }
 
+/**
+ * Matches how Jetpack builds filter selects elsewhere — see the product filter in
+ * `my-jetpack/_inc/components/my-jetpack-tab-panel/products/filters.tsx`:
+ * `SelectControl` with the 40px size and no bottom margin, named by `aria-label`.
+ */
 const DateRangeControl: FunctionComponent< DateRangeControlProps > = ( { value, onChange } ) => {
 	const translate = useTranslate();
 
@@ -33,8 +38,7 @@ const DateRangeControl: FunctionComponent< DateRangeControlProps > = ( { value, 
 			<SelectControl
 				__next40pxDefaultSize
 				__nextHasNoMarginBottom
-				label={ translate( 'Date range' ) }
-				hideLabelFromVision
+				aria-label={ translate( 'Date range' ) }
 				value={ value }
 				options={ DATE_RANGES.map( ( range ) => ( {
 					label: labels[ range.id ],

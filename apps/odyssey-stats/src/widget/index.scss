@@ -20,11 +20,21 @@ $segmentedControlItemBorderRadius: 4px;
 	.stats-widget-header {
 		display: flex;
 		flex-flow: row wrap;
-		justify-content: flex-end;
+		justify-content: space-between;
 		align-items: center;
+		gap: 8px;
 		width: 100%;
 		padding: 16px 24px;
 		box-sizing: border-box;
+	}
+
+	// Matches the Highlights section heading so the two read as siblings.
+	.stats-widget-header__title {
+		margin: 0;
+		padding: 0;
+		font-weight: 500;
+		font-size: $font-body-large;
+		line-height: 26px;
 	}
 
 	// Used by the Highlights tabs.

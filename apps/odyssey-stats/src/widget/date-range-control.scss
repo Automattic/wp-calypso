@@ -2,8 +2,9 @@
 	display: flex;
 	justify-content: flex-end;
 
-	// The widget is narrow; keep the select from stretching across the header.
-	.components-select-control {
-		max-width: 180px;
+	// The option labels are short; let the select size to its content rather than
+	// stretching across the header.
+	.components-select-control__input {
+		white-space: nowrap;
 	}
 }
