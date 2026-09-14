@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
+import config from '@automattic/calypso-config';
 import { PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { waitFor } from '@testing-library/react';
@@ -11,10 +12,12 @@ import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import {
 	getAssertionConditionResult,
+	getFlowLocation,
 	renderFlow,
 	runFlowNavigation,
 } from 'calypso/landing/stepper/declarative-flow/test/helpers';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
@@ -27,6 +30,7 @@ jest.mock( 'calypso/landing/stepper/utils/checkout' );
 jest.mock( '@automattic/data-stores/src/user/selectors' );
 jest.mock( 'calypso/state/current-user/selectors' );
 jest.mock( 'calypso/landing/stepper/hooks/use-is-site-admin' );
+jest.mock( 'calypso/landing/stepper/hooks/use-site' );
 jest.mock( 'calypso/lib/guides/trigger-guides-for-step', () => ( {
 	triggerGuidesForStep: jest.fn(),
 } ) );
@@ -59,6 +63,9 @@ describe( 'Site Migration Flow', () => {
 	} );
 
 	beforeEach( () => {
+		// These cases describe the WordPress path and the flag-off behaviour of the
+		// non-WordPress one. The wizard has its own coverage and enables the flag itself.
+		config.disable( 'migration/non-wordpress-source' );
 		( window.location.assign as jest.Mock ).mockClear();
 		( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( true );
 		( useIsSiteAdmin as jest.Mock ).mockReturnValue( {
@@ -1100,6 +1107,401 @@ describe( 'Site Migration Flow', () => {
 						siteId: 123,
 					},
 				} );
+			} );
+		} );
+	} );
+
+	describe( 'non-WordPress migration wizard', () => {
+		const FROM = 'https://terraandtwine.com';
+		const RUN_ID = 'run-123';
+		const WIZARD_QUERY = { from: FROM, platform: 'wix', switchRunId: RUN_ID };
+		const SITE_QUERY = { siteId: 123, siteSlug: 'example.wordpress.com' };
+
+		let setFlowState: jest.Mock;
+
+		const mockFlowState = ( state: Record< string, unknown > = {} ) => {
+			setFlowState = jest.fn();
+			jest.mocked( useFlowState ).mockReturnValue( {
+				get: jest.fn( ( key: string ) => state[ key ] ),
+				set: setFlowState,
+				sessionId: '123',
+			} );
+		};
+
+		const mockPaidSite = () =>
+			jest.mocked( useSite ).mockReturnValue( {
+				ID: 123,
+				URL: 'https://example.wordpress.com',
+				plan: { is_free: false, product_slug: PLAN_BUSINESS_MONTHLY },
+			} );
+
+		beforeEach( () => {
+			config.enable( 'migration/non-wordpress-source' );
+			jest.mocked( goToCheckout ).mockClear();
+			jest.mocked( useSite ).mockReturnValue( undefined );
+			mockFlowState();
+		} );
+
+		afterEach( () => {
+			config.disable( 'migration/non-wordpress-source' );
+			jest.mocked( useSite ).mockReturnValue( undefined );
+		} );
+
+		describe( 'with the flag off', () => {
+			beforeEach( () => {
+				config.disable( 'migration/non-wordpress-source' );
+			} );
+
+			it( 'still exits to the importer list for a platform with no dedicated importer', () => {
+				runNavigation( {
+					from: STEPS.SITE_MIGRATION_IDENTIFY,
+					dependencies: { platform: 'non-wordpress-site', from: FROM },
+					query: SITE_QUERY,
+				} );
+
+				expect( window.location.assign ).toMatchURL( {
+					path: '/setup/site-setup/importList',
+					query: { ...SITE_QUERY, from: FROM },
+				} );
+			} );
+
+			it( 'still exits to the dedicated importer for an importable platform', () => {
+				runNavigation( {
+					from: STEPS.SITE_MIGRATION_IDENTIFY,
+					dependencies: { platform: 'wix', from: FROM },
+					query: SITE_QUERY,
+				} );
+
+				expect( window.location.assign ).toMatchURL( {
+					path: '/setup/site-setup/importerWix',
+					query: { siteSlug: 'example.wordpress.com', from: FROM },
+				} );
+			} );
+		} );
+
+		describe( 'SITE_MIGRATION_IDENTIFY', () => {
+			it( 'sends a non-WordPress source into the scan step', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_IDENTIFY,
+					dependencies: { platform: 'wix', from: FROM },
+					query: SITE_QUERY,
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_SCAN,
+					query: { from: FROM, platform: 'wix' },
+				} );
+				expect( setFlowState ).toHaveBeenCalledWith( STEPS.SITE_MIGRATION_IDENTIFY.slug, {
+					platform: 'wix',
+					from: FROM,
+				} );
+			} );
+
+			it( 'leaves the WordPress path on import-or-migrate', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_IDENTIFY,
+					dependencies: { platform: 'wordpress', from: FROM },
+					query: SITE_QUERY,
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
+					query: { ...SITE_QUERY, from: FROM },
+				} );
+			} );
+
+			it( 'keeps sending a platform picked from the list to the content importer', () => {
+				runNavigation( {
+					from: STEPS.SITE_MIGRATION_IDENTIFY,
+					dependencies: {
+						platform: 'wix',
+						from: FROM,
+						action: 'skip_platform_identification',
+					},
+					query: SITE_QUERY,
+				} );
+
+				expect( window.location.assign ).toMatchURL( {
+					path: '/setup/site-setup/importerWix',
+					query: { siteSlug: 'example.wordpress.com', from: FROM },
+				} );
+			} );
+		} );
+
+		describe( 'PROCESSING', () => {
+			it( 'leaves the WordPress path on import-or-migrate', () => {
+				const destination = runNavigation( {
+					from: STEPS.PROCESSING,
+					dependencies: { siteCreated: true, siteId: 123, siteSlug: 'example.wordpress.com' },
+					query: { from: FROM, platform: 'wordpress' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
+					query: { ...SITE_QUERY, from: FROM },
+				} );
+			} );
+
+			it( 'goes to checkout with the site created off the back of the review step', () => {
+				mockFlowState( { plans: { cartItems: [ { product_slug: PLAN_BUSINESS_MONTHLY } ] } } );
+
+				runNavigation( {
+					from: STEPS.PROCESSING,
+					dependencies: {
+						siteCreated: true,
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						goToCheckout: true,
+					},
+					query: WIZARD_QUERY,
+				} );
+
+				expect( goToCheckout ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						destination: `/setup/site-migration/${
+							STEPS.SITE_MIGRATION_IMPORT_PROGRESS.slug
+						}?siteSlug=example.wordpress.com&siteId=123&from=${ encodeURIComponent(
+							FROM
+						) }&switchRunId=${ RUN_ID }`,
+						plan: PLAN_BUSINESS_MONTHLY,
+					} )
+				);
+			} );
+		} );
+
+		describe( 'the wizard chain', () => {
+			it( 'goes from scan to destination, carrying the run it created', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_SCAN,
+					dependencies: { action: 'continue', runId: RUN_ID },
+					query: { from: FROM, platform: 'wix' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_DESTINATION,
+					query: WIZARD_QUERY,
+				} );
+			} );
+
+			it( 'goes from destination to preview', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_DESTINATION,
+					dependencies: { destination: 'wpcom' },
+					query: WIZARD_QUERY,
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_PREVIEW,
+					query: WIZARD_QUERY,
+				} );
+			} );
+
+			it( 'goes from preview to domain', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_PREVIEW,
+					dependencies: { action: 'continue' },
+					query: WIZARD_QUERY,
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_DOMAIN,
+					query: WIZARD_QUERY,
+				} );
+			} );
+
+			it( 'goes from domain to plans', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_DOMAIN,
+					dependencies: { choice: 'free-subdomain' },
+					query: WIZARD_QUERY,
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.UNIFIED_PLANS,
+					query: WIZARD_QUERY,
+				} );
+			} );
+
+			it( 'persists the chosen plan and goes from plans to SEO', () => {
+				const cartItems = [ { product_slug: PLAN_BUSINESS_MONTHLY } ];
+
+				const destination = runNavigation( {
+					from: STEPS.UNIFIED_PLANS,
+					dependencies: { stepName: 'plans', cartItems },
+					query: WIZARD_QUERY,
+				} );
+
+				expect( setFlowState ).toHaveBeenCalledWith( STEPS.UNIFIED_PLANS.slug, {
+					stepName: 'plans',
+					cartItems,
+				} );
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_SEO,
+					query: WIZARD_QUERY,
+				} );
+			} );
+
+			it( 'goes from SEO to review', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_SEO,
+					query: WIZARD_QUERY,
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_REVIEW,
+					query: WIZARD_QUERY,
+				} );
+			} );
+		} );
+
+		describe( 'the domain detours', () => {
+			it( 'sends the register choice to the domain search step', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_DOMAIN,
+					dependencies: { choice: 'register' },
+					query: WIZARD_QUERY,
+				} );
+
+				expect( destination ).toMatchDestination( { step: STEPS.DOMAIN_SEARCH, query: null } );
+			} );
+
+			it( 'sends the keep choice to the use-my-domain step', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_DOMAIN,
+					dependencies: { choice: 'keep' },
+					query: WIZARD_QUERY,
+				} );
+
+				expect( destination ).toMatchDestination( { step: STEPS.USE_MY_DOMAIN, query: null } );
+			} );
+
+			it( 'rejoins the wizard at plans once the domain is settled', () => {
+				const destination = runNavigation( {
+					from: STEPS.USE_MY_DOMAIN,
+					query: WIZARD_QUERY,
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.UNIFIED_PLANS,
+					query: WIZARD_QUERY,
+				} );
+			} );
+		} );
+
+		describe( 'the exits', () => {
+			it( 'falls back to the content importer when the scan fails', () => {
+				runNavigation( {
+					from: STEPS.SITE_MIGRATION_SCAN,
+					dependencies: { action: 'failed' },
+					query: { ...WIZARD_QUERY, ...SITE_QUERY },
+				} );
+
+				expect( window.location.assign ).toMatchURL( {
+					path: '/setup/site-setup/importerWix',
+					query: { siteSlug: 'example.wordpress.com', from: FROM },
+				} );
+			} );
+
+			it( 'dead-ends Space Fast at a placeholder', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_DESTINATION,
+					dependencies: { destination: 'space-fast' },
+					query: WIZARD_QUERY,
+				} );
+
+				expect( destination ).toMatchDestination( { step: STEPS.ERROR, query: null } );
+				expect( getFlowLocation().state ).toEqual( {
+					message: 'Space Fast is not available yet',
+				} );
+			} );
+
+			it( 'hands the white-glove option to the DIFM credentials step', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_PREVIEW,
+					dependencies: { action: 'white-glove' },
+					query: { ...WIZARD_QUERY, ...SITE_QUERY },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_CREDENTIALS,
+					query: { ...SITE_QUERY, from: FROM, how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME },
+				} );
+			} );
+		} );
+
+		describe( 'SITE_MIGRATION_REVIEW', () => {
+			it( 'starts checkout with a destination that lands on the import progress step', () => {
+				mockFlowState( {
+					[ STEPS.SITE_MIGRATION_SCAN.slug ]: { runId: RUN_ID },
+					plans: { cartItems: [ { product_slug: PLAN_BUSINESS_MONTHLY } ] },
+				} );
+
+				runNavigation( {
+					from: STEPS.SITE_MIGRATION_REVIEW,
+					dependencies: { action: 'migrate' },
+					query: { from: FROM, platform: 'wix', ...SITE_QUERY },
+				} );
+
+				expect( goToCheckout ).toHaveBeenCalledWith( {
+					flowName: 'site-migration',
+					stepName: STEPS.SITE_MIGRATION_REVIEW.slug,
+					siteSlug: 'example.wordpress.com',
+					destination: `/setup/site-migration/${
+						STEPS.SITE_MIGRATION_IMPORT_PROGRESS.slug
+					}?siteSlug=example.wordpress.com&siteId=123&from=${ encodeURIComponent(
+						FROM
+					) }&switchRunId=${ RUN_ID }`,
+					from: FROM,
+					plan: PLAN_BUSINESS_MONTHLY,
+					historyBack: true,
+				} );
+			} );
+
+			it( 'creates the destination site first when there is not one yet', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_REVIEW,
+					dependencies: { action: 'migrate' },
+					query: WIZARD_QUERY,
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_CREATION_STEP,
+					query: WIZARD_QUERY,
+				} );
+				expect( goToCheckout ).not.toHaveBeenCalled();
+			} );
+		} );
+
+		describe( 'a destination site already on a paid plan', () => {
+			it( 'skips the plans step', () => {
+				mockPaidSite();
+
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_DOMAIN,
+					dependencies: { choice: 'free-subdomain' },
+					query: { ...WIZARD_QUERY, ...SITE_QUERY },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_SEO,
+					query: WIZARD_QUERY,
+				} );
+			} );
+
+			it( 'skips checkout and goes straight to the import progress step', () => {
+				mockPaidSite();
+
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_REVIEW,
+					dependencies: { action: 'migrate' },
+					query: { ...WIZARD_QUERY, ...SITE_QUERY },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_IMPORT_PROGRESS,
+					query: { ...SITE_QUERY, from: FROM, switchRunId: RUN_ID },
+				} );
+				expect( goToCheckout ).not.toHaveBeenCalled();
 			} );
 		} );
 	} );

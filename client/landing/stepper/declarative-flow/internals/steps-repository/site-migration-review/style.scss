@@ -1,0 +1,41 @@
+@import '@wordpress/base-styles/breakpoints';
+
+.site-migration-review__summary {
+	margin: 0;
+	border-block-start: 1px solid var( --color-border-subtle );
+}
+
+.site-migration-review__row {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding-block: 16px;
+	border-block-end: 1px solid var( --color-border-subtle );
+
+	@media ( min-width: $break-small ) {
+		flex-direction: row;
+		gap: 24px;
+		align-items: baseline;
+	}
+
+	dt {
+		flex: 0 0 200px;
+		color: var( --color-text-subtle );
+		font-size: 0.875rem;
+	}
+
+	dd {
+		margin: 0;
+		color: var( --color-text );
+	}
+}
+
+.site-migration-review__counts {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	li {
+		margin: 0;
+	}
+}

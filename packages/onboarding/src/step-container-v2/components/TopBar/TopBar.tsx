@@ -7,6 +7,7 @@ import './style.scss';
 
 export interface TopBarProps {
 	leftElement?: ReactNode;
+	centerElement?: ReactNode;
 	rightElement?: ReactNode;
 
 	/**
@@ -31,6 +32,7 @@ export interface TopBarProps {
 
 export const TopBar = ( {
 	leftElement,
+	centerElement,
 	rightElement,
 	logo,
 	compactLogo,
@@ -103,6 +105,9 @@ export const TopBar = ( {
 
 			{ leftElement && (
 				<div className="step-container-v2__top-bar-left-element">{ leftElement }</div>
+			) }
+			{ centerElement && (
+				<div className="step-container-v2__top-bar-center-element">{ centerElement }</div>
 			) }
 			{ rightElement && (
 				<div className="step-container-v2__top-bar-right-element">{ rightElement }</div>
