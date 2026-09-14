@@ -20,6 +20,7 @@ export {
 	pickSitewideExpiryPurchase,
 } from './get-plan-expiry-notice';
 export type {
+	PlanExpiryEventStage,
 	PlanExpiryNoticeAction,
 	PlanExpiryNoticeContent,
 	PlanExpiryNoticeOptions,

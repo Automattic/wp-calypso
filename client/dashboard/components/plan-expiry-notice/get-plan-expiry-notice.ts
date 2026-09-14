@@ -22,6 +22,9 @@ export type PlanExpiryNoticeScope = 'purchase' | 'sitewide';
 
 export type PlanExpiryNoticeStage = 'early-warning' | 'final-window' | 'grace';
 
+/** Post-grace survives as an analytics stage, not a notice stage: `getPlanExpiryNotice` never returns it. */
+export type PlanExpiryEventStage = PlanExpiryNoticeStage | 'post-grace';
+
 export type PlanExpiryNoticeAction =
 	| { type: 'renew'; label: string; href: string }
 	| { type: 'view-other-plans'; label: string; href: string }
@@ -458,9 +461,7 @@ export function getSitewideExpiryStage( purchase: Purchase ): PlanExpiryNoticeSt
 	return daysUntilExpiry > EXPIRY_ERROR_DAYS ? 'early-warning' : 'final-window';
 }
 
-export function getExpiryStateName(
-	stage: PlanExpiryNoticeStage | 'post-grace'
-): PlanExpiryStateName {
+export function getExpiryStateName( stage: PlanExpiryEventStage ): PlanExpiryStateName {
 	switch ( stage ) {
 		case 'grace':
 			return 'expired_grace';

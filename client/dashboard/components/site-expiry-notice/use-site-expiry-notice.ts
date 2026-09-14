@@ -1,18 +1,22 @@
-import { isWpError } from '@automattic/api-core';
-import {
-	siteCurrentUserQuery,
-	siteLatestAtomicTransferQuery,
-	sitePurchasesQuery,
-} from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { fetchLatestAtomicTransfer, isWpError } from '@automattic/api-core';
+import { siteCurrentUserQuery, sitePurchasesQuery } from '@automattic/api-queries';
+import { queryOptions, useQuery } from '@tanstack/react-query';
 import { getCalendarDaysUntil } from '../../utils/datetime';
 import { getPlanExpiryNotice, pickSitewideExpiryPurchase } from '../plan-expiry-notice';
 import { findPlanExpiryNoticeDismissMetaKey, isPlanExpiryNoticeDismissed } from './dismissal';
 import type { PlanExpiryNoticeStage } from '../plan-expiry-notice';
 import type { AtomicTransfer, Purchase } from '@automattic/api-core';
 
-/** How long after the automatic revert support can still restore the site; matches wp-admin. */
+/**
+ * How long after the automatic revert support can still restore the site;
+ * matches wp-admin. Measured in the viewer's calendar days against a UTC
+ * revert instant, so it can end a day early or late relative to wp-admin for
+ * a viewer far from UTC; accepted for a 30-day support window.
+ */
 export const REVERT_NOTICE_DAYS = 30;
+
+/** A revert cannot un-happen within a day, and the negative answer -- no transfer yet -- is the common case for a Free site; caching it this long is what keeps the probe from costing every hover-preload and navigation. */
+export const TRANSFER_CACHE_TIME = 24 * 60 * 60 * 1000;
 
 export interface SiteExpiryNoticeOptions {
 	/**
@@ -56,7 +60,7 @@ export function isUrgentState( state: SiteExpiryNoticeState ): boolean {
  * The revert time in milliseconds, or null when the transfer is not the
  * automatic expiry revert. `reverted_at` is `Y-m-d H:i:s` in UTC.
  */
-export function parseRevertedAt( transfer: AtomicTransfer | undefined ): number | null {
+export function parseRevertedAt( transfer: AtomicTransfer | null | undefined ): number | null {
 	if (
 		! transfer ||
 		transfer.status !== 'reverted' ||
@@ -71,6 +75,34 @@ export function parseRevertedAt( transfer: AtomicTransfer | undefined ): number 
 
 function isClientError( error: unknown ): boolean {
 	return isWpError( error ) && error.status >= 400 && error.status < 500;
+}
+
+/**
+ * The site's latest Atomic transfer, cached for a day (`TRANSFER_CACHE_TIME`):
+ * a 404 -- never transferred -- is mapped to `null` rather than left as a
+ * query error, so the common negative answer for a Free site is a cached
+ * value instead of a repeated failed probe. A distinct key from
+ * `siteLatestAtomicTransferQuery`: that shared query is typed `AtomicTransfer`
+ * and errors on a 404, and other consumers rely on that.
+ */
+export function siteExpiryTransferQuery( siteId: number ) {
+	return queryOptions( {
+		queryKey: [ 'site', siteId, 'expiry-notice', 'transfer' ],
+		queryFn: async () => {
+			try {
+				return await fetchLatestAtomicTransfer( siteId );
+			} catch ( error ) {
+				if ( isClientError( error ) ) {
+					return null;
+				}
+				throw error;
+			}
+		},
+		staleTime: TRANSFER_CACHE_TIME,
+		// Kept explicit rather than relying on the shared client's retry
+		// defaults, so this query's retry behaviour doesn't drift with them.
+		retry: ( failureCount: number, error: unknown ) => ! isClientError( error ) && failureCount < 3,
+	} );
 }
 
 /**
@@ -98,13 +130,15 @@ export function useSiteExpiryNotice(
 	const mayBeReverted = hasPurchases && ! purchase && ! isAtomic;
 
 	const { data: latestTransfer, isPending: isTransferPending } = useQuery( {
-		...siteLatestAtomicTransferQuery( siteId ),
+		...siteExpiryTransferQuery( siteId ),
 		enabled: mayBeReverted,
-		// The 404 for a site that was never transferred is an answer, not a
-		// failure: the loader stored it, and refetching it on mount would make
-		// the first render pending and the notice pop in a round trip late.
+		// The 404 for a site that was never transferred is a cached answer, not
+		// a failure: the loader stored it, and refetching it on mount would make
+		// the first render pending and the notice pop in a round trip late. This
+		// also means a 5xx left behind by the loader is not retried on mount
+		// either -- the notice stays silent until a window-focus refetch or a
+		// reload, which is preferred to a late pop-in.
 		retryOnMount: false,
-		retry: ( failureCount, error ) => ! isClientError( error ) && failureCount < 3,
 	} );
 	const revertedAt = mayBeReverted ? parseRevertedAt( latestTransfer ) : null;
 	const isInRevertWindow =

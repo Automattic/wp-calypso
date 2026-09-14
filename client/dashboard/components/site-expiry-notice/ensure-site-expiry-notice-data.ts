@@ -1,12 +1,11 @@
-import {
-	queryClient,
-	siteCurrentUserQuery,
-	siteLatestAtomicTransferQuery,
-	sitePurchasesQuery,
-} from '@automattic/api-queries';
+import { queryClient, siteCurrentUserQuery, sitePurchasesQuery } from '@automattic/api-queries';
 import { getCalendarDaysUntil } from '../../utils/datetime';
 import { pickSitewideExpiryPurchase } from '../plan-expiry-notice';
-import { REVERT_NOTICE_DAYS, parseRevertedAt } from './use-site-expiry-notice';
+import {
+	REVERT_NOTICE_DAYS,
+	parseRevertedAt,
+	siteExpiryTransferQuery,
+} from './use-site-expiry-notice';
 import type { Site } from '@automattic/api-core';
 
 const ignore = () => undefined;
@@ -17,7 +16,9 @@ const ignore = () => undefined;
  * its revert, so its latest transfer is fetched, and inside the revert window
  * the dismissal stamp too, so a dismissal made in wp-admin is honoured. Nothing
  * here may block the page: failures are swallowed and retries are off, and
- * `useSiteExpiryNotice` renders nothing for an errored query.
+ * `useSiteExpiryNotice` renders nothing for an errored query. The transfer
+ * probe is cached for a day (`TRANSFER_CACHE_TIME`), so a repeat call for the
+ * same site within the day makes no request.
  */
 export async function ensureSiteExpiryNoticeData(
 	site: Pick< Site, 'ID' | 'is_wpcom_atomic' >
@@ -31,7 +32,7 @@ export async function ensureSiteExpiryNoticeData(
 	}
 
 	const transfer = await queryClient
-		.fetchQuery( { ...siteLatestAtomicTransferQuery( siteId ), retry: false } )
+		.fetchQuery( { ...siteExpiryTransferQuery( siteId ), retry: false } )
 		.catch( ignore );
 	const revertedAt = parseRevertedAt( transfer );
 	if (

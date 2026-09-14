@@ -17,7 +17,7 @@ const site = ( is_wpcom_atomic = false ) => ( { ID: SITE_ID, is_wpcom_atomic } )
 
 const PURCHASES_KEY = [ 'upgrades', 'site', SITE_ID ];
 const CURRENT_USER_KEY = [ 'site', SITE_ID, 'users', 'current' ];
-const TRANSFER_KEY = [ 'site', SITE_ID, 'atomic', 'transfers', 'latest' ];
+const TRANSFER_KEY = [ 'site', SITE_ID, 'expiry-notice', 'transfer' ];
 
 beforeEach( () => {
 	MockDate.set( NOW );
@@ -59,8 +59,23 @@ test( 'with no plan on a Simple site it settles the transfer, tolerating a 404',
 
 	await ensureSiteExpiryNoticeData( site() );
 
-	expect( queryClient.getQueryState( TRANSFER_KEY )?.status ).toBe( 'error' );
+	expect( queryClient.getQueryData( TRANSFER_KEY ) ).toBeNull();
 	expect( meta.isDone() ).toBe( false );
+} );
+
+test( 'a second call within the day makes no transfer request', async () => {
+	upgrades( [] )
+		.get( `/wpcom/v2/sites/${ SITE_ID }/atomic/transfers/latest` )
+		.query( true )
+		.reply( 404, { code: 'no_transfer_record' } );
+
+	await ensureSiteExpiryNoticeData( site() );
+	expect( queryClient.getQueryData( TRANSFER_KEY ) ).toBeNull();
+
+	// No transfer interceptor left: a second, unmatched request would throw.
+	upgrades( [] );
+	await expect( ensureSiteExpiryNoticeData( site() ) ).resolves.toBeUndefined();
+	expect( queryClient.getQueryData( TRANSFER_KEY ) ).toBeNull();
 } );
 
 test( 'in the revert window it also settles the dismissal meta', async () => {

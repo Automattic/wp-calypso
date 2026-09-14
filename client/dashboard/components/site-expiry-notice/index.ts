@@ -1,9 +1,4 @@
-export {
-	useSiteExpiryNotice,
-	isUrgentState,
-	parseRevertedAt,
-	REVERT_NOTICE_DAYS,
-} from './use-site-expiry-notice';
+export { useSiteExpiryNotice, isUrgentState } from './use-site-expiry-notice';
 export type {
 	SiteExpiryNoticeOptions,
 	SiteExpiryNoticeState,

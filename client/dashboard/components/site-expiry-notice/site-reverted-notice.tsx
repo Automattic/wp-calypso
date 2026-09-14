@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { getCalendarDaysUntil } from '../../utils/datetime';
 import Notice from '../notice';
 import { getExpiryStateName, getSiteRevertedNotice } from '../plan-expiry-notice';
+import type { PlanExpiryEventStage } from '../plan-expiry-notice';
 import type { SiteExpiryRevertedState } from './use-site-expiry-notice';
 
 export interface SiteRevertedNoticeProps {
@@ -37,18 +38,19 @@ export function SiteRevertedNotice( {
 	const { mutate: updateMeta } = useMutation( siteCurrentUserMetaMutation( siteId ) );
 	const notice = getSiteRevertedNotice();
 
-	const daysSinceRevert = getCalendarDaysUntil( new Date( revertedAt ) );
+	const daysRemaining = getCalendarDaysUntil( new Date( revertedAt ) );
 	const extraEventPropertiesKey = JSON.stringify( extraEventProperties ?? {} );
+	const stage: PlanExpiryEventStage = 'post-grace';
 	const eventProperties = useMemo(
 		() => ( {
 			...extraEventProperties,
 			surface,
-			stage: 'post-grace',
-			state: getExpiryStateName( 'post-grace' ),
-			days_remaining: daysSinceRevert,
+			stage,
+			state: getExpiryStateName( stage ),
+			days_remaining: daysRemaining,
 		} ),
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- extraEventPropertiesKey stands in for extraEventProperties.
-		[ surface, daysSinceRevert, extraEventPropertiesKey ]
+		[ surface, daysRemaining, extraEventPropertiesKey ]
 	);
 
 	useEffect( () => {

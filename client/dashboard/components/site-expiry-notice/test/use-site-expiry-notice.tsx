@@ -22,7 +22,15 @@ import type { AtomicTransfer, Purchase } from '@automattic/api-core';
 const DISMISS_KEY = 'wp_123_wpcom_plan_expiry_notice_dismiss';
 const PURCHASES_KEY = [ 'upgrades', 'site', SITE_ID ];
 const CURRENT_USER_KEY = [ 'site', SITE_ID, 'users', 'current' ];
-const TRANSFER_KEY = [ 'site', SITE_ID, 'atomic', 'transfers', 'latest' ];
+const TRANSFER_KEY = [ 'site', SITE_ID, 'expiry-notice', 'transfer' ];
+
+function revertedAtMs( transfer: AtomicTransfer ): number {
+	const revertedAt = transfer.reverted_at;
+	if ( ! revertedAt ) {
+		throw new Error( 'Expected the fixture to set reverted_at' );
+	}
+	return new Date( revertedAt.replace( ' ', 'T' ) + 'Z' ).getTime();
+}
 
 function mockApi( {
 	purchases,
@@ -123,7 +131,7 @@ describe( 'useSiteExpiryNotice: purchase states', () => {
 	} );
 
 	test( 'a plan past its date but still active is grace, and the transfer is never asked for', async () => {
-		const api = mockApi( {
+		mockApi( {
 			purchases: [ makePurchase( { expiry_date: expiryInDays( -45 ), expiry_status: 'expired' } ) ],
 		} );
 		const { result, queryClient } = renderNotice( { isAtomic: true } );
@@ -133,7 +141,6 @@ describe( 'useSiteExpiryNotice: purchase states', () => {
 		const transferState = queryClient.getQueryState( TRANSFER_KEY );
 		expect( transferState?.fetchStatus ).toBe( 'idle' );
 		expect( transferState?.dataUpdatedAt ).toBe( 0 );
-		api.persist( false );
 	} );
 } );
 
@@ -145,7 +152,7 @@ describe( 'useSiteExpiryNotice: reverted state', () => {
 		await waitFor( () => expect( result.current ).not.toBeNull() );
 		expect( result.current ).toEqual( {
 			kind: 'reverted',
-			revertedAt: new Date( transfer.reverted_at!.replace( ' ', 'T' ) + 'Z' ).getTime(),
+			revertedAt: revertedAtMs( transfer ),
 			dismissMetaKey: DISMISS_KEY,
 		} );
 	} );
@@ -186,14 +193,28 @@ describe( 'useSiteExpiryNotice: reverted state', () => {
 	} );
 
 	test( 'a never-transferred site (404) is nothing, and the 404 is not refetched on mount', async () => {
-		const api = mockApi( { purchases: [] } );
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( '/rest/v1.2/upgrades' )
+			.query( true )
+			.reply( 200, [] );
+		const scope = nock( 'https://public-api.wordpress.com' )
+			.get( `/wpcom/v2/sites/${ SITE_ID }/atomic/transfers/latest` )
+			.query( true )
+			.reply( 404, { code: 'no_transfer_record' } );
+		const second = nock( 'https://public-api.wordpress.com' )
+			.get( `/wpcom/v2/sites/${ SITE_ID }/atomic/transfers/latest` )
+			.query( true )
+			.reply( 404, { code: 'no_transfer_record' } );
+
 		const first = renderNotice();
 		await first.waitForSettled( TRANSFER_KEY );
 		expect( first.result.current ).toBeNull();
+		expect( scope.isDone() ).toBe( true );
 
 		const cached = first.queryClient.getQueryState( TRANSFER_KEY );
-		expect( cached?.status ).toBe( 'error' );
-		const fetchesBefore = cached?.fetchFailureCount;
+		expect( cached?.status ).toBe( 'success' );
+		expect( cached?.data ).toBeNull();
 
 		const again = renderHook(
 			() =>
@@ -211,17 +232,17 @@ describe( 'useSiteExpiryNotice: reverted state', () => {
 		);
 		expect( again.result.current ).toBeNull();
 		expect( first.queryClient.getQueryState( TRANSFER_KEY )?.fetchStatus ).toBe( 'idle' );
-		expect( first.queryClient.getQueryState( TRANSFER_KEY )?.fetchFailureCount ).toBe(
-			fetchesBefore
+		expect( first.queryClient.getQueryState( TRANSFER_KEY )?.dataUpdatedAt ).toBe(
+			cached?.dataUpdatedAt
 		);
-		api.persist( false );
+		// A second, unconsumed interceptor proves the cached answer served the
+		// second mount without a request.
+		expect( second.isDone() ).toBe( false );
 	} );
 
 	test( 'stays null until the dismissal meta has been fetched, then honours a newer stamp', async () => {
 		const transfer = revertedTransfer( 10 );
-		const revertedAtSeconds = Math.floor(
-			new Date( transfer.reverted_at!.replace( ' ', 'T' ) + 'Z' ).getTime() / 1000
-		);
+		const revertedAtSeconds = Math.floor( revertedAtMs( transfer ) / 1000 );
 
 		mockApi( { purchases: [], transfer, meta: { [ DISMISS_KEY ]: revertedAtSeconds + 3600 } } );
 		const { result, waitForSettled } = renderNotice();
@@ -232,9 +253,7 @@ describe( 'useSiteExpiryNotice: reverted state', () => {
 
 	test( 'a dismissal stamp from before the revert does not count', async () => {
 		const transfer = revertedTransfer( 10 );
-		const revertedAtSeconds = Math.floor(
-			new Date( transfer.reverted_at!.replace( ' ', 'T' ) + 'Z' ).getTime() / 1000
-		);
+		const revertedAtSeconds = Math.floor( revertedAtMs( transfer ) / 1000 );
 
 		mockApi( { purchases: [], transfer, meta: { [ DISMISS_KEY ]: revertedAtSeconds - 3600 } } );
 		const { result } = renderNotice();
