@@ -1,15 +1,18 @@
-// Deep import: the package root pulls in `@wordpress/media-utils`, which touches `document` at import time and breaks SSR.
-import { useUnifiedAiChat } from '@automattic/agents-manager/src/hooks/use-unified-ai-chat';
+import {
+	dashboardAdminBarQuery,
+	queryClient as apiQueryClient,
+	siteAdminBarQuery,
+} from '@automattic/api-queries';
 import { HelpCenter } from '@automattic/data-stores';
-import { HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT } from '@automattic/help-center/src/experiments';
+import { getHelpCenterExperimentVariations } from '@automattic/help-center/src/experiments';
 import { useLocale } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
-import { useExperiment } from 'calypso/lib/explat';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { onboardingUrl } from 'calypso/lib/paths';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -40,20 +43,19 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 	const user = useSelector( getCurrentUser );
 	const agency = useSelector( getActiveAgency );
 	const { site } = useHelpCenterSite();
-	// The experiment lives on the logged-in entry points (masterbar/omnibar), so the
-	// logged-out FAB stays out. Unified-agent users get the Big Sky chat instead of this
-	// panel and can never see the treatment; read the query rather than
-	// `useShouldUseUnifiedAgent` so an unresolved flag isn't mistaken for a resolved `false`.
-	const isLoggedIn = Boolean( user );
-	const { data: shouldUseUnifiedAgent, isPending: isUnifiedAgentPending } =
-		useUnifiedAiChat( isLoggedIn );
-	const isGetHelpChatForwardEligible =
-		loadHelpCenter && isLoggedIn && ! isUnifiedAgentPending && ! shouldUseUnifiedAgent;
-	// Passed down keyed by experiment name, and only once the assignment has settled, so
-	// the Help Center can tell a resolved "no variation" from one that never resolved.
-	const [ isLoadingGetHelpChatForwardAssignment, getHelpChatForwardAssignment ] = useExperiment(
-		HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT,
-		{ isEligible: isGetHelpChatForwardEligible }
+	// The omnibar fetches the admin bar for the entry point it draws, on its own query
+	// client. Read that cache without fetching: the arm costs no request and always
+	// matches the entry point the user saw.
+	const { data: siteAdminBar } = useQuery(
+		{ ...siteAdminBarQuery( site?.ID ?? 0 ), enabled: false },
+		apiQueryClient
+	);
+	const { data: dashboardAdminBar } = useQuery(
+		{ ...dashboardAdminBarQuery(), enabled: false },
+		apiQueryClient
+	);
+	const experimentVariations = getHelpCenterExperimentVariations(
+		siteAdminBar?.nodes ?? dashboardAdminBar?.nodes
 	);
 
 	if ( ! loadHelpCenter ) {
@@ -88,13 +90,7 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
 			onboardingUrl={ onboardingUrl() }
 			googleMailServiceFamily={ getGoogleMailServiceFamily() }
-			experimentVariations={ {
-				...( isGetHelpChatForwardEligible &&
-					! isLoadingGetHelpChatForwardAssignment && {
-						[ HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT ]:
-							getHelpChatForwardAssignment?.variationName ?? null,
-					} ),
-			} }
+			experimentVariations={ experimentVariations }
 			{ ...additionalHelpCenterProps }
 		/>
 	);

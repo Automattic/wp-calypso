@@ -1,11 +1,13 @@
-// Deep import: the package root pulls in `@wordpress/media-utils`, which touches `document` at import time and breaks SSR.
-import { useUnifiedAiChat } from '@automattic/agents-manager/src/hooks/use-unified-ai-chat';
-import { omnibarSiteIdQuery, siteByIdQuery } from '@automattic/api-queries';
+import {
+	dashboardAdminBarQuery,
+	omnibarSiteIdQuery,
+	siteAdminBarQuery,
+	siteByIdQuery,
+} from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT } from '@automattic/help-center/src/experiments';
+import { getHelpCenterExperimentVariations } from '@automattic/help-center/src/experiments';
 import { useQuery } from '@tanstack/react-query';
 import { Suspense, lazy, useCallback, useState } from 'react';
-import { useExperiment } from 'calypso/lib/explat';
 import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
 import type HelpCenterApp from '../help-center/help-center-app';
@@ -64,17 +66,17 @@ export default function OmnibarHelpCenter() {
 		...siteByIdQuery( omnibarSiteId ?? 0 ),
 		enabled: !! omnibarSiteId,
 	} );
-	// Unified-agent users get the Big Sky chat instead of this panel, so they can never
-	// see the treatment and must stay out of the assignment. Read through the query rather
-	// than `useShouldUseUnifiedAgent` so an unresolved flag is distinguishable from a
-	// resolved `false` and we don't enrol them during the loading window.
-	const { data: shouldUseUnifiedAgent, isPending: isUnifiedAgentPending } = useUnifiedAiChat();
-	const isGetHelpChatForwardEligible = ! isUnifiedAgentPending && ! shouldUseUnifiedAgent;
-	// Passed down keyed by experiment name, and only once the assignment has settled, so
-	// the Help Center can tell a resolved "no variation" from one that never resolved.
-	const [ isLoadingGetHelpChatForwardAssignment, getHelpChatForwardAssignment ] = useExperiment(
-		HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT,
-		{ isEligible: isGetHelpChatForwardEligible }
+
+	// The omnibar fetches the admin bar for the entry point it draws. Read that cache
+	// without fetching: the arm costs no request and always matches the entry point
+	// the user saw.
+	const { data: siteAdminBar } = useQuery( {
+		...siteAdminBarQuery( omnibarSiteId ?? 0 ),
+		enabled: false,
+	} );
+	const { data: dashboardAdminBar } = useQuery( { ...dashboardAdminBarQuery(), enabled: false } );
+	const experimentVariations = getHelpCenterExperimentVariations(
+		siteAdminBar?.nodes ?? dashboardAdminBar?.nodes
 	);
 
 	const handleClose = useCallback( () => {
@@ -101,13 +103,7 @@ export default function OmnibarHelpCenter() {
 				onboardingUrl={ config( 'wpcom_signup_url' ) }
 				sectionName="dashboard"
 				site={ site ? toHelpCenterSite( site ) : null }
-				experimentVariations={ {
-					...( isGetHelpChatForwardEligible &&
-						! isLoadingGetHelpChatForwardAssignment && {
-							[ HELP_CENTER_GET_HELP_CHAT_FORWARD_EXPERIMENT ]:
-								getHelpChatForwardAssignment?.variationName ?? null,
-						} ),
-				} }
+				experimentVariations={ experimentVariations }
 			/>
 		</Suspense>
 	);
