@@ -121,7 +121,11 @@ export default function NotePanelActions() {
 						<Menu.Group>
 							<Menu.GroupLabel>
 								{ __( 'Layout' ) }
-								{ showsWhatIsNew && <Badge intent="informational">{ __( 'New' ) }</Badge> }
+								{ showsWhatIsNew && (
+									<Badge className="wpnc-app__new-badge" intent="informational">
+										{ __( 'New' ) }
+									</Badge>
+								) }
 							</Menu.GroupLabel>
 							{ LAYOUTS.map( ( { value, label } ) => (
 								<Menu.RadioItem
