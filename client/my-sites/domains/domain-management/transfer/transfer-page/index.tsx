@@ -108,7 +108,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 
 		const mobileItem = {
 			label: sprintf(
-				/* translators: Link to return to the settings management page of a specific domain (%s = domain, e.g. example.com) */
+				/* translators: Link to return to the settings management page of a specific domain. %s is the domain name, e.g. example.com */
 				__( 'Back to %s' ),
 				selectedDomainName
 			),
