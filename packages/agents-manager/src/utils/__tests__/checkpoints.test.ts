@@ -34,13 +34,26 @@ async function loadCheckpoints() {
 	);
 	const editEntityRecord = jest.fn();
 	const saveSpecifiedEntityEdits = jest.fn();
+	// One mock serves every store, so the editor's post selectors sit next to
+	// core-data's.
+	const editorState = {
+		id: 7 as number | string,
+		type: 'post',
+		title: 'Before',
+		excerpt: 'Old excerpt',
+	};
+	const editPost = jest.fn();
 	select.mockReturnValue( {
 		__experimentalGetCurrentGlobalStylesId: getGlobalStylesId,
 		getEditedEntityRecord,
+		getCurrentPostId: () => editorState.id,
+		getCurrentPostType: () => editorState.type,
+		getEditedPostAttribute: ( field: 'title' | 'excerpt' ) => editorState[ field ],
 	} );
 	dispatch.mockReturnValue( {
 		editEntityRecord,
 		__experimentalSaveSpecifiedEntityEdits: saveSpecifiedEntityEdits,
+		editPost,
 	} );
 	const checkpoints = await import( '../checkpoints' );
 	return {
@@ -49,6 +62,8 @@ async function loadCheckpoints() {
 		getEditedEntityRecord,
 		editEntityRecord,
 		saveSpecifiedEntityEdits,
+		editPost,
+		editorState,
 	};
 }
 
@@ -236,6 +251,110 @@ describe( 'site domains', () => {
 		setCheckpoint( 'site-call', [ key ] );
 
 		await expect( restoreCheckpoint( 'site-call' ) ).rejects.toThrow( message );
+	} );
+} );
+
+describe( 'post domain', () => {
+	it( 'snapshots only the claimed field, with the post it belongs to', async () => {
+		const { setCheckpoint, getCheckpoints, checkpointKeys } = await loadCheckpoints();
+
+		setCheckpoint( 'toolu_1', [ checkpointKeys.POST_TITLE ] );
+
+		expect( getCheckpoints()[ 0 ].postBeforeUpdate ).toEqual( {
+			id: 7,
+			type: 'post',
+			title: 'Before',
+		} );
+	} );
+
+	it( 'snapshots nothing for a checkpoint that does not scope the post', async () => {
+		const { setCheckpoint, getCheckpoints, checkpointKeys } = await loadCheckpoints();
+
+		setCheckpoint( 'toolu_1', [ checkpointKeys.COLOR ] );
+
+		expect( getCheckpoints()[ 0 ].postBeforeUpdate ).toBeUndefined();
+	} );
+
+	it( 'restores the claimed field outside the editor undo stack', async () => {
+		const { setCheckpoint, restoreCheckpoint, checkpointKeys, editPost } = await loadCheckpoints();
+		setCheckpoint( 'toolu_1', [ checkpointKeys.POST_EXCERPT ] );
+
+		await restoreCheckpoint( 'toolu_1' );
+
+		expect( editPost ).toHaveBeenCalledWith( { excerpt: 'Old excerpt' }, { undoIgnore: true } );
+	} );
+
+	it( 'leaves the post alone when the checkpoint does not scope it', async () => {
+		const { setCheckpoint, restoreCheckpoint, checkpointKeys, editPost } = await loadCheckpoints();
+		setCheckpoint( 'toolu_1', [ checkpointKeys.COLOR ] );
+
+		await restoreCheckpoint( 'toolu_1' );
+
+		expect( editPost ).not.toHaveBeenCalled();
+	} );
+
+	it( 'refuses to restore into a different post', async () => {
+		const { setCheckpoint, restoreCheckpoint, checkpointKeys, editPost, editorState } =
+			await loadCheckpoints();
+		setCheckpoint( 'toolu_1', [ checkpointKeys.POST_TITLE ] );
+		editorState.id = 8;
+
+		await expect( restoreCheckpoint( 'toolu_1' ) ).rejects.toThrow( 'no longer shows' );
+		expect( editPost ).not.toHaveBeenCalled();
+	} );
+
+	it( 'stores no snapshot when the editor shows no post, and the restore then throws', async () => {
+		const { setCheckpoint, getCheckpoints, restoreCheckpoint, checkpointKeys, editorState } =
+			await loadCheckpoints();
+		editorState.id = 0;
+
+		setCheckpoint( 'toolu_1', [ checkpointKeys.POST_TITLE ] );
+
+		expect( getCheckpoints()[ 0 ].postBeforeUpdate ).toBeUndefined();
+		await expect( restoreCheckpoint( 'toolu_1' ) ).rejects.toThrow( 'no post snapshot' );
+	} );
+
+	it( 'keeps the post snapshot out of the model-facing list', async () => {
+		const { setCheckpoint, getAvailableCheckpoints, checkpointKeys } = await loadCheckpoints();
+		setCheckpoint( 'toolu_1', [ checkpointKeys.POST_TITLE ] );
+
+		expect( getAvailableCheckpoints()[ 0 ] ).not.toHaveProperty( 'postBeforeUpdate' );
+	} );
+
+	it( 'records the post field as it stands for a redo', async () => {
+		const { setCheckpoint, setReciprocalCheckpoint, getCheckpoint, checkpointKeys, editorState } =
+			await loadCheckpoints();
+		setCheckpoint( 'toolu_1', [ checkpointKeys.POST_TITLE ] );
+		editorState.title = 'After';
+
+		await setReciprocalCheckpoint( 'toolu_2', getCheckpoint( 'toolu_1' )!, {
+			toolId: 'big_sky__restore_checkpoint',
+		} );
+
+		expect( getCheckpoint( 'toolu_2' )?.postBeforeUpdate ).toEqual( {
+			id: 7,
+			type: 'post',
+			title: 'After',
+		} );
+	} );
+
+	it( 'refuses a checkpointed write when the post cannot be read', async () => {
+		const { withCheckpoint, checkpointKeys, editorState } = await loadCheckpoints();
+		editorState.id = 0;
+		const write = jest.fn();
+
+		await expect(
+			withCheckpoint(
+				{
+					toolId: 'big_sky__show_component',
+					toolCallId: 'toolu_1',
+					keys: [ checkpointKeys.POST_TITLE ],
+					summary: 'Chose a title.',
+				},
+				write
+			)
+		).rejects.toThrow( 'post_title' );
+		expect( write ).not.toHaveBeenCalled();
 	} );
 } );
 
