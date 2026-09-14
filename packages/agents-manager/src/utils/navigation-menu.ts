@@ -8,14 +8,12 @@ import { getSiteMetadata } from './site-metadata';
 import type { Block } from '@wordpress/blocks';
 
 /**
- * The site's navigation menu, as `edit-entity-record` needs to touch it: a
- * page added to the site gets a menu item, a renamed page renames its item,
- * and a deleted page loses it.
+ * The site's navigation menus, as `edit-entity-record` touches them: a new
+ * page gets an item, a renamed page renames its item, a deleted page loses it.
  *
- * The menu is a `wp_navigation` entity whose blocks are the items. Whether a
- * write saves at once, joins the page edit's unsaved changes, or waits with the
- * user's own pending edits is decided by `addNavigationItem()` and
- * `rewriteMenusHolding()`; `saveMenu()` only persists what they hand it.
+ * A menu is a `wp_navigation` entity whose blocks are the items. Whether a
+ * write saves at once or waits with the user's pending edits is decided by
+ * `addNavigationItem()` and `rewriteMenusHolding()`; `saveMenu()` only persists.
  */
 
 /** A menu item: `core/navigation-link`, or a submenu holding more of them. */
@@ -286,14 +284,10 @@ const followsPage = ( item: NavigationBlock, previousLabels?: string[] ) =>
 /**
  * Persists a menu's items, putting `previous` back if the save fails.
  *
- * A menu write following a page *edit* is left unsaved on purpose: the two save
- * together as one set. One following a creation or deletion has no such partner,
- * and a reload would throw it away while the page stands.
- *
  * Only the item fields are saved, so a pending title or status edit stays the
- * user's. The write is applied with `undoIgnore`, so a refused save would strand
- * it with no undo — hence `throwOnError`, without which a save that never
- * reached the server would read as a success.
+ * user's. The write went in with `undoIgnore`, so a failed save would strand
+ * it with no undo — hence the rollback and `throwOnError`, without which a
+ * save that never reached the server would read as a success.
  */
 const saveMenu = async ( id: MenuId, previous: NavigationBlock[] ): Promise< void > => {
 	const coreDispatch = dispatch( coreStore ) as unknown as CoreDispatch | undefined;
@@ -393,16 +387,13 @@ export async function addNavigationItem( item: NavigationItem ): Promise< MenuId
 }
 
 /**
- * Rewrites every menu that holds the page. `rewrite` returns the new items, or
- * `null` for a menu the page is not in.
+ * Rewrites every menu that holds the page — header and footer alike. `rewrite`
+ * returns the new items, or `null` for a menu the page is not in.
  *
- * Every menu, since a page can be linked from the header and the footer alike.
- * All are read before any is written: the page change has already landed, so a
- * half-written set of menus could not be put right by a retry.
- *
- * `save` persists the writes: a removal needs it, since its page is already
- * deleted; a rename saves with the page edit. A menu holding the user's unsaved
- * edits is left unsaved either way, and returned so the caller can say so.
+ * All are read before any is written: the page change has already landed, so
+ * a half-written set could not be put right by a retry. `save` persists the
+ * writes; a menu holding the user's unsaved edits is left unsaved either way,
+ * and returned so the caller can say so.
  */
 async function rewriteMenusHolding(
 	rewrite: ( items: NavigationBlock[] ) => NavigationBlock[] | null,

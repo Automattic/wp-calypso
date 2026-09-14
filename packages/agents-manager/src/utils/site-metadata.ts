@@ -81,15 +81,13 @@ export async function setSiteMetadata( changes: SiteMetadata ): Promise< SiteMet
 
 // TODO (ability-migration): Delete once Big Sky no longer writes this field.
 /**
- * Keeps Big Sky's copy in step. It rebuilds this field from its own store, not
- * from the site record, so a write it never saw would be undone by its next one.
+ * Keeps Big Sky's copy in step: it rebuilds this field from its own store, so
+ * a write it never saw would be undone by its next one. Its reducer merges, so
+ * a dropped key is sent as `undefined`, which `JSON.stringify` leaves out. The
+ * runtime key is Big Sky's own and never reaches the record.
  *
- * Its reducer merges, so a key this write drops is sent as `undefined` and
- * `JSON.stringify` leaves it out of what Big Sky persists. The runtime key is
- * exempt: it is Big Sky's to manage and never reaches the record.
- *
- * Keys Big Sky wrote earlier in the page load still win, and nothing here can
- * change that — its writer replays them from a module-level buffer.
+ * Keys Big Sky wrote earlier in the page load still win: its writer replays
+ * them from a buffer nothing here can clear.
  */
 function syncProviderMetadata( metadata: SiteMetadata ): void {
 	const provider = providerActions< { setSiteMetadata?: ( metadata: SiteMetadata ) => void } >();
