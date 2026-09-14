@@ -1,9 +1,5 @@
 # Changelog
 
-## 3.3.0
-
-- Publish against `@automattic/api-core@^2.0.0` and `@automattic/js-utils@^0.2.0`, so consumers resolve the current releases of both (previously published `3.2.2` pinned `^1.1.0` and `^0.1.0`).
-
 ## 3.2.2
 
 - Publish against `i18n-calypso@^8.0.0`, resolving a duplicate/mismatched `i18n-calypso` version in the installed dependency tree (previously published `3.2.1` pinned `i18n-calypso@^7.4.1`).
