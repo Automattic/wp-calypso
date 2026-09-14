@@ -5,7 +5,6 @@ import { Provider } from 'react-redux';
 import repliesCache from '../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../panel/helpers/input';
 import { logError } from '../panel/helpers/log-error';
-import { fetchNotificationPreferences } from '../panel/rest-client/wpcom';
 import { init as initStore, store } from '../panel/state';
 import { SET_IS_SHOWING } from '../panel/state/action-types';
 import actions from '../panel/state/actions';
@@ -137,6 +136,7 @@ const NotificationApp = ( {
 	isDismissible = false,
 	isViewSettingsEnabled = false,
 	preferences,
+	onPreferenceChange,
 	customEnhancer,
 	actionHandlers = {},
 	wpcom,
@@ -145,6 +145,7 @@ const NotificationApp = ( {
 	isDismissible?: boolean;
 	isViewSettingsEnabled?: boolean;
 	preferences?: NotificationPreferences;
+	onPreferenceChange?: ( key: string, value: unknown ) => Promise< unknown >;
 	customEnhancer?: any;
 	actionHandlers?: any;
 	wpcom: any;
@@ -159,26 +160,22 @@ const NotificationApp = ( {
 		store.dispatch( { type: SET_IS_SHOWING, isShowing: true } );
 		getClient()?.setVisibility( { isShowing: true, isVisible: ! document.hidden } );
 
-		// Apply preferences on the first mount.
-		if ( ! hasResolvedPreferences ) {
-			hasResolvedPreferences = true;
-
-			if ( preferences ) {
-				applyPreferences( preferences );
-			} else {
-				fetchNotificationPreferences().then( applyPreferences ).catch( logError );
-			}
-		}
-
 		return () => {
 			store.dispatch( { type: SET_IS_SHOWING, isShowing: false } );
 			getClient()?.setVisibility( { isShowing: false, isVisible: ! document.hidden } );
 		};
-		// `preferences` is read once, on mount. Re-running on a later value would
-		// re-announce the panel as showing and overwrite whatever the picker has since
-		// saved.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ wpcom ] );
+
+	// Seeded once, whenever the host resolves them. A later value would overwrite
+	// whatever the picker has since saved.
+	useEffect( () => {
+		if ( ! preferences || hasResolvedPreferences ) {
+			return;
+		}
+
+		hasResolvedPreferences = true;
+		applyPreferences( preferences );
+	}, [ preferences ] );
 
 	useEffect( () => {
 		if ( customEnhancer ) {
@@ -262,6 +259,7 @@ const NotificationApp = ( {
 					client={ getClient() }
 					locale={ locale }
 					isViewSettingsEnabled={ isViewSettingsEnabled }
+					onPreferenceChange={ onPreferenceChange }
 				>
 					<NotificationContent isDismissible={ isDismissible } />
 				</AppProvider>

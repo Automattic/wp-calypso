@@ -45,7 +45,8 @@ export default function NotePanelActions() {
 
 	const markSeen = () =>
 		savePreference( {
-			preferences: { 'notifications-view-settings-seen': true },
+			key: 'notifications-view-settings-seen',
+			value: true,
 			apply: () => actions.ui.setViewSettingsSeen( true ),
 			revert: () => actions.ui.setViewSettingsSeen( false ),
 		} );
@@ -56,7 +57,8 @@ export default function NotePanelActions() {
 			to: value,
 		} );
 		savePreference( {
-			preferences: { 'notifications-layout-style': value },
+			key: 'notifications-layout-style',
+			value,
 			apply: () => actions.ui.setLayoutStyle( value ),
 			revert: () => actions.ui.setLayoutStyle( layoutStyle ),
 		} );
