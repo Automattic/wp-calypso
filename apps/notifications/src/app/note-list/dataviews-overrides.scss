@@ -87,16 +87,6 @@
 		display: none;
 	}
 
-	// DataViews centres a row only when no description field is configured at all, so a
-	// note whose description renders empty keeps its icon at the top of the row. Its
-	// `align-items` is an inline style, hence `!important`.
-	.dataviews-view-list__item-wrapper
-		> div:has(> .dataviews-view-list__field-wrapper):not(
-			:has(.dataviews-view-list__field:not(:empty))
-		) {
-		align-items: center !important;
-	}
-
 	// We override styles with the selected styles for unread items.
 	div[role="article"]:has(.is-unread),
 	div[role="article"]:has(.is-unread):focus-within {
