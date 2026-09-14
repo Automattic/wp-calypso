@@ -108,6 +108,20 @@ describe( 'NotePanel settings menu', () => {
 		expect( screen.getByRole( 'menuitemradio', { name: 'Simplified' } ) ).toBeInTheDocument();
 	} );
 
+	it( 'hands the settings link to the host as well', async () => {
+		const { store } = renderPanel( { isViewSettingsEnabled: true } );
+		const onViewSettings = jest.fn();
+		store.dispatch( addListeners( { VIEW_SETTINGS: [ onViewSettings ] } ) );
+
+		await userEvent.click( screen.getByRole( 'button', { name: /^Settings/ } ) );
+		await userEvent.click(
+			await screen.findByRole( 'menuitem', { name: /Notification settings/ } )
+		);
+
+		// Not a hardcoded URL: each host knows which dashboard the settings live on.
+		expect( onViewSettings ).toHaveBeenCalled();
+	} );
+
 	it( 'marks the saved layout and saves a new one', async () => {
 		const { post } = renderPanel( { isViewSettingsEnabled: true } );
 

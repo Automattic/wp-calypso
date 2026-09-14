@@ -23,8 +23,6 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 // full-width group separator match what people already see there.
 const { Menu } = unlock( privateApis );
 
-const SETTINGS_URL = 'https://wordpress.com/me/notifications';
-
 const LAYOUTS = [
 	{ value: 'classic', label: __( 'Classic' ) },
 	{ value: 'simplified', label: __( 'Simplified' ) },
@@ -141,15 +139,9 @@ export default function NotePanelActions() {
 						<Menu.Group>
 							<Menu.GroupLabel>{ __( 'Links' ) }</Menu.GroupLabel>
 							<Menu.Item
-								render={
-									<a
-										href={ SETTINGS_URL }
-										target="_blank"
-										rel="noopener noreferrer"
-										// The arrow is decorative, so the new-tab hint rides on the name.
-										aria-label={ __( 'Notification settings (opens in a new tab)' ) }
-									/>
-								}
+								onClick={ () => dispatch( actions.ui.viewSettings() ) }
+								// The arrow is decorative, so the new-tab hint rides on the name.
+								aria-label={ __( 'Notification settings (opens in a new tab)' ) }
 								suffix={ <span aria-hidden="true">&#8599;</span> }
 							>
 								<Menu.ItemLabel>{ __( 'Notification settings' ) }</Menu.ItemLabel>
