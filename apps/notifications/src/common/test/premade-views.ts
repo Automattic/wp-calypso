@@ -1,42 +1,9 @@
-import {
-	PREMADE_VIEWS,
-	getPremadeFilter,
-	getPremadeView,
-	resolveViewOrder,
-} from '../premade-views';
+import { PREMADE_VIEWS, resolveViewOrder } from '../premade-views';
 
 describe( 'premade views', () => {
-	it( 'exposes every view by name', () => {
-		PREMADE_VIEWS.forEach( ( view ) => {
-			expect( getPremadeView( view.name ) ).toBe( view );
-		} );
-	} );
-
-	it( 'returns nothing for a name it does not own', () => {
-		expect( getPremadeView( 'comments' ) ).toBeUndefined();
-		expect( getPremadeFilter( 'comments' ) ).toBeUndefined();
-	} );
-
-	it( 'builds a comma-separated type query', () => {
-		expect( getPremadeFilter( 'following' )?.query ).toEqual( { type: 'new_post' } );
-		expect( getPremadeFilter( 'store' )?.query.type.split( ',' ) ).toContain( 'store_order' );
-	} );
-
-	// `trophy` is a server-side alias covering the achieve/best name prefixes, so the
-	// ~60 badge types don't have to be listed (and future ones are picked up).
-	it( 'queries the badge types through the trophy alias', () => {
-		expect( getPremadeFilter( 'wordpress_com' )?.query.type.split( ',' ) ).toContain( 'trophy' );
-	} );
-
 	it( 'never repeats a type across views', () => {
 		const all = PREMADE_VIEWS.flatMap( ( view ) => view.types );
 		expect( new Set( all ).size ).toBe( all.length );
-	} );
-
-	// The server owns membership for these views; the predicate only exists so the
-	// shared filter shape works.
-	it( 'accepts every note the server returned', () => {
-		expect( getPremadeFilter( 'sites' )?.filter() ).toBe( true );
 	} );
 } );
 

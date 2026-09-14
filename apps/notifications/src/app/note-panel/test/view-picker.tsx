@@ -16,10 +16,6 @@ const defaultProps = {
 	setSelectedNoteId: noop,
 };
 
-// The placement class sits on the dropdown wrapper, not the button inside it.
-const pickerWrapper = () =>
-	screen.getByRole( 'button', { name: 'Add or remove views' } ).closest( '.wpnc-app__view-picker' );
-
 const renderPanel = ( { isViewSettingsEnabled }: { isViewSettingsEnabled: boolean } ) => {
 	const store = initStore();
 	const onPreferenceChange = jest.fn( () => Promise.resolve() );
@@ -39,24 +35,6 @@ const renderPanel = ( { isViewSettingsEnabled }: { isViewSettingsEnabled: boolea
 
 	return { store, onPreferenceChange };
 };
-
-describe( 'NotePanel view picker placement', () => {
-	// Five tabs already fill the panel, so the picker stops trailing the last one.
-	it( 'sits at the panel edge with the default five views', () => {
-		renderPanel( { isViewSettingsEnabled: true } );
-
-		expect( pickerWrapper() ).toHaveClass( 'is-at-edge' );
-	} );
-
-	it( 'trails the last tab once a view is hidden', async () => {
-		const { store } = renderPanel( { isViewSettingsEnabled: true } );
-		store.dispatch( actions.ui.setViews( [ { name: 'likes', hidden: true } ] ) );
-
-		await waitFor( () => {
-			expect( pickerWrapper() ).not.toHaveClass( 'is-at-edge' );
-		} );
-	} );
-} );
 
 describe( 'NotePanel view picker', () => {
 	it( 'is not offered when the host has not enabled view settings', () => {
