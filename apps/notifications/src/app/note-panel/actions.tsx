@@ -1,6 +1,6 @@
-import { Button, DropdownMenu, privateApis } from '@wordpress/components';
+import { Button, DropdownMenu, Icon, privateApis } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { cog, keyboard } from '@wordpress/icons';
+import { cog, keyboard, settings } from '@wordpress/icons';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
@@ -143,6 +143,7 @@ export default function NotePanelActions() {
 						<Menu.Group>
 							<Menu.GroupLabel>{ __( 'Links' ) }</Menu.GroupLabel>
 							<Menu.Item
+								prefix={ <Icon icon={ settings } size={ 24 } /> }
 								onClick={ () => dispatch( actions.ui.viewSettings() ) }
 								// The arrow is decorative, so the new-tab hint rides on the name.
 								aria-label={ __( 'Notification settings (opens in a new tab)' ) }
