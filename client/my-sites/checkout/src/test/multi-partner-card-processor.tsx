@@ -31,6 +31,10 @@ jest.mock( '../lib/create-ebanx-token-vgs', () => ( {
 	createEbanxTokenVgs: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
+	getBlackboxSessionId: jest.fn().mockResolvedValue( undefined ),
+} ) );
+
 async function createMockStripeToken( {
 	type,
 	card,

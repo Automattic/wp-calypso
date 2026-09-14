@@ -114,12 +114,10 @@ const DomainUpsellCardContent = ( {
 			description={
 				<Text variant="muted">
 					{ createInterpolateElement( description, {
-						// Keep this span's identity stable so that Google Translate doesn't crash the page.
-						// A known React issue: react/react#11538
 						domain: (
-							<span translate="no">
-								{ suggestedDomain ? suggestedDomain.domain_name : <TextBlur>{ search }</TextBlur> }
-							</span>
+							<TextBlur isBlurred={ ! suggestedDomain }>
+								{ suggestedDomain ? suggestedDomain.domain_name : search }
+							</TextBlur>
 						),
 						link: (
 							<UpsellCTAButton

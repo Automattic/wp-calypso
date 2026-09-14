@@ -2,10 +2,10 @@ import { Button } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { handleRenewNowClick, getRenewalPrice } from 'calypso/lib/purchases';
+import { handleRenewNowClick } from 'calypso/lib/purchases';
 import { useDispatch } from 'calypso/state';
+import type { Purchase } from '@automattic/api-core';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { Purchase } from 'calypso/lib/purchases/types';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
 import './style.scss';
@@ -46,9 +46,9 @@ function RenewButton( {
 	let loading = true;
 
 	if ( purchase && selectedSite.ID ) {
-		const renewalPrice = getRenewalPrice( purchase ) + ( redemptionProduct?.cost ?? 0 );
-		const currencyCode = purchase.currencyCode;
-		formattedPrice = formatCurrency( renewalPrice, currencyCode, { stripZeros: true } );
+		const renewalPrice =
+			( purchase.sale_amount || purchase.amount ) + ( redemptionProduct?.cost ?? 0 );
+		formattedPrice = formatCurrency( renewalPrice, purchase.currency_code, { stripZeros: true } );
 		loading = false;
 	}
 
@@ -69,10 +69,8 @@ function RenewButton( {
 	}
 
 	function handleRenew() {
-		// Temporary bridge (SHILL-2256): this component still receives the
-		// camelCase Purchase. Remove once it takes the raw shape.
 		dispatch(
-			handleRenewNowClick( ( purchase as Purchase ).rawPurchase, selectedSite.slug, {
+			handleRenewNowClick( purchase as Purchase, selectedSite.slug, {
 				tracksProps,
 			} )
 		);

@@ -7,7 +7,7 @@ import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { useLocale } from '../../app/locale';
+import { useIntlLocale } from '../../app/locale';
 import { Text } from '../../components/text';
 import {
 	convertTimeRangeToUnix,
@@ -77,7 +77,7 @@ export default function MonitoringPerformanceCard( {
 	timeRange: number;
 } ) {
 	const { requestsData, responseTimeData, isLoading } = useSiteMetricsData( site.ID, timeRange );
-	const locale = useLocale();
+	const locale = useIntlLocale();
 
 	const requestsPerMinuteLabel = __( 'Requests per minute' );
 	const averageResponseTimeLabel = __( 'Average response time (ms)' );

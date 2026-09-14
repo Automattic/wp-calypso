@@ -111,10 +111,7 @@ class GoogleMyBusinessNewAccount extends Component {
 								{ translate( 'Use another Google Account' ) }
 							</KeyringConnectButton>
 
-							<Button
-								href={ `/marketing/tools/${ siteSlug }` }
-								onClick={ this.handleNoThanksClick }
-							>
+							<Button href={ `/home/${ siteSlug }` } onClick={ this.handleNoThanksClick }>
 								{ translate( 'No thanks' ) }
 							</Button>
 						</div>

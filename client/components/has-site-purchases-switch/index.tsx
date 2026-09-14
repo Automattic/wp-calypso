@@ -1,14 +1,8 @@
-import { ReactNode, useCallback, useEffect, useState } from 'react';
+import { sitePurchasesQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
+import { ReactNode, useCallback } from 'react';
 import * as React from 'react';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import RenderSwitch from 'calypso/components/jetpack/render-switch';
-import { useSelector, useDispatch } from 'calypso/state';
-import { resetSiteState } from 'calypso/state/purchases/actions';
-import {
-	isFetchingSitePurchases,
-	hasLoadedSitePurchasesFromServer,
-	getSitePurchases,
-} from 'calypso/state/purchases/selectors';
 
 type Props = {
 	siteId: number;
@@ -23,28 +17,16 @@ const HasSitePurchasesSwitch: React.FC< Props > = ( {
 	falseComponent,
 	loadingComponent,
 } ) => {
-	const dispatch = useDispatch();
-	const [ currentSiteId, setCurrentSiteId ] = useState( siteId );
-	const isFetching = useSelector( isFetchingSitePurchases );
-	const hasLoaded = useSelector( hasLoadedSitePurchasesFromServer );
-	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
+	const { data: purchases, isLoading } = useQuery( {
+		...sitePurchasesQuery( siteId ),
+		enabled: Boolean( siteId ),
+	} );
 
-	const loadingCondition = useCallback(
-		() => ! hasLoaded || isFetching,
-		[ hasLoaded, isFetching ]
-	);
-	const renderCondition = useCallback( () => purchases.length > 0, [ purchases ] );
-
-	useEffect( () => {
-		if ( siteId !== currentSiteId ) {
-			setCurrentSiteId( siteId );
-			dispatch( resetSiteState() );
-		}
-	}, [ siteId, currentSiteId, setCurrentSiteId, dispatch ] );
+	const loadingCondition = useCallback( () => isLoading, [ isLoading ] );
+	const renderCondition = useCallback( () => Boolean( purchases?.length ), [ purchases ] );
 
 	return (
 		<RenderSwitch
-			queryComponent={ <QuerySitePurchases siteId={ siteId } /> }
 			trueComponent={ trueComponent }
 			falseComponent={ falseComponent }
 			loadingComponent={ loadingComponent }

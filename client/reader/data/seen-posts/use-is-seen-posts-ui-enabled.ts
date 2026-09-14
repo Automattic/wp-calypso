@@ -4,9 +4,7 @@ import { useSeenPostsPreferenceEnabled } from './use-seen-posts-preference-enabl
 /**
  * Whether Reader should show seen/read UI for this user right now.
  *
- * Combines the rollout gate ({@link useIsSeenPostsAvailable}) with the user's
- * `reader-seen-posts` preference. Prefer this over inlining
- * `isAutomattician && preference` at call sites.
+ * Prefer this over inlining the rollout gate and the preference at call sites.
  */
 export function useIsSeenPostsUiEnabled(): boolean {
 	const isAvailable = useIsSeenPostsAvailable();

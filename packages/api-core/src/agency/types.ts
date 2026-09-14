@@ -147,9 +147,6 @@ export interface Agency {
 	name: string;
 	url: string;
 	tier?: AgencyTier;
-	mcp?: {
-		allowed: boolean;
-	};
 	influenced_revenue?: number;
 	approval_status?: AgencyApprovalStatus | '';
 	profile?: AgencyProfile;

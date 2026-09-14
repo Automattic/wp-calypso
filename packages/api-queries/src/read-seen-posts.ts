@@ -9,9 +9,26 @@ import {
 	type ReadSeenPostsFeedParams,
 	type ReadSeenPostsResponse,
 } from '@automattic/api-core';
-import { mutationOptions, type QueryClient } from '@tanstack/react-query';
+import { mutationOptions, type Query, type QueryClient } from '@tanstack/react-query';
 import { patchSubscriptionSeenCount } from './read-follows';
 import { patchListsSeenCount } from './read-lists';
+
+/**
+ * Query options for fetching unseen counts, including a stale time and a refetch strategy on window focus.
+ */
+export const seenCountQueryOptions = {
+	staleTime: 60 * 60 * 1000, // 1 hour.
+	refetchOnWindowFocus: refetchSeenCounts,
+} as const;
+
+/**
+ * Refetches unseen counts on focus / sidebar mount if the counts are stale.
+ */
+export function refetchSeenCounts( query: Pick< Query, 'isStaleByTime' > ): 'always' | false {
+	const SEEN_COUNT_MAX_AGE_IN_MS = 30 * 1000;
+
+	return query.isStaleByTime( SEEN_COUNT_MAX_AGE_IN_MS ) ? 'always' : false;
+}
 
 export const markReaderPostsAsSeenMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< ReadSeenPostsResponse, Error, ReadSeenPostsFeedParams >( {
@@ -76,8 +93,7 @@ type TeamLike = { slug: string };
 /**
  * Whether the seen-posts feature is rolled out to this user.
  *
- * Currently Automattician-only. When releasing to all users, change the body to
- * `return true` — Reader UI hooks and Dashboard preferences both call this.
+ * Currently Automattician-only. Releasing to all users means returning true here.
  */
 export function isSeenPostsAvailable( teams?: TeamLike[] | null ): boolean {
 	return Boolean( teams?.some( ( team ) => team.slug === 'a8c' ) );

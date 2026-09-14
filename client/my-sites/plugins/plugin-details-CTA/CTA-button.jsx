@@ -165,7 +165,8 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 					size="medium"
 				>
 					<EligibilityWarnings
-						currentContext="plugin-details"
+						context="plugin-details"
+						inModal
 						atomicTransferAction="plugins"
 						isMarketplace={ isMarketplaceProduct }
 						standaloneProceed

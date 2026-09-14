@@ -463,14 +463,15 @@ const sections = [
 		module: 'calypso/reader/tags',
 		group: 'reader',
 		trackLoadPerformance: true,
+		// Kept so the section module can redirect logged-out visitors to /discover/tags.
 		enableLoggedOut: true,
-		isomorphic: true,
 	},
 	{
 		name: 'reader',
 		paths: [ '/tag', '/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/tag' ],
 		module: 'calypso/reader/tag-stream',
 		group: 'reader',
+		// Kept so the section module can redirect logged-out visitors to /discover/tags.
 		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},

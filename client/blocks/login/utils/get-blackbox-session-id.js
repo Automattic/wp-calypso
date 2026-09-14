@@ -1,4 +1,5 @@
 import { loadBlackboxSdk } from 'calypso/blocks/login/utils/blackbox-sdk';
+import { waitForChallengeSettled } from 'calypso/blocks/login/utils/challenge-gate';
 
 /**
  * Retrieve a Blackbox bot-detection session ID.
@@ -8,9 +9,9 @@ import { loadBlackboxSdk } from 'calypso/blocks/login/utils/blackbox-sdk';
  * This ensures the server-side session score reflects behavioral signals
  * before the login request fires — critical for enforcement via verify().
  *
- * collect() is safe to call at submit time because the login form's submit
- * button is disabled while Blackbox is loading or a challenge is active, so
- * this only fires when no challenge widget is in progress.
+ * collect() returns as soon as the response arrives, even when that response
+ * issued a challenge, so we hold the session here until the challenge settles.
+ * Verify rejects a session with an unsolved challenge outright.
  *
  * Blackbox returns BlackboxError instead of throwing, so the typeof check
  * filters those out. The try/catch is defense-in-depth.
@@ -36,6 +37,8 @@ export async function getBlackboxSessionId() {
 			window.Blackbox.collect(),
 			new Promise( ( resolve ) => setTimeout( resolve, 5000 ) ),
 		] );
+
+		await waitForChallengeSettled();
 
 		if ( typeof result === 'string' ) {
 			return result;

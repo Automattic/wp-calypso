@@ -33,7 +33,7 @@ import { useFeedQuery } from 'calypso/reader/data/feed';
 import { usePost } from 'calypso/reader/data/post';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
 import {
-	useIsSeenEnabled,
+	useCanMarkSeen,
 	useSeenPostsPreferenceConfirmed,
 	withSeenPostsMutations,
 } from 'calypso/reader/data/seen-posts';
@@ -78,7 +78,7 @@ export class FullPostView extends Component {
 		onClose: PropTypes.func,
 		referralPost: PropTypes.object,
 		referralStream: PropTypes.string,
-		isSeenEnabled: PropTypes.bool,
+		canMarkSeen: PropTypes.bool,
 		isSeenPreferenceConfirmed: PropTypes.bool,
 		layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
 		currentPath: PropTypes.string,
@@ -151,12 +151,9 @@ export class FullPostView extends Component {
 			this.hasSentPageView = false;
 			this.hasLoaded = false;
 
-			// Reset the automatic-seen guard on the canonical Reader post key — the
-			// discriminator the post cache and streams already identify posts by.
-			// Neither single field is enough on its own: `post.ID` is only unique
-			// within a site, and `global_ID` is absent on cached posts (`Post` is a
-			// `Partial`), so either can read two distinct posts as one and swallow
-			// the second post's mark.
+			// Keyed on the canonical post key because `post.ID` is only unique within
+			// a site and `global_ID` is absent on cached posts, so either alone can
+			// read two distinct posts as one.
 			const hasViewedPostChanged =
 				keyToString( keyForPost( prevProps?.post ) ) !==
 				keyToString( keyForPost( this.props?.post ) );
@@ -177,12 +174,10 @@ export class FullPostView extends Component {
 			}
 		}
 
-		// Seen eligibility resolves asynchronously — subscriptions, teams, and the
-		// reader-seen-posts preference all land after mount — so the automatic mark
-		// is often skipped on first load. Retry it when eligibility becomes true,
-		// since the post ID hasn't changed and nothing else would fire it again.
+		// Seen eligibility resolves after mount, so the mark on load is often
+		// skipped. Nothing else retries it once eligibility turns true.
 		if (
-			( this.props.isSeenEnabled && ! prevProps.isSeenEnabled ) ||
+			( this.props.canMarkSeen && ! prevProps.canMarkSeen ) ||
 			( this.props.isSeenPreferenceConfirmed && ! prevProps.isSeenPreferenceConfirmed )
 		) {
 			this.maybeMarkAsSeenOnLoad();
@@ -624,19 +619,14 @@ export class FullPostView extends Component {
 		}, 100 );
 	};
 
-	// Tracked separately from `hasLoaded` so that loading the post doesn't consume
-	// the automatic mark while the seen gate is still resolving.
-	//
-	// `isSeenPreferenceConfirmed` is required on top of `isSeenEnabled` because
-	// the latter can be true off a rehydrated preference from a previous session.
-	// Rendering off that is harmless, but this write isn't reversible, so it waits
-	// for the current session's /me/preferences response.
+	// One irreversible write per post, so it waits on a preference value confirmed
+	// this session rather than a possibly-stale rehydrated one.
 	maybeMarkAsSeenOnLoad = () => {
-		const { post, isSeenEnabled, isSeenPreferenceConfirmed } = this.props;
+		const { post, canMarkSeen, isSeenPreferenceConfirmed } = this.props;
 
 		if (
 			this.hasAutoMarkedAsSeen ||
-			! isSeenEnabled ||
+			! canMarkSeen ||
 			! isSeenPreferenceConfirmed ||
 			! post ||
 			post._state === 'pending' ||
@@ -815,7 +805,7 @@ export class FullPostView extends Component {
 										post.discussion?.comment_count > 0
 									}
 									renderMarkAsSeenButton={
-										this.props.isSeenEnabled ? this.renderMarkAsSeenButton : null
+										this.props.canMarkSeen ? this.renderMarkAsSeenButton : null
 									}
 									feedUrl={ feedUrl }
 									siteUrl={ post.site_URL }
@@ -1015,8 +1005,8 @@ export const withFullPostNavigation = ( WrappedComponent ) =>
 
 		const { data: previousPost } = usePost( previousPostKey );
 		const { data: nextPost } = usePost( nextPostKey );
-		const isSeenEnabled = useIsSeenEnabled( {
-			feedId: props.feedId,
+		const canMarkSeen = useCanMarkSeen( {
+			feedId: props.feedId ?? post?.feed_ID,
 			blogId: props.blogId ?? props.feed?.blog_ID ?? post?.site_ID,
 			post,
 		} );
@@ -1042,7 +1032,7 @@ export const withFullPostNavigation = ( WrappedComponent ) =>
 				nextPostKey={ nextPostKey }
 				post={ post }
 				referralPost={ referralPost }
-				isSeenEnabled={ isSeenEnabled }
+				canMarkSeen={ canMarkSeen }
 				isSeenPreferenceConfirmed={ isSeenPreferenceConfirmed }
 				commentsApiDisabled={ commentsApiDisabled }
 				previousPost={ previousPost }

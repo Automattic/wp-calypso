@@ -151,6 +151,7 @@ function AddEmailForwarder() {
 				id: 'email_address',
 				layout: {
 					type: 'row' as const,
+					alignment: 'start' as const,
 				},
 			},
 			'forwardingAddresses',

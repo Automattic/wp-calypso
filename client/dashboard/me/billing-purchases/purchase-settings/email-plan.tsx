@@ -8,12 +8,12 @@ import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { currencyDollar, envelope } from '@wordpress/icons';
 import { useAnalytics } from '../../../app/analytics';
-import { addMailboxRoute } from '../../../app/router/emails';
+import { addMailboxRoute, chooseEmailSolutionRoute } from '../../../app/router/emails';
 import { ActionList } from '../../../components/action-list';
 import OverviewCard from '../../../components/overview-card';
 import { IntervalLength, MailboxProvider, TitanPlanTier } from '../../../emails/types';
 import { isMonthlyEmailProduct } from '../../../emails/utils/is-monthly-email-product';
-import { getTitanTierFromSlug } from '../../../emails/utils/titan-tiers';
+import { getTitanTierFromSlug, isHighestTitanTier } from '../../../emails/utils/titan-tiers';
 import { isTitanMail } from '../../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
@@ -83,6 +83,50 @@ export function AddMailboxesActionItem( { purchase }: { purchase: Purchase } ) {
 			actions={
 				<Button variant="secondary" size="compact" onClick={ onAdd }>
 					{ __( 'Add' ) }
+				</Button>
+			}
+		/>
+	);
+}
+
+/**
+ * The highest email tier has nothing higher to upgrade to, so the generic
+ * upgrade action is hidden. In that case "Manage your plan" takes over as a
+ * neutral entry into the tier grid, where the user can still change their plan.
+ */
+export function isEmailPlanAtHighestTier( purchase: Purchase ): boolean {
+	return (
+		isEmailPlanManagementEnabled( purchase ) &&
+		isHighestTitanTier( getTitanTierFromSlug( purchase.product_slug ) )
+	);
+}
+
+function useManagePlanNavigation( purchase: Purchase ) {
+	const navigate = useNavigate();
+	const { recordTracksEvent } = useAnalytics();
+
+	return () => {
+		recordTracksEvent( 'calypso_purchases_email_manage_plan_click', {
+			product_slug: purchase.product_slug,
+		} );
+		navigate( {
+			to: chooseEmailSolutionRoute.to,
+			params: { domain: purchase.meta ?? '' },
+			search: { intent: 'upgrade' as const },
+		} );
+	};
+}
+
+export function ManageEmailPlanActionItem( { purchase }: { purchase: Purchase } ) {
+	const onManage = useManagePlanNavigation( purchase );
+
+	return (
+		<ActionList.ActionItem
+			title={ __( 'Manage your plan' ) }
+			description={ __( 'Review your plan and see other options.' ) }
+			actions={
+				<Button variant="secondary" size="compact" onClick={ onManage }>
+					{ __( 'Manage' ) }
 				</Button>
 			}
 		/>

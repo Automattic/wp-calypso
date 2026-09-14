@@ -221,8 +221,13 @@ test.describe(
 				const message = await clientEmail.getLastMatchingMessage( {
 					inboxId: testUser.inboxId,
 					sentTo: testUser.email,
-					subject: 'Activate',
 				} );
+
+				// Onboarding treatments send a different subject from the control group.
+				expect( [ `Activate ${ testUser.email }`, 'Verify your email.' ] ).toContain(
+					message.subject
+				);
+
 				const links = await clientEmail.getLinksFromMessage( message );
 				const activationLink = links.find( ( link ) => link.includes( 'activate' ) ) as string;
 				await page.goto( activationLink );

@@ -624,7 +624,8 @@ const UnifiedDesignPickerPreview = ( {
 						standaloneProceed
 						isOnboarding
 						isMarketplace={ selectedDesign?.is_externally_managed }
-						currentContext="plugin-details"
+						context="themes"
+						inModal
 						onProceed={ () => {
 							navigateToCheckout();
 							setShowEligibility( false );

@@ -12,6 +12,7 @@ import {
 	FEATURED_EVENT,
 	PRESSABLE_EXPANSION_OFFER_EVENT,
 	PRESSABLE_INTRO_OFFER_EVENT,
+	getAiMcpAnnouncement,
 } from './events';
 import NewTabLabel from './new-tab-label';
 import type { FeaturedEvent } from './events';
@@ -20,6 +21,7 @@ import type { RecordTracksEvent } from '../tiers/types';
 interface EventCardProps {
 	isEligibleForPressableIntroOffer?: boolean;
 	isEligibleForPressableExpansionOffer?: boolean;
+	aiMcpHref: string;
 	recordTracksEvent?: RecordTracksEvent;
 }
 
@@ -91,6 +93,7 @@ function SingleEventCard( {
 export default function EventCard( {
 	isEligibleForPressableIntroOffer,
 	isEligibleForPressableExpansionOffer,
+	aiMcpHref,
 	recordTracksEvent,
 }: EventCardProps ) {
 	const now = new Date();
@@ -98,6 +101,7 @@ export default function EventCard( {
 		FEATURED_EVENT,
 		isEligibleForPressableIntroOffer ? PRESSABLE_INTRO_OFFER_EVENT : null,
 		isEligibleForPressableExpansionOffer ? PRESSABLE_EXPANSION_OFFER_EVENT : null,
+		getAiMcpAnnouncement( aiMcpHref ),
 	].filter( ( event ): event is FeaturedEvent => !! event && now < new Date( event.endsAt ) );
 
 	if ( ! events.length ) {

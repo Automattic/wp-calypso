@@ -20,7 +20,6 @@ import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datet
 import { isGSuiteProductSlug } from './gsuite';
 import { redirectToDashboardLink, wpcomLink } from './link';
 import { getStudioCodeAiCreditsTitle } from './studio-code-ai-credits';
-import { encodeProductForUrl } from './wpcom-checkout';
 import type { Product, Purchase } from '@automattic/api-core';
 
 export const CANCEL_FLOW_TYPE = {
@@ -202,6 +201,21 @@ export function isCloseToExpiration( purchase: Purchase ): boolean {
 			? SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD
 			: SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD * 3;
 	return isWithinNext( new Date( purchase.expiry_date ), threshold, 'days' );
+}
+
+// An early renewal pushes expiry_date past the trial's end_date while
+// is_within_period remains true; comparing the two dates catches that.
+// Both are day-granular UTC from the same backend arithmetic, so they
+// compare exactly for an un-renewed trial.
+export function isFreeTrialEndingOnExpiryDate( purchase: Purchase ): boolean {
+	const offer = purchase.introductory_offer;
+	if ( ! offer?.is_within_period || offer.cost_per_interval !== 0 ) {
+		return false;
+	}
+	if ( ! purchase.expiry_date || ! offer.end_date ) {
+		return false;
+	}
+	return ! isAfter( parseISO( purchase.expiry_date ), parseISO( offer.end_date ) );
 }
 
 export function creditCardExpiresBeforeSubscription( purchase: Purchase ): boolean {
@@ -657,27 +671,8 @@ function getServicePathForCheckoutFromPurchase( purchase: Purchase ): string {
 	return '';
 }
 
-function getCheckoutProductSlugFromPurchase( purchase: Purchase ): string {
-	const productSlug = encodeProductForUrl( purchase.product_slug );
-	const productDomain = purchase.meta ? encodeProductForUrl( purchase.meta ) : undefined;
-	const checkoutProductSlug = productDomain ? `${ productSlug }:${ productDomain }` : productSlug;
-	return checkoutProductSlug;
-}
-
-function getCheckoutSiteSlugForPurchase( purchase: Purchase ): string {
-	// Neither Akismet nor A4A holding sites should use a site slug
-	if ( isAkismetProduct( purchase ) || isA4AHoldingSitePurchase( purchase ) ) {
-		return '';
-	}
-	return purchase.site_slug || '';
-}
-
-export function getRenewalUrlFromPurchase(
-	purchase: Purchase,
-	checkoutSiteSlugForUrl?: string,
-	backUrl?: string
-): string {
-	return getRenewUrlForPurchases( [ purchase ], checkoutSiteSlugForUrl, backUrl );
+export function getRenewalUrlFromPurchase( purchase: Purchase, backUrl?: string ): string {
+	return getRenewUrlForPurchases( [ purchase ], backUrl );
 }
 
 /**
@@ -687,29 +682,21 @@ export function getRenewalUrlFromPurchase(
  */
 export function getRenewUrlForPurchases(
 	purchases: Purchase[],
-	checkoutSiteSlugForUrl?: string,
 	backUrl: string = redirectToDashboardLink()
 ): string {
 	if ( purchases.length < 1 ) {
 		throw new Error( 'Could not find product slug or purchase id for renewal.' );
 	}
-	const firstPurchase = purchases[ 0 ];
-	const checkoutProductSlug = purchases
-		.map( ( purchase ) => getCheckoutProductSlugFromPurchase( purchase ) )
-		.join( ',' );
-	const checkoutSiteSlug =
-		checkoutSiteSlugForUrl || getCheckoutSiteSlugForPurchase( firstPurchase );
-	const servicePath = getServicePathForCheckoutFromPurchase( firstPurchase );
 	const purchaseIds = purchases.map( ( purchase ) => purchase.ID ).join( ',' );
-	return addQueryArgs(
-		wpcomLink(
-			`/checkout/${ servicePath }${ checkoutProductSlug }/renew/${ purchaseIds }/${ checkoutSiteSlug }`
-		),
-		{
-			cancel_to: backUrl,
-			redirect_to: backUrl,
-		}
-	);
+	// Siteless Akismet and Marketplace renewals keep the service in the path
+	// because the route is what selects the service-specific checkout
+	// experience. Everything else renews from the subscription ID alone.
+	const servicePath = getServicePathForCheckoutFromPurchase( purchases[ 0 ] );
+
+	return addQueryArgs( wpcomLink( `/checkout/${ servicePath }renew/${ purchaseIds }` ), {
+		cancel_to: backUrl,
+		redirect_to: backUrl,
+	} );
 }
 
 /**

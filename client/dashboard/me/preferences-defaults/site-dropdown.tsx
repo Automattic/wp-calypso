@@ -5,7 +5,9 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
+import { sprintf, __ } from '@wordpress/i18n';
 import { check } from '@wordpress/icons';
+import { useMemo } from 'react';
 import SiteIcon from '../../components/site-icon';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteDisplayUrl } from '../../utils/site-url';
@@ -25,7 +27,6 @@ interface PreferencesLoginSiteDropdownProps {
 	label?: string;
 	hideLabelFromVision?: boolean;
 	isLoading?: boolean;
-	useSiteUrlAsLabel?: boolean;
 }
 
 export default function PreferencesLoginSiteDropdown( {
@@ -35,14 +36,33 @@ export default function PreferencesLoginSiteDropdown( {
 	label = '',
 	hideLabelFromVision = false,
 	isLoading = false,
-	useSiteUrlAsLabel = false,
 }: PreferencesLoginSiteDropdownProps ) {
-	// Prepare options for ComboboxControl
-	const options: SiteOption[] = sites.map( ( site: Site ) => ( {
-		value: site.ID.toString(),
-		label: useSiteUrlAsLabel ? getSiteDisplayUrl( site ) : getSiteDisplayName( site ),
-		site,
-	} ) );
+	// ComboboxControl only ever filters on `option.label`, so the label has to carry both
+	// the site's name and its URL for either to be searchable. Keep it independent of the
+	// search term: the control tracks the highlighted option by reference, so rebuilding
+	// the options as you type makes it lose your place.
+	const options: SiteOption[] = useMemo(
+		() =>
+			sites.map( ( site: Site ) => {
+				const name = getSiteDisplayName( site );
+				const url = getSiteDisplayUrl( site );
+
+				return {
+					value: site.ID.toString(),
+					label:
+						name === url
+							? name
+							: sprintf(
+									/* translators: 1: site title, 2: site URL, e.g. "My Site — example.com" */
+									__( '%1$s — %2$s' ),
+									name,
+									url
+							  ),
+					site,
+				};
+			} ),
+		[ sites ]
+	);
 
 	// Custom render function for each option
 	const renderItem = ( { item }: { item: { value: string; label: string } } ) => {
@@ -61,7 +81,7 @@ export default function PreferencesLoginSiteDropdown( {
 					<VStack spacing={ 0 }>
 						{ /**using inherit to allow the text to be styled as white when hovering, otherwise it won't be readable */ }
 						<Text as="div" weight={ 500 } size={ 14 } lineHeight={ 1.5 } color="inherit">
-							{ item.label }
+							{ getSiteDisplayName( siteOption.site ) }
 						</Text>
 						<Text as="div" size={ 12 } weight={ 300 } lineHeight={ 1.2 } color="inherit">
 							{ getSiteDisplayUrl( siteOption.site ) }
@@ -81,8 +101,6 @@ export default function PreferencesLoginSiteDropdown( {
 
 	return (
 		<ComboboxControl
-			__next40pxDefaultSize
-			__nextHasNoMarginBottom
 			className="dashboard-preferences__login-site-dropdown"
 			label={ hideLabelFromVision ? '' : label }
 			value={ value }

@@ -31,7 +31,7 @@ import {
 	useFileBrowserContext,
 } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { useAnalytics } from '../../app/analytics';
-import { useLocale } from '../../app/locale';
+import { useIntlLocale, useLocale } from '../../app/locale';
 import { ButtonStack } from '../../components/button-stack';
 import { CardDivider } from '../../components/card';
 import Environment, { EnvironmentType } from '../../components/environment';
@@ -303,7 +303,7 @@ function StagingSiteSyncModalInner( {
 		[ updateFilesAndFoldersCheckState ]
 	);
 
-	const locale = useLocale();
+	const locale = useIntlLocale();
 	const displayBackupDate = lastKnownBackupAttempt
 		? new Intl.DateTimeFormat( locale, { dateStyle: 'medium', timeStyle: 'short' } ).format(
 				new Date( lastKnownBackupAttempt.activityTs )

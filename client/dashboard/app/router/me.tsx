@@ -138,10 +138,6 @@ export const preferencesIndexRoute = createRoute( {
 	getParentRoute: () => preferencesRoute,
 	path: '/',
 	loader: async ( { context } ) => {
-		// The Reader preferences section is rollout-gated on teams, but it's
-		// optional. Prefetch (never require) it so a slow or failing /read/teams
-		// request can't block access to the rest of the preferences index, and
-		// skip it entirely for variants without Reader (e.g. CIAB).
 		if ( context.config.supports.reader ) {
 			queryClient.prefetchQuery( readTeamsQuery() );
 		}
@@ -494,8 +490,12 @@ export const cancelPurchaseRoute = createRoute( {
 		await Promise.all( [
 			...( hasQueryableSite( purchase )
 				? [
-						queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ),
-						queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ),
+						// `hasQueryableSite` only rules out holding sites. The owner can also
+						// have been removed from a real site — a disconnected Jetpack site, or a
+						// deleted one — and those requests 403. Load the flow without this data
+						// rather than failing the whole route (SHILL-1442).
+						queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ).catch( () => {} ),
+						queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ).catch( () => {} ),
 				  ]
 				: [] ),
 			queryClient.ensureQueryData( productsQuery() ),
@@ -1079,9 +1079,7 @@ export const preferencesReaderRoute = createRoute( {
 	getParentRoute: () => preferencesRoute,
 	path: 'reader',
 	beforeLoad: async () => {
-		// Treat a failed teams request as "not available" rather than letting it
-		// reject the route: a deep link here while /read/teams is down should fall
-		// back to the preferences index, not render an error page.
+		// A failed teams request means "not available", not an error page.
 		let teams;
 		try {
 			( { teams } = await queryClient.ensureQueryData( readTeamsQuery() ) );

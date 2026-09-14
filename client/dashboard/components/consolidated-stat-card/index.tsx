@@ -10,7 +10,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
 import { useState } from 'react';
 import { Card, CardBody } from '../card';
-import { TextSkeleton } from '../text-skeleton';
+import { TextBlur } from '../text-blur';
 import type { ReactNode } from 'react';
 
 import './style.scss';
@@ -40,7 +40,9 @@ export default function ConsolidatedStatCard( {
 			<CardBody>
 				<VStack spacing={ 2 }>
 					<Heading level={ 2 } size={ 20 } weight={ 500 }>
-						{ isLoading ? <TextSkeleton length={ 8 } /> : value }
+						<TextBlur isBlurred={ isLoading } length={ 8 }>
+							{ value }
+						</TextBlur>
 					</Heading>
 					<HStack justify="flex-start" spacing={ 1 } expanded={ false }>
 						<Text variant="muted">{ footerText }</Text>

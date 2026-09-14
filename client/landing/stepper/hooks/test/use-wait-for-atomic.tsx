@@ -6,15 +6,18 @@ import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { useWaitForAtomic, type FailureInfo } from '../use-wait-for-atomic';
 
 const mockReduxDispatch = jest.fn();
+const mockRequestLatestAtomicTransfer = jest.fn();
+const mockGetSiteLatestAtomicTransfer = jest.fn();
+const mockGetSiteLatestAtomicTransferError = jest.fn();
 
 jest.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockReduxDispatch,
 } ) );
 jest.mock( '@wordpress/data', () => ( {
-	useDispatch: () => ( { requestLatestAtomicTransfer: jest.fn() } ),
+	useDispatch: () => ( { requestLatestAtomicTransfer: mockRequestLatestAtomicTransfer } ),
 	useSelect: () => ( {
-		getSiteLatestAtomicTransfer: jest.fn(),
-		getSiteLatestAtomicTransferError: jest.fn(),
+		getSiteLatestAtomicTransfer: mockGetSiteLatestAtomicTransfer,
+		getSiteLatestAtomicTransferError: mockGetSiteLatestAtomicTransferError,
 	} ),
 } ) );
 jest.mock( 'react-router-dom', () => ( {
@@ -49,10 +52,46 @@ describe( 'useWaitForAtomic', () => {
 	beforeEach( () => {
 		jest.useFakeTimers();
 		mockReduxDispatch.mockReset();
+		mockRequestLatestAtomicTransfer.mockReset();
+		mockGetSiteLatestAtomicTransfer.mockReset();
+		mockGetSiteLatestAtomicTransferError.mockReset();
 	} );
 
 	afterEach( () => {
 		jest.useRealTimers();
+	} );
+
+	describe( 'waitForTransfer', () => {
+		it( 'reports each polled transfer status, with the transfer’s own start', async () => {
+			mockGetSiteLatestAtomicTransfer
+				.mockReturnValueOnce( {
+					atomic_transfer_id: 1,
+					status: 'active',
+					created_at: '2026-08-12 13:11:10',
+				} )
+				.mockReturnValueOnce( {
+					atomic_transfer_id: 1,
+					status: 'completed',
+					created_at: '2026-08-12 13:11:10',
+				} );
+			const onTransferStatusChange = jest.fn();
+
+			const { result } = renderWaitForAtomic();
+			const promise = result.current.waitForTransfer( { onTransferStatusChange } );
+			await jest.advanceTimersByTimeAsync( 6000 );
+
+			await expect( promise ).resolves.toBeUndefined();
+			expect( onTransferStatusChange ).toHaveBeenNthCalledWith(
+				1,
+				'active',
+				'2026-08-12 13:11:10'
+			);
+			expect( onTransferStatusChange ).toHaveBeenNthCalledWith(
+				2,
+				'completed',
+				'2026-08-12 13:11:10'
+			);
+		} );
 	} );
 
 	describe( 'waitForFeature', () => {

@@ -14,7 +14,7 @@
 	justify-content: center;
 }
 
-.badge.shopping-cart__button-badge {
+.shopping-cart__button-badge {
 	display: flex;
 	@include heading-small;
 	width: 18px;
@@ -25,8 +25,7 @@
 	position: absolute;
 	margin-block-start: -12px;
 	margin-inline-start: 26px;
-
-	&.is-hidden {
-		visibility: hidden;
-	}
+	background: var(--color-error);
+	border-radius: 50%;
+	color: var(--color-text-inverted);
 }

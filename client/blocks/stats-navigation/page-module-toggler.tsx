@@ -2,20 +2,64 @@ import { Popover } from '@automattic/components';
 import { FormToggle } from '@wordpress/components';
 import { Icon, cog } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback, useMemo } from 'react';
+import { useId, useState, useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'calypso/state';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { updateModuleToggles } from 'calypso/state/stats/module-toggles/actions';
 import './page-module-toggler.scss';
 import { AVAILABLE_PAGE_MODULES, ModuleToggleItem } from './constants';
+import type { JSX } from 'react';
+
+export type PageModulesMenuItem = {
+	key: string;
+	label: string;
+	icon: JSX.Element;
+	// Shown under the label, and announced as the button's description rather than its name.
+	description?: string;
+	onSelect: () => void;
+};
 
 type PageModuleTogglerProps = {
 	moduleToggles: { [ name: string ]: boolean };
 	customToggleIcon?: React.ReactNode;
 	siteId: number;
 	selectedItem: string;
+	// Actions listed under the toggles in a section of their own. Selecting one closes the menu.
+	menuItems?: PageModulesMenuItem[];
 };
+
+function MenuItemButton( {
+	item,
+	onSelect,
+}: {
+	item: PageModulesMenuItem;
+	onSelect: ( item: PageModulesMenuItem ) => void;
+} ) {
+	const id = useId();
+	const labelId = `${ id }-label`;
+	const descriptionId = `${ id }-description`;
+
+	return (
+		<button
+			type="button"
+			className="page-modules-settings-menu-item"
+			aria-labelledby={ labelId }
+			aria-describedby={ item.description ? descriptionId : undefined }
+			onClick={ () => onSelect( item ) }
+		>
+			<Icon className="gridicon" icon={ item.icon } />
+			<span className="page-modules-settings-menu-item__text">
+				<span id={ labelId }>{ item.label }</span>
+				{ item.description && (
+					<span id={ descriptionId } className="page-modules-settings-menu-item__description">
+						{ item.description }
+					</span>
+				) }
+			</span>
+		</button>
+	);
+}
 
 // Helper to expose logic for default module listing.
 export function getAvailablePageModules( selectedItem: string, hasVideoPress: boolean ) {
@@ -39,6 +83,7 @@ export default function PageModuleToggler( {
 	moduleToggles,
 	siteId,
 	customToggleIcon = <Icon className="gridicon" icon={ cog } />,
+	menuItems = [],
 }: PageModuleTogglerProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -62,6 +107,14 @@ export default function PageModuleToggler( {
 		setIsSettingsMenuVisible( ( isSettingsMenuVisible ) => {
 			return ! isSettingsMenuVisible;
 		} );
+	};
+
+	const selectMenuItem = ( item: PageModulesMenuItem ) => {
+		// Hand focus back to the trigger before the menu unmounts, so whatever the action opens
+		// finds it as the element to return to.
+		settingsActionElement?.focus();
+		setIsSettingsMenuVisible( false );
+		item.onSelect();
 	};
 
 	const onToggleModule = ( module: string, isShow: boolean ) => {
@@ -112,6 +165,13 @@ export default function PageModuleToggler( {
 						);
 					} ) }
 				</div>
+				{ menuItems.length > 0 && (
+					<div className="page-modules-settings-menu">
+						{ menuItems.map( ( item ) => (
+							<MenuItemButton key={ item.key } item={ item } onSelect={ selectMenuItem } />
+						) ) }
+					</div>
+				) }
 			</Popover>
 		</div>
 	);

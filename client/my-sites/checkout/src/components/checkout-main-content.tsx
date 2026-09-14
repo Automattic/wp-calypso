@@ -50,7 +50,10 @@ import {
 	type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
+import { useBlackboxProtection } from 'calypso/blocks/login/use-blackbox-protection';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Loading from 'calypso/components/loading';
+import { ONBOARDING_STEPPER_TOTAL } from 'calypso/landing/stepper/declarative-flow/flows/onboarding/step-counter-config';
 import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress';
 import { useShowOnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
@@ -114,6 +117,7 @@ import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-
 import { LeaveCheckoutModal, useCheckoutLeaveModal } from './leave-checkout-modal';
 import { MobileCheckoutStickySummary } from './mobile-checkout-sticky-summary';
 import { mobileCheckoutStickySummaryRadioDotStyles } from './mobile-checkout-sticky-summary-styles';
+import { NonRenewableDomain, SearchForNewDomainButton } from './non-renewable-domain';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import { PaymentMethodFilter } from './payment-methods-filter';
 import { getRefundWindowCopy } from './refund-policies';
@@ -125,6 +129,7 @@ import {
 } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
+import { LogInToCorrectAccountButton, WrongAccountRenewal } from './wrong-account-renewal';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type {
 	CheckoutPageErrorCallback,
@@ -245,11 +250,19 @@ const ContactFormTitle = () => {
 		if ( isMobileCheckoutStickySummary ) {
 			return <>{ String( translate( 'Contact information' ) ) }</>;
 		}
+
+		const titleText =
+			! isActive && isComplete
+				? translate( 'Contact information' )
+				: translate( 'Enter your contact information' );
+
 		return (
 			<>
-				{ ! isActive && isComplete
-					? String( translate( 'Contact information' ) )
-					: String( translate( 'Enter your contact information' ) ) }
+				{ titleText }{ ' ' }
+				<InlineSupportLink
+					supportContext="domain-contact-information-requirements"
+					showIcon={ false }
+				/>
 			</>
 		);
 	}
@@ -381,9 +394,11 @@ function CheckoutSidebarNudge( {
 function PortaledCheckoutFormSubmit( {
 	validateForm,
 	submitButtonHeader,
+	disableSubmitButton,
 }: {
 	validateForm?: () => Promise< boolean >;
 	submitButtonHeader?: ReactNode;
+	disableSubmitButton?: boolean;
 } ) {
 	const { slotEl } = useSubmitButtonSlot();
 	if ( ! slotEl ) {
@@ -394,6 +409,7 @@ function PortaledCheckoutFormSubmit( {
 			validateForm={ validateForm }
 			continueToNextIncompleteStep
 			submitButtonHeader={ submitButtonHeader }
+			disableSubmitButton={ disableSubmitButton }
 		/>,
 		slotEl
 	);
@@ -416,6 +432,8 @@ export default function CheckoutMainContent( {
 	siteUrl,
 	isRemovingProductFromCart,
 	areThereErrors,
+	isWrongAccountRenewal,
+	isNonRenewableDomain,
 	isInitialCartLoading,
 	customizedPreviousPath,
 	loadingHeader,
@@ -439,6 +457,8 @@ export default function CheckoutMainContent( {
 	siteUrl: string | undefined;
 	isRemovingProductFromCart: boolean;
 	areThereErrors: boolean;
+	isWrongAccountRenewal: boolean;
+	isNonRenewableDomain: boolean;
 	isInitialCartLoading: boolean;
 	customizedPreviousPath?: string;
 	loadingHeader?: ReactNode;
@@ -458,6 +478,10 @@ export default function CheckoutMainContent( {
 	} = useShoppingCart( cartKey );
 
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteUrl ?? '' } );
+	const blackbox = useBlackboxProtection( {
+		feature: 'blackbox-userless-checkout',
+		suspended: ! isLoggedOutCart,
+	} );
 
 	// Shared sidebar slot for the active payment-method submit button. We render
 	// <CheckoutFormSubmit> inside <CheckoutStepGroup> so it keeps full step-state
@@ -486,15 +510,18 @@ export default function CheckoutMainContent( {
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const stepsCurrent = Number( searchParams.get( 'steps_current' ) );
 	const stepsTotal = Number( searchParams.get( 'steps_total' ) );
-	const stepCounter =
-		isMobileViewport &&
+	const hasStepCount =
 		Number.isInteger( stepsCurrent ) &&
 		stepsCurrent > 0 &&
 		Number.isInteger( stepsTotal ) &&
 		stepsTotal > 0 &&
-		stepsCurrent <= stepsTotal
-			? { current: stepsCurrent, total: stepsTotal }
-			: null;
+		stepsCurrent <= stepsTotal;
+	const stepCounter =
+		isMobileViewport && hasStepCount ? { current: stepsCurrent, total: stepsTotal } : null;
+	// The flow reports how many steps its visit had. Onboarding sends one fewer when the plan
+	// arrived preselected, so the grid was never among them.
+	const shouldHidePlansStep =
+		isOnboardingFlowCheckout && hasStepCount && stepsTotal < ONBOARDING_STEPPER_TOTAL;
 	const selectedSiteData = useSelector( getSelectedSite );
 	const wpcomDomain = useSelector( ( state ) =>
 		getWpComDomainBySiteId( state, selectedSiteData?.ID )
@@ -669,6 +696,45 @@ export default function CheckoutMainContent( {
 		);
 	}
 
+	// This must be checked before the empty cart page below: the renewal was
+	// rejected by the cart, so the cart is also empty, but "you have no items in
+	// your cart" tells the customer nothing they can act on.
+	if ( isWrongAccountRenewal ) {
+		debug( 'rendering wrong account renewal page' );
+		return (
+			<WPCheckoutWrapper>
+				<WPCheckoutSidebarContent></WPCheckoutSidebarContent>
+				<WPCheckoutMainContent isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }>
+					<PerformanceTrackerStop />
+					<WPCheckoutTitle className="checkout__main-title">
+						{ translate( 'Checkout' ) }
+					</WPCheckoutTitle>
+					<WrongAccountRenewal />
+					<CheckoutFormSubmit submitButton={ <LogInToCorrectAccountButton /> } />
+				</WPCheckoutMainContent>
+			</WPCheckoutWrapper>
+		);
+	}
+
+	// Same reasoning as above: the domain renewal was rejected, so the cart is
+	// empty, and "you have no items in your cart" explains none of it.
+	if ( isNonRenewableDomain ) {
+		debug( 'rendering non-renewable domain page' );
+		return (
+			<WPCheckoutWrapper>
+				<WPCheckoutSidebarContent></WPCheckoutSidebarContent>
+				<WPCheckoutMainContent isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }>
+					<PerformanceTrackerStop />
+					<WPCheckoutTitle className="checkout__main-title">
+						{ translate( 'Checkout' ) }
+					</WPCheckoutTitle>
+					<NonRenewableDomain />
+					<CheckoutFormSubmit submitButton={ <SearchForNewDomainButton /> } />
+				</WPCheckoutMainContent>
+			</WPCheckoutWrapper>
+		);
+	}
+
 	if (
 		shouldShowEmptyCartPage( {
 			responseCart,
@@ -822,7 +888,22 @@ export default function CheckoutMainContent( {
 	// money-back guarantee is surfaced up in the payment step instead (see
 	// paymentStepRefundCopy) — reassurance at the moment of entering card
 	// details — so the footer slot below the CTA stays empty.
-	const portaledSubmitButtonHeader = isLargeViewport ? undefined : <SubmitButtonHeader />;
+	const blackboxChallengeHeader =
+		isLoggedOutCart && blackbox.challenge ? (
+			<BlackboxChallengeWrapper>{ blackbox.challenge }</BlackboxChallengeWrapper>
+		) : null;
+	const portaledSubmitButtonHeader = (
+		<>
+			{ isLargeViewport ? null : <SubmitButtonHeader /> }
+			{ blackboxChallengeHeader }
+		</>
+	);
+	const mobileSubmitButtonHeader = (
+		<>
+			<SubmitButtonHeader />
+			{ blackboxChallengeHeader }
+		</>
+	);
 	// Refund copy, no icon, that continues the secure-encryption notice at payment
 	// entry. getRefundWindowCopy is null when no refund window applies; mirror
 	// CheckoutMoneyBackGuarantee's all-domains guard.
@@ -1083,12 +1164,14 @@ export default function CheckoutMainContent( {
 						<PortaledCheckoutFormSubmit
 							validateForm={ validateForm }
 							submitButtonHeader={ portaledSubmitButtonHeader }
+							disableSubmitButton={ blackbox.isSubmitBlocked }
 						/>
 					) : (
 						<CheckoutFormSubmit
 							validateForm={ validateForm }
-							submitButtonHeader={ <SubmitButtonHeader /> }
+							submitButtonHeader={ mobileSubmitButtonHeader }
 							submitButtonFooter={ mobileSubmitButtonFooter }
+							disableSubmitButton={ blackbox.isSubmitBlocked }
 						/>
 					) }
 				</CheckoutStepGroup>
@@ -1136,6 +1219,7 @@ export default function CheckoutMainContent( {
 						showProgress ? (
 							<OnboardingProgress
 								currentStep="checkout"
+								shouldHidePlansStep={ shouldHidePlansStep }
 								isStepSelectDisabled={ leaveModalProps.isLeaveDisabled }
 								onStepSelect={ ( step ) =>
 									handleProgressStepSelect( step, {
@@ -2378,6 +2462,12 @@ function CheckoutTermsAndCheckboxes( {
 		</CheckoutTermsAndCheckboxesWrapper>
 	);
 }
+
+const BlackboxChallengeWrapper = styled.div`
+	.login__form-blackbox-challenge.has-visible-challenge {
+		margin-block-end: 8px;
+	}
+`;
 
 function SubmitButtonHeader() {
 	const translate = useTranslate();

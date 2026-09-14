@@ -753,10 +753,12 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 	);
 }
 
-function ReceiptDetails( { transaction }: { transaction: BillingTransaction } ) {
+export function ReceiptDetails( { transaction }: { transaction: BillingTransaction } ) {
 	// Pre-load the billing details textarea and hidden div with the name and email if available.
 	const initialDetailsText =
-		transaction.cc_num !== 'XXXX' ? transaction.cc_name + '\n' + transaction.cc_email : '';
+		transaction.cc_num !== 'XXXX'
+			? [ transaction.cc_name, transaction.cc_email ].filter( Boolean ).join( '\n' )
+			: '';
 	// When the content of the text area is empty, hide the "Billing Details" label for printing.
 	const [ hideDetailsOnPrint, setHideDetailsOnPrint ] = useState(
 		initialDetailsText.trim().length === 0
@@ -773,16 +775,12 @@ function ReceiptDetails( { transaction }: { transaction: BillingTransaction } ) 
 		[ setHideDetailsOnPrint ]
 	);
 
-	if ( transaction.cc_num !== 'XXXX' && ! transaction.cc_name && ! transaction.cc_email ) {
-		return null;
-	}
-
 	return (
 		<li className="billing-history__billing-details">
 			<ReceiptLabels hideDetailsOnPrint={ hideDetailsOnPrint } />
 			<TextareaAutosize
 				className="billing-history__billing-details-editable receipt__no-print"
-				aria-labelledby="billing-history__billing-details-description"
+				aria-describedby="billing-history__billing-details-description"
 				id="billing-history__billing-details-textarea"
 				rows="1"
 				value={ billingDetailsText }

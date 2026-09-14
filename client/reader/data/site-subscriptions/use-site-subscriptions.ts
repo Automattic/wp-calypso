@@ -13,23 +13,28 @@ interface UseSiteSubscriptionsOptions {
 	enabled?: boolean;
 }
 
-export const useSiteSubscriptions = ( {
-	fetchAllPages = false,
-	enabled = true,
-}: UseSiteSubscriptionsOptions = {} ) => {
+interface UseSiteSubscriptionsQueryOptions {
+	refetchOnMount?: ReturnType< typeof siteSubscriptionsQuery >[ 'refetchOnMount' ];
+}
+
+export const useSiteSubscriptions = (
+	{ fetchAllPages = false, enabled = true }: UseSiteSubscriptionsOptions = {},
+	queryOptions?: UseSiteSubscriptionsQueryOptions
+) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isEnabled = enabled && isLoggedIn;
 	const query = useInfiniteQuery( {
 		...siteSubscriptionsQuery(),
+		...queryOptions,
 		enabled: isEnabled,
 	} );
-	const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = query;
+	const { data, fetchNextPage, hasNextPage, isFetching } = query;
 
 	useEffect( () => {
-		if ( fetchAllPages && isEnabled && hasNextPage && ! isFetchingNextPage ) {
+		if ( fetchAllPages && isEnabled && hasNextPage && ! isFetching ) {
 			fetchNextPage( { cancelRefetch: false } );
 		}
-	}, [ fetchAllPages, isEnabled, hasNextPage, isFetchingNextPage, fetchNextPage ] );
+	}, [ fetchAllPages, isEnabled, hasNextPage, isFetching, fetchNextPage ] );
 
 	return Object.assign( {}, query, {
 		subscriptions: getSiteSubscriptionsFromData( data ),

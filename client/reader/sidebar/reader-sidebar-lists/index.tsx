@@ -9,6 +9,21 @@ import { useIsSeenPostsUiEnabled } from 'calypso/reader/data/seen-posts';
 import MoreMenuActions from '../more-menu-actions';
 import ReaderSidebarListsList from './list';
 
+const RECOMMENDED_BLOGS_SLUG = 'recommended-blogs';
+
+// The backend auto-creates a Recommended Blogs list for every user, so a brand
+// new account would otherwise see it as its only list. Hide it until the user
+// has either recommended something or created another list.
+function hideEmptyRecommendedBlogsPlaceholder( lists?: ReadList[] ): ReadList[] | undefined {
+	if ( lists?.length !== 1 ) {
+		return lists;
+	}
+	const [ list ] = lists;
+	const isEmptyOwnRecommendedBlogs =
+		list.slug === RECOMMENDED_BLOGS_SLUG && list.is_owner && ! list.feeds?.length;
+	return isEmptyOwnRecommendedBlogs ? [] : lists;
+}
+
 interface ReaderSidebarListsProps {
 	lists?: ReadList[];
 	path: string;
@@ -19,7 +34,7 @@ interface ReaderSidebarListsProps {
 }
 
 const ReaderSidebarLists = ( {
-	lists,
+	lists: allLists,
 	isOpen,
 	onClick,
 	path,
@@ -27,6 +42,7 @@ const ReaderSidebarLists = ( {
 }: ReaderSidebarListsProps ): JSX.Element => {
 	const translate = useTranslate();
 	const isSeenEnabled = useIsSeenPostsUiEnabled();
+	const lists = hideEmptyRecommendedBlogsPlaceholder( allLists );
 	const isChildSelected = lists?.some( ( list ) =>
 		path.startsWith( `/reader/list/${ list.owner }/${ list.slug }` )
 	);

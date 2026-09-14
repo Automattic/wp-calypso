@@ -245,4 +245,35 @@ describe( 'ProductsList', () => {
 
 		expect( screen.getByText( 'Hidden from subscribers' ) ).toBeInTheDocument();
 	} );
+
+	// Without it, checkout drops the user on the generic thank-you page instead of
+	// the payment plans they were trying to add.
+	test( 'sends the user back to the payments page after upgrading', () => {
+		window.history.pushState( {}, '', '/earn/payments/example.wordpress.com' );
+		renderWithProvider( <ProductsList />, {
+			initialState: {
+				sites: {
+					items: { 1: { ID: 1, URL: 'https://example.wordpress.com' } },
+					// A loaded feature list without any of the Stripe-backed features is
+					// what puts the site behind the upsell.
+					features: { 1: { data: { active: [ 'wordads' ] } } },
+				},
+				ui: { selectedSiteId: 1 },
+				memberships: { productList: { items: {} }, settings: {} },
+				siteSettings: { items: {}, requesting: { 1: true }, saveRequests: {} },
+			},
+			reducers: {
+				ui: uiReducer,
+				memberships: membershipsReducer,
+				siteSettings: siteSettingsReducer,
+			},
+		} );
+
+		const url = new URL(
+			screen.getByRole( 'link', { name: 'Upgrade' } ).getAttribute( 'href' ),
+			window.location.origin
+		);
+		expect( url.pathname ).toBe( '/plans/example.wordpress.com' );
+		expect( url.searchParams.get( 'redirect_to' ) ).toBe( '/earn/payments/example.wordpress.com' );
+	} );
 } );

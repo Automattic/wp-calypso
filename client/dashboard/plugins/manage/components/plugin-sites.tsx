@@ -1,5 +1,6 @@
 import { __experimentalVStack as VStack, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
+import { decodeEntities } from '@wordpress/html-entities';
 import { __, sprintf } from '@wordpress/i18n';
 import { Card, CardBody, CardHeader } from '../../../components/card';
 import { Notice } from '../../../components/notice';
@@ -40,15 +41,18 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 	};
 
 	const title = () => {
-		if ( ! isLoadingPlugin && ! plugin ) {
-			return __( 'Plugin not found' );
-		}
+		const text = () => {
+			if ( plugin ) {
+				return decodeEntities( plugin.name );
+			}
 
-		return plugin ? (
-			// @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`.
-			<Text dangerouslySetInnerHTML={ { __html: plugin.name } } />
-		) : (
-			<TextBlur>{ selectedPluginSlug }</TextBlur>
+			return isLoadingPlugin ? selectedPluginSlug : __( 'Plugin not found' );
+		};
+
+		return (
+			<TextBlur isBlurred={ ! plugin && isLoadingPlugin }>
+				<Text>{ text() }</Text>
+			</TextBlur>
 		);
 	};
 

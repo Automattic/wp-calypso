@@ -229,13 +229,17 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertToolMessagesToComponents( {
-			messages: [ message ],
-			getChatComponent,
-		} );
+		// The switch is read once per page load, so load the converter under it.
+		jest.isolateModules( () => {
+			const { default: convertUnderSwitch } = jest.requireActual<
+				typeof import('../convert-tool-messages-to-components')
+			>( '../convert-tool-messages-to-components' );
 
-		expect( getChatComponent ).toHaveBeenCalledWith( 'color-picker' );
-		expect( result[ 0 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
+			const result = convertUnderSwitch( { messages: [ message ], getChatComponent } );
+
+			expect( getChatComponent ).toHaveBeenCalledWith( 'color-picker' );
+			expect( result[ 0 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
+		} );
 	} );
 
 	it( 'renders legacy Big Sky show-component messages during migration', () => {
@@ -366,22 +370,6 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 1 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
 		// Message actions are resolved before conversion and must survive it.
 		expect( result[ 0 ].actions ).toEqual( actions );
-	} );
-
-	it( 'renders the start-over notice for the legacy start-over tool', () => {
-		const message = createToolMessage( 'big_sky__client_assistants', {
-			assistantId: 'big-sky-site-admin',
-		} );
-
-		const result = convertToolMessagesToComponents( {
-			messages: [ message ],
-		} );
-
-		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].content[ 0 ] ).toEqual( {
-			type: 'text',
-			text: 'To start over, please send your request again.',
-		} );
 	} );
 
 	it.each( [

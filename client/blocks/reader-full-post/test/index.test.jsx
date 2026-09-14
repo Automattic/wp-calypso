@@ -23,7 +23,7 @@ jest.mock( 'calypso/reader/stream/use-stream-post-key-selection', () => ( {
 
 // The seen gate reads React Query caches these tests don't provide.
 jest.mock( 'calypso/reader/data/seen-posts', () => ( {
-	useIsSeenEnabled: jest.fn( () => false ),
+	useCanMarkSeen: jest.fn( () => false ),
 	useSeenPostsPreferenceConfirmed: jest.fn( () => false ),
 	withSeenPostsMutations: ( WrappedComponent ) => WrappedComponent,
 } ) );
@@ -259,7 +259,7 @@ describe( 'FullPostView Comments API Disabled Logic', () => {
 
 describe( 'FullPostView automatic mark-as-seen on view', () => {
 	const baseProps = {
-		isSeenEnabled: true,
+		canMarkSeen: true,
 		isSeenPreferenceConfirmed: true,
 		teams: [],
 		referralStream: '',
@@ -317,7 +317,7 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 		const requestMarkAsSeenBlog = jest.fn();
 		const instance = new FullPostView( {
 			...baseProps,
-			isSeenEnabled: false,
+			canMarkSeen: false,
 			requestMarkAsSeen,
 			requestMarkAsSeenBlog,
 			post: { ...feedPost, is_seen: false },
@@ -333,19 +333,17 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 		const requestMarkAsSeen = jest.fn();
 		const pendingProps = {
 			...baseProps,
-			isSeenEnabled: false,
+			canMarkSeen: false,
 			requestMarkAsSeen,
 			requestMarkAsSeenBlog: jest.fn(),
 			post: { ...feedPost, is_seen: false },
 		};
 		const instance = new FullPostView( pendingProps );
 
-		// The post loads while the seen gate is still resolving, so no write yet.
 		runAttemptToSendPageView( instance );
 		expect( requestMarkAsSeen ).not.toHaveBeenCalled();
 
-		// Eligibility resolves to true for the same post.
-		instance.props = { ...pendingProps, isSeenEnabled: true };
+		instance.props = { ...pendingProps, canMarkSeen: true };
 		instance.componentDidUpdate( pendingProps );
 
 		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
@@ -356,8 +354,6 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 		const requestMarkAsSeenBlog = jest.fn();
 		const instance = new FullPostView( {
 			...baseProps,
-			// `isSeenEnabled` is true off the persisted preference, but this session's
-			// /me/preferences request hasn't come back yet — it may say otherwise.
 			isSeenPreferenceConfirmed: false,
 			requestMarkAsSeen,
 			requestMarkAsSeenBlog,
@@ -384,7 +380,6 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 		runAttemptToSendPageView( instance );
 		expect( requestMarkAsSeen ).not.toHaveBeenCalled();
 
-		// /me/preferences returns and agrees the feature is on.
 		instance.props = { ...unconfirmedProps, isSeenPreferenceConfirmed: true };
 		instance.componentDidUpdate( unconfirmedProps );
 
@@ -395,7 +390,7 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 		const requestMarkAsSeen = jest.fn();
 		const first = {
 			...baseProps,
-			isSeenEnabled: true,
+			canMarkSeen: true,
 			requestMarkAsSeen,
 			requestMarkAsSeenBlog: jest.fn(),
 			post: { ...feedPost, is_seen: false, ID: 42, feed_item_ID: 10, global_ID: 'post-a' },
@@ -406,8 +401,7 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 		runAttemptToSendPageView( instance );
 		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
 
-		// A different post that reuses ID 42 — post IDs are only unique per site.
-		// The guard has to notice this is a new post and mark it too.
+		// Reuses ID 42: post IDs are only unique per site.
 		instance.props = {
 			...first,
 			post: { ...feedPost, is_seen: false, ID: 42, feed_item_ID: 20, global_ID: 'post-b' },
@@ -420,8 +414,7 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 
 	it( 'marks a second post when neither post carries a global_ID', () => {
 		const requestMarkAsSeen = jest.fn();
-		// The Reader post cache types every field as optional, so cached posts can
-		// reach us without a `global_ID` — two of them must still be told apart.
+		// Cached posts can reach us without a `global_ID`.
 		const first = {
 			...baseProps,
 			requestMarkAsSeen,
@@ -448,7 +441,7 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 		const requestMarkAsSeen = jest.fn();
 		const enabledProps = {
 			...baseProps,
-			isSeenEnabled: true,
+			canMarkSeen: true,
 			requestMarkAsSeen,
 			requestMarkAsSeenBlog: jest.fn(),
 			post: { ...feedPost, is_seen: false },
@@ -458,15 +451,12 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 		runAttemptToSendPageView( instance );
 		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
 
-		// The post is still unseen (the reader marked it back), and eligibility
-		// re-resolves — a refetch briefly flips the gate off and on again. That
-		// drives the retry path, so only the per-post guard stops us from
-		// silently re-marking what they just unmarked.
-		const regatingProps = { ...enabledProps, isSeenEnabled: false };
+		// Flipping the gate off and on is what drives the retry path.
+		const regatingProps = { ...enabledProps, canMarkSeen: false };
 		instance.props = regatingProps;
 		instance.componentDidUpdate( enabledProps );
 
-		instance.props = { ...enabledProps, isSeenEnabled: true };
+		instance.props = { ...enabledProps, canMarkSeen: true };
 		instance.componentDidUpdate( regatingProps );
 
 		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
@@ -476,7 +466,7 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 		const requestMarkAsSeen = jest.fn();
 		const initialProps = {
 			...baseProps,
-			isSeenEnabled: true,
+			canMarkSeen: true,
 			requestMarkAsSeen,
 			requestMarkAsSeenBlog: jest.fn(),
 			post: { ...feedPost, is_seen: false, ID: 42 },

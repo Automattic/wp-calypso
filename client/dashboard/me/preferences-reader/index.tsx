@@ -6,9 +6,8 @@ import RouterLinkSummaryButton from '../../components/router-link-summary-button
 import type { Density } from '@automattic/components/src/summary-button/types';
 
 export default function PreferencesReader( { density }: { density?: Density } ) {
-	// Non-suspense so a slow/failing /read/teams request never blocks the
-	// preferences index; the rollout-gated section simply stays hidden until
-	// (and unless) teams resolve as available.
+	// Not suspense: a slow or failing /read/teams must not block the
+	// preferences index, so the section stays hidden until teams resolve.
 	const { data: teamsData } = useQuery( readTeamsQuery() );
 	const { data: isSeenPostsEnabled } = useSuspenseQuery(
 		userPreferenceQuery( 'reader-seen-posts' )

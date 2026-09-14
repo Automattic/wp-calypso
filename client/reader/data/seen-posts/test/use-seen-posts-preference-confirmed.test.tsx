@@ -26,8 +26,6 @@ describe( 'useSeenPostsPreferenceConfirmed', () => {
 	} );
 
 	it( 'is false for a timestamp rehydrated from an earlier session', () => {
-		// The preferences slice persists for up to a week, so a restored timestamp
-		// predates this page session and must not count as confirmation.
 		const aDayAgo = Date.now() - 24 * 60 * 60 * 1000;
 		const { result } = renderHook( () => useSeenPostsPreferenceConfirmed(), {
 			wrapper: setUp( aDayAgo ),

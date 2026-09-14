@@ -16,11 +16,6 @@ jest.mock( '@automattic/calypso-config', () => {
 
 jest.mock( 'calypso/server/sanitize', () => jest.fn() );
 
-jest.mock( 'calypso/server/bundler/utils', () => ( {
-	hashFile: jest.fn( () => 'hash' ),
-	getUrl: jest.fn( jest.requireActual( 'calypso/server/bundler/utils' ).getUrl ),
-} ) );
-
 jest.mock( 'calypso/sections', () => {
 	// eslint-disable-next-line no-shadow
 	const sections = jest.requireActual( 'calypso/sections' );
@@ -1102,6 +1097,31 @@ describe( 'main app', () => {
 			expect( response.redirect ).toHaveBeenCalledWith(
 				'https://wordpress.com/pricing/?ref=test&coupon=test'
 			);
+		} );
+	} );
+
+	describe( 'Route /tags and /tag', () => {
+		it( 'redirects logged-out visitors to the Discover tags tab', async () => {
+			const { response } = await app.run( { request: { url: '/tags' } } );
+			expect( response.redirect ).toHaveBeenCalledWith(
+				302,
+				'/discover/tags?selectedTag=dailyprompt'
+			);
+		} );
+
+		it( 'carries the tag and locale prefix through the redirect', async () => {
+			const { response } = await app.run( { request: { url: '/fr/tag/travel' } } );
+			expect( response.redirect ).toHaveBeenCalledWith(
+				302,
+				'/fr/discover/tags?selectedTag=travel'
+			);
+		} );
+
+		it( 'does not redirect logged-in users', async () => {
+			const { response } = await app.run( {
+				request: { url: '/tags', cookies: { wordpress_logged_in: true } },
+			} );
+			expect( response.redirect ).not.toHaveBeenCalled();
 		} );
 	} );
 

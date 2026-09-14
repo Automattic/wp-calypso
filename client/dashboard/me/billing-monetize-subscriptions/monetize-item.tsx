@@ -39,24 +39,20 @@ export const MonetizeSubscriptionTerms = ( {
 	}
 
 	// Show renewal or expiry for future dates
-	return (
-		<>
-			{ subscription.renew_interval === null
-				? // translators: %(date)s is the date the subscription expires. Format is LL (e.g. January 1, 2020).
-				  sprintf( __( 'Expires on %(date)s' ), {
-						date: formatDate( endDate, locale, {
-							dateStyle: 'long',
-						} ),
-				  } )
-				: // translators: %(amount)s is the renewal price, %(date)s is the date the subscription renews. Format is LL (e.g. January 1, 2020).
-				  sprintf( __( 'Renews at %(amount)s on %(date)s' ), {
-						amount: formatCurrency( Number( subscription.renewal_price ), subscription.currency ),
-						date: formatDate( endDate, locale, {
-							dateStyle: 'long',
-						} ),
-				  } ) }
-		</>
-	);
+	return subscription.renew_interval === null
+		? // translators: %(date)s is the date the subscription expires. Format is LL (e.g. January 1, 2020).
+		  sprintf( __( 'Expires on %(date)s' ), {
+				date: formatDate( endDate, locale, {
+					dateStyle: 'long',
+				} ),
+		  } )
+		: // translators: %(amount)s is the renewal price, %(date)s is the date the subscription renews. Format is LL (e.g. January 1, 2020).
+		  sprintf( __( 'Renews at %(amount)s on %(date)s' ), {
+				amount: formatCurrency( Number( subscription.renewal_price ), subscription.currency ),
+				date: formatDate( endDate, locale, {
+					dateStyle: 'long',
+				} ),
+		  } );
 };
 
 export const MonetizeSiteLink = ( { subscription }: { subscription: MonetizeSubscription } ) => {

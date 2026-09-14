@@ -11,7 +11,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import ClipboardInputControl from '../../components/clipboard-input-control';
@@ -23,6 +23,8 @@ import type { DataFormControlProps, Field } from '@wordpress/dataviews';
 const SFTP_URL = 'sftp.wp.com';
 
 const SFTP_PORT = '22';
+
+const RESET_PASSWORD_RATE_LIMIT_MILLISECONDS = 60 * 1000;
 
 const noop = () => {};
 
@@ -44,6 +46,7 @@ export default function SftpCard( {
 	const mutation = useMutation( siteSftpUsersResetPasswordMutation( siteId ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ showResetPasswordConfirmDialog, setShowResetPasswordConfirmDialog ] = useState( false );
+	const [ isResetPasswordRateLimited, setIsResetPasswordRateLimited ] = useState( false );
 	const formData = {
 		url: SFTP_URL,
 		port: SFTP_PORT,
@@ -132,8 +135,10 @@ export default function SftpCard( {
 	};
 
 	const handleConfirmResetPassword = () => {
+		setIsResetPasswordRateLimited( true );
 		mutation.mutate( username, {
 			onError: () => {
+				setIsResetPasswordRateLimited( false );
 				createErrorNotice(
 					__(
 						'Sorry, we had a problem retrieving your SFTP user details. Please refresh the page and try again.'
@@ -147,6 +152,38 @@ export default function SftpCard( {
 
 		setShowResetPasswordConfirmDialog( false );
 	};
+
+	useEffect( () => {
+		if ( ! isResetPasswordRateLimited ) {
+			return;
+		}
+
+		const timeoutId = window.setTimeout(
+			() => setIsResetPasswordRateLimited( false ),
+			RESET_PASSWORD_RATE_LIMIT_MILLISECONDS
+		);
+
+		return () => window.clearTimeout( timeoutId );
+	}, [ isResetPasswordRateLimited ] );
+
+	const resetPasswordLabel = __( 'Reset password' );
+	const resetPasswordDescription = isResetPasswordRateLimited
+		? __( 'You reset the password recently. Please wait a minute and try again.' )
+		: undefined;
+	const resetPasswordButton = (
+		<Button
+			variant="secondary"
+			isBusy={ mutation.isPending }
+			disabled={ mutation.isPending || isResetPasswordRateLimited }
+			accessibleWhenDisabled
+			label={ resetPasswordLabel }
+			description={ resetPasswordDescription }
+			showTooltip={ isResetPasswordRateLimited }
+			onClick={ () => setShowResetPasswordConfirmDialog( true ) }
+		>
+			{ resetPasswordLabel }
+		</Button>
+	);
 
 	return (
 		<Card>
@@ -170,17 +207,7 @@ export default function SftpCard( {
 						form={ form }
 						onChange={ noop }
 					/>
-					{ ! password && (
-						<ButtonStack justify="flex-start">
-							<Button
-								variant="secondary"
-								isBusy={ mutation.isPending }
-								onClick={ () => setShowResetPasswordConfirmDialog( true ) }
-							>
-								{ __( 'Reset password' ) }
-							</Button>
-						</ButtonStack>
-					) }
+					<ButtonStack justify="flex-start">{ resetPasswordButton }</ButtonStack>
 				</VStack>
 			</CardBody>
 			<ConfirmDialog

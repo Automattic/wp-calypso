@@ -107,8 +107,7 @@ export default function MoreMenuActions( {
 		controls.push( [ unsubscribeControl ] );
 	}
 
-	// Avoid rendering a "More actions" trigger that opens an empty menu (e.g. a
-	// section header when seen-posts UI is disabled and no unsubscribe applies).
+	// Section headers can end up with no applicable actions at all.
 	if ( controls.length === 0 ) {
 		return null;
 	}
