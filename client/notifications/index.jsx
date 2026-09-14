@@ -133,13 +133,7 @@ const RedesignedNotifications = ( {
 	);
 
 	const preferences = useMemo(
-		() =>
-			hasPreferences
-				? {
-						layoutStyle: layoutStyle ?? ( isViewSettingsEnabled ? 'simplified' : undefined ),
-						viewSettingsSeen,
-				  }
-				: undefined,
+		() => ( hasPreferences ? { layoutStyle, viewSettingsSeen } : undefined ),
 		[ hasPreferences, layoutStyle, viewSettingsSeen ]
 	);
 
