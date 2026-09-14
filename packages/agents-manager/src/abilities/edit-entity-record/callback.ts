@@ -135,13 +135,10 @@ type Entity< O extends Operation > = EntityRef &
 	>;
 
 /**
- * Every entry, checked field by field before anything reads it.
- *
- * The callback runs on raw arguments, so this is where a wrong type is caught:
- * an array `record` would spread into numeric metadata keys, and a string one
- * would throw inside the checkpoint-key lookup before the structured error
- * path. Refused rather than skipped — a dropped entry would write nothing and
- * still read as applied.
+ * Every entry, checked field by field before anything reads it: the callback
+ * runs on raw arguments, and an array `record` would spread into numeric
+ * metadata keys. Refused rather than skipped — a dropped entry would write
+ * nothing and still read as applied.
  */
 function checkEntities< O extends Operation >( entities: unknown[], operation: O ): Entity< O >[] {
 	const required: string[] = [ 'entityType', 'entityName', ...REQUIRED_FIELDS[ operation ] ];
@@ -306,9 +303,8 @@ function checkBatch( input: unknown ): Batch | Error {
 /**
  * What applied, so a partial failure still reports the work that landed.
  *
- * A type alias rather than an interface: this is passed as the result's
- * `details`, and only an alias carries the implicit index signature that
- * `Record< string, unknown >` needs.
+ * An alias, not an interface: only an alias carries the implicit index
+ * signature the result's `details` field needs.
  */
 type AppliedChanges = {
 	/** Menus the user had unsaved edits in, where the agent's item waits with them. */
@@ -623,11 +619,10 @@ async function applyRecordEdit(
 	}
 
 	if ( isRename ) {
-		// Snapshot the menus the rename will relabel: a restore puts each back as
-		// it was, so the label returns exactly. Discarded together on failure —
-		// the rewrite reads every menu before writing any, and its local writes
-		// fail for all or none, so nothing was changed and a stale snapshot would
-		// let an undo overwrite the user's later edits.
+		// Snapshot the menus the rename will relabel, so a restore puts each back
+		// exactly. Discarded on failure: the rewrite reads every menu before
+		// writing any, so nothing changed, and a stale snapshot would let an undo
+		// overwrite the user's later edits.
 		const captured: MenuId[] = [];
 
 		try {
@@ -798,8 +793,7 @@ async function editEntityRecord( input: EditEntityRecordInput ): Promise< Abilit
 	// The backend asks the model for a `confirmationMessage` before anything
 	// destructive. Confirmation is conversational by decision: this writes
 	// nothing, the agent asks in prose, and the user answers in the chat. The
-	// request returns as a client-tool failure and the model runs again, so the
-	// `error` has to be directive — it gets two attempts.
+	// `error` is directive because the model acts on it when it runs again.
 	if ( awaitsConfirmation( input ) ) {
 		const question = input.confirmationMessage.trim();
 

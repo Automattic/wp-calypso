@@ -26,11 +26,10 @@ import {
 import type { Ability, AbilityResult } from '../abilities/types';
 import type { ContextProvider, ToolProvider } from '../types';
 
-// Abilities that write to the page open in the editor. `apply-update-theme` and
-// `set-site-logo` are site-wide and `show-component` is not a write, so a move
-// between pages cannot make them wrong. `edit-entity-record` names its own
-// target, often site-level, so guarding it would refuse legitimate edits; it
-// moves the canvas itself through `bindToEditorPath()`.
+// Abilities that write to the page open in the editor. Site-wide writes and
+// `show-component` cannot be made wrong by a move between pages, and
+// `edit-entity-record` names its own target and moves the canvas itself through
+// `bindToEditorPath()`, so guarding it would refuse legitimate edits.
 //
 // Normalized, because the agent invokes `big-sky/apply-block-edits` as
 // `big_sky__apply_block_edits` — the registered form would never match.

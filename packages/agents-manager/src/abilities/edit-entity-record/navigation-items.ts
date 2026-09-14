@@ -383,11 +383,10 @@ export async function buildNavigationItems(
 		inputs.map( ( input ) => {
 			const existing = resolved.get( input );
 
-			// A clientId names an existing item, so one that resolves to nothing is
-			// refused, not rebuilt: the block it meant would be dropped along with
-			// everything the request did not restate. A new item needs a label, since
-			// a url or id alone makes a link with no text. Collected, not thrown, so
-			// every offending item is named at once.
+			// A clientId names an existing item, so one resolving to nothing is
+			// refused, not rebuilt: the block it meant would be dropped. A new item
+			// needs a label, or the link has no text. Collected, so every offending
+			// item is named at once.
 			const missing = ! existing && ( input.clientId || ! input.label );
 
 			if ( missing ) {
@@ -407,11 +406,10 @@ export async function buildNavigationItems(
 			const name = blockName( block, innerBlocks );
 			const attributes = { ...block.attributes, ...attributesFor( input ) };
 
-			// A page id re-links the item to that page, unless it already points
-			// there — then the id only identified it. The type counts too: a category
-			// can carry a page's number. A new url with no id makes a custom link, as
-			// the editor's own link control does, so the old page does not follow it
-			// through renames and deletions.
+			// A page id re-links the item unless it already points there — then the
+			// id only identified it. The type counts: a category can carry a page's
+			// number. A new url with no id makes a custom link, as the editor's link
+			// control does, so the old page stops following it.
 			const sameEntity =
 				String( input.id ) === String( existing?.attributes?.id ) &&
 				( input.type ?? 'page' ) === ( existing?.attributes?.type ?? 'page' );
@@ -441,11 +439,9 @@ export async function buildNavigationItems(
 	const blocks = build( items );
 
 	if ( unresolved.length ) {
-		// Model-facing, so deliberately untranslated: this is an instruction the
-		// agent has to act on, and the user never sees it. The menu's own labels
-		// are listed so the retry needs no further reading — and it must not
-		// re-read: the page structure it holds for this turn is what named the
-		// stale ids, so a re-read returns them again.
+		// Model-facing, so untranslated. The menu's labels are listed so the retry
+		// needs no re-read: the page structure held for this turn is what named
+		// the stale ids, and a re-read returns them again.
 		const labels = labelsOf( current ).map( ( label ) => `"${ label }"` );
 
 		throw new Error(

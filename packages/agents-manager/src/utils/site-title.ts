@@ -1,12 +1,9 @@
 import { getSiteRecord, saveSiteFields } from './site-record';
 
 /**
- * The site's `title` setting. Kept apart from `site-metadata` because it is a
- * field of the site record itself, not part of the metadata JSON stored in it
- * — the same split `site-logo` follows.
- *
- * WordPress renders it into every `core/site-title` block, so a change here
- * shows up across the site without touching any block.
+ * The site's `title` setting: a field of the site record itself, not part of
+ * the metadata JSON stored in it, hence its own module like `site-logo`.
+ * WordPress renders it into every `core/site-title` block.
  */
 
 /** The title the editor holds, or `undefined` where the record is unreadable. */
@@ -17,13 +14,9 @@ export function getSiteTitle(): string | undefined {
 }
 
 /**
- * Renames the site and saves it. Agent edits stay out of the editor's undo
- * stack — `restore-checkpoint` is the undo the agent offers.
- *
- * Saved for the same reason the metadata is: the title is mirrored into the
- * metadata, and persisting one without the other leaves the two disagreeing
- * after a reload. Only the title is saved, so unrelated pending site edits
- * stay pending.
+ * Renames the site and saves only the title, so unrelated pending site edits
+ * stay pending. Saved, like the metadata the title is mirrored into: persisting
+ * one without the other leaves the two disagreeing after a reload.
  */
 export async function setSiteTitle( title: string ): Promise< void > {
 	await saveSiteFields( { title } );
