@@ -265,7 +265,7 @@ const hasSnapshot = ( checkpoint: CheckpointRecord, key: string ): boolean =>
 	key in SNAPSHOT_FIELDS && checkpoint[ SNAPSHOT_FIELDS[ key ] ] !== undefined;
 
 /** The eager domains among `keys` whose snapshot could not be taken. */
-const unsnapshotted = ( checkpoint: CheckpointRecord, keys: string[] ): string[] =>
+const missingSnapshots = ( checkpoint: CheckpointRecord, keys: string[] ): string[] =>
 	keys.filter( ( key ) => EAGER_KEYS.includes( key ) && ! hasSnapshot( checkpoint, key ) );
 
 /**
@@ -319,7 +319,7 @@ export async function setReciprocalCheckpoint(
 
 	// A redo claiming a domain it could not snapshot would throw part-way,
 	// like any restore with one missing — refused whole instead.
-	const missing = unsnapshotted( checkpoint, target.checkpointKeys );
+	const missing = missingSnapshots( checkpoint, target.checkpointKeys );
 
 	if ( missing.length ) {
 		records.delete( id );
@@ -579,7 +579,7 @@ export async function withCheckpoint< T >(
 
 	// Refused before the write, not made unrestorable: a domain that snapshots
 	// up front and could not be read would leave the change with no way back.
-	const missing = checkpointId ? unsnapshotted( records.get( checkpointId )!, keys ) : [];
+	const missing = checkpointId ? missingSnapshots( records.get( checkpointId )!, keys ) : [];
 
 	if ( missing.length ) {
 		undo();

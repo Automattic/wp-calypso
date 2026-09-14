@@ -305,7 +305,7 @@ const attributesFor = ( item: NavigationItemInput ) => ( {
  * Both halves of a raw menu edit: `content` is what persists, `blocks` what the
  * editor reads, and a record carrying only one would leave the other stale.
  */
-function withBothHalves( record: Record< string, unknown > ): Record< string, unknown > {
+function withBlocksAndContent( record: Record< string, unknown > ): Record< string, unknown > {
 	const { blocks, content } = record;
 
 	if ( Array.isArray( blocks ) ) {
@@ -329,7 +329,7 @@ export async function buildNavigationItems(
 	const { navigationItems, ...rest } = record;
 
 	if ( navigationItems === undefined ) {
-		return withBothHalves( record );
+		return withBlocksAndContent( record );
 	}
 
 	const items = navigationItems as NavigationItemInput[];
